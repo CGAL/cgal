@@ -109,7 +109,7 @@ public:
   
   class Axis {
     
-    friend PS_Stream;
+    friend class PS_Stream;
     friend PS_Stream & operator << (PS_Stream& ps, const Axis& g);
     
   public:
@@ -130,7 +130,7 @@ public:
   
 class Grid {
   
-  friend PS_Stream;
+  friend class PS_Stream;
   friend PS_Stream & operator << (PS_Stream& ps, const Grid& g);
   
 public:
@@ -152,7 +152,7 @@ protected:
 
   class Label {
     
-    friend PS_Stream;
+    friend class PS_Stream;
     friend PS_Stream & operator << (PS_Stream& ps, const Label& txt);
     
   public:
@@ -167,7 +167,7 @@ protected:
   
   class Latex_Label {
     
-    friend PS_Stream;
+    friend class PS_Stream;
     friend PS_Stream& operator << (PS_Stream& ps, Latex_Label& txt);
   public:
     // Only text can be define by user
@@ -191,11 +191,11 @@ protected:
     float posy;
   };
   
-  typedef list<Latex_Label> List_Label;
+  typedef std::list<Latex_Label> List_Label;
   
   class Border {
     
-    friend PS_Stream;
+    friend class PS_Stream;
     friend PS_Stream& operator << (PS_Stream &ps, const Border &b);
     
   public:
@@ -209,7 +209,7 @@ protected:
 
   class Context {
     
-    friend PS_Stream;
+    friend class PS_Stream;
     
   public:
     
@@ -279,21 +279,21 @@ Point_2<Cartesian <double> > _anchor_point;
 };
 
 //Constructors used for PS_Stream 3D
-PS_Stream(ostream& os,OutputMode = QUIET);
+PS_Stream(std::ostream& os,OutputMode = QUIET);
 PS_Stream(const char* fname, OutputMode = QUIET);
-PS_Stream(float H,ostream& os,OutputMode = QUIET);
+PS_Stream(float H,std::ostream& os,OutputMode = QUIET);
 PS_Stream(float H, const char* fname, OutputMode = QUIET);
 
   //Constructors
-  PS_Stream(const PS_BBox& bb, ostream& os,
+  PS_Stream(const PS_BBox& bb, std::ostream& os,
 	    OutputMode = QUIET);
   PS_Stream(const PS_BBox& bb, const char* fname,
 	    OutputMode = QUIET);
-  PS_Stream(const PS_BBox& bb,float H, ostream& os,
+  PS_Stream(const PS_BBox& bb,float H, std::ostream& os,
 	    OutputMode = QUIET);
   PS_Stream(const PS_BBox& bb,float H, const char* fname,
 	    OutputMode = QUIET);
-  PS_Stream(const PS_BBox& bb,float L, float H, ostream& os,
+  PS_Stream(const PS_BBox& bb,float L, float H, std::ostream& os,
 	    OutputMode = QUIET);
   PS_Stream(const PS_BBox& bb,float L, float H, const char* fname,
 	    OutputMode = QUIET);
@@ -321,7 +321,7 @@ PS_Stream(float H, const char* fname, OutputMode = QUIET);
   
 
   //Accessors
-  ostream&        os()   {return _os;}
+  std::ostream&        os()   {return _os;}
   List_Label&   list()        {return _ll;}
   const Context context() const {return ctxt;}
   bool         gs_output()     const {return (bool)(mode()==GS_VIEW);}
@@ -383,8 +383,8 @@ protected:
   //ostream_withassign& _os;
   //endif
 
-//List of Latex Labels. They will be inserted at the end of the file.
-List_Label _ll;
+  //List of Latex Labels. They will be inserted at the end of the file.
+  List_Label _ll;
 
 };
 
