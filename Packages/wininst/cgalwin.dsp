@@ -64,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /TP /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGAL)\stlport" /I "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /I "$(CGAL)\include\cgal\config\msvc" /I "$(CGAL)\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\auxilary\wingmp\gmp-2.0.2" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
 # ADD RSC /l 0x40c /d "_DEBUG"
 BSC32=bscmake.exe
@@ -85,39 +85,39 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_base_panel.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_base_panel.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_base_window.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_base_window.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_basic.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_basic.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_color.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_color.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_file.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_file.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_file_panel.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_file_panel.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_string_manip.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_string_manip.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\_window.C"
+SOURCE="$(CGALROOT)\src\CGALWin\_window.C"
 # End Source File
 # Begin Source File
 
-SOURCE="$(CGAL)\src\CGALWin\mswin\_x_basic.C"
+SOURCE="$(CGALROOT)\src\CGALWin\mswin\_x_basic.C"
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -126,3 +126,4 @@ SOURCE="$(CGAL)\src\CGALWin\mswin\_x_basic.C"
 # End Group
 # End Target
 # End Project
+
