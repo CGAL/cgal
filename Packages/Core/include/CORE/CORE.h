@@ -1,8 +1,20 @@
-
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2003 Exact Computation Project
- * 
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
+ *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
  * File: CORE.h
  * Synopsis:
  *      The main inclusion file for the Core Library system.
@@ -16,21 +28,21 @@
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Id$
- *****************************************************************/
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
 
-#ifndef CORE_H
-#define CORE_H
+#ifndef _CORE_CORE_H_
+#define _CORE_CORE_H_
 
-#include <CORE/CoreImpl.h>
-#include <CORE/CoreAux.h>
 #include <CORE/CoreDefs.h>
+#include <CORE/Timer.h>
 
 // User can still access machine types:
 typedef double machine_double;
 typedef long machine_long;
 
-#ifndef CORE_LEVEL 
+#ifndef CORE_LEVEL
 #   define CORE_LEVEL  DEFAULT_CORE_LEVEL
 #endif
 
@@ -38,22 +50,21 @@ typedef long machine_long;
 #   define Real double
 #   define Expr double
 #elif CORE_LEVEL  == 2
+#   include <CORE/Real.h>
 #   undef long
 #   undef double
-#   include "Real.h"
 #   define long Real
 #   define double Real
 #   define Expr Real
 #elif CORE_LEVEL  == 3
+#   include <CORE/Expr.h>
 #   undef long
 #   undef double
-#   include "Expr.h"
 #   define long Expr
 #   define double Expr
 #   define Real Expr
 #elif CORE_LEVEL == 4
-
-#   include "Expr.h"
+#   include <CORE/Expr.h>
 #endif
 
 // automaticall link necessary static library under visual c++
@@ -71,5 +82,5 @@ typedef long machine_long;
 using namespace CORE;
 #endif
 
-#endif
+#endif // _CORE_CORE_H_
 

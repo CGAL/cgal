@@ -1,7 +1,20 @@
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2002 Exact Computation Project
- * 
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
+ *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
  * File: CoreDefs.h
  * Synopsis:
  *       This contains useful Core Library global parameters which
@@ -10,20 +23,20 @@
  *       modify or examine the values.
  *
  * Written by 
- *       Chen Li <chenli@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
+ *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Id$
- *****************************************************************/
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
 
-#ifndef CORE_DEFS_H
-#define CORE_DEFS_H
+#ifndef _CORE_COREDEFS_H_
+#define _CORE_COREDEFS_H_
 
-#include <CORE/CoreImpl.h>
 #include <CORE/extLong.h>
 
 CORE_BEGIN_NAMESPACE
@@ -33,13 +46,13 @@ CORE_BEGIN_NAMESPACE
 //////////////////////////////////////////////////////////////
 
 /// default accuracy level
-#define DEFAULT_CORE_LEVEL 3		
+#define DEFAULT_CORE_LEVEL 3
 
 /// short hand for positive infinity
-#define CORE_INFTY  (CORE_posInfty) 
+#define CORE_INFTY  (CORE_posInfty)
 
 //////////////////////////////////////////////////////////////
-// global precision parameters 
+// global precision parameters
 //////////////////////////////////////////////////////////////
 
 /// Abort Flag -- default value is true
@@ -67,9 +80,7 @@ extern long EscapePrecFlag;
     when EscapePrec is reached */
 extern bool EscapePrecWarning;
 
-
-
-// These following two values determine the precision of computing 
+// These following two values determine the precision of computing
 // approximations in Expr.
 
 /// default Relative Precision in bits
@@ -89,10 +100,10 @@ extern long defBigFloatOutputDigits;
 
 /// default input precision in digits for converting a string to a Real or Expr
 /** This value can be CORE_INFTY */
-extern extLong defInputDigits; 
-					
+extern extLong defInputDigits;
+
 /// controls the printout precision of std::cout for Real and Expr
-/** This value cannot be CORE_INFTY 
+/** This value cannot be CORE_INFTY
     See also defBigFloatOutputDigits. 
     (it really should be an int, as in std::cout.setprecision(int)). */
 extern long defOutputDigits;
@@ -101,10 +112,10 @@ extern long defOutputDigits;
 /** This value cannot be CORE_INFTY. */
 extern long defBigFloatInputDigits;
 
-/// default BigFloat Division Relative Precision 
+/// default BigFloat Division Relative Precision
 extern extLong defBFdivRelPrec;
 
-/// default BigFloat Sqrt Absolute Precision 
+/// default BigFloat Sqrt Absolute Precision
 extern extLong defBFsqrtAbsPrec;
 
 //////////////////////////////////////////////////////////////
@@ -112,79 +123,132 @@ extern extLong defBFsqrtAbsPrec;
 //////////////////////////////////////////////////////////////
 
 /// floating point filter flag
-extern bool fpFilterFlag; 
+extern bool fpFilterFlag;
 /// if true, evaluation of expressions would be incremental
 extern bool incrementalEvalFlag;
 /// progressive evaluation flag
-extern bool progressiveEvalFlag; 
+extern bool progressiveEvalFlag;
 /// rational reduction flag
-extern bool rationalReduceFlag; 
+extern bool rationalReduceFlag;
 /// default initial (bit) precision for AddSub Progressive Evaluation
 extern long defInitialProgressivePrec;
 
 //////////////////////////////////////////////////////////////
-// methods for setting global precision parameters 
+// methods for setting global precision parameters
 // 	including: scientific vs. positional format
 //	All the set methods return the previous global value if any
 //////////////////////////////////////////////////////////////
 
-/// set default composite precision [defAbsPrec, defRelPrec] 
-/** It determines the precision to which an Expr evaluates its 
+/// set default composite precision [defAbsPrec, defRelPrec]
+/** It determines the precision to which an Expr evaluates its
     (exact, implicit) constant value. */
-CORE_INLINE void setDefaultPrecision(const extLong &r, const extLong &a);
+inline void setDefaultPrecision(const extLong &r, const extLong &a) {
+  defRelPrec = r;
+  defAbsPrec = a;
+}
 
 /// set default relative precision
-CORE_INLINE extLong setDefaultRelPrecision(const extLong &r);
+inline extLong setDefaultRelPrecision(const extLong &r) {
+  extLong old = defRelPrec;
+  defRelPrec = r;
+  return old;
+}
 
 /// set default absolute precision
-CORE_INLINE extLong setDefaultAbsPrecision(const extLong &a);
-
+inline extLong setDefaultAbsPrecision(const extLong &a) {
+  extLong old = defAbsPrec;
+  defAbsPrec = a;
+  return old;
+}
 
 /// set default input digits (for Expr, Real)
 /** it controls the absolute error */
-CORE_INLINE extLong setDefaultInputDigits(const extLong &d);
+inline extLong setDefaultInputDigits(const extLong &d) {
+  extLong old = defInputDigits;
+  defInputDigits = d;
+  return old;
+}
 
 /// set default output digits (for Expr, Real)
-CORE_INLINE long setDefaultOutputDigits(long d = defOutputDigits,
-		std::ostream& o = std::cout);
+inline long setDefaultOutputDigits(long d = defOutputDigits,
+                                   std::ostream& o = std::cout) {
+  long old = defOutputDigits;
+  defOutputDigits = d;
+  o.precision(d);
+  return old;
+}
 
 /// set default input digits for BigFloat
-CORE_INLINE long setDefaultBFInputDigits(long d);
+inline long setDefaultBFInputDigits(long d) {
+  long old = defBigFloatInputDigits;
+  defBigFloatInputDigits = d;
+  return old;
+}
 
 /// set default output digits for BigFloat
-CORE_INLINE long setDefaultBFOutputDigits(long d);
+inline long setDefaultBFOutputDigits(long d) {
+  long old = defBigFloatOutputDigits;
+  defBigFloatOutputDigits = d;
+  return old;
+}
 
 /// turn floating-point filter on/off
-CORE_INLINE bool setFpFilterFlag(bool f);
+inline bool setFpFilterFlag(bool f) {
+  bool oldf = fpFilterFlag;
+  fpFilterFlag = f;
+  return oldf;
+}
 
 /// turn incremental evaluation flag on/off
-CORE_INLINE bool setIncrementalEvalFlag(bool f);
+inline bool setIncrementalEvalFlag(bool f) {
+  bool oldf = incrementalEvalFlag;
+  incrementalEvalFlag = f;
+  return oldf;
+}
 
 /// turn progressive evaluation flag on/off
-CORE_INLINE bool setProgressiveEvalFlag(bool f);
+inline bool setProgressiveEvalFlag(bool f) {
+  bool oldf = progressiveEvalFlag;
+  progressiveEvalFlag = f;
+  return oldf;
+}
 
 /// set initial bit precision for progressive evaluation:
-CORE_INLINE long setDefInitialProgressivePrec(long n);
+inline long setDefInitialProgressivePrec(long n) {
+  long oldn = defInitialProgressivePrec;
+  defInitialProgressivePrec = n;
+  return oldn;
+}
 
 /// turn rational reduction flag on/off
-CORE_INLINE bool setRationalReduceFlag(bool f);
+inline bool setRationalReduceFlag(bool f) {
+  bool oldf = rationalReduceFlag;
+  rationalReduceFlag = f;
+  return oldf;
+}
 
 /// CORE_init(..) is the CORE initialization function.
 /** We recommend calling it before anything else.  Originally motivated
     by need to get around gnu's compiler bug in which the variable 
     "defAbsPrec" was not properly initialized.  But it has other uses,
-    e.g., overriding the default std::cout precision to our own */
-CORE_INLINE void CORE_init(long d);
+    e.g., overriding the default std::cout precision (most systems 
+    initializes this value to 6) to our own */
+inline void CORE_init(long d) {
+  defAbsPrec = CORE_posInfty;
+  defOutputDigits = d;
+  std::setprecision(defOutputDigits);
+}
 
 /// change to scientific output format
-CORE_INLINE void setScientificFormat(std::ostream& o = std::cout);
+inline void setScientificFormat(std::ostream& o = std::cout) {
+  o.setf(std::ios::scientific, std::ios::floatfield);
+}
 
 /// change to positional output format
-CORE_INLINE void setPositionalFormat(std::ostream& o = std::cout);
-
-#ifdef CORE_ENABLE_INLINES
-#include <CORE/CoreDefs.inl>
-#endif
+inline void setPositionalFormat(std::ostream& o = std::cout) {
+  o.setf(std::ios::fixed, std::ios::floatfield);
+}
 
 CORE_END_NAMESPACE
-#endif
+#endif // _CORE_COREDEFS_H_
+

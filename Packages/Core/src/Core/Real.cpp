@@ -1,9 +1,21 @@
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2002 Exact Computation Project
- * 
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
+ *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
  * File: Real.cpp
- * 
  * Synopsis: The Real class is a superclass for all the number 
  *           systems in the Core Library (int, long, float, double,
  *           BigInt, BigRat, BigFloat, etc)
@@ -18,8 +30,10 @@
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Id$
- *****************************************************************/
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
+
 #include <ctype.h>
 #if defined (__BORLANDC__)
   #include <mem.h>
@@ -27,10 +41,6 @@
 #include <CORE/Real.h>
 
 CORE_BEGIN_NAMESPACE
-
-#ifndef CORE_ENABLE_INLINES
-#include <CORE/Real.inl>
-#endif
 
 const Real& Real::getZero() {
   static Real Zero(0);
@@ -52,7 +62,7 @@ BigInt floor(const Real& r, Real &sub) {
 // pow(r,n) and power(r, n) are the same function
 //
 Real pow(const Real& r, unsigned long n) {
-  if (n == 0) 
+  if (n == 0)
     return Real(1);
   else if (n == 1)
     return r;
@@ -65,7 +75,8 @@ Real pow(const Real& r, unsigned long n) {
     Real u = x;
     while (true) {
       n >>= 1;
-      if (n == 0) return u;
+      if (n == 0)
+        return u;
       x *= x;
       if ((n % 2) == 1) // n is odd
         u *= x;
@@ -82,7 +93,7 @@ extern BigInt FiveTo(unsigned long exp);
 // 	-- Original it is the code for Real's constructor for "const char*".
 // 	   I change it to a function so that two constrcutors can share the code.
 // 	   now it is private and no default value.
-// 	   
+//
 //   --Default value of the argument "prec" is defInputDigits
 //   --If prec is CORE_posInfty, then the input is
 //	read in exactly.  Otherwise, we convert to a RealBigFloat
@@ -101,12 +112,12 @@ extern BigInt FiveTo(unsigned long exp);
 //	directly, without relying on Real class.
 
 void Real::constructFromString(const char *str, const extLong& prec )
- 	// NOTE: prec defaults to defInputDigits (see Real.h)
-{ 
-//	8/8/01, Chee and Zilin: add a new rational string format:
-//		this format is indicated by the presence of a slash "/"
-//		Moreover, the value of prec is ignored (basically
-//		assumed to be infinity).
+// NOTE: prec defaults to defInputDigits (see Real.h)
+{
+  //	8/8/01, Chee and Zilin: add a new rational string format:
+  //		this format is indicated by the presence of a slash "/"
+  //		Moreover, the value of prec is ignored (basically
+  //		assumed to be infinity).
 
   if (strchr(str, '/') != NULL) {	// this is a rational number
     rep = new RealBigRat(BigRat(str));
@@ -118,33 +129,36 @@ void Real::constructFromString(const char *str, const extLong& prec )
   long e10 = 0;
   if (e != NULL)
     e10 = atol(e+1);	// e10 is decimal precision of the input string
-			// i.e., input is A/10^{e10}.
+  // i.e., input is A/10^{e10}.
   else {
     e = str + strlen(str);
-#ifdef DEBUG
+#ifdef CORE_DEBUG
     assert(*e == '\0');
-#endif 
+#endif
   }
 
   const char *p = str;
-  if (*p == '-' || *p == '+') p++;
+  if (*p == '-' || *p == '+')
+    p++;
   BigInt m(0);
-  
+
   for (; p < e; p++) {
     if (*p == '.') {
       dot = 1;
       continue;
     }
     m = m * 10 + (*p - '0');
-    if (dot) e10--;
+    if (dot)
+      e10--;
   }
-  
+
   long t = (e10 < 0) ? -e10 : e10;
   BigInt one(1);
-  BigInt ten = FiveTo(t) * (one << t);
-  if (*str == '-') m = -m;
+  BigInt ten = FiveTo(t) * (one << static_cast<unsigned long>(t));
+  if (*str == '-')
+    m = -m;
   if (e10 >= 0) {
-    // convert exactly from integer numbers 
+    // convert exactly from integer numbers
     m *= ten;
     rep = new RealBigInt(m);
   } else { // e10 < 0,  fractional numbers
@@ -156,9 +170,9 @@ void Real::constructFromString(const char *str, const extLong& prec )
     BigRat r(m, ten);
     if (prec.isInfty()) { // convert exactly! to a big rational
       rep = new RealBigRat(r);
-    } else { 
-      // convert approximately, to a BigFloat within the 
-      // specified precision:     
+    } else {
+      // convert approximately, to a BigFloat within the
+      // specified precision:
       // BigFloat bf(r, CORE_posInfty, prec * lgTenM) ;
       BigFloat bf(r, CORE_posInfty, prec * 4) ;
       rep = new RealBigFloat(bf);
@@ -167,8 +181,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
 }// Real(str, prec)
 
 // The operator >>(i,x) calls the constructor Real(char*)
-std::istream& operator >>(std::istream& i, Real& x)
-{
+std::istream& operator >>(std::istream& i, Real& x) {
   int size = 20;
   char *str = new char[size];
   char *p = str;
@@ -185,7 +198,7 @@ std::istream& operator >>(std::istream& i, Real& x)
   do {
     c = i.get();
   } while (isspace(c)); /* loop if met end-of-file, or
-			   char read in is white-space. */
+  			   char read in is white-space. */
   // Chen Li,
   // original "if (c == EOF) ..." is unsafe since c is of char type and
   // EOF is of int tyep with a negative value -1
@@ -202,11 +215,13 @@ std::istream& operator >>(std::istream& i, Real& x)
   }
 
   for (; isdigit(c) || (!d && c=='.') ||
-	 (!e && c=='e') || (!s && (c=='-' || c=='+')); i.get(c)) {
-    if (!e && (c == '-' || c == '+')) break;
-    // Chen Li: put one more rule to prohibite input like 
+       (!e && c=='e') || (!s && (c=='-' || c=='+')); i.get(c)) {
+    if (!e && (c == '-' || c == '+'))
+      break;
+    // Chen Li: put one more rule to prohibite input like
     //  xxxx.xxxe+xxx.xxx:
-    if (e && (c == '.')) break;
+    if (e && (c == '.'))
+      break;
     if (p - str == size) {
       char *t = str;
       str = new char[size*2];
@@ -215,16 +230,20 @@ std::istream& operator >>(std::istream& i, Real& x)
       p = str + size;
       size *= 2;
     }
-#ifdef DEBUG
+#ifdef CORE_DEBUG
     assert((p-str) < size);
 #endif
+
     *p++ = c;
-    if (c == '.')                  d = 1;
+    if (c == '.')
+      d = 1;
     // Chen Li: fix a bug -- the sign of exponent can not happen before
-    // the character "e" appears! It must follow the "e' actually. 
+    // the character "e" appears! It must follow the "e' actually.
     //    if (e || c == '-' || c == '+') s = 1;
-    if (e) s = 1;
-    if (c == 'e')                  e = 1;
+    if (e)
+      s = 1;
+    if (c == 'e')
+      e = 1;
   }
 
   // chenli: make sure that the p is still in the range
@@ -237,9 +256,10 @@ std::istream& operator >>(std::istream& i, Real& x)
     p = str + len;
   }
 
-#ifdef DEBUG
+#ifdef CORE_DEBUG
   assert(p - str < size);
 #endif
+
   *p = '\0';
   i.putback(c);
   // old: x = Real(str, i.precision()); // use precision of input stream.
@@ -247,80 +267,5 @@ std::istream& operator >>(std::istream& i, Real& x)
   delete [] str;
   return i;
 }//operator >> (std::istream&, Real&)
-/*
-//  stream : This function is common to all Realbase_for<> types.
-template <class T>
-std::ostream& Realbase_for<T>::operator <<(std::ostream& o) const
-{
-  o << ker;
-  return o;
-}
-*/
-#if 0
-//  constructor for RealLong
-template<>
-Realbase_for<long>::Realbase_for(const long &l)
-  : ker(l)
-{
-  mostSignificantBit = ((ker != 0) ? extLong(flrLg(ker)) : CORE_negInfty); 
-  //  This computes the bit length of "ker" minus 1,
-  //  i.e., floor(log_2(|ker|)) .
-}
-
-//  constructor for RealDouble
-template<>
-Realbase_for<double>::Realbase_for(const double& d)
-  : ker(d)
-{
-  mostSignificantBit = BigFloat(ker).MSB();
-}
-
-//  constructor for RealBigInt
-template<>
-Realbase_for<BigInt>::Realbase_for(const BigInt& I)
-  : ker(I)
-{
-  mostSignificantBit = (sign(ker)? extLong(floorLg(ker)) : CORE_negInfty);
-}
-
-//  constructor for RealBigFloat
-template<>
-Realbase_for<BigFloat>::Realbase_for(const BigFloat& B)
-  : ker(B)
-{
-  mostSignificantBit = ker.MSB();
-}
-
-//  constructor for RealBigRat
-template<>
-Realbase_for<BigRat>::Realbase_for(const BigRat& R) : ker(R)
-{
-  // MSB of a rational x/y is given by floorLg(|x/y|)
-  BigInt x = ker.numerator();
-  BigInt y = ker.denominator();
-  if (ker.sign()) {
-    mostSignificantBit = extLong(floorLg(x) - floorLg(y));
-    x.abs();
-    if ((y << mostSignificantBit.asLong()) > x) 
-      mostSignificantBit = mostSignificantBit - 1;
-  } else
-    mostSignificantBit = CORE_negInfty;
-  /*
-  mostSignificantBit = ker.sign() ? \
-       extLong(floorLg(x) - floorLg(y)) : CORE_negInfty;
-
-  // This gives us an approximation to msb that could off by 1 in
-  // one direction.  So we next adjust for this possibility:
-  // The exact value of msb(x/y) is given by
-  //   y.2^msb <= x < y.2^{msb+1}.
-
-  // 5/16/02: fixed a bug in logic (Pion/Zilin/Chee)
-  x.abs();
-  if ((y << mostSignificantBit.asLong()) > x) 
-       mostSignificantBit = mostSignificantBit - 1;
-  */
-}
-
-#endif
 
 CORE_END_NAMESPACE

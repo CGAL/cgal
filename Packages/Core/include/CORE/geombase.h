@@ -1,5 +1,5 @@
 /******************************************************************
- * Core Library Version 1.6, June 2003
+ * Core Library Version 1.7, August 2004
  * Copyright (c) 1995-2002 Exact Computation Project
  * 
  * File: geombase.h

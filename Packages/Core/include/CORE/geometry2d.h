@@ -23,9 +23,9 @@
 #endif
 
 #include <CORE/geom2d/point2d.h>
-#include <CORE/geom2d/line2d.h>
-#include <CORE/geom2d/circle2d.h>
-#include <CORE/geom2d/segment2d.h>
+#include "CORE/geom2d/line2d.h"
+#include "CORE/geom2d/circle2d.h"
+#include "CORE/geom2d/segment2d.h"
 
 // automaticall link necessary static library under visual c++
 #ifdef _MSC_VER

@@ -1,3 +1,6 @@
+04 October 2004 Andreas Fabri
+- Replaced everything with the new version
+
 27 July 2004 Efi Fogel
 - Added the method 'int numberOfRoots() const' to poly/Sturm.h. While this
 method may not work very well in this version, it is fully supported in the

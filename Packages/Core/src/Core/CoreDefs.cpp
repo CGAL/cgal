@@ -1,7 +1,20 @@
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2002 Exact Computation Project
- * 
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
+ *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
  * File: CoreDefs.cpp
  * Synopsis:
  *	 Useful parameters for Core Library which users may change
@@ -14,14 +27,25 @@
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Id$
- *****************************************************************/
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
 
-#include <CORE/CoreDefs.h>
+#include "CORE/CoreDefs.h"
 
 CORE_BEGIN_NAMESPACE
 
 //  Default Values
+
+/* ************************************************************
+ * ERROR FLAGS
+ * ************************************************************ */
+
+/** I/O error flag (Default value 0, indicating no error)
+ *  User's responsibility to check and reset value to 0. */
+// This is currently used in geom2d/points2d.cpp for I/O of points
+
+int IOErrorFlag = 0;
 
 /**
  * If AbortFlag is true when invalid expression is constructed, system will abort
@@ -35,6 +59,10 @@ bool AbortFlag = true;
  */
 
 int InvalidFlag = 0;
+
+/* ************************************************************
+ * PRECISION PARAMETERS 
+ * ************************************************************ */
 
 /**
  *  Default BigFloat Division Relative Precision
@@ -64,7 +92,7 @@ long EscapePrecFlag = 0;
     when EscapePrec is reached */
 bool EscapePrecWarning = true;
 
-/** The Composite Precision [defAbsPrec, defRelPrec] 
+/** The Composite Precision [defAbsPrec, defRelPrec]
  *  determines the precision to which an Expr evaluates its 
  *  (exact, implicit) constant value. */
 
@@ -78,7 +106,7 @@ extLong defAbsPrec = CORE_posInfty;
 extLong defRelPrec = 60;
 
 /**  number of BigFloat digits to print out */
-long defBigFloatOutputDigits = 10; 
+long defBigFloatOutputDigits = 10;
 
 /**  NORMALLY, we like to make this equal to defBigFloatOutputDigits
   *  8/3/01, Chee: re-introduced this parameter */
@@ -86,7 +114,7 @@ long defOutputDigits = defBigFloatOutputDigits;
 
 /** String Input Precision */
 
-/** Set this to 16 if you want machine precision. This controls the 
+/** Set this to 16 if you want machine precision. This controls the
  *  absolute error in string decimal inputs to Real or Expr.
  *  If defInputDigits is finite, then the absolute error will be 
  *  at most 10^{-defInputDigits}.  Otherwise, the input is exactly 
@@ -97,6 +125,10 @@ extLong defInputDigits = CORE_posInfty;
  *  The absolute error will be at most 10^{-defInputDigits} */
 long defBigFloatInputDigits = 16;
 
+/* ************************************************************
+ * EVALUATION FLAGS
+ * ************************************************************ */
+
 /** Floating Point filter
  *  true = turn on floating point filter */
 bool fpFilterFlag = true;
@@ -104,7 +136,7 @@ bool fpFilterFlag = true;
 /** IncrementaL evaluation flag
  *  incremental evaluation is requested, This means, we try to use previous
  *  approximate values to improve an approximation */
-bool incrementalEvalFlag = true; 
+bool incrementalEvalFlag = true;
 
 /** Progressive evaluation flag
  *  true = turn on progressive evaluation flag */
@@ -118,8 +150,5 @@ long defInitialProgressivePrec = 64;
  *  true = turn on rational reduction */
 bool rationalReduceFlag = false;
 
-#ifndef CORE_ENABLE_INLINES
-#include <CORE/CoreDefs.inl>
-#endif
-
 CORE_END_NAMESPACE
+

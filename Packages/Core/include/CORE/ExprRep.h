@@ -1,9 +1,23 @@
-/******************************************************************
- * Core Library Version 1.6, June 2003
- * Copyright (c) 1995-2002 Exact Computation Project
- * 
- * File: ExprRep.h
+/****************************************************************************
+ * Core Library Version 1.7, August 2004
+ * Copyright (c) 1995-2004 Exact Computation Project
+ * All rights reserved.
  *
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
+ * redistribute it under the terms of the Q Public License version 1.0.
+ * See the file LICENSE.QPL distributed with CORE.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * File: ExprRep.h
+ * Synopsis: Internal Representation of Expr.
+ * 
  * Written by 
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
@@ -13,31 +27,24 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu> 
  *       Vikram Sharma<sharma@cs.nyu.edu>
+ *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
- * $Id$
- *****************************************************************/
+ * $Source$
+ * $Revision$ $Date$
+ ***************************************************************************/
 
-#ifndef CORE_EXPRREP_H
-#define CORE_EXPRREP_H
+#ifndef _CORE_EXPRREP_H_
+#define _CORE_EXPRREP_H_
 
-#include <CORE/CoreImpl.h>
-#include <CORE/CoreAux.h>
 #include <CORE/Real.h>
 #include <CORE/Filter.h>
-#include <CORE/MemoryPool.h>
 #include <CORE/poly/Sturm.h>
 
 CORE_BEGIN_NAMESPACE
 
-static const long BIG = (1L << 30);
-static const double log_5 = log(double(5))/log(double(2));
-
-// Returns the ceil of log_2(5^a).
-extern extLong ceilLg5(const extLong & a);
-
-#ifdef DEBUG_BOUND
+#ifdef CORE_DEBUG_BOUND
 // These counters are incremented each time each bound is recognized as equal
 // to the best one in computeBound().
 extern unsigned int BFMSS_counter;
@@ -55,6 +62,20 @@ extern unsigned int LiYap_only_counter;
 extern unsigned int rootBoundHitCounter;
 #endif
 
+const extLong EXTLONG_BIG = (1L << 30);
+const extLong EXTLONG_SMALL = -(1L << 30);
+
+const double log_5 = log(double(5))/log(double(2));
+
+// Returns the ceil of log_2(5^a).
+inline extLong ceilLg5(const extLong & a) {
+#if defined (_MSC_VER) || defined (__sgi)
+  return (int) ::ceil(log_5 * a.toLong());
+#else
+  return (int) std::ceil(log_5 * a.toLong());
+#endif
+}
+
 /// \struct NodeInfo
 /// \brief store information of a node
 struct NodeInfo {
@@ -63,17 +84,17 @@ struct NodeInfo {
   bool     flagsComputed;  	///< true if rootBound parameters have been computed
   extLong  knownPrecision; 	///< Precision achieved by current approx value
 
-#ifdef DEBUG
+#ifdef CORE_DEBUG
   extLong relPrecision;
   extLong absPrecision;
-  unsigned long numNodes; 
+  unsigned long numNodes;
 #endif
 
   /// d_e bounds the degree of the minimal polynomial of a DAG expression
   /** Basically, d_e is equal to 2^k where k is the number of square-root nodes
    *   in the DAG.  If there are other kinds of non-linear nodes, this is
    *   generalized accordingly.   */
-  extLong d_e; 
+  extLong d_e;
 
   bool visited;   	///< flag in counting # of sqrts
   int sign; 		///< sign of the value being represented.
@@ -82,7 +103,7 @@ struct NodeInfo {
   extLong  lMSB; ///< lower bound of the position of Most Significant Bit
 
   // For the degree-length method mentioned in Chee's book.
-  /* the degree of defining polynomial P(X) obtained from Resultant calculus 
+  /* the degree of defining polynomial P(X) obtained from Resultant calculus
    * (deprecated now) */
   // extLong degree;
 
@@ -93,17 +114,16 @@ struct NodeInfo {
   /// 2^{high(E)} is an UPPER bound for the moduli of ALL conjugates of E.
   /** In our papers, high is equal to log_2(\overline{\mu(E)}). */
   extLong high;
-  /// 2^{-low(E)} is an LOWER bound for the moduli of ALL NON_ZERO conjugate of E.
-  /** BE CAREFUL!  NOTE THAT UNLIKE "high", the sign of low is negated here! 
+  /// 2^{-low(E)} is LOWER bound on the moduli of ALL NON_ZERO conjugate of E.
+  /** BE CAREFUL!  NOTE THAT UNLIKE "high", the sign of low is negated here!
       In our papers, low is equal to -log_2(\underline{\nu(E)})  */
-  extLong low;   
-  
+  extLong low;
   /// \brief upper bound of the leading coefficient of minimal defining
   ///        polynomial of $E$.
   extLong lc;
-  /// \brief upper bound of the last non-zero coefficient of minimal defining 
+  /// \brief upper bound of the last non-zero coefficient of minimal defining
   ///        polynomial of $E$.
-  extLong tc;  
+  extLong tc;
 
   // For the 2-ary BFMSS bound.
   extLong v2p, v2m;
@@ -121,13 +141,16 @@ struct NodeInfo {
 
   /// default constructor
   NodeInfo();
-};
+};//NodeInfo struct
 
 //  forward reference
 // class Expr;
 
 /// \class ExprRep
 /// \brief The sharable, internal representation of expressions
+//  Members: private: int refCount,
+//            public:  NodeInfo* nodeInfo,
+//                     filteredFp ffVal.
 class ExprRep {
 public:
   /// \name Constructor and Destructor
@@ -140,109 +163,224 @@ public:
       delete nodeInfo;
   }
   //@}
-  
+
   /// \name Reference Counting
   //@{
   /// increase reference counter
-  void incRefCount() { ++refCount; }
+  void incRef() {
+    ++refCount;
+  }
   /// decrease reference counter
-  void decRefCount() { if ((--refCount) == 0) delete this; }
+  void decRef() {
+    if (--refCount == 0)
+      delete this;
+  }
+  /// return reference counter
+  int getRefCount() const {
+    return refCount;
+  }
   /// check whether reference counter == 1
-  int isUnique() const { return refCount == 1; }
+  int isUnique() const {
+    return refCount == 1;
+  }
   //@}
- 
+
   /// \name Helper Functions
   //@{
   /// Get the approximate value
   const Real & getAppValue(const extLong& relPrec = defRelPrec,
-		  const extLong& absPrec = defAbsPrec);
+                           const extLong& absPrec = defAbsPrec);
   /// Get the sign.
-  int getSign(); 
+  int getSign();
   int getExactSign();
 
-  const Real& appValue() const { return nodeInfo->appValue; }
-  Real& appValue() { return nodeInfo->appValue; }
-  
-  const bool& appComputed() const { return nodeInfo->appComputed; }
-  bool& appComputed() { return nodeInfo->appComputed; }
+  const Real& appValue() const {
+    return nodeInfo->appValue;
+  }
+  Real& appValue() {
+    return nodeInfo->appValue;
+  }
 
-  const bool& flagsComputed() const { return nodeInfo->flagsComputed; }
-  bool& flagsComputed() { return nodeInfo->flagsComputed; }
+  const bool& appComputed() const {
+    return nodeInfo->appComputed;
+  }
+  bool& appComputed() {
+    return nodeInfo->appComputed;
+  }
 
-  const extLong& knownPrecision() const { return nodeInfo->knownPrecision; }
-  extLong& knownPrecision() { return nodeInfo->knownPrecision; }
+  const bool& flagsComputed() const {
+    return nodeInfo->flagsComputed;
+  }
+  bool& flagsComputed() {
+    return nodeInfo->flagsComputed;
+  }
 
-#ifdef DEBUG  
-  const extLong& relPrecision() const { return nodeInfo->relPrecision; }
-  extLong& relPrecision() { return nodeInfo->relPrecision; }
+  const extLong& knownPrecision() const {
+    return nodeInfo->knownPrecision;
+  }
+  extLong& knownPrecision() {
+    return nodeInfo->knownPrecision;
+  }
 
-  const extLong& absPrecision() const { return nodeInfo->absPrecision; }
-  extLong& absPrecision() { return nodeInfo->absPrecision; }
+#ifdef CORE_DEBUG
+  const extLong& relPrecision() const {
+    return nodeInfo->relPrecision;
+  }
+  extLong& relPrecision() {
+    return nodeInfo->relPrecision;
+  }
 
-  const unsigned long& numNodes() const { return nodeInfo->numNodes; }
-  unsigned long& numNodes() { return nodeInfo->numNodes; }
+  const extLong& absPrecision() const {
+    return nodeInfo->absPrecision;
+  }
+  extLong& absPrecision() {
+    return nodeInfo->absPrecision;
+  }
+
+  const unsigned long& numNodes() const {
+    return nodeInfo->numNodes;
+  }
+  unsigned long& numNodes() {
+    return nodeInfo->numNodes;
+  }
 #endif
 
-  const extLong& d_e() const { return nodeInfo->d_e; }
-  extLong& d_e() { return nodeInfo->d_e; }
+  const extLong& d_e() const {
+    return nodeInfo->d_e;
+  }
+  extLong& d_e() {
+    return nodeInfo->d_e;
+  }
 
-  const bool& visited() const { return nodeInfo->visited; }
-  bool& visited() { return nodeInfo->visited; }
+  const bool& visited() const {
+    return nodeInfo->visited;
+  }
+  bool& visited() {
+    return nodeInfo->visited;
+  }
 
-  const int& sign() const { return nodeInfo->sign; }
-  int& sign() { return nodeInfo->sign; }
+  const int& sign() const {
+    return nodeInfo->sign;
+  }
+  int& sign() {
+    return nodeInfo->sign;
+  }
 
-  const extLong& uMSB() const { return nodeInfo->uMSB; }
-  extLong& uMSB() { return nodeInfo->uMSB; }
+  const extLong& uMSB() const {
+    return nodeInfo->uMSB;
+  }
+  extLong& uMSB() {
+    return nodeInfo->uMSB;
+  }
 
-  const extLong& lMSB() const { return nodeInfo->lMSB; }
-  extLong& lMSB() { return nodeInfo->lMSB; }
+  const extLong& lMSB() const {
+    return nodeInfo->lMSB;
+  }
+  extLong& lMSB() {
+    return nodeInfo->lMSB;
+  }
 
-//  const extLong& length() const { return nodeInfo->length; }
-//  extLong& length() { return nodeInfo->length; }
+  //  const extLong& length() const { return nodeInfo->length; }
+  //  extLong& length() { return nodeInfo->length; }
 
-  const extLong& measure() const { return nodeInfo->measure; }
-  extLong& measure() { return nodeInfo->measure; }
+  const extLong& measure() const {
+    return nodeInfo->measure;
+  }
+  extLong& measure() {
+    return nodeInfo->measure;
+  }
 
-  const extLong& high() const { return nodeInfo->high; }
-  extLong& high() { return nodeInfo->high; }
+  const extLong& high() const {
+    return nodeInfo->high;
+  }
+  extLong& high() {
+    return nodeInfo->high;
+  }
 
-  const extLong& low() const { return nodeInfo->low; }
-  extLong& low() { return nodeInfo->low; }
+  const extLong& low() const {
+    return nodeInfo->low;
+  }
+  extLong& low() {
+    return nodeInfo->low;
+  }
 
-  const extLong& lc() const { return nodeInfo->lc; }
-  extLong& lc() { return nodeInfo->lc; }
+  const extLong& lc() const {
+    return nodeInfo->lc;
+  }
+  extLong& lc() {
+    return nodeInfo->lc;
+  }
 
-  const extLong& tc() const { return nodeInfo->tc; }
-  extLong& tc() { return nodeInfo->tc; }
+  const extLong& tc() const {
+    return nodeInfo->tc;
+  }
+  extLong& tc() {
+    return nodeInfo->tc;
+  }
 
-  const extLong& v2p() const { return nodeInfo->v2p; }
-  extLong& v2p() { return nodeInfo->v2p; }
+  const extLong& v2p() const {
+    return nodeInfo->v2p;
+  }
+  extLong& v2p() {
+    return nodeInfo->v2p;
+  }
 
-  const extLong& v2m() const { return nodeInfo->v2m; }
-  extLong& v2m() { return nodeInfo->v2m; }
+  const extLong& v2m() const {
+    return nodeInfo->v2m;
+  }
+  extLong& v2m() {
+    return nodeInfo->v2m;
+  }
 
-  extLong v2() const { return v2p()-v2m(); }
+  extLong v2() const {
+    return v2p()-v2m();
+  }
 
-  const extLong& v5p() const { return nodeInfo->v5p; }
-  extLong& v5p() { return nodeInfo->v5p; }
+  const extLong& v5p() const {
+    return nodeInfo->v5p;
+  }
+  extLong& v5p() {
+    return nodeInfo->v5p;
+  }
 
-  const extLong& v5m() const { return nodeInfo->v5m; }
-  extLong& v5m() { return nodeInfo->v5m; }
+  const extLong& v5m() const {
+    return nodeInfo->v5m;
+  }
+  extLong& v5m() {
+    return nodeInfo->v5m;
+  }
 
-  extLong v5() const { return v5p()-v5m(); }
+  extLong v5() const {
+    return v5p()-v5m();
+  }
 
-  const extLong& u25() const { return nodeInfo->u25; }
-  extLong& u25() { return nodeInfo->u25; }
-  
-  const extLong& l25() const { return nodeInfo->l25; }
-  extLong& l25() { return nodeInfo->l25; }
-  
-  const int& ratFlag() const { return nodeInfo->ratFlag; }
-  int& ratFlag() { return nodeInfo->ratFlag; }
+  const extLong& u25() const {
+    return nodeInfo->u25;
+  }
+  extLong& u25() {
+    return nodeInfo->u25;
+  }
 
-  const BigRat* ratValue() const { return nodeInfo->ratValue; }
-  BigRat*& ratValue() { return nodeInfo->ratValue; }
+  const extLong& l25() const {
+    return nodeInfo->l25;
+  }
+  extLong& l25() {
+    return nodeInfo->l25;
+  }
+
+  const int& ratFlag() const {
+    return nodeInfo->ratFlag;
+  }
+  int& ratFlag() {
+    return nodeInfo->ratFlag;
+  }
+
+  const BigRat* ratValue() const {
+    return nodeInfo->ratValue;
+  }
+  BigRat*& ratValue() {
+    return nodeInfo->ratValue;
+  }
 
   /// Get BigFloat
   BigInt BigIntValue();
@@ -250,18 +388,19 @@ public:
   BigFloat BigFloatValue();
   /// represent as a string in decimal value
   // toString() Joaquin Grech 31/5/2003
-  std::string toString(long prec=defOutputDigits, bool sci=false) const
-  {	return nodeInfo->appValue.toString(prec,sci); }
+  std::string toString(long prec=defOutputDigits, bool sci=false) {
+    return (getAppValue(defRelPrec, defAbsPrec)).toString(prec,sci);
+  }
   //@}
 
   /// \name Debug functions
   //@{
   /// dump the contents in this DAG node
-  const std::string dump(int = OPERATOR_VALUE) const; 
+  const std::string dump(int = OPERATOR_VALUE) const;
   /// print debug information in list mode
   virtual void debugList(int level, int depthLimit) const = 0;
   /// print debug information in tree mode
-  virtual void debugTree(int level, int indent, int depthLimit) const = 0; 
+  virtual void debugTree(int level, int indent, int depthLimit) const = 0;
   //@}
 
   /// \name I/O Stream
@@ -272,7 +411,7 @@ public:
   CORE_MEMORY(ExprRep)
 
 private:
-  unsigned refCount;    // reference count
+  int refCount;    // reference count
 
 public:
   enum {OPERATOR_ONLY, VALUE_ONLY, OPERATOR_VALUE, FULL_DUMP};
@@ -289,7 +428,7 @@ public:
   /// compute the minimal root bound
   extLong computeBound();
   /// driver function to approximate
-  void approx(const extLong& relPrec, const extLong& absPrec); 
+  void approx(const extLong& relPrec, const extLong& absPrec);
   /// compute an approximate value satifying the specified precisions
   virtual void computeApproxValue(const extLong&, const extLong&) = 0;
   /// Test whether the current approx. value satisfies [relPrec, absPrec]
@@ -305,7 +444,9 @@ public:
   /// reduce current node to zero
   void reduceToZero();
   /// return operator string
-  virtual const std::string op() const { return "UNKNOWN"; }
+  virtual const std::string op() const {
+    return "UNKNOWN";
+  }
   //@}
 
   /// \name Degree Bound Functions
@@ -313,14 +454,14 @@ public:
   /// compute "d_e" based on # of sqrts
   extLong degreeBound();
   /// count actually computes the degree bound of current node.
-  virtual extLong count() = 0; 
+  virtual extLong count() = 0;
   /// reset the flag "visited"
   virtual void clearFlag() = 0;
   //@}
-#ifdef DEBUG
+#ifdef CORE_DEBUG
   virtual unsigned long dagSize() = 0;
   virtual void fullClearFlag() = 0;
-#endif 
+#endif
 };//ExprRep
 
 /// \class ConstRep
@@ -332,7 +473,7 @@ public:
   /// default constructor
   ConstRep() {}
   /// destructor
-  ~ConstRep() {}
+  virtual ~ConstRep() {}
   //@}
 
   /// \name Debug Functions
@@ -340,34 +481,41 @@ public:
   /// print debug information in list mode
   void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const; 
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
   CORE_MEMORY(ConstRep)
 protected:
   /// initialize nodeInfo
   virtual void initNodeInfo();
   /// return operator in string
-  const std::string op() const { return "C"; }
+  const std::string op() const {
+    return "C";
+  }
   /// count returns the degree of current node
-  extLong count() { return d_e(); }
+  //extLong count() { return d_e(); }
+  extLong count();
   /// clear visited flag
-  void clearFlag() { visited() = false; }
-#ifdef DEBUG
+  void clearFlag() {
+    visited() = false;
+  }
+#ifdef CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
-#endif 
+#endif
 };
 
 /// \class ConstDoubleRep
 /// \brief constant node
-class ConstDoubleRep : public ConstRep{
+class ConstDoubleRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
   /// default constructor
-  ConstDoubleRep() { }
+  ConstDoubleRep() {}
   /// constructor for all \c double type
-  ConstDoubleRep(double d) { ffVal = d; }
+  ConstDoubleRep(double d) {
+    ffVal = d;
+  }
   /// destructor
   ~ConstDoubleRep() {}
   //@}
@@ -381,7 +529,7 @@ protected:
 
 /// \class ConstRealRep
 /// \brief constant node
-class ConstRealRep : public ConstRep{
+class ConstRealRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -394,7 +542,7 @@ public:
   //@}
   CORE_MEMORY(ConstRealRep)
 private:
-  Real value; ///< internal representation of node 
+  Real value; ///< internal representation of node
 protected:
   /// compute sign and MSB
   void computeExactFlags();
@@ -418,54 +566,78 @@ public:
     I = ss.isolateRoot(n);
     // check whether n-th root exists
     if (I.first == 1 && I.second == 0) {
-      std::cerr << "error! root index out of bound." << std::endl;
+      core_error("CORE ERROR! root index out of bound",
+		      __FILE__, __LINE__, true);
       abort();
     }
     // test if the root isolated in I is 0:
     if ((I.first == 0)&&(I.second == 0))
-        ffVal = 0;
+      ffVal = 0;
     else
-    	ffVal = computeFilteredValue();
+      ffVal = computeFilteredValue();
   }
 
   /// constructor for Polynomial
-  ConstPolyRep(const Polynomial<NT>& p, const BFInterval& II) : ss(p), I(II) {
-    if (ss.numberOfRoots(I.first, I.second) != 1) {
-      std::cerr << "error! non-isolating interval." << std::endl;
+  ConstPolyRep(const Polynomial<NT>& p, const BFInterval& II)
+	  : ss(p), I(II) {
+    BFVecInterval v;
+    ss.isolateRoots(I.first, I.second, v);
+    I = v.front();
+    if (v.size() != 1) {
+      core_error("CORE ERROR! non-isolating interval",
+		      __FILE__, __LINE__, true);
       abort();
     }
-    ffVal = computeFilteredValue(); 
+    ffVal = computeFilteredValue(); // Chee: this line doesn't make sense!
   }
 
   /// destructor
   ~ConstPolyRep() {}
   //@}
   CORE_MEMORY(ConstPolyRep)
+
 private:
-  Sturm<NT> ss; ///< internal Sturm sequences 
+  Sturm<NT> ss; ///< internal Sturm sequences
   BFInterval I; ///< current interval contains the real value
+  		// IMPORTANT: I.first and I.second are exact BigFloats
   filteredFp computeFilteredValue() {
-    // refine initial interval to absolute error of 2^(lMSB(k)-54)
-    // 	  where k is a lower bound on the root (use Cauchy Lower Bound here).
+    // refine initial interval to absolute error of 2^(lMSB(k)-54) where
+    // 	  k is a lower bound on the root (use Cauchy Lower Bound).
     //    Hence, the precision we pass to refine should be 54-lMSB(k).
-    
+
     // refine with newton (new method)
-    I = ss.newtonRefine(I, 54-(ss.seq[0].CauchyLowerBound()).lMSB().asLong());
+    // ss.seq[0] could be zero!!
+    // I=ss.newtonRefine(I,
+    //            54-(ss.seq[0].CauchyLowerBound()).lMSB().asLong());
+    extLong lbd = ss.seq[0].CauchyLowerBound().lMSB();
+    if (lbd.isTiny())
+      I = ss.newtonRefine(I, 54);
+    else
+      I = ss.newtonRefine(I, 54-lbd.asLong()); // is this necessary?
 
     //return I.first.doubleValue(); // NOTE:  This is not quite right!
-    			// It should be "centralize" which should set
-			// the error bit correctly.
-			// E.g., radical(4,2) will print wrongly.
+    // It should be "centralized" to set
+    // the error bit correctly.
+    // E.g., otherwise, radical(4,2) will print wrongly.
     if ((I.first == 0) && (I.second == 0))	// Checkfor zero value
-	    return filteredFp(0);
+      return filteredFp(0);
     BigFloat x = centerize(I.first, I.second);
     double val = x.doubleValue();
+    double max = core_max(core_abs(I.first), core_abs(I.second)).doubleValue();
+    int ind = 1;
+    /*
     long ee = x.exp()*CHUNK_BIT;
     unsigned long err = ee > 0 ? (x.err() << ee) : (x.err() >> (-ee));
     double max = core_abs(val) + err;
-    int ind = ((BigInt(x.err()) << 53) / (x.m() + x.err())).longValue(); 
-    return filteredFp(val, max, ind);
-  }
+    int ind = longValue((BigInt(x.err()) << 53) / (x.m() + x.err())); 
+    */
+    return filteredFp(val, max, ind); // Aug 8, 2004, Comment from Chee:
+       // I think we should get rid of filters here!  Given the interval I,
+       // we either know the sign (I.first >=0) or (I.second <=0)
+       // or we don't.  We don't need to compute all the index stuff.
+       // In fact, you have lost the sign in the above computation...
+       // ALSO, why bother to use filter?
+  }//computeFilteredValue
 
 protected:
   void initNodeInfo() {
@@ -476,33 +648,37 @@ protected:
   void computeExactFlags() {
 
     if ((I.first == 0) && (I.second == 0)) {
-	reduceToZero(); 
-	return;
+      reduceToZero();
+      return;
     } else if (I.second > 0) {
-       uMSB() = I.second.uMSB();
-       lMSB() = I.first.lMSB();
-       sign() = 1;
+      uMSB() = I.second.uMSB();
+      lMSB() = I.first.lMSB();
+      sign() = 1;
     } else { // we know that I.first < 0
-       lMSB() = I.second.lMSB();
-       uMSB() = I.first.uMSB();
-       sign() = -1;
+      lMSB() = I.second.lMSB();
+      uMSB() = I.first.uMSB();
+      sign() = -1;
     }
     // length() = 1+ ss.seq[0].length().uMSB();
     measure() = 1+ ss.seq[0].length().uMSB();	// since measure<= length
-  
+
     // compute u25, l25, v2p, v2m, v5p, v5m
     v2p() = v2m() = v5p() = v5m() = 0;
     u25() = 1+ss.seq[0].CauchyUpperBound().uMSB();
     l25() = ceilLg(ss.seq[0].getLeadCoeff());  // assumed coeff is integer!!
-  
+    		// ceilLg(BigInt) and ceilLg(Expr) are defined. But if
+    		// NT=int, ceilLg(int) is ambiguous!  Added ceilLg(int)
+		// under BigInt.h
+
     // compute high, low, lc, tc
     high() = u25();
     low() = - (ss.seq[0].CauchyLowerBound().lMSB()); // note the use of negative
     lc() = l25();
     tc() = ceilLg(ss.seq[0].getTailCoeff());
-  
+
     // no rational reduction
-    if (rationalReduceFlag) ratFlag() = -1;
+    if (rationalReduceFlag)
+      ratFlag() = -1;
 
     flagsComputed() = true;
     appValue()=centerize(I.first, I.second);// set an initial value for appValue
@@ -511,10 +687,10 @@ protected:
   void computeApproxValue(const extLong& relPrec, const extLong& absPrec) {
     extLong pr = -lMSB() + relPrec;
     extLong p = pr < absPrec ? pr : absPrec;
-    
+
     // bisection sturm (old method)
     //I = ss.refine(I, p.asLong()+1);
-    
+
     // refine with newton (new method)
     I = ss.newtonRefine(I, p.asLong()+1);
     appValue() = centerize(I.first, I.second);
@@ -527,9 +703,13 @@ public:
   /// \name Constructors and Destructor
   //@{
   /// constructor
-  UnaryOpRep(ExprRep* c) : child(c)  { child->incRefCount(); }
+  UnaryOpRep(ExprRep* c) : child(c)  {
+    child->incRef();
+  }
   /// destructor
-  virtual ~UnaryOpRep() { child->decRefCount(); }
+  virtual ~UnaryOpRep() {
+    child->decRef();
+  }
   //@}
 
   /// \name Debug Functions
@@ -537,7 +717,7 @@ public:
   /// print debug information in list mode
   void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const; 
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 
   CORE_MEMORY(UnaryOpRep)
@@ -547,10 +727,10 @@ protected:
   virtual void initNodeInfo();
   /// clear visited flag
   void clearFlag();
-#ifdef DEBUG
+#ifdef CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
-#endif 
+#endif
 };
 
 /// \class NegRep
@@ -560,8 +740,7 @@ public:
   /// \name Constructors and Destructor
   //@{
   /// constructor
-  NegRep(ExprRep* c) : UnaryOpRep(c)
-  {
+  NegRep(ExprRep* c) : UnaryOpRep(c) {
     ffVal = - child->ffVal;
   }
   /// destructor
@@ -575,7 +754,9 @@ protected:
   /// compute approximation value
   void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
-  const std::string op() const { return "Neg"; }
+  const std::string op() const {
+    return "Neg";
+  }
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
@@ -589,8 +770,7 @@ public:
   /// \name Constructors and Destructor
   //@{
   /// constructor
-  SqrtRep(ExprRep* c) : UnaryOpRep(c)
-  {
+  SqrtRep(ExprRep* c) : UnaryOpRep(c) {
     ffVal = (child->ffVal).sqrt();
   }
   /// destructor
@@ -604,7 +784,9 @@ protected:
   /// compute approximation value
   void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
-  const std::string op() const { return "Sqrt"; }
+  const std::string op() const {
+    return "Sqrt";
+  }
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
@@ -618,11 +800,15 @@ public:
   /// \name Constructors and Destructor
   //@{
   /// constructor
-  BinOpRep(ExprRep* f, ExprRep* s) : first(f), second(s)
-  { first->incRefCount(); second->incRefCount(); }
+  BinOpRep(ExprRep* f, ExprRep* s) : first(f), second(s) {
+    first->incRef();
+    second->incRef();
+  }
   /// destructor
-  virtual ~BinOpRep()
-  { first->decRefCount(); second->decRefCount(); }
+  virtual ~BinOpRep() {
+    first->decRef();
+    second->decRef();
+  }
   //@}
 
   /// \name Debug Functions
@@ -630,26 +816,26 @@ public:
   /// print debug information in list mode
   void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const; 
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 
   CORE_MEMORY(BinOpRep)
 protected:
   ExprRep* first;  ///< first operand
   ExprRep* second; ///< second operand
-  
+
   /// initialize nodeInfo
   virtual void initNodeInfo();
-  /// clear visited flags 
+  /// clear visited flags
   void clearFlag();
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
   extLong count();
-#ifdef DEBUG
+#ifdef CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
-#endif 
+#endif
 };
 
 /// \struct Add
@@ -660,13 +846,15 @@ struct Add {
 
   /// unary operator
   template <class T>
-  const T& operator()(const T& t) const
-  { return t; }
+  const T& operator()(const T& t) const {
+    return t;
+  }
 
   /// binary operator
   template <class T>
-  T operator()(const T& a, const T& b) const
-  { return a+b; }
+  T operator()(const T& a, const T& b) const {
+    return a+b;
+  }
 };
 
 /// \struct Sub
@@ -677,13 +865,15 @@ struct Sub {
 
   /// unary operator
   template <class T>
-  T operator()(const T& t) const
-  { return -t; }
+  T operator()(const T& t) const {
+    return -t;
+  }
 
   /// binary operator
   template <class T>
-  T operator()(const T& a, const T& b) const
-  { return a-b; }
+  T operator()(const T& a, const T& b) const {
+    return a-b;
+  }
 };
 
 /// \class AddSubRep
@@ -694,8 +884,7 @@ public:
   /// \name Constructors and Destructor
   //@{
   /// constructor
-  AddSubRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s)
-  {
+  AddSubRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s) {
     ffVal = Op(first->ffVal, second->ffVal);
   }
   /// destructor
@@ -709,112 +898,26 @@ protected:
   /// compute approximation value
   void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
-  const std::string op() const { return Operator::name; }
+  const std::string op() const {
+    return Operator::name;
+  }
 private:
   static Operator Op;
-};
+};//AddSubRep class
 
 template <class Operator>
 Operator AddSubRep<Operator>::Op;
 
-/// \typedef AddRep
-/// \brief AddRep for easy of use
-typedef AddSubRep<Add> AddRep;
-
-/// \typedef SubRep
-/// \brief SuRep for easy of use
-typedef AddSubRep<Sub> SubRep;
-
-/// \class MultRep
-/// \brief multiplication operator node
-class MultRep : public BinOpRep {
-public:
-  /// \name Constructors and Destructor
-  //@{
-  /// constructor
-  MultRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s)
-  {
-    ffVal = first->ffVal * second->ffVal;
-  }
-  /// destructor
-  ~MultRep() {}
-  //@}
-
-  CORE_MEMORY(MultRep)
-protected:
-  /// compute sign and MSB
-  void computeExactFlags();
-  /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
-  /// return operator in string
-  const std::string op() const { return "*"; }
-};
-
-/// \class DivRep
-/// \brief division operator node
-class DivRep : public BinOpRep {
-public:
-  /// \name Constructors and Destructor
-  //@{
-  /// constructor
-  DivRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s)
-  {
-    ffVal = first->ffVal / second->ffVal;
-  }
-  /// destructor
-  ~DivRep() {}
-  //@}
-
-  CORE_MEMORY(DivRep)
-protected:
-  /// compute sign and MSB
-  void computeExactFlags();
-  /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
-  /// return operator in string
-  const std::string op() const { return "/"; }
-};
-
-// inline functions
-inline int ExprRep::getExactSign() { 
-  if (!nodeInfo) initNodeInfo();
-
-  if (!flagsComputed()) {
-    degreeBound();	
-#ifdef DEBUG
-    dagSize();
-    fullClearFlag();
-#endif
-    computeExactFlags();
-  } 
-  return sign();
-}
-
-// Chee, 7/17/02: degreeBound() function is now
-// taken out of "computeExactFlags()
-inline int ExprRep::getSign() { 
-  if (ffVal.isOK())
-    return ffVal.sign();
-  else
-    return getExactSign(); 
-}   
-
-// you need force to approximate before call these functions!!
-inline BigInt ExprRep::BigIntValue()
-{ return getAppValue().BigIntValue(); }
-
-inline BigRat ExprRep::BigRatValue()
-{ return getAppValue().BigRatValue(); }
-
-inline BigFloat ExprRep::BigFloatValue()
-{ return getAppValue().BigFloatValue(); }
-
-
-
+  /// AddSubRep<Op>::computeExactFlags()
+  ///     This function is the heart of Expr class,
+  ///     and hence the heart of Core Library!
+  /// Here is where we use the root bounds.
 template <class Operator>
 void AddSubRep<Operator>::computeExactFlags() {
-  if (!first->flagsComputed())  first->computeExactFlags();
-  if (!second->flagsComputed())  second->computeExactFlags();
+  if (!first->flagsComputed())
+    first->computeExactFlags();
+  if (!second->flagsComputed())
+    second->computeExactFlags();
 
   int sf = first->sign();
   int ss = second->sign();
@@ -832,7 +935,7 @@ void AddSubRep<Operator>::computeExactFlags() {
   } else if (ss == 0) { // second operand is zero
     reduceTo(first);
     return;
-  } 
+  }
   // rational node
   if (rationalReduceFlag) {
     if (first->ratFlag() > 0 && second->ratFlag() > 0) {
@@ -840,7 +943,7 @@ void AddSubRep<Operator>::computeExactFlags() {
       reduceToBigRat(val);
       ratFlag() = first->ratFlag() + second->ratFlag();
       return;
-    } else 
+    } else
       ratFlag() = -1;
   }
 
@@ -857,156 +960,233 @@ void AddSubRep<Operator>::computeExactFlags() {
   measure() = m1 * ds + m2 * df + d_e();
 
   // BFMSS[2,5] bound.
-  v2p() = core_min(first->v2p() + second->v2m(), first->v2m() + second->v2p());
+  v2p() = core_min(first->v2p() + second->v2m(),
+		  first->v2m() + second->v2p());
   v2m() = first->v2m() + second->v2m();
-  v5p() = core_min(first->v5p() + second->v5m(), first->v5m() + second->v5p());
+  v5p() = core_min(first->v5p() + second->v5m(),
+		  first->v5m() + second->v5p());
   v5m() = first->v5m() + second->v5m();
 
   if (v2p().isInfty() || v5p().isInfty())
     u25() = CORE_INFTY;
   else
-    u25() = 1 + core_max(first->v2p() + second->v2m() - v2p()
-		     + ceilLg5(first->v5p() + second->v5m() - v5p())
-		     + first->u25() + second->l25(),
-		       first->v2m() + second->v2p() - v2p()
-		     + ceilLg5(first->v5m() + second->v5p() - v5p())
-		     + first->l25() + second->u25());
+    u25() = EXTLONG_ONE + core_max(first->v2p() + second->v2m()
+	    - v2p() + ceilLg5(first->v5p() + second->v5m() - v5p())
+            + first->u25() + second->l25(),
+                                   first->v2m() + second->v2p() - v2p()
+            + ceilLg5(first->v5m() + second->v5p() - v5p())
+            + first->l25() + second->u25());
   l25() = first->l25() + second->l25();
 
   lc() = ds * first->lc() + df * second->lc();
   tc() = measure();
 
-  high() = core_max(first->high(),second->high())+1;
+  high() = core_max(first->high(),second->high())+EXTLONG_ONE;
   // The following is a subset of the minimization in computeBound().
-  low() = core_min(measure(), (d_e()-1)*high() + lc());
+  low() = core_min(measure(), (d_e()-EXTLONG_ONE)*high() + lc());
 
   extLong lf = first->lMSB();
   extLong ls = second->lMSB();
   extLong uf = first->uMSB();
   extLong us = second->uMSB();
-      
+
   extLong l  = core_max(lf, ls);
   extLong u  = core_max(uf, us);
 
+#ifdef CORE_TRACE
+  std::cout << "INSIDE Add/sub Rep: " << std::endl;
+#endif
+
   if (Op(sf, ss) != 0) {     // can't possibly cancel out
-    uMSB() = u + 1;
+#ifdef CORE_TRACE
+    std::cout << "Add/sub Rep:  Op(sf, ss) non-zero" << std::endl;
+#endif
+
+    uMSB() = u + EXTLONG_ONE;
     lMSB() = l;            // lMSB = core_min(lf, ls)+1 better
     sign() = sf;
   } else {               // might cancel out
+#ifdef CORE_TRACE
+    std::cout << "Add/sub Rep:  Op(sf, ss) zero" << std::endl;
+#endif
+
+    uMSB() = u + EXTLONG_ONE;
     uMSB() = u;
-    if (lf >= us + 2) {  // one is at least 1 order of magnitude larger
-      lMSB() = lf - 1;     // can't possibly cancel out
+    if (lf >= us + EXTLONG_TWO) {// one is at least 1 order of magnitude larger
+#ifdef CORE_TRACE
+      std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
+#endif
+
+      lMSB() = lf - EXTLONG_ONE;     // can't possibly cancel out
       sign() = sf;
-    } else if (ls >= uf + 2) {
-      lMSB() = ls - 1;
+    } else if (ls >= uf + EXTLONG_TWO) {
+#ifdef CORE_TRACE
+      std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
+#endif
+
+      lMSB() = ls - EXTLONG_ONE;
       sign() = Op(ss);
     } else if (ffVal.isOK()) {// begin filter computation
-#ifdef DEBUG_FILTER
+#ifdef CORE_TRACE
+      std::cout << "Add/sub Rep:  filter used" << std::endl;
+#endif
+#ifdef CORE_DEBUG_FILTER
       std::cout << "call filter in " << op() << "Rep" << std::endl;
 #endif
       sign() = ffVal.sign();
       lMSB() = ffVal.lMSB();
       uMSB() = ffVal.uMSB();
     } else {			// about the same size, might cancel out
+#ifdef CORE_TRACE
+      std::cout << "Add/sub Rep:  iteration start" << std::endl;
+#endif
+
       extLong lowBound = computeBound();
       /* Zilin 06/11/2003
-       * since BFMSS[2] might be a negative number, the lowBound can be less than 0.
-       * in this case, right now we just set it to 1 since we need at lease one bits
-       * to get the sign. In the future, we may need to improve this.
+       * as BFMSS[2] might be a negative number, lowBound can be negative.
+       * In this case, we just set it to 1 since we need at least one bit
+       * to get the sign.  In the future, we may need to improve this.
        */
-      if (lowBound <= 0) lowBound = 1;
-      
+      if (lowBound <= EXTLONG_ZERO)
+        lowBound = EXTLONG_ONE;
+
       if (!progressiveEvalFlag) {
         // convert the absolute error requirement "lowBound" to
-	// a relative error requirement "ur", s.t. 
-	//    |x|*2^(-ur) <= 2^(-lowBound).
-	// ==> r >= a + lg(x) >= a + (uMSB + 1);
-	//	    extLong  rf = lowBound + (uf + 1);
-	//	    extLong  rs = lowBound + (us + 1);
-	//	    first->approx(rf, CORE_INFTY);
-	//	    second->approx(rs, CORE_INFTY);
-	// Chen: considering the uMSB is also an approximate bound.
-	// we choose to use absolute precision up-front.
-	Real newValue = Op(first->getAppValue(CORE_INFTY, lowBound + 1), 
-                          second->getAppValue(CORE_INFTY, lowBound + 1)); 
-
+        // a relative error requirement "ur", s.t.
+        //    |x|*2^(-ur) <= 2^(-lowBound).
+        // ==> r >= a + lg(x) >= a + (uMSB + 1);
+        //	    extLong  rf = lowBound + (uf + 1);
+        //	    extLong  rs = lowBound + (us + 1);
+        //	    first->approx(rf, CORE_INFTY);
+        //	    second->approx(rs, CORE_INFTY);
+        // Chen: considering the uMSB is also an approximate bound.
+        // we choose to use absolute precision up-front.
+        Real newValue = Op(first->getAppValue(CORE_INFTY,
+				lowBound + EXTLONG_ONE),
+                           second->getAppValue(CORE_INFTY,
+				   lowBound + EXTLONG_ONE));
         if (!newValue.isZeroIn()) { // Op(first, second) != 0
           lMSB() = newValue.lMSB();
-	  uMSB() = newValue.uMSB();   // chen: to get tighers value.
-	  sign() = newValue.sign();
-	} else if (lowBound.isInfty()) {//check if rootbound is too big
-	  core_error("AddSubRep:root bound has exceeded the maximum size\n \
-	    but we still cannot decide zero.\n", __FILE__, __LINE__, false);
-	} else {               // Op(first, second) == 0
-	  lMSB() = CORE_negInfty;
-	  sign() = 0;
-	}
+          uMSB() = newValue.uMSB();   // chen: to get tighers value.
+          sign() = newValue.sign();
+        } else if (lowBound.isInfty()) {//check if rootbound is too big
+          core_error("AddSubRep:root bound has exceeded the maximum size\n \
+            but we still cannot decide zero.\n", __FILE__, __LINE__, false);
+        } else {               // Op(first, second) == 0
+          lMSB() = CORE_negInfty;
+          sign() = 0;
+        }
       } else {  // else do progressive evaluation
-	// Oct 30, 2002: fixed a bug here!  Old versions used relative
-	// precision bounds, but one should absolute precision for addition!
-	// Moreover, this is much more efficient.
+#ifdef CORE_TRACE
+        std::cout << "Add/sub Rep:  progressive eval" << std::endl;
+#endif
+        // Oct 30, 2002: fixed a bug here!  Old versions used relative
+        // precision bounds, but one should absolute precision for addition!
+        // Moreover, this is much more efficient.
 
-	// need one additional bit for children
-	extLong  ua =  lowBound + 1; 
-
-#ifdef DEBUG_BOUND
+        // ua is the upper bound on the absolute precision in our iteration
+	// Chee, Aug 8, 2004: it is important that ua be strictly
+	//     larger than lowBound AND the defaultInitialProgressivePrec,
+	//     so that we do at least one iteration of the for-loop. So:
+	// i is the variable for iteration.
+        extLong i = core_min(defInitialProgressivePrec, lowBound.asLong());
+        extLong ua = lowBound.asLong() + EXTLONG_ONE;
+        //   NOTE: ua is allowed to be CORE_INFTY
+	
+#ifdef CORE_DEBUG_BOUND
         std::cout << "DebugBound:" << "ua = " << ua << std::endl;
 #endif
+        // We initially set the lMSB and sign as if the value is zero:
+        lMSB() = CORE_negInfty;
+        sign() = 0;
 
-	// We initially set the lMSB and sign as if the value is zero:
-	lMSB() = CORE_negInfty;
-	sign() = 0;
+        EscapePrecFlag = 0;	// reset the Escape Flag
 
-	EscapePrecFlag = 0;	// Escape Flag
-
-	// Now we try to determine the real lMSB and sign,
-	// in case it is not really zero:
-	//      NOTE: ua is allowed to be CORE_INFTY
-	extLong i = core_min(defInitialProgressivePrec, lowBound.asLong());
-	for ( ; i<ua; i*=2) {
-          // relative bits = i
-	  Real newValue = Op(first->getAppValue(CORE_INFTY, i), 
-                             second->getAppValue(CORE_INFTY, i)); 
-
-	  if (!newValue.isZeroIn()) {   // Op(first, second) != 0
-	    lMSB() = newValue.lMSB();
-            uMSB() = newValue.uMSB();
-	    sign() = newValue.sign();
-#ifdef DEBUG_BOUND
-	    std::cout << "DebugBound(Exit Loop): " << "i=" << i << std::endl;
+        // Now we try to determine the real lMSB and sign,
+        // in case it is not really zero:
+#ifdef CORE_TRACE
+        std::cout << "Upper bound (ua) for iteration is " << ua << std::endl;
+	std::cout << "Starting iteration at i = " << i << std::endl;
 #endif
+
+        for ( ; i<ua; i*=EXTLONG_TWO) {
+          // relative bits = i
+	  //
+	  // PROBLEM WITH NEXT LINE: you must ensure that
+	  // first and second are represented by BigFloats...
+	  //
+          Real newValue = Op(first->getAppValue(CORE_INFTY, i),
+                             second->getAppValue(CORE_INFTY, i));
+
+#ifdef CORE_TRACE
+	  if (newValue.getRep().ID() == REAL_BIGFLOAT) 
+	  std::cout << "BigFloat! newValue->rep->ID() = "
+		  << newValue.getRep().ID() << std::endl;
+	  else 
+	  std::cout << "ERROR, Not BigFloat! newValue->rep->ID() ="
+		  << newValue.getRep().ID() << std::endl;
+	  std::cout << "newValue = Op(first,second) = "
+		  << newValue << std::endl;
+	  std::cout << "first:appVal, appComputed, knownPrec, sign ="
+		  << first->appValue() << ","
+		  << first->appComputed() << ","
+		  << first->knownPrecision() << ","
+		  << first->sign() << std::endl;
+	  std::cout << "second:appVal, appComputed, knownPrec, sign ="
+		  << second->appValue() << ","
+		  << second->appComputed() << ","
+		  << second->knownPrecision() << ","
+		  << second->sign() << std::endl;
+#endif
+          if (!newValue.isZeroIn()) {   // Op(first, second) != 0
+            lMSB() = newValue.lMSB();
+            uMSB() = newValue.uMSB();
+            sign() = newValue.sign();
+#ifdef CORE_DEBUG_BOUND
+            std::cout << "DebugBound(Exit Loop): " << "i=" << i << std::endl;
+#endif
+#ifdef CORE_TRACE
+	    std::cout << "Zero is not in, lMSB() = " << lMSB()
+		    << ", uMSB() = " << uMSB()
+		    << ", sign() = " << sign() << std::endl;
+	    std::cout << "newValue = " << newValue << std::endl;
+#endif
+
             break; // assert -- this must happen in the loop if nonzero!
-	  }
-	  //8/9/01, Chee: implement escape precision here:
-	  if (i> EscapePrec) { 
-	    EscapePrecFlag = -i.asLong();  // negative value means EscapePrec is used
+          }
+          //8/9/01, Chee: implement escape precision here:
+          if (i> EscapePrec) {
+            EscapePrecFlag = -i.asLong();//negative means EscapePrec is used
+	    core_error("Escape precision triggered at",
+            		 __FILE__, __LINE__, false);
             if (EscapePrecWarning)
-              std::cout<< "Escape Precision triggered at " << EscapePrec << std::endl;
-#ifdef DEBUG
-	    std::cout << "EscapePrecFlags=" << EscapePrecFlag << std::endl;
-	    std::cout << "ua =" << ua  << ",lowBound=" << lowBound << std::endl;
+              std::cout<< "Escape Precision triggered at "
+		      << EscapePrec << " bits" << std::endl;
+#ifdef CORE_DEBUG
+            std::cout << "EscapePrecFlags=" << EscapePrecFlag << std::endl;
+            std::cout << "ua =" << ua  << ",lowBound=" << lowBound << std::endl;
 #endif
             break;
-	  }// if
-	}// for (long i=1...)
+          }// if
+        }// for (long i=1...)
 
-#ifdef DEBUG_BOUND
-	  rootBoundHitCounter++;
+#ifdef CORE_DEBUG_BOUND
+        rootBoundHitCounter++;
 #endif
-	if (sign() == 0 && ua .isInfty()) {
-	  core_error("AddSubRep: root bound has exceeded the maximum size\n \
-	     but we still cannot decide zero.\n", __FILE__, __LINE__, false);
-	} // if (sign == 0 && ua .isInfty())
+
+        if (sign() == 0 && ua .isInfty()) {
+          core_error("AddSubRep: root bound has exceeded the maximum size\n \
+            but we still cannot decide zero.\n", __FILE__, __LINE__, true);
+        } // if (sign == 0 && ua .isInfty())
       }// else do progressive
     }
   }
   flagsComputed() = true;
 }// AddSubRep::computeExactFlags
 
-
 template <class Operator>
 void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
-				const extLong& absPrec) {
+    const extLong& absPrec) {
   // Nov 13, 2002: added the analog of "reduceTo(first)" and "reduceTo(second)"
   //  that is found in computeExactFlags.  This is more efficient, but
   //  it also removes a NaN warning in subsequent logic!
@@ -1014,24 +1194,125 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
   //  subtracting them creates NaN.  Chee and Zilin.
   if (first->sign() == 0) {
     appValue() = Op(second->getAppValue(relPrec, absPrec));
-    return; 
+    return;
   }
   if (second->sign() == 0) {
     appValue() = first->getAppValue(relPrec, absPrec);
-    return; 
+    return;
   }
-  if (lMSB() < BIG && lMSB() > -BIG) {
-    extLong rf = first->uMSB()-lMSB()+relPrec+4;  // 2 better
-    if (rf < 0) rf = 0;  // from Koji's thesis P63: Proposition 26
-    extLong rs = second->uMSB()-lMSB()+relPrec+4; // 2 better
-    if (rs < 0) rs = 0;  // from Koji's thesis P63: Proposition 26
-    extLong  a  = absPrec + 3;                      // 1 better
+  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
+    extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
+    if (rf < EXTLONG_ZERO)
+      rf = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+    extLong rs = second->uMSB()-lMSB()+relPrec+EXTLONG_FOUR; // 2 better
+    if (rs < EXTLONG_ZERO)
+      rs = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+    extLong  a  = absPrec + EXTLONG_THREE;                      // 1 better
     appValue() = Op(first->getAppValue(rf, a), second->getAppValue(rs, a));
   } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl;
-    core_error("a huge lMSB in AddSubRep", __FILE__, __LINE__, false);
+    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
+    core_error("CORE WARNING: a huge lMSB in AddSubRep",
+	 	__FILE__, __LINE__, false);
   }
 }
 
-CORE_END_NAMESPACE
+/// \typedef AddRep
+/// \brief AddRep for easy of use
+typedef AddSubRep<Add> AddRep;
+
+/// \typedef SubRep
+/// \brief SuRep for easy of use
+typedef AddSubRep<Sub> SubRep;
+
+/// \class MultRep
+/// \brief multiplication operator node
+class MultRep : public BinOpRep {
+public:
+  /// \name Constructors and Destructor
+  //@{
+  /// constructor
+  MultRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s) {
+    ffVal = first->ffVal * second->ffVal;
+  }
+  /// destructor
+  ~MultRep() {}
+  //@}
+
+  CORE_MEMORY(MultRep)
+protected:
+  /// compute sign and MSB
+  void computeExactFlags();
+  /// compute approximation value
+  void computeApproxValue(const extLong&, const extLong&);
+  /// return operator in string
+  const std::string op() const {
+    return "*";
+  }
+};
+
+/// \class DivRep
+/// \brief division operator node
+class DivRep : public BinOpRep {
+public:
+  /// \name Constructors and Destructor
+  //@{
+  /// constructor
+  DivRep(ExprRep* f, ExprRep* s) : BinOpRep(f, s) {
+    ffVal = first->ffVal / second->ffVal;
+  }
+  /// destructor
+  ~DivRep() {}
+  //@}
+
+  CORE_MEMORY(DivRep)
+protected:
+  /// compute sign and MSB
+  void computeExactFlags();
+  /// compute approximation value
+  void computeApproxValue(const extLong&, const extLong&);
+  /// return operator in string
+  const std::string op() const {
+    return "/";
+  }
+};
+
+// inline functions
+inline int ExprRep::getExactSign() {
+  if (!nodeInfo)
+    initNodeInfo();
+
+  if (!flagsComputed()) {
+    degreeBound();
+#ifdef CORE_DEBUG
+    dagSize();
+    fullClearFlag();
 #endif
+    computeExactFlags();
+  }
+  return sign();
+}
+
+// Chee, 7/17/02: degreeBound() function is now
+// taken out of "computeExactFlags()
+inline int ExprRep::getSign() {
+  if (ffVal.isOK())
+    return ffVal.sign();
+  else
+    return getExactSign();
+}
+
+// you need force to approximate before call these functions!!
+inline BigInt ExprRep::BigIntValue() {
+  return getAppValue().BigIntValue();
+}
+
+inline BigRat ExprRep::BigRatValue() {
+  return getAppValue().BigRatValue();
+}
+
+inline BigFloat ExprRep::BigFloatValue() {
+  return getAppValue().BigFloatValue();
+}
+
+CORE_END_NAMESPACE
+#endif // _CORE_EXPRREP_H_
