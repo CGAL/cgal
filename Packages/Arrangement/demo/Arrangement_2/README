@@ -21,3 +21,7 @@ Seg_circ_arr_from_file - constructs an arrangement of circular arcs and
        line segments from an input file. Some example files are given in 
        seg_circ_input_files/.
 
+Polygon_intersection_demo - demonstrates using the arrangement to
+       compute the intersection of the interiors of polygons. The demo program
+       is separated from the algorithm itself so it can be easily used in 
+       other programs.
