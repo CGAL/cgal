@@ -85,6 +85,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;
   typedef typename SNC_constructor::SM_overlayer     SM_overlayer;
+  typedef typename SNC_structure::SNC_decorator      SNC_decorator;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
@@ -98,17 +99,19 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   /* determine the plane of polyhedron's facet */
-  CGAL::set_pretty_mode( std::cout);
-  std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
-	     < typename Polyhedron::Plane_3>( std::cout, "\n"));
+  // CGAL::set_pretty_mode( std::cout);
+  // std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
+  //     < typename Polyhedron::Plane_3>( std::cout, "\n"));
 
+  SNC_decorator D(S);
   SNC_constructor C(S);
     
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
-    S.point(nv) = pv.point();
+    D.point(nv) = pv.point();
+    D.mark(nv) = true;
     TRACEN("v "<<pv.point());
 
 #ifdef CGAL_P2NEF3_USE_SM_OVERLAY
@@ -203,7 +206,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       SM.circle(e) = ss_circle;
       SM.circle(SM.twin(e)) = ss_circle.opposite();
       SM.mark(e) = true;
-      SM.mark(SM.twin(e)) = true;
 	  
       sv_prev = sv;
       pe_prev = pe;
@@ -241,7 +243,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.circle(e) = ss_circle;
     SM.circle(SM.twin(e)) = ss_circle.opposite();
     SM.mark(e) = true;
-    SM.mark(SM.twin(e)) = true;
 
     // create facets
     SFace_handle fint = SM.new_face();
@@ -254,20 +255,19 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();
     
-    SM_overlayer O(nv);
-    // O.simplify();
+    /* Why not? SM_overlayer O(nv); O.simplify(); */
+
 #endif // CGAL_P2NEF3_USE_SM_OVERLAY
 	
-    //SMIO::dump(nv);
 #ifdef SM_VISUALIZE
-    //CGAL::OGL::add_sphere();
-    //SMV V(nv, CGAL::OGL::spheres_.back());
-    //V.draw_map();
+    CGAL::OGL::add_sphere();
+    SMV V(nv, CGAL::OGL::spheres_.back());
+    V.draw_map();
 #endif
   }
 
 #ifdef SM_VISUALIZE
-  //CGAL::OGL::start_viewer();
+  CGAL::OGL::start_viewer();
 #endif
 
   return;

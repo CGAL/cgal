@@ -283,33 +283,25 @@ public:
   struct Shell_volume_setter {
     const SNC_decorator D;
     Volume_handle c;
-    Shell_volume_setter(const SNC_decorator& Di, Volume_handle ci) 
+    Shell_volume_setter(const SNC_decorator& Di, Volume_handle ci)
       : D(Di), c(ci) {}
-    void visit(SFace_handle h) { 
-      // TRACEN("volume assigned to SFace "<<&*h);
-      D.set_volume(h, c); 
-    }
+    void visit(SFace_handle h) { D.set_volume(h, c); }
     void visit(Vertex_handle h) { /* empty */ }
     void visit(Halfedge_handle h) { /* empty */ }
-    void visit(Halffacet_handle h ) { 
-      // TRACEN("volume assigned to Halffacet "<<&*h);
-      D.set_volume(h, c); 
-    }
+    void visit(Halffacet_handle h ) { D.set_volume(h, c); }
     void set_volume(Volume_handle ci) { c = ci; }
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
     CGAL_assertion(c->shell_entry_objects_.size() == 0);
     Shell_volume_setter Setter(*this, c);
-    // TRACEN("Setting volume pointer to shell items...");
     visit_shell_objects( f, Setter );
-    // TRACEN("Done");
     TRACEN("Volume "<<&*c<<", outer shell "<<&*f);
     store_boundary_object( f, c );
   }
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
-    //CGAL_assertion(c->shell_entry_objects_.size() > 0);
+    // CGAL_assertion(c->shell_entry_objects_.size() > 0);
     Shell_volume_setter Setter(*this, c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", inner shell "<<&*f);

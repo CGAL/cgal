@@ -315,7 +315,7 @@ public:
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, ews() );
     build_external_structure();
-    //simplify();
+    simplify();
   }
   
   void dump() { SNC_io_parser::dump( ews()); }

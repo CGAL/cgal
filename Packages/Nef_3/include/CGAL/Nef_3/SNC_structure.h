@@ -39,6 +39,7 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_3/nef3_assertions.h>
 #include <CGAL/Nef_2/iterator_tools.h>
+#include <CGAL/Nef_2/Object_index.h> /* debug only */
 #include <CGAL/Union_find.h>
 #include <list>
 
@@ -66,6 +67,14 @@ struct move_shalfedge_around_facet {
   void forward(HE& e) const { e = (e->next_); }
   void backward(HE& e) const { e = (e->prev_); }
 };
+
+template <class Object, class Hash_map, class Union_find>
+void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
+  CGAL_assertion( hash[o1] != 0 && hash[o2] != 0);
+  CGAL_warning( !uf.same_set( hash[o1], hash[o2]));
+  if( !uf.same_set( hash[o1], hash[o2]))
+    uf.unify_sets( hash[o1], hash[o2]);
+}
 
 /*{\Manpage {SNC_structure}{Items}{Selective Nef Complex}{C}}*/
 
@@ -601,7 +610,6 @@ public:
     vh->shalfedges_begin_ = vh->shalfedges_last_ = shalfedges_end();
     vh->sfaces_begin_ = vh->sfaces_last_ = sfaces_end();
     vh->shalfloop_ = shalfloops_end();
-    TRACEN("new_vertex "<<&*vh);
     return vh;
   }
 
@@ -728,34 +736,197 @@ public:
 	SHalfedge_around_facet_circulator u(e), eend(e);
 	CGAL_For_all(u, eend) {
 	  SFace_handle fu = D.sface(u), ftu = D.sface(D.twin(u));
-	  if( fu != ftu) { /* TO VERIFY: is it always true? */
-	    if( !uf.same_set( hash[fu], hash[ftu])) {
-	      uf.unify_sets( hash[fu], hash[ftu]);
-	      TRACEN("union sfaces "<<&*fu<<" and "<<&*ftu<<" (sedge case)");
-	    }
-	    SM_decorator SD(D.vertex(u));
-	    SD.delete_edge_pair(u);
-	  }
+	  TRACEN("union of sfacets "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	  merge_sets( fu, ftu, hash, uf);
+	  SM_decorator SD(D.vertex(u));
+	  TRACEN("deleting sedge pair "<<IO->index(u)<<
+		 " & "<<IO->index(SD.twin(u)));
+	  SD.delete_edge_pair(u);
 	}
       }
       else if( assign(l, fc)) {
 	SFace_handle fu = D.sface(l), ftu = D.sface(D.twin(l));	
-	if( fu != ftu) { /* TO VERIFY: is it always true? */
-	  if( !uf.same_set( hash[fu], hash[ftu])) {
-	    uf.unify_sets( hash[fu], hash[ftu]);
-	    TRACEN("union sfaces "<<&*fu<<" and "<<&*ftu<<" (sloop case)");
-	  }
-	  SM_decorator SD(D.vertex(l));
-	  SD.delete_loop_only();
+	TRACEN("union of sfacets "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	merge_sets( fu, ftu, hash, uf);
+	SM_decorator SD(D.vertex(l));
+	TRACEN("deleting sloop pair "<<IO->index(l)<<
+	       " & "<<IO->index(SD.twin(l)));
+	SD.delete_loop_only();
+      }
+    }
+    TRACEN("deleting halffacet pair "<<IO->index(f)<<
+	   " & "<<IO->index(D.twin(f)));
+    delete_halffacet_pair(f);
+  }
+
+  SNC_io_parser<SNC_structure> *IO;
+
+  char PSE(SHalfedge_handle h) { /* Print Sphere Segment */
+    SNC_decorator D;
+    SM_decorator SD;
+    TRACE(IO->index(h)<<" @ "<<IO->index(D.vertex(h))<<
+	  ", prev "<<IO->index(D.previous(h))<<
+	  ", next "<<IO->index(D.next(h))<<
+	  ", sprev "<<IO->index(SD.previous(h))<<
+	  ", snext "<<IO->index(SD.next(h))<<
+	  ", twin "<<IO->index(D.twin(h)));
+    return ' ';
+  }
+
+  char PFC(SHalfedge_handle e) { /* Print Facet Cycle */
+    TRACEN("--> Facet cycle begin");
+    SHalfedge_around_facet_circulator c(e), cend(c);
+    int i = 0;
+    CGAL_For_all(c, cend)
+      if( i++ == 8 ) break;
+      else TRACEN(PSE(c));
+    TRACE("--> Facet cycle end"); 
+    return ' ';
+  }
+
+  void merge_incident_sedges(SHalfedge_handle e1) {
+    /* it merges |e1| and |sprev(e1)| in |sprev(e1)| and update all
+       the references from its incident objects */
+    SNC_decorator D(*this);
+    SVertex_handle v(D.ssource(e1));
+    SM_decorator SD(D.vertex(v));
+    SHalfedge_handle e2(SD.cyclic_adj_succ(e1)),
+      e1o(SD.twin(e1)), e2o(SD.twin(e2));
+    CGAL_assertion( e1 != e2 && e1 == SD.cyclic_adj_succ(e2));
+    /* there must be only two incident sedges to the svertex v */
+    CGAL_assertion( SD.circle(e1) == SD.circle(e2o));
+    /* the two local sedges share the same scircle */
+    CGAL_assertion( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2o));
+    /* the edge and its two incident facets have the same mark */
+    SD.link_as_prev_next_pair( SD.previous(e1), SD.next(e1));
+    SD.link_as_prev_next_pair( SD.previous(e1o), SD.next(e1o));
+    SFace_handle sf( SD.face(e1));
+    if( SD.is_boundary_object( e1)) {
+      SD.undo_boundary_object(e1, sf);
+      SD.store_boundary_object(D.previous(e1), sf);
+    }
+    SFace_handle sft( SD.face(e1o));
+    if( SD.is_boundary_object( e1o)) {
+      SD.undo_boundary_object(e1o, sft);
+      SD.store_boundary_object(D.next(e1o), sft);
+    }
+    Halffacet_handle f( D.facet(e1));
+    if( D.is_boundary_object(e1)) {
+      D.undo_boundary_object(e1, f);
+      D.store_boundary_object(D.previous(e1), f);
+    }
+    Halffacet_handle ft( D.facet(e1o));
+    if( D.is_boundary_object(e1o)) {
+      D.undo_boundary_object(e1o, ft);
+      D.store_boundary_object(D.next(e1), f);
+    }
+    if( SD.first_out_edge(SD.source(e1o)) == e1o)
+      SD.set_first_out_edge( SD.source(e1o), SD.next(e1o));
+    SD.set_source(SD.next(e1o), SD.source(e1o));
+  }
+
+  void merge_facet_cycles(Halfedge_handle e,
+	  Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
+	  Union_find< Halffacet_handle>& uf )
+    /* it merges two facets adjacent by the edge e
+       Precondition: e has only two incident facets */ {
+    SNC_decorator D(*this);
+    Halfedge_handle et(D.twin(e));
+    Vertex_handle v1(D.vertex(e)), v2(D.vertex(et));
+    SM_decorator SD(v1), SDt(v2);
+    SHalfedge_handle cycle1(SD.first_out_edge(e)), tcycle1(SD.twin(cycle1)),
+      cycle2(SDt.next(D.previous(cycle1)));
+    CGAL_assertion(SDt.source(cycle2) == et);
+    Halffacet_handle f1(D.facet(cycle1)), f2(D.facet(cycle2));
+    TRACEN("union of facets "<<IO->index(f1)<<" & "<<IO->index(f2)
+	   <<" ("<<IO->index(D.twin(f1))<<" & "<<IO->index(D.twin(f2))<<")");
+    TRACEN("BEFORE "<<PFC(cycle1));
+    TRACEN("BEFORE "<<PFC(cycle2));
+    D.link_as_prev_next_pair( D.previous(cycle1),
+			      D.next(SDt.next(D.previous(cycle1))));
+    D.link_as_prev_next_pair( SD.previous(cycle1), D.next(cycle1));
+    D.link_as_prev_next_pair( D.previous(tcycle1), SD.next(tcycle1));
+    D.link_as_prev_next_pair( D.previous(SDt.previous(D.next(tcycle1))),
+			      D.next(tcycle1)); 
+    CGAL_nef3_assertion_code( SHalfedge_handle new_cycle(SD.previous(cycle1)));
+    if( SD.source(cycle1) == SD.target(cycle1)) {
+      TRACEN("cycle1 will converted into a sloop");
+      SD.convert_edge_to_loop(cycle1);
+      Sphere_circle facet_plane(D.plane(f1));
+      if( facet_plane == SD.circle(SD.shalfloop())) {
+	SD.shalfloop()->incident_facet_ = f1;
+	SD.twin(SD.shalfloop())->incident_facet_ = D.twin(f1);
+      } else {
+	CGAL_assertion( facet_plane.opposite() == SD.circle(SD.shalfloop()));
+	SD.shalfloop()->incident_facet_ = D.twin(f1);
+	SD.twin(SD.shalfloop())->incident_facet_ = f1;
+      }
+      CGAL_assertion(has_halfloop_only(v1));
+    } else {
+      merge_incident_sedges(cycle1);
+      SD.delete_edge_pair_only(cycle1);
+      SD.delete_vertex_only(e);
+    }
+    if( SDt.source(cycle2) == SDt.target(cycle2)) {
+      TRACEN("cycle2 will converted into a sloop");
+      TRACEN(" mark(cycle2) "<<SDt.mark(cycle2)<<" mark(f2) "<<D.mark(f2));
+      SDt.convert_edge_to_loop(cycle2);
+      Sphere_circle facet_plane(D.plane(f2));
+      if( facet_plane == SDt.circle(SDt.shalfloop())) {
+	SDt.shalfloop()->incident_facet_ = f2;
+	SDt.twin(SDt.shalfloop())->incident_facet_ = D.twin(f2);
+      } else {
+	CGAL_assertion( facet_plane.opposite() == SDt.circle(SDt.shalfloop()));
+	SDt.shalfloop()->incident_facet_ = D.twin(f2);
+	SDt.twin(SDt.shalfloop())->incident_facet_ = f2;
+      }
+      CGAL_assertion(has_halfloop_only(v2));
+    } else {
+      merge_incident_sedges(cycle2);
+      SDt.delete_edge_pair_only(cycle2);
+      SDt.delete_vertex_only(et);
+    }
+    merge_sets( f1, f2, hash, uf);
+    merge_sets( D.twin(f1), D.twin(f2), hash, uf);
+    TRACEN("AFTER "<<PFC(new_cycle));
+    /* TODO: convert isolated vertex's edges in a halfloop */
+  }
+
+  bool is_isolated(Vertex_handle v) {
+    SM_decorator SD(v);
+    return( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
+	    !SD.has_loop());
+  }
+
+  bool has_halfloop_only(Vertex_handle v) {
+    SM_decorator SD(v);
+    return( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
+	    SD.has_loop());
+  }
+
+  bool is_vertex_in_edge(Vertex_handle v) {
+    SM_decorator SD(v);
+    if( !is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
+	is_empty_range( SD.shalfedges_begin(), SD.shalfedges_end())) {
+      SVertex_iterator sv(SD.svertices_begin());
+      SVertex_handle p0(sv++);
+      if( sv != SD.svertices_end()) {
+	SVertex_handle pf(sv++);
+	if( sv == SD.svertices_end()) {
+	  Sphere_point sp0(SD.point(p0)), spf(SD.point(pf));
+	  return( sp0 == spf.antipode());
 	}
       }
     }
+    return false;
   }
 
-  void simplify() {
+   void simplify() {
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
-
+    SNC_io_parser<SNC_structure> IO_parser(std::cout, *this);
+    IO = &IO_parser;
+    
     Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
     Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
     Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
@@ -764,42 +935,45 @@ public:
     Union_find< SFace_handle> uf_sface;
 
     Volume_iterator c;
-    CGAL_forall_volumes( c, *this) {
+    CGAL_forall_volumes( c, *this)
       hash_volume[c] = uf_volume.make_set(c);
-      /* TODO: clear pointers of the downwards incidences to the volume */
-    }
-    Halffacet_iterator f;
-    CGAL_forall_facets( f, *this) {
-      hash_facet[f] = uf_facet.make_set(f);
-      /* TODO: clear pointers of the downwards incidences to the facet */
-    }
+    Halffacet_iterator hf;
+    CGAL_forall_halffacets( hf, *this)
+      hash_facet[hf] = uf_facet.make_set(hf);
     SFace_iterator sf;
-    CGAL_forall_sfaces( sf, *this) {
+    CGAL_forall_sfaces( sf, *this)
       hash_sface[sf] = uf_sface.make_set(sf);
-      /* TODO: clear pointers of the downwards incidences to the sface */
-    }
-
-    CGAL_forall_facets( f, *this) { /* for all facets, not halffacets (?) */
-      CGAL_assertion( D.twin(f) != Halffacet_handle() );
-      CGAL_assertion( D.volume(f) != Volume_handle());
-      CGAL_assertion( D.volume(D.twin(f)) != Volume_handle() );
-
+    
+    Halffacet_handle f((*this).halffacets_begin());
+    CGAL_assertion( !f->is_twin());
+    while( f != (*this).halffacets_end()) {
+      Halffacet_iterator f_next(f);
+      do f_next++;
+      while( f_next != (*this).halffacets_end() && f_next->is_twin());
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
-      if( (D.mark(c1) == D.mark(f) == D.mark(c2))
+      if(!is_bbox_facet(f))
+	TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
+	       " mark("<<IO->index(f)<<")="<<D.mark(f)<<
+	       " mark("<<IO->index(c2)<<")="<<D.mark(c2)<<
+	       " is_twin(f)="<<f->is_twin());
+      if( (D.mark(c1) == D.mark(f) && 
+	   D.mark(f) == D.mark(D.twin(f)) &&
+	   D.mark(D.twin(f)) == D.mark(c2))
 	  && !is_bbox_facet(f)) { /* if f is not part of the bounding box */
-	if( !uf_volume.same_set( hash_volume[c1], hash_volume[c2])) {
-	  uf_volume.unify_sets( hash_volume[c1], hash_volume[c2]);
-	  remove_f_including_all_edge_uses_in_its_boundary_cycles
-	    (f, hash_sface, uf_sface);
-	  TRACEN("unioning volumes "<<&*c1<<" and "<<&*c2);
-	}
+	merge_sets( c1, c2, hash_volume, uf_volume);
+	remove_f_including_all_edge_uses_in_its_boundary_cycles
+	  (f, hash_sface, uf_sface);
+	TRACEN("unioning volumes "<<IO->index(c1)<<" and "<<IO->index(c2));
       }
+      f = f_next;
     }
 
-    Halfedge_iterator e;
-    CGAL_forall_edges(e, *this) { // all edges
-      // if( e as an svertex is isolated in the local grpah at its source
-      //     and mark(e) == mark(volume(incident_sface(e))) )
+    Halfedge_iterator e = (*this).halfedges_begin();
+    CGAL_assertion( !e->is_twin());
+    while( e != (*this).halfedges_end()) {
+      Halfedge_iterator e_next(e);
+      do e_next++;
+      while( e_next != (*this).halfedges_end() && e_next->is_twin());
       Halfedge_handle et(D.twin(e));
       SM_decorator SD(D.source(e)), SDt(D.source(et));
       if( SD.is_isolated(e) &&
@@ -809,114 +983,154 @@ public:
 	SDt.delete_vertex_only(et);
       } 
       else { 
-	SHalfedge_handle e1, e2;
-	e1 = SD.first_out_edge(e);
-	e2 = SD.cyclic_adj_succ(e1);
+	SHalfedge_handle e1(SD.first_out_edge(e)), e1o(SD.twin(e1)),
+	  e2(SD.cyclic_adj_succ(e1)), e2o(SD.twin(e2));
 	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
-	    (SD.circle(e1) == SD.circle(e2).opposite()) &&
-	    (D.mark(e1) == D.mark(e) == D.mark(e2)) ) {
-	  CGAL_assertion( SD.target(SD.twin(e1)) == SVertex_handle(e));
-	  CGAL_assertion( SD.target(SD.twin(e2)) == SVertex_handle(e));
-	  SD.merge_edge_pairs_at_target(SD.twin(e1));
-	  delete_halfedge_pair(e);
-	  Halffacet_handle f1(D.facet(SD.twin(e1))), f2(D.facet(e2));
-	  if( !uf_facet.same_set( hash_facet[f1], hash_facet[f2])) {
-	    uf_facet.unify_sets( hash_facet[f1], hash_facet[f2]);
-	    TRACEN("unioning facets "<<&*f1<<" and "<<&*f2);
-	  }
-	}
-	// make it simetricaly
-	SHalfedge_handle e1t, e2t;
-	e1t = SDt.first_out_edge(et);
-	e2t = SDt.cyclic_adj_succ(e1t);
-	if( (e1t != e2t && e1t == SDt.cyclic_adj_succ(e2t)) &&
-	    (SDt.circle(e1t) == SDt.circle(e2t).opposite()) &&
-	    (D.mark(e1t) == D.mark(et) == D.mark(e2t)) ) {
-	  CGAL_assertion( SDt.target(SDt.twin(e1t)) == et);
-	  CGAL_assertion( SDt.target(SDt.twin(e2t)) == et);
-	  SDt.merge_edge_pairs_at_target(SDt.twin(e1t));
-	  Halffacet_handle f1t(D.facet(SDt.twin(e1t))), f2t(D.facet(e2t));
-	  if( !uf_facet.same_set( hash_facet[f1t], hash_facet[f2t])) {
-	    uf_facet.unify_sets( hash_facet[f1t], hash_facet[f2t]);
-	    TRACEN("unioning facets "<<&*f1t<<" and "<<&*f2t);
-	  }
-	  delete_halfedge_pair(e);
+	    (SD.circle(e1) == SD.circle(e2o)))
+	    TRACEN(" mark(e1) "<<D.mark(e1)<<
+		   " mark(e) "<<D.mark(e)<<
+		   " mark(e2o) "<<D.mark(e2o));
+	if( (e1 != e2 && e1 == SD.cyclic_adj_succ(e2)) &&
+	    (SD.circle(e1) == SD.circle(e2o)) &&
+	    (D.mark(e1) == D.mark(e) && D.mark(e) == D.mark(e2o)) )
+	  merge_facet_cycles(e, hash_facet, uf_facet);
+      }
+      e = e_next;
+    }
+
+    Vertex_iterator v = (*this).vertices_begin();
+    while( v != (*this).vertices_end()) {
+      Vertex_iterator v_next(v);
+      v_next++;
+      SM_decorator SD(v);
+      CGAL_assertion( SD.sfaces_begin() != SFace_handle());
+      if( is_isolated(v) && D.mark(v) == D.mark(D.volume(SD.sfaces_begin()))) {
+	TRACEN("removing isolated vertex "<<IO->index(v));
+	delete_vertex(v); // TODO: update adjacency list? */
+      }
+      if( has_halfloop_only(v)) {
+	TRACEN(" mark(v) "<<D.mark(v)<<
+	       " mark(sloop) "<<SD.mark(SD.shalfloop())<<
+	       " mark(facet(sloop)) "<<D.mark(D.facet(SD.shalfloop())));
+	CGAL_assertion( D.facet(SD.shalfloop()) != Halffacet_handle());
+	if( D.mark(v) == D.mark(D.facet(SD.shalfloop()))) {
+	  TRACEN("removing vertex "<<IO->index(v)<<
+		 " from facet "<<IO->index(D.facet(SD.shalfloop())));
+	  delete_vertex(v); // TODO: update adjacency list */
 	}
       }
-    }
-#ifdef NO
-    Vertex_iterator v;
-    CGAL_forall_vertices(v, *this) { // all vertices
-      // if( v has a trivial local graph consisting of one sface fs and
-      //     mark(v) == mark(volume(fs)) )
-      //   remove v and merge it into volume(fs)
-      // if( v has a local graph consisting only of one sloop ls and
-      //     mark(v) == mark(facet(ls)) )
-      //   remove v and merge it into facet(ls)
-      // if( v has a local graph consisting only of two svertices v1, v2 that
-      //     are part of the same line and mark(v1) == mark(v) == mark(v2) )
-      //   remove v and merge v1 and v2 into one edge in the global structure
-    }
-    // purge all sfaces, facets, and volumes that are no find objects
-    // create boundary links forall sfaces
-    // create boundary links forall facets
-    // create boundary links forall volumes
-#endif
-  }
-
-#ifdef NO
-  SFace_handle unify(SHalfedge_handle e, SFace_handle f1, SFace_handle f2) {
-    typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    Unique_hash_map< SFace_handle, Union_find_handle> Pitem;
-    Union_find< SFace_handle> UF;
-    SM_decorator D;
-    if ( !UF.same_set(Pitem[D.face(e)],
-		      Pitem[D.face(D.twin(e))]) ) {
-        UF.unify_sets( Pitem[D.face(e)],
-                       Pitem[D.face(D.twin(e))] );
-        TRACEN("unioning disjoint faces");
+      if( is_vertex_in_edge(v)) {
+	SVertex_iterator sv(SD.svertices_begin());
+	Halfedge_handle e0(sv++), e1(sv++), e0t(D.twin(e0)), e1t(D.twin(e1));
+	if( D.mark(e0) == D.mark(sv) && D.mark(sv) == D.mark(e1)) {
+	  e0t->twin_ = e1t;
+	  e1t->twin_ = e0t;
+	  SD.delete_vertex_only(e0);
+	  SD.delete_vertex_only(e1);
+	  delete_vertex(v);
+	}
       }
-    if ( D.is_closed_at_source(e) ) 
-      D.set_face(D.source(e),D.face(e));
-    if ( D.is_closed_at_source(D.twin(e)) ) 
-      D.set_face(D.target(e),D.face(e));
-    D.delete_edge_pair(e);
-    return f1;
-  }
-#endif
+      v = v_next;
+    }
 
-#ifdef NO  
-  void create_boundary_links_forall_sfaces() {
+    purge_no_find_objects(hash_volume, hash_facet, hash_sface,
+			  uf_volume, uf_facet, uf_sface);
+    create_boundary_links_forall_sfaces( hash_sface, uf_sface);
+    create_boundary_links_forall_facets( hash_facet, uf_facet);
+    create_boundary_links_forall_volumes( hash_volume, uf_volume);
+   }
+   
+   void purge_no_find_objects( 
+      Unique_hash_map< Volume_handle, UFH_volume>& hash_volume,
+      Unique_hash_map< Halffacet_handle, UFH_facet>& hash_facet,
+      Unique_hash_map< SFace_handle, UFH_sface>& hash_sface,
+      Union_find< Volume_handle>& uf_volume,
+      Union_find< Halffacet_handle>& uf_facet,
+      Union_find< SFace_handle>& uf_sface ) {
+     SNC_decorator D(*this);
+     SFace_iterator sf;
+     CGAL_forall_sfaces( sf, *this) {
+       if( uf_sface.find(hash_sface[sf]) != hash_sface[sf]) {
+	 TRACEN("no find object "<<IO->index(sf));
+	 SM_decorator SD(D.vertex(sf));
+	 SD.delete_face_only(sf);
+       }
+     }
+     Halffacet_iterator f;
+     CGAL_forall_halffacets( f, *this) {
+       if( uf_facet.find(hash_facet[f]) != hash_facet[f]) {
+	 TRACEN("no find object "<<IO->index(f));
+	 delete_halffacet_pair(f);
+       }
+     }
+     Volume_iterator c;
+     CGAL_forall_volumes( c, *this) {
+       if( uf_volume.find(hash_volume[c]) != hash_volume[c]) {
+	 TRACEN("no find object "<<IO->index(c));
+	 delete_volume(c);
+       }
+     }
+   }
+
+  void create_boundary_links_forall_sfaces(
+      Unique_hash_map< SFace_handle, UFH_sface>& hash,
+      Union_find< SFace_handle>& uf ) {
+    SNC_decorator D(*this);
+    SM_decorator SD;
     SHalfedge_iterator e;
-    CGAL_forall_sedges(e, *this) { // all sedges
+    CGAL_forall_shalfedges(e, *this) { // all shalfedges
       // if( e was not yet assigned to an sface cycle )
-      //   assign all sedges in sface cycle of e to find(sface(e))
+      UFH_sface sf(uf.find(hash[D.sface(e)]));
+      if( hash[D.sface(e)] != sf) {
+	// assign all sedges in sface cycle of e to find(sface(e))
+	SHalfedge_around_sface_circulator c(e), cend(c);
+	CGAL_For_all( c, cend)
+	  SD.set_face(e, *sf);
+      }
     }
-    // forall isolated svertices vs do
-    //   assign vs to find(face(vs))
+    SVertex_handle sv;
+    CGAL_forall_svertices(sv, *this)
+      if( SD.is_isolated(sv))
+	SD.set_face( sv, *(uf.find(hash[D.sface(sv)])));
   }
 
-  void create_boundary_links_forall_facets() {
-    SHalfedge_iterator e;
-    CGAL_forall_edges(u, *this) { // all edge uses
+  void create_boundary_links_forall_facets(
+      Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
+      Union_find< Halffacet_handle>& uf) {
+    SNC_decorator D(*this);
+    SHalfedge_iterator u;
+    CGAL_forall_shalfedges(u, *this) { // all edge uses
       // if( u was not yet assigned to a facet cycle )
-      //   assign all edge uses in facet cycle of u to find(facet(u))
+      UFH_facet sf(uf.find(hash[D.facet(u)]));
+      if( hash[D.facet(u)] != sf) {
+	// assign all edge uses in facet cycle of u to find(facet(u))
+	SHalfedge_around_facet_circulator c(u), cend(c);
+	CGAL_For_all( c, cend) 
+	  u->incident_facet_ = *sf;
+      }
     }
     SHalfloop_iterator l;
-    CGAL_forall_shalfloops(l, *this) { // all sloops
-      // assign l to find(facet(l))
-    }
+    CGAL_forall_shalfloops( l, *this) // all sloops
+      l->incident_facet_ = *(uf.find(hash[D.facet(l)]));
   }
 
-  void create_boundary_links_forall_volumes() {
-    SFace_iterator f;
-    CGAL_forall_sfaces(f, *this) { // all sfaces
+  typedef typename SNC_decorator::Shell_volume_setter Volume_setter;
+  void create_boundary_links_forall_volumes( 
+      Unique_hash_map< Volume_handle, UFH_volume>& hash,
+      Union_find< Volume_handle>& uf) {
+    SNC_decorator D(*this);
+    SFace_iterator sf;
+    CGAL_forall_sfaces(sf, *this) { // all sfaces
       // if( f was not yet assigned to a shell )
-      //    assign all sfaces a facets in the shell of f to find(volume(f))
+      UFH_volume c(uf.find(hash[D.volume(sf)]));
+      if( hash[D.volume(sf)] != c) {
+	// assign all sfaces a facets in the shell of f to find(volume(f))
+	Volume_setter setter(D, *c);
+	D.visit_shell_objects( sf, setter );
+      }
     }
   }
-#endif
-
+  
   
 protected:
   void pointer_update(const Self& D);

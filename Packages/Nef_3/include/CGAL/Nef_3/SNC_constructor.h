@@ -307,7 +307,6 @@ public:
     Vertex_handle v_min = MinimalVertex[Shell[sf]];
     Halffacet_handle f_below = get_facet_below(v_min);
     if ( f_below == Halffacet_handle())
-      // return volumes_begin();  //qualifiers discarded?
       return Base(*this).volumes_begin();
     Volume_handle c = volume(f_below);
     if( c != Volume_handle()) {
