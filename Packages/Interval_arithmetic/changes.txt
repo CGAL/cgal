@@ -1,5 +1,16 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.28 on 13 October 1999
+- Formatting changes.
+- Removed "inline call before definition" warning detected by MipsPro.
+- Added #include<float.h> for Borland.
+- Added parenthesis around double computation to prevent MipsPro from changing 
+  expression computation order...
+- Removed convert_to<Interval_nt>().  This was useless and broke MipsPro.
+- is_valid() workaround for MipsPro.
+- Removed qualifier "throw(...)" of overlap_action(), it speeds things up on
+  GCC.
+
 Version 4.27 on 12 October 1999
 - Fixes for Visual C++.  Most tests pass correctly now.
 - New file "KNOWN_PROBLEMS" (in CVS, not submitted) that describes all

@@ -35,6 +35,8 @@ Concerning the new stuff:
 
 Concerning the code itself:
 ---------------------------
+- See GCC' __builtin_constant_p() for stopping constant propagation.
+  It could be the perfect solution ;-) (for GCC).
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
   this would be cleaner, and won't rely on some optimizations in the compiler.
