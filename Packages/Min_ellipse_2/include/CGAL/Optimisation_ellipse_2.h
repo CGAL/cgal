@@ -119,6 +119,7 @@ class Optimisation_ellipse_2 {
     // -----------
     inline
     Optimisation_ellipse_2( )
+      : er(0), es(0), et(0), eu(0), ev(0), ew(0)
     { }
 
     // Set functions
@@ -143,7 +144,7 @@ class Optimisation_ellipse_2 {
     set( const Point& p, const Point& q)
     {
         n_boundary_points = 2;
-        boundary_point1 = p;
+        CGAL_optimisation_precondition(boundary_point1 == p);
         boundary_point2 = q;
     }
     
@@ -152,8 +153,8 @@ class Optimisation_ellipse_2 {
     set( const Point& p1, const Point& p2, const Point& p3)
     {       
         n_boundary_points = 3;        
-	boundary_point1 = p1;
-        boundary_point2 = p2;
+	CGAL_optimisation_precondition(boundary_point1 == p1);
+        CGAL_optimisation_precondition(boundary_point2 == p2);
 	boundary_point3 = p3;
         conic1.set_ellipse( p1, p2, p3);
     }
@@ -163,9 +164,9 @@ class Optimisation_ellipse_2 {
     set( const Point& p1, const Point& p2, const Point& p3, const Point& p4)
     {
         n_boundary_points = 4;	
-	boundary_point1 = p1;
-        boundary_point2 = p2;
-	boundary_point3 = p3;
+	CGAL_optimisation_precondition(boundary_point1 == p1);
+        CGAL_optimisation_precondition(boundary_point2 == p2);
+	CGAL_optimisation_precondition(boundary_point3 == p3);
         boundary_point4 = p4;
         Conic::set_two_linepairs( p1, p2, p3, p4, conic1, conic2);
 
@@ -222,10 +223,10 @@ class Optimisation_ellipse_2 {
         // ellipse
         conic1 = helper_conic;
 	n_boundary_points = 5;	
-	boundary_point1 = p1;
-        boundary_point2 = p2;
-	boundary_point3 = p3;
-        boundary_point4 = p4;
+	CGAL_optimisation_precondition(boundary_point1 == p1);
+        CGAL_optimisation_precondition(boundary_point2 == p2);
+	CGAL_optimisation_precondition(boundary_point3 == p3);
+        CGAL_optimisation_precondition(boundary_point4 == p4);
 	boundary_point5 = p5;
     }
 
@@ -242,21 +243,9 @@ class Optimisation_ellipse_2 {
     void
     double_conic(DoubleConic_2& e) const
     {
-        CGAL_optimisation_precondition( ! is_degenerate());
-    
-        double t = 0.0;
-    
-        if ( n_boundary_points == 4) {
-	  set_e_values();
-          t = conic1.vol_minimum( er, es, et, eu, ev, ew);
-	}
-    
-        e.set( CGAL::to_double( conic1.r()) + t*CGAL::to_double( er),
-               CGAL::to_double( conic1.s()) + t*CGAL::to_double( es),
-               CGAL::to_double( conic1.t()) + t*CGAL::to_double( et),
-               CGAL::to_double( conic1.u()) + t*CGAL::to_double( eu),
-               CGAL::to_double( conic1.v()) + t*CGAL::to_double( ev),
-               CGAL::to_double( conic1.w()) + t*CGAL::to_double( ew));
+        double r,s,t,u,v,w;
+	double_coefficients(r,s,t,u,v,w);
+        e.set(r,s,t,u,v,w);
 	// actually, we would have to call e.analyse() now to get
 	// a clean conic, but since this is only internal stuff
 	// right now, the call is omitted to save time    

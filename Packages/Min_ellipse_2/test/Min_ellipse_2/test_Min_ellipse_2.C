@@ -194,7 +194,7 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
 	assert(dc == Conic(r,s,t,u,v,w));
     }
-    verr << endl << "   4-point case, paper example...";
+    verr << endl << "   4-point case, paper example..." << endl;
     {
 	std::vector<Point> P;
 	P.push_back(Point(0,0));
