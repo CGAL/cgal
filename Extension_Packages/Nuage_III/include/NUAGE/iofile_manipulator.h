@@ -67,7 +67,7 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -92,9 +92,9 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os_faces << 3 << " ";
-	  os_faces << vertex_index_map[&(*c->vertex(i1))] + 1 << " ";
-	  os_faces << vertex_index_map[&(*c->vertex(i2))] + 1 << " ";
-	  os_faces << vertex_index_map[&(*c->vertex(i3))] + 1 << " ";
+	  os_faces << vertex_index_map[c->vertex(i1)] + 1 << " ";
+	  os_faces << vertex_index_map[c->vertex(i2)] + 1 << " ";
+	  os_faces << vertex_index_map[c->vertex(i3)] + 1 << " ";
 	  os_faces << " 0 0 0 0" << std::endl; 
 	}
       
@@ -104,9 +104,9 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os_faces << 3 << " ";
-	  os_faces << vertex_index_map[&(*n->vertex(i1))] + 1 << " ";
-	  os_faces << vertex_index_map[&(*n->vertex(i2))] + 1 << " ";
-	  os_faces << vertex_index_map[&(*n->vertex(i3))] + 1 << " ";
+	  os_faces << vertex_index_map[n->vertex(i1)] + 1 << " ";
+	  os_faces << vertex_index_map[n->vertex(i2)] + 1 << " ";
+	  os_faces << vertex_index_map[n->vertex(i3)] + 1 << " ";
 	  os_faces << " 0 0 0 0" << std::endl; 
 	}
     }
@@ -117,9 +117,9 @@ write_in_file_medit_selected_facets(char* foutput, const Surface& S)
       add_f_it != S.additional_facets_list_end(); add_f_it++)
     {
       os_faces << 3 << " ";
-      os_faces << vertex_index_map[&(*(*add_f_it).first)] + 1 << " ";
-      os_faces << vertex_index_map[&(*(*add_f_it).second)] + 1 << " ";
-      os_faces << vertex_index_map[&(*(*add_f_it).third)] + 1 << " ";
+      os_faces << vertex_index_map[(*add_f_it).first] + 1 << " ";
+      os_faces << vertex_index_map[(*add_f_it).second] + 1 << " ";
+      os_faces << vertex_index_map[(*add_f_it).third] + 1 << " ";
       os_faces << " 0 0 0 0" << std::endl; 
     }
   */
@@ -168,7 +168,7 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -192,9 +192,9 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os << 3 << " ";
-	  os << vertex_index_map[&(*c->vertex(i1))] << " ";
-	  os << vertex_index_map[&(*c->vertex(i2))] << " ";
-	  os << vertex_index_map[&(*c->vertex(i3))] << " ";
+	  os << vertex_index_map[c->vertex(i1)] << " ";
+	  os << vertex_index_map[c->vertex(i2)] << " ";
+	  os << vertex_index_map[c->vertex(i3)] << " ";
 	  os << 0 << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color
@@ -206,9 +206,9 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os << 3 << " ";
-	  os << vertex_index_map[&(*n->vertex(i1))] << " ";
-	  os << vertex_index_map[&(*n->vertex(i2))] << " ";
-	  os << vertex_index_map[&(*n->vertex(i3))] << " ";
+	  os << vertex_index_map[n->vertex(i1)] << " ";
+	  os << vertex_index_map[n->vertex(i2)] << " ";
+	  os << vertex_index_map[n->vertex(i3)] << " ";
 	  os << 0 << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color 
@@ -221,9 +221,9 @@ write_in_file_gv_selected_facets(char* foutput, const Surface& S)
       add_f_it != S.additional_facets_list_end(); add_f_it++)
     {
       os << 3 << " ";
-      os << vertex_index_map[&(*(*add_f_it).first)] << " ";
-      os << vertex_index_map[&(*(*add_f_it).second)] << " ";
-      os << vertex_index_map[&(*(*add_f_it).third)] << " ";
+      os << vertex_index_map((*add_f_it).first] << " ";
+      os << vertex_index_map[(*add_f_it).second] << " ";
+      os << vertex_index_map[(*add_f_it).third] << " ";
       os << 0 << std::endl;  // without color.
       // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
       // color 
@@ -276,7 +276,7 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -300,9 +300,9 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  os << 3 << " ";
-	  os << vertex_index_map[&(*c->vertex(i1))] << " ";
-	  os << vertex_index_map[&(*c->vertex(i2))] << " ";
-	  os << vertex_index_map[&(*c->vertex(i3))];
+	  os << vertex_index_map[c->vertex(i1)] << " ";
+	  os << vertex_index_map[c->vertex(i2)] << " ";
+	  os << vertex_index_map[c->vertex(i3)];
 	  os << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color
@@ -314,9 +314,9 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 	  os << 3 << " ";
-	  os << vertex_index_map[&(*n->vertex(i1))] << " ";
-	  os << vertex_index_map[&(*n->vertex(i2))] << " ";
-	  os << vertex_index_map[&(*n->vertex(i3))];
+	  os << vertex_index_map[n->vertex(i1)] << " ";
+	  os << vertex_index_map[n->vertex(i2)] << " ";
+	  os << vertex_index_map[n->vertex(i3)];
 	  os << std::endl; // without color.
 	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
 	  // color 
@@ -329,9 +329,9 @@ write_in_file_ply_selected_facets(char* foutput, const Surface& S)
       add_f_it != S.additional_facets_list_end(); add_f_it++)
     {
       os << 3 << " ";
-      os << vertex_index_map[&(*(*add_f_it).first)] << " ";
-      os << vertex_index_map[&(*(*add_f_it).second)] << " ";
-      os << vertex_index_map[&(*(*add_f_it).third)];
+      os << vertex_index_map[(*add_f_it).first] << " ";
+      os << vertex_index_map[(*add_f_it).second] << " ";
+      os << vertex_index_map[(*add_f_it).third];
       os << std::endl;  // without color.
       // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
       // color 
@@ -356,12 +356,12 @@ write_in_file_iv_border_edges(const Surface& S, std::ofstream& os)
   Triangulation_3& T = S.triangulation();
   typedef std::pair<Vertex_handle, int>  indiced_vh;
   std::map<Vertex_handle, int> _vh_vect;
-  int _vh_bord_count(0);
+  int _vh_bord_count = 0;
 
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++)
-    if (v_it->number_of_incident_border() > 0)
+    if (v_it->is_on_border())
       {
 	_vh_vect.insert(indiced_vh (v_it, _vh_bord_count));
 	_vh_bord_count++;
@@ -609,7 +609,7 @@ write_in_file_iv_border_facets(const Surface& S, std::ofstream& os)
 template <class Surface>
 void
 write_in_file_iv_selected_facets(char* foutput, const Surface& S,
-				  const bool& contour)
+				  const bool& boundary)
 { 
   typedef typename Surface::Triangulation_3 Triangulation_3;
   typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
@@ -672,7 +672,7 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -700,9 +700,9 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
 	  i1 = (ci+1) & 3;
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
-	  os <<  vertex_index_map[&(*c->vertex(i1))] << ", ";
-	  os <<  vertex_index_map[&(*c->vertex(i2))] << ", ";
-	  os <<  vertex_index_map[&(*c->vertex(i3))] << ", ";
+	  os <<  vertex_index_map[c->vertex(i1)] << ", ";
+	  os <<  vertex_index_map[c->vertex(i2)] << ", ";
+	  os <<  vertex_index_map[c->vertex(i3)] << ", ";
 	  os << -1;
 	}
 
@@ -711,9 +711,9 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
 	  i1 = (ni+1) & 3;
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
-	  os << vertex_index_map[&(*n->vertex(i1))] << ", ";
-	  os << vertex_index_map[&(*n->vertex(i2))] << ", ";
-	  os << vertex_index_map[&(*n->vertex(i3))] << ", ";
+	  os << vertex_index_map[n->vertex(i1)] << ", ";
+	  os << vertex_index_map[n->vertex(i2)] << ", ";
+	  os << vertex_index_map[n->vertex(i3)] << ", ";
 	  os << -1; 
 	}
     }
@@ -725,9 +725,9 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
     {
       os << "," << std::endl <<
 "		            ";
-       os << vertex_index_map[&(*(*add_f_it).first)] << ", ";
-       os << vertex_index_map[&(*(*add_f_it).second)] << ", ";
-       os << vertex_index_map[&(*(*add_f_it).third)] << ", ";
+       os << vertex_index_map[(*add_f_it).first] << ", ";
+       os << vertex_index_map[(*add_f_it).second] << ", ";
+       os << vertex_index_map[(*add_f_it).third] << ", ";
        os << -1;
     }
   */
@@ -737,9 +737,9 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
     "    }}\n"
     "  }\n";
 
-  if (contour)
+  if (boundary)
     {
-      // pour visualiser les contours restant a la fin...
+      // pour visualiser les boundaries restant a la fin...
       write_in_file_iv_border_edges(S, os);
       
       // pour visualiser les facettes eventuellement candidates...
@@ -757,20 +757,20 @@ write_in_file_iv_selected_facets(char* foutput, const Surface& S,
 
 template <class Surface>
 void
-write_contour(std::ostream& os, const Surface& S)
+write_boundaries(std::ostream& os, const Surface& S)
 {  
 
   typedef typename Surface::Triangulation_3 Triangulation_3;
   typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Surface::Contour_iterator Contour_iterator;
+  typedef typename Surface::Boundary_iterator Boundary_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Vertex Vertex;
   typedef typename Surface::Cell_handle Cell_handle;
 
 
   CGAL::Random random;
-  for(Contour_iterator it = S.contours_begin();
-      it != S.contours_end();
+  for(Boundary_iterator it = S.boundaries_begin();
+      it != S.boundaries_end();
       ++it) {
     double blue = random.get_double(0,1);
     os << 
@@ -803,75 +803,12 @@ write_contour(std::ostream& os, const Surface& S)
 }
 
 
-/*
-template <class Surface>
-void
-write_contour(std::ostream& os, const Surface& S)
-{  
-
-  typedef typename Surface::Triangulation_3 Triangulation_3;
-  typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Surface::Vertex_handle Vertex_handle;
-  typedef typename Surface::Vertex Vertex;
-  typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
-
-  CGAL::Random random;
-  int mark = S.get_next_mark();
-  for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
-      v_it != T.finite_vertices_end(); 
-      v_it++) {
-    if ( (v_it->number_of_incident_border() > 0) &&
-	  (!v_it->is_post_marked(mark))) {
-      std::list<Vertex_handle> L_v_tmp;
-      Vertex_handle vprev_it(v_it), done(vprev_it), vh_it;
-      // collect all vertices on the border
-      do {		      
-	vh_it = (Vertex*) vprev_it->first_incident()->first;
-	L_v_tmp.push_back(vh_it);
-	vh_it->set_post_mark(mark);
-	vprev_it = vh_it;
-      } while(vprev_it != done);
-      // we stopped because we did a complete tour
-
-      double blue = random.get_double(0,1);
-
-	os << 
-	  "Shape {\n"
-	  "appearance Appearance {\n"
-	  "material Material { emissiveColor 1 0 " << blue << "}}\n"
-	  "geometry\n"
-	  "IndexedLineSet {\n"
-	  "coord Coordinate {\n"
-	  "point [ " << std::endl;
-	for(std::list<Vertex_handle>::iterator it = L_v_tmp.begin();
-	    it != L_v_tmp.end();
-	    it++){
-	  os << (*it)->point() << std::endl;
-	}
-	os << "]\n"
-	  "}\n"
-	  "coordIndex [\n";
-
-	for(unsigned int i = 0; i < L_v_tmp.size(); i++){
-	  os << i << ", ";
-	}
-	os << "0, -1\n";
-      os << "]\n" 
-	"}#IndexedLineSet\n"
-	"}# Shape\n"; 
-      }
-    }
-
-}
-
- */
 
 
 template <class Surface>
 void
 write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
-				  const bool& contour)
+				  const bool& boundary)
 {
 
   typedef typename Surface::Triangulation_3 Triangulation_3;
@@ -917,7 +854,7 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
   for (Finite_vertices_iterator v_it = T.finite_vertices_begin();
        v_it != T.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[v_it];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -945,9 +882,9 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
 	  
-	  os << vertex_index_map[&(*c->vertex(i1))] << ", ";
-	  os << vertex_index_map[&(*c->vertex(i2))] << ", ";
-	  os << vertex_index_map[&(*c->vertex(i3))] << ", ";
+	  os << vertex_index_map[c->vertex(i1)] << ", ";
+	  os << vertex_index_map[c->vertex(i2)] << ", ";
+	  os << vertex_index_map[c->vertex(i3)] << ", ";
 	  os << "-1,\n";
 	}
 
@@ -956,9 +893,9 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
 	  i1 = (ni+1) & 3;
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
-	  os << vertex_index_map[&(*n->vertex(i1))] << ", ";
-	  os << vertex_index_map[&(*n->vertex(i2))] << ", ";
-	  os << vertex_index_map[&(*n->vertex(i3))] << ", ";
+	  os << vertex_index_map[n->vertex(i1)] << ", ";
+	  os << vertex_index_map[n->vertex(i2)] << ", ";
+	  os << vertex_index_map[n->vertex(i3)] << ", ";
 	  os << "-1,\n"; 
 	}
     }
@@ -968,9 +905,9 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
       S.additional_facets_list_begin();
 	add_f_it != S.additional_facets_list_end(); add_f_it++)
     {
-       os << vertex_index_map[&(*(*add_f_it).first)] << ", ";
-       os << vertex_index_map[&(*(*add_f_it).second)] << ", ";
-       os << vertex_index_map[&(*(*add_f_it).third)] << ", ";
+       os << vertex_index_map[(*add_f_it).first] << ", ";
+       os << vertex_index_map[(*add_f_it).second] << ", ";
+       os << vertex_index_map[(*add_f_it).third] << ", ";
        os << "-1,\n";
     }
   */
@@ -978,61 +915,30 @@ write_in_file_vrml2_selected_facets(char* foutput, const Surface& S,
     "}# IndexedFaceSet\n"
     "}# Shape\n";
 
-  if (contour)
-    write_contour(os, S);
-  /*
-    {
-      os << 
-	"Shape {\n"
-	"appearance Appearance {\n"
-	"material Material { emissiveColor 1 0 0}}\n"
-	"geometry\n"
-	"IndexedLineSet {\n"
-	"coord USE def_coords\n"
-	"coordIndex [\n";
-      for(Finite_edges_iterator e_it = T.finite_edges_begin();
-	  e_it != T.finite_edges_end();
-	  e_it++) {
-	Cell_handle c = (*e_it).first;
-	int i1 = (*e_it).second, i2 = (*e_it).third;
-	Edge_like key(c->vertex(i1), c->vertex(i2));
-	Border_elt result;
+  if (boundary){
+    write_boundaries(os, S);
+  }
 
-	if (is_border_elt(key, result))
-	  {
-	    os << vertex_index_map[&(*c->vertex(i1))] << ", ";
-	    os << vertex_index_map[&(*c->vertex(i2))] << ", ";
-	    os << "-1,\n"; 
-	  }
-      }
-      os << "]\n" 
-	"}#IndexedLineSet\n"
-	"}# Shape\n";
-      
-      // pour visualiser les facettes eventuellement candidates...
-      //       write_in_file_vrml_border_facets(S, os);
+  Surface::Outlier_iterator pit = S.outliers_begin();
 
-      // pour afficher les points non selectionnes, ~bruit???
-      //      write_in_file_vrml_remaining_points(S, os);
-    }
-  */
+  if(pit != S.outliers_end()) {
+    os << "Shape {\n"
+      "geometry PointSet {\n"
+      "coord Coordinate { point [\n";
 
-  os << "Shape {\n"
-    "geometry PointSet {\n"
-    "coord Coordinate { point [\n";
-
-  for(typename Surface::Outlier_iterator pit = S.outliers_begin(); pit != S.outliers_end(); pit++){
-    os << pit->x() << " " << pit->y() << " " << pit->z() << ",\n";
-  } 
-os << "] } }\n"
-	 "appearance Appearance {\n"
-	  "  material Material {\n"
-	  "    emissiveColor 1 0.1  0\n"
-	  "  }\n"
-	 "}\n"
+    for(; pit != S.outliers_end(); pit++){
+      os << pit->x() << " " << pit->y() << " " << pit->z() << ",\n";
+    } 
+    os << "] } }\n"
+      "appearance Appearance {\n"
+      "  material Material {\n"
+      "    emissiveColor 1 0.1  0\n"
+      "  }\n"
+      "}\n"
       "} # Shape\n";
-  os << "] # children\n"
-    "} # Group\n";
+  }
+    os << "] # children\n"
+      "} # Group\n";
   std::cout << "-- wrl result written." << std::endl;
 }
 
@@ -1042,7 +948,7 @@ os << "] } }\n"
 template <class Surface>
 void
 write_in_file_selected_facets(char* foutput, const Surface& S,
-			     const bool& contour, const int& out_format)
+			     const bool& boundary, const int& out_format)
 {
   switch(out_format)
     {
@@ -1050,14 +956,14 @@ write_in_file_selected_facets(char* foutput, const Surface& S,
       // no output file...
       return;
     case -1:      
-      write_in_file_iv_selected_facets(foutput, S, contour);
-      write_in_file_vrml2_selected_facets(foutput, S, contour);
+      write_in_file_iv_selected_facets(foutput, S, boundary);
+      write_in_file_vrml2_selected_facets(foutput, S, boundary);
       write_in_file_gv_selected_facets(foutput, S);
       write_in_file_medit_selected_facets(foutput, S);
       //write_in_file_ply_selected_facets(foutput, S);
       return;
     case 0:
-      write_in_file_vrml2_selected_facets(foutput, S, contour);
+      write_in_file_vrml2_selected_facets(foutput, S, boundary);
       return;
     case 1:
       write_in_file_gv_selected_facets(foutput, S);
@@ -1069,7 +975,7 @@ write_in_file_selected_facets(char* foutput, const Surface& S,
       write_in_file_ply_selected_facets(foutput, S);
       return;
     case 4:
-      write_in_file_iv_selected_facets(foutput, S, contour);
+      write_in_file_iv_selected_facets(foutput, S, boundary);
       return;
     }
 }
