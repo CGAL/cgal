@@ -89,9 +89,8 @@ int main() {
   
   Point P(p[0],p[1],p[2]);
   Point Q(q[0],q[1],q[2]);
-  box r(P,Q);
 
-  Fuzzy_box exact_range(r);
+  Fuzzy_box exact_range(P,Q);
 
   // Searching the box r exactly
   t.reset();t.start();    
@@ -104,7 +103,7 @@ int main() {
   // std::copy (res1.begin(),res1.end(),std::ostream_iterator<point>(std::cout,"\n") );
   std::cout << std::endl;
   
-  Fuzzy_box approximate_range(r,0.1);
+  Fuzzy_box approximate_range(P,Q,0.1);
 
   // Searching the box r approximately
   t.reset();t.start();    

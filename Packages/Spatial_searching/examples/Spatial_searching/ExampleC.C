@@ -99,12 +99,13 @@ int main() {
   	p[i2]=  -100.0;
         q[i2]=  900.0;
   }
-  
+   
   Point P(dim,p,p+dim);
   Point Q(dim,q,q+dim);
 
-  Rectangle query_rectangle(P,Q);
-  Box query(query_rectangle,100.0);
+  // Rectangle query_rectangle(P,Q);
+  // Box query(query_rectangle,100.0);
+  Box query(P,Q,100.0);
 
   d.search(std::back_inserter(points_in_rectangular_range_query),query);
 

@@ -50,6 +50,7 @@ public:
   typedef typename Compact_container<Node>::iterator Node_handle;
   typedef typename std::vector<Item*>::iterator Item_iterator;
 
+
 private:
 
   Compact_container<Node> nodes;
@@ -166,6 +167,8 @@ private:
 
 public:
 
+  //introduced for backward compability
+  Kd_tree() {}
   
   Kd_tree(input_iterator first, input_iterator beyond,
 	    Traits t = Traits()) : tr(t) {
@@ -173,7 +176,7 @@ public:
     int dim = first->dimension();
     
     std::copy(first, beyond, std::back_inserter(pts));
-
+ 
     data = std::vector<Item*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
     data_iterator = data.begin();
 

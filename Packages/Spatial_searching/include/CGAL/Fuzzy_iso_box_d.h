@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/Iso_box_d.h
+// file          : include/CGAL/Fuzzy_iso_box_d.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
@@ -38,7 +38,7 @@ namespace CGAL {
     
     private:
 
-    Iso_box_d box;
+    Iso_box_d *box;
     NT eps;
     unsigned int dim;
 
@@ -49,18 +49,23 @@ namespace CGAL {
 		
 
 	// constructor
+        /*
 	Fuzzy_iso_box_d(Iso_box_d b, NT epsilon=NT(0)) : 
 	box(b), eps(epsilon), dim(b.min().dimension())
 	{
-	 std::cout << "dim=" << dim << std::endl;
          for (unsigned int i = 0; i < dim; ++i) {
 		std::cout << box.min_coord(i) << " " << box.max_coord(i) << std::endl;
          }
-	}
+	}*/
+
+        // constructor
+	Fuzzy_iso_box_d(const Item& p, const Item& q, NT epsilon=NT(0)) :
+        eps(epsilon), dim(p.dimension())
+        {box= new Iso_box_d(p,q);}
         	
         bool contains(const Item& p) const {	 
 		for (unsigned int i = 0; i < dim; ++i) {
-			if ( (p[i] < box.min_coord(i)) || (p[i] >= box.max_coord(i)) ) return false;
+			if ( (p[i] < box->min_coord(i)) || (p[i] >= box->max_coord(i)) ) return false;
 		}
 		return true; 
         }
@@ -68,8 +73,8 @@ namespace CGAL {
         
 	bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
  		for (unsigned int i = 0; i < dim; ++i) {
-        		if ( (box.max_coord(i)-eps < rectangle->min_coord(i)) 
-			|| (box.min_coord(i)+eps >= rectangle->max_coord(i)) ) return false;
+        		if ( (box->max_coord(i)-eps < rectangle->min_coord(i)) 
+			|| (box->min_coord(i)+eps >= rectangle->max_coord(i)) ) return false;
     		}
     		return true;                                     
 	}
@@ -77,15 +82,15 @@ namespace CGAL {
 
 	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
     		for (unsigned int i = 0; i < dim; ++i) {
-        		if (  (box.max_coord(i)+eps < rectangle->max_coord(i) ) 
-			|| (box.min_coord(i)-eps >= rectangle->min_coord(i)) ) return false;
+        		if (  (box->max_coord(i)+eps < rectangle->max_coord(i) ) 
+			|| (box->min_coord(i)-eps >= rectangle->min_coord(i)) ) return false;
     		}
     		return true;
   	} 
 
 	
 
-	~Fuzzy_iso_box_d() {}
+	~Fuzzy_iso_box_d() {delete box;}
 
 	
 

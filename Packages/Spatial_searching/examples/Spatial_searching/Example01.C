@@ -3,7 +3,6 @@
 // building a kd-tree 
 #include <CGAL/basic.h>
 
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 

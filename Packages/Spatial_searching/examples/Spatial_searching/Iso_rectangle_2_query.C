@@ -55,11 +55,12 @@ int main() {
   
   Point P(p[0],p[1]);
   Point Q(q[0],q[1]);
-  Box r(P,Q);
+  // Box r(P,Q);
 
   // Searching an exact range
   // using default value 0.0 for epsilon fuzziness paramater
-  Fuzzy_box exact_range(r);
+  // Fuzzy_box exact_range(r); replaced by
+  Fuzzy_box exact_range(P,Q);
   d.search( std::back_inserter( res1 ), exact_range);
 
 
@@ -69,7 +70,8 @@ int main() {
   
   // Searching a fuzzy range
   // using value 0.1 for fuzziness paramater
-  Fuzzy_box approximate_range(r,0.1);
+  // Fuzzy_box approximate_range(r,0.1); replaced by
+  Fuzzy_box approximate_range(P,Q,0.1);
   d.search( std::back_inserter( res2 ), approximate_range);
 
   std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: " << std::endl;

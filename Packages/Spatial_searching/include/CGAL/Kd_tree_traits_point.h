@@ -75,5 +75,6 @@ namespace CGAL {
 
   };
 
+  
 } // namespace CGAL
 #endif // KD_TREE_TRAITS_POINT_H
