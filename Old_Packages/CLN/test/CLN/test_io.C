@@ -2,16 +2,17 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
-#include <fstream>
-#include <cassert>
 
 #ifndef CGAL_USE_CLN
 int main()
 {
-  std::cout << "CGAL has not been installed with CLN." << std::endl;
+  std::cout << "CGAL was not installed with CLN support." << std::endl;
   return 0;
 }
 #else // CGAL_USE_CLN
+
+#include <fstream>
+#include <cassert>
 
 #include <CGAL/CLN/cl_integer.h>
 #include <CGAL/CLN/cl_rational.h>
@@ -22,8 +23,7 @@ int main()
 #include <cl_rational_io.h>
 #include <cl_output.h>
 
-int
-main ()
+int main()
 {
     using std::cout;
     using std::cin;
