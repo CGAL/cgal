@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.5-I-88 $
+// release_date  : $CGAL_Date: 2003/04/22 $
 //
 // file          : include/CGAL/Point_set_2.h
 // package       : Point_set_2 (2.3.3)
@@ -55,7 +55,7 @@ class compare_vertices {
 };
 
 
-template<class Gt, class Tds>
+template<class Gt, class Tds = Triangulation_data_structure_2 <Triangulation_vertex_base_2<Gt> > >
 class  Point_set_2 : public  Delaunay_triangulation_2<Gt,Tds>
 {
 

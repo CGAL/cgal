@@ -6,17 +6,13 @@
 
 typedef CGAL::Cartesian<double>    K;
 //typedef CGAL::Simple_cartesian<double>    K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Triangulation_face_base_2<K>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<K,Vb,Fb> Tds;
 
-typedef CGAL::Point_set_2<K,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<K,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
 
+CGAL::Point_set_2<K> PSet;
 
-CGAL::Point_set_2<K,Tds> PSet;
-
-void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PS)
+void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K>& PS)
 {
   W.clear();
   Edge_iterator eit = PS.finite_edges_begin();
