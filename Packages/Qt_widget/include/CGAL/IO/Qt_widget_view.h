@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_SCENE_H
-#define CGAL_QT_SCENE_H
+#ifndef CGAL_QT_WIDGET_VIEW_H
+#define CGAL_QT_WIDGET_VIEW_H
 
 #include <CGAL/IO/Qt_widget.h>
 #include <qobject.h>
@@ -54,4 +54,4 @@ public:
 
 } // namespace CGAL end
 
-#endif // CGAL_QT_SCENE_H
+#endif // CGAL_QT_WIDGET_VIEW_H
