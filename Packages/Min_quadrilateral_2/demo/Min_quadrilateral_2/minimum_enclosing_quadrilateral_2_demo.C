@@ -25,6 +25,13 @@
 // Demo Program: Computing minimum enclosing quadrilaterals
 // ============================================================================
 
+#include <CGAL/basic.h>
+#ifdef CGAL_USE_LEDA
+#include <LEDA/basic.h>
+#endif
+
+#if defined(CGAL_USE_LEDA) && (__LEDA__ >= 400)
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -47,6 +54,18 @@ using CGAL::to_double;
 #include <CGAL/leda_real.h>
 #include <list>
 
+#ifdef _MSC_VER
+// the general templates from geowin support seem not to work here
+leda_point
+convert_to_leda(const CGAL::Point_2<CGAL::Cartesian<leda_real> >& obj)
+{
+  double x = CGAL::to_double(obj.x());
+  double y = CGAL::to_double(obj.y());
+  leda_point p(x,y);
+  return p;
+}
+#endif // _MSC_VER
+
 
 using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
@@ -66,11 +85,7 @@ using CGAL::Timer;
 using CGAL::convex_hull_points_2;
 using CGAL::squared_distance;
 
-#ifdef CGAL_USE_LEDA
 #include <LEDA/list.h>
-#endif // CGAL_USE_LEDA
-
-#if defined(CGAL_USE_LEDA) && (__LEDA__ >= 400)
 
 //typedef CGAL::Cartesian< double >                      R;
 typedef CGAL::Cartesian< leda_real >                   R;
@@ -209,7 +224,8 @@ public geowin_update< CGALPointlist, list< leda_line > > {
 
 int main()
 {
-  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+  geowin_init_default_type((CGALPointlist*)0,
+    leda_string("CGALPointList"));
 
   CGALPointlist L;
 
@@ -256,81 +272,8 @@ int main()
   return 0;
 }
 
-#if 0
-int main( int argc, char* argv[])
-{
-  // take #points from command line:
-  int n;
-  if ( argc < 1 || (n = atoi( argv[1])) < 3) {
-    cerr << "usage: " << argv[0] << " \"#points\" (>= 3)" << endl;
-    return 1;
-  }
+#else // ! (CGAL_USE_LEDA && __LEDA__ >= 400)
 
-  int random_seed( default_random.get_int( 0, (1 << 31)));
-  if ( argc >= 3)
-    // get seed from command line
-    random_seed = atoi(argv[2]);
-
-  cout << "Test minimum_enclosing_rectangle_2:\nwith "
-       << n << " points\nrandom seed is "
-       << random_seed << endl;
-
-  // build random n-gon:
-  cout << "constructing random " << n << "-gon ..." << flush;
-  Random my_rnd( random_seed);
-  Point_generator gen( 1.0, my_rnd);
-  Polygon_2 p;
-  random_convex_set_2( n, back_inserter( p), gen);
-  cout << " done." << endl;
-
-  // output polygon:
-  cout << "\nHere is the result:" << endl;
-
-#ifdef CGAL_USE_LEDA
-  leda_window W;
-  cgalize(W);
-  W.display();
-  W.init(-1.1, 1.1, -1.1);
-  W << p;
-  W << BLUE << p[0];
-#else
-  cout << p << endl;
-#endif
-
-  // check convexity:
-  if ( ! p.is_convex()) {
-    cerr << "ERROR: polygon is not convex." << endl;
-    return 1;
-  }
-
-  cout << "done." << endl;
-
-  Cont v;
-  minimum_enclosing_parallelogram_2(
-    p.vertices_begin(), p.vertices_end(), back_inserter( v));
-
-#ifdef CGAL_USE_LEDA
-  typedef CGAL::Segment_2< R > Segment_2;
-  W << RED
-    << Segment_2(v[0], v[1]) << Segment_2(v[0], v[3])
-    << Segment_2(v[1], v[2]) << Segment_2(v[2], v[3]);
-
-  // wait for mouse-click:
-  Point_2 tmp_p;
-  W >> tmp_p;
-#else
-  cout << Segment_2(v[0], v[1]) << Segment_2(v[0], v[3])
-       << Segment_2(v[1], v[2]) << Segment_2(v[2], v[3])
-       << endl;
-#endif
-
-  return 0;
-} // int main( argc, argv)
-#endif
-
-#else // ! CGAL_USE_LEDA
-
-#include <CGAL/basic.h>
 #include <iostream>
 
 int main()
@@ -340,7 +283,7 @@ int main()
   return 0;
 }
 
-#endif // CGAL_USE_LEDA
+#endif // (CGAL_USE_LEDA && __LEDA__ >= 400)
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
