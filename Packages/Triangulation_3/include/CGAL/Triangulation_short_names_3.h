@@ -24,13 +24,11 @@
 #ifndef CGAL_TRIANGULATION_SHORT_NAMES_3_H
 #define CGAL_TRIANGULATION_SHORT_NAMES_3_H
 
-// ======
 #define Triangulation_vertex_base_3                 T_vb
 #define Triangulation_cell_base_3                   T_cb
 
 #define Triangulation_geom_traits_3                 T_gt
 
-// ======
 #define Triangulation_data_structure_3              TDS
 
 #define Triangulation_ds_vertex_3                   TDS_v
@@ -44,7 +42,6 @@
 #define Triangulation_ds_cell_circulator_3          TDS_ccir
 #define Triangulation_ds_facet_circulator_3         TDS_fcir
 
-// ======
 #define Triangulation_3                             TR
 
 #define Triangulation_vertex_3                      T_v
@@ -61,10 +58,10 @@
 #define Triangulation_cell_circulator_3             T_ccir
 #define Triangulation_facet_circulator_3            T_fcir
 
-// ======
 #define Delaunay_triangulation_3                    DT
 #define Delaunay_remove_tds_face_3_2                DRf32
 #define Delaunay_remove_tds_vertex_3_2              DRv32
+#define Delaunay_remove_tds_halfedge_compare_3_2    DRthc32
 
 #define Regular_triangulation_euclidean_traits_3    R_gt
 #define Regular_triangulation_3                     RT
