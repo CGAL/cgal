@@ -1,3 +1,9 @@
+2.21    (18 July 2001)
+- converted to non-constructive predicates
+- made Polyhedron a template of the traits class for Borland since
+  otherwise it produces an internal compiler error
+- updated kernels and NT's used in examples and demos for better robustness
+
 2.20    (17 July 2001)
 - changed doc to reflect split of convex hull into three chapters: 2D, 3D, dD
 
