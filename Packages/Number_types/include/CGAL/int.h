@@ -25,7 +25,7 @@
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
 
-#include <CGAL/tags.h>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 

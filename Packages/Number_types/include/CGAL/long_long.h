@@ -27,7 +27,7 @@
 #ifndef CGAL_LONG_LONG_H
 #define CGAL_LONG_LONG_H
 
-#include <CGAL/number_type_tags.h>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
