@@ -29,69 +29,68 @@ template < class Triangulation >
 void
 _test_circulators( const Triangulation &T )
 {
-  int nvi = _test_cls_vertex_circulator(T); 
-  int nei = _test_cls_edge_circulator(T); 
-  int nfi = _test_cls_face_circulator(T); 
-  assert( nvi == nei );
-  assert( nvi == nfi );
-
   // test the circulators provided by the Triangulation class 
-  typedef typename Triangulation::Vertex_iterator   Vertex_iterator;
-  typedef typename Triangulation::Vertex_circulator Vertex_circulator;
-  typedef typename Triangulation::Face_iterator     Face_iterator;
+  typedef typename Triangulation::All_vertices_iterator All_vertices_iterator;
+  typedef typename Triangulation::All_faces_iterator    All_faces_iterator;
+  typedef typename Triangulation::All_edges_iterator    All_edges_iterator;
   typedef typename Triangulation::Face_circulator   Face_circulator;
-  typedef typename Triangulation::Edge_iterator     Edge_iterator;
+  typedef typename Triangulation::Vertex_circulator Vertex_circulator;
   typedef typename Triangulation::Edge_circulator   Edge_circulator;
 
-  int n = 0;
-  Vertex_iterator vit;
+  int nvi = 0;
+  All_vertices_iterator vit;
   Vertex_circulator vc, vc0;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       vc0 = vc = T.incident_vertices( vit, vit->face() );
-      do {
-	vc++; n++;
-      } while (vc != vc0);
+      if( !vc.is_empty()){
+	do {
+	  vc++; nvi++;
+	} while (vc != vc0);
+      }
     }
-  assert(nvi==n);
-
-  n = 0;
+  
+  int nfi = 0;
   Face_circulator fc, fc0;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       fc0 = fc = T.incident_faces( vit, vit->face() );
-      do {
-	fc++; n++;
-      } while (fc != fc0);
+      if( !fc.is_empty()){
+	do {
+	  fc++; nfi++;
+	} while (fc != fc0);
+      }
     }
-  assert(nfi==n);
+  
 
-  n = 0;
+  int nei = 0;
   Edge_circulator ec, ec0;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       ec0 = ec = T.incident_edges( vit, vit->face() );
-      do {
-	ec++; n++;
-      } while (ec != ec0);
+       if( !ec.is_empty()){
+	 do {
+	   ec++; nei++;
+	 } while (ec != ec0);
+       }
     }
-  assert(nei==n);
-
+  
   //Traverse convex_hull- this count infinite
-  n = 0;
+  int nch = 0;
   fc = fc0 = T.incident_faces(T.infinite_vertex());
   do {
-    fc++; n++;
+    fc++; nch++;
   } while (fc != fc0);
   
-  //Count finite faces
-  int m=0;
-  Face_iterator fit;
-  for(fit = T.faces_begin(); fit != T.faces_end(); ++fit) {
-    m++;
-  }
-  //Check Euler formula
-  assert( n+m == 2*(T.number_of_vertices() +1) -4);
+  //Total number of faces and vertices and edges (by Euler)
+  int m = T.number_of_faces() + nch;
+  int n = T.number_of_vertices() +1;
+  int ne = 3*n-6;
+  assert( m = 2*n-4);
+  
+  assert ( nvi ==  nei == 2*ne);
+  assert ( nfi == 3*m);
+ 
 }
 
 

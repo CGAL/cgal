@@ -121,7 +121,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   assert(tds1.number_of_vertices() == 1);
   assert(tds1.is_valid() );
 
-  tds2.insert_first();
+  Vertex* w2 = tds2.insert_first();
   Vertex* v2 = tds2.insert_second();
   assert(tds2.dimension()== 0); 
   assert(tds2.number_of_vertices() == 2);
@@ -227,8 +227,8 @@ _test_cls_tds_2( const Tds &, const Gt &)
 	 tds4.number_of_full_dim_faces() == 8);
 
  
-   //clear(), swap() and copy_constructor
-  cout << "    clear, swap, copy_constructor and assign " << endl;
+   //clear(), swap() and copy_constructor and copy
+  cout << "    clear, swap, assign and copy " << endl;
   Tds tds1b(tds1);
   assert(tds1b.is_valid());
   Tds tds1c = tds1b;
@@ -237,6 +237,9 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds1d.swap(tds1c);
   assert(tds1d.is_valid() & tds1d.number_of_vertices()==1);
   tds1d.clear();
+  Tds tds1e;
+  Vertex *w1e= tds1e.copy_tds(tds1,w1);
+  assert(tds1e.is_valid() && tds1e.has_vertex(w1e));
 
   Tds tds2b(tds2);
   assert(tds2b.is_valid());
@@ -246,6 +249,9 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds2d.swap(tds2c);
   assert(tds2d.is_valid() & tds2d.number_of_vertices()==2);
   tds2d.clear();
+  Tds tds2e;
+  Vertex *w2e= tds2e.copy_tds(tds2,w2);
+  assert(tds2e.is_valid() && tds2e.has_vertex(w2e));
 
   Tds tds3b(tds3);
   assert(tds3b.is_valid());
@@ -255,6 +261,10 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds3d.swap(tds3c);
   assert(tds3d.is_valid() & tds3d.number_of_vertices()==4);
   tds3d.clear();
+  Tds tds3e;
+  Vertex *w3e= tds3e.copy_tds(tds3,w3);
+  assert(tds3e.is_valid()&& tds3e.has_vertex(w3e));
+
 
   Tds tds4b(tds4);
   assert(tds4b.is_valid());
@@ -264,7 +274,9 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds4d.swap(tds4c);
   assert(tds4d.is_valid() && tds4d.number_of_vertices()==6);
   tds4d.clear();
-	     
+  Tds tds4e;
+  Vertex *w4e= tds4e.copy_tds(tds4,w4);
+  assert(tds4e.is_valid() && tds4e.has_vertex(w4e));
 
    //iterators are tested by is_valid()
   //test circulators and v->degree()
@@ -275,7 +287,20 @@ _test_cls_tds_2( const Tds &, const Gt &)
   _test_tds_circulators(tds3);
   _test_tds_circulators(tds4);
 
-  //TODO
+  _test_tds_iterators(tds0);
+  _test_tds_iterators(tds1);
+  _test_tds_iterators(tds2);
+  _test_tds_iterators(tds3);
+  _test_tds_iterators(tds4);
+
+  //has_vertex
+  cout << "    has_vertex" << endl;
+  assert (tds4.has_vertex(v4_5));
+  assert (tds3.has_vertex(v3));
+  assert (tds2.has_vertex(v2));
+  
+
+
   //test input, output
   cout << "    output to a file" << endl;
   ofstream of0("file_tds0");
@@ -301,15 +326,15 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
   cout << "    input from a file" << endl;
   ifstream if0("file_tds0"); CGAL::set_ascii_mode(if0);
-  Tds tds0e; if0 >> tds0e ;   assert( tds0e.is_valid());
+  Tds tds0f; if0 >> tds0f ;   assert( tds0f.is_valid());
   ifstream if1("file_tds1"); CGAL::set_ascii_mode(if1);
-  Tds tds1e; if1 >> tds1e;  assert( tds1e.is_valid());
+  Tds tds1f; if1 >> tds1f;  assert( tds1f.is_valid());
   ifstream if2("file_tds2"); CGAL::set_ascii_mode(if2);
-  Tds tds2e; if2 >> tds2e ;   assert( tds2e.is_valid());
+  Tds tds2f; if2 >> tds2f ;   assert( tds2f.is_valid());
   ifstream if3("file_tds3"); CGAL::set_ascii_mode(if3);
-  Tds tds3e; if3 >> tds3e ;   assert( tds3e.is_valid());
+  Tds tds3f; if3 >> tds3f ;   assert( tds3f.is_valid());
   ifstream if4("file_tds4"); CGAL::set_ascii_mode(if4);
-  Tds tds4e; if4 >> tds4e ;   assert( tds4e.is_valid());
+  Tds tds4f; if4 >> tds4f ;   assert( tds4f.is_valid());
 
   // test destructor and return
   cout << "    destructors and return" << endl;
@@ -365,4 +390,29 @@ _test_tds_circulators( const Tds&  tds)
   assert( counte == 2 * tds.number_of_edges());
   assert( countv == counte);
 	  
+}
+
+template< class Tds>
+void
+_test_tds_iterators( const Tds&  tds)
+{
+  typedef typename Tds::Edge     Edge;
+
+  typedef typename Tds::Vertex_iterator   Vertex_iterator;
+  typedef typename Tds::Face_iterator     Face_iterator;
+  typedef typename Tds::Edge_iterator     Edge_iterator;
+  
+  typedef typename Tds::Vertex_circulator Vertex_circulator;
+  typedef typename Tds::Face_circulator   Face_circulator;
+  typedef typename Tds::Edge_circulator   Edge_circulator;
+  
+  Edge e;
+  
+  for( Edge_iterator eit = tds.edges_begin();
+       eit != tds.edges_end(); eit++) {
+    e = *eit;
+  }
+  return;
+
+
 }

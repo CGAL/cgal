@@ -24,11 +24,12 @@ template < class Triangulation >
 int
 _test_cls_edge_iterator( const Triangulation &T )
 {
-  typedef typename Triangulation::Edge_iterator   Edge_iterator;
+  typedef typename Triangulation::Finite_edges_iterator   
+                                  Finite_edges_iterator;
 
   int n = 0;
-  Edge_iterator eit;
-  for (eit = T.edges_begin(); eit != T.edges_end(); ++eit)
+  Finite_edges_iterator eit;
+  for (eit = T.finite_edges_begin(); eit != T.finite_edges_end(); ++eit)
     n++;
 
   return n;

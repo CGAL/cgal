@@ -24,13 +24,13 @@ template < class Triangulation >
 int
 _test_cls_edge_circulator( const Triangulation &T )
 {
-  typedef typename Triangulation::Vertex_iterator   Vertex_iterator;
+  typedef typename Triangulation::All_vertices_iterator All_vertices_iterator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
 
   int n = 0;
-  Vertex_iterator vit;
+  All_vertices_iterator vit;
   Edge_circulator ec, ec0;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       ec0 = ec = vit->incident_edges( vit->face() );
       //n++;

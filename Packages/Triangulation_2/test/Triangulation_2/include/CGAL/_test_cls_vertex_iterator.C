@@ -25,11 +25,12 @@ template < class Triangulation >
 int
 _test_cls_vertex_iterator( const Triangulation &T )
 {
-  typedef typename Triangulation::Vertex_iterator Vertex_iterator;
+  typedef typename Triangulation::Finite_vertices_iterator 
+                                  Finite_vertices_iterator;
 
   int n = 0;
-  Vertex_iterator vit;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  Finite_vertices_iterator vit;
+  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
     n++;
   assert( n == T.number_of_vertices() );
 

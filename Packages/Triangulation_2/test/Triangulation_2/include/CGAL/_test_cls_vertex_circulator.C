@@ -25,20 +25,21 @@ template < class Triangulation >
 int
 _test_cls_vertex_circulator( const Triangulation &T )
 {
-  typedef typename Triangulation::Vertex_iterator   Vertex_iterator;
+  typedef typename Triangulation::All_vertices_iterator All_vertices_iterator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
 
   int n = 0;
-  Vertex_iterator vit;
+  All_vertices_iterator vit;
   Vertex_circulator vc, vc0;
-  for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+  for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
       vc0 = vc = vit->incident_vertices( vit->face() );
-      //n++;
-      do {
-	vc++; n++;
-      } while (vc != vc0);
+      if (! vc.is_empty()) {
+	do {
+	  vc++; n++;
+	} while (vc != vc0);
+      }
     }
-
   return n;
 }
+
