@@ -1,5 +1,11 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.10 on 15-Sep-2000
+- added indexing command.
+
+Version 3.9.2 on 13-Sep-2000
+- re-added example and demo program.
+
 Version 3.9.1 on 13-Sep-2000
 - replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
 
