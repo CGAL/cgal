@@ -690,12 +690,12 @@ private:
 
       bool operator()(const Vertex_iterator & v) const
       {
-	  return t->is_infinite(v->handle());
+	  return t->is_infinite(v);
       }
 
       bool operator()(const Cell_iterator & c) const
       {
-	  return t->is_infinite(c->handle());
+	  return t->is_infinite(c);
       }
 
       bool operator()(const Edge_iterator & e) const
