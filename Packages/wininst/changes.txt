@@ -1,3 +1,7 @@
+2.2.15 (18/01/04) Remove obsolete files :
+                    include/CGAL/config/msvc7/iterator_specializations.h
+                    include/CGAL/config/msvc7/stl_iterator_base.h
+
 2.2.12 (19/11/03) [rursu] removed INSTALL.rtf and Install.hlp that were used 
 		  in CGAL-2.4
 
