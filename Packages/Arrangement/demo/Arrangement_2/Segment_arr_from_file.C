@@ -1,4 +1,16 @@
 #include <CGAL/basic.h>
+
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+  return 0;
+}
+
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -261,3 +273,5 @@ int main(int argc, char * argv[])
   delete myWindow;
   return 0;
 }
+
+#endif
