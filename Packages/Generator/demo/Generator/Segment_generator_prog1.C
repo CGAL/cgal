@@ -1,5 +1,5 @@
 // demo/Generator/Segment_generator_prog1.C
-// -------------------------------
+// ----------------------------------------
 // CGAL example program for the generic segment generator.
 
 #include <CGAL/basic.h>
@@ -13,15 +13,13 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/Window_stream.h>  // used for visualization
+#include <CGAL/IO/Window_stream.h>  
 
-using namespace CGAL;
-
-typedef Cartesian<double>                R;
-typedef Point_2<R>                       Point;
-typedef Creator_uniform_2<double,Point>  Pt_creator;
-typedef Segment_2<R>                     Segment;
-typedef std::vector<Segment>             Vector;
+typedef CGAL::Cartesian<double>                K;
+typedef K::Point_2                             Point;
+typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
+typedef K::Segment_2                           Segment;
+typedef std::vector<Segment>                   Vector;
 
 int main() {
     // Create test segment set. Prepare a vector for 200 segments.
@@ -29,21 +27,21 @@ int main() {
     segs.reserve(200);
 
     // Prepare point generator for the horizontal segment, length 200.
-    typedef  Random_points_on_segment_2<Point,Pt_creator>  P1;
+    typedef  CGAL::Random_points_on_segment_2<Point,Pt_creator>  P1;
     P1 p1( Point( -0.4, 0), Point( 0.4, 0));
 
     // Prepare point generator for random points on circle, radius 250.
-    typedef  Random_points_on_circle_2<Point,Pt_creator>  P2;
+    typedef  CGAL::Random_points_on_circle_2<Point,Pt_creator>  P2;
     P2 p2( 1.0);
 
     // Create 200 segments.
-    typedef Creator_uniform_2< Point, Segment> Seg_creator;
-    typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
+    typedef CGAL::Creator_uniform_2< Point, Segment> Seg_creator;
+    typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
     CGAL::copy_n( g, 200, std::back_inserter(segs));
 
     // Visualize segments.
-    Window_stream* window = create_and_display_demo_window();
+    CGAL::Window_stream* window = CGAL::create_and_display_demo_window();
     for( Vector::iterator i = segs.begin(); i != segs.end(); i++)
         *window << *i;
 
