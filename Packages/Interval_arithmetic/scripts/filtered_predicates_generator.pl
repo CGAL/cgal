@@ -121,7 +121,7 @@ sub print_dynamic {
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
 
   print FO
-"#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+"#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* $inline */
@@ -237,7 +237,7 @@ sub print_static {
      map "\n    NEW_bound = std::max(NEW_bound, fabs($_.to_double()));", @args;
 
   print FO
-"#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+"#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* $inline */

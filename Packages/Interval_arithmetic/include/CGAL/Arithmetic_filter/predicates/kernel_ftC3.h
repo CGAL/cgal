@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -74,7 +74,7 @@ collinearC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -201,7 +201,7 @@ struct Static_Filtered_collinearC3_9
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -283,7 +283,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -343,7 +343,7 @@ collinearC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -400,7 +400,7 @@ orientationC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -520,7 +520,7 @@ struct Static_Filtered_orientationC3_12
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -615,7 +615,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -685,7 +685,7 @@ orientationC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -724,7 +724,7 @@ equal_directionC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -852,7 +852,7 @@ struct Static_Filtered_equal_directionC3_6
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -925,7 +925,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -979,7 +979,7 @@ equal_directionC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1021,7 +1021,7 @@ side_of_oriented_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1112,7 +1112,7 @@ struct Static_Filtered_side_of_oriented_planeC3_7
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1182,7 +1182,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1232,7 +1232,7 @@ side_of_oriented_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1298,7 +1298,7 @@ side_of_oriented_sphereC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1467,7 +1467,7 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1577,7 +1577,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
@@ -1659,7 +1659,7 @@ side_of_oriented_sphereC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -1725,7 +1725,7 @@ side_of_bounded_sphereC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -1878,7 +1878,7 @@ struct Static_Filtered_side_of_bounded_sphereC3_15
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -1989,7 +1989,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2072,7 +2072,7 @@ side_of_bounded_sphereC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_INLINE */
@@ -2120,7 +2120,7 @@ cmp_dist_to_pointC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_INLINE */
@@ -2223,7 +2223,7 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_INLINE */
@@ -2303,7 +2303,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_INLINE */
@@ -2361,7 +2361,7 @@ cmp_dist_to_pointC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2412,7 +2412,7 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2520,7 +2520,7 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_10
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2605,7 +2605,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2667,7 +2667,7 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2733,7 +2733,7 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2872,7 +2872,7 @@ struct Static_Filtered_cmp_signed_dist_to_planeC3_15
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -2982,7 +2982,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3064,7 +3064,7 @@ cmp_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3130,7 +3130,7 @@ has_larger_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3263,7 +3263,7 @@ struct Static_Filtered_has_larger_signed_dist_to_planeC3_15
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3373,7 +3373,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3455,7 +3455,7 @@ has_larger_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3521,7 +3521,7 @@ has_smaller_signed_dist_to_planeC3(
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3654,7 +3654,7 @@ struct Static_Filtered_has_smaller_signed_dist_to_planeC3_15
   }
 };
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
@@ -3764,7 +3764,7 @@ re_adjust:
   }
 }
 
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
