@@ -127,8 +127,8 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	   if (! w_demo_p->empty)//..//
 	   {
          Seg_arr::Edge_iterator hei;
-         for (hei = w_demo_p->m_curves_arr.edges_begin(); 
-              hei != w_demo_p->m_curves_arr.edges_end(); ++hei) 
+         for (hei = w_demo_p->m_curves_arr->edges_begin(); 
+              hei != w_demo_p->m_curves_arr->edges_end(); ++hei) 
          {
            Pm_xseg_2 xcurve = hei->curve();
 		       Curve_data cd = xcurve.get_data();
@@ -152,12 +152,12 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 if (! all_pm_are_empty)//..//
 	 {
      if ( ! seg_list.empty())
-       w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
+       w_demo_p_new->m_curves_arr->insert(seg_list.begin(),seg_list.end());
      w_demo_p_new->update_colors(ubf_colors); 
      Seg_notification  seg_notif;
      std::list<Pm_seg_2>::iterator it;
      for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-       w_demo_p_new->m_curves_arr.insert( *it, &seg_notif );
+       w_demo_p_new->m_curves_arr->insert( *it, &seg_notif );
 
      w_demo_p_new->empty = false;
 
@@ -165,8 +165,8 @@ void MyWindow::make_overlay( std::list<int> indexes ,
      {
        // update new planner map indexes
        Seg_arr::Halfedge_iterator hei;
-       for (hei = w_demo_p_new->m_curves_arr.halfedges_begin(); 
-           hei != w_demo_p_new->m_curves_arr.halfedges_end(); ++hei) 
+       for (hei = w_demo_p_new->m_curves_arr->halfedges_begin(); 
+           hei != w_demo_p_new->m_curves_arr->halfedges_end(); ++hei) 
        {
          Curve_data cd = hei->curve().get_data();
          cd.m_type = Curve_data::INTERNAL;
@@ -183,13 +183,12 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 	 }
 	 else//..//
 	 {
-		std::cout<<"all pm are empty...\n";
+		
     w_demo_p_new->update_colors(ubf_colors);   
 		//w_demo_p_new->set_window(-10, 10, -10, 10);
 	 }
 
 	 // update the colors of the faces of the new PM //..//
-	 //std::cout<<"overlaying faces...\n";
 	
 	 
      w_demo_p_new->setCursor(old);     
@@ -232,8 +231,8 @@ void MyWindow::make_overlay( std::list<int> indexes ,
    	   if (! w_demo_p->empty)//..//
        {
          Pol_arr::Edge_iterator hei;
-         for (hei = w_demo_p->m_curves_arr.edges_begin(); 
-            hei != w_demo_p->m_curves_arr.edges_end(); ++hei) 
+         for (hei = w_demo_p->m_curves_arr->edges_begin(); 
+            hei != w_demo_p->m_curves_arr->edges_end(); ++hei) 
          {
            Pm_xpol_2 xcurve = hei->curve();
  		       Curve_pol_data cd = xcurve.get_data();
@@ -258,21 +257,21 @@ void MyWindow::make_overlay( std::list<int> indexes ,
      if (! all_pm_are_empty)//..//
 	   {
        if ( ! pol_list.empty())
-       w_demo_p_new->m_curves_arr.insert(
+       w_demo_p_new->m_curves_arr->insert(
                                        pol_list.begin(),pol_list.end());
        w_demo_p_new->update_colors(ubf_colors);   
        Pol_notification pol_notif;
        std::list<Pm_pol_2>::iterator it;
        for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-         w_demo_p_new->m_curves_arr.insert( *it , &pol_notif );
+         w_demo_p_new->m_curves_arr->insert( *it , &pol_notif );
 
           
        if (!colors_flag)
        {
          // update new planner map indexes
          Pol_arr::Halfedge_iterator hei;
-         for (hei = w_demo_p_new->m_curves_arr.halfedges_begin(); 
-             hei != w_demo_p_new->m_curves_arr.halfedges_end(); ++hei) 
+         for (hei = w_demo_p_new->m_curves_arr->halfedges_begin(); 
+             hei != w_demo_p_new->m_curves_arr->halfedges_end(); ++hei) 
          {
            Curve_pol_data cd = hei->curve().get_data();
            cd.m_type = Curve_pol_data::INTERNAL;
@@ -286,7 +285,6 @@ void MyWindow::make_overlay( std::list<int> indexes ,
      }
 	   else//..//
 	   {
-		   std::cout<<"all pm are empty...\n";
 		   w_demo_p_new->update_colors(ubf_colors);   
        //w_demo_p_new->set_window(-10, 10, -10, 10);
 	   }
@@ -330,8 +328,8 @@ void MyWindow::make_overlay( std::list<int> indexes ,
   	   {
 
           Conic_arr::Edge_iterator hei;
-          for (hei = w_demo_p->m_curves_arr.edges_begin(); 
-                hei != w_demo_p->m_curves_arr.edges_end(); ++hei) 
+          for (hei = w_demo_p->m_curves_arr->edges_begin(); 
+                hei != w_demo_p->m_curves_arr->edges_end(); ++hei) 
           {
             Pm_xconic_2 xcurve = hei->curve();
   		      Curve_conic_data cd = xcurve.get_data();
@@ -342,7 +340,7 @@ void MyWindow::make_overlay( std::list<int> indexes ,
             if ( w_demo_p->antenna(*hei))
               antenna_list.push_back(curve);
             else
-              w_demo_p_new->m_curves_arr.insert(curve);
+              w_demo_p_new->m_curves_arr->insert(curve);
           }// for
 		      all_pm_are_empty = false;
        }// if
@@ -355,21 +353,21 @@ void MyWindow::make_overlay( std::list<int> indexes ,
 
  	    if (! all_pm_are_empty)//..//
 	    {
-        //w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
+        //w_demo_p_new->m_curves_arr->insert(seg_list.begin(),seg_list.end());
         // update the colors of the faces of the new PM //..//
   	    w_demo_p_new->update_colors(ubf_colors);  
         Conic_notification conic_notif;
         std::list<Pm_conic_2>::iterator it;
         for (it = antenna_list.begin(); it != antenna_list.end(); it++)
-          w_demo_p_new->m_curves_arr.insert( *it , &conic_notif );
+          w_demo_p_new->m_curves_arr->insert( *it , &conic_notif );
         w_demo_p_new->empty = false;
 
 	      if (!colors_flag)
         {
           // update new planner map indexes
           Conic_arr::Halfedge_iterator hei;
-          for (hei = w_demo_p_new->m_curves_arr.halfedges_begin(); 
-                hei != w_demo_p_new->m_curves_arr.halfedges_end(); ++hei) 
+          for (hei = w_demo_p_new->m_curves_arr->halfedges_begin(); 
+                hei != w_demo_p_new->m_curves_arr->halfedges_end(); ++hei) 
           {
             Curve_conic_data cd = hei->curve().get_data();
             cd.m_type = Curve_conic_data::INTERNAL;
@@ -383,7 +381,6 @@ void MyWindow::make_overlay( std::list<int> indexes ,
       }
       else
       {
-    	    std::cout<<"all pm are empty...\n";
      	    w_demo_p_new->update_colors(ubf_colors);   
 	  	    //w_demo_p_new->set_window(-10, 10, -10, 10);
 	    }

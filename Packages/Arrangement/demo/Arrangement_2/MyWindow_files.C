@@ -225,8 +225,8 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-      w_demo_p->m_curves_arr.read(inputFile);
-	  if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+      w_demo_p->m_curves_arr->read(inputFile);
+	  if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
     	w_demo_p->empty = true;
       else 
         w_demo_p->empty = false;
@@ -237,9 +237,9 @@ void MyWindow::fileOpenPm()
       Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-       w_demo_p->m_curves_arr.read(inputFile);
+       w_demo_p->m_curves_arr->read(inputFile);
 
-	   if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	   if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	     w_demo_p->empty = false;
        else 
          w_demo_p->empty = true;
@@ -250,7 +250,7 @@ void MyWindow::fileOpenPm()
   //   Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = 
   //     static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
   //     (myBar->currentPage());
-	 //w_demo_p->m_curves_arr.read(inputFile);
+	 //w_demo_p->m_curves_arr->read(inputFile);
      break;
     }
   }  
@@ -294,7 +294,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
       (myBar->currentPage());
     if (clear_flag)
-        w_demo_p->m_curves_arr.clear();
+        w_demo_p->m_curves_arr->clear();
     char dummy[256];
     Pm_base_conic_2* cv;
     int count;
@@ -310,7 +310,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       cd.m_index = w_demo_p->index;
       cd.m_ptr.m_curve = cv;
       Conic_notification conic_notif;
-      w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd) , & conic_notif);
+      w_demo_p->m_curves_arr->insert(Pm_conic_2( *cv , cd) , & conic_notif);
       
       CGAL::Bbox_2 curve_bbox = cv->bbox();
       if (i == 0)
@@ -318,7 +318,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       else
         w_demo->bbox = w_demo->bbox + curve_bbox;
 	}
-	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
     else 
       w_demo_p->empty = false;    
@@ -330,7 +330,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
       (myBar->currentPage());
     if (clear_flag)
-      w_demo_p->m_curves_arr.clear();
+      w_demo_p->m_curves_arr->clear();
     
     int num_polylines, num_segments;
     int ix, iy;
@@ -366,13 +366,13 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
 	  Pm_pol_2 curve(*base_polyline, cd);
       pol_list.push_back(curve);
-      //w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
+      //w_demo_p->m_curves_arr->insert(Pm_pol_2( *base_polyline , cd));
     }
     Pol_notification pol_notif;
     std::cout << "insert polylines fron file\n";
-	  w_demo_p->m_curves_arr.insert(pol_list.begin(),pol_list.end(), &pol_notif);
+	  w_demo_p->m_curves_arr->insert(pol_list.begin(),pol_list.end(), &pol_notif);
     std::cout << "finish insert polylines fron file\n";
-    if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+    if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
       w_demo_p->empty = true;
     else 
       w_demo_p->empty = false;
@@ -384,7 +384,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
       (myBar->currentPage());
     if (clear_flag)
-        w_demo_p->m_curves_arr.clear();
+        w_demo_p->m_curves_arr->clear();
     
     int count;
     inputFile >> count;
@@ -414,12 +414,12 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       
 	  Pm_seg_2 curve(*base_seg, cd);
       seg_list.push_back(curve);
-      //w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd), &seg_notif);
+      //w_demo_p->m_curves_arr->insert(Pm_seg_2( *base_seg , cd), &seg_notif);
     }
     
-	w_demo_p->m_curves_arr.insert(seg_list.begin(),seg_list.end(), &seg_notif);
+	w_demo_p->m_curves_arr->insert(seg_list.begin(),seg_list.end(), &seg_notif);
 
-	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
+	if( w_demo_p->m_curves_arr->number_of_vertices() == 0 )
 	  w_demo_p->empty = true;
     else 
       w_demo_p->empty = false;

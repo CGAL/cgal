@@ -29,6 +29,12 @@
 #include <CGAL/IO/Pm_drawer.h> 
 #include <CGAL/IO/draw_pm.h> 
 
+#include <CGAL/Pm_trapezoid_ric_point_location.h>
+#include <CGAL/Pm_naive_point_location.h>
+#include <CGAL/Pm_simple_point_location.h>
+#include <CGAL/Pm_walk_along_line_point_location.h>
+//#include <CGAL/Pm_lenmarks_point_location.h>
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/IO/Postscript_file_stream.h> 
 #endif
@@ -46,8 +52,9 @@
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID , POINT};
 enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING ,
-				  DRAG , MERGE , SPLIT,FILLFACE};
+				          DRAG , MERGE , SPLIT,FILLFACE};
 enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABOLA , HYPERBOLA};
+enum Strategy   { NAIVE , SIMPLE , TRAP , WALK };
 
 // default background color
 const QColor def_bg_color(236,236,236);
@@ -158,8 +165,13 @@ typedef Pm_seg_list::const_iterator                        Pm_seg_const_iter;
 typedef Pm_seg_list::iterator                              Pm_seg_iter;
 typedef Seg_arr::Pmwx_change_notification         Seg_arr_change_notification;
 
-
-
+//point location
+typedef CGAL::Pm_trapezoid_ric_point_location<Seg_pm>    Seg_trap_point_location;
+typedef CGAL::Pm_naive_point_location<Seg_pm>             Seg_naive_point_location;
+typedef CGAL::Pm_simple_point_location<Seg_pm>           Seg_simple_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Seg_pm>  Seg_walk_point_location;
+//typedef CGAL::Pm_nearest_neighbor<Seg_pm>               Seg_nearest_neighbor;
+//typedef CGAL::Pm_lenmarks_point_location<Seg_pm,Nearest_neighbor>  Seg_lenmarks_point_location;
 
 class Curve_data { 
 public:
@@ -214,7 +226,13 @@ typedef std::list<Pm_pol_2*>                               Pm_pol_list;
 typedef Pm_pol_list::const_iterator                        Pm_pol_const_iter;
 typedef Pm_pol_list::iterator                              Pm_pol_iter;
 
-
+//point location
+typedef CGAL::Pm_trapezoid_ric_point_location<Pol_pm>    Pol_trap_point_location;
+typedef CGAL::Pm_naive_point_location<Pol_pm>            Pol_naive_point_location;
+typedef CGAL::Pm_simple_point_location<Pol_pm>           Pol_simple_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Pol_pm>  Pol_walk_point_location;
+//typedef CGAL::Pm_nearest_neighbor<Pol_pm>               Pol_nearest_neighbor;
+//typedef CGAL::Pm_lenmarks_point_location<Pol_pm,Nearest_neighbor>  Pol_lenmarks_point_location;
 
 
 
@@ -272,6 +290,14 @@ typedef Conic_arr::Pmwx_change_notification         Conic_arr_change_notificatio
 typedef std::list<Pm_xconic_2*>                          Pm_xconic_list;
 typedef Pm_xconic_list::const_iterator                   Pm_xconic_const_iter;
 typedef Pm_xconic_list::iterator                         Pm_xconic_iter;
+
+//point location
+typedef CGAL::Pm_trapezoid_ric_point_location<Conic_pm>    Conic_trap_point_location;
+typedef CGAL::Pm_naive_point_location<Conic_pm>            Conic_naive_point_location;
+typedef CGAL::Pm_simple_point_location<Conic_pm>           Conic_simple_point_location;
+typedef CGAL::Pm_walk_along_line_point_location<Conic_pm>  Conic_walk_point_location;
+//typedef CGAL::Pm_nearest_neighbor<Conic_pm>               Conic_nearest_neighbor;
+//typedef CGAL::Pm_lenmarks_point_location<Conic_pm,Nearest_neighbor>  Conic_lenmarks_point_location;
 
 
 class Curve_conic_data { 

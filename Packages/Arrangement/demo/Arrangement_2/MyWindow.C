@@ -372,7 +372,7 @@ MyWindow::MyWindow(int w, int h)
 MyWindow::~MyWindow()
 {}
 
-#include "MyWindow.moc"
+//#include "MyWindow.moc"
 
 
 /*! main */

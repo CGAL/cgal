@@ -237,6 +237,33 @@ void MyWindow::rayShootingDirection()
   }
 }
 
+/*! a dialog form to set the pointLocationStrategy */
+void MyWindow::pointLocationStrategy()
+{
+  //TODO - implement
+  /* Qt_widget_base_tab * w_demo_p = 
+    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());*/
+   PointLocationStrategyForm *form = new PointLocationStrategyForm();
+   if ( form->exec() )
+   {
+     QString type = form->arrComboBox1->currentText();
+     if(! strcmp(type,"Naive"))
+       strategy = NAIVE ;
+     else 
+       if(!strcmp(type,"Simple"))
+         strategy = SIMPLE;  
+       else
+         if(!strcmp(type,"Trapezoiedal"))
+           strategy = TRAP;
+         else
+           if(!strcmp(type,"Walk"))
+             strategy = WALK;
+   }
+}
+
+
+
+
 /*! initialize the widget */
 void MyWindow::init(Qt_widget_base_tab *widget)
 {
@@ -264,7 +291,7 @@ void MyWindow::add_segment_tab()
 {
   Qt_widget_demo_tab<Segment_tab_traits> *widget = 
     new Qt_widget_demo_tab<Segment_tab_traits>
-    (SEGMENT_TRAITS , this, tab_number);
+    (SEGMENT_TRAITS ,strategy , this, tab_number);
   init(widget);
 }
 
@@ -273,7 +300,7 @@ void MyWindow::add_polyline_tab()
 {
   Qt_widget_demo_tab<Polyline_tab_traits> *widget = 
     new Qt_widget_demo_tab<Polyline_tab_traits>
-    (POLYLINE_TRAITS , this, tab_number);
+    (POLYLINE_TRAITS ,strategy, this, tab_number);
   init(widget);
 }
 
@@ -282,7 +309,7 @@ void MyWindow::add_conic_tab()
 {
   Qt_widget_demo_tab<Conic_tab_traits> *widget = 
     new Qt_widget_demo_tab<Conic_tab_traits>
-    (CONIC_TRAITS , this , tab_number);
+    (CONIC_TRAITS ,strategy, this , tab_number);
   init(widget);
 
   //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()), 
@@ -290,12 +317,14 @@ void MyWindow::add_conic_tab()
 
 }
 
-/*! add a tab widget with polyline traits */
+/*! remove the current page (tab) from myBar */
 void MyWindow::remove_tab()
 {
   if (number_of_tabs > 1)
   {
-    myBar->removePage(myBar->currentPage());
+    QWidget *w_demo_p = myBar->currentPage(); // w_demo_p is a pointer to Qt_widget_demo_tab object
+    myBar->removePage(w_demo_p);
+    delete w_demo_p;  //the destructor of Qt_widget_demo_tab will be called (virtual...) 
     number_of_tabs--;
   }
   else
@@ -320,19 +349,19 @@ void MyWindow::updateTraitsType( QAction *action )
   {
     if (old_widget->traits_type == SEGMENT_TRAITS) return;
     widget = new Qt_widget_demo_tab<Segment_tab_traits>
-      (SEGMENT_TRAITS , this);
+      (SEGMENT_TRAITS ,strategy, this);
   }
   else if (action == setPolylineTraits)
   {
     if (old_widget->traits_type == POLYLINE_TRAITS) return;
     widget = new Qt_widget_demo_tab<Polyline_tab_traits>
-      (POLYLINE_TRAITS , this);
+      (POLYLINE_TRAITS ,strategy , this);
   }
   else if (action == setConicTraits)
   {
     if (old_widget->traits_type == CONIC_TRAITS) return;
     widget = new Qt_widget_demo_tab<Conic_tab_traits>
-      (CONIC_TRAITS , this);
+      (CONIC_TRAITS ,strategy , this);
   }
   
   if( !old_widget->empty ) // pm is not empty
@@ -645,7 +674,7 @@ void MyWindow::conicType()
   if ( form->exec() ) 
   {
     QString type = form->arrComboBox1->currentText();
-    //std::cout << type << std::endl;
+  
     if (strcmp(type,"Circle") == 0)
       w_demo_p->conic_type = CIRCLE;
     else if (strcmp(type,"Segment") == 0)
