@@ -13,6 +13,9 @@
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <vector>
 #include <cassert>
+
+#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 typedef leda_integer RT;
@@ -67,4 +70,14 @@ int main ()
 
   return 0;
 }
+
+#else // on windows:
+
+int main() {
+  std::cerr <<
+  "This demo requires geomview, which is is not present on windows\n";
+  return 0;
+}
+
+#endif
 
