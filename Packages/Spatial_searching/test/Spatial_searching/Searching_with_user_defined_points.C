@@ -9,8 +9,8 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/General_standard_search.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/K_neighbor_search.h>
 
 #ifdef CUSTOM_POINTS
 
@@ -30,8 +30,8 @@ typedef CGAL::Euclidean_distance<Traits> Distance;
 
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
-typedef CGAL::Orthogonal_standard_search<Traits, Distance> NN_orthogonal_search;
-typedef CGAL::General_standard_search<Traits, Distance> NN_general_search;
+typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> NN_orthogonal_search;
+typedef CGAL::K_neighbor_search<Traits, Distance> NN_general_search;
 typedef NN_general_search::Tree Tree;
 typedef NN_general_search::Splitter Splitter;
 

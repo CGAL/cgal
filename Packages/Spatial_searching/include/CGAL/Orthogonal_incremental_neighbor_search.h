@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/Orthogonal_priority_search.h
+// file          : include/CGAL/Orthogonal_incremental_neighbor_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef  ORTHOGONAL_PRIORITY_SEARCH
-#define  ORTHOGONAL_PRIORITY_SEARCH
+#ifndef  ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
+#define  ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 #include <cstring>
 #include <list>
 #include <queue>
@@ -41,7 +41,7 @@ template <class GeomTraits,
           class Distance_=Euclidean_distance<GeomTraits>,
           class Splitter_ = Sliding_midpoint<GeomTraits>,
 	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_true> >
-class Orthogonal_priority_search {
+class Orthogonal_incremental_neighbor_search {
 
 public:
   typedef Splitter_ Splitter;
@@ -378,9 +378,9 @@ class iterator;
     public:
 
     // constructor
-    Orthogonal_priority_search(Tree& tree,  
-			       Query_item& q, NT Eps = NT(0.0), 
-			       bool search_nearest=true, const Distance& tr=Distance()) 
+    Orthogonal_incremental_neighbor_search(Tree& tree,  
+				  Query_item& q, NT Eps = NT(0.0), 
+				  bool search_nearest=true, const Distance& tr=Distance()) 
       : start(tree,q,tr,Eps,search_nearest),
         past_the_end()
         
@@ -500,11 +500,11 @@ class iterator;
 }; // class 
 
 template <class Traits, class Query_item, class Distance>
-void swap (typename Orthogonal_priority_search<Traits, 
+void swap (typename Orthogonal_incremental_neighbor_search<Traits, 
 				Query_item, Distance>::iterator& x,
-        typename Orthogonal_priority_search<Traits, 
+        typename Orthogonal_incremental_neighbor_search<Traits, 
 				Query_item, Distance>::iterator& y) {
-        typename Orthogonal_priority_search<Traits, 
+        typename Orthogonal_incremental_neighbor_search<Traits, 
 		Query_item, Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
@@ -516,4 +516,4 @@ void swap (typename Orthogonal_priority_search<Traits,
 } // namespace CGAL
 
 
-#endif  // ORTHOGONAL_PRIORITY_SEARCH_H
+#endif  // ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH_H

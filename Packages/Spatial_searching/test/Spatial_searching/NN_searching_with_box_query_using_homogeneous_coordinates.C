@@ -10,8 +10,8 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/General_priority_search.h>
-#include <CGAL/Manhattan_distance_rectangle_point.h>
+#include <CGAL/Incremental_neighbor_search.h>
+#include <CGAL/Manhattan_distance_iso_box_point.h>
 
 typedef CGAL::Homogeneous<CGAL::MP_Float> R;
 
@@ -22,8 +22,8 @@ typedef R::RT RT;
 typedef R::Iso_cuboid_3 Rectangle;
 
 typedef CGAL::Kd_tree_traits_point_3<R> Traits;
-typedef CGAL::Manhattan_distance_rectangle_point<Traits, Rectangle> L1_distance;
-typedef CGAL::General_priority_search<Traits, L1_distance>  NN_priority_search;
+typedef CGAL::Manhattan_distance_iso_box_point<Traits, Rectangle> L1_distance;
+typedef CGAL::Incremental_neighbor_search<Traits, L1_distance>  NN_priority_search;
 typedef NN_priority_search::Tree Tree;
 typedef NN_priority_search::Splitter Splitter;
 

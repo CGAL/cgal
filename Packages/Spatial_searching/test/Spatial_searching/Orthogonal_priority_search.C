@@ -6,7 +6,7 @@
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Random.h>
-#include <CGAL/Orthogonal_priority_search.h>
+#include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
 
@@ -28,7 +28,7 @@ typedef CGAL::Euclidean_distance<Traits> Distance;
 #endif
 
 
-typedef CGAL::Orthogonal_priority_search<Traits, Distance> NN_priority_search;
+typedef CGAL::Orthogonal_incremental_neighbor_search<Traits, Distance> NN_priority_search;
 typedef NN_priority_search::Tree Tree;
 typedef NN_priority_search::Splitter Splitter;
 

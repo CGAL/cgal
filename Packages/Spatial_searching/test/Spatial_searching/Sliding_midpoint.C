@@ -6,7 +6,7 @@
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Random.h>
-#include <CGAL/Orthogonal_priority_search.h>
+#include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
 
@@ -15,7 +15,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include "../../examples/Spatial_searching/Point.h" 
 typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord_iterator> Traits;
-typedef CGAL::Orthogonal_priority_search<Traits, Distance> NN_priority_search;
+typedef CGAL::Orthogonal_incremental_neighbor_search<Traits, Distance> NN_priority_search;
 #else
 
 #include <CGAL/Simple_cartesian.h>
@@ -23,7 +23,7 @@ typedef CGAL::Orthogonal_priority_search<Traits, Distance> NN_priority_search;
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
 typedef CGAL::Kd_tree_traits_point_3<K> Traits;
-typedef CGAL::Orthogonal_priority_search<Traits> NN_priority_search;
+typedef CGAL::Orthogonal_incremental_neighbor_search<Traits> NN_priority_search;
 #endif
 
 

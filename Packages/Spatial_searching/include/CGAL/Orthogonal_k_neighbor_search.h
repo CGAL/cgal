@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/Orthogonal_standard_search.h
+// file          : include/CGAL/Orthogonal_k_neighbor_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -21,8 +21,8 @@
 //
 // ======================================================================
 
-#ifndef  ORTHOGONAL_STANDARD_SEARCH_H
-#define  ORTHOGONAL_STANDARD_SEARCH_H
+#ifndef  ORTHOGONAL_K_NEIGHBOR_SEARCH_H
+#define  ORTHOGONAL_K_NEIGHBOR_SEARCH_H
 #include <cstring>
 #include <list>
 #include <queue>
@@ -38,7 +38,7 @@ template <class GeomTraits,
 	  class Distance_=Euclidean_distance<GeomTraits>, 
           class Splitter_=Sliding_midpoint<GeomTraits> ,
 	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_true> >
-class Orthogonal_standard_search {
+class Orthogonal_k_neighbor_search {
 
 public:
 
@@ -115,7 +115,7 @@ Distance* distance_instance;
 	public:
 
 	template<class OutputIterator>  
-	OutputIterator  the_k_neighbors(OutputIterator res)
+	OutputIterator  the_k_neighbor(OutputIterator res)
 	{   
 		typename NN_list::iterator it=l.begin(); 
 		for (; it != l.end(); it++) { *res= *it; res++; }
@@ -124,7 +124,7 @@ Distance* distance_instance;
 
 
     // constructor
-    Orthogonal_standard_search(Tree& tree, const Query_item& q,  
+    Orthogonal_k_neighbor_search(Tree& tree, const Query_item& q,  
     int k=1, NT Eps=NT(0.0), bool Search_nearest=true, const Distance& d=Distance()) {
    
 	distance_instance=new Distance(d);
@@ -158,9 +158,9 @@ Distance* distance_instance;
     }
 
     
-    // Print statistics of the standard search process.
+    // Print statistics of the k_neighbor search process.
     std::ostream& statistics (std::ostream& s) {
-    	s << "Standard search statistics:" << std::endl;
+    	s << "K_Neighbor search statistics:" << std::endl;
     	s << "Number of internal nodes visited:" 
 	<< number_of_internal_nodes_visited << std::endl;
     	s << "Number of leaf nodes visited:" 
@@ -171,7 +171,7 @@ Distance* distance_instance;
     }
 
     // destructor
-    ~Orthogonal_standard_search() { 
+    ~Orthogonal_k_neighbor_search() { 
 		l.clear();  
 		delete distance_instance;
     };
@@ -260,4 +260,4 @@ Distance* distance_instance;
 } // namespace CGAL
 
 
-#endif  // ORTHOGONAL_STANDARD_SEARCH
+#endif  // ORTHOGONAL_K_NEIGHBOR_SEARCH

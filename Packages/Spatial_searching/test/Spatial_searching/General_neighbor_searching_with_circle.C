@@ -2,7 +2,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_2.h>
 #include <CGAL/Euclidean_distance_sphere_point.h>
-#include <CGAL/General_standard_search.h>
+#include <CGAL/K_neighbor_search.h>
 #include <CGAL/Random.h>
 #include <vector>
 #include <iostream>
@@ -15,7 +15,7 @@ typedef R::Circle_2 Circle;
 
 typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
 typedef CGAL::Euclidean_distance_sphere_point<TreeTraits, Circle> Distance;
-typedef CGAL::General_standard_search<TreeTraits, Distance> Neighbor_search;
+typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 typedef Neighbor_search::Splitter Splitter;
   
