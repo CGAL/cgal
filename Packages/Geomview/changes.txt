@@ -1,3 +1,7 @@
+22 November 2004 Sylvain Pion
+- Fix problem on Fedora (using OFF ASCII mode instead of BINARY).
+  [provided by Steve Oudot]
+
 17 September 2004 Sylvain Pion
 - Remove "missing sentinel" warning with g++ 4.0.0.
 

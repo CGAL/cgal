@@ -368,6 +368,31 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     bool ascii_bak = get_ascii_mode();
     bool raw_bak = set_raw(true);
 
+#if 1 // ASCII version, which works on Fedora.
+
+      // Header.
+      set_ascii_mode();
+      (*this) << "(geometry " << get_new_id("triangles")
+          << " {appearance {material {edgecolor "
+          << ecr() << ecg() << ecb() << "\n ambient "
+          << fcr() << fcg() << fcb() << "\n diffuse "
+          << fcr() << fcg() << fcb() << "}}{ OFF\n"
+          << points.size() << triangles.size() << " 0\n";
+
+      typedef typename std::vector<Point>::const_iterator       Pit;
+      // Points coordinates.
+      for (Pit pit = points.begin(); pit != points.end(); ++pit)
+    (*this) << pit->x() << pit->y() << pit->z() << "\n";
+
+      // Triangles vertices indices.
+      for (Tit tit = triangles.begin(); tit != triangles.end(); ++tit) {
+        (*this) << "3 ";
+    for (int j = 0; j < 3; ++j)
+      (*this) << point_map[tit->vertex(j)];
+        (*this) << "\n"; // without color.
+      }
+#else // BINARY original version, which does not work on Fedora.
+
     // Header.
     set_binary_mode();
     (*this) << "(geometry " << get_new_id("triangles")
@@ -385,6 +410,7 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
 	    (*this) << point_map[tit->vertex(j)];
         (*this) << 0; // without color.
     }
+#endif
     // Footer.
     (*this) << "}})";
 
