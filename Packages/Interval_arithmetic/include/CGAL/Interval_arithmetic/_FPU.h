@@ -280,13 +280,12 @@ enum CGAL_FPU_rounding_mode
 };
 
 
-// The result of 1+epsilon, 1-epsilon, -1+epsilon is enough
+// The results of 1-epsilon and -1+epsilon are enough
 // to detect exactly the rounding mode.
 // (epsilon = MIN_DOUBLE, ulp = 2^-52 or 2^-53).
 // ----------------------------------------------------
 // rounding mode:	 +inf	 -inf	 0	 nearest
 // ----------------------------------------------------
-//  1+epsilon		 1+ulp	 1	 1	 1
 //  1-epsilon		 1	 1-ulp	 1-ulp	 1
 // -1+epsilon		-1+ulp	-1	-1+ulp	-1
 // ----------------------------------------------------
@@ -297,12 +296,11 @@ static inline CGAL_FPU_rounding_mode CGAL_FPU_get_rounding_mode ()
     // If not marked "volatile", the result is false when optimizing
     // because the constants are pre-computed at compile time !!!
     volatile const double m = 5e-324; // CGAL_Interval_nt_advanced::min_double;
-    const double x = 1.0, y = 1.0, z = -1.0;
-    double xe, ye, ze;
-    xe = x + m;
+    const double y = 1.0, z = -1.0;
+    double ye, ze;
     ye = y - m;
     ze = z + m;
-    if ((x == xe) && (y == ye) && (z == ze)) return CGAL_FPU_NEAREST;
+    if ((y == ye) && (z == ze)) return CGAL_FPU_NEAREST;
     if (y == ye) return CGAL_FPU_PLUS_INFINITY;
     if (z == ze) return CGAL_FPU_MINUS_INFINITY;
     return CGAL_FPU_ZERO;
