@@ -735,7 +735,7 @@ set_compiler_flags()
     SUFFIX_LIST=
     OBJ_EXT=".o"
     OBJ_OPT="-c"
-    LIB_SFX=""
+    LIB_SUFFIX=""
     REMOVE_EXT_LIST=".o"
     LIB_OPT="-l"
     LEDA_LIB_OPT='-l'
@@ -746,7 +746,7 @@ set_compiler_flags()
     CGAL_LIBNAME="libCGAL.a"
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
-    START_LD_OPTIONS=""
+    START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
     LIB_CREATION_COMMANDS=""
 
@@ -762,7 +762,7 @@ set_compiler_flags()
 	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
-	    LIB_SFX=".lib"
+	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj .tds"
 	    LIB_OPT=""
             LEDA_LIB_OPT="lib"
@@ -787,9 +787,9 @@ set_compiler_flags()
 	    XLIBS="user32.lib gdi32.lib comdlg32.lib shell32.lib"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
-	    LIB_SFX=".lib"
+	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj"
-	    LIB_OPT="-DEFAULTLIB:"
+	    LIB_OPT=""
             LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
@@ -797,7 +797,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    MATH_LIB=
-	    START_LD_OPTIONS="-link "
+	    START_LD_OPT="-link "
 	    ;;
 	*IRIX*5.*CC*)
 	    #### settings for sgi mipspro compiler on irix5
@@ -1294,15 +1294,15 @@ libpath_option()
 leda_lib_option()
 {
     if [ -z "${WINDOWS_COMPILER}" ]; then
-        ${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
+        ${_printf} "${LIB_OPT}%s${LIB_SUFFIX} " "$*"
     else
-        ${_printf} "${LIB_OPT}lib%s${LIB_SFX} " "$*"
+        ${_printf} "${LIB_OPT}lib%s${LIB_SUFFIX} " "$*"
     fi
 }
 
 lib_option()
 {
-    ${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
+    ${_printf} "${LIB_OPT}%s${LIB_SUFFIX} " "$*"
 }
 
 object_file_name()
@@ -1492,7 +1492,7 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-#	    ${_printf} "%s" "${START_LD_OPTIONS}"
+#	    ${_printf} "%s" "${START_LD_OPT}"
 	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
@@ -2272,9 +2272,9 @@ check_LEDA_LIB_DIR()
 {
     if [ -n "${LEDA_LIB_DIR}" ]; then
 	if [ ! -r $LEDA_LIB_DIR/libL.a -a \
-	     ! -r $LEDA_LIB_DIR/libL${LIB_SFX} -a \
+	     ! -r $LEDA_LIB_DIR/libL${LIB_SUFFIX} -a \
 	     ! -r $LEDA_LIB_DIR/libL.so ]; then
-	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SFX} or libL.so." 
+	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SUFFIX} or libL.so." 
 	else
 	    return 1
 	fi
@@ -3970,8 +3970,6 @@ write_compiler_flags()
   else
     ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   fi
-  ${_printf} "%s%s\n" "DEBUG_OPT = " "${DEBUG_OPT}" >> ${FILE}
-  ${_printf} "%s%s\n" "OBJ_OPT = " "${OBJ_OPT}" >> ${FILE}
 }
 
 # write linker flags for a CGAL include makefile
@@ -4070,6 +4068,7 @@ write_linker_flags()
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
+    GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
@@ -4084,6 +4083,7 @@ write_linker_flags()
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
     LIBS="${LIBS} `lib_option gmp`"
+    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
     WLIBS="${WLIBS} `lib_option gmp`"
   fi
   if [ -n "${CLN_SUPPORT}" ]; then
@@ -4094,9 +4094,11 @@ write_linker_flags()
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CLN_LIB_DIR)"
     fi
     LIBS="${LIBS} `lib_option cln`"
+    GEOWLIBS="${GEOWLIBS} `lib_option cln`"
     WLIBS="${WLIBS} `lib_option cln`"
   fi
   LIBS="${LIBS} `math_ldflags`"
+  GEOWLIBS="${GEOWLIBS} `math_ldflags`"
   WLIBS="${WLIBS} `math_ldflags`"
 
   #
@@ -4134,7 +4136,7 @@ write_linker_flags()
   # CGAL_LDFLAGS
   #
   ${_printf} "\n%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
-  makefile_print_line "${START_LD_OPTIONS}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
   makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
 
@@ -4161,9 +4163,19 @@ write_linker_flags()
   #
   if [ -n "${LEDA_SUPPORT}" ]; then
     ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
-    makefile_print_line "${START_LD_OPTIONS}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
+  fi
+
+  #
+  # CGAL_GEOWIN_LDFLAGS
+  #
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+    ${_printf} "\t%s\n\n" "${GEOWLIBS}" >> ${FILE}
   fi
 }
 
@@ -4196,11 +4208,27 @@ create_include_makefile()
   ${_printf} "%s\n" "CGAL_OS_COMPILER = `full_ostype`" >> ${FILE}
 
   # 
-  # SUFFIXES
+  # filename specific stuff
+  # 
+  makefile_header "filename related flags" >> ${FILE}
+  ${_printf} "%s\n" "OBJ_EXT = ${OBJ_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "EXE_EXT = ${EXE_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "LIB_SUFFIX = ${LIB_SUFFIX}" >> ${FILE}
+
+  # 
+  # some specific compiler flags 
+  # 
+  makefile_header "some specific compiler flags" >> ${FILE}
+  ${_printf} "%s\n" "OBJ_OPT = ${OBJ_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "DEBUG_OPT = ${DEBUG_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "START_LD_OPT = ${START_LD_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "LIBPATH_OPT = ${LIBPATH_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "LIB_OPT = ${LIB_OPT}" >> ${FILE}
+
+  # 
+  # suffixes and rules
   # 
   makefile_header "suffixes and rules" >> ${FILE}
-  ${_printf} "%s\n" "OBJ_EXT = ${OBJ_EXT}" >> ${FILE}
-  ${_printf} "%s%s\n" "EXE_EXT = " "${EXE_EXT}" >> ${FILE}
   ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .clean" >> ${FILE}
   if [ -n "${EXE_EXT}" ]; then
     ${_printf} "\n.C:\n" >> ${FILE}
@@ -4244,9 +4272,12 @@ create_include_makefile()
 	>> ${FILE}
 	;;
     *CYGWIN*)
-	${_printf} "%s\n" \
-	"CGAL_EXTRA_OBJECTS = workaround_4_ms.obj" \
-	>> ${FILE}
+	case `compiler_description` in
+	    *VC++*|*GNU*)
+		${_printf} "%s\n" \
+		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.obj" >> ${FILE}
+	    ;;
+	esac
 	;;
   esac
 
