@@ -1,4 +1,3 @@
-
 #include <CGAL/basic.h>
 
 #include <list>
@@ -45,8 +44,6 @@ int check1(std::list<Vertex_handle> L)
     if (ar1[i] != PSet.pos(*it)) w=1;
     i++;
   }
-  
-  if (w==1) cout << "check1 failed!\n";
   return w;
 }
 
@@ -62,7 +59,6 @@ int check2(std::list<Vertex_handle> L)
     if (ar2[i] != PSet.pos(*it)) w=1;
     i++;
   }
-  if (w==1) cout << "check2 failed!\n";
   return w;
 }
 
@@ -78,8 +74,6 @@ int check3(std::list<Vertex_handle> L)
     if (ar3[i] != PSet.pos(*it)) w=1;
     i++;
  }
- 
-  if (w==1) cout << "check3 failed!\n";
  return w;
 }
 
@@ -104,7 +98,7 @@ int main()
   
   // init 
   ar1[0]=p1; ar1[1]=p6; ar1[2]=p3; ar1[3]=p4; ar1[4]=p5; ar1[5]=pnew; 
-  ar2[0]=p1; ar2[1]=p3; ar2[2]=p2;
+  ar2[0]=p2; ar2[1]=p3; ar2[2]=p1;
   ar3[0]=p7; ar3[1]=p10; ar3[2]=p3;
   
   Lr.push_back(p1); Lr.push_back(p2); Lr.push_back(p3);
@@ -117,8 +111,7 @@ int main()
   cout << "insert!\n"; cout.flush();
   PSet.insert(pnew);
 
-
-  cout << "range search for circle !\n";  
+  cout << "circular range search !\n";  
   Circle_2<REP> rc(p5,p6);
 
   std::list<Vertex_handle> LV;
@@ -130,7 +123,7 @@ int main()
      
   w1 = check1(LV);
  
-  cout << "range search for triangle !\n";    
+  cout << "triangular range search !\n";    
   
   LV.clear();
   PSet.range_search(p1,p2,p3,back_inserter(LV));
@@ -140,7 +133,7 @@ int main()
   w2 = check2(LV);    
   LV.clear();
  
-  cout << "range search for iso rectangle !\n";
+  cout << "isorectangular range search !\n";
   Point_2<REP> pt1=p10; // lower left
   Point_2<REP> pt3=p3; // upper right 
   
