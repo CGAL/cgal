@@ -12,8 +12,9 @@ typedef CGAL::Cartesian<double> K;
 void test_parse_point()
 {
   const char *test_point="( 123 456 789 1 )";
-  K::Point_3 p;
-  CGAL::parse_point(test_point, p);
+  double x, y, z, w;
+  CGAL::Geomview_stream::parse_point(test_point, x, y, z, w);
+  K::Point_3 p(x, y, z, w);
   CGAL_assertion(p == K::Point_3(123, 456, 789));
 }
 
