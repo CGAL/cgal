@@ -33,6 +33,7 @@
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,6 +43,14 @@ class Pm_segment_traits_2 : public Kernel_
 public:
   typedef Kernel_                         Kernel;
 
+  // Categories:
+//#define HAS_LEFT_NOT
+#if !defined(HAS_LEFT_NOT)
+  typedef Tag_true                        Has_left_category;
+#else
+  typedef Tag_false                       Has_left_category;
+#endif
+    
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
   typedef typename Kernel::Segment_2      X_curve_2;
@@ -150,6 +159,7 @@ public:
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
+#if !defined(HAS_LEFT_NOT)
   /*! curve_compare_at_x_left() compares the y value of two curves in an
    * epsilon environment to the left of the x value of the input point
    */
@@ -183,7 +193,26 @@ public:
     // compare their derivatives
     return compare_slope_2_object()(cv2, cv1);
   }
+#else
+  /*! point_reflect_in_x_and_y() reflects the given point about the origin
+   */
+  Point_2 point_reflect_in_x_and_y(const Point_2 & pt) const
+  {
+    typename Kernel::Vector_2 v = construct_vector_2_object()(ORIGIN, pt);
+    Point_2 reflected_pt(v);
+    return reflected_pt;
+  }
 
+  /*! curve_reflect_in_x_and_y reflects the given curve about the origin
+   */
+  X_curve_2 curve_reflect_in_x_and_y(const X_curve_2 & cv) const
+  {
+    X_curve_2 reflected_cv(point_reflect_in_x_and_y ( cv.source()),
+                           point_reflect_in_x_and_y ( cv.target()));
+    return reflected_cv;
+  }
+#endif
+    
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    */

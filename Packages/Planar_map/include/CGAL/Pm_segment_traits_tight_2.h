@@ -33,6 +33,7 @@
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,6 +43,9 @@ class Pm_segment_traits_tight_2 : public Kernel_
 public:
   typedef Kernel_                         Kernel;
 
+  // Categories:
+  typedef Tag_true                        Has_left_category;
+    
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
   typedef typename Kernel::Segment_2      X_curve_2;
