@@ -50,21 +50,19 @@ int main(int argc, char *argv[])
 }
 #else 
 
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/geowin_support.h>
 #include <CGAL/leda_rational.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/predicates_on_points_3.h>
 
-typedef CGAL::Cartesian<leda_rational>                         R;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<R>  HDS;
-typedef CGAL::Polyhedron_default_traits_3<R>                   Traits;
-typedef CGAL::Polyhedron_3<Traits,HDS>                         Polyhedron;
-typedef CGAL::Polyhedron_3<Traits,HDS>::Vertex_handle          Vertex_handle;
-typedef Polyhedron::Halfedge_iterator                          Halfedge_iterator;
+
+typedef CGAL::Cartesian<leda_rational>            R;
+typedef CGAL::Convex_hull_traits_3<R>             Traits;
+typedef Traits::Polyhedron_3                      Polyhedron_3;
+typedef Polyhedron_3::Vertex_handle               Vertex_handle;
+typedef Polyhedron_3::Halfedge_iterator           Halfedge_iterator;
 
 
 CGAL::Point_3<CGAL::Cartesian<leda_rational> > conversion_to_rat(CGAL::Point_3<CGAL::Cartesian<double> > pin)
@@ -87,6 +85,7 @@ CGAL::Point_3<CGAL::Cartesian<double> > conversion_to_float(CGAL::Point_3<CGAL::
  return CGAL::Point_3<CGAL::Cartesian<double> >(pf.xcoord(),pf.ycoord(),pf.zcoord());
 }
 
+
 static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,int>& H)
 {
  GeoEditScene< CGALPoint_3_list >* esc = (GeoEditScene< CGALPoint_3_list > *) sc;
@@ -97,9 +96,6 @@ static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,
 
  for(; it != L.end();++it) { p=*it; H.new_node(convert_to_leda(p)); }
 
- // compute hull...
- Polyhedron Pol;
-
  std::list<CGAL::Point_3<CGAL::Cartesian<leda_rational> > > L2;
  // convert list with FP values to rational values ...
  it = L.begin();
@@ -107,12 +103,21 @@ static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,
     CGAL::Point_3<CGAL::Cartesian<leda_rational> > rpt = conversion_to_rat(*it);
     L2.push_back(rpt);
  }
+  
+ CGAL::Object ch_object;
 
- CGAL::convex_hull_3( L2.begin(), L2.end(), Pol);
+ // compute convex hull 
+ CGAL::convex_hull_3(L2.begin(), L2.end(), ch_object);
 
  // visualize polyhedron...
- Halfedge_iterator hit = Pol.halfedges_begin();
- for (; hit != Pol.halfedges_end(); hit++) {
+ Polyhedron_3           Pol;
+ CGAL::Segment_3<R>     segment;
+ CGAL::Triangle_3<R>    triangle;
+ CGAL::Point_3<R>       point;
+ 
+ if (assign(Pol, ch_object)) {
+  Halfedge_iterator hit = Pol.halfedges_begin();
+  for (; hit != Pol.halfedges_end(); hit++) {
     Vertex_handle v1 = hit->vertex();
     Vertex_handle v2 = hit->opposite()->vertex();
     CGALPoint_3 ps = conversion_to_float(v1->point());
@@ -122,7 +127,38 @@ static void show_d3_points(geo_scene sc, leda_d3_window& W, GRAPH<leda_d3_point,
     leda_node n2= H.new_node(convert_to_leda(pt));
     leda_edge e1= H.new_edge(n1,n2), e2= H.new_edge(n2,n1);
     H.set_reversal(e1,e2);
+  }
  }
+ 
+ else if ( assign(segment, ch_object) ){
+    CGALPoint_3 ps = conversion_to_float(segment.source());
+    CGALPoint_3 pt = conversion_to_float(segment.target()); 
+ 
+    leda_node n1= H.new_node(convert_to_leda(ps));
+    leda_node n2= H.new_node(convert_to_leda(pt));
+    leda_edge e1= H.new_edge(n1,n2), e2= H.new_edge(n2,n1);
+    H.set_reversal(e1,e2);    
+ }
+ else if (assign(triangle, ch_object) ){
+    CGALPoint_3 ps = conversion_to_float(triangle.vertex(0));
+    CGALPoint_3 pt = conversion_to_float(triangle.vertex(1));
+    CGALPoint_3 pu = conversion_to_float(triangle.vertex(2)); 
+    
+    leda_node n1= H.new_node(convert_to_leda(ps));
+    leda_node n2= H.new_node(convert_to_leda(pt));
+    leda_node n3= H.new_node(convert_to_leda(pu));
+    leda_edge e1= H.new_edge(n1,n2), e2= H.new_edge(n2,n1);
+    H.set_reversal(e1,e2);  
+    leda_edge e3= H.new_edge(n2,n3), e4= H.new_edge(n3,n2);
+    H.set_reversal(e3,e4);  
+    leda_edge e5= H.new_edge(n3,n1), e6= H.new_edge(n1,n3);
+    H.set_reversal(e5,e6);              
+ }
+ else if (assign(point, ch_object) ){
+    CGALPoint_3 p = conversion_to_float(point); 
+    H.new_node(convert_to_leda(p));
+ } 
+ 
  
  leda_node_array<leda_vector> pos(H);
  leda_node v;

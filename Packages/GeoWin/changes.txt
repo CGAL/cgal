@@ -1,3 +1,6 @@
+1.3.4 (16 July 2001)
+- 3d convex hull demo updated
+
 1.3.3 (05 July 2001)
 - small change in the manual
 
