@@ -49,10 +49,8 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #endif
 
-#ifndef CGAL_ARR_USE_PMWX_OLD
+#ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 #include <CGAL/Pm_with_intersections.h>
-#else
-#include <CGAL/Arr_pmwx.h>
 #endif
 
 #ifndef CGAL_IO_ARR_FILE_SCANNER_H
@@ -75,11 +73,7 @@ public:
   typedef Planar_map_traits_wrap<Traits> Traits_wrap;
   typedef Planar_map_2<Dcel,Traits> Planar_map;
   typedef Pm_walk_along_line_point_location<Planar_map> WalkPL;
-#ifndef CGAL_ARR_USE_PMWX_OLD
   typedef Planar_map_with_intersections_2<Planar_map> Pmwx;
-#else
-  typedef Arr_pmwx<Planar_map> Pmwx;
-#endif
   typedef typename Pmwx::Pmwx_change_notification  Pmwx_change_notification;
 
   typedef Arrangement_2<_Dcel,_Traits,Base_node> Self;
