@@ -84,6 +84,7 @@ DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Two changes due to Dima/Stefan.
 DOCS: Some updates due to Dima.
 DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
 DOCS: Major additions about MS-stuff by Dima.
