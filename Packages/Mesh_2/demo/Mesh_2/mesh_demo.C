@@ -31,7 +31,6 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 #include <CGAL/IO/Qt_widget_get_polygon.h>
-//#include "Qt_widget_get_polygon.h"
 
 #include "icons.h"
 
