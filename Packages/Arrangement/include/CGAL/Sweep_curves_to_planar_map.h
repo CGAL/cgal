@@ -837,6 +837,7 @@ public:
   
   // typedef typename  PM::Vertex                    Vertex;
   //typedef typename  PM::Halfedge                  Halfedge;
+
   //typedef typename  PM::Face                      Face;
   
   typedef typename  PM::Vertex_iterator           Vertex_iterator; 
@@ -986,8 +987,8 @@ public:
       Event_queue_iterator  edge_point = 
         event_queue.find( traits.curve_source(cv) );
       // defining one cv_node for both source and target event points.  
-      X_curve_plus  cv_plus = X_curve_plus(cv, id);  // to satisfy BCC.
-      Curve_node  cv_node = Curve_node(cv_plus, 
+      //X_curve_plus  cv_plus(cv, id);  // to satisfy BCC.
+      Curve_node  cv_node = Curve_node(X_curve_plus(cv, id), 
                                        curr_point_plus->second); 
       Intersection_point_node  source_point_node = 
         Intersection_point_node(cv_node, curr_point_plus->second );
