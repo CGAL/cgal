@@ -438,7 +438,7 @@ touch $ERRORFILE
     compile
 EOF
          close(CGAL_TEST);
-         chmod 0755, '../test/${DIR}_Demo/cgal_test';
+         chmod 0755, "../test/${DIR}_Demo/cgal_test";
 	}
     }
     chdir '..';
