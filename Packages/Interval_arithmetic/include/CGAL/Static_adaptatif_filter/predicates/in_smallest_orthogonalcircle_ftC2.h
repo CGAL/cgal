@@ -65,7 +65,7 @@ in_smallest_orthogonalcircleC2_SAF(
     const double &tx,
     const double &ty,
     const double &tw,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   double dpx = px-qx;
   double dpy = py-qy;

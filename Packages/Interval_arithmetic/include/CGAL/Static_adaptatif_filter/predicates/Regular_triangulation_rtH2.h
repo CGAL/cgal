@@ -95,7 +95,7 @@ power_testH2_SAF(
     const double &thy,
     const double &thw,
     const double &twt,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
     double dphx = phx*phw;
     double dphy = phy*phw;
@@ -329,8 +329,8 @@ power_testH2_SAF(
     const double &thy,
     const double &thw,
     const double &twt,
-   const double & epsilon_0,
-   const double & epsilon_1)
+    const double & epsilon_0,
+    const double & epsilon_1)
 {
     
     

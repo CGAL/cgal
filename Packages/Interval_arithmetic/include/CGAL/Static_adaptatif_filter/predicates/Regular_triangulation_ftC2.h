@@ -79,7 +79,7 @@ power_testC2_SAF(
     const double &tx,
     const double &ty,
     const double &twt,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
     
 
@@ -265,10 +265,10 @@ power_testC2_SAF(
     const double &tx,
     const double &ty,
     const double &twt,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2,
-   const double & epsilon_3)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2,
+    const double & epsilon_3)
 {
     
     double dpx = px - tx;

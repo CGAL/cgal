@@ -70,9 +70,9 @@ collinearC3_SAF(
     const double &rx,
     const double &ry,
     const double &rz,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
 {
   double dpx = px-rx;
   double dpy = py-ry;
@@ -224,7 +224,7 @@ orientationC3_SAF(
     const double &sx,
     const double &sy,
     const double &sz,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return Orientation(sign_of_determinant3x3_SAF(qx-px,rx-px,sx-px,
                                             qy-py,ry-py,sy-py,
@@ -407,7 +407,7 @@ side_of_oriented_sphereC3_SAF(
     const double &tx,
     const double &ty,
     const double &tz,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   double ptx = px - tx;
   double pty = py - ty;
@@ -617,8 +617,8 @@ side_of_bounded_sphereC3_SAF(
     const double &tx,
     const double &ty,
     const double &tz,
-   const double & epsilon_0,
-   const double & epsilon_1)
+    const double & epsilon_0,
+    const double & epsilon_1)
 {
   Oriented_side s = side_of_oriented_sphereC3_SAF(px, py, pz,
                                               qx, qy, qz,
@@ -798,7 +798,7 @@ cmp_dist_to_pointC3_SAF(
     const double &rx,
     const double &ry,
     const double &rz,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(squared_distanceC3(px,py,pz,qx,qy,qz),
                        squared_distanceC3(px,py,pz,rx,ry,rz), epsilon_0);
@@ -934,7 +934,7 @@ cmp_signed_dist_to_planeC3_SAF(
     const double &qx,
     const double &qy,
     const double &qz,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(scaled_distance_to_planeC3(pa,pb,pc,pd,px,py,pz),
                        scaled_distance_to_planeC3(pa,pb,pc,pd,qx,qy,qz), epsilon_0);
@@ -1091,7 +1091,7 @@ cmp_signed_dist_to_planeC3_SAF(
     const double &qx,
     const double &qy,
     const double &qz,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(
            scaled_distance_to_planeC3(ppx,ppy,ppz,pqx,pqy,pqz,

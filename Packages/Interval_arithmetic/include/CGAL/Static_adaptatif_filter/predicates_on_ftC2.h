@@ -61,8 +61,8 @@ compare_xC2_SAF(
     const double &l2a,
     const double &l2b,
     const double &l2c,
-   const double & epsilon_0,
-   const double & epsilon_1)
+    const double & epsilon_0,
+    const double & epsilon_1)
 {
   Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b, epsilon_0);
   Sign sign2 = sign_of_determinant3x3_SAF(l1a, l1b, l1c,
@@ -209,9 +209,9 @@ compare_xC2_SAF(
     const double &h2a,
     const double &h2b,
     const double &h2c,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
 {
   Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b, epsilon_0);
   Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b, epsilon_1);
@@ -372,8 +372,8 @@ compare_y_at_xC2_SAF(
     const double &la,
     const double &lb,
     const double &lc,
-   const double & epsilon_0,
-   const double & epsilon_1)
+    const double & epsilon_0,
+    const double & epsilon_1)
 {
   Sign sign1 = CGAL::sign_SAF(lb, epsilon_0);
   Sign sign2 = CGAL::sign_SAF(la*px + lb*py + lc, epsilon_1);
@@ -490,9 +490,9 @@ compare_y_at_xC2_SAF(
     const double &l2a,
     const double &l2b,
     const double &l2c,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
 {
   Sign sign1 = CGAL::sign_SAF(l1b, epsilon_0);
   Sign sign2 = CGAL::sign_SAF(l2b, epsilon_1);
@@ -627,9 +627,9 @@ compare_y_at_xC2_SAF(
     const double &ha,
     const double &hb,
     const double &hc,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2)
 {
   Sign sign0 = sign_of_determinant2x2_SAF(l1a,l1b,l2a,l2b, epsilon_0);
   Sign sign1 = sign_of_determinant3x3_SAF(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c, epsilon_1);
@@ -788,10 +788,10 @@ compare_y_at_xC2_SAF(
     const double &h2a,
     const double &h2b,
     const double &h2c,
-   const double & epsilon_0,
-   const double & epsilon_1,
-   const double & epsilon_2,
-   const double & epsilon_3)
+    const double & epsilon_0,
+    const double & epsilon_1,
+    const double & epsilon_2,
+    const double & epsilon_3)
 {
   double double0(0);
   Sign s1 = lexicographical_sign_SAF(h1b, -h1a, epsilon_0);
@@ -945,7 +945,7 @@ compare_deltax_deltayC2_SAF(
     const double &qx,
     const double &ry,
     const double &sy,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
     return CGAL::compare_SAF(abs(px-qx), abs(ry-sy), epsilon_0);
 }
@@ -1041,7 +1041,7 @@ orientationC2_SAF(
     const double &qy,
     const double &rx,
     const double &ry,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return sign_of_determinant2x2_SAF(px-rx,py-ry,qx-rx,qy-ry, epsilon_0);
 }
@@ -1168,7 +1168,7 @@ side_of_oriented_circleC2_SAF(
     const double &ry,
     const double &tx,
     const double &ty,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   
   
@@ -1312,8 +1312,8 @@ side_of_bounded_circleC2_SAF(
     const double &ry,
     const double &tx,
     const double &ty,
-   const double & epsilon_0,
-   const double & epsilon_1)
+    const double & epsilon_0,
+    const double & epsilon_1)
 {
   Oriented_side s = side_of_oriented_circleC2_SAF(px,py,qx,qy,rx,ry,tx,ty, epsilon_0);
   Orientation o = orientationC2_SAF(px,py,qx,qy,rx,ry, epsilon_1);
@@ -1439,7 +1439,7 @@ cmp_dist_to_pointC2_SAF(
     const double &qy,
     const double &rx,
     const double &ry,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(squared_distanceC2(px,py,qx,qy),
                        squared_distanceC2(px,py,rx,ry), epsilon_0);
@@ -1551,7 +1551,7 @@ cmp_signed_dist_to_lineC2_SAF(
     const double &py,
     const double &qx,
     const double &qy,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(scaled_distance_to_directionC2(la,lb,px,py),
                        scaled_distance_to_directionC2(la,lb,qx,qy), epsilon_0);
@@ -1671,7 +1671,7 @@ cmp_signed_dist_to_lineC2_SAF(
     const double &ry,
     const double &sx,
     const double &sy,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::compare_SAF(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
                        scaled_distance_to_lineC2(px,py,qx,qy,sx,sy), epsilon_0);

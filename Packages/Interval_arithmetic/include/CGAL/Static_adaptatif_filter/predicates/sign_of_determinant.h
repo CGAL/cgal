@@ -47,7 +47,7 @@ sign_of_determinant2x2_SAF(
     const double &a01,
     const double &a10,
     const double &a11,
-   const double & epsilon_0)
+    const double & epsilon_0)
 { return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0)));
 }
 
@@ -150,7 +150,7 @@ sign_of_determinant3x3_SAF(
     const double &a20,
     const double &a21,
     const double &a22,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::sign_SAF(det3x3_by_formula(a00, a01, a02,
                                       a10, a11, a12,
@@ -301,7 +301,7 @@ sign_of_determinant4x4_SAF(
     const double &a31,
     const double &a32,
     const double &a33,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::sign_SAF(det4x4_by_formula(a00, a01, a02, a03,
                                       a10, a11, a12, a13,
@@ -514,7 +514,7 @@ sign_of_determinant5x5_SAF(
     const double &a42,
     const double &a43,
     const double &a44,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::sign_SAF(det5x5_by_formula(a00, a01, a02, a03, a04,
                                       a10, a11, a12, a13, a14,
@@ -805,7 +805,7 @@ sign_of_determinant6x6_SAF(
     const double &a53,
     const double &a54,
     const double &a55,
-   const double & epsilon_0)
+    const double & epsilon_0)
 {
   return CGAL::sign_SAF(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
                                       a10, a11, a12, a13, a14, a15,
