@@ -35,12 +35,14 @@ CGAL_BEGIN_NAMESPACE
 template <class Gt>
 class Alpha_shape_vertex_base_3 : public Triangulation_vertex_base_3<Gt>
 {
-private:
+public:
+
   typedef typename Gt::Coord_type Coord_type;
   typedef std::pair< Coord_type, Coord_type > Interval2;  
   typedef typename Gt::Point Point;
 
   //-------------------------------------------------------------------
+private:
 
   Interval2 I;
 
@@ -51,11 +53,11 @@ public:
     : Triangulation_vertex_base_3<Gt>()
     {}
   
-  Alpha_shape_vertex_base_3(const Point & p)
+  Alpha_shape_vertex_base_3(const Point& p)
     : Triangulation_vertex_base_3<Gt>(p)
     {}
   
-  Alpha_shape_vertex_base_3(const Point & p, void* f)
+  Alpha_shape_vertex_base_3(const Point& p, void* f)
     : Triangulation_vertex_base_3<Gt>(p, f) 
     {}
 

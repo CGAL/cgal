@@ -62,6 +62,7 @@ class Alpha_shape_3 : public Dt
   //------------------------- TYPES ------------------------------------
 
 public:
+
   typedef typename Dt::Geom_traits Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 

@@ -35,20 +35,20 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Df >
 class Alpha_shape_cell_base_3 : public Df
 {
-private:
+public:
 
   typedef typename Gt::Rep Rp;               // A corriger avec Monique
   typedef typename Rp::FT Coord_type;        // A corriger avec Monique
   typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
 
   //-------------------------------------------------------------------
+private:
 
   Interval3 vec_facet[4];
   Interval3 vec_edge[4][4];
   Coord_type A;
 
   //-------------------------------------------------------------------
-
 public:
   
   Alpha_shape_cell_base_3() 

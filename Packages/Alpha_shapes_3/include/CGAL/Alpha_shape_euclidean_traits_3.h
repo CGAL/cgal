@@ -51,6 +51,7 @@ template < class return_type, class T >
 class Compute_squared_radius_circumsphere_3
 {
 public:
+
   typedef return_type result_type;
 
   result_type operator()(const T& p, const T& q, const T& r, const T& s)
@@ -74,7 +75,8 @@ public:
 template <class R>
 class Alpha_shape_euclidean_traits_3 : public Triangulation_geom_traits_3<R>
 {
-public: 
+public:
+ 
   typedef R Rep;
   typedef typename R::FT Coord_type;
   typedef typename Triangulation_geom_traits_3<R>::Point_3 Point_3;
