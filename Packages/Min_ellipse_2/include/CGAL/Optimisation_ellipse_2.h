@@ -26,9 +26,7 @@
 #endif
 
 // includes
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
+
 #ifndef CGAL_CONIC_2_H
 #  include <CGAL/Conic_2.h>
 #endif
@@ -63,7 +61,7 @@ class Optimisation_ellipse_2 {
     typedef           K_                K;
     typedef  typename K_::RT            RT;
     typedef  typename K_::FT            FT;
-    typedef           CGAL::Point_2<K>  Point;
+    typedef  typename K::Point_2        Point;
     typedef           CGAL::Conic_2<K>  Conic;
     
     /**************************************************************************
