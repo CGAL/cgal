@@ -38,7 +38,8 @@ The default type is \ccc{CGAL::Sliding_midpoint<PointTraits>}.
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
 The default type is \ccc{CGAL::Kd_tree<TreeTraits, Splitter, CGAL::Tag_true>}.  The 
-template argument \ccc{CGAL::Tag_true} makes that the tree is built with extended nodes.
+template argument must be \ccc{CGAL::Tag_true} because orthogonal search needs extended 
+kd tree nodes.
 
 \ccTypes
 
