@@ -210,7 +210,8 @@ public:
     }
     
     if ( !(e->twin()->face()->is_unbounded()) ){
-      Ccb_halfedge_circulator  ccb_cir = Halfedge_handle(e->twin())->face()->outer_ccb();
+      Ccb_halfedge_circulator  
+        ccb_cir = Halfedge_handle(e->twin())->face()->outer_ccb();
       
       do{
         if (ccb_cir->get_first_halfedge_above() != NULL){
@@ -267,7 +268,7 @@ public:
                                 get_second_halfedge_above(ccb_cir)->face());
       }
       ++ccb_cir;
-    } while (ccb_cir !=  Halfedge_handle(new_edge)->face()->outer_ccb());
+    } while (ccb_cir != Halfedge_handle(new_edge)->face()->outer_ccb());
   }
   
   void update_splited_face (Face_handle new_face)
