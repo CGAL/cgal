@@ -44,7 +44,7 @@ CVS_TAG=""
 cd ${TMPDIR} || return
 
 # The internal release number is considered only in non-public mode.
-if [ $IS_PUBLIC == "n" ]; then
+if [ $IS_PUBLIC = "n" ]; then
     [ -r $VERSION_FILE ] || return
     i=$(( `cat $VERSION_FILE` + 1 ))
     rm -rf $VERSION_FILE
@@ -57,7 +57,7 @@ else
 fi
 
 # Do not show the bugfix number if it is 0.
-if [ $BUGFIX_NUMBER == "0" ]; then 
+if [ $BUGFIX_NUMBER = "0" ]; then 
     BUGFIX_STRING=".$BUGFIX_NUMBER"
 else
     BUGFIX_STRING=""

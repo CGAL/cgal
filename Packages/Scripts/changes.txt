@@ -1,3 +1,6 @@
+7 March 2005 Sylvain Pion
+- create_new_release : last minute catch : replace "==" by "=".
+
 5 March 2005 Sylvain Pion
 - create_new_release : implement new numbering scheme of CGAL_VERSION_NR.
 
