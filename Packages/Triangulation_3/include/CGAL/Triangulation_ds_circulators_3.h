@@ -33,7 +33,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Tds >
 class Triangulation_ds_cell_circulator_3
-  : public Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>, 
+  : public Bidirectional_circulator_base<typename Tds::Cell, 
+    ptrdiff_t, size_t>, 
     public Triangulation_utils_3
 {
   // circulates on cells around a given edge
@@ -64,7 +65,8 @@ public:
 				      e.second==2 || e.second==3 ) &&
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) );
-//     if ( _tds->dimension() <3 ) useless since precondition in tds incident_cells
+    //     if ( _tds->dimension() <3 ) useless since precondition in tds
+    //     incident_cells  
 //       {
 // 	pos = NULL;
 // 	prev = NULL;

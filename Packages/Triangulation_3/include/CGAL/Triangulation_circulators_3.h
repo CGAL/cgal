@@ -39,7 +39,8 @@ class Triangulation_cell_3;
 
 template < class Gt, class Tds>
 class Triangulation_cell_circulator_3
-  : public Bidirectional_circulator_base<Triangulation_cell_3<Gt,Tds>, ptrdiff_t, size_t>
+  : public Bidirectional_circulator_base<Triangulation_cell_3<Gt,Tds>, 
+    ptrdiff_t, size_t>
 {
 public:
   typedef typename Tds::Cell Ctds;

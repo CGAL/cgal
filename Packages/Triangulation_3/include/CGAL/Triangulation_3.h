@@ -134,7 +134,8 @@ protected:
   
   void init_tds()
     {
-      infinite = (Vertex*) _tds.insert_increase_dimension(Vertex(Point(500,500,500)));
+      infinite = (Vertex*) _tds.insert_increase_dimension
+	(Vertex(Point(500,500,500)));
       // forces the compiler to instanciate debug :
       handle2pointer( infinite ); 
       handle2pointer( Cell_handle() );
@@ -608,7 +609,8 @@ public:
 // 	// 	  switch ( lt ) {
 // 	// 	  case CELL:
 // 	// 	    {
-// 	// 	      // returns the finite cell sharing the finite facet of cit
+// 	// 	      // returns the finite cell sharing the finite
+  // 	facet of cit  
 // 	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
 // 	// 	      lt = OUTSIDE_CONVEX_HULL;
 // 	// 	      li = n->index(&(*cit));
@@ -616,14 +618,16 @@ public:
 // 	// 	    }
 // 	// 	  case FACET:
 // 	// 	    {
-// 	// 	      // returns the finite cell sharing the finite facet of cit
+// 	// 	      // returns the finite cell sharing the finite
+  // 	facet of cit 
 // 	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
 // 	// 	      li = n->index(&(*cit));
 // 	// 	      return n;
 // 	// 	    }
 // 	// 	  case EDGE:
 // 	// 	    {
-// 	// 	      // returns the finite cell sharing the finite facet of cit
+// 	// 	      // returns the finite cell sharing the finite
+  // 	facet of cit 
 // 	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
 // 	// 	      cerr << cit->vertex(li)->point() << endl
 // 	// 		   << cit->vertex(lj)->point() << endl;
@@ -633,7 +637,8 @@ public:
 // 	// 	    }
 // 	// 	  case VERTEX:
 // 	// 	    {
-// 	// 	      // returns the finite cell sharing the finite facet of cit
+// 	// 	      // returns the finite cell sharing the finite
+  // 	facet of cit 
 // 	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
 // 	// 	      li = n->index(cit->vertex(li));
 // 	// 	      return n;
@@ -655,9 +660,9 @@ public:
 // 	//first tests whether p is coplanar with the current triangulation
 // 	Facet_iterator finite_fit = finite_facets_begin();
 // 	if ( geom_traits().orientation( p, 
-// 					(*finite_fit).first->vertex(0)->point(),
-// 					(*finite_fit).first->vertex(1)->point(),
-// 					(*finite_fit).first->vertex(2)->point() ) 
+// 			    	(*finite_fit).first->vertex(0)->point(),
+// 			        (*finite_fit).first->vertex(1)->point(),
+// 				(*finite_fit).first->vertex(2)->point() ) 
 // 	     != DEGENERATE ) {
 // 	  lt = OUTSIDE_AFFINE_HULL;
 // 	  li = 3; // only one facet : any cell is degenerate in dimension 2
@@ -693,12 +698,14 @@ public:
 // 	return (*fit).first;
 // 	// the sequel was written to return a finite facet in any case:
 // 	// 	if ( is_infinite(*fit) ) {
-// 	// 	      // returns the finite facet sharing the finite edge of (*fit)
+// 	// 	      // returns the finite facet sharing the finite
+  // 	edge of (*fit) 
 // 	// 	  switch ( lt ) {
 // 	// 	  case FACET:
 // 	// 	    {
 // 	// 	      Cell_handle 
-// 	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+// 	// 		n =
+  // 	(*fit).first->neighbor((*fit).first->index(infinite)); 
 // 	// 	      li = n->index( (*fit).first->vertex
 // 	// 			     (cw((*fit).first->index(infinite))) );
 // 	// 	      lj = n->index( (*fit).first->vertex
@@ -709,7 +716,8 @@ public:
 // 	// 	  case EDGE:
 // 	// 	    {
 // 	// 	      Cell_handle 
-// 	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+// 	// 		n =
+  // 	(*fit).first->neighbor((*fit).first->index(infinite)); 
 // 	// 	      li = n->index((*fit).first->vertex(li));
 // 	// 	      lj = n->index((*fit).first->vertex(lj));
 // 	// 	      return n;
@@ -717,7 +725,8 @@ public:
 // 	// 	  case VERTEX:
 // 	// 	    {
 // 	// 	      Cell_handle 
-// 	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+// 	// 		n =
+  // 	(*fit).first->neighbor((*fit).first->index(infinite)); 
 // 	// 	      li = n->index((*fit).first->vertex(li));
 // 	// 	      return n;
 // 	// 	    }
@@ -733,7 +742,8 @@ public:
 // 	// 	    li = 3;
 // 	// 	  }
 // 	// 	  // case vertex or edge : li and lj already correct
-// 	// 	  // because the index of the vertices in the facet is the same as the
+// 	// 	  // because the index of the vertices in the facet is
+  // 	the same as the 
 // 	// 	  // index in the underlying degenerate cell
 // 	// 	  return (*fit).first;
 // 	// 	}
@@ -744,8 +754,8 @@ public:
 // 	//first tests whether p is collinear with the current triangulation
 // 	Edge_iterator finite_eit = finite_edges_begin();
 // 	if ( ! geom_traits().collinear(p,
-// 				       (*finite_eit).first->vertex(0)->point(),
-// 				       (*finite_eit).first->vertex(1)->point()) ) {
+// 			       (*finite_eit).first->vertex(0)->point(),
+// 			       (*finite_eit).first->vertex(1)->point()) ) {
 // 	  lt = OUTSIDE_AFFINE_HULL;
 // 	  return (*finite_eit).first;
 // 	}
@@ -783,7 +793,8 @@ public:
 // 	// 	  case EDGE:
 // 	// 	    {
 // 	// 	      Cell_handle 
-// 	// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
+// 	// 		n =
+  // 	(*eit).first->neighbor((*eit).first->index(infinite)); 
 // 	// 	      li = n->index( (*eit).first->vertex
 // 	// 			     ( 1 - (*eit).first->index(infinite) ) );
 // 	// 	      lj = 1-li;
@@ -793,7 +804,8 @@ public:
 // 	// 	  case VERTEX:
 // 	// 	    {
 // 	// 	      Cell_handle 
-// 	// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
+// 	// 		n =
+  // 	(*eit).first->neighbor((*eit).first->index(infinite)); 
 // 	// 	      li = n->index((*eit).first->vertex(li));
 // 	// 	      return n;
 // 	// 	    }
@@ -1400,7 +1412,8 @@ public:
     // ON_BOUNDARY if p on the boundary of the cell
     // (for an infinite cell this means that p lies on the *finite* facet)
     // ON_UNBOUNDED_SIDE if p lies outside the cell
-    // (for an infinite cell this means that p is not in the preceding two cases) 
+    // (for an infinite cell this means that p is not in the preceding
+    // two cases)  
     // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
     {
       CGAL_triangulation_precondition( dimension() == 3 );
@@ -1576,7 +1589,8 @@ public:
     // ON_BOUNDARY if p on the boundary of the facet
     // (for an infinite facet this means that p lies on the *finite* edge)
     // ON_UNBOUNDED_SIDE if p lies outside the facet
-    // (for an infinite facet this means that p is not in the preceding two cases)
+    // (for an infinite facet this means that p is not in the
+    // preceding two cases) 
     // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
     // when they mean anything, li and lj refer to indices in the cell c 
     // giving the facet (c,i)
@@ -2162,7 +2176,8 @@ public:
     // in dimension 1, vertex li separates p from the triangulation
     // dimension 0 not allowed, use outside-affine-hull
   {
-    //    CGAL_triangulation_precondition( ! c->has_vertex(infinite_vertex()) );
+    //    CGAL_triangulation_precondition( !
+    //    c->has_vertex(infinite_vertex()) ); 
     // not a precondition any more in this version
     CGAL_triangulation_precondition( dimension() > 0 );
     CGAL_triangulation_precondition( c->has_vertex(infinite) );
@@ -2420,7 +2435,8 @@ public:
     if ( dimension() < 3 ) return cells_end();
     Triangulation_3<GT, Tds>* ncthis 
       = (Triangulation_3<GT, Tds> *)this;
-    return Cell_iterator(ncthis, false); // false means "without infinite cells"
+    return Cell_iterator(ncthis, false); // false means "without
+    // infinite cells" 
   }
   Cell_iterator all_cells_begin() const
   {
@@ -2684,7 +2700,8 @@ public:
     return true;
   }
 
-  bool is_valid_finite(Cell_handle c, bool verbose = false, int level = 0) const
+  bool is_valid_finite(Cell_handle c, 
+		       bool verbose = false, int level = 0) const
     {
       switch ( dimension() ) {
       case 3:
@@ -2706,7 +2723,8 @@ public:
       case 2:
 	{
 	  for ( int i=0; i<3; i++ ) {
-	    if ( ( ! is_infinite( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
+	    if ( ( ! is_infinite
+		   ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
 		 && 
 		 geom_traits().orientation_in_plane
 		 ( c->vertex(cw(i))->point(),
@@ -2720,8 +2738,10 @@ public:
 				  << c->vertex(1)->point() << ", " 
 				  << c->vertex(2)->point() 
 				  << "with neighbor " << i
-				  << c->neighbor(i)->vertex(0)->point() << ", " 
-				  << c->neighbor(i)->vertex(1)->point() << ", " 
+				  << c->neighbor(i)->vertex(0)->point() 
+				  << ", " 
+				  << c->neighbor(i)->vertex(1)->point() 
+				  << ", " 
 				  << c->neighbor(i)->vertex(2)->point() 
 				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;
@@ -2734,9 +2754,13 @@ public:
 	  Point p0 = c->vertex(0)->point();
 	  Point p1 = c->vertex(1)->point();
 	    
-	  //	  Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
-	  if ( ! is_infinite( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
-	    Point n0 = c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
+	  //	  Point n1 =
+	  //
+	  //	  c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point(); 
+	  if ( ! is_infinite
+	       ( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
+	    Point n0 = 
+	      c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
 	    if ( ( geom_traits().compare_x( p0, p1 )
 		   != geom_traits().compare_x( p1, n0 ) )
 		 || ( geom_traits().compare_y( p0, p1 )
@@ -2746,14 +2770,18 @@ public:
 	      if (verbose) { std::cerr << "badly oriented edge "
 				  << p0 << ", " << p1 << std::endl
 				  << "with neighbor 0"
-				  << c->neighbor(0)->vertex(1-c->neighbor(0)->index(c))->point() << ", "
+				  << c->neighbor(0)->vertex
+			       (1-c->neighbor(0)->index(c))->point() 
+				  << ", "
 				  << n0
 				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;
 	    }
 	  }
-	  if ( ! is_infinite( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) ) { 
-	    Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();	
+	  if ( ! is_infinite
+	       ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) ) { 
+	    Point n1 = 
+	      c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
 	    if ( ( geom_traits().compare_x( p1, p0 )
 		   != geom_traits().compare_x( p0, n1 ) )
 		 || ( geom_traits().compare_y( p1, p0 )
@@ -2763,7 +2791,9 @@ public:
 	      if (verbose) { std::cerr << "badly oriented edge "
 				  << p0 << ", " << p1 << std::endl
 				  << "with neighbor 1"
-				  << c->neighbor(1)->vertex(1-c->neighbor(1)->index(c))->point() << ", "
+				  << c->neighbor(1)
+			       ->vertex(1-c->neighbor(1)->index(c))->point() 
+				  << ", "
 				  << n1
 				  << std::endl; }
 	      CGAL_triangulation_assertion(false); return false;

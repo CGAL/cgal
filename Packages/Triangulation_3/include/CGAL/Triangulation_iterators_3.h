@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_iterators_3
+// file          : include/CGAL/Triangulation_iterators_3.h
 // revision      : $Revision$
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -322,7 +322,8 @@ private:
 
 template < class Gt, class Tds>
 class Triangulation_edge_iterator_3
-  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Edge,ptrdiff_t>
+  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Edge,
+    ptrdiff_t>
 {
 public:
   typedef typename Tds::Edge Etds;
@@ -346,7 +347,8 @@ public:
 	while ( // ( _ib != _tr->_tds.cells_end() ) &&
 	   // useless : there must be at least one finite cell
 	   // since precond in _ib : dimension == 3
-	       _tr->is_infinite(make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) )
+	       _tr->is_infinite(make_triple(Cell_handle((Cell *)(*_ib).first),
+					    (*_ib).second, (*_ib).third )) )
 	  { ++_ib; }
     }
   }
@@ -398,7 +400,10 @@ public:
       do {
 	++_ib; 
       } while ( ( _ib != _tr->_tds.edges_end() )
-		&& _tr->is_infinite(make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) );
+		&& _tr->is_infinite(make_triple(Cell_handle
+						( (Cell *) (*_ib).first),
+						(*_ib).second,
+						(*_ib).third )) );
     }
     return *this;   
   }
@@ -413,7 +418,10 @@ public:
       do {
 	--_ib;
       } while ( ( _ib != _tr->_tds.edges_end() )
-	      && _tr->is_infinite(make_triple(Cell_handle( (Cell *) (*_ib).first), (*_ib).second, (*_ib).third )) );
+	      && _tr->is_infinite(make_triple(Cell_handle
+					      ( (Cell *) (*_ib).first),
+					      (*_ib).second,
+					      (*_ib).third )) );
     }
     return *this;   
   }
@@ -449,7 +457,8 @@ private:
 
 template < class Gt, class Tds>
 class Triangulation_facet_iterator_3
-  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Facet,ptrdiff_t>
+  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Facet,
+    ptrdiff_t>
 {
 public:
   typedef typename Tds::Facet Ftds;
@@ -473,7 +482,9 @@ public:
       while ( // ( _ib != _tr->_tds.cells_end() ) &&
 	     // useless : there must be at least one finite cell
 	     // since precond in _ib : dimension == 3
-	     _tr->is_infinite(std::make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) )
+	     _tr->is_infinite(std::make_pair(Cell_handle
+					     ( (Cell *) (*_ib).first),
+					     (*_ib).second )) )
 	{ ++_ib; }
     }
   }
@@ -525,7 +536,9 @@ public:
       do {
 	++_ib; 
       } while ( ( _ib != _tr->_tds.facets_end() )
-		&& _tr->is_infinite(std::make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) );
+		&& _tr->is_infinite(std::make_pair(Cell_handle
+						   ( (Cell *) (*_ib).first),
+						   (*_ib).second )) );
     }
     return *this;   
   }
@@ -540,7 +553,9 @@ public:
       do {
 	--_ib;
       } while ( ( _ib != _tr->_tds.facets_end() )
-		&& _tr->is_infinite(std::make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) );
+		&& _tr->is_infinite(std::make_pair(Cell_handle
+						   ( (Cell *) (*_ib).first),
+						   (*_ib).second )) );
     }
     return *this;   
   }

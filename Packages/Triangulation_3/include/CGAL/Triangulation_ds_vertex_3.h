@@ -41,7 +41,8 @@ public:
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 //   typedef Triangulation_ds_cell_circulator_3<Vertex,Cell> Cell_circulator;
-//   typedef Triangulation_ds_vertex_circulator_3<Vertex,Cell> Vertex_circulator;
+//   typedef Triangulation_ds_vertex_circulator_3<Vertex,Cell>
+  //   Vertex_circulator;  
 //   typedef Triangulation_ds_edge_circulator_3<Vertex,Cell> Edge_circulator;
 
   // CONSTRUCTORS

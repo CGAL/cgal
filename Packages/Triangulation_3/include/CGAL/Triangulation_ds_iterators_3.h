@@ -211,7 +211,8 @@ public:
   Vertex_iterator&
   operator++()
   {
-    //    if (_tds->number_of_vertices() == 0){ return *this;} should not be accessed
+    //    if (_tds->number_of_vertices() == 0){ return *this;} should
+    //    not be accessed  
     do {
       increment();
     } while ( (pos != _tds->past_end_cell())
@@ -222,7 +223,8 @@ public:
   Vertex_iterator&
   operator--()
   {
-    // if (_tds->number_of_vertices() == 0) { return *this;} should not be accessed
+    // if (_tds->number_of_vertices() == 0) { return *this;} should
+    // not be accessed 
     do{
       if (index == 0){
 	// all the vertices of the current cell have been examined
@@ -415,7 +417,8 @@ public:
   Facet
   operator*() const
     {
-      // case pos == NULL should not be accessed, there is no facet when dimension <2
+      // case pos == NULL should not be accessed, there is no facet
+      // when dimension <2 
       return std::make_pair(pos, index);
     }
     
@@ -550,7 +553,8 @@ public:
 	    //	  pp_tds_cell(pos) ;
 	    do {
 	      ++ccir;
-	      //	    cerr << "&*ccir " << &(*ccir) << " pos " << pos << endl;
+	      //	    cerr << "&*ccir " << &(*ccir) << " pos "
+	      //	    << pos << endl; 
 	      //	    cerr << "sommets ccir " << endl;
 	      //	    pp_tds_cell(&(*ccir));
 	    } while ( &(*ccir) > pos );
@@ -675,7 +679,8 @@ public:
   Edge
   operator*() const
     {
-      // case pos == NULL should not be accessed, there is no edge when dimension <2
+      // case pos == NULL should not be accessed, there is no edge
+      // when dimension <2 
       return make_triple(pos, b, e);
     }
     
@@ -684,7 +689,8 @@ private:
   Cell* pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
   int b; // index of the first endpoint of the current edge in the current cell
-  int e; // index of the second endpoint of the current edge in the current cell
+  int e; // index of the second endpoint of the current edge in the
+  // current cell 
 
   void
   increment2()

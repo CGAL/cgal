@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/T_cell.h
+// file          : include/CGAL/Triangulation_cell_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -82,15 +82,17 @@ public:
     
   inline
   Triangulation_cell_3(Tds & tds,
-			    Vertex_handle v0,
-			    Vertex_handle v1,
-			    Vertex_handle v2,
-			    Vertex_handle v3,
-			    Cell_handle n0,
-			    Cell_handle n1,
-			    Cell_handle n2,
-			    Cell_handle n3)
-    : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3), &(*n0), &(*n1), &(*n2), &(*n3)) 
+		       Vertex_handle v0,
+		       Vertex_handle v1,
+		       Vertex_handle v2,
+		       Vertex_handle v3,
+		       Cell_handle n0,
+		       Cell_handle n1,
+		       Cell_handle n2,
+		       Cell_handle n3)
+    : Ctds(tds, 
+	   &(*v0), &(*v1), &(*v2), &(*v3), 
+	   &(*n0), &(*n1), &(*n2), &(*n3)) 
   {}
 
   // Vertex access functions

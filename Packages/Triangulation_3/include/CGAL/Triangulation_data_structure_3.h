@@ -364,7 +364,8 @@ public:
       }
     case 3:
       {
-	CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2 || i == 3 );
+	CGAL_triangulation_precondition( i == 0 || i == 1 || 
+					 i == 2 || i == 3 );
 	// c will be modified to have v replacing vertex(i+3)
 	int i1,i2,i3;
 
@@ -615,7 +616,8 @@ public:
   Vertex * insert_increase_dimension(const Vertex & w, // new vertex
 				  Vertex* star = NULL,
 				  bool reorient = false) 
-    // star = vertex from which we triangulate the facet of the incremented dimension
+    // star = vertex from which we triangulate the facet of the
+    // incremented dimension  
     // ( geometrically : star = infinite vertex )
     // = Null only used to insert the 1st vertex (dimension -2 to dimension -1)
 
@@ -740,7 +742,8 @@ public:
 	  
 	  enew->set_neighbor(i,cnew);
 	  cnew->set_neighbor(j,enew); 
-	  // false at the first iteration of the loop where it should be neighbor 2
+	  // false at the first iteration of the loop where it should
+	  // be neighbor 2 
 	  // it is corrected after the loop
 	  enew->set_neighbor(2,e);
 	  // neighbor j will be set during next iteration of the loop
@@ -1161,7 +1164,8 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
+	  if (verbose) { std::cerr << "false number of vertices" 
+				   << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1174,7 +1178,8 @@ public:
 
 	// Euler relation 
 	if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
-	  if (verbose) { std::cerr << "Euler relation unsatisfied"<< std::endl; }
+	  if (verbose) { std::cerr << "Euler relation unsatisfied"
+				   << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1185,7 +1190,8 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
+	  if (verbose) { std::cerr << "false number of vertices" 
+				   << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1193,7 +1199,8 @@ public:
 	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
 	// Euler for edges
 	if ( edge_count != 3 * vertex_count - 6 ) {
-	  if (verbose) { std::cerr << "Euler relation unsatisfied - edges/vertices" << std::endl;}
+	  if (verbose) { std::cerr << "Euler relation unsatisfied 
+- edges/vertices" << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
 
@@ -1201,7 +1208,8 @@ public:
 	if ( ! count_facets(facet_count,verbose,level) ) {return false;}
 	// Euler for facets
 	if ( facet_count != 2 * vertex_count - 4 ) {
-	  if (verbose) { std::cerr << "Euler relation unsatisfied - facets/vertices" << std::endl;}
+	  if (verbose) { std::cerr << "Euler relation unsatisfied 
+- facets/vertices" << std::endl;}
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	break;
@@ -1211,7 +1219,8 @@ public:
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
-	  if (verbose) { std::cerr << "false number of vertices" << std::endl; }
+	  if (verbose) { std::cerr << "false number of vertices" 
+				   << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	int edge_count;
@@ -1226,7 +1235,8 @@ public:
     case 0:
       {
 	if ( number_of_vertices() < 2 ) {
-	  if (verbose) { std::cerr << "less than 2 vertices but dimension 0" << std::endl; }
+	  if (verbose) { std::cerr << "less than 2 vertices but dimension 0" 
+				   << std::endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
 	// no break; continue
@@ -1298,7 +1308,8 @@ public:
 // 			      (Vertex*) V[it->vertex(1)],
 // 			      (Vertex*) V[it->vertex(2)],
 // 			      (Vertex*) V[it->vertex(3)]);
-	// modified to keep the possible additional non combinatorial information
+	// modified to keep the possible additional non combinatorial
+	// information 
 	F[&(*it)]=  new Cell( *this,
 			      (Vertex*) V[it->vertex(0)],
 			      (Vertex*) V[it->vertex(1)],
