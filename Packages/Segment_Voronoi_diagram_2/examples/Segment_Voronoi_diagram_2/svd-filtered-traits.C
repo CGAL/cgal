@@ -37,7 +37,11 @@ int main()
 
   // read the sites and insert them in the Apollonius graph
   while ( ifs >> site ) {
-    svd.insert(site);
+    if ( site.is_point() ) {
+      svd.insert(site.point());
+    } else {
+      svd.insert(site.source(), site.target());
+    }
   }
 
   // validate the Apollonius graph

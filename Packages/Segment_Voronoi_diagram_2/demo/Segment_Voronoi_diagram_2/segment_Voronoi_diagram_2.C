@@ -275,7 +275,7 @@ private slots:
 	  if ( v1 != NULL && v1->is_point() &&
 	       v2 != NULL && v2->is_point() ) {
 	    timer.start();
-	    svd.insert( Segment(v1->point(), v2->point()) );
+	    svd.insert( v1->site().point(), v2->site().point() );
 	    timer.stop();
 
 	    CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
@@ -285,7 +285,7 @@ private slots:
       } else {
 	if( CGAL::assign(s, obj) ) {
 	  timer.start();
-	  svd.insert(s);
+	  svd.insert(s.source(), s.target());
 	  timer.stop();
 
 	  CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
@@ -296,8 +296,9 @@ private slots:
       Polygon_2 pgn;
       if ( CGAL::assign(pgn, obj) ) {
 	timer.start();
-	for (int i = 0; i < pgn.size(); i++ ) {
-	  svd.insert( pgn.edge(i) );
+	int psize = pgn.size();
+	for (int i = 0; i < psize; i++ ) {
+	  svd.insert( pgn[i], pgn[(i+1)%psize] );
 	}
 	timer.stop();
 
@@ -373,7 +374,11 @@ private slots:
     CGAL::Bbox_2 bbox;
 
     while ( f >> t ) {
-      svd.insert(t);
+      if ( t.is_point() ) {
+	svd.insert(t.point());
+      } else {
+	svd.insert(t.source(), t.target());
+      }
 
       CGAL::Bbox_2 tbox;
       if ( t.is_segment() ) {
