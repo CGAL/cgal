@@ -29,6 +29,10 @@
 #include <vector>
 #include <algorithm>
 
+#if !defined _MSC_VER || defined __INTEL_COMPILER 
+#  define CGAL_T2_USE_ITERATOR_AS_HANDLE
+#endif
+
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -80,9 +84,10 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE 
   typedef Vertex_iterator Vertex_handle;
   typedef Face_iterator Face_handle;
-  /*
+#else
   // Defining nested classes for the handles instead of typedefs
   // considerably shortens the symbol names (and compile times).
   // It makes error messages more readable as well.
@@ -152,7 +157,7 @@ public:
     void * for_compact_container() const { return _f.for_compact_container(); }
     void * & for_compact_container()     { return _f.for_compact_container(); }
    };
-  */
+#endif
   typedef std::pair<Face_handle, int>                Edge;
   typedef std::list<Edge> List_edges;
 
@@ -1267,7 +1272,11 @@ delete_face(Face_handle f)
   CGAL_triangulation_expensive_precondition( dimension() != 1 || is_edge(f,2));
   CGAL_triangulation_expensive_precondition( dimension() != 0 ||
 					     is_vertex(f->vertex(0)) );
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   face_container().erase(f);
+#else
+  face_container().erase(f.base());
+#endif
 }
 
 
@@ -1278,7 +1287,11 @@ Triangulation_data_structure_2<Vb,Fb>::
 delete_vertex(Vertex_handle v)
 {
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   vertex_container().erase(v);
+#else
+  vertex_container().erase(v.base());
+#endif
 }
 
 // CHECKING
