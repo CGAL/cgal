@@ -1,0 +1,285 @@
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
+#define CGAL_CTAG
+#endif
+
+#ifndef CGAL_CARTESIAN_SEGMENT_2_C
+#define CGAL_CARTESIAN_SEGMENT_2_C
+
+CGAL_BEGIN_NAMESPACE
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+SegmentC2<R CGAL_CTAG>::SegmentC2()
+{
+  PTR = new _Twotuple< Point_2 >;
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>  &s)
+  : Handle((Handle&)s)
+{}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>::Point_2 &sp,
+                                  const SegmentC2<R CGAL_CTAG>::Point_2 &ep)
+{
+  PTR = new _Twotuple< Point_2 >(sp, ep);
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::~SegmentC2()
+{}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG> &
+SegmentC2<R CGAL_CTAG>::operator=(const SegmentC2<R CGAL_CTAG> &s)
+{
+  Handle::operator=(s);
+  return *this;
+}
+template < class R >
+inline
+bool
+SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
+{
+  return ( (source() == s.source())  && (target() == s.target()) );
+}
+
+template < class R >
+inline
+bool
+SegmentC2<R CGAL_CTAG>::operator!=(const SegmentC2<R CGAL_CTAG> &s) const
+{
+  return !(*this == s);
+}
+
+template < class R >
+inline
+int
+SegmentC2<R CGAL_CTAG>::id() const
+{
+  return (int) PTR ;
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::start() const
+{
+  return ptr()->e0;
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::end() const
+{
+  return ptr()->e1;
+}
+
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::source() const
+{
+  return ptr()->e0;
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::target() const
+{
+  return ptr()->e1;
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::min() const
+{
+  return (lexicographically_xy_smaller(source(),target())) ? source()
+                                                           : target();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::max() const
+{
+  return (lexicographically_xy_smaller(source(),target())) ? target()
+                                                           : source();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::vertex(int i) const
+{
+  return (i%2 ==0) ? source() : target();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::point(int i) const
+{
+  return (i%2 ==0) ? source() : target();
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Point_2
+SegmentC2<R CGAL_CTAG>::operator[](int i) const
+{
+  return vertex(i);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename R::FT
+SegmentC2<R CGAL_CTAG>::squared_length() const
+{
+  return squared_distance(source(), target());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+SegmentC2<R CGAL_CTAG>::Direction_2
+SegmentC2<R CGAL_CTAG>::direction() const
+{
+  return Direction_2( target() - source() );
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>::Line_2
+SegmentC2<R CGAL_CTAG>::supporting_line() const
+{
+  return Line_2(*this);
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>
+SegmentC2<R CGAL_CTAG>::opposite() const
+{
+  return SegmentC2<R CGAL_CTAG>(target(), source());
+}
+
+template < class R >
+inline
+SegmentC2<R CGAL_CTAG>
+SegmentC2<R CGAL_CTAG>::transform(const SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+{
+  return SegmentC2<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+Bbox_2
+SegmentC2<R CGAL_CTAG>::bbox() const
+{
+  return source().bbox() + target().bbox();
+}
+
+template < class R >
+inline
+bool
+SegmentC2<R CGAL_CTAG>::is_degenerate() const
+{
+  return (source() == target());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+SegmentC2<R CGAL_CTAG>::is_horizontal() const
+{
+  return source().y() == target().y();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+SegmentC2<R CGAL_CTAG>::is_vertical() const
+{
+  return source().x() == target().x();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+SegmentC2<R CGAL_CTAG>::
+has_on(const SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return(( p == source() )
+         || ( p == target() )
+         || ( collinear(source(), p, target())
+              &&( Direction_2(p - source())
+                  !=
+                  Direction_2(p - target()))
+             )
+         );
+}
+
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+bool
+SegmentC2<R CGAL_CTAG>::
+collinear_has_on(const SegmentC2<R CGAL_CTAG>::Point_2 &p) const
+{
+    CGAL_kernel_exactness_precondition( collinear(source(), p, target()) );
+    if (abs(target().x()-source().x())
+      > abs(target().y()-source().y())) {
+        if (p.x() < source().x())
+            return (p.x() >= target().x());
+        if (p.x() <= target().x())
+            return true;
+        return (p.x() == source().x());
+    } else {
+        if (p.y() < source().y())
+            return (p.y() >= target().y());
+        if (p.y() <= target().y())
+            return true;
+        return (p.y() == source().y());
+    }
+}
+
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2
+template < class R >
+std::ostream &operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << s.source() << ' ' << s.target();
+    case IO::BINARY :
+        return os << s.source() << s.target();
+    default:
+        return os << "SegmentC2(" << s.source() <<  ", " << s.target() << ")";
+    }
+}
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTC2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
+template < class R >
+std::istream &operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
+{
+    SegmentC2<R CGAL_CTAG>::Point_2 p, q;
+
+    is >> p >> q;
+
+    s = SegmentC2<R CGAL_CTAG>(p, q);
+    return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
+
+CGAL_END_NAMESPACE
+
+#endif

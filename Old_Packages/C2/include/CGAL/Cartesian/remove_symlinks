@@ -1,0 +1,35 @@
+#!/bin/sh
+
+cd .. ;
+
+rm -f Aff_transformationC2.h
+rm -f CircleC2.h
+rm -f Circle_repC2.h
+rm -f DirectionC2.h
+rm -f Iso_rectangleC2.h
+rm -f LineC2.h
+rm -f PointC2.h
+rm -f RayC2.h
+rm -f SegmentC2.h
+rm -f TriangleC2.h
+rm -f VectorC2.h
+rm -f basic_constructionsC2.h
+rm -f distance_predicatesC2.h
+rm -f predicates_on_linesC2.h
+rm -f predicates_on_pointsC2.h
+
+rm -f Aff_transformation_2.h
+rm -f Circle_2.h
+rm -f Circle_rep_2.h
+rm -f Direction_2.h
+rm -f Iso_rectangle_2.h
+rm -f Line_2.h
+rm -f Point_2.h
+rm -f Ray_2.h
+rm -f Segment_2.h
+rm -f Triangle_2.h
+rm -f Vector_2.h
+rm -f basic_constructions_2.h
+rm -f distance_predicates_2.h
+rm -f predicates_on_lines_2.h
+rm -f predicates_on_points_2.h
