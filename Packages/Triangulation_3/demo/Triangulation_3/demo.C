@@ -78,39 +78,11 @@ void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
     os << T.triangle(c,c->index(T.infinite_vertex()));
 }
 template<class TRIANGULATION>
-void visu_facets(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Facet_iterator fit = T.finite_facets_begin();
-  Facet_iterator fdone = T.facets_end();
-  
-  if ( fit == fdone ) { std::cout << "no facet" << std::endl ;}
-  else {
-    while(fit != fdone) {
-      os << T.triangle(*fit);
-      ++fit;
-    }
-  }
-}
-template<class TRIANGULATION>
 void visu_facet(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 	       Cell_handle c, int i)
 {
   if ( ! T.is_infinite(c,i) )
     os << T.triangle(c,i);
-}
-template<class TRIANGULATION>
-void visu_edges(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Edge_iterator eit = T.finite_edges_begin();
-  Edge_iterator edone = T.edges_end();
-  
-  if ( eit == edone ) { std::cout << "no edge" << std::endl ;}
-  else {
-    while(eit != edone) {
-      os << T.segment(*eit);
-      ++eit;
-    }
-  }
 }
 template<class TRIANGULATION>
 void visu_edge(CGAL::Geomview_stream & os, const TRIANGULATION & T,
@@ -145,8 +117,6 @@ int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
 
-  gv.set_line_width(4);
-  gv.set_trace(false);
   gv.set_bg_color(CGAL::Color(0, 200, 200));
 
   Delaunay T;
@@ -162,20 +132,21 @@ int main()
 
   std::cout <<"                reading file data/points" << std::endl ;
   Point nouv;
-  while ( iFile >> nouv ) {
+  while ( iFile >> nouv ) 
     T.insert(nouv);
-  }
 
   T.is_valid(true);
 
-  std::cout <<"                visualizing vertices and edges" << std::endl;
-  gv << CGAL::GREEN;
+  gv.clear();
+  std::cout <<"          Visualizing vertices and edges" << std::endl;
   visu_vertices(gv,T);
-  visu_edges(gv,T);
+  gv.set_wired(true);
+  gv << T;
+  gv.set_wired(false);
 
   sleep(3);
 
-  std::cout <<"                locating point (1,1,1) :" << std::endl;
+  std::cout <<"          Locating point (1,1,1) :" << std::endl;
   Point p(1,1,1);
   gv.set_vertex_color(CGAL::ORANGE);
   gv << p;
@@ -202,32 +173,29 @@ int main()
     std::cout <<"                     VERTEX" << std::endl;
     visu_vertex(gv,T,c,li);
   }
-  if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) {
+  if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) 
     std::cout <<"                     OUTSIDE_CONVEX_HULL" << std::endl;
-  }
-  if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) {
+  if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) 
     std::cout <<"                     OUTSIDE_AFFINE_HULL" << std::endl;
-  }
 
   sleep(6);
 
+  std::cout <<"          Visualizing T" << std::endl;
   gv.clear();
-  gv.set_face_color(CGAL::BLUE);
-  gv.set_edge_color(CGAL::GREEN);
-  gv.set_vertex_color(CGAL::RED);
-
-  std::cout <<"                visualizing T" << std::endl;
+  std::cout <<"                - facets" << std::endl;
   gv << T;
+  gv.set_vertex_color(CGAL::RED);
   visu_vertices(gv,T);
-  visu_edges(gv,T);
-
-  std::ofstream oFileT("data/output",std::ios::out);
-  std::cout <<"                writing file data/output" << std::endl ;
-  oFileT << T;
-
+  std::cout <<"                - edges only" << std::endl;
+  gv.set_wired(true);
+  gv << T;
+  gv.set_wired(false);
+  std::cout <<"          You can translate or rotate one of the" <<std::endl
+	    <<"          two triangulations by selecting it"    <<std::endl
+	    <<"          in the Geomview targets" <<std::endl;
 
   char ch;
-  std::cout << "enter any character to quit" << std::endl;
+  std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;
 
   return 1;
