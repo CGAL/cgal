@@ -438,7 +438,7 @@ more efficient especially for large and/or complex sequences.
   component refers to the minimal and the second component refers to the
   maximal element in the range [\ccc{first}, \ccc{last}). \ccc{CompareMin} and
   \ccc{CompareMax} are adaptable binary function objects:
-  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where \ccc{VT} is the value type
   of \ccc{ForwardIterator}.}
 
 \ccExample The following example program computes the minimal and maximal
@@ -466,7 +466,7 @@ predicate. They are modeled after the STL functions \ccc{min_element} and
   predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
   defined by the \ccc{operator<} on \ccc{VT} where \ccc{VT} is the value type
   of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
-  \ccc{VT}~$\to$~\ccc{bool}.}
+  \ccc{VT}~$\rightarrow$~\ccc{bool}.}
 
 \ccFunction{template < class ForwardIterator, class Predicate >
   ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last,
@@ -475,7 +475,7 @@ predicate. They are modeled after the STL functions \ccc{min_element} and
   predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
   defined by the \ccc{operator<} on \ccc{VT} where \ccc{VT} is the value type
   of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
-  \ccc{VT}~$\to$~\ccc{bool}.}
+  \ccc{VT}~$\rightarrow$~\ccc{bool}.}
 
 \ccFunction{template < class ForwardIterator, class Compare, class Predicate >
   ForwardIterator min_element_if(ForwardIterator first, ForwardIterator last,
@@ -483,9 +483,9 @@ predicate. They are modeled after the STL functions \ccc{min_element} and
 {return an iterator referring to the minimal element among those satifying the
   predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
   defined by the binary function object \ccc{comp}:
-  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where \ccc{VT} is the value type
   of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
-  \ccc{VT}~$\to$~\ccc{bool}.}
+  \ccc{VT}~$\rightarrow$~\ccc{bool}.}
 
 \ccFunction{template < class ForwardIterator, class Compare, class Predicate >
   ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last,
@@ -493,9 +493,9 @@ predicate. They are modeled after the STL functions \ccc{min_element} and
 {return an iterator referring to the maximal element among those satifying the
   predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The ordering is
   defined by the binary function object \ccc{comp}:
-  \ccc{VT}~$\times$~\ccc{VT}~$\to$~\ccc{bool} where \ccc{VT} is the value type
+  \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where \ccc{VT} is the value type
   of \ccc{ForwardIterator}. \ccc{pred} is an unary function object:
-  \ccc{VT}~$\to$~\ccc{bool}.}
+  \ccc{VT}~$\rightarrow$~\ccc{bool}.}
 
 \ccExample The following example program computes the minimal odd element of
 the sequence $(3,\,5,\,2)$. Hence the output is \ccc{min_odd = 3}.
