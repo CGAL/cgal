@@ -7,7 +7,8 @@
 template< class RandomAccessIter, class Callback, class Traits >
 void all_pairs( RandomAccessIter p_begin, RandomAccessIter p_end,
                 RandomAccessIter i_begin, RandomAccessIter i_end,
-                Callback& callback, Traits traits, int last_dim, bool in_order = true )
+                Callback& callback, Traits traits, int last_dim,
+                bool in_order = true )
 {
     for( RandomAccessIter p = p_begin; p != p_end; ++p ) {
         for( RandomAccessIter i = i_begin; i != i_end; ++i ) {

@@ -128,7 +128,8 @@ template< class RandomAccessIter, class Callback, class T, class Traits >
 void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
                    RandomAccessIter i_begin, RandomAccessIter i_end,
                    T lo, T hi,
-                   Callback& callback, Traits traits, unsigned int dim, bool in_order )
+                   Callback& callback, Traits traits, unsigned int dim,
+                   bool in_order )
 {
     typedef typename Traits::Box Box;
     typedef typename Traits::Interval_Spanning_Predicate Spanning;
@@ -137,7 +138,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
 
 #if DEBUG
     Counter<int> bla( level );
-    //DUMP("----------------===========[ new node ]============---------------")
+    //DUMP("----------------===========[ new node ]============-------------")
     DUMP("range: [" << lo << "," << hi << ") dim " << dim << std::endl )
     DUMP("intervals: " )
     dump_box_numbers( i_begin, i_end, traits );
@@ -170,8 +171,8 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         return;
     }
 
-    if(  (unsigned int)std::distance( p_begin, p_end ) < Traits::get_cutoff() ||
-         (unsigned int)std::distance( i_begin, i_end ) < Traits::get_cutoff()  )
+    if( (unsigned int)std::distance( p_begin, p_end ) < Traits::get_cutoff() ||
+        (unsigned int)std::distance( i_begin, i_end ) < Traits::get_cutoff()  )
     {
         DUMP( "scanning ... " << std::endl )
         modified_two_way_scan( p_begin, p_end, i_begin, i_end,

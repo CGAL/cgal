@@ -98,10 +98,12 @@ unsigned int countMissingItems( Storage& a, Storage& b ) {
 template< class Storage >
 unsigned int countDuplicates( Storage& storage ) {
     unsigned int counter = 0;
-    for( typename Storage::iterator it = storage.begin(); it != storage.end(); ++it )
-        for( typename Storage::iterator it2 = it; it2 != storage.end(); ++it2 )
+    typedef typename Storage::iterator IT;
+    for( IT it = storage.begin(); it != storage.end(); ++it )
+        for( IT it2 = it; it2 != storage.end(); ++it2 )
             if( it != it2 &&  *it == *it2 ) {
-                //cout << it->first.num() << " <-> " << it->second.num() << endl;
+                //cout << it->first.num() << " <-> "
+                //     << it->second.num() << endl;
                 ++counter;
             }
     return counter;
@@ -120,28 +122,37 @@ test( const char* filename1, const char* filename2 )
     readBoxesFromFile( infile2, boxes2 );
 
     cout << endl;
-    StorageCallback< ResultContainer > callback1( result_all_pairs ), callback2( result_tree );
+    StorageCallback< ResultContainer >
+        callback1( result_all_pairs ),
+        callback2( result_tree );
 
     cout << "all pairs ...... " << flush;
     Timer timer;
     timer.start();
-    all_pairs( boxes1.begin(), boxes1.end(), boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
+    all_pairs( boxes1.begin(), boxes1.end(),
+               boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
     timer.stop();
-    cout << "got " << callback1.counter << " intersections in " << timer.t << " seconds." << endl;
+    cout << "got " << callback1.counter << " intersections in "
+         << timer.t << " seconds." << endl;
 
     cout << "segment tree ... " << flush;
     timer.reset();
     timer.start();
     unsigned int n = boxes1.size();
     Traits::cutoff = n < 2000 ? 6 : n / 100;
-    segment_tree( boxes1.begin(), boxes1.end(), boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+    segment_tree( boxes1.begin(), boxes1.end(),
+                  boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
     timer.stop();
-    cout << "got " << callback2.counter << " intersections in " << timer.t << " seconds." <<endl;
+    cout << "got " << callback2.counter << " intersections in "
+         << timer.t << " seconds." <<endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = countMissingItems( result_all_pairs, result_tree );
+        unsigned int missing    = countMissingItems( result_all_pairs,
+                                                     result_tree );
         unsigned int duplicates = countDuplicates( result_tree );
-        cout << "!! failed !! " << missing  << " missing and " << duplicates << " duplicate intersections in tree result." << endl;
+        cout << "!! failed !! " << missing  << " missing and "
+             << duplicates << " duplicate intersections in tree result."
+             << endl;
     }
     else
         cout << "--- passed --- " << endl;

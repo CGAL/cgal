@@ -2,7 +2,6 @@
 #include <bbox/box_traits.h>
 
 #include <bbox/one_way_scan.h>
-#include <bbox/two_way_scan.h>
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
@@ -98,10 +97,12 @@ unsigned int countMissingItems( Storage& a, Storage& b ) {
 template< class Storage >
 unsigned int countDuplicates( Storage& storage ) {
     unsigned int counter = 0;
-    for( typename Storage::iterator it = storage.begin(); it != storage.end(); ++it )
-        for( typename Storage::iterator it2 = it; it2 != storage.end(); ++it2 )
+    typedef typename Storage::iterator IT;
+    for( IT it = storage.begin(); it != storage.end(); ++it )
+        for( IT it2 = it; it2 != storage.end(); ++it2 )
             if( it != it2 &&  *it == *it2 ) {
-                //cout << it->first.num() << " <-> " << it->second.num() << endl;
+                //cout << it->first.num() << " <-> "
+                //     << it->second.num() << endl;
                 ++counter;
             }
     return counter;
@@ -116,29 +117,40 @@ test_n( unsigned int n )
     fill_boxes( n, boxes1 );
     fill_boxes( n, boxes2 );
     cout << endl;
-    StorageCallback< ResultContainer > callback1( result_scanner ), callback2( result_tree );
+    StorageCallback< ResultContainer >
+        callback1( result_scanner ),
+        callback2( result_tree );
 
     cout << "one way scan ... " << flush;
     Timer timer;
     timer.start();
-    one_way_scan( boxes1.begin(), boxes1.end(), boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
-    one_way_scan( boxes2.begin(), boxes2.end(), boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
+    one_way_scan( boxes1.begin(), boxes1.end(),
+                  boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
+    one_way_scan( boxes2.begin(), boxes2.end(),
+                  boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
     timer.stop();
-    cout << "got " << callback1.counter << " intersections in " << timer.t << " seconds." << endl;
+    cout << "got " << callback1.counter << " intersections in "
+         << timer.t << " seconds."
+         << endl;
 
     cout << "segment tree ... " << flush;
     timer.reset();
     timer.start();
     Traits::cutoff = n < 2000 ? 6 : n / 100;
     //Traits::cutoff = 5;
-    segment_tree( boxes1.begin(), boxes1.end(), boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+    segment_tree( boxes1.begin(), boxes1.end(),
+                  boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
     timer.stop();
-    cout << "got " << callback2.counter << " intersections in " << timer.t << " seconds." <<endl;
+    cout << "got " << callback2.counter << " intersections in "
+         << timer.t << " seconds." <<endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = countMissingItems( result_scanner, result_tree );
+        unsigned int missing    = countMissingItems( result_scanner,
+                                                     result_tree );
         unsigned int duplicates = countDuplicates( result_tree );
-        cout << "!! failed !! " << missing  << " missing and " << duplicates << " duplicate intersections in tree result." << endl;
+        cout << "!! failed !! " << missing  << " missing and "
+             << duplicates << " duplicate intersections in tree result."
+             << endl;
     }
     else
         cout << "--- passed --- " << endl;

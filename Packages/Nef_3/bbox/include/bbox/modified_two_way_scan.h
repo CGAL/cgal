@@ -8,7 +8,8 @@ template< class RandomAccessIter,
           class Traits >
 void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
                    RandomAccessIter i_begin, RandomAccessIter i_end,
-                   Callback& callback, Traits traits, unsigned int last_dim, bool in_order = true )
+                   Callback& callback, Traits traits, unsigned int last_dim,
+                   bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
 
@@ -18,7 +19,10 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
     // for each box viewed as interval i
     while( i_begin != i_end && p_begin != p_end ) {
         if( Traits::is_lo_less_lo( *i_begin, *p_begin, 0 ) ) {
-            for( RandomAccessIter p = p_begin; p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 ); ++p ) {
+            for( RandomAccessIter p = p_begin;
+                 p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
+                 ++p )
+            {
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p, *i_begin, dim ) )
                         goto no_intersection1;
@@ -33,7 +37,10 @@ void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
             }
             ++i_begin;
         } else {
-            for( RandomAccessIter i = i_begin; i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 ); ++i ) {
+            for( RandomAccessIter i = i_begin;
+                 i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
+                 ++i )
+            {
                 for( unsigned int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )
                         goto no_intersection2;
