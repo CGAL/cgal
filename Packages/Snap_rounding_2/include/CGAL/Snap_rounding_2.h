@@ -96,7 +96,13 @@ private:
 
 public:
   template<class Out>
-  void draw(Out &o) const;
+  void draw(Out &o) const
+{
+    o << *right_seg;
+    o << *left_seg;
+    o << *top_seg;
+    o << *bot_seg;
+  }
   Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
@@ -148,7 +154,7 @@ typedef typename OutputContainer::value_type         Polyline_type;
 public:
   friend class Segment_data<Rep>;
   friend class Hot_Pixel<Rep>;
-  friend class hot_pixel_dir_cmp<Rep>;
+  friend struct hot_pixel_dir_cmp<Rep>;
 
   typedef typename Rep::Segment_2 Segment_2;
   typedef typename Rep::Point_2   Point_2;
@@ -252,6 +258,7 @@ void Segment_data<Rep_>::determine_direction(Direction &seg_dir)
   }
 }
 
+/* af: not with VC7 
 template<class Rep_>
 template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
   {
@@ -260,7 +267,7 @@ template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
     o << *top_seg;
     o << *bot_seg;
   }
-
+*/
 // intersection pixel
 template<class Rep_>
 Hot_Pixel<Rep_>::Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size) :
@@ -524,7 +531,7 @@ void Snap_rounding_2<Rep_,OutputContainer>::
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter)
       simple_seg_list.push_back(Segment_2(iter->source(),iter->target()));
-
+    
     *mul_kd_tree = new Multiple_kd_tree<Rep,Hot_Pixel<Rep> *>(hot_pixels_list,
                   number_of_kd_trees,simple_seg_list);
   }
@@ -545,11 +552,11 @@ void Snap_rounding_2<Rep_,OutputContainer>::
     hot_pixels_intersected_set.clear();
     seg.determine_direction(seg_dir);
     number_of_intersections = 0;
-
     std::list<Hot_Pixel<Rep_> *> hot_pixels_list;
+    
     mul_kd_tree->get_intersecting_points(hot_pixels_list,
 	   Segment_2(seg.segment()),pixel_size);
-
+    
     for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
       if((*iter)->intersect(seg,seg_dir)) {
         (*iter)->set_direction(seg_dir);
@@ -646,7 +653,7 @@ void Snap_rounding_2<Rep_,OutputContainer>::iterate(
     int number_of_intersections;
     Hot_Pixel<Rep_> *hp;
     Direction seg_dir;
-
+    
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
       seg_output.clear();
@@ -676,7 +683,7 @@ void Snap_rounding_2<Rep_,OutputContainer>::iterate(
       }
 
       output_container.push_back(seg_output);
-    }
+    }    
   }
 
 template<class Rep_,class InputIterator,class OutputContainer>
