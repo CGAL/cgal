@@ -1,6 +1,8 @@
 5 June 2004:  Menelaos Karavelas
 - in io_aux.h replaced char* by const std::string& to avoid warnings by
   SunPro CC
+- fixed typo in Segment_Voronoi_diagram_2.C; VC7 was giving a warning
+  about it
 
 4 June 2004:  Menelaos Karavelas
 - fixed bug in find_faces_to_split in Segment_Voronoi_diagram_2.C: the
