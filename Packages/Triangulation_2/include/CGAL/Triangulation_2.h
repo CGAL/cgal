@@ -762,7 +762,7 @@ void   make_hole ( Vertex_handle v, list<Edge> & hole)
 	 in = fn->index(f);
 	 vv = f->vertex(cw(i));
 	 if( vv->face()==  f) vv->set_face(fn);
-	 vv = fc->vertex(ccw(i));
+	 vv = f->vertex(ccw(i));
 	 if( vv->face()== f) vv->set_face(fn);
 	 fn->set_neighbor(in, NULL);
 	 hole.push_back(Edge(fn,in));

@@ -475,8 +475,10 @@ public:
     list<Face* > to_delete;
     list<Face* > to_downgrade;
     Face_iterator fit = faces_begin();
-    if ( ! fit->has_vertex(v) ) { to_delete.push_back(&(*fit));}
-    else { to_downgrade.push_back(&(*fit));}
+    for( ; fit != faces_end(); fit++){
+      if ( ! fit->has_vertex(v) ) { to_delete.push_back(&(*fit));}
+      else { to_downgrade.push_back(&(*fit));}
+    }
 
     list<Face*>::iterator lfit = to_downgrade.begin();
     int j;
