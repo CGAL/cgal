@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.48 (19. October 2003)
+- Fix MipsPro warnings.
+
 1.47 (15. September 2003) [af]
 - New license headers
 

@@ -349,11 +349,10 @@ public:
       isolated vertices.}*/
 
     void clear_all_entries()
-        { Hole_iterator hit;
-        for (hit = fc_begin(); hit!=fc_end(); ++hit) 
+        {
+        for (Hole_iterator hit = fc_begin(); hit!=fc_end(); ++hit) 
             hit->set_fcit(Halfedge::nil_);
-        Isolated_vertex_iterator vit;
-        for (vit = iv_begin(); vit!=iv_end(); ++vit) 
+        for (Isolated_vertex_iterator vit = iv_begin(); vit!=iv_end(); ++vit) 
             vit->set_ivit(Vertex::nil_);
         FC.clear(); IV.clear(); }
 
