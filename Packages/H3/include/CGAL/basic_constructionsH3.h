@@ -110,10 +110,19 @@ centroid( PointH3<R> const& p,
           PointH3<R> const& r,
           PointH3<R> const& s)
 {
-    typedef typename R::RT  RT;
-    return PointH3<R>((p.hx() + q.hx() + r.hx() + s.hx())/RT(4),
-                      (p.hy() + q.hy() + r.hy() + s.hy())/RT(4),
-                      (p.hz() + q.hz() + r.hz() + s.hz())/RT(4));
+   typedef typename R::RT  RT;
+   const RT phw(p.hw());
+   const RT qhw(q.hw());
+   const RT rhw(r.hw());
+   const RT shw(s.hw());
+   RT hx(p.hx()*qhw*rhw*shw + q.hx()*phw*rhw*shw + r.hx()*phw*qhw*shw
+         + s.hx()*phw*qhw*rhw);
+   RT hy(p.hy()*qhw*rhw*shw + q.hy()*phw*rhw*shw + r.hy()*phw*qhw*shw
+         + s.hy()*phw*qhw*rhw);
+   RT hz(p.hz()*qhw*rhw*shw + q.hz()*phw*rhw*shw + r.hz()*phw*qhw*shw
+         + s.hz()*phw*qhw*rhw);
+   RT hw( phw*qhw*rhw*shw * 4);
+   return PointH3<R>(hx, hy, hz, hw);
 }
 
 template <class R>
@@ -123,10 +132,15 @@ centroid( PointH3<R> const& p,
           PointH3<R> const& q,
           PointH3<R> const& r)
 {
-    typedef typename R::RT  RT;
-    return PointH3<R>((p.hx() + q.hx() + r.hx())/RT(4),
-                      (p.hy() + q.hy() + r.hy())/RT(4),
-                      (p.hz() + q.hz() + r.hz())/RT(4));
+   typedef typename R::RT  RT;
+   const RT phw(p.hw());
+   const RT qhw(q.hw());
+   const RT rhw(r.hw());
+   RT hx(p.hx()*qhw*rhw + q.hx()*phw*rhw + r.hx()*phw*qhw);
+   RT hy(p.hy()*qhw*rhw + q.hy()*phw*rhw + r.hy()*phw*qhw);
+   RT hz(p.hz()*qhw*rhw + q.hz()*phw*rhw + r.hz()*phw*qhw);
+   RT hw( phw*qhw*rhw * 3);
+   return PointH3<R>(hx, hy, hz, hw);
 }
 
 template <class R>

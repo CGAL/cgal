@@ -1,3 +1,6 @@
+2.30   (?? June 2001)
+- fixed bug in centroid
+
 2.29   (19 June 2001)
 - added centroid
 
