@@ -1,3 +1,6 @@
+2.3.2  the Unique hash map stores now Vertex_handles
+       instead of Vertex* (necessary for VC)
+
 2.3.1  docs changed (range_search variants added)
 
 2.3    Unique_hash_map used
