@@ -50,7 +50,7 @@ standard_toolbar$(EXE_EXT): standard_toolbar$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)standard_toolbar standard_toolbar$(OBJ_EXT) $(LDFLAGS)
 
 layer.moc:  layer.C
-	$(QT_MOC) -o layer.moc $<
+	$(QT_MOC) -o layer.moc layer.C
 
 layer$(OBJ_EXT): layer.moc
 

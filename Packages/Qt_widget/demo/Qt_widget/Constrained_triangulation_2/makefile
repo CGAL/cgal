@@ -36,7 +36,7 @@ LDFLAGS = \
 all:constrained$(EXE_EXT) 
 
 constrained.moc:  constrained.C
-	$(QT_MOC) -o constrained.moc $<
+	$(QT_MOC) -o constrained.moc constrained.C
 
 constrained$(OBJ_EXT): constrained.moc
 
