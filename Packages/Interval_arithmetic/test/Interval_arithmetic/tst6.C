@@ -3,6 +3,15 @@
 // variable (Filter) is used before being initialized.
 
 #include <CGAL/basic.h>
+
+// Workaround for buggy compilers.  It's not used here actually.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#define CGAL_IA_CT double
+#define CGAL_IA_ET double
+#define CGAL_IA_PROTECTED true
+#define CGAL_IA_CACHE No_Filter_Cache
+#endif
+
 #include <CGAL/Filtered_exact.h>
 
 // Just to look at how good the CGAL_IA_FORCE_TO_DOUBLE macro is compiled.
