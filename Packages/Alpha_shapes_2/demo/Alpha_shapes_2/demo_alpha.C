@@ -454,7 +454,7 @@ int main(int argc,  char* argv[])
       int but = W.read_mouse(x,y);
 
       if (but == 0)
-	CGAL_CLIB_STD::exit(0);
+        break;
 
       switch (but) 
 	{
@@ -631,13 +631,13 @@ int main(int argc,  char* argv[])
       os << A;
       std::cout << "file written" << std::endl;
 
-      list< Vertex* > L_V;
+      std::list< Vertex* > L_V;
       A.get_Alpha_shape_vertices(back_inserter(L_V));
-      list<Vertex*>::iterator vertex_it = L_V.begin();
+      std::list<Vertex*>::iterator vertex_it = L_V.begin();
       for (; vertex_it != L_V.end(); ++vertex_it)
 	std::cout << (*vertex_it)->point() << std::endl;
  
-      list< pair<Face*, int> > L_E;
+      std::list< pair<Face*, int> > L_E;
       A.get_Alpha_shape_edges(back_inserter(L_E));
    
 #endif // DEBUG   

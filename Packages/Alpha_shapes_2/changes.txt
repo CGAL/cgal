@@ -1,5 +1,9 @@
-version 11.17 [af]
+version 11.19 [sp]
+- replace exit(0) by break, to avoid KCC warning "statement unreachable".
+
+version 11.18 [af]
 - added two missing std:: before ptr_diff
+
 version 11.17 [af]
 - resubmitted from Unix as PC cygwin does not distinguish makefile/Makefile
 
