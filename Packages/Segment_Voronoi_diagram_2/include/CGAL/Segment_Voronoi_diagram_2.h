@@ -88,7 +88,8 @@ public:
   //------
   typedef Svdds                                  Data_structure;
   typedef Gt                                     Geom_traits;
-  typedef typename Gt::Site_2                    Site;
+  typedef typename Gt::Site_2                    Site_2;
+  typedef Site_2                                 Site;
   typedef typename Gt::Point_2                   Point;
   typedef typename Gt::Segment_2                 Segment;
 
