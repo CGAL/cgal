@@ -66,23 +66,24 @@ public:
       {
 	active=true;
 	widget->setMouseTracking(TRUE);
+	last_of_poly = Point_2(x, y);
+	poly.push_back(Point_2(x, y));	
       } else{
 	if (last_of_poly == Point_2(x,y))
 	  return;
-      }
-      
-      rubber_old = Point_2(x, y);
-      if(is_simple()){
-	poly.push_back(Point_2(x,y));	
-	//show the last rubber as edge of the polygon
-	widget->lock();
-	  RasterOp old_rasterop=widget->rasterOp();
-	  widget->painter().setRasterOp(CopyROP);
-	  *widget << CGAL::YELLOW;
-	  *widget << Segment_2(rubber, last_of_poly);
-	  widget->setRasterOp(old_rasterop);
-	widget->unlock();
-	last_of_poly = Point_2(x, y);
+	rubber_old = Point_2(x, y);
+	if(is_simple()){
+	  poly.push_back(Point_2(x,y));	
+	  //show the last rubber as edge of the polygon
+	  widget->lock();
+	    RasterOp old_rasterop=widget->rasterOp();
+	    widget->painter().setRasterOp(CopyROP);
+	    *widget << CGAL::YELLOW;
+	    *widget << Segment_2(rubber, last_of_poly);
+	    widget->setRasterOp(old_rasterop);
+	  widget->unlock();
+	  last_of_poly = Point_2(x, y);
+	}
       }
       return;
     };
@@ -90,6 +91,10 @@ public:
     {
       if (active)
       {
+	if(!poly.is_simple())
+	  return;
+	if(poly.is_clockwise_oriented())
+	  poly.reverse_orientation ();
 	widget->new_object(make_object(poly));
 	active = false;
 	first_time = true;
