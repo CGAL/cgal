@@ -29,6 +29,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_insert_info.h>
+#include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -170,7 +171,7 @@ public:
       counter++;
     }
     
-    assert(curve->getId() == (*iter)->getId());
+    CGAL_assertion(curve->getId() == (*iter)->getId());
 
     return i;
   }

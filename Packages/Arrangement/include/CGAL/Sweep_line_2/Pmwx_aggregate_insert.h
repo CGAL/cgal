@@ -31,8 +31,8 @@
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
+#include <CGAL/assertions.h>
 #include <list>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -331,7 +331,7 @@ protected:
       SL_DEBUG((*slIter)->Print();)
       const Point_2 &topEnd = vcurve->getTopEnd();
       EventQueueIter topEndEventIter = m_queue->find(topEnd);
-      assert(topEndEventIter!=m_queue->end());
+      CGAL_assertion(topEndEventIter!=m_queue->end());
       Event *topEndEvent = topEndEventIter->second;
       
       bool lastEventCreatedHere = false;
@@ -362,7 +362,7 @@ protected:
 	Point_2 p;
 	bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
                                                            currentPoint, p, p);
-	SL_DEBUG(assert(res==true);)
+	SL_DEBUG(CGAL_assertion(res==true);)
 	  res = 0;
       
 	EventQueueIter eqi = m_queue->find(p);
@@ -599,7 +599,7 @@ protected:
 	
       } else if (!curve->isEndPoint(point)) {
 	EventQueueIter eventIter = m_queue->find(curve->getTopEnd());
-	assert(eventIter!=m_queue->end());
+	CGAL_assertion(eventIter!=m_queue->end());
 	(eventIter->second)->addVerticalCurveXEvent(m_currentEvent, true);
 	++iter;
       } else {
