@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1.9 on 26-Sep-2003
+- New file headers.
+
 Version 1.1.8 on 16-Sep-2003
 - Undo 17-Jun change, but protect the indexing commands by \lcTex.
 
