@@ -28,21 +28,6 @@
 #define CGAL_VERSION 2.4-I-65
 #define CGAL_VERSION_NR 1002004065
 
-
-//----------------------------------------------------------------------//
-//             STLport fix for MSVC
-//----------------------------------------------------------------------//
-
-
-#if defined( _MSC_VER) && (_MSC_VER <=1300)
-#   if ! defined(__INTEL_COMPILER)
-#     define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
-#   endif
-#else
-#   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
-#endif // _MSC_VER
-
-
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
@@ -52,7 +37,6 @@
 //----------------------------------------------------------------------//
 //             do some post processing for the flags
 //----------------------------------------------------------------------//
-
 
 // The following are now obsolete, they used to depend on config macros.
 #define CGAL_TYPENAME_MSVC_NULL typename
