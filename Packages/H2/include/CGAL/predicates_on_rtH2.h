@@ -340,9 +340,9 @@ collinear_are_strictly_ordered_along_lineH2(
 
 CGAL_END_NAMESPACE
 
-
-#ifdef CGAL_ARITHMETIC_FILTER_H
-#include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
-#endif // CGAL_ARITHMETIC_FILTER_H
+// Filtered_exact<> is not operational for Homogeneous at the moment.
+// #ifdef CGAL_ARITHMETIC_FILTER_H
+// #include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
+// #endif
 
 #endif // CGAL_PREDICATES_ON_RTH2_H

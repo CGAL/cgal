@@ -1,3 +1,7 @@
+2.25   (9  Apr 2001)
+- #include<CGAL/Homogeneous.h> and #include<CGAL/Arithmetic_filter.h> were not
+  compatible together.
+
 2.24   (20 Mar 2001)
 - Added squared_radius().
 
