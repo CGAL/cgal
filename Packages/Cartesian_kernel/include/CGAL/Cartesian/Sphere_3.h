@@ -52,8 +52,8 @@ public:
            const Orientation &o = COUNTERCLOCKWISE);
   // Sphere with center p, squared radius s, orientation o
   SphereC3(const Point_3 &p, const Point_3 &q,
-           const Point_3 &r, const Point_3 &u);
-  // Sphere passing through p,q,r,u, oriented by p, q, r, u
+           const Point_3 &r, const Point_3 &s);
+  // Sphere passing through p,q,r,s, oriented by p, q, r, s
   SphereC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
 	   const Orientation &o = COUNTERCLOCKWISE);
   // Sphere with great circle passing through p,q,r, oriented by o
@@ -82,14 +82,14 @@ public:
       return ptr->orient;
   }
 
-  Self   orthogonal_transform(const Aff_transformation_3 &t) const;
+  Self orthogonal_transform(const Aff_transformation_3 &t) const;
   //! precond: t.is_orthogonal() (*UNDEFINED*)
   // Returns the image of c by t. Since t is orthogonal, the image is
   // always a circle
 
-  bool   is_degenerate() const;
+  bool is_degenerate() const;
   // A circle is degenerate if its (squared) radius is null or negative
-  Self   opposite() const;
+  Self opposite() const;
   // Returns a circle with opposite orientation
 
   Oriented_side  oriented_side(const Point_3 &p) const;
@@ -100,7 +100,7 @@ public:
   bool has_on_positive_side(const Point_3 &p) const;
   bool has_on_negative_side(const Point_3 &p) const;
 
-  Bounded_side   bounded_side(const Point_3 &p) const;
+  Bounded_side bounded_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_BOUNDED_SIDE, R::ON_BOUNDARY or R::ON_UNBOUNDED_SIDE
   bool has_on_bounded_side(const Point_3 &p) const;
@@ -123,24 +123,23 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
-         const typename R::FT &squared_radius,
-         const Orientation &orient = COUNTERCLOCKWISE)
+         const typename R::FT &squared_radius, const Orientation &o)
 {
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
-                            ( orient    != COLLINEAR) );
+                            ( o != COLLINEAR) );
 
-  initialize_with( Sphere_repC3<R>(center, squared_radius, orient) );
+  initialize_with( Sphere_repC3<R>(center, squared_radius, o) );
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
-         const Orientation &orient = COUNTERCLOCKWISE)
+         const Orientation &o)
 {
-  CGAL_kernel_precondition( orient != COLLINEAR );
+  CGAL_kernel_precondition( o != COLLINEAR );
 
-  initialize_with( Sphere_repC3<R>(center, FT(0), orient) );
+  initialize_with( Sphere_repC3<R>(center, FT(0), o) );
 }
 
 template < class R >
@@ -148,14 +147,14 @@ CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
-         const Orientation &orient = COUNTERCLOCKWISE)
+         const Orientation &o)
 {
-  CGAL_kernel_precondition( orient != COLLINEAR);
+  CGAL_kernel_precondition( o != COLLINEAR);
 
   SphereC3<R CGAL_CTAG>::Point_3 center = midpoint(p,q);
   SphereC3<R CGAL_CTAG>::FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Sphere_repC3<R>( center, squared_radius, orient) );
+  initialize_with( Sphere_repC3<R>( center, squared_radius, o) );
 }
 
 template < class R >
@@ -164,14 +163,14 @@ SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
          const typename SphereC3<R CGAL_CTAG>::Point_3 &r,
-         const Orientation &orient = COUNTERCLOCKWISE)
+         const Orientation &o)
 {
-  CGAL_kernel_precondition( orient != COLLINEAR);
+  CGAL_kernel_precondition( o != COLLINEAR);
 
   Point_3 center = circumcenter(p,q,r);
   FT      squared_radius = squared_distance(p,center);
 
-  initialize_with( Sphere_repC3<R>(center, squared_radius, orient) );
+  initialize_with( Sphere_repC3<R>(center, squared_radius, o) );
 }
 
 template < class R >
