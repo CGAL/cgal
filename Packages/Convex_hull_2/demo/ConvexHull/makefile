@@ -37,6 +37,9 @@ all:            \
 ch_demo$(EXE_EXT): ch_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_demo ch_demo$(OBJ_EXT) $(LDFLAGS)
 
+convex_hull_points_2_demo$(EXE_EXT): convex_hull_points_2_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_points_2_demo convex_hull_points_2_demo$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    ch_demo.clean 
 

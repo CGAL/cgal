@@ -1,3 +1,6 @@
+3.5    (22 May 2001)
+- converted to new documentation style
+
 3.4    (15 Feb 2001)
 - moved predicate_objects_on_point_2 to Kernel_basic package
 
