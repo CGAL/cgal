@@ -56,8 +56,10 @@ public:
 		const NT& a3, const NT& A, const NT& B)
     : a0_(a0), a1_(a1), a2_(a2), a3_(a3), A_(A), B_(B)
   {
-    //    CGAL_assertion( !(CGAL::is_negative(A_)) );
-    //    CGAL_assertion( !(CGAL::is_negative(B_)) );
+#if CHECK_CGAL_PRECONDITIONS
+    CGAL_precondition( !(CGAL::is_negative(A_)) );
+    CGAL_precondition( !(CGAL::is_negative(B_)) );
+#endif
   }
 
   Square_root_2(const Square_root_2<NT>& other)
@@ -314,55 +316,6 @@ operator<<(Stream& os, const Square_root_2<NT>& x)
   os << "+(" << x.d() << ") sqrt{(" << x.e() << ") (" << x.f() 
      << ")}";
   return os;
-
-#if 0
-  if ( CGAL::is_zero(x) ) {
-    os << "0";
-    return os;
-  }
-
-  Square_root_2<NT> One(NT(1), NT(0), NT(0), NT(0), x.e(), x.f());
-
-  if ( CGAL::sign(x.a()) != ZERO ) {
-    os << x.a();
-    if ( CGAL::is_positive(x.b()) ) {
-      os << "+";
-    }
-  }
-
-  if ( CGAL::sign(x.b()) != ZERO &&
-       CGAL::sign(x.e()) != ZERO ) {
-    if ( CGAL::sign(x.b() - One) != ZERO ) {
-      os << x.b() << " ";
-    }
-    os << "sqrt{" << x.e() << "}";
-    if ( CGAL::is_positive(x.c()) ) {
-      os << "+";
-    }
-  }
-
-  if ( CGAL::sign(x.c()) != ZERO &&
-       CGAL::sign(x.f()) != ZERO ) {
-    if ( CGAL::sign(x.c() - One) != ZERO ) {
-      os << x.c() << " ";
-    }
-    os << "sqrt{" << x.f() << "}";
-    if ( CGAL::is_positive(x.d()) ) {
-      os << "+";
-    }
-  }
-
-  if ( CGAL::sign(x.d()) != ZERO &&
-       CGAL::sign(x.e()) != ZERO &&
-       CGAL::sign(x.f()) != ZERO ) {
-    if ( CGAL::sign(x.d() - One) != ZERO ) {
-      os << x.d() << " ";
-    }
-    os << "sqrt{" << x.e() << " " << x.f() << "}";
-  }
-
-  return os;
-#endif
 }
 
 

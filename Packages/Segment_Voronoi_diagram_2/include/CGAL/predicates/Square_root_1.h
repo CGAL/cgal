@@ -306,33 +306,6 @@ operator<<(Stream& os, const Square_root_1<NT>& x)
 {
   os << "(" << x.a()  << ")+(" << x.b() << ") sqrt{" << x.c() << "}";
   return os;
-
-#if 0
-  if ( CGAL::is_zero(x) ) {
-    os << "0";
-    return os;
-  }
-
-  //  Square_root_1<NT> One(NT(1), NT(0), x.r());
-
-  if ( CGAL::sign(x.a()) != ZERO ) {
-    os << x.a();
-    if ( CGAL::is_positive(x.b()) ) {
-      os << "+";
-    }
-  }
-
-  if ( CGAL::sign(x.b()) != ZERO &&
-       CGAL::sign(x.c()) != ZERO ) {
-    //    if ( CGAL::sign(x.b() - One) != ZERO ) {
-      os << x.b() << " ";
-      //    }
-
-    os << "sqrt{" << x.c() << "}";
-  }
-
-  return os;
-#endif
 }
 
 

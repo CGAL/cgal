@@ -27,6 +27,7 @@
 #include <CGAL/determinant.h>
 #include <CGAL/predicates/Svd_basic_predicates_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -201,16 +202,10 @@ class Svd_do_intersect_C2
   : public Svd_basic_predicates_C2<K>
 {
 public:
-  //  typedef std::pair<Intersection_type,Intersection_type>  result_type;
   typedef std::pair<int,int>       result_type;
 
-  enum
-    { FIRST_ENDPOINT = 0, SECOND_ENDPOINT, INTERIOR_POINT,
-      NO_INTERSECTION, IDENTICAL, SUBSEGMENT
-    } Intersection_type;
-
 private:
-  typedef Svd_basic_predicates_C2<K>  Base;
+  typedef Svd_basic_predicates_C2<K>    Base;
 
   typedef typename Base::Point_2        Point_2;
   typedef typename Base::Segment_2      Segment_2;
@@ -222,19 +217,14 @@ private:
 
   typedef typename K::Orientation_2     Orientation_2;
 
-  typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
+  typedef Svd_are_same_points_C2<K>     Are_same_points_C2;
+  typedef Svd_are_same_segments_C2<K>   Are_same_segments_C2;
 
 private:
-  bool same_segments(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_segment() && q.is_segment() );
-    return
-      ( are_same(p.source_site(), q.source_site()) &&
-	are_same(p.target_site(), q.target_site()) ) ||
-      ( are_same(p.source_site(), q.target_site()) &&
-	are_same(p.target_site(), q.source_site()) );
-  }
+  Are_same_points_C2     same_points;
+  Are_same_segments_C2   same_segments;
 
+private:
   //------------------------------------------------------------------------
 
   result_type
@@ -306,13 +296,13 @@ public:
       return std::pair<int,int>(4,4);
     }
 
-    if ( are_same(p.source_site(), q.source_site()) ) {
+    if ( same_points(p.source_site(), q.source_site()) ) {
       return do_intersect_same_point(p, q, 0, 0);
-    } if ( are_same(p.source_site(), q.target_site()) ) {
+    } if ( same_points(p.source_site(), q.target_site()) ) {
       return do_intersect_same_point(p, q, 0, 1);
-    } else if ( are_same(p.target_site(), q.source_site()) ) {
+    } else if ( same_points(p.target_site(), q.source_site()) ) {
       return do_intersect_same_point(p, q, 1, 0);
-    } else if ( are_same(p.target_site(), q.target_site()) ) {
+    } else if ( same_points(p.target_site(), q.target_site()) ) {
       return do_intersect_same_point(p, q, 1, 1);
     }
     
@@ -327,16 +317,7 @@ public:
 			   s2.target().x(), s2.target().y() );
 
     return res;
-
-    //    Intersection_type it1 = res.first;
-    //    Intersection_type it2 = res.second;
-
-    //    return result_type(it1, it2);
   }
-
-private:
-  Are_same_points_C2  are_same;
-
 };
 
 //---------------------------------------------------------------------

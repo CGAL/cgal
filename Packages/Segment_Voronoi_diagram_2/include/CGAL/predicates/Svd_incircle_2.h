@@ -24,6 +24,7 @@
 
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,21 +42,12 @@ private:
   typedef typename K::FT                            FT;
   typedef typename K::RT                            RT;
 
-  typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
+  typedef Svd_are_same_points_C2<K>     Are_same_points_C2;
+  typedef Svd_are_same_segments_C2<K>   Are_same_segments_C2;
 
 private:
-  Are_same_points_C2  are_same;
-
-  bool same_segments(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_segment() && q.is_segment() );
-
-    return
-      ( are_same(p.source_site(), q.source_site()) &&
-        are_same(p.target_site(), q.target_site()) ) ||
-      ( are_same(p.source_site(), q.target_site()) &&
-        are_same(p.target_site(), q.source_site()) );
-  }
+  Are_same_points_C2    same_points;
+  Are_same_segments_C2  same_segments;
 
   bool is_on_common_support(const Site_2& s1, const Site_2& s2,
 			    const Point_2& p) const
@@ -67,15 +59,15 @@ private:
 	  same_segments(s1.supporting_site(0),
 			s2.supporting_site(1))  ) {
       Site_2 support = s1.supporting_site(0);
-      return (  are_same(support.source_site(), p) ||
-		are_same(support.target_site(), p)  );
+      return (  same_points(support.source_site(), p) ||
+		same_points(support.target_site(), p)  );
     } else if (  same_segments(s1.supporting_site(1),
 			       s2.supporting_site(1)) ||
 		 same_segments(s1.supporting_site(1),
 			       s2.supporting_site(0))  ) {
       Site_2 support = s1.supporting_site(1);
-      return (  are_same(support.source_site(), p) ||
-		are_same(support.target_site(), p)  );      
+      return (  same_points(support.source_site(), p) ||
+		same_points(support.target_site(), p)  );      
     }
     return false;
   }
@@ -192,10 +184,10 @@ private:
 
     Orientation o;
     if ( p.is_point() && q.is_segment() ) {
-      Point_2 pq = are_same(p, q.source_site()) ? q.target() : q.source();
+      Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
       o = orientation(p.point(), pq, t.point());
     } else { // p is a segment and q is a point
-      Point_2 pp = are_same(q, p.source_site()) ? p.target() : p.source();
+      Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
       o = orientation(pp, q.point(), t.point());
     }
     return ( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
@@ -208,13 +200,12 @@ private:
 		    const Site_2& t) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
-    //    CGAL_precondition( t.is_segment() );
 
-    bool is_p_tsrc = are_same(p, t.source_site());
-    bool is_p_ttrg = are_same(p, t.target_site());
+    bool is_p_tsrc = same_points(p, t.source_site());
+    bool is_p_ttrg = same_points(p, t.target_site());
 
-    bool is_q_tsrc = are_same(q, t.source_site());
-    bool is_q_ttrg = are_same(q, t.target_site());
+    bool is_q_tsrc = same_points(q, t.source_site());
+    bool is_q_ttrg = same_points(q, t.target_site());
 
     bool is_p_on_t = is_p_tsrc || is_p_ttrg;
     bool is_q_on_t = is_q_tsrc || is_q_ttrg;
@@ -257,16 +248,14 @@ private:
 		    const Site_2& t) const
   {
     CGAL_precondition( p.is_segment() && q.is_point() );
-    //    CGAL_precondition( t.is_segment() );
 
-    bool is_q_tsrc = are_same(q, t.source_site());
-    bool is_q_ttrg = are_same(q, t.target_site());
+    bool is_q_tsrc = same_points(q, t.source_site());
+    bool is_q_ttrg = same_points(q, t.target_site());
 
     bool is_q_on_t = is_q_tsrc || is_q_ttrg;
 
-    //    if ( q == t.source() && q == t.target() ) {
     if ( is_q_on_t ) {
-      Point_2 pp = are_same(q, p.source_site()) ? p.target() : p.source();
+      Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
       Point_2 pt = is_q_tsrc ? t.target() : t.source();
 
       Orientation o = orientation(pp, q.point(), pt);
@@ -282,15 +271,14 @@ private:
 		    const Site_2& t) const
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
-    //    CGAL_precondition( t.is_segment() );
 
-    bool is_p_tsrc = are_same(p, t.source_site());
-    bool is_p_ttrg = are_same(p, t.target_site());
+    bool is_p_tsrc = same_points(p, t.source_site());
+    bool is_p_ttrg = same_points(p, t.target_site());
 
     bool is_p_on_t = is_p_tsrc || is_p_ttrg;
 
     if ( is_p_on_t ) {
-      Point_2 pq = are_same(p, q.source_site()) ? q.target() : q.source();
+      Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
       Point_2 pt = is_p_tsrc ? t.target() : t.source();
 
       Orientation o = orientation(p.point(), pq, pt);
@@ -325,25 +313,6 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
-#if 0
-    if ( p.is_point() && q.is_point() &&
-	 r.is_point() && t.is_point() ) {
-      RT x = p.point().x();
-      Object o = make_object(x);
-      Gmpq qx;
-      if ( assign(qx, o) ) {
-	std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
-	std::cout << "inside vertex conflict top "
-		  << "level operator()" << std::endl;
-	std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
-	std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
-	std::cout << "r: " << r << " exact? " << r.is_exact() << std::endl;
-	std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
-	std::cout << "-------------------------------------" <<	std::endl;
-      }
-    }
-#endif
-
     Voronoi_vertex_2 v(p, q, r);
 
     return v.incircle(t);
@@ -355,55 +324,22 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
-#if 0
-    if ( p.is_point() && q.is_point() && t.is_point() ) {
-      RT x = p.point().x();
-      Object o = make_object(x);
-      Gmpq qx;
-      if ( assign(qx, o) ) {
-	std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
-	std::cout << "inside vertex conflict top "
-		  << "level operator()" << std::endl;
-	std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
-	std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
-	std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
-	std::cout << "-------------------------------------" << std::endl;
-      }
-    }
-#endif
-#if 1
-    std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
-    std::cout << "inside vertex conflict top "
-	      << "level operator()" << std::endl;
-    std::cout << "p: " << p << " exact? " << p.is_exact() << std::endl;
-    std::cout << "q: " << q << " exact? " << q.is_exact() << std::endl;
-    std::cout << "t: " << t << " exact? " << t.is_exact() << std::endl;
-#endif
-
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
     if ( p.is_point() && q.is_segment() ) {
       // p must be an endpoint of q
-      CGAL_assertion( are_same(p, q.source_site()) ||
-		      are_same(p, q.target_site()) );
+      CGAL_assertion( same_points(p, q.source_site()) ||
+		      same_points(p, q.target_site()) );
     } else if ( p.is_segment() && q.is_point() ) {
       // q must be an endpoint of p
-      CGAL_assertion( are_same(p.source_site(), q) ||
-		      are_same(p.target_site(), q) );
+      CGAL_assertion( same_points(p.source_site(), q) ||
+		      same_points(p.target_site(), q) );
     }
 
     if ( t.is_point() ) {
-#if 1
-      std::cout << "incircle: " << incircle_p(p, q, t) << std::endl;
-      std::cout << "-------------------------------------" <<	std::endl;
-#endif
       return incircle_p(p, q, t);
     }
 
-#if 1
-    std::cout << "incircle: " << incircle_s(p, q, t) << std::endl;
-    std::cout << "-------------------------------------" <<	std::endl;
-#endif
     // MK::ERROR: do geometric filtering when orientation is called.
     return incircle_s(p, q, t);
   }

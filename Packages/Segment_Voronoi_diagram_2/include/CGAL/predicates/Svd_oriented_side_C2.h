@@ -48,8 +48,6 @@ private:
   typedef typename Base::FT                   FT;
   typedef typename Base::RT                   RT;
 
-  typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
-
 public:
   // computes the oriented side of the Voronoi vertex of s1, s2, s3
   // wrt the line that is passes through the point p and its direction

@@ -411,15 +411,6 @@ svd_oriented_side_of_bisector_ftC2(const typename K::Site_2& p,
 				   Method_tag mtag)
 {
   typename K::Site_2 site_vec[] = {p, q, t};
-#if 0
-  std::cout << "-----------------------------------------"
-	    << std::endl;
-  std::cout << "inside svd_oriented_side_of_bisector_ftC2"
-	    << std::endl;
-  std::cout << "p: " << p << std::endl;
-  std::cout << "q: " << q << std::endl;
-  std::cout << "t: " << t << std::endl;
-#endif
   return svd_predicate_C2<Svd_oriented_side_of_bisector_C2,
     Oriented_side,K,Method_tag,3>(site_vec);
 }

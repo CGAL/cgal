@@ -55,8 +55,16 @@ public:
   typedef typename Number_type_traits<RT>::Has_sqrt  RT_Has_sqrt;
   typedef typename Number_type_traits<FT>::Has_sqrt  FT_Has_sqrt;
 
-  static RT_Has_sqrt rt_has_sqrt;
-  static FT_Has_sqrt ft_has_sqrt;
+  static const RT_Has_sqrt& rt_has_sqrt() {
+    static RT_Has_sqrt has_sqrt;
+    return has_sqrt;
+  }
+
+  static FT_Has_sqrt ft_has_sqrt() {
+    static FT_Has_sqrt has_sqrt;
+    return has_sqrt;
+  }
+				   
 
   class Line_2
   {
@@ -106,12 +114,12 @@ public:
   // CONVERSIONS
   //-------------------------------------------------------------------
 
-  static FT compute_sqrt(const FT& x, Tag_true)
+  static FT compute_sqrt(const FT& x, const Tag_true&)
   {
     return CGAL::sqrt( x );
   }
 
-  static FT compute_sqrt(const FT& x, Tag_false)
+  static FT compute_sqrt(const FT& x, const Tag_false&)
   {
     return FT(  CGAL::sqrt( CGAL::to_double(x) )  );
   }
@@ -119,18 +127,15 @@ public:
   static
   FT to_ft(const Sqrt_1& x)
   {
-    //    FT sqrt_c = CGAL::sqrt(x.c());
-    FT sqrt_c = compute_sqrt( x.c(), ft_has_sqrt );
+    FT sqrt_c = compute_sqrt( x.c(), ft_has_sqrt() );
     return x.a() + x.b() * sqrt_c;
   }
 
   static
   FT to_ft(const Sqrt_3& x)
   {
-    //    FT sqrt_e = CGAL::sqrt( to_ft(x.e()) );
-    //    FT sqrt_f = CGAL::sqrt( to_ft(x.f()) );
-    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt );
-    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt );
+    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt() );
+    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt() );
     FT sqrt_ef = sqrt_e * sqrt_f;
     return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;
@@ -144,15 +149,8 @@ public:
   static
   Line_2 compute_supporting_line(const Segment_2& s)
   {
-#if 1
     RT a, b, c;
     compute_supporting_line(s, a, b, c);
-#else
-    RT a = s.source().y() - s.target().y();
-    RT b = s.target().x() - s.source().x();
-    RT c = s.source().x() * s.target().y()
-      - s.target().x() * s.source().y();
-#endif
     return Line_2(a, b, c);
   }
 
@@ -322,15 +320,6 @@ public:
 
 };
 
-template<class K>
-typename Svd_basic_predicates_C2<K>::RT_Has_sqrt
-Svd_basic_predicates_C2<K>::rt_has_sqrt =
-Svd_basic_predicates_C2<K>::RT_Has_sqrt();
-
-template<class K>
-typename Svd_basic_predicates_C2<K>::FT_Has_sqrt
-Svd_basic_predicates_C2<K>::ft_has_sqrt =
-Svd_basic_predicates_C2<K>::FT_Has_sqrt();
 
 CGAL_END_NAMESPACE
 

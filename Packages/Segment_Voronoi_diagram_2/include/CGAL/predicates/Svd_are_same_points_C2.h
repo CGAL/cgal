@@ -64,14 +64,7 @@ public:
 			 p.supporting_segment(1) };
       Segment_2 t[2] = { q.supporting_segment(0),
 			 q.supporting_segment(1) };
-#if 0
-      bool b[2][2];
-      for (int i = 0; i < 2; i++) {
-	for (int j = 0; j < 2; j++) {
-	  b[i][j] = are_same(s[i], t[j]);
-	}
-      }
-#endif
+
       return ( are_same(s[0], t[0]) && are_same(s[1], t[1]) ) ||
 	( are_same(s[0], t[1]) && are_same(s[1], t[0]) );
     }

@@ -867,22 +867,6 @@ public:
 
   //--------------------------------------------------------------------------
 
-
-public:
-  // THIS METHOD SHOULD BE PRIVATE AND SHOULD NOT BE USED IN THE
-  // PREDICATES (MAYBE I AM WRONG ON THIS????) IN ANY CASE CALLS TO
-  // THIS METHOD SHOULD BE ELIMINATED AS MUCH AS POSSIBLE; ALSO I NEED
-  // TO WRITE A SPECIAL VERSION FOR THE RING_TAG CASE
-#if 0
-  bool is_same_point(const Point_2& p) const
-  {
-    Comparison_result res = CGAL::compare(x(), p.x());
-    if ( res != EQUAL ) { return false; }
-
-    return (CGAL::compare(y(), p.y()) == EQUAL);
-  }
-#endif
-
 private:
 
   //--------------------------------------------------------------------------

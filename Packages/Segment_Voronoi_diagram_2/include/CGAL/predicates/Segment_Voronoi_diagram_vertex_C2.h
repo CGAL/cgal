@@ -30,53 +30,61 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
 
+#if 0
+  template<class M>
+  struct Svd_which_base_C2
+  {
+    template<class K>
+    struct Which_base {
+      typedef Svd_voronoi_vertex_ring_C2<K>  Base;
+    };
+  };
 
-template<class M>
-struct Svd_which_base_C2
-{
+  template <>
+  struct Svd_which_base_C2<Sqrt_field_tag>
+  {
+    template <class K>
+    struct Which_base {
+      typedef Svd_voronoi_vertex_sqrt_field_C2<K>  Base;
+    };
+  };
+#else
+
+  // with partial specialization:
+  template<class K,class M> struct Svd_which_base_C2;
+
   template<class K>
-  struct Which_base {
+  struct Svd_which_base_C2<K,Ring_tag>
+  {
     typedef Svd_voronoi_vertex_ring_C2<K>  Base;
   };
-};
 
-template <>
-struct Svd_which_base_C2<Sqrt_field_tag>
-{
-  template <class K>
-  struct Which_base {
+  template<class K>
+  struct Svd_which_base_C2<K,Sqrt_field_tag>
+  {
     typedef Svd_voronoi_vertex_sqrt_field_C2<K>  Base;
   };
-};
+
+
+#endif
+
+} // namespace CGALi
 
 
 //----------------------------------------------------------------------
-#if 0
-template<class K, class M>
-class Svd_voronoi_vertex_2
-  : public Svd_which_base_C2<M>::template Which_base<K>::Base
-{
-private:
-  typedef typename
-  Svd_which_base_C2<M>::template Which_base<K>::Base  Base;
-
-  typedef typename Base::Site_2   Site_2;
-public:
-  Svd_voronoi_vertex_2(const Site_2& p, const Site_2& q,
-		       const Site_2& r)
-    : Base(p, q, r) {}
-};
-
-#else
 
 template<class K, class M>
 class Svd_voronoi_vertex_C2
-  : public Svd_which_base_C2<M>::template Which_base<K>::Base
+//  : public CGALi::Svd_which_base_C2<M>::template Which_base<K>::Base
+// using partial specialization:
+  : public CGALi::Svd_which_base_C2<K,M>::Base
 {
 private:
-  typedef typename
-  Svd_which_base_C2<M>::template Which_base<K>::Base  Base;
+  //  typedef typename
+  //  CGALi::Svd_which_base_C2<M>::template Which_base<K>::Base  Base;
+  typedef typename CGALi::Svd_which_base_C2<K,M>::Base   Base;
 
 protected:
   typedef typename Base::Site_2   Site_2;
@@ -85,7 +93,6 @@ public:
 			const Site_2& r)
     : Base(p, q, r) {}
 };
-#endif
 
 
 CGAL_END_NAMESPACE

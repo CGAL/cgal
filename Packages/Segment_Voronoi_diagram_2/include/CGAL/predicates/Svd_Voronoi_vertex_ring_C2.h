@@ -27,6 +27,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/predicates/Svd_basic_predicates_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -60,23 +61,13 @@ public:
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
 private:
-  typedef Svd_are_same_points_C2<K>   Are_same_points_C2;
+  typedef Svd_are_same_points_C2<K>     Are_same_points_C2;
+  typedef Svd_are_same_segments_C2<K>   Are_same_segments_C2;
 
-  Are_same_points_C2  are_same;
+  Are_same_points_C2    same_points;
+  Are_same_segments_C2  same_segments;
 
 private:
-  //--------------------------------------------------------------------------
-
-  bool same_segments(const Site_2& s1, const Site_2& s2) const
-  {
-    CGAL_precondition( s1.is_segment() && s2.is_segment() );
-    return
-      ( are_same(s1.source_site(), s2.source_site()) &&
-	are_same(s1.target_site(), s2.target_site()) ) ||
-      ( are_same(s1.source_site(), s2.target_site()) &&
-	are_same(s1.target_site(), s2.source_site()) );
-  }
-
   //--------------------------------------------------------------------------
 
   void
@@ -113,9 +104,9 @@ private:
     v_type = PSS;
 
     bool pq =
-      are_same(p, q.source_site()) || are_same(p, q.target_site());
+      same_points(p, q.source_site()) || same_points(p, q.target_site());
     bool pr =
-      are_same(p, r.source_site()) || are_same(p, r.target_site());
+      same_points(p, r.source_site()) || same_points(p, r.target_site());
 
     Point_2 pp = p.point();
 
@@ -151,15 +142,8 @@ private:
     if ( sgn_c1_ == NEGATIVE ) {
       a1 = -a1;  b1 = -b1;  c1_ = -c1_;
     } else if ( sgn_c1_ == ZERO ) {
-#if 0
-      if ( !pq ) {
-	std::cout << "p: " << p << std::endl;
-	std::cout << "q: " << q << std::endl;
-	std::cout << "r: " << r << std::endl;
-      }
-#endif
       CGAL_assertion( pq );
-      if ( are_same(p, q.target_site()) ) {
+      if ( same_points(p, q.target_site()) ) {
 	a1 = -a1;  b1 = -b1;  c1_ = -c1_;
       }
     }
@@ -168,7 +152,7 @@ private:
       a2 = -a2;  b2 = -b2;  c2_ = -c2_;
     } else if ( sgn_c2_ == ZERO ) {
       CGAL_assertion( pr );
-      if ( are_same(p, r.source_site()) ) {
+      if ( same_points(p, r.source_site()) ) {
 	a2 = -a2;  b2 = -b2;  c2_ = -c2_;
       }
     }
@@ -323,12 +307,12 @@ private:
     RT cq_ = a * qq.x() + b * qq.y() + c;
 
 
-    if ( are_same(p, r.source_site()) ||
-	 are_same(p, r.target_site()) ) {
+    if ( same_points(p, r.source_site()) ||
+	 same_points(p, r.target_site()) ) {
       c_ = RT(0);
     }
-    if ( are_same(q, r.source_site()) ||
-	 are_same(q, r.target_site()) ) {
+    if ( same_points(q, r.source_site()) ||
+	 same_points(q, r.target_site()) ) {
       cq_ = RT(0);
     }
 
@@ -392,7 +376,6 @@ private:
   is_on_positive_halfspace(const Site_2& supp,
 			   const Site_2& s, const Line_2& l) const
   {
-#if 1
     CGAL_precondition( supp.is_segment() && s.is_segment() );
     
     if ( same_segments(supp.supporting_site(),
@@ -400,13 +383,13 @@ private:
       return false;
     }
 
-    if ( are_same(supp.source_site(), s.source_site()) ||
-	 are_same(supp.target_site(), s.source_site()) ) {
+    if ( same_points(supp.source_site(), s.source_site()) ||
+	 same_points(supp.target_site(), s.source_site()) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
-    if ( are_same(supp.source_site(), s.target_site()) ||
-	 are_same(supp.target_site(), s.target_site()) ) {
+    if ( same_points(supp.source_site(), s.target_site()) ||
+	 same_points(supp.target_site(), s.target_site()) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
@@ -422,7 +405,6 @@ private:
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
-#endif
     return Base::is_on_positive_halfspace(l, s.segment());
   }
 
@@ -663,23 +645,13 @@ private:
 
   }
 
-
-  //--------------------------------------------------------------------------
-
-#if 0
-  bool are_identical(const Point_2& p, const Point_2& q) const
-  {
-    return (p == q);
-  }
-#endif
-
   //--------------------------------------------------------------------------
 
   bool is_endpoint_of(const Site_2& p, const Site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
-    return ( are_same(p, s.source_site()) ||
-	     are_same(p, s.target_site()) );
+    return ( same_points(p, s.source_site()) ||
+	     same_points(p, s.target_site()) );
   }
   
 
@@ -761,9 +733,9 @@ private:
     CGAL_precondition( t.is_point() );
 
     use_result = false;
-    if (  ( p_.is_point() && are_same(p_, t) ) ||
-	  ( q_.is_point() && are_same(q_, t) ) ||
-	  ( r_.is_point() && are_same(r_, t) )  ) {
+    if (  ( p_.is_point() && same_points(p_, t) ) ||
+	  ( q_.is_point() && same_points(q_, t) ) ||
+	  ( r_.is_point() && same_points(r_, t) )  ) {
       use_result = true;
       return ZERO;
     }
@@ -870,10 +842,8 @@ private:
     Sqrt_3 Rs1 =
       CGAL::square(ux - tx * uz) + CGAL::square(uy - ty * uz);
 
-    //    Sign s_vz = CGAL::sign(vz);
     Sign s_Q = CGAL::sign(Rs1 - Rs);
 
-    //    return Sign(s_vz * s_Q);
     return s_Q;
   }
 
@@ -1151,18 +1121,18 @@ private:
     }
 
     Sign d1, d2;
-    if (  ( p_.is_point() && are_same(p_, t.source_site()) ) ||
-	  ( q_.is_point() && are_same(q_, t.source_site()) ) ||
-	  ( r_.is_point() && are_same(r_, t.source_site()) )  ) {
+    if (  ( p_.is_point() && same_points(p_, t.source_site()) ) ||
+	  ( q_.is_point() && same_points(q_, t.source_site()) ) ||
+	  ( r_.is_point() && same_points(r_, t.source_site()) )  ) {
       d1 = ZERO;
     } else {
       d1 = incircle_p(t.source_site());
     }
     if ( d1 == NEGATIVE ) { return NEGATIVE; }
 
-    if (  ( p_.is_point() && are_same(p_, t.target_site()) ) ||
-	  ( q_.is_point() && are_same(q_, t.target_site()) ) ||
-	  ( r_.is_point() && are_same(r_, t.target_site()) )  ) {
+    if (  ( p_.is_point() && same_points(p_, t.target_site()) ) ||
+	  ( q_.is_point() && same_points(q_, t.target_site()) ) ||
+	  ( r_.is_point() && same_points(r_, t.target_site()) )  ) {
       d2 = ZERO;
     } else {
       d2 = incircle_p(t.target_site());
@@ -1173,7 +1143,6 @@ private:
     Line_2 l = compute_supporting_line(t.supporting_segment());
     Sign sl = incircle(l, type);
 
-    // this is the old code
     if ( sl == POSITIVE ) { return sl; }
 
     Oriented_side os1 = oriented_side(l, t.source(), type);
@@ -1199,8 +1168,8 @@ private:
     if ( is_degenerate_Voronoi_circle() ) {
       // case 1: the new segment is not adjacent to the center of the
       //         degenerate Voronoi circle
-      if (  !are_same( p_ref(), t.source_site() ) &&
-	    !are_same( p_ref(), t.target_site() )  ) {
+      if (  !same_points( p_ref(), t.source_site() ) &&
+	    !same_points( p_ref(), t.target_site() )  ) {
 	return POSITIVE;
       }
 
@@ -1223,46 +1192,39 @@ private:
 			 t.supporting_site()) ) {
 	return ZERO;
       }
-#if 0
-      if (  ( r_.is_point() && are_same(p_ref(), r_) ) ||
-	    ( q_.is_point() && are_same(p_ref(), q_) ) ||
-	    ( p_.is_point() && are_same(p_ref(), p_) )  ) {
-#endif
-	Site_2 pr;
-	Site_2 sp, sq;
-	if ( p_.is_point() ) {
-	  CGAL_assertion( q_.is_segment() && r_.is_segment() );
-	  pr = p_;
-	  sp = q_;
-	  sq = r_;
-	} else if ( q_.is_point() ) {
-	  CGAL_assertion( r_.is_segment() && p_.is_segment() );
-	  pr = q_;
-	  sp = r_;
-	  sq = p_;
-	} else {
-	  CGAL_assertion( p_.is_segment() && q_.is_segment() );
-	  pr = r_;
-	  sp = p_;
-	  sq = q_;
-	}
 
-	Point_2 pq = sq.source(), pp = sp.source(), pt = t.source();
-
-	if ( are_same(sp.source_site(), pr) ) { pp = sp.target(); }
-	if ( are_same(sq.source_site(), pr) ) { pq = sq.target(); }
-	if ( are_same( t.source_site(), pr) ) { pt =  t.target(); }
-
-	Point_2 pr_ = pr.point();
-
-	if ( CGAL::orientation(pr_, pp, pt) == LEFT_TURN &&
-	     CGAL::orientation(pr_, pq, pt) == RIGHT_TURN ) {
-	  return NEGATIVE;
-	}
-	return ZERO;
-#if 0
+      Site_2 pr;
+      Site_2 sp, sq;
+      if ( p_.is_point() ) {
+	CGAL_assertion( q_.is_segment() && r_.is_segment() );
+	pr = p_;
+	sp = q_;
+	sq = r_;
+      } else if ( q_.is_point() ) {
+	CGAL_assertion( r_.is_segment() && p_.is_segment() );
+	pr = q_;
+	sp = r_;
+	sq = p_;
+      } else {
+	CGAL_assertion( p_.is_segment() && q_.is_segment() );
+	pr = r_;
+	sp = p_;
+	sq = q_;
       }
-#endif
+
+      Point_2 pq = sq.source(), pp = sp.source(), pt = t.source();
+
+      if ( same_points(sp.source_site(), pr) ) { pp = sp.target(); }
+      if ( same_points(sq.source_site(), pr) ) { pq = sq.target(); }
+      if ( same_points( t.source_site(), pr) ) { pt =  t.target(); }
+
+      Point_2 pr_ = pr.point();
+
+      if ( CGAL::orientation(pr_, pp, pt) == LEFT_TURN &&
+	   CGAL::orientation(pr_, pq, pt) == RIGHT_TURN ) {
+	return NEGATIVE;
+      }
+      return ZERO;
     } // if ( is_degenerate_Voronoi_circle() )
 
     Sign s(ZERO);
@@ -1306,22 +1268,6 @@ public:
 
 
   //--------------------------------------------------------------------------
-
-
-public:
-  // THIS METHOD SHOULD BE PRIVATE AND SHOULD NOT BE USED IN THE
-  // PREDICATES (MAYBE I AM WRONG ON THIS????) IN ANY CASE CALLS TO
-  // THIS METHOD SHOULD BE ELIMINATED AS MUCH AS POSSIBLE; ALSO I NEED
-  // TO WRITE A SPECIAL VERSION FOR THE RING_TAG CASE
-#if 0
-  bool is_same_point(const Point_2& p, Method_tag) const
-  {
-    Comparison_result res = CGAL::compare(x(), p.x());
-    if ( res != EQUAL ) { return false; }
-
-    return (CGAL::compare(y(), p.y()) == EQUAL);
-  }
-#endif
 
 private:
 
@@ -1503,11 +1449,6 @@ private:
   // the case pss and sss
   Sqrt_3 ux, uy, uz;
 };
-
-
-
-
-
 
 
 

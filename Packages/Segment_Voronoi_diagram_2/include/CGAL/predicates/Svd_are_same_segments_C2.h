@@ -18,39 +18,39 @@
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
 
 
-#ifndef CGAL_SVD_IS_DEGENERATE_EDGE_2_H
-#define CGAL_SVD_IS_DEGENERATE_EDGE_2_H
-
-//#include <CGAL/predicates/Svd_basic_predicates_C2.h>
-//#include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
-
+#ifndef CGAL_SVD_ARE_SAME_SEGMENTS_C2_H
+#define CGAL_SVD_ARE_SAME_SEGMENTS_C2_H
 
 CGAL_BEGIN_NAMESPACE
 
-//-----------------------------------------------------------------------------
-
-
-
-template<class R, class Method_tag>
-class Svd_is_degenerate_edge_C2
+template<class K>
+class Svd_are_same_segments_C2
 {
-public:
-  typedef typename R::Site_2      Site_2;
+private:
+  typedef typename K::Site_2          Site_2;
+  typedef Svd_are_same_points_C2<K>   Are_same_points_2;
+
+private:
+  Are_same_points_2  same_points;
 
 public:
-  bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& s)
+  bool operator()(const Site_2& p, const Site_2& q) const
   {
-    return false;
-  }
+    CGAL_precondition( p.is_segment() && q.is_segment() );
 
+    return
+      ( same_points(p.source_site(), q.source_site()) &&
+        same_points(p.target_site(), q.target_site()) ) ||
+      ( same_points(p.source_site(), q.target_site()) &&
+        same_points(p.target_site(), q.source_site()) );
+  }
 };
 
 
-//-----------------------------------------------------------------------------
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SVD_IS_DEGENERATE_EDGE_2_H
+#endif // CGAL_SVD_ARE_SAME_SEGMENTS_C2_H

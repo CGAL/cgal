@@ -23,9 +23,9 @@
 #ifndef CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
-#include <CGAL/Cartesian/distance_predicates_2.h>
 #include <CGAL/predicates/Svd_basic_predicates_C2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,10 +38,16 @@ class Svd_oriented_side_of_bisector_C2
 {
 private:
   typedef Svd_basic_predicates_C2<K>   Base;
-  typedef Svd_are_same_points_C2<K>    Are_same_points_C2;
   typedef typename Base::Line_2     Line_2;
   typedef typename Base::RT         RT;
   typedef typename Base::FT         FT;
+
+  typedef Svd_are_same_points_C2<K>    Are_same_points_C2;
+  typedef Svd_are_same_segments_C2<K>  Are_same_segments_C2;
+
+private:
+  Are_same_points_C2    same_points;
+  Are_same_segments_C2  same_segments;
 
 public:
   typedef typename Base::Site_2     Site_2;
@@ -51,27 +57,17 @@ public:
   typedef Oriented_side          result_type;
 
 private:
-  bool same_segments(const Site_2& s1, const Site_2& s2) const
-  {
-    CGAL_precondition( s1.is_segment() && s2.is_segment() );
-    return
-      ( are_same(s1.source_site(), s2.source_site()) &&
-	are_same(s1.target_site(), s2.target_site()) ) ||
-      ( are_same(s1.source_site(), s2.target_site()) &&
-	are_same(s1.target_site(), s2.source_site()) );
-  }
-
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
     return
-      are_same(p, s.source_site()) || are_same(p, s.target_site());
+      same_points(p, s.source_site()) || same_points(p, s.target_site());
   }
 
   bool is_degenerate(const Site_2& s) const
   {
     CGAL_precondition( s.is_segment() );    
-    return are_same( s.source_site(), s.target_site() );
+    return same_points( s.source_site(), s.target_site() );
   }
 
   //-----------------------------------------------------------------
@@ -81,10 +77,10 @@ private:
 		       const Site_2& q) const
   {
     CGAL_precondition( p1.is_point() && p2.is_point() );
-    CGAL_precondition( !are_same(p1,p2) );
+    CGAL_precondition( !same_points(p1,p2) );
 
-    if ( are_same(q, p1) ) { return SMALLER; }
-    if ( are_same(q, p2) ) { return LARGER; }
+    if ( same_points(q, p1) ) { return SMALLER; }
+    if ( same_points(q, p2) ) { return LARGER; }
     
     return
       compare_distance_to_point(q.point(), p1.point(), p2.point());
@@ -99,13 +95,13 @@ private:
     CGAL_precondition( s.is_segment() && p.is_point() );
     CGAL_precondition( !is_degenerate(s) );
 
-    if ( are_same(q, p) ) { return LARGER; }
-    if ( are_same(q, s.source_site()) ) { return SMALLER; }
-    if ( are_same(q, s.target_site()) ) { return SMALLER; }
+    if ( same_points(q, p) ) { return LARGER; }
+    if ( same_points(q, s.source_site()) ) { return SMALLER; }
+    if ( same_points(q, s.target_site()) ) { return SMALLER; }
 
 
-    bool is_src = are_same(p, s.source_site());
-    bool is_trg = are_same(p, s.target_site());
+    bool is_src = same_points(p, s.source_site());
+    bool is_trg = same_points(p, s.target_site());
 
     if ( is_src || is_trg ) {
       Line_2 ls = compute_supporting_line(s.supporting_segment());
@@ -226,13 +222,13 @@ private:
     if ( idx1 == -1 ) {
       RT d2_s1 = compute_squared_distance(qq, ssrc1);
       if ( idx2 == -1 ) {
-	if ( are_same(s1.source_site(), s2.source_site()) ) {
+	if ( same_points(s1.source_site(), s2.source_site()) ) {
 	  return EQUAL;
 	}
 	RT d2_s2 = compute_squared_distance(qq, ssrc2);
 	return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
-	if ( are_same(s1.source_site(), s2.target_site()) ) {
+	if ( same_points(s1.source_site(), s2.target_site()) ) {
 	  return EQUAL;
 	}
 	RT d2_s2 = compute_squared_distance(qq, strg2);
@@ -244,13 +240,13 @@ private:
     } else if ( idx1 == 1 ) {
       RT d2_s1 = compute_squared_distance(qq, strg1);
       if ( idx2 == -1 ) {
-	if ( are_same(s1.target_site(), s2.source_site()) ) {
+	if ( same_points(s1.target_site(), s2.source_site()) ) {
 	  return EQUAL;
 	}
 	RT d2_s2 = compute_squared_distance(qq, ssrc2);
 	return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
-	if ( are_same(s1.target_site(), s2.target_site()) ) {
+	if ( same_points(s1.target_site(), s2.target_site()) ) {
 	  return EQUAL;
 	}
 	RT d2_s2 = compute_squared_distance(qq, strg2);
@@ -304,27 +300,9 @@ public:
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const
   {
-#if 0
-    RT x = q.point().x();
-    Object o = make_object(x);
-    Gmpq qx;
-    if ( assign(qx, o) ) {
-      std::cout << "+++++++++++++++++++++++++++++++++++++" << std::endl;
-      std::cout << "inside oriented side of bisector top "
-		<< "level operator()" << std::endl;
-      std::cout << "t1: " << t1 << std::endl;
-      std::cout << "t2: " << t2 << std::endl;
-      std::cout << "q: " << q << std::endl;
-      std::cout << "-------------------------------------" << std::endl;
-    }
-#endif
     CGAL_precondition( q.is_point() );
     return compare_distances(t1, t2, q);
   }
-
-
-private:
-  Are_same_points_C2  are_same;
 };
 
 

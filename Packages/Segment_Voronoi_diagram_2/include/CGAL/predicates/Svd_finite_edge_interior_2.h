@@ -26,6 +26,7 @@
 #include <CGAL/predicates/Svd_basic_predicates_C2.h>
 #include <CGAL/predicates/Segment_Voronoi_diagram_vertex_2.h>
 #include <CGAL/predicates/Svd_are_same_points_C2.h>
+#include <CGAL/predicates/Svd_are_same_segments_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -52,19 +53,11 @@ public:
 
 private:
   typedef Svd_are_same_points_C2<K>           Are_same_points_2;
+  typedef Svd_are_same_segments_C2<K>         Are_same_segments_2;
 
 private:
-  Are_same_points_2  are_same;
-
-  bool same_segments(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_segment() && q.is_segment() );
-    return
-      ( are_same(p.source_site(), q.source_site()) &&
-        are_same(p.target_site(), q.target_site()) ) ||
-      ( are_same(p.source_site(), q.target_site()) &&
-        are_same(p.target_site(), q.source_site()) );
-  }
+  Are_same_points_2    same_points;
+  Are_same_segments_2  same_segments;
 
 private:
 
@@ -115,15 +108,15 @@ private:
 
     Oriented_side op, oq;
 
-    if ( are_same(sp, t.source_site()) ||
-	 are_same(sp, t.target_site()) ) {
+    if ( same_points(sp, t.source_site()) ||
+	 same_points(sp, t.target_site()) ) {
       op = ON_ORIENTED_BOUNDARY;
     } else {
       op = oriented_side_of_line(lt, p);
     }
 
-    if ( are_same(sq, t.source_site()) ||
-	 are_same(sq, t.target_site()) ) {
+    if ( same_points(sq, t.source_site()) ||
+	 same_points(sq, t.target_site()) ) {
       oq = ON_ORIENTED_BOUNDARY;
     } else {
       oq = oriented_side_of_line(lt, q);
@@ -180,8 +173,8 @@ private:
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
 
-    if ( are_same(p, q.source_site()) ||
-	 are_same(p, q.target_site()) ) {
+    if ( same_points(p, q.source_site()) ||
+	 same_points(p, q.target_site()) ) {
       return false;
     }   
 
@@ -236,8 +229,8 @@ private:
       lq = opposite_line(lq); 
     }
 
-    if ( are_same(sp, st.source_site()) ||
-	 are_same(sp, st.target_site()) ) {
+    if ( same_points(sp, st.source_site()) ||
+	 same_points(sp, st.target_site()) ) {
 
       Line_2 lqperp = compute_perpendicular(lq, p);
 
@@ -254,18 +247,16 @@ private:
       if ( !on_different_parabola_arcs ) { return true; }
 
       Site_2 t1;
-      if ( are_same(sp, st.source_site()) ) {
+      if ( same_points(sp, st.source_site()) ) {
 	t1 = st.target_site();
       } else {
 	t1 = st.source_site();
       }
 
-      //      Oriented_side o_p = oriented_side_of_line(lq, p);
-
       Oriented_side o_t1;
 
-      if ( are_same(t1, sq.source_site()) ||
-	   are_same(t1, sq.target_site()) ) {
+      if ( same_points(t1, sq.source_site()) ||
+	   same_points(t1, sq.target_site()) ) {
 	o_t1 = ON_ORIENTED_BOUNDARY;
       } else if (  !t1.is_exact() &&
 		   ( same_segments(t1.supporting_site(0),
@@ -277,10 +268,6 @@ private:
 	o_t1 = oriented_side_of_line(lq, t1.point());
       }
 
-      //      CGAL_assertion( o_p == ON_POSITIVE_SIDE );
-
-      //      if ( (o_p == ON_POSITIVE_SIDE && o_t1 == ON_NEGATIVE_SIDE) ||
-      //	   (o_p == ON_NEGATIVE_SIDE && o_t1 == ON_POSITIVE_SIDE) ) {
       if ( o_t1 == ON_NEGATIVE_SIDE ) {
 	return true;
       }
@@ -451,8 +438,8 @@ private:
   {
     CGAL_precondition( sp.is_point() && sq.is_segment() && st.is_point() );
 
-    if ( are_same(sp, sq.source_site()) ||
-	 are_same(sp, sq.target_site()) ) {
+    if ( same_points(sp, sq.source_site()) ||
+	 same_points(sp, sq.target_site()) ) {
       return false;
     }
    
@@ -512,12 +499,9 @@ private:
 
     // first orient lp according to its Voronoi vertices
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    are_same(vpqr.degenerate_point(), p.source_site()) ) ||
+	    same_points(vpqr.degenerate_point(), p.source_site()) ) ||
 	  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    are_same(vpqr.degenerate_point(), p.target_site()) )  ) {
-      //      CGAL_assertion
-      //	( !vqps.is_same_point(p.source(), tag) &&
-      //	  !vqps.is_same_point(p.target(), tag) );
+	    same_points(vpqr.degenerate_point(), p.target_site()) )  ) {
       if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
 	lp = opposite_line(lp);
       }
@@ -529,12 +513,9 @@ private:
 
     // then orient lq according to its Voronoi vertices
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    are_same(vpqr.degenerate_point(), q.source_site()) ) ||
+	    same_points(vpqr.degenerate_point(), q.source_site()) ) ||
 	  ( vpqr.is_degenerate_Voronoi_circle() &&
-	    are_same(vpqr.degenerate_point(), q.target_site()) )  ) {
-      //      CGAL_assertion
-      //	( !vqps.is_same_point(q.source(), tag) &&
-      //	  !vqps.is_same_point(q.target(), tag) );
+	    same_points(vpqr.degenerate_point(), q.target_site()) )  ) {
       if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {
 	lq = opposite_line(lq);
       }
@@ -589,28 +570,6 @@ public:
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		  const Site_2& s, const Site_2& t, Sign sgn) const
   {
-#if 0
-    std::cout << "inside finite edge interior top "
-	      << "level operator()" << std::endl;
-    std::cout << "p: " << p << std::endl;
-    std::cout << "q: " << q << std::endl;
-    std::cout << "r: " << r << std::endl;
-    std::cout << "s: " << s << std::endl;
-    std::cout << "t: " << t << std::endl;
-    std::cout << "sgn: " << sgn << std::endl;
-#endif
-
-
-#if 0
-    bool res;
-    if ( sgn == POSITIVE ) {
-      res = is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
-    } else if ( sgn == NEGATIVE ) {
-      res = is_interior_in_conflict_both(p, q, r, s, t, Method_tag());
-    } else {
-      res = is_interior_in_conflict_touch(p, q, r, s, t, Method_tag());
-    }
-#endif
     if ( sgn == POSITIVE ) {
       return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
     } else if ( sgn == NEGATIVE ) {
@@ -637,11 +596,9 @@ public:
     }
 
     bool p_is_endpoint =
-      are_same(p, t.source_site()) || are_same(p, t.target_site());
-    //      (p.point() == t.source() || p.point() == t.target());
+      same_points(p, t.source_site()) || same_points(p, t.target_site());
     bool q_is_endpoint =
-      are_same(q, t.source_site()) || are_same(q, t.target_site());
-    //      (q.point() == t.source() || q.point() == t.target());
+      same_points(q, t.source_site()) || same_points(q, t.target_site());
 
     return ( p_is_endpoint && q_is_endpoint );
   }
@@ -649,39 +606,6 @@ public:
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& t,
 		  Sign sgn) const
   {
-#if 1
-    std::cout << "inside finite edge interior top "
-	      << "level operator()" << std::endl;
-    std::cout << "p: " << p << std::endl;
-    std::cout << "q: " << q << std::endl;
-    std::cout << "t: " << t << std::endl;
-    std::cout << "sgn: " << sgn << std::endl;
-#endif
-#if 0
-    // MK::ERROR: NEW STUFF; but not necessary ?
-    if ( p.is_point() && q.is_point() && t.is_point() ) {
-      if ( sgn == NEGATIVE ) { return true; }
-
-      RT dtpx = p.point().x() - t.point().x();
-      RT minus_dtpy = -p.point().y() + t.point().y();
-      RT dtqx = q.point().x() - t.point().x();
-      RT dtqy = q.point().y() - t.point().y();
-      
-      Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
-
-      std::cout << "s1: " << int(s1) << std::endl;
-
-      CGAL_assertion( s1 != ZERO );
-      return ( s1 == NEGATIVE );
-    }
-#endif
-
-#if 0
-    if ( sgn != ZERO ) {
-      return false;
-    }
-#endif
-
     if ( p.is_segment() || q.is_segment()) {
       return false;
     }
@@ -695,16 +619,14 @@ public:
 
       Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
 
-      std::cout << "s1: " << int(s1) << std::endl;
-
       CGAL_assertion( s1 != ZERO );
       return ( s1 == NEGATIVE );
     }
 
     bool bp =
-      are_same(p, t.source_site()) || are_same(p, t.target_site());
+      same_points(p, t.source_site()) || same_points(p, t.target_site());
     bool bq =
-      are_same(q, t.source_site()) || are_same(q, t.target_site());
+      same_points(q, t.source_site()) || same_points(q, t.target_site());
 						       
 
     return ( bp && bq );
