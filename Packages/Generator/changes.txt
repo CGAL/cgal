@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.67 (25 Jul 2003)
+   - modified the Generator doc (rursu)
+
 2.66 (09 Jul 2003)
    - replaced Leda based demo with Qt based demo (rursu)
 
