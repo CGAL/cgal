@@ -40,8 +40,8 @@ class Triangulation_all_faces_iterator_2
 public:
   typedef typename Tds::Face_iterator  Base;
   typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef typename Triangulation::Face Face;
-  typedef Triangulation_all_faces_iterator_2<Gt,Tds>  All_faces_iterator;
+  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face Face;
+  typedef Triangulation_all_faces_iterator_2<Gt,Tds>  All_faces;
 
   typedef Face      value_type;
   typedef Face*     pointer;
@@ -59,12 +59,14 @@ public:
     : Base(&(tr->_tds),1) 
     {}
   
-  All_faces_iterator&  operator++();
-  All_faces_iterator&  operator--();
-  All_faces_iterator  operator++(int);
-  All_faces_iterator  operator--(int);
-  Face& operator*() const;
-  Face* operator->() const;
+  All_faces&  operator++();
+  All_faces&  operator--();
+  All_faces  operator++(int);
+  All_faces  operator--(int);
+  Face& operator*() const
+    {return static_cast<Face &>(All_faces::Base::operator*());}
+  Face* operator->() const
+    {return static_cast<Face *>(All_faces::Base::operator->());}
 };
 
 
@@ -73,26 +75,26 @@ class Triangulation_finite_faces_iterator_2
  : public Triangulation_all_faces_iterator_2<Gt,Tds>
 {
 public:
-  typedef Triangulation_all_faces_iterator_2<Gt,Tds>     All;
-  typedef Triangulation_finite_faces_iterator_2<Gt,Tds>  Finite_faces_iterator;
-  typedef typename All::Triangulation  Triangulation;
-
+  typedef Triangulation_2<Gt,Tds>  Triangulation;
+  typedef Triangulation_all_faces_iterator_2<Gt,Tds>     All_faces;
+  typedef Triangulation_finite_faces_iterator_2<Gt,Tds>  Finite_faces;
+  
 private:
    const Triangulation*  _tr;
  
 public:
-  Triangulation_finite_faces_iterator_2()    : All(), _tr()  {}
+  Triangulation_finite_faces_iterator_2()    : All_faces(), _tr()  {}
         
   Triangulation_finite_faces_iterator_2(const Triangulation* tr);
 
   Triangulation_finite_faces_iterator_2(const Triangulation* tr, int i)
-    : All(tr,i), _tr(tr)
+    : All_faces(tr,i), _tr(tr)
   { }
   
-  Finite_faces_iterator&  operator++();
-  Finite_faces_iterator&  operator--();
-  Finite_faces_iterator  operator++(int);
-  Finite_faces_iterator  operator--(int);
+  Finite_faces&  operator++();
+  Finite_faces&  operator--();
+  Finite_faces   operator++(int);
+  Finite_faces   operator--(int);
 };
 
 
@@ -103,8 +105,8 @@ class Triangulation_all_vertices_iterator_2
 public:
   typedef typename Tds::Vertex_iterator  Base;
   typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef typename Triangulation::Vertex Vertex;
-  typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices_iterator;
+  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Vertex Vertex;
+  typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices;
 
   typedef Vertex       value_type;
   typedef Vertex *     pointer;
@@ -127,10 +129,10 @@ public:
     : Base( &(tr->_tds),i)
   { }
   
-  All_vertices_iterator&   operator++();
-  All_vertices_iterator&   operator--();
-  All_vertices_iterator   operator++(int);
-  All_vertices_iterator   operator--(int);
+  All_vertices&   operator++();
+  All_vertices&   operator--();
+  All_vertices    operator++(int);
+  All_vertices    operator--(int);
   Vertex& operator*() const;
   Vertex* operator->() const;
 };
@@ -141,27 +143,25 @@ class Triangulation_finite_vertices_iterator_2
  : public Triangulation_all_vertices_iterator_2<Gt,Tds>
 {
 public:
-  typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All;
-  typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> 
-                                            Finite_vertices_iterator;
-  typedef typename All::Triangulation Triangulation;
-
+  typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices;
+  typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> Finite_vertices;
+  
 private:
   const Triangulation* _tr; 
 
 public:
-  Triangulation_finite_vertices_iterator_2()    : All(),_tr(NULL)   {}
+  Triangulation_finite_vertices_iterator_2()    : All_vertices(),_tr(NULL)   {}
         
   Triangulation_finite_vertices_iterator_2(const Triangulation *tr);
     
   Triangulation_finite_vertices_iterator_2(const Triangulation *tr, int i)
-    : All(tr,i), _tr(tr)
+    : All_vertices(tr,i), _tr(tr)
   { }
 
-  Finite_vertices_iterator&  operator++();
-  Finite_vertices_iterator&  operator--();
-  Finite_vertices_iterator   operator++(int);
-  Finite_vertices_iterator   operator--(int);
+  Finite_vertices&  operator++();
+  Finite_vertices&  operator--();
+  Finite_vertices   operator++(int);
+  Finite_vertices   operator--(int);
 };
 
 template < class Gt, class Tds>
@@ -170,11 +170,11 @@ class Triangulation_all_edges_iterator_2
 {
 public:
   typedef Triangulation_2<Gt,Tds>     Triangulation;
-  typedef typename Triangulation::Edge         Edge;
-  typedef typename Triangulation::Face        Face;
-  typedef typename Triangulation::Face_handle  Face_handle;
+  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Edge  Edge;
+  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face        Face;
+  typedef CGAL_TYPENAME_MSVC_NULL Triangulation::Face_handle  Face_handle;
   typedef typename Tds::Edge_iterator Base;
-  typedef Triangulation_all_edges_iterator_2<Gt,Tds> All_edges_iterator;
+  typedef Triangulation_all_edges_iterator_2<Gt,Tds> All_edges;
 
   typedef Edge       value_type;
   typedef Edge *     pointer;
@@ -194,10 +194,10 @@ public:
     : Base(&(tr->_tds),i)
   { }
        
-  All_edges_iterator&  operator++();
-  All_edges_iterator&  operator--();
-  All_edges_iterator   operator++(int);
-  All_edges_iterator   operator--(int);
+  All_edges&  operator++();
+  All_edges&  operator--();
+  All_edges   operator++(int);
+  All_edges   operator--(int);
   Edge  operator*() const;
 };
 
@@ -206,27 +206,25 @@ class Triangulation_finite_edges_iterator_2
  : public Triangulation_all_edges_iterator_2<Gt,Tds>
 {
 public:
-  typedef Triangulation_all_edges_iterator_2<Gt,Tds> All;
-  typedef Triangulation_finite_edges_iterator_2<Gt,Tds> Finite_edges_iterator;
-  typedef Triangulation_finite_edges_iterator_2<Gt,Tds> Finite;
-  typedef typename All::Triangulation  Triangulation;
-
+  typedef Triangulation_all_edges_iterator_2<Gt,Tds> All_edges;
+  typedef Triangulation_finite_edges_iterator_2<Gt,Tds> Finite_edges;
+  
 private:
   const Triangulation* _tr;
 
 public:  
-  Triangulation_finite_edges_iterator_2()  : All(), _tr(NULL)  {}
+  Triangulation_finite_edges_iterator_2()  : All_edges(), _tr(NULL)  {}
         
   Triangulation_finite_edges_iterator_2(const Triangulation *tr);
   
   Triangulation_finite_edges_iterator_2(const Triangulation *tr, int i)
-    : All(tr,i), _tr(tr)
+    : All_edges(tr,i), _tr(tr)
   { }
        
-  Finite_edges_iterator&   operator++();
-  Finite_edges_iterator&  operator--();
-  Finite_edges_iterator  operator++(int);
-  Finite_edges_iterator  operator--(int);
+  Finite_edges& operator++();
+  Finite_edges& operator--();
+  Finite_edges  operator++(int);
+  Finite_edges  operator--(int);
 };
 
 template < class Gt, class Tds>
@@ -255,7 +253,7 @@ Triangulation_all_faces_iterator_2<Gt,Tds>
 Triangulation_all_faces_iterator_2<Gt,Tds>::
 operator++(int)
 {
-  All_faces_iterator tmp(*this);
+  All_faces tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -266,37 +264,37 @@ Triangulation_all_faces_iterator_2<Gt,Tds>
 Triangulation_all_faces_iterator_2<Gt,Tds>::
 operator--(int)
 {
-  All_faces_iterator tmp(*this);
+  All_faces tmp(*this);
   --(*this);
   return tmp;
 }
         
-template < class Gt, class Tds>
-inline
-typename Triangulation_2<Gt,Tds>::Face &
-Triangulation_all_faces_iterator_2<Gt,Tds>::
-operator*() const
-{
-  return static_cast<Face &>(Base::operator*());
-}
+// template < class Gt, class Tds>
+// inline
+// typename Triangulation_2<Gt,Tds>::Face &
+// Triangulation_all_faces_iterator_2<Gt,Tds>::
+// operator*() const
+// {
+//   return static_cast<Face &>(Base::operator*());
+// }
 
-template < class Gt, class Tds>
-inline
-typename Triangulation_2<Gt,Tds>::Face *
-Triangulation_all_faces_iterator_2<Gt,Tds>::
-operator->() const
-{
-  return static_cast<Face *>(Base::operator->());
-}
+// template < class Gt, class Tds>
+// inline
+// typename Triangulation_2<Gt,Tds>::Face *
+// Triangulation_all_faces_iterator_2<Gt,Tds>::
+// operator->() const
+// {
+//   return static_cast<Face *>(Base::operator->());
+// }
      
 template < class Gt, class Tds>
 inline
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 Triangulation_finite_faces_iterator_2(const Triangulation* tr)
-    : All(tr), _tr(tr)
+    : All_faces(tr), _tr(tr)
 { 
-  while ( *this != All(tr,1) && ( _tr->is_infinite(& **this))) 
-    All::operator++();
+  while ( *this != All_faces(tr,1) && ( _tr->is_infinite(& **this))) 
+    All_faces::operator++();
   return;
 }
 
@@ -306,8 +304,8 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>&
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 operator++()
 {
-  do { All::operator++();}
-  while ( *this != All(_tr,1)  && _tr->is_infinite(*this));
+  do { All_faces::operator++();}
+  while ( *this != All_faces(_tr,1)  && _tr->is_infinite(*this));
   return *this;   
 }
 
@@ -317,8 +315,8 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>&
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 operator--()
 {
-  do {All::operator--();}
-  while ( *this !=  All(_tr,1) &&  _tr->is_infinite(*this));
+  do {All_faces::operator--();}
+  while ( *this !=  All_faces(_tr,1) &&  _tr->is_infinite(*this));
   return *this;   
 }
 
@@ -328,7 +326,7 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>
 Triangulation_finite_faces_iterator_2<Gt,Tds>::
 operator++(int)
 {
-  Finite_faces_iterator tmp(*this);
+  Finite_faces tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -339,7 +337,7 @@ Triangulation_finite_faces_iterator_2<Gt,Tds>
 Triangulation_finite_faces_iterator_2<Gt,Tds>::        
 operator--(int)
 {
-  Finite_faces_iterator tmp(*this);
+  Finite_faces tmp(*this);
   --(*this);
   return tmp;
 }
@@ -370,7 +368,7 @@ Triangulation_all_vertices_iterator_2<Gt,Tds>
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator++(int)
 {
-  All_vertices_iterator tmp(*this);
+  All_vertices tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -381,14 +379,14 @@ Triangulation_all_vertices_iterator_2<Gt,Tds>
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator--(int)
 {
-  All_vertices_iterator tmp(*this);
+  All_vertices tmp(*this);
   --(*this);
   return tmp;
 }
         
 template < class Gt, class Tds>
 inline
-typename Triangulation_2<Gt,Tds>::Vertex &
+Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex &
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator*() const
 {
@@ -397,7 +395,7 @@ operator*() const
 
 template < class Gt, class Tds>
 inline
-typename Triangulation_2<Gt,Tds>::Vertex *
+Triangulation_all_vertices_iterator_2<Gt,Tds>::Vertex*
 Triangulation_all_vertices_iterator_2<Gt,Tds>::
 operator->() const
 {
@@ -408,10 +406,10 @@ template < class Gt, class Tds>
 inline
 Triangulation_finite_vertices_iterator_2<Gt,Tds> ::
 Triangulation_finite_vertices_iterator_2(const Triangulation *tr)
-  : All(tr), _tr(tr)
+  : All_vertices(tr), _tr(tr)
 { 
-  while ( *this != All(_tr,1) && _tr->is_infinite(*this)) 
-    All::operator++();
+  while ( *this != All_vertices(_tr,1) && _tr->is_infinite(*this)) 
+    All_vertices::operator++();
   return;
 } 
 
@@ -421,8 +419,8 @@ Triangulation_finite_vertices_iterator_2<Gt,Tds>&
 Triangulation_finite_vertices_iterator_2<Gt,Tds> ::
 operator++()
 {
-  do All::operator++();
-  while ( *this != All(_tr,1)  && _tr->is_infinite(*this));
+  do All_vertices::operator++();
+  while ( *this != All_vertices(_tr,1)  && _tr->is_infinite(*this));
   return *this;  
 }
 
@@ -432,8 +430,8 @@ Triangulation_finite_vertices_iterator_2<Gt,Tds>&
 Triangulation_finite_vertices_iterator_2<Gt,Tds> ::
 operator--()
 {
-  do All::operator--();
-  while ( *this != All(_tr,1)  && _tr->is_infinite(*this));
+  do All_vertices::operator--();
+  while ( *this != All_vertices(_tr,1)  && _tr->is_infinite(*this));
   return *this;   
 }
 
@@ -443,7 +441,7 @@ Triangulation_finite_vertices_iterator_2<Gt,Tds>
 Triangulation_finite_vertices_iterator_2<Gt,Tds> ::
 operator++(int)
 {
-  Finite_vertices_iterator tmp(*this);
+  Finite_vertices tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -454,7 +452,7 @@ Triangulation_finite_vertices_iterator_2<Gt,Tds>
 Triangulation_finite_vertices_iterator_2<Gt,Tds> ::        
 operator--(int)
 {
-  Finite_vertices_iterator tmp(*this);
+  Finite_vertices tmp(*this);
   --(*this);
   return tmp;
 }
@@ -485,7 +483,7 @@ Triangulation_all_edges_iterator_2<Gt,Tds>
 Triangulation_all_edges_iterator_2<Gt,Tds>::
 operator++(int)
 {
-  All_edges_iterator tmp(*this);
+  All_edges tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -496,14 +494,14 @@ Triangulation_all_edges_iterator_2<Gt,Tds>
 Triangulation_all_edges_iterator_2<Gt,Tds>::
 operator--(int)
 {
-  All_edges_iterator tmp(*this);
+  All_edges tmp(*this);
   --(*this);
   return tmp;
 }
         
 template < class Gt, class Tds>
 inline
-typename Triangulation_2<Gt,Tds>::Edge
+Triangulation_all_edges_iterator_2<Gt,Tds>::Edge
 Triangulation_all_edges_iterator_2<Gt,Tds>::
 operator*() const
 {
@@ -515,10 +513,10 @@ template < class Gt, class Tds>
 inline
 Triangulation_finite_edges_iterator_2<Gt,Tds>::
 Triangulation_finite_edges_iterator_2(const Triangulation *tr)
-  : All(tr),_tr(tr) 
+  : All_edges(tr),_tr(tr) 
 { 
-  while ( *this != All(tr,1) &&   _tr->is_infinite(*this) ) {
-    All::operator++();
+  while ( *this != All_edges(tr,1) &&   _tr->is_infinite(*this) ) {
+    All_edges::operator++();
   }
   return;
 }
@@ -530,8 +528,8 @@ Triangulation_finite_edges_iterator_2<Gt,Tds>::
 operator++()
 {
   do {
-    All::operator++();
-  }  while ( *this != All(_tr,1) &&  _tr->is_infinite(*this));
+    All_edges::operator++();
+  }  while ( *this != All_edges(_tr,1) &&  _tr->is_infinite(*this));
   return *this;   
 }
 
@@ -542,8 +540,8 @@ Triangulation_finite_edges_iterator_2<Gt,Tds>::
 operator--()
 {
   do {
-    All::operator--();
-  } while ( *this != All(_tr,1) &&  _tr->is_infinite(*this));
+    All_edges::operator--();
+  } while ( *this != All_edges(_tr,1) &&  _tr->is_infinite(*this));
   return *this;  
 }
 
@@ -553,7 +551,7 @@ Triangulation_finite_edges_iterator_2<Gt,Tds>
 Triangulation_finite_edges_iterator_2<Gt,Tds>:: 
 operator++(int)
 {
-  Finite_edges_iterator tmp(*this);
+  Finite_edges tmp(*this);
   ++(*this);
   return tmp;
 }
@@ -564,7 +562,7 @@ Triangulation_finite_edges_iterator_2<Gt,Tds>
 Triangulation_finite_edges_iterator_2<Gt,Tds>:: 
 operator--(int)
 {
-  Finite_edges_iterator tmp(*this);
+  Finite_edges tmp(*this);
   --(*this);
   return tmp;
 }

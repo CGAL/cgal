@@ -1041,13 +1041,13 @@ clear()
       Faces.push_front(&(*ib));
     }
   
-    for(std::list<Face*>::iterator it=Faces.begin();
-	it != Faces.end(); ++it) {
-      delete *it;
+    for(std::list<Face*>::iterator lfit=Faces.begin();
+	lfit != Faces.end(); ++lfit) {
+      delete *lfit;
     }
-    for( std::list<Vertex*>::iterator it=Vertices.begin();
-	 it != Vertices.end(); ++it) {
-      delete *it;
+    for( std::list<Vertex*>::iterator lvit=Vertices.begin();
+	 lvit != Vertices.end(); ++lvit) {
+      delete *lvit;
     }
   }  
   set_infinite_vertex(NULL);
@@ -1086,10 +1086,10 @@ file_output( std::ostream& os, Vertex* v, bool skip_first) const
   }
   
   // other vertices
-  for( Vertex_iterator it= vertices_begin(); it != vertices_end() ; ++it) {
-    if ( &(*it) != v) {
-	V[&(*it)] = inum++;
-	os << it->point();
+  for( Vertex_iterator vit= vertices_begin(); vit != vertices_end() ; ++vit) {
+    if ( &(*vit) != v) {
+	V[&(*vit)] = inum++;
+	os << vit->point();
 	if(is_ascii(os)) os << ' ';
     }
   }
@@ -1097,11 +1097,11 @@ file_output( std::ostream& os, Vertex* v, bool skip_first) const
 
   // vertices of the faces
   inum = 0;
-  for( Iterator_base it = iterator_base_begin();
-       it != iterator_base_end(); ++it) {
-    F[&(*it)] = inum++;
+  for( Iterator_base ib = iterator_base_begin();
+       ib != iterator_base_end(); ++ib) {
+    F[&(*ib)] = inum++;
     for(int j = 0; j < dimension()+1; ++j){
-      os << V[it->vertex(j)];
+      os << V[ib->vertex(j)];
       if(is_ascii(os)){
 	if(j== dimension())   os << "\n";
 	else     os <<  ' ';

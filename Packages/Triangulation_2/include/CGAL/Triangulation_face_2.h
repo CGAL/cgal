@@ -53,7 +53,7 @@ public:
   typedef typename Tds::Face Fa;
 
   typedef Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_face_2<Gt,Tds> Tr_face;
 
   typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
   typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
@@ -159,7 +159,7 @@ Triangulation_face_handle_2<Gt,Tds>
 Triangulation_face_2<Gt,Tds>::
 neighbor(int i) const
 {
-  return (Face *)(Fa::neighbor(i));
+  return static_cast<Tr_face *>(Fa::neighbor(i));
 }
 
 template < class Gt, class Tds >
@@ -213,8 +213,8 @@ inline
 void
 Triangulation_face_2<Gt,Tds>::
 set_vertices(const Vertex_handle& v0,
-		    const Vertex_handle& v1,
-		    const Vertex_handle& v2)
+	     const Vertex_handle& v1,
+	     const Vertex_handle& v2)
 {
   Fa::set_vertices(&(*v0), &(*v1), &(*v2));
 }
@@ -224,8 +224,8 @@ inline
 void
 Triangulation_face_2<Gt,Tds>:: 
 set_neighbors(const Face_handle& n0,
-                       const Face_handle& n1,
-                       const Face_handle& n2)
+	      const Face_handle& n1,
+	      const Face_handle& n2)
 {
   Fa::set_neighbors(&(*n0), &(*n1), &(*n2));
 }
