@@ -100,7 +100,7 @@ public:
   typedef Kernel_                                             Kernel;
   typedef Map_                                                Sphere_map;
   typedef Mark_                                               Mark;
-  typedef Nef_polyhedron_S2<Kernel,Items,Sphere_map>          Self;
+  typedef Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>     Self;
   typedef Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map> Rep;
   typedef Handle_for< Nef_polyhedron_S2_rep<Kernel,Items,Mark,Sphere_map> >  Base;
   typedef typename Rep::Sphere_kernel                         Sphere_kernel;
@@ -144,10 +144,11 @@ protected:
   typedef typename Nef_rep::Locator                       Locator;
 
   friend std::ostream& operator<< <>
-      (std::ostream& os, const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& NP);
+      (std::ostream& os, const Self& NP);
   friend std::istream& operator>> <>
-      (std::istream& is, Nef_polyhedron_S2<Kernel,Items,Sphere_map>& NP);
+      (std::istream& is, Self& NP);
 
+public:
   typedef typename Decorator::SVertex_handle         SVertex_handle;
   typedef typename Decorator::SHalfedge_handle       SHalfedge_handle;
   typedef typename Decorator::SHalfloop_handle       SHalfloop_handle;
@@ -243,10 +244,10 @@ public:
     D.simplify();
   }
 
-  Nef_polyhedron_S2(const Nef_polyhedron_S2<Kernel,Items>& N1) : Base(N1) {
+  Nef_polyhedron_S2(const Self& N1) : Base(N1) {
     set_sm(&sphere_map());
   }
-  Nef_polyhedron_S2& operator=(const Nef_polyhedron_S2<Kernel,Items>& N1)
+  Nef_polyhedron_S2& operator=(const Self& N1)
   { Base::operator=(N1); set_sm(&sphere_map()); return (*this); }
   ~Nef_polyhedron_S2() {}
 
@@ -282,7 +283,7 @@ protected:
     set_sm(&sphere_map());
   }
   
-  void clone_rep() { *this = Nef_polyhedron_S2<Kernel,Items>(sphere_map()); }
+  void clone_rep() { *this = Self(sphere_map()); }
 
   /*{\Moperations 4 3 }*/
   public:
@@ -374,46 +375,46 @@ protected:
 
   /*{\Mtext \headerline{Constructive Operations}}*/
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> complement() const
+  Self complement() const
   /*{\Mop returns the complement of |\Mvar| in the plane.}*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res = *this;
+  { Self res = *this;
     res.extract_complement();
     return res;
   }
 
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> interior() const
+  Self interior() const
   /*{\Mop returns the interior of |\Mvar|.}*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res = *this;
+  { Self res = *this;
     res.extract_interior();
     return res;
   }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> closure() const
+  Self closure() const
   /*{\Mop returns the closure of |\Mvar|.}*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res = *this;
+  { Self res = *this;
     res.extract_closure();
     return res;
   }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> boundary() const
+  Self boundary() const
   /*{\Mop returns the boundary of |\Mvar|.}*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res = *this;
+  { Self res = *this;
     res.extract_boundary();
     return res;
   }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> regularization() const
+  Self regularization() const
   /*{\Mop returns the regularized polyhedron (closure of interior).}*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res = *this;
+  { Self res = *this;
     res.extract_regularization();
     return res;
   }
 
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> intersection(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self intersection(const Self& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res(sphere_map(),false); // empty
+  { Self res(sphere_map(),false); // empty
     Overlayer D(&res.sphere_map());
     D.subdivide(&sphere_map(),&N1.sphere_map());
     AND _and; D.select(_and); D.simplify();
@@ -421,29 +422,29 @@ protected:
   }
 
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> join(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self join(const Self& N1) const
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res(sphere_map(),false); // empty
+  { Self res(sphere_map(),false); // empty
     Overlayer D(&res.sphere_map());
     D.subdivide(&sphere_map(),&N1.sphere_map());
     OR _or; D.select(_or); D.simplify();
     return res;
   }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> difference(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self difference(const Self& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res(sphere_map(),false); // empty
+  { Self res(sphere_map(),false); // empty
     Overlayer D(&res.sphere_map());
     D.subdivide(&sphere_map(),&N1.sphere_map());
     DIFF _diff; D.select(_diff); D.simplify();
     return res;
   }    
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map> symmetric_difference(
-    const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self symmetric_difference(
+    const Self& N1) const
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/
-  { Nef_polyhedron_S2<Kernel,Items,Sphere_map> res(sphere_map(),false); // empty
+  { Self res(sphere_map(),false); // empty
     Overlayer D(&res.sphere_map());
     D.subdivide(&sphere_map(),&N1.sphere_map());
     XOR _xor; D.select(_xor); D.simplify();
@@ -456,53 +457,53 @@ protected:
   operation \emph{complement} respectively. There are also the
   corresponding modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>  operator*(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self  operator*(const Self& N1) const
   { return intersection(N1); }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>  operator+(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self  operator+(const Self& N1) const
   { return join(N1); }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>  operator-(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self  operator-(const Self& N1) const
   { return difference(N1); }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>  operator^(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  Self  operator^(const Self& N1) const
   { return symmetric_difference(N1); }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>  operator!() const
+  Self  operator!() const
   { return complement(); }
    
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>& operator*=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1)
+  Self& operator*=(const Self& N1)
   { this = intersection(N1); return *this; }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>& operator+=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1)
+  Self& operator+=(const Self& N1)
   { this = join(N1); return *this; }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>& operator-=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1)
+  Self& operator-=(const Self& N1)
   { this = difference(N1); return *this; }
 
-  Nef_polyhedron_S2<Kernel,Items,Sphere_map>& operator^=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1)
+  Self& operator^=(const Self& N1)
   { this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
   or equal, equality, inequality, respectively.}*/
 
-  bool operator==(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  bool operator==(const Self& N1) const
   { return symmetric_difference(N1).is_empty(); }
 
-  bool operator!=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  bool operator!=(const Self& N1) const
   { return !operator==(N1); }  
 
-  bool operator<=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  bool operator<=(const Self& N1) const
   { return difference(N1).is_empty(); } 
 
-  bool operator<(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  bool operator<(const Self& N1) const
   { return difference(N1).is_empty() && !N1.difference(*this).is_empty(); } 
 
-  bool operator>=(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const
+  bool operator>=(const Self& N1) const
   { return N1.difference(*this).is_empty(); } 
 
-  bool operator>(const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& N1) const   
+  bool operator>(const Self& N1) const   
   { return N1.difference(*this).is_empty() && !difference(N1).is_empty(); } 
 
 
@@ -657,29 +658,29 @@ protected:
 
 }; // end of Nef_polyhedron_S2
 
-template <typename Kernel,typename Items,typename Sphere_map>
+template <typename Kernel,typename Items,typename Mark, typename Sphere_map>
 std::ostream& operator<<
- (std::ostream& os, const Nef_polyhedron_S2<Kernel,Items,Sphere_map>& NP)
+ (std::ostream& os, const Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>& NP)
 {
   os << "Nef_polyhedron_S2\n";
-  typedef typename Nef_polyhedron_S2<Kernel,Items,Sphere_map>::Explorer Decorator;
+  typedef typename Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>::Explorer Decorator;
   CGAL::SM_io_parser<Decorator> O(os, Decorator(&NP.sphere_map())); 
   O.print();
   return os;
 }
 
-template <typename Kernel,typename Items,typename Sphere_map>
+template <typename Kernel,typename Items, typename Mark, typename Sphere_map>
 std::istream& operator>>
-  (std::istream& is, Nef_polyhedron_S2<Kernel,Items,Sphere_map>& NP)
+  (std::istream& is, Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>& NP)
 {
-  typedef typename Nef_polyhedron_S2<Kernel,Items,Sphere_map>::Decorator Decorator;
+  typedef typename Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>::Decorator Decorator;
   CGAL::SM_io_parser<Decorator> I(is, Decorator(NP.sphere_map())); 
   if ( I.check_sep("Nef_polyhedron_S2") ) I.read();
   else {
     std::cerr << "Nef_polyhedron_S2 input corrupted." << std::endl;
-    NP = Nef_polyhedron_S2<Kernel,Items,Sphere_map>();
+    NP = Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>();
   }
-  typename Nef_polyhedron_S2<Kernel,Items,Sphere_map>::Topological_explorer D(NP.explorer());
+  typename Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>::Topological_explorer D(NP.explorer());
   D.check_integrity_and_topological_planarity();
   return is;
 }
