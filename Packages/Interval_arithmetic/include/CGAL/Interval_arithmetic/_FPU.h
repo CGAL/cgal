@@ -46,8 +46,11 @@
 #error "Architecture not recognized."
 #endif
 
-#if ( (defined(__i386) || defined(__sparc) || defined(__alpha) || \
-	defined(__mips)) && defined(__GNUC__))
+// The test-suite bugs for Mips.  Maybe an old egcs bug.
+// #if ( (defined(__i386) || defined(__sparc) || defined(__alpha) || \
+	//defined(__mips)) && defined(__GNUC__))
+#if ( defined(__GNUC__) && 
+    (defined(__i386) || defined(__sparc) || defined(__alpha) ) )
 #define __USE_ASSEMBLY
 #endif
 
