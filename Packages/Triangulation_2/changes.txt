@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+20 April
+- changed test_conflict in Delaunay and Contrained_Delaunay
+  to avoid, in most cases,  testing for infinite faces twice in  row 
+
 19 April 2004 Mariette Yvinec
 - fixed insert_in_edge in Regular_triangulation_2
 - changed insert case VERTEX in  Regular_triangulation_2. 

@@ -234,19 +234,18 @@ inline bool
 Delaunay_triangulation_2<Gt,Tds>::
 test_conflict(const Point  &p, Face_handle fh) const
 {
-  if (! is_infinite(fh))
-    return ( side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE );
-  
-  // fh is infinite 
-  // Returns true when p is inside the open half_plane or on the
-  // finite edge of fh
+  // return true  if P is inside the circumcircle of fh
+  // if fh is infinite, return true when p is in the positive
+  // halfspace or on the boundary and in the  finite edge of fh
   Oriented_side os = side_of_oriented_circle(fh,p);
   if (os == ON_POSITIVE_SIDE) return true;
-  if (os == ON_ORIENTED_BOUNDARY){
+ 
+  if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
     int i = fh->index(infinite_vertex());
     return collinear_between(fh->vertex(cw(i))->point(), p,
 			     fh->vertex(ccw(i))->point() );
   }
+
   return false;
 }
 

@@ -12,4 +12,5 @@ typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
 // typedef CGAL::Regular_triangulation_face_base_2<> Fb;
 // typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Regular_triangulation_2<Gt> Regular_triangulation; 
-typedef Regular_triangulation::Vertex_iterator Vertex_iterator;
+typedef Regular_triangulation::Finite_vertices_iterator 
+                                          Finite_vertices_iterator;

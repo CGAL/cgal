@@ -144,10 +144,10 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");    
     if(rt.number_of_vertices() > 1){
-      Vertex_iterator it = rt.vertices_begin();
+      Finite_vertices_iterator it = rt.finite_vertices_begin();
       xmin = xmax = (*it).point().x();
       ymin = ymax = (*it).point().y();
-      while(it != rt.vertices_end()) {
+      while(it != rt.finite_vertices_end()) {
         if(xmin > (*it).point().x())
           xmin = (*it).point().x();
         if(xmax < (*it).point().x())
@@ -204,7 +204,7 @@ private slots:
       rt.insert(p);
       something_changed();
     } else if (CGAL::assign(c, obj)){
-      rt.insert(Gt::Weighted_point(Point(c.center()), c.squared_radius()));
+      rt.insert(Gt::Weighted_point_2(Point(c.center()), c.squared_radius()));
       something_changed();
     }
   }
