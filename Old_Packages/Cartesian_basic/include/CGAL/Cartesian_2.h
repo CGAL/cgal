@@ -11,7 +11,7 @@
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes
   // We include them (they are common to Cartesian and Homogeneous)
-  #include <CGAL/user_classes.h>
+#include <CGAL/user_classes.h>
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
 #define CGAL_REP_CLASS_DEFINED
@@ -26,6 +26,7 @@ struct Cartesian_base_2
     typedef _FT                                    RT;
     typedef _FT                                    FT;
     typedef Cartesian_tag                          Rep_tag;
+    typedef CGAL::Object                           Object_2;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     typedef CGAL::Point_2<R,Rep_tag>               Point_2;
     typedef CGAL::Vector_2<R,Rep_tag>              Vector_2;
@@ -114,6 +115,8 @@ struct Cartesian_2 :
 
     typedef Cartesian_2<_FT>                    Self;
     typedef Cartesian_base_2<Self,_FT>          Kernel_base;
+
+    typedef typename Kernel_base::Object_2        Object_2;
     
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The classes are inherited and because of partial specialization,
@@ -184,6 +187,7 @@ typedef CGALi::Construct<Line_2>               Construct_line_2;
 typedef CGALi::Construct<Ray_2>                Construct_ray_2;
 typedef CGALi::Construct<Circle_2>             Construct_circle_2;
 typedef CGALi::Construct<Triangle_2>           Construct_triangle_2;
+typedef CGALi::Construct<Iso_rectangle_2>      Construct_iso_rectangle_2;
 typedef CGALi::Construct<Aff_transformation_2> Construct_aff_transformation_2;
 
 Construct_point_2 

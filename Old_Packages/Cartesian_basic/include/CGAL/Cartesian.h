@@ -36,6 +36,9 @@ struct Cartesian_base :
     typedef Cartesian_base_3<R,_FT>                       Kernel_base_3;
     typedef Cartesian_base_dynamic_d<R,_FT>               Kernel_base_d;
 
+    typedef typename Kernel_base_2::Object_2              Object_2;
+    typedef typename Kernel_base_3::Object_3              Object_3;          
+  
     typedef typename Kernel_base_2::Point_2               Point_2;
     typedef typename Kernel_base_2::Vector_2              Vector_2;
     typedef typename Kernel_base_2::Direction_2           Direction_2;
@@ -83,6 +86,10 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
 
     typedef Cartesian<FT>                                 Self;
     typedef Cartesian_base<Self,FT>                       Kernel_base;
+
+    typedef typename Kernel_base::Object_2                Object_2;
+    typedef typename Kernel_base::Object_3                Object_3;          
+  
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The other classes are inherited and because of partial specialization,
@@ -200,6 +207,7 @@ typedef CGALi::Construct<Line_2>               Construct_line_2;
 typedef CGALi::Construct<Ray_2>                Construct_ray_2;
 typedef CGALi::Construct<Circle_2>             Construct_circle_2;
 typedef CGALi::Construct<Triangle_2>           Construct_triangle_2;
+typedef CGALi::Construct<Iso_rectangle_2>      Construct_iso_rectangle_2;
 typedef CGALi::Construct<Aff_transformation_2> Construct_aff_transformation_2;
 
 Construct_point_2 
