@@ -103,7 +103,9 @@ inline
 bool
 RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
 {
-  return source() == r.source() && direction() == r.direction();
+    if (identical(r))
+	return true;
+    return source() == r.source() && direction() == r.direction();
 }
 
 template < class R >

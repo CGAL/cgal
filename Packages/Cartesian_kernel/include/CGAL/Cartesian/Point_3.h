@@ -58,6 +58,8 @@ public:
 
   bool operator==(const Self &p) const
   {
+      if (identical(p))
+	  return true;
       return x_equal(*this, p) && y_equal(*this, p) && z_equal(*this, p);
   }
   bool operator!=(const Self &p) const
