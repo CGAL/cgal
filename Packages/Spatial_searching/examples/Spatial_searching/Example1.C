@@ -50,8 +50,8 @@ NT The_squared_distance(Point P, Point Q) {
 
   CGAL::Timer t;
   int dim=3;
-  int point_number=10000; //10000;
-  int query_point_number=200; //2000;
+  int point_number=10000;
+  int query_point_number=2000; 
   int bucket_size=1;
   NT eps=0.0;
 
@@ -118,6 +118,7 @@ NT The_squared_distance(Point P, Point Q) {
   // brute force approach
 
   // copy data points from vector to list
+  
   Vector the_data_points;
   the_data_points.reserve(point_number);
   std::copy(data_points.begin(),data_points.end(),
@@ -159,12 +160,17 @@ NT The_squared_distance(Point P, Point Q) {
 		the_data_points[nearest_neighbours_brute_force_index[i]]));
 	};
   };
-  std::cout << "all results are fine" << std::endl;
+  std::cout << "all results are fine" << std::endl; 
   return 0;
 };
 
 int main() {
   test_benchmark_nearest_neighbour_L2();
+   /*
+  double dummy;
+  std::cout << "Enter input to stop: \n" ;
+  std::cin >> dummy;
+  */
   return 0;
 };
 

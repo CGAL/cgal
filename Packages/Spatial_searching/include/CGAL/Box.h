@@ -82,21 +82,22 @@ namespace CGAL {
 
   public:
 
-    void set_upper(const int i, const NT& x) {
-      assert(i >= 0 && i < dim);
-      assert(x >= lower_[i]);
+    inline void set_upper(const int i, const NT& x) {
+      // assert(i >= 0 && i < dim);
+      // assert(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
 
-    void set_lower(const int i, const NT& x) {
-      assert(i >= 0 && i < dim);
-      assert(x <= upper_[i]);
+    inline void set_lower(const int i, const NT& x) {
+      // assert(i >= 0 && i < dim);
+      // assert(x <= upper_[i]);
       lower_[i] = x;
       set_max_span();
     }
+
   protected:
-    void set_max_span() {
+    inline void set_max_span() {
       NT span = upper_[0]-lower_[0];
       max_span_coord_ = 0;
       for (int i = 1; i < dim; ++i) {
@@ -182,12 +183,12 @@ namespace CGAL {
     }
 
     inline const NT lower(int i) const {
-      assert (i >= 0 && i < dim);
+      // assert (i >= 0 && i < dim);
       return lower_[i];
     }
 
     inline const NT upper(int i) const {
-      assert (i >= 0 && i < dim);
+      // assert (i >= 0 && i < dim);
       return upper_[i];
     }
 
@@ -206,8 +207,8 @@ namespace CGAL {
 
     // Splits box by modifying itself to lower half and returns upper half
     Box* split(int d, NT value) {
-		assert(d >= 0 && d < dim);
-		assert(lower_[d] <= value && value <= upper_[d]);
+		// assert(d >= 0 && d < dim);
+		// assert(lower_[d] <= value && value <= upper_[d]);
 		Box* b = new Box(*this);
 		upper_[d]=value;
                 b->lower_[d]=value;
@@ -227,7 +228,7 @@ namespace CGAL {
     friend class Points_container<T>;
 
     Box<NT>& operator= (const Box<NT>& b) {
-      assert(dim == b.dim);
+      // assert(dim == b.dim);
       if (this != &b) {
         std::copy(b.lower_, b.lower_+dim, lower_);
 	std::copy(b.upper_, b.upper_+dim, upper_);

@@ -50,13 +50,14 @@ private:
 
 public:
 
+  // remove check_validity?, now commented out.
   Binary_search_tree(input_iterator first, input_iterator beyond,
 	    Traits t = Traits(), bool check_validity=false) : tr(t) {
     assert(first != beyond);
     int dim = first->dimension();
     std::copy(first, beyond, std::back_inserter(pts));
     Points_container<Item> c(dim, pts.begin(), pts.end());
-    if (check_validity) { assert(c.is_valid()); }
+    // if (check_validity) { assert(c.is_valid()); }
 		// std::cout << "validity of container used to store points:" 
 		//	    <<  c.is_valid() << std::endl;}
     bbox = new Box<NT>(c.bounding_box());
@@ -72,10 +73,10 @@ public:
 		 std::cout << "not using extended internal nodes" 
 			   << std::endl;}
 	}
-	if (check_validity) { assert(is_valid()); 
+	// if (check_validity) { assert(is_valid()); 
 		// std::cout << "validity of constructed binary tree:" 
 		// <<  is_valid() << std::endl;
-	}
+	//}
   }
 
     ~Binary_search_tree() {

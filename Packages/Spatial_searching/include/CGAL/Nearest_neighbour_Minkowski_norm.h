@@ -415,7 +415,7 @@ typename Nearest_neighbour_Minkowski_norm<Tree_traits, Search_traits,
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;
-};
+}
 
 } // namespace CGAL
 

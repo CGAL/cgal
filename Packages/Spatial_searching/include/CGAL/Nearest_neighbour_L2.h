@@ -370,8 +370,8 @@ class Distance_smaller
                         number_of_items_visited++;
                         NT distance_to_query_point=0.0;
                         for (int i=0; i< (*it)->dimension(); i++)       {
-                                distance_to_query_point +=
-                                ((*query_point)[i]- (*(*it))[i])*
+                                distance_to_query_point += 
+								((*query_point)[i]- (*(*it))[i])*
                                 ((*query_point)[i]- (*(*it))[i]);
                         }
                         Item_with_distance *NN_Candidate=

@@ -126,7 +126,7 @@ namespace CGAL {
 			        }
                         }
 		}
-		assert(cut_dim >= 0);
+		// assert(cut_dim >= 0);
 		return cut_dim;
 	}
 
@@ -144,8 +144,8 @@ namespace CGAL {
 		NT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
 		NT low_cut = bbox.lower(d) + small_piece; // lowest legal cut;
 		NT high_cut = bbox.upper(d) - small_piece; //highest legal cut;
-		assert (high_cut >= low_cut);
-        NT split_value = median(d);
+		// assert (high_cut >= low_cut);
+        	NT split_value = median(d);
 		if (split_value < low_cut) split_value=low_cut;
 		if (split_value > high_cut) split_value=high_cut;
 		return split_value;
@@ -155,7 +155,7 @@ namespace CGAL {
 		NT small_piece = max_span_upper_without_dim(d) / Aspect_ratio;
 		NT low_cut = bbox.lower(d) + small_piece; // lowest legal cut;
 		NT high_cut = bbox.upper(d) - small_piece; //highest legal cut;
-		assert (high_cut >= low_cut);
+		// assert (high_cut >= low_cut);
                 NT split_value = median(d);
 		NT max_span_lower = tbox.lower(d);
 		NT max_span_upper = tbox.upper(d);
@@ -223,7 +223,7 @@ namespace CGAL {
 	}
 
 	void add_points_from_container(Points_container<Item>& c) {
-	  assert(built_coord==c.built_coord);
+	  // assert(built_coord==c.built_coord);
 	  merge(p_list[built_coord], c.p_list[built_coord], 
 		Less_lexicographically_d());
 	}
@@ -239,7 +239,7 @@ namespace CGAL {
       void split_container(Points_container<Item>& c, Separator* sep, 
 	  bool sliding=false) {
 
-		assert(dimension()==c.dimension());
+	//	assert(dimension()==c.dimension());
 		
 
         c.bbox=bbox;
@@ -297,8 +297,8 @@ namespace CGAL {
 		c.p_list[c.built_coord].begin(),
 		c.p_list[c.built_coord].end(),c.p_list[c.built_coord].empty());
         
-        assert(is_valid()); 
-        assert(c.is_valid());
+        // assert(is_valid()); 
+        // assert(c.is_valid());
 	}
 
 	NT median(const int split_coord) {
@@ -322,7 +322,7 @@ namespace CGAL {
     ~Points_container() { delete [] p_list; }
 
     inline bool empty() const { return size() == 0;}
-
+     /*
      bool is_valid() {
 
 	 assert(! p_list[built_coord].empty());
@@ -356,7 +356,7 @@ namespace CGAL {
      } 
 	 }
      return true;
-  }
+  } */
 
      
 
