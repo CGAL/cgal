@@ -1,36 +1,31 @@
-In this directory there are 8 example program for the arrangement package.
+In this directory there are 12 example program for the arrangement package.
 
 example1-5 : The example programs from the documentation.
 
-example6   : Demonstrates the use of the cached traits and the walk point
-location strategy.
-  This example creates an arrangement with a walk point location
-  with the cached info traits class. You can see the difference between
-  the regular exact traits and the cached traits by replacing the relevant 
-  lines with the commented lines.
-  NOTE: if you want to run this example with different numbers
-  (even slightly larger numbers), use a
-  multiple precision integer (e.g., gmpz or leda_integer). Otherwise there
-  will be an overflow and the program will go into an infinite loop.
+
+example6   : This example creates an arrangement with a walk point location
+        strategy.
+
 
 example7   : Demonstrates the use of update mode, and how to add info to
-the objects of the class.
+        the objects of the class.
+
 
 example8   : Reads an arrangement of segments from standard input and
-performs a vertical ray shoot on it.
+        performs a vertical ray shoot on it.
+
 
 example9-10: Examples from the documentation. These demonstrate using
-an arrangement with Polyline Traits.
+        an arrangement with Polyline Traits.
+
 
 example11  : Example of the usage for I/O functions. 
-The input file for this program is example11.cin, 
-and users have to use the example when redirecting 
-the input file.
-By: Eti Ezra.
+        The input file for this program is example11.cin, and users have to
+         use the example by redirecting the input file.
+
 
 example12 : Example of the usage for I/O functions when taking the
-polyline Traits. A demonstration of defining an I/O operator for
-polyline curves by the user is presented in this example. The input
-file for this program is example12.cin, and users have to use the
-example by redirecting the input file.
-By: Eti Ezra.
+        polyline Traits. A demonstration of defining an I/O operator for
+        polyline curves by the user is presented in this example. The input
+        file for this program is example12.cin, and users have to use the
+        example by redirecting the input file.

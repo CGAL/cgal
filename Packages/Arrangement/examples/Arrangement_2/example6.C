@@ -19,7 +19,6 @@ typedef CGAL::Homogeneous<NT>                        Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>       Traits;
 
 typedef Traits::Point                                Point;
-typedef Traits::X_curve                              X_curve;
 typedef Traits::Curve                                Curve;
 
 typedef CGAL::Arr_base_node<Curve>                   Base_node;

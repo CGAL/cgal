@@ -66,7 +66,7 @@ int main()
 {
   Arrangement arr;
   
-  std::cin>>arr;
+  std::cin >> arr;
  
   std::cout << " * * * Printing list of all halfedges " 
 	    << "of the resulting Arrangement" 

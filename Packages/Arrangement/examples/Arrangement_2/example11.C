@@ -46,8 +46,8 @@ int main()
 #ifdef CGAL_USE_LEDA
   //  CGAL::Postscript_file_stream  LPF(500, 500 ,"arr.ps");
   //  LPF.init(-3,3,-3);
-//  LPF.set_line_width( 1);
-//  LPF << arr;
+  //  LPF.set_line_width( 1);
+  //  LPF << arr;
 #endif
 
   return 0;
