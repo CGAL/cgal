@@ -103,25 +103,22 @@ public:
 
   // INSERTION
   Vertex_handle insert(Point a);
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
+  //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void insert(Point a, Point b);
-  void insert(const Vertex_handle & va, const Vertex_handle & vb);
-  void insert(const Vertex_handle & va, const Vertex_handle & vb,
-		     Face_handle & fr, int & i);
-  void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	      Face_handle & fr, int & i, 
-	      List_edges & new_edges,
-	      List_vertices & new_vertices);
+  void insert(Vertex_handle va, Vertex_handle vb);
+  //Vertex_handle insert(const Vertex_handle & va, const Vertex_handle & vb,
+  //		     Face_handle & fr, int & i);
+  // void insert(const Vertex_handle & va, const Vertex_handle & vb,
+// 	      Face_handle & fr, int & i, 
+// 	      List_edges & new_edges,
+// 	      List_vertices & new_vertices);
   Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
   
-  Vertex_handle find_intersected_faces(Vertex_handle va, 
-				       Vertex_handle vb,
-				       Vertex_handle vaa,
-				       List_faces & intersected_faces,
-				       List_edges & list_ab, 
-				       List_edges & list_ba,
-				       List_edges & new_edges,
-				       List_vertices & new_vertices);
+ 
 
   //SUPPRESSION
   // to be done
@@ -144,6 +141,18 @@ protected:
 			  Vertex_handle vbb,
 			  Tag_true);
 
+  Vertex_handle insert_part(Vertex_handle va, 
+			    Vertex_handle vb,
+			    Vertex_handle vaa);
+
+  Vertex_handle find_intersected_faces(Vertex_handle va, 
+				       Vertex_handle vb,
+				       Vertex_handle vaa,
+				       List_faces & intersected_faces,
+				       List_edges & list_ab, 
+				       List_edges & list_ba,
+				       List_edges & new_edges);
+				       
 
   //to debug
 public:
@@ -176,27 +185,49 @@ Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
 Constrained_triangulation_plus_2<Tr,I_tag>::
 insert(Point a)
 {
-  Vertex_handle va;
-  Vertex_handle v1,v2;
-  Face_handle loc;
-  int li;
   Locate_type lt;
+  int li;
+  Face_handle loc = locate(a, lt, li);
+  return insert(a,lt,loc,li);
+}
+
+template < class Gt, class Tds >
+Constrained_triangulation_plus_2<Gt,Tds>::Vertex_handle
+Constrained_triangulation_plus_2<Gt,Tds>::
+insert(const Point& a, Locate_type lt, Face_handle loc, int li)
+{
+  Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  loc = locate(a, lt, li);
   if ( lt == EDGE && loc->is_constrained(li) ){
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
-  
-  va = Triangulation::insert(a,lt,loc,li);
+  Vertex_handle va = Triangulation::insert(a,lt,loc,li);
   // update the hierarchy
   if (insert_in_constrained_edge) {
     hierarchy.split_constraint(v1,v2,va);
   }
   return va;
 }
+
+// template < class Gt, class Tds >  
+// Constrained_triangulation_plus_2<Gt, Tds>::Vertex_handle 
+// Constrained_triangulation_plus_2<Gt, Tds>::
+// special_insert_in_edge(const Point & a, Face_handle f, int i)
+//   // insert  point p in edge(f,i)
+//   // bypass the precondition for point a to be in edge(f,i)
+//   // update constrained status
+//   // update hierarchy
+//   // does not restore Delaunay in case of Delaunay triangulation
+// {
+//   Vertex_handle va=Triangulation::special_insert_in_edge(a,f,i);
+//   if (f->is_constrained(i)){
+//     hierarchy.split_constraint(f->vertex(ccw(i)), f->vertex(cw(i)), va);
+//   }
+//   return va;
+// }
 
 template <class Tr, class I_tag >
 inline void
@@ -206,118 +237,146 @@ insert(Point a, Point b)
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
-  hierarchy.insert_constraint(va,vb);
   insert(va, vb);
 }
 
 template <class Tr, class I_tag >
 inline void
 Constrained_triangulation_plus_2<Tr,I_tag>::
-insert(const Vertex_handle & va, const Vertex_handle & vb)
-// Precondition va != vb
+insert(Vertex_handle va, Vertex_handle vb)
 {
-  List_edges new_edges;
-  List_vertices new_vertices;
+  hierarchy.insert_constraint(va, vb);
+  Vertex_handle vaa = va;
+  while (vaa != vb) {
+    Vertex_handle vbb = insert_part(va,vb,vaa);
+    if (vbb != vb) hierarchy.split_constraint(vaa,vb,vbb);
+    vaa=vbb;
+  }    
+  return;
+}
+
+
+template <class Tr, class I_tag >
+inline 
+Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
+Constrained_triangulation_plus_2<Tr,I_tag>::
+insert_part(Vertex_handle va, 
+	    Vertex_handle vb,
+	    Vertex_handle vaa)
+{
+  Vertex_handle vbb;
+
   Face_handle fr;
   int i;
-  insert(va, vb, fr, i, new_edges, new_vertices);
-}
-
-template <class Tr, class I_tag >
-inline void
-Constrained_triangulation_plus_2<Tr,I_tag>::
-insert(const Vertex_handle & va, 
-       const Vertex_handle & vb,
-       Face_handle & fr, int & i)
-{
-  List_edges new_edges;
-  List_vertices new_vertices;
-  insert(va, vb, fr, i, new_edges, new_vertices);
-}
-
-template <class Tr, class I_tag >
-void
-Constrained_triangulation_plus_2<Tr,I_tag>::
-insert(const Vertex_handle & va, 
-       const Vertex_handle & vb,
-       Face_handle & fr, int & i, 
-       List_edges & new_edges,
-       List_vertices & new_vertices)
-  // Inserts line segment va vb as a constraint (i.e. an edge) in
-  // triangulation t
-  // The constraint is split  in smaller parts
-  // if it contains a vertex vc
-  // or if it intersects other constrained edges. In that case
-  // va vb and the intersecred edges are both split.
-  // Precondition : the algorithm assumes that va and vb are vertices of t,
-  // walks in t along ab, removes the triangles intersected by ab and
-  // creates new ones
-  // At the end :
-  // - fr is the face incident to edge ab (or the last part of it,
-  //   if it has been cut) and to the right  of ab
-  //   edge ab=(fr,i).
-  // - new_edges will contain in the end 
-  //   all the new unconstrained edges and some of the new constrained edges
-  //   to be used e.g. by propagating flip 
-  //   for Delaunay constrained triangulation
-  // - new_vertices will contain the new vertices resulting from
-  //   intersections  of constraints
-  //   to be also used in  Delaunay constrained triangulation
-  // The algorithm runs in time proportionnal to the number 
-  // of removed triangles
-  // algorithm augmented to update the constraints hierarchy
-{
-  Vertex_handle vaa=va, vbb=va;
-  Face_handle fl;
-        
-  while (vbb != vb) {
-    vaa = vbb;
-    // case where ab contains an edge of t incident to a
-    if(includes_edge(vaa,vb,vbb,fr,i)) {
-      if (dimension()==1) fr->set_constraint(2, true);
-      else{
-	fr->set_constraint(i,true);
-	fr->neighbor(i)->set_constraint(fr->mirror_index(i),true);
-      }
-    }
-    else {
-      // ab does not contain an edge of t incident to a
-      // finds all triangles intersected by ab (in conflict)
-      List_edges conflict_boundary_ab, conflict_boundary_ba;
-      List_faces intersected_faces;
-      vbb = find_intersected_faces(va, vb, vaa,
-				   intersected_faces,
-				   conflict_boundary_ab,
-				   conflict_boundary_ba,
-				   new_edges, 
-				   new_vertices);
-
-      // skip if the lists are empty : the first crossed edge is a constraint
-      if ( !conflict_boundary_ab.empty() ) {
-	triangulate(conflict_boundary_ab, new_edges);
-	triangulate(conflict_boundary_ba, new_edges);
-	
-	// the two faces that share edge ab are neighbors
-	// their common edge ab is a constraint
-	fl=(*conflict_boundary_ab.begin()).first;
-	fr=(*conflict_boundary_ba.begin()).first;
-	fl->set_neighbor(2, fr);
-	fr->set_neighbor(2, fl);
-	fl->set_constraint(2, true);
-	fr->set_constraint(2, true);
-	i=2;
-
-	// delete faces to be removed
-	while( ! intersected_faces.empty()) {
-	  fl = intersected_faces.front();
-	  intersected_faces.pop_front();
-	  delete_face(fl);
-	}
-      }
-    }
-    if (vbb != vb) hierarchy.split_constraint(vaa, vb, vbb);
+  if(includes_edge(vaa,vb,vbb,fr,i)) {
+    mark_constraint(fr,i);
+    return vbb;
   }
+      
+  List_faces intersected_faces;
+  List_edges conflict_boundary_ab, conflict_boundary_ba;
+  List_edges new_edges;
+    
+  vbb = find_intersected_faces( va, vb, vaa,
+			       intersected_faces,
+			       conflict_boundary_ab,
+			       conflict_boundary_ba,
+			       new_edges);
+			       
+  triangulate_hole(intersected_faces,
+		   conflict_boundary_ab,
+		   conflict_boundary_ba,
+		   new_edges,
+		   vbb);
+  return vbb;
 }
+
+
+
+
+// template <class Tr, class I_tag >
+// void
+// Constrained_triangulation_plus_2<Tr,I_tag>::
+// insert(const Vertex_handle & va, 
+//        const Vertex_handle & vb,
+//        Face_handle & fr, int & i, 
+//        List_edges & new_edges,
+//        List_vertices & new_vertices)
+//   // Inserts line segment va vb as a constraint (i.e. an edge) in
+//   // triangulation t
+//   // The constraint is split  in smaller parts
+//   // if it contains a vertex vc
+//   // or if it intersects other constrained edges. In that case
+//   // va vb and the intersecred edges are both split.
+//   // Precondition : the algorithm assumes that va and vb are vertices of t,
+//   // walks in t along ab, removes the triangles intersected by ab and
+//   // creates new ones
+//   // At the end :
+//   // - fr is the face incident to edge ab (or the last part of it,
+//   //   if it has been cut) and to the right  of ab
+//   //   edge ab=(fr,i).
+//   // - new_edges will contain in the end 
+//   //   all the new unconstrained edges and some of the new constrained edges
+//   //   to be used e.g. by propagating flip 
+//   //   for Delaunay constrained triangulation
+//   // - new_vertices will contain the new vertices resulting from
+//   //   intersections  of constraints
+//   //   to be also used in  Delaunay constrained triangulation
+//   // The algorithm runs in time proportionnal to the number 
+//   // of removed triangles
+//   // algorithm augmented to update the constraints hierarchy
+// {
+//   Vertex_handle vaa=va, vbb=va;
+//   Face_handle fl;
+        
+//   while (vbb != vb) {
+//     vaa = vbb;
+//     // case where ab contains an edge of t incident to a
+//     if(includes_edge(vaa,vb,vbb,fr,i)) {
+//       if (dimension()==1) fr->set_constraint(2, true);
+//       else{
+// 	fr->set_constraint(i,true);
+// 	fr->neighbor(i)->set_constraint(fr->mirror_index(i),true);
+//       }
+//     }
+//     else {
+//       // ab does not contain an edge of t incident to a
+//       // finds all triangles intersected by ab (in conflict)
+//       List_edges conflict_boundary_ab, conflict_boundary_ba;
+//       List_faces intersected_faces;
+//       vbb = find_intersected_faces(va, vb, vaa,
+// 				   intersected_faces,
+// 				   conflict_boundary_ab,
+// 				   conflict_boundary_ba,
+// 				   new_edges, 
+// 				   new_vertices);
+
+//       // skip if the lists are empty : the first crossed edge is a constraint
+//       if ( !conflict_boundary_ab.empty() ) {
+// 	triangulate(conflict_boundary_ab, new_edges);
+// 	triangulate(conflict_boundary_ba, new_edges);
+	
+// 	// the two faces that share edge ab are neighbors
+// 	// their common edge ab is a constraint
+// 	fl=(*conflict_boundary_ab.begin()).first;
+// 	fr=(*conflict_boundary_ba.begin()).first;
+// 	fl->set_neighbor(2, fr);
+// 	fr->set_neighbor(2, fl);
+// 	fl->set_constraint(2, true);
+// 	fr->set_constraint(2, true);
+// 	i=2;
+
+// 	// delete faces to be removed
+// 	while( ! intersected_faces.empty()) {
+// 	  fl = intersected_faces.front();
+// 	  intersected_faces.pop_front();
+// 	  delete_face(fl);
+// 	}
+//       }
+//     }
+//     if (vbb != vb) hierarchy.split_constraint(vaa, vb, vbb);
+//   }
+// }
 
     
 template <class Tr, class I_tag >
@@ -329,8 +388,8 @@ find_intersected_faces(Vertex_handle va,
 		       List_faces & intersected_faces,
 		       List_edges & list_ab, 
 		       List_edges & list_ba,
-		       List_edges & new_edges,
-		       List_vertices & new_vertices)
+		       List_edges & new_edges)
+		       
   // finds all triangles intersected the current part of constraint ab
   // vaa is the vertex at the begin of the current part
   // the procedure returns the vertex vbb at the end of the current part
@@ -364,7 +423,7 @@ find_intersected_faces(Vertex_handle va,
     assert(is_edge(vi,vaa,fh,ih));
     fh->set_constraint(ih,true);
     (fh->neighbor(ih))->set_constraint(fh->mirror_index(ih),true);
-    new_vertices.push_back(vi);
+    // new_vertices.push_back(vi);
     //no need to insert (vi,vaa) in new_edges because it is constrained....
     update_new_edges(a,b,vi,vh,new_edges);
     return vi;
@@ -409,7 +468,7 @@ find_intersected_faces(Vertex_handle va,
 	vhh = current_face->vertex(i1);
 	vh = current_face->mirror_vertex(i1);
 	Vertex_handle vi=intersect(current_face, i1, vaa,vb);
-	new_vertices.push_back(vi);
+	//new_vertices.push_back(vi);
 	update_new_edges(a,b,vi,vh,new_edges);
 	update_new_edges(a,b,vi,vhh,new_edges);
 
