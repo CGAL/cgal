@@ -45,7 +45,8 @@ namespace CGALi {
     typedef typename K::Triangle_2        Triangle_2;
     typedef typename K::Iso_rectangle_2   Iso_rectangle_2; 
     typedef typename K::Circle_2          Circle_2; 
-    typedef typename K::Weighted_point_2  Weighted_point_2;   
+    // this is not yet part of the kernel models:
+    //typedef typename K::Weighted_point_2  Weighted_point_2;   
     typedef typename K::Object_2          Object_2; 
 
     typedef typename K::Point_3           Point_3;
@@ -59,7 +60,8 @@ namespace CGALi {
     typedef typename K::Sphere_3          Sphere_3; 
     typedef typename K::Plane_3           Plane_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
-    typedef typename K::Weighted_point_3  Weighted_point_3;   
+    // this is not yet part of the kernel models:
+    //typedef typename K::Weighted_point_3  Weighted_point_3;   
     typedef typename K::Object_3          Object_3; 
   };
 

@@ -1,3 +1,6 @@
+2.77 12/8/2003
+- Remove Weighted_point from Matching_bug_wrapper.
+
 2.76 6/8/2003
 - In Sun_fixes.h the added value_type() etc. functions are put 
   into namespace CGAL to be found by Koenig-lookup.
