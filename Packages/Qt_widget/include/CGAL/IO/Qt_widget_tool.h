@@ -18,13 +18,19 @@
 //
 // ============================================================================
 
+
+
 #ifndef CGAL_QT_WINDOW_TOOL_H
 #define CGAL_QT_WINDOW_TOOL_H
 
-#include <CGAL/IO/Qt_Widget.h>
+
+
+#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Object.h>
 #include <qobject.h>
 #include <qcursor.h>
+
+
 
 namespace CGAL {
 
@@ -32,10 +38,7 @@ class Qt_widget_tool : public QObject
 {
   Q_OBJECT
 public:
-
-
   Qt_widget_tool();
-
   inline bool is_attached() const
   { return (widget==0); };
 
@@ -49,6 +52,7 @@ public:
   virtual void keyReleaseEvent(QKeyEvent *) {};
   virtual void enterEvent(QEvent *) {};
   virtual void leaveEvent(QEvent *) {};
+
 
 signals:
   void redraw();    //this signal is emited when the tool needs to repaint the widget
@@ -69,7 +73,6 @@ private:
   void detach();
   friend class Qt_widget;
 };
-
 } // namespace CGAL
-
 #endif // CGAL_QT_WINDOW_TOOL_H
+

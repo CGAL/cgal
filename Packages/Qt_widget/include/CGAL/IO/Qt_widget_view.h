@@ -21,7 +21,7 @@
 #ifndef CGAL_QT_SCENE_H
 #define CGAL_QT_SCENE_H
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 #include <qobject.h>
 #include <list>
 
