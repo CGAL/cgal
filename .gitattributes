@@ -41,6 +41,7 @@ Packages/PS_Stream/test/postscript svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/comborient.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3/flips.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_convex_hull.eps -text
@@ -61,6 +62,7 @@ Packages/Triangulation_3/doc_tex/Triangulation_3/utils.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/comborient.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/flips.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.eps -text
