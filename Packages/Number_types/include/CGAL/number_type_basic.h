@@ -27,12 +27,7 @@
 
 #define CGAL_PI 3.14159265358979323846
 
-#ifdef CGAL_USE_ADL_FOR_NT
-// Attempt at using Koenig lookup for the NT interface.
-#  define CGAL_NTS
-#else
-#  define CGAL_NTS CGAL::
-#endif
+#define CGAL_NTS CGAL::
 // #define CGAL_NTS CGAL::NTS::
 
 #if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))
