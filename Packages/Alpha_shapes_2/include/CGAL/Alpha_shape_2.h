@@ -16,6 +16,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -169,6 +170,8 @@ private:
   mutable std::list< Vertex_handle > Alpha_shape_vertices_list;
   mutable std::list< Edge > Alpha_shape_edges_list;
 
+  mutable bool use_vertex_cache;
+  mutable bool use_edge_cache;
 public:
 
   //------------------------- CONSTRUCTORS ------------------------------
@@ -177,7 +180,8 @@ public:
   // alpha-value `alpha'. Precondition: `alpha' >= 0.
   Alpha_shape_2(Coord_type alpha = Coord_type(0), 
 		Mode m = GENERAL)
-    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2) 
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2),
+      use_vertex_cache(false), use_edge_cache(false)
     {}
  
   // Introduces an alpha-shape `A' for a positive alpha-value
@@ -189,7 +193,8 @@ public:
 		const InputIterator& last,  
 		const Coord_type& alpha = Coord_type(0),
 		Mode m = GENERAL)
-    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2) 
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2) ,
+      use_vertex_cache(false), use_edge_cache(false)
     {
       Dt::insert(first, last);
       if (dimension() == 2)
@@ -340,6 +345,8 @@ public:
       // Returns the previous alpha
       Coord_type previous_alpha = _alpha;
       _alpha = alpha;
+      use_vertex_cache = false;
+      use_edge_cache = false;
       return previous_alpha;
     }
 
@@ -410,60 +417,15 @@ public:
 
 private:
 
-  std::back_insert_iterator< std::list< Vertex_handle > >
-  get_alpha_shape_vertices(std::back_insert_iterator< 
-  std::list< Vertex_handle > > result) const{
-	//typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
-	//                                              Interval_vertex_map;
-	typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-	//const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
-	const Interval2* pInterval2;
-	Vertex_handle v;
-	     
-	// write the regular vertices
-
-	for (vertex_alpha_it = _interval_vertex_map.begin(); 
-		vertex_alpha_it != _interval_vertex_map.end() &&
-		(*vertex_alpha_it).first.first < get_alpha();
-		++vertex_alpha_it) 
-		{
-		pInterval2 = &(*vertex_alpha_it).first;
-
-		if((pInterval2->second >= get_alpha()
-		|| pInterval2->second == Infinity)) 
-		{
-		// alpha must be larger than the min boundary
-		// and alpha is smaller than the upper boundary
-		// which might be infinity 
-		// write the vertex
-		v = (*vertex_alpha_it).second;
-		CGAL_triangulation_assertion((classify(v) == REGULAR));
-		*result++ = v;
-		}
-		}
-	 
-	if (get_mode() == Alpha_shape_2<Dt>::GENERAL) 
-		{
-		// write the singular vertices
-		for (; 
-		vertex_alpha_it != _interval_vertex_map.end();
-		++vertex_alpha_it) 
-		{
-		v = (*vertex_alpha_it).second;
-		CGAL_triangulation_assertion((classify(v) == SINGULAR));
-
-		*result++ = v;
-		}
-		}
-	return result;
-  }
+void
+update_alpha_shape_vertex_list()const;
 
   //---------------------------------------------------------------------
 
-  std::back_insert_iterator< std::list<Edge > >
-  get_alpha_shape_edges(std::back_insert_iterator< 
-			std::list< Edge > > result) const;
+  void
+  update_alpha_shape_edges_list() const;
+  
 
   //---------------------------------------------------------------------
 
@@ -471,8 +433,9 @@ public:
 
   Alpha_shape_vertices_iterator alpha_shape_vertices_begin() const
     { 
-      Alpha_shape_vertices_list.clear();
-      get_alpha_shape_vertices(std::back_inserter(Alpha_shape_vertices_list));
+    if(!use_vertex_cache){
+      update_alpha_shape_vertex_list();
+    }
       return Alpha_shape_vertices_list.begin();
     }
 
@@ -498,8 +461,9 @@ public:
 
   Alpha_shape_edges_iterator alpha_shape_edges_begin() const
     {
-      Alpha_shape_edges_list.clear();
-      get_alpha_shape_edges(std::back_inserter(Alpha_shape_edges_list));
+      if(!use_edge_cache){
+      update_alpha_shape_edges_list();
+    }
       return Alpha_shape_edges_list.begin();
     }
 
@@ -634,7 +598,7 @@ public:
     }
 
   Classification_type  classify(const Face_handle& f, 
-				const int& i) const 
+				int i) const 
     {  
       return classify(f, i, get_alpha());
     }
@@ -646,7 +610,7 @@ public:
     }
 
   Classification_type  classify(const Face_handle& f, 
-				const int& i,
+				int i,
 				const Coord_type& alpha) const;
 
   
@@ -694,7 +658,7 @@ private:
 
 public:
 
-  Alpha_iterator find_optimal_alpha(const int& nb_components);  	
+  Alpha_iterator find_optimal_alpha(int nb_components);  	
 
 private:
 
@@ -724,7 +688,7 @@ private:
 					       f->vertex(2)->point());
     }
 
-  Coord_type squared_radius(const Face_handle& f, const int& i) const 
+  Coord_type squared_radius(const Face_handle& f, int i) const 
     {
       // should be
       // return (traits().squared_radius_smallest_circumcircle(...)
@@ -1065,10 +1029,62 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum()
 
 //-------------------------------------------------------------------------
 
+
+
 template < class Dt >
-std::back_insert_iterator< std::list< typename Alpha_shape_2<Dt>::Edge > >
-Alpha_shape_2<Dt>::get_alpha_shape_edges
-(std::back_insert_iterator< std::list< Edge > > result) const 
+void
+Alpha_shape_2<Dt>::update_alpha_shape_vertex_list()const {
+	//typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
+	//                                              Interval_vertex_map;
+	typename Interval_vertex_map::const_iterator vertex_alpha_it;
+
+	//const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
+	const Interval2* pInterval2;
+	Vertex_handle v;
+	     
+	// write the regular vertices
+
+	for (vertex_alpha_it = _interval_vertex_map.begin(); 
+		vertex_alpha_it != _interval_vertex_map.end() &&
+		(*vertex_alpha_it).first.first < get_alpha();
+		++vertex_alpha_it) 
+		{
+		pInterval2 = &(*vertex_alpha_it).first;
+
+		if((pInterval2->second >= get_alpha()
+		|| pInterval2->second == Infinity)) 
+		{
+		// alpha must be larger than the min boundary
+		// and alpha is smaller than the upper boundary
+		// which might be infinity 
+		// write the vertex
+		v = (*vertex_alpha_it).second;
+		CGAL_triangulation_assertion((classify(v) == REGULAR));
+		Alpha_shape_vertices_list.push_back(v);
+		}
+		}
+	 
+	if (get_mode() == Alpha_shape_2<Dt>::GENERAL) 
+		{
+		// write the singular vertices
+		for (; 
+		vertex_alpha_it != _interval_vertex_map.end();
+		++vertex_alpha_it) 
+		{
+		v = (*vertex_alpha_it).second;
+		CGAL_triangulation_assertion((classify(v) == SINGULAR));
+
+		Alpha_shape_vertices_list.push_back(v);
+		}
+		}
+	use_vertex_cache = true;
+  }
+
+//-------------------------------------------------------------------------
+
+template < class Dt >
+void
+Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const 
 {
   // Writes the edges of the alpha shape `A' for the current $\alpha$-value
   // to the container where 'out' refers to. Returns an output iterator 
@@ -1107,8 +1123,8 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second)
 			       == REGULAR));
-	      *result++ = Edge((*edge_alpha_it).second.first,
-			       (*edge_alpha_it).second.second);
+	      Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
+						    (*edge_alpha_it).second.second));
 	    }
 	}
     }
@@ -1139,8 +1155,8 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second) 
 			       == REGULAR));
-		  *result++ = Edge((*edge_alpha_it).second.first,
-				   (*edge_alpha_it).second.second);
+		  Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
+							(*edge_alpha_it).second.second));
 		}
 	    }
 	  else 
@@ -1158,22 +1174,22 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
 			       || (classify((*edge_alpha_it).second.first,
 					    (*edge_alpha_it).second.second) 
 				   == SINGULAR)));
-		  *result++ = Edge((*edge_alpha_it).second.first,
-				   (*edge_alpha_it).second.second);
+		  Alpha_shape_edges_list.push_back(Edge((*edge_alpha_it).second.first,
+							(*edge_alpha_it).second.second));
 		}
 	    }
       
 	}
     
     }
-  return result;
+  use_edge_cache = true;
 }
 
 //-------------------------------------------------------------------------
 
 template < class Dt >
 typename Alpha_shape_2<Dt>::Classification_type  
-Alpha_shape_2<Dt>::classify(const Face_handle& f, const int& i, 
+Alpha_shape_2<Dt>::classify(const Face_handle& f, int i, 
 			    const Coord_type& alpha) const
 {
   // Classifies the edge `e' of the underlying Delaunay
@@ -1295,7 +1311,7 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
 
 template < class Dt >
 typename Alpha_shape_2<Dt>::Alpha_iterator
-Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components) 
+Alpha_shape_2<Dt>::find_optimal_alpha(int nb_components) 
 {
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
