@@ -23,6 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/Random.h>
 
 #include <algorithm>
 #include <iterator>
