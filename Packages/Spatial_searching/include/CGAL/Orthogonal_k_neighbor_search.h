@@ -78,7 +78,7 @@ int max_k;
 int actual_k;
 
 
-Distance* distance_instance;
+Distance distance_instance;
 
 	inline bool branch(FT distance) {
 		if (actual_k<max_k) return true;
@@ -137,9 +137,8 @@ Distance* distance_instance;
 
     // constructor
     Orthogonal_k_neighbor_search(Tree& tree, const Query_item& q,  
-    int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance()) {
-   
-	distance_instance=new Distance(d);
+    int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance())
+      : distance_instance(d) {
 
 	multiplication_factor=
 	d.transformed_distance(1.0+Eps);
@@ -184,7 +183,6 @@ Distance* distance_instance;
     // destructor
     ~Orthogonal_k_neighbor_search() { 
 		l.clear();  
-		delete distance_instance;
     };
 
     private:
@@ -215,8 +213,9 @@ Distance* distance_instance;
 					if (old_off<FT(0.0)) old_off=FT(0.0);
                                 }
                                 new_rd=
-                                distance_instance->
-				new_distance(rd,old_off,new_off,new_cut_dim);
+                                distance_instance.new_distance(rd,old_off,
+							       new_off,
+							       new_cut_dim);
 				if (branch(new_rd)) 
 				compute_neighbors_orthogonally(N->upper(),
 								new_rd);                               
@@ -235,8 +234,9 @@ Distance* distance_instance;
 					if (old_off<FT(0.0)) old_off=FT(0.0);
 				}  
                                 new_rd=
-                                distance_instance->
-				new_distance(rd,old_off,new_off,new_cut_dim);
+                                distance_instance. new_distance(rd,old_off,
+								new_off,
+								new_cut_dim);
 				if (branch(new_rd)) 
 				compute_neighbors_orthogonally(N->lower(),
 								new_rd);       
@@ -250,8 +250,7 @@ Distance* distance_instance;
                   for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
 			FT distance_to_query_object=
-                        distance_instance->
-                        transformed_distance(query_object,**it);
+                        distance_instance.transformed_distance(query_object,**it);
                         insert(*it,distance_to_query_object);
                   }
 		}
