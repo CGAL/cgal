@@ -1,0 +1,157 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - Introduction
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/intro.tex
+%% author: Michael Hoffmann, Lutz Kettner 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Revision$
+%% $Date$
+%% =============================================================================
+
+\chapter{\stl\ Extensions for \cgal}
+\label{chapterDataStructures}\label{chapterStlExtensions}
+
+\RCSdef{\stlExtensionRev}{$Revision$}
+\RCSdefDate{\stlExtensionDate}{$Date$}
+\ccChapterRelease{\stlExtensionRev. \ \stlExtensionDate}\ccTexHtml{\\}{<BR>}
+\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<BR>}
+\ccChapterAuthor{Lutz Kettner}
+
+%% +=========================================================================+
+
+\section*{Introduction}
+
+\cgal\ is designed in the spirit of the generic programming paradigm
+to work together with the Standard Template Library (\stl)
+\cite{ansi-is14882,a-gps-98}. This chapter documents non-geometric
+\stl-like components that are not provided in the \stl\ standard but
+in \cgal: a doubly-connected list managing items in place (where
+inserted items are not copied), generic algorithms, iterators, functor
+adaptors for binding and swapping arguments and for composition,
+functors for projection and creation and adaptor classes around
+iterators and circulators. See also circulators in
+Chapter~\ref{chapterCirculators}.
+
+\subsection*{Doubly-Connected List Managing Items in Place.}
+
+The class \ccStyle{In_place_list<T,&T::next,&T::prev>} manages a
+sequence of items in place in a doubly-connected list. Its goals are
+the flexible handling of memory management and performance
+optimization. The item type is supposed to provide the two necessary
+pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
+to obtain these pointers is to inherit them from the base class
+\ccStyle{In_place_list_base<T>}.
+
+The class \ccStyle{In_place_list<T>} is a container and quite similar
+to \stl\ containers, with the advantage that it is able to handle the
+stored elements by reference instead of copying them. It is possible
+to delete an element only knowing its address and no iterator to it.
+This simplifies mutually pointered data structures like a halfedge
+data structure for planar maps or polyhedral surfaces. The usual
+iterators are also available.  Another container with this property of
+working with pointers to objects is the \stl\ vector (at least in the
+current \stl\ implementations).
+
+\ccRefIdfierPage{CGAL::In_place_list<T,bool>}\\
+\ccRefIdfierPage{CGAL::In_place_list_base<T>}
+
+\subsection*{Generic Algorithms.}
+
+\ccRefIdfierPage{CGAL::copy_n}\\
+\ccRefIdfierPage{CGAL::min_max_element}\\
+\ccRefIdfierPage{CGAL::min_element_if}\\
+\ccRefIdfierPage{CGAL::max_element_if}
+
+\subsection*{Iterators and Iterator/Circulator Adaptors.}
+
+\ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+\ccRefIdfierPage{CGAL::Oneset_iterator<T>}\\
+\ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
+\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}\\
+\ccRefIdfierPage{CGAL::Filter_iterator<Iterator, Predicate>}\\
+\ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
+\ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\subsection*{Functor Adaptors.}
+
+The standard library contains some adaptors for binding functors, that
+is fixing one argument of a functor to a specific value thereby
+creating a new functor that takes one argument less than the original
+functor.  Also, though non-standard, some STL implementations (such as
+SGI) provide adaptors to compose function objects. Unfortunately,
+these bind and compose adaptors are limited to unary and binary
+functors only, and these functors must not be overloaded.
+
+Since there are a number of functors in \cgal\ that take more than two
+arguments, and since functors may also be overloaded, i.e., accept
+several different sets of arguments, we have to define our own
+adaptors to be used with \cgal\ functors.
+
+\ccRefIdfierPage{CGAL::swap_1}\\
+\ccRefIdfierPage{CGAL::swap_2}\\
+\ccRefIdfierPage{CGAL::swap_3}\\
+\ccRefIdfierPage{CGAL::swap_4}\\
+\ccRefIdfierPage{CGAL::bind_1}\\
+\ccRefIdfierPage{CGAL::bind_2}\\
+\ccRefIdfierPage{CGAL::bind_3}\\
+\ccRefIdfierPage{CGAL::bind_4}\\
+\ccRefIdfierPage{CGAL::bind_5}\\
+\ccRefIdfierPage{CGAL::compose}\\
+\ccRefIdfierPage{CGAL::compose_shared}\\
+\ccRefIdfierPage{CGAL::Swap<F,i>}\\
+\ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+\ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+\ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
+\ccRefConceptPage{AdaptableFunctor}\\
+\ccRefIdfierPage{CGAL::Arity_tag<int>}\\
+\ccRefIdfierPage{CGAL::Arity_traits<F>}\\
+\ccRefIdfierPage{CGAL::Set_arity<F,a>}\\
+\ccRefIdfierPage{CGAL::set_arity_0}\\
+\ccRefIdfierPage{CGAL::set_arity_1}\\
+\ccRefIdfierPage{CGAL::set_arity_2}\\
+\ccRefIdfierPage{CGAL::set_arity_3}\\
+\ccRefIdfierPage{CGAL::set_arity_4}\\
+\ccRefIdfierPage{CGAL::set_arity_5}
+
+\subsection*{Projection Function Objects.}
+
+\ccRefIdfierPage{CGAL::Identity<Value>}\\
+%%\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
+\ccRefIdfierPage{CGAL::Dereference<Value>}\\
+\ccRefIdfierPage{CGAL::Get_address<Value>}\\
+\ccRefIdfierPage{CGAL::Cast_function_object<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Project_vertex<Node>}\\
+\ccRefIdfierPage{CGAL::Project_facet<Node>}\\
+\ccRefIdfierPage{CGAL::Project_point<Node>}\\
+\ccRefIdfierPage{CGAL::Project_normal<Node>}\\
+\ccRefIdfierPage{CGAL::Project_plane<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next<Node>}\\
+\ccRefIdfierPage{CGAL::Project_prev<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next_opposite<Node>}\\
+\ccRefIdfierPage{CGAL::Project_opposite_prev<Node>}
+
+\subsection*{Creator Function Objects.}
+
+\ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_2<Arg1, Arg2, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_3<Arg1, Arg2, Arg3, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_4<Arg1, Arg2, Arg3, Arg4, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_5<Arg1, Arg2, Arg3, Arg4, Arg5, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_2<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_3<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_4<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_5<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_6<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_7<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_8<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_9<Arg, Result>}
+
+\subsection*{Utilities.}
+\ccRefIdfierPage{CGAL::Triple<T1, T2, T3>}\\
+\ccRefIdfierPage{CGAL::Quadruple<T1, T2, T3, T4>}
+
+%% EOF
