@@ -374,22 +374,22 @@ public:
       : CGAL_Interval_nt_advanced(a,b) {}
 
   // This particular one needs to be redefined, a pitty...
-  CGAL_Interval_nt operator-() const 
-  { return CGAL_Interval_nt(-(sup), inf); }
+  IA operator-() const 
+  { return IA(-(sup), inf); }
 
   // The member functions that have to be protected against rounding mode.
-  CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const ;
-  CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const ;
-  CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const ;
-  CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const ;
+  IA operator+(const IA& d) const ;
+  IA operator-(const IA& d) const ;
+  IA operator*(const IA& d) const ;
+  IA operator/(const IA& d) const ;
   // For speed...
-  CGAL_Interval_nt operator*(const double d) const;
+  IA operator*(const double d) const;
   // These have exactly the same code as the advanced class.
   // How can I avoid duplicating the code ?
-  CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d) ;
-  CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d) ;
-  CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d) ;
-  CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d) ;
+  IA& operator+=(const IA& d) ;
+  IA& operator-=(const IA& d) ;
+  IA& operator*=(const IA& d) ;
+  IA& operator/=(const IA& d) ;
 };
 
 // Here we use the GNU extension of "Named return value".
