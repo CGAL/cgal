@@ -1,5 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.39 (19 July 2001)
+   - fixed? a number type problem in random polygon example and added more
+     output statements
+
 2.38 (16 July 2001)
    - added missing std's in some programs
    - made doc. include programs in examples directory
