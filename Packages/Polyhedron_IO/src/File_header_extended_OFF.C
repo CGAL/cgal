@@ -130,36 +130,36 @@ operator+=( const File_header_extended_OFF& header) {
     return *this;
 }
 
-#define OUT(item) out << "# " #item " " << h.item() << '\n'
-#define OUTBOOL(item) out << "# " #item " " << (h.item() ? '1':'0') << '\n'
+#define CGAL_OUT(item) out << "# " #item " " << h.item() << '\n'
+#define CGAL_OUTBOOL(item) out << "# " #item " " << (h.item() ? '1':'0') << '\n'
 
 // Write extended header incl. CGAL/ENDCBP keywords.
 std::ostream& operator<<( std::ostream& out,
                           const File_header_extended_OFF& h) {
     out << "#CBP\n";
-    OUTBOOL( polyhedral_surface);
-    OUT(     halfedges);
-    OUTBOOL( triangulated);
-    OUTBOOL( non_empty_facets);
-    OUTBOOL( terrain);
-    OUTBOOL( normalized_to_sphere);
-    OUT(     radius);
-    OUTBOOL( rounded);
-    OUT(     rounded_bits);
+    CGAL_OUTBOOL( polyhedral_surface);
+    CGAL_OUT(     halfedges);
+    CGAL_OUTBOOL( triangulated);
+    CGAL_OUTBOOL( non_empty_facets);
+    CGAL_OUTBOOL( terrain);
+    CGAL_OUTBOOL( normalized_to_sphere);
+    CGAL_OUT(     radius);
+    CGAL_OUTBOOL( rounded);
+    CGAL_OUT(     rounded_bits);
     out << "# ENDCBP\n" << std::endl;
     return out;
 }
-#undef OUT
+#undef CGAL_OUT
 #undef OUTBOOL
 
-#define IN(item,type)                         \
+#define CGAL_IN(item,type)                         \
     else if ( CGAL_CLIB_STD::strcmp( keyword, #item) == 0) { \
         type t;                               \
         in >> t;                              \
         h.set_##item( t);                     \
     }
 
-#define INBOOL(item)                          \
+#define CGAL_INBOOL(item)                          \
     else if ( CGAL_CLIB_STD::strcmp( keyword, #item) == 0) { \
         in >> c;                              \
         h.set_##item( c == '1');              \
@@ -174,15 +174,15 @@ std::istream& operator>>( std::istream& in, File_header_extended_OFF& h) {
     while ( in && CGAL_CLIB_STD::strcmp( keyword, "ENDCBP") != 0) {
         if ( CGAL_CLIB_STD::strcmp( keyword, "#") == 0)
             ;
-        INBOOL( polyhedral_surface)
-        IN(     halfedges, int)
-        INBOOL( triangulated)
-        INBOOL( non_empty_facets)
-        INBOOL( terrain)
-        INBOOL( normalized_to_sphere)
-        IN(     radius, double)
-        INBOOL( rounded)
-        IN(     rounded_bits, int)
+        CGAL_INBOOL( polyhedral_surface)
+        CGAL_IN(     halfedges, int)
+        CGAL_INBOOL( triangulated)
+        CGAL_INBOOL( non_empty_facets)
+        CGAL_INBOOL( terrain)
+        CGAL_INBOOL( normalized_to_sphere)
+        CGAL_IN(     radius, double)
+        CGAL_INBOOL( rounded)
+        CGAL_IN(     rounded_bits, int)
         else if ( h.verbose()) {
             std::cerr << "warning: File_header_extended_OFF: unknown key '"
                       << keyword << "'." << std::endl;
@@ -192,8 +192,8 @@ std::istream& operator>>( std::istream& in, File_header_extended_OFF& h) {
     in >> skip_until_EOL >> skip_comment_OFF;
     return in;
 }
-#undef IN
-#undef INBOOL
+#undef CGAL_IN
+#undef CGAL_INBOOL
 
 CGAL_END_NAMESPACE
 // EOF //
