@@ -249,13 +249,13 @@ public:
 
   /*! nearest_intersection_to_left() finds the nearest intersection point of
    * two given curves to the left of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one exception
-   * explained bellow..
+   * lexicographically nearest not including the point itself with one
+   * exception explained bellow..
    * If the intersection of the two curves is an X_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the left, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target of
-   * the overlapping subcurve, or pt is its left endpoint, pt and the target
+   * other point references p1 and p2. If pt is between the source and target
+   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
    * of the left endpoint of the subcurve are returned through p1 and p2 
    * respectively.
    * If the intersection of the two curves is a point to the left of pt, pt
