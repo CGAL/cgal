@@ -1211,7 +1211,7 @@ CGAL_is_prefix(const char* p, const char* w);
 char*
 CGAL_nth(char* s, int count)
 {
-    int length = strlen(s);
+    // int length = strlen(s);
 
     // the first character is always a parenthesis
     int i = 1,  // char count

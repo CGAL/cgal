@@ -27,7 +27,6 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include <stdlib.h>
 
 
 CGAL_Geomview_stream::CGAL_Geomview_stream(const CGAL_Bbox_3 &bbox,
@@ -542,7 +541,7 @@ CGAL_Geomview_stream::operator>>(char *expr)
 char*
 CGAL_nth(char* s, int count)
 {
-    int length = strlen(s);
+    // int length = strlen(s);
 
     // the first character is always a parenthesis
     int i = 1,  // char count
