@@ -2,11 +2,11 @@
 @! The CGAL Library
 @! Implementation: Random Numbers Generator
 @! ----------------------------------------------------------------------------
-@! file  : web/Random_numbers/Random.aw
-@! author: Sven Schönherr <sven@inf.fu-berlin.de>
+@! file  : web/Random.aw
+@! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Random Numbers Generator $
-@! $CGAL_Package: Random_numbers $
+@! $CGAL_Package: Random_numbers WIP $
 @! $Revision$
 @! $Date$
 @! ============================================================================
@@ -14,38 +14,107 @@
 @documentclass[twoside]{article}
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
-@usepackage{cc_manual}
+@usepackage{cc_manual,cc_manual_index}
 @article
 
-\setlength{\parskip}{1ex}
-\addtolength{\textheight}{5ex}
+%\setlength{\parskip}{1ex}
+%\addtolength{\textheight}{5ex}
+
+\setlength{\skip\footins}{3ex}
+
+\pagestyle{headings}
+
+@! LaTeX macros
+\newcommand{\remark}[2]{[\textbf{#1:} \emph{#2}]}
+
+\newcommand{\linebreakByHand}{\ccTexHtml{\linebreak[4]}{}}
+\newcommand{  \newlineByHand}{\ccTexHtml{\\}{}}
+
+\renewcommand{\sectionmark}[1]{\markboth{\uppercase{#1}}{}}
+
+\newcommand{\subsectionRef}[2]{
+  \addtocounter{subsection}{1}
+  \addcontentsline{toc}{subsection}{\protect\numberline{\thesubsection}#1: #2}
+  \markright{\thesubsection~~#1: #2}}
+
+@! settings for `cc_manual.sty'
+\ccDefGlobalScope{CGAL::}
+\renewcommand{\ccRefPageEnd}{\clearpage}
+
+\newcommand{\cgalColumnLayout}{%
+  \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+  \ccPropagateThreeToTwoColumns}
+
+\newcommand{\ccRequirements}{\ccHeading{Requirements}}
+\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
 
 @! ============================================================================
 @! Title
 @! ============================================================================
 
-\RCSdef{\rcsrevision}{$Revision$}
-\RCSdefDate{\rcsdate}{$Date$}
+\thispagestyle{empty}
 
-@t vskip 5 mm
-@t title titlefont centre "CGAL -- Random Numbers Generator*"
-@t vskip 1 mm
-@t title smalltitlefont centre "Implementation Documentation"
-@t vskip 5 mm
+\RCSdef{\rcsRevision}{$Revision$}
+\RCSdefDate{\rcsDate}{$Date$}
+\newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
+
+@t vskip 20 mm
+@t title titlefont centre "Random Numbers Generator*"
+@t vskip 15 mm
 @t title smalltitlefont centre "Sven Schönherr"
-\smallskip
-\centerline{\rcsrevision\ , \rcsdate}
-@t vskip 1 mm
+\begin{center}
+  \textbf{FU Berlin / ETH Z{\"u}rich}
+\end{center}
+@t vskip 10 mm
+{\small
+\begin{center}
+  \begin{tabular}{l}
+    \verb+$CGAL_Package: Min_annulus_d WIP+\cgalWIP\verb+$+ \\
+    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
+  \end{tabular}
+\end{center}
+}
+@t vskip 30 mm
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \footnotetext[1]{This work was supported by the ESPRIT IV LTR Projects
   No.~21957 (CGAL) and No.~28155 (GALIA).}
 
+\renewcommand{\thefootnote}{\arabic{footnote}}
+
+@! --------
+@! Abstract
+@! --------
+
+\begin{abstract}
+  We provide an implementation of a random numbers generator. It allows to
+  generate uniformly distributed random @prg{bool}s, @prg{int}s, and
+  @prg{double}s. The interface fulfills the requirements of an STL random
+  number generating function object.
+\end{abstract}
+
+@! --------
+@! Contents
+@! --------
+
+\clearpage
+
+\newlength{\defaultparskip}
+\setlength{\defaultparskip}{\parskip}
+\setlength{\parskip}{1ex}
+
+\tableofcontents
+
+\setlength{\parskip}{\defaultparskip}
+
+
 @! ============================================================================
-@! Introduction and Contents
+@! Introduction
 @! ============================================================================
 
-\section*{Introduction}
+\clearpage
+\sectionmark{Introduction}
+\section{Introduction}
 
 We provide an implementation of a random numbers generator. It allows
 to generate uniformly distributed random @prg{bool}s, @prg{int}s, and
@@ -59,21 +128,26 @@ gives the implementation. In Section~3 we provide a test program which
 performs some correctness checks. Finally the product files are
 created in Section~4.
 
-\tableofcontents
 
 @! ============================================================================
-@! Specification
+@! Reference Pages
 @! ============================================================================
 
 \clearpage
-\section{Specification}
+\section{Reference Pages} \label{sec:reference_pages}
 
-\renewcommand{\ccSection}{\ccSubsection}
-\renewcommand{\ccFont}{\tt}
-\renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{Random}{random.restore_state( State state)}{}
-\ccPropagateThreeToTwoColumns
-\input{../../doc_tex/general/Random.tex}
+\emph{Note:} Below some references are undefined, they refer to sections
+in the \cgal\ Reference Manual.
+
+@! ----------------------------------------------------------------------------
+@! Class: Random
+@! ----------------------------------------------------------------------------
+
+%\renewcommand{\ccSection}{\ccSubsection}
+%\ccSetThreeColumns{Random}{random.restore_state( State state)}{}
+%\ccPropagateThreeToTwoColumns
+\input{../doc_tex/support/Generator/Random.tex}
+
 
 @! ============================================================================
 @! Implementation
@@ -106,10 +180,12 @@ The class interface looks as follows.
     };
 @end   
 
+@! ----------------------------------------------------------------------------
 \subsection{Public Interface}
 
-The functionality is described and documented in the specification
-section, so we do not comment on it here.
+The functionality is described and documented in
+Section~\ref{sec:random_numbers_generator}, so we do not comment on it
+here.
 
 @macro <Random public interface> = @begin
     // types
@@ -135,9 +211,7 @@ section, so we do not comment on it here.
     bool  operator == ( const Random& rnd) const;
 @end
 
-
-%\pagebreak
-
+@! ----------------------------------------------------------------------------
 \subsection{Global Variable}
 
 The global variable \ccc{default_random} is the default random numbers
@@ -151,7 +225,7 @@ generator.
     Random  default_random;
 @end
 
-
+@! ----------------------------------------------------------------------------
 \subsection{Private Data Members}
 
 The state is stored in an array of three \ccc{unsigned short}s.
@@ -161,7 +235,7 @@ The state is stored in an array of three \ccc{unsigned short}s.
     unsigned short  _state[3];                          // 48 Bits
 @end
 
-
+@! ----------------------------------------------------------------------------
 \subsection{Constructors}
 
 In the default constructor the seed is set using the system time.
@@ -176,16 +250,16 @@ In the default constructor the seed is set using the system time.
         unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
 
         // initialize random numbers generator
-        _state[ 0] = _state[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
-        _state[ 1] =            CGAL_static_cast( unsigned short, ms & 65535);
+        _state[ 0] = _state[ 2] = static_cast<unsigned short>( ms >> 16);
+        _state[ 1] =              static_cast<unsigned short>( ms & 65535);
     }
 
     Random::
     Random( long seed)
     {
         // initialize random numbers generator
-        _state[ 0] = _state[ 2] = CGAL_static_cast( unsigned short,seed >> 16);
-        _state[ 1] =            CGAL_static_cast( unsigned short,seed & 65535);
+        _state[ 0] = _state[ 2] = static_cast<unsigned short>( seed >> 16);
+        _state[ 1] =              static_cast<unsigned short>( seed & 65535);
     }
 
     Random::
@@ -198,7 +272,7 @@ In the default constructor the seed is set using the system time.
     }
 @end
 
-
+@! ----------------------------------------------------------------------------
 \subsection{Operations}
 
 The C library function \ccc{erand48} returns a random \ccc{double},
@@ -211,7 +285,7 @@ The result is converted to a number in the given range.
     Random::
     get_bool( )
     {
-        return( CGAL_static_cast( bool, ( erand48( _state) >= 0.5)));
+        return static_cast<bool>( erand48( _state) < 0.5);
     }
 
     inline
@@ -219,8 +293,8 @@ The result is converted to a number in the given range.
     Random::
     get_int( int lower, int upper)
     {
-        return( lower + CGAL_static_cast( int,
-            CGAL_static_cast( double, upper-lower) * erand48( _state)));
+        return( lower + static_cast<int>(
+            static_cast<double>( upper-lower) * erand48( _state)));
     }
 
     inline
@@ -240,7 +314,7 @@ The result is converted to a number in the given range.
     }
 @end
 
-
+@! ----------------------------------------------------------------------------
 \subsection{State Functions}
 
 The state functions just copy the internal state to or from the given
@@ -266,7 +340,7 @@ state variable, respectively.
     }
 @end
 
-
+@! ----------------------------------------------------------------------------
 \subsection{Equality Test}
 
 The equality test compares the internal states of the two operands.
@@ -277,19 +351,20 @@ The equality test compares the internal states of the two operands.
     Random::
     operator == ( const Random& rnd) const
     {
-        return( CGAL_static_cast( bool,
+        return( static_cast<bool>(
                     ( _state[ 0] == rnd._state[ 0]) &&
                     ( _state[ 1] == rnd._state[ 1]) &&
                     ( _state[ 2] == rnd._state[ 2]) ) );
     }
 @end
 
+
 @! ============================================================================
-@! Test
+@! Test Program
 @! ============================================================================
 
 \clearpage
-\section{Test}
+\section{Test Program}
 
 We call each function of class \ccc{Random} at least once to
 ensure code coverage. In addition, we check if the generated random
@@ -298,54 +373,56 @@ initialized with the same seed generate the same sequence of random
 numbers.
 
 @macro <Random tests> = @begin
-    Random::State  state;
-    default_random.save_state( state);
+    CGAL::Random::State  state;
+    CGAL::default_random.save_state( state);
 
     // test get_bool
     {
-        bool b = default_random.get_bool();
+        bool b = CGAL::default_random.get_bool();
         assert( ! b || b);
     }
 
     // test get_int
     {
-        int  l = default_random.get_int( -100, 0);
-        int  u = default_random.get_int( 0, 1000);
-        int  i = default_random.get_int( l, u);
+        int  l = CGAL::default_random.get_int( -100, 0);
+        int  u = CGAL::default_random.get_int( 0, 1000);
+        int  i = CGAL::default_random.get_int( l, u);
         assert( ( l <= i) && ( i < u));
     }
 
     // test get_double
     {
-        double  l = default_random.get_double( -123.45, -0.99);
-        double  u = default_random.get_double( 22.0/7.0, 33.3);
-        double  d = default_random.get_double( l, u);
+        double  l = CGAL::default_random.get_double( -123.45, -0.99);
+        double  u = CGAL::default_random.get_double( 22.0/7.0, 33.3);
+        double  d = CGAL::default_random.get_double( l, u);
         assert( ( l <= d) && ( d < u));
     }
 
     // test operator()
     {
-        int  i = default_random( 5555);
+        int  i = CGAL::default_random( 5555);
         assert( ( 0 <= i) && ( i < 5555));
     }
 
     // test state functions
     {
-        default_random.restore_state( state);     // `default_random' and `rnd'
-        Random rnd( state);                       // have the same state now
-        assert( default_random.get_bool()         == rnd.get_bool()        );
-        assert( default_random.get_int( -100,100) == rnd.get_int( -100,100));
-        assert( default_random.get_double()       == rnd.get_double()      );
-        assert( default_random                    == rnd                   );
+        CGAL::default_random.restore_state( state);     // `default_random' and
+        CGAL::Random rnd( state);              // `rnd' have the same state now
+        assert( CGAL::default_random.get_bool()         == rnd.get_bool());
+        assert( CGAL::default_random.get_int( -100,100)
+                                                    == rnd.get_int( -100,100));
+        assert( CGAL::default_random.get_double()       == rnd.get_double());
+        assert( CGAL::default_random                    == rnd);
 
-        long init = default_random( 9999);
-        Random rnd1( init), rnd2( init);
+        long init = CGAL::default_random( 9999);
+        CGAL::Random rnd1( init), rnd2( init);
         assert( rnd1.get_bool()         == rnd2.get_bool()        );
         assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
         assert( rnd1.get_double()       == rnd2.get_double()      );
         assert( rnd1                    == rnd2                   );
     }
 @end
+
 
 @! ==========================================================================
 @! Files
@@ -354,13 +431,13 @@ numbers.
 \clearpage
 \section{Files}
 
-@i ../namespace.awi
+@i share/namespace.awi
 
 @! ----------------------------------------------------------------------------
 @! Random.h
 @! ----------------------------------------------------------------------------
 
-\subsection{Random.h}
+\subsection{include/CGAL/Random.h}
 
 @file <include/CGAL/Random.h> = @begin
     @<file header>("include/CGAL/Random.h","Random Numbers Generator")
@@ -369,6 +446,7 @@ numbers.
     #define CGAL_RANDOM_H
 
     // includes
+    // --------
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
     #endif
@@ -417,7 +495,7 @@ numbers.
 @! Random.C
 @! ----------------------------------------------------------------------------
 
-\subsection{Random.C}
+\subsection{src/Random.C}
 
 @file <src/Random.C> = @begin
     @<file header>("src/Random.C","Random Numbers Generator")
@@ -458,7 +536,7 @@ numbers.
 @! test_Random.C
 @! ----------------------------------------------------------------------------
 
-\subsection{test\_Random.C}
+\subsection{test/Random\_numbers/test\_Random.C}
 
 @file <test/Random_numbers/test_Random.C> = @begin
     @<file header>(
@@ -469,8 +547,6 @@ numbers.
     #include <CGAL/Random.h>
     #include <cassert>
 
-    using namespace CGAL;
-    
     int
     main( int, char**)
     {
@@ -488,17 +564,18 @@ numbers.
 
 \subsection*{File Header}
 
-@i ../file_header.awi
+@i share/file_header.awi
 
 @macro <file header>(2) many = @begin
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
         "Random Numbers Generator",
-        "Random_numbers","Random_numbers/Random",
+        "Random_numbers", "Random",
         "$Revision$","$Date$",
-        "Sven Schönherr <sven@@inf.fu-berlin.de>","N.N.",
-        "INRIA Sophia-Antipolis (<Herve.Bronnimann@@sophia.inria.fr>)",
+        "Sven Schönherr",
+        "Sven Schönherr <sven@@inf.ethz.ch>",
+        "INRIA Sophia-Antipolis",
         "@2")
 @end    
 
