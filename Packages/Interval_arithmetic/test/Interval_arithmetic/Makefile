@@ -15,10 +15,13 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -O3 -Wall -mcpu=ultrasparc # -fprofile-arcs -ftest-coverage
-           #-O2 -xtarget=ultra2
+	   -g -Wall
+           # -O2 -xtarget=ultra2
 	   #-Winline
 	   #-mcpu=pentiumpro
+	   #-mcpu=ultrasparc -mtune=ultrasparc
+	   #-fomit-frame-pointer
+	   # -fprofile-arcs -ftest-coverage
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -34,9 +37,10 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst1 tst2
+test:  tst1 tst2 tst5
 	./tst1
 	./tst2
+	./tst5
 
 bench: tst3 tst4
 	./tst3
@@ -61,6 +65,9 @@ tst3: tst3.o
 
 tst4: tst4.o
 	$(CGAL_CXX) -o tst4 tst4.o $(LDFLAGS)
+
+tst5: tst5.o
+	$(CGAL_CXX) -o tst5 tst5.o $(LDFLAGS)
 
 clean:
 	rm -f *.o *.bb *.bbg *.da *.gcov core tst?
