@@ -56,8 +56,6 @@ class Triangulation_ds_cell_3
 
   friend class Triangulation_data_structure_3<Vb,Cb>;
 
-  //  friend class Triangulation_ds_iterator_base_3
-  //  <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_cell_iterator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_facet_iterator_3
@@ -70,11 +68,8 @@ class Triangulation_ds_cell_3
 
 public:
 
-  //  typedef typename Vb::Point Point;
-
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
-  //  typedef typename Triangulation_data_structure_3<Vb,Cb>::Facet Facet;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
 
   // CONSTRUCTORS
@@ -100,24 +95,24 @@ public:
   { add_list(tds); }
     
   Triangulation_ds_cell_3(Tds & tds,
-			     Vertex* v0, Vertex* v1, 
-			     Vertex* v2, Vertex* v3)
+			  Vertex* v0, Vertex* v1, 
+			  Vertex* v2, Vertex* v3)
     :  Cb(v0,v1,v2,v3)
   { add_list(tds); }
 
   Triangulation_ds_cell_3(Tds & tds,
-			     Vertex* v0, Vertex* v1, 
-			     Vertex* v2, Vertex* v3,
-			     Cell* n0, Cell* n1, Cell* n2, Cell* n3)
+			  Vertex* v0, Vertex* v1, 
+			  Vertex* v2, Vertex* v3,
+			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
     :  Cb(v0,v1,v2,v3,n0,n1,n2,n3)
   { add_list(tds); }
 
   // not documented
   // only used by copy_tds in the TDS class
   Triangulation_ds_cell_3(Tds & tds,
-			       Vertex* v0, Vertex* v1, 
-			       Vertex* v2, Vertex* v3,
-			       const Cell& old_cell)
+			  Vertex* v0, Vertex* v1, 
+			  Vertex* v2, Vertex* v3,
+			  const Cell& old_cell)
     :  Cb(old_cell)
   {
     set_vertices(v0,v1,v2,v3);
@@ -150,10 +145,7 @@ public:
   //  void set_vertices() inherited
       
   inline 
-  void set_vertices(Vertex* v0,
-		    Vertex* v1,
-		    Vertex* v2,
-		    Vertex* v3)
+  void set_vertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
   {
     Cb::set_vertices(v0,v1,v2,v3);
   }
@@ -161,10 +153,7 @@ public:
   //   void set_neighbors() inherited
      
   inline
-  void set_neighbors(Cell* n0,
-		     Cell* n1,
-		     Cell* n2,
-		     Cell* n3)
+  void set_neighbors(Cell* n0, Cell* n1, Cell* n2, Cell* n3)
   {
     Cb::set_neighbors(n0,n1,n2,n3);
   }
@@ -224,7 +213,39 @@ public:
 
   // CHECKING
 
-  bool is_valid(int dim = 3, bool verbose = false, int level = 0) const
+  bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
+
+private:
+
+  // to maintain the list of cells
+  Cell* _previous_cell;
+  Cell* _next_cell;
+  
+  inline
+  void add_list(Tds & tds)
+  {
+    this->_next_cell = tds.list_of_cells()._next_cell;
+    tds.list_of_cells()._next_cell=this;
+    this->_next_cell->_previous_cell = this;
+    this->_previous_cell = tds.past_end_cell();
+  }
+
+  void error_orient( Cell * n, int i) const
+  {
+    std::cerr << " pb orientation with neighbor " << std::endl;
+  }
+
+  void error_neighbor( Cell* n, int i, int in ) const
+  {
+    std::cerr << "neighbor of c has not c as neighbor" << std::endl;
+  }
+
+};
+
+template <class Vb, class Cb >
+bool
+Triangulation_ds_cell_3<Vb,Cb>::is_valid
+(int dim = 3, bool verbose = false, int level = 0) const
   {
     if ( ! Cb::is_valid(verbose, true) ) return false;
 
@@ -501,68 +522,6 @@ public:
     } // end switch
     return true;
   } // end is_valid
-
-private:
-
-  // to maintain the list of cells
-  Cell* _previous_cell;
-  Cell* _next_cell;
-  
-  inline
-  void add_list(Tds & tds)
-  {
-    this->_next_cell = tds.list_of_cells()._next_cell;
-    tds.list_of_cells()._next_cell=this;
-    this->_next_cell->_previous_cell = this;
-    this->_previous_cell = tds.past_end_cell();
-  }
-
-  // only for dimension 2
-
-//   inline int ccw(int i) const
-//   {
-//     return (i+1) % 3;
-//   }
-    
-//   inline int cw(int i) const
-//   {
-//     return (i+2) % 3;
-//   }
- 
-
-  void error_orient( Cell * n, int i) const
-  {
-//     std::cerr << this->vertex(0)->point() << ", "
-// 	 << this->vertex(1)->point() << ", "
-// 	 << this->vertex(2)->point() << ", "
-// 	 << this->vertex(3)->point() << std::endl
-// 	 << " pb orientation with neighbor " << i
-// 	 << " : " << std::endl 
-// 	 << n->vertex(0)->point() << ", "
-// 	 << n->vertex(1)->point() << ", "
-// 	 << n->vertex(2)->point() << ", "
-// 	 << n->vertex(3)->point() << std::endl
-// 	 << std::endl;
-    std::cerr << " pb orientation with neighbor " << std::endl;
-  }
-
-  void error_neighbor( Cell* n, int i, int in ) const
-  {
-//     std::cerr << "neighbor " << i << std::endl
-// 	 << n->vertex(0)->point() << ", "
-// 	 << n->vertex(1)->point() << ", "
-// 	 << n->vertex(2)->point() << ", "
-// 	 << n->vertex(3)->point() << std::endl
-// 	 << " does not have this " << std::endl
-// 	 << this->vertex(0)->point() << ", "
-// 	 << this->vertex(1)->point() << ", "
-// 	 << this->vertex(2)->point() << ", "
-// 	 << this->vertex(3)->point() << std::endl
-// 	 << " as neighbor " << in << std::endl;
-    std::cerr << "neighbor of c has not c as neighbor" << std::endl;
-  }
-
-};
 
 CGAL_END_NAMESPACE
 

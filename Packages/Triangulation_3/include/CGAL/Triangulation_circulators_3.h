@@ -60,7 +60,8 @@ public:
     {}
 
   Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
-    : _cb( &(tr->_tds), make_triple( (Ctds *) &(*(e.first)), e.second, e.third ) ), _tr(tr)
+    : _cb( &(tr->_tds), make_triple( (Ctds *) &(*(e.first)), 
+				     e.second, e.third ) ), _tr(tr)
     {}
 
    Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e, Cell_handle c)

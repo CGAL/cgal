@@ -38,15 +38,6 @@ class Triangulation_vertex_handle_3;
 template < class Gt, class Tds >
 class Triangulation_cell_handle_3;
 
-// template<class Gt,  class Tds>
-// class Triangulation_cell_circulator_3;
-
-// template<class Gt,  class Tds>
-// class Triangulation_vertex_circulator_3;
-
-// template<class Gt, class Tds>
-// class Triangulation_edge_circulator_3;
-
 template<class Gt, class Tds >
 class Triangulation_vertex_3
   : public Tds::Vertex
@@ -63,12 +54,6 @@ public:
   
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
-  //  typedef pair<Cell_handle, int, int>     Edge;
-
-  //  typedef Triangulation_cell_circulator_3<Gt,Tds>      Cell_circulator;
-  //  typedef Triangulation_edge_circulator_3<Gt,Tds>      Edge_circulator;
-  //  typedef Triangulation_vertex_circulator_3<Gt,Tds>    Vertex_circulator;
-
   
   Triangulation_vertex_3()
      : Vtds()

@@ -95,15 +95,8 @@ public:
     Vb::set_point(p);
   }
 
-  // USEFUL CONSTANT TIME FUNCTIONS
-
   // USEFUL NON CONSTANT TIME FUNCTIONS
 
-//   int degree() const
-//   {
-// TBD with edge circulator
-//   }
-  
 //   inline Vertex_circulator incident_vertices()
 //   {
 //     return Vertex_circulator(this, cell());
@@ -132,19 +125,24 @@ public:
     
   // CHECKING
 
-   bool is_valid(bool verbose = false, int level = 0) const
-  {
-    bool result = Vb::is_valid(verbose,level);
-    result = result && cell()->has_vertex(this);
-    if ( ! result ) {
-      if ( verbose ) {
-	std::cerr << "invalid vertex" << std::endl;
-      }
-      CGAL_triangulation_assertion(false);
-    }
-    return result;
-  }
+   bool is_valid(bool verbose = false, int level = 0) const;
 };
+
+template <class Vb, class Cb >
+bool
+Triangulation_ds_vertex_3<Vb,Cb>::is_valid
+(bool verbose = false, int level = 0) const
+{
+  bool result = Vb::is_valid(verbose,level);
+  result = result && cell()->has_vertex(this);
+  if ( ! result ) {
+    if ( verbose ) {
+      std::cerr << "invalid vertex" << std::endl;
+    }
+    CGAL_triangulation_assertion(false);
+  }
+  return result;
+}
 
 CGAL_END_NAMESPACE
 

@@ -53,19 +53,12 @@ public:
 
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
-  //  typedef triple<Cell_handle, int, int>     Edge;
 
   inline
   Triangulation_cell_3()
     : Ctds()
   { }
 
-//   inline 
-//   Triangulation_cell_3(Ctds f)
-//     : Ctds(f)
-//   {}
-// 
-  
   inline
   Triangulation_cell_3(Tds& tds)
     : Ctds(tds)
@@ -73,10 +66,10 @@ public:
 
   inline
   Triangulation_cell_3(Tds & tds,
-			    Vertex_handle v0,
-			    Vertex_handle v1,
-			    Vertex_handle v2,
-			    Vertex_handle v3)
+		       Vertex_handle v0,
+		       Vertex_handle v1,
+		       Vertex_handle v2,
+		       Vertex_handle v3)
     : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3))
   {}
     

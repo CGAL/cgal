@@ -13,6 +13,7 @@
 //
 // file          : include/CGAL/Triangulation_geom_traits_3.h
 // revision      : $Revision$
+// 
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia Antipolis 
@@ -27,6 +28,8 @@
 #ifndef CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 #define CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 
+#include <CGAL/basic.h>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Point_2.h>
@@ -37,16 +40,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
+template < class Rep >
 class Triangulation_geom_traits_3 
 {
 public:
 
-  typedef Point_3<R>  Point;
-  typedef Point_2< Cartesian< Quotient<typename R::RT> > >  Point2;
-  typedef Segment_3<R> Segment;
-  typedef Triangle_3<R> Triangle;
-  typedef Tetrahedron_3<R> Tetrahedron;
+  typedef Point_3<Rep>  Point;
+  typedef Point_2< Cartesian< Quotient<typename Rep::RT> > >  Point2;
+  typedef Segment_3<Rep> Segment;
+  typedef Triangle_3<Rep> Triangle;
+  typedef Tetrahedron_3<Rep> Tetrahedron;
 
   Triangulation_geom_traits_3()
     {}

@@ -57,7 +57,7 @@ public:
 
   inline
   Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
-				 void* n0, void* n1, void* n2, void* n3)
+			    void* n0, void* n1, void* n2, void* n3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
@@ -80,41 +80,21 @@ public:
     
   inline 
   bool has_vertex(const void* v, int & i) const
-  {
-    if (v == V[0]) {
-      i = 0;
-      return true;
+    {
+      if (v == V[0]) { i = 0; return true; }
+      if (v == V[1]) { i = 1; return true; }
+      if (v == V[2]) { i = 2; return true; }
+      if (v == V[3]) { i = 3; return true; }
+      return false;
     }
-    if (v == V[1]) {
-      i = 1;
-      return true;
-    }
-    if (v == V[2]) {
-      i = 2;
-      return true;
-    }
-    if (v == V[3]) {
-      i = 3;
-      return true;
-    }
-    return false;
-  }
     
   inline 
   int vertex_index(const void* v) const
   {
-    if (v == V[0]) {
-      return 0;
-    }
-    if (v == V[1]) {
-      return 1;
-    }
-    if (v == V[2]) {
-      return 2;
-    }
-    if (v == V[3]) {
-      return 3;
-    }
+    if (v == V[0]) { return 0; }
+    if (v == V[1]) { return 1; }
+    if (v == V[2]) { return 2; }
+    if (v == V[3]) { return 3; }
     CGAL_triangulation_assertion(false); // we should not get here
     return -1;
   }
@@ -135,22 +115,10 @@ public:
   inline 
   bool has_neighbor(const void* n, int & i) const
   {
-    if(n == N[0]){
-      i = 0;
-      return true;
-    }
-    if(n == N[1]){
-      i = 1;
-      return true;
-    }
-    if(n == N[2]){
-      i = 2;
-      return true;
-    }
-    if(n == N[3]){
-      i = 3;
-      return true;
-    }
+    if(n == N[0]){ i = 0; return true; }
+    if(n == N[1]){ i = 1; return true; }
+    if(n == N[2]){ i = 2; return true; }
+    if(n == N[3]){ i = 3; return true; }
     return false;
   }
     
@@ -160,7 +128,7 @@ public:
     if (n == N[0]) return 0;
     if (n == N[1]) return 1;
     if (n == N[2]) return 2;
-	CGAL_triangulation_assertion( n == N[3] );
+    CGAL_triangulation_assertion( n == N[3] );
     return 3;
   }
  
@@ -187,10 +155,7 @@ public:
   }
     
   inline 
-  void set_vertices(void* v0,
-		    void* v1,
-		    void* v2,
-		    void* v3)
+  void set_vertices(void* v0, void* v1, void* v2, void* v3)
   {
     V[0] = v0;
     V[1] = v1;
@@ -208,10 +173,7 @@ public:
   }
     
   inline
-  void set_neighbors(void* n0,
-		     void* n1,
-		     void* n2,
-		     void* n3)
+  void set_neighbors(void* n0, void* n1, void* n2, void* n3)
   {
     N[0] = n0;
     N[1] = n1;
@@ -240,6 +202,7 @@ std::istream& operator>>
 {
   return is;
 }
+
 template < class GT >
 std::ostream& operator<<
 (std::ostream& os, const Triangulation_cell_base_3<GT> & c)
