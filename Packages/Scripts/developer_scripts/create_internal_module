@@ -988,10 +988,25 @@ make_src_makefiles();
 #CreateSrcTestDir();
 #CreateCoreTestDir();
 
+
+
+#CLEANING UP THE MODULE 
 chdir "$RELEASEDIR/$MODULE_NAME" or die;
 system("rm", "-rf", "test");
 system("rm", "-rf", "developer_scripts"); 
-system("rm -f * 2> /dev/null");
+system("rm", "-rf", "Modules");
+system("rm", "-rf", "web");
+
+@file_list_to_be_removed = glob("*");
+foreach $i  (@file_list_to_be_removed){
+  if ( -f $i ){
+    chomp($i);
+    if ( $i ne "install_cgal" ){
+      system("rm -f ${i} 2>/dev/null");
+    } 
+  }
+}
+
 
 unlock;
 

@@ -1,4 +1,11 @@
 03 June 2004 Radu Ursu
+- create_internal_release removes web directory from the module
+- create_internal_release removes all files in the root of the module except 
+  for install_cgal
+- create_modules checks for create_internal_release script and for CVSDIR 
+  directory. If they are not found, the script exits.  
+
+03 June 2004 Radu Ursu
 - create_modules script could be used with parameters
 
 03 June 2004 Radu Ursu

@@ -32,6 +32,11 @@ if [ ! -r ${CVSDIR} ]; then
   return
 fi
 
+if [ ! -r create_internal_module ]; then
+  printf "create_internal_module file could not be found ... EXITING\n"
+  return
+fi
+
 
 cd ${CVSDIR} || return
 if [ -r "Installation" ]; then
