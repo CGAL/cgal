@@ -35,6 +35,7 @@ CGAL_BEGIN_NAMESPACE
 
 template<class T>
 class Largest_empty_iso_rectangle_2 {
+public: 
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
   typedef typename T::FT NT;
   typedef typename T::Point_2               Point;
@@ -99,11 +100,13 @@ private:
 
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) {
+    //Comparison_result c = geom_traits().compare_yx_2_object()(a->p, b->p);
     Comparison_result c = geom_traits().compare_y_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return geom_traits().less_xy_2_object()(b->p, a->p);
+      return geom_traits().less_x_2_object()(b->p, a->p); //af: check
+      /*geom_traits().less_xy_2_object()(b->p, a->p);*/
     } 
     return false;
   }
@@ -270,8 +273,9 @@ public:
   {
     int n = 0;
     while(first != last){
-      insert(*first);
-      n++;
+      if(insert(*first)){
+	n++;
+      }
       ++first;
     }
     return n;
@@ -439,15 +443,15 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
 {
   cache_valid = false;
   Point_data *po = new Point_data(_p);
-  Point_data_set_of_x::iterator iter1 = x_sorted.find(po),
-                                iter2 = y_sorted.find(po);
+  Point_data_set_of_x::iterator iter1 = x_sorted.find(po);
+  Point_data_set_of_y::iterator iter2 = y_sorted.find(po);
 
   // point does not exist or a corner point
-  if(iter1 == x_sorted.end() || iter1->type != REG)
+  if(iter1 == x_sorted.end() || (*iter1)->type != REG)
     return(false);
 
-  delete(iter->right_tent);
-  delete(iter->left_tent);
+  delete((*iter1)->right_tent); // af: was iter
+  delete((*iter2)->left_tent);  // af: was iter
 
   x_sorted.erase(iter1);
   y_sorted.erase(iter2);
