@@ -1,58 +1,81 @@
 toolview.o : \
- toolview.cpp /usr/local/qt2/include/qprinter.h \
- /usr/local/qt2/include/qpaintdevice.h \
- /usr/local/qt2/include/qwindowdefs.h \
- /usr/local/qt2/include/qobjectdefs.h /usr/local/qt2/include/qglobal.h \
- /usr/local/qt2/include/qfeatures.h /usr/local/qt2/include/qconfig.h \
- /usr/local/qt2/include/qstring.h /usr/local/qt2/include/qcstring.h \
- /usr/local/qt2/include/qarray.h /usr/local/qt2/include/qgarray.h \
- /usr/local/qt2/include/qshared.h /usr/include/string.h \
- /usr/include/features.h /usr/include/sys/cdefs.h \
- /usr/include/gnu/stubs.h \
+ toolview.cpp /usr/local/qt3/include/qprinter.h \
+ /usr/local/qt3/include/qpaintdevice.h \
+ /usr/local/qt3/include/qwindowdefs.h \
+ /usr/local/qt3/include/qobjectdefs.h /usr/local/qt3/include/qglobal.h \
+ /usr/local/qt3/include/qconfig.h /usr/local/qt3/include/qmodules.h \
+ /usr/local/qt3/include/qfeatures.h /usr/local/qt3/include/qstring.h \
+ /usr/local/qt3/include/qcstring.h /usr/local/qt3/include/qmemarray.h \
+ /usr/local/qt3/include/qgarray.h /usr/local/qt3/include/qshared.h \
+ /usr/include/string.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/stddef.h \
- /usr/local/qt2/include/qnamespace.h \
+ /usr/local/qt3/include/qnamespace.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/limits.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
- /usr/include/bits/posix2_lim.h /usr/local/qt2/include/qrect.h \
- /usr/local/qt2/include/qsize.h /usr/local/qt2/include/qpoint.h \
- /usr/local/qt2/include/qpainter.h /usr/local/qt2/include/qcolor.h \
- /usr/local/qt2/include/qfontmetrics.h /usr/local/qt2/include/qfont.h \
- /usr/local/qt2/include/qfontinfo.h /usr/local/qt2/include/qregion.h \
- /usr/local/qt2/include/qpen.h /usr/local/qt2/include/qbrush.h \
- /usr/local/qt2/include/qpointarray.h \
- /usr/local/qt2/include/qwmatrix.h /usr/include/stdio.h \
+ /usr/include/bits/posix2_lim.h /usr/local/qt3/include/qrect.h \
+ /usr/local/qt3/include/qsize.h /usr/local/qt3/include/qpoint.h \
+ /usr/local/qt3/include/qpainter.h /usr/local/qt3/include/qcolor.h \
+ /usr/local/qt3/include/qfontmetrics.h /usr/local/qt3/include/qfont.h \
+ /usr/local/qt3/include/qfontinfo.h /usr/local/qt3/include/qregion.h \
+ /usr/local/qt3/include/qpen.h /usr/local/qt3/include/qbrush.h \
+ /usr/local/qt3/include/qpointarray.h \
+ /usr/local/qt3/include/qwmatrix.h /usr/include/stdio.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/stdarg.h \
  /usr/include/bits/types.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/bits/stdio_lim.h \
- /usr/include/bits/stdio.h toolview.h /usr/local/qt2/include/qwidget.h \
- /usr/local/qt2/include/qobject.h /usr/local/qt2/include/qevent.h \
- /usr/local/qt2/include/qmime.h /usr/local/qt2/include/qstringlist.h \
- /usr/local/qt2/include/qvaluelist.h \
- /usr/local/qt2/include/qdatastream.h \
- /usr/local/qt2/include/qiodevice.h /usr/local/qt2/include/qregexp.h \
- /usr/local/qt2/include/qpalette.h /usr/local/qt2/include/qcursor.h \
- /usr/local/qt2/include/qstyle.h /usr/local/qt2/include/qsizepolicy.h \
- /usr/local/qt2/include/qworkspace.h \
- /usr/local/qt2/include/qwidgetlist.h /usr/local/qt2/include/qlist.h \
- /usr/local/qt2/include/qglist.h /usr/local/qt2/include/qcollection.h \
- /usr/local/qt2/include/qgl.h /usr/X11R6/include/GL/gl.h \
- /usr/X11R6/include/GL/glu.h glview.h Camera.h Quaternion.h Matrix44.h \
- Vector3d.h Viewport.h Arcball.h tooldoc.h ../config.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Simple_cartesian.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/basic.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config.h \
- /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config/i686_Linux-2.2.18_g++-2.95/CGAL/compiler_config.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream \
+ /usr/include/bits/stdio.h toolview.h /usr/local/qt3/include/qwidget.h \
+ /usr/local/qt3/include/qobject.h /usr/local/qt3/include/qevent.h \
+ /usr/local/qt3/include/qmime.h /usr/local/qt3/include/qmap.h \
+ /usr/local/qt3/include/qdatastream.h \
+ /usr/local/qt3/include/qiodevice.h /usr/local/qt3/include/qpair.h \
+ /usr/local/qt3/include/qtl.h /usr/local/qt3/include/qtextstream.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iterator \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_config.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_relops.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/streambuf.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstdlib \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_iterator.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/map \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tree.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algobase.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_pair.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/type_traits.h \
  /usr/include/stdlib.h /usr/include/sys/types.h /usr/include/time.h \
  /usr/include/endian.h /usr/include/bits/endian.h \
  /usr/include/sys/select.h /usr/include/bits/select.h \
  /usr/include/bits/sigset.h /usr/include/sys/sysmacros.h \
  /usr/include/alloca.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/exception \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_alloc.h \
+ /usr/include/assert.h /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/bits/sched.h /usr/include/bits/time.h \
+ /usr/include/signal.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sigthread.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_construct.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_function.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_map.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_multimap.h \
+ /usr/local/qt3/include/qpalette.h \
+ /usr/local/qt3/include/qsizepolicy.h \
+ /usr/local/qt3/include/qworkspace.h \
+ /usr/local/qt3/include/qwidgetlist.h \
+ /usr/local/qt3/include/qptrlist.h /usr/local/qt3/include/qglist.h \
+ /usr/local/qt3/include/qptrcollection.h /usr/local/qt3/include/qgl.h \
+ /usr/local/qt3/include/qglcolormap.h /usr/X11R6/include/GL/gl.h \
+ /usr/X11R6/include/GL/glu.h glview.h Camera.h Quaternion.h Matrix44.h \
+ Vector3d.h Viewport.h Arcball.h tooldoc.h ../config.h \
+ /usr/local/qt3/include/qlist.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Simple_cartesian.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/basic.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config.h \
+ /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config/i686_Linux-2.2.18_g++-2.95/CGAL/compiler_config.h \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream \
+ /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstdlib \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/assertions.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/kernel_assertions.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Object.h \
@@ -69,16 +92,6 @@ toolview.o : \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/float.h \
  /usr/include/bits/mathinline.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/algorithm \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algobase.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_config.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_relops.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_pair.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/type_traits.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/exception \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_iterator.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_construct.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_uninitialized.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tempbuf.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algo.h \
@@ -89,7 +102,6 @@ toolview.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/functional_base.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/functional \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_function.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/number_utils_classes.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/double.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/float.h \
@@ -104,11 +116,6 @@ toolview.o : \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Handle_for.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/memory.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/memory \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_alloc.h \
- /usr/include/assert.h /usr/include/pthread.h /usr/include/sched.h \
- /usr/include/bits/sched.h /usr/include/bits/time.h \
- /usr/include/signal.h /usr/include/bits/pthreadtypes.h \
- /usr/include/bits/sigthread.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_raw_storage_iter.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/known_bit_size_integers.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Twotuple.h \
@@ -221,16 +228,11 @@ toolview.o : \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstddef \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_iterator_3.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/circulator.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iterator \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/circulator_bases.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Iterator_project.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/function_objects.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/N_step_adaptor_derived.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/map \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tree.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_map.h \
- /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_multimap.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_items_3.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_vertex_base.h \
  /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_halfedge_base.h \
@@ -253,33 +255,39 @@ toolview.o : \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_list.h \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream \
  /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream.h \
- toolview.moc /usr/local/qt2/include/qmetaobject.h \
- /usr/local/qt2/include/qconnection.h \
- /usr/local/qt2/include/qstrlist.h \
- /usr/local/qt2/include/qapplication.h \
- /usr/local/qt2/include/qasciidict.h /usr/local/qt2/include/qgdict.h \
- /usr/local/qt2/include/qtranslator.h \
- /usr/local/qt2/include/qintdict.h \
- /usr/local/qt2/include/qsignalslotimp.h
+ toolview.moc /usr/local/qt3/include/qmetaobject.h \
+ /usr/local/qt3/include/qconnection.h \
+ /usr/local/qt3/include/qstrlist.h \
+ /usr/local/qt3/include/qapplication.h \
+ /usr/local/qt3/include/qdesktopwidget.h \
+ /usr/local/qt3/include/qasciidict.h /usr/local/qt3/include/qgdict.h \
+ /usr/local/qt3/include/qtranslator.h \
+ /usr/local/qt3/include/qvaluelist.h \
+ /usr/local/qt3/include/qstringlist.h /usr/local/qt3/include/quuid.h \
+ /usr/include/memory.h /usr/local/qt3/include/private/qucomextra_p.h \
+ /usr/local/qt3/include/private/qucom_p.h \
+ /usr/local/qt3/include/qsignalslotimp.h \
+ /usr/local/qt3/include/qptrvector.h /usr/local/qt3/include/qgvector.h
 toolview.cpp :
-/usr/local/qt2/include/qprinter.h :
-/usr/local/qt2/include/qpaintdevice.h :
-/usr/local/qt2/include/qwindowdefs.h :
-/usr/local/qt2/include/qobjectdefs.h :
-/usr/local/qt2/include/qglobal.h :
-/usr/local/qt2/include/qfeatures.h :
-/usr/local/qt2/include/qconfig.h :
-/usr/local/qt2/include/qstring.h :
-/usr/local/qt2/include/qcstring.h :
-/usr/local/qt2/include/qarray.h :
-/usr/local/qt2/include/qgarray.h :
-/usr/local/qt2/include/qshared.h :
+/usr/local/qt3/include/qprinter.h :
+/usr/local/qt3/include/qpaintdevice.h :
+/usr/local/qt3/include/qwindowdefs.h :
+/usr/local/qt3/include/qobjectdefs.h :
+/usr/local/qt3/include/qglobal.h :
+/usr/local/qt3/include/qconfig.h :
+/usr/local/qt3/include/qmodules.h :
+/usr/local/qt3/include/qfeatures.h :
+/usr/local/qt3/include/qstring.h :
+/usr/local/qt3/include/qcstring.h :
+/usr/local/qt3/include/qmemarray.h :
+/usr/local/qt3/include/qgarray.h :
+/usr/local/qt3/include/qshared.h :
 /usr/include/string.h :
 /usr/include/features.h :
 /usr/include/sys/cdefs.h :
 /usr/include/gnu/stubs.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/stddef.h :
-/usr/local/qt2/include/qnamespace.h :
+/usr/local/qt3/include/qnamespace.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/limits.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/syslimits.h :
 /usr/include/limits.h :
@@ -287,19 +295,19 @@ toolview.cpp :
 /usr/include/bits/local_lim.h :
 /usr/include/linux/limits.h :
 /usr/include/bits/posix2_lim.h :
-/usr/local/qt2/include/qrect.h :
-/usr/local/qt2/include/qsize.h :
-/usr/local/qt2/include/qpoint.h :
-/usr/local/qt2/include/qpainter.h :
-/usr/local/qt2/include/qcolor.h :
-/usr/local/qt2/include/qfontmetrics.h :
-/usr/local/qt2/include/qfont.h :
-/usr/local/qt2/include/qfontinfo.h :
-/usr/local/qt2/include/qregion.h :
-/usr/local/qt2/include/qpen.h :
-/usr/local/qt2/include/qbrush.h :
-/usr/local/qt2/include/qpointarray.h :
-/usr/local/qt2/include/qwmatrix.h :
+/usr/local/qt3/include/qrect.h :
+/usr/local/qt3/include/qsize.h :
+/usr/local/qt3/include/qpoint.h :
+/usr/local/qt3/include/qpainter.h :
+/usr/local/qt3/include/qcolor.h :
+/usr/local/qt3/include/qfontmetrics.h :
+/usr/local/qt3/include/qfont.h :
+/usr/local/qt3/include/qfontinfo.h :
+/usr/local/qt3/include/qregion.h :
+/usr/local/qt3/include/qpen.h :
+/usr/local/qt3/include/qbrush.h :
+/usr/local/qt3/include/qpointarray.h :
+/usr/local/qt3/include/qwmatrix.h :
 /usr/include/stdio.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/stdarg.h :
 /usr/include/bits/types.h :
@@ -308,25 +316,62 @@ toolview.cpp :
 /usr/include/bits/stdio_lim.h :
 /usr/include/bits/stdio.h :
 toolview.h :
-/usr/local/qt2/include/qwidget.h :
-/usr/local/qt2/include/qobject.h :
-/usr/local/qt2/include/qevent.h :
-/usr/local/qt2/include/qmime.h :
-/usr/local/qt2/include/qstringlist.h :
-/usr/local/qt2/include/qvaluelist.h :
-/usr/local/qt2/include/qdatastream.h :
-/usr/local/qt2/include/qiodevice.h :
-/usr/local/qt2/include/qregexp.h :
-/usr/local/qt2/include/qpalette.h :
-/usr/local/qt2/include/qcursor.h :
-/usr/local/qt2/include/qstyle.h :
-/usr/local/qt2/include/qsizepolicy.h :
-/usr/local/qt2/include/qworkspace.h :
-/usr/local/qt2/include/qwidgetlist.h :
-/usr/local/qt2/include/qlist.h :
-/usr/local/qt2/include/qglist.h :
-/usr/local/qt2/include/qcollection.h :
-/usr/local/qt2/include/qgl.h :
+/usr/local/qt3/include/qwidget.h :
+/usr/local/qt3/include/qobject.h :
+/usr/local/qt3/include/qevent.h :
+/usr/local/qt3/include/qmime.h :
+/usr/local/qt3/include/qmap.h :
+/usr/local/qt3/include/qdatastream.h :
+/usr/local/qt3/include/qiodevice.h :
+/usr/local/qt3/include/qpair.h :
+/usr/local/qt3/include/qtl.h :
+/usr/local/qt3/include/qtextstream.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iterator :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_config.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_relops.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/streambuf.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_iterator.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/map :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tree.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algobase.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_pair.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/type_traits.h :
+/usr/include/stdlib.h :
+/usr/include/sys/types.h :
+/usr/include/time.h :
+/usr/include/endian.h :
+/usr/include/bits/endian.h :
+/usr/include/sys/select.h :
+/usr/include/bits/select.h :
+/usr/include/bits/sigset.h :
+/usr/include/sys/sysmacros.h :
+/usr/include/alloca.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/exception :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_alloc.h :
+/usr/include/assert.h :
+/usr/include/pthread.h :
+/usr/include/sched.h :
+/usr/include/bits/sched.h :
+/usr/include/bits/time.h :
+/usr/include/signal.h :
+/usr/include/bits/pthreadtypes.h :
+/usr/include/bits/sigthread.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_construct.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_function.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_map.h :
+/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_multimap.h :
+/usr/local/qt3/include/qpalette.h :
+/usr/local/qt3/include/qsizepolicy.h :
+/usr/local/qt3/include/qworkspace.h :
+/usr/local/qt3/include/qwidgetlist.h :
+/usr/local/qt3/include/qptrlist.h :
+/usr/local/qt3/include/qglist.h :
+/usr/local/qt3/include/qptrcollection.h :
+/usr/local/qt3/include/qgl.h :
+/usr/local/qt3/include/qglcolormap.h :
 /usr/X11R6/include/GL/gl.h :
 /usr/X11R6/include/GL/glu.h :
 glview.h :
@@ -338,24 +383,13 @@ Viewport.h :
 Arcball.h :
 tooldoc.h :
 ../config.h :
+/usr/local/qt3/include/qlist.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Simple_cartesian.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/basic.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/config/i686_Linux-2.2.18_g++-2.95/CGAL/compiler_config.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iostream.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/streambuf.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstdlib :
-/usr/include/stdlib.h :
-/usr/include/sys/types.h :
-/usr/include/time.h :
-/usr/include/endian.h :
-/usr/include/bits/endian.h :
-/usr/include/sys/select.h :
-/usr/include/bits/select.h :
-/usr/include/bits/sigset.h :
-/usr/include/sys/sysmacros.h :
-/usr/include/alloca.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/assertions.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/kernel_assertions.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Object.h :
@@ -374,16 +408,6 @@ tooldoc.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/float.h :
 /usr/include/bits/mathinline.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/algorithm :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algobase.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_config.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_relops.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_pair.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/type_traits.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/new :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/include/exception :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_iterator.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_construct.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_uninitialized.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tempbuf.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_algo.h :
@@ -394,7 +418,6 @@ tooldoc.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Kernel_traits.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/functional_base.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/functional :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_function.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/number_utils_classes.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/double.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/float.h :
@@ -409,15 +432,6 @@ tooldoc.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Handle_for.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/memory.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/memory :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_alloc.h :
-/usr/include/assert.h :
-/usr/include/pthread.h :
-/usr/include/sched.h :
-/usr/include/bits/sched.h :
-/usr/include/bits/time.h :
-/usr/include/signal.h :
-/usr/include/bits/pthreadtypes.h :
-/usr/include/bits/sigthread.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_raw_storage_iter.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/known_bit_size_integers.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Twotuple.h :
@@ -531,16 +545,11 @@ cgal_types.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/cstddef :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_iterator_3.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/circulator.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/iterator :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/circulator_bases.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Iterator_project.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/function_objects.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/N_step_adaptor_derived.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/iterator.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/map :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_tree.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_map.h :
-/usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/stl_multimap.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/Polyhedron_items_3.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_vertex_base.h :
 /0/prisme_util/CGAL/CGAL-2.4/include/CGAL/HalfedgeDS_halfedge_base.h :
@@ -564,12 +573,20 @@ cgal_types.h :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream :
 /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/../../../../include/g++-3/fstream.h :
 toolview.moc :
-/usr/local/qt2/include/qmetaobject.h :
-/usr/local/qt2/include/qconnection.h :
-/usr/local/qt2/include/qstrlist.h :
-/usr/local/qt2/include/qapplication.h :
-/usr/local/qt2/include/qasciidict.h :
-/usr/local/qt2/include/qgdict.h :
-/usr/local/qt2/include/qtranslator.h :
-/usr/local/qt2/include/qintdict.h :
-/usr/local/qt2/include/qsignalslotimp.h :
+/usr/local/qt3/include/qmetaobject.h :
+/usr/local/qt3/include/qconnection.h :
+/usr/local/qt3/include/qstrlist.h :
+/usr/local/qt3/include/qapplication.h :
+/usr/local/qt3/include/qdesktopwidget.h :
+/usr/local/qt3/include/qasciidict.h :
+/usr/local/qt3/include/qgdict.h :
+/usr/local/qt3/include/qtranslator.h :
+/usr/local/qt3/include/qvaluelist.h :
+/usr/local/qt3/include/qstringlist.h :
+/usr/local/qt3/include/quuid.h :
+/usr/include/memory.h :
+/usr/local/qt3/include/private/qucomextra_p.h :
+/usr/local/qt3/include/private/qucom_p.h :
+/usr/local/qt3/include/qsignalslotimp.h :
+/usr/local/qt3/include/qptrvector.h :
+/usr/local/qt3/include/qgvector.h :
