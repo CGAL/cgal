@@ -159,10 +159,10 @@ in the \cgal\ Reference Manual.
   creates a variable \ccc{min_ellipse} of type
   \ccc{CGAL_Min_ellipse_2<Traits>}.}
 \ccPropagateThreeToTwoColumns
-\input{../../spec/Optimisation/Min_ellipse_2.tex}
-\input{../../spec/Optimisation/Optimisation_ellipse_2.tex}
-\input{../../spec/Optimisation/Min_ellipse_2_adapterC2.tex}
-\input{../../spec/Optimisation/Min_ellipse_2_adapterH2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_ellipse_2.tex}
+\input{../../doc_tex/basic/Optimisation/Optimisation_ellipse_2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_ellipse_2_adapterC2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_ellipse_2_adapterH2.tex}
 
 @! ============================================================================
 @! Implementations
@@ -1693,8 +1693,8 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-        typedef  CGAL_ConicC2< PT, DA>  CT;
-	typedef	 _DA::FT		FT;
+        typedef  CGAL_ConicCPA2< PT, DA>  CT;
+	typedef	 _DA::FT		  FT;
 
       private:
         // data members
@@ -2071,8 +2071,8 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-	typedef  CGAL_ConicH2< PT, DA>  CT;
-        typedef  _DA::RT		RT;
+	typedef  CGAL_ConicHPA2< PT, DA>  CT;
+        typedef  _DA::RT		  RT;
 
       private:
         // data members
@@ -2364,9 +2364,7 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
     #include <CGAL/Min_ellipse_2.h>
     #include <CGAL/Min_ellipse_2_adapterC2.h>
     #include <CGAL/Min_ellipse_2_adapterH2.h>
-    #include <CGAL/Random.h>
     #include <CGAL/IO/Verbose_ostream.h>
-    #include <algo.h>
     #include <assert.h>
     #include <fstream.h>
 
@@ -2855,10 +2853,18 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_MISC_H
     #  include <CGAL/optimisation_misc.h>
     #endif
-    #include <list.h>
+    #ifndef CGAL_PROTECT_LIST_H
+    #  include <list.h>
+    #endif
+    #ifndef CGAL_PROTECT_VECTOR_H
     #include <vector.h>
+    #endif
+    #ifndef CGAL_PROTECT_ALGO_H
     #include <algo.h>
+    #endif
+    #ifndef CGAL_PROTECT_IOSTREAM_H
     #include <iostream.h>
+    #endif
 
     @<Min_ellipse_2 interface>
 
@@ -2983,8 +2989,8 @@ end of each file.
     // Class interface and implementation
     // ==================================
     // includes
-    #ifndef CGAL_CONICC2_H
-    #  include <CGAL/ConicC2.h>
+    #ifndef CGAL_CONICCPA2_H
+    #  include <CGAL/ConicCPA2.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
@@ -3050,8 +3056,8 @@ end of each file.
     // Class interface and implementation
     // ==================================
     // includes
-    #ifndef CGAL_CONICH2_H
-    #  include <CGAL/ConicH2.h>
+    #ifndef CGAL_CONICHPA2_H
+    #  include <CGAL/ConicHPA2.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
