@@ -4,6 +4,8 @@ Ver 3.6 (?? December 2000)
 - Factorized code between Point_[23], Segment_[23] and Triangle_[23].
 - Added some color to the kernel demo program.
 - Added a wired flag, with the get/set functions.
+- Use this flag in operator<<(Triangulations), and add a pointer in the doc.
+- Demo program for triangulations/terrains.
 
 Ver 3.5 (1 December 2000)
 - New echo_flag boolean, that decides when a point Geomview gives us needs to

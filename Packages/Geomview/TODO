@@ -10,10 +10,6 @@
   geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
   job ?  Discretisation for Sphere and Circle should be configurable for the
   stream.
-- See how we can mix the Color output with the raw mode.
-  Currently it's not clear to me.
-  Check how to do transparency with Geomview ?
-  (passing the one from CGAL::Color)
 - Is there a way to see edges like cylinders somewhat (possibly generate them
   ourselves), so that we know which one is in front of which other one ?
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
@@ -22,12 +18,21 @@
 - See how we can use this as a debugger : ask Frederic details on his stuff.
   The fact we're multiprocess probably means we'll even have less problems
   than multi-threads...
+- Should wired_flag be checked for Triangle_[23] and other kernel stuff ?
 - Why not use the OOGL library coming with Geomview to parse stuff ?
+
+Color:
+------
+- Color is not passed correctly to triangulations, and probably other kernel
+  objects.  That must be checked, along with transparency.
+- See how we can mix the Color output with the raw mode.
+  Currently it's not clear to me.
+  Check how to do transparency with Geomview ?
+  (passing the one from CGAL::Color)
 
 Demo :
 ------
-- Add demo files for polyhedrons, t2D, t3d.
-- Add a note in the doc when triangulation outputs are ready.
+- Add demo files for polyhedrons ?
 
 Doc:
 ---
