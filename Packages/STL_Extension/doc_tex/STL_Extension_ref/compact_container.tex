@@ -71,7 +71,7 @@
 \end{ccRefClass}
 
 %% +--------------------------------------------------------+
-\begin{ccRefClass}{Compact_container<T, Allocator = CGAL_ALLOCATOR(T)>}
+\begin{ccRefClass}{Compact_container<T, Allocator>}
 
   \ccDefinition An object of the class \ccClassTemplateName\ 
   is a container of objects of type \ccc{T}.  It matches all the
@@ -79,7 +79,7 @@
   the complexity of its iterator increment and decrement operations
   is not always guaranteed to be amortized constant time.
 
-  This container is not a standard \it{sequence} nor \it{associative} container,
+  This container is not a standard \textit{sequence} nor \textit{associative} container,
   which means the elements are stored in no particular order, and it is not
   possible to specify a particular place in the iterator sequence where to
   insert new objects.  However, all dereferenceable iterators are
@@ -128,7 +128,8 @@
   \ccStyle{==} and \ccStyle{<} for \ccc{T} respectively.
 
   The parameter \ccStyle{Allocator} has to match the standard allocator
-  requirements, with value type \ccc{T}.
+  requirements, with value type \ccc{T}.  This parameter has the default
+  value \ccc{CGAL_ALLOCATOR(T)}.
 
   %% +-----------------------------------+
   \ccTypes
