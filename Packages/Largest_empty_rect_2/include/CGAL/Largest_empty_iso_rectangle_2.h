@@ -158,7 +158,6 @@ private:
   Point left_p, bottom_p, right_p ,top_p; 
 
   NT largest_rect_size;
-  //  Polygon *polygon;
 
 
   bool insert(const Point& _p,Point_type i_type);
@@ -255,8 +254,6 @@ public:
   // ctor
   Largest_empty_iso_rectangle_2();
 
-  // ctor
-  //  Largest_empty_iso_rectangle_2(Polygon &inp_polygon);
 
   // add a point to data
   bool
@@ -478,17 +475,7 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
 						   const Point& py1)
 {
   bool do_check = true;
-  /*
-  if(polygon) {
-    NT bw = x1 - x0;
-    NT bh = y1 - y0;
-    NT bx = x0 + bw/2;
-    NT by = y0 + bh/2;
 
-    Point center(bx,by);
-    do_check = polygon->has_on_bounded_side(center);
-  }
-  */
   // check if the rectangle represented by the parameters is larger 
   //than the current one
   NT rect_size =
@@ -751,9 +738,8 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
     if(less_yx(*iter1, *iter2) && larger_yx(*iter2, *iter3)) {
-      // Rectangles in phase 2 should be ignored for polygon
-      //if(!polygon)
-        check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
+
+      check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
       tent(*iter1,*iter2,*iter3);
       ++points_removed;
       Point_data_list.erase(iter2);
@@ -913,12 +899,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2()
 {
-  // Rectangles in phase 2 should be ignored for polygon
-  //if(!polygon) {
     phase_2_on_top();
     phase_2_on_left();
     phase_2_on_right();
-    //}
 
   // Done only for building tents for phase 3
   phase_2_on_bot();
@@ -1119,8 +1102,6 @@ Largest_empty_iso_rectangle_2<T>::update()
   if(! cache_valid){
     largest_rect_size = 0;
 
-    // Rectangles in phase 1 should be ignored for polygon
-    //if(!polygon)
     phase_1();
 
     phase_2();
@@ -1159,59 +1140,11 @@ Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
   return(make_quadruple(left_p, bottom_p, right_p, top_p));
 }
 
-/*
-template<class T>
-Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
-    Polygon &inp_polygon)
-{
-  polygon = new Polygon(inp_polygon);
-
-  // determine extreme values of bounding box
-  min_x2 = min_x = polygon->left_vertex()->x();
-  min_y2 = min_y = polygon->bottom_vertex()->y();
-  max_x2 = max_x = polygon->right_vertex()->x();
-  max_y2 = max_y = polygon->top_vertex()->y();
-
-  // add extreme points
-  insert(Point(min_x - 0.000001,min_y - 0.000001),BOT_LEFT);
-  insert(Point(max_x + 0.000001,min_y2 - 0.000001),BOT_RIGHT);
-  insert(Point(min_x2 - 0.000001,max_y + 0.000001),TOP_LEFT);
-  insert(Point(max_x2 + 0.000001,max_y2 + 0.000001),TOP_RIGHT);
-
-  // insert the polygon 
-  Polygon::Vertex_iterator it = polygon->vertices_begin();
-  Polygon::Vertex_iterator next = it;
-
-  Point p,q;
-  Point p0 = *it;
-
-  while(it != polygon->vertices_end()) {
-    insert(*it);
-    ++next;
-    if(next == polygon->vertices_end())
-      q = p0;
-    else
-      q = *next;
-    p = *it;
-
-    // add some points on the segment 
-    Vector_2 v = (q - p)/6;
-    for(int j = 1; j < 6; j++) {
-      insert(p + j * v);
-    }    
-
-    ++it;
-  }
-}
-*/  
-
 
 template<class T>
 void
 Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
 {
-  //  polygon = NULL;
-
   // determine extreme values of bounding box
   bl_p = bl;
   tr_p = tr;
