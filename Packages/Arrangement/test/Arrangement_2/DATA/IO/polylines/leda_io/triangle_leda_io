@@ -2,6 +2,7 @@
 # --------------------------------------------------------
 # ------------------------------------- Printing Planar map
 # --------------------------------------------------------
+# Printing number of vertices halfedges and faces in Planar map
 2 4 2
 # 2 vertices
 # ------------------------------------------
@@ -57,12 +58,12 @@
 # ------------------------------------------
 2
 # begin and past end indices of children edge nodes
-0 1 
+0 1
 # subcurve of current level
 3
  (0,0,1) (10,10,1) (20,0,1)
 # begin and past end indices of children edge nodes
-1 2 
+1 2
 # subcurve of current level
 2
  (20,0,1) (0,0,1)
@@ -70,19 +71,19 @@
 2
 # ----------------------- Edge nodes childrens:
 # pair indices (curve node and its edge node) for next overlapping edge node :
-0 0 
-# Halfedge's indices of edge nodes
-0 
+0 0
+# Halfedge indices associated with edge nodes
+0
 # Edge node curve
 3
  (0,0,1) (10,10,1) (20,0,1)
 # pair indices (curve node and its edge node) for next overlapping edge node :
-0 1 
-# Halfedge's indices of edge nodes
-2 
+0 1
+# Halfedge indices associated with edge nodes
+2
 # Edge node curve
 2
  (20,0,1) (0,0,1)
-
+# finished current level
 # ------------------------------------- End of Arrangement
 # --------------------------------------------------------
