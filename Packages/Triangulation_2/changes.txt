@@ -1,3 +1,7 @@
+
+18 February 2005 Mariette
+-fixed the doc of TriangulationDSFaceBase_2 concept
+
 18 February 2005 Mariette
 -fixed the doc of TriangulationVertexBase_2 concept
 
