@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Small change in In_place_list to please VC7.
 ALL : Changed triple, quadruple -> Triple, Quadruple.
 ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
