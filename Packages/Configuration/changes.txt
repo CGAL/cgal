@@ -1,4 +1,17 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.24
+
+Now using the standard header names in the testfiles.
+E.g. <vector> instead of <vector.h>.
+
+//-----------------------------------------------------------------------//
+// Changes in 1.23
+
+Bug fix in include/CGAL/config.h
+Renamed CGAL_NAMESPACE_BEGIN to CGAL_BEGIN_NAMESPACE.
+
+
+//-----------------------------------------------------------------------//
 // Changes in 1.22
 
 Added support for namespace CGAL.

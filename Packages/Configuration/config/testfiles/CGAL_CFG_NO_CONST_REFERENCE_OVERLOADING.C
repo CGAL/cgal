@@ -35,7 +35,7 @@
 //| distinguish those functions.
 
 
-#include <assert.h>
+#include <cassert>
 
 struct Y {
     int i;

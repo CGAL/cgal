@@ -26,7 +26,7 @@
 //| an STL vector (e.g. SunPro 4.2 with STLport-3.01). This program is 
 //| used to detect this bug.
 
-#include <vector.h>
+#include <vector>
 
 template <class T>
 class A
@@ -39,7 +39,7 @@ public:
 int
 main()
 {
-  vector<A<int> > iV;
+  std::vector<A<int> > iV;
 
   return 0;
 }

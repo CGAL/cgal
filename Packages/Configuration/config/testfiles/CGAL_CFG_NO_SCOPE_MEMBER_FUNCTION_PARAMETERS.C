@@ -31,7 +31,7 @@
 //| The following definition is set if the compiler fails parsing.
 
 
-#include <assert.h>
+#include <cassert>
 
 template < class T>
 struct A {

@@ -29,7 +29,7 @@
 //| If a compiler doesn't know the keyword typename, the flag
 //| CGAL_CFG_NO_TYPENAME is set.
 
-#include <assert.h>
+#include <cassert>
 
 struct X {
   typedef int A;

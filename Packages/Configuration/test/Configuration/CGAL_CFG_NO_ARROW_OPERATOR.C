@@ -30,7 +30,7 @@
 //| if it cannot be overloaded. Note that the arrow operator is mandatory
 //| for iterators according to the Dec. 1996 C++ Standard draft.
 
-#include <assert.h>
+#include <cassert>
 
 struct A {
     int i;

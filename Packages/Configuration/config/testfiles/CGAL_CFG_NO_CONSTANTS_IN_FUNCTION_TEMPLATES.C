@@ -29,7 +29,7 @@
 //| if they are not accepted.
 
 
-#include <assert.h>
+#include <cassert>
 
 template < class T, int N>
 struct A {

@@ -29,13 +29,15 @@
 //| including their use in a template class, as a default template
 //| argument and as a return type of global function.
 
-#include <assert.h>
-#include <iterator.h>
-#include <vector.h>
+#include <cassert>
+#include <iterator>
+#include <vector>
 
 // This class implements an iterator adaptor that forwards all
 // member function calls to its template argument. It uses 
 // iterator traits to derive correct types and iterator category.
+
+using std::iterator_traits;
 
 template < class I, class category = iterator_traits<I>::iterator_category>
 class Adaptor {

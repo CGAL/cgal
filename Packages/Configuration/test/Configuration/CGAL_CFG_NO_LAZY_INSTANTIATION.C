@@ -32,7 +32,7 @@
 //| the Gnu g++ 2.7.2 does not comply to this. The following definition
 //| is set if the implicit instantiation does not work in this lazy fashion.
 
-#include <assert.h>
+#include <cassert>
 
 struct A {
     int i;

@@ -30,7 +30,7 @@
 #include <typeinfo>
 #endif // __GNUG__
 
-#include <assert.h>
+#include <cassert>
 
 class Base
 {

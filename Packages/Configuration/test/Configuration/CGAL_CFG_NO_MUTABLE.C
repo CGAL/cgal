@@ -26,7 +26,7 @@
 //| If a compiler doesn't know the keyword mutable, the flag
 //| CGAL_CFG_NO_MUTABLE is set.
 
-#include <assert.h> 
+#include <cassert> 
 
 struct A {
   A() : i( 1) {}

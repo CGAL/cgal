@@ -28,7 +28,7 @@
 //| CGAL_CFG_NO_STD_NAMESPACE is set. Some compilers know namespace std
 //| but don't implement namespaces in general.
 
-#include <vector.h>
+#include <vector>
 
 using namespace std;
 

@@ -33,7 +33,7 @@
 //| typename, since otherwise the flag
 //| CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS is used.
 
-#include <assert.h>
+#include <cassert>
 
 template < class T>
 struct A {
