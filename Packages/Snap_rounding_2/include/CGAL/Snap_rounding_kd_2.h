@@ -15,7 +15,7 @@
 // package       : arr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : Dna Halperin Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
 #ifndef CGAL_SR_KD_2_H
@@ -42,11 +42,13 @@ public:
   my_point(NT x,NT y) : Point(x,y),orig(Point(0,0)) {}
 };
 
-template<class NT,class SAVED_OBJECT>
+template<class Rep_,class SAVED_OBJECT>
 class Multiple_kd_tree {
 
-typedef CGAL::Point_2<CGAL::Cartesian<NT> >  Point;
-typedef CGAL::Segment_2<CGAL::Cartesian<NT> >      Segment;
+typedef Rep_                                Rep;
+typedef typename Rep::FT                    NT;
+typedef CGAL::Segment_2<Rep>                Segment;
+typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef typename kd_tree::Box Box;
@@ -383,8 +385,8 @@ public:
 template<class NT,class SAVED_OBJECT>
 bool Multiple_kd_tree<NT,SAVED_OBJECT>::map_done(false);
 
-template<class NT,class SAVED_OBJECT>
-  std::map<const int,NT> 
-      Multiple_kd_tree<NT,SAVED_OBJECT>::angle_to_sines_appr;
+template<class Rep,class SAVED_OBJECT>
+  std::map<const int,typename Rep::FT> 
+      Multiple_kd_tree<Rep,SAVED_OBJECT>::angle_to_sines_appr;
 
 #endif // CGAL_SR_KD_2_H
