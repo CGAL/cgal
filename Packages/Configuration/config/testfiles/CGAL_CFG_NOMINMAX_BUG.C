@@ -34,3 +34,10 @@
 #if defined _MSC_VER
 #error "NOMINMAX flag should be set"
 #endif
+
+int main(){
+  return 0;
+}
+
+
+

@@ -1,3 +1,6 @@
+2.37
+- Put the main function in CGAL_CFG_NOMINMAX_BUG.C.
+
 2.36
 - Introduce CGAL_USE_LONG_LONG.
 - Delete CGAL_CFG_NO_ADVANCED_KERNEL.
