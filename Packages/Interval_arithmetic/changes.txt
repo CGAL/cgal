@@ -1,3 +1,6 @@
+Version 4.132 on 20 March 2002
+- removed number_type_tag
+
 Version 4.131 on 15 March 2002
 - Don't submit test/IA/Static_filters.C, as the feature is not ready for
   CGAL 2.4.

@@ -478,12 +478,6 @@ io_Operator
 io_tag (const Lazy_exact_nt<ET>&)
 { return io_Operator(); }
  
-template <typename ET>
-inline
-Number_tag
-number_type_tag (const Lazy_exact_nt<ET>&)
-{ return Number_tag(); }
-
 #ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 template <typename ET>
 struct converter<ET, Lazy_exact_nt<ET> >

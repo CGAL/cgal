@@ -149,7 +149,7 @@ public:
 
 // We forward the following functions to the CT value:
 // sqrt, square, is_valid, is_finite, to_double, sign, compare, abs, min, max,
-// io_tag, number_type_tag, operator>>, operator<<.
+// io_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET, class Type, bool Protection, class Cache>
@@ -229,12 +229,6 @@ inline
 io_Operator
 io_tag (const Filtered_exact<CT,ET,Type,Protection,Cache> &fil)
 { return io_tag(fil.value()); }
-
-template <class CT, class ET, class Type, bool Protection, class Cache>
-inline
-Number_tag
-number_type_tag (const Filtered_exact<CT,ET,Type,Protection,Cache> &fil)
-{ return number_type_tag(fil.value()); }
 
 template <class CT, class ET, class Type, bool Protection, class Cache>
 inline

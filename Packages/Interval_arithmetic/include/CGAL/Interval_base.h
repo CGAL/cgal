@@ -203,13 +203,6 @@ io_tag (const Interval_base &)
   return io_Operator();
 }
 
-inline
-Number_tag
-number_type_tag (const Interval_base &)
-{
-  return Number_tag();
-}
-
 std::ostream & operator<< (std::ostream &, const Interval_base &);
 std::istream & operator>> (std::istream &, Interval_base &);
 
