@@ -348,7 +348,7 @@ insert(const Site& t, int hierarchy_level)
     return vertices[0];
   }
 
-  if ( t.segment().is_degenerate() ) {
+  if ( is_degenerate_segment(t) ) {
     insert(t.source_site(), vertex_level, vertices);
     return vertices[0];
   }
@@ -358,7 +358,11 @@ insert(const Site& t, int hierarchy_level)
   insert(t.source_site(), vertex_level, vertices);
   insert(t.target_site(), vertex_level, NULL);
 
+  CGAL_assertion( vertices[0] != Vertex_handle(NULL) );
+
   Vertex_handle vertex = hierarchy[0]->insert(t, vertices[0], false);
+
+  CGAL_assertion( vertex != Vertex_handle(NULL) );
 
   // this is the case when the new site is a segment and it intersects
   // existing segments
@@ -379,6 +383,7 @@ insert(const Site& t, int hierarchy_level)
   int level = 1;
   while (level <= vertex_level ){
     vertex = hierarchy[level]->insert(t, vertices[level], false);
+    CGAL_assertion( vertex != Vertex_handle(NULL) );
     vertex->set_down(previous); // link with level above
     previous->set_up(vertex);
     previous = vertex;
@@ -396,6 +401,8 @@ insert(const Site& p, int hierarchy_level,
 {
   CGAL_precondition( p.is_point() );
 
+  CGAL_precondition( hierarchy_level != UNDEFINED_LEVEL );
+
   int vertex_level(hierarchy_level);
   if ( hierarchy_level == UNDEFINED_LEVEL ) {
     vertex_level = random_level();
@@ -409,12 +416,15 @@ insert(const Site& p, int hierarchy_level,
   vertex = hierarchy[0]->insert(p, vnear[0]);
   if ( vertices != NULL ) { vertices[0] = vertex; }
 
+  CGAL_assertion( vertex != Vertex_handle(NULL) );
+
   // insert at other levels
   Vertex_handle previous = vertex;
       
   int level = 1;
   while (level <= vertex_level ){
     vertex = hierarchy[level]->insert(p, vnear[level]);
+    CGAL_assertion( vertex != Vertex_handle(NULL) );
     if ( vertices != NULL ) { vertices[level] = vertex; }
     vertex->set_down(previous); // link with level above
     previous->set_up(vertex);
@@ -445,7 +455,7 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,Tds>::
 find_nearest_neighbor(const Point& p, bool force_point) const
 {
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
-  find_nearest_neighbor(p, vnear, force_point);
+  find_nearest_neighbor(Site(p), vnear, force_point);
   return vnear[0];
 }
 
@@ -459,7 +469,7 @@ find_nearest_neighbor(const Site& p,
 {
   CGAL_precondition( p.is_point() );
 
-  Vertex_handle nearest = 0;
+  Vertex_handle nearest(NULL);
   int level  = svd_hierarchy_2__maxlevel;
 
   // find the highest level with enough vertices
@@ -468,7 +478,7 @@ find_nearest_neighbor(const Site& p,
     if ( !level ) break;  // do not go below 0
   }
   for (int i = level+1; i < svd_hierarchy_2__maxlevel; ++i){
-    vnear[i] = NULL;
+    vnear[i] = Vertex_handle(NULL);
   }
 
   while ( level > 0 ) {
@@ -476,6 +486,7 @@ find_nearest_neighbor(const Site& p,
       hierarchy[level]->nearest_neighbor(p, nearest);  
 
     CGAL_assertion( !hierarchy[level]->is_infinite(vnear[level]) );
+    CGAL_assertion( vnear[level] != Vertex_handle(NULL) );
     // go at the same vertex on level below
     nearest = nearest->down();
     --level;
