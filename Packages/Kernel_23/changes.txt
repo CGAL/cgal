@@ -1,3 +1,6 @@
+1.22 (29 January 2003)
+- "far" is rejected by VC++ (used to be a keyword).
+
 1.21 (28 January 2003)
 - lots of warnings removed
 - LEDA_NO_MIN_MAX_TEMPL macro removed from CGAL/basic.h

@@ -960,8 +960,8 @@ public:
     Iso_cuboid_3
     operator()(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
-               const Point_3 &far,    const Point_3 &close) const
-    { return Iso_cuboid_3(left, right, bottom, top, far, close); }
+               const Point_3 &far_,   const Point_3 &close) const
+    { return Iso_cuboid_3(left, right, bottom, top, far_, close); }
 };
 
 template <typename K>
