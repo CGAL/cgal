@@ -1,3 +1,6 @@
+Version 4.1 (11 August 00)
+- Changed Compute_y_at_x to Compute_y_at_x_2 in Cartesian.h Cartesian_2.h [my]
+
 Version 4.0 (1 August 00)
 - Added construction circumcenter_3(3 points). [syl]
 
