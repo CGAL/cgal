@@ -1,3 +1,6 @@
+4.50     (24 March 02)
+- added missing creation variable in Sqrt functor doc.
+
 4.49     (21 March 02)
 - Kill lexicographical_sign.
 
