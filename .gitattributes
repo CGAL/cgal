@@ -2289,4 +2289,9 @@ Packages/wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
 Packages/wininst/include/CGAL/config/msvc7/gmp.h -text
 Packages/wininst/include/CGAL/config/msvc7/mpf2mpfr.h -text
 Packages/wininst/include/CGAL/config/msvc7/mpfr.h -text
+Packages/wininst/lib/msvc7/gcc.lib -text svneol=unset#unset
+Packages/wininst/lib/msvc7/gmp.lib -text svneol=unset#unset
+Packages/wininst/lib/msvc7/gmp_p4.dll -text svneol=unset#unset
+Packages/wininst/lib/msvc7/mpfr.dll -text svneol=unset#unset
+Packages/wininst/lib/msvc7/mpfr.lib -text svneol=unset#unset
 Packages/wininst/src/cgallib.vcproj -text
