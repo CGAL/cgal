@@ -1,3 +1,6 @@
+23 April 2004 Andreas Fabri
+- bug fix in line_from_pointsC2 (sign error, degenerate line)
+
 16 April 2004 Andreas Fabri
 - Special treatment for horizontal and vertical line in line_from_pointsC2
 

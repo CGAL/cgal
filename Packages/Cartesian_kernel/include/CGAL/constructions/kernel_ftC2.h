@@ -117,18 +117,24 @@ line_from_pointsC2(const FT &px, const FT &py,
     if(qx > px){
       b = 1;
       c = -py;
-    } else {
+    } else if(qx == px){
+      b = 0;
+      c = 0;
+    }else{
       b = -1;
       c = py;
-}
+    }
   } else if(qx == px){
     b = 0;
     if(qy > py){
-      a = 1;
-      c = -px;
-    } else {
       a = -1;
       c = px;
+    } else if (qy == py){
+      a = 0;
+      c = 0;
+    } else {
+      a = 1;
+      c = -px;
     }
   } else {
     a = py - qy;
