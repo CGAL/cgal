@@ -285,8 +285,8 @@ compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x,
       Comparison_result cmp_x2 = CGAL_NTS compare(s2_src_x, s2_tgt_x);
 
       if (cmp_x2 == EQUAL) return SMALLER;
-      return Comparison_result ( CGAL_NTS sign((s2_src_y - s2_tgt_y) *
-                                               (s2_src_x - s2_tgt_x)) );
+      return Comparison_result (- CGAL_NTS sign((s2_src_y - s2_tgt_y) *
+                                                (s2_src_x - s2_tgt_x)) );
    }
 
    Comparison_result cmp_y2 = CGAL_NTS compare(s2_src_y, s2_tgt_y);
