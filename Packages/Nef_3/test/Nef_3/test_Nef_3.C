@@ -28,7 +28,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_cartesian_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -1218,7 +1217,6 @@ const char* test<Kernel>::datadir="data/";
 
 int main() {
   typedef CGAL::Simple_homogeneous<NT>       SH_kernel;
-  //  typedef CGAL::Extended_cartesian_3<NT>   EH_kernel;
   typedef CGAL::Extended_homogeneous_3<NT>   EH_kernel;
   
   //std::cin>>debugthread;

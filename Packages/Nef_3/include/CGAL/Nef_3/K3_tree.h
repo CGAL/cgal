@@ -223,6 +223,7 @@ else {
     S.pop_front();
     if( n->is_leaf()) {
 #ifndef NDEBUG
+      CGAL_assertion_code(
       if( first_segment) {
         first_segment = false;
         TRACEN("operator++: prev_segment=(none), segment="<<s);
@@ -232,7 +233,7 @@ else {
         CGAL_assertion( prev_segment.direction() == s.direction());
         TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
       }
-      prev_segment = s;
+      prev_segment = s);
 #endif
       node = n;
       break;
