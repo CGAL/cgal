@@ -38,12 +38,14 @@ namespace CGAL {
 
     public:
 
+
     	// default constructor
     	Euclidean_distance_sphere_point() {
 		Point p;
 		the_dimension=p.dimension();
 		assert(the_dimension>0);
     	}
+
 
         Euclidean_distance_sphere_point(const int d) : the_dimension(d) {}
 

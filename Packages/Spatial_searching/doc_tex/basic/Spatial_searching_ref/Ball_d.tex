@@ -1,24 +1,24 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: IsoBox_d.tex
+% | Reference manual page: Ball_d.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % | 
-\RCSdef{\RCSIsoBoxdRev}{$Revision$}
-\RCSdefDate{\RCSIsoBoxdDate}{$Date$}
+\RCSdef{\RCSBalldRev}{$Revision$}
+\RCSdefDate{\RCSBalldDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{IsoBox_d}
+\begin{ccRefConcept}{Ball_d}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccRefName\ defines the requirements for $d$-dimensional iso-boxes.
+The concept \ccRefName\ defines the requirements for $d$-dimensional balls.
 
 {\bf Refines}
 
@@ -28,27 +28,30 @@ QueryItem
 
 \ccc{SpatialPoint} represents a $d$-dimensional point.
 
+\ccTypes
+
+\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
+
 
 \ccOperations
 
-\ccMethod{SpatialPoint min();}
-{Returns the smallest vertex of the iso-oriented box.}
+\ccMethod{SpatialPoint center();}
+{Returns the center of the ball.}
 
 
-\ccMethod{SpatialPoint max();}
-{Returns the largest vertex of the iso-oriented box.}
+\ccMethod{NT squared_radius();}
+{Returns the squared radius of the ball.}
 
 
 \ccHasModels
 
-\ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
-\ccc{CGAL::Iso_box_d<Kernel>}.
+\ccc{CGAL::Iso_circle_2<Kernel>}, \ccc{CGAL::Iso_sphere_3<Kernel>}, 
+\ccc{CGAL::Iso_sphere_d<Kernel>}.
 
 \ccSeeAlso
 
-QueryItem, \ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
-\ccc{CGAL::Iso_box_d<Kernel>}.
-
+QueryItem, \ccc{CGAL::Iso_circle_2<Kernel>}, \ccc{CGAL::Iso_sphere_3<Kernel>}, 
+\ccc{CGAL::Iso_sphere_d<Kernel>}.
 
 \end{ccRefConcept}
 

@@ -34,15 +34,17 @@ for example \ccc{CGAL::Kd_tree_traits_point<Point,Splitter>}.
 \ccTypedef{TreeTraits::NT NT;}{Number type.}
 \ccTypedef{Kd_tree_node<TreeTraits> Node;}{Node type.}
 \ccTypedef{Kd_tree<TreeTraits> Tree;}{Tree type.}
-\ccTypedef{Compact_container<Node>::iterator Node_handle;}{Node handle.}
-\ccTypedef{std::vector<Point*>::iterator Point_iterator;} {Iterator over points.}
-\ccTypedef{std::list<Point>::iterator input_iterator;}{Input iterator.}
+% \ccTypedef{Compact_container<Node>::iterator Node_handle;}{Node handle.}
+\ccTypedef{std::vector<Point*>::iterator Point_iterator;} {Random access iterator 
+with value type pointer to Point.}
+% \ccTypedef{std::list<Point>::iterator input_iterator;}{Input iterator.}
 
 \ccCreation
 \ccCreationVariable{tree}
 
-\ccConstructor
-{Kd_tree(input_iterator first, input_iterator beyond, traits t=TreeTraits());}
+\ccConstructor{
+template <class input_iterator>
+Kd_tree(input_iterator first, input_iterator beyond, traits t=TreeTraits());}
 {
 Constructs a $k$-$d$ tree on the elements from the sequence 
 \ccc{first, beyond} using the splitting rule implemented by \ccc{t}. 

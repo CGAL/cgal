@@ -43,6 +43,7 @@ namespace CGAL {
     	// default constructor
     	Fuzzy_iso_box_d() {}
 
+
         // constructor
 	Fuzzy_iso_box_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
         eps(epsilon), dim(p.dimension())

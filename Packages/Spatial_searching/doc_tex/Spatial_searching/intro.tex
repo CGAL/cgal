@@ -272,10 +272,28 @@ The concepts related to the spatial searching package are
 
 \begin{itemize}
 
+\item
+\ccc{QueryItem} denoting a $d$-dimensional spatial query object. The concepts
+\ccc{SpatialPoint}, \ccc{IsoBox_d}, and \ccc{Ball_d} refine \ccc{QueryItem}.
+
 \item 
 \ccc{SpatialPoint} 
 denoting a $d$-dimensional point, as implemented by 
-\ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
+\ccc{CGAL::Point_2<Kernel>}, \ccc{CGAL::Point_3<Kernel>}, and \ccc{CGAL::Point_d<Kernel>}.
+
+\item
+\ccc{IsoBox_d} 
+denoting a $d$-dimensional iso-box, as implemented
+by
+\ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
+and \ccc{CGAL::Iso_box_d<Kernel>}.
+
+\item
+\ccc{Ball_d}
+denoting a $d$-dimensional ball, as implemented by
+\ccc{CGAL::Circle_2<Kernel>}, \ccc{CGAL::Sphere_3<Kernel>},
+and \ccc{CGAL::Sphere_d<Kernel>}.
+
 
 \item
 \ccc{PointContainer} denoting a container, that stores points and
@@ -302,17 +320,6 @@ as implemented by \ccc{CGAL::Plane_separator<NT>}.
 \ccc{CGAL::Kd_tree_traits_point< SpatialPoint, Splitter >} provides an implementation. 
 
 \item
-\ccc{QueryItem} denoting a $d$-dimensional spatial query object. Implementations
-for point queries are provided by
-\ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
-Implementations
-for spherical queries are provided by
-\ccc{CGAL::Circle_2<R>}, \ccc{CGAL::Sphere_3<R>}, and \ccc{CGAL::Sphere_d<R>}.
-Implementations
-for rectangular queries are provided by
-\ccc{CGAL::Iso_rectangle_2<R>}, \ccc{CGAL::Iso_cuboid_3<R>}, and \ccc{CGAL::Iso_box_d<R>}.
-
-\item
 \ccc{GeneralDistance} denoting a general distance object. A general distance object should define distances between a query object
 and the points stored in a tree and between the query object and the rectangles associated with the nodes from the tree.
 Implementations for queries defined by points are provided
@@ -321,9 +328,9 @@ by \ccc{CGAL::Euclidean_distance<SpatialPoint>}, and
 a weighted Minkowski metric.
 
 An implementation for queries defined by rectangles is provided by
-\ccc{CGAL::Manhattan_distance_rectangle_point<QueryItem,SpatialPoint>}.
+\ccc{CGAL::Manhattan_distance_rectangle_point<IsoBox_d,SpatialPoint>}.
 An implementation for queries defined by spheres is provided by
-\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem,SpatialPoint>}.
+\ccc{CGAL::Euclidean_distance_sphere_point<Ball_d,SpatialPoint>}.
 
 \item
 \ccc{OrthogonalDistance} denoting a distance object. An orthogonal distance object should define distances 
@@ -336,7 +343,7 @@ by \ccc{CGAL::Euclidean_distance<SpatialPoint>}, and
 a weighted Minkowski metric.
 
 \item
-\ccc{SpatialTree} denoting a tree supporting spatial searching/  
+\ccc{SpatialTree} denoting a tree supporting spatial searching 
 \ccc{CGAL::Kd_tree<TreeTraits>} provides an implementation of $k$-$d$ trees.
 
 \end{itemize}
@@ -398,7 +405,7 @@ supports also range searching using the method \\
 \ccc{template <class OutputIterator, class FuzzyQueryItem>} \\
 \ccc{OutputIterator CGAL::Kd_tree<Treetraits>::search(OutputIterator it, const FuzzyQueryItem& q)}.\\
 Implementations for the concept \ccc{FuzzyQueryItem} are provided by
-the class \ccc{CGAL::Fuzzy_iso_box_d<Point, IsoBox_d>}  
+the class \ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}  
 and the class \ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>}. 
 For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
 used in building the $k$-$d$ tree to a large value (e.g. 100), 

@@ -39,7 +39,7 @@ public:
   
   typedef typename TreeTraits::Point Point;
   typedef typename TreeTraits::Container Point_container;
-  typedef typename std::list<Point>::iterator input_iterator;
+  // typedef typename std::list<Point>::iterator input_iterator;
   typedef typename TreeTraits::NT NT;
   typedef Kd_tree_node<TreeTraits> Node;
   typedef Kd_tree<TreeTraits> Tree;
@@ -175,6 +175,7 @@ public:
   //introduced for backward compability
   Kd_tree() {}
   
+  template <class input_iterator>
   Kd_tree(input_iterator first, input_iterator beyond,
 	    TreeTraits t = TreeTraits()) : tr(t) {
     assert(first != beyond);

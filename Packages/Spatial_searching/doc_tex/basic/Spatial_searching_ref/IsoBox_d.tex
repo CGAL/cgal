@@ -20,27 +20,22 @@
   
 The concept \ccRefName\ defines the requirements for $d$-dimensional iso-boxes.
 
+{\bf Refines}
+
+QueryItem
+
 \ccParameters
 
 \ccc{SpatialPoint} represents a $d$-dimensional point.
 
-\ccTypes
-
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
-
-\ccCreation
-\ccCreationVariable{b}  %% choose variable name
-
-\ccConstructor{IsoBox_d(SpatialPoint p, SpatialPoint q);}{introduces an iso-oriented box with diagonal opposite points 
-\ccc{p} and \ccc{}q.}
 
 \ccOperations
 
-\ccMethod{NT min();}
+\ccMethod{SpatialPoint min();}
 {Returns the smallest vertex of the iso-oriented box.}
 
 
-\ccMethod{NT max();}
+\ccMethod{SpatialPoint max();}
 {Returns the largest vertex of the iso-oriented box.}
 
 
@@ -48,6 +43,12 @@ The concept \ccRefName\ defines the requirements for $d$-dimensional iso-boxes.
 
 \ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
 \ccc{CGAL::Iso_box_d<Kernel>}.
+
+\ccSeeAlso
+
+QueryItem, \ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
+\ccc{CGAL::Iso_box_d<Kernel>}.
+
 
 \end{ccRefConcept}
 

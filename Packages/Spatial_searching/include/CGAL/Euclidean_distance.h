@@ -45,6 +45,8 @@ namespace CGAL {
 		assert(the_dimension>0);
     	}
 
+ 
+
         Euclidean_distance(const int d) : the_dimension(d) {}
 
 	~Euclidean_distance() {}

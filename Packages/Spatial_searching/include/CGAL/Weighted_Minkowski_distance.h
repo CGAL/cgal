@@ -45,7 +45,6 @@ namespace CGAL {
 
     public:
 
-
     // default constructor
     Weighted_Minkowski_distance(): power(2) 
     { 

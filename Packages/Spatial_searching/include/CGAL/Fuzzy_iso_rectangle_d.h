@@ -43,9 +43,7 @@ namespace CGAL {
     	// default constructor
     	Fuzzy_iso_rectangle_d() {}
 		
-
-	
-
+    
         // constructor
 	Fuzzy_iso_rectangle_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
         eps(epsilon), dim(p.dimension())

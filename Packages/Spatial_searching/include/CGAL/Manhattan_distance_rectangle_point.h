@@ -46,6 +46,7 @@ namespace CGAL {
 		assert(the_dimension>0);
     }
     
+
     Manhattan_distance_rectangle_point(const int d) : the_dimension(d) {}
 
     //copy constructor
