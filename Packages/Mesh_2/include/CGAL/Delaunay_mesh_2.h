@@ -721,6 +721,24 @@ refine_Delaunay_mesh_2(Tr& t,
   t.swap(mesh);
 }
 
+template <class Tr, class InputIterator>
+void
+refine_Delaunay_mesh_2(Tr& t,
+		       InputIterator b, InputIterator e,
+		       bool mark = false,
+		       const typename Tr::Geom_traits& gt =
+		       typename Tr::Geom_traits())
+{
+  typedef Delaunay_mesh_2<Tr> Mesh;
+
+  Mesh mesh;
+  mesh.swap(t);
+  mesh.set_geom_traits(gt);
+  mesh.set_seeds(b, e, mark);
+  mesh.refine_mesh();
+  t.swap(mesh);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_MESH_2_H

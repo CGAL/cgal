@@ -1,6 +1,5 @@
-\chapter{2D meshes}
+\chapter{2D conforming triangulations and meshes}
 \label{user_chapter_2D_Meshes}
-
 
 \minitoc
 
@@ -8,44 +7,68 @@
 \label{sec:Mesh_2_introduction}
 
 This package implements Shewchuk's algorithm to construct conforming
-triangulations and 2D quality meshes.
+triangulations and 2D meshes.
 
-After several definitions in section~\ref{sec:Mesh_2_definitions}, Conforming
-triangulations will be described in the
-section~\ref{sec:Mesh_2_conforming_triangulation} and quality meshes in the
-section~\ref{sec:Mesh_2_quality_meshes}.
+Conforming triangulations will be described in the
+section~\ref{sec:Mesh_2_conforming_triangulation} and meshes in the
+section~\ref{sec:Mesh_2_meshes}.
 
 
-\section{Definitions}
-\label{sec:Mesh_2_definitions}
+%\section{Definitions}
+%\label{sec:Mesh_2_definitions}
 
-\begin{description}
+%\begin{description}
 
-\item[Conforming triangulation] A conforming triangulation is a refinement
-  of a constrained triangulation, obtained by inserting points (named
-  \emph{Steiner points}) on constrained segments, so that the resulting
-  triangulation is a \emph{Delaunay} or a \emph{Gabriel}
-  triangulation. Delaunay triangulations are defined in the \cgal\ user
-  manual of \ccc{Triangulation_2} package. A Gabriel triangulation of a
-  sets of points and constrained segments is a constrained Delaunay
-  triangulation with the extra following \emph{Gabriel property}: the
-  \emph{diametral circle} of each constrained segments contains no point in
-  its interior. The Gabriel property is stronger that the Delaunay property:
-  a conforming Gabriel triangulation is also a conforming Delaunay
-  triangulation.
-\item[Quality mesh] In this package, a quality mesh is a contrained
-  Delaunay triangulation of a domain containing only triangles whose shapes
-  and sizes satisfy several criterias.
-\end{description}
+%\item[Conforming triangulation] A conforming triangulation is a refinement
+%  of a constrained triangulation, obtained by inserting points (named
+%  \emph{Steiner points}) on constrained segments, so that the resulting
+%  triangulation is a \emph{Delaunay} or a \emph{Gabriel}
+%  triangulation. Delaunay triangulations are defined in the \cgal\ user
+%  manual of \ccc{Triangulation_2} package. A Gabriel triangulation of a
+%  sets of points and constrained segments is a constrained Delaunay
+%  triangulation with the extra following \emph{Gabriel property}: the
+%  \emph{diametral circle} of each constrained segments contains no point in
+%  its interior. The Gabriel property is stronger that the Delaunay property:
+%  a conforming Gabriel triangulation is also a conforming Delaunay
+%  triangulation.
+%\item[Quality mesh] In this package, a quality mesh is a contrained
+%  Delaunay triangulation of a domain containing only triangles whose shapes
+%  and sizes satisfy several criterias.
+%\end{description}
 
 
 \section{Conforming triangulations}
 \label{sec:Mesh_2_conforming_triangulation}
 
+\subsection{Definition}
+\label{sec:Mesh_2_conforming_defition}
+
+A constrained Delaunay triangulation is said to be a \emph{conforming
+  Delaunay triangulation} if every constrained edge is a Delaunay
+edge, that is appears in the Delaunay triangulation of the set of
+vertices. Thus a conforming Delaunay triangulation is a Delaunay
+triangulation where some edges are marked as constrained edges.
+
+A constrained Delaunay triangulation is said to be a \emph{conforming
+  Gabriel triangulation} if every constrained edge is a Gabriel edge,
+meaning that its diametral circle includes no vertex of the
+triangulation in its interior. Observe that each Gabriel edge is a
+Delaunay edge, and then conforming Gabriel triangulations are
+conforming Delaunay triangulations.
+
+Any contrained Delaunay triangulation can be refined into a conforming
+Delaunay or conforming Gabriel triangulation by adding vertices,
+called \emph{Steiner vertices}, on constrained edges until they are
+cut into subconstraints small enough to be Delaunay or Gabriel edges.
+
+
+\subsection{Building conforming triangulations}
+\label{sec:Mesh_2_building_conforming}
+
 Conforming triangulations can be obtained by two global functions:
 \ccc{template<class CDT> void make_conforming_Delaunay_2 (CDT& t)} and
 \ccc{template<class CDT> void make_conforming_Gabriel_2 (CDT& t)}. The
-parameter \ccc{t} must be a \cgal\ constrained triangulation. It
+template parameter \ccc{CDT} must be a \cgal\ constrained triangulation. It
 can be for example a \ccc{Contrained_triangulation_2}, or a
 \ccc{Constrained_triangulation_plus_2} or a \ccc{Triangulation_hierarchy_2}
 templated by a constrained triangulation.
@@ -70,7 +93,7 @@ number of points is printed.
 \ccIncludeExampleCode{Mesh_2/conform.C}
 
 \section{Quality meshes}
-\label{sec:Mesh_2_quality_meshes}
+\label{sec:Mesh_2_meshes}
 
 Quality meshes can be obtained by a global function \ccc{template<class CDT>
  void refine_Delaunay_mesh_2 (CDT &t, typename CDT::Geom_traits gt)}. It can
