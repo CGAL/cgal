@@ -20,6 +20,7 @@ struct Input_traits<float> {
   typedef float                                 Input_rat_type;
 };
 
+#ifdef DOUBLE_H
 /*! double */
 template <>
 struct Input_traits<CGAL::Double> {
@@ -27,6 +28,7 @@ struct Input_traits<CGAL::Double> {
   typedef double                                Input_float_type;
   typedef double                                Input_rat_type;
 };
+#endif
 
 #ifdef CGAL_MP_FLOAT_H
 /*! CGAL::MP_Float */
