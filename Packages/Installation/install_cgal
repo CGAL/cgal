@@ -535,8 +535,6 @@ initial_check()
 }
 
 # fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/version.h
-# and compiler-testsuite version id
-# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
 get_cgal_version()
 {
     # this file is assumed to contain one line matching "CGAL_VERSION "

@@ -3,6 +3,9 @@
 //=====================================================================
 
 26 Feb 2004 Radu Ursu
+- install_cgal : remove obsolete comment.
+
+26 Feb 2004 Radu Ursu
 - install_cgal takes the CGAL_VERSION from include/CGAL/version.h 
     moved get_cgal_version call before all the cgal_install_header calls
     this way the version is displayed from the beginning
