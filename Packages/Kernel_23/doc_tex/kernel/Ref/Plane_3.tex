@@ -140,6 +140,7 @@ combinatorics, but not distances.
        {returns a point $q$, such that \ccStyle{to_2d( to_3d( p ))}
         is equal to \ccStyle{p}.}
 
+\ccPredicates
 
 \ccMethod{Oriented_side oriented_side(const Point_3<R> &p) const;}
        {returns either \ccStyle{ON_ORIENTED_BOUNDARY}, or
@@ -147,8 +148,6 @@ combinatorics, but not distances.
         \ccStyle{ON_NEGATIVE_SIDE}, 
         determined by the position of $p$ relative to the oriented plane \ccVar.
         }
-
-\ccPredicates
 
 For convenience we provide the following boolean functions:
 
