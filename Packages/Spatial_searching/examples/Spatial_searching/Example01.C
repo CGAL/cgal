@@ -19,7 +19,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Splitting_rules.h>
+#include <CGAL/Splitters.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 
@@ -35,7 +35,7 @@ typedef CGAL::Plane_separator<FT> Separator;  // was double
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::Creator_uniform_3<RT,Point> Creator; // was double
 
-int generate_kd_tree(CGAL::Split_rules::Split_rule s) {
+int main() {
 
   int bucket_size=10;
   
@@ -48,8 +48,7 @@ int generate_kd_tree(CGAL::Split_rules::Split_rule s) {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
-  
-  Traits tr(bucket_size, s, 3, true);
+  Traits tr(bucket_size, 3, true);
 
   
   typedef CGAL::Kd_tree<Traits> Tree;
@@ -57,28 +56,10 @@ int generate_kd_tree(CGAL::Split_rules::Split_rule s) {
 
   Tree d(data_points.begin(), data_points.end(), tr);
 
-  std::cout << "created kd tree using splitting rule " << s << " containing "  
+  std::cout << "created kd tree using "  
   << data_point_number << " points. " << std::endl;
   d.statistics();
 
-  return 0;
-};
-
-
-
-int main() {
-  
-  generate_kd_tree(CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD); 
-  generate_kd_tree(CGAL::Split_rules::MEDIAN_OF_RECTANGLE); 
-  generate_kd_tree(CGAL::Split_rules::MIDPOINT_OF_MAX_SPREAD);
-  generate_kd_tree(CGAL::Split_rules::MIDPOINT_OF_RECTANGLE);
-  generate_kd_tree(CGAL::Split_rules::FAIR);
-  generate_kd_tree(CGAL::Split_rules::SLIDING_MIDPOINT); 
-  generate_kd_tree(CGAL::Split_rules::SLIDING_FAIR);    
-
-  
-
-  return 0;
 };
 
 

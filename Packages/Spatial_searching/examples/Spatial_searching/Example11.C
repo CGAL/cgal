@@ -3,7 +3,7 @@
 #include <CGAL/Iso_cuboid_3.h>  
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Splitting_rules.h>
+#include <CGAL/Splitters.h>
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
@@ -67,7 +67,7 @@ int main() {
   }; 
   */
   
-  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_MIDPOINT, 3.0, true);
+  Traits tr(bucket_size, 3.0, true);
   typedef CGAL::Kd_tree<Traits> tree;
   
    

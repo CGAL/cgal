@@ -1,7 +1,6 @@
-// Approximate spatial searching: Example04.C
-// Example illustrating for each separate splitting rule
-// building a kd-tree 
-
+// Approximate spatial searching: Example08.C
+// Example illustrating for each separate splitting rule 
+// building a kd-tree using orthogonal priority search
 #include <CGAL/basic.h>
 
 #include <vector>
@@ -16,13 +15,11 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
-#include <CGAL/Splitters.h>
-#include <CGAL/point_generators_3.h>
+#include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_standard_search.h>
-#include <CGAL/General_standard_search.h>
+#include <CGAL/Splitters.h>
 
-// create own Point type (adapted from example3.C from kdtree and Point_3.h)
+  // create own Point type (adapted from example3.C from kdtree and Point_3.h)
  
 class Point
 {
@@ -109,7 +106,6 @@ operator==(const Point& p, const Point& q)
   return ( (p[0] == q[0]) && (p[1] == q[1]) && (p[2] == q[2]) ) ;
 }
 
-
 class Point3D_distance
 {
 public:
@@ -175,87 +171,81 @@ inline double inverse_of_transformed_distance(double d) {
 
 }; // end of class
 
-typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
+
+typedef CGAL::Kd_tree_rectangle<double> Rectangle;
 typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Orthogonal_standard_search<Traits, Point, Point3D_distance> 
-NN_orthogonal_search;
-typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 
-NN_general_search;
 
-typedef std::vector<Traits::Item> Vector;
-typedef std::vector<Point> Query_vector;
+typedef CGAL::Kd_tree_traits_point<Separator,Point,
+CGAL::Midpoint_of_max_spread<Point> > Traits;
+
+typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
+NN_priority_search;
 
 int main() {
 
-  int bucket_size=10;
+  std::cout << "test started" << std::endl;
+
+  int bucket_size=1;
+  const int dim=3;
   
-  const int data_point_number=1000;
+  const int data_point_number=100;
+  const int nearest_neighbour_number=10;
   
   typedef std::list<Point> point_list;
   point_list data_points;
   
-  CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
-  CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
-  
-  
-  Traits tr1(bucket_size, 3.0, true);
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d1(data_points.begin(), data_points.end(), tr1);
-
-  
-  
-  std::cout << "created kd tree using extended nodes containing "   
-  << data_point_number << " points. " << std::endl;
-  d1.statistics();
-
-  
-  Traits tr2(bucket_size, 3.0, false);
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d2(data_points.begin(), data_points.end(), tr2);
-
-  std::cout << "created kd tree using no extended nodes containing "
-  << data_point_number << " points. " << std::endl;
-  d2.statistics();
- 
-  
-  // neighbour searching
-  const int query_point_number=5;
-  Query_vector query_points;
-  CGAL::copy_n( g, query_point_number+1, std::back_inserter(query_points));
-
-  
-  Point3D_distance tr_dist;
-
-  // nearest neighbour searching using extended nodes
-  std::vector<NN_orthogonal_search::Item_with_distance> nearest_neighbours1;
-  // nearest_neighbours1.reserve(query_point_number+1);
-  
-  
-  // nearest neighbour searching using no extended nodes
-  std::vector<NN_general_search::Item_with_distance> nearest_neighbours2;
-  // nearest_neighbours2.reserve(query_point_number+1);
-  
-  for (int i=1; i < query_point_number+1; ++i) { 
-     NN_orthogonal_search NN1(d1, query_points[i], tr_dist, 1, 0.0);
-     std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
-     NN1.statistics();
-     NN1.the_k_neighbours(std::back_inserter(nearest_neighbours1));
-     NN_general_search NN2(d2, query_points[i], tr_dist, 1, 0.0, false);
-     std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
-     NN2.statistics();
-     NN2.the_k_neighbours(std::back_inserter(nearest_neighbours2));
+  // add random points of dimension dim to data_points
+  CGAL::Random Rnd;
+  // std::cout << "started tstrandom()" << std::endl;
+  for (int i1=0; i1<data_point_number; i1++) { 
+	    double v[dim];
+		for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
+        Point Random_point(v[0],v[1],v[2]);
+        data_points.push_front(Random_point);
   }
   
-  std::cout << "results neighbour searching:" << std::endl;
+  
+  Traits tr(bucket_size, 3.0, true);
 
-  for (int j=0; j < query_point_number; ++j) { 
-     std::cout << " d(q,nearest neighbour)=" << nearest_neighbours1[j].second << 
-     " d(q,furthest neighbour)=" << nearest_neighbours2[j].second << std::endl; 
-  } 
+  Point3D_distance tr_dist;
+
+  std::cout << "constructing tree started" << std::endl;
+  typedef CGAL::Kd_tree<Traits> Tree;
+  Tree d(data_points.begin(), data_points.end(), tr);
+  std::cout << "constructing tree ready" << std::endl;
+
+  double q[dim];
+  q[0]=0.5; q[1]=0.5; q[2]=0.5;
+  Point query_item(q[0], q[1], q[2]);
+
+  std::vector<NN_priority_search::Item_with_distance> nearest_neighbours; 
+  nearest_neighbours.reserve(nearest_neighbour_number);
+
+  NN_priority_search NN(d, query_item, tr_dist, 0.0, true);
+
+  std::vector<NN_priority_search::Item_with_distance>::iterator 
+  it = nearest_neighbours.begin();
+
+  CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
+ 
+  
+  NN.statistics();
+  
+
+  for (int i=0; i < nearest_neighbour_number; ++i) { 
+     std::cout << " d(q,nn)= " << sqrt(nearest_neighbours[i].second)  <<
+     // " nn= " << *(nearest_neighbours[i].first) 
+     " nn= " << 
+     nearest_neighbours[i].first->x()  << " " <<
+     nearest_neighbours[i].first->y()  << " " <<
+     nearest_neighbours[i].first->z()  << " " 
+     << std::endl; 
+  }
+  std::cout << "test ready" << std::endl;
 
   return 0;
-};
+}; 
+  
 
 

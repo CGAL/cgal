@@ -3,7 +3,6 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
-#include <CGAL/Splitting_rules.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Orthogonal_standard_search.h>
@@ -190,7 +189,7 @@ int main() {
   CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
-  Traits tr(bucket_size, CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD, 3.0, true);
+  Traits tr(bucket_size, 3.0, true);
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 

@@ -18,7 +18,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Splitting_rules.h>
+#include <CGAL/Splitters.h>
 #include <CGAL/General_priority_search.h>
 // #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
@@ -59,7 +59,7 @@ OutputIterator my_copy_n( InputIterator first, Size n,
 }
 
 
-int test_range_searching(CGAL::Split_rules::Split_rule s) {
+int main() {
 
   int bucket_size=1;
   const int dim=3;
@@ -74,7 +74,7 @@ int test_range_searching(CGAL::Split_rules::Split_rule s) {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
-  Traits tr(bucket_size, s, 3.0, false);
+  Traits tr(bucket_size, 3.0, false);
   L1_distance tr_dist(dim);
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
@@ -140,20 +140,6 @@ int test_range_searching(CGAL::Split_rules::Split_rule s) {
   
   return 0;
 }; 
-  
- 
 
-int main() {
-  
-  test_range_searching(CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD); 
-  test_range_searching(CGAL::Split_rules::MEDIAN_OF_RECTANGLE); 
-  test_range_searching(CGAL::Split_rules::MIDPOINT_OF_MAX_SPREAD);
-  test_range_searching(CGAL::Split_rules::MIDPOINT_OF_RECTANGLE);
-  test_range_searching(CGAL::Split_rules::FAIR);
-  test_range_searching(CGAL::Split_rules::SLIDING_MIDPOINT); 
-  test_range_searching(CGAL::Split_rules::SLIDING_FAIR);    
-
-  return 0;
-};
 
 

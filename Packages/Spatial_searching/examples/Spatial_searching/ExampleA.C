@@ -21,6 +21,7 @@ typedef CGAL::Weighted_Minkowski_distance<Point, Point> Distance;
 typedef CGAL::Orthogonal_standard_search<Traits, Point, Distance> 
 Neighbour_search;
 
+
 typedef std::vector<Traits::Item> Vector;
 typedef std::vector<Point> Query_vector;
 

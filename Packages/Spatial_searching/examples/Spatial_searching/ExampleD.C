@@ -3,7 +3,6 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
-#include <CGAL/Splitting_rules.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
@@ -66,7 +65,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, CGAL::Split_rules::SLIDING_FAIR, 3.0, false);
+  Traits tr(bucket_size, 3.0, false);
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);

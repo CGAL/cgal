@@ -27,8 +27,6 @@ int main() {
 
   const int dim=4;
   const int bucket_size=3;
-  const CGAL::Split_rules::Split_rule s=
-  CGAL::Split_rules::MEDIAN_OF_MAX_SPREAD;
   
   const int data_point_number=3000;
   const int neighbour_number=5;
@@ -46,7 +44,7 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, s, 3.0, false);
+  Traits tr(bucket_size, 3.0, false);
 
   Distance::Weight_vector w(4);
   w[0]=1.0; w[1]=1.0; w[2]=1.0; w[3]=1.0;
