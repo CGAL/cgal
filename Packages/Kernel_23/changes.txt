@@ -1,3 +1,6 @@
+1.1 (8 January 2003)
+- CGAL kernel concept archetype files added
+
 1.0 (7 January 2003)
 - Merge _2, _3, Kernel_test, Kernel_basic and Doc23 into Kernel_23.
 
