@@ -177,20 +177,19 @@ void window_input(TRIANGULATION &T,
     int b = W.read_mouse(x,y);
     p = Point(coord_type(x),
 	      coord_type(y));
-    if(b == MOUSE_BUTTON(1)){
+    switch(b){
+    case MOUSE_BUTTON(1) :
       show_conflicts(p, T , W);
-      //T.insert(p);
       W.clear(); W << T;
-    } 
-    else if(b == MOUSE_BUTTON(2)){
+      break; 
+    case MOUSE_BUTTON(2) :
       hv = T.nearest_vertex(p);
       T.remove(hv);
       W.clear();
       W << T;
-    }
-    else if(b == MOUSE_BUTTON(3)){
-      // we are done. Nothing is highlighted
       break;
+    case MOUSE_BUTTON(3) :  
+      return;
     }
   }
 }
