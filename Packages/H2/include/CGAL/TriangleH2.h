@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -25,12 +25,8 @@
 #ifndef CGAL_TRIANGLEH2_H
 #define CGAL_TRIANGLEH2_H
 
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,14 +45,6 @@ class Triangle_repH2 : public Ref_counted
         A[1] = v2;
         A[2] = v3;
         _orientation = CGAL::orientation(v1,v2,v3);
-    }
-
-    Triangle_repH2(const Triangle_repH2<FT,RT>& tbc)
-    {
-        A[0] = tbc.A[0];
-        A[1] = tbc.A[1];
-        A[2] = tbc.A[2];
-        _orientation = tbc._orientation;
     }
 
  friend class TriangleH2<FT,RT>;
@@ -339,6 +327,5 @@ operator>>(std::istream &is, TriangleH2<FT,RT> &t)
 #endif // NO_ISTREAM_EXTRACT_TRIANGLEH2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_TRIANGLEH2_H
