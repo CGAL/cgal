@@ -1,3 +1,13 @@
+1.9 (22 March 2001)
+    Changed basis for std::stack in Vertex_visibility_graph_2 to std::list
+    instead of std::deque (the default) since the latter under MSVC++ assumes
+    pointers where it shouldn't (i.e., iterator_traits doesn't work).
+
+    Changed name of template parameter from Point_2 to Point_2_ in set_valid
+    for Partition_opt_cvx_edge so VC++ won't get confused.
+
+    Made some cosmetic changes to the demos.
+
 1.8 (12 March 2001)
 
     Changed Vertex_const_iterator to Vertex_iterator for Partition_vertex_map
@@ -30,7 +40,7 @@
    
 1.5 (8 January 2001)
    
-    Moved definitions of template functions in other classes to see if 
+    Moved definitions of template functions inside classes to see if 
     Borland and VC++ can deal with this better and fixed some typedefs
     causing problems with these two compilers.
 
