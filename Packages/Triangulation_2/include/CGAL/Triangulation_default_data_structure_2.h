@@ -315,13 +315,17 @@ public:
   {
     CGAL_triangulation_precondition(v != NULL && f != NULL); 
     CGAL_triangulation_precondition(dimension() >= 1);
-    if (dimension() == 1) {CGAL_triangulation_precondition( i=3);}
+    if (dimension() == 1) {CGAL_triangulation_precondition( i == 2);}
     if (dimension() == 2) {CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);}
   
     if (dimension() == 1) {
-      Face * g = new Face(v,f->vertex(1),NULL, NULL, NULL, NULL);
-      g->set_neighbor(1,f); g->set_neighbor(0, f->neighbor(0));
-      f->set_vertex(1,v); f->set_neighbor(0,g);
+      Face * ff = f->neighbor(0);
+      Vertex * vv = f->vertex(1);
+      Face * g = new Face(v,vv,NULL,ff, f, NULL);
+      f->set_vertex(1,v);f->set_neighbor(0,g);
+      ff->set_neighbor(1,g);
+      v->set_face(g);
+      vv->set_face(ff);
       set_number_of_vertices(number_of_vertices() +1);
     }
 
@@ -649,21 +653,22 @@ public:
             }
         }
         
-//         Face_circulator fc(infinite_vertex());
-//         Face_circulator    fcdone(fc);
-//         do {
-// 	  result = result && fc->is_valid(verbose, level);
-//           CGAL_triangulation_assertion( fc->is_valid(verbose, level) );
-// 	  ++face_count;
-// 	  ++edge_count;
-//         }
-//         while(++fc != fcdone);
-    
+	switch(dimension()) {
+	case 0: 
+	  break;
+	case 1:
+	 result = result && ( edge_count == vertex_count); 
+	 CGAL_triangulation_assertion(edge_count == vertex_count); 
+	 result = result && ( face_count == vertex_count);
+	 CGAL_triangulation_assertion( face_count == vertex_count);
+	 break;
+	case 2:
 	result = result && ( edge_count == 3*vertex_count - 6 );
         CGAL_triangulation_assertion( edge_count == 3*vertex_count -6 );
         result = result && ( face_count == 2*vertex_count - 4 );
         CGAL_triangulation_assertion( face_count == 2*vertex_count - 4 );
-    
+	break;
+	}
         return result;
     }
 

@@ -254,6 +254,62 @@ public:
     return result;
   }
 
+
+  // TO DEBUG
+  void show_all()
+{
+  cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<endl;
+  typename Tds::Face_iterator fi = _tds.faces_begin();
+  cerr<<"***"<<endl;
+  while(fi != _tds.faces_end()) {
+    show_face(fi);
+    ++fi;
+  }
+}
+
+
+void show_face( typename Tds::Face_iterator fi)
+{
+  cerr << "face : "<<(void*)&(*fi)<<" => "<<endl;
+  int i = fi->dimension(); 
+  switch(i){
+  case 0:
+    cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+	 <<"["<<(fi->neighbor(0))->vertex(0)->point()<<"]"
+      	<<endl;
+    break;
+  case 1:
+     cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+				<<"["<<(fi->neighbor(0))->vertex(0)->point()
+				<<"/"<<(fi->neighbor(0))->vertex(1)->point()<<"]"
+  	<<endl;
+     cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
+				<<"["<<(fi->neighbor(1))->vertex(0)->point()
+				<<"/"<<(fi->neighbor(1))->vertex(1)->point()<<"]"
+				<<endl;
+     break;
+  case 2:
+  cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+				<<"["<<(fi->neighbor(0))->vertex(0)->point()
+				<<"/"<<(fi->neighbor(0))->vertex(1)->point()
+				<<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
+					<<endl;
+  cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
+				<<"["<<(fi->neighbor(1))->vertex(0)->point()
+				<<"/"<<(fi->neighbor(1))->vertex(1)->point()
+				<<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
+				<<endl;
+  cerr <<"point :"<<(fi->vertex(2)->point())<<" / voisin "<<&(*(fi->neighbor(2)))
+				<<"["<<(fi->neighbor(2))->vertex(0)->point()
+				<<"/"<<(fi->neighbor(2))->vertex(1)->point()
+				<<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
+				<<endl;
+  }
+  return;
+}
+
+
+
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Face_handle& f) const {
     return f->has_vertex(infinite_vertex());
@@ -402,7 +458,7 @@ private:
 void  insert_outside_convex_hull_1(Vertex_handle v, Face_handle f)
   {
     int i = f->index(infinite_vertex());
-    Face_handle  n = f->neighbor(i-1);
+    Face_handle  n = f->neighbor(i);
     int in = n->index(f);
     CGAL_triangulation_precondition( ! is_infinite(n));
     CGAL_triangulation_precondition(
@@ -412,7 +468,7 @@ void  insert_outside_convex_hull_1(Vertex_handle v, Face_handle f)
 	 collinear_between( n->vertex(in)->point(),
 			    n->vertex(1-in)->point(),
 			    v->point()) );
-    _tds.insert_in_edge(&(*v), &(*f), 3);
+    _tds.insert_in_edge(&(*v), &(*f), 2);
     return;
   }
 
@@ -1632,7 +1688,7 @@ Line_face_circulator(const Face_handle& face,
 	  }
 	  if(collinear_between(u->point(), t, v->point())){
 	    lt = EDGE;
-	    li = 3;
+	    li =  2;
 	    return (*eit).first;
 	  }
 	}
@@ -1936,7 +1992,8 @@ inline
     CGAL_Oriented_side
     oriented_side(const Face_handle& f, const Point &p) const
     {
-        return oriented_side(f->vertex(0)->point(),
+      CGAL_triangulation_precondition ( dimension()==2); 
+      return oriented_side(f->vertex(0)->point(),
                              f->vertex(1)->point(),
                              f->vertex(2)->point(),
                              p);
