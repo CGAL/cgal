@@ -224,23 +224,24 @@ void Assert_output_category( const I &/*i*/) {
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
-    Assert_compile_time_tag( std::forward_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  Assert_compile_time_tag( std::forward_iterator_tag(),
                              //std::iterator_category(ic));
-		     typename std::iterator_traits<IC>::iterator_category());
+	                   category());
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &/*ic*/) {
-    Assert_compile_time_tag( std::bidirectional_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  Assert_compile_time_tag( std::bidirectional_iterator_tag(),
                              //std::iterator_category(ic));
-		     typename std::iterator_traits<IC>::iterator_category());
-    
+                           category());
 }
 template <class IC> inline
 void Assert_random_access_category( const IC &/*ic*/) {
-    Assert_compile_time_tag( std::random_access_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  Assert_compile_time_tag( std::random_access_iterator_tag(),
                              //std::iterator_category(ic));
-		     typename std::iterator_traits<IC>::iterator_category());
-			     
+                           category());  
 }
 
 // The assert at-least-category functions use the following
@@ -282,33 +283,38 @@ inline void I_Has_to_be_at_least( std::random_access_iterator_tag,
 // The is-at-least assertions.
 template <class I> inline
 void Assert_is_at_least_input_category( const I& /*i*/) {
-    I_Has_to_be_at_least( std::input_iterator_tag(),
+  typedef typename std::iterator_traits<I>::iterator_category category;
+  I_Has_to_be_at_least( std::input_iterator_tag(),
                           //std::iterator_category(i));
-		  typename std::iterator_traits<I>::iterator_category());
+                        category());
 }
 template <class I> inline
 void Assert_is_at_least_output_category( const I& /*i*/) {
-    I_Has_to_be_at_least( std::output_iterator_tag(),
+  typedef typename std::iterator_traits<I>::iterator_category category;
+  I_Has_to_be_at_least( std::output_iterator_tag(),
                           //std::iterator_category(i));
-		  typename std::iterator_traits<I>::iterator_category());
+                        category());
 }
 template <class IC> inline
 void Assert_is_at_least_forward_category( const IC& /*ic*/) {
-    I_Has_to_be_at_least( std::forward_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  I_Has_to_be_at_least( std::forward_iterator_tag(),
                           //std::iterator_category(ic));
-		  typename std::iterator_traits<IC>::iterator_category());
+                        category());
 }
 template <class IC> inline
 void Assert_is_at_least_bidirectional_category( const IC& /*ic*/) {
-    I_Has_to_be_at_least( std::bidirectional_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  I_Has_to_be_at_least( std::bidirectional_iterator_tag(),
                           //std::iterator_category(ic)) ;
-		  typename std::iterator_traits<IC>::iterator_category());
-    }
+                        category());
+}
 template <class IC> inline
 void Assert_is_at_least_random_access_category( const IC& /*ic*/) {
-    I_Has_to_be_at_least( std::random_access_iterator_tag(),
+  typedef typename std::iterator_traits<IC>::iterator_category category;
+  I_Has_to_be_at_least( std::random_access_iterator_tag(),
                           //std::iterator_category(ic));
-		  typename std::iterator_traits<IC>::iterator_category());
+                        category());
 }
 
 template< class C> inline
@@ -406,9 +412,10 @@ I_circulator_size( const C& c, Random_access_circulator_tag) {
 template <class C> inline
 typename C::size_type
 circulator_size( const C& c) {
-    return I_circulator_size( c, 
-			      //std::iterator_category(c));
-		      typename std::iterator_traits<C>::iterator_category());
+  typedef typename std::iterator_traits<C>::iterator_category category;
+  return I_circulator_size( c, 
+			    //std::iterator_category(c));
+                            category());
 }
 template <class C>
 typename C::difference_type
@@ -444,9 +451,10 @@ I_circulator_distance( const C& c, const C& d,
 template <class C> inline
 typename C::difference_type
 circulator_distance( const C& c, const C& d) {
-    return I_circulator_distance( c, d, 
-				  //std::iterator_category(c));
-			typename std::iterator_traits<C>::iterator_category());
+  typedef typename std::iterator_traits<C>::iterator_category category;
+  return I_circulator_distance( c, d, 
+				//std::iterator_category(c));
+                                category());
 }
 template <class C> inline
 #ifdef __SUNPRO_CC
