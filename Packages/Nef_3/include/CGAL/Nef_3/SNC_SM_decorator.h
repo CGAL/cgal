@@ -392,8 +392,8 @@ void delete_loop_only() const
 /*{\Mop deletes the loop and its twin without any connectivity update.}*/ 
 { Vertex_handle v(psm_); 
   CGAL_nef3_assertion( has_loop() );
-  sncp()->delete_sloop_only(twin(shalfloop()));  
-  sncp()->delete_sloop_only(shalfloop());  
+  sncp()->delete_shalfloop_only(twin(shalfloop()));  
+  sncp()->delete_shalfloop_only(shalfloop());  
   v->shalfloop_ = sncp()->shalfloops_end();
 }
 

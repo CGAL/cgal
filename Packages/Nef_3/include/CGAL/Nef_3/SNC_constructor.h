@@ -333,11 +333,11 @@ public:
     SObject_handle o = L.locate(sp);
     SFace_const_handle sf;
     CGAL_assertion( assign( sf, o));
-    /* the ray must not intersect the objects incident to v */
+    /* the ray must not belong to the 2-skeleton incident to v */
     assign( sf, o);
     SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
-    if( is_empty_range( fc, fce)) { // TO TEST: condition never satisfied
+    if( is_empty_range( fc, fce)) { // TO TEST: is v an isolated vertex?
 	TRACEN( "no adjacent facet found.");
 	f_visible =  Halffacet_handle();
     }
@@ -359,7 +359,6 @@ public:
   }
 
   typedef typename Kernel::Direction_2 Direction_2;
-  typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Point_2 Point_2;
 
   bool strictly_ordered_ccw(const Direction_2& d1, 
@@ -987,6 +986,7 @@ create_volumes() const
       continue;
     V.minimal_vertex() = vertex(f);
     visit_shell_objects(f,V);
+
     MinimalVertex.push_back(V.minimal_vertex());
     EntrySFace.push_back(f);
     V.increment_shell_number();

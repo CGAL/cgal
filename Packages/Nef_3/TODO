@@ -1,6 +1,8 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
+- To set marks for volumes properly in p2nef.
+- To improve the ray shotting process when it hits an edge.
 - Simplification of the SNC structure
 - Unary operations
 - Intersections of Line_3 with Line_3
