@@ -134,13 +134,26 @@ public:
 
   Oriented_side oriented_side(const Point_3 &p) const;
 #ifndef CGAL_NO_DEPRECATED_CODE
-  bool         has_on_boundary(const Point_3 &p) const;
-  bool         has_on_boundary(const Line_3 &l) const;
+  bool         has_on_boundary(const Point_3 &p) const
+  {
+    return has_on(p);
+  }
+  bool         has_on_boundary(const Line_3 &l) const
+  {
+    return has_on(l);
+  }
 #endif // CGAL_NO_DEPRECATED_CODE
   bool         has_on_positive_side(const Point_3 &l) const;
   bool         has_on_negative_side(const Point_3 &l) const;
-  bool         has_on(const Point_3 &p) const;
-  bool         has_on(const Line_3 &l) const;
+  bool         has_on(const Point_3 &p) const
+  {
+    return oriented_side(p) == ON_ORIENTED_BOUNDARY;
+  }
+  bool         has_on(const Line_3 &l) const
+  {
+    return has_on(l.point())
+       &&  has_on(l.point() + l.direction().to_vector());
+  }
 
   bool         is_degenerate() const;
 };
@@ -298,45 +311,6 @@ PlaneC3<R CGAL_CTAG>::
 oriented_side(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return side_of_oriented_plane(*this, p);
-}
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R >
-inline
-bool
-PlaneC3<R CGAL_CTAG>::
-has_on_boundary(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{
-  return has_on(p);
-}
-
-template < class R >
-inline
-bool
-PlaneC3<R CGAL_CTAG>::
-has_on_boundary(const  typename PlaneC3<R CGAL_CTAG>::Line_3 &l) const
-{
-  return has_on(l);
-}
-#endif
-
-template < class R >
-inline
-bool
-PlaneC3<R CGAL_CTAG>::
-has_on(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{
-  return oriented_side(p) == ON_ORIENTED_BOUNDARY;
-}
-
-template < class R >
-inline
-bool
-PlaneC3<R CGAL_CTAG>::
-has_on(const  typename PlaneC3<R CGAL_CTAG>::Line_3 &l) const
-{
-  return has_on(l.point())
-     &&  has_on(l.point() + l.direction().to_vector());
 }
 
 template < class R >
