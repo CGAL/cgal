@@ -760,7 +760,7 @@ private:
 	while (true) {
 	  j1 = n->index( cur->vertex(j1) );
 	  j2 = n->index( cur->vertex(j2) );
-	  if ( region.find( (void*) n) == region.end() ) { 
+	  if ( region.find( (void*) n ) == region.end() ) { 
 	    //not in conflict
             break;
 	  }
@@ -780,8 +780,54 @@ private:
       }
       return cnew;
     } // endif dimension 3
-    // dimension 2 :
-    // tbd
+    
+    // else dimension 2 
+    // i1 i2 such that v,i1,i2 positive
+    int i1=ccw(li);
+/*     cnew = new Cell( *this, */
+/* 		     v, c->vertex(i1), c->vertex(i2), NULL, */
+/* 		     c->neighbor(li), NULL, NULL, NULL); */
+/*     c->vertex(i1)->set_cell(cnew); */
+/*     c->neighbor(li)->set_neighbor( c->neighbor(li)->index(c), cnew); */
+    // traversal of the boundary of region in ccw order to create all
+    // the new facets
+    Cell* bound = c;
+    Vertex* v1 = c->vertex(i1);
+    int ind = c->neighbor(li)->index(c); // to be able to find the
+    // first cell that will be created 
+    Cell* cur;
+    Cell* pnew = NULL;
+    do {
+      cur = bound;
+      // turn around v2 until we reach the boundary of region
+      while ( region.find( (void*) cur->neighbor(cw(i1)) ) !=
+	      region.end() ) {
+	// neighbor in conflict
+	cur = cur->neighbor(cw(i1));
+	i1 = cur->index( v1 );
+      }
+      // here cur has an edge on the boundary of region
+      cnew = new Cell( *this,
+		       v, v1, cur->vertex( ccw(i1) ), NULL,
+		       cur->neighbor(cw(i1)), NULL, pnew, NULL);
+      cur->neighbor(cw(i1))->set_neighbor
+	( cur->neighbor(cw(i1))->index(cur), cnew );
+      // pnew is null at the first iteration
+      v1->set_cell(cnew);
+      //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
+      if (pnew) { pnew->set_neighbor( 1, cnew );}
+
+      bound = cur;
+      i1 = ccw(i1);
+      v1 = bound->vertex(i1);
+      pnew = cnew;
+      //} while ( ( bound != c ) || ( li != cw(i1) ) );
+    } while ( v1 != c->vertex(ccw(li)) );
+    // missing neighbors between the first and the last created cells
+    cur = c->neighbor(li)->neighbor(ind); // first created cell
+    cnew->set_neighbor( 1, cur );
+    cur->set_neighbor( 2, cnew );
+    return cnew;
   }
 public:
 
