@@ -1,0 +1,14 @@
+- rename all types without the _2 at the end to types that have the
+  _2 at the end
+- write a different class for the construction of the Voronoi vertex
+  that does internel filtering
+- write a different class for the Voronoi vertex for the predicates, that
+  also has all the predicates
+- write separate classes/methods for the Voronoi vertex, depending on the
+  Method_tag
+- use the Square_root_* classes to store the representation of the Voronoi
+  vertex; maybe use different representation depending on the method tag
+- collect all basic constructions/predicates (which appear now as static
+  methods) into one or two classes; if two classes are used, then do one with
+  constructions and then derive from that and do the predicates;
+  also this/these classes should provide basic types
