@@ -787,7 +787,7 @@ public:
 #endif // !defined(CGAL_USE_LEDA) ||  (  __LEDA__ > 441 )
 
 namespace CGAL {
-#ifdef CGAL_USE_LEDA &&  (  __LEDA__ <= 441 )
+#if defined(CGAL_USE_LEDA) &&  (  __LEDA__ <= 441 )
 #define Segment_overlay_traits leda_seg_overlay_traits
 static const char* const sweepversion = "LEDA segment overlay sweep";
 #else
