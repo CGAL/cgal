@@ -1,3 +1,13 @@
+1.2.43
+--------
+	set_window was setting ranges and added to history even when the geometry of the widget wasn't yet known. Now, set_scaled and add_to_history is delayed in showEvent(...)	 
+	the << operators for segment, triangle and triangulation were changed.
+	the first 2 of them due to very slow bug when segments were degenerated (very big)
+	the << operator for triangulation use the apply_to_range function to output only the visible triangles
+	removed redraw from the zoom and the history actions in Qt_widget_standard_toolbar.C. Everything was drawn twice.
+
+	
+
 1.2.42
 ---------
 	set_window was setting ranges even when the geometry of the widget
