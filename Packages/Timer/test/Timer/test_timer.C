@@ -1,28 +1,4 @@
-// ============================================================================
-//
-// Copyright (c) 1997 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
-//
-// file          : test_timer.C
-// chapter       : $CGAL_Chapter: Timer $
-// package       : $CGAL_Package: Timer 1.4 (20 Sept 1999) $
-// source        : test_timer.C
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
-//                 Matthias Baesken <baesken@informatik.uni-halle.de>
-// coordinator   : INRIA, Sophia Antipolis
-//
-// test Timer.h and real_timer.h
-// ============================================================================
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
@@ -68,7 +44,7 @@ int main(){
     Tm.start();
     Tm2.start();
     int i1,i2;
-    double p;
+    double p = 0;
      
     std::cout << "\n";
     for (i1=0;i1<5;i1++) {
