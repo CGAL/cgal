@@ -8,7 +8,7 @@
 #include <CGAL/IO/cgal_window_redefine.h>
 
 
-#include <CGAL/Largest_empty_iso_rectangle_2.h>
+#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -49,10 +49,10 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 
   display_bounding_box(empty_rectangle,W);
 
-  /* for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
+  for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
       iter != empty_rectangle.end();
       ++iter)
-      W << *iter;*/
+      W << *iter;
 }
 
 
@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
   std::ifstream *is_ptr;
   bool automatic_show = false;
 
-  if(argc == 1) {
+  if(argc == 1 || argc == 2) {
     // initialize window
     W.init(-2,13,-2);
     W.set_mode(leda_src_mode);
@@ -90,17 +90,19 @@ int main(int argc,char *argv[])
     W.button("Manual",4);
     W.button("Exit",5);
     W.display();
-  } else if(argc == 2) {
+  } else {
+    std::cerr << "Syntax : EmptyRect [input file name]\n";
+    return(1);
+  }
+
+
+  if(argc == 2) {
     // initialize input file
     is_ptr = new std::ifstream(argv[1]);
     if(is_ptr->bad()) {
       std::cerr << "Bad input file : " << argv[1] << std::endl;
       return(1);
     }
-    W.display();
-  } else {
-    std::cerr << "Syntax : EmptyRect [input file name]\n";
-    return(1);
   }
 
   // determine bounding box
@@ -129,9 +131,7 @@ int main(int argc,char *argv[])
     W.set_node_width(3);
   }
 
-  
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
-  //Bbox b = Bbox(Nt_pair(x1,y1),Nt_pair(x2,y2));
 
   Largest_empty_rect empty_rectangle(b);
 
@@ -140,56 +140,9 @@ int main(int argc,char *argv[])
   double x,y;
   Number_Type x_type,y_type;
   int mouse_input;
+  bool biggest_rect_shown;
 
-  // main loop over input points
-  if(argc == 1) {
-    bool biggest_rect_shown = false;
-    for (;;) {
-      mouse_input = W.read_mouse(x,y);
-
-      if(mouse_input == -1 && x >= MIN_X && x <= MAX_X &&
-	 y >= MIN_Y && y <= MAX_Y) {
-        if(biggest_rect_shown) {
-          // remove biggest rectangle
-          biggest_rect_shown = false;
-          redraw(empty_rectangle,W);
-        }
-
-        x_type = x;
-        y_type = y;
-        // add point
-        W << CGAL::BLACK;
-        W << Point(x,y);
-        Point tmp1(x_type,y_type);
-
-        empty_rectangle.insert(tmp1);
-        if(automatic_show) {
-          // automatic display of biggest rectangle
-          show_biggest_rec(empty_rectangle,W);
-          biggest_rect_shown = true;
-	}
-      } else if(mouse_input == 1) {
-        // show biggest rectangle
-        show_biggest_rec(empty_rectangle,W);
-        biggest_rect_shown = true;
-      } else if(mouse_input == 2) {
-        clear(empty_rectangle,W);
-        biggest_rect_shown = false;
-      } else if(mouse_input == 3) {
-        // change to automatic mode
-        automatic_show = true;
-        show_biggest_rec(empty_rectangle,W);
-        biggest_rect_shown = true;
-      } else if(mouse_input == 4) {
-        // change to manual mode
-        automatic_show = false;
-        biggest_rect_shown = false;
-        redraw(empty_rectangle,W);
-      } else if(mouse_input == 5)
-        // finish
-        break;
-    }
-  } else {
+  if(argc == 2) {
     // get points from an input file 
     int number_of_points;
     (*is_ptr) >> number_of_points;
@@ -207,7 +160,54 @@ int main(int argc,char *argv[])
     }
 
     show_biggest_rec(empty_rectangle,W);
+    biggest_rect_shown = true;
+  } else
+    biggest_rect_shown = false;
+
+  // main loop over input points
+  for (;;) {
     mouse_input = W.read_mouse(x,y);
+    if(mouse_input == -1 && x >= MIN_X && x <= MAX_X &&
+       y >= MIN_Y && y <= MAX_Y) {
+      if(biggest_rect_shown) {
+        // remove biggest rectangle
+        biggest_rect_shown = false;
+        redraw(empty_rectangle,W);
+      }
+
+      x_type = x;
+      y_type = y;
+      // add point
+      W << CGAL::BLACK;
+      W << Point(x,y);
+      Point tmp1(x_type,y_type);
+
+      empty_rectangle.insert(tmp1);
+      if(automatic_show) {
+        // automatic display of biggest rectangle
+        show_biggest_rec(empty_rectangle,W);
+        biggest_rect_shown = true;
+      }
+    } else if(mouse_input == 1) {
+      // show biggest rectangle
+      show_biggest_rec(empty_rectangle,W);
+      biggest_rect_shown = true;
+    } else if(mouse_input == 2) {
+      clear(empty_rectangle,W);
+      biggest_rect_shown = false;
+    } else if(mouse_input == 3) {
+      // change to automatic mode
+      automatic_show = true;
+      show_biggest_rec(empty_rectangle,W);
+      biggest_rect_shown = true;
+    } else if(mouse_input == 4) {
+      // change to manual mode
+      automatic_show = false;
+      biggest_rect_shown = false;
+      redraw(empty_rectangle,W);
+    } else if(mouse_input == 5)
+      // finish
+      break;
   }
 
   if(argc == 2)

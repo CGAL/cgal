@@ -1,7 +1,7 @@
 Using demo
 ==========
  
-1) The user paint point inside a
+1) The user paints points inside a
    graphics interface by pressing mouse left
    button. The largest empty rectangle is shown
    by pressing control buttons. There are five control
@@ -18,7 +18,9 @@ Using demo
    Syntax:   demo
 
 2) Using input files. Showing the largest empty rectangle
-   of input points inside files. The syntax of the files is the following:
+   of input points inside files. Afterwards, the user can
+   continue working with the window as explained above.
+   The syntax of the files is the following:
 
      Four points indicating the bounding box coordinates (x1,y1,x2,y2)
      number of points
