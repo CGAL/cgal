@@ -44,7 +44,11 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
-static char * BenchOpts[] = {
+static
+#if (defined _MSC_VER)
+const
+#endif
+char * BenchOpts[] = {
   "construct", "display", "co", "di", NULL
 };
 
