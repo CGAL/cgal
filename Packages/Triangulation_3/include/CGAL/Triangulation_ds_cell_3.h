@@ -183,28 +183,28 @@ public:
 private:
 
   union {
-    int in_conflict_flag;
-    void *list;
-  } extra;
+      int _in_conflict_flag;
+      void *_list;
+  };
   
   void set_in_conflict_flag(int f)
   {
-    extra.in_conflict_flag = f;
+      _in_conflict_flag = f;
   }
 
   int get_in_conflict_flag() const
   {
-    return extra.in_conflict_flag;
+      return _in_conflict_flag;
   }
 
   void set_list_pointer(void *p)
   {
-      extra.list = p;
+      _list = p;
   }
 
   void * get_list_pointer() const
   {
-      return extra.list;
+      return _list;
   }
 
   void error_orient( Cell * , int i ) const
