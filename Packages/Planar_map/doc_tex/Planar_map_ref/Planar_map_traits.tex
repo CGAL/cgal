@@ -33,11 +33,25 @@ copy constructor, assignment operator and \ccStyle{operator==}.
   the plane. The type of the end points of \ccc{X_monotone_curve_2} curves.}
 
 \ccHeading{Categories}
+
+The following categories declare the implementation of the method 
+\ccc{curves_compare_y_at_x_left()}. If the category  \ccc{Has_left_category}
+is \ccc{Tag_true} the method is required specifically. Otherwise, if 
+the category  \ccc{Has_reflect_category} is \ccc{Tag_true} the method 
+\ccc{curves_compare_y_at_x_left()} is implemented using the required 
+methods \ccc{point_reflect_in_x_and_y()} and \ccc{curve_reflect_in_x_and_y()}.
+If none of the categories is \ccc{Tag_true}, a default implementation is used, 
+that does not require any of the above methods.
+
 \ccNestedType{Has_left_category}{A boolean category that indicates
-  whether the method \ccc{curves_compare_y_at_x_left()} is required or
-  alternatively the methods \ccc{point_reflect_in_x_and_y()} and
+  whether the method \ccc{curves_compare_y_at_x_left()} is required.
+  It must be either \ccc{Tag_true} or \ccc{Tag_false}.}
+
+\ccNestedType{Has_reflect_category}{A boolean category that indicates
+  whether the methods \ccc{point_reflect_in_x_and_y()} and
   \ccc{curve_reflect_in_x_and_y()} are required. It must be either
   \ccc{Tag_true} or \ccc{Tag_false}.}
+
 
 \ccHeading{Enumerations}
 \ccEnum{enum Comparison_result {SMALLER, EQUAL, LARGER};}
