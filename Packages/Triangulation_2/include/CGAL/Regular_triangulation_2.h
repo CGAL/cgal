@@ -685,23 +685,32 @@ is_valid_vertex(Vertex_handle vh) const
 			     vh->face()->has_vertex(loc->vertex(li))) ||
 			(lt == Base::EDGE && vh->face() ==
 			 loc->neighbor(li)) );
-        if ( !result) {
-      std::cerr << vh->point() << " " << std::endl;
-      std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
-      std::cerr <<  "loc      " <<  &*(loc )
-	        << " lt " << lt  << " li " << li << std::endl;
-      show_face(vh->face());
-      show_face(loc);
-    }
+
     CGAL_triangulation_assertion(result);  
     result = result && 
              power_test(vh->face(),vh->point()) == ON_NEGATIVE_SIDE;
-    CGAL_triangulation_assertion(result); 
+ //    if ( !result) {
+//       std::cerr << " from is_valid_vertex " << std::endl;
+//       std::cerr << "sommet cache " << &*(vh) 
+// 		<< "vh_point " <<vh->point() << " " << std::endl;
+//       std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
+//       std::cerr <<  "loc      " <<  &*(loc )
+// 	        << " lt " << lt  << " li " << li << std::endl;
+//       show_face(vh->face());
+//       show_face(loc);
+//     }
   }
   else { // normal vertex
     result = result && vh->face()->has_vertex(vh);
-    CGAL_triangulation_assertion(result); 
+//     if ( !result) {
+//       std::cerr << " from is_valid_vertex " << std::endl;
+//       std::cerr << "normal vertex " << &(*vh) << std::endl;
+//       std::cerr << vh->point() << " " << std::endl;
+//       std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
+//       show_face(vh->face());
+//     }
   }
+  CGAL_triangulation_assertion(result);
   return result;
 }
 
@@ -1001,13 +1010,16 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
   if (number_of_vertices() <= 1) return Base::insert(p);
   Vertex_handle v;
   Oriented_side os;
+  Vertex_handle vv; // helping vertex in case VERTEX
   switch (lt) {
   case Base::VERTEX:
+    vv = loc->vertex(li);
     if (power_test(loc->vertex(li)->point(), p) != ON_POSITIVE_SIDE) 
           return hide_new_vertex(loc,p);
-    hide_new_vertex(loc, loc->vertex(li)->point());
-    loc->vertex(li)->set_point(p);
-    v = loc->vertex(li);
+    v = this->_tds.create_vertex(); 
+    v->set_point(p);
+    exchange_incidences(v,loc->vertex(li));
+    hide_vertex(loc, vv);
     break;
   case Base::EDGE:
     os = dimension() == 1 ?  power_test(loc,li,p) : 
@@ -1059,6 +1071,17 @@ reinsert(Vertex_handle v, Face_handle start)
   v->set_hidden(false);
   _hidden_vertices--;
  
+//   //to debug 
+//   std::cerr << "from reinsert " << std::endl;
+//   show_vertex(v);
+//   Locate_type lt;
+//   int li;
+//   Face_handle loc = locate(v->point(), lt, li, start);
+//   std::cerr << "locate " << &(*loc) << "\t" << lt << "\t" << li <<
+//     std::endl;
+//   show_face(loc);
+//    std::cerr << std::endl;
+
   Vertex_handle vh = insert(v->point(), start);
   if(vh->is_hidden()) exchange_hidden(v,vh);
   else  exchange_incidences(v,vh);
@@ -1076,9 +1099,22 @@ exchange_hidden(Vertex_handle va, Vertex_handle vb)
 { 
   CGAL_triangulation_assertion (vb->is_hidden());
   CGAL_triangulation_assertion (vb == vb->face()->vertex_list().back());
+ 
+//   //to debug 
+//   std::cerr << "from exchange hidden 1" << std::endl;
+//   show_vertex(vb);
+//   std::cerr << "  / face associee : "
+// 	     << &*(vb->face()) << std::endl;
+  
   vb->face()->vertex_list().pop_back();
   _hidden_vertices--;
   hide_vertex(vb->face(), va);
+
+//  //to debug 
+//   std::cerr << "from exchange hidden 1" << std::endl;
+//   show_vertex(va);
+//   std::cerr << "  / face associee : "
+// 	     << &*(va->face()) << std::endl << std::endl; 
 }
 
 // set to va the incidences of vb 
@@ -1129,24 +1165,28 @@ typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
 insert_in_edge(const Weighted_point &p, Face_handle f, int i)
 {
-  Vertex_handle w = f->vertex(i); //to recignize faces after insertion
-  Vertex_handle v = Base::insert_in_edge(p,f,i);
+  Vertex_handle v;
   if (dimension() == 1) {
+    v = Base::insert_in_edge(p,f,i);
     Face_handle g = f->neighbor(1 - f->index(v));
     update_hidden_points_2_2(f,g);
   }
   else { //dimension()==2
-//     Face_handle g = (v==f->vertex(cw(i))) ? f->neighbor(ccw(i))
-//       : f->neighbor( cw(i));
-//     update_hidden_points_2_2(f,g);
-//     update_hidden_points_2_2(f->neighbor(i), g->neighbor(i));
-    int ivf = f->index(v);
-    Face_handle g = f->neighbor(cw(ivf))->has_vertex(w) ?
-      f->neighbor(cw(ivf)) : f->neighbor(ccw(ivf));
-    Face_handle fn = f->neighbor( 3 - f->index(v) - f->index(g));
-    Face_handle gn = g->neighbor( 3 - g->index(v) - g->index(w));
-    update_hidden_points_2_2(f,fn);
-    update_hidden_points_2_2(g,gn);
+    // don't use update_hidden_points_2_2 any more to split
+    // hidden vertices list because new affectation of f and n
+    // around new vertex is unknown
+    Face_handle n = f->neighbor(i);
+    Vertex_list p_list;
+    p_list.splice(p_list.begin(),f->vertex_list());
+    p_list.splice(p_list.begin(),n->vertex_list());
+    v = Base::insert_in_edge(p,f,i);
+    Face_handle loc;
+    while ( ! p_list.empty() ){
+      loc = locate(p_list.front()->point(), n);
+      if (is_infinite(loc)) loc = loc->neighbor(loc->index(infinite_vertex()));
+      hide_vertex(loc, p_list.front());
+      p_list.pop_front();
+    }
   }
   return v;
 } 
@@ -1265,7 +1305,6 @@ remove(Vertex_handle v )
   } else {
     remove_2D(v);
   }
-  
 
   while (! p_list.empty())
   {

@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+19 April 2004 Mariette Yvinec
+- fixed insert_in_edge in Regular_triangulation_2
+- changed insert case VERTEX in  Regular_triangulation_2. 
+   The new version is  more easy to debug
+
 17 April 2004 Sylvain Pion
 - Fix copy-paste bug in T_face_base_with_info_2.h .
 

@@ -4,6 +4,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+CGAL_MAKEFILE=/0/net/proj/geometrica/home/CGAL/CGAL-I/make/makefile_i686_Linux-2.4.23_g++-3.3.3
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95_LEDA
 #CGAL_MAKEFILE=/u/papillon/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
@@ -21,10 +22,12 @@ CXXFLAGS = \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-	-pedantic 
+	-pedantic
 	
+#-pedantic -g
+# -DCGAL_LFC_WALK -DCGAL_ZIG_ZAG_WALK \
 # -DCGAL_NO_DEPRECTED_CODE
-
+# -DCGAL_ZIG_ZAG_WALK \
 # -DCGAL_NO_CONCEPT_CHECKING
 
 

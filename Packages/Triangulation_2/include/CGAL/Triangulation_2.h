@@ -281,7 +281,8 @@ public:
 		  int& li) const;
 
   void
-  compare_walks(Face_handle c1, Face_handle c2,
+  compare_walks(const Point& p,
+		Face_handle c1, Face_handle c2,
 		Locate_type& lt1, Locate_type& lt2,
 		int li1, int li2) const;
 
@@ -1716,11 +1717,13 @@ march_locate_2D_LFC(Face_handle start,
 template <class Gt, class Tds >    
 void
 Triangulation_2<Gt, Tds>::
-compare_walks(Face_handle c1, Face_handle c2,
+compare_walks(const Point& p,
+	      Face_handle c1, Face_handle c2,
 	      Locate_type& lt1, Locate_type& lt2,
 	      int li1, int li2) const
 {
   bool b = true;
+  b = b && (lt1 == lt2);
   if((lt1 == lt2) && (lt1 == VERTEX)) {
     b = b && ( c1->vertex(li1) == c2->vertex(li2) );
   } else if((lt1 == lt2) && (lt1 == EDGE)) {
@@ -1732,7 +1735,22 @@ compare_walks(Face_handle c1, Face_handle c2,
     b = b && (lt1 == FACE);
     b = b && (c1 == c2);
   }
-  CGAL_triangulation_assertion(b);
+  
+  if ( c1 != c2) {
+    std::cerr << "from compare_walks " << std::endl;
+    std::cerr << "point " << p << std::endl;
+    std::cerr << "locate 1 " << &*c1 << "\t" << lt1 << "\t" << li1 
+	      << std::endl;
+    std::cerr << "locate 2 " << &*c2 << "\t" << lt2 << "\t" << li2 
+	      << std::endl;
+    std::cerr << std::endl;
+    show_face(c1);
+    std::cerr << std::endl;
+    show_face(c2);
+    std::cerr << std::endl;
+  }
+    
+    CGAL_triangulation_assertion(b);
 }
       
 
@@ -2058,7 +2076,8 @@ locate(const Point& p,
 #endif
 
 #if defined(CGAL_ZIG_ZAG_WALK) && defined(CGAL_LFC_WALK)
-  compare_walks(res1, res2,
+  compare_walks(p,
+		res1, res2,
 		lt, lt2,
 		li, li2);
 #endif
