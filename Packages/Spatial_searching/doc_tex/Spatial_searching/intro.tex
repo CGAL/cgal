@@ -1,24 +1,78 @@
-\chapter{Approximate Spatial Searching}
+\chapter{Approximate spatial searching}
 
 \section{Introduction}
 
-\section{Approximate spatial searching}
+The Approximate SPAtial Searching (ASPAS) package supports
+exact and approximate distance browsing
+by providing implementations of algorithms supporting both exact and
+approximate nearest and furthest, (approximate) $k$-nearest and furthest,
+exact and approximate incremental nearest
+and furthest searching in a generic fashion of query items
+representing $d$-dimensional
+points using $d$-dimensional trees
+($k$-$d$) trees.
+Also, exact and approximate range searching is
+supported by using query items that represent
+$d$-dimensional iso-rectangles.
 
-To be provided (see paper on distance browsing in spatial databases). 
+In these searching problems a set $P$ of data points in $d$-dimensional
+space is given.
+These points are preprocessed into a data structure, so that given
+any query item $q$ the points of $P$ can be browsed efficiently.
+ASPAS is designed for data sets that are small enough to store
+the search structure in main menory (in contrast to approaches
+from databases that assume that the data reside in secondary storage).
 
-\section{The $k$-$d$ Tree}
+\subsection{Incremental Nearest Neighbour Searching and Distance Browsing}
+
+Spatial searching supports browsing through a collection of spatial objects
+stored in a spatial data structure on the basis of their distances to an arbitrary spatial
+query object. The conventional approach is one that makes use of a $k$-nearest neighbour
+algorithm where $k$ is know prior to the invocation of the algorithm.
+Thus if $m>k$ neighbours are needed, the $k$-nearest neighbour algorithm has to be
+reinvoked for $m$ neighbours, thereby possibly performing some redundant computations.
+The second approach is incremental in the sence that having obtained
+the $k$ nearest neighbours, the $k$ + 1$^{st}$ neighbour can be obtained without
+having to calculate the $k$ + 1 nearest neighbour frm scratch.
+The incremental approach is useful when processing complex queries where
+one of the conditions involves spatial proximity (e.g. the nearest city to Paris with
+population greater than a million), in which case a query engine can make use of
+a pipelined strategey.
+
+\subsection{Furthest Neighbour Searching}
+
+With relatively minor modifications, nearest neighbour searching algorithms can be
+used to find the farthest object from the query object. Furthest neighbour searching is invoked if
+a boolean \ccc{Search_nearest} is set to false in the constructor of the searching classes.
+If this boolean is set to true or is not set nearest neighbour searching is invoked.
+
+\subsection{Range Searching}
+
+Range queries are supported by using iso-rectangles as query item.
+
+\subsection{Approximate Searching}
+
+ASPAS supports both exact and approximate browsing, by
+specifying an approximation facter $\epsilon \geq 0$ with the query.
+
+\subsection{The $k$-$d$ tree}
 
 Bentley \cite{b-mbstu-75} introduced the $k$-$d$ tree as a generalization of the binary
-search tree in higher dimensions. $k$-$d$ trees hierarchically decompose space into a 
-relatively small number of rectangles such that no rectangle contains too many input objects. 
-For our purposes, a {\it rectangle} in real $d$ dimensional space, $\R^d$, is the product of $d$ closed 
+search tree in higher dimensions. $k$-$d$ trees hierarchically decompose space into a
+relatively small number of rectangles such that no rectangle contains too many input objects.
+For our purposes, a {\it rectangle} in real $d$ dimensional space, $\R^d$, is the product of $d$ closed
 intervals on the coordinate axes.
-$k$-$d$ trees are obtained by partitioning point sets in $\R^d$ using ($d$-1)-dimensional hyperplanes. 
-Each node in the tree is split into two children by one such separating plane.
+$k$-$d$ trees are obtained by partitioning point sets in $\R^d$ using
+($d$-1)-dimensional hyperplanes.
+Each node in the tree is split into two children by one such separating hyperplane.
 
-Each internal node of the $k$-$d$ tree is associated with a rectangle and a hyperplane orthogonal to
-one of the coordinate axis, which splits the rectangle into two parts. These two parts are then associated
-with the two child nodes in the tree. The process of partitioning space continues until the number of data 
+Each internal node of the $k$-$d$ tree is associated with a rectangle
+and a hyperplane orthogonal to
+one of the coordinate axis, which splits the rectangle into two parts.
+Therefore, such a hyperplane, defined by a splitting dimension
+and a splitting value, is called a separator.
+These two parts are then associated
+with the two child nodes in the tree. The process of partitioning space continues until the number of data
 points in the rectangle falls below some given treshold. The rectangles associated with the leaf nodes
 are called {\it buckets}, and they define a subdivision of the space into rectangles.
 Data points are only stored in the leaf nodes of the tree, not in the internal nodes.
@@ -26,25 +80,101 @@ Data points are only stored in the leaf nodes of the tree, not in the internal n
 Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
 search algorithm to find the $k$th nearest neighbour by searching a $k$-$d$ tree recursively.
 
-When encountering a node of the kd-tree the algorithm first visits the child that is closest 
-to the query point. On return, if the box containing  the other child lie within 
-1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then 
+When encountering a node of the kd-tree the algorithm first visits the child that is closest
+to the query point. On return, if the box containing  the other child lie within
+1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then
 the other child is visited recursively.
-Priority search \cite{???} visits the nodes in increasing order of distance from 
-the queue with help of a priority queue. 
-The search stops when the distance of the query point to the nearest nodes 
+Priority search \cite{am-annqf-93} visits the nodes in increasing order of distance from
+the queue with help of a priority queue.
+The search stops when the distance of the query point to the nearest nodes
 exceeds the distance to the nearest point found with a factor 1/ (1+$\epsilon$).
 Priority search supports next neighbour search, standard search does not.
 
-Splitting rules ...
+\subsection {Splitting Rules}
 
-\section{Getting started}
+ASPAS provides the following different splitting rules,
+which determine how a separating hyperplane is selected:
+
+\begin{itemize}
+
+\item {\bf Midpoint of box}
+This splitting rule cuts a rectangle through its midpoint orthogonal
+to the longest side.
+
+\item {\bf Midpoint of max spread}
+This splitting rule cuts a rectangle through its midpoint orthogonal
+to the dimension with the maximum point spread.
+
+\item {\bf Sliding midpoint}
+
+This is a modification of the midpoint of box splitting rule.
+It first attempts to perform a midpoint of box split as
+described above. If data points lie on both sides of the separating
+plane the sliding midpoint rule computes the same separator as
+the midpoint of box rule. If the data points lie only on one
+side it avoids this by sliding the separator, computed by
+the midpoint of box rule, to the nearest datapoint.
+
+\item {\bf Median of box}
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordintes of the data points
+along this dimension.
+
+\item {\bf Median of max spread}
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item {\bf Fair}
+This splitting rule is a compromise between the median of box splitting rule
+and the midpoint of box splitting rule. This splitting rule maintains an upper
+bound on the maximal allowed ratio of the longest and shortest side of
+a rectangle (the value of this upper bound is set in the constructor of the
+fair splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.
+It then splits the points in the most even manner possible, subject
+to maintaining the bound on the ratio of the resulting rectangles.
+
+\item {\bf Sliding fair}
+This splitting rule is a compromise between the fair splitting rule
+and the sliding midpoint rule.
+Sliding fair-split is based on the theory that there are
+two types of splits that are good: balanced splits that
+produce fat rectangles, and unbalanced splits provided
+the rectangle with fewer points is fat.
+
+Also, this splitting rule maintains an upper
+bound on the maximal allowed ratio of the longest and shortest side of
+a rectangle (the value of this upper bound is set in the constructor of the
+fair splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.
+It then considers the most extreme cuts that would be allowed by the
+aspect ratio bound. This is done by dividing the longest side of
+the rectangle by the acpect ratio bound. If the median cut lies
+between these extreme cuts, then we use the median cut. If not,
+then consider the extreme cut that is closer to the median.
+If all the points lie to one side of this cut, then we slide the cut
+until it hits the first point.
+This may violate the aspect ratio bound, but will never generate empty cells.
+
+\end{itemize}
+
+Also, a user of ASPAS may provide an implementation of his own
+splitting rule.
+
+\section{Software Design}
+
+\section{Example Programs}
+
+\subsection{K-Nearest Neighbour Searching}
 
 The first example program illustrates building $k$-$d$ trees using 1000
-100-dimensional points. 
+100-dimensional points.
 The way the $k$-$d$ tree is build is defined by the traits variable \ccc{tr(bucket_size, s, 3.0 true)}.
 In the example the \ccc{bucket_size} is set to 10.
-Hence, each leaf nodes stores at most 10 points. 
+Hence, each leaf nodes stores at most 10 points.
 The strategy for splitting the nodes is defined by $s$.
 Some rules use a maximal aspect ratio to define
 the maximal allowed ratio between the largest and smallest side of a rectangle.
@@ -53,4 +183,8 @@ extended internal nodes are used.
 
 \ccIncludeExampleCode{Example03.C}
 
-More examples to be provided.
+\subsection{Incremental Nearest Neighbour Searching}
+
+\subsection{Distance Browsing}
+
+\subsection{Range Querying}
