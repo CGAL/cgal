@@ -20,6 +20,7 @@ ALL : TEST: Added vector test program in test/STL_Extension/test_vector.C
 GLOB: remove Susan as maintainer
 ALL : moved reference page directory up one level to effect split of support
 ALL :  manual
+ALL : Some fixes for Compact_container by Sylvain.
 ALL : Added template constructors to Triple/Quadruple (<- Sylvain).
 ALL : Optimized operator< for Triple/Quadruple (<- Sylvain).
 DOCS: added a new main.tex for the user manual chapter and relabeled ref manual
