@@ -46,6 +46,10 @@ public:
   Iso_rectangle_2(const Point_2 &p, const Point_2 &q)
     : RIso_rectangle_2(p,q) {}
 
+  Iso_rectangle_2(const Point_2 &left, const Point_2 &right,
+                  const Point_2 &bottom, const Point_2 &top)
+    : RIso_rectangle_2(left, right, bottom, top) {}
+
   Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
                   const RT& max_hx, const RT& max_hy)
     : RIso_rectangle_2(min_hx, min_hy, max_hx, max_hy) {}

@@ -46,6 +46,11 @@ public:
   Iso_cuboid_3(const Point_3& p, const Point_3& q)
    : RIso_cuboid_3(p,q) {}
 
+  Iso_cuboid_3(const Point_3 &left,   const Point_3 &right,
+               const Point_3 &bottom, const Point_3 &top,
+               const Point_3 &far,    const Point_3 &close)
+   : RIso_cuboid_3(left, right, bottom, top, far, close) {}
+
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz, 
                const RT& hw)

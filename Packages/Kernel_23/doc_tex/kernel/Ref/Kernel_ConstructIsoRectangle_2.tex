@@ -16,6 +16,17 @@ A model for this must provide:
              opposite vertices $p$ and $q$ such that $p$ is the
              lexicographically smallest point in the rectangle.}
 
+\ccMemberFunction{Kernel::Iso_rectangle_2
+                  operator()(const Kernel::Point_2 &left, 
+                             const Kernel::Point_2 &right,
+                             const Kernel::Point_2 &bottom,
+                             const Kernel::Point_2 &top);}
+            {introduces an iso-oriented rectangle \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}.}
+
 \ccRefines
 AdaptableFunctor (with two arguments)
 

@@ -24,29 +24,11 @@
 #ifndef CGAL__TEST_NEW_2_H
 #define CGAL__TEST_NEW_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/Vector_2.h>
-#include <CGAL/Direction_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Line_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Triangle_2.h>
-#ifndef CGAL_NO_DEPRECATED_CODE
-#include <CGAL/Aff_transformation_2.h>
-#endif // CGAL_NO_DEPRECATED_CODE
-#include <CGAL/intersections.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/predicates_on_lines_2.h>
-#include <CGAL/distance_predicates_2.h>
 #include <CGAL/squared_distance_2.h>
 
-void use(bool) {}
-void use(CGAL::Sign) {}
-void use(CGAL::Bounded_side) {}
-void use(CGAL::Oriented_side) {}
-void use(CGAL::Comparison_result) {}
-
+// To kill "unused" warnings.
+template < typename T >
+void use(const T&) {}
 
 template <class R>
 bool
@@ -164,6 +146,7 @@ test_new_2(const R& rep)
   typename R::Construct_iso_rectangle_2 construct_iso_rectangle
         = rep.construct_iso_rectangle_2_object();
   Iso_rectangle_2 rec2 = construct_iso_rectangle(p4,p5);
+  Iso_rectangle_2 rec3 = construct_iso_rectangle(p4,p4,p5,p5);
 
   typename R::Construct_object_2 construct_object 
         = rep.construct_object_2_object();

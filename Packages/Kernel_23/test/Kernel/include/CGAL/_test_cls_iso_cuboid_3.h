@@ -24,8 +24,6 @@
 #ifndef CGAL__TEST_CLS_ISO_CUBOID_3_H
 #define CGAL__TEST_CLS_ISO_CUBOID_3_H
 
-#include <CGAL/Iso_cuboid_3.h>
-
 template <class R>
 bool
 _test_cls_iso_cuboid_3(const R& )
@@ -75,6 +73,11 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Iso_cuboid_3<R> r8( n4, n1, n1, n5, n4, n3, n1);
  CGAL::Iso_cuboid_3<R> r9( n4, n1, n1, n5, n4, n3);
  r0 = r1;
+
+ CGAL::Iso_cuboid_3<R> r11(p1, p1, p1, p1, p1, p1);
+ CGAL::Iso_cuboid_3<R> r12(p1, p1, p2, p2, p3, p3);
+ CGAL::Iso_cuboid_3<R> r13(p1, p2, p1, p2, p1, p2);
+ CGAL::Iso_cuboid_3<R> r14(p3, p4, p1, p2, p5, p6);
 
  assert( r1 == r1 );
  assert( r0 == r1 );

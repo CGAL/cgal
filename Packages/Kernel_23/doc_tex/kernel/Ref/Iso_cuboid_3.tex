@@ -1,8 +1,8 @@
 \begin{ccRefClass} {Iso_cuboid_3<Kernel>}
 
 \ccDefinition  An object $s$ of the data type \ccRefName\ is a
-cuboid in the Euclidean plane $\E^3$ with sides parallel to the $x$ and
-$y$ axis of the coordinate system.
+cuboid in the Euclidean space $\E^3$ with edges parallel to the $x$,
+$y$ and $z$ axis of the coordinate system.
  
 Although they are represented in a canonical form by only two
 vertices, namely the lexicographically smallest and largest vertex
@@ -14,10 +14,8 @@ difference however is that bounding boxes have always double coordinates,
 whereas the coordinate type of an iso-oriented cuboid is chosen by
 the user.
 
-
 \ccCreation
 \ccCreationVariable{c}
-
 
 \ccHidden \ccConstructor{Iso_cuboid_3();}
              {introduces an uninitialized variable \ccVar.}
@@ -30,6 +28,20 @@ the user.
             {introduces an iso-oriented cuboid \ccVar\ with diagonal
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
+
+\ccConstructor{Iso_cuboid_3(const Point_3<Kernel> &left, 
+                            const Point_3<Kernel> &right,
+                            const Point_3<Kernel> &bottom,
+                            const Point_3<Kernel> &top,
+                            const Point_3<Kernel> &far,
+                            const Point_3<Kernel> &close);}
+            {introduces an iso-oriented cuboid \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}, the
+             minimal $z$ coordinate is the one of \ccc{far}, the
+             maximal $z$ coordinate is the one of \ccc{close}.}
 
 \ccConstructor{Iso_cuboid_3(
                 const Kernel::RT& min_hx, const Kernel::RT& min_hy, const Kernel::RT& min_hz,

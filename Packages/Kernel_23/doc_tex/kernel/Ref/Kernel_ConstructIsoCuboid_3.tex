@@ -16,6 +16,21 @@ A model for this must provide:
              opposite vertices $p$ and $q$ such that $p$ is the
              lexicographically smallest point in the cuboid.}
 
+\ccMemberFunction{Kernel::Iso_cuboid_3
+                  operator()(const Kernel::Point_3 &left, 
+                             const Kernel::Point_3 &right,
+                             const Kernel::Point_3 &bottom,
+                             const Kernel::Point_3 &top,
+                             const Kernel::Point_3 &far,
+                             const Kernel::Point_3 &close);}
+            {introduces an iso-oriented cuboid \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}, the
+             minimal $z$ coordinate is the one of \ccc{far}, the
+             maximal $z$ coordinate is the one of \ccc{close}.}
+
 \ccRefines
 AdaptableFunctor (with two arguments)
 

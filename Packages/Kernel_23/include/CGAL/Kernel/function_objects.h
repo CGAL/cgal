@@ -956,6 +956,12 @@ public:
     Iso_cuboid_3
     operator()(const Point_3& p, const Point_3& q) const
     { return Iso_cuboid_3(p, q); }
+
+    Iso_cuboid_3
+    operator()(const Point_3 &left,   const Point_3 &right,
+               const Point_3 &bottom, const Point_3 &top,
+               const Point_3 &far,    const Point_3 &close) const
+    { return Iso_cuboid_3(left, right, bottom, top, far, close); }
 };
 
 template <typename K>
@@ -974,6 +980,11 @@ public:
     Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
     { return Iso_rectangle_2(p, q); }
+
+    Iso_rectangle_2
+    operator()(const Point_2 &left,   const Point_2 &right,
+               const Point_2 &bottom, const Point_2 &top) const
+    { return Iso_rectangle_2(left, right, bottom, top); }
 };
 
 template <typename K>

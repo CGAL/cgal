@@ -160,6 +160,7 @@ test_new_3(const R& rep)
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid
         = rep.construct_iso_cuboid_3_object();
   Iso_cuboid_3 iso1 = construct_iso_cuboid(p3,p6);
+  Iso_cuboid_3 iso2 = construct_iso_cuboid(p3,p3,p6,p6,p4,p4);
 
   typename R::Construct_object_3 construct_object
         = rep.construct_object_3_object();

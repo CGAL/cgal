@@ -24,9 +24,6 @@
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 
-#include <CGAL/Iso_rectangle_2.h>
-
-
 template <class R>
 bool
 _test_cls_iso_rectangle_2(const R& )
@@ -72,6 +69,11 @@ _test_cls_iso_rectangle_2(const R& )
  CGAL::Iso_rectangle_2<R> r8( n4, n2, n6, n8, n2);
  CGAL::Iso_rectangle_2<R> r9( n2, n1, n3, n4, n1);
  CGAL::Iso_rectangle_2<R> r10( n2, n1, n3, n4);
+
+ CGAL::Iso_rectangle_2<R> r11(p1, p1, p1, p1);
+ CGAL::Iso_rectangle_2<R> r12(p1, p1, p2, p2);
+ CGAL::Iso_rectangle_2<R> r13(p1, p2, p1, p2);
+ CGAL::Iso_rectangle_2<R> r14(p3, p4, p1, p2);
 
  r0 = r1;
 

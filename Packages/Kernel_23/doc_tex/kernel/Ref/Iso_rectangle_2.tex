@@ -30,6 +30,16 @@ the user.
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
 
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &left, 
+                               const Point_2<Kernel> &right,
+                               const Point_2<Kernel> &bottom,
+                               const Point_2<Kernel> &top);}
+            {introduces an iso-oriented rectangle \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}.}
+
 \ccConstructor{Iso_rectangle_2(const Kernel::RT& min_hx, const Kernel::RT& min_hy, 
                                const Kernel::RT& max_hx, const Kernel::RT& max_hy, 
                                const Kernel::RT& hw = RT(1));}
