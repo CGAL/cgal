@@ -34,21 +34,30 @@ CGAL_BEGIN_NAMESPACE
 #define	CGAL_XT_ORIGINAL_POINT 2
 
 class Arr_leda_segment_exact_traits 
-        : public Pm_leda_segment_exact_traits
+  : public Pm_leda_segment_traits_2
 {
 public:
         Arr_leda_segment_exact_traits() 
-                : Pm_leda_segment_exact_traits() {}
+                : Pm_leda_segment_traits_2() {}
 
 public:
   typedef Pm_leda_segment_exact_traits Base;
   
-  typedef Base::Curve_status           Curve_status;
-  typedef Base::Curve_point_status     Curve_point_status;
-  
-  typedef Base::X_curve                X_curve;
-  typedef X_curve                      Curve;
+  typedef Base::Point_2                Point_2;
+  typedef Base::X_curve_2              X_curve_2;
+  typedef X_curve_2                    Curve_2;
 
+  typedef Base::Curve_point_status     Curve_point_status;
+
+  // Obsolete, for backward compatibility
+  typedef Point_2                      Point;
+  typedef X_curve_2                    X_curve;
+  typedef Curve_2                      Curve;
+
+protected:
+  typedef Base::Curve_status           Curve_status;
+
+public:
   bool is_x_monotone(const Curve& cv) {return true;}
   //segments are x_monotone:
   void make_x_monotone(const Curve& cv, std::list<Curve>& l) {} 
@@ -58,7 +67,7 @@ public:
   }
 
   void curve_split(const X_curve& cv, X_curve& c1, X_curve& c2, 
-                   const Point& split_pt) const
+                   const Point_2& split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_get_point_status(cv,split_pt)==ON_CURVE);
@@ -75,7 +84,7 @@ public:
 
   //returns true iff the intersection is strictly right of pt
   bool do_intersect_to_right(const X_curve& c1, const X_curve& c2,
-                             const Point& pt) const 
+                             const Point_2& pt) const 
   {
     return intersection_base(c1, c2, pt, true, false, dummy_pnt1, dummy_pnt2, 
 			     dummy_int);
@@ -99,9 +108,9 @@ public:
   
   bool nearest_intersection_to_right(const X_curve& c1,
                                      const X_curve& c2,
-                                     const Point& pt,
-                                     Point& p1,
-                                     Point& p2) const 
+                                     const Point_2& pt,
+                                     Point_2& p1,
+                                     Point_2& p2) const 
   {
     bool res = intersection_base(c1, c2, pt, true, true, p1, p2, dummy_int);
 	if ((res) && (dummy_int & CGAL_XT_SINGLE_POINT))
@@ -139,15 +148,15 @@ public:
   }
       
 
-  Point point_reflect_in_x_and_y (const Point& pt) const
+  Point_2 point_reflect_in_x_and_y (const Point_2& pt) const
   {
-    Point reflected_pt( -pt.xcoord(), -pt.ycoord());
+    Point_2 reflected_pt( -pt.xcoord(), -pt.ycoord());
     return reflected_pt;
   }
       
 #else
   bool do_intersect_to_left(const X_curve& c1, const X_curve& c2,
-			    const Point& pt) const 
+			    const Point_2& pt) const 
   {
     return intersection_base(c1, c2, pt, false, false, dummy_pnt1, dummy_pnt2,
 			     dummy_int);
@@ -166,9 +175,9 @@ public:
 
   bool nearest_intersection_to_left(const X_curve& c1,
                                      const X_curve& c2,
-                                     const Point& pt,
-                                     Point& p1,
-                                     Point& p2) const 
+                                     const Point_2& pt,
+                                     Point_2& p1,
+                                     Point_2& p2) const 
   {
     bool res = intersection_base(c1, c2, pt, false, true, p1, p2, dummy_int);
 	if ((res) && (dummy_int & CGAL_XT_SINGLE_POINT))
@@ -205,9 +214,14 @@ public:
 
   // returns values in p1 and p2 only if return_intersection is true
   // if (xsect_type | CGAL_XT_SINGLE_POINT) then only p1 is returned
-  bool intersection_base(const X_curve& c1, const X_curve& c2,
-			 const Point& pt, bool right, bool return_intersection,
-			 Point &p1, Point &p2, int &xsect_type) const 
+  bool intersection_base(const X_curve & c1, 
+                         const X_curve & c2,
+			 const Point_2 & pt, 
+                         bool            right, 
+                         bool            return_intersection,
+			 Point_2       & p1, 
+                         Point_2       & p2, 
+                         int           & xsect_type) const 
   {
     xsect_type = 0;
     if ( c1.is_trivial() )
@@ -409,7 +423,7 @@ public:
 
 
 private:
-  Point point_normalize(const Point &pt) const {
+  Point_2 point_normalize(const Point_2 &pt) const {
 
     leda_integer g, x, y, w;
     x = pt.X();
@@ -417,13 +431,13 @@ private:
     w = pt.W();
     if (x.iszero() &&  y.iszero()) {
       //g = w;
-      return Point(x,y,leda_integer(1));
+      return Point_2(x,y,leda_integer(1));
     }
     else {
       g = gcd(x, y);
       g = gcd(g, w);
 
-      return Point(x/g,y/g,w/g);
+      return Point_2(x/g,y/g,w/g);
     }
 
   }
@@ -436,7 +450,7 @@ public:
 
 //in future versions of LEDA these operators should be defined
 // friend inline
-// Window_stream& operator<<(Window_stream& os, const Point& p){
+// Window_stream& operator<<(Window_stream& os, const Point_2& p){
 //     return os << leda_point(p.xcoordD(),p.ycoordD());
 //   }
 // friend inline
