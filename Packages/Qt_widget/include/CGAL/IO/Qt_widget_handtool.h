@@ -91,32 +91,31 @@ private:
   }
   void mouseMoveEvent(QMouseEvent *e)
   {
-    char tempc1[100], tempc2[20];
+    char tempc1[130], tempc2[40];
     if(on_first)
     {
       double
 	x = e->x(),
 	y = e->y();
-			
 	RasterOp old = widget->rasterOp();	//save the initial raster mode
 	widget->setRasterOp(XorROP);
 	widget->lock();
 	*widget << CGAL::GRAY;
 	if(!wasrepainted) {
-	  CGAL_CLIB_STD::sprintf(tempc1, "dx=%f", widget->x_real(x2 - first_x));
-	  CGAL_CLIB_STD::sprintf(tempc2, ", dy=%f", widget->x_real(y2 - first_y));
+	  CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x2 - first_x));
+	  CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y2 - first_y));
 	  strcat(tempc1, tempc2);
 	  widget->painter().drawLine(first_x, first_y, x2, y2);
 	  *widget << CGAL::GREEN;
-	  widget->painter().drawText(x2, y2, tempc1, 25);
+	  widget->painter().drawText(x2, y2, tempc1, 49);
 	  *widget << CGAL::GRAY;
 	}
-	CGAL_CLIB_STD::sprintf(tempc1, "dx=%f", widget->x_real(x - first_x));
-	CGAL_CLIB_STD::sprintf(tempc2, ", dy=%f", widget->x_real(y - first_y));
+	CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x - first_x));
+	CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y - first_y));
 	strcat(tempc1, tempc2);
 	widget->painter().drawLine(first_x, first_y, x, y);
 	*widget << CGAL::GREEN;
-	widget->painter().drawText(x, y, tempc1, 25);
+	widget->painter().drawText(x, y, tempc1, 49);
 	widget->unlock();
 	widget->setRasterOp(old);
 
