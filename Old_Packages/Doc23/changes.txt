@@ -1,3 +1,6 @@
+2.47    (20 Mar 2002)
+- added Tag classes used for number type traits
+
 2.46    (20 Mar 2002)
 - updated number type concepts
 
