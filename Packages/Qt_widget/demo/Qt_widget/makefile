@@ -46,10 +46,8 @@ all:
 $(DEMO_SUBDIRS):
 	cd $@ && make
 
-#	for dir in ${DEMO_SUBDIRS}; do make -C $$dir; done
-
 clean:
-	for dir in ${DEMO_SUBDIRS}; do make -C $$dir clean; done
+	for dir in ${DEMO_SUBDIRS}; do (cd $$dir && make clean); done
 
 #---------------------------------------------------------------------#
 #                    suffix rules
