@@ -9,13 +9,15 @@
 #include <CGAL/Cartesian.h>
 //#include <CGAL/config.h>
 
-#include <CGAL/leda_real.h>
-#include <CGAL/leda_rational.h>
+//#include <CGAL/leda_real.h>
+//#include <CGAL/leda_rational.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Pm_segment_exact_traits.h>
-#include <CGAL/Pm_leda_segment_exact_traits.h>
+//#include <CGAL/Pm_leda_segment_exact_traits.h>
 
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
@@ -279,7 +281,8 @@ public:
 
 CGAL_END_NAMESPACE         
 
-typedef leda_rational                NT;
+typedef CGAL::Quotient<CGAL::MP_Float>      NT;
+//typedef leda_rational                NT;
 typedef CGAL::Cartesian<NT>          R;
 typedef CGAL::Pm_segment_exact_traits<R>    Traits;
 //typedef CGAL::Pm_leda_segment_exact_traits  Traits;
