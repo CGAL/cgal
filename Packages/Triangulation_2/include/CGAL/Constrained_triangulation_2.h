@@ -58,7 +58,7 @@ public:
 
   //nouveau 
   class Less_edge;
-  typedef set<Edge,Less_edge> Edge_set;
+  typedef std::set<Edge,Less_edge> Edge_set;
   //nouveau
 
   Constrained_triangulation_2(const Gt& gt=Gt()) : Triangulation() { }
@@ -106,7 +106,7 @@ public:
 		   faces_to_be_removed, List_edges & new_edges);
 
 
-   class Less_edge : binary_function<Edge, Edge, bool>
+   class Less_edge : std::binary_function<Edge, Edge, bool>
     {
     public:
       Less_edge() {}
@@ -664,47 +664,9 @@ file_output(std::ostream& os) const
 }
 
 template < class Gt, class Tds >
-ostream &
-operator<<(ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
+std::ostream &
+operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
 {
-  //os << (Triangulation_2<Gt, Tds>) Ct;
-
- //  typename Constrained_triangulation_2<Gt, Tds>::Face_iterator
-//     it = Ct.faces_begin();
-//   while(it != Ct.faces_end()){
-//     for(int j = 0; j < 3; j++){
-//       if (it->is_constrained(j)) {os << "C " ;}
-//       else { os << "N ";}
-//       if(is_ascii(os)){
-// 	if(j==2) {
-// 	  os << "\n";
-// 	} else {
-// 	  os <<  ' ';
-// 	}
-//       }
-//     }
-//     ++it;
-//   }
-
-// typename Constrained_triangulation_2<Gt, Tds>::Face_circulator
-// fc = Ct.infinite_vertex()->incident_faces(),
-//   done(fc);
-
-// do{
-//   for(int j = 0; j < 3; j++){
-//     if (fc->is_constrained(j)) { os << "C ";}
-//     else { os << "N ";}
-//     if(is_ascii(os)){
-//       if(j==2) {
-// 	os << "\n";
-//       } else {
-// 	os <<  ' ';
-//       }
-//     }
-//   }
-// }while(++fc != done);
-
-
   Ct.file_output(os);
   return os ;
 }

@@ -232,14 +232,14 @@ is_valid(bool verbose, int level) const
 	           power_test(it->neighbor(i), it->vertex(i)->point());
       if (!result)
       {
-        cerr << "face : " << (void*)&(*it)<< "  " 
-	     <<"["<< it->vertex(0)->point()
-	     <<"/"<< it->vertex(1)->point()
-	     <<"/"<< it->vertex(2)->point()<<"]"<< std::endl
-             << "voisin : " << (void*)&(*(it->neighbor(i)))<< "  "
-	     <<"["<<(it->neighbor(i))->vertex(0)->point()
-	     <<"/"<<(it->neighbor(i))->vertex(1)->point()
-	     <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" << std::endl;
+        std::cerr << "face : " << (void*)&(*it)<< "  " 
+		  <<"["<< it->vertex(0)->point()
+		  <<"/"<< it->vertex(1)->point()
+		  <<"/"<< it->vertex(2)->point()<<"]"<< std::endl
+		  << "voisin : " << (void*)&(*(it->neighbor(i)))<< "  "
+		  <<"["<<(it->neighbor(i))->vertex(0)->point()
+		  <<"/"<<(it->neighbor(i))->vertex(1)->point()
+		  <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" << std::endl;
       }
       CGAL_triangulation_assertion(result);
     }
@@ -252,11 +252,11 @@ is_valid(bool verbose, int level) const
     	
       if (!result)
       {
-	cerr << "face : " << (void*)&(*it)<< "  " 
-	     <<"["<< it->vertex(0)->point()
-	     <<"/"<< it->vertex(1)->point()
-	     <<"/"<< it->vertex(2)->point()<<"]"	<< std::endl
-	     << "hidden point : " << *plit << std::endl;
+	std::cerr << "face : " << (void*)&(*it)<< "  " 
+		  <<"["<< it->vertex(0)->point()
+		  <<"/"<< it->vertex(1)->point()
+		  <<"/"<< it->vertex(2)->point()<<"]"	<< std::endl
+		  << "hidden point : " << *plit << std::endl;
       }
       CGAL_triangulation_assertion(result); 
     }
