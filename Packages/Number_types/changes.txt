@@ -1,3 +1,6 @@
+4.40	 (21 December 01)
+- VC++ 7 support.
+
 4.39	 (19 December 01)
 - Define CGAL_PI, since there's no standard macro for Pi (M_PI is not).
 

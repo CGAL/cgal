@@ -41,7 +41,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_USING_USING_BUG
+#if !defined CGAL_CFG_USING_USING_BUG && !defined CGAL_CFG_RETURN_TYPE_BUG
 
 using std::min;
 using std::max;
@@ -62,7 +62,7 @@ NT
 max(const NT& x, const NT& y)
 { return (x < y) ? y : x; }
 
-#endif // CGAL_CFG_USING_USING_BUG
+#endif
 
 CGAL_END_NAMESPACE
 
