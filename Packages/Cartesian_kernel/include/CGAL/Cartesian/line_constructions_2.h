@@ -30,45 +30,45 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-line_from_points( PointC2<R CGAL_CTAG> const& p,
-                  PointC2<R CGAL_CTAG> const& q)
+line_from_points(const PointC2<R CGAL_CTAG> &p,
+                 const PointC2<R CGAL_CTAG> &q)
 {
-  typename R::FT a,b,c;
-  line_from_pointsC2(p.x(),p.y(),q.x(),q.y(),a,b,c);
-  return LineC2<R CGAL_CTAG>(a,b,c);
+  typename R::FT a, b, c;
+  line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
+  return LineC2<R CGAL_CTAG>(a, b, c);
 }
 
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-line_from_point_direction( PointC2<R CGAL_CTAG> const& p,
-                           DirectionC2<R CGAL_CTAG> const& d)
+line_from_point_direction(const PointC2<R CGAL_CTAG> &p,
+                          const DirectionC2<R CGAL_CTAG> &d)
 {
-  typename R::FT a,b,c;
-  line_from_point_directionC2(p.x(),p.y(),d.dx(),d.dy(),a,b,c);
-  return LineC2<R CGAL_CTAG>(a,b,c);
+  typename R::FT a, b, c;
+  line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, c);
+  return LineC2<R CGAL_CTAG>(a, b, c);
 }
 
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-bisector( PointC2<R CGAL_CTAG> const& p,
-          PointC2<R CGAL_CTAG> const& q)
+bisector(const PointC2<R CGAL_CTAG> &p,
+         const PointC2<R CGAL_CTAG> &q)
 {
-  typename R::FT a,b,c;
-  bisector_of_pointsC2(p.x(),p.y(),q.x(),q.y(),a,b,c);
-  return LineC2<R CGAL_CTAG>(a,b,c);
+  typename R::FT a, b, c;
+  bisector_of_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, c);
+  return LineC2<R CGAL_CTAG>(a, b, c);
 }
 
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-perpendicular_through_point( LineC2<R CGAL_CTAG> const& l,
-                             PointC2<R CGAL_CTAG> const& p)
+perpendicular_through_point(const LineC2<R CGAL_CTAG> &l,
+                            const PointC2<R CGAL_CTAG> &p)
 {
-  typename R::FT a,b,c;
-  perpendicular_through_pointC2(l.a(),l.b(),p.x(),p.y(),a,b,c);
-  return LineC2<R CGAL_CTAG>(a,b,c);
+  typename R::FT a, b, c;
+  perpendicular_through_pointC2(l.a(), l.b(), p.x(), p.y(), a, b, c);
+  return LineC2<R CGAL_CTAG>(a, b, c);
 }
 
 CGAL_END_NAMESPACE

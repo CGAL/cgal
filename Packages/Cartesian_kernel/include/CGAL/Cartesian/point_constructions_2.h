@@ -30,45 +30,45 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 PointC2<R CGAL_CTAG>
-midpoint( PointC2<R CGAL_CTAG> const& p,
-          PointC2<R CGAL_CTAG> const& q )
+midpoint(const PointC2<R CGAL_CTAG> &p,
+         const PointC2<R CGAL_CTAG> &q )
 {
-  typename R::FT x,y;
-  midpointC2(p.x(),p.y(),q.x(),q.y(),x,y);
-  return PointC2<R CGAL_CTAG>(x,y);
+  typename R::FT x, y;
+  midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
+  return PointC2<R CGAL_CTAG>(x, y);
 }
 
 template < class R >
 inline
 PointC2<R CGAL_CTAG>
-circumcenter( PointC2<R CGAL_CTAG> const& p,
-              PointC2<R CGAL_CTAG> const& q,
-              PointC2<R CGAL_CTAG> const& r)
+circumcenter(const PointC2<R CGAL_CTAG> &p,
+             const PointC2<R CGAL_CTAG> &q,
+             const PointC2<R CGAL_CTAG> &r)
 {
-  typename R::FT x,y;
-  circumcenterC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),x,y);
-  return PointC2<R CGAL_CTAG>(x,y);
+  typename R::FT x, y;
+  circumcenterC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), x, y);
+  return PointC2<R CGAL_CTAG>(x, y);
 }
 
 template < class R >
 inline
 PointC2<R>
-line_get_point( LineC2<R CGAL_CTAG> const& l, int i)
+line_get_point(const LineC2<R CGAL_CTAG> &l, int i)
 {
   typename R::FT x, y;
   line_get_pointC2(l.a(), l.b(), l.c(), i, x, y);
-  return PointC2<R>(x,y);
+  return PointC2<R>(x, y);
 }
 
 template < class R >
 inline
 PointC2<R>
-line_project_point( LineC2<R CGAL_CTAG> const& l,
-                    PointC2<R CGAL_CTAG> const& p)
+line_project_point(const LineC2<R CGAL_CTAG> &l,
+                   const PointC2<R CGAL_CTAG> &p)
 {
   typename R::FT x, y;
   line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
-  return PointC2<R>(x,y);
+  return PointC2<R>(x, y);
 }
 
 CGAL_END_NAMESPACE

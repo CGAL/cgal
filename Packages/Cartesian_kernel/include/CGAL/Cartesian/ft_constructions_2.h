@@ -29,36 +29,35 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 inline
 typename R::FT
-squared_distance( PointC2<R CGAL_CTAG> const& p,
-                  PointC2<R CGAL_CTAG> const& q)
+squared_distance(const PointC2<R CGAL_CTAG> &p,
+                 const PointC2<R CGAL_CTAG> &q)
 {
-  return squared_distanceC2(p.x(),p.y(),q.x(),q.y());
+  return squared_distanceC2(p.x(), p.y(), q.x(), q.y());
 }
 
 template < class R >
 inline
 typename R::FT
-scaled_distance_to_line( LineC2<R CGAL_CTAG> const& l,
-                         PointC2<R CGAL_CTAG> const& p)
+scaled_distance_to_line(const LineC2<R CGAL_CTAG> &l,
+                        const PointC2<R CGAL_CTAG> &p)
 {
-  return scaled_distance_to_lineC2(l.a(),l.b(),l.c(),p.x(),p.y());
+  return scaled_distance_to_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
 }
 
 template < class R >
 inline
 typename R::FT
-scaled_distance_to_line( PointC2<R CGAL_CTAG> const& p,
-                         PointC2<R CGAL_CTAG> const& q,
-                         PointC2<R CGAL_CTAG> const& r)
+scaled_distance_to_line(const PointC2<R CGAL_CTAG> &p,
+                        const PointC2<R CGAL_CTAG> &q,
+                        const PointC2<R CGAL_CTAG> &r)
 {
-  return scaled_distance_to_lineC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+  return scaled_distance_to_lineC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template < class R >
 inline
 typename R::FT
-line_y_at_x( LineC2<R CGAL_CTAG> const& l,
-             typename R::FT const& x)
+line_y_at_x(const LineC2<R CGAL_CTAG> &l, const typename R::FT &x)
 {
   return line_y_at_xC2(l.a(), l.b(), l.c(), x);
 }
@@ -66,8 +65,7 @@ line_y_at_x( LineC2<R CGAL_CTAG> const& l,
 template < class R >
 inline
 typename R::FT
-line_x_at_y( LineC2<R CGAL_CTAG> const& l,
-             typename R::FT const& y)
+line_x_at_y(const LineC2<R CGAL_CTAG> &l, const typename R::FT &y)
 {
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }

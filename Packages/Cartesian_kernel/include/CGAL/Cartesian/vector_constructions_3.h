@@ -30,12 +30,12 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 VectorC3<R CGAL_CTAG>
-cross_product(const VectorC3<R CGAL_CTAG>& v,
-              const VectorC3<R CGAL_CTAG>& w)
+cross_product(const VectorC3<R CGAL_CTAG> &v,
+              const VectorC3<R CGAL_CTAG> &w)
 {
-    return VectorC3<R CGAL_CTAG>( v.y() * w.z() - v.z() * w.y() ,
-                         v.z() * w.x() - v.x() * w.z() ,
-                         v.x() * w.y() - v.y() * w.x() );
+    return VectorC3<R CGAL_CTAG>(v.y() * w.z() - v.z() * w.y(),
+                                 v.z() * w.x() - v.x() * w.z(),
+                                 v.x() * w.y() - v.y() * w.x());
 }
 
 CGAL_END_NAMESPACE

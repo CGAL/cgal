@@ -36,7 +36,7 @@ typename R::FT
 squared_distance(const PointC3<R CGAL_CTAG> &p,
                  const PointC3<R CGAL_CTAG> &q)
 {
-  return squared_distanceC3(p.x(),p.y(),p.z(),q.x(),q.y(),q.z());
+  return squared_distanceC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z());
 }
 
 template < class R >
@@ -45,8 +45,8 @@ typename R::FT
 scaled_distance_to_plane(const PlaneC3<R CGAL_CTAG> &h,
                          const PointC3<R CGAL_CTAG> &p)
 {
-  return scaled_distance_to_planeC3(h.a(),h.b(),h.c(),h.d(),
-                                    p.x(),p.y(),p.z());
+  return scaled_distance_to_planeC3(h.a(), h.b(), h.c(), h.d(),
+                                    p.x(), p.y(), p.z());
 }
 
 template < class R >
@@ -57,10 +57,10 @@ scaled_distance_to_plane(const PointC3<R CGAL_CTAG> &hp,
                          const PointC3<R CGAL_CTAG> &hr,
                          const PointC3<R CGAL_CTAG> &p)
 {
-  return scaled_distance_to_planeC3(hp.x(),hp.y(),hp.z(),
-                                    hq.x(),hq.y(),hq.z(),
-                                    hr.x(),hr.y(),hr.z(),
-                                    p.x(),p.y(),p.z());
+  return scaled_distance_to_planeC3(hp.x(), hp.y(), hp.z(),
+                                    hq.x(), hq.y(), hq.z(),
+                                    hr.x(), hr.y(), hr.z(),
+                                    p.x(), p.y(), p.z());
 }
 
 CGAL_END_NAMESPACE
