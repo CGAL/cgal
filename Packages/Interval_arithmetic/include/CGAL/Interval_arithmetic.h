@@ -467,6 +467,7 @@ inline
 Interval_base
 to_interval (const long & l)
 {
+#ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
   if (sizeof(double) > sizeof(long)) {
     // On 64bit platforms, a long doesn't fit exactly in a double.
     // Well, a perfect fix would be to use std::numeric_limits<>, but...
@@ -476,6 +477,7 @@ to_interval (const long & l)
     return approx + Interval_nt_advanced(Interval_base::Smallest);
   }
   else
+#endif
     return Interval_base(double(l));
 }
 
