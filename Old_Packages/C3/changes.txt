@@ -1,4 +1,4 @@
-Version 5.0 (?? ???? 2000)
+Version 5.0 (1 August 2000)
 - Added a new construction circumcenterC3(3 points). [syl]
 - Minor cleanups. [syl]
 
