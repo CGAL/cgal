@@ -13,6 +13,7 @@ my $nameLength = 32;
 my $home = $ENV{HOME};
 $home =~ s/\\/\//g;			# replace '\' with '/';
 my $logDir = $home . '/logs';
+$logDir =~ s/\/+/\//g;			# replace '//.../' with '/';
 
 my $root = $ENV{ROOT};
 my $benchDir = $root . '/bench';
@@ -333,7 +334,8 @@ exit(0);
 ################
 sub usage {
   printf "Usage: cgalBenchAnalyze [options]\n";
-printf "  -help\t\t\tprint this help message
+printf "  -databaseFile <file>\tset database xml file to <file>
+  -help\t\t\tprint this help message
   -root <root>\t\tset ROOT. Default \$ROOT (env. var.)
   -logDir <dir>\t\tset log directory. Default is $logDir
   -logFile <file>\tset log file.
@@ -379,14 +381,14 @@ sub benchDuration {
 sub findLogFile {
   my ($logDir) = @_;
   opendir LOGDIR, $logDir or die "serious braindamage: $logDir $!";
-  @logFiles = grep /cgalBench/, readdir LOGDIR;
+  @logFiles = grep /bcgal/, readdir LOGDIR;
   closedir LOGDIR;
   $day = 0;
   $month = 0;
   $year = 0;
   foreach $newLogFile (@logFiles) {
       $date = $newLogFile;
-      $date =~ s/cgalBench_(.*)%.*/$1/;
+      $date =~ s/bcgal_(.*)%.*/$1/;
       $newDay = substr($date, 0, 2);
       $newMonth = substr($date, 2, 2);
       $newYear = substr($date, 4, 2);
