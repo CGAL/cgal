@@ -451,7 +451,7 @@ void Qt_widget::redraw()
 
 } // namespace CGAL
 
-CGAL_MOC_FROM("../../include/CGAL/IO/Qt_widget.h")
+//CGAL_MOC_FROM("../../include/CGAL/IO/Qt_widget.h")
 #include "Qt_widget.moc"
 
 #endif
