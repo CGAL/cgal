@@ -136,9 +136,12 @@ public:
     CGAL_triangulation_precondition(v != NULL);
     Vertex* v0 = vertex(0);
     Vertex* v2 = vertex(2);
+    Vertex* v1 =vertex(1);
     
-    Face* ccwptr = neighbor(ccw(0));
-    Face* cwptr  = neighbor(cw(0));
+    Face* f1 = neighbor(1);
+    Face* f2 = neighbor(2);
+    int i1 = cw(f1->index(vertex(cw(1))));
+    int i2 = cw(f2->index(vertex(cw(2))));
     
     int ccwi, cwi;
     if(ccwptr != NULL) {
@@ -149,34 +152,25 @@ public:
     }
     
     Face* n1ptr = new Face(v0, v, v2,
-			   this, ccwptr, NULL);
+			   this, f1, NULL);
     
-    Face* n2ptr = new Face(v0, vertex(1), v,
-			   this, n1ptr, cwptr);
-    
-    if( (v0 != NULL) && (v0->face() == this) ) {
-      v0->set_face(n2ptr);
-    }
-    
-    if( (v2 != NULL) && (v2->face() == this) ) {
-      v2->set_face(n1ptr);
-    }
-    
+    Face* n2ptr = new Face(v0, v1, v,
+			   this, NULL, f2);
+
+    n1ptr->set_neighbor(2, n2ptr);
+    n2ptr->set_neighbor(1, n1ptr);
+    f1->set_neighbor(i1,n1ptr);
+    f2->set_neighbor(i2,n1ptr);
+
     set_vertex(0, v);
-    v->set_face(this);
-    
-    // here come the missing links
     set_neighbor(1, n1ptr);
     set_neighbor(2, n2ptr);
-    n1ptr->set_neighbor(2, n2ptr);
-    
-    if(ccwptr != NULL) {
-      ccwptr->set_neighbor(ccwi, n1ptr);
+
+    if( v0->face ==this  ) {
+      v0->set_face(n2ptr);
     }
-    if(cwptr != NULL) {
-      cwptr->set_neighbor(cwi, n2ptr);
-    }
-  }
+     v->set_face(this);
+   }
     
   void insert_on_edge(const Vertex* v, int i)
   {
