@@ -125,7 +125,7 @@ sub check_and_update_2($$$$$)
     print TEMPFILE "//\n";
     $_ = <SOURCE_FILE>;
     $_ = <SOURCE_FILE> while (m|^\s*//\s*$|);
-    if ($_ !~ m<^\s*//\s*Copyright\s*\(c\)\s*\d{4}(,\s?\d{4})*\s+(t|T)he CGAL Consortium\s*$> ) {
+    if ($_ !~ m<^\s*//\s*Copyright\s*\(c\)\s*\d{4}([-,]\s?\d{4})*\s+(t|T)he CGAL Consortium\s*$> ) {
 	print FILE_CHECKS "$filename has no valid copyright notice.\n";
 	return 0;
     }
