@@ -47,7 +47,7 @@ Object
 intersection(const Point_2<R> &pt, const Line_2<R> &line)
 {
     if (do_intersect(pt,line)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -66,7 +66,7 @@ inline Object
 intersection(const Line_2<R> &line, const Point_2<R> &pt)
 {
     if (do_intersect(pt,line)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }

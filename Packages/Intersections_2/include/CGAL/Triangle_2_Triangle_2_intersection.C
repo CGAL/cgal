@@ -430,17 +430,17 @@ intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     case is_t::TRIANGLE: {
         Triangle_2<R> itr;
         ispair.intersection(itr);
-        return Object(new Wrapper< Triangle_2<R> >(itr));
+        return make_object(itr);
     }
     case is_t::POLYGON: {
         typedef CGAL_STD::vector<Point_2<R> > Container;
@@ -448,7 +448,7 @@ intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2)
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        return Object(new Wrapper< Container >(points));
+        return make_object(points);
     }
     }
 }

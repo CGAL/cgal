@@ -46,7 +46,7 @@ Object
 intersection(const Point_2<R> &pt1, const Point_2<R> &pt2)
 {
     if (pt1 == pt2) {
-        return Object(new Wrapper< Point_2<R> >(pt1));
+        return make_object(pt1);
     }
     return Object();
 }

@@ -263,12 +263,12 @@ intersection(const Line_2<R> &line, const Iso_rectangle_2<R>&iso)
     case is_t::POINT: {
         Point_2<R> ipt;
         ispair.intersection(ipt);
-        return Object(new Wrapper< Point_2<R> >(ipt));
+        return make_object(ipt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     }
 }

@@ -51,7 +51,7 @@ intersection(
     const Iso_rectangle_2<R> &iso)
 {
     if (do_intersect(pt,iso)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -73,7 +73,7 @@ intersection(
     const Point_2<R> &pt)
 {
     if (do_intersect(pt, iso)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }

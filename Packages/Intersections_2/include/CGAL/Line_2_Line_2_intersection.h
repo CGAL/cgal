@@ -122,10 +122,10 @@ intersection(const Line_2<R> &line1, const Line_2<R> &line2)
     case is_t::POINT: {
         Point_2<R> pt;
         linepair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::LINE:
-        return Object(new Wrapper< Line_2<R> >(line1));
+        return make_object(line1);
     }
 }
 

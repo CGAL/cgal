@@ -199,7 +199,7 @@ intersection(const Point_2<R> &pt, const Triangle_2<R>&tr)
     default:
         return Object();
     case is_t::POINT: {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     }
 }

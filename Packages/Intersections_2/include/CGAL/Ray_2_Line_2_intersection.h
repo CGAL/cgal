@@ -109,10 +109,10 @@ intersection(const Ray_2<R> &ray, const Line_2<R>&line)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::RAY: {
-        return Object(new Wrapper< Ray_2<R> >(ray));
+        return make_object(ray);
     }
     }
 }

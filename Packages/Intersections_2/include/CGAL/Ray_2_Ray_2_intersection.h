@@ -399,17 +399,17 @@ intersection(const Ray_2<R> &ray1, const Ray_2<R>&ray2)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     case is_t::RAY: {
         Segment_2<R> iray;
         ispair.intersection(iray);
-        return Object(new Wrapper< Segment_2<R> >(iray));
+        return make_object(iray);
     }
     }
 }

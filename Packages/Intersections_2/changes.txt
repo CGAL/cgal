@@ -1,3 +1,6 @@
+2.11 (9 October 2001)
+Replaced explicit constructions of Object by make_object
+
 2.10.2 (8 October 2001)
 Added some more 'typename' keywords to shut up warnings.
 

@@ -109,10 +109,10 @@ intersection(const Segment_2<R> &seg, const Line_2<R> &line)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT:
-        return Object(new Wrapper< Segment_2<R> >(seg));
+        return make_object(seg);
     }
 }
 

@@ -616,10 +616,10 @@ intersection(const Line_2<R> &line1, const Line_2<R> &line2)
     case is_t::POINT: {
         Point_2<R> pt;
         linepair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::LINE:
-        return Object(new Wrapper< Line_2<R> >(line1));
+        return make_object(line1);
     }
 }
 
@@ -858,10 +858,10 @@ intersection(const Segment_2<R> &seg, const Line_2<R> &line)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT:
-        return Object(new Wrapper< Segment_2<R> >(seg));
+        return make_object(seg);
     }
 }
 
@@ -1044,12 +1044,12 @@ intersection(const Segment_2<R> &seg1, const Segment_2<R>&seg2)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     }
 }
@@ -1443,10 +1443,10 @@ intersection(const Ray_2<R> &ray, const Line_2<R>&line)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::RAY: {
-        return Object(new Wrapper< Ray_2<R> >(ray));
+        return make_object(ray);
     }
     }
 }
@@ -1636,12 +1636,12 @@ intersection(const Ray_2<R> &ray, const Segment_2<R>&seg)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     }
 }
@@ -1904,17 +1904,17 @@ intersection(const Ray_2<R> &ray1, const Ray_2<R>&ray2)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     case is_t::RAY: {
         Segment_2<R> iray;
         ispair.intersection(iray);
-        return Object(new Wrapper< Segment_2<R> >(iray));
+        return make_object(iray);
     }
     }
 }
@@ -2136,7 +2136,7 @@ Object
 intersection(const Point_2<R> &pt, const Line_2<R> &line)
 {
     if (do_intersect(pt,line)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2155,7 +2155,7 @@ inline Object
 intersection(const Line_2<R> &line, const Point_2<R> &pt)
 {
     if (do_intersect(pt,line)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2210,7 +2210,7 @@ Object
 intersection(const Point_2<R> &pt, const Ray_2<R> &ray)
 {
     if (do_intersect(pt,ray)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2229,7 +2229,7 @@ inline Object
 intersection(const Ray_2<R> &ray, const Point_2<R> &pt)
 {
     if (do_intersect(pt,ray)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2283,7 +2283,7 @@ Object
 intersection(const Point_2<R> &pt, const Segment_2<R> &seg)
 {
     if (do_intersect(pt,seg)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2302,7 +2302,7 @@ inline Object
 intersection(const Segment_2<R> &seg, const Point_2<R> &pt)
 {
     if (do_intersect(pt,seg)) {
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     return Object();
 }
@@ -2347,7 +2347,7 @@ Object
 intersection(const Point_2<R> &pt1, const Point_2<R> &pt2)
 {
     if (pt1 == pt2) {
-        return Object(new Wrapper< Point_2<R> >(pt1));
+        return make_object(pt1);
     }
     return Object();
 }

@@ -240,12 +240,12 @@ intersection(const Segment_2<R> &seg, const Triangle_2<R>&tr)
     case is_t::POINT: {
         Point_2<R> pt;
         ispair.intersection(pt);
-        return Object(new Wrapper< Point_2<R> >(pt));
+        return make_object(pt);
     }
     case is_t::SEGMENT: {
         Segment_2<R> iseg;
         ispair.intersection(iseg);
-        return Object(new Wrapper< Segment_2<R> >(iseg));
+        return make_object(iseg);
     }
     }
 }
