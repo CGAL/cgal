@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<bench>
+<bench name_length="64" header="false">
   <file name="eurcut.dat" format="rat" curves="3099"
     vertices="3078" halfedges="6198" faces="39"></file>
   <file name="fork0505_mc.seg.rand.dat" format="rat" curves="12834"
@@ -17,37 +17,37 @@
   <file name="random_segments_100_x.dat" format="int" curves="100"
     vertices="1129" halfedges="3916" faces="831"></file>
 
-  <benchPm file="eurcut.dat" samples="10" name_length="64"></benchPm>
-  <bench samples="10" header="false" name_length="64" enable="true">
+  <bench samples="10" enable="true">
+    <benchPm file="eurcut.dat" header="true"></benchPm>
     <benchPmMyKernel file="eurcut.dat"></benchPmMyKernel>
     <benchPmLedaKernel file="eurcut.dat"></benchPmLedaKernel>
   </bench>
   
-  <bench samples="5" header="false" name_length="64" enable="true">
+  <bench samples="5" enable="true">
     <benchPm file="fork0505_mc.seg.rand.dat"></benchPm>
     <benchPmMyKernel file="fork0505_mc.seg.rand.dat"></benchPmMyKernel>
     <benchPmLedaKernel file="fork0505_mc.seg.rand.dat"></benchPmLedaKernel>
   </bench>
   
-  <bench samples="10" header="false" name_length="64" enable="true">
+  <bench samples="10" enable="true">
     <benchPm file="polygon_100.dat"></benchPm>
     <benchPmMyKernel file="polygon_100.dat"></benchPmMyKernel>
     <benchPmLedaKernel file="polygon_100.dat"></benchPmLedaKernel>
   </bench>
     
-  <bench samples="1" header="false" name_length="64" enable="true">
+  <bench samples="1" enable="true">
     <benchPm file="world.seg.cut.rand.dat" samples="2"></benchPm>
     <benchPmMyKernel file="world.seg.cut.rand.dat" samples="2"></benchPmMyKernel>
     <benchPmLedaKernel file="world.seg.cut.rand.dat" samples="2"></benchPmLedaKernel>
   </bench>
     
-  <bench samples="10" header="false" name_length="64" enable="true">
+  <bench samples="10" enable="true">
     <benchPm file="onebig_100.dat"></benchPm>
     <benchPmMyKernel file="onebig_100.dat"></benchPmMyKernel>
     <benchPmLedaKernel file="onebig_100.dat"></benchPmLedaKernel>
   </bench>
   
-  <bench samples="10" header="false" name_length="64" enable="true">
+  <bench samples="10" enable="true">
     <benchPm file="random_segments_100.dat"></benchPm>
     <benchPmMyKernel file="random_segments_100.dat"></benchPmMyKernel>
     <benchPmLedaKernel file="random_segments_100.dat"></benchPmLedaKernel>
