@@ -54,11 +54,7 @@ object have been received you have to use CGAL::assign. If you are
 already familiar with CGAL this will be a piece of cake to you.
 
 You can insert new points in the triangulation by clicking on the
-widget. You can notice that after the first use of the standard
-toolbar, you cannot insert more points in the triangulation. It's
-because some tools from standard toolbar detach the current tool
-before attaching. Due to the conflicts that may appear, it is
-preferable to do it this way.
+widget. When you use the Standard toolbar, your already attached tool will be put on waiting state, till you finish working with it. For example if you click on hand tool, and you use it, then you click once again for detaching it, your attached tool will receive the focus being brought to life.
 
 It is written in the documentation that when a new tool is attached to the
 Qt_widget, the last tool attached, is detached. Two tools will

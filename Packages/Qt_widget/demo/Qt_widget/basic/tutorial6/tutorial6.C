@@ -7,6 +7,7 @@
 #include <qmainwindow.h>
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 
