@@ -1,3 +1,6 @@
+21 Feb 2004 Sylvain Pion
+- Add swap() to Quotient and MP_Float.
+
 13 Feb 2004 Sylvain Pion
 - Remove traces of CLN.
 

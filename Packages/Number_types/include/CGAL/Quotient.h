@@ -93,11 +93,24 @@ class Quotient
   const NT&   numerator()   const { return num; }
   const NT&   denominator() const { return den; }
 
+  void swap(Quotient &q)
+  {
+    using std::swap;
+    swap(num, q.num);
+    swap(den, q.den);
+  }
+
  public:
   NT   num;
   NT   den;
 };
 
+template <class NT>
+inline
+void swap(Quotient<NT> &p, Quotient<NT> &q)
+{
+  p.swap(q);
+}
 
 template <class NT>
 Quotient<NT>

@@ -29,6 +29,7 @@
 #include <CGAL/Quotient.h>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 // MP_Float : multiprecision scaled integers.
 
@@ -184,9 +185,19 @@ public:
     return NEGATIVE;
   }
 
+  void swap(MP_Float &m)
+  {
+    std::swap(v, m.v);
+    std::swap(exp, m.exp);
+  }
+
   V v;
   int exp;
 };
+
+inline
+void swap(MP_Float &m, MP_Float &n)
+{ return m.swap(n); }
 
 inline
 bool operator<(const MP_Float &a, const MP_Float &b)
