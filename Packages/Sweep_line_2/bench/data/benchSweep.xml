@@ -3,8 +3,8 @@
 
   <class name="cls111" key="segs"/>
   <class name="cls112" key="segs"/>
-  <class name="cls121" key="Tight"/>
-  <class name="cls122" key="Tight"/>
+  <class name="cls121" key="Old Sweep"/>
+  <class name="cls122" key="Old Sweep"/>
 
   <clo name="format" string="-If="></clo> 
   <clo name="samples" string="-s"/> 
@@ -42,47 +42,47 @@
 
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="eurcut.dat" header="true"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="eurcut.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="eurcut.dat"></benchSweepLDSegmentsOld>
   </bench>
 
   <bench samples="2" enable="true">
     <benchSweepLDSegments file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="fork0505_mc.seg.rand.dat"></benchSweepLDSegmentsOld>
   </bench>
   
   <bench samples="10" enable="true">
     <benchSweepLDSegments file="polygon_100.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="polygon_100.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="polygon_100.dat"></benchSweepLDSegmentsOld>
   </bench>
   
   <bench samples="1" enable="true">
     <benchSweepLDSegments file="world.seg.cut.rand.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="world.seg.cut.rand.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="world.seg.cut.rand.dat"></benchSweepLDSegmentsOld>
   </bench>
   
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="onebig_100.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="onebig_100.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="onebig_100.dat"></benchSweepLDSegmentsOld>
   </bench>
     
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="random_segments_100.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="random_segments_100.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="random_segments_100.dat"></benchSweepLDSegmentsOld>
   </bench>
 
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="onebig_100_x.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="onebig_100_x.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="onebig_100_x.dat"></benchSweepLDSegmentsOld>
   </bench>
 
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="random_segments_100_x.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="random_segments_100_x.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="random_segments_100_x.dat"></benchSweepLDSegmentsOld>
   </bench>
 
   <bench samples="2" enable="true">
     <benchSweepLDSegments file="random_segments_500.dat"></benchSweepLDSegments>
-    <benchSweepLDSegments_fast file="random_segments_500.dat"></benchSweepLDSegments_fast>
+    <benchSweepLDSegmentsOld file="random_segments_500.dat"></benchSweepLDSegmentsOld>
   </bench>
 
 </bench>

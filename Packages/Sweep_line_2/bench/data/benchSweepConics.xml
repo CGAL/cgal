@@ -3,8 +3,8 @@
 
   <class name="cls111" key="conics"/>
   <class name="cls112" key="conics"/>
-  <class name="cls121" key="Tight"/>
-  <class name="cls122" key="Tight"/>
+  <class name="cls121" key="Old Sweep"/>
+  <class name="cls122" key="Old Sweep"/>
 
   <clo name="format" string="-If="/> 
   <clo name="samples" string="-s"/> 
@@ -74,78 +74,78 @@
 
   <bench samples="10" enable="true">
     <benchSweepConics file="big_clover2.txt" header="true"></benchSweepConics>
-    <benchSweepConics_fast file="big_clover2.txt"></benchSweepConics_fast>
+    <benchSweepConicsOld file="big_clover2.txt"></benchSweepConicsOld>
   </bench>
   <bench samples="10" enable="true">
     <benchSweepConics file="big_clover.txt"></benchSweepConics>
-    <benchSweepConics_fast file="big_clover.txt"></benchSweepConics_fast>
+    <benchSweepConicsOld file="big_clover.txt"></benchSweepConicsOld>
   </bench>
   <bench samples="1" enable="true">
     <benchSweepConics file="box_25_16_org_big.txt"></benchSweepConics>
-    <benchSweepConics_fast file="box_25_16_org_big.txt"></benchSweepConics_fast>
+    <benchSweepConicsOld file="box_25_16_org_big.txt"></benchSweepConicsOld>
   </bench>
   <!--
   <bench samples="1" enable="true">
-    <benchSweepConics file="box_25_16_per_sml.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="box_25_16_per_sml.txt"></benchSweepConics_fast>
+    <benchSweepConics file="box_25_16_per_sml.txt"></benchSweepConics>
+    <benchSweepConicsOld file="box_25_16_per_sml.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="1" enable="true">
     <benchSweepConics file="cgal_logo_460.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="cgal_logo_460.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="cgal_logo_460.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="1" enable="true">
     <benchSweepConics file="cgal_logo_segs.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="cgal_logo_segs.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="cgal_logo_segs.txt" ></benchSweepConicsOld>
   </bench>
   -->
   <bench samples="1" enable="true">
     <benchSweepConics file="circles_21.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="circles_21.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="circles_21.txt" ></benchSweepConicsOld>
   </bench>
   <!--
   <bench samples="1" enable="true">
     <benchSweepConics file="ellipses_20.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="ellipses_20.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="ellipses_20.txt" ></benchSweepConicsOld>
   </bench>
   -->
   <bench samples="1" enable="true">
     <benchSweepConics file="ellipses_2_int.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="ellipses_2_int.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="ellipses_2_int.txt" ></benchSweepConicsOld>
   </bench>
   <!--
   <bench samples="1" enable="true">
     <benchSweepConics file="ellipses_30.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="ellipses_30.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="ellipses_30.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="1" enable="true">
     <benchSweepConics file="hyper_ellip_18.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="hyper_ellip_18.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="hyper_ellip_18.txt" ></benchSweepConicsOld>
   </bench>
   -->
   <!--
   <bench samples="3" enable="true">
     <benchSweepConics file="mix_20.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="mix_20.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="mix_20.txt" ></benchSweepConicsOld>
   </bench>
   -->
   <bench samples="1" enable="true">
     <benchSweepConics file="mix_50.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="mix_50.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="mix_50.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="2" enable="true">
     <benchSweepConics file="rose_with_holes_14.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="rose_with_holes_14.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="rose_with_holes_14.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="10" enable="true">
     <benchSweepConics file="seg_ellipse_4.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="seg_ellipse_4.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="seg_ellipse_4.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="5" enable="true">
     <benchSweepConics file="tng_circs_8.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="tng_circs_8.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="tng_circs_8.txt" ></benchSweepConicsOld>
   </bench>
   <bench samples="5" enable="true">
     <benchSweepConics file="tng_ellipses_9.txt" ></benchSweepConics>
-    <benchSweepConics_fast file="tng_ellipses_9.txt" ></benchSweepConics_fast>
+    <benchSweepConicsOld file="tng_ellipses_9.txt" ></benchSweepConicsOld>
   </bench>
 </bench>

@@ -27,10 +27,10 @@ endif
 endif
 LOBJDIR :=$(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
-ifeq ($(USE_INSERT_FAST), 1)
-LCPPDEFS+= -DUSE_INSERT_FAST
-LOBJDIR :=$(LOBJDIR)_fast
-TARGET0 :=$(TARGET0)_fast
+ifeq ($(USE_INSERT_OLD), 1)
+LCPPDEFS+= -DUSE_INSERT_OLD
+LOBJDIR :=$(LOBJDIR)_old
+TARGET0 :=$(TARGET0)Old
 endif
 
 LCPPINCS = -I$(BASEDIR)/../../include
@@ -53,5 +53,5 @@ use_my_kernel:
 use_conic_traits:
 	$(MAKEF) "USE_CONIC_TRAITS=1"
 
-use_insert_fast:
-	$(MAKEF) "USE_INSERT_FAST=1"
+use_insert_old:
+	$(MAKEF) "USE_INSERT_OLD=1"

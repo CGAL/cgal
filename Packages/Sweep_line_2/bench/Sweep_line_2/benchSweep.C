@@ -13,11 +13,9 @@
 #include <CGAL/leda_rational.h>
 #if defined(USE_LEDA_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
-#if defined(USE_INSERT_FAST)
-#include <CGAL/Arr_segment_traits_tight_2.h>
-#else
+
 #include <CGAL/Arr_segment_traits_2.h>
-#endif
+
 #else
 #if defined(USE_MY_KERNEL)
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
@@ -29,10 +27,8 @@
 #endif
 #endif
 
-#if defined(USE_INSERT_FAST)
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_tight_2.h>
+#if defined(USE_INSERT_OLD)
+#include <CGAL/Sweep_line_2_old.h>
 #else
 #include <CGAL/Sweep_line_2.h>
 #endif
@@ -62,22 +58,21 @@ typedef leda_rational                                   NT;
 typedef CGAL::Cartesian<NT>               Kernel;
 typedef CGAL::Arr_conic_traits_2<Kernel>  Traits;
 
-#if defined(USE_INSERT_FAST)
-#define PM_TYPE "Tight Sweep (conics)"
+#if defined(USE_INSERT_OLD)
+#define PM_TYPE "Old Sweep (conics)"
 #else
-#define PM_TYPE "Sweep       (conics)"
+#define PM_TYPE "Sweep     (conics)"
 #endif
 
 #else
 
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
-#if defined(USE_INSERT_FAST)
-#define PM_TYPE "Tight Sweep (seg)"
-typedef CGAL::Arr_segment_traits_tight_2<Kernel>         Traits;
-#else
-#define PM_TYPE "Sweep       (segs)"
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
+#if defined(USE_INSERT_OLD)
+#define PM_TYPE "Old Sweep (seg)"
+#else
+#define PM_TYPE "Sweep     (segs)"
 #endif
 
 #else
@@ -95,7 +90,7 @@ typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #endif
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                      Curve;
 typedef std::list<Curve>                                CurveList;
 typedef CurveList::iterator                             CurveListIter;
 
@@ -103,12 +98,8 @@ typedef CGAL::Bench_parse_args::TypeId                  TypeId;
 typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
 typedef CGAL::Bench_parse_args::FormatId                FormatId;
 
-#if defined(USE_INSERT_FAST)
-typedef CGAL::Sweep_line_subcurve<Traits> CurveWrap;
-typedef CGAL::Sweep_line_event<Traits, CurveWrap> SweepEvent;
-
-typedef CGAL::Sweep_line_tight_2<CurveListIter, Traits, 
-                                SweepEvent, CurveWrap> SweepLine;
+#if defined(USE_INSERT_OLD)
+typedef CGAL::Sweep_line_2_old<CurveListIter, Traits> SweepLine;
 #else
 typedef CGAL::Sweep_line_2<CurveListIter, Traits> SweepLine;
 #endif
