@@ -450,9 +450,9 @@ numbers.
 @! test_Random.C
 @! ----------------------------------------------------------------------------
 
-@file <test/Random/test_Random.C> = @begin
+@file <test/Random_numbers/test_Random.C> = @begin
     @<file header>(
-        "test/Random/test_Random.C",
+        "test/Random_numbers/test_Random.C",
         "test program for Random Numbers Generator")
 
     // includes
@@ -484,7 +484,7 @@ numbers.
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
-        "Random Sources and Geometric Object Genera.",
+        "Random Numbers Generator",
         "Random","Random/Random",
         "$Revision$","$Date$",
         "Sven Schönherr <sven@@inf.fu-berlin.de>","N.N.",
