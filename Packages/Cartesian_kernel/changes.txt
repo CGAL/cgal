@@ -1,3 +1,6 @@
+Version 6.21 (21 June 2001)
+- Add constructors for Direction.
+
 Version 6.20 (21 June 2001)
 - Improve robustness and speed of Plane_3::operator==(Plane_3).
 

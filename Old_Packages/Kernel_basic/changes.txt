@@ -1,3 +1,6 @@
+3.46   (21 June 2001)
+- Traits update.
+
 3.45   (20 June 2001)
 - Cleanup misc.h and don't include it from basic.h.
 - Added Construct_orthogonal_vector_[23]
