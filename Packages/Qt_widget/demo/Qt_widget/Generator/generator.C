@@ -26,10 +26,6 @@ int main(int, char*){
   std::cout << std::endl; return 0;
 }
 #else
-#include <fstream>
-#include <stack>
-#include <set>
-#include <string>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -53,8 +49,12 @@ int main(int, char*){
 #include <qfiledialog.h>
 #include <qtimer.h>
 
+
+#include <fstream>
+#include <stack>
+#include <set>
+#include <string>
 #include <list>
-#include <iterator>
 
 typedef double                          Coord_type;
 typedef CGAL::Cartesian<Coord_type>     Rep;
@@ -143,10 +143,6 @@ public:
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
 	
-    //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
-      this, SLOT(get_new_object(CGAL::Object)));
-
     //application flag stuff
     old_state = 0;
 
@@ -170,15 +166,6 @@ public slots:
   }
 
 private slots:
-  void get_new_object(CGAL::Object obj)
-  {
-    Point p;
-    if(CGAL::assign(p,obj)) {
-      list_of_points.push_back(p);
-      something_changed();
-    }
-  };
-
   void about()
   {
     QMessageBox::about( this, my_title_string,
