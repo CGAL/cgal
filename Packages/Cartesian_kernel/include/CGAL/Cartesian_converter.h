@@ -57,6 +57,7 @@ public:
     typedef Converter  Number_type_converter;
 
 #if defined(__GNUC__) && (__GNUC__ < 3)
+#elif defined(__sun) && defined(__SUNPRO_CC)
 #else
     using Enum_converter::operator();
 #endif
