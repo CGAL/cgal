@@ -287,11 +287,6 @@ operator* (const double d, const Interval_nt_advanced & t)
 
 inline
 Interval_nt_advanced
-operator/ (const double d, const Interval_nt_advanced & t)
-{ return Interval_nt_advanced(d)/t; }
-
-inline
-Interval_nt_advanced
 Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 {
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
@@ -330,6 +325,11 @@ Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
 }
+
+inline
+Interval_nt_advanced
+operator/ (const double d, const Interval_nt_advanced & t)
+{ return Interval_nt_advanced(d)/t; }
 
 inline
 Interval_nt_advanced &
