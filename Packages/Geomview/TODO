@@ -1,5 +1,7 @@
 - recuperer le dernier objet insere dans geomview
 - pouvoir detruire des objets
+- avoir une option pour que les segments soient des petits cylindres,
+  pour qu'on puisse enfin faire des demos 3D...
 - INPUT BUG : not really fixed : if it takes long to run geomview (eg the
   first time you run the program), then the bug is still there.
   Try to fix it properly with select().

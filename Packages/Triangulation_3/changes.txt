@@ -1,4 +1,7 @@
 Version 1.61 (?? June 01)
+- default template parameters for all triangulation classes except hierarchy
+- kernel traits used in the example(s)
+- example files included directly in the do
 - Remove one "new Cell" in Triangulation_3.
 - Privatize some member functions of TDS.
 
