@@ -72,6 +72,41 @@ public:
   typedef CGAL::Hyperplane_d<Self>         Hyperplane_d;
   typedef CGAL::Aff_transformation_d<Self> Aff_transformation_d;
 
+  typedef Point_d::Cartesian_const_iterator Cartesian_const_iterator_d;
+
+  template <typename K>
+  class Construct_Cartesian_const_iterator
+  {    
+    typedef K::Point_d Point_d;
+    typedef Point_d::Cartesian_const_iterator  Cartesian_const_iterator_d;
+
+  public:
+    typedef Cartesian_const_iterator_d result_type;
+    typedef Arity_tag< 1> Arity;
+
+    Cartesian_const_iterator_d
+    operator()(const Point_d& p) const
+    {
+      return p.cartesian_begin();
+    }
+    
+    Cartesian_const_iterator_d
+    operator()( const Point_d& p, int) const
+    {
+      return p.cartesian_end();
+    }
+  };
+
+
+  typedef Construct_Cartesian_const_iterator<Self> 
+                           Construct_Cartesian_const_iterator_d;
+
+  Construct_Cartesian_const_iterator_d
+  construct_Cartesian_const_iterator_d_object() const
+  {
+    return Construct_Cartesian_const_iterator_d();
+  }
+
   // meta types (fit both kernels):
   typedef CGAL::Sphere_d<Self>   Sphere_d;
   typedef CGAL::Iso_box_d<Self>  Iso_box_d;

@@ -96,12 +96,21 @@ int main()
 
     Point::Homogeneous_const_iterator hit;
     Point::Cartesian_const_iterator cit; 
+
+    Kernel::Cartesian_const_iterator_d cit_begin = 
+      Kernel().construct_Cartesian_const_iterator_d_object()(p1);
+    Kernel::Cartesian_const_iterator_d cit_end = 
+      Kernel().construct_Cartesian_const_iterator_d_object()(p1, 1);
+
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit);
       CGAL_TEST(p1.cartesian(i)==*cit);
+      CGAL_TEST(p1.cartesian(i)==*cit_begin);
+      cit_begin++;
     }
     CGAL_TEST(cit==p1.cartesian_end());
+    CGAL_TEST(cit_begin==cit_end);
     CGAL_TEST(p1.homogeneous(p1.dimension())==*hit);
     CGAL_TEST(++hit == p1.homogeneous_end());
 
@@ -601,12 +610,22 @@ int main()
 
     Point::Homogeneous_const_iterator hit;
     Point::Cartesian_const_iterator cit; 
+
+    Kernel::Cartesian_const_iterator_d cit_begin = 
+      Kernel().construct_Cartesian_const_iterator_d_object()(p1);
+    Kernel::Cartesian_const_iterator_d cit_end = 
+      Kernel().construct_Cartesian_const_iterator_d_object()(p1, 1);
+
+  
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
       CGAL_TEST(p1.homogeneous(i)==*hit);
       CGAL_TEST(p1.cartesian(i)==*cit);
+      CGAL_TEST(p1.cartesian(i)==*cit_begin);
+      cit_begin++;
     }
     CGAL_TEST(cit==p1.cartesian_end());
+    CGAL_TEST(cit_begin==cit_end);
     CGAL_TEST(p1.homogeneous(p1.dimension())==*hit);
     CGAL_TEST(++hit == p1.homogeneous_end());
 
