@@ -38,6 +38,7 @@ public:
     connect(widget, SIGNAL(custom_redraw()),
 	    this, SLOT(redraw_win()) );
   }
+
 private slots:	//functions
   void redraw_win()
   {
@@ -48,6 +49,9 @@ private:	//members
   CGAL::Qt_widget *widget;
   CGAL::Qt_widget_standard_toolbar *stoolbar;
 };
+
+// moc_source_file: standard_toolbar.C
+#include "standard_toolbar.moc"
 
 int main( int argc, char **argv )
 {
