@@ -20,7 +20,7 @@
 #ifndef CGAL_DOUBLE_MAP_H
 #define CGAL_DOUBLE_MAP_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <map>
 #include <utility>
@@ -172,6 +172,6 @@ erase(Key& k)
     }
 }
 
-CGAL_END_NAMESPACE
+}
 
 #endif

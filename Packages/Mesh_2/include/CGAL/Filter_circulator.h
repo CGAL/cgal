@@ -20,7 +20,7 @@
 #ifndef CGAL_FILTRED_CIRCULATOR_H
 #define CGAL_FILTRED_CIRCULATOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Circ, class Pred>
 class Filter_circulator : public Circ
@@ -93,6 +93,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+}
 
 #endif

@@ -20,7 +20,7 @@
 #ifndef CGAL_FILTRED_CONTAINER_H
 #define CGAL_FILTRED_CONTAINER_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Cont, class Pred>
 class Filtered_container
@@ -81,6 +81,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+}
 
 #endif
