@@ -1,3 +1,8 @@
+Version 1.41 (7 aug 00)
+- parameter dummy_for_windows added in the old versions of 
+Triangulation_3:: incident_vertices et al (kept for compatibility
+with previous versions).
+
 Version 1.40 (2 aug 00)
 - * replaced by _handle in Triangulation_3:: incident_vertices and
 incindet_cells for a given vertex
