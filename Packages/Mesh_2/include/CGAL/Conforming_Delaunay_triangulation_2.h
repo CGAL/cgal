@@ -97,10 +97,14 @@ protected:
      Conforming_Delaunay_triangulation_2 object m in
      constructor. Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is
      a constrained edge in m. */
+
+  class Is_really_a_constrained_edge;
+  friend class Is_really_a_constrained_edge;
+
   class Is_really_a_constrained_edge {
     const Conform& _m;
   public:
-    explicit Is_really_a_constrained_edge(const Conform& m) : _m(m) {};
+    explicit Is_really_a_constrained_edge(const Conform& m) : _m(m) {}
     bool operator()(const Constrained_edge& ce) const
       {
 	Face_handle fh;
@@ -578,7 +582,7 @@ Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
     initialized(NONE)
-{};
+{}
 
 // --- ACCESS FUNCTIONS ---
 
@@ -801,7 +805,8 @@ construct_cluster(Vertex_handle v,
 	}
     }
   while(next++,begin++!=end);
-  cluster_map.insert(std::make_pair(v,c));
+  typedef typename Cluster_map::value_type Value_key_pair;
+  cluster_map.insert(Value_key_pair(v,c));
 }
 
 template <class Tr>
@@ -908,7 +913,7 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
       // no cluster
       vm = insert_middle(f,i);
   update_edges_to_be_conformed(va, vb, vm, is_loc_conf);
-};
+}
 
 // template <class Tr>
 // inline
@@ -1122,7 +1127,8 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   if(c.is_reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
 			      c.smallest_angle.second->point())/FT(4);
-  cluster_map.insert(std::make_pair(va,c));
+  typedef typename Cluster_map::value_type  Value_key_pair;
+  cluster_map.insert(Value_key_pair(va,c));
 }
 
 // # used by refine_face and cut_cluster_edge
