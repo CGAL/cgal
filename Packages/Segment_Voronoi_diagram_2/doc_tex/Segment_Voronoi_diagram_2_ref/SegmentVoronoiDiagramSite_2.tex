@@ -125,14 +125,14 @@ methods are available for constructing sites:
 \ccAccessFunctions
 %\ccThree{Segment_2}{s.point(unsigned int i)+}{}
 \ccThree{Segment_2}{s.segment()+}{}
-\ccMethod{Point_2 point(unsigned int i) const;}{
-  Returns the \ccc{i}-th point of the site's representation. The valid
-  values for \ccc{i} are $0$ through the number of points in the
-  \ccc{construct_site_2} used to construct the site.
-  \ccPrecond{\ccc{i} must be at most $5$. The site must be of the
-    correct type in order to access the corresponding point.}}
-%
-\ccGlue
+%% \ccMethod{Point_2 point(unsigned int i) const;}{
+%%   Returns the \ccc{i}-th point of the site's representation. The valid
+%%   values for \ccc{i} are $0$ through the number of points in the
+%%   \ccc{construct_site_2} used to construct the site.
+%%   \ccPrecond{\ccc{i} must be at most $5$. The site must be of the
+%%     correct type in order to access the corresponding point.}}
+%% %
+%% \ccGlue
 \ccMethod{Point_2 point() const;}{Returns the point represented by the
   site \ccc{s}.
   \ccPrecond{ \ccc{s.is_point()} must be \ccc{true}.}}
@@ -193,6 +193,44 @@ methods are available for constructing sites:
          {Returns a point site object representing the target point of
            the site.
          \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_supporting_site();}
+{ Returns the source point of the supporting site of the this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_supporting_site();}
+{ Returns the target point of the supporting site of the this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_supporting_site(unsigned int i);}
+{ Returns the source point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_supporting_site(unsigned int i);}
+{ Returns the target point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_crossing_site(unsigned int i);}
+{ Returns the source point of the \ccc{i}-th crossing site of the
+  this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_crossing_site(unsigned int i);}
+{ Returns the target point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
 %% %
 %% \ccGlue
 %% \ccMethod{SegmentVoronoiDiagramSite_2 opposite_site();}
