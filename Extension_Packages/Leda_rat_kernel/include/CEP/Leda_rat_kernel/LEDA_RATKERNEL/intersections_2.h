@@ -91,12 +91,14 @@ public:
     else 
        return obj;
    }
-
+   
+#if (__LEDA__ <= 431)
+   int o1 = ::orientation(s,t.start()); 
+   int o2 = ::orientation(s,t.end());
+#else
    int o1 = s.orientation(t.start()); 
    int o2 = s.orientation(t.end());
-  
-   //int o1 = LEDA_NAMESPACE_NAME::orientation(s.start(), s.end(), t.start()); 
-   //int o2 = LEDA_NAMESPACE_NAME::orientation(s.start(), s.end(), t.end());  
+#endif  
   
    // two orientation tests were moved ...
 
@@ -128,11 +130,15 @@ public:
    }
   
    if ( o1 != o2){ // was && ...
-   // moved ...
+   // moved ..
+   
+#if (__LEDA__ <= 431)
+   int o3 = ::orientation(t,s.start());
+   int o4 = ::orientation(t,s.end());  
+#else   
    int o3 = t.orientation(s.start());
    int o4 = t.orientation(s.end());  
-   //int o3 = LEDA_NAMESPACE_NAME::orientation(t.start(),t.end(),s.start());
-   //int o4 = LEDA_NAMESPACE_NAME::orientation(t.start(),t.end(),s.end());     
+#endif
   
    if ( o3 != o4 )
    { leda_integer w  = s.dy()*t.dx() - t.dy()*s.dx();
