@@ -97,16 +97,14 @@ namespace CGAL {
 	widget->setMouseTracking(true);
       }
 
-    const QIconSet
-      arrow_pixmap(QPixmap(static_cast<const char **>(arrow_small_xpm) ),
-		   QPixmap(static_cast<const char **>(arrow_xpm) ));
-    const QIconSet 
-      back_pixmap(QPixmap(static_cast<const char **>(back_small_xpm) ),
-		  QPixmap(static_cast<const char **>(back_xpm) ));
+    const QPixmap p1(arrow_small_xpm), p2(arrow_xpm);
+    const QIconSet arrow_pixmap(p1, p2);
 
-    const QIconSet 
-      forward_pixmap(QPixmap(static_cast<const char **>(forward_small_xpm) ),
-		     QPixmap(static_cast<const char **>(forward_xpm) ));
+    const QPixmap p3(back_small_xpm), p4(back_xpm);
+    const QIconSet back_pixmap(p3, p4);
+
+    const QPixmap p5(forward_small_xpm), p6(forward_xpm);
+    const QIconSet forward_pixmap(p5, p6);
 
     QToolButton* backBt = new QToolButton(this, "History Back");
     backBt->setIconSet(back_pixmap);

@@ -1,7 +1,12 @@
+1.3.57 - 19/09/2003
+----------------------------------------
+	- Patched Qt_widget_standard_toolbar.C 
+	- removed static_cast<const char**> because the pixmaps are 
+	  const char *[] now.
+
 1.3.56 - 18/09/2003
 ----------------------------------------
 	- Sylvain changed the headers of CGAL files.
-
 
 1.3.55 - 12/09/2003
 ----------------------------------------
