@@ -316,12 +316,9 @@ Geomview_stream::operator<<(double d)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
-    std::ostrstream os;
-    os << "bbox" << gv.bbox_count++ << std::ends;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {VECT 1 5 0 5 0 ";
+       << "(geometry Bbox" << gv.bbox_count++
+       << " {VECT 1 5 0 5 0 ";
     // here are the four corners
 
     gv << bbox.xmin() << bbox.ymin() << 0.0
@@ -339,12 +336,9 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
-    std::ostrstream os;
-    os << "bbox" << gv.bbox_count++ << std::ends;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {appearance {material {edgecolor "
+       << "(geometry Bbox" << gv.bbox_count++
+       << " {appearance {material {edgecolor "
        << gv.ecr() << gv.ecg() << gv.ecb() <<  "}}{SKEL 8 4 "
     // here are the corners
        << bbox.xmin() << bbox.ymin() << bbox.zmin()
