@@ -298,7 +298,7 @@ to_double(const MP_Float &b)
 }
 
 // FIXME : This function deserves proper testing...
-const std::pair<double,double>&
+std::pair<double,double>
 to_interval(const MP_Float &b)
 {
   if (b.is_zero())
@@ -311,7 +311,7 @@ to_interval(const MP_Float &b)
 
   // We take care of overflow.  The following should be enough.
   if (!CGAL_NTS is_finite(d_exp))
-    return Interval_nt<false>::largest();
+    return Interval_nt<false>::largest().pair();
 
   Protect_FPU_rounding<true> P;
   Interval_nt_advanced d = 0;
