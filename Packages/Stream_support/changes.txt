@@ -1,5 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
+2.14 (18 June 01)
+- Test for LEDA in the demo that requires it, so that there's no "N" to look at
+  in the test-suite.
+
 2.13 (5 June 01)
 - Recreate the makefile for BCC support.
 
