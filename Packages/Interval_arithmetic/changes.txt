@@ -1,5 +1,11 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.13 on ?? May 1999
+- New test file, that should emit a warning with a smart compiler.
+- Moved some documentation files.
+- Removed calls to convert_to from the test-suite (MipsPro...).
+- Minor doc updates for 2.0.
+
 Version 4.12 on 7 May 1999
 - Fixed a bug in std::istream & operator>>().
 - Fixed the definition of CGAL_IA_CACHE for the MipsPro workaround.

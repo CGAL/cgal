@@ -14,18 +14,16 @@
 
 Concerning the code itself:
 
-- PENSER a virer include/CGAL/determinant.h.
-- Try long double bounds on Intel, and make benchmarks.  If it isn't too slow,
-  then it'll be better, because it won't need the "force to mem" workaround.
-- Stop constant propagation (could be considered a compiler bug, or
+- Expertiser le bench de Stefan.
+- Stop constant propagation (could be considered a compiler bug, or at least
   misfeature).  It's not specific to Intel, it would be nice if egcs had
   better control over that (work on that ?).  It can easily be fixed by
   "CGAL_IA_FORCE_TO_DOUBLE" in the constructors.
 - On Intel, due to lack of IEEE support, after each critical operation, I need
   to "CGAL_IA_FORCE_TO_DOUBLE".  Would be nice if egcs had a good option for
-  that.
-- Drop the class Interval_nt ?  Or have a boolean template parameter, instead
-  or the derivation ?
+  that.  I should try/bench the other solution: use "long double" bounds.
+- Drop the class Interval_nt ?
+  Or have a boolean template parameter, instead or the derivation ?
 - FPU_get_and_set_cw (), c'est plus joli, et ça peut être plus efficace.
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
@@ -68,6 +66,7 @@ Concerning the code itself:
 
 Concerning the script:
 
+- Add a warning/check to the argument being "const".
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
 - Produire un fichier avec juste les déclarations, et un autre avec les
@@ -80,13 +79,15 @@ Concerning the script:
 
 Concerning the doc:
 
+- documenter le mécanisme pour les prédicats? Il me semblerait utile de
+  rajouter une section d'introduction ou bien à la fin du chapitre, pour
+  expliquer comment utiliser les filtres. Peut-être une référence à ton
+  chapitre sur l'arithmétique d'intervalles...
 - change the status of homogeneous predicates when available...
-- faire un fichier long_description comme ça doit se faire.
-- Tell the status for MipsPro (the workaround about partial specializations).
-  (#define CGAL_IA_ET, CGAL_IA_CT... cf tst5.C).
 - add a pointer to my MISC'99 paper.
 - Document "IA::number_of_failures".
 - Documenter le mécanisme de cache.
+- Documenter .exact() et .interval().
 - Passer au nouveau format de doc.
 
 Concerning the test-suite:

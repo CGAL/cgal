@@ -17,7 +17,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2 -W -Winline -Wunused
+	-g
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
 	# -O2 -W -Winline -Wunused
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
