@@ -22,9 +22,9 @@ int main(int /*argc*/,char */*argv[]*/)
   Point tr(10, 10);
   Iso_rectangle_2 b(bl, tr);
 
-  // missing default constructor
+
   Largest_empty_rect dc;  
-  // by the way what is the bounding box ((0,0),(1,1)) ??  
+
   Largest_empty_rect empty_rectangle(b);
   assert(b == empty_rectangle.get_largest_empty_iso_rectangle());
 

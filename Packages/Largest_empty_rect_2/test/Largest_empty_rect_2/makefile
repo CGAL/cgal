@@ -46,9 +46,12 @@ all:	EmptyRect
 EmptyRect: EmptyRect$(OBJ_EXT)
 	$(CGAL_CXX) $(CXXFLAGS) $(LIBPATH)  EmptyRect$(OBJ_EXT) $(LDFLAGS)
 
+test: test$(OBJ_EXT)
+	$(CGAL_CXX) $(CXXFLAGS) $(LIBPATH)  test$(OBJ_EXT) $(LDFLAGS)
+
 clean:
 	rm -f *.$(OBJ_EXT)
-	rm -f EmptyRect
+	rm -f EmptyRect test
 	rm -f core
 #---------------------------------------------------------------------#
 #                    suffix rules

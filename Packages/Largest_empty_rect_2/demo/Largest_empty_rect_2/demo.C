@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
   if(argc == 1) {
     // initialize window
     W.init(-2,13,-2);
-    W.set_mode(leda_src_mode);
+    W.set_mode(CGAL::src_mode);
     W.set_node_width(3);
     W.button("Show Largest Empty Rectangle",1);
     W.button("Clear",2);
@@ -122,7 +122,7 @@ int main(int argc,char *argv[])
     }
 
     W.init(x1 - 2,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
-    W.set_mode(leda_src_mode);
+    W.set_mode(CGAL::src_mode);
     W.set_node_width(3);
   }
 

@@ -1,8 +1,9 @@
-#include <fstream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
+#include <fstream>
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -21,20 +22,20 @@ typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
 int main(int argc,char *argv[])
 {
-  ifstream *is_ptr;
+  std::ifstream *is_ptr;
   double x,y;
   std::list<Point> points_list;
   Iso_rectangle_2 ler;
 
   if(argc == 2) {
     // initialize input file
-    is_ptr = new ifstream(argv[1]);
+    is_ptr = new std::ifstream(argv[1]);
     if(is_ptr->bad()) {
-      cerr << "Bad input file : " << argv[1] << endl;
+      std::cerr << "Bad input file : " << argv[1] << std::endl;
       return(1);
     }
   } else {
-    cerr << "Syntax : test [input file name] > [output file name]\n";
+    std::cerr << "Syntax : test [input file name] > [output file name]\n";
     return(1);
   }
 
