@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
+DEMO: Now nearest neighbor queries are done brute-force.
 ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
