@@ -1,3 +1,29 @@
+// ======================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/functions_on_signs.h
+// package       : Apollonius_graph_2
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ======================================================================
+
+
+
 #ifndef CGAL_FUNCTIONS_ON_SIGNS_H
 #define CGAL_FUNCTIONS_ON_SIGNS_H
 

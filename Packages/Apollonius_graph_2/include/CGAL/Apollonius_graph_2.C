@@ -11,8 +11,8 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Apollonius_graph_2.h
-// package       : Triangulation 
+// file          : include/CGAL/Apollonius_graph_2.C
+// package       : Apollonius_graph_2
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
