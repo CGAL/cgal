@@ -81,6 +81,13 @@ triangulations.
 addition the empty sphere property of all the created faces.
 The optional argument \ccc{start} is used as a starting place for the search.}
 
+\ccMethod{Vertex_handle insert(const Point & p, Locate_type lt,
+                               Cell_handle loc, int li, int lj);}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex. Similar to the above \ccc{insert()} function, but takes as additional
+ parameter the return values of a previous location query.  See description of
+ \ccc{locate()} above.}
+
 The following method allows one to insert several points. It returns the
 number of inserted points. 
 
@@ -91,21 +98,6 @@ number of inserted points.
 \ccc{last}$\left.\right)$. 
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
-%\ccMethod{int insert(list<Point>::const_iterator first,
-%	     list<Point>::const_iterator last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(vector<Point>::const_iterator first,
-%	     vector<Point>::const_iterator last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
-%	     istream_iterator<Point, ptrdiff_t> last);}
-%{}
-%\ccGlue
-%\ccMethod{int insert(Point* first,
-%	     Point* last);}
-%{}
 
 \ccHeading{Removal}
 

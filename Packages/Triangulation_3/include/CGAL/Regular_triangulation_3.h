@@ -95,7 +95,10 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert( const Weighted_point & p, Cell_handle start = NULL);
+  Vertex_handle insert(const Weighted_point & p, Cell_handle start = NULL);
+
+  Vertex_handle insert(const Weighted_point & p, Locate_type lt,
+	               Cell_handle c, int li, int);
 
   Vertex_handle push_back(const Weighted_point &p)
   {
@@ -354,13 +357,20 @@ typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
 insert(const Weighted_point & p, Cell_handle start) 
 {
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c = locate(p, lt, li, lj, start);
+    return insert(p, lt, c, li, lj);
+}
+
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
+{
   switch (dimension()) {
   case 3: 
     {
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = locate( p, lt, li, lj, start);
-      
       if ( lt == VERTEX )
 	  return c->vertex(li);
       // choice: not to do anything
@@ -389,9 +399,6 @@ insert(const Weighted_point & p, Cell_handle start)
     }
   case 2:
     {
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case CELL:
@@ -429,9 +436,6 @@ insert(const Weighted_point & p, Cell_handle start)
     }//dim 2
   case 1:
     {
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case EDGE:
@@ -488,7 +492,7 @@ insert(const Weighted_point & p, Cell_handle start)
     }
   default :
     {
-      return Tr_Base::insert(p,start);
+      return Tr_Base::insert(p, c);
     }
   }
 }

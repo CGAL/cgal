@@ -103,18 +103,25 @@ public:
   Cell_handle locate(const Point& p) const;
 
 private:
+
+  struct locs {
+      Cell_handle pos;
+      int li, lj;
+      Locate_type lt;
+  };
+
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
-	      Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const;
+	      locs pos[Triangulation_hierarchy_3__maxlevel]) const;
   int random_level();
 
   // added to make the test program of usual triangulations work
   // undocumented
 public:
 
-  // FIXME : This one could benefit from the hierarchy too.
-  Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle loc, int li)
+  Vertex_handle insert(const Point& p, Locate_type lt, Cell_handle loc,
+	               int li, int lj)
   {
-    return Tr_Base::insert(p);
+    return Tr_Base::insert(p, lt, loc, li, lj);
   }
   
   Vertex_handle insert(const Point &p, Cell_handle start)
@@ -266,16 +273,27 @@ insert(const Point &p)
   Locate_type lt;
   int i, j;
   // locate using hierarchy
-  Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
+  locs positions[Triangulation_hierarchy_3__maxlevel];
   locate(p, lt, i, j, positions);
   // insert at level 0
-  Vertex_handle vertex = hierarchy[0]->insert(p, positions[0]);
+  Vertex_handle vertex = hierarchy[0]->insert(p,
+	                                      positions[0].lt,
+	                                      positions[0].pos,
+	                                      positions[0].li,
+	                                      positions[0].lj);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
 
   int level = 1;
   while (level <= vertex_level ){
-    vertex = hierarchy[level]->insert(p, positions[level]);
+      if (positions[level].pos == NULL)
+          vertex = hierarchy[level]->insert(p);
+      else
+          vertex = hierarchy[level]->insert(p,
+	                                    positions[level].lt,
+	                                    positions[level].pos,
+	                                    positions[level].li,
+	                                    positions[level].lj);
     vertex->set_down((void *) &*previous);// link with level above
     previous->set_up((void *) &*vertex);
     previous=vertex;
@@ -310,9 +328,9 @@ typename Triangulation_hierarchy_3<Tr>::Cell_handle
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 {
-  Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
+  locs positions[Triangulation_hierarchy_3__maxlevel];
   locate(p, lt, li, lj, positions);
-  return positions[0];
+  return positions[0].pos;
 }
 
 template <class Tr>
@@ -330,7 +348,7 @@ template <class Tr>
 void
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj,
-       Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const
+       locs pos[Triangulation_hierarchy_3__maxlevel]) const
 {
   int level = Triangulation_hierarchy_3__maxlevel;
 
@@ -342,13 +360,17 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   }
 
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel; ++i)
-      pos[i]=0;
+      pos[i].pos=0;
 
   Cell_handle position(NULL);
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level
-    pos[level] = position = hierarchy[level]->locate(p, position);
+    pos[level].pos = position = hierarchy[level]->locate(p,
+	                                                 pos[level].lt,
+	                                                 pos[level].li,
+	                                                 pos[level].lj,
+	                                                 position);
     // find the nearest vertex.
     Vertex_handle nearest =
 	hierarchy[level]->nearest_vertex_in_cell(p, position);
@@ -358,7 +380,10 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
     position = nearest->cell();                // incident cell
     --level;
   }
-  pos[0] = hierarchy[level]->locate(p, lt, li, lj, position);  // at level 0
+  pos[0].pos = hierarchy[level]->locate(p, lt, li, lj, position); // at level 0
+  pos[0].lt = lt;
+  pos[0].li = li;
+  pos[0].lj = lj;
 }
 
 

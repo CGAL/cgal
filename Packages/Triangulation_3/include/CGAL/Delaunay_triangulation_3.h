@@ -201,6 +201,9 @@ public:
 
   Vertex_handle insert(const Point & p, Cell_handle start = NULL);
 
+  Vertex_handle insert(const Point & p, Locate_type lt,
+	               Cell_handle c, int li, int);
+ 
   // Obsolete.
   Vertex_handle push_back(const Point & p)
   {
@@ -373,12 +376,20 @@ typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
 insert(const Point & p, Cell_handle start)
 {
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c = locate(p, lt, li, lj, start);
+    return insert(p, lt, c, li, lj);
+}
+
+template < class Gt, class Tds >
+typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds>::
+insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
+{
   switch (dimension()) {
   case 3:
     {
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = locate( p, lt, li, lj, start);
       if ( lt == VERTEX )
 	  return c->vertex(li);
 
@@ -389,9 +400,6 @@ insert(const Point & p, Cell_handle start)
     }// dim 3
   case 2:
     {
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = locate( p, lt, li, lj, start);
       switch (lt) {
       case OUTSIDE_CONVEX_HULL:
       case CELL:
@@ -413,9 +421,9 @@ insert(const Point & p, Cell_handle start)
     }//dim 2
   default :
     // dimension <= 1
-    return Tr_Base::insert(p,start);
+    return Tr_Base::insert(p, c);
   }
-}// insert(p)
+}
 
 template < class Gt, class Tds >
 void
