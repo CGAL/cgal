@@ -1,3 +1,11 @@
+Version 4.2 (28 March 2000) [my]
+- fixed bugs in Iso_cuboid_3.C concerning
+  min(), max() and bounded_side()
+- suppress compare_dominance and compare_submittance in
+  predicates_on_points_3.h and predicates/kernel_ftC3.h
+- add dominance() and strict_dominance instead in
+  predicates_on_points_3.h and predicates/kernel_ftC3.h
+
 Version 4.1 (22 March 2000)
 - fixed Iso_cuboid_3 again [my]
 - added maintainer file
