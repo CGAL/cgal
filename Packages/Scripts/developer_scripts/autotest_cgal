@@ -431,7 +431,7 @@ fi
   log ${ACTUAL_LOGFILE} "getting LATEST"
   ${WGET} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
 if [ ! -f "LATEST" ]; then
-  log ${ACTUAL_LOGFILE} "COULD NOT DOWNLOAD LATEST!"
+  error "COULD NOT DOWNLOAD LATEST!"
 fi
 if [ ! -r "RELEASE_NR" ]; then
   touch "RELEASE_NR"
