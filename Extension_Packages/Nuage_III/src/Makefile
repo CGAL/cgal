@@ -42,32 +42,21 @@ LDFLAGS = $(CGAL_LDFLAGS)
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: nuage$(EXE_EXT)
+all: extract$(EXE_EXT)
 
+
+
+extract$(EXE_EXT): extract$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extract  extract$(OBJ_EXT) $(LDFLAGS)
 
 
 
 nuage$(EXE_EXT): nuage$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nuage  nuage$(OBJ_EXT) $(LDFLAGS)
 
-extract$(EXE_EXT): extract$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extract  extract$(OBJ_EXT) $(LDFLAGS)
-
-
-vc-6$(EXE_EXT): vc-6$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)vc-6  vc-6$(OBJ_EXT) $(LDFLAGS)
 
 fill$(EXE_EXT): fill$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)fill  fill$(OBJ_EXT) $(LDFLAGS)
-
-bug$(EXE_EXT): bug$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bug  bug$(OBJ_EXT) $(LDFLAGS)
-
-templ$(EXE_EXT): templ$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)templ  templ$(OBJ_EXT) $(LDFLAGS)
-
-constrained$(EXE_EXT): constrained$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained  constrained$(OBJ_EXT) $(LDFLAGS)
 
 clean:
 	\rm -f *.o  *.obj *.exe nuage$(EXE_EXT) core
