@@ -17,14 +17,14 @@ include $(CGAL_MAKEFILE)
 #CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
-        -I$(HOME)/prog/Cgal/Kernel_basic/include \
-        -I$(HOME)/prog/Cgal/Cartesian_kernel/include \
 	-I../../include \
 	-I./include \
 	 $(CGAL_CXXFLAGS) \
 	 $(TESTSUITE_CXXFLAGS) \
 	-W -Wall \
 	-g # -Wold-style-cast # -pedantic
+        # -I$(HOME)/prog/Cgal/Kernel_basic/include \
+        # -I$(HOME)/prog/Cgal/Cartesian_kernel/include \
 	# -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS \
 	# -DCGAL_CHECK_EXPENSIVE \
