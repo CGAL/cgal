@@ -36,7 +36,7 @@ const int Triangulation_hierarchy_3__minsize  = 20;
 const int Triangulation_hierarchy_3__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Tr>
+template < class Tr >
 class Triangulation_hierarchy_3
   : public Tr
 {

@@ -42,6 +42,8 @@
 #include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <CGAL/Triangulation_cell_3.h>
 #include <CGAL/Triangulation_vertex_3.h>
@@ -62,7 +64,10 @@ template < class GT, class Tds> class Triangulation_cell_3;
 template < class GT, class Tds > std::istream& operator>> 
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
  
-template < class GT, class Tds >
+template < class GT, 
+           class Tds = Triangulation_data_structure_3 <
+                                   Triangulation_vertex_base_3<GT>,
+                                   Triangulation_cell_base_3<void> > >
 class Triangulation_3
   :public Triangulation_utils_3
 {
