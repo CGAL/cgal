@@ -76,30 +76,57 @@ public:
     //CURVE_VERTICAL = 3
   } Curve_point_status;
 
+protected:
+  // Functors:
+  typedef typename Kernel::Is_vertical_2        Is_vertical_2;
+  typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
+  typedef typename Kernel::Less_x_2             Less_x_2;
+  typedef typename Kernel::Equal_2              Equal_2;
+
+public:
   Arr_polyline_traits() { }
 
-  Comparison_result compare_x(const Point_2 & p0, const Point_2 & p1) const {
-    return CGAL::compare_x(p0,p1);
-  }
+  /*! compare_x() compares the x-coordinates of two given points
+   * \param p1 the first point
+   * \param p2 the second point
+   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL
+   *
+   * \todo replace indirect use compare_x() with compare_x_2()
+   */
+  Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
+  { return compare_x_2_object()(p1, p2); }
+
   Comparison_result compare_y(const Point_2 & p0, const Point_2 & p1) const {
     return CGAL::compare_y(p0,p1);
   }
 
-  //on X_curve only - not Curve!
-  bool curve_is_vertical(const X_curve_2& cv) const {
+  /*! curve_is_vertical
+   * on X_curve only - not Curve!
+   */
+  bool curve_is_vertical(const X_curve_2 & cv) const
+  {
     CGAL_assertion(is_x_monotone(cv));
-    return compare_x(curve_source(cv),curve_target(cv))==EQUAL;
+    return compare_x(curve_source(cv), curve_target(cv)) == EQUAL;
   } 
 
-  bool curve_is_in_x_range(const X_curve_2& cv, const Point_2& p) const {
+  /*! curve_is_in_x_range
+   */
+  bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & p) const
+  {
     CGAL_assertion(is_x_monotone(cv));
-    return (compare_x(p,curve_source(cv)) * 
-	    compare_x(p,curve_target(cv))) <= 0 ;
+
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
+    const Point_2 & source = curve_source(cv);
+    const Point_2 & target = curve_target(cv);
+    Less_x_2 less_x = less_x_2_object();
+    return !((less_x(source, p) && less_x(target, p)) ||
+             (less_x(p, source) && less_x(p, target)));
   }
 
-  Comparison_result curve_compare_at_x(const X_curve_2& cv1, 
-				       const X_curve_2& cv2, 
-				       const Point_2& p) const {
+  Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
+				       const X_curve_2 & cv2, 
+				       const Point_2 & p) const
+  {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
@@ -134,13 +161,18 @@ public:
     return (segment_traits.curve_compare_at_x(seg1, seg2, p));
   }
 
-  //precondition - x-monotone
-  Comparison_result curve_compare_at_x_left(const X_curve_2& cv1, 
-					    const X_curve_2& cv2,
-					    const Point_2& p) const {
+  // precondition - x-monotone
+  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1, 
+					    const X_curve_2 & cv2,
+					    const Point_2 & p) const
+  {
+    std::cout << "left "
+              << curve_source(cv1) << "," << curve_target(cv1) << " "
+              << curve_source(cv2) << "," << curve_target(cv2) << " "
+              << p << std::endl;
+      
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
-
 
     if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
       return EQUAL;
@@ -158,11 +190,8 @@ public:
       return EQUAL;
     }
 
-
-
-    
-    typename X_curve_2::const_iterator pit=cv1.begin();
-    typename X_curve_2::const_iterator after=pit; ++after;
+    typename X_curve_2::const_iterator pit = cv1.begin();
+    typename X_curve_2::const_iterator after = pit; ++after;
     
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
@@ -174,7 +203,7 @@ public:
     
     Line_2<Kernel> l2(*pit,*after);
     
-    Comparison_result r=CGAL::compare_y_at_x(p,l1,l2); 
+    Comparison_result r = CGAL::compare_y_at_x(p,l1,l2); 
     
     if ( r != EQUAL)
       return r;
@@ -183,14 +212,16 @@ public:
       // the left) otherwise -
       return (CGAL::compare_y_at_x(point_to_left(p),l1,l2)); 
     }
-
   } 
-
-
 
   Comparison_result curve_compare_at_x_right(const X_curve_2& cv1, 
 					     const X_curve_2& cv2,
-					     const Point_2& p) const {
+					     const Point_2& p) const
+  {
+    std::cout << "right ("
+              << curve_source(cv1) << "," << curve_target(cv1) << ") ("
+              << curve_source(cv2) << "," << curve_target(cv2) << ") ("
+              << p << std::endl;
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
@@ -211,7 +242,8 @@ public:
     }
 
     //not defined right of curve:
-    //    CGAL_assertion(!is_same(rightmost1,p) && !is_same(rightmost2,p)); 
+    //    CGAL_assertion(!point_is_same(rightmost1,p) &&
+    //                   !point_is_same(rightmost2,p)); 
 
 
     if (!curve_is_in_x_range(cv1,p) || !curve_is_in_x_range(cv2,p) )
@@ -244,11 +276,7 @@ public:
 	CGAL_assertion(curve_compare_at_x(cv1,cv2,p) == EQUAL);
 	return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
       }
-    //debug
-    
   }
-  
-
 
   Curve_point_status 
   curve_get_point_status(const X_curve_2 &cv, const Point_2& p) const
@@ -296,25 +324,20 @@ public:
     CGAL_assertion(is_x_monotone(first));
     CGAL_assertion(is_x_monotone(second));
 
-    CGAL_precondition(is_same(curve_source(cv),p) || 
-		      is_same(curve_target(cv),p));
-    CGAL_precondition(is_same(curve_source(first),p) || 
-		      is_same(curve_target(first),p));
-    CGAL_precondition(is_same(curve_source(second),p) || 
-		      is_same(curve_target(second),p));
-
-
+    CGAL_precondition(point_is_same(curve_source(cv),p) || 
+		      point_is_same(curve_target(cv),p));
+    CGAL_precondition(point_is_same(curve_source(first),p) || 
+		      point_is_same(curve_target(first),p));
+    CGAL_precondition(point_is_same(curve_source(second),p) || 
+		      point_is_same(curve_target(second),p));
 
     X_curve_2 cv0 = first;
     X_curve_2 cv1 = second;
     X_curve_2 cvx = cv;
 
-
-
-    if ( !is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
-    if ( !is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
-    if ( !is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
-
+    if ( !point_is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
+    if ( !point_is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
+    if ( !point_is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
     
     typename X_curve_2::iterator xcit=cv0.begin();++xcit;
     Point_2 p0(*xcit);
@@ -323,7 +346,7 @@ public:
     xcit=cvx.begin(); ++xcit;
     Point_2 px(*xcit);
 
-    if (is_same(p0,p1))
+    if (point_is_same(p0,p1))
       return true; 
     
     int or0=orientation(p0,p,px);
@@ -340,47 +363,59 @@ public:
     }
   }
   
-  bool point_is_same(const Point_2 & p, const Point_2 & q) const
+  /*! \todo replace indirect use point_is_same() with equal_2()
+   */
+  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  { return equal_2_object()(p1, p2); }
+  
+  /*! \todo replace indirect use curve_is_same() with equal_2()
+   */
+  bool curve_is_same(const X_curve_2 & cv1, const X_curve_2 & cv2) const
   {
-    return is_same(p, q);
-  }
-
-  bool curve_is_same(const X_curve_2& cv1, const X_curve_2& cv2) const {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
-    if (cv1.size()!=cv2.size())
-      return false;
-    typename X_curve_2::const_iterator it1=cv1.begin();
-    typename X_curve_2::const_iterator it2=cv2.begin();
-    while (it1!=cv1.end()) {
-      if (!is_same(*it1++,*it2++))
-        return false;
+    if (cv1.size() != cv2.size()) return false;
+
+    typename X_curve_2::const_iterator it1 = cv1.begin();
+    typename X_curve_2::const_iterator it2 = cv2.begin();
+    Equal_2 equal = equal_2_object();
+    bool is_equal = true;
+
+    while (it1 != cv1.end()) {
+      if (!equal(*it1++, *it2++)) {
+        is_equal = false;
+        break;
+      }
+    }
+    if (is_equal) return true;
+
+    // Reverse order:
+    it1 = cv1.begin();
+    it2 = cv2.end();
+    while (it1 != cv1.end()) {
+      if (!equal(*it1++, *--it2)) return false;
     }
     return true;
   }
 
-  // SHAI: shouldn't cv  be of type Curve (even if X_curve is the same)
-  Point_2 curve_source(const X_curve_2& cv) const {
-    return *(cv.begin());
-  }
+  /*! 
+   */
+  Point_2 curve_source(const X_curve_2 & cv) const
+  { return *(cv.begin()); }
 
-  // SHAI: shouldn't cv  be of type Curve (even if X_curve_2 is the same)
-  Point_2 curve_target(const X_curve_2& cv) const {
-    //debug
-    //this seems to not work with vector
-    //return *(--cv.end());
-    typename X_curve_2::const_iterator it=cv.end(); --it;
-    return *it;
-  }
+  /*! 
+   */
+  Point_2 curve_target(const X_curve_2 & cv) const
+  { return *(--(cv.end())); }
 
   ///////////////////////////////////////////////////////
   //         ARRANGEMENT FUNCS
 
 
-  X_curve_2 curve_flip(const X_curve_2& cv) const {
+  X_curve_2 curve_flip(const X_curve_2 & cv) const
+  {
     X_curve_2 cv1(cv);
-    //cv1.reverse();
     std::reverse(cv1.begin(),cv1.end()); 
     return cv1; 
   }
@@ -466,7 +501,7 @@ public:
     bool split_at_vertex=false;
 
     for (; p1 != cv.end(); ++p0,++p1) {
-      if (is_same(*p1,split_pt)) {
+      if (point_is_same(*p1,split_pt)) {
 	split_at_vertex=true;
 	break;
       }
@@ -830,7 +865,7 @@ public:
     
     // if the x point is at the end of a segment, then there might be 
     // an overlap in the continious of the polyline
-    if ( found && is_same( p1, p2) ) {
+    if ( found && point_is_same(p1, p2) ) {
       typename X_curve_2::const_iterator s1=i1s, t1=i1t, s2=i2s, t2=i2t;
       s1++; t1++; s2++; t2++;
       if (t1 != i1e && t2 != i2e) {
@@ -839,13 +874,13 @@ public:
 	Object result;
 	Segment_2 i_seg;
 
-	if ( is_same( p1, *i1t) && is_same( p1, *i2t)) {
+	if ( point_is_same(p1, *i1t) && point_is_same(p1, *i2t)) {
 	  result = intersection(Segment_2(*s1, *t1), Segment_2(*s2, *t2));
 	}
-	else if ( is_same( p1, *i1t)) {
+	else if ( point_is_same(p1, *i1t)) {
 	  result = intersection(Segment_2(*s1, *t1), Segment_2(*i2s, *i2t));
 	}
-	else if ( is_same( p1, *i2t)) {
+	else if ( point_is_same(p1, *i2t)) {
 	  result = intersection(Segment_2(*i1s, *i1t),
                                 Segment_2(*s2, *t2));
 	}
@@ -888,7 +923,7 @@ public:
     Object res=intersection(s1,s2);
     
     if (assign(i_seg,res)) {
-      if (!is_same(i_seg.source(),i_seg.target()))
+      if (!point_is_same(i_seg.source(),i_seg.target()))
 	return true;
     }
     //advance to the nearer point
@@ -908,7 +943,7 @@ public:
       Segment_2 s1(*i1s,*i1t),s2(*i2s,*i2t);
       res=intersection(s1,s2);
       if (assign(i_seg,res)) {
-	if (!is_same(i_seg.source(),i_seg.target()))
+	if (!point_is_same(i_seg.source(),i_seg.target()))
 	  return true;
       }
 
@@ -923,35 +958,30 @@ public:
     }    
   }
 
-
-  X_curve_2 curve_reflect_in_x_and_y( const X_curve_2& cv) const
+  /*! point_reflect_in_x_and_y() reflects the given point about the origin
+   */
+  Point_2 point_reflect_in_x_and_y(const Point_2 & pt) const
   {
-    X_curve_2 reflected_cv;
-    typename Curve_2::const_iterator it  = cv.begin();
-    for  (; it != cv.end(); it++)
-      {
-        reflected_cv.push_back( point_reflect_in_x_and_y( *it)); 
-      }
-    return reflected_cv;
+    Point_2 org = construct_point_2_object()(ORIGIN);      
+    typename Kernel::Vector_2 v = construct_vector_2_object()(pt, org);
+    Point_2 reflected_pt(v);
+    return reflected_pt;
   }
 
-
-  Point_2 point_reflect_in_x_and_y (const Point_2& pt) const
+  /*!
+   */
+  X_curve_2 curve_reflect_in_x_and_y( const X_curve_2 & cv) const
   {
-    // use hx(), hy(), hw() in order to support both Homogeneous and Cartesian
-    Point_2 reflected_pt( -pt.hx(), -pt.hy(), pt.hw());
-    return reflected_pt;
+    X_curve_2 reflected_cv;
+    typename Curve_2::const_iterator it = cv.begin();
+    while (it != cv.end())
+      reflected_cv.push_back(point_reflect_in_x_and_y(*it++)); 
+    return reflected_cv;
   }
 
   ////////////////////////////////////////////////////////////////////
   // PRIVATE
 private:
-
-  bool is_same(const Point_2 &p1, const Point_2 &p2) const
-  {
-    return (compare_x(p1, p2) == EQUAL) &&
-      (compare_y(p1, p2) == EQUAL);
-  }
 
   Point_2 point_to_left(const Point_2& p) const {
     return p+Vector_2(-1,0);;
