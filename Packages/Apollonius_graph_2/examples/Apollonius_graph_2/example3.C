@@ -29,9 +29,9 @@ typedef CGAL::Filtered_kernel<CK>  Kernel;
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 #include <CGAL/Apollonius_graph_face_base_2.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_euclidean_traits_2<Kernel> Traits;
+typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
 
 // with the second template argument in the vertex base class being
 // false, we indicate that there is no need to store that hidden

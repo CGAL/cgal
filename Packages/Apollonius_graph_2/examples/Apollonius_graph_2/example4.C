@@ -28,9 +28,9 @@ typedef CGAL::Filtered_kernel<CK>  Kernel;
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_euclidean_traits_2<Kernel> Traits;
+typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
 
 // now we use the Apollonius graph hierarchy.
 // the hierarchy is faster for inputs consisting of about more than

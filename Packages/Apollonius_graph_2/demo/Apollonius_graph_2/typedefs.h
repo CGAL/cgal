@@ -57,11 +57,11 @@ typedef CGAL::Filtered_kernel<CK>      Rep;
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
 
 
 typedef
-CGAL::Apollonius_graph_euclidean_traits_2<Rep,CGAL::Ring_tag>  Gt;
+CGAL::Apollonius_graph_traits_2<Rep,CGAL::Ring_tag>  Gt;
 
 typedef Gt::Point_2                           Point_2;
 typedef Rep::Circle_2                         Circle_2;

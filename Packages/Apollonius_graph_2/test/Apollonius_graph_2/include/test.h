@@ -10,7 +10,7 @@
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
 
 #include "IO/Null_output_stream.h"
 
@@ -23,7 +23,7 @@ template<class Kernel, class Method_tag>
 bool test_traits()
   //bool test_traits(InputStream& is)
 {
-  typedef Apollonius_graph_euclidean_traits_2<Kernel,Method_tag>  Traits;
+  typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
 
   // testing typedefs
   //--------------------------------------------------------------------
@@ -433,7 +433,8 @@ bool test_algo_generic(InputStream& is)
   //--------------------------------------------------------------------
 
   Apollonius_graph ag;
-  Apollonius_graph ag1(Traits());
+  Traits gt = Traits();
+  Apollonius_graph ag1(gt);
   Apollonius_graph ag2(ag);
 
   std::vector<Site_2> wp_list;
@@ -746,7 +747,7 @@ bool test_algo_generic(InputStream& is)
 template<class Kernel, class Method_tag, class InputStream>
 bool test_algo(InputStream& is)
 {
-  typedef Apollonius_graph_euclidean_traits_2<Kernel,Method_tag> Traits;
+  typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
   typedef Apollonius_graph_2<Traits>  Apollonius_graph;
 
   return test_algo_generic<Apollonius_graph,InputStream>(is);
@@ -755,7 +756,7 @@ bool test_algo(InputStream& is)
 template<class Kernel, class Method_tag, class InputStream>
 bool test_hierarchy_algo(InputStream& is)
 {
-  typedef Apollonius_graph_euclidean_traits_2<Kernel,Method_tag> Traits;
+  typedef Apollonius_graph_traits_2<Kernel,Method_tag> Traits;
   typedef Apollonius_graph_hierarchy_2<Traits>  Apollonius_graph_hierarchy;
 
   return test_algo_generic<Apollonius_graph_hierarchy,InputStream>(is);

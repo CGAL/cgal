@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Apollonius_graph_euclidean_traits_2.C
+// file          : include/CGAL/Apollonius_graph_traits_2.h
 // package       : Apollonius_graph_2
 // source        : $RCSfile$
 // revision      : $Revision$
@@ -23,470 +23,46 @@
 // ======================================================================
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
-#define CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
+
+#ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
+#define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
+
+#include <CGAL/Triangulation_euclidean_traits_2.h>
+#include <CGAL/Parabola_segment_2.h>
+#include <CGAL/Hyperbola_2.h>
+#include <CGAL/Hyperbola_segment_2.h>
+#include <CGAL/Hyperbola_ray_2.h>
+
+#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Filtered_predicate.h>
+
+#ifndef CGAL_REP_CLASS_DEFINED
+#error  no representation class defined
+#endif  // CGAL_REP_CLASS_DEFINED
+
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+#include <CGAL/predicates/Apollonius_graph_ftC2.h>
+#include <CGAL/Apollonius_graph_constructions_ftC2.h>
+#endif
+
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
+#include <CGAL/predicates/Apollonius_graph_rtH2.h>
+#include <CGAL/Apollonius_graph_constructions_rtH2.h>
+#endif
 
 
-// class implementation continued
-//=================================
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Number_type_traits.h>
+
+#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
+#include <CGAL/Apollonius_graph_constructions_C2.h>
+
+
+#define KEEP_MOST_TYPES_IN_TRAITS 0
+
 
 CGAL_BEGIN_NAMESPACE
 
-//***********************************************************************
-//***********************************************************************
-//                            CONSTRUCTIONS
-//***********************************************************************
-//***********************************************************************
-#if 0
-
-//-----------------------------------------------------------------------
-//                        Apollonius vertex
-//-----------------------------------------------------------------------
-template < class K >
-inline
-typename K::Point_2
-ad_circumcenter_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r,
-		  Cartesian_tag )
-{
-  typename K::FT x,y;
-  ad_circumcenterC2(p.x(),p.y(),p.weight(),
-		    q.x(),q.y(),q.weight(),
-		    r.x(),r.y(),r.weight(),x,y);
-  return typename K::Point_2(x,y);
-}
-
-template < class K >
-inline
-typename K::Point_2
-ad_circumcenter_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r,
-		  Homogeneous_tag )
-{
-  typename K::RT x,y,w;
-  ad_circumcenterH2(p.hx(),p.hy(),p.hw(),p.weight(),
-		    q.hx(),q.hy(),q.hw(),q.weight(),
-		    r.hx(),r.hy(),r.hw(),r.weight(),
-		    x,y,w);
-  return typename K::Point_2(x,y,w);
-}
-
-template < class K >
-inline
-typename K::Point_2
-ad_circumcenter_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_circumcenter_2< K >(p, q, r, Tag()); 
-}
-
-
-template < class K >
-class Construct_Apollonius_vertex_2
-{
-public:
-  typedef typename K::Point_2              Point_2;
-  typedef typename K::Site_2    Site_2;
-
-  inline
-  Point_2 operator() (const Site_2& p,
-		      const Site_2& q,
-		      const Site_2& r) const
-  {
-    //      CGAL_triangulation_precondition( ! collinear(p, q, r) );
-    return ad_circumcenter_2< K >(p,q,r);
-  }
-};
-
-
-//-----------------------------------------------------------------------
-//                     Apollonius weighted point
-//-----------------------------------------------------------------------
-template < class K >
-inline
-typename K::Site_2
-ad_circumcircle_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r,
-		  Cartesian_tag )
-{
-  typename K::FT x, y, wt;
-  ad_circumcircleC2(p.x(),p.y(),p.weight(),
-		    q.x(),q.y(),q.weight(),
-		    r.x(),r.y(),r.weight(),x,y,wt);
-  return typename K::Site_2(typename K::Point_2(x,y), wt);
-}
-
-template < class K >
-inline
-typename K::Site_2
-ad_circumcircle_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r,
-		  Homogeneous_tag )
-{
-  typename K::RT x, y, w, wt;
-  ad_circumcircleH2(p.hx(),p.hy(),p.hw(),p.weight(),
-		    q.hx(),q.hy(),q.hw(),q.weight(),
-		    r.hx(),r.hy(),r.hw(),r.weight(),
-		    x,y,w,wt);
-  return typename K::Site_2(typename K::Point_2(x,y,w), wt);
-}
-
-template < class K >
-inline
-typename K::Site_2
-ad_circumcircle_2(const typename K::Site_2& p,
-		  const typename K::Site_2& q,
-		  const typename K::Site_2& r)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_circumcircle_2< K >(p, q, r, Tag()); 
-}
-
-template < class K >
-inline
-typename K::Line_2
-ad_left_bitangent_line_2(const typename K::Site_2& p,
-			 const typename K::Site_2& q,
-			 Cartesian_tag )
-{
-  typename K::FT a, b, c;
-  ad_left_bitangent_lineC2(p.x(),p.y(),p.weight(),
-			   q.x(),q.y(),q.weight(),
-			   a,b,c);
-  return typename K::Line_2(a, b, c);
-}
-
-template < class K >
-inline
-typename K::Line_2
-ad_left_bitangent_line_2(const typename K::Site_2& p,
-			 const typename K::Site_2& q,
-			 Homogeneous_tag )
-{
-  typename K::RT a, b, c;
-  ad_left_bitangent_lineH2(p.hx(),p.hy(),p.hw(),p.weight(),
-			   q.hx(),q.hy(),q.hw(),q.weight(),
-			   a, b, c);
-  return typename K::Line_2(a, b, c);
-}
-
-template < class K >
-inline
-typename K::Line_2
-ad_left_bitangent_line_2(const typename K::Site_2& p,
-			 const typename K::Site_2& q)
-{
-  typedef typename K::Rep_tag Tag;
-  return ad_left_bitangent_line_2< K >(p, q, Tag()); 
-}
-
-
-template < class K >
-class Construct_Apollonius_site_2
-{
-public:
-  typedef typename K::Line_2             Line_2;
-  typedef typename K::Point_2            Point_2;
-  typedef typename K::Site_2  Site_2;
-
-  inline Site_2 operator()(const Site_2& p,
-				      const Site_2& q,
-				      const Site_2& r) const
-  {
-    //      CGAL_triangulation_precondition( ! collinear(p, q, r) );
-    return ad_circumcircle_2< K >(p,q,r);
-  }
-
-  inline Line_2 operator()(const Site_2 &p,
-			   const Site_2 &q) const
-  {
-    return ad_left_bitangent_line_2< K >(p, q);
-  }
-};
-
-
-//-----------------------------------------------------------------------
-//                        Apollonius bisector
-//-----------------------------------------------------------------------
-
-
-template< class K >
-class Construct_Apollonius_bisector_2
-{
-public:
-  typedef typename K::Point_2                Point_2;
-  typedef typename K::RT                     Weight;
-  typedef typename K::Line_2                 Line_2;
-  typedef typename K::Site_2      Site_2;
-  typedef typename K::Object_2               Object_2;
-  typedef typename K::Construct_object_2     Construct_object_2;
-  typedef CGAL::Hyperbola_2<Point_2, Weight> Hyperbola_2;
-
-private:
-  template<class T>
-  Object_2 make_object(const T& t) const
-  {
-    return Construct_object_2()(t);
-  }
-
-public:
-  inline Object_2 operator() (const Site_2& p,
-			      const Site_2& q) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Line_2 l1(p.point(), q.point());
-      Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
-      return make_object(l);
-    }
-
-    Hyperbola_2 h(p, q);
-    return make_object(h);
-  }
-};
-
-//-----------------------------------------------------------------------
-//                      Apollonius bisector ray
-//-----------------------------------------------------------------------
-
-
-template< class K >
-class Construct_Apollonius_bisector_ray_2
-{
-public:
-  typedef typename K::Point_2               Point_2;
-  typedef typename K::RT                    Weight;
-  typedef typename K::Line_2                Line_2;
-  typedef typename K::Ray_2                 Ray_2;
-  typedef typename K::Site_2     Site_2;
-  typedef typename K::Object_2              Object_2;
-  typedef typename K::Construct_object_2    Construct_object_2;
-  typedef CGAL::Hyperbola_ray_2<Point_2, Weight>  Hyperbola_ray_2;
-  typedef CGAL::Sign                              Hyperbola_direction;
-  typedef CGAL::Construct_Apollonius_vertex_2<K>  Apollonius_vertex_2;
-
-private:
-  template<class T>
-  Object_2 make_object(const T& t) const
-  {
-    return Construct_object_2()(t);
-  }
-
-public:
-  inline Object_2
-  operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Point_2& r,
-	      const Hyperbola_direction& direction) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Line_2 l1(q, p);
-      Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
-      Ray_2 ray(r, l.direction());
-      return make_object(ray);
-    }
-    Hyperbola_ray_2 hr(p, q, r, direction);
-    return make_object(hr);
-  }
-
-  inline Object_2
-  operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r) const {
-    Point_2 c = Apollonius_vertex_2()(p, q, r);
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Line_2 l1(q.point(), p.point());
-      Line_2 l = l1.perpendicular(midpoint(p.point(), q.point()));
-      Ray_2 ray(c, l.direction());
-      return make_object(ray);
-    }
-    Hyperbola_ray_2 hr(p, q, c, NEGATIVE);
-    return make_object(hr);
-  }
-};
-
-//-----------------------------------------------------------------------
-//                    Apollonius bisector segment
-//-----------------------------------------------------------------------
-
-template< class K >
-class Construct_Apollonius_bisector_segment_2
-{
-public:
-  typedef typename K::Point_2                 Point_2;
-  typedef typename K::RT                      Weight;
-  typedef typename K::Segment_2               Segment_2;
-  typedef typename K::Site_2       Site_2;
-  typedef typename K::Object_2                Object_2;
-  typedef typename K::Construct_object_2      Construct_object_2;
-  typedef CGAL::Hyperbola_segment_2<Point_2, Weight>  Hyperbola_segment_2;
-  typedef CGAL::Construct_Apollonius_vertex_2<K>      Apollonius_vertex_2;
-
-private:
-  template<class T>
-  Object_2 make_object(const T& t) const
-  {
-    return Construct_object_2()(t);
-  } 
-
-public:
-  inline Object_2 operator() (const Site_2& p,
-			      const Site_2& q,
-			      const Point_2& r, const Point_2& s) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Segment_2 seg(r, s);
-      return make_object(seg);
-    }
-    Hyperbola_segment_2 hs(p, q, r, s);
-    return make_object(hs);
-  }
-
-  inline Object_2 operator() (const Site_2& p,
-			      const Site_2& q,
-			      const Site_2& r,
-			      const Site_2& s) const {
-    Apollonius_vertex_2 apollonius_vertex_2;
-    Point_2 c_pqr = apollonius_vertex_2(p,q,r);
-    Point_2 c_qps = apollonius_vertex_2(q,p,s);
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Segment_2 seg(c_pqr, c_qps);
-      return make_object(seg);
-    }
-    Hyperbola_segment_2 hs(p, q, c_pqr, c_qps);
-    return make_object(hs);
-  }
-
-};
-
-//-----------------------------------------------------------------------
-//                    Apollonius primal ray
-//-----------------------------------------------------------------------
-
-
-template< class K >
-class Construct_Apollonius_primal_ray_2
-{
-public:
-  typedef typename K::Point_2                        Point_2;
-  typedef typename K::RT                             Weight;
-  typedef typename K::RT                             RT;
-  typedef typename K::Line_2                         Line_2;
-  typedef typename K::Ray_2                          Ray_2;
-  typedef typename K::Site_2                         Site_2;
-  typedef CGAL::Construct_Apollonius_site_2<K>       Apollonius_circle_2;
-
-  inline Ray_2 operator() (const Site_2& p,
-			   const Site_2& r,
-			   const Site_2& s) const {
-    //
-    Apollonius_circle_2 apollonius_circle_2;
-    Line_2 l1 = apollonius_circle_2(r, p);
-    Line_2 l2 = apollonius_circle_2(p, s);
-
-    RT d1 = CGAL_NTS sqrt( CGAL_NTS square(l1.a()) +
-			   CGAL_NTS square(l1.b()) );
-    RT d2 = CGAL_NTS sqrt( CGAL_NTS square(l2.a()) +
-			   CGAL_NTS square(l2.b()) );
-    RT a = l1.a() / d1 - l2.a() / d2;
-    RT b = l1.b() / d1 - l2.b() / d2;
-    Point_2 c(p.x() + b, p.y() - a);
-    return Ray_2(p.point(), c);
-  }
-};
-
-//-----------------------------------------------------------------------
-//                    Apollonius primal segment
-//-----------------------------------------------------------------------
-
-template< class K >
-class Construct_Apollonius_primal_segment_2
-{
-public:
-  typedef typename K::Point_2                         Point_2;
-  typedef typename K::RT                              Weight;
-  typedef typename K::Line_2                          Line_2;
-  typedef typename K::Segment_2                       Segment_2;
-  typedef typename K::Site_2                          Site_2;
-  typedef typename K::Object_2                        Object_2;
-  typedef typename K::Construct_object_2              Construct_object_2;
-  typedef CGAL::Hyperbola_segment_2<Point_2,Weight>   Hyperbola_segment_2;
-  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2> 
-  /*                                               */ Parabola_segment_2;
-  typedef CGAL::Construct_Apollonius_site_2<K>        Apollonius_circle_2;
-
-
-private:
-  template<class T>
-  Object_2 make_object(const T& t) const
-  {
-    return Construct_object_2()(t);
-  }
-
-public:
-
-  inline Segment_2
-  operator() (const Site_2& p,
-	      const Site_2& q) const {
-    //
-    return Segment_2(p.point(), q.point());
-  }
-
-  inline Object_2
-  operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Point_2& r, const Point_2& s) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Segment_2 seg(r, s);
-      return make_object(seg);
-    }
-    Hyperbola_segment_2 hs(p, q, r, s);
-    return make_object(hs);
-  }
-
-  inline Object_2
-  operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r,
-	      const Site_2& s) const {
-    Apollonius_circle_2 apollonius_circle_2;
-    Site_2 c_pqr = apollonius_circle_2(p, q, r);
-    Site_2 c_qps = apollonius_circle_2(q, p, s);
-    //
-    Comparison_result cr = CGAL_NTS compare(c_pqr.weight(), c_qps.weight());
-    if ( cr == EQUAL ) {
-      Segment_2 seg(p.point(), q.point());
-      return make_object(seg);
-    }
-    Hyperbola_segment_2 hs(c_pqr, c_qps, p.point(), q.point());
-    return make_object(hs);
-  }
-
-  inline Parabola_segment_2
-  operator() (const Site_2& p,
-	      const Site_2& q,
-	      const Site_2& r) const {
-    //
-    Apollonius_circle_2 apollonius_circle_2;
-    Site_2 c = apollonius_circle_2(p, q, r);
-    Line_2 l = apollonius_circle_2(q, p);
-    return Parabola_segment_2(c, l, q.point(), p.point());
-  }
-};
-#endif
 
 //***********************************************************************
 //***********************************************************************
@@ -1357,9 +933,440 @@ public:
 
 
 
+
+//-----------------------------------------------------------------------
+// the Traits class
+//-----------------------------------------------------------------------
+template < class Rep, class MTag = Ring_tag >
+class Apollonius_graph_traits_2
+{
+public:
+  //-----------------------------------------------------------------------
+  //                  TYPE DEFINITIONS
+  //-----------------------------------------------------------------------
+
+  // BASIC TYPES
+  //------------
+private:  
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>        Kernel;
+  typedef Apollonius_graph_traits_2<Rep,MTag>           Self;
+
+public:
+  typedef Rep                                           R;
+  typedef MTag                                          Method_tag;
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Kernel::Site_2                       Site_2;
+
+  typedef typename Kernel::Line_2                       Line_2;
+  typedef typename Kernel::Ray_2                        Ray_2;
+  typedef typename Rep::Segment_2                       Segment_2;
+
+  typedef typename Kernel::Object_2                     Object_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::RT                           RT;
+
+private:
+  typedef typename Site_2::FT                           Weight;
+
+public:
+#if KEEP_MOST_TYPES_IN_TRAITS
+  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
+  /*                                                 */ Parabola_segment_2;
+  typedef CGAL::Hyperbola_2<Self>                       Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Self>                   Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Self>
+  /*                                                 */ Hyperbola_segment_2;
+#endif
+
+public:
+  // OBJECT CONSTRUCTION & ASSIGNMENT
+  //---------------------------------
+  typedef typename Kernel::Construct_object_2     Construct_object_2;
+  typedef typename Kernel::Assign_2               Assign_2;
+
+  // CONSTRUCTIONS
+  //--------------
+  // vertex and dual site
+  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
+  /*                                      */ Construct_Apollonius_vertex_2;
+  typedef CGAL::Construct_Apollonius_site_2<Kernel>
+  /*                                        */ Construct_Apollonius_site_2;
+
+
+#if KEEP_MOST_TYPES_IN_TRAITS
+  // bisectors and subsets
+  typedef CGAL::Construct_Apollonius_bisector_2<Self>
+  /*                                    */ Construct_Apollonius_bisector_2;
+  typedef CGAL::Construct_Apollonius_bisector_ray_2<Self>
+  /*                                */ Construct_Apollonius_bisector_ray_2;
+  typedef CGAL::Construct_Apollonius_bisector_segment_2<Self>
+  /*                            */ Construct_Apollonius_bisector_segment_2;
+
+  // primal edges
+  typedef CGAL::Construct_Apollonius_primal_ray_2<Self> 
+  /*                                   */ Construct_Apollonius_primal_ray_2;
+  typedef CGAL::Construct_Apollonius_primal_segment_2<Self>
+  /*                               */ Construct_Apollonius_primal_segment_2;
+#endif
+
+  // PREDICATES
+  //-----------
+  typedef typename Kernel::Compare_x_2                  Compare_x_2;
+  typedef typename Kernel::Compare_y_2                  Compare_y_2;
+  typedef CGAL::Compare_weight_2<Kernel>                Compare_weight_2;
+  typedef typename Kernel::Orientation_2                Orientation_2;
+  typedef CGAL::Is_hidden_2<Kernel,MTag>                Is_hidden_2;
+  typedef CGAL::Oriented_side_of_bisector_2<Kernel,MTag> 
+  /*                                          */ Oriented_side_of_bisector_2;
+  typedef CGAL::Vertex_conflict_2<Kernel,MTag >            Vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<Kernel,MTag >
+  /*                                      */ Finite_edge_interior_conflict_2;
+  typedef CGAL::Infinite_edge_interior_conflict_2<Kernel,MTag>
+  /*                                    */ Infinite_edge_interior_conflict_2;
+  typedef CGAL::Is_degenerate_edge_2<Kernel,MTag>       Is_degenerate_edge_2;
+
+
+public:
+  //-----------------------------------------------------------------------
+  //                  ACCESS TO OBJECTS
+  //-----------------------------------------------------------------------
+
+  // OBJECT CONSTRUCTION & ASSIGNMENT
+  Assign_2
+  assign_2_object() const {
+    return Assign_2();
+  }
+
+  Construct_object_2
+  construct_object_2_object() const { 
+    return Construct_object_2();
+  }
+
+
+  // CONSTRUCTIONS
+  //--------------
+  Construct_Apollonius_vertex_2
+  construct_Apollonius_vertex_2_object() const { 
+    return Construct_Apollonius_vertex_2();
+  }
+
+  Construct_Apollonius_site_2
+  construct_Apollonius_site_2_object() const {
+    return Construct_Apollonius_site_2();
+  }
+
+#if KEEP_MOST_TYPES_IN_TRAITS
+  Construct_Apollonius_bisector_2
+  construct_Apollonius_bisector_2_object() const {
+    return Construct_Apollonius_bisector_2();
+  }
+
+  Construct_Apollonius_bisector_ray_2
+  construct_Apollonius_bisector_ray_2_object() const {
+    return Construct_Apollonius_bisector_ray_2();
+  }
+
+  Construct_Apollonius_bisector_segment_2
+  construct_Apollonius_bisector_segment_2_object() const { 
+    return Construct_Apollonius_bisector_segment_2(); 
+  }
+
+  Construct_Apollonius_primal_ray_2
+  construct_Apollonius_primal_ray_2_object() const {
+    return Construct_Apollonius_primal_ray_2(); 
+  }
+
+  Construct_Apollonius_primal_segment_2
+  construct_Apollonius_primal_segment_2_object() const { 
+    return Construct_Apollonius_primal_segment_2();
+  }
+#endif
+
+  // PREDICATES
+  //-----------
+  Compare_x_2
+  compare_x_2_object() const {
+    return Compare_x_2();
+  }
+
+  Compare_y_2
+  compare_y_2_object() const {
+    return Compare_y_2();
+  }
+
+  Compare_weight_2
+  compare_weight_2_object() const {
+    return Compare_weight_2();
+  }
+
+  Orientation_2
+  orientation_2_object() const {
+    return Orientation_2();
+  }
+
+  Is_hidden_2
+  is_hidden_2_object() const {
+    return Is_hidden_2();
+  }
+
+  Oriented_side_of_bisector_2
+  oriented_side_of_bisector_2_object() const {
+    return Oriented_side_of_bisector_2();
+  }
+
+  Vertex_conflict_2
+  vertex_conflict_2_object() const {
+    return Vertex_conflict_2();
+  }
+
+  Finite_edge_interior_conflict_2
+  finite_edge_interior_conflict_2_object() const {
+    return Finite_edge_interior_conflict_2();
+  }
+
+  Infinite_edge_interior_conflict_2
+  infinite_edge_interior_conflict_2_object() const {
+    return Infinite_edge_interior_conflict_2();
+  }
+
+  Is_degenerate_edge_2
+  is_degenerate_edge_2_object() const {
+    return Is_degenerate_edge_2();
+  }
+
+};
+
+
+#if 0
+// I AM REMOVING THE FILTERED KERNEL STUFF SO THAT I DON'T GET ANY
+// PROBLEMS WITH PARTIAL SPECIALIZATION AND ALSO BECAUSE THE CURRENT
+// DEFINITION OF FILTERED KERNEL DOES NOT SUPPORT MORE THAN ONE
+// TEMPLATE ARGUMENT
+
+// CHANGE THE TEMPLATE NAMES SO THAT THERE IS NO UNDERSCROEE IN THE
+// BEGINNING
+
+//-----------------------------------------------------------------------
+// the Traits class for a filtered kernel
+//-----------------------------------------------------------------------
+template< class MTag, class _CK, class _EK, class _FK,
+  class _C2E, class _C2F >
+class Apollonius_graph_euclidean_traits_2<
+Filtered_kernel<_CK,_EK,_FK,_C2E,_C2F>, MTag>
+{
+private:
+  typedef Apollonius_graph_kernel_wrapper_2<_CK>  CK;
+  typedef Apollonius_graph_kernel_wrapper_2<_EK>  EK;
+  typedef Apollonius_graph_kernel_wrapper_2<_FK>  FK;
+  typedef Extended_cartesian_converter<_C2E>  C2E;
+  typedef Extended_cartesian_converter<_C2F>  C2F;
+
+public:
+  //-----------------------------------------------------------------------
+  //                  TYPE DEFINITIONS
+  //-----------------------------------------------------------------------
+
+  // BASIC TYPES
+  //------------
+  typedef Kernel_wrapper_2< Filtered_kernel<CK,EK,FK,C2E,C2F> >  Kernel;
+  typedef Kernel                                         Rep;
+  typedef MTag                                           Method_tag;
+  typedef typename Kernel::RT                            Weight;
+  typedef typename Kernel::Point_2                       Point_2;
+  typedef typename Kernel::Site_2                        Site_2;
+  //
+  typedef typename Kernel::Object_2                      Object_2;
+  typedef typename Kernel::Line_2                        Line_2;
+  typedef typename Kernel::Ray_2                         Ray_2;
+  typedef typename Kernel::Segment_2                     Segment_2;
+  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
+  /*                                                  */ Parabola_segment_2;
+  typedef CGAL::Hyperbola_2<Point_2,Weight>         Hyperbola_2;
+  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>     Hyperbola_ray_2;
+  typedef CGAL::Hyperbola_segment_2<Point_2,Weight> Hyperbola_segment_2;
+
+public:
+  // CONSTRUCTIONS
+  //--------------
+  // vertex and dual site
+  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
+  /*                                      */ Construct_Apollonius_vertex_2;
+  typedef CGAL::Construct_Apollonius_site_2<Kernel>
+  /*                                        */ Construct_Apollonius_site_2;
+
+  // bisectors and subsets
+  typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
+  /*                                    */ Construct_Apollonius_bisector_2;
+  typedef CGAL::Construct_Apollonius_bisector_ray_2<Kernel>
+  /*                                */ Construct_Apollonius_bisector_ray_2;
+  typedef CGAL::Construct_Apollonius_bisector_segment_2<Kernel>
+  /*                            */ Construct_Apollonius_bisector_segment_2;
+
+  // primal edges
+  typedef CGAL::Construct_Apollonius_primal_ray_2<Kernel>
+  /*                                   */ Construct_Apollonius_primal_ray_2;
+  typedef CGAL::Construct_Apollonius_primal_segment_2<Kernel>
+  /*                               */ Construct_Apollonius_primal_segment_2;
+
+
+private:
+  // Predicates for the construction kernel
+  typedef CGAL::Compare_weight_2<CK>                   CK_compare_weight_2;
+  typedef CGAL::Is_hidden_2<CK,MTag>                   CK_is_hidden_2;
+  typedef CGAL::Oriented_side_of_bisector_2<CK,MTag> 
+  /*                                      */ CK_oriented_side_of_bisector_2;
+  typedef CGAL::Vertex_conflict_2<CK,MTag >            CK_vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<CK,MTag >
+  /*                                  */ CK_finite_edge_interior_conflict_2;
+  typedef CGAL::Infinite_edge_interior_conflict_2<CK,MTag>
+  /*                                */ CK_infinite_edge_interior_conflict_2;
+  typedef CGAL::Is_degenerate_edge_2<CK,MTag>       CK_is_degenerate_edge_2;
+
+  // Predicates for the exact kernel
+  typedef CGAL::Compare_weight_2<EK>                   EK_compare_weight_2;
+  typedef CGAL::Is_hidden_2<EK,MTag>                   EK_is_hidden_2;
+  typedef CGAL::Oriented_side_of_bisector_2<EK,MTag> 
+  /*                                      */ EK_oriented_side_of_bisector_2;
+  typedef CGAL::Vertex_conflict_2<EK,MTag >            EK_vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<EK,MTag >
+  /*                                  */ EK_finite_edge_interior_conflict_2;
+  typedef CGAL::Infinite_edge_interior_conflict_2<EK,MTag>
+  /*                                */ EK_infinite_edge_interior_conflict_2;
+  typedef CGAL::Is_degenerate_edge_2<EK,MTag>       EK_is_degenerate_edge_2;
+
+  // Predicates for the filtering kernel
+  typedef CGAL::Compare_weight_2<FK>                   FK_compare_weight_2;
+  typedef CGAL::Is_hidden_2<FK,MTag>                   FK_is_hidden_2;
+  typedef CGAL::Oriented_side_of_bisector_2<FK,MTag> 
+  /*                                      */ FK_oriented_side_of_bisector_2;
+  typedef CGAL::Vertex_conflict_2<FK,MTag >            FK_vertex_conflict_2;
+  typedef CGAL::Finite_edge_interior_conflict_2<FK,MTag >
+  /*                                  */ FK_finite_edge_interior_conflict_2;
+  typedef CGAL::Infinite_edge_interior_conflict_2<FK,MTag>
+  /*                                */ FK_infinite_edge_interior_conflict_2;
+  typedef CGAL::Is_degenerate_edge_2<FK,MTag>       FK_is_degenerate_edge_2;
+
+public:
+  // PREDICATES
+  //-----------
+  typedef typename Kernel::Compare_x_2                   Compare_x_2;
+  typedef typename Kernel::Compare_y_2                   Compare_y_2;
+  typedef Filtered_predicate<EK_compare_weight_2,
+    FK_compare_weight_2,C2E,C2F> Compare_weight_2;
+  typedef typename Kernel::Orientation_2                 Orientation_2;
+  typedef Filtered_predicate<EK_is_hidden_2,
+    FK_is_hidden_2,C2E,C2F> Is_hidden_2;
+  typedef Filtered_predicate<EK_oriented_side_of_bisector_2,
+    FK_oriented_side_of_bisector_2,C2E,C2F> Oriented_side_of_bisector_2;
+  typedef Filtered_predicate<EK_vertex_conflict_2,
+    FK_vertex_conflict_2,C2E,C2F> Vertex_conflict_2;
+  typedef Filtered_predicate<EK_finite_edge_interior_conflict_2,
+    FK_finite_edge_interior_conflict_2,C2E,C2F>
+  Finite_edge_interior_conflict_2;
+  typedef Filtered_predicate<EK_infinite_edge_interior_conflict_2,
+    FK_infinite_edge_interior_conflict_2,C2E,C2F>
+  Infinite_edge_interior_conflict_2;
+  typedef Filtered_predicate<EK_is_degenerate_edge_2,
+    FK_is_degenerate_edge_2,C2E,C2F> Is_degenerate_edge_2;
+
+public:
+  //-----------------------------------------------------------------------
+  //                  ACCESS TO OBJECTS
+  //-----------------------------------------------------------------------
+
+  // CONSTRUCTIONS
+  //--------------
+  Construct_Apollonius_vertex_2
+  construct_Apollonius_vertex_2_object() const { 
+    return Construct_Apollonius_vertex_2();
+  }
+
+  Construct_Apollonius_site_2
+  construct_Apollonius_site_2_object() const {
+    return Construct_Apollonius_site_2();
+  }
+
+  Construct_Apollonius_bisector_2
+  construct_Apollonius_bisector_2_object() const {
+    return Construct_Apollonius_bisector_2();
+  }
+
+  Construct_Apollonius_bisector_ray_2
+  construct_Apollonius_bisector_ray_2_object() const {
+    return Construct_Apollonius_bisector_ray_2();
+  }
+
+  Construct_Apollonius_bisector_segment_2
+  construct_Apollonius_bisector_segment_2_object() const { 
+    return Construct_Apollonius_bisector_segment_2(); 
+  }
+
+  Construct_Apollonius_primal_ray_2
+  construct_Apollonius_primal_ray_2_object() const {
+    return Construct_Apollonius_primal_ray_2(); 
+  }
+
+  Construct_Apollonius_primal_segment_2
+  construct_Apollonius_primal_segment_2_object() const { 
+    return Construct_Apollonius_primal_segment_2();
+  }
+
+  // PREDICATES
+  //-----------
+  Compare_x_2
+  compare_x_2_object() const {
+    return Compare_x_2();
+  }
+
+  Compare_y_2
+  compare_y_2_object() const {
+    return Compare_y_2();
+  }
+
+  Compare_weight_2
+  compare_weight_2_object() const {
+    return Compare_weight_2();
+  }
+
+  Orientation_2
+  orientation_2_object() const {
+    return Orientation_2();
+  }
+
+  Is_hidden_2
+  is_hidden_2_object() const {
+    return Is_hidden_2();
+  }
+
+  Oriented_side_of_bisector_2
+  oriented_side_of_bisector_2_object() const {
+    return Oriented_side_of_bisector_2();
+  }
+
+  Vertex_conflict_2
+  vertex_conflict_2_object() const {
+    return Vertex_conflict_2();
+  }
+
+  Finite_edge_interior_conflict_2
+  finite_edge_interior_conflict_2_object() const {
+    return Finite_edge_interior_conflict_2();
+  }
+
+  Infinite_edge_interior_conflict_2
+  infinite_edge_interior_conflict_2_object() const {
+    return Infinite_edge_interior_conflict_2();
+  }
+
+  Is_degenerate_edge_2
+  is_degenerate_edge_2_object() const {
+    return Is_degenerate_edge_2();
+  }
+
+};
+#endif
+
+
 CGAL_END_NAMESPACE
 
-
-
-#endif // CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
-
+#endif // CGAL_APOLLONIUS_GRAPH_TRAITS_2_H

@@ -29,10 +29,10 @@ typedef CGAL::Simple_cartesian<NT>  Kernel;
 // typedefs for the traits and the algorithm
 
 #include <CGAL/Apollonius_graph_2.h>
-#include <CGAL/Apollonius_graph_euclidean_traits_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
 
-typedef CGAL::Apollonius_graph_euclidean_traits_2<Kernel> Traits;
-typedef CGAL::Apollonius_graph_2<Traits> Apollonius_graph;
+typedef CGAL::Apollonius_graph_traits_2<Kernel>   Traits;
+typedef CGAL::Apollonius_graph_2<Traits>          Apollonius_graph;
 
 
 

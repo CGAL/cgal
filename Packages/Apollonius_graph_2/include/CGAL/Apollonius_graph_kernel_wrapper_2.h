@@ -71,7 +71,7 @@ public:
 
 };
 
-
+#if 0
 template<class Cartesian_converter>
 class Extended_cartesian_converter
 {};
@@ -100,7 +100,7 @@ public:
     return typename K2W::Site_2( p, c(wp.weight()) );
   }
 };
-
+#endif
 
 CGAL_END_NAMESPACE
 

@@ -33,7 +33,7 @@
 #define Apollonius_graph_data_structure_2   Agds2
 #define Apollonius_graph_vertex_base_2      Agvb2
 #define Apollonius_graph_face_base_2        Agfb2
-#define Apollonius_graph_euclidean_traits_2 Aget2
+#define Apollonius_graph_traits_2           Agt2
 
 
 
