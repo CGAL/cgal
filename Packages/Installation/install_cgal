@@ -4270,7 +4270,10 @@ create_include_makefile()
   makefile_header "suffixes and rules" >> ${FILE}
   ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .clean" >> ${FILE}
   if [ -n "${EXE_EXT}" ]; then
-    ${_printf} "\n.C:\n" >> ${FILE}
+    case ${CGAL_OS_COMPILER} in 
+	*CYGWIN*g++*) ${_printf} "\n.o:\n" >> ${FILE};;
+	*)            ${_printf} "\n.C:\n" >> ${FILE};;
+    esac
     ${_printf} "\t%s %s%s\n" "\$(MAKE)" '$*' "${EXE_EXT}" >> ${FILE}
   fi
   ${_printf} "\n.C.clean:\n" >> ${FILE}
