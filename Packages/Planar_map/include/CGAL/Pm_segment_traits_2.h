@@ -33,7 +33,6 @@
 #ifndef CGAL_PM_SEGMENT_TRAITS_2_H
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
-#include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
 #include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -67,14 +66,6 @@ protected:
   typedef typename Kernel::Less_x_2             Less_x_2;
   typedef typename Kernel::Equal_2              Equal_2;
     
-  typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve_2>
-                                                Counterclockwise_in_between_2;
-
-protected:
-  inline Counterclockwise_in_between_2 counterclockwise_in_between_2_object()
-    const
-  { return Counterclockwise_in_between_2(); }
-
 public:
   // Creation
   Pm_segment_traits_2() {}
