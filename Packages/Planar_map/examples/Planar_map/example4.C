@@ -1,76 +1,70 @@
-// examples/Planar_map/example4.C
-// ------------------------------
+/*! \file
+ * A construction of a planar map using various insert and split operations.
+ * In this example a planar map similar to the planar map of example 1 and 2
+ * is constructed. The planar map is further modified by spliting one of its
+ * edges and inserting an additional edge at specified vertices. The
+ * Planar_map out-streaming feature is demonstrated as well. Note the format
+ * of the stream.
+ */
+
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-
 #include <CGAL/IO/Pm_file_writer.h>
 #include <CGAL/IO/write_pm.h>
+#include <iostream>
 
-using CGAL::write_pm;
-
-typedef CGAL::Homogeneous<long>                Coord_t;
-typedef CGAL::Pm_segment_exact_traits<Coord_t> Pmtraits;
-
-typedef Pmtraits::Point                        Point;
-typedef Pmtraits::X_curve                      Curve;
-
-typedef CGAL::Pm_default_dcel<Pmtraits>        Pmdcel;
-typedef CGAL::Planar_map_2<Pmdcel,Pmtraits>    Planar_map;
-
-typedef CGAL::Pm_file_writer<Planar_map>       Pm_writer;
+typedef CGAL::Homogeneous<long>                 Kernel;
+typedef CGAL::Pm_segment_traits<Kernel>         Traits;
+typedef Traits::Point_2                         Point_2;
+typedef Traits::X_curve_2                       X_curve_2;
+typedef CGAL::Pm_default_dcel<Traits>           Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits>         Planar_map;
+typedef CGAL::Pm_file_writer<Planar_map>        Pm_writer;
 
 int main()
 {
-  // creating an instance of Planar_map
+  // Create an instance of a Planar_map:
   Planar_map pm;
   Pm_writer verbose_writer(std::cout, pm, true);
-
-  Curve cv[5];
+  X_curve_2 cv[5];
   int i;
 
   CGAL::set_ascii_mode(std::cout);
 
-  Point a1(100, 0), a2(20, 50), a3(180, 50), a4(100, 100);
+  Point_2 a1(100, 0), a2(20, 50), a3(180, 50), a4(100, 100);
 
-  // those curves are about to be inserted to pm
-  cv[0] = Curve(a1, a2);
-  cv[1] = Curve(a1, a3);
-  cv[2] = Curve(a2, a3);
-  cv[3] = Curve(a2, a4);
-  cv[4] = Curve(a3, a4);
+  // Create the curves:
+  cv[0] = X_curve_2(a1, a2);
+  cv[1] = X_curve_2(a1, a3);
+  cv[2] = X_curve_2(a2, a3);
+  cv[3] = X_curve_2(a2, a4);
+  cv[4] = X_curve_2(a3, a4);
   
+  // Insert the curves into the Planar_map:
+  std::cout << "Inserting the curves to the map ... ";
   Planar_map::Halfedge_handle e[5];  
-  // insert the five curves to the map and return e[i]
   for (i = 0; i < 5; i++)
-  {
-    e[i]=pm.insert(cv[i]);
-    std::cout << "is " ;
-    if (!pm.is_valid() )
-      std::cout << "in" ;
-    std::cout << "valid" << std::endl  ;
-  }
+    e[i] = pm.insert(cv[i]);
+  std::cout << ((pm.is_valid()) ? "map valid!" : "map invalid!") << std::endl
+            << std::endl;
   
-  //map before splitting the edge and adding curve
+  // Print map before splitting and adding:
   std::cout << "* * * Map before:" << std::endl << std::endl;
-  //std::cout << pm << std::endl;
-  write_pm(pm, verbose_writer, std::cout);
-
+  CGAL::write_pm(pm, verbose_writer, std::cout);
   
+  // Split e[2] in the middle, and add a curve between the new vertex and
+  // the source of e[0]:
+  Point_2 p(100, 50);
+  X_curve_2 c1(a2, p);
+  X_curve_2 c2(p, a3);
+  Planar_map::Halfedge_handle se = pm.split_edge(e[2], c1, c2); 
+  pm.insert_at_vertices(X_curve_2(p, a1), se->target(), e[0]->source());
 
-  //splitting e[2] of the map at the middle and inserting an edge between the 
-  // new vertex and the vertex at a1
-  Point p(100, 50);
-  Curve c1(a2,p);
-  Curve c2(p,a3);
-
-  Planar_map::Halfedge_handle se = pm.split_edge(e[2],c1,c2); 
-
-  pm.insert_at_vertices( Curve(p,a1), se->target(),e[0]->source() );
-
+  // Print map after splitting and adding:
   std::cout << std::endl << "* * * Map after:" << std::endl << std::endl;
-  write_pm(pm, verbose_writer, std::cout);
+  CGAL::write_pm(pm, verbose_writer, std::cout);
 
   return 0;  
 }
