@@ -150,7 +150,7 @@ inline ostream& operator<<(ostream& os, const CGAL_Filtered_exact<CT,ET>& d)
 { return os << d.value; }
 
 template <class CT, class ET>
-inline istream &operator>>(istream &is, const CGAL_Filtered_exact<CT,ET>& d)
+inline istream &operator>>(istream &is, CGAL_Filtered_exact<CT,ET>& d)
 { return is >> d.value; }
 
 
