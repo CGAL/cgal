@@ -179,8 +179,10 @@ public:
    *  \param curves_end the input past-the-end iterator of the range.
    *  \param subcurves an iterator to the first curve in the range
    *                   of curves created by intersecting the input curves.
-   *  \param overlapping indicates whether there are overlapping curves
-   *                     in the input range. Defaults to false.
+   *  \param overlapping indicates whether overlapping curves should be reported 
+   *                   once or multiple times. If false, the overlapping curves are 
+   *                   reported once only.
+   *
    */
   template <class OutpoutIterator>
   void  get_subcurves(CurveInputIterator begin, CurveInputIterator end, 
@@ -377,8 +379,9 @@ protected:
         }
         leftCurve->setLastPoint(eventPoint);
         leftCurve->setLastCurve(b); 
+      
       }
-
+      
       // remove curve from the status line (also checks intersection 
       // between the neighbouring curves)
       RemoveCurveFromStatusLine(leftCurve);
@@ -386,6 +389,7 @@ protected:
       m_currentPos = m_prevPos;
       ++leftCurveIter;
     }
+      
   }
 
   /*!
@@ -916,6 +920,7 @@ FirstPass()
   DBG("First pass");
   EventCurveIter rightIter = m_currentEvent->rightCurvesBegin();
   m_currentPos = m_sweepLinePos;
+
   while ( rightIter != m_currentEvent->rightCurvesEnd())
   {
     // if the point is not an end point, skip it
@@ -924,6 +929,20 @@ FirstPass()
       continue;
     }
 
+#if 1
+// improve here
+    StatusLineIter slIter = m_statusLine->begin();
+    while ( slIter != m_statusLine->end() ) 
+    {
+      if ( m_traits->curve_get_point_status((*slIter)->getCurve(), p) ==
+	      Traits::ON_CURVE && !(*slIter)->isEndPoint(p))
+      {
+	m_currentEvent->addCurveToRight(*slIter);
+	m_currentEvent->addCurveToLeft(*slIter, m_prevPos);
+      }
+      ++slIter;
+    }
+#else
     StatusLineIter slIter = m_statusLine->lower_bound(*rightIter);
     StatusLineIter prev = slIter;
     StatusLineIter next = slIter;
@@ -946,7 +965,7 @@ FirstPass()
 
     // check the curve that comes after the rightCurve on the status line.
     // check also all of the overlaps...
-   if ( slIter != m_statusLine->end() )
+    if ( slIter != m_statusLine->end() )
     {
       while ( m_traits->curve_get_point_status((*next)->getCurve(), p) ==
 	      Traits::ON_CURVE && !(*next)->isEndPoint(p))
@@ -958,8 +977,10 @@ FirstPass()
 	  break;
       }    
     } 
+#endif // 1
     ++rightIter;
   }
+
   SL_DEBUG(m_currentEvent->Print();)
   SL_DEBUG(std::cout << "First pass - done\n" ;)
 }
@@ -1414,11 +1435,10 @@ RemoveCurveFromStatusLine(Subcurve *leftCurve)
 	IntersectCurveGroup(*tmp, mylist);
 	++tmp;
       }
-      else
+      else 
 	break;
     }
   }
-  
   m_statusLine->erase(sliter);
 } 
 
@@ -1442,7 +1462,8 @@ Intersect(Subcurve *c1, Subcurve *c2)
   SL_DEBUG(std::cout << "\t";)
   SL_DEBUG(c2->Print();)
   SL_DEBUG(std::cout << "\n";)
-	    
+  SL_DEBUG(std::cout << "relative to " << m_currentEvent->getPoint() << "\n";)
+
   if ( c1->getId() == c2->getId() ) {
     SL_DEBUG(std::cout << "same curve, returning....\n";)
     return false;
@@ -1461,7 +1482,8 @@ Intersect(Subcurve *c1, Subcurve *c2)
 					       xp, xp1))
   {
     if ( !m_traits->point_is_same(xp, xp1)) {
-      xp = xp1;
+      if ( m_traits->compare_x(xp1, xp) == LARGER )
+	xp = xp1;
       SL_DEBUG(std::cout << "overlap detected\n";)
       isOverlap = true;
     }
@@ -1597,10 +1619,13 @@ inline bool
 Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
 DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
+if 0
+// improve here...
   if ( m_traits->curve_compare_at_x_right(c1->getCurve(),
-				    c2->getCurve(),
-				    m_sweepLinePos) != EQUAL )
+					  c2->getCurve(),
+					  m_sweepLinePos) != EQUAL )
     return false;
+#endif
 
   if ( m_traits->curves_overlap(c1->getCurve(),c2->getCurve()) )
     return true;
