@@ -4296,7 +4296,13 @@ create_include_makefile()
           ${_printf} " \$*%s" "${extension}" >> ${FILE}
       done
   fi
-  ${_printf} "\n\n" >> ${FILE}
+  case ${CGAL_OS_COMPILER} in 
+	mips_IRIX*-6*_CC-*32-*) 
+	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
+	*)  
+	    ${_printf} "\n" >> ${FILE};;
+  esac
+  ${_printf} "\n" >> ${FILE}
 
   # 
   # CGAL_CXX
