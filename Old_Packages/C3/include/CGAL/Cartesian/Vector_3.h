@@ -28,11 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class VectorC3
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class VectorC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle_for<Threetuple<typename R_::FT> >
 {
 public:
@@ -84,6 +80,7 @@ public:
   Self            operator-(const Self &w) const;
   Self            operator-() const;
   FT              operator*(const Self &w) const;
+  FT              squared_length() const;
   Self            operator/(const FT &c) const;
   Direction_3 direction() const;
   Self            transform(const Aff_transformation_3 &) const;

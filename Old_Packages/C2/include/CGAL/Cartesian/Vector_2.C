@@ -231,6 +231,14 @@ VectorC2<R CGAL_CTAG>::operator*(const VectorC2<R CGAL_CTAG> &w) const
 
 template < class R >
 CGAL_KERNEL_INLINE
+typename VectorC2<R CGAL_CTAG>::FT
+VectorC2<R CGAL_CTAG>::squared_length() const
+{
+  return CGAL_NTS square(x()) + CGAL_NTS square(y());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
 VectorC2<R CGAL_CTAG>
 VectorC2<R CGAL_CTAG>::
 operator/(const typename VectorC2<R CGAL_CTAG>::FT &c) const

@@ -223,16 +223,15 @@ operator+(const VectorC3<R CGAL_CTAG> &w) const
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>
-VectorC3<R CGAL_CTAG>::
-operator-(const VectorC3<R CGAL_CTAG> &w) const
+VectorC3<R CGAL_CTAG>::operator-(const VectorC3<R CGAL_CTAG> &w) const
 {
   return VectorC3<R CGAL_CTAG>(x() - w.x(), y() - w.y(), z() - w.z());
 }
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG> VectorC3<R CGAL_CTAG>::
-operator-() const
+VectorC3<R CGAL_CTAG>
+VectorC3<R CGAL_CTAG>::operator-() const
 {
   return VectorC3<R CGAL_CTAG>(-x(), -y(), -z());
 }
@@ -240,10 +239,17 @@ operator-() const
 template < class R >
 inline
 typename VectorC3<R CGAL_CTAG>::FT
-VectorC3<R CGAL_CTAG>::
-operator*(const VectorC3<R CGAL_CTAG> &w) const
+VectorC3<R CGAL_CTAG>::operator*(const VectorC3<R CGAL_CTAG> &w) const
 {
   return x() * w.x() + y() * w.y() + z() * w.z();
+}
+
+template < class R >
+inline
+typename VectorC3<R CGAL_CTAG>::FT
+VectorC3<R CGAL_CTAG>::squared_length() const
+{
+  return CGAL_NTS square(x()) + CGAL_NTS square(y()) + CGAL_NTS square(z());
 }
 
 template < class R >
