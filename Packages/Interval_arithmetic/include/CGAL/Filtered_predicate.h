@@ -43,13 +43,13 @@ CGAL_BEGIN_NAMESPACE
 // - Potential caching is done at the Point_2 level.
 
 
-template <class EP, class AP, class EC, class AC, bool Protection = true>
+template <class EP, class AP, class C2E, class C2F, bool Protection = true>
 class Filtered_predicate
 {
   EP Exact_predicate;
   AP Approx_predicate;
-  EC To_Exact;
-  AC To_Approx;
+  C2E To_Exact;
+  C2F To_Approx;
 
 public:
 
@@ -229,10 +229,10 @@ public:
 };
 
 #ifndef _MSC_VER
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1) const
 {
     try
@@ -247,10 +247,10 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
     }
 }
 
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1, class A2>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1, const A2 &a2) const
 {
     try
@@ -265,10 +265,10 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
     }
 }
 
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1, class A2, class A3>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
 {
     try
@@ -283,10 +283,10 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
     }
 }
 
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1, class A2, class A3, class A4>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
 {
     try
@@ -303,10 +303,10 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
     }
 }
 
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1, class A2, class A3, class A4, class A5>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
 {
@@ -324,10 +324,10 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
     }
 }
 
-template <class EP, class AP, class EC, class AC, bool Protection>
+template <class EP, class AP, class C2E, class C2F, bool Protection>
   template <class A1, class A2, class A3, class A4, class A5, class A6>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2F,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
 {

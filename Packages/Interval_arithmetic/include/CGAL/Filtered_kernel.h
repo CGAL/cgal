@@ -46,9 +46,9 @@ CGAL_BEGIN_NAMESPACE
 template <class CK,
           class EK = Simple_cartesian<MP_Float>,
           class FK = Simple_cartesian<Interval_nt_advanced>,
-	  class C2E_Converter = Cartesian_converter<CK, EK>,
-	  class C2F_Converter = Cartesian_converter<CK, FK,
-	                Interval_converter<CGAL_TYPENAME_MSVC_NULL CK::RT> > >
+	  class C2E = Cartesian_converter<CK, EK>,
+	  class C2F = Cartesian_converter<CK, FK,
+	              Interval_converter<CGAL_TYPENAME_MSVC_NULL CK::RT> > >
 class Filtered_kernel
 {
 public:
@@ -70,7 +70,7 @@ public:
 
 #define CGAL_Filter_pred(P, Pf) \
     typedef Filtered_predicate<typename EK::P, typename FK::P, \
-	                     C2E_Converter, C2F_Converter> P; \
+	                     C2E, C2F> P; \
     P Pf() const { return P(); }
 
     // The following could be used instead for some Cartesian predicates
