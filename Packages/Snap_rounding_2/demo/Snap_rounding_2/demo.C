@@ -1,3 +1,17 @@
+#include <iostream>
+
+#ifndef CGAL_USE_LEDA
+int main()
+{
+
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#else
+
 #include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
@@ -5,7 +19,7 @@
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/IO/cgal_window_redefine.h>
+//#include <CGAL/IO/cgal_window_redefine.h>
 #include "../../include/CGAL/Snap_rounding_2.h"
 
 typedef leda_rational                                  Number_Type;
@@ -35,7 +49,6 @@ Number_Type max(const Number_Type &p,const Number_Type &q,const Number_Type &r)
   return(p > q ? max(p,r) : max(q,r));
 }
 
-
 void get_extreme_points(std::list<Segment_2> &seg_list,
                         Number_Type &min_x,
                         Number_Type &min_y,
@@ -59,7 +72,8 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
 
 void show_output(Snap_rounding_2 &s,
                  Number_Type prec,
-                 CGAL::Window_stream &w)
+                 CGAL::Window_stream &w,
+                 bool show_hp)
 {
   // draw isr polylines
   for(Polyline_const_iterator i = s.polylines_begin();
@@ -68,19 +82,22 @@ void show_output(Snap_rounding_2 &s,
     Point_const_iterator prev = i->begin();
     Point_const_iterator i2 = prev;
     bool seg_painted = false;
-    w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					        i2->y() - prec / 2.0),
-                                        Point_2(i2->x() + prec / 2.0,
-					        i2->y() + prec / 2.0));
+
+    if(show_hp)
+      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
+					          i2->y() - prec / 2.0),
+                                          Point_2(i2->x() + prec / 2.0,
+					          i2->y() + prec / 2.0));
     for(++i2;
         i2 != i->end();
         ++i2) {
       seg_painted = true;
       w << CGAL::RED << Segment_2(*prev,*i2);
-      w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
-					          i2->y() - prec / 2.0),
-                                          Point_2(i2->x() + prec / 2.0,
-					          i2->y() + prec / 2.0));
+      if(show_hp)
+        w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
+					            i2->y() - prec / 2.0),
+                                            Point_2(i2->x() + prec / 2.0,
+					            i2->y() + prec / 2.0));
       prev = i2;
     }
 
@@ -216,13 +233,14 @@ int main(int argc,char *argv[])
   bool sr_shown;
   bool remove_segments = false;
   bool do_isr = true;
+  bool show_hp = true;
 
   if(argc == 1 || argc == 2) {
     // initialize window
     W.init(MIN_X - 3,MAX_X + 3,MIN_Y - 2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
-    W.buttons_per_line(2);
+    W.buttons_per_line(4);
     W.button("Show Output",1);
     W.button("Clear",2);
     W.button("Automatic",3);
@@ -231,7 +249,9 @@ int main(int argc,char *argv[])
     W.button("Remove Segments",6);
     W.button("Isr",7);
     W.button("Sr",8);
-    W.button("Exit",9);
+    W.button("Show hot pixels",9);
+    W.button("Hide hot pixels",10);
+    W.button("Exit",11);
     W.display();
     W.disable_button(4);
     W.disable_button(5);
@@ -286,7 +306,7 @@ int main(int argc,char *argv[])
 
   if(argc == 2) {
     s.insert(seg_list.begin(),seg_list.end());
-    show_output(s,prec,W);
+    show_output(s,prec,W,show_hp);
     sr_shown = true;
   } else
     sr_shown = false;
@@ -334,12 +354,12 @@ int main(int argc,char *argv[])
 
       if(automatic_show) {
         // automatic display of biggest rectangle
-        show_output(s,prec,W);
+        show_output(s,prec,W,show_hp);
         sr_shown = true;
       }
     } else if(mouse_input == 1) {
       // show biggest rectangle
-      show_output(s,prec,W);
+      show_output(s,prec,W,show_hp);
       sr_shown = true;
     } else if(mouse_input == 2) {
       clear(s,W,b);
@@ -347,13 +367,13 @@ int main(int argc,char *argv[])
     } else if(mouse_input == 3) {
       // change to automatic mode
       automatic_show = true;
-      show_output(s,prec,W);
+      show_output(s,prec,W,show_hp);
       W.enable_button(4);
       W.disable_button(3);
       W.disable_button(1);
       sr_shown = true;
       redraw(s,W,b);
-      show_output(s,prec,W);
+      show_output(s,prec,W,show_hp);
       sr_shown = true;
     } else if(mouse_input == 4) {
       // change to manual mode
@@ -369,14 +389,14 @@ int main(int argc,char *argv[])
       remove_segments = false;
       redraw(s,W,b);
       if(automatic_show)
-        show_output(s,prec,W);
+        show_output(s,prec,W,show_hp);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_segments = true;
       redraw(s,W,b);
       if(automatic_show)
-        show_output(s,prec,W);
+        show_output(s,prec,W,show_hp);
     } else if(mouse_input == 7) {
       W.enable_button(8);
       W.disable_button(7);
@@ -384,7 +404,7 @@ int main(int argc,char *argv[])
       do_isr = true;
       redraw(s,W,b);
       if(automatic_show)
-        show_output(s,prec,W);
+        show_output(s,prec,W,show_hp);
     } else if(mouse_input == 8) {
       W.enable_button(7);
       W.disable_button(8);
@@ -392,8 +412,22 @@ int main(int argc,char *argv[])
       do_isr = false;
       redraw(s,W,b);
       if(automatic_show)
-        show_output(s,prec,W);
+        show_output(s,prec,W,show_hp);
     } else if(mouse_input == 9) {
+      W.enable_button(10);
+      W.disable_button(9);
+      show_hp = true;
+      redraw(s,W,b);
+      if(automatic_show)
+        show_output(s,prec,W,show_hp);
+    } else if(mouse_input == 10) {
+      W.enable_button(9);
+      W.disable_button(10);
+      show_hp = false;
+      redraw(s,W,b);
+      if(automatic_show)
+        show_output(s,prec,W,show_hp);
+    } else if(mouse_input == 11) {
       // finish
       break;
     }
@@ -419,3 +453,5 @@ int main(int argc,char *argv[])
 
   return(0);
 }
+
+#endif
