@@ -334,7 +334,6 @@ namespace CGALi {
 
     bool crossing1, crossing2;
     RT c1s, c1e;
-    Orientation ray_s_side;
     if (seg.source() == seg.target())
       return CGALi::squared_distance(seg.source(), ray, k);
     c1s = wcross(raydir, startvec, k);
@@ -350,15 +349,14 @@ namespace CGALi {
 	crossing1 = (c1s == RT(0));
       }
     }
-    ray_s_side = orientation(seg.source(), seg.target(), ray.source());
-    switch (ray_s_side) {
+    switch (orientation(seg.source(), seg.target(), ray.source())) {
     case LEFT_TURN:
       crossing2 = right_turn(construct_vector(seg.source(), seg.target()), raydir, k);
       break;
     case RIGHT_TURN:
       crossing2 = left_turn(construct_vector(seg.source(), seg.target()), raydir, k);
       break;
-    case COLLINEAR:
+    default:
       crossing2 = true;
       break;
     }
@@ -382,10 +380,8 @@ namespace CGALi {
 	  }
 	}
       } else {
-
 	FT min1, min2;
-	RT dm;
-	dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
+	RT dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
 	if (dm == RT(0))
 	  return CGALi::squared_distance_parallel(seg, ray, k);
 	min1 = (dm < RT(0))
@@ -510,9 +506,7 @@ namespace CGALi {
     Vector_2 diffvec(construct_vector(ray1.source(),ray2.source()));
 
     bool crossing1, crossing2;
-    Orientation dirorder;
-    dirorder = orientation(ray1dir, ray2dir, k);
-    switch (dirorder) {
+    switch (orientation(ray1dir, ray2dir, k)) {
     case COUNTERCLOCKWISE:
       crossing1 = !clockwise(diffvec, ray2dir, k);
       crossing2 = !counterclockwise(ray1dir, diffvec, k);
@@ -521,7 +515,7 @@ namespace CGALi {
       crossing1 = !counterclockwise(diffvec, ray2dir, k);
       crossing2 = !clockwise(ray1dir, diffvec, k);
       break;
-    case COLLINEAR:
+    default:
       return ray_ray_squared_distance_parallel(ray1dir,ray2dir,diffvec,k);
     }
 

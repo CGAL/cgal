@@ -1,4 +1,7 @@
 5 June 2004 Sylvain Pion
+- Remove warning.
+
+5 June 2004 Sylvain Pion
 - Remove obsolete test/install_ii and test/keep_ii.
 
 25 March 2004 Radu Ursu
