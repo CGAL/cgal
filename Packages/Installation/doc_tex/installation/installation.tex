@@ -11,6 +11,9 @@
 %% macro for GNU
 \newcommand{\gnu}{\textsc{Gnu}}
 
+%% macro for GNU
+\newcommand{\MSInst}{``Windows-specific Installation''}
+
 %% macro for g++
 \newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
 
@@ -28,6 +31,9 @@
 
 %% macro for Microsoft Visual C++
 \newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
+
+%% macro for Microsoft Windows
+\newcommand{\mswin}{\textsc{Microsoft}~Windows}
 
 %% macro for CGAL release number
 %% \newcommand{\cgalrelease}{2.1}
@@ -70,32 +76,47 @@ Library for Numbers (CLN)\footnote{\clnpage}.
 \section{Prerequisites}\label{sec:prerequisites}
 
 In order to build the \cgal\ libraries you need a \CC\ compiler.
-Currently only a small number of recent compilers on unix platforms
-are supported. The reason is that most compilers do not conform to the
-ISO 14882 standard for 
-\lcTex{\CC\footnote{see e.g. \path~http://reality.sgi.com/austern/std-c++/faq-new.html\#PartB~ for information}}
-\lcHtml{\CC\footnote{see e.g. \path~http://reality.sgi.com/austern/std-c++/faq-new.html#PartB~ for information}}
-and some of them have so many limitations/bugs that
+Currently only a small number of recent compilers on Unix platforms
+and \mswin\ are supported. The reason is that most compilers do not
+conform to the ISO 14882 standard for \lcTex{\CC\footnote{see e.g.
+    \path~http://reality.sgi.com/austern/std-c++/faq.html\#PartB~ for
+    information}} \lcHtml{\CC\footnote{see e.g.
+    \path~http://reality.sgi.com/austern/std-c++/faq.html#PartB~ for
+    information}} and some of them have so many limitations/bugs that
 we could not work around all of them.
 
-More precisely, \cgaldir\ supports the following Unix
-compilers/operating systems:
+On \mswin, one has two options for installing: one is specifically
+targeted for this OS and is described in \MSInst; the other is using
+Cygwin\footnote{see \path~http://sourceware.cygnus.com/cygwin~} and
+the generic installation procedure for Unix-like environments
+described here. If you are going to install \cgal\ using Cygwin,
+please read section \ref{sec:cygwin} first.
+
+More precisely, \cgaldir\ supports the following compilers/operating
+systems:
 
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
-    \textbf{compiler}       & \textbf{operating system}\\\hline\hline
-    \mipsprocc\ 7.2.1 (n32) & IRIX 6.5\\\hline
-    \Gcc{2.8.1}             & IRIX 6.5 / Solaris 2.6 / Linux 2.x\\\hline
-    \egcs{1.1}              & IRIX 5.3 / IRIX 6.5 / Solaris 2.6 / Linux 2.x\\\hline
+    \textbf{compiler}        & \textbf{operating system}\\\hline\hline
+    \mipsprocc\ 7.3 (n32)    & IRIX 6.5\\\hline
+    \Gcc{2.95} (and later)   & 
+      IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
+      \mswin\ 95/98/NT4\footnote{with Cygwin $\beta$20.1}\\\hline
+    \egcs{1.1.2} (and later) & 
+      IRIX 6.5 / Solaris 2.6 / Linux 2.x / 
+      \mswin\ 95/98/NT4\footnote{with Cygwin $\beta$20.1}\\\hline
+    \msvc{6.0}               & \mswin\ 95/98/NT4\\\hline
   \end{tabular}
 \end{center}
 
-There will be support for \msvc{6} in the future, but there is no such
-support at the moment. The \sunprocc{4.2} compiler is not supported
-anymore, please stay with \cgal-1.2 if you have to use it. Support for
-\sunprocc{5} will be reconsidered as soon as an acceptable degree of
+There are plans to provide full support for \bcc{5.4} in the future,
+but there is no such support at the moment. The \sunprocc{4.2}
+compiler is not supported anymore, please stay with \cgal-1.2 if you
+have to use it.  \Gcc{2.8.1} is not supported anymore, please stay
+with \cgal-2.0 if you have to use it.  Support for \sunprocc{5} will
+be reconsidered as soon as an acceptable degree of
 standard-conformance is reached.
 
 \section{Getting \cgal}
@@ -194,7 +215,7 @@ section~\ref{sec:leda}.
 \section{A Sample Installation}\label{sec:sample-inst}
 
 In this section we sketch an example installation on a \textsc{Sun}
-running Solaris 2.6 with the \egcs{1.1.1} compiler. For a complete
+running Solaris 2.6 with the \Gcc{2.95} compiler. For a complete
 description of the different menus and their options refer to section
 \ref{sec:interactive-mode}.
 
@@ -222,7 +243,7 @@ screen indicating progress.
 starting interactive mode - one moment, please
 ......
 
-  Choosing compiler GNU egcs-2.91.60.
+  Choosing compiler GNU egcs-2.95
   Testing for STL ... ok.
   ...
   <tests for several compiler features>
@@ -251,7 +272,7 @@ A menu similar to the following will appear on your screen.
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
-  **   Compiler:            GNU egcs-2.91.60                    **
+  **   Compiler:            GNU egcs-2.95                       **
   **   LEDA:                not supported.                      **
   **   GMP:                 not supported.                      **
   **   CLN:                 not supported.                      **
@@ -315,7 +336,7 @@ from compiler or linker).
   ****************************************************************
 
   OS:           sparc_SunOS-5.6
-  COMPILER:     GNU egcs-2.91.60
+  COMPILER:     GNU egcs-2.95
   LEDA:         not supported
   GMP:          not supported
   CLN:          not supported
@@ -479,8 +500,9 @@ This menu is to setup GMP (\gnu\ Muptiple Precision Library) specific
 options, if you plan to use GMP together with \cgal . In the {\tt
   auxiliary} directory you can find a GMP distribution, if you do not
 already have it installed on your system. This menu contains an option
-to install GMP in you \cgal\ directory tree, but of course you can
-also install it independently from \cgal .
+to install GMP in you \cgal\ directory tree\footnote{This option is
+  not present on \mswin.}, but of course you can also install it
+independently from \cgal .
 
 If GMP support is enabled the first time, the script tests whether GMP
 is installed in standard system directories or in the \cgal\ tree. If
@@ -657,7 +679,7 @@ to determine your \cgal-OS description (see section
 \ref{sec:os-compiler-id}). The compiler can either be given by an
 absolute path like
 \begin{verbatim}
-./install_cgal -os /usr/local/gcc-2.8.1/sun/bin/g++
+./install_cgal -os /usr/local/gcc-2.95/sun/bin/g++
 \end{verbatim}
 or just by denoting its basename, as long as it is on your path:
 \begin{verbatim}
@@ -707,7 +729,7 @@ The suffix \texttt{\_}LEDA is appended to indicate \leda\ support.
 
 We call the resulting string \cgal-OS description.\\ Examples are
 \texttt{mips\_IRIX-6.2\_CC-7.2} or {\tt
-  sparc\_SunOS-5.5\_g++-2.8.1\_LEDA}.\\ You can use the install script
+  sparc\_SunOS-5.5\_g++-2.95\_LEDA}.\\ You can use the install script
 to get your \cgal-OS description, see section \ref{sec:other-options}.
 
 \section{The \cgal\ makefile structure}\label{sec:makefiles}
@@ -744,8 +766,8 @@ dependent makefile settings. The abbreviation \texttt{<CGAL-OS
   description>} (see section \ref{sec:os-compiler-id} for details) is
 used to identify the operating system and compiler for which the
 settings hold. For example, the file
-\texttt{makefile\_mips\_IRIX64-6.5\_CC-n32-7.2.1.1m} contains makefile
-settings for the IRIX 6.5 operating system and the \mipsprocc\ 7.2.1
+\texttt{makefile\_mips\_IRIX64-6.5\_CC-n32-7.30} contains makefile
+settings for the IRIX 6.5 operating system and the \mipsprocc\ 7.3
 compiler.  These include files are automatically generated by the
 \texttt{install\_cgal} script and they are all located in the
 \texttt{\cgaldir/make} directory.  For convenience, the
@@ -905,14 +927,14 @@ and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release\footnote{At the moment
   this is \leda\ 3.8.}, since this is what we test \cgal\ with.
 
-\section{Compiler Optimisations}\label{sec:compiler-optimisations}
+\section{Compiler Optimizations}\label{sec:compiler-optimisations}
 
 You may have noticed that we do not set optimizer flags as \texttt{-O}
 by default in the include makefiles(see section\ref{sec:makefiles} for
 a description of the makefile structure in \cgal).  The main reason
 for not doing this is that compilers run much more stable without. On
 the other hand, most if not all \cgal\ programs will run considerably
-faster when compiled with optimisations! So if you are going for
+faster when compiled with optimizations! So if you are going for
 performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
 more specific optimizer flags (please refer to the compiler
 documentation for that) to the \texttt{CXXFLAGS} variable in your
@@ -1044,4 +1066,98 @@ Alternatively, you can type
 \begin{alltt}
   perl -wi.hrbck -- replace_headers <FILES>
 \end{alltt}
+
+\section{Installation on Cygwin}\label{sec:cygwin}
+
+Cygwin is a free Unix-like environment for MS-Windows, distributed by
+Cygnus Solutions, see \path~http://sourceware.cygnus.com/cygwin/~
+
+It consists of a port of a large number of GNU tools, such as bash,
+make, gcc (egcs), gas, file utilities, etc, as well as tools ensuring
+an ability to emulate Unix-like access to resources, for instance
+mount.  For a comprehensive introduction and details, see the URL
+above.
+
+\subsection{Pathnames}
+
+Cygwin has a UNIX-like way of navigating hard drives, NFS shares, etc.
+This is also the way in which directories and pathnames have to given
+to the installation script. They are automatically converted to
+Win*-style pathnames when given to the compiler or linker.
+
+The main difference is that directories are seperated by slash (``/'')
+rather than by backslash (``$\backslash$'').  The other difference is
+concerned with specifying drives. One way is to use POSIX-style
+pathnames that map Win*-style drives (\texttt{A:}, \texttt{B:}) to
+\texttt{//a/\ldots}, \texttt{//b/\ldots} respectively. For instance,
+the path
+\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
+translates to \texttt{//d/Mystuff/Mydir/LEDA}.
+
+Alternatively, it can be done using the mount utility, that can be
+used to establish a map between Win*-style drives and the Unix-like
+style. More precisely, it maps the forest of the directories/files on
+Win*-drives to a tree with the root that is usually located at the top
+level of the boot drive, say \texttt{C:}.  The root location can be
+seen by typing \texttt{mount} command without parameters.  For
+instance, if \texttt{D:} is mounted on
+\texttt{C:$\backslash$ddrive}\footnote{by typing \texttt{mount D:
+    /ddrive}} then the path
+\texttt{D:$\backslash$Mystuff$\backslash$Mydir$\backslash$LEDA}
+translates to \texttt{/ddrive/Mystuff/Mydir/LEDA}.
+
+\paragraph{Upper/lower case and spaces in file names}
+might also be confusing. Behavour of Cygwin in this regard might be
+different from the \mswin\ behavour.
+In particular, using spaces in filenames should better be avoided.
+
+\paragraph{Links, shortcuts, etc} should be avoided as well.
+
+\subsection{\msvc{6.0}-setup}
+A number of environment variables has to be set (or updated)
+in order to use the installation.
+
+\texttt{PATH} should contain \msvc{6.0} command line tools locations.
+The environment variables \texttt{INCLUDE} and \texttt{LIB} should
+point to the location of \msvc{6.0} header files and to the location
+of the \msvc{6.0} libraries, respectively.
+The interface for doing this is different for NT and for Win9*.
+
+\paragraph{\mswin-NT4.0.}
+One can set the corresponding environment variables using the
+usual NT interface\footnote{open MyComputer, press right mouse button,
+  select Properties, select Environment, set the relevant variables}.
+Alternatively, they can be set in \texttt{.bashrc} file for the
+particular user.
+
+The result should look roughly as follows, assuming that
+\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
+is the location of the \msvc{} installation.
+\begin{verbatim}
+LIB=C:\PROGRA~1\MICROS~2\VC98\LIB
+INCLUDE=C:\PROGRA~1\MICROS~2\VC98\INCLUDE
+\end{verbatim}
+and \texttt{PATH} should contain
+\begin{verbatim}
+/PROGRA~1/MICROS~2/Common/msdev98/BIN:
+/PROGRA~1/MICROS~2/VC98/BIN:/PROGRA~1/MICROS~2/Common/TOOLS:
+/PROGRA~1/MICROS~2/Common/TOOLS/WINNT
+\end{verbatim}
+
+\paragraph{\mswin-9*.} 
+First, the memory for environment variables has to be increased.
+Select the Cygwin icon from the Start-menu, press the right mouse
+button and choose \textit{Properties}. Go to \textit{Memory}, select
+\textit{Initial Environment}, set it to at least 2048 and
+\textit{apply} the changes.
+
+Second, edit the file \texttt{cygnus.bat}, located in the cygwin main
+directory and add the line
+\begin{verbatim}
+call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
+\end{verbatim}
+where
+\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
+has to be customized according to where \msvc{} is installed on your
+system.
 
