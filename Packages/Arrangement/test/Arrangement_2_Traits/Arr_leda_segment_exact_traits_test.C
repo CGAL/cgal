@@ -3,7 +3,7 @@
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA)
-int main(int argc, char* argv[])
+int main()
 {
   std::cout << "A try to run test with LEDA traits but LEDA is not installed.";
   std::cout << std::endl;

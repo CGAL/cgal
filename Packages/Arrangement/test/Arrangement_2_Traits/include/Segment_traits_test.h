@@ -61,7 +61,7 @@ read_curve( std::ifstream& is, Curve& cv ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Segment_traits_test< Traits_class, Number_type >::
-make_x_monotone_wrapper( std::istrstream& strLine ){
+make_x_monotone_wrapper( std::istrstream & /* strLine */){
   std::cout << "Test: make_x_monotone - nothing to do in segment case" << std::endl;
   std::cout << "Was successful" << std::endl;
   return true;
