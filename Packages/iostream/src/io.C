@@ -37,7 +37,7 @@ int IO::mode = std::ios::xalloc();
 IO::Mode
 get_mode(std::ios& i)
 {
-    return CGAL_static_cast(IO::Mode,i.iword(IO::mode));
+    return static_cast<IO::Mode>(i.iword(IO::mode));
 }
 
 IO::Mode
