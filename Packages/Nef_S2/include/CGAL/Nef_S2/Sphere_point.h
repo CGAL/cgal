@@ -62,13 +62,13 @@ Sphere_point() : Base() {}
 /*{\Mcreate creates some sphere point.}*/
 
 Sphere_point(int x, int y, int z) :
-Base(x,y,z,1) { CGAL_assertion(x!=0 || y!=0 || z!=0); }
+Base(x,y,z,1) { CGAL_nef_assertion(x!=0 || y!=0 || z!=0); }
 
 Sphere_point(const RT& x, const RT& y, const RT& z) :
 /*{\Mcreate creates a sphere point corresponding to the point of
 intersection of the ray starting at the origin in direction $(x,y,z)$
 and the surface of $S_2$.}*/
-  Base(x,y,z,1) { CGAL_assertion(x!=0 || y!=0 || z!=0); }
+  Base(x,y,z,1) { CGAL_nef_assertion(x!=0 || y!=0 || z!=0); }
 
 Sphere_point(const Base& p) : Base(p) {} 
 

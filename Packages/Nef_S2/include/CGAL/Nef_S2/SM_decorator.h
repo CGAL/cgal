@@ -274,10 +274,6 @@ Halfedge_handle cas(Halfedge_handle e) const
 Halfedge_handle cap(Halfedge_handle e) const
 { return cyclic_adj_pred(e); }
 
-template <class H>
-void make_twins(H h1, H h2) const
-{ h1->twin_ = h2; h2->twin_ = h1; }
-
 Vertex_handle new_vertex(const Sphere_point& p) const
 /*{\Mop creates a new vertex.}*/
 { return psm_->new_vertex(p); }
@@ -289,7 +285,7 @@ Halfedge_handle new_edge_pair() const
 Halfloop_handle new_loop_pair() const
 /*{\Mop creates a new loop pair.
 \precond No sloop pair exists in the local graph.}*/ 
-{ CGAL_assertion(!has_loop());
+{ CGAL_nef_assertion(!has_loop());
   return psm_->new_halfloop_pair(); }
 
 Face_handle new_face() const
@@ -314,7 +310,7 @@ void delete_face_only(Face_handle f) const
 
 void delete_loop_only() const
 /*{\Mop deletes the loop and its twin without any connectivity update.}*/ 
-{ CGAL_assertion(psm_->loops_);
+{ CGAL_nef_assertion(psm_->loops_);
   psm_->delete_halfloop_pair(psm_->loops_); }
 
 template <typename H>
@@ -329,7 +325,7 @@ void store_boundary_object(H h, Face_handle f) const
 
 template <typename H>
 void undo_boundary_object(H h, Face_handle f) const
-{ CGAL_assertion(psm_->is_boundary_object(h));
+{ CGAL_nef_assertion(psm_->is_boundary_object(h));
   Face_cycle_iterator it = psm_->boundary_item(h);
   psm_->undef_boundary_item(h);
   f->boundary_.erase(it);
@@ -508,7 +504,7 @@ void merge_edge_pairs_at_target(Halfedge_handle e) const
   if ( is_closed_at_target(en) ) { enn = eo; enno=e; }
   else { enn = next(en), enno = previous(eno); }
   Vertex_handle v = target(e), vn = target(en);
-  CGAL_assertion(has_outdeg_two(v));
+  CGAL_nef_assertion(has_outdeg_two(v));
   Face_handle f1 = face(en), f2 = face(eno);
   // transfer the opposite face cycles e-en-enn to e-enn
   if ( enn != eno ) {
@@ -536,11 +532,11 @@ void convert_edge_to_loop(Halfedge_handle e) const
   in the conversion. \precond there was no loop in |\Mvar|. 
   As |e| was entry point of |face(e)| then |l| takes this role.}*/
 { TRACEN("convert_edge_to_loop "<<PH(e));
-  CGAL_assertion( !has_loop() );
+  CGAL_nef_assertion( !has_loop() );
   Halfloop_handle l = new_loop_pair();
   Vertex_handle v = target(e);
   Face_handle f1 = face(e), f2 = face(twin(e));
-  CGAL_assertion( is_boundary_object(e) && 
+  CGAL_nef_assertion( is_boundary_object(e) && 
                   is_boundary_object(twin(e)) );
   undo_boundary_object(e,f1); undo_boundary_object(twin(e),f2);
   link_as_loop(l,f1), link_as_loop(twin(l),f2);
@@ -556,7 +552,7 @@ void flip_diagonal(Halfedge_handle e) const
   Halfedge_handle rn = next(r), rnn= next(rn);
   TRACEN(PH(e)<<PH(en)<<PH(enn));
   TRACEN(PH(r)<<PH(rn)<<PH(rnn));
-  CGAL_assertion( next(enn)==e && next(rnn)==r );
+  CGAL_nef_assertion( next(enn)==e && next(rnn)==r );
   remove_from_adj_list_at_source(e);
   remove_from_adj_list_at_source(r);
   set_adjacency_at_source_between(enn,e,twin(en));
@@ -628,7 +624,7 @@ void set_adjacency_at_source_between(Halfedge_handle e, Halfedge_handle en)
   const 
 /*{\Mop makes |e| and |en| neigbors in the cyclic ordered adjacency list 
     around |v=source(e)|. \precond |source(e)==source(en)|.}*/
-{ CGAL_assertion(source(e)==source(en));
+{ CGAL_nef_assertion(source(e)==source(en));
   link_as_prev_next_pair(twin(en),e);
 }
 
@@ -750,7 +746,7 @@ void set_marks_in_face_cycle(Halfedge_handle e, Mark m) const
 }
 
 Mark& mark_of_halfsphere(int i) const
-{ CGAL_assertion(i);
+{ CGAL_nef_assertion(i);
   if (i<0) return psm_->m_neg_; 
   return psm_->m_pos_; }
 
@@ -778,13 +774,12 @@ const GenPtr& info(Face_const_handle f) const
 For comfortable iteration we also provide iterations macros. 
 The iterator range access operations are of the following kind:\\
 |Vertex_iterator vertices_begin()/vertices_end()|\\
-|Halfedge_iterator   edges_begin()/edges_end()|\\
-|Face_iterator   faces_begin()/faces_end()|
+|Halfedge_iterator halfedges_begin()/halfedges_end()|\\
+|Face_iterator faces_begin()/faces_end()|
 
 The macros are then |CGAL_forall_vertices_of(v,V)|,
-|CGAL_forall_edges_of(e,V)|, |CGAL_forall_faces_of(f,V)|,
-|CGAL_forall_face_cycles_of(fc,F)| where |V| is the center vertex of
-the local graph and |F| any face.}*/
+|CGAL_forall_halfedges_of(e,V)|, |CGAL_forall_edges_of(e,V)|, 
+|CGAL_forall_faces_of(f,V)|, |CGAL_forall_face_cycles_of(fc,F)|.}*/
 
 
 }; // SM_decorator

@@ -212,7 +212,7 @@ public:
     otherwise. |Forward_iterator| has to be an iterator with value
     type |Sphere_segment|.}*/
   { TRACEN("Nef_polyhedron_S2(): creation from segment range");
-    CGAL_assertion(first!=beyond);
+    CGAL_nef_assertion(first!=beyond);
     Overlayer D(sphere_map());
     Sphere_segment s = *first;
     D.create_from_segments(first,beyond);
@@ -223,7 +223,7 @@ public:
     }
     if ( e != Halfedge_iterator() ) {
       if ( D.circle(e) != s.sphere_circle() ) e = D.twin(e);
-      CGAL_assertion( D.circle(e) == s.sphere_circle() );
+      CGAL_nef_assertion( D.circle(e) == s.sphere_circle() );
       D.set_marks_in_face_cycle(e,bool(b));
       if ( D.number_of_faces() > 2 ) D.mark(D.face(e)) = true;
       else                           D.mark(D.face(e)) = !bool(b);
@@ -238,7 +238,6 @@ public:
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_S2() {}
 
-
   template <class Forward_iterator>
   Nef_polyhedron_S2(Forward_iterator first, Forward_iterator beyond, 
     double p) : Base(Nef_rep())
@@ -246,8 +245,8 @@ public:
   the set of circles |S = set[first,beyond)|. The cells of the arrangement
   are selected uniformly at random with probability $p$. \precond $0 < p
   < 1$.}*/
-  { CGAL_assertion(0<p && p<1);
-    CGAL_assertion(first!=beyond);
+  { CGAL_nef_assertion(0<=p && p<=1);
+    CGAL_nef_assertion(first!=beyond);
     Overlayer D(sphere_map());
     D.create_from_circles(first, beyond); D.simplify();
     Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
@@ -280,6 +279,7 @@ protected:
   bool is_empty() const
   /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
   { Const_decorator D(sphere_map());
+    TRACEN("is_empty()"<<*this);
     Face_const_iterator f = D.faces_begin();
     return (D.number_of_vertices()==0 &&
             D.number_of_edges()==0 &&
@@ -303,21 +303,13 @@ protected:
   { TRACEN("extract complement");
     if ( ptr->is_shared() ) clone_rep();
     Overlayer D(sphere_map());
-    Vertex_iterator v, vend = D.vertices_end();
-    for(v = D.vertices_begin(); v != vend; ++v)      
-      D.mark(v) = !D.mark(v);
+    Vertex_iterator v;
+    Halfedge_iterator e;
+    Face_iterator f;
+    CGAL_forall_vertices(v,D) D.mark(v) = !D.mark(v);
+    CGAL_forall_edges(e,D) D.mark(e) = !D.mark(e);
+    CGAL_forall_faces(f,D) D.mark(f) = !D.mark(f);
 
-    Unique_hash_map<Halfedge_iterator,bool> Done(false);
-    Halfedge_iterator e, eend = D.halfedges_end();
-    for(e = D.halfedges_begin(); e != eend; ++e) {
-      if ( Done[e] ) continue;
-      D.mark(e) = !D.mark(e);
-      Done[e] = Done[D.twin(e)] = true;
-    }
-
-    Face_iterator f, fend = D.faces_end();
-    for(f = D.faces_begin(); f != fend; ++f)         
-      D.mark(f) = !D.mark(f);
     if ( D.has_loop() ) 
       D.mark(D.halfloop()) = !D.mark(D.halfloop());
     D.mark_of_halfsphere(-1) = !D.mark_of_halfsphere(-1);
@@ -328,10 +320,10 @@ protected:
   { TRACEN("extract interior");
     if ( ptr->is_shared() ) clone_rep();
     Overlayer D(sphere_map());
-    Vertex_iterator v, vend = D.vertices_end();
-    for(v = D.vertices_begin(); v != vend; ++v)  D.mark(v) = false;
-    Halfedge_iterator e, eend = D.halfedges_end();
-    for(e = D.halfedges_begin(); e != eend; ++e) D.mark(e) = false;
+    Vertex_iterator v;
+    Halfedge_iterator e;
+    CGAL_forall_vertices(v,D) D.mark(v) = false;
+    CGAL_forall_edges(e,D) D.mark(e) = false;
     if ( D.has_loop() ) D.mark(D.halfloop()) = false;
     D.simplify();
   }
@@ -341,13 +333,13 @@ protected:
   { TRACEN("extract boundary");
     if ( ptr->is_shared() ) clone_rep();
     Overlayer D(sphere_map());
-    Vertex_iterator v, vend = D.vertices_end();
-    for(v = D.vertices_begin(); v != vend; ++v)   D.mark(v) = true;
-    Halfedge_iterator e, eend = D.halfedges_end();
-    for(e = D.halfedges_begin(); e != eend; ++e)  D.mark(e) = true;
+    Vertex_iterator v;
+    Halfedge_iterator e;
+    Face_iterator f;
+    CGAL_forall_vertices(v,D) D.mark(v) = true;
+    CGAL_forall_edges(e,D)    D.mark(e) = true;
+    CGAL_forall_faces(f,D)    D.mark(f) = false;
     if ( D.has_loop() ) D.mark(D.halfloop()) = true;
-    Face_iterator f, fend = D.faces_end();
-    for(f = D.faces_begin(); f != fend; ++f)      D.mark(f) = false;
     D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = false;
     D.simplify();
   }

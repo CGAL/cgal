@@ -12,9 +12,9 @@ class Tuple {
 public:
   Tuple() { for (unsigned i=0; i<n; ++i) object_[i]=T(); }
   Tuple(const T& t1, const T& t2)
-  { CGAL_assertion(n>1); object_[0]=t1; object_[1]=t2; }
+  { CGAL_nef_assertion(n>1); object_[0]=t1; object_[1]=t2; }
   Tuple(const T& t1, const T& t2, const T& t3)
-  { CGAL_assertion(n>2); object_[0]=t1; object_[1]=t2; object_[2]=t3; }
+  { CGAL_nef_assertion(n>2); object_[0]=t1; object_[1]=t2; object_[2]=t3; }
   
   Tuple(const Self& t) 
   { for (unsigned i=0; i<n; ++i) object_[i] = t.object_[i]; }
@@ -23,9 +23,9 @@ public:
     return *this; }
   
   const T& operator[](unsigned i) const 
-  { CGAL_assertion(i<n); return object_[i]; }
+  { CGAL_nef_assertion(i<n); return object_[i]; }
   T& operator[](unsigned i) 
-  { CGAL_assertion(i<n); return object_[i]; }  
+  { CGAL_nef_assertion(i<n); return object_[i]; }  
 
 };
 

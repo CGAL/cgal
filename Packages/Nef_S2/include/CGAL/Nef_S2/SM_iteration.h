@@ -10,6 +10,9 @@ for(x = (SM).vertices_begin(); x != (SM).vertices_end(); ++x)
 #define CGAL_forall_halfedges(x,SM)\
 for(x = (SM).halfedges_begin(); x != (SM).halfedges_end(); ++x) 
 
+#define CGAL_forall_edges(x,SM)\
+for(x = (SM).halfedges_begin(); x != (SM).halfedges_end(); ++(++x)) 
+
 #define CGAL_forall_halfloops(x,SM)\
 for(x = (SM).halfloops_begin(); x != (SM).halfloops_end(); ++x) 
 

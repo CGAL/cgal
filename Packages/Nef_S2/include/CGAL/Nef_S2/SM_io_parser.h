@@ -198,13 +198,13 @@ bool SM_io_parser<Decorator_>::read_edge(Halfedge_handle e)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg 
+  CGAL_nef_assertion_msg 
      (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
       v >= 0 && v < vn && f >= 0 && f < fn ,
       "wrong index in read_edge");
   
   // precond: features exist!
-  CGAL_assertion(EI[twin(e)]);
+  CGAL_nef_assertion(EI[twin(e)]);
   set_prev(e,Edge_of[epr]);
   set_next(e,Edge_of[ene]);
   set_source(e,Vertex_of[v]);
@@ -234,7 +234,7 @@ bool SM_io_parser<Decorator_>::read_loop(Halfloop_handle l)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg(
+  CGAL_nef_assertion_msg(
     (lo >= 0 && lo < 2 && f >= 0 && f < fn),"wrong index in read_edge");
   
   set_face(l,Face_of[f]);
@@ -276,17 +276,17 @@ bool SM_io_parser<Decorator_>::read_face(Face_handle f)
   int n, ei, vi, li; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> ei) { 
-    CGAL_assertion_msg(ei >= 0 && ei < en, "wrong index in face cycle list.");
+    CGAL_nef_assertion_msg(ei >= 0 && ei < en, "wrong index in face cycle list.");
     store_boundary_object(Edge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) { 
-    CGAL_assertion_msg(vi >= 0 && vi < vn, "wrong index in iso vertex list.");
+    CGAL_nef_assertion_msg(vi >= 0 && vi < vn, "wrong index in iso vertex list.");
     store_boundary_object(Vertex_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
-    CGAL_assertion_msg(li >= 0 && li < 2, "wrong index in iso vertex list.");
+    CGAL_nef_assertion_msg(li >= 0 && li < 2, "wrong index in iso vertex list.");
     store_boundary_object(Loop_of[li],f);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") ) 
@@ -341,15 +341,15 @@ template <typename Decorator_>
 void SM_io_parser<Decorator_>::read() 
 {
   if ( !check_sep("Plane_map_2") )  
-    CGAL_assertion_msg(0,"SM_io_parser::read: no embedded_PM header.");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
-    CGAL_assertion_msg(0,"SM_io_parser::read: wrong vertex line.");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong vertex line.");
   if ( !(check_sep("edges") && (in >> en) && (en%2==0)) )
-    CGAL_assertion_msg(0,"SM_io_parser::read: wrong edge line.");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong edge line.");
   if ( !(check_sep("loops") && (in >> ln)) )
-    CGAL_assertion_msg(0,"SM_io_parser::read: wrong loop line.");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong loop line.");
   if ( !(check_sep("faces") && (in >> fn)) )
-    CGAL_assertion_msg(0,"SM_io_parser::read: wrong face line.");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: wrong face line.");
 
   Vertex_of.reserve(vn);
   Edge_of.reserve(en);
@@ -364,21 +364,21 @@ void SM_io_parser<Decorator_>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
-      CGAL_assertion_msg(0,"SM_io_parser::read: error in node line");
+      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in node line");
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
-      CGAL_assertion_msg(0,"SM_io_parser::read: error in edge line");
+      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in edge line");
   }
   if ( ln == 2 ) {
     read_loop(Loop_of[0]); read_loop(Loop_of[1]);
   }
   for(i=0; i<fn; i++) {
     if (!read_face(Face_of[i]))
-      CGAL_assertion_msg(0,"SM_io_parser::read: error in face line");
+      CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in face line");
   }
   if (!read_init_points())
-    CGAL_assertion_msg(0,"SM_io_parser::read: error in init point line");
+    CGAL_nef_assertion_msg(0,"SM_io_parser::read: error in init point line");
 }
 
 //-----------------------------------------------------------------------------

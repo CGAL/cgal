@@ -8,6 +8,7 @@
 #undef _DEBUG
 #define _DEBUG 113
 #include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_S2/nef_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -74,7 +75,7 @@ int compare_xy(const Point_2& p1, const Point_2& p2) const
 Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
 { if (s1.sphere_circle() != s2.sphere_circle().opposite()) 
     return s1.intersection(s2); 
-  CGAL_assertion(s1.target()==s2.target());
+  CGAL_nef_assertion(s1.target()==s2.target());
   return s1.target();
 }
 

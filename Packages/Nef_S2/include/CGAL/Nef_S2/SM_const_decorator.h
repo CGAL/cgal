@@ -28,7 +28,7 @@ public:
 // ---------------------------
 
     bool operator==( CGAL_NULL_TYPE p ) const {
-      CGAL_assertion( p == NULL );
+      CGAL_nef_assertion( p == NULL );
       return Iter::operator==( Iter(NULL) );
     }
     bool operator!=( CGAL_NULL_TYPE p ) const {
@@ -391,7 +391,7 @@ Mark mark(Face_const_handle f) const
 { return f->mark_; }
 
 Mark mark_of_halfsphere(int i) const
-{ CGAL_assertion(i);
+{ CGAL_nef_assertion(i);
   if (i<0) return psm_->m_neg_; 
   return psm_->m_pos_; }
 
@@ -404,9 +404,10 @@ The iterator range access operations are of the following kind:\\
 |Halfloop_iterator halfloops_begin()/halfloops_end()|\\
 |Face_iterator     faces_begin()/faces_end()|
 
-The macros are then |CGAL_forall_vertices(v,M)|, |CGAL_forall_halfedges(e,M)|,
-|CGAL_forall_faces(f,M)|, |CGAL_forall_face_cycles_of(fc,F)| where |M| is
-a sphere map and |F| is a face.}*/
+The macros are then |CGAL_forall_vertices(v,M)|,
+|CGAL_forall_halfedges(e,M)|, |CGAL_forall_edges(e,M)|,
+|CGAL_forall_faces(f,M)|, |CGAL_forall_face_cycles_of(fc,F)| where |M|
+is a sphere map and |F| is a face.}*/
 
 }; // SM_const_decorator
 
@@ -436,13 +437,13 @@ check_integrity_and_topological_planarity(bool faces) const
   CGAL_forall_vertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
-        CGAL_assertion_msg( face(v) != Face_const_handle(), VI(v).c_str());
+        CGAL_nef_assertion_msg( face(v) != Face_const_handle(), VI(v).c_str());
       ++iso_vert_num;
     } else {
-      CGAL_assertion_msg( first_out_edge(v) != Halfedge_const_handle(),
+      CGAL_nef_assertion_msg( first_out_edge(v) != Halfedge_const_handle(),
       VI(v).c_str());
       TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
-      CGAL_assertion_msg( source(first_out_edge(v)) == v ,
+      CGAL_nef_assertion_msg( source(first_out_edge(v)) == v ,
                           VI(v).c_str());
     }
   }
@@ -450,18 +451,18 @@ check_integrity_and_topological_planarity(bool faces) const
   /* check the bidirected links and the face pointer init */
   Halfedge_const_iterator e;
   CGAL_forall_halfedges(e,*this) {
-    CGAL_assertion( twin(twin(e)) == e );
-    CGAL_assertion( source(e) != Vertex_const_handle() );
-    CGAL_assertion( next(e) != Halfedge_const_handle() );
-    CGAL_assertion( previous(next(e)) == e );
-    CGAL_assertion( target(e) == source(next(e)) );
-    CGAL_assertion( previous(e) != Halfedge_const_handle() );
-    CGAL_assertion( next(previous(e)) == e );
-    CGAL_assertion( target(previous(e)) == source(e) );
+    CGAL_nef_assertion( twin(twin(e)) == e );
+    CGAL_nef_assertion( source(e) != Vertex_const_handle() );
+    CGAL_nef_assertion( next(e) != Halfedge_const_handle() );
+    CGAL_nef_assertion( previous(next(e)) == e );
+    CGAL_nef_assertion( target(e) == source(next(e)) );
+    CGAL_nef_assertion( previous(e) != Halfedge_const_handle() );
+    CGAL_nef_assertion( next(previous(e)) == e );
+    CGAL_nef_assertion( target(previous(e)) == source(e) );
     if ( !faces ) continue;
-    CGAL_assertion( face(e) != Face_const_handle() );
-    CGAL_assertion( face(next(e)) == face(e) );
-    CGAL_assertion( face(previous(e)) == face(e) );
+    CGAL_nef_assertion( face(e) != Face_const_handle() );
+    CGAL_nef_assertion( face(next(e)) == face(e) );
+    CGAL_nef_assertion( face(previous(e)) == face(e) );
   }
 
   int fc_num(0),iv_num(0);
@@ -470,11 +471,11 @@ check_integrity_and_topological_planarity(bool faces) const
   CGAL_forall_faces(f,*this) {
     CGAL_forall_face_cycles_of(fci,f) {
       if ( fci.is_halfedge() ) {
-        CGAL_assertion( face(Halfedge_const_handle(fci)) == f ); ++fc_num;
+        CGAL_nef_assertion( face(Halfedge_const_handle(fci)) == f ); ++fc_num;
       } else if ( fci.is_vertex() ) {
-        CGAL_assertion( face(Vertex_const_handle(fci)) == f ); ++iv_num;
+        CGAL_nef_assertion( face(Vertex_const_handle(fci)) == f ); ++iv_num;
       }
-      else CGAL_assertion(0);
+      else CGAL_nef_assertion(0);
     }
   }
 
@@ -489,7 +490,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* every isolated vertex increases the component count
        one face cycle per component is redundent except one
        finally check the Euler formula: */
-  CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
+  CGAL_nef_assertion( v_num - e_num + f_num == 1 + c_num );
 }
 
 template <typename SM_, typename K_>

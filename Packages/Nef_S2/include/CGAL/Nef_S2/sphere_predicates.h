@@ -151,7 +151,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
       s1 = Sphere_segment<R>(source(),i1,sphere_circle());
     else if ( or2 == CGAL::ON_POSITIVE_SIDE )
       s1 = Sphere_segment<R>(i1,target(),sphere_circle());
-    else CGAL_assertion_msg(0,"no intersection.");
+    else CGAL_nef_assertion_msg(0,"no intersection.");
     return 1;
   }
   else if ( or1 == CGAL::ON_ORIENTED_BOUNDARY && 
@@ -225,7 +225,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
     return 0;
   }
 
-  CGAL_assertion_msg(0,"Oops, forgot some case.");
+  CGAL_nef_assertion_msg(0,"Oops, forgot some case.");
   return -1;
 }
 

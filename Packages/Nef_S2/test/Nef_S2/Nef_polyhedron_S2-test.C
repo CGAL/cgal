@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 {
   CGAL::set_pretty_mode ( std::cerr );
   SETDTHREAD(911);
+  std::cerr << CGAL::sweepversion << std::endl;
 
   // Sphere_map 109
   // Sphere_geometry 113
@@ -55,8 +56,11 @@ int main(int argc, char **argv)
   CGAL_TEST((N1*!N1) == EMPTY);
   CGAL_TEST((N1+!N1) == SPHERE);
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))); // exor reformulation
-  CGAL_TEST((!(N1*N2)) == (!N1+!N2));      // deMorgan
 
+  // TRACEV((N1*N2)); TRACEV(!(N1*N2)); TRACEV((!N1+!N2)); 
+  // TRACEV(!(N1*N2) ^ (!N1+!N2));
+  CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ); // deMorgan
+#if 1
   Nef_polyhedron N3 = N1.intersection(N2);
   /* N3 is the two octants +++ and +-+ including the z-positive yz-halfplane
      but excluding the y-axis and the x-positive xy-halfplane */
@@ -83,7 +87,7 @@ int main(int argc, char **argv)
   h = N3.locate(p3);
   CGAL_TEST( CGAL::assign(f,h) );
   CGAL_TEST( E.mark(f) );
-
+#endif
   CGAL_TEST_END;     
   return 0;
 }

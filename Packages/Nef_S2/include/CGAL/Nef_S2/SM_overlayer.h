@@ -95,12 +95,12 @@ struct SMO_from_segs {
   { return geninfo<Halfedge_handle>::access(G.info(v)); }
 
   void assert_equal_marks(Vertex_handle v1, Vertex_handle v2) const 
-  { CGAL_assertion(G.mark(v1)==G.mark(v2)); }
+  { CGAL_nef_assertion(G.mark(v1)==G.mark(v2)); }
   void discard_info(Vertex_handle v) const 
   { geninfo<Halfedge_handle>::clear(G.info(v)); }
 
   void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
-  { CGAL_assertion(G.mark(e1)==G.mark(e2)); }
+  { CGAL_nef_assertion(G.mark(e1)==G.mark(e2)); }
   void transfer_marks(Halfedge_handle e) const 
   { G.unify_tmp_marks(e); }
   void discard_info(Halfedge_handle e) const {}
@@ -161,7 +161,7 @@ void supporting_segment(Halfedge_handle e, IT it) const
 
 void trivial_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
-  CGAL_assertion( si._o != NULL );
+  CGAL_nef_assertion( si._o != NULL );
   G.supp_object(v,si._from) = si._o; 
 }
 
@@ -189,13 +189,13 @@ Halfedge_handle halfedge_below(Vertex_handle v) const
 void assert_equal_marks(Vertex_handle v1, Vertex_handle v2) const 
 { TRACEV(G.mark(v1,0));TRACEV(G.mark(v1,1));
   TRACEV(G.mark(v2,0));TRACEV(G.mark(v2,1));
-  CGAL_assertion(G.mark(v1,0)==G.mark(v2,0)&&
+  CGAL_nef_assertion(G.mark(v1,0)==G.mark(v2,0)&&
                  G.mark(v1,1)==G.mark(v2,1)); }
 void discard_info(Vertex_handle v) const 
 { G.discard_info(v); }
 
 void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
-{ CGAL_assertion(G.mark(e1,0)==G.mark(e2,0) && 
+{ CGAL_nef_assertion(G.mark(e1,0)==G.mark(e2,0) && 
                  G.mark(e1,1)==G.mark(e2,1)); }
 void transfer_marks(Halfedge_handle e) const 
 { Halfedge_handle et = G.twin(e);
@@ -462,7 +462,7 @@ public:
     int fc = FaceCycle[e];
     Halfedge_handle e_min = MinimalHalfedge[fc];
     Halfedge_handle e_below = D.halfedge_below(target(e_min));
-    CGAL_assertion( e_below != Halfedge_handle() );
+    CGAL_nef_assertion( e_below != Halfedge_handle() );
     Face_handle f = face(e_below);
     if ( f != Face_handle() ) return f; // has already a face 
     // e_below also has no face
@@ -637,13 +637,11 @@ create_from_segments(Forward_iterator start, Forward_iterator end) const
   create_face_objects(e, halfedges_end(), v, vertices_end(), O,
                       K.get_negative_halfsphere_geometry());
 
-  Unique_hash_map<Halfedge_iterator,bool> Done(false);
-  CGAL_forall_halfedges(e,*this) {
-    if ( Done[e] ) continue;
-    Sphere_segment s(point(source(e)),point(target(e)));
-    circle(e) = s.sphere_circle(); 
-    circle(twin(e)) = s.sphere_circle().opposite();
-    Done[e] = Done[twin(e)] = true;
+  Halfedge_iterator u;
+  CGAL_forall_edges(u,*this) {
+    Sphere_segment s(point(source(u)),point(target(u)));
+    circle(u) = s.sphere_circle();
+    circle(twin(u)) = s.sphere_circle().opposite();
   }
 
   merge_halfsphere_maps(vertices_begin(),v,O);
@@ -710,13 +708,11 @@ create_from_circles(Forward_iterator start, Forward_iterator end) const
   create_face_objects(e, halfedges_end(), v, vertices_end(), O,
                       K.get_negative_halfsphere_geometry());
 
-  Unique_hash_map<Halfedge_iterator,bool> Done(false);
-  CGAL_forall_halfedges(e,*this) {
-    if ( Done[e] ) continue;
-    Sphere_segment s(point(source(e)),point(target(e)));
-    circle(e) = s.sphere_circle(); 
-    circle(twin(e)) = s.sphere_circle().opposite();
-    Done[e] = Done[twin(e)] = true;
+  Halfedge_iterator u;
+  CGAL_forall_edges(u,*this) {
+    Sphere_segment s(point(source(u)),point(target(u)));
+    circle(u) = s.sphere_circle();
+    circle(twin(u)) = s.sphere_circle().opposite();
   }
 
   merge_halfsphere_maps(vertices_begin(),v,O);
@@ -745,17 +741,15 @@ subdivide(const Sphere_map& M0, const Sphere_map& M1)
   PI[1] = SM_decorator(const_cast<Sphere_map&>(M1));
   Seg_list L;
   Seg_map  From;
-  CGAL::Unique_hash_map<Halfedge_iterator,bool> Done(false);
   for (int i=0; i<2; ++i) {
     Vertex_iterator v;
-    for(v = PI[i].vertices_begin(); v != PI[i].vertices_end(); ++v) {
+    CGAL_forall_vertices(v,PI[i]) {
       if ( !PI[i].is_isolated(v) ) continue;
       L.push_back(trivial_segment(PI[i],v));
       From[--L.end()] = Seg_info(v,i);
     }
     Halfedge_iterator e;
-    for(e = PI[i].halfedges_begin(); e != PI[i].halfedges_end(); ++e) {
-      if ( Done[e] ) continue;
+    CGAL_forall_edges(e,PI[i]) {
       if ( source(e) == target(e) ) {
         Seg_pair p = two_segments(PI[i],e);
         L.push_back(p.first); 
@@ -765,8 +759,6 @@ subdivide(const Sphere_map& M0, const Sphere_map& M1)
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
       }
-      Done[e] = Done[twin(e)] = true;
-      
     }
     if ( PI[i].has_loop() ) {
       Seg_pair p = two_segments(PI[i],PI[i].halfloop());
@@ -819,13 +811,11 @@ subdivide(const Sphere_map& M0, const Sphere_map& M1)
   create_face_objects(e, halfedges_end(), v, vertices_end(), O,
                       NH_geometry());
 
-  Done.clear(false);
-  for(Halfedge_iterator e = halfedges_begin(); e != halfedges_end(); ++e)
-  { if ( Done[e] ) continue;
-    Sphere_segment s(point(source(e)),point(target(e)));
-    circle(e) = s.sphere_circle(); 
-    circle(twin(e)) = s.sphere_circle().opposite();
-    Done[e] = Done[twin(e)] = true;
+  Halfedge_iterator u;
+  CGAL_forall_edges(u,*this) {
+    Sphere_segment s(point(source(u)),point(target(u)));
+    circle(u) = s.sphere_circle(); 
+    circle(twin(u)) = s.sphere_circle().opposite();
   }
 
 
@@ -845,7 +835,7 @@ void SM_overlayer<Decorator_>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L, 
   CGAL::Unique_hash_map<Iterator,T>& M, int pos) const
 { TRACEN("partition_to_halfsphere ");
-  CGAL_assertion(pos!=0);
+  CGAL_nef_assertion(pos!=0);
   Sphere_segment s1,s2;
   Sphere_circle xycircle(0,0,pos);
   while ( start != beyond ) { 
@@ -952,7 +942,7 @@ create_face_objects(Halfedge_iterator e_start, Halfedge_iterator e_end,
   for (Vertex_iterator v = v_start; v != v_end; ++v) {
     if ( !is_isolated(v) ) continue;
     Halfedge_handle e_below = D.halfedge_below(v);
-    CGAL_assertion( e_below != Halfedge_handle() );
+    CGAL_nef_assertion( e_below != Halfedge_handle() );
     link_as_isolated_vertex(v,face(e_below));
   }
 
@@ -975,7 +965,7 @@ complete_face_support(Vertex_iterator v_start, Vertex_iterator v_end,
       for (int i=0; i<2; ++i) 
         m_buffer[i] = incident_mark(e_below,i); 
     } else { // e_below does not exist
-      CGAL_assertion( point(v).hz() == 0 && 
+      CGAL_nef_assertion( point(v).hz() == 0 && 
                       ( pos > 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
       for (int i=0; i<2; ++i) 
         m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
@@ -996,7 +986,7 @@ complete_face_support(Vertex_iterator v_start, Vertex_iterator v_end,
         mark(v,i) = PI[i].mark(es); continue;
       }
       if ( assign(ls,o) ) { mark(v,i) = PI[i].mark(ls); continue; }
-      CGAL_assertion_msg(0,"wrong handle");
+      CGAL_nef_assertion_msg(0,"wrong handle");
     } TRACEN(" vertex marks "<<mark(v,0)<<" "<<mark(v,1));
 
     if ( is_isolated(v) ) continue;
@@ -1009,7 +999,7 @@ complete_face_support(Vertex_iterator v_start, Vertex_iterator v_end,
           Halfedge_handle ei; 
           if ( assign(ei,supp_object(e,i)) ) { 
             if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
-            CGAL_assertion( PI[i].circle(ei) == circle(e) ); 
+            CGAL_nef_assertion( PI[i].circle(ei) == circle(e) ); 
             TRACEN("  supporting edge "<<i<<" "<<PH(ei));
             incident_mark(twin(e),i) = 
               PI[i].mark(PI[i].face(PI[i].twin(ei)));
@@ -1020,7 +1010,7 @@ complete_face_support(Vertex_iterator v_start, Vertex_iterator v_end,
           Halfloop_handle li;
           if ( assign(li,supp_object(e,i)) ) { 
             if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
-            CGAL_assertion( PI[i].circle(li) == circle(e) ); 
+            CGAL_nef_assertion( PI[i].circle(li) == circle(e) ); 
             TRACEN("  supporting loop "<<i<<" "<<PH(li));
             incident_mark(twin(e),i) = 
               PI[i].mark(PI[i].face(PI[i].twin(li)));
@@ -1041,10 +1031,10 @@ complete_face_support(Vertex_iterator v_start, Vertex_iterator v_end,
   for (f = faces_begin(); f != faces_end(); ++f) {
     assoc_info(f);
     Object_handle boundary_object = face_cycles_begin(f);
-    CGAL_assertion(boundary_object != NULL);
+    CGAL_nef_assertion(boundary_object != NULL);
     Halfedge_handle e;
     if ( !assign(e,boundary_object) ) 
-      CGAL_assertion_msg(0,"Outer face cycle should be first.");
+      CGAL_nef_assertion_msg(0,"Outer face cycle should be first.");
     for (int i=0; i<2; ++i) mark(f,i) = incident_mark(e,i);
   }
 
@@ -1059,7 +1049,7 @@ merge_nodes(Halfedge_handle e1, Halfedge_handle e2,
 {
   Vertex_handle v1 = source(e1), v2 = target(e2);
   TRACEN("merge_nodes "<<PH(v1)<<PH(v2));
-  CGAL_assertion(point(v1)==point(v2));
+  CGAL_nef_assertion(point(v1)==point(v2));
   Halfedge_handle ep1 = previous(e1), en2 = next(e2);
   Halfedge_around_vertex_circulator eav(out_edges(v2)),ee(eav);
   CGAL_For_all(eav,ee) { set_source(eav,v1); }
@@ -1076,7 +1066,7 @@ void SM_overlayer<Decorator_>::
 merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2,
   const Mark_accessor& D) const
 { TRACEN("merging halfspheres "<<PH(v1)<<PH(v2));
-  CGAL_assertion(point(v1)==point(v2));
+  CGAL_nef_assertion(point(v1)==point(v2));
   std::list<Halfedge_pair> L_equator;
   Halfedge_around_face_circulator 
     ep(last_out_edge(v1)), en(twin(first_out_edge(v2)));
@@ -1094,12 +1084,10 @@ merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2,
     Halfedge_handle e2tn = next(e2t);
     link_as_prev_next_pair(e2tp,e1);
     link_as_prev_next_pair(e1,e2tn);
-    falls e2t zyklusentry ersetze e2t durch e1;
-    face(e1) = face(e2t);
-
-    D.assert_equal_marks(e1,e2);
-    D.transfer_marks(e1); D.transfer_marks(e2);
-    make_twins(e1,e2); make_twins(e1t,e2t);
+    Face_handle f = face(e2t);
+    if ( is_boundary_object(e2t) )
+    { undo_boundary_object(e2t,f); store_boundary_object(e1,f); }
+    set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
     D.discard_info(e2);

@@ -99,9 +99,7 @@ void draw_map() const
 {
   // draw sphere segments underlying edges of E_:
   Halfedge_const_iterator e;
-  CGAL::Unique_hash_map<Halfedge_const_iterator,bool> Done(false);
-  CGAL_forall_halfedges(e,E_) {
-    if ( Done[e] ) continue;
+  CGAL_forall_edges(e,E_) {
     if ( source(e) == target(e) ) {
       S_.push_back(E_.circle(e), CO_.color(e,E_.mark(e))); 
     } else {
@@ -109,7 +107,6 @@ void draw_map() const
 				  E_.point(E_.target(e)),
 				  E_.circle(e)),CO_.color(e,E_.mark(e)));
     }
-    Done[e]=Done[E_.twin(e)]=true;
   }
   // draw sphere circles underlying loops of E_:
 
@@ -123,12 +120,13 @@ void draw_map() const
   CGAL_forall_vertices(v,E_)
     S_.push_back(E_.point(v),CO_.color(v,E_.mark(v)));
 
+  Unique_hash_map<Halfedge_const_iterator,bool> Done(false);
   CGAL_forall_halfedges(e,*this) {
     if ( Done[e] ) continue;
     Halfedge_const_handle en(next(e)),enn(next(en));
     TRACEV(Base::incident_triangle(e));
     TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
-    CGAL_assertion(Base::incident_mark(e)==Base::incident_mark(en) &&
+    CGAL_nef_assertion(Base::incident_mark(e)==Base::incident_mark(en) &&
 		   Base::incident_mark(en)==Base::incident_mark(enn));
     Mark m = Base::incident_mark(e);
     Sphere_triangle t = Base::incident_triangle(e);
@@ -153,14 +151,11 @@ void draw_map() const
 
 void draw_triangulation() const
 { 
-  CGAL::Unique_hash_map<Halfedge_const_iterator,bool> Done(false);
   // draw sphere segments underlying edges of triangulation:
   Halfedge_const_iterator e;
-  CGAL_forall_halfedges(e,*this) {
-    if ( Done[e] ) continue;
+  CGAL_forall_edges(e,*this) {
     S_.push_back(Sphere_segment(point(source(e)),point(target(e)),
 				circle(e)),CO_.color(e,mark(e)));
-    Done[e]=Done[twin(e)]=true;
   }
 
   // draw points underlying vertices of triangulation:
@@ -172,7 +167,7 @@ void draw_triangulation() const
   CGAL_forall_halfedges(e,*this) {
     if ( Done[e] ) continue;
     Halfedge_const_handle en(next(e)),enn(next(en));
-    CGAL_assertion(incident_mark(e)==incident_mark(en)&&
+    CGAL_nef_assertion(incident_mark(e)==incident_mark(en)&&
 		   incident_mark(en)==incident_mark(enn));
     Mark m = incident_mark(e);
     Sphere_triangle t = incident_triangle(e);

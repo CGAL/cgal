@@ -29,6 +29,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Nef_S2/nef_assertions.h>
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
@@ -147,7 +148,7 @@ public:
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const { CGAL_assertion_msg(0,"not impl."); }
+    Object_handle  operator->() const { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
   class Face_cycle_const_iterator : public Object_const_iterator 
@@ -177,7 +178,7 @@ public:
 
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const { CGAL_assertion_msg(0,"not impl."); }
+    Object_handle  operator->() const { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
   /*{\Mcreation 3}*/
@@ -192,16 +193,24 @@ public:
   ~Sphere_map() { clear(); }
 
   Sphere_map(const Self& D) : boundary_item_(undef_),
-    vertices_(D.vertices_), edges_(D.edges_), faces_(D.faces_), loops_(0)
-  { if ( D.loops_ != 0 ) new_halfloop_pair(*(D.loops_),*(D.loops_->twin_));
+    vertices_(D.vertices_), 
+    // edges_(D.edges_), 
+    faces_(D.faces_), 
+    loops_(0)
+  { if ( D.loops_ != 0 ) new_halfloop_pair(*(D.loops_));
+    Halfedge_const_iterator e;
+    CGAL_forall_edges(e,D) new_halfedge_pair(*e);
     pointer_update(D); 
     m_pos_ = D.m_pos_; m_neg_ = D.m_neg_; }
 
   Self& operator=(const Self& D) 
   { if ( this == &D ) return *this; 
     clear();
-    vertices_ = D.vertices_; edges_ = D.edges_; faces_ = D.faces_;
-    if ( D.loops_ != 0 ) new_halfloop_pair(*D.loops_,*(D.loops_->twin_));
+    vertices_ = D.vertices_; 
+    faces_ = D.faces_;
+    Halfedge_const_iterator e;
+    CGAL_forall_edges(e,D) new_halfedge_pair(*e);
+    if ( D.loops_ != 0 ) new_halfloop_pair(*D.loops_);
     pointer_update(D);
     m_pos_ = D.m_pos_; m_neg_ = D.m_neg_;
     return *this;
@@ -210,7 +219,10 @@ public:
   void clear()
   { 
     boundary_item_.clear(undef_);
-    vertices_.destroy(); edges_.destroy(); faces_.destroy();
+    vertices_.destroy(); 
+    faces_.destroy();
+    while ( halfedges_begin() != halfedges_end() )
+      delete_halfedge_pair( halfedges_begin() );
     if ( loops_ != 0 ) { delete_halfloop_pair(loops_); loops_=0; }
     m_pos_ = m_neg_ = Mark(); 
   }
@@ -229,7 +241,7 @@ public:
 
   template <typename H>
   void undef_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=undef_);
+  { CGAL_nef_assertion(boundary_item_[h]!=undef_);
     boundary_item_[h] = undef_; }
 
   void reset_iterator_hash(Object_iterator it)
@@ -327,9 +339,11 @@ public:
   { faces_.push_back( * new Face ); return --faces_end(); } 
 
   Halfedge_handle new_halfedge_pair()
-  { edges_.push_back( * new Halfedge );
+  { Halfedge* ep2 = new Halfedge[2];
+    Halfedge* ep1 = ep2++;
+    edges_.push_back( *ep1 );
     Halfedge_handle e1 = --halfedges_end();
-    edges_.push_back( * new Halfedge );
+    edges_.push_back( *ep2 );
     Halfedge_handle e2 = --halfedges_end();
     make_twins(e1,e2); return e1; }
 
@@ -339,9 +353,20 @@ public:
     make_twins(ph,pt);
     loops_=ph; return ph; }
 
-  Halfloop_handle new_halfloop_pair(const Halfloop& l1,
-				    const Halfloop& l2)
-  { Halfloop* ph = new Halfloop[2];
+  Halfedge_handle new_halfedge_pair(const Halfedge& e1)
+  { const Halfedge& e2 = *(e1.twin_);
+    Halfedge* ep2 = new Halfedge[2];
+    Halfedge* ep1 = ep2++;
+    *ep1=e1; *ep2=e2;
+    edges_.push_back( *ep1 );
+    Halfedge_handle eh1 = --halfedges_end();
+    edges_.push_back( *ep2 );
+    Halfedge_handle eh2 = --halfedges_end();
+    make_twins(eh1,eh2); return eh1; }
+
+  Halfloop_handle new_halfloop_pair(const Halfloop& l1)
+  { const Halfloop& l2 = *(l1.twin_);
+    Halfloop* ph = new Halfloop[2];
     Halfloop* pt(ph); ++pt;
     *ph=l1; *pt=l2; make_twins(ph,pt);
     loops_=ph; return ph; }
@@ -353,9 +378,12 @@ public:
   { faces_.erase(h); delete &* h; }
 
   void delete_halfedge_pair(Halfedge_handle h)
-  { Halfedge_handle ht = h->twin_;
-    edges_.erase(h); edges_.erase(ht);
-    delete &*ht; delete &*h; }
+  { Halfedge_handle t = h->twin_;
+    edges_.erase(h); edges_.erase(t);
+    Halfedge* ph = &*h;
+    Halfedge* pt = &*t;
+    if ( ph > pt ) std::swap(ph,pt);
+    delete [] ph; }
 
   void delete_halfloop_pair(Halfloop_handle h)
   { Halfloop* ph = &*h;
@@ -363,9 +391,6 @@ public:
     if ( ph > pt ) std::swap(ph,pt);
     loops_ = Halfloop_handle();
     delete [] ph; }
-
-  void delete_halfedge(Halfedge_handle h)
-  { edges_.erase(h); delete &* h; }
 
 protected:
   void pointer_update(const Self& D);
@@ -421,7 +446,7 @@ pointer_update(const Sphere_map<K>& D)
   }
   // Edge update:
   for (e = halfedges_begin(); e != halfedges_end(); ++e) {
-    e->twin_ = EM[e->twin_];
+    // e->twin_ = EM[e->twin_]; twin is set on construction
     e->prev_ = EM[e->prev_];
     e->next_ = EM[e->next_];
     e->source_ = VM[e->source_];
@@ -442,7 +467,7 @@ pointer_update(const Sphere_map<K>& D)
       { *fci = make_object(EM[e]); store_boundary_item(e,fci); }
       else if ( assign(l,Object_handle(fci)) ) 
       { *fci = make_object(LM[l]); store_boundary_item(l,fci); }
-      else CGAL_assertion_msg(0,"damn wrong boundary item in face.");
+      else CGAL_nef_assertion_msg(0,"damn wrong boundary item in face.");
     }
   }
 }

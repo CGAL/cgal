@@ -110,7 +110,7 @@ check_order_preserving_embedding(Vertex_const_handle v) const
            !K.strictly_ordered_ccw(direction(e),direction(en),
                                    direction(ef)) ) {
         error_status << "ccw order violate!" << endl << '\0';
-        CGAL_assertion_msg(0,error_status.str());
+        CGAL_nef_assertion_msg(0,error_status.str());
       }
       e = en;
     }
@@ -129,7 +129,7 @@ check_forward_prefix_condition(Vertex_const_handle v) const
                                 point(target(el)));
   bool el_forward = is_forward(el);
   bool ef_forward = is_forward(ef);
-  CGAL_assertion_msg( (ef == el ||
+  CGAL_nef_assertion_msg( (ef == el ||
                        ef_forward && !el_forward ||
                        ef_forward &&  el_forward && is_leftturn ||
                        !ef_forward && !el_forward && is_leftturn) ,
@@ -156,7 +156,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   Vertex_const_iterator vit, v_min;
   for (vit = v_min = vertices_begin() ; vit != vertices_end(); ++vit) 
     if ( K.compare_xy(point(vit), point(v_min))<0 ) v_min = vit;
-  CGAL_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
+  CGAL_nef_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
   Sphere_point p_min = point(v_min);
 
   // determine boundary edge incident to v_min: 
@@ -187,7 +187,7 @@ check_boundary_is_clockwise_weakly_polygon() const
     if ( d_curr < d_prev ) ++winding_around_globally;
     d_prev = d_curr;
   }
-  CGAL_assertion(winding_around_globally == 1);
+  CGAL_nef_assertion(winding_around_globally == 1);
   return e_boundary_at_v_min;
 }
 
@@ -197,7 +197,7 @@ check_is_triangulation() const
 {
   Halfedge_const_iterator eb;
   check_integrity_and_topological_planarity(false);
-  CGAL_assertion(number_of_connected_components() == 1);
+  CGAL_nef_assertion(number_of_connected_components() == 1);
   check_order_preserving_embedding();
   eb = check_boundary_is_clockwise_weakly_polygon();
 
@@ -220,7 +220,7 @@ check_is_triangulation() const
       error_status << PE(hit);
       ++edges_in_face_cycle;
     }
-    CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str());
+    CGAL_nef_assertion_msg(edges_in_face_cycle==3,error_status.str());
   }
   error_status.freeze(0);
 }

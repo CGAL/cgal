@@ -99,11 +99,11 @@ public:
     int s = 0;
     if ( p == point(source(e1)) )      s =   orientation(e2,p);
     else if ( p == point(source(e2)) ) s = - orientation(e1,p);
-    else CGAL_assertion_msg(0,"compare error in sweep.");
+    else CGAL_nef_assertion_msg(0,"compare error in sweep.");
     if ( s || source(e1) == target(e1) || source(e2) == target(e2) ) 
       return ( s < 0 );
     s = orientation(e2,point(target(e1)));
-    if (s==0) CGAL_assertion_msg(0,"parallel edges not allowed.");
+    if (s==0) CGAL_nef_assertion_msg(0,"parallel edges not allowed.");
     return ( s < 0 );
   }
 

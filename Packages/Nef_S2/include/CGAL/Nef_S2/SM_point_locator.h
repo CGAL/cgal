@@ -176,7 +176,7 @@ public:
     if ( assign(v,h) ) return mark(v);
     if ( assign(e,h) ) return mark(e);
     if ( assign(f,h) ) return mark(f);
-    CGAL_assertion_msg(0,
+    CGAL_nef_assertion_msg(0,
     "PM_point_locator::mark: Object_handle holds no object.");
   }
 
@@ -196,11 +196,8 @@ public:
     }
 
     Halfedge_const_iterator e;
-    CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited(false);
-    CGAL_forall_halfedges(e,*this) {
-      if ( visited[e] ) continue;
+    CGAL_forall_edges(e,*this) {
       if ( segment(e).has_on(p) ) return make_object(e);
-      visited[e]=visited[twin(e)]=true;
     }
     if ( has_loop() && circle(halfloop()).has_on(p) )
       return make_object(Halfloop_const_handle(halfloop()));
@@ -223,7 +220,7 @@ public:
 	halfloop() : twin(halfloop());
       solution = is_loop_;
     } else { // has vertices !
-      CGAL_assertion( number_of_vertices()!=0 );
+      CGAL_nef_assertion( number_of_vertices()!=0 );
       Vertex_const_handle vt = vertices_begin();
       Sphere_point pvt = point(vt);
       if ( p != pvt.opposite() ) s = Sphere_segment(p,pvt);
@@ -235,7 +232,7 @@ public:
     // s now initialized
     
     Sphere_direction dso(s.sphere_circle().opposite()), d_res;
-    visited.clear(false);
+    Unique_hash_map<Halfedge_const_handle,bool> visited(false);
     CGAL_forall_vertices(v,*this) {
       Sphere_point p_res, vp = point(v);
       if ( s.has_on(vp) ) {
@@ -281,7 +278,7 @@ public:
         return make_object((Face_const_handle)(face(l_res)));
       case is_vertex_:
         return make_object((Face_const_handle)(face(v_res)));
-      default: CGAL_assertion_msg(0,"missing solution.");
+      default: CGAL_nef_assertion_msg(0,"missing solution.");
     }
     return Object_handle(); // never reached!
   }
@@ -369,7 +366,7 @@ public:
       }
     }
 #endif
-    CGAL_assertion_msg(0,"not yet correct");
+    CGAL_nef_assertion_msg(0,"not yet correct");
     return h;
   }
 
@@ -405,7 +402,7 @@ void SM_point_locator<D>::init_marks_of_halfspheres()
 
   Halfedge_const_handle e;
   if ( CGAL::assign(e,h) ) { 
-    CGAL_assertion(circle(e).has_on(y_minus));
+    CGAL_nef_assertion(circle(e).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(e).orthogonal_vector());
     TRACEN("on edge "<<op);
     if ( (op.x() > 0) || (op.x() == 0) && (op.z() < 0) ) e = twin(e);
@@ -417,7 +414,7 @@ void SM_point_locator<D>::init_marks_of_halfspheres()
 
   Halfloop_const_handle l;
   if ( CGAL::assign(l,h) ) {
-    CGAL_assertion(circle(l).has_on(y_minus));
+    CGAL_nef_assertion(circle(l).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(l).orthogonal_vector());
     TRACEN("on loop "<<op);
     if ( (op.x() > 0) || (op.x() == 0) && (op.z() < 0) ) l = twin(l);
@@ -434,7 +431,7 @@ void SM_point_locator<D>::init_marks_of_halfspheres()
   bool collinear(false);
   Vertex_const_handle v;
   if ( CGAL::assign(v,h) ) {
-    CGAL_assertion(point(v)==y_minus);
+    CGAL_nef_assertion(point(v)==y_minus);
     e = out_wedge(v,left,collinear); 
     if ( collinear ) mark_of_halfsphere(+1) = mark(face(twin(e)));
     else mark_of_halfsphere(+1) = mark(face(e));
@@ -443,7 +440,7 @@ void SM_point_locator<D>::init_marks_of_halfspheres()
     else mark_of_halfsphere(-1) = mark(face(e));
     return;
   }
-  CGAL_assertion_msg(0,"damn wrong type.");
+  CGAL_nef_assertion_msg(0,"damn wrong type.");
 }
 
 CGAL_END_NAMESPACE

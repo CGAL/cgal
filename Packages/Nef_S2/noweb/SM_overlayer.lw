@@ -646,13 +646,11 @@ create_face_objects(e, halfedges_end(), v, vertices_end(), O,
 sphere map. Note that due to our restriction to perfect hemispheres
 the circles can be easily constructed per edge.
 <<sweeping and creating the faces per halfsphere>>=
-Unique_hash_map<Halfedge_iterator,bool> Done(false);
-CGAL_forall_halfedges(e,*this) {
-  if ( Done[e] ) continue;
-  Sphere_segment s(point(source(e)),point(target(e)));
-  circle(e) = s.sphere_circle(); 
-  circle(twin(e)) = s.sphere_circle().opposite();
-  Done[e] = Done[twin(e)] = true;
+Halfedge_iterator u;
+CGAL_forall_edges(u,*this) {
+  Sphere_segment s(point(source(u)),point(target(u)));
+  circle(u) = s.sphere_circle();
+  circle(twin(u)) = s.sphere_circle().opposite();
 }
 
 @ \subsection{Overlay calculation of a list of circles}
@@ -858,17 +856,15 @@ come from.
 <<filling the input segment lists per halfsphere>>=
 Seg_list L;
 Seg_map  From;
-CGAL::Unique_hash_map<Halfedge_iterator,bool> Done(false);
 for (int i=0; i<2; ++i) {
   Vertex_iterator v;
-  for(v = PI[i].vertices_begin(); v != PI[i].vertices_end(); ++v) {
+  CGAL_forall_vertices(v,PI[i]) {
     if ( !PI[i].is_isolated(v) ) continue;
     L.push_back(trivial_segment(PI[i],v));
     From[--L.end()] = Seg_info(v,i);
   }
   Halfedge_iterator e;
-  for(e = PI[i].halfedges_begin(); e != PI[i].halfedges_end(); ++e) {
-    if ( Done[e] ) continue;
+  CGAL_forall_edges(e,PI[i]) {
     if ( source(e) == target(e) ) {
       Seg_pair p = two_segments(PI[i],e);
       L.push_back(p.first); 
@@ -878,8 +874,6 @@ for (int i=0; i<2; ++i) {
       L.push_back(segment(PI[i],e));
       From[--L.end()] = Seg_info(e,i);
     }
-    Done[e] = Done[twin(e)] = true;
-    
   }
   if ( PI[i].has_loop() ) {
     Seg_pair p = two_segments(PI[i],PI[i].halfloop());
@@ -1313,13 +1307,11 @@ create_face_objects(halfedges_begin(), e, vertices_begin(), v, O,
 create_face_objects(e, halfedges_end(), v, vertices_end(), O,
                     NH_geometry());
 
-Done.clear(false);
-for(Halfedge_iterator e = halfedges_begin(); e != halfedges_end(); ++e)
-{ if ( Done[e] ) continue;
-  Sphere_segment s(point(source(e)),point(target(e)));
-  circle(e) = s.sphere_circle(); 
-  circle(twin(e)) = s.sphere_circle().opposite();
-  Done[e] = Done[twin(e)] = true;
+Halfedge_iterator u;
+CGAL_forall_edges(u,*this) {
+  Sphere_segment s(point(source(u)),point(target(u)));
+  circle(u) = s.sphere_circle(); 
+  circle(twin(u)) = s.sphere_circle().opposite();
 }
 
 
@@ -1808,15 +1800,18 @@ merge_halfsphere_maps(Vertex_handle v1, Vertex_handle v2,
     Halfedge_handle e1 = it->first, e2 = it->second;
     Halfedge_handle e1t = twin(e1), e2t = twin(e2);
     TRACEV(PH(e1));TRACEV(PH(e2));
-    D.assert_equal_marks(e1,e2);
-    D.transfer_marks(e1); D.transfer_marks(e2);
-    make_twins(e1,e2); make_twins(e1t,e2t);
-    if ( e1 == first_out_edge(source(e1)) )
-      set_first_out_edge(source(e1),e2t);
+    Halfedge_handle e2tp = previous(e2t);
+    Halfedge_handle e2tn = next(e2t);
+    link_as_prev_next_pair(e2tp,e1);
+    link_as_prev_next_pair(e1,e2tn);
+    Face_handle f = face(e2t);
+    if ( is_boundary_object(e2t) )
+    { undo_boundary_object(e2t,f); store_boundary_object(e1,f); }
+    set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
-    D.discard_info(e1);
-    delete_edge_pair_only(e1);
+    D.discard_info(e2);
+    delete_edge_pair_only(e2);
   }
 }
 
