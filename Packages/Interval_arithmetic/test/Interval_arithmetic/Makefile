@@ -16,13 +16,14 @@ CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
 	   -g -Wall
-	   # -O3 -mcpu=ultrasparc -mtune=ultrasparc -Wall
+	   # -O3 -mcpu=ultrasparc -mtune=ultrasparc -Wall -Winline
            # -O2 -xtarget=ultra2
 	   # -Winline
 	   # -mcpu=pentiumpro
 	   # -mcpu=ultrasparc -mtune=ultrasparc
 	   # -fomit-frame-pointer
 	   # -fprofile-arcs -ftest-coverage
+	   # -DCGAL_IA_DEBUG -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS
 
 #---------------------------------------------------------------------#
 #                    linker flags
