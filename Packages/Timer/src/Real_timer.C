@@ -60,7 +60,7 @@ bool Real_timer::m_failed = false;
 // Member functions for Real_timer
 // =====================================
 
-double Real_timer::user_process_time() const {
+double Real_timer::get_real_time() const {
     // Depends on the operating system.
     // Returns a (weakly ;-) monotone increasing time in seconds (with
     // possible wrap-around in case of overflow, see max()), or 0.0
@@ -114,12 +114,12 @@ double Real_timer::compute_precision() const {
     // in the precision.
     double min_res = DBL_MAX;
     for ( int i = 0; i < 5; ++i) {
-        double current = user_process_time();
+        double current = get_real_time();
         if ( m_failed)
             return -1.0;
-        double next    = user_process_time();
-        while ( current == next) { // wait until timer increases
-            next = user_process_time();
+        double next    = get_real_time();
+        while ( current >= next) { // wait until timer increases
+            next = get_real_time();
             if ( m_failed)
                 return -1.0;
         }

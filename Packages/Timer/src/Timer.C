@@ -77,9 +77,10 @@ double Timer::user_process_time() const {
     int ret = getrusage( RUSAGE_SELF, &usage);
     CGAL_warning_msg( ret == 0, "Call to getrusage() in class CGAL::Timer "
                       "failed - timings will be 0.");
-    if ( ret == 0)
+    if ( ret == 0) {
         return double( usage.ru_utime.tv_sec)               // seconds
              + double( usage.ru_utime.tv_usec) / 1000000.0; // microseconds
+    }
 #else // CGAL__GETRUSAGE //
     CGAL_CLIB_STD::clock_t clk = CGAL_CLIB_STD::clock();
     CGAL_warning_msg( clk != (CGAL_CLIB_STD::clock_t)-1,
@@ -104,7 +105,7 @@ double Timer::compute_precision() const {
         if ( m_failed)
             return -1.0;
         double next    = user_process_time();
-        while ( current == next) { // wait until timer increases
+        while ( current >= next) { // wait until timer increases
             next = user_process_time();
             if ( m_failed)
                 return -1.0;

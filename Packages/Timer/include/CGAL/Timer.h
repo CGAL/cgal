@@ -85,7 +85,8 @@ inline void Timer::start() {
 
 inline void Timer::stop() {
     CGAL_precondition( running);
-    elapsed += user_process_time() - started;
+    double t = user_process_time();
+    elapsed += (t - started);
     started = 0.0;
     running = false;
 }
@@ -102,8 +103,10 @@ inline void Timer::reset() {
 }
 
 inline double Timer::time() const {
-    if (running)
-	return elapsed + (user_process_time() - started);
+    if (running) {
+        double t = user_process_time();
+	return elapsed + (t - started);
+    }
     return elapsed;
 }
 

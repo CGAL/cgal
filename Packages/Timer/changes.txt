@@ -1,6 +1,13 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.6 (04 Apr 2002)
+
+     - Changed details to get rid of spurious negative (small) timing
+       and precision results which I attribute to problems with
+       different rounding behavior of double and inline code in different
+       places (but just a hunch).
+
 2.5 (25 Mar 2002)
 
      - Moved #include <float.h> in Timer.C to get always included.
