@@ -2,6 +2,14 @@ Packages/Distance_2/web/lis
 Packages/Distance_3/include
 Packages/Mesh_2/demo/Mesh_2/*.moc
 Packages/Mesh_2/demo/Mesh_2/mesh_demo
+Packages/Mesh_2/doc_tex/basic/*.aux
+Packages/Mesh_2/doc_tex/basic/*.dvi
+Packages/Mesh_2/doc_tex/basic/*.idx
+Packages/Mesh_2/doc_tex/basic/*.ilg
+Packages/Mesh_2/doc_tex/basic/*.ind*
+Packages/Mesh_2/doc_tex/basic/*.log
+Packages/Mesh_2/doc_tex/basic/*.ps*
+Packages/Mesh_2/doc_tex/basic/html
 Packages/Mesh_2/examples/Mesh_2/mesh
 Packages/Mesh_2/test/Mesh_2/test_filtred_container
 Packages/Min_annulus_d/*.aux
