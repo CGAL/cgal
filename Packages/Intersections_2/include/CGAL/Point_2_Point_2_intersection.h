@@ -60,7 +60,7 @@ inline
 bool
 do_intersect(const Point_2<K> &pt1, const Point_2<K> &pt2)
 {
-  return CGALi::do_intersect(pt1, pt2, K());
+  return typename K::Do_intersect_2(pt1, pt2);
 }
 
 
@@ -69,7 +69,7 @@ inline
 Object
 intersection(const Point_2<K> &pt1, const Point_2<K> &pt2)
 {
-  return CGALi::intersection(pt1, pt2, K());
+  return typename K::Intersect_2()(pt1, pt2);
 }
 
 CGAL_END_NAMESPACE

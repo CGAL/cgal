@@ -57,7 +57,7 @@ bool
 do_intersect(const Circle_2<K> & circ1, 
 	     const Circle_2<K> & circ2)
 {
-  return CGALi::do_intersect(circ1, circ2, K());
+  return typename K::Do_intersect_2()(circ1, circ2);
 }
 
 

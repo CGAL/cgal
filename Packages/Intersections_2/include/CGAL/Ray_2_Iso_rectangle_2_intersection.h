@@ -250,14 +250,14 @@ template <class K>
 inline bool do_intersect(const Iso_rectangle_2<K> &p1,
 			 const Ray_2<K> &p2)
 {
-  return CGALi::do_intersect(p1, p2, K());
+  return typename K::Do_intersect_2()(p1, p2);
 }
 
 template <class K>
 inline bool do_intersect(const Ray_2<K> &p2,
 			 const Iso_rectangle_2<K> &p1)
 {
-  return CGALi::do_intersect(p1, p2, K());
+  return typename K::Do_intersect_2()(p1, p2);
 }
 
 
@@ -265,13 +265,13 @@ template <class K>
 inline Object
 intersection(const Iso_rectangle_2<K>&iso, const Ray_2<K>&ray)
 {
-  return CGALi::intersection(ray, iso, K());
+  return typename K::Intersect_2()(ray, iso);
 }
 template <class K>
 inline Object
 intersection(const Ray_2<K>&ray, const Iso_rectangle_2<K>&iso)
 {
-  return CGALi::intersection(ray, iso, K());
+  return typename K::Intersect_2()(ray, iso);
 }
 
 CGAL_END_NAMESPACE

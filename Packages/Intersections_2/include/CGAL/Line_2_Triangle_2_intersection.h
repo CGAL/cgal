@@ -239,7 +239,7 @@ bool
 do_intersect(const Line_2<K> &p1,
 	     const Triangle_2<K> &p2)
 {
-  return CGALi::do_intersect(p1, p2, K());
+  return typename K::Do_intersect_2()(p1, p2);
 }
 
 template <class K>
@@ -247,21 +247,21 @@ inline bool do_intersect(
     const Triangle_2<K> &p1,
     const Line_2<K> &p2)
 {
-    return CGALi::do_intersect(p2, p1, K());
+    return typename K::Do_intersect_2()(p2, p1);
 }
 
 template <class K>
 inline Object
 intersection(const Line_2<K> &line, const Triangle_2<K> &tr)
 {
-    return CGALi::intersection(line, tr, K());
+    return typename K::Intersect_2()(line, tr);
 }
 
 template <class K>
 inline Object
 intersection(const Triangle_2<K> &tr, const Line_2<K> &line)
 {
-    return CGALi::intersection(line, tr, K());
+    return typename K::Intersect_2()(line, tr);
 }
 
 CGAL_END_NAMESPACE

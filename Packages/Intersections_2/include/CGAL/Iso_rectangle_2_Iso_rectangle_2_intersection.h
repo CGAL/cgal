@@ -88,7 +88,7 @@ intersection(
     const Iso_rectangle_2<K> &irect1,
     const Iso_rectangle_2<K> &irect2)
 {
-  return CGALi::intersection(irect1, irect2, K());
+  return typename K::Intersect_2()(irect1, irect2);
 }
 
 

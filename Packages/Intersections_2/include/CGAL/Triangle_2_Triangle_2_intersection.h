@@ -39,7 +39,7 @@ Object
 intersection(const Triangle_2<K> &tr1, 
 	     const Triangle_2<K>& tr2)
 {
-  return CGALi::intersection(tr1, tr2, K());
+  return typename K::Intersect_2()(tr1, tr2);
 }
 
 CGAL_END_NAMESPACE

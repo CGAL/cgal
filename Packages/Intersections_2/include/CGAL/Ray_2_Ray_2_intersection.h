@@ -296,7 +296,7 @@ bool
 do_intersect(const Ray_2<K> &ray1, 
 	     const Ray_2<K> &ray2)
 {
-  return CGALi::do_intersect(ray1, ray2, K());
+  return typename K::Do_intersect_2()(ray1, ray2);
 }
 
 template <class K>
@@ -304,7 +304,7 @@ Object
 intersection(const  Ray_2<K> &ray1, 
 	     const Ray_2<K> &ray2)
 {
-  return CGALi::intersection(ray1, ray2, K());
+  return typename K::Intersect_2()(ray1, ray2);
 }
 
 CGAL_END_NAMESPACE

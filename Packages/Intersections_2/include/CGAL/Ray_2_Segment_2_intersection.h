@@ -310,7 +310,7 @@ inline bool do_intersect(
     const Segment_2<K> &p1,
     const Ray_2<K> &p2)
 {
-  return CGALi::do_intersect(p1, p2, K());
+  return typename K::Do_intersect_2()(p1, p2);
 }
 
 template <class K>
@@ -318,21 +318,21 @@ inline bool do_intersect(
     const Ray_2<K> &p1,
     const Segment_2<K> &p2)
 {
-  return CGALi::do_intersect(p2, p1, K());
+  return typename K::Do_intersect_2()(p2, p1);
 }
 
 template <class K>
 inline Object
 intersection(const Segment_2<K> &seg, const Ray_2<K> &ray)
 {
-    return CGALi::intersection(ray, seg, K());
+    return typename K::Intersect_2()(ray, seg);
 }
 
 template <class K>
 inline Object
 intersection(const Ray_2<K> &ray, const Segment_2<K> &seg)
 {
-    return CGALi::intersection(ray, seg, K());
+    return typename K::Intersect_2()(ray, seg);
 }
 CGAL_END_NAMESPACE
 

@@ -83,7 +83,7 @@ bool
 do_intersect(const Line_2<K> &line, 
 	     const Point_2<K> &pt)
 {
-    return CGALi::do_intersect(pt, line, K());
+    return typename K::Do_intersect_2()(pt, line);
 }
 
 template <class K>
@@ -92,7 +92,7 @@ bool
 do_intersect(const Point_2<K> &pt,
 	     const Line_2<K> &line)
 {
-    return CGALi::do_intersect(pt, line, K());
+    return typename K::Do_intersect_2()(pt, line);
 }
 
 template <class K>
@@ -101,7 +101,7 @@ Object
 intersection(const Line_2<K> &line, 
 	     const Point_2<K> &pt)
 {
-  return CGALi::intersection(pt, line, K());
+  return typename K::Intersection_2()(pt, line);
 }
 
 template <class K>
@@ -110,7 +110,7 @@ Object
 intersection(const Point_2<K> &pt,
 	     const Line_2<K> &line)
 {
-  return CGALi::intersection(pt, line, K());
+  return typename K::Intersection_2()(pt, line);
 }
 CGAL_END_NAMESPACE
 

@@ -1,3 +1,6 @@
+17 April Andreas Fabri
+- Global functions call functor
+
 29 March 2004 Radu Ursu
 - removed obsolete doc_tex directory
 

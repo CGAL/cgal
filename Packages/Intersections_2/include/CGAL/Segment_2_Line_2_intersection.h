@@ -197,26 +197,26 @@ template <class K>
 inline bool do_intersect(const Segment_2<K> &seg,
 			 const Line_2<K> &line)
 {
-  return CGALi::do_intersect(seg, line, K());
+  return typename K::Do_intersect_2()(seg, line);
 }
 template <class K>
 inline bool do_intersect(const Line_2<K> &line,
 			 const Segment_2<K> &seg)
 {
-  return CGALi::do_intersect(line, seg, K());
+  return typename K::Do_intersect_2()(line, seg);
 }
 
 template <class K>
 inline Object
 intersection(const Line_2<K> &line, const Segment_2<K> &seg)
 {
-    return CGALi::intersection(seg, line, K());
+    return typename K::Intersect_2()(seg, line);
 }
 template <class K>
 inline Object
 intersection(const Segment_2<K> &seg, const Line_2<K> &line)
 {
-    return CGALi::intersection(line, seg, K());
+    return typename K::Intersect_2()(line, seg);
 }
 CGAL_END_NAMESPACE
 

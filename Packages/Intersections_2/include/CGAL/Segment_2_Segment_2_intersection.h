@@ -498,7 +498,7 @@ bool
 do_intersect(const Segment_2<K> &seg1, 
 	     const Segment_2<K> &seg2)
 {
-  return CGALi::do_intersect(seg1, seg2, K());
+  return typename K::Do_intersect_2()(seg1, seg2);
 }
 
 
@@ -507,7 +507,7 @@ Object
 intersection(const Segment_2<K> &seg1, 
 	     const Segment_2<K> &seg2)
 {
-  return CGALi::intersection(seg1, seg2, K());
+  return typename K::Intersect_2()(seg1, seg2);
 }
 
 CGAL_END_NAMESPACE
