@@ -22,22 +22,22 @@
 // ======================================================================
 
 
-#ifndef CGAL_KD_TREE_TRAITS_POINT_D_H
-#define CGAL_KD_TREE_TRAITS_POINT_D_H
+#ifndef CGAL_SEARCH_TRAITS_D_H
+#define CGAL_SEARCH_TRAITS_D_H
 
 namespace CGAL {
 
   template <class K>
-  class Kd_tree_traits_point_d {
+  class Search_traits_d {
 
   public:
-    typedef typename K::Cartesian_const_iterator_d Cartesian_const_iterator;
-    typedef typename K::Construct_Cartesian_const_iterator_d Construct_cartesian_const_iterator;
-    typedef typename K::Point_d Point;
-    typedef typename K::FT NT;
+    typedef typename K::Cartesian_const_iterator_d Cartesian_const_iterator_d;
+    typedef typename K::Construct_Cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
+    typedef typename K::Point_d Point_d;
+    typedef typename K::FT FT;
     
   };
 
   
 } // namespace CGAL
-#endif // KD_TREE_TRAITS_POINT_D_H
+#endif // CGAL_SEARCH_TRAITS_D_H

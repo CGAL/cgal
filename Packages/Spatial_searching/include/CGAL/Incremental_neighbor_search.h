@@ -34,22 +34,22 @@
 
 namespace CGAL {
 
-template <class GeomTraits, 
-          class Distance_=Euclidean_distance<GeomTraits>,
-          class Splitter_ = Sliding_midpoint<GeomTraits>,
-	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
+template <class SearchTraits, 
+          class Distance_=Euclidean_distance<SearchTraits>,
+          class Splitter_ = Sliding_midpoint<SearchTraits>,
+	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false> >
 class Incremental_neighbor_search { 
 
 public:
 
   typedef Distance_ Distance;
   typedef Tree_     Tree;
-  typedef typename GeomTraits::Point Point;
-  typedef typename GeomTraits::NT NT;
-  typedef typename Tree::Point_iterator Point_iterator;
+  typedef typename SearchTraits::Point_d Point_d;
+  typedef typename SearchTraits::FT FT;
+  typedef typename Tree::Point_d_iterator Point_d_iterator;
   typedef typename Tree::Node_handle Node_handle;
   typedef typename Tree::Splitter Splitter;
-  typedef Kd_tree_rectangle<GeomTraits> Node_box;
+  typedef Kd_tree_rectangle<SearchTraits> Node_box;
   typedef typename Distance::Query_item Query_item;
 
 class Cell 
@@ -78,8 +78,8 @@ class Cell
 
     
 
-typedef std::pair<Point,NT> Point_with_distance;
-typedef std::pair<Cell*,NT> Cell_with_distance;
+typedef std::pair<Point_d,FT> Point_with_distance;
+typedef std::pair<Cell*,FT> Cell_with_distance;
 
 // this forward declaration may problems for g++ 
 class iterator;
@@ -89,7 +89,7 @@ class iterator;
 
     typedef std::vector<Point_with_distance*> Point_with_distance_vector;
 
-    typedef std::vector<NT> Distance_vector;
+    typedef std::vector<FT> Distance_vector;
 
     iterator *start;
     iterator *past_the_end;
@@ -98,7 +98,7 @@ class iterator;
 
     // constructor
     Incremental_neighbor_search(Tree& tree, const Query_item& q,
-			    NT Eps=NT(0.0), bool search_nearest=true, 
+			    FT Eps=FT(0.0), bool search_nearest=true, 
 			    const Distance& tr=Distance())
     {
         start = new iterator(tree,q,tr,Eps,search_nearest);
@@ -145,7 +145,7 @@ class iterator;
     }
 
     // constructor
-    iterator(const Tree& tree, const Query_item& q, const Distance& tr, NT eps, 
+    iterator(const Tree& tree, const Query_item& q, const Distance& tr, FT eps, 
 	     bool search_nearest) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
@@ -210,17 +210,17 @@ class iterator;
 
     private:
 
-    NT multiplication_factor;
+    FT multiplication_factor;
 
     Query_item query_point;
 
     int total_item_number;
 
-    NT distance_to_root;
+    FT distance_to_root;
 
     bool search_nearest_neighbour;
 
-    NT rd;
+    FT rd;
 
     class Priority_higher
     {
@@ -280,7 +280,7 @@ class Distance_smaller
 
     // constructor
     Iterator_implementation(const Tree& tree, const Query_item& q,const Distance& tr,
-        NT Eps, bool search_nearest)
+        FT Eps, bool search_nearest)
     {
         
 	
@@ -296,7 +296,7 @@ class Distance_smaller
 	reference_count=1;
         Distance_instance=new Distance(tr);
         multiplication_factor=
-	Distance_instance->transformed_distance(NT(1)+Eps);
+	Distance_instance->transformed_distance(FT(1)+Eps);
 
         Node_box *bounding_box = new Node_box(*(tree.bounding_box()));
         
@@ -422,16 +422,16 @@ class Distance_smaller
                 while (!(N->is_leaf())) { // compute new distances
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
-                        NT  new_cut_val=N->cutting_value();
+                        FT  new_cut_val=N->cutting_value();
                         
 			Node_box* lower_box = new Node_box(*B);
                         Node_box* upper_box = 
 			lower_box->split(new_cut_dim, new_cut_val);
 			delete B;
 			if (search_nearest_neighbour) {
-NT distance_to_box_lower =
+FT distance_to_box_lower =
 Distance_instance->min_distance_to_rectangle(query_point, *lower_box);
-NT distance_to_box_upper =
+FT distance_to_box_upper =
 Distance_instance->min_distance_to_rectangle(query_point, *upper_box);
 if (distance_to_box_lower <= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
@@ -451,9 +451,9 @@ else {
 }
                         }
 			else { // search furthest
-NT distance_to_box_lower =
+FT distance_to_box_lower =
 Distance_instance->max_distance_to_rectangle(query_point, *lower_box);
-NT distance_to_box_upper =
+FT distance_to_box_upper =
 Distance_instance->max_distance_to_rectangle(query_point, *upper_box);
 if (distance_to_box_lower >= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
@@ -479,7 +479,7 @@ else {
                 if (N->size() > 0) {
                   for (Point_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-                        NT distance_to_query_point=
+                        FT distance_to_query_point=
                         Distance_instance->
                         distance(query_point,**it);
                         Point_with_distance *NN_Candidate=

@@ -25,7 +25,7 @@
 #include <CGAL/Compact_container.h>
 namespace CGAL {
 
-  template <class GeomTraits, class Splitter=Sliding_midpoint<GeomTraits>, class UseExtendedNode = Tag_true > 
+  template <class SearchTraits, class Splitter=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true > 
   class Kd_tree;
 
 	template < class TreeTraits, class Splitter, class UseExtendedNode > 
@@ -35,11 +35,11 @@ namespace CGAL {
 
 	  typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;
 	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
-	typedef typename TreeTraits::Point Point;
+	typedef typename TreeTraits::Point_d Point_d;
 
-	typedef typename TreeTraits::NT NT;
+	typedef typename TreeTraits::FT FT;
 	typedef typename Kd_tree<TreeTraits>::Separator Separator;
-	typedef typename Kd_tree<TreeTraits>::Point_iterator Point_iterator;
+	typedef typename Kd_tree<TreeTraits>::Point_d_iterator Point_d_iterator;
 
         private:
 
@@ -48,7 +48,7 @@ namespace CGAL {
 
      	// private variables for leaf nodes
 	unsigned int n; // denotes number of items in a leaf node
-	Point_iterator data; // iterator to data in leaf node
+	Point_d_iterator data; // iterator to data in leaf node
 
     	// private variables for internal nodes
 
@@ -57,8 +57,8 @@ namespace CGAL {
   	Separator sep;
 
 	// private variables for extended internal nodes
-	NT low_val;
-  	NT high_val;
+	FT low_val;
+  	FT high_val;
                 
 	public:
 		
@@ -74,8 +74,8 @@ namespace CGAL {
 	// members for leaf nodes only
   	inline unsigned int size() const { return n;}
   
-  	inline Point_iterator begin() const  {return data;}
-  	inline Point_iterator end() const {return data + n;}
+  	inline Point_d_iterator begin() const  {return data;}
+  	inline Point_d_iterator end() const {return data + n;}
 
 	// members for internal node and extended internal node
 
@@ -85,15 +85,15 @@ namespace CGAL {
   	// inline Separator& separator() {return sep; }
   	// use instead
   	
-  	inline NT cutting_value() const 
+  	inline FT cutting_value() const 
   	{return sep.cutting_value();}
   	
   	inline int cutting_dimension() const 
   	{return sep.cutting_dimension();}
 
 	// members for extended internal node only
-	inline NT low_value() const { return low_val; }
-  	inline NT high_value() const { return high_val; }
+	inline FT low_value() const { return low_val; }
+  	inline FT high_value() const { return high_val; }
        
 
 	  Separator& separator() {
@@ -121,7 +121,7 @@ namespace CGAL {
             	if (is_leaf()) 
                         { 
 		          if (n>0) 
-			  for (Point_iterator i=begin(); i != end(); i++) 
+			  for (Point_d_iterator i=begin(); i != end(); i++) 
 				{*it=**i; ++it;} 
 			}
 		else {
@@ -136,7 +136,7 @@ namespace CGAL {
 			      Kd_tree_rectangle<TreeTraits>& b) {
 		if (is_leaf()) { 
 			if (n>0) 
-			for (Point_iterator i=begin(); i != end(); i++) 
+			for (Point_d_iterator i=begin(); i != end(); i++) 
 				if (q.contains(**i)) 
                                 {*it=**i; ++it;}
                 }

@@ -29,19 +29,19 @@
 
 namespace CGAL {
 
-  template <class PointTraits>
+  template <class SearchTraits>
   class Fuzzy_sphere{
 
     public:
 
-    typedef typename PointTraits::NT NT;
+    typedef typename SearchTraits::FT FT;
     
-    typedef typename PointTraits::Point Point;
+    typedef typename SearchTraits::Point_d Point_d;
     private:
 
-    Point c;
-    NT r;
-    NT eps;
+    Point_d c;
+    FT r;
+    FT eps;
     unsigned int dim;
 
     public:
@@ -51,18 +51,18 @@ namespace CGAL {
 		
 
 	// constructor
-	Fuzzy_sphere(const Point& center, NT radius, NT epsilon=NT(0)) : 
+	Fuzzy_sphere(const Point_d& center, FT radius, FT epsilon=FT(0)) : 
 	c(center), r(radius), eps(epsilon), dim(c.dimension()) 
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
 	} 
         	
-        bool contains(const Point& p) const {
+        bool contains(const Point_d& p) const {
 		// test whether the squared distance 
 		// between P and c 
 		// is at most the squared_radius
-		NT squared_radius = r*r;
-		NT distance=NT(0);		  
+		FT squared_radius = r*r;
+		FT distance=FT(0);		  
 		for (unsigned int i = 0; 
 		(i < dim) && (distance <= squared_radius); ++i) {
 			distance += 
@@ -72,12 +72,12 @@ namespace CGAL {
         }
 
         
-	bool inner_range_intersects(const Kd_tree_rectangle<PointTraits>& rectangle) const {                          
+	bool inner_range_intersects(const Kd_tree_rectangle<SearchTraits>& rectangle) const {                          
                 // test whether the interior of a sphere
 		// with radius (r-eps) intersects r, i.e.
                 // if the minimal distance of r to c is less than r-eps
-		NT distance = NT(0);
-		NT squared_radius = (r-eps)*(r-eps);
+		FT distance = FT(0);
+		FT squared_radius = (r-eps)*(r-eps);
 		for (unsigned int i = 0; (i < dim) && (distance < squared_radius); ++i) {
 			if (c[i] < rectangle.min_coord(i))
 				distance += 
@@ -90,15 +90,15 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<PointTraits>& rectangle) const { 
+	bool outer_range_is_contained_by(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 
         // to c is less than r+eps                         
-	NT distance=NT(0);
-	NT squared_radius = (r+eps)*(r+eps);	
+	FT distance=FT(0);
+	FT squared_radius = (r+eps)*(r+eps);	
 	for (unsigned int i = 0; (i < dim) && (distance < squared_radius) ; ++i) {
-		if (c[i] <= (rectangle.min_coord(i)+rectangle.max_coord(i))/NT(2))
+		if (c[i] <= (rectangle.min_coord(i)+rectangle.max_coord(i))/FT(2))
 			distance += 
 			(rectangle.max_coord(i)-c[i])*(rectangle.max_coord(i)-c[i]);
 		else

@@ -31,19 +31,19 @@
 
 namespace CGAL {
 
-  template <class GeomTraits>
+  template <class SearchTraits>
   class Weighted_Minkowski_distance {
 
     public:
 
-    typedef typename GeomTraits::Point Point;
-    typedef typename GeomTraits::NT NT;
-    typedef std::vector<NT> Weight_vector;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::FT FT;
+    typedef std::vector<FT> Weight_vector;
 
     private:
 
-    typedef typename GeomTraits::Cartesian_const_iterator Coord_iterator;
-    NT power; 
+    typedef typename SearchTraits::Cartesian_const_iterator_d Coord_iterator;
+    FT power; 
 
     Weight_vector the_weights;
 
@@ -59,51 +59,51 @@ namespace CGAL {
       : power(2)
     {
       the_weights.reserve(d);
-      for (unsigned int i = 0; i < d; ++i) the_weights[i]=NT(1);
+      for (unsigned int i = 0; i < d; ++i) the_weights[i]=FT(1);
     }
 
     //default copy constructor and destructor
     
 
-    Weighted_Minkowski_distance (NT pow, int dim,
+    Weighted_Minkowski_distance (FT pow, int dim,
 				 const Weight_vector& weights) 
       : power(pow)
     {
-      assert(power >= NT(0));
+      assert(power >= FT(0));
       assert(dim==weights.size());
       for (unsigned int i = 0; i < weights.size(); ++i)
-	assert(weights[i]>=NT(0));
+	assert(weights[i]>=FT(0));
       the_weights.resize(weights.size());
       the_weights = weights;
     }
 
     template <class InputIterator>
-    Weighted_Minkowski_distance (NT pow, int dim,
+    Weighted_Minkowski_distance (FT pow, int dim,
 				 InputIterator begin, InputIterator end) 
       : power(pow)
     {
-      assert(power >= NT(0));
+      assert(power >= FT(0));
       the_weights.resize(dim);
       std::copy(begin, end, the_weights.begin());
       for (unsigned int i = 0; i < dim; ++i){
 	the_weights[i] = *begin;
 	++begin;
-	assert(the_weights[i]>=NT(0));
+	assert(the_weights[i]>=FT(0));
       }
       assert(begin == end);
     }
 
 
     inline 
-    NT 
-    distance(const Point& q, const Point& p) 
+    FT 
+    transformed_distance(const Point_d& q, const Point_d& p) 
     {
-      NT distance = NT(0);
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
       Coord_iterator qit = construct_it(q),
 	             qe = construct_it(q,1), 
 	             pit = construct_it(p);
-      if (power == NT(0)) {
+      if (power == FT(0)) {
 	for (unsigned int i = 0; qit != qe; ++qit, ++i)
 	  if (the_weights[i] * fabs((*qit) - (*pit)) > distance)
 	    distance = the_weights[i] * fabs((*qit)-(*pit));
@@ -117,14 +117,14 @@ namespace CGAL {
     
 
     inline 
-    NT 
-    min_distance_to_rectangle(const Point& q,
-			      const Kd_tree_rectangle<GeomTraits>& r) const 
+    FT 
+    min_distance_to_rectangle(const Point_d& q,
+			      const Kd_tree_rectangle<SearchTraits>& r) const 
     {
-      NT distance = NT(0);
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == NT(0))
+      if (power == FT(0))
 	{
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
 	    if (the_weights[i]*(r.min_coord(i) - 
@@ -152,17 +152,17 @@ namespace CGAL {
     }
 
     inline 
-    NT
-    max_distance_to_rectangle(const Point& q,
-			      const Kd_tree_rectangle<GeomTraits>& r) const {
-      NT distance=NT(0);
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+    FT
+    max_distance_to_rectangle(const Point_d& q,
+			      const Kd_tree_rectangle<SearchTraits>& r) const {
+      FT distance=FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == NT(0))
+      if (power == FT(0))
 	{
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
 	    if ((*qit) >= (r.min_coord(i) + 
-			 r.max_coord(i))/NT(2.0))
+			 r.max_coord(i))/FT(2.0))
 	      if (the_weights[i] * ((*qit) - 
 				    r.min_coord(i)) > distance)
 		distance = the_weights[i] * 
@@ -177,7 +177,7 @@ namespace CGAL {
       else
 	{
 	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
-	    if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
+	    if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
 	      distance += the_weights[i] * pow(r.max_coord(i)-(*qit),power);
 	    else
 	      distance += the_weights[i] * pow((*qit)-r.min_coord(i),power);
@@ -187,12 +187,12 @@ namespace CGAL {
     }
     
     inline 
-    NT 
-    new_distance(NT dist, NT old_off, NT new_off,
+    FT 
+    new_distance(FT dist, FT old_off, FT new_off,
 		 int cutting_dimension)  const 
     {
-      NT new_dist;
-      if (power == NT(0))
+      FT new_dist;
+      if (power == FT(0))
 	{
 	  if (the_weights[cutting_dimension]*fabs(new_off) 
 	      > dist) 
@@ -209,19 +209,19 @@ namespace CGAL {
     }
     
     inline 
-    NT 
-    transformed_distance(NT d) const 
+    FT 
+    transformed_distance(FT d) const 
     {
-      if (power <= NT(0)) return d;
+      if (power <= FT(0)) return d;
       else return pow(d,power);
       
     }
     
     inline 
-    NT 
-    inverse_of_transformed_distance(NT d) const 
+    FT 
+    inverse_of_transformed_distance(FT d) const 
     {
-      if (power <= NT(0)) return d;
+      if (power <= FT(0)) return d;
       else return pow(d,1/power);
       
     }

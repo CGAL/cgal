@@ -34,10 +34,10 @@
 
 namespace CGAL {
 
-template <class GeomTraits, 
-	  class Distance_=Euclidean_distance<GeomTraits>, 
-          class Splitter_=Sliding_midpoint<GeomTraits> ,
-	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_true> >
+template <class SearchTraits, 
+	  class Distance_=Euclidean_distance<SearchTraits>, 
+          class Splitter_=Sliding_midpoint<SearchTraits> ,
+	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_true> >
 class Orthogonal_k_neighbor_search {
 
 public:
@@ -45,14 +45,14 @@ public:
   typedef Splitter_ Splitter;
   typedef Tree_  Tree;
   typedef Distance_ Distance;
-  typedef typename GeomTraits::Point Point;
-  typedef typename GeomTraits::Point Query_item;
-  typedef typename GeomTraits::NT NT;
-  typedef std::pair<Point,NT> Point_with_distance;
+  typedef typename SearchTraits::Point_d Point_d;
+  typedef typename SearchTraits::Point_d Query_item;
+  typedef typename SearchTraits::FT FT;
+  typedef std::pair<Point_d,FT> Point_with_distance;
   
   typedef typename Tree::Node_handle Node_handle;
   
-  typedef typename Tree::Point_iterator Point_iterator;
+  typedef typename Tree::Point_d_iterator Point_d_iterator;
 
 private:
 
@@ -62,12 +62,16 @@ int number_of_items_visited;
 
 bool search_nearest;
 
-NT multiplication_factor;
+FT multiplication_factor;
 Query_item query_object;
 int total_item_number;
-NT distance_to_root;   
+FT distance_to_root;   
 
 typedef std::list<Point_with_distance> NN_list;
+
+public:
+  typedef typename NN_list::const_iterator iterator;
+private:
 
 NN_list l;
 int max_k;
@@ -76,7 +80,7 @@ int actual_k;
 
 Distance* distance_instance;
 
-	inline bool branch(NT distance) {
+	inline bool branch(FT distance) {
 		if (actual_k<max_k) return true;
 		else 
 		  if (search_nearest) return 
@@ -86,7 +90,7 @@ Distance* distance_instance;
 		    l.begin()->second * multiplication_factor);
 	};
 
-	inline void insert(Point* I, NT dist) {
+	inline void insert(Point_d* I, FT dist) {
 		bool insert;
 		if (actual_k<max_k) insert=true;
 		else 
@@ -111,7 +115,7 @@ Distance* distance_instance;
 
 	
 	public:
-
+  /*
 	template<class OutputIterator>  
 	OutputIterator  the_k_neighbors(OutputIterator res)
 	{   
@@ -119,11 +123,21 @@ Distance* distance_instance;
 		for (; it != l.end(); it++) { *res= *it; res++; }
 		return res;     
 	}
+  */
+  iterator begin() const
+  {
+    return l.begin();
+  }
+
+  iterator end() const
+  {
+    return l.end();
+  }
 
 
     // constructor
     Orthogonal_k_neighbor_search(Tree& tree, const Query_item& q,  
-    int k=1, NT Eps=NT(0.0), bool Search_nearest=true, const Distance& d=Distance()) {
+    int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance()) {
    
 	distance_instance=new Distance(d);
 
@@ -175,30 +189,30 @@ Distance* distance_instance;
 
     private:
    
-    void compute_neighbors_orthogonally(Node_handle N, NT rd) {
+    void compute_neighbors_orthogonally(Node_handle N, FT rd) {
 		
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-      typename GeomTraits::Cartesian_const_iterator query_object_it = construct_it(query_object);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d query_object_it = construct_it(query_object);
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
-                        NT old_off, new_rd;
-                        NT new_off =
+                        FT old_off, new_rd;
+                        FT new_off =
                         *(query_object_it + new_cut_dim) - 
 					N->cutting_value();
-                        if ( ((new_off < NT(0.0)) && (search_nearest)) ||
-                        (( new_off >= NT(0.0)) && (!search_nearest))  ) {
+                        if ( ((new_off < FT(0.0)) && (search_nearest)) ||
+                        (( new_off >= FT(0.0)) && (!search_nearest))  ) {
 				compute_neighbors_orthogonally(N->lower(),rd);
                                 if (search_nearest) {
                                 	old_off= *(query_object_it + new_cut_dim)-
 							N->low_value();
-                                	if (old_off>NT(0.0)) old_off=NT(0.0);
+                                	if (old_off>FT(0.0)) old_off=FT(0.0);
                                 }
 				else 
 				{	
                                 	old_off= *(query_object_it + new_cut_dim) 
 					- N->high_value();
-					if (old_off<NT(0.0)) old_off=NT(0.0);
+					if (old_off<FT(0.0)) old_off=FT(0.0);
                                 }
                                 new_rd=
                                 distance_instance->
@@ -212,13 +226,13 @@ Distance* distance_instance;
 				if (search_nearest) {
                                 	old_off= N->high_value() - 
 					*(query_object_it + new_cut_dim);
-                                	if (old_off>NT(0.0)) old_off=NT(0.0);
+                                	if (old_off>FT(0.0)) old_off=FT(0.0);
 				}
                                 else 
                                 {       
                                 	old_off= N->low_value() - 
 					*(query_object_it + new_cut_dim);
-					if (old_off<NT(0.0)) old_off=NT(0.0);
+					if (old_off<FT(0.0)) old_off=FT(0.0);
 				}  
                                 new_rd=
                                 distance_instance->
@@ -233,11 +247,11 @@ Distance* distance_instance;
                   // n is a leaf
                   number_of_leaf_nodes_visited++;
                   if (N->size() > 0)
-                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-			NT distance_to_query_object=
+			FT distance_to_query_object=
                         distance_instance->
-                        distance(query_object,**it);
+                        transformed_distance(query_object,**it);
                         insert(*it,distance_to_query_object);
                   }
 		}

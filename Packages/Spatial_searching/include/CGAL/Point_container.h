@@ -32,32 +32,32 @@
 #include <CGAL/Kd_tree_rectangle.h>
 namespace CGAL {
 
-  template <class GeomTraits> class Point_container {
+  template <class SearchTraits> class Point_container {
 
   private:
-    typedef typename GeomTraits::Point Point;
-    typedef std::vector<Point*> Point_vector;
-    typedef Point_container<Point> Self;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef std::vector<Point_d*> Point_vector;
+    typedef Point_container<Point_d> Self;
 
   public:
-   typedef typename GeomTraits::NT NT;
-   typedef std::list<Point*> Point_list; 
+   typedef typename SearchTraits::FT FT;
+   typedef std::list<Point_d*> Point_list; 
     typedef Point_list::iterator iterator;
 
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
     unsigned int the_size;
-    Kd_tree_rectangle<GeomTraits> bbox;       // bounding box, i.e. rectangle of node
-    Kd_tree_rectangle<GeomTraits> tbox;       // tight bounding box, 
+    Kd_tree_rectangle<SearchTraits> bbox;       // bounding box, i.e. rectangle of node
+    Kd_tree_rectangle<SearchTraits> tbox;       // tight bounding box, 
 				      // i.e. minimal enclosing bounding
 	                	      // box of points
 	                	    
   public:
 
-    inline const Kd_tree_rectangle<GeomTraits>& bounding_box() const { return bbox; }
+    inline const Kd_tree_rectangle<SearchTraits>& bounding_box() const { return bbox; }
 
-    inline const Kd_tree_rectangle<GeomTraits>& tight_bounding_box() const 
+    inline const Kd_tree_rectangle<SearchTraits>& tight_bounding_box() const 
     { return tbox; }
 
     inline int dimension() const { return bbox.dimension(); } 
@@ -70,35 +70,35 @@ namespace CGAL {
     // coordinate of the maximal tight span
     inline int max_tight_span_coord() const { return tbox.max_span_coord(); }
 
-    inline NT  max_span_lower() const 
+    inline FT  max_span_lower() const 
 	{ return bbox.min_coord(max_span_coord());}
 
-    inline NT  max_tight_span_lower() const {
+    inline FT  max_tight_span_lower() const {
       return tbox.min_coord(max_tight_span_coord());}
 
-    inline NT  max_span_upper() const 
+    inline FT  max_span_upper() const 
 	{ return bbox.max_coord(max_span_coord());}
 
-    inline NT  max_tight_span_upper() const {
+    inline FT  max_tight_span_upper() const {
       return tbox.max_coord(max_tight_span_coord());}
 
-    inline NT max_spread() const 
+    inline FT max_spread() const 
 	{ return  max_span_upper() -  max_span_lower(); }
 
-    inline NT max_tight_spread() const {
+    inline FT max_tight_spread() const {
       return  max_tight_span_upper() -  max_tight_span_lower(); }
 
 
-	int max_tight_span_coord_balanced(NT Aspect_ratio) const {
+	int max_tight_span_coord_balanced(FT Aspect_ratio) const {
 		int cut_dim(-1);
-		NT max_spread_points(NT(-1));
-		NT max_length=max_spread();  // length of longest side of box
+		FT max_spread_points(FT(-1));
+		FT max_length=max_spread();  // length of longest side of box
 		int dim=dimension();
 		for (int d=0; d<dim; d++) {
-			NT length=bbox.max_coord(d)-bbox.min_coord(d);
+			FT length=bbox.max_coord(d)-bbox.min_coord(d);
                      
-		        if (NT(2)*max_length/length <= Aspect_ratio) {
-			        NT spread=tbox.max_coord(d)-tbox.min_coord(d);
+		        if (FT(2)*max_length/length <= Aspect_ratio) {
+			        FT spread=tbox.max_coord(d)-tbox.min_coord(d);
                                 
 			        if (spread > max_spread_points) {
 				        max_spread_points = spread;
@@ -110,41 +110,41 @@ namespace CGAL {
 		return cut_dim;
 	}
 
-	NT max_span_upper_without_dim(int d) const {
-		NT max_span(NT(0));
+	FT max_span_upper_without_dim(int d) const {
+		FT max_span(FT(0));
         	int dim=dimension();
 		for (int i=0; i<dim; i++) {
-			NT span = bbox.max_coord(i)-bbox.min_coord(i);
+			FT span = bbox.max_coord(i)-bbox.min_coord(i);
 			if (d != i && span > max_span) max_span=span;
 		}
 		return max_span;
 	}
 
-	NT balanced_fair(int d, NT Aspect_ratio) {
-	  	NT small_piece = 
+	FT balanced_fair(int d, FT Aspect_ratio) {
+	  	FT small_piece = 
 		max_span_upper_without_dim(d) / Aspect_ratio;
-	  	NT low_cut = 
+	  	FT low_cut = 
 		bbox.min_coord(d) + small_piece; // lowest legal cut;
-	  	NT high_cut = 
+	  	FT high_cut = 
 		bbox.max_coord(d) - small_piece; //highest legal cut;
 	  	// assert (high_cut >= low_cut);
-        	NT split_value = median(d);
+        	FT split_value = median(d);
 		if (split_value < low_cut) split_value=low_cut;
 		if (split_value > high_cut) split_value=high_cut;
 		return split_value;
 	}
 
-	NT balanced_sliding_fair(int d, NT Aspect_ratio) {
-		NT small_piece = 
+	FT balanced_sliding_fair(int d, FT Aspect_ratio) {
+		FT small_piece = 
 		max_span_upper_without_dim(d) / Aspect_ratio;
-		NT low_cut = 
+		FT low_cut = 
 		bbox.min_coord(d) + small_piece; // lowest legal cut;
-		NT high_cut = 
+		FT high_cut = 
 		bbox.max_coord(d) - small_piece; //highest legal cut;
 		// assert (high_cut >= low_cut);
-                NT split_value = median(d);
-		NT max_span_lower = tbox.min_coord(d);
-		NT max_span_upper = tbox.max_coord(d);
+                FT split_value = median(d);
+		FT max_span_lower = tbox.min_coord(d);
+		FT max_span_upper = tbox.max_coord(d);
 		if (split_value < low_cut) split_value= max_span_lower; 
 		if (split_value > high_cut) split_value = max_span_upper; 
 		return split_value;
@@ -172,7 +172,7 @@ namespace CGAL {
 
         
 
-      bbox = Kd_tree_rectangle<GeomTraits>(d, begin, end);
+      bbox = Kd_tree_rectangle<SearchTraits>(d, begin, end);
       tbox = bbox;
 
       // build list 
@@ -187,7 +187,7 @@ namespace CGAL {
 	Point_container(const int d) :
 	the_size(0), bbox(d), tbox(d)  {}
 
-	void swap(Point_container<GeomTraits>& c) {
+	void swap(Point_container<SearchTraits>& c) {
 
 		swap(p_list,c.p_list);
 
@@ -203,12 +203,12 @@ namespace CGAL {
                 c.built_coord = h;
 
                 // work-around
-                Kd_tree_rectangle<GeomTraits> h_bbox(bbox);
+                Kd_tree_rectangle<SearchTraits> h_bbox(bbox);
                 bbox = c.bbox;
                 c.bbox = h_bbox;
 
                 // work-around
-                Kd_tree_rectangle<GeomTraits> h_tbox(tbox);
+                Kd_tree_rectangle<SearchTraits> h_tbox(tbox);
                 tbox = c.tbox;
                 c.tbox = h_tbox;
                 
@@ -229,7 +229,7 @@ namespace CGAL {
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split(Point_container<GeomTraits>& c, Separator& sep,  
+      void split(Point_container<SearchTraits>& c, Separator& sep,  
 	bool sliding=false) {
 
 	assert(dimension()==c.dimension());
@@ -240,7 +240,7 @@ namespace CGAL {
         // bool test_validity=false;
 
         const int split_coord = sep.cutting_dimension();
-        const NT cutting_value = sep.cutting_value();
+        const FT cutting_value = sep.cutting_value();
 
         built_coord=split_coord;
 	c.built_coord=split_coord;
@@ -248,8 +248,8 @@ namespace CGAL {
 	
 	iterator pt=p_list.begin();
 			
-	typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-	typename GeomTraits::Cartesian_const_iterator ptit;
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits::Cartesian_const_iterator_d ptit;
 
 	for (; (pt != p_list.end()); ++pt) {
                         
@@ -263,7 +263,7 @@ namespace CGAL {
 	if (sliding) { // avoid empty lists 
 		if (l_lower.empty()) {
 		  iterator pt_min=l_upper.begin();
-		  NT min_value=bbox.max_coord(built_coord);
+		  FT min_value=bbox.max_coord(built_coord);
 		  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
 		    ptit = construct_it((*(*pt)));	
 				if ( *(ptit+split_coord) < min_value) {
@@ -275,7 +275,7 @@ namespace CGAL {
 		}
 		if (l_upper.empty()) {
 		  iterator pt_max=l_lower.begin();
-		  NT max_value=bbox.min_coord(built_coord);
+		  FT max_value=bbox.min_coord(built_coord);
 		  for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
 		    ptit = construct_it((*(*pt)));	
 				if ( *(ptit+split_coord) > max_value) {
@@ -311,51 +311,51 @@ namespace CGAL {
 
 
 
-    template <class GeomTraits2, class Value>
+    template <class SearchTraits2, class Value>
     struct comp_coord_val {
       
     private:
       Value coord;   
       
-      typedef typename GeomTraits2::Point Point;
+      typedef typename SearchTraits2::Point_d Point_d;
     public:
       comp_coord_val (const Value& coordinate) : coord(coordinate) {}
       
-      bool operator() (const Point *a, const Point *b) {
-	typename GeomTraits2::Construct_cartesian_const_iterator construct_it;
-	typename GeomTraits2::Cartesian_const_iterator ait = construct_it(*a),
+      bool operator() (const Point_d *a, const Point_d *b) {
+	typename SearchTraits2::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits2::Cartesian_const_iterator_d ait = construct_it(*a),
 	  bit = construct_it(*b);
 	return *(ait+coord) < *(bit+coord);
     }
   };
   
 
-  NT median(const int split_coord) {
+  FT median(const int split_coord) {
       
     #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
         Point_vector p_vector;
     	std::copy(p_list.begin(), p_list.end(), std::back_inserter(p_vector));
-    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<GeomTraits,int>(split_coord));
+    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<SearchTraits,int>(split_coord));
     	p_list.clear();
     	std::copy(p_vector.begin(), p_vector.end(), std::back_inserter(p_list));
     #else
-        p_list.sort(comp_coord_val<GeomTraits,int>(split_coord));
+        p_list.sort(comp_coord_val<SearchTraits,int>(split_coord));
     #endif 
       
       iterator median_point_ptr = p_list.begin();
       for (unsigned int i = 0; i < the_size/2-1; i++, 
 		   median_point_ptr++) {}
       
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-      typename GeomTraits::Cartesian_const_iterator mpit = construct_it((*(*median_point_ptr)));
-      NT val1= *(mpit+split_coord);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d mpit = construct_it((*(*median_point_ptr)));
+      FT val1= *(mpit+split_coord);
       median_point_ptr++;
       mpit = construct_it((*(*median_point_ptr)));
-      NT val2= *(mpit+split_coord);
+      FT val2= *(mpit+split_coord);
       
       
       
-      return (val1+val2)/NT(2); 
+      return (val1+val2)/FT(2); 
     };
 
 

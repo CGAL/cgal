@@ -29,18 +29,18 @@
 
 namespace CGAL {
 
-  template <class GeomTraits, class Iso_box>
+  template <class SearchTraits, class Iso_box>
   class Fuzzy_iso_box{
 
     public:
 
-    typedef typename GeomTraits::Point Point;
-    typedef typename GeomTraits::NT NT;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::FT FT;
     
     private:
 
     Iso_box box;
-    NT eps;
+    FT eps;
     unsigned int dim;
 
     public:
@@ -49,27 +49,27 @@ namespace CGAL {
     	Fuzzy_iso_box() {}
 
         // constructor
-	Fuzzy_iso_box(const Point& p, const Point& q, NT epsilon=NT(0)) 
+	Fuzzy_iso_box(const Point_d& p, const Point_d& q, FT epsilon=FT(0)) 
 	  : eps(epsilon)
         {
-	  typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-	  typename GeomTraits::Cartesian_const_iterator begin = construct_it(p),
+	  typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	  typename SearchTraits::Cartesian_const_iterator_d begin = construct_it(p),
 	    end = construct_it(p,1);
 	  dim = end - begin;
 	  box = Iso_box(p,q);
 	}
 
         	
-        bool contains(const Point& p) const {	
-	  typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-	  typename GeomTraits::Cartesian_const_iterator pit = construct_it(p); 
+        bool contains(const Point_d& p) const {	
+	  typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	  typename SearchTraits::Cartesian_const_iterator_d pit = construct_it(p); 
 		for (unsigned int i = 0; i < dim; ++i, ++pit) {
 			if ( ((*pit) < box.min()[i]) || ((*pit) >= box.max()[i]) ) return false;
 		}
 		return true; 
         }
 
-	bool inner_range_intersects(const Kd_tree_rectangle<GeomTraits>& rectangle) const {   
+	bool inner_range_intersects(const Kd_tree_rectangle<SearchTraits>& rectangle) const {   
  		for (unsigned int i = 0; i < dim; ++i) {
         		if ( (box.max()[i]-eps < rectangle.min_coord(i)) 
 			|| (box.min()[i]+eps >= rectangle.max_coord(i)) ) return false;
@@ -78,7 +78,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<GeomTraits>& rectangle) const { 
+	bool outer_range_is_contained_by(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
     		for (unsigned int i = 0; i < dim; ++i) {
         		if (  (box.max()[i]+eps < rectangle.max_coord(i) ) 
 			|| (box.min()[i]-eps >= rectangle.min_coord(i)) ) return false;

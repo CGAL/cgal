@@ -27,34 +27,30 @@
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Kd_tree_node.h>
+#include <CGAL/Kd_tree.h>
 #include <CGAL/Euclidean_distance.h>
 
 namespace CGAL {
 
 
-
-
-
-
-template <class GeomTraits, 
-          class Distance_=Euclidean_distance<GeomTraits>,
-          class Splitter_ = Sliding_midpoint<GeomTraits>,
-	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_true> >
+template <class SearchTraits, 
+          class Distance_=Euclidean_distance<SearchTraits>,
+          class Splitter_ = Sliding_midpoint<SearchTraits>,
+	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_true> >
 class Orthogonal_incremental_neighbor_search {
 
 public:
   typedef Splitter_ Splitter;
   typedef Tree_  Tree;
   typedef Distance_ Distance;
-  typedef typename GeomTraits::Point Point;
-  typedef Point Query_item;
-  typedef typename GeomTraits::NT NT;
-  typedef typename Tree::Point_iterator Point_iterator;
+  typedef typename SearchTraits::Point_d Point_d;
+  typedef Point_d Query_item;
+  typedef typename SearchTraits::FT FT;
+  typedef typename Tree::Point_d_iterator Point_d_iterator;
   typedef typename Tree::Node_handle Node_handle;
 
-  typedef std::pair<Point,NT> Point_with_distance;
-  typedef std::pair<Node_handle,NT> Node_with_distance;
+  typedef std::pair<Point_d,FT> Point_with_distance;
+  typedef std::pair<Node_handle,FT> Node_with_distance;
   typedef std::vector<Node_with_distance*> Node_with_distance_vector;
   typedef std::vector<Point_with_distance*> Point_with_distance_vector;
 
@@ -72,17 +68,17 @@ class Iterator_implementation {
     private:
 
     
-    NT multiplication_factor;
+    FT multiplication_factor;
 
-    Point* query_point;
+    Point_d* query_point;
 
     int total_item_number;
 
-    NT distance_to_root;
+    FT distance_to_root;
 
     bool search_nearest_neighbour;
 
-    NT rd;
+    FT rd;
 
     class Priority_higher
     {
@@ -140,7 +136,7 @@ class Iterator_implementation {
 
     // constructor
     Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
-        NT Eps=NT(0.0), bool search_nearest=true)
+        FT Eps=FT(0.0), bool search_nearest=true)
     {
         PriorityQueue= new std::priority_queue<Node_with_distance*, 
 	Node_with_distance_vector,
@@ -156,7 +152,7 @@ class Iterator_implementation {
 	reference_count=1;
         Orthogonal_distance_instance= new Distance(tr);
         multiplication_factor=
-	Orthogonal_distance_instance->transformed_distance(NT(1.0)+Eps);
+	Orthogonal_distance_instance->transformed_distance(FT(1.0)+Eps);
 
         // if (search_nearest) 
 	distance_to_root=
@@ -263,26 +259,26 @@ class Iterator_implementation {
 		next_neighbour_found=
 		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
         }
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-      typename GeomTraits::Cartesian_const_iterator query_point_it = construct_it(*query_point);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d query_point_it = construct_it(*query_point);
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
                 Node_with_distance* The_node_top=PriorityQueue->top();
                 Node_handle N= The_node_top->first;
                 PriorityQueue->pop();
                 delete The_node_top;
-		NT copy_rd=rd;
+		FT copy_rd=rd;
                 while (!(N->is_leaf())) { // compute new distance
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
-                        NT old_off, new_rd;
-                        NT new_off =
+                        FT old_off, new_rd;
+                        FT new_off =
                         *(query_point_it + new_cut_dim) -
                         N->cutting_value();
-                        if (new_off < NT(0.0)) {
+                        if (new_off < FT(0.0)) {
 				old_off=
                                 *(query_point_it + new_cut_dim)-N->low_value();
-                                if (old_off>NT(0.0)) old_off=NT(0.0);
+                                if (old_off>FT(0.0)) old_off=FT(0.0);
                                 new_rd=
                                 Orthogonal_distance_instance->
                                 new_distance(copy_rd,old_off,new_off,new_cut_dim);
@@ -305,7 +301,7 @@ class Iterator_implementation {
                         else { // compute new distance
 				old_off= N->high_value() -
                                 *(query_point_it+new_cut_dim);
-                                if (old_off>NT(0.0)) old_off=NT(0.0);
+                                if (old_off>FT(0.0)) old_off=FT(0.0);
                                 new_rd=Orthogonal_distance_instance->
                                 new_distance(copy_rd,old_off,new_off,new_cut_dim);  
 				assert(new_rd >= copy_rd);
@@ -327,11 +323,11 @@ class Iterator_implementation {
                 // n is a leaf
                 number_of_leaf_nodes_visited++;
                 if (N->size() > 0) {
-                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-                        NT distance_to_query_point=
+                        FT distance_to_query_point=
                         Orthogonal_distance_instance->
-                        distance(*query_point,**it);
+                        transformed_distance(*query_point,**it);
                         Point_with_distance *NN_Candidate=
                         new Point_with_distance(**it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
@@ -373,13 +369,13 @@ class iterator;
 
     typedef std::vector<Point_with_distance*> Point_with_distance_vector;
 
-    typedef std::vector<NT> Distance_vector;
+    typedef std::vector<FT> Distance_vector;
 
     public:
 
     // constructor
     Orthogonal_incremental_neighbor_search(Tree& tree,  
-				  Query_item& q, NT Eps = NT(0.0), 
+				  Query_item& q, FT Eps = FT(0.0), 
 				  bool search_nearest=true, const Distance& tr=Distance()) 
       : start(tree,q,tr,Eps,search_nearest),
         past_the_end()
@@ -428,7 +424,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), NT eps=NT(0.0), 
+    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
     bool search_nearest=true){
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);

@@ -29,13 +29,13 @@
 
 namespace CGAL {
 
-  template <class GeomTraits, class QueryItem>
+  template <class SearchTraits, class QueryItem>
   class Manhattan_distance_iso_box_point {
 
     public:
 
-    typedef typename GeomTraits::Point Point;
-    typedef typename GeomTraits::NT    NT;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::FT    FT;
     typedef QueryItem                  Query_item;
 
     
@@ -49,10 +49,10 @@ namespace CGAL {
 
     ~Manhattan_distance_iso_box_point() {}
 
-    inline NT distance(const QueryItem& q, const Point& p) {
-		NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator qmaxit = construct_it(q.max()),
+    inline FT transformed_distance(const QueryItem& q, const Point_d& p) {
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 		  qe = construct_it(q.max(),1), qminit = construct_it(q.min()),
 		  pit = construct_it(p);
 		for (; qmaxit != qe; ++qmaxit) {
@@ -65,11 +65,11 @@ namespace CGAL {
     }
 
 
-    inline NT min_distance_to_rectangle(const QueryItem& q,
-					      const Kd_tree_rectangle<GeomTraits>& r) {
-		NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator qmaxit = construct_it(q.max()),
+    inline FT min_distance_to_rectangle(const QueryItem& q,
+					      const Kd_tree_rectangle<SearchTraits>& r) {
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 		  qe = construct_it(q.max(),1), qminit = construct_it(q.min());
 		for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++i)  {
 			if (r.min_coord(i)>(*qmaxit)) 
@@ -81,12 +81,12 @@ namespace CGAL {
 	}
 
     inline 
-    NT 
+    FT 
     max_distance_to_rectangle(const QueryItem& q,
-			      const Kd_tree_rectangle<GeomTraits>& r) {
-      NT distance=NT(0);
-      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-      typename GeomTraits::Cartesian_const_iterator qmaxit = construct_it(q.max()),
+			      const Kd_tree_rectangle<SearchTraits>& r) {
+      FT distance=FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 	qe = construct_it(q.max(),1), qminit = construct_it(q.min());
       for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++i)  {
 	if ( r.max_coord(i)-(*qminit) >(*qmaxit)-r.min_coord(i) )  
@@ -98,15 +98,15 @@ namespace CGAL {
     }
 	
   inline 
-  NT 
-  transformed_distance(NT d) 
+  FT 
+  transformed_distance(FT d) 
   {
     return d;
   }
 
   inline 
-  NT 
-  inverse_of_transformed_distance(NT d) 
+  FT 
+  inverse_of_transformed_distance(FT d) 
   {
     return d;
   }

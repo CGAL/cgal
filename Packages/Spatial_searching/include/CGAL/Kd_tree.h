@@ -36,21 +36,21 @@
 namespace CGAL {
 
 
-  template <class GeomTraits, class Splitter_=Sliding_midpoint<GeomTraits>, class UseExtendedNode = Tag_true >
+  template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
   class Kd_tree {
 
 public:
 
     typedef Splitter_ Splitter;
-  typedef typename GeomTraits::Point Point;
+  typedef typename SearchTraits::Point_d Point_d;
   typedef typename Splitter::Container Point_container;
 
-  typedef typename GeomTraits::NT NT;
-  typedef Kd_tree_node<GeomTraits, Splitter, UseExtendedNode > Node;
-  typedef Kd_tree<GeomTraits, Splitter> Tree;
+  typedef typename SearchTraits::FT FT;
+  typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
+  typedef Kd_tree<SearchTraits, Splitter> Tree;
 
   typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef typename std::vector<Point*>::iterator Point_iterator;
+  typedef typename std::vector<Point_d*>::iterator Point_d_iterator;
   typedef typename Splitter::Separator Separator;
 
 private:
@@ -60,16 +60,16 @@ private:
 
   Node_handle tree_root;
 
-  Kd_tree_rectangle<GeomTraits>* bbox;
-  std::list<Point> pts;
+  Kd_tree_rectangle<SearchTraits>* bbox;
+  std::list<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
   // 
-  std::vector<Point*> data;
-  Point_iterator data_iterator;
-  GeomTraits tr;
+  std::vector<Point_d*> data;
+  Point_d_iterator data_iterator;
+  SearchTraits tr;
   int the_item_number;
 
   // protected copy constructor
@@ -200,16 +200,16 @@ template <class InputIterator>
 	    Splitter s = Splitter()) : split(s) {
     assert(first != beyond);
     std::copy(first, beyond, std::back_inserter(pts));
-    const Point& p = *pts.begin();
-    typename GeomTraits::Construct_cartesian_const_iterator ccci;
+    const Point_d& p = *pts.begin();
+    typename SearchTraits::Construct_cartesian_const_iterator_d ccci;
     int dim = std::distance(ccci(p), ccci(p,0)); 
 
-    data = std::vector<Point*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
+    data = std::vector<Point_d*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
     data_iterator = data.begin();
 
     Point_container c(dim, pts.begin(), pts.end());
 
-    bbox = new Kd_tree_rectangle<GeomTraits>(c.bounding_box());
+    bbox = new Kd_tree_rectangle<SearchTraits>(c.bounding_box());
     
     the_item_number=c.size();
     if (c.size() <= split.bucket_size())
@@ -223,7 +223,7 @@ template <class InputIterator>
  
   template <class OutputIterator, class FuzzyQueryItem>
 	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q) {
-		Kd_tree_rectangle<GeomTraits> b(*bbox);
+		Kd_tree_rectangle<SearchTraits> b(*bbox);
 		tree_root->search(it,q,b);
 		return it;
 	}
@@ -238,11 +238,11 @@ template <class InputIterator>
 	};
 
 
-  GeomTraits traits() const {return tr;} // Returns the traits class;
+  SearchTraits traits() const {return tr;} // Returns the traits class;
 
   Node_handle root()const { return tree_root; }
 
-  const Kd_tree_rectangle<GeomTraits>& bounding_box() const {return *bbox; }
+  const Kd_tree_rectangle<SearchTraits>& bounding_box() const {return *bbox; }
 
   int size() const {return the_item_number;}
 

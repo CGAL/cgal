@@ -29,13 +29,13 @@
 
 namespace CGAL {
 
-  template <class GeomTraits, class Sphere>
+  template <class SearchTraits, class Sphere>
   class Euclidean_distance_sphere_point {
 
     public:
 
-    typedef typename GeomTraits::Point Point;
-    typedef typename GeomTraits::NT    NT;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::FT    FT;
     typedef Sphere Query_item;    
     public:
 
@@ -43,27 +43,27 @@ namespace CGAL {
     	Euclidean_distance_sphere_point() {}
 
 
-	inline NT distance(const Sphere& q, const Point& p) const {
-                Point c=q.center();
-		NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator cit = construct_it(c),
+	inline FT transformed_distance(const Sphere& q, const Point_d& p) const {
+                Point_d c=q.center();
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1), pit = construct_it(p);
 		for(; cit != ce; cit++, pit++){
 		  distance += ((*cit)-(*pit))*((*cit)-(*pit));
 		}
                 distance += -q.squared_radius();
-                if (distance<0) distance=NT(0);
+                if (distance<0) distance=FT(0);
         	return distance;
 	}
 
 
-	inline NT min_distance_to_rectangle(const Sphere& q,
-					     const Kd_tree_rectangle<GeomTraits>& r) const {
-                Point c=q.center();
-		NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator cit = construct_it(c),
+	inline FT min_distance_to_rectangle(const Sphere& q,
+					     const Kd_tree_rectangle<SearchTraits>& r) const {
+                Point_d c=q.center();
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
 			if ((*cit) < r.min_coord(i))
@@ -75,35 +75,35 @@ namespace CGAL {
 			
 		};
                 distance += -q.squared_radius();
-                if (distance<0) distance=NT(0);
+                if (distance<0) distance=FT(0);
 		return distance;
 	}
 
-	inline NT max_distance_to_rectangle(const Sphere& q,
-					      const Kd_tree_rectangle<GeomTraits>& r) const {
-                Point c=q.center();
-		NT distance=NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator cit = construct_it(c),
+	inline FT max_distance_to_rectangle(const Sphere& q,
+					      const Kd_tree_rectangle<SearchTraits>& r) const {
+                Point_d c=q.center();
+		FT distance=FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
-				if ((*cit) <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
+				if ((*cit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
 					distance += (r.max_coord(i)-(*cit))*(r.max_coord(i)-(*cit));
 				else
 					distance += ((*cit)-r.min_coord(i))*((*cit)-r.min_coord(i));
 		};
 		distance += -q.squared_radius();
-                if (distance<0) distance=NT(0);
+                if (distance<0) distance=FT(0);
 		return distance;
 	}
 
 
 
-  inline NT transformed_distance(NT d) const {
+  inline FT transformed_distance(FT d) const {
 		return d*d;
 	}
 
-  inline NT inverse_of_transformed_distance(NT d) const {
+  inline FT inverse_of_transformed_distance(FT d) const {
 		return CGAL::sqrt(d);
 	}
 

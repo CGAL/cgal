@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Kd_tree_traits_point_2.h
+// file          : include/CGAL/Search_traits.h
 // package       : ASPAS
 // revision      : 3.0
 // revision_date : 2003/07/10 
@@ -22,23 +22,23 @@
 // ======================================================================
 
 
-#ifndef CGAL_KD_TREE_TRAITS_POINT_2_H
-#define CGAL_KD_TREE_TRAITS_POINT_2_H
+#ifndef CGAL_KD_TREE_TRAITS_POINT_H
+#define CGAL_KD_TREE_TRAITS_POINT_H
+
 
 namespace CGAL {
 
-
-  template <class K > 
-
-  class Kd_tree_traits_point_2 {
-
+  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator>
+  class Search_traits {
+    
   public:
-    typedef typename K::Point_2 Point;
-    typedef typename K::Cartesian_const_iterator_2 Cartesian_const_iterator;
-    typedef typename K::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator;
-    typedef typename K::FT NT;
+    typedef CartesianCoordinateIterator Cartesian_const_iterator_d;
+    typedef ConstructCartesianCoordinateIterator Construct_cartesian_const_iterator_d;
+    typedef Point Point_d;
+    typedef FT_ FT;
+    
   };
 
   
 } // namespace CGAL
-#endif // KD_TREE_TRAITS_POINT_2_H
+#endif //  KD_TREE_TRAITS_POINT_H

@@ -34,10 +34,10 @@
 
 namespace CGAL {
 
-template <class GeomTraits, 
-          class Distance_=Euclidean_distance<GeomTraits>,
-          class Splitter_=Sliding_midpoint<GeomTraits> , 
-	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
+template <class SearchTraits, 
+          class Distance_=Euclidean_distance<SearchTraits>,
+          class Splitter_=Sliding_midpoint<SearchTraits> , 
+	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false> >
 
 class K_neighbor_search {
 
@@ -45,14 +45,14 @@ public:
   typedef Splitter_ Splitter;
   typedef Distance_ Distance;
   typedef Tree_ Tree;
-  typedef typename GeomTraits::Point Point;
-  typedef typename GeomTraits::NT NT;
-  typedef std::pair<Point,NT> Point_with_distance;
+  typedef typename SearchTraits::Point_d Point_d;
+  typedef typename SearchTraits::FT FT;
+  typedef std::pair<Point_d,FT> Point_with_distance;
   
   typedef typename Tree::Node_handle Node_handle;
   
-  typedef typename Tree::Point_iterator Point_iterator;
-  typedef Kd_tree_rectangle<GeomTraits> Rectangle;
+  typedef typename Tree::Point_d_iterator Point_d_iterator;
+  typedef Kd_tree_rectangle<SearchTraits> Rectangle;
   typedef typename Distance::Query_item Query_item;
 private:
 
@@ -62,12 +62,16 @@ private:
   
   bool search_nearest;
   
-  NT multiplication_factor;
+  FT multiplication_factor;
   Query_item query_object;
   int total_item_number;
-  NT distance_to_root;   
+  FT distance_to_root;   
   
   typedef std::list<Point_with_distance> NN_list;
+
+public:
+  typedef typename NN_list::const_iterator iterator;
+private:
 
   NN_list l;
   int max_k;
@@ -75,7 +79,7 @@ private:
   
   Distance* distance_instance;
   
-  inline bool branch(NT distance) {
+  inline bool branch(FT distance) {
     if (actual_k<max_k) return true;
     else 
       if (search_nearest) return 
@@ -85,7 +89,7 @@ private:
     
   };
   
-  inline void insert(Point* I, NT dist) {
+  inline void insert(Point_d* I, FT dist) {
     bool insert;
     if (actual_k<max_k) insert=true;
     else 
@@ -110,7 +114,7 @@ private:
   
 	
 public:
-
+  /*
 	template<class OutputIterator>  
 	OutputIterator  the_k_neighbors(OutputIterator res)
 	{   
@@ -118,18 +122,28 @@ public:
 		for (; it != l.end(); it++) { *res= *it; res++; }
 		return res;     
 	}
+  */
 
+  iterator begin() const
+  {
+    return l.begin();
+  }
+
+  iterator end() const
+  {
+    return l.end();
+  }
 
     // constructor
     K_neighbor_search(Tree& tree, const Query_item& q, 
-			    int k=1, NT Eps=NT(0.0), 
+			    int k=1, FT Eps=FT(0.0), 
 			    bool Search_nearest=true,
 			    const Distance& d=Distance()) {
 
 	distance_instance=new Distance(d);
 
 	multiplication_factor=
-	distance_instance->transformed_distance(NT(1.0)+Eps);
+	distance_instance->transformed_distance(FT(1.0)+Eps);
         
 	max_k=k;
 	actual_k=0;
@@ -170,21 +184,21 @@ public:
     private:
    
 
-  void compute_neighbors_general(Node_handle N, const Kd_tree_rectangle<GeomTraits>& r) {
+  void compute_neighbors_general(Node_handle N, const Kd_tree_rectangle<SearchTraits>& r) {
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
-			NT  new_cut_val=N->cutting_value();
+			FT  new_cut_val=N->cutting_value();
 
-			Kd_tree_rectangle<GeomTraits> r_lower(r);
+			Kd_tree_rectangle<SearchTraits> r_lower(r);
 
 			// modifies also r_lower to lower half
-			Kd_tree_rectangle<GeomTraits> r_upper(r_lower);
+			Kd_tree_rectangle<SearchTraits> r_upper(r_lower);
 			r_lower.split(r_upper, new_cut_dim, new_cut_val);
 
-                        NT distance_to_lower_half;
-                        NT distance_to_upper_half;
+                        FT distance_to_lower_half;
+                        FT distance_to_upper_half;
 
                         if (search_nearest) { 
 
@@ -240,11 +254,11 @@ public:
                   // n is a leaf
                   number_of_leaf_nodes_visited++;
                   if (N->size() > 0)
-                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
-			NT distance_to_query_object=
+			FT distance_to_query_object=
                         distance_instance->
-                        distance(query_object,**it);
+                        transformed_distance(query_object,**it);
                         insert(*it,distance_to_query_object);
                   }
 		}

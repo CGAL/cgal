@@ -23,7 +23,7 @@
 
 // Defines rules used for constructing a split node. That is, it implements, 
 // in several ways, the concept
-// Boxtree_splitter<NT>.
+// Boxtree_splitter<FT>.
 
 #ifndef CGAL_SPLITTERS_H
 #define CGAL_SPLITTERS_H
@@ -31,20 +31,20 @@
 #include <CGAL/Plane_separator.h>
 namespace CGAL {
 
-  template <class NT>
+  template <class FT>
   class Splitter_base {
   private:
     unsigned int the_bucket_size;
-    NT the_aspect_ratio;
+    FT the_aspect_ratio;
 
 public:
     Splitter_base(unsigned int bucket_size = 3, 
-		  NT aspect_ratio = NT(3))
+		  FT aspect_ratio = FT(3))
       : the_bucket_size(bucket_size),
 	the_aspect_ratio(aspect_ratio)
     {}
 
-    NT 
+    FT 
     aspect_ratio() const {
       return the_aspect_ratio;
     }
@@ -57,15 +57,15 @@ public:
   };
 
 
-template <class GeomTraits, class Container_=Point_container<GeomTraits>, 
-          class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits, class Container_=Point_container<SearchTraits>, 
+          class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Median_of_max_spread 
-  : public Splitter_base<typename GeomTraits::NT> 
+  : public Splitter_base<typename SearchTraits::FT> 
 {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
  
@@ -80,20 +80,20 @@ public:
   void operator() (Separator& sep, 
 		   Container& c0,
 		   Container& c1) {        
-        sep=Separator(c0.max_tight_span_coord(),NT(0));
+        sep=Separator(c0.max_tight_span_coord(),FT(0));
         sep.set_cutting_value(c0.median(sep.cutting_dimension()));
         c0.split(c1,sep,true);
   }
 };
 
-template <class GeomTraits, class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  > 
+template <class SearchTraits, class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  > 
 class Fair
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -102,7 +102,7 @@ public:
   {}
 
   Fair(unsigned int bucket_size, 
-       NT aspect_ratio=NT(3))
+       FT aspect_ratio=FT(3))
     : Base(bucket_size, aspect_ratio)
   {}
 
@@ -110,22 +110,22 @@ public:
   			     Container& c1) {
 	// find legal cut with max spread
         sep=Separator(c0.max_tight_span_coord_balanced(aspect_ratio()),
-				NT(0));
+				FT(0));
         sep.set_cutting_value(c0.balanced_fair(sep.cutting_dimension(),
 				aspect_ratio()));
         c0.split(c1,sep);
   }
 };
 
-template <class GeomTraits,  class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Sliding_fair
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -134,7 +134,7 @@ public:
   {}
 
   Sliding_fair(unsigned int bucket_size, 
-	       NT aspect_ratio=NT(3))
+	       FT aspect_ratio=FT(3))
     : Base(bucket_size, aspect_ratio)
   {}
 
@@ -143,7 +143,7 @@ public:
     // find legal cut with max spread
    
     sep=Separator(c0.max_tight_span_coord_balanced(aspect_ratio()),
-			    NT(0));
+			    FT(0));
     
     sep.set_cutting_value(c0.balanced_sliding_fair(sep.cutting_dimension(),
 			 aspect_ratio()));
@@ -152,15 +152,15 @@ public:
 };
 
 
-template <class GeomTraits,  class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Sliding_midpoint
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -176,10 +176,10 @@ public:
   			     Container& c1)
   {
         sep=Separator(c0.max_span_coord(),
-              (c0.max_span_upper() + c0.max_span_lower())/NT(2));
-	NT max_span_lower = 
+              (c0.max_span_upper() + c0.max_span_lower())/FT(2));
+	FT max_span_lower = 
 	c0.tight_bounding_box().min_coord(c0.max_span_coord());
-	NT max_span_upper = 
+	FT max_span_upper = 
 	c0.tight_bounding_box().max_coord(c0.max_span_coord());
 	if (max_span_upper <= sep.cutting_value()) {
 		sep.set_cutting_value(max_span_upper); 
@@ -191,15 +191,15 @@ public:
   }
 };
 
-template <class GeomTraits,  class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Median_of_rectangle
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -215,21 +215,21 @@ public:
   void operator() (Separator& sep, Container& c0,
   			     Container& c1)
   {
-    sep=Separator(c0.max_span_coord(),NT(0));
+    sep=Separator(c0.max_span_coord(),FT(0));
     sep.set_cutting_value(c0.median(sep.cutting_dimension()));
     c0.split(c1,sep,true);
   }
 };
 
-template <class GeomTraits,  class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits,  class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Midpoint_of_max_spread
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -246,19 +246,19 @@ public:
   			     Container& c1)
   {
     sep= Separator(c0.max_tight_span_coord(),
-    (c0.max_tight_span_upper() + c0.max_tight_span_lower())/NT(2));
+    (c0.max_tight_span_upper() + c0.max_tight_span_lower())/FT(2));
     c0.split(c1,sep);
   }
 };
 
-template <class GeomTraits, class Container_=Point_container<GeomTraits>,
-	  class Separator_=Plane_separator<typename GeomTraits::NT>  >
+template <class SearchTraits, class Container_=Point_container<SearchTraits>,
+	  class Separator_=Plane_separator<typename SearchTraits::FT>  >
 class Midpoint_of_rectangle
-  : public Splitter_base<typename GeomTraits::NT> {
+  : public Splitter_base<typename SearchTraits::FT> {
 
-  typedef Splitter_base<typename GeomTraits::NT> Base;
+  typedef Splitter_base<typename SearchTraits::FT> Base;
 public:
-  typedef typename GeomTraits::NT NT;
+  typedef typename SearchTraits::FT FT;
   typedef Container_ Container;
   typedef Separator_ Separator;
 
@@ -275,7 +275,7 @@ public:
   			     Container& c1)
   {
     sep = Separator(c0.max_span_coord(),
-		    (c0.max_span_upper() + c0.max_span_lower())/NT(2));
+		    (c0.max_span_upper() + c0.max_span_lower())/FT(2));
     c0.split(c1,sep);          
   }
  

@@ -29,14 +29,14 @@
 
 namespace CGAL {
 
-  template <class GeomTraits>
+  template <class SearchTraits>
   class Euclidean_distance {
 
     public:
 
-    typedef typename GeomTraits::Point Point;
-    typedef typename GeomTraits::NT    NT;
-    typedef Point Query_item;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename SearchTraits::FT    FT;
+    typedef Point_d Query_item;
     
     public:
 
@@ -44,10 +44,10 @@ namespace CGAL {
     	Euclidean_distance() {}
 
 
-	inline NT distance(const Point& q, const Point& p) const {
-	        NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+	inline FT transformed_distance(const Point_d& q, const Point_d& p) const {
+	        FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1), pit = construct_it(p);
 		for(; qit != qe; qit++, pit++){
 		  distance += ((*qit)-(*pit))*((*qit)-(*pit));
@@ -56,11 +56,11 @@ namespace CGAL {
 	}
 
 
-	inline NT min_distance_to_rectangle(const Point& q,
-					    const Kd_tree_rectangle<GeomTraits>& r) const {
-		NT distance = NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+	inline FT min_distance_to_rectangle(const Point_d& q,
+					    const Kd_tree_rectangle<SearchTraits>& r) const {
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1);
 		for(unsigned int i = 0;qit != qe; i++, qit++){
 		  if((*qit) < r.min_coord(i))
@@ -74,14 +74,14 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT max_distance_to_rectangle(const Point& q,
-					     const Kd_tree_rectangle<GeomTraits>& r) const {
-		NT distance=NT(0);
-		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
-                typename GeomTraits::Cartesian_const_iterator qit = construct_it(q),
+	inline FT max_distance_to_rectangle(const Point_d& q,
+					     const Kd_tree_rectangle<SearchTraits>& r) const {
+		FT distance=FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1);
 		for(unsigned int i = 0;qit != qe; i++, qit++){
-				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/NT(2.0))
+				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
 					distance += (r.max_coord(i)-(*qit))*(r.max_coord(i)-(*qit));
 				else
 					distance += ((*qit)-r.min_coord(i))*((*qit)-r.min_coord(i));
@@ -89,18 +89,18 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT new_distance(NT dist, NT old_off, NT new_off,
+	inline FT new_distance(FT dist, FT old_off, FT new_off,
 			int cutting_dimension)  const {
 		
-		NT new_dist = dist + new_off*new_off - old_off*old_off;
+		FT new_dist = dist + new_off*new_off - old_off*old_off;
                 return new_dist;
 	}
 
-  inline NT transformed_distance(NT d) const {
+  inline FT transformed_distance(FT d) const {
 		return d*d;
 	}
 
-  inline NT inverse_of_transformed_distance(NT d) const {
+  inline FT inverse_of_transformed_distance(FT d) const {
 		return CGAL::sqrt(d);
 	}
 
