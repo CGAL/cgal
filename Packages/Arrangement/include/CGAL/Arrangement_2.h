@@ -487,7 +487,7 @@ public:
 #ifndef _MSC_VER
       return (PmVertex::is_incident_edge(e.current_iterator()));
 #else
-      return ( (static_cast<PmVertex*>(this))->
+      return ( (static_cast<const PmVertex*>(this))->
 	       is_incident_edge(e.current_iterator()));
 #endif
     }
@@ -497,7 +497,7 @@ public:
 #ifndef _MSC_VER
       return (PmVertex::is_incident_face(f.current_iterator()));      
 #else
-      return ( (static_cast<PmVertex*>(this))->
+      return ( (static_cast<const PmVertex*>(this))->
 	       is_incident_face(f.current_iterator())); 
 #endif
     }
@@ -511,7 +511,7 @@ public:
     Halfedge_around_vertex_circulator incident_halfedges() 
     {
 #ifndef _MSC_VER
-      return Halfedge_around_vertex_circulator\
+      return Halfedge_around_vertex_circulator
 	(Halfedge_handle(PmVertex::incident_halfedges()));
 #else
       return Halfedge_around_vertex_circulator
@@ -527,7 +527,7 @@ public:
 	(Halfedge_const_handle(PmVertex::incident_halfedges()));
 #else
       return Halfedge_around_vertex_const_circulator
-	(Halfedge_const_handle( (static_cast<PmVertex*>(this))->
+	(Halfedge_const_handle( (static_cast<const PmVertex*>(this))->
 				incident_halfedges()));
 #endif
 
@@ -569,7 +569,7 @@ public:
 #ifndef _MSC_VER
       return Vertex_const_handle(PmHalfedge::source()); 
 #else
-      return Vertex_const_handle( (static_cast<PmHalfedge*>(this))->source()); 
+      return Vertex_const_handle( (static_cast<const PmHalfedge*>(this))->source()); 
 #endif
     }
     
@@ -586,7 +586,7 @@ public:
 #ifndef _MSC_VER
       return Vertex_const_handle(PmHalfedge::target());
 #else
-      return Vertex_const_handle( (static_cast<PmHalfedge*>(this))->target());
+      return Vertex_const_handle( (static_cast<const PmHalfedge *>(this))->target());
 #endif
     }
     
@@ -603,7 +603,7 @@ public:
 #ifndef _MSC_VER
       return Face_const_handle(PmHalfedge::face()); 
 #else
-      return Face_const_handle( (static_cast<PmHalfedge*>(this))->face()); 
+      return Face_const_handle( (static_cast<const PmHalfedge*>(this))->face()); 
 #endif
     }
     
@@ -620,7 +620,7 @@ public:
 #ifndef _MSC_VER
       return Halfedge_const_handle(PmHalfedge::twin());
 #else
-      return Halfedge_const_handle( (static_cast<PmHalfedge*>(this))->twin());
+      return Halfedge_const_handle( (static_cast<const PmHalfedge*>(this))->twin());
 #endif
   }
     
@@ -637,7 +637,7 @@ public:
 #ifndef _MSC_VER
     return Halfedge_const_handle(PmHalfedge::next_halfedge() );
 #else
-    return Halfedge_const_handle( (static_cast<PmHalfedge*>(this))->
+    return Halfedge_const_handle( (static_cast<const PmHalfedge*>(this))->
 				  next_halfedge() );
 #endif
   }
@@ -659,7 +659,7 @@ public:
       (Halfedge_const_handle(PmHalfedge::ccb()));
 #else
     return Ccb_halfedge_const_circulator
-      (Halfedge_const_handle( (static_cast<PmHalfedge*>(this))->ccb()));
+      (Halfedge_const_handle( (static_cast<const PmHalfedge *>(this))->ccb()));
 #endif
   }
 
@@ -768,7 +768,7 @@ public:
 #ifndef _MSC_VER
     return Holes_const_iterator(PmFace::holes_begin());
 #else
-    return Holes_const_iterator( (static_cast<PmFace*>(this))->holes_begin());
+    return Holes_const_iterator( (static_cast<const PmFace *>(this))->holes_begin());
 #endif
   }
     
@@ -785,7 +785,7 @@ public:
 #ifndef _MSC_VER
     return Holes_const_iterator(PmFace::holes_end());
 #else
-    return Holes_const_iterator( (static_cast<PmFace*>(this))->holes_end());
+    return Holes_const_iterator( (static_cast<const PmFace *>(this))->holes_end());
 #endif
   }
 
@@ -794,7 +794,7 @@ public:
 #ifndef _MSC_VER
     return PmFace::is_halfedge_on_inner_ccb(e.current_iterator());
 #else
-    return (static_cast<PmFace*>(this))->
+    return (static_cast<const PmFace*>(this))->
       is_halfedge_on_inner_ccb(e.current_iterator());
 #endif
   }
@@ -804,7 +804,7 @@ public:
 #ifndef _MSC_VER
     return PmFace::is_halfedge_on_outer_ccb(e.current_iterator());
 #else
-    return (static_cast<PmFace*>(this))->
+    return (static_cast<const PmFace*>(this))->
       is_halfedge_on_outer_ccb(e.current_iterator());
 #endif
   }
