@@ -1,3 +1,6 @@
+2.10 (4 September 2003) [af]
+- Removed superfluous variable
+
 2.9 (4 September 2003) [af]
 - Towards an extensible kernel
 
