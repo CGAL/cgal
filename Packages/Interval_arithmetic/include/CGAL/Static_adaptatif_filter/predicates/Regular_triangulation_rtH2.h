@@ -146,17 +146,12 @@ power_testH2(
     const Static_adaptatif_filter &thw,
     const Static_adaptatif_filter &twt)
 {
-  bool tried = false;
+  bool re_adjusted = false;
   static double SAF_bound = -1.0;
   static double SAF_epsilon_0;
 
-letstry:
-  try
-  {
-    // Check the bounds.  All arguments must be <= SAF_bound.
-    // The throw mecanism is not useful here, it should be before the try{}.
-    if (
-	fabs(phx.value()) > SAF_bound ||
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(phx.value()) > SAF_bound ||
 	fabs(phy.value()) > SAF_bound ||
 	fabs(phw.value()) > SAF_bound ||
 	fabs(pwt.value()) > SAF_bound ||
@@ -172,8 +167,52 @@ letstry:
 	fabs(thy.value()) > SAF_bound ||
 	fabs(thw.value()) > SAF_bound ||
 	fabs(twt.value()) > SAF_bound)
-      throw Restricted_double::unsafe_comparison();
-    // Try the epsilon variant of the predicate.
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(phx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(phy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(phw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rhx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rhy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rhw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(rwt.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) power_testH2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
     return power_testH2_SAF(
 		Restricted_double(phx.value()),
 		Restricted_double(phy.value()),
@@ -195,54 +234,10 @@ letstry:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed once, we re-adjust (bound, epsilons).
-    if (!tried)
-    {
-      tried = true;
-      // Recompute SAF_bound (tighter or larger).
-      SAF_bound = 0;
-      SAF_bound = std::max(SAF_bound, fabs(phx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(phy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(phw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rhx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rhy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rhw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(rwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
-
-      // recompute epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) power_testH2_SAF(
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		SAF_epsilon_0);
-
-      // We should verify that all epsilons have really been updated.
-
-      // Try again with the updated (SAF_bound, epsilon)
-      goto letstry;
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return power_testH2(
@@ -389,18 +384,13 @@ power_testH2(
     const Static_adaptatif_filter &thw,
     const Static_adaptatif_filter &twt)
 {
-  bool tried = false;
+  bool re_adjusted = false;
   static double SAF_bound = -1.0;
   static double SAF_epsilon_0;
   static double SAF_epsilon_1;
 
-letstry:
-  try
-  {
-    // Check the bounds.  All arguments must be <= SAF_bound.
-    // The throw mecanism is not useful here, it should be before the try{}.
-    if (
-	fabs(phx.value()) > SAF_bound ||
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(phx.value()) > SAF_bound ||
 	fabs(phy.value()) > SAF_bound ||
 	fabs(phw.value()) > SAF_bound ||
 	fabs(pwt.value()) > SAF_bound ||
@@ -412,8 +402,45 @@ letstry:
 	fabs(thy.value()) > SAF_bound ||
 	fabs(thw.value()) > SAF_bound ||
 	fabs(twt.value()) > SAF_bound)
-      throw Restricted_double::unsafe_comparison();
-    // Try the epsilon variant of the predicate.
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(phx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(phy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(phw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qhw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(thw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) power_testH2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0,
+		SAF_epsilon_1);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
     return power_testH2_SAF(
 		Restricted_double(phx.value()),
 		Restricted_double(phy.value()),
@@ -432,47 +459,10 @@ letstry:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed once, we re-adjust (bound, epsilons).
-    if (!tried)
-    {
-      tried = true;
-      // Recompute SAF_bound (tighter or larger).
-      SAF_bound = 0;
-      SAF_bound = std::max(SAF_bound, fabs(phx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(phy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(phw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qhw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qwt.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(thw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(twt.value()));
-
-      // recompute epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) power_testH2_SAF(
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		SAF_epsilon_0,
-		SAF_epsilon_1);
-
-      // We should verify that all epsilons have really been updated.
-
-      // Try again with the updated (SAF_bound, epsilon)
-      goto letstry;
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return power_testH2(

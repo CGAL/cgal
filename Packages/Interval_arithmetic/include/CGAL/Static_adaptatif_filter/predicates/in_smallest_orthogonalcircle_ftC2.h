@@ -93,17 +93,12 @@ in_smallest_orthogonalcircleC2(
     const Static_adaptatif_filter &ty,
     const Static_adaptatif_filter &tw)
 {
-  bool tried = false;
+  bool re_adjusted = false;
   static double SAF_bound = -1.0;
   static double SAF_epsilon_0;
 
-letstry:
-  try
-  {
-    // Check the bounds.  All arguments must be <= SAF_bound.
-    // The throw mecanism is not useful here, it should be before the try{}.
-    if (
-	fabs(px.value()) > SAF_bound ||
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (	fabs(px.value()) > SAF_bound ||
 	fabs(py.value()) > SAF_bound ||
 	fabs(pw.value()) > SAF_bound ||
 	fabs(qx.value()) > SAF_bound ||
@@ -112,8 +107,38 @@ letstry:
 	fabs(tx.value()) > SAF_bound ||
 	fabs(ty.value()) > SAF_bound ||
 	fabs(tw.value()) > SAF_bound)
-      throw Restricted_double::unsafe_comparison();
-    // Try the epsilon variant of the predicate.
+  {
+re_adjust:
+      // Re-adjust SAF_bound.
+      SAF_bound = std::max(0.0, fabs(px.value()));
+      SAF_bound = std::max(SAF_bound, fabs(py.value()));
+      SAF_bound = std::max(SAF_bound, fabs(pw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
+      SAF_bound = std::max(SAF_bound, fabs(qw.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
+      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
+      SAF_bound = std::max(SAF_bound, fabs(tw.value()));
+
+      // recompute the epsilons: "just" call it over Static_filter_error.
+      // That's the tricky part that might not work for everything.
+      (void) in_smallest_orthogonalcircleC2_SAF(
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		Static_filter_error(SAF_bound),
+		SAF_epsilon_0);
+
+      // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  try  // Try the epsilon variant of the predicate.
+  {
     return in_smallest_orthogonalcircleC2_SAF(
 		Restricted_double(px.value()),
 		Restricted_double(py.value()),
@@ -128,40 +153,10 @@ letstry:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed once, we re-adjust (bound, epsilons).
-    if (!tried)
-    {
-      tried = true;
-      // Recompute SAF_bound (tighter or larger).
-      SAF_bound = 0;
-      SAF_bound = std::max(SAF_bound, fabs(px.value()));
-      SAF_bound = std::max(SAF_bound, fabs(py.value()));
-      SAF_bound = std::max(SAF_bound, fabs(pw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qy.value()));
-      SAF_bound = std::max(SAF_bound, fabs(qw.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tx.value()));
-      SAF_bound = std::max(SAF_bound, fabs(ty.value()));
-      SAF_bound = std::max(SAF_bound, fabs(tw.value()));
-
-      // recompute epsilons: "just" call it over Static_filter_error.
-      // That's the tricky part that might not work for everything.
-      (void) in_smallest_orthogonalcircleC2_SAF(
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		Static_filter_error(SAF_bound,0,1),
-		SAF_epsilon_0);
-
-      // We should verify that all epsilons have really been updated.
-
-      // Try again with the updated (SAF_bound, epsilon)
-      goto letstry;
+    // It failed, we re-adjust once.
+    if (!re_adjusted) {
+      re_adjusted = true;
+      goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return in_smallest_orthogonalcircleC2(
