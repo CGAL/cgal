@@ -61,13 +61,6 @@ void show_output(Snap_rounding_2 &s,
                  Number_Type prec,
                  CGAL::Window_stream &w)
 {
-  // draw original segments
-  /*w << CGAL::BLACK;
-  for(Segment_iterator i1 = s.segments_begin();
-      i1 != s.segments_end();
-      ++i1)
-    w << *i1;
-  */
   // draw isr polylines
   for(Polyline_const_iterator i = s.polylines_begin();
       i != s.polylines_end();
@@ -92,7 +85,7 @@ void show_output(Snap_rounding_2 &s,
     }
 
     if(!seg_painted) // segment entirely inside hot pixel
-      w << *(i->begin());
+      w << CGAL::RED << *(i->begin());
   }
 }
 
@@ -220,22 +213,29 @@ int main(int argc,char *argv[])
   bool automatic_show = false;
   Number_Type prec;
   std::list<Segment_2> seg_list;
+  bool sr_shown;
+  bool remove_segments = false;
+  bool do_isr = true;
 
   if(argc == 1 || argc == 2) {
     // initialize window
-    W.init(MIN_X - 2,MAX_X + 3,MIN_Y - 2);
+    W.init(MIN_X - 3,MAX_X + 3,MIN_Y - 2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
+    W.buttons_per_line(2);
     W.button("Show Output",1);
     W.button("Clear",2);
     W.button("Automatic",3);
     W.button("Manual",4);
     W.button("Add Segments",5);
     W.button("Remove Segments",6);
-    W.button("Exit",7);
+    W.button("Isr",7);
+    W.button("Sr",8);
+    W.button("Exit",9);
     W.display();
     W.disable_button(4);
     W.disable_button(5);
+    W.disable_button(7);
   } else {
     std::cerr << "Syntax : demo [input file name]\n";
     return(1);
@@ -268,21 +268,21 @@ int main(int argc,char *argv[])
     W.set_node_width(3);
   }
 
-  W.text_box(-1.5,-1,10,"manual");
-  W.text_box(-1.5,-1,9.5,"add segments");
+  CGAL::cgalize(W);
 
-  Snap_rounding_2 s(prec,true,5);// !!!! do_isr instead of true which is read from argv such as others are read
-                                 // number_of_kd_trees onstead of 5
+  W.text_box(-1.5,-1,10,"manual");
+  W.text_box(-1.5,-1,9.5,"add");
+  W.text_box(-1.5,-1,9,"isr");
+
+  Snap_rounding_2 s(prec,true,5);// !!!! number_of_kd_trees instead of 5
+                                 // which is read from argv such as others are read
 
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));
 
   display_bounding_box(W,b);
   
   double x3,y3,x4,y4;
-  //Number_Type x_type,y_type;
   int mouse_input;
-  bool sr_shown;
-  bool remove_segments = false;
 
   if(argc == 2) {
     s.insert(seg_list.begin(),seg_list.end());
@@ -336,7 +336,6 @@ int main(int argc,char *argv[])
         // automatic display of biggest rectangle
         show_output(s,prec,W);
         sr_shown = true;
-        //W.text_box(-1.5,-1,10,"auto");
       }
     } else if(mouse_input == 1) {
       // show biggest rectangle
@@ -379,6 +378,22 @@ int main(int argc,char *argv[])
       if(automatic_show)
         show_output(s,prec,W);
     } else if(mouse_input == 7) {
+      W.enable_button(8);
+      W.disable_button(7);
+      s.do_isr(true);
+      do_isr = true;
+      redraw(s,W,b);
+      if(automatic_show)
+        show_output(s,prec,W);
+    } else if(mouse_input == 8) {
+      W.enable_button(7);
+      W.disable_button(8);
+      s.do_isr(false);
+      do_isr = false;
+      redraw(s,W,b);
+      if(automatic_show)
+        show_output(s,prec,W);
+    } else if(mouse_input == 9) {
       // finish
       break;
     }
@@ -389,9 +404,14 @@ int main(int argc,char *argv[])
       W.text_box(-1.5,-1,10,"manual");
 
     if(remove_segments)
-      W.text_box(-1.5,-1,9.5,"remove segments");
+      W.text_box(-1.5,-1,9.5,"remove");
     else
-      W.text_box(-1.5,-1,9.5,"add segments");
+      W.text_box(-1.5,-1,9.5,"add");
+
+    if(do_isr)
+      W.text_box(-1.5,-1,9,"isr");
+    else
+      W.text_box(-1.5,-1,9,"sr");
   }
 
   if(argc == 2)
