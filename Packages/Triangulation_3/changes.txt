@@ -1,4 +1,4 @@
-Version 1.69 (?? June 01)
+Version 1.69 (3  July 01)
 - fix in read_cells
 - cell constructions and deletions done by the TDS only + doc update.
 - Add a init() method to the cell base.

@@ -6,10 +6,10 @@ a negocier
 
 General
 - constructeurs pour avoir Triangulation T(points.begin(), points.end()); 
-- new Vertex/Cell
+- new Vertex
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
-- purify
+- insure
 - Incompatibilite entre le remove, et les I/O de fichiers, a cause du numero
   de vertex pour les perturbations, qui est recree pas dans le bon ordre.
   Solution possible : mettre les sommets dans le fichier dans l'ordre du
