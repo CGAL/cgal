@@ -52,7 +52,7 @@
 
 // Some useful constants
 
-// Smallest interval strictly around zero.
+// Smallest interval strictly containing zero.
 #define CGAL_IA_SMALLEST (Interval_nt_advanced(-CGAL_IA_MIN_DOUBLE, \
                                                 CGAL_IA_MIN_DOUBLE))
 // [-inf;+inf]
@@ -63,7 +63,8 @@ CGAL_BEGIN_NAMESPACE
 struct Interval_nt_advanced
 {
   typedef Interval_nt_advanced IA;
-  struct unsafe_comparison{};	// Exception class.
+  struct unsafe_comparison{};		// Exception class.
+  static unsigned number_of_failures;	// Counts the number of failures.
 
 protected:
   double inf, sup;	// "inf" stores the lower bound, "sup" the upper.
@@ -72,7 +73,7 @@ private:
   int overlap_action() const
 #ifndef CGAL_IA_NO_EXCEPTION
       throw (unsafe_comparison)
-  { throw unsafe_comparison(); }
+  { number_of_failures++;  throw unsafe_comparison(); }
 #else
   {
 #if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
@@ -198,7 +199,6 @@ public:
   IA operator&& (const IA & d) const
   { return IA(max(inf,d.inf), min(sup,d.sup)); }
 };
-
 
 inline
 Interval_nt_advanced
