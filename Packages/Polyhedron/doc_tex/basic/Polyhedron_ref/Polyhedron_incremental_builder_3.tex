@@ -132,7 +132,9 @@ vertices when creating new facets.
 \ccMethod{bool error() const;}{returns error status of the builder.}
 \ccGlue
 \ccMethod{void rollback();}{undoes all changes made to the halfedge
-  data structure since the last \ccc{begin_surface()}.}
+  data structure since the last \ccc{begin_surface()} in relative
+  indexing, and deletes the whole surface in absolute indexing.
+  It needs a new call to \ccc{begin_surface()} to start inserting again.}
 
 \ccMethod{bool check_unconnected_vertices();}{returns
   \ccc{true} if unconnected vertices are detected. If \ccc{verbose} was set to
