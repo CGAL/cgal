@@ -1,3 +1,6 @@
+20 May 2004 Sylvain Pion
+- Perturbed predicate : minor changes.
+
 18 May 2004 Sylvain Pion
 - SunPRO workaround.
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000,2001,2002,2003   INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2004   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -1035,12 +1035,12 @@ side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
         Orientation o;
         if (points[i] == &p3 && (o = orientation(p0,p1,p2,p)) != COPLANAR )
             return Oriented_side(o);
-        if (points[i] == &p2 && (o = orientation(p0,p1,p3,p)) != COPLANAR )
-            return Oriented_side(-o);
-        if (points[i] == &p1 && (o = orientation(p0,p2,p3,p)) != COPLANAR )
+        if (points[i] == &p2 && (o = orientation(p0,p1,p,p3)) != COPLANAR )
             return Oriented_side(o);
-        if (points[i] == &p0 && (o = orientation(p1,p2,p3,p)) != COPLANAR )
-            return Oriented_side(-o);
+        if (points[i] == &p1 && (o = orientation(p0,p,p2,p3)) != COPLANAR )
+            return Oriented_side(o);
+        if (points[i] == &p0 && (o = orientation(p,p1,p2,p3)) != COPLANAR )
+            return Oriented_side(o);
     }
 
     CGAL_triangulation_assertion(false);
@@ -1084,10 +1084,10 @@ coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
 	    // [syl] : TODO : I'm not sure of the signs here (nor the rest :)
             return Bounded_side(o*local);
         if (points[i] == &p1
-		&& (o = coplanar_orientation(p0,p2,p)) != COLLINEAR )
-            return Bounded_side(-o*local);
+		&& (o = coplanar_orientation(p0,p,p2)) != COLLINEAR )
+            return Bounded_side(o*local);
         if (points[i] == &p0
-		&& (o = coplanar_orientation(p1,p2,p)) != COLLINEAR )
+		&& (o = coplanar_orientation(p,p1,p2)) != COLLINEAR )
             return Bounded_side(o*local);
     }
 
