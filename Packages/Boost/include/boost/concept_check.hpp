@@ -1,9 +1,8 @@
 //
-// (C) Copyright Jeremy Siek 2000. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright Jeremy Siek 2000.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // Revision History:
 //   05 May   2001: Workarounds for HP aCC from Thomas Matelich. (Jeremy Siek)
@@ -180,7 +179,7 @@ struct require_same { typedef T type; };
   template <> struct SignedIntegerConcept<int> { void constraints() {} };
   template <> struct SignedIntegerConcept<long> { void constraints() {} };
 # if defined(BOOST_HAS_LONG_LONG)
-  template <> struct SignedIntegerConcept<long long> { void constraints() {} };
+  template <> struct SignedIntegerConcept< ::boost::long_long_type> { void constraints() {} };
 # endif
   // etc.
 #endif      

@@ -1,9 +1,8 @@
 //
-// (C) Copyright Jeremy Siek 2000. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// (C) Copyright Jeremy Siek 2000.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //
 // Revision History:
 //
@@ -409,7 +408,7 @@ namespace boost {
   //===========================================================================
   // Iterator Archetype Classes
 
-  template <class T>
+  template <class T, int I = 0>
   class input_iterator_archetype
   {
   private:
@@ -418,7 +417,7 @@ namespace boost {
     typedef std::input_iterator_tag iterator_category;
     typedef T value_type;
     struct reference {
-      operator value_type() const { return static_object<T>::get(); }
+      operator const value_type&() const { return static_object<T>::get(); }
     };
     typedef const T* pointer;
     typedef std::ptrdiff_t difference_type;

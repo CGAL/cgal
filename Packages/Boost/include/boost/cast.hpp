@@ -1,10 +1,9 @@
 //  boost cast.hpp header file  ----------------------------------------------//
 
-//  (C) Copyright boost.org 1999. Permission to copy, use, modify, sell
-//  and distribute this software is granted provided this copyright
-//  notice appears in all copies. This software is provided "as is" without
-//  express or implied warranty, and with no claim as to its suitability for
-//  any purpose.
+//  (C) Copyright Kevlin Henney and Dave Abrahams 1999. 
+//  Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/conversion for Documentation.
 
@@ -129,12 +128,12 @@ namespace boost
       template <class T>
       struct signed_numeric_limits : std::numeric_limits<T>
       {
-             static inline T min()
+             static inline T min BOOST_PREVENT_MACRO_SUBSTITUTION ()
          {
-             return std::numeric_limits<T>::min() >= 0
+             return (std::numeric_limits<T>::min)() >= 0
                      // unary minus causes integral promotion, thus the static_cast<>
-                     ? static_cast<T>(-std::numeric_limits<T>::max())
-                     : std::numeric_limits<T>::min();
+                     ? static_cast<T>(-(std::numeric_limits<T>::max)())
+                     : (std::numeric_limits<T>::min)();
          };
       };
    
@@ -157,11 +156,11 @@ namespace boost
       // long / unsigned long long. Not intended to be full
       // numeric_limits replacements, but good enough for numeric_cast<>
       template <>
-      struct fixed_numeric_limits_base<long long, false>
+      struct fixed_numeric_limits_base< ::boost::long_long_type, false>
       {
           BOOST_STATIC_CONSTANT(bool, is_specialized = true);
           BOOST_STATIC_CONSTANT(bool, is_signed = true);
-          static long long max()
+          static  ::boost::long_long_type max BOOST_PREVENT_MACRO_SUBSTITUTION ()
           {
 #  ifdef LONGLONG_MAX
               return LONGLONG_MAX;
@@ -170,7 +169,7 @@ namespace boost
 #  endif 
           }
 
-          static long long min()
+          static  ::boost::long_long_type min BOOST_PREVENT_MACRO_SUBSTITUTION ()
           {
 #  ifdef LONGLONG_MIN
               return LONGLONG_MIN;
@@ -181,11 +180,11 @@ namespace boost
       };
 
       template <>
-      struct fixed_numeric_limits_base<unsigned long long, false>
+      struct fixed_numeric_limits_base< ::boost::ulong_long_type, false>
       {
           BOOST_STATIC_CONSTANT(bool, is_specialized = true);
           BOOST_STATIC_CONSTANT(bool, is_signed = false);
-          static unsigned long long max()
+          static  ::boost::ulong_long_type max BOOST_PREVENT_MACRO_SUBSTITUTION ()
           {
 #  ifdef ULONGLONG_MAX
               return ULONGLONG_MAX;
@@ -194,7 +193,7 @@ namespace boost
 #  endif 
           }
 
-          static unsigned long long min() { return 0; }
+          static  ::boost::ulong_long_type min BOOST_PREVENT_MACRO_SUBSTITUTION () { return 0; }
       };
 # endif 
     } // namespace detail
@@ -314,10 +313,10 @@ namespace boost
        template <class T>
        struct fixed_numeric_limits : public std::numeric_limits<T>
        {
-           static inline T min()
+           static inline T min BOOST_PREVENT_MACRO_SUBSTITUTION ()
            {
-               return std::numeric_limits<T>::is_signed && std::numeric_limits<T>::min() >= 0
-                   ? T(-std::numeric_limits<T>::max()) : std::numeric_limits<T>::min();
+               return std::numeric_limits<T>::is_signed && (std::numeric_limits<T>::min)() >= 0
+                   ? T(-(std::numeric_limits<T>::max)()) : (std::numeric_limits<T>::min)();
            }
        };
   
@@ -351,8 +350,8 @@ namespace boost
         const bool result_is_signed = result_traits::is_signed;
         const bool same_sign = arg_is_signed == result_is_signed;
 
-        if (less_than_type_min<arg_is_signed, result_is_signed>::check(arg, result_traits::min())
-            || greater_than_type_max<same_sign, arg_is_signed>::check(arg, result_traits::max())
+        if (less_than_type_min<arg_is_signed, result_is_signed>::check(arg, (result_traits::min)())
+            || greater_than_type_max<same_sign, arg_is_signed>::check(arg, (result_traits::max)())
             )
             
 #else // We need to use #pragma hacks if available
@@ -364,8 +363,8 @@ namespace boost
 #pragma option push -w-8012
 # endif
         if ((arg < 0 && !result_traits::is_signed)  // loss of negative range
-             || (arg_traits::is_signed && arg < result_traits::min())  // underflow
-             || arg > result_traits::max())            // overflow
+             || (arg_traits::is_signed && arg < (result_traits::min)())  // underflow
+             || arg > (result_traits::max)())            // overflow
 # if BOOST_MSVC
 #  pragma warning(pop)
 #elif defined(__BORLANDC__)

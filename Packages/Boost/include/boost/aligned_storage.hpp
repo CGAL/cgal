@@ -6,13 +6,9 @@
 // Copyright (c) 2002-2003
 // Eric Friedman, Itay Maman
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee, 
-// provided that the above copyright notice appears in all copies and 
-// that both the copyright notice and this permission notice appear in 
-// supporting documentation. No representations are made about the 
-// suitability of this software for any purpose. It is provided "as is" 
-// without express or implied warranty.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_ALIGNED_STORAGE_HPP
 #define BOOST_ALIGNED_STORAGE_HPP
@@ -24,7 +20,7 @@
 #include "boost/type_traits/alignment_of.hpp"
 #include "boost/type_traits/type_with_alignment.hpp"
 
-#include "boost/mpl/apply_if.hpp"
+#include "boost/mpl/eval_if.hpp"
 #include "boost/mpl/identity.hpp"
 
 namespace boost {
@@ -50,7 +46,7 @@ private: // representation
     {
         char buf[size_];
 
-        typename mpl::apply_if_c<
+        typename mpl::eval_if_c<
               alignment_ == std::size_t(-1)
             , mpl::identity<detail::max_align>
             , type_with_alignment<alignment_>

@@ -30,7 +30,7 @@
 #include <boost/regex/v4/cregex.hpp>
 #endif
 
-#endif // include guard
+#endif /* include guard */
 
 
 

@@ -10,15 +10,13 @@
 //
 //  boost/checked_delete.hpp
 //
-//  Copyright (c) 1999, 2000, 2001, 2002 boost.org
 //  Copyright (c) 2002, 2003 Peter Dimov
 //  Copyright (c) 2003 Daniel Frey
 //  Copyright (c) 2003 Howard Hinnant
 //
-//  Permission to copy, use, modify, sell and distribute this software
-//  is granted provided this copyright notice appears in all copies.
-//  This software is provided "as is" without express or implied
-//  warranty, and with no claim as to its suitability for any purpose.
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
 //
 //  See http://www.boost.org/libs/utility/checked_delete.html for documentation.
 //

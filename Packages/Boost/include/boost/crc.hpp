@@ -1,6 +1,6 @@
 //  Boost CRC library crc.hpp header file  -----------------------------------//
 
-//  Copyright 2001 Daryle Walker.  Use, modification, and distribution are
+//  Copyright 2001, 2004 Daryle Walker.  Use, modification, and distribution are
 //  subject to the Boost Software License, Version 1.0.  (See accompanying file
 //  LICENSE_1_0.txt or a copy at <http://www.boost.org/LICENSE_1_0.txt>.)
 
@@ -527,6 +527,30 @@ namespace detail
         did_init = true;
     }
 
+    #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+    // Align the msb of the remainder to a byte
+    template < std::size_t Bits, bool RightShift >
+    class remainder
+    {
+    public:
+        typedef typename uint_t<Bits>::fast  value_type;
+
+        static unsigned char align_msb( value_type rem )
+            { return rem >> (Bits - CHAR_BIT); }
+    };
+
+    // Specialization for the case that the remainder has less
+    // bits than a byte: align the remainder msb to the byte msb
+    template < std::size_t Bits >
+    class remainder< Bits, false >
+    {
+    public:
+        typedef typename uint_t<Bits>::fast  value_type;
+
+        static unsigned char align_msb( value_type rem )
+            { return rem << (CHAR_BIT - Bits); }
+    };
+    #endif
 
     // CRC helper routines
     template < std::size_t Bits, bool DoReflect >
@@ -555,7 +579,9 @@ namespace detail
 
         // Compare a byte to the remainder's highest byte
         static  unsigned char  index( value_type rem, unsigned char x )
-            { return x ^ ( rem >> (DoReflect ? 0u : Bits - CHAR_BIT) ); }
+            { return x ^ ( DoReflect ? rem :
+                                ((Bits>CHAR_BIT)?( rem >> (Bits - CHAR_BIT) ) :
+                                    ( rem << (CHAR_BIT - Bits) ))); }
 
         // Shift out the remainder's highest byte
         static  value_type  shift( value_type rem )
@@ -578,7 +604,7 @@ namespace detail
 
         // Compare a byte to the remainder's highest byte
         static  unsigned char  index( value_type rem, unsigned char x )
-            { return x ^ ( rem >> (Bits - CHAR_BIT) ); }
+            { return x ^ remainder<Bits,(Bits>CHAR_BIT)>::align_msb( rem ); }
 
         // Shift out the remainder's highest byte
         static  value_type  shift( value_type rem )
