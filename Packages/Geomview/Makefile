@@ -15,16 +15,13 @@ package:
 	@echo "---- VERSION=2.9; export VERSION -"
 	@echo "---- make Doc --------------------"
 	@echo "---- make Version ----------------"
-	@echo "---- make commit -----------------"
+	@echo "---- cvs commit ------------------"
 	@echo "---- make tag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
-
-commit:
-	cvs commit
 
 tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"`
