@@ -1,7 +1,6 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Hi
 - Synthesizing volumes from SM representation
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces
