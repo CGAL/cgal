@@ -2096,7 +2096,6 @@ locate(const Point & p,
       return NULL;
     }
   }
-
 }
 	  
 template < class GT, class Tds >
@@ -2117,16 +2116,12 @@ side_of_tetrahedron(const Point & p,
 {
   CGAL_triangulation_precondition
     ( geom_traits().orientation(p0,p1,p2,p3) == POSITIVE );
-				      
-  Orientation o0 = geom_traits().orientation(p,p1,p2,p3);
-  Orientation o1 = geom_traits().orientation(p0,p,p2,p3);
-  Orientation o2 = geom_traits().orientation(p0,p1,p,p3);
-  Orientation o3 = geom_traits().orientation(p0,p1,p2,p);
 
-  if ( (o0 == NEGATIVE) ||
-       (o1 == NEGATIVE) ||
-       (o2 == NEGATIVE) ||
-       (o3 == NEGATIVE) ) {
+  Orientation o0,o1,o2,o3;
+  if ( ((o0 = geom_traits().orientation(p,p1,p2,p3)) == NEGATIVE) ||
+       ((o1 = geom_traits().orientation(p0,p,p2,p3)) == NEGATIVE) ||
+       ((o2 = geom_traits().orientation(p0,p1,p,p3)) == NEGATIVE) ||
+       ((o3 = geom_traits().orientation(p0,p1,p2,p)) == NEGATIVE) ) {
     lt = OUTSIDE_CONVEX_HULL;
     return ON_UNBOUNDED_SIDE;
   }
