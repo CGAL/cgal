@@ -679,10 +679,30 @@ class Segment_circle_2
 
     // If the two arcs are completely equal, return one of them as the
     // overlapping arc.
-    bool      same_or = (_conic.orientation() == arc._conic.orientation());
+    int       orient1 = _conic.orientation();
+    int       orient2 = arc._conic.orientation();
+    bool      same_or = (orient1 == orient2);
+    bool      identical = false;
 
-    if ((same_or && _source == arc._source && _target == arc._target) ||
-	(!same_or && _source == arc._target && _target == arc._source))
+    if (orient1 == 0)
+    {
+      // That mean both arcs are really segments, so they are identical
+      // if their endpoints are the same.
+      if ((_source == arc._source && _target == arc._target) ||
+	  (_source == arc._target && _target == arc._source))
+	identical = true;
+    }
+    else
+    {
+      // If those are really curves of degree 2, than the points curves
+      // are identical only if their source and target are the same and the
+      // orientation is the same, or vice-versa if the orientation is opposite.
+      if ((same_or && _source == arc._source && _target == arc._target) ||
+	  (!same_or && _source == arc._target && _target == arc._source))
+	identical = true;
+    }
+
+    if (identical)
     {
       ovlp_arcs[0] = arc;
       return (1);
@@ -704,8 +724,6 @@ class Segment_circle_2
     // and target.
     const Point *arc_sourceP;
     const Point *arc_targetP;
-    int         orient1 = _conic.orientation();
-    int         orient2 = arc._conic.orientation();
 
     if (orient1 == 0)
       orient1 = (compare_lexicographically_xy (_source, _target) 
