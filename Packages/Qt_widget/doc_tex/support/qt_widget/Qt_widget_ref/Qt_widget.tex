@@ -113,6 +113,16 @@ the objects. The color returned is a Qt class.}
 \ccMethod{double x_max() const;}{Returns the right X coordinate of the widget.}
 \ccMethod{double y_max() const;}{Returns the upper Y coordinate of the widget.}
 
+%Signals
+\ccHeading{Signals}
+\ccMethod{void mousePressed(QMouseEvent *e);}{}
+\ccMethod{void mouseReleased(QMouseEvent *e);}{}
+\ccMethod{void mouseMoved(QMouseEvent *e);}{}
+\ccMethod{void resized();}{}
+\ccMethod{void new_cgal_object(CGAL::Object);}{Triggered when a new object 
+from a tool is received. The user should catch this signal if it's working with
+tools that provide \cgal\ objects as input.}
+
 \input{Qt_widget_ref/Operators_for_output.tex}
 \input{Qt_widget_ref/Manipulators.tex}
 

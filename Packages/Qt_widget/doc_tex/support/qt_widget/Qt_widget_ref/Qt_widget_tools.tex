@@ -15,11 +15,65 @@
 
 \ccDefinition
 
-The widget Qt\_Widget is a class that is designed to help \cgal\ users easily 
-visualize \cgal\ objects and for advanced users to interact with them. This 
-widget is designed only for 2D \cgal\ objects.
+A tool for Qt\_widget is a class that receives events from Qt\_widget and can 
+provide some functionalities like input objects for Qt\_widget and modify 
+already created objects. Also some basic operations can be provided like tools
+for zoomIn, zoomOut, translate.
 
+There is a base class for tools called Qt\_widget\_tool, all the tools should 
+be derived from this base class.
 
+\begin{ccExampleCode}
+namespace CGAL {
+class Qt_widget_zoomrect : public Qt_widget_tool
+{
+public:
+	....
+protected:
+	....
+private:
+	....
+}
+\end{ccExampleCode}
+
+In order to attach a tool to Qt\_widget all you have to do is to declare and 
+define the tool and then use the \(>>\) operator. The Qt\_widget and the tool
+mechanism is designed to use only one tool at one moment of time. You can't
+use two tools at the same time. When a tool is attached, both the tool and the
+Qt\_widget will receive the events from the Window System.
+
+\begin{ccExampleCode}
+CGAL::Qt_widget_zoomrect	zoomrectbut;
+CGAL::Qt_widget			*widget;
+
+*widget >> zoomrectbut;
+\end{ccExampleCode}
+The events are declared in the base class as virtual functions. Your tool class
+has to overload this functions in order to receive the events from the main 
+widget. Only the tool that is attached at the moment will receive the events
+from the widget.
+
+\begin{ccExampleCode}
+namespace CGAL {
+class Qt_widget_zoomrect : public Qt_widget_tool
+{
+.....
+private:
+  void mousePressEvent(QMouseEvent *e)
+  {
+    if(e->button() == CGAL_QT_WINDOW_ZOOMRECT_BUTTON)
+    {
+      if (!on_first)
+      {
+        first_x = e->x();
+        first_y = e->y();
+        on_first = TRUE;
+      }
+    }
+  };
+......
+}
+\end{ccExampleCode}
 
 % +-----------------------------------------------------+
 % EOF
