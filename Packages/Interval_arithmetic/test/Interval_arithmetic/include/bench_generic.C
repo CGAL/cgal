@@ -1,5 +1,5 @@
 // Generic bench file for the IA package.
-// Sylvain Pion, 1997-1999.
+// Sylvain Pion, 1997-2000.
 
 // This file is included from tst[34].C, that do just a #define:
 // #define TESTED_TYPE Interval_nt_advanced // For tst3.C
@@ -20,13 +20,6 @@ const int loops = 1000;
 const int loops = LOOPS;
 #endif
 
-// Not called, only used to watch at the assembly code produced.
-
-IA_nt add (IA_nt a, IA_nt b)
-{
-  return a+b;
-}
-
 // Some simple operators benchmarks.
 
 void bench()
@@ -45,9 +38,7 @@ void bench()
   if (b.is_point())
   {
     std::cout << "error due to constant propagation" << std::endl;
-    const volatile double ddd = 10.0;
-    b = IA_nt(21.0)/IA_nt(ddd);
-    assert(!b.is_point());
+    assert(false);
   }
   std::cout << c << std::endl;
   std::cout << loops << " loops.\n";
@@ -127,8 +118,8 @@ int main()
   bench_orientation();
 
   IA_nt a=1, b=2;
-  (int) CGAL_NTS sign(a);
-  (int) CGAL_NTS compare(a,b);
+  (void) CGAL_NTS sign(a);
+  (void) CGAL_NTS compare(a,b);
 
 #ifdef ADVANCED
   CGAL::FPU_set_cw(backup);
