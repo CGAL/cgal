@@ -74,11 +74,27 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 template <class InputIterator>
 Bbox_2 bbox_2(InputIterator first, InputIterator last);
 
-template <class ForwardIterator, class Numbertype, class Traits>
-void area_2(ForwardIterator first,
-                 ForwardIterator last,
-                 Numbertype& result,
-                 const Traits& traits);
+
+template <class ForwardIterator, class Traits>
+void 
+area_2( ForwardIterator first, ForwardIterator last,
+   	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
+        const Traits& traits)
+{
+   typedef typename std::iterator_traits<ForwardIterator>::value_type::FT FT;
+   result = FT(0);
+   // check if the polygon is empty
+   if (first == last) return;
+   ForwardIterator second = first; ++second;
+   // check if the polygon has only one point
+   if (second == last) return;
+   ForwardIterator third = second;
+   while (++third != last) {
+	result = result + traits.determinant_2(*first, *second, *third);
+	second = third;
+   }
+   result = result / FT(2);
+}
 
 template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,

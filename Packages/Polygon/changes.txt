@@ -1,4 +1,14 @@
 //-----------------------------------------------------------------------//
+// 2.7
++Made some adaptations for compilation under Borland.
+ In CGAL/Polygon_2_algorithms.C:
+ - used iterator instead of const_iterator for index of
+   Simplicity_test_2::SweepStatus.
+ - Altered the declaration of area_2 a bit and moved it to the .h file
+   (to please MSVC, which doesn't recognise the forward declaration otherwise)
++Added a typedef of FT to example CustomPoint2.C
+
+//-----------------------------------------------------------------------//
 // 2.6
 +Added std:: in several places in the testsuite.
 +Removed constructor that takes a circulator as parameter. MSVC and egcs

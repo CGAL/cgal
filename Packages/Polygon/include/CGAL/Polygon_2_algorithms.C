@@ -190,7 +190,7 @@ class Simplicity_test_2 {
         std::set<int,EdgeComp> status;
         // if i is an element of status, it means that 
 
-        std::vector<typename std::set<int,EdgeComp>::const_iterator> index;
+        std::vector<typename std::set<int,EdgeComp>::iterator> index;
         // the iterators of the edges are stored to enable fast deletion
 
         const Simplicity_test_2<ForwardIterator, Traits>* s;
@@ -670,31 +670,12 @@ Bbox_2 bbox_2(InputIterator first, InputIterator last)
 //-----------------------------------------------------------------------//
 // uses Traits::determinant_2
 
-template <class ForwardIterator, class FT, class Traits>
-void area_2(ForwardIterator first,
-                 ForwardIterator last,
-                 FT& result,
-                 const Traits& traits)
-{
-  result = FT(0);
-
-  // check if the polygon is empty
-  if (first == last) return;
-
-  ForwardIterator second = first; ++second;
-
-  // check if the polygon has only one point
-  if (second == last) return;
-
-  ForwardIterator third = second;
-
-  while (++third != last) {
-    result = result + traits.determinant_2(*first, *second, *third);
-    second = third;
-  }
-
-  result = result / FT(2);
-}
+// template <class ForwardIterator, class FT, class Traits>
+// void area_2(ForwardIterator first,
+//                 ForwardIterator last,
+//                 FT& result,
+//                 const Traits& traits)
+//{
 
 //-----------------------------------------------------------------------//
 //                          is_convex_2

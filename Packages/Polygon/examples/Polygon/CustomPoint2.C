@@ -28,6 +28,7 @@ class MyPoint
     double d_x, d_y;
 
   public:
+    typedef double FT;
     MyPoint(): d_x(0), d_y(0) {}
     MyPoint(double x, double y): d_x(x), d_y(y) {}
     double x() const { return d_x; }
