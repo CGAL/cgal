@@ -1,4 +1,4 @@
-5.160 (14 Oct 2003) [af]
+5.161 (14 Oct 2003) [af]
 - Fixed typos in the documentation
 
 5.159 (03 Oct 2003) [rursu]
