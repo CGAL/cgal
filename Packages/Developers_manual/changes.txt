@@ -1,4 +1,7 @@
-05 Mars 2004 Radu Ursu
+09 March 2004 Sylvain Pion
+- Updates to Radu's change.
+
+05 March 2004 Radu Ursu
 - Updated doc for autotest_cgal script
 
 18 Feb 2004 Sylvain Pion

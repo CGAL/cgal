@@ -165,100 +165,6 @@ The generated file contains a header that lists the requirements a
 Section~\ref{sec:test_subdirectory} with the description of the 
 {\tt cgal\_test} script.
 
-\section{{\tt autotest\_cgal}}
-\label{sec:autotest_cgal}
-\index{autotest_cgal script@{\tt autotest\_cgal} script|(}
-\ccIndexSubitem{test suite}{internal release}
-
-This shell script autotest\_cgal is used to run test suites for the internal 
-releases of the library. The script takes no arguments. You may configure the 
-script using the .autocgalrc file stored either in \$HOME, either in the same 
-directory with autotest\_cgal. I will explain later every variable that is 
-configurable and the variables that must be configured. Using this script you 
-can run the testsuite on multiple hosts and multiple platforms remotely or 
-locally. You can also specify how many processors has the host and the script 
-will use this information to run the testsuite process on multiple processors
- in the same time. By default, the number of processors assigned to every 
-host is one. In a couple of words, the script downloads first a file named 
-LATEST that contains the current release file name. It compares it with the 
-file RELEASE\_NR in the \$CGAL\_ROOT directory and if it is different it 
-continues the testsuite. It downloads the internal release, unzips, untar, 
-copies the configuration files, and starts the testsuite. When everything 
-is done, it sends a notification email to the person who collects the 
-results and puts the results on some ftp server.
-
-The first step is to create a directory where you will store the releases. 
-This directory is known in the script as \$CGAL\_ROOT. By default \$CGAL\_ROOT
- is the directory where you put the script autotest\_cgal, but you may change 
-it in .autocgalrc. 
-
-The next step is to download the internal release of your choice and create 
-the configuration files for the compilers you need to test, using the script
- install\_cgal. The configuration files are stored in the directory {\tt 
-config/install/}.
-
-Create a symbolic link to the release using {\tt ln -s CGAL-3.1-I-latest CGAL-I}. This will be always updated by the script to point to the last release, so 
-that you may remove older releases.
-
-The script uses wget to download the release. The different options you may 
-pass to wget you should put in the \$WGET variable in .autocgalrc. By default, 
-WGET=''wget''. We noticed that you must use wget 1.9.1 or later. You must also
- create a file in your \$HOME called .wgetrc, that must contain the following:
-\begin{verbatim}
-$ cat ~/.wgetrc 
---http-user=member1
---http-passwd=cg4any1)
-\end{verbatim}
-It is possible to use another file for this task by setting or exporting the 
-WGETRC variable.
-
-The next step is to specify the name of the hosts. To do that, you must 
-define the variable \$BUILD\_HOSTS in the file .autocgalrc. For every host 
-that you define you must also specify the compiler names on that host. Here is 
-an example:
-\begin{verbatim}
-BUILD_HOSTS="papillon electra winmachine"
-COMPILERS_papillon="mips_IRIX64-6.5_CC-n32-7.30_LEDA mips_IRIX-6.5_g++-fsquangle-2.95.2_LEDA"
-COMPILERS_electra="sparc_SunOS-5.6_g++-2.95.2_LEDA"
-COMPILERS_winmachine="i686_CYGWINNT-5.0-1.3.22_CL.EXE-1300"
-PROCESSORS_papillon="3"
-\end{verbatim}
-You should take those names from the configuration files that I have mentioned
- earlier. The PROCESSORS\_hostname must be set if you have more than one 
-processor on that host and of course if you want to give all of them to the 
-testsuite. If you want to run the testsuite local and not remote, name the 
-host as localhost and the script will run the testsuite locally for that host. 
-
-MYSHELL is a variable that must exist in .autocgalrc, otherwise the script 
-will not run. Here is an example of MYSHELL variable:
-\begin{verbatim}
-MYSHELL="TERM=vt100 PATH=$PATH:/bin:/usr/local/bin:$HOME/bin/SunOS:/usr/ccs/bin:/opt/SUNWspro/bin \
-QTDIR=/usr/local/qt2 PARASOFT=/usr/local/parasoft /usr/local/bin/zsh -c\"
-\end{verbatim}
-
-CGAL\_URL is the place where we put internal releases. LATEST file is comming 
-from the same location. If this will change, you may change either CGAL\_URL, 
-either LATEST\_LOCATION variable in .autocgalrc.
-
-TAR, GZIP, GUNZIP are the variables for compression and decompression tools. 
-They are defaulted to tar, gzip, gunzip.
-
-SENDMAIL variable has the default value SENDMAIL=''mail''.
-
-CGAL\_TESTER variable has the default value CGAL\_TESTER=\`whoami\`.
-
-MAIL\_SUBMIT\_ADDRESS variable has the default value {\tt Sylvain.Pion@sophia.inria.fr}
-
-MAIL\_ADRESS variable has no value by default. In case that you want to set it
- in the .autocgalrc, the script will send an additional email to everyone 
-mentioned in this variable.    
-
-LOGS\_DIR variable has the default value LOGS\_DIR={\tt \$CGAL\_ROOT/AUTOTEST\_LOGS}
-
-
-\index{autotest_cgal script@{\tt autotest\_cgal} script|)}
-
-
 %\begin{itemize}
 %\item For every target two one-line messages are written to the file 
 %      {\tt error.txt}\in
@@ -272,4 +178,116 @@ LOGS\_DIR variable has the default value LOGS\_DIR={\tt \$CGAL\_ROOT/AUTOTEST\_L
 %\end{itemize}
 \index{cgal_test script@{\tt cgal\_test} script|)}
 \index{create_cgal_test script@{\tt create\_cgal\_test} script|)}
+
+\section{{\tt autotest\_cgal}}
+\label{sec:autotest_cgal}
+\index{autotest_cgal script@{\tt autotest\_cgal} script|(}
+\ccIndexSubitem{test suite}{internal release}
+
+The shell script {\tt autotest\_cgal} is used to run automated test suites for
+the internal releases of the library. The script takes no command-line
+argument, but it is configurable using a {\tt .autocgalrc} file (stored
+either in {\tt \$HOME}, or in the same directory as {\tt autotest\_cgal}).
+It is meant to be run regularly by a cron job run by the testers.
+
+This script allows you to run the testsuite on multiple hosts (remotely or
+locally) and multiple compiler-platforms. It is also possible to specify how
+many processors the host has and the script will use this information to run
+the testsuite process on several processors at the same time. By default, the
+number of processors assigned to every host is one.
+
+In a couple of words, the script first downloads a file named {\tt LATEST}
+that contains the current release file name. It compares it with the file {\tt
+RELEASE\_NR} in the {\tt \$CGAL\_ROOT} directory and if it is different it
+starts the testsuite process : it downloads the internal release, unzips,
+untars, copies the configuration files, and starts the testsuite. When
+everything is done, it puts the results on some ftp server.
+
+\paragraph{How to set up your local testing} ~
+
+The first step is to create a directory where you will store the releases. 
+This directory is known in the script as {\tt \$CGAL\_ROOT}. By default
+{\tt \$CGAL\_ROOT} is the directory where you put the script {\tt
+autotest\_cgal}, but you may change it in {\tt .autocgalrc}. 
+
+The next step is to download an internal release of your choice, say {\tt
+CGAL-3.1-I-xx}, and install it on the various platforms you want it to be
+installed using the usual procedure with the {\tt install\_cgal} script.
+This will create the configuration files in the directory {\tt
+CGAL-3.1-I-xx/config/install/}.
+
+Then, create a symbolic link to this release using {\tt ln -s CGAL-3.1-I-xx
+CGAL-I}. This link will be updated by {\tt autotest\_cgal} to point to the
+last installed release.  You may remove older releases at some point.
+
+The script uses {\tt wget} to download the release. The different options you
+may pass to {\tt wget} you should put in the {\tt \$WGET} variable in {\tt
+.autocgalrc}. By default, {\tt WGET=''wget''}. We noticed that you must use
+a recent version of {\tt wget} (1.9.1 is fine, but 1.8.2 is not). You must
+also create a file in your {\tt \$HOME} called {\tt .wgetrc} (alternatively,
+it is also possible to use another file by setting the {\tt WGETRC} variable),
+that contains the following:
+\begin{verbatim}
+$ cat ~/.wgetrc 
+--http-user=member1
+--http-passwd=xxxxxxx
+\end{verbatim}
+
+The next step is to specify the name of the hosts. To do that, you must define
+the variable {\tt \$BUILD\_HOSTS} in the file {\tt .autocgalrc}. For every
+host that you define you must also specify the compiler-platform names on that
+host.  Here is an example:
+\begin{verbatim}
+BUILD_HOSTS="papillon electra winmachine localhost"
+COMPILERS_papillon="mips_IRIX64-6.5_CC-n32-7.30_LEDA mips_IRIX-6.5_g++-fsquangle-2.95.2_LEDA"
+COMPILERS_electra="sparc_SunOS-5.6_g++-2.95.2_LEDA"
+COMPILERS_winmachine="i686_CYGWINNT-5.0-1.3.22_CL.EXE-1300"
+COMPILERS_localhost="i686_Linux-2.4.17_g++-3.4.0"
+PROCESSORS_papillon="3"
+\end{verbatim}
+You should take those names from the configuration files mentioned earlier.
+The {\tt PROCESSORS\_hostname} must be set if you have more than one 
+processor on that host and of course if you want to give all of them to the 
+testsuite. If you want to run the testsuite locally and not remotely, name the 
+host as {\tt localhost} and the script will run the testsuite locally for that
+host. 
+
+\paragraph{List of configurable variables} ~
+
+{\tt MYSHELL} is a variable that must be defined in {\tt .autocgalrc},
+otherwise the script will not run.  You can use it to pass environment
+variables along to remote hosts.  Here is an example of {\tt MYSHELL}
+variable :
+\begin{verbatim}
+MYSHELL="TERM=vt100 PATH=$PATH:/bin:/usr/local/bin:$HOME/bin/SunOS:/usr/ccs/bin:/opt/SUNWspro/bin \
+QTDIR=/usr/local/qt2 PARASOFT=/usr/local/parasoft /usr/local/bin/zsh -c\"
+\end{verbatim}
+
+{\tt CGAL\_URL} is the URL where internal releases are available.
+The {\tt LATEST} file is comming from the same location. If this will change,
+you may change either {\tt CGAL\_URL}, or {\tt LATEST\_LOCATION}
+in {\tt .autocgalrc}.
+
+{\tt TAR}, {\tt GZIP}, {\tt GUNZIP} are the variables for compression and
+decompression tools.  They are defaulted to {\tt tar}, {\tt gzip}, {\tt
+gunzip} found in {\tt \$PATH}.
+
+{\tt SENDMAIL} has the default value {\tt ''mail''}.
+
+{\tt CGAL\_TESTER} has the default value {\tt `whoami`}.
+
+{\tt MAIL\_SUBMIT\_ADDRESS} has the default value {\tt Sylvain.Pion@sophia.inria.fr}.
+
+{\tt MAIL\_ADDRESS} has no value by default. In case you want to
+set it in {\tt .autocgalrc}, the script will send an additional email to
+everyone mentioned in this variable.    
+
+{\tt LOGS\_DIR} has the default value {\tt \$CGAL\_ROOT/AUTOTEST\_LOGS}.  This
+is used to keep local log files.
+
+
+\index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
+\index{autotest_cgal script@{\tt autotest\_cgal} script|)}
+
+
 \ccIndexMainItemEnd{tools}
