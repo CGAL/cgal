@@ -1,3 +1,6 @@
+4.74      (17 January 03)
+- Added specialization for to_double(Quotient<Gmpz>)
+
 4.73      (20 December 02)
 - Move Rational_traits into Number_type_traits.h.
 - Introduce Number type tags.
