@@ -1,5 +1,4 @@
-demo
-------------
+------- demo -------------------------------------------------
 Construction of a Delaunay triangulation.
 
 Needs an input file "data" containing points (given by x y z)
@@ -10,5 +9,8 @@ Writes the triangulation into a file "output"
 
 This demo program uses "doubles". 
 For a robust version, another arithmetic should be used.
-------------
+--------------------------------------------------------------
 
+------- blind_demo -------------------------------------------
+Same, but without visualization.
+--------------------------------------------------------------

@@ -19,8 +19,6 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <CGAL/IO/Geomview_stream.h>
-
 typedef CGAL::Cartesian<double>  Rep;
 
 typedef CGAL::Triangulation_geom_traits_3<Rep> Gt;
@@ -46,87 +44,10 @@ typedef typename Triangulation::Locate_type Locate_type;
 typedef Gt::Point Point;
 //typedef CGAL::Point_3<Rep>  Point;
 
-////////////////////// 
-// VISU GEOMVIEW
-////////////////////// 
-template<class TRIANGULATION>
-void visu_cells(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Cell_iterator cit = T.finite_cells_begin();
-  Cell_iterator cdone = T.cells_end();
-  
-  if ( cit == cdone ) { cout << "debut=fin" << endl ;}
-  else {
-    while(cit != cdone) {
-      os << T.tetrahedron(&(*cit));
-    ++cit;
-    }
-  }
-}
-void visu_cell(CGAL::Geomview_stream & os, Cell_handle c)
-{
-  os << Gt::Tetrahedron(c->vertex(0)->point(),
-			   c->vertex(1)->point(),
-			   c->vertex(2)->point(),
-			   c->vertex(3)->point());
-}
-template<class TRIANGULATION>
-void visu_facets(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Facet_iterator fit = T.finite_facets_begin();
-  Facet_iterator fdone = T.facets_end();
-  
-  if ( fit == fdone ) { cout << "debut=fin" << endl ;}
-  else {
-    while(fit != fdone) {
-      os << T.triangle(*fit);
-      ++fit;
-    }
-  }
-}
-template<class TRIANGULATION>
-void visu_edges(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Edge_iterator eit = T.finite_edges_begin();
-  Edge_iterator edone = T.edges_end();
-  
-  if ( eit == edone ) { cout << "debut=fin" << endl ;}
-  else {
-    while(eit != edone) {
-      os << T.segment(*eit);
-      ++eit;
-    }
-  }
-}
-template<class TRIANGULATION>
-void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
-{
-  Vertex_iterator vit = T.finite_vertices_begin();
-  Vertex_iterator vdone = T.vertices_end();
-  
-  if ( vit == vdone ) { cout << "debut=fin" << endl ;}
-  else {
-    while(vit != vdone) {
-      os << vit->point();
-      ++vit;
-    }
-  }
-}
-
-CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
 Delaunay T;
 
 int main(int argc, char* argv[])
 {
-
-  CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-
-  gv.set_line_width(4);
-  gv.set_trace(false);
-  gv.set_bg_color(CGAL::Color(200, 200, 200));
-  gv.set_face_color(CGAL::RED);
-  gv.set_edge_color(CGAL::GREEN);
-  gv.set_vertex_color(CGAL::BLUE);
 
   ifstream iFile("data",ios::in);
   if (iFile) cout <<"                              reading file "
@@ -137,10 +58,6 @@ int main(int argc, char* argv[])
       T.insert(nouv);
     }
   }
-
-  visu_cells(gv,T);
-  visu_vertices(gv,T);
-  visu_edges(gv,T);
 
   cout << T.is_valid(true);
 

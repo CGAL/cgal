@@ -48,26 +48,14 @@ all:            \
 demo: demo.o 
 	$(CGAL_CXX) -o demo demo.o $(LDFLAGS)
 
-essai: essai.o pretty_print.o
-	$(CGAL_CXX) -o essai essai.o pretty_print.o $(LDFLAGS)
-
-essaiIv: essaiIv.o
-	$(CGAL_CXX) -o essaiIv essaiIv.o $(LDFLAGS) ${xfc_LIBS}
-
-essai_tds: essai_tds.o pretty_print.o
-	$(CGAL_CXX) -o essai_tds essai_tds.o pretty_print.o $(LDFLAGS)
+blind_demo: blind_demo.o 
+	$(CGAL_CXX) -o blind_demo blind_demo.o $(LDFLAGS)
 
 clean:
 	/bin/rm -f *.o \
                    essai \
 		   essai_tds \
                    core
-
-essai.o: ../include/CGAL/*.h pretty_print.h
-
-essai_tds.o: ../include/CGAL/*.h pretty_print.h
-
-
 
 #---------------------------------------------------------------------#
 #                    suffix rules
