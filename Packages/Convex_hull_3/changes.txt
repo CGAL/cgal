@@ -1,3 +1,6 @@
+2.14    (23 June 2001)
+- fixed doc. problem
+
 2.13    (21 June 2001)
 - fixed bugs with facet circulator 
 - removed predicates that are now in kernel traits
