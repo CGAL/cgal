@@ -6,6 +6,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+.SUFFIXES: .moc
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -36,11 +38,12 @@ LDFLAGS = \
 
 all: tutorial6$(EXE_EXT)
 
-tutorial6$(EXE_EXT): tutorial6$(OBJ_EXT)
+tutorial6$(EXE_EXT): tutorial6.moc tutorial6$(OBJ_EXT) 
 	$(CGAL_CXX)  $(EXE_OPT)tutorial6 tutorial6$(OBJ_EXT) $(LDFLAGS)
 
-clean: 
+clean:
 	rm -f tutorial6.o
+	rm -f tutorial6.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -48,3 +51,6 @@ clean:
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.C.moc:
+	$(QT_MOC) $< -o $@
