@@ -4,16 +4,14 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-#CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
-#CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_CL.EXE-1300
-CGAL_MAKEFILE = /cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+#CGAL_MAKEFILE = Enter_your_makefile_here
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -DCORE_DISABLE_MEMORY_POOL '-I../../include' $(CGAL_CXXFLAGS)
+CXXFLAGS = $(CGAL_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 # Object files
