@@ -65,9 +65,8 @@ void Qt_widget::set_scales()
 {
   if(!constranges)
     {
-      double 
-	tempmin = min(width(), height()),
-	tempmax = max(xmax-xmin, ymax-ymin);
+      double tempmin = min(width(), height());
+	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
       set_scale_center(xcentre, ycentre);
