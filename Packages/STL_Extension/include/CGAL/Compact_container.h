@@ -516,7 +516,7 @@ namespace CGALi {
     typedef typename DSC::difference_type             difference_type;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    CC_iterator() : p() {}
+    CC_iterator() : p(NULL) {}   // VC7.0 needs the initialisation with NULL 
 
     // Either a harmless copy-ctor,
     // or a conversion from iterator to const_iterator.
