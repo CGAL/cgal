@@ -577,7 +577,6 @@ FirstPass()
       if ( m_traits->curve_get_point_status((*next)->getCurve(), p) ==
 	   Traits::ON_CURVE && !(*next)->isEndPoint(p))
       {
-	std::cout << "here\n";
 	m_currentPos = m_sweepLinePos;
 	m_currentEvent->addCurveToRight(*next);
 	m_currentPos = m_prevPos;
@@ -730,7 +729,7 @@ HandleLeftCurves_for_points(const Point_2 &p, bool includeEndPoints,
     m_statusLine->erase(sliter);
     ++leftCurveIter;
   }
-  std::cout << "isendpoint = " << (isEndPoint ? "true" : "false") << "\n";
+
   if ( includeEndPoints || !isEndPoint )
     *out = p; ++out;
 
