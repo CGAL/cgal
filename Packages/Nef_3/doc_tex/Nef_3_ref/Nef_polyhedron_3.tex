@@ -234,14 +234,13 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}{}
 {return the symmetric difference of \ccVar\ and N1.}
 
-\ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{}
-\ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{}
-\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{}
-\ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{}
+\ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{intersects \ccVar\ and N1.}
+\ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{unites \ccVar\ with N1.}
+\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{subtracts N1 from \ccVar\.}
+\ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{performs a symmetric intersection of \ccVar\ and N1.}
 
 \ccMethod{Object_handle locate(const Point_3& p) const;}
-{returns a generic handle to the object (vertex, edge, facet or volume) that
-  contains the point p in its relative interior.}
+{returns a generic handle to the object (vertex, edge, facet or volume) which contains the point p in its relative interior.}
 %\ccMethod{bool contains(Object_handle h) const;}{}
 %\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
 
@@ -249,33 +248,33 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 {make \ccVar\ the empty set if \ccc{space == EMPTY} and
  the complete 3D space if \ccc{space == COMPLETE}.}
 
-\ccMethod{void transform(const Aff_transformation_3& aff);}{}
+\ccMethod{void transform(const Aff_transformation_3& aff);}{applies an affine transformation to \ccVar\.}
 
-\ccMethod{void dump() const;}{}
-\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{}
-\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{}
+%\ccMethod{void dump() const;}{}
+\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{converts \ccVar\ into a Polyhedron. \emph{Precondition: \ccVar\.is_simple()}.}
+\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{returns the neighborhood of a Vertex modeled by a Nef_polyhedron_S2.}
 
-\ccMethod{Mark mark(Vertex_const_handle v) const;}{}
-\ccMethod{Mark mark(Halfedge_const_handle e) const;}{}
-\ccMethod{Mark mark(Halffacet_const_handle f) const;}{}
-\ccMethod{Mark mark(Volume_const_handle c) const;}{}
+\ccMethod{Mark mark(Vertex_const_handle v) const;}{returns the mark of v.}
+\ccMethod{Mark mark(Halfedge_const_handle e) const;}{returns the mark of e.}
+\ccMethod{Mark mark(Halffacet_const_handle f) const;}{returns the mark of f.}
+\ccMethod{Mark mark(Volume_const_handle c) const;}{returns the mark of c.}
 
-\ccMethod{Vertex_const_iterator   vertices_begin() const;}{} 
-\ccMethod{Vertex_const_iterator   vertices_end()   const;}{}
-\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{}
-\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{}
-\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{}
-\ccMethod{Halffacet_const_iterator halffacets_end() const;}{}
-\ccMethod{Volume_const_iterator   volumes_begin() const;}{}
-\ccMethod{Volume_const_iterator   volumes_end()   const;}{}
+\ccMethod{Vertex_const_iterator   vertices_begin() const;}{iterator over all vertices.}
+\ccMethod{Vertex_const_iterator   vertices_end()   const;}{past-the-end iterator.}
+\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{iterator over all halfedges.}
+\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{past-the-end iterator.}
+\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{iterator over all halffacets.}
+\ccMethod{Halffacet_const_iterator halffacets_end() const;}{past-the-end iterator.}
+\ccMethod{Volume_const_iterator   volumes_begin() const;}{iterator over all volumes.}
+\ccMethod{Volume_const_iterator   volumes_end()   const;}{past-the-end iterator.}
 \ccMethod{Shell_entry_const_iterator shells_begin(Volume_const_handle c) const;}{}
-\ccMethod{Shell_entry_const_iterator shells_end(Volume_const_handle c) const;}{}
+\ccMethod{Shell_entry_const_iterator shells_end(Volume_const_handle c) const;}{past-the-end iterator.}
 
-\ccMethod{Vertex_const_handle vertex(Halfedge_const_handle e) const;}{}
-\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e) const;}{}
-\ccMethod{Vertex_const_handle source(Halfedge_const_hnalde e) const;}{}
-\ccMethod{Vertex_const_handle target(Halfedge_const_handle e) const;}{}
-\ccMethod{SFace_const_handle sface(Halfedge_const_handle e) const;}{}
+\ccMethod{Vertex_const_handle vertex(Halfedge_const_handle e) const;}{returns the source vertex of e.}
+\ccMethod{Vertex_const_handle source(Halfedge_const_hnalde e) const;}{returns the source vertex of e.}
+\ccMethod{Vertex_const_handle target(Halfedge_const_handle e) const;}{returns source(twin(e)).}
+\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e) const;}{returns the twin of e.}
+\ccMethod{SFace_const_handle sface(Halfedge_const_handle e) const;}{returns the incident sface of e.}
 
 \ccMethod{Vertex_const_handle vertex(SHalfedge_const_handle e) const;}{}
 \ccMethod{SHalfedge_const_handle twin(SHalfedge_const_handle e) const;}{}
@@ -296,22 +295,23 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccMethod{Vertex_const_handle vertex(SFace_const_handle f) const;}{}
 \ccMethod{Volume_const_handle volume(SFace_const_handle f) const;}{}
 
-\ccMethod{Halffacet_const_handle twin(Halffacet_const_handle f) const;}{}
-\ccMethod{Volume_const_handle volume(Halffacet_const_handle f) const;}{}
+\ccMethod{Halffacet_const_handle twin(Halffacet_const_handle f) const;}{returns the twin of f.}
+\ccMethod{Volume_const_handle volume(Halffacet_const_handle f) const;}{returns the incident volume of f.}
 \ccMethod{SFace_const_handle adjacent_sface(Halffacet_const_handle f) const;}{}
 
-\ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}{}
+\ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}
+{calls the visit function of V for every item which belongs to the same shell as sf.}
 
-\ccMethod{const Point_3& point(Vertex_const_handle v) const;}{}
-\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{}
-\ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{}
-\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{}
+\ccMethod{const Point_3& point(Vertex_const_handle v) const;}{returns the location of v.}
+\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{returns Segment_3(point(source(e)),point(target(e))).}
+\ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{returns the direction of e.}
+\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{returns the supporting plane of f.}
 
-\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
-\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
-\ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
-\ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
-\ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
+%\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
+%\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
+%\ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
+%\ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
+%\ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
 
 \end{ccRefClass}
 

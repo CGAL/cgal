@@ -16,21 +16,25 @@
 
 \ccDefinition
 
-This operator writes the Nef polyhedron $N$ to the output stream \ccc{out} using
-a propriatary file format. The output is in ASCII format. It includes the complete
-incidence structure, the geometric data, and the marks of each item.
+This operator writes The Nef polyhedron \emph{N} to the output stream \ccc{out} 
+using a propriatary file format. It includes the 
+complete incidence structure, the geometric data, and the marks of each item.
 
-If the output is stored in a file, the Nef polyhedron can be restored from 
-that file using the input operator. For this purpose, a standard output mode 
-has to be chosen. Therefore, use the \cgal \ccc{set_ascii_mode} modifier and 
-do not use the \ccc{set_pretty_mode} modifier.
+Using \cgal stream modifiers the following output formats can be chosen: 
+ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
+pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format. It 
+is recommended to use this format for file input and output.
 
-The output of the geometric data depends on the used kernel, i.e. the ASCII 
-output of vertex coordinates depends on the output operator of the $Point$ 
-type. Finite Nef polyhedron can be represented with a normal as well as with an
-extended kernel. Therefore, the output operator checks for finiteness. If the 
-Nef polyhedron is finite but an extended kernel is used, the operator converts 
-the geometric data and writes the data as if a normal kernel is used.
+As the output depends on the output operators of the geometric primitives 
+provided by the traits class, it might not be possible that the input operator
+and output operators of different traits classes are not compatible. We recommend
+to use the \cgal kernels Homogeneous, Simple_homogeneous, or Extended_homogeneous
+parametrized with any exact number type that models mathbb{Z}.
+
+A bounded \ccc{Nef_polyhedron_3<Extended_homogeneous>} is automatically written
+as though \ccc{Nef_polyhedron_3<CGAL::Homogeneous>} or 
+\ccc{Nef_polyhedron_3<CGAL::Simple_homogeneous>} is used. As a result, the input
+operator of each of these types can read the output.
 
 \ccInclude{CGAL/IO/Nef_polyhedron_iostream.h}
 
