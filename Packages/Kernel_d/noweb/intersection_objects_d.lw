@@ -1,5 +1,6 @@
 \documentclass[a4paper,11pt,twoside]{article}
 \usepackage{Lweb}
+\input{defs}
 
 \begin{document}
 
@@ -11,34 +12,27 @@ Here we implement a $d$-dimensional intersection routine for two
 non-parallel lines. We do the intersection and node calculation by the
 help of some matrix calculation. We know that a common point $x$ of
 two lines $s_1t_1$ and $s_2t_2$ through two $d$-dimensional points
-obey the equations:
-
+obeys the equations:
 \begin{eqnarray}
 x_1 & = & s_1 + \lambda_1 (t_1 - s_1) \\
 x_2 & = & s_2 + \lambda_2 (t_2 - s_2) 
 \end{eqnarray}
-
-If we put this together $x_1 = x_2$ and rearrange with variables
-$\lambda_1$ and $\lambda_2$ we get the $d \times 2$ cartesian matrix
-system
-
+Assume $x_1 = x_2$ and rearrange with variables $\lambda_1$ and
+$\lambda_2$. Then we get the $d \times 2$ cartesian matrix system
 \begin{displaymath}
-\left( \begin{array}{cc}
+\begin{bmatrix}
 t_{1_0} - s_{1_0} & s_{2_0} - t_{2_0} \\
 \vdots & \vdots \\
 t_{1_{d-1}} - s_{1_{d-1}} & s_{2_{d-1}} - t_{2_{d-1}} 
-       \end{array} \right)
+\end{bmatrix}
 * 
-\left( \begin{array}{c}
-\lambda_1 \\
-\lambda_2
-       \end{array} \right)
+\begin{bmatrix} \lambda_1 \\ \lambda_2 \end{bmatrix}
 =
-\left( \begin{array}{c}
+\begin{bmatrix}
   s_{2_0} - s_{1_0} \\
   \vdots \\
   s_{2_{d-1}} - s_{1_{d-1}} 
-       \end{array} \right)
+\end{bmatrix}
 \end{displaymath}
 The code below puts this linear system into a matrix after
 multiplication of each row with its common denominator $s_{1_d}
@@ -111,41 +105,11 @@ is degenerate.}*/
 
 @ Now we implement the cartesian $d$-dimensional intersection routine
 for two non-parallel lines. We do the intersection and node
-calculation by the help of some matrix calculation. We know that a
-common point $x$ of two lines $s_1t_1$ and $s_2t_2$ through two
-$d$-dimensional points obey the equations:
-
-\begin{eqnarray}
-x_1 & = & s_1 + \lambda_1 (t_1 - s_1) \\
-x_2 & = & s_2 + \lambda_2 (t_2 - s_2) 
-\end{eqnarray}
-
-If we put this together $x_1 = x_2$ and rearrange with variables
-$\lambda_1$ and $\lambda_2$ we get the $d \times 2$ cartesian matrix
-system
-
-\begin{displaymath}
-\left( \begin{array}{cc}
-t_{1_0} - s_{1_0} & s_{2_0} - t_{2_0} \\
-\vdots & \vdots \\
-t_{1_{d-1}} - s_{1_{d-1}} & s_{2_{d-1}} - t_{2_{d-1}} 
-       \end{array} \right)
-* 
-\left( \begin{array}{c}
-\lambda_1 \\
-\lambda_2
-       \end{array} \right)
-=
-\left( \begin{array}{c}
-  s_{2_0} - s_{1_0} \\
-  \vdots \\
-  s_{2_{d-1}} - s_{1_{d-1}} 
-       \end{array} \right)
-\end{displaymath}
-The code below puts this linear system into a matrix. Afterwards we
-solve the system. If we get a solution we calculate the intersection
-point $x$ and deliver additionally $\lambda_1$ and $\lambda_2$ for
-outside use.
+calculation by the help of some matrix calculation.  The code below
+puts this linear system from above directly into a matrix. Afterwards
+we solve the system. If we get a solution we calculate the
+intersection point $x$ and deliver additionally $\lambda_1$ and
+$\lambda_2$ for outside use.
 
 Note the possible exceptions here. Each of the direction vectors of
 the lines can be the zero vectors in case that its spanning points 
