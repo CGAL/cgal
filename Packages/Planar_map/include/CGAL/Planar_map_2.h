@@ -39,6 +39,7 @@
 #endif
 
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
+
 #ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
 #include <CGAL/Pm_default_point_location.h>
 #endif
@@ -50,22 +51,33 @@
 #ifndef CGAL_PM_NAIVE_POINT_LOCATION_H
 #include <CGAL/Pm_naive_point_location.h>
 #endif
-#else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
+//#else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 #ifndef CGAL_PM_POINT_LOCATION_BASE_H
 #include <CGAL/Pm_point_location_base.h>
 #endif
 #endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
+// for solving the dynamic cast in the copy constructor, these lines will be removed after writing 
+//copy construtor for point location.
+#ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
+#include <CGAL/Pm_walk_along_line_point_location.h>
+#endif
+
+#ifndef CGAL_PM_NAIVE_POINT_LOCATION_H
+#include <CGAL/Pm_naive_point_location.h>
+#endif
+// end.
 
 /*#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-#ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
-#include <CGAL/Pm_default_point_location.h>
-#endif
-#else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
-#ifndef CGAL_PM_POINT_LOCATION_BASE_H
-#include <CGAL/Pm_point_location_base.h>
-#endif
-#endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION*/
+  #ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
+  #include <CGAL/Pm_default_point_location.h>
+  #endif
+  #else // CGAL_NO_PM_DEFAULT_POINT_LOCATION
+  #ifndef CGAL_PM_POINT_LOCATION_BASE_H
+  #include <CGAL/Pm_point_location_base.h>
+#endif*/
+
+//#endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
 // default bounding box for finite curves
 #ifndef CGAL_PM_UNBOUNDING_BOX_H
@@ -262,12 +274,14 @@ public:
   Planar_map_2(const Self& pm){
     // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
     //                                pm.get_point_bbox());
-    
+
+    typedef         Pm_naive_point_location<Planar_map_2<Dcel,Traits> >  Pm_naive;
+    typedef         Pm_naive*                                            Pm_naive_pointer;
+
     traits = new Traits_wrap();
     use_delete_traits = true;
 
-    if (Pm_naive_point_location<Self>* tmp_pl = 
-	dynamic_cast<Pm_naive_point_location<Self>*>(pm.pl) ){
+    if (Pm_naive_pointer tmp_pl = dynamic_cast<Pm_naive_pointer>(pm.pl) ){
       //cout<<"Naive"<<std::endl;
       pl = new Pm_naive_point_location<Self>;
     }
