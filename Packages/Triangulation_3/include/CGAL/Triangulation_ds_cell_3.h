@@ -19,18 +19,15 @@
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
-//
+
 // cell of a combinatorial triangulation of any dimension <=3
 // use to store vertices if dimension <=0, edges if dimension 1,
 // faces if dimension 2, plain cells if dimension 3
-//
-// ============================================================================
 
 #ifndef CGAL_TRIANGULATION_DS_CELL_3_H
 #define CGAL_TRIANGULATION_DS_CELL_3_H
 
 #include <CGAL/Triangulation_utils_3.h>
-
 #include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -55,18 +52,16 @@ class Triangulation_ds_cell_3
   : public Cb,
     public Triangulation_utils_3
 {
-
   friend class Triangulation_data_structure_3<Vb,Cb>;
 
   friend class Triangulation_ds_cell_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
+               <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_facet_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
+               <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_edge_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
+               <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_vertex_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-  
+               <Triangulation_data_structure_3<Vb,Cb> >;
 
 public:
 
@@ -79,12 +74,10 @@ public:
   // used only for initializing _list_of_cells by the constructors of
   // Triangulation_data_structure_3
   // private ?
-  inline
   Triangulation_ds_cell_3()
     : Cb(), _previous_cell(this), _next_cell(this)
   {}
 
-//   inline
 //   Triangulation_ds_cell_3(Tds & tds)
 //     : Cb()
 //     // builds a new cell of Triangulation_data_structure_3 and
@@ -94,18 +87,18 @@ public:
   Triangulation_ds_cell_3(Cell* c)
     : Cb(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3),
 	 c->neighbor(0),c->neighbor(1),c->neighbor(2),c->neighbor(3))
-  { }
+  {}
     
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3)
     :  Cb(v0,v1,v2,v3)
-  { }
+  {}
 
   Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
     :  Cb(v0,v1,v2,v3,n0,n1,n2,n3)
-  {  }
+  {}
 
   // not documented
   // only used by copy_tds in the TDS class
@@ -123,34 +116,25 @@ public:
     {
       _previous_cell->_next_cell = _next_cell;
       _next_cell->_previous_cell = _previous_cell;
-      // automatically calls the destructor of the cell base ?
     }
 
   // SETTING
 
-  inline 
   void set_vertex(int i, Vertex* v)
   {
     Cb::set_vertex(i,v);
   }
     
-  inline 
-   void set_neighbor(int i, Cell* n)
+  void set_neighbor(int i, Cell* n)
   {
     Cb::set_neighbor(i,n);
   }
 
-  //  void set_vertices() inherited
-      
-  inline 
   void set_vertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
   {
     Cb::set_vertices(v0,v1,v2,v3);
   }
     
-  //   void set_neighbors() inherited
-     
-  inline
   void set_neighbors(Cell* n0, Cell* n1, Cell* n2, Cell* n3)
   {
     Cb::set_neighbors(n0,n1,n2,n3);
@@ -158,75 +142,62 @@ public:
 
   // VERTEX ACCESS
 
-  inline
   Vertex* vertex(int i) const
   {
-    return( (Vertex*) (Cb::vertex(i)));
+    return (Vertex*) (Cb::vertex(i));
   } 
 
-  inline 
   bool has_vertex(const Vertex* v) const
   {
-    return (Cb::has_vertex(v));
+    return Cb::has_vertex(v);
   }
     
-  inline 
   bool has_vertex(const Vertex* v, int & i) const
   {
-    return (Cb::has_vertex(v,i));
+    return Cb::has_vertex(v,i);
   }
     
-  inline 
   int index(const Vertex* v) const
   {
-    return(Cb::vertex_index(v));
+    return Cb::vertex_index(v);
   }
 
   // NEIGHBOR ACCESS
 
-  inline 
   Cell* neighbor(int i) const
   {
-    return ((Cell*) Cb::neighbor(i));
+    return (Cell*) Cb::neighbor(i);
   }
     
-  inline 
   bool has_neighbor(const Cell* n) const
   {
-    return (Cb::has_neighbor(n));
+    return Cb::has_neighbor(n);
   }
     
-  inline 
   bool has_neighbor(const Cell* n, int & i) const
   {
-    return (Cb::has_neighbor(n,i));
+    return Cb::has_neighbor(n,i);
   }
     
-  inline 
   int index(const Cell* n) const
   {
-    return(Cb::cell_index(n));
+    return Cb::cell_index(n);
   }
-    
-  inline
-  Vertex* mirror_vertex(int i) const
-    {
-      CGAL_triangulation_precondition ( (i>=0) && (i<4) );
-      CGAL_triangulation_precondition ( is_valid() && 
-					neighbor(i).is_valid() );
-      return neighbor(i)->vertex(neighbor(i)->index(this));
-    }
 
-  inline 
   int mirror_index(int i) const
-    {
+  {
       CGAL_triangulation_precondition ( (i>=0) && (i<4) );
       CGAL_triangulation_precondition ( is_valid() && 
 					neighbor(i).is_valid() );
       return neighbor(i)->index(this);
-    }
+  }
       
   // CHECKING
+    
+  Vertex* mirror_vertex(int i) const
+  {
+      return neighbor(i)->vertex(mirror_index(i));
+  }
 
   bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
 
@@ -236,7 +207,6 @@ private:
   Cell* _previous_cell;
   Cell* _next_cell;
   
-//   inline
 //   void add_list(Tds & tds)
 //   {
 //     this->_next_cell = tds.list_of_cells()._next_cell;
@@ -254,20 +224,17 @@ private:
   {
     std::cerr << "neighbor of c has not c as neighbor" << std::endl;
   }
-
 };
 
 template <class Vb, class Cb >
 bool
 Triangulation_ds_cell_3<Vb,Cb>::is_valid
 (int dim, bool verbose, int level) const
-  {
+{
     if ( ! Cb::is_valid(verbose,level) ) return false;
 
     switch (dim) {
-      
     case -2:
-
     case -1:
     {
       if ( vertex(0) == NULL ) {
@@ -286,7 +253,7 @@ Triangulation_ds_cell_3<Vb,Cb>::is_valid
 	CGAL_triangulation_assertion(false); return false;
       }
       break;
-      }
+    }
 
     case 0:
       {
@@ -536,7 +503,7 @@ Triangulation_ds_cell_3<Vb,Cb>::is_valid
       }// end case dim 3
     } // end switch
     return true;
-  } // end is_valid
+} // end is_valid
 
 CGAL_END_NAMESPACE
 
