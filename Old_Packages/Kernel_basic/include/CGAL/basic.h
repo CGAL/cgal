@@ -59,6 +59,9 @@
 #    endif // __LEDA__ < 380
 #    define CGAL_PROTECT_LEDA_BASIC_H
 #  endif // CGAL_PROTECT_LEDA_BASIC_H
+#else
+   // set flag for libCGALWin
+#  define CGAL_USE_CGAL_WINDOW
 #endif  // CGAL_USE_LEDA
 
 // CGAL uses std::min and std::max
