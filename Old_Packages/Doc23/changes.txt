@@ -1,3 +1,6 @@
+2.34    (24 July 2001)
+- Remove merge bug.
+
 2.33    (24 July 2001)
 - renamed kernel concepts to follow new capitalization sheme (words
   separated by capital letters instead of underscores)
