@@ -1,3 +1,6 @@
+Version 4.124 on 23 November 2001
+- std:: missing for abort (CodeWarrior).
+
 Version 4.123 on 10 October 2001
 - Forgot class declaration.
 

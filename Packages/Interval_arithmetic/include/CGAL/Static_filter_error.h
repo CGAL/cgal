@@ -85,7 +85,8 @@ struct Static_filter_error
 
   Sfe operator- (const Sfe &f) const { return *this + f; }
   Sfe operator- ()             const { return *this; }
-  // Sfe operator/ (const Sfe &) const { abort(); } // Division not supported.
+  // Sfe operator/ (const Sfe &) const { std::abort(); }
+  // Division not supported.
 
   Sfe& operator+=(const Sfe &f) { return *this = *this + f; }
   Sfe& operator-=(const Sfe &f) { return *this = *this - f; }
@@ -100,7 +101,7 @@ struct Static_filter_error
   {
       Sfe e = *this + f;
       std::cerr << "Static error is : " << e.error() << std::endl;
-      abort();
+      std::abort();
       return false;
   }
   bool operator> (const Sfe &f) const { return *this < f; }
