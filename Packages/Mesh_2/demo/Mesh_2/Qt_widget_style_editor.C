@@ -1,3 +1,5 @@
+#ifdef CGAL_USE_QT
+
 #include "Qt_widget_style_editor.h"
 
 #include <qcolor.h>
@@ -220,3 +222,5 @@ void Qt_widget_style_editor::map(bool b)
 
 // moc_source_file: Qt_widget_style_editor.C
 #include "Qt_widget_style_editor.C.moc"
+
+#endif // CGAL_USE_QT
