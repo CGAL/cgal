@@ -1,3 +1,6 @@
+4.13 (6 April 2003) [sp]
++ Another couple of 'this->' and other missing 'std::' for g++ 3.4.
+
 4.12 (4 April 2003) [gjg]
 + Added a few times 'this->' to keep newer compilers happy.
 
