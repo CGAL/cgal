@@ -370,47 +370,6 @@ public:
     // -- changes the dimension
     // -- if (reorient) the orientation of the cells is modified
 
-  // This one takes a function object to recursively determine the cells in
-  // conflict, then inserts by starring.
-  // Maybe we need _2 and _3 versions ?
-  template < class Conflict_test >
-  Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
-  {
-    CGAL_triangulation_precondition( tester(c) );
-
-    if ( w == NULL ) 
-      w = new Vertex();
-
-    if (dimension() == 3)
-    {
-      // Find the cells in conflict.
-      Cell *ccc;
-      int i;
-      find_conflicts_3(c, ccc, i, tester);
-
-      // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_3( w, ccc, i );
-      w->set_cell( nouv );
-
-      move_temporary_free_cells_to_free_list();
-    }
-    else // dim == 2
-    {
-      // Find the cells in conflict.
-      Cell *ccc;
-      int i;
-      find_conflicts_2(c, ccc, i, tester);
-
-      // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_2( w, ccc, i );
-      w->set_cell( nouv );
-
-      move_temporary_free_cells_to_free_list();
-    }
-
-    return w;
-  }
-
 private:
   // The two find_conflicts_[23] below could probably be merged ?
   // The only difference between them is the test "j<3" instead of "j<4"...
@@ -470,6 +429,47 @@ private:
   Cell * create_star2_2(Vertex* v, Cell* c, int li );
 
 public:
+
+  // This one takes a function object to recursively determine the cells in
+  // conflict, then inserts by starring.
+  // Maybe we need _2 and _3 versions ?
+  template < class Conflict_test >
+  Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
+  {
+    CGAL_triangulation_precondition( tester(c) );
+
+    if ( w == NULL ) 
+      w = new Vertex();
+
+    if (dimension() == 3)
+    {
+      // Find the cells in conflict.
+      Cell *ccc;
+      int i;
+      find_conflicts_3(c, ccc, i, tester);
+
+      // Create the new cells, and returns one of them.
+      Cell * nouv = create_star2_3( w, ccc, i );
+      w->set_cell( nouv );
+
+      move_temporary_free_cells_to_free_list();
+    }
+    else // dim == 2
+    {
+      // Find the cells in conflict.
+      Cell *ccc;
+      int i;
+      find_conflicts_2(c, ccc, i, tester);
+
+      // Create the new cells, and returns one of them.
+      Cell * nouv = create_star2_2( w, ccc, i );
+      w->set_cell( nouv );
+
+      move_temporary_free_cells_to_free_list();
+    }
+
+    return w;
+  }
 
   // ITERATOR METHODS
 

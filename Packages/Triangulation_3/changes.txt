@@ -3,6 +3,7 @@ Version 1.56 (?? May 01)
 - Use MP_Float.
 - Hierarchy traits now uses Compare_distance_3.
 - One more VC++ for()-scope workaround.
+- Change function order to try to fix BCC.
 
 Version 1.55 (29 May 01)
 - warning bcc fixed (unused variable)
