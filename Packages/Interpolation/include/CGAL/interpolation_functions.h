@@ -30,12 +30,12 @@ template< class Map >
 struct Data_access : public std::unary_function< typename Map::key_type,
 		     std::pair< typename Map::mapped_type, bool> > {
   typedef typename Map::mapped_type Data_type;
-  typedef typename Map::key_type  Point;
+  typedef typename Map::key_type  Key_type;
   
   Data_access< Map >(const Map& m): map(m){};
   
   std::pair< Data_type, bool> 
-  operator()(const Point& p) { 
+  operator()(const Key_type& p) { 
     typename Map::const_iterator mit = map.find(p);
     if(mit!= map.end())
       return std::make_pair(mit->second, true);

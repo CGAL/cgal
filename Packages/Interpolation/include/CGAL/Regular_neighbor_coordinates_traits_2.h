@@ -33,16 +33,10 @@ class Regular_neighbor_coordinates_traits_2
 public:
   typedef R                                     Rep;
   typedef typename R::FT                        FT;
-
   typedef typename Rep::Compute_area_2          Compute_area_2;
-  typedef typename Rep::Construct_triangle_2    Construct_triangle_2;
-
+ 
   Compute_area_2 compute_area_2_object() const
     {return Compute_area_2();}
-  
-  Construct_triangle_2 construct_triangle_2_object() const
-    {return Construct_triangle_2();}
-
 };
  
 CGAL_END_NAMESPACE

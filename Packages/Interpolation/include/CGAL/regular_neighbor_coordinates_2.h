@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template <class Rt, class OutputIterator>
-std::pair< OutputIterator, typename Rt::Geom_traits::Rep::FT > 
+std::pair< OutputIterator, typename Rt::Geom_traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
 			       const typename Rt::Geom_traits::
 			       Weighted_point& p, 
@@ -38,7 +38,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 };
   
 template <class Rt, class OutputIterator, class Traits>
-std::pair< OutputIterator, typename Rt::Geom_traits::Rep::FT > 
+std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
 			       const typename Rt::Geom_traits::
 			       Weighted_point& p, 
@@ -51,13 +51,13 @@ regular_neighbor_coordinates_2(const Rt& rt,
 };
 
 template <class Rt, class OutputIterator, class Traits>
-std::pair< OutputIterator, typename Traits::Rep::FT > 
+std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt,
 			     const typename Traits::Weighted_point& p, 
 			     OutputIterator out, const Traits& traits, 
 		 	     typename Rt::Face_handle start){
   
-  typedef typename Traits::Rep::FT            Coord_type;
+  typedef typename Traits::FT            Coord_type;
   typedef typename Traits::Weighted_point  Weighted_point;
   
   typedef typename Rt::Vertex_handle     Vertex_handle;
@@ -104,7 +104,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
 template <class Rt, class OutputIterator, class Traits, class
 EdgeIterator, class VertexIterator  >
-std::pair< OutputIterator, typename Traits::Rep::FT > 
+std::pair< OutputIterator, typename Traits::FT > 
 regular_neighbor_coordinates_2(const Rt& rt, 
 			       const typename Traits::Weighted_point& p, 
 			       OutputIterator out, EdgeIterator
@@ -117,14 +117,13 @@ regular_neighbor_coordinates_2(const Rt& rt,
   //               (=^ inside convex hull of neighbors)
   CGAL_precondition(rt.dimension()==2);
 
-  typedef typename Traits::Rep::FT         Coord_type;
+  typedef typename Traits::FT         Coord_type;
   typedef typename Traits::Bare_point      Bare_point;
   typedef typename Traits::Weighted_point  Weighted_point;
   
   typedef typename Rt::Vertex_handle     Vertex_handle;
   typedef typename Rt::Face_circulator   Face_circulator;
   
-
   //no hole because only (exactly!) one vertex is hidden:
   if(hole_begin==hole_end){
     *out++= std::make_pair((*hidden_vertices_begin)->point(),
