@@ -28,7 +28,7 @@ equality, coordinate comparison, orientation in space, orientation
 in case of coplanar points, and collinearity tests.
 
 \ccTypes
-\ccThree{Triangulation_traits_3::Tetrahedron}{tds.set_number_of_vertices()}{}
+\ccTwo{Triangulation_traits_3::Tetrahedron}{}
 
 \ccNestedType{Point}
 {The type must provide a copy constructor and assignment operator.}
@@ -55,6 +55,8 @@ Only a default constructor is required.
 {A default constructor.}
 
 \ccOperations
+
+\ccThree{Comparison_result}{traits.orientation_in_plane( Point q, Point r, Point s, Point test)}{} 
 
 \ccHeading{Predicates}
 \ccMethod{bool equal(const Point & p, const Point & q) const;}

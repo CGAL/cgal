@@ -28,7 +28,8 @@ maximal dimension.
 \ccc{Tds_3::Vertex}
 
 \ccTypes
-\ccThree{typedef triple <Cell*, int, int>}{Facettoto}{}
+\ccThree{typedef Triangulation_traits_3::Pointxx}{Pointxx}{}
+\ccThreeToTwo
 The class \ccClassTemplateName\ defines the following types, also
 defined in the class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}:
 
@@ -38,7 +39,6 @@ defined in the class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}:
 \ccGlue
 \ccNestedType{Cell_handle}{handle to a cell}
 
-\ccCreation
 \ccCreationVariable{v}  %% choose variable name
 
 \begin{ccAdvanced}
@@ -108,9 +108,6 @@ of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 \ccSeeAlso
 
 \ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Cell}.
-
-\ccExample
-
 
 \end{ccRefClass}
 

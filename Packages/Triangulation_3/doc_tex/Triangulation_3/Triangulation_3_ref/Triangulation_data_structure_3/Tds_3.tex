@@ -57,8 +57,8 @@ data structure class. (See Chapter~\ref{chapter-TDS3}.)
 
 To ensure all the \textbf{flexibility} of class \ccc{Triangulation_3}
 described in 
-\ccRefPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>}
-and in Chapter~\ref{chapter-Triangulation3}, a model of a
+\lcTex{ \ccRefPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>}
+and in } Chapter~\ref{chapter-Triangulation3}, a model of a
 triangulation data structure must be templated by the base vertex and
 the base cell classes (see~\ref{TDS3-sec-intro}):
 \ccc{Tds_3<Triangulation_vb_3,Triangulation_cb_3>}.
@@ -75,11 +75,13 @@ operations.
 \ccThree{typedef triple <Cell*, int, int>}{Facet }{}
 \ccThreeToTwo
 
-\ccNestedType{Vertex }{Vertex}
+\ccNestedType{Vertex }{}
 \ccGlue
 \ccNestedType{Cell}{Cell type}
+\lcTex{
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
 \ccRefPage{Tds_3::Vertex} and \ccRefPage{Tds_3::Cell}.
+}
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and

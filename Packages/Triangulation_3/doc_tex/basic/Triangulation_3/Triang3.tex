@@ -164,7 +164,8 @@ sufficient for practical cases.
 \section{Software Design}
 \label{Triangulation3-sec-design}
 
-The class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is designed to be used as 
+The class \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is
+designed to be used as  
 a layer upon a 3D-triangulation data structure as presented in 
 Section~\ref{TDS3-sec-design} of Chapter~\ref{chapter-TDS3}.
 It provides high level geometric operations such as location of a point
@@ -174,11 +175,13 @@ the geometric validity. This class is parameterized by two classes:
 \item {} the \textbf{geometric traits} class, where the user can
 specify the type of points to use as well as the elementary
 operations on them (predicates,\ldots). The concept of such a class is
-introduced in Section~\ref{Triangulation3-sec-Traits} and described in 
-\ccRefPage{Triangulation_traits_3} and a
+introduced in Section~\ref{Triangulation3-sec-Traits}\lcTex{ and described in 
+\ccRefPage{Triangulation_traits_3}} and a
 model is provided by \cgal\
-(see \ccRefPage{CGAL::Triangulation_geom_traits_3<R>} and 
-\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}).
+(see \ccc{CGAL::Triangulation_geom_traits_3<R>}\lcTex{
+(\ccRefPage{CGAL::Triangulation_geom_traits_3<R>})} and  
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
+(\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
 \item {} the \textbf{triangulation data structure} class of the middle level, 
 described in Chapter~\ref{chapter-TDS3}.
 \end{itemize}	
@@ -194,8 +197,8 @@ Delaunay triangulations are not yet implemented.)}
 \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} derives from
 \ccc{Triangulation_utils_3<Triangulation_traits_3,Tds_3>}, 
 which defines a set of tools
-working on the indices of vertices in cells 
-(\ccRefPage{CGAL::Triangulation_utils_3}). 
+working on the indices of vertices in cells\lcTex{ 
+(\ccRefPage{CGAL::Triangulation_utils_3})}. 
 
 \subsection{Basic Triangulation}
 
@@ -203,9 +206,13 @@ working on the indices of vertices in cells
 \textit{geometric traits class} as its first template argument and a model 
 of a \textit{triangulation data structure} as its second argument. The
 requirements and defaults for these classes are described in
-\ccRefPage{Triangulation_traits_3},
-\ccRefPage{CGAL::Triangulation_geom_traits_3<R>} and
-\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}.
+the reference pages for Triangulation\_traits\_3\lcTex{ (
+\ccRefPage{Triangulation_traits_3})},
+\ccc{CGAL::Triangulation_geom_traits_3<R>}\lcTex{
+(\ccRefPage{CGAL::Triangulation_geom_traits_3<R>})} and
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\lcTex{
+(\ccRefPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>})}.
+
 
 %\subsection{The Vertex of a Triangulation} 
 %\label{Triangulation3-sec-class-Vertex}
@@ -387,10 +394,10 @@ by \cgal, a class must provide definitions for the \textit{power tests}.
 geometric objects and predicates.
 This class is templated with a representation class.
 
-The traits class \ccClassTemplateName\ is designed to deal with \cgal\ three
-dimensional points. It supplies the user with all
-the functionalities described in
-\ccRefPage{Triangulation_traits_3}.
+The traits class \ccClassTemplateName\ is designed to deal with \cgal\ 
+three-dimensional points. It supplies the user with all
+the functionalities described for the concept
+Triangulation\_traits\_3\lcTex{ (\ccRefPage{Triangulation_traits_3})}.
 So, it can be used as a default traits
 class for \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>},
 \ccc{Delaunay_triangulation_3<Triangulation_traits_3,Tds_3>} and
@@ -403,7 +410,8 @@ class for \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>},
 provided by the class, which derives from the \cgal\ three dimensional
 point class. It supplies
 the user with all the functionalities 
-described in \ccRefPage{Triangulation_traits_3}.
+described for the concept Triangulation\_traits\_3\lcTex{
+(\ccRefPage{Triangulation_traits_3})}. 
  It can be used as a default traits
 class for \ccc{Regular_triangulation_3<Triangulation_traits_3,Tds_3>}.
 
@@ -436,8 +444,8 @@ The second template parameter of the basic triangulation class
 data structure class.  This class can be seen as a container for the
 cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data
-structure is \ccc{Triangulation_data_structure_3} 
-(\ccRefPage{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>}).
+structure is \ccc{Triangulation_data_structure_3}\lcTex{ 
+(\ccRefPage{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>})}.
 
 \section{Examples}
 \label{Triangulation3-sec-examples}
