@@ -1,3 +1,6 @@
+1.9     (31 July 2001)
+- Last port to CGALWin.
+
 1.8     (18 July 2001)
 - Don't use <sstream> as it doesn't exist in GCC < 2.95.3.
 

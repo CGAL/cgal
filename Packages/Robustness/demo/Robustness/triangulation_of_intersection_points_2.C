@@ -240,7 +240,11 @@ main( int argc, char** argv)
   {
     W0.set_fg_color( leda_red);
     leda_string fi = Msg.fi;
+#ifdef CGAL_USE_CGAL_WINDOW
+    int fistart = fi.find(leda_string("include/CGAL/"),0);
+#else
     int fistart = fi.pos(leda_string("include/CGAL/"),0);
+#endif
     fistart += 13;
     W0.draw_text(25,85,
         leda_string("Cartesian< double >: ")
@@ -249,10 +253,17 @@ main( int argc, char** argv)
       + leda_string(" in line ")
       + leda_string("%d", Msg.wo)
       + leda_string(" of file "));
+#ifdef CGAL_USE_CGAL_WINDOW
+    W0.draw_text(25,70, fi.substr( fistart, 200 ));
+    W0.draw_text(25,55, Msg.ex.substr(0,60) );
+    W0.draw_text(25,40, Msg.ex.substr(60,120) );
+    W0.draw_text(25,25, Msg.ex.substr(120,180) );
+#else
     W0.draw_text(25,70, fi( fistart, 200 ));
     W0.draw_text(25,55, Msg.ex(0,60) );
     W0.draw_text(25,40, Msg.ex(60,120) );
     W0.draw_text(25,25, Msg.ex(120,180) );
+#endif
     std::cout << Msg.ex << std::endl;
   }
 
