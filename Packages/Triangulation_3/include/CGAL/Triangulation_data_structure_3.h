@@ -1628,7 +1628,6 @@ istream& operator>>
   case 0:
     {
       CGAL_triangulation_assertion( (n == 2) || (m == 2) );
-      int i0, i1;
       for (i=0; i < 2; i++) {
 	c = new Cell(tds, V[i], NULL, NULL, NULL);
 	C[i] = c;

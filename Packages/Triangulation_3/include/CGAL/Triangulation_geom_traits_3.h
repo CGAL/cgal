@@ -197,6 +197,8 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, O, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(O, p, q, r, test);
+      default: 
+	break;
       }
       // if O coplanar, use A
       Point A(1,0,0);
@@ -205,6 +207,8 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, A, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(A, p, q, r, test);
+      default: 
+	break;
       }
       // if A is coplanar, use B
       Point B(0,1,0);
@@ -213,6 +217,8 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, B, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(B, p, q, r, test);
+      default: 
+	break;
      }
       // if B also coplanar, use C
       Point C(0,0,1);
@@ -221,6 +227,8 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, C, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(C, p, q, r, test);
+      default: 
+	break;
       }
       // impossible, only to avoid compilation warnings :
       CGAL_triangulation_assertion(false);
