@@ -1,3 +1,6 @@
+25 November 2004 Sylvain Pion
+- x86_64 porting.
+
 18 November 2004 Sylvain Pion
 - Static filters : protect against underflow.
 - Static filters : improve fit_in_double() interface.
