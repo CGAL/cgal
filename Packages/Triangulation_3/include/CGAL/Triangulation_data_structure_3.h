@@ -159,7 +159,7 @@ public:
   Cell* create_cell() 
     { 
       Cell* c = get_new_cell();
-      add_cell(c);
+      put_cell_in_list(c, _list_of_cells);
       return c; 
     }
 
@@ -168,7 +168,7 @@ public:
       Cell* cnew = get_new_cell();
       *cnew = c;
       cnew->init();
-      add_cell(cnew);
+      put_cell_in_list(cnew, _list_of_cells);
       return cnew; 
     }
 
@@ -176,7 +176,7 @@ public:
     {
       Cell* c = get_new_cell();
       c->set_vertices(v0,v1,v2,v3);
-      add_cell(c);
+      put_cell_in_list(c, _list_of_cells);
       return c; 
     }
 
@@ -186,7 +186,7 @@ public:
       Cell* c = get_new_cell();
       c->set_vertices(v0,v1,v2,v3);
       c->set_neighbors(n0,n1,n2,n3);
-      add_cell(c);
+      put_cell_in_list(c, _list_of_cells);
       return c; 
     }
 
@@ -210,12 +210,17 @@ private:
       link_cells(c->_previous_cell, c->_next_cell);
   }
 
-  // TODO : put add_cell() in it ?
   Cell* get_new_cell()
   {
       Cell *r;
       if (_list_of_free_cells._next_cell == &_list_of_free_cells)
+      {
+	  // We create a new array.
+	  //cell_array_vector.push_back(new Cell[1000]);
+	  //for (int i=0; i<1000; ++i)
+
 	  r = new Cell();
+      }
       else
       {
           r = _list_of_free_cells._next_cell;
@@ -228,11 +233,8 @@ private:
 
   void move_cell_to_temporary_free_list(Cell *c)
   {
-      CGAL_triangulation_precondition( c != NULL );
-
       remove_cell_from_list(c);
-      link_cells(c, _list_of_temporary_free_cells._next_cell);
-      link_cells(&_list_of_temporary_free_cells, c);
+      put_cell_in_list(c, _list_of_temporary_free_cells);
   }
 
   void move_temporary_free_cells_to_free_list()
@@ -248,13 +250,12 @@ private:
 	         &_list_of_temporary_free_cells);
   }
 
-  void add_cell( Cell* c )
-    {
+  void put_cell_in_list(Cell *c, Cell &l)
+  {
       CGAL_triangulation_precondition( c != NULL );
-
-      link_cells(c, _list_of_cells._next_cell);
-      link_cells(&_list_of_cells, c);
-    }
+      link_cells(c, l._next_cell);
+      link_cells(&l, c);
+  }
 
 public:
   // not documented
@@ -285,8 +286,7 @@ public:
                                                  is_vertex(c->vertex(0)) );
 
       remove_cell_from_list(c);
-      link_cells(c, _list_of_free_cells._next_cell);
-      link_cells(&_list_of_free_cells, c);
+      put_cell_in_list(c, _list_of_free_cells);
       // Maybe we should have an heuristic to know when to really
       // delete the cells, or provide some flush() method to the user.
     }
@@ -609,6 +609,10 @@ private:
   // This is a list of cells that is filled by find_conflicts, and which is
   // merged to _list_of_free_cells after create_star.
   Cell _list_of_temporary_free_cells;
+
+  // Cells and vertices allocation by arrays.
+  //std::vector<Cell[1000] *> cell_array_vector;
+  //std::vector<Vertex[1000] *> vertex_array_vector;
 
   // ACCESS FUNCTIONS
 
