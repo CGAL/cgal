@@ -19,13 +19,11 @@
 \label{PM_sec:pm}
     
 \ccDefinition
-    An object $pm$ of the class
-    \ccClassTemplateName\ is the planar subdivision
-    induced by a set of $x$-monotone curves %that do not intersect in
-    %their interiors.
-    such that no curve intersects the interior of any other curve.
-    The available traits and dcel classes will be described
-    later.
+ An object $pm$ of the class \ccClassTemplateName\ is the planar
+ subdivision induced by a set of $x$-monotone curves, such that no
+ curve intersects the interior of any other curve. The available
+ traits and dcel classes are described bellow. \ccc{Self} is an
+ abbreviation of the \ccRefName\ type hereafter.
 
 \ccInclude{CGAL/Planar_map_2.h}
 
@@ -44,7 +42,7 @@
 \ccTypes
 
 %  \ccTypedef{typedef Planar_map_2<Dcel,Traits> Self;}{planar map class}
-%
+
   \ccNestedType{Traits}{traits class.}
   \ccGlue
   \ccNestedType{Dcel}{DCEL class.}
@@ -119,24 +117,22 @@
 %\def\ccLongParamLayout{\ccFalse}
 
 \ccCreation
-    \ccCreationVariable{pm}
+  \ccCreationVariable{pm}
     
-    \ccConstructor{Planar_map<Dcel,Traits>();} {constructs an
-       ``empty map'' containing one unbounded face, which corresponds to the
-       whole plane.}
+  \ccConstructor{Planar_map<Dcel,Traits>();} {constructs an
+   ``empty map'' containing one unbounded face, which corresponds to the
+   whole plane.}
     
-    \ccConstructor{Planar_map<Dcel,Traits>(const Self& pm);}{copy constructor;}
+  \ccConstructor{Planar_map<Dcel,Traits>(const Self & pm);}{copy constructor;}
     
-    \ccc{Self} here is an abbreviation for the \ccRefName\ type.
-
-    %\ccConstructor{Planar_map<I>( list<X_curve_2> &l
+%  \ccConstructor{Planar_map<I>( list<X_curve_2> & l
 %       );} {construct the planar-map of the curves  of \ccStyle{l}
 %       \ccPrecond{The curves are $x$-monotone} 
 %       \ccPrecond{no pair of curves of $l$ intersect in their interiors} 
 %       }
         
-%    \ccStyle{template <class InputIterator>} \\
-%    \ccConstructor{ Planar_map<I>( InputIterator begin, 
+%  \ccStyle{template <class InputIterator>} \\
+%  \ccConstructor{ Planar_map<I>( InputIterator begin, 
 %                           InputIterator end );} 
 %                {construct the planar-map of the curves from a 
 %                container iterated by
@@ -145,11 +141,11 @@
 %                   is \ccStyle{X_curve_2} objects}
 %                \ccPrecond{The curves are $x$-monotone} 
 %                \ccPrecond{no pair of curves intersect in their interiors} 
-%      }
+%    }
 
-%    \ccConstructor{Planar_map<I>( Planar_map<I>
-%       &map, I::Info_face &i);} {construct the planar-map of all the faces of
-%       \ccStyle{map} with attached information equal to \ccStyle{i}.}
+%  \ccConstructor{Planar_map<I>( Planar_map<I>
+%     & map, I::Info_face & i);} {construct the planar-map of all the faces of
+%     \ccStyle{map} with attached information equal to \ccStyle{i}.}
 
 %\newpage
 
@@ -169,7 +165,7 @@ implement their own point location algorithm. This can be done with a
 class derived from the \ccc{Point_location_base<Planar_map>}. The concept \ccc{PlanarMapPointLocation_2} lists the set of requirements 
 (\ccRefPage{PlanarMapPointLocation_2}).
 
-\ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> *pl_ptr);}{}
+\ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> * pl_ptr);}{}
   
 %A more advanced strategies 
 %\ccc{Pm_dynamic_closed_bounding_box},
@@ -181,43 +177,44 @@ class derived from the \ccc{Point_location_base<Planar_map>}. The concept \ccc{P
 %to bound all the finite curves inserted into the map, and to intersect 
 %all the unbounded curves.
 %In the static case, the bounding box is as indicated by its name, static.
-%In any case, each curve is represented as its intersection with the bounding box, 
-%allowing the planar map to deal only with bounded curves. 
+%In any case, each curve is represented as its intersection with the
+%bounding box, allowing the planar map to deal only with bounded curves. 
 
 
 The planar map user can also determine the bounding box strategy
-This is done with a {\em bounding box class} passed to the map in the following constructors. 
-The \ccc{Pm_dynamic_open_bounding_box} strategy is the one used by default by the library. If only the default strategy is to be used, the user can ignore the following constructors.
+This is done with a {\em bounding box class} passed to the map in the
+following constructors.  The \ccc{Pm_dynamic_open_bounding_box}
+strategy is the one used by default by the library. If only the
+default strategy is to be used, the user can ignore the following
+constructors. 
 
-\ccConstructor{Planar_map<Dcel,Traits>(Pm_bounding_box_base<Self> *bb_ptr);}{}
+\ccConstructor{Planar_map<Dcel,Traits>(Pm_bounding_box_base<Self> * bb_ptr);}{}
 \ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> * pl_ptr,
-        Pm_bounding_box_base<Self> *bb_ptr);}{}
+        Pm_bounding_box_base<Self> * bb_ptr);}{}
   
 
-\ccc{Self} here is an abbreviation for the \ccRefName\ type.
-
 \end{ccAdvanced}
+
+\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
 
 \begin{ccAdvanced}
 \ccHeading{Reading Planar map}
 
-\ccMethod{bool read (istream &in);}
-         {reading ccRefName\ from a given input stream. The input
-         stream should support the extractor operator (\ccc{>>}) for
-         the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of
-         \ccc{Planar_map}. Note that the verbose format is not meant
-         to be read.}
+\ccMethod{bool read (istream & in);}
+{reads \ccRefName\ from the given input stream \ccc{in}. The input
+ stream should support the extractor operator (\ccc{>>}) for
+ the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of
+ \ccc{Planar_map}. Note that the verbose format is not meant to be
+ read. }
 
-\ccStyle{template <class Scanner>}
-\ccMethod{bool read (istream &in, Scanner& scanner);}
-{reading \ccRefName\ from a given input stream when taking the scanner
+\ccMethod{template <class Scanner>
+          bool read (istream & in, Scanner & scanner);}
+{reads \ccRefName\ from the given input stream \ccc{in} when taking the scanner
 class as a parameter.
 The input stream should support the extractor operator (\ccc{>>})
 for the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of \ccc{Planar_map} }
 
 \end{ccAdvanced}
-
-\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
 
 %\ccPredicates
 %\ccHeading{Query Functions}
@@ -226,9 +223,9 @@ for the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of \ccc{Planar_map} }
 The following two functions are query functions. Their time complexity
 depends on the point location strategy used.
 
-\ccMethod{Halfedge_handle locate(const Point_2& p , 
-   Locate_type& lt );}{
-   \ccHtmlNoLinksFrom{computes the location in \ccStyle{pm}
+\ccMethod{Halfedge_handle locate(const Point_2 & p , Locate_type & lt);}
+{
+  \ccHtmlNoLinksFrom{computes the location in \ccStyle{pm}
    where  \ccStyle{p} lies;  
    If \ccStyle{lt} returns VERTEX then \ccStyle{p} lies on the vertex which 
    is the target of the returned \ccStyle{Halfedge}. If \ccStyle{lt} returns 
@@ -241,11 +238,13 @@ depends on the point location strategy used.
    The returned value for an empty map equals \ccc{halfedges_end()}.}
    }
     
-%\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p, 
-\ccMethod{ Halfedge_handle vertical_ray_shoot(const Point_2& p, 
-   Locate_type& lt, bool up_direction );} {if
-   \ccStyle{up_direction} is \ccStyle{true} (respectively,
-   \ccStyle{false}) returns the first edge of \ccStyle{pm} that
+%\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename
+%Traits::Point & p, 
+\ccMethod{ Halfedge_handle vertical_ray_shoot(const Point_2 & p, 
+                                              Locate_type & lt,
+					      bool up_direction );}
+{if \ccStyle{up_direction} is \ccStyle{true} (respectively,
+ \ccStyle{false}) returns the first edge of \ccStyle{pm} that
    intersects the upward (respectively, downward) vertical ray emanating
    from \ccStyle{p}. If several edges intersect the vertical ray
    in the same (end)point $q$, the function returns the
@@ -283,7 +282,6 @@ depends on the point location strategy used.
     \ccMethod{const Pm_point_location_base<Self>* point_location();}{returns a
        const pointer to the point location strategy of the map.}
 
-\ccc{Self} here is an abbreviation for the \ccRefName\ type.
 \end{ccAdvanced}
 
 \ccModifiers
@@ -335,8 +333,8 @@ these functions with the naive point location strategy.
 
   \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
                                                Vertex_handle v);}
-  {inserts the curve \ccc{cv} into the map. The given vertex \ccc{v},
-  that is already in the map, holds one endpoint of \ccc{cv}. 
+  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
+  is the point of the given vertex \ccc{v}, that is already in the map.
    \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
    \ccc{v} as its source vertex.
    \ccPrecond{\ccc{v} is a vertex of the map. }
