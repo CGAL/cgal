@@ -13,8 +13,8 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
-           $(CGAL_CXXFLAGS) \
+CXXFLAGS = \
+	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -93,7 +93,7 @@ regular_triangulation_2.moc: regular_triangulation_2.C \
                         triangulation_2_edit_vertex$(OBJ_EXT) \
 			regular_triangulation_2_toolbar$(OBJ_EXT) \
 			regular_triangulation_2_toolbar_layers$(OBJ_EXT)
-	${QT_MOC} -o triangulation_2.moc triangulation_2.C
+	${QT_MOC} -o regular_triangulation_2.moc regular_triangulation_2.C
 
 
 regular_triangulation_2$(OBJ_EXT): regular_triangulation_2.C \

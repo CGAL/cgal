@@ -220,7 +220,7 @@ private slots:
         return;
     rt.clear();
 
-    Gt::Weighted_point wp;
+    //Gt::Weighted_point wp;
     
   }
   void

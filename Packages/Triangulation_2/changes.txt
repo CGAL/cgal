@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.81 (10/06/03)
+- make qt_demo for regular work
+
 ver 7.80 (10/06/03)
 - remove demos using leda_window or cgal_window
   added Qt demo for Delaunay an regular (thois one does not yet compiles)

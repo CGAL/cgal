@@ -157,12 +157,13 @@ class triangulation_2_edit_weightedpoint : public triangulation_2_edit_vertex_he
 {
 public:
 
-  typedef typename T::Point			      Point;
+  typedef typename T::Weighted_point		      Weighted_point;
+  typedef typename T::Bare_point                      Bare_point;
   typedef typename T::Segment                         Segment;
   typedef typename T::Face_handle                     Face_handle;
   typedef typename T::Vertex_handle                   Vertex_handle;
   typedef typename T::Geom_traits                     GT;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel::FT FT;
+  typedef typename CGAL::Kernel_traits<Bare_point>::Kernel::FT FT;
 protected:
   FT                                                  first_x, first_y;
   FT                                                  x2, y2;
@@ -177,7 +178,7 @@ protected:
           //true if the popup's change_weight button was pressed
   Vertex_handle                                       current_v;
           //the vertex that will be processed
-  Point                                               old_point;
+  Bare_point                                               old_point;
           //contains the old vertex that should be removed
   T                                                   *t;
           //pointer to regular triangulation being used
@@ -192,7 +193,7 @@ public:
   Vertex_handle
   closest_vertex(const TRIANGULATION &T,
 			      Face_handle f,
-			      const Point& p)
+			      const Bare_point& p)
   {
     Vertex_handle v ;
     typename GT::Compare_distance_2 cmp =
@@ -200,8 +201,8 @@ public:
 
     if( T.is_infinite(f)){
       int i = f->index(T.infinite_vertex());
-      Point pcwi = f->vertex(f->cw(i))->point();
-      Point pccwi = f->vertex(f->ccw(i))->point();
+      Bare_point pcwi = f->vertex(f->cw(i))->point();
+      Bare_point pccwi = f->vertex(f->ccw(i))->point();
       v =  cmp(p, pcwi, pccwi) == CGAL::SMALLER ? f->vertex(f->cw(i)) :
                                                   f->vertex(f->ccw(i));
     }
@@ -235,7 +236,7 @@ private:
        FT x, y;
        widget->x_real(e->x(), x);
        widget->y_real(e->y(), y);
-       Point p(x, y);
+       Bare_point p(x, y);
        Face_handle f = t->locate(p);
        Vertex_handle v = closest_vertex(*t, f, p);
        RasterOp old = widget->rasterOp();	//save the initial raster mode
@@ -270,22 +271,22 @@ private:
                 << CGAL::PointStyle (CGAL::DISC);
         if(!wasrepainted)
           *widget << old_point;
-        *widget << Point(x, y);
+        *widget << Bare_point(x, y);
         double wght = current_v->point().weight();
         t->remove(current_v);
-        current_v = t->insert(GT::Weighted_point(Point(x, y), wght));
+        current_v = t->insert(Weighted_point(Bare_point(x, y), wght));
         widget->redraw();	//redraw the scenes
-        old_point = Point(x, y);
+        old_point = Bare_point(x, y);
       } else if(change_weight_pressed){
         FT x, y;
         widget->x_real(e->x(), x);
         widget->y_real(e->y(), y);
 
-        double wght = current_v->point().weight();
-        Point lastp = current_v->point().point();
+	//        double wght = current_v->point().weight();
+        Bare_point lastp = current_v->point().point();
 
         t->remove(current_v);
-        current_v = t->insert(GT::Weighted_point(lastp, CGAL::squared_distance(lastp, Point(x, y))));
+        current_v = t->insert(Weighted_point(lastp, CGAL::squared_distance(lastp, Bare_point(x, y))));
         widget->redraw();	//redraw the scenes
         old_point = lastp;
       }
