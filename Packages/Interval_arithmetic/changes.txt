@@ -1,3 +1,7 @@
+Version 4.153 on 14 November 2002
+- Provide 64bit IRIX version of src/Interval_arithmetic/workaround_4_irix6_64.s.
+  (compiled with gcc -O2 -mabi=64 -S, gcc 3.1)
+
 Version 4.152 on 13 November 2002
 - The Perl script now overloads predicates also for Lazy_exact_nt, so that you
   don't have to wrap it in Filtered_exact to get the maximum performance.
