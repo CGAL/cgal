@@ -46,6 +46,7 @@ namespace std{
 namespace std{
   using ::strcat;
   using ::strcpy;
+  using ::strlen;
 }
 
 #include <ctime>
