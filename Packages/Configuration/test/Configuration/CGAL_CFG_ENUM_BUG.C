@@ -53,6 +53,7 @@ struct C {
 int main()
 {
   C< F > c;
+  (void) c;
   return 0;
 }
 

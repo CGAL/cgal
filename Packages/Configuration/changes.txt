@@ -1,10 +1,9 @@
+- kill unused variable warning.
+
 2.31
-----------
-Added a function test in the CGAL_NO_TMPL_IN_TMPL_PARAM.C.
-template < template < class T > class HDS>
-void fct(HDS<int> h1 ) { // here it does not compile } 
-
-
+- Added a function test in the CGAL_NO_TMPL_IN_TMPL_PARAM.C.
+  template < template < class T > class HDS>
+  void fct(HDS<int> h1 ) { // here it does not compile } 
 
 2.30
 - Fixed STLport include (not for VC7) as suggested by Radu.
