@@ -1,3 +1,6 @@
+1.12 (9 January 2003)
+- Just resubmit.
+
 1.11 (9 January 2003)
 - tests added for kernel concept archetype
 
