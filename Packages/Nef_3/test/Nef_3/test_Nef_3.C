@@ -28,7 +28,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Extended_cartesian_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -59,21 +59,18 @@ class test {
   typedef CGAL::Polyhedron_3<Kernel>                        Polyhedron;
   typedef CGAL::SNC_structure<Kernel,CGAL::SNC_items>       SNC_structure;
   typedef typename SNC_structure::Vertex_const_iterator     Vertex_const_iterator;
-  typedef typename SNC_structure::Vertex_handle             Vertex_handle;
   typedef typename SNC_structure::Vertex_const_handle       Vertex_const_handle;
   typedef typename SNC_structure::Halfedge_const_iterator   Halfedge_const_iterator;
-  typedef typename SNC_structure::Halfedge_handle           Halfedge_handle;
   typedef typename SNC_structure::Halfedge_const_handle     Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_const_iterator  Halffacet_const_iterator;
-  typedef typename SNC_structure::Halffacet_handle          Halffacet_handle;
   typedef typename SNC_structure::Halffacet_const_handle    Halffacet_const_handle;
   typedef typename SNC_structure::Halffacet_cycle_const_iterator
                                   Halffacet_cycle_const_iterator;
-  typedef typename SNC_structure::Volume_handle             Volume_handle;
   typedef typename SNC_structure::Volume_const_iterator     Volume_const_iterator;
+  typedef typename SNC_structure::Volume_const_handle       Volume_const_handle;
   typedef typename SNC_structure::Object_handle             Object_handle;
-  typedef typename SNC_structure::SHalfedge_handle          SHalfedge_handle;
-  typedef typename SNC_structure::SFace_handle              SFace_handle;
+  typedef typename SNC_structure::SHalfedge_const_handle    SHalfedge_const_handle;
+  typedef typename SNC_structure::SHalfloop_const_handle    SHalfloop_const_handle;
   typedef typename SNC_structure::SFace_const_handle        SFace_const_handle;
   typedef typename SNC_structure::Shell_entry_const_iterator 
                                   Shell_entry_const_iterator;
@@ -125,6 +122,8 @@ private:
 
     void visit(Halfedge_const_handle h) {}
     void visit(Halffacet_const_handle h) {}
+    void visit(SHalfedge_const_handle h) {}
+    void visit(SHalfloop_const_handle h) {}
 
     Vertex_const_handle& minimal_vertex() { return v_min; }
   };
@@ -216,9 +215,9 @@ private:
       Nef_polyhedron N3 = N1.intersection(N2);
       N3.is_valid(0,0);
       CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef1.nef3.SH"));
-//      N3 = N1.symmetric_difference(N2);
-//      N3.is_valid(0,0);
-//      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef2.nef3.SH"));
+      N3 = N1.symmetric_difference(N2);
+      N3.is_valid(0,0);
+      CGAL_assertion(does_nef3_equals_file(N3,"intersWithIsolatedEdgeRef2.nef3.SH"));
       isolated_edge_tested = true;
     }
   }
@@ -251,6 +250,53 @@ private:
     Nef_polyhedron N = load_off("data/star.off");
     CGAL_assertion(N.is_valid(0,0));    
     CGAL_assertion(does_nef3_equals_file(N,"newell.nef3.SH"));
+  }
+
+  void transformation() {
+    typedef typename Kernel::RT NT;
+
+    double alpha = M_PI * 20 / 180.0;
+    NT diry = std::sin( alpha) * 256*256*256;
+    NT dirx = std::cos( alpha) * 256*256*256;
+    NT sin_alpha;
+    NT cos_alpha;
+    NT w;
+    CGAL::rational_rotation_approximation( dirx, diry, 
+					   sin_alpha, cos_alpha, w,
+					   NT(1), NT( 1000000));
+    Aff_transformation_3 rotx20( w, NT(0), NT(0),
+				 NT(0), cos_alpha,-sin_alpha,
+				 NT(0), sin_alpha, cos_alpha,
+				 w);
+
+    Nef_polyhedron N = load_off("data/cube.off");
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,1,0,1)));
+    N.transform(Aff_transformation_3( CGAL::SCALING, 6, 4));
+    N.transform(Aff_transformation_3(0,1,0,1,0,0,0,0,1,1));
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(0,-4,-1,1)));
+    N.transform(Aff_transformation_3( CGAL::SCALING, 5, 12));
+    N.transform(Aff_transformation_3(0,1,0,1,0,0,0,0,1,1));
+    N.transform(rotx20);
+    N.transform(Aff_transformation_3( CGAL::SCALING, 8, 5));
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
+    N.transform(rotx20.inverse());
+    N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(8,-3,2,3)));
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N,"cube.nef3.SH"));
+
+    if(Infi_box::extended_kernel()) {    
+      N = Nef_polyhedron(Plane_3(1,1,0,0));
+      Nef_polyhedron N1(Plane_3(1,-2,3,0));
+      N = N.join(N1);
+      N1 = N;
+      N.transform(rotx20);
+      N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(1,0,0,1)));
+      N.transform(Aff_transformation_3( CGAL::SCALING, 2, 1));
+      N.transform(rotx20.inverse());
+      N.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-2,0,0,1)));
+      CGAL_assertion(N.is_valid(0,0));
+      //      CGAL_assertion(N == N1);
+    }
   }
 
   void construction() {
@@ -340,7 +386,7 @@ private:
 
   void point_location_SNC() {
     
-    Volume_handle c;
+    Volume_const_handle c;
     Object_handle o;
     Nef_polyhedron N;
 
@@ -371,7 +417,7 @@ private:
     CGAL_assertion(N.is_valid(0,0));
     
     Vertex_const_iterator vin;
-    Vertex_handle vout;
+    Vertex_const_handle vout;
     CGAL_forall_vertices(vin,N) {
       Object_handle o = N.locate(N.point(vin));
       CGAL_assertion(assign(vout,o));
@@ -379,7 +425,7 @@ private:
     }
     
     Halfedge_const_iterator ein;
-    Halfedge_handle eout;
+    Halfedge_const_handle eout;
     CGAL_forall_halfedges(ein,N) {
       Vector_3 d(N.point(N.source(N.twin(ein))) - N.point(N.source(ein)));
       Point_3 s(N.point(N.source(ein)));
@@ -389,11 +435,12 @@ private:
     }
     
     Halffacet_const_iterator fin;
-    Halffacet_handle fout;
+    Halffacet_const_handle fout;
     CGAL_forall_halffacets(fin,N) {
       Halffacet_cycle_const_iterator fc(fin->facet_cycles_begin());
-      SHalfedge_handle e;
-      CGAL_assertion(assign(e, fc));
+      SHalfedge_const_handle e;
+      CGAL_assertion(fc.is_shalfedge());
+      e = SHalfedge_const_handle(fc);
       SHalfedge_around_facet_const_circulator ec(e),ee(e);
       Vertex_const_handle v_min = N.vertex(ec++);
       CGAL_For_all(ec,ee) {
@@ -413,7 +460,7 @@ private:
     }
     
     Volume_const_iterator Cin;
-    Volume_handle Cout;
+    Volume_const_handle Cout;
     Vector_3 vec(1,1,1);
     vec = vec / RT(10);
     SFace_visited_hash Done(false);
@@ -1129,11 +1176,28 @@ private:
     }
   }		     
      
+  void bug_scenarios() {
+    
+    Nef_polyhedron N = load_off("data/octa.off");    
+    Nef_polyhedron N1 = N;
+    N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3( 3, 4,5,9)));
+    CGAL_assertion(N1.is_valid(0,0));
+    N = N.symmetric_difference(N1);
+    CGAL_assertion(N.is_valid(0,0));
+    // CGAL_assertion(does_nef3_equals_file(N, "octa_ref.nef3.SH"));
+
+    N = load_off("data/2_cycles_on_halfsphere.off");
+    N1 = load_off("data/2_cycles_on_halfsphere2.off");
+    N = N1.difference(N);
+    CGAL_assertion(N.is_valid(0,0));
+    CGAL_assertion(does_nef3_equals_file(N, "2_cycles_on_halfsphere_ref.nef3.SH"));    
+  }
     
 public:
   void run_test() {
     loadSave();
     newell();
+    transformation();
     construction();
     point_location_SNC();
     intersection();
@@ -1143,6 +1207,7 @@ public:
     synthesis();
     unary_operations();
     mark_evaluation();
+    bug_scenarios();
   }
 
 };
@@ -1152,6 +1217,7 @@ const char* test<Kernel>::datadir="data/";
 
 int main() {
   typedef CGAL::Simple_homogeneous<NT>       SH_kernel;
+  //  typedef CGAL::Extended_cartesian_3<NT>   EH_kernel;
   typedef CGAL::Extended_homogeneous_3<NT>   EH_kernel;
   
   //std::cin>>debugthread;
