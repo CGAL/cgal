@@ -34,28 +34,38 @@
 
 // Macro to stop compiler optimization.
 #ifdef __GNUG__
-#define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y=(x);double z=y;z; })
+// It's slightly faster to use the following, but it's a GCC extension.
+#define CGAL_IA_STOP_COMPILER_OPT(x) ({ volatile double y(x); double z=y; z; })
 #else
-inline double cgal_ia_force_to_double(const double x)
+inline double IA_force_to_double(const double x)
 { volatile double e = x; return e; }
-#define CGAL_IA_STOP_COMPILER_OPT(x) cgal_ia_force_to_double(x)
+#define CGAL_IA_STOP_COMPILER_OPT(x) IA_force_to_double(x)
 #endif
 
-// The x87 keeps too wide exponents (15bits) in registers, even in double
-// precision mode.  This causes problems when the intervals overflow or
-// underflow.  To work around that, at every critical moment, we flush the
-// register to memory, using the macro below.
-// The other possible workaround is to use intervals of "long doubles"
+// The x86 processor keeps too wide exponents (15bits) in registers, even in
+// double precision mode !  It's a problem when the intervals overflow or
+// underflow.  To work around that, we store the variable to memory when
+// needed, using the macro below.
+// An other possible workaround would be to use intervals of "long doubles"
 // directly, but I think it would be much slower.
-#if defined(__i386__) || defined(_MSC_VER)
+#if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
+    (defined __i386__ || defined _MSC_VER || defined __BORLANDC__)
 #define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL_IA_STOP_COMPILER_OPT(x)
 #else
 #define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif // __i386__
 
-// We sometimes need to do the same thing to stop constant propagation.
-#ifdef CGAL_IA_STOP_CONSTANT_PROPAGATION
+// We sometimes need to stop constant propagation.
+// (because operations are done with a wrong rounding mode).
+// With GCC, this is done using __builtin_constant_p().
+// It should also be called at more specific places rather than in the ctors.
+#ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
+#ifdef __GNUG__
+#define CGAL_IA_STOP_CPROP(x) \
+    (__builtin_constant_p (x) ? CGAL_IA_STOP_COMPILER_OPT(x) : (x) )
+#else
 #define CGAL_IA_STOP_CPROP(x) CGAL_IA_STOP_COMPILER_OPT(x)
+#endif
 #else
 #define CGAL_IA_STOP_CPROP(x) (x)
 #endif
