@@ -1,3 +1,6 @@
+version 3.16 (22/08/02) MY
+- fixed a bug in function classify(Point p, ..) of Alpha_shapes_3.h
+
 version 3.15 (af)
 - Made demo/demo_alpha.C compile under Windows
 - Fixes to make operator<< for ostream work
