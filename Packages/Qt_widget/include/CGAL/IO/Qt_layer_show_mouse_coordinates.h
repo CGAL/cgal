@@ -44,6 +44,9 @@ public:
     qmw.statusBar()->message(final);
   };
 private:
+  void deactivating(){
+    qmw.statusBar()->clear();
+  }
   QMainWindow	&qmw;
 };//end class 
 
