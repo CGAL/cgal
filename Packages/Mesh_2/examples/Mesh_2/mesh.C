@@ -39,10 +39,7 @@ int main(int argc, char** argv)
     };
   std::ifstream input(argv[1]);
   if(input)
-    {
-      mesh.read_poly(input);
-      mesh.refine();
-    }
+    mesh.read_poly(input);
   else
     {
       std::cerr << "Bad file: " << argv[1] << std::endl;
