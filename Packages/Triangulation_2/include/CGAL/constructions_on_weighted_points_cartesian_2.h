@@ -25,7 +25,7 @@
 #ifndef CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_2_H
 #define CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_2_H
 
-#include <CGAL/Cartesian/redefine_names_2.h>
+//#include <CGAL/Cartesian/redefine_names_2.h>
 
 CGAL_BEGIN_NAMESPACE 
 
