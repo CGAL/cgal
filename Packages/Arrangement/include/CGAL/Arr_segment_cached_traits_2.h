@@ -507,18 +507,19 @@ public:
   }
 
   /*!
-   * Find the nearest intersection point of two given curves to the right of 
-   * a given point. Nearest is defined as the lexicographically nearest not 
-   * including the point itself (with one exception explained below).
-   * If the intersection of the two curves is an X_curve_2, that is,
-   * there is an overlapping subcurve, then if the the source and target of the
-   * subcurve are strickly to the right, they are returned through two
-   * other point references p1 and p2. If p is between the source and target
-   * of the overlapping subcurve, or p is its left endpoint, p and the target
-   * of the right endpoint of the subcurve are returned through p1 and p2 
-   * respectively.
-   * If the intersection of the two curves is a point to the right of p, it is
-   * returned through the p1 and p2.
+   * Find the nearest intersection point (or points) of two given curves to
+   * the right lexicographically of a given point not includin the point
+   * itself, (with one exception explained below).
+   * If the intersection of the two curves is an X_curve_2, that is, they
+   * overlap at infinitely many points, then if the right endpoint and the
+   * left endpoint of the overlapping subcurve are strickly to the right of
+   * the given point, they are returned through the two other point
+   * references respectively. If the given point is between the
+   * overlapping-subcurve endpoints, or the point is its left endpoint,
+   * the point and the right endpoint of the subcurve are returned through
+   * the point references respectively. If the intersection of the two curves
+   * is a point to the right of the given point, it is returned through the
+   * point references.
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param p The refernece point.
