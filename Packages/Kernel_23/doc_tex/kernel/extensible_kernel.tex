@@ -10,35 +10,243 @@ geometric classes in existing \cgal\ kernels.
 \subsection{Introduction}
 
 \cgal\ defines the concept of a geometry kernel. Such a kernel provides types,
-construction objects and generalized predicates. Most implementations of CG
-algorithms and data structures in the basic library of \cgal\ were done in a way
-that classes or functions can be parametrized with a geometric traits class. 
+construction objects and generalized predicates. Most implementations
+of Computational Geometry algorithms and data structures in the basic
+library of \cgal\ were done in a way that classes or functions can be
+parametrized with a geometric traits class.
 
 In most cases this geometric traits class must be a model of the \cgal\ geometry
 kernel concept (but there are some exceptions).
 
 
 
-\subsection{Restricting the Interface}
+\subsection{An Example}
 
-
+Assume you have the following point class.
 
 \ccHtmlLinksOff
-
 \begin{ccExampleCode}
-#include <CGAL/Kernel_archetype.h>
-\end{ccExampleCode}
+class MyPointC2 {
 
+private:
+  double vec[2];
+  int col;
+
+public:
+
+  MyPointC2()
+    : col(0)
+  {
+    *vec = 0;
+    *(vec+1) = 0;
+  }
+
+  
+  MyPointC2(const double x, const double y, int c)
+    : col(c)
+  {
+    *vec = x;
+    *(vec+1) = y;
+  }
+
+  const double& x() const  { return *vec; }
+
+  const double& y() const { return *(vec+1); }
+
+  double & x() { return *vec; }
+
+  double& y() { return *(vec+1); }
+
+  int color() const { return col; }
+
+  int& color() { return col; }
+  
+  
+  bool operator==(const MyPointC2 &p) const
+  {
+    return ( *vec == *(p.vec) )  && ( *(vec+1) == *(p.vec + 1) && ( col == p.col) );
+  }
+
+  bool operator!=(const MyPointC2 &p) const
+  {
+      return !(*this == p);
+  }
+
+};
+\end{ccExampleCode}
 \ccHtmlLinksOn
 
 
-\subsection{Example Program}
+Note that this class has no \ccc{bbox()} method, so one
+might assume that a basic library algorithm which computes 
+a bounding box (e.g, to compute the bouding box of a polygon),
+will not compile. However, this is wrong, because it makes
+use of the functor \ccc{Kernel::Construct_bbox_2}.
 
-The following example shows a program for 
+To make the right thing happen with \cccMyPointC2} we
+have to provide the following functor.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+template <class ConstructBbox_2>
+class MyConstruct_bbox_2 : public ConstructBbox_2 {
+public:
+  CGAL::Bbox_2 operator()(const typename MyPointC2& p) const {
+    return CGAL::Bbox_2(p.x(), p.y(), p.x(), p.y());
+  }
+};
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+Things are similar for random access to the \ccHtmlNoLinksFrom{Cartesian}
+coordinates of a point. As the coordinates are stored
+in an array of \ccc{doubles} we can use \ccc{double*} as
+random access iterator.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+class MyConstruct_coord_iterator {
+public:
+  const double* operator()(const MyPointC2& p)
+  {
+    return &p.x();
+  }
+
+  const double* operator()(const MyPointC2& p, int)
+  {
+    const double* pyptr = &p.y();
+    pyptr++;
+    return pyptr;
+  }
+};
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+The last functor we have to provide is the one which constructs
+points. That is you are not forced to add constructors
+with the \ccc{Origin} as parameter, or a constructor with 
+homogeneous coordinates, and at the same time you can 
+pass the additional color argument to your point constructor.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+ template <typename K>
+  class MyConstruct_point_2
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_2    Point_2;
+  public:
+    typedef Point_2          result_type;
+    typedef CGAL::Arity_tag< 1 >   Arity;
+
+    Point_2
+    operator()() const
+    { return Point_2(); }
+
+    Point_2
+    operator()(CGAL::Origin o) const
+    { return Point_2(0,0, 0); }
+
+    Point_2
+    operator()(const RT& x, const RT& y) const
+    { return Point_2(x, y, 0); }
+
+    
+    // We need this one, as such a functor is in the Filtered_kernel
+    Point_2
+    operator()(const RT& x, const RT& y, const RT& w) const
+    { 
+      if(w != 1){
+	return Point_2(x/w, y/w, 0); 
+      } else {
+	return Point_2(x,y, 0);
+      }
+    }
+  };
+
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+Now we are ready to put the puzzle together. To do so we
+scavenge code. We won't explain it in detail, but you see
+that there are \ccc{typedefs} to the new point class and
+the functors. All the other types are inherited.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+#ifndef MYKERNEL_H
+#define MYKERNEL_H
+
+#include <CGAL/Cartesian/Cartesian_base.h>
+#include <CGAL/Simple_Handle_for.h>
+
+
+#include "MyPointC2.h"
+
+// Taken from include/CGAL/Cartesian/Cartesian_base.h
+
+template < typename K_ >
+struct MyCartesian_base : public CGAL::Cartesian_base< K_ >
+{
+  typedef K_                                Kernel;
+  typedef CGAL::Cartesian_base< K_ >        Base;
+  typedef MyPointC2                         Point_2;
+  typedef MyConstruct_point_2<Kernel>       Construct_point_2;
+  typedef const double*                     Cartesian_const_iterator_2;
+  typedef MyConstruct_coord_iterator        Construct_cartesian_const_iterator_2;
+  typedef MyConstruct_bbox_2<typename Base::Construct_bbox_2> 
+                                            Construct_bbox_2;
+};
+
+
+// Taken from include/CGAL/Cartesian.h
+
+template < typename FT_, typename Kernel >
+struct MyCartesian_base_no_ref_count
+  : public MyCartesian_base< Kernel >
+{
+    typedef FT_                                           RT;
+    typedef FT_                                           FT;
+
+    // The mecanism that allows to specify reference-counting or not.
+    template < typename T >
+    struct Handle { typedef CGAL::Simple_Handle_for<T>   type; };
+
+    template < typename Kernel2 >
+    struct Base { typedef MyCartesian_base_no_ref_count<FT_, Kernel2>  Type; };
+
+    static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}
+    static   FT make_FT(const RT & num)                  { return num;}
+    static   RT FT_numerator(const FT &r)                { return r;}
+    static   RT FT_denominator(const FT &)               { return RT(1);}
+};
+
+template < typename FT_ >
+struct MyKernel
+  : public MyCartesian_base_no_ref_count<FT_, MyKernel<FT_> >
+{
+public:
+  typedef MyCartesian_base_no_ref_count<FT_, MyKernel<FT_> > Kernel_base;
+};
+
+CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(MyKernel)
+
+#endif // MYKERNEL_H
+
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+Finally, we give an example how this new kernel can be used.
+
+
+
+
 
 \ccHtmlLinksOff
 
-{\bf MyKernel.C :}
 
 \begin{ccExampleCode}
 #include <CGAL/basic.h>
