@@ -1,3 +1,6 @@
+2.87 (22 May 2003) [mh]
+- Fixed bug in Homogeneous/function_objects.h
+
 2.86 (11 May 2003)
 - In order to get rid of Direction_2 at some point, I have added :
     - Line_2(Point_2, Vector_2)        ConstructLine_2
