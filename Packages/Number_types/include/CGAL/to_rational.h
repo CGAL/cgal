@@ -39,7 +39,7 @@ to_rational(double x)
       if (neg) x = -x;
 
       const unsigned shift = 15;   // a safe shift per step
-      const unsigned int shift_pow = 32768; // = 2^shift
+      const int shift_pow = 32768; // = 2^shift
       const double width = 32768;  // = 2^shift
       const int maxiter = 20;      // ought not be necessary, but just in
                                    // case, max 300 bits of precision
@@ -54,7 +54,7 @@ to_rational(double x)
       { mantissa *= width; // shift double mantissa
         mantissa = CGAL_CLIB_STD::modf(mantissa, &intpart);
         num *= shift_pow;
-        num += (long)intpart;
+        num += (int)intpart;
         exponent -= shift;
       }
       int expsign = (exponent>0 ? +1 : (exponent<0 ? -1 : 0));

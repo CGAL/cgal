@@ -1,3 +1,6 @@
+4.111 (25 August 2003)
+- Better testing of to_rational() and simplest_rational_in_interval().
+
 4.110 (7 August 2003)
 - Remove Interval_converter.
 - Derive NT_converter from std::unary_function.

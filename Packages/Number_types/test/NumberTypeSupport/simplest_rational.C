@@ -1,30 +1,24 @@
+// Test program for simplest_rational_in_interval().
 
-#include <CGAL/basic.h>
-#include <cassert>
 #include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
+#include <cassert>
 
 #ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-//#include <CGAL/gmpxx.h>
+#  include <CGAL/Gmpz.h>
+#  include <CGAL/Gmpq.h>
+#endif
+
+#ifdef CGAL_USE_GMPXX
+#  include <CGAL/gmpxx.h>
 #endif
 
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_rational.h>
+#  include <CGAL/leda_rational.h>
 #endif
-
 
 #include <CGAL/simplest_rational_in_interval.h>
 #include <CGAL/to_rational.h>
-
-
-#ifdef CGAL_USE_GMP
-typedef CGAL::Gmpz Gmpz;
-typedef CGAL::Gmpq Gmpq;
-typedef CGAL::Quotient<CGAL::Gmpz> Quot;
-#else
-typedef CGAL::Quotient<int> Quot;
-#endif
 
 template <class Q>
 void test_it()
@@ -43,15 +37,16 @@ void test_it()
 }
 
 int main() {
+  test_it<CGAL::Quotient<CGAL::MP_Float> >();
+
 #ifdef CGAL_USE_GMP
-  test_it<Gmpq>();
+  test_it<CGAL::Quotient<CGAL::Gmpz> >();
+  test_it<CGAL::Gmpq>();
 #endif
 
-  //#ifdef CGAL_USE_GMPXX
-  //test_it<mpq_class>();
-  //#endif
-
-  test_it<Quot>();
+#ifdef CGAL_USE_GMPXX
+  test_it<mpq_class>();
+#endif
 
 #ifdef CGAL_USE_LEDA
   test_it<leda_rational>();
