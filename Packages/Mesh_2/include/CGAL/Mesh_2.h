@@ -879,7 +879,12 @@ create_clusters_of_vertex(Vertex_handle v)
   bool in_a_cluster = false;
   do
     {
-      if(is_small_angle(current->point(), v->point(), next->point()))
+      Face_handle f;
+      int i;
+      is_edge(v, next, f, i); // put in f the face on the right side 
+                              // of (v,next)
+      if(f->is_marked() && 
+	 is_small_angle(current->point(), v->point(), next->point()))
 	{
 	  if(!in_a_cluster)
 	    {
