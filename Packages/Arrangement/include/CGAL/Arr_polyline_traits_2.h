@@ -1026,6 +1026,16 @@ public:
     }
   }
 
+  /*
+   *Append a point to the polyline
+   */
+  void push_back (const Point_2 & p)
+  {
+	  Point_2 pt = p;
+	  Point_2 ps = (--segments.end()).source();
+	  segments.push_back (Segment_2 (ps, pt));
+  }
+
   /*!
    * Create a bounding-box for the polyline.
    * \return The bounding-box.
@@ -1062,6 +1072,7 @@ public:
     int                               n_pts;       // Its number of points.
     Segment_traits_                   seg_traits;  // Auxiliary variable.
     int                               i;           // The current point.
+	bool                              is_forward;  // Forward or reverse iterator.
 
     /*!
      * Private constructor.
@@ -1069,15 +1080,35 @@ public:
      * \param index The index of the segment.
      */
     const_iterator (const Polyline_2<Segment_traits_>* _cvP,
-		    const int& index) :
+		            const int& index,
+					const bool& _forward) :
       cvP(_cvP),
-      i(index)
+      i(index),
+	  is_forward(_forward)
     {
       if (cvP == NULL)
 	n_pts = 0;
       else
 	n_pts = (cvP->_size() == 0) ? 0 : (cvP->_size() + 1);
     }
+
+	/*!
+	 * Increment the index.
+	 */
+	void _increment ()
+	{
+      if (cvP != NULL && i < n_pts)
+        i++;
+	}
+
+	/*!
+	 * Decrement the index.
+	 */
+	void _decrement ()
+	{
+      if (cvP != NULL && i >= 0)
+        i--;
+	}
 
   public:
     
@@ -1087,7 +1118,8 @@ public:
     const_iterator () :
       cvP(NULL),
       n_pts(0),
-      i(-1)
+      i(-1),
+	  is_forward(true)
     {}
 
     /*!
@@ -1100,11 +1132,11 @@ public:
       CGAL_assertion(i >= 0 && i < n_pts);
 
       if (i == 0)
-	// First point is the source of the first segment.
-	return (seg_traits.curve_source ((*cvP)[0]));
+        // First point is the source of the first segment.
+        return (seg_traits.curve_source ((*cvP)[0]));
       else
-	// Return the target of the (i-1)'st segment
-	return (seg_traits.curve_target ((*cvP)[i-1]));
+        // Return the target of the (i-1)'st segment
+        return (seg_traits.curve_target ((*cvP)[i-1]));
     }
 
     /*!
@@ -1112,14 +1144,18 @@ public:
      */
     void operator++ () 
     {
-      if (cvP != NULL && i < n_pts)
-	i++;
+	  if (is_forward)
+	    _increment();
+      else
+	    _decrement();
     }
 
     void operator++ (int)
     {
-      if (cvP != NULL && i < n_pts)
-	i++;
+	  if (is_forward)
+	    _increment();
+      else
+	    _decrement();
     }
 
     /*!
@@ -1127,14 +1163,18 @@ public:
      */
     void operator-- ()
     {
-      if (cvP != NULL && i >= 0)
-	i--;
+	  if (is_forward)
+	    _decrement();
+      else
+	    _increment();
     }
 
     void operator-- (int)
     {
-      if (cvP != NULL && i >= 0)
-	i--;
+	  if (is_forward)
+	    _decrement();
+      else
+	    _increment();
     }
 
     /*!
@@ -1160,9 +1200,9 @@ public:
   const_iterator begin () const
   {
     if (_size() == 0)
-      return (const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1, true));
     else
-      return (const_iterator (this, 0));
+      return (const_iterator (this, 0, true));
   }
 
   /*!
@@ -1172,9 +1212,9 @@ public:
   const_iterator end () const
   {
     if (_size() == 0)
-      return (const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1, true));
     else
-      return (const_iterator (this, _size() + 1));
+      return (const_iterator (this, _size() + 1, true));
   }
 
   /*!
@@ -1184,9 +1224,9 @@ public:
   const_iterator rbegin () const
   {
     if (_size() == 0)
-      return (const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1, false));
     else
-      return (const_iterator (this, _size()));
+      return (const_iterator (this, _size(), false));
   }
 
   /*!
@@ -1196,9 +1236,9 @@ public:
   const_iterator rend () const
   {
     if (_size() == 0)
-      return (const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1, false));
     else
-      return (const_iterator (this, -1));
+      return (const_iterator (this, -1, false));
   }
 
   /*!
@@ -1212,6 +1252,7 @@ public:
     else
       return (_size() + 1);
   }
+
 
 private:
 

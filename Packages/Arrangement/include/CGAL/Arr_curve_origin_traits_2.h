@@ -139,10 +139,12 @@ public:
    * \param cv the curve.
    * \param o the output iterator
    * \return the past-the-end iterator
+   *
+   * \todo This function does not compile when made 'const', why?
    */
   template<class OutputIterator>
   OutputIterator curve_make_x_monotone(const Curve_2 & cv,
-                                       OutputIterator o) const
+                                       OutputIterator o) // const
   {
     std::list<Org_x_monotone_curve_2>  org_x_curves;
     m_traits.curve_make_x_monotone(cv, std::back_inserter(org_x_curves));

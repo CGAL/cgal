@@ -524,11 +524,19 @@ public:
                    const Point_2 & p) const
   {
     // Check preconditions.
+	Equal_2 my_is_equal = equal_2_object();
+
+	if (my_is_equal (cv.ps, p))
+	{
+		std::cout << "Inserting the segment: " << cv << std::endl << "p = " << p << std::endl;
+		std::cout << std::flush;
+	}
+
     CGAL_precondition(curve_compare_y_at_x(p, cv) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(cv.ps, p));
     CGAL_precondition(!is_equal(cv.pt, p));
-    
+
     // Do the split.
     c1.line = cv.line;
     c1.ps = cv.ps;

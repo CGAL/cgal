@@ -33,6 +33,7 @@ CGAL_BEGIN_NAMESPACE
  * X_monotone_curve_2, and when the X_monotone_curve_2 curves are split. All
  * other methods are inherited from the base ordinary traits class.
  */
+
 template <class Traits_, class Data_>
 class Arr_curve_data_traits_2 : public Traits_ {
 public:
@@ -92,10 +93,12 @@ public:
    * \param cv The curve.
    * \param o The output iterator
    * \return The past-the-end iterator
+   *
+   * why this function dose not compile as const???
    */
   template<class OutputIterator>
   OutputIterator curve_make_x_monotone(const Curve_2 & cv,
-                                       OutputIterator o) const
+                                       OutputIterator o)// const
   {
     std::list<Org_x_monotone_curve_2>  org_x_curves;
     

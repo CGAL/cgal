@@ -169,6 +169,22 @@ public:
       (is_full ? FULL_CONIC : 0) | 
       X_MON_UNDEFINED;
 
+    // Copy the hyperbolic or circular data, if necessary.
+    if ((arc._info & IS_HYPERBOLA) != 0)
+    {
+      _info = _info | IS_HYPERBOLA;
+      _data.hyper_P = new Hyperbolic_arc_data (*(arc._data.hyper_P));
+    }
+    else if ((arc._info & IS_CIRCLE) != 0)
+    {
+      _info = _info | IS_CIRCLE;
+      _data.circ_P = new Circular_arc_data (*(arc._data.circ_P));
+    }
+    else
+    {
+      _data.hyper_P = NULL;
+    }
+
     // Check whether the conic is x-monotone.
     if (is_x_monotone())
     {
@@ -186,22 +202,6 @@ public:
     else
     {
       _info = (_info & ~X_MON_UNDEFINED);
-    }
-
-    // Copy the hyperbolic or circular data, if necessary.
-    if ((arc._info & IS_HYPERBOLA) != 0)
-    {
-      _info = _info | IS_HYPERBOLA;
-      _data.hyper_P = new Hyperbolic_arc_data (*(arc._data.hyper_P));
-    }
-    else if ((arc._info & IS_CIRCLE) != 0)
-    {
-      _info = _info | IS_CIRCLE;
-      _data.circ_P = new Circular_arc_data (*(arc._data.circ_P));
-    }
-    else
-    {
-      _data.hyper_P = NULL;
     }
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX

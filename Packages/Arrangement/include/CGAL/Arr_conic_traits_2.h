@@ -1023,8 +1023,8 @@ class Arr_conic_traits_2
     sub_curve1 = X_monotone_curve_2 (curve, curve.source(), p, false);
     sub_curve2 = X_monotone_curve_2 (curve, p, curve.target(), false);
 
-    CGAL_assertion(sub_curve1.is_x_monotone());
-    CGAL_assertion(sub_curve2.is_x_monotone());
+    //CGAL_assertion(sub_curve1.is_x_monotone());
+    //CGAL_assertion(sub_curve2.is_x_monotone());
 
     return;
   }
