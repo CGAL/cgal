@@ -1,3 +1,6 @@
+2.8.7   (04 July 2001)
+- small change in documentation
+
 2.8.6       (27 Jun 2001)
 - header file CGAL/IO/cgal_window_redefine.h added
 - small change in the documentation
