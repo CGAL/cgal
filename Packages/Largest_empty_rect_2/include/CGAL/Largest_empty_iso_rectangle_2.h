@@ -1122,10 +1122,9 @@ typename Largest_empty_iso_rectangle_2<T>::const_iterator
 Largest_empty_iso_rectangle_2<T>::begin()
 {
   Point_data_set_of_x::const_iterator i = x_sorted.begin();
-
-  while((*i)->type != REG)
+  while(i != x_sorted.end() && (*i)->type != REG) 
     ++i;
-
+ 
   return const_iterator(i);
 }
 
