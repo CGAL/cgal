@@ -1210,6 +1210,7 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_curve & cv,
     // i.e. split the halfedge that contains its.
     lt1 = VERTEX; 
   }
+
   if (lt2 == EDGE || lt2 == UNBOUNDED_EDGE) 
   {
     Halfedge_handle h1, h = h2;
@@ -1218,13 +1219,15 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_curve & cv,
     // i.e. split the halfedge that contains its.
     lt2 = VERTEX;
   }
+
   if (lt1 == VERTEX && lt2 == VERTEX) 
-    return insert_at_vertices(cv, h1->target(),h2->target(), en); 
+    return insert_at_vertices(cv, h1->target(), h2->target(), en); 
     
-  if (lt1 == VERTEX && lt2!=VERTEX)
-    return insert_from_vertex(cv, h1->target(),true, en); 
-  if (lt1!=VERTEX && lt2 == VERTEX)
-    return insert_from_vertex(cv, h2->target(),false, en)->twin();
+  if (lt1 == VERTEX && lt2 != VERTEX)
+    return insert_from_vertex(cv, h1->target(), true, en); 
+
+  if (lt1 != VERTEX && lt2 == VERTEX)
+    return insert_from_vertex(cv, h2->target(), false, en)->twin();
     
   if (lt1 == UNBOUNDED_FACE)
     return insert_in_face_interior(cv, unbounded_face(), en);
@@ -1232,7 +1235,9 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_curve & cv,
   if (lt1 == FACE)
     return insert_in_face_interior(cv, h1->face(), en);
     
-  CGAL_postcondition(lt1 == VERTEX||lt1 == UNBOUNDED_FACE||lt1 == FACE);
+  CGAL_assertion_msg(lt1 == VERTEX || lt1 == UNBOUNDED_FACE || lt1 == FACE,
+  "Endpoints should not coinside with an edge. No intersections allowed.");
+
   return Halfedge_handle();
 }
 
