@@ -12,6 +12,25 @@ From the requirements specification defined for the point location and intersect
 Meeting the first requirement, the interface needed is straightforward.  However, for accomplishing the second requirement a more complex interface is required in order to provide a internal-attributes free service, so the user does not need to have knowledge about the operation of the ray shooting process.  A simple way to achieve these goal is to define a iterator over the sets of objects that belong to the cell that the ray is currently intersecting.  The class interface is defined then in the following way:
 
 <<K3_tree.h>>=
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
+
 #ifndef K3_TREE_H
 #define K3_TREE_H
 
@@ -912,6 +931,25 @@ else {
 \subsection{K3 Tree Traits class for the SNC structure}
 
 <<SNC_k3_tree_traits.h>>=
+// Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
+
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
