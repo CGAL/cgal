@@ -1,3 +1,6 @@
+4.126 (4 Dec 2003)
+- Protect operator>>(MP_Float) against end of stream.
+
 4.125 (1 Dec 2003)
 - Quotient<NT> now supports sqrt() iff NT supports it.
 

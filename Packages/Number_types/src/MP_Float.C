@@ -54,7 +54,7 @@ MP_Float::MP_Float(double d)
     if (d == 0)
       return;
 
-    CGAL_expensive_assertion(is_finite(d) && is_valid(d));
+    CGAL_assertion(is_finite(d) && is_valid(d));
     CGAL_expensive_assertion_code(double bak = d;)
 
     // This is subtle, because ints are not symetric against 0.
@@ -402,9 +402,10 @@ print (std::ostream & os, const MP_Float &b)
 std::istream &
 operator>> (std::istream & is, MP_Float &b)
 {
-  double i;
-  is >> i;
-  b = MP_Float(i);
+  double d;
+  is >> d;
+  if (is)
+    b = MP_Float(d);
   return is;
 }
 
