@@ -60,5 +60,3 @@ It is written in the documentation that when a new tool is attached to the
 Qt_widget, the last tool attached, is detached. Two tools will
 never be attached in the same time on the widget.
 
-To attach again the tool created in this tutorial you have to create
-some button that lets you attach it or detach it at run time.
