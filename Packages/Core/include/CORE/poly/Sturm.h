@@ -438,16 +438,16 @@ public:
     Sturm<NT> SS (P);
     BFVecInterval v;
     SS.refineAllRoots(v, prec);
-    cout << "   Number of roots is " << v.size();
+    std::cout << "   Number of roots is " << v.size();
     if ((n >= 0) & (v.size() == (unsigned)n))
-    		cout << " (CORRECT!)" << endl;
+    		std::cout << " (CORRECT!)" << std::endl;
     else
-        	cout << " (ERROR!) " << endl;
+        	std::cout << " (ERROR!) " << std::endl;
     int i = 0;
     for (BFVecInterval::const_iterator it = v.begin();
          	it != v.end(); ++it) {
-      	cout << ++i << "th Root is in ["
-		<< it->first << " ; " << it->second << "]" << endl;
+      	std::cout << ++i << "th Root is in ["
+		<< it->first << " ; " << it->second << "]" << std::endl;
     }
   }// testSturm
 
@@ -461,17 +461,17 @@ public:
     Sturm<NT> SS (P);
     BFVecInterval v;
     SS.newtonRefineAllRoots(v, prec);
-    cout << "   Number of roots is " << v.size();
+    std::cout << "   Number of roots is " << v.size();
     if ((n >= 0) & (v.size() == (unsigned)n))
-    		cout << " (CORRECT!)" << endl;
+    		std::cout << " (CORRECT!)" << std::endl;
     else
-        	cout << " (ERROR!) " << endl;
+        	std::cout << " (ERROR!) " << std::endl;
 
     int i = 0;
     for (BFVecInterval::const_iterator it = v.begin();
          	it != v.end(); ++it) {
-      	cout << ++i << "th Root is in ["
-		<< it->first << " ; " << it->second << "]" << endl;
+      	std::cout << ++i << "th Root is in ["
+		<< it->first << " ; " << it->second << "]" << std::endl;
     }
   }// testNewtonSturm
 
