@@ -44,8 +44,8 @@ while (<>)
       {print STDERR "Warning: $result_type is unknown\n"; }
     print
 "{
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     $result_type result = $function_name(
@@ -56,12 +56,12 @@ while (<>)
       else { print ");"; }
     }
     print "
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return $function_name(
 ";
     foreach (@args) {
@@ -103,7 +103,7 @@ while (<>)
         $last_arg=$1;
       }
       s/const/\n    const/g;  # Split lines.
-      s/[RF]T/Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE>/g;
+      s/[RF]T/CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE>/g;
     }
     if (/\(/) {
       /([a-zA-Z_]\w*)\s*\(/;
