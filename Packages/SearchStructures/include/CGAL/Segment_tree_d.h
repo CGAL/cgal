@@ -182,7 +182,7 @@ protected:
        build_next_dimension(left(v));
        build_next_dimension(right(v));
      }
-     if(v->objects.size()>0)
+     if(! v->objects.empty())
      {
        typename std::list< C_Data>::iterator sub_first = v->objects.begin();
        typename std::list< C_Data>::iterator sub_last = v->objects.end();
@@ -313,7 +313,7 @@ protected:
      }
      else
      {
-       if(v->objects.size()>0)
+       if(! v->objects.empty())
        {
 	 typename std::list< C_Data>::iterator j=v->objects.begin();
 	 while (j!= v->objects.end())
@@ -378,7 +378,7 @@ protected:
      }
      else
      {
-       if(v->objects.size()>0)
+       if(! v->objects.empty())
        {
 	 typename std::list< C_Data>::iterator j=v->objects.begin();
 	 while (j!= v->objects.end())
@@ -422,7 +422,7 @@ protected:
       if(!is_valid(right(v)))
 	return false;
     }
-    if(v->objects.size()>0)
+    if(! v->objects.empty())
     {
 //      true falls das Object das Segment enthaelt, 
 //	  der parent aber das Segmetn nicht enthaelt.
@@ -511,7 +511,7 @@ public:
 
     A count = first;
     int n=0;
-    std::vector<Key> keys(2*count_elements__C(first, last) + 1);
+    std::vector<Key> keys(2*count_elements__C(first, last));
     while(count!=last)
     {
       if (interface.comp(interface.get_left(*count),
