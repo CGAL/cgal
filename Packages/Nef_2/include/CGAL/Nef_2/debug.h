@@ -22,7 +22,14 @@
 
 #include <iostream>
 
-static int debugthread=1;
+#ifdef NDEBUG
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 0
+#endif
+
+#if CGAL_NEF_DEBUG>0
+  static int debugthread=1;
+#endif
 
 #undef TRACE
 #undef TRACEN
@@ -74,4 +81,4 @@ static int debugthread=1;
 #define CTRACEN(b,t) 
 #endif
 
-#endif //CGAL_DEBUG_H
+#endif // CGAL_DEBUG_H
