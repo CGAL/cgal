@@ -465,28 +465,6 @@ public:
     store_boundary_object( f, c);
   }
 
-  struct Shell_mark_setter {
-    const SNC_decorator D;
-    Mark m;
-    Shell_mark_setter(const SNC_decorator& Di, Mark mi)
-      : D(Di), m(mi) {}
-    void visit(SFace_handle h)        { /* empty */ }
-    void visit(Vertex_handle h)       { D.mark(h) = m; }
-    void visit(Halfedge_handle h)     { D.mark(h) = D.mark(D.twin(h)) = m; }
-    void visit(Halffacet_handle h)    { D.mark(h) = m; }
-    void set_volume(Volume_handle ci) { /* empty */ }
-  };
-
-  void clear_outer_box_marks() {
-    SObject_handle o = shells_begin(volumes_begin());
-    SFace_handle sf;
-    CGAL_nef3_assertion( assign( sf, o));
-    CGAL_assertion( sf != sncp()->sfaces_end());
-    assign( sf, o);
-    Shell_mark_setter Setter( *this, false);
-    visit_shell_objects( sf, Setter );
-  }
-
   template <class H> void set_facet(H h, Halffacet_handle f) const 
     { h->incident_facet_ = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const

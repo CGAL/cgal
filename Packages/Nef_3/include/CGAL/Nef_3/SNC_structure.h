@@ -103,7 +103,7 @@ public:
   typedef typename Items::Sphere_kernel Sphere_kernel;
   
   typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
-  typedef Infi_box::Standard_kernel  Standard_kernel;
+  typedef typename Infi_box::Standard_kernel  Standard_kernel;
   typedef Infimaximal_box<typename Is_extended_kernel<Standard_kernel>::value_type, Standard_kernel> No_box;
 
   typedef typename Kernel::Point_3      Point_3;

@@ -55,7 +55,8 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   typedef typename SNC_structure::SHalfedge               SHalfedge;
   typedef typename SNC_structure::Halfedge_handle         Halfedge_handle;
-  typedef typename SNC_structure::Halffacet_const_handle  Halffacet_const_handle;
+  typedef typename SNC_structure::Halffacet_const_handle  
+                                  Halffacet_const_handle;
   typedef typename SNC_structure::SHalfedge_handle        SHalfedge_handle;
   typedef typename SNC_structure::SHalfloop_handle        SHalfloop_handle;
   typedef typename SNC_structure::SHalfedge_around_facet_circulator 

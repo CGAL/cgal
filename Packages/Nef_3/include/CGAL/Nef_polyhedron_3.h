@@ -269,14 +269,6 @@ protected:
     C.build_external_structure();
   }
 
-  void clear_box_marks() 
-    /* unset all frame marks */ {
-    SNC_decorator D(snc());
-    Volume_iterator c = D.volumes_begin(); 
-    D.mark(c) = false;
-    D.clear_outer_box_marks();
-  }
-
  public:
   /*{\Mcreation 3}*/
 
@@ -700,7 +692,6 @@ protected:
     //D.binary_operation( N1.snc(), _and, rsnc, tests_impl );
     //Nef_polyhedron_3<T> res(rsnc);
     //>>>>>>> 1.43
-    //    res.clear_box_marks();
     return res;
   }
 
@@ -721,7 +712,6 @@ protected:
     //D.binary_operation( N1.snc(), _or, rsnc, tests_impl);
     //Nef_polyhedron_3<T> res(rsnc);
     //>>>>>>> 1.43
-    //    res.clear_box_marks();
     return res;
   }
 
@@ -741,7 +731,6 @@ protected:
     //D.binary_operation( N1.snc(), _diff, rsnc, tests_impl);
     //Nef_polyhedron_3<T> res(rsnc);
     //>>>>>>> 1.43
-    //    res.clear_box_marks();
     return res;
   }    
 
@@ -762,7 +751,6 @@ protected:
     //D.binary_operation( N1.snc(), _xor, rsnc, tests_impl);
     //Nef_polyhedron_3<T> res(rsnc);
     //>>>>>>> 1.43
-    //    res.clear_box_marks();
     return res;
   }
 
