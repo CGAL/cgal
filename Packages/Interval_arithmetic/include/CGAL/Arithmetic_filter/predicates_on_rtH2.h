@@ -1,35 +1,10 @@
 // ======================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The CGAL Consortium
 //
-// This software and related documentation is part of the
-// Computational Geometry Algorithms Library (CGAL).
-//
-// Every use of CGAL requires a license. Licenses come in three kinds:
-//
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the CGAL Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
-//
-// This software and documentation is provided "as-is" and without
-// warranty of any kind. In no event shall the CGAL Consortium be
-// liable for any damage of any kind.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Free University of Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany) Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
 // ----------------------------------------------------------------------
 // 
@@ -39,14 +14,11 @@
 // source        : 
 // file          : include/CGAL/Arithmetic_filter/predicates_on_rtH2.h
 // package       : Interval_arithmetic
-// revision      : 1.3.1
+// revision      : 2.0.1
 // revision_date :
 // author(s)     : Sylvain.Pion@sophia.inria.fr
 //
 // coordinator   : MPI, Saarbruecken
-//
-// email         : cgal@cs.uu.nl
-//
 // ======================================================================
 
 
@@ -58,24 +30,26 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Orientation
-CGAL_orientationH2( const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                    const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                    const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw )
+Orientation
+orientationH2( const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	                    const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                    const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw )
 {
-  CGAL_Orientation result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Orientation result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_orientationH2(
+    result = orientationH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
@@ -85,12 +59,12 @@ CGAL_orientationH2( const CGAL_Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_orientationH2(
+    FPU_set_rounding_to_nearest();
+    result = orientationH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -107,21 +81,21 @@ CGAL_orientationH2( const CGAL_Filtered_exact<CT,ET>& phx,
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
 bool
-CGAL_leftturnH2( const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                 const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                 const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw )
+leftturnH2( const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	                 const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                 const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_leftturnH2(
+    result = leftturnH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
@@ -131,12 +105,12 @@ CGAL_leftturnH2( const CGAL_Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_leftturnH2(
+    FPU_set_rounding_to_nearest();
+    result = leftturnH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -153,21 +127,21 @@ CGAL_leftturnH2( const CGAL_Filtered_exact<CT,ET>& phx,
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
 bool
-CGAL_rightturnH2(const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                 const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                 const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw )
+rightturnH2(const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	                 const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                 const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_rightturnH2(
+    result = rightturnH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
@@ -177,12 +151,12 @@ CGAL_rightturnH2(const CGAL_Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_rightturnH2(
+    FPU_set_rounding_to_nearest();
+    result = rightturnH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -199,21 +173,21 @@ CGAL_rightturnH2(const CGAL_Filtered_exact<CT,ET>& phx,
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
 bool
-CGAL_collinearH2(const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                 const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                 const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw )
+collinearH2(const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	                 const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                 const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw )
 {
   bool result;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_collinearH2(
+    result = collinearH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
@@ -223,12 +197,12 @@ CGAL_collinearH2(const CGAL_Filtered_exact<CT,ET>& phx,
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_collinearH2(
+    FPU_set_rounding_to_nearest();
+    result = collinearH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -243,25 +217,25 @@ CGAL_collinearH2(const CGAL_Filtered_exact<CT,ET>& phx,
 }
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Bounded_side
-CGAL_side_of_bounded_circleH2( const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                               const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw,
-	                               const CGAL_Filtered_exact<CT,ET>& shx,
-	const CGAL_Filtered_exact<CT,ET>& shy,
-	const CGAL_Filtered_exact<CT,ET>& shw,
-	                               const CGAL_Filtered_exact<CT,ET>& thx,
-	const CGAL_Filtered_exact<CT,ET>& thy,
-	const CGAL_Filtered_exact<CT,ET>& thw )
+Bounded_side
+side_of_bounded_circleH2( const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                               const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw,
+	                               const Filtered_exact<CT,ET>& shx,
+	const Filtered_exact<CT,ET>& shy,
+	const Filtered_exact<CT,ET>& shw,
+	                               const Filtered_exact<CT,ET>& thx,
+	const Filtered_exact<CT,ET>& thy,
+	const Filtered_exact<CT,ET>& thw )
 {
-  CGAL_Bounded_side result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Bounded_side result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_side_of_bounded_circleH2(
+    result = side_of_bounded_circleH2(
 		qhx.interval(),
 		qhy.interval(),
 		qhw.interval(),
@@ -274,12 +248,12 @@ CGAL_side_of_bounded_circleH2( const CGAL_Filtered_exact<CT,ET>& qhx,
 		thx.interval(),
 		thy.interval(),
 		thw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_side_of_bounded_circleH2(
+    FPU_set_rounding_to_nearest();
+    result = side_of_bounded_circleH2(
 		qhx.exact(),
 		qhy.exact(),
 		qhw.exact(),
@@ -298,25 +272,25 @@ CGAL_side_of_bounded_circleH2( const CGAL_Filtered_exact<CT,ET>& qhx,
 
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Oriented_side
-CGAL_side_of_oriented_circleH2(const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                               const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw,
-	                               const CGAL_Filtered_exact<CT,ET>& shx,
-	const CGAL_Filtered_exact<CT,ET>& shy,
-	const CGAL_Filtered_exact<CT,ET>& shw,
-	                               const CGAL_Filtered_exact<CT,ET>& thx,
-	const CGAL_Filtered_exact<CT,ET>& thy,
-	const CGAL_Filtered_exact<CT,ET>& thw )
+Oriented_side
+side_of_oriented_circleH2(const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	                               const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw,
+	                               const Filtered_exact<CT,ET>& shx,
+	const Filtered_exact<CT,ET>& shy,
+	const Filtered_exact<CT,ET>& shw,
+	                               const Filtered_exact<CT,ET>& thx,
+	const Filtered_exact<CT,ET>& thy,
+	const Filtered_exact<CT,ET>& thw )
 {
-  CGAL_Oriented_side result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Oriented_side result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_side_of_oriented_circleH2(
+    result = side_of_oriented_circleH2(
 		qhx.interval(),
 		qhy.interval(),
 		qhw.interval(),
@@ -329,12 +303,12 @@ CGAL_side_of_oriented_circleH2(const CGAL_Filtered_exact<CT,ET>& qhx,
 		thx.interval(),
 		thy.interval(),
 		thw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_side_of_oriented_circleH2(
+    FPU_set_rounding_to_nearest();
+    result = side_of_oriented_circleH2(
 		qhx.exact(),
 		qhy.exact(),
 		qhw.exact(),
@@ -352,31 +326,31 @@ CGAL_side_of_oriented_circleH2(const CGAL_Filtered_exact<CT,ET>& qhx,
 }
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Comparison_result
-CGAL_compare_lexicographically_xyH2(const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                                    const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw)
+Comparison_result
+compare_lexicographically_xyH2(const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	                                    const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw)
 {
-  CGAL_Comparison_result result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Comparison_result result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_compare_lexicographically_xyH2(
+    result = compare_lexicographically_xyH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
 		qhx.interval(),
 		qhy.interval(),
 		qhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_compare_lexicographically_xyH2(
+    FPU_set_rounding_to_nearest();
+    result = compare_lexicographically_xyH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -389,27 +363,27 @@ CGAL_compare_lexicographically_xyH2(const CGAL_Filtered_exact<CT,ET>& phx,
 
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Comparison_result
-CGAL_compare_xH2( const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                  const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhw )
+Comparison_result
+compare_xH2( const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phw,
+	                  const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhw )
 {
-  CGAL_Comparison_result result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Comparison_result result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_compare_xH2(
+    result = compare_xH2(
 		phx.interval(),
 		phw.interval(),
 		qhx.interval(),
 		qhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_compare_xH2(
+    FPU_set_rounding_to_nearest();
+    result = compare_xH2(
 		phx.exact(),
 		phw.exact(),
 		qhx.exact(),
@@ -418,45 +392,45 @@ CGAL_compare_xH2( const CGAL_Filtered_exact<CT,ET>& phx,
   return result;
 }
 
-// No CGAL_compare_yH2; use CGAL_compare_xH2( py, pw, qy, qw)
+// No compare_yH2; use compare_xH2( py, pw, qy, qw)
 
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
-CGAL_Comparison_result
-CGAL_compare_deltax_deltayH2(const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	                             const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	                             const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw,
-	                             const CGAL_Filtered_exact<CT,ET>& shy,
-	const CGAL_Filtered_exact<CT,ET>& shw )
-  const CGAL_Filtered_exact<CT,ET>  tbc1 = CGAL_abs(phx*qhw - qhx*phw) * rhw*shw;
-  const CGAL_Filtered_exact<CT,ET>  tbc2 = CGAL_abs(rhy*shw - shy*rhw) * phw*qhw;
-  return (tbc2 < tbc1) ? CGAL_LARGER
-                       : (tbc1 == tbc2) ? CGAL_EQUAL : CGAL_SMALLER;
+Comparison_result
+compare_deltax_deltayH2(const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phw,
+	                             const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhw,
+	                             const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw,
+	                             const Filtered_exact<CT,ET>& shy,
+	const Filtered_exact<CT,ET>& shw )
+  const Filtered_exact<CT,ET>  tbc1 = abs(phx*qhw - qhx*phw) * rhw*shw;
+  const Filtered_exact<CT,ET>  tbc2 = abs(rhy*shw - shy*rhw) * phw*qhw;
+  return (tbc2 < tbc1) ? LARGER
+                       : (tbc1 == tbc2) ? EQUAL : SMALLER;
 
 
-template <class CGAL_Filtered_exact<CT,ET>>
+template <class Filtered_exact<CT,ET>>
 // CGAL_KERNEL_INLINE
 bool
-CGAL_collinear_are_ordered_along_lineH2(
-     const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	     const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	     const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw
+collinear_are_ordered_along_lineH2(
+     const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	     const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	     const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw
                                        )
 {
-  CGAL_Comparison_result result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Comparison_result result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_collinear_are_ordered_along_lineH2(
+    result = collinear_are_ordered_along_lineH2(
 		phx.interval(),
 		phw.interval(),
 		qhx.interval(),
@@ -470,9 +444,9 @@ CGAL_collinear_are_ordered_along_lineH2(
 		rhw.interval(),
 		q.interval(),
 		tbc1.interval(),
-		CGAL_LARGER.interval(),
+		LARGER.interval(),
 		tbc2.interval(),
-		C.interval(),
+		S.interval(),
 		.interval());		CGAL_KERNEL_INLINE.interval(),
 		bool.interval(),
 		phx.interval(),
@@ -485,12 +459,12 @@ CGAL_collinear_are_ordered_along_lineH2(
 		rhy.interval(),
 		rhw.interval(),
 		.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_collinear_are_ordered_along_lineH2(
+    FPU_set_rounding_to_nearest();
+    result = collinear_are_ordered_along_lineH2(
 		phx.exact(),
 		phw.exact(),
 		qhx.exact(),
@@ -504,9 +478,9 @@ CGAL_collinear_are_ordered_along_lineH2(
 		rhw.exact(),
 		q.exact(),
 		tbc1.exact(),
-		CGAL_LARGER.exact(),
+		LARGER.exact(),
 		tbc2.exact(),
-		C.exact(),
+		S.exact(),
 		.exact());		CGAL_KERNEL_INLINE.exact(),
 		bool.exact(),
 		phx.exact(),
@@ -526,22 +500,22 @@ CGAL_collinear_are_ordered_along_lineH2(
 template < class CT, class ET >
 // CGAL_KERNEL_INLINE
 bool
-CGAL_collinear_are_strictly_ordered_along_lineH2(
-     const CGAL_Filtered_exact<CT,ET>& phx,
-	const CGAL_Filtered_exact<CT,ET>& phy,
-	const CGAL_Filtered_exact<CT,ET>& phw,
-	     const CGAL_Filtered_exact<CT,ET>& qhx,
-	const CGAL_Filtered_exact<CT,ET>& qhy,
-	const CGAL_Filtered_exact<CT,ET>& qhw,
-	     const CGAL_Filtered_exact<CT,ET>& rhx,
-	const CGAL_Filtered_exact<CT,ET>& rhy,
-	const CGAL_Filtered_exact<CT,ET>& rhw)
+collinear_are_strictly_ordered_along_lineH2(
+     const Filtered_exact<CT,ET>& phx,
+	const Filtered_exact<CT,ET>& phy,
+	const Filtered_exact<CT,ET>& phw,
+	     const Filtered_exact<CT,ET>& qhx,
+	const Filtered_exact<CT,ET>& qhy,
+	const Filtered_exact<CT,ET>& qhw,
+	     const Filtered_exact<CT,ET>& rhx,
+	const Filtered_exact<CT,ET>& rhy,
+	const Filtered_exact<CT,ET>& rhw)
 {
   bool result;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_collinear_are_strictly_ordered_along_lineH2(
+    result = collinear_are_strictly_ordered_along_lineH2(
 		phx.interval(),
 		phy.interval(),
 		phw.interval(),
@@ -551,12 +525,12 @@ CGAL_collinear_are_strictly_ordered_along_lineH2(
 		rhx.interval(),
 		rhy.interval(),
 		rhw.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_collinear_are_strictly_ordered_along_lineH2(
+    FPU_set_rounding_to_nearest();
+    result = collinear_are_strictly_ordered_along_lineH2(
 		phx.exact(),
 		phy.exact(),
 		phw.exact(),
@@ -571,6 +545,8 @@ CGAL_collinear_are_strictly_ordered_along_lineH2(
 }
 
 
+
+CGAL_END_NAMESPACE
 
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
