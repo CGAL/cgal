@@ -3071,7 +3071,8 @@ public:
     { return true; }
 
     bool
-    operator()( const Point_3&, const Point_3&, const Point_3&, const Point_3&, const Point_3&) const
+    operator()( const Point_3&, const Point_3&, const Point_3&, 
+		const Point_3&, const Point_3&) const
     { return true; }
 };
 
