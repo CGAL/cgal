@@ -44,13 +44,6 @@ template < class R >
 class Triangulation_euclidean_traits_2 {
 public:
   typedef R Rep;
-//   typedef CGAL::Point_2  Point_2;
-//   typedef CGAL::Segment_2<R> Segment_2;
-//   typedef CGAL::Triangle_2<R> Triangle_2;
-//   typedef CGAL::Line_2<R> Line_2;
-//   typedef CGAL::Direction_2<R> Direction_2;
-//   typedef CGAL::Ray_2<R> Ray_2;
-
   typedef typename R::Point_2     Point_2;
   typedef typename R::Segment_2   Segment_2;
   typedef typename R::Triangle_2  Triangle_2;
@@ -64,15 +57,12 @@ public:
   typedef typename R::Side_of_oriented_circle_2  Side_of_oriented_circle_2;
   typedef typename R::Construct_circumcenter_2   Construct_circumcenter_2;
   typedef typename R::Construct_bisector_2       Construct_bisector_2;
-  //typedef typename R::Construct_midpoint         Construct_midpoint;
   typedef typename R::Compare_distance_2         Compare_distance_2;
   typedef typename R::Construct_segment_2        Construct_segment_2;
   typedef typename R::Construct_triangle_2       Construct_triangle_2;
-  //typedef typename R::Construct_direction_2      Construct_direction_2;
+  typedef typename R::Construct_direction_2      Construct_direction_2;
   typedef typename R::Construct_ray_2            Construct_ray_2;
-  typedef typename R::Construct_direction_of_line_2
-                                           Construct_direction_of_line_2;
-
+  
   // for compatibility with previous versions
   typedef Point_2      Point;
   typedef Segment_2    Segment;
@@ -111,18 +101,9 @@ public:
   construct_bisector_2_object() const
     {return Construct_bisector_2();}
   
- //  Construct_midpoint
-//   construct_midpoint_object() const
-//     {return Construct_midpoint();}
-
-
   Compare_distance_2
   compare_distance_2_object() const
     {return Compare_distance_2();}
-
-  Construct_direction_of_line_2
-  construct_direction_of_line_2_object() const
-    {return  Construct_direction_of_line_2();}
 
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
@@ -130,8 +111,8 @@ public:
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
 
-//   Construct_direction_2  construct_direction_2_object() const
-//     {return Construct_direction_2();}
+  Construct_direction_2  construct_direction_2_object() const
+    {return Construct_direction_2();}
 
   Construct_ray_2  construct_ray_2_object() const
     {return Construct_ray_2();}

@@ -406,7 +406,7 @@ dual(const Edge &e) const
   const Point& p = f->vertex(cw(i))->point();
   const Point& q = f->vertex(ccw(i))->point();
   Line l = geom_traits().construct_bisector_2_object()(p,q);
-  Direction d = geom_traits().construct_direction_of_line_2_object()(l);
+  Direction d = geom_traits().construct_direction_2_object()(l);
   Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
   return make_object(r);
 }

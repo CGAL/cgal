@@ -435,7 +435,7 @@ dual(const Edge &e) const
   Weighted_point q = f->vertex( ccw(i))->point();
   Line l  = geom_traits().construct_radical_axis_2_object()(p,q);
   Direction d =
-    geom_traits().construct_direction_of_line_2_object()(l);
+    geom_traits().construct_direction_2_object()(l);
   Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
   return make_object(r);
 }

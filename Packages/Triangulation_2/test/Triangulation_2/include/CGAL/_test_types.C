@@ -298,13 +298,13 @@ class Triangulation_test_Construct_triangle_2
     }
 };
 
-// class Triangulation_test_Construct_direction_2
-// {
-//  public:
-//   typedef Triangulation_test_line     Line;
-//   typedef Triangulation_test_direction  Direction;
-//   Direction operator()(const Line &l) { return Direction(l);}
-// };
+class Triangulation_test_Construct_direction_2
+{
+ public:
+  typedef Triangulation_test_line     Line;
+  typedef Triangulation_test_direction  Direction;
+  Direction operator()(const Line &l) { return Direction(l);}
+};
 
 class Triangulation_test_Construct_ray_2
 {
@@ -339,14 +339,14 @@ public:
     }
 };
 
-class Triangulation_test_Construct_direction_of_line_2
-{
-public:
-  Triangulation_test_Construct_direction_of_line_2(){}
-  typedef Triangulation_test_direction Direction;
-  typedef Triangulation_test_line      Line;
-  Direction operator()(Line l)    { return Direction(l);}
-};
+// class Triangulation_test_Construct_direction_of_line_2
+// {
+// public:
+//   Triangulation_test_Construct_direction_of_line_2(){}
+//   typedef Triangulation_test_direction Direction;
+//   typedef Triangulation_test_line      Line;
+//   Direction operator()(Line l)    { return Direction(l);}
+// };
 
 class _Triangulation_test_traits {
 public:
@@ -370,15 +370,11 @@ public:
                                              Construct_midpoint;
   typedef Triangulation_test_Compare_distance_2 
                                              Compare_distance_2;
-  typedef Triangulation_test_Construct_direction_of_line_2
-                                      Construct_direction_of_line_2;
   typedef Triangulation_test_Construct_segment_2   Construct_segment_2;
   typedef Triangulation_test_Construct_triangle_2  Construct_triangle_2;
-  //typedef Triangulation_test_Construct_direction_2 Construct_direction_2;
+  typedef Triangulation_test_Construct_direction_2 Construct_direction_2;
   typedef Triangulation_test_Construct_ray_2       Construct_ray_2;
 
-
-  //  typedef Triangulation_test_distance  Distance;
 
   _Triangulation_test_traits() {}
   _Triangulation_test_traits(const _Triangulation_test_traits &) {}
@@ -417,10 +413,6 @@ public:
   compare_distance_2_object() const
     {return Compare_distance_2();}
 
-  Construct_direction_of_line_2
-  construct_direction_of_line_2_object() const
-    { return Construct_direction_of_line_2();}
-
   Construct_segment_2
   construct_segment_2_object() const
     {return Construct_segment_2();}
@@ -429,9 +421,9 @@ public:
   construct_triangle_2_object() const
     {return Construct_triangle_2();}
 
-//   Construct_direction_2
-//   construct_direction_2_object() const
-//     {return Construct_direction_2();}
+  Construct_direction_2
+  construct_direction_2_object() const
+    {return Construct_direction_2();}
 
   Construct_ray_2
   construct_ray_2_object() const
