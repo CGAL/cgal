@@ -57,10 +57,12 @@ class Holes_split {
   typedef typename Planar_map::Vertex_iterator          Vertex_iterator;
   typedef typename Planar_map::Vertex_const_iterator    Vertex_const_iterator;
   typedef typename Planar_map::Halfedge_iterator        Halfedge_iterator;
-  typedef typename Planar_map::Halfedge_const_iterator  Halfedge_const_iterator;
+  typedef typename Planar_map::Halfedge_const_iterator
+                                        Halfedge_const_iterator;
   typedef typename Planar_map::Face_iterator            Face_iterator;
   typedef typename Planar_map::Face_const_iterator      Face_const_iterator;
-  typedef typename Planar_map::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
+  typedef typename Planar_map::Ccb_halfedge_circulator
+                                        Ccb_halfedge_circulator;
   typedef typename Planar_map::Ccb_halfedge_const_circulator
                                         Ccb_halfedge_const_circulator;
   typedef typename Planar_map::Halfedge_around_vertex_circulator
