@@ -21,7 +21,7 @@ endif
 endif
 
 LCPPINCS = -I$(BASEDIR)/../../include
-LCPPINCS+= -I$(BASEDIR)/../../../Bench/include
+LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
 LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../../src/LEDA_KERNEL/include
