@@ -1,4 +1,4 @@
-#line 909 "k3_tree.nw"
+#line 911 "k3_tree.nw"
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
