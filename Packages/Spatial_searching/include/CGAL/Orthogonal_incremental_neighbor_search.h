@@ -437,8 +437,10 @@ class iterator;
     }
 
     // postfix operator
-    Point_with_transformed_distance operator++(int) {
-        return (*Ptr_implementation)++;
+    iterator operator++(int) {
+      iterator tmp(*this);
+      ++(*this);
+      return tmp;
     }
 
 
