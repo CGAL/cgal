@@ -93,6 +93,7 @@ int main()
     for (fit = T1.facets_begin(); fit != T1.facets_end(); ++fnum, ++fit) *fit;
     CGAL_TEST(fnum==4);
 
+#ifndef _MSC_VER // truncation due to name length exceeded
     Convex_hull_d::Hull_vertex_iterator hvit;
     int vnum(0);
     for (hvit = T1.hull_vertices_begin(); 
@@ -107,6 +108,7 @@ int main()
     Convex_hull_d::Hull_point_const_iterator hpcit; 
     for (hpcit = pT1->hull_points_begin(); 
          hpcit != pT1->hull_points_end(); ++hpcit) *hpcit;
+#endif
   }
 
 
