@@ -44,13 +44,13 @@ public:
   typedef typename Traits::Point_3                  Point;
   //typedef typename Polyhedron_3::Point_iterator          Point_iterator;
 
-  SoPolyhedronDetail() : p(p_temp){};
+  SoPolyhedronDetail() {};
   SoPolyhedronDetail(SoRayPickAction * action,
                         const SoPrimitiveVertex * v1,
                         const SoPrimitiveVertex * v2,
                         const SoPrimitiveVertex * v3,
                         SoPickedPoint *pp,
-                        Polyhedron_3 &P) : p(P){
+                        Polyhedron_3 *P) : p(P){
     vertex[0].setPoint(v1->getPoint());
     vertex[0].setNormal(v1->getNormal());
     vertex[1].setPoint(v2->getPoint());
@@ -83,9 +83,9 @@ public:
   }
 
   Facet_handle find_face(){
-    Facet_iterator fit = p.facets_begin();
+    Facet_iterator fit = p->facets_begin();
     int number_of_matching_vertices;
-    while(fit != p.facets_end())
+    while(fit != p->facets_end())
     {      
       Halfedge_around_facet_circulator haf = (*fit).facet_begin ();
       bool found_one_equal = false;
@@ -121,8 +121,7 @@ public:
 private:
   static SoType classTypeId; //defined from SoSubDetail.h
   SoPrimitiveVertex vertex[3];
-  Polyhedron_3 &p;
-  Polyhedron_3 p_temp;
+  Polyhedron_3 *p;
 };
 
 template <class Polyhedron_3>

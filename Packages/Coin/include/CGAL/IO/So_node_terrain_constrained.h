@@ -119,7 +119,7 @@ public:
       } while (0);
     } while (0);
   }// Initializes this class
-  Node_terrain() : t(t_temp), LOCK(0) {
+  Node_terrain() : LOCK(0), max_height(0) {
     do {
       Node_terrain::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -137,7 +137,7 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   }// The constructor
-  Node_terrain(Triangulation_2 &T) : t(T), LOCK(0) {
+  Node_terrain(Triangulation_2 *T) : t(T), LOCK(0), max_height(0) {
     do {
       compute_normals_for_faces();
       compute_normals_for_vertices();
@@ -163,11 +163,11 @@ public:
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
     QProgressBar * progress = new QProgressBar(NULL, "My Progress");
     progress->setCaption("Normals for faces");
-    progress->setTotalSteps(t.number_of_faces());
+    progress->setTotalSteps(t->number_of_faces());
     progress->show();
     int faces_count = 0;
     Finite_faces_iterator fit;
-    for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+    for (fit = t->finite_faces_begin(); fit != t->finite_faces_end(); fit++){
       progress->setProgress( faces_count );
       CPoint3 p1(CGAL::to_double((*(*fit).vertex(0)).point().x()),
                   CGAL::to_double((*(*fit).vertex(0)).point().y()),
@@ -197,12 +197,12 @@ public:
     vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
     QProgressBar * progress = new QProgressBar(NULL, "My Progress");
     progress->setCaption("Normals for vertices");
-    progress->setTotalSteps(t.number_of_vertices());
+    progress->setTotalSteps(t->number_of_vertices());
     progress->show();
     int vertices_count = 0;
     Finite_vertices_iterator vit;      
-    for ( vit = t.finite_vertices_begin(); 
-          vit != t.finite_vertices_end(); ++vit){
+    for ( vit = t->finite_vertices_begin(); 
+          vit != t->finite_vertices_end(); vit++){
       progress->setProgress(vertices_count);
       Face_circulator cit = (&(*vit))->incident_faces();
       unsigned int normals_count = 0;
@@ -237,6 +237,7 @@ public:
   SoMFInt32 numVertices;
 
 public:
+  void set_max_height(double h){max_height = h;}
   static SoType getClassTypeId(void){
     return Node_terrain::classTypeId;
   }
@@ -280,6 +281,20 @@ protected:
       }
       action->addNumLines(cnt);
     }
+  }
+
+  void set_face_color(Finite_faces_iterator *fit){
+    double a = CGAL::to_double((*(*(*fit)).vertex(0)).point().z());
+    double b = CGAL::to_double((*(*(*fit)).vertex(1)).point().z());
+    double c = CGAL::to_double((*(*(*fit)).vertex(2)).point().z());
+    if(a > max_height/3 || b > max_height/3 || c > max_height/3){
+      glColor3f(1.0f, 1.0f, 1.0f);
+    } else if(a > max_height/6 || b > max_height/6 || c > max_height/6){
+      glColor3f(0.8f, 0.4f, 0.1f);
+    } else if(a > max_height/10 || b > max_height/10 || c > max_height/10){
+      glColor3f(0.0f, 1.0f, 0.0f);
+    } else
+      glColor3f(0.0f, 0.0f, 1.0f);
   }
 
   virtual void  GLRender(SoGLRenderAction *action){
@@ -431,10 +446,10 @@ protected:
       glEnd();
     } else if(complexity==1){ //render smooth      
       Finite_faces_iterator fit;
-      glColor3f(0.5f, 0.6f, 0.0f);
       glBegin(GL_TRIANGLES);      
-      for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+      for (fit = t->finite_faces_begin(); fit != t->finite_faces_end(); fit++){
         CPoint3 pn = CPoint3(0, 0, 0) + vertices_normals[(*fit).vertex(0)];
+        set_face_color(&fit);
         glNormal3f(pn.x(), pn.y(), pn.z());
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
           CGAL::to_double((*(*fit).vertex(0)).point().y()), 
@@ -451,9 +466,9 @@ protected:
           CGAL::to_double((*(*fit).vertex(2)).point().z()));
       }
       glEnd();
-      Finite_edges_iterator eit = t.finite_edges_begin();
-      while(eit!=t.finite_edges_end()){
-        if(t.is_constrained((*eit))){
+      Finite_edges_iterator eit = t->finite_edges_begin();
+      while(eit!=t->finite_edges_end()){
+        if(t->is_constrained((*eit))){
           glColor3f(1.0f, 0.0f, 0.0f);
           glLineWidth(2);
           glBegin(GL_LINES);
@@ -472,10 +487,10 @@ protected:
       Finite_faces_iterator fit;
       glColor3f(0.5f, 0.6f, 0.0f);
       glBegin(GL_TRIANGLES);      
-      for (fit = t.finite_faces_begin(); fit != t.finite_faces_end(); ++fit){
+      for (fit = t->finite_faces_begin(); fit != t->finite_faces_end(); fit++){
         CPoint3 pn = CPoint3(0, 0, 0) + faces_normals[&(*fit)];
         glNormal3f(pn.x(), pn.y(), pn.z());
-
+        set_face_color(&fit);
         glVertex3f(CGAL::to_double((*(*fit).vertex(0)).point().x()), 
           CGAL::to_double((*(*fit).vertex(0)).point().y()), 
           CGAL::to_double((*(*fit).vertex(0)).point().z()));
@@ -487,9 +502,9 @@ protected:
           CGAL::to_double((*(*fit).vertex(2)).point().z()));
       }
       glEnd();
-      Finite_edges_iterator eit = t.finite_edges_begin();
-      while(eit!=t.finite_edges_end()){
-        if(t.is_constrained((*eit))){
+      Finite_edges_iterator eit = t->finite_edges_begin();
+      while(eit!=t->finite_edges_end()){
+        if(t->is_constrained((*eit))){
           glColor3f(1.0f, 0.0f, 0.0f);
           glLineWidth(2);
           glBegin(GL_LINES);
@@ -513,8 +528,8 @@ protected:
     SbBox3f &box, SbVec3f &center){
     Finite_vertices_iterator vit;
     double xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
-    for ( vit = t.finite_vertices_begin(); 
-          vit != t.finite_vertices_end(); ++vit) {
+    for ( vit = t->finite_vertices_begin(); 
+          vit != t->finite_vertices_end(); vit++) {
       if(CGAL::to_double((*vit).point().x()) < xmin)
         xmin = CGAL::to_double((*vit).point().x());
       if(CGAL::to_double((*vit).point().y()) < ymin)
@@ -527,7 +542,6 @@ protected:
         ymax = CGAL::to_double((*vit).point().y());
       if(CGAL::to_double((*vit).point().z()) > zmax)
         zmax = CGAL::to_double((*vit).point().z());
-      vit++;
     }
     SbVec3f min, max;
     // Set the box to bound the two extreme points
@@ -538,7 +552,6 @@ protected:
   }
   // Generates triangles representing the triangulation
   virtual void  generatePrimitives(SoAction *action){}
-
 
 private:
   virtual SbBool generateDefaultNormals(SoState *, SoNormalCache * nc){
@@ -551,10 +564,10 @@ private:
 
   std::map<Vertex_handle, CVector3> vertices_normals;
   std::map<Face_handle, CVector3> faces_normals;
-  Triangulation_2 &t;
-  Triangulation_2 t_temp;
+  Triangulation_2 *t;
   int LOCK;
   SbBox3f polyhedron_bounding_box;
+  double max_height;
 
 };
 

@@ -121,7 +121,8 @@ public:
       } while (0);
     } while (0);
   };            // Initializes this class
-  Node_polyhedron_3() : p(p_temp), LOCK(0){
+private:
+  Node_polyhedron_3() : LOCK(0){
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -139,7 +140,8 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   };                // The constructor
-  Node_polyhedron_3(Polyhedron &P) : p(P), LOCK(0){
+public:
+  Node_polyhedron_3(Polyhedron *P) : p(P), LOCK(0){
     do {
       Node_polyhedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -168,11 +170,11 @@ public:
       lock();
     faces_normals.erase(faces_normals.begin(), faces_normals.end());
     QProgressDialog progress( "Computing normals for faces...", 
-      "Cancel computing", p.size_of_facets(), NULL, "progress", true );
+      "Cancel computing", p->size_of_facets(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int faces_count = 0;
     Facet_iterator fit;
-    for(fit = p.facets_begin(); fit != p.facets_end(); fit++){
+    for(fit = p->facets_begin(); fit != p->facets_end(); fit++){
       progress.setProgress( faces_count );
       Halfedge_around_facet_circulator h = (*fit).facet_begin();
       Vector_3 normal = CGAL::cross_product(
@@ -197,12 +199,12 @@ public:
       lock();    
     //vertices_normals.erase(vertices_normals.begin(), vertices_normals.end());
     QProgressDialog progress( "Computing normals for vertices...", 
-      "Cancel computing", p.size_of_vertices(), NULL, "progress", true );
+      "Cancel computing", p->size_of_vertices(), NULL, "progress", true );
     progress.setMinimumDuration(0);
     int vertices_count = 0;
 
     Vertex_iterator vit;
-    for(vit = p.vertices_begin(); vit != p.vertices_end(); vit++){
+    for(vit = p->vertices_begin(); vit != p->vertices_end(); vit++){
       progress.setProgress(vertices_count);
       Halfedge_around_vertex_circulator vh = (*vit).vertex_begin();
       unsigned int normals_count = 0;
@@ -425,8 +427,8 @@ protected:
       glEnd();
     } else if(complexity==1){
       //render in smooth (specify the normals for the vertices)
-      Facet_iterator fit = p.facets_begin();
-      while(fit != p.facets_end()){
+      Facet_iterator fit = p->facets_begin();
+      while(fit != p->facets_end()){
         Halfedge_around_facet_circulator h = (*fit).facet_begin();
         glBegin(GL_POLYGON);
           do{
@@ -439,11 +441,11 @@ protected:
         fit++;          
       }//end while
     } else { //render specifying vertices only for normals
-      double nr_of_facets = p.size_of_facets();
-      Facet_iterator fit = p.facets_begin();
+      double nr_of_facets = p->size_of_facets();
+      Facet_iterator fit = p->facets_begin();
       unsigned int complexity_count = 0;
       unsigned int complexity_step = (unsigned int)(1/complexity);
-      while(fit != p.facets_end() && complexity_count < nr_of_facets){
+      while(fit != p->facets_end() && complexity_count < nr_of_facets){
         glBegin(GL_POLYGON);        
           Point pn = Point(0, 0, 0) + faces_normals[fit];
           glNormal3f(pn.x(), pn.y(), pn.z());
@@ -463,9 +465,9 @@ protected:
   };
   
   virtual void  computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center){
-    Vertex_iterator vit = p.vertices_begin();
+    Vertex_iterator vit = p->vertices_begin();
     Kernel::FT xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;
-    while(vit != p.vertices_end()){
+    while(vit != p->vertices_end()){
       if((*vit).point().x() < xmin)
         xmin = (*vit).point().x();
       if((*vit).point().y() < ymin)
@@ -546,8 +548,8 @@ protected:
 
 
     //Generate POLYGON primitives
-    Facet_iterator fit = p.facets_begin();
-    while(fit != p.facets_end()){
+    Facet_iterator fit = p->facets_begin();
+    while(fit != p->facets_end()){
       Halfedge_around_facet_circulator h = (*fit).facet_begin();
     
       Vector_3 normal = CGAL::cross_product(
@@ -573,8 +575,8 @@ protected:
     }//end while
 /*
     //Generate POINTS primitives
-    Vertex_iterator vit = p.vertices_begin();
-    while(vit != p.vertices_end()){
+    Vertex_iterator vit = p->vertices_begin();
+    while(vit != p->vertices_end()){
       //Halfedge_around_facet_circulator h = (*fit).facet_begin();
     
       //Vector_3 normal = CGAL::cross_product(
@@ -641,8 +643,7 @@ private:
                                       vertices_normals;  
   std::map<Facet_handle, Vector_3, Facet_handle_less>
                                       faces_normals;
-  Polyhedron &p;
-  Polyhedron p_temp;
+  Polyhedron *p;
   int LOCK;   //used to secure rendering
               //the node is rendered only when the data is ready
 
