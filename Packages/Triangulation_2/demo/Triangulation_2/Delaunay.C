@@ -98,7 +98,7 @@ void show_conflicts( Point& p, Delaunay& T, Window_stream &W )
   else {
     std::list<Face_handle> conflict_faces;
     std::list<Edge>  hole_bd;
-    T.get_conflicts__and_boundary(p, 
+    T.get_conflicts_and_boundary(p, 
 				 std::back_inserter(conflict_faces),
 				 std::back_inserter(hole_bd));
     std::list<Face_handle>::iterator fit = conflict_faces.begin();
