@@ -5,7 +5,7 @@ typedef CGAL::Cartesian<double> R;
 typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
 typedef Traits::Segment_2 Segment;
-typedef Traits::Vector_2 Vector_2;
+//typedef Traits::Vector_2 Vector;
 
 #include <list>
 #include <vector>
