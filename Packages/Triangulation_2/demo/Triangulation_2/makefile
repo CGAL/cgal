@@ -77,8 +77,7 @@ delaunay_triangulation_2$(OBJ_EXT): delaunay_triangulation_2.C \
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) delaunay_triangulation_2.C
 
 delaunay_triangulation_2$(EXE_EXT): delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT) 	\
-		delaunay_triangulation_2 \
+	$(CGAL_CXX) $(EXE_OPT)delaunay_triangulation_2 \
 		delaunay_triangulation_2$(OBJ_EXT)  \
 		triangulation_2_edit_vertex$(OBJ_EXT) \
 		delaunay_triangulation_2_toolbar$(OBJ_EXT) \
@@ -163,7 +162,7 @@ constrained_delaunay_triangulation_2$(OBJ_EXT): \
 
 constrained_delaunay_triangulation_2$(EXE_EXT): \
 		constrained_delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT) constrained_delaunay_triangulation_2 \
+	$(CGAL_CXX) $(EXE_OPT)constrained_delaunay_triangulation_2 \
 		constrained_delaunay_triangulation_2$(OBJ_EXT) \
 		constrained_delaunay_triangulation_2_toolbar$(OBJ_EXT) \
 		constrained_delaunay_triangulation_2_toolbar_layers$(OBJ_EXT) \
