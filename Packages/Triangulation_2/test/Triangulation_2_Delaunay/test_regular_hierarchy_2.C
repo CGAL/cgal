@@ -34,7 +34,7 @@
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 #include <CGAL/_test_cls_regular_hierarchy_2.C>
 
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Test_rep_cartesian> RGt;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<TestK> RGt;
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
 typedef CGAL::Regular_triangulation_face_base_2<RGt>  Fb;
@@ -53,6 +53,7 @@ int main()
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
 	    <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
+  //_test_cls_regular_hierarchy_2( Rt());
   _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());
   return 0;
 }

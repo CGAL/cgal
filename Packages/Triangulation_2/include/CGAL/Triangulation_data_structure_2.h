@@ -100,7 +100,7 @@ public:
     Vertex_handle() : _v() {}
     Vertex_handle(const Vertex_iterator& v) : _v(v) {}
     Vertex_handle(const Vertex_circulator& v) : _v(v.base()._v) {}
-    Vertex_handle(void * n) : _v() 
+    Vertex_handle(void * CGAL_triangulation_precondition_code(n)) : _v()
     { CGAL_triangulation_precondition(n == NULL); }
 
     Vertex* operator->() const { return &*_v; }
@@ -134,7 +134,7 @@ public:
     Face_handle(const Face_iterator& f) : _f(f) {}
     Face_handle(const Face_circulator& f) : _f(f.base()._f) {}
     //Face_handle(Face_circulator f) : _f(f.base()._f) {}
-    Face_handle(void * n) : _f()
+    Face_handle(void * CGAL_triangulation_precondition_code(n)) : _f()
     { CGAL_triangulation_precondition(n == NULL); }
 
     Face* operator->() const { return &*_f; }

@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.105 (01/08/03)
+- fixed missing std:: in new test of get_conflict() functions
+
 ver 7.104  (29/07/03)
 - change the return types of get_conflicts member functions in
   Delaunay and constrained_Delaunay triangulations

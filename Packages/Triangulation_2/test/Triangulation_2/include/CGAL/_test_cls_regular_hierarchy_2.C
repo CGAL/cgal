@@ -13,7 +13,8 @@ _test_cls_regular_hierarchy_2( const Rh & )
  
   _test_cls_regular_triangulation_2( Regular_hierarchy());
   
-  int nn = 500;
+  //int nn = 500;
+  int nn=100;
   std::cout << " insertion of " << nn << "  points" << std::endl;
   Regular_hierarchy rh;
 
@@ -59,10 +60,9 @@ _test_cls_regular_hierarchy_2( const Rh & )
   std::cout << "  location" << std::endl;
   rh.locate(Bare_point(0.,0.));
   std::cout <<  "  removal of all points" << std::endl;
-  while( rh.number_of_vertices() >0) {
+  while( rh.number_of_vertices() > 0) {
     rh.remove(rh.finite_vertices_begin());
   }
-
   return;
 }
 
