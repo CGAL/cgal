@@ -44,7 +44,9 @@ int main(int, char*)
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h> 
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Partition_traits_2.h>
+
 
 #include <CGAL/point_generators_2.h>
 
@@ -66,13 +68,15 @@ int main(int, char*)
 #include <qtimer.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>             Rep;
+typedef CGAL::Cartesian<Coord_type>             K1;
+typedef CGAL::Filtered_kernel<K1>               Rep;
+//struct Rep : public K2{} ;
 
-typedef CGAL::Point_2<Rep>                      Point;
-typedef CGAL::Segment_2<Rep>                    Segment;
-typedef CGAL::Line_2<Rep>                       Line;
-typedef CGAL::Triangle_2<Rep>                   Triangle;
-typedef CGAL::Circle_2<Rep>                     Circle;
+typedef Rep::Point_2                            Point;
+typedef Rep::Segment_2                          Segment;
+typedef Rep::Line_2                             Line;
+typedef Rep::Triangle_2                         Triangle;
+typedef Rep::Circle_2                           Circle;
 
 typedef CGAL::Triangulation_vertex_base_2<Rep>  Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<Rep>

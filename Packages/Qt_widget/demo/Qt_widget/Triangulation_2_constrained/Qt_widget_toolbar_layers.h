@@ -25,6 +25,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
@@ -40,18 +41,20 @@
 #include <qbuttongroup.h>
 
 typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Triangulation_vertex_base_2<Rp>  Vb;
+typedef CGAL::Cartesian<Coord_type>  K11;
+typedef CGAL::Filtered_kernel<K11>   Rp;
+
+typedef CGAL::Triangulation_vertex_base_2<Rp>  Vb1;
 typedef CGAL::Constrained_triangulation_face_base_2<Rp>
-                                                Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
-                                                TDS;
+                                                Fb1;
+typedef CGAL::Triangulation_data_structure_2<Vb1, Fb1>
+                                                TDS1;
 typedef CGAL::Exact_predicates_tag               Itag;
 
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS, Itag>
-                                                CT;
-typedef CGAL::Constrained_triangulation_plus_2<CT>      CDT;
-typedef CDT::Constraint     Constraint;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS1, Itag>
+                                                CT1;
+typedef CGAL::Constrained_triangulation_plus_2<CT1>      CDT1;
+typedef CDT1::Constraint     Constraint;
 
 
 namespace CGAL {
@@ -60,7 +63,7 @@ class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT1 *t);
   ~Layers_toolbar()
   {
     delete showT;
@@ -83,9 +86,9 @@ private:
 
   int	  nr_of_buttons;
 	
-  CGAL::Qt_layer_show_triangulation < CDT>  *showT;  
-  CGAL::Qt_layer_show_points < CDT >        *showP;  
-  CGAL::Qt_layer_show_constraineds < CDT >  *showC;  
+  CGAL::Qt_layer_show_triangulation < CDT1>  *showT;  
+  CGAL::Qt_layer_show_points < CDT1 >        *showP;  
+  CGAL::Qt_layer_show_constraineds < CDT1 >  *showC;  
   CGAL::Qt_layer_mouse_coordinates          *showMC;
 };//end class
 

@@ -31,13 +31,13 @@
 
 
 namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t) : 
+  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT1 *t) : 
      nr_of_buttons(0)
   {
-    showT   = new Qt_layer_show_triangulation< CDT >(*t);
-    showP   = new Qt_layer_show_points< CDT >(*t);
+    showT   = new Qt_layer_show_triangulation< CDT1 >(*t);
+    showP   = new Qt_layer_show_points< CDT1 >(*t);
     showMC  = new Qt_layer_mouse_coordinates(*mw);
-    showC   = new Qt_layer_show_constraineds<CDT>(*t);
+    showC   = new Qt_layer_show_constraineds<CDT1>(*t);
 
     //set the widget
     widget = w;
@@ -71,8 +71,8 @@ namespace CGAL {
     for(int i =0; i<nr_of_buttons; i++)
     {
       but[i]->setToggleButton(TRUE);
-      but[i]->toggle();
       button_group->insert(but[i]);
+      but[i]->toggle();
     }    
     connect(button_group, SIGNAL(clicked(int)),
           widget, SLOT(redraw()));

@@ -31,7 +31,7 @@
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT1 *t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;

@@ -27,6 +27,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Partition_traits_2.h>
+#include <CGAL/Filtered_kernel.h>
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
@@ -42,21 +43,25 @@
 #include <qbuttongroup.h>
 
 typedef double                              Coord_type;
-typedef CGAL::Cartesian<Coord_type>         Rp;
-typedef CGAL::Exact_predicates_tag          Itag;
-typedef CGAL::Triangulation_vertex_base_2<Rp>  Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<Rp>
-                                                Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb>
-                                                TDS;
-typedef CGAL::Exact_predicates_tag               Itag;
+typedef CGAL::Cartesian<Coord_type>  K1;
+typedef CGAL::Filtered_kernel<K1>           Rp;
 
-typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS, Itag>
-                                                CT;
-typedef CGAL::Constrained_triangulation_plus_2<CT>      CDT;
-typedef CDT::Constraint     Constraint;
-typedef CGAL::Partition_traits_2<Rp>        Traits;
-typedef Traits::Polygon_2                   Polygon;
+typedef CGAL::Exact_predicates_tag          Itag;
+typedef CGAL::Triangulation_vertex_base_2<Rp>
+                                            Vb1;
+typedef CGAL::Constrained_triangulation_face_base_2<Rp>
+                                            Fb1;
+typedef CGAL::Triangulation_data_structure_2<Vb1, Fb1>
+                                            TDS1;
+typedef CGAL::Exact_predicates_tag          Itag;
+
+typedef CGAL::Constrained_Delaunay_triangulation_2<Rp, TDS1, Itag>
+                                            CT1;
+typedef CGAL::Constrained_triangulation_plus_2<CT1>
+                                            CDT1;
+typedef CDT1::Constraint                    Constraint;
+typedef CGAL::Partition_traits_2<Rp>        Traits1;
+typedef Traits1::Polygon_2                  Polygon;
 
 
 namespace CGAL {
@@ -64,7 +69,7 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT1 *t);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
