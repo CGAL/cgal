@@ -158,12 +158,12 @@ int main(int argc, char* argv[])
     std::cout << "       which=4 LEDA integer homogeneous\n" ;
     std::cout << "       which=8 GNU mpz homogeneous\n" ;
     std::cout << "       which=16 LEDA real cartesian\n" ;
-    exit(1);
+    CGAL_CLIB_STD exit(1);
   }
-  if (argc > 1) which = atoi(argv[1]);
-  if (argc > 2) d = atoi(argv[2]);
-  if (argc > 3) n = atoi(argv[3]);
-  if (argc > 4) range = atoi(argv[4]);
+  if (argc > 1) which = CGAL_CLIB_STD atoi(argv[1]);
+  if (argc > 2) d = CGAL_CLIB_STD atoi(argv[2]);
+  if (argc > 3) n = CGAL_CLIB_STD atoi(argv[3]);
+  if (argc > 4) range = CGAL_CLIB_STD atoi(argv[4]);
   p_table_file = new std::ofstream(
     (std::string(argv[0])+".rts").c_str(), std::ios::app);
 
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
     create(V,n,d);
     random_d_tuples_in_range(V,n,d,-range,range);
     print_to_file(V,n,d,std::string(argv[0])+".ch");
-    exit(0);
+    CGAL_CLIB_STD exit(0);
   } else {
     read_from_file(V,n,d,std::string(argv[0])+".ch");
   }
