@@ -1,3 +1,7 @@
+2.58    (?)
+- List more models for number type concepts.
+- Introduce SqrtFieldNumberType.
+
 2.57    (9 December 2002)
 - Fix Iso_Cuboid documentation (4<->5 in the picture of .vertex()).
 
