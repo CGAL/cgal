@@ -1,4 +1,7 @@
 include $(ROOT)/include/make/comdef.mak
-FILES = benchPmwxDb.xml benchPmwxConics.xml benchPmwxSegments.xml benchCompareSweep.xml benchCompareSweepConics.xml
+FILES = benchPmwxDb.xml benchPmwxConics.xml
+FILES+= benchPmwxSegments.xml benchCompareSweep.xml
+FILES+= benchCompareSweepConics.xml
+FILES+= benchPmwx.xml
 INSTALLDIR =$(ROOT)/bench/data
 include $(MAKEINCDIR)/files.mak
