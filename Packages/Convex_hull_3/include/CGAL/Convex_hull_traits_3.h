@@ -30,7 +30,7 @@ namespace CGAL {
 template < class R_ >
 class Point_triple
 {
-CGAL_VC7_BUG_PROTECTED
+protected:
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
