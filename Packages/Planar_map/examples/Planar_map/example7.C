@@ -1,5 +1,5 @@
-//example7
-
+// examples/Planar_map/example7.C
+// ------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Pm_straight_exact_traits.h>
 #include <CGAL/Pm_default_dcel.h>

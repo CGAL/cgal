@@ -1,5 +1,5 @@
-// example10
-
+// examples/Planar_map/example10.C
+// -------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 

@@ -1,5 +1,5 @@
-// example9
-
+// examples/Planar_map/example9.C
+// ------------------------------
 #include <CGAL/Cartesian.h>
 
 //#include <CGAL/leda_rational.h>

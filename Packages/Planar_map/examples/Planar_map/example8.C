@@ -1,5 +1,5 @@
-//example8
-
+// examples/Planar_map/example8.C
+// ------------------------------
 #include <iostream>
 
 #define CGAL_NO_PM_DEFAULT_POINT_LOCATION

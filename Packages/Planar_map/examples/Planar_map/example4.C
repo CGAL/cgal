@@ -1,5 +1,5 @@
-//example4
-
+// examples/Planar_map/example4.C
+// ------------------------------
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Pm_segment_exact_traits.h>
 #include <CGAL/Pm_default_dcel.h>

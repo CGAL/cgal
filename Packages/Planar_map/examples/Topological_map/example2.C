@@ -1,5 +1,5 @@
-//example2
-
+// examples/Topological_map/example2.C
+// -----------------------------------
 #include <CGAL/basic.h>
 #include <iostream>
 

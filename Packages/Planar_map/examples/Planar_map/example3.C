@@ -1,5 +1,5 @@
-//example 3
-
+// examples/Planar_map/example3.C
+// ------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Pm_segment_epsilon_traits.h>
 #include <CGAL/Pm_default_dcel.h>

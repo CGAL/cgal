@@ -1,5 +1,5 @@
-//example4
-
+// examples/Topological_map/example4.C
+// -----------------------------------
 #include <CGAL/Cartesian.h>
 
 #include <iostream>

@@ -1,5 +1,5 @@
-//example6
-
+// examples/Planar_map/example6.C
+// ------------------------------
 #define NAIVE_POINT_LOCATION
 #define CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
