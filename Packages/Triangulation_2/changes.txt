@@ -1,6 +1,14 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.28 (4 janvier 99)
+correction on the doc  : cpied .gif files modified by Susan 
++ deplaced a few \begin{ccAdvanced}
+
+Ver 4.27 (20 Dec 99)
+submitted by Olivier
+with correction on demo.C parse.C in demo pointed to by Dima
+
 Ver 4.26 (10 Dec 99)
 fixed demo.C for VC++ and borland
 added include <list> in Regular_triangulation_face_base_2
