@@ -1,3 +1,7 @@
+1.3.37 - 20/06/2003(rursu)
+---------------------------
+	- removed demos that moved in the other packages from Qt_widget
+
 1.3.36 -16/06/2003 (rursu)
 --------------------------
 	- patched apply_to_range.h
