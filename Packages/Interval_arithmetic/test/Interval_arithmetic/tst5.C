@@ -18,11 +18,8 @@
 #endif
 #endif
 
-#include <CGAL/misc.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
-#include <CGAL/double.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
