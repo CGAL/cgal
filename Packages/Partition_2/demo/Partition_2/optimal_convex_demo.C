@@ -1,23 +1,17 @@
-#include <fstream.h>
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <list>
 #include <string>
+#include <fstream>
 
 typedef CGAL::Cartesian<double>                           R;
 typedef CGAL::Partition_traits_2<R>                       Traits;
 typedef Traits::Polygon_2                                 Polygon_2;
 typedef Traits::Point_2                                   Point_2;
 typedef Polygon_2::Vertex_const_iterator                  Vertex_iterator;
-/*
-typedef CGAL::Cartesian<double>                           R;
-typedef CGAL::Polygon_traits_2<R>                         Traits;
-typedef std::list<Point_2>                                Container;
-typedef CGAL::Polygon_2<Traits, Container>                Polygon_2;
-typedef Polygon_2::Vertex_iterator                        Vertex_iterator;
-*/
 typedef std::list<Polygon_2>                              Polygon_list;
 
 using CGAL::is_convex_2;

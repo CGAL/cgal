@@ -34,10 +34,12 @@
 namespace CGAL {
 
 template <class Circulator>
-class Circulator_list : public std::list<Circulator> {
+class Circulator_list : public std::list<Circulator> 
+{
 
 public:
-  Circulator_list() {}
+  Circulator_list() 
+  {}
 
   Circulator_list(Circulator first) 
   {
@@ -49,18 +51,6 @@ public:
          push_back(current);
       } while (++current != first);
   }
-
-  void catenate(Circulator first) 
-  {
-      if (first == NULL) return;
-
-      Circulator current = first;
-      do 
-      {
-         push_back(current);
-      } while (++current != first);
-  }
-
 };
 
 template <class C>

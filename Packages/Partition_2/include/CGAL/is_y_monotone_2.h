@@ -31,7 +31,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
-#include <iterator.h>
+#include <iterator>
 #include <list>
 
 namespace CGAL {

@@ -1,10 +1,11 @@
-#include <fstream.h>
+#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <list>
 #include <string>
+#include <fstream>
 
 typedef CGAL::Cartesian<double>                           R;
 typedef CGAL::Polygon_traits_2<R>                         Traits;

@@ -31,9 +31,52 @@
 namespace CGAL {
 
 template <class Traits>
+template <class InputIterator>
+void 
+Partition_vertex_map<Traits>::build(InputIterator poly_first, 
+                                    InputIterator poly_last)
+{
+   typedef typename Traits::Polygon_2::Vertex_const_iterator
+                                                   Poly_vtx_const_iterator;
+   typedef std::pair<Self_iterator, bool>          Location_pair;
+   typedef Edge_list<Traits>                       Edge_list;
+   typedef typename Traits::Point_2                Point_2;
+   typedef std::pair<Point_2, Edge_list>           P_Vertex;
+
+
+   Location_pair v_loc_pair;
+   Location_pair begin_v_loc_pair; 
+   Location_pair prev_v_loc_pair;
+
+   Poly_vtx_const_iterator begin;  
+   Poly_vtx_const_iterator end;  
+   Poly_vtx_const_iterator v_it;  
+
+   int poly_num = 0;
+   for (; poly_first != poly_last; poly_first++, poly_num++)
+   {
+      begin = (*poly_first).vertices_begin();
+      end = (*poly_first).vertices_end();
+      begin_v_loc_pair= insert(P_Vertex(*begin, Edge_list()));
+      prev_v_loc_pair = begin_v_loc_pair;
+      v_it = begin;
+      for (v_it++; v_it != end; v_it++)
+      {
+         v_loc_pair = insert(P_Vertex(*v_it, Edge_list()));
+         insert_next_edge(prev_v_loc_pair.first, v_loc_pair.first, poly_num);
+         insert_prev_edge(v_loc_pair.first, prev_v_loc_pair.first, poly_num);
+         prev_v_loc_pair = v_loc_pair;
+      }
+      insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first, poly_num);
+      insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first, poly_num);
+   }
+}
+
+
+template <class Traits>
 template <class OutputIterator>
 OutputIterator
-Partition_vertex_map<Traits>::union_vertices(OutputIterator result)
+Partition_vertex_map<Traits>::union_vertices(OutputIterator result) 
 {
     if (empty()) return result;
 

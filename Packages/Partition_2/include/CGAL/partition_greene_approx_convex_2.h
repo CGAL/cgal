@@ -29,7 +29,6 @@
 #ifndef CGAL_GREENE_APPROX_H
 #define CGAL_GREENE_APPROX_H
 
-#include<deque>
 #include<vector>
 #include<algorithm>
 #include<iterator>

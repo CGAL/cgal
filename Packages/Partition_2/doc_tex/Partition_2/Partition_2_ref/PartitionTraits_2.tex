@@ -25,7 +25,9 @@ requirements.
 \ccNestedType{Polygon_2}{The polygon type to be created by the partitioning 
 algorithm. For testing the validity postcondition of the partition, this 
 type should provide a nested type \ccc{Vertex_const_iterator} that is the
-type of the iterator over the polygon vertices.}%
+type of the iterator over the polygon vertices and member functions
+\ccc{Vertex_const_iterator vertices_begin()} and
+\ccc{Vertex_const_iterator vertices_end()}.}%
 \ccIndexSubitem[C]{approx_convex_partition_2}{postconditions}
 \ccIndexSubitem[C]{greene_approx_convex_partition_2}{postconditions}
 \ccIndexSubitem[C]{optimal_convex_partition_2}{postconditions}

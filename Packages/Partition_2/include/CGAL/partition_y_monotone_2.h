@@ -85,13 +85,14 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
    std::cout << "partition_y_mono__vertex_type: previous " << *previous 
              << " c " << *c << " next " << *next  << std::endl;
 #endif
-   typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
-   typename Traits::Leftturn_2  leftturn = traits.leftturn_2_object();
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
 
    if (compare_y_2(*previous, *c) == EQUAL &&
        compare_y_2(*next, *c) == EQUAL)
       return PARTITION_Y_MONO_COLLINEAR_VERTEX;
+
+   typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
+   typename Traits::Leftturn_2  leftturn = traits.leftturn_2_object();
 
    if (less_yx(*previous, *c)) 
    {
@@ -431,9 +432,9 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
    CGAL_partition_precondition(
      orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
-   Circulator_list<Circulator>  circ_list;
    Circulator first_c(polygon.begin(), polygon.end());
-   circ_list.catenate(first_c);
+   Circulator_list<Circulator>  circ_list(first_c);
+//   circ_list.catenate(first_c);
    circ_list.sort(Indirect_not_less_yx_compare<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG

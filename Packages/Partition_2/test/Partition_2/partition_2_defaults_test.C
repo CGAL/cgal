@@ -27,12 +27,14 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
+#include "rep_include.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 
-typedef CGAL::Cartesian<double>                           R;
+#include "rep_def.h"
+
 typedef CGAL::Partition_traits_2<R>                       Traits;
 typedef Traits::Point_2                                   Point_2;
 typedef Traits::Polygon_2                                 Polygon_2;

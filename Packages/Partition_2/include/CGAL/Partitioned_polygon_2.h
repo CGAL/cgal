@@ -195,9 +195,10 @@ private:
 //   Traits::Orientation_2
 //   Traits::leftturn_2_object
 //   Traits::orientation_2_object
-template <class Traits>
-class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits > >
+template <class Traits_>
+class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
 {
+   typedef Traits_                                   Traits;
    typedef Partitioned_polygon_2<Traits>             Self;
    typedef Partition_vertex<Traits>                  Vertex;
    typedef typename Self::iterator                   Iterator;

@@ -18,8 +18,6 @@ The contents of this directory are:
       programs that display various partitionings of a single, given polygon and
       wait for a mouse click before closing the window.
  
-   polygon_io.C
-      utility functions for input and output of polygons through a LEDA window
 
    partition_2_demo.C
       interactive program that allows the user to input a polygon with the
@@ -36,13 +34,15 @@ The contents of this directory are:
       it is read when the program is started.  The format of an input file
       is:
          #pieces  (== 1)
-         #vertices list of vertices
+         #vertices <list of vertices>
 
       NOTE: The input files provided are for use with the Cartesian kernel.
 
    include/
       typedefs.h   -- file of typedefs for the CGAL types used
-      polygon_io.h -- header file for polygon_io.C
+      polygon_io.h 
+      polygon_io.C -- utility functions for input and output of polygons 
+                      through a LEDA window
 
    output/
       a directory to which partition_2_demo writes files that contain the

@@ -47,41 +47,102 @@
 
 namespace CGAL {
 
-template <class InputIterator, class Vertex_list>
+template <class Circulator1, class Circulator2>
 bool 
-polygons_equal(InputIterator first, InputIterator last, Vertex_list vertices)
+polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first)
 {
-   typedef typename Vertex_list::iterator        I;
-   typedef Circulator_from_iterator<I>  Circulator;
+   typedef typename Circulator1::value_type                Point_2;
 
-   Circulator v_first(vertices.begin(), vertices.end(), vertices.begin());
-   Circulator v_circ = v_first;
+   Circulator1 orig_circ;
+   Circulator2 new_circ;
 
-   // find the first (input) vertex in the list of vertices
-   for (v_circ = v_first; *v_circ != *first && ++v_circ != v_first;) {}
+   // find the first (original) vertex in the list of vertices
+   for (new_circ = new_first; *new_circ != *orig_first && ++new_circ != new_first;) {}
 
-   // now look through both lists until you find a vertex that is not
-   // the same or you reach the end of the vertices
-   while (first != last && *v_circ == *first)
+   if (new_circ == new_first) 
    {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
-      std::cout << *first << " is in the right place " << std::endl;
-#endif
-      v_circ++; first++;
+      std::cout << "first vertex " << *orig_first << " not found " << std::endl;
+#endif // CGAL_PARTITION_CHECK_DEBUG
+      return false;
    }
 
-   if (first == last) return true;
+   // first becomes the first one you found; now look for the others
+   new_first = new_circ;
+   orig_circ = orig_first;
+   Point_2 prev_pt = *new_first;
+  
+   // keep going until you find all the original vertices, or come back
+   // to the first new vertex
+   do
+   {
+      if (*new_circ == *orig_circ)  // points correspond, so move both
+      {
+         prev_pt = *new_circ;
+         new_circ++;
+         orig_circ++;
+      }
+      else // points don't correspond
+      {
+         if (!collinear(prev_pt, *new_circ, *orig_circ))
+         {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
-   std::cout << *first << " is out of order. ";
+           std::cout << *new_circ << " is not collinear with " << prev_pt 
+                     << " and " << *orig_circ << std::endl;
 #endif
-   return false;
+           return false;
+         }
+         if (!collinear_are_ordered_along_line(prev_pt, *new_circ, *orig_circ))
+         {
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+           std::cout << *new_circ << " doesn't belong betweene " << prev_pt 
+                     << " and " << *orig_circ << std::endl;
+#endif
+           return false;
+         }
+         prev_pt = *new_circ;
+         new_circ++;
+      }
+   }
+   while (orig_circ != orig_first && new_circ != new_first);
+
+   // if they didn't both come back to the beginning, then something is wrong
+   return (orig_circ == orig_first && new_circ == new_first);
+}
+
+template <class Circulator1, class Circulator2>
+bool 
+polygons_are_equal(Circulator1 orig_first, Circulator2 new_first)
+{
+   Circulator1 orig_circ = orig_first;
+   Circulator2 new_circ;
+
+   // find the first (original) vertex in the list of vertices
+   for (new_circ = new_first; 
+        *new_circ != *orig_first && ++new_circ != new_first;) 
+   {}
+
+   new_first = new_circ;
+   // now look through both lists until you find a vertex that is not
+   // the same or you reach the end of the vertices
+   do 
+   {
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+      std::cout << *new_first << " is in the right place " << std::endl;
+#endif
+      orig_circ++; new_circ++;
+   }
+   while (*orig_circ == *new_circ &&
+          orig_circ != orig_first && new_circ != new_first);
+
+   return (orig_circ == orig_first && new_circ == new_first);
 }
 
 
-template<class InputIterator1, class InputIterator2, class Traits> 
+template<class InputIterator, class ForwardIterator, class Traits> 
 bool
-partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
-                      InputIterator2 poly_first, InputIterator2 poly_last,
+partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
+                      ForwardIterator poly_first, ForwardIterator poly_last,
                       const Traits& traits) 
 {
    if (poly_first == poly_last)  return (point_first == point_last);
@@ -89,14 +150,10 @@ partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
    typedef typename Traits::Polygon_2::Vertex_const_iterator   
                                                        Poly_vtx_const_iterator;
    typedef typename Traits::Point_2                    Point_2;
-   typedef Edge_list<Traits>                           Edge_list;
-   typedef std::pair<Point_2, Edge_list>               P_Vertex;
    typedef Partition_vertex_map<Traits>                P_Vertex_map;
-   typedef typename P_Vertex_map::iterator             Set_iterator;
-   typedef std::pair<Set_iterator, bool>               Set_iterator_pair;
    typedef typename Traits::Is_valid                   Is_valid;
 
-   Poly_vtx_const_iterator begin, end, v_it;
+   Poly_vtx_const_iterator begin, end;
 
    Is_valid is_valid = traits.is_valid_object(traits);
 
@@ -106,8 +163,10 @@ partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
 
    CGAL_partition_precondition(orientation_2(orig_poly.begin(),orig_poly.end(),
                                              traits) == COUNTERCLOCKWISE);
-   P_Vertex_map  output_vertex_set;
-   Set_iterator_pair v_loc_pair, begin_v_loc_pair, prev_v_loc_pair;
+
+   P_Vertex_map  output_vertex_set(poly_first, poly_last);
+
+   if (output_vertex_set.polygons_overlap()) return false;
 
    int poly_num = 0;
    for (; poly_first != poly_last; poly_first++, poly_num++)
@@ -127,28 +186,7 @@ partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
 #endif
          return false;
       }
-      begin_v_loc_pair=output_vertex_set.insert(P_Vertex(*begin, Edge_list()));
-      prev_v_loc_pair = begin_v_loc_pair;
-      v_it = begin;
-      for (v_it++; v_it != end; v_it++)
-      {
-         v_loc_pair = output_vertex_set.insert(P_Vertex(*v_it, Edge_list()));
-         output_vertex_set.insert_next_edge(prev_v_loc_pair.first, 
-                                            v_loc_pair.first,
-                                            poly_num);
-         output_vertex_set.insert_prev_edge(v_loc_pair.first, 
-                                            prev_v_loc_pair.first,
-                                            poly_num);
-         prev_v_loc_pair = v_loc_pair;
-      }
-      output_vertex_set.insert_next_edge(prev_v_loc_pair.first, 
-                                         begin_v_loc_pair.first,
-                                         poly_num);
-      output_vertex_set.insert_prev_edge(begin_v_loc_pair.first, 
-                                         prev_v_loc_pair.first,
-                                         poly_num);
    }
-   if (output_vertex_set.polygons_overlap()) return false;
 
    std::list<Point_2>  union_polygon;
    output_vertex_set.union_vertices(std::back_inserter(union_polygon));
@@ -162,31 +200,36 @@ partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
       std::cout << *poly_iterator << " ";
    }
    std::cout << std::endl;
-#endif
+#endif // CGAL_PARTITION_CHECK_DEBUG
 
-   if (!polygons_equal(orig_poly.begin(), orig_poly.end(), union_polygon)) 
-      return false;
+   typedef typename std::list<Point_2>::iterator     I;
+   typedef Circulator_from_iterator<I>      Circulator;
 
-   return true;
+   Circulator   orig_poly_circ(orig_poly.begin(), orig_poly.end());
+   Circulator   union_poly_circ(union_polygon.begin(), union_polygon.end());
+   if (orig_poly.size() == union_polygon.size())
+     return polygons_are_equal(orig_poly_circ, union_poly_circ);
+   else
+     return polygons_w_steiner_are_equal(orig_poly_circ, union_poly_circ);
 }
 
-template<class InputIterator1, class InputIterator2>
+template<class InputIterator, class FowardIterator>
 bool
-partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
-                      InputIterator2 poly_first, InputIterator2 poly_last)
+partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
+                      FowardIterator poly_first, FowardIterator poly_last)
 {
-   typedef typename std::iterator_traits<InputIterator1>::value_type   Point_2;
+   typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    return CGAL_partition_is_valid_2(point_first, point_last,
                                     poly_first, poly_last,
                                     reinterpret_cast<Point_2*>(0));
 }
 
-template<class InputIterator1, class InputIterator2, class R>
+template<class InputIterator, class ForwardIterator, class R>
 bool
-CGAL_partition_is_valid_2 (InputIterator1 point_first, 
-                           InputIterator1 point_last,
-                           InputIterator2 poly_first, 
-                           InputIterator2 poly_last,
+CGAL_partition_is_valid_2 (InputIterator point_first, 
+                           InputIterator point_last,
+                           ForwardIterator poly_first, 
+                           ForwardIterator poly_last,
                            Point_2<R>*)
 {
    typedef Partition_traits_2<R>                   Traits;
@@ -199,12 +242,12 @@ CGAL_partition_is_valid_2 (InputIterator1 point_first,
 }
 
 
-template<class InputIterator1, class InputIterator2, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool 
-convex_partition_is_valid_2(InputIterator1 point_first,
-                            InputIterator1 point_last,
-                            InputIterator2 poly_first,
-                            InputIterator2 poly_last,
+convex_partition_is_valid_2(InputIterator point_first,
+                            InputIterator point_last,
+                            ForwardIterator poly_first,
+                            ForwardIterator poly_last,
                             const Traits& traits)
 {
    typedef typename Traits::Is_convex_2                 Is_convex_2;
@@ -214,25 +257,25 @@ convex_partition_is_valid_2(InputIterator1 point_first,
                                validity_traits);
 }
 
-template<class InputIterator1, class InputIterator2>
+template<class InputIterator, class ForwardIterator>
 bool 
-convex_partition_is_valid_2(InputIterator1 point_first,
-                            InputIterator1 point_last,
-                            InputIterator2 poly_first,
-                            InputIterator2 poly_last)
+convex_partition_is_valid_2(InputIterator point_first,
+                            InputIterator point_last,
+                            ForwardIterator poly_first,
+                            ForwardIterator poly_last)
 {
-   typedef typename std::iterator_traits<InputIterator1>::value_type   Point_2;
+   typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    return CGAL_convex_partition_is_valid_2(point_first, point_last, 
                                            poly_first, poly_last, 
                                            reinterpret_cast<Point_2*>(0));
 }
 
-template<class InputIterator1, class InputIterator2, class R>
+template<class InputIterator, class ForwardIterator, class R>
 bool 
-CGAL_convex_partition_is_valid_2(InputIterator1 point_first,
-                                 InputIterator1 point_last,
-                                 InputIterator2 poly_first,
-                                 InputIterator2 poly_last,
+CGAL_convex_partition_is_valid_2(InputIterator point_first,
+                                 InputIterator point_last,
+                                 ForwardIterator poly_first,
+                                 ForwardIterator poly_last,
                                  Point_2<R>*)
 {
    return convex_partition_is_valid_2(point_first, point_last, 
@@ -240,12 +283,12 @@ CGAL_convex_partition_is_valid_2(InputIterator1 point_first,
                                       Partition_traits_2<R>());
 }
 
-template<class InputIterator1, class InputIterator2, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool 
-y_monotone_partition_is_valid_2(InputIterator1 point_first,
-                                InputIterator1 point_last,
-                                InputIterator2 poly_first,
-                                InputIterator2 poly_last,
+y_monotone_partition_is_valid_2(InputIterator point_first,
+                                InputIterator point_last,
+                                ForwardIterator poly_first,
+                                ForwardIterator poly_last,
                                 const Traits& traits)
 {
    typedef typename Traits::Is_y_monotone_2                Is_y_monotone_2;
@@ -256,25 +299,25 @@ y_monotone_partition_is_valid_2(InputIterator1 point_first,
                                validity_traits);
 }
 
-template<class InputIterator1, class InputIterator2>
+template<class InputIterator, class ForwardIterator>
 bool 
-y_monotone_partition_is_valid_2(InputIterator1 point_first,
-                                InputIterator1 point_last,
-                                InputIterator2 poly_first,
-                                InputIterator2 poly_last)
+y_monotone_partition_is_valid_2(InputIterator point_first,
+                                InputIterator point_last,
+                                ForwardIterator poly_first,
+                                ForwardIterator poly_last)
 {
-   typedef typename std::iterator_traits<InputIterator1>::value_type   Point_2;
+   typedef typename std::iterator_traits<InputIterator>::value_type   Point_2;
    return CGAL_y_monotone_partition_is_valid_2(point_first, point_last, 
                                                poly_first, poly_last,
                                                reinterpret_cast<Point_2*>(0));
 }
 
-template<class InputIterator1, class InputIterator2, class R>
+template<class InputIterator, class ForwardIterator, class R>
 bool
-CGAL_y_monotone_partition_is_valid_2(InputIterator1 point_first,
-                                     InputIterator1 point_last,
-                                     InputIterator2 poly_first,
-                                     InputIterator2 poly_last,
+CGAL_y_monotone_partition_is_valid_2(InputIterator point_first,
+                                     InputIterator point_last,
+                                     ForwardIterator poly_first,
+                                     ForwardIterator poly_last,
                                      Point_2<R>*)
 {
    return y_monotone_partition_is_valid_2(point_first, point_last, 

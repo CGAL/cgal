@@ -125,10 +125,12 @@ private:
 };
 
 
-template <class Traits>
+template <class Traits_>
 class Edge_list : public std::list< 
-                   Edge_info<typename Partition_vertex_map<Traits>::iterator> > 
+                   Edge_info<typename Partition_vertex_map<Traits_>::iterator> >
 {
+public:
+   typedef Traits_                                        Traits;
    typedef typename Traits::Point_2                       Point_2;
    typedef typename Traits::Orientation_2                 Orientation_pred;
    typedef Edge_list<Traits>                              Self;
@@ -139,7 +141,6 @@ class Edge_list : public std::list<
    typedef typename Partition_vertex_map<Traits>::iterator  Map_iterator;
    typedef Edge_info<Map_iterator>                          Edge_info;
 
-public:
 
    void insert_next(Map_iterator endpoint_ref, int num)
    {
@@ -270,11 +271,20 @@ class Partition_vertex_map : public std::map<typename Traits::Point_2,
                                              Edge_list<Traits>,
                                              typename Traits::Less_xy_2> 
 {
+public:
+
    typedef Partition_vertex_map<Traits>            Self;
    typedef typename Self::iterator                 Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
-public:
+   Partition_vertex_map() {}
+
+   template <class InputIterator>
+   Partition_vertex_map(InputIterator first_poly, InputIterator last_poly)
+   {  build(first_poly, last_poly); }
+   
+   template <class InputIterator>
+   void build(InputIterator first_poly, InputIterator last_poly);
 
    void insert_next_edge(Self_iterator& v1_ref, Self_iterator& v2_ref, int num)
    {
@@ -298,6 +308,7 @@ public:
 
    template <class OutputIterator>
    OutputIterator union_vertices(OutputIterator result);
+
 };
 
 }

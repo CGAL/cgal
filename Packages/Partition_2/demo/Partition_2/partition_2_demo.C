@@ -1,5 +1,4 @@
 #include <typedefs.h>
-#include <fstream.h>
 #include <polygon_io.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/copy_n.h>
@@ -11,6 +10,7 @@
 #include <LEDA/point.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/Partition_traits_2.h>
+#include <fstream>
 
 enum Button_nums {QUIT=4, MOUSE_POLYGON, RANDOM_POLYGON, 
                   READ_FROM_FILE, WRITE_INPUT_TO_FILE};
@@ -59,16 +59,16 @@ void draw_polygons(int button_num)
    W << CGAL::BLACK;
    if (!polygon.is_empty())  
    {
-      draw_a_polygon(polygon, leda_black, W);
+      draw_a_polygon(W, polygon, CGAL::BLACK);
       width--;
-      if (show_coords) label_vertices(polygon, W);
+      if (show_coords) label_vertices(W, polygon);
    }
    legend_y += legend_dist;
 
    int num_greene_opt;
    if (show_greene_opt) 
    {
-      draw_poly_list(greene_opt_polys, width, CGAL::GREEN, num_greene_opt, W);
+      draw_poly_list(W, greene_opt_polys, width, CGAL::GREEN, num_greene_opt);
       leda_string go_num_label(" greene opt. (%d)", num_greene_opt);
       W.draw_text(legend_x, legend_y, go_num_label);
       legend_y += legend_dist;
@@ -77,7 +77,7 @@ void draw_polygons(int button_num)
    int num_tri_approx;
    if (show_tri_approx) 
    {
-      draw_poly_list(tri_approx_polys, width, CGAL::VIOLET, num_tri_approx, W);
+      draw_poly_list(W, tri_approx_polys, width, CGAL::VIOLET, num_tri_approx);
       leda_string tri_num_label(" tri. approx. (%d)", num_tri_approx);
       W.draw_text(legend_x, legend_y, tri_num_label);
       legend_y += legend_dist;
@@ -86,7 +86,8 @@ void draw_polygons(int button_num)
    int num_greene_approx;
    if (show_greene_approx) 
    {
-      draw_poly_list(greene_approx_polys, width, CGAL::BLUE, num_greene_approx, W);
+      draw_poly_list(W, greene_approx_polys, width, CGAL::BLUE, 
+                     num_greene_approx);
       leda_string ga_num_label(" greene approx. (%d)", num_greene_approx);
       W.draw_text(legend_x, legend_y, ga_num_label);
       legend_y += legend_dist;
@@ -95,7 +96,7 @@ void draw_polygons(int button_num)
    int num_monotone; 
    if (show_monotone) 
    {
-      draw_poly_list(monotone_polys, width, CGAL::RED, num_monotone, W);
+      draw_poly_list(W, monotone_polys, width, CGAL::RED, num_monotone);
       leda_string mono_num_label(" monotone (%d)", num_monotone);
       W.draw_text(legend_x, legend_y, mono_num_label);
       legend_y += legend_dist;
@@ -165,12 +166,15 @@ int main( int argc, char** argv )
    controls.button("Quit", QUIT);
    controls.make_menu_bar();
    controls.bool_item("Show convex optimal", show_greene_opt, draw_polygons);
-   controls.bool_item("Show convex approximation", show_tri_approx, draw_polygons);
-   controls.bool_item("Show Greene approximation", show_greene_approx, draw_polygons);
+   controls.bool_item("Show convex approximation", show_tri_approx, 
+                      draw_polygons);
+   controls.bool_item("Show Greene approximation", show_greene_approx, 
+                      draw_polygons);
    controls.bool_item("Show monotone partition", show_monotone, draw_polygons);
    controls.bool_item("Show coordinates", show_coords, draw_polygons);
    file_name_panel =
-       controls.text_item(file_label.insert(file_label.length(), current_file_name));
+       controls.text_item(file_label.insert(file_label.length(), 
+                          current_file_name));
    W.set_node_width(1);
 
    W.display();
