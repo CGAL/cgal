@@ -1,3 +1,9 @@
+3.35 (12 Aug 2002)
+
+- replaced LEFTTURN and relatives with LEFT_TURN and relatives.
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 4   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 3.34 (20 Mar 2001)
 - added the examples/include/ch_timing_2.[Ch] files back.  Some problem with
   CVS there...

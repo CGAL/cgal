@@ -1,3 +1,8 @@
+2.42    (12 Aug 2002)
+- replaced LEFTTURN and relatives by LEFT_TURN and relatives
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 4   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 2.41    (6 May 2002)
 - added missing CGAL:: for SunPRO
 - changed name of Polyhedron template parameter for incremental hull example
