@@ -1,46 +1,44 @@
-# Created by the script create_makefile
-# This is the makefile for compiling a CGAL application.
+# This is the makefile for compiling the CGAL Kernel test.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
-           -Iinclude \
-           -I../../include \
-           $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+CGAL_CXX = g++
 
+CXXFLAGS = -g \
+           $(TESTSUITE_CXXFLAGS) \
+           -I./include \
+	   -DCGAL_CFG_NO_ADVANCED_KERNEL \
+           -I../../include \
+	   -I../../../C2/include \
+	   -I../../../C3/include \
+	   -I../../../Cartesian_basic/include \
+           $(CGAL_CXXFLAGS) \
+           $(EXTRA_FLAGS) -Wall -W
+
+
+#	   -I $(CGAL)/test/NewKernel/include \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
-          $(CGAL_LIBPATH)
-
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                test_kernelCd 
+all: test_kernelCd 
 
 test_kernelCd$(EXE_EXT): test_kernelCd$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelCd test_kernelCd$(OBJ_EXT) $(LDFLAGS)
@@ -48,10 +46,12 @@ test_kernelCd$(EXE_EXT): test_kernelCd$(OBJ_EXT)
 clean: \
                    test_kernelCd.clean 
 
+distclean: clean
+	rm -rf error* Program* Compiler* 
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
+.C.o:
+	$(CGAL_CXX) $(CXXFLAGS) -c $<
