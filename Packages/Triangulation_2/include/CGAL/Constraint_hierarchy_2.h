@@ -576,6 +576,8 @@ print() const
   std::map<T,int>::iterator vnit = vertex_num.begin();
   for(; vnit != vertex_num.end(); vnit++) {
     vnit->second = ++num;
+    std::cerr << "vertex num " << num  << " " << vnit->first->point()
+	      << std::endl;
   }
 
   H_c_iterator cit=c_begin();

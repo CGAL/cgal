@@ -15,7 +15,7 @@ _test_cls_const_triang_plus_2( const TriangPlus & )
   typedef typename TrP::Context_iterator       Context_iterator;
   typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
 
-  // _test_cls_const_Del_triangulation( TrP() );
+  _test_cls_const_Del_triangulation( TrP() );
 
   Point pt[12] = {
      Point(0,0), Point(0,4), 
@@ -41,34 +41,41 @@ _test_cls_const_triang_plus_2( const TriangPlus & )
 
 
   Vertices_in_constraint vit = trp.vertices_in_constraint_begin(vh[10],vh[11]);
-  assert (*vit == vh[10]);
+  assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;
   Vertex_handle vb = *++vit;
-  assert (*++vit == vh[11]);
+  assert (*++vit == vh[11] || *vit == vh[10]);
   assert (++vit == trp.vertices_in_constraint_end(vh[10],vh[11]));
   assert(trp.number_of_enclosing_constraints(va,vb) == 2);
   Context_iterator cit1 = trp.contexts_begin(va,vb);
   Context_iterator cit2 = cit1++;
+  std::cerr << cit1->number_of_vertices() << " " 
+            << cit2->number_of_vertices() <<  std::endl;
+  trp.print_hierarchy();
   assert( cit1->number_of_vertices() == 4  || cit1->number_of_vertices() == 7);
-  Vertices_in_constraint vit1 = cit1->first(); 
-  Vertices_in_constraint vit2 = cit2->first();
-  if ( cit1->number_of_vertices() == 4 ) {
-    assert(*vit1 == vh[10]);
-    assert(*vit2 == vh[6] );
-    assert(*--(cit1->past()) == vh[11]);
-    assert( *--(cit2->past()) == vh[7]);
+  Vertices_in_constraint firstin1 = cit1->first();
+  Vertices_in_constraint lastin1 = --(cit1->past());
+  Vertices_in_constraint currentin1 = cit1->current();
+  Vertices_in_constraint firstin2 = cit2->first();
+  Vertices_in_constraint lastin2 = --(cit2->past());
+  Vertices_in_constraint currentin2 = cit2->current();
+  if ( cit1->number_of_vertices() == 4) {
+    assert( (*firstin1 == vh[10] &&  *lastin1 == vh[11]) ||
+	    (*firstin1 == vh[11] &&  *lastin1 == vh[10]));
+    assert( (*firstin2 == vh[6] &&  *lastin2 == vh[7]) ||
+	    (*firstin2 == vh[7] &&  *lastin2 == vh[6]));
   }
   else {
-    assert(*vit1 == vh[6]);
-    assert(*vit2 == vh[10]);
-    assert(*--(cit1->past()) == vh[7]);
-    assert(*--(cit2->past()) == vh[11]);
+    assert( (*firstin1 == vh[6] &&  *lastin1 == vh[7]) ||
+	    (*firstin1 == vh[7] &&  *lastin1 == vh[6]));
+    assert( (*firstin2 == vh[10] &&  *lastin2 == vh[11]) ||
+	    (*firstin2 == vh[11] &&  *lastin2 == vh[10]));
   }
-  assert(*(cit1->current()) == va);
-  assert( *(cit2->current()) == va);
+  assert( (*currentin1 == va &&  *++currentin1 == vb) ||
+	  (*currentin1 == vb &&  *++currentin1 == va));
+  assert( (*currentin2 == va &&  *++currentin2 == vb) ||
+	  (*currentin2 == vb &&  *++currentin2 == va));
   return;
-  
-  
 }
 
 

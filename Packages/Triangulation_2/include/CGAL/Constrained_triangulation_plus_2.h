@@ -116,6 +116,8 @@ public:
 		       Face_handle loc, int li );
   void insert(Point a, Point b);
   void insert(Vertex_handle va, Vertex_handle vb);
+//   template < class InputIterator >
+//   int insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
   
@@ -168,6 +170,19 @@ protected:
   //to debug
 public:
   void print_hierarchy() { return hierarchy.print();}
+
+  //template member functions
+public:
+  template < class InputIterator >
+  int insert(InputIterator first, InputIterator last)
+    {
+      int n = number_of_vertices();
+      while(first != last){
+	insert(*first);
+	++first;
+      }
+      return number_of_vertices() - n;
+    }
 
 };
 
