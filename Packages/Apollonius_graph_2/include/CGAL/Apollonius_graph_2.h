@@ -173,11 +173,11 @@ public:
   }
 
   inline int dimension() const {
-    return _tds.dimension();
+    return this->_tds.dimension();
   }
 
   inline int number_of_faces() const {
-    return _tds.number_of_faces();
+    return this->_tds.number_of_faces();
   }
 
   inline int number_of_vertices() const {
@@ -763,7 +763,7 @@ protected:
 
   // this was defined because the hierarchy needs it
   inline Vertex_handle create_vertex() {
-    return _tds.create_vertex();
+    return this->_tds.create_vertex();
   }
 
 

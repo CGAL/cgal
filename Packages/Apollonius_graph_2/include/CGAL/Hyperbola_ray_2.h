@@ -58,7 +58,7 @@ protected:
   inline
   void draw_ray(Stream &W) const
   {
-    W << Ray_2(p1, p2);
+    W << Ray_2(this->p1, this->p2);
   }
 
   Weighted_point _f1, _f2;
@@ -78,9 +78,9 @@ public:
   {
     FT t1 = t(this->p1);
     if ( direction == POSITIVE ) {
-      this->p2 = f(t1 + STEP * OFFSET);
+      this->p2 = f(t1 + this->STEP * OFFSET);
     } else {
-      this->p2 = f(t1 - STEP * OFFSET);
+      this->p2 = f(t1 - this->STEP * OFFSET);
     }
   }
 
@@ -118,7 +118,7 @@ public:
   inline
   void draw(Stream& s) const
   {
-    if ( CGAL_NTS is_zero(r) ) {
+    if ( CGAL_NTS is_zero(this->r) ) {
       draw_ray(s);
       return;
     }

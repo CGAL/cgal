@@ -88,22 +88,22 @@ public:
       double tt;
       int k;
 
-      p.push_back( o );
+      p.push_back( this->o );
       k = 1;
-      tt = double(-STEP);
+      tt = double(- this->STEP);
       while ( CGAL_NTS compare(tt, s[0]) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;
-	tt = -double(k * k) * STEP;
+	tt = -double(k * k) * this->STEP;
       }
       p.insert( p.begin(), f(s[0]) );
 
       k = 1;
-      tt = double(STEP);
+      tt = double(this->STEP);
       while ( CGAL_NTS compare(tt, s[1]) == SMALLER ) {
 	p.push_back( f(tt) );
 	k++;
-	tt = double(k * k) * STEP;
+	tt = double(k * k) * this->STEP;
       }
       p.push_back( f(s[1]) );
     } else if ( !(CGAL_NTS is_negative(s[0])) &&
@@ -115,13 +115,13 @@ public:
       p.push_back( f(s[0]) );
 
       tt = s[0];
-      k = int(CGAL_NTS to_double(CGAL_NTS sqrt(tt / STEP)));
+      k = int(CGAL_NTS to_double(CGAL_NTS sqrt(tt / this->STEP)));
 
       while ( CGAL_NTS compare(tt, s[1]) == SMALLER ) {
 	if ( CGAL_NTS compare(tt, s[0]) != SMALLER )
 	  p.push_back( f(tt) );
 	k++;
-	tt = double(k * k) * STEP;
+	tt = double(k * k) * this->STEP;
       }
       p.push_back( f(s[1]) );
     } else {
@@ -131,13 +131,13 @@ public:
       p.push_back( f(s[1]) );
 
       tt = s[1];
-      k = int(CGAL_NTS to_double(-CGAL_NTS sqrt(-tt / STEP)));
+      k = int(CGAL_NTS to_double(-CGAL_NTS sqrt(-tt / this->STEP)));
 
       while ( CGAL_NTS compare(tt, s[0]) == LARGER ) {
 	if ( CGAL_NTS compare(tt, s[1]) != LARGER )
 	  p.push_back( f(tt) );
 	k--;
-	tt = -double(k * k) * STEP;
+	tt = -double(k * k) * this->STEP;
       }
       p.push_back( f(s[0]) );
     }

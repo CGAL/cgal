@@ -288,8 +288,8 @@ protected:
   inline
   void compute_gamma()
     {
-      _gamma = CGAL_NTS square(_dxw) + CGAL_NTS square(_dyw)
-	- CGAL_NTS square(_c2);
+      _gamma = CGAL_NTS square(this->_dxw) + CGAL_NTS square(this->_dyw)
+	- CGAL_NTS square(this->_c2);
     }
 
 public:
@@ -307,11 +307,13 @@ public:
       compute_gamma();
     }
 		
-  inline FT alpha() const { return _d; }
-  inline FT beta() const { return  _c1; }
+  inline FT alpha() const { return this->_d; }
+  inline FT beta() const { return  this->_c1; }
   inline FT gamma() const { return _gamma; }
 
-  inline bool is_first_root() const { return CGAL_NTS is_negative(_c2); }
+  inline bool is_first_root() const {
+    return CGAL_NTS is_negative(this->_c2);
+  }
 
   FT compute_P4(const Inverted_weighted_point& u1,
 		const Inverted_weighted_point& u2,

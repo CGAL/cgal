@@ -44,7 +44,7 @@ is_valid(bool verbose, int level) const
   if (number_of_vertices() <= 1) { return true; }
 
   // level 0 test: check the TDS
-  bool result = _tds.is_valid(verbose, level);
+  bool result = this->_tds.is_valid(verbose, level);
   //  bool result(true);
 
   //  CGAL_assertion( result );
@@ -325,7 +325,7 @@ flip(Face_handle& f, int i)
 
   CGAL_triangulation_precondition( f->vertex(i) != f->mirror_vertex(i) );
 
-  _tds.flip( &(*f), i);
+  this->_tds.flip( &(*f), i);
 
   return Edge(f, ccw(i));
 }
@@ -345,7 +345,7 @@ typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_in_face(Face_handle& f, const Weighted_point_2& p)
 {
-  Vertex_handle v = static_cast<Vertex*>(_tds.insert_in_face( &(*f) ));
+  Vertex_handle v = static_cast<Vertex*>(this->_tds.insert_in_face( &(*f) ));
 
   v->set_point(p);
   return v;
@@ -369,7 +369,7 @@ typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e)
 {
-  return _tds.insert_degree_2(&(*e.first),e.second);
+  return this->_tds.insert_degree_2(&(*e.first),e.second);
 }
 
 template< class Gt, bool StoreHidden, class Agds >
@@ -393,7 +393,7 @@ remove_degree_2(Vertex_handle v)
 {
   CGAL_triangulation_precondition( is_degree_2(v) );
 
-  _tds.remove_degree_2( &(*v) );
+  this->_tds.remove_degree_2( &(*v) );
 }
 
 
@@ -414,7 +414,7 @@ Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_3(Vertex_handle v, Face* f)
 {
   CGAL_triangulation_precondition( v->degree() == 3 );
-  _tds.remove_degree_3( &(*v), f);
+  this->_tds.remove_degree_3( &(*v), f);
 }
 
 //--------------------------------------------------------------------
@@ -490,7 +490,7 @@ insert_third(const Weighted_point_2& p)
     return v1;
   }
 
-  Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
+  Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
   v->set_point(p);
 
   Face_handle f(finite_faces_begin());
@@ -991,14 +991,14 @@ get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
   }
 
   while ( vf.size() < n_wanted ) {
-    Face* fp = static_cast<Face*>(_tds.create_face());
+    Face* fp = static_cast<Face*>(this->_tds.create_face());
     vf.push_back(fp);
   }
 
   while ( vf.size() > n_wanted ) {
     Face* fp = vf.back();
     vf.pop_back();
-    _tds.delete_face(fp);
+    this->_tds.delete_face(fp);
   }
   
   return vf;
@@ -1013,7 +1013,7 @@ remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
 
   for (it = vm.begin(); it != vm.end(); ++it) {
     Vertex_handle vhidden = (*it).first;
-    _tds.delete_vertex( &(*vhidden) );
+    this->_tds.delete_vertex( &(*vhidden) );
   }
   vm.clear();
 }
@@ -1112,7 +1112,7 @@ retriangulate_conflict_region(const Weighted_point_2& p,	List& l,
     return v;
   }
 
-  Vertex_handle v = _tds.create_vertex();
+  Vertex_handle v = this->_tds.create_vertex();
   v->set_point(p);
 
   // 1. move all the hidden weighted points to the new one
@@ -1164,7 +1164,7 @@ retriangulate_conflict_region(const Weighted_point_2& p,	List& l,
 
   // 6. retriangulate the hole
   //  _tds.star_hole( &(*v), ve.begin(), ve.end(), vf.begin(), vf.end());
-  _tds.star_hole(&(*v), ve.begin(), ve.end());
+  this->_tds.star_hole(&(*v), ve.begin(), ve.end());
 
   // 7. remove the bogus vertices
   remove_bogus_vertices(dummy_vertices);
@@ -1173,7 +1173,7 @@ retriangulate_conflict_region(const Weighted_point_2& p,	List& l,
   typename Face_map::iterator it;
   for (it = fm.begin(); it != fm.end(); ++it) {
     Face_handle fh = (*it).first;
-    _tds.delete_face( &(*fh) );
+    this->_tds.delete_face( &(*fh) );
   }
 
   CGAL_assertion( number_of_vertices() == num_vert - vmsize + 1 );
@@ -1716,7 +1716,7 @@ remove_third(Vertex_handle v)
     }
   }
 
-  _tds.remove_dim_down( &(*v) );
+  this->_tds.remove_dim_down( &(*v) );
 }
 
 
@@ -1872,7 +1872,7 @@ remove_degree_d_vertex(Vertex_handle v)
   }
   CGAL_triangulation_precondition( v->degree() == 3 );
 
-  _tds.remove_degree_3( &(*v), NULL);
+  this->_tds.remove_degree_3( &(*v), NULL);
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete flipped_edges[i];
