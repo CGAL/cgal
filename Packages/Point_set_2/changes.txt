@@ -1,3 +1,6 @@
+2.2    function template versions for nearest neighbor queries and
+       range searches added 
+
 2.1.1  a shorter example program was added and is includet in the manual
 
 2.1    manual changed
