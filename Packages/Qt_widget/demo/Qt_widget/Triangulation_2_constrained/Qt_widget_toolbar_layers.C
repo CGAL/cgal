@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar_layers.C
+// file          : Qt_widget_toolbar_layers.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
@@ -53,9 +53,8 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Layers_toolbar::Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t) : 
-     nr_of_buttons(0)
+  Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, 
+                                 CDT *t) : nr_of_buttons(0)
   {
     showT   = new Qt_layer_show_triangulation< CDT >(*t);
     showP   = new Qt_layer_show_points< CDT >(*t);
@@ -109,7 +108,6 @@ namespace CGAL {
         showP, SLOT(stateChanged(int)));
   }
   
-}//end namespace
 
 #include "Qt_widget_toolbar_layers.moc"
 

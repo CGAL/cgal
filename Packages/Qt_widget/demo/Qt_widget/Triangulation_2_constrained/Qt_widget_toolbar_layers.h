@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar_layers.h
+// file          : Qt_widget_toolbar_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
@@ -46,9 +46,7 @@
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_layer_show_triangulation.h"
-#include "Qt_layer_show_constraineds.h"
-#include "Qt_layer_show_points.h"
+#include "triangulation_2_constrained_layers.h"
 
 
 #include <qobject.h>
@@ -59,13 +57,11 @@
 #include <qbuttongroup.h>
 
 
-namespace CGAL {
-
 class Layers_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Layers_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, CDT *t);
   ~Layers_toolbar()
   {
     delete showT;
@@ -78,20 +74,16 @@ signals:
   void new_object(CGAL::Object);
 	
 private:
-  QToolBar	*maintoolbar;
-  QToolButton	*but[10];
-  Qt_widget	*widget;
-  QMainWindow	*window;
-  //Delaunay	*dt;
-  QButtonGroup  *button_group;
-
-  int	  nr_of_buttons;
+  QToolBar	   *maintoolbar;
+  QToolButton	   *but[10];
+  CGAL::Qt_widget  *widget;
+  QMainWindow	   *window;
+  QButtonGroup     *button_group;
+  int	           nr_of_buttons;
 	
-  CGAL::Qt_layer_show_triangulation < CDT>  *showT;  
-  CGAL::Qt_layer_show_points < CDT >        *showP;  
-  CGAL::Qt_layer_show_constraineds < CDT >  *showC;  
+  Qt_layer_show_triangulation < CDT>  *showT;  
+  Qt_layer_show_points < CDT >        *showP;  
+  Qt_layer_show_constraineds < CDT >  *showC;  
 };//end class
-
-};//end namespace
 
 #endif

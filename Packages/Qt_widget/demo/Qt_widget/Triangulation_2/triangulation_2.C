@@ -231,6 +231,20 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");
     ed->show();
+    Vertex_iterator it = tr1.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
+    while(it != tr1.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
     ed->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }

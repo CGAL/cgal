@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : src/Qt_widget_toolbar.C
+// file          : Qt_widget_toolbar.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : CGAL-2.4
@@ -54,8 +54,7 @@
 
 #include <qiconset.h>
 
-namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t)
+  Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, CDT *t)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -114,9 +113,6 @@ namespace CGAL {
         &polygonbut, SLOT(stateChanged(int)));
   
 };
-
-
-}//end namespace
 
 #include "Qt_widget_toolbar.moc"
 

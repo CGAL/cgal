@@ -128,10 +128,10 @@ public:
 		      SLOT( closeAllWindows() ), CTRL+Key_Q );
 
 
-    // drawidgetg menu
-    QPopupMenu * draw = new QPopupMenu( this );
-    menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate_triangulation", this,
+    // edit menu
+    QPopupMenu * edit = new QPopupMenu( this );
+    menuBar()->insertItem( "&Edit", edit );
+    edit->insertItem("&Generate_triangulation", this,
 		      SLOT(generate_triangulation()), CTRL+Key_G );
 
     // help menu
@@ -141,9 +141,9 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    newtoolbar = new CGAL::Tools_toolbar(widget, this, &ct);	
+    newtoolbar = new Tools_toolbar(widget, this, &ct);	
     //the new scenes toolbar
-    vtoolbar = new CGAL::Layers_toolbar(widget, this, &ct);
+    vtoolbar = new Layers_toolbar(widget, this, &ct);
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -164,6 +164,12 @@ public:
     //application flag stuff
     old_state = 0;
   };
+
+  void  init_coordinates(){
+    xmin = -1; xmax = 1;
+    ymin = -1; ymax = 1;
+  }
+
   void set_window(double xmin, double xmax,
 			  double ymin, double ymax)
   {
@@ -236,6 +242,20 @@ private slots:
     Window *ed = new Window(500, 500);
     ed->setCaption("Layer");
     ed->show();
+    Vertex_iterator it = ct.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
+    while(it != ct.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
     ed->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
@@ -251,16 +271,25 @@ private slots:
   void generate_triangulation()
   {
     ct.clear();
-    widget->clear_history();
-    widget->lock();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-	// set the Visible Area to the Interval
-
-    // send resizeEvent only on show.
-    widget->unlock();
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++)
-      ct.insert(*g++);  
+      ct.insert(*g++);
+    Vertex_iterator it = ct.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
+    while(it != ct.vertices_end()) {
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
+    widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
 	
@@ -288,6 +317,8 @@ private slots:
     CGAL::set_ascii_mode(in);
     in >> ct;
     Vertex_iterator it = ct.vertices_begin();
+    xmin = xmax = (*it).point().x();
+    ymin = ymax = (*it).point().y();
     while(it != ct.vertices_end()) {
       if(xmin > (*it).point().x())
 	xmin = (*it).point().x();
@@ -299,6 +330,7 @@ private slots:
 	ymax = (*it).point().y();
       it++;
     }
+    widget->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     something_changed();
   }
@@ -369,23 +401,18 @@ private slots:
 	b = p.bbox();
     ++it;
     while(it != done){
-      Point q(*it);
-      
-	  b = b + q.bbox();
-     
-      
-	  Vertex_handle q_vh = ct.insert(q);
-	  if(q_vh == p_vh){
-		  assert(p == q);
-	  }else{
-	      ct.insert_constraint(p_vh, q_vh);
-	  }
-        
+      Point q(*it);      
+      b = b + q.bbox();           
+      Vertex_handle q_vh = ct.insert(q);
+      if(q_vh == p_vh){
+        assert(p == q);
+      }else{
+	ct.insert_constraint(p_vh, q_vh);
+      }
       p = q;
-	  p_vh = q_vh;
-	  ++it;
-    }
-	
+      p_vh = q_vh;
+      ++it;
+    }	
     set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
     something_changed();
  
@@ -396,10 +423,10 @@ private:
 
 
   CGAL::Qt_widget                   *widget;
-  CGAL::Tools_toolbar               *newtoolbar;
-  CGAL::Layers_toolbar              *vtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  int			  old_state;
+  Tools_toolbar                     *newtoolbar;
+  Layers_toolbar                    *vtoolbar;
+  int                               old_state;
 };//endclass
 
 #include "triangulation_2_constrained.moc"
@@ -414,6 +441,7 @@ main(int argc, char **argv)
   W.setMouseTracking(TRUE);
   W.show();
   // because Qt send resizeEvent only on show.
+  W.init_coordinates();  
   W.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();

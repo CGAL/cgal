@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// Copyright (c) 1997-2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_layer_show_points.h
+// file          : triangulation_2_constrained_layers.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -18,15 +18,40 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_LAYER_SHOW_POINTS_H
-#define CGAL_QT_LAYER_SHOW_POINTS_H
+
+#ifndef CGAL_TRIANGULATION_2_CONSTRAINED_LAYERS_H
+#define CGAL_TRIANGULATION_2_CONSTRAINED_LAYERS_H
+
 
 #include <CGAL/IO/Qt_widget_layer.h>
-
-namespace CGAL {
+#include <CGAL/IO/Qt_widget_Triangulation_2.h>
 
 template <class T>
-class Qt_layer_show_points : public Qt_widget_layer {
+class Qt_layer_show_constraineds : public CGAL::Qt_widget_layer {
+public:
+  typedef typename T::Edge            Edge;
+  typedef typename T::Finite_edges_iterator
+                                      Finite_edges_iterator;
+
+  Qt_layer_show_constraineds(T &t) : tr(t){};
+
+  void draw()
+  {  
+    Finite_edges_iterator it = tr.finite_edges_begin();
+    *widget << CGAL::RED << CGAL::LineWidth(2);
+    while(it != tr.finite_edges_end()) {
+      if(tr.is_constrained(*it))
+        *widget << tr.segment(it);
+      ++it;
+    }
+  };
+private:
+  T	&tr;
+  
+};//end class 
+
+template <class T>
+class Qt_layer_show_points : public CGAL::Qt_widget_layer {
 public:
   typedef typename T::Point           Point;
   typedef typename T::Segment         Segment;
@@ -51,6 +76,23 @@ private:
   
 };//end class 
 
-} // namespace CGAL
+template <class T>
+class Qt_layer_show_triangulation : public CGAL::Qt_widget_layer
+{
+public:
+	
+  Qt_layer_show_triangulation(T &t) : tr(t){};
 
-#endif // CGAL_QT_LAYER_SHOW_POINTS_H
+
+  void draw()
+  {
+    *widget << CGAL::BLUE; 
+    *widget << tr;
+  };
+	
+private:
+  T &tr;
+};//end class 
+
+
+#endif

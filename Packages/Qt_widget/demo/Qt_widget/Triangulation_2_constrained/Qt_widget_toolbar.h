@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_toolbar.h
+// file          : Qt_widget_toolbar.h
 // package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : CGAL-2.4
@@ -59,12 +59,11 @@
 #include <qmainwindow.h>
 #include <qbuttongroup.h>
 
-namespace CGAL {
 class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, CDT *t);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, CDT *t);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -76,21 +75,19 @@ private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
 private:
-  QToolBar		  *maintoolbar;
-  QToolButton		*but[10];
-  Qt_widget		  *widget;
-  QButtonGroup  *button_group;
-  int			      activebutton;
-  bool			    is_active;
-  void			    setActiveButton(int i);
-  void			    addToolButton(QToolButton *b);
-  int			      nr_of_buttons;
+  QToolBar           *maintoolbar;
+  QToolButton        *but[10];
+  CGAL::Qt_widget    *widget;
+  QButtonGroup       *button_group;
+  int                activebutton;
+  bool               is_active;
+  void               setActiveButton(int i);
+  void               addToolButton(QToolButton *b);
+  int                nr_of_buttons;
 	
   CGAL::Qt_widget_get_segment<K1>         segmentbut;
   CGAL::Qt_widget_get_point<K1>           pointbut;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>  polygonbut;
 };//end class
-
-};//end namespace
 
 #endif
