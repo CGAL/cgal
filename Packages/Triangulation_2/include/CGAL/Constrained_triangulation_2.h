@@ -422,9 +422,6 @@ insert(const Vertex_handle & va,
     if(includes_edge(vaa,vb,vbb,fr,i)) {
       if (dimension()==1) fr->set_constraint(2, true);
       else{
-	//fr->set_constraint(ccw(fr->index(vaa)), true);
-	//fl=fr->neighbor(i);
-	//fl->set_constraint(cw(fl->index(vaa)), true);
 	fr->set_constraint(i,true);
 	fr->neighbor(i)->set_constraint(fr->mirror_index(i),true);
       }
@@ -454,6 +451,7 @@ insert(const Vertex_handle & va,
 	fr->set_constraint(2, true);
 	i=2;
 
+	// delete faces to be removed
 	while( ! conflicts.empty()) {
 	  fl = conflicts.front();
 	  std::cerr << "a detruire " << &(*fl) << std::endl;
@@ -526,7 +524,8 @@ remove_constraint(Face_handle f, int i)
 template < class Gt, class Tds >
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_triangulation_2<Gt,Tds>::
-find_conflicts(Vertex_handle va, Vertex_handle  vb,
+find_conflicts(Vertex_handle va, 
+	       Vertex_handle  vb,
 	       Vertex_handle vaa,
 	       List_faces & conflicts,
 	       List_edges & list_ab, 
@@ -539,8 +538,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   // If segment ab contains a vertex c, 
   // c becomes the new vertex vbb and 
   // only triangles intersected by ac are reported.
-  // // If segment ab intersect a constrained edge,
-  // // this constraint is splitted and the new vertex becomes vbb.
+  // 
   // The new edges created by the split which are not constrained 
   // and some of the constrained ones are inserted in new_edges.
   // The new vertex is inserted in new_vertices.

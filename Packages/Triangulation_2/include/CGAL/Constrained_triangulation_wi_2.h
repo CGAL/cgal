@@ -22,8 +22,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
-#define CGAL_CONSTRAINED_TRIANGULATION_2_H
+#ifndef CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
+#define CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 
 #include <utility>
 #include <list>
@@ -124,13 +124,13 @@ public:
   Vertex_handle find_conflicts(Vertex_handle va, 
 			       Vertex_handle vb,
 			       Vertex_handle vaa,
+			       List_faces & conflicts,
 			       List_edges & list_ab, 
 			       List_edges & list_ba,
 			       List_edges & new_edges,
 			       List_vertices & new_vertices);
-  void triangulate(List_edges & list_edges, List_faces & faces_to_be_removed); 
+  void triangulate(List_edges & list_edges); 
   void triangulate(List_edges & list_edges, 
-		   List_faces & faces_to_be_removed, 
 		   List_edges & new_edges);
 
     class Less_edge 
@@ -424,9 +424,6 @@ insert(const Vertex_handle & va,
     if(includes_edge(vaa,vb,vbb,fr,i)) {
       if (dimension()==1) fr->set_constraint(2, true);
       else{
-	//fr->set_constraint(ccw(fr->index(vaa)), true);
-	//fl=fr->neighbor(i);
-	//fl->set_constraint(cw(fl->index(vaa)), true);
 	fr->set_constraint(i,true);
 	fr->neighbor(i)->set_constraint(fr->mirror_index(i),true);
       }
@@ -442,14 +439,9 @@ insert(const Vertex_handle & va,
 
       // skip if the lists are empty : the first crossed edge is a constraint
       if ( !conflict_boundary_ab.empty() ) {
-	// removes the triangles in conflict and creates the new ones
 	triangulate(conflict_boundary_ab, faces_to_be_removed, new_edges);
-	faces_to_be_removed.pop_back(); 
-	//to avoid repetitions in faces_to_be_removed
 	triangulate(conflict_boundary_ba, faces_to_be_removed, new_edges);
-	faces_to_be_removed.pop_back(); 
-	//to avoid repetitions in faces_to_be_removed
-
+	
 	// the two faces that share edge ab are neighbors
 	// their common edge ab is a constraint
 	fl=(*conflict_boundary_ab.begin()).first;
@@ -461,9 +453,10 @@ insert(const Vertex_handle & va,
 	i=2;
 
 	// delete faces to be removed
-	while( ! faces_to_be_removed.empty()){
-	  fl = faces_to_be_removed.front();
-	  faces_to_be_removed.pop_front();
+	while( ! conflicts.empty()) {
+	  fl = conflicts.front();
+	  std::cerr << "a detruire " << &(*fl) << std::endl;
+	  conflicts.pop_front();
 	  delete_face(fl);
 	}
       }
@@ -532,9 +525,12 @@ remove_constraint(Face_handle f, int i)
 template < class Gt, class Tds >
 Constrained_triangulation_2<Gt,Tds>::Vertex_handle 
 Constrained_triangulation_2<Gt,Tds>::
-find_conflicts(Vertex_handle va, Vertex_handle  vb,
+find_conflicts(Vertex_handle va, 
+	       Vertex_handle  vb,
 	       Vertex_handle vaa,
-	       List_edges & list_ab, List_edges & list_ba,
+	       List_faces & conflicts,
+	       List_edges & list_ab, 
+	       List_edges & list_ba,
 	       List_edges & new_edges,
 	       List_vertices & new_vertices)
   // finds all triangles intersected the current part of constraint ab
@@ -591,7 +587,8 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 
   list_ab.push_back(Edge(lf, lf->index(current_face)));
   list_ba.push_front(Edge(rf, rf->index(current_face)));
-  
+  conflicts.push_front(current_face);
+
   // init
   previous_face=current_face; 
   ++current_face;
@@ -636,7 +633,8 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 	vbb = vi; // new endpoint of the constraint
       }
       else {
-	lf= current_face->neighbor(i2);	
+	lf= current_face->neighbor(i2);
+	conflicts.push_front(current_face);
 	if (orient == LEFTTURN) 
 	  list_ab.push_back(Edge(lf, lf->index(current_face)));
 	else // orient == RIGHTTURN
@@ -651,6 +649,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   }
     
   // last triangle (having vbb as a vertex)
+  conflicts.push_front(current_face);
   lf= current_face->neighbor(cw(ind));
   list_ab.push_back(Edge(lf, lf->index(current_face))); 
   rf= current_face->neighbor(ccw(ind));
@@ -809,7 +808,7 @@ operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &ct)
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_CONSTRAINED_TRIANGULATION_2_H
+#endif //CGAL_CONSTRAINED_TRIANGULATION_WI_2_H
 
 
 
