@@ -148,9 +148,9 @@ public:
   void clean() { m_curveList.clear(); }
   void sync(){}
 
-  void setFormat(CGAL::Bench_parse_args::FormatId fmt) { m_format = fmt; }
-  void setFilename(const char * filename) { m_filename = filename; }
-  void setVerbose(const bool verbose) { m_verbose = verbose; }
+  void set_format(CGAL::Bench_parse_args::FormatId fmt) { m_format = fmt; }
+  void set_file_name(const char * filename) { m_filename = filename; }
+  void set_verbose(const bool verbose) { m_verbose = verbose; }
 
 protected:
   const char * m_filename;
@@ -209,23 +209,24 @@ typedef CGAL::Bench<Walk_dis_pmwx>            Walk_dis_pmwx_bench;
 typedef CGAL::Bench<Points_sweep> Points_sweep_bench;
 /*
  */
-template <class Bench_inst, class Bench_user>
-void runBench(Bench_inst & benchInst, Bench_user & benchUser,
+template <class Bench_inst, class Benchable>
+void runBench(Bench_inst & benchInst, Benchable & benchable,
               const char * fullname, FormatId format,
               int samples, int iterations, bool verbose)
 {
     // Bench_inst benchInst(name, seconds, false);
-    // Bench_user & benchUser = benchInst.getBenchUser();
-  benchUser.setFormat(format);
-  benchUser.setFilename(fullname);
-  benchUser.setVerbose(verbose);
+    // Benchable & benchable = benchInst.getBenchUser();
+  benchable.set_format(format);
+  benchable.set_file_name(fullname);
+  benchable.set_verbose(verbose);
 
-  if (samples > 0) benchInst.setSamples(samples);
-  else if (iterations > 0) benchInst.setIterations(iterations);
+  if (samples > 0) benchInst.set_samples(samples);
+  else if (iterations > 0) benchInst.set_iterations(iterations);
 
   benchInst();
 
-  if (verbose) std::cout << "(" << benchInst.getSamples() << ") " << std::endl;
+  if (verbose) std::cout << "(" << benchInst.get_samples() << ") "
+                         << std::endl;
 }
 
 /*
@@ -237,33 +238,33 @@ int main(int argc, char * argv[])
   if (rc > 0) return 0;
   if (rc < 0) return rc;
   
-  bool verbose = parseArgs.getVerbose();
-  unsigned int typeMask = parseArgs.getTypeMask();
-  FormatId format = parseArgs.getInputFormat();
-  int samples = parseArgs.getSamples();
-  int iterations = parseArgs.getIterations();
-  int seconds = parseArgs.getSeconds();
-  bool printHeader = parseArgs.getPrintHeader();
-  int nameLength = parseArgs.getNameLength();
-  const char * filename = parseArgs.getFilename();
-  const char * fullname = parseArgs.getFullname();
+  bool verbose = parseArgs.get_verbose();
+  unsigned int typeMask = parseArgs.get_type_mask();
+  FormatId format = parseArgs.get_input_format();
+  int samples = parseArgs.get_samples();
+  int iterations = parseArgs.get_iterations();
+  int seconds = parseArgs.get_seconds();
+  bool printHeader = parseArgs.get_print_header();
+  int nameLength = parseArgs.get_name_length();
+  const char * filename = parseArgs.get_file_name();
+  const char * fullname = parseArgs.get_full_name();
       
-  CGAL::Bench_base::setNameLength(nameLength);
-  if (printHeader) CGAL::Bench_base::printHeader();
+  CGAL::Bench_base::set_name_length(nameLength);
+  if (printHeader) CGAL::Bench_base::print_header();
   
 
   // Construct Incrementaly
   TypeId typeId = CGAL::Bench_parse_args::TYPE_SUBCURVES;
   if (typeMask & (0x1 << typeId)) {
 
-    //std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
+    //std::string name = std::string(parseArgs.get_type_name(typeId)) + " " +
     //  "SL " + PM_TYPE + " (" + std::string(filename) + ")";
     std::string name = std::string(filename) + " - " + PM_TYPE + " " +
-      std::string(parseArgs.getTypeName(typeId));
+      std::string(parseArgs.get_type_name(typeId));
 
     Subcurves_sweep_bench benchInst(name, seconds, false);
-    Subcurves_sweep & benchUser = benchInst.getBenchUser();
-    runBench<Subcurves_sweep_bench, Subcurves_sweep>(benchInst, benchUser,
+    Subcurves_sweep & benchable = benchInst.get_benchable();
+    runBench<Subcurves_sweep_bench, Subcurves_sweep>(benchInst, benchable,
 						     fullname, format,
 						     samples, iterations,
 						     verbose);
@@ -273,13 +274,13 @@ int main(int argc, char * argv[])
   typeId = CGAL::Bench_parse_args::TYPE_POINTS;
   if (typeMask & (0x1 << typeId)) {
 
-    // std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
+    // std::string name = std::string(parseArgs.get_type_name(typeId)) + " " +
     //  "   SL " + PM_TYPE + " (" + std::string(filename) + ")";
     std::string name = std::string(filename) + " - " + PM_TYPE + " " +
-      std::string(parseArgs.getTypeName(typeId));
+      std::string(parseArgs.get_type_name(typeId));
     Points_sweep_bench benchInst(name, seconds, false);
-    Points_sweep & benchUser = benchInst.getBenchUser();
-    runBench<Points_sweep_bench, Points_sweep>(benchInst, benchUser,
+    Points_sweep & benchable = benchInst.get_benchable();
+    runBench<Points_sweep_bench, Points_sweep>(benchInst, benchable,
 					       fullname, format,
 					       samples, iterations,
 					       verbose);
