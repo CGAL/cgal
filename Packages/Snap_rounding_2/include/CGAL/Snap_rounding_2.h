@@ -835,13 +835,13 @@ template<class Rep_>
 template<class Out> void Snap_rounding_2<Rep_>::output_distances(Out &o)
   {
     double max = 0,max_seg_dis,evarage_dis,cur_dis;
-    std::list<Segment_data<Rep_> >::iterator orig_iter = seg_list.begin();
+    typename std::list<Segment_data<Rep_> >::iterator orig_iter = seg_list.begin();
 
-    for(std::list<std::list<std::pair<NT,NT> > >::iterator iter1 =
+    for(typename std::list<std::list<std::pair<NT,NT> > >::iterator iter1 =
         segments_output_list.begin();iter1 != segments_output_list.end();
         ++iter1) {
       max_seg_dis = 0;
-      for(std::list<std::pair<NT,NT> >::iterator iter2 = iter1->begin();
+      for(typename std::list<std::pair<NT,NT> >::iterator iter2 = iter1->begin();
           iter2 != iter1->end();++iter2) {
         cur_dis = sqrt(CGAL::squared_distance(Point_2(iter2->first,
           iter2->second),Segment_2(Point_2(orig_iter->get_x1(),
