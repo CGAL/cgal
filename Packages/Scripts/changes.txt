@@ -1,3 +1,7 @@
+1.37 (19 Dec 2003) [rursu]
+- updated developer_scripts/create_internal_release
+  the script manage tocopy Core into test directory
+
 1.36 (22  October 2003)
 - changed headers
 
