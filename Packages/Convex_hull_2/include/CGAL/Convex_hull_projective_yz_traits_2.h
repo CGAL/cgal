@@ -43,6 +43,21 @@ public:
 };
 
 template <class Point_3>
+class Equal_xy_plane_yz_2 
+{
+public:
+   typedef bool         result_type;
+   typedef Arity_tag<2> Arity;
+
+   bool 
+   operator()(const Point_3& p, const Point_3& q) const
+   { 
+      return 
+        compare_lexicographically_xyC2(p.y(), p.z(), q.y(), q.z()) == EQUAL;
+   }
+};
+
+template <class Point_3>
 class Less_yx_plane_yz_2 
 {
 public:
@@ -151,6 +166,7 @@ class Convex_hull_projective_yz_traits_2
 public:
     typedef Point_3                            Point_2;
     typedef Less_xy_plane_yz_2<Point_3>        Less_xy_2;
+    typedef Equal_xy_plane_yz_2<Point_3>       Equal_2;    
     typedef Less_yx_plane_yz_2<Point_3>        Less_yx_2;
     typedef Left_turn_plane_yz_2<Point_3>      Left_turn_2;
     typedef Less_dist_to_line_plane_yz_2<Point_3>
@@ -160,6 +176,10 @@ public:
     Less_xy_2
     less_xy_2_object() const
     {  return Less_xy_2(); }
+    
+    Equal_2
+    equal_2_object() const
+    {  return Equal_2(); }    
 
     Less_yx_2
     less_yx_2_object() const

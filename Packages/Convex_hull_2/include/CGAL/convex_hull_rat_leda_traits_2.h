@@ -34,6 +34,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
+struct LEDA_equal_rat_points {
+  typedef Arity_tag< 2 > Arity;
+  typedef bool           result_type;  
+
+  bool operator()(const leda_rat_point& p1, const leda_rat_point& p2) const
+  { return (p1 == p2); }
+};
+
 class LEDA_rat_kernel_2
 {
 public:
@@ -51,6 +59,7 @@ public:
                                                Less_signed_distance_to_line_2;
   typedef   CGALi::Less_rotate_ccw_2<LEDA_rat_kernel_2>     Less_rotate_ccw_2;
   typedef   CGALi::Left_turn_2<LEDA_rat_kernel_2>           Left_turn_2;
+  typedef   CGAL::LEDA_equal_rat_points                     Equal_2;  
   typedef   leda_rat_segment                                Segment_2; 
   
   Less_xy_2
@@ -73,6 +82,9 @@ public:
   left_turn_2_object() const
   { return Left_turn_2(); }
 
+  Equal_2
+  equal_2_object() const
+  { return Equal_2(); }
 };
 
 // for backward compatability
