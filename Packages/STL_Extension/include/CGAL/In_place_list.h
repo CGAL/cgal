@@ -352,7 +352,7 @@ public:
   // inserts n copies of `t' in front of iterator `pos'.
 
   void insert( T* pos, size_type n) { insert( iterator(pos), n); }
-  void insert( T* pos, size_type n, const T& x = T()) {
+  void insert( T* pos, size_type n, const T& x) {
     insert( iterator(pos), n, x);
   }
 
@@ -417,13 +417,23 @@ public:
 
   // CREATION (Continued)
 
-  explicit In_place_list(size_type n, const T& value = T()) : length(0) {
+  explicit In_place_list(size_type n, const T& value) : length(0) {
     // introduces a list with n items, all initialized with copies of
     // value.
     node = get_node();
     (*node).next_link = node;
     (*node).prev_link = node;
     insert(begin(), n, value);
+  }
+  // Sylvain reported a problem with the default argument
+  // on sunpro; hence, I took it out.
+  explicit In_place_list(size_type n) : length(0) {
+    // introduces a list with n items, all initialized with copies of
+    // value.
+    node = get_node();
+    (*node).next_link = node;
+    (*node).prev_link = node;
+    T t; insert(begin(), n, t);
   }
 
   template <class InputIterator>
@@ -469,7 +479,7 @@ public:
     insert( begin(), n, t);
   }
 
-  void resize( size_type sz, T c = T()) {
+  void resize( size_type sz, T c) {
     if ( sz > size())
       insert( end(), sz - size(), c);
     else if ( sz < size()) {
@@ -479,6 +489,9 @@ public:
       erase( i, end());
     }  // else do nothing
   }
+  // Sylvain reported a problem with the default argument
+  // on sunpro; hence, I took it out.
+  void resize( size_type sz) { resize( sz, T()); }
 
   // COMPARISON OPERATIONS
 

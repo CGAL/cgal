@@ -7873,6 +7873,7 @@ void test_Filter_iterator()
     CGAL_assertion(*f1 == 9);
     --f1;
     f1--;
+    f1 = f;
     CGAL_assertion(
       6 ==
       std::distance(filter_iterator(l.begin(), l.end(), fi),
@@ -7890,8 +7891,7 @@ void test_Filter_iterator()
     FI1 f(l.begin(), l.end(), fi);
     CGAL_assertion(
       1 ==
-      std::distance(filter_iterator(l.begin(), l.end(), fi),
-                    filter_iterator(l.begin(), l.end(), fi, l.end())));
+      std::distance(f, filter_iterator(l.begin(), l.end(), fi, l.end())));
   }
 }
 void test_Inverse_index() {
