@@ -1285,10 +1285,10 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
  * that are from the input and that define the empty rectangle
  */
 template<class T>
-Quadruple<Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point,
-          Largest_empty_iso_rectangle_2<T>::Point>
+Quadruple<typename Largest_empty_iso_rectangle_2<T>::Point,
+          typename Largest_empty_iso_rectangle_2<T>::Point,
+          typename Largest_empty_iso_rectangle_2<T>::Point,
+          typename Largest_empty_iso_rectangle_2<T>::Point>
 Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
 {
   if(x_sorted.size() == 4) {
