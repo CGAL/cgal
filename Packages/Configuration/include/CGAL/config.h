@@ -163,6 +163,15 @@ namespace std {
     typedef const T& reference;
     typedef random_access_iterator_tag iterator_category;
   };
+  template <class ForwardIterator>
+  inline ptrdiff_t
+  distance (ForwardIterator first, ForwardIterator last)
+  {
+    ptrdiff_t n = 0;
+    __distance(first, last, n, 
+               iterator_traits<ForwardIterator>::iterator_category());
+    return n;
+  }
 }
 #endif // if defined(__sun) && defined(__SUNPRO_CC)
 
