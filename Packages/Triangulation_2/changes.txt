@@ -3,6 +3,9 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 7.04
 - fixed details in Triangulation_ds_face_2.h
+- changed number types used in testsuite (get rid of LEDA and Gmp)
+- add test for handle conversion operator of circulators and iterators 
+  and operator-> for edge circulators and iterators
 
 Ver 7.03 (4/03/02)
 - fixed details

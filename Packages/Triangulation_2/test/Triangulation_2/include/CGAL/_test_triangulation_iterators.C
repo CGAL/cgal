@@ -47,14 +47,25 @@ _test_cls_face_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_faces_iterator   
                                   Finite_faces_iterator;
+  typedef typename Triangulation::Face     Face;
+  typedef typename Triangulation::Vertex_handle   Vertex_handle;
+  typedef typename Triangulation::Face_handle     Face_handle;
   
+  Face f;
+  Face_handle fh;
+  Vertex_handle vh;
+
   int n_finite = 0;
   Finite_faces_iterator fit;
 
   for (fit = T.finite_faces_begin(); 
        fit != T.finite_faces_end(); 
-       ++fit)
+       ++fit) {
+    f = *fit;
+    fh = fit;
+    vh = fit->vertex(0);
     n_finite++;
+  }
   assert(n_finite == T.number_of_faces());
 
   int n=n_finite;
@@ -74,14 +85,25 @@ _test_cls_vertex_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_vertices_iterator 
                                   Finite_vertices_iterator;
+  typedef typename Triangulation::Vertex   Vertex;
+  typedef typename Triangulation::Vertex_handle   Vertex_handle;
+  typedef typename Triangulation::Face_handle     Face_handle;
+  
+  Vertex v;
+  Face_handle fh;
+  Vertex_handle vh;
 
   int nv = 0;
   Finite_vertices_iterator vit;
 
   for (vit = T.finite_vertices_begin(); 
        vit != T.finite_vertices_end(); 
-       ++vit)
+       ++vit) {
+    v = *vit;
+    vh = vit;
+    fh = vit->face();
     nv++;
+  }
   assert( nv == T.number_of_vertices() );
 
   int n=nv;
@@ -128,13 +150,21 @@ _test_cls_edge_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_edges_iterator   
                                   Finite_edges_iterator;
-
+  typedef typename Triangulation::Edge     Edge;
+  typedef typename Triangulation::Face_handle     Face_handle;
+ 
+  Edge e;
+  Face_handle fh;
+ 
   int ne = 0;
   Finite_edges_iterator eit;
   for (eit = T.finite_edges_begin(); 
        eit != T.finite_edges_end(); 
-       ++eit)
+       ++eit){
+    e = *eit;
+    fh = eit->first;
     ne++;
+  }
  
   int n = ne;
   for (eit = T.finite_edges_end(); 

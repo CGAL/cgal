@@ -1585,7 +1585,7 @@ off_file_input( std::istream& is, bool verbose)
     is.clear( std::ios::badbit);
     return vinf;
   }
-  vinf = vvh[0];
+  //vinf = vvh[0];
 
   // create the facets
   for ( i = 0; i < scanner.size_of_facets(); i++) {

@@ -15,22 +15,22 @@
 // #include <cl_integer_io.h>
 // typedef cl_I Rtype;
 // #else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz Rtype;
-#else
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer Rtype;
-#else
+// #ifdef CGAL_USE_GMP
+// #include <CGAL/Gmpz.h>
+// typedef CGAL::Gmpz Rtype;
+// #else
+// #ifdef CGAL_USE_LEDA
+// #include <CGAL/leda_integer.h>
+// typedef leda_integer Rtype;
+// #else
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float Rtype;
-#endif // CGAL_USE_LEDA
-#endif // CGAL_USE_GMP
+//#endif // CGAL_USE_LEDA
+//#endif // CGAL_USE_GMP
 //#endif // CGAL_USE_CLN
 
-#include <CGAL/Quotient.h>
-typedef CGAL::Quotient<Rtype>   Ftype;
+//#include <CGAL/Quotient.h>
+typedef CGAL::MP_Float  Ftype;
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
