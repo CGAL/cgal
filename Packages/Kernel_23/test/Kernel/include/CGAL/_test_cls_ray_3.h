@@ -43,7 +43,6 @@ _test_cls_ray_3(const R& )
  RT  n5 =  5;
  RT  n6 = 20;
  RT  n7 = -2;
- RT  n8 =  3;
 
  CGAL::Point_3<R> p1( n1, n2, n3, n3);
  CGAL::Point_3<R> p2( n4, n5, n6, n5);

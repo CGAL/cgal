@@ -43,7 +43,6 @@ _test_cls_triangle_2(const R& )
  RT n4 =  4;
  RT n5 =  5;
  RT n6 =  6;
- RT n7 =  7;
  RT n8 =  8;
  RT n9 =  9;
  RT n10= 10;

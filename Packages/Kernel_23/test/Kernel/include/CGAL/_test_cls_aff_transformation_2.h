@@ -50,7 +50,6 @@ _test_cls_aff_transformation_2(const R& )
  RT n11=-12;
  RT n12= 20;
  RT n13=  1;
- RT n14= 35;
  RT n100 = 100;
 
  CGAL::Vector_2<R> vec( n3, n8,  n6 );      // (-2,-9)

@@ -42,7 +42,6 @@ _test_cls_point_2(const R& )
 
  RT  n1(-35 );
  RT  n2( 50 );
- RT  n3(-20 );
  RT  n4(  5 );
 
  CGAL::Point_2<R>  p3(n1, n2);

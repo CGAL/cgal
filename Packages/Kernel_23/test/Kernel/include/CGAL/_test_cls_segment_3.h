@@ -42,7 +42,6 @@ _test_cls_segment_3(const R& )
  RT  n4 =-10;
  RT  n5 =  5;
  RT  n6 = 20;
- RT  n7 = -1;
  RT  n8 =  3;
 
  CGAL::Point_3<R> p1( n1, n2, n3, n1);

@@ -35,13 +35,10 @@ _test_fct_point_vector_2(const R& )
 
  RT  n1( 12 );
  RT  n2( -4 );
- RT  n3(  6 );
  RT  n4(  2 );
  RT  n5(  9 );
  RT  n6(-18 );
- RT  n7( 36 );
  RT  n8(  3 );
- RT  n9( 15 );
  RT n10( -8 );
 
  CGAL::Vector_2<R>  v0(CGAL::NULL_VECTOR);

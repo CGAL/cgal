@@ -340,6 +340,7 @@ test_new_2(const R& rep)
   typename R::Compute_y_at_x_2 compute_y_at_x
         = rep.compute_y_at_x_2_object();
   FT tmp22 = compute_y_at_x(l2, FT(11));
+  use(tmp22);
 #endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Compute_area_2 compute_area_2

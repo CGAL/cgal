@@ -36,7 +36,6 @@ _test_cls_iso_cuboid_3(const R& )
  typename R::Iso_cuboid_3 ir;
  CGAL::Iso_cuboid_3<R>  r0(ir);
 
- RT n0 =  0;
  RT n1 =  1;
  RT n2 =  2;
  RT n3 =  3;

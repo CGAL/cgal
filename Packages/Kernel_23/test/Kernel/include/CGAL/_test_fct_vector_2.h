@@ -39,9 +39,7 @@ _test_fct_vector_2(const R& )
  RT  n4(  2 );
  RT  n5(  9 );
  RT  n6(-18 );
- RT  n7( 36 );
  RT  n8(  3 );
- RT  n9( 15 );
  RT n10( -8 );
  RT n11( 24 );
 

@@ -40,7 +40,6 @@ _test_cls_vector_2(const R& )
 
  RT  n1( 12 );
  RT  n2( -4 );
- RT  n3(  6 );
  RT  n4(  2 );
 
  CGAL::Vector_2<R>  v3(n1, n2 );       // ( 12, -4)

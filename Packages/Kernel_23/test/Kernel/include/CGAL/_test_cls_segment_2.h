@@ -36,7 +36,6 @@ _test_cls_segment_2(const R& )
  typename R::Segment_2  is;
  CGAL::Segment_2<R> s0;
 
- RT  n0 = 0;
  RT  n2 = 2;
  RT  n3 = 3;
  RT  n4 = 4;

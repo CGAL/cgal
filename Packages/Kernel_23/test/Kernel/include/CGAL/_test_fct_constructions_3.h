@@ -36,7 +36,6 @@ _test_fct_constructions_3(const R&)
   RT RT0(0);
   RT RT1(1);
   RT RT2(2);
-  RT RT3(3);
   RT RT4(4);
   RT RT8(8);
 

@@ -36,7 +36,6 @@ _test_cls_ray_2(const R& )
  typename R::Ray_2  ir;
  CGAL::Ray_2<R> r0;
 
- RT  n0 = 0;
  RT  n2 = 2;
  RT  n3 = 3;
  RT  n4 = 4;
