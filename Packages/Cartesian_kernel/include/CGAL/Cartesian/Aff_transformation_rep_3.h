@@ -107,9 +107,10 @@ public:
 
   virtual Point_3 transform(const Point_3& p) const // FIXME : construction
   {
-    return Point_3(t11 * p.x() + t12 * p.y() + t13 * p.z() + t14,
-                   t21 * p.x() + t22 * p.y() + t23 * p.z() + t24,
-                   t31 * p.x() + t32 * p.y() + t33 * p.z() + t34);
+    typename R::Construct_point_3 construct_point_3;
+    return construct_point_3(t11 * p.x() + t12 * p.y() + t13 * p.z() + t14,
+			     t21 * p.x() + t22 * p.y() + t23 * p.z() + t24,
+			     t31 * p.x() + t32 * p.y() + t33 * p.z() + t34);
   }
 
   // note that a vector is not translated

@@ -854,18 +854,20 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
+      typename K::Construct_point_2 construct_point_2;
       FT x, y;
       centroidC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), x, y);
-      return Point_2(x, y);
+      return construct_point_2(x, y);
     }
 
     Point_2
     operator()(const Point_2& p, const Point_2& q, 
                const Point_2& r, const Point_2& s) const
     {
+      typename K::Construct_point_2 construct_point_2;
       FT x, y;
       centroidC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), s.x(), s.y(), x, y);
-      return Point_2(x, y);
+      return construct_point_2(x, y);
     }
   };
 
@@ -881,25 +883,27 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { 
+      typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       centroidC3(p.x(), p.y(), p.z(),
 		 q.x(), q.y(), q.z(),
 		 r.x(), r.y(), r.z(),
 		 x, y, z);
-      return Point_3(x, y, z);
+      return construct_point_3(x, y, z);
     }
 
     Point_3
     operator()(const Point_3& p, const Point_3& q, 
                const Point_3& r, const Point_3& s) const
     {
+      typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       centroidC3(p.x(), p.y(), p.z(),
 		 q.x(), q.y(), q.z(),
 		 r.x(), r.y(), r.z(),
 		 s.x(), s.y(), s.z(),
 		 x, y, z);
-      return Point_3(x, y, z);
+      return construct_point_3(x, y, z);
     }
   };
 
@@ -915,9 +919,10 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { 
+      typename K::Construct_point_2 construct_point_2;
       FT x, y;
       circumcenterC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), x, y);
-      return Point_2(x, y);
+      return construct_point_2(x, y);
     }
   };
 
@@ -933,25 +938,27 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { 
+      typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       circumcenterC3(p.x(), p.y(), p.z(),
 		     q.x(), q.y(), q.z(),
 		     r.x(), r.y(), r.z(),
 		     x, y, z);
-      return Point_3(x, y, z);
+      return construct_point_3(x, y, z);
     }
 
     Point_3
     operator()(const Point_3& p, const Point_3& q,
 	       const Point_3& r, const Point_3& s) const
     {
+      typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       circumcenterC3(p.x(), p.y(), p.z(),
 		     q.x(), q.y(), q.z(),
 		     r.x(), r.y(), r.z(),
 		     s.x(), s.y(), s.z(),
 		     x, y, z);
-      return Point_3(x, y, z);
+      return construct_point_3(x, y, z);
     }
   };
 
@@ -1127,9 +1134,10 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const Point_2& p, const Point_2& q) const
     { 
+      typename K::Construct_point_2 construct_point_2;
       FT x, y;
       midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
-      return Point_2(x, y);
+      return construct_point_2(x, y);
     }
   };
 
@@ -1145,9 +1153,10 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
     { 
+      typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
-      return Point_3(x, y, z);
+      return construct_point_3(x, y, z);
     }
   };
 
@@ -1221,7 +1230,8 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()( const Point_2& p, const Vector_2& v) const
     {  
-      return Point_2(p.x() + v.x(), p.y() + v.y());
+      typename K::Construct_point_2 construct_point_2;
+      return construct_point_2(p.x() + v.x(), p.y() + v.y());
     }
   };
 
@@ -1237,7 +1247,8 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()( const Point_3& p, const Vector_3& v) const
     { 
-      return Point_3(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
+      typename K::Construct_point_3 construct_point_3;
+      return construct_point_3(p.x() + v.x(), p.y() + v.y(), p.z() + v.z());
     }
   };
 

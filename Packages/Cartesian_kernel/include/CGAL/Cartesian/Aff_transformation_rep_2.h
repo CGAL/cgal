@@ -95,10 +95,11 @@ friend class Scaling_repC2<R>;
       t21(m21), t22(m22), t23(m23)
   {}
 
-  Point_2 transform(const Point_2& p) const // FIXME : construction
+  Point_2 transform(const Point_2& p) const
   {
-    return Point_2(t11 * p.x() + t12 * p.y() + t13,
-                   t21 * p.x() + t22 * p.y() + t23);
+    typename R::Construct_point_2 construct_point_2;
+    return construct_point_2(t11 * p.x() + t12 * p.y() + t13,
+			     t21 * p.x() + t22 * p.y() + t23);
   }
 
   // note that a vector is not translated
