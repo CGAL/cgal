@@ -33,6 +33,7 @@
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 #include <CGAL/IO/Arr_file_scanner.h>
+#include <CGAL/HalfedgeDS_default.h>
 
 #include <vector>
 
@@ -1412,14 +1413,13 @@ public:
                              const typename Traits::X_curve& c1,
                              const typename Traits::X_curve& c2)
   {
-    Edge_iterator eit=e->edge_node();
-    Curve_iterator cit=eit->curve_node();
+    Edge_iterator eit = e->edge_node();
     //find the representative halfedge of the edge node 
     //(the one with the same direction as the curve)
-    Halfedge_handle e_rep=eit->halfedge(); 
+    Halfedge_handle e_rep = eit->halfedge(); 
 
-    typename Planar_map::Halfedge_handle 
-      pmh=pm.split_edge(e_rep.current_iterator(),c1,c2);
+    typename Planar_map::Halfedge_handle pmh =
+      pm.split_edge(e_rep.current_iterator(),c1,c2);
     handle_split_edge(pmh, pmh->next_halfedge(), c1, c2);
     return Halfedge_handle(pmh);
   }
