@@ -1493,6 +1493,7 @@ Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/data/m30f.jpg svneol=native#uns
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
+Packages/Qt_widget/demo/Qt_widget/Min_circle_2/min_circle_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/min_ellipse_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/min_quadrilateral_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
