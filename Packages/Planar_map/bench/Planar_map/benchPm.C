@@ -238,23 +238,26 @@ private:
 
 typedef CGAL::Bench<Display_Pm> DisplayPmBench;
 
+static char * progName = 0;
+
 /*!
  */
 static void printHelp(void)
 {
-  printf("Usage: bench [options]\n\
-  -b <id>\tset bench id to <id> (default all)\n\
+  printf("Usage: %s [options]\n\
+  -b <name>\tset bench name to <name> (default all)\n\
+  \t\t\t<name> is one of {co[nstruct], di[splay]}\n\
   -h\t\tprint this help message\n\
   -s <samples>\tset number of samples to <samples> (default 10)\n\
   -t <seconds>\tset number of seconds to <seconds> (default 1)\n\
-  -v\t\ttoggle verbosity (default no)");
+  -v\t\ttoggle verbosity (default no)\n", progName);
 }
 
 /*
  */
 int main(int argc, char * argv[])
 {
-  char * progName = strrchr(argv[0], '\\');
+  progName = strrchr(argv[0], '\\');
   progName = (progName) ? progName+1 : argv[0];
 
   bool verbose = false;
