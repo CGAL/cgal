@@ -1,5 +1,5 @@
-// hds_prog_compact2.C
-// -------------------------------------------------
+// examples/Halfedge_DS/hds_prog_compact2.C
+// ----------------------------------------
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>

@@ -1,5 +1,5 @@
-// hds_prog_graph2.C
-// -------------------------------------------------
+// examples/Halfedge_DS/hds_prog_graph2.C
+// --------------------------------------
 #include <CGAL/Halfedge_data_structure_bases.h>
 #include <CGAL/Halfedge_data_structure_using_list.h>
 #include <CGAL/Halfedge_data_structure_decorator.h>

@@ -1,5 +1,5 @@
-// hds_prog_color.C
-// -------------------------------------------------
+// examples/Halfedge_DS/hds_prog_color.C
+// -------------------------------------
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Halfedge_data_structure_bases.h>

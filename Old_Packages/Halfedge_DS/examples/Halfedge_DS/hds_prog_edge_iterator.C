@@ -1,5 +1,5 @@
-// hds_prog_edge_iterator.C
-// ------------------------------------------------
+// examples/Halfedge_DS/hds_prog_edge_iterator.C
+// ---------------------------------------------
 #include <CGAL/Halfedge_data_structure_default.h>
 #include <CGAL/Halfedge_data_structure_decorator.h>
 #include <CGAL/N_step_adaptor.h>

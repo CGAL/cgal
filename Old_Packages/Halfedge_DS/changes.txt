@@ -1,5 +1,10 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
+
+2.13 (29 Jun 2001)
+
+     - Added pathname to example program header line.
+
 2.12 (18 Jun 2001)
 
      - Moved manual to deprecated_basic.

@@ -1,5 +1,5 @@
-// hds_prog_compact.C
-// ---------------------------------------------------
+// examples/Halfedge_DS/hds_prog_compact.C
+// ---------------------------------------
 #include <CGAL/Halfedge_data_structure_bases.h>
 #include <CGAL/Halfedge_data_structure_using_vector.h>
 #include <CGAL/Halfedge_data_structure_decorator.h>

@@ -1,5 +1,5 @@
-// hds_prog_default.C
-// ------------------------------------------------
+// examples/Halfedge_DS/hds_prog_default.C
+// ---------------------------------------
 #include <CGAL/Halfedge_data_structure_default.h>
 #include <CGAL/Halfedge_data_structure_decorator.h>
 
