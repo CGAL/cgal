@@ -1,3 +1,6 @@
+Version 4.188 on 15 January 2004
+- Fix FPU.h on g++ and Solaris 5.9.
+
 Version 4.187 on 18 December 2003
 - Filtered_exact stores its potential cache as private base, to benefit from
   the empty base class optimization.
