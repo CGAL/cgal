@@ -1,3 +1,12 @@
+18 02 2004 Radu Ursu
+- added in VRML_2_ostream << operators for 
+	- Point_3
+	- Segment_3
+	- Triangle_3
+	- const char*
+	- const double&
+- created a small testsuite to test those operators. 
+
 Ver 2.11 (22 Oct 2003)
 - new header
 

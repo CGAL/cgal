@@ -89,6 +89,22 @@ private:
     std::ostream*  m_os;
 };
 
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const char* s)
+{
+  os.os() << s;
+  return os;
+}
+
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const double& d)
+{
+  os.os() << d;
+  return os;
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_VRML_2_OSTREAM_H
@@ -149,3 +165,120 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_VRML_2_TETRAHEDRON_3
 #endif // CGAL_TETRAHEDRON_3_H
+
+#ifdef CGAL_POINT_3_H
+#ifndef CGAL_IO_VRML_2_POINT_3
+#define CGAL_IO_VRML_2_POINT_3
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R >
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const Point_3<R > &p)
+{
+  const char *Indent = "                                    ";
+  os.os() << "        Group {\n"
+             "            children [\n"
+             "                Shape {\n"
+             "                    geometry\n"
+             "                        PointSet {\n"
+             "                            coord Coordinate {\n"
+             "                                point [ ";
+  os << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) 
+     << " " << CGAL::to_double(p.z()) << " ]\n";
+  os << Indent << "}\n";
+  os << Indent << "} # PointSet\n";
+  os << "                } #Shape\n"
+        "            ] #children\n"
+        "        } #Group\n";
+  return os;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_IO_VRML_2_POINT_3
+#endif // CGAL_POINT_3_H
+
+
+
+#ifdef CGAL_TRIANGLE_3_H
+#ifndef CGAL_IO_VRML_2_TRIANGLE_3
+#define CGAL_IO_VRML_2_TRIANGLE_3
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R >
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const Triangle_3<R > &t)
+{
+  const char *Indent = "                                    ";
+  os.os() << "        Group {\n"
+             "            children [\n"
+             "                Shape {\n"
+             "                    geometry\n"
+             "                        IndexedLineSet {\n"
+             "                            coord Coordinate {\n"
+             "                                point [ \n";
+  os << Indent ;
+  os << CGAL::to_double(t[0].x()) << " " << CGAL::to_double(t[0].y()) 
+     << " " << CGAL::to_double(t[0].z()) << ",\n";
+  os << Indent;
+  os << CGAL::to_double(t[1].x()) << " " << CGAL::to_double(t[1].y()) 
+     << " " << CGAL::to_double(t[1].z()) << ",\n";
+  os << Indent;
+  os << CGAL::to_double(t[2].x()) << " " << CGAL::to_double(t[2].y()) 
+     << " " << CGAL::to_double(t[2].z()) << " ]\n";
+  os << Indent << "}\n" << Indent << "coordIndex [ 0 1, 1 2, 2 0 -1 ]\n";
+  os << Indent << "} # IndexedLineSet\n";
+  os << "                } #Shape\n"
+        "            ] #children\n"
+        "        } #Group\n";
+  return os;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_IO_VRML_2_TRIANGLE_3
+#endif // CGAL_TRIANGLE_3_H
+
+
+#ifdef CGAL_SEGMENT_3_H
+#ifndef CGAL_IO_VRML_2_SEGMENT_3
+#define CGAL_IO_VRML_2_SEGMENT_3
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R >
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const Segment_3<R > &s)
+{
+  const char *Indent = "                                    ";
+  os.os() << "        Group {\n"
+             "            children [\n"
+             "                Shape {\n"
+             "                    geometry\n"
+             "                        IndexedLineSet {\n"
+             "                            coord Coordinate {\n"
+             "                                point [ \n";
+  os << Indent << CGAL::to_double(s.source().x());
+  os << " " << CGAL::to_double(s.source().y()) 
+     << " " << CGAL::to_double(s.source().z()) << ",\n";
+  os << Indent;
+  os << CGAL::to_double(s.target().x()) << " " << CGAL::to_double(s.target().y()) 
+     << " " << CGAL::to_double(s.target().z()) << " ]\n";
+  os << Indent << "}\n" << Indent << "coordIndex [ 0 1 -1 ]\n";
+  os << Indent << "} # IndexedLineSet\n";
+  os << "                } #Shape\n"
+        "            ] #children\n"
+        "        } #Group\n";
+
+  return os;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_IO_VRML_2_SEGMENT_3
+#endif // CGAL_SEGMENT_3_H
