@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: farin_c1_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{farin_c1_interpolation}  %% add template arg's if necessary
+\ccIndexMainItemBegin{farin_c1_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values and the
+gradients that are provided using the method described in  \cite{f-sodt-90}.
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccFunction{template < class RandomAccessIterator, class Functor,
+  class GradFunctor, class Gt> typename Functor::result_type
+  farin_c1_interpolation(RandomAccessIterator first,
+  RandomAccessIterator beyond, const typename
+  std::iterator_traits<RandomAccessIterator>::value_type::second_type&
+  norm, Functor f, GradFunctor grad_f,const Gt& geom_traits);}
+{generates the interpolated function value computed by Farin's
+  interpolant \cite{f-sodt-90}.  See also
+  \ccc{sibson_c1_interpolation}.  \ccPrecond{\ccc{norm} $\neq 0$.}
+  \ccPrecond{The range $\left[\right.$ \ccc{first},
+    \ccc{beyond}$\left.\right)$ contains either one or more than three
+    elements.  }  } 
+
+\ccHeading{Requirements}
+
+Same requirements as for \ccc{sibson_c1_interpolation} only the
+iterator must provide random access.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2_3}\\
+%\ccImplementation
+
+\ccIndexSubitemEnd{Interpolation}{farin_c1_interpolation}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

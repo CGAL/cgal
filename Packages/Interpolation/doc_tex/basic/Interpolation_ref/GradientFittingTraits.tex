@@ -1,0 +1,117 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: GradientFittingTraits.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSGradientFittingTraitsRev}{$Revision$}
+\RCSdefDate{\RCSGradientFittingTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{GradientFittingTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccc{sibson_gradient_fitting} is parameterized by a
+traits class that defines the primitives used by the algorithm.   The
+concept \ccRefName\ defines this common set of requirements.
+
+
+\ccTypes \ccNestedType{FT}{The number type.}  \ccNestedType{Point}{}
+\ccNestedType{Vector}{} \ccNestedType{Aff_transformation}{defines a
+  matrix type.
+  Must provide the following member functions~: \\
+  \ccc{Aff_transformation tr.inverse ()} which gives the inverse
+  transformation, and \\
+  \ccc{Aff_transformation tr.transform( Vector v)} which returns the
+  multiplication of \ccc{tr} with \ccc{v}. %, and, \\
+  %the constructor \ccc{Aff_transformation(SCALING, FT scale)} which introduces a 
+  %scaling by a scale factor \ccc{scale}. 
+  }
+
+
+
+\ccNestedType{Construct_vector} {A constructor object for
+  \ccc{Vector}.
+  Provides~: \\
+  \ccc{Vector operator() (Point a, Point b)} which produces the vector
+  \ccc{b -
+    a} and \\
+  \ccc{Vector operator() (Null_vector NULL_VECTOR)} which introduces
+  the null vector.}
+\ccNestedType{Construct_scaled_vector}{Constructor object
+  \ccc{Vector}.
+  Provides~: \\
+  \ccc{Vector operator() (Vector v,FT scale)} which produces the
+  vector v scaled by a factor scale.}
+\ccNestedType{Construct_null_matrix}{Constructor object for
+  \ccc{Aff_transformation}. Provides~: \\
+  \ccc{Aff_transformation operator()()} which introduces an affine
+  transformation whose matrix has only zero entries.}
+\ccNestedType{Construct_scaling_matrix}{Constructor object for
+  \ccc{Aff_transformation}. Provides~: \\
+  \ccc{Aff_transformation operator()(FT scale)()} which introduces a
+  scaling by a scale factor \ccc{scale}.}
+\ccNestedType{Construct_sum_matrix}{Constructor object for
+  \ccc{Aff_transformation}. Provides~: \\
+  \ccc{Aff_transformation operator()(Aff_transformation tr1,
+    Aff_transformation tr2)} which returns the sum of the two matrices
+  representing \ccc{tr1} and \ccc{tr2}.}
+\ccNestedType{Construct_outer_product} {Constructor object for
+  \ccc{Aff_transformation}. Provides~: \\
+  \ccc{Aff_transformation operator()(Vector v)} which returns the
+  outerproduct, i.\ e.\ the quadratic matrix \ccc{v}$^t$ \ccc{v}.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+%A default constructor, a copy constructor
+% and an assignement operator are required. 
+%Note that further constructors
+%can be provided. 
+%%\ccThree{InterpolationTraits}{traits=gtrxx  }{}
+%\ccConstructor{InterpolationTraits();}{default constructor.}
+%\ccGlue
+%\ccConstructor{InterpolationTraits(InterpolationTraits gtr);}
+%{Copy constructor}
+%\ccMethod{InterpolationTraits operator=(InterpolationTraits gtr);}
+%{Assignment operator.}
+
+\ccOperations
+\ccHeading{Predicate functions}
+The following functions that create instances of the above predicate object
+types must exist.
+\ccMethod{Construct_vector construct_vector_object();}{}
+\ccGlue
+\ccMethod{Construct_scaled_vector construct_scaled_vector_object();}{}
+\ccGlue
+\ccMethod{Construct_null_matrix construct_null_matrix_object();}{}
+\ccGlue
+\ccMethod{Construct_sum_matrix construct_sum_matrix_object();}{}
+\ccGlue
+\ccMethod{Construct_outer_product construct_outer_product_object();}{}
+
+\ccHasModels
+\ccc{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+
+\ccSeeAlso
+%\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+%\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+%\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+%\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2_3}\\
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

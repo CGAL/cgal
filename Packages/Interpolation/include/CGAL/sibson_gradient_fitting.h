@@ -28,9 +28,12 @@ CGAL_BEGIN_NAMESPACE
 template < class ForwardIterator, class Functor, class Traits>
 typename Traits::Vector 
 sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
-			const typename std::iterator_traits<ForwardIterator>::value_type::second_type&
+			const typename
+			std::iterator_traits<ForwardIterator>::
+			value_type::second_type&
 			norm, const typename
-			std::iterator_traits<ForwardIterator>::value_type::first_type& p, 
+			std::iterator_traits<ForwardIterator>::value_type::
+			first_type& p, 
 			Functor f,
 			const Traits& geom_traits)
 {  
@@ -87,7 +90,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
   for(; vit != dt.vertices_end(); vit++){
     //test if vit is a convex hull vertex:
     if(dt.is_edge(vit, dt.infinite_vertex()))
-      *out++= std::make_pair(vit->point(), typename Traits::Vector(NULL_VECTOR));
+      *out++= std::make_pair(vit->point(), typename traits.
+			     construct_vector_object()(NULL_VECTOR));
     else{
       norm = 
 	natural_neighbor_coordinates_2(dt, vit,
@@ -95,8 +99,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
       *out++= std::make_pair(vit->point(), 
 			     sibson_gradient_fitting(coords.begin(), 
 						     coords.end(),
-							   norm, vit->point(),
-							   f, traits));
+						     norm, vit->point(),
+						     f, traits));
       coords.clear();
     }
   }
@@ -121,7 +125,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 //   for(; vit != dt.vertices_end(); vit++){
 //     //test if vit is a convex hull vertex:
 //     if(dt.is_edge(vit, dt.infinite_vertex()))
-//       *out++= std::make_pair(vit->point(), typename Traits::Vector(NULL_VECTOR));
+//       *out++= std::make_pair(vit->point(),traits.
+//			     construct_vector_object()(NULL_VECTOR)); 
 //     else{
 //       norm = 
 // 	natural_neighbor_coordinates_2(dt, vit,

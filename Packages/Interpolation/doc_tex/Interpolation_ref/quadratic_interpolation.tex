@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: quadratic_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{quadratic_interpolation}  %% add template arg's if necessary
+\ccIndexMainItemBegin{quadratic_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values provided by 
+a functor.
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  GradFunctor, class Gt> typename Functor::result_type
+  quadratic_interpolation(ForwardIterator first, ForwardIterator
+  beyond, const typename std::iterator_traits<ForwardIterator>::\~
+  value_type::second_type& norm, Functor f, GradFunctor grad_f,const
+  Gt& geom_traits);} { \ccc{ForwardIterator::value_type} is a pair
+  associating a point to a (non-normalized) barycentric coordinate.
+  \ccc{norm} is the normalization factor.  \ccc{f} allows to access a
+  value given a point and \ccc{f} allows to access a function gradient
+  given a point.  This function generates the interpolated function
+  value as the weighted sum of the values plus a linear term in the
+  gradient for each point of the point/coordinate pairs in the range
+  $\left[\right.$ \ccc{first}, \ccc{beyond}$\left.\right)$.
+  \ccPrecond{\ccc{norm} $\neq 0$.}}
+
+
+\ccHeading{Requirements}
+Same requirements as for \ccc{sibson_c1_interpolation}.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Interpolation_traits_class_2.h} \\
+
+%\ccImplementation
+
+\ccIndexSubitemEnd{Interpolation}{quadratic_interpolation}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: linear_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{linear_interpolation}  %% add template arg's if necessary
+\ccIndexMainItemBegin{linear_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values provided by 
+a functor.
+
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccFunction{template < class ForwardIterator, class Functor> typename
+  Functor::result_type linear_interpolation(ForwardIterator first,
+  ForwardIterator beyond, const typename
+  std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, Functor f);} { \ccc{ForwardIterator::value_type} is a pair
+  associating a point to a (non-normalized) barycentric coordinate.
+  \ccc{norm} is the normalization factor. 
+  \ccc{f} allows to access a value given a point. 
+  This function
+  generates the interpolated function value as the weighted sum of the
+  values corresponding to each point of the point/coordinate pairs in
+  the range $\left[\right.$ \ccc{first}, \ccc{beyond}$\left.\right)$.
+  \ccPrecond{\ccc{norm} $\neq 0$.}
+  }
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{ForwardIterator::value_type} is a pair of point/coordinate
+  value, thus \ccc{ForwardIterator::value_type::first_type} is
+  equivalent to a point and
+  \ccc{ForwardIterator::value_type::second_type} is a
+  number type. 
+\item \ccc{Functor::argument_type} must be equivalent to
+  \ccc{ForwardIterator::value_type::first_type} and
+  \ccc{Functor::result_type} is the function value type. It must
+  provide a multiplication and addition operation with the type
+  \ccc{ForwardIterator::value_type::second_type}.
+\end{enumerate}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2_3}\\
+%\ccImplementation 
+
+\ccIndexSubitemEnd{Interpolation}{linear_interpolation}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

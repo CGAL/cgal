@@ -1,0 +1,103 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: sibson_c1_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{sibson_c1_interpolation}  %% add template arg's if necessary
+\ccIndexMainItemBegin{sibson_c1_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values and the
+gradients that are provided following the method described in \cite{s-bdnni-81}.
+
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  GradFunctor, class Traits> typename Functor::result_type
+  sibson_c1_interpolation(ForwardIterator first, ForwardIterator
+  beyond, const typename
+  std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, const typename
+  std::iterator_traits<ForwardIterator>::value_type:: first_type& p,
+  Functor f, GradFunctor grad_f,const Traits& geom_traits);} {
+  \ccc{ForwardIterator::value_type} is a pair associating a point to a
+  (non-normalized) barycentric coordinate. \ccc{norm} is the
+  normalization factor. The range $\left[\right.$ \ccc{first},
+  \ccc{beyond}$\left.\right)$ contains the barycentric coordinates for
+  the query point \ccc{p}. \ccc{f} allows to access the value of the
+  interpolated function given a point and \ccc{grad_f} allows to
+  access the function gradient at a given point. This function
+  generates the interpolated function value at the point \ccc{p} using
+  Sibson's $Z^1$ interpolant \cite{s-bdnni-81}.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{ForwardIterator::value_type} is a pair of point/coordinate
+  value, thus \ccc{ForwardIterator::value_type::first_type} is
+  equivalent to a point and
+  \ccc{ForwardIterator::value_type::second_type} is a
+  number type. 
+\item \ccc{Functor::argument_type} must be equivalent to
+  \ccc{ForwardIterator::value_type::first_type} and
+  \ccc{Functor::result_type} is the function value type. It must
+  provide a multiplication and addition operation with the type
+  \ccc{ForwardIterator::value_type::second_type}.
+\item \ccc{GradFunctor::argument_type} must be equivalent to
+  \ccc{ForwardIterator::value_type::first_type} and
+  \ccc{Functor::result_type} is the type of the gradient of the
+  function value. It must provide a multiplication operation with the
+  return type of \ccc{Construct_vector} defined in the traits
+  class \ccc{Traits}.
+\item  \ccc{Traits} is a model of the concept 
+  \ccc{InterpolationTraits}\ccIndexMainItem[c]{InterpolationTraits}.
+  %Only the following members of this traits class are used:
+  %\begin{itemize}
+  %\item \ccc{Construct_vector}
+  %\item \ccc{Construct_scaled_vector}
+  %\item \ccc{Compute_squared_distance}
+  %\item \ccc{FT}
+  %\item \ccc{construct_vector_object}
+  %\item \ccc{construct_scaled_vector_object} 
+  %\item \ccc{compute_squared_distance_object}
+  %\end{itemize}
+\item The number type \ccc{FT} provided by \ccc{Traits} must support
+  the square root operation \ccc{sqrt()}.
+\end{enumerate}
+
+\ccFunction{template < class ForwardIterator, class Functor, class GradFunctor, class Traits>
+  typename Functor::result_type 
+  Sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator beyond,
+  const typename std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, Functor f, GradFunctor grad_f,const Traits& geom_traits);}
+{The same as above except that no square root operation is needed for \ccc{FT}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2_3}\\
+%\ccImplementation
+
+\ccIndexSubitemEnd{Interpolation}{sibson_c1_interpolation}
+\end{ccRefFunction}
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -78,7 +78,8 @@ public:
   
   Aff_transformation_2
   operator()(const Vector_2& v){  
-    return(Aff_transformation_2(v.x()*v.x(),v.x()*v.y(),v.x()*v.y(),v.y()*v.y()));
+    return(Aff_transformation_2(v.x()*v.x(),v.x()*v.y(),v.x()*v.y(),
+				v.y()*v.y()));
   }
 
 };
@@ -88,26 +89,26 @@ template <class R>
 class Interpolation_gradient_fitting_traits_2 
 {
 public:
-  typedef R                                    Rep;
+  typedef R                                          Rep;
 
-  typedef typename Rep::FT                     FT;
-  typedef typename Rep::Construct_vector_2     Construct_vector;
-  typedef typename Rep::Construct_scaled_vector_2
-                                               Construct_scaled_vector;
+  typedef typename Rep::FT                           FT;
+  typedef typename Rep::Construct_vector_2           Construct_vector;
+  typedef typename Rep::Construct_scaled_vector_2    Construct_scaled_vector;
   //only one not needed by gradient fitting:
-  typedef typename Rep::Compute_squared_distance_2 
-                                               Compute_squared_distance;
+  typedef typename Rep::Compute_squared_distance_2   Compute_squared_distance;
   
   
   //additional types for gradient computation:
-  typedef typename Rep::Point_2                   Point;
-  typedef typename Rep::Vector_2                  Vector;
-  typedef typename Rep::Aff_transformation_2      Aff_transformation;
+  typedef typename Rep::Point_2                      Point;
+  typedef typename Rep::Vector_2                     Vector;
+  typedef typename Rep::Aff_transformation_2         Aff_transformation;
 
-  typedef Construct_null_matrix_2<Aff_transformation>   Construct_null_matrix;
-  typedef Construct_scaling_matrix_2<Aff_transformation>   Construct_scaling_matrix;
-  typedef Construct_sum_matrix_2<Aff_transformation>    Construct_sum_matrix;
-  typedef Construct_outer_product_2<Rep>                Construct_outer_product;
+  typedef Construct_null_matrix_2<Aff_transformation>   
+                                                     Construct_null_matrix;
+  typedef Construct_scaling_matrix_2<Aff_transformation> 
+                                                     Construct_scaling_matrix;
+  typedef Construct_sum_matrix_2<Aff_transformation> Construct_sum_matrix;
+  typedef Construct_outer_product_2<Rep>             Construct_outer_product;
   
   
   Construct_outer_product
