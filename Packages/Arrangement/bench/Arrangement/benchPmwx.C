@@ -72,9 +72,9 @@ enum MaxFilesNumber {
 #include <CORE/BigInt.h>
 #include <CGAL/Arr_conic_traits_2_core.h>
 #if defined(USE_CGAL_WINDOW)
-#include <CGAL/IO/Conic_arc_2_Window_stream_core.h>
+#include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #else
-#include <CGAL/IO/Qt_widget_Conic_arc_2_core.h>
+#include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #endif
 
 // Exacus Conics:
