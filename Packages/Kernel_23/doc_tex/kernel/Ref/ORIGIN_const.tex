@@ -1,0 +1,19 @@
+\begin{ccRefConstant}{ORIGIN}
+
+\ccGlobalVariable{const Origin ORIGIN;}
+
+\ccDefinition
+A symbolic constant which denotes the point at the origin.
+This constant is used in the conversion between points and vectors.
+
+\ccExample
+
+\begin{cprog}
+  Point_2< Cartesian<Filtered_exact<leda_real,leda_real> > >  p(1.0, 1.0), q;
+  Vector2< Cartesian<Filtered_exact<leda_real,leda_real> > >  v;
+  v = p - ORIGIN;
+  q = ORIGIN + v;  
+  assert( p == q );
+\end{cprog} 
+
+\end{ccRefConstant}
