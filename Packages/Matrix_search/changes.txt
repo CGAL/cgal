@@ -11,6 +11,7 @@ ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
 ALL : Initial revision
+DOCS: fixed preconditions in replace_column (reported by Mariette).
 TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 //---------------------------------------------------------------------
