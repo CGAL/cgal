@@ -347,6 +347,7 @@ class Extended_point : public Handle_for< Extended_point_rep<RT_> > {
 public:
   typedef typename Rep::DT DT;
   typedef RT_ RT;
+  typedef SPolynomial<RT>  SP;
 
   Extended_point() : Base( Rep() ) {}
 
@@ -361,7 +362,7 @@ public:
 
   Extended_point(const RT& mx, const RT& nx,
                  const RT& my, const RT& ny, const RT& w) :
-    Base( Rep(SPolynomial<RT>(mx,nx), SPolynomial<RT>(my,ny), w) )
+    Base( Rep(SP(mx,nx), SP(my,ny), w) )
   { if (w < 0) ptr()->negate(); }
   
   Extended_point(const Extended_point<RT>& p) : Base(p) {}
