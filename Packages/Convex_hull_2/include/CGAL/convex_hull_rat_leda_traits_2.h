@@ -40,7 +40,7 @@ public:
   typedef   CGAL::p_Less_dist_to_line_2<Point_2>           
                                                Less_signed_distance_to_line_2;
   typedef   CGAL::p_Less_rotate_ccw<Point_2>                Less_rotate_ccw_2;
-  typedef   CGAL::p_Leftturn<Point_2>                       Leftturn_2;
+  typedef   CGAL::p_Left_turn<Point_2>                      Leftturn_2;
   typedef   leda_rat_segment                                Segment_2; 
   
   Less_xy_2
