@@ -670,7 +670,8 @@ private:
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
 		 << hhandle->target()->point() << "\n";)
-        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
+        res = pm.non_intersecting_insert_from_vertex(cv, hhandle,
+                                                     m_change_not);
 	res = res->twin();
       } else { 
 	// if this is the first left curve being inserted
