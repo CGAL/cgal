@@ -17,6 +17,7 @@
 // revision      :
 // revision_date :
 // author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
+//                 Efi Fogel    <efif@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin)
 // chapter       : Arrangement_2
@@ -36,23 +37,26 @@ template <class Kernel_>
 class Arr_segment_exact_traits : public Pm_segment_traits_2<Kernel_>
 {
 public:
-  typedef Kernel_                       Kernel;
+  typedef Kernel_                               Kernel;
 
-  typedef int                           Info_face;
-  typedef int                           Info_edge;
-  typedef int                           Info_vertex;
+  typedef int                                   Info_face;
+  typedef int                                   Info_edge;
+  typedef int                                   Info_vertex;
   
-  typedef Pm_segment_traits_2<Kernel>   Base;
+  typedef Pm_segment_traits_2<Kernel>           Base;
   
-  typedef typename Base::Point_2        Point_2;
-  typedef typename Base::X_curve_2      X_curve_2;
-  typedef X_curve_2                     Curve_2;
+  typedef typename Base::Point_2                Point_2;
+  typedef typename Base::X_curve_2              X_curve_2;
+  typedef X_curve_2                             Curve_2;
 
   // Obsolete, for backward compatibility
   typedef typename Base::Curve_point_status     Curve_point_status;
-  typedef Point_2                       Point;
-  typedef X_curve_2                     X_curve;
-  typedef Curve_2                       Curve;
+  typedef Point_2                               Point;
+  typedef X_curve_2                             X_curve;
+  typedef Curve_2                               Curve;
+
+protected:
+  typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
 
 public:
   Arr_segment_exact_traits() : Base() { }
