@@ -32,27 +32,23 @@
 #define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
-#ifdef __i386__
 // The x87 keeps too wide exponents (15bits) in registers, even in double
 // precision mode.  This causes problems when the intervals overflow or
 // underflow.  To work around that, at every critical moment, we flush the
 // register to memory, using the macro below.
 // The other possible workaround is to use intervals of "long doubles"
 // directly, but I think it would be much slower.
+#ifdef __i386__
 #define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); double z=y; z; })
 #else
 #define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif // __i386__
 
-#if ! ( defined(__i386__)     || \
-	defined(__mips__)     || \
-	defined(__sparc__)    || \
-	defined(__alpha__)    || \
-	defined(__powerpc__)  || \
-	defined(__SUNPRO_CC)  || \
-	defined(__sgi)        || \
-	defined(_MSC_VER) )
-#error "Architecture not supported."
+// We sometimes need to do the same thing to stop constant propagation.
+#ifdef CGAL_IA_STOP_CONSTANT_PROPAGATION
+#define CGAL_IA_STOP_CPROP(x) ({ volatile double y=(x); double z=y; z; })
+#else
+#define CGAL_IA_STOP_CPROP(x) (x)
 #endif
 
 #ifdef __linux__
@@ -83,7 +79,7 @@ CGAL_BEGIN_NAMESPACE
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("fnstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
 enum {
     FPU_cw_near = 0x000 | 0x127f,
@@ -195,6 +191,9 @@ enum {
 };
 #endif // _MSC_VER
 
+#ifndef CGAL_IA_SETFPCW
+#error Architecture not supported
+#endif
 
 // User interface:
 
