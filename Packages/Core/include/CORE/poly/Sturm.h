@@ -202,6 +202,14 @@ public:
     		- signVariations(newy, seq[0].eval(newy).sign()) );
   }//numberOfRoots
 
+  // numberOfRoots():
+  // 	Counts the number of real roots of a polynomial
+  ///////////////////////////////////////////
+  int numberOfRoots() const {
+    BigFloat bd = seq[0].CauchyUpperBound();
+    return numberOfRoots(-bd, bd);
+  }
+  
   // numberOfRoots above x:
   //   NOTE: should do a special case for x=0
   ///////////////////////////////////////////
