@@ -1,3 +1,6 @@
+2.8.8   (11 July 2001)
+- LEDA check changed in manual_example_ps
+
 2.8.7   (04 July 2001)
 - small change in documentation
 
