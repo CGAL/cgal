@@ -8,6 +8,8 @@
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: Fixed some problems for "spaces in pathnames".
+GLOB: Updated help message for --upgrade.
 GLOB: Removed #include <cassert> from test_leda.
 GLOB: Search only in OLD_CGAL_DIR/lib for gmp libs in --upgrade.
 GLOB: Introduced variable GMP_LIBNAME (-> libgmp.a || gmp.lib).
@@ -90,6 +92,7 @@ DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Updated CGAL version in --upgrade.
 DOCS: Some minor changes due to Dima.
 DOCS: Two changes due to Dima/Stefan.
 DOCS: Some updates due to Dima.

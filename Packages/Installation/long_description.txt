@@ -4,6 +4,28 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.94
+//---------------------------------------------------------------------
+
+GLOB: Fixed some problems for "spaces in pathnames".
+GLOB: Updated help message for --upgrade.
+DOCS: Some additions/corrections due to Dima.
+DOCS: Updated ps-docs.
+DOCS: updated documentation acc.to Stefan's suggestions.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+DOCS: updated titlepage to 1.1.
+DOCS: Updated to Rev 1.28.
+DOCS: moved from former package Installation_doc.
+DOCS: Updated CGAL version in --upgrade.
+
+//---------------------------------------------------------------------
 //	revision 1.93
 //---------------------------------------------------------------------
 
