@@ -158,12 +158,20 @@ sub compress_psfiles()
 
 sub get_version($)
 {
+    my ($version_string, $date, $maintainer);
     open VERSION, $_[0] or return ();
     while (<VERSION>) {
 	next if (/^\s*$/);
 	if ( /^\s*(\d+(?:[\.]\d+)*)\s*\((.*)\)\s*$/ ) {
+            $version_string = $1;
+            $date = $2;
+            $_ = <VERSION>;
 	    close VERSION;
-	    return ($1,$2);
+	    if (/^\s*maintainer\s*:\s*(.*)$/ ) {
+	        return ($version_string,$date, $1);
+	    } else {
+	        return ($version_string,$date);
+	    }
 	}
 	close VERSION;
 	return ();
@@ -175,16 +183,23 @@ sub get_version($)
 sub check_version($)
 {
     my $package_name = shift;
-    my ($new_version_string, $new_date, $old_version_string, $old_date, @nversion, @oversion);
-    ($new_version_string, $new_date) = get_version('version');
+    my ($new_version_string, $new_date, $package_maintainer,
+        $old_version_string, $old_date,
+        @nversion, @oversion);
+    ($new_version_string, $new_date,$package_maintainer) = get_version('version');
     if (!defined($new_version_string)) {
 	log_msg "Failed to parse version file";
 	return ();
     }
+    if (!defined($package_maintainer)) {
+	log_msg "Version file does not contain a maintainer line!";
+#	return ();
+$package_maintainer = '?';
+    }
     ($old_version_string, $old_date) =
 	get_version("$packagedir/$package_name/version");
     if (!defined($old_version_string)) {
-	return ($new_version_string, $old_version_string);
+	return ($new_version_string, $old_version_string, $package_maintainer);
     }
     my ($new_nr,$old_nr);
     @nversion = split /\./, $new_version_string;
@@ -199,7 +214,7 @@ sub check_version($)
 	    return ();
 	}
 	if ($new_nr > $old_nr) {
-	    return ($new_version_string,$old_version_string);
+	    return ($new_version_string,$old_version_string, $package_maintainer);
 	}
     }
     log_msg
@@ -216,9 +231,10 @@ sub add_codefiles
     }
 }
 
-sub check_codefiles($)
+sub check_codefiles($$)
 {
     my $package_name = $_[0];
+    my $package_maintainer = $_[1];
     @source_files_to_check = ();
     if (-d 'include') {
 	find(\&add_codefiles, "include");
@@ -231,7 +247,7 @@ sub check_codefiles($)
     }
     my $source_file;
     foreach $source_file (@source_files_to_check) {
-	system("$check_source_file_prog -u -d \"\" -p \"$package_name\" $source_file >tmpmsg.$$");
+	system("$check_source_file_prog -u -d \"\" -p \"$package_name\" -m \"$package_maintainer\" $source_file >tmpmsg.$$");
 	open CHECK_MSGS, "<tmpmsg.$$";
 	while (<CHECK_MSGS>) {
 	    chomp;
@@ -244,12 +260,12 @@ sub check_codefiles($)
 
 sub check_package($)
 {
-    my ($version, $prev_version);
+    my ($version, $prev_version, $package_maintainer);
     if ( ! -f 'version' ) {
 	log_msg "ERROR: File version is missing!";
 	return 0;
     }
-    if ( ! (($version, $prev_version) = check_version($_[0])) ) {
+    if ( ! (($version, $prev_version, $package_maintainer) = check_version($_[0])) ) {
 	log_msg "ERROR: version file does not pass the checks!";
 	return 0;
     }
@@ -273,7 +289,7 @@ sub check_package($)
 #	log_msg "WARNING: File changes.txt is missing!";
 #    }
 
-    check_codefiles("$_[0] ($version)");
+    check_codefiles("$_[0] ($version)", "$package_maintainer");
     if (defined($prev_version)) {
 	log_msg "Version $version will replace $prev_version";
     } else {
