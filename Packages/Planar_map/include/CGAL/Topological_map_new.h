@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-33 $
 // release_date  : $CGAL_Date: 2001/12/04 $
 //
-// file          : include/CGAL/Topological_map.h
+// file          : include/CGAL/Topological_map_new.h
 // package       : Planar_map (5.77)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 

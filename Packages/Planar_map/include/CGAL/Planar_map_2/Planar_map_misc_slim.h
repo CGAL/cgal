@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 1999, October 13
 //
-// file          : include/CGAL/Planar_map_2/Planar_map_misc.h
+// file          : include/CGAL/Planar_map_2/Planar_map_misc_slim.h
 // package       : pm (4.08)
 // source        :
 // revision      :

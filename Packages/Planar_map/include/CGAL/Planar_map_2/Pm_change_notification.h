@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.2-I-17 $
 // release_date  : $CGAL_Date: 2000/05/12 $
 //
-// file          : include/CGAL/Pm_with_intersections_misc.h
+// file          : include/CGAL/Pm_change_notification.h
 // package       : arr (1.27)
 // maintainer    : Sigal Raab <raab@math.tau.ac.il>
 // author(s)     : Eyal flato <flato@math.tau.ac.il>

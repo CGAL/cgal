@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-40 $
+// release_date  : $CGAL_Date: 2001/12/28 $
+//
+// file          : include/CGAL/Topological_map_face_base.h
+// package       : Planar_map (5.80)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// author(s)     : ?
+// coordinator   : ?
+//
+// ======================================================================
 #ifndef  CGAL_TOPOLOGICAL_MAP_FACE_BASE_H
 #define  CGAL_TOPOLOGICAL_MAP_FACE_BASE_H
 
