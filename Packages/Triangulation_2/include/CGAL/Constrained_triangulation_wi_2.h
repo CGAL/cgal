@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Constrained_triangulation_2.h
+// file          : include/CGAL/Constrained_triangulation_wi_2.h
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
