@@ -3,9 +3,9 @@
 
 #include <CGAL/Cartesian.h>
 #include "MyPointC2.h"
+#include "MySegmentC2.h"
 
-// K_ is the new kernel.
-// K_Base is the old kernel.
+// K_ is the new kernel, and K_Base is the old kernel
 template < typename K_, typename K_Base >
 class MyCartesian_base
   : public K_Base::template Base<K_>::Type
@@ -14,6 +14,7 @@ class MyCartesian_base
   typedef K_                                Kernel;
 public:
   typedef MyPointC2                         Point_2;
+  typedef MySegmentC2<Kernel>               Segment_2;
   typedef MyConstruct_point_2<Kernel>       Construct_point_2;
   typedef const double*                     Cartesian_const_iterator_2;
   typedef MyConstruct_coord_iterator        Construct_cartesian_const_iterator_2;
