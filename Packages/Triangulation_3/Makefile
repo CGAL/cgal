@@ -3,13 +3,13 @@
 CVS_MODULE_NAME=tet
 Package=Triangulation3
 
-.PHONY: doc package test example submit version rtag
+.PHONY: doc package test submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc example clean $(Package).tar.gz
+package: doc clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -30,7 +30,7 @@ rtag:
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description.txt \
-	   $(WWW_dir)
+	   changes.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
 	echo > $(TMP_file)
