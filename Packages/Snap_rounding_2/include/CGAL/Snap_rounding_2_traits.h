@@ -27,7 +27,6 @@
 #include <list>
 
 #include <CGAL/leda_integer.h>
-#include "../../include/CGAL/Snap_rounding_2_utility.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -77,10 +76,10 @@ Integer_grid_point_2 integer_grid_point_2_object() const
 /*! Functor
  */
 
-class Bounding_box_of_minkowski_sum_2 {
+class Minkowski_sum_with_pixel_2 {
  private:
   const Snap_rounding_traits<base_rep>* _gt;
-  Bounding_box_of_minkowski_sum_2(
+  Minkowski_sum_with_pixel_2(
       const Snap_rounding_traits<base_rep>* gt) : _gt(gt) {}
 
  public:
@@ -124,8 +123,8 @@ class Bounding_box_of_minkowski_sum_2 {
   friend class Snap_rounding_traits<base_rep>;
 };
 
-Bounding_box_of_minkowski_sum_2 bounding_box_of_minkowski_sum_2_object() const
-    {return Bounding_box_of_minkowski_sum_2(this); }
+Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object() const
+    {return Minkowski_sum_with_pixel_2(this); }
 
 };
 

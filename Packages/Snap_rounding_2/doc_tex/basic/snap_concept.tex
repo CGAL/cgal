@@ -69,11 +69,13 @@ Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
 where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel of the grid.
 }
 
-\ccNestedType{Bounding_box_of_minkowski_sum_2}{Get the bounding box
-of the minkowski sum of a segment and a unit pixel as described in \cite{isr-2002}.
-Must have the syntax \ccc{Iso_rectangle_2 operator()(Segment_2 s,NT unit_squere,NT angle)}
-where $s$ is the segment, {\ccc unit\_square} is the edge size of the pixel
-and $angle$ is the slope of the segment.}
+\ccNestedType{Minkowski_sum_with_pixel_2}{Returns the points of a polygon which is
+a minkowski sum of a segment and a square centered at the origin with edge size
+\ccc{0.6 * pixel edge}.
+Must have the syntax \ccc{void operator()(std::list<Point_2>& points_list,
+Segment_2 s,NT unit_squere)}
+where {\ccc points\_list} is the list of the points of the minkowski sum polygon,
+$s$ is the input segment and {\ccc unit\_square} is the edge size of the pixel}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
@@ -105,7 +107,7 @@ and constructor objects.
 \ccGlue
 \ccMethod{Integer_grid_point_2 integer_grid_point_2_object();}{}
 \ccGlue
-\ccMethod{Bounding_box_of_minkowski_sum_2 bounding_box_of_minkowski_sum_2_object();}{}
+\ccMethod{Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object();}{}
 \ccGlue
 
 
