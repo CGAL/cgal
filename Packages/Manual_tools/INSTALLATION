@@ -9,7 +9,7 @@ Installation
 ============
 
 (1)  The LaTeX style files 'cc_manual.sty', 'cc_manual_index.sty',
-     'latex_converter.sty', 'cprog.sty', 'nonlinkedpath.sty', and the 
+     'latex_to_html.sty', 'cprog.sty', 'nonlinkedpath.sty', and the 
      subdirectory 'eps_tabs/' in the `format/' directory have to be made 
      accessable for TeX, e.g. copy them into a directory that is included 
      in $TEXINPUTS. (The subdirectory `eps_tabs' must be copied as a directory 
