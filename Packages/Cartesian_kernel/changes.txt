@@ -1,3 +1,6 @@
+Version 6.73 (22 January 2003)
+- VC++ workaround in Cartesian_converter.
+
 Version 6.72 (22 January 2003)
 - Add coordinate iterator
 - Add new constructors Iso_rectangle_2(left, right, bottom, top) and

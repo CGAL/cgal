@@ -46,7 +46,8 @@ public:
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {
-	return typename K2::Point_2(c(a.x()), c(a.y()));
+        typedef typename K2::Point_2 Point_2;
+	return Point_2(c(a.x()), c(a.y()));
     }
 
     typename K2::Vector_2
@@ -108,7 +109,8 @@ public:
     typename K2::Point_3
     operator()(const typename K1::Point_3 &a) const
     {
-	return typename K2::Point_3(c(a.x()), c(a.y()), c(a.z()));
+        typedef typename K2::Point_3 Point_3;
+	return Point_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
     typename K2::Vector_3
