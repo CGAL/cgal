@@ -234,7 +234,10 @@ template< class T> inline
 int foo2( T t) { return -1; }  // never used
 
 template< class T> inline
-int foo( T t) { return foo2( t, query_circulator_or_iterator( t));}
+int foo( T t) {     
+  typedef typename Circulator_traits<T>::category category;
+  return foo2( t, category());
+}
 
 int bar( std::size_t)    { return 1;}
 int bar( std::ptrdiff_t) { return 2;}

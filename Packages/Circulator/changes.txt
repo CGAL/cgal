@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.19 (24 September 01)
+- test suite fix.
+
 3.18 (20 September 01)
 - SunPro 5.3 fixes/workarounds.
 
