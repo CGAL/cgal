@@ -350,6 +350,7 @@ void MyWindow::init(Qt_widget_base_tab *widget)
           this, SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
+  rayShootingMode->setIconSet(QPixmap((const char**)ray_shooting_xpm ));
   QColor c = Qt::white;
   c.setRgb(236,236,236);
   widget->setBackgroundColor(c);
@@ -482,7 +483,8 @@ void MyWindow::updateTraitsType( QAction *action )
   widget->m_line_width = 2;
   widget->index = old_index;
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
-  
+  rayShootingMode->setIconSet(QPixmap((const char**)ray_shooting_xpm ));
+
   // add the new widget to myBar
   myBar->insertTab( widget, label , index );
   
@@ -710,7 +712,7 @@ void MyWindow::fileOpenPolyline()
        *form = new FileOpenOptionsForm(flag);
   if ( form->exec() ) 
   {
-      int id = form->buttonGroup->selectedId();
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
       switch ( id ) 
       {
           case 0: // open file in a new tab
@@ -738,7 +740,7 @@ void MyWindow::fileOpenConic()
        *form = new FileOpenOptionsForm(flag);
   if ( form->exec() ) 
   {
-      int id = form->buttonGroup->selectedId();
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
       switch ( id ) 
       {
           case 0: // open file in a new tab

@@ -111,6 +111,7 @@ class Qt_widget_demo_tab : public Qt_widget_base_tab
 private:
   typedef typename Tab_traits::Curves_list Curves_list;
   typedef typename Tab_traits::Curves_arr Curves_arr;
+  typedef typename Tab_traits::Traits Traits;
   typedef typename Tab_traits::Curve Curve;
   typedef typename Tab_traits::Xcurve Xcurve;
   typedef typename Tab_traits::Base_curve Base_curve;
@@ -139,6 +140,8 @@ public:
   Tab_traits m_tab_traits;
   /*! m_curves_arr - the tab planar map */
   Curves_arr m_curves_arr;
+  /*! Original Traits */
+  Traits m_traits;
   
   /*! constractor 
    *\ param t - widget traits type
@@ -251,52 +254,74 @@ public:
       
       setColor(Qt::blue);
       (*this) << CGAL::LineWidth(1);
+
+	  if (ray_shooting_direction)
+	  {
+	    if (lt == Curves_arr::UNBOUNDED_FACE)
+		{
+		  Coord_point up(pl_point.x() , y_max());
+		  (*this) << Coord_segment(pl_point , up );
+		}
+		else // we shoot something
+		{
+		  Pm_point_2 p1c1(pl_point.x() , y_max());
+		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
+		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+		  const Xcurve c2 = e->curve();
+		  Pm_point_2 p1;
+		  Pm_point_2 p2;
       
-      Pm_point_2 p1c1(pl_point.x() , y_max());
-      Pm_point_2 p2c1(pl_point.x() , pl_point.y());
-      Data d;
-      //const Curve cv(Base_curve(p1c1 , p2c1) , d);
-	  //std::list<Xcurve> xcurve_list;
-      //m_tab_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
-      //const Xcurve c1 = xcurve_list.begin();
-      //const Xcurve c2 = e->curve();
-      //const Pm_point_2 p(pl_point);
-      //Pm_point_2 p1;
-      //Pm_point_2 p2;
-      //bool ans = 
-	   //  m_tab_traits.nearest_intersection_to_right(c1, c2, p, p1, p2);
-      ////Coord_point up(pl_point.x() , y_max());
-      //Coord_type x1 = CGAL::to_double(p1.x());
-      //Coord_type y1 = CGAL::to_double(p1.y());
-      //Coord_point up(x1,y1);
-      //(*this) << Coord_segment(pl_point , up );
-      ////std::cout << p1 << " " << p << std::endl;
+		  m_traits.nearest_intersection_to_right(c1, c2, p2c1, p1, p2);
+	      Coord_type x1 = CGAL::to_double(p1.x());
+		  Coord_type y1 = CGAL::to_double(p1.y());
+		  Coord_point up(x1,y1);
+		  (*this) << Coord_segment(pl_point , up );
+		}
+	  }
+	  else // down ray shooting
+	  {
+	    if (lt == Curves_arr::UNBOUNDED_FACE)
+		{
+		  Coord_point down(pl_point.x() , y_min());
+		  (*this) << Coord_segment(pl_point , down );
+		}
+		else // we shoot something
+		{
+		  Pm_point_2 p1c1(pl_point.x() , y_min());
+		  Pm_point_2 p2c1(pl_point.x() , pl_point.y());
+		  const Xcurve c1 = m_tab_traits.curve_make_x_monotone(p1c1 , p2c1);
+		  const Xcurve c2 = e->curve();
+		  Pm_point_2 p1;
+		  Pm_point_2 p2;
+      
+		  m_traits.nearest_intersection_to_left(c1, c2, p2c1, p1, p2);
+	      Coord_type x1 = CGAL::to_double(p1.x());
+		  Coord_type y1 = CGAL::to_double(p1.y());
+		  Coord_point up(x1,y1);
+		  (*this) << Coord_segment(pl_point , up );
+		}
+	  }
+	    
       
       (*this) << CGAL::LineWidth(3);
       setColor(Qt::red);
       
       switch (lt) {
        case (Curves_arr::VERTEX):
-        //std::cout << "VERTEX" << std::endl;
         *this << e->target()->point();
         break;
        case (Curves_arr::UNBOUNDED_VERTEX) :
-        //std::cout << "UNBOUNDED_VERTEX" << std::endl;
         *this << e->target()->point();
         break;
        case (Curves_arr::EDGE):
-        //std::cout << "EDGE" << std::endl;
         m_tab_traits.draw_xcurve(this , e->curve() );
         break;
        case (Curves_arr::UNBOUNDED_EDGE) :
-        //std::cout << "UNBOUNDED_EDGE" << std::endl;
         m_tab_traits.draw_xcurve(this , e->curve() );
         break;
        case (Curves_arr::FACE) :
-        //std::cout << "FACE" << std::endl;
         break;
        case (Curves_arr::UNBOUNDED_FACE) :
-        //std::cout << "UNBOUNDED_FACE" << std::endl;
         break;
         
       }                
@@ -687,6 +712,7 @@ class Segment_tab_traits
 public:
   typedef Pm_seg_list Curves_list;
   typedef Seg_arr Curves_arr;
+  typedef Seg_traits Traits;
   typedef Pm_seg_iter Pm_curve_iter;
   typedef Pm_seg_const_iter Pm_curve_const_iter;
   typedef Seg_locate_type Locate_type;
@@ -865,8 +891,19 @@ public:
     }
     return min_dist;
   }
-  
+
+  /*! curve_make_x_monotone */
+  const Xcurve curve_make_x_monotone(Pm_point_2 p1 , Pm_point_2 p2)
+  {
+    Data d;
+    const Curve cv(Base_curve(p1 , p2) , d);
+	std::list<Xcurve> xcurve_list;
+	m_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
+    const Xcurve c1 = xcurve_list.front();
+	return c1;
+  }
   /*! temporary points of the created segment */
+  Traits m_traits;
   Coord_point m_p1,m_p2;
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -877,6 +914,7 @@ class Polyline_tab_traits
 public:
   typedef Pm_pol_list Curves_list;
   typedef Pol_arr Curves_arr;
+  typedef Pol_traits Traits;
   typedef Pm_pol_iter Pm_curve_iter;
   typedef Pm_pol_const_iter Pm_curve_const_iter;
   typedef Pol_locate_type Locate_type;
@@ -1086,6 +1124,20 @@ public:
       return get_origin_curve( *xseg_p );
     }
   }
+
+   /*! curve_make_x_monotone */
+  const Xcurve curve_make_x_monotone(Pm_point_2 p1 , Pm_point_2 p2)
+  {
+	std::vector<Pm_pol_point_2> temp_points;
+	temp_points.push_back(p1);
+	temp_points.push_back(p2);
+    Data d;
+    Curve cv(Base_curve(temp_points.begin(), temp_points.end() ) , d);
+	std::list<Xcurve> xcurve_list;
+	m_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
+    const Xcurve c1 = xcurve_list.front();
+	return c1;
+  }
   
 private:
   
@@ -1131,6 +1183,7 @@ private:
     return Coord_segment(coord_source, coord_target);
   }
   
+  Traits m_traits;
   /*! the new point of the rubber band */
   Coord_point rubber;
   /*! the last point of the polygon */
@@ -1149,6 +1202,7 @@ class Conic_tab_traits
 public:
   typedef Pm_xconic_list Curves_list;
   typedef Conic_arr Curves_arr;
+  typedef Conic_traits Traits;
   typedef Pm_xconic_iter Pm_curve_iter;
   typedef Pm_xconic_const_iter Pm_curve_const_iter;
   typedef Conic_locate_type Locate_type;
@@ -1560,8 +1614,20 @@ public:
     } // else 
   } // 
   
+  /*! curve_make_x_monotone */
+  const Xcurve curve_make_x_monotone(Pm_point_2 p1 , Pm_point_2 p2)
+  {
+    Data d;
+	Pm_base_conic_2 base(Pm_conic_segment_2(p1 , p2));
+    const Pm_conic_2 cv( base , d);
+	std::list<Xcurve> xcurve_list;
+	m_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
+    const Xcurve c1 = xcurve_list.front();
+	return c1;
+  }
   
-    /*! temporary points of the created conic */
+  Traits m_traits;
+  /*! temporary points of the created conic */
   Coord_point m_p1,m_p2;
 };
 
