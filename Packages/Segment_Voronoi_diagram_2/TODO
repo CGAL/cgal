@@ -1,3 +1,4 @@
+- update doc of storage site: add the methods source_site() and target_site()
 - add a method insert_point_no_search in the segment Voronoi diagram class
   that inserts a point without searching for the nearest neighbor;
   the assumption here is that the nearest neighbor given is already known
@@ -6,8 +7,8 @@
   segment Voronoi diagram hierarchy needs this method when inserting a point:
   the nearest neighbors of the point at all levels are known...
 - remove the site set_* methods from the spec
-- use the input sites container as the container where point handles are gotten
-  from
+- use the input sites container as the container where point handles
+  are gotten from
 - remove the STORE_INPUT_SITES macro
 - the insert_point_on_segment method in the Segment_Voronoi_diagram_2
   class has a bug: it does not handle the case where ff1 or ff2 are
@@ -16,15 +17,9 @@
 - add swap method in hierarchy; verify that the swap method in the segment
   Voronoi diagram class works correctly (does it swap the point container
   correctly?)
-- change the return type of the do_intersect predicate (and potentially
-  its name) to be a char instead of std::pair<int,int>; the char should
-  encode the type of arrangement; actually rename do_intersect to 
-  arrangement_type and return an enumeration type
 - in class Svd_basic_constructions_C2.h, inside method to_ft, check
   if sqrt is supported by the number type; actually this is ok for predicates
   but constructions also need to use this too.
 - add the methods insert_polyline and insert_polygon that do some
   optimized insertion for polylines and polygons; add these in both
   the one-level and hierarchy classes
-- add the check for a segment intersecting an existing point and
-  a point intersecting an existing segment.
