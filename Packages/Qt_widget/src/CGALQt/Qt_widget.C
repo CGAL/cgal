@@ -47,8 +47,11 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   painter = new QPainter;
   printer = new QPrinter;
   pixmap = new QPixmap;
+  matrix = new QWMatrix;
+
   pixmap->resize(size());
   painter->begin(pixmap);
+  painter->setWorldMatrix(*matrix);
 
   // set properties
   painter->setRasterOp(CopyROP);
@@ -93,10 +96,12 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   QBrush b=painter->brush();
   QPen p=painter->pen();
   QColor bc=painter->backgroundColor();
+  QWMatrix bm = painter->worldMatrix();
 
   painter->end();  // end painting on pixmap
   pixmap->resize(size());
   painter->begin(pixmap); // begin again painting on pixmap
+  painter->setWorldMatrix(bm);
 
   // restore paint state
   painter->setFont(f);
@@ -119,12 +124,13 @@ void Qt_widget::paintEvent(QPaintEvent *e)
   QBrush b=painter->brush();
   QPen p=painter->pen();
   QColor bc=painter->backgroundColor();
+  QWMatrix bm = painter->worldMatrix();
 
 
   painter->end();  // end painting on pixmap
   bitBlt(this, 0, 0, pixmap); // copy pixmap to the Qt_widget
   painter->begin(pixmap); // begin again painting on pixmap
-
+  painter->setWorldMatrix(bm);
 
   // restore paint state
   painter->setFont(f);

@@ -72,6 +72,7 @@ public:
   // painting system
   inline QPainter& get_painter() { return (*painter); };
   inline QPixmap& get_pixmap() { return (*pixmap); };
+  inline QWMatrix& get_matrix() { return (*matrix); };
   void lock() { ++Locked; };
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
@@ -197,6 +198,8 @@ private:
   QPixmap     *pixmap;	// the pixmap on which paints the painter
   QPainter    *painter;	// the painter
   QPrinter    *printer;	// the printer
+  QWMatrix    *matrix;  // the world matrix
+
   QBrush      savedBrush; // saved brush, to be able to restore it on
   // setFilled(true)
 
