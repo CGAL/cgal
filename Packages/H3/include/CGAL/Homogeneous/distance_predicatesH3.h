@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/distance_predicatesH3.h
+// file          : include/CGAL/Homogeneous/distance_predicatesH3.h
 // package       : H3 
 // revision      : $Revision$
 // revision_date : $Date$

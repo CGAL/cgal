@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : Aff_transformationH3.h
+// file          : include/CGAL/Homogeneous/Aff_transformationH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/predicates_on_pointsH3.h
+// file          : include/CGAL/Homogeneous/predicates_on_pointsH3.h
 // package       : H3 
 // revision      : $Revision$
 // revision_date : $Date$
@@ -24,7 +24,7 @@
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
 
-#include <CGAL/PointH3.h>
+#include <CGAL/Homogeneous/PointH3.h>
 
 CGAL_BEGIN_NAMESPACE
 

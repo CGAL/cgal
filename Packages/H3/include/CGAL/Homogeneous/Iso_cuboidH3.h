@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : Iso_cuboidH3.h
+// file          : include/CGAL/Homogeneous/Iso_cuboidH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$
@@ -38,9 +38,9 @@ class Iso_cuboidH3
   typedef typename R_::Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
 public:
-  typedef R_                R;
+  typedef R_                 R;
 
-  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3_;
+  typedef typename R::Iso_cuboid_handle_3             Iso_cuboid_handle_3_;
   typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;
 
   Iso_cuboidH3()

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : SegmentH3.h
+// file          : include/CGAL/Homogeneous/SegmentH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$

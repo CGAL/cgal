@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : VectorH3.h
+// file          : include/CGAL/Homogeneous/VectorH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$

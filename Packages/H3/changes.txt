@@ -1,3 +1,6 @@
+2.38   (? October 2001)
+- moved *H3.h include files to include/CGAL/Homogeneous directory
+
 2.37   (16 October 2001)
 - Replace Handle/Rep by Handle_for/Ref_counted.
 - Hardcoded dependencies between classes removed.

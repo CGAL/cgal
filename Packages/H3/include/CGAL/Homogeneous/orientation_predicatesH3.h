@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : orientation_predicatesH3.h
+// file          : include/CGAL/Homogeneous/orientation_predicatesH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$
@@ -24,8 +24,8 @@
 #ifndef CGAL_ORIENTATION_PREDICATESH3_H
 #define CGAL_ORIENTATION_PREDICATESH3_H
 
-#include <CGAL/PointH3.h>
-#include <CGAL/predicates_on_rtH2.h>
+#include <CGAL/Homogeneous/PointH3.h>
+#include <CGAL/Homogeneous/predicates_on_rtH2.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 
 CGAL_BEGIN_NAMESPACE

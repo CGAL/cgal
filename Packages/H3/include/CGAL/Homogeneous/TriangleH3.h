@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : TriangleH3.h
+// file          : include/CGAL/Homogeneous/TriangleH3.h
 // package       : H3
 // revision      : $Revision$
 // revision_date : $Date$
