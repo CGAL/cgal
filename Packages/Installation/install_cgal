@@ -2733,7 +2733,7 @@ check_CGAL_INSTALL_VERSION()
 
 check_COMPILER()
 {
-    _check_comp_executable "`quote \`compiler_bin\``"
+    _check_comp_executable `quote \`compiler_bin\``
     return 1
 }
 
@@ -5998,7 +5998,11 @@ _check_comp_executable()
     elif [ -z "${*}" ]; then
 	exit_on_error "Missing argument"
     elif [ "`_real_dirname \"${*}\"`" != "." ]; then
-	_check_execute "${*}"
+	if [ -z "${CYGWIN_COMPILER}" ]; then
+	    _check_execute "${1}"
+	else
+	    _check_execute "${*}"
+	fi
     elif [ ! -x "${1}" ]; then
 	# that was not an absolute path -> try which
 	_tmp1="`real_which ${_tmp}`"
