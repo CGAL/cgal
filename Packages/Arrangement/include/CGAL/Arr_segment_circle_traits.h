@@ -44,7 +44,7 @@ class Arr_segment_circle_traits
   // The difference between Curve and X_curve is semantical only,
   // NOT syntactical.
   typedef Segment_circle_2<NT>      Curve_2;
-  typedef Curve_2                   X_curve_2;
+  typedef Curve_2                   X_monotone_curve_2;
  
   // Using typename to please compiler (e.g., CC with IRIX64 on mips)
   typedef typename Curve_2::R       R;
@@ -55,7 +55,7 @@ class Arr_segment_circle_traits
 
   // Obsolete, for backward compatibility
   typedef Point_2                   Point;
-  typedef X_curve_2                 X_curve;
+  typedef X_monotone_curve_2                 X_curve;
   typedef Curve_2                   Curve;
   typedef Segment_2                 Segment;
   typedef Circle_2                  Circle;
@@ -85,14 +85,14 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the given curve is a vertical segment.
-  bool curve_is_vertical(const X_curve_2& curve) const
+  bool curve_is_vertical(const X_monotone_curve_2& curve) const
   {
     return (curve.is_vertical_segment());
   }
 
   // Check whether the x co-ordinate of the given point is contained in the
   // x-range of the given x-monotone curve.
-  bool curve_is_in_x_range (const X_curve_2& curve, const Point_2& p) const
+  bool point_in_x_range (const X_monotone_curve_2& curve, const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
 
@@ -113,14 +113,14 @@ class Arr_segment_circle_traits
 
   // Decide wether curve1 is above, below or equal to curve2 at the
   // x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x (const X_curve_2& curve1, 
-				        const X_curve_2& curve2, 
+  Comparison_result curves_compare_y_at_x (const X_monotone_curve_2& curve1, 
+				        const X_monotone_curve_2& curve2, 
 				        const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
-    CGAL_precondition(curve_is_in_x_range(curve1, p));
-    CGAL_precondition(curve_is_in_x_range(curve2, p));
+    CGAL_precondition(point_in_x_range(curve1, p));
+    CGAL_precondition(point_in_x_range(curve2, p));
 
     // Get the points on curve1 with the same x co-ordinate as p.
     int      n1;
@@ -215,8 +215,8 @@ class Arr_segment_circle_traits
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the left of the x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x_left (const X_curve_2& curve1, 
-					     const X_curve_2& curve2,
+  Comparison_result curves_compare_y_at_x_left (const X_monotone_curve_2& curve1, 
+					     const X_monotone_curve_2& curve2,
 					     const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
@@ -271,7 +271,7 @@ class Arr_segment_circle_traits
     CGAL_precondition(_compare_y (ps1[0], ps2[0]) == EQUAL);
 
     // If the curves are the same, they are equal to the left of p:
-    if (curve_is_same(curve1,curve2))
+    if (curve_equal(curve1,curve2))
       return (EQUAL);
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
@@ -280,8 +280,8 @@ class Arr_segment_circle_traits
     
     // In order to simplify the process, make sure the source is always to the
     // left of p.
-    X_curve_2 c1 = curve1;
-    X_curve_2 c2 = curve2;
+    X_monotone_curve_2 c1 = curve1;
+    X_monotone_curve_2 c2 = curve2;
     
     if (compare_x(c1.source(), p) != SMALLER)
       c1 = curve1.flip();
@@ -410,7 +410,7 @@ class Arr_segment_circle_traits
 
     // If we reached here, the two curves must be overlapping:
     int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
+    X_monotone_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps == 1);
@@ -419,8 +419,8 @@ class Arr_segment_circle_traits
 
   // Decide wether curve1 is above, below or equal to curve2 immediately to
   // the right of the x co-ordinate of the given point.
-  Comparison_result curve_compare_at_x_right (const X_curve_2& curve1, 
-					      const X_curve_2& curve2,
+  Comparison_result curves_compare_y_at_x_right (const X_monotone_curve_2& curve1, 
+					      const X_monotone_curve_2& curve2,
 					      const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
@@ -475,7 +475,7 @@ class Arr_segment_circle_traits
     CGAL_precondition(_compare_y (ps1[0], ps2[0]) == EQUAL);
 
     // If the two curves are the same, they are equal to the right of p:
-    if (curve_is_same(curve1,curve2))
+    if (curve_equal(curve1,curve2))
       return (EQUAL);
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
@@ -484,8 +484,8 @@ class Arr_segment_circle_traits
 
     // In order to simplify the process, make sure the source is always to the
     // right of p.
-    X_curve_2 c1 = curve1;
-    X_curve_2 c2 = curve2;
+    X_monotone_curve_2 c1 = curve1;
+    X_monotone_curve_2 c2 = curve2;
     
     if (compare_x(c1.source(), p) != LARGER)
       c1 = curve1.flip();
@@ -614,7 +614,7 @@ class Arr_segment_circle_traits
 
     // If we reached here, the two curves must be overlapping:
     int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
+    X_monotone_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps == 1);
@@ -622,11 +622,11 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the given point is above, under or on the given curve.
-  Comparison_result curve_get_point_status (const X_curve_2& curve,
+  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2& curve,
 					    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
-    CGAL_precondition(curve_is_in_x_range(curve, p));
+    CGAL_precondition(point_in_x_range(curve, p));
 
     // A special treatment for vertical segments:
     if (curve.is_vertical_segment())
@@ -654,13 +654,13 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the two curves are identical.
-  bool curve_is_same (const Point_2 & p, const Point_2 & q) const
+  bool curve_equal (const Point_2 & p, const Point_2 & q) const
   {
     return (p == q);
   }
 
   // Check whether the two curves are identical.
-  bool curve_is_same (const X_curve_2& curve1, const X_curve_2& curve2) const
+  bool curve_equal (const X_monotone_curve_2& curve1, const X_monotone_curve_2& curve2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -683,12 +683,12 @@ class Arr_segment_circle_traits
   }
 
   // Get the source and target vertex of the curve.
-  Point_2 curve_source(const X_curve_2& curve) const
+  Point_2 curve_source(const X_monotone_curve_2& curve) const
   {
     return (curve.source());
   }
 
-  Point_2 curve_target(const X_curve_2& curve) const
+  Point_2 curve_target(const X_monotone_curve_2& curve) const
   {
     return (curve.target());
   }
@@ -701,7 +701,7 @@ class Arr_segment_circle_traits
   }
       
   // Reflect a curve in y.
-  X_curve_2 curve_reflect_in_y (const X_curve_2& curve) const
+  X_monotone_curve_2 curve_reflect_in_y (const X_monotone_curve_2& curve) const
   {
     Conic  ref_conic (curve.conic().r(),
                       curve.conic().s(),
@@ -709,7 +709,7 @@ class Arr_segment_circle_traits
 		      -curve.conic().u(),
 		      curve.conic().v(),
 		      curve.conic().w());
-    X_curve_2 ref_arc (ref_conic,
+    X_monotone_curve_2 ref_arc (ref_conic,
 		     point_reflect_in_y (curve.source()),
 		     point_reflect_in_y (curve.target()));
     return (ref_arc);
@@ -723,7 +723,7 @@ class Arr_segment_circle_traits
   }
       
   // Reflect a curve in x and y.
-  X_curve_2 curve_reflect_in_x_and_y (const X_curve_2& curve) const
+  X_monotone_curve_2 curve_reflect_in_x_and_y (const X_monotone_curve_2& curve) const
   {
     Conic  ref_conic (curve.conic().r(),
                       curve.conic().s(),
@@ -731,7 +731,7 @@ class Arr_segment_circle_traits
 		      -curve.conic().u(),
 		      -curve.conic().v(),
 		      curve.conic().w());
-    X_curve_2 ref_arc (ref_conic,
+    X_monotone_curve_2 ref_arc (ref_conic,
 		     point_reflect_in_x_and_y (curve.source()),
 		     point_reflect_in_x_and_y (curve.target()));
     return (ref_arc);
@@ -741,7 +741,7 @@ class Arr_segment_circle_traits
   ////////// Arrangement methods: //////////
 
   // Change the orientation of the curve (swap the source and the target).
-  X_curve_2 curve_flip (const X_curve_2& curve) const
+  X_monotone_curve_2 curve_opposite (const X_monotone_curve_2& curve) const
   {
     CGAL_precondition(is_x_monotone(curve));
 
@@ -756,8 +756,8 @@ class Arr_segment_circle_traits
   }
 
   // Cut the curve to several x-monotone sub-curves.
-  void make_x_monotone (const Curve_2& curve, 
-			std::list<X_curve_2>& x_curves) const
+  void curve_make_x_monotone (const Curve_2& curve, 
+			std::list<X_monotone_curve_2>& x_curves) const
   {
     if (is_x_monotone(curve))
     {
@@ -785,14 +785,14 @@ class Arr_segment_circle_traits
 
       // In case the curve is a full conic, split it to two x-monotone curves,
       // one going from ps[0] to ps[1], and the other from ps[1] to ps[0].
-      x_curves.push_back (X_curve_2 (curve.conic(), ps[0], ps[1]));
-      x_curves.push_back (X_curve_2 (curve.conic(), ps[1], ps[0]));
+      x_curves.push_back (X_monotone_curve_2 (curve.conic(), ps[0], ps[1]));
+      x_curves.push_back (X_monotone_curve_2 (curve.conic(), ps[1], ps[0]));
     }
     else
     {
-      X_curve_2    sub_curve1;
-      X_curve_2    sub_curve2;
-      X_curve_2    sub_curve3;
+      X_monotone_curve_2    sub_curve1;
+      X_monotone_curve_2    sub_curve2;
+      X_monotone_curve_2    sub_curve3;
 
       if (n == 1)
       {
@@ -811,7 +811,7 @@ class Arr_segment_circle_traits
 	// arc source to ps[0], one from ps[0] to ps[1], and the last one
 	// from ps[1] to the target.
 	// Notice that ps[0] and ps[1] might switch places.
-	X_curve_2    temp;
+	X_monotone_curve_2    temp;
 
 	_curve_split (curve, 
 	              sub_curve1, sub_curve2, 
@@ -854,8 +854,8 @@ class Arr_segment_circle_traits
   }
 
   // Split the given curve into two sub-curves at the given point.
-  void curve_split (const X_curve_2& curve, 
-		    X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+  void curve_split (const X_monotone_curve_2& curve, 
+		    X_monotone_curve_2& sub_curve1, X_monotone_curve_2& sub_curve2, 
                     const Point_2& p) const 
   {
     CGAL_precondition(is_x_monotone(curve));
@@ -876,8 +876,8 @@ class Arr_segment_circle_traits
   // right of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
   // overlapping curve. Otherwise p1=p2 is the calculated intersection point.
-  bool nearest_intersection_to_right (const X_curve_2& curve1,
-				      const X_curve_2& curve2,
+  bool nearest_intersection_to_right (const X_monotone_curve_2& curve1,
+				      const X_monotone_curve_2& curve2,
 				      const Point_2& p,
                                       Point_2& p1,
                                       Point_2& p2) const
@@ -887,7 +887,7 @@ class Arr_segment_circle_traits
 
     // Deal with overlapping curves:
     int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
+    X_monotone_curve_2 ovlp_arcs[2];
 
     n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
     CGAL_assertion (n_ovlps < 2);
@@ -1005,18 +1005,18 @@ class Arr_segment_circle_traits
   }
 
   // Check whether two curves overlap.
-  bool curves_overlap (const X_curve_2& curve1, const X_curve_2& curve2) const
+  bool curves_overlap (const X_monotone_curve_2& curve1, const X_monotone_curve_2& curve2) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
 
-    X_curve_2 ovlp_arcs[2];
+    X_monotone_curve_2 ovlp_arcs[2];
 
     return (curve1.overlaps (curve2, ovlp_arcs) > 0);
   }
 
   // Check if the two points are the same.
-  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  bool point_equal(const Point_2 & p1, const Point_2 & p2) const
   { 
     return (compare_xy(p1, p2) == EQUAL);
   }
@@ -1039,13 +1039,13 @@ private:
 
   // Split the given curve into two sub-curves at the given point.
   // Since this is a private function, there are no preconditions.
-  void _curve_split (const X_curve_2& curve, 
-		     X_curve_2& sub_curve1, X_curve_2& sub_curve2, 
+  void _curve_split (const X_monotone_curve_2& curve, 
+		     X_monotone_curve_2& sub_curve1, X_monotone_curve_2& sub_curve2, 
 		     const Point_2 & p) const
   {
     // Split the curve to source->p and p->target.
-    sub_curve1 = X_curve_2 (curve.conic(), curve.source(), p);
-    sub_curve2 = X_curve_2 (curve.conic(), p, curve.target());
+    sub_curve1 = X_monotone_curve_2 (curve.conic(), curve.source(), p);
+    sub_curve2 = X_monotone_curve_2 (curve.conic(), p, curve.target());
 
     return;
   }

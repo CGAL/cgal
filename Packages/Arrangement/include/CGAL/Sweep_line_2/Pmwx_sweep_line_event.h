@@ -59,7 +59,7 @@ class Pmwx_sweep_line_event :
 {
 public:
   typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
   typedef Sweep_line_event<SweepLineTraits_2, CurveWrap> Base;

@@ -58,14 +58,14 @@
 \ccOperations
 
 
-    \ccMethod{Halfedge_handle insert(const X_curve_2& cv, Pmwx_change_notification *en = NULL);}
+    \ccMethod{Halfedge_handle insert(const X_monotone_curve_2& cv, Pmwx_change_notification *en = NULL);}
       {inserts the $x$-monotone curve \ccStyle{cv} into the planar map.
       Returns the last inserted halfedge whose target points to the
       target point of \ccStyle{cv}.
        \ccPrecond{\ccc{cv} is not equivalent to a point. }
        }
 
-    \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2& cv, Vertex_handle src,
+    \ccMethod{Halfedge_handle insert_from_vertex(const X_monotone_curve_2& cv, Vertex_handle src,
       Pmwx_change_notification *en = NULL);}
       {inserts  the $x$-monotone curve \ccStyle{cv}, for
        which the source vertex, \ccStyle{src}, is already in the
@@ -93,7 +93,7 @@ they are more efficient than their counterpart insert-functions.
 preconditions.
 
   \ccMethod{Halfedge_handle
-            non_intersecting_insert(const X_curve_2 & cv,
+            non_intersecting_insert(const X_monotone_curve_2 & cv,
                                     Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the
   map. \ccc{non_intersecting_insert()} returns a handle to a new
@@ -102,10 +102,10 @@ preconditions.
   map. }
   }
 
-  \ccMethod{template <class X_curve_2_iterator>
+  \ccMethod{template <class X_monotone_curve_2_iterator>
             Halfedge_iterator
-	    non_intersecting_insert(const X_curve_2_iterator & begin,
-                                    const X_curve_2_iterator & end,
+	    non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
+                                    const X_monotone_curve_2_iterator & end,
                                     Change_notification * en = NULL);}
   {iterates through a given range of curves, inserting the curves into
   the map. \ccc{begin} and \ccc{end} are input iterators that point to
@@ -117,7 +117,7 @@ preconditions.
   }
 
   \ccMethod{Halfedge_handle
-            non_intersecting_insert_in_face_interior(const X_curve_2 & cv, 
+            non_intersecting_insert_in_face_interior(const X_monotone_curve_2 & cv, 
                                                      Face_handle f,
                                              Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} as a new inner component of the face
@@ -128,7 +128,7 @@ preconditions.
   }
 
   \ccMethod{Halfedge_handle
-            non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
+            non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
                                                 Halfedge_handle h,
                                              Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
@@ -143,7 +143,7 @@ preconditions.
   }
 
   \ccMethod{Halfedge_handle
-            non_intersecting_insert_at_vertices(const X_curve_2 & cv, 
+            non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
                                                 Halfedge_handle h1, 
                                                 Halfedge_handle h2,
                                              Change_notification * en = NULL);}
@@ -162,7 +162,7 @@ preconditions.
   }
 
   \ccMethod{Halfedge_handle
-            non_intersecting_insert_from_vertex(const X_curve_2 & cv, 
+            non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
                                                 Vertex_handle v1,
                                              Change_notification * en = NULL);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv}
@@ -174,7 +174,7 @@ preconditions.
   }
   
   \ccMethod{Halfedge_handle
-            non_intersecting_insert_at_vertices(const X_curve_2 & cv, 
+            non_intersecting_insert_at_vertices(const X_monotone_curve_2 & cv, 
                                                 Vertex_handle v1, 
                                                 Vertex_handle v2,
                                              Change_notification * en = NULL);}
@@ -204,8 +204,8 @@ preconditions.
 %    \ccMethod{Face_iterator faces_end();}{}
 %    \ccMethod{Size number_of_faces();}{}
 %
-%    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve_2& c1,
-%   const X_curve_2& c2);}{}
+%    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_monotone_curve_2& c1,
+%   const X_monotone_curve_2& c2);}{}
 %    \ccMethod{Halfedge_handle locate(const Point& p, Locate_type& lt);}{}
 %    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);}{}
 %

@@ -30,8 +30,8 @@ public Base_traits_test<Traits_class, Number_type>
   // Read a curve.
   virtual void read_curve (std::ifstream& is, Curve& cv);
   
-  // Test the make_x_monotone function.
-  virtual bool make_x_monotone_wrapper (std::istringstream& str_line);
+  // Test the curve_make_x_monotone function.
+  virtual bool curve_make_x_monotone_wrapper (std::istringstream& str_line);
   
   // Test the curve_split function.
   virtual bool curve_split_wrapper (std::istringstream& str_line);
@@ -114,14 +114,14 @@ read_curve (std::ifstream& is, Curve& cv)
 }
 
 //---------------------------------------------------------------------
-// Test the make_x_monotone function.
-// Input case: make_x_monotone n1 n2, where: 
+// Test the curve_make_x_monotone function.
+// Input case: curve_make_x_monotone n1 n2, where: 
 //     n1 - curve index in all_curves_vec
 //     n2 - number of expected X-monotonian subcurves
 //
 template<class Traits_class, class Number_type>
 bool Segment_circle_traits_test<Traits_class, Number_type>::
-make_x_monotone_wrapper (std::istringstream& str_line)
+curve_make_x_monotone_wrapper (std::istringstream& str_line)
 {
   // Read the inputs.
   int        cv_index;
@@ -129,13 +129,13 @@ make_x_monotone_wrapper (std::istringstream& str_line)
 
   str_line >> cv_index >> n_exp_curves;
 
-  std::cout << "Test: make_x_monotone( Curve" << cv_index << " ) ? " 
+  std::cout << "Test: curve_make_x_monotone( Curve" << cv_index << " ) ? " 
 	    << std::endl;
 
   // Make x-monotone !
   std::list<X_curve> x_curves;
 
-  tr.make_x_monotone (all_curves_vec[cv_index], x_curves);
+  tr.curve_make_x_monotone (all_curves_vec[cv_index], x_curves);
 
   int           n_act_curves = static_cast<int>(x_curves.size()); 
   if (n_act_curves == n_exp_curves)
@@ -180,9 +180,9 @@ curve_split_wrapper (std::istringstream& str_line)
     return (false);
   }
 
-  if (! tr.curve_is_in_x_range (all_curves_vec[cv_index], 
+  if (! tr.point_in_x_range (all_curves_vec[cv_index], 
 				all_points_vec[pt_index]) ||
-      tr.curve_get_point_status (all_curves_vec[cv_index], 
+      tr.curve_compare_y_at_x (all_curves_vec[cv_index], 
                                  all_points_vec[pt_index]) != CGAL::EQUAL)
   {
     std::cout << "Was NOT successful" << std::endl;

@@ -55,7 +55,7 @@ public:
   typedef Arrangement_2<_Dcel,_Traits,Base_node>        Self;
 
   typedef typename Traits::Point                        Point_2;
-  typedef typename Traits::X_curve                      X_curve_2;
+  typedef typename Traits::X_curve                      X_monotone_curve_2;
   typedef typename Traits::Curve                        Curve_2;
    
   typedef typename Planar_map::Halfedge_handle          Pm_halfedge_handle;
@@ -72,7 +72,7 @@ public:
   // Obsolete, for backward compatability
   typedef Change_notification Pmwx_change_notification; 
   typedef Point_2             Point;
-  typedef X_curve_2           X_curve;
+  typedef X_monotone_curve_2  X_curve;
   typedef Curve_2             Curve;
 
   enum Locate_type {
@@ -880,16 +880,16 @@ public:
         Overlap_const_circulator ovlp_circ = eit->halfedge()->overlap_edges();
         
         edge_curve_is_halfedge_curve &= 
-          (traits->curve_is_same(eit->curve(), eit->halfedge()->curve()));
+          (traits->curve_equal(eit->curve(), eit->halfedge()->curve()));
 
         do {
           Overlap_const_circulator next = ovlp_circ;
           ++next;
           
           circ_curve_is_next_curve &= 
-            traits->curve_is_same(ovlp_circ->curve(), next->curve());
+            traits->curve_equal(ovlp_circ->curve(), next->curve());
           circ_curve_is_halfedge_curve &= 
-            (traits->curve_is_same(ovlp_circ->curve(),
+            (traits->curve_equal(ovlp_circ->curve(),
                                    eit->halfedge()->curve()));
           
         } while (++ovlp_circ != eit->halfedge()->overlap_edges());
@@ -1050,10 +1050,10 @@ public:
                                   Vertex_handle         src,
                                   Change_notification * en = NULL)
   {
-    CGAL_precondition(traits->point_is_same(src->point(), 
+    CGAL_precondition(traits->point_equal(src->point(), 
                                             traits->curve_source(cv)));
 
-    CGAL_precondition(!traits->point_is_same(traits->curve_source(cv),
+    CGAL_precondition(!traits->point_equal(traits->curve_source(cv),
                                              traits->curve_target(cv)) ||
                       !traits->is_x_monotone(cv));
 
@@ -1067,7 +1067,7 @@ public:
 
       //cut cv into x_monotone curves and insert them into l
       std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
-      traits->make_x_monotone(cv,x_list);
+      traits->curve_make_x_monotone(cv,x_list);
 
       typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
         lit=x_list.begin();
@@ -1127,7 +1127,7 @@ public:
 
   Curve_iterator insert(const Curve_2 & cv, Change_notification * en = NULL) 
   {
-    CGAL_precondition(!traits->point_is_same(traits->curve_source(cv),
+    CGAL_precondition(!traits->point_equal(traits->curve_source(cv),
                                              traits->curve_target(cv)) ||
                       !traits->is_x_monotone(cv));
   
@@ -1141,7 +1141,7 @@ public:
 
       //cut cv into x_monotone curves and insert them into l
       std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
-      traits->make_x_monotone(cv,x_list);
+      traits->curve_make_x_monotone(cv,x_list);
 
       typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
         lit=x_list.begin();
@@ -1348,7 +1348,7 @@ public:
     //!! bug fix (two weeks of debugging)
     en->ftr=eit->ftr;
 
-    if (traits->point_is_same(traits->curve_source(c1), 
+    if (traits->point_equal(traits->curve_source(c1), 
                               orig_edge->source()->point()))
     {
       en->set_curve(c2);
@@ -1765,7 +1765,7 @@ public:
                            traits->curve_target(cv)))
       en->set_curve(cv);
     else 
-      en->set_curve(traits->curve_flip(cv));
+      en->set_curve(traits->curve_opposite(cv));
   
     // DEALING WITH OVERLAP:
     // We use the 2 redundant pointers - begin_child and past_end_child
@@ -1806,7 +1806,7 @@ public:
     e->set_edge_node(en);
     e->twin()->set_edge_node(en);
   
-    if (traits->point_is_same(e->target()->point(),
+    if (traits->point_equal(e->target()->point(),
                               traits->curve_target(en->curve())))
       en->set_halfedge(Halfedge_handle(e));
     else

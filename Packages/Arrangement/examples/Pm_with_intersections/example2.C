@@ -15,7 +15,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>                          NT;
 typedef CGAL::Cartesian<NT>                                     Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits;
 typedef Traits::Point_2                                         Point_2;
-typedef Traits::X_curve_2                                       X_curve_2;
+typedef Traits::X_monotone_curve_2                                       X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>                           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                         Planar_map_2;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map_2>     Pmwx;
@@ -28,7 +28,7 @@ public:
   My_notification()
   {i = 0;}
 
-  void add_edge(const  Traits::X_curve_2 &, Planar_map::Halfedge_handle, 
+  void add_edge(const  Traits::X_monotone_curve_2 &, Planar_map::Halfedge_handle, 
                 bool /* left_to_right */, bool overlap = false)
   {
     (void) overlap;
@@ -38,7 +38,7 @@ public:
 
   void split_edge(Planar_map::Halfedge_handle /* orig_edge */, 
                   Planar_map::Halfedge_handle /* new_edge */,
-                  const Traits::X_curve_2 &, const Traits::X_curve_2 &)
+                  const Traits::X_monotone_curve_2 &, const Traits::X_monotone_curve_2 &)
   {
     std::cout << "split_edge" << std::endl;
     i++;
@@ -65,9 +65,9 @@ int main() {
   My_notification notif;
 
   //insertion of the curves
-  X_curve_2 c1(Point_2(0, 1), Point_2(1, 0));
-  X_curve_2 c2(Point_2(0, 0), Point_2(1, 1));
-  X_curve_2 c3(Point_2(0, 1), Point_2(1, 1));
+  X_monotone_curve_2 c1(Point_2(0, 1), Point_2(1, 0));
+  X_monotone_curve_2 c2(Point_2(0, 0), Point_2(1, 1));
+  X_monotone_curve_2 c3(Point_2(0, 1), Point_2(1, 1));
 
   std::cout << "inserting " << c1 << std::endl;
   pm.insert(c1, &notif);

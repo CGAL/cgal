@@ -34,17 +34,17 @@ protected:
   bool compare_x_y_wrapper(std::istringstream & strLine,
                            std::string & strCommand );
   bool curve_is_vertical_wrapper( std::istringstream& strLine );
-  bool curve_is_in_x_range_wrapper( std::istringstream& strLine );
-  bool curve_compare_at_x_smth_wrapper( std::istringstream& strLine, 
+  bool point_in_x_range_wrapper( std::istringstream& strLine );
+  bool curves_compare_y_at_x_smth_wrapper( std::istringstream& strLine, 
                                         std::string& strCommand  );
-  bool curve_get_point_status_wrapper( std::istringstream& strLine );
-  bool curve_is_same_wrapper( std::istringstream& strLine );
+  bool curve_compare_y_at_x_wrapper( std::istringstream& strLine );
+  bool curve_equal_wrapper( std::istringstream& strLine );
   bool curve_src_trg_wrapper( std::istringstream & strLine,
                               std::string & strCommand );
   bool point_to_lr_wrapper( std::istringstream & strLine,
                             std::string & strCommand );
   bool is_x_monotone_wrapper( std::istringstream& strLine );
-  virtual bool make_x_monotone_wrapper( std::istringstream& strLine ) = 0;
+  virtual bool curve_make_x_monotone_wrapper( std::istringstream& strLine ) = 0;
   virtual bool curve_split_wrapper( std::istringstream& strLine ) = 0;
 
   bool point_reflect_in_x_and_y_wrapper(std::istringstream& strLine);
@@ -179,19 +179,19 @@ perform_test( std::ifstream& is )
     else if( strCommand == "curve_is_vertical" ) {
       test_result &= curve_is_vertical_wrapper( strLine );
     }
-    else if( strCommand == "curve_is_in_x_range" ) {
-      test_result &= curve_is_in_x_range_wrapper( strLine );
+    else if( strCommand == "point_in_x_range" ) {
+      test_result &= point_in_x_range_wrapper( strLine );
     }
-    else if( strCommand == "curve_compare_at_x" ||
-             strCommand == "curve_compare_at_x_left" ||
-             strCommand == "curve_compare_at_x_right" ) {
-      test_result &= curve_compare_at_x_smth_wrapper( strLine, strCommand );
+    else if( strCommand == "curves_compare_y_at_x" ||
+             strCommand == "curves_compare_y_at_x_left" ||
+             strCommand == "curves_compare_y_at_x_right" ) {
+      test_result &= curves_compare_y_at_x_smth_wrapper( strLine, strCommand );
     }
-    else if( strCommand == "curve_get_point_status" ) { 
-      test_result &= curve_get_point_status_wrapper( strLine );
+    else if( strCommand == "curve_compare_y_at_x" ) { 
+      test_result &= curve_compare_y_at_x_wrapper( strLine );
     }
-    else if( strCommand == "curve_is_same" ) {
-      test_result &= curve_is_same_wrapper( strLine );
+    else if( strCommand == "curve_equal" ) {
+      test_result &= curve_equal_wrapper( strLine );
     }
     else if( strCommand == "curve_source" ||
              strCommand == "curve_target" ) {
@@ -200,8 +200,8 @@ perform_test( std::ifstream& is )
     else if( strCommand == "is_x_monotone" ) {
       test_result &= is_x_monotone_wrapper( strLine );
     }
-    else if( strCommand == "make_x_monotone" ) {
-      test_result &= make_x_monotone_wrapper( strLine );
+    else if( strCommand == "curve_make_x_monotone" ) {
+      test_result &= curve_make_x_monotone_wrapper( strLine );
     }
     else if( strCommand == "curve_split" ) {
       test_result &= curve_split_wrapper( strLine );
@@ -280,21 +280,21 @@ curve_is_vertical_wrapper( std::istringstream& strLine )
 
 /*!
  * input case:
- * curve_is_in_x_range n1 n2 BOOL_RESULT, where
+ * point_in_x_range n1 n2 BOOL_RESULT, where
  * n1 - curve index in all_curves_vec
  * n2 - point index in all_points_vec
  * BOOL_RESULT - expected result, or FALSE or TRUE string
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_in_x_range_wrapper( std::istringstream& strLine )
+point_in_x_range_wrapper( std::istringstream& strLine )
 {
   int index1, index2;
   bool exp_answer, real_answer;
 
   strLine >> index1 >> index2;
   exp_answer = get_expected_boolean( strLine );
-  std::cout << "Test: curve_is_in_x_range( Curve" << index1
+  std::cout << "Test: point_in_x_range( Curve" << index1
             << ", " <<  all_points_vec[index2] << " ) ? " << exp_answer
             << std::endl;
   if( !tr.is_x_monotone( all_curves_vec[index1] ) ) {
@@ -302,15 +302,15 @@ curve_is_in_x_range_wrapper( std::istringstream& strLine )
     std::cout << "The input curve must be X-monotone" << std::endl;
     return false;    
   }
-  real_answer = tr.curve_is_in_x_range( all_curves_vec[index1], 
+  real_answer = tr.point_in_x_range( all_curves_vec[index1], 
                                         all_points_vec[index2] );
   return print_was_successful_or_not( exp_answer, real_answer );
 }
 /*!
  * input case:
- * curve_compare_at_x       n1 n2 n3 RESULT
- * curve_compare_at_x_left  n1 n2 n3 RESULT
- * curve_compare_at_x_right n1 n2 n3 RESULT, where
+ * curves_compare_y_at_x       n1 n2 n3 RESULT
+ * curves_compare_y_at_x_left  n1 n2 n3 RESULT
+ * curves_compare_y_at_x_right n1 n2 n3 RESULT, where
  * n1 - curve index in all_curves_vec
  * n2 - curve index in all_curves_vec
  * n3 - point index in all_points_vec
@@ -318,27 +318,27 @@ curve_is_in_x_range_wrapper( std::istringstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_compare_at_x_smth_wrapper( std::istringstream& strLine, 
+curves_compare_y_at_x_smth_wrapper( std::istringstream& strLine, 
                                  std::string& strCommand  )
 {
   int index1, index2, index3, exp_answer, real_answer;
 
   strLine >> index1 >> index2 >> index3;
   exp_answer = get_expected_enum( strLine );
-  if( strCommand == "curve_compare_at_x_left" ) {
-    std::cout << "Test: curve_compare_at_x_left( Curve" << index1
+  if( strCommand == "curves_compare_y_at_x_left" ) {
+    std::cout << "Test: curves_compare_y_at_x_left( Curve" << index1
               << ", Curve" << index2 << ", " 
               <<   all_points_vec[index3] << " ) ?" << std::endl 
               << "  expected: " << exp_answer;
   }
-  else if( strCommand == "curve_compare_at_x_right" ) {
-    std::cout << "Test: curve_compare_at_x_right( Curve" << index1
+  else if( strCommand == "curves_compare_y_at_x_right" ) {
+    std::cout << "Test: curves_compare_y_at_x_right( Curve" << index1
               << ", Curve" << index2 << ", " 
               <<   all_points_vec[index3] << " ) ?" << std::endl
               << "  expected: " << exp_answer;
   }
   else{
-    std::cout << "Test: curve_compare_at_x( Curve" << index1
+    std::cout << "Test: curves_compare_y_at_x( Curve" << index1
               << ", Curve" << index2 << ", " 
               <<   all_points_vec[index3] << " ) ?" << std::endl
               << "  expected: " << exp_answer;
@@ -349,21 +349,21 @@ curve_compare_at_x_smth_wrapper( std::istringstream& strLine,
     std::cout << "  The input curves must be X-monotone" << std::endl;
     return false;    
   }
-  if( strCommand == "curve_compare_at_x_left" ) {
-    real_answer = tr.curve_compare_at_x_left( all_curves_vec[index1], 
+  if( strCommand == "curves_compare_y_at_x_left" ) {
+    real_answer = tr.curves_compare_y_at_x_left( all_curves_vec[index1], 
                                               all_curves_vec[index2], 
                                               all_points_vec[index3] );
 
     std::cout << " actual: " << real_answer << std::endl;
   }
-  else if( strCommand == "curve_compare_at_x_right" ) {
-    real_answer = tr.curve_compare_at_x_right( all_curves_vec[index1], 
+  else if( strCommand == "curves_compare_y_at_x_right" ) {
+    real_answer = tr.curves_compare_y_at_x_right( all_curves_vec[index1], 
                                                all_curves_vec[index2], 
                                                all_points_vec[index3] );
     std::cout << " actual: " << real_answer << std::endl;
   }
   else{
-    real_answer = tr.curve_compare_at_x( all_curves_vec[index1], 
+    real_answer = tr.curves_compare_y_at_x( all_curves_vec[index1], 
                                          all_curves_vec[index2], 
                                          all_points_vec[index3] );
     std::cout << " actual: " << real_answer << std::endl;
@@ -374,20 +374,20 @@ curve_compare_at_x_smth_wrapper( std::istringstream& strLine,
 
 /*!
  * input case:
- * curve_get_point_status n1 n2 STATUS_RESULT, where
+ * curve_compare_y_at_x n1 n2 STATUS_RESULT, where
  * n1 - curve index in all_curves_vec
  * n2 - point index in all_points_vec
  * STATUS_RESULT - expected result, enum{SMALLER,LARGER,EQUAL} type
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_get_point_status_wrapper( std::istringstream& strLine )
+curve_compare_y_at_x_wrapper( std::istringstream& strLine )
 {
   int index1, index2, exp_answer, real_answer;
 
   strLine >> index1 >> index2;
   exp_answer = get_expected_enum( strLine );
-  std::cout << "Test: curve_get_point_status( Curve" << index1
+  std::cout << "Test: curve_compare_y_at_x( Curve" << index1
             << ", " <<  all_points_vec[index2] << " ) ? " << exp_answer
             << std::endl;
   if( !tr.is_x_monotone( all_curves_vec[index1] ) ) {
@@ -395,26 +395,26 @@ curve_get_point_status_wrapper( std::istringstream& strLine )
     std::cout << "The input curve must be X-monotone" << std::endl;
     return false;    
   }
-  real_answer = tr.curve_get_point_status( all_curves_vec[index1], 
+  real_answer = tr.curve_compare_y_at_x( all_curves_vec[index1], 
                                            all_points_vec[index2] );
   return print_was_successful_or_not( exp_answer, real_answer );
 }
 
 /*!
  * input case:
- * curve_is_same n1 n2  BOOL_RESULT, where
+ * curve_equal n1 n2  BOOL_RESULT, where
  * n1, n2 - curves indeces in all_curves_vec
  * BOOL_RESULT - expected result, or FALSE or TRUE string  
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_same_wrapper( std::istringstream& strLine )
+curve_equal_wrapper( std::istringstream& strLine )
 {
   int index1, index2, exp_answer, real_answer;
 
   strLine >> index1 >> index2;
   exp_answer = get_expected_boolean( strLine );
-  std::cout << "Test: curve_is_same( Curve" << index1
+  std::cout << "Test: curve_equal( Curve" << index1
        << ", Curve" <<  index2 << " ) ? " << exp_answer << std::endl;
   if( !( tr.is_x_monotone( all_curves_vec[index1] ) &&
          tr.is_x_monotone( all_curves_vec[index2] ) ) ) {
@@ -422,7 +422,7 @@ curve_is_same_wrapper( std::istringstream& strLine )
     std::cout << "The input curve must be X-monotone" << std::endl;
     return false;    
   }
-  real_answer = tr.curve_is_same( all_curves_vec[index1], 
+  real_answer = tr.curve_equal( all_curves_vec[index1], 
                                   all_curves_vec[index2] );
   return print_was_successful_or_not( exp_answer, real_answer );
 }
@@ -555,7 +555,7 @@ curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
   }
   X_curve res  = tr.curve_reflect_in_x_and_y( all_curves_vec[ index ] );
   X_curve res2 = tr.curve_reflect_in_x_and_y( res );
-  if( tr.curve_is_same( res2, all_curves_vec[ index ] ) ) {
+  if( tr.curve_equal( res2, all_curves_vec[ index ] ) ) {
     std::cout << "Was successful" << std::endl;
     return true;
   }

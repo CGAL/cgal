@@ -110,13 +110,13 @@ public:
 
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
-  typedef Segment_cached_2<Kernel>        X_curve_2;
+  typedef Segment_cached_2<Kernel>        X_monotone_curve_2;
   typedef Segment_cached_2<Kernel>        Curve_2;
 
   // Backward compatability    
   typedef Point_2                         Point;
-  typedef X_curve_2                       X_curve;
-  typedef X_curve_2                       Curve;
+  typedef X_monotone_curve_2              X_curve;
+  typedef X_monotone_curve_2              Curve;
 
 protected:
 
@@ -169,7 +169,7 @@ public:
    * \param cv The curve.
    * \return (true) if the curve is vertical.
    */
-  bool curve_is_vertical(const X_curve_2 & cv) const 
+  bool curve_is_vertical(const X_monotone_curve_2 & cv) const 
   {
     return (cv.is_vert);
   } 
@@ -182,7 +182,7 @@ public:
    * \param q The point.
    * \return (true) if q is in the x-range of cv.
    */
-  bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & q) const
+  bool point_in_x_range(const X_monotone_curve_2 & cv, const Point_2 & q) const
   {
     Compare_x_2       compare_x = compare_x_2_object();
     Comparison_result res1 = compare_x (q, cv.ps);
@@ -209,12 +209,12 @@ public:
    * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q));
    *  or else EQUAL.
    */
-  Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
-				       const X_curve_2 & cv2, 
-				       const Point_2 & q) const
+  Comparison_result curves_compare_y_at_x(const X_monotone_curve_2 & cv1, 
+                                          const X_monotone_curve_2 & cv2, 
+                                          const Point_2 & q) const
   {
-    CGAL_precondition(curve_is_in_x_range(cv1, q));
-    CGAL_precondition(curve_is_in_x_range(cv2, q));
+    CGAL_precondition(point_in_x_range(cv1, q));
+    CGAL_precondition(point_in_x_range(cv2, q));
 
     // Special treatment for vertical segments:
     // In case one curve is a vertical segment, return EQUAL if it intersects
@@ -285,9 +285,9 @@ public:
    * \return The relative position of cv1 with respect to cv2 to the left of
    * x(q): LARGER, SMALLER or EQUAL.
    */
-  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
-                                            const X_curve_2 & cv2, 
-                                            const Point_2 & q) const 
+  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2 & cv1,
+                                               const X_monotone_curve_2 & cv2, 
+                                               const Point_2 & q) const 
   {
     // The two curves must not be vertical.
     CGAL_precondition(! cv1.is_vert);
@@ -325,9 +325,9 @@ public:
    * \return The relative position of cv1 with respect to cv2 to the right of
    * x(q): LARGER, SMALLER or EQUAL.
    */
-  Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
-                                             const X_curve_2 & cv2, 
-                                             const Point_2 & q) const 
+  Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2 & cv1,
+                                                const X_monotone_curve_2 & cv2, 
+                                                const Point_2 & q) const 
   {
     // The two curves must not be vertical.
     CGAL_precondition(! cv1.is_vert);
@@ -361,10 +361,10 @@ public:
    *         LARGER if cv(x(p)) > y(p);
    *         or else (if p is on the curve) EQUAL.
    */
-  Comparison_result curve_get_point_status (const X_curve_2 & cv, 
-					    const Point_2 & p) const
+  Comparison_result curve_compare_y_at_x(const X_monotone_curve_2 & cv, 
+                                         const Point_2 & p) const
   {
-    CGAL_precondition(curve_is_in_x_range(cv, p));
+    CGAL_precondition(point_in_x_range(cv, p));
 
     if (! cv.is_vert)
     {
@@ -397,7 +397,8 @@ public:
    * \param cv2 The second curve.
    * \return (true) if the two curves are the same.
    */
-  bool curve_is_same(const X_curve_2 & cv1,const X_curve_2 & cv2) const
+  bool curve_equal(const X_monotone_curve_2 & cv1,
+                   const X_monotone_curve_2 & cv2) const
   {
     Equal_2 equal = equal_2_object();
     return ((equal(cv1.ps, cv2.ps) && equal(cv1.pt, cv2.pt)) ||
@@ -410,7 +411,7 @@ public:
    * \param p2 The second point.
    * \return (true) if p1 == p2.
    */
-  bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
+  bool point_equal(const Point_2 & p1, const Point_2 & p2) const
   {
     return (equal_2_object()(p1, p2));
   }
@@ -420,7 +421,7 @@ public:
    * \param cv The curve.
    * \return The source point.
    */
-  const Point_2& curve_source(const X_curve_2 & cv) const 
+  const Point_2& curve_source(const X_monotone_curve_2 & cv) const 
   { 
     return (cv.ps);
   }
@@ -430,7 +431,7 @@ public:
    * \param cv The curve.
    * \return The target point.
    */
-  const Point_2& curve_target(const X_curve_2 & cv) const 
+  const Point_2& curve_target(const X_monotone_curve_2 & cv) const 
   { 
     return (cv.pt);
   }
@@ -453,7 +454,7 @@ public:
    * \param cv The curve.
    * \param x_curves A list of the output x-monotone sub-curves.
    */
-  void make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) const
+  void curve_make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) const
   {
     l.clear();
     l.push_back(cv);
@@ -465,9 +466,9 @@ public:
    * \return The flipped curve. In case of segments, if the input is [s,t],
    * then the flipped curve is simply [t,s].
    */
-  X_curve_2 curve_flip(const X_curve_2 & cv) const
+  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2 & cv) const
   {
-    X_curve_2 flip_cv(cv);
+    X_monotone_curve_2 flip_cv(cv);
 
     flip_cv.ps = cv.pt;
     flip_cv.pt = cv.ps;
@@ -484,12 +485,12 @@ public:
    * \param p the split point.
    * \pre p lies on cv but is not one of its end-points.
    */
-  void curve_split(const X_curve_2& cv, 
-		   X_curve_2& c1, X_curve_2& c2, 
+  void curve_split(const X_monotone_curve_2& cv, 
+		   X_monotone_curve_2& c1, X_monotone_curve_2& c2, 
                    const Point_2& p) const
   {
     // Check preconditions.
-    CGAL_precondition(curve_get_point_status(cv, p) == EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(cv, p) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(cv.ps, p));
     CGAL_precondition(!is_equal(cv.pt, p));
@@ -512,7 +513,7 @@ public:
    * Find the nearest intersection point (or points) of two given curves to
    * the right lexicographically of a given point not includin the point
    * itself, (with one exception explained below).
-   * If the intersection of the two curves is an X_curve_2, that is, they
+   * If the intersection of the two curves is an X_monotone_curve_2, that is, they
    * overlap at infinitely many points, then if the right endpoint and the
    * left endpoint of the overlapping subcurve are strickly to the right of
    * the given point, they are returned through the two other point
@@ -530,8 +531,8 @@ public:
    * \return (true) if c1 and c2 do intersect to the right of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_right(const X_curve_2 & cv1,
-                                     const X_curve_2 & cv2,
+  bool nearest_intersection_to_right(const X_monotone_curve_2 & cv1,
+                                     const X_monotone_curve_2 & cv2,
                                      const Point_2 & p,
                                      Point_2 & p1, Point_2 & p2) const
   {
@@ -569,7 +570,7 @@ public:
    * Find the nearest intersection point of two given curves to the left of 
    * a given point. Nearest is defined as the lexicographically nearest not 
    * including the point itself (with one exception explained below).
-   * If the intersection of the two curves is an X_curve_2, that is,
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the left, they are returned through two
    * other point references p1 and p2. If p is between the source and target
@@ -586,8 +587,8 @@ public:
    * \return (true) if c1 and c2 do intersect to the left of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_left(const X_curve_2 & cv1,
-                                    const X_curve_2 & cv2,
+  bool nearest_intersection_to_left(const X_monotone_curve_2 & cv1,
+                                    const X_monotone_curve_2 & cv2,
                                     const Point_2 & p,
                                     Point_2 & p1, Point_2 & p2) const
   {
@@ -629,7 +630,8 @@ public:
    * (i.e., not in a finite number of points). Otherwise, if they have a finite
    * number of intersection points, or none at all, return (false).
    */
-  bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const
+  bool curves_overlap(const X_monotone_curve_2 & cv1,
+                      const X_monotone_curve_2 & cv2) const
   {
     // Comparing lines
     //   if (!equal_2_object()(cv1.line, cv2.line)) return false;
@@ -698,8 +700,8 @@ private:
    * intersection segment.
    * \return (true) if an intersectio has been found.
    */
-  bool _find_intersection (const X_curve_2& cv1,
-			   const X_curve_2& cv2,
+  bool _find_intersection (const X_monotone_curve_2& cv1,
+			   const X_monotone_curve_2& cv2,
                            bool& is_overlap,
 			   Point_2& p1, Point_2& p2) const
   {
@@ -772,7 +774,7 @@ private:
    * \pre The function assumes q lies on the supporting line of the segment.
    * \return (true) if q lies of cv.
    */
-  bool _is_on_segment (const X_curve_2 & cv, const Point_2 & q) const
+  bool _is_on_segment (const X_monotone_curve_2 & cv, const Point_2 & q) const
   {
     if (! cv.is_vert)
     {

@@ -49,7 +49,7 @@ class Pmwx_aggregate_insert_impl :
 {
 public:
   typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
   typedef PM_ PM;
@@ -104,7 +104,7 @@ public:
                      PM &planarMap,
                      Change_notification* change_notification)
   {
-    std::vector<X_curve_2> subcurves;
+    std::vector<X_monotone_curve_2> subcurves;
     Init(begin, end, planarMap); 
     
     for ( EventQueueIter qiter = m_queue->begin();
@@ -213,14 +213,14 @@ protected:
     while ( leftCurveIter != m_currentEvent->leftCurvesEnd() )  // ** fix here
     {
       SubCurve *leftCurve = *leftCurveIter; 
-      const X_curve_2 &cv = leftCurve->getCurve();
+      const X_monotone_curve_2 &cv = leftCurve->getCurve();
       const Point_2 &lastPoint = leftCurve->getLastPoint();
 
       if ( leftCurve->isSource(eventPoint))
       {
         if ( !leftCurve->isTarget(lastPoint) )
         {
-          X_curve_2 a,b;
+          X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
           //*out = a; ++out;
 	  h = insertToPm(a, leftCurve, h, pm);
@@ -232,7 +232,7 @@ protected:
       {
         if ( !leftCurve->isSource(lastPoint))
         {
-          X_curve_2 a,b;
+          X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
           //*out = b; ++out;
 	  h = insertToPm(b, leftCurve, h, pm);
@@ -242,7 +242,7 @@ protected:
         }
 
       } else { 
-        X_curve_2 a,b;
+        X_monotone_curve_2 a,b;
         if ( leftCurve->isSource(lastPoint)) {
           m_traits->curve_split(cv, a, b, eventPoint);
           //*out = a; ++out;
@@ -252,7 +252,7 @@ protected:
           //*out = a; ++out;
 	  h = insertToPm(a, leftCurve, h, pm);
         } else {
-          const X_curve_2 &lastCurve = leftCurve->getLastCurve();
+          const X_monotone_curve_2 &lastCurve = leftCurve->getLastCurve();
           if ( leftCurve->isSourceLeftToTarget() ) {
             m_traits->curve_split(lastCurve, a, b, eventPoint);
             //*out = a; ++out;
@@ -334,13 +334,13 @@ protected:
       Event *topEndEvent = topEndEventIter->second;
       
       while (slIter != m_statusLine->end() &&
-	     (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+	     (! m_traits->point_in_x_range((*slIter)->getCurve(), 
 					      topEnd) ||
-	      m_traits->curve_get_point_status((*slIter)->getCurve(), 
+	      m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
 					       topEnd) != LARGER) &&
-	     (! m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+	     (! m_traits->point_in_x_range((*slIter)->getCurve(), 
 					      currentPoint) ||
-	      m_traits->curve_get_point_status((*slIter)->getCurve(), 
+	      m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
 					       currentPoint) != SMALLER))
       {
 	SL_DEBUG(std::cout<<"intersecting with \n";)
@@ -353,8 +353,8 @@ protected:
 	}
 	
 	// handle a curve that goes through the interior of the vertical curve
-	const X_curve_2 &cv1 = vcurve->getCurve();
-	const X_curve_2 &cv2 = (*slIter)->getCurve();
+	const X_monotone_curve_2 &cv1 = vcurve->getCurve();
+	const X_monotone_curve_2 &cv2 = (*slIter)->getCurve();
 	Point_2 p;
 	bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
                                                            currentPoint, p, p);
@@ -445,13 +445,13 @@ protected:
 	SL_DEBUG((*slIter)->Print();)
 
 	while (slIter != m_statusLine->end() &&
-	       m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     topPoint) && 
-	       m_traits->curve_get_point_status((*slIter)->getCurve(), 
+	       m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
 						topPoint) == SMALLER &&
-	       m_traits->curve_is_in_x_range((*slIter)->getCurve(), 
+	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     vcurve->getBottomEnd()) &&
-	       m_traits->curve_get_point_status((*slIter)->getCurve(), 
+	       m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
 					   vcurve->getBottomEnd()) == LARGER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
@@ -478,7 +478,7 @@ protected:
 	continue;
       }
     
-      X_curve_2 a, b, c;
+      X_monotone_curve_2 a, b, c;
       a = vcurve->getCurve();
       SL_DEBUG(std::cout << "there are " << pointList.size() << " points\n";)
       SL_DEBUG(m_currentEvent->PrintVerticalXPoints();)
@@ -530,8 +530,8 @@ protected:
   {
     const Point_2 &topEnd = vcurve->getTopEnd();
     // handle a curve that goes through the top point of the vertical curve
-    if (m_traits->curve_is_in_x_range(curve->getCurve(), topEnd) &&
-	m_traits->curve_get_point_status(curve->getCurve(), topEnd) == EQUAL)
+    if (m_traits->point_in_x_range(curve->getCurve(), topEnd) &&
+	m_traits->curve_compare_y_at_x(curve->getCurve(), topEnd) == EQUAL)
     {
       if ( !curve->isLeftEnd(topEnd)) {
 	topEndEvent->addCurveToLeft(curve, m_prevPos);
@@ -544,8 +544,8 @@ protected:
     
     // handle a curve that goes through the bottom point of the vertical curve
     const Point_2 &currentPoint = m_currentEvent->getPoint();
-    if (m_traits->curve_is_in_x_range((curve)->getCurve(), currentPoint) &&
-	m_traits->curve_get_point_status((curve)->getCurve(), 
+    if (m_traits->point_in_x_range((curve)->getCurve(), currentPoint) &&
+	m_traits->curve_compare_y_at_x((curve)->getCurve(), 
 					 currentPoint) == EQUAL)
     {
       if ( !(curve)->isLeftEnd(currentPoint)) {
@@ -577,8 +577,8 @@ protected:
     {
       Subcurve *curve = *iter;
       
-      if (m_traits->curve_is_in_x_range(curve->getCurve(), point) &&
-	  m_traits->curve_get_point_status(curve->getCurve(), point)==SMALLER)
+      if (m_traits->point_in_x_range(curve->getCurve(), point) &&
+	  m_traits->curve_compare_y_at_x(curve->getCurve(), point)==SMALLER)
       {
 	iter = m_verticals.erase(iter);
       }
@@ -607,13 +607,13 @@ protected:
 
 private:
 
-  Halfedge_handle insertToPm(const X_curve_2 &a, SubCurve *leftCurve, 
+  Halfedge_handle insertToPm(const X_monotone_curve_2 &a, SubCurve *leftCurve, 
 			     Halfedge_handle hhandle, PM &pm)
   {
     SL_DEBUG(std::cout << "*X inserting " << a << ")\n";)
 
     static SubCurve *prevCurve = 0;
-    static X_curve_2 prevXCv;
+    static X_monotone_curve_2 prevXCv;
     Event *lastEvent = leftCurve->getLastEvent();
     SL_DEBUG(std::cout << "lastEvent = " << lastEvent << "\n";)
     assert(lastEvent!=0);
@@ -670,7 +670,7 @@ private:
 
     return res;
   }
-  Halfedge_handle insertToPmV(const X_curve_2 &a, SubCurve *origCurve, 
+  Halfedge_handle insertToPmV(const X_monotone_curve_2 &a, SubCurve *origCurve, 
 			      Event *topEvent, Event *bottomEvent,
 			      Halfedge_handle hhandle, PM &pm)
   {

@@ -121,7 +121,7 @@ public:
   //the difference between Curve and X_curve is semantical only,
   // NOT syntactical
   typedef Circ_Curve<NT>             Curve_2;
-  typedef Curve_2                    X_curve_2;
+  typedef Curve_2                    X_monotone_curve_2;
  
   // using typename to please compiler (e.g., CC with IRIX64 on mips)
   typedef typename Curve_2::Kernel   Kernel;
@@ -133,7 +133,7 @@ public:
   typedef Kernel                     R;
   typedef Point_2                    Point;
   typedef Curve_2                    Curve;
-  typedef X_curve_2                  X_curve;
+  typedef X_monotone_curve_2                  X_curve;
   typedef Circle_2                   Circle;
   typedef Vector_2                   Vector;
 
@@ -153,22 +153,22 @@ public:
   }
 
   //no vertical segments :
-  bool curve_is_vertical(const X_curve_2&) const {return false;} 
+  bool curve_is_vertical(const X_monotone_curve_2&) const {return false;} 
 
-  bool curve_is_in_x_range(const X_curve_2& cv, const Point_2& p) const {
+  bool point_in_x_range(const X_monotone_curve_2& cv, const Point_2& p) const {
     CGAL_precondition(is_x_monotone(cv));
 
     return (compare_x(p,cv.s) * compare_x(p,cv.t)) <=0 ;
   }
 
-  Comparison_result curve_compare_at_x(const X_curve_2& cv1, 
-				       const X_curve_2& cv2, 
+  Comparison_result curves_compare_y_at_x(const X_monotone_curve_2& cv1, 
+				       const X_monotone_curve_2& cv2, 
 				       const Point_2& p) const {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
-    CGAL_precondition(curve_is_in_x_range(cv1, p));
-    CGAL_precondition(curve_is_in_x_range(cv2, p));
+    CGAL_precondition(point_in_x_range(cv1, p));
+    CGAL_precondition(point_in_x_range(cv2, p));
     
     Point_2 p1 = curve_calc_point(cv1,p);
     Point_2 p2 = curve_calc_point(cv2,p);
@@ -177,35 +177,35 @@ public:
   }
 
 
-  Comparison_result curve_compare_at_x_left(const X_curve_2& cva, 
-					    const X_curve_2& cvb,
+  Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2& cva, 
+					    const X_monotone_curve_2& cvb,
 					    const Point_2& p) const {
 
     CGAL_assertion(is_x_monotone(cva));
     CGAL_assertion(is_x_monotone(cvb));
 
     // Both curves is must be defined at p and to its left. 
-    CGAL_precondition(curve_is_in_x_range(cva, p));
+    CGAL_precondition(point_in_x_range(cva, p));
     CGAL_precondition ((compare_x(curve_source(cva),p) == SMALLER) ||
 		       (compare_x(curve_target(cva),p) == SMALLER));
 
-    CGAL_precondition(curve_is_in_x_range(cvb, p));
+    CGAL_precondition(point_in_x_range(cvb, p));
     CGAL_precondition ((compare_x(curve_source(cvb),p) == SMALLER) ||
 		       (compare_x(curve_target(cvb),p) == SMALLER));
 
     // Compare the two curves at x(p).
-    CGAL_precondition (curve_compare_at_x(cva, cvb, p) == EQUAL);
+    CGAL_precondition (curves_compare_y_at_x(cva, cvb, p) == EQUAL);
     
     //otherwise
     // <cv1> and <cv2> meet at a point with the same x-coordinate as p
     // compare their derivatives
     Point_2 q=curve_calc_point(cva,p);
 
-    X_curve_2 cv1(cva),cv2(cvb);
+    X_monotone_curve_2 cv1(cva),cv2(cvb);
     if (compare_x(curve_source(cv1),q) == SMALLER)
-      cv1 = curve_flip(cva);
+      cv1 = curve_opposite(cva);
     if (compare_x(curve_source(cv2),q) == SMALLER)
-      cv2 = curve_flip(cvb);
+      cv2 = curve_opposite(cvb);
  
     Vector d1=derivative_vec(cv1,q);
     Vector d2=derivative_vec(cv2,q);
@@ -277,23 +277,23 @@ public:
 
   }
 
-  Comparison_result curve_compare_at_x_right(const X_curve_2& cva, 
-					     const X_curve_2& cvb,
+  Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2& cva, 
+					     const X_monotone_curve_2& cvb,
 					     const Point_2& p) const {
     CGAL_assertion(is_x_monotone(cva));
     CGAL_assertion(is_x_monotone(cvb));
 
     // Both curves is must be defined at p and to its right. 
-    CGAL_precondition(curve_is_in_x_range(cva, p));
+    CGAL_precondition(point_in_x_range(cva, p));
     CGAL_precondition ((compare_x(curve_source(cva),p) == LARGER) ||
 		       (compare_x(curve_target(cva),p) == LARGER));
 
-    CGAL_precondition(curve_is_in_x_range(cvb, p));
+    CGAL_precondition(point_in_x_range(cvb, p));
     CGAL_precondition ((compare_x(curve_source(cvb),p) == LARGER) ||
 		       (compare_x(curve_target(cvb),p) == LARGER));
 
     // Compare the two curves at x(p).
-    CGAL_precondition (curve_compare_at_x(cva, cvb, p) == EQUAL);
+    CGAL_precondition (curves_compare_y_at_x(cva, cvb, p) == EQUAL);
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as p
     // compare their derivatives
@@ -301,11 +301,11 @@ public:
     //make both curves compared - left to right
     Point_2 q=curve_calc_point(cva,p);
     
-    X_curve_2 cv1(cva),cv2(cvb);
+    X_monotone_curve_2 cv1(cva),cv2(cvb);
     if (compare_x(curve_source(cv1),q) == LARGER)
-      cv1 = curve_flip(cva);
+      cv1 = curve_opposite(cva);
     if (compare_x(curve_source(cv2),q) == LARGER)
-      cv2 = curve_flip(cvb);
+      cv2 = curve_opposite(cvb);
     
     Vector d1=derivative_vec(cv1,q);
     Vector d2=derivative_vec(cv2,q);
@@ -374,21 +374,21 @@ public:
     }
   }
 
-  Comparison_result curve_get_point_status (const X_curve_2 &cv, 
+  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 &cv, 
 					    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(cv));
-    CGAL_precondition(curve_is_in_x_range(cv, p));
+    CGAL_precondition(point_in_x_range(cv, p));
   
     return (_compare_value(curve_calc_point(cv, p).y(), p.y()));
   }
 
-  bool point_is_same(const Point_2 & p, const Point_2 & q) const
+  bool point_equal(const Point_2 & p, const Point_2 & q) const
   {
     return is_same(p, q);
   }
 
-  bool curve_is_same(const X_curve_2& cv1, const X_curve_2& cv2) const {
+  bool curve_equal(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const {
     CGAL_precondition(is_x_monotone(cv1));
     CGAL_precondition(is_x_monotone(cv2));
 
@@ -399,10 +399,10 @@ public:
 			   cv2.c.squared_radius()) == EQUAL);
   }
 
-  Point_2 curve_source(const X_curve_2& cv) const {
+  Point_2 curve_source(const X_monotone_curve_2& cv) const {
     return cv.s;
   }
-  Point_2 curve_target(const X_curve_2& cv) const {
+  Point_2 curve_target(const X_monotone_curve_2& cv) const {
     return cv.t;
   }
 
@@ -411,8 +411,8 @@ public:
 
 
 
-  X_curve_2 curve_flip(const X_curve_2& cv) const {
-    X_curve_2 xc(cv.c.center().x(),cv.c.center().y(),
+  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2& cv) const {
+    X_monotone_curve_2 xc(cv.c.center().x(),cv.c.center().y(),
 	       cv.c.squared_radius(),cv.t, cv.s);
     xc.c=cv.c.opposite();
     return xc;
@@ -422,7 +422,7 @@ public:
     return cv.is_x_monotone();
   }
 
-  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  void curve_make_x_monotone(const Curve_2 & cv, std::list<X_monotone_curve_2>& l) const
   {
     // Require:
 //    CGAL_precondition( ! is_x_monotone(cv) );
@@ -472,7 +472,7 @@ public:
       
       // for simplicity work on CCW curve
       if (cv.c.orientation() == CLOCKWISE) {
-	work_cv = curve_flip(cv);
+	work_cv = curve_opposite(cv);
 	switch_orientation = true;
       } 
       else {
@@ -546,7 +546,7 @@ public:
 	for (typename std::list<Curve_2>::iterator lit = l.begin(); 
 	     lit != l.end(); 
 	     lit++) {
- 	  *lit = curve_flip(*lit);
+ 	  *lit = curve_opposite(*lit);
 	}
       } 
     }
@@ -584,12 +584,12 @@ public:
 
     
 
-  void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2, 
+  void curve_split(const X_monotone_curve_2& cv, X_monotone_curve_2& c1, X_monotone_curve_2& c2, 
                    const Point_2& split_pt) const {
     CGAL_precondition(is_x_monotone(cv));
 
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv,split_pt)==EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(cv,split_pt)==EQUAL);
     CGAL_precondition(compare_x(curve_source(cv),split_pt)!=EQUAL);
     CGAL_precondition(compare_x(curve_target(cv),split_pt)!=EQUAL);
 
@@ -601,8 +601,8 @@ public:
   }
 
 
-  bool nearest_intersection_to_right(const X_curve_2& c1,
-				     const X_curve_2& c2,
+  bool nearest_intersection_to_right(const X_monotone_curve_2& c1,
+				     const X_monotone_curve_2& c2,
 				     const Point_2& pt,
                                      Point_2& p1,
                                      Point_2& p2) const {
@@ -704,10 +704,10 @@ public:
     }
 
     if (compare_x(rgt,pt)==LARGER) {
-      if (curve_is_in_x_range(c1, rgt) &&
-	  (curve_get_point_status(c1, rgt) == EQUAL) &&
-	  curve_is_in_x_range(c2, rgt) &&
-          (curve_get_point_status(c2, rgt) == EQUAL) ) 
+      if (point_in_x_range(c1, rgt) &&
+	  (curve_compare_y_at_x(c1, rgt) == EQUAL) &&
+	  point_in_x_range(c2, rgt) &&
+          (curve_compare_y_at_x(c2, rgt) == EQUAL) ) 
       {
         p1=p2=rgt;
         return true;
@@ -715,10 +715,10 @@ public:
     }
 
     if (compare_x(lft,pt)==LARGER) {
-      if (curve_is_in_x_range(c1, lft) &&
-	  (curve_get_point_status(c1,lft) == EQUAL) &&
-	  curve_is_in_x_range(c2, lft) &&
-          (curve_get_point_status(c2,lft) == EQUAL) ) 
+      if (point_in_x_range(c1, lft) &&
+	  (curve_compare_y_at_x(c1,lft) == EQUAL) &&
+	  point_in_x_range(c2, lft) &&
+          (curve_compare_y_at_x(c2,lft) == EQUAL) ) 
       {
         p1=p2=lft;
         return true;
@@ -738,14 +738,14 @@ public:
   }
       
 
-  X_curve_2 curve_reflect_in_x_and_y (const X_curve_2& cv) const
+  X_monotone_curve_2 curve_reflect_in_x_and_y (const X_monotone_curve_2& cv) const
   {
     Circle circ( point_reflect_in_x_and_y (cv.circle().center()),
 		 cv.circle().squared_radius(), 
 		 //reflection in two axes means no change in orientation
 		 cv.circle().orientation());  
     // 		 CGAL::opposite( cv.circle().orientation()));
-    X_curve_2 reflected_cv( circ,
+    X_monotone_curve_2 reflected_cv( circ,
 			  point_reflect_in_x_and_y (cv.source()),
 			  point_reflect_in_x_and_y (cv.target()));
     return reflected_cv;
@@ -753,7 +753,7 @@ public:
 
 
   //currently we assume that no two circles overlap (might change in future)
-  bool curves_overlap(const X_curve_2& c1, const X_curve_2& c2) const {
+  bool curves_overlap(const X_monotone_curve_2& c1, const X_monotone_curve_2& c2) const {
     CGAL_precondition(is_x_monotone(c1));
     CGAL_precondition(is_x_monotone(c2));
 
@@ -805,8 +805,8 @@ private:
   }
 
   
-  //calculates the point on the X_curve_2 with the same x coordinate as p
-  Point_2 curve_calc_point(const X_curve_2& cv, const Point_2& p) const {
+  //calculates the point on the X_monotone_curve_2 with the same x coordinate as p
+  Point_2 curve_calc_point(const X_monotone_curve_2& cv, const Point_2& p) const {
     //simple cases 
     if (compare_x(cv.s,p)==EQUAL)
       return cv.s;
@@ -839,7 +839,7 @@ private:
   }
   
 
-  Vector derivative_vec(const X_curve_2& cv, const Point_2& p) const {
+  Vector derivative_vec(const X_monotone_curve_2& cv, const Point_2& p) const {
     if (cv.c.orientation()==COUNTERCLOCKWISE) { //ccw - (-y,x)
       return Vector((cv.c.center().y()-p.y()), (p.x()-cv.c.center().x())); 
     } 

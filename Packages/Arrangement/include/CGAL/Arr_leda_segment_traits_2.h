@@ -57,44 +57,45 @@ public:
   typedef Pm_segment_traits_2<Kernel>           Base;
   
   typedef typename Base::Point_2                Point_2;
-  typedef typename Base::X_curve_2              X_curve_2;
-  typedef X_curve_2                             Curve_2;
+  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
+  typedef X_monotone_curve_2                    Curve_2;
 
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
-  typedef X_curve_2                             X_curve;
+  typedef X_monotone_curve_2                             X_curve;
   typedef Curve_2                               Curve;
 
 public:
   bool is_x_monotone(const Curve_2 & cv) {return true;}
   //segments are x_monotone:
-  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  void curve_make_x_monotone(const Curve_2 & cv,
+                             std::list<X_monotone_curve_2>& l) const
   {
     l.clear();
     l.push_back(cv);
   } 
 
-  X_curve_2 curve_flip(const X_curve_2 & cv) const {
-      return cv.reversal();
-  }
+  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2 & cv) const
+  { return cv.reversal(); }
 
-  void curve_split(const X_curve_2 & cv, X_curve_2 & c1, X_curve_2 & c2, 
+  void curve_split(const X_monotone_curve_2 & cv,
+                   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv,split_pt) == EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(cv,split_pt) == EQUAL);
     CGAL_precondition(curve_source(cv) != split_pt);
     CGAL_precondition(curve_target(cv) != split_pt);
     
-    c1 = X_curve_2(cv.source(), split_pt);
-    c2 = X_curve_2(split_pt, cv.target());
+    c1 = X_monotone_curve_2(cv.source(), split_pt);
+    c2 = X_monotone_curve_2(split_pt, cv.target());
   }
 
 
 public:
   
-  bool nearest_intersection_to_right(const X_curve_2 & c1,
-                                     const X_curve_2 & c2,
+  bool nearest_intersection_to_right(const X_monotone_curve_2 & c1,
+                                     const X_monotone_curve_2 & c2,
                                      const Point_2 & pt,
                                      Point_2 & p1, Point_2 & p2) const 
   {
@@ -105,12 +106,12 @@ public:
 
     // Following implementation was commented out during to the 
     // introduction of intersection_base by Eyal to speed up the traits class.
-/*    X_curve_2 xcv;
+/*    X_monotone_curve_2 xcv;
     bool res = c1.intersection(c2, xcv);
     if (!res) return false;
 
     if (lexicographically_xy_larger(xcv.source(),xcv.target()))
-      xcv=curve_flip(xcv);
+      xcv=curve_opposite(xcv);
     if (lexicographically_xy_larger(xcv.target(),pt)) {
       p2=point_normalize(xcv.target());
       if (lexicographically_xy_larger(xcv.source(),pt))
@@ -126,10 +127,11 @@ public:
 
 #ifndef CGAL_PMWX_TRAITS_HAVE_INTERSECT_TO_LEFT
 
-  X_curve_2 curve_reflect_in_x_and_y (const X_curve_2 & cv) const
+  X_monotone_curve_2
+  curve_reflect_in_x_and_y(const X_monotone_curve_2 & cv) const
   {
-    X_curve_2 reflected_cv(point_reflect_in_x_and_y(cv.source()),
-                           point_reflect_in_x_and_y(cv.target()));
+    X_monotone_curve_2 reflected_cv(point_reflect_in_x_and_y(cv.source()),
+                                    point_reflect_in_x_and_y(cv.target()));
     return reflected_cv;
   }
       
@@ -144,8 +146,8 @@ public:
 
   /*!
    */
-  bool nearest_intersection_to_left(const X_curve_2 & c1,
-                                    const X_curve_2 & c2,
+  bool nearest_intersection_to_left(const X_monotone_curve_2 & c1,
+                                    const X_monotone_curve_2 & c2,
                                     const Point_2 & pt,
                                     Point_2 & p1,
                                     Point_2 & p2) const 
@@ -154,12 +156,12 @@ public:
     if ((res) && (dummy_int & CGAL_XT_SINGLE_POINT))
       p2 = p1;
     return res;
-    /*X_curve_2 xcv;
+    /*X_monotone_curve_2 xcv;
     bool res = c1.intersection(c2, xcv);
     if (!res) return false;
 
     if (compare_xy(xcv.source(),xcv.target()) == SMALLER)
-      xcv=curve_flip(xcv);
+      xcv=curve_opposite(xcv);
     if (compare_xy(xcv.target(),pt) == SMALLER) {
       p2=point_normalize(xcv.target());
       if (compare_xy(xcv.source(),pt) == SMALLER)
@@ -175,8 +177,10 @@ public:
 
 #endif
 
-  bool curves_overlap(const X_curve_2 & ca, const X_curve_2 & cb) const {
-    X_curve_2 xcv;
+  bool curves_overlap(const X_monotone_curve_2 & ca,
+                      const X_monotone_curve_2 & cb) const
+  {
+    X_monotone_curve_2 xcv;
     //    bool res = 
     ca.intersection(cb, xcv);
     return !(xcv.is_trivial());
@@ -184,7 +188,8 @@ public:
 
   // returns values in p1 and p2 only if return_intersection is true
   // if (xsect_type | CGAL_XT_SINGLE_POINT) then only p1 is returned
-  bool intersection_base(const X_curve_2 & c1, const X_curve_2 & c2,
+  bool intersection_base(const X_monotone_curve_2 & c1,
+                         const X_monotone_curve_2 & c2,
 			 const Point_2 & pt, 
                          bool right, bool return_intersection,
 			 Point_2 & p1, Point_2 & p2, 

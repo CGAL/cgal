@@ -66,7 +66,7 @@ struct Sweep_curves_to_planar_map_utils {
     
     bool operator==(const X_curve_plus_id &cv) const {
       Traits traits;
-      return (_id == cv.id() && traits.curve_is_same(*this, cv));
+      return (_id == cv.id() && traits.curve_equal(*this, cv));
     }
     
     void  set_id(unsigned int i) { _id = i; }
@@ -168,7 +168,7 @@ public:
     // splitting all curves to x-monotone curves.
     for (cv_iter = curves_begin; cv_iter != curves_end; ++cv_iter){
       X_curve_list x_monotone_subcurves;
-      traits->make_x_monotone(*cv_iter, x_monotone_subcurves);
+      traits->curve_make_x_monotone(*cv_iter, x_monotone_subcurves);
 
       for(X_curve_list_iterator iter = x_monotone_subcurves.begin(); 
           iter != x_monotone_subcurves.end(); ++iter) {
@@ -201,7 +201,7 @@ public:
       X_curve cv(*xcv_iter);
       if (is_right(traits->curve_source(*xcv_iter), 
                    traits->curve_target(*xcv_iter)) )
-        cv = traits->curve_flip(*xcv_iter);
+        cv = traits->curve_opposite(*xcv_iter);
    
       Vertices_points_plus_iterator curr_point_plus = 
         input_vertices.find( traits->curve_source(cv) );
@@ -412,8 +412,8 @@ private:
     typename PM::Locate_type lt;
     Halfedge_handle h = pm.locate(traits->curve_source(cv),lt);
     
-    if (traits->curve_is_same(h->curve(),cv) || 
-        traits->curve_is_same(h->curve(),traits->curve_flip(cv)) )
+    if (traits->curve_equal(h->curve(),cv) || 
+        traits->curve_equal(h->curve(),traits->curve_opposite(cv)) )
       return h;
     
     Vertex_handle v;
@@ -426,8 +426,8 @@ private:
                                circ = v->incident_halfedges();
     
     do {
-      if (traits->curve_is_same(circ->curve(),cv) || 
-          traits->curve_is_same(circ->curve(),traits->curve_flip(cv)))
+      if (traits->curve_equal(circ->curve(),cv) || 
+          traits->curve_equal(circ->curve(),traits->curve_opposite(cv)))
         return Halfedge_handle(circ);
       
     } while (++circ != v->incident_halfedges());

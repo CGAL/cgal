@@ -20,7 +20,7 @@ public:
   typedef typename Traits::Curve_2      Curve_2;
   typedef typename Traits::Circle_2     Circle_2;
   typedef typename Traits::Segment_2    Segment_2;
-  typedef typename Traits::X_curve_2    X_curve_2;
+  typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
   typedef std::list<Curve_2>            CurveList;
 
   int ReadData(const char * filename, CurveList & curves,

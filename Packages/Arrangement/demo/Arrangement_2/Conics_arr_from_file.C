@@ -43,7 +43,7 @@ typedef Traits::Point_2                                 Point_2;
 typedef Traits::Curve_2                                 Curve_2;
 typedef Traits::Circle_2                                Circle_2;
 typedef Traits::Segment_2                               Segment_2;
-typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
 typedef std::list<Curve_2>                              CurveList;
 
 typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;

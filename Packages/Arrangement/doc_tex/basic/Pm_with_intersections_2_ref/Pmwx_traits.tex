@@ -34,10 +34,10 @@
 \ccTypes
   \ccNestedType{Curve_2}{A type that holds a general curve in the plane. The
   sweep-line operation operates on curves of this type.}
-  \ccNestedType{X_curve_2}{same as \ccc{PlanarMapTraits_2::X_curve_2}.}
+  \ccNestedType{X_monotone_curve_2}{same as \ccc{PlanarMapTraits_2::X_monotone_curve_2}.}
   \ccNestedType{Point_2}{same as \ccc{PlanarMapTraits_2::Point_2}.}
 
-  The following methods that have a parameter of type \ccc{X_curve_2} have the
+  The following methods that have a parameter of type \ccc{X_monotone_curve_2} have the
   implicit precondition that requires the parameter to be $x$-monotone.
 
 \ccOperations
@@ -47,7 +47,7 @@
 \ccMethod{bool is_x_monotone(const Curve_2& c);}{returns true if $c$ is
 an $x$-monotone curve.}
 
-\ccMethod{void make_x_monotone(const Curve_2& cv, list<X_curve_2>& l);}{
+\ccMethod{void curve_make_x_monotone(const Curve_2& cv, list<X_monotone_curve_2>& l);}{
    cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
    The order in which they are inserted into $l$ defines their order
    in the hierarchy tree.}
@@ -57,25 +57,25 @@ an $x$-monotone curve.}
 that is the reflection of \ccc{pt} about the origin (both the $x$ and $y$ 
 axes). E.g., the point $(2,2)$ will be reflected as $(-2,-2)$. }
 
-\ccMethod{X_curve_2 curve_reflect_in_x_and_y(const X_curve_2& cv);}{returns the \ccc{X_curve_2}
+\ccMethod{X_monotone_curve_2 curve_reflect_in_x_and_y(const X_monotone_curve_2& cv);}{returns the \ccc{X_monotone_curve_2}
 that is the reflection of \ccc{cv} about the origin 
 (both the $x$ and $y$ axes). E.g., the line segment $((2,2),(3,3))$ will be reflected as $((-2,-2),(-3,-3))$. }
 
-  \ccMethod{void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2,
+  \ccMethod{void curve_split(const X_monotone_curve_2& cv, X_monotone_curve_2& c1, X_monotone_curve_2& c2,
                              const Point_2& split_pt);}
   {splits $cv$ at \ccc{split_pt} into two curves, and assigns them to
   \ccc{c1} and \ccc{c2} respectively.
   \ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}}
 
-\ccMethod{bool nearest_intersection_to_right(const X_curve_2& c1,
-                                      const X_curve_2& c2,
+\ccMethod{bool nearest_intersection_to_right(const X_monotone_curve_2& c1,
+                                      const X_monotone_curve_2& c2,
                                       const Point_2& pt,
                                       Point_2& p1, Point_2& p2);}
 {finds the
 nearest intersection point to the right of \ccc{pt}. Nearest is defined as the
 one lexicographically closest to \ccc{pt} not including \ccc{pt} itself.
 If the intersection of \ccc{c1} and \ccc{c2} to the
-right of \ccc{pt} is an \ccc{X_curve_2} (i.e., there is an overlapping subcurve
+right of \ccc{pt} is an \ccc{X_monotone_curve_2} (i.e., there is an overlapping subcurve
 to the right of \ccc{pt}),
 then \ccc{p1} will hold the source point of the intersection and
 \ccc{p2} will hold its target point. Otherwise \ccc{p1} and \ccc{p2} are
@@ -90,7 +90,7 @@ the function returns \ccc{false}, otherwise it returns true.
 %The intersection function is defined in such a way to enable dealing with
 %degenerate cases when two curves inserted into the arrangement overlap.
 
-\ccMethod{bool curves_overlap(const X_curve_2& cv1, const X_curve_2& cv2);}
+\ccMethod{bool curves_overlap(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2);}
 {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
 in a one-dimensional subcurve (i.e., not in a finite number
 of points), otherwise returns

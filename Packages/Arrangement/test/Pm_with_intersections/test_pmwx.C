@@ -110,9 +110,9 @@ int main()
 #endif
 
 typedef Traits::Point_2                                         Point_2;
-typedef Traits::X_curve_2                                       X_curve_2;
+typedef Traits::X_monotone_curve_2                                       X_monotone_curve_2;
 typedef Traits::Curve_2                                         Curve_2;
-typedef CGAL::Arr_base_node<X_curve_2>                          Base_node;
+typedef CGAL::Arr_base_node<X_monotone_curve_2>                          Base_node;
 typedef CGAL::Pm_default_dcel<Traits>                           Dcel;
 
 typedef CGAL::Planar_map_2<Dcel,Traits>                         Planar_map;
@@ -460,7 +460,7 @@ public:
     // Pmwx::Face_handle f  = m_subd->unbounded_face();
     // Pmwx::Holes_iterator it = f->holes_begin(), end=f->holes_end();
     // Pmwx::Ccb c  = *it;
-    // const X_curve_2_2 & cv = curr->curve();
+    // const X_monotone_curve_2_2 & cv = curr->curve();
 #endif
     
     // Check validity of arrangement after insertion:

@@ -53,14 +53,14 @@ public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Traits::X_curve_2 X_curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
   typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
 
   typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;
   typedef Pmwx_sweep_line_event<Traits, Self> Event;
 
-  Pmwx_sweep_line_curve(int id, X_curve_2 &curve, Point_2 *reference, 
+  Pmwx_sweep_line_curve(int id, X_monotone_curve_2 &curve, Point_2 *reference, 
 			SweepLineTraits_2 *traits) : 
     Base(id, curve, reference, traits) , m_insertInfo(0), m_lastEvent(0)
   {

@@ -32,7 +32,7 @@ protected:
   // Builds list of curves, depends on template parameter arr_traits
   virtual void build_curve_list(std::list<Curve_with_info>& curve_list) = 0;
 
-  // Checks is_x_monotone and make_x_monotone
+  // Checks is_x_monotone and curve_make_x_monotone
   bool check_monotony_functions(std::list<Curve_with_info> curves_list, 
 				bool flip)
   {
@@ -46,7 +46,7 @@ protected:
 	 cit != curves_list.end();
 	 cit++) {
       if (flip) 
-	cit->cv = tr.curve_flip(cit->cv);
+	cit->cv = tr.curve_opposite(cit->cv);
       std::cout << cit->description.c_str();
       if (flip)
 	std::cout << " flipped";
@@ -63,7 +63,7 @@ protected:
 
       if ( ! is_x_monotone ) {
 	x_monotone_parts.clear();
-	tr.make_x_monotone(cit->cv, x_monotone_parts);
+	tr.curve_make_x_monotone(cit->cv, x_monotone_parts);
       
 	if (x_monotone_parts.size() != cit->x_monotone_num) {
 	  std::cout << "  cut into wrong number of parts." << std::endl;
@@ -86,7 +86,7 @@ public:
     
     build_curve_list(curves_list);
 
-    std::cout << "Checking is_x_monotone and make_x_monotone" << std::endl;
+    std::cout << "Checking is_x_monotone and curve_make_x_monotone" << std::endl;
     std::cout << "------------------------------------------" << std::endl;
     if ( ! check_monotony_functions(curves_list, false) ) // don't flip
       result = false;

@@ -48,10 +48,10 @@ operator<<(std::ostream & os,
 template <class R, class Container>
 std::ostream & 
 operator<<(std::ostream & os,  
-	   const typename Arr_polyline_traits<R, Container>::X_curve_2 & cv)
+	   const typename Arr_polyline_traits<R, Container>::X_monotone_curve_2 & cv)
 {
-  typedef typename Arr_polyline_traits<R>::X_curve_2 X_curve_2;
-  typedef typename X_curve_2::const_iterator         Points_iterator;
+  typedef typename Arr_polyline_traits<R>::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename X_monotone_curve_2::const_iterator         Points_iterator;
   
   os << cv.size() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
@@ -87,11 +87,11 @@ operator>>(std::istream& in,
 template <class R, class Container>
 std::istream& 
 operator>>(std::istream& in, 
-	   typename Arr_polyline_traits<R, Container>::X_curve_2 & cv)
+	   typename Arr_polyline_traits<R, Container>::X_monotone_curve_2 & cv)
 {
-  typedef typename Arr_polyline_traits<R>::X_curve_2 X_curve_2;
-  typedef typename X_curve_2::value_type             Point_2;
-  typedef typename X_curve_2::size_type              size_type;
+  typedef typename Arr_polyline_traits<R>::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename X_monotone_curve_2::value_type             Point_2;
+  typedef typename X_monotone_curve_2::size_type              size_type;
 
   size_type size;
 

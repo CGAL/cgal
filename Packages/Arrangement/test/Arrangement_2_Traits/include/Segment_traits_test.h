@@ -7,12 +7,12 @@ public Base_traits_test< Traits_class, Number_type >
 public:
   typedef Number_type                           NT;
   typedef typename Traits_class::Point_2        Point;
-  typedef typename Traits_class::X_curve_2      X_curve;
+  typedef typename Traits_class::X_monotone_curve_2      X_curve;
   typedef typename Traits_class::Curve_2        Curve;
 public:
   Segment_traits_test( int argc, char ** argv );
   virtual void read_curve( std::ifstream & is, Curve & cv );
-  virtual bool make_x_monotone_wrapper( std::istringstream & strLine );
+  virtual bool curve_make_x_monotone_wrapper( std::istringstream & strLine );
   virtual bool curve_split_wrapper( std::istringstream & strLine );
   ~Segment_traits_test();
 };
@@ -61,15 +61,15 @@ read_curve( std::ifstream & is, Curve & cv )
 //---------------------------------------------------------------------------
 /*
   input case:
-  make_x_monotone n1 n2, where 
+  curve_make_x_monotone n1 n2, where 
   n1 - curve index in all_curves_vec
   n2 - number of expected X-monotonian subcurves
 */
 //---------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Segment_traits_test< Traits_class, Number_type >::
-make_x_monotone_wrapper( std::istringstream & /* strLine */){
-  std::cout << "Test: make_x_monotone - nothing to do in segment case" 
+curve_make_x_monotone_wrapper( std::istringstream & /* strLine */){
+  std::cout << "Test: curve_make_x_monotone - nothing to do in segment case" 
 	    << std::endl;
   std::cout << "Was successful" << std::endl;
   return true;
@@ -98,9 +98,9 @@ curve_split_wrapper( std::istringstream& strLine ){
 	      << std::endl;
     return false;
   }
-  if (! tr.curve_is_in_x_range (all_curves_vec[index1], 
+  if (! tr.point_in_x_range (all_curves_vec[index1], 
 				all_points_vec[index2]) ||
-      tr.curve_get_point_status( all_curves_vec[index1], 
+      tr.curve_compare_y_at_x( all_curves_vec[index1], 
                                  all_points_vec[index2]) != CGAL::EQUAL)
   {
     std::cout << "Was NOT successful" << std::endl;

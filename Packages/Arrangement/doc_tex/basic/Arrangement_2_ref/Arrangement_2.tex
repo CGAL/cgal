@@ -50,7 +50,7 @@
        into the arrangement. It is created by invoking a user defined 
        \ccc{split_function} on the original curve, or on another curve. By
        default a subcurve is created from the original curve by invoking
-       the function \ccc{Traits::make_x_monotone()}.}
+       the function \ccc{Traits::curve_make_x_monotone()}.}
 
     \ccNestedType{Edge_node}{represents a subcurve of the curve inserted 
        into the arrangement which is created by an intersection with
@@ -147,7 +147,7 @@
 
     \ccTypedef{typedef typename Traits::Point_2 Point_2;}{the point type
        of the arrangement}
-    \ccTypedef{typedef typename Traits::X_curve_2 X_curve_2;}{
+    \ccTypedef{typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;}{
        the x-monotone curve type of the arrangmenet}
     \ccTypedef{typedef typename Traits::Curve_2 Curve_2;}{the curve type
       of the arrangement}
@@ -161,7 +161,7 @@
 
     \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>(const Traits& tr, Pm_point_location_base<Planar_map> *pl);}{create an empty arrangement with \ccc{tr} as the traits class and \ccc{*pl} as the point location strategy.}
 
-    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( list<Traits::X_curve_2> &l );}
+    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( list<Traits::X_monotone_curve_2> &l );}
     %{create the arrangement of the curves of \ccStyle{l}}
 
     %\ccStyle{tempalte <class InputIterator>} \\
@@ -169,7 +169,7 @@
      %                              InputIterator end );} 
      %           {create the arrangement of the curves from a container iterated by
      %           \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
-     %           \ccPrecond{the container contains \ccStyle{Traits::X_curve_2} objects.}       
+     %           \ccPrecond{the container contains \ccStyle{Traits::X_monotone_curve_2} objects.}       
      %           }
     
 \ccOperations
@@ -179,7 +179,7 @@
 
      \ccMethod{Curve_iterator insert(const Curve_2& cv);}{inserts the curve
        \ccStyle{cv} into the arrangement. It uses the
-       \ccc{Traits::make_x_monotone}
+       \ccc{Traits::curve_make_x_monotone}
        function to cut the curve into $x$-monotone curves and inserts
        them in the hierarchy tree. If the arrangement is in {\em update}
        mode (the default mode) then the curves are inserted into the
@@ -188,7 +188,7 @@
        }
     
 
-    \ccMethod{Curve_iterator insert_from_vertex( const X_curve_2 & cv,
+    \ccMethod{Curve_iterator insert_from_vertex( const X_monotone_curve_2 & cv,
        Vertex_handle src);}{inserts  the curve
        \ccStyle{cv}, for 
        which the source point, \ccStyle{src}, is already in the
@@ -254,7 +254,7 @@
 
 \end{ccAdvanced}    
 
-    %\ccMethod{void insert( list<Traits::X_curve_2> &l );} {insert the
+    %\ccMethod{void insert( list<Traits::X_monotone_curve_2> &l );} {insert the
     %   curves of \ccStyle{l} into the arrangement \comment{iddo: use plane sweep?}}
 
     %\ccStyle{tempalte <class InputIterator>} \\
@@ -263,11 +263,11 @@
     %            \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
     %            into the arrangement.
     %            \ccPrecond{the container contains \\ 
-    %               \ccStyle{Traits::X_curve_2} objects.}}
+    %               \ccStyle{Traits::X_monotone_curve_2} objects.}}
 
 %\comment{iddo: maybe add the function:} 
-%\ccMethod{insert_super_curve(list<Traits::X_curve_2> &l );}{}
-%\comment{iddo: which will insert the X_curve_2s with prev/next to the super-curve from which they originated.}
+%\ccMethod{insert_super_curve(list<Traits::X_monotone_curve_2> &l );}{}
+%\comment{iddo: which will insert the X_monotone_curve_2s with prev/next to the super-curve from which they originated.}
 
     \ccMethod{void set_update(bool u);}{sets update mode to \ccc{u}. If
        update mode is true then every curve inserted into the
@@ -309,8 +309,8 @@
     \ccMethod{Face_iterator faces_end();}{}
     \ccMethod{Size number_of_faces();}{}
 
-    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve_2& c1, 
-   const X_curve_2& c2);}{}
+    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_monotone_curve_2& c1, 
+   const X_monotone_curve_2& c2);}{}
     \ccMethod{Halfedge_handle locate(const Point_2& p, Locate_type& lt);}{}
     \ccMethod{Halfedge_handle vertical_ray_shoot(const Point_2& p, Locate_type& lt, bool up);}{}
 

@@ -47,12 +47,12 @@ public:
   typedef typename Base::Has_left_category      Has_left_category;
     
   typedef typename Base::Point_2                Point_2;
-  typedef typename Base::X_curve_2              X_curve_2;
-  typedef X_curve_2                             Curve_2;
+  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
+  typedef X_monotone_curve_2                    Curve_2;
 
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
-  typedef X_curve_2                             X_curve;
+  typedef X_monotone_curve_2                    X_curve;
   typedef Curve_2                               Curve;
 
 protected:
@@ -75,23 +75,23 @@ public:
    */
   bool is_x_monotone(const Curve_2 &) {return true;}
   
-  /*! make_x_monotone() cuts the given curve into x-monotone subcurves and
+  /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves and
    * stores them in the given list. The order in which they are inserted into
    * the list defines their order in the hierarchy tree.
    * While segments are x_monotone, still need to cast their type.
    */
-  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  void curve_make_x_monotone(const Curve_2 & cv,
+                             std::list<X_monotone_curve_2> & l) const
   {
     l.clear();
     l.push_back(cv);
   } 
 
-  /*! curve_flip() flips a given curve
+  /*! curve_opposite() flips a given curve
    * \param cv the curve
    * \return a segment with source and target point interchanged
-   * \todo replace indirect use curve_flip() with opposite()
    */
-  X_curve_2 curve_flip(const X_curve_2 & cv) const
+  X_monotone_curve_2 curve_opposite(const X_monotone_curve_2 & cv) const
   {
     return construct_opposite_segment_2_object()(cv);
   }
@@ -106,11 +106,12 @@ public:
    * \param split_pt
    * \pre split_pt is on cv but is not an endpoint.
    */
-  void curve_split(const X_curve_2 & cv, X_curve_2 & c1, X_curve_2 & c2, 
+  void curve_split(const X_monotone_curve_2 & cv,
+                   X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
                    const Point_2 & split_pt)
   {
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv, split_pt) == EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(cv, split_pt) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(curve_source(cv), split_pt));
     CGAL_precondition(!is_equal(curve_target(cv), split_pt));
@@ -127,7 +128,7 @@ public:
    * two given curves to the right of a given point. Nearest is defined as the
    * lexicographically nearest not including the point itself with one
    * exception explained bellow..
-   * If the intersection of the two curves is an X_curve_2, that is,
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the right, they are returned through two
    * other point references p1 and p2. If pt is between the source and target
@@ -144,8 +145,8 @@ public:
    * \return true if c1 and c2 do intersect to the right of pt. Otherwise,
    * false
    */
-  bool nearest_intersection_to_right(const X_curve_2 & c1,
-                                     const X_curve_2 & c2,
+  bool nearest_intersection_to_right(const X_monotone_curve_2 & c1,
+                                     const X_monotone_curve_2 & c2,
                                      const Point_2 & pt,
                                      Point_2 & p1, Point_2 & p2) const
   {
@@ -166,7 +167,7 @@ public:
     }
     
     // Intersection is a segment
-    X_curve_2 seg;
+    X_monotone_curve_2 seg;
     if (assign(seg, res)) {
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
@@ -209,7 +210,7 @@ public:
    * two given curves to the left of a given point. Nearest is defined as the
    * lexicographically nearest not including the point itself with one
    * exception explained bellow..
-   * If the intersection of the two curves is an X_curve_2, that is,
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the left, they are returned through two
    * other point references p1 and p2. If pt is between the source and target
@@ -226,8 +227,8 @@ public:
    * \return true if c1 and c2 do intersect to the left of pt. Otherwise,
    * false
    */
-  bool nearest_intersection_to_left(const X_curve_2 & c1,
-                                    const X_curve_2 & c2,
+  bool nearest_intersection_to_left(const X_monotone_curve_2 & c1,
+                                    const X_monotone_curve_2 & c2,
                                     const Point_2 & pt,
                                     Point_2 & p1, Point_2 & p2) const
   {
@@ -248,7 +249,7 @@ public:
     }
     
     // Intersection is a segment
-    X_curve_2 seg;
+    X_monotone_curve_2 seg;
     if (assign(seg, res)) {
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
@@ -292,9 +293,9 @@ public:
    * \patam c2 the second curve
    * \return true if c1 and c2 overlap in a one-dimensional subcurve
    * (i.e., not in a finite number of points). Otherwise, false.
-   * \todo end point coincidence instead of intersection!
    */
-  bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const
+  bool curves_overlap(const X_monotone_curve_2 & cv1,
+                      const X_monotone_curve_2 & cv2) const
   {
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     const Point_2 & src2 = construct_vertex(cv2, 0);

@@ -33,7 +33,7 @@ typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                               X_curve;
 typedef Traits::Curve_2                                 Curve;
 
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;

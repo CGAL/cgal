@@ -13,7 +13,7 @@ public:
 public:
   Polyline_traits_test( int argc, char** argv );
   virtual void read_curve( std::ifstream& is, Curve& cv );
-  virtual bool make_x_monotone_wrapper( std::istringstream& strLine );
+  virtual bool curve_make_x_monotone_wrapper( std::istringstream& strLine );
   virtual bool curve_split_wrapper( std::istringstream& strLine );
   ~Polyline_traits_test();
 };
@@ -62,21 +62,21 @@ read_curve( std::ifstream& is, Curve& cv ){
 //---------------------------------------------------------------------------
 /*
   input case:
-  make_x_monotone n1 n2, where 
+  curve_make_x_monotone n1 n2, where 
   n1 - curve index in all_curves_vec
   n2 - number of expected X-monotonian subcurves
 */
 //---------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Polyline_traits_test< Traits_class, Number_type >::
-make_x_monotone_wrapper( std::istringstream & strLine )
+curve_make_x_monotone_wrapper( std::istringstream & strLine )
 {
   int index, exp_number, real_number;
   std::list<X_curve> l;
   typename std::list<X_curve>::iterator it;
   strLine >> index >> exp_number;
   
-  tr.make_x_monotone( all_curves_vec[index], l );
+  tr.curve_make_x_monotone( all_curves_vec[index], l );
   real_number = l.size();
   it = l.begin();
   Point prev_target_point = *( it->begin() );                   
@@ -153,9 +153,9 @@ curve_split_wrapper( std::istringstream & strLine )
 	      << std::endl;
     return false;
   }
-  if (! tr.curve_is_in_x_range (all_curves_vec[index1], 
+  if (! tr.point_in_x_range (all_curves_vec[index1], 
 				all_points_vec[index2]) ||
-      tr.curve_get_point_status (all_curves_vec[index1], 
+      tr.curve_compare_y_at_x (all_curves_vec[index1], 
                                  all_points_vec[index2]) != CGAL::EQUAL)
   {
     std::cout << "Was NOT successful" << std::endl;
