@@ -1,3 +1,8 @@
+1.60 (5 January 2004) [mk]
+- changed the code so that it is compatible with the new filter
+  iterator design (no begin iterator needed any longer in the
+  filter iterator)
+
 1.59 (6 November 2003) [mk]
 - Radu updated the project file for the demo so that it
   reflects the new files involved in the demo
