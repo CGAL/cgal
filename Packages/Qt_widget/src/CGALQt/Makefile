@@ -23,6 +23,7 @@ CGAL_OBJECTS = \
 Qt_widget$(OBJ_EXT) \
 Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
+Qt_widget_xpm_icons$(OBJ_EXT) \
 Qt_help_window$(OBJ_EXT) \
 Qt_widget_history$(OBJ_EXT)
 
@@ -69,6 +70,9 @@ Qt_help_window$(OBJ_EXT): Qt_help_window.C \
 			../../include/CGAL/IO/Qt_help_window.h
 	$(QT_MOC) ../../include/CGAL/IO/Qt_help_window.h -o Qt_help_window.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_help_window.C
+
+Qt_widget_xpm_icons$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_xpm_icons.C
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
