@@ -600,7 +600,7 @@ Triangulation_ds_edge_circulator_2<Tds> ::
 operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
 {
   CGAL_triangulation_assertion( n == NULL);
-  return (v == Vertex_handle() || pos == Face_handle());
+  return (_v == Vertex_handle() || pos == Face_handle());
 }
                
 template < class Tds >
