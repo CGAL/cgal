@@ -32,8 +32,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                advanced_hull$(EXE_EXT) \
-                advanced_hull_2$(EXE_EXT) \
                 basic$(EXE_EXT) \
                 basic_io$(EXE_EXT) \
                 boundingbox$(EXE_EXT) \
@@ -47,7 +45,6 @@ all:            \
                 incircle$(EXE_EXT) \
                 inters_check$(EXE_EXT) \
                 inters_comp$(EXE_EXT) \
-                listmanip$(EXE_EXT) \
                 orientation$(EXE_EXT) \
                 polygon_centre$(EXE_EXT) \
                 templ_centre_of_mass$(EXE_EXT) \
@@ -55,6 +52,10 @@ all:            \
                 triangulation2$(EXE_EXT) \
                 vectorex$(EXE_EXT) \
                 vectorex1$(EXE_EXT) 
+
+#                advanced_hull$(EXE_EXT) \ don't work on msvc as of I-2.3-88
+#                advanced_hull_2$(EXE_EXT) \
+#                listmanip$(EXE_EXT) \
 
 advanced_hull$(EXE_EXT): advanced_hull$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)advanced_hull advanced_hull$(OBJ_EXT) $(LDFLAGS)
