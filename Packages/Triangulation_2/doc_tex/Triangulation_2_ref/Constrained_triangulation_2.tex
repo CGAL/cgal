@@ -131,7 +131,7 @@ The default intersection tag is \ccc{CGAL::No_intersection_tag}.
 \ccTypes
 \ccTypedef{typedef pair<Point,Point> Constraint;}{ The type of input
 constraints}
-\ccTypedef{typedef Itag   Intersection_tag;}{Thr intersection tag which decides how 
+\ccTypedef{typedef Itag   Intersection_tag;}{The intersection tag which decides how 
 intersections between input constraints are dealt with.}
 
 
@@ -146,7 +146,7 @@ Constrained_triangulation_2& ct1)}
 are duplicated and  the constrained status of edges
 is copied.}
 
-\ccConstructor{Constrained_triangulation_2(list<Constrained>& lc,
+\ccConstructor{Constrained_triangulation_2(std::list<Constraint>& lc,
 const Traits& t = Traits());}
 {Introduces a constrained triangulation, the constrained edges of which
 are the edges of the list \ccc{lc}.}
