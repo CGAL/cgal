@@ -27,6 +27,8 @@
 #include <list>
 #include <fstream>
 
+#define MAX_INTERSECTIONS_BETWEEN_2_CURVES 1
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_> class Segment_cached_2;
@@ -801,6 +803,23 @@ protected:
     
     return (compare_x (cv1.pt, cv2.ps) == SMALLER);
   }
+
+  /*! ixx
+   * Return the location of the given point with respect to the two query points.
+   * \param p - the refernce point.
+   * \param q - first query point
+   * \param r - second query point
+   * \pre p is in the x-range of cv.
+   * \return SMALLER if q1 is closer to p than q2 
+   *         LARGER if q2 is closer to p
+   *         or else (if q1 and q2 are in equal distance from p) EQUAL.
+   */
+  Comparison_result compare_distance(const Point_2 & p,
+                                     const Point_2 & q, const Point_2 & r) const
+  {
+    return (compare_distance_2_object()(p, q, r)); 
+  }
+
 
 private:
 
