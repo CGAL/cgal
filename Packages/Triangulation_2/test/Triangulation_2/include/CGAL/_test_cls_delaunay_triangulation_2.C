@@ -84,6 +84,7 @@ _test_delaunay_duality( const Del &T )
   typedef typename Del::Geom_traits          Gt;
   typedef typename Del::Finite_faces_iterator        Face_iterator;
   typedef typename Del::Finite_edges_iterator        Edge_iterator;
+  typedef typename Del::Edge_circulator              Edge_circulator;
 
   // Test dual(face iterator)
   Face_iterator fit;
@@ -97,10 +98,10 @@ _test_delaunay_duality( const Del &T )
   Edge_iterator eit;
   for (eit =  T.finite_edges_begin(); eit !=  T.finite_edges_end(); ++eit)
     {
-         CGAL::Object o = T.dual(eit);
-	 typename Gt::Ray r;
-        typename Gt::Segment s;
-	typename Gt::Line l;
+      CGAL::Object o = T.dual(eit);
+      typename Gt::Ray r;
+      typename Gt::Segment s;
+      typename Gt::Line l;
       if ( CGAL::assign(s,o) ) {
         assert(  ! T.is_infinite((*eit).first) );
 	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
@@ -114,15 +115,17 @@ _test_delaunay_duality( const Del &T )
     }
 
   // Test dual(edge circulator)
- //  Edge_circulator ec=T.finite_vertex()->incident_edges(), done(ec);
-//   if ( !ec.is_empty() ) 
-//   do  
-//     {
-//       if (! T.is_infinite(ec)){
-// 	// CGAL::Object o = T.dual(ec);
-// // 	Segment s; Ray r; Line l;
-// // 	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
-//       }
-//       ++ec;
-//     } while ( ec == done);
+  Edge_circulator ec=T.finite_vertices_begin()->incident_edges(), done(ec);
+  if ( !ec.is_empty() ) 
+  do  
+    {
+      if (! T.is_infinite(ec)){
+	CGAL::Object o = T.dual(ec);
+	typename Gt::Ray r;
+        typename Gt::Segment s;
+	typename Gt::Line l;
+	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
+      }
+      ++ec;
+    } while ( ec == done);
 }
