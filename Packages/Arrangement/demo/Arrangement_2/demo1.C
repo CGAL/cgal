@@ -276,132 +276,146 @@ MyWindow::~MyWindow()
 
 void MyWindow::something_changed()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab   *w_demo_p = dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab   *w_demo_p =
+    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
 
   w_demo_p->current_state++;
 }
  
 void MyWindow::get_new_object(CGAL::Object obj)
-  {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+{
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   // point location
-    Coord_point p;
-    if(CGAL::assign(p,obj)) {
+  Coord_point p;
+  if(CGAL::assign(p,obj)) {
 
-      w_demo_p->pl_point = p;
-      //something_changed();
-    }
+    w_demo_p->pl_point = p;
+    //something_changed();
+  }
   something_changed();
-  }
+}
 
-  void MyWindow::about()
-  {
-    QMessageBox::about( this, my_title_string,
-    "This is a demo for the Arrangement package\n"
-      "Copyright CGAL @2003");
-  }
+void MyWindow::about()
+{
+  QMessageBox::about( this, my_title_string,
+                      "This is a demo for the Arrangement package\n"
+                      "Copyright CGAL @2003");
+}
 
-  void MyWindow::aboutQt()
-  {
-    QMessageBox::aboutQt( this, my_title_string );
-  }
+void MyWindow::aboutQt()
+{
+  QMessageBox::aboutQt( this, my_title_string );
+}
 
-  void MyWindow::howto(){
-    QString home;
-    home = "help/index.html";
-    CGAL::Qt_help_window * help =
-      new CGAL::Qt_help_window(home, ".", 0, "help viewer");
-    help->resize(400, 400);
-    help->setCaption("Demo HowTo");
-    help->show();
-  }
+void MyWindow::howto()
+{
+  QString home;
+  home = "help/index.html";
+  CGAL::Qt_help_window * help =
+    new CGAL::Qt_help_window(home, ".", 0, "help viewer");
+  help->resize(400, 400);
+  help->setCaption("Demo HowTo");
+  help->show();
+}
 
-  void MyWindow::add_segment_tab()
-  {
-  Qt_widget_demo_tab<Segment_tab_traits> *widget = new Qt_widget_demo_tab<Segment_tab_traits>(SEGMENT_TRAITS , this, tab_number);
-  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+void MyWindow::add_segment_tab()
+{
+  Qt_widget_demo_tab<Segment_tab_traits> *widget =
+    new Qt_widget_demo_tab<Segment_tab_traits>(SEGMENT_TRAITS , this,
+                                               tab_number);
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this,
+          SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
   tab_number++;
   number_of_tabs++;
   // add the new widget to myBar
-  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index ) ) , widget->index );
+  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index )),
+                    widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
   resize(m_width,m_height);
   something_changed();
-  }
+}
 
-  void MyWindow::add_polyline_tab()
-  {
-  Qt_widget_demo_tab<Polyline_tab_traits> *widget = new Qt_widget_demo_tab<Polyline_tab_traits>(POLYLINE_TRAITS , this, tab_number);
-  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+void MyWindow::add_polyline_tab()
+{
+  Qt_widget_demo_tab<Polyline_tab_traits> *widget =
+    new Qt_widget_demo_tab<Polyline_tab_traits>(POLYLINE_TRAITS , this,
+                                                tab_number);
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
+          SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
   tab_number++;
   number_of_tabs++;
   // add the new widget to myBar
-  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index ) ) , widget->index );
+  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index )),
+                    widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
   resize(m_width,m_height);
   something_changed();
-  }
+}
   
-  void MyWindow::add_conic_tab()
-  {
-  Qt_widget_demo_tab<Conic_tab_traits> *widget = new Qt_widget_demo_tab<Conic_tab_traits>(CONIC_TRAITS , this , tab_number);
-  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+void MyWindow::add_conic_tab()
+{
+  Qt_widget_demo_tab<Conic_tab_traits> *widget =
+    new Qt_widget_demo_tab<Conic_tab_traits>(CONIC_TRAITS , this , tab_number);
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this,
+          SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
   tab_number++;
   number_of_tabs++;
   // add the new widget to myBar
-  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index ) ) , widget->index );
+  myBar->insertTab( widget, QString("Arr " + QString::number( widget->index )),
+                    widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
   if (!overlay_flag)
     fileOpen();
   resize(m_width,m_height);
   something_changed();
-  }
+}
 
-  void MyWindow::remove_tab()
+void MyWindow::remove_tab()
+{
+  if (number_of_tabs > 1)
   {
-    if (number_of_tabs > 1)
-    {
-          myBar->removePage(myBar->currentPage());
-      number_of_tabs--;
-    }
-    else
-    {
-      QMessageBox::information( this, my_title_string,
-      "Can not remove last tab");
-    }
-
+    myBar->removePage(myBar->currentPage());
+    number_of_tabs--;
   }
-
-
-  void MyWindow::timer_done()
+  else
   {
-  // We peform downcasting from QWigdet* to Qt_widget_demo_tab*, as we know that only
-  // Qt_widget_demo_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+    QMessageBox::information( this, my_title_string,
+                              "Can not remove last tab");
+  }
+}
 
-    if(old_state!=w_demo_p->current_state){
-      w_demo_p->redraw();
-      old_state = w_demo_p->current_state;
-    }
-  }  
+void MyWindow::timer_done()
+{
+  // We peform downcasting from QWigdet* to Qt_widget_demo_tab*, as we know
+  // that only Qt_widget_demo_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+
+  if(old_state!=w_demo_p->current_state){
+    w_demo_p->redraw();
+    old_state = w_demo_p->current_state;
+  }
+}  
 
 void MyWindow::updateTraitsType( QAction *action )
 {
   //if (tab_number == 0) return;
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab *old_widget = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab *old_widget =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   Qt_widget_base_tab *widget;
 
   if (action == setSegmentTraits)
@@ -412,7 +426,8 @@ void MyWindow::updateTraitsType( QAction *action )
   else if (action == setPolylineTraits)
   {
     if (old_widget->traits_type == POLYLINE_TRAITS) return;
-    widget = new Qt_widget_demo_tab<Polyline_tab_traits>(POLYLINE_TRAITS , this);
+    widget = new Qt_widget_demo_tab<Polyline_tab_traits>(POLYLINE_TRAITS ,
+                                                         this);
   }
   else if (action == setConicTraits)
   {
@@ -429,7 +444,8 @@ void MyWindow::updateTraitsType( QAction *action )
   *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
   widget->set_window(-10, 10, -10, 10);
   widget->setMouseTracking(TRUE);
-  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this, SLOT(get_new_object(CGAL::Object)));
+  connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),this,
+          SLOT(get_new_object(CGAL::Object)));
   widget->attach(testlayer);
   widget->m_line_width = 2;
   widget->index = old_index;
@@ -472,18 +488,19 @@ void MyWindow::setTraits( TraitsType t )
 
 void MyWindow::updateSnapMode( QAction *action )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   if ( action == setNoneSnapMode ) {
-  w_demo_p->snap_mode = NONE;
+    w_demo_p->snap_mode = NONE;
   }
   else if ( action == setGridSnapMode ) {
-  w_demo_p->snap_mode = GRID;
+    w_demo_p->snap_mode = GRID;
   }
   else if ( action == setPointSnapMode ) {
-  w_demo_p->snap_mode = POINT;
+    w_demo_p->snap_mode = POINT;
   }
 
   something_changed();
@@ -491,9 +508,10 @@ void MyWindow::updateSnapMode( QAction *action )
 
 void MyWindow::setSnapMode( SnapMode m )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   w_demo_p->snap_mode = m;
   switch ( m ) {
@@ -515,13 +533,14 @@ void MyWindow::setSnapMode( SnapMode m )
 
 void MyWindow::updateMode( QAction *action )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   if ( action == insertMode ) 
   {
-        w_demo_p->mode = INSERT;
+    w_demo_p->mode = INSERT;
     //w_demo_p->setCursor(QCursor(Qt::ArrowCursor));
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
     statusBar()->removeWidget(current_label);
@@ -549,7 +568,8 @@ void MyWindow::updateMode( QAction *action )
   else if ( action == rayShootingMode ) 
   {
     w_demo_p->mode = RAY_SHOOTING;
-    w_demo_p->setCursor(QCursor( QPixmap( (const char**)small_ray_shooting_xpm)));
+    w_demo_p->
+      setCursor(QCursor( QPixmap( (const char**)small_ray_shooting_xpm)));
     statusBar()->removeWidget(current_label);
     statusBar()->addWidget(ray_shooting_label);
     current_label = ray_shooting_label;
@@ -567,9 +587,10 @@ void MyWindow::updateMode( QAction *action )
 
 void MyWindow::setMode( Mode m )
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   w_demo_p->mode = m;
   switch ( m ) {
@@ -593,40 +614,45 @@ void MyWindow::setMode( Mode m )
 
 void MyWindow::update()
 {
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know
+  // that only Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab  *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   setMode( w_demo_p->mode );
   setSnapMode( w_demo_p->snap_mode );
-  setTraits( w_demo_p->traits_type );
-      
+  setTraits( w_demo_p->traits_type );  
 }
 
 void MyWindow::zoomin()
 {
-    Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+    Qt_widget_base_tab  *w_demo_p =
+      static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p->zoom(m_scailing_factor);
 }
 
 void MyWindow::zoomout()
 {
-    Qt_widget_base_tab  *w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+    Qt_widget_base_tab  *w_demo_p =
+      static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p->zoom(1/m_scailing_factor);
 }
 
 void MyWindow::properties()
 {
-    PropertiesForm *optionsForm = new PropertiesForm( myBar , this ,number_of_tabs );
+    PropertiesForm *optionsForm =
+      new PropertiesForm( myBar , this ,number_of_tabs );
     
     if ( optionsForm->exec() ) 
   {  
-    Qt_widget_base_tab  *w_demo_p1 = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+    Qt_widget_base_tab  *w_demo_p1 =
+      static_cast<Qt_widget_base_tab *> (myBar->currentPage());
     m_width = optionsForm->box1->value();
     m_height = optionsForm->box2->value();
     w_demo_p1->m_line_width = optionsForm->box3->value();
     double new_factor = static_cast<double> (optionsForm->box4->value());
     m_scailing_factor = (new_factor/10);
-    std::cout << optionsForm->box4->value() << " " << m_scailing_factor << std::endl;
+    std::cout << optionsForm->box4->value() << " " << m_scailing_factor
+              << std::endl;
     resize(m_width,m_height);
     w_demo_p1->redraw();
     something_changed();
@@ -642,336 +668,337 @@ void MyWindow::fileOpenPolyline()
 
 void MyWindow::fileOpen()
 {
-    
-    QString filename = QFileDialog::getOpenFileName(
-          QString::null, 0, this,
-          "file open", "Demo -- File Open" );
-    if ( !filename.isEmpty() )
-  load( filename );
-    else
-  statusBar()->message( "File Open abandoned", 2000 );
+  QString filename =
+    QFileDialog::getOpenFileName(QString::null, 0, this,
+                                 "file open", "Demo -- File Open" );
+  if ( !filename.isEmpty() )
+    load( filename );
+  else
+    statusBar()->message( "File Open abandoned", 2000 );
 }
 
 void MyWindow::load( const QString& filename )
 {
-    std::ifstream inputFile(filename);
-        // Creates an ofstream object named inputFile
-    if (! inputFile.is_open()) // Always test file open
-    {
-      std::cout << "Error opening input file" << std::endl;
-      return;
-    }
+  std::ifstream inputFile(filename);
+  // Creates an ofstream object named inputFile
+  if (! inputFile.is_open()) // Always test file open
+  {
+    std::cout << "Error opening input file" << std::endl;
+    return;
+  }
 
+  Qt_widget_base_tab  *w_demo =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+
+  if (w_demo->traits_type == CONIC_TRAITS)
+  {
+    Qt_widget_demo_tab<Conic_tab_traits>  *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+        (myBar->currentPage());
+    char dummy[256];
+    Pm_base_conic_2* cv;
+    int count;
+    //std::list<Pm_conic_2> curve_list;
     
-        Qt_widget_base_tab  *w_demo = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-
-    if (w_demo->traits_type == CONIC_TRAITS)
+    inputFile >> count;
+    inputFile.getline(dummy, sizeof(dummy));
+    for (int i = 0; i < count; i++) 
     {
-      Qt_widget_demo_tab<Conic_tab_traits>  *w_demo_p = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> (myBar->currentPage());
-      char dummy[256];
-      Pm_base_conic_2* cv;
-      int count;
-      //std::list<Pm_conic_2> curve_list;
-    
-      inputFile >> count;
-      inputFile.getline(dummy, sizeof(dummy));
-      for (int i = 0; i < count; i++) 
-      {
-        cv = new Pm_base_conic_2();
-        ReadCurve(inputFile, *cv);
+      cv = new Pm_base_conic_2();
+      ReadCurve(inputFile, *cv);
 
-        Curve_conic_data cd;
-        cd.m_type = Curve_conic_data::LEAF;
-        cd.m_index = w_demo_p->index;
-        cd.m_ptr.m_curve = cv;
+      Curve_conic_data cd;
+      cd.m_type = Curve_conic_data::LEAF;
+      cd.m_index = w_demo_p->index;
+      cd.m_ptr.m_curve = cv;
 
-        //curve_list.push_back(Pm_conic_2( *cv , cd));
-        w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd));
+      //curve_list.push_back(Pm_conic_2( *cv , cd));
+      w_demo_p->m_curves_arr.insert(Pm_conic_2( *cv , cd));
         
-        CGAL::Bbox_2 curve_bbox = cv->bbox();
-        if (i == 0)
-          w_demo->bbox = curve_bbox;
-        else
-          w_demo->bbox = w_demo->bbox + curve_bbox;
-      }
-      
-      //w_demo_p->m_curves_arr.insert(curve_list.begin() , curve_list.end());
-      // insert xcurve into xcurve list
-
-      Conic_arr::Edge_iterator ei;
-
-      for (ei = w_demo_p->m_curves_arr.edges_begin(); ei != w_demo_p->m_curves_arr.edges_end(); ++ei) 
-      {
-        Pm_xconic_2 *xseg = new Pm_xconic_2(ei->curve());
-        w_demo_p->m_curves_list.push_back(xseg);
-      }
-
+      CGAL::Bbox_2 curve_bbox = cv->bbox();
+      if (i == 0)
+        w_demo->bbox = curve_bbox;
+      else
+        w_demo->bbox = w_demo->bbox + curve_bbox;
     }
+      
+    //w_demo_p->m_curves_arr.insert(curve_list.begin() , curve_list.end());
+    // insert xcurve into xcurve list
 
-    else if (w_demo->traits_type == POLYLINE_TRAITS)
+    Conic_arr::Edge_iterator ei;
+
+    for (ei = w_demo_p->m_curves_arr.edges_begin();
+         ei != w_demo_p->m_curves_arr.edges_end(); ++ei) 
     {
-      Qt_widget_demo_tab<Polyline_tab_traits>  *w_demo_p = static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> (myBar->currentPage());
-      w_demo_p->m_curves_list.clear();
-      w_demo_p->m_curves_arr.clear();
+      Pm_xconic_2 *xseg = new Pm_xconic_2(ei->curve());
+      w_demo_p->m_curves_list.push_back(xseg);
+    }
+  }
+
+  else if (w_demo->traits_type == POLYLINE_TRAITS)
+  {
+    Qt_widget_demo_tab<Polyline_tab_traits>  *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+        (myBar->currentPage());
+    w_demo_p->m_curves_list.clear();
+    w_demo_p->m_curves_arr.clear();
       
-      int num_polylines, num_segments;
-      int ix, iy;
-      std::vector<Pm_pol_point_2> points;
-      int i, j;
+    int num_polylines, num_segments;
+    int ix, iy;
+    std::vector<Pm_pol_point_2> points;
+    int i, j;
 
-      inputFile >> num_polylines;
-      for (i = 0; i < num_polylines; i++) 
+    inputFile >> num_polylines;
+    for (i = 0; i < num_polylines; i++) 
+    {
+      inputFile >> num_segments;
+      points.clear();
+      for (j = 0; j < num_segments; j++)
       {
-        inputFile >> num_segments;
-        points.clear();
-        for (j = 0; j < num_segments; j++)
-        {
-          inputFile >> ix >> iy;
-          points.push_back (Pm_pol_point_2(NT(ix),NT(iy)));
-        }
-
-        Pm_base_pol_2 *base_polyline = new Pm_base_pol_2(points.begin(), points.end());
-        
-        CGAL::Bbox_2 curve_bbox = base_polyline->bbox();
-        if (i == 0)
-          w_demo->bbox = curve_bbox;
-        else
-          w_demo->bbox = w_demo->bbox + curve_bbox;
-
-        Curve_pol_data cd;
-        cd.m_type = Curve_pol_data::LEAF;
-        cd.m_index = w_demo_p->index;
-        cd.m_ptr.m_curve = base_polyline;
-
-        w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
-        w_demo_p->m_curves_list.push_back(new Pm_pol_2( *base_polyline , cd));
-    
+        inputFile >> ix >> iy;
+        points.push_back (Pm_pol_point_2(NT(ix),NT(iy)));
       }
 
+      Pm_base_pol_2 *base_polyline =
+        new Pm_base_pol_2(points.begin(), points.end());
+        
+      CGAL::Bbox_2 curve_bbox = base_polyline->bbox();
+      if (i == 0)
+        w_demo->bbox = curve_bbox;
+      else
+        w_demo->bbox = w_demo->bbox + curve_bbox;
+
+      Curve_pol_data cd;
+      cd.m_type = Curve_pol_data::LEAF;
+      cd.m_index = w_demo_p->index;
+      cd.m_ptr.m_curve = base_polyline;
+
+      w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
+      w_demo_p->m_curves_list.push_back(new Pm_pol_2( *base_polyline , cd));
     }
+  }
 
-    w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , w_demo->bbox.ymin() , w_demo->bbox.ymax());
+  w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() ,
+                     w_demo->bbox.ymin() , w_demo->bbox.ymax());
 
-    inputFile.close();
-    something_changed();
+  inputFile.close();
+  something_changed();
 }
 
 
 void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
 {
-      // Read a line from the input file.
-      char one_line[128];
+  // Read a line from the input file.
+  char one_line[128];
       
-      skip_comments (is, one_line);
-      std::string stringvalues(one_line);
-      std::istringstream str_line (stringvalues, std::istringstream::in);
+  skip_comments (is, one_line);
+  std::string stringvalues(one_line);
+  std::istringstream str_line (stringvalues, std::istringstream::in);
       
-      // Get the arc type.
-      char     type;
-      bool     is_circle = false;              // Is this a circle.
-      Pm_conic_circle_2 circle;
-      CONIC_NT       r, s, t, u, v, w;               // The conic coefficients.
+  // Get the arc type.
+  char     type;
+  bool     is_circle = false;              // Is this a circle.
+  Pm_conic_circle_2 circle;
+  CONIC_NT       r, s, t, u, v, w;               // The conic coefficients.
       
-      str_line >> type;
+  str_line >> type;
       
-      // An ellipse (full ellipse or a partial ellipse):
-      if (type == 'f' || type == 'F' || type == 'e' || type == 'E')
-      {  
-          // Read the ellipse (using the format "a b x0 y0"):
-          //
-          //     x - x0   2      y - y0   2
-          //  ( -------- )  + ( -------- )  = 1
-          //       a               b
-          //
-          CONIC_NT     a, b, x0, y0;
+  // An ellipse (full ellipse or a partial ellipse):
+  if (type == 'f' || type == 'F' || type == 'e' || type == 'E')
+  {  
+    // Read the ellipse (using the format "a b x0 y0"):
+    //
+    //     x - x0   2      y - y0   2
+    //  ( -------- )  + ( -------- )  = 1
+    //       a               b
+    //
+    CONIC_NT     a, b, x0, y0;
+    
+    str_line >> a >> b >> x0 >> y0;
           
-          str_line >> a >> b >> x0 >> y0;
+    CONIC_NT     a_sq = a*a;
+    CONIC_NT     b_sq = b*b;
           
-          CONIC_NT     a_sq = a*a;
-          CONIC_NT     b_sq = b*b;
+    if (a == b)
+    {
+      is_circle = true;
+      circle = Pm_conic_circle_2 (Pm_conic_point_2 (x0, y0), a*b,
+                                  CGAL::CLOCKWISE);
+    }
+    else
+    {
+      r = b_sq;
+      s = a_sq;
+      t = 0;
+      u = -2*x0*b_sq;
+      v = -2*y0*a_sq;
+      w = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
+    }
           
-          if (a == b)
-          {
-              is_circle = true;
-              circle = Pm_conic_circle_2 (Pm_conic_point_2 (x0, y0), a*b, CGAL::CLOCKWISE);
-          }
-          else
-          {
-              r = b_sq;
-              s = a_sq;
-              t = 0;
-              u = -2*x0*b_sq;
-              v = -2*y0*a_sq;
-              w = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
-          }
-          
-          if (type == 'f' || type == 'F')
-          {
-              // Create a full ellipse (or circle).
-              if (is_circle)
-                  cv = Pm_base_conic_2 (circle);
-              else
-                  cv = Pm_base_conic_2 (r, s, t, u, v, w);
-              
-              return;
-          }
-      }
-      else if (type == 'h' || type == 'H')
-      {
-          // Read the hyperbola (using the format "a b x0 y0"):
-          //
-          //     x - x0   2      y - y0   2
-          //  ( -------- )  - ( -------- )  = 1
-          //       a               b
-          //
-          CONIC_NT     a, b, x0, y0;
-          
-          str_line >> a >> b >> x0 >> y0;
-          
-          CONIC_NT     a_sq = a*a;
-          CONIC_NT     b_sq = b*b;
-          
-          r = b_sq;
-          s= -a_sq;
-          t = 0;
-          u = -2*x0*b_sq;
-          v = 2*y0*a_sq;
-          w = x0*x0*b_sq - y0*y0*a_sq - a_sq*b_sq;  
-      }
-      else if (type == 'p' || type == 'P')
-      {
-          // Read the parabola (using the format "c x0 y0"):
-          //
-          //                        2
-          //  4c*(y - y0) = (x - x0)
-          //
-          CONIC_NT     c, x0, y0;
-          
-          str_line >> c >> x0 >> y0;
-          
-          r = 1;
-          s = 0;
-          t = 0;
-          u = -2*x0;
-          v = -4*c;
-          w = x0*x0 + 4*c*y0;
-      }
-      else if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
-      {
-          // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-          str_line >> r >> s >> t >> u >> v >> w;
-          
-          if (type == 'c' || type == 'C')
-          {
-              // Create a full conic (should work only for ellipses).
-              cv = Pm_base_conic_2 (r, s, t, u, v, w);
-              return;
-          }
-      }
-      else if (type == 's' || type == 'S')
-      {
-          // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
-          CONIC_NT      x1, y1, x2, y2;
-          
-          str_line >> x1 >> y1 >> x2 >> y2;
-          
-          Pm_conic_point_2   source (x1, y1);
-          Pm_conic_point_2   target (x2, y2);
-          Pm_conic_segment_2 segment (source, target);
-          
-          // Create the segment.
-          cv = Pm_base_conic_2(segment);
-          return;
-      }
-      else if (type == 'i' || type == 'I')
-      {
-          // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-          str_line >> r >> s >> t >> u >> v >> w;
-          
-          // Read the approximated source, along with a general conic 
-          // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
-          // defines the source.
-          CONIC_NT     r1, s1, t1, u1, v1, w1;
-          CONIC_NT     x1, y1;
-          
-          str_line >> x1 >> y1;
-          str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
-          
-          Pm_conic_point_2   app_source (x1, y1);
-          
-          // Read the approximated target, along with a general conic 
-          // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
-          // defines the target.
-          CONIC_NT     r2, s2, t2, u2, v2, w2;
-          CONIC_NT     x2, y2;
-          
-          str_line >> x2 >> y2;
-          str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
-          
-          Pm_conic_point_2   app_target (x2, y2);
-          
-          // Create the conic arc.
-          cv = Pm_base_conic_2 (r, s, t, u, v ,w,
-                        app_source, r1, s1, t1, u1, v1, w1,
-                        app_target, r2, s2, t2, u2, v2, w2);
-          return;
-      }
-      else
-      {
-          std::cerr << "Illegal conic type specification: " << type << "."
-                    << std::endl;
-          return;
-      }
-      
-      // Read the end points of the arc and create it.
-      CONIC_NT    x1, y1, x2, y2;
-      
-      str_line >> x1 >> y1 >> x2 >> y2;
-      
-      Pm_conic_point_2 source (x1, y1);
-      Pm_conic_point_2 target (x2, y2);
-      
-      // Create the conic (or circular) arc.
+    if (type == 'f' || type == 'F')
+    {
+      // Create a full ellipse (or circle).
       if (is_circle)
-      {
-          cv = Pm_base_conic_2 (circle,
-                        source, target);
-      }
+        cv = Pm_base_conic_2 (circle);
       else
-      {
-          cv = Pm_base_conic_2 (r, s, t, u, v, w,
-                        source, target);
-      }
-      
+        cv = Pm_base_conic_2 (r, s, t, u, v, w);
+              
       return;
+    }
+  }
+  else if (type == 'h' || type == 'H')
+  {
+    // Read the hyperbola (using the format "a b x0 y0"):
+    //
+    //     x - x0   2      y - y0   2
+    //  ( -------- )  - ( -------- )  = 1
+    //       a               b
+    //
+    CONIC_NT     a, b, x0, y0;
+          
+    str_line >> a >> b >> x0 >> y0;
+    
+    CONIC_NT     a_sq = a*a;
+    CONIC_NT     b_sq = b*b;
+          
+    r = b_sq;
+    s= -a_sq;
+    t = 0;
+    u = -2*x0*b_sq;
+    v = 2*y0*a_sq;
+    w = x0*x0*b_sq - y0*y0*a_sq - a_sq*b_sq;  
+  }
+  else if (type == 'p' || type == 'P')
+  {
+    // Read the parabola (using the format "c x0 y0"):
+    //
+    //                        2
+    //  4c*(y - y0) = (x - x0)
+    //
+    CONIC_NT     c, x0, y0;
+          
+    str_line >> c >> x0 >> y0;
+          
+    r = 1;
+    s = 0;
+    t = 0;
+    u = -2*x0;
+    v = -4*c;
+    w = x0*x0 + 4*c*y0;
+  }
+  else if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+  {
+    // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+    str_line >> r >> s >> t >> u >> v >> w;
+    
+    if (type == 'c' || type == 'C')
+    {
+      // Create a full conic (should work only for ellipses).
+      cv = Pm_base_conic_2 (r, s, t, u, v, w);
+      return;
+    }
+  }
+  else if (type == 's' || type == 'S')
+  {
+    // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
+    CONIC_NT      x1, y1, x2, y2;
+          
+    str_line >> x1 >> y1 >> x2 >> y2;
+          
+    Pm_conic_point_2   source (x1, y1);
+    Pm_conic_point_2   target (x2, y2);
+    Pm_conic_segment_2 segment (source, target);
+    
+    // Create the segment.
+    cv = Pm_base_conic_2(segment);
+    return;
+  }
+  else if (type == 'i' || type == 'I')
+  {
+    // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+    str_line >> r >> s >> t >> u >> v >> w;
+          
+    // Read the approximated source, along with a general conic 
+    // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
+    // defines the source.
+    CONIC_NT     r1, s1, t1, u1, v1, w1;
+    CONIC_NT     x1, y1;
+          
+    str_line >> x1 >> y1;
+    str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
+          
+    Pm_conic_point_2   app_source (x1, y1);
+          
+    // Read the approximated target, along with a general conic 
+    // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
+    // defines the target.
+    CONIC_NT     r2, s2, t2, u2, v2, w2;
+    CONIC_NT     x2, y2;
+          
+    str_line >> x2 >> y2;
+    str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
+          
+    Pm_conic_point_2   app_target (x2, y2);
+          
+    // Create the conic arc.
+    cv = Pm_base_conic_2 (r, s, t, u, v ,w,
+                          app_source, r1, s1, t1, u1, v1, w1,
+                          app_target, r2, s2, t2, u2, v2, w2);
+    return;
+  }
+  else
+  {
+    std::cerr << "Illegal conic type specification: " << type << "."
+              << std::endl;
+    return;
+  }
+      
+  // Read the end points of the arc and create it.
+  CONIC_NT    x1, y1, x2, y2;
+      
+  str_line >> x1 >> y1 >> x2 >> y2;
+      
+  Pm_conic_point_2 source (x1, y1);
+  Pm_conic_point_2 target (x2, y2);
+      
+  // Create the conic (or circular) arc.
+  if (is_circle)
+  {
+    cv = Pm_base_conic_2 (circle, source, target);
+  }
+  else
+  {
+    cv = Pm_base_conic_2 (r, s, t, u, v, w, source, target);
+  }
+      
+  return;
 }
     
 void MyWindow::skip_comments( std::ifstream& is, char* one_line )
 {
-    while( !is.eof() )
+  while( !is.eof() )
   {
-        is.getline( one_line, 128 );
-        if( one_line[0] != '#' )
+    is.getline( one_line, 128 );
+    if( one_line[0] != '#' )
     {
-            break;
-        }
+      break;
     }
+  }
 }
 
 void MyWindow::fileSaveAs()
 {
-    QString filename = QFileDialog::getSaveFileName(
-          QString::null, "Planar Map (*.pm)", this,
-          "file save as", "Planar Map -- File Save As" );
-    if ( !filename.isEmpty() ) 
+  QString filename =
+    QFileDialog::getSaveFileName(QString::null, "Planar Map (*.pm)", this,
+                                 "file save as", "Planar Map -- File Save As");
+  if ( !filename.isEmpty() ) 
   {
     int answer = 0;
     if ( QFile::exists( filename ) )
-      answer = QMessageBox::warning(
-          this, "Overwrite File",
-          QString( "Overwrite\n\'%1\'?" ).
-          arg( filename ),
-          "&Yes", "&No", QString::null, 1, 1 );
+      answer = QMessageBox::warning(this, "Overwrite File",
+                                    QString( "Overwrite\n\'%1\'?" ).
+                                    arg( filename ),
+                                    "&Yes", "&No", QString::null, 1, 1 );
     if ( answer == 0 ) 
     {
       m_filename = filename;
@@ -979,43 +1006,50 @@ void MyWindow::fileSaveAs()
       fileSave();
       return;
     }
-    }
-    statusBar()->message( "Saving abandoned", 2000 );
+  }
+  statusBar()->message( "Saving abandoned", 2000 );
 }
 
 void MyWindow::fileSave()
 {
-    if ( m_filename.isEmpty() ) {
-  fileSaveAs();
-  return;
-    }
+  if ( m_filename.isEmpty() ) {
+    fileSaveAs();
+    return;
+  }
 
   std::ofstream outFile(m_filename);
-    // Creates an ofstream object named outFile
+  // Creates an ofstream object named outFile
   if (! outFile.is_open()) // Always test file open
   {
     std::cout << "Error opening input file" << std::endl;
     return;
   }
 
-    Qt_widget_base_tab  *w_demo_p1 = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  Qt_widget_base_tab  *w_demo_p1 =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   switch ( w_demo_p1->traits_type ) {
-    case SEGMENT_TRAITS:
+   case SEGMENT_TRAITS:
     {
-      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> (myBar->currentPage());
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
+          (myBar->currentPage());
       outFile << w_demo_p->m_curves_arr;
       break;
     }
     case POLYLINE_TRAITS:
     {
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> (myBar->currentPage());
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+          (myBar->currentPage());
       outFile << w_demo_p->m_curves_arr;
       break;
     }
     case CONIC_TRAITS:
     {
-      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> (myBar->currentPage());
+      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+          (myBar->currentPage());
       outFile << w_demo_p->m_curves_arr;
       break;
     }
@@ -1033,30 +1067,39 @@ void MyWindow::fileSave_ps()
 #if 0
   CGAL::Postscript_file_stream ps_stream(m_width, m_height ,"pm.ps");
 
-    Qt_widget_base_tab  *w_demo_p1 = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  Qt_widget_base_tab  *w_demo_p1 =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
 
   switch ( w_demo_p1->traits_type ) {
-    case SEGMENT_TRAITS:
+   case SEGMENT_TRAITS:
     {
-      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> (myBar->currentPage());
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
+          (myBar->currentPage());
       
       //ps_stream.set_line_width(w_demo_p->m_line_width);
       CGAL::Pm_drawer<Seg_arr, CGAL::Postscript_file_stream> drawer(ps_stream);
       ps_stream << CGAL::BLUE;
-      drawer.draw_halfedges(w_demo_p->m_curves_arr.halfedges_begin(), w_demo_p->m_curves_arr.halfedges_end());
+      drawer.draw_halfedges(w_demo_p->m_curves_arr.halfedges_begin(),
+                            w_demo_p->m_curves_arr.halfedges_end());
       ps_stream << CGAL::RED;
-      drawer.draw_vertices(w_demo_p->m_curves_arr.vertices_begin(), w_demo_p->m_curves_arr.vertices_end());
+      drawer.draw_vertices(w_demo_p->m_curves_arr.vertices_begin(),
+                           w_demo_p->m_curves_arr.vertices_end());
       break;
     }
     case POLYLINE_TRAITS:
     {
-      //Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> (myBar->currentPage());
+      //Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+     // static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+     // (myBar->currentPage());
       //outFile << w_demo_p->m_curves_arr;
       break;
     }
     case CONIC_TRAITS:
     {
-      //Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> (myBar->currentPage());
+      //Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+     // static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+     // (myBar->currentPage());
       //outFile << w_demo_p->m_curves_arr;
       break;
     }
@@ -1067,21 +1110,22 @@ void MyWindow::fileSave_ps()
 
 void MyWindow::print()
 {
-    Qt_widget_base_tab  *w_demo_p1 = static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  Qt_widget_base_tab  *w_demo_p1 =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   w_demo_p1->print_to_ps();
 }
 
-
 void MyWindow::overlay_pm()
 {
-    OverlayForm *form = new OverlayForm( myBar , this ,tab_number );
+  OverlayForm *form = new OverlayForm( myBar , this ,tab_number );
     
-    if ( form->exec() ) 
+  if ( form->exec() ) 
   {  
     unsigned int i = 2;
     if (form->listBox2->count() < i)
     {
-      QMessageBox::information( this, my_title_string,"Please!!! you need more than one planar map to make an overlay...");
+      QMessageBox::information( this, my_title_string,
+        "Please!!! you need more than one planar map to make an overlay...");
       return;
     }
     std::list<int> indexes;
@@ -1118,8 +1162,10 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
     case SEGMENT_TRAITS:
     {
       add_segment_tab();
-      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new = static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> (myBar->currentPage());
-            Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p;
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new =
+        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
+          (myBar->currentPage());
+      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p;
 
       std::list<Pm_seg_2> seg_list;
       Pm_seg_const_iter itp;
@@ -1133,9 +1179,12 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
         indexes.pop_front();
         w_demo_p_new->setColor(*it);
         it++;
-        w_demo_p = static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> (myBar->page( current ));
+        w_demo_p =
+          static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
+            (myBar->page( current ));
 
-        for (itp = w_demo_p->m_curves_list.begin(); itp != w_demo_p->m_curves_list.end(); ++itp)
+        for (itp = w_demo_p->m_curves_list.begin();
+             itp != w_demo_p->m_curves_list.end(); ++itp)
         {
           Pm_seg_2 * seg = new Pm_seg_2( **itp );
           w_demo_p_new->m_curves_list.push_back(seg);
@@ -1151,7 +1200,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
       // Go over all vertices and for each vertex print the ID numbers of the
       // base curves that go through it.
       Seg_arr::Vertex_iterator   vit;
-      for (vit = w_demo_p_new->m_curves_arr.vertices_begin(); vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
+      for (vit = w_demo_p_new->m_curves_arr.vertices_begin();
+           vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
       {
         Seg_arr::Halfedge_around_vertex_circulator 
         eit, first = (*vit).incident_halfedges();
@@ -1182,7 +1232,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
   
       // update new planner map index
       Pm_seg_iter iter;
-      for (iter = w_demo_p_new->m_curves_list.begin(); iter != w_demo_p_new->m_curves_list.end(); ++iter)
+      for (iter = w_demo_p_new->m_curves_list.begin();
+           iter != w_demo_p_new->m_curves_list.end(); ++iter)
       {
         Curve_data cd = (**iter).get_data();
         cd.m_type = Curve_data::INTERNAL;
@@ -1195,8 +1246,10 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
     case POLYLINE_TRAITS:
     {
       add_polyline_tab();
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new = static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> (myBar->currentPage());
-            Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p;
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new =
+        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+          (myBar->currentPage());
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p;
 
       std::list<Pm_pol_2> pol_list;
       Pm_pol_const_iter itp;
@@ -1210,9 +1263,12 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
         indexes.pop_front();
         w_demo_p_new->setColor(*it);
         it++;
-        w_demo_p = static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> (myBar->page( current ));
+        w_demo_p =
+          static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+            (myBar->page( current ));
 
-        for (itp = w_demo_p->m_curves_list.begin(); itp != w_demo_p->m_curves_list.end(); ++itp)
+        for (itp = w_demo_p->m_curves_list.begin();
+             itp != w_demo_p->m_curves_list.end(); ++itp)
         {
           Pm_pol_2 * seg = new Pm_pol_2( **itp );
           w_demo_p_new->m_curves_list.push_back(seg);
@@ -1228,7 +1284,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
       // Go over all vertices and for each vertex print the ID numbers of the
       // base curves that go through it.
       Pol_arr::Vertex_iterator   vit;
-      for (vit = w_demo_p_new->m_curves_arr.vertices_begin(); vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
+      for (vit = w_demo_p_new->m_curves_arr.vertices_begin();
+           vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
       {
         Pol_arr::Halfedge_around_vertex_circulator 
         eit, first = (*vit).incident_halfedges();
@@ -1259,7 +1316,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
   
       // update new planner map index
       Pm_pol_iter iter;
-      for (iter = w_demo_p_new->m_curves_list.begin(); iter != w_demo_p_new->m_curves_list.end(); ++iter)
+      for (iter = w_demo_p_new->m_curves_list.begin();
+           iter != w_demo_p_new->m_curves_list.end(); ++iter)
       {
         Curve_pol_data cd = (**iter).get_data();
         cd.m_type = Curve_pol_data::INTERNAL;
@@ -1274,8 +1332,10 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
       overlay_flag = true;
       add_conic_tab();
       overlay_flag = false;
-      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> (myBar->currentPage());
-            Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p;
+      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new =
+        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+          (myBar->currentPage());
+      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p;
 
       //std::list<Pm_xconic_2> conic_list;
       Pm_xconic_const_iter itp;
@@ -1289,15 +1349,20 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
         indexes.pop_front();
         w_demo_p_new->setColor(*it);
         it++;
-        w_demo_p = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> (myBar->page( current ));
+        w_demo_p =
+          static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+            (myBar->page( current ));
 
-        for (itp = w_demo_p->m_curves_list.begin(); itp != w_demo_p->m_curves_list.end(); ++itp)
+        for (itp = w_demo_p->m_curves_list.begin();
+             itp != w_demo_p->m_curves_list.end(); ++itp)
         {
           Pm_xconic_2 * seg = new Pm_xconic_2( **itp );
           w_demo_p_new->m_curves_list.push_back(seg);
           //conic_list.push_back(*seg);
-          Pm_base_conic_2* org_conic = w_demo_p_new->m_tab_traits.get_origin_curve(*seg);
-          w_demo_p_new->m_curves_arr.insert(Pm_conic_2( *org_conic , seg->get_data() ));
+          Pm_base_conic_2* org_conic =
+            w_demo_p_new->m_tab_traits.get_origin_curve(*seg);
+          w_demo_p_new->m_curves_arr.insert(Pm_conic_2( *org_conic ,
+                                                        seg->get_data() ));
 
           w_demo_p_new->draw_curve( **itp);
         }
@@ -1310,7 +1375,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
       // Go over all vertices and for each vertex print the ID numbers of the
       // base curves that go through it.
       Conic_arr::Vertex_iterator   vit;
-      for (vit = w_demo_p_new->m_curves_arr.vertices_begin(); vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
+      for (vit = w_demo_p_new->m_curves_arr.vertices_begin();
+           vit != w_demo_p_new->m_curves_arr.vertices_end(); vit++)
       {
         Conic_arr::Halfedge_around_vertex_circulator 
         eit, first = (*vit).incident_halfedges();
@@ -1341,7 +1407,8 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
   
       // update new planner map index
       Pm_xconic_iter iter;
-      for (iter = w_demo_p_new->m_curves_list.begin(); iter != w_demo_p_new->m_curves_list.end(); ++iter)
+      for (iter = w_demo_p_new->m_curves_list.begin();
+           iter != w_demo_p_new->m_curves_list.end(); ++iter)
       {
         Curve_conic_data cd = (**iter).get_data();
         cd.m_type = Curve_conic_data::INTERNAL;
@@ -1362,8 +1429,8 @@ int MyWindow::realIndex(int index)
   {
     if ( myBar->isTabEnabled( myBar->page(i) ) )
     {
-      // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we know that only
-      // Qt_widget_base_tab objects are stored in the tab pages.
+      // We peform downcasting from QWigdet* to Qt_widget_base_tab*, as we
+      // know that only Qt_widget_base_tab objects are stored in the tab pages.
       w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->page(i));
       if (w_demo_p->index == index)
         return i;
