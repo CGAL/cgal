@@ -40,6 +40,7 @@ is represented by two halfedges or two halffacets, respectively.
 \begin{tabbing}
 \ccc{template <} \=\ccc{class Nef_polyhedronTraits_3,}\\
                  \>\ccc{class Nef_polyhedronItems_3 = CGAL::SNC_items_3,}\\
+                 \>\ccc{class Nef_polyhedronMarks_3 = bool >}\\
     \ccc{class Nef_polyhedron_3;}
 \end{tabbing}
 
@@ -54,6 +55,9 @@ The second parameter expects a model of the concept
 \ccc{Nef_polyhedronItems_3}.  The default is the \ccc{CGAL::SNC_items}
 class.
 
+The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks_3}.
+The default is the basic type \ccc{bool}.
+
 \ccTypes
 
 \ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_const_iterator;}{}
@@ -61,10 +65,10 @@ class.
 \ccNestedType{Traits}{traits class selected for \ccc{Nef_polyhedronTraits_3}.}
 \ccGlue
 \ccNestedType{Items}{items class selected for \ccc{Nef_polyhedronItems_3}.}
+\ccGlue
+\ccNestedType{Mark}{mark class selected for \ccc{Nef_polyhedronMarks_3}.}
 
 \ccNestedType{Size_type}{size type of \ccc{Nef_polyhedron_3}.}
-
-\ccNestedType{Mark} {}
 
 \ccNestedType{Vertex_const_handle}{non-mutable handle to a vertex.}
 \ccGlue
