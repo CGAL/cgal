@@ -1,4 +1,6 @@
 Version 1.66 (21 June 01)
+- dual function for cells and facets
+- demo.voronoi
 - example and demo with modified vertex base
 - new remove documented
 
