@@ -4,6 +4,9 @@ OpenInventor and VRML (Virtual Reality Markup Language)
 
 CHANGES:
 
+Ver 2.0 (8 april 1999)
+introduced namespaces
+
 Ver 1.2 (29 June 1998)
 - Corrected vim bugs with closing "
 
