@@ -14,12 +14,12 @@ all:
 	make ps
 	make pdf
 	make clean
-	\rm *.ps
+	\rm *.ps *.tmp
 	clear
 	ls -l
 
 clean:
-	\rm *.aux *.dvi *.log
+	\rm *.aux *.dvi *.log *.out *.blg *.bbl
 
 superclean:
 	\rm *.ps *.pdf *~
