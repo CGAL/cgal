@@ -13,14 +13,6 @@
 #define Arrangement_2                   Ar
 #define I_Polyhedron_iterator           IPI
 #define I_Polyhedron_const_iterator     IPCI
-#define Arr_2_default_dcel              ADD
-#define Arr_segment_exact_traits        AST
-#define Arr_circles_real_traits         ACRT
-#define Arr_polyline_traits             APT
-#define Arr_base_node                   ABN
-#define Arr_2_halfedge_base             AHB
-#define Arr_2_vertex_base               AVB
-#define Arr_2_face_base                 AFB
 #define In_place_list_iterator          IPLI
 #define In_place_list_const_iterator    IPLCI
 #define allocator                       All
