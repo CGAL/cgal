@@ -1,3 +1,6 @@
+Version 5.4 (14 October 2000)
+- Removed default argument value duplication for SphereC3 ctors.
+
 Version 5.3 (13 October 2000)
 - Use Vector::squared_length().
 - Fix SphereC3.
