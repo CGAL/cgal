@@ -164,6 +164,8 @@ public:
       
       if ( curve->getId() == (*iter)->getId() ) {
 	m_isCurveInPm[counter] = true;
+	if ( getNumLeftCurves() == 0 )
+	  return i-1;
 	return i;
       }
       if ( m_isCurveInPm[counter] == true )
@@ -173,6 +175,8 @@ public:
     
     CGAL_assertion(curve->getId() == (*iter)->getId());
 
+    if ( getNumLeftCurves() == 0 )
+      i--;
     return i;
   }
 

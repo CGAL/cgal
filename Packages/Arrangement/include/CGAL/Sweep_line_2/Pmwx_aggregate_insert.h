@@ -950,50 +950,56 @@ void HandleRightCurves(PM &pm, SweepLinePlanarmap &tag)
     prevXCv = cv;
     
     Halfedge_handle res; 
+    int jump = lastEvent->getHalfedgeJumpCount(leftCurve);
     
     // if the previous event on the curve is not in the planar map yet
     if ( insertInfo->getHalfedgeHandle() == Halfedge_handle(NULL) ) 
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) {
+	if ( hhandle->target()->point() != cv.source() &&
+	     hhandle->target()->point() != cv.target() )
+	  hhandle = hhandle->twin();
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
 		 << hhandle->target()->point() << "\n";)
         res = pm.non_intersecting_insert_from_vertex(cv, hhandle, 
 						     m_change_not);
-	res = res->twin();
       } else { 
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  in face interior\n";)
 	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), 
 					 m_change_not);
-	if ( !leftCurve->isSourceLeftToTarget() ){
-	  res = res->twin();
-	}
       }
     } else 
       // the previous event on the curve is already in the planar map. 
       // Let's use it.
     {
       // skip to the right halfedge
-      int jump = lastEvent->getHalfedgeJumpCount(leftCurve);
       SL_DEBUG(std::cout << "Skipping " << jump << " steps\n";)
       Halfedge_handle prev = insertInfo->getHalfedgeHandle();
+      if ( prev->target()->point() != cv.source() &&
+	   prev->target()->point() != cv.target() )
+	prev = prev->twin();
       for ( int i = 0 ; i < jump ; i++ )
 	prev = (prev->next_halfedge())->twin();
       
       // we have a handle from the previous insert
-      if ( hhandle != Halfedge_handle(NULL) ) {
+      if ( hhandle != Halfedge_handle(NULL) ) 
+      {
+	if ( hhandle->target()->point() != cv.source() &&
+	     hhandle->target()->point() != cv.target() )
+	  hhandle = hhandle->twin();
+
 	SL_DEBUG(std::cout << "  at vertices";
 		 std::cout << prev->source()->point() << " " 
-		           << prev->target()->point();
+		           << prev->target()->point() << " --- ";
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-
-	  res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
-	  				     m_change_not);
+	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
+							 m_change_not);
       } else {
-	// if this is the first left curve being inserted
+
 	SL_DEBUG(std::cout << "  from vertex (2)";
 		 std::cout << prev->source()->point() << " " 
 	                   << prev->target()->point() << "\n";)
@@ -1073,8 +1079,12 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	       std::cout << bottomII->getHalfedgeHandle()->source()->point() 
 	                 << bottomII->getHalfedgeHandle()->target()->point()
 	                 << "\n";)
+      Halfedge_handle h1 = bottomII->getHalfedgeHandle();
+      if ( h1->target()->point() != cv.source() &&
+	   h1->target()->point() != cv.target() )
+	h1 = h1->twin();
       res = pm.non_intersecting_insert_from_vertex(cv, 
-					  bottomII->getHalfedgeHandle(), 
+						   h1,
 						   m_change_not);
     }
   } else 
@@ -1085,9 +1095,13 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	       std::cout << topII->getHalfedgeHandle()->source()->point() 
 	                 << topII->getHalfedgeHandle()->target()->point() 
                          << "\n";)
-	res = pm.non_intersecting_insert_from_vertex(cv, 
-					  topII->getHalfedgeHandle(),
-						     m_change_not);
+      Halfedge_handle h1 = topII->getHalfedgeHandle();
+      if ( h1->target()->point() != cv.source() &&
+	   h1->target()->point() != cv.target() )
+	h1 = h1->twin();
+      res = pm.non_intersecting_insert_from_vertex(cv, 
+						   h1,
+						   m_change_not);
       res = res->twin();
     } else 
     {
@@ -1097,9 +1111,17 @@ insertToPmV(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	       std::cout << topII->getHalfedgeHandle()->source()->point();
 	       std::cout << topII->getHalfedgeHandle()->target()->point() 
                          << "\n";)
+      Halfedge_handle h1 = bottomII->getHalfedgeHandle();
+      Halfedge_handle h2 = topII->getHalfedgeHandle();
+      if ( h1->target()->point() != cv.source() &&
+	   h1->target()->point() != cv.target() )
+	h1 = h1->twin();
+      if ( h2->target()->point() != cv.source() &&
+	   h2->target()->point() != cv.target() )
+	h2 = h2->twin();
       res = pm.non_intersecting_insert_at_vertices(cv,
-					     bottomII->getHalfedgeHandle(), 
-					     topII->getHalfedgeHandle(),
+					     h1, 
+					     h2,
 					     m_change_not);
     }
   }
