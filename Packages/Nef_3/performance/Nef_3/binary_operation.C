@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
   assert(argc==3);
   
   std::ifstream in1(argv[1]);
-  std::ifstream in1(argv[2]);
+  std::ifstream in2(argv[2]);
 
   Nef_polyhedron N1, N2;
   in1 >> N1;
