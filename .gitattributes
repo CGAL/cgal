@@ -712,6 +712,12 @@ Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text
 Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
 Packages/Alpha_shapes_3/doc_tex/basic/Alpha_shapes_3/alphashape.eps -text
 Packages/Alpha_shapes_3/doc_tex/basic/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/filenew.xpm -text
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/fileopen.xpm -text
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/fileprint.xpm -text
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/filesave.xpm -text
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/remove.xpm -text
+Packages/Apollonius_graph_2/demo/Apollonius_graph_2/removecircle.xpm -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr3.gif svneol=native#unset
 Packages/Arrangement/doc_tex/Arrangement_2/circles.gif svneol=native#unset
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr3.gif svneol=native#unset

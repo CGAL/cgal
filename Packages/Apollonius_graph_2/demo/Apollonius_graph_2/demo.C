@@ -1,0 +1,285 @@
+#include <qapplication.h>
+#include <qmainwindow.h>
+
+//#include <CGAL/IO/Color.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_get_circle.h>
+#include <CGAL/IO/Qt_widget_get_point.h>
+
+
+#include "typedefs.h"
+
+#include "qt_file_toolbar.h"
+#include "qt_layers_toolbar.h"
+#include "qt_layers.h"
+
+
+//************************************
+// global variables
+//************************************
+AG_2 ag;
+
+//************************************
+// conversion functions
+//************************************
+inline Weighted_point
+to_weighted_point(const Circle &c)
+{
+  double r = CGAL_NTS sqrt(CGAL_NTS to_double(c.squared_radius()));
+  return  Weighted_point(c.center(), Rep::RT(r));
+}
+
+inline Circle
+to_circle(const Weighted_point &wp)
+{
+  return Circle(wp.point(), CGAL_NTS square(wp.weight()) );
+}
+
+
+//************************************
+// my window
+//************************************
+class My_Window : public QMainWindow {
+  Q_OBJECT
+
+  friend class Layers_toolbar;
+private:
+  CGAL::Qt_widget *widget;
+  Layers_toolbar *layers_toolbar;
+  File_toolbar   *file_toolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
+  CGAL::Qt_widget_get_circle<Rep> get_circle;
+  CGAL::Qt_widget_get_point<Rep> get_point;
+  bool is_remove_mode;
+  bool is_insert_point_mode;
+
+public:
+  My_Window(int x, int y)
+  {
+    is_remove_mode = false;
+    is_insert_point_mode = false;
+
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
+
+    *widget << CGAL::BackgroundColor(CGAL::YELLOW);
+    resize(x,y);
+    widget->set_window(0, x, 0, y);
+    widget->show();
+
+    //    setUsesBigPixmaps(TRUE);
+
+    //How to attach the standard toolbar
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+
+    file_toolbar = new File_toolbar(this);
+    this->addToolBar(file_toolbar->toolbar(), Top, FALSE);
+
+    layers_toolbar = new Layers_toolbar(widget, this, ag);
+    this->addToolBar(layers_toolbar->toolbar(), Top, FALSE);
+
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this,
+	    SLOT(get_object(CGAL::Object)));
+
+    connect(layers_toolbar, SIGNAL(inputModeChanged(bool)), this,
+	    SLOT(get_input_mode(bool)));
+
+    connect(layers_toolbar, SIGNAL(removeModeChanged(bool)), this,
+	    SLOT(get_remove_mode(bool)));
+
+    connect(file_toolbar, SIGNAL(fileToRead(const QString&)), this,
+	    SLOT(read_from_file(const QString&)));
+
+    connect(file_toolbar, SIGNAL(printScreen()), this,
+	    SLOT(print_screen()));
+    connect(file_toolbar, SIGNAL(clearAll()), this,
+	    SLOT(remove_all()));
+
+    widget->attach(&get_circle);
+
+    setMouseTracking(true);
+    widget->setMouseTracking(true);
+
+    widget->attach(&get_point);
+
+    get_circle.activate();
+    get_point.deactivate();
+
+    //    get_circle.setMouseTracking(true);
+  }
+  ~My_Window(){}
+
+  void set_window(double xmin, double xmax,
+		  double ymin, double ymax)
+  {
+    widget->set_window(xmin, xmax, ymin, ymax);
+  }
+
+private slots:
+  void get_object(CGAL::Object obj)
+  {
+    if ( is_remove_mode ) {
+      if ( ag.number_of_vertices() == 0 ) { return; }
+      Point p;
+      if ( CGAL::assign(p, obj) ) {
+	Vertex_handle v = ag.nearest_neighbor(p);
+#if 0
+	AG_2::Vertex_circulator vc = v->incident_vertices();
+	AG_2::Vertex_circulator vc_start = vc;
+	widget->redraw();
+	*widget << CGAL::PURPLE;
+	std::cout << "==============================" << std::endl;
+	std::cout << v->point() << " " << v->timestamp() << std::endl;
+	std::cout << "------------------------------" << std::endl;
+	do {
+	  Vertex_handle v1(vc);
+	  if ( !ag.is_infinite(v1) ) {
+	    *widget << to_circle(v1->point());
+	    *widget << v1->point().point();
+	    std::cout << v1->point() << " " << v1->timestamp() << std::endl;
+	  }
+	  ++vc;
+	} while ( vc != vc_start );
+	std::cout << "==============================" << std::endl;
+#else
+	if ( v.ptr() != NULL ) {
+	  ag.remove(v);
+	  ag.is_valid(false,1);
+	  //	  std::cout << "--------" << std::endl;
+	}
+#endif
+      }
+      widget->redraw();
+      return;
+    }
+    Circle c;
+    Point p;
+    if ( CGAL::assign(c, obj) ) {
+      Weighted_point wp = to_weighted_point(c);
+      ag.insert(wp);
+    } else if ( CGAL::assign(p, obj) ) {
+      Weighted_point wp(p, Weight(0));
+      ag.insert(wp);
+    }
+    ag.is_valid(false, 1);
+    //    std::cout << "--------" << std::endl;
+    //      *widget << CGAL::RED << c;
+    widget->redraw();
+  }
+
+  void get_input_mode(bool b)
+  {
+    is_insert_point_mode = b;
+
+    if ( !is_remove_mode ) {
+      if ( is_insert_point_mode ) {
+	get_point.activate();
+	get_circle.deactivate();
+      } else {
+	get_point.deactivate();
+	get_circle.activate();
+      }
+    }
+  }
+
+  void get_remove_mode(bool b)
+    {
+      is_remove_mode = b;
+
+      if ( is_remove_mode ) {	
+	get_point.activate();
+	get_circle.deactivate();
+      } else {
+	if ( !is_insert_point_mode ) {
+	  get_point.deactivate();
+	  get_circle.activate();
+	}
+      }
+    }
+
+  void read_from_file(const QString& fileName)
+    {
+      std::ifstream f(fileName);
+      assert( f );
+
+      int n;
+      f >> n;
+      Weighted_point wp;
+
+      int counter = 0;
+      std::cout << std::endl;
+#if 1
+      for (int i = 0; i < n; i++) {
+	f >> wp;
+	ag.insert(wp);
+	counter++;
+	if ( counter % 500 == 0 ) {
+	  std::cout << "\r" << counter
+		    << " sites haved been inserted..." << std::flush;
+	}
+      }
+      //      std::cout << "\r" << counter 
+      //		<< " sites haved been inserted... Done!" << std::endl;
+      ag.is_valid(false, 1);
+      widget->redraw();
+#else
+      for (int i = 0; i < n - 1; i++) {
+	f >> wp;
+	ag.insert(wp);
+	counter++;
+	if ( counter % 500 == 0 ) {
+	  std::cout << "\r" << counter
+		    << " sites haved been inserted..." << std::flush;
+	}
+      }
+      std::cout << "\r" << counter 
+		<< " sites haved been inserted... Done!" << std::endl;
+      //      assert( ag.is_valid(true, 1) );
+
+      f >> wp;
+      std::vector<AG_2::Edge> edge_list = 
+	ag.find_conflict_region(wp);
+
+      widget->redraw();
+
+      *widget << CGAL::ORANGE;
+      ag.draw_edge_list(*widget, edge_list.begin(), edge_list.end());
+#endif
+    }
+
+  void print_screen()
+    {
+      widget->print_to_ps();
+    }
+
+  void remove_all()
+    {
+      ag.clear();
+      widget->redraw();
+    }
+
+};
+
+#include "qt_file_toolbar.moc"
+#include "qt_layers_toolbar.moc"
+#include "demo.moc"
+
+int
+main(int argc, char* argv[])
+{
+  int size = 750;
+
+  QApplication app( argc, argv );
+  My_Window W(size,size);
+  app.setMainWidget( &W );
+  W.show();
+  W.set_window(0,size,0,size);
+  W.setCaption("Apollonius diagram 2");
+  return app.exec();
+}
+
+
+// moc_source_file: demo.C
