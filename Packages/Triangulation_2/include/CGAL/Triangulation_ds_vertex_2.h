@@ -57,12 +57,26 @@ public:
   //ACCESS
   Face* face() const {return ( (Face *) (Vb::face()) );}
   int degree() const ;
-  Vertex_circulator incident_vertices() const;
-  Vertex_circulator incident_vertices(const Face* f) const;
-  Face_circulator incident_faces() const; 
-  Face_circulator incident_faces(const Face* f) const; 
-  Edge_circulator incident_edges() const;
-  Edge_circulator incident_edges(const Face* f) const;
+
+  inline Vertex_circulator incident_vertices() const    {
+    return Vertex_circulator(this);
+  }
+  inline Vertex_circulator incident_vertices(const Face* f) const  {
+    return Vertex_circulator(this,f);
+  }
+  inline Face_circulator incident_faces() const  {
+    return Face_circulator(this);
+  }
+  inline Face_circulator incident_faces(const Face* f) const   {
+    return Face_circulator(this, f);
+  }
+  inline Edge_circulator incident_edges() const  {
+    return Edge_circulator(this);
+  }
+  inline Edge_circulator incident_edges(const Face* f) const {
+    return Edge_circulator(this, f);
+  }
+
   bool is_valid(bool verbose = false, int level = 0) const;
 
 };
@@ -82,65 +96,65 @@ degree() const
   return count;
 }
 
-template <class Vb, class Fb >
-inline
-Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                     Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::
-incident_vertices() const
-{
-  return Vertex_circulator(this);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                      Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::
+// incident_vertices() const
+// {
+//   return Vertex_circulator(this);
+// }
     
-template <class Vb, class Fb >
-inline
-Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                     Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::
-incident_vertices(const Face* f) const
-{
-  return Vertex_circulator(this,f);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_vertex_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                      Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::
+// incident_vertices(const Face* f) const
+// {
+//   return Vertex_circulator(this,f);
+// }
 
-template <class Vb, class Fb >
-inline
-Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                   Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::
-incident_faces() const
-{
-  return Face_circulator(this);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                    Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::
+// incident_faces() const
+// {
+//   return Face_circulator(this);
+// }
     
-template <class Vb, class Fb >
-inline
-Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                   Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::
-incident_faces(const Face* f) const
-{
-  return Face_circulator(this, f);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_face_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                    Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::
+// incident_faces(const Face* f) const
+// {
+//   return Face_circulator(this, f);
+// }
     
-template <class Vb, class Fb >
-inline
-Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                   Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::  
-incident_edges() const
-{
-  return Edge_circulator(this);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                    Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::  
+// incident_edges() const
+// {
+//   return Edge_circulator(this);
+// }
        
-template <class Vb, class Fb >
-inline
-Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
-                                   Triangulation_ds_face_2<Vb,Fb> >
-Triangulation_ds_vertex_2<Vb,Fb> ::  
-incident_edges(const Face* f) const
-{
-  return Edge_circulator(this, f);
-}
+// template <class Vb, class Fb >
+// inline
+// Triangulation_ds_edge_circulator_2<Triangulation_ds_vertex_2<Vb,Fb>,
+//                                    Triangulation_ds_face_2<Vb,Fb> >
+// Triangulation_ds_vertex_2<Vb,Fb> ::  
+// incident_edges(const Face* f) const
+// {
+//   return Edge_circulator(this, f);
+// }
     
 template <class Vb, class Fb >
 bool 

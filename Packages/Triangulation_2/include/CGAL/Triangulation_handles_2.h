@@ -59,7 +59,7 @@ class Triangulation_face_handle_2
   :public Pointer<Triangulation_face_2<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_face_2<Gt,Tds> >        Pointer;
+  typedef Pointer<Triangulation_face_2<Gt,Tds> >        Pointer_;
   typedef Triangulation_face_2<Gt,Tds>                  Face;
   typedef Triangulation_face_handle_2<Gt,Tds>           Face_handle;
   
@@ -68,27 +68,27 @@ public:
   typedef Triangulation_face_circulator_2<Gt,Tds>       Face_circulator;
   
   Triangulation_face_handle_2()
-    : Pointer(NULL)
+    : Pointer_(NULL)
     {}
 
   Triangulation_face_handle_2(const Face* p)
-    : Pointer(p)
+    : Pointer_(p)
     {}
 
   Triangulation_face_handle_2(const Face_handle& p)
-    : Pointer(p.ptr())
+    : Pointer_(p.ptr())
     {}
 
   Triangulation_face_handle_2(const Finite_faces_iterator& fit)
-    : Pointer(&(*fit))
+    : Pointer_(&(*fit))
     {}
   
   Triangulation_face_handle_2(const All_faces_iterator& fit)
-    : Pointer(&(*fit))
+    : Pointer_(&(*fit))
     {}
 
   Triangulation_face_handle_2(const Face_circulator& fc)
-    : Pointer(&(*fc))
+    : Pointer_(&(*fc))
     {}
 
   Face_handle& operator=(Face* p)
@@ -109,7 +109,7 @@ class Triangulation_vertex_handle_2
   :public Pointer<Triangulation_vertex_2<Gt,Tds> > 
 {
 public:
-  typedef Pointer<Triangulation_vertex_2<Gt,Tds> >  Pointer;
+  typedef Pointer<Triangulation_vertex_2<Gt,Tds> >  Pointer_;
   typedef Triangulation_vertex_2<Gt,Tds>            Vertex;
   typedef Triangulation_vertex_handle_2<Gt,Tds>     Vertex_handle;
   
@@ -120,27 +120,27 @@ public:
   typedef Triangulation_vertex_circulator_2<Gt,Tds> Vertex_circulator;
   
   Triangulation_vertex_handle_2()
-    : Pointer(NULL)
+    : Pointer_(NULL)
     {}
 
   Triangulation_vertex_handle_2(const Vertex* p)
-    : Pointer(p)
+    : Pointer_(p)
     {}
 
   Triangulation_vertex_handle_2(const Vertex_handle& p)
-    : Pointer(p.ptr())
+    : Pointer_(p.ptr())
     {}
 
   Triangulation_vertex_handle_2(const Finite_vertices_iterator& vit)
-    : Pointer(&(*vit))
+    : Pointer_(&(*vit))
     {}
   
   Triangulation_vertex_handle_2(const All_vertices_iterator& vit)
-    : Pointer(&(*vit))
+    : Pointer_(&(*vit))
     {}
 
   Triangulation_vertex_handle_2(const Vertex_circulator& vc)
-    : Pointer(&(*vc))
+    : Pointer_(&(*vc))
     {}
   
   Vertex_handle& operator=(Vertex* p)
