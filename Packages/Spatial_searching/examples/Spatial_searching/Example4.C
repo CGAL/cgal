@@ -14,7 +14,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/Binary_search_tree.h>
+#include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Nearest_neighbour_general_distance.h>
 #include <CGAL/Search_nearest_neighbour.h>
@@ -81,10 +81,10 @@ NNN_Iterator;
   t.reset(); t.start();
   
   // Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
-  Traits tr(bucket_size, CGAL::MIDPOINT_OF_MAX_SPREAD, 2.0, false);
+  Traits tr(bucket_size, CGAL::Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD, 2.0, false);
 
-  typedef CGAL::Binary_search_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr, true);
+  typedef CGAL::Kd_tree<Traits> Tree;
+  Tree d(data_points.begin(), data_points.end(), tr);
   t.stop();
 
   std::cout << "created binary search tree containing" << std::endl

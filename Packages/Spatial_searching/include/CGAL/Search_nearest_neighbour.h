@@ -27,6 +27,7 @@
 
 namespace CGAL {
 
+
   class Search_nearest_neighbour {
 
 

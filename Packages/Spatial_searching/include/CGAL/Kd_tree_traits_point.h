@@ -38,11 +38,12 @@ namespace CGAL {
     // CGaL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
     typedef std::pair<Item*,NT> Item_with_distance;
+    typedef typename Split_rule_enumeration::Split_rule split_rule;
 
   private:
 
     unsigned int the_bucket_size;
-    Split_rule the_selected_split_rule;
+    split_rule the_selected_split_rule;
     NT the_aspect_ratio;
     bool use_extended_nodes_option;
 
@@ -50,7 +51,7 @@ namespace CGAL {
 
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
-			     Split_rule My_split_rule=SLIDING_MIDPOINT,
+			     split_rule My_split_rule=Split_rule_enumeration::SLIDING_MIDPOINT,
 			     NT aspect_ratio=3.0, 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
@@ -60,56 +61,56 @@ namespace CGAL {
 	}
 
     	NT aspect_ratio() const {return the_aspect_ratio;}
-	Split_rule  selected_split_rule() const {return the_selected_split_rule;}
-	Shrink_rule selected_shrink_rule() const {return NONE;}
-    unsigned int bucket_size() const {return the_bucket_size;}
+	split_rule  selected_split_rule() const {return the_selected_split_rule;}
+
+        unsigned int bucket_size() const {return the_bucket_size;}
 	bool use_extended_nodes() const {return use_extended_nodes_option;}
 
 	// split c0 in c0 and c1
-    	Separator* split(Points_container<Item>& c0, Points_container<Item>& c1) 
+    	Separator* split(Point_container<Item>& c0, Point_container<Item>& c1) 
 	{
 		Separator* sep;
 
 		switch (the_selected_split_rule) {
 
-			case SLIDING_MIDPOINT:
-				{Sliding_MidPoint<Item> M;
+			case Split_rule_enumeration::SLIDING_MIDPOINT:
+				{Sliding_midpoint<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep,true);}
 				break;
 
-			case SLIDING_FAIR:
-				{Sliding_Fair<Item> M;
+			case Split_rule_enumeration::SLIDING_FAIR:
+				{Sliding_fair<Item> M;
 				sep=M.rule(c0,aspect_ratio());
 				c0.split_container(c1,sep,true);}
 				break;
 
-			case FAIR:
+			case Split_rule_enumeration::FAIR:
 				{Fair<Item> M;
 				sep=M.rule(c0,aspect_ratio());
 				c0.split_container(c1,sep);}
 				break;
 
-			case MEDIAN_OF_MAX_SPREAD:
-				{Median_Of_Max_Spread<Item> M;
+			case Split_rule_enumeration::MEDIAN_OF_MAX_SPREAD:
+				{Median_of_max_spread<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;
 
-			case MEDIAN_OF_BOX:
-				{Median_Of_Box<Item> M;
+			case Split_rule_enumeration::MEDIAN_OF_BOX:
+				{Median_of_box<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;
 
-			case MIDPOINT_OF_MAX_SPREAD:
-				{MidPoint_Of_Max_Spread<Item> M;
+			case Split_rule_enumeration::MIDPOINT_OF_MAX_SPREAD:
+				{Midpoint_of_max_spread<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;
 
-			case MIDPOINT_OF_BOX:
-				{MidPoint_Of_Box<Item> M;
+			case Split_rule_enumeration::MIDPOINT_OF_BOX:
+				{Midpoint_of_box<Item> M;
 				sep=M.rule(c0);
 				c0.split_container(c1,sep);}
 			    break;

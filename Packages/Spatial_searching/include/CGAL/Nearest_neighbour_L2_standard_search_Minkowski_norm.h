@@ -27,9 +27,9 @@
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Binary_node.h>
+#include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Box.h>
+
 #include <CGAL/Weighted_Minkowski_distance.h>
 namespace CGAL {
 
@@ -43,10 +43,8 @@ typedef typename Tree_traits::NT NT;
 typedef Item** Item_iterator;
 typedef std::pair<Item*,NT> Item_with_distance;
 
-// private:
-
-typedef Binary_node<Tree_traits> Node;
-typedef Binary_search_tree<Tree_traits> Tree;
+typedef Kd_tree_node<Tree_traits> Node;
+typedef Kd_tree<Tree_traits> Tree;
 
 private:
 

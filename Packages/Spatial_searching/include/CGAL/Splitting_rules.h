@@ -28,31 +28,28 @@
 
 #ifndef CGAL_SPLITTING_RULES_H
 #define CGAL_SPLITTING_RULES_H
-#include <CGAL/Points_container.h>
+#include <CGAL/Point_container.h>
 #include <CGAL/Plane_separator.h>
 namespace CGAL {
 
+class Split_rule_enumeration {
+public:
 enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,
         MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_BOX, FAIR, 
 		SLIDING_MIDPOINT, SLIDING_FAIR};
-
-enum Shrink_rule {NONE, SIMPLE, CENTROID};
+};
 
 template <class P>
 class Splitter {
 public:
-  // CGAL dependancy typename Kernel_traits<P>::Kernel K;
-  // CGAL dependancy typedef typename K::FT NT;
-  typedef typename P::R::FT NT;
+// empty base class
 };
 
 template <class P>
-class Median_Of_Max_Spread : public Splitter<P> {
+class Median_of_max_spread : public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c) {
+  Plane_separator<NT>* rule(Point_container<P>& c) {
         Plane_separator<NT>* sep =
         new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
         sep->set_cutting_val(c.median(sep->cutting_dimension()));
@@ -63,10 +60,8 @@ public:
 template <class P>
 class Fair : public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
+  Plane_separator<NT>* rule(Point_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
         new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
@@ -78,12 +73,10 @@ public:
 };
 
 template <class P>
-class Sliding_Fair : public Splitter<P> {
+class Sliding_fair : public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
+  Plane_separator<NT>* rule(Point_container<P>& c, NT Aspect_ratio) {
     // find legal cut with max spread
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
@@ -95,12 +88,10 @@ public:
 };
 
 template <class P>
-class Sliding_MidPoint: public Splitter<P> {
+class Sliding_midpoint: public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Point_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);
@@ -117,12 +108,10 @@ public:
 };
 
 template <class P>
-class Median_Of_Box : public Splitter<P> {
+class Median_of_box : public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Point_container<P>& c)
   {
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_span_coord(),0.0);
@@ -132,12 +121,10 @@ public:
 };
 
 template <class P>
-class MidPoint_Of_Max_Spread : public Splitter<P> {
+class Midpoint_of_max_spread : public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Point_container<P>& c)
   {
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord(),
@@ -147,12 +134,10 @@ public:
 };
 
 template <class P>
-class MidPoint_Of_Box: public Splitter<P> {
+class Midpoint_of_box: public Splitter<P> {
 public:
-  // typedef typename Kernel_traits<P>::Kernel K;
-  // typedef typename K::FT NT;
   typedef typename P::R::FT NT;
-  Plane_separator<NT>* rule(Points_container<P>& c)
+  Plane_separator<NT>* rule(Point_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
               (c.max_span_upper() + c.max_span_lower())/2.0);

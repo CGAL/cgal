@@ -10,30 +10,23 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Box.h
+// file          : include/CGAL/Kd_tree_rectangle.h
 // package       : ASPAS
 // revision      : 1.4 
-// revision_date : 2002/16/08 
+// revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
 
-#ifndef CGAL_BOX_H
-#define CGAL_BOX_H
+#ifndef CGAL_KD_TREE_RECTANGLE_H
+#define CGAL_KD_TREE_RECTANGLE_H
 #include <functional>
 #include <algorithm>
 #include <new>
 namespace CGAL {
 
-  template <class T> class Points_container;
-
-  // Borland does not like moving this code into the class Box,
-  // it gives the error message
-  // [C++ Error] E2402 Illegal base class type: formal type
-  // 'std::unary_function<Point &,void>' resolves to
-  // 'std::unary_function<Point &,void>'
   template <class Point, class T>
   struct set_bounds : public std::unary_function<Point&, void> {
     int dim;
@@ -50,11 +43,6 @@ namespace CGAL {
     }
   };
 
-  // Borland does not like moving this code into the class Box,
-  // it gives the error message
-  // [C++ Error] E2402 Illegal base class type: formal type
-  // 'std::unary_function<Point &,void>' resolves to
-  // 'std::unary_function<Point &,void>'
   template <class P, class T>
   struct set_bounds_from_pointer : public std::unary_function<P, void> {
     int dim;
@@ -73,7 +61,7 @@ namespace CGAL {
   };
 
 
-  template <class T> class Box {
+  template <class T> class Kd_tree_rectangle{
   public:
     typedef T NT;
 
@@ -86,21 +74,20 @@ namespace CGAL {
 
   public:
 
-    inline void set_upper(const int i, const NT& x) {
+    inline void set_upper_bound(const int i, const NT& x) {
       // assert(i >= 0 && i < dim);
       // assert(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
 
-    inline void set_lower(const int i, const NT& x) {
+    inline void set_lower_bound(const int i, const NT& x) {
       // assert(i >= 0 && i < dim);
       // assert(x <= upper_[i]);
       lower_[i] = x;
       set_max_span();
     }
 
-  protected:
     inline void set_max_span() {
       NT span = upper_[0]-lower_[0];
       max_span_coord_ = 0;
@@ -112,20 +99,18 @@ namespace CGAL {
 	}
       }
     }
-
-  public:
-    //Box(const int d) : dim(d) { lower_ = new T[d]; upper_ = new T[d];}
-    Box(const int d) : dim(d), lower_(new NT[d]), upper_(new NT[d])
+    
+    Kd_tree_rectangle(const int d) : dim(d), lower_(new NT[d]), upper_(new NT[d])
     {
       std::fill(lower_, lower_ + dim, 0);
       std::fill(upper_, upper_ + dim, 0);
       set_max_span();
     }
 
-    Box() : dim(0), lower_(0), upper_(0) {}
+    Kd_tree_rectangle() : dim(0), lower_(0), upper_(0) {}
 
     template <class Iter>
-    Box(const int d, Iter begin_lower, Iter end_lower,
+    Kd_tree_rectangle(const int d, Iter begin_lower, Iter end_lower,
 	Iter begin_upper, Iter end_upper)
       : dim(d) {
 
@@ -136,15 +121,15 @@ namespace CGAL {
       set_max_span();
     }
 
-    explicit Box(const Box<NT>& b) : dim(b.dim),
+    explicit Kd_tree_rectangle(const Kd_tree_rectangle<NT>& r) : dim(r.dim),
       lower_(new NT[dim]), upper_(new NT[dim]) {
-        std::copy(b.lower_, b.lower_+dim, lower_);
-	std::copy(b.upper_, b.upper_+dim, upper_);
+        std::copy(r.lower_, r.lower_+dim, lower_);
+	std::copy(r.upper_, r.upper_+dim, upper_);
 	set_max_span();
     }
 
     template <class PointIter>
-    Box(const int d,  PointIter begin,  PointIter end)
+    Kd_tree_rectangle(const int d,  PointIter begin,  PointIter end)
       : dim(d), lower_(new NT[d]), upper_(new NT[d]) {
 	  // initialize with values of first point
 	  for (int i=0; i < dim; ++i)
@@ -187,17 +172,15 @@ namespace CGAL {
     }
 
     inline NT lower(int i) const {
-      // assert (i >= 0 && i < dim);
       return lower_[i];
     }
 
     inline NT upper(int i) const {
-      // assert (i >= 0 && i < dim);
       return upper_[i];
     }
 
     std::ostream& print(std::ostream& s) {
-      s << "Box dimension = " << dim;
+      s << "Rectangle dimension = " << dim;
       s << "\n lower: ";
       std::copy(lower_, lower_ + dim,
        	      std::ostream_iterator<NT>(s, " "));
@@ -209,18 +192,18 @@ namespace CGAL {
       return s;
     }
 
-    // Splits box by modifying itself to lower half and returns upper half
-    Box* split(int d, NT value) {
+    // Splits rectangle by modifying itself to lower half and returns upper half
+    Kd_tree_rectangle* split(int d, NT value) {
 		// assert(d >= 0 && d < dim);
 		// assert(lower_[d] <= value && value <= upper_[d]);
-		Box* b = new Box(*this);
+		Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
 		upper_[d]=value;
-                b->lower_[d]=value;
-		return b;
+                r->lower_[d]=value;
+		return r;
     }
                       
 
-    ~Box() {
+    ~Kd_tree_rectangle() {
       if (dim) {
 	if (lower_) delete [] lower_;
 	if (upper_) delete [] upper_;
@@ -229,90 +212,32 @@ namespace CGAL {
 
     int dimension() const {return dim;}
 
-    friend class Points_container<T>;
-
-    Box<NT>& operator= (const Box<NT>& b) {
-      // assert(dim == b.dim);
-      if (this != &b) {
-        std::copy(b.lower_, b.lower_+dim, lower_);
-	std::copy(b.upper_, b.upper_+dim, upper_);
+    Kd_tree_rectangle<NT>& operator= (const Kd_tree_rectangle<NT>& r) {
+      
+      if (this != &r) {
+        std::copy(r.lower_, r.lower_+dim, lower_);
+	std::copy(r.upper_, r.upper_+dim, upper_);
 	set_max_span();
       }
       return *this;
     }
-  }; // of class Box
+  }; // of class Kd_tree_rectangle
 
   template <class NT>
-    std::ostream& operator<< (std::ostream& s, Box<NT>& box) {
-    return box.print(s);
+    std::ostream& operator<< (std::ostream& s, Kd_tree_rectangle<NT>& r) {
+    return r.print(s);
   }
 
   template <class NT, class Point> bool belongs(const Point& p, 
-					      const Box<NT>& b) {
+					      const Kd_tree_rectangle<NT>& r) {
     NT h;
-    for (int i = 0; i < b.dimension(); ++i) {
+    for (int i = 0; i < r.dimension(); ++i) {
         h=p[i];
-        if (h < b.lower(i) || h > b.upper(i)) return 0;
+        if (h < r.lower(i) || h > r.upper(i)) return 0;
     }
     return 1;
   }
 
-  template <class NT, class Point> 
-  NT Min_squared_distance_l2_to_box(const Point& p,
-					      const Box<NT>& b) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < b.dimension(); ++i) {
-      h=p[i];
-      if (h < b.lower(i)) distance += (b.lower(i)-h)*(b.lower(i)-h);
-	  if (h > b.upper(i)) distance += (h-b.upper(i))*(h-b.upper(i));
-	}
-    return distance;
-  }
-
-  template <class NT, class Point> 
-  NT Max_squared_distance_l2_to_box(const Point& p,
-					      const Box<NT>& b) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < b.dimension(); ++i) {
-      h=p[i];
-      if (h >= (b.lower(i)+b.upper(i))/2.0) 
-		  distance += (h-b.lower(i))*(h-b.lower(i)); 
-	  else
-		  distance += (b.upper(i)-h)*(b.upper(i)-h);
-	}
-    return distance;
-  }
-
-  template <class NT, class Point> 
-  NT Min_distance_linf_to_box(const Point& p,
-					      const Box<NT>& b) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < b.dimension(); ++i) {
-      h=p[i];
-      if (b.lower(i) - h > distance)  distance = b.lower(i)-h;
-	  if (h - b.upper(i) > distance)  distance = h-b.upper(i);
-	}
-    return distance;
-  }
-
-  template <class NT, class Point> 
-  NT Max_distance_linf_to_box(const Point& p,
-					      const Box<NT>& b) {
-    NT distance(0.0);
-    NT h;
-    for (int i = 0; i < b.dimension(); ++i) {
-      h=p[i];
-      if (h >= (b.lower(i)+b.upper(i))/2.0) 
-		  if (h - b.lower(i) > distance)  distance = h-b.lower(i); 
-	  else
-		  if (b.upper(i) - h > distance)  distance = b.upper(i)-h;
-	}
-    return distance;
-  }
-
 } // namespace CGAL
-#endif // CGAL_BOX_H
+#endif // CGAL_KD_TREE_RECTANGLE_H
 

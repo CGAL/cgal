@@ -31,7 +31,7 @@
 #ifndef CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 #define CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 #include <math.h>
-#include <CGAL/Box.h>
+#include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {
 
@@ -94,50 +94,50 @@ namespace CGAL {
 
 
 	inline NT lower_bound_distance_to_box(const Item& Point,
-					      const Box<NT>& b) {
+					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = 0.0;
 		if (p == 0.0)
 		{
-			for (int i = 0; i < b.dimension(); ++i) {
-				if ((*The_weights)[i]*(b.lower(i) - Point[i]) > distance)
-					distance = (*The_weights)[i] * (b.lower(i)-Point[i]);
-				if ((*The_weights)[i] * (Point[i] - b.upper(i)) > distance)
-					distance = (*The_weights)[i] * (Point[i]-b.upper(i));
+			for (int i = 0; i < r.dimension(); ++i) {
+				if ((*The_weights)[i]*(r.lower(i) - Point[i]) > distance)
+					distance = (*The_weights)[i] * (r.lower(i)-Point[i]);
+				if ((*The_weights)[i] * (Point[i] - r.upper(i)) > distance)
+					distance = (*The_weights)[i] * (Point[i]-r.upper(i));
 			}
 		}
 		else
 		{
-			for (int i = 0; i < b.dimension(); ++i) {
-				if (Point[i] < b.lower(i))
-					distance += (*The_weights)[i] * pow(b.lower(i)-Point[i],p);
-				if (Point[i] > b.upper(i))
-					distance += (*The_weights)[i] * pow(Point[i]-b.upper(i),p);
+			for (int i = 0; i < r.dimension(); ++i) {
+				if (Point[i] < r.lower(i))
+					distance += (*The_weights)[i] * pow(r.lower(i)-Point[i],p);
+				if (Point[i] > r.upper(i))
+					distance += (*The_weights)[i] * pow(Point[i]-r.upper(i),p);
 			}
 		};
 		return distance;
 	}
 
 	inline NT upper_bound_distance_to_box(const Item& Point,
-					      const Box<NT>& b) {
+					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=0.0;
 		if (p == 0.0)
 		{
-			for (int i = 0; i < b.dimension(); ++i) {
-				if (Point[i] >= (b.lower(i) + b.upper(i))/2.0)
-					if ((*The_weights)[i] * (Point[i] - b.lower(i)) > distance)
-						distance = (*The_weights)[i] * (Point[i]-b.lower(i));
+			for (int i = 0; i < r.dimension(); ++i) {
+				if (Point[i] >= (r.lower(i) + r.upper(i))/2.0)
+					if ((*The_weights)[i] * (Point[i] - r.lower(i)) > distance)
+						distance = (*The_weights)[i] * (Point[i]-r.lower(i));
 				else
-					if ((*The_weights)[i] * (b.upper(i) - Point[i]) > distance)
-						distance = (*The_weights)[i] * ( b.upper(i)-Point[i]);
+					if ((*The_weights)[i] * (r.upper(i) - Point[i]) > distance)
+						distance = (*The_weights)[i] * ( r.upper(i)-Point[i]);
 			}
 		}
 		else
 		{
-			for (int i = 0; i < b.dimension(); ++i) {
-				if (Point[i] <= (b.lower(i)+b.upper(i))/2.0)
-					distance += (*The_weights)[i] * pow(b.upper(i)-Point[i],p);
+			for (int i = 0; i < r.dimension(); ++i) {
+				if (Point[i] <= (r.lower(i)+r.upper(i))/2.0)
+					distance += (*The_weights)[i] * pow(r.upper(i)-Point[i],p);
 				else
-					distance += (*The_weights)[i] * pow(Point[i]-b.lower(i),p);
+					distance += (*The_weights)[i] * pow(Point[i]-r.lower(i),p);
 			}
 		};
 		return distance;

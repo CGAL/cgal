@@ -27,8 +27,8 @@
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Binary_node.h>
-#include <CGAL/Box.h>
+#include <CGAL/Kd_tree_node.h>
+
 namespace CGAL {
 
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
@@ -39,8 +39,8 @@ public:
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
 typedef Item** Item_iterator;
-typedef Binary_node<Tree_traits> Node;
-typedef Binary_search_tree<Tree_traits> Tree;
+typedef Kd_tree_node<Tree_traits> Node;
+typedef Kd_tree<Tree_traits> Tree;
 
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;

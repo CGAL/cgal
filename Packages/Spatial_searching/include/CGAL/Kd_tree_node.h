@@ -11,30 +11,29 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Binary_node.h
+// file          : include/CGAL/Kd_tree_node.h
 // package       : ASPAS
 // revision      : 1.4 
-// revision_date : 2002/16/08 
+// revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
 
-#ifndef CGAL_BINARY_NODE_H
-#define CGAL_BINARY_NODE_H
+#ifndef CGAL_KD_TREE_NODE_H
+#define CGAL_KD_TREE_NODE_H
 
 #include <CGAL/Kd_tree_traits_point.h>
-// #include <CGAL/Timer.h> included for time analysis
 
 namespace CGAL {
 
 	template < class Traits > 
-	class Binary_node {
+	class Kd_tree_node {
 
 	public:
 
-	enum Node_type {LEAF, INTERNAL}; // , EXTENDED_INTERNAL};
+	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
 	typedef typename Traits::Item Item;
   	typedef typename Traits::Item_iterator Item_iterator;
 	typedef typename Traits::NT NT;
@@ -45,14 +44,14 @@ namespace CGAL {
 	// node type identifier
 	Node_type the_node_type;
 
-     // private variables for leaf nodes
+     	// private variables for leaf nodes
 	unsigned int n; // denotes number of items in a leaf node
   	Item_iterator data; // iterator to data in leaf node
 
-    // private variables for internal nodes
+    	// private variables for internal nodes
 
-    Binary_node* lower_ch;
-  	Binary_node* upper_ch;
+    	Kd_tree_node* lower_ch;
+  	Kd_tree_node* upper_ch;
   	Separator* sep;
 
 	// private variables for extended internal nodes
@@ -62,28 +61,28 @@ namespace CGAL {
 	public:
 		
 	// default constructor
-	Binary_node() {};
+	Kd_tree_node() {};
 
 	// constructor for leaf node
-        Binary_node(Points_container<Item>& c) :
+        Kd_tree_node(Point_container<Item>& c) :
     		n(c.size()), data(new Item*[c.size()]) {
 		the_node_type=LEAF;
     		std::copy(c.begin(), c.end(), data);
   	};
 
 	// constructor for internal node or extended internal node;
-	Binary_node(Points_container<Item>& c, Traits& t, bool use_extension) {
+	Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension) {
 		
-		/*
+		
 		if (use_extension) 
 			the_node_type=EXTENDED_INTERNAL;
-		else */
+		else 
 			the_node_type=INTERNAL;
 
 		
 
-    		Points_container<Item> c_low = Points_container<Item>(c.dimension());
-			Box<NT> bbox(c.bounding_box());
+    		Point_container<Item> c_low = Point_container<Item>(c.dimension());
+			Kd_tree_rectangle<NT> bbox(c.bounding_box());
 
     		sep = t.split(c, c_low);
 	
@@ -95,14 +94,14 @@ namespace CGAL {
 		};
 
     		if (c_low.size() > t.bucket_size())
-      			lower_ch = new Binary_node<Traits>(c_low,t,use_extension);
+      			lower_ch = new Kd_tree_node<Traits>(c_low,t,use_extension);
     		else
-      			lower_ch = new Binary_node<Traits>(c_low);
+      			lower_ch = new Kd_tree_node<Traits>(c_low);
 
     		if (c.size() > t.bucket_size())
-      			upper_ch = new Binary_node<Traits>(c,t,use_extension);
+      			upper_ch = new Kd_tree_node<Traits>(c,t,use_extension);
     		else
-      			upper_ch = new Binary_node<Traits>(c);
+      			upper_ch = new Kd_tree_node<Traits>(c);
 
   	};
 
@@ -116,15 +115,15 @@ namespace CGAL {
   	inline Item_iterator end() const {return data + n;}
 
 	// members for internal node and extended internal node
-	inline Binary_node* lower() const { return lower_ch; }
-  	inline Binary_node* upper() const { return upper_ch; }
+	inline Kd_tree_node* lower() const { return lower_ch; }
+  	inline Kd_tree_node* upper() const { return upper_ch; }
   	inline Separator* separator() const {return sep; }
 
 	// members for extended internal node only
 	inline NT low_value() const { return low_val; }
   	inline NT high_value() const { return high_val; }
        
-        ~Binary_node() {switch (the_node_type) {
+        ~Kd_tree_node() {switch (the_node_type) {
 
 			case LEAF: {
 				delete []data;}
@@ -133,11 +132,9 @@ namespace CGAL {
 			case INTERNAL: { 
 				delete sep; delete lower_ch; delete upper_ch;}
 				break;
-			/*
 			case EXTENDED_INTERNAL:
 				delete sep; delete lower_ch; delete upper_ch;
-				break;
-			*/	
+				break;	
 			default:{
 				std::cerr << "Node corrupted\n";
 				}
@@ -171,4 +168,4 @@ namespace CGAL {
 
 
 } // namespace CGAL
-#endif // CGAL_BINARY_NODE_H
+#endif // CGAL_KDTREE_NODE_H

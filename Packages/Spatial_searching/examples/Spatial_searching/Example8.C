@@ -17,7 +17,7 @@
 
 // #include <CGAL/Cartesian.h>
 // #include <CGAL/Point_3.h>
-#include <CGAL/Binary_search_tree.h>
+#include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Nearest_neighbour_L2_standard_search_Minkowski_norm.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
@@ -187,9 +187,9 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   
   
   t.reset(); t.start();
-  Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
-  typedef CGAL::Binary_search_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr, true);
+  Traits tr(bucket_size, CGAL::Split_rule_enumeration::SLIDING_MIDPOINT, 3.0, true);
+  typedef CGAL::Kd_tree<Traits> Tree;
+  Tree d(data_points.begin(), data_points.end(), tr);
   t.stop();
 
   std::cout << "created binary search tree containing" << std::endl

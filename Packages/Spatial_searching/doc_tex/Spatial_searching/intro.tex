@@ -1,0 +1,37 @@
+\section{Introduction}
+
+\section{The $k$-$d$ Tree}
+
+Bentley \cite{b-mbstu-75} introduced the $k$-$d$ tree as a generalization of the binary
+search tree in higher dimensions. $k$-$d$ trees hierarchically decompose space into a 
+relatively small number of rectangles such that no rectangle contains too many input objects. 
+For our purposes, a {\it rectangle} in real $d$ dimensional space, $\R^d$, is the product of $d$ closed 
+intervals on the coordinate axes.
+$k$-$d$ trees are obtained by partitioning point sets in $\R^d$ using ($d$-1)-dimensional hyperplanes. 
+Each node in the tree is split into two children by one such separating plane.
+
+Each internal node of the $k$-$d$ tree is associated with a rectangle and a hyperplane orthogonal to
+one of the coordinate axis, which splits the rectangle into two parts. These two parts are then associated
+with the two child nodes in the tree. The process of partitioning space continues until the number of data 
+points in the rectangle falls below some given treshold. The rectangles associated with the leaf nodes
+are called {\it buckets}, and they define a subdivision of the space into rectangles.
+Data points are only stored in the leaf nodes of the tree, not in the internal nodes.
+
+Friedmann, Bentley and Finkel \cite{fbf-afbml-77} ...
+
+
+\section{Getting started}
+
+The first example program illustrates building $k$-$d$ trees using 1000
+100-dimensional points. 
+The way the $k$-$d$ tree is build is defined by the traits variable \ccc{tr(bucket_size, s, 3.0 true)}.
+In the example the \ccc{bucket_size} is set to 10.
+Hence, each leaf nodes stores at most 10 points. 
+The strategy for splitting the nodes is defined by $s$.
+Some rules use a maximal aspect ratio to define
+the maximal allowed ratio between the largest and smallest side of a rectangle.
+This aspect ratio is set to 3.0. The boolean value true indicates that
+extended internal nodes are used.
+
+\ccIncludeExampleCode{Example03.C}
+

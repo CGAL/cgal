@@ -27,10 +27,37 @@
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Binary_node.h>
+#include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Box.h>
+// #include <CGAL/Box.h>
 namespace CGAL {
+
+template <class NT, class Point> 
+  NT Min_squared_distance_l2_to_box(const Point& p,
+					      const Kd_tree_rectangle<NT>& r) {
+    NT distance(0.0);
+    NT h;
+    for (int i = 0; i < r.dimension(); ++i) {
+      h=p[i];
+      if (h < r.lower(i)) distance += (r.lower(i)-h)*(r.lower(i)-h);
+	  if (h > r.upper(i)) distance += (h-r.upper(i))*(h-r.upper(i));
+	}
+    return distance;
+  }
+
+  template <class NT, class Point> 
+  NT Max_squared_distance_l2_to_box(const Point& p, const Kd_tree_rectangle<NT>& r) {
+    NT distance(0.0);
+    NT h;
+    for (int i = 0; i < r.dimension(); ++i) {
+      h=p[i];
+      if (h >= (r.lower(i)+r.upper(i))/2.0) 
+		  distance += (h-r.lower(i))*(h-r.lower(i)); 
+	  else
+		  distance += (r.upper(i)-h)*(r.upper(i)-h);
+	}
+    return distance;
+  }
 
 template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
 class Nearest_neighbour_L2_standard_search {
@@ -42,10 +69,8 @@ typedef typename Tree_traits::NT NT;
 typedef Item** Item_iterator;
 typedef std::pair<Item*,NT> Item_with_distance;
 
-// private:
-
-typedef Binary_node<Tree_traits> Node;
-typedef Binary_search_tree<Tree_traits> Tree;
+typedef Kd_tree_node<Tree_traits> Node;
+typedef Kd_tree<Tree_traits> Tree;
 
 private:
 
