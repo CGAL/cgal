@@ -500,7 +500,7 @@ Cls T0_2;
   f = T2_1.locate(p10,lt,li); assert( lt == Cls::VERTEX );
   assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p10) );
 
-  f = T2_1.locate(p11,lt,li); assert( lt == Cls::OUTSIDE);
+  f = T2_1.locate(p11,lt,li); assert( lt == Cls::EDGE);
   assert( (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p1)
         && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p0))
        || (T2_1.geom_traits().compare(f->vertex(f->ccw(li))->point(), p0)
