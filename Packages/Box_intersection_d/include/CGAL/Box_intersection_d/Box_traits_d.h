@@ -102,7 +102,7 @@ struct Predicate_traits_d : public BoxTraits {
     public:
         Lo_less(NT value, int dim) : value(value), dim(dim) {}
         bool operator() (Box_handle box) const { 
-            return min_coord(box, dim) < value;
+            return BoxTraits::min_coord(box, dim) < value;
         }
     };
 
@@ -112,7 +112,7 @@ struct Predicate_traits_d : public BoxTraits {
     public:
         Hi_greater(NT value, int dim) : value(value), dim(dim) {}
         bool operator() (Box_handle box) const {
-            return hi_greater( max_coord(box, dim), value);
+            return hi_greater( BoxTraits::max_coord(box, dim), value);
         }
     };
 
@@ -124,7 +124,8 @@ struct Predicate_traits_d : public BoxTraits {
         Spanning(NT lo, NT hi, int dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
         bool operator() (Box_handle box) const {
-            return min_coord(box,dim) < lo && max_coord(box,dim) > hi;
+            return BoxTraits::min_coord(box,dim) < lo 
+                && BoxTraits::max_coord(box,dim) > hi;
         }
     };
 
@@ -140,12 +141,14 @@ struct Predicate_traits_d : public BoxTraits {
                           return Spanning( lo, hi, dim );
     }
     static bool is_lo_less_lo(Box_handle a, Box_handle b, int dim) {
-        return min_coord(a,dim)  < min_coord(b,dim) ||
-               min_coord(a,dim) == min_coord(b,dim) && id(a) < id(b);
+        return BoxTraits::min_coord(a,dim)  < BoxTraits::min_coord(b,dim) ||
+               BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) && 
+               BoxTraits::id(a) < BoxTraits::id(b);
     }
 
     static bool is_lo_less_hi(Box_handle a, Box_handle b, int dim) {
-        return hi_greater( max_coord(b,dim), min_coord(a,dim ));
+        return hi_greater( BoxTraits::max_coord(b,dim), 
+                           BoxTraits::min_coord(a,dim));
     }
     static bool does_intersect (Box_handle a, Box_handle b, int dim) {
         return is_lo_less_hi(a,b,dim) && is_lo_less_hi(b,a,dim);
