@@ -83,14 +83,14 @@ bidirectional and non-mutable. Its \ccc{value_type}
 is \ccc{Coord_type}}
 
 \ccNestedType{Alpha_shape_vertices_iterator}{An iterator that allow to traverse 
-the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. The
+the vertices which belongs to the $\alpha$-shape for the current $\alpha$. The
 iterator is bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Dt::Vertex_handle}}
+is \ccc{Dt::Vertex_handle}.}
 
 \ccNestedType{Alpha_shape_edges_iterator}{An iterator that allow to traverse 
-the edges which belongs to the $\alpha$-shape for a fixed $\alpha$. The iterator
+the edges which belongs to the $\alpha$-shape for the current $\alpha$. The iterator
 is bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Dt::Edge}}
+is \ccc{Dt::Edge}.}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
@@ -101,12 +101,12 @@ is \ccc{Dt::Edge}}
 \ccc{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
  and is incident to a 2-dimensional face of the $\alpha$-complex\\
 \ccc{INTERIOR} if the face belongs to the $\alpha$-complex, but does
-not belong to the boundary of the $\alpha$-shape\\}
+not belong to the boundary of the $\alpha$-shape.\\}
 
 \ccEnum{enum Mode {GENERAL, REGULARIZED};}
 { In general, an alpha shape can be disconnected and contain many singular edges 
 or vertices. Its regularized version is formed by the set of regular edges
-and their vertices}
+and their vertices.}
 
 \ccCreation
 \ccCreationVariable{A}
@@ -196,14 +196,17 @@ Returns the previous mode.}
 	get_mode(void) const;}
 {Returns whether \ccVar\ is general or regularized.}
 
-\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_begin();}{Starts at
-an arbitrary finite vertex which belongs to the $\alpha$-shape for a fixed $\alpha$.}
-\ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_end();}{Past-the-end iterator.}
-\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_begin();}{Starts at
-an arbitrary finite edge which belongs to the $\alpha$-shape for a fixed
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_begin();}{Starts at
+an arbitrary finite vertex which belongs to the $\alpha$-shape for the current $\alpha$.}
+
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_end();}{Past-the-end iterator.}
+
+\ccMethod{Alpha_shape_edges_iterator alpha_shape_edges_begin();}{Starts at
+an arbitrary finite edge which belongs to the $\alpha$-shape for the current
 $\alpha$. In regularised mode, edges are represented as a pair (f,i), where f is 
 an interior face of the $\alpha$-shape.}
-\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_end();}{Past-the-end iterator.}
+
+\ccMethod{Alpha_shape_edges_iterator alpha_shape_edges_end();}{Past-the-end iterator.}
 
 %\ccMethod{template  < class OutputIterator >
 %	  OutputIterator get_alpha_shape_vertices(
@@ -316,14 +319,13 @@ is an internal format.
 \ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Segment}.}
 
 \ccImplementation
-In this, the set of intervals associated with the
+The set of intervals associated with the
 $k$-dimensional faces of the underlying triangulation are
-stored only as \ccc{multimaps}.
+stored in \ccc{multimaps}.
 
 The cross links between the intervals and the $k$-dimensional faces of the
-triangulation are actually realized using methods in the $k$-dimensional faces
-themselves. By this way, you can decide if you want to store or re-compute any
-of these informations.
+triangulation are realized using methods in the $k$-dimensional faces
+themselves. This allows the user to decide if this information gets cached or recomputed.
 
 
 \ccc{A.alpha find} uses linear search, while 

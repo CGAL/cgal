@@ -73,6 +73,10 @@ Old_Packages/Stl_port/stlport/bug/typeinfo svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/utility svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/valarray svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/vector svneol=native#unset
+Packages/Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text
+Packages/Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
+Packages/Alpha_shapes_2/doc_tex/basic/Alpha_shapes_2/alphashape.eps -text
+Packages/Alpha_shapes_2/doc_tex/basic/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr3.gif svneol=native#unset
 Packages/Arrangement/doc_tex/Arrangement_2/circles.gif svneol=native#unset
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr3.gif svneol=native#unset
