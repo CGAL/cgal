@@ -1,3 +1,8 @@
+1.66 (25 January 2004) [mk]
+- make some undocumented methods protected in Apollonius_graph_2;
+  test suite was appropriately altered; these changes have also been
+  reflected in the CGAL 3.0 bug fix release
+
 1.65 (21 January 2004) [mk]
 - number_of*() methods now return size_type
 
