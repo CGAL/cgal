@@ -22,11 +22,14 @@
 #ifndef CGAL_CARTESIAN_LINE_3_H
 #define CGAL_CARTESIAN_LINE_3_H
 
+#include <utility>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineC3
-  : public R_::Line_handle_3
+  : public R_::template Handle<std::pair<typename R_::Point_3,
+                                         typename R_::Direction_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,8 +42,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Line_handle_3             base;
-  typedef typename base::element_type            rep;
+  typedef std::pair<Point_3, Direction_3>          rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

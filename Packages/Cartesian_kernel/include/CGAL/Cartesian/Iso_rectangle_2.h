@@ -22,11 +22,13 @@
 #ifndef CGAL_CARTESIAN_ISO_RECTANGLE_2_H
 #define CGAL_CARTESIAN_ISO_RECTANGLE_2_H
 
+#include <CGAL/Twotuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_rectangleC2
-  : public R_::Iso_rectangle_handle_2
+  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -34,8 +36,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Iso_rectangle_handle_2    base;
-  typedef typename base::element_type            rep;
+  typedef Twotuple<Point_2>                        rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

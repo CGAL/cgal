@@ -22,11 +22,14 @@
 #ifndef CGAL_CARTESIAN_SPHERE_3_H
 #define CGAL_CARTESIAN_SPHERE_3_H
 
+#include <CGAL/utility.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class SphereC3
-  : public R_::Sphere_handle_3
+  : public R_::template Handle<Triple<typename R_::Point_3,
+                                      typename R_::FT, Orientation> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -35,8 +38,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Sphere_3             Sphere_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Sphere_handle_3           base;
-  typedef typename base::element_type            rep;
+  typedef Triple<Point_3, FT, Orientation>         rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

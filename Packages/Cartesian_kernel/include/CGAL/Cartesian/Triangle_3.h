@@ -22,11 +22,13 @@
 #ifndef CGAL_CARTESIAN_TRIANGLE_3_H
 #define CGAL_CARTESIAN_TRIANGLE_3_H
 
+#include <CGAL/Threetuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TriangleC3
-  : public R_::Triangle_handle_3
+  : public R_::template Handle<Threetuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -36,8 +38,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Triangle_3           Triangle_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Triangle_handle_3         base;
-  typedef typename base::element_type            rep;
+  typedef Threetuple<Point_3>                      rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

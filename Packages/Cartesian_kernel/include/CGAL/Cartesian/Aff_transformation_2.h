@@ -23,6 +23,7 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 
 #include <cmath>
+#include <CGAL/Handle_for_virtual.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,7 +45,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Aff_transformationC2
-  : public R_::Aff_transformation_handle_2
+  : public Handle_for_virtual< Aff_transformation_rep_baseC2<R_> >
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;

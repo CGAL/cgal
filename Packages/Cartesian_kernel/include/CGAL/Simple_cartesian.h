@@ -26,14 +26,10 @@
 #define CGAL_CARTESIAN_CLASS_DEFINED
 
 #include <CGAL/basic.h>
-
-#include <CGAL/Twotuple.h>
-#include <CGAL/Threetuple.h>
-#include <CGAL/Simple_Handle_for.h>
-#include <CGAL/Handle_for_virtual.h>
-#include <CGAL/utility.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/user_classes.h>
+
+#include <CGAL/Simple_Handle_for.h>
 
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
@@ -179,42 +175,6 @@ struct Simple_cartesian
     typedef CGAL::Sphere_3<Self>                          Sphere_3;
     typedef CGAL::Iso_cuboid_3<Self>                      Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
-
-    // The typedefs that allow to specify the handle of each type.
-
-    // typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Point_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Vector_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Direction_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Line_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> > Ray_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> > Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<Triple<Point_2, FT, Orientation> >
-                                                      	Circle_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_2> >
-                                                       	Triangle_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
-                                                 	Iso_rectangle_handle_2;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC2<Self> >
-			                           Aff_transformation_handle_2;
-
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Point_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Vector_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Direction_handle_3;
-    typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
-                                                     	Line_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<FT> > Plane_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> > Ray_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> > Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<Triple<Point_3, FT, Orientation> >
-                                                    	Sphere_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_3> >
-                                                  	Triangle_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<Point_3> >
-                                                   	Tetrahedron_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
-                                                	Iso_cuboid_handle_3;
-    typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC3<Self> >
-			                           Aff_transformation_handle_3;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

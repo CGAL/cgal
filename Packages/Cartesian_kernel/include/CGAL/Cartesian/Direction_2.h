@@ -22,11 +22,13 @@
 #ifndef CGAL_CARTESIAN_DIRECTION_2_H
 #define CGAL_CARTESIAN_DIRECTION_2_H
 
+#include <CGAL/Twotuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionC2
-  : public R_::Direction_handle_2
+  : public R_::template Handle<Twotuple<typename R_::FT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -38,8 +40,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef typename R_::Direction_handle_2        base;
-  typedef typename base::element_type            rep;
+  typedef Twotuple<FT>	                           rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

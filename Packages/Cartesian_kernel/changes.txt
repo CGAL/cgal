@@ -1,3 +1,6 @@
+Version 6.65 (20 January 2003)
+- Finish last change : remove *handle_[23] types from the main kernel classes.
+
 Version 6.64 (9 January 2003)
 - Experiment with new ref-counting specification mecanism.
 

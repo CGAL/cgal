@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class PointC2
   : public R_::template Handle<Twotuple<typename R_::FT> >::type
-  // : public R_::Point_handle_2
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,10 +38,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Twotuple<FT>	                    rep;
+  typedef Twotuple<FT>	                           rep;
   typedef typename R_::template Handle<rep>::type  base;
-  // typedef typename R_::Point_handle_2		 base;
-  // typedef typename base::element_type	         rep;
 
 public:
   typedef R_                                     R;

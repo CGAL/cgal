@@ -23,6 +23,7 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 
 #include <cmath>
+#include <CGAL/Handle_for_virtual.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class Aff_transformationC3
-  : public R_::Aff_transformation_handle_3
+  : public Handle_for_virtual<Aff_transformation_rep_baseC3<R_> >
 {
 CGAL_VC7_BUG_PROTECTED
   friend class PlaneC3<R_>; // FIXME: why ?

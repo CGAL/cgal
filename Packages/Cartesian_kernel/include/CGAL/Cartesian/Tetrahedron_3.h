@@ -22,6 +22,7 @@
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_3_H
 #define CGAL_CARTESIAN_TETRAHEDRON_3_H
 
+#include <CGAL/Fourtuple.h>
 #include <CGAL/Cartesian/solve_3.h>
 #include <vector>
 #include <functional>
@@ -30,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class TetrahedronC3
-  : public R_::Tetrahedron_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::Point_3> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -39,8 +40,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Tetrahedron_handle_3      base;
-  typedef typename base::element_type            rep;
+  typedef Fourtuple<Point_3>                       rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;

@@ -22,11 +22,13 @@
 #ifndef CGAL_CARTESIAN_PLANE_3_H
 #define CGAL_CARTESIAN_PLANE_3_H
 
+#include <CGAL/Fourtuple.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class PlaneC3
-  : public R_::Plane_handle_3
+  : public R_::template Handle<Fourtuple<typename R_::FT> >::type
 {
 CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
@@ -40,8 +42,8 @@ CGAL_VC7_BUG_PROTECTED
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef typename R_::Plane_handle_3            base;
-  typedef typename base::element_type            rep;
+  typedef Fourtuple<FT>	                           rep;
+  typedef typename R_::template Handle<rep>::type  base;
 
 public:
   typedef R_                                     R;
