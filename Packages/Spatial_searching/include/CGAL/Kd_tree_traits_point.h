@@ -50,7 +50,7 @@ namespace CGAL {
         //default constructor
 
 	Kd_tree_traits_point() {
-		the_bucket_size = 100;		
+		the_bucket_size = 5;		
 		the_aspect_ratio = NT(3);
 		use_extended_nodes_option = true;
         }

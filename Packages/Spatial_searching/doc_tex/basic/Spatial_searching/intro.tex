@@ -44,8 +44,8 @@ stored in a spatial data structure on the basis of their distances to a
 query object. The query object may be a point or an arbitrary spatial object, e.g a 
 $d$-dimensional sphere. The objects in the spatial data structure are $d$-dimensional points.
 
-Often the number of the neighbours to be computed is not know beforehand, e.g. because the number
-may depend on some properties of the neighbours  
+Often the number of the neighbors to be computed is not know beforehand, e.g. because the number
+may depend on some properties of the neighbors  
 (e.g. when querying for the nearest city to Paris with
 population greater than a million) or the distance to the query point.
 The convential approach is $k$-{\bf nearest neighbor searching} that makes use of a $k$-nearest neighbor
@@ -145,7 +145,7 @@ points and with a quadratic form distance, defined by $d_A(x,y)= (x-y)A(x-y)^T$,
 $A$ is positive definite, i.e. $d_A(x,y) \geq 0$. 
 An important class of quadratic form distances are weighted Minkowski distances.
 Given a parameter $p>0$ and parameters $w_i \geq 0, 0 < i \leq d$, the weighted 
-Minkowski distance is defined by  $l_p(w)(r,q)=\sqrt[p] {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
+Minkowski distance is defined by  $l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p})^{1/p}$ for $0 < p <\infty$ and
 defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
 The Manhattan distance ($p=1$, $w_i=1$) and the
 Euclidean distance ($p=2$, $w_i=1$) are examples of a weighted Minkowski metric.
@@ -384,8 +384,9 @@ supports also range searching using the method \\
 Implementations for the concept \ccc{FuzzyQueryItem} are provided by
 the class \ccc{CGAL::Fuzzy_iso_box_d<Point, IsoBox_d>}  
 and the class \ccc{CGAL::Fuzzy_sphere_d<Point>}. 
-
-
+For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
+used in building the $k$-$d$ tree to a large value (e.g. 100), 
+because in general the query time will be less then using the default value 5 for the parameter \ccc{bucket_size}.
 
 
 \section{Splitting Rules}
@@ -465,6 +466,8 @@ until it hits the first point.
 This may violate the aspect ratio bound, but will never generate empty cells.
 
 \end{itemize}
+
+
 
 \section{Backward compability with the Kd-trees package}
 \label{Spatial_searching:Backward_compability_Kd-trees}

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/Fuzzy_iso_box_d.h
+// file          : include/CGAL/Fuzzy_iso_rectangle_d.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 3.0
@@ -57,25 +57,30 @@ namespace CGAL {
         	
         bool contains(const Point& p) const {	 
 		for (unsigned int i = 0; i < dim; ++i) {
-			if ( (p[i] < box->min_coord(i)) || (p[i] >= box->max_coord(i)) ) return false;
+			if ( (p[i] < box->min_coord(i)) || 
+			   (p[i] >= box->max_coord(i)) ) return false;
 		}
 		return true; 
         }
 
         
-	bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
+	bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) 
+        const {   
  		for (unsigned int i = 0; i < dim; ++i) {
         		if ( (box->max_coord(i)-eps < rectangle->min_coord(i)) 
-			|| (box->min_coord(i)+eps >= rectangle->max_coord(i)) ) return false;
+			|| (box->min_coord(i)+eps >= rectangle->max_coord(i)) ) 
+			return false;
     		}
     		return true;                                     
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
+	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) 
+        const { 
     		for (unsigned int i = 0; i < dim; ++i) {
         		if (  (box->max_coord(i)+eps < rectangle->max_coord(i) ) 
-			|| (box->min_coord(i)-eps >= rectangle->min_coord(i)) ) return false;
+			|| (box->min_coord(i)-eps >= rectangle->min_coord(i)) ) 
+			return false;
     		}
     		return true;
   	} 
