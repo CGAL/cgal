@@ -129,3 +129,59 @@ all_cached: cached_traits \
 	quotient_mp_float_cached_traits \
 	lazy_rat_cached_traits \
 	lazy_quotient_mp_float_cached_traits
+
+# install:
+
+cartesian_inst:
+	$(MAKEF) install
+
+leda_kernel_inst:
+	$(MAKEF) "USE_LEDA_KERNEL=1" install
+
+quotient_mp_float_inst:
+	$(MAKEF) "USE_MP_FLOAT=1" install
+
+lazy_rat_inst:
+	$(MAKEF) "USE_LAZY_RAT=1" install
+
+lazy_quotient_mp_float_inst:
+	$(MAKEF) "USE_LAZY_QUOTIENT=1" install
+
+# 
+insert_fast_inst:
+	$(MAKEF) "USE_INSERT_TIGHT=1" install
+
+my_kernel_inst:
+	$(MAKEF) "USE_MY_KERNEL=1" install
+
+conic_traits_inst:
+	$(MAKEF) "USE_CONIC_TRAITS=1" install
+
+# Cached:
+
+cached_traits_inst:
+	$(MAKEF) "USE_CACHED_TRAITS=1" install
+
+leda_kernel_cached_traits_inst:
+	$(MAKEF) "USE_LEDA_KERNEL=1" "USE_CACHED_TRAITS=1" install
+
+quotient_mp_float_cached_traits_inst:
+	$(MAKEF) "USE_MP_FLOAT=1" "USE_CACHED_TRAITS=1" install
+
+lazy_rat_cached_traits_inst:
+	$(MAKEF) "USE_LAZY_RAT=1" "USE_CACHED_TRAITS=1" install
+
+lazy_quotient_mp_float_cached_traits_inst:
+	$(MAKEF) "USE_LAZY_QUOTIENT=1" "USE_CACHED_TRAITS=1" install
+
+all_non_cached_inst: cartesian_inst \
+	leda_kernel_inst \
+	quotient_mp_float_inst \
+	lazy_rat_inst \
+	lazy_quotient_mp_float_inst
+
+all_cached_inst: cached_traits_inst \
+	leda_kernel_cached_traits_inst \
+	quotient_mp_float_cached_traits_inst \
+	lazy_rat_cached_traits_inst \
+	lazy_quotient_mp_float_cached_traits_inst
