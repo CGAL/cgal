@@ -402,26 +402,6 @@ CGAL_STL_BEGIN_NAMESPACE                                                        
     };                                                                                         \
 CGAL_STL_END_NAMESPACE                                                                            \
 
-#define CGAL_ITERATOR_TRAITS_POINTER_SPEC_DSC(NT)                                              \
-CGAL_STL_BEGIN_NAMESPACE                                                             \
-    template <>                                                                   \
-    struct iterator_traits<const CGAL::Point_d< CGAL::Simple_cartesian< NT > >*> {       \
-        typedef random_access_iterator_tag                     iterator_category; \
-        typedef CGAL::Point_d< CGAL::Simple_cartesian< NT > >         value_type;        \
-        typedef ptrdiff_t                                      difference_type;   \
-        typedef const CGAL::Point_d< CGAL::Simple_cartesian< NT > >*  pointer;           \
-        typedef const CGAL::Point_d< CGAL::Simple_cartesian< NT > >&  reference;         \
-    };                                                                            \
-    template <>                                                                   \
-    struct iterator_traits<CGAL::Point_d< CGAL::Simple_cartesian< NT > >*> {             \
-        typedef random_access_iterator_tag                     iterator_category; \
-        typedef CGAL::Point_d< CGAL::Simple_cartesian< NT > >         value_type;        \
-        typedef ptrdiff_t                                      difference_type;   \
-        typedef CGAL::Point_d< CGAL::Simple_cartesian< NT > >*        pointer;           \
-        typedef CGAL::Point_d< CGAL::Simple_cartesian< NT > >&        reference;         \
-    };                                                                            \
-CGAL_STL_END_NAMESPACE                                                               \
-
 #define CGAL_ITERATOR_TRAITS_POINTER_SPECSC2(NT)                                               \
 CGAL_STL_BEGIN_NAMESPACE                                                             \
     template <>                                                                   \

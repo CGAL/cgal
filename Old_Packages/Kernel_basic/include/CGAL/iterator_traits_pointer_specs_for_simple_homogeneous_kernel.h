@@ -403,25 +403,6 @@ CGAL_STL_BEGIN_NAMESPACE                                                        
     };                                                                                           \
 CGAL_STL_END_NAMESPACE                                                                              \
 
-#define CGAL_ITERATOR_TRAITS_POINTER_SPEC_DSH(NT)                                                \
-CGAL_STL_BEGIN_NAMESPACE                                                               \
-    template <>                                                                     \
-    struct iterator_traits<const CGAL::Point_d< CGAL::Simple_homogeneous< NT > >*> {       \
-        typedef random_access_iterator_tag                       iterator_category; \
-        typedef CGAL::Point_d< CGAL::Simple_homogeneous< NT > >         value_type;        \
-        typedef ptrdiff_t                                        difference_type;   \
-        typedef const CGAL::Point_d< CGAL::Simple_homogeneous< NT > >*  pointer;           \
-        typedef const CGAL::Point_d< CGAL::Simple_homogeneous< NT > >&  reference;         \
-    };                                                                              \
-    template <>                                                                     \
-    struct iterator_traits<CGAL::Point_d< CGAL::Simple_homogeneous< NT > >*> {             \
-        typedef random_access_iterator_tag                       iterator_category; \
-        typedef CGAL::Point_d< CGAL::Simple_homogeneous< NT > >         value_type;        \
-        typedef ptrdiff_t                                        difference_type;   \
-        typedef CGAL::Point_d< CGAL::Simple_homogeneous< NT > >*        pointer;           \
-        typedef CGAL::Point_d< CGAL::Simple_homogeneous< NT > >&        reference;         \
-    };                                                                              \
-CGAL_STL_END_NAMESPACE                                                                 \
 
 #define CGAL_ITERATOR_TRAITS_POINTER_SPECSH2(NT)                                                       \
 CGAL_STL_BEGIN_NAMESPACE                                                                \

@@ -402,25 +402,6 @@ CGAL_STL_BEGIN_NAMESPACE                                                        
     };                                                                                         \
 CGAL_STL_END_NAMESPACE                                                                            \
 
-#define CGAL_ITERATOR_TRAITS_POINTER_SPEC_DC(NT)                                              \
-CGAL_STL_BEGIN_NAMESPACE                                                             \
-    template <>                                                                   \
-    struct iterator_traits<const CGAL::Point_d< CGAL::Cartesian< NT > >*> {       \
-        typedef random_access_iterator_tag                     iterator_category; \
-        typedef CGAL::Point_d< CGAL::Cartesian< NT > >         value_type;        \
-        typedef ptrdiff_t                                      difference_type;   \
-        typedef const CGAL::Point_d< CGAL::Cartesian< NT > >*  pointer;           \
-        typedef const CGAL::Point_d< CGAL::Cartesian< NT > >&  reference;         \
-    };                                                                            \
-    template <>                                                                   \
-    struct iterator_traits<CGAL::Point_d< CGAL::Cartesian< NT > >*> {             \
-        typedef random_access_iterator_tag                     iterator_category; \
-        typedef CGAL::Point_d< CGAL::Cartesian< NT > >         value_type;        \
-        typedef ptrdiff_t                                      difference_type;   \
-        typedef CGAL::Point_d< CGAL::Cartesian< NT > >*        pointer;           \
-        typedef CGAL::Point_d< CGAL::Cartesian< NT > >&        reference;         \
-    };                                                                            \
-CGAL_STL_END_NAMESPACE                                                               \
 
 #define CGAL_ITERATOR_TRAITS_POINTER_SPECC2(NT)                                               \
 CGAL_STL_BEGIN_NAMESPACE                                                             \

@@ -620,10 +620,6 @@ CGAL_Kernel_pred(CGALi::Side_of_bounded_sphere,
 	         Side_of_bounded_sphere_3,
 		 side_of_bounded_sphere_3_object)
 
-CGAL_Kernel_cons(CGALi::Construct<Point_d>,
-	         Construct_point_d,
-		 construct_point_d_object)
-
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons
 #undef CGAL_Kernel_pred2
