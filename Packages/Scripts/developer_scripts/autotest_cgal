@@ -239,6 +239,7 @@ test_script()
 	#
 	# collect results and put them on the web
 	#
+        cd ${CGAL_TEST_DIR}
 	log ${ACTUAL_LOGFILE}.${1} "PUTTING RESULTS ON THE WEB"
 	log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
 	${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
