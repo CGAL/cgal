@@ -1,3 +1,6 @@
+2.78   (11 Feb 2003)
+- Add squared_radius(p, q).
+
 2.77   (10 Feb 2003)
 - Split the main kernel classes into Homogeneous_base<>, and use
   Type_equality_wrapper<>.

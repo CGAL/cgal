@@ -12,6 +12,11 @@ A model for this must provide:
        {returns the squared radius of the circle passing through $p$, $q$
        and $r$. \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
 
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_2& p,
+                                        const Kernel::Point_2& q);}
+{returns the squared radius of the smallest circle passing through $p$,
+and $q$, i.e. one fourth of the squared distance between $p$ and $q$.}
+
 \ccRefines
 AdaptableFunctor (with one argument)
 

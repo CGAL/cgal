@@ -643,6 +643,10 @@ public:
     FT
     operator()( const Point_2&, const Point_2&, const Point_2&) const
     { FT val = 0; return val; }
+
+    FT
+    operator()( const Point_2&, const Point_2&) const
+    { FT val = 0; return val; }
 };
 
 template <typename K>
@@ -660,12 +664,16 @@ public:
     { FT val = 0; return val; }
 
     FT
+    operator()( const Point_3&, const Point_3&,
+	        const Point_3&, const Point_3&) const
+    { FT val = 0; return val; }
+
+    FT
     operator()( const Point_3&, const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 
     FT
-    operator()( const Point_3&, const Point_3&,
-	        const Point_3&, const Point_3&) const
+    operator()( const Point_3&, const Point_3&) const
     { FT val = 0; return val; }
 };
 

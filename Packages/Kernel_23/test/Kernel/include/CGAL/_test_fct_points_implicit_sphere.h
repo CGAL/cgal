@@ -186,6 +186,7 @@ _test_fct_points_implicit_sphere(const R&)
 
   assert( CGAL::squared_radius(p1, p2, pt2, pt3) == FT(300));
   assert( CGAL::squared_radius(p1, p2, pt2) == FT(300));
+  assert( CGAL::squared_radius(p1, p2) == FT(300));
 
   return true;
 }

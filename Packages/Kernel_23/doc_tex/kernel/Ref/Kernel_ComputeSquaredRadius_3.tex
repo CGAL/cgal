@@ -19,6 +19,11 @@ A model for this must provide:
        {returns the squared radius of the sphere passing through $p$, $q$ and
        $r$, and whose center is in the plane defined by these three points.}
 
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_3& p,
+                                        const Kernel::Point_3& q);}
+{returns the squared radius of the smallest circle passing through $p$,
+and $q$, i.e. one fourth of the squared distance between $p$ and $q$.}
+
 \ccRefines
 AdaptableFunctor (with one argument)
 

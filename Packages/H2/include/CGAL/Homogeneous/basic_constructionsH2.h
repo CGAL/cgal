@@ -215,6 +215,16 @@ squared_radius( const PointH2<R>& p,
 }
 
 template <class R>
+CGAL_KERNEL_INLINE
+typename R::FT
+squared_radius( const PointH2<R>& p,
+                const PointH2<R>& q )
+{
+  typedef typename R::FT FT;
+  return squared_distance(p, q)/FT(4);
+}
+
+template <class R>
 CGAL_KERNEL_LARGE_INLINE
 typename R::FT
 area(const TriangleH2<R>& t)

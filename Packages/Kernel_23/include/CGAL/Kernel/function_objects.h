@@ -640,6 +640,10 @@ public:
     FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radius(p, q, r); }
+
+    FT
+    operator()( const Point_2& p, const Point_2& q) const
+    { return squared_radius(p, q); }
 };
 
 template <typename K>
@@ -657,13 +661,17 @@ public:
     { return s.squared_radius(); }
 
     FT
+    operator()( const Point_3& p, const Point_3& q,
+	        const Point_3& r, const Point_3& s) const
+    { return squared_radius(p, q, r, s); }
+
+    FT
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
     { return squared_radius(p, q, r); }
 
     FT
-    operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
-    { return squared_radius(p, q, r, s); }
+    operator()( const Point_3& p, const Point_3& q) const
+    { return squared_radius(p, q); }
 };
 
 template <typename K>

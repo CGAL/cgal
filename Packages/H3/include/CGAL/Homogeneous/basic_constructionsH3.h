@@ -228,6 +228,16 @@ template <class R>
 CGAL_KERNEL_INLINE
 typename R::FT
 squared_radius( const PointH3<R>& p,
+                const PointH3<R>& q )
+{
+  typedef typename R::FT FT;
+  return squared_distance(p, q) / FT(4);
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename R::FT
+squared_radius( const PointH3<R>& p,
                 const PointH3<R>& q,
                 const PointH3<R>& r )
 {

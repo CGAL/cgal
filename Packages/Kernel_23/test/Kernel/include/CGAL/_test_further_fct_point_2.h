@@ -142,6 +142,7 @@ _test_further_fct_point_2(const R& )
  // Now test squared_radius().
 
  assert( CGAL::squared_radius(p10, p11, pt1) == FT(200));
+ assert( CGAL::squared_radius(p10, p11) == FT(200));
 
  std::cout << '.';
 
