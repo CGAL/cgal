@@ -1,0 +1,475 @@
+#ifndef HOMOGENEOUS_D_H
+#define HOMOGENEOUS_D_H
+
+#ifndef NOCGALINCL
+#include <CGAL/basic.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/representation_tags.h>
+#include <CGAL/Kernel/function_objects.h>
+#include <vector>
+#endif
+#include <CGAL/Linear_algebra.h>
+#include <CGAL/Kernel_d/PointHd.h>
+#include <CGAL/Kernel_d/VectorHd.h>
+#include <CGAL/Kernel_d/DirectionHd.h>
+#include <CGAL/Kernel_d/HyperplaneHd.h>
+#include <CGAL/Kernel_d/Aff_transformationHd.h>
+#include <CGAL/Kernel_d/PointHd.C>
+#include <CGAL/Kernel_d/VectorHd.C>
+#include <CGAL/Kernel_d/DirectionHd.C>
+#include <CGAL/Kernel_d/HyperplaneHd.C>
+#include <CGAL/Kernel_d/Aff_transformationHd.C>
+#include <CGAL/Kernel_d/function_objectsHd.h>
+#include <CGAL/Kernel_d/intersection_objectsHd.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R> class Point_d;
+template <class R> class Vector_d;
+template <class R> class Direction_d;
+template <class R> class Hyperplane_d;
+template <class R> class Sphere_d;
+
+template <class R> class Segment_d;
+template <class R> class Ray_d;
+template <class R> class Line_d;
+template <class R> class Aff_transformation_d;
+
+template <class pRT, class pLA = Linear_algebra<pRT> >
+class Homogeneous_d 
+{
+public:
+  typedef Homogeneous_d<pRT,pLA> Self;
+  typedef pRT                    RT;
+  typedef Quotient<RT>           FT;
+  typedef pLA                    LA;
+
+  typedef Homogeneous_tag        Rep_tag;
+
+  typedef PointHd<RT,LA>              Point_d_base;
+  typedef VectorHd<RT,LA>             Vector_d_base;
+  typedef DirectionHd<RT,LA>          Direction_d_base;
+  typedef HyperplaneHd<RT,LA>         Hyperplane_d_base;
+  typedef Aff_transformationHd<RT,LA> Aff_transformation_d_base;
+
+  typedef CGAL::Point_d<Self>              Point_d;
+  typedef CGAL::Vector_d<Self>             Vector_d;
+  typedef CGAL::Direction_d<Self>          Direction_d;
+  typedef CGAL::Hyperplane_d<Self>         Hyperplane_d;
+  typedef CGAL::Aff_transformation_d<Self> Aff_transformation_d;
+
+  // meta types (fit both kernels):
+  typedef CGAL::Sphere_d<Self>   Sphere_d;
+  typedef CGAL::Segment_d<Self>  Segment_d;
+  typedef CGAL::Ray_d<Self>      Ray_d;
+  typedef CGAL::Line_d<Self>     Line_d;
+
+  // function objects:
+  typedef Lift_to_paraboloidHd<Self> Lift_to_paraboloid_d;
+  typedef Project_along_d_axisHd<Self> Project_along_d_axis_d;
+  typedef MidpointHd<Self> Midpoint_d;
+  typedef Squared_distanceHd<Self> Squared_distance_d;
+  typedef Position_on_lineHd<Self> Position_on_line_d;
+  typedef Barycentric_coordinatesHd<Self> Barycentric_coordinates_d;
+  typedef OrientationHd<Self> Orientation_d;
+  typedef Side_of_oriented_sphereHd<Self> Side_of_oriented_sphere_d;
+  typedef Side_of_bounded_sphereHd<Self> Side_of_bounded_sphere_d;
+  typedef Contained_in_simplexHd<Self> Contained_in_simplex_d;
+  typedef Contained_in_affine_hullHd<Self> Contained_in_affine_hull_d;
+  typedef Affine_rankHd<Self> Affine_rank_d;
+  typedef Affinely_independentHd<Self> Affinely_independent_d;
+  typedef Compare_lexicographicallyHd<Self> Compare_lexicographically_d; 
+  typedef Center_of_circleHd<Self> Center_of_circle_d;
+  typedef Contained_in_linear_hullHd<Self> Contained_in_linear_hull_d;  
+  typedef Linear_rankHd<Self> Linear_rank_d;
+  typedef Linearly_independentHd<Self> Linearly_independent_d;
+  typedef Linear_baseHd<Self> Linear_base_d;
+
+  Lift_to_paraboloid_d lift_to_paraboloid_d_object() const
+  { return Lift_to_paraboloid_d(); }
+  Project_along_d_axis_d project_along_d_axis_d_object() const
+  { return Project_along_d_axis_d(); }
+  Midpoint_d midpoint_d_object() const
+  { return Midpoint_d(); }
+  Squared_distance_d squared_distance_d_object() const
+  { return Squared_distance_d(); }
+  Position_on_line_d position_on_line_d_object() const
+  { return Position_on_line_d(); }
+  Barycentric_coordinates_d barycentric_coordinates_d_object() const
+  { return Barycentric_coordinates_d(); }
+  Orientation_d orientation_d_object() const
+  { return Orientation_d(); }
+  Side_of_oriented_sphere_d side_of_oriented_sphere_d_object() const
+  { return Side_of_oriented_sphere_d(); }
+  Side_of_bounded_sphere_d side_of_bounded_sphere_d_object() const
+  { return Side_of_bounded_sphere_d(); }
+  Contained_in_simplex_d contained_in_simplex_d_object() const
+  { return Contained_in_simplex_d(); }
+  Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
+  { return Contained_in_affine_hull_d(); }
+  Affine_rank_d affine_rank_d_object() const 
+  { return Affine_rank_d(); }
+  Affinely_independent_d affinely_independent_d_object() const
+  { return Affinely_independent_d(); }
+  Compare_lexicographically_d compare_lexicographically_d_object() const
+  { return Compare_lexicographically_d(); }
+  Center_of_circle_d center_of_circle_d_object() const
+  { return Center_of_circle_d(); }
+  Contained_in_linear_hull_d contained_in_linear_hull_d_object() const
+  { return Contained_in_linear_hull_d(); }
+  Linear_rank_d linear_rank_d_object() const 
+  { return Linear_rank_d(); }
+  Linearly_independent_d linearly_independent_d_object() const
+  { return Linearly_independent_d(); }
+  Linear_base_d linear_base_d_object() const 
+  { return Linear_base_d(); }
+
+  // Intersection objects:
+  typedef Line_d_Line_d_pairH<Self> Line_d_Line_d_pair;
+  typedef Ray_d_Ray_d_pairH<Self> Ray_d_Ray_d_pair;
+  typedef Segment_d_Segment_d_pairH<Self> Segment_d_Segment_d_pair;
+  typedef Line_d_Ray_d_pairH<Self> Line_d_Ray_d_pair;
+  typedef Line_d_Segment_d_pairH<Self> Line_d_Segment_d_pair;
+  typedef Ray_d_Segment_d_pairH<Self> Ray_d_Segment_d_pair;
+  typedef Line_d_Hyperplane_d_pairH<Self> Line_d_Hyperplane_d_pair;
+  typedef Ray_d_Hyperplane_d_pairH<Self> Ray_d_Hyperplane_d_pair;
+  typedef Segment_d_Hyperplane_d_pairH<Self> Segment_d_Hyperplane_d_pair;
+
+  typedef CGALi::Intersect Intersect_d;
+  Intersect_d intersect_d_object() const 
+  { return Intersect_d(); }
+
+  // FT - RT conversion and access :
+
+  static  FT  make_FT(const RT & num, const RT& denom)
+  { return FT(num, denom); }
+  
+  static  FT  make_FT(const RT & num)
+  { return FT(num); }
+  
+  static  RT FT_numerator(const FT &r)
+  { return r.numerator(); }
+  
+  static  RT FT_denominator(const FT &r)
+  { return r.denominator(); }
+
+  // special stuff for traits class character :
+
+  struct Component_accessor_d {
+    template <typename C>
+    int dimension(const C& c) const { return c.dimension(); }
+    template <typename C>
+    RT homogeneous(const C& c, int i) { return c.homogeneous(i); }
+    template <typename C>
+    FT cartesian(const C& c, int i) { return c.cartesian(i); }
+  };
+  Component_accessor_d component_accessor_d_object() const
+  { return Component_accessor_d(); }
+
+  typedef CGALi::Construct<Point_d> Construct_point_d;
+  Construct_point_d construct_point_d_object() const
+  { return Construct_point_d(); }
+
+  typedef CGALi::Construct<Vector_d> Construct_vector_d;
+  Construct_vector_d construct_vector_d_object() const
+  { return Construct_vector_d(); }
+
+  typedef CGALi::Construct<Sphere_d> Construct_sphere_d;
+  Construct_sphere_d construct_sphere_d_object() const
+  { return Construct_sphere_d(); }
+
+  typedef CGALi::Construct<Hyperplane_d> Construct_hyperplane_d;
+  Construct_hyperplane_d construct_hyperplane_d_object() const
+  { return Construct_hyperplane_d(); }
+
+  typedef CGALi::Call_has_on_positive_side Has_on_positive_side_d;
+  Has_on_positive_side_d has_on_positive_side_d_object() const
+  { return Has_on_positive_side_d(); }
+
+  typedef CGALi::Call_oriented_side Oriented_side_d;
+  Oriented_side_d oriented_side_d_object() const
+  { return Oriented_side_d(); }
+
+  struct Point_to_vector_d {
+    Vector_d operator()(const Point_d& p) const
+    { return p-CGAL::ORIGIN; }
+  };
+  Point_to_vector_d point_to_vector_d_object() const
+  { return Point_to_vector_d(); }
+
+  struct Vector_to_point_d {
+    Point_d operator()(const Vector_d& v) const
+    { return CGAL::ORIGIN+v; }
+  };
+  Vector_to_point_d vector_to_point_d_object() const
+  { return Vector_to_point_d(); }
+  
+  struct Orthogonal_vector_d {
+    Vector_d operator()(const Hyperplane_d& h) const
+    { return h.orthogonal_vector(); }
+  };
+  Orthogonal_vector_d orthogonal_vector_d_object() const
+  { return Orthogonal_vector_d(); }
+
+  struct Point_of_sphere_d {
+    Point_d operator()(const Sphere_d& S, int i)
+    { return S.point(i); }
+  };
+  Point_of_sphere_d point_of_sphere_d_object() const
+  { return Point_of_sphere_d(); }
+
+}; // Homogeneous_d<R>
+ 
+ 
+template <class pR>
+class Point_d : public pR::Point_d_base
+{ public:
+  typedef typename pR::Point_d_base Base;
+  typedef Point_d<pR>               Self;
+  typedef pR R;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  typedef typename R::LA LA;
+
+  Point_d(int d=0) : Base(d) {}
+  Point_d(int d, const Origin &o) : Base(d,o) {}
+
+  Point_d(int a, int b, int c = 1) : Base(a,b,c) {} 
+  Point_d(const RT& a, const RT& b, const RT& c = 1) :
+    Base(a,b,c) {}  
+  Point_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
+  Point_d(const RT& a, const RT& b, const RT& c, const RT& d) :
+    Base(a,b,c,d) {}
+
+  template <class InputIterator>
+  Point_d (int d, InputIterator first, InputIterator last)
+    : Base (d, first, last) {}
+  template <class InputIterator>
+  Point_d(int d, InputIterator first, InputIterator last, const RT& D)
+    : Base (d, first, last, D) {}
+  Point_d(const Self &p) : Base(p) {}
+  Point_d(const Base& p) : Base(p) {}
+ 
+  Vector_d<R> operator-(const Origin& o) const 
+  { return Base::operator-(o); }
+  Vector_d<R> operator-(const Self& q) const
+  { return Base::operator-(q); }
+  Self operator+(const Vector_d<R>& v) const
+  { return Base::operator+(v); }
+  Self operator-(const Vector_d<R>& v) const
+  { return Base::operator-(v); }
+  Self& operator+=(const Vector_d<R>& v) 
+  { return static_cast<Self&>(Base::operator+=(v)); }
+  Self& operator-=(const Vector_d<R>& v)
+  { return static_cast<Self&>(Base::operator-=(v)); }
+  
+};
+
+
+
+template <class pR>
+class Vector_d : public pR::Vector_d_base
+{ public:
+  typedef typename pR::Vector_d_base Base;
+  typedef Vector_d<pR>               Self;
+  typedef pR R;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  typedef typename R::LA LA;
+
+  Vector_d(int d=0) : Base(d) {}
+  Vector_d(int d, Null_vector v) : Base(d,v) {}
+  Vector_d(int a, int b, int c = 1) : Base(a,b,c) {}
+  Vector_d(const RT& a, const RT& b, const RT& c = 1) :
+    Base(a,b,c) {}
+  Vector_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
+  Vector_d(const RT& a, const RT& b, const RT& c, const RT& d) :
+    Base(a,b,c,d) {}
+  Vector_d(typename Base::Base_vector, int d, int i) :
+    Base(typename Base::Base_vector(), d,i) {}
+
+  template <class InputIterator>
+  Vector_d (int d, InputIterator first, InputIterator last)
+    : Base (d, first, last) {}
+  template <class InputIterator>
+  Vector_d (int d, InputIterator first, InputIterator last, const RT& D)
+    : Base (d, first, last, D) {}
+  Vector_d(const Self& v) : Base(v) {}
+  Vector_d(const Base& v) : Base(v) {}
+
+  Direction_d<R> direction() const { return Base::direction(); }
+
+  FT operator* (const Self& w) const
+  { return Base::operator*(w); }
+  Self operator+(const Self& w) const
+  { return Base::operator+(w); }
+  Self operator-(const Self& w) const
+  { return Base::operator-(w); }
+  Self operator-() const 
+  { return Base::operator-(); }
+
+  template <class NT> 
+  Self operator/(const NT& n) const { return Base::operator/(n); }
+
+  Self& operator+=(const Self& w) 
+  { return static_cast<Self&>(Base::operator+=(w)); }
+  Self& operator-=(const Self& w) 
+  { return static_cast<Self&>(Base::operator-=(w)); }
+  template <class NT> 
+  Self& operator*=(const NT& n) 
+  { return static_cast<Self&>(Base::operator*=(n)); }
+  template <class NT> 
+  Self& operator/=(const NT& n) 
+  { return static_cast<Self&>(Base::operator/=(n)); }
+
+  bool operator==(const Self& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Self& w) const
+  { return Base::operator!=(w); }
+  
+};
+
+template <class R> Point_d<R> 
+operator+ (const Origin& o, const Vector_d<R>& v)
+{ return Point_d<R>( o + static_cast<typename Vector_d<R>::Base>(v) ); }
+
+template <class NT, class R>
+Vector_d<R> operator*(const NT& n, const Vector_d<R>& v) 
+{ return Vector_d<R>( n * static_cast<typename Vector_d<R>::Base>(v) ); }
+
+
+template <class pR>
+class Direction_d : public pR::Direction_d_base
+{ public:
+  typedef typename pR::Direction_d_base Base;
+  typedef Direction_d<pR>               Self;
+  typedef pR R;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  typedef typename R::LA LA;
+
+  Direction_d(int d=0) : Base(d) {}
+  Direction_d(int a, int b) : Base(a,b) {}
+  Direction_d(const RT& a, const RT& b) : Base(a,b) {}
+  Direction_d(int a, int b, int c) : Base(a,b,c) {}
+  Direction_d(const RT& a, const RT& b, const RT& c) : Base(a,b,c) {}
+  template <class InputIterator>
+  Direction_d (int d, InputIterator first, InputIterator last)
+    : Base(d, first, last) {}
+  Direction_d(const Direction_d<R> &d) : Base(d) {}
+  Direction_d(const Vector_d<R> &v) : Base(v) {}
+  Direction_d(typename Base::Base_direction, int d, int i) : 
+    Base(typename Base::Base_direction(),d,i) {}
+  Direction_d(const Base& p) : Base(p) {}
+
+  Self operator-() const { return Base::operator-(); }
+  Vector_d<R> vector() const { return Base::vector(); }
+
+  bool operator==(const Self& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Self& w) const
+  { return Base::operator!=(w); }
+};
+
+template <class pR>
+class Hyperplane_d : public pR::Hyperplane_d_base
+{ public:
+  typedef typename pR::Hyperplane_d_base Base;
+  typedef Hyperplane_d<pR>               Self;
+  typedef pR R;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  typedef typename R::LA LA;
+
+  Hyperplane_d(int d=0) : Base(d) {}
+  Hyperplane_d(int a, int b, int c) : Base(a,b,c) {}
+  Hyperplane_d(const RT& a, const RT& b, const RT& c) : 
+    Base(a,b,c) {}
+  Hyperplane_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
+  Hyperplane_d(const RT& a, const RT& b, const RT& c, const RT& d) : 
+    Base(a,b,c,d) {}
+
+  Hyperplane_d(const Point_d<R>& p, const Direction_d<R>& dir) :
+    Base(p,dir) {}
+
+  Hyperplane_d(const Hyperplane_d<R> &h) : Base(h) {}
+  Hyperplane_d(const Base& p) : Base(p) {}
+
+  template <class InputIterator>
+  Hyperplane_d(int d, InputIterator first, InputIterator last)
+    : Base (d, first, last) {}
+
+  template <class InputIterator>
+  Hyperplane_d(int d, InputIterator first, InputIterator last,
+               const RT& D)
+    : Base (d, first, last, D) {}
+
+  template <class ForwardIterator>
+  Hyperplane_d(ForwardIterator first, ForwardIterator last, 
+               const Point_d<R>& o, Oriented_side side = Oriented_side(0)) :
+    Base(first,last,o,side) {}
+
+  Vector_d<R> orthogonal_vector() const 
+  { return Base::orthogonal_vector(); }
+  Direction_d<R> orthogonal_direction() const 
+  { return Base::orthogonal_direction(); }
+
+  bool operator==(const Self& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Self& w) const
+  { return Base::operator!=(w); }
+};
+
+
+template <class pR>
+class Aff_transformation_d : public pR::Aff_transformation_d_base
+{ public:
+  typedef typename pR::Aff_transformation_d_base Base;
+  typedef Aff_transformation_d<pR>               Self;
+  typedef pR R;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
+  typedef typename R::LA LA;
+
+  Aff_transformation_d(int d = 0, bool identity=false) 
+    : Base(d,identity) {}
+  Aff_transformation_d(const typename LA::Matrix& M) 
+    : Base(M) {}
+  template <typename Forward_iterator>
+  Aff_transformation_d(
+    Forward_iterator start, Forward_iterator end) : Base(start,end) {}
+  Aff_transformation_d(const Vector_d<R>& v) : Base(v) {}
+  Aff_transformation_d(int d, const RT& num, const RT& den) 
+    : Base(d,num,den) {}
+  Aff_transformation_d(int d, const RT& sin_num, const RT& cos_num, 
+                       const RT& den, int e1 = 0, int e2 = 1)
+    : Base(d,sin_num,cos_num,den,e1,e2) {}
+  Aff_transformation_d(int d, const Direction_d<R>& dir, 
+                       const RT& num, const RT& den, 
+                       int e1 = 0, int e2 = 1)
+    : Base(d,dir,num,den,e1,e2) {}
+  Aff_transformation_d(const Base& a) : Base(a) {}
+  Aff_transformation_d(const Self& a) : Base(a) {}
+
+  Self operator*(const Self& a)
+  { return Base::operator*(a); }
+  Self inverse() const { return Base::inverse(); }
+
+  bool operator==(const Self& a) const
+  { return Base::operator==(a); }
+  bool operator!=(const Self& a) const
+  { return Base::operator!=(a); } 
+
+};
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Kernel_d/Sphere_d.h>
+#include <CGAL/Kernel_d/Segment_d.h>
+#include <CGAL/Kernel_d/Ray_d.h>
+#include <CGAL/Kernel_d/Line_d.h>
+#include <CGAL/Kernel_d/Line_d.C>
+#include <CGAL/intersections_d.h>
+
+#endif // HOMOGENEOUS_D_H
+

@@ -1,0 +1,6 @@
+Kernel_d Package: Release changes
+----------------------------------------------------------------------
+
+0.9 (1 January 2001)
+
+     initial release
