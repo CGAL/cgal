@@ -44,7 +44,7 @@ namespace CGAL {
     w->attach_standard(&zoombut);
     w->attach_standard(&zoomrectbut);
     w->attach_standard(&handtoolbut);
-    w->attach_standard(show_coord);
+    w->attach(show_coord);
     zoombut.deactivate();
     zoomrectbut.deactivate();
     handtoolbut.deactivate();
@@ -114,11 +114,13 @@ namespace CGAL {
 
     button_group = new QButtonGroup(0, "My_group");
     nr_of_buttons = 9;
-    for(int i = 5; i<nr_of_buttons; i++){
+    for(int i = 5; i<nr_of_buttons-1; i++){
       but[i]->setToggleButton(true);
       button_group->insert(but[i]);
     }
     but[0]->setToggleButton(true);
+    but[8]->setToggleButton(true);
+    but[8]->toggle();
     //but[1]->setEnabled(false);
     //but[2]->setEnabled(false);
     button_group->insert(but[0]);
