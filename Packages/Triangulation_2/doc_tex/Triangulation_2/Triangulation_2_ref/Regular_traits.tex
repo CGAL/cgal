@@ -26,42 +26,42 @@ and additionally provides  a type
 and add a weight data member )
 and the power tests for weighted points
 and two function objects type for generic and degenerate
-power_test predicates.
+power\_test predicates.
 %The traits must also provide the types 
 %\ccc{Ray} and \ccc{Line} to output the dual power diagram,
 
 
 
 \ccTypes
-\ccNestedType{Bare_point}{Anothr name for the Point_2 type.}
+\ccNestedType{Bare_point}{Another name for the \ccc{Point_2} type.}
 \ccGlue    
-\ccNestedType{Weighted_point}{Is required to derive from Point_2
-and to be a model of the Weighted_point concept.}
-\ccGlue
+\ccNestedType{Weighted_point}{Is required to derive from \ccc{Point_2}
+and to be a model of the \ccc{Weighted_point} concept.}
+%\ccGlue
 %\ccNestedType{Line_2}{Only required if the dual power diagram is asked.}
 %\ccGlue
 %\ccNestedType{Ray_2}{Only required if the dual power diagram is asked.}
 %\ccGlue
 
-\ccNestedTypes{Power_test_2}{A predicate object type. Must provide
+\ccNestedType{Power_test_2}{A predicate object type. Must provide
 the operator 
 \ccc{Oriented_side operator() ( Weighted_point p,
 			     Weighted_point q,
 			     Weighted_point r,
 			     Weighted_point s) }
 which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
-\ccc{s}. \ccPrecondition{the bare_points corresponding to 
+\ccc{s}. \ccPrecond{the bare points corresponding to 
 \ccc{p}, \ccc{q}, \ccc{r} are not collinear}.}
 \ccGlue
-\ccNestedTypes{Power_test_degenerated_2}{A predicate object type. Must provide
+\ccNestedType{Power_test_degenerated_2}{A predicate object type. Must provide
 the operator 
 \ccc{Oriented_side operator() ( Weighted_point p,
 			     Weighted_point q,
 			     Weighted_point r) }
 which is the degenerated power test for collinear points 
 \ccc{p}, \ccc{q}, \ccc{r}.
-\ccPrecondition{the bare_points corresponding to 
-\ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}
+\ccPrecond{the bare points corresponding to 
+\ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}}
 
 
  

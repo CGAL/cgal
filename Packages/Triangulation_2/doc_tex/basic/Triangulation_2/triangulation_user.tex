@@ -1360,7 +1360,7 @@ that takes three points as argument.}
 \ccNestedType{Compare_x_2}{A function object whose operator() takes
 two points as arguments and returns the 
 \ccc{CGAL_comparison_result} correponding to the
-ordering of their x-coordinates.
+ordering of their x-coordinates.}
 \ccGlue
 \ccNestedType{Compare_y_2}{A function object whose operator() takes
 two points as arguments and 
@@ -1386,11 +1386,12 @@ can be provided.
 \ccHeading{Predicates functions}
 The following functions give access to the  predicate objects.
 \ccThree{Comparison_result}{gt.compare_x(Point p0, Point p1)x}{}
-\ccMethod{Comparison_x_2 compare_x_2_object();}                                \ccGlue
-\ccMethod{Comparison_y_2 compare_y_2_object();} 
+\ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
+\ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
-\ccMethod{Orientation_2  orientation_2_object();}
+\ccMethod{Orientation_2  orientation_2_object();}{}
 
+\end{ccClass}
 
 
 
@@ -1410,19 +1411,19 @@ is designed to deal with ordinary  two dimensional points.
 \ccInclude{CGAL/Triangulation_euclidean_traits_2.h}
 
 \ccTypes
-\ccThree{typedef Triangle_2<R>}{Triangle}{}
+\ccThree{typedef Triangle_2<R>}{Triangle_2}{}
 
-\ccTypedef{typedef Point_2<R>  Point;}{}
+\ccTypedef{typedef Point_2<R>  Point_2;}{}
 \ccGlue
-\ccTypedef{typedef Segment_2<R>   Segment;}{}
+\ccTypedef{typedef Segment_2<R>   Segment_2;}{}
 \ccGlue
-\ccTypedef{typedef Triangle_2<R>   Triangle;}{}
+\ccTypedef{typedef Triangle_2<R>   Triangle_2;}{}
 \ccGlue
-\ccTypedef{typedef  R::Compare_x_2 Compare_x_2;}
+\ccTypedef{typedef  R::Compare_x_2 Compare_x_2;}{}
 \ccGlue
-\ccTypedef{typedef  R::Compare_y_2 Compare_y_2;}
+\ccTypedef{typedef  R::Compare_y_2 Compare_y_2;}{}
 \ccGlue
-\ccTypedef{typedef  R::Orientation_2 Orientation_2;}
+\ccTypedef{typedef  R::Orientation_2 Orientation_2;}{}
 \end{ccClassTemplate}
 
 
@@ -1443,11 +1444,11 @@ this class supplies geometric predicates that ignore the
 
 \ccTypes
 
-\ccTypedef{typedef Point_3<R>   Point;}{}
+\ccTypedef{typedef Point_3<R>   Point_2;}{}
 \ccGlue
-\ccTypedef{typedef Segment_3<R>   Segment;}{}
+\ccTypedef{typedef Segment_3<R>   Segment_2;}{}
 \ccGlue
-\ccTypedef{typedef Triangle_3<R>   Triangle;}{}
+\ccTypedef{typedef Triangle_3<R>   Triangle_2;}{}
 \end{ccClassTemplate}
 
 \cgal\ provides also predefined geometric traits class
@@ -2536,8 +2537,8 @@ for the basic \ccc{in_circle} test used to maintain the
 empty circle property.
 The \ccc{in_circle} test is the test 
 that actually defines the triangulation.
-The additional types \ccc{Line} and
-and \ccc{Ray} and the constructor objects
+The additional types \ccc{Line_2} and
+and \ccc{Ray_2} and the constructor objects
 \ccc{Construct_circumcenter_2}, \ccc{Construct_bisector_2},
 \ccc{Construct_midpoint}
 are used to build the dual Voronoi diagram
@@ -2551,12 +2552,12 @@ if \ccc{nearest_vertex(..)} query are issued.
 \ccTypes
 \ccThree{Oriented_side}{xxxxxx}{}
 \ccThreeToTwo
-\ccNestedType{Line}{}}
+\ccNestedType{Line_2}{}
 \ccGlue
-\ccNestedType{Ray}{}
+\ccNestedType{Ray_2}{}
 
 \ccNestedType{Side_of_oriented_circle_2}{Function object for the
-\ccc{in_circle} test.
+\ccc{in_circle} test.}
 \ccNestedType{Less_distance_to_point_2}{ Function object type to
 compare the distance of two points to a third one.
 Needed only if the \ccc{nearest_neighbor()} 
@@ -2577,9 +2578,8 @@ The following function provide access to the predicates and constructors
 type objects.
 \ccMethod{Side_of_oriented_circle_2 side_of_oriented_circle_2_object();}{}
 \ccGlue
-\ccMethod{Less_distance_to_point_2 less_distance_to_point_2_object(const Point_2& p);}
-\ccMethod{ Construct_circumcenter_2}{
-construct_circumcenter_2_object();}{}
+\ccMethod{Less_distance_to_point_2 less_distance_to_point_2_object(const Point_2& p);}{}
+\ccMethod{ Construct_circumcenter_2 construct_circumcenter_2_object();}{}
 \ccGlue                                        
 \ccMethod{Construct_bisector_2 construct_bisector_2_object();} {}
 \ccGlue
@@ -2720,14 +2720,7 @@ any pair of neighboring faces.
 \ccTypes
 \ccThree{typedef Traits::Weighted_point}{Weighted_point;}{}
 \ccThreeToTwo
-\ccTypedef{typedef Traits::Distance Distance;}{}
 
-\ccTypedef{typedef Traits::Line Line;}{}
-\ccGlue
-\ccTypedef{typedef Traits::Direction Direction;}{}
-\ccGlue
-\ccTypedef{typedef Traits::Ray Ray;}{}
-\ccGlue
 \ccTypedef{typedef Traits::Bare_point  Bare_point;}{}
 \ccGlue
 \ccTypedef{typedef Traits::Weighted_point  Weighted_point;}{}
@@ -2955,23 +2948,23 @@ must fulfill the requirements of section~\ref{I1_Sect_Geom_traits}
 and additionally provide  
 \ccc{Weitghed_point} type (which derives from the type \ccc{Point} 
 and add a weight data member )
-and a two types Power_test_2 and Power_test_degenerated_2
+and a two types \ccc{Power_test_2} and \ccc{Power_test_degenerated_2}
 for the power tests.
 and a  power tests for weighted points.
-The traits must also provide the types 
-\ccc{Ray} and \ccc{Line} to output the dual power diagram,
-and also eventually a \ccc{Distance} type 
-(analogue to the distance type defined in ~\ref{I1_Sect_Delaunay_geom_traits})
-to answer to lowest power query (localisation in the power diagram).
+%The traits must also provide the types 
+%\ccc{Ray_2} and \ccc{Line_2} to output the dual power diagram,
+%and also eventually a \ccc{Distance} type 
+%(analogue to the distance type defined in ~\ref{I1_Sect_Delaunay_geom_traits})
+%to answer to lowest power query (localisation in the power diagram).
 
 
 \ccThree{Comparison_result}{t.compare_x();}{}
 \ccThreeToTwo
 
 \ccTypes
-\ccTypedef{Point_2 Bare_point}
+\ccTypedef{typedef Point_2 Bare_point;}{}
 \ccGlue    
-\ccNestedType{Weighted_point}
+\ccNestedType{Weighted_point}{}
 
 \ccNestedType{Power_test_2}{Function objects for generic power test on four
 points;}
