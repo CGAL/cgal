@@ -19,3 +19,4 @@
 - check the case that s is a segment in the infinite_edge_conflict predicate
 - in the traits class add Object_2 and Assign_2 as in the case of the Apollonius graph
 - remove the constructions from the traits class except the ones for the Voronoi vertex
+- verify that the infinite_edge_predicate is working correctly
