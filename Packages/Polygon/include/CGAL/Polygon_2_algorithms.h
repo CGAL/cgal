@@ -24,25 +24,15 @@
 #ifndef CGAL_POLYGON_2_ALGORITHMS_H
 #define CGAL_POLYGON_2_ALGORITHMS_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
 
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_BBOX_2_H
 #include <CGAL/Bbox_2.h>
-#endif // CGAL_BBOX_2_H
 
-#ifndef CGAL_POLYGON_ASSERTIONS_H
 #include <CGAL/polygon_assertions.h>
-#endif // CGAL_POLYGON_ASSERTIONS_H
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_POLYGON_TRAITS_2_H
 #include <CGAL/Polygon_traits_2.h>
-#endif // CGAL_POLYGON_TRAITS_2_H
 #endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE

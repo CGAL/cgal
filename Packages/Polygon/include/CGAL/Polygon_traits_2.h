@@ -24,37 +24,17 @@
 #ifndef CGAL_POLYGON_TRAITS_2_H
 #define CGAL_POLYGON_TRAITS_2_H
 
-#ifndef CGAL_DIRECTION_2_H
 #include <CGAL/Direction_2.h>
-#endif // CGAL_DIRECTION_2_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif // CGAL_VECTOR_2_H
 
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_PREDICATES_ON_POINTS_2_H
 #include <CGAL/predicates_on_points_2.h>
-#endif // CGAL_PREDICATES_ON_POINTS_2_H
-#ifndef CGAL_PREDICATES_CLASSES_2_H
 #include <CGAL/predicate_classes_2.h>
-#endif // CGAL_PREDICATES_CLASSES_2_H
-#ifndef CGAL_SEGMENT_2_SEGMENT_2_INTERSECTION_H
 #include <CGAL/Segment_2_Segment_2_intersection.h>
-#endif // CGAL_SEGMENT_2_SEGMENT_2_INTERSECTION_H
 
 CGAL_BEGIN_NAMESPACE
 

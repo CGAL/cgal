@@ -21,26 +21,12 @@
 //
 // ============================================================================
 
-#ifndef CGAL_POLYGON_2_ALGORITHMS_H
 #include <CGAL/Polygon_2_algorithms.h>
-#endif // CGAL_POLYGON_2_ALGORITHMS_H
 
-#ifndef CGAL_PROTECT_CSTDLIB
 #include <cstdlib>
-#define CGAL_PROTECT_CSTDLIB
-#endif
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
-#ifndef CGAL_PROTECT_SET
 #include <set>
-#define CGAL_PROTECT_SET
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

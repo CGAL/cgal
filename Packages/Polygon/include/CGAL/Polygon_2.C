@@ -21,9 +21,7 @@
 //
 // ======================================================================
 
-#ifndef CGAL_POLYGON_2_H
 #include <CGAL/Polygon_2.h>
-#endif // CGAL_POLYGON_2_H
 
 //-----------------------------------------------------------------------//
 //                          operator==
@@ -126,9 +124,7 @@ CGAL_END_NAMESPACE
 //-----------------------------------------------------------------------//
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_POLYGON_TRAITS_2_H
 #include <CGAL/Polygon_traits_2.h>
-#endif // CGAL_POLYGON_TRAITS_2_H
 
 CGAL_BEGIN_NAMESPACE
 

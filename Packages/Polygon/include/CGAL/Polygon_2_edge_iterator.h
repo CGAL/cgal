@@ -24,13 +24,8 @@
 #ifndef CGAL_POLYGON_2_EDGE_ITERATOR_H
 #define CGAL_POLYGON_2_EDGE_ITERATOR_H
 
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif // CGAL_CIRCULATOR_H
 
 CGAL_BEGIN_NAMESPACE
 
