@@ -27,7 +27,6 @@
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/triple.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Triangulation_utils_3.h>
 
