@@ -5,7 +5,7 @@ Package=Cartesian_basic
 
 .PHONY: package test submit version rtag
 
-WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
+WWW_base=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
