@@ -58,6 +58,8 @@ public:
   typedef typename K::Site_2                Site_2;
   typedef CGAL::Svd_voronoi_vertex_2<K,M>   Voronoi_vertex_2;
   typedef typename K::Point_2               Point_2;
+
+  typedef Point_2                           result_type;
   
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,

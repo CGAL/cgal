@@ -31,6 +31,7 @@
 #include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 
 #include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_construction.h>
 
 // includes for the default parameters of the filtered traits
 #ifdef CGAL_USE_GMP
@@ -87,6 +88,14 @@ private:
   typedef Svd_cartesian_converter<CK, EK, C2E_t>            C2E;
   typedef Svd_cartesian_converter<CK, FK, C2F_t>            C2F;
 
+  typedef
+  Cartesian_converter<FK, CK, To_double<typename FK::RT> >  F2C_t;
+  typedef Svd_cartesian_converter<FK, CK, F2C_t>            F2C;
+
+  typedef
+  Cartesian_converter<EK, CK, To_double<typename EK::RT> >  E2C_t;
+  typedef Svd_cartesian_converter<EK, CK, E2C_t>            E2C;
+  
   // Types for the construction kernel
   typedef typename CK::Point_2                CK_Point_2;
   typedef typename CK::Line_2                 CK_Line_2;
@@ -151,18 +160,35 @@ public:
 
   typedef typename CK::Rep_tag          Rep_tag;
 
+
+private:
+  typedef typename CK_traits::Construct_svd_vertex_2
+  CK_Construct_svd_vertex_2;
+
+  typedef typename FK_traits::Construct_svd_vertex_2
+  FK_Construct_svd_vertex_2;
+
+  typedef typename EK_traits::Construct_svd_vertex_2
+  EK_Construct_svd_vertex_2;
+
 public:
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
-  typedef typename CK_traits::Construct_svd_vertex_2
+  typedef
+  Filtered_construction<CK_Construct_svd_vertex_2,
+			EK_Construct_svd_vertex_2,
+			FK_Construct_svd_vertex_2,
+			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
+
+  //  typedef typename CK_traits::Construct_svd_vertex_2
+  //  Construct_svd_vertex_2;
 
 #if 0
   typedef typename CK_traits::Construct_svd_circle_2
   Construct_svd_circle_2;
 #endif
-
 
 
 private:

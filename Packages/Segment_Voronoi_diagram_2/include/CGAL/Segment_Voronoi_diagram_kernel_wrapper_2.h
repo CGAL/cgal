@@ -87,11 +87,15 @@ public:
     } else {
       K2_Segment_2 supp = Base::operator()(t.supporting_segment());
       if ( t.is_exact(0) ) {
-	K2_Segment_2 s = Base::operator()(t.crossing_segment(1));
-	return K2_Site_2(supp, s, true);
+	K2_Segment_2 cs = Base::operator()(t.crossing_segment(1));
+	return K2_Site_2(supp, cs, true);
+      } else if ( t.is_exact(1) ) {
+	K2_Segment_2 cs = Base::operator()(t.crossing_segment(0));
+	return K2_Site_2(supp, cs, false);
       } else {
-	K2_Segment_2 s = Base::operator()(t.crossing_segment(0));
-	return K2_Site_2(supp, s, false);
+	K2_Segment_2 cs1 = Base::operator()(t.crossing_segment(0));
+	K2_Segment_2 cs2 = Base::operator()(t.crossing_segment(1));
+	return K2_Site_2(supp, cs1, cs2);
       }
     }
   }

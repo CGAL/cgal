@@ -145,108 +145,124 @@ public:
     widget->set_window(xmin, xmax, ymin, ymax);
   }
 
+private:
+  void get_object_remove_mode(CGAL::Object obj)
+  {
+    std::cout << "in remove mode" << std::endl;
+#if 1
+    if ( svd.number_of_vertices() == 0 ) { return; }
+
+    Point p;
+    if ( CGAL::assign(p, obj) ) {
+      SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
+#if 1
+      std::cout << "degree: " << v->degree() << std::endl;
+      if ( v->site().is_segment() &&
+	   !v->site().is_exact() ) {
+	std::cout << "site: " << v->site() << std::endl;
+	std::cout << "supporting segment: "
+		  << v->site().supporting_segment() << std::endl;
+	if ( !v->site().is_exact(0) ) {
+	  std::cout << "crossing segment for source: "
+		    << v->site().crossing_segment(0) << std::endl;
+	}
+	if ( !v->site().is_exact(1) ) {
+	  std::cout << "crossing segment for target: "
+		    << v->site().crossing_segment(1) << std::endl;
+	}
+	SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
+	SVD_2::Vertex_circulator vc_start = vc;
+	do {
+	  SVD_2::Vertex_handle vv(vc);
+	  if ( !svd.is_infinite(vc) &&
+	       vv->site().is_point() &&
+	       (vv->site().point() == v->site().source() ||
+		vv->site().point() == v->site().target()) ) {
+	    std::cout << "degree of endpoint " << vv->site()
+		      << " : " << vv->degree() << std::endl;
+	  }
+	  ++vc;
+	} while ( vc_start != vc );
+      }
+
+      widget->redraw();
+
+      SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
+      SVD_2::Vertex_circulator vc_start = vc;
+      *widget << CGAL::GREEN;
+      do {
+	SVD_2::Vertex_handle vv(vc);
+	if ( !svd.is_infinite(vc) ) {
+	  SVD_2::Site_2 site = vv->site();
+	  if ( site.is_segment() ) {
+	    *widget << site.segment();
+	  } else {
+	    *widget << site.point();
+	  }
+	}
+	++vc;
+      } while ( vc_start != vc );
+#else
+      *widget << CGAL::BLACK;
+      if ( v->is_point() ) {
+	std::cout << v->point() << std::endl;
+	*widget << v->point();
+      } else {
+	std::cout << v->segment() << std::endl;
+	*widget << v->segment();
+      }
+#endif
+    }
+#else
+    if ( svd.number_of_vertices() == 0 ) { return; }
+
+    Point q;
+
+    if ( CGAL::assign(q, obj) ) {
+      SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
+      svd.remove(v, is_snap_mode);
+      widget->redraw();
+    }
+#endif
+  }
+
 private slots:
   void get_object(CGAL::Object obj)
   {
     if ( is_remove_mode ) {
-      std::cout << "in remove mode" << std::endl;
-#if 1
-      if ( svd.number_of_vertices() == 0 ) { return; }
-
-      Point p;
-      if ( CGAL::assign(p, obj) ) {
-	SVD_2::Vertex_handle v = svd.nearest_neighbor(p);
-#if 1
-	std::cout << "degree: " << v->degree() << std::endl;
-	if ( v->site().is_segment() &&
-	     !v->site().is_exact() ) {
-	  std::cout << "site: " << v->site() << std::endl;
-	  std::cout << "supporting segment: "
-		    << v->site().supporting_segment() << std::endl;
-	  if ( !v->site().is_exact(0) ) {
-	    std::cout << "crossing segment for source: "
-		      << v->site().crossing_segment(0) << std::endl;
-	  }
-	  if ( !v->site().is_exact(1) ) {
-	    std::cout << "crossing segment for target: "
-		      << v->site().crossing_segment(1) << std::endl;
-	  }
-	  SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
-	  SVD_2::Vertex_circulator vc_start = vc;
-	  do {
-	    SVD_2::Vertex_handle vv(vc);
-	    if ( !svd.is_infinite(vc) &&
-		 vv->site().is_point() &&
-		 (vv->site().point() == v->site().source() ||
-		  vv->site().point() == v->site().target()) ) {
-	      std::cout << "degree of endpoint " << vv->site()
-			<< " : " << vv->degree() << std::endl;
-	    }
-	    ++vc;
-	  } while ( vc_start != vc );
-
-	}
-
-	SVD_2::Vertex_circulator vc = svd.incident_vertices(v);
-	SVD_2::Vertex_circulator vc_start = vc;
-	*widget << CGAL::GREEN;
-	do {
-	  SVD_2::Vertex_handle vv(vc);
-	  if ( !svd.is_infinite(vc) ) {
-	    SVD_2::Site_2 site = vv->site();
-	    if ( site.is_segment() ) {
-	      *widget << site.segment();
-	    } else {
-	      *widget << site.point();
-	    }
-	  }
-	  ++vc;
-	} while ( vc_start != vc );
-#else
-	*widget << CGAL::BLACK;
-	if ( v->is_point() ) {
-	  std::cout << v->point() << std::endl;
-	  *widget << v->point();
-	} else {
-	  std::cout << v->segment() << std::endl;
-	  *widget << v->segment();
-	}
-#endif
-      }
+      get_object_remove_mode(obj);
       return;
-
-#else
-      if ( svd.number_of_vertices() == 0 ) { return; }
-
-      Point q;
-
-      if ( CGAL::assign(q, obj) ) {
-	SVD_2::Vertex_handle v = svd.nearest_neighbor(q);
-	svd.remove(v, is_snap_mode);
-	widget->redraw();
-      }
-      return;
-#endif
     }
+
+    CGAL::Timer timer;
+    char msg[100];
+
     if ( input_mode == SVD_POINT ) {
       if ( is_snap_mode ) {
 	Point p;
 	if ( CGAL::assign(p, obj) ) {
 	  SVD_2::Vertex_handle v;
 	  v = svd.nearest_neighbor(p);
-	  unsigned int n = svd.number_of_incident_segments(v);
-	  char msg[100];
-	  CGAL_CLIB_STD::sprintf(msg,
-				 "number of incident segments is: %d",
-				 n);
-	  statusBar()->message(msg);
+	  if ( v->is_point() ) {
+	    unsigned int n = svd.number_of_incident_segments(v);
+	    char msg[100];
+	    CGAL_CLIB_STD::sprintf(msg,
+				   "number of incident segments is: %d",
+				   n);
+	    statusBar()->message(msg);
+	  }
 	}
 	return;
       }
 
       Point p;
       if ( CGAL::assign(p, obj) ) {
+	timer.start();
 	svd.insert(p);
+	timer.stop();
+
+	CGAL_CLIB_STD::sprintf(msg, "Insertion time: %f", timer.time());
+	statusBar()->message(msg);
       }
     } else if ( input_mode == SVD_SEGMENT ) {
       Segment s;
@@ -258,22 +274,40 @@ private slots:
 	  v2 = svd.nearest_neighbor(s.target());
 	  if ( v1 != NULL && v1->is_point() &&
 	       v2 != NULL && v2->is_point() ) {
+	    timer.start();
 	    svd.insert( Segment(v1->point(), v2->point()) );
+	    timer.stop();
+
+	    CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
+	    statusBar()->message(msg);
 	  }
 	}
       } else {
 	if( CGAL::assign(s, obj) ) {
+	  timer.start();
 	  svd.insert(s);
+	  timer.stop();
+
+	  CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
+	  statusBar()->message(msg);
 	}
       }
     } else if ( input_mode == SVD_POLYGON ) {
       Polygon_2 pgn;
       if ( CGAL::assign(pgn, obj) ) {
+	timer.start();
 	for (int i = 0; i < pgn.size(); i++ ) {
 	  svd.insert( pgn.edge(i) );
 	}
+	timer.stop();
+
+	CGAL_CLIB_STD::sprintf(msg,	"Insertion time: %f", timer.time());
+	statusBar()->message(msg);
       }
     }
+
+    
+
     //    std::cout << "insertion done..." << std::endl;
     svd.is_valid(true,1);
     //    assert( svd.is_valid(true,1) );

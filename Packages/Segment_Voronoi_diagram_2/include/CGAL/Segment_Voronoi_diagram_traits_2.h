@@ -128,6 +128,14 @@ public:
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const
   {
+#if 0
+    std::cout << "//////////////////////////////" << std::endl;
+    std::cout << "inside Svd_oriented_side_of_bisector_2"
+	      << " operator()" << std::endl;
+    std::cout << "t1: " << t1 << std::endl;
+    std::cout << "t2: " << t2 << std::endl;
+    std::cout << "q: " << q << std::endl;
+#endif
     return svd_oriented_side_of_bisector_ftC2<K,Method_tag>
       (t1, t2, q, Method_tag());
   }

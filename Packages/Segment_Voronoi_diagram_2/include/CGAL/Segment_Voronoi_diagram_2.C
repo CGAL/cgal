@@ -482,7 +482,7 @@ do_intersect(const Site& t, Vertex_handle v) const
   if ( t.is_segment() ) {
     if ( !is_infinite(v) && v->is_segment() ) {
       if ( do_intersect(t, v->site()) ) {
-	print_error_message();
+	//	print_error_message();
 	return true;
       }
     }
@@ -687,6 +687,7 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   CGAL_assertion( f1 != f2 );
 
+#if 0
   {
     std::cout << "---" << std::endl;
     std::cout << "f1: " << std::endl;
@@ -699,6 +700,7 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
     }
     std::cout << "---" << std::endl;      
   }
+#endif
 
   Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
     qq = this->_tds.split_vertex(v, f1, f2);
@@ -733,9 +735,11 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   vsx->set_site(sx);
 
+#if 0
   std::cout << "sv1: " << v1->site() << std::endl;
   std::cout << "sv2: " << v2->site() << std::endl;
   std::cout << "sx: " << vsx->site() << std::endl;
+#endif
 
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
@@ -755,6 +759,7 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
   }
 
 
+#if 0
   std::cout << "===" << std::endl;
   Finite_vertices_iterator fvit = finite_vertices_begin();
   for (; fvit != finite_vertices_end(); fvit++ ) {
@@ -762,9 +767,10 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
     std::cout << v->site() << std::endl;
   }
   std::cout << "===" << std::endl;
+#endif
 
-  //  insert(s3, vsx);
-  //  insert(s4, vsx);
+  insert(s3, vsx);
+  insert(s4, vsx);
 
   return vsx;
   //  return v1;
@@ -1163,7 +1169,9 @@ nearest_neighbor(const Site_2& p,
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;
 
+#if 0
   std::cout << "start vertex: " << v->site() << std::endl;
+#endif
 
   if ( number_of_vertices() < 3 ) {
     vclosest = v;
@@ -1175,7 +1183,9 @@ nearest_neighbor(const Site_2& p,
 	Site t1 = v1->site();
 	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
 	  vclosest = v1;
+#if 0
 	  std::cout << "new vertex: " << vclosest->site() << std::endl;
+#endif
 	}
       }
     }
@@ -1187,13 +1197,24 @@ nearest_neighbor(const Site_2& p,
     Site t0 = v->site();
     Vertex_circulator vc_start = incident_vertices(v);
     Vertex_circulator vc = vc_start;
+#if 0
+    std::cout << "++++++ new loop" << std::endl;
+#endif
     do {
       if ( !is_infinite(vc) ) {
 	Vertex_handle v1(vc);
 	Site t1 = v1->site();
-	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
+	Oriented_side os = side_of_bisector(t0, t1, p);
+#if 0
+	std::cout << "candicate new vertex: " << v1->site() << std::endl;
+	std::cout << "oriented_side for " << t0 << " and " << t1
+		  << ": " << os << std::endl;
+#endif
+	if ( os == ON_NEGATIVE_SIDE ) {
 	  v = v1;
+#if 0
 	  std::cout << "new vertex: " << v->site() << std::endl;
+#endif
 	  break;
 	}
       }
@@ -1224,6 +1245,14 @@ Oriented_side
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 {
+#if 0
+  std::cout << "++++++++++++++++++++++++++++++++++"
+	    << std::endl;
+  std::cout << "inside SVD's side_of_bisector" << std::endl;
+  std::cout << "t1: " << t1 << std::endl;
+  std::cout << "t2: " << t2 << std::endl;
+  std::cout << "q: " << q << std::endl;
+#endif
   return geom_traits().oriented_side_of_bisector_2_object()(t1, t2, q);
 }
 

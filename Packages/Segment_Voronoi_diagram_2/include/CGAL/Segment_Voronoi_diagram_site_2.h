@@ -91,20 +91,14 @@ public:
   }
 
   Segment_Voronoi_diagram_site_2(const Object &o) {
-    if ( assign(_p, o) ) {
-      defined_ = true;
-      point_ = true;
-      input_ = true;
+    if ( assign(p_, o) ) {
+      initialize_site(p);
       return;
     }
 
     Segment_2 s;
     if ( assign(s, o) ) {
-      p_ = s.source();
-      p2_ = s.target();
-      defined_ = true;
-      point_ = false;
-      input_ = true;
+      initialize_site(s);
       return;
     }
 
@@ -190,18 +184,11 @@ public:
   }
 
   void set_point(const Point_2& p) {
-    p_ = p;
-    defined_ = true;
-    point_ = true;
-    input_ = true;
+    initialize_site(p);
   }
 
   void set_segment(const Segment_2& s) {
-    p_ = s.source();
-    p2_ = s.target();
-    defined_ = true;
-    point_ = false;
-    input_ = true;
+    initialize_site(s);
   }
 
   void set_point(const Segment_2& s1, Segment_2& s2) {

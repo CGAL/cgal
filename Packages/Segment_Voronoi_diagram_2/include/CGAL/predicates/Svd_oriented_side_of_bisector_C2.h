@@ -1,6 +1,8 @@
 #ifndef CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_SVD_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template<class FT, class Method_tag>
@@ -13,7 +15,7 @@ svd_compare_distance_ftC2(const FT& qx, const FT& qy,
   // first check if (qx,qy) is inside, the boundary or at the exterior
   // of the band of the segment s
 
-  must_be_filtered(qx);
+  //  must_be_filtered(qx);
 
   FT dx = sx - tx;
   FT dy = sy - ty;
@@ -23,8 +25,20 @@ svd_compare_distance_ftC2(const FT& qx, const FT& qy,
   FT d1y = qy - sy;
   FT d2x = qx - tx;
   FT d2y = qy - ty;
+#if 0
+  std::cout << "inside svd_compare_distance_ftC2" << std::endl;
+  std::cout << "px: " << px << std::endl;
+  std::cout << "py: " << py << std::endl;
+  std::cout << "sx: " << sx << std::endl;
+  std::cout << "sy: " << sy << std::endl;
+  std::cout << "tx: " << tx << std::endl;
+  std::cout << "ty: " << ty << std::endl;
+#endif
 
   if ( px == sx && py == sy ) {
+#if 0
+    std::cout << "point is same as segment's endpoint 1" << std::endl;
+#endif
     FT o = dx * d1x + dy * d1y;
     if ( o >= FT(0) ) {
       return LARGER;
@@ -32,6 +46,9 @@ svd_compare_distance_ftC2(const FT& qx, const FT& qy,
   }
 
   if ( px == tx && py == ty ) {
+#if 0
+    std::cout << "point is same as segment's endpoint 2" << std::endl;
+#endif
     FT o = dx * d2x + dy * d2y;
     if ( o <= FT(0) ) {
       return LARGER;
@@ -275,8 +292,14 @@ public:
   typedef typename K::Point_2    Point_2;
   typedef typename K::Segment_2  Segment_2;
   typedef typename K::Rep_tag    Rep_tag;
+  typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
 
-  struct Arity {};
+  static
+  bool are_same(const Point_2& p, const Point_2& q)
+  {
+    return Are_same_points_C2()(p, q);
+    //return p.x() == q.y() && p.y() == q.y();
+  }
 
 private:
   Comparison_result
@@ -285,8 +308,8 @@ private:
   {
     CGAL_precondition( p1 != p2 );
 
-    if ( q == p1 ) { return SMALLER; }
-    if ( q == p2 ) { return LARGER; }
+    if ( are_same(q, p1) ) { return SMALLER; }
+    if ( are_same(q, p2) ) { return LARGER; }
     
     return compare_distance_to_point(q, p1, p2);
   }
@@ -305,9 +328,9 @@ private:
   operator()(const Point_2& q,
 	     const Segment_2& s, const Point_2& p) const
   {
-    if ( q == p ) { return LARGER; }
-    if ( q == s.source() ) { return SMALLER; }
-    if ( q == s.target() ) { return SMALLER; }
+    if ( are_same(q, p) ) { return LARGER; }
+    if ( are_same(q, s.source()) ) { return SMALLER; }
+    if ( are_same(q, s.target()) ) { return SMALLER; }
 
     return svd_compare_distance_2<K>(q, s, p, Rep_tag(), Method_tag());
   }
@@ -319,25 +342,27 @@ private:
     CGAL_precondition( !s1.is_degenerate() );
     CGAL_precondition( !s2.is_degenerate() );
 
-    if (  ( q == s1.source() && q == s2.source() ) ||
-	  ( q == s1.source() && q == s2.target() ) ||
-	  ( q == s1.target() && q == s2.source() ) ||
-	  ( q == s1.target() && q == s2.target() )  ) {
+    if (  ( are_same(q, s1.source()) && are_same(q, s2.source()) ) ||
+	  ( are_same(q, s1.source()) && are_same(q, s2.target()) ) ||
+	  ( are_same(q, s1.target()) && are_same(q, s2.source()) ) ||
+	  ( are_same(q, s1.target()) && are_same(q, s2.target()) )  ) {
       return EQUAL;
     }
 
-    if (  ( q == s1.source() || q == s1.target() ) &&
-	  ( q != s2.source() && q != s2.target() )  ) {
+    if (  ( are_same(q, s1.source()) || are_same(q, s1.target()) ) &&
+	  ( !are_same(q, s2.source()) && !are_same(q, s2.target()) )  ) {
       return SMALLER;
     }
 
-    if (  ( q == s2.source() || q == s2.target() ) &&
-	  ( q != s1.source() && q != s1.target() )  ) {
+    if (  ( are_same(q, s2.source()) || are_same(q, s2.target()) ) &&
+	  ( !are_same(q, s1.source()) && !are_same(q, s1.target()) )  ) {
       return LARGER;
     }
 
-    if ( (s1.source() == s2.source() && s1.target() == s2.target()) ||
-	 (s1.source() == s2.target() && s1.target() == s2.source()) ) {
+    if (  ( are_same(s1.source(), s2.source()) &&
+	    are_same(s1.target(), s2.target()) ) ||
+	  ( are_same(s1.source(), s2.target()) &&
+	    are_same(s1.target(), s2.source()) )  ) {
       return EQUAL;
     }
 
@@ -379,6 +404,13 @@ public:
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const
   {
+#if 0
+    std::cout << "inside oriented side of bisector top "
+	      << "level operator()" << std::endl;
+    std::cout << "t1: " << t1 << std::endl;
+    std::cout << "t2: " << t2 << std::endl;
+    std::cout << "q: " << q << std::endl;
+#endif
     CGAL_precondition( q.is_point() );
     return operator()(t1, t2, q.point());
   }
