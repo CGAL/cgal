@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
+GLOB: Introduced variable GMP_LIBNAME (-> libgmp.a || gmp.lib).
 GLOB: Check for LEDA_STD_HEADERS on windows compilers.
 GLOB: Now also binary distribution of libgmp for cygwin/g++.
 GLOB: Cleanup in gmp_menu and cln_menu.
