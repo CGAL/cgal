@@ -1,3 +1,12 @@
+#ifndef CGAL_LANDMARKS_POINT_LOCATION
+// To enable compilation without core:
+int main ()
+{
+  return (0);
+}
+
+#else
+
 //----------------------------------------------------------
 //Pm includes
 //----------------------------------------------------------
@@ -45,6 +54,7 @@ typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
 typedef CGAL::Pm_nearest_neighbor<Pm>               Nearest_neighbor;
 typedef CGAL::Pm_landmarks_point_location<Pm,Nearest_neighbor>  Landmarks_point_location;
 typedef Pm::Face_iterator                               Face_iterator;
+typedef Pm::Face_handle                               Face_handle;
 typedef Pm::Halfedge_iterator                           Halfedge_iterator;
 typedef Pm::Vertex_iterator                             Vertex_iterator;
 typedef Pm::Edge_iterator                               Edge_iterator;
@@ -63,9 +73,13 @@ int main(int argc, char * argv[] )
 {
 	const char * inp_seg_filename = "temp_input_seg.txt";
 	const char * inp_pnt_filename = "temp_input_point.txt";
-	const char * out_filename = "temp_results.txt";
+	//const char * out_filename = "temp_results.txt";
+	const char * out_filename = "temp_results_lm.txt";
+	//const char * out_filename = "temp_results_naive.txt";
 
 	Landmarks_point_location		strategy;
+	//Naive_point_location		strategy;
+
 	Pmwx											pm(&strategy);
 	Locate_type								lt;
 	Halfedge_iterator					e;
@@ -115,7 +129,14 @@ int main(int argc, char * argv[] )
     }
 
      std::cout << point_list.size() << " points" << std::endl;
-	 getchar();
+	 //getchar();
+
+	 std::ofstream outfile(out_filename);
+	if (!outfile.is_open()) 
+	{
+		std::cerr << "Cannot open file " << out_filename << "!" << std::endl;
+		return -1;
+	}
     
     //iterator on all the points got from the input, 
     //go over each one and locate it in the pm .
@@ -126,6 +147,7 @@ int main(int argc, char * argv[] )
 		Point_2 pnt = *iter;
 		std::cout << std::endl << std::endl;
 		std::cout << "-------- point number "<< point_index <<" is " << pnt << std::endl << std::endl;
+		outfile <<  "-------- point number "<< point_index <<" is " << pnt << std::endl;
 		//if (point_index != 384) {
 		//	point_index++;
 		//	continue;
@@ -141,10 +163,29 @@ int main(int argc, char * argv[] )
 		else if (lt==Pm::EDGE) std::cout << "EDGE : " ;
 		else if (lt==Pm::VERTEX) std::cout << "VERTEX : " ;
 		else std::cout << "Unknown locate type" << std::endl;
+
+		//print output to outfile
+		if (lt==Pm::UNBOUNDED_FACE) outfile << "Unbounded face" << std::endl;
+		else if (lt==Pm::FACE) outfile << "Face that is left of :  ";
+		else if (lt==Pm::EDGE) outfile << "EDGE : " ;
+		else if (lt==Pm::VERTEX) outfile << "VERTEX : " ;
+		else outfile << "Unknown locate type" << std::endl;
+
 		//print e
 		if (lt != Pm::UNBOUNDED_FACE)
 		{
 			std::cout << "e = "<< e->source()->point() <<" towards "<< e->target()->point() << std::endl;
+			Face_handle f= e->face();
+			Ccb_halfedge_circulator  circ = f->outer_ccb () ;
+			Ccb_halfedge_circulator  circ_end = circ;
+			int num_edges_around_f = 0;
+			do {
+				num_edges_around_f ++;
+				circ++;
+			} while (circ != circ_end) ;
+			std::cout << "num_edges_around_f = "<< num_edges_around_f << std::endl;
+			outfile << "num_edges_around_f = "<< num_edges_around_f << std::endl;
+
 			//outfile << e->curve() << std::endl;
 			//if (lt == Pm::FACE) {
 			//	Ccb_halfedge_circulator curr = e;
@@ -342,3 +383,7 @@ const int num_of_points = 1;
 		}
 	}
 */
+
+
+#endif //CGAL_LANDMARKS_POINT_LOCATION
+
