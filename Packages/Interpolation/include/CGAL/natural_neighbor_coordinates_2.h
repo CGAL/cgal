@@ -112,7 +112,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
 			     hole_begin, EdgeIterator hole_end, 
 			     const Traits& traits){
   
-  CGAL_precondition(T.dimension()==2);
+  CGAL_precondition(dt.dimension()==2);
   //precondition: p must lie inside the hole 
   //             (=^ inside convex hull of neighbors)
   
