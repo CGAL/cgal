@@ -29,11 +29,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vb>
+template < class Vbb>
 class Triangulation_hierarchy_vertex_base_2
- : public Vb
+ : public Vbb
 {
-  typedef Vb V_Base;
+  typedef Vbb V_Base;
   typedef typename V_Base::Point                        Point;
 
  public:

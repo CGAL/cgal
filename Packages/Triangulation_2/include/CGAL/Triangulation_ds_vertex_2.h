@@ -32,14 +32,19 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Vb, class Fb >
+class  Triangulation_ds_face_2 ;
+
+template <class Vb, class Fb >
 class  Triangulation_ds_vertex_2 
   : public Vb,
     public Triangulation_cw_ccw_2
 {
 public:
-  typedef typename Vb::Point Point;
-  typedef Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-  typedef Triangulation_ds_face_2<Vb,Fb> Face;
+  typedef Vb Vertex_base;
+  typedef Fb Face_base;
+  typedef typename Vertex_base::Point Point;
+  typedef Triangulation_ds_vertex_2<Vertex_base,Fb> Vertex;
+  typedef Triangulation_ds_face_2<Vertex_base,Fb> Face;
   typedef std::pair< Face*,int> Edge;
   typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 
@@ -47,15 +52,15 @@ public:
   typedef Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
 
   //CREATORS
-  Triangulation_ds_vertex_2() : Vb() {}
-  Triangulation_ds_vertex_2(const Point & p) :  Vb(p)  {}
-  Triangulation_ds_vertex_2(const Point & p, Face * f) : Vb(p, f )  {}
+  Triangulation_ds_vertex_2() : Vertex_base() {}
+  Triangulation_ds_vertex_2(const Point & p) :  Vertex_base(p)  {}
+  Triangulation_ds_vertex_2(const Point & p, Face * f) : Vertex_base(p, f )  {}
 
   //SETTING
-  void set_face(Face* f)  { Vb::set_face(f);  }
+  void set_face(Face* f)  { Vertex_base::set_face(f);  }
 
   //ACCESS
-  Face* face() const {return ( static_cast<Face *>(Vb::face()) );}
+  Face* face() const {return ( static_cast<Face *>(Vertex_base::face()) );}
   int degree() const ;
 
   inline Vertex_circulator incident_vertices() const    {
@@ -161,7 +166,7 @@ bool
 Triangulation_ds_vertex_2<Vb,Fb> ::  
 is_valid(bool verbose, int level) const
 {
-  bool result = Vb::is_valid(verbose, level);
+  bool result = Vertex_base::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);
   if (face() != NULL) { // face==NULL if dim <0
     result = result && face()->has_vertex(this);
