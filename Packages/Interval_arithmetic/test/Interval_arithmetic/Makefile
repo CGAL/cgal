@@ -13,13 +13,19 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 # CGAL_CXX=$(HOME)/egcs/$(UNAME)/bin/g++
+# Pour utiliser Purify:
+# CGAL_CXX=purify g++
+# CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
+              # -L$(GMP_LIB_DIR) -lgmp -lm \
+	      # ../../src/Interval_arithmetic.o
 
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g
+	-g -DLOOPS=100000 -W
+	# -fpermissive
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -O2 -W -Winline -Wunused
+	# -O2 -W -Winline -Wunused -malign-double
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
@@ -116,6 +122,9 @@ tst5: tst5.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst6: tst6.o
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
+
+tst7: tst7.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tstlink: tstlink1.o tstlink2.o
