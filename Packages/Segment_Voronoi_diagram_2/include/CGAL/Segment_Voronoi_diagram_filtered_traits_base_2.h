@@ -56,6 +56,13 @@ template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
 class Segment_Voronoi_diagram_filtered_traits_base_2
 {
 private:
+  typedef
+  Segment_Voronoi_diagram_filtered_traits_base_2<CK_t, CK_MTag,
+						 EK_t, EK_MTag,
+						 FK_t, FK_MTag,
+						 C2E_t, C2F_t,
+						 ITag>  Self;
+
 #if defined (__GNUC__) && (__GNUC__ < 3)
 #else
   typedef Segment_Voronoi_diagram_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
@@ -183,6 +190,8 @@ public:
 			FK_Construct_svd_vertex_2,
 			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
+
+  //  typedef typename CK::Construct_site_2   Construct_site_2;
 
   //  typedef typename CK_traits::Construct_svd_circle_2
   //  Construct_svd_circle_2;
@@ -365,6 +374,13 @@ public:
   construct_svd_vertex_2_object() const { 
     return Construct_svd_vertex_2();
   }
+
+  /*
+  Construct_site_2
+  construct_site_2_object() const { 
+    return Construct_site_2();
+  }
+  */
 
   /*
   Construct_svd_circle_2

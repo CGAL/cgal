@@ -145,7 +145,12 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
   Vertex_handle vertex;
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
 
-  nearest_neighbor(p, vnear, false);
+#ifdef USE_SC
+  Site_2 t = Site_2(p);
+#else
+  Site_2 t = Site_2::construct_site_2(p);
+#endif
+  nearest_neighbor(t, vnear, false);
 
   vertex = hierarchy[0]->insert_no_register(p, vnear[0]);
 
@@ -248,7 +253,11 @@ insert_segment(const Point_2& p0, const Point_2& p1,
     level = random_level();
   }
 
+#ifdef USE_SC
   Site_2 t(p0, p1);
+#else
+  Site_2 t = Site_2::construct_site_2(p0, p1);
+#endif
 
   if ( is_degenerate_segment(t) ) {
     return insert_point(p0, level);
@@ -461,26 +470,28 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    s3 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), true);
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), true);
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
-    s3 = Site_2(t.point(0), t.point(1),
-		t.point(2), t.point(3),
-		sitev.point(0), sitev.point(1));
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		t.point(2), t.point(3),
+    //		sitev.point(0), sitev.point(1));
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
+  s3 = ss3.site();
 
   if ( t.is_exact(1) ) {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), false);
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), false);
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1),
-		t.point(4), t.point(5));
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1),
+    //		t.point(4), t.point(5));
     ss4 = create_storage_site_type2(ss, ssitev, ss);
   }
+  s4 = ss4.site();
 
   insert_segment_interior(s3, ss3, verticesx, level);
   insert_segment_interior(s4, ss4, verticesx, level);
@@ -569,26 +580,28 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    s3 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), true);
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), true);
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
-    s3 = Site_2(t.point(0), t.point(1),
-		t.point(2), t.point(3),
-		sitev.point(0), sitev.point(1));
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		t.point(2), t.point(3),
+    //		sitev.point(0), sitev.point(1));
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
+  s3 = ss3.site();
 
   if ( t.is_exact(1) ) {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), false);
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), false);
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1),
-		t.point(4), t.point(5));
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1),
+    //		t.point(4), t.point(5));
     ss4 = create_storage_site_type2(ss, ssitev, ss);
   }
+  s4 = ss4.site();
 
   insert_segment_interior(s3, ss3, verticesx, level);
   insert_segment_interior(s4, ss4, verticesx, level);
@@ -611,7 +624,9 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 nearest_neighbor(const Point_2& p, bool force_point) const
 {
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
-  nearest_neighbor(Site_2(p), vnear, force_point);
+  //  nearest_neighbor(Site_2(p), vnear, force_point);
+  Site_2 t = geom_traits().construct_site_2_object()(p);
+  nearest_neighbor(t, vnear, force_point);
   return vnear[0];
 }
 

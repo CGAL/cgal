@@ -62,9 +62,16 @@ insert_second(const Point_2& p)
   Site_2 p0 = finite_vertices_begin()->site();
   // MK: change the equality test between points by the functor in
   // geometric traits
+#ifdef USE_SC
   if ( same_points(Site_2(p),p0) ) {
     return Vertex_handle(finite_vertices_begin());
   }
+#else
+  Site_2 tp = Site_2::construct_site_2(p);
+  if ( same_points(tp,p0) ) {
+    return Vertex_handle(finite_vertices_begin());
+  }
+#endif
 
   Storage_site_2 ss = create_storage_site(p);
   return create_vertex_dim_up(ss);
@@ -76,7 +83,11 @@ typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_third(const Point_2& p)
 {
+#ifdef USE_SC
   Site_2 t(p);
+#else
+  Site_2 t = Site_2::construct_site_2(p);
+#endif
   Storage_site_2 ss = create_storage_site(p);
   return insert_third(t, ss);
 }
@@ -227,7 +238,11 @@ insert_point(const Point_2& p, Vertex_handle vnear)
     return insert_third(p);
   }
 
+#ifdef USE_SC
   Site_2 t(p);
+#else
+  Site_2 t = Site_2::construct_site_2(p);
+#endif
   Storage_site_2 ss = create_storage_site(p);
   return insert_point(ss, t, vnear);
 }
@@ -402,14 +417,16 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Storage_site_2 ssx = create_storage_site(ss, ssitev);
 
   Site_2 sitev = ssitev.site();
-  Site_2 sx(t.point(0), t.point(1), sitev.point(0), sitev.point(1));
+  //  Site_2 sx(t.point(0), t.point(1), sitev.point(0), sitev.point(1));
+  Site_2 sx = ssx.site();
 
   Face_circulator fc1 = incident_faces(v);
   Face_circulator fc2 = fc1; ++fc2;
   Face_circulator fc_start = fc1;
   Face_handle f1, f2;
   bool found_f1 = false, found_f2 = false;
-  Site_2 sitev_supp(sitev.point(0), sitev.point(1));
+  //  Site_2 sitev_supp(sitev.point(0), sitev.point(1));
+  Site_2 sitev_supp = sitev.supporting_site();
   do {
     Face_handle ff1(fc1), ff2(fc2);
 
@@ -452,30 +469,32 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Storage_site_2 ssv1;
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
-    sv1 = Site_2(sitev.point(0), sitev.point(1),
-		 t.point(0), t.point(1), true);
+    //    sv1 = Site_2(sitev.point(0), sitev.point(1),
+    //		 t.point(0), t.point(1), true);
     ssv1 = create_storage_site(ssitev, ss, true);
   } else {
-    sv1 = Site_2(sitev.point(0), sitev.point(1),
-		 sitev.point(2), sitev.point(3),
-		 t.point(0), t.point(1));
+    //    sv1 = Site_2(sitev.point(0), sitev.point(1),
+    //		 sitev.point(2), sitev.point(3),
+    //		 t.point(0), t.point(1));
     ssv1 = create_storage_site_type1(ssitev, ssitev, ss);
   }
+  sv1 = ssv1.site();
   v1->set_site( ssv1 );
 
   Vertex_handle v2 = qq.second;
   Storage_site_2 ssv2;
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
-    sv2 = Site_2(sitev.point(0), sitev.point(1),
-		 t.point(0), t.point(1), false);
+    //    sv2 = Site_2(sitev.point(0), sitev.point(1),
+    //		 t.point(0), t.point(1), false);
     ssv2 = create_storage_site(ssitev, ss, false);
   } else {
-    sv2 = Site_2(sitev.point(0), sitev.point(1),
-		 t.point(0), t.point(1),
-		 sitev.point(4), sitev.point(5));
+    //    sv2 = Site_2(sitev.point(0), sitev.point(1),
+    //		 t.point(0), t.point(1),
+    //		 sitev.point(4), sitev.point(5));
     ssv2 = create_storage_site_type2(ssitev, ss, ssitev);
   }
+  sv2 = ssv2.site();
   v2->set_site( ssv2 );
 
   Vertex_handle vsx =
@@ -670,26 +689,28 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    s3 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), true);
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), true);
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
-    s3 = Site_2(t.point(0), t.point(1),
-		t.point(2), t.point(3),
-		sitev.point(0), sitev.point(1));
+    //    s3 = Site_2(t.point(0), t.point(1),
+    //		t.point(2), t.point(3),
+    //		sitev.point(0), sitev.point(1));
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
+  s3 = ss3.site();
 
   if ( t.is_exact(1) ) {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1), false);
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1), false);
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
-    s4 = Site_2(t.point(0), t.point(1),
-		sitev.point(0), sitev.point(1),
-		t.point(4), t.point(5));
+    //    s4 = Site_2(t.point(0), t.point(1),
+    //		sitev.point(0), sitev.point(1),
+    //		t.point(4), t.point(5));
     ss4 = create_storage_site_type2(ss, ssitev, ss);
   }
+  s4 = ss4.site();
 
   insert_segment_interior(s3, ss3, vsx);
   insert_segment_interior(s4, ss4, vsx);
@@ -1163,6 +1184,7 @@ create_storage_site_type2(const Storage_site_2& ss0,
 			 ss1.point_handle(0), ss1.point_handle(1),
 			 ss2.point_handle(4), ss2.point_handle(5));
 }
+
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------

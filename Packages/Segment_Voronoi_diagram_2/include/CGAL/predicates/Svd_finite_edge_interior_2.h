@@ -510,6 +510,24 @@ private:
     Line_2 lq = compute_supporting_line(q.supporting_segment());
 
     // first orient lp according to its Voronoi vertices
+    if ( vpqr.is_degenerate_Voronoi_circle() ) {
+#ifdef USE_SC
+      Site_2 tpqr = vpqr.degenerate_point();
+#else
+      Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
+#endif
+      if ( same_points(tpqr, p.source_site()) ||
+	   same_points(tpqr, p.target_site()) ) {
+	if ( vqps.oriented_side(lp) != ON_POSITIVE_SIDE ) {
+	  lp = opposite_line(lp);
+	}
+      }
+    } else {
+      if ( vpqr.oriented_side(lp) != ON_POSITIVE_SIDE ) {
+	lp = opposite_line(lp);
+      }
+    }
+#if 0 // OLD CODE
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
 	    same_points(vpqr.degenerate_point(), p.source_site()) ) ||
 	  ( vpqr.is_degenerate_Voronoi_circle() &&
@@ -522,8 +540,27 @@ private:
 	lp = opposite_line(lp);
       }
     }
+#endif
 
     // then orient lq according to its Voronoi vertices
+    if ( vpqr.is_degenerate_Voronoi_circle() ) {
+#ifdef USE_SC
+      Site_2 tpqr = vpqr.degenerate_point();
+#else
+      Site_2 tpqr = Site_2::construct_site_2(vpqr.degenerate_point());
+#endif
+      if ( same_points(tpqr, q.source_site()) ||
+	   same_points(tpqr, q.target_site()) ) {
+	if ( vqps.oriented_side(lq) != ON_POSITIVE_SIDE ) {
+	  lq = opposite_line(lq);
+	}
+      }
+    } else {
+      if ( vpqr.oriented_side(lq) != ON_POSITIVE_SIDE ) {
+	lq = opposite_line(lq);
+      }
+    }
+#if 0 // OLD CODE
     if (  ( vpqr.is_degenerate_Voronoi_circle() &&
 	    same_points(vpqr.degenerate_point(), q.source_site()) ) ||
 	  ( vpqr.is_degenerate_Voronoi_circle() &&
@@ -536,6 +573,7 @@ private:
 	lq = opposite_line(lq);
       }
     }
+#endif
 
     Point_2 tp = t.point();
 
