@@ -1,0 +1,24 @@
+\graphicspath{{figs/}}
+\def\figurename{Figure}
+\def\tablename{Tableau}
+\newcommand{\italic}[1]{\emph{#1}} 
+
+% ------------------------------------------------------------------------
+\newcommand\IL{{\itshape left}}
+\newcommand\IR{{\itshape right}}
+\newcommand\IM{{\itshape middle}}
+\newcommand\IT{{\itshape top}}
+\newcommand\IB{{\itshape bottom}}
+
+% ------------------------------------------------------------------------
+\def\kernel{\lstinline!Kernel!}
+
+\def\cgalpoly{\lstinline!CGAL::Polyhedron_3!}
+\def\poly{\lstinline!Polyhedron_3!}
+\def\polytrait{\lstinline!PolyhedronTraits_3!}
+\def\polyitem{\lstinline!PolyhedronItems_3!}
+\def\polybuilder{\lstinline!Polyhedron_incremental_builder_3!}
+
+\def\cgalhds{\lstinline!CGAL::HalfedgeDS!}
+\def\hds{\lstinline!HalfedgeDS!}
+\def\hdsitem{\lstinline!PolyhedronItems!}

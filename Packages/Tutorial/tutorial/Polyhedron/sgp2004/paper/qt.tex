@@ -1,0 +1,17 @@
+TODO: with the "backdoor" mechanism: modifier (example: qt) 
+
+The quad-triangle subdivision scheme was introduced by
+Levin~\cite{l-pg-03}, then Stam and Loop~\cite{sl-qts-02}. It applies
+to polygon meshes and basically features Loop subdivision on triangles
+and Catmull-Clark subdivision on polygons of the control mesh (see
+Fig.\ref{fig:quad-triangle}). After one iteration of subdivision the
+subdivided model is only composed of triangles and quads. A simple
+solution for implementing such a scheme is to use the
+\italic{incremental builder} concept featured by CGAL 
+Polyhedron (see Section~\ref{sec:builder}).
+
+\begin{figure}
+    \centering{\includegraphics[width=7.0cm]{figs/quad-triangle}}
+    \caption{Quad-triangle subdivision scheme.}
+    \label{fig:quad-triangle}
+\end{figure}

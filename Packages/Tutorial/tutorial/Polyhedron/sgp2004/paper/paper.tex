@@ -1,0 +1,173 @@
+%\documentclass[letter,twoside,10pt]{article}
+%\usepackage{tutorial}
+%\usepackage[OT1]{fontenc}
+
+\documentclass{egpubl}
+\usepackage{SGP2004}
+
+% --- for  Annual CONFERENCE
+% \ConferenceSubmission % uncomment for Conference submission
+% \ConferencePaper      % uncomment for (final) Conference Paper
+% \STAR                 % uncomment for STAR contribution
+% \Tutorial             % uncomment for Tutorial contribution
+% \ShortPresentation    % uncomment for (final) Short Conference Presentation
+%
+% --- for  CGF Journal
+% \JournalSubmission    % uncomment for submission to Computer Graphics Forum
+% \JournalPaper         % uncomment for final version of Journal Paper
+%
+% --- for  EG Workshop Proceedings
+\WsSubmission    % uncomment for submission to EG Workshop
+% \WsPaper         % uncomment for final version of EG Workshop contribution
+%
+\electronicVersion % uncomment if producing the printed version
+
+% ------------------------------------------------------------------------
+\ifpdf \usepackage[pdftex]{graphicx} \pdfcompresslevel=9
+\else \usepackage[dvips]{graphicx} \fi
+%\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{epsfig}
+\usepackage{psfrag}
+\usepackage{}
+% used to write c++ code/algorithms
+\usepackage{listings}
+\usepackage{fancyvrb}
+
+\PrintedOrElectronic
+
+% prepare for electronic version of your document
+\usepackage{t1enc,dfadobe}
+
+
+%\psdraft
+
+% hyperref stuff
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle={Getting started with CGAL Polyhedron},
+  pdfauthor={INRIA Geometrica},
+  pdfsubject={A tutorial for CGAL},
+  pdfkeywords={},
+  pdfpagemode=UseThumbs,
+  baseurl={http://www.cgal.org},
+  colorlinks=true,
+  linkcolor=black,
+  anchorcolor=black,
+  citecolor=black,
+  filecolor=black,
+  menucolor=black,
+  pagecolor=black,
+  urlcolor=blue,
+  bookmarksopen=false,}
+% end hyperref stuff
+
+\lstset{language=C++, basicstyle=\scriptsize}
+
+\input{paper.def}
+
+% TITLE
+% ------------------------------------------------------------------------
+\title{{\LARGE {\sffamily\bfseries Algorithms on Meshes with CGAL Polyhedron}}}
+
+% pierre: other suggestions for the title?
+%  Mesh Processing with CGAL Polyhedron
+%  Algorithms on Meshes with CGAL Polyhedron
+%  Getting started with CGAL Polyhedron
+% ?
+
+% for anonymous conference submission please enter your SUBMISSION ID
+% instead of the author's name (and leave the affiliation blank) !!
+\author[Le-Jeng Shiue \& Pierre Alliez \& Radu Ursu \& Lutz Kettner]
+       {Le-Jeng Shiue\thanks{CISE, University of Florida} and
+        Pierre Alliez\thanks{GEOMETRICA, INRIA Sophia-Antipolis} and
+	Radu Ursu\thanks{GEOMETRICA, INRIA Sophia-Antipolis} and
+	Lutz Kettner\thanks{MPII, Saarbr\"ucken}
+       }
+% ------------------------------------------------------------------------
+
+% if the Editors-in-Chief have given you the data, you may uncomment
+% the following five lines and insert it here
+%
+% \volume{23}   % the volume in which the issue will be published;
+% \issue{2}     % the issue number of the publication
+% \pStartPage{201}      % set starting page
+
+
+%-------------------------------------------------------------------------
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  Based on the CGAL polyhedron meshes, a soft-coupled framework
+  of the geometry data structure and algorithms is proposed. The 
+  framework contains three major components: mesh data structure,
+  topology operators and geometry operators. The demonstrated 
+  prototype adapts the generic paradigm and is shown flexible
+  and efficient.
+
+  \begin{classification} % according to http://www.acm.org/class/1998/
+    \CCScat{I.?.?}{Computer Graphics}{??}
+  \end{classification}
+
+\end{abstract}
+
+%% \noindent {\bf Keywords:}
+%%                  CGAL library,
+%%                  tutorial,
+%%                  halfedge data structure, 
+%%                  polygon surface mesh,
+%%                  subdivision surfaces,
+%%                  quad-triangle,
+%%                  $\sqrt{3}$,
+%%                  Loop,
+%%                  Doo-Sabin,
+%%                  Catmull-Clark,
+%%                  OpenGL.
+
+% INTRODUCTION                 
+% ------------------------------------------------------------------------
+\section{Introduction}
+\input intro
+% ------------------------------------------------------------------------
+\subsection{Background}
+\input prereq 
+
+% ------------------------------------------------------------------------
+\section{CGAL Polyhedron Meshes}
+\input polyhedron 
+
+% ------------------------------------------------------------------------
+\section{Subdivisions on Generic Mesh Data Structures}
+% generic data struture + static algorithms
+\input subdivision
+
+% connectivity ops: specific polyhedron algorithms (sqrt3 subdivisions) 
+\subsection{$\sqrt{3}$-Subdivision using Euler Operators}
+\input sqrt3
+% inc builder: specific polyhedron algorithms (qt subdivisions) 
+\subsection{Quad-triangle Subdivision using modifier}
+\input qt
+
+% ------------------------------------------------------------------------
+% templated rules: a generic framework for subdivisions 
+\subsection{Generic Subdivisions}
+%\label{sec:subtempl}
+\input subtempl
+
+% APPLICATION DEMO
+% ------------------------------------------------------------------------
+%\section{Application demo}
+%\input demo
+
+\section{Conclusions}
+\input conclusion
+
+% ------------------------------------------------------------------------
+% REFERENCES
+\bibliographystyle{eg-alpha}
+\bibliography{paper}
+
+
+\end{document}

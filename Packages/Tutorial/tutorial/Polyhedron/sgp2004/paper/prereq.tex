@@ -1,0 +1,33 @@
+% C++ and generic programming
+\noindent \textbf{CGAL and generic programming.}
+The CGAL library is a joint effort between nine European
+institutes~\cite{fgkss-dccga-00}. The goal of CGAL is to make
+available to users in industry and academia some efficient solutions
+to basic geometric problems developed in the area of computational
+geometry in a C++ software library.
+
+Before using CGAL, it is mandatory to be familiar with C++ and the
+\italic{generic programming paradigm}. The latter features the notion
+of C++ class templates and function templates, which is at the corner
+stone of all features provided by CGAL.
+
+An example illustrating generic programming is the Standard Template
+Library (STL)~\cite{ms-stl-96}. Generality and flexibility is achieved
+with a set of \italic{concepts}, where a concept is a well defined set
+of requirements. One of them is the \italic{iterator} concept, which
+allows both referring to an item and traversing a sequence of
+items. Those items are stored in a data structure called
+\italic{container} in STL. Another concept, so-called
+\italic{circulator}, allows traversing some circular sequences. They
+share most of the requirements with iterators, except the lack of
+past-the-end position in the sequence. Since CGAL is strongly inspired
+from the generality of STL, it is important to become familiar with
+its concepts before starting using it.
+
+TODO:The difference between: class and object; concept and model; 
+trait and policy.
+
+TODO:Explain the relation of: container and algorithm; specialization;
+
+\noindent \textbf{Halfedge data structure.}
+\input hds

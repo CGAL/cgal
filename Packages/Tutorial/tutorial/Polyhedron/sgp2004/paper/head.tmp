@@ -1,0 +1,912 @@
+%!PS-Adobe-2.0
+%%Creator: dvips(k) 5.94a Copyright 2003 Radical Eye Software
+%%Title: paper.dvi
+%%Pages: 5
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 612 792
+%%DocumentFonts: Times-Roman Helvetica-Bold CMSY7 Times-Bold
+%%+ Times-Italic CMSY8 Helvetica-BoldOblique CMSY9 Symbol CMSY6
+%%EndComments
+%DVIPSWebPage: (www.radicaleye.com)
+%DVIPSCommandLine: dvips -Ppdf -G0 -t letter -z -o paper.ps paper.dvi
+%DVIPSParameters: dpi=8000
+%DVIPSSource:  TeX output 2004.03.15:1930
+%%BeginProcSet: tex.pro 0 0
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/CharBuilder{save 3 1 roll S A/base get 2 index get S
+/BitMaps get S get/Cd X pop/ctr 0 N Cdx 0 Cx Cy Ch sub Cx Cw add Cy
+setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx sub Cy .1 sub]{Ci}imagemask
+restore}B/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: alt-rule.pro 0 0
+%!
+% Patch by TVZ
+% Makes dvips files draw rules with stroke rather than fill.
+% Makes narrow rules more predictable at low resolutions
+% after distilling to PDF.
+% May have unknown consequences for very thick rules.
+% Tested only with dvips 5.85(k).
+TeXDict begin
+/QV {
+  gsave newpath /ruleY X /ruleX X
+  Rx Ry gt
+  { ruleX ruleY Ry 2 div sub moveto Rx 0 rlineto Ry }
+  { ruleX Rx 2 div add ruleY moveto 0 Ry neg rlineto Rx }
+  ifelse
+  setlinewidth 0 setlinecap stroke grestore
+} bind def
+end
+
+%%EndProcSet
+%%BeginProcSet: psfrag.pro 0 0
+%%
+%% This is file `psfrag.pro',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% psfrag.dtx  (with options: `filepro')
+%% 
+%% Copyright (c) 1996 Craig Barratt, Michael C. Grant, and David Carlisle.
+%% All rights reserved.
+%% 
+%% This file is part of the PSfrag package.
+%% 
+userdict begin
+/PSfragLib 90 dict def
+/PSfragDict 6 dict def
+/PSfrag { PSfragLib begin load exec end } bind def
+end
+PSfragLib begin
+/RO /readonly      load def
+/CP /currentpoint  load def
+/CM /currentmatrix load def
+/B { bind RO def } bind def
+/X { exch def } B
+/MD { { X } forall } B
+/OE { end exec PSfragLib begin } B
+/S false def
+/tstr 8 string def
+/islev2 { languagelevel } stopped { false } { 2 ge } ifelse def
+[ /sM /tM /srcM /dstM /dM /idM /srcFM /dstFM ] { matrix def } forall
+sM currentmatrix RO pop
+dM defaultmatrix RO idM invertmatrix RO pop
+srcFM identmatrix pop
+/Hide { gsave { CP } stopped not newpath clip { moveto } if } B
+/Unhide { { CP } stopped not grestore { moveto } if } B
+/setrepl islev2 {{ /glob currentglobal def true setglobal array astore
+                   globaldict exch /PSfrags exch put glob setglobal }}
+                {{ array astore /PSfrags X }} ifelse B
+/getrepl islev2 {{ globaldict /PSfrags get aload length }}
+                {{ PSfrags aload length }} ifelse B
+/convert {
+   /src X src length string
+   /c 0 def src length {
+      dup c src c get dup 32 lt { pop 32 } if put /c c 1 add def
+   } repeat
+} B
+/Begin {
+    /saver save def
+    srcFM exch 3 exch put
+    0 ne /debugMode X 0 setrepl
+    dup /S exch dict def { S 3 1 roll exch convert exch put } repeat
+    srcM CM dup invertmatrix pop
+    mark { currentdict { end } stopped { pop exit } if } loop
+    PSfragDict counttomark { begin } repeat pop
+} B
+/End {
+    mark { currentdict end dup PSfragDict eq { pop exit } if } loop
+    counttomark { begin } repeat pop
+    getrepl saver restore
+    7 idiv dup /S exch dict def {
+        6 array astore /mtrx X tstr cvs /K X
+        S K [ S K known { S K get aload pop } if mtrx ] put
+    } repeat
+} B
+/Place {
+    tstr cvs /K X
+    S K known {
+        bind /proc X tM CM pop
+        CP /cY X /cX X
+        0 0 transform idtransform neg /aY X neg /aX X
+        S K get dup length /maxiter X
+        /iter 1 def {
+            iter maxiter ne { /saver save def } if
+            tM setmatrix aX aY translate
+            [ exch aload pop idtransform ] concat
+            cX neg cY neg translate cX cY moveto
+            /proc load OE
+            iter maxiter ne { saver restore /iter iter 1 add def } if
+        } forall
+        /noXY { CP /cY X /cX X } stopped def
+        tM setmatrix noXY { newpath } { cX cY moveto } ifelse
+    } {
+        Hide OE Unhide
+    } ifelse
+} B
+/normalize {
+    2 index dup mul 2 index dup mul add sqrt div
+    dup 4 -1 roll exch mul 3 1 roll mul
+} B
+/replace {
+    aload pop MD
+    CP /bY X /lX X gsave sM setmatrix
+    str stringwidth abs exch abs add dup 0 eq
+        { pop } { 360 exch div dup scale } ifelse
+    lX neg bY neg translate newpath lX bY moveto
+    str { /ch X ( ) dup 0 ch put false charpath ch Kproc } forall
+    flattenpath pathbbox [ /uY /uX /lY /lX ] MD
+    CP grestore moveto
+    currentfont /FontMatrix get dstFM copy dup
+    0 get 0 lt { uX lX /uX X /lX X } if
+    3 get 0 lt { uY lY /uY X /lY X } if
+    /cX uX lX add 0.5 mul def
+    /cY uY lY add 0.5 mul def
+    debugMode { gsave 0 setgray 1 setlinewidth
+        lX lY moveto lX uY lineto uX uY lineto uX lY lineto closepath
+        lX bY moveto uX bY lineto lX cY moveto uX cY lineto
+        cX lY moveto cX uY lineto stroke
+    grestore } if
+    dstFM dup invertmatrix dstM CM srcM
+    2 { dstM concatmatrix } repeat pop
+    getrepl /temp X
+        S str convert get {
+            aload pop [ /rot /scl /loc /K ] MD
+            /aX cX def /aY cY def
+            loc {
+                dup 66  eq { /aY bY def } { % B
+                dup 98  eq { /aY lY def } { % b
+                dup 108 eq { /aX lX def } { % l
+                dup 114 eq { /aX uX def } { % r
+                dup 116 eq { /aY uY def }   % t
+                if } ifelse } ifelse } ifelse } ifelse pop
+            } forall
+            K srcFM rot tM rotate dstM
+            2 { tM concatmatrix } repeat aload pop pop pop
+            2 { scl normalize 4 2 roll } repeat
+            aX aY transform
+            /temp temp 7 add def
+        } forall
+    temp setrepl
+} B
+/Rif {
+    S 3 index convert known { pop replace } { exch pop OE } ifelse
+} B
+/XA { bind [ /Kproc /str } B /XC { ] 2 array astore def } B
+/xs   { pop } XA XC
+/xks  { /kern load OE } XA /kern XC
+/xas  { pop ax ay rmoveto } XA /ay /ax XC
+/xws  { c eq { cx cy rmoveto } if } XA /c /cy /cx XC
+/xaws { ax ay rmoveto c eq { cx cy rmoveto } if }
+    XA /ay /ax /c /cy /cx XC
+/raws { xaws { awidthshow } Rif } B
+/rws  { xws { widthshow } Rif } B
+/rks  { xks { kshow } Rif } B
+/ras  { xas { ashow } Rif } B
+/rs   { xs { show } Rif } B
+/rrs { getrepl dup 2 add -1 roll //restore exec setrepl } B
+PSfragDict begin
+islev2 not { /restore { /rrs PSfrag } B } if
+/show       { /rs   PSfrag } B
+/kshow      { /rks  PSfrag } B
+/ashow      { /ras  PSfrag } B
+/widthshow  { /rws  PSfrag } B
+/awidthshow { /raws PSfrag } B
+end PSfragDict RO pop
+end
+
+%%EndProcSet
+%%BeginProcSet: 8r.enc 0 0
+% @@psencodingfile@{
+%   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
+%   version = "0.6",
+%   date = "1 July 1998",
+%   filename = "8r.enc",
+%   email = "tex-fonts@@tug.org",
+%   docstring = "Encoding for TrueType or Type 1 fonts
+%                to be used with TeX."
+% @}
+% 
+% Idea is to have all the characters normally included in Type 1 fonts
+% available for typesetting. This is effectively the characters in Adobe
+% Standard Encoding + ISO Latin 1 + extra characters from Lucida.
+% 
+% Character code assignments were made as follows:
+% 
+% (1) the Windows ANSI characters are almost all in their Windows ANSI
+% positions, because some Windows users cannot easily reencode the
+% fonts, and it makes no difference on other systems. The only Windows
+% ANSI characters not available are those that make no sense for
+% typesetting -- rubout (127 decimal), nobreakspace (160), softhyphen
+% (173). quotesingle and grave are moved just because it's such an
+% irritation not having them in TeX positions.
+% 
+% (2) Remaining characters are assigned arbitrarily to the lower part
+% of the range, avoiding 0, 10 and 13 in case we meet dumb software.
+% 
+% (3) Y&Y Lucida Bright includes some extra text characters; in the
+% hopes that other PostScript fonts, perhaps created for public
+% consumption, will include them, they are included starting at 0x12.
+% 
+% (4) Remaining positions left undefined are for use in (hopefully)
+% upward-compatible revisions, if someday more characters are generally
+% available.
+% 
+% (5) hyphen appears twice for compatibility with both 
+% ASCII and Windows.
+% 
+/TeXBase1Encoding [
+% 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
+  /.notdef /dotaccent /fi /fl
+  /fraction /hungarumlaut /Lslash /lslash
+  /ogonek /ring /.notdef
+  /breve /minus /.notdef 
+% These are the only two remaining unencoded characters, so may as
+% well include them.
+  /Zcaron /zcaron 
+% 0x10
+ /caron /dotlessi 
+% (unusual TeX characters available in, e.g., Lucida Bright)
+ /dotlessj /ff /ffi /ffl 
+ /.notdef /.notdef /.notdef /.notdef
+ /.notdef /.notdef /.notdef /.notdef
+ % very contentious; it's so painful not having quoteleft and quoteright
+ % at 96 and 145 that we move the things normally found there to here.
+ /grave /quotesingle 
+% 0x20 (ASCII begins)
+ /space /exclam /quotedbl /numbersign
+ /dollar /percent /ampersand /quoteright
+ /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+% 0x30
+ /zero /one /two /three /four /five /six /seven
+ /eight /nine /colon /semicolon /less /equal /greater /question
+% 0x40
+ /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O
+% 0x50
+ /P /Q /R /S /T /U /V /W
+ /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+% 0x60
+ /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o
+% 0x70
+ /p /q /r /s /t /u /v /w
+ /x /y /z /braceleft /bar /braceright /asciitilde
+ /.notdef % rubout; ASCII ends
+% 0x80
+ /.notdef /.notdef /quotesinglbase /florin
+ /quotedblbase /ellipsis /dagger /daggerdbl
+ /circumflex /perthousand /Scaron /guilsinglleft
+ /OE /.notdef /.notdef /.notdef
+% 0x90
+ /.notdef /.notdef /.notdef /quotedblleft
+ /quotedblright /bullet /endash /emdash
+ /tilde /trademark /scaron /guilsinglright
+ /oe /.notdef /.notdef /Ydieresis
+% 0xA0
+ /.notdef % nobreakspace
+ /exclamdown /cent /sterling
+ /currency /yen /brokenbar /section
+ /dieresis /copyright /ordfeminine /guillemotleft
+ /logicalnot
+ /hyphen % Y&Y (also at 45); Windows' softhyphen
+ /registered
+ /macron
+% 0xD0
+ /degree /plusminus /twosuperior /threesuperior
+ /acute /mu /paragraph /periodcentered
+ /cedilla /onesuperior /ordmasculine /guillemotright
+ /onequarter /onehalf /threequarters /questiondown
+% 0xC0
+ /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+ /Egrave /Eacute /Ecircumflex /Edieresis
+ /Igrave /Iacute /Icircumflex /Idieresis
+% 0xD0
+ /Eth /Ntilde /Ograve /Oacute
+ /Ocircumflex /Otilde /Odieresis /multiply
+ /Oslash /Ugrave /Uacute /Ucircumflex
+ /Udieresis /Yacute /Thorn /germandbls
+% 0xE0
+ /agrave /aacute /acircumflex /atilde
+ /adieresis /aring /ae /ccedilla
+ /egrave /eacute /ecircumflex /edieresis
+ /igrave /iacute /icircumflex /idieresis
+% 0xF0
+ /eth /ntilde /ograve /oacute
+ /ocircumflex /otilde /odieresis /divide
+ /oslash /ugrave /uacute /ucircumflex
+ /udieresis /yacute /thorn /ydieresis
+] def
+
+%%EndProcSet
+%%BeginProcSet: texps.pro 0 0
+%!
+TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
+index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]/Metrics
+exch def dict begin Encoding{exch dup type/integertype ne{pop pop 1 sub
+dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get div def}
+ifelse}forall Metrics/Metrics currentdict end def[2 index currentdict
+end definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{
+dup sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1
+roll mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def
+dup[exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}
+if}forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}
+def end
+
+%%EndProcSet
+%%BeginProcSet: special.pro 0 0
+%!
+TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
+/vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
+/rhiSeen false N/letter{}N/note{}N/a4{}N/legal{}N}B/@scaleunit 100 N
+/@hscale{@scaleunit div/hsc X}B/@vscale{@scaleunit div/vsc X}B/@hsize{
+/hs X/CLIP 1 N}B/@vsize{/vs X/CLIP 1 N}B/@clip{/CLIP 2 N}B/@hoffset{/ho
+X}B/@voffset{/vo X}B/@angle{/ang X}B/@rwi{10 div/rwi X/rwiSeen true N}B
+/@rhi{10 div/rhi X/rhiSeen true N}B/@llx{/llx X}B/@lly{/lly X}B/@urx{
+/urx X}B/@ury{/ury X}B/magscale true def end/@MacSetUp{userdict/md known
+{userdict/md get type/dicttype eq{userdict begin md length 10 add md
+maxlength ge{/md md dup length 20 add dict copy def}if end md begin
+/letter{}N/note{}N/legal{}N/od{txpose 1 0 mtx defaultmatrix dtransform S
+atan/pa X newpath clippath mark{transform{itransform moveto}}{transform{
+itransform lineto}}{6 -2 roll transform 6 -2 roll transform 6 -2 roll
+transform{itransform 6 2 roll itransform 6 2 roll itransform 6 2 roll
+curveto}}{{closepath}}pathforall newpath counttomark array astore/gc xdf
+pop ct 39 0 put 10 fz 0 fs 2 F/|______Courier fnt invertflag{PaintBlack}
+if}N/txpose{pxs pys scale ppr aload pop por{noflips{pop S neg S TR pop 1
+-1 scale}if xflip yflip and{pop S neg S TR 180 rotate 1 -1 scale ppr 3
+get ppr 1 get neg sub neg ppr 2 get ppr 0 get neg sub neg TR}if xflip
+yflip not and{pop S neg S TR pop 180 rotate ppr 3 get ppr 1 get neg sub
+neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get neg TR}if}{
+noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop pop
+90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr
+1 get neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr
+2 get ppr 0 get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4
+-1 roll add 2 div 3 1 roll add 2 div 2 copy TR .96 dup scale neg S neg S
+TR}if}N/cp{pop pop showpage pm restore}N end}if}if}N/normalscale{
+Resolution 72 div VResolution 72 div neg scale magscale{DVImag dup scale
+}if 0 setgray}N/psfts{S 65781.76 div N}N/startTexFig{/psf$SavedState
+save N userdict maxlength dict begin/magscale true def normalscale
+currentpoint TR/psf$ury psfts/psf$urx psfts/psf$lly psfts/psf$llx psfts
+/psf$y psfts/psf$x psfts currentpoint/psf$cy X/psf$cx X/psf$sx psf$x
+psf$urx psf$llx sub div N/psf$sy psf$y psf$ury psf$lly sub div N psf$sx
+psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy psf$sy div psf$ury sub
+TR/showpage{}N/erasepage{}N/copypage{}N/p 3 def @MacSetUp}N/doclip{
+psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll newpath 4 copy 4 2
+roll moveto 6 -1 roll S lineto S lineto S lineto closepath clip newpath
+moveto}N/endTexFig{end psf$SavedState restore}N/@beginspecial{SDict
+begin/SpecialSave save N gsave normalscale currentpoint TR
+@SpecialDefaults count/ocount X/dcount countdictstack N}N/@setspecial{
+CLIP 1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs neg 0 rlineto
+closepath clip}if ho vo TR hsc vsc scale ang rotate rwiSeen{rwi urx llx
+sub div rhiSeen{rhi ury lly sub div}{dup}ifelse scale llx neg lly neg TR
+}{rhiSeen{rhi ury lly sub div dup scale llx neg lly neg TR}if}ifelse
+CLIP 2 eq{newpath llx lly moveto urx lly lineto urx ury lineto llx ury
+lineto closepath clip}if/showpage{}N/erasepage{}N/copypage{}N newpath}N
+/@endspecial{count ocount sub{pop}repeat countdictstack dcount sub{end}
+repeat grestore SpecialSave restore end}N/@defspecial{SDict begin}N
+/@fedspecial{end}B/li{lineto}B/rl{rlineto}B/rc{rcurveto}B/np{/SaveX
+currentpoint/SaveY X N 1 setlinecap newpath}N/st{stroke SaveX SaveY
+moveto}N/fil{fill SaveX SaveY moveto}N/ellipse{/endangle X/startangle X
+/yrad X/xrad X/savematrix matrix currentmatrix N TR xrad yrad scale 0 0
+1 startangle endangle arc savematrix setmatrix}N end
+
+%%EndProcSet
+%%BeginProcSet: color.pro 0 0
+%!
+TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
+setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
+}repeat setrgbcolor pop}ifelse}B}ifelse/TeXcolorcmyk{setcmykcolor}def
+/TeXcolorrgb{setrgbcolor}def/TeXcolorgrey{setgray}def/TeXcolorgray{
+setgray}def/TeXcolorhsb{sethsbcolor}def/currentcmykcolor where{pop}{
+/currentcmykcolor{currentrgbcolor 10}B}ifelse/DC{exch dup userdict exch
+known{pop pop}{X}ifelse}B/GreenYellow{0.15 0 0.69 0 setcmykcolor}DC
+/Yellow{0 0 1 0 setcmykcolor}DC/Goldenrod{0 0.10 0.84 0 setcmykcolor}DC
+/Dandelion{0 0.29 0.84 0 setcmykcolor}DC/Apricot{0 0.32 0.52 0
+setcmykcolor}DC/Peach{0 0.50 0.70 0 setcmykcolor}DC/Melon{0 0.46 0.50 0
+setcmykcolor}DC/YellowOrange{0 0.42 1 0 setcmykcolor}DC/Orange{0 0.61
+0.87 0 setcmykcolor}DC/BurntOrange{0 0.51 1 0 setcmykcolor}DC
+/Bittersweet{0 0.75 1 0.24 setcmykcolor}DC/RedOrange{0 0.77 0.87 0
+setcmykcolor}DC/Mahogany{0 0.85 0.87 0.35 setcmykcolor}DC/Maroon{0 0.87
+0.68 0.32 setcmykcolor}DC/BrickRed{0 0.89 0.94 0.28 setcmykcolor}DC/Red{
+0 1 1 0 setcmykcolor}DC/OrangeRed{0 1 0.50 0 setcmykcolor}DC/RubineRed{
+0 1 0.13 0 setcmykcolor}DC/WildStrawberry{0 0.96 0.39 0 setcmykcolor}DC
+/Salmon{0 0.53 0.38 0 setcmykcolor}DC/CarnationPink{0 0.63 0 0
+setcmykcolor}DC/Magenta{0 1 0 0 setcmykcolor}DC/VioletRed{0 0.81 0 0
+setcmykcolor}DC/Rhodamine{0 0.82 0 0 setcmykcolor}DC/Mulberry{0.34 0.90
+0 0.02 setcmykcolor}DC/RedViolet{0.07 0.90 0 0.34 setcmykcolor}DC
+/Fuchsia{0.47 0.91 0 0.08 setcmykcolor}DC/Lavender{0 0.48 0 0
+setcmykcolor}DC/Thistle{0.12 0.59 0 0 setcmykcolor}DC/Orchid{0.32 0.64 0
+0 setcmykcolor}DC/DarkOrchid{0.40 0.80 0.20 0 setcmykcolor}DC/Purple{
+0.45 0.86 0 0 setcmykcolor}DC/Plum{0.50 1 0 0 setcmykcolor}DC/Violet{
+0.79 0.88 0 0 setcmykcolor}DC/RoyalPurple{0.75 0.90 0 0 setcmykcolor}DC
+/BlueViolet{0.86 0.91 0 0.04 setcmykcolor}DC/Periwinkle{0.57 0.55 0 0
+setcmykcolor}DC/CadetBlue{0.62 0.57 0.23 0 setcmykcolor}DC
+/CornflowerBlue{0.65 0.13 0 0 setcmykcolor}DC/MidnightBlue{0.98 0.13 0
+0.43 setcmykcolor}DC/NavyBlue{0.94 0.54 0 0 setcmykcolor}DC/RoyalBlue{1
+0.50 0 0 setcmykcolor}DC/Blue{1 1 0 0 setcmykcolor}DC/Cerulean{0.94 0.11
+0 0 setcmykcolor}DC/Cyan{1 0 0 0 setcmykcolor}DC/ProcessBlue{0.96 0 0 0
+setcmykcolor}DC/SkyBlue{0.62 0 0.12 0 setcmykcolor}DC/Turquoise{0.85 0
+0.20 0 setcmykcolor}DC/TealBlue{0.86 0 0.34 0.02 setcmykcolor}DC
+/Aquamarine{0.82 0 0.30 0 setcmykcolor}DC/BlueGreen{0.85 0 0.33 0
+setcmykcolor}DC/Emerald{1 0 0.50 0 setcmykcolor}DC/JungleGreen{0.99 0
+0.52 0 setcmykcolor}DC/SeaGreen{0.69 0 0.50 0 setcmykcolor}DC/Green{1 0
+1 0 setcmykcolor}DC/ForestGreen{0.91 0 0.88 0.12 setcmykcolor}DC
+/PineGreen{0.92 0 0.59 0.25 setcmykcolor}DC/LimeGreen{0.50 0 1 0
+setcmykcolor}DC/YellowGreen{0.44 0 0.74 0 setcmykcolor}DC/SpringGreen{
+0.26 0 0.76 0 setcmykcolor}DC/OliveGreen{0.64 0 0.95 0.40 setcmykcolor}
+DC/RawSienna{0 0.72 1 0.45 setcmykcolor}DC/Sepia{0 0.83 1 0.70
+setcmykcolor}DC/Brown{0 0.81 1 0.60 setcmykcolor}DC/Tan{0.14 0.42 0.56 0
+setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
+setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
+
+%%EndProcSet
+%%BeginProcSet: hps.pro 0 0
+%!
+/HPSdict 20 dict dup begin/braindeaddistill 50 def/rfch{dup length 1 sub
+1 exch getinterval}bind def/splituri{dup(#)search{exch pop}{()exch}
+ifelse dup(file:)anchorsearch{pop exch pop 3 -1 roll pop false}{pop 3 -1
+roll exch pop true}ifelse}bind def/lookuptarget{exch rfch dup
+/TargetAnchors where{pop TargetAnchors dup 3 -1 roll known{exch get true
+}{pop(target unknown:)print == false}ifelse}{pop pop
+(target dictionary unknown\012)print false}ifelse}bind def/savecount 0
+def/stackstopped{count counttomark sub/savecount exch store stopped
+count savecount sub 1 sub dup 0 gt{{exch pop}repeat}{pop}ifelse}bind def
+/tempstring 256 string def/targetvalidate{1 index dup length 255 gt exch
+dup(/)search{pop pop pop exch pop true exch}{pop}ifelse cvn tempstring
+cvs token pop pop length 0 ne or not}bind def/targetdump-hook where{pop}
+{/targetdump-hook{dup mark exch gsave initmat setmatrix{{mark/Dest 4 2
+roll targetvalidate{aload pop exch pop/Page 3 1 roll/View exch[exch
+/FitH exch]/DEST pdfmark}{cleartomark}ifelse}forall}stackstopped pop
+grestore}bind def}ifelse/baseurl{mark exch 1 dict dup 3 -1 roll/Base
+exch put/URI exch/DOCVIEW{pdfmark}stackstopped pop}bind def
+/externalhack systemdict/PDF known def/oldstyle true def/initmat matrix
+currentmatrix def/actiondict 2 dict dup/Subtype/URI put def
+/weblinkhandler{dup 3 1 roll mark 4 1 roll/Title 4 1 roll splituri 3 -1
+roll dup length 0 gt{cvn/Dest exch 4 2 roll}{pop}ifelse{externalhack{
+/HTTPFile exch}{actiondict dup 3 -1 roll/URI exch put/Action exch}
+ifelse}{externalhack{/HTTPFile exch}{/File exch/Action/GoToR}ifelse}
+ifelse counttomark 2 sub -1 roll aload pop/Rect 4 1 roll/Border 3 1 roll
+/Color exch oldstyle{/LNK}{/Subtype/Link/ANN}ifelse gsave initmat
+setmatrix{pdfmark}stackstopped grestore}bind def/externalhandler where{
+pop}{/externalhandler{2 copy{weblinkhandler}exec{/externalhack
+externalhack not store 2 copy{weblinkhandler}exec{/externalhack
+externalhack not store/oldstyle false store 2 copy{weblinkhandler}exec{
+(WARNING: external refs disabled\012)print/externalhandler{pop pop}bind
+store externalhandler}{pop pop}ifelse}{pop pop/externalhack externalhack
+not store}ifelse}{pop pop/externalhandler{weblinkhandler pop}bind store}
+ifelse}bind def}ifelse/pdfmnew{dup type/stringtype eq{externalhandler}{
+exch dup rfch exch 3 -1 roll lookuptarget{mark 4 1 roll/Title 4 1 roll
+aload pop exch pop/Page 3 1 roll/View exch[exch/FitH exch]5 -1 roll
+aload pop/Rect 4 1 roll/Border 3 1 roll/Color exch/LNK gsave initmat
+setmatrix pdfmark grestore}{pop pop}ifelse}ifelse}bind def/pdfmold{dup
+type/stringtype eq{externalhandler}{exch dup rfch exch 3 -1 roll
+lookuptarget{mark 4 1 roll/Title 4 1 roll aload pop exch pop/Page 3 1
+roll/View exch[exch/FitH exch]5 -1 roll aload pop pop 0 3 getinterval
+/Rect 3 1 roll/Border exch/LNK gsave initmat setmatrix pdfmark grestore}
+{pop pop}ifelse}ifelse}bind def/pdfm where{pop}{/pdfm
+/currentdistillerparams where{pop currentdistillerparams dup
+/CoreDistVersion known{/CoreDistVersion get}{0}ifelse dup
+braindeaddistill le{(WARNING: switching to old pdfm because version =)
+print ==/pdfmold}{pop/pdfmnew}ifelse load}{/pdfmark where{pop{dup type
+/stringtype eq{externalhandler}{2 copy mark 3 1 roll{pdfmnew}
+stackstopped{2 copy mark 3 1 roll{pdfmold}stackstopped{
+(WARNING: pdfm disabled\012)print/pdfm{pop pop}store}{
+(WARNING: new pdfm failed, switching to old pdfm\012)print/pdfm/pdfmold
+load store}ifelse}{/pdfm/pdfmnew load store}ifelse pop pop}ifelse}}{{
+pop pop}}ifelse}ifelse bind def}ifelse end def
+
+%%EndProcSet
+TeXDict begin @defspecial
+
+ /DvipsToPDF { 72.27 mul Resolution div } def /PDFToDvips { 72.27 div
+Resolution mul } def /HyperBorder { 1 PDFToDvips } def /H.V {pdf@hoff
+pdf@voff null} def /H.B {/Rect[pdf@llx pdf@lly pdf@urx pdf@ury]} def
+/H.S { currentpoint HyperBorder add /pdf@lly exch def dup DvipsToPDF
+/pdf@hoff exch def HyperBorder sub /pdf@llx exch def } def /H.L { 2
+sub dup /HyperBasePt exch def PDFToDvips /HyperBaseDvips exch def currentpoint
+HyperBaseDvips sub /pdf@ury exch def /pdf@urx exch def } def /H.A {
+H.L currentpoint exch pop vsize 72 sub exch DvipsToPDF HyperBasePt
+sub sub /pdf@voff exch def } def /H.R { currentpoint HyperBorder sub
+/pdf@ury exch def HyperBorder add /pdf@urx exch def currentpoint exch
+pop vsize 72 sub exch DvipsToPDF sub /pdf@voff exch def } def systemdict
+/pdfmark known not {userdict /pdfmark systemdict /cleartomark get put}
+if
+ 
+@fedspecial end
+%%BeginFont: CMSY6
+%!PS-AdobeFont-1.1: CMSY6 1.0
+%%CreationDate: 1991 Aug 15 07:21:34
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSY6) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.035 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSY6 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 112 /radical put
+readonly def
+/FontBBox{-4 -948 1329 786}readonly def
+/UniqueID 5000816 def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
+7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
+A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
+E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
+221A37D9A807DD01161779DDE7D5FC1B2109839E5B52DFB7605D7BA557CC35D6
+49F6EB651B83771034BA0C39DB8D426A24543EF4529E2D939125B5157482688E
+9045C2242F4AFA4C489D975C029177CD6497EACD181FF151A45F521A4C4043C2
+1F3E76EF5B3291A941583E27DFC68B9211105827590393ABFB8AA4D1623D1761
+6AC0DF1D3154B0277BE821712BE7B33385E7A4105E8F3370F981B8FE9E3CF3E0
+007B8C9F2D934F24D591C330487DDF179CECEC5258C47E4B32538F948AB00673
+F9D549C971B0822056B339600FC1E3A5E51844CC8A75B857F15E7276260ED115
+C5FD550F53CE5583743B50B0F9B7C4F836DEF7499F439A6EBE9BF559D2EE0571
+CE54AEC470B3017D0A25838A046077CD3E463B079CE60A96DDD386D85B653D9E
+FB8DCD94034AC3F3F37BC6B4F7DE98B5E2B7853F4FA063F7966CA0D61E21A8DF
+7D1901D099BEC381ACB52040C8CB9C321AD322C0960649EABA1569DE104FB9AF
+2D924CA45E753D0A2DEF78F991918F3528E7DC99E3928F231394C5F4514B6140
+74A60FCC57258F25B194B2714E4B46414C83A1E0255CB240046981AF3FC2020E
+4C207C19074D40DC2C624337AA79EBF25E737EB032CBF3384467507E1C161523
+30CBB13654837FDD2EB3A6624885F5B7338EEEAC6A3393E2F08A7032782A0C84
+C76EF6869067CB19AED712D3DEE5ADE59B56695FD97225810AABB80C2CDDF66F
+E234
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMSY9
+%!PS-AdobeFont-1.1: CMSY9 1.0
+%%CreationDate: 1991 Aug 15 07:22:27
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSY9) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.035 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSY9 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 15 /bullet put
+dup 112 /radical put
+readonly def
+/FontBBox{-30 -958 1146 777}readonly def
+/UniqueID 5000819 def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
+7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
+A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
+E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
+221A37D9A807DD01161779DDE7D31FF2B87F97C73D63EECDDA4C49501773468A
+27D1663E0B62F461F6E40A5D6676D0037D33F24E2FAC2B0009AD3C8350CDF8CC
+65BCA87979C36D14CB552E9A985E48BE4E88ECA16DF418749AF04FDD2B0E1380
+D281BB2476BB45FF30946B247DFD7F57305FA87E50CA338121C71CDFDF927A9C
+77FF14CB4A1D6D80356FB1171ED38C37702350497B44E42CE31DB2F493807DAA
+15B887C671199A54C4C1294BC520F5538C15556BC43C9F62342B121C6DCD6C5F
+491DA47FF360201EE21C08A781ED0589A6DF91B99FE118B9B29E4F068672E52F
+1A06C514D91C4C937D4E642503392B1CD1BF5AF0BCA28EBD840AD76CC39AD7AA
+CF2C05723E3599B95B4C5FE6FB43D842FC020017ED2002A4FD11BF6D07256A6B
+63C5FB8EF8521A2875951F0B66F2D6ADE4D8A8C8864A153C4DAA3855C1A468BB
+C435982A01E33D313E1A1AC640EF47B5898AE6479A6AF90FA35131B8CCE6F91D
+E67327CDDFBB5AF8AA459CFB8C882B1A78F36F15AAA6E6B4AFE7638EAB68C817
+FEE59EEA86D5B23033C8BD64E3E2BCE820BA786C49B69EFEDFAE427D0B7BE7F0
+4BEDD322FFB8DDE38C202A442DB607022913F7A28626C9E6D3B4F93F406043A5
+7B934D6762CFD87D4AD334960D76D5E9BFB1BEC610434F523D9F752593672526
+6A7EDFFDA7B8515DBDD9CCC6659AF54C408F0E9AEAA91A86A0E8290D5510BC2C
+ABE774F5403028B983E02F33DBAC7B15B02FD1A3D1E1512FF8BB4AEF71495610
+696D4E3419BA6CF0B2B9B04A616B6526A8B52FF7FF738647EC81DA0B9F621E69
+8D3CE9E3CF1E53F1D0E377606B9F6FCD01F36857C1
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMSY8
+%!PS-AdobeFont-1.1: CMSY8 1.0
+%%CreationDate: 1991 Aug 15 07:22:10
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSY8) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.035 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSY8 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 120 /section put
+dup 121 /dagger put
+dup 122 /daggerdbl put
+dup 123 /paragraph put
+readonly def
+/FontBBox{-30 -955 1185 779}readonly def
+/UniqueID 5000818 def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
+7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
+A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
+E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
+221A37D9A807DD01161779DDE7D5FC1B2109839E5B52DFBB2A7C1B5D8E7E8AA0
+5B10EA43D6A8ED61AF5B23D49920D8F79DAB6A59062134D84AC0100187A6CD1F
+80F5DDD9D222ACB1C23326A7656A635C4A241CCD32CBFDF8363206B8AA36E107
+1477F5496111E055C7491002AFF272E46ECC46422F0380D093284870022523FB
+DA1716CC4F2E2CCAD5F173FCBE6EDDB874AD255CD5E5C0F86214393FCB5F5C20
+9C3C2BB5886E36FC3CCC21483C3AC193485A46E9D22BD7201894E4D45ADD9BF1
+CC5CF6A5010B5654AC0BE0DA903DB563B13840BA3015F72E51E3BC80156388BA
+F83C7D393392BCBC227771CDCB976E9330253690E4C2BECD6FFF806E507B9C3A
+02BC7D9B63DD9A24B2DE2128336C24699AFCFDF8987FF3F495B9EBBEAB40C786
+F9F5F7A5F68ADD96A8AD4768FC932E1BB19A31D633D5D8A358648C4E830D89DD
+0B4187AB8DBAAA2734FC253F7E13B4865642D96042EC84552D30E1B49681AA5D
+9D8B297FDF59860F215467BA69FB06148486EC2BA4ADB8A5459A58348065C50B
+72DE3B827ECF0BC285AA7C7D076059A0FE792B1D564E13FC06ED4DA20497D654
+032EA2CC4D41DF0E5ECE9A7E38FC71FB4756DB250A21A0E77D54DFBC05162A2B
+78C4CD3711DAE1388557AB9301B39DA1757E90B5591DC1584ABCD0FFCF7CC593
+94397B303AD071D26C052BE592FF46B3DD63D0B7B612967A9F46DE7CA106D9C6
+1F94E6CA3F1109B22EBBB3148E866C68FCAEE7F538A038BC0245B57C66F25F6D
+80039D434BE4710F9D4A2DDC53717F001D2086A194B90B6B3B62B746C649F2C8
+15B3A7AB20C8097E21F6E3183BC83AC01B043407F8A1B953C4DF186191BB012E
+BA9DD0A30E4D0810F335CFF7C6431D3C511452BD09CF827CD6AA480A7B9ADE5B
+627F5F462D5D3BD997CAF2793DAB1E4E01B3923FF231ED17E985676321C365BC
+EF80EE5A496BCA976C5DCBC97D5659FFD8E990A34C98C1D5663010A8B55FFD27
+DCBD176B1FA9482AA8969FDAAA5C22548FF4BD39E5C1776CEFC34AE3FEB1B825
+832397FA94E1FC488E8EB6B02D29A19847E4743A712644091F4E937FE51F5743
+FCA4583209D2E4FE122A6202B679C4CDCFF0B5DA612AD695FF893406B9F78D0F
+ED8003C19AA05E72A088FD38050E68767BCE7A76F5ACD71AAEDB8BCE49953EF5
+FFE3EA57B305A87562A3058EA3E450A966934EAC3757EE1C333B80AE3B40CC60
+BB14C2DC3411D0C2E52F18DF87124C58CF04AC9E47C30BC8CA8CE0D6E235A2B5
+FA5AA7A824E6FC906B2A6835805128AD73C8281C3A8BB19B61B6BA8AA43A9710
+AEEFE864A05626FC45FD4B82B864359A87C5680D48C799BFC3CC740647DD60CA
+E4627DE4479AE84F21F9C020EB540B3F96D9CD618D2412C2AE1FDF51AE12DFA2
+2100E19055DF44A7E5106D6A0734337A7D36D46BE69C5DB0C92D3FCBB0F2BE05
+99EF7C8B7146EDCE32E1BF4FAB8ACB492349E7261BCC02CB04F4A3CE7DB4AE22
+0636B04CB22A339D927DFC9F2A4F0354EE20C419751BDF5D75381032588D50BA
+19B10507C5E31BE3EEF66D2FA198DDF8A8CC35D5DF4625A0A59116D90869BCF8
+E7E8200EFEADC3297D67EF279BDC95B0CF9C4DAC6DA4ABC6BAECD77A41DEB674
+AD40209C6CEBC7BDFC3FE48CE9D44812D3AE43737FE58D26377A8087514F0E9B
+C3A2770635D14DD98565B5DF61B4DB92838CE0E9905275844A5E40560C11CBAE
+8BBF81928C8BA155501CBBED19851629DFA93095BB3517B6B3CDBCDCC61AAE6D
+9A8FDC9CE644E6016D1B1FD7FE8B3B6EA3CDAB1CF3F62B391B4911C58BF55FBA
+A66FDD4316341F26976326304B66F9D693D4F66120B767036910483F8BE23E25
+9A89F6D2711A0BF3C2D642A85B73C998547556B2EE27C2798496F9FB041A16F5
+
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+%%BeginFont: CMSY7
+%!PS-AdobeFont-1.1: CMSY7 1.0
+%%CreationDate: 1991 Aug 15 07:21:52
+% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
+11 dict begin
+/FontInfo 7 dict dup begin
+/version (1.0) readonly def
+/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
+/FullName (CMSY7) readonly def
+/FamilyName (Computer Modern) readonly def
+/Weight (Medium) readonly def
+/ItalicAngle -14.035 def
+/isFixedPitch false def
+end readonly def
+/FontName /CMSY7 def
+/PaintType 0 def
+/FontType 1 def
+/FontMatrix [0.001 0 0 0.001 0 0] readonly def
+/Encoding 256 array
+0 1 255 {1 index exch /.notdef put} for
+dup 3 /asteriskmath put
+dup 120 /section put
+dup 121 /dagger put
+dup 122 /daggerdbl put
+dup 123 /paragraph put
+readonly def
+/FontBBox{-15 -951 1252 782}readonly def
+/UniqueID 5000817 def
+currentdict end
+currentfile eexec
+D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
+7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
+A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
+E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
+221A37D9A807DD01161779DDE7D251491EBF65A98C9FE2B1CF8D725A70281949
+8F4AFFE638BBA6B12386C7F32BA350D62EA218D5B24EE612C2C20F43CD3BFD0D
+F02B185B692D7B27BEC7290EEFDCF92F95DDEB507068DE0B0B0351E3ECB8E443
+E611BE0A41A1F8C89C3BC16B352C3443AB6F665EAC5E0CC4229DECFC58E15765
+424C919C273E7FA240BE7B2E951AB789D127625BBCB7033E005050EB2E12B1C8
+E5F3AD1F44A71957AD2CC53D917BFD09235601155886EE36D0C3DD6E7AA2EF9C
+C402C77FF1549E609A711FC3C211E64E8F263D60A57E9F2B47E3480B978AAF63
+868AEA25DA3D5413467B76D2F02F8097D2841AE1598196877011AB8455EFC5DD
+7C30F66F2BBFB7B35E9ADCB899D843090628799BC67D712BC6A307B395D7AF8C
+724BD0DBFD761EF8FF661B98DF02C59791EA0FBC646447A1EE960E87B1D47D80
+B3CA3F9290C5B60C9346CCA66CA0B75DB30ED6FBFC7F4B9D01932D79BA25602B
+D4A213D55A17C621E97ED2498D1256A7A03D0D2A0B394DFC3D69F64C37004825
+1C85C943895C59AB82FA48A3989F541164B5BA2052344B5EC6CAD7569AC77203
+7CB71E13E7AEE37ED8F468F283830AAA42B88F76D43927C7117029548843B3FA
+9F898C90A0FCEA0F516F7C10557C7A8E79C7592AD50B12390DEDE741AD153CB4
+ACDD4CF75D51BCC1E0DBB94BE1B1C25CB25F2DFCE3D53B5A2D14283580603F6C
+07F642F2117BA89349B4F5E2829DF9A39518A7FCA16E86DE40363C8A1DE5F4BE
+12DDF22E87AFBE6C60E195A3F33A8D204FBC3C344A3F1195B83F808D49D99052
+421A727C5E917CDF31247FF0414B22E80309A1F098D47A545BC4B7DE88209250
+EF50FFF2085FB69626EBDE5BED816C1CE13E243B5955587CAA3E4B3590600EDF
+6D1BA18BC98F9B14F69B59DD2D653DBF89B3E5ED875F90A1404E1AA23C488189
+3E6980141B745954D2FDCFF53634435CA36E98E43BBE17DCE927CF9560D91855
+CCD039931563D78744B5AD57CB504D2D425D49C3A7607501FAB26A0D46939CF7
+FB4FDDB25758AD69DC90062D1EE7FB38E3CB6D28D0EAA50F1A57B33048DEBA76
+FFDE8D735A89EA66F10F03D12C441C0E4512EFE9C0EC1EB1565E8B5342B71AEC
+7130D6C5ECA760AD641403A9DF5136BC7909509ACEEBA3BF6272ACB740AF79BD
+44DD76240AECE086DD1651A08A1DFC6CE39C89BF3DADA0EA9234BE9263A3A050
+DABE31CD41BA263F781BF98B8C0BD2051522A4495BC429C58F6CEF39D579CEBD
+BBED54DA04CA9E4EF650A769BADB44D4C006522121196B351694CF9D7E32C038
+27E7E952F059EEF53C812CD5ECFCEF4CD4CB47CB4A9D3C062C35E7FFDB6CC3E8
+61B5478E9D712F1209984CB201A06AF4F7176CD9DABA84C835D67C15EC100626
+F9053DF80E9AC75A066B9CE10454A3EE053D9EAAF5A28CC4636B947148B410FF
+4D6B8F508854F3442561F2D4880D68901E77E5AE81E8EBD446193463610633C8
+94691825986BF835700EA278F735827F971E080789BB278017787305981C4D62
+2686C3452AA377F0549DBC12E513CE4BDA5E41DAE2102AC8929CE0420C460EAA
+6CA89903CA77E09366DB3F0A9EEF648AA075DE5BB0E4224000601C2D688C9D6B
+377ECD7ADF0546640BCFF5B626C00E76974031E6CEFF1593B755DEDC30E4E1F0
+7B5BA74C73D0968DD0E7FC23A1D0E42F60F793331C67CD11B5FF732F2AB61F48
+46C8D08A34C61BFD73D206A444C0381EEA9769230592D0E2FE00EB9D94164B7E
+68BC4B8128A6231F8621BBA445077F539551B6A2EFBE6B6FA1229CCE8881DE77
+F78E3E9771759FE6952420FC867F32C3D439BF097DD8CE94193BF61C5C6676A0
+2653FA6E6742868B3054C4C82D6C68F521B04AF08825A7DEEE01675D40EC7FF4
+0B9A55C9CB470DC2619C464A8BF62375EB4354EAB70FA7C3F7B56150877CEF43
+6F371820370D47AB9D5D780EE1AD707C8668FF6332B3E5D405230A442D00B66C
+9681787EE3E9418CA02255385672049544F5FDFCA88BFB76EBF17CDCDDF4E79A
+0A2A7DA11148F1A2B13F9B7E36C40681A052967ECA1983900B369A4A1C9859EC
+D5891ED4C507F794DA8536AC89C557783EF19A904CF0EBCBE94AA777A67EE183
+1775CCCF1DDD719FCBC9720164D8924A14B650392A9D0000082D8E0D9B365F18
+9477D7
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+cleartomark
+%%EndFont 
+TeXDict begin 40258431 52099146 1000 8000 8000 (paper.dvi)
+@start /Fa 41[575 123[487 1[575 1[575 575 487 443 532
+1[443 575 575 709 487 2[265 575 2[487 1[532 532 575 65[{
+TeXBase1Encoding ReEncodeFont}19 797.011 /Times-Roman
+rf /Fc 143[664 112[{}1 664.176 /CMSY6 rf /Fe 143[853
+96[512 15[{}2 996.264 /CMSY9 rf /Ff 134[798 1[1116 2[478
+798 558 2[877 877 1275 399 2[399 877 877 1[798 877 19[957
+2[1195 877 4[1116 3[1036 1[1036 65[{TeXBase1Encoding ReEncodeFont}20
+1434.61 /Helvetica-BoldOblique rf /Fg 133[344 4[443 246
+344 344 3[443 1[246 2[246 443 443 1[393 443 2[443 11[639
+1[443 541 1[541 3[492 591 393 8[541 17[246 1[295 6[689
+38[{TeXBase1Encoding ReEncodeFont}24 885.568 /Times-Italic
+rf /Fh 134[295 3[332 185 258 258 1[332 332 332 480 3[185
+332 332 1[295 1[295 1[332 13[332 2[406 8[480 1[406 16[332
+1[332 1[332 7[221 40[{TeXBase1Encoding ReEncodeFont}23
+664.176 /Times-Italic rf /Fi 134[332 3[332 185 258 221
+2[332 332 517 185 2[185 332 332 221 295 332 295 332 295
+1[332 10[406 369 1[480 369 3[406 3[480 480 2[480 443
+1[480 6[185 6[332 9[221 41[{TeXBase1Encoding ReEncodeFont}32
+664.176 /Times-Roman rf /Fj 132[575 418 418 418 120[{}4
+885.568 /CMSY8 rf /Fk 105[498 27[388 442 442 665 442
+498 277 388 388 1[498 498 498 719 277 442 277 277 498
+498 277 442 498 442 498 498 12[554 498 609 1[609 2[830
+554 2[332 719 719 1[609 719 665 609 609 6[332 498 5[498
+498 498 498 1[249 332 249 672 1[332 332 36[498 498 2[{
+TeXBase1Encoding ReEncodeFont}54 996.264 /Times-Italic
+rf /Fl 134[498 2[498 554 332 388 442 1[554 498 554 830
+277 554 1[277 554 498 332 442 554 442 554 498 13[554
+719 775 609 775 1[940 665 2[388 775 775 1[665 719 719
+665 719 1[498 10[498 498 498 498 2[249 332 42[554 2[{
+TeXBase1Encoding ReEncodeFont}44 996.264 /Times-Bold
+rf /Fm 132[549 406 406 406 116[454 3[{}5 774.872 /CMSY7
+rf /Fn 22[442 81[996 498 27[442 498 498 719 498 498 277
+388 332 498 498 498 498 775 277 498 277 277 498 498 332
+442 498 442 498 442 3[332 1[332 3[940 1[719 609 554 665
+719 554 719 719 886 609 719 388 332 719 719 554 609 719
+665 665 719 1[442 1[562 1[277 277 498 1[498 498 498 498
+498 498 498 498 277 249 332 249 562 1[332 332 5[406 30[554
+554 2[{TeXBase1Encoding ReEncodeFont}76 996.264 /Times-Roman
+rf /Fo 134[798 1[1116 2[478 798 558 2[877 877 1275 399
+2[399 877 877 1[798 877 19[957 2[1195 877 4[1116 3[1036
+1[1036 65[{TeXBase1Encoding ReEncodeFont}20 1434.61 /Helvetica-Bold
+rf /Fp 3[443 101[443 28[443 2[443 443 246 344 295 1[443
+443 443 689 246 443 1[246 443 443 295 393 443 393 443
+393 6[541 4[639 541 492 591 1[492 639 639 787 3[295 1[639
+492 541 639 591 1[639 11[443 443 443 443 443 443 1[221
+295 221 2[295 295 40[{TeXBase1Encoding ReEncodeFont}50
+885.568 /Times-Roman rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 8000dpi
+TeXDict begin
+%%BeginPaperSize: Letter
+letter
+%%EndPaperSize
+ end
+HPSdict begin
+/TargetAnchors
+0 dict dup begin
+end targetdump-hook def end
+TeXDict begin
+%%EndSetup

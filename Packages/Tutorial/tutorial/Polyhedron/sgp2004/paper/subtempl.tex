@@ -1,0 +1,78 @@
+TODO: dissect the subdivisions and point out the generic parts (refinement
++ smooth = subdivision).
+
+Any implementation of a subdivision contains two major
+components: \emph{refinement} and \emph{geometry rules}.
+The geometry rules are merged into the refinement component
+in the examples of $\sqrt{3}$ and Quad-Triangle subdivisions.
+Refinements are defined by the 
+\emph{uniform connectivity reconfiguration} of the source 
+to the target mesh. The geometry rules,
+guarantee certain surface properties, e.g the smoothness, are the
+mapping functions of the \emph{stencil} in the source to the
+\emph{vertices} in the range mesh. Any subdivision in practice can
+be defined as a proper combination of a refinement and the
+geometry rules. Based on the paradigm of the
+\emph{policy-based design} \cite{a-rotm-02}, the combination can be
+designed as a \emph{host function} for the refinement
+templated with the \emph{policy classes} for the geometry rules.
+These policies grant the modification on the attributes of the
+target vertex and the ability to collect the attributes of the
+stencil of the source polyhedron.
+
+TODO: the input polyhedron is generic, i.e.\ no assumption
+is made for any attributes associated with the polyhedron.
+The host function, i.e.\ the refinement, cannot use any
+flag to register the correspondence between the refinement.
+The policy functors should grant the access any attributes
+of any specialized polyhedron. The policy functors also
+need to be complete covering all cases, e.g.\ interior and
+boundary.
+
+%% We use Catmull-Clark (CC) subdivision as our first example (see
+%% Figure~\ref{fig:cc}). CC subdivision can be defined as the combination
+%% of the primal quadrilateral quadrisection (PQQ) scheme and the
+%% Catmull-Clark geometry rules.
+
+%% For meshes based on PQQ scheme, the footprints of the range vertices
+%% each corresponds to a topology primitive, i.e. vertex, edge or facet,
+%% in the domain (see Figure. \ref{fig:PQQMap}).  The policy class hence
+%% needs to provide the policy functions in each case.
+
+%% Each policy function has two input parameters: the domain primitive
+%% and the range vertex. The footprint, defined as the vertices set of
+%% the 1-distance neighbors of the corresponding domain primitive, is
+%% passed as the handle of the primitive. Empolying the incidental
+%% function of the halfedge data structure, the policy designer works on
+%% the simple view of the \italic{local} mesh corresponding to the
+%% footprint. Following codes demonstrate the facet-vertex case.
+
+%% \begin{figure}[htb]
+%%     \centering{\includegraphics[width=7.0cm]{figs/subdivision}}
+%%     \caption{Catmull-Clark subdivision of a quadrilateral control mesh.}  
+%%     \label{fig:cc}
+%% \end{figure}
+
+%% Loop subdivision uses similar refinement scheme to PQQ scheme except
+%% that it works on the triangle mesh. Hence the footprints of Loop
+%% scheme are same as the CC scheme but without the facet-vertex case.
+
+%% Doo-Sabin (DS) subdivision is fundamentally different from the primal
+%% subdivision schemes in the aspect of the footprints. As showed in
+%% Figure \ref{fig:PQQMap}, each range vertex corresponds to a
+%% \emph{corner} in the domain mesh. The footprint of the range vertex
+%% is the facet containing the corner.
+
+%% The only policy function for the DS subdivision has the halfedge
+%% pointing to the corner as the domain parameter. A demo of policy
+%% function for the regular facet, i.e. the quadrilateral facet, is
+%% listed in the following codes.
+
+TODO: the framework is naturally multipass-able. Geometry processing 
+algorithms like ?? and ?? can be easily adapted into the framework.
+
+TODO: since the writing memory is not overlapped, multi-threaded
+supporting is easily done.
+
+TODO: trade-off between generic and efficient. 
+ 

@@ -1,0 +1,51 @@
+
+The application demo runs on windows and features:
+\begin{itemize}
+
+\item 
+A standard document-view architecture. Accepted file formats are ASCII
+off and obj (1-based vertex indices for the latter).
+
+\item 
+An OpenGL-based viewer.
+
+\item 
+An arcball for interaction.
+
+\item 
+One menu dedicated to subdivision algorithms (shortcut 's' for
+quad-triangle scheme).
+
+\item 
+Some rendering options accesible through the menu render or through
+the shortcut 'r'. Note that superimposing the control edges during
+subdivision is only available for the quad-triangle subdivision
+scheme.
+
+\item 
+A 24-bits raster image output to the clipboard (short-cut ctrl+c),
+
+\item 
+A vectorial output to an .eps file (menu file/dump to eps), editable
+with \italic{e.g.}, Adobe Illustrator.
+
+\item 
+One functionality to display two models with the same viewpoint (copy
+and paste viewpoint).
+
+\end{itemize}
+
+\subsection{Compiling on Windows}
+
+The application has been compiled on MS .NET 2003 using CGAL 3.0,
+OpenGL and MFC. The following steps are necessary to compile:
+\begin{itemize}
+\item Install CGAL 3.0.
+\item Define an environment variable CGAL3 with the path to the CGAL-3.0 folder.
+\item Compile the CGAL library in multithread mode and name the output 
+      libraries resp. cgal\_mt\_debug.lib and cgal\_mt\_release.lib 
+      for resp. the debug and the release mode.
+\item Check your path to the library in the MS .NET project
+      properties.
+\item Rebuild all.
+\end{itemize}
