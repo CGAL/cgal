@@ -1,3 +1,6 @@
+2.36    (25 July 2001)
+- fixed title page in html and LaTeX
+
 2.35    (24 July 2001)
 - fixed undefined reference problems
 - revised introduction a bit
