@@ -247,6 +247,8 @@ template <class pNT> class Polynomial :
   public:
   typedef pNT NT;
   typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
+  typedef CGAL::Tag_false Has_sqrt;
+  typedef CGAL::Tag_true  Has_division;
  
   typedef Handle_for< Polynomial_rep<NT> > Base;
   typedef Polynomial_rep<NT> Rep;
@@ -586,6 +588,8 @@ class Polynomial<int> :
   /*{\Xtypemember the component type representing the coefficients.}*/
 
   typedef Number_type_traits<NT>::Has_gcd Has_gcd;
+  typedef CGAL::Tag_false Has_sqrt;
+  typedef CGAL::Tag_true  Has_division;
 
   typedef Handle_for< Polynomial_rep<int> > Base;
   typedef Polynomial_rep<int> Rep;
@@ -891,6 +895,8 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Xtypemember the component type representing the coefficients.}*/
 
   typedef Number_type_traits<NT>::Has_gcd Has_gcd;
+  typedef CGAL::Tag_false Has_sqrt;
+  typedef CGAL::Tag_true  Has_division;
 
   typedef Handle_for< Polynomial_rep<double> > Base;
   typedef Polynomial_rep<double> Rep;
