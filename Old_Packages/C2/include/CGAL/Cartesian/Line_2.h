@@ -28,11 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
-class LineC2
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class LineC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   : public Handle_for< Threetuple<typename R_::FT> >
 {
 public:

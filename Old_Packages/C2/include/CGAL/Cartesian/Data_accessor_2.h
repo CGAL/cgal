@@ -28,11 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 // 2D Cartesian point data accessor
 template < class R_ >
-class Data_accessorC2
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class Data_accessorC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 {
 public:
     typedef R_                           R;

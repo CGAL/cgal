@@ -11,6 +11,9 @@ Version 4.3 (?? ???? 2000)
 - Made leftturn(Origin,,) and righturn(Origin,,) a little bit faster. [syl]
 - Various other small cleanups. [syl]
 - Removed long_description.txt. [syl]
+- Use CGAL_ADVANCED_KERNEL_PARTIAL_SPEC for all partial specialization of
+  kernel objects, instead of the 4 line for each class. [syl]
+- Added Vector_2.squared_length(). [syl]
 
 Version 4.2 (27 July 2000)
 - Suppress id() in Cartesian Ray_2.h [my]

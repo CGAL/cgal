@@ -28,11 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class SphereC3
-#ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-// This is a partial specialization
-<R_,Cartesian_tag>
-#endif
+class SphereC3 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 {
 public:
   typedef R_                                    R;

@@ -55,9 +55,13 @@
 // We unify this with PointC3<R CGAL_CTAG >::function
 #define CGAL_CTAG   , Cartesian_tag
 
+// This is the mark of a partial specialization.  Used by all kernel classes.
+#define CGAL_ADVANCED_KERNEL_PARTIAL_SPEC <R_,Cartesian_tag>
+
 #else
 
-#define CGAL_CTAG   
+#define CGAL_CTAG
+#define CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
 
 // Note that it was not possible to keep the opposite (changing the
 // Point_3 into PointC3 for Stefan's design) because it would also

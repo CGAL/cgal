@@ -2,6 +2,9 @@ Version 5.1 (?? August 2000)
 - Removed Sphere_3::id(). [syl]
 - Various other cleanups. [syl]
 - Removed long_description.txt. [syl]
+- Use CGAL_ADVANCED_KERNEL_PARTIAL_SPEC for all partial specialization of
+  kernel objects, instead of the 4 line for each class. [syl]
+- Added Vector_3.squared_length(). [syl]
 
 Version 5.0 (1 August 2000)
 - Added a new construction circumcenterC3(3 points). [syl]
