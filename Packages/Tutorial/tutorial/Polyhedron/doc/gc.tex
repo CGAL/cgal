@@ -1,0 +1,340 @@
+% geometric computing
+
+There are geometric algorithms available in \cgal, not directly
+processing a mesh, but that can be helpful in the mesh processing
+context, for example, a fast self intersection test, the smallest
+enclosing sphere, or the minimum width of a point set. We use a few
+large meshes (see Fig.~\ref{fig:models}) to evaluate performance on a
+laptop with an Intel Mobile Pentium4 running at 1.80GHz with 512KB
+cache and 256MB main memory under Linux. For our largest mesh, the
+Raptor, the algorithms started swapping. Nevertheless, the runtimes
+are quite acceptable.
+
+(These programs were written with features only available with the next
+\cgal\ release 3.1., in particular the box intersection and an improved
+convex hull function are not yet available.)
+
+% models used for benchmarking
+\begin{figure}[t]
+  \centering
+  \epsfig{file=figs/models.eps, width=\linewidth}
+  \caption{Models used for benchmarking. 
+           Complexity (in triangles):
+           Bunny: 69,451,
+           Lion vase: 400k,
+           David (simplified version): 700k,
+           Raptor: 2M.}
+  \label{fig:models}\vspace{-3mm}
+\end{figure}
+
+\noindent%\hspace*{-3mm}%
+{\small
+\begin{tabular}{l|ccccc}
+  \multicolumn{1}{l}{{\footnotesize time in}}
+  & \multicolumn{2}{c}{\textbf{min. sphere}}
+  & \textbf{convex} & \textbf{min.} & \textbf{self inter-}\\
+  \multicolumn{1}{l}{{\footnotesize seconds}}
+  & \CodeFmt{double} & \CodeFmt{gmpq}
+  & \textbf{hull} & \textbf{width}  & \textbf{section}\\\hline
+  Bunny     &  0.02 & \hspace*{1ex}14 & 
+                 \hspace*{1ex}3.5 & 111 & \hspace*{1ex}3.2\\
+  Lion vase\hspace*{-16mm} & 0.19 & 396 & 13.1 & 276 & 22.9 \\
+  David     & 0.12 & 215 & 20.3 & 112 & 41.6 \\
+  Raptor    & 0.35 & 589 & 45.5 & 123 & 92.3
+\end{tabular}
+}
+
+
+
+% --------------------------------------------------------------------
+\subsection{Self Intersection Test}
+
+The self intersection test is based on the general algorithm for fast
+box intersections~\cite{cgal:ze-fsbi-02}, applied to the bounding
+boxes of individual facets, i.e. triangles, as a filtering step. The
+triangles of intersecting boxes are then checked in detail, i.e., if
+they share a common edge they do not intersect, if they share a common
+vertex they may intersect or not depending on the opposite edge, and
+otherwise the intersection test for triangles in the \cgal\ geometric
+kernel is used to decide the intersection. A geometric kernel with
+exact predicates is sufficient for this algorithm. Interestingly, only
+the lion vase is free of self intersections. The algorithm is fast,
+see the table below, though not sufficient for interactive use.
+Nevertheless, a final quality check is possible for quite large meshes.
+
+See the full program in \path|examples/intersection.C|, we discuss a
+shortened version here that detects self intersections among a
+triangle soup, i.e., we ignore the extra handling for the mesh and the
+incidences that are no intersections.
+
+\begin{lstlisting}
+// file: examples/Box_intersection_d/triangle_self_intersect.C
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/intersections.h>
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Join_input_iterator.h>
+#include <CGAL/copy_n.h>
+#include <vector>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+typedef Kernel::Point_3                                       Point_3;
+typedef Kernel::Triangle_3                                    Triangle_3;
+typedef std::vector<Triangle_3>                               Triangles;
+typedef Triangles::iterator                                   Iterator;
+typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,Iterator> Box;
+
+Triangles triangles; // global vector of all triangles
+\end{lstlisting}
+
+Up to here we have included all necessary include files, defined our triangle
+type and a \CodeFmt{std::vector} storing all triangles, and the
+\CodeFmt{Box} type. As a specialty, the chosen box type with
+the \CodeFmt{double} type for its coordinates and in dimension three
+has special support for accepting \CodeFmt{CGAL::Bbox\_3} in a
+constructor. The box type additionally stores an iterator to the
+triangle that it encloses.
+
+Next, we define a callback function for the box intersection. It
+accepts two boxes as arguments and will be called when the algorithm
+detects that these two boxes are intersecting. The algorithm uses an
+\CodeFmt{id}-function of the boxes, here mapped to the address of the
+triangles, to avoid reporting pairs of boxes twice. The trivial
+intersection of a box with itself is not reported. Now, the boxes are
+placeholders for triangles; we access the triangles and test
+whether the triangles intersect as well.
+
+\begin{lstlisting}
+// callback function that reports all truly intersecting triangles
+void report_inters( const Box& a, const Box& b) {
+    std::cout << "Box " << (a.handle() - triangles.begin()) << " and "
+              << (b.handle() - triangles.begin()) << " intersect";
+    if ( ! a.handle()->is_degenerate() && ! b.handle()->is_degenerate()
+         && CGAL::do_intersect( *(a.handle()), *(b.handle()))) {
+        std::cout << ", and the triangles intersect also";
+    }
+    std::cout << '.' << std::endl;
+}
+\end{lstlisting}
+
+The main function creates some random triangles, fills a
+\CodeFmt{std::vector} of boxes with the corresponding \cgal\ bounding
+boxes of all triangles, and calls the
+\CodeFmt{box\_self\_intersection\_d} function of \cgal.
+
+\begin{lstlisting}
+int main() {
+    // Create 10 random triangles
+    typedef CGAL::Random_points_in_cube_3<Point_3>           Pts;
+    typedef CGAL::Creator_uniform_3< Point_3, Triangle_3>    Creator;
+    typedef CGAL::Join_input_iterator_3<Pts,Pts,Pts,Creator> Triangle_gen;
+    Pts    points( 1); // in centered cube [-1,1)^3
+    Triangle_gen triangle_gen( points, points, points);
+    CGAL::copy_n( triangle_gen, 10, std::back_inserter(triangles));
+
+    // Create the corresponding vector of bounding boxes
+    std::vector<Box> boxes;
+    for ( Iterator i = triangles.begin(); i != triangles.end(); ++i)
+        boxes.push_back( Box( i->bbox(), i));
+    
+    // Run the self intersection algorithm with all defaults
+    CGAL::box_self_intersection_d( boxes.begin(), boxes.end(), report_inters);
+    return 0;
+}
+\end{lstlisting}
+
+For the full program example using triangulated meshes, the callback
+is more involved checking for triangles that intersect geometrically
+but that should not be reportted as intersecting since they intersect
+only at the common endpoint or common edge with some proper neighbor.
+Since the callback is more costly, the tradeoff between calling the
+box intersection algorithm with the boxes themselfes or with pointers
+to boxes (bot variants are supported by default) shift in faviour for
+the pointer version. So we create an additional \CodeFmt{std::vector}
+with pointers to the boxes and run the algorithm on those. For better
+practical performance, one also has to consider a \CodeFmt{cutoff}
+parameter of the algorithm. A higher value than the currently chosen
+default turns out to be quite a bit faster for our meshes.
+
+% --------------------------------------------------------------------
+\subsection{Smallest Enclosing Sphere}
+
+Smallest enclosing spheres, min.~sphere for short, are commonly used
+as bounding volumes in bounding volume hierarchies, for example, to
+speed up intersection tests. The algorithm in~\cite{fg-sebbc-03} needs a
+geometric kernel with an exact number type for correctness, but
+specializations for the number types \CodeFmt{double} and
+\CodeFmt{float} have been written to be quite robust as well. For the
+exact version, we use here \CodeFmt{gmpq} from the GMP number type package~\cite{cgal:g-gmpal-96}. The runtimes are slow, but still feasible
+for huge meshes. In contrast, when we run the algorithm with the
+\CodeFmt{double} number type, it becomes fast enough to be considered
+for interactive purposes, for example, selecting a good view frustum
+in a viewer. We compared the resulting spheres of the algorithm
+running with the exact and with the floating-point number type. In all
+cases the sphere center coordinates and the radius where exactly the
+same up to the seven digits after the decimal. We want to point out
+the running time anomaly in above table---the smaller lion vase needs
+longer than the larger David sculpture---which is o.k. for this data
+sensitive algorithm. It is worst-case linear time (expected time over
+the randomized order of the input points), but depends on a
+heuristic to be really fast.
+
+See the full program in \path|examples/mini_ball.C|, we discuss some
+aspects of it here. When running the program with the \CodeFmt{double}
+number type, we choose the kernel:
+
+\begin{lstlisting}
+typedef CGAL::Simple_cartesian<double>                       Kernel;
+\end{lstlisting}
+
+Instead, when picking the exact number type, we use the kernel:
+
+\begin{lstlisting}
+typedef CGAL::Cartesian< CGAL::Gmpq>                         Kernel;
+\end{lstlisting}
+
+Since we are only interested in the points in the vertices of the
+polyhedron, we choose a version of the polyhedron with small memory
+footprint:
+
+\begin{lstlisting}
+typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_min_items_3,
+                           CGAL::HalfedgeDS_vector>        Polyhedron;
+\end{lstlisting}
+
+The chosen version of the algorithm,
+\CodeFmt{CGAL::Min\_sphere\_of\_spheres\_d}, is actually designed to
+compute the smallest enclosing sphere of spheres, so it could be used
+to construct hierarchical schemes of bounding spheres, but we use it
+here just for points, i.e., spheres with a degenerate zero
+radius. 
+The necessary conversion from points to spheres requires an explicit step.
+%Proper generic interfaces allow to pass the plain points into
+%the algorithms constructor where they will be converted internally to
+%the sphere representation on the fly.
+
+%\begin{lstlisting}
+%void mini_ball( const Polyhedron& P) {
+%    Min_sphere min_sphere( P.points_begin(), P.points_end());
+%    Point p = min_sphere.center();
+%    // ....
+%}
+%\end{lstlisting}
+
+\begin{lstlisting}
+void min_sphere_of_spheres( const Polyhedron& P) {
+    Min_sphere_of_spheres min_sphere;
+    min_sphere.prepare( P.size_of_vertices());
+    for ( Point_iterator i = P.points_begin(); i!= P.points_end(); ++i) {
+        min_sphere.insert( Sphere(*i, 0.0));
+    }
+    // ...
+\end{lstlisting}
+
+The algorithm is working in arbitrary dimension, and in the exact case
+with roots in the coordinates. This makes
+the access to the resulting sphere less intuitive, e.g., the center
+point is accessed with an iterator over the coordinates, and the
+following code works only for the \CodeFmt{double} version of the
+program.
+
+\begin{lstlisting}
+    // ...
+    cout << "Center point  : ";
+    std::copy( min_sphere.center_cartesian_begin(), 
+               min_sphere.center_cartesian_end(),
+               std::ostream_iterator<double>( cout, " "));
+    cout << endl;
+    cout << "Double radius : " << min_sphere.radius() << endl;
+}
+\end{lstlisting}
+
+% \begin{tabular}{l|ll}
+%   \textbf{smallest enclosing sphere} & \texttt{double} & exact
+%     \texttt{gmpq} (non opt.)\\\hline
+%   Bunny     & 0.02 &  14 \\
+%   Lion vase & 0.19 & 396 \\
+%   David     & 0.12 & 215 \\
+%   Raptor    & 0.35  & 589
+% \end{tabular}
+
+% --------------------------------------------------------------------
+\subsection{Convex Hull and the Width of a Point Set}
+
+Convex hulls are, similar to the smallest enclosing sphere, sometimes
+useful as bounding volumes, for example, as a placeholder for faster
+interaction. For the quickhull algorithm~\cite{bdh-qach-96} used
+in \cgal\ a geometric kernel with exact predicates suffices,
+and the convex hull can be computed significantly faster than the
+exact smallest enclosing sphere, however, far slower than the
+\CodeFmt{double} version of the smallest enclosing sphere.
+
+\begin{lstlisting}
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
+typedef Kernel::Vector_3                                     Vector;
+typedef Kernel::Point_3                                      Point;
+typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
+typedef Polyhedron::Point_const_iterator                     Point_iterator;
+
+void convex_hull( const Polyhedron& P, Polyhedron& Q) {
+    CGAL::convex_hull_3( P.points_begin(), P.points_end(), Q);
+    cerr << "#vertices  : " << Q.size_of_vertices() << endl;
+    cerr << "#facets    : " << Q.size_of_facets() << endl;
+    cerr << "#edges     : " << (Q.size_of_halfedges() / 2) << endl;
+}
+\end{lstlisting}
+
+
+In fact we are more interested in the convex hull as a preprocessing
+to another optimization algorithm, the width of a point set. The
+minimum width is obtained by two parallel planes of smallest possible
+distance that enclose all points between them. The printing time for
+three-dimensional stereo-lithographic printer is proportional to the
+height of the object printed. Minimizing this height can be done by
+computing the normal direction that minimizes the width between the
+two planes, and then align this normal direction with the printer
+height direction.
+
+The width algorithm requires an exact number type, so we use the
+result of the convex hull computation, convert all vertices to exact
+points, recompute the convex hull, and run the width algorithm. The
+runtimes in the table above are for the conversion, recomputing of the
+convex hull and the width computation together, but excluding the
+first convex hull computation that runs on the full data set.
+
+
+\begin{lstlisting}
+typedef CGAL::Exact_predicates_exact_constructions_kernel    EKernel;
+typedef CGAL::Polyhedron_3<EKernel>                          EPolyhedron;
+typedef EKernel::Point_3                                     EPoint;
+typedef CGAL::Width_default_traits_3<EKernel>                Width_traits;
+typedef CGAL::Width_3<Width_traits>                          Width;
+
+void width( const Polyhedron& P) {
+    std::vector< EPoint> epoints;
+    for ( Point_iterator i = P.points_begin(); i != P.points_end(); ++i)
+        epoints.push_back( EPoint( CGAL::to_double( i->x()),
+                                   CGAL::to_double( i->y()),
+                                   CGAL::to_double( i->z())));
+    Width width( epoints.begin(), epoints.end());
+    Width::RT num, denum;
+    width.get_squared_width( num,denum);
+    cerr << "width      : " << ( sqrt( CGAL::to_double( num) / 
+                                       CGAL::to_double( denum))) << endl;
+    cerr << "direction  : " << width.get_build_direction() << endl;
+}
+\end{lstlisting}
+
+See the full program in \path|examples/convex_hull.C| .
+
+
+% \begin{tabular}{l|l}
+%   & \textbf{self intersection} \\\hline
+%   Bunny     & 3.2 \\
+%   Lion vase & 22.9 \\
+%   David     & 41.6 \\
+%   Raptor    & 92.3
+% \end{tabular}
+
