@@ -22,7 +22,6 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_POINT_VECTOR_DEFINITIONS_2_C
 #define CGAL_POINT_VECTOR_DEFINITIONS_2_C
 

@@ -21,21 +21,8 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_RAY_3_H
 #define CGAL_RAY_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/RayH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Ray_3.h>
-#endif
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Direction_3.h>
@@ -54,23 +41,20 @@ public:
 
   Ray_3() : RRay_3()
   {}
+
   Ray_3(const CGAL::Ray_3<R>& r) : RRay_3(r)
   {}
+
   Ray_3(const RRay_3&  r) : RRay_3(r)
   {}
-  Ray_3(const CGAL::Point_3<R>& sp,
-            const CGAL::Point_3<R>& secondp)
+
+  Ray_3(const CGAL::Point_3<R>& sp, const CGAL::Point_3<R>& secondp)
     : RRay_3(sp, secondp)
   {}
-  Ray_3(const CGAL::Point_3<R>& sp,
-            const CGAL::Direction_3<R>& d)
+
+  Ray_3(const CGAL::Point_3<R>& sp, const CGAL::Direction_3<R>& d)
     : RRay_3(sp, d)
   {}
-
-  bool                operator==(const CGAL::Ray_3<R>& r) const
-  { return RRay_3::operator==(r); }
-  bool                operator!=(const CGAL::Ray_3<R>& r) const
-  { return !(*this == r); }
 
   CGAL::Point_3<R>     start() const
   { return RRay_3::start(); }
@@ -88,33 +72,8 @@ public:
   { return RRay_3::opposite(); }
   CGAL::Ray_3<R>       transform(const CGAL::Aff_transformation_3<R>& t) const
   { return RRay_3::transform(t); }
-  bool                is_degenerate() const
-  { return RRay_3::is_degenerate(); }
-  bool                has_on(const CGAL::Point_3<R>& p) const
-  { return RRay_3::has_on(p); }
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAY_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Ray_3<R>& r)
-{
-  typedef typename  R::Ray_3_base  RRay_3;
-  return os << static_cast<const RRay_3&>(r);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_RAY_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_3
-template < class R >
-std::istream&
-operator>>(std::istream& is, Ray_3<R>& r)
-{
-  typedef typename  R::Ray_3_base  RRay_3;
-  return is >> static_cast<RRay_3&>(r);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_RAY_3_H

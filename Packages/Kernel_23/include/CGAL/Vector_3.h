@@ -25,21 +25,14 @@
 #ifndef CGAL_VECTOR_3_H
 #define CGAL_VECTOR_3_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/Point_3.h>
 #include <CGAL/Direction_3.h>
 #include <CGAL/Aff_transformation_3.h>
 
-#ifdef VECTOR_WRAPPER
-#include <CGAL/Vector_3_rft_wrapper.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template <class T> class Quotient;
+
 template <class R_>
 class Vector_3 : public R_::Vector_3_base
 {
@@ -75,37 +68,6 @@ friend CGAL_FRIEND_INLINE
     : RVector_3(x, y, z, w)
   {}
 
-  bool operator==(const CGAL::Vector_3<R>& v) const
-  { return RVector_3::operator==(v); }
-  bool operator!=(const CGAL::Vector_3<R>& v) const
-  { return !(*this == v); }
-  bool operator==(const Null_vector& v) const
-  { return RVector_3::operator==(v); }
-  bool operator!=(const Null_vector& v) const
-  { return !(*this == v); }
-  RT hx() const
-  { return RVector_3::hx(); }
-  RT hy() const
-  { return RVector_3::hy(); }
-  RT hz() const
-  { return RVector_3::hz(); }
-  RT hw() const
-  { return RVector_3::hw(); }
-  FT x() const
-  { return RVector_3::x(); }
-  FT y() const
-  { return RVector_3::y(); }
-  FT z() const
-  { return RVector_3::z(); }
-  RT homogeneous(int i) const
-  { return RVector_3::homogeneous(i); }
-  FT cartesian(int i) const
-  { return RVector_3::cartesian(i); }
-  FT operator[](int i) const
-  { return cartesian(i); }
-  int dimension() const
-  { return 3; }
-
   CGAL::Vector_3<R> operator+(const CGAL::Vector_3<R>& w) const
   {
       return static_cast<const RVector_3&>(*this) +
@@ -127,25 +89,27 @@ friend CGAL_FRIEND_INLINE
 	     static_cast<const RVector_3&>(w);
   }
 
-#ifndef VECTOR_WRAPPER
   CGAL::Vector_3<R> operator*(const RT& c) const
   { return c * static_cast<const RVector_3&>(*this) ; }
+
   CGAL::Vector_3<R> operator*(const Quotient<RT>& q) const
   {
     return (q.numerator() * static_cast<const RVector_3&>(*this)) /
             q.denominator();
   }
+
   CGAL::Vector_3<R> operator/(const Quotient<RT>& q) const
   {
     return (q.denominator() * static_cast<const RVector_3&>(*this)) /
             q.numerator();
   }
-#endif // VECTOR_WRAPPER
 
   CGAL::Vector_3<R> operator/(const RT& c) const
   { return static_cast<const RVector_3&>(*this) / c; }
+
   CGAL::Direction_3<R> direction() const
   { return RVector_3::direction(); }
+
   CGAL::Vector_3<R> transform(const CGAL::Aff_transformation_3<R>& t) const
   { return RVector_3::transform(t); }
 
@@ -161,26 +125,6 @@ No_number_tag number_type_tag(const Vector_3<R>& )
 {
   return No_number_tag();
 }
-
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Vector_3<R>& v)
-{
-  typedef typename  R::Vector_3_base  RVector_3;
-  return os << static_cast<const RVector_3&>(v);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
-template < class R >
-std::istream&
-operator>>(std::istream& is, Vector_3<R>& p)
-{
-  typedef typename  R::Vector_3_base  RVector_3;
-  return is >> static_cast<RVector_3&>(p);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 
 template<class R>
 inline

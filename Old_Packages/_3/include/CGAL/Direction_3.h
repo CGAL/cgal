@@ -21,21 +21,8 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_DIRECTION_3_H
 #define CGAL_DIRECTION_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/DirectionH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Direction_3.h>
-#endif
 
 #include <CGAL/Vector_3.h>
 
@@ -53,24 +40,22 @@ public:
 
   Direction_3()
   {}
+
   Direction_3(const CGAL::Direction_3<R>& d)
     : RDirection_3( static_cast<const RDirection_3&>(d) )
   {}
+
   Direction_3(const RDirection_3&  d)
     : RDirection_3(d)
   {}
+
   Direction_3(const RVector_3&  v)
     : RDirection_3(v)
   {}
+
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
     : RDirection_3(hx, hy, hz)
   {}
-
-  bool operator==(const CGAL::Direction_3<R> & d) const
-  { return RDirection_3::operator==(d); }
-
-  bool operator!=(const CGAL::Direction_3<R> & d) const
-  { return !(*this == d); }
 
   CGAL::Vector_3<R> vector() const
   { return static_cast<CGAL::Vector_3<R> >(RDirection_3::to_vector()); }
@@ -83,37 +68,7 @@ public:
 
   CGAL::Direction_3<R> operator-() const
   { return RDirection_3::operator-(); }
-
-  RT delta(int i) const
-  { return RDirection_3::delta(i); }
-
-  RT dx() const
-  { return RDirection_3::dx(); }
-
-  RT dy() const
-  { return RDirection_3::dy(); }
-
-  RT dz() const
-  { return RDirection_3::dz(); }
 };
-
-
-#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_3
-template < class R >
-std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
-{
-  typedef typename  R::Direction_3_base  RDirection_3;
-  return os << static_cast<const RDirection_3&>(d); }
-#endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
-
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
-template < class R >
-std::istream& operator>>(std::istream& is, Direction_3<R>& p)
-{
-  typedef typename  R::Direction_3_base  RDirection_3;
-  return is >> static_cast<RDirection_3&>(p); }
-#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
 
 CGAL_END_NAMESPACE
 

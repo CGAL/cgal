@@ -20,22 +20,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_TRIANGLE_3_H
 #define CGAL_TRIANGLE_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/TriangleH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Triangle_3.h>
-#endif
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Plane_3.h>
@@ -53,69 +40,35 @@ public:
 
   Triangle_3() : RTriangle_3()
   {}
+
   Triangle_3(const CGAL::Triangle_3<R>& t) : RTriangle_3(t)
   {}
+
   Triangle_3(const RTriangle_3&  t) : RTriangle_3(t)
   {}
+
   Triangle_3(const CGAL::Point_3<R>& p,
                   const CGAL::Point_3<R>& q,
                   const CGAL::Point_3<R>& r)
     : RTriangle_3(p,q,r)
   {}
 
-  bool                operator==(const CGAL::Triangle_3<R>& t) const
-                      { return RTriangle_3::operator==(t); }
-  bool                operator!=(const CGAL::Triangle_3<R>& t) const
-                      { return !(*this == t); }
   CGAL::Plane_3<R>     supporting_plane() const
-                      {
-                        return
-                        CGAL::Plane_3<R>(
-                            RTriangle_3::supporting_plane());
-                      }
-  CGAL::Triangle_3<R>  transform(
-                      const CGAL::Aff_transformation_3<R>& t) const
-                      {
-                        return
-                        CGAL::Triangle_3<R>(RTriangle_3::transform( t ));
-                      }
-  bool                has_on(const CGAL::Point_3<R>& p) const
-                      { return RTriangle_3::has_on(p); }
-  bool                is_degenerate() const
-                      { return RTriangle_3::is_degenerate(); }
+  {
+      return CGAL::Plane_3<R>(RTriangle_3::supporting_plane());
+  }
+
+  CGAL::Triangle_3<R>  transform(const CGAL::Aff_transformation_3<R>& t) const
+  {
+      return CGAL::Triangle_3<R>(RTriangle_3::transform( t ));
+  }
+
   CGAL::Point_3<R>     vertex(int i) const
-                      { return RTriangle_3::vertex(i); }
+  { return RTriangle_3::vertex(i); }
+
   CGAL::Point_3<R>     operator[](int i) const
-                      { return vertex(i); }
-  Bbox_3              bbox() const
-                      {
-                        return vertex(0).bbox()
-                             + vertex(1).bbox()
-                             + vertex(2).bbox();
-                      }
-  FT                  squared_area() const
-                      { return RTriangle_3::squared_area(); }
+  { return vertex(i); }
 };
-
-#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Triangle_3<R>& t)
-{
-  typedef typename  R::Triangle_3_base  RTriangle_3;
-  return os << static_cast<const RTriangle_3&>(t);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
-template < class R >
-std::istream&
-operator>>(std::istream& is, Triangle_3<R>& t)
-{
-  typedef typename  R::Triangle_3_base  RTriangle_3;
-  return is >> static_cast<RTriangle_3&>(t);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 
 CGAL_END_NAMESPACE
 

@@ -17,33 +17,18 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_SPHERE_3_H
 #define CGAL_SPHERE_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/SphereH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Sphere_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Sphere_3 : public R_::Sphere_3_base
-
 {
-  public:
+public:
 
   typedef          R_                       R;
   typedef typename R::RT                    RT;
@@ -82,7 +67,6 @@ class Sphere_3 : public R_::Sphere_3_base
                const Orientation& o = COUNTERCLOCKWISE)
        : RSphere_3(p, o)
       {}
-
 };
 
 CGAL_END_NAMESPACE

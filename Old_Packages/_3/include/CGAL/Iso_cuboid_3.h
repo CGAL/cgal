@@ -17,25 +17,11 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_ISO_CUBOID_3_H
 #define CGAL_ISO_CUBOID_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/Iso_cuboidH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Iso_cuboid_3.h>
-#endif
 
 #include <CGAL/Point_3.h>
 
@@ -73,78 +59,7 @@ public:
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
    : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz)
   {}
-
-/*
-  bool     operator==(const CGAL::Iso_cuboid_3<R>& r) const
-           { return (const RIso_cuboid_3& )*this == (const RIso_cuboid_3& )r ;}
-  bool     operator!=(const CGAL::Iso_cuboid_3<R>& r) const
-           { return !(*this == r); }
-  CGAL::Point_3<R>
-           min() const
-           { return RIso_cuboid_3::min(); }
-  CGAL::Point_3<R>
-           max() const
-           { return RIso_cuboid_3::max(); }
-  FT       xmin() const
-           { return RIso_cuboid_3::xmin(); }
-  FT       ymin() const
-           { return RIso_cuboid_3::ymin(); }
-  FT       zmin() const
-           { return RIso_cuboid_3::zmin(); }
-  FT       xmax() const
-           { return RIso_cuboid_3::xmax(); }
-  FT       ymax() const
-           { return RIso_cuboid_3::ymax(); }
-  FT       zmax() const
-           { return RIso_cuboid_3::zmax(); }
-  FT       min_coord(int i) const
-           { return RIso_cuboid_3::min_coord(i); }
-  FT       max_coord(int i) const
-           { return RIso_cuboid_3::max_coord(i); }
-  CGAL::Point_3<R>
-           vertex(int i) const
-           { return RIso_cuboid_3::vertex(i); }
-  CGAL::Point_3<R>
-           operator[](int i) const
-           { return vertex(i); }
-  FT       volume() const
-           { return RIso_cuboid_3::volume(); }
-  Bounded_side
-           bounded_side(const CGAL::Point_3<R>& p) const
-           { return RIso_cuboid_3::bounded_side(p); }
-  bool     has_on_boundary(const CGAL::Point_3<R>& p) const
-           { return RIso_cuboid_3::has_on_boundary(p); }
-  bool     has_on_bounded_side(const CGAL::Point_3<R>& p) const
-           { return RIso_cuboid_3::has_on_bounded_side(p); }
-  bool     has_on_unbounded_side(const CGAL::Point_3<R>& p) const
-           { return RIso_cuboid_3::has_on_unbounded_side(p); }
-  bool     is_degenerate() const
-           { return RIso_cuboid_3::is_degenerate(); }
-  CGAL::Iso_cuboid_3<R>
-           transform(const CGAL::Aff_transformation_3<R>& t) const
-           { return RIso_cuboid_3::transform(t); }
-*/
 };
-
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Iso_cuboid_3<R>& r)
-{
-  typedef typename  R::Iso_cuboid_3_base  RIso_cuboid_3;
-  return  os << (const RIso_cuboid_3& )r; }
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
-template < class R >
-std::istream&
-operator>>(std::istream& is, Iso_cuboid_3<R>& r)
-{
-  typedef typename  R::Iso_cuboid_3_base  RIso_cuboid_3;
-  is >> (RIso_cuboid_3& )r;
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
 
 CGAL_END_NAMESPACE
 

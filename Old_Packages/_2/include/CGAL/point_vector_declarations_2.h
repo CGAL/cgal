@@ -1,4 +1,3 @@
-
 // ======================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
@@ -49,6 +48,8 @@ template < class R >
 inline
 Point_2<R>
 operator-(const Point_2<R>& p, const Vector_2<R>& v);
+
+class Origin;
 
 template < class R >
 inline

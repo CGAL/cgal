@@ -20,30 +20,11 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_AFF_TRANSFORMATION_2_H
 #define CGAL_AFF_TRANSFORMATION_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined(CGAL_CFG_INCOMPLETE_TYPE_BUG_1) && \
-   !defined(CGAL_NO_LINE_TRANSFORM_IN_AT)
-#define CGAL_NO_LINE_TRANSFORM_IN_AT
-#endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
-
 #include <CGAL/Line_2.h>
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/Aff_transformationH2.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Aff_transformation_2.h>
-#endif
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,29 +39,23 @@ public:
   typedef typename R::Direction_2_base  RDirection_2;
   typedef typename R::Aff_transformation_2_base  RAff_transformation_2;
 
-  // default constructor
   Aff_transformation_2()
     : RAff_transformation_2()
   {}
 
-  // copy constructor
   Aff_transformation_2(const CGAL::Aff_transformation_2<R> &t)
     : RAff_transformation_2(t)
   {}
 
-  // up cast constructor
   Aff_transformation_2(const RAff_transformation_2& t)
     : RAff_transformation_2(t)
   {}
 
-  // Identity:
   Aff_transformation_2(const Identity_transformation tag)
     : RAff_transformation_2(tag)
   {}
 
-  // Translation:
-  Aff_transformation_2(const Translation tag,
-                       const CGAL::Vector_2<R> &v)
+  Aff_transformation_2(const Translation tag, const CGAL::Vector_2<R> &v)
     : RAff_transformation_2(tag, v)
   {}
 
@@ -99,14 +74,10 @@ public:
     : RAff_transformation_2(tag, sin, cos, den)
   {}
 
-  // Reflection:
-  Aff_transformation_2(const Reflection tag,
-                       const CGAL::Line_2<R>& l )
+  Aff_transformation_2(const Reflection tag, const CGAL::Line_2<R>& l )
     : RAff_transformation_2(tag, l)
   {}
 
-
-  // Scaling:
   Aff_transformation_2(const Scaling tag,
                        const RT &s,
                        const RT &w= RT(1))
@@ -136,9 +107,6 @@ public:
                                       w)
   {}
 
-  ~Aff_transformation_2()
-  {}
-
   CGAL::Point_2<R>     transform(const CGAL::Point_2<R> &p) const
                       { return RAff_transformation_2::transform(p); }
 
@@ -159,13 +127,9 @@ public:
 
   CGAL::Line_2<R>      transform(const CGAL::Line_2<R> &l) const
   {
-#ifndef CGAL_NO_LINE_TRANSFORM_IN_AT
-                        return RAff_transformation_2::transform(l);
-#else
                         return
       ((const RLine_2&)l).transform((const RAff_transformation_2&)(*this));
-#endif // CGAL_NO_LINE_TRANSFORM_IN_AT
-                      }
+  }
 
   CGAL::Line_2<R>      operator()(const CGAL::Line_2<R> &l) const
                       { return transform(l); }
@@ -175,46 +139,10 @@ public:
                       inverse() const
                       { return RAff_transformation_2::inverse(); }
 
-  bool                is_even() const
-                      { return RAff_transformation_2::is_even(); }
-
-  bool                is_odd() const
-                      { return !is_even(); }
-
   CGAL::Aff_transformation_2<R>
                       operator*(const CGAL::Aff_transformation_2<R> &t) const
                       { return RAff_transformation_2::operator*(t); }
-
-  FT          cartesian(int i, int j) const
-              { return RAff_transformation_2::cartesian(i,j); }
-  RT          homogeneous(int i, int j) const
-              { return RAff_transformation_2::homogeneous(i,j); }
-  FT          m(int i, int j) const
-              { return RAff_transformation_2::m(i,j); }
-  RT          hm(int i, int j) const
-              { return RAff_transformation_2::hm(i,j); }
-  
 };
-
-#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
-{
-  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
-  return os << static_cast<const RAff_transformation_2&>(t);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
-template < class R >
-std::istream &
-operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
-{
-  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
-  return is >> static_cast<RAff_transformation_2&>(t);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
 
 CGAL_END_NAMESPACE
 

@@ -20,22 +20,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_SEGMENT_3_H
 #define CGAL_SEGMENT_3_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/SegmentH3.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Segment_3.h>
-#endif
 
 #include <CGAL/Line_3.h>
 
@@ -60,12 +47,6 @@ public:
   Segment_3(const RSegment_3&  s) : RSegment_3(s)
   {}
 
-  bool                 has_on(const CGAL::Point_3<R>& p) const
-  { return RSegment_3::has_on(p); }
-  bool                 operator==(const CGAL::Segment_3<R>& s) const
-  { return RSegment_3::operator==(s); }
-  bool                 operator!=(const CGAL::Segment_3<R>& s) const
-  { return !(*this == s); }
   CGAL::Point_3<R>     start() const
   { return RSegment_3::start(); }
   CGAL::Point_3<R>     end() const
@@ -82,8 +63,6 @@ public:
   { return RSegment_3::vertex(i); }
   CGAL::Point_3<R>     operator[](int i) const
   { return vertex(i); }
-  FT                   squared_length() const
-  { return RSegment_3::squared_length(); }
   CGAL::Direction_3<R> direction() const
   { return RSegment_3::direction(); }
   CGAL::Segment_3<R>  opposite() const
@@ -92,32 +71,7 @@ public:
   { return RSegment_3::transform(t); }
   CGAL::Line_3<R>     supporting_line() const
   { return RSegment_3::supporting_line(); }
-  bool                is_degenerate() const
-  { return RSegment_3::is_degenerate(); }
-  Bbox_3         bbox() const
-  { return source().bbox() + target().bbox(); }
 };
-
-
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3
-template < class R>
-std::ostream&
-operator<<(std::ostream& os, const Segment_3<R>& s)
-{
-  typedef typename  R::Segment_3_base  RSegment_3;
-  return os << static_cast<const RSegment_3&>(s);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
-template < class R>
-std::istream&
-operator>>(std::istream& is, Segment_3<R>& s)
-{
-  typedef typename  R::Segment_3_base  RSegment_3;
-  return is >> static_cast<RSegment_3&>(s);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 
 CGAL_END_NAMESPACE
 

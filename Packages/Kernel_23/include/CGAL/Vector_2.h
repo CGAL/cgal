@@ -25,20 +25,15 @@
 #ifndef CGAL_VECTOR_2_H
 #define CGAL_VECTOR_2_H
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
 
-#ifdef VECTOR_WRAPPER
-#include <CGAL/Vector_2_rft_wrapper.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
+class Null_vector;
+
 template <class T> class Quotient;
+
 template <class R_>
 class Vector_2 : public R_::Vector_2_base
 {
@@ -72,55 +67,6 @@ friend CGAL_FRIEND_INLINE
   Vector_2(const RT &x, const RT &y, const RT &w) : RVector_2(x,y,w) {}
 
 
-  bool
-  operator==(const CGAL::Vector_2<R> &v) const
-  { return RVector_2::operator==(v); }
-
-  bool
-  operator!=(const CGAL::Vector_2<R> &v) const
-  { return !(*this == v); }
-
-  bool
-  operator==(const Null_vector &v) const
-  { return RVector_2::operator==(v); }
-
-  bool
-  operator!=(const Null_vector &v) const
-  { return !(*this == v); }
-
-  RT
-  hx() const
-  { return RVector_2::hx(); }
-
-  RT
-  hy() const
-  { return RVector_2::hy(); }
-
-  RT
-  hw() const
-  { return RVector_2::hw(); }
-
-  FT x() const
-  { return RVector_2::x(); }
-
-  FT y() const
-  { return RVector_2::y(); }
-
-  RT homogeneous(int i) const
-  { return RVector_2::homogeneous(i); }
-
-  FT
-  cartesian(int i) const
-  { return RVector_2::cartesian(i); }
-
-  FT
-  operator[](int i) const
-  { return cartesian(i); }
-
-  int
-  dimension() const
-  { return 2; }
-
   CGAL::Vector_2<R>
   operator+(const CGAL::Vector_2<R> &w) const
   {
@@ -146,7 +92,6 @@ friend CGAL_FRIEND_INLINE
              static_cast<const RVector_2&>(w);
   }
 
-#ifndef VECTOR_WRAPPER // FIXME : Bad macro name.
   CGAL::Vector_2<R>
   operator*(const RT &c) const
   { return c * static_cast<const RVector_2&>(*this); }
@@ -164,7 +109,6 @@ friend CGAL_FRIEND_INLINE
       return (q.denominator() * static_cast<const RVector_2&>(*this))
 	  / q.numerator();
   }
-#endif // VECTOR_WRAPPER
 
   CGAL::Vector_2<R>
   operator/(const RT &c) const
@@ -192,26 +136,6 @@ template < class R >
 No_number_tag
 number_type_tag(const Vector_2<R> &)
 { return No_number_tag(); }
-
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const Vector_2<R> &v)
-{
-  typedef typename  R::Vector_2_base  RVector_2;
-  return os << static_cast<const RVector_2&>(v);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
-template < class R >
-std::istream &
-operator>>(std::istream &is, Vector_2<R> &p)
-{
-  typedef typename  R::Vector_2_base  RVector_2;
-  return is >> static_cast<RVector_2&>(p);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 
 CGAL_END_NAMESPACE
 

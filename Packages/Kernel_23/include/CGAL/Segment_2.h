@@ -19,22 +19,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_SEGMENT_2_H
 #define CGAL_SEGMENT_2_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/SegmentH2.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Segment_2.h>
-#endif
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Line_2.h>
@@ -55,9 +42,6 @@ public:
     : RSegment_2()  // does the handle stuff
   {}
 
-  ~Segment_2()
-  {}
-
   Segment_2(const CGAL::Segment_2<R>& s)
     : RSegment_2(static_cast<const RSegment_2&>(s))  // does the handle stuff
   {}
@@ -70,25 +54,6 @@ public:
   Segment_2(const RSegment_2& s)
     : RSegment_2(s)  // does the handle stuff
   {}
-
-  bool  is_horizontal() const
-  { return RSegment_2::is_horizontal(); }
-
-  bool  is_vertical() const
-  { return RSegment_2::is_vertical(); }
-
-  bool  has_on(const CGAL::Point_2<R> &p) const
-  { return RSegment_2::has_on(p); }
-
-  bool  collinear_has_on(const CGAL::Point_2<R> &p) const
-  { return RSegment_2::collinear_has_on(p); }
-
-
-  bool  operator==(const CGAL::Segment_2<R> &s) const
-  { return RSegment_2::operator==(s); }
-
-  bool  operator!=(const CGAL::Segment_2<R> &s) const
-  { return !(*this == s); }
 
   CGAL::Point_2<R>     start() const
   { return RSegment_2::start(); }
@@ -117,9 +82,6 @@ public:
   CGAL::Point_2<R>     operator[](int i) const
   { return vertex(i); }
 
-  FT                 squared_length() const
-  { return RSegment_2::squared_length(); }
-
   CGAL::Direction_2<R> direction() const
   { return RSegment_2::direction(); }
 
@@ -132,37 +94,9 @@ public:
   CGAL::Segment_2<R>   transform(const CGAL::Aff_transformation_2<R> &t) const
   { return  RSegment_2::transform(t); }
 
-
   CGAL::Line_2<R>      supporting_line() const
   { return RSegment_2::supporting_line(); }
-
-  bool                is_degenerate() const
-  { return RSegment_2::is_degenerate(); }
-
-  Bbox_2         bbox() const
-  { return source().bbox() + target().bbox(); }
-
 };
-
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_2
-template < class R>
-std::ostream &
-operator<<(std::ostream &os, const Segment_2<R> &s)
-{
-  typedef typename  R::Segment_2_base  RSegment_2;
-  return os << static_cast<const RSegment_2&>(s);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
-template < class R>
-std::istream &
-operator>>(std::istream &is, Segment_2<R> &s)
-{
-  typedef typename  R::Segment_2_base  RSegment_2;
-  return is >> static_cast<RSegment_2&>(s);
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
 
 CGAL_END_NAMESPACE
 

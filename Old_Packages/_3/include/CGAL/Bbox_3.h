@@ -20,7 +20,6 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_BBOX_3_H
 #define CGAL_BBOX_3_H
 
@@ -88,6 +87,7 @@ inline
 double
 Bbox_3::zmax() const
 { return ptr->e5; }
+
 inline Bbox_3 Bbox_3::operator+(const Bbox_3& b) const
 {
   return Bbox_3(std::min(xmin(), b.xmin()),
@@ -97,6 +97,7 @@ inline Bbox_3 Bbox_3::operator+(const Bbox_3& b) const
                 std::max(ymax(), b.ymax()),
                 std::max(zmax(), b.zmax()));
 }
+
 inline bool do_overlap(const Bbox_3& bb1, const Bbox_3& bb2)
 {
     // check for emptiness ??

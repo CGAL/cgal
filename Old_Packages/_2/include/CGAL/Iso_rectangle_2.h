@@ -19,22 +19,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_ISO_RECTANGLE_2_H
 #define CGAL_ISO_RECTANGLE_2_H
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
-#include <CGAL/Iso_rectangleH2.h>
-#endif
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/Cartesian/Iso_rectangle_2.h>
-#endif
 
 #include <CGAL/Point_2.h>
 
@@ -75,15 +62,6 @@ public:
     : RIso_rectangle_2(min_hx, min_hy, max_hx, max_hy, hw)
   {}
 
-  bool
-  operator==(const CGAL::Iso_rectangle_2<R> &r) const
-  { return  vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2); }
-
-  bool
-  operator!=(const CGAL::Iso_rectangle_2<R> &r) const
-  { return !(*this == r); }
-
-
   CGAL::Point_2<R>
   min() const
   { return RIso_rectangle_2::min(); }
@@ -91,30 +69,6 @@ public:
   CGAL::Point_2<R>
   max() const
   { return RIso_rectangle_2::max(); }
-
-  FT
-  xmin() const
-  { return RIso_rectangle_2::xmin(); }
-
-  FT
-  ymin() const
-  { return RIso_rectangle_2::ymin(); }
-
-  FT
-  xmax() const
-  { return RIso_rectangle_2::xmax(); }
-
-  FT
-  ymax() const
-  { return RIso_rectangle_2::ymax(); }
-
-  FT
-  min_coord(int i) const
-  { return RIso_rectangle_2::min_coord(i); }
-
-  FT
-  max_coord(int i) const
-  { return RIso_rectangle_2::max_coord(i); }
 
   CGAL::Point_2<R>
   vertex(int i) const
@@ -124,56 +78,10 @@ public:
   operator[](int i) const
   { return vertex(i); }
 
-  Bounded_side
-  bounded_side(const CGAL::Point_2<R> &p) const
-  { return RIso_rectangle_2::bounded_side(p); }
-
-  bool
-  has_on_boundary(const CGAL::Point_2<R> &p) const
-  { return RIso_rectangle_2::has_on_boundary(p); }
-
-  bool
-  has_on_bounded_side(const CGAL::Point_2<R> &p) const
-  { return RIso_rectangle_2::has_on_bounded_side(p); }
-
-  bool
-  has_on_unbounded_side(const CGAL::Point_2<R> &p) const
-  { return RIso_rectangle_2::has_on_unbounded_side(p); }
-
-  bool
-  is_degenerate() const
-  { return RIso_rectangle_2::is_degenerate(); }
-
   CGAL::Iso_rectangle_2<R>
   transform(const CGAL::Aff_transformation_2<R> &t) const
   { return  RIso_rectangle_2::transform(t); }
-
-  FT
-  area() const
-  { return RIso_rectangle_2::area(); }
-
 };
-
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
-{
-  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
-  return  os << (const RIso_rectangle_2&)r;
-}
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
-template < class R >
-std::istream &
-operator>>(std::istream &is, Iso_rectangle_2<R> &r)
-{
-  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
-  is >> (RIso_rectangle_2&)r;
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 
 CGAL_END_NAMESPACE
 
