@@ -1,21 +1,33 @@
 ========================================================================
-Installing the manual package
+Installation of the Manual package
 ========================================================================
 
-In order to be able to use the scripts in the scripts/ directory to
-create a manual, you need to do the following:
+In order to be able to create CGAL's manuals you need to do the following:
 
 (1)  install the manual conversion tools (available as package Manual_tools 
      on the CVS server or from http://www.cgal.org/Members/Manual_tools)
 
-(2)  most of the scripts are shell scripts, which assume sh to be located in
+(2)  make the style files in 'sty/' accessible for LaTeX, e.g., 
+     by adding the path to the TEXINPUTS environment variable (colon 
+     seperated list of paths).
+
+     make the style files in 'htmlsty/' accessible for the latex_to_html
+     converter, e.g., by adding the path the to the LATEX_CONV_INPUTS
+     environment variable (colon seperated list of paths). 
+
+     make 'doc_tex/cgal_manual.bib' accessible for BiBTeX, e.g., by 
+     adding the path to the BIBINPUTS environment variable (colon seperated
+     list of paths). 
+
+(3)  make the scripts in 'scripts/' accessible via the standard execution path.
+     as well as the ps2pdf program (used in scripts/to_pdf).  
+
+     Most of the scripts are shell scripts, which assume sh to be located in
      /bin/sh.  If this is not the case(!), edit the scripts to indicate the 
      proper location.  The scripts bibmerge and rmbibcomments (which you 
      probably won't need to use) are Perl scripts and should also be edited
      to indicate the proper location of your Perl installation.
 
-(3)  make the scripts in scripts/ accessible via the standard execution path.
-     as well as the ps2pdf program (used in scripts/to_pdf).  
 
 (4) Set the following environment variables:
       BIBINPUTS           should include the path of geom.bib

@@ -3,21 +3,22 @@ Contents of the directory
 ========================================================================
 
 This directory contains:
-   README               -- this file
-   demo                 -- link to the current release's demo directory
-                           (needed for inclusion of demo programs in doc and
-                            created by install_manual_files)
-   doc_tex_skel/        -- directory containing the "skeleton" of the tex manual
-                           (i.e., those files not submitted with packages but 
-                            needed to create the manual)
-   examples             -- link to the current release's examples directory
-                           (needed for inclusion of example programs in doc and
-                            created by install_manual_files)
-   INSTALL              -- directions for how to INSTALL this package in order
-                           to create the manuals and run the tests
-   scripts/             -- directory of scripts used for creating the manual
-   web_pages/           -- directory containing the extra files needed for
-                           the manual on the web site.
+   README          -- this file
+   INSTALL         -- directions for how to INSTALL this package in order
+                      to create the manuals and run the tests
+
+   doc_tex/        -- directory containing the main tex files for the 
+                      manuals (the "driver"), i.e., those files not 
+                      submitted with packages but needed to create the manual.
+   sty/            -- additional LaTeX style files used for the CGAL manuals
+   scripts/        -- directory of scripts used for creating the manual
+   web_pages/      -- directory containing the extra files needed for
+                      the manual on the web site.
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+The following is outdated and will be replaced soon.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ========================================================================
 How to run the test suite:
