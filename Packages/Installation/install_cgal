@@ -820,7 +820,7 @@ set_compiler_flags()
 	    #### settings Intel C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -Zc:forScope"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -Zc:forScope"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
@@ -854,7 +854,7 @@ set_compiler_flags()
 	    #### settings Microsoft Visual C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
@@ -1906,9 +1906,9 @@ EOF4
     EXE_OPT="-o "
     case $1 in
   	*bcc32.exe*|*BCC32*)      EXE_OPT="-P -e";;
-	*CL.*-1300*|*cl.*-1300*)  EXE_OPT="-EHsc -TP -GR -GX -nologo -Fe";;
-	*ICL.*|*icl.*)              EXE_OPT="-TP -GR -GX -nologo -Fe";;
-	*CL.*|*cl.*)              EXE_OPT="-TP -GR -GX -nologo -Fe";;
+	*CL.*-1300*|*cl.*-1300*|*CL.*-1400*|*cl.*-1400*)  EXE_OPT="-TP -GR -nologo -Fe";;
+	*ICL.*|*icl.*)              EXE_OPT="-TP -GR  -nologo -Fe";;
+	*CL.*|*cl.*)              EXE_OPT="-TP -GR  -nologo -Fe";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
     _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
