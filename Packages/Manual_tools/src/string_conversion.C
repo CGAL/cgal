@@ -236,7 +236,8 @@ string convert_to_small_caps( string s) {
 // read a file into a string
 // ===========================
 void append_file_to_string( const string& name, string& s) {
-    istream* in = open_file_for_read( name.c_str());
+//    istream* in = open_file_for_read( name.c_str());
+    istream* in = open_file_for_read_w_input_dirs( name.c_str());
     char c;
     while( in->get(c))
         s += c;

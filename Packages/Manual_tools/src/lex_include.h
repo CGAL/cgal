@@ -94,6 +94,8 @@ public:
     // extension string (suffix) and new_line_number.
     bool                 push_tex_file( const string& name, 
 					size_t new_line_number = 1);
+    bool                 push_tex_file_w_input_dirs( const string& name, 
+					            size_t new_line_number = 1);
     
     // Push current state. Init with new string and new_line_number.
     bool                 push_string( const string& name,
@@ -102,6 +104,7 @@ public:
 
     void                 pop();
     void                 trace( ostream& out) const;
+
 };
 
 inline ostream&
@@ -113,6 +116,7 @@ operator<< ( ostream& out, const Include_stack& stack) {
 extern Include_stack       include_stack;
 extern Include_stack_item* in_file;
 extern Include_stack_item* in_string;
+extern string              latex_conv_inputs; // defined in cc_extract_html.C
 
 #endif // LEX_INCLUDE_H //
 // EOF //

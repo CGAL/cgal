@@ -69,6 +69,36 @@ istream* open_file_for_read( const string& name){
     return in;
 }
 
+istream* open_file_for_read_w_input_dirs( const string& name){
+
+    if (name.at(0) == '/')  // an absolute path name is given
+    {
+       return open_file_for_read(name);
+    }
+
+    string::size_type first = 0;
+    string::size_type last = 0;
+    string dir = "";
+
+    while (last < latex_conv_inputs.size())
+    {
+       last = latex_conv_inputs.find(':', first);
+       if (last < latex_conv_inputs.size())
+         dir = latex_conv_inputs.substr(first, last-first);
+       else
+         dir = latex_conv_inputs.substr(first, latex_conv_inputs.size()-first);
+       assert_trailing_slash_in_path(dir);
+       first = last+1;
+
+       istream* in = new ifstream( (dir + name).c_str());
+       if ( *in ) return in;
+    }
+    cerr << ' ' << endl 
+	 << prog_name << ": error: cannot open file `" << name
+	 << "' for reading." << endl;
+    exit(1);
+}
+
 ostream* open_file_for_write( const string& name){
     ostream* out = new ofstream( name.c_str());
     if ( ! *out) {
@@ -255,12 +285,15 @@ void filter_config_file( istream& in, ostream& out) {
 /* ========================================== */
 
 istream* open_config_file( const string& name){
+/*
     if ( config_switch == NO_SWITCH) {
         // check if the file exists in the current directory
         if ( exist_file( name))
 	    return (open_file_for_read( name));
     }
-    return( open_file_for_read( config_path + name));
+*/
+    return( open_file_for_read_w_input_dirs( config_path + name));
+//    return( open_file_for_read_w_input_dirs(name));
 }
 
 void copy_and_filter_config_file( const string& name, ostream& out){

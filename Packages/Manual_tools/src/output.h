@@ -93,8 +93,9 @@ extern string  pre_main_filename;
 extern string  main_filename;
 extern string  class_filename;
 
-extern string  config_path;  // defined in cc_extract_html.C
-extern string  tmp_path;    //
+extern string  config_path;        // defined in cc_extract_html.C
+extern string  latex_conv_inputs;  // 
+extern string  tmp_path;           //
 
 /* Auxiliary functions for stream handling */
 /* ======================================= */
@@ -102,6 +103,7 @@ extern string  tmp_path;    //
 bool     exist_file( const string& name);
 void     assert_file_write( ostream& out, const string& name);
 istream* open_file_for_read( const string& name);
+istream* open_file_for_read_w_input_dirs( const string& name);
 ostream* open_file_for_write( const string& name);
 
 

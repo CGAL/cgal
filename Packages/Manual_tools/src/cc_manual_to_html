@@ -37,6 +37,7 @@
 # The same variable is used in the cc_manual_to_html script.
 # LATEX_CONV_CONFIG = ${PUBLIC}/CGAL/Tools/latex_converter_config
 
+
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc
 
@@ -423,18 +424,30 @@ foreach f ($in_files)
     endif
 end
 
+# directories in which to look for input files (default is current
+# directory)
+if ( ! $?LATEX_CONV_INPUTS)  then
+   set orig_INPUTS = "."
+else
+   set orig_INPUTS = "$LATEX_CONV_INPUTS"
+endif
+
+
 # Step 1: convert each LaTeX file into an HTML file.
 # --------------------------------------------------
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 foreach f ($in_files)
     if ( ! $quiet_switch) echo "[converting package $f"
     set options = "${header} -config ${config_path} -tmp ${new_tmp_path}/$f:h -noheader"
-    cd $f:h
+#    cd $f:h
+#    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
+#    cd ..
+    setenv LATEX_CONV_INPUTS "$f:h:$orig_INPUTS"
     cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
-    cd ..
     if ( ! $quiet_switch) echo "]"
 end
 
+setenv LATEX_CONV_INPUTS "$orig_INPUTS"
 
 # Step 2: generate the local hyperlinks. The anchor filter.
 # ---------------------------------------------------------

@@ -514,11 +514,14 @@
 % ###########################################################################
 % +--------------------------------------------------------------------------
 % | \ccClassName, \ccClassTemplateName, \ccVar, \ccPur...
-% | \begin{ccClass}, \begin{ccClassTemplate}, \end...
+% | \begin{ccClass}, \begin{ccClassTemplate}, \begin{ccTraitsClass}, \end...
 % +--------------------------------------------------------------------------
 
 % class environments
 \newenvironment{ccClass}{\lciParseCC{\lciClassCont}}{\end{lciClassEnvironment}}
+
+% traits class environments
+\newenvironment{ccTraitsClass}{\lciParseCC{\lciClassCont}}{\end{lciClassEnvironment}}
 
 \newcommand{\lciClassCont}{\lciClassContX\lciCCParameter}
 \newcommand{\lciClassContX}[1]{
@@ -529,6 +532,10 @@
 
 % class environments
 \newenvironment{ccClassTemplate}{\lciParseCC{\lciClassTemplateCont}}%
+    {\end{lciClassEnvironment}}
+
+% traits class environments
+\newenvironment{ccTraitsClassTemplate}{\lciParseCC{\lciClassTemplateCont}}%
     {\end{lciClassEnvironment}}
 
 \newcommand{\lciClassTemplateCont}{\lciClassTemplateContX\lciCCParameter}

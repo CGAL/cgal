@@ -69,7 +69,7 @@ else
     if ( -w cc_checker.o) rm cc_checker.o
 endif
 if ( $?DEBUG) echo "cc_checker $argv"
-cc_checker $argv
+./cc_checker $argv
 set returnvalue = $status
 if ( $returnvalue) then
    echo '==>  NOTE: The program call `cc_checker '"$argv""' can be used to"

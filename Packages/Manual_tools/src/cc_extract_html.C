@@ -45,7 +45,11 @@ const string prog_release = "$Revision$";
 #ifndef LATEX_CONVERTER_CONFIG
 #define LATEX_CONVERTER_CONFIG   ""
 #endif
+#ifndef LATEX_CONV_INPUTS
+#define LATEX_CONV_INPUTS   ""
+#endif
 string config_path    = LATEX_CONVERTER_CONFIG;
+string latex_conv_inputs   = LATEX_CONV_INPUTS;
 
 
 // Directory for the temporary files. A default is given.
@@ -229,6 +233,12 @@ main( int argc, char **argv) {
     char* s = getenv("LATEX_CONV_CONFIG");
     if ( s)
 	config_path = s;
+    s = getenv("LATEX_CONV_INPUTS");
+    if ( s)
+       latex_conv_inputs = s;
+    else
+       latex_conv_inputs = "."; // if the environment variable is not set,
+                                // try to get all files from current directory
 
     int i;
     int nParameters = 0;
@@ -458,7 +468,11 @@ main( int argc, char **argv) {
     init_commandline_args();
     init_internal_macros();
     current_ostream  = 0;
+/*
     if ( ! include_stack.push_tex_file( config_path + sty_filename))
+	exit(1);
+*/
+    if (!include_stack.push_tex_file_w_input_dirs(config_path + sty_filename))
 	exit(1);
 
     yyparse();
@@ -528,7 +542,11 @@ main( int argc, char **argv) {
 	    current_filename = main_filename;
 	    insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
 	}
+/*
 	if ( include_stack.push_tex_file( parameters[i]))
+	    yyparse();
+*/
+	if ( include_stack.push_tex_file_w_input_dirs( parameters[i]))
 	    yyparse();
 
 	include_stack.push_string( "<end of conversion>", 

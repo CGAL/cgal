@@ -19,6 +19,7 @@
 
 #include <iomanip.h>
 #include <macro_dictionary.h>
+#include <string_conversion.h>
 
 // Global variables used in scanner.
 Include_stack       include_stack;
@@ -85,11 +86,51 @@ Include_stack::push_tex_file( const string& name,
 	return push_file( fin, name + ".sty", new_line_number);
     if ( (fin = fopen( name.c_str(), "r")) != NULL)
 	return push_file( fin, name, new_line_number);
+    return false;
+}
+
+
+
+bool
+Include_stack::push_tex_file_w_input_dirs( const string& name, 
+			                  size_t new_line_number)
+{
+    string::size_type first = 0;
+    string::size_type last = 0;
+    string dir;
+
+    // check for absolute path 
+    if (name[0] == '/') 
+      if (push_tex_file(name, new_line_number))
+      {
+        return true;
+      }
+      else
+      {
+         cerr << ' ' << endl 
+	      << "*** Error: cannot open file `" << name << "' for reading.";
+         printErrorMessage( FileReadOpenError);
+         return false;
+      }
+
+
+    while (last < latex_conv_inputs.size())
+    {
+       last = latex_conv_inputs.find(':', first);
+       if (last < latex_conv_inputs.size())
+          dir = latex_conv_inputs.substr(first, last-first);
+       else
+          dir = latex_conv_inputs.substr(first, latex_conv_inputs.size()-first);
+       assert_trailing_slash_in_path(dir);
+       first = last+1;
+       if (push_tex_file(dir+name, new_line_number)) return true;
+    }
     cerr << ' ' << endl 
 	 << "*** Error: cannot open file `" << name << "' for reading.";
     printErrorMessage( FileReadOpenError);
     return false;
 }
+
 
 // Push current state. Init with new string and new_line_number.
 bool

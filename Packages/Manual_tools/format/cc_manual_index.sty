@@ -9,6 +9,7 @@
 % used in this file are defined there
 %
 \usepackage{cc_manual}
+\usepackage{makeidx}
 
 % ========================================================================
 % Definitions of fonts for the different categories of non-C++ items 
@@ -1051,6 +1052,7 @@
 % with the text
 \newcommand{\emptyIndexingFont}{\ccTrue}%
 \newcommand{\indexingFontIsCC}{\ccFalse}%
+\newcommand{\allowUnderscores}{\ccFalse}%
 
 % variable to hold the first type name for a global operator
 \newcommand{\typeName}{}% 
@@ -1070,6 +1072,7 @@
        \indexTextParse{\ccFont}{#3}{#4}{#5}{#6}%
     \else \if#1c% concept
        \indexTextParse{\ccIndexConceptFont}{#3}{#4}{#5}{#6}%
+       \xdef\allowUnderscores{\ccTrue}%
     \else \if#1d% data structure 
        \indexTextParse{\ccIndexDSFont}{#3}{#4}{#5}{#6}%
     \else \if#1f% functionality
@@ -1325,39 +1328,56 @@
 \newcommand\makeIndexText[5]{%
    \ifx#2\empty%                                 no modifier
       \ifnum\emptyIndexingFont=\ccTrue%          no font
-        \gdef#4{#3}%
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3@\protect\ccOnlyUnderscores{#3}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3}%
+        \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3@\protect\ccc{#3}}%
-      \else%                                     other font
+      \else%                                     other font, no _s possible
         \gdef#4{#3@{#1 #3}}%
       \fi \fi%
       \gdef#5{}%
    \else\ifdimmodifier%                          dimension modifier
       \ifnum\emptyIndexingFont=\ccTrue%          no font
-        \gdef#4{#3, #2}%
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccOnlyUnderscores{#3, #2}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+        \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
-      \else%                                     other font
+      \else%                                     other font; no _s possible
         \gdef#4{#3, #2@{#1 #3, #2}}%
       \fi \fi%
       \gdef#5{}%
    \else\ifnum\ccIndexModifierCrossRef=\ccFalse% no cross referencing wanted
       \ifnum\emptyIndexingFont=\ccTrue%          no font
-        \gdef#4{#3, #2}%
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccOnlyUnderscores{#3, #2}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+        \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
-      \else%                                     other font
+      \else%                                     other font; no _s possible
         \gdef#4{#3, #2@{#1 #3, #2}}%
       \fi \fi%
       \gdef#5{}%
    \else%                                        non-dimensional modifier
       \ifnum\emptyIndexingFont=\ccTrue%          no font
-        \gdef#4{#3, #2}%
-        \gdef#5{#2\ #3|see{#3, #2}}%
+        \ifnum\allowUnderscores=\ccTrue%          allow underscores
+           \gdef#4{#3, #2@\protect\ccOnlyUnderscores{#3, #2}}%
+           \gdef#5{#2\ #3@\protect\ccOnlyUnderscores{#2\ #3}|see{\protect\ccOnlyUnderscores{#3, #2}}}%
+        \else%                                    don't allow underscores
+           \gdef#4{#3, #2}%
+           \gdef#5{#2\ #3|see{#3, #2}}%
+        \fi
       \else\ifnum\indexingFontIsCC=\ccTrue%      ccFont
         \gdef#4{#3, #2@\protect\ccc{#3, #2}}%
         \gdef#5{#2\ #3@\protect\ccc{#2\ #3}|see{\protect\ccc{#3, #2}}}%
-      \else%                                     other font
+      \else%                                     other font; no _s possible
         \gdef#4{#3, #2@{#1 #3, #2}}%
         \gdef#5{#2\ #3@{#1 #2\ #3}|see{{#1 #3, #2}}}%
       \fi \fi%
@@ -1877,7 +1897,7 @@
       \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
          \ccIndexMainItemBegin[C]{\ccPureClassTemplateName}%
       \else
-         \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
+         \ccIndexSubitemBegin[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
       \fi
    \fi\fi\fi%
 }
@@ -1904,7 +1924,7 @@
       \expandafter\expandafter\isEmpty{\ccIndexClassName}\ifnum\ccBool=\ccTrue
          \ccIndexMainItemEnd[C]{\ccPureClassTemplateName}%
       \else
-         \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccPureClassTemplateName}%
+         \ccIndexSubitemEnd[C]{\ccIndexClassName}{\ccFont \ccPureClassTemplateName}%
       \fi
    \fi\fi\fi%
    \gdef\ccIndexClassName{}%

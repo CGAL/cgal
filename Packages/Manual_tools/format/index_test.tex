@@ -9,7 +9,8 @@
 \usepackage{cprog}
 \usepackage{cc_manual}
 \usepackage{makeidx}
-\usepackage{cc_manual_index}
+
+\ccDefGlobalScope{CGAL::}
 
 % page dimensions
 % ---------------
@@ -1723,11 +1724,12 @@ testing8\ccIndexMainItem{\myNoCommandText}where is this
 \begin{ccRefClass}[RefClass::]{Circulator_from_container<C>}
 \end{ccRefClass}
 
-\begin{ccRefClass}{Circulator_from_container<C>}
+\begin{ccRefClass}{Circulator_from_container_no_ref<C>}
 
 This is a ref class and should produce an index entry without the template
 parameter...
 
+\ccCreationVariable{c}
 creation\ccIndexClassCreation
 default\ccIndexClassDefault
 member functions\begin{ccIndexMemberFunctions}
@@ -1747,12 +1749,22 @@ A reference concept is talked about here...
 \pagebreak
 \end{ccRefConcept}
 
-\begin{ccRefConcept}[RefClass::]{Concept}
+\begin{ccRefConcept}[RefClass::]{ConceptWithRef}
 A reference concept is talked about here...
 \pagebreak
 \end{ccRefConcept}
 
-\begin{ccRefEnum}[RefClass::]{Enum}
+\begin{ccRefConcept}{Concept_name}
+A reference concept with an underscore in the name is talked about here...
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[RefClass::]{Concept_name_with_ref}
+A reference concept with an underscore in the name is talked about here...
+\pagebreak
+\end{ccRefConcept}
+
+\begin{ccRefEnum}[RefClass::]{Enum_with_ref}
 A reference enumeration is talked about here...
 \pagebreak
 \end{ccRefEnum}
@@ -1762,7 +1774,7 @@ A reference enumeration is talked about here...
 \pagebreak
 \end{ccRefEnum}
 
-\begin{ccRefFunction}[RefClass::]{Function}
+\begin{ccRefFunction}[RefClass::]{Function_with_ref}
 A reference function is talked about here...
 \pagebreak
 \end{ccRefFunction}
@@ -1772,7 +1784,7 @@ A reference function is talked about here...
 \pagebreak
 \end{ccRefFunction}
 
-\begin{ccRefVariable}[RefClass::]{Variable}
+\begin{ccRefVariable}[RefClass::]{Variable_with_ref}
 A reference variable is talked about here...
 \pagebreak
 \end{ccRefVariable}
@@ -1782,7 +1794,7 @@ A reference variable is talked about here...
 \pagebreak
 \end{ccRefVariable}
 
-\begin{ccRefMacro}[RefClass::]{Macro}
+\begin{ccRefMacro}[RefClass::]{Macro_with_ref}
 A reference macro is talked about here...
 \pagebreak
 \end{ccRefMacro}

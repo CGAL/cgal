@@ -458,6 +458,27 @@ to remove files are echoed with a \# in front. The temporary files are
 not removed in DEBUG mode in order to examine them later.
 
 % -------------------------------------------------------
+\section{Getting input from other places using {\tt LATEX\_CONV\_INPUTS}} 
+\label{sectionLatexConvInputs}
+
+Beginning with release 3.6, the converter supports the use of an 
+environment variable, \verb|LATEX_CONV_INPUTS|, which is analogous
+to the \verb|TEXINPUTS| environment variable used with \LaTeX.  This
+variable is used by the \verb|cc_extract_html| program to find input
+files (included, for example, using the \verb|\input| or \verb|\include| 
+commands, or their derivatives).  It should contain a colon-separated
+list of directories in which the input files can be found.  If this variable
+is not set, the default is that files are looked for in the current
+directory (meaning the directory where \verb|cc_extract_html| is being
+run).  If it is set, directories 
+are searched in the order provided in this variable (which means you should
+include \verb|"."| somewhere in the list if you want it to find files in the
+current directory).
+\index{LATEX_CONV_CONFIG@{\tt LATEX\_CONV\_CONFIG}}
+\index{LATEX_CONV_INPUTS@{\tt LATEX\_CONV\_INPUTS}}
+\Mindex{input}\Mindex{include}
+
+% -------------------------------------------------------
 \section{Converting a Manual Using Multiple Directories}
 \label{sectionHtmlExtended}
 
@@ -468,8 +489,25 @@ the new capabilities of the {\tt cc\_manual\_to\_html} script. Use the
 {\tt -extended} option to activate it. However, the actual converter
 {\tt cc\_extract\_html} has not changed and does not support
 subdirectories. Similar to \TeX, subdirectories in \verb+\input+ and
-\verb+\include+ macros does not cause the converter to change its
-local working directory while processing the included file.
+\verb+\include+ macros do not cause the converter to change its
+local working directory while processing the included file.  Thus,
+also similar to \TeX, if relative paths are provided, they should be
+relative to the place where the {\tt cc\_extract\_html} command is
+run, not relative to the place where the file containing the command
+is.  
+
+With the introduction of the {\tt LATEX\_CONV\_INPUTS} variable 
+(Section~\ref{sectionLatexConvInputs}), it is now also possible 
+for {\tt cc\_extract\_html} to find input files in other directories 
+without the directory being specified in the body of the source file.  
+However, if the {\tt -extended} option is used, it is NOT 
+necessary (and probably undesirable) to include the list of all the
+subdirectories containing the various files in the variable 
+{\tt LATEX\_CONV\_INPUTS}; {\tt cc\_manual\_to\_html} attaches each
+separate subdirectory to the existing {\tt LATEX\_CONV\_INPUTS} before 
+processing the subdirectory.  This allows different subdirectories 
+to have files with the same name. 
+\index{LATEX_CONV_INPUTS@{\tt LATEX\_CONV\_INPUTS}}
 
 The file structure proposed here looks as follows. The manual is split
 up into different parts, each part in its own subdirectory. Each part
@@ -506,6 +544,8 @@ in the directory {\tt Tools/src/test\_html/} which can be converted
 with the script {\tt convert} located in the same directory. This
 script calls the {\tt cc\_manual\_to\_html} converter with the
 appropriate parameters for the example.
+
+
 
 % -------------------------------------------------------
 \section{Conversion Capabilities and Unsupported Features}

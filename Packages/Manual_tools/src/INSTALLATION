@@ -57,6 +57,7 @@ Installation of the Supporting Tools:
 	  - LATEX_CONV_CONFIG
 	      The same variable is used in the cc_manual_to_html script.
 
+
 	  - LATEX_CONV_HEADER
               The header files within the \ccInclude macro can be linked
               to the original header files if the -header option is given
@@ -89,6 +90,18 @@ Installation of the Supporting Tools:
 	  setenv CC                 gcc
 	  setenv CPPFLAGS           -g
 	  setenv LDFLAGS
+
+	  The following environment variable is optional: 
+
+	  - LATEX_CONV_INPUTS
+	      This is the analog of the TEXINPUTS environment variable for
+              the cc_extract_html program.  It should contain a colon-separated
+              list of directories where the input files can be found.  If
+              this is not set, the default is that files are looked for in
+              the current directory.  If this is set, then directories are 
+              searched in the order provided in this variable (so "." should
+              be included in the list if some input files are in the current
+              directory).
 
      (B)  The configuration option (B) expects that in the following
           files the installation section will be edited according to the

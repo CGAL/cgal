@@ -30,7 +30,7 @@
 # CXX = g++
 
 # C++ Compiler Options:
-# CXXFLAGS = 
+# CXXFLAGS = -v
 
 # C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
 # CC = gcc
@@ -117,6 +117,8 @@ cc_extract : ${OBJ} ${HEADER} cc_extract.o
 cc_build_checker : ${OBJ} ${HEADER} cc_build_checker.o
 	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJ} ${LDFLAGS}
 
+texinputs : texinputs.o
+	${CXX} ${CXXFLAGS} -o $@ $@.o ${LDFLAGS}
 
 # LaTeX Converter
 # ==========================

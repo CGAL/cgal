@@ -293,7 +293,7 @@ number          {digit}+
 			yyterminate();
 		    }
 		    BEGIN( old_state);
-		    include_stack.push_tex_file( yytext);
+		    include_stack.push_tex_file_w_input_dirs( yytext);
 		    break;
 }
 

@@ -873,8 +873,15 @@
 \gdef\ccRefDeclarationX #1{%
                    \endgroup
                    \gdef\ccPureRefName{#1}%
-                   \renewcommand{\ccRefName}{{{\ccFont 
-                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+% ??? currently this has no effect since \ccRefName is not used and all
+% names (in the .ps manual) are displayed in the default font
+                   \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+                      \renewcommand{\ccRefName}{{{
+                        \ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}}}%
+                   \else
+                      \renewcommand{\ccRefName}{{{\ccFont 
+                        \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \fi
                    \ccRefPageBegin
                    \ccRefSection{\ccRefCategory}{#1}%
                    \label{ccRef_\ccRefPureGlobalScope\ccPureRefScope #1}%
@@ -904,10 +911,20 @@
 \gdef\ccRefSectionX #1#2{\endgroup\section*{%
     \ifnum\ccNewRefManualStyle=\ccTrue \ccDrawRefTabs{#1}{#2}\\ \else #1 \fi
     \expandafter\ccPrintTokens\ccRefPureGlobalScope\ccEnd%
-    {\expandafter\ccPrintTokens\ccPureRefScope #2\ccEnd}}%
+    % for concepts, the only "special" character allowed is the underscore
+    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+       {\expandafter\ccPrintUnderscoreSeparatedTokens\ccPureRefScope #2\ccEnd}%
+    \else
+       {\expandafter\ccPrintTokens\ccPureRefScope #2\ccEnd}%
+    \fi}%
     \ifnum\ccNewRefManualStyle=\ccTrue
+    \ifnum\ccCurrentIndexCat=\ccIndexConceptCat%
+        \markright{\ccRefCategory : \ \protect\ccRefScope
+                   \protect\ccRefName}%
+    \else
         \markright{\ccRefCategory : \ \protect\ccGlobalScope\protect\ccRefScope
                    \protect\ccRefName}%
+    \fi
     \fi
 }
 
@@ -2150,6 +2167,38 @@
                    \fi
                    \xqnext}
 
+\gdef\ccUnderscoreCatcode {%
+              \catcode`\_=12
+}
+
+\newcommand{\ccOnlyUnderscores}{%
+    \begingroup\ccUnderscoreCatcode\ccOnlyUnderscoresX
+}
+\def\ccOnlyUnderscoresX #1{%
+     {\ccPrintUnderscoreSeparatedTokens #1\ccEnd\ccEndFont}\endgroup
+}
+
+\def\ccPrintUnderscoreSeparatedTokens #1\ccEnd{%
+    \isEmpty{#1}\ifnum\ccBool=\ccFalse
+        \ccPrintUnderscoreSeparatedTokensX #1\ccEnd
+    \fi
+}
+\def\ccPrintUnderscoreSeparatedTokensX #1#2\ccEnd{%
+                   \ccPrintCharOrUnderscore #1%
+                   \def\xqbody{\ccPrintUnderscoreSeparatedTokensX #2\ccEnd}%
+                   \isEmpty{#2}\ifnum\ccBool=\ccTrue
+                       \let\xqnext=\relax
+                   \else
+                       \let\xqnext=\xqbody
+                   \fi
+                   \xqnext}
+% Print a character of a C++ declaration. Special handling of _<>&.
+\def\ccPrintCharOrUnderscore #1{%
+                   \if_#1\ccUnderscore
+                   \else\ifx\_#1\ccUnderscore
+                   \else #1%
+                   \fi\fi}
+
 
 % +--------------------------------------------------------------------------
 % |     * Formatting of operator declarations:
@@ -2794,6 +2843,13 @@
 % command and ccExampleCode environment depend on it
 %
 \usepackage{alltt}
+
+% the graphicx package is used to include the page tabs for the reference 
+% pages in the new manual style, so...
+\ifnum\ccNewRefManualStyle=\ccTrue
+\usepackage{graphicx}
+\fi
+
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF
