@@ -59,7 +59,7 @@ class Filtered_kernel_base
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
     typedef Cartesian_converter<Kernel_base, EK>     C2E;
     typedef Cartesian_converter<Kernel_base, FK,
-                          Interval_converter<typename Kernel_base::RT> > C2F;
+                                To_interval<typename Kernel_base::RT> > C2F;
 public:
 
     template < typename Kernel2 >
