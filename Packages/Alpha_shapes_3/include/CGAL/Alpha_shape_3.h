@@ -67,8 +67,8 @@ public:
 
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::Segment_3 Segment;
-  //   typedef typename Gt::Triangle Triangle;
-  //   typedef typename Gt::Tetrahedron Tetrahedron;
+  //   typedef typename Gt::Triangle_3 Triangle;
+  //   typedef typename Gt::Tetrahedron_3 Tetrahedron;
 
   typedef typename Dt::Cell_handle Cell_handle;
   typedef typename Dt::Vertex_handle Vertex_handle;
