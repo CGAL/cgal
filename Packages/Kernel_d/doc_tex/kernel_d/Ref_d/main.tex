@@ -7,16 +7,24 @@
 
 \chapter{Reference Pages}
 
-\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
+\lcTex{\input{kernel_d_toc}}
+
+\clearpage
+\section{Linear Algebra Concepts and Classes}
+\gdef\ccRefPageBreak{\ccFalse}
 \input{Ref_d/LinearAlgebraTraits_d.tex}
+\gdef\ccRefPageBreak{\ccTrue}
 \input{Ref_d/Vector.tex}
 \input{Ref_d/Matrix.tex}
 \input{Ref_d/Linear_algebraCd.tex}
 \input{Ref_d/Linear_algebraHd.tex}
 
+\clearpage
 \section{Kernel Objects}
+\gdef\ccRefPageBreak{\ccFalse}
 
 \input{Ref_d/Point_d.tex}
+\gdef\ccRefPageBreak{\ccTrue}
 \input{Ref_d/Vector_d.tex}
 \input{Ref_d/Direction_d.tex}
 \input{Ref_d/Line_d.tex}
@@ -26,9 +34,12 @@
 \input{Ref_d/Sphere_d.tex}
 \input{Ref_d/Aff_transformation_d.tex}
 
+\clearpage
 \section{Global Kernel Functions}
+\gdef\ccRefPageBreak{\ccFalse}
 
 \input{Ref_d/affinely_independent.tex}
+\gdef\ccRefPageBreak{\ccTrue}
 \input{Ref_d/affine_rank.tex}
 \input{Ref_d/center_of_sphere.tex}
 \input{Ref_d/compare_lexicographically.tex}
@@ -50,9 +61,12 @@
 \input{Ref_d/side_of_oriented_sphere.tex}
 \input{Ref_d/squared_distance.tex}
 
+\clearpage
 \section{Kernel Concept}
+\gdef\ccRefPageBreak{\ccFalse}
 
 \input{Ref_d/Kernel.tex}
+\gdef\ccRefPageBreak{\ccTrue}
 \input{Ref_d/Kernel_Affinely_independent_d.tex}
 \input{Ref_d/Kernel_Affine_rank_d.tex}
 \input{Ref_d/Kernel_Center_of_sphere_d.tex}
