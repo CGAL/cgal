@@ -152,7 +152,8 @@ public:
   Lazy_exact_nt_dyn_rep () : count(1), in(1,0)
   {
       // total_num_objs++;
-      // std::cout << "NEW total num objects = " << total_num_objs << std::endl;
+      // std::cout << "NEW total num objects = ";
+      // std::cout << total_num_objs << std::endl;
   }
   Lazy_exact_nt_dyn_rep (const double d) : count(1), in(d) {}
   // virtual void update_interval() const = 0;
@@ -182,7 +183,8 @@ public:
     if (rep && --rep->count == 0)
     {
 	// total_num_objs--;
-	// std::cout << "DELETE total num objects = " << total_num_objs << std::endl;
+	// std::cout << "DELETE total num objects = ";
+	// std::cout << total_num_objs << std::endl;
         delete rep;
     }
   }
@@ -526,8 +528,10 @@ public:
   // All the other operators are missing... (same for sign/compare).
   bool operator< (const Self s) const
   {
-    // std::cout << "interval: " << rep->interval() << " <? " << s.rep->interval() << std::endl;
-    // std::cout << "exact: " << rep->exact() << " <? " << s.rep->exact() << std::endl;
+    // std::cout << "interval: " << rep->interval();
+    // std::cout << " <? " << s.rep->interval() << std::endl;
+    // std::cout << "exact: " << rep->exact();
+    // std::cout << " <? " << s.rep->exact() << std::endl;
 #if 0
     return rep->interval() < s.rep->interval();
 #else
