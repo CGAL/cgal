@@ -160,6 +160,7 @@ class Polygon_2 {
     Polygon_2(InputIterator first, InputIterator last)
       { std::copy(first, last, std::back_inserter(d_container)); }
 
+/*
     template <class Circulator>
     Polygon_2(Circulator start)
 	{
@@ -170,6 +171,7 @@ class Polygon_2 {
 		} while (cur != start);
 	    }
 	}
+*/
 #endif
 
     //--------------------------------------------------------
