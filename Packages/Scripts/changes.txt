@@ -1,3 +1,6 @@
+28 May 2004 Radu Ursu
+- modified autotest_cgal behaviour which could be now used for installing new versions of CGAL without running the testsuite
+
 27 May 2004 Radu Ursu
 - added -m option to create_internal_module script
 - fixed all the other issues related to the VERSION which is no longer used as the module name. 

@@ -489,31 +489,41 @@ fi
 
 # do the job
 
-get_cgal
-unzip_cgal
-copy_old_stuff
 
-
-if [ "${BUILD_HOSTS}" = "must_be_set_in_.autocgalrc" ]; then
-  error "BUILD_HOSTS must be set in .autocgalrc"
-else
-  for i in ${BUILD_HOSTS}; do
-    TEXT="`value_of COMPILERS_${i}`"
-    if [ -z "${TEXT}" ]; then
-      error "COMPILERS_${i} must be defined in .autocgalrc"
+if [ "${BUILD_HOSTS}" = "localhost" ]; then
+  TEXT="`value_of COMPILERS_localhost`"
+  if [ -z "${TEXT}" ]; then
+    printf "\nWARNING: Only installing on localhost\n";
+    get_cgal
+    unzip_cgal
+    copy_old_stuff
+    build_cgal;
+  else
+    if [ "${BUILD_HOSTS}" = "must_be_set_in_.autocgalrc" ]; then
+      error "BUILD_HOSTS must be set in .autocgalrc"
     else
-      TEXT="`value_of PROCESSORS_${i}`"
-      TEMPVAR="PROCESSORS_${i}"
-      if [ -z "${TEXT}" ]; then
-        log ${ACTUAL_LOGFILE} "\ngiving default 1 values TO PROCESSORS_${i} ...";
-        eval $TEMPVAR="1";
-      fi 
+      for i in ${BUILD_HOSTS}; do
+        TEXT="`value_of COMPILERS_${i}`"
+        if [ -z "${TEXT}" ]; then
+          error "COMPILERS_${i} must be defined in .autocgalrc"
+        else
+          TEXT="`value_of PROCESSORS_${i}`"
+          TEMPVAR="PROCESSORS_${i}"
+          if [ -z "${TEXT}" ]; then
+            log ${ACTUAL_LOGFILE} "\ngiving default 1 values TO PROCESSORS_${i} ...";
+            eval $TEMPVAR="1";
+          fi
+        fi
+      done
     fi
-  done
+    get_cgal
+    unzip_cgal
+    copy_old_stuff
+    build_cgal
+    run_test
+  fi
 fi
 
-build_cgal
-run_test
 
 # restore settings:
 cd ${CGAL_ROOT}
