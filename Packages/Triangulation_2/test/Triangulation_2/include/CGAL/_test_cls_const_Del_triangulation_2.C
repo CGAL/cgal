@@ -128,8 +128,8 @@ _test_cls_const_Del_triangulation(const Triangul&)
   T3.insert_constraint(v0,v4);
   Face_handle fh;
   int i;
-  assert(T3.is_edge(v0,v4,fh,i));
-  assert(T3.is_edge(v0,v4,fh,i));
+  bool check = T3.is_edge(v0,v4,fh,i);
+  assert(check);
   std::set<Face_handle> deleted;
   T3.remove_constrained_edge(fh,i,inserter(deleted, deleted.begin()));
   assert(deleted.size()==4);
