@@ -53,7 +53,7 @@ $parser->parsefile($databaseFile);
 $logFile = findLogFile($logDir) if (!defined($logFile));
 
 my $date = $logFile;
-$date =~ s/bcgal_(.*)%.*/$1/;
+$date =~ s/bcgal_(.*)/$1/;
 my $year = substr($date, 0, 2);
 my $month = substr($date, 2, 2);
 my $day = substr($date, 4, 2);
@@ -63,7 +63,7 @@ if (!defined($phpFile)) {
   $phpFile =~ s/(.*)\.log/$1\.php/;
 }
 $logFile = $logDir . '/' . $logFile;
-  
+
 $h = HTML::Element->new('html');
 
 $inc = HTML::Element->new("~pi",
@@ -446,15 +446,15 @@ sub findLogFile {
   $minute = 0;
   
   foreach $newLogFile (@logFiles) {
-    next if !($newLogFile =~ /bcgal_([^\.%]*%[^\.]+)\.log$/);
+    next if !($newLogFile =~ /bcgal_([^\.%]*)\.log$/);
     $date = $1;
     $newYear = substr($date, 0, 2);
     $newMonth = substr($date, 2, 2);
     $newDay = substr($date, 4, 2);
 
-    $newHour = substr($date, 7, 2);
-    $newMinute = substr($date, 9, 2);
-    $newSecond = substr($date, 11, 2);
+    $newHour = substr($date, 6, 2);
+    $newMinute = substr($date, 8, 2);
+    $newSecond = substr($date, 10, 2);
     if (($newYear > $year) ||
 	(($newYear == $year) && ($newMonth > $month)) ||
 	(($newYear == $year) && ($newMonth == $month) && ($newDay > $day)) ||
