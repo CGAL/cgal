@@ -57,7 +57,7 @@
 \marginparsep10mm
 \marginparwidth15mm
 
-\newcommand{\cgalrelease}{2.3-I-90}
+\newcommand{\cgalrelease}{2.3}
 \lcTex{\batchmode}
 
 %% let HTML converter know it is dealing with a manual in multiple parts
@@ -78,9 +78,15 @@
 \include{preface}
 \cleardoublepage
 \tableofcontents
-\pagenumbering{arabic}
 
 \cgalColumnLayout
+
+% ???
+% this needs to come after the cgalColumnLayout command, otherwise the
+% arabic page numbers begin with 1 on the last page of the table of contents
+% ???
+\cleardoublepage
+\pagenumbering{arabic}
 
 \include{main}
 
