@@ -43,7 +43,7 @@ computes a support set $S$ which remains fixed until the next insert
 or clear operation.
 
 \emph{Note:} In this release correct results are only guaranteed if exact
-arithmetic is used, see Section~\ref{sec:min_ellipse_2_traits_impl_2D_kernel}.
+arithmetic is used.
 
 \ccInclude{CGAL/Min_ellipse_2.h}
 
@@ -63,6 +63,20 @@ and~\ref{sec:min_ellipse_2_traits_adapterH2}. Customizing own traits
 classes for optimisation algorithms can be done according to the
 requirements for traits classes listed in
 \ccTexHtml{Section~\ref{sec:min_ellipse_2_traits_req}}{Section&nbsp;<A HREF="requirements_Min_ellipse_2.html"><IMG SRC="../gif/cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>}.
+
+% -----------------------------------------------------------------------------
+\ccHeading{Guidelines and Hints}
+
+For ultimate speed, use the representation type \ccc{Cartesian<float>}
+or \ccc{Cartesian<double>}. For exact number types \ccc{NT}, we
+recommend the homogeneous representation \ccc{Homogeneous<NT>}, even
+if \ccc{NT} is a field type and supports divsions; the latter are
+usually slower than the other arithmetic operations, and it pays off
+to avoid them by using the homogeneous representation.
+
+Because an object of type \ccClassTemplateName\ is of non-constant
+size, copy and assignment are expensive. Use references whenever
+possible.
 
 % -----------------------------------------------------------------------------
 \ccTypes
