@@ -184,10 +184,10 @@ namespace CGAL {
       s << "Rectangle dimension = " << dim;
       s << "\n lower: ";
       std::copy(lower_, lower_ + dim,
-       	      std::ostream_iterator<NT>(s, " "));
+       	      std::ostream_iterator<NT>(s," "));
       s << "\n upper: ";
       std::copy(upper_, upper_ + dim,
-	      std::ostream_iterator<NT>(s, " "));
+	      std::ostream_iterator<NT>(s," "));
       s << "\n maximum span " << max_span() <<
       " at coordinate " << max_span_coord() << std::endl;
       return s;
