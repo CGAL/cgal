@@ -27,13 +27,10 @@
 #ifndef  CGAL_TOPOLOGICAL_MAP_H
 #define  CGAL_TOPOLOGICAL_MAP_H
 
-#ifndef CGAL_PLANAR_MAP_MISC_H
-#include  <CGAL/Planar_map_2/Planar_map_misc.h>
-#endif
-
+#include <CGAL/Polyhedron_iterator_3.h>
+#include <CGAL/Planar_map_2/Planar_map_misc.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template <class Dcel >
 class Topological_map
