@@ -1,3 +1,6 @@
+2.7 (22 May 2001)
+Implemented segment segment intersection without making use of collinear_has_on.
+
 2.6.5 (1 May 2001)
 Small change to suppress a warning.
 

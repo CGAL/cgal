@@ -47,9 +47,8 @@ public:
 {
     if (_known)
         return _result;
-    // The non const this pointer is used to cast away const.
     _known = true;
-    if (!do_overlap(_seg1->bbox(), _seg2->bbox())) {
+    if (!do_intersect(*_seg1, *_seg2)) {
         _result = NO;
         return _result;
     }
@@ -62,8 +61,7 @@ public:
         break;
     case Line_2_Line_2_pair<R>::POINT:
         linepair.intersection(_intersection_point);
-        _result = (_seg1->collinear_has_on(_intersection_point)
-            && _seg2->collinear_has_on(_intersection_point)) ? POINT : NO;
+        _result = POINT;
         break;
     case Line_2_Line_2_pair<R>::LINE:
         {
@@ -431,9 +429,8 @@ Segment_2_Segment_2_pair<R>::intersection_type() const
 {
     if (_known)
         return _result;
-    // The non const this pointer is used to cast away const.
     _known = true;
-    if (!do_overlap(_seg1->bbox(), _seg2->bbox())) {
+    if (!do_intersect(*_seg1, *_seg2)) {
         _result = NO;
         return _result;
     }
@@ -446,8 +443,7 @@ Segment_2_Segment_2_pair<R>::intersection_type() const
         break;
     case Line_2_Line_2_pair<R>::POINT:
         linepair.intersection(_intersection_point);
-        _result = (_seg1->collinear_has_on(_intersection_point)
-            && _seg2->collinear_has_on(_intersection_point)) ? POINT : NO;
+        _result = POINT;
         break;
     case Line_2_Line_2_pair<R>::LINE:
         {
