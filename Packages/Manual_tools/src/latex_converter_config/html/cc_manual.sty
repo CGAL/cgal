@@ -394,7 +394,6 @@
                    \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
                }
-\lciOptionalParameterAtEnd{\begin@ccRefDeclaration}{1}
 \newcommand{\begin@ccRefDeclaration@mo}{%
                    \def\ccRefCategory{#C1}%
                    \def\ccPureRefScope{#C2}%
@@ -676,7 +675,6 @@
 
 \newcommand{\ccHtmlIndexC}{%
     \newcommand{\lciLocalIndexCategory}{class}\lciParseCC{\lciIndexCParsed}}
-\lciOptionalParameterAtEnd{\ccHtmlIndexC}{1}
 \newcommand{\ccHtmlIndexC@o}{%
     \newcommand{\lciLocalIndexCategory}{#C1}\lciParseCC{\lciIndexCParsed}}
 \newcommand{\lciIndexCParsed}{\lciIndexCParsedX{\lciLocalIndexCategory}}

@@ -16,12 +16,12 @@
 
 #include <stdlib.h>
 #include <mstring.h>
-#include <database.h>
+#include <buffer.h>
 
 void init_internal_macros();
 
-void handleChapter(  const Text& T);
-void handleBiblio(  const Text& T);
+void handleChapter(  const Buffer_list& T);
+void handleBiblio(  const Buffer_list& T);
 
 void handleClassEnvironment();
 void handleClassEnd();
@@ -29,7 +29,7 @@ void handleClassEnd();
 void handleClassNameEnd( void);
 void handleClassFileEnd( void);
 
-void handleHtmlClassFile( const string& filename, const Text& T);
+void handleHtmlClassFile( const string& filename, const Buffer_list& T);
 
 string handleHtmlIndexC( const string& category, const string& item);
 string handleHtmlIndex( const string& category, const string& item);

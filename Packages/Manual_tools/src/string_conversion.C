@@ -527,8 +527,8 @@ const int max_tag_size = 20;
 char  font_tag_buffer[max_tag_size];
 
 const char* font_changing_tags( Font old_font, Font new_font) {
-    assert( old_font > unknown_font && old_font < end_font_array);
-    assert( new_font > unknown_font && new_font < end_font_array);
+    CC_Assert( old_font > unknown_font && old_font < end_font_array);
+    CC_Assert( new_font > unknown_font && new_font < end_font_array);
     if ( old_font == new_font)
 	*font_tag_buffer = '\0';
     else {

@@ -45,7 +45,7 @@ int yyerror( char *s);
 
 /* Datastructures for the parser */
 /* ============================= */
-#include <database.h>
+#include <buffer.h>
 #include <config.h>
 %}
 
@@ -53,11 +53,10 @@ int yyerror( char *s);
     struct {
         char*      text;    /* a (meaningless) chunk of zero terminated text */
         int        len;     /* its length */
-    }          string;
-    char       character;   /* a (meaningless) character */
-    Buffer*    pBuffer;     /* Buffer for collected strings and characters */
-    TextToken* pTextToken;
-    Text*      pText;
+    }            string;
+    char         character;   /* a (meaningless) character */
+    Buffer*      pBuffer;     /* Buffer for collected strings and characters */
+    Buffer_list* pText;
 }
 
 /* Elementary data types */
@@ -112,19 +111,25 @@ int yyerror( char *s);
 /* -------------------------- */
 %token             LALRRESTRICTION
 
-%type  <pBuffer>    string
-%type  <pBuffer>    declaration      classname          template_params
-%type  <pBuffer>    cc_stmts         cc_stmt            cc_stmts_skip_space
-%type  <pText>      comment_group    comment_sequence  
-%type  <pText>      nested_token_sequence               nested_token
-%type  <pText>      compound_comment                    full_comment_sequence  
-%type  <pText>      non_empty_comment_sequence
+%type  <pBuffer>   string
+%type  <pBuffer>   whitespace
+%type  <pBuffer>   cc_stmts
+%type  <pBuffer>   cc_stmt
+%type  <pBuffer>   cc_stmts_skip_space
+%type  <pBuffer>   comment_token
+%type  <pBuffer>   declaration
+%type  <pBuffer>   classname
+%type  <pBuffer>   template_params
 
-%type  <pText>      whitespaces      optional_whitespaces
-
-%type  <pTextToken> comment_token    non_empty_token    whitespace
-
-
+%type  <pText>     whitespaces
+%type  <pText>     optional_whitespaces
+%type  <pText>     comment_group
+%type  <pText>     comment_sequence
+%type  <pText>     compound_comment
+%type  <pText>     full_comment_sequence  
+%type  <pText>     non_empty_comment_sequence
+%type  <pText>     nested_token_sequence
+%type  <pText>     nested_token
 
 %%
 /* Grammar: Top Level */
@@ -138,7 +143,7 @@ stmt:             string              { delete $1;}
                 | SPACE               {}
                 | NEWLINE
 		| BEGINCLASS
-		  classname           {   handleClass( $2->string());
+		  classname           {   handleClass( $2->begin());
 		                          delete $2;}
 		    decl_sequence 
 		  ENDCLASS
@@ -148,8 +153,8 @@ stmt:             string              { delete $1;}
                                           creationvariable = NULL;
 				      }
 		| BEGINREFCLASS
-		  classname           {   handleClass( $2->string());
-		                          handleRefPage( $2->string());
+		  classname           {   handleClass( $2->begin());
+		                          handleRefPage( $2->begin());
 		                          delete $2;}
 		  decl_sequence
 		  ENDREFCLASS
@@ -161,9 +166,9 @@ stmt:             string              { delete $1;}
 				      }
 		| BEGINREFCLASS
 		  '[' nested_token_sequence ']'
-		  classname           {   handleClass( $5->string());
-		                          handleRefPage( $5->string());
-		                          delete $3;
+		  classname           {   handleClass( $5->begin());
+		                          handleRefPage( $5->begin());
+		                          delete_list( $3);
 		                          delete $5;}
 		  decl_sequence
 		  ENDREFCLASS
@@ -174,21 +179,21 @@ stmt:             string              { delete $1;}
                                           creationvariable = NULL;
 				      }
 		| BEGINREFPAGE
-		  classname           {   handleRefPage( $2->string());
+		  classname           {   handleRefPage( $2->begin());
 		                          delete $2; }
 		| BEGINREFPAGE
 		  '[' nested_token_sequence ']'
-		  classname           {   handleRefPage( $5->string());
-		                          delete $3;
+		  classname           {   handleRefPage( $5->begin());
+		                          delete_list( $3);
 		                          delete $5; }
                 | ENDREFPAGE          {   handleRefPageEnd(); }
 		| CREATIONVARIABLE    {}
 		| CCSTYLE  '{'  nested_token_sequence '}'  { set_INITIAL = 1; 
-                                                             delete $3;
+                                                             delete_list($3);
                                                            }
-                | HEADING '{' comment_sequence '}'         { delete $3; }
-                | INCLUDE '{' comment_sequence '}'         { delete $3; }
-                | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
+                | HEADING '{' comment_sequence '}'         { delete_list($3); }
+                | INCLUDE '{' comment_sequence '}'         { delete_list($3); }
+                | COMMENTHEADING '{' comment_sequence '}'  { delete_list($3); }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
                 | global_tagged_declarator
@@ -221,11 +226,11 @@ reduced_statement:
                 | NEWLINE
 		| CREATIONVARIABLE    {}
 		| CCSTYLE  '{' nested_token_sequence '}'   { set_INITIAL = 1;
-                                                             delete $3;
+                                                             delete_list($3);
                                                            }
-                | HEADING '{' comment_sequence '}'         { delete $3; }
-                | INCLUDE '{' comment_sequence '}'         { delete $3; }
-                | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
+                | HEADING '{' comment_sequence '}'         { delete_list($3); }
+                | INCLUDE '{' comment_sequence '}'         { delete_list($3); }
+                | COMMENTHEADING '{' comment_sequence '}'  { delete_list($3); }
                 | gobble_parameters
                 | GOBBLEAFTERONEPARAM reduced_group reduced_group
 		| reduced_group
@@ -251,36 +256,31 @@ string:           STRING        {
 		                }
 ;
 
-non_empty_token:    string      { $$ = new TextToken( 
-					       $1->string(), $1->length());
-                                  delete $1;
-                                }
-;
-
-optional_whitespaces:  /* empty */    { $$ = new Text( managed); }
+optional_whitespaces:  /* empty */    { $$ = new Buffer_list(); }
                   | whitespaces       { $$ = $1; }
 ;
 
-whitespaces:        whitespace  { $$ = new Text( * $1, managed); }
+whitespaces:        whitespace  { $$ = new Buffer_list( 1, $1); }
                   | GOBBLEAFTERONEPARAM comment_group comment_group {
                                   $$ = $2;
-				  delete $3;
+				  delete_list( $3);
 		                }
                   | whitespaces whitespace {
                                   $$ = $1;
-                                  $$->append( * $2);
+                                  $$->push_back( $2);
                                 }
-                  | whitespaces GOBBLEAFTERONEPARAM comment_group comment_group {
+                  | whitespaces GOBBLEAFTERONEPARAM comment_group 
+                    comment_group {
                                   $$ = $3;
-				  delete $1;
-				  delete $4;
+				  delete_list( $1);
+				  delete_list( $4);
 		                }
 ;
 
-whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
-                  | NEWLINE     { $$ = new TextToken( "\n", 1, true); }
+whitespace:         SPACE       { $$ = new Buffer( $1.text, $1.len); }
+                  | NEWLINE     { $$ = new Buffer( "\n", 1); }
 		  | gobble_parameters
-                                { $$ = new TextToken( " ", 1, true); }
+                                { $$ = new Buffer( " ", 1); }
 ;
 
 
@@ -289,39 +289,39 @@ whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
 /* =============================== */
 decl_sequence:    comment_sequence  {
 				  handleMainComment( * $1);
-				  delete $1;
+				  delete_list($1);
 		                }
 		| decl_sequence
 		  tagged_declarator 
 		  comment_sequence {
 				  handleMainComment( * $3);
-				  delete $3;
+				  delete_list($3);
 		                }
 ;
 
 tagged_declarator:
 		  global_tagged_declarator
 		| CONSTRUCTOR   declaration   comment_group {
-		                  handleFunctionDeclaration( $2->string());
+		                  handleFunctionDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
 		| METHOD        declaration   comment_group {
-		                  handleMethodDeclaration( $2->string());
+		                  handleMethodDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
 ;
 
 global_tagged_declarator:
 		  error               {}
                 | FUNCTION      declaration   comment_group {
-		                  handleFunctionDeclaration( $2->string());
+		                  handleFunctionDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
 		| FUNCTIONTEMPLATE 
                       template_params
@@ -329,46 +329,46 @@ global_tagged_declarator:
 		      declaration 
 		      comment_group {
 		                  handleFunctionTemplateDeclaration(
-					  $2->string(),
-					  $4->string());
+					  $2->begin(),
+					  $4->begin());
 				  delete $2;
-				  delete $3;
+				  delete_list( $3);
 				  delete $4;
 				  handleComment( * $5);
-				  delete $5;
+				  delete_list( $5);
 		                }
  		| VARIABLE      declaration   comment_group {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
  		| TYPEDEF       declaration   comment_group {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
  		| NESTEDTYPE    declaration   comment_group {
-		                  handleNestedType( $2->string());
+		                  handleNestedType( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
  		| ENUM          declaration   comment_group {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
  		| STRUCT        declaration   comment_group {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 				  handleComment( * $3);
-				  delete $3;
+				  delete_list( $3);
 		                }
 		| GLOBALFUNCTION      declaration   {
-		                  handleFunctionDeclaration( $2->string());
+		                  handleFunctionDeclaration( $2->begin());
 				  delete $2;
 		                }
 		| GLOBALFUNCTIONTEMPLATE 
@@ -376,30 +376,30 @@ global_tagged_declarator:
 		      optional_whitespaces 
 		      declaration  {
 		                  handleFunctionTemplateDeclaration( 
-					  $2->string(),
-					  $4->string());
+					  $2->begin(),
+					  $4->begin());
 				  delete $2;
-				  delete $3;
+				  delete_list( $3);
 				  delete $4;
 		                }
  		| GLOBALVARIABLE      declaration   {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 		                }
  		| GLOBALTYPEDEF       declaration   {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 		                }
  		| GLOBALENUM          declaration   {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 		                }
  		| GLOBALSTRUCT        declaration   {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 		                }
  		| DECLARATION   declaration {
-		                  handleDeclaration( $2->string());
+		                  handleDeclaration( $2->begin());
 				  delete $2;
 		                }
 ;
@@ -408,55 +408,61 @@ global_tagged_declarator:
 /* ===================================== */
 comment_group:      optional_whitespaces '{' comment_sequence '}'  { 
                                   $$ = $3; 
-				  delete $1;
+				  delete_list( $1);
                                 }
                   | optional_whitespaces BLOCKINTRO comment_sequence '}'  { 
                                   $$ = $3; 
-				  delete $1;
+				  delete_list( $1);
                                 }
 ;
 
-comment_sequence:   optional_whitespaces { $$ = new Text(managed); 
-                                           delete $1;
+comment_sequence:   optional_whitespaces { $$ = new Buffer_list(); 
+                                           delete_list( $1);
                                          }
                   | optional_whitespaces
                     non_empty_comment_sequence
                     optional_whitespaces { $$ = $2; 
-	                                   delete $1;
-	                                   delete $3;
+	                                   delete_list( $1);
+	                                   delete_list( $3);
                                          }
 ;
 
-full_comment_sequence:   /* empty */  { $$ = new Text(managed); }
+full_comment_sequence:   /* empty */  { $$ = new Buffer_list(); }
                   | whitespaces       { $$ = $1; }
                   | optional_whitespaces
                     non_empty_comment_sequence
                     optional_whitespaces  { 
 		                  $$ = $1;
-				  $$->append( * $2);
-				  $$->append( * $3);
+				  $$->insert($$->end(), $2->begin(),$2->end());
+				  $$->insert($$->end(), $3->begin(),$3->end());
+				  delete $2;
+				  delete $3;
 		                }
 ;
 
 non_empty_comment_sequence:
-		    comment_token     { $$ = new Text( * $1, managed); }
+		    comment_token     { $$ = new Buffer_list( 1, $1); }
                   | compound_comment  { $$ = $1; }
-                  | non_empty_comment_sequence optional_whitespaces comment_token {
+                  | non_empty_comment_sequence optional_whitespaces 
+                    comment_token {
 		                  $$ = $1;
-				  $$->append( * $2);
-				  $$->append( * $3);
+				  $$->insert($$->end(), $2->begin(),$2->end());
+				  delete $2;
+				  $$->push_back( $3);
 		                }
                   | non_empty_comment_sequence 
 		    optional_whitespaces
 		    compound_comment {
 		                  $$ = $1;
-				  $$->append( * $2);
-				  $$->append( * $3);
+				  $$->insert($$->end(), $2->begin(),$2->end());
+				  delete $2;
+				  $$->insert($$->end(), $3->begin(),$3->end());
+				  delete $3;
 		                }
 ;
 
-comment_token:      non_empty_token   { $$ = $1; }
-                  | comment_token non_empty_token {
+comment_token:      string   { $$ = $1; }
+                  | comment_token string {
 		                  $$ = $1;
 				  $$->add( * $2);
 				  delete $2;
@@ -465,8 +471,8 @@ comment_token:      non_empty_token   { $$ = $1; }
 
 compound_comment:   '{' full_comment_sequence '}' {
 				  $$ = $2;
-		                  $$->cons(   *new TextToken( "{", 1));
-		                  $$->append( *new TextToken( "}", 1));
+		                  $$->push_front( new Buffer( "{", 1));
+		                  $$->push_back(  new Buffer( "}", 1));
 		                }
                   | BLOCKINTRO full_comment_sequence '}' {
 				  $$ = $2;
@@ -474,140 +480,120 @@ compound_comment:   '{' full_comment_sequence '}' {
                   | CCSTYLE '{' nested_token_sequence '}'  { 
 				  $$ = $3;
 		                  set_INITIAL = 1;
-                                  if ( $$->head().isSpace)  // should not
-		                      $$->cons(   *new TextToken( "`", 1));
+                                  if ( $$->front()->is_space())  // should not
+		                      $$->push_front( new Buffer( "`", 1));
                                   else
-		                      $$->head().prepend( "`");
-                                  InListFIter< TextToken> ix( * $$);
-				  ForAll( ix) {
-				      if ( ix.isLast())
-					  if ( ix->isSpace)
-					      $$->append( *new TextToken(
-                                                                  "'", 1));
-					  else
-					      ix->add( "'");
-				  }
-                                }
+		                      $$->front()->prepend( "`");
+                                  if ( $$->back()->is_space())
+		                      $$->push_back( new Buffer( "'", 1));
+                                  else
+		                      $$->back()->add( "'");
+		  }
                   | CCSECTION '{' comment_sequence '}'  {
 				  $$ = $3;
-		                  $$->cons(   *new TextToken( " ", 1, true));
-		                  $$->cons(   *new TextToken( "SECTION:"));
-		                  $$->cons(   *new TextToken( "\n", 1, true));
-		                  $$->cons(   *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( 
+		                  $$->push_front( new Buffer( " ", 1));
+		                  $$->push_front( new Buffer( "SECTION:"));
+		                  $$->push_front( new Buffer( "\n", 1));
+		                  $$->push_front( new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( 
 				      "===================================="
 				      "===================================="));
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
 		                }
                   | CCSUBSECTION '{' comment_sequence '}'  {
 				  $$ = $3;
-		                  $$->cons(   *new TextToken( " ", 1, true));
-		                  $$->cons(   *new TextToken( "Subsection:"));
-		                  $$->cons(   *new TextToken( "\n", 1, true));
-		                  $$->cons(   *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( 
+		                  $$->push_front( new Buffer( " ", 1));
+		                  $$->push_front( new Buffer( "Subsection:"));
+		                  $$->push_front( new Buffer( "\n", 1));
+		                  $$->push_front( new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( 
 				      "------------------------------------"
 				      "------------------------------------"));
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
 		                }
                   | HEADING '{' comment_sequence '}'  {
 				  $$ = $3;
 		                }
                   | INCLUDE '{' comment_sequence '}'  {
 				  $$ = $3;
-		                  $$->cons(   *new TextToken( "<"));
-		                  $$->cons(   *new TextToken( " ", 1, true));
-		                  $$->cons(   *new TextToken( "#include"));
-		                  $$->append( *new TextToken(  ">"));
+		                  $$->push_front( new Buffer( "<"));
+		                  $$->push_front( new Buffer( " ", 1));
+		                  $$->push_front( new Buffer( "#include"));
+		                  $$->push_back(  new Buffer(  ">"));
 		                }
                   | COMMENTHEADING '{' comment_sequence '}'  {
 				  $$ = $3;
 		                }
 		  | CREATIONVARIABLE   {
-                                  $$ = new Text( managed);
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken(
+                                  $$ = new Buffer_list();
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer(
 					"New creation variable is:"));
-		                  $$->append( *new TextToken( " ", 1, true));
-                                  TextToken* t = new TextToken($1.text,$1.len);
+		                  $$->push_back(  new Buffer( " ", 1));
+                                  Buffer* t = new Buffer( $1.text, $1.len);
 		                  t->prepend( "`");
 		                  t->add(     "'");
-		                  $$->append( *t);
-		                  $$->append( *new TextToken( "\n", 1, true));
-		                  $$->append( *new TextToken( "\n", 1, true));
+		                  $$->push_back(  t);
+		                  $$->push_back(  new Buffer( "\n", 1));
+		                  $$->push_back(  new Buffer( "\n", 1));
 		                }
 ;
 
 /* Parsing of a C++ expression/statement with nested expressions */
 /* ============================================================= */
 nested_token_sequence:
-		    /* empty */ {
-		                  $$ = new Text(managed);
-		                }
+		    /* empty */ { $$ = new Buffer_list(); }
 		  | nested_token_sequence nested_token
 		                {
-				  $1->append( * $2);
+				  $1->insert($1->end(), $2->begin(),$2->end());
+				  delete $2;
 				  $$ = $1;
 				}
 ;
 
-nested_token:       string      {
-                                  $$ = new Text(*new TextToken( 
-						    $1->string(),
-						    $1->length()),
-						managed);
-				  delete $1;
-                                }
+nested_token:       string      { $$ = new Buffer_list( 1, $1); }
                   | SPACE       {
-                                  $$ = new Text(*new TextToken( 
-						    $1.text,
-						    $1.len,
-						    true),
-						managed);
+                                  $$ = new Buffer_list( 1, 
+					     new Buffer( $1.text, $1.len));
 		  }
                   | NEWLINE     {
-                                  $$ = new Text(*new TextToken( "\n", 1, true),
-						managed);
+                                  $$ = new Buffer_list( 1, 
+							new Buffer( "\n", 1));
                                 }
 		  | '{' nested_token_sequence '}' {
-		                  $2->cons(   *new TextToken( "{", 1));
-		                  $2->append( *new TextToken( "}", 1));
+		                  $2->push_front( new Buffer( "{", 1));
+		                  $2->push_back(  new Buffer( "}", 1));
 				  $$ = $2;
 		                }
 		  | BLOCKINTRO nested_token_sequence '}' {
 				  $$ = $2;
 		                }
 		  | '[' nested_token_sequence ']' {
-		                  $2->cons(   *new TextToken( "[", 1));
-		                  $2->append( *new TextToken( "]", 1));
+		                  $2->push_front( new Buffer( "[", 1));
+		                  $2->push_back(  new Buffer( "]", 1));
 				  $$ = $2;
 		                }
 		  | '(' nested_token_sequence ')' {
-		                  $2->cons(   *new TextToken( "(", 1));
-		                  $2->append( *new TextToken( ")", 1));
+		                  $2->push_front( new Buffer( "(", 1));
+		                  $2->push_back(  new Buffer( ")", 1));
 				  $$ = $2;
 		                }
                   | CCSTYLE '{' nested_token_sequence '}'  { 
 				  $$ = $3;
 		                  set_INITIAL = 1;
-                                  if ( $$->head().isSpace)  // should not
-		                      $$->cons(   *new TextToken( "`", 1));
+                                  if ( $$->front()->is_space())  // should not
+		                      $$->push_front( new Buffer( "`", 1));
                                   else
-		                      $$->head().prepend( "`");
-                                  InListFIter< TextToken> ix( * $$);
-				  ForAll( ix) {
-				      if ( ix.isLast())
-					  if ( ix->isSpace)
-					      $$->append( *new TextToken(
-                                                                  "'", 1));
-					  else
-					      ix->add( "'");
-				  }
+		                      $$->front()->prepend( "`");
+                                  if ( $$->back()->is_space())
+		                      $$->push_back( new Buffer( "'", 1));
+                                  else
+		                      $$->back()->add( "'");
                                 }
 ;
 
@@ -653,7 +639,7 @@ cc_stmts:         /* empty */
                                 { $$ = new Buffer;}
 		  | cc_stmts cc_stmt {
 		                  $$ = $1;
-				  $$->add( $2);
+				  $$->add( * $2);
 				  delete $2;
 		                }
 ;
@@ -680,7 +666,7 @@ cc_stmts_skip_space:
                                 { $$ = new Buffer;}
 		| string
 		  cc_stmts      { $$ = $1;
-				  $$->add( $2);
+				  $$->add( * $2);
 				  delete $2;
 		                }
                 | SPACE         cc_stmts { $$ = $2;}
@@ -692,7 +678,7 @@ cc_stmts_skip_space:
 		                  $$ = $3;
 				  $$->prepend( '{');
 				  $$->add( '}');
-				  $$->add( $6);
+				  $$->add( * $6);
 				  delete $6;
 		                }
 ;

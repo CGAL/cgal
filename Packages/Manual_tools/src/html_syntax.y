@@ -28,7 +28,7 @@
 #include <cpp_formatting.h>
 #include <internal_macros.h>
 
-#include <database.h>
+#include <buffer.h>
 #include <html_config.h>
 
 
@@ -39,11 +39,11 @@ int yyerror( char *s);
 %}
 
 %union {
-    const char* text;        /* a chunk of zero terminated text */
-    char        character;   /* a character */
-    int         number;      /* an integer  */
-    TextToken*  pTextToken;
-    Text*       pText;
+    const char*   text;        /* a chunk of zero terminated text */
+    char          character;   /* a character */
+    int           number;      /* an integer  */
+    Buffer*       pBuffer;
+    Buffer_list*  pText;
 }
 
 /* Elementary data types */
@@ -81,8 +81,10 @@ int yyerror( char *s);
 
 /* Type declarations for production rules       */
 /* -------------------------------------------- */
-%type  <pTextToken> string_token 
-%type  <pText>      comment_group  comment_sequence  comment_token
+%type  <pBuffer>   string_token 
+%type  <pText>     comment_group
+%type  <pText>     comment_sequence
+%type  <pText>     comment_token
 
 
 
@@ -98,13 +100,13 @@ stmt:             error               {}
                 | direct_string       {}
                 | CHAPTER '{' comment_sequence '}'  {
 		                          handleChapter( * $3); 
-                                          delete $3;
+                                          delete_list( $3);
                                       }
 		| BEGINCLASS          {   handleClassEnvironment(); }
 		| ENDCLASS            {   handleClassEnd(); }
 		| HTMLBEGINCLASSFILE comment_group 
 		                      {  handleHtmlClassFile( cc_filename,*$2);
-		                          delete $2;
+		                          delete_list( $2);
                                       }
 		| '{' input '}'
 ;
@@ -174,27 +176,27 @@ direct_string:    STRING        { handleString( $1); }
 ;
 
 
-string_token:     STRING        { $$ = new TextToken( $1); }
-                | CHAR          { $$ = new TextToken(); $$->add( $1); }
+string_token:     STRING        { $$ = new Buffer( $1); }
+                | CHAR          { $$ = new Buffer( $1); }
                 | ASCIITOHTML PARAMETER  {
 		                  char* s = convert_ascii_to_html($2);
-				  $$ = new TextToken( s);
+				  $$ = new Buffer( s);
 				  delete[] $2;
 				  delete[] s;
 				  set_old_state = 1;
 				}
                 | RAWOUTPUT PARAMETER  {
-				  $$ = new TextToken( $2);
+				  $$ = new Buffer( $2);
 				  delete[] $2;
 				  set_old_state = 1;
 				}
                 | RAWOUTPUTN   {
-				  $$ = new TextToken( $1);
+				  $$ = new Buffer( $1);
 				  delete[] $1;
 				  set_old_state = 1;
 				}
                 | DEFWITHARGS  PARAMETER {
-				  $$ = new TextToken();
+				  $$ = new Buffer();
 				  if ( number_of_args < 1 ||
 				       number_of_args> 9)
 				      printErrorMessage( NParamRangeError);
@@ -207,7 +209,7 @@ string_token:     STRING        { $$ = new TextToken( $1); }
 				  set_old_state = 1;
 				}
                 | GDEFWITHARGS  PARAMETER {
-				  $$ = new TextToken();
+				  $$ = new Buffer();
 				  if ( number_of_args < 1 ||
 				       number_of_args > 9)
 				      printErrorMessage( NParamRangeError);
@@ -222,7 +224,7 @@ string_token:     STRING        { $$ = new TextToken( $1); }
 				  set_old_state = 1;
 				}
                 | DEFWITHUNKNOWNARGS  PARAMETER {
-				  $$ = new TextToken();
+				  $$ = new Buffer();
 				  if ( ! quiet_switch) {
 				      cerr << endl 
 					   << "Unknown macro definition: " 
@@ -243,15 +245,15 @@ string_token:     STRING        { $$ = new TextToken( $1); }
 comment_group:      '{' comment_sequence '}'  { $$ = $2; }
 ;
 
-comment_sequence:        /* empty */  { $$ = new Text( managed); }
+comment_sequence:        /* empty */  { $$ = new Buffer_list(); }
                        | comment_sequence comment_token {
 		                  $$ = $1;
-				  $$->append( * $2);
+				  $$->insert($$->end(), $2->begin(),$2->end());
 				  delete $2;
 		                }
 ;
 
-comment_token:      string_token  { $$ = new Text( * $1, managed); }
+comment_token:      string_token  { $$ = new Buffer_list( 1, $1); }
                   | comment_group { $$ = $1; }
 ;
 

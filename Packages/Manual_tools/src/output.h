@@ -16,6 +16,7 @@
 
 #include <iostream.h>
 #include <mstring.h>
+#include <basic.h>
 
 #define OUT(x) if ( m_out) *m_out << x; return *this
 
@@ -31,7 +32,7 @@ public:
     Output_file( ostream* out, const string& name)
 	: m_out(out), m_name(name) {}
     bool           is_valid() const   { return m_out != 0;}
-    ostream&       stream() const     { assert( m_out != 0); return *m_out;}
+    ostream&       stream() const     { CC_Assert( m_out != 0); return *m_out;}
     ostream*       stream_ptr() const { return m_out;}
     const string&  name() const       { return m_name;}
     Output_file&  operator<<( char c)                   { OUT(c);}

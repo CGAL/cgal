@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <database.h>
+#include <buffer.h>
 #include <html_config.h>
 #include <string_conversion.h>
 #include <internal_macros.h>

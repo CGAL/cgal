@@ -72,36 +72,36 @@ inline double estimate_html_size( const string& s) {
 
 void three_cols_html_begin( ostream& out, bool big_col1) {
     current_font = it_font;
-    out << indent << indent << indNewline
+    out << indent << indent << ind_newline
 	<< "<!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
-	<< table_width << ">" << indNewline 
+	<< table_width << ">" << ind_newline 
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	<< table_first_col + (big_col1 ? (table_second_col+table_third_col) :0)
 	<< "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
-	<< indNewline << "<I><NOBR>" << outdent << indNewline;
+	<< ind_newline << "<I><NOBR>" << outdent << ind_newline;
 }
 
 void three_cols_html_premature_end( ostream& out) {
-    out << indent << indNewline	<< store_remember_font() << "</I></NOBR>" 
-	<< indNewline << "</TD></TR>" << indNewline 
-	<< "</TABLE><!3>" << outdent << outdent << indNewline;
+    out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
+	<< ind_newline << "</TD></TR>" << ind_newline 
+	<< "</TABLE><!3>" << outdent << outdent << ind_newline;
 }
 
 void three_cols_html_second( ostream& out, bool big_col1, bool big_col2) {
-    out << indent << indNewline	<< store_remember_font() << "</I></NOBR>" 
-	<< indNewline << "</TD>";
+    out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
+	<< ind_newline << "</TD>";
     if ( big_col1)
         out << "</TR><TR><TD WIDTH=" << table_first_col << "% NOWRAP></TD>";
     out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	<< table_second_col + ( big_col2 ? table_third_col : 0)
 	<< "% NOWRAP" << ( big_col2 ? " COLSPAN=2>" : ">")
-	<< indNewline << "<I><NOBR>" << get_remember_font() << outdent 
-	<< indNewline;
+	<< ind_newline << "<I><NOBR>" << get_remember_font() << outdent 
+	<< ind_newline;
 }
 
 void three_cols_html_third( ostream& out, bool big_col2, bool empty_col3) {
-    out << indent << indNewline << store_remember_font() << "</I></NOBR>" 
-	<< indNewline;
+    out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
+	<< ind_newline;
     if ( ! big_col2)
 	out << "</TD>";
     if ( ! empty_col3) {
@@ -111,15 +111,15 @@ void three_cols_html_third( ostream& out, bool big_col2, bool empty_col3) {
 		<< "% NOWRAP></TD>";
 	out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH=" << table_third_col << "%>";
     }
-    out << outdent << indNewline;
+    out << outdent << ind_newline;
 }
 
 void three_cols_html_end( ostream& out, bool empty_col3) {
-    out << indent << indNewline;
+    out << indent << ind_newline;
     if ( ! empty_col3)
         out << "</TD>";
-    out << "</TR>" << indNewline 
-	<< "</TABLE><!3>" << outdent << outdent << indNewline;
+    out << "</TR>" << ind_newline 
+	<< "</TABLE><!3>" << outdent << outdent << ind_newline;
 }
 
 void three_cols_html_new_closing( ostream& out) {
@@ -128,40 +128,40 @@ void three_cols_html_new_closing( ostream& out) {
 
 void two_cols_html_begin( ostream& out) {
     current_font = it_font;
-    out << indent << indent << indNewline
+    out << indent << indent << ind_newline
 	<< "<!2><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
-	<< table_width << ">" << indNewline 
+	<< table_width << ">" << ind_newline 
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	<< table_2c_first_col + table_2c_second_col << "% NOWRAP COLSPAN=2>"
-	<< indNewline << "<I><NOBR>" << outdent << indNewline;
+	<< ind_newline << "<I><NOBR>" << outdent << ind_newline;
 }
 
 void two_cols_html_premature_end( ostream& out) {
-    out << indent << indNewline	<< store_remember_font() <<"</I></NOBR>" 
-	<< indNewline << "</TD></TR>" << indNewline 
-	<< "</TABLE><!2>" << outdent << outdent << indNewline;
+    out << indent << ind_newline << store_remember_font() <<"</I></NOBR>" 
+	<< ind_newline << "</TD></TR>" << ind_newline 
+	<< "</TABLE><!2>" << outdent << outdent << ind_newline;
 }
 
 void two_cols_html_second( ostream& out, bool empty_col2) {
-    out << indent << indNewline << store_remember_font() << "</I></NOBR>" 
-	<< indNewline << "</TD></TR>";
+    out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
+	<< ind_newline << "</TD></TR>";
     if ( ! empty_col2)
         out << "<TR><TD WIDTH=" << table_2c_first_col 
 	    << "% NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	    << table_2c_second_col << "%>";
-    out << outdent << indNewline;
+    out << outdent << ind_newline;
 }
 
 void two_cols_html_new_closing( ostream& out) {
-    out << indent << indNewline << store_remember_font() << "</I></NOBR>" 
-	<< indNewline << "</TD></TR>" << outdent << outdent;
+    out << indent << ind_newline << store_remember_font() << "</I></NOBR>" 
+	<< ind_newline << "</TD></TR>" << outdent << outdent;
 }
 
 void two_cols_html_end( ostream& out, bool empty_col2) {
-    out << indent << indNewline;
+    out << indent << ind_newline;
     if ( ! empty_col2)    
-        out << "</TD></TR>" << indNewline;
-    out	<< "</TABLE><!2>" << outdent << outdent << indNewline;
+        out << "</TD></TR>" << ind_newline;
+    out	<< "</TABLE><!2>" << outdent << outdent << ind_newline;
 }
 
 
@@ -1000,7 +1000,7 @@ void format_function( bool method, const char* signature,
 		     ! macroIsTrue( "\\ccAlternateThreeColumn"))
 		    *current_ostream << " COLSPAN=2";
 		*current_ostream << "><I>" << get_remember_font()
-				 << indNewline;
+				 << ind_newline;
 	    }
 	    if ( method) {
 		if ( ! definedMacro( "\\ccPureVar")) {
@@ -1026,7 +1026,7 @@ void format_function( bool method, const char* signature,
 					<< " NOWRAP></TD>";
 		    *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
 		      "NOWRAP><I>";
-		    *current_ostream << get_remember_font() << indNewline;
+		    *current_ostream << get_remember_font() << ind_newline;
 		}
 		char* p = parameter_list;
 		while ( n--) {
@@ -1035,13 +1035,13 @@ void format_function( bool method, const char* signature,
 		    if ( n) {
 			*current_ostream << ", ";
 			if ( exp_size > dd_width)
-			    *current_ostream << "<BR>" << indNewline;
+			    *current_ostream << "<BR>" << ind_newline;
 		    }
 		}
 		*current_ostream << ")";
 		if ( exp_size > dd_width) {
 		    *current_ostream << store_remember_font();
-		    *current_ostream << "</I></TD></TR></TABLE>" << indNewline;
+		    *current_ostream << "</I></TD></TR></TABLE>" <<ind_newline;
 		}
 	    } else
 		*current_ostream << " ()";
@@ -1332,7 +1332,7 @@ void format_struct( const char* signature) {
 	"<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
       //if ( tag_long_param_layout)
       //*current_ostream << " COLSPAN=2";
-      *current_ostream << "><I>" << get_remember_font() << indNewline;
+      *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
         print_ascii_to_html_spc( *current_ostream, return_value);
@@ -1346,7 +1346,7 @@ void format_struct( const char* signature) {
 	if ( exp_size > table_width) {
 	    *current_ostream << store_remember_font();
 	    *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
-	    *current_ostream << get_remember_font() << indNewline;
+	    *current_ostream << get_remember_font() << ind_newline;
 	}
 	char* p = parameter_list;
 	while ( n--) {
@@ -1358,13 +1358,13 @@ void format_struct( const char* signature) {
 	    if ( n) {
 	        *current_ostream << ", ";
 		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << indNewline;
+		    *current_ostream << "<BR>" << ind_newline;
 	    }
 	}
         *current_ostream << "};";
 	if ( exp_size > table_width) {
 	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD></TR></TABLE>" << indNewline;
+	    *current_ostream << "</TD></TR></TABLE>" << ind_newline;
 	}
     } else
         *current_ostream << ';';
@@ -1504,7 +1504,7 @@ void format_enum( const char* signature) {
 	"<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
       //if ( tag_long_param_layout)
       //*current_ostream << " COLSPAN=2";
-      *current_ostream << "><I>" << get_remember_font() << indNewline;
+      *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     if ( return_value) {
         print_ascii_to_html_spc( *current_ostream, return_value);
@@ -1518,7 +1518,7 @@ void format_enum( const char* signature) {
 	if ( exp_size > table_width) {
 	    *current_ostream << store_remember_font();
 	    *current_ostream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
-	    *current_ostream << get_remember_font() << indNewline;
+	    *current_ostream << get_remember_font() << ind_newline;
 	}
 	char* p = parameter_list;
 	while ( n--) {
@@ -1580,13 +1580,13 @@ void format_enum( const char* signature) {
 	    if ( n) {
 	        *current_ostream << ", ";
 		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << indNewline;
+		    *current_ostream << "<BR>" << ind_newline;
 	    }
 	}
         *current_ostream << "};";
 	if ( exp_size > table_width) {
 	    *current_ostream << store_remember_font();
-	    *current_ostream << "</TD></TR></TABLE>" << indNewline;
+	    *current_ostream << "</TD></TR></TABLE>" << ind_newline;
 	}
     } else
         *current_ostream << ';';
@@ -1645,7 +1645,7 @@ void format_constructor( const char* signature) {
       if ( macroIsTrue( "\\ccLongParamLayout") ||
 	   ! macroIsTrue( "\\ccAlternateThreeColumn"))
 	  *current_ostream << " COLSPAN=2";
-      *current_ostream << "><I>" << get_remember_font() << indNewline;
+      *current_ostream << "><I>" << get_remember_font() << ind_newline;
     }
     // Of no use here!
     // if ( scope)
@@ -1666,7 +1666,7 @@ void format_constructor( const char* signature) {
 			      << " NOWRAP></TD>";
 	  *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
 	    "NOWRAP><I>";
-	  *current_ostream << get_remember_font() << indNewline;
+	  *current_ostream << get_remember_font() << ind_newline;
 	}
 	char* p = parameter_list;
 	while ( n--) {
@@ -1675,13 +1675,13 @@ void format_constructor( const char* signature) {
 	    if ( n) {
 	        *current_ostream << ", ";
 		if ( exp_size > table_width)
-		    *current_ostream << "<BR>" << indNewline;
+		    *current_ostream << "<BR>" << ind_newline;
 	    }
 	}
         *current_ostream << ");";
 	if ( exp_size > table_width) {
 	    *current_ostream << store_remember_font();
-	    *current_ostream << "</I></TD></TR></TABLE>" << indNewline;
+	    *current_ostream << "</I></TD></TR></TABLE>" << ind_newline;
 	}
     } else
         *current_ostream << ';';

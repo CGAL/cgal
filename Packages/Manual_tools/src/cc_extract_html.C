@@ -18,14 +18,13 @@
 #include <fstream.h>
 #include <strstream.h>
 #include <ctype.h>
-#include <assert.h>
 
 #include <mstring.h>
 
 #include <lex_include.h>
 #include <macro_dictionary.h>
 #include <internal_macros.h>
-#include <database.h>
+#include <buffer.h>
 #include <html_config.h>
 #include <html_syntax.h>
 #include <html_error.h>
@@ -121,44 +120,40 @@ void init_commandline_args() {
 
 
 
-int text_block_length( const Text& T) {
+int text_block_length( const Buffer_list& T) {
     int l = 0;
-    InListFIter< TextToken> words( (Text&)T);
-    ForAll( words) {
-        if ( words->isSpace)
+    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
+        if ( (*words)->is_space())
 	    ++l;
 	else
-	    l += (*words).len;
+	    l += (*words)->size() - 1;
     }
     return l;
 }
 
-char* text_block_to_string( const Text& T) {
-    char* string = new char[ text_block_length( T) + 1];
+char* text_block_to_string( const Buffer_list& T) {
+    char* string = new char[ text_block_length(T) + 1];
     string[0] = '\0';
-    InListFIter< TextToken> words( (Text&)T);
-    ForAll( words) {
-        if ( words->isSpace)
+    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
+        if ( (*words)->is_space())
 	    strcat( string, " ");
 	else
-	    strcat( string, (*words).string);
+	    strcat( string, (*words)->begin());
     }
     return string;
 }
 
-bool is_text_block_empty( const Text& T) {
-    InListFIter< TextToken> words( (Text&)T);
-    ForAll( words) {
-        if ( !words->isSpace)
+bool is_text_block_empty( const Buffer_list& T) {
+    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
+        if ( ! (*words)->is_space())
 	    return false;
     }
     return true;
 }
 
-void print_html_text_block( ostream &out, const Text& T) {
-    InListFIter< TextToken> words( (Text&)T);
-    ForAll( words) {
-	const char* s = words->string;
+void print_html_text_block( ostream &out, const Buffer_list& T) {
+    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
+	const char* s = (*words)->begin();
 	while ( *s) {
 	    if ( *s != SEPARATOR)
 		out << *s;
@@ -172,15 +167,15 @@ void print_html_text_block( ostream &out, const Text& T) {
 /* Taylored semantic functions used in syntax.y */
 /* ============================================ */
 
-void handleText( const Text& T) {
+void handleText( const Buffer_list& T) {
     if ( ! current_ostream)
 	return;
     print_html_text_block( *current_ostream, T);
 }
 
-void handleTextToken( const TextToken& TT) {
+void handleBuffer( const Buffer& TT) {
     if ( current_ostream)
-	*current_ostream << TT.string;
+	*current_ostream << TT.begin();
 }
 
 void handleString( const char* s) {

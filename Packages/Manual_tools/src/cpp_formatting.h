@@ -15,7 +15,6 @@
 #define CPP_FORMATTING_H 1
 
 #include <mstring.h>
-#include <database.h>
 
 extern string class_name;
 extern string template_class_name;

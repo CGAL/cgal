@@ -135,8 +135,6 @@
 %% newlines, except for tabbing and tabular environments.
 \newcommand{\\}{\lcRawHtml{<BR>}}
 \newcommand{\\*}{\lcRawHtml{<BR>}}
-\lciOptionalParameterAtEnd{\\}{1}
-\lciOptionalParameterAtEnd{\\*}{1}
 \newcommand{\\@o}{\lcRawHtml{<BR>}}
 \newcommand{\\*@o}{\lcRawHtml{<BR>}}
 
@@ -239,7 +237,6 @@
 \newcommand{\footnotemark}{%
     \addtocounter{footnote}{1}%
     \footnotemark[\thefootnote]}
-\lciOptionalParameterAtEnd{\footnotemark}{1}
 \newcommand{\footnotemark@o}{%
     \lcRawHtml{<A HREF="##Footnote_#XC1"><SUP>#XC1</SUP></A>}}
 \newcommand{\footnotetext}[1]{%
@@ -1020,7 +1017,6 @@
 \newcommand{\pagenumbering}[1]{}
 
 \newcommand{\twocolumn}{}
-\lciOptionalParameterAtEnd{\twocolumn}{1}
 \newcommand{\twocolumn@o}{#1}
 \newcommand{\onecolumn}{}
 
@@ -1057,7 +1053,6 @@
 \newenvironment{enumerate}{\lcRawHtml{<OL>}}{\lcRawHtml{</OL>}}
 \newenvironment{description}{\lcRawHtml{<DL>}}{\lcRawHtml{</DL>}}
 \newcommand{\item}{\lcRawHtml{<LI>}}
-\lciOptionalParameterAtEnd{\item}{1}
 \newcommand{\item@o}{\lcRawHtml{<DT><B>}#1\lcRawHtml{</B><DD>}}
 
 \newcommand{\lciLocalVerbatim}[1]{%
@@ -1143,14 +1138,12 @@
 
 \newcommand{\newtheorem}[2]{%
     \gdef{\begin@#C1}{{\bf #2}~~\lcRawHtml{<EM>}}%
-    \lciOptionalParameterAtEnd{\begin@#C1}{1}%
     \gdef{\begin@#C1@o}{{\bf #2 (##1)}~~\lcRawHtml{<EM>}}%
     \gdef{\end#C1}{\lcRawHtml{</EM>}}%
 }
 \newcommand{\newcounter}[1]{%
     \gdef{\the#C1}{0}%
     \gdef{\lciDependantCounter#C1}{}}
-\lciOptionalParameterAtEnd{\newcounter}{1}
 \newcommand{\newcounter@mo}{
     \gdef{\the#C1}{0}%
     \gdef{\lciDependantCounter#C1}{}%
@@ -1177,15 +1170,11 @@
 
 \newenvironment{figure}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
 \newenvironment{figure*}{\begin{figure}}{\end{figure}}
-\lciOptionalParameterAtEnd{\begin@figure}{1}
-\lciOptionalParameterAtEnd{\begin@figure*}{1}
 \newenvironment{figure@o}{\begin{figure}}{\end{figure}}
 \newenvironment{figure*@o}{\begin{figure}}{\end{figure}}
 
 \newenvironment{table}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
 \newenvironment{table*}{\begin{table}}{\end{table}}
-\lciOptionalParameterAtEnd{\begin@table}{1}
-\lciOptionalParameterAtEnd{\begin@table*}{1}
 \newenvironment{table@o}{\begin{table}}{\end{table}}
 \newenvironment{table*@o}{\begin{table}}{\end{table}}
 
@@ -1193,7 +1182,6 @@
 \newcommand{\caption@om}{\lciLabelTitle #1}
 
 \newcommand{\suppressfloats}{}
-\lciOptionalParameterAtEnd{\suppressfloats}{1}
 \newcommand{\suppressfloats@o}{}
 
 \newcommand{\marginpar}[1]{%
@@ -1229,8 +1217,6 @@
     \newcommand{\>}{\lciTabbingSkip}%
     \renewcommand{\\}{\lciTabbingNL}%
     \renewcommand{\\*}{\lciTabbingNL}%
-    \lciOptionalParameterAtEnd{\\}{1}%
-    \lciOptionalParameterAtEnd{\\*}{1}%
     \renewcommand{\\@o}{\lciTabbingNL}%
     \renewcommand{\\*@o}{\lciTabbingNL}%
 }
@@ -1270,8 +1256,6 @@
     \newcommand{&}{\lciTabularSkip}%
     \renewcommand{\\}{\lciTabularNL}%
     \renewcommand{\\*}{\lciTabularNL}%
-    \lciOptionalParameterAtEnd{\\}{1}%
-    \lciOptionalParameterAtEnd{\\*}{1}%
     \renewcommand{\\@o}{\lciTabularNL}%
     \renewcommand{\\*@o}{\lciTabularNL}%
     \lciTabularCountColumns #1\*%
@@ -1438,10 +1422,8 @@
 % ###########################################################################
 
 \newcommand{\linebreak}{}
-\lciOptionalParameterAtEnd{\linebreak}{1}
 \newcommand{\linebreak@o}{}
 \newcommand{\nolinebreak}{}
-\lciOptionalParameterAtEnd{\nolinebreak}{1}
 \newcommand{\nolinebreak@o}{}
 
 \newcommand{\newline}{\\}
@@ -1453,10 +1435,8 @@
 \newenvironment{sloppypar}{}{}
 
 \newcommand{\pagebreak}{}
-\lciOptionalParameterAtEnd{\pagebreak}{1}
 \newcommand{\pagebreak@o}{}
 \newcommand{\nopagebreak}{}
-\lciOptionalParameterAtEnd{\nopagebreak}{1}
 \newcommand{\nopagebreak@o}{}
 
 \newcommand{\samepage}{}

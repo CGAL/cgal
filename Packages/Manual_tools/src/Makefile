@@ -94,20 +94,22 @@ all: $(ALL)
 # modules
 # --------------------
 
-database.o : database.C database.h config.h
+basic.o : basic.h
 
-extract_lex.o : extract_syntax.tab.h database.h config.h
+buffer.o : buffer.C buffer.h config.h basic.h
 
-extract_syntax.o : extract_syntax.tab.h database.h config.h
+extract_lex.o : extract_syntax.tab.h buffer.h config.h basic.h
 
-cc_extract.o : database.h config.h
+extract_syntax.o : extract_syntax.tab.h buffer.h config.h basic.h
 
-cc_build_checker.o : database.h config.h
+cc_extract.o : buffer.h config.h basic.h
+
+cc_build_checker.o : buffer.h config.h basic.h
 
 # program
 # --------------------
-OBJ        = extract_lex.o extract_syntax.o database.o
-HEADER     = extract_syntax.tab.h database.h config.h
+OBJ        = extract_lex.o extract_syntax.o buffer.o basic.o
+HEADER     = extract_syntax.tab.h buffer.h config.h basic.h
 
 cc_extract : ${OBJ} ${HEADER} cc_extract.o
 	${CXX} ${CXXFLAGS} -o $@ $@.o ${OBJ} ${LDFLAGS}
@@ -132,7 +134,8 @@ cc_extract_html.o : cc_extract_html.C
 # --------------------
 OBJHTML    = html_lex.o          \
              html_syntax.o       \
-             database.o          \
+             basic.o             \
+             buffer.o            \
              macro_dictionary.o  \
              internal_macros.o   \
              html_error.o        \
@@ -202,7 +205,8 @@ install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 
 DEPENDSRC  = html_lex.C          \
              html_syntax.C       \
-             database.C          \
+             basic.C             \
+             buffer.C            \
              macro_dictionary.C  \
              internal_macros.C   \
              html_error.C        \
@@ -216,7 +220,7 @@ DEPENDSRC  = html_lex.C          \
 
 depend: ${DEPENDSRC}
 	# Works only with SunPro CC
-	CC -I. ${CPPFLAGS} ${CXXFLAGS} -xM1 ${DEPENDSRC} | grep -v "STL/SUN" | grep -v "ADT" | grep -v "opt/SUNWspro" | sort | uniq > Makefile_depend
+	CC -I. ${CPPFLAGS} ${CXXFLAGS} -xM1 ${DEPENDSRC} | grep -v "STL/SUN" | grep -v "opt/SUNWspro" | sort | uniq > Makefile_depend
 
 
 # =====================================================================

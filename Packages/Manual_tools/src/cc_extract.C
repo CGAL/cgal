@@ -17,8 +17,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stream.h>
-#include <database.h>
+#include <buffer.h>
 #include <config.h>
+
+// Max. width of the formatted output
+#define MaxTextWidth 74
 
 typedef char Switch;
  
@@ -31,7 +34,97 @@ Switch  noc_switch    = NO_SWITCH;
 Switch  nomc_switch   = NO_SWITCH;
 Switch  nosc_switch   = NO_SWITCH;
 
-
+// Format comments
+// ==========================
+int printComment( ostream &out, const Buffer_list& T, bool leadingLine) {
+    int  width = MaxTextWidth - indentation_number() - 3;
+    int  w     = width;
+    int  state = 0;     // 0 = start, 1 = after token, 2 = spaces
+                        // 3 = one newline (and spaces), 4 = newlines
+    for ( Buffer_const_iterator words = T.begin(); words != T.end(); ++words) {
+	bool is_space = (*words)->is_space();
+	int  len      = int((*words)->size()) - 1;
+	switch ( state) {
+	case 0:
+	    if ( ! is_space) {
+		if ( leadingLine)
+		    out << endl;
+		out << ind_newline << "// " << (*words)->begin();
+		w -= len;
+		state = 1;
+	    }
+	    break;
+	case 1:
+	    if ( ! is_space || len > 0) {
+		if ( ! is_space) {
+		    if ((len > w) && (w != width)) {
+			w = width;
+			out << ind_newline << "// ";
+		    }
+		    out << (*words)->begin();
+		    w -= len;
+		} else {
+		    if ( (*words)->begin()[0] == '\n')
+			state = 3;
+		    else
+			state = 2;
+		}
+	    }
+	    break;
+	case 2:
+	    if ( ! is_space || len > 0) {
+		if ( ! is_space) {
+		    if ((len >= w) && (w != width)) {
+			w = width;
+			out << ind_newline << "// ";
+		    } else {
+			out << ' ';
+			w--;
+		    }
+		    out << (*words)->begin();
+		    w -= len;
+		    state = 1;
+		} else {
+		    if ( (*words)->begin()[0] == '\n')
+			state = 3;
+		}
+	    }
+	    break;
+	case 3:
+	    if ( ! is_space || len > 0) {
+		if ( !is_space) {
+		    if ((len >= w) && (w != width)) {
+			w = width;
+			out << ind_newline << "// ";
+		    } else {
+			out << ' ';
+			w--;
+		    }
+		    out << (*words)->begin();
+		    w -= len;
+		    state = 1;
+		} else {
+		    if ( (*words)->begin()[0] == '\n')
+			state = 4;
+		}
+	    }
+	    break;
+	case 4:
+	    if ( ! is_space || len > 0) {
+		if ( ! is_space) {
+		    out << ind_newline << "// ";
+		    out << ind_newline << "// ";
+		    w = width;
+		    out << (*words)->begin();
+		    w -= len;
+		    state = 1;
+		}
+	    }
+	    break;
+	}
+    }
+    return state;
+}
 
 /* Declarations from syntax.y */
 /* ========================== */
@@ -54,7 +147,7 @@ const char* file_name = "<stdin>";
 /* Taylored semantic functions used in syntax.y */
 /* ============================================ */
 
-void handleMainComment( const Text& T) {
+void handleMainComment( const Buffer_list& T) {
     if ( noc_switch || nomc_switch)
         return;
     if ( indentation_number() > 0) {
@@ -66,7 +159,7 @@ void handleMainComment( const Text& T) {
     }
 }
 
-void handleComment( const Text& T) {
+void handleComment( const Buffer_list& T) {
     if ( noc_switch || nosc_switch)
         return;
     cout << indent;
@@ -83,13 +176,13 @@ void handleClass( const char* classname) {
 	s++;
 
     if ( *s == 0) {
-	cout << indNewline;
+	cout << ind_newline;
 	cout << "class " << classname;
     } else {
 	global_template_params = global_classname;
 	while( *global_template_params && *global_template_params != '<')
 	    ++global_template_params;
-	cout << indNewline;
+	cout << ind_newline;
 	cout << "template < class ";
         int nesting = 0;
 	s++;
@@ -118,7 +211,7 @@ void handleClass( const char* classname) {
 	}
 	if ( nesting >= 0)
 	    printErrorMessage( MalformedTemplateParamError);
-	cout << " >" << indNewline;
+	cout << " >" << ind_newline;
 	cout << "class ";
 	s = classname;
 	while ( *s != 0 && *s != '<') {
@@ -126,8 +219,8 @@ void handleClass( const char* classname) {
 	    s++;
 	}
     }
-    cout << " {" << indNewline;
-    cout << "public:" << indNewline;
+    cout << " {" << ind_newline;
+    cout << "public:" << ind_newline;
     cout << indent;
 }
 
@@ -137,8 +230,8 @@ void handleClassEnd( void) {
         free( global_classname);
     global_classname = NULL;
     cout << outdent;
-    cout << indNewline;
-    cout << "};" << indNewline;
+    cout << ind_newline;
+    cout << "};" << ind_newline;
 }
 
 void handleRefPage( const char* token) {
@@ -154,27 +247,27 @@ void handleRefPageEnd( void) {
 }
 
 void handleDeclaration( const char* decl) {
-    cout << endl << indNewline;
+    cout << endl << ind_newline;
     cout << decl;
 }
 
 void handleNestedType( const char* decl) {
-    cout << endl << indNewline;
+    cout << endl << ind_newline;
     cout << "Nested type required: " << global_classname << "::" << decl;
 }
 
 void handleMethodDeclaration( const char* decl) {
-    cout << endl << indNewline;
+    cout << endl << ind_newline;
     cout << decl;
 }
 
 void handleFunctionDeclaration( const char* decl) {
-    cout << endl << indNewline;
+    cout << endl << ind_newline;
     cout << decl;
 }
 
 void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
-    cout << endl << indNewline;
+    cout << endl << ind_newline;
     cout << "template < class ";
     const char* s = templ;
     int nesting = 0;
@@ -203,7 +296,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
     }
     if ( nesting != 0)
         printErrorMessage( MalformedTemplateParamError);
-    cout << " >" << indNewline;
+    cout << " >" << ind_newline;
     cout << decl;
 }
 

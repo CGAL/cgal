@@ -30,22 +30,20 @@ struct Macro_item {
     size_t  n_param;
     size_t  n_opt_at_end;
     ExpandFunction fct;
-    Macro_item() : n_param(0), n_opt_at_end(false) {}
+
+    Macro_item() : n_param(0), n_opt_at_end(0) {}
     Macro_item(	const string&  file,
 		size_t         ln,
 		const string&  bdy,
-		size_t         n_par = 0,
-		size_t         n_opt = 0)
+		size_t         n_par = 0)
 	: filename(file), line(ln), body(bdy), n_param(n_par), 
-	  n_opt_at_end(n_opt), fct(0)
+	  n_opt_at_end(0), fct(0)
     {}
     Macro_item(	const string&  file,
 		size_t         ln,
 		ExpandFunction f,
-		size_t         n_par = 0,
-		size_t         n_opt = 0)
-	: filename(file), line(ln), n_param(n_par), 
-	  n_opt_at_end(n_opt), fct(f)
+		size_t         n_par = 0)
+	: filename(file), line(ln), n_param(n_par), n_opt_at_end(0), fct(f)
     {}
 };
 
@@ -56,35 +54,29 @@ void          insertMacro( const string& macro,
 			   const string& filename,
 			   size_t        line,
 			   const string& body,
-			   size_t        n_param = 0,
-			   size_t        n_opt = 0);
+			   size_t        n_param = 0);
 
 void          insertInternalMacro( const string&  macro, 
 				   ExpandFunction fct,
-				   size_t         n_param = 0,
-				   size_t         n_opt = 0);
+				   size_t         n_param = 0);
 
 void          insertInternalMacro( const string&  macro, 
 				   const string&  body,
-				   size_t         n_param = 0,
-				   size_t         n_opt = 0);
+				   size_t         n_param = 0);
 
 void          insertGlobalMacro( const string& macro, 
 				 const string& filename,
 				 size_t        line,
 				 const string& body,
-				 size_t        n_param = 0,
-				 size_t        n_opt = 0);
+				 size_t        n_param = 0);
 
 void          insertInternalGlobalMacro( const string&  macro, 
 					 ExpandFunction fct,
-					 size_t         n_param = 0,
-					 size_t         n_opt = 0);
+					 size_t         n_param = 0);
 
 void          insertInternalGlobalMacro( const string&  macro, 
 					 const string&  body,
-					 size_t         n_param = 0,
-					 size_t         n_opt = 0);
+					 size_t         n_param = 0);
 
 const Macro_item& fetchMacro(  const string& macro);
 
@@ -113,8 +105,7 @@ bool definedMacro(  const string& macro);
 
 bool macroIsTrue( const string& macro);
 
-void setMacroOptEnd(  const string& macro, int n_opt);
-
+void checkMacroOptEnd(  const string& macro);
 
 #endif // MACRO_DICTIONARY_H //
 // EOF //

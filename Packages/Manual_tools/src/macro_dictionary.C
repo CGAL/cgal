@@ -84,46 +84,46 @@ void insertMacro( const string& macro,
 		  const string& filename,
 		  size_t        line,
 		  const string& body,
-		  size_t        n_param,
-		  size_t        n_opt) {
+		  size_t        n_param) {
     if ( macro_def_switch) {
         cerr << "Macro definition: macro `" << macro << "' = `" 
 	     << body << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.front()[ macro] = 
-	Macro_item( filename, line, body, n_param, n_opt);
+	Macro_item( filename, line, body, n_param);
 }
 
 void insertInternalMacro( const string&  macro, 
 			  ExpandFunction fct,
-			  size_t         n_param,
-			  size_t         n_opt) {
+			  size_t         n_param) {
     if ( macro_def_switch) {
         cerr << "Internal def.   : macro `" << macro << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.front()[ macro] = 
-	Macro_item( "<internal macro>", 0, fct, n_param, n_opt);
+	Macro_item( "<internal macro>", 0, fct, n_param);
 }
 
 void insertInternalMacro( const string&  macro, 
 			  const string&  body,
-			  size_t         n_param ,
-			  size_t         n_opt) {
+			  size_t         n_param ) {
     if ( macro_def_switch) {
         cerr << "Internal def.   : macro `" << macro << "' = `" 
 	     << body << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.front()[ macro] = 
-	Macro_item( "<internal macro>", 0, body, n_param, n_opt);
+	Macro_item( "<internal macro>", 0, body, n_param);
 }
 
 
@@ -131,49 +131,49 @@ void insertGlobalMacro( const string& macro,
 			const string& filename,
 			size_t        line,
 			const string& body,
-			size_t        n_param,
-			size_t        n_opt) {
+			size_t        n_param) {
     if ( macro_def_switch) {
         cerr << "Macro global def: macro `" << macro << "' = `" 
 	     << body << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     localEraseMacro( macro);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_all_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.back()[ macro] = 
-	Macro_item( filename, line, body, n_param, n_opt);
+	Macro_item( filename, line, body, n_param);
 }
 
 void insertInternalGlobalMacro( const string&  macro, 
 				ExpandFunction fct,
-				size_t         n_param,
-				size_t         n_opt) {
+				size_t         n_param) {
     if ( macro_def_switch) {
         cerr << "Internal gdef.  : macro `" << macro << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     localEraseMacro( macro);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_all_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.back()[ macro] = 
-	Macro_item( "<internal macro>", 0, fct, n_param, n_opt);
+	Macro_item( "<internal macro>", 0, fct, n_param);
 }
 
 void insertInternalGlobalMacro( const string&  macro, 
 				const string&  body,
-				size_t         n_param,
-				size_t         n_opt) {
+				size_t         n_param) {
     if ( macro_def_switch) {
         cerr << "Internal gdef.  : macro `" << macro << "' = `" 
 	     << body << "'." << endl;
     }
-    assert( macro_dictionary.size() > 0);
+    CC_Assert( macro_dictionary.size() > 0);
     localEraseMacro( macro);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_all_active_char( macro[0], true);
+    checkMacroOptEnd( macro);
     macro_dictionary.back()[ macro] = 
-	Macro_item( "<internal macro>", 0, body, n_param, n_opt);
+	Macro_item( "<internal macro>", 0, body, n_param);
 }
 
 
@@ -212,19 +212,6 @@ bool macroIsTrue( const string& macro) {
 	return ( body == "\\lcTrue" || body == "\\ccTrue");
     }
     return false;
-}
-
-void setMacroOptEnd(  const string& macro, int n_opt) {
-    Macro_dictionary_scope::iterator j;
-    if ( queryMacro( macro, j)) {
-	(*j).second.n_opt_at_end = n_opt;
-    } else {
-	cerr << endl << "Unknown macro " << macro
-	     << " in `" << in_string->name()
-	     << " in line " << in_string->line() << "'.";
-	if ( stack_trace_switch)
-	    printErrorMessage( MacroUndefinedError);
-    }
 }
 
 void eraseMacro( const string& macro) {
@@ -391,6 +378,36 @@ string expandMacro( const string& macro,
     if ( macro_exp_switch2)
 	cerr << "    expanded to: `" << s << "'." << endl;
     return s;
+}
+
+void checkMacroOptEnd(  const string& macro) {
+    if ( macro.size() > 2) {
+	int cnt = 0;
+	string::const_iterator i = macro.end();
+	-- i;
+	while ( i != macro.begin() && *i == 'o') {
+	    -- i;
+	    ++ cnt;
+	}
+	while ( i != macro.begin() && (*i == 'o' || *i == 'm'))
+	    --i;
+	if ( *i != '@' || cnt == 0)
+	    return;
+	string basename( macro.begin(), i);
+	Macro_dictionary_scope::iterator j;
+	if ( queryMacro( basename, j)) {
+	    if ( cnt > int((*j).second.n_opt_at_end))
+		(*j).second.n_opt_at_end = cnt;
+	} else {
+	    cerr << endl << "Error: Define macro " << basename
+		 << " before defining optional arguments " << macro
+		 << " in `" << in_string->name()
+		 << " in line " << in_string->line() << "'.";
+	    if ( stack_trace_switch)
+		printErrorMessage( MacroUndefinedError);
+	}
+    }
+
 }
 
 

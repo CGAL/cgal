@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <database.h>
+#include <buffer.h>
 #include <config.h>
 #include <extract_syntax.tab.h>
 

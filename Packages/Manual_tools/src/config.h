@@ -14,14 +14,15 @@
 #if ! defined( MODULE_CONFIG)
 #define MODULE_CONFIG 1
 
+#include <buffer.h>
 
 // Global declarations that are implemented in the main module.
 // There they can be taylored to the specific application, i.e.
 // extraction or checker.
 
-void handleComment( const Text& T);
-void handleConstructorComment( const Text& T);
-void handleMainComment( const Text& T);
+void handleComment( const Buffer_list& T);
+void handleConstructorComment( const Buffer_list& T);
+void handleMainComment( const Buffer_list& T);
 
 void handleClass( const char* classname);
 void handleClassEnd( void);

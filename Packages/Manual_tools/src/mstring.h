@@ -9,6 +9,8 @@
 #define MY_STRING_H 1
 
 #include <string>
+
+// comment this for SGI 7.2
 using namespace std;
 
 // provide hash function for string class of egcs 1.1.1

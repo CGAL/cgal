@@ -179,7 +179,7 @@ static int next_class_link_last    = 0;
 
 string chapter_title;
 
-void handleChapter(  const Text& T) {
+void handleChapter(  const Buffer_list& T) {
     next_class_link_last = 0;
     //string new_main_filename = macroX( "\\lciInputPath")
     //                         + macroX( "\\lciChapterPrefix")
@@ -218,7 +218,7 @@ void handleChapter(  const Text& T) {
 		     << "\">" << chapter_title << "</A>" << endl;
 }
 
-void handleBiblio(  const Text& T) {
+void handleBiblio(  const Buffer_list& T) {
     ostream* out = open_file_for_write( tmp_path + macroX("\\lciBibFilename"));
     istream* in  = open_config_file( macroX( "\\lciBiblioHeader"));
     filter_config_file( *in, *out);
@@ -326,7 +326,7 @@ void handleClassEnd( void) {
 	handleClassFileEnd();
 }
 
-void handleHtmlClassFile( const string& filename, const Text& T) {
+void handleHtmlClassFile( const string& filename, const Buffer_list& T) {
     char*  s = text_block_to_string( T);
     string p = string("<A HREF=\"") + filename + "\">" + s + "</A>";
     handleClassFile( filename, p);
@@ -392,18 +392,6 @@ undef( const string&, string param[], size_t n, size_t opt) {
     crop_string( macroname);
     remove_separator( macroname);
     eraseMacro( macroname);
-    return string();
-}
-
-string
-optional_param_at_end( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 2, 0);
-    string macroname( param[0]);
-    crop_string( macroname);
-    remove_separator( macroname);
-    string s( param[1]);
-    crop_string( s);
-    setMacroOptEnd( macroname, atoi(s.c_str()));
     return string();
 }
 
@@ -700,8 +688,6 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\def", newcommand, 2);
     insertInternalGlobalMacro( "\\gdef", global_newcommand, 2);
     insertInternalGlobalMacro( "\\lciUndef", undef, 1);
-    insertInternalGlobalMacro( "\\lciOptionalParameterAtEnd", 
-			       optional_param_at_end, 2);
     insertInternalGlobalMacro( "\\lciBeginScope", begin_scope, 0);
     insertInternalGlobalMacro( "\\lciEndScope", end_scope, 0);
     insertInternalGlobalMacro( "\\lciIfDefined", if_defined, 1);
@@ -719,10 +705,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciStyle", cc_style, 1);
     insertInternalGlobalMacro( "\\lciCCParameter", cc_parameter, 0);
 
-    insertInternalGlobalMacro( "\\lciTwoColumnLayout",   
-			       two_column_layout,   1);
-    insertInternalGlobalMacro( "\\lciThreeColumnLayout", 
-			       three_column_layout, 2);
+    insertInternalGlobalMacro( "\\lciTwoColumnLayout",  two_column_layout,  1);
+    insertInternalGlobalMacro( "\\lciThreeColumnLayout",three_column_layout,2);
 
     insertInternalGlobalMacro( "\\lciHtmlIndex", html_index, 2);
     insertInternalGlobalMacro( "\\lciHtmlIndexC", html_index_C, 1);

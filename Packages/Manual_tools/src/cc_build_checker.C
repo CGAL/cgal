@@ -23,7 +23,7 @@
 #include <stream.h>
 #include <ctype.h>
 #include <fstream.h>
-#include <database.h>
+#include <buffer.h>
 #include <config.h>
 
 #define MaxParameters          1002
@@ -450,8 +450,8 @@ void printPattern( ostream& out_pattern,
 	return;
     }
     int i;
-    int l = err->length();
-    const char *str = err->string();
+    int l = err->size() - 1;
+    const char *str = err->begin();
     if ( pat == 0) {
         pat = pattern;
 	pat->flush();
@@ -460,7 +460,7 @@ void printPattern( ostream& out_pattern,
 	    pat->add( patternText( str[i], str[i+1]));
 	pat->add( '"');
     }
-    printReducedPattern( out_pattern, pat->string(), pat->length());
+    printReducedPattern( out_pattern, pat->begin(), pat->size() - 1);
     out_pattern << "  {" << endl;
     out_pattern << "        tags[" << n_pattern << "] = -1;" << endl;
     out_pattern << "        count_newlines( yytext);" << endl;
@@ -498,8 +498,8 @@ void printFunctionPattern( ostream& out_pattern,
     bool default_params = false;
     bool nonzero_param_list = false;
     int  nesting = 0;
-    int  l = err->length();
-    const char *str = err->string();
+    int  l = err->size() - 1;
+    const char *str = err->begin();
     if ( pat == 0) {
         pat = pattern;
 	pat->flush();
@@ -516,7 +516,7 @@ void printFunctionPattern( ostream& out_pattern,
 		    pat->add( "\"{ws}*\"");
 		    pat2 = pattern2;
 		    pat2->flush();
-		    pat2->add( pat);
+		    pat2->add( * pat);
 		    if ( nonzero_param_list)
 		        pat2->add( ',');
 		    pat2->add( "\"{ws}*[^ \\n\\r\\t)]");
@@ -534,14 +534,14 @@ void printFunctionPattern( ostream& out_pattern,
 	// if ( default_params)
 	//     pat2->add( '"');
     }
-    printReducedPattern( out_pattern, pat->string(), pat->length());
+    printReducedPattern( out_pattern, pat->begin(), pat->size() - 1);
     out_pattern << "    {" << endl;
     out_pattern << "        tags[" << n_pattern << "] = -1;" << endl;
     out_pattern << "        count_newlines( yytext);" << endl;
     out_pattern << "        MD;" << endl;
     out_pattern << "    }" << endl;
     if ( default_params || pat2 != 0) {
-        printReducedPattern( out_pattern, pat2->string(), pat2->length());
+        printReducedPattern( out_pattern, pat2->begin(), pat2->size() - 1);
         out_pattern << "    {" << endl;
 	out_pattern << "        if (tags[" << n_pattern << "] == 0) {" << endl;
 	out_pattern << "            tags[" << n_pattern << "] = line_number;"
@@ -628,11 +628,11 @@ void translateFunctionArgumentLists( const char* decl, Buffer *func) {
     const char* current = decl;
     while ( *current != '(') {
         current++;
-        ADT_Assert( *current);
+        CC_Assert( *current);
     }
-    ADT_Assert( *current == '(');
+    CC_Assert( *current == '(');
     current++;
-    ADT_Assert( *current);
+    CC_Assert( *current);
     func->add( decl, current - decl);
 
     /* the parsing starts here. It counts parenthesis. */
@@ -641,7 +641,7 @@ void translateFunctionArgumentLists( const char* decl, Buffer *func) {
     const char* from = current;
     const char* last_idfier = current - 1;
     while ( nesting > 0) {
-        ADT_Assert( *current);
+        CC_Assert( *current);
 	if ( nesting == 1 && *current == '=')
 	    in_init = true;
 	if (      nesting == 1 
@@ -658,7 +658,7 @@ void translateFunctionArgumentLists( const char* decl, Buffer *func) {
 		while( isalnum( *p) || *p == '_')
 		    p--;
 		p++;  /* points to idfier start */
-		ADT_Assert( p - from >= 0);
+		CC_Assert( p - from >= 0);
 		if ( isTypeInFunctionArgument( from, p)) {
 		    func->add( from, p - from);
 		    func->add( IDFIER_TAG);
@@ -681,7 +681,7 @@ void translateFunctionArgumentLists( const char* decl, Buffer *func) {
 	    case ')':
 	    case '>':
 	        nesting--;
-		ADT_Assert( nesting >= 1);
+		CC_Assert( nesting >= 1);
 		break;
 	    }
 	}
@@ -694,8 +694,8 @@ void translateFunctionArgumentLists( const char* decl, Buffer *func) {
 // if so, use the INLINE_TAG to add the regular expression for an optional
 // inline keyword right after the template declaration.
 void checkTemplateKeyword( Buffer *decl){
-    if( 0 == strncmp( "template", decl->string(), 8)) {
-        const char* p = decl->string() + 8;
+    if( 0 == strncmp( "template", decl->begin(), 8)) {
+        const char* p = decl->begin() + 8;
 	int nesting = 0;
 	while( *p != '\0') {
 	    switch( *p) {
@@ -709,7 +709,7 @@ void checkTemplateKeyword( Buffer *decl){
 	    case '>':
 	        nesting --;
 		if ( nesting == 0) {
-		    decl->set( p - decl->string(), INLINE_TAG);
+		    decl->set( p - decl->begin(), INLINE_TAG);
 		    return;
 		}
 		break;
@@ -723,11 +723,11 @@ void checkTemplateKeyword( Buffer *decl){
 /* Taylored semantic functions used in syntax.y */
 /* ============================================ */
 
-void handleMainComment( const Text& ) {
+void handleMainComment( const Buffer_list& ) {
     return;
 }
 
-void handleComment( const Text& ) {
+void handleComment( const Buffer_list& ) {
     return;
 }
 
@@ -857,7 +857,7 @@ void handleNestedType( const char* decl) {
 void handleMethodDeclaration( const char* decl) {
     translateFunctionArgumentLists( decl, function_decl);
     checkTemplateKeyword( function_decl);
-    decl = function_decl->string();
+    decl = function_decl->begin();
     errmessage->flush();
     int l = strlen( decl);
     while ( l > 0 && decl[ l-1] == ' ') l--;
@@ -873,7 +873,7 @@ void handleMethodDeclaration( const char* decl) {
 void handleFunctionDeclaration( const char* decl) {
     translateFunctionArgumentLists( decl, function_decl);
     checkTemplateKeyword( function_decl);
-    decl = function_decl->string();
+    decl = function_decl->begin();
     errmessage->flush();
     int l = strlen( decl);
     while ( l > 0 && decl[ l-1] == ' ') l--;
@@ -888,7 +888,7 @@ void handleFunctionDeclaration( const char* decl) {
 
 void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
     translateFunctionArgumentLists( decl, function_decl);
-    decl = function_decl->string();
+    decl = function_decl->begin();
     errmessage->flush();
     pattern->flush();
     pattern2->flush();
@@ -952,7 +952,7 @@ void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
 	    if ( nesting == 0) {
 	        default_params = true;
 		pattern->add( "\"{ws}*\"");
-		pattern2->add( pattern);
+		pattern2->add( * pattern);
 		pattern2->add( ",\".*\"");
 	    }
 	    break;

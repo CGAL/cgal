@@ -1,7 +1,7 @@
 INSTALLATION for the Specification and Manual Writing Tools
              for C++ Reference Manuals
 ===========================================================
-03.08.1998   Zurich   Lutz Kettner
+24.08.1999   Zurich   Lutz Kettner
 
 
 Installation of the Supporting Tools:
@@ -11,7 +11,7 @@ Installation of the Supporting Tools:
 
 (1)  System Requirements:
 
-     *  C++ Compiler (Gnu g++ 2.8.1 and SGI CC 7.2 were tested)
+     *  C++ Compiler (Gnu g++ 2.8.1, 2.95.1, Gnu egcs 1.1.2)
      *  C Compiler (Gnu gcc 2.6.3 or the usual system cc compiler)
      *  flex and bison
      *  perl 5

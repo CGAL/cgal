@@ -14,7 +14,7 @@
 #if ! defined( MODULE_CONFIG)
 #define MODULE_CONFIG 1
 
-#include <database.h>
+#include <buffer.h>
 #include <mstring.h>
 
 
@@ -49,16 +49,16 @@ extern const string reference_icon;
 
 
 // outdated
-int   text_block_length( const Text& T);
-char* text_block_to_string( const Text& T);
-bool  is_text_block_empty( const Text& T);
-void  print_html_text_block( ostream &out, const Text& T);
+int   text_block_length(     const Buffer_list& T);
+char* text_block_to_string(  const Buffer_list& T);
+bool  is_text_block_empty(   const Buffer_list& T);
+void  print_html_text_block( ostream &out, const Buffer_list& T);
 
 
-void handleText(      const Text&      T);
-void handleTextToken( const TextToken& TT);
-void handleString(    const char*      s);
-void handleString(    const string&    s);
-void handleChar(      char             c);
+void handleText(   const Buffer_list& T);
+void handleBuffer( const Buffer&      TT);
+void handleString( const char*        s);
+void handleString( const string&      s);
+void handleChar(   char               c);
 
 #endif // MODULE_CONFIG //
