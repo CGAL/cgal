@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Changed test_gmp for Borland.
+GLOB: Changed link_gmp to copy (no ln -s) libgmp on cygwin.
 GLOB: Changed real_which to work with spaces in directory names.
 GLOB: Added gmp installation in CGAL tree for cygwin.
 GLOB: Removed -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
@@ -78,6 +80,8 @@ DOCS: Updated.
 DOCS: Some additions/corrections due to Dima.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+DOCS: Some updates due to Dima.
+DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
 DOCS: Major additions about MS-stuff by Dima.
 DOCS: Reorganized section order moving some stuff into the appendix.
 DOCS: A number of minor changes/additions.
