@@ -14,10 +14,10 @@ struct Primitive {
 struct User_box : public CGAL::Box_intersection_d::Unique_numbers
 {
     Primitive *primitive;
-    float lo[3], size;
+    float min[3], size;
     User_box( Primitive *p ) : primitive( p ) {
         for( unsigned int d = 0; d < 3; ++d )
-            lo[d] = 10.0 * CGAL::default_random.get_double();
+            min[d] = 10.0 * CGAL::default_random.get_double();
         size = 1 + 3.0 * CGAL::default_random.get_double();
     }
 };
@@ -26,11 +26,11 @@ struct Box_traits {
     typedef const User_box& Box;
     typedef float NT;
 
-    static NT get_lo( Box b, unsigned int dim )
-    { return b.lo[ dim ]; }
+    static NT min( Box b, unsigned int dim )
+    { return b.min[ dim ]; }
 
-    static NT get_hi( Box b, unsigned int dim )
-    { return b.lo[ dim ] + b.size; }
+    static NT max( Box b, unsigned int dim )
+    { return b.min[ dim ] + b.size; }
 
     static unsigned int get_id( Box b )
     { return b.get_id();     }

@@ -211,7 +211,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
     int levels = (int)(.91*log(((double)std::distance(begin,end))/137.0)+1);
     levels = (levels <= 0) ? 1 : levels;
     RandomAccessIter it = iterative_radon( begin, end, traits, dim, levels );
-    mi = Predicate_traits::get_lo( *it, dim );
+    mi = Predicate_traits::min( *it, dim );
     return std::partition( begin, end,
                            typename Predicate_traits::Lo_less( mi, dim ) );
 }
@@ -233,7 +233,7 @@ template< class ForwardIter, class Traits >
 void dump_points( ForwardIter begin, ForwardIter end, Traits traits,
                   unsigned int dim ) {
     while( begin != end ) {
-        std::cout << Traits::get_lo( *begin, dim ) << " ";
+        std::cout << Traits::min( *begin, dim ) << " ";
         ++begin;
     }
     std::cout << std::endl;
@@ -243,8 +243,8 @@ template< class ForwardIter, class Traits >
 void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
                      unsigned int dim ) {
     while( begin != end ) {
-        std::cout << "[" << Traits::get_lo( *begin, dim ) << ","
-                         << Traits::get_hi( *begin, dim ) << ") ";
+        std::cout << "[" << Traits::min( *begin, dim ) << ","
+                         << Traits::max( *begin, dim ) << ") ";
         ++begin;
     }
     std::cout << std::endl;

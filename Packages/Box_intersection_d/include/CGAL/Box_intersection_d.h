@@ -26,6 +26,7 @@
 #include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <vector>
+#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -122,10 +123,10 @@ void box_intersection_d_custom_predicates(
 {
     typedef BoxPredicateTraits Traits;
     typedef typename Traits::NT NT;
+    assert( Traits::get_dim() > 0 );
     const unsigned int dim = Traits::get_dim() - 1;
     const NT inf = Box_intersection_d::box_limits<NT>::inf();
     const NT sup = Box_intersection_d::box_limits<NT>::sup();
-
     Box_intersection_d::segment_tree(p_begin, p_end, i_begin, i_end,
                                inf, sup, callback, traits, cutoff, dim, true);
     if(setting == Box_intersection_d::BIPARTITE)

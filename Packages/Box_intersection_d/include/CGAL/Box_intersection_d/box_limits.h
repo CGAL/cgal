@@ -63,7 +63,7 @@ struct box_limits<double> {
     static float sup()
     {
         const UInteger64 i = 0x7FF0000000000000ull;
-        return *reinterpret_cast<const float*>(&i);
+        return *reinterpret_cast<const double*>(&i);
     }
 };
 

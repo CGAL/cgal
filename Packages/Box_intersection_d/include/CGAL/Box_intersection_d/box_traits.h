@@ -73,8 +73,8 @@ struct Box_d : public Unique_numbers {
         }
     }
 
-    NT get_lo(unsigned int dim) const { return lo[dim]; }
-    NT get_hi(unsigned int dim) const { return hi[dim]; }
+    NT min(unsigned int dim) const { return lo[dim]; }
+    NT max(unsigned int dim) const { return hi[dim]; }
     static unsigned int get_dim() { return N; }
 protected:
     NT lo[N], hi[N];
@@ -85,11 +85,11 @@ struct Box_traits_d {
     typedef const Box_&       Box;
     typedef typename Box_::NT NT;
 
-    static NT get_lo(Box b, unsigned int dim)
-    { return b.get_lo( dim ); }
+    static NT min(Box b, unsigned int dim)
+    { return b.min( dim ); }
 
-    static NT get_hi(Box b, unsigned int dim)
-    { return b.get_hi( dim ); }
+    static NT max(Box b, unsigned int dim)
+    { return b.max( dim ); }
 
     static unsigned int get_id(Box b)
     { return b.get_id();     }
@@ -103,11 +103,11 @@ struct Box_traits_d<Box_*> {
     typedef const Box_*       Box;
     typedef typename Box_::NT NT;
 
-    static NT get_lo(Box b, unsigned int dim)
-    { return b->get_lo(dim); }
+    static NT min(Box b, unsigned int dim)
+    { return b->min(dim); }
 
-    static NT get_hi(Box b, unsigned int dim)
-    { return b->get_hi(dim); }
+    static NT max(Box b, unsigned int dim)
+    { return b->max(dim); }
 
     static unsigned int get_id(Box b)
     { return b->get_id();   }
@@ -147,7 +147,7 @@ struct Box_predicate_traits_d : public BoxTraits {
     public:
         Lo_less(NT value, unsigned int dim) : value(value), dim(dim) {}
         bool operator() (Box box) const
-        { return get_lo(box, dim) < value; }
+        { return min(box, dim) < value; }
     };
 
     class Hi_greater : public std::unary_function<Box,bool> {
@@ -156,7 +156,7 @@ struct Box_predicate_traits_d : public BoxTraits {
     public:
         Hi_greater(NT value, unsigned int dim) : value(value), dim(dim) {}
         bool operator() (Box box) const
-        { return hi_greater( get_hi(box, dim), value); }
+        { return hi_greater( max(box, dim), value); }
     };
 
     // spanning lo hi dim box = getlo box dim < lo && gethi box dim > hi
@@ -167,7 +167,7 @@ struct Box_predicate_traits_d : public BoxTraits {
         Spanning(NT lo, NT hi, unsigned int dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
         bool operator() (Box box) const
-        { return get_lo(box,dim) < lo && get_hi(box,dim) > hi; }
+        { return min(box,dim) < lo && max(box,dim) > hi; }
     };
 
     static Compare    compare_object(unsigned int dim)
@@ -183,12 +183,12 @@ struct Box_predicate_traits_d : public BoxTraits {
     { return Spanning( lo, hi, dim ); }
 
     static bool is_lo_less_lo(Box a, Box b, unsigned int dim) {
-        return get_lo(a,dim)  < get_lo(b,dim) ||
-               get_lo(a,dim) == get_lo(b,dim) && get_id(a) < get_id(b);
+        return min(a,dim)  < min(b,dim) ||
+               min(a,dim) == min(b,dim) && get_id(a) < get_id(b);
     }
 
     static bool is_lo_less_hi(Box a, Box b, unsigned int dim)
-    { return hi_greater( get_hi(b,dim), get_lo(a,dim )); }
+    { return hi_greater( max(b,dim), min(a,dim )); }
 
     static bool does_intersect (Box a, Box b, unsigned int dim)
     { return is_lo_less_hi(a,b,dim) && is_lo_less_hi(b,a,dim); }

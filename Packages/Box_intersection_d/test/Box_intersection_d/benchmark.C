@@ -21,78 +21,16 @@
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include <CGAL/Box_intersection_d.h>
-
-#include <CGAL/Timer.h>
-
-#include <iostream>
-#include <iomanip>
-#include <iterator>
-#include <vector>
-#include <cstdio>
-#include <cmath>
 #include <fstream>
-#include <CGAL/Random.h>
+#include "definitions.h"
 
 static unsigned int failed = 0;
 
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
-typedef NT Number_type;
-typedef CGAL::Box_intersection_d::Box_d< Number_type, DIM >  Box;
-typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
-typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
-                                      Box_adapter, CLOSED > Traits;
-typedef std::vector< Box >      Box_container;
-typedef std::pair< Box, Box >   Box_pair;
-typedef std::vector< Box_pair > Result_container;
+typedef Definitions<NT,DIM,CLOSED> Defs;
 
-
-static void fill_boxes( unsigned int n, Box_container& boxes ) {
-    NT maxEdgeLength = (NT) pow(n, (DIM-1.0)/DIM);
-
-    for( unsigned int i = 0; i < n; ++i ) {
-        NT lo[DIM], hi[DIM];
-        for( unsigned int d = 0; d < DIM; ++d ) {
-            lo[d] =
-                (NT)(CGAL::default_random.get_double() * (n - maxEdgeLength));
-            hi[d] =
-        (NT)(lo[d] + 1 + (CGAL::default_random.get_double() * maxEdgeLength));
-        }
-        boxes.push_back( Box( &lo[0], &hi[0]) );
-    }
-}
-
-static void assert_intersection( const Box& a, const Box& b ) {
-    for( unsigned int dim = 0; dim < DIM; ++dim ) {
-        if( Traits::does_intersect( a, b, dim ) == false ) {
-            std::cout << "does not intersect!" << std::endl;
-            //cout << a << endl << b << endl;
-            exit(-1);
-        }
-    }
-}
-
-
-template< class Storage >
-struct Storage_callback {
-    unsigned int counter;
-    Storage& storage;
-    Storage_callback( Storage& storage ) : counter( 0 ), storage( storage ) {}
-    void operator()( const Box& a, const Box& b ) {
-        assert_intersection( a, b );
-        ++counter;
-    }
-};
-
-struct Counter_callback {
-    unsigned int counter;
-    Counter_callback() : counter( 0 ) {}
-    void operator()( const Box& a, const Box& b ) {
-        assert_intersection( a, b );
-        ++counter;
-    }
-};
+#include "util.h"
 
 static void
 test_n( unsigned int n, std::ostream& outfile )
