@@ -103,7 +103,6 @@ public:
     int point_count;
     int tetrahedron_count;
 
-    char sexpr[1024];
 private:
     void setup_geomview(const char *machine, const char *login);
     void frame(const Bbox_3 &bbox);
@@ -409,9 +408,10 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
        << "(pickable pickplane yes) (ui-target pickplane yes)"
        << "(interest " << gclpick <<")";
 
-    gv >> gv.sexpr;  // this reads a gcl expression
+    char sexpr[1024];
+    gv >> sexpr;  // this reads a gcl expression
 
-    const char* pickpoint = nth(gv.sexpr, 3);
+    const char* pickpoint = nth(sexpr, 3);
     // this gives something as: (0.0607123 0.0607125 4.76837e-07 0.529628)
     parse_point(pickpoint, point);
 
