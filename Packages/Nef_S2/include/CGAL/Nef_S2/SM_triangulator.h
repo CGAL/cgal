@@ -32,7 +32,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 137
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #define CGAL_USING(t) typedef typename Base::t t
 #ifndef CGAL_USE_LEDA

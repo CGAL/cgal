@@ -9,7 +9,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 211
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 template <typename R, typename ITERATOR>
 class leda_graph_decorator { 

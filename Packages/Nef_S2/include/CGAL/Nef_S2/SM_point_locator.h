@@ -27,7 +27,7 @@
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 47
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 
 CGAL_BEGIN_NAMESPACE

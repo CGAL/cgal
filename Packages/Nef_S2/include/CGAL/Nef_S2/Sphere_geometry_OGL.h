@@ -15,7 +15,7 @@
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 151
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #define LGREY CGAL::Color(170,170,200)
 #define DGREY CGAL::Color(30,30,50)

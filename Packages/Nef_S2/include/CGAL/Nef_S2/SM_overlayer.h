@@ -31,7 +31,7 @@
 #include <CGAL/Nef_S2/SM_io_parser.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 131
-#include <CGAL/Nef_S2/debug.h>
+#include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
