@@ -56,24 +56,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//template < class GT, class Tds>
-//class Delaunay_triangulation_3;
-
 template < class GT, class Tds>
 class Triangulation_cell_iterator_3;
-
 template < class GT, class Tds>
 class Triangulation_vertex_iterator_3;
-
 template < class GT, class Tds>
 class Triangulation_edge_iterator_3;
-
 template < class GT, class Tds>
 class Triangulation_facet_iterator_3;
 
 template < class GT, class Tds>
 class Triangulation_cell_circulator_3;
-
 template < class GT, class Tds>
 class Triangulation_facet_circulator_3;
 
@@ -90,12 +83,11 @@ class Triangulation_3
   friend class Triangulation_cell_3<GT,Tds>;
   friend class Triangulation_vertex_3<GT,Tds>;
 
-  //  friend class Delaunay_triangulation_3<GT,Tds>;
-
   friend Triangulation_cell_iterator_3<GT,Tds>;
   friend Triangulation_facet_iterator_3<GT,Tds>;
   friend Triangulation_edge_iterator_3<GT,Tds>;
   friend Triangulation_vertex_iterator_3<GT,Tds>;
+
   friend Triangulation_cell_circulator_3<GT,Tds>;
   friend Triangulation_facet_circulator_3<GT,Tds>;
 
@@ -113,7 +105,6 @@ public:
   typedef Triangulation_vertex_3<GT,Tds> Vertex;
   typedef std::pair<Cell_handle, int> Facet;
   typedef triple<Cell_handle, int, int> Edge;
-
 
   typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
   typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
@@ -691,6 +682,7 @@ public:
       return Facet_iterator(ncthis);
     }
 
+  // cells around an edge
   Cell_circulator incident_cells(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
@@ -705,7 +697,6 @@ public:
 	= (Triangulation_3<GT, Tds>*)this;
       return Cell_circulator(ncthis,c,i,j);
     }
-
   Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
@@ -721,7 +712,8 @@ public:
 	= (Triangulation_3<GT, Tds>*)this;
       return Cell_circulator(ncthis,c,i,j,start);
     }
-  //
+
+  // facets around an edge
   Facet_circulator incident_facets(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
@@ -736,9 +728,8 @@ public:
 	= (Triangulation_3<GT, Tds>*)this;
       return Facet_circulator(ncthis,c,i,j);
     }
-
   Facet_circulator incident_facets(const Edge & e, 
-				   Facet start) const
+				   const Facet & start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
       Triangulation_3<GT, Tds>* ncthis 
@@ -746,7 +737,7 @@ public:
       return Facet_circulator(ncthis,e,start);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, 
-				   Facet start) const  
+				   const Facet & start) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
       Triangulation_3<GT, Tds>* ncthis 
@@ -770,7 +761,7 @@ public:
       return Facet_circulator(ncthis,c,i,j,start,f);
     }
 
-  //
+  // around a vertex
   void
   incident_cells(Vertex_handle v, 
 		 std::set<Cell*, std::less<Cell*> > & cells,

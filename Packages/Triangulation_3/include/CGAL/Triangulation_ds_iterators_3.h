@@ -511,7 +511,7 @@ public:
 	  while ( // useless (pos != _tds->past_end_cell()) &&
 		 // there must be at least one edge
 		 notfound ) {
-	    Cell_circulator ccir = _tds->incident_cells(make_triple(pos,b,e));
+	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
 	    do {
 	      ++ccir;
 	    } while ( &(*ccir) > pos ); 
@@ -568,7 +568,7 @@ public:
 	do {
 	  increment3();
 	  if (pos != _tds->past_end_cell()) {
-	    Cell_circulator ccir = _tds->incident_cells(make_triple(pos,b,e));
+	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
 	    //	  cerr << "sommets pos" << endl ;
 	    //	  pp_tds_cell(pos) ;
 	    do {
@@ -645,7 +645,7 @@ public:
 	    }
 	  }
 	  if (pos != _tds->past_end_cell()) {
-	    Cell_circulator ccir = _tds->incident_cells(make_triple(pos,b,e));
+	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
 	    // 	while ( &(*ccir) > pos ) {
 	    // 	  --ccir;
 	    // 	}

@@ -58,7 +58,10 @@ class Triangulation_ds_cell_iterator_3;
 template <class TDS>
 class Triangulation_ds_facet_iterator_3;
 template <class TDS>
+class Triangulation_ds_edge_iterator_3;
+template <class TDS>
 class Triangulation_ds_vertex_iterator_3;
+
 template <class TDS>
 class Triangulation_ds_cell_circulator_3;
 template <class TDS>
@@ -71,12 +74,6 @@ class Triangulation_data_structure_3
 
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
-//   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
-//   (std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tr);
-
-  //  friend void Triangulation_ds_cell_3<Vb,Cb>::add_list
-  //  (Triangulation_data_structure_3<Vb,Cb>&);
-  //  friend class Triangulation_ds_cell_3<Vb,Cb>;
 
   friend class Triangulation_ds_cell_iterator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
@@ -86,14 +83,13 @@ class Triangulation_data_structure_3
   <Triangulation_data_structure_3<Vb,Cb> >;
   friend class Triangulation_ds_vertex_iterator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
+
    friend class Triangulation_ds_cell_circulator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
    friend class Triangulation_ds_facet_circulator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
 
 public:
-  
-  //  typedef typename Vb::Point Point;
   
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
@@ -106,6 +102,7 @@ public:
   typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
   typedef Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
   typedef Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
+
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
@@ -402,11 +399,6 @@ public:
     Tds* ncthis = (Tds *)this;
     return Cell_circulator(ncthis,e);
   }
-
-//   Cell_circulator incident_cells(Cell* ce, int i, int j) const
-//   {
-//     return incident_cells(make_triple(ce,i,j));
-//   }
   Cell_circulator incident_cells(Cell* ce, int i, int j) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
@@ -420,11 +412,6 @@ public:
     Tds* ncthis = (Tds *)this;
     return Cell_circulator(ncthis,e,start);
   }
-
-//   Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* c) const
-//   {
-//     return incident_cells(make_triple(ce,i,j),c);
-//   }
   Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* start) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
@@ -439,48 +426,34 @@ public:
     Tds* ncthis = (Tds *)this;
     return Facet_circulator(ncthis,e);
   }
-
-//   Facet_circulator incident_facets(Cell* ce, int i, int j) const
-//   {
-//     return incident_cells(make_triple(ce,i,j));
-//   }
   Facet_circulator incident_facets(Cell* ce, int i, int j) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
     return Facet_circulator(ncthis,ce,i,j);
   }
-
-  Facet_circulator incident_facets(const Edge & e, Facet start) const
+  Facet_circulator incident_facets(const Edge & e, 
+				   const Facet & start) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
     return Facet_circulator(ncthis,e,start);
   }
-
-//   Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* c) const
-//   {
-//     return incident_facets(make_triple(ce,i,j),c);
-//   }
-  Facet_circulator incident_facets(Cell* ce, int i, int j, Facet start) const
+  Facet_circulator incident_facets(Cell* ce, int i, int j,
+				   const Facet & start) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
     return Facet_circulator(ncthis,ce,i,j,start);
   }
-
   Facet_circulator incident_facets(const Edge & e, Cell* start, int f) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
     return Facet_circulator(ncthis,e,start,f);
   }
-
-//   Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* c) const
-//   {
-//     return incident_facets(make_triple(ce,i,j),c);
-//   }
-  Facet_circulator incident_facets(Cell* ce, int i, int j, Cell* start, int f) const
+  Facet_circulator incident_facets(Cell* ce, int i, int j, 
+				   Cell* start, int f) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;

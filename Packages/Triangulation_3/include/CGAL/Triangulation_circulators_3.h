@@ -48,12 +48,12 @@ public:
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_circulator Circulator_base;
 
-  typedef Triangulation_cell_3<Gt,Tds> Cell;
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
-  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
 
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
@@ -66,7 +66,7 @@ public:
     : _cb( &(tr->_tds), (Ctds *) &(*c), s, t ), _tr(tr)
     {}
 
-  Triangulation_cell_circulator_3(Triangulation * tr, Edge e)
+  Triangulation_cell_circulator_3(Triangulation * tr, const Edge & e)
     : _cb( &(tr->_tds), (Ctds *) &(*(e.first)), e.second, e.third ), _tr(tr)
     {}
 
@@ -79,7 +79,7 @@ public:
       _tr(tr)
     {}
 
-   Triangulation_cell_circulator_3(Triangulation * tr, Edge e, 
+   Triangulation_cell_circulator_3(Triangulation * tr, const Edge & e, 
 				   Cell_handle start)
     : _cb( &(tr->_tds), 
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
@@ -166,13 +166,13 @@ public:
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Facet_circulator Circulator_base;
 
-  typedef Triangulation_cell_3<Gt,Tds> Cell;
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
+  typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triangulation;
-  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
-  typedef typename Triangulation_3<Gt,Tds>::Facet Facet;
 
   typedef Triangulation_facet_circulator_3<Gt,Tds> Facet_circulator;
 
@@ -185,21 +185,21 @@ public:
     : _cb( &(tr->_tds), (Ctds *) &(*c), s, t ), _tr(tr)
     {}
 
-  Triangulation_facet_circulator_3(Triangulation * tr, Edge e)
+  Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e)
     : _cb( &(tr->_tds), (Ctds *) &(*(e.first)), e.second, e.third ), _tr(tr)
     {}
 
    Triangulation_facet_circulator_3(Triangulation * tr, 
 				   Cell_handle c, int s, int t,
-				   Facet start)
+				   const Facet & start)
     : _cb( &(tr->_tds), 
 	   (Ctds *) &(*c), s, t,
 	   std::make_pair((Ctds *) &(*start.first), start.second) ),
       _tr(tr)
     {}
 
-   Triangulation_facet_circulator_3(Triangulation * tr, Edge e, 
-				   Facet start)
+   Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e, 
+				   const Facet & start)
     : _cb( &(tr->_tds), 
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
 	   std::make_pair((Ctds *) &(*start.first), start.second) ),
@@ -215,7 +215,7 @@ public:
       _tr(tr)
     {}
 
-   Triangulation_facet_circulator_3(Triangulation * tr, Edge e, 
+   Triangulation_facet_circulator_3(Triangulation * tr, const Edge & e, 
 				   Cell_handle start, int f)
     : _cb( &(tr->_tds), 
 	   (Ctds *) &(*(e.first)), e.second, e.third, 
@@ -280,11 +280,6 @@ public:
   inline Facet & operator*() const
   {
     return (Facet &)(*_cb);
-  }
-
-  inline Facet* operator->() const
-  {
-    return (Facet*)( &(*_cb) );
   }
 
 private: 

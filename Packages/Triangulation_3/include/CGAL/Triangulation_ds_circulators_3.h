@@ -75,7 +75,7 @@ public:
     pos = c;
   }
 
-  Triangulation_ds_cell_circulator_3(Tds * tds, Edge e)
+  Triangulation_ds_cell_circulator_3(Tds * tds, const Edge & e)
     : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
@@ -106,7 +106,7 @@ public:
     pos = start;
   }
 
-  Triangulation_ds_cell_circulator_3(Tds * tds, Edge e, Cell* start)
+  Triangulation_ds_cell_circulator_3(Tds * tds, const Edge & e, Cell* start)
     : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
@@ -261,7 +261,7 @@ public:
     pos = c;
   }
 
-  Triangulation_ds_facet_circulator_3(Tds * tds, Edge e)
+  Triangulation_ds_facet_circulator_3(Tds * tds, const Edge & e)
     : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
@@ -293,7 +293,7 @@ public:
   }
 
   Triangulation_ds_facet_circulator_3(Tds * tds, Cell* c, int s, int t,
-				      Facet start) 
+				      const Facet & start) 
     : _tds(tds), _c(c), _s(s), _t(t)
   {
     CGAL_triangulation_precondition( c != NULL && 
@@ -311,7 +311,7 @@ public:
     // other cell with same facet
   }
 
-   Triangulation_ds_facet_circulator_3(Tds * tds, Edge e, 
+   Triangulation_ds_facet_circulator_3(Tds * tds, const Edge & e, 
 				       Cell* start, int f) 
     : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
   {
@@ -331,7 +331,8 @@ public:
     else pos = start.first->neighbor(6-i-j-f); // other cell with same facet
   }
 
- Triangulation_ds_facet_circulator_3(Tds * tds, Edge e, Facet start)
+ Triangulation_ds_facet_circulator_3(Tds * tds, const Edge & e, 
+				     const Facet & start)
     : _tds(tds), _c(e.first), _s(e.second), _t(e.third)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
