@@ -83,8 +83,9 @@ private:
   
 public:
   Constraint_hierarchy_2() { }
-  ~Constraint_hierarchy_2(){ }
-  // Constraint_hierarchy_2& operator=(const Constraint_hierarchy_2& ch);
+  Constraint_hierarchy_2(const Constraint_hierarchy_2& ch); 
+  ~Constraint_hierarchy_2(){ clear();}
+  Constraint_hierarchy_2& operator=(const Constraint_hierarchy_2& ch);
 
   // Query 
   bool is_subconstrained_edge(T va, T vb) const;
@@ -120,7 +121,6 @@ public:
   Data get_data(T v);
 
   void remove_Steiner(T v, T va, T vb);
-  void clear();
 
   // iterators
   H_sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
@@ -132,7 +132,9 @@ public:
  
  
   
-private:
+private:  
+  void clear();
+  void copy(const Constraint_hierarchy_2& ch);
   H_edge    make_edge(T va, T vb) const;
   H_vertex_it     get_pos(T va, T vb) const;
   bool      get_contexts(T va, T vb, 
@@ -145,17 +147,38 @@ public:
   void   print() const;
 };
 
-//--------------------------------------------------------------------------//
-// to be rewritten
-// template <class T, class Data> 
-// Constraint_hierarchy_2<T,Data>&
-// Constraint_hierarchy_2<T,Data>::
-// operator=(const Constraint_hierarchy_2& ch){
-//   c_to_sc_map=ch.c_to_sc_map;
-//   sc_to_c_map=ch.sc_to_c_map;
-//   vertex_map=ch,vertex_map;
-//   return *this;
-// };
+template <class T, class Data> 
+Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2& ch)
+{
+  copy(ch);
+}
+
+template <class T, class Data> 
+Constraint_hierarchy_2<T,Data>&
+Constraint_hierarchy_2<T,Data>::
+operator=(const Constraint_hierarchy_2& ch){
+  copy(ch);
+  return *this;
+}
+
+template <class T, class Data> 
+void
+Constraint_hierarchy_2<T,Data>::
+copy(const Constraint_hierarchy_2& ch)
+{
+  clear();
+  H_c_iterator cit = ch.c_begin();
+  for( ; cit != ch.c_end(); ++cit) {
+    H_vertex_list* hvlist = new H_vertex_list(*(cit->second));
+    c_to_sc_map.insert(std::make_pair(cit->first, hvlist));
+  }
+  H_sc_iterator scit= ch.sc_begin();
+  for( ; scit != ch.sc_end(); ++scit) {
+    H_context_list* hclist = new H_context_list(*(scit->second));
+    sc_to_c_map.insert(std::make_pair(scit->first, hclist));
+  }
+}
 
 
 template <class T, class Data> 
@@ -360,7 +383,7 @@ clear()
     delete (*cit).second;
   }
   // clean and delete context lists
-  for(scit=sc_to_c_map.begin(); cit != sc_to_c_map.end(); scit++){
+  for(scit=sc_to_c_map.begin(); scit != sc_to_c_map.end(); scit++){
     (*scit).second->clear();
     delete (*scit).second;
   }
