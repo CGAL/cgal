@@ -1,3 +1,7 @@
+Version 1.9 (13 sept 99)
+minor changes (names, etc)
+minor changes in the doc (macros, not change in the contents)
+
 Version 1.8 (8 sept 99)
 minor fixes (std::, typenames, etc)
 
