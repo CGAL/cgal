@@ -231,8 +231,9 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
 // The real number type, handle class
 template <typename ET>
-struct Lazy_exact_nt : public Handle
+class Lazy_exact_nt : public Handle
 {
+public :
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
