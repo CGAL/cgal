@@ -1704,6 +1704,10 @@ Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.fig -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_CC.fig -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/TriCube_DS.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_raster.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/gargoyle_vec.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/halfedge.eps -text
@@ -1714,6 +1718,17 @@ Packages/Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.ai -text svneol=unse
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/stl_concepts.eps -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/stock.ppt -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/subdivision.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc0.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC1.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC2.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC3.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_CC4.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS1.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS2.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS3.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/tc_DS4.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/teaser.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/pfigs/Circulators.fig -text
