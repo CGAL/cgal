@@ -11,6 +11,8 @@
 // file          : include/CGAL/Qt_Window.h
 // package       : QT_window
 // author(s)     : Laurent Rineau
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //

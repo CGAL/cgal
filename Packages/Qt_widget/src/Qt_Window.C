@@ -11,6 +11,8 @@
 // file          : src/Qt_Window.C
 // package       : QT_window
 // author(s)     : Laurent Rineau
+// release       : 
+// release_date  : 
 //
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //
