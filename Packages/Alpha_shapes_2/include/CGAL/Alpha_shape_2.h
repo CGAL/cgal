@@ -1273,7 +1273,7 @@ Alpha_shape_2<Dt>::number_of_solid_components(const Coord_type& alpha) const
        ++face_it) 
     {
       Face_handle pFace = face_it;
-      CGAL_triangulation_postcondition((!pFace.is_null()));
+      CGAL_triangulation_postcondition( pFace != NULL);
 
       if (classify(pFace, alpha) == INTERIOR &&
 	  ((marked_face_set.insert(Key(&(*face_it))))).second) 
@@ -1298,7 +1298,7 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
     { 
       Face_handle pNeighbor = pFace->neighbor(i);
 	 
-      CGAL_triangulation_precondition((!pNeighbor.is_null())); 
+      CGAL_triangulation_precondition( pNeighbor != NULL ); 
       if (classify(pNeighbor, alpha) == INTERIOR &&
 	  ((marked_face_set.insert(Key(&(*pNeighbor))))).second)
 	traverse(pNeighbor, marked_face_set, alpha);
