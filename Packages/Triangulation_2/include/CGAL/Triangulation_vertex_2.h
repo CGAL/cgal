@@ -102,8 +102,6 @@ public:
    
 };
 
-CGAL_END_NAMESPACE
-
 template<class Gt, class Tds>
 inline void
 Triangulation_vertex_2<Gt,Tds>::
@@ -183,5 +181,7 @@ incident_edges(const Face_handle& f) const
 {
   return Edge_circulator(handle(), f);
 }
-    
+
+CGAL_END_NAMESPACE
+
 #endif //CGAL_TRIANGULATION_VERTEX_2_H

@@ -33,7 +33,6 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
-#include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -1299,7 +1298,7 @@ march_locate_2D(const Face_handle& start,
         }
 
         while(! lfc.locate(t, lt, li) ){
-	  lfc.increment();
+	  ++lfc;
         }
         return lfc;
     }

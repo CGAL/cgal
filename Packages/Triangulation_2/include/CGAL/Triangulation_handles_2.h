@@ -25,7 +25,7 @@
 #ifndef CGAL_TRIANGULATION_HANDLES_2_H
 #define CGAL_TRIANGULATION_HANDLES_2_H
 
-#include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Pointer.h>
 
 CGAL_BEGIN_NAMESPACE
 
