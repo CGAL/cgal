@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_vertex_base_2<Gt,PC>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_vertex_base_2<Gt,PC,SSTag>}
 
 %% add template arg's if necessary
 
@@ -33,7 +33,14 @@ base required by the \ccc{SegmentVoronoiDiagramDataStructure_2}
 concept. The class \ccRefName\ has two template arguments, the first
 being the geometric traits of the segment Voronoi diagram and should be a
 model of the concept \ccc{SegmentVoronoiDiagramTraits_2}. The second
-is a class that must be a model of the concept \ccc{SimpleContainer}.
+is a class that must be a model of the concept
+\ccc{SimpleContainer}. The third template argument indicates whether
+or not to use the simple storage site that does not support
+intersecting segments, or the full storage site, that supports
+intersecting segments. The possible values are \ccc{CGAL::Tag_true}
+and \ccc{CGAL::Tag_false}. \ccc{CGAL::Tag_true} indicates that the
+full storage site is to be used, whereas \ccc{CGAL::Tag_false}
+indicates that the simple storage site is to be used.
 
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_vertex_base_2.h}

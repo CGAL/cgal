@@ -33,16 +33,18 @@ it provides a type \ccc{Site_2}, which must be a model of the concept
 constructions for sites and several function object
 types for the predicates.
 
-{\sc Add also the stuff about intersections...}
-
 \ccTypes
 \ccTwo{SegmentVoronoiDiagramTraits_2::Segment_2+}{}
 %
-\ccNestedType{Point_2}{A type for a point.}
-\ccGlue
+\ccNestedType{Intersections_tag}{Indicates or not whether the
+  intersecting segments are to be supported.
+  \ccPrecond{The tag must either be \ccc{CGAL::Tag_true} or
+  \ccc{CGAL::Tag_false}.}}
 \ccNestedType{Site_2}{A type for a site of the segment Voronoi
   diagram. Must be a model of the concept
   \ccc{SegmentVoronoiDiagramSite_2}.}
+\ccGlue
+\ccNestedType{Point_2}{A type for a point.}
 \ccGlue
 \ccNestedType{Line_2}{A type for a line. Only required if the segment
   Voronoi diagram is inserted in a stream.}
@@ -53,13 +55,23 @@ types for the predicates.
 \ccNestedType{Segment_2}{A type for a segment. Only required if 
   if the segment Voronoi diagram is inserted in a stream.}
 \ccGlue
-\ccNestedType{Object_2}{A type representing different types of objects
-  in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
-  \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}.}
-\ccGlue
 \ccNestedType{FT}{A type for the field number type of sites, points, etc..}
 \ccGlue
 \ccNestedType{RT}{A type for the ring number type of sites, points, etc.}
+\ccGlue
+\ccNestedType{Arrangement_type}{An enumeration type that indicates the
+  type of the arrangement of two sites. The possible values are
+  \ccc{DISJOINT}, \ccc{IDENTICAL}, \ccc{CROSSING},
+  \ccc{TOUCHING_1}, \ccc{TOUCHING_2}, \ccc{TOUCHING_11},
+  \ccc{TOUCHING_12}, \ccc{TOUCHING_21}, \ccc{TOUCHING_22},
+  \ccc{OVERLAPPING_11}, \ccc{OVERLAPPING_12}, \ccc{OVERLAPPING_21},
+  \ccc{OVERLAPPING_22}, \ccc{INTERIOR}, \ccc{INTERIOR_1},
+  \ccc{INTERIOR_2}. A detailed description of the meaning of these
+  values is shown the end of the reference manual for this concept.}
+\ccGlue
+\ccNestedType{Object_2}{A type representing different types of objects
+  in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
+  \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}.}
 \ccGlue
 \ccNestedType{Assign_2}
 {Must provide \ccc{template <class T> bool operator() ( T& t,
@@ -99,17 +111,19 @@ types for the predicates.
 %
 \ccTwo{SegmentVoronoiDiagram_2}{}
 %
-%\ccGlue
-%\ccNestedType{Compare_x_2}{A predicate object type. Must
-%provide \ccc{Comparison_result operator()(Site_2 s1,
-%Site_2 s2)}, which compares the $x$-coordinates of the centers of
-%\ccc{s1} and \ccc{s2}.}
+\ccGlue
+\ccNestedType{Compare_x_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $x$-coordinates of the points
+represented by the sites \ccc{s1} and \ccc{s2}.
+\ccPrecond{\ccc{s1} and \ccc{s2} muts be points.}}
 %
-%\ccGlue
-%\ccNestedType{Compare_y_2}{A predicate object type. Must
-%provide \ccc{Comparison_result operator()(Site_2 s1,
-%Site_2 s2)}, which compares the $y$-coordinates of the centers of
-%\ccc{s1} and \ccc{s2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $y$-coordinates of the points
+represented by the sites \ccc{s1} and \ccc{s2}.
+\ccPrecond{\ccc{s1} and \ccc{s2} muts be points.}}
 %
 \ccGlue
 \ccNestedType{Orientation_2}{A predicate object type. Must
@@ -118,6 +132,19 @@ Site_2 s2, Site_2 s3)}, which performs the
 usual orientation test for three points.
 \ccc{s1}, \ccc{s2} and \ccc{s3}.
 \ccPrecond{the sites \ccc{s1}, \ccc{s2} and \ccc{s3} must be points.}}
+%
+\ccGlue
+\ccNestedType{Are_same_points_2}{A predicate object type. Must provide
+  \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
+  points represented by the sites \ccc{s1} and \ccc{s2} are identical.
+  \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
+%
+\ccGlue
+\ccNestedType{Are_parallel_2}{A predicate object type. Must provide
+  \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
+  segments represented by the sites \ccc{s1} and \ccc{s2} are
+  parallel.
+  \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
 %
 \ccGlue
 \ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.
@@ -214,6 +241,20 @@ edge is in conflict with \ccc{q}. If \ccc{sgn} is \ccc{POSITIVE} or
 \ccc{ZERO}, the predicate returns \ccc{false} if and only if \ccc{q}
 is not in conflict with the Voronoi edge.}
 %
+\ccGlue
+\ccNestedType{Oriented_side_2}{A predicate object type. Must provide
+  \ccc{Oriented_side operator(Site_1 s1, Site_2 s2, Site_2 s3, Site_2
+    s, Site_2 p)}. Determines the oriented side of the line $\ell$,
+  that passes through the Voronoi vertex of the sites \ccc{s1},
+  \ccc{s2}, \ccc{s3} and is perpendicular to the segment site \ccc{s},
+  that contains the point site \ccc{p}.
+  \ccPrecond{\ccc{s} must be a segment and \ccc{p} must be a point.}}
+%
+\ccNestedType{Arrangement_type_2}{A predicate object type. Must
+  provide \ccc{Arrangement_type operator()(Site_2 s1, Site_2 s2)} that
+  returns the type of the arrangement of the two sites \ccc{s1} and
+  \ccc{s2}.}
+%
 %\ccGlue
 %\ccNestedType{Is_degenerate_edge_2}{A predicate object type.
 %Must provide \ccc{bool operator()(Site_2 s1, Site_2
@@ -248,11 +289,15 @@ other);}{Copy constructor.}
 \ccThree{Infinite_edge_interior_conflict_2}
 {gt.infinite_edge_interior_conflict_2_object();}{}
 %
-%\ccMethod{Compare_x_2 compare_x_2_object();}{}
-%\ccGlue
-%\ccMethod{Compare_y_2 compare_y_2_object();}{}
-%\ccGlue
+\ccMethod{Compare_x_2 compare_x_2_object();}{}
+\ccGlue
+\ccMethod{Compare_y_2 compare_y_2_object();}{}
+\ccGlue
 \ccMethod{Orientation_2 orientation_2_object();}{}
+\ccGlue
+\ccMethod{Are_same_points_2 are_same_points_2_object();}{}
+\ccGlue
+\ccMethod{Are_parallel_2 are_parallel_2_object();}{}
 \ccGlue
 \ccMethod{Oriented_side_of_bisector_2
 oriented_side_of_bisector_test_2_object();}{}
@@ -264,6 +309,10 @@ oriented_side_of_bisector_test_2_object();}{}
 \ccGlue
 \ccMethod{Infinite_edge_interior_conflict_2
 	infinite_edge_interior_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Oriented_side_2 oriented_side_2_object();}{}
+\ccGlue
+\ccMethod{Arrangement_type_2 arrangement_type_2_object();}{}
 %\ccGlue
 %\ccMethod{Is_degenerate_edge_2 is_degenerate_edge_2_object();}{}
 
@@ -300,6 +349,7 @@ construct_svd_vertex_2_object();}{}
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramSite_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
 \end{ccRefConcept}

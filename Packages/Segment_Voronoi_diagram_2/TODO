@@ -1,6 +1,9 @@
+- make the intersectio tag in the traits to be the first template argument,
+  thus no default value
 - change the return type of the do_intersect predicate (and potentially
   its name) to be a char instead of std::pair<int,int>; the char should
-  encode the type of arrangement
+  encode the type of arrangement; actually rename do_intersect to 
+  arrangement_type and return an enumeration type
 - in the predicate classes, instead of the kernel's orientation use the
   orientation class taylored for sites (it does geometric filtering)
 - in class Svd_basic_constructions_C2.h, inside method to_ft, check
