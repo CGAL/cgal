@@ -63,6 +63,5 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
-compile_and_run polygonal
 compile_and_run manual_example_ps
 compile_and_run test_window_stream_xy_3

@@ -1,3 +1,6 @@
+- removed test/WindowStream/polygonal_2.C and 
+  test/WindowStream/polygonal_2.cmd.
+
 2.8.19 ( 4 Dec 2001)
 - removed CGAL/IO/polygonal_2.h
 

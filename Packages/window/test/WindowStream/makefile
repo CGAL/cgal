@@ -35,20 +35,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_window_stream_xy_3 \
-		polygonal
+                test_window_stream_xy_3
 
 test_window_stream_xy_3$(EXE_EXT): test_window_stream_xy_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_window_stream_xy_3 test_window_stream_xy_3$(OBJ_EXT) $(LDFLAGS)
-
-polygonal$(EXE_EXT): polygonal$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polygonal polygonal$(OBJ_EXT) $(LDFLAGS)
 
 manual_example_ps$(EXE_EXT): manual_example_ps$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)manual_example_ps manual_example_ps$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   polygonal.clean \
                    manual_example_ps.clean \
                    test_window_stream_xy_3.clean
 
