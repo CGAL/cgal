@@ -127,6 +127,7 @@ CGAL_KERNEL_INLINE
 bool
 RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
 {
+  if ( identical(r) ) return true;
   return source() == r.source() && direction() == r.direction();
 }
 

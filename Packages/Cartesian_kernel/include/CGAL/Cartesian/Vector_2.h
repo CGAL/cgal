@@ -176,6 +176,7 @@ CGAL_KERNEL_INLINE
 bool
 VectorC2<R CGAL_CTAG>::operator==(const VectorC2<R CGAL_CTAG> &v) const
 {
+  if ( identical(v) ) return true;
   return x() == v.x() && y() == v.y();
 }
 

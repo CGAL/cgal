@@ -182,6 +182,7 @@ CGAL_KERNEL_INLINE
 bool
 CircleC2<R CGAL_CTAG>::operator==(const CircleC2<R CGAL_CTAG> &c) const
 {
+  if ( identical(c) ) return true;
   return center() == c.center() &&
          squared_radius() == c.squared_radius() &&
          orientation() == c.orientation();

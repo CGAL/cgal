@@ -55,7 +55,6 @@ public:
 
   bool operator==(const Self& s) const;
   bool operator!=(const Self& s) const;
-  bool identical(const Self& s) const;
 
   Point_3 min() const
   {
@@ -120,6 +119,7 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 {
+  if ( identical(r) ) return true;
   return min() == r.min() && max() == r.max();
 }
 

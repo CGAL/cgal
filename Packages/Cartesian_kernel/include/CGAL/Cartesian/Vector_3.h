@@ -174,9 +174,11 @@ VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
 {}
 
 template < class R >
+inline
 bool
 VectorC3<R CGAL_CTAG>::operator==(const VectorC3<R CGAL_CTAG> &v) const
 {
+  if ( identical(v) ) return true;
   return x() == v.x() && y() == v.y() && z() == v.z();
 }
 
@@ -189,6 +191,7 @@ VectorC3<R CGAL_CTAG>::operator!=(const VectorC3<R CGAL_CTAG> &v) const
 }
 
 template < class R >
+inline
 bool
 VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
 {
