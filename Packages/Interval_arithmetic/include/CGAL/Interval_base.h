@@ -112,6 +112,8 @@ double
 to_double (const Interval_base & d)
 {
   return (d.sup_ + d.inf_) * 0.5;
+  // This may overflow...
+  // But if you are _that_ unlucky, you are probably already dead :)
 }
 
 inline
