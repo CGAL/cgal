@@ -106,7 +106,8 @@ public:
  private:
   std::istream& in; std::ostream& out;
   bool verbose;
-  CGAL::Unique_hash_map<Vertex_iterator, int>  VI;
+  //  CGAL::Unique_hash_map<Vertex_iterator, int>  VI;
+  CGAL::Object_index<Vertex_iterator> VI;  
   CGAL::Object_index<Halfedge_iterator> EI;
   CGAL::Object_index<Halffacet_iterator>    FI;
   CGAL::Object_index<Volume_iterator>   CI;
@@ -134,12 +135,8 @@ public:
   SNC_io_parser(std::istream& is, SNC_structure& W);
   SNC_io_parser(std::ostream& os, SNC_structure& W, bool standard_mode);
 
-  std::string index(Vertex_iterator v) const { 
-    std::ostringstream os; 
-    os << VI[v];    
-    return os.str();
-  }
-  
+  std::string index(Vertex_iterator v) const
+  { return VI(v,verbose); } 
   std::string index(Halfedge_iterator e) const 
   { return EI(e,verbose); }
   std::string index(Halffacet_iterator f) const 
@@ -242,7 +239,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W) :
 */
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, bool standard_mode = true) : 
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, bool sorted = false) : 
   Base(W), in(std::cin), out(os),
   FI(W.halffacets_begin(),W.halffacets_end(),'F'),
   CI(W.volumes_begin(),W.volumes_end(),'C'),
@@ -259,23 +256,68 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, bool standa
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
              out.iword(CGAL::IO::mode) != CGAL::IO::BINARY); 
 
- Vertex_iterator vi; 
- CGAL_nef3_forall_vertices(vi, *sncp())
-   VL.push_back(vi);
- VL.sort(sort_vertices<SNC_structure>(*sncp()));
- int i = 0;
- typename std::list<Vertex_iterator>::iterator vl;
- for(vl = VL.begin(); vl != VL.end(); vl++)
-   VI[*vl] = i++;
+  Vertex_iterator vi; 
+  CGAL_nef3_forall_vertices(vi, *sncp())
+    VL.push_back(vi);
+  if(sorted)  VL.sort(sort_vertices<SNC_structure>(*sncp()));
+  int i = 0;
+  typename std::list<Vertex_iterator>::iterator vl;
+  for(vl = VL.begin(); vl != VL.end(); vl++)
+    VI[*vl] = i++;
+  
+  Halfedge_iterator ei; 
+  CGAL_nef3_forall_halfedges(ei, *sncp())
+    EL.push_back(ei);
+  if(sorted) EL.sort(sort_edges<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<Halfedge_iterator>::iterator el;
+  for(el = EL.begin(); el != EL.end(); el++)
+    EI[*el] = i++;
 
- Halfedge_iterator ei; 
- CGAL_nef3_forall_halfedges(ei, *sncp())
-   EL.push_back(ei);
- EL.sort(sort_edges<SNC_structure>(*sncp()));
- i = 0;
- typename std::list<Halfedge_iterator>::iterator el;
- for(el = EL.begin(); el != EL.end(); el++)
-   EI[*el] = i++;
+  Halffacet_iterator fi; 
+  CGAL_nef3_forall_halffacets(fi, *sncp())
+    FL.push_back(fi);
+  //  if(sorted) FL.sort(sort_facets<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<Halffacet_iterator>::iterator fl;
+  for(fl = FL.begin(); fl != FL.end(); fl++)
+    FI[*fl] = i++;
+
+  Volume_iterator ci; 
+  CGAL_nef3_forall_volumes(ci, *sncp())
+    CL.push_back(ci);
+  //  if(sorted) CL.sort(sort_volumes<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<Volume_iterator>::iterator cl;
+  for(cl = CL.begin(); cl != CL.end(); cl++)
+    CI[*cl] = i++;
+
+  SHalfedge_iterator sei; 
+  CGAL_nef3_forall_shalfedges(sei, *sncp())
+    SEL.push_back(sei);
+  //  if(sorted) SEL.sort(sort_sedges<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<SHalfedge_iterator>::iterator sel;
+  for(sel = SEL.begin(); sel != SEL.end(); sel++)
+    SEI[*sel] = i++;
+
+  SHalfloop_iterator sli; 
+  CGAL_nef3_forall_shalfloops(sli, *sncp())
+    SLL.push_back(sli);
+  //  if(sorted) SLL.sort(sort_sloops<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<SHalfloop_iterator>::iterator sll;
+  for(sll = SLL.begin(); sll != SLL.end(); sll++)
+    SLI[*sll] = i++;
+
+  SFace_iterator sfi; 
+  CGAL_nef3_forall_sfaces(sfi, *sncp())
+    SFL.push_back(sfi);
+  //  if(sorted) SFL.sort(sort_sfaces<SNC_structure>(*sncp()));
+  i = 0;
+  typename std::list<SFace_iterator>::iterator sfl;
+  for(sfl = SFL.begin(); sfl != SFL.end(); sfl++)
+    SFI[*sfl] = i++;
 
   VI[W.vertices_end()]=-2;
   EI[W.halfedges_end()]=-2;
@@ -331,25 +373,35 @@ void SNC_io_parser<EW>::print() const
 
   if (verbose) 
   out << "/* Facet: index { fclist, ivlist, mark, plane } */\n";
-  Halffacet_iterator f;
-  CGAL_nef3_forall_halffacets(f,*sncp()) print_facet(f);
+  typename std::list<Halffacet_iterator>::const_iterator f;
+  for(f=FL.begin();f!=FL.end();f++)
+    print_facet(*f);
+
   if (verbose) 
   out << "/* Volume: index { shlist, mark } */\n";
-  Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,*sncp()) print_volume(c);
+  typename std::list<Volume_iterator>::const_iterator c;
+  for(c=CL.begin();c!=CL.end();c++)
+    print_volume(*c);
+
   if (verbose) 
   out << "/* SEdge: index { twin, sprev, snext, source, sface,"
       << " prev, next, facet } */\n";
-  SHalfedge_iterator se;
-  CGAL_nef3_forall_shalfedges(se,*sncp()) print_sedge(se);
+  typename std::list<SHalfedge_iterator>::const_iterator se;
+  for(se=SEL.begin();se!=SEL.end();se++)
+    print_sedge(*se);
+
   if (verbose) 
   out << "/* SLoop: index { twin, sface, facet } */" << std::endl;
-  SHalfloop_iterator sl;
-  CGAL_nef3_forall_shalfloops(sl,*sncp()) print_sloop(sl);
+  typename std::list<SHalfloop_iterator>::const_iterator sl;
+  for(sl=SLL.begin();sl!=SLL.end();sl++)
+    print_sloop(*sl);
+
   if (verbose) 
   out << "/* SFace: index { fclist, ivlist, sloop, volume } */" << std::endl;
-  SFace_iterator sf;
-  CGAL_nef3_forall_sfaces(sf,*sncp()) print_sface(sf);
+  typename std::list<SFace_iterator>::const_iterator sf;
+  for(sf=SFL.begin();sf!=SFL.end();sf++)
+    print_sface(*sf);
+
   out << "/* end Selective Nef complex */" << std::endl;
 }
 

@@ -110,6 +110,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   }
 
 #else // LINE3_LINE3_INTERSECTION
+
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const {
