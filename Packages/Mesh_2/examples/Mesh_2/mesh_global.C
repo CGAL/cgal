@@ -1,14 +1,12 @@
 // file: examples/Mesh_2/mesh_global.C
 
-#include <CGAL/basic.h>
-#include <iostream>
-
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesh_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_traits_2.h>
+
+#include <iostream>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
@@ -19,9 +17,9 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> CDT;
 
 typedef CDT::Vertex_handle Vertex_handle;
-typedef K::Point_2 Point;
+typedef CDT::Point Point;
 
-int main(int, char**)
+int main()
 {
   CDT cdt;
 
@@ -37,12 +35,12 @@ int main(int, char**)
   cdt.insert_constraint(vd, va);
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() 
-	    << std::endl;
+            << std::endl;
 
   std::cout << "Meshing the triangulation with default criterias..."
-	    << std::endl;
+            << std::endl;
   CGAL::refine_Delaunay_mesh_2(cdt);
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() 
-	    << std::endl;
+            << std::endl;
 }

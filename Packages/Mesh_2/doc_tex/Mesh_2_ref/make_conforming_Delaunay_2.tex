@@ -6,8 +6,9 @@
 { Refines the constrained Delaunay triangulation \ccc{t} into a
   conforming Delaunay triangulation. After a call to this function,
   all edges of \ccc{t} are Delaunay edges.   
-  \ccPrecond The template parameter \ccc{CDT} \meshcdtrequires{}
-  The geometric traits class plugged in the constrained Delaunay
+  \ccPrecond The template parameter \ccc{CDT} should be a model of the
+  concept \ccc{ConstrainedDelaunayTriangulation_2}.
+  The geometric traits class plugged into the constrained Delaunay
   triangulation must be a model of
   \ccc{ConformingDelaunayTriangulationTraits_2}.} 
 
@@ -16,5 +17,5 @@
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

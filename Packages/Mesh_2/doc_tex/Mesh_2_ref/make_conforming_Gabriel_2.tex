@@ -8,15 +8,15 @@
   constrained edges of \ccc{t} have the \emph{Gabriel property}: the
   circle that have $e$ as diameter does not contain any points from
   the triangulation.  
-  \ccPrecond The template parameter \ccc{CDT}
-    \meshcdtrequires{}. The geometric traits class plugged in the
-    constrained Delaunay triangulation must be a model of
-    \ccc{ConformingGabrielTriangulationTraits_2}.} 
+  \ccPrecond The template parameter \ccc{CDT} should be a model of the
+  concept \ccc{ConstrainedDelaunayTriangulation_2}. The geometric
+  traits class plugged into the constrained Delaunay triangulation must be a
+  model of \ccc{ConformingDelaunayTriangulationTraits_2}.} 
 
 \end{ccRefFunction}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

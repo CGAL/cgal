@@ -5,7 +5,8 @@
 The concept \ccRefName\ refines the concept
 \ccc{ConstrainedDelaunayTriangulationTraits_2}, providing a numeric
 field type \ccc{FT}, a type \ccc{Vector_2} and several constructors on
-\ccc{Vector_2} and \ccc{Point_2}. The field type has to be a model of
+\ccc{Vector_2} and \ccc{Point_2}, and a predicate on angles.
+The field type has to be a model of
 the concept \ccc{SqrtFieldNumberType}. This field type and the
 constructors are used by the conforming algorithm to compute Steiner
 points on constrained edges.
@@ -18,7 +19,7 @@ points on constrained edges.
 
 \ccNestedType{FT}{The field type. It must be a model of the
   \ccc{SqrtFieldNumberType}, meaning it must be a number type
-  supporting the operation $+$, $-$, $*$, $/$, and $\sqrt{\cdot}$.}
+  supporting the operations $+$, $-$, $*$, $/$, and $\sqrt{\cdot}$.}
 \ccNestedType{Vector_2}{The vector type.}
 \ccNestedType{Construct_vector_2}{Constructor object. Must
   provide the operator \ccc{Vector_2 operator()(Point a, Point b)}
@@ -31,10 +32,14 @@ points on constrained edges.
   that computes the point $p + \mathbf{v}$.}
 \ccNestedType{Construct_midpoint_2}{Constructor object. Must provide
   the operator \ccc{Point_2 operator()(Point_2 a, Point_2 b)} that
-  computes the middle point of the segment $ab$.}
+  computes the midpoint of the segment $ab$.}
 \ccNestedType{Compute_squared_distance_2}{Constructor object. Must
   provide the operator \ccc{FT operator()(Point_2 a, Point_2 b)} that
   computes the squared distance between $a$ and $b$.}
+\ccNestedType{Angle_2}{Predicate object. Must provide the operator
+  \ccc{CGAL::Angle operator()(Point_2 p, Point_2 q, Point_2 r)} that
+  returns OBTUSE, RIGHT or ACUTE depending on the angle formed by the three
+  points p, q, r (q being the vertex of the angle).}
 
 \ccCreationVariable{traits}
 
@@ -52,6 +57,7 @@ points on constrained edges.
 \ccGlue
 \ccMethod{Compute_squared_distance_2
   compute_squared_distance_2_object();}{}
+\ccMethod{Angle_2 angle_2_object();}{}
 
 \ccHasModels
 Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
@@ -61,5 +67,5 @@ Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

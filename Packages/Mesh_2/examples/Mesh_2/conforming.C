@@ -2,12 +2,13 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Conforming_Delaunay_triangulation_2.h>
+#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+#include <iostream>
 
+struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
-typedef CDT::Point          Point;
+typedef CDT::Point Point;
 typedef CDT::Vertex_handle Vertex_handle;
 
 int main()
@@ -35,17 +36,17 @@ int main()
   cdt.insert_constraint(vh,ve);
 
   std::cout << "Number of vertices before: "
-	    << cdt.number_of_vertices() << std::endl;
+            << cdt.number_of_vertices() << std::endl;
 
   // make it conforming Delaunay
   CGAL::make_conforming_Delaunay_2(cdt);
 
   std::cout << "Number of vertices after make_conforming_Delaunay_2: "
-	    << cdt.number_of_vertices() << std::endl;
+            << cdt.number_of_vertices() << std::endl;
 
   // then make it conforming Gabriel
   CGAL::make_conforming_Gabriel_2(cdt);
 
   std::cout << "Number of vertices after make_conforming_Gabriel_2: "
-	    << cdt.number_of_vertices() << std::endl;
+            << cdt.number_of_vertices() << std::endl;
 }

@@ -34,14 +34,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                conform$(EXE_EXT) \
                 conforming$(EXE_EXT) \
                 mesh_class$(EXE_EXT) \
                 mesh_global$(EXE_EXT) \
                 mesh_with_seeds$(EXE_EXT) 
-
-conform$(EXE_EXT): conform$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conform conform$(OBJ_EXT) $(LDFLAGS)
 
 conforming$(EXE_EXT): conforming$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conforming conforming$(OBJ_EXT) $(LDFLAGS)
@@ -56,7 +52,6 @@ mesh_with_seeds$(EXE_EXT): mesh_with_seeds$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_with_seeds mesh_with_seeds$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   conform.clean \
                    conforming.clean \
                    mesh_class.clean \
                    mesh_global.clean \

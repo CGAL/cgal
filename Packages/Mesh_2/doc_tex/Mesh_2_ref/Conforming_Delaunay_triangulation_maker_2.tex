@@ -1,7 +1,7 @@
-\begin{ccRefClass}{Conforming_Delaunay_triangulation_2<CDT>}
+\begin{ccRefClass}{Conforming_Delaunay_triangulation_maker_2<CDT>}
 
-The class \ccRefName{} is an auxiliary base class of
-\ccc{Delaunay_mesh_2<CDT>}. It permits to refine a constrained
+The class \ccRefName{} is an auxiliary class of
+\ccc{Delaunay_mesher_2<CDT>}. It permits to refine a constrained
 Delaunay triangulation into a conforming Delaunay or conforming
 Gabriel triangulation. For standard needs, consider using the global
 fonctions \ccc{make_conforming_Gabriel_2} and
@@ -9,62 +9,37 @@ fonctions \ccc{make_conforming_Gabriel_2} and
 
 \ccParameters 
 
-The template parameter \ccc{CDT} \meshcdtrequires{}
+The template parameter \ccc{CDT} should be a model of the concept
+\ccc{ConstrainedDelaunayTriangulation_2}.
 
 The geometric traits class of the instance of \ccc{CDT} has to be
-  a model of the concept \ccc{ConformingGabrielTriangulationTraits_2}
-  or \ccc{ConformingDelaunayTriangulationTraits_2}. Every methods of
-  this class (but \ccc{clear()}) exists in two versions: one suffixed
-  by \ccc{_Delaunay} and one suffixed by \ccc{_Gabriel}. If only
-  \emph{Delaunay} methods are called, the geometric traits class of
-  the instance of \ccc{CDT} can be a model of
-  \ccc{ConformingDelaunayTriangulationTraits_2}. If some
-  \emph{Gabriel} methods are called, the geometric traits class of
-  the instance of \ccc{CDT} has to be a model of
-  \ccc{ConformingGabrielTriangulationTraits_2}.
+a model of the concept \ccc{ConformingDelaunayTriangulationTraits_2}.
 
 \ccHeading{Using this class}
 
-The class \ccRefName\ derives from \ccc{CDT}. A call to the
-  method \ccc{make_conforming_Delaunay()} (resp.
-  \ccc{make_conforming_Gabriel()}) will refine the contrained Delaunay
-  triangulation into a conforming Delaunay (resp. conforming Gabriel)
-  triangulation. Note that the insertion methods of vertices or
-  constrained edges are not overridden. Thus insertions of new vertices
-  or new constrained edges break the conforming Delaunay (or
-  conforming Gabriel) property, until a conforming method is called
-  again.
+The constructor of the class \ccRefName\ takes a reference to a \ccc{CDT}
+as an argument. A call to the method \ccc{make_conforming_Delaunay()}
+(resp.  \ccc{make_conforming_Gabriel()}) will refine this contrained
+Delaunay triangulation into a conforming Delaunay (resp. conforming
+Gabriel) triangulation. note that if, during the life of the \ccRefName\ 
+object, the triangulation is externally modified, any further call to its
+member methods may crash. Considere reconstructing a new \ccRefName\ object
+if the triangulation has been modified.
 
 The conforming methods insert points into constrained edges, splitting
-them into sub-constraints. You can have access to initial inserted
+them into sub-constraints. You have access to the initial inserted
 constraints if you instantiate the template parameter by a
 \ccc{CGAL::Constrained_triangulation_plus_2<CDT>}.
 
-\ccInclude{CGAL/Conforming_Delaunay_triangulation_2.h}
-
-\ccInheritsFrom
-
-\ccc{CDT}
-
-\ccParameters
-
-\ccc{CDT} must be a \cgal\ constrained Delaunay triangulation.
-
-\ccTypes 
-\ccTypedef{typedef CDT Triangulation;}{the triangulation base class.}
+\ccInclude{CGAL/Conforming_Delaunay_triangulation_maker_2.h}
 
 \ccCreation
-\ccCreationVariable{c}
+\ccCreationVariable{m}
 
-\ccConstructor{Conforming_Delaunay_triangulation_2(const Geom_traits& gt =
-  Geom_traits());}
-{Introduces an empty triangulation \ccVar.}
+\ccConstructor{Conforming_Delaunay_triangulation_maker_2(CDT& t);}
+{Create a new conforming maker, working on \ccc{t}.}
 
 \ccOperations
-
-\ccMethod{ void clear(); }
-{ Clear the triangulation and private datas, resulting in a empty
-  triangulation. }
 
 \ccHeading{Conforming methods}
 
@@ -76,7 +51,7 @@ constraints if you instantiate the template parameter by a
 \ccMethod{ void make_conforming_Gabriel(); }
 { Refines the triangulation into a conforming Gabriel triangulation.
   After a call to this method, all constrained edges $e$ have the
-  \emph{Gabriel property}: the circle that have $e$ as diameter
+  \emph{Gabriel property}: the circle with diameter $e$ 
   does not contain any vertex of the triangulation. }
 
 \ccHeading{Checking}
@@ -89,7 +64,7 @@ of edges.
 { Returns \ccc{true} iff all triangles fulfill the Delaunay property.}
 
 \ccMethod{ bool is_conforming_Gabriel(); }
-{ Returns \ccc{true} if all constrained edges have the Gabriel property:
+{ Returns \ccc{true} iff all constrained edges have the Gabriel property:
   there circumsphere is empty. }
 
 \begin{ccAdvanced}
@@ -98,7 +73,7 @@ of edges.
 
 The \ccRefName{} class allows, for debugging or demos, to play the
 conforming algorithm step by step, using the following methods. They
-exist in two versions, depending whether you want the triangulation to
+exist in two versions, depending on whether you want the triangulation to
 be conforming Delaunay or conforming Gabriel. Any call to a
 \ccc{step_by_step_conforming_XX} function requires a previous call to
 the corresponding of \ccc{init_XX}.
@@ -111,12 +86,10 @@ the corresponding of \ccc{init_XX}.
 
 \ccMethod{ bool step_by_step_conforming_Delaunay (); }
 { Applies one step of the algorithm. At one step of the algorithm,
-  only one point is inserted. However, the algorithm sometimes doesn't
-  insert a point at a step. Anyway, internal datas of the \ccRefName{}
+  only one point is inserted. However, the algorithm sometimes does not
+  insert a point at some steps. Anyway, internal data of the \ccRefName{}
   object are modified at each step, until \ccc{c.is_conforming_done()}
-  returns \ccc{true}. If \ccc{c.is_conforming_done()}, returns
-  \ccc{false}. If not (when the algorithm is not done), returns
-  \ccc{true}.}
+  returns \ccc{true}. Returns \ccc{true} iff the algorithm is not done.}
 
 \ccMethod{ void init_Gabriel(); }{Analog to
     \ccc{init_Delaunay} for Gabriel conforming.}
@@ -125,10 +98,10 @@ the corresponding of \ccc{init_XX}.
   \ccc{step_by_step_conforming_Delaunay()} for Gabriel conforming.}
 
 \ccMethod{ bool is_conforming_done(); }
-{ Tests if the step by step conforming algorithm if done or not. If if
+{ Tests if the step by step conforming algorithm is done. If it
   returns \ccc{true}, the following calls to
   \ccc{step_by_step_conforming_XX} will not insert any points, until some
-  new contrained segments or points are inserted in the triangulation and
+  new constrained segments or points are inserted in the triangulation and
   \ccc{init_XX} is called again. }
 
 \end{ccAdvanced}
@@ -138,5 +111,5 @@ the corresponding of \ccc{init_XX}.
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

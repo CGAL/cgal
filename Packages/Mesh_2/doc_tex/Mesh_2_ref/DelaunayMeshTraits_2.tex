@@ -3,28 +3,14 @@
 \ccDefinition
 
 The concept \ccRefName\ refines the concept
-\ccc{ConformingGabrielTriangulationTraits_2}. It has to provides a
-type \ccc{Quality} that represents a measure of the quality of a
-triangle, and a predicate \ccc{Is_bad}.  \ccc{Is_bad} defines mesh
-criteria on triangles and computes the quality of the triangle passed
-as argument. The type \ccc{Quality} must be \emph{comparable} as the
-meshing algorithm will order bad triangles by quality, to split those
-with smallest quality first.
+\ccc{ConformingDelaunayTriangulationTraits_2}. It provides a construction
+object \ccc{Construct_circum_center_2}.
 
 \ccRefines
 
-\ccc{ConformingGabrielTriangulationTraits_2}
+\ccc{ConformingDelaunayTriangulationTraits_2}
 
 \ccTypes
-
-\ccNestedType{Quality}{Copy constructible, assignable, and comparable type.}
-
-\ccNestedType{Is_bad} {Predicate object. Must provide the operator
-  \ccc{bool operator()(Point_2 a, Point_2 b, Point_2 c, Quality& q)}
-  thats assigns to \ccc{q} a value measuring the quality of the
-  triangle and returns \ccc{true} iff the triangle formed by the three
-  points $a$, $b$, $c$ satisfies the wanted criteria for mesh
-  triangles.}
 
 \ccNestedType{Construct_circum_center_2} {Constructor object. Must provide
   the operator \ccc{Point_3 operator()(const Point_3&p, 
@@ -38,16 +24,15 @@ with smallest quality first.
 
 \ccHeading{Access to predicate and constructor objects}
 
-\ccMethod{Is_bad is_bad_object();}{}
+\ccMethod{Construct_circum_center_2 construct_circum_center_2_object();}{}
 
 \ccHasModels
-\ccc{Delaunay_mesh_traits_2<K>}\\
-\ccc{Delaunay_mesh_size_traits_2<K>}
+Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
 
 \end{ccRefConcept}
 
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

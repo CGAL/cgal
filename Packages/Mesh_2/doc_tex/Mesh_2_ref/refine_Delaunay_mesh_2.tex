@@ -1,27 +1,27 @@
 \begin{ccRefFunction}{refine_Delaunay_mesh_2}
 
 
-\ccFunction{ template<class CDT> 
-void refine_Delaunay_mesh_2 (CDT &t, const typename CDT::Geomtraits& gt = 
-typename CDT::Geom_traits() ); }
+\ccFunction{ template<class CDT, Criteria> 
+void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); }
 { Refines the defaults domain defined by a constrained Delaunay
   triangulation and no seeds into a mesh satifying the criteria
-  defined by the traits \ccc{gt}. The domain of the mesh
-    covers all the connected components of the plan defined by the
-    constrained edges of \ccc{t}, except the unbounded component.
-  \ccPrecond The template parameter \ccc{CDT}
-    \meshcdtrequires{}. The geometric traits class plugged in the
-    constrained Delaunay triangulation must be a model of
-    \ccc{DelaunayMeshTraits_2}. The face base plugged in the
-    constrained Delaunay triangulation must be a model of the
-    concept \ccc{DelaunayMeshFaceBase_2}.}
+  defined by the traits \ccc{criteria}. The domain of the mesh
+  covers all the connected components of the plan defined by the
+  constrained edges of \ccc{t}, except the unbounded component.
+  \ccPrecond The template parameter \ccc{CDT} must be a model of the
+  concept \ccc{ConstrainedDelaunayTriangulation_2}. The geometric traits
+  class plugged in the constrained Delaunay triangulation must be a model
+  of \ccc{DelaunayMeshTraits_2}. The face plugged into the constrained
+  Delaunay triangulation must be a model of the concept
+  \ccc{DelaunayMeshFaceBase_2}. \ccc{Criteria} must be a model of the
+  concept \ccc{MeshingCriteria_2} and \ccc{CDT::Face_handle} must be the same
+  as \ccc{Criteria::Face_handle}. }
 
-\ccFunction{ template <class CDT, class InputIterator>
+\ccFunction{ template <class CDT, class Criteria, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,
                        InputIterator begin, InputIterator end,
                        bool mark = false,
-                       const typename CDT::Geom_traits& gt =
-                       typename CDT::Geom_traits()); }
+                       const Criteria& criteria = Criteria()); }
                      { Same a the previous function, but the sequence
                        [\ccc{begin}, \ccc{end}] gives a set of
                        seeds points, that defines the domain to be
@@ -43,5 +43,5 @@ void refine_Delaunay_mesh_2(CDT& t,
 %%% For emacs/AucTeX:
 %%% Local Variables: ***
 %%% mode:latex ***
-%%% TeX-master: "ref_manual.tex"  ***
+%%% TeX-master: "../Mesh_2.tex"  ***
 %%% End: ***

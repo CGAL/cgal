@@ -1,14 +1,12 @@
 // file: examples/Mesh_2/mesh_class.C
 
-#include <CGAL/basic.h>
-#include <iostream>
-
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesh_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_traits_2.h>
+
+#include <iostream>
 
 struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
@@ -17,40 +15,45 @@ typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 typedef CGAL::Delaunay_mesh_size_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> CDT;
-typedef CGAL::Delaunay_mesh_2<CDT> Mesh;
+typedef CGAL::Delaunay_mesher_2<CDT> Mesher;
 
 typedef CDT::Vertex_handle Vertex_handle;
-typedef K::Point_2 Point;
+typedef CDT::Point Point;
 
-int main(int, char**)
+int main()
 {
-  Mesh mesh;
+  CDT cdt;
 
-  Vertex_handle va = mesh.insert(Point(-4,0));
-  Vertex_handle vb = mesh.insert(Point(0,-1));
-  Vertex_handle vc = mesh.insert(Point(4,0));
-  Vertex_handle vd = mesh.insert(Point(0,1));
-  mesh.insert(Point(2, 0.6));
+  Vertex_handle va = cdt.insert(Point(-4,0));
+  Vertex_handle vb = cdt.insert(Point(0,-1));
+  Vertex_handle vc = cdt.insert(Point(4,0));
+  Vertex_handle vd = cdt.insert(Point(0,1));
+  cdt.insert(Point(2, 0.6));
 
-  mesh.insert_constraint(va, vb);
-  mesh.insert_constraint(vb, vc);
-  mesh.insert_constraint(vc, vd);
-  mesh.insert_constraint(vd, va);
+  cdt.insert_constraint(va, vb);
+  cdt.insert_constraint(vb, vc);
+  cdt.insert_constraint(vc, vd);
+  cdt.insert_constraint(vd, va);
 
-  std::cout << "Number of vertices: " << mesh.number_of_vertices() 
-	    << std::endl;
+  std::cout << "Number of vertices: " << cdt.number_of_vertices() 
+            << std::endl;
 
   std::cout << "Meshing the triangulation with default criterias..."
-	    << std::endl;
-  mesh.refine_mesh();
+            << std::endl;
 
-  std::cout << "Number of vertices: " << mesh.number_of_vertices() 
-	    << std::endl;
+  Mesher mesher(cdt);
+  mesher.refine_mesh();
+
+  std::cout << "Number of vertices: " << cdt.number_of_vertices() 
+            << std::endl;
 
   std::cout << "Meshing with new criterias..." << std::endl;
-  mesh.set_geom_traits(Meshtraits(0.125, 0.5));
-  mesh.refine_mesh();
+  // 0.125 is the default shape bound. It corresponds to abound 20.6°.
+  // 0.5 is the upper bound on the length of the longuest edge.
+  // See reference manual for Delaunay_mesh_size_traits_2<K>.
+  cdt.set_geom_traits(Meshtraits(0.125, 0.5));
+  mesher.refine_mesh();
 
-  std::cout << "Number of vertices: " << mesh.number_of_vertices() 
-	    << std::endl;
+  std::cout << "Number of vertices: " << cdt.number_of_vertices() 
+            << std::endl;
 }

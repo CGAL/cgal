@@ -13,12 +13,18 @@ Packages/Mesh_2/demo/Mesh_2/semantic.cache
 Packages/Mesh_2/doc_html
 Packages/Mesh_2/doc_pdf
 Packages/Mesh_2/doc_ps
+Packages/Mesh_2/doc_tex/**.aux
 Packages/Mesh_2/doc_tex/*.blg
+Packages/Mesh_2/doc_tex/*.cb
 Packages/Mesh_2/doc_tex/*.cgallog
+Packages/Mesh_2/doc_tex/*.hlg
 Packages/Mesh_2/doc_tex/*.ilg
 Packages/Mesh_2/doc_tex/*.log
 Packages/Mesh_2/doc_tex/*.out
 Packages/Mesh_2/doc_tex/*.pdflg
+Packages/Mesh_2/doc_tex/*.ref
+Packages/Mesh_2/doc_tex/*.tmp
+Packages/Mesh_2/doc_tex/*.tmp.*
 Packages/Mesh_2/doc_tex/Mesh_2/*.aux
 Packages/Mesh_2/doc_tex/Mesh_2/*.core
 Packages/Mesh_2/doc_tex/Mesh_2/*.dvi
@@ -39,6 +45,7 @@ Packages/Mesh_2/doc_tex/Mesh_2_ref/*.pdf
 Packages/Mesh_2/doc_tex/Mesh_2_ref/*.ps
 Packages/Mesh_2/doc_tex/Mesh_2_ref/_region*
 Packages/Mesh_2/doc_tex/Mesh_2_ref/semantic.cache
+Packages/Mesh_2/doxygen
 Packages/Mesh_2/examples/Mesh_2/*.core
 Packages/Mesh_2/examples/Mesh_2/conform
 Packages/Mesh_2/examples/Mesh_2/conforming

@@ -1,0 +1,42 @@
+\begin{ccRefConcept}{MeshingCriteria_2}
+
+\ccDefinition
+
+The concept \ccRefName\ defines the meshing criteria. It provides a type
+\ccc{Quality} that represents a measure of quality of a triangle, and a
+predicate \ccc{Is_bad}.  \ccc{Is_bad} defines mesh criteria on triangles
+and computes the quality of the triangle passed as an argument. The type
+\ccc{Quality} must be \emph{less-than comparable} as the meshing algorithm
+will order bad triangles by quality, to split those with smallest quality
+first.
+
+\ccTypes
+
+\ccNestedType{Face_handle}{Handle to a face of the triangulation.}
+
+\ccNestedType{Quality}{Copy constructible, assignable, and less-than
+  comparable type.}
+
+\ccNestedType{Is_bad} {Predicate object. Must provide the operator
+  \ccc{bool operator()(Face_handle fh, Quality& q)} that assigns to \ccc{q}
+  a value measuring the quality of the triangle pointed by \ccc{fh} and
+  returns \ccc{true} iff it satisfies the desired criteria for mesh
+  triangles.}
+
+\ccCreationVariable{traits}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccMethod{Is_bad is_bad_object();}{}
+
+\ccHasModels
+\ccc{Delaunay_mesh_traits_2<K>}\\
+\ccc{Delaunay_mesh_size_traits_2<K>}
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***
