@@ -41,6 +41,7 @@
  *  Laurent Saboret 01/2005: Change for CGAL:
  *		- Added OpenNL namespace
  *		- solve() returns true on success
+ *		- test divisions by zero
  */
  
 #ifndef __CONJUGATE_GRADIENT__
@@ -61,8 +62,7 @@ namespace OpenNL {
  *
  * This implementation is inspired by the lsolver library,
  * by Christian Badura, available from:
- * http://www.mathematik.uni-freiburg.de
- * /IAM/Research/projectskr/lin_solver/
+ * http://www.mathematik.uni-freiburg.de/IAM/Research/projectskr/lin_solver/
  *
  * @param A generic matrix, a function
  *   mult(const MATRIX& M, const double* x, double* y)
@@ -92,24 +92,27 @@ public:
 	// Preconditions:
 	// * A.dimension() == b.dimension()
 	// * A.dimension() == x.dimension()
-	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
+	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
+	{
         if (A.dimension() != b.dimension())
 			return false;
         if (A.dimension() != x.dimension())
 			return false;
+        if (A.dimension() <= 0)
+			return false;
 
-        unsigned int n = A.dimension() ;
-        unsigned int max_iter = max_iter_ ;
+        unsigned int n = A.dimension() ;						// (Square) matrix dimension
+        unsigned int max_iter = max_iter_ ;						// Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
         }
         Vector g(n) ;
         Vector r(n) ;
         Vector p(n) ;
-        unsigned int its = 0 ;
+        unsigned int its=0;										// Loop counter
         CoeffType t, tau, sig, rho, gam;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ; 
-        CoeffType err=epsilon_*epsilon_*bnorm2 ;
+        CoeffType err=epsilon_*epsilon_*bnorm2 ;				// Error to reach
         mult(A,x,g);
         BLAS<Vector>::axpy(-1,b,g);
         BLAS<Vector>::scal(-1,g);
@@ -120,9 +123,11 @@ public:
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
             tau=BLAS<Vector>::dot(g,r);
+			assert( fabs(sig)>1e-40 );
             t=tau/sig;
             BLAS<Vector>::axpy(t,r,x);
             BLAS<Vector>::axpy(-t,p,g);
+			assert( fabs(tau)>1e-40 );
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
@@ -130,8 +135,10 @@ public:
         }
 
 		// TO BE CHECKED BY Bruno Levy
-		return (its < max_iter);
+		bool success = (its < max_iter);
+		return success;
     } 
+
 private:
     CoeffType epsilon_ ;
     unsigned int max_iter_ ;

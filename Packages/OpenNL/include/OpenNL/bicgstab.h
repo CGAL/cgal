@@ -41,6 +41,7 @@
  *  Laurent Saboret 01/2005: Change for CGAL:
  *		- Added OpenNL namespace
  *		- solve() returns true on success
+ *		- test divisions by zero
  */
 
 #ifndef __BICGSTAB__
@@ -60,8 +61,7 @@ namespace OpenNL {
  *
  * This implementation is inspired by the lsolver library,
  * by Christian Badura, available from:
- * http://www.mathematik.uni-freiburg.de
- * /IAM/Research/projectskr/lin_solver/
+ * http://www.mathematik.uni-freiburg.de/IAM/Research/projectskr/lin_solver/
  *
   * @param A generic matrix, a function
  *   mult(const MATRIX& M, const double* x, double* y)
@@ -91,18 +91,24 @@ public:
 	// Preconditions:
 	// * A.dimension() == b.dimension()
 	// * A.dimension() == x.dimension()
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
-        if (A.dimension() != b.dimension())
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+	{
+	   // Debug trace
+	   //std::cerr << std::endl << "Solver_BICGSTAB<>::solve: start" << std::endl;
+
+       if (A.dimension() != b.dimension())
 			return false;
         if (A.dimension() != x.dimension())
 			return false;
+        if (A.dimension() <= 0)
+			return false;
 
-        unsigned int n = A.dimension() ;
-        unsigned int max_iter = max_iter_ ;
+        unsigned int n = A.dimension() ;						// (Square) matrix dimension
+        unsigned int max_iter = max_iter_ ;						// Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
         }
-        Vector rT(n) ;
+        Vector rT(n) ;											// Initial residue rT=Ax-b
         Vector d(n) ;
         Vector h(n) ;
         Vector u(n) ;
@@ -110,18 +116,28 @@ public:
         Vector t(n) ;
         Vector& s = h ;
         CoeffType rTh, rTAd, rTr, alpha, beta, omega, st, tt;
-        unsigned int its=0;
-        CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);
-        Vector r(n) ;
+        unsigned int its=0;										// Loop counter
+        CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
+
+        Vector r(n) ;											// Current residue r=Ax-b
         mult(A,x,r);
         BLAS<Vector>::axpy(-1,b,r);
+
+	    // Initially, d=h=rT=r=Ax-b
         BLAS<Vector>::copy(r,d);
         BLAS<Vector>::copy(d,h);
         BLAS<Vector>::copy(h,rT);
         assert( BLAS<Vector>::dot(rT,rT)>1e-40 );
-        rTh=BLAS<Vector>::dot(rT,h);
-        rTr=BLAS<Vector>::dot(r,r);
-        while ( rTr>err && its < max_iter) {
+
+		rTh=BLAS<Vector>::dot(rT,h);							// (rT|h)
+        rTr=BLAS<Vector>::dot(r,r);								// Current error (r|r)
+
+        while ( rTr>err && its < max_iter) 
+		{
+			// Debug trace
+			//if (its % 25 == 0)
+			//	std::cerr << "Solver_BICGSTAB<>::solve: rTr(=" << rTr << ") > err(=" << err << ")" << std::endl;
+
             mult(A,d,Ad);
             rTAd=BLAS<Vector>::dot(rT,Ad);
             assert( fabs(rTAd)>1e-40 );
@@ -134,16 +150,21 @@ public:
             BLAS<Vector>::scal(alpha,u);
             st=BLAS<Vector>::dot(s,t);
             tt=BLAS<Vector>::dot(t,t);
-            if ( fabs(st)<1e-40 || fabs(tt)<1e-40 ) {
+            if ( fabs(st)<1e-40 || fabs(tt)<1e-40 )
                 omega = 0 ;
-            } else {
-                omega = st/tt;
-            }
+		    else
+		      omega = st/tt;
             BLAS<Vector>::axpy(-omega,t,r);
             BLAS<Vector>::axpy(-alpha,d,x);
             BLAS<Vector>::axpy(-omega,s,x);
             BLAS<Vector>::copy(s,h);
             BLAS<Vector>::axpy(-omega,t,h);
+			if( fabs(rTh)<=1e-40 )								// LS 03/2005: avoid division by zero 
+			{
+				std::cerr << "Solver_BICGSTAB<>::solve: unexpected error: rTh=" << rTh << std::endl;
+				return false;
+			}
+			assert( fabs(omega)>1e-40 );
             beta=(alpha/omega)/rTh; rTh=BLAS<Vector>::dot(rT,h); beta*=rTh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
@@ -153,8 +174,12 @@ public:
         }
 
 		// TO BE CHECKED BY Bruno Levy
-		return (its < max_iter);
+		bool success = (its < max_iter);
+		if ( ! success )
+			std::cerr << "Solver_BICGSTAB<>::solve: failure: rTr(=" << rTr << ") > err(=" << err << ")" << std::endl;
+		return success;
     }
+
 private:
     CoeffType epsilon_ ;
     unsigned int max_iter_ ;

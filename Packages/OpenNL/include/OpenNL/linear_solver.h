@@ -95,7 +95,7 @@ public:
 	{
         Solver solver ;
 		D = 1;													// Solver_BICGSTAB does not support homogeneous coordinates
-		X = B;													// useful?
+		X = B;													// mandatory
 		return solver.solve(A, B, X) ;
 	}
 
@@ -267,6 +267,7 @@ public:
             norm += al_[i] * al_[i] ;
         }
         norm = sqrt(norm) ;
+		assert( fabs(norm)>1e-40 );
         scale_row(weight / norm) ;
     }
 
