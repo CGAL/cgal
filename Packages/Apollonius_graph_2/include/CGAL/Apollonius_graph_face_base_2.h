@@ -11,27 +11,18 @@ template <class Gt>
 class Apollonius_graph_face_base_2
   :  public Triangulation_face_base_2<Gt>
 {
-  //public:
-private:
-  typedef Gt                                  Geom_traits;
-  typedef Triangulation_face_base_2<Gt>       Fbase;
-  typedef Apollonius_graph_face_base_2<Gt>  Face_base;
-  //  typedef typename Gt::Weighted_point   Weighted_point;
 protected:
-  void* next_face_in_list[3];
-  int   next_indx_in_list[3];
-  void* prev_face_in_list[3];
-  int   prev_indx_in_list[3];
+  // local types
+  typedef Triangulation_face_base_2<Gt>     Fbase;
 
-  inline
-  void init()
-  {
-    for (int i = 0; i < 3; i++) {
-      next_face_in_list[i] = NULL;
-      prev_face_in_list[i] = NULL;
-    }
-  }
 public:
+  // TYPES
+  //------
+  typedef Apollonius_graph_face_base_2<Gt>  Face_base;
+
+public:
+  // CREATION
+  //---------
   Apollonius_graph_face_base_2() : Fbase()
   { init(); }
 
@@ -45,7 +36,8 @@ public:
   { init(); }
 
 public:
-  // methods for handling the in-place queue
+  // OPERATIONS
+  //-----------
   inline bool is_in_list(int i) const
   {
     CGAL_triangulation_assertion( i >= 0 && i <= 2 );
@@ -73,15 +65,6 @@ public:
     prev_indx_in_list[i] = prev.second;
   }
 
-#if 0
-  inline void remove(int i)
-  {
-    CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    next_face_in_list[i] = NULL;
-    prev_face_in_list[i] = NULL;
-  }
-#endif
-
   inline std::pair<void*, int> next(int i) const
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
@@ -95,6 +78,24 @@ public:
     return std::pair<void*, int>(prev_face_in_list[i],
 				 prev_indx_in_list[i]);
   }
+
+
+protected:
+  // class variables
+  void* next_face_in_list[3];
+  int   next_indx_in_list[3];
+  void* prev_face_in_list[3];
+  int   prev_indx_in_list[3];
+
+protected:
+  // initialization of in-place list pointers
+  inline void init() {
+    for (int i = 0; i < 3; i++) {
+      next_face_in_list[i] = NULL;
+      prev_face_in_list[i] = NULL;
+    }
+  }
+
 };
 
 CGAL_END_NAMESPACE 

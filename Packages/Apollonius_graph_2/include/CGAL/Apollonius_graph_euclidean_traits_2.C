@@ -3,11 +3,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//                        CONSTRUCTIONS
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
+//***********************************************************************
+//***********************************************************************
+//                            CONSTRUCTIONS
+//***********************************************************************
+//***********************************************************************
+
 
 //-----------------------------------------------------------------------
 //                        Apollonius vertex
@@ -66,9 +67,9 @@ public:
   typedef Weighted_point < Point, Weight >   Weighted_point;
 
   inline
-  Point_2< R > operator() ( const Weighted_point& p,
-			    const Weighted_point& q,
-			    const Weighted_point& r)
+  Point operator() ( const Weighted_point& p,
+		     const Weighted_point& q,
+		     const Weighted_point& r) const
   {
     //      CGAL_triangulation_precondition( ! collinear(p, q, r) );
     return ad_circumcenter_2< Point, Weight >(p,q,r);
@@ -123,10 +124,6 @@ ad_circumcircle_2(const Weighted_point< Point, We >& p,
   return ad_circumcircle_2< Point, We >(p, q, r, Tag()); 
 }
 
-//-----------------------------------------------------------------------
-// the functions for the construction of the additively weighted
-// Delaunay graph left bitangent
-//-----------------------------------------------------------------------
 template < class Point, class We, class Line >
 inline
 Line
@@ -166,49 +163,184 @@ ad_left_bitangent_line_2(const Weighted_point< Point, We >& p,
 }
 
 
-//======================================================================
-
-template < class Point, class Weight, class Line >
+template < class R >
 class Construct_Apollonius_weighted_point_2
 {
 public:
+  typedef typename R::Line_2                 Line;
+  typedef typename R::RT                     Weight;
+  typedef typename R::Point_2                Point;
   typedef Weighted_point < Point, Weight >   Weighted_point;
 
   inline Weighted_point operator() ( const Weighted_point& p,
 				     const Weighted_point& q,
-				     const Weighted_point& r)
+				     const Weighted_point& r) const
   {
     //      CGAL_triangulation_precondition( ! collinear(p, q, r) );
     return ad_circumcircle_2< Point, Weight >(p,q,r);
   }
 
   inline Line operator()(const Weighted_point &p,
-			 const Weighted_point &q)
+			 const Weighted_point &q) const
   {
     return ad_left_bitangent_line_2< Point, Weight, Line >(p, q);
   }
 };
 
 
+//-----------------------------------------------------------------------
+//                        Apollonius bisector
+//-----------------------------------------------------------------------
 
-//----------------------------------------------------------------------------
 
-template<class Point, class Weight, class Line, class Ray>
+template< class R >
+class Construct_Apollonius_bisector_2
+{
+public:
+  typedef typename R::Point_2               Point;
+  typedef typename R::RT                    Weight;
+  typedef typename R::Line_2                Line;
+  typedef Weighted_point< Point, Weight >   Weighted_point;
+  typedef Hyperbola_2<Point, Weight>        Hyperbola;
+
+  inline Object operator() (const Weighted_point& p,
+			    const Weighted_point& q) const {
+    //
+    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    if ( cr == EQUAL ) {
+      Line l1(p.point(), q.point());
+      Line l = l1.perpendicular(midpoint(p, q));
+      return make_object(l);
+    }
+
+    Hyperbola h(p, q);
+    return make_object(h);
+  }
+};
+
+//-----------------------------------------------------------------------
+//                      Apollonius bisector ray
+//-----------------------------------------------------------------------
+
+
+template<class R>
+class Construct_Apollonius_bisector_ray_2
+{
+public:
+  typedef typename R::Point_2               Point;
+  typedef typename R::RT                    Weight;
+  typedef typename R::Line_2                Line;
+  typedef typename R::Ray_2                 Ray;
+  typedef Weighted_point< Point, Weight >   Weighted_point;
+  typedef Hyperbola_ray_2<Point, Weight>    Hyperbola_ray;
+  typedef Sign                              Hyperbola_direction;
+  typedef Construct_Apollonius_vertex_2<R>  Apollonius_vertex;
+
+  inline Object
+  operator() (const Weighted_point& p,
+	      const Weighted_point& q,
+	      const Point& r,
+	      const Hyperbola_direction& direction) const {
+    //
+    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    if ( cr == EQUAL ) {
+      Line l1(q, p);
+      Line l = l1.perpendicular(midpoint(p.point(), q.point()));
+      Ray ray(r, l.direction());
+      return make_object(ray);
+    }
+    Hyperbola_ray hr(p, q, r, direction);
+    return make_object(hr);
+  }
+
+  inline Object
+  operator() (const Weighted_point& p,
+	      const Weighted_point& q,
+	      const Weighted_point& r) const {
+    Point c = Apollonius_vertex()(p, q, r);
+    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    if ( cr == EQUAL ) {
+      Line l1(q, p);
+      Line l = l1.perpendicular(midpoint(p.point(), q.point()));
+      Ray ray(c, l.direction());
+      return make_object(ray);
+    }
+    Hyperbola_ray hr(p, q, c, NEGATIVE);
+    return make_object(hr);
+  }
+};
+
+//-----------------------------------------------------------------------
+//                    Apollonius bisector segment
+//-----------------------------------------------------------------------
+
+template<class R>
+class Construct_Apollonius_bisector_segment_2
+{
+public:
+  typedef typename R::Point_2                 Point;
+  typedef typename R::RT                      Weight;
+  typedef typename R::Segment_2               Segment;
+  typedef Weighted_point< Point, Weight >     Weighted_point;
+  typedef Hyperbola_segment_2<Point, Weight>  Hyperbola_segment;
+  typedef Construct_Apollonius_vertex_2<R>    Apollonius_vertex;
+
+  inline Object operator() (const Weighted_point& p,
+			    const Weighted_point& q,
+			    const Point& r, const Point& s) const {
+    //
+    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    if ( cr == EQUAL ) {
+      Segment seg(r, s);
+      return make_object(seg);
+    }
+    Hyperbola_segment hs(p, q, r, s);
+    return make_object(hs);
+  }
+
+  inline Object operator() (const Weighted_point& p,
+			    const Weighted_point& q,
+			    const Weighted_point& r,
+			    const Weighted_point& s) const {
+    Apollonius_vertex apollonius_vertex;
+    Point c_pqr = apollonius_vertex(p,q,r);
+    Point c_qps = apollonius_vertex(q,p,s);
+    //
+    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
+    if ( cr == EQUAL ) {
+      Segment seg(c_pqr, c_qps);
+      return make_object(seg);
+    }
+    Hyperbola_segment hs(p, q, c_pqr, c_qps);
+    return make_object(hs);
+  }
+
+};
+
+//-----------------------------------------------------------------------
+//                    Apollonius primal ray
+//-----------------------------------------------------------------------
+
+
+template<class R>
 class Construct_Apollonius_primal_ray_2
 {
 public:
-  typedef typename Point::R::RT                           RT;
-  typedef Weighted_point< Point, Weight >                 Weighted_point;
-  typedef Construct_Apollonius_weighted_point_2<Point,Weight,Line>
-                                                     Circumcircle_object;
+  typedef typename R::Point_2                        Point;
+  typedef typename R::RT                             Weight;
+  typedef typename R::RT                             RT;
+  typedef typename R::Line_2                         Line;
+  typedef typename R::Ray_2                          Ray;
+  typedef Weighted_point< Point, Weight >            Weighted_point;
+  typedef Construct_Apollonius_weighted_point_2<R>   Apollonius_circle;
 
-  inline Object operator() (const Weighted_point& p,
-			    const Weighted_point& r,
-			    const Weighted_point& s) const {
+  inline Ray operator() (const Weighted_point& p,
+			 const Weighted_point& r,
+			 const Weighted_point& s) const {
     //
-    Circumcircle_object circumcircle;
-    Line l1 = circumcircle(r, p);
-    Line l2 = circumcircle(p, s);
+    Apollonius_circle apollonius_circle;
+    Line l1 = apollonius_circle(r, p);
+    Line l2 = apollonius_circle(p, s);
 
     RT d1 = CGAL_NTS sqrt( CGAL_NTS square(l1.a()) +
 			   CGAL_NTS square(l1.b()) );
@@ -217,28 +349,32 @@ public:
     RT a = l1.a() / d1 - l2.a() / d2;
     RT b = l1.b() / d1 - l2.b() / d2;
     Point c(p.x() + b, p.y() - a);
-    Ray ray(p, c);
-    return make_object(ray);
+    return Ray(p, c);
   }
 };
 
+//-----------------------------------------------------------------------
+//                    Apollonius primal segment
+//-----------------------------------------------------------------------
 
-template<class Point, class Weight, class Line, class Segment>
+template<class R>
 class Construct_Apollonius_primal_segment_2
 {
 public:
-  typedef Weighted_point< Point, Weight >                 Weighted_point;
-  typedef Hyperbola_segment_2<Point,Weight>               Hyperbola_segment;
-  typedef Parabola_segment_2<Point,Weight,Line>           Parabola_segment;
-  typedef Construct_Apollonius_weighted_point_2<Point,Weight,Line> 
-                                                        Circumcircle_object;
+  typedef typename R::Point_2                         Point;
+  typedef typename R::RT                              Weight;
+  typedef typename R::Line_2                          Line;
+  typedef typename R::Segment_2                       Segment;
+  typedef Weighted_point< Point, Weight >             Weighted_point;
+  typedef Hyperbola_segment_2<Point,Weight>           Hyperbola_segment;
+  typedef Parabola_segment_2<Point,Weight,Line>       Parabola_segment;
+  typedef Construct_Apollonius_weighted_point_2<R>    Apollonius_circle;
 
-  inline Object
+  inline Segment
   operator() (const Weighted_point& p,
 	      const Weighted_point& q) const {
     //
-    Segment s(p.point(), q.point());
-    return make_object(s);
+    return Segment(p.point(), q.point());
   }
 
   inline Object
@@ -258,6 +394,25 @@ public:
   inline Object
   operator() (const Weighted_point& p,
 	      const Weighted_point& q,
+	      const Weighted_point& r,
+	      const Weighted_point& s) const {
+    Apollonius_circle apollonius_circle;
+    Weighted_point c_pqr = apollonius_circle(p, q, r);
+    Weighted_point c_qps = apollonius_circle(q, p, s);
+    //
+    Comparison_result cr = CGAL_NTS compare(c_pqr.weight(), c_qps.weight());
+    if ( cr == EQUAL ) {
+      Segment seg(p.point(), q.point());
+      return make_object(seg);
+    }
+    Hyperbola_segment hs(c_pqr, c_qps, p.point(), q.point());
+    return make_object(hs);
+  }
+
+#if 0
+  inline Object
+  operator() (const Weighted_point& p,
+	      const Weighted_point& q,
 	      const Weighted_point& c) const {
     //
     Circumcircle_object circumcircle;
@@ -265,301 +420,128 @@ public:
     Parabola_segment ps(c, l, p.point(), q.point());
     return make_object(ps);
   }
-};
+#endif
 
-
-template<class Point, class Weight, class Line, class Ray>
-class Construct_Apollonius_bisector_ray_2
-{
-public:
-  typedef Weighted_point< Point, Weight >   Weighted_point;
-  typedef Hyperbola_ray_2<Point, Weight>    Hyperbola_ray;
-  typedef Sign                              Hyperbola_direction;
-
-  inline Object
+  inline Parabola_segment
   operator() (const Weighted_point& p,
 	      const Weighted_point& q,
-	      const Point& r,
-	      const Hyperbola_direction& direction) const {
+	      const Weighted_point& r) const {
     //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Line l1(q, p);
-      Line l = l1.perpendicular(midpoint(p.point(), q.point()));
-      Ray ray(r, l.direction());
-      return make_object(ray);
-    }
-    Hyperbola_ray hr(p, q, r, direction);
-    return make_object(hr);
-  }
-};
-
-template<class Point, class Weight, class Segment>
-class Construct_Apollonius_bisector_segment_2
-{
-public:
-  typedef Weighted_point< Point, Weight >     Weighted_point;
-  typedef Hyperbola_segment_2<Point, Weight>  Hyperbola_segment;
-
-  inline Object operator() (const Weighted_point& p,
-			    const Weighted_point& q,
-			    const Point& r, const Point& s) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Segment seg(r, s);
-      return make_object(seg);
-    }
-    Hyperbola_segment hs(p, q, r, s);
-    return make_object(hs);
+    Apollonius_circle apollonius_circle;
+    Weighted_point c = apollonius_circle(p, q, r);
+    Line l = apollonius_circle(q, p);
+    return Parabola_segment(c, l, q.point(), p.point());
   }
 };
 
 
-template< class Point, class Weight, class Line >
-class Construct_Apollonius_bisector_2
-{
-public:
-  typedef Weighted_point< Point, Weight >   Weighted_point;
-  typedef Hyperbola_2<Point, Weight>        Hyperbola;
-
-  inline Object operator() (const Weighted_point& p,
-			    const Weighted_point& q) const {
-    //
-    Comparison_result cr = CGAL_NTS compare(p.weight(), q.weight());
-    if ( cr == EQUAL ) {
-      Line l1(p.point(), q.point());
-      Line l = l1.perpendicular(midpoint(p, q));
-      return make_object(l);
-    }
-
-    Hyperbola h(p, q);
-    return make_object(h);
-  }
-};
-
-
-
-
 //***********************************************************************
 //***********************************************************************
-//************ THE PREDICATES **************
+//                              PREDICATES
 //***********************************************************************
 //***********************************************************************
-
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Naive_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
-				   p2.x(), p2.y(), FT(p2.weight()),
-				    q.x(),  q.y(), FT( q.weight()));
-}
-
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic1_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				   q.x(),  q.y(), FT( q.weight()));
-}
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic2_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				   q.x(),  q.y(), FT( q.weight()));
-}
-
-
-
-template < class Point, class We, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag tag)
-{
-  return ad_incircle_test_2(p1, p2, q, tag, Method_tag());
-}
-
-
-template < class Point, class We, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& q,
-		   Homogeneous_tag )
-{
-  typedef typename Point::RT  RT;
-  return 
-    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
-		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
-		        q.hx(),  q.hy(),  q.hw(), RT( q.weight()));
-}
-
-
-
-//------------------------------------
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Naive_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
-				   p2.x(), p2.y(), FT(p2.weight()),
-				   p3.x(), p3.y(), FT(p3.weight()),
-				    q.x(),  q.y(), FT( q.weight()));
-}
-
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic1_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				  q.x(),  q.y(), FT( q.weight()));
-}
-
-template < class Point, class We >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag, Algebraic2_tag )
-{
-  typedef typename Point::FT  FT;
-  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
-				  p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				   q.x(),  q.y(), FT( q.weight()));
-}
-
-
-
-template < class Point, class We, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >&  q,
-		   Cartesian_tag tag)
-{
-  return ad_incircle_test_2(p1, p2, p3, q, tag, Method_tag());
-}
-
-
-template < class Point, class We, class Method_tag >
-inline
-Sign
-ad_incircle_test_2(const Weighted_point< Point, We >& p1,
-		   const Weighted_point< Point, We >& p2,
-		   const Weighted_point< Point, We >& p3,
-		   const Weighted_point< Point, We >& q,
-		   Homogeneous_tag )
-{
-  typedef typename Point::RT  RT;
-  return 
-    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
-		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
-		       p3.hx(), p3.hy(), p3.hw(), RT(p3.weight()),
-		        q.hx(),  q.hy(),  q.hw(), RT( q.weight()));
-}
-
-
-
-template < class Point, class Weight, class Method_tag >
-class Vertex_conflict_2
-{
-public:
-  typedef Weighted_point< Point, Weight >    Weighted_point;
-
-  inline
-  Sign operator()(const Weighted_point& p1,
-		  const Weighted_point& p2,
-		  const Weighted_point& p3,
-		  const Weighted_point& q)
-  {
-    typedef typename Point::R::Rep_tag Tag;
-    return
-      ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, p3, q, Tag());
-  }
-
-
-  inline
-  Sign operator()(const Weighted_point& p1,
-		  const Weighted_point& p2,
-		  const Weighted_point& q)
-  {
-    typedef typename Point::R::Rep_tag Tag;
-    return
-      ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, q, Tag());
-  }
- 
-
-
-};
 
 //-----------------------------------------------------------------------
-// the functions for the
-// Additively_weighted_Voronoi_diagram_compare_weight_test_2 predicate
+//                        Compare weight
 //-----------------------------------------------------------------------
-template < class Point, class Weight >
+
+template < class R >
 class Compare_weight_2
 {
 public:
+  typedef typename R::Point_2                Point;
+  typedef typename R::RT                     Weight;
   typedef Weighted_point< Point, Weight >    Weighted_point;
+  typedef Comparison_result                  result_type;
+
   inline
   Comparison_result operator()(const Weighted_point& p,
-			       const Weighted_point& q)
+			       const Weighted_point& q) const
   {
     return CGAL_NTS compare(p.weight(), q.weight());
   }
 };
 
+//-----------------------------------------------------------------------
+//                        Is hidden
+//-----------------------------------------------------------------------
+
+template < class Point, class We >
+inline
+bool
+ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
+		    const Weighted_point< Point, We >& q,
+		    Cartesian_tag, Naive_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_is_trivial_test_naive_C2(p.x(), p.y(), FT(p.weight()),
+				     q.x(), q.y(), FT(q.weight()));
+}
+
+
+template < class Point, class We, class Algebraic_tag >
+inline
+bool
+ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
+		    const Weighted_point< Point, We >& q,
+		    Cartesian_tag, Algebraic_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_is_trivial_test_alg_C2(p.x(), p.y(), FT(p.weight()),
+				   q.x(), q.y(), FT(q.weight()));
+}
+
+
+
+template < class Point, class We, class Method_tag >
+inline
+bool
+ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
+		    const Weighted_point< Point, We >& q,
+		    Homogeneous_tag)
+{
+  typedef typename Point::RT  RT;
+  Sign s = sign_of_ad_distance2_testH2(p.hx(), p.hy(), p.hw(), 
+				       RT(p.weight()),
+				       q.hx(), q.hy(), q.hw(),
+				       RT(q.weight())
+				       );
+  if ( s == POSITIVE ) { return false; }
+  return (CGAL_NTS compare(p.weight(), q.weight()) != SMALLER);
+}
+
+template < class Point, class We, class Method_tag >
+inline
+bool
+ad_is_hidden_test_2(const Weighted_point< Point, We >& p,
+		    const Weighted_point< Point, We >& q,
+		    Cartesian_tag tag)
+{
+  return ad_is_hidden_test_2(p, q, tag, Method_tag());
+}
+
+
+template< class R, class Method_tag >
+class Is_hidden_2
+{
+public:
+  typedef typename R::Point_2                Point;
+  typedef typename R::RT                     Weight;
+  typedef Weighted_point < Point, Weight >   Weighted_point;
+  typedef bool                               result_type;
+
+  inline bool operator()(const Weighted_point &p,
+			 const Weighted_point &q) const
+  {
+    typedef typename Point::R::Rep_tag Tag;
+    return
+      ad_is_hidden_test_2<Point,Weight,Method_tag>(p, q, Tag());
+  }
+};
+
 
 //-----------------------------------------------------------------------
-// the functions for the
-// Additively_weighted_Voronoi_diagram_compare_distances_test_2 predicate
+//                    Oriented side of bisector
 //-----------------------------------------------------------------------
 
 
@@ -653,15 +635,18 @@ ad_distances_test_2(const Weighted_point< Point, We >& p1,
 
 
 
-template< class Point, class Weight, class Method_tag >
+template< class R, class Method_tag >
 class Oriented_side_of_bisector_2
 {
 public:
+  typedef typename R::Point_2                Point;
+  typedef typename R::RT                     Weight;
   typedef Weighted_point < Point, Weight >   Weighted_point;
+  typedef Oriented_side                      result_type;
 
   inline Oriented_side operator()(const Weighted_point &p1,
 				  const Weighted_point &p2,
-				  const Point &p)
+				  const Point &p) const
   {
     Comparison_result r =
       ad_distances_test_2<Point,Weight,Method_tag>(p1, p2, p);
@@ -671,219 +656,209 @@ public:
 };
 
 
+
+//-----------------------------------------------------------------------
+//                        Vertex conflict
 //-----------------------------------------------------------------------
 
 
 template < class Point, class We >
 inline
-bool
-ad_is_trivial_test_2(const Weighted_point< Point, We >& p,
-		     const Weighted_point< Point, We >& q,
-		     Cartesian_tag, Naive_tag )
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Naive_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_is_trivial_test_naive_C2(p.x(), p.y(), FT(p.weight()),
-				     q.x(), q.y(), FT(q.weight()));
+  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+				   p2.x(), p2.y(), FT(p2.weight()),
+				    q.x(),  q.y(), FT( q.weight()));
 }
 
 
-template < class Point, class We, class Algebraic_tag >
+template < class Point, class We >
 inline
-bool
-ad_is_trivial_test_2(const Weighted_point< Point, We >& p,
-		     const Weighted_point< Point, We >& q,
-		     Cartesian_tag, Algebraic_tag )
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Algebraic1_tag )
 {
   typedef typename Point::FT  FT;
-  return ad_is_trivial_test_alg_C2(p.x(), p.y(), FT(p.weight()),
-				   q.x(), q.y(), FT(q.weight()));
+  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
+				  p2.x(), p2.y(), FT(p2.weight()),
+				   q.x(),  q.y(), FT( q.weight()));
+}
+
+template < class Point, class We >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Algebraic2_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
+				  p2.x(), p2.y(), FT(p2.weight()),
+				   q.x(),  q.y(), FT( q.weight()));
 }
 
 
 
 template < class Point, class We, class Method_tag >
 inline
-bool
-ad_is_trivial_test_2(const Weighted_point< Point, We >& p,
-		     const Weighted_point< Point, We >& q,
-		     Homogeneous_tag)
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag tag)
+{
+  return ad_incircle_test_2(p1, p2, q, tag, Method_tag());
+}
+
+
+template < class Point, class We, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& q,
+		   Homogeneous_tag )
 {
   typedef typename Point::RT  RT;
-  Sign s = sign_of_ad_distance2_testH2(p.hx(), p.hy(), p.hw(), 
-				       RT(p.weight()),
-				       q.hx(), q.hy(), q.hw(),
-				       RT(q.weight())
-				       );
-  if ( s == POSITIVE ) { return false; }
-  return (CGAL_NTS compare(p.weight(), q.weight()) != SMALLER);
+  return 
+    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
+		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
+		        q.hx(),  q.hy(),  q.hw(), RT( q.weight()));
 }
+
+
+//-----------------------------------------------------------------------
+
+
+template < class Point, class We >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& p3,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Naive_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_incircle_test_naive_C2(p1.x(), p1.y(), FT(p1.weight()),
+				   p2.x(), p2.y(), FT(p2.weight()),
+				   p3.x(), p3.y(), FT(p3.weight()),
+				    q.x(),  q.y(), FT( q.weight()));
+}
+
+
+template < class Point, class We >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& p3,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Algebraic1_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_incircle_test_alg1_C2(p1.x(), p1.y(), FT(p1.weight()),
+				  p2.x(), p2.y(), FT(p2.weight()),
+				  p3.x(), p3.y(), FT(p3.weight()),
+				  q.x(),  q.y(), FT( q.weight()));
+}
+
+template < class Point, class We >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& p3,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag, Algebraic2_tag )
+{
+  typedef typename Point::FT  FT;
+  return ad_incircle_test_alg2_C2(p1.x(), p1.y(), FT(p1.weight()),
+				  p2.x(), p2.y(), FT(p2.weight()),
+				  p3.x(), p3.y(), FT(p3.weight()),
+				   q.x(),  q.y(), FT( q.weight()));
+}
+
+
 
 template < class Point, class We, class Method_tag >
 inline
-bool
-ad_is_trivial_test_2(const Weighted_point< Point, We >& p,
-		     const Weighted_point< Point, We >& q,
-		     Cartesian_tag tag)
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& p3,
+		   const Weighted_point< Point, We >&  q,
+		   Cartesian_tag tag)
 {
-  return ad_is_trivial_test_2(p, q, tag, Method_tag());
+  return ad_incircle_test_2(p1, p2, p3, q, tag, Method_tag());
 }
 
 
+template < class Point, class We, class Method_tag >
+inline
+Sign
+ad_incircle_test_2(const Weighted_point< Point, We >& p1,
+		   const Weighted_point< Point, We >& p2,
+		   const Weighted_point< Point, We >& p3,
+		   const Weighted_point< Point, We >& q,
+		   Homogeneous_tag )
+{
+  typedef typename Point::RT  RT;
+  return 
+    ad_incircle_testH2(p1.hx(), p1.hy(), p1.hw(), RT(p1.weight()),
+		       p2.hx(), p2.hy(), p2.hw(), RT(p2.weight()),
+		       p3.hx(), p3.hy(), p3.hw(), RT(p3.weight()),
+		        q.hx(),  q.hy(),  q.hw(), RT( q.weight()));
+}
 
 
-template< class Point, class Weight, class Method_tag >
-class Is_trivial_2
+template < class R, class Method_tag >
+class Vertex_conflict_2
 {
 public:
-  typedef Weighted_point < Point, Weight >   Weighted_point;
+  typedef typename R::Point_2                Point;
+  typedef typename R::RT                     Weight;
+  typedef Weighted_point< Point, Weight >    Weighted_point;
+  typedef Sign                               result_type;
 
-  inline bool operator()(const Weighted_point &p,
-			 const Weighted_point &q)
+  inline
+  Sign operator()(const Weighted_point& p1,
+		  const Weighted_point& p2,
+		  const Weighted_point& p3,
+		  const Weighted_point& q) const
   {
     typedef typename Point::R::Rep_tag Tag;
     return
-      ad_is_trivial_test_2<Point,Weight,Method_tag>(p, q, Tag());
-#if 0
-    Sign s = ad_distance2_test_2<Point,Weight,Method_tag>(p, q);
-    if ( s == POSITIVE ) { return false; }
-    return (CGAL_NTS compare(p.weight(), q.weight()) != SMALLER);
-#endif
+      ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, p3, q, Tag());
   }
-};
 
 
-
-
-//-----------------------------------------------------------------------
-// the functions for the Aw_Delaunay_infinite_edge_test_2 predicate
-//-----------------------------------------------------------------------
-
-template < class Pt, class We >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Naive_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_infinite_edge_test_naive_C2(p2.x(), p2.y(), FT(p2.weight()),
-				   p3.x(), p3.y(), FT(p3.weight()),
-				   p4.x(), p4.y(), FT(p4.weight()),
-				   q.x(),  q.y(), FT( q.weight()), b);
-}
-
-
-template < class Pt, class We >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Algebraic1_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_infinite_edge_test_alg1_C2(p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				  p4.x(), p4.y(), FT(p4.weight()),
-				  q.x(),  q.y(), FT( q.weight()), b);
-}
-
-template < class Pt, class We >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag, Algebraic2_tag)
-{
-  typedef typename Pt::FT  FT;
-  return
-    ad_infinite_edge_test_alg2_C2(p2.x(), p2.y(), FT(p2.weight()),
-				  p3.x(), p3.y(), FT(p3.weight()),
-				  p4.x(), p4.y(), FT(p4.weight()),
-				  q.x(),  q.y(), FT( q.weight()), b);
-}
-
-
-template < class Pt, class We, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Cartesian_tag tag)
-{
-  return
-    ad_infinite_edge_test_2(p2, p3, p4, q, b, tag, Method_tag());
-}
-
-
-
-template < class Pt, class We, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q,
-			bool b, Homogeneous_tag)
-{
-  typedef typename Pt::RT  RT;
-  return
-    ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
-			    RT(p1.weight()),
-			    p3.hx(), p3.hy(), p3.hw(),
-			    RT(p3.weight()),
-			    p4.hx(), p4.hy(), p4.hw(),
-			    RT(p4.weight()),
-			    q.hx(),  q.hy(), q.hw(),
-			    RT( q.weight()), b);
-}
-
-template < class Pt, class We, class Method_tag >
-inline
-bool
-ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
-			const Weighted_point< Pt, We >& p3,
-			const Weighted_point< Pt, We >& p4,
-			const Weighted_point< Pt, We >& q, bool b)
-{
-  typedef typename Pt::R::Rep_tag Tag;
-  return ad_infinite_edge_test_2<Pt,We,Method_tag>
-    (p2, p3, p4, q, b, Tag());
-}
-
-template < class Point, class Weight, class Method_tag >
-class Infinite_edge_interior_conflict_2
-{
-public:
-  typedef Weighted_point< Point, Weight >  Weighted_point;
   inline
-  bool operator()(const Weighted_point& p2,
-		  const Weighted_point& p3,
-		  const Weighted_point& p4,
-		  const Weighted_point& q, bool b)
+  Sign operator()(const Weighted_point& p1,
+		  const Weighted_point& p2,
+		  const Weighted_point& q) const
   {
-    return ad_infinite_edge_test_2<Point,Weight,Method_tag>
-      (p2, p3, p4, q, b);
+    typedef typename Point::R::Rep_tag Tag;
+    return
+      ad_incircle_test_2<Point,Weight,Method_tag>(p1, p2, q, Tag());
   }
+ 
+
+
 };
 
-
 //-----------------------------------------------------------------------
-// the functions for the Aw_Delaunay_finite_edge_test_denegenerated_2
-// predicate
+//                    Finite edge interior conflict
 //-----------------------------------------------------------------------
 
-// Below are the functions for the case where the degenerated edge has
-// two infinite vertices
 template < class Pt, class We>
 inline
 bool
@@ -984,8 +959,8 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
     (p1, p2, q, b, Tag());
 }
 
-// Below are the functions for the case where the degenerated edge has
-// one finite vertex and one infinite
+//-----------------------------------------------------------------------
+
 template < class Pt, class We >
 inline
 bool
@@ -1099,9 +1074,6 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 }
 
 //-----------------------------------------------------------------------
-// the functions for the Aw_Delaunay_finite_edge_test_2 predicate
-//-----------------------------------------------------------------------
-
 
 
 template < class Pt, class We >
@@ -1219,20 +1191,20 @@ ad_finite_edge_test_2(const Weighted_point< Pt, We >& p1,
 
 
 
-template < class Point, class Weight, class Method_tag >
+template < class R, class Method_tag >
 class Finite_edge_interior_conflict_2
 {
 public:
+  typedef typename R::Point_2              Point;
+  typedef typename R::RT                   Weight;
   typedef Weighted_point< Point, Weight >  Weighted_point;
-
-
-
+  typedef bool                             result_type;
 
   inline
   bool operator()(const Weighted_point& p1,
 		  const Weighted_point& p2,
 		  const Weighted_point& p3,
-		  const Weighted_point& q, bool b)
+		  const Weighted_point& q, bool b) const
   {
     return
       ad_finite_edge_test_2<Point,Weight,Method_tag>(p1, p2, p3, q, b);
@@ -1240,7 +1212,7 @@ public:
 
   bool operator()(const Weighted_point& p1,
 		  const Weighted_point& p2,
-		  const Weighted_point& q, bool b)
+		  const Weighted_point& q, bool b) const
   {
     return
       ad_finite_edge_test_2<Point,Weight,Method_tag>(p1, p2, q, b);
@@ -1254,7 +1226,7 @@ public:
 		  const Weighted_point& p3,
 		  const Weighted_point& p4,
 		  const Weighted_point& q,
-		  bool b)
+		  bool b) const
   {
     return ad_finite_edge_test_2<Point,Weight,Method_tag>
       (p1, p2, p3, p4, q, b);
@@ -1263,6 +1235,135 @@ public:
 
 
 //-----------------------------------------------------------------------
+//                   Infinite edge interior conflict
+//-----------------------------------------------------------------------
+
+template < class Pt, class We >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q,
+			bool b, Cartesian_tag, Naive_tag)
+{
+  typedef typename Pt::FT  FT;
+  return
+    ad_infinite_edge_test_naive_C2(p2.x(), p2.y(), FT(p2.weight()),
+				   p3.x(), p3.y(), FT(p3.weight()),
+				   p4.x(), p4.y(), FT(p4.weight()),
+				   q.x(),  q.y(), FT( q.weight()), b);
+}
+
+
+template < class Pt, class We >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q,
+			bool b, Cartesian_tag, Algebraic1_tag)
+{
+  typedef typename Pt::FT  FT;
+  return
+    ad_infinite_edge_test_alg1_C2(p2.x(), p2.y(), FT(p2.weight()),
+				  p3.x(), p3.y(), FT(p3.weight()),
+				  p4.x(), p4.y(), FT(p4.weight()),
+				  q.x(),  q.y(), FT( q.weight()), b);
+}
+
+template < class Pt, class We >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q,
+			bool b, Cartesian_tag, Algebraic2_tag)
+{
+  typedef typename Pt::FT  FT;
+  return
+    ad_infinite_edge_test_alg2_C2(p2.x(), p2.y(), FT(p2.weight()),
+				  p3.x(), p3.y(), FT(p3.weight()),
+				  p4.x(), p4.y(), FT(p4.weight()),
+				  q.x(),  q.y(), FT( q.weight()), b);
+}
+
+
+template < class Pt, class We, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q,
+			bool b, Cartesian_tag tag)
+{
+  return
+    ad_infinite_edge_test_2(p2, p3, p4, q, b, tag, Method_tag());
+}
+
+
+
+template < class Pt, class We, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q,
+			bool b, Homogeneous_tag)
+{
+  typedef typename Pt::RT  RT;
+  return
+    ad_infinite_edge_testH2(p2.hx(), p2.hy(), p2.hw(),
+			    RT(p1.weight()),
+			    p3.hx(), p3.hy(), p3.hw(),
+			    RT(p3.weight()),
+			    p4.hx(), p4.hy(), p4.hw(),
+			    RT(p4.weight()),
+			    q.hx(),  q.hy(), q.hw(),
+			    RT( q.weight()), b);
+}
+
+template < class Pt, class We, class Method_tag >
+inline
+bool
+ad_infinite_edge_test_2(const Weighted_point< Pt, We >& p2,
+			const Weighted_point< Pt, We >& p3,
+			const Weighted_point< Pt, We >& p4,
+			const Weighted_point< Pt, We >& q, bool b)
+{
+  typedef typename Pt::R::Rep_tag Tag;
+  return ad_infinite_edge_test_2<Pt,We,Method_tag>
+    (p2, p3, p4, q, b, Tag());
+}
+
+
+template < class R, class Method_tag >
+class Infinite_edge_interior_conflict_2
+{
+public:
+  typedef typename R::Point_2              Point;
+  typedef typename R::RT                   Weight;
+  typedef Weighted_point< Point, Weight >  Weighted_point;
+  typedef bool                             result_type;
+
+  inline
+  bool operator()(const Weighted_point& p2,
+		  const Weighted_point& p3,
+		  const Weighted_point& p4,
+		  const Weighted_point& q, bool b) const
+  {
+    return ad_infinite_edge_test_2<Point,Weight,Method_tag>
+      (p2, p3, p4, q, b);
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                          Is degenerate
 //-----------------------------------------------------------------------
 
 
@@ -1370,18 +1471,20 @@ ad_is_degenerate_edge_test_2(const Weighted_point< Pt, We >& p1,
 
 
 
-template < class Point, class Weight, class Method_tag >
+template < class R, class Method_tag >
 class Is_degenerate_edge_2
 {
 public:
+  typedef typename R::Point_2              Point;
+  typedef typename R::RT                   Weight;
   typedef Weighted_point< Point, Weight >  Weighted_point;
-
+  typedef bool                             result_type;
 
   inline
   bool operator()(const Weighted_point& p1,
 		  const Weighted_point& p2,
 		  const Weighted_point& p3,
-		  const Weighted_point& p4)
+		  const Weighted_point& p4) const
   {
     return ad_is_degenerate_edge_test_2<Point,Weight,Method_tag>
       (p1, p2, p3, p4);

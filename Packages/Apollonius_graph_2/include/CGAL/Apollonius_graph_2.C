@@ -7,9 +7,9 @@ CGAL_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 // test method
 //--------------------------------------------------------------------
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 is_valid(bool verbose, int level) const
 {
   if (level < 0) { return true; }
@@ -42,7 +42,7 @@ is_valid(bool verbose, int level) const
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle_test(f, v->point()) != NEGATIVE );
+	( incircle(f, v->point()) != NEGATIVE );
       //    CGAL_triangulation_assertion(result);
     }
     Edge sym_e = sym_edge(e);
@@ -50,7 +50,7 @@ is_valid(bool verbose, int level) const
     v = f->mirror_vertex(sym_e.second);
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle_test(f, v->point()) != NEGATIVE );
+	( incircle(f, v->point()) != NEGATIVE );
       //    CGAL_triangulation_assertion(result);
     }
   }
@@ -74,10 +74,10 @@ is_valid(bool verbose, int level) const
 //--------------------------------------------------------------------
 
 // circumcenter
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Point
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcenter(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
@@ -86,21 +86,22 @@ circumcenter(const Face_handle& f) const
 		      f->vertex(2)->point());
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Point
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcenter(const Weighted_point& p0, const Weighted_point& p1, 
 	     const Weighted_point& p2) const
 {
-  return geom_traits().construct_circumcenter_2_object()(p0, p1, p2);
+  return
+    geom_traits().construct_Apollonius_vertex_2_object()(p0, p1, p2);
 }
 
 // circumcircle
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Weighted_point
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcircle(const Face_handle& f) const
 {
   CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
@@ -109,42 +110,44 @@ circumcircle(const Face_handle& f) const
 		      f->vertex(2)->point());
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Weighted_point
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcircle(const Weighted_point& p0, const Weighted_point& p1, 
 	     const Weighted_point& p2) const
 {
-  return geom_traits().construct_circumcircle_2_object()(p0, p1, p2);
+  return
+    geom_traits().construct_Apollonius_weighted_point_2_object()(p0, p1, p2);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Line
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+typename Gt::Line_2
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcircle(const Weighted_point& p0, const Weighted_point& p1) const
 {
-  return geom_traits().construct_circumcircle_2_object()(p0, p1);
+  return
+    geom_traits().construct_Apollonius_weighted_point_2_object()(p0, p1);
 }
 
 
 // dual
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Point
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 dual(const Face_handle& f) const
 {
   return circumcenter(f);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Object
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 dual(const Edge e) const
 {
   CGAL_triangulation_precondition( !is_infinite(e) );
@@ -153,17 +156,19 @@ dual(const Edge e) const
     Weighted_point p = (e.first)->vertex(cw(e.second))->point();
     Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
 
-    return geom_traits().construct_bisector_2_object()(p, q);
+    return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
   }
 
   // dimension == 2
   // none of the two adjacent faces is infinite
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Weighted_point p = (e.first)->vertex(cw(e.second))->point();
-    Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
-    return geom_traits().construct_bisector_segment_2_object()
-      (p, q, dual(e.first),dual(e.first->neighbor(e.second)));
+    Weighted_point p = (e.first)->vertex( ccw(e.second) )->point();
+    Weighted_point q = (e.first)->vertex(  cw(e.second) )->point();
+    Weighted_point r = (e.first)->vertex(     e.second  )->point();
+    Weighted_point s = (e.first)->mirror_vertex(e.second)->point();
+    return
+      geom_traits().construct_Apollonius_bisector_segment_2_object()(p,q,r,s);
   }
 
   // both of the adjacent faces are infinite
@@ -171,7 +176,7 @@ dual(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Weighted_point p = (e.first)->vertex(cw(e.second))->point();
     Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
-    return geom_traits().construct_bisector_2_object()(p, q);
+    return geom_traits().construct_Apollonius_bisector_2_object()(p,q);
   }
 
   // only one of the adjacent faces is infinite
@@ -188,33 +193,27 @@ dual(const Edge e) const
     (  is_infinite( e.first->vertex(e.second) ) ||
        is_infinite( e.first->mirror_vertex(e.second) )  );
 
-  Face_handle f;
-  Sign direction;
-  if (  is_infinite( e.first->vertex(e.second) )  ) {
-    f = e.first->neighbor(e.second);
-    direction = POSITIVE;
-  } else {
-    f = e.first;
-    direction = NEGATIVE;
+  Edge ee = e;
+  if ( is_infinite( e.first->vertex(e.second) )  ) {
+    ee = sym_edge(e);
   }
+  Weighted_point p = ee.first->vertex( ccw(ee.second) )->point();
+  Weighted_point q = ee.first->vertex(  cw(ee.second) )->point();
+  Weighted_point r = ee.first->vertex(     ee.second  )->point();
 
-  Weighted_point p = e.first->vertex( ccw(e.second) )->point();
-  Weighted_point q = e.first->vertex( cw(e.second) )->point();
-  return
-    geom_traits().construct_bisector_ray_2_object()
-    (p, q, dual(f), direction);
+  return geom_traits().construct_Apollonius_bisector_ray_2_object()(p,q,r);
 }
 
 
 
 // primal
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Object
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 primal(const Edge e) const
 {
-  typedef typename Geom_traits::Point::RT  RT;
+  //  typedef typename Geom_traits::Point::RT  RT;
   typedef typename Geom_traits::Segment_2  Segment;
   typedef typename Geom_traits::Ray_2      Ray;
   typedef typename Geom_traits::Hyperbola_segment_2  Hyperbola_segment;
@@ -224,38 +223,42 @@ primal(const Edge e) const
 
   if ( number_of_vertices() != 2 ) {
     if ( is_infinite(e) ) {
+      Ray ray;
       if (  is_infinite( e.first->vertex(cw(e.second)) )  ) {
 	Weighted_point p = e.first->vertex( ccw(e.second) )->point();
 	Weighted_point r = e.first->vertex( e.second )->point();
 	Weighted_point s = e.first->mirror_vertex( e.second )->point();
-	return geom_traits().construct_dual_ray_2_object()(p, r, s);
+	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(p,r,s);
       } else {
 	CGAL_triangulation_assertion
 	  (   is_infinite( e.first->vertex(ccw(e.second)) )   );
 	Weighted_point q = e.first->vertex( cw(e.second) )->point();
 	Weighted_point r = e.first->vertex( e.second )->point();
 	Weighted_point s = e.first->mirror_vertex( e.second )->point();
-	return geom_traits().construct_dual_ray_2_object()(q, s, r);
+	ray = geom_traits().construct_Apollonius_primal_ray_2_object()(q,s,r);
       }
+      return make_object(ray);
     }
   }
 
   if ( dimension() == 1 ) {
     Weighted_point p = (e.first)->vertex(cw(e.second))->point();
     Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
-    return geom_traits().construct_dual_segment_2_object()(p, q);
+    Segment seg =
+      geom_traits().construct_Apollonius_primal_segment_2_object()(p, q);
+    return make_object(seg);
+
   }
 
   // dimension == 2
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Weighted_point p = (e.first)->vertex(cw(e.second))->point();
-    Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
-    Weighted_point d1 = circumcircle(e.first);
-    Weighted_point d2 = circumcircle(e.first->neighbor(e.second));
+    Weighted_point p = (e.first)->vertex( ccw(e.second) )->point();
+    Weighted_point q = (e.first)->vertex(  cw(e.second) )->point();
+    Weighted_point r = (e.first)->vertex(     e.second  )->point();
+    Weighted_point s = (e.first)->mirror_vertex(e.second)->point();
     return
-      geom_traits().construct_dual_segment_2_object()
-      (d1, d2, p.point(), q.point());
+      geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r,s);
   }
 
   // both of the adjacent faces are infinite
@@ -263,28 +266,31 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Weighted_point p = (e.first)->vertex(cw(e.second))->point();
     Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
-    return geom_traits().construct_dual_segment_2_object()(p, q);
+    Segment seg =
+      geom_traits().construct_Apollonius_primal_segment_2_object()(p,q);
+    return make_object(seg);
   }
 
   // only one of the adjacent faces is infinite
-  Weighted_point p = (e.first)->vertex(ccw(e.second))->point();
-  Weighted_point q = (e.first)->vertex(cw(e.second))->point();
+  Edge ee = e;
   if ( is_infinite(e.first) ) {
-    Weighted_point c = circumcircle(e.first->neighbor(e.second));
-    return
-      geom_traits().construct_dual_segment_2_object()(p, q, c);
+    ee = sym_edge(e);
   }
-  Weighted_point c = circumcircle(e.first);
-  return geom_traits().construct_dual_segment_2_object()(q, p, c);
+  Weighted_point p = (ee.first)->vertex( ccw(ee.second) )->point();
+  Weighted_point q = (ee.first)->vertex(  cw(ee.second) )->point();
+  Weighted_point r = (ee.first)->vertex(     ee.second  )->point();
+  Parabola_segment ps =
+    geom_traits().construct_Apollonius_primal_segment_2_object()(p,q,r);
+  return make_object(ps);
 }
 
 
 //--------------------------------------------------------------------
 // combinatorial operations
 //--------------------------------------------------------------------
-template< class Gt, bool StoreTrivial, class Tds >
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Edge
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 flip(Face_handle& f, int i)
 {
   CGAL_triangulation_precondition ( ! f.is_null() );
@@ -298,19 +304,19 @@ flip(Face_handle& f, int i)
   return Edge(f, ccw(i));
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Edge
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 flip(Edge e)
 {
   return flip(e.first, e.second);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_in_face(Face_handle& f, const Weighted_point& p)
 {
   Vertex_handle v = static_cast<Vertex*>(_tds.insert_in_face( &(*f) ));
@@ -319,10 +325,10 @@ insert_in_face(Face_handle& f, const Weighted_point& p)
   return v;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 is_degree_2(const Vertex_handle& v) const
 {
   Face_circulator fc = v->incident_faces();
@@ -331,19 +337,19 @@ is_degree_2(const Vertex_handle& v) const
   return ( fc == fc1 );
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e)
 {
   return _tds.insert_degree_2(e.first.ptr(),e.second);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e, const Weighted_point& p)
 {
   Vertex_handle v = insert_degree_2(e);
@@ -353,10 +359,10 @@ insert_degree_2(Edge e, const Weighted_point& p)
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_2(Vertex_handle v)
 {
   CGAL_triangulation_precondition( is_degree_2(v) );
@@ -365,20 +371,20 @@ remove_degree_2(Vertex_handle v)
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_3(Vertex_handle v)
 {
   remove_degree_3(v, NULL);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_3(Vertex_handle v, Face* f)
 {
   CGAL_triangulation_precondition( v->degree() == 3 );
@@ -389,36 +395,30 @@ remove_degree_3(Vertex_handle v, Face* f)
 // insertion of weighted point
 //--------------------------------------------------------------------
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_first(const Weighted_point& p)
 {
   return Delaunay_graph::insert_first(p);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_second(const Weighted_point& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 1 );
   Vertex_handle vnew;
   Vertex_handle v(finite_vertices_begin());
-  if ( is_trivial_test(v->point(), p) ) {
-    v->add_weighted_point(p);
+  if ( is_hidden(v->point(), p) ) {
+    v->add_hidden_weighted_point(p);
     vnew = Vertex_handle(NULL);  
-  } else if ( is_trivial_test(p, v->point()) ) {
-    v->add_weighted_point(v->point());
+  } else if ( is_hidden(p, v->point()) ) {
+    v->add_hidden_weighted_point(v->point());
     v->set_point(p);
     vnew = v;
-#if 0    
-    vnew = Delaunay_graph::insert(p);
-    vnew->add_weighted_point(v->point());
-    move_trivial_weighted_points(v, vnew);
-    remove_first(v);
-#endif
   } else {
     vnew = Delaunay_graph::insert_second(p);
   }
@@ -426,9 +426,9 @@ insert_second(const Weighted_point& p)
   return vnew;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_third(const Weighted_point& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
@@ -436,63 +436,33 @@ insert_third(const Weighted_point& p)
   Vertex_handle v1(vertices_begin());
   Vertex_handle v2(++vertices_begin());
 
-  if ( is_trivial_test(v1->point(), p) ) {
-    v1->add_weighted_point(p);
+  if ( is_hidden(v1->point(), p) ) {
+    v1->add_hidden_weighted_point(p);
     return Vertex_handle(NULL);
   }
-  if ( is_trivial_test(v2->point(), p) ) {
-    v2->add_weighted_point(p);
+  if ( is_hidden(v2->point(), p) ) {
+    v2->add_hidden_weighted_point(p);
     return Vertex_handle(NULL);
   }
 
-  bool t1 = is_trivial_test(p, v1->point());
-  bool t2 = is_trivial_test(p, v2->point());
+  bool t1 = is_hidden(p, v1->point());
+  bool t2 = is_hidden(p, v2->point());
 
   if ( t1 && !t2 ) {
-    v1->add_weighted_point(v1->point());
+    v1->add_hidden_weighted_point(v1->point());
     v1->set_point(p);
     return v1;
-#if 0
-    Weighted_point p1 = v1->point();
-    Vertex_handle v = Delaunay_graph::insert(p);
-    v->add_weighted_point(p1);
-    move_trivial_weighted_points(v1, v);
-    remove_second(v1);
-    return v;
-#endif
   } else if ( !t1 && t2 ) {
-    v2->add_weighted_point(v2->point());
+    v2->add_hidden_weighted_point(v2->point());
     v2->set_point(p);
     return v2;
-#if 0
-    Weighted_point p2 = v2->point();
-    Vertex_handle v = Delaunay_graph::insert(p);
-    v->add_weighted_point(p2);
-    move_trivial_weighted_points(v2, v);
-    remove_second(v2);
-    return v;
-#endif
   } else if ( t1 && t2 ) {
-    v1->add_weighted_point(v1->point());
-    v1->add_weighted_point(v2->point());
+    v1->add_hidden_weighted_point(v1->point());
+    v1->add_hidden_weighted_point(v2->point());
     v1->set_point(p);
     remove_second(v2);
     return v1;
-#if 0
-    Weighted_point p1 = v1->point();
-    Weighted_point p2 = v2->point();
-    Vertex_handle v = Delaunay_graph::insert(p);
-    v->add_weighted_point(p1);
-    v->add_weighted_point(p2);
-    move_trivial_weighted_points(v1, v);
-    move_trivial_weighted_points(v2, v);
-    remove_first(v1);
-    remove_second(v2);
-    return v;
-#endif
   }
-
-  //  Vertex_handle v = Delaunay_graph::insert(p);
 
   Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
   v->set_point(p);
@@ -513,22 +483,12 @@ insert_third(const Weighted_point& p)
     }
   }
 
-#if 0
-  Orientation o =
-    geom_traits().orientation_2_object()(v1->point().point(),
-					 v2->point().point(),
-					 p.point());
-  Vertex_handle v =
-    _tds.insert_dim_up(infinite_vertex(), o == LEFT_TURN);
-  v->set_point(p);
-#endif
-
   Conflict_type ct =
     finite_edge_conflict_type_degenerated(v1->point(), v2->point(), p);
 
   if ( ct == NO_CONFLICT ) {
     Oriented_side os =
-      side_of_bisector_test(v1->point(), v2->point(), p);
+      side_of_bisector(v1->point(), v2->point(), p);
 
     CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
     Vertex_handle vv = ( os == ON_NEGATIVE_SIDE ) ? v1 : v2;
@@ -592,20 +552,20 @@ insert_third(const Weighted_point& p)
 
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert(const Weighted_point& p)
 {
   return insert(p, NULL);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert(const Weighted_point& p, Vertex_handle vnear)
 {
   if ( number_of_vertices() == 0 ) {
@@ -624,10 +584,10 @@ insert(const Weighted_point& p, Vertex_handle vnear)
   CGAL_assertion( vnearest.ptr() != NULL );
 
 
-  // check if it is trivial
+  // check if it is hidden
   Weighted_point wp_nearest = vnearest->point();
-  if ( is_trivial_test(wp_nearest, p) ) {
-    vnearest->add_weighted_point(p);
+  if ( is_hidden(wp_nearest, p) ) {
+    vnearest->add_hidden_weighted_point(p);
     return Vertex_handle(NULL);
   }
 
@@ -640,7 +600,7 @@ insert(const Weighted_point& p, Vertex_handle vnear)
   Sign s;
   do {
     Face_handle f(fc);
-    s = incircle_test(f, p);
+    s = incircle(f, p);
 
     if ( s == NEGATIVE ) {
       start_f = f;
@@ -659,7 +619,7 @@ insert(const Weighted_point& p, Vertex_handle vnear)
     Edge e;
     do {
       e = *ec;
-      interior_in_conflict = edge_interior_test(e, p, false);
+      interior_in_conflict = edge_interior(e, p, false);
 
       if ( interior_in_conflict ) { break; }
       ++ec;
@@ -677,8 +637,8 @@ insert(const Weighted_point& p, Vertex_handle vnear)
   Face_map fm;
   Vertex_map vm;
 
-  Vertex_handle v = _tds.create_vertex();
-  v->set_point(p);
+  //  Vertex_handle v = _tds.create_vertex();
+  //  v->set_point(p);
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
@@ -687,7 +647,8 @@ insert(const Weighted_point& p, Vertex_handle vnear)
   initialize_conflict_region(start_f, l);
   expand_conflict_region(start_f, p, l, fm, vm, NULL);
 
-  retriangulate_conflict_region(v, l, fm, vm);
+  //  retriangulate_conflict_region(v, l, fm, vm);
+  Vertex_handle v = retriangulate_conflict_region(p, l, fm, vm);
 
   fm.clear();
   vm.clear();
@@ -700,9 +661,9 @@ insert(const Weighted_point& p, Vertex_handle vnear)
 //--------------------------------------------------------------------
 // find conflict region
 //--------------------------------------------------------------------
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 find_conflict_region_remove(const Vertex_handle& v,
 			    const Vertex_handle& vnearest,
 			    List& l, Face_map& fm,
@@ -710,10 +671,10 @@ find_conflict_region_remove(const Vertex_handle& v,
 			    std::vector<Vh_triple*>* fe)
 {
   Weighted_point p = v->point();
-  // check if it is trivial
+  // check if it is hidden
   Weighted_point wp_nearest = vnearest->point();
-  if ( is_trivial_test(wp_nearest, p) ) {
-    vnearest->add_weighted_point(p);
+  if ( is_hidden(wp_nearest, p) ) {
+    vnearest->add_hidden_weighted_point(p);
     return;
   }
 
@@ -730,7 +691,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   do {
     Face_handle f(fc);
     //    int id = f->mirror_indexf->index(vnearest)
-    s = incircle_test(f, p);
+    s = incircle(f, p);
 
     if ( s == NEGATIVE ) {
       start_f = f;
@@ -751,7 +712,7 @@ find_conflict_region_remove(const Vertex_handle& v,
     Edge e;
     do {
       e = *ec;
-      interior_in_conflict = edge_interior_test(e, p, false);
+      interior_in_conflict = edge_interior(e, p, false);
 
       if ( interior_in_conflict ) { break; }
       ++ec;
@@ -768,9 +729,9 @@ find_conflict_region_remove(const Vertex_handle& v,
   expand_conflict_region(start_f, v->point(), l, fm, vm, fe);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 initialize_conflict_region(const Face_handle& f, List& l)
 {
   l.clear();
@@ -779,18 +740,18 @@ initialize_conflict_region(const Face_handle& f, List& l)
   }
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-check_edge_for_trivial_weighted_points(const Face_handle& f, int i,
-				       const Weighted_point& p,
-				       Vertex_map& vm)
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+check_edge_for_hidden_weighted_points(const Face_handle& f, int i,
+				      const Weighted_point& p,
+				      Vertex_map& vm)
 {
   bool found(false);
 
   Vertex_handle v1 = f->vertex(ccw(i));
   if ( vm.find(v1) == vm.end() ) {
-    if ( !is_infinite(v1) && is_trivial_test(p, v1->point()) ) {
+    if ( !is_infinite(v1) && is_hidden(p, v1->point()) ) {
       vm[v1] = true;
       found = true;
     }
@@ -800,7 +761,7 @@ check_edge_for_trivial_weighted_points(const Face_handle& f, int i,
 
   Vertex_handle v2 = f->vertex(cw(i));
   if ( vm.find(v2) == vm.end() ) {
-    if ( !is_infinite(v2) && is_trivial_test(p, v2->point()) ) {
+    if ( !is_infinite(v2) && is_hidden(p, v2->point()) ) {
       vm[v2] = true;
       found = true;
     }
@@ -811,9 +772,9 @@ check_edge_for_trivial_weighted_points(const Face_handle& f, int i,
   return found;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 expand_conflict_region(const Face_handle& f, const Weighted_point& p,
 		       List& l, Face_map& fm, Vertex_map& vm,
 		       std::vector<Vh_triple*>* fe)
@@ -826,16 +787,16 @@ expand_conflict_region(const Face_handle& f, const Weighted_point& p,
 
   //  CGAL_assertion( fm.find(f) != fm.end() );
   for (int i = 0; i < 3; i++) {
-    bool trivial_found =
-      check_edge_for_trivial_weighted_points(f, i, p, vm);
+    bool hidden_found =
+      check_edge_for_hidden_weighted_points(f, i, p, vm);
 
     Face_handle n = f->neighbor(i);
 
-    if ( !trivial_found ) {
-      Sign s = incircle_test(n, p);
+    if ( !hidden_found ) {
+      Sign s = incircle(n, p);
       if ( s != NEGATIVE ) { continue; }
 
-      bool interior_in_conflict = edge_interior_test(f, i, p, true);
+      bool interior_in_conflict = edge_interior(f, i, p, true);
 
       if ( !interior_in_conflict ) { continue; }
     }
@@ -884,10 +845,10 @@ expand_conflict_region(const Face_handle& f, const Weighted_point& p,
 // retriangulate conflict region
 //--------------------------------------------------------------------
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
@@ -919,10 +880,10 @@ add_bogus_vertex(Edge e, List& l)
   return v;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_list
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_list
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 add_bogus_vertices(List& l)
 {
   Vertex_list vertex_list;
@@ -957,10 +918,10 @@ add_bogus_vertices(List& l)
   return vertex_list;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_bogus_vertices(Vertex_list& vl)
 {
   while ( vl.size() > 0 ) {
@@ -971,28 +932,28 @@ remove_bogus_vertices(Vertex_list& vl)
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-move_trivial_weighted_points(Vertex_handle& vold, Vertex_handle& vnew)
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+move_hidden_weighted_points(Vertex_handle& vold, Vertex_handle& vnew)
 {
-  typename Vertex_base::Weighted_point_list_iterator wpit;
+  typename Vertex_base::Hidden_weighted_point_iterator wpit;
 
-  for (wpit = vold->weighted_points_begin();
-       wpit != vold->weighted_points_end(); ++wpit) {
-    vnew->add_weighted_point(*wpit);
+  for (wpit = vold->hidden_weighted_points_begin();
+       wpit != vold->hidden_weighted_points_end(); ++wpit) {
+    vnew->add_hidden_weighted_point(*wpit);
   }
 
-  vold->clear_weighted_point_list();
+  vold->clear_hidden_weighted_point_container();
 }
 
 
 
 
-template< class Gt, bool StoreTrivial, class Tds >
-std::vector<Apollonius_graph_2<Gt,StoreTrivial,Tds>::Face*>
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+std::vector<Apollonius_graph_2<Gt,StoreHidden,Agds>::Face*>
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
 {
   std::vector<Face*> vf;
@@ -1017,39 +978,125 @@ get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
   return vf;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-remove_trivial_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
 {
   Vertex_map::iterator it;
 
   for (it = vm.begin(); it != vm.end(); ++it) {
-    Vertex_handle vtrivial = (*it).first;
-    _tds.delete_vertex(vtrivial.ptr());
+    Vertex_handle vhidden = (*it).first;
+    _tds.delete_vertex(vhidden.ptr());
   }
   vm.clear();
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
-void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-retriangulate_conflict_region(Vertex_handle& v,	List& l, 
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+retriangulate_conflict_region(const Weighted_point& p,	List& l, 
 			      Face_map& fm, Vertex_map& vm)
 {
-  //  CGAL_assertion( is_valid() );
-
-  // 1. move all the trivial weighted points to the new one
-  Vertex_map::iterator vmit;
-  for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
-    Vertex_handle vtrivial = (*vmit).first;
-    move_trivial_weighted_points(vtrivial, v);
-    v->add_weighted_point(vtrivial->point());
-  }
-
   int vmsize = vm.size();
   int num_vert = number_of_vertices();
+
+  if ( num_vert - vmsize == 0 ) {
+    // 1. copy all hidden sites to a temporary list
+    Weighted_point_list wp_list;
+    Vertex_map::iterator vmit;
+    for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
+      Vertex_handle vhidden = (*vmit).first;
+
+      wp_list.push_back(vhidden->point());
+      typename Vertex_base::Hidden_weighted_point_iterator it;
+      for (it = vhidden->hidden_weighted_points_begin();
+	   it != vhidden->hidden_weighted_points_end(); ++it) {
+	wp_list.push_back(*it);
+      }	
+      vhidden->clear_hidden_weighted_point_container();
+    }
+
+    // 2. clear the current Apollonius diagram
+    clear();
+
+    // 3. add a new vertex
+    Vertex_handle v = Delaunay_graph::insert_first(p);
+
+    // 4. add all old sites to the hidden weighted point list of the
+    // new site
+    Weighted_point_list_iterator wpit;
+    for (wpit = wp_list.begin(); wpit != wp_list.end(); ++wpit) {
+      v->add_hidden_weighted_point(*wpit);
+    }
+
+    return v;
+  } else if ( num_vert - vmsize == 1 ) {
+    // 1. copy all hidden sites to a temporary list
+    Weighted_point_list wp_list;
+    Vertex_map::iterator vmit;
+    for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
+      Vertex_handle vhidden = (*vmit).first;
+
+      wp_list.push_back(vhidden->point());
+      typename Vertex_base::Hidden_weighted_point_iterator it;
+      for (it = vhidden->hidden_weighted_points_begin();
+	   it != vhidden->hidden_weighted_points_end(); ++it) {
+	wp_list.push_back(*it);
+      }	
+      vhidden->clear_hidden_weighted_point_container();
+    }
+
+    // 2. find which vertex remains non-hidden and copy its hidden
+    // sites to a local container
+    Vertex_handle non_hidden;
+    Finite_vertices_iterator vit = finite_vertices_begin();
+    do {
+      non_hidden = Vertex_handle(vit);
+      ++vit;
+    } while ( vm.find(non_hidden) != vm.end() );
+
+    Weighted_point p1 = non_hidden->point();
+    Weighted_point_list wp_list1;
+    typename Vertex_base::Hidden_weighted_point_iterator it;
+    for (it = non_hidden->hidden_weighted_points_begin();
+	 it != non_hidden->hidden_weighted_points_end(); ++it) {
+      wp_list1.push_back(*it);
+    }	
+    non_hidden->clear_hidden_weighted_point_container();
+
+    // 3. clear the current Apollonius graph
+    clear();
+
+    // 4. insert the two non-hidden sites and copy the corresponding
+    // hidden sites
+    Vertex_handle v1 = Delaunay_graph::insert_first(p1);
+    for (Weighted_point_list_iterator it = wp_list1.begin();
+	 it != wp_list1.end(); ++it) {
+      v1->add_hidden_weighted_point(*it);
+    }
+
+    Vertex_handle v = Delaunay_graph::insert_second(p);
+    for (Weighted_point_list_iterator it = wp_list.begin();
+	 it != wp_list.end(); ++it) {
+      v->add_hidden_weighted_point(*it);
+    }
+
+    return v;
+  }
+
+  Vertex_handle v = _tds.create_vertex();
+  v->set_point(p);
+
+  // 1. move all the hidden weighted points to the new one
+  Vertex_map::iterator vmit;
+  for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
+    Vertex_handle vhidden = (*vmit).first;
+    move_hidden_weighted_points(vhidden, v);
+    v->add_hidden_weighted_point(vhidden->point());
+  }
+
   CGAL_precondition( number_of_vertices() - vm.size() >= 2 );
 
   // 2. add the bogus vetrices
@@ -1074,20 +1121,20 @@ retriangulate_conflict_region(Vertex_handle& v,	List& l,
 
   // 4. copy the edge list to a vector of edges and clear the in place 
   //    list
-  typedef typename Tds::Edge Tds_edge;
-  std::vector<Tds_edge> ve;
+  typedef typename Agds::Edge Agds_edge;
+  std::vector<Agds_edge> ve;
 
   Edge efront = l.front();
   Edge e = efront;
   do {
-    ve.push_back(Tds_edge(e.first.ptr(), e.second));
+    ve.push_back(Agds_edge(e.first.ptr(), e.second));
     e = l.next(e);
   } while ( e != efront );
 
   l.clear();
 
-  // 5. remove the trivial vertices
-  remove_trivial_vertices(v, vm, fm);
+  // 5. remove the hidden vertices
+  remove_hidden_vertices(v, vm, fm);
 
   // 6. retriangulate the hole
   //  _tds.star_hole(v.ptr(), ve.begin(), ve.end(), vf.begin(), vf.end());
@@ -1103,9 +1150,10 @@ retriangulate_conflict_region(Vertex_handle& v,	List& l,
     _tds.delete_face(fh.ptr());
   }
 
-  CGAL_assertion( number_of_vertices() == num_vert - vmsize );
+  CGAL_assertion( number_of_vertices() == num_vert - vmsize + 1 );
 
   // 9. DONE!!!!
+  return v;
 }
 
 
@@ -1113,19 +1161,19 @@ retriangulate_conflict_region(Vertex_handle& v,	List& l,
 //--------------------------------------------------------------------
 // point location
 //--------------------------------------------------------------------
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 nearest_neighbor(const Point& p) const
 {
   return nearest_neighbor(p, NULL);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Vertex_handle
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 nearest_neighbor(const Point& p,
 		 Vertex_handle start_vertex) const
 {
@@ -1134,13 +1182,7 @@ nearest_neighbor(const Point& p,
   }
 
   if ( start_vertex.ptr() == NULL ) {
-    Vertex_iterator vit = vertices_begin();
-    for (; vit != vertices_end(); ++vit) {
-      if ( !is_infinite(vit) ) {
-	start_vertex = Vertex_handle(vit);
-	break;
-      }
-    }
+    start_vertex = finite_vertex();
   }
 
   //  if ( start_vertex.ptr() == NULL ) { return start_vertex; }
@@ -1150,13 +1192,13 @@ nearest_neighbor(const Point& p,
 
   if ( number_of_vertices() < 3 ) {
     vclosest = v;
-    Vertex_iterator vit = vertices_begin();
-    for (; vit != vertices_end(); ++vit) {
+    Finite_vertices_iterator vit = finite_vertices_begin();
+    for (; vit != finite_vertices_end(); ++vit) {
       Vertex_handle v1(vit);
       if ( v1 != vclosest && !is_infinite(v1) ) {
 	Weighted_point p1 = vclosest->point();
 	Weighted_point p2 = v1->point();
-	if ( side_of_bisector_test(p1, p2, p) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(p1, p2, p) == ON_NEGATIVE_SIDE ) {
 	  vclosest = v1;
 	}
       }
@@ -1173,7 +1215,7 @@ nearest_neighbor(const Point& p,
       if ( !is_infinite(vc) ) {
 	Vertex_handle v1(vc);
 	Weighted_point p2 = v1->point();
-	if ( side_of_bisector_test(p1, p2, p) == ON_NEGATIVE_SIDE ) {
+	if ( side_of_bisector(p1, p2, p) == ON_NEGATIVE_SIDE ) {
 	  v = v1;
 	  break;
 	}
@@ -1190,62 +1232,57 @@ nearest_neighbor(const Point& p,
 // methods for the predicates
 //----------------------------------------------------------------------
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-is_trivial_test(const Weighted_point &p, const Weighted_point &q) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+is_hidden(const Weighted_point &p, const Weighted_point &q) const
 {
-  return geom_traits().is_trivial_test_2_object()(p, q);
+  return geom_traits().is_hidden_2_object()(p, q);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Oriented_side
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-side_of_bisector_test(const Weighted_point &p1,
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+side_of_bisector(const Weighted_point &p1,
 		      const Weighted_point &p2,
 		      const Point &p) const
 {
-  return geom_traits().side_of_bisector_test_2_object()(p1, p2, p);
+  return geom_traits().oriented_side_of_bisector_2_object()(p1, p2, p);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Sign
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-incircle_test(const Weighted_point &p1, const Weighted_point &p2,
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+incircle(const Weighted_point &p1, const Weighted_point &p2,
 	      const Weighted_point &p3,	const Weighted_point &q) const
 {
-  //  if ( is_trivial_test(q, p1) ) { return NEGATIVE; }
-  //  if ( is_trivial_test(q, p2) ) { return NEGATIVE; }
-  //  if ( is_trivial_test(q, p3) ) { return NEGATIVE; }
-  return geom_traits().incircle_test_2_object()(p1, p2, p3, q);
+  return geom_traits().vertex_conflict_2_object()(p1, p2, p3, q);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Sign
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-incircle_test(const Weighted_point &p1, const Weighted_point &p2,
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+incircle(const Weighted_point &p1, const Weighted_point &p2,
 	      const Weighted_point &q) const
 {
-  //  if ( is_trivial_test(q, p1) ) { return NEGATIVE; }
-  //  if ( is_trivial_test(q, p2) ) { return NEGATIVE; }
   return
-    geom_traits().incircle_test_2_object()(p1, p2, q);
+    geom_traits().vertex_conflict_2_object()(p1, p2, q);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Sign
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-incircle_test(const Face_handle& f, const Weighted_point& q) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+incircle(const Face_handle& f, const Weighted_point& q) const
 {
   if ( !is_infinite(f) ) {
-    return incircle_test(f->vertex(0)->point(),
+    return incircle(f->vertex(0)->point(),
 			 f->vertex(1)->point(),
 			 f->vertex(2)->point(), q);
   }
@@ -1257,144 +1294,141 @@ incircle_test(const Face_handle& f, const Weighted_point& q) const
       break;
     }
   }
-  return incircle_test( f->vertex( ccw(inf_i) )->point(),
+  return incircle( f->vertex( ccw(inf_i) )->point(),
 			f->vertex(  cw(inf_i) )->point(),
 			q );
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Sign
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-incircle_test(const Vertex_handle& v0, const Vertex_handle& v1,
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	      const Vertex_handle& v) const
 {
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
 		     && !is_infinite(v) );
 
-  return incircle_test( v0->point(), v1->point(), v->point());
+  return incircle( v0->point(), v1->point(), v->point());
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 Sign
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-incircle_test(const Vertex_handle& v0, const Vertex_handle& v1,
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	      const Vertex_handle& v2, const Vertex_handle& v) const
 {
   CGAL_precondition( !is_infinite(v) );
 
   if ( !is_infinite(v0) && !is_infinite(v1) &&
        !is_infinite(v2) ) {
-    return incircle_test(v0->point(), v1->point(),
+    return incircle(v0->point(), v1->point(),
 			 v2->point(), v->point());
   }
 
   if ( is_infinite(v0) ) {
     CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) );
-    return incircle_test( v1->point(), v2->point(), v->point());
+    return incircle( v1->point(), v2->point(), v->point());
   }
   if ( is_infinite(v1) ) {
     CGAL_precondition( !is_infinite(v0) && !is_infinite(v2) );
-    return incircle_test( v2->point(), v0->point(), v->point());
+    return incircle( v2->point(), v0->point(), v->point());
   }
 
   CGAL_assertion( is_infinite(v2) );
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1) );
-  return incircle_test( v0->point(), v1->point(), v->point());
+  return incircle( v0->point(), v1->point(), v->point());
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test(const Weighted_point& p1,
-			  const Weighted_point& p2,
-			  const Weighted_point& p3,
-			  const Weighted_point& p4,
-			  const Weighted_point& q, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior(const Weighted_point& p1,
+		     const Weighted_point& p2,
+		     const Weighted_point& p3,
+		     const Weighted_point& p4,
+		     const Weighted_point& q, bool b) const
 {
-  if ( is_trivial_test(q, p1) ) { return true; }
-  if ( is_trivial_test(q, p2) ) { return true; }
+  if ( is_hidden(q, p1) ) { return true; }
+  if ( is_hidden(q, p2) ) { return true; }
   return
-    geom_traits().finite_edge_interior_test_2_object()(p1, p2, p3, p4,
-						       q, b);
+    geom_traits().finite_edge_interior_conflict_2_object()(p1,p2,p3,p4,q,b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test(const Face_handle& f, int i,
-			  const Weighted_point& p, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior(const Face_handle& f, int i,
+		     const Weighted_point& p, bool b) const
 {
   CGAL_precondition( !is_infinite(f) &&
 		     !is_infinite(f->neighbor(i)) );
-  return finite_edge_interior_test( f->vertex( ccw(i) )->point(),
-				    f->vertex(  cw(i) )->point(),
-				    f->vertex(     i  )->point(),
-				    f->mirror_vertex(i)->point(), p, b);
+  return finite_edge_interior( f->vertex( ccw(i) )->point(),
+			       f->vertex(  cw(i) )->point(),
+			       f->vertex(     i  )->point(),
+			       f->mirror_vertex(i)->point(), p, b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test(const Vertex_handle& v1,
-			  const Vertex_handle& v2,
-			  const Vertex_handle& v3,
-			  const Vertex_handle& v4,
-			  const Vertex_handle& v, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior(const Vertex_handle& v1,
+		     const Vertex_handle& v2,
+		     const Vertex_handle& v3,
+		     const Vertex_handle& v4,
+		     const Vertex_handle& v, bool b) const
 {
   CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
 		     !is_infinite(v3) && !is_infinite(v4) &&
 		     !is_infinite(v) );
-  return finite_edge_interior_test( v1->point(), v2->point(),
-				    v3->point(), v4->point(),
-				    v->point(), b);
+  return finite_edge_interior( v1->point(), v2->point(),
+			       v3->point(), v4->point(),
+			       v->point(), b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test_degenerated(const Weighted_point& p1,
-				      const Weighted_point& p2,
-				      const Weighted_point& p3,
-				      const Weighted_point& q,
-				      bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior_degenerated(const Weighted_point& p1,
+				 const Weighted_point& p2,
+				 const Weighted_point& p3,
+				 const Weighted_point& q,
+				 bool b) const
 {
-  if ( is_trivial_test(q, p1) ) { return true; }
-  if ( is_trivial_test(q, p2) ) { return true; }
+  if ( is_hidden(q, p1) ) { return true; }
+  if ( is_hidden(q, p2) ) { return true; }
   return
-    geom_traits().finite_edge_interior_test_degenerated_2_object()
-    (p1, p2, p3, q, b);
+    geom_traits().finite_edge_interior_conflict_2_object()(p1,p2,p3,q,b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test_degenerated(const Weighted_point& p1,
-				      const Weighted_point& p2,
-				      const Weighted_point& q,
-				      bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior_degenerated(const Weighted_point& p1,
+				 const Weighted_point& p2,
+				 const Weighted_point& q,
+				 bool b) const
 {
-  if ( is_trivial_test(q, p1) ) { return true; }
-  if ( is_trivial_test(q, p2) ) { return true; }
+  if ( is_hidden(q, p1) ) { return true; }
+  if ( is_hidden(q, p2) ) { return true; }
   return
-    geom_traits().finite_edge_interior_test_degenerated_2_object()
-    (p1, p2, q, b);
+    geom_traits().finite_edge_interior_conflict_2_object()(p1, p2, q, b);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test_degenerated(const Face_handle& f, int i,
-				  const Weighted_point& p, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior_degenerated(const Face_handle& f, int i,
+				 const Weighted_point& p, bool b) const
 {
   if ( !is_infinite( f->mirror_vertex(i) ) ) {
     CGAL_precondition( is_infinite(f->vertex(i)) );
@@ -1402,7 +1436,7 @@ finite_edge_interior_test_degenerated(const Face_handle& f, int i,
     Face_handle g = f->neighbor(i);
     int j = f->mirror_index(i);
 
-    return finite_edge_interior_test_degenerated(g, j, p, b);
+    return finite_edge_interior_degenerated(g, j, p, b);
   }
 
   CGAL_precondition( is_infinite( f->mirror_vertex(i) ) );
@@ -1411,22 +1445,22 @@ finite_edge_interior_test_degenerated(const Face_handle& f, int i,
   Weighted_point p2 = f->vertex(  cw(i) )->point();
 
   if ( is_infinite(f->vertex(i)) ) {
-    return finite_edge_interior_test_degenerated(p1, p2, p, b);
+    return finite_edge_interior_degenerated(p1, p2, p, b);
   }
 
   Weighted_point p3 = f->vertex(i)->point();
-  return finite_edge_interior_test_degenerated(p1, p2, p3, p, b);
+  return finite_edge_interior_degenerated(p1, p2, p3, p, b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-finite_edge_interior_test_degenerated(const Vertex_handle& v1,
-				      const Vertex_handle& v2,
-				      const Vertex_handle& v3,
-				      const Vertex_handle& v4,
-				      const Vertex_handle& v, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+finite_edge_interior_degenerated(const Vertex_handle& v1,
+				 const Vertex_handle& v2,
+				 const Vertex_handle& v3,
+				 const Vertex_handle& v4,
+				 const Vertex_handle& v, bool b) const
 {
   CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) && 
 		     !is_infinite(v) );
@@ -1434,7 +1468,7 @@ finite_edge_interior_test_degenerated(const Vertex_handle& v1,
     CGAL_precondition( is_infinite(v3) );
 
     return
-      finite_edge_interior_test_degenerated(v2, v1, v4, v3, v, b);
+      finite_edge_interior_degenerated(v2, v1, v4, v3, v, b);
   }
 
   CGAL_precondition( is_infinite( v4 ) );
@@ -1444,40 +1478,39 @@ finite_edge_interior_test_degenerated(const Vertex_handle& v1,
   Weighted_point p = v->point();
 
   if ( is_infinite(v3) ) {
-    return finite_edge_interior_test_degenerated(p1, p2, p, b);
+    return finite_edge_interior_degenerated(p1, p2, p, b);
   }
 
   Weighted_point p3 = v3->point();
-  return finite_edge_interior_test_degenerated(p1, p2, p3, p, b);
+  return finite_edge_interior_degenerated(p1, p2, p3, p, b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-infinite_edge_interior_test(const Weighted_point& p2,
-			    const Weighted_point& p3,
-			    const Weighted_point& p4,
-			    const Weighted_point& q,
-			    bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+infinite_edge_interior(const Weighted_point& p2,
+		       const Weighted_point& p3,
+		       const Weighted_point& p4,
+		       const Weighted_point& q,
+		       bool b) const
 {
-  if ( is_trivial_test(q, p2) ) { return true; }
+  if ( is_hidden(q, p2) ) { return true; }
   return
-    geom_traits().infinite_edge_interior_test_2_object()(p2, p3, p4,
-							 q, b);
+    geom_traits().infinite_edge_interior_conflict_2_object()(p2,p3,p4,q,b);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-infinite_edge_interior_test(const Face_handle& f, int i,
-			    const Weighted_point& p, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+infinite_edge_interior(const Face_handle& f, int i,
+		       const Weighted_point& p, bool b) const
 {
   if ( !is_infinite( f->vertex(ccw(i)) ) ) {
     CGAL_precondition( is_infinite( f->vertex(cw(i)) ) );
     Face_handle g = f->neighbor(i);
     int j = f->mirror_index(i);
 
-    return infinite_edge_interior_test(g, j, p, b);
+    return infinite_edge_interior(g, j, p, b);
   }
 
   CGAL_precondition( is_infinite( f->vertex(ccw(i)) ) );
@@ -1486,18 +1519,18 @@ infinite_edge_interior_test(const Face_handle& f, int i,
   Weighted_point p3 = f->vertex(     i  )->point();
   Weighted_point p4 = f->mirror_vertex(i)->point();
 
-  return infinite_edge_interior_test(p2, p3, p4, p, b);
+  return infinite_edge_interior(p2, p3, p4, p, b);
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-infinite_edge_interior_test(const Vertex_handle& v1,
-			    const Vertex_handle& v2,
-			    const Vertex_handle& v3,
-			    const Vertex_handle& v4,
-			    const Vertex_handle& v, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+infinite_edge_interior(const Vertex_handle& v1,
+		       const Vertex_handle& v2,
+		       const Vertex_handle& v3,
+		       const Vertex_handle& v4,
+		       const Vertex_handle& v, bool b) const
 {
   CGAL_precondition( !is_infinite(v3) && !is_infinite(v4) && 
 		     !is_infinite(v) );
@@ -1505,7 +1538,7 @@ infinite_edge_interior_test(const Vertex_handle& v1,
   if ( !is_infinite( v1 ) ) {
     CGAL_precondition( is_infinite( v2 ) );
 
-    return infinite_edge_interior_test(v2, v1, v4, v3, v, b);
+    return infinite_edge_interior(v2, v1, v4, v3, v, b);
   }
 
   CGAL_precondition( is_infinite( v1 ) );
@@ -1515,20 +1548,20 @@ infinite_edge_interior_test(const Vertex_handle& v1,
   Weighted_point p4 = v4->point();
   Weighted_point p = v->point();
 
-  return infinite_edge_interior_test(p2, p3, p4, p, b);
+  return infinite_edge_interior(p2, p3, p4, p, b);
 }
 
 
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-edge_interior_test(const Vertex_handle& v1,
-		   const Vertex_handle& v2,
-		   const Vertex_handle& v3,
-		   const Vertex_handle& v4,
-		   const Vertex_handle& v, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+edge_interior(const Vertex_handle& v1,
+	      const Vertex_handle& v2,
+	      const Vertex_handle& v3,
+	      const Vertex_handle& v4,
+	      const Vertex_handle& v, bool b) const
 {
   CGAL_precondition( !is_infinite(v) );
 
@@ -1540,22 +1573,22 @@ edge_interior_test(const Vertex_handle& v1,
   bool result;
 
   if ( !is_inf_v1 && !is_inf_v2 && !is_inf_v3 && !is_inf_v4 ) {
-    result = finite_edge_interior_test(v1, v2, v3, v4, v, b);
+    result = finite_edge_interior(v1, v2, v3, v4, v, b);
   } else if ( is_inf_v3 || is_inf_v4 ) {
-    result = finite_edge_interior_test_degenerated(v1, v2, v3, v4, v, b);
+    result = finite_edge_interior_degenerated(v1, v2, v3, v4, v, b);
   } else {
-    result = infinite_edge_interior_test(v1, v2, v3, v4, v, b);
+    result = infinite_edge_interior(v1, v2, v3, v4, v, b);
   }
 
   return result;
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-edge_interior_test(const Face_handle& f, int i,
-		   const Weighted_point& p, bool b) const
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+edge_interior(const Face_handle& f, int i,
+	      const Weighted_point& p, bool b) const
 {
   Face_handle g = f->neighbor(i);
 
@@ -1565,40 +1598,40 @@ edge_interior_test(const Face_handle& f, int i,
   bool result;
 
   if ( !is_inf_f && !is_inf_g ) {
-    result = finite_edge_interior_test(f, i, p, b);
+    result = finite_edge_interior(f, i, p, b);
   } else if ( !is_inf_f || !is_inf_g ) {
-    result = finite_edge_interior_test_degenerated(f, i, p, b);
+    result = finite_edge_interior_degenerated(f, i, p, b);
   } else {
     //    Edge e(f, i);
     if ( !is_infinite(f, i) ) {
-      result = finite_edge_interior_test_degenerated(f, i, p, b);
+      result = finite_edge_interior_degenerated(f, i, p, b);
     } else {
-      result = infinite_edge_interior_test(f, i, p, b);
+      result = infinite_edge_interior(f, i, p, b);
     }
   }
 
   return result;
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::Conflict_type
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+template< class Gt, bool StoreHidden, class Agds >
+Apollonius_graph_2<Gt,StoreHidden,Agds>::Conflict_type
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 				      const Weighted_point& p2,
 				      const Weighted_point& q) const
 {
-  Sign i1 = incircle_test(p1, p2, q);
-  Sign i2 = incircle_test(p2, p1, q);
+  Sign i1 = incircle(p1, p2, q);
+  Sign i2 = incircle(p2, p1, q);
 
   if ( i1 == NEGATIVE && i2 == POSITIVE ) {
     return LEFT_VERTEX;
   } else if ( i1 == POSITIVE && i2 == NEGATIVE ) {
     return RIGHT_VERTEX;
   } else if ( i1 == POSITIVE && i2 == POSITIVE ) {
-    bool b = finite_edge_interior_test_degenerated(p1, p2, q, false);
+    bool b = finite_edge_interior_degenerated(p1, p2, q, false);
     return (b ? INTERIOR : NO_CONFLICT);
   } else if ( i1 == NEGATIVE && i2 == NEGATIVE ) {
-    bool b = finite_edge_interior_test_degenerated(p1, p2, q, true);
+    bool b = finite_edge_interior_degenerated(p1, p2, q, true);
     return (b ? ENTIRE_EDGE : BOTH_VERTICES);
   } else {
     // this should never be reached; the degenerated incircle never
@@ -1616,45 +1649,32 @@ finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 // methods for disk removal
 //----------------------------------------------------------------------
 
-template< class Gt, bool StoreTrivial, class Tds >
-inline
-bool
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-is_degree_2_vertex(const Vertex_handle& v) const
-{
-  Face_circulator fc = v->incident_faces();
-  Face_circulator fc1 = v->incident_faces();
-  ++(++fc1);
-  Face_handle fh(fc), fh1(fc1);
-  return ( fh == fh1 );
-}
 
-
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_first(Vertex_handle v)
 {
   Delaunay_graph::remove_first(v);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_second(Vertex_handle v)
 {
   Delaunay_graph::remove_second(v);
 }
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 inline
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_third(Vertex_handle v)
 {
-  if ( is_degree_2_vertex(v) ) {
+  if ( is_degree_2(v) ) {
     Face_handle fh(v->incident_faces());
     int i = fh->index(v);
     flip(fh, i);
@@ -1675,44 +1695,37 @@ remove_third(Vertex_handle v)
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-remove(Vertex_handle v, bool insert_trivial)
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
+remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( v != Vertex_handle() );
   CGAL_triangulation_precondition( !is_infinite(v) );
 
-  // find a neighbor of v to use for point location
+  // find a neighbor of v to use for point location of hidden sites to
+  // be re-inserted
   Vertex_handle vnear(NULL);
-  if ( insert_trivial && number_of_vertices() > 10 ) {
-    Vertex_circulator vc_start = v->incident_vertices();
-    Vertex_circulator vc = vc_start;
-    do {
-      if ( !is_infinite(vc) ) {
-	vnear = Vertex_handle(vc);
-	break;
-      }
-      ++vc;
-    } while ( vc != vc_start );
-  }
-
-
-  Weighted_point_list wp_list;
-  typename Vertex_base::Weighted_point_list_iterator wpit;
-  if ( insert_trivial ) {
-    for (wpit = v->weighted_points_begin();
-	 wpit != v->weighted_points_end(); ++wpit) {
-      wp_list.push_back(*wpit);
+  if ( StoreHidden ) {
+    if ( number_of_vertices() > 10 ) {
+      Vertex_circulator vc_start = v->incident_vertices();
+      Vertex_circulator vc = vc_start;
+      do {
+	if ( !is_infinite(vc) ) {
+	  vnear = Vertex_handle(vc);
+	  break;
+	}
+	++vc;
+      } while ( vc != vc_start );
     }
   }
 
-#if 0
-  if ( wp_list.size() > 1 ) {
-    Weighted_point_less_than_comparator less_than(geom_traits());
-    std::sort(wp_list.begin(), wp_list.end(), less_than);
+  Weighted_point_list wp_list;
+  typename Vertex_base::Hidden_weighted_point_iterator wpit;
+  for (wpit = v->hidden_weighted_points_begin();
+       wpit != v->hidden_weighted_points_end(); ++wpit) {
+    wp_list.push_back(*wpit);
   }
-#endif
 
   int n = number_of_vertices();
   if ( n == 1 ) {
@@ -1728,167 +1741,22 @@ remove(Vertex_handle v, bool insert_trivial)
     } else if ( degree == 3 ) {
       remove_degree_3(v);
     } else {
-      //      remove_degree_d_vertex(v);
-      remove_degree_d_vertex_using_conflict_region(v);
+      remove_degree_d_vertex(v);
     }
   }
 
-  if ( insert_trivial ) {
-    for (unsigned int i = 0; i < wp_list.size(); i++) {
-      vnear = insert(wp_list[i], vnear);
-    }
+  Weighted_point_less_than_comparator less_than(geom_traits());
+  std::sort(wp_list.begin(), wp_list.end(), less_than);
+  for (unsigned int i = 0; i < wp_list.size(); i++) {
+    vnear = insert(wp_list[i], vnear);
   }
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_d_vertex(Vertex_handle v)
-{
-  typedef std::list<Weighted_point>       Set;
-
-  Set wp_set;
-  {
-    Weighted_point wp = v->point();
-    Vertex_circulator vc = v->incident_vertices();
-    Vertex_circulator vc_start = vc;
-    do {
-      Vertex_handle v1(vc);
-      if ( !is_infinite(v1) ) {
-	wp_set.push_back(v1->point());
-      }
-      Vertex_circulator vc1 = v1->incident_vertices();
-      Vertex_circulator vc1_start = vc1;
-      do {
-	Vertex_handle v2(vc1);
-	if ( !is_infinite(v2) && v2->point() != wp ) {
-	  wp_set.push_back(v2->point());
-	}
-	++vc1;
-      } while ( vc1 != vc1_start );
-      ++vc;
-    } while ( vc != vc_start );
-
-    wp_set.push_back(wp);
-  }
-
-  int deg = v->degree();
-
-  Edge e;
-  Face_circulator fc_start = v->incident_faces();
-  Face_circulator fc = v->incident_faces();
-  Face_handle f;
-  while ( deg > 3 ) {
-    f = Face_handle(fc);
-    e = Edge(f, ccw( f->index(v) ));
-
-    CGAL_assertion( e.first->vertex(cw(e.second)) == v );
-
-    Vertex_handle v0 = e.first->vertex( e.second );
-    Vertex_handle v1 = e.first->vertex( ccw(e.second) );
-    Vertex_handle v2 = e.first->mirror_vertex( e.second );
-
-    bool is_acceptable = ( v0 != v2 );
-    if ( is_acceptable ) {
-      Vertex_circulator vc_start = v->incident_vertices();
-      Vertex_circulator vc = v->incident_vertices();
-      do {
-	Vertex_handle vv(vc);
-
-	if ( vv != v0 && vv != v1 && vv != v2 ) {
-	  Sign s;
-	  if ( is_infinite(vv) ) {
-	    s = incircle_test(v0, v2, v1);
-	  } else {
-	    s = incircle_test(v0, v1, v2, vv);
-	  }
-	  is_acceptable = is_acceptable && ( s != NEGATIVE );
-	}
-	++vc;
-      } while ( is_acceptable && vc != vc_start ); // inner do-loop
-    }
-    if ( is_acceptable ) {
-      Vertex_handle v3 = f->mirror_vertex(f->index(v));
-      Vertex_circulator vc_start = v->incident_vertices();
-      Vertex_circulator vc = vc_start;
-      do {
-	Vertex_handle vv(vc);
-	if ( !is_infinite(vv) && 
-	     vv != v0 && vv != v1 && vv != v2 && vv != v3 ) {
-	  bool edge_in_conflict =
-	    edge_interior_test(v0, v1, v2, v3, vv, false);
-	  is_acceptable = is_acceptable && !edge_in_conflict;
-	}
-	++vc;
-      } while ( is_acceptable && vc != vc_start );
-    }
-    if ( is_acceptable ) {
-      typename Set::iterator it;
-      typename Set::iterator it_last = wp_set.end();
-      --it_last;
-      for (it = wp_set.begin(); it != it_last; ++it) {
-	Weighted_point w = *it;
-	Sign s;
-	if ( !is_infinite(v0) && !is_infinite(v1) &&
-	     !is_infinite(v2) ) {
-	  s = incircle_test(v0->point(), v1->point(), v2->point(), w);
-	} else if ( is_infinite(v0) &&
-		    v1->point() != w && v2->point() != w ) {
-	  s = incircle_test(v1->point(), v2->point(), w);
-	} else if ( is_infinite(v1) &&
-		    v2->point() != w && v0->point() != w ) {
-	  s = incircle_test(v2->point(), v0->point(), w);
-	} else if ( is_infinite(v2) &&
-		    v0->point() != w && v1->point() != w ) {
-	  s = incircle_test(v0->point(), v1->point(), w);
-	}
-	is_acceptable = is_acceptable && ( s != NEGATIVE );
-      }
-    }
-    
-    if ( is_acceptable ) {
-      Edge e_fl = flip(e);
-      --deg;
-      f = e_fl.first;
-      if ( !f->has_vertex(v) ) { f = e_fl.first->neighbor(e_fl.second); }
-      fc = --( v->incident_faces(f) );
-      fc_start = fc;
-    } else {
-      ++fc;
-      if ( fc == fc_start ) {
-	CGAL_assertion( deg <= 3 );
-	break;
-      }
-    }
-  } // outer do-loop
-
-  CGAL_assertion( deg == 3 || deg == 2 );
-
-  if ( deg == 3 ) {
-    remove_degree_3(v);
-  } else {
-    remove_degree_2(v);
-  }
-
-  if ( !is_valid(false,1) ) {
-    ofstream f("check");
-    assert( f );
-    f.precision(16);
-
-    f << wp_set.size() << std::endl;
-    typename Set::iterator it;
-    for (it = wp_set.begin(); it != wp_set.end(); ++it) {
-      f << (*it) << std::endl;
-    }
-    f.close();
-  }
-}
-
-template< class Gt, bool StoreTrivial, class Tds >
-void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
-remove_degree_d_vertex_using_conflict_region(Vertex_handle v)
 {
   minimize_degree(v);
   int deg = v->degree();
@@ -1901,7 +1769,7 @@ remove_degree_d_vertex_using_conflict_region(Vertex_handle v)
     return;
   }
   
-  Apollonius_graph_2<Gt,StoreTrivial,Tds> ag_small;
+  Apollonius_graph_2<Gt,StoreHidden,Agds> ag_small;
 
   std::map<Vertex_handle,Vertex_handle> vmap;
 
@@ -1987,9 +1855,9 @@ remove_degree_d_vertex_using_conflict_region(Vertex_handle v)
 }
 
 
-template< class Gt, bool StoreTrivial, class Tds >
+template< class Gt, bool StoreHidden, class Agds >
 void
-Apollonius_graph_2<Gt,StoreTrivial,Tds>::
+Apollonius_graph_2<Gt,StoreHidden,Agds>::
 minimize_degree(Vertex_handle v)
 {
   CGAL_precondition ( v->degree() > 3 );
@@ -2009,7 +1877,7 @@ minimize_degree(Vertex_handle v)
     bool is_admissible = (v0 != v1) &&
       !is_infinite(f) && !is_infinite( f->neighbor(i) );
 
-    if ( is_admissible && is_degenerate_edge_test(f, i) ) {
+    if ( is_admissible && is_degenerate_edge(f, i) ) {
       Edge e = flip(f, i);
       f = e.first;
 
