@@ -14,12 +14,13 @@ Delaunay dt;
 
 class My_window : public QMainWindow{
 public:
-  My_window(int x, int y) : win(this)
+  My_window(int x, int y)
   {
-    setCentralWidget(&win);
+    win = new CGAL::Qt_widget(this);
+    setCentralWidget(win);
     resize(x,y);
-    win.show();
-    win.set_window(0, x, 0, y);
+    win->show();
+    win->set_window(0, x, 0, y);
 
     CGAL::Random_points_in_disc_2<Point> g(500);
     for(int count=0; count<100; count++) {
@@ -27,11 +28,12 @@ public:
     }
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(&win, this);
+    stoolbar = new CGAL::Standard_toolbar(win, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
-    win.redraw();
+    win->redraw();
   }
+  ~My_Window(){delete win;}
 private:	//functions
   void redraw()
   {
@@ -40,7 +42,7 @@ private:	//functions
   }
 
 private:	//members
-  CGAL::Qt_widget win;
+  CGAL::Qt_widget *win;
   CGAL::Standard_toolbar *stoolbar;
 };
 

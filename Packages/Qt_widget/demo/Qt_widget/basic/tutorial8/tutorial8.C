@@ -29,15 +29,16 @@ class My_Layer : public CGAL::Qt_widget_layer{
 class My_Window : public QMainWindow{
   Q_OBJECT
 public:
-  My_Window(int x, int y) : win(this)
+  My_Window(int x, int y)
   {
-    setCentralWidget(&win);
+    win = new CGAL::Qt_widget(this);
+    setCentralWidget(win);
     resize(x,y);
-    win.show();
-    win.set_window(0, x, 0, y);
+    win->show();
+    win->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(&win, this);
+    stoolbar = new CGAL::Standard_toolbar(win, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     
     QToolBar  *tools_toolbar;
@@ -51,17 +52,18 @@ public:
 				  tools_toolbar, 
 				  "Point Tool");
     get_point_but->setToggleButton(TRUE);
-    win.attach(&v);
+    win->attach(&v);
 
-    connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
+    connect(win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_object(CGAL::Object)));
   }
+  ~My_Window(){delete win;}
 private slots:
   //this function is called every time the toolbar button is pressed
   void pointtool(){
     if (get_point_but->isOn())
-      win.attach(get_point);
+      win->attach(get_point);
     else
-      win.detach_current_tool();
+      win->detach_current_tool();
   }
 
   //this function is called every time a tool creates a Cgal object
@@ -71,12 +73,12 @@ private slots:
     if(CGAL::assign(p, obj))
     {
       dt.insert(p);
-      win.redraw();
-      win << CGAL::RED << p;
+      win->redraw();
+      *win << CGAL::RED << p;
     }
   }
 private:
-  CGAL::Qt_widget win;	//the instance of Qt_widget
+  CGAL::Qt_widget *win;	//the instance of Qt_widget
   My_Layer v;		//an instance of a layer
   CGAL::Standard_toolbar *stoolbar; //the standard toolbar
   CGAL::Qt_widget_get_point<Rep> get_point;   //the generic tool that creates Cgal points

@@ -30,12 +30,12 @@ In My_Window class an instance of My_Tool is created :
 
 In the constructor of My_Window we attach the tool:
 
-	win.attach(t);
+	win->attach(t);
 
 To receive the object that the tool creates, in the constructor of My_Window, 
 we connect:
 
-    connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(win, SIGNAL(new_cgal_object(CGAL::Object)), 
 	    this, SLOT(get_object(CGAL::Object)));
 
 In My_Window class it is declared the private slot get_object(CGAL::Object obj). 
@@ -44,7 +44,7 @@ tool calls the new_object() member function from Qt_widget, that emits
 a signal new_cgal_object(CGAL::Object). To receive this signal, in the
 constructor of My_Window a connect is declared:
 
-	connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), 
+	connect(win, SIGNAL(new_cgal_object(CGAL::Object)), 
 		this, SLOT(get_object(CGAL::Object)));
 
 This connect tells the application that every time Qt_widget emits the
