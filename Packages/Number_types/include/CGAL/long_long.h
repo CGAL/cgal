@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -17,12 +17,12 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
-// !!!  ANSI C++ does not support `long long'  !!!
+// ISO C++ does not support `long long', but ISO C does, which means the next
+// revision of ISO C++ probably will too.  However, currently, g++ -pedantic
+// produces a warning so we don't include this file by default.
 
 #ifndef CGAL_LONG_LONG_H
 #define CGAL_LONG_LONG_H
@@ -30,7 +30,6 @@
 #include <CGAL/number_type_tags.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 inline
 double
@@ -58,7 +57,8 @@ is_valid(long long int)
     (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
 typedef  long long int           Integer64;
 typedef  unsigned long long int  UInteger64;
-#endif // __sparc__ || ...
+#define CGAL_HAS_INTEGER64
+#endif
 
 CGAL_END_NAMESPACE
 

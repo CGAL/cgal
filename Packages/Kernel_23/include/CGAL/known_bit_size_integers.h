@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,12 +19,11 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
-CGAL_BEGIN_NAMESPACE
 
+CGAL_BEGIN_NAMESPACE
 
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
     (defined(__sgi__)   || defined(__sgi)   || defined(sgi)) || \
@@ -36,11 +35,7 @@ CGAL_BEGIN_NAMESPACE
     typedef  unsigned char           UInteger8;
     typedef  unsigned short          UInteger16;
     typedef  unsigned int            UInteger32;
-//  ANSI C++ does not support `long long'
-//  typedef  long long int           Integer64;
-//  typedef  unsigned long long int  UInteger64;
-//  the above definitions for long long are now in file
-//  include/CGAL/long_long.h and not included automatically anymore
+    // See long_long.h for Integer64.
 #else
 #  if defined(__BORLANDC__)
     typedef  __int8                  Integer8;
@@ -51,6 +46,7 @@ CGAL_BEGIN_NAMESPACE
     typedef  unsigned __int16        UInteger16;
     typedef  unsigned __int32        UInteger32;
     typedef  unsigned __int64        UInteger64;
+#define CGAL_HAS_INTEGER64
 #  else
 #  if defined(_MSC_VER)
     typedef  signed char             Integer8;
@@ -61,6 +57,7 @@ CGAL_BEGIN_NAMESPACE
     typedef  unsigned short          UInteger16;
     typedef  unsigned int            UInteger32;
     typedef  unsigned __int64        UInteger64;
+#define CGAL_HAS_INTEGER64
 #  else
 #    error "patch this"
 #  endif

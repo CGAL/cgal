@@ -1,3 +1,7 @@
+4.4      (?? Jan 01)
+- known_bit_size_integers.h now defines CGAL_HAS_INTEGER64 when it defines
+  Integer64 (see long_long.h too).
+
 4.3      (15 Jan 01)
 - Removed gnu_integer and Double_eps.
 

@@ -1,5 +1,6 @@
 3.19   (?? Jan 2001)
 - Remove warnings in No_op_allocator.
+- long_long.h now defines CGAL_HAS_INTEGER64.
 
 3.18   (12 Jan 2001)
 
