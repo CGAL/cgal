@@ -24,6 +24,9 @@
 // Demo: 2-4-Centering Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
@@ -575,6 +578,19 @@ main(int argc, char* argv[])
 
   return 0;
 }
+
+#else
+
+#include <iostream>
+
+int main()
+{
+  std::cerr << "This demo requires LEDA." << std::endl;
+  return 0;
+}
+
+#endif
+
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

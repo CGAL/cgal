@@ -24,6 +24,9 @@
 // Demo program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
+
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -137,6 +140,19 @@ main()
 
   return 0;
 } // int main()
+
+#else
+
+#include <iostream>
+
+int main()
+{
+  std::cerr << "This demo requires LEDA." << std::endl;
+  return 0;
+}
+
+#endif
+
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
