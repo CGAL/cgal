@@ -721,6 +721,8 @@ Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/bcc/gmp.lib svneol=native#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/gmp.dll svneol=native#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/msvc/gmp.lib svneol=native#unset
+Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
+Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.eps -text

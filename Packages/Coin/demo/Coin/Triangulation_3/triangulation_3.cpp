@@ -4,7 +4,6 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
-#include <Inventor/events/SoEvent.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/nodes/SoCallback.h>
@@ -18,63 +17,30 @@
 #include <Inventor/nodes/SoColorIndex.h>
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoPointLight.h>
-#include <Inventor/nodes/SoRotation.h>
-#include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/manips/SoTrackballManip.h>
 #include <Inventor/manips/SoTransformBoxManip.h>
 #include <Inventor/draggers/SoDragPointDragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 
-#include "So_node_polyhedron_3.h"
-#include "So_node_triangulation_3.h"
-#include "So_node_tetrahedron_3.h"
-#include "So_node_terrain.h"
+#include <CGAL/IO/So_node_triangulation_3.h>
 
 #include <list>
 #include <map>
 #include <stack>
 
-Delaunay dt;
 Triangulation	T;
 SoCube *cube;
 SoQtExaminerViewer * viewer;
 SoSeparator *root;
-Polyhedron P, P2;
-Tetrahedron_3 Tetra;
 std::list<Cell_handle>  list_of_cell_handles;
 Plane_3 plane(Point_3(0, 0, 0), Point_3(0, 1, 0), Point_3(1, 0, 0));
 Point_3 pp1, pp2, pp3;
 SbVec3f normal3f;
-SoPrimitiveVertex v1p, v2p, v3p;
-bool should_pick = false; //true only once when the key was pressed
-bool right_button_found_polygon = false;
 
 
 
-void render_custom(void *, SoAction *){
-  if(!should_pick)
-    return;
-  should_pick = false;
-  float params[4];
-  glPushMatrix();
-  //glTranslatef(0, 0, 0.1);
 
-  glGetFloatv(GL_CURRENT_COLOR, &params[0]);
-  //printf("\n%f  %f  %f  %f\n", params[0], params[1], params[2], params[3]);
-  glColor3f(0.0, 1.0, 0.0);
-  float mat_diffuse[] = {0.0, 1.0, 0.0, 0.0};
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-  //glColorMaterial(GL_FRONT, GL_DIFFUSE);
-  glBegin(GL_TRIANGLES);    
-    glNormal3f(normal3f[0], normal3f[1], normal3f[2]);
-    glVertex3f(v1p.getPoint()[0], v1p.getPoint()[1], v1p.getPoint()[2]);
-    glVertex3f(v2p.getPoint()[0], v2p.getPoint()[1], v2p.getPoint()[2]);
-    glVertex3f(v3p.getPoint()[0], v3p.getPoint()[1], v3p.getPoint()[2]);
-  glEnd();
-  glColor4fv(&params[0]);
-  glPopMatrix();
-}
 
 void render_cells(void *, SoAction *){
   std::list<Cell_handle>::const_iterator it = list_of_cell_handles.begin();
@@ -142,133 +108,6 @@ void render_cells(void *, SoAction *){
 
     it++;
   }
-}
-
-SbBool
-writePickedPath (SoNode *root, 
-   const SbViewportRegion &viewport, 
-   const SbVec2s &cursorPosition)
-{
-   SoRayPickAction myPickAction(viewport);
-
-   // Set an 8-pixel wide region around the pixel
-   myPickAction.setPoint(cursorPosition);
-   myPickAction.setRadius(8.0);
-
-   // Start a pick traversal
-   myPickAction.apply(root);
-   const SoPickedPoint *myPickedPoint = 
-            myPickAction.getPickedPoint();
-   if (myPickedPoint == NULL) return FALSE;
-
-   // Write out the path to the picked object
-   SoWriteAction myWriteAction;
-   SoPath *path = myPickedPoint->getPath();
-   path->write(&myWriteAction);
-
-   return TRUE;
-}
-
-void
-mouse_moved(void * ud, SoEventCallback *n)
-{  
-  const SoEvent *mme = (SoEvent *)n->getEvent();
-  if(!right_button_found_polygon)
-    return;
-  SoQtExaminerViewer * viewer = (SoQtExaminerViewer *)ud;
-  SoRayPickAction rp(viewer->getViewportRegion());
-  rp.setPoint(mme->getPosition());
-  rp.apply(viewer->getSceneManager()->getSceneGraph());
-  SoPickedPoint * point = rp.getPickedPoint();
-  if (point == NULL) {    
-    return;
-  }
-  const SoDetail* pickDetail = point->getDetail();
-  if(pickDetail != NULL && pickDetail->getTypeId() == SoPolyhedronDetail<Polyhedron>::getClassTypeId()){
-    SoPolyhedronDetail<Polyhedron> *poly_detail = (SoPolyhedronDetail<Polyhedron> *) pickDetail;
-    Facet_handle fh = poly_detail->find_face();
-    Halfedge_handle hh = (*fh).halfedge();
-    //Halfedge_handle h(&(*hh));
-    P.erase_facet(hh);
-    viewer->render();
-  } 
-
-}
-
-void
-mouse_button_pressed(void * ud, SoEventCallback * n)
-{
-  const SoMouseButtonEvent * mbe = (SoMouseButtonEvent *)n->getEvent();
-
-  if (mbe->getButton() == SoMouseButtonEvent::BUTTON1 &&
-      mbe->getState() == SoButtonEvent::DOWN) {
-    SoQtExaminerViewer * viewer = (SoQtExaminerViewer *)ud;
-
-    SoRayPickAction rp(viewer->getViewportRegion());
-    rp.setPoint(mbe->getPosition());
-    //rp.setPickAll(true);
-    rp.apply(viewer->getSceneManager()->getSceneGraph());    
-
-    SoPickedPoint * point = rp.getPickedPoint();
-    if (point == NULL) {
-      (void)fprintf(stderr, "\n** MISS LEFT BUTTON! **\n\n");
-      return;
-    }
-    
-
-    (void)fprintf(stdout, "\n");
-
-    SbVec3f v = point->getPoint();
-    SbVec3f nv = point->getNormal();
-
-    normal3f = nv;
-
-    const SoDetail* pickDetail = point->getDetail();
-    if(pickDetail != NULL && pickDetail->getTypeId() == SoPolyhedronDetail<Polyhedron>::getClassTypeId()){
-      SoPolyhedronDetail<Polyhedron> *poly_detail = (SoPolyhedronDetail<Polyhedron> *) pickDetail;
-      v1p.setPoint(poly_detail->get_vertex(0)->getPoint());
-      v1p.setNormal(poly_detail->get_vertex(0)->getNormal());
-      v2p.setPoint(poly_detail->get_vertex(1)->getPoint());
-      v2p.setNormal(poly_detail->get_vertex(1)->getNormal());
-      v3p.setPoint(poly_detail->get_vertex(2)->getPoint());
-      v3p.setNormal(poly_detail->get_vertex(2)->getNormal());
-
-      Facet_handle fh = poly_detail->find_face();      
-      Halfedge_around_facet_circulator haf = (*fh).facet_begin ();
-      do{
-        std::cout << (*(*haf).vertex()).point().x() <<"\n"<< (*(*haf).vertex()).point().y() <<"\n"<< (*(*haf).vertex()).point().z() << "\n";
-      }while(++haf!=(*fh).facet_begin());
-      Halfedge_handle hh = (*fh).halfedge();      
-      P.erase_facet(hh);
-      should_pick = true;
-    }    
-    viewer->render();
-  }
-  if (mbe->getButton() == SoMouseButtonEvent::BUTTON2 &&
-      mbe->getState() == SoButtonEvent::DOWN) {
-    if(right_button_found_polygon)
-        right_button_found_polygon = false;
-      else
-        right_button_found_polygon = true;
-    viewer->render();
-  }
-}
-
-
-void headCB(void *data, SoDragger *dragger)
-{
-  SoTransformBoxDragger *drg = (SoTransformBoxDragger *)dragger;
-  SbVec3f vec_rot;
-  float angle;
-  drg->rotation.getValue(vec_rot, angle);
-  printf("Translation_X: %f\n",drg->translation.getValue()[0]);
-  printf("Translation_Y: %f\n",drg->translation.getValue()[1]);
-  printf("Translation_Z: %f\n",drg->translation.getValue()[2]);  
-  printf("Rotation_angle: %f\n", angle);
-  printf("Rotation_X axe: %f\n", vec_rot[0]);
-  printf("Rotation_Y axe  %f\n", vec_rot[1]);
-  printf("Rotation_Z axe  %f\n", vec_rot[2]);
-
 }
 
 void draggerCB(void *data, SoDragger *dragger)
@@ -386,8 +225,6 @@ void draggerCB(void *data, SoDragger *dragger)
 
 }
 
-
-//SoSeparator* get_plane(SoSFVec3f * draggerfield, SoSFRotation * draggerfieldr, Triangulation &t){
 SoSeparator* get_plane(Triangulation &t){
     
   SoSeparator * sub = new SoSeparator;
@@ -429,14 +266,16 @@ SoSeparator* get_plane(Triangulation &t){
 
   cube = new SoCube;
   sub->addChild(cube);
-  cube->height.setValue(max(ymax-ymin, xmax - xmin));
-  cube->width.setValue(max(ymax-ymin, xmax - xmin));
+  cube->height.setValue(std::max(ymax-ymin, xmax - xmin));
+  cube->width.setValue(std::max(ymax-ymin, xmax - xmin));
   cube->depth.setValue(0.05f);
 
   return sub;
 
 
 }
+
+
 
 int
 main (int argc, char ** argv)
@@ -445,69 +284,9 @@ main (int argc, char ** argv)
   // If unsuccessful, exit
   QWidget * window = SoQt::init(argv[0]); 
   if (window==NULL) exit(1);
-    
-  Node_tetrahedron_3<Kernel>::initClass();
-  Node_polyhedron_3<Polyhedron>::initClass();
+ 
   Node_triangulation_3<Triangulation>::initClass();
-  Node_terrain<Delaunay>::initClass();
 
-/*
-  //read the polyhedron
-  const char* iname = "cin";
-  std::istream*    p_in  = &std::cin;
-  std::ifstream    in;
-  in.open("d:\\coinsource\\coin_vc6\\data\\venus.off");
-  p_in = &in;  
-  if ( !*p_in)
-    std::cout << "error: cannot open file for reading." <<endl;  
-  CGAL::set_ascii_mode(* p_in);      
-  (*p_in) >> P;
-  in.close();
-*/
-/*
-  in.open("d:\\coinsource\\coin_vc6\\data\\terrain.cin");
-  std::istream_iterator<TPoint_3> begin(in);
-  std::istream_iterator<TPoint_3> end;
-
-  
-  dt.insert(begin, end);
-	*/
-  int size = 100;
-  int divs = 12;
-  int NumTerrainIndices  = divs * divs * 2 * 3;
-  int num_divisions = (int)sqrt(NumTerrainIndices/6);
-	float plane_size = (float)size;
-
-	float delta = plane_size/(float)num_divisions;
-	float tex_delta = 2.0f/(float)num_divisions;
-	float x_dist   = 0.0f;
-	float z_dist   = 0.0f;
-  srand( (unsigned)time( NULL ) );
-
-	for (int i=0;i<=num_divisions;i++)
-	{
-    for (int j=0;j<=num_divisions;j++)
-		{
-			x_dist = (-0.5f * plane_size) + ((float)j*delta);
-			z_dist = (-0.5f * plane_size) + ((float)i*delta);
-      int rand_n = rand()%2;
-      if(rand_n)
-			  dt.push_back(TPoint_3(x_dist, 0, z_dist));
-      else
-        dt.push_back(TPoint_3(x_dist, 20, z_dist));
-    }
-  }
-
-
-  /*
-  in.open("d:\\coinsource\\coin_vc6\\david.off");
-  p_in = &in;  
-  if ( !*p_in)
-    std::cout << "error: cannot open file for reading." <<endl;  
-  CGAL::set_ascii_mode(* p_in);      
-  (*p_in) >> P2;
-  in.close();
-*/
   //generate a triangulation
   std::list<Point> L;	 
   CGAL::Random_points_in_sphere_3<Point> g(4);
@@ -516,141 +295,40 @@ main (int argc, char ** argv)
   }
   int n = T.insert(L.begin(), L.end());
 
-
   root = new SoSeparator;
   SoSeparator * sep1 = new SoSeparator;
   SoSeparator * sep2 = new SoSeparator;
   SoSeparator * sep3 = new SoSeparator;
   SoSeparator * sep4 = new SoSeparator;
-  Node_polyhedron_3<Polyhedron> *poly = new Node_polyhedron_3<Polyhedron>(P);
-  Node_polyhedron_3<Polyhedron> *poly2 = new Node_polyhedron_3<Polyhedron>(P2);
-  Node_triangulation_3<Triangulation> *triangl = new Node_triangulation_3<Triangulation>(T);
-  Node_terrain<Delaunay> *terrain = new Node_terrain<Delaunay>(dt);
-  SoCube * cube = new SoCube;
-
   SoMaterial * material = new SoMaterial;
-  SoMaterial * material2 = new SoMaterial;
-  SoColorIndex * indexC = new SoColorIndex;
-  SoDrawStyle * style = new SoDrawStyle;
-  SoDrawStyle * triangulation_style = new SoDrawStyle;  
-  SoLightModel * lightm = new SoLightModel;
-  SoPointLight * lightp = new SoPointLight;
-  SoPointLight * lightb = new SoPointLight;
-  lightp->location.setValue(0, 0, 1);
-  lightp->color.setValue(1, 1, 1);
-  lightb->location.setValue(0, 0, -1);
-  lightb->color.setValue(1, 1, 0);
-  SoTrackballManip * polyhedron_trackball = new SoTrackballManip;
-  SoTrackballManip * triangulation_trackball = new SoTrackballManip;    
-  SoEventCallback *myEventCB = new SoEventCallback;  
-  SoTranslation * transl = new SoTranslation;
-  SoRotation * rot = new SoRotation;
-  SoTransformBoxManip * plane_manip = new SoTransformBoxManip;
-  SoComplexity * complexity = new SoComplexity;
+  SoCallback *cell_callback = new SoCallback;
   
+  material->diffuseColor.setValue(0.0f, 0.0f, 1.0f);
+  cell_callback->setCallback(render_cells);
 
-  style->style.setValue(SoDrawStyle::LINES);
-  style->lineWidth = 4;
-  triangulation_style->pointSize = 5;
-  triangulation_style->lineWidth = 2;
-  material->diffuseColor.setValue(0.8f, 0.2f, 0.0);
-  material2->diffuseColor.setValue(0.0f, 0.0f, 1.0f);
-  transl->translation.setValue(0, 3.5, 0);
-  rot->rotation.setValue(SbVec3f(-0.348137f, 0540522.0f, 0.265922f), 3.225028f);
+  Node_triangulation_3<Triangulation> *triangl = new Node_triangulation_3<Triangulation>(T);  
 
-  root->ref();                   //increments the reference counter
-
-  root->addChild(myEventCB);
-  
-  sep3->ref();
-  sep3->addChild(lightp);
-  SoCallback *triangle_callback = new SoCallback;
-  triangle_callback->setCallback(render_custom);
-  sep3->addChild(triangle_callback);
-  root->addChild(sep3);
-  
-
-  sep2->ref();
-  //sep1->addChild(lightp);
-  sep2->addChild(material2);
-  sep2->addChild(terrain);
-  root->addChild(sep2);
 
   sep1->ref();
-  //SoPickStyle * pickstyle = new SoPickStyle;
-  //sep1->addChild(pickstyle);
-  //pickstyle->style = SoPickStyle::UNPICKABLE;
-  //sep1->addChild(polyhedron_trackball);  
-  sep1->addChild(material);
-  //sep1->addChild(lightm);
-  //SoPickStyle * pickstyle2 = new SoPickStyle;
-  //sep1->addChild(pickstyle2);  
-  //sep1->addChild(style);
-  //complexity->type.setValue(SoComplexity::SCREEN_SPACE);
+  sep1->addChild(material);  
+  sep1->addChild(triangl);  
+  sep1->addChild(cell_callback);  
+  root->addChild(sep1);
 
-  complexity->value.setValue(0.8f);
-  sep1->addChild(complexity);
-  sep1->addChild(lightp);
-  sep1->addChild(lightb);
-  //sep1->addChild(texture());
-  sep1->addChild(poly);
-  sep1->addChild(transl);
-  
-  //SoTransformBoxManip * head_manip = new SoTransformBoxManip;
-  //sep1->addChild(head_manip);
-
-  //head_manip->getDragger()->enableValueChangedCallbacks(true);
-  //head_manip->getDragger()->addValueChangedCallback(headCB, NULL);
-
-  //sep1->addChild(rot);
-
-  //sep1->addChild(poly2);
-  //root->addChild(sep1);
-
-/*
-  sep2->ref();
-  sep2->addChild(material2);  
-  //sep2->addChild(triangulation_trackball);    
-  //sep2->addChild(triangulation_style);  
-  sep2->addChild(triangl);
-  SoCallback *cell_callback = new SoCallback;
-  cell_callback->setCallback(render_cells);
-  sep2->addChild(cell_callback);  
+  sep2->ref();  
+  sep2->addChild(get_plane(T));  
   root->addChild(sep2);
-*/
 
-
-/*
-
-  sep4->ref();  
-  sep4->addChild(get_plane(T));  
-  root->addChild(sep4);
-*/
 
 
   // Set up the ExaminerViewer
   viewer = new SoQtExaminerViewer(window);
   viewer->setSceneGraph(root);
-  viewer->setTitle("Draw Style");
+  viewer->setTitle("Triangulation_3 demo");  
   viewer->viewAll();  
   viewer->show();
 
   viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_BBOX);  
-
-  // Set up the event callback. We want to pass the root of the
-  // entire scene graph (including the camera) as the userData,
-  // so we get the scene manager's version of the scene graph
-  // root.
-
-  myEventCB->addEventCallback(
-      SoMouseButtonEvent::getClassTypeId(),
-      mouse_button_pressed,
-      viewer);
-
-  myEventCB->addEventCallback(
-      SoEvent::getClassTypeId(),
-      mouse_moved,
-      viewer);
 
   SoQt::show(window); // display the main window
   SoQt::mainLoop();   // main Coin event loop
