@@ -241,7 +241,7 @@ test_conflict(const Point  &p, Face_handle fh) const
   if (os == ON_POSITIVE_SIDE) return true;
  
   if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
-    int i = fh->index(infinite_vertex());
+    int i = fh->index(this->infinite_vertex());
     return collinear_between(fh->vertex(cw(i))->point(), p,
 			     fh->vertex(ccw(i))->point() );
   }
