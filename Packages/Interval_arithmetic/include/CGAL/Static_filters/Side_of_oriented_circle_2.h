@@ -88,7 +88,7 @@ public:
           double maxt = maxx;
           if (maxt < maxy) maxt = maxy;
 
-          double eps = 8.8887243614545931e-15 * maxx * maxy * (maxt*maxt);
+          double eps = 8.887856576200131e-15 * maxx * maxy * (maxt*maxt);
 
           if (det >  eps) return ON_POSITIVE_SIDE;
           if (det < -eps) return ON_NEGATIVE_SIDE;

@@ -91,9 +91,11 @@ struct Static_filter_error
 	      "you are adding variables of different homogeneous degree");
       // We have to add an ulp, since the homogeneization could induce such
       // an error.
-      double b = (_b + f._b) * (1 + ulp());
       FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-      double e = (ulp(b)/2 + _e) + f._e;
+      double b = _b + f._b;
+      double u = ulp(b) / 2;
+      b += u;
+      double e = u + _e + f._e;
       FPU_set_cw(backup);
       return Sfe(b, e, _d);
   }
@@ -102,9 +104,11 @@ struct Static_filter_error
   {
       // We have to add an ulp, since the homogeneization could induce such
       // an error.
-      double b = (_b * f._b) * (1 + ulp());
       FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-      double e = (ulp(b)/2 + _e * f._e) +  _e * f._b + _b * f._e;
+      double b = _b * f._b;
+      double u = ulp(b) / 2;
+      b += u;
+      double e = u + _e * f._e + _e * f._b + _b * f._e;
       FPU_set_cw(backup);
       return Sfe(b, e, _d+f._d);
   }
@@ -154,9 +158,11 @@ sqrt(const Static_filter_error &f)
 	  "you really want a non integer degree ???");
   // We have to add an ulp, since the homogeneization could induce such
   // an error.
-  double b = CGAL_CLIB_STD::sqrt(f.bound()) * (1 + Static_filter_error::ulp());
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  double e = CGAL_CLIB_STD::sqrt(f.error()) + Static_filter_error::ulp(b)/2;
+  double b = CGAL_CLIB_STD::sqrt(f.bound());
+  double u = Static_filter_error::ulp(b) / 2;
+  b += u;
+  double e = CGAL_CLIB_STD::sqrt(f.error()) + u;
   FPU_set_cw(backup);
   return Static_filter_error(b, e, f.degree()/2);
 }

@@ -65,7 +65,7 @@ public:
           if (maxx < fabs(prx)) maxx = fabs(prx);
           double maxy = fabs(pqy);
           if (maxy < fabs(pry)) maxy = fabs(pry);
-          double eps = 8.8882904688273534e-16 * maxx * maxy;
+          double eps = 8.8872057372592758e-16 * maxx * maxy;
 
           if (det > eps)  return POSITIVE;
           if (det < -eps) return NEGATIVE;
