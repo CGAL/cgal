@@ -1,3 +1,7 @@
+02/05/2003 (rursu) 1.188
+-----------
+	modified the install_cgal script: fixed libs names introduced in 1.187 (removed .lib from the end)
+
 2/05/2003 (spion)
 
 - Add the CUSTOM*FLAGS to get_compiler_description().

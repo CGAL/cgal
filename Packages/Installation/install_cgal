@@ -1704,9 +1704,9 @@ qt_ldflags()
 	    lib_option "ole32"
 	    lib_option "winspool"
 	    lib_option "comdlg32"
-	    lib_option "advapi32.lib"
-	    lib_option "shell32.lib"
-	    lib_option "ws2_32.lib"
+	    lib_option "advapi32"
+	    lib_option "shell32"
+	    lib_option "ws2_32"
 	fi
     fi
 }
