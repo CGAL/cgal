@@ -1,3 +1,6 @@
+Version 3.2 (Sept 1 1999)
+- Includes new predicates and construction files in C2 and C3
+
 Version 3.1 (August 31 1999)
 - Changes decided in Dagstuhl: addition of Function_objects in the kernel
 - Creation of <CGAL/Kernel/{Construction,Predicate}_objects_{2,3}.h>
