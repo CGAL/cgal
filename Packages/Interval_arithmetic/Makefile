@@ -49,13 +49,9 @@ clean:
 	rm -f $(Package).tar.gz
 	rm -f src/.pure src/*.o
 
-# --exclude=tst6.C because it's supposed to warn at compile time, but it
-# actually breaks at run time.
-
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO --exclude=tst6.C \
+	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	version description.txt changes.txt \
 	src include doc_tex doc_ps test scripts
 
