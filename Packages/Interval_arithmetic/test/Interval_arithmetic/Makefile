@@ -16,16 +16,18 @@ CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	# -O2 -Wall -W -Winline
-	# /Oi /Fatst2.s
-	# /Fatst1.s
-	# /Op /Oi /Od /Za /O2 /Ox
+	-g -gdwarf-2 -W -Wall
+	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -Wall -W
 	# -O2 -Wall -W
+	# /Fatst1.s
+	# /Op /Oi /Od /Za /O2 /Ox
 	# -fpermissive
-	# -DCGAL_IA_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
+	# -DCGAL_NO_WARNINGS
 	# -DCGAL_CHECK_EXPENSIVE \
+	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
+	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT
 	# -O2 -W -Winline -Wunused -malign-double
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
@@ -43,6 +45,7 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 # LDFLAGS = Interval_arithmetic$(OBJ_EXT)
+# LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
 
 LDFLAGS =  \
           $(TESTSUITE_LDFLAGS) \

@@ -1,4 +1,3 @@
-#include <CGAL/config.h>
 #include <CGAL/basic.h>
 
 // Workaround for crappy compilers.
@@ -13,8 +12,7 @@
 #endif
 
 #include <CGAL/misc.h>
-// #include <CGAL/kernel_basic.h>
-// #include <CGAL/number_utils.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
 #include <CGAL/Quotient.h>
@@ -111,6 +109,7 @@ int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
+  a = CGAL::abs(a);
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);

@@ -17,6 +17,49 @@ void empty_handler(const char*, const char*, const char*, int, const char *)
   // Do nothing.
 }
 
+IA_nt test_add(const IA_nt &a, const IA_nt &b)
+{
+  return a+b;
+}
+
+IA_nt test_mul_2_add(const IA_nt &a)
+{
+  return a+a;
+}
+
+IA_nt test_mult_2_hand_optimized (const IA_nt &a)
+{
+  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE(2.0*(-a.inf())),
+                CGAL_IA_FORCE_TO_DOUBLE(2.0*a.sup()));
+}
+
+IA_nt test_mult_2_hand_optimized_bis (const IA_nt &a)
+{
+  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE((-2.0)*a.inf()),
+                CGAL_IA_FORCE_TO_DOUBLE(2.0*a.sup()));
+}
+
+IA_nt test_mult_4_hand_optimized (const IA_nt &a)
+{
+  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE(4.0*(-a.inf())),
+                CGAL_IA_FORCE_TO_DOUBLE(4.0*a.sup()));
+}
+
+IA_nt test_mult_4_hand_optimized_bis (const IA_nt &a)
+{
+  return IA_nt(-CGAL_IA_FORCE_TO_DOUBLE((-4.0)*a.inf()),
+                CGAL_IA_FORCE_TO_DOUBLE(4.0*a.sup()));
+}
+
+IA_nt test_mult_2a(const IA_nt &a) { return 2.0 * a; }
+IA_nt test_mult_a2(const IA_nt &a) { return a * 2.0; }
+
+IA_nt test_mult_4a(const IA_nt &a) { return 4.0 * a; }
+IA_nt test_mult_a4(const IA_nt &a) { return a * 4.0; }
+
+IA_nt test_square(const IA_nt &a) { return CGAL::square(a); }
+IA_nt test_sqr(const IA_nt &a) { return a*a; }
+
 // This test program computes the coordinates of a sequence of points drawing
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
 // axis.  With double precision, the first possible solution is 396.
@@ -74,11 +117,6 @@ bool square_root_test()
 // Same thing for [2.1;2.1]  -> [MAX_DOUBLE;+inf].
 // Same thing for [-2;2]     -> [-inf;+inf].
 // Same thing for [-2.1;2.1] -> [-inf;+inf].
-
-IA_nt test_add(const IA_nt &a, const IA_nt &b)
-{
-  return a+b;
-}
 
 bool overflow_test()
 {
@@ -365,8 +403,7 @@ void print_res (bool res)
 int main()
 {
 #ifdef ADVANCED
-  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
-  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
   std::cout << "Stress-testing the class Interval_nt_advanced.\n";
 #else
   std::cout << "Stress-testing the class Interval_nt.\n";
