@@ -331,11 +331,21 @@ real_which()
     done
 }
 
-# basename is somewhat nasty when having options like:
+# basename/dirname is somewhat nasty when having options like:
 # /<path>/<cmd> -<opt1> ... -<optn>
 _real_basename()
 {
     ${_basename} `${_printf} "${*}\n" | ${_awk} '{ printf "%s",$1 }'`
+}
+
+_real_dirname()
+{
+    ${_dirname} `${_printf} "${*}\n" | ${_awk} '{ printf "%s",$1 }'`
+}
+
+_real_options()
+{
+    ${_printf} "${*}\n" | ${_awk} '{ for (i=2; i<=NF; ++i) printf "%s",$i }'
 }
 
 # print to logfile
@@ -461,13 +471,13 @@ get_cgal_version()
     
     # this file is assumed to contain one line matching "revision "
     # where the fourth field describes the compiler-testsuite version
-    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TYPENAME.C"
+    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_BUILTIN_BOOL.C"
     _check_read ${FILE}
     CGAL_INSTALL_CONF_VERSION=`${_fgrep} 'revision ' ${FILE} | \
 	${_awk} '{printf "%s",$4}'`
     log_print "CGAL version is ${CGAL_VERSION}."
     log_print \
-	"Install Testuite version is ${CGAL_INSTALL_CONF_VERSION}."
+	"Install Testsuite version is ${CGAL_INSTALL_CONF_VERSION}."
 }
 
 # initialize the logfiles
@@ -524,6 +534,7 @@ check_for_utils()
 {
     _which='which'
     _check_for_sysutil basename y
+    _check_for_sysutil dirname y
     _which=real_which
     _check_for_sysutil uname y
     _check_for_sysutil printf y
@@ -801,7 +812,7 @@ test_compiler_specifica()
 	    "${_NO}" \
 	  && _link_run_test \
 	    "${_tmp_name}" \
-	    "${CUSTOM_LDFLAGS}" \
+	    "${CUSTOM_LDFLAGS} " \
 	    "$1" \
 	    "${_NO}"
 	then
@@ -871,6 +882,24 @@ gmp_ldflags()
     fi
 }
 
+gmp_test_cxxflags()
+{
+    ${_printf} "${CUSTOM_CXXFLAGS} "
+    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
+	cgal_cxxflags
+    fi
+    gmp_cxxflags
+}
+
+gmp_test_ldflags()
+{
+    ${_printf} "${CUSTOM_LDFLAGS} "
+    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
+	cgal_ldflags
+    fi
+    gmp_ldflags
+}
+
 #---------------------------------------------------------
 # flags for STL
 
@@ -879,6 +908,16 @@ stl_cxxflags()
     if [ "${STL_STATUS}" != "b" ]; then
 	${_printf} "-I`_where_is 'STL_DIR'` "
     fi
+}
+
+stl_test_cxxflags()
+{
+    ${_printf} "${CUSTOM_CXXFLAGS} `stl_cxxflags`"
+}
+
+stl_test_ldflags()
+{
+    ${_printf} "${CUSTOM_LDFLAGS} -lm"
 }
 
 #---------------------------------------------------------
@@ -899,6 +938,19 @@ leda_ldflags()
 	fi
 	${_printf} "-lP -lG -lL "
     fi
+}
+
+leda_test_cxxflags()
+{
+    ${_printf} "${CUSTOM_CXXFLAGS} "
+    leda_cxxflags
+}
+
+leda_test_ldflags()
+{
+    ${_printf} "${CUSTOM_LDFLAGS} "
+    leda_ldflags
+    ${_printf} "-lm "
 }
 
 #---------------------------------------------------------
@@ -927,7 +979,7 @@ linker_flags_no_cgal_lib()
 # (full path to executable)
 get_compiler_version()
 {
-    case `${_basename} ${1:-${COMPILER}}` in
+    case `_real_basename ${1:-${COMPILER}}` in
 	*CC*)
 	    case ${SYST} in
 		*IRIX*)  _check_for_sysutil versions y
@@ -1014,14 +1066,34 @@ extended_compiler_description()
 }
 
 
+# register compiler with description $*,
+# iff there is no corresponding config file in CGAL_INSTALL_CONF_DIR
+# (since in this case it already has been registered)
+_check_and_register_compiler()
+{
+    _ORIG_COMPILER="${COMPILER}"
+    COMPILER="${*}"
+    set_ostype
+    file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    if [ -r ${file} ]; then
+	try_to_get_var_from_file COMPILER ${file}
+	if [ ${?} != 0 ]; then
+	    log_print "${CGAL_OS_COMPILER} has already been registered."
+	else
+	    _register_compiler "${*}"
+	fi
+    fi
+    COMPILER="${_ORIG_COMPILER}"
+}
+
 # register compiler with description $*
 _register_compiler()
 {
     log_print \
-	"found compiler `extended_compiler_description \"$*\"`."
-    eval "_COMPILER_${_COMPILER_NUMBER}=\"$*\""
-    eval "$_EXPR $_COMPILER_NUMBER + 1"
-    _COMPILER_NUMBER=$_result
+	"found compiler `extended_compiler_description \"${*}\"`."
+    eval "_COMPILER_${_COMPILER_NUMBER}=\"${*}\""
+    eval "${_EXPR} ${_COMPILER_NUMBER} + 1"
+    _COMPILER_NUMBER=${_result}
 }
 
 # search for compiler and set COMPILER correspondingly
@@ -1035,7 +1107,7 @@ _search_compiler()
 	_check_for_util "$1" n tmp2
 	COMPILER="$2@`get_compiler_description \"$2\"`@${_tmp2}@${_tmp1}@`get_compiler_version \"${_tmp1}\"`"
 	if [ -z "$3" ]; then
-	    _register_compiler "${COMPILER}"
+	    _check_and_register_compiler "${COMPILER}"
 	fi
 	return 0
     fi
@@ -1058,22 +1130,30 @@ _add_flags()
     compiler_version "$1"
 }
 
-# search for compilers 
-# NB: The declarativ strings must have the version number as
-#  their third component, since this is used later to extract it)
+# search for supported compilers 
 search_for_compilers()
 {
     guess_os log_print
     _COMPILER_NUMBER=1
+
+    # first check, which config files exist
+    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    do
+	try_to_get_var_from_file COMPILER ${i}
+	if [ ${?} != 0 ]; then
+	    _register_compiler "${COMPILER}"
+	fi
+    done
+
     case ${SYST} in 
 	*IRIX64*)
 	    if _search_compiler cc CC 'n'; then
-		_register_compiler \
+		_check_and_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
-		_register_compiler \
+		_check_and_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 		if [ -n "${SUPPORT_MIPSPRO_64}" ]; then
-		    _register_compiler \
+		    _check_and_register_compiler \
 			"`_add_flags \"${COMPILER}\" '-64' ' (64)' ' -64'`"
 		fi
 	    fi
@@ -1081,9 +1161,9 @@ search_for_compilers()
 	    ;;
 	*IRIX*-6*)
 	    if _search_compiler cc CC 'n'; then
-		_register_compiler \
+		_check_and_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
-		_register_compiler \
+		_check_and_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 	    fi
 	    _search_compiler gcc g++ ''
@@ -1121,7 +1201,22 @@ compiler_absolute()
     fi
     ${_printf} "@"
     get_compiler_description "${_args}"
-    ${_printf} "@no-c-compiler@${_args}@"
+    ${_printf} "@"
+    _tmp1=`_real_dirname "${_args}"`
+    if [ "${_tmp1}" != "." ]; then
+	${_printf} "${_tmp1}/"
+    fi
+    # guess C compiler:
+    case ${_tmp} in
+	g++) ${_printf} "gcc";;
+	xlC) ${_printf} "xlc";;
+	*) ${_printf} "cc";;
+    esac
+    _tmp1=`_real_options "${_args}"`
+    if [ -n "${_tmp1}" ]; then
+	${_printf} " ${_tmp1}"
+    fi
+    ${_printf} "@${_args}@"
     get_compiler_version "${_args}"
 }
 
@@ -1374,6 +1469,7 @@ wait_for_enter()
     else
 	print_center_line "D O N E"
 	print_filled_line
+	flush_buffer
     fi
 }
 
@@ -1592,6 +1688,7 @@ check_CGAL_INSTALL_VERSION()
 check_COMPILER()
 {
     _check_comp_executable `compiler_bin`
+    return 1
 }
 
 # try to read variable $1 from file $2 
@@ -1613,7 +1710,8 @@ try_to_get_var_from_file()
 	    eval "check_${1} log_print"
 	    return ${?}
 	else
-	    log_print "WARNING: cannot find field ${1} in file." 
+	    log_print \
+		"WARNING: cannot find field ${1} in file `${_basename} ${2}`." 
 	fi
     else
 	log_print "WARNING: cannot find file ${2}." 
@@ -1867,7 +1965,9 @@ test_leda()
 	  return 0;
 	}' >> ${TMP_CXX_FILE}.C
 
-	if _compile_test LEDA '' $1 && _link_run_test LEDA '' $1; then
+	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
+	    _link_run_test LEDA "`leda_test_ldflags`" $1
+	then
 	    LEDA_TEST_PASSED='y'
 	    return 0
 	else    
@@ -1883,18 +1983,6 @@ test_leda()
 # STL TESTS:
 # (I use "@error" instead of "#error" to indicate an error,
 #  since sunpro CC treats the latter as warnings ...)
-
-# print cxxflags for current setting
-stl_test_cxxflags()
-{
-    ${_printf} "${CUSTOM_CXXFLAGS} `stl_cxxflags`"
-}
-
-# print ldflags for current setting
-stl_test_ldflags()
-{
-    ${_printf} "${CUSTOM_LDFLAGS} -lm"
-}
 
 # test, if STL is original HP from 1994 (or compatible?)
 # (return 0, iff it is)
@@ -2122,7 +2210,9 @@ test_stl_general()
 set_stl_version()
 {
     if [ "`compiler_basename`" = "g++" -a \
-	 "`compiler_version`" = "2.7.2" ]; then
+	 "`compiler_version`" = "2.7.2" -a \
+	 "${STL_STATUS}" = "b" ]
+    then
 	CGAL_STL_VERSION='CGAL_STL_GCC'
     elif _test_sgi_3_0_stl $1; then
 	CGAL_STL_VERSION='CGAL_STL_SGI_3_0'
@@ -2145,9 +2235,14 @@ set_stl_version()
 # (and CGAL_STL_VERSION) correspondingly
 test_for_builtin_stl()
 {
+    _OLD_STL_STATUS=${STL_STATUS}
     STL_STATUS='b'
     if test_stl_general "${INSTALL_VERBOSE}" 'builtin STL'; then
 	log_print "`extended_compiler_description` seems to have builtin STL."
+	if [ "${_OLD_STL_STATUS}" = "x" ]; then
+	    log_print "... but we do not use it."
+	    STL_STATUS="x"
+	fi	
 	test_compiler_specifica "${INSTALL_VERBOSE}"
 	STL_TEST_PASSED='y'
 	return 0
@@ -2197,14 +2292,10 @@ test_gmp()
 	    puts ("");                      /* print newline */
 	    return 0;
 	}' > ${TMP_CXX_FILE}.C
-	if [ "$1" = "GMP syslib" ]; then
-	    _compile_test "$1" "${CUSTOM_CXXFLAGS} " "$2" && \
-		_link_run_test "$1" "${CUSTOM_LDFLAGS} -lgmp" "$2"
-	else
-	    _compile_test "$1" '' "$2" && \
-		_link_run_test "$1" '' "$2"
-	fi
-	if [ $? = 0 ]; then
+
+	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
+	    _link_run_test "$1" "`gmp_test_ldflags`" "$2"
+	then
 	    GMP_TEST_PASSED='y'
 	    return 0
 	else
@@ -2512,7 +2603,7 @@ _choose_compiler()
 	# reset all TEST_PASSED variables
 	reset_all_test_variables
 	test_for_builtin_stl
-	if [ $? = 0 -o -n "${STL_DIR}" ]; then
+	if [ "${STL_STATUS}" = "b" -o -n "${STL_DIR}" ]; then
 	    test_setup
     	else
 	    SETUP_COMPLETE=''
@@ -3755,6 +3846,8 @@ _check_comp_executable()
 	exit_on_error "basename returned empty string"
     elif [ -z "${*}" ]; then
 	exit_on_error "Missing argument"
+    elif [ "`_real_dirname \"${*}\"`" != "." ]; then
+	_check_execute "${1}"
     elif [ ! -x "${1}" ]; then
 	# that was not an absolute path -> try which
 	_tmp1="`real_which ${_tmp}`"
@@ -4051,11 +4144,12 @@ case ${_WHAT_TO_DO} in
 	# architecture/os key
 	_uname=uname
 	_basename=basename
+	_dirname=dirname
 	_fgrep=fgrep
 	_which=real_which
 	_sed=sed
 	eval "guess_os ${_printf}" >/dev/null
-	_check_comp_executable ${COMPILER}
+	_check_comp_executable "${COMPILER}"
 	COMPILER="`compiler_absolute ${COMPILER}`"
 	set_ostype
 	set_compiler_flags
@@ -4086,6 +4180,7 @@ case ${_WHAT_TO_DO} in
 			;;
 		esac
 		lib_menu
+		store_compiler_settings
 	    else
 		log_print "Cannot rebuild the library."
 		print_filled_line
