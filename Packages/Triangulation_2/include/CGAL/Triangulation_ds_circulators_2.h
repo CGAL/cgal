@@ -288,7 +288,7 @@ Triangulation_ds_face_circulator_2<Tds>&
 Triangulation_ds_face_circulator_2<Tds> ::
 operator++()
 {
-  CGAL_triangulation_precondition( (pos != Face_handle() && 
+  CGAL_triangulation_precondition( pos != Face_handle() && 
 				 _v != Vertex_handle());
   int i = pos->index(_v);
   pos = pos->neighbor(ccw(i));

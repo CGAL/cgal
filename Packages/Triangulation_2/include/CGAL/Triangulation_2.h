@@ -1096,7 +1096,7 @@ void
 Triangulation_2<Gt,Tds>::      
 remove(Vertex_handle  v)
 {
-  CGAL_triangulation_precondition( v != Verex_handle());
+  CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
     
   if  (number_of_vertices() == 1)     remove_first(v);
