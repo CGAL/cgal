@@ -113,10 +113,12 @@ public:
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_T);
     file->insertSeparator();
-    file->insertItem("&Load Constrainets", this, 
-		      SLOT(load_constraineds()), CTRL+Key_L);
-    file->insertItem("&Save Constrainets", this,
-		      SLOT(save_constraineds()), CTRL+Key_T);
+    file->insertItem("&Load Polyline", this, 
+		      SLOT(load_polyline()), CTRL+Key_P);
+    file->insertItem("&Load Constraints", this, 
+		      SLOT(load_constraints()), CTRL+Key_L);
+    file->insertItem("&Save Constraints", this,
+		      SLOT(save_constraints()), CTRL+Key_T);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()));
     file->insertSeparator();
@@ -188,7 +190,9 @@ private slots:
     Cgal_Polygon poly;
     if (CGAL::assign(s,obj))
     {
-      ct.insert(s.source(), s.target());
+      Vertex_handle vs = ct.insert(s.source());
+      Vertex_handle vt = ct.insert(s.target());
+      ct.insert_constraint(vs, vt);
       something_changed();
     } else if(CGAL::assign(p,obj)) {
       ct.insert(p);
@@ -202,12 +206,16 @@ private slots:
         for(;i!=poly.vertices_end();i++){
           Point p(i->x(), i->y());
           Segment s(p, lp);
-          ct.insert(s.source(), s.target());
+	  Vertex_handle vs = ct.insert(p);
+	  Vertex_handle vt = ct.insert(lp);
+          ct.insert_constraint(vs, vt);
           lp = p;
         }
       }
       Segment s(lp, lp1);
-      ct.insert(s.source(), s.target());
+      Vertex_handle vs = ct.insert(lp);
+      Vertex_handle vt = ct.insert(lp1);
+      ct.insert_constraint(vs, vt);
       something_changed();
     }
   }
@@ -283,21 +291,101 @@ private slots:
     something_changed();
   }
 
-  void load_constraineds()
+  void load_constraints()
+  {
+    QString s( QFileDialog::getOpenFileName( QString::null,
+					     "Constraint File (*.cst)", this ) );
+    if ( s.isEmpty() )
+      return;
+    //ct.clear();
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+    std::istream_iterator<Point> it(in), done;
+    bool first(true);
+    CGAL::Bbox_2 b;
+
+    Vertex_handle p_vh;
+    Point p_q;
+
+    while(it != done){
+      Point p(*it);
+      if(first){
+	b = p.bbox();
+      } else {
+	b = b + p.bbox();
+      }
+      ++it;
+      Point q(*it);
+      b = b + q.bbox();
+      ++it;
+      if( (! first) && (p_q == p)){
+	Vertex_handle vh = ct.insert(q);
+	ct.insert_constraint(p_vh, vh);
+        p_vh = vh;
+      } else {
+	Vertex_handle vhp = ct.insert(p);
+	p_vh = ct.insert(q, vhp->face());
+      }
+      p_q = q;
+      first = false;
+    }
+	
+    set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
+    something_changed();
+  }
+
+  void save_constraints()
   {
   }
 
-  void save_constraineds()
-  {
+  void load_polyline(){
+      QString s( QFileDialog::getOpenFileName( QString::null,
+					     "Polyline File (*.cst)", this ) );
+    if ( s.isEmpty() )
+      return;
+    //ct.clear();
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+
+    std::istream_iterator<Point> it(in), done;
+    bool first(true);
+    CGAL::Bbox_2 b;
+
+    
+    Point p(*it);
+	Vertex_handle p_vh = ct.insert(p);
+	b = p.bbox();
+    ++it;
+    while(it != done){
+      Point q(*it);
+      
+	  b = b + q.bbox();
+     
+      
+	  Vertex_handle q_vh = ct.insert(q);
+	  if(q_vh == p_vh){
+		  assert(p == q);
+	  }else{
+	      ct.insert_constraint(p_vh, q_vh);
+	  }
+        
+      p = q;
+	  p_vh = q_vh;
+	  ++it;
+    }
+	
+    set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
+    something_changed();
+ 
   }
 
 private:
   inline  void something_changed(){current_state++;};
 
 
-  CGAL::Qt_widget	                  *widget;		
-  CGAL::Tools_toolbar	              *newtoolbar;
-  CGAL::Layers_toolbar	            *vtoolbar;
+  CGAL::Qt_widget                   *widget;
+  CGAL::Tools_toolbar               *newtoolbar;
+  CGAL::Layers_toolbar              *vtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   int			  old_state;
 };//endclass
