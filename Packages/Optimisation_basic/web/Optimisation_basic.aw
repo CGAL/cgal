@@ -44,8 +44,8 @@
 @t vskip 1 mm
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
-  No.~21957 (CGAL).}
+\footnotetext[1]{This work was supported by the ESPRIT IV LTR Projects
+  No.~21957 (CGAL) and No.~28155 (GALIA).}
 
 @! ============================================================================
 @! Introduction and Contents
@@ -53,9 +53,9 @@
 
 \section*{Introduction}
 
-We provide macros for assertions, pre- and postconditions and
-warnings, and a failure function for the checking functions of the
-optimisation algorithms.
+We provide macros for checking assertions, pre- and postconditions and
+warnings, for encapsulating code for debugging, and a failure function for the
+checking functions of the optimisation algorithms.
 
 \tableofcontents
 
@@ -66,17 +66,16 @@ optimisation algorithms.
 \clearpage
 \section{Macros}
 
-The following macros are used to perform several checks. We
-distinguish four groups of checks, namely checking for assertions, for
-preconditions, for postconditions and for warnings. Each group
-consists of macros for normal checks, for exactness checks, for
-expensive checks, and for expensive exactness checks.
+@! --------
+@! Checking
+@! --------
 
-@! ------
-@! Checks
-@! ------
+\subsection{Checking}
 
-\subsection{Checks}
+The following macros are used to perform several checks. We distinguish four
+groups of checks, namely checking for assertions, for preconditions, for
+postconditions and for warnings. Each group consists of macros for normal
+checks, exactness checks, expensive checks, and expensive exactness checks.
 
 @macro<check macros>(2) many = @begin
     @<normal checks>(@1,@2)
@@ -171,12 +170,55 @@ expensive checks, and for expensive exactness checks.
     #endif // optimisation expensive exactness @2s
 @end
 
+@! ---------
+@! Debugging
+@! ---------
+
+\subsection{Debugging}
+
+The \ccc{CGAL_optimisation_debug} macro can be used to encapsulate code, that
+should not be compiled into the production version, e.g.~diagnose output. The
+following piece of code
+
+@macro<optimisation debug macro usage> zero = @begin
+    CGAL_optimisation_debug {
+        // do something
+    }
+@end
+
+is expanded to 
+
+@macro<optimisation debug macro on> zero = @begin
+    if ( 1) {
+        // do something
+    }
+@end
+
+in development versions, and to
+
+@macro<optimisation debug macro off> zero = @begin
+    if ( 0) {
+        // do something
+    }
+@end
+
+in production versions of the program. The latter will be discarded if
+compiled with the \ccc{-O} option.
+
+@macro<optimisation debug macro> = @begin
+    #if (    defined( CGAL_OPTIMISATION_NO_DEBUG) \
+          || defined( CGAL_NO_DEGUG) || defined( NDEBUG))
+    #  define  CGAL_optimisation_debug  if ( 0)
+    #else
+    #  define  CGAL_optimisation_debug  if ( 1)
+    #endif // optimisation debug
+@end
+
 
 @! ============================================================================
 @! Functions
 @! ============================================================================
 
-\clearpage
 \section{Functions}
 
 @! ----------------------------------------------------------------------------
@@ -221,14 +263,14 @@ stream \ccc{verr}.
 @i ../namespace.awi
 
 @! ----------------------------------------------------------------------------
-@! optimisation_assertions.h
+@! assertions.h
 @! ----------------------------------------------------------------------------
 
-\subsection{optimisation\_assertions.h}
+\subsection{include/CGAL/Optimisation/assertions.h}
 
-@file <include/CGAL/optimisation_assertions.h> = @begin
+@file <include/CGAL/Optimisation/assertions.h> = @begin
     @<file header>(
-        "include/CGAL/optimisation_assertions.h",
+        "include/CGAL/Optimisation/assertions.h",
         "assertion macros for optimisation algorithms",
         "Geert-Jan Giezeman")
 
@@ -260,14 +302,41 @@ stream \ccc{verr}.
 @end
 
 @! ----------------------------------------------------------------------------
-@! optimisation_basic.h
+@! debug.h
 @! ----------------------------------------------------------------------------
 
-\subsection{optimisation\_basic.h}
+\subsection{include/CGAL/Optimisation/debug.h}
 
-@file <include/CGAL/optimisation_basic.h> = @begin
+@file <include/CGAL/Optimisation/debug.h> = @begin
     @<file header>(
-        "include/CGAL/optimisation_basic.h",
+        "include/CGAL/Optimisation/debug.h",
+        "debug macro for optimisation algorithms",
+        "N.N.")
+
+    #ifndef CGAL_OPTIMISATION_DEBUG_H
+    #define CGAL_OPTIMISATION_DEBUG_H
+
+    // macro definitions
+    // =================
+
+    // debug
+    // -----
+    @<optimisation debug macro>
+
+    #endif // CGAL_OPTIMISATION_DEBUG_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! basic.h
+@! ----------------------------------------------------------------------------
+
+\subsection{include/CGAL/Optimisation/basic.h}
+
+@file <include/CGAL/Optimisation/basic.h> = @begin
+    @<file header>(
+        "include/CGAL/Optimisation/basic.h",
         "basic things for optimisation algorithms",
         "N.N.")
 
@@ -279,7 +348,10 @@ stream \ccc{verr}.
     #  include <CGAL/basic.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_DEBUG_H
+    #  include <CGAL/Optimisation/debug.h>
     #endif
     #ifndef CGAL_IO_VERBOSE_OSTREAM_H
     #  include <CGAL/IO/Verbose_ostream.h>
@@ -302,18 +374,18 @@ stream \ccc{verr}.
 @end
 
 @! ----------------------------------------------------------------------------
-@! optimisation_basic.C
+@! basic.C
 @! ----------------------------------------------------------------------------
 
-\subsection{optimisation\_basic.C}
+\subsection{src/Optimisation/basic.C}
 
-@file <src/optimisation_basic.C> = @begin
+@file <src/Optimisation/basic.C> = @begin
     @<file header>(
-        "src/optimisation_basic.C",
+        "src/Optimisation/basic.C",
         "basic things for optimisation algorithms",
         "N.N.")
 
-    #include <CGAL/optimisation_basic.h>
+    #include <CGAL/Optimisation/basic.h>
 
     @<namespace begin>("CGAL")
 
@@ -333,7 +405,7 @@ stream \ccc{verr}.
 @! optimisation_Window_stream.h
 @! ----------------------------------------------------------------------------
 
-\subsection{optimisation\_Window\_stream.h}
+\subsection{include/CGAL/IO/optimisation\_Window\_stream.h}
 
 @file <include/CGAL/IO/optimisation_Window_stream.h> = @begin
     @<file header>(
