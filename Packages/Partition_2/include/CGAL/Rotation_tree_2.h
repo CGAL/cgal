@@ -31,7 +31,7 @@
 
 //  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
 //  (from stlport?)
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
 #include <vector>
 #else
 #include <CGAL/vector.h>
@@ -42,7 +42,7 @@
 namespace CGAL {
 
 template <class Traits_>
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
 class Rotation_tree_2 : public std::vector< Rotation_tree_node_2<Traits_> >
 #else
 class Rotation_tree_2 : public CGALi::vector< Rotation_tree_node_2<Traits_> >
@@ -51,7 +51,7 @@ class Rotation_tree_2 : public CGALi::vector< Rotation_tree_node_2<Traits_> >
 public:
    typedef Traits_                                 Traits;
    typedef Rotation_tree_node_2<Traits>            Node;
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
    typedef typename std::vector<Node>::iterator    Self_iterator;
 #else
    typedef typename CGALi::vector<Node>::iterator  Self_iterator;

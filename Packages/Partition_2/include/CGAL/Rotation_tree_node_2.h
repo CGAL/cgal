@@ -32,7 +32,7 @@
 #include <utility>
 //  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
 //  (from stlport?)
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
 #include <vector>
 #else
 #include <CGAL/vector.h>
@@ -49,7 +49,7 @@ public:
 
    typedef typename Traits::Point_2          Base_point;
    typedef Rotation_tree_node_2<Traits>      Self;
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#if (defined( _MSC_VER) && (_MSC_VER <= 1200)) || defined(__BORLANDC__)
    typedef std::vector< Self >               Tree;
 #else
    typedef CGALi::vector< Self >             Tree;
