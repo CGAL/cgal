@@ -153,14 +153,14 @@ s it's a pointer to an existing layer.}
 \ccHeading{public slots:}
 \ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
 overload this function and put your code for drawing here if you don't use 
-\ccc{layers}. Redraw the layers situated in the list. Before 
-redraw the layers, clears the screen. At the end is emitted the signal 
-\ccc{custom_redraw()}.}
+\ccc{layers}. The best way is to attach layers to the widget and
+call this method. This method redraws the layers attached and
+active. Before drawing the layers, redraw clear the screen and emit
+\ccc{redraw_on_back()}. Emit \ccc{redraw_on_front()} at the end.}
 
 \ccMethod{void print_to_ps();}{Redraws all the attached and active
-layers into a Postscript device. It could be a file or a printer. If
-you use the signal \ccc{custom_redraw()}, the painting that you do
-using this signal will be drawn on top.}
+layers into a Postscript device. It could be a file or a
+printer. This method also use signals as \ccc{redraw_on_back()} or \ccc{redraw_on_front()}.}
 
 %Cgal
 \ccHeading{New CGAL Objects}
@@ -285,8 +285,12 @@ function to receive the event.}
 \ccMethod{void new_cgal_object(CGAL::Object);}{Triggered when a new object 
 from a tool is received. The user should catch this signal if it's working with
 tools that provide \cgal\ objects as input.}
-\ccMethod{void custom_redraw();}{Emitted in the redraw() function after 
-the layers are drawn.}
+\ccMethod{void custom_redraw();}{Deprecated: Emitted in the redraw()
+function after the layers are drawn.}
+\ccMethod{void redraw_on_back();}{Emmitted in redraw() method before
+calling layer's redraw.}
+\ccMethod{void redraw_on_front();}{Emmitted in redraw() method after
+calling layer's redraw.}
 
 \input{Qt_widget_ref/Operators_for_output.tex}
 \input{Qt_widget_ref/Manipulators.tex}

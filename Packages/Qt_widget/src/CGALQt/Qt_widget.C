@@ -520,11 +520,13 @@ void Qt_widget::clear() {
       painter->setClipping(true);
       painter->setClipRect(rect());
       lock();
+        emit(redraw_on_back());
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
 		      if((*it)->is_active())
 			      (*it)->draw();
-        emit(custom_redraw());
+        emit(custom_redraw()); //deprecated, should use the following:
+	emit(redraw_on_front());
       unlock();
       delete painter;
       painter = ptemp;
@@ -537,15 +539,17 @@ void Qt_widget::clear() {
     {
       clear();
       lock();
+        emit(redraw_on_back());
         std::list<Qt_widget_layer*>::iterator it;
-		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
-		      if((*it)->is_active())
-			      (*it)->draw();
+          for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
+            if((*it)->is_active())
+              (*it)->draw();
         for(it = qt_standard_layers.begin();
             it!= qt_standard_layers.end(); it++)
-		      if((*it)->is_active())
-			      (*it)->draw();
-		emit(custom_redraw());
+          if((*it)->is_active())
+            (*it)->draw();
+        emit(custom_redraw()); //deprecated, should use the following:
+        emit(redraw_on_front());
       unlock();
     }
   };

@@ -195,7 +195,12 @@ signals:
   void s_leaveEvent(QEvent *e);
   void s_event(QEvent *e);
   
-  void custom_redraw(); // if user want to draw something after layers
+  void custom_redraw(); //deprecated:  if user want to draw something
+                        //after layers replaced by redraw_on_front
+  void redraw_on_front(); //called by redraw at the end
+  void redraw_on_back();  //called by redraw at the beginning
+
+
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
 
@@ -468,52 +473,52 @@ Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
   {
     case PIXEL:
     {
-			w.get_painter().drawPoint(x,y);
-			break;
+       w.get_painter().drawPoint(x,y);
+       break;
     }
     case CROSS:
     {
-			w.get_painter().drawLine(x-size/2, y-size/2, x+size/2, y+size/2);
-			w.get_painter().drawLine(x-size/2, y+size/2, x+size/2, y-size/2);
-			break;
+       w.get_painter().drawLine(x-size/2, y-size/2, x+size/2, y+size/2);
+       w.get_painter().drawLine(x-size/2, y+size/2, x+size/2, y-size/2);
+       break;
     }
     case PLUS:
     {
-			w.get_painter().drawLine(x, y-size/2, x, y+size/2);
-			w.get_painter().drawLine(x-size/2, y, x+size/2, y);
-			break;
+       w.get_painter().drawLine(x, y-size/2, x, y+size/2);
+       w.get_painter().drawLine(x-size/2, y, x+size/2, y);
+       break;
     }
     case CIRCLE:
     {
-			QBrush old_brush=w.get_painter().brush();
-			w.get_painter().setBrush(QBrush());
-			w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
-			w.get_painter().setBrush(old_brush);
-			break;
+       QBrush old_brush=w.get_painter().brush();
+       w.get_painter().setBrush(QBrush());
+       w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
+       w.get_painter().setBrush(old_brush);
+       break;
     }
     case DISC:
     {
-			QBrush old_brush=w.get_painter().brush();
-			w.get_painter().setBrush(w.get_painter().pen().color());
-			w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
-			w.get_painter().setBrush(old_brush);
-			break;
+       QBrush old_brush=w.get_painter().brush();
+       w.get_painter().setBrush(w.get_painter().pen().color());
+       w.get_painter().drawEllipse(x-size/2, y-size/2, size, size);
+       w.get_painter().setBrush(old_brush);
+       break;
     }
     case RECT:
     {
-			QBrush old_brush=w.get_painter().brush();
-			w.get_painter().setBrush(QBrush());
-			w.get_painter().drawRect(x-size/2, y-size/2, size, size);
-			w.get_painter().setBrush(old_brush);
-			break;
+      QBrush old_brush=w.get_painter().brush();
+      w.get_painter().setBrush(QBrush());
+      w.get_painter().drawRect(x-size/2, y-size/2, size, size);
+      w.get_painter().setBrush(old_brush);
+      break;
     }
     case BOX:
     {
-			QBrush old_brush=w.get_painter().brush();
-			w.get_painter().setBrush(w.get_painter().pen().color());
-			w.get_painter().drawRect(x-size/2, y-size/2, size, size);
-			w.get_painter().setBrush(old_brush);
-			break;
+      QBrush old_brush=w.get_painter().brush();
+      w.get_painter().setBrush(w.get_painter().pen().color());
+      w.get_painter().drawRect(x-size/2, y-size/2, size, size);
+      w.get_painter().setBrush(old_brush);
+      break;
     }
   };
   w.do_paint();
