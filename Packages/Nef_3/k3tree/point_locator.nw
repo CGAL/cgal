@@ -500,7 +500,7 @@ public:
 	return f->incident_volume();
       SM_decorator SD(&*v); // now, the vertex has no incident facets
       CGAL_assertion( SD.number_of_sfaces() == 1);
-      return volume(SD.sfaces_begin());      
+      return SD.sfaces_begin()->volume();      
 */
     } else if( CGAL::assign( f, result)) {
       _TRACEN("facet hit, obtaining volume...");
@@ -710,7 +710,7 @@ private:
         return f_below->incident_volume();
       SM_decorator SD(&*v); // now, the vertex has no incident facets
       CGAL_assertion( SD.number_of_sfaces() == 1);
-      return volume(SD.sfaces_begin());
+      return SD.sfaces_begin()->volume();
     }
     else if( CGAL::assign( e, o)) {
       _TRACEN("edge hit, obtaining volume...");
@@ -719,7 +719,7 @@ private:
         return f_below->incident_volume();
       CGAL_assertion_code(SM_decorator SD(&*source(e))); // now, the edge has no incident facets
       CGAL_assertion(SD.is_isolated(e));
-      return volume(sface(e));
+      return sface(e)->volume();
     }
     else if( CGAL::assign( f, o)) {
       _TRACEN("facet hit, obtaining volume...");
