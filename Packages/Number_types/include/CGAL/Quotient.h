@@ -277,13 +277,11 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     }
 }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <class NT>
 inline
 Comparison_result
 compare(const Quotient<NT>& x, const Quotient<NT>& y)
 { return quotient_cmp(x, y); }
-#endif // CGAL_CFG_MATCHING_BUG_2
 
 template <class NT>
 std::ostream&

@@ -1,3 +1,6 @@
+4.129 (?? Jan 2004)
+- Remove obsolete CGAL_CFG_MATCHING_BUG_2 workaround (VC++ <= 7.0).
+
 4.128 (18 Jan 2004)
 - Add tests for overflow in to_double(Gmpq and Quotient<MP_Float>). 
 
