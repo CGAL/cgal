@@ -167,25 +167,25 @@ public:
 
 				// Default copy constructor and operator =() are fine
 
-				// Update the adapted Polyhedron_ex mesh when parameterization is over
-				~Mesh_adaptor_polyhedron_ex() 
-				{
-					// TEMPORARY @@@
-					// Update the inner halfedges' (u,v) from their "main" halfedge
-					fprintf(stderr,"  update texture coordinates per corner...");
-					Polyhedron_ex::Halfedge_iterator pHalfedge;
-					for (pHalfedge = m_mesh->halfedges_begin(); pHalfedge != m_mesh->halfedges_end(); pHalfedge++)
-					{
-						// Skip border halfedges
-						if ( !pHalfedge->is_border() && !pHalfedge->opposite()->is_border() )
-						{
-							Vertex_const_handle adaptor_vertex = get_adaptor_vertex(pHalfedge);
-							if (is_vertex_parameterized(adaptor_vertex))
-								pHalfedge->uv(adaptor_vertex->u(), adaptor_vertex->v());	
-						}
-					}
-					fprintf(stderr,"ok\n");
-				}
+				//// Update the adapted Polyhedron_ex mesh when parameterization is over
+				//~Mesh_adaptor_polyhedron_ex() 
+				//{
+				//	// TEMPORARY @@@
+				//	// Update the inner halfedges' (u,v) from their "main" halfedge
+				//	fprintf(stderr,"  update texture coordinates per corner...");
+				//	Polyhedron_ex::Halfedge_iterator pHalfedge;
+				//	for (pHalfedge = m_mesh->halfedges_begin(); pHalfedge != m_mesh->halfedges_end(); pHalfedge++)
+				//	{
+				//		// Skip border halfedges
+				//		if ( !pHalfedge->is_border() && !pHalfedge->opposite()->is_border() )
+				//		{
+				//			Vertex_const_handle adaptor_vertex = get_adaptor_vertex(pHalfedge);
+				//			if (is_vertex_parameterized(adaptor_vertex))
+				//				pHalfedge->uv(adaptor_vertex->u(), adaptor_vertex->v());	
+				//		}
+				//	}
+				//	fprintf(stderr,"ok\n");
+				//}
 
 				//
 				// MESH INTERFACE
@@ -321,30 +321,59 @@ public:
 					assert(is_valid(adaptor_vertex));
 					return Point_2(adaptor_vertex->u(), adaptor_vertex->v());		
 				}
-				void  set_vertex_uv (Vertex_handle adaptor_vertex, const Point_2& uv) {
+				void  set_vertex_uv (Vertex_handle adaptor_vertex, const Point_2& uv) 
+				{
 					assert(is_valid(adaptor_vertex));
-					adaptor_vertex->u(uv.x());
-					adaptor_vertex->v(uv.y());
+					//adaptor_vertex->u(uv.x());
+					//adaptor_vertex->v(uv.y());
+					// Update all halfedges sharing the same vertex (except outer halfedges)
+					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
+					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
+													  cir_end = cir;
+					CGAL_For_all(cir, cir_end) { 
+						if ( ! cir->is_border() ) {	// skip outer halfedges @@@ SEAM
+							cir->u(uv.x());	
+							cir->v(uv.y());
+						}
+					}
 				}
 
 				// Get/set "is parameterized" field of vertex (stored in halfedge)
-				void  set_vertex_parameterized (Vertex_handle adaptor_vertex, bool parameterized) {
-					assert(is_valid(adaptor_vertex));
-					adaptor_vertex->is_parameterized(parameterized);
-				}
 				bool  is_vertex_parameterized (Vertex_const_handle adaptor_vertex) const {
 					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->is_parameterized();
 				}
+				void  set_vertex_parameterized (Vertex_handle adaptor_vertex, bool parameterized) 
+				{
+					assert(is_valid(adaptor_vertex));
+					//adaptor_vertex->is_parameterized(parameterized);
+					// Update all halfedges sharing the same vertex (except outer halfedges)
+					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
+					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
+													  cir_end = cir;
+					CGAL_For_all(cir, cir_end) { 
+						if ( ! cir->is_border() )	// skip outer halfedges @@@ SEAM
+							cir->is_parameterized(parameterized);
+					}
+				}
 
 				// Get/set vertex index (stored in halfedge)
-				void  set_vertex_index (Vertex_handle adaptor_vertex, int new_index) {
-					assert(is_valid(adaptor_vertex));
-					adaptor_vertex->index(new_index);
-				}
 				int  get_vertex_index (Vertex_const_handle adaptor_vertex) const {
 					assert(is_valid(adaptor_vertex));
 					return adaptor_vertex->index();		
+				}
+				void  set_vertex_index (Vertex_handle adaptor_vertex, int new_index) 
+				{
+					assert(is_valid(adaptor_vertex));
+					//adaptor_vertex->index(new_index);
+					// Update all halfedges sharing the same vertex (except outer halfedges)
+					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
+					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
+													  cir_end = cir;
+					CGAL_For_all(cir, cir_end) { 
+						if ( ! cir->is_border() )	// skip outer halfedges @@@ SEAM
+							cir->index(new_index);
+					}
 				}
 
 				// Return true if a vertex belongs to the mesh's boundary
@@ -498,6 +527,8 @@ private:
 				}
 				inline bool is_valid (Vertex_const_handle adaptor_vertex) const {
 					if (adaptor_vertex == NULL)
+						return false;
+					if ( adaptor_vertex->is_border() )					// outer halfedges are not exported @@@ SEAM
 						return false;
 					return (get_adaptor_vertex(adaptor_vertex) == adaptor_vertex);	
 				}

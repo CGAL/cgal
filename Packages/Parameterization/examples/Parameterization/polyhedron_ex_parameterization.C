@@ -290,8 +290,7 @@ int main(int argc,char * argv[])
 	assert(seam != NULL);
 
 	// The parameterization package needs an adaptor to handle Polyhedrons   
-	Mesh_adaptor_polyhedron_ex* mesh_adaptor = new Mesh_adaptor_polyhedron_ex(&mesh, seam->halfedges()->begin(), seam->halfedges()->end());
-	assert(mesh_adaptor != NULL);
+	Mesh_adaptor_polyhedron_ex mesh_adaptor(&mesh, seam->halfedges()->begin(), seam->halfedges()->end());
 
 	// Switch parameterization. Defaults are:
 	// - floater mean value coordinates
@@ -301,61 +300,57 @@ int main(int argc,char * argv[])
 	if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
 		// Floater/circle is the default parameterization algorithm
-		err = CGAL::parameterize(mesh_adaptor);
+		err = CGAL::parameterize(&mesh_adaptor);
 	}
 	else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-									CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-									CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex >());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex >());
 	}
 	else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-									CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-									CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+								 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 	}
 	else if (strcmp(type,"lscm") == 0)
 	{
-		err = CGAL::parameterize(mesh_adaptor,
-									CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
+		err = CGAL::parameterize(&mesh_adaptor,
+								 CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 	}
 	else 
 	{
 		fprintf(stderr,"invalid choice\n");
-		delete mesh_adaptor; mesh_adaptor = NULL;
 		return -1;
 	}
-
-	// Clean up the adaptor. CAUTION: must be done before saving the mesh into the file.
-	delete mesh_adaptor; mesh_adaptor = NULL;
 
 	// On parameterization error
 	if (err != CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::OK)
