@@ -1,3 +1,27 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Constrained_triangulation_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_2_H
 
@@ -93,6 +117,13 @@ public:
  		|| ( (&(*e1.first) == &(*e2.first)) && (ind1 < ind2)));
       } 
     };
+
+private:
+  void update_status_incident(Vertex_handle va, 
+			      Vertex_handle c1,
+			      Vertex_handle c2);
+  void update_status_incident(Vertex_handle va);
+  void update_status_opposite(Vertex_handle va);
 };
     
 
@@ -163,46 +194,150 @@ insert(Point a)
 // in addition to what is done for non constrained triangulations
 // constrained edges are updated
 {
-  Vertex_handle va;
-  Face_handle f,n,start;
-  int indf,indn,li;
-  Locate_type lt;
+//   Vertex_handle va;
+//   Face_handle f,n,start;
+//   int indf,indn,li;
+//   Locate_type lt;
 
-  start = locate(a, lt, li);
+//   start = locate(a, lt, li);
 
-  // a is a vertex
+//   // a is a vertex
 
-  if (lt == VERTEX) {
-    return start->vertex(li);
-  }
+//   if (lt == VERTEX) {
+//     return start->vertex(li);
+//   }
 
-  // a belongs to the relative interior of a constrained edge
+//   // a belongs to the relative interior of a constrained edge
 
-  if ((lt == EDGE) && (start->is_constrained(li))) {
-    va = insert_in_constrained_edge(a, start,li);
-    return va;
-  }
+//   if ((lt == EDGE) && (start->is_constrained(li))) {
+//     va = insert_in_constrained_edge(a, start,li);
+//     return va;
+//   }
     
        
-  // a does NOT belong to a constrained edge
-  va = Triangulation::insert(a,start);
+//   // a does NOT belong to a constrained edge
+//   va = Triangulation::insert(a,start);
 
-  // updates the status (constrained or not) of the edges 
-  // of  the new triangles (incident to a)
+//   // updates the status (constrained or not) of the edges 
+//   // of  the new triangles (incident to a)
     
-  if (dimension()<2) { 
-    return va;
+//   if (dimension()<2) { 
+//     return va;
+//   }
+//   f = va->face();
+//   start = f;
+//   do {
+//     indf = f->index(va);
+//     f->set_constraint(cw(indf),false);  // edge incident to a
+//     f->set_constraint(ccw(indf),false); // other edge incident to a 
+//     // edge opposite to a
+//     n = f->neighbor(indf);
+//     indn=f->mirror_index(indf);
+//     if (n->is_constrained(indn)) {
+//       f->set_constraint(indf,true);
+//     }
+//     else {
+//       f->set_constraint(indf,false);
+//     }
+//     f= f->neighbor(ccw(indf)); // turns ccw around va 
+//   } while (f != start);
+//   return va;
+
+  Vertex_handle va;
+  Vertex_handle c1,c2;
+  Face_handle loc;
+  int li;
+  Locate_type lt;
+  bool insert_in_constrained_edge = false;
+
+  loc = locate(a, lt, li);
+  if ( lt == EDGE && loc->is_constrained(li) ){
+    insert_in_constrained_edge = true;
+    c1=loc->vertex(ccw(li)); //endpoint of the constraint
+    c2=loc->vertex(cw(li)); // endpoint of the constraint
   }
-  f = va->face();
-  start = f;
+  
+  va = Triangulation::insert(a,lt,loc,li);
+  if (insert_in_constrained_edge) update_status_incident(va, c1,c2);
+  else update_status_incident(va);
+  if (dimension() == 2) update_status_opposite(va);
+  return va;
+}
+
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::
+update_status_incident(Vertex_handle va, 
+		       Vertex_handle c1,
+		       Vertex_handle c2)
+  // update status of edges incident to a 
+  // after insertion in the  constrained edge c1c2
+{
+  if (dimension() == 0) return;
+  if (dimension()==1) {
+    Edge_circulator ec=va->incident_edges(), done(ec);
+    do {
+      ((*ec).first)->set_constraint(2,true);
+    }while (++ec != done);
+  }
+  else{
+    //dimension() ==2
+    int cwi, ccwi, indf;
+    Face_circulator fc=va->incident_faces(), done(fc);  
+    CGAL_triangulation_assertion(fc != 0);
+    do {
+      indf = fc->index(va);
+      cwi=cw(indf);
+      ccwi=ccw(indf); 
+      if ((fc->vertex(cwi) == c1)||(fc->vertex(cwi) == c2)) {
+	  fc->set_constraint(ccwi,true);
+	  fc->set_constraint(cwi,false);
+	}	
+	else {
+	  fc->set_constraint(ccwi,false);
+	  fc->set_constraint(cwi,true);
+	}
+	++fc;
+      } while (fc != done);
+  }
+}
+
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::
+update_status_incident(Vertex_handle va)
+// updates status of edges incident to a
+{
+ Edge_circulator ec=va->incident_edges(), done(ec);
+ Face_handle f;
+ int indf;
+  if ( ec != 0){
+    do {
+      f = (*ec).first ;
+      indf = (*ec).second;
+      f->set_constraint(indf,false);
+      if (dimension() == 2) {
+	f->neighbor(indf)->set_constraint(f->mirror_index(indf),false);
+      }
+    } while (++ec != done);
+  }
+  return;
+}
+
+
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::  
+update_status_opposite(Vertex_handle va)
+  // update status of edges opposite to a
+  // after insertion of a
+{
+  CGAL_triangulation_assertion(dimension()==2); 
+  Face_handle f=va->face(), start=f;
+  int indf;
   do {
     indf = f->index(va);
-    f->set_constraint(cw(indf),false);  // edge incident to a
-    f->set_constraint(ccw(indf),false); // other edge incident to a 
-    // edge opposite to a
-    n = f->neighbor(indf);
-    indn=f->mirror_index(indf);
-    if (n->is_constrained(indn)) {
+    if (f->neighbor(indf)->is_constrained(f->mirror_index(indf)) ) {
       f->set_constraint(indf,true);
     }
     else {
@@ -210,7 +345,7 @@ insert(Point a)
     }
     f= f->neighbor(ccw(indf)); // turns ccw around va 
   } while (f != start);
-  return va;
+  return;
 }
 
 

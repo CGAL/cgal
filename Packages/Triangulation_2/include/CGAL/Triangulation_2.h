@@ -533,9 +533,9 @@ inline bool
 Triangulation_2<Gt, Tds>::
 is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const
 {
-  Face* f ;
+  typename Tds::Face* f ;
   bool b = _tds.is_edge( &(*(va)), &(*(vb)), f, i);
-  fr = Face_handle(f);
+  fr = Face_handle(static_cast<Face*>(f));
   return b;
 }
 
