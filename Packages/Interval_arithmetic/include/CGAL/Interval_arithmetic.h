@@ -47,6 +47,14 @@ extern "C" { double CGAL_ms_sqrt(double); }
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_IA_NO_INLINE
+struct Interval_nt_advanced;
+static Interval_nt_advanced operator*(const Interval_nt_advanced&,
+	                              const Interval_nt_advanced&);
+static Interval_nt_advanced operator/(const Interval_nt_advanced&,
+	                              const Interval_nt_advanced&);
+#endif
+
 struct Interval_nt_advanced
 {
   typedef Interval_nt_advanced IA;
@@ -55,8 +63,13 @@ struct Interval_nt_advanced
 
   friend inline IA operator+     (const IA &, const IA &);
   friend inline IA operator-     (const IA &, const IA &);
+#ifdef CGAL_IA_NO_INLINE
+  friend        IA operator*     (const IA &, const IA &);
+  friend        IA operator/     (const IA &, const IA &);
+#else
   friend inline IA operator*     (const IA &, const IA &);
   friend inline IA operator/     (const IA &, const IA &);
+#endif
   friend inline IA operator||    (const IA &, const IA &);
   friend inline IA operator&&    (const IA &, const IA &);
   friend inline bool operator<   (const IA &, const IA &);
@@ -169,7 +182,11 @@ operator- (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 	                          CGAL_IA_FORCE_TO_DOUBLE(e._sup - d._inf));
 }
 
+#ifdef CGAL_IA_NO_INLINE
+static
+#else
 inline
+#endif
 Interval_nt_advanced
 operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
@@ -222,7 +239,11 @@ operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   };
 }
 
+#ifdef CGAL_IA_NO_INLINE
+static
+#else
 inline
+#endif
 Interval_nt_advanced
 operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 {
