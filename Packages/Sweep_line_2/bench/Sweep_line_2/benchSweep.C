@@ -258,7 +258,8 @@ int main(int argc, char * argv[])
 
     //std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
     //  "SL " + PM_TYPE + " (" + std::string(filename) + ")";
-    std::string name = std::string(filename) + " - " + PM_TYPE + " " + std::string(parseArgs.getTypeName(typeId));
+    std::string name = std::string(filename) + " - " + PM_TYPE + " " +
+      std::string(parseArgs.getTypeName(typeId));
 
     Subcurves_sweep_bench benchInst(name, seconds, false);
     Subcurves_sweep & benchUser = benchInst.getBenchUser();
@@ -274,7 +275,8 @@ int main(int argc, char * argv[])
 
     // std::string name = std::string(parseArgs.getTypeName(typeId)) + " " +
     //  "   SL " + PM_TYPE + " (" + std::string(filename) + ")";
-    std::string name = std::string(filename) + " - " + PM_TYPE + " " + std::string(parseArgs.getTypeName(typeId));
+    std::string name = std::string(filename) + " - " + PM_TYPE + " " +
+      std::string(parseArgs.getTypeName(typeId));
     Points_sweep_bench benchInst(name, seconds, false);
     Points_sweep & benchUser = benchInst.getBenchUser();
     runBench<Points_sweep_bench, Points_sweep>(benchInst, benchUser,
