@@ -62,7 +62,6 @@ public:
 #endif
 
   PlaneC3();
-  PlaneC3(const Self &p);
   PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r);
   PlaneC3(const Point_3 &p, const Direction_3 &d);
   PlaneC3(const Point_3 &p, const Vector_3 &v);
@@ -92,7 +91,7 @@ public:
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;
-  Self             opposite() const;
+  Self         opposite() const;
 
   Point_3      point() const;
   Point_3      projection(const Point_3 &p) const;
@@ -106,7 +105,7 @@ public:
   Point_2      to_2d(const Point_3 &p) const;
   Point_3      to_3d(const Point_2 &p) const;
 
-  Self        transform(const Aff_transformation_3 &t) const;
+  Self         transform(const Aff_transformation_3 &t) const;
 
 
   Oriented_side oriented_side(const Point_3 &p) const;
@@ -123,11 +122,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::PlaneC3()
   : Plane_handle_3(Plane_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
-  : Plane_handle_3(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

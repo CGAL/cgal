@@ -26,7 +26,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 class Circle_repC2 
-//: public Rep
   : public Ref_counted
 {
 public:
@@ -37,15 +36,14 @@ public:
   typedef typename R::Point_2_base              Point_2;
 #endif
 
-  Point_2      center;
-  FT           squared_radius;
-  Orientation  orient;
-
-
   Circle_repC2() {}
 
   Circle_repC2(const Point_2 & c, const FT & r, const Orientation &o)
     : center(c), squared_radius(r), orient(o) {}
+
+  Point_2      center;
+  FT           squared_radius;
+  Orientation  orient;
 };
 
 CGAL_END_NAMESPACE

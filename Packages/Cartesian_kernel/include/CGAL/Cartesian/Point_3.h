@@ -52,7 +52,6 @@ public:
 
   PointC3();
   PointC3(const Origin &o);
-  PointC3(const Self &p);
   PointC3(const Vector_3 &v);
   PointC3(const FT &x, const FT &y, const FT &z);
   PointC3(const FT &x, const FT &y, const FT &z, const FT &hw);
@@ -118,11 +117,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC3<R CGAL_CTAG>::PointC3(const Origin &)
   : Point_handle_3(Point_ref_3(FT(0), FT(0), FT(0)) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::PointC3(const PointC3<R CGAL_CTAG> &p)
-  : Point_handle_3(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

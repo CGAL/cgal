@@ -63,7 +63,6 @@ public:
 #endif
 
   Iso_rectangleC2();
-  Iso_rectangleC2(const Self &);
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q);
 
   bool            operator==(const Self &s) const;
@@ -101,12 +100,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_rectangleC2<R CGAL_CTAG>::Iso_rectangleC2()
   : Iso_rectangle_handle_2(Iso_rectangle_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_rectangleC2<R CGAL_CTAG>::
-Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG> &r)
-  : Iso_rectangle_handle_2(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

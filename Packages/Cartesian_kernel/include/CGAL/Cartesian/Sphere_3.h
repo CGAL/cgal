@@ -50,8 +50,6 @@ public:
 #endif
 
   SphereC3();
-  SphereC3(const Self &s);
-
   SphereC3(const Point_3 &p, const FT &s,
            const Orientation &o = COUNTERCLOCKWISE);
   // Sphere with center p, squared radius s, orientation o
@@ -117,11 +115,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::SphereC3()
   : Sphere_handle_3() {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SphereC3<R CGAL_CTAG>::SphereC3(const SphereC3<R CGAL_CTAG> &t)
-  : Sphere_handle_3(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

@@ -52,7 +52,6 @@ public:
 #endif
 
   VectorC3();
-  VectorC3(const Self &v);
   VectorC3(const Null_vector &);
   VectorC3(const Point_3 &p);
   VectorC3(const Direction_3 &p);
@@ -118,11 +117,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC3<R CGAL_CTAG>::VectorC3()
   : Vector_handle_3(Vector_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC3<R CGAL_CTAG>::VectorC3(const VectorC3<R CGAL_CTAG> &v)
-  : Vector_handle_3(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

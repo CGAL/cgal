@@ -53,7 +53,6 @@ public:
 #endif
 
   SegmentC3();
-  SegmentC3(const Self  &s);
   SegmentC3(const Point_3 &sp, const Point_3 &ep);
 
   bool        has_on(const Point_3 &p) const;
@@ -95,11 +94,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC3<R CGAL_CTAG>::SegmentC3()
   : Segment_handle_3(Segment_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC3<R CGAL_CTAG>::SegmentC3(const SegmentC3<R CGAL_CTAG> &s)
-  : Segment_handle_3(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

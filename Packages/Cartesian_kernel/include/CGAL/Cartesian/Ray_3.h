@@ -53,7 +53,6 @@ public:
 #endif
 
   RayC3();
-  RayC3(const Self &r);
   RayC3(const Point_3 &sp, const Point_3 &secondp);
   RayC3(const Point_3 &sp, const Direction_3 &d);
 
@@ -86,11 +85,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC3<R CGAL_CTAG>::RayC3()
   : Ray_handle_3(Ray_ref_3() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-RayC3<R CGAL_CTAG>::RayC3(const RayC3<R CGAL_CTAG> &r)
-  : Ray_handle_3(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

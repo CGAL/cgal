@@ -64,7 +64,6 @@ public:
 #endif
 
   SegmentC2();
-  SegmentC2(const Self  &s);
   SegmentC2(const Point_2 &sp, const Point_2 &ep);
 
   bool        is_horizontal() const;
@@ -108,11 +107,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2()
   : Segment_handle_2(Segment_ref_2() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG> &s)
-  : Segment_handle_2(s) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

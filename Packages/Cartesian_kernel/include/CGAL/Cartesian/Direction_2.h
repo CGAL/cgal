@@ -63,7 +63,6 @@ public:
 #endif
 
   DirectionC2();
-  DirectionC2(const Self &d);
   DirectionC2(const Vector_2 &v);
   DirectionC2(const FT &x, const FT &y);
 
@@ -97,12 +96,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::DirectionC2()
   : Direction_handle_2(Direction_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::
-DirectionC2(const DirectionC2<R CGAL_CTAG> &d)
-  : Direction_handle_2(d) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

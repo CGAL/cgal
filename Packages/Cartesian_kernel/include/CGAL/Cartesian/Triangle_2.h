@@ -64,7 +64,6 @@ public:
 #endif
 
   TriangleC2();
-  TriangleC2(const Self &);
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
 
   bool           operator==(const Self &s) const;
@@ -97,11 +96,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TriangleC2<R CGAL_CTAG>::TriangleC2()
   : Triangle_handle_2(Triangle_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleC2<R CGAL_CTAG>::TriangleC2(const TriangleC2<R CGAL_CTAG> &t)
-  : Triangle_handle_2(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

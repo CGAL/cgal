@@ -51,7 +51,6 @@ public:
 
 public:
   Iso_cuboidC3();
-  Iso_cuboidC3(const Self& );
   Iso_cuboidC3(const Point_3& p, const Point_3& q);
 
   bool operator==(const Self& s) const;
@@ -88,11 +87,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
   : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
-  : Iso_cuboid_handle_3(r) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE

@@ -64,7 +64,6 @@ public:
 #endif
 
   LineC2();
-  LineC2(const Self  &l);
   LineC2(const Point_2 &p, const Point_2 &q);
   LineC2(const FT &a, const FT &b, const FT &c);
   LineC2(const Segment_2 &s);
@@ -116,11 +115,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC2<R CGAL_CTAG>::LineC2()
   : Line_handle_2(Line_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG> &l)
-  : Line_handle_2(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

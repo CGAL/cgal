@@ -54,7 +54,6 @@ public:
 #endif
 
   TetrahedronC3();
-  TetrahedronC3(const Self &t);
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s);
 
@@ -85,11 +84,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 TetrahedronC3<R CGAL_CTAG>::TetrahedronC3()
   : Tetrahedron_handle_3(Tetrahedron_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TetrahedronC3<R CGAL_CTAG>::TetrahedronC3(const TetrahedronC3<R CGAL_CTAG> &t)
-  : Tetrahedron_handle_3(t) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

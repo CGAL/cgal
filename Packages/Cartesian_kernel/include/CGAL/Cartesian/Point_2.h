@@ -66,7 +66,6 @@ public:
 
   PointC2();
   PointC2(const Origin &);
-  PointC2(const Self &p);
   PointC2(const FT &x, const FT &y);
   PointC2(const FT &hx, const FT &hy, const FT &hw);
   PointC2(const Vector_2 &v);
@@ -134,11 +133,6 @@ CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
                               const typename PointC2<R CGAL_CTAG>::FT &y)
   : Point_handle_2(Point_ref_2(x, y)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG> &p)
-  : Point_handle_2(p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

@@ -65,7 +65,6 @@ public:
 #endif
 
   CircleC2();
-  CircleC2(const Self &);
   CircleC2(const Point_2 &center, const FT &squared_radius = FT(0),
            const Orientation &orient = COUNTERCLOCKWISE); // Is this new?
   CircleC2(const Point_2 &center, const Orientation &orient); // Is this new?
@@ -76,14 +75,14 @@ public:
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
 
-  Point_2    center() const;
+  Point_2        center() const;
   FT             squared_radius() const;
 
-  Self   opposite() const;
+  Self           opposite() const;
 
 //  EllipseC2<FT> transform(const Aff_transformation_2 &t) const;
 
-  Self   orthogonal_transform(const Aff_transformation_2 &t) const;
+  Self           orthogonal_transform(const Aff_transformation_2 &t) const;
 
   Orientation    orientation() const;
 
@@ -106,11 +105,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 CircleC2<R CGAL_CTAG>::CircleC2()
   : Circle_handle_2() {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG> &c)
-  : Circle_handle_2(c) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

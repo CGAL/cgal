@@ -35,14 +35,14 @@ public:
   typedef typename R::Point_3_base              Point_3;
 #endif
 
-  Point_3      center;
-  FT           squared_radius;
-  Orientation  orient;
-
   Sphere_repC3() {}
 
   Sphere_repC3(const Point_3 & c, const FT & r, const Orientation &o)
     : center(c), squared_radius(r), orient(o) {}
+
+  Point_3      center;
+  FT           squared_radius;
+  Orientation  orient;
 };
 
 CGAL_END_NAMESPACE

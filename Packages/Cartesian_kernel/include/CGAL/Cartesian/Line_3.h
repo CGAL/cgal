@@ -61,7 +61,6 @@ public:
 #endif
 
   LineC3();
-  LineC3(const Self  &l);
   LineC3(const Point_3 &p, const Point_3 &q);
   LineC3(const Segment_3 &s);
   LineC3(const Ray_3 &r);
@@ -96,11 +95,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 LineC3<R CGAL_CTAG>::LineC3()
   : Line_handle_3(Line_ref_3() ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG> &l)
-  : Line_handle_3(l) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

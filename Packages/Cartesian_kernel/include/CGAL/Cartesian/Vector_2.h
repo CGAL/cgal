@@ -64,7 +64,6 @@ public:
 #endif
 
   VectorC2();
-  VectorC2(const Self &v);
   VectorC2(const Null_vector &);
   VectorC2(const Point_2 &p);
   VectorC2(const Direction_2 &d);
@@ -123,11 +122,6 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2()
   : Vector_handle_2(Vector_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG> &v)
-  : Vector_handle_2(v) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
