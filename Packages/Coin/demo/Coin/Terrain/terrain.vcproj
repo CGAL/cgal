@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GR /Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.NET.ML/include;&quot;$(QTDIR)/include&quot;;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib c:\coin\.NET.ML\lib\coin1.lib c:\coin\.NET.ML\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib $(COINDIR)\lib\coin1.lib $(COINDIR)/lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
 				OutputFile="$(OutDir)/terrain.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -69,7 +69,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;c:/coin/.NET.ML/include;&quot;$(QTDIR)/include&quot;;D:\CgalCVS\Coin\include"
+				AdditionalIncludeDirectories="&quot;$(CGALIROOT)/include/CGAL/config/msvc7&quot;;&quot;$(CGALIROOT)/include&quot;;&quot;$(COINDIR)/include&quot;;&quot;$(QTDIR)/include&quot;;../../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SOQT_NOT_DLL;COIN_NOT_DLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib c:/coin/.NET.ML/lib/coin1.lib c:/coin/.NET.ML/lib/soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
+				AdditionalOptions="$(QTDIR)\lib\qtmain.lib $(QTDIR)\lib\qt.lib $(COINDIR)/lib/coin1.lib $(COINDIR)/lib/soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
 				OutputFile="$(OutDir)/terrain.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBC"
