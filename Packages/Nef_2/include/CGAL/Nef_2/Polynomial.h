@@ -1289,7 +1289,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p)
 Polynomial<int> operator - (const Polynomial<int>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<int> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
+  Polynomial<int> res(p.coeffs().begin(),p.coeffs().end());
   Polynomial<int>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
@@ -1298,7 +1298,7 @@ Polynomial<int> operator - (const Polynomial<int>& p)
 Polynomial<double> operator - (const Polynomial<double>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<double> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
+  Polynomial<double> res(p.coeffs().begin(),p.coeffs().end());
   Polynomial<double>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
