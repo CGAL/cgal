@@ -2,11 +2,11 @@
 @! The CGAL Library
 @! Implementation: Random Numbers Generator
 @! ----------------------------------------------------------------------------
-@! file  : web/Random/Random.aw
+@! file  : web/Random_numbers/Random.aw
 @! author: Sven Schönherr <sven@inf.fu-berlin.de>
 @! ----------------------------------------------------------------------------
-@! $CGAL_Chapter: Random Sources $
-@! $CGAL_Package: Random WIP $
+@! $CGAL_Chapter: Random Numbers Generator $
+@! $CGAL_Package: Random_numbers $
 @! $Revision$
 @! $Date$
 @! ============================================================================
@@ -38,8 +38,8 @@
 @t vskip 1 mm
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-\footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
-  No.~21957 (CGAL).}
+\footnotetext[1]{This work was supported by the ESPRIT IV LTR Projects
+  No.~21957 (CGAL) and No.~28155 (GALIA).}
 
 @! ============================================================================
 @! Introduction and Contents
@@ -73,7 +73,7 @@ created in Section~4.
 \renewcommand{\ccEndFont}{}
 \ccSetThreeColumns{Random}{random.restore_state( State state)}{}
 \ccPropagateThreeToTwoColumns
-\input{../../doc_tex/support/Random/Random.tex}
+\input{../../doc_tex/general/Random.tex}
 
 @! ============================================================================
 @! Implementation
@@ -360,6 +360,8 @@ numbers.
 @! Random.h
 @! ----------------------------------------------------------------------------
 
+\subsection{Random.h}
+
 @file <include/CGAL/Random.h> = @begin
     @<file header>("include/CGAL/Random.h","Random Numbers Generator")
 
@@ -415,6 +417,8 @@ numbers.
 @! Random.C
 @! ----------------------------------------------------------------------------
 
+\subsection{Random.C}
+
 @file <src/Random.C> = @begin
     @<file header>("src/Random.C","Random Numbers Generator")
 
@@ -449,6 +453,8 @@ numbers.
 @! ----------------------------------------------------------------------------
 @! test_Random.C
 @! ----------------------------------------------------------------------------
+
+\subsection{test\_Random.C}
 
 @file <test/Random_numbers/test_Random.C> = @begin
     @<file header>(
@@ -485,7 +491,7 @@ numbers.
     @<file name>(@1)
     @<file description>(
         "Random Numbers Generator",
-        "Random","Random/Random",
+        "Random_numbers","Random_numbers/Random",
         "$Revision$","$Date$",
         "Sven Schönherr <sven@@inf.fu-berlin.de>","N.N.",
         "INRIA Sophia-Antipolis (<Herve.Bronnimann@@sophia.inria.fr>)",
