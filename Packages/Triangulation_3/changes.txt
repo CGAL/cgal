@@ -1,10 +1,9 @@
 Version 1.46 (?? ??? 01)
 - violates() optimization (remove() speed up). [syl]
-- find_conflicts*() optimisation (insert() speed up). [syl]
+- new insert_conflict() in the TDS. [syl]
 - rand4() can now be inline (locate() speed up). [syl]
 - New internal typedef Conflict_set to allow later testing of hash_set<>. [syl]
 - "int in_conflict_flag" in ds_cell to speed up insert(). [syl]
-- Various cleanups.
 - Point_2 include and typedef removed from Triangulation_geom_traits_3.h [af]
 - add dummy variable to cheat MSVC++
 - added Delaunay__traingulation_3::fill_hole_3d_ear, an alternative
@@ -12,6 +11,7 @@ Version 1.46 (?? ??? 01)
 - Use std::distance(). [syl]
 - Triangulation_hierarchy<>.
 - Remove some old style casts.
+- Various cleanups.
 
 Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]

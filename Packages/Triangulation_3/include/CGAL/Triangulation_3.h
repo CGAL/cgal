@@ -1470,6 +1470,7 @@ locate(const Point & p,
 	  return c;
 	}
 
+	// FIXME: do more benchmarks.
 	i = rand_4(); // For the (remembering) stochastic walk
 	// i = 0; // For the (remembering) visibility walk. Ok for Delaunay only
 

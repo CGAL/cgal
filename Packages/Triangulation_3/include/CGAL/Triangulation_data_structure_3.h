@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Triangulation_data_structure_3.h
 // revision      : $Revision$
-// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+// author(s)     : Monique Teillaud, Sylvain Pion
 //
 // coordinator   : INRIA Sophia Antipolis 
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
@@ -31,12 +31,12 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/triple.h>
 #include <utility>
 #include <map>
 #include <set>
 #include <vector>
 
+#include <CGAL/triple.h>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/triangulation_assertions.h>
 
@@ -323,7 +323,7 @@ public:
 
   Vertex * insert_increase_dimension(const Vertex & w, // new vertex
 				     Vertex* star = NULL,
-				     bool reorient = false) ;
+				     bool reorient = false);
     // star = vertex from which we triangulate the facet of the
     // incremented dimension  
     // ( geometrically : star = infinite vertex )
@@ -333,16 +333,43 @@ public:
 
   typedef std::set<void *> Conflict_set;
 
-  // for Delaunay :
+  // Maybe we need _2 and _3 versions ?
+  template < class Conflict_test >
+  void insert_conflict(Vertex & w, Cell *c, const Conflict_test &test);
+  // This one takes a function object to recursively determine the cells in
+  // conflict, then inserts by starring.
+
+private:
+  typedef std::vector<void *> Conflict_vector;
+  // The two find_conflicts_[23] below could probably be merged ?
+  // Anyway, Conflict_vector is probably temporary, so...
+  template < class Conflict_test >
+  void
+  find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
+                 const Conflict_test &tester);
+
+  template < class Conflict_test >
+  void
+  find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
+                 const Conflict_test &tester);
+
+  Cell * create_star2_3(Vertex* v, Cell* c, int li,
+	                Cell * prev_c = NULL, Vertex * prev_v = NULL);
+  Cell * create_star2_2(Vertex* v, Cell* c, int li );
+
+#if 1
+public:
+  // for Regular (shall this go away one day ?)
   void star_region(Conflict_set & region, Vertex* v, Cell* c, int li);
     // region is a set of connected cells
     // c belongs to region and has facet li on the boundary of region 
     // replaces the cells in region  
     // by linking v to the boundary of region 
-    
+
 private:
   Cell* create_star(Conflict_set & region, Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
+#endif
 
 public:
 
@@ -514,8 +541,8 @@ private:
 };
 
 template < class Vb, class Cb>
-std::istream& operator >>
-(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
+std::istream&
+operator>> (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // reads :
   // the dimension
   // the number of vertices
@@ -665,14 +692,14 @@ template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_vertex(Vertex* v) const
-    {
+{
       Vertex_iterator it = vertices_begin();
       while (it != vertices_end()) {
 	if ( v == &(*it) ) return true;
 	++it;
       }
       return false;
-    }
+}
 
 template < class Vb, class Cb>
 bool
@@ -721,7 +748,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 is_facet(Vertex* u, Vertex* v, Vertex* w, 
 	 Cell* & c, int & i, int & j, int & k) const
   // returns false when dimension <2
-    {
+{
       if ( (u==v) || (u==w) || (v==w) ) return false;
       Facet_iterator it = facets_begin();
       while ( it != facets_end() ) {
@@ -734,7 +761,7 @@ is_facet(Vertex* u, Vertex* v, Vertex* w,
 	++it;
       }
       return false;
-    }
+}
 
 template < class Vb, class Cb>
 bool
@@ -2012,6 +2039,257 @@ insert_increase_dimension(const Vertex & w, // new vertex
   return v;
 } // end insert_increase_dimension
 
+// Status : it's working, and already way faster than before.
+// - remove the old code (regular still uses it).
+// - improve memory management (new/delete in TDS, with a free_list)
+// - try to improve locate() by choosing a cell that is more "towards" the
+//   target (ie vertices are closer).
+
+// This one takes a function object to recursively determine the cells in
+// conflict, then inserts by starring.
+template < class Vb, class Cb >
+template < class Conflict_test >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+insert_conflict(Vertex & w, Cell *c, const Conflict_test &tester)
+{
+  CGAL_triangulation_precondition( dimension() >= 2 ); // FIXME
+  CGAL_triangulation_precondition( tester(c) );
+
+  // We anticipate 32 cells to be deleted (the average is about 20 ?).
+  // (maybe we get do without this completely... later)
+  Conflict_vector conflict_vector;
+  conflict_vector.reserve(32);
+
+  // Call the recursive find_conflict().
+  // Probably this will go to the trash if both steps are merged... later.
+  Cell *ccc;
+  int i;
+  if (dimension() == 3)
+    find_conflicts_3(conflict_vector, c, ccc, i, tester);
+  else
+    find_conflicts_2(conflict_vector, c, ccc, i, tester);
+
+  // Create the new cells, and returns one of them.
+  Cell * nouv;
+  if (dimension() == 3)
+    nouv = create_star2_3( &w, ccc, i );
+  else
+    nouv = create_star2_2( &w, ccc, i );
+  w.set_cell( nouv );
+
+  // We delete the old cells (these should probably go in a free_list).
+  // But memory management needs to be revised too anyway...
+  typename Conflict_vector::const_iterator it;
+  for( it = conflict_vector.begin(); it != conflict_vector.end(); ++it)
+    delete (Cell *) *it;
+}
+
+template <class Vb, class Cb >
+template < class Conflict_test >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+find_conflicts_3(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
+                 const Conflict_test &tester)
+{
+  // The semantic of the flag is the following :
+  // 0  -> never went on the cell
+  // 1  -> cell is in conflict
+  // -1 -> cell is not in conflict
+
+  CGAL_triangulation_precondition( tester(c) );
+
+  conflicts.push_back( (Conflict_vector::value_type) &(*c) );
+  c->set_in_conflict_flag(1);
+
+  for ( int j=0; j<4; j++ ) {
+    Cell * test = c->neighbor(j);
+    if (test->get_in_conflict_flag() != 0)
+      continue; // test was already tested.
+    if ( tester(test) )
+      find_conflicts_3(conflicts, test, ac, i, tester);
+    else {
+      test->set_in_conflict_flag(-1);
+      ac = c;
+      i = j;
+    }
+  }
+}
+
+// The only difference with the above is the test "j<3" instead of "j<4"...
+template <class Vb, class Cb >
+template < class Conflict_test >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+find_conflicts_2(Conflict_vector & conflicts, Cell *c, Cell * &ac, int &i,
+                 const Conflict_test &tester)
+{
+  // The semantic of the flag is the following :
+  // 0  -> never went on the cell
+  // 1  -> cell is in conflict
+  // -1 -> cell is not in conflict
+
+  CGAL_triangulation_precondition( tester(c) );
+
+  conflicts.push_back( (Conflict_vector::value_type) &(*c) );
+  c->set_in_conflict_flag(1);
+
+  for ( int j=0; j<3; j++ ) {
+    Cell * test = c->neighbor(j);
+    if (test->get_in_conflict_flag() != 0)
+      continue; // test was already tested.
+    if ( tester(test) )
+      find_conflicts_2(conflicts, test, ac, i, tester);
+    else {
+      test->set_in_conflict_flag(-1);
+      ac = c;
+      i = j;
+    }
+  }
+}
+
+template <class Vb, class Cb >
+Triangulation_data_structure_3<Vb,Cb>::Cell*
+Triangulation_data_structure_3<Vb,Cb>::
+create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
+// TODO: We should try to combine it with find_conflicts if possible.
+{
+  CGAL_triangulation_assertion( dimension() == 3);
+#if 1
+    // He oui, c'est la meme chose, mais en plus rapide...
+    // voir si ca vaut vraiment le coup...
+    int jkjk = (li+2-(li&1))&3; int kjkj = (li-1)&3;
+    unsigned char i[3] = {jkjk, 6-jkjk-kjkj-li, kjkj};
+#else
+    unsigned char i[3] = {(li+1)&3, (li+2)&3, (li+3)&3};
+    if ( (li&1) == 0 )
+      std::swap(i[0], i[1]);
+#endif
+
+    Vertex *v0 = c->vertex(i[0]);
+    Vertex *v1 = c->vertex(i[1]);
+    Vertex *v2 = c->vertex(i[2]);
+    Cell * cnew = create_cell(v0, v1, v2, v);
+    v0->set_cell(cnew);
+    v1->set_cell(cnew);
+    v2->set_cell(cnew);
+    Cell * c_li = c->neighbor(li);
+    cnew->set_neighbor(3, c_li);
+    c_li->set_neighbor(c_li->index(c), cnew);
+
+    // look for the other three neighbors of cnew
+    for (int ii=0; ii<3; ii++) {
+      if ( prev_v == c->vertex(i[ii]) ) {
+        cnew->set_neighbor(ii, prev_c);
+        continue;
+      }
+      // indices of the vertices of cnew such that i[ii],j1,j2,li positive
+      int j1 = next_around_edge(i[ii],li);
+      int j2 = 6-li-i[ii]-j1;
+      const Vertex *vj1 = c->vertex(j1);
+      const Vertex *vj2 = c->vertex(j2);
+      Cell *cur = c;
+      Cell *n = c->neighbor(i[ii]);
+      // turn around the oriented edge j1 j2
+      while ( n->get_in_conflict_flag() > 0) {
+// La boucle principale est degagee des problemes d'orientation.
+// Reste encore avant et apres...
+// Pour apres, c'est faisable (mais bof), et ca doit permettre de nettoyer le debut.
+	CGAL_triangulation_assertion( n != c );
+        if (n->neighbor(0) != cur && n->vertex(0) != vj1 && n->vertex(0) != vj2)
+          cur = n, n = n->neighbor(0);
+        else
+        if (n->neighbor(1) != cur && n->vertex(1) != vj1 && n->vertex(1) != vj2)
+          cur = n, n = n->neighbor(1);
+        else
+        if (n->neighbor(2) != cur && n->vertex(2) != vj1 && n->vertex(2) != vj2)
+          cur = n, n = n->neighbor(2);
+        else
+	  cur = n, n = n->neighbor(3);
+      }
+      // now n is outside region, cur is inside
+      n->set_in_conflict_flag(0);
+      Cell *nnn;
+      int kkk;
+      if (n->has_neighbor(cur, kkk)) {
+	// neighbor relation is reciprocical, ie
+	// the cell we are looking for is not yet created
+        Vertex * next_prev;
+        if (kkk != 0 && n->vertex(0) != vj1 && n->vertex(0) != vj2)
+           next_prev = n->vertex(0);
+        else if (kkk != 1 && n->vertex(1) != vj1 && n->vertex(1) != vj2)
+           next_prev = n->vertex(1);
+        else if (kkk != 2 && n->vertex(2) != vj1 && n->vertex(2) != vj2)
+           next_prev = n->vertex(2);
+        else
+           next_prev = n->vertex(3);
+
+	nnn = create_star2_3(v, cur, cur->index(n), cnew, next_prev);
+      }
+      else
+      {
+        // else the cell we are looking for was already created
+        int jj1 = n->index( vj1 );
+        int jj2 = n->index( vj2 );
+        nnn = n->neighbor( next_around_edge(jj2,jj1) );
+      }
+      cnew->set_neighbor(ii, nnn);
+    }
+
+    return cnew;
+}
+
+template <class Vb, class Cb >
+Triangulation_data_structure_3<Vb,Cb>::Cell*
+Triangulation_data_structure_3<Vb,Cb>::
+create_star2_2(Vertex* v, Cell* c, int li )
+{
+  CGAL_triangulation_assertion( dimension() == 2 );
+  Cell* cnew;
+
+  // i1 i2 such that v,i1,i2 positive
+  int i1=ccw(li);
+  // traversal of the boundary of region in ccw order to create all
+  // the new facets
+  Cell* bound = c;
+  Vertex* v1 = c->vertex(i1);
+  int ind = c->neighbor(li)->index(c); // to be able to find the
+                                       // first cell that will be created 
+  Cell* cur;
+  Cell* pnew = NULL;
+  do {
+    cur = bound;
+    // turn around v2 until we reach the boundary of region
+    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() > 0 ) {
+      // neighbor in conflict
+      cur = cur->neighbor(cw(i1));
+      i1 = cur->index( v1 );
+    }
+    cur->neighbor(cw(i1))->set_in_conflict_flag(0);
+    // here cur has an edge on the boundary of region
+    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
+			cur->neighbor(cw(i1)), NULL, pnew, NULL);
+    cur->neighbor(cw(i1))->set_neighbor
+      ( cur->neighbor(cw(i1))->index(cur), cnew );
+    // pnew is null at the first iteration
+    v1->set_cell(cnew);
+    //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
+    if (pnew) { pnew->set_neighbor( 1, cnew );}
+
+    bound = cur;
+    i1 = ccw(i1);
+    v1 = bound->vertex(i1);
+    pnew = cnew;
+    //} while ( ( bound != c ) || ( li != cw(i1) ) );
+  } while ( v1 != c->vertex(ccw(li)) );
+  // missing neighbors between the first and the last created cells
+  cur = c->neighbor(li)->neighbor(ind); // first created cell
+  cnew->set_neighbor( 1, cur );
+  cur->set_neighbor( 2, cnew );
+  return cnew;
+}
+
+#if 1 // only used by Regular these days.
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
@@ -2131,6 +2409,7 @@ create_star(Conflict_set & region, Vertex* v, Cell* c, int li )
   cur->set_neighbor( 2, cnew );
   return cnew;
 }
+#endif
 
 template <class Vb, class Cb >
 void
@@ -2516,6 +2795,7 @@ count_vertices(int & i, bool verbose, int level) const
   }
   return true;
 } 
+
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::

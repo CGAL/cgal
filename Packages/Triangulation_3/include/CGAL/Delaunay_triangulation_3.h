@@ -49,6 +49,7 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 public:
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits;
+  typedef Delaunay_triangulation_3<Gt, Tds> Self;
 
   typedef typename Gt::Point_3       Point;
   typedef typename Gt::Vector_3      Vector;
@@ -171,24 +172,6 @@ public:
   void print(Cell_handle c) const;
 
 private:
-  typedef std::set<void *> Conflict_set;
-
-  void
-  find_conflicts_3(Conflict_set & conflicts, const Point & p,
-		   Cell_handle c, Cell_handle & ac, int & i);
-    // 3d case
-    // p is in conflict with c
-    // finds the set conflicts of cells in conflict with p
-    // gives a cell ac having a facet on the boundary of conflicts
-    // and the index i of its facet on the boundary
-  void
-  find_conflicts_2(Conflict_set & conflicts, const Point & p,
-		   Cell_handle c, Cell_handle & ac, int & i);
-    // 2d case
-    // p is in conflict with c
-    // finds the set conflicts of cells in conflict with p
-    // gives a cell ac having a facet on the boundary of conflicts
-    // and the index i of its facet on the boundary
   bool
   violates( Vertex_handle u, 
 	    Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, 
@@ -248,6 +231,42 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
+
+private:
+
+  class Conflict_tester_3
+  {
+      const Point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_3(const Point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+	  return t->side_of_sphere((Cell_handle)(Cell*)c, p)
+	      == ON_BOUNDED_SIDE;
+      }
+  };
+
+  class Conflict_tester_2
+  {
+      const Point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_2(const Point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+	  return t->side_of_circle((Cell_handle)(Cell*)c, 3, p)
+	      == ON_BOUNDED_SIDE;
+      }
+  };
 };
 
 template < class Gt, class Tds >
@@ -285,11 +304,8 @@ insert(const Point & p, Cell_handle start)
 //    case EDGE:
       Vertex_handle v = new Vertex(p);
       set_number_of_vertices(number_of_vertices()+1);
-      Conflict_set conflicts;
-      Cell_handle aconflict;
-      int ineighbor;
-      find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
-      _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
+      Conflict_tester_3 tester(p, this);
+      _tds.insert_conflict((*v), &(*c), tester);
       return v;
     }// dim 3
   case 2:
@@ -305,11 +321,8 @@ insert(const Point & p, Cell_handle start)
 	{
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
-	  Conflict_set conflicts;
-	  Cell_handle aconflict;
-	  int ineighbor;
-	  find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
-	  _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
+          Conflict_tester_2 tester(p, this);
+          _tds.insert_conflict((*v), &(*c), tester);
 	  return v;
 	}
       case VERTEX:
@@ -337,7 +350,7 @@ remove(Vertex_handle v)
 
   if ( dimension() <3 ) {
     // to be implemented : removal in degenerate dimensions
-    // the traingulation is now rebuilt...
+    // the triangulation is now rebuilt...
 
     Vertex_iterator vit, vdone = vertices_end();
     std::list<Point> points;
@@ -705,7 +718,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
       fitset_tmp = boundhole.begin();
       //debug
       std::cout << "    constraining facets " << std::endl;
-      
+
       not_violate.clear();
 
       while ( fitset_tmp != boundhole.end() ) {
@@ -994,34 +1007,6 @@ fill_hole_3D( std::set<Facet> & boundhole,
   return true;
 }// fill_hole_3D
 
-
-template < class Gt, class Tds >
-void
-Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_3(Conflict_set & conflicts, const Point & p,
-		 Cell_handle c, Cell_handle & ac, int & i)
-  // 3d case
-  // p is in conflict with c
-  // finds the set conflicts of cells in conflict with p
-  // gives a cell ac having a facet on the boundary of conflicts
-  // and the index i of its facet on the boundary
-{
-  (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
-
-  for ( int j=0; j<4; j++ ) {
-    Cell_handle test = c->neighbor(j);
-    if (conflicts.find( (Conflict_set::value_type) &(*test) )
-	    != conflicts.end())
-      continue; // test was already tested and found to be in conflict.
-    if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
-      find_conflicts_3(conflicts, p, test, ac, i);
-    else {
-      ac = c;
-      i = j;
-    }
-  }
-}
-
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1092,33 +1077,6 @@ violates( Vertex_handle u,
     }
 
     return false;
-}
-
-template < class Gt, class Tds >
-void
-Delaunay_triangulation_3<Gt,Tds>::
-find_conflicts_2(Conflict_set & conflicts, const Point & p,
-		 Cell_handle c, Cell_handle & ac, int & i)
-  // 2d case
-  // p is in conflict with c
-  // finds the set conflicts of cells in conflict with p
-  // gives a cell ac having a facet on the boundary of conflicts
-  // and the index i of its facet on the boundary
-{
-  (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
-
-  for ( int j=0; j<3; j++ ) {
-    Cell_handle test = c->neighbor(j);
-    if (conflicts.find( (Conflict_set::value_type) &(*test) )
-	    != conflicts.end())
-      continue;   // test was already found
-    if ( side_of_circle( test, 3, p ) == ON_BOUNDED_SIDE )
-      find_conflicts_2(conflicts, p, test, ac, i);
-    else {
-      ac = c;
-      i = j;
-    }
-  }
 }
 
 template < class Gt, class Tds >
