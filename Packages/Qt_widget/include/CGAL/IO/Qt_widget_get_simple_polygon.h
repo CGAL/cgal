@@ -34,16 +34,17 @@ class Qt_widget_get_simple_polygon : public Qt_widget_tool
 public:
   typedef typename Polygon::Point_2   Point_2;
   typedef typename Polygon::Segment_2 Segment_2;
+  typedef typename Polygon::Edge_const_iterator  ECI;
   typedef typename Polygon::FT	      FT;
   
   Qt_widget_get_simple_polygon()
-    : active(false), first_time(true) {};
+    : active(false), first_time(true) {}
 
   void widget_repainted()
   {
     if(poly.size() > 1)
     {
-      Polygon::Edge_const_iterator  it;
+      ECI  it;
       widget->lock();
 	RasterOp old_rasterop=widget->rasterOp();
 	widget->painter().setRasterOp(XorROP);
@@ -53,6 +54,7 @@ public:
 	widget->setRasterOp(old_rasterop);
       widget->unlock();
     }
+    return;
   };
 
   void mousePressEvent(QMouseEvent *e)
@@ -189,7 +191,7 @@ private:
     Segment_2 rubber_segment(rubber, last_of_poly);
     if(poly.size() > 1)
     {
-      Polygon::Edge_const_iterator  it;
+      ECI it;      
       for(it = poly.edges_begin(); it != ----poly.edges_end(); it++)
       {
 	if(do_intersect(*it, rubber_segment))
