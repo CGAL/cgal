@@ -403,11 +403,17 @@ div (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil1,
      const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET, Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
-{ return CGAL::CGALi::checked_div(fil1.value(), fil2.value(),
-			   typename Filtered_exact<CGAL_IA_CT,
-				                   CGAL_IA_ET,Dynamic,
-				                   CGAL_IA_PROTECTED,
-                                                   CGAL_IA_CACHE>::Has_gcd()); }
+{ 
+  typedef
+#ifndef CGAL_CFG_MATCHING_BUG_2
+          typename
+#endif  
+                   Filtered_exact<CGAL_IA_CT,
+                                  CGAL_IA_ET,Dynamic,
+                                  CGAL_IA_PROTECTED,
+                                  CGAL_IA_CACHE>::Has_gcd Has_gcd;
+  return CGAL::CGALi::checked_div(fil1.value(), fil2.value(), Has_gcd()); 
+}
 
 
 template < class CT, class ET, class Type, bool Protected, class Cache >
@@ -432,11 +438,17 @@ gcd (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil1,
      const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
-{ return CGAL::CGALi::checked_gcd(fil1.value(), fil2.value(), 
-			   typename Filtered_exact<CGAL_IA_CT,
-			                           CGAL_IA_ET,Dynamic,
-			                           CGAL_IA_PROTECTED,
-			                           CGAL_IA_CACHE>::Has_gcd()); }
+{ 
+ typedef
+#ifndef CGAL_CFG_MATCHING_BUG_2
+         typename
+#endif
+                   Filtered_exact<CGAL_IA_CT,
+                                  CGAL_IA_ET,Dynamic,
+			          CGAL_IA_PROTECTED,
+                                  CGAL_IA_CACHE>::Has_gcd Has_gcd;
+  return CGAL::CGALi::checked_gcd(fil1.value(), fil2.value(), Has_gcd());
+}
 
 
 
