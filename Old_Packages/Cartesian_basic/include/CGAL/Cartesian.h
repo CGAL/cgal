@@ -672,6 +672,11 @@ Construct_midpoint_3
 construct_midpoint_3_object() const 
 { return Construct_midpoint_3(); }
 
+typedef CGALi::p_Circumcenter<Point_3>             Construct_circumcenter_3;
+Construct_circumcenter_3
+construct_circumcenter_3_object() const 
+{ return Construct_circumcenter_3(); }
+
 typedef CGALi::Call_opposite_to_get<Segment_3>         
                                                  Construct_opposite_segment_3;
 Construct_opposite_segment_3
