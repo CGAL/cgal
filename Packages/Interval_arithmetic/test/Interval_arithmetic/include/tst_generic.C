@@ -83,12 +83,13 @@ int overflow_test()
   int i=0;
   IA_nt a (2), b(2.1);
   IA_nt c (-2,2), d(-2.1,2.1);
+  IA_nt e (-2,2), f(2), g(-2);
 
   DEBUG( cout << "+infinity = " << HUGE_VAL; )
   DEBUG( cout << "  maxdouble = " << CGAL_IA_MAX_DOUBLE << endl; )
   DEBUG( cout << "largest = " << CGAL_IA_LARGEST << endl; )
   DEBUG( cout << "smallest = " << CGAL_IA_SMALLEST << endl; )
-  while (++i < 20)
+  for (i=0; i<20; i++)
   {
     a *= a;
     b = b * b;
@@ -98,10 +99,20 @@ int overflow_test()
     // DEBUG( cout << a << endl; )
   }
 
+  for (i=0; i<10000; i++)
+  {
+    e += e;
+    f = f+f;
+    g += g;
+  }
+
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
          c.is_same(CGAL_IA_LARGEST) &&
-         d.is_same(CGAL_IA_LARGEST);
+         d.is_same(CGAL_IA_LARGEST) &&
+	 e.is_same(CGAL_IA_LARGEST) &&
+	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
+	 g.is_same(-f);
 }
 
 
@@ -112,18 +123,21 @@ int overflow_test()
 
 int underflow_test()
 {
-  int i=0;
-  IA_nt a (0.5), b(-0.5,0.5);
+  int i;
+  IA_nt a(0.5), b(-0.5,0.5), c(0.5);
 
   DEBUG( cout << CGAL_IA_MIN_DOUBLE << endl;)
-  while (++i < 20)
+  for (i=0; i<20; i++)
   {
     a *= a;
     b = b * b;
+    c = square(c);
     DEBUG( cout << a << b << endl; )
   }
 
-  return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE)) && b.is_same(CGAL_IA_SMALLEST);
+  return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
+      && b.is_same(CGAL_IA_SMALLEST)
+      && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
 }
 
 
@@ -224,10 +238,6 @@ int utility_test()
 
 int main()
 {
-  // unsigned short rd_mode;
-  // GETFPCW(rd_mode);
-  // cout << hex << rd_mode << endl;
-
 #ifdef ADVANCED
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
@@ -236,40 +246,8 @@ int main()
   cout << "Stress-testing the class Interval_nt.\n";
 #endif
 
-#if 0
-// Note: it works with -O3, but not -g... (at least, with latest eg++) !?!?!?
-  double a = 2.1; // Check 2.0 too.
-  a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a; a = a*a;
-  double b = -a;
-  b = b*a;
-  b = b*a;
-  b = b*a;
-  b = b*a;
-  IA_nt c = 2.1;
-  c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
-  c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c; c *= c;
-  IA_nt d = 2.0;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-  d += d; d += d; d += d; d += d; d += d; d += d; d += d; d += d;
-#endif
-
   bool tmpflag, flag = true;
   cout.precision(20);
-
-#if 0
-cout << a << "  " << is_finite(a) << is_valid(a) << endl;
-cout << b << "  " << is_finite(b) << is_valid(b) << endl;
-cout << c << "  " << is_finite(c) << is_valid(c);
-cout << is_finite(c.lower_bound()) << is_valid(c.lower_bound());
-cout << is_finite(c.upper_bound()) << is_valid(c.upper_bound())<<endl;
-cout << d << "  " << is_finite(d) << is_valid(d);
-cout << is_finite(d.lower_bound()) << is_valid(d.lower_bound());
-cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
-#endif
 
   cout << "Printing test:" << endl;
   cout << (IA_nt)-.7 << endl << (IA_nt)7/10 << endl << (IA_nt)1/0 << endl;
@@ -278,9 +256,6 @@ cout << is_finite(d.upper_bound()) << is_valid(d.upper_bound())<<endl;
   tmpflag = square_root_test();
   cout << (int) tmpflag << endl;
   flag = tmpflag && flag;
-
-  // GETFPCW(rd_mode);
-  // cout << hex << rd_mode << endl;
 
   cout << "Do spiral_test()        \t";
   tmpflag = spiral_test();
