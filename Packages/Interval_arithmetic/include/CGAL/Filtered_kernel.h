@@ -316,12 +316,10 @@ public:
     // They are problematic, as their constructor will systematically
     // construct the _exact_ object, and thus will be uselessly costly.
 
-    CGAL_Filter_pred_type_only(Compare_distance_to_point_2)
     CGAL_Filter_pred_type_only(Less_distance_to_point_2)
     CGAL_Filter_pred_type_only(Less_signed_distance_to_line_2)
     CGAL_Filter_pred_type_only(Less_rotate_ccw_2)
     CGAL_Filter_pred_type_only(Left_of_line_2)
-    CGAL_Filter_pred_type_only(Compare_distance_to_point_3)
     CGAL_Filter_pred_type_only(Less_distance_to_point_3)
 
     Less_distance_to_point_2
@@ -344,10 +342,6 @@ public:
     Less_distance_to_point_3
     less_distance_to_point_3_object(const Point_3& p) const
     { return Less_distance_to_point_3(p); }
-
-    Compare_distance_to_point_3
-    compare_distance_to_point_3_object(const Point_3& p) const
-    { return Compare_distance_to_point_3(p); }
 
     // CGAL_Filter_cons(Construct_point_d, construct_point_d_object)
 };

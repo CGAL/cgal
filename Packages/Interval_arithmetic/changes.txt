@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.94 on 30 May 2001
+- Remove Compare_distance_to_point_[23].
+
 Version 4.93 on 29 May 2001
 - Add Compare_distance_[23].
 
