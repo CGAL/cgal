@@ -1,11 +1,9 @@
 
-  and for local variables [af]
-
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-
-Ver 7.45
+Ver 7.45 (27/08/02)
+- simplify macros defined in dans Trivial_iterator.h
 - fixed demo/Triangulation_2/Delaunay.C
 - added a macro to workaround MSC in Trivial_iterator.h
   changed accordingli the def of Face_handle and Vertex_handle in TDS2
