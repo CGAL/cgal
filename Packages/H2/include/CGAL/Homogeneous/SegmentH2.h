@@ -53,13 +53,6 @@ public:
     SegmentH2( const Point_2& sp, const Point_2& ep)
       : base(sp, ep) {}
 
-#if 1 // FIXME : should this exist at all ?
-    SegmentH2( const RT& sx, const RT& sy, const RT& sw,
-               const RT& ex, const RT& ey, const RT& ew)
-      : base(Point_2(sx,sy,sw),
-             Point_2(ex,ey,ew)) {}
-#endif
-
     bool    operator==(const SegmentH2<R>& s) const;
     bool    operator!=(const SegmentH2<R>& s) const;
 
@@ -72,7 +65,6 @@ public:
     const Point_2 & operator[](int i) const;
     const Point_2 & min()   const;
     const Point_2 & max()   const;
-    const Point_2 & other_vertex(const Point_2& p) const;
 
     bool    is_horizontal() const;
     bool    is_vertical() const;
@@ -131,15 +123,6 @@ SegmentH2<R>::max() const
 {
   return
   lexicographically_xy_smaller_or_equal(start(),end()) ? end() : start();
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-const typename SegmentH2<R>::Point_2 &
-SegmentH2<R>::other_vertex(const typename SegmentH2<R>::Point_2& p) const
-{
-  CGAL_kernel_precondition( (p == end()) || (p == start()) );
-  return ( p == start() ) ? end() : start() ;
 }
 
 template < class R >
