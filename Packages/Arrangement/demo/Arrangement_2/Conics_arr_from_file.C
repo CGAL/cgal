@@ -375,7 +375,7 @@ int main(int argc, char * argv[])
   myWindow->init(x0, x1, y0);   // logical window size 
 
   myWindow->set_redraw(redraw);
-  myWindow->set_mode(leda_src_mode);
+  myWindow->set_mode(CGAL_LEDA_SCOPE::src_mode);
   myWindow->set_node_width(3);
   myWindow->set_point_style(leda_cross_point);
   myWindow->set_line_width(1);

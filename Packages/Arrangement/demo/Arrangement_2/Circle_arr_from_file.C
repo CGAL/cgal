@@ -1,36 +1,36 @@
 // demo/Arrangement_2/Circle_arr_from_file.C
 //
-//constructs an arrangement of circles from file
+// constructs an arrangement of circles from file
+// 
+// File format is:
+// #number_of_circles
+// #x_center y_center squared_radius
+// # ....
 
-//File format is:
-//#number_of_circles
-//#x_center y_center squared_radius
-//# ....
-
-#include <CGAL/Cartesian.h>
-#include <fstream>
-#include <CGAL/Timer.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_2_bases.h>
-#include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
+#include <iostream>
 int main()
 {
-
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
 
 #else
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_2_bases.h>
+#include <CGAL/Arr_2_default_dcel.h>
+#include <CGAL/Arrangement_2.h>
+#include <CGAL/Timer.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #include <CGAL/Draw_preferences.h>
+#include <fstream>
 
 typedef leda_real                                      NT;
 typedef CGAL::Cartesian<NT>                            Kernel;
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 
   W.init(min_x-2*sqrt(max_r2),max_x+2*sqrt(max_r2),min_y-2*sqrt(max_r2));
   W.set_redraw(redraw);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
   W.button("finish",10);
   W.open_status_window();
@@ -170,4 +170,4 @@ int main(int argc, char* argv[])
   return 0;  
 }
 
-#endif // CGAL_USE_LEDA
+#endif

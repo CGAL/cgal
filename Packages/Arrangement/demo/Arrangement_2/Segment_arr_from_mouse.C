@@ -4,16 +4,14 @@
 // We use the leda traits (therefore we are using leda functions).
 
 #include "short_names.h"
-
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
+#include <iostream>
 int main()
 {
-
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
 
@@ -38,7 +36,7 @@ typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
 typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                      X_curve;
 
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
@@ -55,8 +53,7 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& os, const Point& p)
 }
 */
 
-CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-                                const X_curve &c)
+CGAL::Window_stream& operator<<(CGAL::Window_stream & os, const X_curve & c)
 {
   return os << c.to_segment();
 }
@@ -69,12 +66,10 @@ static CGAL::Window_stream W(400, 400, "CGAL - Segment Arrangement Demo");
 CGAL_BEGIN_NAMESPACE
 Window_stream & operator<<(Window_stream& os, Arr_2 &A)
 {
-  My_Arr_drawer< Arr_2,
-                 Arr_2::Ccb_halfedge_circulator, 
-                 Arr_2::Holes_iterator> drawer(os);
+  My_Arr_drawer<Arr_2, Arr_2::Ccb_halfedge_circulator, 
+    Arr_2::Holes_iterator> drawer(os);
   
   draw_pm(arr, drawer, os);
-  
   return os;
 }
 CGAL_END_NAMESPACE
@@ -97,7 +92,7 @@ int main()
 
   W.init(x0,x1,y0);
   W.set_redraw(redraw);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
   W.button("finish",10);
   W.open_status_window();
@@ -174,11 +169,9 @@ int main()
   else {
     // map is not empty
     
-    CGAL:: My_Arr_drawer< Arr_2,
-                          Arr_2::Ccb_halfedge_circulator, 
-                          Arr_2::Holes_iterator>  drawer(W);
-    for (; ; ) {
-      
+    CGAL:: My_Arr_drawer<Arr_2, Arr_2::Ccb_halfedge_circulator, 
+      Arr_2::Holes_iterator>  drawer(W);
+    for (; ;) {
       double x,y;
       int b=W.read_mouse(x,y);
       if (b==10) break;
@@ -216,4 +209,4 @@ int main()
   return 0;  
 }
 
-#endif // CGAL_USE_LEDA
+#endif

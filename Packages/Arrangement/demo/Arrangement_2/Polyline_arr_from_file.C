@@ -1,30 +1,27 @@
 // demo/Arrangement_2/Polyline_arr_from_file.C
 //
-//constructs an arrangement of polylines from file
+// constructs an arrangement of polylines from file
+// We use the leda traits (therefore we use leda functions).
 
 #include "short_names.h"
+#include <CGAL/basic.h>
 
-//constructs a ployline arrangement from a file.
-// We use the leda traits (therefore we use leda functions).
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main()
+{
+  std::cout << "Sorry, this demo needs LEDA for visualisation.";
+  std::cout << std::endl;
+  return 0;
+}
+
+#else
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arr_polyline_traits.h>
-
-#ifndef CGAL_USE_LEDA
-int main()
-{
-
-  std::cout << "Sorry, this demo needs LEDA for visualisation.";
-  std::cout << std::endl;
-
-  return 0;
-}
-
-#else
-
 #include <CGAL/leda_real.h>
 #include <CGAL/Draw_preferences.h>
 
@@ -33,7 +30,7 @@ typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                      X_curve;
 typedef Traits::Curve_2                                 Curve;
 
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;
@@ -75,9 +72,8 @@ Window_stream & operator<<(Window_stream & os, const X_curve & c)
 
 Window_stream & operator<<(Window_stream & os, Arr_2 & arr)
 {
-  My_Arr_drawer< Arr_2,
-                 Arr_2::Ccb_halfedge_circulator, 
-                 Arr_2::Holes_iterator> drawer(os);
+  My_Arr_drawer<Arr_2, Arr_2::Ccb_halfedge_circulator, 
+    Arr_2::Holes_iterator> drawer(os);
   draw_pm(arr, drawer, os);
   
   return os;
@@ -102,7 +98,6 @@ void read_arr(Arr_2 & arr, char * filename)
     }
 
     arr.insert(polyline);
-
     polyline.clear();
   }
 }
@@ -130,7 +125,7 @@ int main(int argc, char* argv[])
   CGAL::Window_stream W(400, 400, "CGAL - Polyline Arrangement Demo");
   W.init(x0, x1, y0);
   W.set_redraw(redraw);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
   W.button("  Quit  ", THE_BUTTON);
   W.open_status_window();

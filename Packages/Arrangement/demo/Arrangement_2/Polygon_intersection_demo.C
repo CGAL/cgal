@@ -1,12 +1,11 @@
-#include <iostream>
+#include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
+#include <iostream>
 int main(int, char *[])
 {
-
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
  
@@ -21,6 +20,7 @@ int main(int, char *[])
 #include <LEDA/polygon.h>
 #include <LEDA/list.h>
 #include <LEDA/string.h>
+#include <iostream>
 
 typedef CGAL::Window_stream Window;
 
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
   // Set window parameters
   W.init(0, 1000, 0);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
     
   // Define Buttons
@@ -109,58 +109,57 @@ int main(int argc, char* argv[])
 
   // Main demo loop
   double x,y; 
-  while( true )
+  while (true) {
+    int b = W.read_mouse(x,y);
+    // Quit button
+    if (b == QUIT) break;
+
+    // Clear button
+    if (b == CLEAR)
     {
-      int b = W.read_mouse(x,y);
-      // Quit button
-      if (b == QUIT) break;
+      poly1.erase(poly1.vertices_begin(), poly1.vertices_end());
+      poly2.erase(poly2.vertices_begin(), poly2.vertices_end());
+      out_poly_list.clear();
+    }
 
-      // Clear button
-      if (b == CLEAR)
-        {
-	  poly1.erase(poly1.vertices_begin(), poly1.vertices_end());
-	  poly2.erase(poly2.vertices_begin(), poly2.vertices_end());
-	  out_poly_list.clear();
-        }
-
-      // Inserting polygon 1
-      if (b == POLY1)
-        {
-	  out_poly_list.clear();
-	  poly1.erase(poly1.vertices_begin(), poly1.vertices_end());
-	  redraw(W, poly1, poly2, out_poly_list);
-
-	  W << CGAL::RED;
-	  PolygonRead(poly1, W);
-	  out_poly_list.clear();
-        }
-
-      // Inserting polygon 2
-      if (b == POLY2)
-        {
-	  out_poly_list.clear();
-	  poly2.erase(poly2.vertices_begin(), poly2.vertices_end());
-	  redraw(W, poly1, poly2, out_poly_list);
-
-	  W << CGAL::BLUE;
-	  PolygonRead(poly2, W);
-	  out_poly_list.clear();
-        }
-
-      // Polygon intersection
-      if (b == INTERSECT)
-        {
-	  out_poly_list.clear();
-	  in_poly_list.clear();
-	  in_poly_list.push_back(poly1);
-	  in_poly_list.push_back(poly2);
-	  intersect_polygons(in_poly_list, out_poly_list);
-        }
-
-      // Perform redraw for whatever operation was performed.
-      // In particular, for a refresh operation.
+    // Inserting polygon 1
+    if (b == POLY1)
+    {
+      out_poly_list.clear();
+      poly1.erase(poly1.vertices_begin(), poly1.vertices_end());
       redraw(W, poly1, poly2, out_poly_list);
-    } 
+
+      W << CGAL::RED;
+      PolygonRead(poly1, W);
+      out_poly_list.clear();
+    }
+
+    // Inserting polygon 2
+    if (b == POLY2)
+    {
+      out_poly_list.clear();
+      poly2.erase(poly2.vertices_begin(), poly2.vertices_end());
+      redraw(W, poly1, poly2, out_poly_list);
+
+      W << CGAL::BLUE;
+      PolygonRead(poly2, W);
+      out_poly_list.clear();
+    }
+
+    // Polygon intersection
+    if (b == INTERSECT)
+    {
+      out_poly_list.clear();
+      in_poly_list.clear();
+      in_poly_list.push_back(poly1);
+      in_poly_list.push_back(poly2);
+      intersect_polygons(in_poly_list, out_poly_list);
+    }
+
+    // Perform redraw for whatever operation was performed.
+    // In particular, for a refresh operation.
+    redraw(W, poly1, poly2, out_poly_list);
+  } 
   return 0;
 }
 

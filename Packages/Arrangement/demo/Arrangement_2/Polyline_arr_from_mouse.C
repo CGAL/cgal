@@ -1,33 +1,29 @@
 // demo/Arrangement_2/Polyline_arr_from_mouse.C
 //
-//constructs an arrangement of polylines from user input
+// constructs an arrangement of polylines from user input
+// We use the leda traits (therefore we use leda functions).
 
 #include "short_names.h"
-
-//constructs a ployline arrangement from CGAL window.
-// We use the leda traits (therefore we use leda functions).
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_2_bases.h>
-#include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_polyline_traits.h>
 
 #ifndef CGAL_USE_LEDA
+#include <iostream>
 int main()
 {
-
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
 
 #else
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_2_bases.h>
+#include <CGAL/Arr_2_default_dcel.h>
+#include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/leda_real.h>
 #include <LEDA/string.h>
-
 #include <CGAL/Draw_preferences.h>
 
 typedef leda_real                                       NT;
@@ -35,7 +31,7 @@ typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
 
 typedef Traits::Point_2                                 Point;
-typedef Traits::X_monotone_curve_2                               X_curve;
+typedef Traits::X_monotone_curve_2                      X_curve;
 typedef Traits::Curve_2                                 Curve;
 
 typedef CGAL::Arr_base_node<X_curve>                    Base_node;
@@ -74,15 +70,13 @@ Window_stream & operator<<(Window_stream & os, const X_curve & c)
     os << leda_segment(to_leda_pnt(*sit), to_leda_pnt(*tit));
     os.draw_point(to_leda_pnt(*tit), leda_green);
   }
-    
   return os;
 }
 
 Window_stream & operator<<(Window_stream & os, Arr_2 & arr)
 {
-  My_Arr_drawer< Arr_2,
-                 Arr_2::Ccb_halfedge_circulator, 
-                 Arr_2::Holes_iterator> drawer(os);
+  My_Arr_drawer<Arr_2, Arr_2::Ccb_halfedge_circulator, 
+    Arr_2::Holes_iterator> drawer(os);
   draw_pm(arr, drawer, os);
   return os;
 }
@@ -128,7 +122,7 @@ int main()
   CGAL::Window_stream W(400, 400, "CGAL - 2D Polyline Arrangement Demo");
   W.init(x0,x1,y0);
   W.set_redraw(redraw);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
   W.button("  Begin  ",THE_BUTTON);
   W.open_status_window();
@@ -178,8 +172,8 @@ int main()
       // second, looking in other points of the arrangement
       for(Arr_2::Vertex_iterator vi = Arr.vertices_begin();
 	  ! vicinity_point && vi != Arr.vertices_end(); ++vi) {
-	if ( CGAL::squared_distance(pnt, vi->point()) <
-             ((x1-x0)/50)*((x1-x0)/50) )
+	if (CGAL::squared_distance(pnt, vi->point()) <
+            ((x1-x0)/50)*((x1-x0)/50) )
         {
           pnt = vi->point(); 
           vicinity_point = true;
@@ -190,9 +184,9 @@ int main()
 	cv1.push_back(pnt);
       W << CGAL::BLACK;
       W << pnt;
-      if ( ! first_point ) {
-        W << leda_segment(last_pnt.x().to_double(), last_pnt.y().to_double(),
-                          pnt.x().to_double(), pnt.y().to_double());
+      if (!first_point) {
+        W <<leda_segment(last_pnt.x().to_double(), last_pnt.y().to_double(),
+                         pnt.x().to_double(), pnt.y().to_double());
       }
       first_point = false;
     }

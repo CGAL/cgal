@@ -11,11 +11,11 @@
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_LEDA
+#include <iostream>
 int main()
 {
   std::cout << "Sorry, this demo needs LEDA for visualisation.";
   std::cout << std::endl;
-
   return 0;
 }
 
@@ -23,15 +23,12 @@ int main()
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Timer.h>
-
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
-
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #include <CGAL/IO/Window_stream.h>
-
 #include <CGAL/leda_real.h>
 #include <CGAL/Draw_preferences.h>
 
@@ -52,19 +49,17 @@ typedef std::list<Curve_2>                          CurveList;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
-static Pmwx_2              arr;
-static CGAL::Window_stream W(400, 400, 
-			    "CGAL - Segments and Circular Arcs Arrangement Demo");
+static Pmwx_2 arr;
+static CGAL::Window_stream
+W(400, 400, "CGAL - Segments and Circular Arcs Arrangement Demo");
  
 CGAL_BEGIN_NAMESPACE
 Window_stream& operator<<(Window_stream& os, Pmwx_2 &A)
 {
-  My_Arr_drawer< Pmwx_2,
-                 Pmwx_2::Ccb_halfedge_circulator, 
-                 Pmwx_2::Holes_iterator> drawer(os);
+  My_Arr_drawer<Pmwx_2, Pmwx_2::Ccb_halfedge_circulator, 
+    Pmwx_2::Holes_iterator> drawer(os);
   
   draw_pm(arr, drawer, os);
-
   return os;
 }
 CGAL_END_NAMESPACE
@@ -221,7 +216,7 @@ int main(int argc, char* argv[])
 	  min_y - margin);
 
   W.set_redraw(redraw);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL_LEDA_SCOPE::src_mode);
   W.set_node_width(3);
   W.button("finish",10);
   W.open_status_window();
@@ -272,4 +267,4 @@ int main(int argc, char* argv[])
   return 0;  
 }
 
-#endif // CGAL_USE_LEDA
+#endif

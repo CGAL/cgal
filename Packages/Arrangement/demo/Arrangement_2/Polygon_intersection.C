@@ -68,7 +68,9 @@ void covering_DFS(Face_handle f) {
 
   // Do a recursive step for all holes, if any exists.
   Arr_2::Holes_iterator hit = f->holes_begin();
-  for (; Arr_2::Holes_iterator(hit)!=Arr_2::Holes_iterator(f->holes_end()); ++hit) {
+  for (; Arr_2::Holes_iterator(hit)!=Arr_2::Holes_iterator(f->holes_end());
+       ++hit)
+  {
     start = circ = (*hit);
       do {
         if (circ->twin()->face()->counter < 0) {
