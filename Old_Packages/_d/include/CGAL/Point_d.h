@@ -27,20 +27,16 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/PointHd.h>
-#endif // CGAL_HOMOGENEOUS_H
+#endif
 
-#ifdef CGAL_CARTESIAN_H
+#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/PointCd.h>
 // #include <CGAL/Cartesian/Point_d.h>
-#endif // CGAL_CARTESIAN_H
-
-#ifdef CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/PointCd.h>
-#endif // CGAL_SIMPLE_CARTESIAN_H
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -127,7 +123,7 @@ public:
     }
 };
 
-#ifndef NO_OSTREAM_INSERT_POINT_D
+#ifndef CGAL_NO_OSTREAM_INSERT_POINT_D
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_d<R>& p)
@@ -135,9 +131,9 @@ operator<<(std::ostream& os, const Point_d<R>& p)
   typedef typename  R::Point_d_base    Point;
   return os << (const Point&)p;
 }
-#endif // NO_OSTREAM_INSERT_POINT_D
+#endif // CGAL_NO_OSTREAM_INSERT_POINT_D
 
-#ifndef NO_ISTREAM_EXTRACT_POINT_D
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_D
 template < class R >
 std::istream&
 operator>>(std::istream& is, Point_d<R> &p)
@@ -145,9 +141,8 @@ operator>>(std::istream& is, Point_d<R> &p)
   typedef typename  R::Point_d_base    Point;
   return is >> (Point&)p;
 }
-#endif // NO_ISTREAM_EXTRACT_POINT_D
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINT_D
+
 CGAL_END_NAMESPACE
 
-
 #endif // CGAL_POINT_D_H
-
