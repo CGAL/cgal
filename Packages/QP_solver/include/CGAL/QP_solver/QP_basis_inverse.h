@@ -360,7 +360,7 @@ class QPE_basis_inverse {
 			    m_it1->begin(), std::negate<ET>());
 
 	    // clean up in 'R'
-	    std::fill_n( m_it2->begin()+l, b-row+1, et0);
+	    std::fill_n( m_it2->begin()+l, b-row, et0);
 	}
 
 	// scale A_B^-1
