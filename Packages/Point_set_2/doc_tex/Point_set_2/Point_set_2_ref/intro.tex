@@ -18,7 +18,11 @@ That means that it is a dynamic data structure supporting the insertion and
 deletion of points. Previous versions of the two dimensional point set class
 were inherited from the LEDA graph data type storing its own Delaunay triangulation,
 but to make the class independent from LEDA we switched to the 
-CGAL Delaunay triangulation data type.
+CGAL Delaunay triangulation data type. \\
+We now also provide function template versions of the range search and nearest
+neighbor query operations. They all have to be templated by the type of a \cgal\
+Delaunay triangulation and provide functionality similar to the corresponding
+member functions of the point set class.
 
 \subsection*{Concepts}
 \ccc{PointSetTraits}\\
@@ -26,4 +30,7 @@ CGAL Delaunay triangulation data type.
 \subsection*{Classes}
 \ccc{CGAL::Point_set_2}\\
 
-
+\subsection*{Functions}
+\ccc{CGAL::nearest_neighbor}\\
+\ccc{CGAL::nearest_neighbors}\\
+\ccc{CGAL::range_search}\\

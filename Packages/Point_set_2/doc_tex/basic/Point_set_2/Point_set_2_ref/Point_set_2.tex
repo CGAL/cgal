@@ -42,9 +42,6 @@ and for the triangulation data structure (Tds).
 \ccConstructor{Point_set_2();}
 {creates an empty \ccRefName\ .}
 
-\ccConstructor{Point_set_2(const std::list<Point>& S);}
-{creates a \ccRefName\ \ccVar\ of the points in $S$. 
-}
 
 \ccConstructor{template<class InputIterator>
 Point_set_2(InputIterator first, InputIterator last);}
@@ -54,8 +51,6 @@ Point_set_2(InputIterator first, InputIterator last);}
 
 \ccOperations
 
-\ccMethod{void  init(const std::list<Point>& L);}
-{ makes \ccVar\ a \ccRefName\ for the points in $L$.}
 
 \ccMethod{template<class InputIterator>
 void init(InputIterator first, InputIterator last);}
@@ -90,24 +85,11 @@ which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.} 
 
-\ccHtmlLinksOn
-
-\ccMethod{bool  empty();}
-{ decides whether \ccVar\ is empty. }
-
-\ccMethod{bool  is_empty();}
-{ decides whether \ccVar\ is empty. }
-
-
-\ccHtmlLinksOff
 
 \ccMethod{Vertex\_handle  lookup(Point p);}
 { if \ccVar\ contains a Vertex $v$ with $|pos(v)| = p$ 
 the result is a handle to $v$ otherwise the result is $NULL$. }
 
-\ccMethod{void del(Point p);}
-{ removes the vertex $v$ with position $p$ from \ccVar. If there is
-no such vertex in \ccVar, the function returns without changing \ccVar. }
 
 \ccMethod{Vertex\_handle  nearest_neighbor(Point p);}
 { computes a handle to a vertex $v$ of \ccVar\ that is closest to $p$.
