@@ -87,7 +87,7 @@ public:
     void set_epsilon(CoeffType eps) { epsilon_ = eps ; }
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
- 	// Solve the sparse linear system "A*x = b". Return true on success.
+ 	// Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE. Return true on success.
 	// 
 	// Preconditions:
 	// * A.dimension() == b.dimension()
@@ -109,6 +109,7 @@ public:
         Vector g(n) ;
         Vector r(n) ;
         Vector p(n) ;
+        CoeffType gg;
         unsigned int its=0;										// Loop counter
         CoeffType t, tau, sig, rho, gam;
         CoeffType bnorm2 = BLAS<Vector>::dot(b,b) ; 
@@ -117,8 +118,14 @@ public:
         BLAS<Vector>::axpy(-1,b,g);
         BLAS<Vector>::scal(-1,g);
         BLAS<Vector>::copy(g,r);
+        gg=BLAS<Vector>::dot(g,g);								// Current error (g|g)
 
-        while ( BLAS<Vector>::dot(g,g)>err && its < max_iter) {
+        while ( gg>err && its < max_iter) 
+		{
+			// Debug trace
+			//if (its % 25 == 0)
+			//	std::cerr << "Solver_CG<>::solve: gg(=" << gg << ") > err(=" << err << ")" << std::endl;
+
             mult(A,r,p);
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
@@ -131,14 +138,15 @@ public:
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
+            gg=BLAS<Vector>::dot(g,g);
             its++;
         }
 
 		bool success = (its < max_iter);
 		if ( ! success )
-			std::cerr << "Solver_CG<>::solve: failure: BLAS<Vector>::dot(g,g)(=" << BLAS<Vector>::dot(g,g) << ") > err(=" << err << ")" << std::endl;
+			std::cerr << "Solver_CG<>::solve: failure: gg(=" << gg << ") > err(=" << err << ")" << std::endl;
 		return success;
-    } 
+    }
 
 private:
     CoeffType epsilon_ ;
