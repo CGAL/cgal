@@ -100,6 +100,7 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   FT rsx = psy*qsz-psz*qsy;
   FT rsy = psx*qsy-psx*qsz;
   FT rsz = psx*qsy-psy*qsx;
+  FT rs2 = CGAL_NTS square(rsx) + CGAL_NTS square(rsy) + CGAL_NTS square(rsz);
 
   FT num_x = det3x3_by_formula(psy,psz,ps2,
                                qsy,qsz,qs2,
