@@ -1,7 +1,7 @@
 // Generic test file for the IA package. include/tst_generic.C
 //  $Revision$
 //  $Date$
-// Written by Sylvain Pion, 1997/1998.
+// Written by Sylvain Pion, 1997-1999.
 
 // This file is included from tst[12].C, that do just a #define:
 // #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst1.C
