@@ -19,18 +19,30 @@ sub usage()
     print STDERR "  $0 package_name directory\n";
     print STDERR "  package_name: the name of the package that is checked\n";
     print STDERR "  directory: the root directory of the package\n";
+    print STDERR "return values:\n";
+    print STDERR "  0: everything is OK\n";
+    print STDERR "  1: The names are OK, but the file of filenames could not be updated\n";
+    print STDERR "  2: There was a name clash.\n";
+    print STDERR "  3: Checking could not be done.\n";
+}
+
+sub my_die($)
+{
+    print STDERR $_[0];
+    exit 3;
 }
 
 if ( $#ARGV != 1 ) {
     usage();
-    exit 1;
+    exit 3;
 }
+
 
 
 $cgal_package_name = shift;
 $start_directory = shift;
 
-open(FILEMAP,$filenames_used_file) or die;
+open(FILEMAP,$filenames_used_file) or my_die($@);
 while(<FILEMAP>) {
     chop;
     if (/^(.*):([^:]*)$/) {
@@ -40,14 +52,14 @@ while(<FILEMAP>) {
 	$filename_map{$lowercasename}=$_;
     } 
 }
-close FILEMAP or die;
+close FILEMAP or my_die($@);
 
 foreach (@reserved_filenames) {
     my $lowercasename = './' . lc($_);
     $filename_map{$lowercasename}='reserved_name';
 }
 
-chdir $start_directory or die "Can't go to directory $start_directory\n";
+chdir $start_directory or my_die("Can't go to directory $start_directory\n");
 
 sub add_files()
 {
@@ -71,29 +83,35 @@ sub write_file($)
 {
     my ($key, $value,$tmpfile);
     $tmpfile = shift;
-    open(OFILE,">$tmpfile") or die;
+    open(OFILE,">$tmpfile") or my_die($@);
     while (($key,$value) = each %filename_map) {
 	if ($value ne 'reserved_name') {
 	    print OFILE "$value\n";
 	}
     }
-    close OFILE or die;
+    close OFILE or my_die($@);
 }
 
 if ($#conflicts != -1) {
-    print STDERR "conflicts:\n";
-    print STDERR "@conflicts\n";
-    return 1;
+    print STDOUT "In package $cgal_package_name ";
+    print STDOUT "the following conflicting filenames were detected:\n";
+    my $i;
+    for ($i=0; $i<$#conflicts; $i +=2) {
+        print STDOUT "< $conflicts[$i]\n";
+        print STDOUT "> $conflicts[$i+1]\n";
+    }
+    exit 2;
 }
 my $tmpfile = "tmp_add_pack$$";
-eval "writefile($tmpfile)";
+eval "write_file(\"$tmpfile\")";
 if ($@) {
-    print STDERR "$0: Error while writing $tmpfile.\n";
-    return 1;
+    print STDOUT "$0: Error while writing $tmpfile.\n";
+    die;
+#    exit 1;
 }
 if (system('mv',"$tmpfile","$filenames_used_file") != 0) {
-    print STDERR "$0: Could not move $tmpfile to $filenames_used_file\n";
-    return 1;
+    print STDOUT "$0: Could not move $tmpfile to $filenames_used_file\n";
+    exit 1;
 }
 
-return 0;
+exit 0;
