@@ -32,14 +32,14 @@ CGAL_KERNEL_INLINE
 bool
 less_x(const PointH2<R>& p,
        const PointH2<R>& q)
-{ return ( p.hx()*q.hw() < q.hx()*p.hw() ); }
+{ return p.hx()*q.hw() < q.hx()*p.hw(); }
 
 template < class R>
 CGAL_KERNEL_INLINE
 bool
 less_y(const PointH2<R>& p,
        const PointH2<R>& q)
-{ return ( p.hy()*q.hw() < q.hy()*p.hw() ); }
+{ return p.hy()*q.hw() < q.hy()*p.hw(); }
 
 template < class R>
 CGAL_KERNEL_INLINE
@@ -49,21 +49,11 @@ equal_xy(const PointH2<R>& p,
 {
   typedef typename R::RT RT;
 
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
+  // Using these references allows to spare calls to [pq].hw().
   const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
   const RT& qhw = q.hw();
 
-  RT pV = phx*qhw;
-  RT qV = qhx*phw;
-  if ( pV == qV )
-  {
-      pV = phy*qhw;
-      qV = qhy*phw;
-  }
-  return ( pV == qV ) ? true : false;
+  return (p.hx()*qhw == q.hx()*phw) && (p.hy()*qhw == q.hy()*phw);
 }
 
 template < class R>
@@ -87,33 +77,14 @@ compare_xy(const PointH2<R>& p, const PointH2<R>& q)
       pV = phy*qhw;
       qV = qhy*phw;
   }
-  if ( pV < qV )
-  {
-      return SMALLER;
-  }
-  else
-  {
-      return (qV < pV) ? LARGER : EQUAL;
-  }
+  return CGAL_NTS compare(pV, qV);
 }
 
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_xy(const PointH2<R>& p,
-                             const PointH2<R>& q)
-{
-   return compare_xy(p, q);
-}
-#endif
 
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_smaller_or_equal(const PointH2<R>& p,
-                                           const PointH2<R>& q)
+lexicographically_xy_smaller_or_equal(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -143,8 +114,7 @@ lexicographically_xy_smaller_or_equal(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_smaller(const PointH2<R>& p,
-                                  const PointH2<R>& q)
+lexicographically_xy_smaller(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -181,8 +151,7 @@ lexicographically_xy_larger_or_equal(const PointH2<R>& p, const PointH2<R>& q)
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-lexicographically_xy_larger(const PointH2<R>& p,
-                                 const PointH2<R>& q)
+lexicographically_xy_larger(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -238,16 +207,6 @@ compare_yx(const PointH2<R>& p, const PointH2<R>& q)
       return ( qV < pV ) ? LARGER : EQUAL;
   }
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-Comparison_result
-compare_lexicographically_yx(const PointH2<R>& p, const PointH2<R>& q)
-{
-  return compare_yx(p, q);
-}
-#endif
 
 template < class R>
 CGAL_KERNEL_INLINE
@@ -349,59 +308,23 @@ lexicographically_yx_larger(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_x(const PointH2<R>& p,
-          const PointH2<R>& q)
+compare_x(const PointH2<R>& p, const PointH2<R>& q)
 {
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhw = q.hw();
-  const RT  RT0 = RT(0);
-  RT com = phx * qhw - qhx * phw;
-  if ( com < RT0 )
-  {
-      return SMALLER;
-  }
-  else if ( RT0 < com )
-  {
-      return LARGER;
-  }
-  return EQUAL;
+  return CGAL_NTS compare(p.hx() * q.hw(), q.hx() * p.hw());
 }
 
 template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_y(const PointH2<R>& p,
-          const PointH2<R>& q)
+compare_y(const PointH2<R>& p, const PointH2<R>& q)
 {
-  typedef typename R::RT RT;
-
-  const RT& phy = p.hy();
-  const RT& phw = p.hw();
-  const RT& qhy = q.hy();
-  const RT& qhw = q.hw();
-  const RT  RT0 = RT(0);
-  RT com = phy * qhw - qhy * phw;
-  if ( com < RT0 )
-  {
-      return SMALLER;
-  }
-  else if ( RT0 < com )
-  {
-     return LARGER;
-  }
-  return EQUAL;
+  return CGAL_NTS compare(p.hy() * q.hw(), q.hy() * p.hw());
 }
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Orientation
-orientation( const PointH2<R>& p,
-             const PointH2<R>& q,
-             const PointH2<R>& r)
+orientation( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -450,9 +373,7 @@ orientation( const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Angle
-angle( const PointH2<R>& p,
-       const PointH2<R>& q,
-       const PointH2<R>& r)
+angle( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   return (Angle) CGAL_NTS sign((p-q)*(r-q));
 }
@@ -473,7 +394,6 @@ left_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
   const RT& rhx = r.hx();
   const RT& rhy = r.hy();
   const RT& rhw = r.hw();
-  const RT  RT0 = RT(0);
 
   // | A B |
   // | C D |
@@ -497,78 +417,21 @@ left_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 */
 
 
-  return ( RT0 < det );
+  return CGAL_NTS is_positive(det);
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 template < class R>
 inline
-bool
-leftturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
-{
-   return left_turn(p, q, r);
-}
-#endif
-
-template < class R>
-CGAL_KERNEL_MEDIUM_INLINE
 bool
 right_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
-  const RT& qhw = q.hw();
-  const RT& rhx = r.hx();
-  const RT& rhy = r.hy();
-  const RT& rhw = r.hw();
-  const RT  RT0 = RT(0);
-
-  // | A B |
-  // | C D |
-
-  RT  A = phx*rhw - phw*rhx;
-  RT  B = phy*rhw - phw*rhy;
-  RT  C = qhx*rhw - qhw*rhx;
-  RT  D = qhy*rhw - qhw*rhy;
-
-  RT  det =  A*D - B*C;
-
-/*
-  RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
-               + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
-               + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
-
-  if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
-  {
-      std::cerr << "det: " << det << " det_old: " << det_old << flush;
-  }
-*/
-
-
-  return ( det < RT0 );
+  return left_turn(p, r, q);
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class R>
-inline
-bool
-rightturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
-{
-   return right_turn(p, q, r);
-}
-#endif
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-collinear( const PointH2<R>& p,
-                const PointH2<R>& q,
-                const PointH2<R>& r)
+collinear( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -581,7 +444,6 @@ collinear( const PointH2<R>& p,
   const RT& rhx = r.hx();
   const RT& rhy = r.hy();
   const RT& rhw = r.hw();
-  const RT  RT0 = RT(0);
 
   // | A B |
   // | C D |
@@ -604,7 +466,7 @@ collinear( const PointH2<R>& p,
   }
 */
 
-  return ( det == RT0 );
+  return CGAL_NTS is_zero(det);
 }
 
 template <class R>
@@ -706,9 +568,9 @@ template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
 side_of_oriented_circle( const PointH2<R>& q,
-                              const PointH2<R>& r,
-                              const PointH2<R>& s,
-                              const PointH2<R>& t)
+                         const PointH2<R>& r,
+                         const PointH2<R>& s,
+                         const PointH2<R>& t)
 {
   typedef typename R::RT RT;
 
@@ -773,8 +635,8 @@ template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_ordered_along_line( const PointH2<R>& p,
-                                       const PointH2<R>& q,
-                                       const PointH2<R>& r )
+                                  const PointH2<R>& q,
+                                  const PointH2<R>& r )
 {
   typedef typename R::RT RT;
 
@@ -811,8 +673,8 @@ template <class R>
 CGAL_KERNEL_INLINE
 bool
 are_ordered_along_line( const PointH2<R>& p,
-              const PointH2<R>& q,
-              const PointH2<R>& r )
+                        const PointH2<R>& q,
+                        const PointH2<R>& r )
 {
   if ( collinear(p,q,r) )
   {
@@ -828,8 +690,8 @@ template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_strictly_ordered_along_line( const PointH2<R>& p,
-                                                const PointH2<R>& q,
-                                                const PointH2<R>& r )
+                                           const PointH2<R>& q,
+                                           const PointH2<R>& r )
 {
   typedef typename R::RT RT;
 
@@ -864,50 +726,32 @@ template <class R>
 CGAL_KERNEL_INLINE
 bool
 are_strictly_ordered_along_line( const PointH2<R>& p,
-                                      const PointH2<R>& q,
-                                      const PointH2<R>& r )
+                                 const PointH2<R>& q,
+                                 const PointH2<R>& r )
 {
-  if ( collinear(p,q,r) )
-  {
-     return collinear_are_strictly_ordered_along_line(p,q,r);
-  }
-  else
-  {
-     return false;
-  }
+  return collinear(p, q, r) &&
+         collinear_are_strictly_ordered_along_line(p, q, r);
 }
 
 template <class R>
 inline
 bool
-x_equal( const PointH2<R>& p,
-              const PointH2<R>& q )
-{ return ( p.hx()*q.hw() == q.hx()*p.hw() ); }
+x_equal( const PointH2<R>& p, const PointH2<R>& q )
+{ return p.hx()*q.hw() == q.hx()*p.hw(); }
 
 template <class R>
 inline
 bool
-y_equal( const PointH2<R>& p,
-              const PointH2<R>& q )
-{ return ( p.hy()*q.hw() == q.hy()*p.hw() ); }
+y_equal( const PointH2<R>& p, const PointH2<R>& q )
+{ return p.hy()*q.hw() == q.hy()*p.hw(); }
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-_where_wrt_L_wedge( const PointH2<R>& p,
-                         const PointH2<R>& q )
+_where_wrt_L_wedge( const PointH2<R>& p, const PointH2<R>& q )
 {
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
-  const RT& qhw = q.hw();
-
-  Sign xs = CGAL_NTS sign<RT>( qhx*phw - phx*qhw );  // sign( qx - px )
-  Sign ys = CGAL_NTS sign<RT>( qhy*phw - phy*qhw );  // sign( qy - py )
+  Sign xs = CGAL_NTS sign( q.hx()*p.hw() - p.hx()*q.hw() );  // sign( qx - px )
+  Sign ys = CGAL_NTS sign( q.hy()*p.hw() - p.hy()*q.hw() );  // sign( qy - py )
 
   if (( xs == NEGATIVE ) || ( ys == NEGATIVE ))
   {
@@ -928,23 +772,48 @@ compare_deltax_deltay(const PointH2<R>& p,
                       const PointH2<R>& r,
                       const PointH2<R>& s)
 {
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhw = q.hw();
-  const RT& rhy = r.hy();
-  const RT& rhw = r.hw();
-  const RT& shy = s.hy();
-  const RT& shw = s.hw();
-  const RT  tbc1 = CGAL_NTS abs<RT>(phx*qhw - qhx*phw) * rhw*shw;
-  const RT  tbc2 = CGAL_NTS abs<RT>(rhy*shw - shy*rhw) * phw*qhw;
-
-  return (tbc2 < tbc1) ? LARGER
-                       : (tbc1 == tbc2) ? EQUAL : SMALLER;
-
+  return CGAL_NTS compare(
+                  CGAL_NTS abs(p.hx()*q.hw() - q.hx()*p.hw()) * r.hw()*s.hw(),
+                  CGAL_NTS abs(r.hy()*s.hw() - s.hy()*r.hw()) * p.hw()*q.hw());
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_xy(const PointH2<R>& p, const PointH2<R>& q)
+{
+  bool THIS_FUNCTION_IS_DEPRECATED;
+  return compare_xy(p, q);
+}
+
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_yx(const PointH2<R>& p, const PointH2<R>& q)
+{
+  bool THIS_FUNCTION_IS_DEPRECATED;
+  return compare_yx(p, q);
+}
+
+template < class R>
+inline
+bool
+leftturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+{
+  bool THIS_FUNCTION_IS_DEPRECATED;
+  return left_turn(p, q, r);
+}
+
+template < class R>
+inline
+bool
+rightturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+{
+  bool THIS_FUNCTION_IS_DEPRECATED;
+  return right_turn(p, q, r);
+}
+#endif
 
 CGAL_END_NAMESPACE
 
