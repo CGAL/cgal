@@ -226,7 +226,11 @@ public:
     insert(first, last);
   }
 
+#ifdef CGAL_CFG_EARLY_INSTANTIATION_BUG
+  void erase(const iterator &x)
+#else
   void erase(iterator x)
+#endif
   {
     CGAL_precondition(type(&*x) == USED);
     alloc.destroy(&*x);
@@ -234,8 +238,12 @@ public:
     --size_;
   }
 
-  void erase(iterator first, iterator last)
-  {
+#ifdef CGAL_CFG_EARLY_INSTANTIATION_BUG
+  void erase(const iterator &_first, const iterator &last) {
+    iterator first = _first;
+#else
+  void erase(iterator first, iterator last) {
+#endif
     for (; first != last; ++first)
       erase(first);
   }
@@ -593,6 +601,47 @@ namespace CGALi {
     void * & for_compact_container()       { return (void * &) p; }
   };
 
+#if defined(__GNUG__) && __GNUG__==2 && __GNUC_MINOR__==95
+// G++ 2.95 has loosy namespace support,
+// and this produces conflicts with std::rel_ops...
+
+  template < class DSC, class Ptr, class Ref >
+  inline
+  bool operator==(const CC_iterator<DSC, Ptr, Ref> &rhs,
+                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  { return &*rhs == &*lhs; }
+
+  template < class DSC, class Val >
+  inline
+  bool operator==(const CC_iterator<DSC, Val*, Val&> &rhs,
+                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
+  { return &*rhs == &*lhs; }
+
+  template < class DSC, class Val >
+  inline
+  bool operator==(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+                  const CC_iterator<DSC, Val*, Val&> &lhs)
+  { return &*rhs == &*lhs; }
+
+  template < class DSC, class Ptr, class Ref >
+  inline
+  bool operator!=(const CC_iterator<DSC, Ptr, Ref> &rhs,
+                  const CC_iterator<DSC, Ptr, Ref> &lhs)
+  { return &*rhs != &*lhs; }
+
+  template < class DSC, class Val >
+  inline
+  bool operator!=(const CC_iterator<DSC, Val*, Val&> &rhs,
+                  const CC_iterator<DSC, const Val*, const Val&> &lhs)
+  { return &*rhs != &*lhs; }
+
+  template < class DSC, class Val >
+  inline
+  bool operator!=(const CC_iterator<DSC, const Val*, const Val&> &rhs,
+                  const CC_iterator<DSC, Val*, Val&> &lhs)
+  { return &*rhs != &*lhs; }
+
+#else
   template < class DSC, class Ptr1, class Ref1, class Ptr2, class Ref2 >
   inline
   bool operator==(const CC_iterator<DSC, Ptr1, Ref1> &rhs,
@@ -608,6 +657,7 @@ namespace CGALi {
   {
     return &*rhs != &*lhs;
   }
+#endif
 
 } // namespace CGALi
 
