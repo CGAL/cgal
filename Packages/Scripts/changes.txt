@@ -1,3 +1,6 @@
+1.20 (23 January 2002)
++ Modified create_makefile such that '-Include' is put one line later.
+
 1.19 (?? ??? 2001)
 + Added cgal_submit.
 

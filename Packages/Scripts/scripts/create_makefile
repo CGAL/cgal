@@ -44,10 +44,10 @@ create_makefile()
     echo    "           \$(TESTSUITE_CXXFLAGS) \\"
     echo    "           \$(EXTRA_FLAGS) \\"
   fi
+  echo    "           \$(CGAL_CXXFLAGS) \\"
   if [ -d include ] ; then
     echo  "           -Iinclude \\"
   fi
-  echo    "           \$(CGAL_CXXFLAGS) \\"
   echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS) \\"
   echo    "           \$(DEBUG_OPT)"
   echo
