@@ -1,3 +1,6 @@
+2.9 (19 September 2001)
+Bbox_2 intersections with line and ray use pimpl idiom and Simple_cartesian.
+
 2.8 (17 July 2001)
 Added do_intersect for two circles.
 
