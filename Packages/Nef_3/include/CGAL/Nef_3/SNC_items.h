@@ -870,14 +870,8 @@ class SNC_items {
       return *this;
     }
 
-    Mark& mark() { 
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
-    }
-    const Mark& mark() const { 
-      if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; 
-    }
+    Mark& mark() { return mark_;}
+    const Mark& mark() const { return mark_; }
 
     SHalfloop_handle& twin() { return twin_; }
     SHalfloop_handle twin() const { return twin_; }
