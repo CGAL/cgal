@@ -1,5 +1,11 @@
+#include <fstream>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Iso_rectangle_2.h>
 #include "EmptyRect.h"
-
+#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/leda_window.h>
+#include <CGAL/leda_real.h>
 
 typedef double                                Number_Type;
 
@@ -7,39 +13,29 @@ typedef CGAL::Cartesian<Number_Type>             Repr;
 typedef CGAL::Point_2<Repr>                      Point; 
 typedef CGAL::Vector_2<Repr>                     Vector; 
 typedef CGAL::Segment_2<Repr>                    Segment;
-typedef pair<Number_Type,Number_Type> Nt_pair;
-typedef pair<Nt_pair,Nt_pair> Bbox;
+typedef CGAL::Iso_rectangle_2<Repr>              Iso_rectangle_2;
 
 typedef CGAL::Polygon_traits_2<Repr> Traits;
 typedef std::list<Point> Container;
 typedef CGAL::Polygon_2<Traits,Container> Polygon;
-
+typedef CGAL::Largest_empty_iso_rectangle_2<Repr> Largest_empty_rect;
 Polygon P;
 
-void display_points(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream &W)
+void display_points(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
   W << CGAL::BLACK;
-  for(Largest_Empty_Rect<Number_Type>::const_iterator it = empty_rectangle.begin();it != empty_rectangle.end();++it)
+  for(Largest_empty_rect::const_iterator it = empty_rectangle.begin();it != empty_rectangle.end();++it)
     W << *it;
 }
 
-void display_bounding_box(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream &W)
+void display_bounding_box(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
-  Bbox b = empty_rectangle.get_bounding_box();
-  double x1 = CGAL::to_double(b.first.first),
-    y1 = CGAL::to_double(b.first.second),
-    x2 = CGAL::to_double(b.second.first),
-    y2 = CGAL::to_double(b.second.second);
-
   W << CGAL::GREEN;
 
-  W << Segment(Point(x1,y1),Point(x2,y1));
-  W << Segment(Point(x1,y1),Point(x1,y2));
-  W << Segment(Point(x1,y2),Point(x2,y2));
-  W << Segment(Point(x2,y2),Point(x2,y1));
+  W << empty_rectangle.get_bounding_box();
 }
 
-void clear(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream &W)
+void clear(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
   empty_rectangle.clear();
 
@@ -49,7 +45,7 @@ void clear(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream 
   display_bounding_box(empty_rectangle,W);
 }
 
-void redraw(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream &W)
+void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
   W.clear();
   W << CGAL::BLUE;
@@ -66,24 +62,15 @@ void redraw(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream
 }
 
 
-void show_biggest_rec(Largest_Empty_Rect<Number_Type> &empty_rectangle,CGAL::Window_stream &W)
+void show_biggest_rec(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 {
-  Bbox b = empty_rectangle.get_largest_empty_rectangle();
+  Iso_rectangle_2 b = empty_rectangle.get_largest_empty_rectangle();
 
-  W << CGAL::RED;
+  W << CGAL::RED << b;
 
-  double x1 = CGAL::to_double(b.first.first),
-    y1 = CGAL::to_double(b.first.second),
-    x2 = CGAL::to_double(b.second.first),
-    y2 = CGAL::to_double(b.second.second);
 
-  W << Segment(Point(x1,y1),Point(x2,y1));
-  W << Segment(Point(x1,y1),Point(x1,y2));
-  W << Segment(Point(x1,y2),Point(x2,y2));
-  W << Segment(Point(x2,y2),Point(x2,y1));
-
-  cout << "\nThe biggest rectangle is :\n   buttom-left point - (" << x1 << ":" << y1 << ")\n   top-right point   - (" << x2 << ":" << y2 << ")\n";
-  cout << "Its size is " << abs((x2 - x1) * (y2 - y1)) << endl;
+  cout << "\nThe biggest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+  //cout << "Its size is " << abs((x2 - x1) * (y2 - y1)) << endl;
 }
 
 int main(int argc,char *argv[])
@@ -135,8 +122,14 @@ int main(int argc,char *argv[])
   W.set_node_width(3);
   
   W << P;
+  Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
+  Largest_empty_rect empty_rectangle(b);
 
-  Largest_Empty_Rect<Number_Type> empty_rectangle(P);
+  for(Polygon::Vertex_const_iterator it = P.vertices_begin();
+      it  != P.vertices_end();
+      ++it){
+    empty_rectangle.insert(*it);
+  }
 
   display_bounding_box(empty_rectangle,W);
   display_points(empty_rectangle,W);
