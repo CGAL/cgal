@@ -15,7 +15,7 @@
 #elif BENCH_NT == LEDA_RAT_NT
 #include <CGAL/leda_rational.h>
 
-#elif BENCH_NT == LAZY_RATIONAL_NT
+#elif BENCH_NT == LAZY_LEDA_RAT_NT
 #include <CGAL/leda_rational.h>
 #include <CGAL/Lazy_exact_nt.h>
 
@@ -47,9 +47,15 @@
 
 #elif BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT
 #include <NiX/Arithmetic_traits.h>
+#if !LiS_HAVE_LEDA
+#error "Leda not supported"
+#endif
 
 #elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
 #include <NiX/Arithmetic_traits.h>
+#if !LiS_HAVE_CORE
+#error "Core not supported!"
+#endif
 
 #else
 #error No Number Type (NT) specified! 

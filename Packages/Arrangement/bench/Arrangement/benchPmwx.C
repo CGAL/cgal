@@ -58,9 +58,9 @@
 
 // Exacus Conics:
 #elif BENCH_TRAITS == EXACUS_CONIC_TRAITS
-#include <EXACUS/SweepX/GAPS/CGAL_Pmwx_for_GAPS.h>
 #include <CnX/Conic_sweep_traits_2.h>
 #include <CnX/Conic_segment_v2_2.h>
+#include <SoX/GAPS/CGAL_Pmwx_2_for_GAPS_traits.h>
 
 // Curved-kernel Conics:
 #elif BENCH_TRAITS == CK_CONIC_TRAITS

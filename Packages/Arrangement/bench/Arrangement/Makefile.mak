@@ -23,7 +23,7 @@ LEDA_RAT_NT =                   2
 QUOTIENT_MP_FLOAT_NT =          3
 QUOTIENT_GMPZ_NT =              4
 GMPQ_NT =                       5
-LAZY_RATIONAL_NT =              6
+LAZY_LEDA_RAT_NT =              6
 LAZY_GMPQ_NT =                  7
 LAZY_QUOTIENT_MP_FLOAT_NT =     8
 LEDA_REAL_NT =                  9
@@ -115,6 +115,14 @@ endif
 # Number Type:
 LCPPDEFS+= -DBENCH_NT=$(BENCH_NT)
 
+ifeq ($(BENCH_NT), $(DOUBLE_NT))
+TARGET0 := $(TARGET0)Double
+LOBJDIR :=$(LOBJDIR)_double
+else
+ifeq ($(BENCH_NT), $(GMPZ_NT))
+TARGET0 := $(TARGET0)Gmpz
+LOBJDIR :=$(LOBJDIR)_gmpz
+else
 ifeq ($(BENCH_NT), $(LEDA_RAT_NT))
 TARGET0 := $(TARGET0)LedaRat
 LOBJDIR :=$(LOBJDIR)_leda_rat
@@ -131,25 +139,32 @@ ifeq ($(BENCH_NT), $(GMPQ_NT))
 TARGET0 := $(TARGET0)Gmpq
 LOBJDIR :=$(LOBJDIR)_gmpq
 else
-ifeq ($(BENCH_NT), $(DOUBLE_NT))
-TARGET0 := $(TARGET0)Double
-LOBJDIR :=$(LOBJDIR)_double
-else
-ifeq ($(BENCH_NT), $(LEDA_REAL_NT))
-TARGET0 := $(TARGET0)LedaReal
-LOBJDIR :=$(LOBJDIR)_leda_real
-else
 ifeq ($(BENCH_NT), $(LAZY_LEDA_RAT_NT))
 TARGET0 := $(TARGET0)LazyRat
 LOBJDIR :=$(LOBJDIR)_lazy_rat
+else
+ifeq ($(BENCH_NT), $(LAZY_GMPQ_NT))
+TARGET0 := $(TARGET0)LazyGmpq
+LOBJDIR :=$(LOBJDIR)_lazy_gmpq
 else
 ifeq ($(BENCH_NT), $(LAZY_QUOTIENT_MP_FLOAT_NT))
 TARGET0 := $(TARGET0)LazyQuotient
 LOBJDIR :=$(LOBJDIR)_lazy_quotient
 else
-ifeq ($(BENCH_NT), $(LAZY_GMPQ_NT))
-TARGET0 := $(TARGET0)LazyGmpq
-LOBJDIR :=$(LOBJDIR)_lazy_gmpq
+ifeq ($(BENCH_NT), $(LEDA_REAL_NT))
+TARGET0 := $(TARGET0)LedaReal
+LOBJDIR :=$(LOBJDIR)_leda_real
+else
+ifeq ($(BENCH_NT), $(NIX_LEDA_FIELD_WITH_SQRT_NT))
+TARGET0 := $(TARGET0)NixLeda
+LOBJDIR :=$(LOBJDIR)_nix_leda
+else
+ifeq ($(BENCH_NT), $(NIX_CORE_FIELD_WITH_SQRT_NT))
+TARGET0 := $(TARGET0)NixCore
+LOBJDIR :=$(LOBJDIR)_nix_core
+endif
+endif
+endif
 endif
 endif
 endif
@@ -247,6 +262,13 @@ ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
 endif
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
+LCPPINCS+= -I$(EXACUS_ROOT)/NumeriX/include
+LCPPINCS+= -I$(EXACUS_ROOT)/Support/include
+LCPPINCS+= -I$(EXACUS_ROOT)/SweepX/include
+LCPPINCS+= -I$(EXACUS_ROOT)/ConiX/include
+LCPPINCS+= -I/usr/local/boost
+LCPPDEFS+= -DHAVE_CONFIG_H -DQT_NO_COMPAT -DQT_CLEAN_NAMESPACE
+LCPPOPTS+= -ftemplate-depth-50 -Wno-deprecated
 endif
 ifeq ($(BENCH_TRAITS), $(CK_CONIC_TRAITS))
 LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
@@ -490,7 +512,7 @@ leda_exacus_conic_inst:
 core_exacus_conic_inst:
 	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
 
-ck_conic_inst:
+mpz_simple_cartesian_ck_conic_inst:
 	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
 # Miscellaneous
