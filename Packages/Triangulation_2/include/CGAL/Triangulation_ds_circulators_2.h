@@ -412,7 +412,7 @@ Triangulation_ds_edge_circulator_2(const Vertex* v, const Face* f)
   if (pos == NULL || pos->dimension() < 1){_v = NULL; pos = NULL;return;}
   int i = pos->index( _v );
   if (pos->dimension() == 2) {_ri = ccw(i);}
-  else {_ri = 1-i;}
+  else {_ri = 2;}
   return;
 }
 
@@ -436,7 +436,6 @@ operator++()
   int i = pos->index(_v);
   if (pos->dimension() == 1) { 
     pos = pos->neighbor(1-i);
-    _ri = 1 - pos->index(_v);
     return *this;
   }
   else{
@@ -467,7 +466,6 @@ operator--()
 
   if (pos->dimension() == 1) { 
     pos = pos->neighbor(1-i);
-    _ri = 1 - pos->index(_v);
     return *this;
   }
   else{

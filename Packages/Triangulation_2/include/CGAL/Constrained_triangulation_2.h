@@ -45,7 +45,6 @@ public:
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds> Constrained_triangulation;
   
-// the following typedef to satisfy MIPS CC 7.3
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Point          Point;
   
