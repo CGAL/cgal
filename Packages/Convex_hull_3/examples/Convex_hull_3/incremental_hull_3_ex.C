@@ -11,7 +11,7 @@
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz RT;
 #else
-#include <CGAL/CGAL::MP_Float.h>
+#include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float RT;
 #endif
 
