@@ -1,3 +1,7 @@
+2.82 15/10/2003
+-added global min/max functions in config.h (only if NOMINMAX is defined)
+
+
 2.81 18/9/2003
 - New headers, bis.
 

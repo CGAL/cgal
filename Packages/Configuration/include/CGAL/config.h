@@ -137,6 +137,32 @@
 #  define NOMINMAX 1
 #endif
 
+//-------------------------------------------------------------------//
+// When the global min and max are no longer defined (as macros) 
+// because of NOMINMAX flag definition, we define our own global 
+// min/max functions to make the Microsoft headers compile. (afxtempl.h)
+// Users that does not want the global min/max 
+// should define CGAL_NOMINMAX
+//-------------------------------------------------------------------//
+
+#if defined NOMINMAX && !defined CGAL_NOMINMAX
+template <class NT>
+inline
+NT
+// const NT&
+min(const NT& x, const NT& y)
+{ return (y < x) ? y : x; }
+
+template <class NT>
+inline
+NT
+// const NT&
+max(const NT& x, const NT& y)
+{ return (x < y) ? y : x; }
+#endif
+
+
+
 //-----------------------------------------------------------------------//
 // the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
 // very well, so we have to use specific templating here with the CGAL
