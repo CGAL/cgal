@@ -8,23 +8,21 @@
 
 Concerning the main code:
 -------------------------
+- Lazy_exact_nt<Traits>, where :
+  class Traits {
+    typedef leda_real  ET;
+    typedef Tag_true   Protection; // due, this won't work nicely... const ?
+  }
+  In any case worth it for my multi-type kernel ?
+- DAG : voir include/CGAL/Td_dag.h
+- Have a scheme for counting each try{} and each catch{} of each predicate ?
+  (request by Michael Seel).  Maybe not worth it : gcov or any profiling tool
+  should be fine for that.
 - Remove the "return false" after overlap_action(), if possible, and see
   produced code.  Or re-arrange the code in order to remove it ?
 - Implement to_interval() for CLN types, and Lazy_exact_nt<>.
 - Specializations for is_zero() and co, and make use of them in the kernel.
   [Filtered_exact<> doesn't define them either, it's a bug...]
-- Have a non-ref counted (and non dynamic allocated) version of
-  Lazy_exact_nt<>, for use in local variables, interroperable with the normal
-  Lazy_exact_nt<>.  Say local_Lazy_exact_nt<> ?
-  Rule : operator+(Lazy, Local_Lazy) returns a local_Lazy
-  This should greatly help the compiler to optimize.  If it does really help a
-  lot, then we may consider requiring from the user to specify such a type for
-  his NT to help us optimize local computations.
-  Same thing for the kernel, which will be nicely done when Simple and
-  non-Simple will be merged.
-  Could be done with a conversion function : local_Lazy(const Lazy &), and
-  redefining the operators...  hum, need to be thought out, and asked the list.
-  Maybe there's some litterature on this ?
 - Implement CGAL_ms_sqrt() with asms so that no special install procedure is
   needed ?  Should not be too hard, and should be faster (no function call).
   If M$ has a flag like __OPTIMIZE__, then we can use in the non-optimize case,
@@ -45,7 +43,6 @@ Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
 (genre #ifndef __OPTIMIZE__), ca peut faire l'affaire.
 De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
 
-- GCC 2.96 seems really bad at optimizing copy ctor of intervals (august'00).
 - Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
 - Try to see if KCC can use the GCC asm() on x86 ?
 - Try to get rid of the libc5 compatible version (make benchmarks first).

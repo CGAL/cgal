@@ -35,3 +35,11 @@ except we could share stuff with Olivier's Fixed !
   .bound()      (basically a bound on: fabs(.dbl_approx())) .error()
 - Add a "number of bits" field in Static_filter_error ?  (so that we get the
   same thing as Fixed for 24 bits)
+
+- Another approach to consider : Implement predicates taking one or several
+  epsilons as additional parameters, and have the functionality found in Open
+  CasCade, using sign(a, epsilon).  Then with a special traits or something,
+  we can define sign(a,epsilon) = sign(a), and get the traditionnal template
+  predicates from that...  So that the epsilons are removed at compile time ?
+  It would be nice to know exactly the desired funcitonality for epsilons...
+
