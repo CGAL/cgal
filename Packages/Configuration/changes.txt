@@ -1,3 +1,6 @@
+31/01/2004 Sylvain Pion
+- Also do not define CGAL_USE_GEOMVIEW for __MINGW32__.
+
 30/01/2004 Sylvain Pion
 - Define CGAL_USE_GEOMVIEW except for windows.
 

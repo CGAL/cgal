@@ -120,7 +120,7 @@ using std::max;
 #endif
 
 // Is Geomview usable ?
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#if !defined(__BORLANDC__) && !defined(_MSC_VER) && !defined(__MINGW32__)
 #  define CGAL_USE_GEOMVIEW
 #endif
 
