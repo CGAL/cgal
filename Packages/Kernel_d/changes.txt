@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.89 (28 August 2003)
+- Added Iso_box_d.
+
 0.9.88 (11 August 2003) [af]
 - Replaced the list (which replaced the In_place_list) with Compact_container
   because the default constructor of std::list<T>::iterator behaves different on different compilers
