@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.58 (24 Apr 2002)
+   - in deletion_event in Random_polygon_2_sweep, removed use of
+     prev_seg iterator after it was erased (replaced with thing it
+     was pointing to before erased).
+
 2.57 (23 Apr 2002)
    - added cast to Creator argument type to get rid of warnings for 
      Solaris + g++ 3.0.1

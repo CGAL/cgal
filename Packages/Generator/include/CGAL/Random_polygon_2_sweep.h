@@ -439,7 +439,7 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is seg_above" << std::endl;
 #endif
-            conflict1 = *prev_seg;
+            conflict1 = prev_vt;
 	    conflict2 = *seg_above;
 	    return false;
         }
@@ -451,7 +451,7 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
             std::cout << "conflict2 is --seg_above" << std::endl;
 #endif
-            conflict1 = *prev_seg;
+            conflict1 = prev_vt;
 	    conflict2 = *seg_above;
 	    return false;
         }
