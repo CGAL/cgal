@@ -1,3 +1,8 @@
+Version 1.78 (?? July 01)
+- traits concepts doc modified according to the corresponding modifications
+  in the code
+- fix: CGAL::make_object no longer used, it is taken from the traits instead
+
 Version 1.77 (20 July 01)
 - Don't put the traits' function objects as data members of the
   triangulations.
