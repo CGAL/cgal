@@ -27,6 +27,7 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Conic_2.h>
+#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL{
 
@@ -34,16 +35,14 @@ template< class R >
 Qt_widget&
 operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
 {
-  typedef typename R::Point_2 Point;    
   // pixel dimensions of window
-  int dim = std::max( ws.width(), ws.height());    
+  int dim = std::max( ws.width(), ws.height());
   // length of a pixel in window-coordinates
   double pixel_x = (ws.x_max() - ws.x_min())/dim;
   double pixel_y = (ws.y_max() - ws.y_min())/dim;
   // pixel coordinates, stored for faster output
-  typedef typename std::pair<double, double> pcoordinates;
-  std::vector<pcoordinates> vcoordinates;
-  typedef typename std::vector<pcoordinates>::const_iterator CIT;
+  typedef CGAL::Simple_cartesian<double>::Point_2 Point;
+  std::vector<Point> vcoordinates;
   // conic coordinates
   double r = CGAL::to_double (c.r()),
          s = CGAL::to_double (c.s()),
@@ -52,7 +51,7 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
          v = CGAL::to_double (c.v()),
          w = CGAL::to_double (c.w());
 
-  // Phase I (drawing in x-direction)    
+  // Phase I (drawing in x-direction)
   // solve conic equation for y
   if (s != 0.0)
       for (double x = ws.x_min(); x <= ws.x_max(); x+=pixel_x) {
@@ -61,20 +60,16 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
           if (discr >= 0.0) {
               double y1 = (-t*x - v - CGAL::sqrt(discr))/(2.0*s);
               double y2 = (-t*x - v + CGAL::sqrt(discr))/(2.0*s);
-              vcoordinates.push_back(std::make_pair(x, y1));
-              vcoordinates.push_back(std::make_pair(x, y2));} }
+              vcoordinates.push_back(Point(x, y1));
+              vcoordinates.push_back(Point(x, y2));} }
   else
       for (double x = ws.x_min(); x <= ws.x_max(); x+=pixel_x) {
           double denom = t*x + v;
           if (denom != 0.0) {
               double y = -(r*x*x + u*x + w)/denom;
-              vcoordinates.push_back(std::make_pair(x, y)); } }
-    
-  for(CIT it1 = vcoordinates.begin(); it1!= vcoordinates.end(); it1++){
-    ws << Point((*it1).first, (*it1).second);
-  }
-  vcoordinates.clear();
-  // Phase II (drawing in y-direction)  
+              vcoordinates.push_back(Point(x, y)); } }
+
+  // Phase II (drawing in y-direction)
   // solve conic equation for x
   if (r != 0.0)
       for (double y = ws.y_min(); y <= ws.y_max(); y+=pixel_y) {
@@ -83,20 +78,22 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
           if (discr >= 0.0) {
               double x1 = (-t*y - u - CGAL::sqrt(discr))/(2.0*r);
               double x2 = (-t*y - u + CGAL::sqrt(discr))/(2.0*r);
-              vcoordinates.push_back(std::make_pair(x1, y));
-              vcoordinates.push_back(std::make_pair(x2, y));} }
+              vcoordinates.push_back(Point(x1, y));
+              vcoordinates.push_back(Point(x2, y));} }
   else
       for (double y = ws.y_min(); y <= ws.y_max(); y+=pixel_y) {
           double denom = t*y + u;
           if (denom != 0.0) {
               double x = -(s*y*y + v*y + w)/denom;
-              vcoordinates.push_back(std::make_pair(x, y));} }
-  
-  for(CIT it1 = vcoordinates.begin(); it1!= vcoordinates.end(); it1++){
-    ws << Point((*it1).first, (*it1).second);
-  }
-  return( ws);
+              vcoordinates.push_back(Point(x, y));} }
+
+  typedef typename std::vector<Point>::const_iterator CIT;
+  for(CIT it1 = vcoordinates.begin(); it1!= vcoordinates.end(); ++it1)
+    ws << *it1;
+
+  return ws;
 }
+
 }//end namespace CGAL
 
 #endif
