@@ -34,10 +34,10 @@ template<class It>
 struct Nested_iterator_traits
 {
   typedef It                                 Base_iterator;
-  typedef typename It::value_type::iterator  Nested_iterator;
+  typedef typename It::value_type::iterator  Iterator;
 
-  Nested_iterator begin(It it) const { return it->begin(); }
-  Nested_iterator end(It it) const { return it->end(); }
+  Iterator begin(It it) const { return it->begin(); }
+  Iterator end(It it) const { return it->end(); }
 };
 
 namespace CGALi {
@@ -60,7 +60,7 @@ namespace CGALi {
   {
   private:
     typedef typename F_iterator::Predicate               Predicate;
-    typedef typename Predicate::Traits::Nested_iterator  Nested_iterator;
+    typedef typename Predicate::Traits::Iterator         Iterator;
     typedef typename Predicate::Traits::Base_iterator    Base_iterator;
 
   public:    
@@ -71,11 +71,12 @@ namespace CGALi {
 		   Base_iterator it3)
       : F_iterator(it1, it2, Predicate(), it3) {}
 
-    Nested_iterator begin(Base_iterator it)
+    Iterator begin(Base_iterator it)
     {
       return predicate().begin(it);
     }
-    Nested_iterator end(Base_iterator it)
+
+    Iterator end(Base_iterator it)
     {
       return predicate().end(it);
     }
@@ -84,16 +85,23 @@ namespace CGALi {
 
 }
 
+template<class Base_it, class Tr> class Nested_iterator;
+
+template<class Base_it, class Tr>
+bool operator==(const Nested_iterator<Base_it,Tr>&,
+		const Nested_iterator<Base_it,Tr>&);
+
 template <typename Base_it,
 	  typename Tr = Nested_iterator_traits<Base_it> >
 class Nested_iterator
   : private CGALi::FI_w_begin_end<
   Filter_iterator<Base_it, CGALi::Emptyness_predicate<Tr> > >
 {
+  typedef Nested_iterator<Base_it,Tr>           Self;
 public:
   typedef Base_it                               Base_iterator;
   typedef Tr                                    Traits;
-  typedef typename Tr::Nested_iterator          Iterator;
+  typedef typename Tr::Iterator                 Iterator;
 
 protected:
   typedef CGALi::
@@ -121,7 +129,7 @@ public:
     }
   }
 
-  Nested_iterator& operator++()
+  Self& operator++()
   {
     if ( nested_it_ != end( this->base() ) ) {
       ++nested_it_;
@@ -135,14 +143,14 @@ public:
     return *this;
   }
 
-  Nested_iterator operator++(int)
+  Self operator++(int)
   {
-    Nested_iterator tmp = *this;
+    Self tmp = *this;
     ++(*this);
     return tmp;
   }
 
-  Nested_iterator& operator--()
+  Self& operator--()
   {
     if ( this->is_end() ) {
       Filter_base_iterator::operator--();
@@ -158,9 +166,10 @@ public:
     return *this;
   }
 
-  Nested_iterator operator--(int)
+  Self operator--(int)
   {
-    Nested_iterator tmp = *this;
+    
+    Self tmp = *this;
     --(*this);
     return tmp;
   }
@@ -176,8 +185,7 @@ public:
     return nested_it_.operator->();
   }
 
-  friend bool operator== <>(const Nested_iterator&,
-			    const Nested_iterator&);
+  friend bool operator==<>(const Self&, const Self&);
 
 protected:
   Iterator       nested_it_;
@@ -192,7 +200,7 @@ inline
 bool operator==(const Nested_iterator<Base_it,Traits>& it1,
 		const Nested_iterator<Base_it,Traits>& it2)
 {
-  CGAL_precondition( it1.b_ == it2.b_ && it1.e_ == it2.e_ );
+  //  CGAL_precondition( it1.b_ == it2.b_ && it1.e_ == it2.e_ );
 
   if ( it1.base() != it2.base() ) { return false; }
   

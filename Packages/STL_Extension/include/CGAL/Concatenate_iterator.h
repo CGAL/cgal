@@ -31,6 +31,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class It1, class It2> class Concatenate_iterator;
+
+template <class It1, class It2>
+bool operator==(const Concatenate_iterator<It1,It2>&,
+		const Concatenate_iterator<It1,It2>&);
+
 
 template <class It1, class It2>
 class Concatenate_iterator
@@ -108,7 +114,7 @@ public:
     }
   }
 
-  friend bool operator== <>(const Self&, const Self&);
+  friend bool operator==<>(const Self&, const Self&);
 
 protected:
   It1 e1_, i1_;
