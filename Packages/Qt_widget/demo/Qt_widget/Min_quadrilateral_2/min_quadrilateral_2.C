@@ -185,7 +185,8 @@ private slots:
   void gen_points()
   {
     widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+	// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
     CGAL::Random_points_in_disc_2<Point> g(0.5);
