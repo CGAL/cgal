@@ -119,14 +119,6 @@ int main ()
   // std::cout << "sign(sqrt(2)) = " << CGAL_NTS sign(CGAL_NTS sqrt(NT(2))) << std::endl;
   // std::cout << "sign(square(2)) = " << CGAL_NTS sign(CGAL_NTS square(NT(2))) << std::endl;
   // bool pipo = e < d;
-  std::cout << "sizeof(rep) = " << sizeof(CGAL::Lazy_exact_rep<int>)
-            << std::endl;
-  std::cout << "sizeof(cst) = " << sizeof(CGAL::Lazy_exact_Cst<int>)
-            << std::endl;
-  std::cout << "sizeof(abs) = " << sizeof(CGAL::Lazy_exact_Abs<int>)
-            << std::endl;
-  std::cout << "sizeof(add) = " << sizeof(CGAL::Lazy_exact_Add<int>)
-            << std::endl;
   std::cout << "sizeof(Exat_NT) = " << sizeof(Exact_NT) << std::endl;
   std::cout << "sizeof(Lazy_exact_nt) = " << sizeof(CGAL::Lazy_exact_nt<int>)
             << std::endl;
