@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_default_data_structure_2.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationdefaultdatastructureRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdefaultdatastructureDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_default_data_structure_2<Traits,Vb,Fb>} 
+ %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{tds}
+\ccDefinition
+  
+The class \ccRefName\ is the default model for the concept
+\ccc{TriangulationDataStructure_2}.
+The class \ccRefName 
+is highly economic with respect to memory space but its use is
+restricted
+to planar embedded triangulation.
+
+As required this class has two template parameters \ccc{Vb} anf \ccc{Fb}
+which have 
+to be models for respectively the
+\ccc{TriangulationVertexBase_2} and 
+the \ccc{TriangulationFaceBase_2} concepts.
+
+In addition, the class \ccClassTemplateName\ has a first template parameter
+which is a geometric traits class. This may be surprising because
+the triangulation data structure is supposed to deal only with the combinatorial
+aspect of the triangulation and not with any geometric embedding
+The reason for that is the following.
+The class \ccRefName\ does not use any additional data structure
+such as a list or a vector to act as a container for faces and vertices.
+The iterators which allows to visit all faces and vertices of the
+triangulation
+data structure
+is implemented using  an implicit tree structure over the faces
+as described by
+ de Berg, van Oostrum, and Overmars, 
+in Proc.\ 12th Annual Symp.\ on Comput.\ Geom.,
+1996, pages C5--C6. This tree structure is  based on the planar
+geometric embedding
+the triangulation. Each face 
+ can find its parent 
+and its children using only simple comparisons on the
+coordinates of the points embedding its vertices.
+Thus the tree structure may remain implicit 
+and does not require any additional memory. 
+
+The requirements concerning the geometric traits \ccc{Traits} of
+\ccc{Triangulation_default_data_structure_2}
+ are very light and form a subset of the concept
+\ccc{TriangulationTraits_2}.
+This class is required  to provide a type \ccc{Point}
+and the coordinate comparison functions \ccc{compare_x(Point p0, Point p1)} and
+\ccc{compare_y(Point p0, Point p1)}. The point type
+defined by the geometric traits class of the triangulation data structure
+has to be the same 
+as the point type defined by the geometric traits of the triangulation.
+This is achieved if the same model is used for both traits classes
+which is recommended but not compulsory.
+
+
+\ccInclude{Triangulation_default_data_structure_2.h}
+
+\ccIsModel
+
+\ccc{TriangulationDataStructure_2}
+
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_2},
+\ccc{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

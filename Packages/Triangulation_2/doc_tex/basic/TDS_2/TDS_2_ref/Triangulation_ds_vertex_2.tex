@@ -1,0 +1,149 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure_2::Vertex.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationdatastructure::VertexRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructure::VertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDataStructure_2::Vertex}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the vertex class of a
+\ccc{Triangulation_data_structure_2}.
+The vertex stores a point and a pointer to an incident face.
+
+To ensure all the \textbf{flexibility} of class 
+\ccc{CGAL::Triangulation_2<Traits,Tds>}
+described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
+and in Chapter~\ref{Chapter_2D_Triangulations}, a model of 
+\ccRefName derives from a template parameter
+\ccc{Vb} to be instantiated with a model of 
+\ccc{Triangulation_vertex_base_2}.
+
+
+\ccTypes
+The class \ccRefName\ defines the same types as 
+the triangulation data structure 
+except the iterators.
+
+\ccCreationVariable{v}  %% choose variable name
+
+\begin{ccAdvanced}
+\ccCreation
+
+
+\ccConstructor{TriangulationDataStructure_2::Vertex();}{default
+constructor.
+ The geometric information is
+ initialized by the default constructor of class \ccc{Point}.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{TriangulationDataStructure_2::Vertex(const Point&
+p);}
+{introduces a vertex \ccVar, and initializes the geometric information.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{TriangulationDataStructure_2::Vertex(const Point& p,
+                      Face* f);}
+{introduces a vertex \ccVar, and initializes the geometric information and 
+the pointer to the incident face.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_point(const Point& p);}
+{sets the geometric information to \ccc{p}.}
+\ccGlue
+\ccMethod{void set_face(Face* f);}
+{sets the incident face to \ccc{f}.}
+
+
+\end{ccAdvanced}
+
+\ccHeading{Access Functions}
+
+\ccMethod{Point point() const;}
+{returns  the geometric information of \ccVar.}
+\ccGlue
+\ccMethod{Face* face() const;}
+{returns a face of the triangulation having  \ccVar\ as vertex.}
+
+\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
+Three circulator classes allow to traverse the edges, and faces
+incident to a given vertex and the adjacent vertices.
+Note that infinite as well as finite incident edges and faces are visited.
+ These circulators are bidirectional
+and their value types are respectively \ccc{Vertex}, \ccc{Edge}
+and \ccc{Face}.
+The  \ccc{operator++} moves the circulator
+counterclockwise around the vertex 
+and  the \ccc{operator--} moves the circulator
+clockwise. 
+
+A face circulator is invalidated by any modification of the face it
+points to. An edge circulator is invalidated
+by any modification of anyone of the two faces incident to the edge
+pointed to.  A vertex circulator that turns around vertex \ccc{v}
+and that has as value a pointer to vertex \ccc{w}, is invalidated
+by any modification of anyone of the two faces incident to \ccc{v}
+and \ccc{w}.
+
+\ccMethod{Vertex_circulator
+          incident_vertices(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with a vertex of \ccc{f} :
+the vertex \ccc{f->vertex(ccw(i))} 
+if \ccc{i} is the index of \ccVar\  in \ccc{f}.} 
+\ccGlue
+\ccMethod{Edge_circulator
+          incident_edges(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with an edge of \ccc{f} :
+the edge \ccc{(f,cw(i))}
+where \ccc{i} is the index of \ccVar\  in \ccc{f}.}
+\ccGlue
+\ccMethod{Face_circulator
+          incident_faces(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\
+and the crculators begins with the face
+\ccc{f}.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int degree() const;}
+{Returns the degree of \ccVar\ in the triangulation.}
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_ds_vertex_2<Vb,Fb>}
+
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationVertexBase_2}.
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

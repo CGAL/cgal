@@ -1,0 +1,112 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Face_base.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulation::FacebaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulation::FacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for
+the base face of a \ccc{Triangulation_2<Traits,Tds>}.
+At the bottom layer, a 
+face stores \ccc{void *} pointers
+ to its three vertices  and to its three neighboring faces.
+The vertices and neighbors are indexed 0,1 and 2 in counterclockwise
+order around the face. Neighbor $i$ lies opposite to vertex $i$.
+
+
+\ccCreation
+\ccCreationVariable{f}  %% choose variable name
+
+\ccConstructor{TriangulationFaceBase_2();}{default constructor.}
+\ccConstructor{TriangulationFaceBase_2(void* v0, void* v1, void* v2);}
+{neighbors are initialized to
+\ccc{NULL}.}
+\ccConstructor{TriangulationFaceBase_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} {initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
+\ccc{n0, n1, n2}.}
+
+\ccAccessFunctions
+\ccMethod{ int dimension();}{returns the dimension.}
+\ccMethod{void* vertex(int i) const;}
+{ \ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v);}{true if \ccc{v} is a vertex
+of \ccc{f}.}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v, int& i) const;}
+{as above and sets \ccc{i} to the index of \ccc{v}}
+\ccGlue
+\ccMethod{int vertex_index(const void* v) const;}{the index of \ccc{v} 
+in \ccc{f}.}
+\ccGlue
+\ccMethod{void* neighbor(int i) const;}{\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool has_neighbor(void* n);}{true if \ccc{n} is a neighbor
+of \ccc{f}.}
+\ccGlue
+\ccMethod{bool has_neigbor(const void* n, int& i) const;}
+{as above and sets i to the index of \ccc{n}.}
+\ccGlue
+\ccMethod{int face_index(const void* n) const;}
+{returns the index of neighbor \ccc{n}.}
+
+\ccHeading{Setting}
+\ccMethod{void set_vertex(int i, void* v);}{\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(void* v0,
+		    void* v1,
+		    void* v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbor(int i, void* n);}{\ccPrecond $0\leq i \leq 2$.} 
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(void* n0,
+		     void* n1,
+		     void* n2);}{sets the neighbors pointers.}
+\ccMethod{void reorient();}
+{Changes the orientation of \ccVar by exchanging \ccc{vertex(0)}
+with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
+\ccMethod{void ccw_permute();}
+{preforms a counterclockwise permutation of the
+ vertices and neighbors of \ccVar.}
+\ccMethod{ void cw_permute();}
+{preforms a clockwise permutation of the
+ vertices and neighbors of \ccVar.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid() const;}{ To perform any required geometrical test on a face.}
+
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure::Face} \\
+\ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

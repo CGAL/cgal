@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.16 (27/7/01)
+- Susan made changes necessary for the manual split and added missing
+  ref pages in TDS_2_ref directory
+
 Ver 5.15 (27/7/01)
 - putt the two chapters of the doc (TDS and Triangulation)
 in separate directories, each with its own _ref subdirectory

@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_face_base_2.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationfacebaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_face_base_2<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{fb}
+\ccDefinition
+  
+The class \ccRefName\ is the default  model for the concept
+\ccc{TriangulationFaceBase_2}.
+It is  templated by a geometric traits class.
+Using for this traits class, the geometric traits class used for the triangulation class
+is strongly recommended. 
+
+These default base class can be used directly or can serve as a base to derive
+other base classes with some additional attribute (a color for example)
+tuned for a specific application.
+
+\ccInclude{Triangulation_face_base_2.h}
+
+\ccIsModel
+\ccc{TriangulationFaceBase_2}
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2}
+
+\ccIndexHintAsSubitem[C]{Triangulation_2}{customizing faces or 
+vertices}
+\ccIndexHintAsSubitem[C]{Triangulation_face_base_2}{customizing}
+
+\ccExample
+The following example derives a new \ccc{Face_base} class from the default
+one and add a color to the faces of the triangulation. 
+The face of the triangulation data structure
+and the face of the triangulation will inherit the new data member 
+and its functionality.
+Any kind of additional fonctionality can thus be added to faces or vertices of a triangulation 
+as long as this functionality  does not involve additional pointers to vertices or faces
+(because the base classes use only void* pointer and have no knowledge
+of the vertex or face types.).
+
+
+\ccIncludeExampleCode{Triangulation_2/colored_face.C}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
