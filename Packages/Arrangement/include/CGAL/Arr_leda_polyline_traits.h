@@ -236,11 +236,9 @@ public:
       
     Segment l2(*pit,*after);
       
-    CGAL_precondition_code(      
-      Comparison_result r = 
-      (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
-      );
-    CGAL_precondition_code(r == EQUAL); 
+    CGAL_assertion(
+      (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1, l2, p) ==
+      EQUAL);
 
     //check if they are left endpoints (and compare to the one from the 
     //right) otherwise -         
