@@ -73,29 +73,29 @@ _test_cls_tds_3( const Tds &)
   tds2.insert_increase_dimension(NULL);
   assert( tds2.number_of_vertices() == 1 );
   Tds tds3(tds2);
-  Vertex * v2 = tds3.create_vertex();
 
   Vertex_iterator vit;
   vit=tds3.vertices_begin();
+  Vertex * v2 = tds3.create_vertex();
   tds3.insert_increase_dimension(v2,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds4 = tds3;
-  Vertex * v3 = tds4.create_vertex();
   vit=tds4.vertices_begin();
+  Vertex * v3 = tds4.create_vertex();
   tds4.insert_increase_dimension(v3,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
-  Vertex * v4 = tds5.create_vertex();
   vit=tds5.vertices_begin();
+  Vertex * v4 = tds5.create_vertex();
   tds5.insert_increase_dimension(v4,&*vit);
   std::cout << "ok" << std::endl;
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
-  Vertex * v5 = tds6.create_vertex();
   vit=tds6.vertices_begin();
+  Vertex * v5 = tds6.create_vertex();
   tds6.insert_increase_dimension(v5,&*vit);
   std::cout << "ok" << std::endl;
 
