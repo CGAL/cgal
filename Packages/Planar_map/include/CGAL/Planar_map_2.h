@@ -454,7 +454,10 @@ public:
     if (use_delete_bb) delete bb;
     if (use_delete_traits) delete traits;
   }
-  
+
+  // Inserts a new curve cv in the interior of the face f.
+  // Returns the halfedge which is directed in the same way as the curve cv
+  // (i.e., traits->curve_source(cv) == h.source()).
   Halfedge_handle insert_in_face_interior(const X_curve& cv, Face_handle f) 
   {
     Halfedge_handle h = Topological_map<Dcel>::insert_in_face_interior(f);
