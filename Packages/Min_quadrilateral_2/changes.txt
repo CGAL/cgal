@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Fixed a warning on Borland.
 ALL : Changed concept names, added README for demo.
 DEMO: Do not compute min_strip for < 2 and min_quad for < 3 points.
 
