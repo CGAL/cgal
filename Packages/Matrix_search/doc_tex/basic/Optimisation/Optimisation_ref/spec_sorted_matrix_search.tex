@@ -15,7 +15,7 @@
   entry in a set of sorted matrices that fulfills a certain criterion.
 
   \ccHtmlNoClassToc\begin{ccHtmlClassFile}{sorted_matrix_search.html}
-    {Function Declaration of CGAL_sorted_matrix_search}
+    {Function Declaration of \ccc{CGAL_sorted_matrix_search}}
     \ccTexHtml{}{
       <H3>Sorted Matrix Search</H3>
       
@@ -31,9 +31,9 @@
         \forall \, 1 \le i < r,\; 1 \le j \le l\; :\; m_{i j} \le m_{(i+1) j} 
         \;\;.
       \end{eqnarray*}
-
-      Now let ${\cal M}$ be a set of $n$ sorted matrices over $S$ and $f$ be
-      a monotone predicate on $S$, i.e. 
+      
+      Now let $\mathcal{M}$ be a set of $n$ sorted matrices over $S$
+      and $f$ be a monotone predicate on $S$, i.e.
       $$
       f\: :\: S \longrightarrow\, \textit{bool} \quad{\rm with}\quad f(r)
       \;\Longrightarrow\; \forall\, t \in S\,,\: t > r \; :\; f(t)\;.
@@ -47,12 +47,12 @@
       matrices over <I>S</I> and <I>f</I> be a monotone predicate on
       <I>S</I>, i.e.  <P> <IMG WIDTH=445 HEIGHT=16 ALIGN=BOTTOM
       ALT="displaymath32" SRC="./MatrixSearch_sorted4.gif" > <P><BR>}
-
-    If we assume there is any feasible element in one of the matrices in
-    \ccTexHtml{${\cal M}$}{<IMG WIDTH=18 HEIGHT=13 ALIGN=BOTTOM
-      ALT="tex2html_wrap_inline21" SRC="./MatrixSearch_sorted3.gif" >}, there
-    certainly is a smallest such element. This is the one we are
-    searching for.
+    
+    If we assume there is any feasible element in one of the matrices
+    in \ccTexHtml{$\mathcal{M}$}{<IMG WIDTH=18 HEIGHT=13 ALIGN=BOTTOM
+      ALT="tex2html_wrap_inline21" SRC="./MatrixSearch_sorted3.gif"
+      >}, there certainly is a smallest such element. This is the one
+    we are searching for.
 
     The feasibility test as well as some other parameters can (and have
     to) be customized through a traits class. The requirements for this
@@ -85,10 +85,10 @@
     
     \ccImplementation The implementation uses an algorithm by
     Frederickson and Johnson\cite{fj-fkppc-83},\cite{fj-gsrsm-84} and
-    runs in ${\cal O}(n \cdot k + f \cdot \log (n \cdot k))$, where $n$
-    is the number of input matrices, $k$ denotes the maximal dimension
-    of any input matrix and $f$ the time needed for one feasibility
-    test.
+    runs in $\mathcal{O}(n \cdot k + f \cdot \log (n \cdot k))$, where
+    $n$ is the number of input matrices, $k$ denotes the maximal
+    dimension of any input matrix and $f$ the time needed for one
+    feasibility test.
     
     \ccExample In the following program we build a random vector $a =
     (a_i)_{i = 1,\,\ldots,\,5}$ (elements drawn uniformly from $\{

@@ -24,21 +24,56 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - demo program
 // ============================================================================
 
+#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
+#endif // CGAL_CARTESIAN_H
+#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
+#endif // CGAL_ISO_RECTANGLE_2_H
+#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
+#endif // CGAL_POINT_2_H
+#ifndef CGAL_IO_LEDA_WINDOW_H
 #include <CGAL/IO/leda_window.h>
+#endif // CGAL_IO_LEDA_WINDOW_H
+#ifndef CGAL_IO_OSTREAM_ITERATOR_H
 #include <CGAL/IO/Ostream_iterator.h>
+#endif // CGAL_IO_OSTREAM_ITERATOR_H
+#ifndef CGAL_IO_ISTREAM_ITERATOR_H
 #include <CGAL/IO/Istream_iterator.h>
+#endif // CGAL_IO_ISTREAM_ITERATOR_H
+#ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
+#endif // CGAL_RECTANGULAR_P_CENTER_2_H
+#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
+#endif // CGAL_POINT_GENERATORS_2_H
+#ifndef CGAL_COPY_N_H
 #include <CGAL/copy_n.h>
+#endif // CGAL_COPY_N_H
+#ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
+#endif // CGAL_LEDA_REAL_H
+#ifndef CGAL_PROTECT_IOSTREAM_H
 #include <iostream.h>
+#define CGAL_PROTECT_IOSTREAM_H
+#endif // CGAL_PROTECT_IOSTREAM_H
+#ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
+#define CGAL_PROTECT_VECTOR_H
+#endif // CGAL_PROTECT_VECTOR_H
+#ifndef CGAL_PROTECT_ALGO_H
 #include <algo.h>
+#define CGAL_PROTECT_ALGO_H
+#endif // CGAL_PROTECT_ALGO_H
+#ifndef CGAL_PROTECT_FUNCTION_H
 #include <function.h>
+#define CGAL_PROTECT_FUNCTION_H
+#endif // CGAL_PROTECT_FUNCTION_H
+#ifndef CGAL_PROTECT_STDLIB_H
 #include <stdlib.h>
+#define CGAL_PROTECT_STDLIB_H
+#endif // CGAL_PROTECT_STDLIB_H
 
 typedef double                     FT;
 // typedef leda_real                  FT;
@@ -59,7 +94,10 @@ typedef ostream_iterator< Square_2 >   Ostream_iterator_square;
 typedef CGAL_Istream_iterator< Point_2, leda_window>
   Istream_iterator_point;
 
+#ifndef CGAL_PROTECT_TIME_H
 #include <time.h>
+#define CGAL_PROTECT_TIME_H
+#endif // CGAL_PROTECT_TIME_H
 static time_t Measure;
 static long long int measure;
 #define MEASURE(comm) \

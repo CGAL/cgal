@@ -17,7 +17,7 @@ minimal distance between both sets is minimized.
 
 \ccHtmlNoClassToc
 \begin{ccHtmlClassFile}{rectangular_p_centers.html}
-  {Definition of function CGAL_rectangular_p_center_2}
+  {Definition of function \ccc{CGAL_rectangular_p_center_2}}
   \ccTexHtml{}{
     <H3>Rectangular <I>p</I>-Centers</H3>
     
@@ -28,30 +28,30 @@ minimal distance between both sets is minimized.
   
   More formally the problem can be defined as follows.
   
-  \ccTexHtml{Given a finite set ${\cal P}$ of points, compute a point
-    set ${\cal C}$ with $|{\cal C}| \le p$ such that the $p$-radius of
-    ${\cal P}$,
+  \ccTexHtml{Given a finite set $\mathcal{P}$ of points, compute a
+    point set $\mathcal{C}$ with $|\mathcal{C}| \le p$ such that the
+    $p$-radius of $\mathcal{P}$,
     $$
-    rad_p({\cal P}) := \max_{P \in {\cal P}} \min_{Q \in {\cal C}} || P
-    - Q ||_\infty
+    rad_p(\mathcal{P}) := \max_{P \in \mathcal{P}} \min_{Q \in
+      \mathcal{C}} || P - Q ||_\infty
     $$
-    is minimized. We can interpret ${\cal C}$ as the best
-    approximation (with respect to the given metric) for ${\cal P}$
+    is minimized. We can interpret $\mathcal{C}$ as the best
+    approximation (with respect to the given metric) for $\mathcal{P}$
     with at most $p$ points.}{Given a finite set <IMG WIDTH=12
     HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
     SRC="./MatrixSearch_pcenter1.gif" > of points, compute a point set
     <IMG WIDTH=9 HEIGHT=13 ALIGN=BOTTOM ALT="tex2html_wrap_inline19"
     SRC="./MatrixSearch_pcenter2.gif" > with <IMG WIDTH=46 HEIGHT=24
     ALIGN=MIDDLE ALT="tex2html_wrap_inline21"
-    SRC="./MatrixSearch_pcenter3.gif" > such that the <I>p</I>-radius of
+    SRC="./MatrixSearch_pcenter3.gif" > such that the <I>p</I>-radius
+    of <IMG WIDTH=12 HEIGHT=12 ALIGN=BOTTOM
+    ALT="tex2html_wrap_inline17" SRC="./MatrixSearch_pcenter1.gif" > ,
+    <P> <IMG WIDTH=358 HEIGHT=24 ALIGN=BOTTOM ALT="displaymath27"
+    SRC="./MatrixSearch_pcenter4.gif" > <P> is minimized. We can
+    interpret <IMG WIDTH=9 HEIGHT=13 ALIGN=BOTTOM
+    ALT="tex2html_wrap_inline19" SRC="./MatrixSearch_pcenter2.gif" >
+    as the best approximation (with respect to the given metric) for
     <IMG WIDTH=12 HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
-    SRC="./MatrixSearch_pcenter1.gif" > , <P> <IMG WIDTH=358 HEIGHT=24
-    ALIGN=BOTTOM ALT="displaymath27" SRC="./MatrixSearch_pcenter4.gif" >
-    <P> is minimized. We can interpret <IMG WIDTH=9 HEIGHT=13
-    ALIGN=BOTTOM ALT="tex2html_wrap_inline19"
-    SRC="./MatrixSearch_pcenter2.gif" > as the best approximation (with
-    respect to the given metric) for <IMG WIDTH=12 HEIGHT=12
-    ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
     SRC="./MatrixSearch_pcenter1.gif" > with at most <I>p</I> points.}
 
 \ccInclude{CGAL/rectangular_p_center_2.h}
@@ -94,8 +94,8 @@ minimal distance between both sets is minimized.
   \ccImplementation The implementation uses sorted matrix search (see
   section \ref{secSortedMatrixSearch}) and fast algorithms for
   piercing rectangles\cite{sw-rpppp-96} which leads to a runtime
-  complexity of ${\cal O}(n \cdot \log n)$ where $n$ is the number of
-  input points.
+  complexity of $\mathcal{O}(n \cdot \log n)$ where $n$ is the number
+  of input points.
   
   \ccExample The following code generates a random set of ten points
   and computes its two-centers.

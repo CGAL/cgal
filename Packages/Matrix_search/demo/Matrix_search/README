@@ -1,4 +1,4 @@
-demo/Matrix_search/README
+demo/${PACKAGE}/README
 ---------------------------
 
 Interactive demo programs of some optimisation algorithms in CGAL.

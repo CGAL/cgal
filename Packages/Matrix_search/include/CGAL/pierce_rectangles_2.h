@@ -968,14 +968,18 @@ CGAL_three_pierce_rectangles(
   OutputIterator o,
   bool& ok)
 {
-  int number_of_points( CGAL_iterator_distance( f, l));
+#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+  typedef ptrdiff_t difference_type;
+#else  // CGAL_CFG_NO_ITERATOR_TRAITS //
+  typedef typename iterator_traits< RandomAccessIC >::difference_type
+    difference_type;
+#endif // CGAL_CFG_NO_ITERATOR_TRAITS //
+  difference_type number_of_points( CGAL_iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
 
   // typedefs:
-  typedef typename Traits::Point_2
-    Point_2;
-  typedef typename Traits::Iso_rectangle_2
-    Iso_rectangle_2;
+  typedef typename Traits::Point_2          Point_2;
+  typedef typename Traits::Iso_rectangle_2  Iso_rectangle_2;
   typedef CGAL_Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
     Has_on_unbounded_side;
 
@@ -1450,9 +1454,6 @@ CGAL_four_pierce_rectangles(
     CGAL_optimisation_assertion( top_side_above_top_side_of_lr >= d.ymin());
     
     
-    
-    // one-piercing intervall of s[LR]:
-    Intervall I_LR;
     
     // one-piercing intervall of s[BT]:
     Intervall I_BT;

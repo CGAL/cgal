@@ -38,10 +38,9 @@ class CGAL_Dynamic_matrix
 // and extraction of all even rows in linear time
 {
 public:
-  typedef vector< int >             CoordContainer;
-  typedef CGAL_Dynamic_matrix< Matrix >
-    ThisMatrixClass;
-  typedef typename Matrix::Value    Value;
+  typedef vector< int >                  CoordContainer;
+  typedef CGAL_Dynamic_matrix< Matrix >  ThisMatrixClass;
+  typedef typename Matrix::Value         Value;
 
   CGAL_Dynamic_matrix( const Matrix& m,
                        int r_p = 0)
@@ -50,7 +49,7 @@ public:
     row_power( r_p),
     row_offset( (1 << r_p) - 1)
   {
-    for ( int i( 0); i < column_indices.size(); ++i)
+    for ( unsigned int i( 0); i < column_indices.size(); ++i)
       column_indices[i] = i;
   }
 
