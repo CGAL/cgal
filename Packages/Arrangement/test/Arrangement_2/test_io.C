@@ -489,10 +489,13 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       file1.getline(s1, STR_LEN);
       file2.getline(s2, STR_LEN);
       
-      //cout<<s1<<endl;
-      //cout<<s2<<endl;
-      
-       CGAL_assertion(std::string(s1) == std::string(s2));
+      if (std::string(s1) != std::string(s2))
+      {
+        std::cout << "Strings are not equal:" << std::endl
+                  << "String 1: " << s1 << std::endl
+                  << "String 2: " << s2 << std::endl;
+        exit(-1);
+      }
     }
     
      CGAL_assertion(file1.eof() && file2.eof());
