@@ -1,3 +1,6 @@
+Version 1.106 (1 March 02)
+- Updates for DS_Container.
+
 Version 1.105 (18 February 02)
 - Shorten DS_Container::Free_elt so that TDS_2 can use it.
 - Add a copy of DS_Container that preserves the iterator order.

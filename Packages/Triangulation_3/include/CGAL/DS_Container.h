@@ -75,6 +75,8 @@
 
 // TODO :
 // - Add a const_iterator
+// - .merge(DS_container &) that merges two containers into one.
+//   (useful for divide and conquer and co ?)
 // - The magic_key is not clean, we should preferably require
 //   some member functions from Elt to store the necessary information
 //   (a bit like In_place_list does).
@@ -123,6 +125,7 @@ class DS_Container
 public:
 
     typedef Elt                         value_type;
+    typedef const Elt &                 const_reference;
     typedef DS_Container_iterator<Self> iterator;
     typedef std::size_t                 size_type;
 
@@ -143,8 +146,10 @@ public:
 
     DS_Container & operator=(const DS_Container &c)
     {
-	clear();
-	std::copy(c.begin(), c.end(), std::back_inserter(*this));
+	if (&c != this) {
+	    clear();
+	    std::copy(c.begin(), c.end(), std::back_inserter(*this));
+	}
 	return *this;
     }
 
