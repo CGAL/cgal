@@ -2,12 +2,6 @@
   first time you run the program), then the bug is still there.
   Try to fix it properly with select().
   It's still probably a bug in Geomview.
-- Finish get rid of standard deprecated (and gcc 2.97 unfriendly) strstream.
-  http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
-  It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
-  Maybe CGAL should define it ?  Or simply CGAL should define
-  <strstream> = <backward/strstream> for gcc > 2.95 ?
-  Or wait for an update of gcc that fixes it ? :)
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
 - What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the

@@ -1,6 +1,51 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
+- Remove all global function usage, and replace by common code for all kernels.
+  The backward compatible layer could look like :
+
+// The following should work for all Point types which have an internal "R".
+template <class Point>
+Orientation
+orientation(const Point &p, const Point &q, const Point &r)
+{
+  return Point::R::orientation_2_object()(p, q, r);
+}
+
+// However, it's a bit too general, as shows :
+template <class Point>
+// Point::R::Vector_2 // and Vector_3 ?
+Point::Vector // fixes the dimension choice.
+operator-(const Point &p, const Point &q)
+{
+  return Point::R::Construct_vector_2_object()(p, q);
+}
+// This is still loosy.  So maybe having these operators as member functions
+// will be fine for backward compatible stuff...
+// Also look at what Michael proposed on the list.
+
+// Or we keep also this stuff, but don't maintain nor add new stuff...
+
+// Another idea : write a backward compatible wrapper for any kernel,
+// say, Backward<R> using only the kernel traits R, and giving the additional
+// interface to get an "old kernel interface" from it.
+// So in particular, we would have :
+template <class R>
+Backward
+{
+  typedef CGAL::Point_2<Backward<R> > Point_2;
+};
+// Backward<R> would also be a valid kernel traits, but with
+// R::Point_2 != Backward<R>::Point_2.
+ 
+// So, to sum up (and ask the list) :
+// - is this acceptable if we drop all compatibility stuff with the old
+//   non-traits interface ?
+// - if not, is the Backward<> approach acceptable ?
+// [Note : ideally, all code in CGAL should be converted to use the traits only]
+
+------------------------
+
 - Tests :
   - GCOV
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
@@ -32,6 +77,7 @@ Stuff to look at, as time permits:
     on the command line, and not in config.h... ?
   - Have a separate (top-level) kernel for the advanced cartesian ? 
 
+- Remove operator!=() definitions, and use STL ?
 - Move include/CGAL/Kernel_common_traits.h to
   include/CGAL/Kernel/common_traits.h ?
 - Use CGAL_TYPENAME_MSVC_NULL where needed.
@@ -118,6 +164,9 @@ Stuff to look at, as time permits:
     un truc d'efficacite la dedans?
     ou alors c'est juste pour avoir l'interface des classes utilisateurs plus
     lisible ?
+- Herve complains that the design of the CGAL kernel is too
+  cartesian/homogeneous oriented, whereas it could be made more general (think
+  polar kernel).  Anyone with a concrete proposal ? :)
 
 Notes:
 ------
