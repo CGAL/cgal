@@ -1,0 +1,34 @@
+There are four demos. To activate them just run : demo{index}
+for example : demo1
+
+In the leda window you will see three types of objects:
+
+1. Input segments - in black.
+2. Iterated Snap Rounding output objects - in red.
+3. Hot pixels - in green.
+
+It may take a while to show the output.
+
+You can also create demos of your own. In order to do it, you first should
+create an input file. The input file is in the following form: first
+the number of input segments and then a for each segment a quadruple
+representing its two endpoints. The first two numbers of the quadruple
+are the x and y values of the first endpoint respectively and than
+the x and y values of the second endpoint respectively. The following is an example
+of an input file of four segments.
+
+4
+0.7 0.5 10.7 10.7
+0.7 10.5 10.5 0.5
+10.7 2.5 0.7 2.5
+10.7 7.5 0.7 7.5
+
+After you finish writing the input file you run the demo. The syntax is:
+
+demo <precision> <input file name> [do_isr = t][wait for a click = f]
+
+The first parameter determines the precision of the Iterated Snap Rounding.
+The third parameter determines whether to do a regular Snap Rounding
+or an Iterated Snap Rounding.
+The fourth parameter determines if the user should press a button
+before he sees the output.
