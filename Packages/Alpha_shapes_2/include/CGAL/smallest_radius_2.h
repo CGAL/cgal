@@ -25,23 +25,14 @@
 #ifndef CGAL_SMALLEST_RADIUS_2_H
 #define CGAL_SMALLEST_RADIUS_2_H
 
-#ifdef CGAL_HOMOGENEOUS_H
-#include <CGAL/smallest_radiusH2.h>
-#endif // CGAL_HOMOGENEOUS_H
-
-#ifdef CGAL_CARTESIAN_H
-#include <CGAL/smallest_radiusC2.h>
-#endif // CGAL_CARTESIAN_H
-
 #include <CGAL/Point_2.h>
-#include <CGAL/Circle_2.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template <class R >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 typename R::FT
 squared_radius_smallest_circumcircle(const Point_2<R> &p,
 				     const Point_2<R> &q) 
@@ -49,20 +40,6 @@ squared_radius_smallest_circumcircle(const Point_2<R> &p,
   typedef typename R::FT Return_type;
   Vector_2<R> v(p - q);
   return (Return_type ((v*v)/4));
-}
-
-template <class R >
-inline
-typename R::FT
-squared_radius_circumcircle(const Point_2<R> &p,
-			    const Point_2<R> &q,
-			    const Point_2<R> &r) 
-{
-  typedef typename R::Point_2_base Point_two; 
-  // compute the smallest radius directly
-  return squared_radius_circumcircle((const Point_two&) p,
-				     (const Point_two&) q,
-				     (const Point_two&) r);
 }
 
 //-------------------------------------------------------------------

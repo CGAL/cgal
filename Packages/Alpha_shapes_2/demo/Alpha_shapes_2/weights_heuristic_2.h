@@ -53,31 +53,16 @@
 
 #include <CGAL/basic.h>
 
-// SGI MIPSpro C++ 7.x
-#ifdef STL_HASH_TABLES
-#include <hash_set>
-#include <hash_map>
-#include <map>
-#else
-#include <set>
-#include <map>
-#endif
-
-#include <algorithm>
-#include <utility>
-#include <iostream>
-
 #include <CGAL/Alpha_shape_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/less_partial.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template < class Rt >
-class Weighted_alpha_shape_2 : public Alpha_shape_2<Rt>
+class Weighted_alpha_shape_2: public Alpha_shape_2<Rt>
 {
 
   //------------------------- TYPES ------------------------------------

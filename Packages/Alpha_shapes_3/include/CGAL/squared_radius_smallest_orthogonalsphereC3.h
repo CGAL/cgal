@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template< class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 FT 
 squared_radius_orthogonalsphere(
   const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,
@@ -71,7 +71,7 @@ squared_radius_orthogonalsphere(
 }
 
 template< class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 FT 
 squared_radius_smallest_orthogonalsphere(
   const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,
@@ -97,7 +97,7 @@ squared_radius_smallest_orthogonalsphere(
 }
 
 template< class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 FT 
 squared_radius_smallest_orthogonalsphere(
    const Weighted_point<Point_3< Cartesian<FT> >, FT> &p,

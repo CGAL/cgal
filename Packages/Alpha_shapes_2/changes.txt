@@ -1,3 +1,7 @@
+version 10.0:
+using multimaps
+design for 2D & 3D coordinate.
+
 version 9.0:
 new iterators added to describe the alpha shape for a certain value alpha.
 edges are now described as a pair of interior face and the corresponding index.

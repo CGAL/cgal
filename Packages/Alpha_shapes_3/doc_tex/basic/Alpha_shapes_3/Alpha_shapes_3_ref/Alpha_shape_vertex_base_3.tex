@@ -33,7 +33,7 @@
 %
 % ----------------------------------------------------------------------
 %
-% package       : Alpha_shapes_2
+% package       : Alpha_shapes_3
 % author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 %
 % coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
@@ -45,7 +45,7 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_vertex_base}
+\begin{ccRefClass}{Alpha_shape_vertex_base_3}
 
 \ccDefinition
 
@@ -54,7 +54,7 @@ They are listed below as such.
 
 \ccInheritsFrom
 
-\ccc{Triangulation_vertex_base}
+\ccc{Triangulation_vertex_base_3}
 
 \ccCreationVariable{v}
 
@@ -73,13 +73,13 @@ the \ccc{Gt}, already used by underlying triangulation \ccc{Dt}.}
 
 \begin{ccAdvanced}
 
-\ccConstructor{Alpha_shape_vertex_base();}{default constructor.}
+\ccConstructor{Alpha_shape_vertex_base_3();}{default constructor.}
 \ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
+\ccConstructor{Alpha_shape_vertex_base_3(Point p);}{constructor setting
 the point associated to.}
 \ccGlue
-\ccConstructor{Alpha_shape_vertex_base(Point p, void* f);} 
-{constructor setting the point  associated to and an incident face.}
+\ccConstructor{Alpha_shape_vertex_base_3(Point p, void* c);} 
+{constructor setting the point  associated to and an incident cell.}
 
 \end{ccAdvanced}
 

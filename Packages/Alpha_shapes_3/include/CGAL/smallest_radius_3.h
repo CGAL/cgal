@@ -25,14 +25,6 @@
 #ifndef SMALLEST_RADIUS_3_H
 #define SMALLEST_RADIUS_3_H
 
-#ifdef CGAL_HOMOGENEOUS_H
-#include <CGAL/smallest_radiusH3.h>
-#endif // CGAL_HOMOGENEOUS_H
-
-#ifdef CGAL_CARTESIAN_H
-#include <CGAL/smallest_radiusC3.h>
-#endif // CGAL_CARTESIAN_H
-
 #include <CGAL/Point_3.h>
 
 //-------------------------------------------------------------------
@@ -41,37 +33,12 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R >
 typename R::FT
-inline squared_radius_smallest_circumsphere(const Point_3<R> &p,
-					    const Point_3<R> &q)
+CGAL_KERNEL_MEDIUM_INLINE
+squared_radius_smallest_circumsphere(const Point_3<R> &p,
+				     const Point_3<R> &q)
 {
   Vector_3<R> v(p - q);
   return typename R::FT ((v*v)/R::FT(4));
-}
-
-template <class R >
-typename R::FT
-inline squared_radius_smallest_circumsphere(const Point_3<R> &p,
-					    const Point_3<R> &q,
-					    const Point_3<R> &r)
-{
-  typedef typename R::Point_3_base Point_three;
-  return squared_radius_smallest_circumsphere((const Point_three&)p,
-					      (const Point_three&)q,
-					      (const Point_three&)r);
-}
-
-template <class R >
-typename R::FT
-inline squared_radius_circumsphere(const Point_3<R> &p,
-				   const Point_3<R> &q,
-				   const Point_3<R> &r,
-				   const Point_3<R> &s)
-{
-  typedef typename R::Point_3_base Point_three;
-  return squared_radius_circumsphere((const Point_three&)p,
-				     (const Point_three&)q,
-				     (const Point_three&)r,
-				     (const Point_three&)s);  
 }
 
 //-------------------------------------------------------------------

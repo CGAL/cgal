@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
 template< class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 in_smallest_orthogonalsphere(
 			     const Weighted_point<Point_3< Cartesian<FT> >, FT > &p,

@@ -316,11 +316,9 @@ is an internal format.
 \ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Segment}.}
 
 \ccImplementation
-In the first static version, the set of intervals associated with the
+In this, the set of intervals associated with the
 $k$-dimensional faces of the underlying triangulation are
-stored only as sorted \ccc{vectors}. By using an interval tree the
-alpha-shape could be constructed more efficiently. For the dynamic
-version, we need \ccc{multimaps} or dynamic interval trees.
+stored only as \ccc{multimaps}.
 
 The cross links between the intervals and the $k$-dimensional faces of the
 triangulation are actually realized using methods in the $k$-dimensional faces

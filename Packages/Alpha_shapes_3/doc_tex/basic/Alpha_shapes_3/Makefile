@@ -3,7 +3,7 @@
 ps: alpha.ps
 
 alpha.ps: dvi
-	dvips -o Alpha_shapes_2.ps wrapper.dvi
+	dvips -o Alpha_shapes_3.ps wrapper.dvi
 
 dvi: wrapper.dvi
 

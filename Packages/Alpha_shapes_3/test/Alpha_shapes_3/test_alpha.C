@@ -5,8 +5,6 @@ correspondant a l'Alpha Shape.
 
 ************************************************************************/
 
-
-
 #include <CGAL/basic.h>
 #include <cstdio>
 #include <cstring>

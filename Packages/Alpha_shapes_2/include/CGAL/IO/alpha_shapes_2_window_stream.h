@@ -54,13 +54,13 @@ Alpha_shape_2<Dt>::op_window(Window_stream& W) const
 
 	  pInterval = &(*edge_alpha_it).first;
 
-	  CGAL_triangulation_assertion(pInterval->second != INFINITY);
+	  CGAL_triangulation_assertion(pInterval->second != Infinity);
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
 
 	  if(pInterval->second < get_alpha() &&
 	     (pInterval->third >= get_alpha()
-	      || pInterval->third == INFINITY)) 
+	      || pInterval->third == Infinity)) 
 	    {
 	      // alpha must be larger than the mid boundary
 	      // and alpha is smaller than the upper boundary
@@ -102,13 +102,13 @@ Alpha_shape_2<Dt>::op_window(Window_stream& W) const
 	  if (pInterval->first == UNDEFINED) 
 	    {
 	    
-	      CGAL_triangulation_assertion(pInterval->second != INFINITY);
+	      CGAL_triangulation_assertion(pInterval->second != Infinity);
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 
 	      if(pInterval->second < get_alpha() &&
 		 (pInterval->third >= get_alpha()
-		  || pInterval->third == INFINITY)) 
+		  || pInterval->third == Infinity)) 
 		{
 		  // alpha must be larger than the mid boundary
 		  // and alpha is smaller than the upper boundary
@@ -127,7 +127,7 @@ Alpha_shape_2<Dt>::op_window(Window_stream& W) const
 	   
 
 	      if(pInterval->third >= get_alpha()
-		 || pInterval->third == INFINITY) 
+		 || pInterval->third == Infinity) 
 		{
 		  // if alpha is smaller than the upper boundary
 		  // which might be infinity 

@@ -33,7 +33,7 @@
 %
 % ----------------------------------------------------------------------
 %
-% package       : Alpha_shapes_2
+% package       : Alpha_shapes_3
 % author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 %
 % coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
@@ -45,7 +45,7 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_face_base<Df>}
+\begin{ccRefClass}{Alpha_shape_cell_base_3<Df>}
 
 \ccDefinition
 
@@ -58,7 +58,7 @@ They are listed below as such.
 
 \ccc{Df}
 
-\ccCreationVariable{f}
+\ccCreationVariable{c}
 \ccTypes
 
 \ccNestedType{Interval_3}{A container type to get (and put) the three special values 
@@ -72,49 +72,50 @@ declaration and initialization with a small integer constant
 coordinate type of the point class.
 \ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
 \ccc{Gt}, already used by the underlying triangulation \ccc{Dt}, and by
-her face base \ccc{Df}.} 
+her cell base \ccc{Df}.} 
 
 \ccCreation
 
 \begin{ccAdvanced}
 
-\ccConstructor{Alpha_shape_face_base();}{default constructor.}
+\ccConstructor{Alpha_shape_cell_base_3();}{default constructor.}
 \ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
+\ccConstructor{Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
-{constructor setting the incident vertices and the neighboring faces.}
+\ccConstructor{Alpha_shape_cell_base_3(void* v0, void* v1, void*  v2, void* v3,
+void* n0, void* n1, void* n2, void* n3);} 
+{constructor setting the incident vertices and the neighboring cells.}
 
 \end{ccAdvanced}
 
 \ccHeading{Access Functions}
 \ccMethod{Interval_3[3] get_ranges();}
-{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
+{returns a vector \ccc{V}, in which, for each facet $i$, \ccc{V[i]} contains
 three alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
 attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
-upper $\alpha_3$, the edge is interior.}
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
+upper $\alpha_3$, the facet is interior.}
 \ccMethod{Coord_type get_alpha();}
 {return the alpha value, under which the alpha shape contains the
-face.}
+cell.}
 
 \ccModifiers
 
 \begin{ccAdvanced}
 
 \ccMethod{void set_ranges(Interval_3[3] V);}
-{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
+{sets the vector \ccc{V}, in which, for each facet $i$, \ccc{V[i]} contains three
 alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
-$\alpha$  between $\alpha_1$ and $\alpha_2$, the edge indexed with $i$ is
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
 attached but singular, 
-for $\alpha$ between $\alpha_2$ and $\alpha_3$, the edge is regular, and for $\alpha$
-upper $\alpha_3$, the edge is interior.}
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
+upper $\alpha_3$, the facet is interior.}
 \ccMethod{void set_alpha(Coord_type A);}
 {sets the alpha value, under which the alpha shape contains the
-face.}
+cell.}
 
 \end{ccAdvanced}
 

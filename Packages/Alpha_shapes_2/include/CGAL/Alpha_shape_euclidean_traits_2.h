@@ -41,13 +41,12 @@
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
 #include <CGAL/smallest_radius_2.h>
-#include <CGAL/side_of_smallest_circle_2.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-//------------------ Function Objects----------------------------------
+//------------------ Function Objects ---------------------------------
 
 template < class return_type, class T >
 class Compute_squared_radius_2
@@ -57,26 +56,12 @@ public:
 
   result_type operator()(const T& p, const T& q, const T& r)
     {
-      return CGAL::squared_radius_circumcircle(p, q, r);
+      return CGAL::squared_radius(p, q, r);
     }
 
   result_type operator()(const T& p, const T& q)
     {
       return CGAL::squared_radius_smallest_circumcircle(p, q);
-    }
-};
-
-//-------------------------------------------------------------------
-
-template < class T >
-class Side_of_bounded_circle_2
-{
-public:
-  typedef Bounded_side result_type;
-  
-  result_type operator()(const T& p, const T& q, const T& t)
-    {
-      return CGAL::side_of_bounded_circle(p, q, t);
     }
 };
 
@@ -92,12 +77,12 @@ public:
 
   typedef Compute_squared_radius_2<Coord_type, Point> 
   Compute_squared_radius_2;
-  typedef Side_of_bounded_circle_2<Point> Side_of_bounded_circle_2;
+  typedef typename R::Side_of_bounded_circle_2 Side_of_bounded_circle_2;
   
   //------------------------------------------------------------------
 
   Compute_squared_radius_2
-  Compute_squared_radius_2_object() const
+  compute_squared_radius_2_object() const
     {
       return Compute_squared_radius_2();
     }

@@ -33,7 +33,7 @@
 %
 % ----------------------------------------------------------------------
 %
-% package       : Alpha_shapes_2
+% package       : Alpha_shapes_3
 % author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 %
 % coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
@@ -45,12 +45,12 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Alpha_shape_2<Dt>}
+\begin{ccRefClass} {Alpha_shape_3<Dt>}
 
 \ccDefinition
 
 The class \ccClassTemplateName\ represents the family of
-$\alpha$-shapes of points in a plane for {\em all} positive
+$\alpha$-shapes of points in the 3D space for {\em all} positive
 $\alpha$. It maintains the underlying triangulation \ccc{Dt} which
 represents connectivity and order among its faces. Each
 $k$-dimensional face of the \ccc{Dt} is associated with
@@ -87,31 +87,31 @@ the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. The
 iterator is bidirectional and non-mutable. Its \ccc{value_type}
 is \ccc{Dt::Vertex_handle}}
 
-\ccNestedType{Alpha_shape_edges_iterator}{An iterator that allow to traverse 
-the edges which belongs to the $\alpha$-shape for a fixed $\alpha$. The iterator
+\ccNestedType{Alpha_shape_facets_iterator}{An iterator that allow to traverse 
+the facets which belongs to the $\alpha$-shape for a fixed $\alpha$. The iterator
 is bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Dt::Edge}}
+is \ccc{Dt::Facet}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
  of the underlying triangulation of the $\alpha$-shape. \\
 \ccc{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
 \ccc{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
- but is not incident to any 2-dimensional face of the $\alpha$-complex\\
+ but is not incident to any 3-dimensional face of the $\alpha$-complex\\
 \ccc{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
- and is incident to a 2-dimensional face of the $\alpha$-complex\\
+ and is incident to a 3-dimensional face of the $\alpha$-complex\\
 \ccc{INTERIOR} if the face belongs to the $\alpha$-complex, but does
 not belong to the boundary of the $\alpha$-shape\\}
 
 \ccEnum{enum Mode {GENERAL, REGULARIZED};}
-{ In general, an alpha shape can be disconnected and contain many singular edges 
-or vertices. Its regularized version is formed by the set of regular edges
+{ In general, an alpha shape can be disconnected and contain many singular facets 
+or vertices. Its regularized version is formed by the set of regular facets
 and their vertices}
 
 \ccCreation
 \ccCreationVariable{A}
 
-\ccConstructor{Alpha_shape_2(Coord_type alpha = 0,
+\ccConstructor{Alpha_shape_3(Coord_type alpha = 0,
 				  Mode m = GENERAL);}
 {Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
  \ccc{alpha}.
@@ -119,7 +119,7 @@ and their vertices}
 
 
 \ccConstructor{template < class InputIterator >
-		Alpha_shape_2(
+		Alpha_shape_3(
 			InputIterator first,
 			InputIterator last,
                 const Coord_type& alpha = 0,
@@ -199,11 +199,11 @@ Returns the previous mode.}
 \ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_begin();}{Starts at
 an arbitrary finite vertex which belongs to the $\alpha$-shape for a fixed $\alpha$.}
 \ccMethod{Alpha_shape_vertices_iterator Alpha_shape_vertices_end();}{Past-the-end iterator.}
-\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_begin();}{Starts at
-an arbitrary finite edge which belongs to the $\alpha$-shape for a fixed
-$\alpha$. In regularised mode, edges are represented as a pair (f,i), where f is 
-an interior face of the $\alpha$-shape.}
-\ccMethod{Alpha_shape_edges_iterator Alpha_shape_edges_end();}{Past-the-end iterator.}
+\ccMethod{Alpha_shape_facets_iterator Alpha_shape_facets_begin();}{Starts at
+an arbitrary finite facet which belongs to the $\alpha$-shape for a fixed
+$\alpha$. In regularised mode, facets are represented as a pair (f,i), where f is 
+an interior cell of the $\alpha$-shape.}
+\ccMethod{Alpha_shape_facets_iterator Alpha_shape_facets_end();}{Past-the-end iterator.}
 
 %\ccMethod{template  < class OutputIterator >
 %	  OutputIterator get_alpha_shape_vertices(
@@ -214,9 +214,9 @@ an interior face of the $\alpha$-shape.}
 %Returns an output iterator which is the end of the constructed range.}
 %
 %\ccMethod{template  < class OutputIterator >
-%	  OutputIterator get_alpha_shape_edges(
+%	  OutputIterator get_alpha_shape_facets(
 %					 OutputIterator result);}
-%{Writes the edges 
+%{Writes the facets 
 %of the alpha shape \ccVar\ for the current $\alpha$-value
 %to the container where \ccc{result} refers to. 
 %The \ccc{value_type} of \ccc{result} is \ccc{pair<Face_handle, int>}.
@@ -232,16 +232,16 @@ an interior face of the $\alpha$-shape.}
 associated k-face with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(Face_handle f, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the face \ccc{f} of the underlying triangulation with respect to \ccVar.}
+           classify(Cell_handle f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the cell \ccc{f} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(pair<Face_handle, int> e, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge \ccc{e} of the underlying triangulation with respect to \ccVar.}
+           classify(pair<Cell_handle, int> f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the facet \ccc{e} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(Face_handle f, int i, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge of the face \ccc{f} opposite to the vertex with index
+           classify(Cell_handle f, int i, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the facet of the cell \ccc{f} opposite to the vertex with index
 \ccc{i} 
 of the underlying triangulation with respect to \ccVar.}	
 
@@ -302,25 +302,28 @@ is an internal format.
 \ccInclude{CGAL/IO/io.h}
 
 \ccFunction{ostream& operator<<(ostream& os,
-                  const Alpha_shape_2<Dt>& A);}
+                  const Alpha_shape_3<Dt>& A);}
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
 \ccPrecond The insert operator must be defined for \ccc{Point}.}
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
-\ccInclude{CGAL/IO/alpha_shapes_2_window_stream.h}
+\ccInclude{CGAL/IO/alpha_shapes_3_window_stream.h}
 
 \ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Alpha_shape_2<Dt>& A);}
+                         const Alpha_shape_3<Dt>& A);}
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the window stream \ccc{W}.
-\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Segment}.}
+\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Triangle}.}
 
 \ccImplementation
-In the first static version, the set of intervals associated with the
+
+Note that this implementation don't provide functions to deal with edges, first
+because of single edges aren't in any reconstruction, secondly because dealing
+with edges would slow the wall initialization process.
+
+In this version, the set of intervals associated with the
 $k$-dimensional faces of the underlying triangulation are
-stored only as sorted \ccc{vectors}. By using an interval tree the
-alpha-shape could be constructed more efficiently. For the dynamic
-version, we need \ccc{multimaps} or dynamic interval trees.
+stored only as \ccc{multimaps}. 
 
 The cross links between the intervals and the $k$-dimensional faces of the
 triangulation are actually realized using methods in the $k$-dimensional faces
@@ -332,7 +335,7 @@ of these informations.
 \ccc{A.alpha lower bound} and \ccc{A.alpha upper bound} 
 use binary search.
 \ccc{A.number solid components} performs a graph traversal and takes time
-linear in the number of faces of the underlying triangulation.
+linear in the number of cells of the underlying triangulation.
 \ccc{A.find optimal alpha} uses binary search and takes time
 $O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
 

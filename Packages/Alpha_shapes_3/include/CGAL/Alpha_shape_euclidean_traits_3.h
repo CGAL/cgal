@@ -40,13 +40,12 @@
 #include <CGAL/Triangulation_geom_traits_3.h>
 
 #include <CGAL/smallest_radius_3.h>
-#include <CGAL/side_of_smallest_sphere_3.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
-//------------------ Function Objects----------------------------------
+//------------------ Function Objects ---------------------------------
 
 template < class return_type, class T >
 class Compute_squared_radius_3
@@ -56,12 +55,12 @@ public:
 
   result_type operator()(const T& p, const T& q, const T& r, const T& s)
     { 
-      return CGAL::squared_radius_circumsphere(p, q, r, s);
+      return CGAL::squared_radius(p, q, r, s);
     }
 
   result_type operator()(const T& p, const T& q, const T& r)
     { 
-      return CGAL::squared_radius_smallest_circumsphere(p, q, r);
+      return CGAL::squared_radius(p, q, r);
     }
 
   result_type operator()(const T& p, const T& q)
@@ -70,20 +69,6 @@ public:
     }
 };
 
-//-------------------------------------------------------------------
-
-template < class T >
-class Side_of_bounded_sphere_3
-{
-public:
-  typedef Bounded_side result_type;
-
-  result_type operator()(const T& p, const T& q, const T& r, const T& test)
-    {
-      return CGAL::side_of_bounded_sphere(p, q, r, test);
-    }
-};
-  
 //------------------ Traits class -------------------------------------
 
 template <class R>
@@ -97,7 +82,7 @@ public:
 
   typedef Compute_squared_radius_3<Coord_type, Point_3> 
   Compute_squared_radius_3;
-  typedef Side_of_bounded_sphere_3<Point_3> Side_of_bounded_sphere_3;
+  typedef typename R::Side_of_bounded_sphere_3 Side_of_bounded_sphere_3;
 
   //---------------------------------------------------------------------
 
@@ -107,7 +92,6 @@ public:
     }
   //---------------------------------------------------------------------
   
-
   Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object() const
     {
       return Side_of_bounded_sphere_3();

@@ -45,7 +45,7 @@
 
 %----------------------------------------------------------------------
 
-\chapter{Alpha-Shapes} \label{I1_ChapterAlphashapes}
+\chapter{Alpha-Shapes 2D} \label{I1_ChapterAlphashapes2D}
 
 %\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
 
@@ -66,9 +66,9 @@ replacing the natural distance by the power to weighted points. The metric used
 determines an underlying triangulation of the alpha shape and thus, the version
 computed. 
 In one hand, there is the {\em classic alpha shapes}
-(cf. \ref{I1_SectClassicAS}) associated with the Delaunay triangulations
+(cf. \ref{I1_SectClassicAS2D}) associated with the Delaunay triangulations
 (cf. \ref{I1_Sect_Delaunay}), in the other hand, the {\em weighted alpha shapes}
-(cf. \ref{I1_SectWeightedAS}) associated with the regular triangulations
+(cf. \ref{I1_SectWeightedAS2D}) associated with the regular triangulations
 (cf. \ref{I1_Sect_Regular}). 
 
 There is a close connection between alpha shapes and the underlying
@@ -124,7 +124,7 @@ The main class of this package is documented in the Reference Manual
 
 %----------------------------------------------------------------------
 
-\section{Requirements for the Underlying Triangulation\label{I1_SectDtClass}}
+\section{Requirements for the Underlying Triangulation\label{I1_SectDtClass2D}}
 
 For the \ccc{Dt} class, you have to choose between a Delaunay or a regular
 triangulation, depending the version of alpha shapes, you want.
@@ -134,7 +134,7 @@ traits class and a simple triangulation data structure, with no more requirement
 for a simple triangulation class, but parameterized by a special vertex base
 class and a special face base class.
 
-\subsection*{The Alpha-Shape Traits Class (\mbox{\it Gt})\label{I1_ASTraits}} 
+\subsection*{The Alpha-Shape Traits Class (\mbox{\it Gt})\label{I1_ASTraits2D}} 
 
 \subsection{Requirements for the Alpha-Shape Traits Class}
 
@@ -145,7 +145,7 @@ Furthermore, you have also to provide specific methods to compute Alpha-Shapes~:
 as two constructions to compute the minimum squared radius for a face and for an
 edge, and a predicate to certify if a point is in the smallest circle associated
 with an edge or not. You can find the complete description in the Reference
-Manual \ccRefPage{CGAL::Alpha_shape_traits}.
+Manual \ccRefPage{CGAL::Alpha_shape_traits_2}.
 
 \subsection*{Triangulation Data Structure Class (\mbox{\it Tds}) for an Alpha-Shape}
 
@@ -153,40 +153,40 @@ The underlying triangulation \ccc{Dt} is parameterized with her
 triangulation data structure class \ccc{Tds}, that has no additional
 requirements. In fact, the requirements are on the \ccc{Tds} parameters.
 
-She requires to be templated by special \ccc{Alpha_shape_vertex_base} and
-\ccc{Alpha_shape_face_base<Df>}, to store the alpha values associated. Thus, we need to
-define the requirements of such \ccc{Alpha_shape_vertex_base} and
-\ccc{Alpha_shape_face_base<Df>} classes.
+She requires to be templated by special \ccc{Alpha_shape_vertex_base_2} and
+\ccc{Alpha_shape_face_base_2<Df>}, to store the alpha values associated. Thus, we need to
+define the requirements of such \ccc{Alpha_shape_vertex_base_2} and
+\ccc{Alpha_shape_face_base_2<Df>} classes.
 
 \subsection{Requirements for the \protect \ccc{Vertex_base} Class of an
-Alpha-Shape\label{I1_SectVertex}} 
+Alpha-Shape\label{I1_SectVertexAS2D}} 
 
 The information about the alpha values associated  are accessible by the 
-vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base}
+vertices of the alpha shape. Thus the nested \ccc{Alpha_shape_vertex_base_2}
 type of an alpha shape offers additional functionalities to deal with these
 methods.  
 
 This additional functionalities related to the alpha shape
 are requirements which have to be fulfilled by the base vertex for an alpha
 shape. You can find the complete description in the Reference Manual
-\ccRefPage{CGAL::Alpha_shape_vertex_base}.  
+\ccRefPage{CGAL::Alpha_shape_vertex_base_2}.  
 
 \subsection{Requirements for the \protect \ccc{Face_base} Class of an Alpha-Shape}
 
 The information about the alpha values, associated to the face herself and the
 incident edges, are accessible by the 
-faces of the alpha shape. Thus the nested \ccc{Alpha_shape_face_base<Df>}
+faces of the alpha shape. Thus the nested \ccc{Alpha_shape_face_base_2<Df>}
 type of an alpha shape offers additional functionalities to deal with these
 methods.
 
 This additional functionalities related to the alpha shape are requirements
 which have to be fulfilled by the base face  for an alpha shape. You can find
 the complete description in the Reference Manual
-\ccRefPage{CGAL::Alpha_shape_face_base<Df>}.
+\ccRefPage{CGAL::Alpha_shape_face_base_2<Df>}.
 
 %----------------------------------------------------------------------
 
-\section{Classic Version of Alpha-Shapes\label{I1_SectClassicAS}}
+\section{Classic Version of Alpha-Shapes\label{I1_SectClassicAS2D}}
 
 \subsection*{The Underlying Triangulation~: a Delaunay Triangulation}
 
@@ -197,7 +197,7 @@ underlying triangulation \ccc{Dt} and follow the requirements listed above.
 
 \subsection*{Predefined Geometric Traits Class (\mbox{\it Gt})}
 
-Of course, \cgal\ provides a default \ccc{Alpha_shape_traits} class in this
+Of course, \cgal\ provides a default \ccc{Alpha_shape_traits_2} class in this
 case, with an implementation of the appropriate predicate and constructions.
 The class \ccc{Alpha_shape_euclidean_traits_2<Rp>} simply derived from 
 \ccc{Triangulation_euclidean_traits_2<Rp>}.
@@ -247,7 +247,7 @@ typedef CGAL::Alpha_shape_2<Dt> Alpha_shape_2;
 
 %----------------------------------------------------------------------
 
-\section{Weighted Version of Alpha-Shapes\label{I1_SectWeightedAS}}
+\section{Weighted Version of Alpha-Shapes\label{I1_SectWeightedAS2D}}
 
 \subsection*{The Underlying Triangulation~: a Regular Triangulation}
 
@@ -258,7 +258,7 @@ underlying triangulation \ccc{Dt} and follow the requirements listed above.
 
 \subsection*{Predefined Geometric Traits Class (\mbox{\it Gt})}
 
-Of course, \cgal\ provides a default \ccc{Alpha_shape_traits} class in this
+Of course, \cgal\ provides a default \ccc{Alpha_shape_traits_2} class in this
 case, with an implementation of the appropriate predicate and constructions.
 The class \ccc{Weighted_alpha_shape_euclidean_traits_2<Rp>} simply derived from 
 \ccc{Regular_triangulation_euclidean_traits_2<Rp>}.

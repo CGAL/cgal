@@ -103,11 +103,10 @@ public:
   typedef Side_of_bounded_orthogonalcircle_2<Point>
   Side_of_bounded_orthogonalcircle_2;
   
-  
   //------------------------------------------------------------------
 
   Compute_squared_radius_orthogonalcircle_2
-  Compute_squared_radius_2_object() const
+  compute_squared_radius_2_object() const
     {
       return Compute_squared_radius_orthogonalcircle_2();
     }

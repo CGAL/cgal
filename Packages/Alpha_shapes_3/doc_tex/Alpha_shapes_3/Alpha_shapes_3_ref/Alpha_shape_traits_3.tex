@@ -33,7 +33,7 @@
 %
 % ----------------------------------------------------------------------
 %
-% package       : Alpha_shapes_2
+% package       : Alpha_shapes_3
 % author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 %
 % coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
@@ -45,13 +45,13 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Alpha_shape_traits}
+\begin{ccRefClass} {Alpha_shape_traits_3}
 
 \ccCreationVariable{t}
 
 \ccDefinition
 A class \ccClassName\ that satisfies the requirements of a
-\ccc{Alpha_shape_traits} class must provide the following predicate and
+\ccc{Alpha_shape_traits_3} class must provide the following predicate and
 operations in addition to the requirements for the underlying triangulation
 traits class.
 
@@ -72,28 +72,22 @@ can be provided.
 \ccConstructor{Gt();}
 {A default constructor.}
 
-\ccHeading{Constructions}
+\ccHeading{Constructions by function objects}
 
-\ccMethod{Coord_type squared_radius(const Point& p0,
-				const Point& p1, 
-				const Point& p2) const;} 
-{Returns the squared radius of the circle of the
-points \ccc{p0, p1, p2}, associated with the metric 
-used by \ccc{Dt}.}
+\ccMethod{Compute_squared_radius_3 compute_squared_radius_3_object();} 
+{Returns an object, which has to be able to compute the squared radius of the
+circle of the points \ccc{p0, p1, p2, p3} or the squared radius of the
+smallest circle of the points \ccc{p0, p1, p2} or the squared radius of smallest circle
+of the points \ccc{p0, p1}, as \ccc{Coord_type} associated with the metric used
+by \ccc{Dt}.} 
 
-\ccMethod{Coord_type squared_radius(const Point& p0,
-                                const Point& p1) const;} 
-{Returns the squared radius of smallest  circle of the
-points \ccc{p0, p1}, associated with the metric 
-used by \ccc{Dt}.}
+\ccHeading{Predicate by function object}
 
-\ccHeading{Predicate}
-
-\ccMethod{Bounded_side side_of_circle(const Point& p0,
-                                const Point& p1,
-                                const Point& test) const;}
-{Returns the relative position of point \ccc{test} to the smallest circle of
-the points \ccc{p0, p1}, using the same metric as \ccc{Dt}.}
+\ccMethod{Side_of_bounded_circle_3 side_of_bounded_circle_3_object();}
+{Returns an object, which has to be able to compute the relative position of
+point \ccc{test} to the smallest circle of the points \ccc{p0, p1, p2} or 
+to the smallest circle of the points \ccc{p0, p1}, using the
+same metric as \ccc{Dt}.}
 
 \end{ccRefClass}
 
