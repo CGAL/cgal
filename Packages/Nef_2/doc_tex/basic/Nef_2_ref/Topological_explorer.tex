@@ -65,7 +65,7 @@ All objects (vertices, edges, faces) are attributed by a \ccc{Mark} object.}
 Local types are handles, iterators and circulators of the following
 kind: \ccc{Vertex_const_handle}, \ccc{Vertex_const_iterator},
 \ccc{Halfedge_const_handle}, \ccc{Halfedge_const_iterator},
-\ccc{Face_const_handle}, \ccc{Face_\-const_\-ite\-rator}.
+\ccc{Face_const_handle}, \ccc{Face_const_iterator}.
 Additionally the following circulators are defined.
 
 \ccNestedType{Halfedge_around_vertex_const_circulator}{
@@ -141,6 +141,26 @@ returns a halfedge in the bounding face cycle of \ccc{f}
 }
 
 \ccHeading{Iteration} 
+
+\ccMethod{Vertex_const_iterator   vertices_begin();}
+{iterator over vertices of the map.}
+\ccMethod{Vertex_const_iterator   vertices_end();}
+{past-the-end iterator for vertices.}
+\ccMethod{Halfedge_const_iterator halfedges_begin();}
+{ iterator over halfedges of the map. }
+\ccMethod{Halfedge_const_iterator halfedges_end();}
+{ past-the-end iterator for halfedges. }
+\ccMethod{Face_const_iterator     faces_begin();}
+{ iterator over faces of the map. }
+\ccMethod{Face_const_iterator     faces_end();}
+{ past-the-end iterator for faces}
+
+\ccHidden
+\ccMethod{Point_const_iterator points_begin();}
+{ ??? }
+\ccHidden
+\ccMethod{Point_const_iterator points_end();}
+{ ??? }
 
 \ccMethod{Halfedge_around_vertex_const_circulator 
   out_edges(Vertex_const_handle v) ;}{
