@@ -1,3 +1,6 @@
+4.131 (18 Jan 2004)
+- Remove CGAL_CFG_RETURN_TYPE_BUG workarounds.
+
 4.130 (18 Jan 2004)
 - Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
 

@@ -41,40 +41,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG
-
 using std::min;
 using std::max;
-
-#else
-
-// We have to redefine them to change the return type from const NT& to NT.
-
-template <class NT>
-inline
-NT
-min(const NT& x, const NT& y)
-{ return (y < x) ? y : x; }
-
-template <class NT, class Comp>
-inline
-NT
-min(const NT& x, const NT& y, const Comp& c)
-{ return c(x, y) ? x : y; }
-
-template <class NT>
-inline
-NT
-max(const NT& x, const NT& y)
-{ return (x < y) ? y : x; }
-
-template <class NT, class Comp>
-inline
-NT
-max(const NT& x, const NT& y, const Comp& c)
-{ return c(x, y) ? y : x; }
-
-#endif
 
 CGAL_END_NAMESPACE
 
