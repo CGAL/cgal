@@ -146,7 +146,7 @@ public:
       std::list<Curve>::iterator it_seg=NULL;
       while(itp!=list_of_segments.end())
       {
-	NT dist = squared_distance( p, (*itp));
+	NT dist = CGAL::squared_distance( p, (*itp));
 	if( dist < min_dist)
 	{
 	  min_dist = dist;

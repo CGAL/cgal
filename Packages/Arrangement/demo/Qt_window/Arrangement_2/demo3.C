@@ -196,7 +196,7 @@ public:
 	last_edge--;
 	while(eit != last_edge )
 	{
-	  NT dist = squared_distance( p, (*eit));
+	  NT dist = CGAL::squared_distance( p, (*eit));
 	  if( dist < min_dist)
 	  {
 	    min_dist = dist;

@@ -109,7 +109,7 @@ public:
 
     if( !list_of_covering.empty() )
     {
-      *widget << FillColor(CGAL::PURPLE);
+      *widget << CGAL::FillColor(CGAL::PURPLE);
       std::list<Cgal_Polygon>::iterator itp = list_of_covering.begin();
       while(itp!=list_of_covering.end())
       {
@@ -151,7 +151,7 @@ public:
 	Cgal_Polygon::Edge_const_iterator eit = (*pit).edges_begin();
 	while(eit != (*pit).edges_end())
 	{
-	  NT dist = squared_distance( p, (*eit));
+	  NT dist = CGAL::squared_distance( p, (*eit));
 	  if( dist < min_dist)
 	  {
 	    min_dist = dist;
