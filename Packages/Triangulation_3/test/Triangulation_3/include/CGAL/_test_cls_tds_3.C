@@ -144,13 +144,13 @@ std::ifstream iFileT("Test_tds_IO_3",std::ios::in);
 
   cdone = tds6.cells_end();
   
-  std::set< Vertex*,std::less<Vertex*> > set_of_vertices;
+  std::set< Vertex* > set_of_vertices;
   
   for ( cit = tds6.cells_begin(); cit != cdone; cit++ ) {
     // NOTE : the triangulation is modified during loop
     // --> the cell_iterator does not mean a lot
     for ( i=0; i<4; i++ ) {
-      std::set< Vertex*,std::less<Vertex*> > set_of_vertices;
+      std::set< Vertex* > set_of_vertices;
       tds6.incident_vertices( (&(*cit))->vertex(i), set_of_vertices );
       if ( set_of_vertices.find
 	   ( (&(*cit))->neighbor(i)->vertex

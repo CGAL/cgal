@@ -32,7 +32,6 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/triple.h>
-//#include <pair.h>
 #include <utility>
 #include <map>
 #include <set>
@@ -600,7 +599,7 @@ std::istream& operator >>
   }
 
   //  Point p;
-  std::map< int, Vertex*, std::less<int> > V;
+  std::map< int, Vertex* > V;
   //  std::vector<Vertex*> V(n);
   
   // creation of the vertices    
@@ -611,7 +610,7 @@ std::istream& operator >>
     V[i] = new Vertex();
   }
 
-  std::map< int, Cell*, std::less<int> > C;
+  std::map< int, Cell* > C;
   int m;
  
   //  read_cells(is, tds, n, V, m, C);
@@ -642,8 +641,7 @@ std::ostream& operator<<
   typedef typename Tds::Edge_iterator  Edge_iterator;
   typedef typename Tds::Facet_iterator  Facet_iterator;
 
-  std::map< void*, int, std::less<void*> > V;
-  //  std::map< void*, int, less<void*> > C;
+  std::map< void*, int > V;
 
   // outputs dimension and number of vertices
   int n = tds.number_of_vertices();
@@ -1227,14 +1225,14 @@ read_cells(std::istream& is,
 	   Triangulation_data_structure_3<Vb,Cb>  &tds,
 	   //	   int n,
 	   // std::vector<void*> &V(n),
-	   std::map< int, 
-	             typename Triangulation_data_structure_3<Vb,Cb>::Vertex*, 
-	             std::less<int> > &V,
+	   std::map< int,
+	             typename Triangulation_data_structure_3<Vb,Cb>::Vertex*
+	             > &V,
 	   // std::vector<void*> &C(m)
 	   int & m,
-	   std::map< int, 
-                     typename Triangulation_data_structure_3<Vb,Cb>::Cell*, 
-	             std::less<int> > &C )
+	   std::map< int,
+                     typename Triangulation_data_structure_3<Vb,Cb>::Cell*
+	             > &C )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef typename Tds::Vertex  Vertex;
@@ -1350,7 +1348,7 @@ std::ostream&
 print_cells(std::ostream& os, 
 	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
 	    //	    int n,
-	    std::map< void*, int, std::less<void*> > &V )
+	    std::map< void*, int > &V )
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef typename Tds::Vertex  Vertex;
@@ -1362,7 +1360,7 @@ print_cells(std::ostream& os,
   typedef typename Tds::Edge_iterator  Edge_iterator;
   typedef typename Tds::Facet_iterator  Facet_iterator;
 
-  std::map< void*, int, std::less<void*> > C;
+  std::map< void*, int > C;
 
   int i = 0;
   int j;
@@ -2395,8 +2393,8 @@ copy_tds(const Tds & tds, Vertex* vert )
 {
   CGAL_triangulation_precondition( vert==NULL || tds.is_vertex(vert) );
 
-  std::map< void*, void*, std::less<void*> > V;
-  std::map< void*, void*, std::less<void*> > F;
+  std::map< void*, void* > V;
+  std::map< void*, void* > F;
   Vertex*  v;
   Cell* f;
 

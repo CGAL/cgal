@@ -897,7 +897,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 
   //  Point p;
   //  std::vector<Vertex_handle> V(n+1);
-  std::map< int, TdsVertex*, std::less<int> > V;
+  std::map< int, TdsVertex* > V;
   V[0] = &*(tr.infinite_vertex());
   // the infinite vertex is numbered 0
 
@@ -909,7 +909,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
     is >> *V[i];
   }
 
-  std::map< int, TdsCell*, std::less<int> > C;
+  std::map< int, TdsCell* > C;
 
   //  read_cells(is, tr._tds, n+1, V, m, C);
   read_cells(is, tr._tds, V, m, C);
@@ -944,8 +944,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   typedef typename Triangulation::Edge_iterator  Edge_iterator;
   typedef typename Triangulation::Facet_iterator  Facet_iterator;
  
-  std::map< void*, int, std::less<void*> > V;
-  //  std::map< void*, int, less<void*> > C;
+  std::map< void*, int > V;
 
   // outputs dimension and number of vertices
   int n = tr.number_of_vertices();
