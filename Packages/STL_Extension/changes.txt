@@ -9,6 +9,8 @@
 
 DOCS: now joind into stl_extension.tex.
 DOCS: Joined with compose.tex.
+SRC : Added N_step_adaptor_derived.
+SRC : Fixed _Circulator_size_traits to I_Circulator_size_traits.
 SRC : Removed obsolete workaround flags.
 ALL : Removed line directives.
 SRC : Added typedefs for types from base class that are not visible
