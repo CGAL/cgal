@@ -25,12 +25,16 @@
 #define Simple_cartesian Sc
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Filtered_exact.h>
+#include <CGAL/MP_Float.h>
 
 #include <iostream>
 #include <cassert>
 
+// Filtered_kernel fails with Regular until weighted points are in the kernel.
+typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
+
 // Try to shorten symbol names (for VC++)
-struct K : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
+struct K : public CGAL::Simple_cartesian<NT> {};
 
 #endif
