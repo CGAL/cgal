@@ -40,16 +40,17 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_subcurve
  */
 
-template<class SweepLineTraits_2, class HalfedgeHandle>
-class Pmwx_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2>
+template<class SweepLineTraits_2,class SweepNotif, class HalfedgeHandle>
+class Pmwx_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2,
+                                                         SweepNotif>
 {
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef Sweep_line_subcurve<SweepLineTraits_2> Base;
-  typedef Pmwx_sweep_line_curve<Traits, HalfedgeHandle> Self;
+  typedef Sweep_line_subcurve<SweepLineTraits_2, SweepNotif> Base;
+  typedef Pmwx_sweep_line_curve<Traits, SweepNotif, HalfedgeHandle> Self;
 
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
   typedef std::set<Self*, StatusLineCurveLess, CGAL_ALLOCATOR(int)> StatusLine;
@@ -57,17 +58,18 @@ public:
 
 
   typedef Pmwx_insert_info<HalfedgeHandle> PmwxInsertInfo;
-  typedef Pmwx_sweep_line_event<Traits, Self> Event;
+  typedef Pmwx_sweep_line_event<Traits, Self, SweepNotif> Event;
 
-  Pmwx_sweep_line_curve(){}
+
+  Pmwx_sweep_line_curve()
+  {}
 
   Pmwx_sweep_line_curve( X_monotone_curve_2 &curve): Base( curve),
                                                      m_lastEvent(0)
-  {
-  }
+  {}
 
   
-  void init(X_monotone_curve_2 &curve)
+  void init(const X_monotone_curve_2 &curve)
   {
     Base::init(curve);
     m_lastEvent  = 0;

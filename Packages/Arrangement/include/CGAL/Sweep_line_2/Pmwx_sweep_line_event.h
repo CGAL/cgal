@@ -41,17 +41,17 @@ CGAL_BEGIN_NAMESPACE
  * \sa Sweep_line_event
  */
 
-template<class SweepLineTraits_2, class CurveWrap>
+template<class SweepLineTraits_2, class CurveWrap, class SweepNotif>
 class Pmwx_sweep_line_event : 
-  public Sweep_line_event<SweepLineTraits_2, CurveWrap>
+  public Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif>
 {
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
-  typedef Sweep_line_event<SweepLineTraits_2, CurveWrap> Base;
-  typedef Pmwx_sweep_line_event<Traits, CurveWrap> Self;
+  typedef Sweep_line_event<SweepLineTraits_2, CurveWrap, SweepNotif> Base;
+  typedef Pmwx_sweep_line_event<Traits, CurveWrap, SweepNotif> Self;
 
   typedef CurveWrap SubCurve;
   typedef std::list<SubCurve *> SubcurveContainer;
@@ -60,17 +60,15 @@ public:
 
   typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
 
-	typedef Event_less_functor<Self ,SweepLineTraits_2>  EventLess;
-	typedef std::set<Self * , EventLess > VerticalXEventSet;
   
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
+
 
   Pmwx_sweep_line_event()
   {}
 
   /*! Constructor */
-  Pmwx_sweep_line_event(const Point_2 &point) :
-    Base(point)
+  Pmwx_sweep_line_event(const Point_2 &point) : Base(point)
   {}
 
 
@@ -89,10 +87,12 @@ public:
     return &m_insertInfo;
   }
 
-  void add_curve_to_right(SubCurve *curve)
+  std::pair<bool, SubCurveIter> add_curve_to_right(SubCurve *curve)
   {
-    if(Base::add_curve_to_right(curve))
+    std::pair<bool,SubCurveIter> res = Base::add_curve_to_right(curve);
+    if(res.second != m_rightCurves.end() && res.first == false )
       m_insertInfo.inc_right_curves_counter();
+    return res;
   }
 
 
