@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.0.1)
+// package       : Point_set_2 (2.0.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.0.1
-// revision_date : 05 June 2001 
+// revision      : 2.0.2
+// revision_date : 19 June 2001 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -30,10 +30,8 @@
 #include <queue>
 #include <map>
 #include <stack>
-
 #include <cmath>
 
-#include <CGAL/point_set_traits_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -57,7 +55,7 @@ class compare_vertices {
 
 
 
-template<class Str, class Gt, class Tds>
+template<class Gt, class Tds>
 class  Point_set_2 : public  Delaunay_triangulation_2<Gt,Tds>
 {
 
@@ -67,6 +65,8 @@ public:
   typedef typename Geom_traits::Rep                         Rep;
   typedef typename Geom_traits::Point_2                     Point;
   typedef typename Geom_traits::Segment_2                   Segment;
+  
+  typedef typename Rep::Circle_2                            Circle;
   
   typedef typename Geom_traits::Orientation_2               Orientation_2;
   typedef typename Geom_traits::Side_of_oriented_circle_2   Side_of_oriented_circle_2;
@@ -88,14 +88,11 @@ public:
   typedef typename Triangulation::Vertex_circulator         Vertex_circulator;  
   typedef typename Triangulation::Edge_iterator             Edge_iterator;
 
-  // now the types from Str
-  typedef typename Str::Circle   Circle;
-
-  typedef typename Str::Compare_dist_2              Comparedist;             
-  typedef typename Str::Circle_bounded_side_2       Circleptori;
-  typedef typename Str::Circle_center_2             Circlecenter;     
+  // function object classes from the removed second geometry traits ...
+  typedef typename Rep::Bounded_side_2                      Circleptori; 
+  typedef typename Rep::Compare_distance_2                  Comparedist;         
+  typedef typename Rep::Construct_center_2                  Circlecenter;     
   
-   Str                           traits;
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
    Side_of_oriented_circle_2     tr_so_circle;    

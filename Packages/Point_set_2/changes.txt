@@ -1,3 +1,6 @@
+2.0.2  point_set_traits_2 removed (we need now only one geometric
+       traits class)
+
 2.0.1 range search example program changed
       some 'typenames' and a typedef added to Point_set_2.h  
       to please g++ with -pedantic compilation
