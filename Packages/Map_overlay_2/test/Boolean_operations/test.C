@@ -374,6 +374,29 @@ private:
     }
   }
   
+  // This function is written for the symmetric difference.
+  // the two former functions: get_points_below_vertex_with_covering and 
+  // get_points_below_edge_with_covering could have return a point inside a polygon 
+  // since this check was not perfromed. Here we clean such points.
+  template <class InputIterator, class Container>
+  void  remove_points_below_faces(InputIterator polygons_begin,
+                                  InputIterator polygons_end, 
+                                  Container& points)
+  {
+    for (typename Container::iterator p_iter=points.begin(); 
+         p_iter!=points.end(); ){
+      InputIterator poly_iter;
+      for (poly_iter=polygons_begin; poly_iter!=polygons_end; ++poly_iter){
+        if (poly_iter->has_on_bounded_side(*p_iter)){
+          points.erase(p_iter++);
+          break;
+        }
+      }
+      if (poly_iter==polygons_end)
+        ++p_iter;
+    }
+  }
+  
   template <class InputIterator1, class InputIterator2,class OutputIterator>
   void get_vertices_with_covering(InputIterator1 polygons_begin, 
                                   InputIterator1 polygons_end,
@@ -421,9 +444,11 @@ private:
       std::copy(intersections.begin(),intersections.end(),vertices);
     }
     
-    else if (covering == 1)  // symmetric difference.
+    else if (covering == 1)  { // symmetric difference.
+      remove_points_below_faces(polygons_begin,polygons_end,covering_endpoints);
       std::copy(covering_endpoints.begin(),covering_endpoints.end(),vertices);
-  }
+    }
+  }  
   
   // The interface for an intersection function
   template <class OutputIterator>
