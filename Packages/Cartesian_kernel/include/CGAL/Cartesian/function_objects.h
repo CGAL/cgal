@@ -1648,7 +1648,6 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Less_signed_distance_to_plane_3
   {
-  public:
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
   public:
