@@ -36,6 +36,8 @@
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
 #endif
 
+#include <list>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Planar_map_>
