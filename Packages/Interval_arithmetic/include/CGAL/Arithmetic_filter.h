@@ -179,7 +179,7 @@ inline
 Comparison_result
 compare (	const Filtered_exact<CT,ET>& fil,
 		const Filtered_exact<CT,ET>& fil2)
-{ return compare(fil.value, fil2.value); }
+{ return CGAL::compare(fil.value, fil2.value); }
 
 template <class CT, class ET>
 inline
