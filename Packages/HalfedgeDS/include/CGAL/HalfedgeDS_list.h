@@ -317,9 +317,64 @@ protected:
 // CREATION
 
 private:
-    void pointer_update( const Self& hds);
+    void pointer_update( const Self& hds) {
         // Update own pointers assuming that they lived previously
         // in a halfedge data structure `hds' with lists.
+        // Update own pointers assuming that they lived previously
+        // in a halfedge data structure `hds' with lists.
+        typedef Unique_hash_map< Vertex_const_iterator, Vertex_iterator> V_map;
+        typedef Unique_hash_map< Halfedge_const_iterator, Halfedge_iterator>
+                                                                         H_map;
+        typedef Unique_hash_map< Face_const_iterator, Face_iterator>     F_map;
+        // initialize maps.
+        H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
+                     halfedges_begin(), Halfedge_iterator(), 
+                     3 * hds.size_of_halfedges() / 2);
+        Vertex_iterator vii;
+        V_map v_map( vii, 3 * hds.size_of_vertices() / 2);
+        Face_iterator fii;
+        F_map f_map( fii, 3 * hds.size_of_faces() / 2);
+        // some special values
+        h_map[Halfedge_const_iterator()] = Halfedge_iterator();
+        h_map[hds.halfedges_end()]       = halfedges_end();
+        v_map[Vertex_const_iterator()]   = Vertex_iterator();
+        v_map[hds.vertices_end()]        = vertices_end();
+        f_map[Face_const_iterator()]     = Face_iterator();
+        f_map[hds.faces_end()]           = faces_end();
+        // vertices and faces are optional
+        if ( check_tag( Supports_halfedge_vertex())) {
+            v_map.insert( hds.vertices_begin(),
+                          hds.vertices_end(),
+                          vertices_begin());
+        }
+        if ( check_tag( Supports_halfedge_face())) {
+            f_map.insert( hds.faces_begin(), hds.faces_end(), faces_begin());
+        }
+        HalfedgeDS_items_decorator<Self> D;
+        for (Halfedge_iterator h = halfedges_begin(); h!=halfedges_end(); ++h){
+            h->HBase::set_next( h_map[ h->next()]);
+            // Superfluous and false: opposite pointer get set upon creation
+            // h->HBase_base::set_opposite( h_map[ h->opposite()]);
+            if ( check_tag( Supports_halfedge_prev()))
+                D.set_prev( h, h_map[ D.get_prev(h)]);
+            if ( check_tag( Supports_halfedge_vertex()))
+                D.set_vertex( h, v_map[ D.get_vertex(h)]);
+            if ( check_tag( Supports_halfedge_face()))
+                D.set_face( h, f_map[ D.get_face(h)]);
+        }
+        border_halfedges = h_map[ border_halfedges];
+        if (check_tag( Supports_vertex_halfedge())) {
+            for (Vertex_iterator v = vertices_begin(); v != vertices_end();++v)
+                D.set_vertex_halfedge(v, h_map[ D.get_vertex_halfedge(v)]);
+        }
+        if (check_tag( Supports_face_halfedge())) {
+            for ( Face_iterator f = faces_begin(); f != faces_end(); ++f)
+                D.set_face_halfedge(f, h_map[ D.get_face_halfedge(f)]);
+        }
+        //h_map.statistics();
+        //v_map.statistics();
+        //f_map.statistics();
+    }
 
 public:
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -574,22 +629,65 @@ public:
         return border_halfedges;
     }
 
-    void normalize_border();
+    void normalize_border() {
         // sorts halfedges such that the non-border edges precedes the
         // border edges. For each border edge that is incident to a face
         // the halfedge iterator will reference the halfedge incident to
         // the face right before the halfedge incident to the hole.
+        CGAL_assertion_code( size_type count = halfedges.size();)
+        nb_border_halfedges = 0;
+        nb_border_edges = 0;
+        Halfedge_list  border;
+        Halfedge_iterator i = halfedges_begin();
+        while ( i != halfedges_end()) {
+            Halfedge_iterator j = i;
+            ++i;
+            ++i;
+            Halfedge_iterator k = j;
+            ++k;
+            if ( j->is_border()) {
+                nb_border_halfedges++;
+                nb_border_edges++;
+                if (k->is_border())
+                    nb_border_halfedges++;
+                border.splice( border.end(), halfedges, k);
+                border.splice( border.end(), halfedges, j);
+            } else if ( k->is_border()) {
+                nb_border_halfedges++;
+                nb_border_edges++;
+                border.splice( border.end(), halfedges, j);
+                border.splice( border.end(), halfedges, k);
+            } else {
+                CGAL_assertion_code( count -= 2;)
+            }
+        }
+        CGAL_assertion( count == 2 * nb_border_edges );
+        CGAL_assertion( count == border.size());
+        if ( i == halfedges_begin()) {
+            halfedges.splice( halfedges.end(), border);
+            i = halfedges_begin();
+        } else {
+            --i;
+            --i;
+            CGAL_assertion( ! i->is_border() && ! i->opposite()->is_border());
+            halfedges.splice( halfedges.end(), border);
+            ++i;
+            ++i;
+        }
+        CGAL_assertion( i == halfedges_end() || i->opposite()->is_border());
+        border_halfedges = i;
+    }
 };
 #ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 };
 #endif
 
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#define CGAL__HDS_IP_List HalfedgeDS_list
-#else
-#define CGAL__HDS_IP_List HalfedgeDS_list::HDS
-#endif
+//  #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+//  #define CGAL__HDS_IP_List HalfedgeDS_list
+//  #else
+//  #define CGAL__HDS_IP_List HalfedgeDS_list::HDS
+//  #endif
 
 // init static member allocator objects (no longer static)
 //template < class Traits_, class HalfedgeDSItems, class Alloc>
@@ -604,114 +702,8 @@ public:
 //typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Face_allocator
 //CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::face_allocator;
 
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-void
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
-pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
-    // Update own pointers assuming that they lived previously
-    // in a halfedge data structure `hds' with lists.
-    typedef Unique_hash_map< Vertex_const_iterator, Vertex_iterator>     V_map;
-    typedef Unique_hash_map< Halfedge_const_iterator, Halfedge_iterator> H_map;
-    typedef Unique_hash_map< Face_const_iterator, Face_iterator>         F_map;
-    // initialize maps.
-    H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
-                 halfedges_begin(), Halfedge_iterator(), 
-                 3 * hds.size_of_halfedges() / 2);
-    Vertex_iterator vii;
-    V_map v_map( vii, 3 * hds.size_of_vertices() / 2);
-    Face_iterator fii;
-    F_map f_map( fii, 3 * hds.size_of_faces() / 2);
-    // some special values
-    h_map[Halfedge_const_iterator()] = Halfedge_iterator();
-    h_map[hds.halfedges_end()]       = halfedges_end();
-    v_map[Vertex_const_iterator()]   = Vertex_iterator();
-    v_map[hds.vertices_end()]        = vertices_end();
-    f_map[Face_const_iterator()]     = Face_iterator();
-    f_map[hds.faces_end()]           = faces_end();
-    // vertices and faces are optional
-    if ( check_tag( Supports_halfedge_vertex())) {
-        v_map.insert(hds.vertices_begin(),hds.vertices_end(),vertices_begin());
-    }
-    if ( check_tag( Supports_halfedge_face())) {
-        f_map.insert( hds.faces_begin(), hds.faces_end(), faces_begin());
-    }
-    HalfedgeDS_items_decorator<Self> D;
-    for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
-        h->HBase::set_next( h_map[ h->next()]);
-        // Superfluous and false: opposite pointer get set upon creation
-        // h->HBase_base::set_opposite( h_map[ h->opposite()]);
-        if ( check_tag( Supports_halfedge_prev()))
-            D.set_prev( h, h_map[ D.get_prev(h)]);
-        if ( check_tag( Supports_halfedge_vertex()))
-            D.set_vertex( h, v_map[ D.get_vertex(h)]);
-        if ( check_tag( Supports_halfedge_face()))
-            D.set_face( h, f_map[ D.get_face(h)]);
-    }
-    border_halfedges = h_map[ border_halfedges];
-    if (check_tag( Supports_vertex_halfedge())) {
-        for ( Vertex_iterator v = vertices_begin(); v != vertices_end(); ++v) {
-            D.set_vertex_halfedge(v, h_map[ D.get_vertex_halfedge(v)]);
-        }
-    }
-    if (check_tag( Supports_face_halfedge())) {
-        for ( Face_iterator f = faces_begin(); f != faces_end(); ++f) {
-            D.set_face_halfedge(f, h_map[ D.get_face_halfedge(f)]);
-        }
-    }
-    //h_map.statistics();
-    //v_map.statistics();
-    //f_map.statistics();
-}
 
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-void
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
-normalize_border() {
-    CGAL_assertion_code( size_type count = halfedges.size();)
-    nb_border_halfedges = 0;
-    nb_border_edges = 0;
-    Halfedge_list  border;
-    Halfedge_iterator i = halfedges_begin();
-    while ( i != halfedges_end()) {
-        Halfedge_iterator j = i;
-        ++i;
-        ++i;
-        Halfedge_iterator k = j;
-        ++k;
-        if ( j->is_border()) {
-            nb_border_halfedges++;
-            nb_border_edges++;
-            if (k->is_border())
-                nb_border_halfedges++;
-            border.splice( border.end(), halfedges, k);
-            border.splice( border.end(), halfedges, j);
-        } else if ( k->is_border()) {
-            nb_border_halfedges++;
-            nb_border_edges++;
-            border.splice( border.end(), halfedges, j);
-            border.splice( border.end(), halfedges, k);
-        } else {
-            CGAL_assertion_code( count -= 2;)
-        }
-    }
-    CGAL_assertion( count == 2 * nb_border_edges );
-    CGAL_assertion( count == border.size());
-    if ( i == halfedges_begin()) {
-        halfedges.splice( halfedges.end(), border);
-        i = halfedges_begin();
-    } else {
-        --i;
-        --i;
-        CGAL_assertion( ! i->is_border() && ! i->opposite()->is_border());
-        halfedges.splice( halfedges.end(), border);
-        ++i;
-        ++i;
-    }
-    CGAL_assertion( i == halfedges_end() || i->opposite()->is_border());
-    border_halfedges = i;
-}
-
-#undef CGAL__HDS_IP_List
+//  #undef CGAL__HDS_IP_List
 
 CGAL_END_NAMESPACE
 #endif // CGAL_HALFEDGEDS_LIST_H //

@@ -1,6 +1,11 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.32 (26 Apr 2002)
+
+     - Moved externally defined member functions into class body in
+       HalfedgeDS_default, HalfedgeDS_list, and HalfedgeDS_vector. 
+
 3.31 (19 Apr 2002)
 
      - Added missing std:: before ptrdiff_t in HalfedgeDS_list.h.

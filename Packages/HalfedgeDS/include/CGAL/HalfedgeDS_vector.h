@@ -254,10 +254,44 @@ protected:
 // CREATION
 
 private:
+#define CGAL__V_UPDATE(v) (((v) == Vertex_handle()) ? (v) : \
+                           (v_new + ( Vertex_CI   (get_v_iter(v)) - v_old)))
+#define CGAL__H_UPDATE(h) (((h) == Halfedge_handle()) ? (h) : \
+                           (h_new + ( Halfedge_CI (get_h_iter(h)) - h_old)))
+#define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
+                           (f_new + ( Face_CI     (get_f_iter(f)) - f_old)))
+
     void pointer_update( Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old);
         // Update own pointers assuming that they lived previously
         // in a halfedge data structure with vector starting addresses
         // as given as parameters v_old, h_old, f_old.
+        HalfedgeDS_items_decorator<Self> D;
+        Vertex_iterator   v_new = vertices.begin();
+        Halfedge_iterator h_new = halfedges.begin();
+        Face_iterator     f_new = faces.begin();
+        for (Halfedge_iterator h = halfedges_begin();h != halfedges_end();++h){
+            h->HBase::set_next( CGAL__H_UPDATE( h->next()));
+            h->HBase_base::set_opposite( CGAL__H_UPDATE( h->opposite()));
+            D.set_prev(   h, CGAL__H_UPDATE( D.get_prev(h)));
+            D.set_vertex( h, CGAL__V_UPDATE( D.get_vertex(h)));
+            D.set_face(   h, CGAL__F_UPDATE( D.get_face(h)));
+        }
+        border_halfedges = CGAL__H_UPDATE( border_halfedges);
+        if (check_tag( Supports_vertex_halfedge())) {
+            for (Vertex_iterator v = vertices_begin();v != vertices_end();++v){
+                D.set_vertex_halfedge(v, CGAL__H_UPDATE(
+                    D.get_vertex_halfedge(v)));
+            }
+        }
+        if (check_tag( Supports_face_halfedge())) {
+            for ( Face_iterator f = faces_begin(); f != faces_end(); ++f) {
+                D.set_face_halfedge(f,CGAL__H_UPDATE( D.get_face_halfedge(f)));
+            }
+        }
+    }
+#undef CGAL__V_UPDATE
+#undef CGAL__H_UPDATE
+#undef CGAL__F_UPDATE
 
 public:
 
@@ -494,203 +528,148 @@ public:
         return border_halfedges;
     }
 
-    void normalize_border();
+    void normalize_border() {
         // sorts halfedges such that the non-border edges precedes the
         // border edges. For each border edge that is incident to a face
         // the halfedge iterator will reference the halfedge incident to
         // the face right before the halfedge incident to the hole.
-};
-#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-};
-#endif
+        nb_border_halfedges = 0;
+        nb_border_edges = 0;
+        border_halfedges = halfedges_end();
+        // Lets run one partition step over the array of halfedges.
+        // First find a pivot -- that means a border edge.
+        Halfedge_I ll = halfedges.begin();
+        while ( ll != halfedges.end() && (! ll->is_border()) &&
+                (! ll->opposite()->is_border() ))
+            ++ ++ll;
+        if ( ll == halfedges.end()) // Done. No border edges found.
+            return;
 
+        // An array of pointers to update the changed halfedge pointers.
+        typedef typename Allocator::template rebind< Halfedge_I>
+                                                      HI_alloc_rebind;
+        typedef typename HI_alloc_rebind::other       HI_allocator;
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#define CGAL__HalfedgeDS_vector HalfedgeDS_vector
-#else
-#define CGAL__HalfedgeDS_vector HalfedgeDS_vector::HDS
-#endif
-
-#define CGAL__V_UPDATE(v) (((v) == Vertex_handle()) ? (v) : \
-                           (v_new + ( Vertex_CI   (get_v_iter(v)) - v_old)))
-#define CGAL__H_UPDATE(h) (((h) == Halfedge_handle()) ? (h) : \
-                           (h_new + ( Halfedge_CI (get_h_iter(h)) - h_old)))
-#define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
-                           (f_new + ( Face_CI     (get_f_iter(f)) - f_old)))
-
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-void
-CGAL__HalfedgeDS_vector<Traits_, HalfedgeDSItems, Alloc>::
-pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
-    // Update own pointers assuming that they lived previously
-    // in a halfedge data structure with vector starting addresses
-    // as given as parameters v_old, h_old, f_old.
-    HalfedgeDS_items_decorator<Self> D;
-    Vertex_iterator   v_new = vertices.begin();
-    Halfedge_iterator h_new = halfedges.begin();
-    Face_iterator     f_new = faces.begin();
-    for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
-        h->HBase::set_next( CGAL__H_UPDATE( h->next()));
-        h->HBase_base::set_opposite( CGAL__H_UPDATE( h->opposite()));
-        D.set_prev(   h, CGAL__H_UPDATE( D.get_prev(h)));
-        D.set_vertex( h, CGAL__V_UPDATE( D.get_vertex(h)));
-        D.set_face(   h, CGAL__F_UPDATE( D.get_face(h)));
-    }
-    border_halfedges = CGAL__H_UPDATE( border_halfedges);
-    if (check_tag( Supports_vertex_halfedge())) {
-        for ( Vertex_iterator v = vertices_begin(); v != vertices_end(); ++v) {
-            D.set_vertex_halfedge(v, CGAL__H_UPDATE(D.get_vertex_halfedge(v)));
+        typedef std::vector<Halfedge_I, HI_allocator> HVector;
+        typedef typename HVector::iterator Hiterator;
+        HVector hvector;
+        // Initialize it.
+        hvector.reserve( halfedges.size());
+        for ( Halfedge_I i = halfedges.begin(); i != halfedges.end(); ++i) {
+            hvector.push_back(i);
         }
-    }
-    if (check_tag( Supports_face_halfedge())) {
-        for ( Face_iterator f = faces_begin(); f != faces_end(); ++f) {
-            D.set_face_halfedge(f, CGAL__H_UPDATE( D.get_face_halfedge(f)));
-        }
-    }
-}
-#undef CGAL__V_UPDATE
-#undef CGAL__H_UPDATE
-#undef CGAL__F_UPDATE
-
-template < class Traits_, class HalfedgeDSItems, class Alloc>
-void
-CGAL__HalfedgeDS_vector<Traits_, HalfedgeDSItems, Alloc>::
-normalize_border() {
-    nb_border_halfedges = 0;
-    nb_border_edges = 0;
-    border_halfedges = halfedges_end();
-    // Lets run one partition step over the array of halfedges.
-    // First find a pivot -- that means a border edge.
-    Halfedge_I ll = halfedges.begin();
-    while ( ll != halfedges.end() && (! ll->is_border()) &&
-            (! ll->opposite()->is_border() ))
-        ++ ++ll;
-    if ( ll == halfedges.end()) // Done. No border edges found.
-        return;
-
-    // An array of pointers to update the changed halfedge pointers.
-    typedef typename Allocator::template rebind< Halfedge_I>  HI_alloc_rebind;
-    typedef typename HI_alloc_rebind::other            HI_allocator;
-
-    typedef std::vector<Halfedge_I, HI_allocator> HVector;
-    typedef typename HVector::iterator Hiterator;
-    HVector hvector;
-    // Initialize it.
-    hvector.reserve( halfedges.size());
-    for ( Halfedge_I i = halfedges.begin(); i != halfedges.end(); ++i) {
-        hvector.push_back(i);
-    }
-    Hiterator llhv = hvector.begin() + (ll-halfedges.begin());
-    // Start with the partitioning.
-    Halfedge_I rr = halfedges.end();
-    -- --rr;
-    Hiterator rrhv = hvector.end();
-    -- --rrhv;
-    // The comments proove the invariant of the partitioning step.
-    // Note that + 1 or - 1 denotes plus one edge or minus one edge,
-    // so they mean actually + 2 and - 2.
-                          // Pivot is in *ll
-                          // Elements in [rr+1..end) >= pivot (border)
-                          // Elements in [begin..ll) <  pivot (non border)
-    while (ll < rr) {
-                          // Pivot is in *ll, ll <= rr.
-        while ( rr > ll && (rr->is_border() || rr->opposite()->is_border())) {
+        Hiterator llhv = hvector.begin() + (ll-halfedges.begin());
+        // Start with the partitioning.
+        Halfedge_I rr = halfedges.end();
+        -- --rr;
+        Hiterator rrhv = hvector.end();
+        -- --rrhv;
+        // The comments proove the invariant of the partitioning step.
+        // Note that + 1 or - 1 denotes plus one edge or minus one edge,
+        // so they mean actually + 2 and - 2.
+                              // Pivot is in *ll
+                              // Elements in [rr+1..end) >= pivot (border)
+                              // Elements in [begin..ll) <  pivot (non border)
+        while (ll < rr) {
+                              // Pivot is in *ll, ll <= rr.
+            while ( rr > ll && (rr->is_border() 
+                              || rr->opposite()->is_border())) {
+                if ( ! rr->opposite()->is_border()) {
+                    CGAL_assertion( rr + 1 == get_h_iter(rr->opposite()));
+                    std::swap( *rr, *(rr+1));
+                    update_opposite( rr);
+                    std::swap( *rrhv, *(rrhv+1));
+                }
+                -- --rr;
+                -- --rrhv;
+            }
+                              // Elements in [rr+1..end) >= pivot (border)
+                              // *rr <= pivot, ll <= rr.
+            CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
+            CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
+            std::swap( *(ll+1), *(rr+1));
+            std::swap( *ll, *rr);
+            update_opposite( ll);
+            update_opposite( rr);
+            std::swap( *(llhv+1), *(rrhv+1));
+            std::swap( *llhv, *rrhv);
+                              // Elements in [begin..ll) < pivot
+                              // Pivot is in *rr, ll <= rr.
+            while ( !ll->is_border() && ! ll->opposite()->is_border()) {
+                ++ ++ll;
+                ++ ++llhv;
+            }
+                              // Elements in [begin..ll) < pivot
+                              // *ll >= pivot
+                              // ll <= rr (since *rr is pivot.)
+            CGAL_assertion( ll <= rr);
+            CGAL_assertion( llhv <= rrhv);
+            CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
+            CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
+            std::swap( *(ll+1), *(rr+1));
+            std::swap( *ll, *rr);
+            update_opposite( ll);
+            update_opposite( rr);
+            std::swap( *(llhv+1), *(rrhv+1));
+            std::swap( *llhv, *rrhv);
             if ( ! rr->opposite()->is_border()) {
-                CGAL_assertion( rr + 1 == get_h_iter(rr->opposite()));
+                CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
                 std::swap( *rr, *(rr+1));
                 update_opposite( rr);
                 std::swap( *rrhv, *(rrhv+1));
             }
             -- --rr;
             -- --rrhv;
+                              // Elements in [rr+1..end) >= pivot
+                              // Pivot is in *ll
         }
-                          // Elements in [rr+1..end) >= pivot (border)
-                          // *rr <= pivot, ll <= rr.
-        CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
-        CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
-        std::swap( *(ll+1), *(rr+1));
-        std::swap( *ll, *rr);
-        update_opposite( ll);
-        update_opposite( rr);
-        std::swap( *(llhv+1), *(rrhv+1));
-        std::swap( *llhv, *rrhv);
-                          // Elements in [begin..ll) < pivot
-                          // Pivot is in *rr, ll <= rr.
-        while ( !ll->is_border() && ! ll->opposite()->is_border()) {
-            ++ ++ll;
-            ++ ++llhv;
+        CGAL_assertion( llhv >= rrhv);
+                              // rr + 1 >= ll >= rr
+                              // Elements in [rr+1..end) >= pivot
+                              // Elemente in [begin..ll) <  pivot
+                              // Pivot is in a[ll]
+        if ( ll == rr) {
+            // Check for the possibly missed swap.
+            if ( rr->is_border() && ! rr->opposite()->is_border()) {
+                CGAL_assertion( rr + 1 == get_h_iter (rr->opposite()));
+                std::swap( *rr, *(rr+1));
+                update_opposite( rr);
+                std::swap( *rrhv, *(rrhv+1));
+            }
         }
-                          // Elements in [begin..ll) < pivot
-                          // *ll >= pivot
-                          // ll <= rr (since *rr is pivot.)
-        CGAL_assertion( ll <= rr);
-        CGAL_assertion( llhv <= rrhv);
-        CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
-        CGAL_assertion( ll + 1 == get_h_iter( ll->opposite()));
-        std::swap( *(ll+1), *(rr+1));
-        std::swap( *ll, *rr);
-        update_opposite( ll);
-        update_opposite( rr);
-        std::swap( *(llhv+1), *(rrhv+1));
-        std::swap( *llhv, *rrhv);
-        if ( ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == get_h_iter( rr->opposite()));
-            std::swap( *rr, *(rr+1));
-            update_opposite( rr);
-            std::swap( *rrhv, *(rrhv+1));
-        }
-        -- --rr;
-        -- --rrhv;
-                          // Elements in [rr+1..end) >= pivot
-                          // Pivot is in *ll
-    }
-    CGAL_assertion( llhv >= rrhv);
-                          // rr + 1 >= ll >= rr
-                          // Elements in [rr+1..end) >= pivot
-                          // Elemente in [begin..ll) <  pivot
-                          // Pivot is in a[ll]
-    if ( ll == rr) {
-        // Check for the possibly missed swap.
-        if ( rr->is_border() && ! rr->opposite()->is_border()) {
-            CGAL_assertion( rr + 1 == get_h_iter (rr->opposite()));
-            std::swap( *rr, *(rr+1));
-            update_opposite( rr);
-            std::swap( *rrhv, *(rrhv+1));
-        }
-    }
-    CGAL_assertion( ll->opposite()->is_border());
-    CGAL_assertion( ll == halfedges.begin() || ! (ll-2)->is_border());
-    CGAL_assertion( ll == halfedges.begin() || ! (ll-1)->is_border());
-    border_halfedges = ll;
-    nb_border_edges = (halfedges.end() - ll) / 2;
-    nb_border_halfedges = 0;
+        CGAL_assertion( ll->opposite()->is_border());
+        CGAL_assertion( ll == halfedges.begin() || ! (ll-2)->is_border());
+        CGAL_assertion( ll == halfedges.begin() || ! (ll-1)->is_border());
+        border_halfedges = ll;
+        nb_border_edges = (halfedges.end() - ll) / 2;
+        nb_border_halfedges = 0;
 
-    HVector inv_vector( halfedges.size());
-    // Initialize inverse index.
-    for ( Hiterator k = hvector.begin(); k != hvector.end(); ++k){
-        inv_vector[*k - halfedges.begin()] =
-            halfedges.begin() + (k - hvector.begin());
+        HVector inv_vector( halfedges.size());
+        // Initialize inverse index.
+        for ( Hiterator k = hvector.begin(); k != hvector.end(); ++k){
+            inv_vector[*k - halfedges.begin()] =
+                halfedges.begin() + (k - hvector.begin());
+        }
+        // Update halfedge pointers.
+        HalfedgeDS_items_decorator<Self> D;
+        for (Halfedge_iterator h = halfedges_begin();h != halfedges_end();++h){
+            h->HBase::set_next( inv_vector[ h->next() - halfedges_begin()]);
+            D.set_vertex_halfedge(h);
+            if ( D.get_prev( h) == Halfedge_iterator())
+                D.set_prev( h, Halfedge_iterator());
+            else
+                D.set_prev( h, inv_vector[ D.get_prev(h) - halfedges_begin()]);
+            if ( h->is_border())
+                nb_border_halfedges++;
+            else
+                D.set_face_halfedge(h);
+        }
     }
+};
+#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+};
+#endif
 
-    // Update halfedge pointers.
-    HalfedgeDS_items_decorator<Self> D;
-    for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
-        h->HBase::set_next( inv_vector[ h->next() - halfedges_begin()]);
-// #ifdef DEADCODE
-        D.set_vertex_halfedge(h);
-        if ( D.get_prev( h) == Halfedge_iterator())
-            D.set_prev( h, Halfedge_iterator());
-        else
-            D.set_prev( h, inv_vector[ D.get_prev(h) - halfedges_begin()]);
-        if ( h->is_border())
-            nb_border_halfedges++;
-        else
-            D.set_face_halfedge(h);
-// #endif
-    }
-}
-
-#undef CGAL__HalfedgeDS_vector
 
 CGAL_END_NAMESPACE
 #endif // CGAL_HALFEDGEDS_VECTOR_H //

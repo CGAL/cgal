@@ -60,18 +60,11 @@ struct HalfedgeDS_default {
       typedef Traits_                                               Traits;
       typedef HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc> DS;
       typedef typename DS::size_type                                size_type;
-      HDS();
-      HDS( size_type v, size_type h, size_type f);
+      HDS() {}
+      HDS( size_type v, size_type h, size_type f)
+          : HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc>(v,h,f) {}
   };
 };
-
-template <class Traits_, class HalfedgeDSItems, class Alloc>
-HalfedgeDS_default::HDS<Traits_, HalfedgeDSItems, Alloc>:: HDS() {}
-
-template <class Traits_, class HalfedgeDSItems, class Alloc>
-HalfedgeDS_default::HDS<Traits_, HalfedgeDSItems, Alloc>::
-HDS( size_type v, size_type h, size_type f)
-    : HalfedgeDS_list::HDS<Traits_, HalfedgeDSItems, Alloc>(v,h,f) {}
 
 #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
 
