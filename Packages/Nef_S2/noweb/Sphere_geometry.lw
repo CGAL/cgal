@@ -1,0 +1,28 @@
+%------------------------------------------------------------------------------
+%KILLSTART
+%LDEL TRACE.*?\)\;
+\documentclass[a4paper]{article}
+\usepackage{amsmath,MyLweb,version}
+\input{defs}
+\excludeversion{ignorecodeparts}
+
+\begin{document}
+\title{Spherical Geometry}
+\author{Michael Seel}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{The manual page}
+
+\input{manpages/Sphere_point.man}
+\input{manpages/Sphere_segment.man}
+\input{manpages/Sphere_circle.man}
+\input{manpages/Sphere_direction.man}
+\input{manpages/Sphere_triangle.man}
+\newpage
+
+\bibliographystyle{alpha}
+\bibliography{diss}
+\end{document}
+
