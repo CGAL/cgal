@@ -1,3 +1,6 @@
+8 November 2004 Andreas Fabri
+- In Weighted_minkowski_distance.h: Bug fix: Added missing initialisation of a data member
+
 5 November 2004 Sylvain Pion
 - Remove warning.
 - Use CGAL_assertion() instead of assert().
