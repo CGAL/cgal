@@ -98,8 +98,6 @@ public:
                                                            const FT& m34,
                        const FT& w = FT(1));
 
-  ~Aff_transformationC3();
-
   Point_3     transform(const Point_3 &p) const { return ptr()->transform(p); }
   Point_3     operator()(const Point_3 &p) const { return transform(p); }
 
@@ -227,10 +225,6 @@ Aff_transformationC3(const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11,
                                           m21, m22, m23,
                                           m31, m32, m33);
 }
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::~Aff_transformationC3()
-{}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >

@@ -105,10 +105,6 @@ public:
                        const FT & m21, const FT & m22,
                        const FT &w = FT(1));
 
-  ~Aff_transformationC2();
-
-  Self &operator=(const Self &t);
-
   Point_2     transform(const Point_2 &p) const 
     { return ptr()->transform(p); } 
 
@@ -249,19 +245,6 @@ Aff_transformationC2(
   else
     PTR = new Aff_transformation_repC2<R>(m11, m12, m13,
                                           m21, m22, m23);
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::~Aff_transformationC2()
-{}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG> &
-Aff_transformationC2<R CGAL_CTAG>::
-operator=(const Aff_transformationC2<R CGAL_CTAG> &t)
-{
-  Handle::operator=(t);
-  return *this;
 }
 
 template < class R >
