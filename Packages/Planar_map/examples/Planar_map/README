@@ -57,3 +57,10 @@ example8:
   and the direct insertion functions (insert_from_vertex etc.)
   By: Oren Nechushtan
 
+example9:
+  This example tests the use of IO functions provided for Planar map.
+  This example demonsrates a trivial using of reading Planar map from 
+  input stream and writing it to output stream. Writing the Planar map 
+  to a Postscript file is also demonstated in this example.
+  By: Eti ezra.
+ 
