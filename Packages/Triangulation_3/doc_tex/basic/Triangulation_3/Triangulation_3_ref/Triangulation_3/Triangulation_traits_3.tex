@@ -92,9 +92,9 @@ according to the $z$-ordering of the points \ccc{p} and \ccc{q}.}
 %
 \ccNestedType{Orientation_3}{Predicate object. Must provide the operator
 \ccc{Orientation operator()(Point p, Point q, Point r, Point s)}
-which returns \ccc{LEFTTURN} (resp. \ccc{RIGHTTURN}) is $s$ is on the left 
-(resp. on the right) of the oriented plane \ccc{pqr}
-and \ccc{COPLANAR} is the four points are coplanar.}
+which returns POSITIVE, if s lies on the positive side of the oriented plane h
+defined by p, q, and r, returns NEGATIVE if s lies on the negative side of h,
+and returns COPLANAR if s lies on h.}
 %
 \ccGlue
 %

@@ -2368,34 +2368,34 @@ flip( Cell_handle c, int i )
 				    c->vertex((i+2)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+2)&3)->point(),
 				    c->vertex((i+3)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+3)&3)->point(),
 				    c->vertex((i+1)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
   }
   else {
     if ( orientation( c->vertex((i+2)&3)->point(),
 				    c->vertex((i+1)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+3)&3)->point(),
 				    c->vertex((i+2)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
     if ( orientation( c->vertex((i+1)&3)->point(),
 				    c->vertex((i+3)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
-	 != LEFTTURN ) return false;
+	 != POSITIVE ) return false;
   }
 
   _tds.flip_flippable( &(*c), i);
@@ -2429,19 +2429,19 @@ flip_flippable( Cell_handle c, int i )
 				   c->vertex((i+2)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
     CGAL_triangulation_precondition
       ( orientation( c->vertex((i+2)&3)->point(),
 				   c->vertex((i+3)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
     CGAL_triangulation_precondition
       ( orientation( c->vertex((i+3)&3)->point(),
 				   c->vertex((i+1)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
   }
   else {
     CGAL_triangulation_precondition
@@ -2449,19 +2449,19 @@ flip_flippable( Cell_handle c, int i )
 				   c->vertex((i+1)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
     CGAL_triangulation_precondition
       ( orientation( c->vertex((i+3)&3)->point(),
 				   c->vertex((i+2)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
     CGAL_triangulation_precondition
       ( orientation( c->vertex((i+1)&3)->point(),
 				   c->vertex((i+3)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
-	== LEFTTURN );
+	== POSITIVE );
   }
   
   _tds.flip_flippable( &(*c), i);
@@ -2508,12 +2508,12 @@ flip( Cell_handle c, int i, int j )
 				  c->vertex(next_around_edge(j,i))->point(),
 				  n->vertex(next_around_edge(jn,in))->point(),
 				  c->vertex(j)->point() )
-       != LEFTTURN ) return false;
+       != POSITIVE ) return false;
   if ( orientation( c->vertex(i)->point(),
 				  c->vertex(next_around_edge(j,i))->point(),
 				  n->vertex(next_around_edge(jn,in))->point(),
 				  c->vertex(next_around_edge(i,j))->point() )
-       != LEFTTURN ) return false;
+       != POSITIVE ) return false;
 
   _tds.flip_flippable( &(*c), i, j );
   return true;
@@ -2558,12 +2558,12 @@ flip_flippable( Cell_handle c, int i, int j )
     ( orientation( c->vertex(next_around_edge(i,j))->point(),
 		   c->vertex(next_around_edge(j,i))->point(),
 		   n->vertex(next_around_edge(jn,in))->point(),
-		   c->vertex(j)->point() ) == LEFTTURN );
+		   c->vertex(j)->point() ) == POSITIVE );
   CGAL_triangulation_precondition
     ( orientation( c->vertex(i)->point(),
 		   c->vertex(next_around_edge(j,i))->point(),
 		   n->vertex(next_around_edge(jn,in))->point(),
-		   c->vertex(next_around_edge(i,j))->point() ) == LEFTTURN );
+		   c->vertex(next_around_edge(i,j))->point() ) == POSITIVE );
 #endif
   _tds.flip_flippable( &(*c), i, j );
 }
@@ -3007,7 +3007,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
       if ( orientation(c->vertex(0)->point(),
 		       c->vertex(1)->point(),
 		       c->vertex(2)->point(),
-		       c->vertex(3)->point()) != LEFTTURN ) {
+		       c->vertex(3)->point()) != POSITIVE ) {
 	if (verbose)
 	    std::cerr << "badly oriented cell " 
 		      << c->vertex(0)->point() << ", " 
@@ -3022,10 +3022,8 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
   case 2:
     {
       for ( int i=0; i<3; i++ ) {
-	if ( ( ! is_infinite
-	       ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
-	     && 
-	     coplanar_orientation
+	if ( ! is_infinite ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) )
+	     && coplanar_orientation
 	     ( c->vertex(cw(i))->point(),
 	       c->vertex(ccw(i))->point(),
 	       c->vertex(i)->point(),
@@ -3051,8 +3049,8 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
       const Point & p0 = c->vertex(0)->point();
       const Point & p1 = c->vertex(1)->point();
 	    
-      if ( ! is_infinite
-	   ( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
+      if ( ! is_infinite ( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) )
+      {
 	const Point & n0 =
 	    c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
 	if ( ( compare_x( p0, p1 ) != compare_x( p1, n0 ) )
@@ -3069,8 +3067,8 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 	  return false;
 	}
       }
-      if ( ! is_infinite
-	   ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) ) { 
+      if ( ! is_infinite ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) )
+      {
 	const Point & n1 = 
 	  c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
 	if ( ( compare_x( p1, p0 ) != compare_x( p0, n1 ) )
