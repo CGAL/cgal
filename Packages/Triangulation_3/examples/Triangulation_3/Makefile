@@ -15,9 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include\
 	$(CGAL_CXXFLAGS)\
-	-B$(UTIL)/Binutils/$(UNAME)/bin/
-#	$(LONG_NAME_PROBLEM_CXXFLAGS)
-#	$(LONG_NAME_PROBLEM_CXXFLAGS) \
 #	-g 
 
 
@@ -27,9 +24,7 @@ CXXFLAGS = -I../../include\
 
 LDFLAGS = \
 	$(TESTSUITE_LDFLAGS) \
-	-B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	$(CGAL_LDFLAGS)
-#	$(LONG_NAME_PROBLEM_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries
