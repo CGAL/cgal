@@ -34,10 +34,7 @@
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 //!!! this should go into function_objects.h
-#ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
-#define CGAL_PROTECT_FUNCTIONAL
-#endif
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
@@ -55,10 +52,7 @@ struct Squared_distance
 
 CGAL_END_NAMESPACE
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
 #endif
 CGAL_BEGIN_NAMESPACE
 
@@ -87,7 +81,7 @@ public:
   //   form a convex chain.
   {
     typedef Polygon_traits_2< R >        P_traits;
-    typedef vector< Point_2 >            Cont;
+    typedef std::vector< Point_2 >       Cont;
     typedef Polygon_2< P_traits, Cont >  Polygon_2;
   
     Polygon_2 p( points_begin, points_end);

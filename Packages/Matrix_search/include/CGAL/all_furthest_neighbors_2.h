@@ -46,14 +46,8 @@
 #ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #include <CGAL/monotone_matrix_search.h>
 #endif // CGAL_MONOTONE_MATRIX_SEARCH_H
-#ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
-#define CGAL_PROTECT_FUNCTIONAL
-#endif
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 #ifdef _MSC_VER
@@ -106,10 +100,7 @@ public:
 !defined(CGAL_CFG_MATCHING_BUG_2)
 
 CGAL_END_NAMESPACE
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
 CGAL_BEGIN_NAMESPACE
 
 template < class RandomAccessIC, class OutputIterator, class Traits >

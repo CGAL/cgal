@@ -157,7 +157,7 @@ rectangular_p_center_2_binary_search(
     r,
     pf,
     CGAL_reinterpret_cast(
-      Pcenter_default_traits< PiercingFunction >, 0));
+      Pcenter_default_traits_2< PiercingFunction >, 0));
 } // rectangular_p_center_2_binary_search( ... )
 
 template < class ForwardIterator,
@@ -213,7 +213,7 @@ rectangular_p_center_2_binary_search(
   if ( ok)
     return oi;
   // create vector with absolute coordinate differences:
-  vector< FT > c_diffs;
+  std::vector< FT > c_diffs;
   X x;
   Y y;
   c_diffs.reserve( pierce_it.number_of_points() *
@@ -300,7 +300,7 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     CGAL_reinterpret_cast(
-      Pcenter_default_traits< PiercingFunction >*, 0),
+      Pcenter_default_traits_2< PiercingFunction >*, 0),
     compose1_2(
       bind1st( Max< FT >(), 0),
       minus< FT >()));
@@ -350,14 +350,14 @@ rectangular_p_center_2_matrix_search(
 #endif
   typedef typename Traits::X        X;
   typedef typename Traits::Y        Y;
-  typedef vector< FT >              FT_cont;
+  typedef std::vector< FT >         FT_cont;
   typedef FT_cont::iterator         FT_iterator;
   typedef Cartesian_matrix_horizontally_flipped<
     MatrixOperator,
     FT_iterator,
     FT_iterator >
   Matrix;
-  typedef vector< Matrix >          MatrixContainer;
+  typedef std::vector< Matrix >     MatrixContainer;
   typedef Sorted_matrix_search_traits_adaptor<
     Traits, Matrix >
   Matrix_search_traits;
@@ -375,8 +375,8 @@ rectangular_p_center_2_matrix_search(
   Matrix_search_traits search_it( pierce_it);
 
   // copy x and y coordinates from [f,l):
-  vector< FT > x_coords;
-  vector< FT > y_coords;
+  std::vector< FT > x_coords;
+  std::vector< FT > y_coords;
   X x;
   Y y;
   x_coords.reserve( number_of_points);

@@ -1003,9 +1003,9 @@ three_pierce_rectangles(
 
   // define container to store disjoint rectangles:
   // typedef vector< Iso_rectangle_2 >  Rectangle_cont;
-  typedef vector< Iso_rectangle_2 >   Rectangle_cont;
-  typedef Rectangle_cont::size_type   size_type;
-  typedef Rectangle_cont::iterator    Rectangle_iterator;
+  typedef std::vector< Iso_rectangle_2 >   Rectangle_cont;
+  typedef Rectangle_cont::size_type        size_type;
+  typedef Rectangle_cont::iterator         Rectangle_iterator;
   typedef Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
     Does_not_contain;
   Rectangle_cont disjoint;
@@ -1161,9 +1161,9 @@ four_pierce_rectangles(
   Ymax ymax;
   // define container to store disjoint rectangles:
   // typedef vector< Iso_rectangle_2 >  Rectangle_cont;
-  typedef vector< Iso_rectangle_2 >   Rectangle_cont;
-  typedef Rectangle_cont::size_type   size_type;
-  typedef Rectangle_cont::iterator    Rectangle_iterator;
+  typedef std::vector< Iso_rectangle_2 >   Rectangle_cont;
+  typedef Rectangle_cont::size_type        size_type;
+  typedef Rectangle_cont::iterator         Rectangle_iterator;
   typedef Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
     Does_not_contain;
   Rectangle_cont disjoint;
@@ -1885,10 +1885,8 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
 #else
-  typedef vector< Iso_rectangle_2 >::iterator
-    RandomAccessIC;
-  typedef back_insert_iterator< vector< Point_2 > >
-    OutputIterator;
+  typedef std::vector< Iso_rectangle_2 >::iterator       RandomAccessIC;
+  typedef back_insert_iterator< std::vector< Point_2 > > OutputIterator;
 
   Wastebasket< Point_2 >
   operator()(
@@ -1948,10 +1946,8 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
 #else
-  typedef vector< Iso_rectangle_2 >::iterator
-    RandomAccessIC;
-  typedef back_insert_iterator< vector< Point_2 > >
-    OutputIterator;
+  typedef std::vector< Iso_rectangle_2 >::iterator       RandomAccessIC;
+  typedef back_insert_iterator< std::vector< Point_2 > > OutputIterator;
 
   Wastebasket< Point_2 >
   operator()(
@@ -2011,10 +2007,8 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
 #else
-  typedef vector< Iso_rectangle_2 >::iterator
-    RandomAccessIC;
-  typedef back_insert_iterator< vector< Point_2 > >
-    OutputIterator;
+  typedef std::vector< Iso_rectangle_2 >::iterator       RandomAccessIC;
+  typedef back_insert_iterator< std::vector< Point_2 > > OutputIterator;
 
   Wastebasket< Point_2 >
   operator()(

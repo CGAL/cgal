@@ -105,9 +105,9 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
 #else
-  typedef typename vector< Point_2 >::iterator
+  typedef typename std::vector< Point_2 >::iterator
     RandomAccessIC;
-  typedef typename vector< int >::reverse_iterator
+  typedef typename std::vector< int >::reverse_iterator
     OutputIterator;
 #endif
   OutputIterator
@@ -182,7 +182,7 @@ public:
   //   form a convex chain.
   {
     typedef Polygon_traits_2< R >        P_traits;
-    typedef vector< Point_2 >            Cont;
+    typedef std::vector< Point_2 >       Cont;
     typedef Polygon_2< P_traits, Cont >  Polygon_2;
   
     Polygon_2 p( points_begin, points_end);
@@ -270,9 +270,9 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
 #else
-  typedef typename vector< Point_2 >::iterator
+  typedef typename std::vector< Point_2 >::iterator
     RandomAccessIC;
-  typedef typename vector< int >::reverse_iterator
+  typedef typename std::vector< int >::reverse_iterator
     OutputIterator;
 #endif
   OutputIterator
@@ -333,7 +333,7 @@ public:
   //   form a convex chain.
   {
     typedef Polygon_traits_2< R >        P_traits;
-    typedef vector< Point_2 >            Cont;
+    typedef std::vector< Point_2 >       Cont;
     typedef Polygon_2< P_traits, Cont >  Polygon_2;
   
     Polygon_2 p( points_begin, points_end);
