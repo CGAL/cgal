@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Removed Sqrt.
+ALL : Fixed demos for LEDA namespace (as suggested by Matthias).
 ALL : K::FT -> K::R::FT. (<- Sylvain)
 ALL : Fixed sunpro problems.
 ALL : Some fixes for sunpro 5.3.
