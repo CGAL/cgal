@@ -42,6 +42,7 @@
 
 
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/number_utils_classes.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
 
@@ -659,8 +660,13 @@ private:
   typedef typename FK::FT                     FK_FT;
   typedef typename FK::RT                     FK_RT;
 
+#ifdef CGAL_VERSION_LESS_THAN_120
   typedef
   Cartesian_converter<CK_, FK_,	Interval_converter<CK_RT> >  C2F_;
+#else 
+  typedef
+  Cartesian_converter<CK_, FK_,	To_interval<CK_RT> >  C2F_;
+#endif
   typedef Svd_cartesian_converter<CK, FK, C2F_>              C2F;
 
 
