@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.8.3 on 10-Aug-2000
+- no changes (problem with download script)
+
 Version 3.8.2 on 07-Aug-2000
 - field 'maintainer' added to file header (where missing).
 
