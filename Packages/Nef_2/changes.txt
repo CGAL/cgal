@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.31 (28 Jul 2003) [rursu]
+     - replaced Leda_based demo with Qt_widget demo
+     - fixed demo/Nef_2/makefile for FreeBSD
+
 1.30 (18 Jun 2003) [af]
      - Added Rational in Nef polyhedron testsuite, in the LEDA case
 
