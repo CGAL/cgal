@@ -1,3 +1,5 @@
+- Added missing typename
+
 1.50
 - Bugfix: Replaced one more occurence of  Circulator_list with std::vector
 1.49 (20 June 2003)
