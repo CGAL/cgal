@@ -774,7 +774,22 @@
                    \subsection[#1 (\protect\ccPrintSingleTokenSemi
                    \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}}
 
-\newcommand{\ccInclude}[1]{\noindent\ccc{##include <#1>}}
+
+% Option to enable automatic check for C++ include files in cgal_manual
+\gdef\ccIfCheckInclude{\ccFalse}
+\gdef\cciIfCheckIncludeOpen{\ccFalse}
+
+\newcommand{\ccInclude}[1]{%
+  \noindent\ccc{##include <#1>}%
+  \ifnum\ccIfCheckInclude=\ccTrue
+    \ifnum\cciIfCheckIncludeOpen=\ccFalse
+      \gdef\cciIfCheckIncludeOpen{\ccTrue}%
+      \newwrite\cciIncludeFileHandle      
+      \openout\cciIncludeFileHandle=\jobname.inc\relax
+    \fi
+    \write\cciIncludeFileHandle{#1}\relax
+  \fi
+}
 
 
 \newcommand{\ccHeading}[1]{\bigskip\pagebreak[1]
