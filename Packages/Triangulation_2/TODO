@@ -1,6 +1,7 @@
 
+- Something still tobe done for remove in Constrained
+  Delaunay_constrained and  Constrained_triangulation_plus
 - Mettre la doc a jour
-- virer Dummy_output_iterator et le remplacer par empty_set_iterator
 - Harmoniser find_conflicts() avec le 3d
 - tester entree vrml
 - eclaircir ce qui arrive

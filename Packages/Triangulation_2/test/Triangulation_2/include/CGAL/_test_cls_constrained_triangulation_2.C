@@ -124,6 +124,14 @@ _test_cls_constrained_triangulation(const Triang &)
    assert( T2_3.is_valid() );
    assert(T2_3.number_of_vertices()==T2_2.number_of_vertices());
 
+   // There are too many constraint here to make difference
+   // between constrained and Constrained Delaunay
+   Triang T2_5;
+   for (int j=0; j < 20; j++) T2_5.insert(lpt[j]);
+   T2_5.insert( Point(1,0.5), Point(2.5, 3.5));
+   T2_5.is_valid();
+
+
    // test assignement operator
     Triang Taux = T2_2;
     assert( Taux.dimension() == 2 );

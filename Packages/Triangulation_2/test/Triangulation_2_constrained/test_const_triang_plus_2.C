@@ -30,21 +30,16 @@
 #include <CGAL/_test_cls_const_triang_plus_2.C>
 
 
-
-
-
-
 int main()
 {
 
   std::cout << "Testing constraint hirarchy" << std::endl;
   _test_cls_hierarchy_2();
 
-  std::cout << "Testing constrained_triangulation_plus_2 "<< std::endl;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<TestK> CDt;
-  typedef CGAL::Tag_exact_predicates   I_tag;
-  typedef CGAL::Constrained_triangulation_plus_2<CDt, I_tag>   CDtplus;
-
+  std::cout << "Testing constrained_triangulation_plus_2 "<<
+    std::endl;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<TestK>   CDt;
+  typedef CGAL::Constrained_triangulation_plus_2<CDt>   CDtplus;
   _test_cls_const_triang_plus_2(CDtplus());
   return 0;
 }

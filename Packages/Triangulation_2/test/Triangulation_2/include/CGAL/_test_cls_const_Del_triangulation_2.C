@@ -66,7 +66,6 @@ _test_cls_const_Del_triangulation(const Triangul&)
    assert( T2.number_of_vertices() == 20);
    assert( T2.is_valid() );
 
-
    // test get_conflicts
   std:: cout << "    get conflicts" << std::endl;
   std::list<Face_handle> conflicts;

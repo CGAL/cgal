@@ -108,6 +108,8 @@ public:
   int number_of_enclosing_constraints(T va, T vb);
   H_context_iterator contexts_begin(T va, T vb);
   H_context_iterator contexts_end(T va, T vb);
+  int number_of_constraints() { return c_to_sc_map.size();}
+  int number_of_subconstraints() {return sc_to_c_map.size();}
   
 
   // insert/remove

@@ -33,20 +33,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct Tag_no_intersection{};
-struct Tag_exact_intersections{}; // to be used with an exact number type
-struct Tag_exact_predicates{}; // to be used with filtered exact number
-
 // Tr the base triangulation class 
 // Tr has to be Constrained or Constrained_Delaunay
-// I_tag to tag the optional support of constriaint intersections
-template < class Tr, class I_tag = Tag_exact_predicates>
+
+template < class Tr >
 class Constrained_triangulation_plus_2  
   : public Tr
 {
 public:
-  typedef Tr              Triangulation;
-  typedef I_tag           Intersection_tag;
+  typedef Tr                                   Triangulation;
+  typedef typename Tr::Intersection_tag        Intersection_tag;
 
   typedef typename Triangulation::Edge         Edge;
   typedef typename Triangulation::Vertex        Vertex;
@@ -76,21 +72,22 @@ public:
 
 protected:
   Constraint_hierarchy hierarchy;
-  Intersection_tag     itag;
-
+ 
 public:
   Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
-    : Triangulation(gt), itag() { }
+    : Triangulation(gt) { }
 
-  // copy constructrue et effectation operateur a revoir
-//   Constrained_triangulation_plus_2(
-  //  const Constrained_triangulation_plus_2& ct)
-//     : Constrained_triangulation(ct) {}
-  // destructeur aussi a revoir
+// Constrained_triangulation_plus_2(const Constrained_triangulation_plus2& ctp)
+//     { copy(ctp);}
+
+  virtual ~Constrained_triangulation_plus_2() {}
+
+  Constrained_triangulation_plus_2 &operator=
+     (const Constrained_triangulation_plus_2 &ctp);
 
   Constrained_triangulation_plus_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())
-      : Triangulation(gt), itag()
+      : Triangulation(gt)
   {
     typename List_constraints::iterator lcit=lc.begin();
     for( ;lcit != lc.end(); lcit++) {
@@ -112,19 +109,39 @@ public:
       CGAL_triangulation_postcondition( is_valid() );
   }
 
+    //Helping
+  // void copy(const Constrained_triangulation_plus_2 &ctp);
+  // void swap(Triangulation_2 &tr);
+
   // INSERTION
-  Vertex_handle insert(const Point& a, Face_handle start = Face_handle() );
-  Vertex_handle insert(const Point& p,
-		       Locate_type lt,
-		       Face_handle loc, int li );
-  void insert(Point a, Point b);
-  void insert(Vertex_handle va, Vertex_handle vb);
+  virtual Vertex_handle insert(const Point& a, 
+			       Face_handle start = Face_handle() );
+  virtual Vertex_handle insert(const Point& p,
+			       Locate_type lt,
+			       Face_handle loc, int li );
+  void insert_constraint(Point a, Point b);
+  void insert_constraint(Vertex_handle va, Vertex_handle vb);
 //   template < class InputIterator >
 //   int insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
   
- 
+  //for backward compatibility
+  void insert(Point a, Point b) { insert_constraint(a, b);}
+  void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
+
+  Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb);
+  Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb,
+			  Exact_intersections_tag);
+  Vertex_handle intersect(Face_handle f, int i, 
+			  Vertex_handle vaa,
+			  Vertex_handle vbb,
+			  Exact_predicates_tag);
+  
 
   //SUPPRESSION
   // to be done next
@@ -145,39 +162,11 @@ public:
 						      Vertex_handle vb);
   Vertices_in_constraint vertices_in_constraint_end(Vertex_handle va, 
 						    Vertex_handle vb);
+  int number_of_constraints() { return hierarchy.number_of_constraints();}
+  int number_of_subconstraints(){return hierarchy.number_of_subconstraints();}
 
 protected:
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Tag_no_intersection);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Tag_exact_intersections);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Tag_exact_predicates);
-  
-
-  void  insert_subconstraint(Vertex_handle vaa,
-			     Vertex_handle vbb);
-
-  bool find_intersected_faces(Vertex_handle vaa,
-			      Vertex_handle vbb,
-			      List_faces & intersected_faces,
-			      List_edges & list_ab, 
-			      List_edges & list_ba,
-			      Vertex_handle & vi);
-private:
-  Vertex_handle t_intersect(Vertex_handle vaa,
-			    Vertex_handle vbb,
-			    Vertex_handle vcc,
-			    Vertex_handle vdd);
+  void insert_subconstraint(Vertex_handle va,Vertex_handle vb);
 
   //to debug
 public:
@@ -198,29 +187,30 @@ public:
 
 };
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
 push_back(const Point &p)
 {
   return insert(p);
 }
 
 
-template <class Tr, class I_tag >
+
+template <class Tr>
 inline
 void
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::
 push_back(const Constraint &c)
 {
-  insert(c.first, c.second);
+  insert_constraint(c.first, c.second);
 }
     
-template < class Tr, class I_tag >
+template < class Tr >
 inline 
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
 insert(const Point& a, Face_handle start)
 {
   Locate_type lt;
@@ -229,9 +219,9 @@ insert(const Point& a, Face_handle start)
   return insert(a,lt,loc,li);
 }
 
-template < class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
-Constrained_triangulation_plus_2<Tr,I_tag>::
+template < class Tr>
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 {
   Vertex_handle v1, v2;
@@ -250,22 +240,21 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   return va;
 }
 
-
-template <class Tr, class I_tag >
+template <class Tr>
 inline void
-Constrained_triangulation_plus_2<Tr,I_tag>::
-insert(Point a, Point b)
+Constrained_triangulation_plus_2<Tr>::
+insert_constraint(Point a, Point b)
   // insert endpoints first
 {
   Vertex_handle va= insert(a);
   Vertex_handle vb= insert(b);
-  insert(va, vb);
+  insert_constraint(va, vb);
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline void
-Constrained_triangulation_plus_2<Tr,I_tag>::
-insert(Vertex_handle va, Vertex_handle vb)
+Constrained_triangulation_plus_2<Tr>::
+insert_constraint(Vertex_handle va, Vertex_handle vb)
 {
   // protects against inserting twice the same constraint
   bool no_twice = hierarchy.insert_constraint(va, vb);
@@ -274,9 +263,9 @@ insert(Vertex_handle va, Vertex_handle vb)
 }
 
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline void
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::
 insert_subconstraint(Vertex_handle vaa,
 		     Vertex_handle vbb)
   // insert the subconstraint [vaa vbb] 
@@ -298,8 +287,7 @@ insert_subconstraint(Vertex_handle vaa,
       
   List_faces intersected_faces;
   List_edges conflict_boundary_ab, conflict_boundary_ba;
-  List_edges new_edges;
-    
+     
   bool intersection  = find_intersected_faces( vaa, vbb,
 			                       intersected_faces,
 					       conflict_boundary_ab,
@@ -326,108 +314,9 @@ insert_subconstraint(Vertex_handle vaa,
   return;
 }
 
-
-    
-template <class Tr, class I_tag >
-bool
-Constrained_triangulation_plus_2<Tr,I_tag>::
-find_intersected_faces(Vertex_handle vaa,
-		       Vertex_handle vbb,
-		       List_faces & intersected_faces,
-		       List_edges & list_ab, 
-		       List_edges & list_ba,
-		       Vertex_handle & vi)
-  // find the facets intersected by  the subconstraint [vaa,vbb] 
-  // and put in vertex-handle vi the first vertex encountered on [vaa,vbb]
-  // return true if  vi is  an  intersection point 
-  // when false, vi is not an intersection and : 
-  // intersected_faces contains the list if faces intersected by [va,vi]
-  // list_ab and list_ba represents the boundary of the union
-  // of the intersected faces oriented cw
-  // list_ab consists of the edges from vaa to vi (i.e. on the left of a->b)
-  // list_ba    "         "        from vi to vaa (i.e. on the right of a->b)
-{
-  Point aa = vaa->point();
-  Point bb = vbb->point();
-  Line_face_circulator current_face=Line_face_circulator(vaa, this, bb);
-  int ind=current_face->index(vaa);
-      
-  // to deal with the case where the first crossed edge
-  // is constrained
-  if(current_face->is_constrained(ind)) {
-    vi=intersect(current_face, ind, vaa, vbb);
-    return true;
-  }
-
-  Face_handle lf= current_face->neighbor(ccw(ind)); 
-  Face_handle rf= current_face->neighbor(cw(ind));
-  Orientation orient;
-  Face_handle previous_face;
-  Vertex_handle current_vertex;	
-
-  list_ab.push_back(Edge(lf, lf->index(current_face)));
-  list_ba.push_front(Edge(rf, rf->index(current_face)));
-  intersected_faces.push_front(current_face);
-
-  // initcd
-  previous_face=current_face; 
-  ++current_face;
-  ind=current_face->index(previous_face);  
-  current_vertex=current_face->vertex(ind);  
-
-  // loop over triangles intersected by ab
-  bool done = false;
-  while (current_vertex != vbb && !done)  { 
-    orient = orientation(aa,bb,current_vertex->point());
-    int i1, i2;
-    switch (orient) {
-    case COLLINEAR :  
-      done = true; // current_vertex is the new endpoint
-      break;
-    case LEFTTURN :
-    case RIGHTTURN :
-      if (orient == LEFTTURN) {
-	i1 = ccw(ind) ; //index of second intersected edge of current_face
-	i2 = cw(ind); //index of non intersected edge of current_face
-      }
-      else {
-	i1 = cw(ind) ; //index of second intersected edge of current_face
-	i2 = ccw(ind); //index of non intersected edge of current_face
-      }
-      if(current_face->is_constrained(i1)) {
-	vi = intersect(current_face, i1, vaa,vbb);
-	return true;
-      }
-      else {
-	lf= current_face->neighbor(i2);
-	intersected_faces.push_front(current_face);
-	if (orient == LEFTTURN) 
-	  list_ab.push_back(Edge(lf, lf->index(current_face)));
-	else // orient == RIGHTTURN
-	  list_ba.push_front(Edge(lf, lf->index(current_face)));
-	previous_face=current_face;
-	++current_face;
-	ind=current_face->index(previous_face); 
-	current_vertex=current_face->vertex(ind);
-      }
-      break;
-    }
-  }
-    
-  // last triangle 
-  vi = current_vertex;
-  intersected_faces.push_front(current_face);
-  lf= current_face->neighbor(cw(ind));
-  list_ab.push_back(Edge(lf, lf->index(current_face))); 
-  rf= current_face->neighbor(ccw(ind));
-  list_ba.push_front(Edge(rf, rf->index(current_face)));
-  return false;
-}
-
-template <class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
-
-Constrained_triangulation_plus_2<Tr,I_tag>::
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb) 
@@ -435,28 +324,13 @@ intersect(Face_handle f, int i,
   return intersect(f, i, vaa, vbb, Intersection_tag());
 }
 
-template <class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
-Constrained_triangulation_plus_2<Tr,I_tag>::
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb,
-	  Tag_no_intersection)
-{
-  std::cerr << " sorry, this triangulation does not deal " 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
-  return Vertex_handle();
-}
-
-template <class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>:: Vertex_handle 
-Constrained_triangulation_plus_2<Tr,I_tag>::
-intersect(Face_handle f, int i, 
-	  Vertex_handle vaa,
-	  Vertex_handle vbb,
-	  Tag_exact_intersections)
+	  Exact_intersections_tag)
 // compute the intersection of the constraint edge (f,i) 
 // with the subconstraint (vaa,vbb) being inserted
 // insert the intersection point
@@ -482,10 +356,9 @@ intersect(Face_handle f, int i,
   return vi; 
 }
 
-
-template <class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
-Constrained_triangulation_plus_2<Tr,I_tag>::
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb,
@@ -524,39 +397,10 @@ intersect(Face_handle f, int i,
   return vi; 
 }
 
-template <class Tr, class I_tag >
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
-Constrained_triangulation_plus_2<Tr,I_tag>::
-t_intersect(Vertex_handle vaa,
-	    Vertex_handle vbb,
-	    Vertex_handle vcc,
-	    Vertex_handle vdd)
-{
-  // intersection between edges [vaa,vbb] and [vcc,vdd]
-  // has been detected by exact predicates
-  // but not computed by approximate construction
-  typename Geom_traits::Construct_line_2  construct_line = 
-    geom_traits().construct_line_2_object();
-  typename Geom_traits::Compute_squared_distance_2
-    compute_squared_distance = 
-    geom_traits().compute_squared_distance_2_object();
-  typename Geom_traits::Line_2 l1 = construct_line(vaa->point(),
-						   vbb->point());
-  typename Geom_traits::Line_2 l2 = construct_line(vcc->point(),
-						   vdd->point());
-  Vertex_handle vi = vaa;
-  typename Geom_traits::FT dd = compute_squared_distance(l2,vaa->point());
-  if (compute_squared_distance(l2,vbb->point()) < dd) vi = vbb;
-  if (compute_squared_distance(l1,vcc->point()) < dd) vi = vcc;
-  if (compute_squared_distance(l1,vdd->point()) < dd) vi = vdd;
-  return vi;
-}
-
-
-template <class Tr, class I_tag >
+template <class Tr>
 std::ostream &
 operator<<(std::ostream& os, 
-	   const Constrained_triangulation_plus_2<Tr,I_tag> &ct)
+	   const Constrained_triangulation_plus_2<Tr> &ct)
 {
   ct.file_output(os);
   return os ;
@@ -564,96 +408,96 @@ operator<<(std::ostream& os,
 
 // Constraint Hierarchy Queries
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
 typename
-Constrained_triangulation_plus_2<Tr,I_tag>::Constraint_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 constraints_begin() const
 {
   return hierarchy.c_begin();
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
 typename
-Constrained_triangulation_plus_2<Tr,I_tag>::Constraint_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 constraints_end() const
 {
   return hierarchy.c_end();
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
 typename
-Constrained_triangulation_plus_2<Tr,I_tag>::Subconstraint_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 subconstraints_begin() const
 {
   return hierarchy.sc_begin();
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
 typename
-Constrained_triangulation_plus_2<Tr,I_tag>::Subconstraint_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 subconstraints_end() const
 {
   return hierarchy.sc_end();
 }
 
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Context
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Context
+Constrained_triangulation_plus_2<Tr>::
 context(Vertex_handle va, Vertex_handle vb)
 {
   return hierarchy.context(va,vb);
 }
 
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline int
-Constrained_triangulation_plus_2<Tr,I_tag>::
+Constrained_triangulation_plus_2<Tr>::
 number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb)
 {
  return hierarchy.number_of_enclosing_constraints(va,vb); 
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Context_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Context_iterator
+Constrained_triangulation_plus_2<Tr>::
 contexts_begin(Vertex_handle va, Vertex_handle vb)
 {
   return hierarchy.contexts_begin(va,vb);
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Context_iterator
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Context_iterator
+Constrained_triangulation_plus_2<Tr>::
 contexts_end(Vertex_handle va, Vertex_handle vb)
 {
   return hierarchy.context_end(va,vb);
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertices_in_constraint
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint
+Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb)
 {
   return  hierarchy.vertices_in_constraint_begin(va,vb);
 }
 
-template <class Tr, class I_tag >
+template <class Tr>
 inline
-typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertices_in_constraint
-Constrained_triangulation_plus_2<Tr,I_tag>::
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint
+Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
 {
   return  hierarchy.vertices_in_constraint_end(va,vb);
