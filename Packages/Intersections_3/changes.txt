@@ -1,3 +1,7 @@
-Version 2.2.1
+-----
+* 2.2.2 *
+Added a few using declarations to test files
 
+-----
+* 2.2.1 *
 Adapted cgal_test and makefile in test directory to new install_cgal script

@@ -4,6 +4,9 @@
 #include <CGAL/intersection_3_1.h>
 #include "numrep2.h"
 
+using std::cout;
+using std::cin;
+
 typedef CGAL::Plane_3<TestR> Plane;
 typedef CGAL::Segment_3<TestR> Segment;
 typedef CGAL::Point_3<TestR> Point;
