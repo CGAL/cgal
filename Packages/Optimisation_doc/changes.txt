@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.7 on 31-Jul-2001
+- Susan moved Optimisation_ref directory up one level
+
 Version 1.0.6 on 27-Jul-2001
 - Susan made changes necessary for manual split
 
