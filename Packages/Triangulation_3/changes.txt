@@ -1,3 +1,7 @@
+Version 1.110 (10 April 02)
+- method Triangulation_3<GT,Tds>::triangle returns a triangle oriented 
+towards the outside of the cell c for facet (c,i)
+
 Version 1.109 (9 April 02)
 - SunPro can't eat the automatic conversion iterator -> handle in some cases,
   so fix example_color.C.

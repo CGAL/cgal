@@ -1,8 +1,5 @@
 -------------- POUR LA RELEASE
 
-- .triangle(Facet) devrait retourner un triangle oriente 
-  (cf mail sur cgal-discuss-l).
-
 - bien tester le output_stream de T_3 et le copy_tds (ordre de creation des
   sommets). 
 - Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 

@@ -218,14 +218,16 @@ an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 {Returns the tetrahedron formed by the four vertices of \ccc{c}.
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$ and the cell is finite.}}
 \ccGlue
-\ccMethod{Triangle triangle(const Facet & f) const;}
-{Returns the triangle formed by the three vertices of \ccc{f}. 
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and the facet is finite.}}
-\ccGlue
 \ccMethod{Triangle triangle(const Cell_handle c, int i) const;}
-{Same as the previous method for facet \ccc{(c,i)}.
-\ccPrecond{As above and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
-dimension~2.}}
+{Returns the triangle formed by the three vertices of facet
+\ccc{(c,i)}. The triangle is oriented so that its normal points to the
+outside of cell \ccc{c}. 
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and $i \in \{0,1,2,3\}$
+in dimension~3, $i = 3$ in dimension~2, and the facet is finite.}}
+\ccGlue
+\ccMethod{Triangle triangle(const Facet & f) const;}
+{Same as the previous method for facet \ccc{f}. 
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and the facet is finite.}}
 \ccGlue
 \ccMethod{Segment segment(const Edge & e) const;}
 {Returns the line segment formed by the vertices of \ccc{e}.

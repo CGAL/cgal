@@ -99,8 +99,9 @@ public:
                                                Finite_vertices_iterator_base;
   typedef Triangulation_iterator_handle_adaptor_3<Finite_cells_iterator_base,
                                Cell_handle>    Finite_cells_iterator;
-  typedef Triangulation_iterator_handle_adaptor_3<Finite_vertices_iterator_base,
-                               Vertex_handle>  Finite_vertices_iterator;
+  typedef Triangulation_iterator_handle_adaptor_3
+                               <Finite_vertices_iterator_base,
+				 Vertex_handle> Finite_vertices_iterator;
   typedef Filter_iterator<Edge_iterator, Infinite_tester>
                                                Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>
@@ -1193,11 +1194,15 @@ triangle(const Cell_handle c, int i) const
 { 
   CGAL_triangulation_precondition( dimension() == 2 || dimension() == 3 );
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
-				   || (dimension() == 3 && i >= 0 && i <= 3) );
+				|| (dimension() == 3 && i >= 0 && i <= 3) );
   CGAL_triangulation_precondition( ! is_infinite(Facet(c, i)) );
-  return construct_triangle(c->vertex(i<=0 ? 1 : 0)->point(),
-			    c->vertex(i<=1 ? 2 : 1)->point(),
-			    c->vertex(i<=2 ? 3 : 2)->point());
+  if ( (i&1)==0 ) 
+    return construct_triangle(c->vertex( (i+2)&3 )->point(),
+			      c->vertex( (i+1)&3 )->point(),
+			      c->vertex( (i+3)&3 )->point());
+  return construct_triangle(c->vertex( (i+1)&3 )->point(),
+			    c->vertex( (i+2)&3 )->point(),
+			    c->vertex( (i+3)&3 )->point());
 }
 
 template < class GT, class Tds >
