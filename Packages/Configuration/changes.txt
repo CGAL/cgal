@@ -1,3 +1,6 @@
+2.73 30/07/2003 [af]
+- Added some workarounds for SunPro CC 5.5
+
 2.72 22/07/2003 [af]
 - Removed some workarounds for SunPro CC 5.5
 
