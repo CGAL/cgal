@@ -13,8 +13,10 @@ void box_intersection_d( RandomAccessIter p_begin, RandomAccessIter p_end,
                          RandomAccessIter i_begin, RandomAccessIter i_end,
                          Callback& callback,
                          unsigned int cutoff = 10,
-                         Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-                         Box_intersection_d::Topology topology = Box_intersection_d::CLOSED )
+                         Box_intersection_d::Setting
+                                     setting  = Box_intersection_d::BIPARTITE,
+                         Box_intersection_d::Topology
+                                     topology = Box_intersection_d::CLOSED )
 {
     typedef typename RandomAccessIter::value_type Box_type;
     typedef Default_box_traits_d< Box_type > Box_traits;
@@ -29,15 +31,19 @@ void box_intersection_d(RandomAccessIter p_begin, RandomAccessIter p_end,
                         Callback& callback,
                         BoxTraits box_traits,
                         unsigned int cutoff = 10,
-                        Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-                        Box_intersection_d::Topology topology = Box_intersection_d::CLOSED)
+                        Box_intersection_d::Setting
+                                     setting  = Box_intersection_d::BIPARTITE,
+                        Box_intersection_d::Topology
+                                     topology = Box_intersection_d::CLOSED)
 {
     if (topology == Box_intersection_d::CLOSED ) {
         typedef Default_box_predicate_traits_d< BoxTraits, true > Traits;
-        box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback, Traits(), cutoff, setting);
+        box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback,
+                                  Traits(), cutoff, setting);
     } else {
         typedef Default_box_predicate_traits_d< BoxTraits, false > Traits;
-        box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback, Traits(), cutoff, setting);
+        box_intersection_d_custom(p_begin, p_end, i_begin, i_end, callback,
+                                  Traits(), cutoff, setting);
     }
 }
 
@@ -48,9 +54,7 @@ void box_intersection_d_custom(
       Callback& callback,
       BoxPredicateTraits traits,
       unsigned int cutoff = 10,
-      Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE
-      //typename BoxPredicateTraits::Interval_Spanning_Predicate p = typename BoxPredicateTraits::Interval_Spanning_Predicate()
-                       )
+      Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE )
 {
     typedef BoxPredicateTraits Traits;
     typedef typename Traits::NT NT;
