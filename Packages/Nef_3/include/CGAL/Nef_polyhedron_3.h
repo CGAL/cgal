@@ -30,7 +30,6 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
-#include <CGAL/Nef_3/SNC_io_parser.h>
 //#include <CGAL/Nef_3/SNC_walker.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
@@ -78,7 +77,6 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   //typedef CGAL::SNC_walker<SNC_structure>              SNC_walker;
-  typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
   typedef CGAL::SNC_simplify<SNC_structure>            SNC_simplify;
 #ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
@@ -162,7 +160,6 @@ protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   //typedef typename Nef_rep::SNC_walker          SNC_walker;
-  typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
   typedef typename Nef_rep::SNC_point_locator_default 
     SNC_point_locator_default;
@@ -321,34 +318,6 @@ protected:
     //    CGAL_assertion(orientation() == 1);
   }
   
-  Nef_polyhedron_3( const char* filename, 
-		    SNC_point_locator* _pl = new SNC_point_locator_default) {
-    bool OK = true;
-    std::ifstream in(filename);
-    OK = OK && in;
-
-    empty_rep();   
-
-    size_t s(strlen(filename));
-    if(filename[s-7] == 'n' &&
-       filename[s-6] == 'e' &&
-       filename[s-5] == 'f' &&
-       filename[s-4] == '3' &&
-       filename[s-3] == '.' &&
-       filename[s-2] == 'S') {
-      //      initialize_infibox_vertices(EMPTY);
-      //      build_external_structure();
-      OK = OK && snc().load_simple(in);
-    }
-    else
-      OK = OK && snc().load(in);
-    if(!OK) 
-      std::cerr << "Failure while loading data" << std::endl;
-
-    pl() = _pl;
-    pl()->initialize(&snc());
-  }
-
  protected:  
   template <class HDS>
   class Build_polyhedron : public CGAL::Modifier_base<HDS> {
@@ -494,7 +463,8 @@ protected:
     P.delegate(bp);
   }
 
-  void dump(bool sorted = false, std::ostream& os = std::cout) { SNC_io_parser::dump( snc(), os, sorted); }
+ //  void dump(bool sorted = false, std::ostream& os = std::cout) 
+ //  { SNC_io_parser::dump( snc(), os, sorted); }
 
   bool is_valid( bool verb = false, int level = 0) {
     // checks the combinatorial consistency.
@@ -652,8 +622,8 @@ protected:
   }
 
  public:
-  const Nef_polyhedron_S2* get_sphere(Vertex_const_handle v) {
-    return new Nef_polyhedron_S2(*v);
+  Nef_polyhedron_S2 get_sphere_map(Vertex_const_handle v) {
+    return Nef_polyhedron_S2(*v);
   }
 
   void extract_complement();
@@ -1100,27 +1070,6 @@ extract_boundary() {
   Volume_iterator c;
   CGAL_forall_volumes(c,D) D.mark(c) = false;
   simplify();
-}
-
-template <typename Kernel, typename Items>
-std::ostream& operator<<
- (std::ostream& os, Nef_polyhedron_3<Kernel,Items>& NP)
-{
-  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_structure SNC_structure;
-  CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc());
-  O.print();
-  return os;
-}
-
-template <typename Kernel, typename Items>
-std::istream& operator>>
-  (std::istream& is, Nef_polyhedron_3<Kernel,Items>& NP)
-{
-  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_decorator SNC_decorator;
-  CGAL::SNC_io_parser<SNC_decorator> I(is, NP.snc());
-  I.read();
-  I.check_integrity();
-  return is;
 }
 
 CGAL_END_NAMESPACE
