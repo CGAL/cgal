@@ -111,7 +111,8 @@ private:
       filePrint = new QAction(tr("Print File"), printIcon, tr("&Print"),
 			      0, this);
       filePrint->setStatusTip(tr("Prints out the actual document"));
-      filePrint->setWhatsThis(tr("Print File\n\nPrints out the actual document"));
+      str = "Print File\n\nPrints out the actual document";
+      filePrint->setWhatsThis(tr(str));
       connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
     }
 
