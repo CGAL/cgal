@@ -239,8 +239,7 @@ struct Cartesian
 	                                                Circle_handle_2;
     typedef CGAL::Handle_for<CGAL::Threetuple<CGAL_TYPENAME_MSVC_NULL
 	                     Kernel_base::Point_2> >    Triangle_handle_2;
-    typedef CGAL::Handle_for<CGAL::Twotuple<CGAL_TYPENAME_MSVC_NULL
-	                     Kernel_base::Point_2> >    Iso_rectangle_handle_2;
+    typedef CGAL::Handle_for<CGAL::Twotuple<Point_2> >  Iso_rectangle_handle_2;
     typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC2<Self> >
 			                           Aff_transformation_handle_2;
 

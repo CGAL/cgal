@@ -33,7 +33,7 @@ class Iso_rectangleC2 CGAL_ADVANCED_KERNEL_PARTIAL_SPEC
   typedef typename R_::Iso_rectangle_handle_2    base;
   typedef typename base::element_type            rep;
 
-  typedef typename R_::Kernel_base::Point_2              Point_2;
+  typedef typename R_::Point_2              Point_2;
   typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
 public:
@@ -50,14 +50,14 @@ public:
     if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
     else               { miny = q.y(); maxy = p.y(); }
     initialize_with(rep(Point_2(minx, miny),
-	                                Point_2(maxx, maxy)));
+	                Point_2(maxx, maxy)));
   }
 
   Iso_rectangleC2(const FT& min_x, const FT& min_y, 
                   const FT& max_x, const FT& max_y)
   {
     initialize_with(rep(Point_2(min_x, min_y),
-	                                Point_2(max_x, max_y)));
+	                Point_2(max_x, max_y)));
   }
 
   Iso_rectangleC2(const FT& min_hx, const FT& min_hy, 
@@ -65,10 +65,10 @@ public:
   {
     if (hw == FT(1))
        initialize_with(rep(Point_2(min_hx, min_hy),
-	                                   Point_2(max_hx, max_hy)));
+	                   Point_2(max_hx, max_hy)));
     else
        initialize_with(rep(Point_2(min_hx/hw, min_hy/hw),
-	                                   Point_2(max_hx/hw, max_hy/hw)));
+	                   Point_2(max_hx/hw, max_hy/hw)));
   }
 
   bool            operator==(const Iso_rectangleC2 &s) const;
