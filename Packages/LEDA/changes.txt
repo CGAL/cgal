@@ -1,3 +1,5 @@
+1.0.2 missing CGAL_LEDA_SCOPE added in cmp_signed_dist_to_line
+    
 1.0.1 tests from LedaKernel were moved to this package 
       (and were fixed)
 

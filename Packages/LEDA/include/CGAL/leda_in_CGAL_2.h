@@ -96,7 +96,7 @@ cmp_signed_dist_to_line( const leda_point & p, const leda_point & q,
                          const leda_point & r, const leda_point & s )
 {
 #if ( __LEDA__ >= 360 )
-  return (Comparison_result)::cmp_signed_dist(p,q,r,s);
+  return (Comparison_result)CGAL_LEDA_SCOPE::cmp_signed_dist(p,q,r,s);
 #else
   leda_line  l(p,q);
   int  r_or = CGAL_LEDA_SCOPE::orientation( l, r );
