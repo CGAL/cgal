@@ -36,7 +36,8 @@ public:
   typedef typename R::FT FT;
 
   Qt_widget_get_polygon()
-    : active(false), lastx(0), lasty(0), num_points(0), points(), qpoints(0), qpoints_old(0) {};
+    : active(false), lastx(0), lasty(0), num_points(0), points(),
+      qpoints(0), qpoints_old(0) {};
 
   void mousePressEvent(QMouseEvent *e)
   {
