@@ -17,11 +17,11 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.59 Doc -------"
+	@echo "---- make VERSION=4.60 Doc -------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.59 Version ---"
+	@echo "---- make VERSION=4.60 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.59 Tag -------"
+	@echo "---- make VERSION=4.60 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
@@ -36,10 +36,14 @@ Tag:
 
 
 Test: 
+	cd test/Triangulation2_Delaunay; mv makefile makefile.submitted
+	cd test/Triangulation2_constrained; mv makefile makefile.submitted
 	cd test; ./run_testsuite;
-	cd test/Triangulation; make -f Makefile realclean
-	cd test/Triangulation2_Delaunay; make -f Makefile realclean
-	cd test/Triangulation2_constraint; make -f Makefile realclean
+	cd test/Triangulation; make realclean
+	cd test/Triangulation2_Delaunay; make realclean
+	cd test/Triangulation2_constrained; make realclean
+	cd test/Triangulation2_Delaunay; mv makefile.submitted makefile
+	cd test/Triangulation2_constrained; mv makefile.submitted makefile
 
 
 clean:
