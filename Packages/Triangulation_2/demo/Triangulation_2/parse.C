@@ -7,23 +7,27 @@
 void usage(char* program)
 {
   std::cerr << "\nNAME\n     "
-       << program << " - Triangulation of a point set\n\n";
+	    << program << " - Triangulation of a point set\n\n";
   std::cerr << "SYNOPSIS\n     "
-       << program << " [-draw] [-statistics] [-check]"
-       << " [min #] [max #] [winx #] [winy #]"
-       << " [-file fname]\n";
+	    << program << " [-draw] [-statistics] [-check]"
+	    << " [min #] [max #] [winx #] [winy #]"
+	    << " [-file fname]\n";
 
   std::cerr << "\nDESCRIPTION\n"
-       << "     Triangulates a point set that comes from a file or stdin.\n";
+	    << " Triangulates a point set that comes from a file or stdin.\n";
   std::cerr << "\nOPTIONS\n"
-       << "     -draw          : Displays intermediate results" << std::endl
-       << "     -statistics    : Collects and displays performance data" << std::endl
-       << "     -check         : Performs correctness tests" << std::endl
-       << "     -min           : xmin and ymin of the logical window" << std::endl
-       << "     -max           : xmax and ymax of the logical window" << std::endl
-       << "     -winx -winy    : size of the physical window" << std::endl
-       << "     -file fname    : Reads points from file ./fname" << std::endl << std::endl
-       << "     All options can be abbreviated by their first character\n\n";
+	    << " -draw          : Displays intermediate results" << std::endl
+	    << " -statistics    : Collects and displays performance data" 
+	    << std::endl
+	    << " -check         : Performs correctness tests" << std::endl
+	    << " -min           : xmin and ymin of the logical window" 
+	    << std::endl
+	    << " -max           : xmax and ymax of the logical window" 
+  	    << std::endl
+	    << "     -winx -winy    : size of the physical window" << std::endl
+	    << "     -file fname    : Reads points from file ./fname" 
+	    << std::endl << std::endl
+	    << "All options can be abbreviated by their first character\n\n";
 }
 
 

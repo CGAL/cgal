@@ -60,7 +60,9 @@ clean: \
                    constrained.clean \
                    constrained_wi.clean \
                    demo.clean \
-                   regular_demo.clean 
+                   regular_demo.clean \
+		   parse.clean 
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules
