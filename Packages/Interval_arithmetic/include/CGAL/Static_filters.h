@@ -50,6 +50,7 @@
 //   - others ?
 // - improve fit_in_double() for other NTs (MP_Float, Lazy).
 // - check if it's not possible to underflow/overflow the new filters.
+// - add code to make sure we are using Cartesian coordinates as input.
 
 
 CGAL_BEGIN_NAMESPACE

@@ -2,6 +2,7 @@
 - Merge Static_filters into Filtered_kernel.
 - Static_filter_error : add ulp() function for new filters.
 - Static_filter::Orientation_3 : improve filter.
+- Static_filter::Side_of_orientes_sphere_3 : improve filter.
 
 20 June 2004 Sylvain Pion
 - Don't assume coordinates are doubles, call to_double().

@@ -7,12 +7,13 @@
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 
-//typedef CGAL::Simple_cartesian<CGAL::MP_Float>   K0;
+typedef CGAL::Simple_cartesian<CGAL::MP_Float>   K4;
 typedef CGAL::Simple_cartesian<double>   K0;
 typedef CGAL::Filtered_kernel<K0>        K1;
-typedef CGAL::Static_filters<K1>         K2;
-typedef CGAL::Kernel_checker<K2, K1,
-              CGAL::Cartesian_converter<K2, K1> >     K3;
+typedef K1         K2; // Static_filters is now included in Filtered_kernel.
+//typedef CGAL::Static_filters<K1>         K2;
+typedef CGAL::Kernel_checker<K2, K4,
+              CGAL::Cartesian_converter<K2, K4> >     K3;
 
 typedef K3::Point_2    Point_2;
 typedef K3::Point_3    Point_3;
@@ -205,11 +206,11 @@ void compute_epsilons()
 {
   std::cerr.precision(20);
   K2::Orientation_3::compute_epsilon();
+  K2::Side_of_oriented_sphere_3::compute_epsilon();
 }
 
 int main(int argc, char **argv)
 {
-
   compute_epsilons();
 
   int loops = (argc < 2) ? 1000 : atoi(argv[1]);

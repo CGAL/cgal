@@ -30,7 +30,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < typename K_base >
-struct SF_Orientation_3
+class SF_Orientation_3
   : public K_base::Orientation_3
 {
   typedef typename K_base::Point_3          Point_3;
