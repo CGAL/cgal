@@ -42,6 +42,23 @@ Exemples - demo
 TDS
 - reflechir a un support de facettes explicites (cf papier de Giesen)
 - nettoyer les trucs 2d only (face_circulator etc)
+- Bistellar flips ?  (cf shewchuck's SoCG'03 paper).
+  (it's when you have 4 coplanar points, you break 4 cells,
+   and it gives 4 cells back).
+- More compact representation [inspired by a CUJ article for lists] :
+  instead of having a cell which stores 4 vertex pointers, it only stores the
+  XOR of them.  And a Cell_handle now additionaly stores the 4 vertex pointers
+  of the cell.
+  The tricky part seems to be how to update the correspondance between
+  neighbor(i)/vertex(i) when doing c2 = c->neighbor(i).
+  Maybe it requires storing a permutation table, or storing the vertices
+  in adress order, and squatting bits in the Cell* in order to specify the
+  permutation ?
+  It's definitely worth thinking about it.
+  - Maybe we could remove the requirement of fat handles by storing a little
+    bit more ?  But that seems complicated at first sight.  Let's try
+    to implement the first idea first.
+  - Sharing the neighbor pointers seems less fruitful.
 
 T3
 - virer push_back/copy_triangulation apres 3.0.
