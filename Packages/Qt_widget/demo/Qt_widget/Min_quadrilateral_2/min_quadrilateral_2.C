@@ -99,7 +99,7 @@ public:
 
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, list_of_points);	
+  newtoolbar = new CGAL::Tools_toolbar(&win, this, &list_of_points);	
   //the layers toolbar
   vtoolbar = new CGAL::Layers_toolbar(&win, this, &list_of_points);
   //the standard toolbar

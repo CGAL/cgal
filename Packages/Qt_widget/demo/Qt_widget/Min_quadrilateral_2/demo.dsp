@@ -91,11 +91,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\min_ellipse_2.C
+SOURCE=.\min_quadrilateral_2.C
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\src\CGALQt\Qt_widget.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_move_list_point.C
 # End Source File
 # Begin Source File
 
@@ -111,7 +119,7 @@ SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
+SOURCE=.\Qt_widget_toolbar_layers.C
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -143,6 +151,25 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_move_list_point.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_move_list_point.h
+
+"Qt_widget_move_list_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -195,6 +222,25 @@ InputPath=.\Qt_widget_toolbar.h
 
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_widget_toolbar_layers.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar_layers.h
+
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc -o Qt_widget_toolbar_layers.moc Qt_widget_toolbar_layers.h
 
 # End Custom Build
 
