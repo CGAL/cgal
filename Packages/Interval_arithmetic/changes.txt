@@ -1,3 +1,6 @@
+18 November 2004 Sylvain Pion
+- Static filters : protect against underflow.
+
 4 November 2004 Sylvain Pion
 - Static filters : yet another smallish re-optimisticization.
 

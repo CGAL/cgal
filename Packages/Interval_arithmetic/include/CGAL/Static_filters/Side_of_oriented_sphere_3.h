@@ -103,8 +103,15 @@ public:
                                          qtx,qty,qtz,qt2,
                                          stx,sty,stz,st2);
 
-          if (det >  eps) return ON_POSITIVE_SIDE;
-          if (det < -eps) return ON_NEGATIVE_SIDE;
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-59 || maxy < 1e-59 || maxz < 1e-59) {
+            if (maxx == 0 || maxy == 0 || maxz == 0)
+              return ON_ORIENTED_BOUNDARY;
+          }
+          else {
+            if (det > eps)  return ON_POSITIVE_SIDE;
+            if (det < -eps) return ON_NEGATIVE_SIDE;
+          }
 
           CGAL_PROFILER("In_sphere_3 semi-static failures");
       }

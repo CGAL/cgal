@@ -80,8 +80,15 @@ public:
                                          prx, pry, prz,
                                          psx, psy, psz);
 
-          if (det > eps)  return POSITIVE;
-          if (det < -eps) return NEGATIVE;
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-97 || maxy < 1e-97 || maxz < 1e-97) {
+            if (maxx == 0 || maxy == 0 || maxz == 0)
+              return ZERO;
+          }
+          else {
+            if (det > eps)  return POSITIVE;
+            if (det < -eps) return NEGATIVE;
+          }
 
           CGAL_PROFILER("Orientation_3 semi-static failures");
       }

@@ -67,8 +67,15 @@ public:
           if (maxy < fabs(pry)) maxy = fabs(pry);
           double eps = 8.8872057372592758e-16 * maxx * maxy;
 
-          if (det > eps)  return POSITIVE;
-          if (det < -eps) return NEGATIVE;
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-146 || maxy < 1e-146) {
+            if (maxx == 0 || maxy == 0)
+              return ZERO;
+          }
+          else {
+            if (det > eps)  return POSITIVE;
+            if (det < -eps) return NEGATIVE;
+          }
 
           CGAL_PROFILER("Orientation_2 semi-static failures");
       }

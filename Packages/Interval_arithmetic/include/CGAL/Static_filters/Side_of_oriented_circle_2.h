@@ -90,8 +90,15 @@ public:
 
           double eps = 8.887856576200131e-15 * maxx * maxy * (maxt*maxt);
 
-          if (det >  eps) return ON_POSITIVE_SIDE;
-          if (det < -eps) return ON_NEGATIVE_SIDE;
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-73 || maxy < 1e-73) {
+            if (maxx == 0 || maxy == 0)
+              return ON_ORIENTED_BOUNDARY;
+          }
+          else {
+            if (det > eps)  return ON_POSITIVE_SIDE;
+            if (det < -eps) return ON_NEGATIVE_SIDE;
+          }
 
           CGAL_PROFILER("In_circle_2 semi-static failures");
       }
