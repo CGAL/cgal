@@ -14,13 +14,14 @@ class My_vertex_3;
 
 // Then, we have to break the dependency cycle.
 
+// we need to refer to a dummy 3D TDS.
+typedef CGAL::Triangulation_ds_vertex_base_3<>::Triangulation_data_structure
+        Dummy_tds_3;
 // the 2D TDS, initially plugging a dummy 3D TDS in the vertex type
 // (to break the dependency cycle).
-typedef CGAL::Triangulation_data_structure_2<My_vertex_2<CGAL::Dummy_tds_3> >
-        TDS_2;
+typedef CGAL::Triangulation_data_structure_2<My_vertex_2<Dummy_tds_3> >  TDS_2;
 // the 3D TDS, here we can plug the 2D TDS directly.
-typedef CGAL::Triangulation_data_structure_3<My_vertex_3<TDS_2> >
-        TDS_3;
+typedef CGAL::Triangulation_data_structure_3<My_vertex_3<TDS_2> >        TDS_3;
 
 
 template < typename T3, typename Vb >
