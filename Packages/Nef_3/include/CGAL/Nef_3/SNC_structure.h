@@ -116,6 +116,7 @@ public:
   /*{\Mtypemember segments in space.}*/
   typedef typename Kernel::Line_3       Line_3;
   /*{\Mtypemember lines in space.}*/
+  typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
   /*{\Mtypemember points on the unit sphere.}*/
