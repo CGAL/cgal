@@ -190,10 +190,6 @@ private:
 		             std::list<Cell_handle> & hole);
   bool fill_hole_3D_ear(std::list<Facet> & boundhole);
 
-  // Bounded_side side_of_sphere_inf(const Point & p0, const Point &
-  // p1, const Point & p2, const Point & p) const; 
-  // bool fill_hole_3D_ear_andreas(std::list<Facet> & boundhole);
-
 private:
 
   class Conflict_tester_3
@@ -503,13 +499,15 @@ side_of_sphere_finite_perturb(Vertex_handle v0,
 
   CGAL_triangulation_precondition( orientation(p0,p1,p2,p3) == POSITIVE );
 				   
-  if (is_infinite(v)) return ON_UNBOUNDED_SIDE;
+  if (is_infinite(v))
+      return ON_UNBOUNDED_SIDE;
 
   const Point & p = v->point();
 
   Bounded_side bs = Bounded_side(side_of_oriented_sphere(p0,p1,p2,p3,p));
 
-  if ( bs != ON_BOUNDARY ) return bs;
+  if ( bs != ON_BOUNDARY )
+      return bs;
 
   int i0 = v0->get_order_of_creation();
   int i1 = v1->get_order_of_creation();
@@ -522,74 +520,57 @@ side_of_sphere_finite_perturb(Vertex_handle v0,
   // we look whether the leading monomial of the determinant has non null 
   // coefficient 
   if (m == i) 
-    return ON_UNBOUNDED_SIDE; 
-  // since p0 p1 p2 p3 are supposed to be non coplanar and positively
-  // oriented 
-  if (m == i3)
-    if ( (o = orientation(p0,p1,p2,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i2)
-    if ( (o = orientation(p0,p1,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
-  if (m == i1)
-    if ( (o = orientation(p0,p2,p3,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i0)
-    if ( (o = orientation(p1,p2,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
+    return ON_UNBOUNDED_SIDE;
+  // since p0 p1 p2 p3 are supposed to be non coplanar and positively oriented
+  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+    return Bounded_side(-o);
+  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+    return Bounded_side(-o);
 
   // if not yet returned, then the leading monomial of the determinant
   // has null coefficient 
   // we look whether the 2nd monomial has non null coefficient 
   m = max2(i0,i1,i2,i3,i,m);
   if (m == i) 
-    return ON_UNBOUNDED_SIDE; 
-  if (m == i3)
-    if ( (o = orientation(p0,p1,p2,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i2)
-    if ( (o = orientation(p0,p1,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
-  if (m == i1)
-    if ( (o = orientation(p0,p2,p3,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i0)
-    if ( (o = orientation(p1,p2,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
+    return ON_UNBOUNDED_SIDE;
+  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+    return Bounded_side(-o);
+  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+    return Bounded_side(-o);
 
   // we look whether the 3rd monomial also has non null coefficient 
   m = maxless(i0,i1,i2,i3,i,m);
   if (m == i) 
-    return ON_UNBOUNDED_SIDE; 
-  if (m == i3)
-    if ( (o = orientation(p0,p1,p2,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i2)
-    if ( (o = orientation(p0,p1,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
-  if (m == i1)
-    if ( (o = orientation(p0,p2,p3,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i0)
-    if ( (o = orientation(p1,p2,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
+    return ON_UNBOUNDED_SIDE;
+  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+    return Bounded_side(-o);
+  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+    return Bounded_side(-o);
 
   // we look whether the 4th monomial also has non null coefficient 
   m = maxless(i0,i1,i2,i3,i,m);
   if (m == i) 
-    return ON_UNBOUNDED_SIDE; 
-  if (m == i3)
-    if ( (o = orientation(p0,p1,p2,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i2)
-    if ( (o = orientation(p0,p1,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
-  if (m == i1)
-    if ( (o = orientation(p0,p2,p3,p)) != ZERO ) 
-      return Bounded_side(o);
-  if (m == i0)
-    if ( (o = orientation(p1,p2,p3,p)) != ZERO ) 
-      return Bounded_side(-o);
+    return ON_UNBOUNDED_SIDE;
+  if (m == i3 && (o = orientation(p0,p1,p2,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i2 && (o = orientation(p0,p1,p3,p)) != ZERO )
+    return Bounded_side(-o);
+  if (m == i1 && (o = orientation(p0,p2,p3,p)) != ZERO )
+    return Bounded_side(o);
+  if (m == i0 && (o = orientation(p1,p2,p3,p)) != ZERO )
+    return Bounded_side(-o);
 
   // case when the first non null coefficient is the coefficient of 
   // the 5th monomial
@@ -832,28 +813,23 @@ make_hole_3D_ear( Vertex_handle v,
   Hole_cells cells;
   incident_cells( v, cells );
 
-  typename Hole_cells::iterator cit = cells.begin(), cdone = cells.end();
-
   Cell_handle opp_cit;
   Vertex_handle vi;
-  do {
+
+  for (typename Hole_cells::iterator cit = cells.begin();
+       cit != cells.end(); ++cit) {
     int indv = (*cit)->index(&(*v));
     opp_cit = (*cit)->neighbor( indv );
     hole.push_back(*cit);    
     boundhole.push_back( std::make_pair( opp_cit, opp_cit->index(*cit)) );
 
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<4; i++)
       if ( i != indv ) {
 	vi = (*cit)->vertex(i);
-	    vi->set_cell( opp_cit );
+	vi->set_cell( opp_cit );
       }
-    }
-
-    ++cit;
-  } while ( cit != cdone );
-
-}// make_hole_3D_ear
-
+  }
+}
 
 template < class Gt, class Tds >
 void
@@ -863,8 +839,7 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
 {
   typename std::list<Cell_handle>::iterator cit = hole.begin();
   for(typename std::list<Facet>::iterator fit = boundhole.begin();	
-      fit != boundhole.end();
-      ++fit) {
+      fit != boundhole.end(); ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, *cit);
     ++cit;
@@ -872,7 +847,6 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
     // point to the cells that form the boundary of the hole
   }
 }
-
 
 template < class Gt, class Tds >
 bool
@@ -884,7 +858,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   typedef typename Surface::Vertex_3_2 Vertex_3_2;
   typedef typename Surface::Vertex_circulator Vertex_circulator_3_2;
 
-  // The list of cells that get created, so that we know what
+  // The list of cells that gets created, so that we know what
   // we have to delete, in case that we cannot fill the hole
   std::list<Cell_handle> cells;
 
@@ -899,8 +873,9 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   // This is a loop over the halfedges of the surface of the hole
   // As edges are not explicitely there, we loop over the faces instead,
   // and an index. 
-  // The current face is f, The current index is k = -1, 0, 1, 2
+  // The current face is f, the current index is k = -1, 0, 1, 2
   for(;;) {
+    next_edge: ;
     k++;
     if(k == 3) {
       // The faces form a circular list. With f->n() we go to the next face.
@@ -921,7 +896,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
     // from both adjacent faces.
     if(f->is_halfedge_marked(k)) {
       Vertex_3_2 *w0, *w1, *w2, *w3;
-      Vertex *v0, *v1, *v2, *v3;
+      Vertex_handle v0, v1, v2, v3;
       int i = ccw(k);
       int j = cw(k);
       Face_3_2 *n = f->neighbor(k);
@@ -933,7 +908,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       v1 = w1->info();
       v2 = w2->info();
 
-      if( is_infinite(Vertex_handle(v1)) || is_infinite(Vertex_handle(v2)) ){
+      if( is_infinite(v1) || is_infinite(v2) ){
 	// there will be another ear, so let's ignore this one,
 	// because it is complicated to treat
 	goto next_edge;
@@ -944,8 +919,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       v0 = w0->info();
       v3 = w3->info();
 
-      bool inf_0 = is_infinite(Vertex_handle(v0));
-      bool inf_3 = is_infinite(Vertex_handle(v3));
+      bool inf_0 = is_infinite(v0);
+      bool inf_3 = is_infinite(v3);
 
       if( inf_0 || inf_3 || 
 	  (orientation(v0->point(), v1->point(), 
@@ -956,13 +931,13 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	for(typename Surface::Vertex_iterator vit = surface.vertices_begin();
 	    vit != surface.vertices_end();
 	    ++vit) {
-	  Vertex *v = (*vit).info();
-	  if( (! is_infinite(Vertex_handle(v)))
+	  Vertex_handle v = (*vit).info();
+	  if( (! is_infinite(v))
 	      && (v != v0) && (v != v1) && (v != v2) && (v != v3)) {
 
 	    Bounded_side bs;
 	    
-	    if(inf_0) {
+	    if (inf_0) {
  	      bs = side_of_sphere_inf_perturb(v2, v1, v3, v);
 	    } else if(inf_3) {
 	      bs = side_of_sphere_inf_perturb(v0, v1, v2, v);
@@ -970,8 +945,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      bs = side_of_sphere_finite_perturb(v0,v1,v2,v3,v);
 	    }
 
-	    if(bs == ON_BOUNDED_SIDE) { goto next_edge; }
-
+	    if (bs == ON_BOUNDED_SIDE)
+		goto next_edge;
 	  }
 	}
 
@@ -982,8 +957,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	bool neighbor_i = m_i == n->neighbor(cw(fi));
 	bool neighbor_j = m_j == n->neighbor(ccw(fi));
 
-	if( (((! neighbor_i) && (! neighbor_j)) 
-	       && surface.is_edge(f->vertex(k), n->vertex(fi)))) {
+	if ((! neighbor_i) && (! neighbor_j)
+	       && surface.is_edge(f->vertex(k), n->vertex(fi))) {
 	  // The edge that would get introduced is on the surface
 	  goto next_edge;
 	}
@@ -991,10 +966,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	// none of the vertices violates the Delaunay property
 	// We are ready to plug a new cell
 
-	Cell_handle ch = create_cell(Vertex_handle(v0), 
-				     Vertex_handle(v1), 
-				     Vertex_handle(v2), 
-				     Vertex_handle(v3),
+	Cell_handle ch = create_cell(v0, v1, v2, v3,
 				     NULL, NULL, NULL, NULL);
 	cells.push_back(ch);
 
@@ -1045,26 +1017,24 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	  surface.remove_degree_3(f->vertex(i), f);
 	  f->mark_adjacent_edges();
 	  f->set_info(std::make_pair(ch,1));
+	} else if (surface.number_of_vertices() != 4) {
+	  // this should not happen at all  => panic mode, 
+	  //clean up, and say that it didn't work
+	  CGAL_triangulation_warning_msg(true, "panic");
+	  delete_cells(cells);
+	  return false;
 	} else {
-	  if(surface.number_of_vertices() != 4) {
-	    // this should not happen at all  => panic mode, 
-	    //clean up, and say that it didn't work
-	    CGAL_triangulation_warning_msg(true, "panic");
-	    delete_cells(cells);
-	    return false;
-	  } else {
-	    // when we leave the function the vertices and faces of the surface
-	    // are deleted by the destructor
-	    return true;
-	  }
+	  // when we leave the function the vertices and faces of the surface
+	  // are deleted by the destructor
+	  return true;
 	}
+
 	// we successfully inserted a cell
 	last_op = f; 
 	// we have to reconsider all edges incident to f
 	k = -1;
       } // else if (inf_0 ...
     }// if(f->edge(k))
-  next_edge: ;
   } // for(;;)
 }
 

@@ -264,18 +264,17 @@ public:
 template <class T>
 class Delaunay_remove_tds_3_2 
   : public Triangulation_data_structure_using_list_2< 
-           Delaunay_remove_tds_vertex_3_2<typename T::Vertex*>,
+           Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
 	   Delaunay_remove_tds_face_3_2<typename T::Facet> > 
 {
 public:
   typedef typename T::Facet Facet;
   typedef typename T::Cell_handle Cell_handle;
   typedef typename T::Vertex_handle Vertex_handle;
-  typedef typename T::Vertex Vertex;
 
 private:
   typedef Triangulation_data_structure_using_list_2< 
-            Delaunay_remove_tds_vertex_3_2<typename T::Vertex*>,
+            Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
             Delaunay_remove_tds_face_3_2<typename T::Facet> > TDSUL2;
 
 public:
@@ -292,12 +291,11 @@ public:
  
     std::vector<Halfedge> halfedges(3*size);
     int i = 0;
-    std::map<Vertex*, Vertex_3_2*>  vertex_map;
-    typename std::map<Vertex*, Vertex_3_2*>::iterator map_it;
+    std::map<Vertex_handle, Vertex_3_2*>  vertex_map;
+    typename std::map<Vertex_handle, Vertex_3_2*>::iterator map_it;
 
-    for(Facet_iterator fit = boundhole.begin();
-	fit != boundhole.end();
-	++fit) {
+    for(Facet_iterator fit = boundhole.begin(); fit != boundhole.end(); ++fit)
+    {
       Face_3_2 * f = create_face();
 
       Facet facet = *fit;
@@ -318,7 +316,7 @@ public:
       // We create as many 2d vertices as there are 3d vertices.
       Vertex_3_2 *v0, *v1, *v2;
 
-      Vertex *w0 = handle2pointer(h->vertex(i0));
+      Vertex_handle w0 = h->vertex(i0);
 
       if((map_it = vertex_map.find(w0)) == vertex_map.end()) {
 	v0 = create_vertex();
@@ -328,7 +326,7 @@ public:
 	v0 = map_it->second;
       }
       
-      Vertex *w1 = handle2pointer(h->vertex(i1));
+      Vertex_handle w1 = h->vertex(i1);
       if((map_it = vertex_map.find(w1)) == vertex_map.end()) {
 	v1 = create_vertex();
 	v1->set_info(w1);
@@ -337,7 +335,7 @@ public:
 	v1 = map_it->second;
       }
       
-      Vertex *w2 = handle2pointer(h->vertex(i2));
+      Vertex_handle w2 = h->vertex(i2);
       if((map_it = vertex_map.find(w2)) == vertex_map.end()) {
 	v2 = create_vertex();
 	v2->set_info(w2);
@@ -352,7 +350,6 @@ public:
 
       f->set_vertices(v0, v1, v2);
       f->set_info(facet);
-      ///
 
       for(int j = 0; j < 3; j++) {
 	void* v = f->vertex(j); 
@@ -363,12 +360,10 @@ public:
       }
     }
 
-    std::sort(halfedges.begin(), 
-	      halfedges.end(), 
+    std::sort(halfedges.begin(), halfedges.end(), 
 	      Delaunay_remove_tds_halfedge_compare_3_2<Halfedge>());
 
-
-    // The halfedges that are oppsoite to each other are neighbor
+    // The halfedges that are opposite to each other are neighbors
     // in the sorted list. 
 
     for(typename std::vector<Halfedge>::iterator it = halfedges.begin();
@@ -401,7 +396,6 @@ public:
     f->set_n(dummy.n());
     ((Face_3_2*)dummy.n())->set_p(f);
   }
-
 
   void
   remove_degree_3(Vertex_3_2* v, Face_3_2* f) 
