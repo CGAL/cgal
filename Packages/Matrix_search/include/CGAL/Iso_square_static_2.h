@@ -27,7 +27,9 @@
 #if ! (CGAL_ISO_SQUARE_STATIC_2_H)
 #define CGAL_ISO_SQUARE_STATIC_2_H 1
 
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
+#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
 // class CGAL__Iso_square_static_2 represents a square with center and radius.
 // all objects have the same radius ==> radius is a static member

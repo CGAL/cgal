@@ -27,15 +27,28 @@
 #if ! (CGAL_RECTANGULAR_P_CENTER_2_H)
 #define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
+#ifndef CGAL_PIERCE_RECTANGLES_2_H
 #include <CGAL/pierce_rectangles_2.h>
+#endif // CGAL_PIERCE_RECTANGLES_2_H
+#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
+#endif // CGAL_FUNCTION_OBJECTS_H
+#ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #include <CGAL/sorted_matrix_search.h>
+#endif // CGAL_SORTED_MATRIX_SEARCH_H
+#ifndef CGAL_PROTECT_ALGO_H
 #include <algo.h>
+#define CGAL_PROTECT_ALGO_H
+#endif // CGAL_PROTECT_ALGO_H
 #ifdef CGAL_REP_CLASS_DEFINED
+#ifndef CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H
 #include <CGAL/rectangular_p_center_2_traits.h>
+#endif // CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H
 #endif // CGAL_REP_CLASS_DEFINED
 
+#ifndef CGAL_CARTESIAN_MATRIX_H
 #include <CGAL/Cartesian_matrix.h>
+#endif // CGAL_CARTESIAN_MATRIX_H
 
 template < class Operation,
            class RandomAccessIC_row,

@@ -27,7 +27,9 @@
 #if ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
 #define CGAL_MONOTONE_MATRIX_SEARCH_H 1
 
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
+#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 #ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
 #define CGAL_PROTECT_VECTOR_H

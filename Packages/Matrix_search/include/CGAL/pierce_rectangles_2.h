@@ -27,15 +27,33 @@
 #if ! (CGAL_PIERCE_RECTANGLES_2_H)
 #define CGAL_PIERCE_RECTANGLES_2_H 1
 
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
+#endif // CGAL_OPTIMISATION_ASSERTIONS_H
+#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
+#endif // CGAL_CIRCULATOR_H
+#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
+#endif // CGAL_FUNCTION_OBJECTS_H
+#ifndef CGAL_TRANSFORM_ITERATOR_H
 #include <CGAL/Transform_iterator.h>
+#endif // CGAL_TRANSFORM_ITERATOR_H
+#ifndef CGAL_PROTECT_ALGO_H
 #include <algo.h>
+#define CGAL_PROTECT_ALGO_H
+#endif // CGAL_PROTECT_ALGO_H
+#ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
+#define CGAL_PROTECT_VECTOR_H
+#endif // CGAL_PROTECT_VECTOR_H
 #ifdef CGAL_PCENTER_WINDOW_TRACE
+#ifndef CGAL_IO_WINDOW_STREAM_H
 #include <CGAL/IO/Window_stream.h>
+#endif // CGAL_IO_WINDOW_STREAM_H
+#ifndef CGAL_IO_OSTREAM_ITERATOR_H
 #include <CGAL/IO/Ostream_iterator.h>
+#endif // CGAL_IO_OSTREAM_ITERATOR_H
 #endif // CGAL_PCENTER_WINDOW_TRACE
 
 //!!! to function_objects.h
@@ -789,7 +807,9 @@ CGAL__Rectangle_partition(
 } // Rectangle_partition( f, l, d)
 
 #ifdef CGAL_REP_CLASS_DEFINED
+#ifndef CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #include <CGAL/Pierce_rectangles_2_traits.h>
+#endif // CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #endif // CGAL_REP_CLASS_DEFINED
 
 template < class RandomAccessIC,

@@ -30,7 +30,9 @@
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif // CGAL_BASIC_H
+#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
+#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
 template < class Operation,
            class RandomAccessIC_row,
