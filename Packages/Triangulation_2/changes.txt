@@ -1,7 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.75
+Ver 4.75 (??/12/00)
+- added make_hole(), star_hole(), create_vertex(), delete_vertex()
+  in Triangulation_default_data_structure_2
+  and Triangulation_data_structure_using_list_2
+- added
 - Regular triangulation support for Simple Cartesian kernels. [syl]
 - Geomview output, which works for terrains as well. [syl]
 - Regenerate triangulation_assertions.h. [syl]
