@@ -3,7 +3,6 @@
 WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Geomview
 TMP_file=/tmp/submit-mail
-MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package:
 	@echo "----------------------------------"
@@ -23,7 +22,6 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
-	echo  "maintainer : $(MAINTAINER)" >> version
 
 commit:
 	cvs commit
