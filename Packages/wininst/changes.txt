@@ -1,3 +1,5 @@
+2.1.24(10/03/03)  removed warnings from build using VC7 project
+
 2.1.23(18/02/03)  removed Triangulation_3.C from the CGAL project in src.
 
 2.1.22(10/02/03)  removed makefile.mak from examples and demos.
