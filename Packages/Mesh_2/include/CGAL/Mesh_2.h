@@ -529,7 +529,7 @@ refine_edge(Vertex_handle va, Vertex_handle vb)
  //split all the bad faces
 template <class Tr>
 void Mesh_2<Tr>::
-refine_face(Face_handle f)
+refine_face(const Face_handle f)
 {
   Point pc = circumcenter(f);
 
