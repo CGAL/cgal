@@ -84,36 +84,6 @@ square( const NT& n)
 
 template <class NT>
 inline
-double
-to_double( const NT& n)
-{ return CGAL::to_double(n); }
-
-template <class NT>
-inline
-NT
-div( const NT& n1, const NT& n2)
-{ return CGAL::div(n1, n2); }
-
-template <class NT>
-inline
-NT
-sqrt( const NT& n)
-{ return CGAL::sqrt(n); }
-
-template <class NT>
-inline
-bool
-is_valid( const NT& n)
-{ return CGAL::is_valid(n); }
-
-template <class NT>
-inline
-bool
-is_finite( const NT& n)
-{ return CGAL::is_finite(n); }
-
-template <class NT>
-inline
 NT
 gcd( const NT& n1, const NT& n2)
 {

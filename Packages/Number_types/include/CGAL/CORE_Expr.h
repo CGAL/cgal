@@ -78,13 +78,6 @@ compare(const CORE::Expr& e1, const CORE::Expr& e2)
   return Comparison_result(e1.cmp(e2));
 }
 
-inline
-CORE::Expr
-sqrt(const CORE::Expr& e)
-{ 
-  return CORE::sqrt(e);
-}
-
 // Should not be inline, but, well...
 inline
 std::pair<double,double>

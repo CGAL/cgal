@@ -1,3 +1,7 @@
+4.115 (1 September 2003)
+- Remove duplicate CGAL::sqrt(CORE::Expr)
+- Remove buggy templates in number_utils.h.
+
 4.114 (27 August 2003)
 - Move test/NumberTypeSupport to test/Number_types
 
