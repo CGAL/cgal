@@ -1,3 +1,6 @@
+3 September 2004 Sylvain Pion
+- Quotient.h : #include <CGAL/basic.h> before the protect macro.
+
 3 September 2004 Sylvain Pion & Menelaos Karavelas
 - resurect to_double(Quotient<Gmpz>).
 
