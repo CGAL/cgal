@@ -29,15 +29,6 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_3_H
 #define CGAL_CONVEX_HULL_TRAITS_3_H
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/predicates_on_points_3.h>
-#include <CGAL/distance_predicates_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_projective_xy_traits_2.h>
 #include <CGAL/Convex_hull_projective_xz_traits_2.h>
@@ -46,31 +37,12 @@
 
 namespace CGAL {
 
-/*
+// without this we get an internal compiler error on bcc
+#if defined(__BORLANDC__)
+template <class R_, class Polyhedron_ = CGAL::Polyhedron_3<R_> >
+#else
 template <class R_>
-class Convex_hull_traits_3: public R_
-{
- public:  
-  typedef   R_                                              R;
-  typedef   typename R::Point_3                             Point_3;
-  typedef   typename R::Plane_3                             Plane_3;
-  typedef   Less_signed_distance_to_plane_3<Plane_3, Point_3>
-                                               Less_signed_distance_to_plane_3;
-  typedef   Construct_centroid_3<Point_3> Construct_centroid_3;
-
-  Construct_centroid_3  
-  construct_centroid_3_object() const
-  { return Construct_centroid_3(); }
-
-  Less_signed_distance_to_plane_3  
-  less_signed_distance_to_plane_3_object(Plane_3& P) const
-  { return Less_signed_distance_to_plane_3(P); }
-
-};
-
-*/
-
-template <class R_>
+#endif
 class Convex_hull_traits_3 
 {
  public:  
@@ -81,8 +53,11 @@ class Convex_hull_traits_3
   typedef typename R::Plane_3                    Plane_3;
   typedef typename R::Vector_3                   Vector_3;
 
-  typedef Polyhedron_default_traits_3<R>         Polyhedron_traits;
-  typedef Polyhedron_3<Polyhedron_traits>        Polyhedron_3;
+#if defined(__BORLANDC__)
+  typedef Polyhedron_                            Polyhedron_3;
+#else
+  typedef Polyhedron_3<R>                        Polyhedron_3;
+#endif
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;
@@ -154,8 +129,8 @@ class Convex_hull_traits_3
   { return Has_on_3(); }
 
   Less_distance_to_point_3
-  less_distance_to_point_3_object(const Point_3& p) const
-  { return Less_distance_to_point_3(p); }
+  less_distance_to_point_3_object() const
+  { return Less_distance_to_point_3(); }
 
   Has_on_positive_side_3
   has_on_positive_side_3_object() const
