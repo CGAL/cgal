@@ -23,7 +23,6 @@
 #define CGAL_CARTESIAN_POINT_2_H
 
 #include <CGAL/Cartesian/redefine_names_2.h>
-#include <CGAL/Twotuple.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 
@@ -153,9 +152,9 @@ PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
                               const typename PointC2<R CGAL_CTAG>::FT &hw)
 {
   if( hw != FT(1))
-    initialize_with( Twotuple<FT>(hx/hw, hy/hw) );
+    initialize_with( Point_ref_2(hx/hw, hy/hw) );
   else
-    initialize_with( Twotuple<FT>(hx, hy) );
+    initialize_with( Point_ref_2(hx, hy) );
 }
 
 template < class R >
