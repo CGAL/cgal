@@ -1478,6 +1478,7 @@ concat_path()
         for elem in "$@"
         do
             ${_printf} "%s%s" '\' "${elem}"
+#This character ' is just to please font-lock-mode under (x)emacs
         done
     else
         for elem in "$@"
@@ -5437,7 +5438,7 @@ write_compiler_flags()
   #
   # QT_MOC
   #
-  if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QTMOC}" ]; then
+  if [ -n "${QT_SUPPORT}" ]; then
     print_as_shell_comment \
       "*** Fill in your Qt moc executable ***" \
       >> ${FILE}
@@ -5451,7 +5452,7 @@ write_compiler_flags()
     print_as_shell_comment \
       "*** We fake QT_MOC to let the testsuite pass ***" \
       >> ${FILE}
-    ${_printf} "%s\\\\\n\n" "QT_MOC = echo dymmymoc" >> ${FILE}
+    ${_printf} "%s\\\\\n\n" "QT_MOC = echo dummymoc" >> ${FILE}
   fi
 
   #
