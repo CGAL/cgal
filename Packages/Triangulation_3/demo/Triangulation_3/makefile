@@ -55,7 +55,7 @@ clean:
 	/bin/rm -f *.o \
                    demo \
 		   blind_demo \
-		   output \
+		   data/output \
                    core
 
 #---------------------------------------------------------------------#

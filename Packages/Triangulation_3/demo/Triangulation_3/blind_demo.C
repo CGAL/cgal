@@ -69,15 +69,16 @@ int main(int argc, char* argv[])
 
   Delaunay T;
 
-  ifstream iFile("data",ios::in);
+  std::ifstream iFile("data/points",ios::in);
 
   if (! iFile) {
-    cout <<"A file named data containing points should be provided," << endl
+    std::cout <<"A file named points in directory data 
+            containing points should be provided," << endl
 	 <<"see README"<<endl;
     return 1;
   }
 
-  cout <<"                              reading file data" << endl ;
+  std::cout <<"                reading file data/points" << endl ;
   Point nouv;
   while ( iFile >> nouv ) {
     T.insert(nouv);
@@ -85,13 +86,27 @@ int main(int argc, char* argv[])
 
   T.is_valid(true);
 
-  ofstream oFileT("output",ios::out);
-  cout <<"                              writing file output" << endl << flush;
-  oFileT << T;
+  std::cout <<"                locating point (1,1,1) :" << endl;
+  Point p(1,1,1);
+  Locate_type lt;
+  int li, lj;
+  T.locate(p,lt,li,lj);
+  if ( lt == Triangulation::CELL ) 
+    std::cout <<"                     CELL" << endl;
+  if ( lt == Triangulation::FACET )
+    std::cout <<"                     FACET" << endl;
+  if ( lt == Triangulation::EDGE ) 
+    std::cout <<"                     EDGE" << endl;
+  if ( lt == Triangulation::VERTEX )
+    std::cout <<"                     VERTEX" << endl;
+  if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) 
+    std::cout <<"                     OUTSIDE_CONVEX_HULL" << endl;
+  if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) 
+    std::cout <<"                     OUTSIDE_AFFINE_HULL" << endl;
 
-  char ch;
-  cout << "enter any character to quit" << endl;
-  cin >> ch;
+  std::ofstream oFileT("data/output",ios::out);
+  std::cout <<"                writing file data/output" << endl << flush;
+  oFileT << T;
 
   return 1;
 }
