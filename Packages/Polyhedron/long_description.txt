@@ -10,10 +10,15 @@ Polyhedron Package
      Iterator and circulator used for polyhedral surfaces (and maybe
      other data structures based on the halfedge data structure as well.
 
--  CGAL/Polyhedron_default_traits_3.h
+-  CGAL/Polyhedron_traits_3.h
 
      A default traits class for polyhedral surfaces based on the
      CGAL-kernel.
+
+-  CGAL/Polyhedron_traits_with_normals_3.h
+
+     A traits class replacing the plane equation per facet with a 
+     normal vector per facet.
 
 -  CGAL/Polyhedron_incremental_builder_3.h
 
@@ -24,10 +29,5 @@ Polyhedron Package
 
      A modifier able of copying or appending polyhedral surfaces.
      (Not documented in the manual)
-
--  CGAL/Polyhedron_old/*
-
-     Files for the old design. They are automatically included
-     from the files above in case the old design is selected.
 
 Lutz Kettner
