@@ -79,8 +79,8 @@
 #include <float.h>
 #endif
 #ifdef __sgi
-  // This #define is forced for backward compatibility with Irix 5.3.
-  // I think it slows down Irix 6.2...
+  // This #define is forced for backward compatibility with Irix 5.x.
+  // I think it slows down Irix 6.x...
 #define __SGI_ieeefph__
 #ifdef __SGI_ieeefph__
 #include <ieeefp.h>
@@ -118,7 +118,7 @@ enum {  //        rounding   | precision  | def.mask
     FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f
 };
 #else
-typedef fp_rnd FPU_CW_t;
+typedef unsigned int FPU_CW_t; // fp_rnd
 enum {
     FPU_cw_near = FP_RN,
     FPU_cw_zero = FP_RZ,
@@ -141,7 +141,7 @@ enum {
 };
 #else
 #ifdef __SGI_ieeefph__ // 2 cases for C... I love IRIX !!!
-typedef fp_rnd FPU_CW_t;
+typedef unsigned int FPU_CW_t; // fp_rnd
 enum {
     FPU_cw_near = FP_RN,
     FPU_cw_zero = FP_RZ,
@@ -149,7 +149,7 @@ enum {
     FPU_cw_down = FP_RM
 };
 #else
-typedef int FPU_CW_t;
+typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = ROUND_TO_NEAREST,
     FPU_cw_zero = ROUND_TO_ZERO,
@@ -184,11 +184,9 @@ enum {
 #endif // __alpha
 
 
-// Main functions:
-static inline FPU_CW_t FPU_get_cw (void);
-static inline void FPU_set_cw (FPU_CW_t);
+// Main functions: FPU_get_cw() and FPU_set_cw();
 
-static inline FPU_CW_t FPU_get_cw (void)
+inline FPU_CW_t FPU_get_cw (void)
 {
     FPU_CW_t cw;
 #ifdef CGAL_IA_USE_ASSEMBLY
@@ -221,7 +219,7 @@ static inline FPU_CW_t FPU_get_cw (void)
     return cw;
 }
 
-static inline void FPU_set_cw (FPU_CW_t cw)
+inline void FPU_set_cw (FPU_CW_t cw)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
     CGAL_IA_SETFPCW(cw);
@@ -236,12 +234,12 @@ static inline void FPU_set_cw (FPU_CW_t cw)
 #endif
 
 #ifdef __sun
-    fpsetround(cw);
+    fpsetround(fp_rnd(cw));
 #endif
 
 #ifdef __sgi
 #ifdef __SGI_ieeefph__
-    fpsetround(cw);
+    fpsetround(fp_rnd(cw));
 #else
     union fpc_csr fpu_ctl;
     fpu_ctl.fc_word = get_fpc_csr();
@@ -256,16 +254,16 @@ static inline void FPU_set_cw (FPU_CW_t cw)
 // Obscolete: wrappers for the old interface.
 
 #if 1
-static inline void FPU_set_rounding_to_zero (void)
+inline void FPU_set_rounding_to_zero (void)
 { FPU_set_cw(FPU_cw_zero); }
 
-static inline void FPU_set_rounding_to_nearest (void)
+inline void FPU_set_rounding_to_nearest (void)
 { FPU_set_cw(FPU_cw_near); }
 
-static inline void FPU_set_rounding_to_infinity (void)
+inline void FPU_set_rounding_to_infinity (void)
 { FPU_set_cw(FPU_cw_up); }
 
-static inline void FPU_set_rounding_to_minus_infinity (void)
+inline void FPU_set_rounding_to_minus_infinity (void)
 { FPU_set_cw(FPU_cw_down); }
 #endif
 
