@@ -16,34 +16,38 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I./include 	-I../../include \
 	$(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-
+	$(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LDFLAGS = $(CGAL_LDFLAGS) \
-	$(LONG_NAME_PROBLEM_LDFLAGS) 
-WINDOW_LDFLAGS = $(CGAL_WINDOW_LDFLAGS) 
+LIBPATH = \
+          $(CGAL_WINDOW_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_WINDOW_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
+all :            \
+	demo
 
 
-demo: demo.o parse.o
-	$(CGAL_CXX) -o demo demo.o parse.o $(WINDOW_LDFLAGS)
+demo$(EXE_EXT): demo$(OBJ_EXT) parse$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) parse$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	- rm -rf *~ *.o core tr
+clean: \
+	demo.clean 
 
-realclean: clean
-	- rm -rf  demo 
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS)  $(OBJ_OPT) $<
