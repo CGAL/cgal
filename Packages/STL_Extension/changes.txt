@@ -1,3 +1,11 @@
+June 24 2004 Menelaos Karavelas
+- test suite for concatenate iterator is more verbose; also added
+  test cases where at least one container is empty
+- fixed bug in copy constructor and assignment operator for nested
+  iterator
+- added tests for assignment operator and copy constructor in nested
+  iterator test suite
+
 22 June 2004 Sylvain Pion
 - G++ 3.4 test-suite fix.
 
