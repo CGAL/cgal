@@ -11,11 +11,9 @@
 // release_date  :
 //
 // file          : ch__test.h
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================

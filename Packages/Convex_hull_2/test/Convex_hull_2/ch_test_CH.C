@@ -11,23 +11,17 @@
 // release_date  :
 //
 // file          : ch_test_CH.C
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-
 #include <CGAL/convex_hull_cartesian_double_traits_2.h>
-
 #include <CGAL/convex_hull_traits_2.h>
-
 #include <CGAL/convex_hull_constructive_traits_2.h>
 
 #include <fstream>

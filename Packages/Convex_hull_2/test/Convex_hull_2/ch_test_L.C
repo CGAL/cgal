@@ -11,11 +11,9 @@
 // release_date  :
 //
 // file          : ch_test_L.C
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
@@ -42,9 +40,9 @@ main()
   std::istream_iterator< Point2>  in_end;
   std::copy( in_start, in_end , std::back_inserter(V) );
   std::vector< Point2 > CH;
-  CGAL::convex_hull_points_2( V.begin(), V.end(), 
-                              std::back_inserter(CH),
-                              CGAL::convex_hull_leda_traits_2() ); 
+  CGAL::convex_hull_2( V.begin(), V.end(), 
+                       std::back_inserter(CH),
+                       CGAL::convex_hull_leda_traits_2() ); 
   return 0;
 }
 #endif // CGAL_USE_LEDA

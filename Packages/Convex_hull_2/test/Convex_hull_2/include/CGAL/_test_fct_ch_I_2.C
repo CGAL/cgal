@@ -11,11 +11,9 @@
 // release_date  :
 //
 // file          : _test_fct_ch_I_2.C
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
@@ -57,8 +55,8 @@ ch__batch_test( const Traits& chI )
                          Cocircular_points.end(), \
                          chI, ch_ALL, ch_CHECK_CONVEXITY ));
   std::vector< Point_2 > extreme_points;
-  convex_hull_points_2(Cocircular_points.begin(), Cocircular_points.end(),
-                            std::back_inserter(extreme_points), chI );
+  convex_hull_2(Cocircular_points.begin(), Cocircular_points.end(),
+                std::back_inserter(extreme_points), chI );
   assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                          extreme_points.begin(), \
                                          chI ));
