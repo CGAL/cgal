@@ -200,12 +200,8 @@ det6x6_by_formula(
   return m012345;
 }
 
-
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_PREDICATES_SIGN_OF_DETERMINANT_H
 #include <CGAL/predicates/sign_of_determinant.h>
-#endif // CGAL_PREDICATES_SIGN_OF_DETERMINANT_H
 
 #endif // CGAL_DETERMINANT_H

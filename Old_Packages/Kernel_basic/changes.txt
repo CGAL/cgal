@@ -1,3 +1,7 @@
+3.26   (25 Feb 2001)
+- iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h fixes.
+- Allow changing inline policy without having to modify CGAL files...
+
 3.25   (21 Feb 2001)
 - Added Construct_cross_product_vector_3, with corresponding template class
   v_Cross_product<>.

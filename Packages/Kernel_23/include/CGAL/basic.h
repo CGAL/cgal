@@ -145,13 +145,15 @@ assert_equal_types( const T&, const T&) {}
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
-#define CGAL_MEDIUM_INLINE inline
+#  define CGAL_MEDIUM_INLINE inline
 #endif
+
 #ifndef CGAL_LARGE_INLINE
-#define CGAL_LARGE_INLINE
+#  define CGAL_LARGE_INLINE
 #endif
+
 #ifndef CGAL_HUGE_INLINE
-#define CGAL_HUGE_INLINE
+#  define CGAL_HUGE_INLINE
 #endif
 
 CGAL_END_NAMESPACE
