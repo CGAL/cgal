@@ -1,3 +1,5 @@
+- define the Orientation_2 predicate in the traits but for sites, not
+  for points.
 - replace the Point_container class by a more generic class called
   Simple_container_wrapper; the Segment_Voronoi_diagram_2 class
   should take as template parameter the real container (by default
