@@ -1,4 +1,5 @@
-- removed test_svd2.C from the test directory
+- replace std::list by std::set in the spec (for the point container)
+- remove test_svd2.C from the test directory
 - add hierarchy specific tests in the hierarchy test suite
 - make sure that the assignment operator and copy constructor for the
   segment Voronoi diagram hierarchy class do not have any bugs
