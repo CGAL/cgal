@@ -27,13 +27,6 @@
 #include <CGAL/Nef_3/debug.h>
 
 template <typename R>
-CGAL::Direction_3<R> normalized(const CGAL::Direction_3<R>& d) {
-  CGAL::Point_3<R> p( CGAL::ORIGIN + d.vector());
-  p = normalized(p);
-  return (CGAL::Direction_3<R>( p - CGAL::ORIGIN));
-}
-
-template <typename R>
 CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p)
 { 
   typedef typename R::RT     RT;
