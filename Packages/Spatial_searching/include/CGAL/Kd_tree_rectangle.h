@@ -26,24 +26,6 @@
 
 namespace CGAL {
 
-  template <class SearchTraits, class Point_d, class T>
-  struct set_bounds : public std::unary_function<Point_d&, void> {
-    int dim;
-    T *lower;
-    T *upper;
-    set_bounds(int d, T *l, T *u) : dim(d), lower(l), upper(u) {}
-    void operator() (Point_d& p) {
-		T h;
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-                typename SearchTraits::Cartesian_const_iterator_d pit = construct_it(p);
-		for (int i = 0; i < dim; ++i, ++pit) {
-			h=(*pit); 
-			if (h < lower[i]) lower[i] = h;
- 			if (h > upper[i]) upper[i] = h;
-		}
-    }
-  };
-
   template <class SearchTraits, class P, class T>
   struct set_bounds_from_pointer : public std::unary_function<P, void> {
     int dim;
@@ -121,48 +103,45 @@ namespace CGAL {
 	std::copy(r.upper_, r.upper_+dim, upper_);
     }
 
-    template <class PointIter>
-    Kd_tree_rectangle(int d,  PointIter begin,  PointIter end)
+    template <class PointPointerIter> // was PointIter
+    Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end)
       : dim(d), lower_(new FT[d]), upper_(new FT[d]) 
     {
       // initialize with values of first point
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-      typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(*begin);
-      //      typename SearchTraits::Cartesian_const_iterator_d be = construct_it(*begin,1);
+      typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(**begin);
 
 	  for (int i=0; i < dim; ++bit, ++i)
 	  {
 	    lower_[i]=(*bit); upper_[i]=lower_[i];
 	  }
 	  begin++;
-      typedef typename std::iterator_traits<PointIter>::value_type P;
-      std::for_each(begin, end, set_bounds<SearchTraits, P,T>(dim, lower_, upper_));
+      typedef typename std::iterator_traits<PointPointerIter>::value_type P;
+      std::for_each(begin, end, set_bounds_from_pointer<SearchTraits, P,T>(dim, lower_, upper_));
       set_max_span();
     }
 
     template <class PointPointerIter>
     void update_from_point_pointers(PointPointerIter begin, 
                                     PointPointerIter end, bool empty) {
-		if (empty) { // no points
-		  for (int i=0; i < dim; ++i)
-		  {
-			lower_[i]= FT(1); upper_[i]= FT(-1);
-		  }
-		} else {
-          // initialize with values of first point
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-      typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(**begin);
-	      for (int i=0; i < dim; ++i, ++bit)
-		  {
-	        lower_[i]= *bit; upper_[i]=lower_[i];
-		  }
-	      begin++;
-          typedef typename 
-	  std::iterator_traits<PointPointerIter>::value_type P;
-          std::for_each(begin, end,
-		    set_bounds_from_pointer<SearchTraits,P,T>(dim, lower_, upper_));
-		}
-        set_max_span();
+      if (empty) { // no points
+	for (int i=0; i < dim; ++i) {
+	  lower_[i]= FT(1); upper_[i]= FT(-1);
+	}
+      } else {
+	// initialize with values of first point
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(**begin);
+
+	for (int i=0; i < dim; ++i, ++bit) {
+	  lower_[i]= *bit; upper_[i]=lower_[i];
+	}
+	begin++;
+	typedef typename std::iterator_traits<PointPointerIter>::value_type P;
+	std::for_each(begin, end,
+		      set_bounds_from_pointer<SearchTraits,P,T>(dim, lower_, upper_));
+      }
+      set_max_span();
     }
 
     inline int max_span_coord() const { return max_span_coord_; }
@@ -179,7 +158,7 @@ namespace CGAL {
       return upper_[i];
     }
 
-    std::ostream& print(std::ostream& s) {
+    std::ostream& print(std::ostream& s) const {
       s << "Rectangle dimension = " << dim;
       s << "\n lower: ";
       for (int i=0; i < dim; ++i)
@@ -236,7 +215,7 @@ split(Kd_tree_rectangle& r, int d, FT value) {
 }; // of class Kd_tree_rectangle
 
   template <class SearchTraits>
-    std::ostream& operator<< (std::ostream& s, Kd_tree_rectangle<SearchTraits>& r) {
+    std::ostream& operator<< (std::ostream& s, const Kd_tree_rectangle<SearchTraits>& r) {
     return r.print(s);
   }
 

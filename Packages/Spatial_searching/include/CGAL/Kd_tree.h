@@ -66,7 +66,6 @@ private:
   std::vector<Point_d*> data;
   Point_d_iterator data_iterator;
   SearchTraits tr;
-  int the_item_number;
 
   // protected copy constructor
   Kd_tree(const Tree& tree) {};
@@ -81,10 +80,8 @@ private:
   create_leaf_node(Point_container& c)
   {
     Node_handle nh = nodes.construct_insert(c.size(), Node::LEAF);
-    if (c.size()>0) { 
-      nh->data = data_iterator;
-      data_iterator = std::copy(c.begin(), c.end(), data_iterator);
-    }
+
+    nh->data = c.begin();
     return nh;
   }
 
@@ -115,8 +112,7 @@ private:
 
     Node_handle nh = nodes.construct_insert(Node::EXTENDED_INTERNAL);
     
-    Point_container
-      c_low = Point_container(c.dimension());
+    Point_container c_low(c.dimension());
     
     split(nh->separator(), c, c_low);
 	        
@@ -156,8 +152,7 @@ private:
   {
     Node_handle nh = nodes.construct_insert(Node::INTERNAL);
     
-    Point_container
-    c_low = Point_container(c.dimension());
+    Point_container c_low(c.dimension());
     
     split(nh->separator(), c, c_low);
 	        
@@ -193,13 +188,13 @@ template <class InputIterator>
     int dim = std::distance(ccci(p), ccci(p,0)); 
 
     data = std::vector<Point_d*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
-    data_iterator = data.begin();
-
-    Point_container c(dim, pts.begin(), pts.end());
+    for(int i = 0; i < pts.size(); i++){
+      data[i] = &pts[i];
+    }
+    Point_container c(dim, data.begin(), data.end());
 
     bbox = new Kd_tree_rectangle<SearchTraits>(c.bounding_box());
     
-    the_item_number=c.size();
     if (c.size() <= split.bucket_size())
       tree_root = create_leaf_node(c);
     else {
@@ -232,7 +227,7 @@ template <class InputIterator>
 
   const Kd_tree_rectangle<SearchTraits>& bounding_box() const {return *bbox; }
 
-  int size() const {return the_item_number;}
+  int size() const {return data.size();}
 
   // Print statistics of the tree.
   std::ostream& statistics (std::ostream& s) {
