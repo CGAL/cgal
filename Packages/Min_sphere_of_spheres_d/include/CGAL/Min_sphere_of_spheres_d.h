@@ -27,6 +27,8 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+
+#include <CGAL/Min_sphere_of_spheres_d_pair.h>
 #include <CGAL/Min_sphere_of_spheres_d_support_set.h>
 
 namespace CGAL_MINIBALL_NAMESPACE {
@@ -162,8 +164,6 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool is_valid(const Tag_false is_exact);
   
   private:
-    bool pivot(int B);
-  
     void update();
     void update(LP_algorithm);
     void update(Farthest_first_heuristic);

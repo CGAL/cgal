@@ -53,7 +53,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
       for (i=e; i<n; ++i)
         if (!ss.contains(t.center_cartesian_begin(*l[i]),
-                         t.radius(*l[i]),Tol,Is_exact()) && pivot(i)) {
+                         t.radius(*l[i]),Tol,Is_exact()) && ss.pivot(l,e,i)) {
           k = i+1;
           break;
         }
@@ -205,7 +205,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool enclosing = (e == 0)? n == 0 :
       !find_farthest(e,n,i,Use_sqrt(),Is_exact());
   
-    while (!enclosing && pivot(i)) {
+    while (!enclosing && ss.pivot(l,e,i)) {
       enclosing = !find_farthest(e,n,i,Use_sqrt(),Is_exact());
     }
   
