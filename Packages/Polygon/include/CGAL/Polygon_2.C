@@ -46,6 +46,8 @@ template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
                  const Polygon_2<Traits_P,Container2_P> &y )
 {
+  if (&x == &y)
+    return true;
   typedef typename Traits_P::Equal_2 Equal_2;
   typedef typename Traits_P::Point_2 Point_2;
 //  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));

@@ -227,8 +227,10 @@ class Polygon_2 {
     Polygon_2<Traits_P, Container_P>&
     operator=(const Polygon_2<Traits_P,Container_P>& polygon)
     {
-      d_container = polygon.d_container;
-      invalidate_cache();
+      if (this != &polygon) {
+          d_container = polygon.d_container;
+          invalidate_cache();
+      }
       return *this;
     }
 

@@ -1,3 +1,6 @@
+4.6 (6 December 2001)
++ Added check for identity in assignment and equality operators.
+
 4.5.2 (5 December 2001)
 + Removed some non essential tests from PolygonTest.C. Those tests tested
   standard iterator functionality more than specific polygon functionality.
