@@ -13,36 +13,17 @@
 % +========================================================================+
 %   Arrangement_2_traits
 % +========================================================================+
-\begin{ccRefConcept}{Arrangement_2_traits}
+\begin{ccRefConcept}{ArrangementTraits_2}
 
-% TODO (shai) verify this definition is correct
 \ccDefinition
-   The \ccRefName\ concept is a refinement of the \ccc{Planar_map_with_intersections_traits}
-   concept \lcTex{(\ccRefPage{Planar_map_traits})}.
-   The requirements of the latter
-   are requirements for the former.
-   The additional requirements are the following types and methods.
-   %The \ccStyle{Point} can be implemented for non-linear curves as the
-   %intersection of 2 curves.
+   A model for the\ccRefName\ defines the geometric types and
+   primitive operations used in the arrangement data structure
+   \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
 
-\ccTypes
-\ccNestedType{Point}{same as the planar map traits' \ccc{Point}.}
-\ccNestedType{X_curve}{same as the planar map traits' \ccc{X_curve}.}
-\ccNestedType{Curve}{curve type, this type should be {\it syntactically}
-identical to the \ccc{X_curve} type (i.e., it should {\em be} the same type).
-However, {\it semantically} it differs from the \ccc{X_curve} in that it
-is not necessarily $x$-monotone. In the following methods when we
-require an \ccc{X_curve} as a parameter, we assume that the curve
-is $x$-monotone.}
-
-\ccCreationVariable{arr_traits}
-\ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
-an $x$-monotone curve.}
-
-\ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{cuts
-\ccc{cv} into $x$-monotone subcurves and stores them in $l$.
-The order in which they are inserted into $l$ defines their order in the
-hierarchy tree.}
+  The\ccRefName\ is a synonym of the
+  \ccc{PlanarMapWithIntersectionsTraits_2} concept. It has the same
+  set of requirements. (In previous versions this concept was known as
+  \ccc{Arrangement_2_traits}.)
 
 \ccHasModels
   \ccc{Arr_segment_exact_traits<R>}\\

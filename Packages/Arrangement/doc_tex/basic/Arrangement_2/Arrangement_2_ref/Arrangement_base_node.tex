@@ -13,18 +13,14 @@
 % +========================================================================+
 %  Arrangement_base_node Concept
 % +========================================================================+
-\begin{ccRefConcept}{Arrangement_base_node}
+\begin{ccRefConcept}{ArrangementBaseNode_2}
 \label{sec:base_node}
 
 \ccDefinition
-    The arrangement class is parameterized with the
-    \ccRefName\ class which defines the base class for the objects
-    inside the hierarchy tree.
-    In this section we present the formal requirements for an \ccRefName\
-    class.
-
-    An object $bn$ of the class
-    \ccRefName\ must provide the following types and operations.
+    A model for the \ccRefName\ concept must provide the following
+    types and operations. It defines the base class for the nodes of
+    the hierarchy tree of the arrangement data structure
+    \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>}.
 
 \ccTypes
     \ccNestedType{Curve}{curve type, corresponding to the traits

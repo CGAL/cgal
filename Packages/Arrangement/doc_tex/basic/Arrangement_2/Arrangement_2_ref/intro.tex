@@ -52,7 +52,7 @@ of the hierarchy tree by adding them inside the \ccc{Base_node}.
 The arrangement is parametrized with the interface class \ccc{Dcel}.
 The \ccc{Dcel} is a container class that defines the underlying
 combinatorial data structure used by the planar map. We define the
-concept \ccc{Arrangement_2_Dcel} \lcTex{(\ccRefPage{Arrangement_2_Dcel})}
+concept \ccc{ArrangementDcel_2} \lcTex{(\ccRefPage{ArrangementDcel_2})}
 where the requirements for a \ccc{Dcel} class are defined.
 
 As part of the \ccc{Dcel} we define requirements for its vertex, halfedge and 
@@ -245,9 +245,10 @@ More details are given in sections
 \begin{ccTexOnly}
 
 \subsection*{Concepts}
-\ccRefConceptPage{Arrangement_base_node}\\
-\ccRefConceptPage{Arrangement_2_Dcel}\\
-\ccRefConceptPage{Arrangement_2_traits}\\
+\ccRefConceptPage{ArrangementBaseNode_2}\\
+\ccRefConceptPage{ArrangementDcel_2}\\
+\ccRefConceptPage{ArrangementDcelHalfedge_2}\\
+\ccRefConceptPage{ArrangementTraits_2}\\
 
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>}\\

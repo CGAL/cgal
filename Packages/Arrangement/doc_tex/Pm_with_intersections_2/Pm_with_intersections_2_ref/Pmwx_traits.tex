@@ -16,6 +16,10 @@
 \begin{ccRefConcept}{PlanarMapWithIntersectionsTraits_2}
 
 \ccDefinition
+   A model for the \ccRefName\ defines the geometric types and
+   primitive operations used in the planar map with intersections data
+   structure \ccc{Planar_map_with_intersections_2<Planar_map>}.
+
    The \ccRefName\ concept is a refinement of the \ccc{PlanarMapTraits_2}
    concept \lcTex{(\ccRefPage{PlanarMapTraits_2})}.
    The requirements of the latter
@@ -28,7 +32,23 @@
 \ccNestedType{Point}{same as the planar map traits' \ccc{Point}.}
 \ccNestedType{X_curve}{same as the planar map traits' \ccc{X_curve}.}
 
+\ccNestedType{Curve}{
+   curve type, this type should be {\it syntactically} identical to
+   the \ccc{X_curve} type (i.e., it should {\em be} the same type).
+   However, {\it semantically} it differs from the \ccc{X_curve} in
+   that it is not necessarily $x$-monotone. In the following methods
+   when we require an \ccc{X_curve} as a parameter, we assume that the
+   curve is $x$-monotone.}
+
 \ccCreationVariable{pmwx_traits}
+
+\ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
+an $x$-monotone curve.}
+
+\ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
+   cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
+   The order in which they are inserted into $l$ defines their order
+   in the hierarchy tree.}
 
 \ccMethod{Point point_reflect_in_x_and_y(const Point& pt);}{returns the
 \ccc{Point}
@@ -85,10 +105,10 @@ of points), otherwise returns
 \ccc{false}.}
 
 \ccHasModels
-  The package does not supply specific implementations of the planar
-  map with intersections traits concept. However, since the
-  \ccc{Arrangement Traits} concept is a refinment of the \ccRefName\
-  concept, all of the models of the former are models of the latter.
+%  The package does not supply specific implementations of the planar
+%  map with intersections traits concept. However, since the
+%  \ccc{Arrangement Traits} concept is a refinment of the \ccRefName\
+%  concept, all of the models of the former are models of the latter.
 
   \ccc{Arr_segment_exact_traits<R>}\\
   \ccc{Arr_leda_segment_exact_traits}\\

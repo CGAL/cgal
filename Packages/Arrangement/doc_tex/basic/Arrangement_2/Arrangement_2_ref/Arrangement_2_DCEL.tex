@@ -14,75 +14,32 @@
 %   Arrangement_2_DCEL
 % +========================================================================+
 
-\begin{ccRefConcept}{Arrangement_2_Dcel}
+\begin{ccRefConcept}{ArrangementDcel_2}
 
 \ccDefinition
-    An \ccRefName\ is a refinement of the \ccc{Planar_map_Dcel} concept 
-    \lcTex{(see \ccRefPage{Planar_map_Dcel})}. 
-    The requirements of the latter are 
-    the requirements of the former.
-    The additional requirements of the \ccRefName\ are
-    additional functions for the
-    Dcel \ccc{Halfedge} class. Those requirements are listed below.
+   A model for the \ccRefName\ concept defines the underlying
+   combinatorial data structure (halfedge data structure) used in the
+   arrangement data structure \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+
+    An \ccRefName\ is $not$ (!) a refinement of the
+    \ccc{PlanarMapDcel_2} concept \lcTex{(see
+    \ccRefPage{PlanarMapDcel_2})}. However, it is very similiar.  The
+    difference in requirements is that the
+    \ccHtmlNoLinksFrom{\ccStyle{Halfedge}} type
+    should a model of the more refined concept
+    \ccc{ArrangementDcelHalfedge_2}.
+
+\ccTypes
+    \ccNestedType{Halfedge}{
+       The halfedge type. Should be a model of the
+       \ccc{ArrangementDcelHalfedge_2} concept.}
 
 \ccHasModels
    \ccc{Arr_2_default_dcel<Traits>} 
    \lcTex{(see introduction, \ccRefPage{arr_ref_intro})}
 
-   The \ccRefName\ concept consists of a set of requirements as any other 
-   concept. The notions of a Dcel vertex, Dcel halfedge and Dcel face are
-   part of the whole Dcel concept. One can regard these notions as 
-   {\em subconcepts,} (not a formal term). 
-
-   However, since the implementation is often separated into different 
-   classes, the user does not have to write the whole Dcel anew. For example,
-   the \ccc{Arr_2_default_dcel} inherits the \ccc{Pm_Dcel<V,H,F>}
-   \lcTex{(\ccRefPage{Pm_Dcel<V,E,F>})} with the actual parameters
-   \ccc{Arr_2_vertex_base}, \ccc{Arr_2_halfedge_base} and 
-   \ccc{Arr_2_face_base}. The reason for this is that the refinement of 
-   the \ccRefName\ is only with the additional halfedge requirements of it.
-
-% WHAT ABOUT THIS
-\ccHeading{Halfedge of Arrangement\_2\_Dcel}
-
-%\begin{ccClass}[Arrangement_2_DCEL_]{Halfedge}
-\begin{ccClass}{Arrangement_2_Dcel_Halfedge}
-
-\ccCreationVariable{e}
-
-
-\ccDefinition An object $e$ of the class
-    \ccStyle{Halfedge} is a halfedge of the Dcel of the
-    arrangement.
-    It has an additional type \ccc{Base_node} which is the
-    same as the template parameter \ccc{Base_node} of the
-    arrangement (see section~\ref{sec:base_node}).
-    It has the additional methods \ccc{edge_node()} 
-    and \ccc{set_edge_node(Base_node*)}.
-
-\ccOperations
-    \ccMethod{Base_node* edge_node();}
-    {returns a pointer to the edge node in the hierarchy tree which
-       holds the curve from 
-       which the halfedge was generated.}
-
-    \ccMethod{void set_edge_node(Base_node* b);}
-    {sets \ccc{b} to be the edge node in the hierarchy tree which
-       holds the curve of the halfedge.}
-
-
-\ccHasModels
-  \ccc{CGAL::Arr_2_halfedge_base<Base_node>} (for example, used by
-  \ccc{Arr_2_default_dcel<Traits>} )
-
-
-\end{ccClass}
-%\end{ccRefConcept}
 
 \end{ccRefConcept}
-
-
-%\end{ccRefConcept}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
