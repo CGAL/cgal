@@ -7,6 +7,8 @@
 
 13 August 2004 Radu Ursu
 - added mpfr to linker flags.
+- mpfr.lib or libmpfr.a is also copied in the lib directory of the release,
+  when installing gmp with Cygwin.
 
 9 August 2004 Menelaos Karavelas
 - Removed the -Xlinker option for ICC under Linux. RHEL complains when
