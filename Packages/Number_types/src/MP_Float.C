@@ -298,11 +298,11 @@ to_double(const MP_Float &b)
 }
 
 // FIXME : This function deserves proper testing...
-Interval_base
+const std::pair<double,double>&
 to_interval(const MP_Float &b)
 {
   if (b.is_zero())
-    return 0;
+    return std::pair<double,double>(0,0);
 
   int exp = b.max_exp();
   int steps = std::min(limbs_per_double, b.v.size());
@@ -311,7 +311,7 @@ to_interval(const MP_Float &b)
 
   // We take care of overflow.  The following should be enough.
   if (!CGAL_NTS is_finite(d_exp))
-    return Interval_base::Largest;
+    return Interval_nt<false>::largest();
 
   Protect_FPU_rounding<true> P;
   Interval_nt_advanced d = 0;
@@ -340,7 +340,7 @@ to_interval(const MP_Float &b)
     CGAL_assertion(MP_Float(d.inf()) <= b && MP_Float(d.sup()) >= b);
 #endif
 
-  return d;
+  return d.pair();
 }
 
 std::ostream &
