@@ -178,6 +178,15 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
 template < class K >
 inline
 Comparison_result
+compare_slopes(const typename CGAL_WRAP(K)::Segment_2 &s1,
+               const typename CGAL_WRAP(K)::Segment_2 &s2, const K& k)
+{
+  return k.compare_slope_2_object()(s1, s2);
+}
+
+template < class K >
+inline
+Comparison_result
 compare_x(const typename CGAL_WRAP(K)::Point_2 &p,
           const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
 {

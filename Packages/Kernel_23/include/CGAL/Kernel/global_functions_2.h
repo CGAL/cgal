@@ -180,6 +180,14 @@ compare_lexicographically_xy(const Point_2<K> &p,
 template < class K >
 inline
 Comparison_result
+compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
+{
+  return CGALi::compare_slopes(s1, s2, K());
+}
+
+template < class K >
+inline
+Comparison_result
 compare_x(const Point_2<K> &p, const Point_2<K> &q)
 {
   return CGALi::compare_x(p, q, K());

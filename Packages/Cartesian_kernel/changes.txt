@@ -1,3 +1,6 @@
+22 Feb 2004 Sylvain Pion
+- Move compare_slopes(Segment_2, Segment_2) to the new scheme.
+
 21 Feb 2004 Sylvain Pion
 - Move internal predicates(p,q,K) to CGALi.
 

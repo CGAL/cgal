@@ -1,4 +1,4 @@
-// Copyright (c) 2000,2001,2002,2003  Utrecht University (The Netherlands),
+// Copyright (c) 2000-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -46,7 +46,6 @@
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/Cartesian/predicates_on_directions_2.h>
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
-#include <CGAL/Cartesian/predicates_on_segments_2.h>
 #include <CGAL/Cartesian/distance_predicates_2.h>
 #include <CGAL/Cartesian/basic_constructions_2.h>
 

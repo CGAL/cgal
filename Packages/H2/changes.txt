@@ -1,3 +1,6 @@
+22 Feb 2004 Sylvain Pion
+- Move compare_slopes(Segment_2, Segment_2) to the new scheme.
+
 19 Feb 2004 Sylvain Pion
 - Internal *H[23] classes do not publicly derive from the Handle stuff,
   but private data member instead.
