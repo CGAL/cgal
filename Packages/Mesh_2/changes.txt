@@ -1,3 +1,7 @@
+29 September 2004 Laurent Rineau
+- New code
+- New layers in mesh_demo
+
 30 August 2004 Laurent Rineau
 - New specifications.
 

@@ -105,7 +105,11 @@ public:
   /** Get the next face to conform. */
   Face_handle do_get_next_element()
   {
-    return bad_faces.front()->second;
+    Face_handle fh = bad_faces.front()->second;
+    std::cerr << "Refine_faces::do_get_next_element()\n";
+    std::cerr<< tr.circumcenter(fh) << std::endl;
+
+    return fh;
   }
 
   /** Pop the first face of the map. */
@@ -130,7 +134,7 @@ public:
   do_test_point_conflict_from_superior(const Point&,
                                        Zone&)
   {
-    return std::make_pair(true, false);
+    return std::make_pair(true, true);
   }
 
   /** Do nothing */
@@ -141,18 +145,19 @@ public:
   }
 
   /** Remove the conflicting faces from the bad faces map. */
-  void do_before_insertion(const Face_handle&, const Point&,
+  void do_before_insertion(const Face_handle& fh, const Point&,
                            Zone& zone)
   {
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
         fh_it != zone.faces.end();
         ++fh_it)
-      bad_faces.erase(*fh_it);
+      if(*fh_it != fh) 
+	bad_faces.erase(*fh_it);
   }
 
   /** Do nothing. */
   void do_after_no_insertion(const Face_handle&, const Point&,
-                             Zone& zone)
+                             Zone&)
   {
   }
 
@@ -181,7 +186,7 @@ public:
    */
   void compute_new_bad_faces(Vertex_handle v);
 
-private:
+public:
   /** \name ACCESS FUNCTION */
 
   bool is_bad(const Face_handle fh, Quality& q) const;

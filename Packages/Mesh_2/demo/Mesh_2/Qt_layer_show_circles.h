@@ -24,7 +24,7 @@ public:
   typedef typename GT::Circle_2 Circle;
   typedef typename GT::FT		FT;
 
-  Qt_layer_show_circles(T*& t,
+  Qt_layer_show_circles(T* t,
 			CGAL::Color c = CGAL::GRAY,
 			int linewidth = 1,
 			CGAL::Color fill_color = CGAL::WHITE,
@@ -122,7 +122,7 @@ private:
       widget->do_paint();
     }
 
-  T*& tr;
+  T* tr;
   Face_handle  old_face;
   bool	       do_erase;
   

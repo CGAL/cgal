@@ -20,6 +20,8 @@
 #ifndef MESH_2_REFINE_EDGES_VISITOR_H
 #define MESH_2_REFINE_EDGES_VISITOR_H
 
+#include <CGAL/Mesher_level.h>
+
 namespace CGAL {
 namespace Mesh_2 {
 
@@ -30,7 +32,7 @@ namespace Mesh_2 {
  * \param Mesher_base should be instanciated with Refine_face_base<Tr>.
  */
 template <typename Mesher_base>
-class Refine_edges_visitor 
+class Refine_edges_visitor : public ::CGAL::Null_mesh_visitor
 {
 public:
   typedef typename Mesher_base::Triangulation Tr;
@@ -56,10 +58,10 @@ public:
 
   Null_mesh_visitor previous_level() const { return null_mesh_visitor; }
   
-  /** Store vertex handles and markers at left and right of the edge
-   *  \c e. 
+  /** 
+   * Store vertex handles and markers at left and right of the edge \c e.
    */
-  void before_insertion(Constrained_edge& e, const Point&, const Zone&)
+  void before_conflicts(const Constrained_edge& e, const Point&)
   {
     Tr& tr = mesher_base.get_triangulation_ref();
 
@@ -108,6 +110,11 @@ public:
     mesher_base.compute_new_bad_faces(v);
   }
 
+  template <typename E, typename P, typename Z>
+  void before_insertion(E, P, Z) const {}
+
+  template <typename E, typename P, typename Z>
+  void after_no_insertion(E, P, Z) const {}
 }; // end class Refine_edges_visitor
 
 /**
@@ -132,11 +139,17 @@ public:
 
   Previous_level& previous_level() { return previous; }
 
+  template <typename E, typename P>
+  void before_conflicts(E, P) const {}
+
   template <typename E, typename P, typename Z>
   void before_insertion(E, P, Z) const {}
 
   template <typename V>
   void after_insertion(V) const {}
+
+  template <typename E, typename P, typename Z>
+  void after_no_insertion(E, P, Z) const {}
 }; // end class Refine_edges_visitor_from_faces
 
 } // end namespace Mesh_2

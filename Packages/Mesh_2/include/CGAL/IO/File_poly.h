@@ -151,4 +151,4 @@ write_triangle_poly_file(const CDT& t, std::ostream &f)
 
 } // end namespace CGAL
 
-#endif CGAL_FILE_POLY_H
+#endif // CGAL_FILE_POLY_H

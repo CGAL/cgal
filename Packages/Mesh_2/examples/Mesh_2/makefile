@@ -13,10 +13,13 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+OTHER_CXXFLAGS?=
+
 CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(OTHER_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -38,6 +41,8 @@ all:            \
                 mesh_class$(EXE_EXT) \
                 mesh_global$(EXE_EXT) \
                 mesh_with_seeds$(EXE_EXT) 
+
+include depends
 
 conforming$(EXE_EXT): conforming$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)conforming conforming$(OBJ_EXT) $(LDFLAGS)

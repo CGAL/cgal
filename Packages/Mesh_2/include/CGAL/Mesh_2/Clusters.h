@@ -210,7 +210,7 @@ private:
   //@}
 
 public:
-  /** \name ACCESS FUNCTIONS */
+  /** \name CONST ACCESS FUNCTIONS */
   typedef typename boost::transform_iterator<
     Pair_get_first<typename Cluster_map::value_type>,
     typename Cluster_map::const_iterator>
@@ -236,9 +236,9 @@ public:
     return Cluster_vertices_iterator(cluster_map.end());
   }
 
-  unsigned int number_of_clusters_at_vertex(const Vertex_handle& vh)
+  unsigned int number_of_clusters_at_vertex(const Vertex_handle& vh) const 
   {
-    typedef typename Cluster_map::iterator Iterator;
+    typedef typename Cluster_map::const_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
     Range range = cluster_map.equal_range(vh);
     return std::distance(range.first, range.second);
@@ -247,9 +247,9 @@ public:
   // returns the sequence of vertices bellonging to the n-th cluster of vh
   std::pair<Vertices_in_cluster_iterator, Vertices_in_cluster_iterator>
   vertices_in_cluster_sequence(const Vertex_handle& vh,
-                               const unsigned int n)
+                               const unsigned int n) const
   {
-    typedef typename Cluster_map::iterator Iterator;
+    typedef typename Cluster_map::const_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
     typedef typename Range::first_type Clusters_iterator;
     typedef Pair_get_first<typename Cluster_vertices_map::value_type>

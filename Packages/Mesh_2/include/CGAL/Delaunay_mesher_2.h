@@ -26,9 +26,10 @@
 
 namespace CGAL {
 
-template <typename Tr, typename Criteria>
+template <typename Tr, typename Crit>
 class Delaunay_mesher_2 
 {
+
   /** \name \c Tr types */
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
@@ -39,9 +40,14 @@ class Delaunay_mesher_2
   typedef Mesh_2::Refine_edges_with_clusters<Tr,
     Mesh_2::Is_locally_conforming_Gabriel<Tr> > Edges_level;
 
-  typedef Mesh_2::Refine_faces<Tr, Criteria, Edges_level> Faces_level;
+  typedef Mesh_2::Refine_faces<Tr, Crit, Edges_level> Faces_level;
 
 public:
+
+  typedef Tr Triangulation;
+  typedef Crit Criteria;
+  typedef Mesh_2::Clusters<Tr> Clusters;
+
   /** \name Types needed to mark the domain for Delaunay_mesh_2<Tr> */
 
   typedef std::list<Point> Seeds;
@@ -54,7 +60,7 @@ private:
   Criteria criteria;
   Null_mesher_level null_level;
   Null_mesh_visitor null_visitor;
-  Mesh_2::Clusters<Tr> clusters;
+  Clusters clusters_;
   Edges_level edges_level;
   Faces_level faces_level;
   Mesh_2::Refine_edges_visitor_from_faces<Faces_level> visitor;
@@ -68,8 +74,8 @@ public:
       criteria(criteria_), 
       null_level(),
       null_visitor(),
-      clusters(tr),
-      edges_level(tr, clusters, null_level),
+      clusters_(tr),
+      edges_level(tr, clusters_, null_level),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, null_visitor),
       initialized(false)
@@ -82,7 +88,7 @@ public:
       criteria(criteria_), 
       null_level(),
       null_visitor(),
-      clusters(tr),
+      clusters_(tr),
       edges_level(edges_level_),
       faces_level(tr, criteria, edges_level),
       visitor(faces_level, null_visitor),
@@ -101,7 +107,7 @@ public:
   {
     return seeds.end();
   }
-  
+
 private:
   /** \name INITIALIZED */
 
@@ -132,11 +138,17 @@ public:
     seeds_mark = false;
   }
 
+  void mark_facets()
+  {
+    mark_facets(tr, seeds.begin(), seeds.end(), seeds_mark);
+  }
+
   /** Procedure that marks facets according to a list of seeds. */
   template <typename Seeds_it>
-  void mark_facets(Seeds_it begin,
-                   Seeds_it end,
-                   bool mark = false)
+  static void mark_facets(Tr& tr, 
+                          Seeds_it begin,
+                          Seeds_it end,
+                          bool mark = false)
   {
     if (tr.dimension()<2) return;
     if( begin != end )
@@ -154,20 +166,15 @@ public:
           }
       }
     else
-      mark_convex_hull();
+      mark_convex_hull(tr);
     propagate_marks(tr.infinite_face(), false);
-  }
-
-  void mark_facets()
-  {
-    mark_facets(seeds.begin(), seeds.end(), seeds_mark);
   }
 
   /**
    * Marks all faces of the convex hull but those connected to the
    * infinite faces.
    */
-  void mark_convex_hull()
+  static void mark_convex_hull(Tr& tr)
   {
     for(typename Tr::All_faces_iterator fit=tr.all_faces_begin();
         fit!=tr.all_faces_end();
@@ -177,7 +184,7 @@ public:
   }
 
   /** Propagates the mark \c mark recursivly. */
-  void propagate_marks(const Face_handle fh, bool mark)
+  static void propagate_marks(const Face_handle fh, bool mark)
   {
     // std::queue only works with std::list on VC++6, and not with
     // std::deque, which is the default
@@ -238,7 +245,7 @@ public:
   void init()
   {
     mark_facets();
-    clusters.create_clusters();
+    clusters_.create_clusters();
     edges_level.scan_triangulation();
     faces_level.scan_triangulation();
     initialized = true;
@@ -260,6 +267,17 @@ public:
     return faces_level.one_step(visitor);
   }
 
+  /** \name ACCESS FUNCTIONS */
+
+  const Mesh_2::Clusters<Tr>& clusters() const 
+  {
+    return clusters_;
+  }
+
+  const Triangulation& triangulation() const
+  {
+    return tr;
+  }
 }; // end class Delaunay_mesher_2
 
 // --- GLOBAL FUNCTIONS ---

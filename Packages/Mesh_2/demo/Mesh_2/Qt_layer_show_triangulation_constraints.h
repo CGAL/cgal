@@ -10,7 +10,7 @@ class Qt_layer_show_triangulation_constraints : public Qt_widget_layer
 {
 public:
 	
-  Qt_layer_show_triangulation_constraints(T *&t,
+  Qt_layer_show_triangulation_constraints(T *t,
 					  CGAL::Color lc = CGAL::RED,
 					  int linewidth = 1)
     : tr(t), color(lc), width(linewidth){};
@@ -37,7 +37,7 @@ public:
   };
 	
 private:
-  T *&tr;
+  T *tr;
   CGAL::Color color;
   int width;
 };//end class

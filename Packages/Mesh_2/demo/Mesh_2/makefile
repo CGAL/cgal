@@ -43,6 +43,27 @@ all:            \
 		mesh$(EXE_EXT) \
 		conform$(EXE_EXT)
 
+Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
+	$(QT_MOC) -o Qt_widget_styled_layer.moc Qt_widget_styled_layer.h
+
+Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
+		Qt_widget_styled_layer.C
+
+Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
+	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
+
+Qt_widget_style_editor.C.moc:  Qt_widget_style_editor.C
+	$(QT_MOC) -o Qt_widget_style_editor.C.moc Qt_widget_style_editor.C
+
+Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
+		Qt_widget_style_editor.C.moc \
+		Qt_widget_style_editor.C
+
+Show_points.moc:  Show_points.h
+	$(QT_MOC) -o Show_points.moc Show_points.h
+
+Show_points$(OBJ_EXT): Show_points.moc Show_points.C
+
 icons$(OBJ_EXT): seeds.xpm marked.xpm contraints.xpm
 
 icons$(EXE_EXT): icons$(OBJ_EXT)
@@ -55,6 +76,8 @@ Show_clusters.moc: Show_clusters.h
 	$(QT_MOC) -o Show_clusters.moc $<
 
 mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
+	Show_points.h \
+	Qt_widget_style_editor.h \
 	../../include/CGAL/Double_map.h \
 	../../include/CGAL/Filter_circulator.h \
 	../../include/CGAL/Conforming_Delaunay_triangulation_maker_2.h \
@@ -65,10 +88,16 @@ mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
 	../../include/CGAL/Delaunay_mesh_size_criteria_2.h
 
 
-mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT)
+mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT) \
+		Show_points$(OBJ_EXT) \
+		Qt_widget_styled_layer$(OBJ_EXT) \
+		Qt_widget_style_editor$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_demo \
 	mesh_demo$(OBJ_EXT) \
 	icons$(OBJ_EXT) \
+	Show_points$(OBJ_EXT) \
+	Qt_widget_styled_layer$(OBJ_EXT) \
+	Qt_widget_style_editor$(OBJ_EXT) \
 	$(LDFLAGS)
 
 run_mesh_demo: mesh_demo$(EXE_EXT)
@@ -102,7 +131,10 @@ clean: \
 		icons.clean \
 		mesh_demo.clean \
 		mesh.clean \
-		conform.clean
+		conform.clean \
+		Show_points.clean \
+		Qt_widget_styled_layer.clean \
+		Qt_widget_style_editor.clean \
 	rm -f Show_clusters.moc
 
 #---------------------------------------------------------------------#

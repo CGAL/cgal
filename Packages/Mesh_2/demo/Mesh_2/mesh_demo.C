@@ -24,9 +24,12 @@ int main(int, char*)
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
+#include <CGAL/Conforming_Delaunay_triangulation_maker_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_local_size_criteria_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
+
+#include <CGAL/IO/File_poly.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -35,7 +38,7 @@ int main(int, char*)
 
 #include "icons.h"
 
-#include "Qt_layer_show_points.h"
+#include "Show_points.h"
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
@@ -139,10 +142,10 @@ write_constraints(const CDT& t, std::ostream &f)
 template <class Tr>
 class Show_marked_faces : public CGAL::Qt_widget_layer
 {
-  Tr *&tr;
+  Tr *cdt;
   CGAL::Color color;
 public:
-  Show_marked_faces(Tr *&t, CGAL::Color c=CGAL::GREEN) : tr(t),
+  Show_marked_faces(Tr *t, CGAL::Color c=CGAL::GREEN) : cdt(t),
     color(c) {};
 
   typedef typename Tr::Finite_faces_iterator Face_iterator;
@@ -152,11 +155,11 @@ public:
     QColor old_fill_color = widget->fillColor();
     int old_line_width = widget->lineWidth();
     *widget << CGAL::FillColor(CGAL::GREEN) << CGAL::LineWidth(0);
-    for(Face_iterator fit=tr.finite_faces_begin();
-        fit!=tr.finite_faces_end();
+    for(Face_iterator fit=cdt->finite_faces_begin();
+        fit!=cdt->finite_faces_end();
         ++fit)
       if(fit->is_marked())
-        *widget << tr.triangle(fit);
+        *widget << cdt->triangle(fit);
     widget->setFillColor(old_fill_color);
     widget->setLineWidth(old_line_width);
   }
@@ -194,11 +197,11 @@ struct Vertex_to_point {
 class MyWindow : public QMainWindow
 {
   Q_OBJECT
-public:
-  MyWindow() : criteria()
-    {
-      mesher = new Mesher(criteria);
 
+  typedef std::list<Point_2> Seeds;
+public:
+  MyWindow() : criteria(), mesher(0)
+    {
       // --- DEMO WINDOW'S LAYOUT ---
       // a main frame, with a QHBoxLayout (border=0, space=0)
       QFrame* mainframe = new QFrame(this, "mainframe");
@@ -311,32 +314,32 @@ public:
       // --- LAYERS ---
 
       show_points =
-        new Show_points_from_triangulation(tr,
+        new Show_points_from_triangulation(&cdt,
                                            &Tr::finite_vertices_begin,
                                            &Tr::finite_vertices_end,
                                            CGAL::BLACK, 2);
 
-      show_seeds = new Show_seeds(mesher,
-                                  &Mesher::seeds_begin,
-                                  &Mesher::seeds_end,
+      show_seeds = new Show_seeds(&seeds,
+                                  &Seeds::begin,
+                                  &Seeds::end,
                                   CGAL::BLUE,
                                   5,
                                   CGAL::CROSS);
       show_triangulation =
-        new CGAL::Qt_layer_show_triangulation<Tr>(tr,
-                                                    CGAL::BLUE,1);
+        new CGAL::Qt_layer_show_triangulation<Tr>(&cdt,
+                                                  CGAL::BLUE,1);
       show_marked =
-        new Show_marked_faces<Tr>(tr, CGAL::GREEN);
+        new Show_marked_faces<Tr>(&cdt, CGAL::GREEN);
       show_constraints =
         new CGAL::Qt_layer_show_triangulation_constraints<Tr>
-        (tr, CGAL::RED, 1);
+        (&cdt, CGAL::RED, 1);
       show_circles =
-        new CGAL::Qt_layer_show_circles<Tr>(tr, CGAL::GRAY, 1);
+        new CGAL::Qt_layer_show_circles<Tr>(&cdt, CGAL::GRAY, 1);
       show_mouse = new CGAL::Qt_widget_show_mouse_coordinates(*this);
 
-      show_clusters = new Show_clusters<Mesher>(*mesher,
-                                              CGAL::BLACK,3,CGAL::RECT,
-                                              CGAL::BLACK,2);
+      show_clusters = new Show_clusters<Mesher>(mesher,
+                                                CGAL::BLACK,3,CGAL::RECT,
+                                                CGAL::BLACK,2);
 
       // layers order, first attached are "under" last attached
       widget->attach(show_marked);
@@ -585,8 +588,8 @@ public:
               this, SLOT(after_inserted_input()));
       connect(this, SIGNAL(insertedInput()),
               show_clusters, SLOT(reinitClusters()));
-      connect(this, SIGNAL(initializedMesh()),
-              this, SLOT(after_initialized_mesh()));
+      connect(this, SIGNAL(initializedMesher()),
+              this, SLOT(after_initialized_mesher()));
 
       widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
@@ -596,11 +599,11 @@ public:
   void bounds(FT &xmin, FT &ymin,
               FT &xmax, FT &ymax)
     {
-      Tr::Finite_vertices_iterator vi=tr.finite_vertices_begin();
+      Tr::Finite_vertices_iterator vi=cdt.finite_vertices_begin();
       xmin=xmax=vi->point().x();
       ymin=ymax=vi->point().y();
       vi++;
-      while(vi != tr.finite_vertices_end())
+      while(vi != cdt.finite_vertices_end())
         {
           if(vi->point().x() < xmin) xmin=vi->point().x();
           if(vi->point().x() > xmax) xmax=vi->point().x();
@@ -612,28 +615,31 @@ public:
 
 signals:
   void insertedInput();
-  void initializedMesh();
+  void initializedMesher();
 
 private slots:
-  void after_initialized_mesh()
+  void after_initialized_mesher()
   {
     updatePointCounter();
-    switch( mesh->get_initialized() )
-      {
-      case Mesh::NONE: init_status->setText("no"); break;
-      case Mesh::DELAUNAY: init_status->setText("Delaunay"); break;
-      case Mesh::GABRIEL: init_status->setText("Gabriel"); break;
-      default: init_status->setText("unknown"); break;
-      }
+    if( mesher !=0 )
+      init_status->setText("yes");
+    else
+      init_status->setText("no");
     show_clusters->reinitClusters();
   }
 
   void after_inserted_input()
   {
-    mesh->set_initialized(Mesh::NONE);
-    emit initializedMesh();
+    delete mesher;
+    mesher = 0;
+    emit initializedMesher();
+    mark_facets();
     nb_of_clusters_has_to_be_updated = true;
-    mesh->mark_facets();
+  }
+
+  void mark_facets()
+  {
+    Mesher::mark_facets(cdt, seeds.begin(), seeds.end());
   }
 
 public slots:
@@ -646,39 +652,33 @@ public slots:
       if(CGAL::assign(p,obj))
         if(follow_mouse->is_active())
           {
-            typedef Mesh::Face_handle Face_handle;
+            typedef Tr::Face_handle Face_handle;
             std::list<Face_handle> l;
 
-            Face_handle fh = mesh->locate(p);
+            Face_handle fh = cdt.locate(p);
             criteria.set_point(p);
-            if( (fh!=NULL) && (!mesh->is_infinite(fh)) && fh->is_marked() )
+            if( (fh!=NULL) && (!cdt.is_infinite(fh)) && fh->is_marked() )
               {
-                const Point_2&
-                  a = fh->vertex(0)->point(),
-                  b = fh->vertex(1)->point(),
-                  c = fh->vertex(2)->point();
-
-                Mesh::Quality q;
-                if(criteria.is_bad_object().operator()(a, b, c, q))
+                Criteria::Quality q;
+                if(criteria.is_bad_object().operator()(fh, q))
                   l.push_back(fh);
               }
-            mesh->set_criteria(criteria);
-            mesh->set_bad_faces(l.begin(), l.end());
-            while( mesh->step_by_step_refine_mesh() );
+            if( mesher!=0 )
+              {
+                mesher->set_criteria(criteria);
+                mesher->set_bad_faces(l.begin(), l.end());
+                while( mesher->step_by_step_refine_mesh() );
+              }
           }
         else
           if(get_seed->is_active())
             {
-              Mesh::Seeds seeds;
-              std::copy(mesh->seeds_begin(), mesh->seeds_end(),
-                        std::back_inserter(seeds));
               seeds.push_back(p);
-              mesh->set_seeds(seeds.begin(), seeds.end());
-              mesh->mark_facets();
+              mark_facets();
             }
           else // get_point is active
             {
-              mesh->insert(p);
+              cdt.insert(p);
               emit( insertedInput() );
             }
       else
@@ -687,10 +687,10 @@ public slots:
             for(CGALPolygon::Edge_const_iterator it=poly.edges_begin();
                 it!=poly.edges_end();
                 it++)
-              mesh->insert((*it).source(),(*it).target());
+              cdt.insert((*it).source(),(*it).target());
             emit( insertedInput() );
           }
-        else // obj should be a polygon of or point!
+        else // obj should be a polygon or a point!
           CGAL_assertion(false);
       updatePointCounter();
       widget->redraw();
@@ -711,67 +711,66 @@ public slots:
       Point_2 bb2(xcenter + FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
       Point_2 bb3(xcenter + FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
       Point_2 bb4(xcenter - FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
-      mesh->insert(bb1);
-      mesh->insert(bb2);
-      mesh->insert(bb3);
-      mesh->insert(bb4);
-      mesh->insert(bb1, bb2);
-      mesh->insert(bb2, bb3);
-      mesh->insert(bb3, bb4);
-      mesh->insert(bb4, bb1);
+      cdt.insert(bb1);
+      cdt.insert(bb2);
+      cdt.insert(bb3);
+      cdt.insert(bb4);
+      cdt.insert(bb1, bb2);
+      cdt.insert(bb2, bb3);
+      cdt.insert(bb3, bb4);
+      cdt.insert(bb4, bb1);
       emit( insertedInput() );
       widget->redraw();
     }
 
   void updatePointCounter()
     {
-      nb_of_points->setNum(static_cast<int>(mesh->number_of_vertices()));
+      nb_of_points->setNum(static_cast<int>(cdt.number_of_vertices()));
       if(nb_of_clusters_has_to_be_updated &&
-         mesh->get_initialized() != Mesh::NONE)
+         mesher != 0)
         {
           nb_of_clusters_has_to_be_updated = false;
-          nb_of_clusters->setNum(mesh->number_of_clusters_vertices());
+          nb_of_clusters->setNum(mesher->clusters().size());
         }
     }
 
   void refineMesh()
     {
       dumpTriangulation("last_input.edg");
-      mesh->refine_mesh();
-      emit initializedMesh();
+      if( mesher == 0 )
+        mesher = create_mesher();
+      mesher->refine_mesh();
+      emit initializedMesher();
       widget->redraw();
     }
 
   void conformMesh()
     {
-      if(mesh->get_initialized() != Mesh::GABRIEL)
-        dumpTriangulation("last_input.edg");
-      mesh->make_conforming_Gabriel();
-      initializedMesh();
+      dumpTriangulation("last_input.edg");
+      CGAL::make_conforming_Gabriel_2(cdt);
       updatePointCounter();
       widget->redraw();
     }
 
   void refineMeshStep()
     {
-      CGAL_assertion(mesh->is_valid(true)); // @todo: remove this
       int counter = step_lenght;
-      if(mesh->get_initialized() != Mesh::GABRIEL)
+      if(mesher == 0)
         {
-          mesh->init_Gabriel();
-          initializedMesh();
+          mesher = create_mesher();
+          mesher->init();
+          initializedMesher();
           dumpTriangulation("last_input.edg");
         }
       while(counter>0)
         {
           --counter;
-          if(!mesh->step_by_step_refine_mesh())
+          if(!mesher->try_one_step_refine_mesh())
             {
               pbMeshTimer->setOn(false);
               counter = 0;
             }
         }
-      CGAL_assertion(mesh->is_valid(true)); // @todo: remove this
       updatePointCounter();
       widget->redraw();
     }
@@ -803,7 +802,7 @@ public slots:
 
   void clearMesh()
     {
-      mesh->clear();
+      cdt.clear();
       emit( insertedInput() );
       updatePointCounter();
       widget->clear_history();
@@ -812,8 +811,11 @@ public slots:
 
   void clearSeeds()
     {
-      mesh->clear_seeds();
-      mesh->mark_facets();
+      seeds.clear();
+      delete mesher;
+      mesher = 0;
+      initializedMesher();
+      mark_facets();
       widget->redraw();
     }
 
@@ -835,9 +837,8 @@ public slots:
 
       if(s.right(5) == ".poly")
         {
-          Mesh::Seeds seeds;
-          CGAL::read_poly(*mesh, f, std::back_inserter(seeds));
-          mesh->set_seeds(seeds.begin(), seeds.end(), false);
+          clearSeeds();
+          CGAL::read_triangle_poly_file(cdt, f, std::back_inserter(seeds));
         }
       else if(s.right(5) == ".data")
         {
@@ -867,7 +868,7 @@ public slots:
           }
 
           std::random_shuffle(points.begin(), points.end());
-          mesh->clear();
+          cdt.clear();
           //      std::copy(points.begin(), points.end(), std::back_inserter(*mesh));
 
           s.replace(QRegExp("\\.data$"), "_fault.data");
@@ -891,7 +892,7 @@ public slots:
             }
             for(int j = 1; j < num_vertex_per_line[i]; j++){
               ins2 >> q;
-              mesh->insert_constraint(p, q);
+              cdt.insert_constraint(p, q);
               p = q;
               b = b + p.bbox();
             }
@@ -899,7 +900,7 @@ public slots:
 
           for(unsigned int k = 0; k < points.size(); k++)
             if (CGAL::do_overlap(b,points[k].bbox()))
-              mesh->insert(points[k]);
+              cdt.insert(points[k]);
 
           xmax = b.xmax();
           xmin = b.xmin();
@@ -916,16 +917,16 @@ public slots:
           Point_2 br(xmax, ymin);
           Point_2 tl(xmin, ymax);
           Point_2 tr(xmax, ymax);
-          mesh->insert_constraint(bl, br);
-          mesh->insert_constraint(br, tr);
-          mesh->insert_constraint(tr, tl);
-          mesh->insert_constraint(tl, bl);
+          cdt.insert_constraint(bl, br);
+          cdt.insert_constraint(br, tr);
+          cdt.insert_constraint(tr, tl);
+          cdt.insert_constraint(tl, bl);
 
           clearSeeds();
         }
       else
         {
-          read_constraints(*mesh, f);
+          read_constraints(cdt, f);
           clearSeeds();
         }
 
@@ -955,15 +956,15 @@ public slots:
         return;
       std::ofstream of(s);
       if(s.right(5) == ".poly")
-        CGAL::write_poly(*mesh, of);
+        CGAL::write_triangle_poly_file(cdt, of);
       else
-        write_constraints(*mesh, of);
+        write_constraints(cdt, of);
     }
 
   void dumpTriangulation(QString s=QString("dump.edg"))
     {
       std::ofstream of(s);
-      write_constraints(*mesh, of);
+      write_constraints(cdt, of);
     }
 
   inline
@@ -974,21 +975,26 @@ public slots:
   void setBound(const QString& bound)
     {
       criteria.set_bound(bound.toDouble());
-      if( mesh != 0 )
-        mesh->set_criteria(criteria);
+      if( mesher != 0 )
+        mesher->set_criteria(criteria);
     }
 
   void setSizeBound(const QString& size_bound)
     {
       criteria.set_size_bound(size_bound.toDouble());
-      if ( mesh != 0 )
-        mesh->set_criteria(criteria);
+      if ( mesher != 0 )
+        mesher->set_criteria(criteria);
     }
 
   void setLocal(bool checked)
     {
       criteria.set_local_size(checked);
-      mesh->set_criteria(criteria);
+      if( mesher == 0 )
+        {
+          mesher = create_mesher();
+          initializedMesher();
+        }
+      mesher->set_criteria(criteria);
       if(criteria.is_local_size())
         follow_mouse->activate();
       else
@@ -1004,10 +1010,19 @@ public slots:
   }
 
 private:
+  Mesher* create_mesher()
+  {
+    mesher = new Mesher(cdt, criteria);
+    mesher->set_seeds(seeds.begin(), seeds.end());
+    return mesher;
+  }
+
+private:
   static const QString my_filters;
   Criteria criteria;
-  Tr tr;
-  Mesh* mesh;
+  Tr cdt;
+  Mesher* mesher;
+  Seeds seeds;
 
   QPopupMenu *pmCriteria;
   int menu_id;
@@ -1018,11 +1033,12 @@ private:
   CGAL::Qt_widget_get_polygon<CGALPolygon>* get_polygon;
   Follow_mouse* follow_mouse;
 
-  typedef CGAL::Qt_layer_show_points<Tr, Tr::Finite_vertices_iterator,
-  Vertex_to_point>
+  typedef CGAL::Show_points<Tr,
+                            Tr::Finite_vertices_iterator,
+                            Vertex_to_point>
     Show_points_from_triangulation;
 
-  typedef CGAL::Qt_layer_show_points<Tr, Tr::Seeds_const_iterator>
+  typedef CGAL::Show_points<Seeds, Seeds::const_iterator>
     Show_seeds;
 
   Show_points_from_triangulation* show_points;

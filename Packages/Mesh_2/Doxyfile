@@ -70,7 +70,9 @@ WARN_LOGFILE           =
 INPUT                  = include
 FILE_PATTERNS          = *.h
 RECURSIVE              = YES
-EXCLUDE                = include/boost
+EXCLUDE                = include/boost \
+                         include/CGAL/Delaunay_mesh_2.h \
+                         include/CGAL/Conforming_Delaunay_triangulation_2.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = 

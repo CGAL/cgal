@@ -85,6 +85,12 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
+      std::cerr << "Double_map::insert(" 
+                << k->vertex(0)->point() << ", "
+                << k->vertex(1)->point() << ", "
+	        << k->vertex(2)->point()
+                << ", " << d << ")\n";
+
       std::pair<direct_iterator, bool> 
 	direct_result = direct_func.insert(Direct_entry(k, d));
 
@@ -102,16 +108,31 @@ public :
   // Access
   reverse_iterator front()
     {
+      CGAL_assertion(is_valid() && !empty());
       return(reverse_func.begin());
     }
 
   void pop_front()
     {
+      CGAL_assertion(is_valid());
       reverse_iterator rit = reverse_func.begin();
       direct_iterator pos = direct_func.find(rit->second);
       assert(pos != direct_func.end());
+      
+      std::cerr << "Before Double_map::pop_front()\n";
+      std::cerr << pos->second << " " 
+	    << "("
+	    << pos->first->vertex(0)->point() << ", "
+	    << pos->first->vertex(1)->point() << ", "
+	    << pos->first->vertex(2)->point()
+	    << ")" << std::endl;
+
       direct_func.erase(pos);
       reverse_func.erase(rit);
+      CGAL_assertion(is_valid());
+
+      std::cerr << "After Double_map::pop_front()\n";
+      dump_direct_func(std::cerr);      
     }
 
   class Second_is {
@@ -129,25 +150,25 @@ public :
       for(typename Direct_func::iterator it = direct_func.begin();
 	  it != direct_func.end();
 	  ++it)
-	std::cerr << it->second << " " 
-		  << "("
-		  << it->first->vertex(0)->point() << ", "
-		  << it->first->vertex(1)->point() << ", "
-		  << it->first->vertex(2)->point()
-		  << ")" << std::endl;
+	out << it->second << " " 
+	    << "("
+	    << it->first->vertex(0)->point() << ", "
+	    << it->first->vertex(1)->point() << ", "
+	    << it->first->vertex(2)->point()
+	    << ")" << std::endl;
     }
 
   void dump_reverse_func(std::ostream& out)
     {
       for(typename Reverse_func::iterator it = reverse_func.begin();
-      it != reverse_func.end();
+	  it != reverse_func.end();
 	  ++it)
-	std::cerr << it->first << " " 
-		  << "("
-		  << it->second->vertex(0)->point() << ", "
-		  << it->second->vertex(1)->point() << ", "
-		  << it->second->vertex(2)->point()
-		  << ")" << std::endl;
+        out << it->first << " " 
+            << "("
+            << it->second->vertex(0)->point() << ", "
+            << it->second->vertex(1)->point() << ", "
+            << it->second->vertex(2)->point()
+	    << ")" << std::endl;
     }
 };
 
@@ -170,6 +191,7 @@ erase(Key& k)
       direct_func.erase(pos);
       reverse_func.erase(std::find_if(lb, ub, Second_is(k)));
     }
+  CGAL_assertion(is_valid());
 }
 
 }

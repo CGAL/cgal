@@ -85,8 +85,6 @@ public:
 
   Point get_refinement_point(const Constrained_edge& edge)
   {
-    CGAL_assertion(tr.is_edge(edge.first, edge.second));
-    std::cerr << "Ok\n";
     const Vertex_handle& va = edge.first;
     const Vertex_handle& vb = edge.second;
     va_has_a_cluster = false;
@@ -138,14 +136,30 @@ public:
     bool split_the_face = true;
     bool remove_the_bad_face = true;
 
+    std::cerr << "with_clusters::do_test_point_conflict_from_superior(" << p 
+              << ", ...)\n";
+    std::cerr << "test de " << z.boundary_edges.size() 
+              << " aretes" << std::endl;
+    
    for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       {
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
 
+	std::cerr << (int)&*eit << std::endl;
+	
         if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
           {
+	    const Vertex_handle& va = fh->vertex( tr.cw (i));
+	    const Vertex_handle& vb = fh->vertex( tr.ccw(i));
+
+	    std::cerr << fh->is_constrained(i) << !is_locally_conform(tr, fh, i, p) << std::endl;
+	    
+	    std::cerr << fh->vertex(tr.cw (i))->point() << "|"
+		      << fh->vertex(tr.ccw(i))->point() << "|"
+		      << p << std::endl;
+	    
             split_the_face = false;
 
             va_has_a_cluster = clusters.get_cluster(va,vb,ca),
@@ -182,6 +196,9 @@ public:
       }; // after here edges encroached by p are in the list of edges to
          // be conformed.
 
+    std::cerr << "split_the_face=" << split_the_face << std::endl
+    << "remove_the_bad_face=" << remove_the_bad_face << std::endl;
+    
     return std::make_pair(split_the_face, remove_the_bad_face);
   }
 

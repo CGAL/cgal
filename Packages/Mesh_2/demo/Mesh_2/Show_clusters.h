@@ -21,42 +21,47 @@ public slots:
   }
 };
 
-template <class Conform>
+template <class Mesher>
 class Show_clusters : public Show_clusters_aux
 {
 public:
-  typedef typename Conform::Point		Point;
-  typedef typename Conform::Geom_traits         Geom_traits;
+  typedef typename Mesher::Triangulation Tr;
+  typedef typename Tr::Point		Point;
+  typedef typename Tr::Geom_traits         Geom_traits;
   typedef CGAL::Delaunay_triangulation_2<Geom_traits> DT;
   typedef typename DT::Finite_vertices_iterator Vertices_iterator;
   typedef typename DT::Vertex_handle DT_vertex_handle;
-  typedef typename Conform::Segment		Segment;
-  typedef typename Conform::Face_handle		Face_handle;
-  typedef typename Conform::Vertex_handle	Vertex_handle;
-  typedef typename Conform::Geom_traits::FT	FT;
-  typedef typename Conform::Cluster_vertices_iterator CVIt;
-  typedef typename Conform::Vertices_in_cluster_iterator ViCIt;
+  typedef typename Tr::Segment		Segment;
+  typedef typename Tr::Face_handle		Face_handle;
+  typedef typename Tr::Vertex_handle	Vertex_handle;
+  typedef typename Tr::Geom_traits::FT	FT;
+  typedef typename Mesher::Clusters Clusters;
+  typedef typename Clusters::Cluster_vertices_iterator CVIt;
+  typedef typename Clusters::Vertices_in_cluster_iterator ViCIt;
   typedef std::list<Point> List_of_points;
   typedef typename List_of_points::const_iterator Point_iterator;
 
-  Show_clusters(Conform &conform,
+  Show_clusters(Mesher* m,
 		CGAL::Color color = CGAL::GREEN,
 		int pointsize = 3,
 		CGAL::PointStyle pointstyle = CGAL::DISC,
 		CGAL::Color lc = CGAL::RED,
 		int linewidth = 2)
-    : c(conform), dt(), _color(color),
+    : mesher(m), dt(), _color(color),
       size(pointsize), style(pointstyle), _line_color(lc),
       width(linewidth) 
     {
-      for(CVIt it = conform.clusters_vertices_begin();
-	  it != conform.clusters_vertices_end();
-	  ++it)
-	dt.push_back( (*it)->point() );
+      reinit_clusters();
     }
 
   void activating()
   {
+    reinit_clusters();
+  }
+
+  void change_mesher(Mesher* mesher)
+  {
+    m = mesher;
     reinit_clusters();
   }
 
@@ -66,40 +71,41 @@ public:
 
     dt.clear();
 
-    for(CVIt it = c.clusters_vertices_begin();
-	it != c.clusters_vertices_end();
-	++it)
-      {
-	dt.push_back( (*it)->point() );
-      }
+    if( mesher != 0 )
+      for(CVIt it = mesher->clusters().clusters_vertices_begin();
+          it != mesher->clusters().clusters_vertices_end();
+          ++it)
+        dt.push_back( (*it)->point() );
   }
 
   void draw()
   {
     widget->lock();
-
+    
     QColor oldColor = widget->color();
     int oldPointSize = widget->pointSize();
     CGAL::PointStyle oldStyle = widget->pointStyle();
-
+    
     *widget << _color << CGAL::PointStyle(style)
-	    << CGAL::PointSize(size);
-
+    	    << CGAL::PointSize(size);
+    
     for(Vertices_iterator it = dt.finite_vertices_begin();
-	it != dt.finite_vertices_end();
-	++it)
+        it != dt.finite_vertices_end();
+        ++it)
       *widget << it->point();
-
+    
     widget->setPointStyle(oldStyle);
     widget->setPointSize(oldPointSize);
     widget->setColor(oldColor);
-
+    
     widget->unlock();
     oldPixmap = widget->get_pixmap();
   }
 
   void mouseMoveEvent(QMouseEvent *e)
   {
+    if( mesher == 0 ) return;
+    
     FT x, y;
     widget->x_real(e->x(), x);
     widget->y_real(e->y(), y);
@@ -121,18 +127,19 @@ public:
 
     *widget << _line_color << CGAL::LineWidth(width);
 
-    typename Conform::Locate_type lt;
+    typename Tr::Locate_type lt;
     int i;
-    Face_handle fh = c.locate(v->point(), lt, i);
-    CGAL_assertion( lt == Conform::VERTEX );
+    Face_handle fh = mesher->triangulation().locate(v->point(), lt, i);
+    CGAL_assertion( lt == Tr::VERTEX );
 
     Vertex_handle v2 = fh->vertex(i);
 
-    int n = c.number_of_clusters_at_vertex(v2);
+    int n = mesher->clusters().number_of_clusters_at_vertex(v2);
 
     for(int j = 0; j < n; ++j)
       {
-	std::pair<ViCIt,ViCIt> seq = c.vertices_in_cluster_sequence(v2, j);
+	std::pair<ViCIt,ViCIt> seq = 
+          mesher->clusters().vertices_in_cluster_sequence(v2, j);
 	for(ViCIt it = seq.first;
 	    it != seq.second;
 	    ++it)
@@ -152,7 +159,7 @@ public:
   }
 
 private:
-  Conform& c;
+  Mesher* mesher;
   DT dt;
   DT_vertex_handle oldVertex;
   QPixmap oldPixmap;

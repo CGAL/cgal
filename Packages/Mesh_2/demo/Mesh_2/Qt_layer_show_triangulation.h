@@ -11,7 +11,7 @@ class Qt_layer_show_triangulation : public Qt_widget_layer
 {
 public:
 	
-  Qt_layer_show_triangulation(T *&t,
+  Qt_layer_show_triangulation(T *t,
 			      CGAL::Color lc = CGAL::BLUE,
 			      int linewidth = 1) 
     : tr(t), color(lc), width(linewidth) {};
@@ -32,7 +32,7 @@ public:
   };
 
 private:
-  T *&tr;
+  T *tr;
   CGAL::Color color;
   int width;
 };//end class 

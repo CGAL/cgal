@@ -267,6 +267,7 @@ template <
 >
 class Refine_edges_base
 {
+public:
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Tr::Face_circulator Face_circulator;
   
@@ -396,7 +397,6 @@ public:
     CGAL_assertion_code( bool should_be_true= )
     tr.is_edge(va, vb, fh, i);
     CGAL_assertion( should_be_true );
-    std::cerr <<"ok\n";
     
     tr.remove_constrained_edge(fh, i);
     tr.is_edge(va, vb);
@@ -420,7 +420,11 @@ public:
                                        Zone& z)
   {
     bool no_edge_is_encroached = true;
-
+    std::cerr << "do_test_point_conflict_from_superior(" << p 
+              << ", ...)\n";
+    std::cerr << "test de " << z.boundary_edges.size()
+              << "aretes" << std::endl;
+    
     for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       { 
@@ -433,14 +437,17 @@ public:
             no_edge_is_encroached = false;
           }
       }
-    return std::make_pair(no_edge_is_encroached, true);
+
+    std::cerr << "no_edge_is_encroached=" 
+              << no_edge_is_encroached << std::endl;
+
+    return std::make_pair(no_edge_is_encroached, false);
   }
 
-  /** Do nothing */
-  std::pair<bool, bool>
-  do_private_test_point_conflict(const Point&, Zone& ) const
+  /** Do nothing. */
+  std::pair<bool, bool> 
+  do_private_test_point_conflict(Point, Zone)
   {
-    CGAL_assertion(tr.is_edge(va, vb));
     return std::make_pair(true, true);
   }
 
@@ -448,11 +455,8 @@ public:
   void do_before_insertion(const Constrained_edge& e, const Point&,
                            const Zone&)
   {
-    CGAL_assertion(tr.is_edge(va, vb));
     va = e.first;
     vb = e.second;
-    CGAL_assertion(tr.is_edge(va, vb));
-    std::cerr << "OK ok\n";
   }
 
   /**
@@ -477,11 +481,14 @@ public:
       ++fc;
     } while( fc != fcbegin );
 
-  if(!is_locally_conform(tr, va, v))
-    add_constrained_edge_to_be_conformed(va, v);
-  
-  if(!is_locally_conform(tr, vb, v))
-    add_constrained_edge_to_be_conformed(vb, v);
+    tr.insert_constraint(va, v);
+    tr.insert_constraint(vb, v);
+
+    if(!is_locally_conform(tr, va, v))
+      add_constrained_edge_to_be_conformed(va, v);
+    
+    if(!is_locally_conform(tr, vb, v))
+      add_constrained_edge_to_be_conformed(vb, v);
   } // end do_after_insertion
 
 protected:

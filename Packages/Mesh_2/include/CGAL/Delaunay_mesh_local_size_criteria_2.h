@@ -35,6 +35,8 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_2 Point;
 
+  typedef typename CDT::Face_handle Face_handle;
+
 private:
   bool local;
   Point _p;
@@ -90,14 +92,14 @@ public:
 	  typename Geom_traits::Orientation_2 orient = 
 	    Geom_traits().orientation_2_object();
 	  
-	  bool is_non_locally_bad = Baseclass::operator()(f,q);
+	  bool is_non_locally_bad = Baseclass::operator()(fh,q);
 
 	  if( q.first < B )
 	    return true;
 
-          const Point_2& a = fh->vertex(0);
-          const Point_2& b = fh->vertex(1);
-          const Point_2& c = fh->vertex(2);
+          const Point_2& a = fh->vertex(0)->point();
+          const Point_2& b = fh->vertex(1)->point();
+          const Point_2& c = fh->vertex(2)->point();
 
 	  Orientation 
 	    o1 = orient(a,b,p),
