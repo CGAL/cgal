@@ -145,9 +145,9 @@ protected:
   Collinear_3 collinear;
   Orientation_3 orientation;
   Coplanar_orientation_3 coplanar_orientation;
-  Construct_segment_3 construct_segment_3;
-  Construct_triangle_3 construct_triangle_3;
-  Construct_tetrahedron_3 construct_tetrahedron_3;
+  Construct_segment_3 construct_segment;
+  Construct_triangle_3 construct_triangle;
+  Construct_tetrahedron_3 construct_tetrahedron;
 
   void init_tds()
     {
@@ -167,9 +167,9 @@ protected:
       collinear = geom_traits().collinear_3_object();
       orientation = geom_traits().orientation_3_object();
       coplanar_orientation = geom_traits().coplanar_orientation_3_object();
-      construct_segment_3 = geom_traits().construct_segment_3_object();
-      construct_triangle_3 = geom_traits().construct_triangle_3_object();
-      construct_tetrahedron_3 = geom_traits().construct_tetrahedron_3_object();
+      construct_segment = geom_traits().construct_segment_3_object();
+      construct_triangle = geom_traits().construct_triangle_3_object();
+      construct_tetrahedron = geom_traits().construct_tetrahedron_3_object();
     }
 
   bool test_dim_down(Vertex_handle v);
@@ -286,10 +286,10 @@ public:
     {
       CGAL_triangulation_precondition( dimension() == 3 );
       CGAL_triangulation_precondition( ! is_infinite(c) );
-      return construct_tetrahedron_3(c->vertex(0)->point(),
-			             c->vertex(1)->point(),
-			             c->vertex(2)->point(),
-			             c->vertex(3)->point());
+      return construct_tetrahedron(c->vertex(0)->point(),
+				   c->vertex(1)->point(),
+				   c->vertex(2)->point(),
+				   c->vertex(3)->point());
     }
 
   Triangle triangle(const Cell_handle c, int i) const;
@@ -1170,9 +1170,9 @@ triangle(const Cell_handle c, int i) const
   CGAL_triangulation_precondition( (dimension() == 2 && i == 3)
 	                        || (dimension() == 3 && i >= 0 && i <= 3) );
   CGAL_triangulation_precondition( ! is_infinite(std::make_pair(c, i)) );
-  return construct_triangle_3(c->vertex(i<=0 ? 1 : 0)->point(),
-		              c->vertex(i<=1 ? 2 : 1)->point(),
-		              c->vertex(i<=2 ? 3 : 2)->point());
+  return construct_triangle(c->vertex(i<=0 ? 1 : 0)->point(),
+			    c->vertex(i<=1 ? 2 : 1)->point(),
+			    c->vertex(i<=2 ? 3 : 2)->point());
 }
 
 template < class GT, class Tds >
@@ -1185,7 +1185,7 @@ segment(const Cell_handle c, int i, int j) const
   CGAL_triangulation_precondition(
 	  i >= 0 && i <= dimension() && j >= 0 && j <= dimension() );
   CGAL_triangulation_precondition( ! is_infinite(make_triple(c, i, j)) );
-  return construct_segment_3( c->vertex(i)->point(), c->vertex(j)->point() );
+  return construct_segment( c->vertex(i)->point(), c->vertex(j)->point() );
 }
 
 template < class GT, class Tds >
