@@ -185,7 +185,7 @@ protected:
 
  typedef typename Nef_rep::Sphere_map                Sphere_map;
  public:
- typedef Nef_polyhedron_S2<Kernel,Items,Sphere_map>  Nef_polyhedron_S2;
+ typedef Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>  Nef_polyhedron_S2;
  protected:
  // typedef bool   Mark;
 
@@ -948,6 +948,8 @@ protected:
 
   void transform( const Aff_transformation_3& aff) {
     
+    CGAL_precondition(aff.is_even());
+
     // precondition: the polyhedron as a bounded boundary
     // (needs to be explicitly tested at some time)
 
@@ -978,15 +980,7 @@ protected:
 	if(is_standard(vi))
 	  vi->point() = vi->point().transform( aff);
 	else if(!Infi_box::is_infibox_corner(vi->point())) {
-	  RT lx(vi->point().hx()[0]);
-	  RT ly(vi->point().hy()[0]);
-	  RT lz(vi->point().hz()[0]);
-	  RT hx(vi->point().hx()-lx);
-	  RT hy(vi->point().hy()-ly);
-	  RT hz(vi->point().hz()-lz);
-	  RT hw(vi->point().hw());
-	  Point_3 p(Point_3(lx,ly,lz,hw).transform(aff));
-	  vi->point() = Point_3(hx+p.hx(),hy+p.hy(),hz+p.hz(),hw);
+	  vi->point() = normalized(Infi_box::normalize_transformed_vertex(vi->point().transform(aff)));
 	}
       } else if (!is_standard(vi) && !ninety) {
 	if(Infi_box::is_infibox_corner(vi->point()))
@@ -1000,19 +994,17 @@ protected:
     }
 
     if(!is_bounded() && !ninety && !scale) {
-      //      Unique_hash_map<Halffacet_handle, std::list<Point_3> > facet_cycle_map;
-      
       Halffacet_iterator fi;
       CGAL_forall_facets(fi, snc()) {
 	if(!is_standard(fi) || is_bounded(fi)) continue;
 	Plane_3 pt = fi->plane();
 	pt = pt.transform(aff);
 	std::list<Point_3> points(Infi_box::find_points_of_box_with_plane(cstr,pt));
-	//	facet_cycle_map[Halffacet_handle(fi)] = points;
 	std::list<Vertex_handle> newVertices;
-	newVertices = cstr.create_vertices_on_infibox(pt, points, fi->mark(), 
-						      fi->twin()->volume()->mark(), 
-						      fi->volume()->mark());
+	newVertices = Infi_box::create_vertices_on_infibox(cstr,
+							   pt, points, fi->mark(), 
+							   fi->twin()->volume()->mark(), 
+							   fi->volume()->mark());
 
 	for(li = newVertices.begin(); li != newVertices.end(); ++li) {
 	  if(Infi_box::is_infibox_corner(point(*li))) {
@@ -1025,7 +1017,6 @@ protected:
 	}
       }
       
-      //      Unique_hash_map<Vertex_handle, Point_3> transform_vertex;
       for(li = vertex_list.begin(); li != vertex_list.end();++li) {
 	SM_decorator SD(&**li);
 	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
@@ -1041,12 +1032,6 @@ protected:
 	    if(i>1)
 	      break;
 	  }
-	  /*
-	  Point_3 tp(cstr.get_transformed_coords_of_vertex(point(*li).transform(aff),
-							   facet_cycle_map[hf[0]],
-							   facet_cycle_map[hf[1]]));
-	  transform_vertex[*li] = tp;
-	  */
 	}
       }
 
@@ -1055,7 +1040,6 @@ protected:
 	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
 	  Vertex_handle v2;
 	  Vertex_handle v1 = cstr.create_for_infibox_overlay(*li);
-	  //	  v1->point() = transform_vertex[*li];
 	  v1->point() = normalized(Infi_box::normalize_transformed_vertex(point(*li).transform(aff)));
 	  SM_decorator sdeco(&*v1);
 	  sdeco.transform(linear);	    
@@ -1083,14 +1067,6 @@ protected:
 	  O.simplify();
 	  snc().delete_vertex(v1);
 	  snc().delete_vertex(v2);
-	  /*
-	  if(Infi_box::is_infibox_corner(v->point())) {
-	    li2 = corner_list.begin();
-	    while(li2 != corner_list.end() && point(*li2) != v->point()) ++li2;
-	    CGAL_assertion(li2 != corner_list.end());
-	    delete_list.push_back(*li2);
-	  }
-	  */
 	}
 	
 	if(Infi_box::is_infibox_corner(point(*li))) {

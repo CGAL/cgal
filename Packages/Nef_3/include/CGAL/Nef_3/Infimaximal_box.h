@@ -54,6 +54,7 @@ class Infimaximal_box {
   typedef typename Kernel::Vector_3         Vector_3;
   typedef typename Kernel::Plane_3          Plane_3;
   typedef typename Kernel::Ray_3            Ray_3;
+  typedef typename Kernel::Aff_transformation_3   Aff_transformation_3;
   typedef Plane_3                           Standard_plane;
   typedef Vector_3                          Standard_vector;
   typedef Point_3                           Standard_point;
@@ -144,8 +145,27 @@ class Infimaximal_box {
     return false;
   }
 
+  template<typename SNC_structure>
+  static NT compute_evaluation_constant_for_halfedge_pairup(const SNC_structure& snc) {
+    return NT(1);
+  }
+
+  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& min, int& max) { }
+
+  static Point_3 scale_infibox_vertex(const Point_3 pin) {
+    return Point_3();
+  }
+
   static Point_3 normalize_transformed_vertex(const Point_3& p) {
     return Point_3();
+  }
+
+  template <typename SNC_constructor, typename Mark>
+  static std::list<typename SNC_constructor::Vertex_handle> 
+    create_vertices_on_infibox(SNC_constructor& C, 
+			       const Plane_3& h, const std::list<Point_3>& points, 
+			       const Mark& bnd, const Mark& inside, const Mark& outside) {
+    return std::list<typename SNC_constructor::Vertex_handle>();
   }
 
   template <typename SNC_constructor>
@@ -216,6 +236,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   typedef typename Kernel::Vector_3              Vector_3;
   typedef typename Kernel::Segment_3             Segment_3;
   typedef typename Kernel::Direction_3           Direction_3;
+  typedef typename Kernel::Aff_transformation_3  Aff_transformation_3;
 
   //  typedef typename SNC_structure::Sphere_point   Sphere_point;
   //  typedef typename SNC_structure::Sphere_circle  Sphere_circle;
@@ -295,15 +316,6 @@ class Infimaximal_box<Tag_true, Kernel> {
     return (x*h.a()+y*h.b()+z*h.c()+w*d == 0);
   }
 
-  /*
-  static Plane_3 plane_through(Point_3 p, Sphere_circle c) {
-    
-    Point_3
-    
-    
-  }
-  */
-
   static Standard_point standard_point(Point_3 p, NT d=1) {
     return Standard_point(p.hx().eval_at(d),
 			  p.hy().eval_at(d),
@@ -364,9 +376,64 @@ class Infimaximal_box<Tag_true, Kernel> {
     return (D.volume(sf) == snc.volumes_begin());
   }
 
+  template <typename SNC_constructor, typename Mark>
+  static std::list<typename SNC_constructor::Vertex_handle> 
+    create_vertices_on_infibox(SNC_constructor& C, 
+			       const Plane_3& h, const std::list<Point_3>& points, 
+			       const Mark& bnd, const Mark& inside, const Mark& outside) {
+    return C.create_vertices_on_infibox(h,points,bnd,inside,outside);
+  }
+
   template <typename SNC_constructor>
   static void create_vertices_of_box_with_plane(SNC_constructor& C, const Plane_3& h, bool b) {
     C.create_vertices_of_box_with_plane(h, b);
+  }
+
+  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& min, int& max) {
+    Vector_3 orth = h.orthogonal_vector();
+    
+    orth_coords[0] = CGAL_NTS abs(orth.hx()[0]);
+    orth_coords[1] = CGAL_NTS abs(orth.hy()[0]);
+    orth_coords[2] = CGAL_NTS abs(orth.hz()[0]);
+    
+    max = 0;
+    if(orth_coords[1] > orth_coords[0])
+      max = 1;
+    if(orth_coords[2] > orth_coords[max])
+      max = 2;   
+    
+    min = 0;
+    if(orth_coords[1] < orth_coords[0])
+      min = 1;
+    if(orth_coords[2] < orth_coords[min])
+      min = 2;
+  }
+
+  template<typename SNC_structure>
+  static NT compute_evaluation_constant_for_halfedge_pairup(const SNC_structure& snc) {
+    NT eval = 0;
+    typename SNC_structure::Vertex_const_iterator v;
+    CGAL_forall_vertices(v, snc) {
+      Point_3 p(v->point());
+      if(p.hx()[0] > eval) eval = p.hx()[0];
+      if(p.hy()[0] > eval) eval = p.hy()[0];
+      if(p.hz()[0] > eval) eval = p.hz()[0];
+    }
+    eval *= 4;
+    if(eval == 0) return 1;
+    return eval;
+  }
+
+  static Point_3 scale_infibox_vertex(const Point_3 pin, const Aff_transformation_3& aff) {
+    RT lx(pin.hx()[0]);
+    RT ly(pin.hy()[0]);
+    RT lz(pin.hz()[0]);
+    RT hx(pin.hx()-lx);
+    RT hy(pin.hy()-ly);
+    RT hz(pin.hz()-lz);
+    RT hw(pin.hw());
+    Point_3 p(Point_3(lx,ly,lz,hw).transform(aff));
+    return Point_3(hx+p.hx(),hy+p.hy(),hz+p.hz(),hw);    
   }
 
   static Point_3 normalize_transformed_vertex(const Point_3& p) {
@@ -384,36 +451,36 @@ class Infimaximal_box<Tag_true, Kernel> {
       CGAL_assertion(p.hx().degree() == 1);
       if(p.hx()[1] > 0)
 	return Point_3(RT(0,p.hx()[1]*p.hw()[0]),
-		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()(1),p.hy()[1]*p.hw()[0]),
-		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()(1),p.hz()[1]*p.hw()[0]),
+		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()(1),p.hy()(1)*p.hw()[0]),
+		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()(1),p.hz()(1)*p.hw()[0]),
 		       RT(p.hw()[0]*p.hx()[1]));
       else
 	return Point_3(RT(0,-p.hx()[1]*p.hw()[0]),
-		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()[1],-p.hy()(1)*p.hw()[0]),
-		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()[1],-p.hz()(1)*p.hw()[0]),
+		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()(1),-p.hy()(1)*p.hw()[0]),
+		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()(1),-p.hz()(1)*p.hw()[0]),
 		       RT(p.hw()[0]*p.hx()[1]));
     case 1:
       CGAL_assertion(p.hy().degree() == 1);
       if(p.hy()[1] > 0)
-	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()[1],p.hx()(1)*p.hw()[0]),
+	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()(1),p.hx()(1)*p.hw()[0]),
 		       RT(0,p.hy()[1]*p.hw()[0]),
-		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()[1],p.hz()(1)*p.hw()[0]),
+		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()(1),p.hz()(1)*p.hw()[0]),
 		       RT(p.hw()[0]*p.hy()[1]));
       else
-	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()[1],-p.hx()(1)*p.hw()[0]),
+	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()(1),-p.hx()(1)*p.hw()[0]),
 		       RT(0,-p.hy()[1]*p.hw()[0]),
-		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()[1],-p.hz()(1)*p.hw()[0]),
+		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()(1),-p.hz()(1)*p.hw()[0]),
 		       RT(p.hw()[0]*p.hy()[1]));
     case 2:
       CGAL_assertion(p.hz().degree() == 1);
       if(p.hz()[1] > 0)
-	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()[1],p.hx()(1)*p.hw()[0]),
-		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()[1],p.hy()(1)*p.hw()[0]),
+	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()(1),p.hx()(1)*p.hw()[0]),
+		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()(1),p.hy()(1)*p.hw()[0]),
 		       RT(0,p.hz()[1]*p.hw()[0]),
 		       RT(p.hw()[0]*p.hz()[1]));
       else
-	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()[1],-p.hx()(1)*p.hw()[0]),
-		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()[1],-p.hy()(1)*p.hw()[0]),
+	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()(1),-p.hx()(1)*p.hw()[0]),
+		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()(1),-p.hy()(1)*p.hw()[0]),
 		       RT(0,-p.hz()[1]*p.hw()[0]),
 		       RT(p.hw()[0]*p.hz()[1]));
     default: CGAL_assertion_msg(false, "wrong value");

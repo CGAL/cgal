@@ -249,7 +249,6 @@ public:
   typedef typename SNC_structure::Object_handle Object_handle;
 
   typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
-  typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
   typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
   typedef typename SNC_structure::SFace_cycle_const_iterator SFace_cycle_const_iterator;
   typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
@@ -272,7 +271,6 @@ public:
   typedef typename SNC_structure::Sphere_direction Sphere_direction;
 
   typedef typename SNC_structure::Mark Mark;
-  typedef typename SNC_structure::Infi_box Infi_box;
 
   typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
                                  SHalfedge_around_svertex_circulator;
@@ -568,15 +566,7 @@ erase_redundant_vertices() {
     }
   }
 
-  NT eval = 0;
-  CGAL_forall_vertices(v, *sncp()) {
-    Point_3 p(v->point());
-    if(p.hx()[0] > eval) eval = p.hx()[0];
-    if(p.hy()[0] > eval) eval = p.hy()[0];
-    if(p.hz()[0] > eval) eval = p.hz()[0];
-  }
-  eval *= 4;
-  if(eval == 0) eval = 1;
+  NT eval(Infi_box::compute_evaluation_constant_for_halfedge_pairup(*sncp()));
 
   bool res;
   do {
@@ -821,24 +811,9 @@ create_vertices_on_infibox(const Plane_3& h, const std::list<Point_3> points,
 			   const Mark& bnd, const Mark& inside, const Mark& outside) {
 
   std::list<Vertex_handle> res;
-  Vector_3 orth = h.orthogonal_vector();
-  
   NT orth_coords[3];
-  orth_coords[0] = CGAL_NTS abs(orth.hx()[0]);
-  orth_coords[1] = CGAL_NTS abs(orth.hy()[0]);
-  orth_coords[2] = CGAL_NTS abs(orth.hz()[0]);
-  
-  int max = 0;
-  if(orth_coords[1] > orth_coords[0])
-    max = 1;
-  if(orth_coords[2] > orth_coords[max])
-    max = 2;   
-  
-  int min = 0;
-  if(orth_coords[1] < orth_coords[0])
-    min = 1;
-  if(orth_coords[2] < orth_coords[min])
-    min = 2;
+  int min,max;
+  Infi_box::compute_min_max(h,orth_coords,min,max);
   
   typename std::list<Point_3>::const_iterator p,prev,next;
   for(p=points.begin();p!=points.end();++p){
@@ -1989,16 +1964,7 @@ pair_up_halfedges() const
   //  Progress_indicator_clog progress( 2*sncp()->number_of_halfedges(), 
   //				    "SNC_constructor: pairing up edges...");
   
-  NT eval = 0;
-  Vertex_iterator v;
-  CGAL_forall_vertices(v, *sncp()) {
-    Point_3 p(v->point());
-    if(p.hx()[0] > eval) eval = p.hx()[0];
-    if(p.hy()[0] > eval) eval = p.hy()[0];
-    if(p.hz()[0] > eval) eval = p.hz()[0];
-  }
-  eval *= 4;
-  if(eval == 0) eval = 1;
+  NT eval(Infi_box::compute_evaluation_constant_for_halfedge_pairup(*sncp()));;
 
   Halfedge_iterator e;
   CGAL_forall_halfedges(e,*sncp()) {
