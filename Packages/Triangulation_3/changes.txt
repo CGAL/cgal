@@ -1,3 +1,9 @@
+Version 1.8 (8 sept 99)
+minor fixes (std::, typenames, etc)
+
+Version 1.7 (1st sept 99)
+changes in Dagstuhl for MSVC++
+
 Version 1.6 (25 august 99)
 minor changes to run with g++ 2.95
 
