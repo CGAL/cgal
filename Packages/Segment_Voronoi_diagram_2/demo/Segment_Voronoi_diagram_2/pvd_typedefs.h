@@ -32,7 +32,10 @@ typedef CGAL::Tag_true       STag;
 
 
 typedef
-CGAL::Segment_Voronoi_diagram_filtered_traits_2<Rep,MTag,ERep,EMTag,ITag>
+CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<Rep,
+								      MTag,
+								      ERep,
+								      EMTag>
 Gt;
 
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_with_info_2.h>
@@ -42,9 +45,7 @@ typedef Gt::Segment_2          Segment;
 typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;
 
-typedef std::list<Point_2>   PC;
-
-typedef CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PC,ITag>       Vb;
+typedef CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,ITag>          Vb;
 typedef CGAL::Segment_Voronoi_diagram_vertex_base_with_info_2<Vb,int> Vbi;
 typedef CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbi>    Vbh;
 typedef CGAL::Triangulation_face_base_2<Gt>                           Fb;
@@ -53,7 +54,7 @@ typedef CGAL::Segment_Voronoi_diagram_data_structure_2<Vbh,Fb>        DS;
 
 
 
-typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>   SVD_2;
-//typedef CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>          SVD_2;
+typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>   SVD_2;
+//typedef CGAL::Segment_Voronoi_diagram_2<Gt,DS>          SVD_2;
 
 #endif  // PVD_TYPEDEFS_H
