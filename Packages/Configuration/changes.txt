@@ -1,3 +1,7 @@
+2.34
+- I was wrong about basic.h, I have added the definition in
+  $CGALROOT/include/CGAL/config.h
+
 2.33
 - Added the CGAL_CFG_NOMINMAX_BUG.C. The file basic.h should
  check if this bug is set and #define NOMINMAX 1

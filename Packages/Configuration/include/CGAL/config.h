@@ -143,5 +143,13 @@
 #  endif // ! CGAL_CFG_NO_STANDARD_HEADERS
 #endif // ! CGAL_USE_NEWSTYLE_HEADERS
 
+//--------------------------------------------------------------------//
+//           if defined CGAL_CFG_NOMINMAX_BUG define NOMINMAX flag
+//-------------------------------------------------------------------//
+
+#ifdef CGAL_CFG_NOMINMAX_BUG
+#define NOMINMAX 1
+#endif
+
 #endif // CGAL_CONFIG_H
 
