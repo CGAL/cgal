@@ -1,3 +1,6 @@
+2.8.25 (11 April 2002)
+- added include of Color reference page
+
 2.8.24 (21 March 2002)
 - manual split
 
