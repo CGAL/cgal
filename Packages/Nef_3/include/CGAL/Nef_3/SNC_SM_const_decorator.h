@@ -333,11 +333,6 @@ Mark mark(SFace_const_handle f) const
 /*{\Mop returns the mark of |f|.}*/
 { return f->mark_; }
 
-Mark mark_of_halfsphere(int i) const
-{ CGAL_nef3_assertion(i);
-  if (i<0) return psm_->m_neg_; 
-  return psm_->m_pos_; }
-
 /*{\Mtext \headerline{Iteration}}*/
 /*{\Mtext The list of all objects can be accessed via iterator ranges.
 For comfortable iteration we also provide iterations macros. 
