@@ -57,6 +57,12 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
+  using Triangulation::geom_traits;
+  using Triangulation::cw;
+  using Triangulation::ccw;
+  using Triangulation::number_of_vertices;
+  using Triangulation::vertices_begin;
+
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
   // for user interface with the constraint hierarchy

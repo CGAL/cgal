@@ -2,6 +2,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 22 June 2004 Sylvain Pion
+- Add some "using base::member;" to please g++ 3.4.
+
+22 June 2004 Sylvain Pion
 - Fix signed/unsigned warnings introduced by last change.
 
 17 June 2004 Andreas Fabri

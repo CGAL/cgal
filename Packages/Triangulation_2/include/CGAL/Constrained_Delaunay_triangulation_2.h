@@ -57,6 +57,14 @@ public:
   typedef typename Ctr::Less_edge less_edge;
   typedef typename Ctr::Edge_set Edge_set;
 
+  using Ctr::number_of_vertices;
+  using Ctr::finite_faces_begin;
+  using Ctr::finite_faces_end;
+  using Ctr::dimension;
+  using Ctr::cw;
+  using Ctr::ccw;
+  using Ctr::infinite_vertex;
+
   typedef typename Geom_traits::Point_2  Point;
 
 

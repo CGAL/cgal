@@ -68,6 +68,27 @@ public:
   typedef typename Base::Face::Vertex_list     Vertex_list;
   typedef typename Vertex_list::iterator       Vertex_list_iterator;
 
+  using Base::cw;
+  using Base::ccw;
+  using Base::dimension;
+  using Base::geom_traits;
+  using Base::infinite_vertex;
+  using Base::create_face;
+  using Base::number_of_faces;
+  using Base::all_faces_begin;
+  using Base::all_faces_end;
+  using Base::all_edges_begin;
+  using Base::all_edges_end;
+  using Base::finite_faces_begin;
+  using Base::finite_faces_end;
+  using Base::finite_edges_begin;
+  using Base::finite_edges_end;
+  using Base::OUTSIDE_AFFINE_HULL;
+  using Base::VERTEX;
+  using Base::FACE;
+  using Base::EDGE;
+  using Base::OUTSIDE_CONVEX_HULL;
+
 private:
   typedef std::list<Face_handle>      Faces_around_stack; 
 
@@ -312,7 +333,7 @@ public:
   template < class Stream>
   Stream& draw_dual(Stream & ps) const
     {
-      Finite_edges_iterator eit= finite_edges_begin();
+      Finite_edges_iterator eit = finite_edges_begin();
       for (; eit != finite_edges_end(); ++eit) {
 	Object o = dual(eit);
 	typename Geom_traits::Line_2  l;

@@ -63,7 +63,14 @@ public:
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
   typedef typename Triangulation::Line_face_circulator Line_face_circulator;
-  
+
+  using Triangulation::number_of_vertices;
+  using Triangulation::cw;
+  using Triangulation::ccw;
+  using Triangulation::dimension;
+  using Triangulation::geom_traits;
+  using Triangulation::all_faces_begin;
+  using Triangulation::all_faces_end;
 
   typedef Gt                                 Geom_traits;
   typedef Itag                               Intersection_tag;
