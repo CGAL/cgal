@@ -22,7 +22,6 @@
 //
 // ======================================================================
 
-
 #ifdef CGAL_ALPHA_WINDOW_STREAM
 
 //-------------------------------------------------------------------
@@ -76,6 +75,15 @@ Alpha_shape_2<Dt>::op_window(Window_stream& W) const
 	      // thus we would write to many vertices
 	      W << segment((*edge_alpha_it).second.first,
 			   (*edge_alpha_it).second.second);
+
+	      // to debug the edge descrition...
+// 	      W << Segment((*edge_alpha_it).second.first->vertex(0)->point(),
+// 			   (*edge_alpha_it).second.first->vertex(1)->point());
+// 	      W << Segment((*edge_alpha_it).second.first->vertex(1)->point(),
+// 			   (*edge_alpha_it).second.first->vertex(2)->point());
+// 	      W << Segment((*edge_alpha_it).second.first->vertex(2)->point(),
+// 			   (*edge_alpha_it).second.first->vertex(0)->point());
+
 	    }
 	}
     }

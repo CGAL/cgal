@@ -46,6 +46,44 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
+//------------------ Function Objects----------------------------------
+
+template < class return_type, class T >
+class Compute_squared_radius_orthogonalcircle_2
+{
+public:
+  typedef return_type result_type;
+  
+  result_type operator()(const T& p, const T& q, const T& r)
+    {
+      return
+	std::max
+	(return_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
+    }
+
+  result_type operator()(const T& p, const T& q)
+    {
+      return
+	std::max
+	(return_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
+    }
+};
+
+//-------------------------------------------------------------------
+
+template < class T >
+class Side_of_bounded_orthogonalcircle_2
+{
+public:
+  typedef Bounded_side result_type;
+  
+   result_type operator()(const T& p, const T& q, const T& t)
+    {  
+      return
+	CGAL::in_smallest_orthogonalcircle(p, q, t);
+    }
+};
+
 //------------------ Traits class -------------------------------------
 
 template< class R >
@@ -60,39 +98,26 @@ public:
    Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Weighted_point 
      Point;
 
-  //---------------------------------------------------------------------
-
-  Coord_type squared_radius(const Point &p,
-			    const Point &q,
-			    const Point &r) const 
-    {
+  typedef Compute_squared_radius_orthogonalcircle_2<Coord_type, Point>
+  Compute_squared_radius_orthogonalcircle_2;
+  typedef Side_of_bounded_orthogonalcircle_2<Point>
+  Side_of_bounded_orthogonalcircle_2;
   
-      return
-	std::max
-	(Coord_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
-    }
-
-
-
-
-  Coord_type squared_radius(const Point &p,
-			    const Point &q) const 
-    {
-
-      return
-	std::max
-	(Coord_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
-    }
-
-  Bounded_side side_of_circle(const Point &p,
-			      const Point &q,
-			      const Point &t) const 
-    {
   
-      return
-	CGAL::in_smallest_orthogonalcircle(p, q, t);
+  //------------------------------------------------------------------
+
+  Compute_squared_radius_orthogonalcircle_2
+  Compute_squared_radius_2_object() const
+    {
+      return Compute_squared_radius_orthogonalcircle_2();
     }
 
+  //------------------------------------------------------------------
+
+  Side_of_bounded_orthogonalcircle_2 side_of_bounded_circle_2_object() const
+    {
+      return Side_of_bounded_orthogonalcircle_2();
+    }
 };
   
 //-------------------------------------------------------------------

@@ -46,8 +46,7 @@ squared_radius_orthogonalcircle(
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &q,
   const Weighted_point<Point_2< Cartesian<FT> >, FT> &r) 
-{
-   
+{   
   FT px(p.point().x());
   FT py(p.point().y());
   FT pw(p.weight());
@@ -70,7 +69,6 @@ squared_radius_smallest_orthogonalcircle(
    const Weighted_point<Point_2< Cartesian<FT> >, FT> &p,
    const Weighted_point<Point_2< Cartesian<FT> >, FT> &q) 
 {
-
   FT px(p.point().x());
   FT py(p.point().y());
   FT pw(p.weight());
