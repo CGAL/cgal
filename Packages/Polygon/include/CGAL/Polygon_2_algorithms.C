@@ -34,10 +34,14 @@ CGAL_BEGIN_NAMESPACE
 //                          Simplicity_test_2
 //-----------------------------------------------------------------------//
 // The simplicity test is implemented as a class.
+// The algorithm used is a sweep line algorithm. The sweep line is a
+// horizontal line that sweeps from top (big y) to bottom.
+// In the sweep status the edges are ordered from left (small) to right
+// (big).
 
 template <class ForwardIterator, class Traits>
 class Simplicity_test_2 {
-  private:
+  protected:
     std::vector<ForwardIterator> d_index;
     // the attribute d_index is just a mapping between the integers and the
     // sequence of points
@@ -75,7 +79,7 @@ class Simplicity_test_2 {
     // compares the (lexicographical) order of vertex(i) and vertex(j)
 
     class VertexComp {
-      private:
+      protected:
         const Simplicity_test_2<ForwardIterator, Traits>* s;
       public:
         VertexComp() {}
@@ -114,17 +118,17 @@ class Simplicity_test_2 {
     bool EdgeCompare(int e1, int e2) const;
     // computes the order of two edges e1 and e2 on the current sweepline
 
-    bool EdgeCompareShared(int e1, int e2) const;
+    bool edge_compare_consecutive(int e1, int e2) const;
     // computes the order of two edges e1 and e2 that share a vertex
 
-    bool EdgeCompareNonShared(int e1, int e2) const;
+    bool edge_compare_non_consecutive(int e1, int e2) const;
     // computes the order of two edges e1 and e2 that do not share a vertex
 
-    bool EdgesShareVertex(int e1, int e2) const;
-    // true if the edges e1 and e2 share a vertex
+    bool consecutive_edges(int e1, int e2) const;
+    // true if the edges e1 and e2 are not equal but share a vertex
 
     class EdgeComp {
-      private:
+      protected:
         const Simplicity_test_2<ForwardIterator, Traits>* s;
       public:
         EdgeComp() {}
@@ -141,7 +145,7 @@ class Simplicity_test_2 {
       // typedef set<int,VertexComp>::const_iterator const_iterator;
       //-----------------------------------------------------------------//
 
-      private:
+      protected:
         std::set<int,VertexComp> queue;
       public:
         EventQueue(Simplicity_test_2<ForwardIterator, Traits>* s)
@@ -172,7 +176,7 @@ class Simplicity_test_2 {
       // typedef std::set<int,EdgeComp>::const_iterator const_iterator;
       //-----------------------------------------------------------------//
 
-      private:
+      protected:
         std::set<int,EdgeComp> status;
         // if i is an element of status, it means that 
 
@@ -188,7 +192,7 @@ class Simplicity_test_2 {
           const Simplicity_test_2<ForwardIterator, Traits>* s0, int n)
           : status(EdgeComp(s0)), s(s0)
         {
-          index.reserve(n);
+	  index.resize(n,status.end());
         }
 
         bool is_valid()
@@ -305,17 +309,17 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
 
   bool Result;
 
-  if (EdgesShareVertex(e1,e2)) {
+  if (consecutive_edges(e1,e2)) {
     if (e1 < e2)
-      Result = EdgeCompareShared(e1,e2);
+      Result = edge_compare_consecutive(e1,e2);
     else
-      Result = !EdgeCompareShared(e2,e1);
+      Result = !edge_compare_consecutive(e2,e1);
   }
   else {
     if (e1 < e2)
-      Result = EdgeCompareNonShared(e1,e2);
+      Result = edge_compare_non_consecutive(e1,e2);
     else
-      Result = !EdgeCompareNonShared(e2,e1);
+      Result = !edge_compare_non_consecutive(e2,e1);
   }
 
 #ifdef CGAL_POLYGON_DEBUG
@@ -329,7 +333,7 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompare(
 }
 
 template <class ForwardIterator, class Traits>
-bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareShared(
+bool Simplicity_test_2<ForwardIterator, Traits>::edge_compare_consecutive(
   int e1, int e2) const
 // This function is used to compare two edges that share a vertex:
 //
@@ -362,7 +366,7 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareShared(
 
 template <class ForwardIterator, class Traits>
 bool
-Simplicity_test_2<ForwardIterator, Traits>::EdgeCompareNonShared(
+Simplicity_test_2<ForwardIterator, Traits>::edge_compare_non_consecutive(
   int e1, int e2) const
 {
   int n = NumberOfVertices();
@@ -498,6 +502,21 @@ Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
         return false;
     }
     else {
+       // check for intersections between edges that become new neighbors 
+       // in the sweep status due to the deletion 
+       int left, right;
+       if (status.left(prev) == i)
+       {
+          left = status.left(i);
+          right = status.right(prev);
+       }
+       else
+       {
+          left = status.left(prev);
+          right = status.right(i);
+       }
+       if (left >=0 && right >=0 && EdgesDoIntersect(left, right))
+          return false;
       status.erase(prev);
       status.erase(i);
       CGAL_polygon_assertion(status.is_valid());
@@ -529,7 +548,7 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgesDoIntersect(
   int f2 = (e2<n-1) ? e2+1 : e2+1-n;  // edge(e2) = (vertex(e2), vertex(f2))
 
   bool Result;
-  if (EdgesShareVertex(e1,e2))
+  if (consecutive_edges(e1,e2))
     Result = d_traits.have_equal_direction(Vertex(f1) - Vertex(e1),
                                            Vertex(e2) - Vertex(f2) );
   else
@@ -545,7 +564,7 @@ bool Simplicity_test_2<ForwardIterator, Traits>::EdgesDoIntersect(
 
 template <class ForwardIterator, class Traits>
 inline
-bool Simplicity_test_2<ForwardIterator, Traits>::EdgesShareVertex(
+bool Simplicity_test_2<ForwardIterator, Traits>::consecutive_edges(
   int e1, int e2) const
 {
   int n = NumberOfVertices();
