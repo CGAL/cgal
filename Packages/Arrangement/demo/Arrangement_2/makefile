@@ -5,31 +5,18 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+#CGAL_MAKEFILE = c:/cgal/CGAL-3.1-I-145/make/makefile_i686_CYGWINNT-5.1-1.5.6_CL.EXE-1310
+CGAL_MAKEFILE = c:/cgal/CGAL-3.1-I-145/make/makefile_i686_CYGWINNT-5.1-1.5.6_ICL.EXE-8
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-ifdef COREROOT
-COREROOT_INC=-I$(COREROOT)/inc
-COREROOT_LIB=-L$(COREROOT)/lib
-CORE_LIB=-lcore
-else
-COREROOT_INC=
-COREROOT_LIB=
-ifdef CORE_LIB_DIR
-CORE_LIB=-lCore
-else
-CORE_LIB=
-endif
-endif
+
 
 CXXFLAGS = \
        -I../../include \
-       $(COREROOT_INC) \
        $(CGAL_CXXFLAGS) \
        $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -50,7 +37,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: demo_arr
+all: demo_arr$(EXE_EXT)
 
 MyWindow$(OBJ_EXT): MyWindow.C cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.C
@@ -60,7 +47,7 @@ MyWindow_files$(OBJ_EXT): MyWindow_files.C cgal_types.h demo_tab.h
 
 MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.C cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_overlay.C
-	
+
 MyWindow_operations$(OBJ_EXT): MyWindow_operations.C cgal_types.h demo_tab.h
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.C
 
