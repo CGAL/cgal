@@ -40,9 +40,7 @@
 #  define CGAL_BIG_ENDIAN 1
 #endif
 
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/LEDA_basic.h>
-#else
+#ifndef CGAL_USE_LEDA
 #  define CGAL_USE_CGAL_WINDOW
 #endif
 
