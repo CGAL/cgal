@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.65 (6  Apr 2003)
+   - G++ 3.4 support : add missing "this->".
+
 2.64 (22 Aug 2002)
    - default Creator now uses number type from given point types 
      instead of double; default creator is now documented

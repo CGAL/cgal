@@ -209,7 +209,7 @@ Vertex_data(ForwardIterator begin, ForwardIterator end,
             const PolygonTraits& pgn_traits)
 : Base_class(begin, end, pgn_traits)
 {
-    edges.insert(edges.end(), m_size, Edge_data());
+    edges.insert(edges.end(), this->m_size, Edge_data());
 }
 
 template <class ForwardIterator, class PolygonTraits>
@@ -260,23 +260,23 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
 	// assert(result.second)
 	td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
-        if (!is_simple_result) return false;
+        if (!this->is_simple_result) return false;
         result = tree->insert(mid_vt);
 	// assert(result.second)
 	td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
-        if (!is_simple_result) return false;
+        if (!this->is_simple_result) return false;
     } else {
         result = tree->insert(mid_vt);
 	// assert(result.second)
 	td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
-        if (!is_simple_result) return false;
+        if (!this->is_simple_result) return false;
         result = tree->insert(prev_vt);
 	// assert(result.second)
 	td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
-        if (!is_simple_result) return false;
+        if (!this->is_simple_result) return false;
     }
     return true;
 }
@@ -348,7 +348,7 @@ replacement_event(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
     td.is_in_tree = false;
     new_td.tree_it = tree->insert(seg_above, next_edge);
     new_td.is_in_tree = true;
-    return is_simple_result;
+    return this->is_simple_result;
 }
 
 template <class ForwardIterator, class PolygonTraits>
@@ -463,10 +463,10 @@ template <class ForwardIterator, class PolygonTraits>
 void Vertex_data<ForwardIterator, PolygonTraits>::
 sweep(Tree *tree)
 {
-    if (m_size < 3)
+    if (this->m_size < 3)
     	return;
     bool success = true;
-    for (Index_t i=0; i< m_size; ++i) {
+    for (Index_t i=0; i< this->m_size; ++i) {
         Vertex_index cur = index_at_rank(Vertex_order(i));
 	    Vertex_index prev_vt = prev(cur), next_vt = next(cur);
 	    if (ordered_left_to_right(cur, next_vt)) {
@@ -484,7 +484,7 @@ sweep(Tree *tree)
 	        break;
     }
     if (!success)
-    	is_simple_result = false;
+    	this->is_simple_result = false;
 }
 }
 // ----- End of implementation of i_generator_polygon functions. -----
