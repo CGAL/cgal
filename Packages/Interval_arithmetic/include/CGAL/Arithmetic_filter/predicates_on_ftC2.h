@@ -2,9 +2,34 @@
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This software and related documentation is part of the
+// Computational Geometry Algorithms Library (CGAL).
+//
+// Every use of CGAL requires a license. Licenses come in three kinds:
+//
+// - For academic research and teaching purposes, permission to use and
+//   copy the software and its documentation is hereby granted free of  
+//   charge, provided that
+//   (1) it is not a component of a commercial product, and
+//   (2) this notice appears in all copies of the software and
+//       related documentation.
+// - Development licenses grant access to the source code of the library 
+//   to develop programs. These programs may be sold to other parties as 
+//   executable code. To obtain a development license, please contact
+//   the CGAL Consortium (at cgal@cs.uu.nl).
+// - Commercialization licenses grant access to the source code and the
+//   right to sell development licenses. To obtain a commercialization 
+//   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
+//
+// This software and documentation is provided "as-is" and without
+// warranty of any kind. In no event shall the CGAL Consortium be
+// liable for any damage of any kind.
+//
+// The CGAL Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Free University of Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany) Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).
 //
 // ----------------------------------------------------------------------
 //
@@ -18,7 +43,10 @@
 // revision_date :
 // author(s)     : Sylvain.Pion@sophia.inria.fr
 //
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+// coordinator   : INRIA Sophia-Antipolis
+//
+//
+// email         : cgal@cs.uu.nl
 //
 // ======================================================================
 
@@ -40,7 +68,7 @@
 #endif
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -50,43 +78,40 @@ CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	                 const CGAL_Filtered_exact<CT,ET> &l2a,
 	const CGAL_Filtered_exact<CT,ET> &l2b,
 	const CGAL_Filtered_exact<CT,ET> &l2c)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_xC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value));
+		px.interval(),
+		py.interval(),
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_xC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value));
+		px.exact(),
+		py.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &l1a,
 	const CGAL_Filtered_exact<CT,ET> &l1b,
@@ -100,88 +125,82 @@ CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &l1a,
 	                 const CGAL_Filtered_exact<CT,ET> &h2a,
 	const CGAL_Filtered_exact<CT,ET> &h2b,
 	const CGAL_Filtered_exact<CT,ET> &h2c)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_xC2(
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value),
-		CGAL_convert_to<IA>(h1a.value),
-		CGAL_convert_to<IA>(h1b.value),
-		CGAL_convert_to<IA>(h1c.value),
-		CGAL_convert_to<IA>(h2a.value),
-		CGAL_convert_to<IA>(h2b.value),
-		CGAL_convert_to<IA>(h2c.value));
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_xC2(
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value),
-		CGAL_convert_to<ET>(h1a.value),
-		CGAL_convert_to<ET>(h1b.value),
-		CGAL_convert_to<ET>(h1c.value),
-		CGAL_convert_to<ET>(h2a.value),
-		CGAL_convert_to<ET>(h2b.value),
-		CGAL_convert_to<ET>(h2c.value));
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_compare_y_at_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
 	                      const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &lb,
 	const CGAL_Filtered_exact<CT,ET> &lc)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(la.value),
-		CGAL_convert_to<IA>(lb.value),
-		CGAL_convert_to<IA>(lc.value));
+		px.interval(),
+		py.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(la.value),
-		CGAL_convert_to<ET>(lb.value),
-		CGAL_convert_to<ET>(lc.value));
+		px.exact(),
+		py.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_compare_y_at_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	                      const CGAL_Filtered_exact<CT,ET> &l1a,
@@ -190,35 +209,32 @@ CGAL_compare_y_at_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 	                      const CGAL_Filtered_exact<CT,ET> &l2a,
 	const CGAL_Filtered_exact<CT,ET> &l2b,
 	const CGAL_Filtered_exact<CT,ET> &l2c)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value));
+		px.interval(),
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value));
+		px.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
   }
   return result;
 }
@@ -235,39 +251,36 @@ CGAL_compare_y_at_xC2(const CGAL_Filtered_exact<CT,ET> &l1a,
 	                      const CGAL_Filtered_exact<CT,ET> &ha,
 	const CGAL_Filtered_exact<CT,ET> &hb,
 	const CGAL_Filtered_exact<CT,ET> &hc)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value),
-		CGAL_convert_to<IA>(ha.value),
-		CGAL_convert_to<IA>(hb.value),
-		CGAL_convert_to<IA>(hc.value));
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value),
-		CGAL_convert_to<ET>(ha.value),
-		CGAL_convert_to<ET>(hb.value),
-		CGAL_convert_to<ET>(hc.value));
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
   }
   return result;
 }
@@ -287,45 +300,42 @@ CGAL_compare_y_at_xC2(const CGAL_Filtered_exact<CT,ET> &l1a,
 	                      const CGAL_Filtered_exact<CT,ET> &h2a,
 	const CGAL_Filtered_exact<CT,ET> &h2b,
 	const CGAL_Filtered_exact<CT,ET> &h2c)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<IA>(l1a.value),
-		CGAL_convert_to<IA>(l1b.value),
-		CGAL_convert_to<IA>(l1c.value),
-		CGAL_convert_to<IA>(l2a.value),
-		CGAL_convert_to<IA>(l2b.value),
-		CGAL_convert_to<IA>(l2c.value),
-		CGAL_convert_to<IA>(h1a.value),
-		CGAL_convert_to<IA>(h1b.value),
-		CGAL_convert_to<IA>(h1c.value),
-		CGAL_convert_to<IA>(h2a.value),
-		CGAL_convert_to<IA>(h2b.value),
-		CGAL_convert_to<IA>(h2c.value));
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_y_at_xC2(
-		CGAL_convert_to<ET>(l1a.value),
-		CGAL_convert_to<ET>(l1b.value),
-		CGAL_convert_to<ET>(l1c.value),
-		CGAL_convert_to<ET>(l2a.value),
-		CGAL_convert_to<ET>(l2b.value),
-		CGAL_convert_to<ET>(l2c.value),
-		CGAL_convert_to<ET>(h1a.value),
-		CGAL_convert_to<ET>(h1b.value),
-		CGAL_convert_to<ET>(h1c.value),
-		CGAL_convert_to<ET>(h2a.value),
-		CGAL_convert_to<ET>(h2b.value),
-		CGAL_convert_to<ET>(h2c.value));
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
   }
   return result;
 }
@@ -337,29 +347,26 @@ CGAL_compare_deltax_deltayC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qx,
 	                             const CGAL_Filtered_exact<CT,ET> &ry,
 	const CGAL_Filtered_exact<CT,ET> &sy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_deltax_deltayC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(sy.value));
+		px.interval(),
+		qx.interval(),
+		ry.interval(),
+		sy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_deltax_deltayC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(sy.value));
+		px.exact(),
+		qx.exact(),
+		ry.exact(),
+		sy.exact());
   }
   return result;
 }
@@ -372,29 +379,26 @@ CGAL_compare_lexicographically_xyC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
 	                                    const CGAL_Filtered_exact<CT,ET> &qx,
 	const CGAL_Filtered_exact<CT,ET> &qy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_compare_lexicographically_xyC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_compare_lexicographically_xyC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
   }
   return result;
 }
@@ -408,39 +412,36 @@ CGAL_orientationC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                   const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Orientation result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_orientationC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_orientationC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_collinear_are_ordered_along_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -448,39 +449,36 @@ CGAL_collinear_are_ordered_along_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                                        const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_collinear_are_ordered_along_lineC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_collinear_are_ordered_along_lineC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_collinear_are_strictly_ordered_along_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -488,33 +486,30 @@ CGAL_collinear_are_strictly_ordered_along_lineC2(const CGAL_Filtered_exact<CT,ET
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                                                 const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_collinear_are_strictly_ordered_along_lineC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_collinear_are_strictly_ordered_along_lineC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
@@ -530,37 +525,34 @@ CGAL_side_of_oriented_circleC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &ry,
 	                               const CGAL_Filtered_exact<CT,ET> &tx,
 	const CGAL_Filtered_exact<CT,ET> &ty)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Oriented_side result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_side_of_oriented_circleC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(tx.value),
-		CGAL_convert_to<IA>(ty.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		tx.interval(),
+		ty.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_side_of_oriented_circleC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(tx.value),
-		CGAL_convert_to<ET>(ty.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
   }
   return result;
 }
@@ -576,43 +568,40 @@ CGAL_side_of_bounded_circleC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &ry,
 	                              const CGAL_Filtered_exact<CT,ET> &tx,
 	const CGAL_Filtered_exact<CT,ET> &ty)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Bounded_side result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_side_of_bounded_circleC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(tx.value),
-		CGAL_convert_to<IA>(ty.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		tx.interval(),
+		ty.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_side_of_bounded_circleC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(tx.value),
-		CGAL_convert_to<ET>(ty.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_cmp_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -620,39 +609,36 @@ CGAL_cmp_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                         const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_cmp_dist_to_pointC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_cmp_dist_to_pointC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_larger_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -660,39 +646,36 @@ CGAL_has_larger_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                                const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_larger_dist_to_pointC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_larger_dist_to_pointC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_smaller_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -700,39 +683,36 @@ CGAL_has_smaller_dist_to_pointC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &qy,
 	                                 const CGAL_Filtered_exact<CT,ET> &rx,
 	const CGAL_Filtered_exact<CT,ET> &ry)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_smaller_dist_to_pointC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_smaller_dist_to_pointC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_cmp_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &lb,
@@ -741,41 +721,38 @@ CGAL_cmp_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &py,
 	                               const CGAL_Filtered_exact<CT,ET> &qx,
 	const CGAL_Filtered_exact<CT,ET> &qy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_cmp_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(la.value),
-		CGAL_convert_to<IA>(lb.value),
-		CGAL_convert_to<IA>(lc.value),
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value));
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_cmp_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(la.value),
-		CGAL_convert_to<ET>(lb.value),
-		CGAL_convert_to<ET>(lc.value),
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value));
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_larger_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &lb,
@@ -784,41 +761,38 @@ CGAL_has_larger_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &py,
 	                                      const CGAL_Filtered_exact<CT,ET> &qx,
 	const CGAL_Filtered_exact<CT,ET> &qy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_larger_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(la.value),
-		CGAL_convert_to<IA>(lb.value),
-		CGAL_convert_to<IA>(lc.value),
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value));
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_larger_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(la.value),
-		CGAL_convert_to<ET>(lb.value),
-		CGAL_convert_to<ET>(lc.value),
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value));
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_smaller_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &lb,
@@ -827,40 +801,37 @@ CGAL_has_smaller_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &la,
 	const CGAL_Filtered_exact<CT,ET> &py,
 	                                       const CGAL_Filtered_exact<CT,ET> &qx,
 	const CGAL_Filtered_exact<CT,ET> &qy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_smaller_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(la.value),
-		CGAL_convert_to<IA>(lb.value),
-		CGAL_convert_to<IA>(lc.value),
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value));
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_smaller_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(la.value),
-		CGAL_convert_to<ET>(lb.value),
-		CGAL_convert_to<ET>(lc.value),
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value));
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
   }
   return result;
 }
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
 CGAL_cmp_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -870,43 +841,40 @@ CGAL_cmp_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &ry,
 	                               const CGAL_Filtered_exact<CT,ET> &sx,
 	const CGAL_Filtered_exact<CT,ET> &sy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   CGAL_Comparison_result result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_cmp_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(sx.value),
-		CGAL_convert_to<IA>(sy.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		sx.interval(),
+		sy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_cmp_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(sx.value),
-		CGAL_convert_to<ET>(sy.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_larger_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -916,43 +884,40 @@ CGAL_has_larger_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &ry,
 	                                      const CGAL_Filtered_exact<CT,ET> &sx,
 	const CGAL_Filtered_exact<CT,ET> &sy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_larger_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(sx.value),
-		CGAL_convert_to<IA>(sy.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		sx.interval(),
+		sy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_larger_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(sx.value),
-		CGAL_convert_to<ET>(sy.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
   }
   return result;
 }
 
 template < class CT, class ET >
-// CGAL_KERNEL_LARGE_INLINE
+// CGAL_KERNEL_MEDIUM_INLINE
 bool
 CGAL_has_smaller_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &py,
@@ -962,43 +927,40 @@ CGAL_has_smaller_signed_dist_to_lineC2(const CGAL_Filtered_exact<CT,ET> &px,
 	const CGAL_Filtered_exact<CT,ET> &ry,
 	                                       const CGAL_Filtered_exact<CT,ET> &sx,
 	const CGAL_Filtered_exact<CT,ET> &sy)
-{ // This is the default filter (specialisation).
-
-  typedef CGAL_Interval_nt_advanced IA;
-
+{
   bool result;
   CGAL_FPU_set_rounding_to_infinity();
   try
   {
     result = CGAL_has_smaller_signed_dist_to_lineC2(
-		CGAL_convert_to<IA>(px.value),
-		CGAL_convert_to<IA>(py.value),
-		CGAL_convert_to<IA>(qx.value),
-		CGAL_convert_to<IA>(qy.value),
-		CGAL_convert_to<IA>(rx.value),
-		CGAL_convert_to<IA>(ry.value),
-		CGAL_convert_to<IA>(sx.value),
-		CGAL_convert_to<IA>(sy.value));
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		sx.interval(),
+		sy.interval());
     CGAL_FPU_set_rounding_to_nearest();
   } 
-  catch (IA::unsafe_comparison)
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
   {
     CGAL_FPU_set_rounding_to_nearest();
     result = CGAL_has_smaller_signed_dist_to_lineC2(
-		CGAL_convert_to<ET>(px.value),
-		CGAL_convert_to<ET>(py.value),
-		CGAL_convert_to<ET>(qx.value),
-		CGAL_convert_to<ET>(qy.value),
-		CGAL_convert_to<ET>(rx.value),
-		CGAL_convert_to<ET>(ry.value),
-		CGAL_convert_to<ET>(sx.value),
-		CGAL_convert_to<ET>(sy.value));
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
   }
   return result;
 }
 
-#ifdef CGAL_FILTER_H
-#include <CGAL/Filter/predicates_on_ftC2.h>
+#ifdef CGAL_ARITHMETIC_FILTER_H
+#include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
 #endif
 
 
