@@ -1,52 +1,20 @@
 // file : examples/Triangulation_2/colored_face.C
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
 
-/* A facet with a color member variable. */
-template < class Gt, class Fb = CGAL::Triangulation_face_base_2<Gt> >
-class My_face_base 
-  : public  Fb
-{
-  typedef Fb                                           Base;
-  typedef typename Fb::Triangulation_data_structure    TDS;
-public:
-  typedef Gt                               Geom_traits;
-  typedef TDS                              Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle      Vertex_handle;
-  typedef typename TDS::Face_handle        Face_handle;
+struct K : CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
 
-  template < typename TDS2 >
-  struct Rebind_TDS {
-    typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
-    typedef My_face_base<Gt,Fb2>                             Other;
-  };
-
-  CGAL::Color color;
-
-  My_face_base() : Base() {}
-
-  My_face_base(Vertex_handle v0, 
-	       Vertex_handle v1, 
-	       Vertex_handle v2) : Base(v0,v1,v2) {}
-
-  My_face_base(Vertex_handle v0, 
-	       Vertex_handle v1, 
-	       Vertex_handle v2,
-	       Face_handle n0, 
-	       Face_handle n1, 
-	       Face_handle n2) : Base(v0,v1,v2,n0,n1,n2) {}
-};
-
-typedef CGAL::Cartesian<double> Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
-typedef My_face_base<Gt> Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
-typedef CGAL::Triangulation_2<Gt,Tds> Triangulation;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<CGAL::Color,K> Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
+typedef CGAL::Triangulation_2<K,Tds> Triangulation;
 
 typedef Triangulation::Face_handle Face_handle;
 typedef Triangulation::Finite_faces_iterator Finite_faces_iterator;
-typedef Gt::Point_2  Point;
+typedef Triangulation::Point  Point;
 
 int main() {
   Triangulation t;
@@ -56,11 +24,11 @@ int main() {
   t.insert(Point(2,2));
  
   Finite_faces_iterator fc = t.finite_faces_begin();
-  for( ; fc != t.finite_faces_end(); ++fc)  fc->color = CGAL::BLUE;
+  for( ; fc != t.finite_faces_end(); ++fc)  fc->info() = CGAL::BLUE;
 
   Point p(0.5,0.5);
   Face_handle fh = t.locate(p);
-  fh->color = CGAL::RED;
+  fh->info() = CGAL::RED;
 
   return 0;
 }

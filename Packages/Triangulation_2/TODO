@@ -1,4 +1,7 @@
-
+- add demo and examples with the Kernels
+       Exact_predicates_exact_constructions_kernel
+       Exact_predicates_exact_constructions_kernel_with_sqrt
+       Exact_predicates_inexact_constructions_kernel
 - Vertex_with_info
 - find_conflict et al should return the Output Iterators
 - faire retourner  Edge au flip 2d

@@ -59,6 +59,7 @@ public:
   Triangulation_vertex_base_2(const Point & p) : Vb(), _p(p) {}
   Triangulation_vertex_base_2(const Point & p, Face_handle f)
     : Vb(f), _p(p) {}
+  Triangulation_vertex_base_2(Face_handle f) : Vb(f) {} 
 
   void set_point(const Point & p) { _p = p; }
   const Point&  point() const { return _p; }

@@ -7,7 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#CGAL_MAKEFILE =/u/papillon/0/prisme_util/CGAL/CGAL-2.4/make/makefile_i686_Linux-2.2.18_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,11 +14,10 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	   -I../../include\
+	   -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
-
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -37,6 +35,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                adding_handles$(EXE_EXT) \
                 colored_face$(EXE_EXT) \
                 constrained$(EXE_EXT) \
                 constrained_plus$(EXE_EXT) \
@@ -45,6 +44,9 @@ all:            \
                 terrain$(EXE_EXT) \
                 triangulation_prog1$(EXE_EXT) \
                 voronoi$(EXE_EXT) 
+
+adding_handles$(EXE_EXT): adding_handles$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)adding_handles adding_handles$(OBJ_EXT) $(LDFLAGS)
 
 colored_face$(EXE_EXT): colored_face$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)colored_face colored_face$(OBJ_EXT) $(LDFLAGS)
@@ -71,6 +73,7 @@ voronoi$(EXE_EXT): voronoi$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)voronoi voronoi$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   adding_handles.clean \
                    colored_face.clean \
                    constrained.clean \
                    constrained_plus.clean \
