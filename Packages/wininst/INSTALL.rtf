@@ -1,0 +1,66 @@
+{\rtf1\ansi\ansicpg1252\uc1 \deff0\deflang1033\deflangfe1036{\fonttbl{\f0\froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f2\fmodern\fcharset0\fprq1{\*\panose 02070309020205020404}Courier New;}
+{\f38\froman\fcharset238\fprq2 Times New Roman CE;}{\f39\froman\fcharset204\fprq2 Times New Roman Cyr;}{\f41\froman\fcharset161\fprq2 Times New Roman Greek;}{\f42\froman\fcharset162\fprq2 Times New Roman Tur;}
+{\f43\froman\fcharset186\fprq2 Times New Roman Baltic;}{\f50\fmodern\fcharset238\fprq1 Courier New CE;}{\f51\fmodern\fcharset204\fprq1 Courier New Cyr;}{\f53\fmodern\fcharset161\fprq1 Courier New Greek;}{\f54\fmodern\fcharset162\fprq1 Courier New Tur;}
+{\f55\fmodern\fcharset186\fprq1 Courier New Baltic;}}{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;
+\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;\red192\green192\blue192;}{\stylesheet{\nowidctlpar\widctlpar\adjustright \fs20\lang1036\cgrid 
+\snext0 Normal;}{\*\cs10 \additive Default Paragraph Font;}{\s15\nowidctlpar\widctlpar\adjustright \f2\fs20\lang1036\cgrid \sbasedon0 \snext15 Plain Text;}}{\info{\title $(CGAL_HOME)/INSTALL}{\author SEMIR}{\operator SEMIR}
+{\creatim\yr2002\mo5\dy13\hr15\min14}{\revtim\yr2002\mo5\dy13\hr15\min20}{\version4}{\edmins4}{\nofpages1}{\nofwords343}{\nofchars1958}{\*\company Ursu}{\nofcharsws0}{\vern73}}\paperw11906\paperh16838\margl1152\margr1152\margt1417\margb1417 
+\deftab708\widowctrl\ftnbj\aenddoc\hyphhotz425\hyphcaps0\formshade\viewkind4\viewscale100\pgbrdrhead\pgbrdrfoot \fet0\sectd \linex0\headery709\footery709\colsx709\endnhere\sectdefaultcl {\*\pnseclvl1\pnucrm\pnstart1\pnindent720\pnhang{\pntxta .}}
+{\*\pnseclvl2\pnucltr\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl3\pndec\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl4\pnlcltr\pnstart1\pnindent720\pnhang{\pntxta )}}{\*\pnseclvl5\pndec\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}
+{\*\pnseclvl6\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl7\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl8\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl9
+\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}\pard\plain \s15\nowidctlpar\widctlpar\adjustright \f2\fs20\lang1036\cgrid {\b\f0 $(CGAL_HOME)/INSTALL.win32
+\par }{\f0 This file describes how to install CGAL on MS Windows
+\par For installation on Unix and on Cygwin, please see INSTALL.
+\par 
+\par The documentation of CGAL is available in various formats (HTML, PostScript,
+\par PDF). It is not bundled with the software but can be downloaded separately.
+\par 
+\par For more information about CGAL, see the URL http://www.cgal.org/.
+\par 
+\par To install CGAL, you should:
+\par   - download the compressed archive file from the CGAL web site www.cgal.org
+\par   - Unpack and run setup.exe
+\par   - The setup will go through some steps, at the end you will have CGAL-2.4 
+\par     installed:
+\par \tab 1) The License Agreement
+\par \tab 2) The Destination Folder (we call it CGALROOT)
+\par \tab 3) Add the CGALROOT environment variable
+\par \tab 4) Install the CGAL files
+\par \tab 5) Reboot the System if you are running on Win95/98/Millenium
+\par 
+\par To uninstall CGAL you should go to Start->Control Panel->Add/Remove Programms, 
+\par Uninstall CGAL-2.4 or you go to Start->Programms->CGAL-2.4->Uninstall.
+\par      
+\par 
+\par We recommend that you first have a look at the Installation notes. 
+\par These are available in several formats. A PostScript file named
+\par installation.ps.gz can be found in the directory doc_ps.
+\par The HTML version is in doc_html/installation/main.html and 
+\par the PDF documentation is in the directory doc_pdf.
+\par 
+\par 
+\par }{\b\f0 Building the library
+\par }{\f0 The CGAL.lib is located in CGALROOT/lib/msvc6/CGAL.lib. It is buit using
+\par the MLd compiler option. If you want to rebuild the CGAL.lib you should go
+\par into the CGALROOT/src directory and open cgallib.dsp/cgallib.vcproj for 
+\par Msvc6/Msvc7. Then you build the opened project. The CGAL.lib from the lib 
+\par directory will be overwritten.
+\par 
+\par }{\b\f0 Building the examples
+\par }{\f0 In CGALROOT/examples there are directories for every example. In each 
+\par directory you will find two more directories called Vc6 and Vc7. In this
+\par directories are the projects for the example files. To build an example 
+\par you should open one of those projects and build it.
+\par 
+\par }{\b\f0 Building the demos
+\par }{\f0 In CGALROOT/demo there are directories for every CGAL demo. Each demo 
+\par directory contain two other directories called Vc6 and Vc7 containing the
+\par projects for the demo files. To build a demo you should open one of those
+\par projects and build it.
+\par 
+\par }{\b\f0 Running the examples and demos.
+\par }{\f0 The corresponding executable(s) then can be run as usual, from the
+\par command prompt, or via Explorer.
+\par 
+\par 
+\par }}
