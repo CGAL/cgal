@@ -88,14 +88,20 @@ struct CGAL_Filtered_exact
 
 
 // We forward the following functions to the CT value:
-// sqrt, CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign,
+// sqrt, CGAL_square, CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign,
 // CGAL_compare, CGAL_abs, CGAL_min, CGAL_max, CGAL_io_tag,
 // CGAL_number_type_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET>
-inline CGAL_Filtered_exact<CT,ET> sqrt (const CGAL_Filtered_exact<CT,ET>& fil)
+inline CGAL_Filtered_exact<CT,ET>
+sqrt (const CGAL_Filtered_exact<CT,ET>& fil)
 { return sqrt(fil.value); }
+
+template <class CT, class ET>
+inline CGAL_Filtered_exact<CT,ET>
+CGAL_square (const CGAL_Filtered_exact<CT,ET>& fil)
+{ return CGAL_square(fil.value); }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET>
