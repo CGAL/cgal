@@ -1098,57 +1098,83 @@ protected:  //private implementation
     }
   */
   
-  bool point_is_in(const Point& p, Halfedge_const_handle ne,
-		   const X_curve& ncv) const
-    // returns true if the points is inside the planar map.
+  // Determines if an input point is within the face incident
+  // to an input halfedge.
+  //
+  // p   - input point
+  // ne  - handle of input halfedge
+  // nvc - curve of input halfedge
+  //
+  // return value - true iff the above condition holds
+  //
+  // Implementation:
+  // Conceptually, we shoot a ray from p vertically upwards and count
+  // the number of pm-halfedges of the boundary of the face that intersect it.
+  // If this number is odd the point is inside the face. In practice, we 
+  // we use a check whether a curve is above or below a point.
+  //
+  bool point_is_in(const Point           & p, 
+                   Halfedge_const_handle   ne,
+                   const X_curve         & ncv) const
   {
+    // count stores the number of curves that intersect the upward vertical 
+    // ray shot from p (except for a degenerate case which is explained in 
+    // the code)
     int count = 0;
-    
-    //    Ccb_halfedge_const_circulator circ = nf->outer_ccb();
+
+    // 1. Find the first halfedge, whose curve is non-vertical, along
+    // the ccb that includes input halfedge ne.
     Ccb_halfedge_const_circulator circ = ne;
     do {
       ++circ;
-    } while (circ!=ne && traits->curve_is_vertical(circ->curve()));
-    if (circ==ne && traits->curve_is_vertical(ncv) )
+    } while ( circ != ne && traits->curve_is_vertical(circ->curve()) );
+
+    // If the whole ccb is vertical then there is no face, so point p
+    // cannot be in it
+    if ( circ == ne && traits->curve_is_vertical(ncv) )
       return false; 
-    //if the whole ccb is vertical then the point is out.
-    //else advance to a non vertical curve 
-    
+
+    // 2. Go over all curves of the ccb and count those which are above p.
     Ccb_halfedge_const_circulator last = circ;
-    
-    
     do {
+
+      // Put curve of current halfedge in circv.
       X_curve circv;
-      if (circ!=ne) { //not on the new halfedge (circ has a curve
+      // If not on the new halfedge circ definitely has a curve
+      if (circ != ne) 
+      { 
 	circv=circ->curve();
       }
-      else { //maybe doesn't have a curve yet (e.g in arrangement)
+      // o/w, circ might not have a curve yet (e.g in arrangement)
+      // so we take the input curve.
+      else { 
 	circv=ncv;
       }
-      
+
+      // If query point is vertex point on the outer ccb
       if (traits->point_is_same(circ->target()->point(), p)) 
-	//point is on outer ccb 
 	return false;
-      if (!traits->curve_is_vertical(circv)) {
-	
+
+      // If current curve is not vertical
+      if ( ! traits->curve_is_vertical(circv)) 
+      {
+	// If point is under current curve in the range (source,target] of it
 	if ( (traits->curve_get_point_status(circv,p) == 
 	      Traits::UNDER_CURVE) && 
-	     !(traits->point_is_same_x(circ->source()->point(),p)) ) {  
-	  //point is under curve in the range (source,target]
-	  
-	  if (traits->point_is_same_x(circ->target()->point(),p)) {
-	    //p is exactly under a vertex of the ccb - if next is not on the 
-	    //same side of the vertical line from p as circ is, 
-	    //we count one more intersection
-	    
-	    Ccb_halfedge_const_circulator next=circ;
+	     ! (traits->point_is_same_x(circ->source()->point(), p)) ) 
+	{  
+	  // If p is exactly under a vertex of the ccb 
+	  if (traits->point_is_same_x(circ->target()->point(), p)) 
+	  {
+	    // Put curve of next halfedge that is not vertical in nextcv
+	    Ccb_halfedge_const_circulator next = circ;
 	    ++next;
 	    X_curve nextcv;
-	    if (next!=ne) {
-	      nextcv=next->curve();
+	    if (next != ne) {
+	      nextcv = next->curve();
 	    }
 	    else {
-	      nextcv=ncv;
+	      nextcv = ncv;
 	    }
 	    if (traits->curve_is_vertical(nextcv)) {
 	      //advance to non-vertical edge
@@ -1163,25 +1189,27 @@ protected:  //private implementation
 		
 	      }
 	    }
+	    // If nextcv is on the same side of the vertical line
+	    // from p as circv is 
 	    if ( (traits->point_is_right(circ->source()->point(),p)&&
 		  traits->point_is_left(next->target()->point(),p)) ||
 		 (traits->point_is_left(circ->source()->point(),p)&&
 		  traits->point_is_right(next->target()->point(),p)) ) {
-	      
+	      // then we raise the count
 	      ++count;
 	    }
 	  }
-	  else {
+	  else 
+	  {
+	    // o/w, point p is under the interior of the current curve
+	    // so we raise the count
 	    ++count;
 	  }
 	}
-      }
-      
-      
-    } while (++circ!=last);
+      } // If current curve is not vertical
+    } while (++circ != last);
     
     return (count%2 != 0);  //if count is odd return true
-    
   }
   
   
