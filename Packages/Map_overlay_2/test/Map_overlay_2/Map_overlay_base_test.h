@@ -2,20 +2,17 @@
 #define  MAP_OVERLAY_BASE_TEST
 
 #include <CGAL/Cartesian.h>
-//#include <CGAL/Arr_2_bases.h>
-//#include <CGAL/Arr_2_default_dcel.h>
-#include <fstream>
 
-//#ifndef CGAL_PLANAR_MAP_2
-//#include <CGAL/Planar_map_2.h>
-//#endif
+#ifndef CGAL_PLANAR_MAP_2
+#include <CGAL/Planar_map_2.h>
+#endif
 
 #ifndef CGAL_ARR_2_OVERLAY_DCEL_H
 #include <CGAL/Map_overlay_default_dcel.h>
 #endif
 
-#ifndef CGAL_MAP_OVERLAY_POST_PROC_NOTIFIER_H
-#include <CGAL/Map_overlay_post_proc_notifier.h>
+#ifndef CGAL_MAP_OVERLAY_DEFAULTNOTIFIER_H
+#include <CGAL/Map_overlay_default_notifier.h>
 #endif
 
 #ifndef CGAL_MAP_OVERLAY_H
@@ -24,19 +21,16 @@
  
 //#include <CGAL/Arrangement_2.h>
 
-#include <CGAL/sweep_to_construct_planar_map.h>
-
-//for debugging
-#include <CGAL/IO/Pm_file_writer.h>
+#include <CGAL/sweep_to_construct_planar_map_2.h>
 
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
-#include <CGAL/Quotient.h> 
+//#include <CGAL/Quotient.h> 
 
 #include <list>
 #include <string>
-
+#include <fstream>
 
 // we use the namespace std for compatability with MSVC
 
@@ -50,31 +44,36 @@ protected:
   typedef typename Traits::X_curve                               X_curve;
   typedef typename Traits::Curve                                 Curve;
   
-  typedef CGAL::Map_overlay_default_dcel<Traits>                Dcel;
+  //typedef CGAL::Map_overlay_default_dcel<Traits>                Dcel;
+  //typedef CGAL::Planar_map_2<Dcel, Traits>                      PM;
   
-  typedef CGAL::Planar_map_2<Dcel, Traits>                      PM;
+  typedef typename Subdivision::Vertex                             Vertex;
+  typedef typename Subdivision::Face                               Face;
+  typedef typename Subdivision::Halfedge                           Halfedge;
+  typedef typename Subdivision::Vertex_handle                      Vertex_handle;
+  typedef typename Subdivision::Halfedge_handle                    Halfedge_handle;
+  typedef typename Subdivision::Face_handle                        Face_handle;
+  typedef typename Subdivision::Vertex_const_handle                Vertex_const_handle;
+  typedef typename Subdivision::Halfedge_const_handle              Halfedge_const_handle;
+  typedef typename Subdivision::Face_const_handle                  Face_const_handle;
+  typedef typename Subdivision::Vertex_iterator                    Vertex_iterator;
+  typedef typename Subdivision::Vertex_const_iterator              Vertex_const_iterator;
+  typedef typename Subdivision::Halfedge_iterator                  Halfedge_iterator;
+  typedef typename Subdivision::Halfedge_const_iterator          Halfedge_const_iterator;
+  typedef typename Subdivision::Face_iterator                      Face_iterator;
+  typedef typename Subdivision::Face_const_iterator                Face_const_iterator;
+  typedef typename Subdivision::Ccb_halfedge_circulator          Ccb_halfedge_circulator;
+  typedef typename Subdivision::Ccb_halfedge_const_circulator  
+                                                          Ccb_halfedge_const_circulator;
+  typedef typename Subdivision::Halfedge_around_vertex_const_circulator  
+                                                    Halfedge_around_vertex_const_circulator;
+ 
+  typedef typename Subdivision::Holes_iterator                    Holes_iterator;
+  typedef typename Subdivision::Holes_const_iterator              Holes_const_iterator;
+  typedef typename Subdivision::Locate_type                       Locate_type;
+  typedef typename Subdivision::Traits_wrap                       Traits_wrap;
   
-  typedef typename Subdivision::Vertex                                     Vertex;
-  typedef typename Subdivision::Face                                       Face;
-  typedef typename Subdivision::Halfedge                                   Halfedge;
-  typedef typename Subdivision::Vertex_handle                              Vertex_handle;
-  typedef typename Subdivision::Halfedge_handle                            Halfedge_handle;
-  typedef typename Subdivision::Face_handle                                Face_handle;
-  typedef typename Subdivision::Vertex_const_handle                        Vertex_const_handle;
-  typedef typename Subdivision::Halfedge_const_handle                      Halfedge_const_handle;
-  typedef typename Subdivision::Face_const_handle                          Face_const_handle;
-  typedef typename Subdivision::Vertex_iterator                            Vertex_iterator;
-  typedef typename Subdivision::Vertex_const_iterator                      Vertex_const_iterator;
-  typedef typename Subdivision::Halfedge_iterator                          Halfedge_iterator;
-  typedef typename Subdivision::Halfedge_const_iterator                    Halfedge_const_iterator;
-  typedef typename Subdivision::Face_iterator                              Face_iterator;
-  typedef typename Subdivision::Face_const_iterator                        Face_const_iterator;
-  typedef typename Subdivision::Ccb_halfedge_circulator                    Ccb_halfedge_circulator;
-  typedef typename Subdivision::Ccb_halfedge_const_circulator              Ccb_halfedge_const_circulator;
-  typedef typename Subdivision::Holes_iterator                             Holes_iterator;
-  typedef typename Subdivision::Holes_const_iterator                       Holes_const_iterator;
-  typedef typename Subdivision::Locate_type                                Locate_type;
-  typedef typename Subdivision::Traits_wrap                                Traits_wrap;
+  typedef typename Subdivision::Planar_map                        Planar_map;
   
   //typedef CGAL::Arr_base_node<Curve>                     Base_node;
   //typedef CGAL::Map_overlay_default_dcel<Traits, 
@@ -86,16 +85,17 @@ protected:
   
   //typedef Arrangement::Halfedge_iterator                        Arr_halfedge_iterator;
   
-  typedef CGAL::Pm_naive_point_location<Subdivision>                       PmNaivePL;
-  typedef CGAL::Pm_walk_along_line_point_location<Subdivision>             PmWalkPL;
+  typedef CGAL::Pm_naive_point_location<Planar_map>                    PmNaivePL;
+  typedef CGAL::Pm_walk_along_line_point_location<Planar_map>           PmWalkPL;
   
-  typedef CGAL::Map_overlay_post_proc_notifier<Subdivision>                MapOverlay_change_notification;
+  typedef CGAL::Map_overlay_default_notifier<Planar_map> 
+                                                   MapOverlay_change_notification;
   typedef CGAL::Map_overlay<Subdivision,MapOverlay_change_notification>    MapOverlay; 
   
   //MapOverlay  map_overlay;  
   std::map<const void*, Vertex_const_handle>    vertices;
   std::map<const void*, Halfedge_const_handle>  halfedges;
-  // std::map<void*, Face_handle>      faces;
+  std::map<const void*, Face_const_handle>      faces;
   
 public:
   Map_overlay_base_test() {}
@@ -144,13 +144,39 @@ protected:
       return p2;
   }
 
+  const Point& rightmost(const Point &p1, const Point &p2) const
+  { 
+    CGAL::Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
+    
+    if (rx == CGAL::LARGER)
+      return p1;
+    else
+      return p2;
+  }
+  
+  Point find_rightmost_intersection(const Curve& cv1, 
+                                    const Curve& cv2, 
+                                    const Point& point) const
+  {
+    Traits traits;
+    
+    Point xp1, xp2, p=point;
+    while (traits.nearest_intersection_to_right(cv1, cv2, p, xp1, xp2)){
+      p = xp2;  // if there is no overlap - put xp1, else put xp2.
+    }
+
+    return xp2;
+  }
+  
   template <class Container>
-  void find_intersections(const Curve& cv1, const Curve& cv2, Container& points)
+  void find_intersections(const Curve& cv1, 
+                          const Curve& cv2, 
+                          Container& points)
   {
     Traits  traits;
     
     Point p = leftmost(leftmost(traits.curve_source(cv1),traits.curve_target(cv1)), 
-                        leftmost(traits.curve_source(cv2),traits.curve_target(cv2)));
+                       leftmost(traits.curve_source(cv2),traits.curve_target(cv2)));
     
     //cout<<"p="<<p<<endl;
     
@@ -165,7 +191,7 @@ protected:
     }
   }
 
-  void read_file_build_creator(std::ifstream& file, Subdivision& pm)
+  void read_file_build_creator(std::ifstream& file, Planar_map& pm)
   {
     Curve curr_curve;
     std::list<Curve> curves;
@@ -176,6 +202,8 @@ protected:
     // read number of curves
     unsigned int num_curves = get_next_int(file);
     
+    cout<<"num_curves="<<num_curves<<endl;
+    
     // read curves (test specific)
     while (num_curves--) {
       curr_curve = read_curve(file);
@@ -184,7 +212,8 @@ protected:
 	//arr.insert(curr_curve);
     }
 
-    sweep_to_construct_planar_map(curves.begin(),curves.end(), pm);
+    Traits traits;
+    sweep_to_construct_planar_map_2(curves.begin(),curves.end(), traits, pm);
   }
 
   /**********************************************************
@@ -234,7 +263,8 @@ protected:
         std::list<Point>  points;
         find_intersections(h_iter1->curve(), h_iter2->curve(), points);
         
-        for (std::list<Point>::iterator p_iter = points.begin(); p_iter != points.end(); ++p_iter){
+        for (std::list<Point>::iterator p_iter = points.begin(); 
+             p_iter != points.end(); ++p_iter){
           Locate_type lt;
           Halfedge_const_handle  h=map_overlay.subdivision().locate(*p_iter, lt);
           CGAL_assertion(lt == Subdivision::VERTEX);
@@ -254,6 +284,103 @@ protected:
                                                 const Subdivision& pm2, 
                                                 const MapOverlay& map_overlay)
   {
+    check_that_halfedges_are_in_map_overlay(pm1,map_overlay);
+    check_that_halfedges_are_in_map_overlay(pm2,map_overlay);
+
+    cout<<"Check_that_halfedges_are_in_map_overlay -- passed"<<endl;
+  }
+  
+  void  check_that_halfedges_are_in_map_overlay(const Subdivision& pm, 
+                                                const MapOverlay& map_overlay)
+  {
+    Traits traits;
+    
+    for (Halfedge_const_iterator h_iter = pm.halfedges_begin();
+         h_iter != pm.halfedges_end(); ++h_iter, ++h_iter){
+      // At each iteration we move on consecutive intersection points 
+      // on h_iter->curve() from left to right.
+      
+#ifdef OVL_DEBUG_TEST
+      cout<<"walking along "<<h_iter->curve() << endl;
+#endif
+      
+      Point s = leftmost(h_iter->source()->point(),h_iter->target()->point());
+      Point t = rightmost(h_iter->source()->point(),h_iter->target()->point());
+      
+      bool finish_traversal = false;
+      
+      while (!finish_traversal){
+        Locate_type lt;
+        Halfedge_const_handle  h = 
+          map_overlay.subdivision().locate(s,lt);
+        
+        CGAL_assertion(lt == Subdivision::VERTEX);
+        
+        Vertex_const_handle vertex = (h->source()->point() == s) ?
+          h->source() : h->target();
+        
+        Halfedge_around_vertex_const_circulator  halfedge=vertex->incident_halfedges();
+        
+        // finding the halfdge in the overlay corresponding to the
+        // original halfedge h_iter.
+        
+#ifdef OVL_DEBUG_TEST
+        cout<<"--- vertex is "<<vertex->point()<<endl;
+#endif
+        do {
+#ifdef OVL_DEBUG_TEST
+          cout<<"walking around vertex: "<< halfedge->curve() <<endl;
+#endif
+          // finding the first halfedge which is part of h_iter->curve() and 
+          // continues from the right of vertex->point().
+          if (CGAL::compare_lexicographically_xy(
+                            rightmost(halfedge->source()->point(),
+                                      halfedge->target()->point()), 
+                            vertex->point()) == CGAL::LARGER && 
+              traits.curves_overlap(halfedge->curve(), h_iter->curve()))
+            break;
+        } while (++halfedge != vertex->incident_halfedges());
+        
+#ifdef OVL_DEBUG_TEST
+          cout<<"After walking around vertex, halfedge is "<< halfedge->curve() <<endl;
+#endif  
+          CGAL_assertion(CGAL::compare_lexicographically_xy(
+                               rightmost(halfedge->source()->point(),
+                                         halfedge->target()->point()), 
+                               vertex->point()) == CGAL::LARGER &&
+                         traits.curves_overlap(halfedge->curve(), h_iter->curve()));
+        
+        halfedges[halfedge.operator->()] = halfedge;          // marking the corresponding
+        halfedges[halfedge->twin().operator->()] = halfedge->twin();  // halfedge from the overlay.
+        
+        Point p1,p2;  // the intersection points: p1=s and p2 is the next intersection 
+                      // point on h_iter->curve();
+        CGAL_assertion(traits.nearest_intersection_to_right(halfedge->curve(),
+                                                            h_iter->curve(),s,p1,p2));
+       
+#ifdef OVL_DEBUG_TEST
+        cout<<"p1 and p2  "<<p1<<" "<<p2<<endl; 
+        cout<<"rightmost(p1,p2) "<<rightmost(p1,p2)<<endl;
+        cout<<"leftmost(p1,p2) "<<leftmost(p1,p2)<<endl;
+        cout<<"s and t are "<< s <<" "<<t <<endl;
+#endif
+        
+        //       CGAL_assertion(p1 == s);
+        
+        Point next_point = find_rightmost_intersection(halfedge->curve(),
+                                                       h_iter->curve(), s);
+
+        
+        // Here we assume that h_iter->curve() is x-monotone due to the fact
+        // it is a part of Planar map.
+        CGAL_assertion(CGAL::compare_lexicographically_xy(s,next_point) == CGAL::SMALLER);
+      
+        if (next_point == t)  // reaching the right endpoint of h_iter->curve().
+          finish_traversal=true;
+        else
+          s = next_point; //rightmost(p1,p2);
+      }
+    }
   }
 
   void  check_that_faces_are_in_map_overlay(const MapOverlay& map_overlay)
@@ -270,6 +397,9 @@ protected:
       
       Face_const_handle  face_creator1 = notifier->get_first_face_above(f_iter);
       Face_const_handle  face_creator2 = notifier->get_second_face_above(f_iter);
+      
+      faces[face_creator1.operator->()] = face_creator1;
+      faces[face_creator2.operator->()] = face_creator2;
       
       //cout<<"face_creator1"<<endl;
       //write_face(face_creator1);
@@ -305,8 +435,8 @@ protected:
           //cout<<"notifier->get_second_face_above(hole_halfedge)"<<endl;
           //write_face(notifier->get_second_face_above(face_halfedge));
           
-          CGAL_assertion(notifier->get_first_face_above(face_halfedge) == face_creator1);
-          CGAL_assertion(notifier->get_second_face_above(face_halfedge) == face_creator2);
+          CGAL_assertion(notifier->get_first_face_above(face_halfedge)==face_creator1);
+          CGAL_assertion(notifier->get_second_face_above(face_halfedge)==face_creator2);
           // a queue to hold all faces involed with hit.
         } while (++face_halfedge != f_iter->outer_ccb());
       }
@@ -315,17 +445,30 @@ protected:
     cout<<"Check_that_faces_are_in_map_overlay -- passed"<<endl;
   }
 
-  void  check_all_freatures_are_marked(const MapOverlay& map_overlay)
+  void  check_all_features_are_marked(const MapOverlay& map_overlay)
   {
+    // Checking vertices.
     for (Vertex_const_iterator v_iter = map_overlay.subdivision().vertices_begin();
          v_iter != map_overlay.subdivision().vertices_end(); ++v_iter)
       CGAL_assertion(vertices.find(&*v_iter) != vertices.end());
 
-    //for (Halfedge_const_iterator h_iter = map_overlay.subdivision().halfedges_begin();
-    //     h_iter != map_overlay.subdivision().halfedges_end(); ++h_iter)
-    //  CGAL_assertion(halfedges.find(&*h_iter) != halfedges.end());
-    
-    cout<<"check_all_freatures_are_marked -- passed"<<endl;
+    // Checking halfedges.
+    for (Halfedge_const_iterator h_iter = map_overlay.subdivision().halfedges_begin();
+         h_iter != map_overlay.subdivision().halfedges_end(); ++h_iter){
+      CGAL_assertion(halfedges.find(&*h_iter) != halfedges.end());
+    }
+
+    // Checking faces of creators.
+    Face_const_iterator f_iter;
+    for (f_iter = map_overlay.first_creator()->subdivision().faces_begin();
+         f_iter != map_overlay.first_creator()->subdivision().faces_end(); ++f_iter)
+      CGAL_assertion(faces.find(&*f_iter) != faces.end());
+
+    for (f_iter = map_overlay.second_creator()->subdivision().faces_begin();
+         f_iter != map_overlay.second_creator()->subdivision().faces_end(); ++f_iter)
+      CGAL_assertion(faces.find(&*f_iter) != faces.end());
+
+    cout<<"check_all_features_are_marked -- passed"<<endl;
   }
 
   /**** debugging ***
@@ -362,30 +505,33 @@ protected:
   /****************************
    * Class Interface
    ****************************/
+  
 public:
-  void start(char * filename1, char * filename2, 
-             CGAL::Map_overlay_base<Subdivision,MapOverlay_change_notification>* ovl_alg=0)
+  void start(char * filename,
+             CGAL::Map_overlay_base<Subdivision,MapOverlay_change_notification>* ovl_alg)
   {
     // Read data from file. Build Arrangement.
-    std::ifstream file1(filename1);
-    std::ifstream file2(filename2);
+    std::ifstream file(filename);
       
-    PmWalkPL pl_walk1, pl_walk2;
-    Subdivision   pm1(&pl_walk1), pm2(&pl_walk2);
+    PmWalkPL     pl_walk1, pl_walk2;
+    Planar_map   pm1(&pl_walk1), pm2(&pl_walk2);
     
-    read_file_build_creator(file1, pm1);
-    read_file_build_creator(file2, pm2);
+    read_file_build_creator(file, pm1);
+    read_file_build_creator(file, pm2);
     
-    //MapOverlay first_creator(pm1);
-    //MapOverlay second_creator(pm2);
+    Subdivision  subdivision1(pm1), subdivision2(pm2);
+    MapOverlay   first_creator(subdivision1, ovl_alg);
+    MapOverlay   second_creator(subdivision2, ovl_alg);
     
     PmWalkPL pl_walk_ovl;
-    MapOverlay map_overlay(&pl_walk_ovl);
+    //MapOverlay map_overlay(&pl_walk_ovl);
+    //Subdivision pmwx1(pm1), pmwx2(pm2);
     
-    if (ovl_alg)
-      map_overlay = MapOverlay(pm1, pm2, ovl_alg);
-    else
-      map_overlay = MapOverlay(pm1, pm2);
+    //if (ovl_alg)
+    MapOverlay map_overlay(first_creator, second_creator, &pl_walk_ovl, ovl_alg);
+    
+    //else
+      //map_overlay = MapOverlay(pmwx1, pmwx2);
     // DEBUG
     //print_vertices(arr);
 
@@ -400,36 +546,57 @@ public:
     CGAL_assertion(map_overlay.subdivision().is_valid());
     
     // Check that input vertices are indeed in the map overlay
-    check_that_vertices_are_in_map_overlay(pm1, pm2, map_overlay);
+    check_that_vertices_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
     
      // Check that intersections vertices are indeed in the map overlay
-    check_that_intersections_are_in_map_overlay(pm1, pm2, map_overlay);
+    check_that_intersections_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
 
     // Check that halfedges are indeed in the map overlay.
-    //    check_that_halfedges_are_in_map_overlay(pm1, pm2, map_overlay);
+    check_that_halfedges_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
     
     // Check that faces are indeed in the map overlay.
     check_that_faces_are_in_map_overlay(map_overlay); 
 
-    check_all_freatures_are_marked(map_overlay);
+    check_all_features_are_marked(map_overlay);
   }  
- 
+
+  void start(char * filename)
+  {
+    // Read data from file. Build Arrangement.
+    std::ifstream file(filename);
+      
+    PmWalkPL     pl_walk1, pl_walk2;
+    Planar_map   pm1(&pl_walk1), pm2(&pl_walk2);
+    
+    read_file_build_creator(file, pm1);
+    read_file_build_creator(file, pm2);
+    
+    Subdivision  subdivision1(pm1), subdivision2(pm2);
+    MapOverlay   first_creator(subdivision1);
+    MapOverlay   second_creator(subdivision2);
+    
+    PmWalkPL pl_walk_ovl;
+    MapOverlay map_overlay(first_creator, second_creator, &pl_walk_ovl);
+    
+    
+    // Check validity of arrangement after insertion
+    CGAL_assertion(map_overlay.subdivision().is_valid());
+    
+    // Check that input vertices are indeed in the map overlay
+    check_that_vertices_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
+    
+     // Check that intersections vertices are indeed in the map overlay
+    check_that_intersections_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
+
+    // Check that halfedges are indeed in the map overlay.
+    check_that_halfedges_are_in_map_overlay(subdivision1, subdivision2, map_overlay);
+    
+    // Check that faces are indeed in the map overlay.
+    check_that_faces_are_in_map_overlay(map_overlay); 
+
+    check_all_features_are_marked(map_overlay);
+  }  
 };
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
