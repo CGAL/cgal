@@ -101,9 +101,9 @@ struct Static_Filtered_lexicographical_sign_2
   }
 
   static Sign epsilon_variant(
-          const Restricted_double &a,
-          const Restricted_double &b,
-          const double & epsilon_0)
+          const Restricted_double &,
+          const Restricted_double &,
+          const double &)
   {
     // Not finished.
     throw Restricted_double::unsafe_comparison();
