@@ -785,22 +785,23 @@
     \par{\it #1}: }
 
 
+% reference page headings in the recommended order
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
-\newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concept}}
 \newcommand{\ccInheritsFrom   }{\ccHeading{Inherits From}}
-\newcommand{\ccRequirements   }{\ccHeading{Requirements}}
-\newcommand{\ccParameters     }{\ccHeading{Parameters}}
-\newcommand{\ccConstants      }{\ccHeading{Constants}}
-\newcommand{\ccTypes          }{\ccHeading{Types}}
-\newcommand{\ccCreation       }{\ccHeading{Creation}}
-\newcommand{\ccOperations     }{\ccHeading{Operations}}
-\newcommand{\ccQueryFunctions }{\ccHeading{Query Functions}}
-\newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
-\newcommand{\ccPredicates     }{\ccHeading{Predicates}}
-\newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccHasModels      }{\ccHeading{Has Models}}
+\newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concept}}
 \newcommand{\ccGeneralizes    }{\ccHeading{Generalizes}}
 \newcommand{\ccRefines        }{\ccHeading{Refines}}
+\newcommand{\ccRequirements   }{\ccHeading{Requirements}}
+\newcommand{\ccParameters     }{\ccHeading{Parameters}}
+\newcommand{\ccTypes          }{\ccHeading{Types}}
+\newcommand{\ccConstants      }{\ccHeading{Constants}}
+\newcommand{\ccCreation       }{\ccHeading{Creation}}
+\newcommand{\ccOperations     }{\ccHeading{Operations}}
+\newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
+\newcommand{\ccQueryFunctions }{\ccHeading{Query Functions}}
+\newcommand{\ccPredicates     }{\ccHeading{Predicates}}
+\newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
 \newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
@@ -1153,9 +1154,9 @@
 \newcommand{\ccRefConceptPage}{\begingroup\ccCatcode\ccRefConceptPageX}
 \def\ccRefConceptPageX #1{\endgroup%
    \ifnum\ccRefPageNumAtMargin=\ccTrue
-      \ccPrintTokens #1\ccEnd\ccEndFont \ccRefPageFill \ccRefPage{#1}
+      \ccPrintTokens #1\ccEnd\ccEndFont \ccRefPageFill \ccRefPage{#1}%
    \else
-      \ccPrintTokens #1\ccEnd\ccEndFont\ (pg. \pageref{ccRef_#1})
+      \ccPrintTokens #1\ccEnd\ccEndFont\ (pg. \pageref{ccRef_#1})%
    \fi
 }
 

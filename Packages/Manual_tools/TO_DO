@@ -1,7 +1,7 @@
 Manual_tools/TO_DO
 ==================
 
--- Macro to detect CGAL packages collected in a module
+-- detect and layout long template parameter lists
 
 -- Documentation
 
