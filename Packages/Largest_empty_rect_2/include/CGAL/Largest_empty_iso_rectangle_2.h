@@ -99,7 +99,7 @@ private:
 
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) {
-    Comparison_result c = geom_traits().compare_yx_2_object()(a->p, b->p);
+    Comparison_result c = geom_traits().compare_y_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
@@ -344,6 +344,10 @@ template<class T>
 void Largest_empty_iso_rectangle_2<T>::
   copy_memory(const Largest_empty_iso_rectangle_2<T>& ler)
 {
+  // copy bounding box
+  bl_p = ler.bl_p;
+  tr_p = ler.tr_p;
+
     // copy points
   for(Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
         iter != ler.x_sorted.end();
@@ -352,11 +356,7 @@ void Largest_empty_iso_rectangle_2<T>::
 	insert((*iter)->p);
       else
 	insert((*iter)->p,(*iter)->type);
-    }
-
-    // copy bounding box
-    bl_p = ler.bl_p;
-    tr_p = ler.tr_p;
+  }
 }
 
 template<class T>
@@ -366,6 +366,8 @@ Largest_empty_iso_rectangle_2<T>::operator =(
 {
   if(this != &ler) {
     free_memory();
+
+    cerr << "operator = calling copy_memory\n";
     copy_memory(ler);
   }
 
@@ -380,6 +382,7 @@ Largest_empty_iso_rectangle_2(
   x_sorted(Less_xy(geom_traits())),
   y_sorted(Less_yx(geom_traits()))
 {
+  cerr << "cctor = calling copy_memory\n";
   copy_memory(ler);
 }
 
