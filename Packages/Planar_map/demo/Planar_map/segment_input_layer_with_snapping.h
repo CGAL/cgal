@@ -32,7 +32,7 @@ private:
   std::list<Curve>              *curveslist;
   Planar_map                    *pm;
   //true if the user selected the first vertex
-  Point                         old_point;
+  Point_2                       old_point;
   QCursor                       cursor;
 public:
   typedef typename R::Segment_2	Segment;

@@ -14,7 +14,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel>       Traits;
 
-typedef Traits::Point_2                         Point;
+typedef Traits::Point_2                         Point_2;
 typedef Traits::X_monotone_curve_2              Curve;
 
 typedef CGAL::Pm_default_dcel<Traits>           Dcel;
