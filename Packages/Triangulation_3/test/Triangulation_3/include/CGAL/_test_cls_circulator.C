@@ -123,7 +123,7 @@ _test_circulator( const Triangulation &T )
       do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
 	fc++; n++;
       } while (fc != fc0);
     }
@@ -134,7 +134,7 @@ _test_circulator( const Triangulation &T )
       do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
 	fc--; n++;
       } while (fc != fc0);
     }
@@ -150,7 +150,7 @@ _test_circulator( const Triangulation &T )
         do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
    	  fc++; n++;
         } while (fc != fc0);
 //       }
@@ -164,7 +164,7 @@ _test_circulator( const Triangulation &T )
       do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
 	fc--; n++;
       } while (fc != fc0);
     }
@@ -175,12 +175,12 @@ _test_circulator( const Triangulation &T )
 //        {
 // 	if (t.dimension()==2) {fi=3;}
         fc0=fc=T.incident_facets(*eit,std::make_pair( (*eit).first,
-				 (int) T.nextposaround((*eit).second,
-						       (*eit).third)) );
+					T.nextposaround((*eit).second,
+							(*eit).third)) );
         do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
    	  fc++; n++;
         } while (fc != fc0);
 //       }
@@ -190,12 +190,12 @@ _test_circulator( const Triangulation &T )
     {
      fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
 			      std::make_pair( (*eit).first,
-			      (int) T.nextposaround((*eit).second,
-						    (*eit).third)) );
+			       T.nextposaround((*eit).second,
+					       (*eit).third)) );
       do {
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
 	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
-	assert( (*fc).second == (int) T.nextposaround(i,j) );
+	assert( (*fc).second == T.nextposaround(i,j) );
 	fc--; n++;
       } while (fc != fc0);
     }
