@@ -152,7 +152,6 @@ public:
 
   typedef typename CK::Rep_tag          Rep_tag;
 
-
 private:
   typedef typename CK_traits::Construct_svd_vertex_2
   CK_Construct_svd_vertex_2;
@@ -331,9 +330,15 @@ public:
 		     FK_Is_degenerate_edge_2, C2E, C2F>
   Is_degenerate_edge_2;
 
+private:
   typedef
   Filtered_predicate<EK_Arrangement_type_2, FK_Arrangement_type_2, C2E, C2F>
-  Arrangement_type_2;
+  Arrangement_type_2_base;
+
+public:
+  struct Arrangement_type_2
+    : public Arrangement_type_2_base, public CGALi::Svd_arrangement_enum
+  {};
 
   typedef
   Filtered_predicate<EK_Oriented_side_2, FK_Oriented_side_2, C2E, C2F>
