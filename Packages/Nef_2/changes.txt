@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+01 June 2004 Radu Ursu
+- updated QPL header in Nef_polynomial.h
+
 17 May 2004 Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
   the Mac version of Qt
