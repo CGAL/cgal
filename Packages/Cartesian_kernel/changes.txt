@@ -1,4 +1,4 @@
-Version 6.99 (18 September 2003)
+Version 6.100 (18 September 2003)
 - New headers.
 
 Version 6.98 (17 September 2003)

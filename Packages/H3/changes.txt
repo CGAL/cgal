@@ -1,3 +1,6 @@
+2.66 (18 September 2003)
+- New headers
+
 2.65 (8 August 2003)
 - Simplify default constructors to have better optimization.
 

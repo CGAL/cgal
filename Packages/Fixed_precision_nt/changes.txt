@@ -1,3 +1,6 @@
+2.40 (18 September 2003)
+- New headers.
+
 2.39 (25 July 2003)
 - Remove demo (uses LEDA window and is useless).
 
