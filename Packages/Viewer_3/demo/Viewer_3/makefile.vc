@@ -58,11 +58,11 @@ LDFLAGS =   $(CGAL_LDFLAGS) $(FLTK_LIBPATH) $(PTHREAD_LIBPATH) $(FLTK_LIBS)
 #---------------------------------------------------------------------#
 
 
-demo$(EXE_EXT): main$(OBJ_EXT) 
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo $(OFILES) main$(OBJ_EXT) $(LDFLAGS)
+demo$(EXE_EXT): demo$(OBJ_EXT) 
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo $(OFILES) demo$(OBJ_EXT) $(LDFLAGS)
 
-facet$(EXE_EXT): facet_obj$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)facet $(OFILES) facet_obj$(OBJ_EXT) $(LDFLAGS)
+facet_obj$(EXE_EXT): facet_obj$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)facet_obj $(OFILES) facet_obj$(OBJ_EXT) $(LDFLAGS)
 
 
 tetra1$(EXE_EXT): tetra1$(OBJ_EXT)
@@ -104,12 +104,11 @@ all: tetra3$(EXE_EXT) terrain$(EXE_EXT) stream_ex$(EXE_EXT)
 
 clean: \
 	demo.clean \
-	facet.clean \
+	facet_obj.clean \
 	tetra1.clean \
 	tetra2.clean \
 	tetra3.clean \
 	terrain.clean \
-	testter.clean \
 	stream_ex.clean
 
 distclean: clean
