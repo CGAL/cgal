@@ -11,12 +11,12 @@
 // release       : 
 // release_date  : 1999, October 13
 //
-// file          : include/CGAL/Arr_segment_traits_2.h
+// file          : include/CGAL/Arr_segment_debug_traits_2.h
 // package       : arr (1.03)
 // source        :
 // revision      :
 // revision_date :
-// author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
+// author(s)     : Eran Leiserowitz <leiserow@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin)
