@@ -65,6 +65,13 @@ enum  Comparison_result
         LARGER
       };
 
+enum  Angle
+      {
+	  OBTUSE = -1,
+	  RIGHT,
+	  ACUTE
+      };
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/functions_on_enums.h>

@@ -190,6 +190,7 @@ left_of_line_2_object(const Point_2& p, const Point_2& q) const  // XXX XXX
 { return Left_of_line_2(p,q); }
 
 
+typedef CGALi::p_Angle                             Angle_2;
 typedef CGALi::Collinear                           Collinear_2;
 typedef CGAL ::p_Orientation<Point_2>              Orientation_2;
 typedef CGALi::Side_of_oriented_circle             Side_of_oriented_circle_2;
@@ -213,6 +214,7 @@ typedef CGALi::Collinear_are_ordered_along_line
 typedef CGALi::Collinear_are_strictly_ordered_along_line 
                                    Collinear_are_strictly_ordered_along_line_2;
 
+CGAL_Kernel_obj(Angle_2, angle_2_object)
 CGAL_Kernel_obj(Collinear_2, collinear_2_object)
 CGAL_Kernel_obj(Orientation_2, orientation_2_object)
 CGAL_Kernel_obj(Side_of_oriented_circle_2, side_of_oriented_circle_2_object)
@@ -384,6 +386,7 @@ compare_distance_to_point_3_object(const Point_3& p) const
 { return Compare_distance_to_point_3(p); }
 
 
+typedef CGALi::p_Angle                                 Angle_3;
 typedef CGALi::Collinear                               Collinear_3;
 typedef CGALi::Coplanar                                Coplanar_3 ;
 typedef CGALi::Coplanar_orientation                    Coplanar_orientation_3;
@@ -408,6 +411,7 @@ typedef CGALi::Collinear_are_strictly_ordered_along_line
 typedef CGALi::Side_of_oriented_sphere      Side_of_oriented_sphere_3;
 typedef CGALi::Side_of_bounded_sphere        Side_of_bounded_sphere_3;
 
+CGAL_Kernel_obj(Angle_3, angle_3_object)
 CGAL_Kernel_obj(Collinear_3, collinear_3_object)
 CGAL_Kernel_obj(Coplanar_3, coplanar_3_object)
 CGAL_Kernel_obj(Coplanar_orientation_3, coplanar_orientation_3_object)

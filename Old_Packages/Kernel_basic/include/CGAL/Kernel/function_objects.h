@@ -378,6 +378,17 @@ class Call_squared_radius
     { return squared_radius(t1, t2, t3, t4); }
 };
 
+class p_Angle
+{
+  public:
+    typedef Angle           result_type;
+
+    template <class T>
+    Angle
+    operator()(const T& p, const T& q, const T& r) const
+    { return angle(p, q, r); }
+};
+
 class Counterclockwise_in_between
 {
   public:

@@ -50,6 +50,11 @@ Bounded_side
 opposite(Bounded_side bs)
 { return static_cast<Bounded_side>( - static_cast<int>(bs)); }
 
+inline
+Angle
+opposite(Angle a)
+{ return static_cast<Angle>( - static_cast<int>(a)); }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTIONS_ON_ENUMS_H
