@@ -597,7 +597,7 @@ _test_cls_triangulation_2( const Triangulation & )
   /********************/
   /******** I/O *******/
   std::cout << "    output to a file" << std::endl;
-  std::ofstream of0_0("T00.triangulation", ios::out);
+  std::ofstream of0_0("T00.triangulation", std::ios::out);
   CGAL::set_ascii_mode(of0_0); 
   of0_0 << T0_0; of0_0.close();
   std::ofstream of0_1("T01.triangulation");

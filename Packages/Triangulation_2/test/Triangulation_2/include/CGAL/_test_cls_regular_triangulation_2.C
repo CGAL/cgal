@@ -25,9 +25,7 @@
 #include <iostream>
 #include <fstream>
 
-//#include <pair.h>
-
-#include <vector.h>
+//#include <vector>
 
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
@@ -546,7 +544,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   /********************/
   /******** I/O *******/
   std::cout << "    output to a file" << std::endl;
-  std::ofstream of0_0("T00.triangulation", ios::out);
+  std::ofstream of0_0("T00.triangulation", std::ios::out);
   CGAL::set_ascii_mode(of0_0); 
   of0_0 << T0_1; of0_0.close();
   std::ofstream of0_1("T01.triangulation");

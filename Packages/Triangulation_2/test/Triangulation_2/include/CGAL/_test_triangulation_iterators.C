@@ -61,8 +61,8 @@ _test_cls_face_iterator( const Triangulation &T )
     assert(&(*fit) == &(*(fit++)));
     assert(&(*fit) == &(*(fit--)));
     assert(fit== T.finite_faces_begin());
-    for (int i = 0 ; i < n_finite-1 ; ++i) ++fit;
-    for (int i = 0 ; i < n_finite-1 ; ++i) --fit;
+    { for (int i = 0 ; i < n_finite-1 ; ++i) ++fit; }
+    { for (int i = 0 ; i < n_finite-1 ; ++i) --fit; }
     assert(fit == T.finite_faces_begin());
     fit--; assert(fit == T.finite_faces_end());
   }
@@ -91,8 +91,8 @@ _test_cls_vertex_iterator( const Triangulation &T )
     assert(&(*vit) == &(*(vit++)));  
     assert(&(*vit) == &(*(vit--)));
     assert(vit== T.finite_vertices_begin()); 
-    for (int i = 0 ; i < n-1 ; ++i) ++vit;
-    for (int i = 0 ; i < n-1 ; ++i) --vit;
+    { for (int i = 0 ; i < n-1 ; ++i) ++vit; }
+    { for (int i = 0 ; i < n-1 ; ++i) --vit; }
     assert(vit == T.finite_vertices_begin());
     --vit; assert(vit == T.finite_vertices_end());
   }
@@ -119,8 +119,8 @@ _test_cls_edge_iterator( const Triangulation &T )
     //assert(*eit == *(eit++));
     //assert(*eit == *(eit--)); 
       assert(eit== T.finite_edges_begin()); 
-      for (int i = 0 ; i < n-1 ; ++i) ++eit;
-      for (int i = 0 ; i < n-1 ; ++i) --eit;
+      { for (int i = 0 ; i < n-1 ; ++i) ++eit; }
+      { for (int i = 0 ; i < n-1 ; ++i) --eit; }
       assert(eit == T.finite_edges_begin());
       --eit; assert(eit == T.finite_edges_end());
   }
