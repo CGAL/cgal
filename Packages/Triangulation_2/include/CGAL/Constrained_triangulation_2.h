@@ -84,7 +84,7 @@ public:
   typedef std::set<Edge,Less_edge> Edge_set;
   //nouveau
 
-  Constrained_triangulation_2(const Gt& =Gt()) : Triangulation() { }
+  Constrained_triangulation_2(const Gt& gt = Gt()) : Triangulation(gt) { }
 
   Constrained_triangulation_2(const Constrained_triangulation_2& ct)
     : Triangulation(ct) {}
@@ -111,6 +111,7 @@ public:
       CGAL_triangulation_postcondition( is_valid() );
   }
 
+  //TODO Is that destructor correct ?
   virtual ~Constrained_triangulation_2() {}
 
   // INSERTION

@@ -1,6 +1,15 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.60 (27/02/03 )
+- general fixes in Regular_triangulation_2  owing to the hiding of vertices
+  instead of points
+  also , it is now possible to introduce twice the same point 
+  with different weights, or delete a hidden vertex
+- changes in the testsuite of Regular_triangulation_2 
+- fixes in regular triangulation - (stack_flip_4_2 and stack_flip_3_1)
+- changed the is_valid() of Regular_triangulation_2
+
 Ver 7.59 (15/02/03)
 - fixes in Triangulation_2_newd/example_3.C and _4.C
 
@@ -16,7 +25,8 @@ Ver 7.56 (06/02/03)
 - fixes by Andreas in Regular_triangulation_2.h
 
 Ver 7.55 (04/02/03)
-- Instead of hiding weighted points in faces of the regular triangulation, we now hide vertices.
+- Instead of hiding weighted points in faces of the regular triangulation, 
+  we now hide vertices.
   This makes that the Triangulation_hierarchy works for Regular now
 - changed typedef Point in Triangulation_Hierarchy_2
 - Added a new class Regular_traingulation_vertex_base_2 with  member: bool hidden

@@ -18,6 +18,7 @@ int main()
    while(in >> wp){
      std::cout << wp << std::endl;
      rt.insert(wp);
+     rt.is_valid();
    }
    rt.is_valid();
    return 0;	

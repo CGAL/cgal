@@ -1,4 +1,16 @@
-- bencher Delaunay_2 avec un insert utilisant
+- test de la regular hierarchy
+- input output of regular triangulation
+  (may be outputing for each face the hidden points
+   in the output operator for faces)
+  could be envisaged in a more thoroughfull treatment of
+  input-output operation
+- write a function
+  temp< Pointit, OutFacesIt>
+  bool	finite_faces_inside( Pointit begin, Pointit end, OutFacesIt fit) 
+	given a range of point, find all finites faces inside or intersecting
+        the polygon discribed by the sequence of points.
+        bool = false if none is found
+ - bencher Delaunay_2 avec un insert utilisant
   find_conflict + star_hole
 - in Regular triangulation : fix the cae when the user insert 
   several  weighted points with the same coordinates and different
@@ -30,7 +42,6 @@
 	
 - k orderVoronoi diagram (code de Julia)
 - Natural neighbor (code de Franck)
-- mesh 2d (stage de Mihaella)
 - Constrained_triangulation_3 (stage de Douc)
 - Conforming triangulation (David)
 - Vrml output

@@ -7,26 +7,6 @@ struct TDS_Bidon {
  typedef int  Vertex_handle;
 };
 
-
-//template <class TDS = void> 
-template <class TDS = TDS_Bidon>
-class  Vertex_base 
-{
-public:
-  typedef typename TDS::Vertex_handle            Vertex_handle;
-
-  template < class My_TDS>
-  struct TDS_rebind { typedef Vertex_base<My_TDS> Rebound;};
-    
-  Vertex_base() : _vh(0){}
-  Vertex_base(Vertex_handle vh) : _vh(vh) {}
-  void set_vh(Vertex_handle vh) { _vh = vh;}
-  Vertex_handle get_vh() {return _vh ;}
-
-private:
-  Vertex_handle _vh;
-};
-
 template<class Vb>
 class TDS_2 {
 public:
@@ -45,6 +25,28 @@ public:
     container.push_back(*vv);
     return vv;
     }
+};
+
+
+
+
+//template <class TDS = void> 
+template <class TDS = TDS_Bidon>
+class  Vertex_base 
+{
+public:
+  typedef typename TDS::Vertex_handle            Vertex_handle;
+
+  template < class My_TDS>
+  struct TDS_rebind { typedef Vertex_base<My_TDS> Rebound;};
+    
+  Vertex_base() : _vh(0){}
+  Vertex_base(Vertex_handle vh) : _vh(vh) {}
+  void set_vh(Vertex_handle vh) { _vh = vh;}
+  Vertex_handle get_vh() {return _vh ;}
+
+private:
+  Vertex_handle _vh;
 };
 
 

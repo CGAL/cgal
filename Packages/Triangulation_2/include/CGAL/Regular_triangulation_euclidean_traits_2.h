@@ -257,11 +257,8 @@ power_test(const Weighted_point<Point, Weight> &p,
 {
   typedef typename Point::R::RT  RT;
   Comparison_result r = Compare<RT>()(p.weight(), t.weight());
-  if(r == LARGER){
-    return ON_NEGATIVE_SIDE;
-  } else if (r == SMALLER) {
-    return ON_POSITIVE_SIDE;
-  }
+  if(r == LARGER)    return ON_NEGATIVE_SIDE;
+  else if (r == SMALLER) return ON_POSITIVE_SIDE;
   return ON_ORIENTED_BOUNDARY;
 }
 
