@@ -26,6 +26,7 @@ CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS) \
 CGAL_OBJECTS = \
 Bbox_2.o \
 Bbox_2_intersections.o \
+Color.o \
 Double.o \
 Double_eps.o \
 File_header_OFF.o \
@@ -35,9 +36,8 @@ File_writer_OFF.o \
 File_writer_VRML_2.o \
 File_writer_inventor.o \
 File_writer_wavefront.o \
-Fixed_precision_nt.o \
 Float.o \
-Geomview_stream.o \
+Interval_arithmetic.o \
 Origin.o \
 Random.o \
 aff_transformation_tags.o \
@@ -50,7 +50,7 @@ optimisation_basic.o
 #---------------------------------------------------------------------#
 
 lib: $(CGAL_OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
+	$(CGAL_SHARED_LIB_CREATE) $(CGAL_SHARED_LIB) $(CGAL_EXTRA_OBJECTS) $(CGAL_OBJECTS) $(CGAL_SHARED_LIB_LDFLAGS)
 	mv $(CGAL_SHARED_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
 	rm $(CGAL_OBJECTS)
 
