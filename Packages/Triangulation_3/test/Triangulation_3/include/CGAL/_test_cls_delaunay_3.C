@@ -15,8 +15,7 @@
 // file          : include/CGAL/_test_cls_delaunay_3.C
 // revision      : 
 // revision_date : 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
-//                 Monique Teillaud
+// author(s)     : Francois Rebufat, Monique Teillaud
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -146,9 +145,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
@@ -158,7 +155,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == -1);
       assert(Tfromfile.number_of_vertices() == 0);
-    }
+  }
 
   std::cout << "    Constructor1 " << std::endl;
   Point p10(0,0,0);
@@ -167,9 +164,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
@@ -179,7 +174,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 0);
       assert(Tfromfile.number_of_vertices() == 1);
-    }
+  }
 
   std::cout << "    Constructor2 " << std::endl;
 
@@ -189,9 +184,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
@@ -201,7 +194,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == 2);
-    }
+  }
 
   std::cout << "    Constructor3 " << std::endl;
 
@@ -211,9 +204,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT4("Test4_triangulation_IO_3",std::ios::out);
@@ -223,7 +214,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 3);
-    }
+  }
 
   std::cout << "    Constructor4 " << std::endl;
 
@@ -233,9 +224,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT5("Test5_triangulation_IO_3",std::ios::out);
@@ -245,7 +234,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 4);
-    }
+  }
 
   std::cout << "    Constructor5 " << std::endl;
 
@@ -321,9 +310,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1_2.number_of_vertices()==n);
   assert(T1_2.is_valid());
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT6("Test6_triangulation_IO_3",std::ios::out);
@@ -333,7 +320,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == n);
-    }
+  }
 
   std::cout << "    Constructor9 " << std::endl;
   // 2-dimensional triangulations 
@@ -366,9 +353,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT7("Test7_triangulation_IO_3",std::ios::out);
@@ -378,7 +363,7 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 8);
-    }
+  }
 
   std::cout << "    Constructor10 " << std::endl;
   // test grid insert
@@ -434,17 +419,15 @@ _test_cls_delaunay_3(const Triangulation &)
   }
 
 
-   std::cout << "    Constructor12 " << std::endl;
-   Cls T3_1;
+  std::cout << "    Constructor12 " << std::endl;
+  Cls T3_1;
   for (i=0;i<22;i++)
     T3_1.insert(q[i]);
   assert(T3_1.is_valid());
   assert(T3_1.number_of_vertices()==22);
   assert(T3_1.dimension()==3);
 
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+  {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
       std::ofstream oFileT8("Test8_triangulation_IO_3",std::ios::out);
@@ -454,7 +437,48 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
+  }
+
+  // Testing find_conflicts() + insert_in_hole()
+  std::cout << "    Constructor13 (find_conflicts/insert_in_hole)" << std::endl;
+  Cls T3_13;
+  for (i=0; i<22; ++i) {
+    if (T3_13.dimension() < 2)
+      T3_13.insert(q[i]);
+    else {
+      // First locate the point.
+      Locate_type lt;
+      int li, lj;
+      Cell_handle c = T3_13.locate(q[i], lt, li, lj);
+      if (lt == Cls::VERTEX) // Already exist, skip.
+        continue;
+      if (lt == Cls::OUTSIDE_AFFINE_HULL) { // Increases dimension.
+        T3_13.insert_outside_affine_hull(q[i]);
+        continue;
+      }
+      // Get the cells in conflicts.
+      std::vector<Cell_handle> V;
+      Facet facet;
+      T3_13.find_conflicts(q[i], c, CGAL::Oneset_iterator<Facet>(facet),
+                           std::back_inserter(V), CGAL::Emptyset_iterator());
+      T3_13.insert_in_hole(q[i], V.begin(), V.end(), facet.first, facet.second);
     }
+  }
+  assert(T3_13.is_valid());
+  assert(T3_13.number_of_vertices()==22);
+  assert(T3_13.dimension()==3);
+
+  {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT8("Test13_triangulation_IO_3",std::ios::out);
+      std::ifstream iFileT8("Test13_triangulation_IO_3",std::ios::in);
+      oFileT8 << T3_13;
+      iFileT8 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 3);
+      assert(Tfromfile.number_of_vertices() == 22);
+  }
 
 
   //#######################################################################
@@ -756,9 +780,8 @@ _test_cls_delaunay_3(const Triangulation &)
   Cls T0_1;
   Point p28(1,3,5);
   v0=T0_1.insert(p28);
-  if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations 
-    {
+
+  {
       std::cout << "    Testing Iterator   "<< std::endl;
       _test_vertex_iterator(T0_1);
       _test_triangulation_iterator(T0_1);
@@ -784,7 +807,7 @@ _test_cls_delaunay_3(const Triangulation &)
       _test_circulator(T3_0);
       _test_circulator(T3_2);
       _test_circulator(T3_3);
-    }
+  }
 
   std::cout <<"   Test destructors and quit "<< std::endl;
 
