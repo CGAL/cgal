@@ -42,7 +42,7 @@ public:
 
     Voronoi_vertex_2 v(s1, s2, s3);
     Line_2 l = compute_supporting_line( s.segment() );
-    Line_2 lp = compute_perpendicular(l, p);
+    Line_2 lp = compute_perpendicular(l, p.point());
 
     return v.oriented_side(lp);
   }
