@@ -27,7 +27,7 @@
 #ifndef CGAL_ARITHMETIC_FILTER_H
 #define CGAL_ARITHMETIC_FILTER_H
 
-#include <iostream>	// Because we declare operator<< and >>.
+#include <iostream>
 #include <CGAL/Interval_arithmetic.h>
 #if 0 // The following are already included from Interval_arithmetic.h.
 #include <CGAL/enum.h>  // Because we overload {sign,compare,abs,min,max}
@@ -46,7 +46,7 @@ CGAL_BEGIN_NAMESPACE
 // ET = exact type (used for exact predicate evaluation)
 // (Interval_nt_advanced) = used for filtering.
 //
-// 2 exact conversion functions must be provided:
+// 2 conversion functions must be provided:
 // - convert_to <Interval_nt_advanced> (CT)
 //     which gives an interval SURELY containing the CT value.
 // - convert_to <ET> (CT)
@@ -92,7 +92,8 @@ struct Filtered_exact
   // CT stored_value()   const { return value; }
 
   // Check Stroustrup if it's ok for assignment/ctors.
-  Fil& operator= (const Fil& fil) { value = fil.value; recompute_cache(); return *this; }
+  Fil& operator= (const Fil& fil)
+    { value = fil.value; recompute_cache(); return *this; }
 
   Fil  operator- ()               const { return Fil(-value); }
   bool operator< (const Fil& fil) const { return value <  fil.value; }
@@ -108,10 +109,14 @@ struct Filtered_exact
   Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
   Fil operator/(const Fil& fil) const { return Fil(value / fil.value); }
 
-  Fil& operator+=(const Fil& fil) { value += fil.value; recompute_cache(); return *this; }
-  Fil& operator-=(const Fil& fil) { value -= fil.value; recompute_cache(); return *this; }
-  Fil& operator*=(const Fil& fil) { value *= fil.value; recompute_cache(); return *this; }
-  Fil& operator/=(const Fil& fil) { value /= fil.value; recompute_cache(); return *this; }
+  Fil& operator+=(const Fil& fil)
+    { value += fil.value; recompute_cache(); return *this; }
+  Fil& operator-=(const Fil& fil)
+    { value -= fil.value; recompute_cache(); return *this; }
+  Fil& operator*=(const Fil& fil)
+    { value *= fil.value; recompute_cache(); return *this; }
+  Fil& operator/=(const Fil& fil)
+    { value /= fil.value; recompute_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
@@ -157,7 +162,7 @@ template <class CT, class ET>
 inline
 Sign
 sign (const Filtered_exact<CT,ET>& fil)
-{ return Sign(fil.value); }
+{ return sign(fil.value); }
 
 template <class CT, class ET>
 inline
