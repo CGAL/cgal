@@ -68,17 +68,16 @@ public:
     : Triangulation_3<Gt,Tds>() {}
   
   Delaunay_triangulation_3(const Gt & gt)
-  : Triangulation_3<Gt,Tds>(gt) {}
+    : Triangulation_3<Gt,Tds>(gt) {}
   
   Delaunay_triangulation_3(const Point & p0,
-				const Point & p1,
-				const Point & p2,
-				const Point & p3)
+			   const Point & p1,
+			   const Point & p2,
+			   const Point & p3)
     : Triangulation_3<Gt,Tds>(p0,p1,p2,p3){} // debug
 
   // copy constructor duplicates vertices and cells
-  Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> 
-				& tr)
+  Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> & tr)
     : Triangulation_3<Gt,Tds>(tr)
     { CGAL_triangulation_postcondition( is_valid() );  }
   
@@ -97,6 +96,17 @@ public:
   Vertex_handle insert(const Point & p );
 
   Vertex_handle insert(const Point & p, Cell_handle start);
+  
+  bool remove(Vertex_handle v );
+
+  // to be made private after tests
+  void make_hole_3D(Vertex_handle v,
+		    std::set<Facet> & boundhole,
+		    std::set<Vertex_handle> & boundvert);	
+
+  bool fill_hole_3D(std::set<Facet> & boundhole,
+		    std::set<Vertex_handle> & boundvert);	
+  void print(Vertex_handle v) const;
 
 private:
   void
@@ -117,6 +127,23 @@ private:
     // finds the set conflicts of cells in conflict with p
     // gives a cell ac having a facet on the boundary of conflicts
     // and the index i of its facet on the boundary
+  inline bool
+  violates( Vertex_handle u, 
+	    Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, 
+	    Facet f);
+  // checks whether edge uv crosses f
+
+  bool remove_3D(Vertex_handle v );
+  //  void make_hole_3D(Vertex_handle v,
+  //		    std::list<Facet> & hole) const;		 
+
+  Bounded_side
+  side_of_sphere( Vertex_handle v0, 
+		  Vertex_handle v1, 
+		  Vertex_handle v2, 
+		  Vertex_handle v3, 
+		  const Point & p) const;
+
 public:
 
   Bounded_side
@@ -234,6 +261,626 @@ insert(const Point & p, Cell_handle start)
 }// insert(p)
 
 template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+remove(Vertex_handle v)
+{
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+
+  if ( dimension() <3 ) {
+    // to be implemented : removal in degenerate dimensions
+    // the traingulation is now rebuilt...
+
+    Vertex_iterator vit;
+    Vertex_iterator vdone = vertices_end();
+    std::list<Point> points;
+    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
+      if ( v != (*vit).handle() ) 
+	{ points.push_front( vit->point() ); }
+    }
+    std::list<Point>::iterator pit;
+    std::list<Point>::iterator pdone = points.end();
+    
+    clear();
+    for ( pit = points.begin(); pit != pdone; ++pit) {
+      insert( *pit );
+    }
+
+    return true;
+  }
+
+  return remove_3D(v);
+}// remove(v)
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+remove_3D(Vertex_handle v)
+{
+  CGAL_triangulation_precondition( dimension() == 3 );
+
+  std::set<Facet> boundary; // facets on the boundary of the hole
+  std::set<Vertex_handle> bdvert; // vertices on the boundary of the hole
+
+  if ( test_dim_down(v) ) {
+
+    // _tds.remove_dim_down(&(*v)); return; 
+    // !!!!!!!!!!!! TO BE DONE !!!!!!!!!!!!!
+    // the triangulation is rebuilt...
+
+    Vertex_iterator vit;
+    Vertex_iterator vdone = vertices_end();
+    std::list<Point> points;
+    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
+	if ( v != (*vit).handle() ) { points.push_front( vit->point() ); }
+    }
+    std::list<Point>::iterator pit;
+    std::list<Point>::iterator pdone = points.end();
+    
+    clear();
+    for ( pit = points.begin(); pit != pdone; ++pit) {
+      insert( *pit );
+    }
+    return true;
+  }
+
+  //  std::cout << "removed point " << v->point() << std::endl;
+
+  make_hole_3D(v, boundary, bdvert);
+  bool b = fill_hole_3D(boundary, bdvert);
+
+  delete( &(*v) );
+  set_number_of_vertices(number_of_vertices()-1);
+
+  return b;
+}// remove_3D(v)
+
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+make_hole_3D( Vertex_handle v, 
+	      std::set<Facet> & boundhole,
+	      std::set<Vertex_handle> & boundvert)
+{
+  CGAL_triangulation_precondition( ! test_dim_down(v) );
+
+  typedef typename std::set<Cell*, std::less<Cell*> > Hole_cells;
+  Hole_cells cells;
+  incident_cells( v, cells );
+  int i, indv;
+
+  typename Hole_cells::iterator cit = cells.begin();
+  typename Hole_cells::iterator cdone = cells.end();
+
+  Cell_handle opp_cit;
+  Vertex_handle vi;
+  do {
+    indv = (*cit)->index(&(*v));
+    opp_cit = (*cit)->neighbor( indv );
+    
+    boundhole.insert
+      (	std::make_pair( opp_cit, opp_cit->index(*cit)) );
+    for ( i=0; i<4; i++) {
+      if ( i != indv ) {
+	vi = (*cit)->vertex(i);
+	if ( boundvert.find( vi ) == boundvert.end() )
+	  {
+	    boundvert.insert( vi );
+	    vi->set_cell( opp_cit );
+	  }
+      }
+    }
+    
+    _tds.delete_cell( &*(*cit) );
+
+    ++cit;
+  } while ( cit != cdone );
+
+  return;
+}// make_hole_3D
+
+//debug
+template < class Gt, class Tds >
+void 
+Delaunay_triangulation_3<Gt,Tds>::
+print( Vertex_handle v ) const
+{
+  if ( is_infinite( v ) )
+    std::cout << "inf" << "; ";
+  else 
+    std::cout << v->point() << "; ";
+};
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+fill_hole_3D( std::set<Facet> & boundhole,
+	      std::set<Vertex_handle> & boundvert)
+  // examines each facet of the hole in turn and finds the fourth
+  // vertex to build a cell
+{
+  typename std::set<Facet>::iterator fit;
+  typename std::set<Facet>::iterator fitset_tmp;
+
+  Facet fit_stick;
+  typename std::list<Facet>::iterator fitlist_tmp;
+
+  typename std::set<Vertex_handle>::iterator vit;
+  typename std::set<Vertex_handle>::iterator vdone = boundvert.end();
+
+  Vertex_handle v[3]; // current facet
+  Vertex_handle vf1,vf2,vf3;
+
+  typename std::set<Vertex_handle> oppvert; // vertices of the hole
+  // that are all copsherical with the current facet and whose sphere
+  // is empty 
+  typename std::set<Vertex_handle>::iterator bv;
+
+  typename std::list<Facet> cosph_bound; // facets of boundhole that
+  // are cospherical with the vertices of oppvert 
+  typename std::list<Facet> not_violate;
+  typename std::list<Facet> for_next; // facets created or not used by
+  // the current vertex 
+
+  // the facets in these sets will always be given by the cell
+  // **outside** the hole and their index in this cell
+
+  Cell_handle cnew;
+  int i;
+
+  Bounded_side sos;
+  Orientation or;
+  bool opp_inf, sticked, created;
+  int nbnew = 1; // to detect a loop in the execution due to an
+  // impossible case 
+
+  //debug
+  //  int nbfacet = 0;
+
+  while( ! boundhole.empty() ) {
+    //    std::cout << boundhole.size() << " boundary faces remaining" 
+    // << std::endl;
+    fit = boundhole.begin();
+//     for ( fit = boundhole.begin(); fit != boundhole.end(); ++fit ) {
+// 	print( (*fit).first->vertex( ((*fit).second+1)&3 ) );
+// 	print( (*fit).first->vertex( ((*fit).second+2)&3 ) );
+// 	print( (*fit).first->vertex( ((*fit).second+3)&3 ) );
+// 	std::cout << std::endl;
+//     }	       
+
+    fit = boundhole.begin();
+    while( (fit != boundhole.end()) && has_vertex(*fit,infinite_vertex()) ) {
+      ++fit;
+    }
+    if (fit == boundhole.end()) {
+      // all the remaining facets have the infinite vertex 
+      //      std::cout << " pb" << std::endl;
+    }
+
+    cosph_bound.clear();
+    oppvert.clear();
+    //    new_fac.clear();
+
+    //debug
+    //    nbfacet++;
+    
+    // orientation of the facet chosen so that the future cell
+    // v0,v1,v2,oppvert is correctly oriented
+    // (ie. orientation reversed with respect to the cell giving (*fit),
+    // which is outside the hole)
+
+    if ( ((*fit).second%2) == 0) {
+      v[0] = (*fit).first->vertex( ((*fit).second+1)&3 );
+      v[1] = (*fit).first->vertex( ((*fit).second+2)&3 );
+      v[2] = (*fit).first->vertex( ((*fit).second+3)&3 );
+    }
+    else {
+      v[0] = (*fit).first->vertex( ((*fit).second+2)&3 );
+      v[1] = (*fit).first->vertex( ((*fit).second+1)&3 );
+      v[2] = (*fit).first->vertex( ((*fit).second+3)&3 );
+    }      
+
+    //debug
+//     std::cout << std::endl << nbfacet << "- facet : " << std::endl;
+//     for ( i=0; i<3; i++ ) { print( v[i] ); }
+//     std::cout << " index " << (*fit).second << std::endl;
+//     std::cout << "   cell " ;
+//     for ( i=0; i<4; i++ ) { print( (*fit).first->vertex(i) ); }
+//     std::cout << std::endl;
+
+    if ( nbnew == 0 ) {
+      // the program is looping
+      std::cerr << " !!!!! IMPOSSIBLE TO RETRIANGULATE !!!!! " << std::endl;
+      return false;
+    }
+    nbnew = 0;
+   
+    // looking for a vertex to build a cell with the current facet *fit
+    vit = boundvert.begin();
+    while ( (( *vit == v[0] ) || ( *vit == v[1] ) || ( *vit == v[2] )) 
+	    ||
+	    ( ( ! is_infinite(v[0]) ) && 
+	      ( ! is_infinite(v[1]) ) &&
+	      ( ! is_infinite(v[2]) ) &&
+	      ( ! is_infinite(*vit) ) &&
+	      geom_traits().orientation( v[0]->point(),v[1]->point(),
+					 v[2]->point(),(*vit)->point() ) 
+	      != POSITIVE ) ) 
+      { ++vit; }
+    oppvert.insert(*vit); // candidate to build a cell with *fit
+    // it is either infinite or on the positive side of the facet
+    opp_inf = is_infinite( *vit );
+
+    // checking whether the current candidate forms an empty sphere
+    ++vit;
+    i=0;
+    while ( vit != vdone ) {
+      if ( *vit == v[0] ) {++vit; continue;};
+      if ( *vit == v[1] ) {++vit; continue;};
+      if ( *vit == v[2] ) {++vit; continue;};
+
+      //debug
+//       std::cout << "    vertex " ; print( *oppvert.begin() );
+//       std::cout << std::endl << "            test " ; print( *vit );
+//       std::cout << std::endl;
+
+      if ( ! is_infinite(*vit) ) {
+	sos = side_of_sphere(v[0],v[1],v[2],*oppvert.begin(), 
+			     (*vit)->point());
+	or = geom_traits().orientation( v[0]->point(), v[1]->point(),
+					v[2]->point(), (*vit)->point() );
+	if ( or == POSITIVE ) {
+	  if ( sos == ON_BOUNDED_SIDE ) {
+	    if ( is_infinite(*oppvert.begin()) ) {
+	      oppvert.erase(infinite_vertex());
+	      opp_inf = false;
+	      //	      std::cout << "          cocy kept - inf"
+	      //	      << std::endl; 
+	    }
+	    else {
+	      for ( bv=oppvert.begin(); bv!= oppvert.end(); ++bv ) {
+		if ( side_of_sphere(v[0],v[1],v[2],(*bv),(*vit)->point())
+		     != ON_BOUNDARY ) break;
+	      }
+	      if ( bv == oppvert.end() ) {
+		oppvert.erase(*oppvert.begin());
+		// because all the other points are cospherical with vit
+		//		std::cout << "          cocy kept" <<
+		//		std::endl; 
+	      }
+	      else {
+		oppvert.clear();
+	      }
+	    }
+	    oppvert.insert(*vit); 
+	    //	    std::cout << "          inside" << std::endl;
+	  }
+	  else {
+	    if ( sos == ON_BOUNDARY ) {
+	      oppvert.insert(*vit); 
+	      //	      std::cout << "          cosph" << std::endl;
+	    }; 
+	  };
+	}
+	else {
+	  if ( (or == COPLANAR) && (opp_inf) && (sos == ON_BOUNDARY) ) {
+	    oppvert.insert(*vit); 
+	    //	    std::cout << "          cocycl" << std::endl;
+	  }
+	}
+      };
+
+      ++vit;
+    }
+    // now oppvert contains 
+    // either the only possible vertex to build a cell with the
+    // current facet *fit
+    // or the set of vertices that are cospherical with the vertices
+    // of the current facet *fit
+
+    // in the case when there are several vertices in oppvert, the
+    // polyhedron they form must be triangulated without violating the 
+    // possibly already existing facets on the boundary of the hole.
+
+    // creation of a list of cospherical facets already on the
+    // boundary of the hole, that must not be violated
+    if ( oppvert.size() > 1 ) {
+      fitset_tmp = boundhole.begin();
+      //debug
+      std::cout << "    constraining facets " << std::endl;
+      
+      not_violate.clear();
+
+      while ( fitset_tmp != boundhole.end() ) {
+	vf1 = (*fitset_tmp).first->vertex(((*fitset_tmp).second+1)&3);
+	vf2 = (*fitset_tmp).first->vertex(((*fitset_tmp).second+2)&3);
+	vf3 = (*fitset_tmp).first->vertex(((*fitset_tmp).second+3)&3);
+	if (
+	    ( (vf1 == v[0]) || (vf1 == v[1]) || (vf1 == v[2]) ||
+	      ( oppvert.find(vf1) != oppvert.end() ) )
+	    &&
+	    ( (vf2 == v[0]) || (vf2 == v[1]) || (vf2 == v[2]) ||
+	      ( oppvert.find(vf2) != oppvert.end() ) )
+	    &&
+	    ( (vf3 == v[0]) || (vf3 == v[1]) || (vf3 == v[2]) ||
+	      ( oppvert.find(vf3) != oppvert.end() ) )
+	    )
+	  {
+	    cosph_bound.push_front( *fitset_tmp );
+	    // fit will be one of the facets inserted
+
+	    //	    print( vf1 ); print( vf2 ); print( vf3 ); 
+	    //	    std::cout << " cosph" << std::endl;
+	    ++fitset_tmp;
+	    continue;
+	  }
+	for ( bv=oppvert.begin(); bv!=oppvert.end(); ++bv ) {
+	  if ( ( ! is_infinite(*bv) )
+	       &&
+	       ( ! is_infinite( *fitset_tmp ) )
+	       &&
+	       ((( (vf1 == v[0]) || (vf1 == v[1]) || (vf1 == v[2]) )
+		 &&
+		 ( (vf2 == v[0]) || (vf2 == v[1]) || (vf2 == v[2]) )
+		 &&
+		 ( geom_traits().orientation
+		   (vf1->point(),vf2->point(),
+		    vf3->point(),(*bv)->point()) == COPLANAR ))
+		||
+		(( (vf1 == v[0]) || (vf1 == v[1]) || (vf1 == v[2]) )
+		 &&
+		 ( (vf3 == v[0]) || (vf3 == v[1]) || (vf3 == v[2]) )
+		 &&
+		 ( geom_traits().orientation
+		   (vf1->point(),vf2->point(),
+		    vf3->point(),(*bv)->point()) == COPLANAR ))
+		||
+		(( (vf2 == v[0]) || (vf2 == v[1]) || (vf2 == v[2]) )
+		 &&
+		 ( (vf3 == v[0]) || (vf3 == v[1]) || (vf3 == v[2]) )
+		 &&
+		 ( geom_traits().orientation
+		   (vf1->point(),vf2->point(),
+		    vf3->point(),(*bv)->point()) == COPLANAR )) ) )
+	    {
+	      not_violate.push_front(*fitset_tmp);
+	      //	      print( vf1 ); print( vf2 ); print( vf3 ); 
+	      //	      std::cout << " copl ";
+	      //	      print(*bv); std::cout << std::endl;
+	      ++fitset_tmp;
+	      continue;
+	    }
+	}
+	++fitset_tmp;
+      }
+    }
+    else cosph_bound.push_front( *fit ); // *fit is the only element in
+    // this case
+
+    not_violate.insert(not_violate.end(),
+		       cosph_bound.begin(),cosph_bound.end());
+
+    // if there are cospherical vertices, the polyhedron they form is
+    // triangulated by linking each vertex in its turn to its visible
+    // facets, without violating the facets of cosph_bound
+    while ( oppvert.size() > 0 ) {
+      // look for all the facets of the polyhedron visible from
+      // oppvert.begin() 
+//       std::cout << std::endl << "oppvert " ; print(*oppvert.begin());
+//       std::cout << std::endl;
+
+      for_next.clear();
+
+      while ( ! cosph_bound.empty() ) {
+	fit_stick = cosph_bound.front();
+	cosph_bound.pop_front(); 
+	
+
+	if ( has_vertex( fit_stick, *oppvert.begin() ) ) {
+	  for_next.push_front( fit_stick );
+	  continue;
+	}
+	     
+	if ( ((fit_stick).second%2) == 0 ) {
+	  v[0] = (fit_stick).first->vertex( ((fit_stick).second+1)&3 );
+	  v[1] = (fit_stick).first->vertex( ((fit_stick).second+2)&3 );
+	  v[2] = (fit_stick).first->vertex( ((fit_stick).second+3)&3 );
+	}
+	else {
+	  v[0] = (fit_stick).first->vertex( ((fit_stick).second+2)&3 );
+	  v[1] = (fit_stick).first->vertex( ((fit_stick).second+1)&3 );
+	  v[2] = (fit_stick).first->vertex( ((fit_stick).second+3)&3 );
+	}
+
+	//	std::cout << "test facet " ;
+	//	for ( i=0; i<3; i++ ) {print(v[i]);}; std::cout << std::endl;
+
+	// testing if the current vertex of oppvert can be associated
+	// with this facet fit_stick without violating any facet of
+	// not_violate
+	fitlist_tmp = not_violate.begin();
+	while ( fitlist_tmp != not_violate.end() ) {
+ 	  if ( (*fitlist_tmp) == fit_stick ) {
+ 	    ++fitlist_tmp;
+ 	    continue;
+ 	  }
+	  if ( ! (is_infinite(v[0]) ||
+		  is_infinite(v[1]) || 
+		  is_infinite(v[2]) ||
+		  is_infinite(*oppvert.begin()) ) 
+	       ) {
+	    if ( violates( *oppvert.begin(),v[0],v[1],v[2],*fitlist_tmp ) ) 
+	      break;
+	  }
+	  ++fitlist_tmp;
+	}
+	if ( fitlist_tmp != not_violate.end() ) {
+	  // this facet cannot form a cell with oppvert.begin()
+	  for_next.push_front(fit_stick);
+	  continue;
+	}
+	
+	// here fit_stick does not violate any facet
+	// test whether it is visible from oppvert.begin()
+	created = false;
+	if ( ( ! (is_infinite(v[0]) ||
+		  is_infinite(v[1]) || 
+		  is_infinite(v[2])) )
+	     // already tested, ti be removed
+	     && 
+	     ( ( ! is_infinite((*oppvert.begin())) &&
+		 ( geom_traits().orientation
+		   (v[0]->point(),v[1]->point(),v[2]->point(),
+		    ((*oppvert.begin()))->point()) 
+		   == POSITIVE ) )
+	       ||
+	       ( is_infinite((*oppvert.begin())) &&
+		 ! is_infinite( (fit_stick).first
+				->vertex((fit_stick).second ) ) )
+	       )
+	     ) 
+	  { // creation of a cell
+	    cnew = new Cell (v[0],v[1],v[2],(*oppvert.begin()),
+			     NULL,NULL,NULL,(fit_stick).first);
+	    ++nbnew;
+// 	    std::cout << "cell " ;
+// 	    for (i=0;i<4;i++) { print(cnew->vertex(i)); };
+// 	    std::cout << std::endl;
+
+	    _tds.add_cell( &(*cnew) );
+	    (fit_stick).first->set_neighbor((fit_stick).second,cnew);
+	    created = true;
+	    ((*oppvert.begin()))->set_cell(cnew);
+
+	    boundhole.erase( fit_stick );
+	    not_violate.remove( fit_stick);
+	    for_next.remove( fit_stick);
+
+	    for ( i=0; i<3; i++ ) { 
+	      v[i]->set_cell(cnew); //useless ? to be checked
+
+	      // if the facet ( cnew, i ) is already on the boundary 
+	      // of the hole, it must be sticked and removed from
+	      // the hole
+// 	      std::cout << "    facet " ;
+// 	      for ( j=1; j<4; j++ ) {print(cnew->vertex((i+j)&3));};
+// 	      std::cout << std::endl;
+
+	      fitlist_tmp = cosph_bound.begin();
+	      sticked = false;
+	      while ( (fitlist_tmp != cosph_bound.end()) && (! sticked) ) {
+		if ( are_equal( *fitlist_tmp, cnew, i ) ) {
+		  (*fitlist_tmp).first->set_neighbor
+		    ((*fitlist_tmp).second,cnew);
+		  cnew->set_neighbor(i,(*fitlist_tmp).first);
+
+		  not_violate.remove(*fitlist_tmp);
+		  boundhole.erase(*fitlist_tmp);
+		  cosph_bound.erase(fitlist_tmp);
+
+		  sticked = true;
+		  //		  std::cout << "      sticked" << std::endl;
+		  break;
+		}
+		++fitlist_tmp;
+	      }
+	      fitlist_tmp = for_next.begin();
+	      while ( (fitlist_tmp != for_next.end()) && (! sticked) ) {
+		if ( are_equal( *fitlist_tmp, cnew, i ) ) {
+		  (*fitlist_tmp).first->set_neighbor
+		    ((*fitlist_tmp).second,cnew);
+		  cnew->set_neighbor(i,(*fitlist_tmp).first);
+
+		  not_violate.remove(*fitlist_tmp);
+		  boundhole.erase(*fitlist_tmp);
+		  for_next.erase(fitlist_tmp);
+
+		  sticked = true;
+		  //		  std::cout << "      sticked" << std::endl;
+		  break;
+		}
+		++fitlist_tmp;
+	      }
+	      if ( ! sticked ) {
+		//		std::cout << "      not sticked" << std::endl;
+
+		for_next.push_front( std::make_pair( cnew, i ) );
+		not_violate.push_front( std::make_pair( cnew, i ) );
+	      }
+	    }
+	  }
+	else 
+	  {
+	    // fit_stick is already in not_violate
+	    for_next.push_front( fit_stick );
+	  }
+      }
+      cosph_bound = for_next;
+      oppvert.erase(oppvert.begin());
+    }
+
+
+
+//     std::cout << std::endl << "triangulated polyhedron" << std::endl;
+//     std::cout << boundhole.size() << " facets in boundhole" <<
+//       std::endl;
+//     std::cout << cosph_bound.size() << " facets remaining in cosph_bound" 
+//       << std::endl;
+    // looking whether the new facets just built are already on the
+    // boundary 
+    // if they are, update the adjacency relations
+    //
+    // unefficient code, to be changed 
+
+    while ( ! cosph_bound.empty() ) {
+      fit_stick = cosph_bound.front();
+      cosph_bound.pop_front();
+
+//       std::cout << "   facet " ;
+//       for ( i=1; i<4; i++ ) 
+// 	{print((fit_stick).first->vertex(((fit_stick).second+i)&3));};
+//       std::cout << " index " << (fit_stick).second << std::endl;
+      
+      sticked = false;
+      fitset_tmp = boundhole.begin();
+      while (fitset_tmp != boundhole.end()) {
+	if ((*fitset_tmp) == fit_stick) { ++fitset_tmp; continue; };
+	if ( are_equal( *fitset_tmp, fit_stick ) ) {
+// 	  std::cout << "        sticked to " ;
+// 	  for ( i=1; i<4; i++ ) {
+// 	    print((*fitset_tmp).first->vertex(((*fitset_tmp).second+i)&3));};
+// 	  std::cout << " of " ;
+// 	  for ( i=0; i<4; i++ ) {
+// 	    print((*fitset_tmp).first->vertex(i));}
+// 	  std::cout << std::endl;
+
+	  (*fitset_tmp).first->set_neighbor
+	    ((*fitset_tmp).second,(fit_stick).first);
+	  (fit_stick).first->set_neighbor
+	    ((fit_stick).second,(*fitset_tmp).first);
+
+	  boundhole.erase(*fitset_tmp);
+
+	  sticked = true;
+	  break;
+	};
+	++fitset_tmp;
+      }
+      if ( ! sticked ) {
+	boundhole.insert( fit_stick );
+	// 	std::cout << "        not sticked" << std::endl;
+      }
+    }
+
+  }
+
+  return true;
+}// fill_hole_3D
+
+
+template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
 find_conflicts_3(std::set<void*, std::less<void*> > & conflicts, 
@@ -261,6 +908,88 @@ find_conflicts_3(std::set<void*, std::less<void*> > & conflicts,
     }
   }
 }// find_conflicts_3
+
+template < class Gt, class Tds >
+inline bool
+Delaunay_triangulation_3<Gt,Tds>::
+violates( Vertex_handle u, 
+	  Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, 
+	  Facet f)
+  {
+    // u, v0, v1, v2 supposed to be all different
+    Point pu( u->point() );
+
+    int i,j,k,l;
+
+    Point pf[3];
+    pf[0] = (f.first)->vertex((f.second+1)&3)->point();
+    pf[1] = (f.first)->vertex((f.second+2)&3)->point();
+    pf[2] = (f.first)->vertex((f.second+3)&3)->point();
+ 
+    if ( geom_traits().orientation( pu, pf[0], pf[1], pf[2] ) != COPLANAR ) 
+      return false;
+
+    Point p[3];
+    p[0] = v0->point();
+    p[1] = v1->point();
+    p[2] = v2->point();
+    Orientation o[3];
+    o[0] = geom_traits().orientation(p[0],pf[0],pf[1],pf[2]);
+    o[1] = geom_traits().orientation(p[1],pf[0],pf[1],pf[2]);
+    o[2] = geom_traits().orientation(p[2],pf[0],pf[1],pf[2]);
+
+    if ( ( o[0] != COPLANAR ) && ( o[1] != COPLANAR ) && ( o[2] != COPLANAR ) )
+      return false;
+
+    for ( i=0; i<3; i++ ) {
+      if ( pu == pf[i] ) {
+	j = (i+1)%3;
+	k = (i+2)%3;
+	if ( 
+	    ( (o[0] == COPLANAR) && (p[0] != pf[j]) && (p[0] != pf[k]) &&
+	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[0])
+		== NEGATIVE ) ) 
+	    ||
+	    ( (o[1] == COPLANAR) && (p[1] != pf[j]) && (p[1] != pf[k]) &&
+	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[1])
+		== NEGATIVE ) ) 
+	    ||
+	    ( (o[2] == COPLANAR) && (p[2] != pf[j]) && (p[2] != pf[k]) &&
+	      ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[i],p[2])
+		== NEGATIVE ) ) 
+	    )
+	  return true;
+	else
+	  return false;
+      }
+    }
+
+    // here pu is none of pf[i]
+    for ( i=0; i<3; i++ ) {
+      if ( o[i] == COPLANAR )
+	{
+	  for ( l=0; l<3; l++ ) {
+	    j = (l+1)%3;
+	    k = (l+2)%3;
+	    if ( p[i] == pf[l] ) {
+	      if ( (pu != pf[j]) && (pu != pf[k]) &&
+		   ( geom_traits().orientation_in_plane(pf[j],pf[k],pf[l],pu)
+		     == NEGATIVE ) )
+		return true;
+	      else
+		continue;
+	    }
+	    if ( ( geom_traits().orientation_in_plane(pf[j],pf[k],pu,p[i])
+		   != POSITIVE ) )
+	      return true;
+	  }
+	}
+      else
+	continue;
+    }
+
+    return false;
+  }
 
 template < class Gt, class Tds >
 void
@@ -346,6 +1075,56 @@ side_of_sphere(Cell_handle c, const Point & p) const
 // 	       (s == ON_POSITIVE_SIDE) ? ON_BOUNDED_SIDE :
 // 	       ON_BOUNDARY );
 //     }
+}// end side of sphere
+
+template < class Gt, class Tds >
+Bounded_side
+Delaunay_triangulation_3<Gt,Tds>::
+side_of_sphere(Vertex_handle v0, 
+	       Vertex_handle v1, 
+	       Vertex_handle v2, 
+	       Vertex_handle v3, 
+	       const Point & p) const
+  // duplication of code with the other side_of_sphere should (?) be fixed 
+{
+  CGAL_triangulation_precondition( dimension() == 3 );
+  Vertex_handle v[4] = { v0, v1, v2, v3 };
+  int i;
+  int i0,i1,i2;
+  for ( i=0; i<4; i++) {
+    if ( is_infinite( v[i] ) ) {
+      if ( (i%2) == 1 ) {
+	i0 = (i+1)&3;
+	i1 = (i+2)&3;
+	i2 = (i+3)&3;
+      }
+      else {
+	i0 = (i+2)&3;
+	i1 = (i+1)&3;
+	i2 = (i+3)&3;
+      }
+      Orientation
+	o = geom_traits().orientation(v[i0]->point(),
+				      v[i1]->point(),
+				      v[i2]->point(),
+				      p);
+      if (o != ZERO)
+	return Bounded_side(o);
+
+      return Bounded_side( geom_traits().side_of_oriented_circle
+			   ( v[i0]->point(), 
+			     v[i1]->point(),
+			     v[i2]->point(),
+			      p ) );
+    }
+  }
+  
+  // all vertices are finite
+  return Bounded_side( geom_traits().side_of_oriented_sphere
+		       ( v[0]->point(),
+			 v[1]->point(),
+			 v[2]->point(),
+			 v[3]->point(), p) );
 }// end side of sphere
 
 template < class Gt, class Tds >
