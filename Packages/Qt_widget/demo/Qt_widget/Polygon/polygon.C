@@ -1,0 +1,312 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2003 The CGAL Consortium
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
+// ----------------------------------------------------------------------
+//
+// file          : polygon.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu
+// coordinator   : Laurent Rineau
+//
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+// ======================================================================
+
+// if QT is not installed, a message will be issued in runtime.
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl; return 0;
+}
+#else
+
+#include "cgal_types.h"
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+#include "polygon_toolbar.h"
+//#include <CGAL/IO/Qt_widget_get_polygon.h>
+
+
+#include <qapplication.h>
+#include <qmainwindow.h>
+#include <qstatusbar.h>
+#include <qfiledialog.h>
+#include <qmessagebox.h>
+#include <qpopupmenu.h>
+#include <qmenubar.h>
+#include <qtoolbutton.h>
+#include <qtoolbar.h>
+#include <qtimer.h>
+
+#include <list>
+#include <fstream>
+#include <stack>
+#include <set>
+#include <string>
+
+
+//global flags and variables
+int current_state;
+Cgal_Polygon polygon;
+
+const QString my_title_string("Polygon Demo with"
+			      " CGAL Qt_widget");
+
+class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
+{
+public:
+  Qt_layer_show_polygon(){};
+  void draw()
+  {
+    widget->lock();
+      *widget << CGAL::LineWidth(3);
+      *widget << CGAL::BLUE;
+      *widget << polygon;
+      *widget << CGAL::LineWidth(1);
+      *widget << CGAL::WHITE;
+      *widget << polygon;
+    widget->unlock();
+  };
+};//end class 
+
+
+class MyWindow : public QMainWindow
+{
+  Q_OBJECT
+public:
+  MyWindow(int w, int h){
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
+    
+    //create a timer for checking if somthing changed
+    QTimer *timer = new QTimer( this );
+    connect( timer, SIGNAL(timeout()),
+           this, SLOT(timer_done()) );
+    timer->start( 200, FALSE );
+
+    // file menu
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
+    file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
+    file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("&Load Polygon", this, SLOT(load_polygon()), CTRL+Key_L);
+    file->insertItem("&Save Polygon", this, SLOT(save_polygon()), CTRL+Key_S);
+    file->insertSeparator();
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
+    file->insertSeparator();
+    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
+    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+
+    // drawing menu
+    QPopupMenu * draw = new QPopupMenu( this );
+    menuBar()->insertItem( "&Edit", draw );
+    draw->insertItem("Generate Polygon", this, SLOT(gen_poly()),
+		     CTRL+Key_G);
+    draw->insertItem("Show Information", this, SLOT(show_info()), CTRL+Key_I);
+
+    // help menu
+    QPopupMenu * help = new QPopupMenu( this );
+    menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
+    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+
+    //the standard toolbar
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
+    //the polygon_toolbar
+    pt = new Polygon_toolbar(widget, this);
+
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+  
+    resize(w,h);
+    widget->set_window(-1, 1, -1, 1);
+    widget->setMouseTracking(TRUE);
+
+    //connect the widget to the main function that receives the objects
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
+      this, SLOT(get_new_object(CGAL::Object)));
+
+    //application flag stuff
+    old_state = 0;
+
+    //layers
+    widget->attach(&testlayer);
+  };
+
+private:
+  void something_changed(){current_state++;};
+  
+public slots:
+  void new_instance()
+  {
+    widget->lock();
+    widget->clear_history();
+    polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+		// set the Visible Area to the Interval
+    widget->unlock();
+    something_changed();
+  }
+
+private slots:
+  void gen_poly(){
+    widget->clear_history();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    // set the Visible Area to the Interval
+    polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
+    //    CGAL::random_polygon_2(100,
+    //			   std::back_inserter(polygon),
+    //			   Point_generator(1));
+    something_changed();
+  }
+
+  void get_new_object(CGAL::Object obj)
+  {
+    Cgal_Polygon p;
+    if(CGAL::assign(p,obj)) {
+      polygon = p;
+      something_changed();
+    }
+  };
+
+
+//--------------------------------------------------------------------------//
+//                   PrintPolygonInfo
+//--------------------------------------------------------------------------//
+// prints some information about the polygon P to cerr
+
+void show_info()
+{
+  Cgal_Polygon P(polygon);
+  cerr << std::endl << "Polygon information:" << std::endl;
+  if(P.is_empty())
+    {std::cerr << "  P is empty" << std::endl; return;}
+  cerr << "  P.size()               = " << P.size() << std::endl;
+  cerr << "  P.is_empty()           = " << int(P.is_empty()) << std::endl;
+
+  cerr << "  P.is_simple()          = " << int(P.is_simple()) << std::endl;
+  cerr << "  P.is_convex()          = " << int(P.is_convex()) << std::endl;
+
+  if(P.is_simple()){
+    CGAL::Orientation o = P.orientation();
+    cerr << "  P.orientation()        = ";
+    switch (o) {
+      case CGAL::CLOCKWISE       : cerr << "clockwise" << std::endl; break;
+      case CGAL::COUNTERCLOCKWISE: cerr << "counter clockwise" <<
+				     std::endl; break;
+      case CGAL::COLLINEAR       : cerr << "collinear" << std::endl; break;
+    }
+  }
+
+  cerr << "  P.bbox()               = " << P.bbox() << std::endl;
+  cerr << "  P.area()               = " << P.area() << std::endl;
+  cerr << "  P.left_vertex()        = " << *P.left_vertex() << std::endl;
+  cerr << "  P.right_vertex()       = " << *P.right_vertex() << std::endl;
+  cerr << "  P.top_vertex()         = " << *P.top_vertex() << std::endl;
+  cerr << "  P.bottom_vertex()      = " << *P.bottom_vertex() << std::endl;
+}
+
+
+
+
+  void about()
+  {
+    QMessageBox::about( this, my_title_string,
+		"This is a demo for Polygon\n"
+  		"Copyright CGAL @2003");
+  };
+
+  void aboutQt()
+  {
+    QMessageBox::aboutQt( this, my_title_string );
+  }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
+  }
+
+  void new_window(){
+    MyWindow *ed = new MyWindow(500, 500);
+    ed->setCaption("Layer");
+    ed->widget->clear_history();
+    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->show();
+    something_changed();
+  }
+
+  void timer_done()
+  {
+    if(old_state!=current_state){
+      widget->redraw();
+      old_state = current_state;
+    }
+  }	
+
+  void save_polygon()
+  {
+    QString fileName = QFileDialog::getSaveFileName( 
+		"polygon.cgal", "Cgal files (*.cgal)", this );
+    if ( !fileName.isNull() ) {                 // got a file name
+      std::ofstream out(fileName);
+      //out << std::setprecision(15);
+      CGAL::set_ascii_mode(out);
+      out << polygon << std::endl;
+    }
+  }
+
+  void load_polygon()
+  {
+    QString s( QFileDialog::getOpenFileName(
+		QString::null, "CGAL files (*.cgal)", this ) );
+    if ( s.isEmpty() )
+        return;
+    std::ifstream in(s);
+    CGAL::set_ascii_mode(in);
+    in >> polygon;
+    something_changed();
+  }
+
+private:
+  CGAL::Qt_widget        *widget;
+  CGAL::Qt_widget_standard_toolbar
+                         *stoolbar;
+  Polygon_toolbar        *pt;
+  int                    old_state;
+  Qt_layer_show_polygon  testlayer;
+  //  CGAL::Qt_widget_get_polygon<Cgal_Polygon> getpoly;
+};
+
+#include "polygon.moc"
+
+int
+main(int argc, char **argv)
+{
+  QApplication app( argc, argv );
+  MyWindow widget(500,500); // physical window size
+  app.setMainWidget(&widget);
+  widget.setCaption(my_title_string);
+  widget.setMouseTracking(TRUE);
+  widget.show();
+  current_state = -1;
+  return app.exec();
+}
+
+
+#endif
