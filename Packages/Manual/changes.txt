@@ -1,3 +1,7 @@
+(4 Aug 2004) [mk]
+- added missing references for the Segment Voronoi diagram and Apollonius
+  graph packages
+
 (8 Jan 2004)
 - Remove one cruft from "Handle and Circulators" kludge in one script.
 
