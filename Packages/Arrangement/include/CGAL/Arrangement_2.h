@@ -1041,7 +1041,7 @@ bool is_valid(bool verbose = false) const
   bool         valid = true;
 
   verr << std::endl;
-  verr << "CGAL::Arrangment_2<Decl, Traits, Base_N3ode>::";
+  verr << "CGAL::Arrangment_2<Decl, Traits, Base_Node>::";
   verr << "is_valid( true ):" << std::endl;
 
   // Planar Map Check
