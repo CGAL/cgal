@@ -42,6 +42,7 @@ public:
   // the following typedef to satisfy MIPS CC 7.3
   typedef typename Triangulation::Face_handle    Face_handle;
   typedef typename Triangulation::Vertex_handle  Vertex_handle;
+  typedef typename Triangulation::Edge           Edge;
   typedef typename Triangulation::Locate_type    Locate_type;
 
   // a list to memorise temporary the faces around a point
@@ -234,11 +235,11 @@ is_valid(bool verbose = false, int level = 0) const
         cerr << "face : " << (void*)&(*it)<< "  " 
 	     <<"["<< it->vertex(0)->point()
 	     <<"/"<< it->vertex(1)->point()
-	     <<"/"<< it->vertex(2)->point()<<"]"<<endl
+	     <<"/"<< it->vertex(2)->point()<<"]"<< std::endl
              << "voisin : " << (void*)&(*(it->neighbor(i)))<< "  "
 	     <<"["<<(it->neighbor(i))->vertex(0)->point()
 	     <<"/"<<(it->neighbor(i))->vertex(1)->point()
-	     <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" <<endl;
+	     <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" << std::endl;
       }
       CGAL_triangulation_assertion(result);
     }
@@ -254,8 +255,8 @@ is_valid(bool verbose = false, int level = 0) const
 	cerr << "face : " << (void*)&(*it)<< "  " 
 	     <<"["<< it->vertex(0)->point()
 	     <<"/"<< it->vertex(1)->point()
-	     <<"/"<< it->vertex(2)->point()<<"]"	<<endl
-	     << "hidden point : " << *plit <<endl;
+	     <<"/"<< it->vertex(2)->point()<<"]"	<< std::endl
+	     << "hidden point : " << *plit << std::endl;
       }
       CGAL_triangulation_assertion(result); 
     }

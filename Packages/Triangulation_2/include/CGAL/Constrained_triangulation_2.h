@@ -118,6 +118,9 @@ public:
       } 
     };
 
+
+  void file_output(std::ostream& os) const;
+
 private:
   void update_status_incident(Vertex_handle va, 
 			      Vertex_handle c1,
@@ -637,10 +640,34 @@ triangulate(List_edges & list_edges, List_faces &
 }
 
 template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt, Tds>::
+file_output(std::ostream& os) const
+{
+  Triangulation_2<Gt, Tds>::file_output(os);
+
+  // write constrained status
+  typename Tds::Iterator_base ib = _tds.iterator_base_begin();
+  for( ; ib != _tds.iterator_base_end(); ++ib) {
+    for(int j = 0; j < 3; ++j){
+      if (ib->is_constrained(j)) { os << "C";}
+      else { os << "N";}
+      if(is_ascii(os)){
+	if(j==2) {
+	  os << "\n";
+	} else {
+	  os <<  ' ';
+	}
+      }
+    }
+  }
+}
+
+template < class Gt, class Tds >
 ostream &
 operator<<(ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
 {
-  os << (Triangulation_2<Gt, Tds>) Ct;
+  //os << (Triangulation_2<Gt, Tds>) Ct;
 
  //  typename Constrained_triangulation_2<Gt, Tds>::Face_iterator
 //     it = Ct.faces_begin();
@@ -677,7 +704,9 @@ operator<<(ostream& os, const Constrained_triangulation_2<Gt,Tds> &Ct)
 //   }
 // }while(++fc != done);
 
-return os ;
+
+  Ct.file_output(os);
+  return os ;
 }
 
 

@@ -1068,7 +1068,7 @@ file_output( std::ostream& os, Vertex* v, bool skip_first) const
   
   int n = number_of_vertices();
   int m = number_of_full_dim_faces();
-  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << endl;
+  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
   else     os << n << m << dimension();
   if (n==0) return;
 

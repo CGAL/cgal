@@ -249,7 +249,7 @@ public:
   Edge_iterator    operator--(int);
 
   Edge      operator*() const
-    {return make_pair(const_cast<Face*>(pos), index);}
+    {return std::make_pair(const_cast<Face*>(pos), index);}
 
 private: 
   void increment();
@@ -807,7 +807,7 @@ operator--(int)
 // Triangulation_ds_edge_iterator_2<Tds> ::     
 // operator*() const
 // {
-//   return make_pair(const_cast<Face*>(pos), index);
+//   return std::make_pair(const_cast<Face*>(pos), index);
 // }
 
 
