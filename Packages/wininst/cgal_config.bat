@@ -56,9 +56,9 @@ set cgallibpref=-LIBPATH:
 goto :ledaconf
 
 :bccconf
-set cclibo=bcc
+set cclibo=nd
 if "%2" == "d"		set ccopt=-v
-if "%2" == "d"		set cclibo=bcc_debug
+if "%2" == "d"		set cclibo=d
 
 set cxx=bcc32
 rem set cxx=bcc32 -nologo -- BCC 5.5.1 does not have -nologo option!
@@ -154,7 +154,7 @@ set ledaflag=
 set ledalink=
 set ledasupport="NOT SUPPORTED"
 set ledalibs=CGALWin.lib
-set cgalwindirpath=%cgallibpref%$(CGAL_ROOT)\cgalwindow\win32\%cc%\%cclibo%
+set cgalwindirpath=%cgallibpref%$(CGAL_ROOT)\lib\win32\%cc%\%cclibo%
 goto :done
 
 
@@ -367,3 +367,5 @@ set cxx=
 set make=
 set extralibs=
 set ledain=
+set cgalwindirpath=
+set cclibo=
