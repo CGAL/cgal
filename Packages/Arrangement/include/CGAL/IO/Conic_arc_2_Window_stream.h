@@ -24,10 +24,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel>
+template <class Int_kernel, class Alg_kernel>
 Window_stream& operator<<(Window_stream& ws,
-                          const Conic_arc_2<Kernel>& cv)
+                          const Conic_arc_2<Int_kernel, Alg_kernel>& cv)
 {
+  typedef typename Alg_kernel::FT                               CoNT;
+  typedef typename Conic_arc_2<Int_kernel, Alg_kernel>::Point_2 Point_2;
+
   // Get the co-ordinates of the curve's source and target.
   double sx = CGAL::to_double(cv.source().x()),
          sy = CGAL::to_double(cv.source().y()),
@@ -38,14 +41,14 @@ Window_stream& operator<<(Window_stream& ws,
   {
     // The curve is a segment - simply draw it.
     ws << leda_segment(sx, sy, tx, ty);
-  } 
-  // The arc is circular
+  }
   else
   {
-    // If the curve is monotone, than its source and its target has the
-    // extreme x co-ordinates on this curve.
+    // Draw a conic arc of degree 2.
     if (cv.is_x_monotone())
     {
+      // If the curve is monotone, than its source and its target has the
+      // extreme x co-ordinates on this curve.
       bool     is_source_left = (sx < tx);
       int      x_min = is_source_left ? ws.real_to_pix(sx) : 
 	                                ws.real_to_pix(tx);
@@ -58,14 +61,16 @@ Window_stream& operator<<(Window_stream& ws,
       double   curr_x, curr_y;
       int      x;
 
-      typename Conic_arc_2<Kernel>::Point_2 ps[2];
-      int                      nps;
+      Point_2  q;
+      Point_2  ps[2];
+      int      nps;
 
       for (x = x_min + 1; x < x_max; x++)
       {
 	curr_x = ws.pix_to_real(x);
-	nps = cv.get_points_at_x
-          (Conic_arc_2<Kernel>::Point_2(typename Kernel::FT(curr_x), 0), ps);
+	q = Point_2 (CoNT(curr_x), 0);
+	nps = cv.get_points_at_x (q, ps);
+
 	if (nps == 1)
 	{
 	  curr_y = CGAL::to_double(ps[0].y());
@@ -80,8 +85,16 @@ Window_stream& operator<<(Window_stream& ws,
     }
     else
     {
-      // We should never reach here.
-      CGAL_assertion(false);
+      // Break the arc into x-monotone sub-curves and draw each one separately.
+      Arr_conic_traits_2<Int_kernel, Alg_kernel>       traits; 
+      std::list<Conic_arc_2<Int_kernel, Alg_kernel> >  x_mon_curves;
+      typename std::list<Conic_arc_2<Int_kernel, Alg_kernel> >::iterator xit;
+
+      traits.curve_make_x_monotone (cv,
+				    std::back_inserter (x_mon_curves));
+
+      for (xit = x_mon_curves.begin(); xit != x_mon_curves.end(); xit++)
+	ws << *xit;
     }
   }
 

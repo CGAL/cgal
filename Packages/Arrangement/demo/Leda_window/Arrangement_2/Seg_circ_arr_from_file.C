@@ -29,23 +29,32 @@ int main()
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/leda_real.h>
+#include <CORE/BigInt.h>
+#include <CGAL/CORE_Expr.h>
 #include <CGAL/Draw_preferences.h>
 
 #include <fstream>
 
-typedef leda_real                                   NT;
-typedef CGAL::Cartesian<NT>                         Kernel;
-typedef CGAL::Arr_conic_traits_2<Kernel>            Traits;
-typedef CGAL::Pm_default_dcel<Traits>               Dcel;
-typedef CGAL::Planar_map_2<Dcel,Traits>             Pm_2;
-typedef CGAL::Planar_map_with_intersections_2<Pm_2> Pmwx_2;
+typedef CORE::BigInt                            CfNT;
+typedef CGAL::Cartesian<CfNT>                   Int_kernel;
+typedef Int_kernel::Point_2                     Int_point_2;
+typedef Int_kernel::Circle_2                    Int_circle_2;
+typedef Int_kernel::Segment_2                   Int_segment_2;
 
-typedef Traits::Point_2                             Point_2;
-typedef Traits::Curve_2                             Curve_2;
-typedef Traits::Circle_2                            Circle_2;
-typedef Traits::Segment_2                           Segment_2;
-typedef std::list<Curve_2>                          CurveList;
+typedef CORE::Expr                              CoNT;
+typedef CGAL::Cartesian<CoNT>                   Alg_kernel;
+
+typedef CGAL::Arr_conic_traits_2<Int_kernel,
+                                 Alg_kernel>    Traits_2;
+
+typedef Traits_2::Point_2                       Point_2;
+typedef Traits_2::Curve_2                       Curve_2;
+typedef Traits_2::X_monotone_curve_2            X_monotone_curve_2;
+typedef std::list<Curve_2>                      CurveList;
+
+typedef CGAL::Pm_default_dcel<Traits_2>             Dcel;
+typedef CGAL::Planar_map_2<Dcel,Traits_2>           Pm_2;
+typedef CGAL::Planar_map_with_intersections_2<Pm_2> Pmwx_2;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
@@ -103,57 +112,45 @@ int main(int argc, char* argv[])
     std::cout << "Inserting arc no. " << i_arc + 1;
 
     // A full circle (c) or a circular arc (a):
-    if (type == 'c' || type == 'C' || type == 'a' || type == 'A' ||
-	     type == 'f' || type == 'F' || type == 'e' || type == 'E')
+    if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
     {
       // Read the circle, using the format "x0 y0 r^2"
-      leda_real  x0, y0, r2;
+      int    x0, y0, r2;
     
-      if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
-      {
-	f >> x0 >> y0 >> r2;
-      }
-      else
-      {
-	leda_real r, r_;
+      f >> x0 >> y0 >> r2;
 
-	f >> r >> r_ >> x0 >> y0;
-	CGAL_assertion(r == r_);
-	r2 = r*r;
-      }
+      Int_point_2    center = Int_point_2 (CfNT(x0), CfNT(y0));
+      Int_circle_2   circle = Int_circle_2 (center, CfNT(r2));
 
-      Circle_2   circle (Point_2 (x0, y0), r2, CGAL::CLOCKWISE);
-
-      if (type == 'c' || type == 'C' || type == 'f' || type == 'F')
+      if (type == 'c' || type == 'C')
       {
 	std::cout << " (full circle)." << std::endl;
 
 	insrt_t.start();
 	arr.insert (Curve_2(circle));
 	insrt_t.stop();
-
       }
       else
       {
 	std::cout << " (circular arc)." << std::endl;
 
 	// Read the end points.
-	leda_real  x1, y1, x2, y2;
+	int    x1, y1, x2, y2;
 
 	f >> x1 >> y1 >> x2 >> y2;
 
-	Point_2      source (x1, y1);
-	Point_2      target (x2, y2);
+	Point_2      source = Point_2 (CoNT(x1), CoNT(y1));
+	Point_2      target = Point_2 (CoNT(x2), CoNT(y2));
 
 	insrt_t.start();
-	arr.insert (Curve_2 (circle, source, target));
+	arr.insert (Curve_2 (circle, CGAL::CLOCKWISE, source, target));
 	insrt_t.stop();
       }
 
       // Check whether we need to resize the screen.
-      double dx = CGAL::to_double(x0);
-      double dy = CGAL::to_double(y0);
-      double dr = sqrt(CGAL::to_double(r2));
+      double dx = x0;
+      double dy = y0;
+      double dr = r2;
 
       if (min_x > dx - dr) 
 	min_x = dx - dr;
@@ -170,15 +167,15 @@ int main(int argc, char* argv[])
       std::cout << " (segment)." << std::endl;
       
       // Read the end points.
-      leda_real  x1, y1, x2, y2;
+      int    x1, y1, x2, y2;
 
       f >> x1 >> y1 >> x2 >> y2;
 
-      Point_2      source (x1, y1);
-      Point_2      target (x2, y2);
- 
+      Int_point_2      source = Int_point_2 (CfNT(x1), CfNT(y1));
+      Int_point_2      target = Int_point_2 (CfNT(x2), CfNT(y2));
+
       insrt_t.start();
-      arr.insert (Curve_2 (Segment_2 (source, target)));
+      arr.insert (Curve_2 (Int_segment_2 (source, target)));
       insrt_t.stop();
 
       // Check whether we need to resize the screen.

@@ -22,7 +22,7 @@ int main()
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
-#include <CGAL/IO/Conic_arc_2_Window_stream_core.h>
+#include <CGAL/IO/Conic_arc_2_Window_stream.h>
 
 #include <CGAL/Pm_trapezoid_dag_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>

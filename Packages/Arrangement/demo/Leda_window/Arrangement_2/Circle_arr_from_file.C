@@ -26,23 +26,30 @@ int main()
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/leda_real.h>
+#include <CORE/BigInt.h>
+#include <CGAL/CORE_Expr.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 #include <CGAL/Draw_preferences.h>
 #include <fstream>
 
-typedef leda_real                               NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Arr_conic_traits_2<Kernel>        Traits;
+typedef CORE::BigInt                            CfNT;
+typedef CGAL::Cartesian<CfNT>                   Int_kernel;
+typedef Int_kernel::Point_2                     Int_point_2;
+typedef Int_kernel::Circle_2                    Int_circle_2;
 
-typedef Traits::Point_2                         Point_2;
-typedef Traits::Curve_2                         Curve_2;
-typedef Traits::Circle_2                        Circle_2;
-typedef Traits::X_monotone_curve_2              X_monotone_curve_2;
+typedef CORE::Expr                              CoNT;
+typedef CGAL::Cartesian<CoNT>                   Alg_kernel;
 
-typedef CGAL::Arr_2_default_dcel<Traits>        Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits>        Arr_2;
+typedef CGAL::Arr_conic_traits_2<Int_kernel,
+                                 Alg_kernel>    Traits_2;
+
+typedef Traits_2::Point_2                       Point_2;
+typedef Traits_2::Curve_2                       Curve_2;
+typedef Traits_2::X_monotone_curve_2            X_monotone_curve_2;
+
+typedef CGAL::Arr_2_default_dcel<Traits_2>      Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits_2>      Arr_2;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
@@ -88,20 +95,20 @@ int main(int argc, char* argv[])
   std::ifstream f(argv[1]);
   f >> circles_num;
 
-  std::vector<Circle_2> circles;
+  std::vector<Int_circle_2> circles;
   
   double max_r2=1,max_x=1,min_x=-1,min_y=-1; //for adjusting the window size
   while (circles_num--) 
   {
-    leda_real x,y,r2;
+    int   x,y,r2;
     f >> x >> y >> r2;
     
-    Point_2  center (x,y);
-    circles.push_back(Circle_2(center, r2, CGAL::CLOCKWISE));
+    Int_point_2  center = Int_point_2 (CfNT(x), CfNT(y));
+    circles.push_back(Int_circle_2 (center, r2));
 
-    double dx=CGAL::to_double(x);
-    double dy=CGAL::to_double(y);
-    double dr2=CGAL::to_double(r2);
+    double dx = x;
+    double dy = y;
+    double dr2 = r2;
     if (dr2 > max_r2) max_r2=dr2;
     if (dx > max_x) max_x=dx;
     if (dx < min_x) min_x=dx;
