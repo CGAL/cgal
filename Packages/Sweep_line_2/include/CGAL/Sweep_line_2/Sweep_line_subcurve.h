@@ -65,7 +65,7 @@ public:
   typedef Sweep_line_subcurve<Traits> Self;
   typedef Status_line_curve_less_functor<Traits, Self> StatusLineCurveLess;
 
-  typedef std::set<Self*, StatusLineCurveLess> StatusLine;
+  typedef std::set<Self*, StatusLineCurveLess,CGAL_ALLOCATOR(int)> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef Sweep_line_event<Traits, Self> Event;
