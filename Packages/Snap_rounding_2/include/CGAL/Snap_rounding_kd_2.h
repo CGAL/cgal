@@ -171,43 +171,6 @@ public:
     }
   }
 
-  Point small_x_point(Point p1,Point p2)
-  {
-     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p1);
-     else
-       return(p2);
-  }
-
-  Point small_y_point(Point p1,Point p2)
-  {
-     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p1);
-     else
-       return(p2);
-  }
-
-  Point big_x_point(Point p1,Point p2)
-  {
-     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p2);
-     else
-       return(p1);
-  }
-
-  Point big_y_point(Point p1,Point p2)
-  {
-     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
-     if(c == SMALLER)
-       return(p2);
-     else
-       return(p1);
-  }
-
-
   void get_intersecting_points(list<SAVED_OBJECT> &result_list,
                                Segment inp_s,
                                NT unit_squere)
@@ -250,68 +213,8 @@ public:
       --right_iter;
     }
 
-    // query
-    Point ms1,ms2,ms3,ms4,ms5,ms6;// minkowski sum points
-    list<my_point<NT,SAVED_OBJECT> > res;
-
-    Comparison_result cx = _gt.compare_x_2_object()(s.source(),s.target());
-    NT x1 = s.source().x(),y1 = s.source().y(),x2 =
-       s.target().x(),y2 = s.target().y();
-    if(cx == SMALLER) {
-      // we use unit_squere instead of unit_squere / 2 in order to
-      // find tangency points which are not supported by kd-tree
-      ms1 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-      ms2 = Point(x1 - 0.6 * unit_squere,y1 + 0.6 * unit_squere);
-      ms3 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-      ms4 = Point(x2 + 0.6 * unit_squere,y2 - 0.6 * unit_squere);
-      ms5 = Point(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-      ms6 = Point(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-    } else {
-      // we use unit_squere instead of unit_squere / 2 in order to
-      // find tangency points which are not supported by kd-tree
-      ms1 = Point(x1 + 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-      ms2 = Point(x1 - 0.6 * unit_squere,y1 - 0.6 * unit_squere);
-      ms3 = Point(x1 + 0.6 * unit_squere,y1 + 0.6 * unit_squere);
-      ms4 = Point(x2 + 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-      ms5 = Point(x2 - 0.6 * unit_squere,y2 + 0.6 * unit_squere);
-      ms6 = Point(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
-    }
-
-    _gt.rotate_point(ms1,right_iter->second);
-    _gt.rotate_point(ms2,right_iter->second);
-    _gt.rotate_point(ms3,right_iter->second);
-    _gt.rotate_point(ms4,right_iter->second);
-    _gt.rotate_point(ms5,right_iter->second);
-    _gt.rotate_point(ms6,right_iter->second);
-
-    // query
-    Point point_left,point_right,point_bot,point_top;
-
-    point_left = small_x_point(ms1,ms2);
-    point_left = small_x_point(point_left,ms3);
-    point_left = small_x_point(point_left,ms4);
-    point_left = small_x_point(point_left,ms5);
-    point_left = small_x_point(point_left,ms6);
-
-    point_right = big_x_point(ms1,ms2);
-    point_right = big_x_point(point_right,ms3);
-    point_right = big_x_point(point_right,ms4);
-    point_right = big_x_point(point_right,ms5);
-    point_right = big_x_point(point_right,ms6);
-
-    point_bot = small_y_point(ms1,ms2);
-    point_bot = small_y_point(point_bot,ms3);
-    point_bot = small_y_point(point_bot,ms4);
-    point_bot = small_y_point(point_bot,ms5);
-    point_bot = small_y_point(point_bot,ms6);
-
-    point_top = big_y_point(ms1,ms2);
-    point_top = big_y_point(point_top,ms3);
-    point_top = big_y_point(point_top,ms4);
-    point_top = big_y_point(point_top,ms5);
-    point_top = big_y_point(point_top,ms6);
-
-    Iso_rectangle_2 rec(point_left,point_right,point_bot,point_top);
+    Iso_rectangle_2 rec = _gt.get_bounding_of_min_sum(s,unit_squere,
+			  right_iter->second);
 
     Point p1 = rec.vertex(0);
     Point p2 = rec.vertex(2);// end of new code
@@ -322,6 +225,7 @@ public:
     Box b(point1,point2,2);
  
     // the kd-tree query
+    list<my_point<NT,SAVED_OBJECT> > res;
     right_iter->first->search(std::back_inserter(res),b);
 
     // create result
