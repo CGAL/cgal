@@ -149,13 +149,22 @@ inline Fixed_precision_nt  operator/
 
 inline bool  operator<
 (Fixed_precision_nt a, Fixed_precision_nt b)
-{   return (a.to_double() < b.to_double() );}
+{   return (a.to_double() <  b.to_double() );}
+inline bool  operator<=
+(Fixed_precision_nt a, Fixed_precision_nt b)
+{   return (a.to_double() <= b.to_double() );}
+inline bool  operator>
+(Fixed_precision_nt a, Fixed_precision_nt b)
+{   return (a.to_double() >  b.to_double() );}
+inline bool  operator>=
+(Fixed_precision_nt a, Fixed_precision_nt b)
+{   return (a.to_double() >= b.to_double() );}
 inline bool  operator==
 (Fixed_precision_nt a, Fixed_precision_nt b)
-{   return (a.to_double() ==b.to_double() );}
+{   return (a.to_double() == b.to_double() );}
 inline bool  operator!=
 (Fixed_precision_nt a, Fixed_precision_nt b)
-{   return (a.to_double() !=b.to_double() );}
+{   return (a.to_double() != b.to_double() );}
 
 
 std::ostream &operator<<(std::ostream &os, const Fixed_precision_nt& a)

@@ -10,6 +10,9 @@ predicates.
 
 Versions
 
+2.15 (23 Jun 2000)
+  adding operators <= > >= for Micro$oft and kcc 
+
 2.14 (17 May 2000)
   improved version, no longer .C file, + pb borland std:: in example
 
