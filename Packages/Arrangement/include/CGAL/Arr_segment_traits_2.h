@@ -126,13 +126,19 @@ public:
   bool do_intersect_to_right(const X_curve_2 & c1, const X_curve_2 & c2,
                              const Point_2 & pt) const 
   {
-    Point_2 ip;
-    X_curve_2 seg;
     Object res = intersect_2_object()(c1, c2);
 
+    // Empty object is returned - no intersection.
+    if (res.is_empty()) return (false);
+
+    // Intersection is a point
+    Point_2 ip;
     if (assign(ip, res)) {
       return (compare_xy_2_object()(ip, pt) == LARGER);
     }
+
+    // Intersection is a segment
+    X_curve_2 seg;
     if (assign(seg, res)) {
       Compare_xy_2 compare_xy = compare_xy_2_object();
       return ((compare_xy(seg.source(), pt) == LARGER) ||
@@ -153,13 +159,19 @@ public:
   bool do_intersect_to_left(const X_curve_2 & c1, const X_curve_2 & c2,
                             const Point_2 & pt) const 
   {
-    Point_2 ip;
-    X_curve_2 seg;
     Object res = intersect_2_object()(c1, c2);
 
+    // Empty object is returned - no intersection.
+    if (res.is_empty()) return (false);
+
+    // Intersection is a point
+    Point_2 ip;
     if (assign(ip, res)) {
       return (compare_xy_2_object()(ip, pt) == SMALLER);
     }
+
+    // Intersection is a segment
+    X_curve_2 seg;
     if (assign(seg, res)) {
       Compare_xy_2 compare_xy = compare_xy_2_object();
       return ((compare_xy(seg.source(), pt) == SMALLER) ||
@@ -195,10 +207,13 @@ public:
                                      const Point_2 & pt,
                                      Point_2 & p1, Point_2 & p2) const
   {
-    Point_2 ip;
-    X_curve_2 seg;
     Object res = intersect_2_object()(c1, c2);
 
+    // Empty object is returned - no intersection.
+    if (res.is_empty()) return (false);
+
+    // Intersection is a point
+    Point_2 ip;
     if (assign(p1,res)) {
       // the intersection is a point:
       if (compare_xy_2_object()(p1, pt) == LARGER) {
@@ -207,7 +222,9 @@ public:
       }
       return false;
     }
-
+    
+    // Intersection is a segment
+    X_curve_2 seg;
     if (assign(seg, res)) {
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
@@ -272,10 +289,13 @@ public:
                                     const Point_2 & pt,
                                     Point_2 & p1, Point_2 & p2) const
   {
-    Point_2 ip;
-    X_curve_2 seg;
     Object res = intersect_2_object()(c1, c2);
 
+    // Empty object is returned - no intersection.
+    if (res.is_empty()) return (false);
+
+    // Intersection is a point
+    Point_2 ip;
     if (assign(p1,res)) {
       // the intersection is a point:
       if (compare_xy_2_object()(p1, pt) == SMALLER) {
@@ -284,7 +304,9 @@ public:
       }
       return false;
     }
-
+    
+    // Intersection is a segment
+    X_curve_2 seg;
     if (assign(seg, res)) {
       // the intersection is a curve:
       Construct_vertex_2 construct_vertex = construct_vertex_2_object();
@@ -318,7 +340,7 @@ public:
       // the subcurve is completely to the right:
       return false;
     }
-
+    
     // the curves do not intersect:
     return false;
   }
