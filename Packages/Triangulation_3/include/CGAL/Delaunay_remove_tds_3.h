@@ -243,11 +243,26 @@ public:
   typedef typename TDSUL2::Vertex_handle Vertex_handle_3_2;
   typedef typename TDSUL2::Face_handle   Face_handle_3_2;
 
+private:
+
+  // VC7 is lost by too many templates, so we cut the templates by deriving
+
+  // typedef Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
+  //                   Face_handle_3_2, int> Halfedge;
+
+  struct Halfedge : public Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
+                                     Face_handle_3_2, int>
+  {
+    Halfedge(Vertex_handle_3_2 a, Vertex_handle_3_2 b,
+	     Face_handle_3_2 c, int d)
+      : Quadruple<Vertex_handle_3_2, Vertex_handle_3_2, Face_handle_3_2, int>
+        (a, b, c, d) {}
+  };
+
+public:
+
   // FIXME : similar to operator>>(), isn't it ?  Should we try to factorize ?
   Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole ) {
-
-    typedef Quadruple<Vertex_handle_3_2, Vertex_handle_3_2,
-                      Face_handle_3_2, int> Halfedge;
 
     std::vector<Halfedge> halfedges;
     halfedges.reserve(3*boundhole.size());
