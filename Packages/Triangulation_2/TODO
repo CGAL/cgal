@@ -2,8 +2,6 @@
 - defaults template parameter pour triangulations reguliere,
 contrainte et delaunay contrainte
 - documenter les defaults et faire un exemple
-- revoir remove dans Constrained_Delaunay_triangulaion_2
-- ajouter Remove_constraint dans Constrained_Delaunay_triangulaion_2
 - ajouter des acces a la hierarchie dans
  Constrained_triangulation_plus
 - documenter Constrained_triangulation_plus_2

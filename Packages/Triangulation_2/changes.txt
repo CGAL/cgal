@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.89 (15/5/01)
+- add remove_constraint in Constrained_Delaunay_triangulation_2
+- add is_contrained(Edge e), remove_incident_constraints(Vertex_handle v)
+  are_there_incident_constraints(Vertex_handle v) in 
+  Constrained_triangulation_2 and Constrained_Delaunay_triangulation_2
+
 Ver 4.88 (14/5/01)
 - fixed missind std:: in front of back_inserter
 
