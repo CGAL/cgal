@@ -62,6 +62,10 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP
 
+#ifdef CGAL_USE_LONG_LONG
+#  include <CGAL/long_long.h>
+#endif
+
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Lazy_exact_nt.h>
