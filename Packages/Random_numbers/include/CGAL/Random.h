@@ -16,8 +16,8 @@
 // chapter       : Random Numbers Generator
 //
 // source        : web/Random.aw
-// revision      : 2.5
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : INRIA Sophia-Antipolis
@@ -44,13 +44,9 @@ class Random;
 // ===============
 class Random {
   public:
-    // types
-    typedef  unsigned short  State[3];                  // 48 Bits
-    
     // creation
     Random( );
-    Random( long seed);
-    Random( State state);
+    Random( unsigned int  seed);
     
     // operations
     bool    get_bool  ( );
@@ -58,17 +54,9 @@ class Random {
     double  get_double( double lower = 0.0, double upper = 1.0);
     
     int     operator () ( int upper);
-    
-    // state functions
-    void       save_state(       State& state) const;
-    void    restore_state( const State& state);
-    
-    // equality test
-    bool  operator == ( const Random& rnd) const;
-
   private:
     // data members
-    unsigned short  _state[3];                          // 48 Bits
+    const double  rand_max_plus_1;
 };
 
 // Global variables
@@ -95,7 +83,7 @@ bool
 Random::
 get_bool( )
 {
-    return static_cast<bool>( erand48( _state) < 0.5);
+    return( static_cast< bool>( rand() & 1));
 }
 
 inline
@@ -103,8 +91,8 @@ int
 Random::
 get_int( int lower, int upper)
 {
-    return( lower + static_cast<int>(
-        static_cast<double>( upper-lower) * erand48( _state)));
+    return( lower + static_cast< int>(
+      ( static_cast< double>( upper) - lower) * rand() / rand_max_plus_1));
 }
 
 inline
@@ -112,7 +100,7 @@ double
 Random::
 get_double( double lower, double upper)
 {
-    return( lower + ( upper-lower) * erand48( _state));
+    return( lower + ( ( upper-lower) * rand() / rand_max_plus_1));
 }
 
 inline
@@ -121,17 +109,6 @@ Random::
 operator () ( int upper)
 {
     return( get_int( 0, upper));
-}
-
-inline
-bool
-Random::
-operator == ( const Random& rnd) const
-{
-    return( static_cast<bool>(
-                ( _state[ 0] == rnd._state[ 0]) &&
-                ( _state[ 1] == rnd._state[ 1]) &&
-                ( _state[ 2] == rnd._state[ 2]) ) );
 }
 
 CGAL_END_NAMESPACE

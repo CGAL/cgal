@@ -16,8 +16,8 @@
 // chapter       : Random Numbers Generator
 //
 // source        : web/Random.aw
-// revision      : 2.5
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : INRIA Sophia-Antipolis
@@ -32,9 +32,6 @@
 int
 main( int, char**)
 {
-    CGAL::Random::State  state;
-    CGAL::default_random.save_state( state);
-    
     // test get_bool
     {
         bool b = CGAL::default_random.get_bool();
@@ -61,24 +58,6 @@ main( int, char**)
     {
         int  i = CGAL::default_random( 5555);
         assert( ( 0 <= i) && ( i < 5555));
-    }
-    
-    // test state functions
-    {
-        CGAL::default_random.restore_state( state);     // `default_random' and
-        CGAL::Random rnd( state);              // `rnd' have the same state now
-        assert( CGAL::default_random.get_bool()         == rnd.get_bool());
-        assert( CGAL::default_random.get_int( -100,100)
-                                                    == rnd.get_int( -100,100));
-        assert( CGAL::default_random.get_double()       == rnd.get_double());
-        assert( CGAL::default_random                    == rnd);
-    
-        long init = CGAL::default_random( 9999);
-        CGAL::Random rnd1( init), rnd2( init);
-        assert( rnd1.get_bool()         == rnd2.get_bool()        );
-        assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
-        assert( rnd1.get_double()       == rnd2.get_double()      );
-        assert( rnd1                    == rnd2                   );
     }
 
     return( 0);

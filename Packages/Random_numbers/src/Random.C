@@ -16,8 +16,8 @@
 // chapter       : Random Numbers Generator
 //
 // source        : web/Random.aw
-// revision      : 2.5
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : INRIA Sophia-Antipolis
@@ -32,10 +32,6 @@
 #  include <ctime>
 #  define CGAL_PROTECT_CTIME
 #endif
-#ifndef CGAL_PROTECT_SYS_TIME_H
-#  include <sys/time.h>
-#  define CGAL_PROTECT_SYS_TIME_H
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,51 +41,23 @@ CGAL_BEGIN_NAMESPACE
 // constructors
 Random::
 Random( )
+    : rand_max_plus_1( RAND_MAX+1.0)
 {
-    // get system's microseconds
-    timeval tv;
-    gettimeofday( &tv, NULL);
-    unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
+    // get system's time
+    time_t s;
+    time( &s);
+    unsigned int  seed = s;
 
     // initialize random numbers generator
-    _state[ 0] = _state[ 2] = static_cast<unsigned short>( ms >> 16);
-    _state[ 1] =              static_cast<unsigned short>( ms & 65535);
+    srand( seed);
 }
 
 Random::
-Random( long seed)
+Random( unsigned int  seed)
+    : rand_max_plus_1( RAND_MAX+1.0)
 {
     // initialize random numbers generator
-    _state[ 0] = _state[ 2] = static_cast<unsigned short>( seed >> 16);
-    _state[ 1] =              static_cast<unsigned short>( seed & 65535);
-}
-
-Random::
-Random( State state)
-{
-    // initialize random numbers generator
-    _state[ 0] = state[ 0];
-    _state[ 1] = state[ 1];
-    _state[ 2] = state[ 2];
-}
-
-// state functions
-void
-Random::
-save_state( State& state) const
-{
-    state[ 0] = _state[ 0];
-    state[ 1] = _state[ 1];
-    state[ 2] = _state[ 2];
-}
-
-void
-Random::
-restore_state( const State& state)
-{
-    _state[ 0] = state[ 0];
-    _state[ 1] = state[ 1];
-    _state[ 2] = state[ 2];
+    srand( seed);
 }
 
 // Global variables
