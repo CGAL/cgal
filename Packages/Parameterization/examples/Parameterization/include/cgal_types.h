@@ -522,10 +522,6 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
   // normal
   Norm m_normal;
 
-  // texture coordinates
-  double m_u;
-  double m_v;
-
   // multiplicity on the seaming backbone
   unsigned char m_multiplicity;
   // the vertex can be on the boundary or inner
@@ -598,8 +594,6 @@ public:
     m_is_border = false;
     m_is_crease = false;
     m_sharp_degree = 0;
-    m_u = 0.0;
-    m_v = 0.0;
     m_multiplicity = 1;
     m_is_inner_param = true;
     m_multiplicity = 0;
@@ -627,13 +621,6 @@ public:
   // index
   int index() const { return m_index; }
   void index(int i) { m_index = i; }
-
-  // texture coordinates
-  double u() const { return m_u; }
-  double v() const { return m_v; }
-  void u(double u) { m_u = u; }
-  void v(double v) { m_v = v; }
-  void uv(double u,double v) { m_u = u; m_v = v; }
 
   // normal
   typedef Norm Normal_3;
