@@ -1,3 +1,29 @@
+// ======================================================================
+//
+// Copyright (c) 2003 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : include/CGAL/predicates/Svd_Voronoi_vertex_ring_C2.h
+// package       : Segment_Voronoi_diagram_2
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+//
+// coordinator   :
+//
+// ======================================================================
+
+
+
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_VERTEX_RING_C2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_VERTEX_RING_C2_H
 
