@@ -180,6 +180,7 @@ else
 
   #run the test for new sweep
     (compile_and_run_sweep test_sweep $NAIVE $CGAL_SEGMENT_TRAITS "DATA/segments_tight")
+    (compile_and_run_sweep test_sweep_conic $NAIVE $CGAL_CONIC_TRAITS "DATA/conics")
   exit 0
 
   # run test with generic segment traits
