@@ -16,12 +16,12 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test ; ------------ ----"
-	@echo "---- make VERSION=4.83 Doc -------"
+	@echo "---- make VERSION=4.84 Doc -------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.83 Version ---"
+	@echo "---- make VERSION=4.84 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.83 Tag -------"
-	@echo "---- make VERSION=4.83 Submit ----"
+	@echo "---- make VERSION=4.84 Tag -------"
+	@echo "---- make VERSION=4.84 Submit ----"
 	@echo "---------------------------------"
 
 

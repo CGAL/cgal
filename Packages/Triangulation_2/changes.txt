@@ -1,12 +1,16 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.83 (22/01/01)
+Ver 4.84 (14/03/01)
+- pass the private constructor of Line_face_circulator
+  to public, to please Microsoft compilers
+
+Ver 4.83 (22/02/01)
 - cleaned up Line_face_circulator and locate. 
 - fixed line_walk
 - add test for Line_face_circulator and line_walk
 
-Ver 4.82 (20/01/01)
+Ver 4.82 (20/02/01)
 - remove const_cast for "this" in march_locate_2d of Triangulation_2
 
 Ver 4.81 (19/01/01)
