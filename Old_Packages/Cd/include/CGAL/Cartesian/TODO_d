@@ -1,0 +1,12 @@
+TODO list for the d-dimension kernel:
+- Aff_transformations with the whole hierarchy, although need to think
+  hard about what the benefits are (cause it's a lot of work)!
+  currently, we limit ourselves with the generic representation!
+     Homothecy_rep_d.h           Translation_rep_d.h
+     Scaling_rep_d.h             Reflexion_rep_d.h
+- smaller dimensional flats and simplices
+- distances and intersection packages
+
+- homogeneous_solver() in Linear_algebra_d.h
+- verify_determinant() in Linear_algebra_d.h
+- coplanar_orientation() in predicates_on_points_d.h
