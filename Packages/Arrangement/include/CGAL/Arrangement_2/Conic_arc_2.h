@@ -205,7 +205,7 @@ public:
     }
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
-    _bbox = bounding_box();         // Compute the bounding box.
+    _bbox = bbox();         // Compute the bounding box.
 #endif
   }
 
@@ -666,7 +666,7 @@ public:
   }
 
   // Get a bounding box for the conic arc.
-  Bbox_2 bounding_box () const
+  Bbox_2 bbox () const
   {
     // Use the source and target to initialize the exterme points.
     bool   source_left = 
@@ -952,7 +952,7 @@ public:
     }
  
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
-    ref_arc._bbox = ref_arc.bounding_box();  // Compute the bounding box.
+    ref_arc._bbox = ref_arc.bbox();  // Compute the bounding box.
 #endif
 
     return (ref_arc);
@@ -997,7 +997,7 @@ public:
 
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
-    ref_arc._bbox = ref_arc.bounding_box();  // Compute the bounding box.
+    ref_arc._bbox = ref_arc.bbox();  // Compute the bounding box.
 #endif
 
     return (ref_arc);
@@ -1627,7 +1627,7 @@ public:
     }
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
-    _bbox = bounding_box();         // Compute the bounding box. 
+    _bbox = bbox();         // Compute the bounding box. 
 #endif
 
     return;
@@ -1691,7 +1691,7 @@ public:
                          _conic_id);
 
 #ifdef CGAL_CONIC_ARC_USE_BOUNDING_BOX
-    _bbox = bounding_box();       // Compute the bounding box.
+    _bbox = bbox();       // Compute the bounding box.
 #endif
 
     return;
