@@ -97,7 +97,7 @@ template <class Traits>
 class Partition_vertex : public Traits::Point_2
 {
   public:
-    typedef typename Traits::Point_2                             Point_2;
+    typedef typename Traits::Point_2                             Base_point;
     typedef typename Partitioned_polygon_2< Traits >::iterator   I; 
     typedef Circulator_from_iterator<I>                          Circulator;
 //
@@ -112,7 +112,7 @@ class Partition_vertex : public Traits::Point_2
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
 
-    Partition_vertex(Point_2 p): Point_2(p) {}
+    Partition_vertex(Base_point p): Base_point(p) {}
 
     void insert_diagonal(Circulator v_ref) 
     {

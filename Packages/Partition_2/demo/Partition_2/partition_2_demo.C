@@ -242,5 +242,5 @@ int main( int argc, char** argv )
             break;
       }
     }
-    return 0;
+    return 0; // statement is unreachable; warning is OK
 }

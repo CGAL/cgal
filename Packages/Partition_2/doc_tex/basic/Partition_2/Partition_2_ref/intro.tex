@@ -11,8 +11,9 @@
 \clearpage
 \section{Reference Pages for Planar Polygon Partitioning}
 
-\lcTex{\ifnum\ccNewRefManualStyle=\ccTrue}
-{
+\begin{ccTexOnly}
+\ifnum\ccNewRefManualStyle=\ccTrue
+\end{ccTexOnly}
 A {\em partition}\ccIndexMainItemDef{partition} of a polygon is a set 
 of polygons such that the interiors of the polygons do not intersect and 
 the union of the polygons is equal to the interior of the original polygon.
@@ -39,8 +40,9 @@ Mehlhorn \cite{hm-ftsp-83}, which requires $O(n)$ time and space to produce
 a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.
-}
-\lcTex{\fi}
+\begin{ccTexOnly}
+\fi
+\end{ccTexOnly}
 
 \lcTex{
 \subsection*{Concepts}

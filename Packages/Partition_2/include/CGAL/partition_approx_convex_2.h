@@ -84,7 +84,8 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
              << std::endl;
 #endif
 
-   Circulator next_ccw_pt_ref, prev_ccw_pt_ref;
+//   Circulator next_ccw_pt_ref, prev_ccw_pt_ref;
+   typename Triangulation::Point next_ccw_pt_ref, prev_ccw_pt_ref;
 
    // the next and previous edges in the ccw ordering of edges around v_ref
    Edge_circulator next_e = e_circ; next_e++;
@@ -221,7 +222,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
                                 *source, *after_s, *target, traits)) 
                 {
                    if (partition_appx_cvx_cuts_nonconvex_angle(e_circ, 
-                                 v_it->point(), triangles, traits)) 
+                                 (*v_it).point(), triangles, traits)) 
                    {
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                       std::cout << "inserting" << std::endl;

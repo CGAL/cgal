@@ -26,9 +26,8 @@
 // implementation: testing of is_y_monotone_2 function
 // ============================================================================
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_traits_2.h>
 #include <CGAL/is_y_monotone_2.h>
