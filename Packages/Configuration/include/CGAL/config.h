@@ -45,13 +45,6 @@
 #   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 #endif // _MSC_VER
 
-//-----
-// Borland builder fix
-//-----
-
-#if defined(__BORLANDC__) && __BORLANDC__ > 0x520
-#include <time.h> // for time_t
-#endif
 
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
@@ -113,6 +106,9 @@
 
 #ifdef _MSC_VER
 #  include <CGAL/MSVC_standard_header_fixes.h>
+#endif
+#if defined(__BORLANDC__) && __BORLANDC__ > 0x520
+#include <CGAL/Borland_fixes.h>
 #endif
 #include <CGAL/workaround_return_type.h>
 #include <CGAL/workaround_casts.h>
