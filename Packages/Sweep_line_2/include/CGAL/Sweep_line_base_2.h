@@ -506,6 +506,10 @@ private:
 
   Event *m_currentEvent;
 
+#ifndef NDEBUG
+  int m_eventId;
+  int m_curveId;
+#endif
 };
 
 template <class CurveInputIterator,  class SweepLineTraits_2>
@@ -546,11 +550,14 @@ Init(CurveInputIterator begin, CurveInputIterator end)
   StatusLineCurveLess slcurveless(m_traits);
   m_statusLine = new StatusLine(slcurveless);
 
+  SL_DEBUG(m_eventId = 0;)
+  SL_DEBUG(m_curveId = 0 ;)
+
   int count = 0;
   CurveInputIterator iter;
   for ( iter = begin ; iter != end ; ++iter)
   {
-    if ( m_traits->is_x_monotone(*iter) )
+    if ( m_traits->is_x_monotone(*iter) ) 
       InitCurve(*iter);
     else
     {
@@ -569,6 +576,7 @@ Init(CurveInputIterator begin, CurveInputIterator end)
 	count++;
       }
     }
+    SL_DEBUG(m_curveId++;)
   }
 }
 
@@ -586,6 +594,7 @@ InitCurve(X_curve_2 &curve)
   Event *e = 0;
   
   SubCurve *subCv = new SubCurve(curve, &m_currentPos, m_traits);
+  SL_DEBUG(subCv->id = m_curveId;)
   m_subCurves.push_back(subCv);
   
   // handle the source point
@@ -594,7 +603,8 @@ InitCurve(X_curve_2 &curve)
     SL_DEBUG(std::cout << "event " << source << " already exists\n";)
     e = eventIter->second;
   } else  {
-    e = new Event(source, m_traits);
+    e = new Event(source, m_traits); 
+    SL_DEBUG(e->id = m_eventId++;)
     m_events.push_back(e);
     m_queue->insert(EventQueueValueType(source, e));
   }
@@ -607,7 +617,8 @@ InitCurve(X_curve_2 &curve)
     SL_DEBUG(std::cout << "event " << target << " already exists\n";)
     e = eventIter->second;
   } else  {
-    e = new Event(target, m_traits);
+    e = new Event(target, m_traits); 
+    SL_DEBUG(e->id = m_eventId++;)
     m_events.push_back(e);
     m_queue->insert(EventQueueValueType(target, e));
   }
@@ -716,7 +727,6 @@ FirstPass()
 
   SL_DEBUG(std::cout << "First pass - done\n" ;)
 }
-
 
 /*! Loop over the curves to the right of the sweep line and handle them:
   - if we are at the beginning of the curve, we insert it to the sweep 
@@ -830,9 +840,9 @@ Intersect(SubCurve *c1, SubCurve *c2)
 {
   SL_DEBUG(std::cout << "Looking for intersection between:\n\t";)
   SL_DEBUG(c1->Print();)
-  SL_DEBUG(std::cout << "\n\t";)
+  SL_DEBUG(std::cout << "\t";)
   SL_DEBUG(c2->Print();)
-  SL_DEBUG(std::cout << "\n\n";)
+  SL_DEBUG(std::cout << "\n";)
 	    
   SubCurve *scv1 = c1;
   SubCurve *scv2 = c2;
@@ -845,10 +855,13 @@ Intersect(SubCurve *c1, SubCurve *c2)
 					       p, p))
   {
     SL_DEBUG(
-      std::cout << " a new event is created between:\n\t(" 
-	      << cv1 << ") and \n\t(" << cv2 << ")\n\trelative to ("
-	      << m_sweepLinePos << ")\n\t at (" 
-	      << p << ")" << std::endl;
+      std::cout << " a new event is created between:\n\t";
+      scv1->Print();
+      std::cout << "\t";
+      scv2->Print();
+      std::cout << "\trelative to ("
+                << m_sweepLinePos << ")\n\t at (" 
+                << p << ")" << std::endl;
     )
 
     // check to see if an event at this point already exists...
@@ -856,7 +869,8 @@ Intersect(SubCurve *c1, SubCurve *c2)
     Event *e = 0;
     if ( eqi == m_queue->end() )
     {
-      e = new Event(p, m_traits);
+      e = new Event(p, m_traits); 
+      SL_DEBUG(e->id = m_eventId++;)
       m_events.push_back(e);
       
       m_currentPos = m_sweepLinePos;
@@ -869,7 +883,7 @@ Intersect(SubCurve *c1, SubCurve *c2)
       
       PRINT_NEW_EVENT(p, e);
       m_queue->insert(EventQueueValueType(p, e));
-
+      return e;
     } else 
     {
       SL_DEBUG(std::cout << "event already exists, updating.. (" << p << ")\n";)
@@ -892,6 +906,7 @@ Intersect(SubCurve *c1, SubCurve *c2)
     return e;
   } 
   SL_DEBUG(std::cout << "not found 2\n";)
+
   return 0;
   
 }
@@ -944,7 +959,8 @@ Intersect(SubCurve *c1, SubCurve *c2, SubCurve *c3)
   Event *e = 0;
   if ( eqi == m_queue->end() )
   {
-    e = new Event(p, m_traits);
+    e = new Event(p, m_traits); 
+    SL_DEBUG(e->id = m_eventId++;)
     m_events.push_back(e);
     
     m_currentPos = m_sweepLinePos;

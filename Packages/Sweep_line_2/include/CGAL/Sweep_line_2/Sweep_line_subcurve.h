@@ -85,8 +85,10 @@ public:
     return false;
   }
 
+#ifndef NDEBUG
   void Print() const;
- 
+#endif
+
 private:
     
   Traits *m_traits;
@@ -97,6 +99,11 @@ private:
   bool m_isRightSide;
   Point_2 m_source;
   Point_2 m_target;
+
+public:
+#ifndef NDEBUG
+  int id;
+#endif
 };
 
 template<class SweepLineTraits_2>
@@ -119,17 +126,17 @@ Sweep_line_subcurve(X_curve_2 &curve, Point_2 *reference,
     m_isRightSide = true;
   }
 }
-
+#ifndef NDEBUG
 template<class SweepLineTraits_2>
 void 
 Sweep_line_subcurve<SweepLineTraits_2>::
 Print() const
 {
-  std::cout << "Curve (" << m_curve << ") "
-	    << "p = (" << m_lastPoint << ")" << std::endl;
+  std::cout << "Curve " << id << "  (" << m_curve << ") "
+	    << "last P = (" << m_lastPoint << ")" << std::endl;
   
 }
-
+#endif
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SWEEP_LINE_SUBCURVE_H

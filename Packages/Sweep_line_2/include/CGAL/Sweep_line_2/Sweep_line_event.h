@@ -59,6 +59,10 @@ public:
   typedef typename std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
 
+  typedef Status_line_curve_less_functor<Traits> StatusLineCurveLess;
+  typedef std::set<SubCurve*, StatusLineCurveLess> StatusLine;
+  typedef typename StatusLine::iterator StatusLineIter;
+
   Sweep_line_event(const Point_2 &point, Traits *traits) {
     m_leftCurves = new SubcurveContainer();
     m_rightCurves = new SubcurveContainer();
@@ -72,6 +76,9 @@ public:
     delete m_rightCurves;
   }
 
+  /** if the curve is already in, we will take it out and reinsert it, 
+      since its relative position to the other curves may have changed.
+  */
   void addCurveToLeft(SubCurve *curve) 
   {
     if (m_leftCurves->empty())
@@ -79,6 +86,14 @@ public:
     else 
     {
       SubCurveIter iter = m_leftCurves->begin();
+      while ( iter != m_leftCurves->end() ) {
+	if ( m_traits->curve_is_same((*iter)->getCurve(), curve->getCurve())) {
+	  m_leftCurves->erase(iter);
+	  break;
+	}
+	++iter;
+      }
+      iter = m_leftCurves->begin();
       while ( iter != m_leftCurves->end() &&
 	      m_traits->curve_compare_at_x_right(curve->getCurve(),
 					  (*iter)->getCurve(), 
@@ -87,9 +102,12 @@ public:
       {
 	++iter;
       }
+
       if ( iter == m_leftCurves->end() ||
 	   !m_traits->curve_is_same((*iter)->getCurve(), curve->getCurve()))
+      {
 	m_leftCurves->insert(iter, curve);
+      }
     }
   }
 
@@ -144,7 +162,9 @@ public:
     return m_point;
   }
 
+#ifndef NDEBUG
   void Print();
+#endif
  
 private:
 
@@ -157,33 +177,45 @@ private:
   bool m_isEndPoint;
 
   Point_2 m_point;
+
+#ifndef NDEBUG
+public:
+  int id;
+#endif
   
 };
 
-
+#ifndef NDEBUG
 template<class SweepLineTraits_2>
 void 
 Sweep_line_event<SweepLineTraits_2>::
 Print() 
 {
+  std::cout << "\tEvent id: " << id << "\n" ;
   std::cout << "\tLeft curves: \n" ;
   for ( SubCurveIter iter = m_leftCurves->begin() ;
 	iter != m_leftCurves->end() ; ++iter )
   {
-    const X_curve_2 &c = (*iter)->getCurve();
-    std::cout << "\t(" << c << ") \n";
+    //const X_curve_2 &c = (*iter)->getCurve();
+    //std::cout << "\t(" << c << ") \n";
+    std::cout << "\t";
+    (*iter)->Print();
+    std::cout << "\n";
   }
   std::cout << std::endl;
   std::cout << "\tRight curves: \n" ;
   for ( SubCurveIter iter = m_rightCurves->begin() ;
 	iter != m_rightCurves->end() ; ++iter )
   {
-    const X_curve_2 &c = (*iter)->getCurve();
-    std::cout << "\t(" << c << ") \n";
+    //const X_curve_2 &c = (*iter)->getCurve();
+    //std::cout << "\t(" << c << ") \n";
+    std::cout << "\t";
+    (*iter)->Print();
+    std::cout << "\n";
   }
   std::cout << std::endl;
 }
-
+#endif
 
 
 
