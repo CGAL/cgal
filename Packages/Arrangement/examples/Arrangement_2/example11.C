@@ -21,6 +21,8 @@
 //uncomment if you have LEDA installed.
 //#include <CGAL/IO/Arr_Postscript_file_stream.h>
 
+using CGAL::write_arr;
+
 typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;
 typedef CGAL::Arr_segment_exact_traits<R>              Traits;
@@ -37,15 +39,17 @@ int main()
 { 
   Arrangement arr;
 
-  std::cout<<"* * * Demonstrating a trivial use of IO functions"<<std::endl<<std::endl;
+  std::cout << "* * * Demonstrating a trivial use of IO functions";
+  std::cout << std::endl << std::endl;
   std::cin >> arr;
   std::cout << arr;
   
-  std::cout<<std::endl;
+  std::cout << std::endl;
 
-  std::cout<<"* * * Presenting the use of verbose format"<<std::endl<<std::endl;;
-  CGAL::Arr_file_writer<Arrangement>  verbose_writer(cout, arr, true);
-  write_arr(arr, verbose_writer, cout);
+  std::cout << "* * * Presenting the use of verbose format";
+  std::cout << std::endl << std::endl;;
+  CGAL::Arr_file_writer<Arrangement> verbose_writer(std::cout, arr, true);
+  write_arr(arr, verbose_writer, std::cout);
    
   //uncomment if you have LEDA installed. 
   //printing to leda window.
