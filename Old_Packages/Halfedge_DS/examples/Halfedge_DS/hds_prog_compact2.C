@@ -47,10 +47,9 @@ public:
     bool is_border() const       { return f == NULL;}
 
     void  set_opposite( void* g) {
-        const size_t SIZE = sizeof( My_halfedge) + 
-                            sizeof( In_place_list_base<My_halfedge>);
         char* h = (char*)g;
-        CGAL_assertion( size_t( abs( h - (char*)this)) == SIZE);
+        CGAL_assertion( size_t( abs( h - (char*)this)) == 
+	    sizeof( My_halfedge) + sizeof( In_place_list_base<My_halfedge>));
         if ( h > (char*)this)
             nxt |= 1;
         else

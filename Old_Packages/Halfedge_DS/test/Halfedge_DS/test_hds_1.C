@@ -123,7 +123,7 @@ void test_Halfedge_data_structure_polyhedron_default_3() {
     CGAL_assertion( hds.size_of_border_edges() == 1);
     // g++ 2.8 and egcs 2.90 linker relocation error:
     typedef HDS::Edge_iterator Edge_iterator;
-    Edge_iterator i = hds.edges_begin();
+    CGAL_assertion_code( Edge_iterator i = hds.edges_begin();)
     // This operator== causes the error.
     CGAL_assertion(!(i == hds.edges_end()));
 }

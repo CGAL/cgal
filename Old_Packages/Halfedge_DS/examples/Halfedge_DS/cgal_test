@@ -74,6 +74,7 @@ else
   compile_and_run hds_prog_default
   compile_and_run hds_prog_graph
   compile_and_run hds_prog_graph2
+  compile_and_run hds_prog_edge_iterator
   compile_and_run hds_prog_halfedge_iterator
   compile_and_run hds_prog_vector
 fi

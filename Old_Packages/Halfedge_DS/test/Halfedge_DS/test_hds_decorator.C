@@ -101,6 +101,7 @@ void test_Halfedge_data_structure_decorator() {
     Decorator  decorator;
     // Check create single loop.
     Halfedge* h = decorator.create_loop(hds);
+    (void)h; // suppress compiler warning
     hds.normalize_border();
     CGAL_assertion( hds.size_of_vertices() == 1);
     CGAL_assertion( hds.size_of_halfedges() == 2);
@@ -145,7 +146,8 @@ void test_Halfedge_data_structure_decorator() {
     decorator.split_vertex( hds, g2, g->opposite());
     CGAL_assertion( decorator.is_valid( hds, false, 4));
     CGAL_assertion( g->next()->next()->next()->next() == g);
-    Halfedge* g3 = decorator.split_facet( hds, g2->next()->opposite(), h);
+    CGAL_assertion_code( Halfedge* g3 = 
+        decorator.split_facet( hds, g2->next()->opposite(), h); )
     CGAL_assertion( decorator.is_valid( hds, false, 4));
     CGAL_assertion( g->next()->next()->next()->next() == g);
     CGAL_assertion( h->next()->next()->next() == h);
@@ -155,7 +157,7 @@ void test_Halfedge_data_structure_decorator() {
     CGAL_assertion( g3->opposite() == h->next());
 
     // Edge flip within the triangle.
-    Halfedge* g4 = decorator.flip_edge( g3);
+    CGAL_assertion_code( Halfedge* g4 = decorator.flip_edge( g3);)
     CGAL_assertion( decorator.is_valid( hds, false, 4));
     CGAL_assertion( g4 == g3);
     CGAL_assertion( g3->next()->next() == g2->opposite());
@@ -212,6 +214,7 @@ void test_Halfedge_data_structure_decorator2() {
     Decorator  decorator;
     // Check create single loop.
     Halfedge* h = decorator.create_loop(hds);
+    (void)h; // suppress compiler warning
     hds.normalize_border();
     CGAL_assertion( hds.size_of_vertices() == 1);
     CGAL_assertion( hds.size_of_halfedges() == 2);
@@ -263,7 +266,8 @@ void test_Halfedge_data_structure_decorator2() {
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( hds, false, 4));
     CGAL_assertion( g->next()->next()->next()->next() == g);
-    Halfedge* g3 = decorator.split_facet( hds, g2->next()->opposite(), h);
+    CGAL_assertion_code( Halfedge* g3 = 
+        decorator.split_facet( hds, g2->next()->opposite(), h);)
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( hds, false, 4));
     CGAL_assertion( g->next()->next()->next()->next() == g);
@@ -274,7 +278,7 @@ void test_Halfedge_data_structure_decorator2() {
     CGAL_assertion( g3->opposite() == h->next());
 
     // Edge flip within the triangle.
-    Halfedge* g4 = decorator.flip_edge( g3);
+    CGAL_assertion_code( Halfedge* g4 = decorator.flip_edge( g3);)
     CGAL_assertion( decorator.is_valid( hds, false, 3));
     hds.normalize_border();
     CGAL_assertion( decorator.is_valid( hds, false, 4));

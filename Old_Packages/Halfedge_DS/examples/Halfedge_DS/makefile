@@ -44,6 +44,7 @@ all:            \
                 hds_prog_default \
                 hds_prog_graph \
                 hds_prog_graph2 \
+                hds_prog_edge_iterator \
                 hds_prog_halfedge_iterator \
                 hds_prog_vector 
 
@@ -65,6 +66,9 @@ hds_prog_graph$(EXE_EXT): hds_prog_graph$(OBJ_EXT)
 hds_prog_graph2$(EXE_EXT): hds_prog_graph2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hds_prog_graph2 hds_prog_graph2$(OBJ_EXT) $(LDFLAGS)
 
+hds_prog_edge_iterator$(EXE_EXT): hds_prog_edge_iterator$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hds_prog_edge_iterator hds_prog_edge_iterator$(OBJ_EXT) $(LDFLAGS)
+
 hds_prog_halfedge_iterator$(EXE_EXT): hds_prog_halfedge_iterator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)hds_prog_halfedge_iterator hds_prog_halfedge_iterator$(OBJ_EXT) $(LDFLAGS)
 
@@ -78,6 +82,7 @@ clean: \
                    hds_prog_default.clean \
                    hds_prog_graph.clean \
                    hds_prog_graph2.clean \
+                   hds_prog_edge_iterator.clean \
                    hds_prog_halfedge_iterator.clean \
                    hds_prog_vector.clean 
 

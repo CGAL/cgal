@@ -137,7 +137,7 @@ void test_Halfedge_data_structure_default() {
     // g++ 2.8 and egcs 2.90 linker relocation error:
     // This here is quite similar code, but it works out nicely, no error.
     typedef HDS::Edge_iterator Edge_iterator;
-    Edge_iterator i = hds.edges_begin();
+    CGAL_assertion_code( Edge_iterator i = hds.edges_begin();)
     // This operator== causes NO error here.
     CGAL_assertion(!(i == hds.edges_end()));
 
