@@ -43,8 +43,6 @@ public:
     side_of_oriented_circleC2(X, X, X, X, X, X, X, X);
   }
 
-  static const double epsilon; // = 1.42109e-13; // cir_2();
-
 public:
   typedef Oriented_side result_type;
 
@@ -93,7 +91,7 @@ public:
     double max2 = tx*tx + ty*ty;
     if (max2 < qq) max2 = qq;
     if (max2 < rr) max2 = rr;
-    double eps = epsilon*maxx*maxy*(max2+pp);
+    double eps = 1.42109e-13 * maxx * maxy * (max2+pp);
 
     if (det >  eps) return ON_POSITIVE_SIDE;
     if (det < -eps) return ON_NEGATIVE_SIDE;
@@ -125,7 +123,7 @@ public:
         double maxy = fabs(tpy);
         if (maxy < fabs(qpy)) maxy = fabs(qpy);
         if (maxy < fabs(rpy)) maxy = fabs(rpy);
-        double eps = epsilon*maxx*maxy*max2;
+        double eps = 1.42109e-13 * maxx * maxy * max2;
 
         if (det >  eps) return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
@@ -146,9 +144,6 @@ public:
     return oooo;
   }
 };
-
-template <class Point>
-const double SF_Side_of_oriented_circle_2<Point>::epsilon = 1.42109e-13;
 
 CGAL_END_NAMESPACE
 

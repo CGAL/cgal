@@ -47,8 +47,6 @@ class SF_Orientation_2
     return err;
   }
 
-  static const double epsilon; // = 3.55271e-15; // ori_2();
-
 public:
   typedef Orientation result_type;
 
@@ -86,7 +84,7 @@ public: // public because used by Coplanar_orientation_3.
     double maxy = fabs(py);
     if (maxy < fabs(qy)) maxy = fabs(qy);
     if (maxy < fabs(ry)) maxy = fabs(ry);
-    double eps = epsilon*maxx*maxy;
+    double eps = 3.55271e-15 * maxx * maxy;
 
     if (det > eps)  return POSITIVE;
     if (det < -eps) return NEGATIVE;
@@ -101,9 +99,6 @@ public: // public because used by Coplanar_orientation_3.
   }
 
 };
-
-template <class Point>
-const double SF_Orientation_2<Point>::epsilon = 3.55271e-15;
 
 CGAL_END_NAMESPACE
 

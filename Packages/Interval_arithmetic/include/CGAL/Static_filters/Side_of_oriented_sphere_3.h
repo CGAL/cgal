@@ -50,8 +50,6 @@ class SF_Side_of_oriented_sphere_3
     return err;
   }
 
-  static const double epsilon; // = 3.6664e-12; // sph_3();
-
 public:
   typedef Oriented_side result_type;
 
@@ -126,7 +124,7 @@ public:
     if (max2 < qq) max2 = qq;
     if (max2 < rr) max2 = rr;
     if (max2 < ss) max2 = ss;
-    double eps = epsilon*maxx*maxy*maxz*(max2+tt);
+    double eps = 3.6664e-12 * maxx * maxy * maxz * (max2+tt);
 
     if (det >  eps) return ON_POSITIVE_SIDE;
     if (det < -eps) return ON_NEGATIVE_SIDE;
@@ -174,7 +172,7 @@ public:
         if (maxz < fabs(qtz)) maxz = fabs(qtz);
         if (maxz < fabs(rtz)) maxz = fabs(rtz);
         if (maxz < fabs(stz)) maxz = fabs(stz);
-        double eps = epsilon*maxx*maxy*maxz*max2;
+        double eps = 3.6664e-12 * maxx * maxy * maxz * max2;
 
         if (det >  eps) return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
@@ -194,9 +192,6 @@ public:
     return oooo;
   }
 };
-
-template <class Point>
-const double SF_Side_of_oriented_sphere_3<Point>::epsilon = 3.6664e-12;
 
 CGAL_END_NAMESPACE
 

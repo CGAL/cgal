@@ -54,8 +54,6 @@ class SF_Side_of_bounded_circle_3
     return err;
   }
 
-  static const double epsilon;
-
 public:
   typedef Bounded_side result_type;
 
@@ -124,7 +122,7 @@ public:
     if (maxz < fabs(tz)) maxz = fabs(tz);
 
     double d = std::max(maxx, std::max(maxy, maxz));
-    double eps = epsilon*d*d*d*d*d*d;
+    double eps = 3.27418e-11 * d * d * d * d * d * d;
 
     if (det >  eps) return ON_BOUNDED_SIDE;
     if (det < -eps) return ON_UNBOUNDED_SIDE;
@@ -138,9 +136,6 @@ public:
 	                                   P(rx,ry,rz), P(tx,ty,tz));
   }
 };
-
-template <class Point>
-const double SF_Side_of_bounded_circle_3<Point>::epsilon = 3.27418e-11;
 
 CGAL_END_NAMESPACE
 

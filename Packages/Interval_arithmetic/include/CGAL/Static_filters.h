@@ -41,6 +41,8 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
+// TODO : write an extensive test-suite.
+
 CGAL_BEGIN_NAMESPACE
 
 template < class K_base >
