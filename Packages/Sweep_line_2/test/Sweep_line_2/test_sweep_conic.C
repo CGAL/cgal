@@ -80,7 +80,7 @@ public:
     for (int i = 0; i < count; i++) {
       ReadCurve(inp, cv);
       curves.push_back(cv);
-      CGAL::Bbox_2 curve_bbox = cv.bounding_box();
+      CGAL::Bbox_2 curve_bbox = cv.bbox();
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;      
     }

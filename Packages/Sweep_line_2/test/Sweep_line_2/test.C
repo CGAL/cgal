@@ -1,7 +1,5 @@
 #define  CGAL_SWEEP_LINE_DEBUG  
 
-#include "short_names.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
