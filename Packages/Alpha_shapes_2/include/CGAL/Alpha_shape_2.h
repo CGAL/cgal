@@ -1151,7 +1151,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
 //-------------------------------------------------------------------------
 
 template < class Dt >
-std::back_insert_iterator< std::list< Alpha_shape_2<Dt>::Vertex_handle > >
+std::back_insert_iterator< std::list<typename Alpha_shape_2<Dt>::Vertex_handle> >
 Alpha_shape_2<Dt>::get_alpha_shape_vertices
 (std::back_insert_iterator< std::list< Vertex_handle > > result) const 
 {
@@ -1204,7 +1204,7 @@ Alpha_shape_2<Dt>::get_alpha_shape_vertices
 //-------------------------------------------------------------------------
 
 template < class Dt >
-std::back_insert_iterator< std::list< Alpha_shape_2<Dt>::Edge > >
+std::back_insert_iterator< std::list< typename Alpha_shape_2<Dt>::Edge > >
 Alpha_shape_2<Dt>::get_alpha_shape_edges
 (std::back_insert_iterator< std::list< Edge > > result) const 
 {
@@ -1311,8 +1311,7 @@ Alpha_shape_2<Dt>::get_alpha_shape_edges
 
 template < class Dt >
 Alpha_shape_2<Dt>::Classification_type  
-Alpha_shape_2<Dt>::classify
-( Face_handle f, int i, const Coord_type& alpha ) const 
+Alpha_shape_2<Dt>::classify(Face_handle f, int i, const Coord_type& alpha) const 
 {
   // Classifies the edge `e' of the underlying Delaunay
   // triangulation with respect to `A'.
@@ -1350,8 +1349,8 @@ Alpha_shape_2<Dt>::classify
 
 template < class Dt >
 Alpha_shape_2<Dt>::Classification_type  
-Alpha_shape_2<Dt>::classify( Vertex_handle v,
-				 const Coord_type& alpha ) const 
+Alpha_shape_2<Dt>::classify(Vertex_handle v,
+			    const Coord_type& alpha) const 
 {
   // Classifies the vertex `v' of the underlying Delaunay
   // triangulation with respect to `A'.
@@ -1413,9 +1412,9 @@ Alpha_shape_2<Dt>::number_solid_components(const Coord_type& alpha) const
 
 template < class Dt >
 void
-Alpha_shape_2<Dt>::traverse( Face_handle pFace,
-				 Marked_face_set& marked_face_set, 
-				 const Coord_type alpha) const 
+Alpha_shape_2<Dt>::traverse(Face_handle pFace,
+			    Marked_face_set& marked_face_set, 
+			    const Coord_type alpha) const 
 {
   for (int i=0; i<=2; i++) 
     { 
@@ -1782,8 +1781,8 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 //-------------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Vect_seg& 
-Alpha_shape_2<Dt>::op_vect_seg(Alpha_shape_2<Dt>::Vect_seg& V) const
+typename Alpha_shape_2<Dt>::Vect_seg& 
+Alpha_shape_2<Dt>::op_vect_seg(Vect_seg& V) const
 {
 
   typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
@@ -1901,8 +1900,8 @@ Alpha_shape_2<Dt>::op_vect_seg(Alpha_shape_2<Dt>::Vect_seg& V) const
 //-------------------------------------------------------------------
 
 template < class Dt >
-std::ostream& operator<<
-(std::ostream& os, const Alpha_shape_2<Dt>& A)
+std::ostream& 
+operator<<(std::ostream& os, const Alpha_shape_2<Dt>& A)
 {
   return A.op_ostream(os);
 }
@@ -1910,8 +1909,8 @@ std::ostream& operator<<
 //-------------------------------------------------------------------
 
 template < class Dt >
-Alpha_shape_2<Dt>::Vect_seg& operator<<
-(Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
+typename Alpha_shape_2<Dt>::Vect_seg& 
+operator<<(typename Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
 {
   return A.op_vect_seg(V);
 }
@@ -1920,7 +1919,7 @@ Alpha_shape_2<Dt>::Vect_seg& operator<<
 
 #if defined(LIST) || defined(__SGI_STL_LIST)
 template < class Dt >
-std::list<Alpha_shape_2<Dt>::Point> 
+std::list<typename Alpha_shape_2<Dt>::Point> 
 Alpha_shape_2<Dt>::Output () 
 {
 
