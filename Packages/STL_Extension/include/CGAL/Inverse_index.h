@@ -27,13 +27,8 @@
 
 #ifndef CGAL_INVERSE_INDEX_H
 #define CGAL_INVERSE_INDEX_H 1
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>  // Needed for circulator categories.
-#endif // CGAL_CIRCULATOR_H
-#ifndef CGAL_PROTECT_MAP
 #include <map>
-#define CGAL_PROTECT_MAP
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

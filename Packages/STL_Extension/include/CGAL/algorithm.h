@@ -28,12 +28,9 @@
 #ifndef CGAL_ALGORITHM_H
 #define CGAL_ALGORITHM_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_COPY_N_H
 #include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -76,7 +73,7 @@ min_element_if(ForwardIterator first,
                ForwardIterator last,
                Predicate pred)
 {
-  ForwardIterator result = first;
+  ForwardIterator result = first = std::find_if(first, last, pred);
   if (first != last)
     while (++first != last)
       if (*first < *result && pred(*first))
@@ -90,7 +87,7 @@ min_element_if(ForwardIterator first,
                Compare comp,
                Predicate pred)
 {
-  ForwardIterator result = first;
+  ForwardIterator result = first = std::find_if(first, last, pred);
   if (first != last)
     while (++first != last)
       if (comp(*first, *result) && pred(*first))
@@ -103,7 +100,7 @@ max_element_if(ForwardIterator first,
                ForwardIterator last,
                Predicate pred)
 {
-  ForwardIterator result = first;
+  ForwardIterator result = first = std::find_if(first, last, pred);
   if (first != last)
     while (++first != last)
       if (*result < *first && pred(*first))
@@ -117,7 +114,7 @@ max_element_if(ForwardIterator first,
                Compare comp,
                Predicate pred)
 {
-  ForwardIterator result = first;
+  ForwardIterator result = first = std::find_if(first, last, pred);
   if (first != last)
     while (++first != last)
       if (comp(*result, *first) && pred(*first))

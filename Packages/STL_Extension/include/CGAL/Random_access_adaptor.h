@@ -27,13 +27,8 @@
 
 #ifndef CGAL_RANDOM_ACCESS_ADAPTOR_H
 #define CGAL_RANDOM_ACCESS_ADAPTOR_H 1
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif // CGAL_CIRCULATOR_H
 
 CGAL_BEGIN_NAMESPACE
 

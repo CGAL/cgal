@@ -27,37 +27,13 @@
 
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
-
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-
-#ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
-#define CGAL_PROTECT_FUNCTIONAL
-#endif
-
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
-
-#ifndef CGAL_CIRCULATOR_IMPL_H
 #include <CGAL/circulator_impl.h>
-#endif
-
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

@@ -27,9 +27,7 @@
 
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

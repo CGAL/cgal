@@ -27,9 +27,7 @@
 
 #ifndef CGAL_N_STEP_ADAPTOR_H
 #define CGAL_N_STEP_ADAPTOR_H 1
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

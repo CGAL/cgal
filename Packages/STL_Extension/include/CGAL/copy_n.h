@@ -31,10 +31,7 @@
 
 #ifndef CGAL_COPY_N_H
 #define CGAL_COPY_N_H 1
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
 
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide out own copy_n. Only on Gnu g++ 2.8.1
