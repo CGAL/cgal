@@ -1188,8 +1188,17 @@ typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
-    // We only support dimension == 3, at least for now.
-    CGAL_triangulation_precondition(dimension() == 3);
+    if (number_of_vertices() == 0)
+	return Vertex_handle(NULL);
+
+    // Use a brute-force algorithm if dimension < 3.
+    if (dimension() < 3) {
+	Finite_vertices_iterator vit = finite_vertices_begin();
+	Vertex_handle res = vit;
+	for (++vit; vit != finite_vertices_end(); ++vit)
+	    res = nearest_vertex(p, res, vit);
+	return res;
+    }
 
     Locate_type lt;
     int li, lj;
@@ -1197,7 +1206,8 @@ nearest_vertex(const Point& p, Cell_handle start) const
     if (lt == Tr_Base::VERTEX)
 	return c->vertex(li);
 
-    // Note that we could use/test/bench a different algorithm :
+    // Note that we could use a different algorithm,
+    // which could be more efficient :
     // - find the nearest_vertex_in_cell()
     // - repeatedly take the nearest of its incident vertices if any
     // - if not, we're done.
@@ -1219,7 +1229,6 @@ nearest_vertex(const Point& p, Cell_handle start) const
 	if (fit->second != 3) V.insert(fit->first->vertex(3));
     }
 
-    // Note that we could do faster if p is outside the convex hull...
     CGAL_triangulation_assertion(V.size() >= 2);
     typename std::set<Vertex_handle>::const_iterator sit = V.begin();
     Vertex_handle nearest = nearest_vertex(p, *sit++, *sit++);

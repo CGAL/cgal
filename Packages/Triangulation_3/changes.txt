@@ -1,3 +1,6 @@
+Version 1.177 (7 November 03)
+- Handle dimension < 3 as well in Delaunay_3::nearest_vertex().
+
 Version 1.176 (7 November 03)
 - Added Delaunay_3::nearest_vertex()
 
