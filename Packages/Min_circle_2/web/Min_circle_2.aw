@@ -2,7 +2,7 @@
 @! The CGAL Project
 @! Implementation: 2D Smallest Enclosing Circle
 @! ----------------------------------------------------------------------------
-@! file  : web/Min_circle_2.aw
+@! file  : Library/web/Min_circle_2.aw
 @! author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 @! $Id$
 @! ============================================================================
@@ -298,11 +298,8 @@ method $\mc$ to compute $\mc(P)=\mc(P,\emptyset)$.
 	    copy( first, last, back_inserter( points));
 
 	    // shuffle points at random
-	    if ( randomize) {
-	        long  seed;
-		time( &seed);
-		srand( seed);
-		random_shuffle( points.begin(), points.end()); }
+	    if ( randomize)
+		random_shuffle( points.begin(), points.end());
 
 	    // link points
 	    for ( int i = 0; i < number_of_points(); ++i) {
@@ -926,8 +923,6 @@ set is minimal only if the center lies properly inside the triangle.
     #include <CGAL/Triangle_2.h>
     #endif
     #include <algo.h>
-    #include <sys/types.h>
-    #include <time.h>
 
     // check macros
     // ------------
@@ -976,6 +971,12 @@ set is minimal only if the center lies properly inside the triangle.
     #endif // (__SUNPRO_CC)
 
     @<Min_circle_2 implementation>
+
+    // specializations
+    // ---------------
+    #if ( defined( CGAL_INTEGER_H) && defined( CGAL_HOMOGENEOUS_H))
+    #include <CGAL/Min_circle_2__Homogeneous_integer.h>
+    #endif
 
     #endif // CGAL_MIN_CIRLCE_2_H
 
