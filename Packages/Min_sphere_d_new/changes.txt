@@ -1,5 +1,9 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12 on 09-Jul-2001
+- replaced template parameter 'R' by 'K'
+- fixed warning message of test program when no number type is available
+
 Version 0.11.2 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
