@@ -5432,7 +5432,7 @@ write_linker_flags()
         LIBS="${LIBS} `lib_option gmpxx`"
         GEOWLIBS="${GEOWLIBS} `lib_option gmpxx`"
         WLIBS="${WLIBS} `lib_option gmpxx`"
-	QLIBS="$(QLIBS) `lib_option gmpxx`"
+	QLIBS="${QLIBS} `lib_option gmpxx`"
     fi
     LIBS="${LIBS} `lib_option gmp`"
     GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
