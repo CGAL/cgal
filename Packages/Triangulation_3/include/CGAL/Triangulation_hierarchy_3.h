@@ -233,27 +233,27 @@ is_valid(bool verbose, int level) const
 {
   bool result = true;
   
-  //verify correctness of triangulation at all levels
+  // verify correctness of triangulation at all levels
   for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
 	result = result && hierarchy[i]->is_valid(verbose, level);
 
-  //verify that lower level has no down pointers
+  // verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) 
-    result = result && ( it->down() == 0 );
+    result = result && (it->down() == NULL);
 
-  //verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(); 
 	 it != hierarchy[j]->finite_vertices_end(); ++it) 
-      result = result && ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
+      result = result && (&*it == (Vertex*)((Vertex*)it->down())->up());
 
-  //verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<Triangulation_hierarchy_3__maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(); 
 	 it != hierarchy[k]->finite_vertices_end(); ++it) 
       result = result && ( ((Vertex*)it->up() == NULL) ||
-	       ( ((Vertex*)((Vertex*)it->up())->down()) ==  &(*it) ));
+	       ( &*it == (Vertex*)((Vertex*)it->up())->down() ));
 
   return result;
 }
@@ -268,9 +268,9 @@ insert(const Point &p)
   int i, j;
   // locate using hierarchy
   Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
-  locate(p,lt,i,j,positions);
+  locate(p, lt, i, j, positions);
   // insert at level 0
-  Vertex_handle vertex = hierarchy[0]->insert(p,positions[0]);
+  Vertex_handle vertex = hierarchy[0]->insert(p, positions[0]);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
 
@@ -290,27 +290,29 @@ bool
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
-  void * u=v->up();
+  CGAL_triangulation_precondition(v != NULL);
+  void * u = v->up();
   int l = 0;
   bool result = true;
-  while(1){
+  while (1) {
     if (! hierarchy[l++]->remove(v))
 	result = false;
-    if (!u) break;
-    if (l>Triangulation_hierarchy_3__maxlevel) break;
-    v=(Vertex*)u; u=v->up();
+    if (!u || l>Triangulation_hierarchy_3__maxlevel)
+	break;
+    v = (Vertex*) u;
+    u = v->up();
   }
   return result;
 }
 
 template <class Tr>
 inline
-typename Triangulation_hierarchy_3<Tr>::Cell_handle 
+typename Triangulation_hierarchy_3<Tr>::Cell_handle
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 {
   Cell_handle positions[Triangulation_hierarchy_3__maxlevel];
-  locate(p,lt,li,lj,positions);
+  locate(p, lt, li, lj, positions);
   return positions[0];
 }
 
@@ -331,30 +333,33 @@ Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj,
        Cell_handle pos[Triangulation_hierarchy_3__maxlevel]) const
 {
-  Cell_handle position;
-  int level  = Triangulation_hierarchy_3__maxlevel;
+  int level = Triangulation_hierarchy_3__maxlevel;
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
-	 < Triangulation_hierarchy_3__minsize){
-    if ( ! level) break;  // do not go below 0
+	 < Triangulation_hierarchy_3__minsize) {
+    if ( ! level)
+	break;  // do not go below 0
   }
+
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel; ++i)
       pos[i]=0;
+
+  Cell_handle position;
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level
-    pos[level]=position=hierarchy[level]->locate(p,position);
+    pos[level] = position = hierarchy[level]->locate(p, position);
     // find the nearest vertex.
     Vertex_handle nearest =
 	hierarchy[level]->nearest_vertex_in_cell(p, position);
 
     // go at the same vertex on level below
-    nearest = (Vertex*)( nearest->down() );
+    nearest = (Vertex*) nearest->down();
     position = nearest->cell();                // incident cell
     --level;
   }
-  pos[0]=hierarchy[level]->locate(p,lt,li,lj,position);  // at level 0
+  pos[0] = hierarchy[level]->locate(p, lt, li, lj, position);  // at level 0
 }
 
 
@@ -364,12 +369,12 @@ Triangulation_hierarchy_3<Tr>::
 random_level()
 {
   int l = 0;
-  while (1) {
-    if ( random(Triangulation_hierarchy_3__ratio) ) break;
+  while ( ! random(Triangulation_hierarchy_3__ratio) )
     ++l;
-  }
+
   if (l >= Triangulation_hierarchy_3__maxlevel)
-    l = Triangulation_hierarchy_3__maxlevel -1;
+    l = Triangulation_hierarchy_3__maxlevel - 1;
+
   return l;
 }
 
