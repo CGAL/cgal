@@ -590,10 +590,10 @@ struct QP_rep_signed_point_iterator {
               ? std::make_pair( p_it[ i  ], CGAL::POSITIVE)
               : std::make_pair( q_it[ i-n], CGAL::NEGATIVE); }
 
-    bool   operator <  ( const Self&) const { return ( curr <  it.curr); }
-    bool   operator >  ( const Self&) const { return ( curr >  it.curr); }
-    bool   operator <= ( const Self&) const { return ( curr <= it.curr); }
-    bool   operator >= ( const Self&) const { return ( curr >= it.curr); }
+    bool   operator <  ( const Self& it) const { return ( curr <  it.curr); }
+    bool   operator >  ( const Self& it) const { return ( curr >  it.curr); }
+    bool   operator <= ( const Self& it) const { return ( curr <= it.curr); }
+    bool   operator >= ( const Self& it) const { return ( curr >= it.curr); }
 
   private:
     PointIterator  p_it;
