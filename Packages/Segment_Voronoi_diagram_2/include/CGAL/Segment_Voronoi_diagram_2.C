@@ -453,6 +453,8 @@ insert_third(const Site& t)
   }
 
   //  this can only be the case if the first site is a segment
+  CGAL_precondition( _tds.dimension() == 1 );
+
   Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
   v->set_site(t);
 
@@ -505,17 +507,17 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
 
   if ( number_of_vertices() == 0 ) {
     if ( t.is_segment() ) {
-      insert( t.source() );
-      insert( t.target() );
-      return insert( t.segment() );
+      insert( t.source_site() );
+      insert( t.target_site() );
+      return insert( t );
     }
     return insert_first(t.point());
   }
   if ( number_of_vertices() == 1 ) {
     if ( t.is_segment() ) {
-      insert( t.source() );
-      insert( t.target() );
-      return insert( t.segment() );
+      insert( t.source_site() );
+      insert( t.target_site() );
+      return insert( t );
     } else {
       return insert_second(t.point());
     }
