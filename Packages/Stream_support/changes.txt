@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.21 (12 Apr 2003)
+- Replace <strstream> by <sstream>.
+
 2.20 (14 Feb 2003)
 - Fix bug in last change.
 
