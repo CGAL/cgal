@@ -583,8 +583,16 @@ _sunpro_version()
 # give version numbers for IRIX MIPSPRO CC
 _sgi_version()
 {
-    ${_printf} "`$_showprods -nM | $_fgrep \"C++,\" | $_fgrep c++_dev | \
-	${_awk} '{print $5}'`"
+    case ${SYST} in
+	*IRIX*5.*)
+	    ${_printf} "`${_showprods} -nM | ${_fgrep} \"C++,\" | \
+		${_fgrep} c++_dev | ${_awk} '{print $5}'`"
+	    ;;
+	*IRIX*6.*)
+	    ${_printf} "`${_showprods} -nM | ${_fgrep} \"c++_dev\" | \
+		${_fgrep} \"irix\" | ${_awk} '{print $(NF-3)}'`"
+	    ;;
+    esac
 }
 
 # return the cmdline-switch to add directory variable $1 
@@ -639,7 +647,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -shared"
 	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=
+	    RUNTIME_LINKER_FLAG=''
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -675,7 +683,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -Xlinker -shared"
 	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=
+	    RUNTIME_LINKER_FLAG=''
 	    ;;
 	*)
 	    #### settings for unknown compiler 
@@ -687,7 +695,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_LDFLAGS=""
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
 	    WINDOW_DIR="/usr/lib/X11"
-	    RUNTIME_LINKER_FLAG=
+	    RUNTIME_LINKER_FLAG=''
 	    ;;
     esac
 }
@@ -785,8 +793,10 @@ cgal_ldflags()
     ${_printf} \
 	"-L`_where_is 'CGAL_LIB_DIR'`/`full_ostype` "
     ${_printf} \
-	"`rpath_directive 'CGAL_LIB_DIR'`/"
-    ${_printf} "`full_ostype` "
+	"`rpath_directive 'CGAL_LIB_DIR'`"
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+	${_printf} "/`full_ostype` "
+    fi
 }
 
 #---------------------------------------------------------
@@ -2380,6 +2390,7 @@ test_setup()
 {
     SETUP_COMPLETE=''
     make_lib_dir
+    link_gmp
     # STL
     if [ -z "${STL_TEST_PASSED}" ]; then
 	test_stl
@@ -3045,6 +3056,7 @@ install_gmp()
 
     # restore os/compiler stuff
     LEDA_SUPPORT="${SAVE_LEDA}"
+    link_gmp
 }
 
 
@@ -3133,10 +3145,7 @@ write_compiler_flags()
     "*** Fill in any additional compiler flags you need ***" \
     >> ${FILE}
   ${_printf} \
-    "CUSTOM_CXXFLAGS = \\\\\n" \
-    >> ${FILE}
-  ${_printf} \
-    "\t${CUSTOM_CXXFLAGS}\n\n" \
+    "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}\n\n" \
     >> ${FILE}
 
   #
@@ -3547,9 +3556,13 @@ generatemakefiles()
   replace_line ${FILE} CGAL_MAKEFILE \
     "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
 
-  FILE=${CGAL_EXAMPLE_DIR}/makefile
-  replace_line ${FILE} CGAL_MAKEFILE \
-    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+  for DIRECTORY in `/bin/ls ${CGAL_EXAMPLE_DIR}`; do
+    if [ -d ${DIRECTORY} ]; then
+      FILE=${CGAL_EXAMPLE_DIR}/${DIRECTORY}/makefile
+      replace_line ${FILE} CGAL_MAKEFILE \
+        "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    fi
+  done
 
   if [ -n "${CGAL_TESTSUITE}" ]; then
     for FILE in `${_ls} ${CGAL_TEST_DIR}/*/makefile`; do
