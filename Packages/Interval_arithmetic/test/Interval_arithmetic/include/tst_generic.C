@@ -22,7 +22,7 @@ typedef TESTED_TYPE IA_nt;
 // a spiral.  It tests, using Interval Arithmetic, whether we fall back on an
 // axis.  With double precision, the first possible solution is 396.
 
-int spiral_test()
+bool spiral_test()
 {
   int i=0;
   IA_nt x_i (1), y_i (0), x_ip1, y_ip1, length;
@@ -46,7 +46,7 @@ int spiral_test()
 // at the beginning.  It must converge to the fixed point [1-2^-52 ; 1+2^-52].
 // NB: Note that 1-2^-52 is not the closest to 1 (which is 1-2^-53)... Funny.
 
-int square_root_test()
+bool square_root_test()
 {
   int i=0;
   IA_nt a (0.5, 1.5);
@@ -74,7 +74,7 @@ int square_root_test()
 // Same thing for [-2;2]     -> [-inf;+inf].
 // Same thing for [-2.1;2.1] -> [-inf;+inf].
 
-int overflow_test()
+bool overflow_test()
 {
   int i=0;
   IA_nt a (2), b(2.1);
@@ -117,7 +117,7 @@ int overflow_test()
 // Same thing for [0.5;0.5]      -> [0;MIN_DOUBLE].
 // Same thing for [-0.5;0.5]     -> [-MIN_DOUBLE;MIN_DOUBLE].
 
-int underflow_test()
+bool underflow_test()
 {
   int i;
   IA_nt a(0.5), b(-0.5,0.5), c(0.5);
@@ -135,7 +135,7 @@ int underflow_test()
 // Here we specifically test the division code.
 // We iterate the function f(x)= (1/x + x)/4 + 1/2.
 
-int division_test()
+bool division_test()
 {
   IA_nt a (1), b(0);
   IA_nt c = a/b;
@@ -156,13 +156,13 @@ int division_test()
   DEBUG( std::cout << d << e << i << std::endl; )
   DEBUG( std::cout << d-1 << e+1 << std::endl; )
 
-  return c.is_same(CGAL_IA_LARGEST) && (i == 54);
+  return c.is_same(CGAL_IA_LARGEST) && i == 54;
 }
 
 
 // Here it's mainly to have a 100% coverage for the test-suite.
 
-int multiplication_test()
+bool multiplication_test()
 {
   const IA_nt a (-2,-1), b (-1,1);
   const IA_nt d (-2,2), e (1,2), f (-2,-1);
@@ -182,13 +182,13 @@ int multiplication_test()
   h = k*i; h = i*k; h *= k; h *= i;
   h = k/i; h = i/k; h /= k; h /= i;
 
-  return 1;
+  return true;
 }
 
 // Here we test the specialized functions for IA.
 // They are usually templated in CGAL, but I've overriden them.
 
-int utility_test()
+bool utility_test()
 {
   bool tmpflag, flag = true;
   const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
