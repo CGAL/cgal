@@ -535,6 +535,8 @@ public:
 
 protected:
   
+  void reset() { intersection_exist_ = false; }
+
   // change it back to the original one.
   bool  handle_one_event (Event_queue& event_queue, 
                           Status_line& status, 
@@ -1437,15 +1439,6 @@ protected:
   bool is_higher(const Point &p1, const Point &p2) const 
   { return (Compare_lexicographically_yx(p1, p2) == LARGER); }
 
-  bool is_same_x(const Point &p1, const Point &p2) const 
-  { return (traits->compare_x(p1, p2) == EQUAL); }
-  bool is_same_y(const Point &p1, const Point &p2) const 
-  { return (traits->compare_y(p1, p2) == EQUAL); }
-  bool is_same(const Point &p1, const Point &p2) const
-  {
-    return (traits->compare_x(p1, p2) == EQUAL) &&
-      (traits->compare_y(p1, p2) == EQUAL);
-  }
   const Point& leftmost(const Point &p1, const Point &p2) const
   {
     //Comparison_result rx = CGAL::compare_lexicographically_xy(p1, p2);
