@@ -10,7 +10,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-_Twotuple< RayC3<R CGAL_CTAG>::Point_3 > *
+_Twotuple< typename RayC3<R CGAL_CTAG>::Point_3 > *
 RayC3<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple< Point_3 >*)PTR;
@@ -19,7 +19,7 @@ RayC3<R CGAL_CTAG>::ptr() const
 template < class R >
 RayC3<R CGAL_CTAG>::RayC3()
 {
-  PTR = new _Twotuple< RayC3<R CGAL_CTAG>::Point_3 >;
+  PTR = new _Twotuple< Point_3 >;
 }
 
 template < class R >
@@ -30,18 +30,18 @@ RayC3(const RayC3<R CGAL_CTAG>  &r)
 
 template < class R >
 RayC3<R CGAL_CTAG>::
-RayC3(const RayC3<R CGAL_CTAG>::Point_3 &sp,
-      const RayC3<R CGAL_CTAG>::Point_3 &secondp)
+RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
+      const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
 {
-  PTR = new _Twotuple< RayC3<R CGAL_CTAG>::Point_3 >(sp,secondp);
+  PTR = new _Twotuple< Point_3 >(sp,secondp);
 }
 
 template < class R >
 RayC3<R CGAL_CTAG>::
-RayC3(const RayC3<R CGAL_CTAG>::Point_3 &sp,
-      const RayC3<R CGAL_CTAG>::Direction_3 &d)
+RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
+      const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
 {
-  PTR = new _Twotuple< RayC3<R CGAL_CTAG>::Point_3 >(sp, sp + d.vector());
+  PTR = new _Twotuple< Point_3 >(sp, sp + d.vector());
 }
 
 
@@ -78,7 +78,7 @@ long RayC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>::Point_3
+typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::start() const
 {
   return ptr()->e0;
@@ -86,7 +86,7 @@ RayC3<R CGAL_CTAG>::start() const
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>::Point_3
+typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::source() const
 {
   return ptr()->e0;
@@ -94,7 +94,7 @@ RayC3<R CGAL_CTAG>::source() const
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>::Point_3
+typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::second_point() const
 {
   return ptr()->e1;
@@ -103,7 +103,7 @@ RayC3<R CGAL_CTAG>::second_point() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-RayC3<R CGAL_CTAG>::Point_3
+typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
@@ -118,18 +118,18 @@ RayC3<R CGAL_CTAG>::point(int i) const
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>::Direction_3
+typename RayC3<R CGAL_CTAG>::Direction_3
 RayC3<R CGAL_CTAG>::direction() const
 {
-  return RayC3<R CGAL_CTAG>::Direction_3( second_point() - source() );
+  return Direction_3( second_point() - source() );
 }
 
 template < class R >
 inline
-RayC3<R CGAL_CTAG>::Line_3
+typename RayC3<R CGAL_CTAG>::Line_3
 RayC3<R CGAL_CTAG>::supporting_line() const
 {
-  return RayC3<R CGAL_CTAG>::Line_3(*this);
+  return Line_3(*this);
 }
 
 template < class R >
@@ -144,7 +144,7 @@ template < class R >
 inline
 RayC3<R CGAL_CTAG>
 RayC3<R CGAL_CTAG>::
-transform(const RayC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename RayC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return RayC3<R CGAL_CTAG>(t.transform(source()), t.transform(second_point()));
 }
@@ -152,11 +152,11 @@ transform(const RayC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 template < class R >
 bool
 RayC3<R CGAL_CTAG>::
-has_on(const RayC3<R CGAL_CTAG>::Point_3 &p) const
+has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return (p == source()) ||
          ( collinear(source(), p, second_point())
-           && ( RayC3<R CGAL_CTAG>::Direction_3(p - source()) == direction() ));
+           && ( Direction_3(p - source()) == direction() ));
 }
 
 template < class R >
@@ -171,7 +171,7 @@ template < class R >
 inline
 bool
 RayC3<R CGAL_CTAG>::
-collinear_has_on(const RayC3<R CGAL_CTAG>::Point_3 &p) const
+collinear_has_on(const typename RayC3<R CGAL_CTAG>::Point_3 &p) const
 {
   CGAL_kernel_exactness_precondition( collinear(source(), p, second_point()) );
 
@@ -210,8 +210,8 @@ std::ostream &operator<<(std::ostream &os, const RayC3<R CGAL_CTAG> &r)
 template < class R >
 std::istream &operator>>(std::istream &is, RayC3<R CGAL_CTAG> &r)
 {
-    RayC3<R CGAL_CTAG>::Point_3 p;
-    RayC3<R CGAL_CTAG>::Direction_3 d;
+    typename RayC3<R CGAL_CTAG>::Point_3 p;
+    typename RayC3<R CGAL_CTAG>::Direction_3 d;
 
     is >> p >> d;
 

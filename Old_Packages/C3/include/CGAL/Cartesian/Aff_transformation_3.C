@@ -38,7 +38,7 @@ Aff_transformationC3(const Identity &)
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
 Aff_transformationC3(const Translation,
-                     const Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
+                     const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
 {
   PTR = new Translation_repC3<R>(v);
 }
@@ -97,72 +97,72 @@ template < class R >
 Aff_transformationC3<R CGAL_CTAG>::~Aff_transformationC3()
 {}
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Point_3
+typename Aff_transformationC3<R CGAL_CTAG>::Point_3
 Aff_transformationC3<R CGAL_CTAG>::
-transform(const Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
+transform(const typename Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return ptr()->transform(p);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Point_3
+typename Aff_transformationC3<R CGAL_CTAG>::Point_3
 Aff_transformationC3<R CGAL_CTAG>::
-operator()(const Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
+operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return transform(p);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Vector_3
+typename Aff_transformationC3<R CGAL_CTAG>::Vector_3
 Aff_transformationC3<R CGAL_CTAG>::
-transform(const Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
+transform(const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
 {
   return ptr()->transform(v);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Vector_3
+typename Aff_transformationC3<R CGAL_CTAG>::Vector_3
 Aff_transformationC3<R CGAL_CTAG>::
-operator()(const Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
+operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
 {
   return transform(v);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Direction_3
+typename Aff_transformationC3<R CGAL_CTAG>::Direction_3
 Aff_transformationC3<R CGAL_CTAG>::
-transform(const Aff_transformationC3<R CGAL_CTAG>::Direction_3 &d) const
+transform(const typename Aff_transformationC3<R CGAL_CTAG>::Direction_3 &d) const
 {
   return ptr()->transform(d);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Direction_3
+typename Aff_transformationC3<R CGAL_CTAG>::Direction_3
 Aff_transformationC3<R CGAL_CTAG>::
-operator()(const Aff_transformationC3<R CGAL_CTAG>::Direction_3& d) const
+operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Direction_3& d) const
 {
   return transform(d);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Plane_3
+typename Aff_transformationC3<R CGAL_CTAG>::Plane_3
 Aff_transformationC3<R CGAL_CTAG>::
-transform(const Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
+transform(const typename Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
 {
   return p.transform(*this);
 }
 
 template < class R >
 inline
-Aff_transformationC3<R CGAL_CTAG>::Plane_3
+typename Aff_transformationC3<R CGAL_CTAG>::Plane_3
 Aff_transformationC3<R CGAL_CTAG>::
-operator()(const Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
+operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
 {
   return transform(p);
 }

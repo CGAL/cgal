@@ -77,7 +77,7 @@ PointC3<R CGAL_CTAG>::operator=(const PointC3<R CGAL_CTAG> &p)
 
 template < class R >
 PointC3<R CGAL_CTAG>::
-PointC3(const PointC3<R CGAL_CTAG>::Vector_3 &v) :
+PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v) :
   Handle((Handle&)v)
 {}
 
@@ -208,7 +208,7 @@ template < class R >
 inline
 PointC3<R CGAL_CTAG>
 PointC3<R CGAL_CTAG>::
-transform(const PointC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename PointC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return t.transform(*this);
 }

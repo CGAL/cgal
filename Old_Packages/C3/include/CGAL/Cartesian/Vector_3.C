@@ -74,14 +74,14 @@ VectorC3<R CGAL_CTAG>::operator=(const VectorC3<R CGAL_CTAG> &v)
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>::
-VectorC3(const VectorC3<R CGAL_CTAG>::Point_3 &p)
+VectorC3(const typename VectorC3<R CGAL_CTAG>::Point_3 &p)
   : Handle((Handle&)p)
 {
 }
 
 template < class R >
 inline VectorC3<R CGAL_CTAG>::
-VectorC3(const VectorC3<R CGAL_CTAG>::Direction_3 &d) :
+VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d) :
   Handle((Handle&)d)
 {
 }
@@ -248,16 +248,16 @@ VectorC3<R CGAL_CTAG>::operator/(const typename R::FT &c) const
 
 template < class R >
 inline
-VectorC3<R CGAL_CTAG>::Direction_3
+typename VectorC3<R CGAL_CTAG>::Direction_3
 VectorC3<R CGAL_CTAG>::direction() const
 {
-  return VectorC3<R CGAL_CTAG>::Direction_3(*this);
+  return Direction_3(*this);
 }
 
 template < class R >
 VectorC3<R CGAL_CTAG>
 VectorC3<R CGAL_CTAG>::
-transform(const VectorC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename VectorC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return t.transform(*this);
 }

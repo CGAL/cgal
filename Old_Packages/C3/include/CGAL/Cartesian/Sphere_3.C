@@ -31,9 +31,9 @@ SphereC3(const SphereC3<R CGAL_CTAG> &t)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
-SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &center,
-                      const typename R::FT &squared_radius,
-                      const Orientation &orient = COUNTERCLOCKWISE)
+SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
+         const typename R::FT &squared_radius,
+         const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
                             ( orient    != COLLINEAR) );
@@ -44,7 +44,7 @@ SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &center,
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
-SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &center,
+SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
          const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( ( orient    != COLLINEAR) );
@@ -55,8 +55,8 @@ SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &center,
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
-SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &p,
-         const SphereC3<R CGAL_CTAG>::Point_3 &q,
+SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
          const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( orient != COLLINEAR);
@@ -70,9 +70,9 @@ SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
-SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &p,
-         const SphereC3<R CGAL_CTAG>::Point_3 &q,
-         const SphereC3<R CGAL_CTAG>::Point_3 &r,
+SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &r,
          const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( orient != COLLINEAR);
@@ -87,10 +87,10 @@ SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
 SphereC3<R CGAL_CTAG>::
-SphereC3(const SphereC3<R CGAL_CTAG>::Point_3 &p,
-         const SphereC3<R CGAL_CTAG>::Point_3 &q,
-         const SphereC3<R CGAL_CTAG>::Point_3 &r,
-         const SphereC3<R CGAL_CTAG>::Point_3 &s)
+SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &p,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &q,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &r,
+         const typename SphereC3<R CGAL_CTAG>::Point_3 &s)
 {
   Point_3 center = circumcenter(p,q,r,s);
   FT      squared_radius = squared_distance(p,center);
@@ -138,7 +138,7 @@ int SphereC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-SphereC3<R CGAL_CTAG>::Point_3
+typename SphereC3<R CGAL_CTAG>::Point_3
 SphereC3<R CGAL_CTAG>::center() const
 {
  return ptr()->center;
@@ -146,7 +146,7 @@ SphereC3<R CGAL_CTAG>::center() const
 
 template < class R >
 inline
-SphereC3<R CGAL_CTAG>::FT
+typename R::FT
 SphereC3<R CGAL_CTAG>::squared_radius() const
 {
  return ptr()->squared_radius;
@@ -163,7 +163,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
 SphereC3<R CGAL_CTAG>::
-oriented_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+oriented_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return Oriented_side(bounded_side(p) * orientation());
 }
@@ -172,7 +172,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 Bounded_side
 SphereC3<R CGAL_CTAG>::
-bounded_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return Bounded_side(CGAL::compare(squared_radius(),
                                     squared_distance(center(),p)));
@@ -182,7 +182,7 @@ template < class R >
 inline
 bool
 SphereC3<R CGAL_CTAG>::
-has_on_boundary(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_boundary(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return squared_distance(center(),p) == squared_radius();
 }
@@ -191,7 +191,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 SphereC3<R CGAL_CTAG>::
-has_on_negative_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_negative_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   if (orientation() == COUNTERCLOCKWISE) {
     return has_on_unbounded_side(p);
@@ -203,7 +203,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 SphereC3<R CGAL_CTAG>::
-has_on_positive_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_positive_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   if (orientation() == COUNTERCLOCKWISE) {
     return has_on_bounded_side(p);
@@ -215,7 +215,7 @@ template < class R >
 inline
 bool
 SphereC3<R CGAL_CTAG>::
-has_on_bounded_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_bounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return squared_distance(center(),p) < squared_radius();
 }
@@ -223,7 +223,7 @@ has_on_bounded_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool SphereC3<R CGAL_CTAG>::
-has_on_unbounded_side(const SphereC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_unbounded_side(const typename SphereC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return squared_distance(center(),p) > squared_radius();
 }
@@ -264,7 +264,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>
 SphereC3<R CGAL_CTAG>::
-orthogonal_transform(const SphereC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+orthogonal_transform(const typename SphereC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   Vector_3 vec(FT(1), FT(0) );   // unit vector
   vec = vec.transform(t);             // transformed
@@ -328,8 +328,8 @@ template < class R >
 CGAL_KERNEL_INLINE
 std::istream& operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
 {
-    SphereC3<R CGAL_CTAG>::Point_3 center;
-    SphereC3<R CGAL_CTAG>::FT squared_radius;
+    typename SphereC3<R CGAL_CTAG>::Point_3 center;
+    typename SphereC3<R CGAL_CTAG>::FT squared_radius;
     int o;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :

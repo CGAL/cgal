@@ -8,7 +8,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Threetuple< TriangleC3<R CGAL_CTAG>::Point_3 > *
+inline _Threetuple< typename TriangleC3<R CGAL_CTAG>::Point_3 > *
 TriangleC3<R CGAL_CTAG>::ptr() const
 {
   return (_Threetuple< Point_3 >*)PTR;
@@ -17,7 +17,7 @@ TriangleC3<R CGAL_CTAG>::ptr() const
 template < class R >
 TriangleC3<R CGAL_CTAG>::TriangleC3()
 {
-  PTR = new _Threetuple< TriangleC3<R CGAL_CTAG>::Point_3 >;
+  PTR = new _Threetuple< Point_3 >;
 }
 
 template < class R >
@@ -28,11 +28,11 @@ TriangleC3(const TriangleC3<R CGAL_CTAG> &t) :
 
 template < class R >
 TriangleC3<R CGAL_CTAG>::
-TriangleC3(const TriangleC3<R CGAL_CTAG>::Point_3 &p,
-           const TriangleC3<R CGAL_CTAG>::Point_3 &q,
-           const TriangleC3<R CGAL_CTAG>::Point_3 &r)
+TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
+           const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
+           const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
 {
-  PTR = new _Threetuple< TriangleC3<R CGAL_CTAG>::Point_3 >(p, q, r);
+  PTR = new _Threetuple<Point_3>(p, q, r);
 }
 
 template < class R >
@@ -76,7 +76,7 @@ TriangleC3<R CGAL_CTAG>::id() const
 }
 
 template < class R >
-TriangleC3<R CGAL_CTAG>::Point_3
+typename TriangleC3<R CGAL_CTAG>::Point_3
 TriangleC3<R CGAL_CTAG>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
@@ -88,7 +88,7 @@ TriangleC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-TriangleC3<R CGAL_CTAG>::Point_3
+typename TriangleC3<R CGAL_CTAG>::Point_3
 TriangleC3<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
@@ -96,10 +96,10 @@ TriangleC3<R CGAL_CTAG>::operator[](int i) const
 
 template < class R >
 inline
-TriangleC3<R CGAL_CTAG>::Plane_3
+typename TriangleC3<R CGAL_CTAG>::Plane_3
 TriangleC3<R CGAL_CTAG>::supporting_plane() const
 {
-  return TriangleC3<R CGAL_CTAG>::Plane_3(vertex(0), vertex(1), vertex(2));
+  return Plane_3(vertex(0), vertex(1), vertex(2));
 }
 
 template < class R >
@@ -113,7 +113,7 @@ template < class R >
 inline
 TriangleC3<R CGAL_CTAG>
 TriangleC3<R CGAL_CTAG>::
-transform(const TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return TriangleC3<R CGAL_CTAG>(t.transform(vertex(0)),
                         t.transform(vertex(1)),
@@ -123,12 +123,12 @@ transform(const TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 template < class R >
 bool
 TriangleC3<R CGAL_CTAG>::
-has_on(const TriangleC3<R CGAL_CTAG>::Point_3 &p) const
+has_on(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  TriangleC3<R CGAL_CTAG>::Point_3 o = vertex(0) + supporting_plane().orthogonal_vector();
-  TriangleC3<R CGAL_CTAG>::Vector_3 v0 = vertex(0)-o,
-               v1 = vertex(1)-o,
-               v2 = vertex(2)-o;
+  Point_3  o  = vertex(0) + supporting_plane().orthogonal_vector();
+  Vector_3 v0 = vertex(0)-o,
+           v1 = vertex(1)-o,
+           v2 = vertex(2)-o;
 
   FT alpha, beta, gamma;
   solve(v0, v1, v2, p-o, alpha, beta, gamma);
@@ -163,7 +163,7 @@ std::ostream &operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
 template < class R >
 std::istream &operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
 {
-    TriangleC3<R CGAL_CTAG>::Point_3 p, q, r;
+    typename TriangleC3<R CGAL_CTAG>::Point_3 p, q, r;
 
     is >> p >> q >> r;
 

@@ -19,7 +19,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple< LineC3<R CGAL_CTAG>::Point_3 > *
+_Twotuple< typename LineC3<R CGAL_CTAG>::Point_3 > *
 LineC3<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<Point_3>*)PTR;
@@ -29,8 +29,8 @@ template < class R >
 inline
 void
 LineC3<R CGAL_CTAG>::
-new_rep(const LineC3<R CGAL_CTAG>::Point_3 &p,
-        const LineC3<R CGAL_CTAG>::Vector_3 &v)
+new_rep(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
+        const typename LineC3<R CGAL_CTAG>::Vector_3 &v)
 {
   // CGAL_kernel_precondition(  v != NULL_VECTOR );
   PTR = new _Twotuple< Point_3 > (p, ORIGIN+v);
@@ -49,30 +49,30 @@ LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG>  &l) :
 
 template < class R >
 LineC3<R CGAL_CTAG>::
-LineC3(const LineC3<R CGAL_CTAG>::Point_3 &p,
-       const LineC3<R CGAL_CTAG>::Point_3 &q)
+LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
+       const typename LineC3<R CGAL_CTAG>::Point_3 &q)
 {
   new_rep(p, q-p);
 }
 
 template < class R >
 LineC3<R CGAL_CTAG>::
-LineC3(const LineC3<R CGAL_CTAG>::Segment_3 &s)
+LineC3(const typename LineC3<R CGAL_CTAG>::Segment_3 &s)
 {
   new_rep(s.start(), s.end() - s.start());
 }
 
 template < class R >
 LineC3<R CGAL_CTAG>::
-LineC3(const LineC3<R CGAL_CTAG>::Ray_3 &r)
+LineC3(const typename LineC3<R CGAL_CTAG>::Ray_3 &r)
 {
   new_rep(r.start(), r.second_point() - r.start());
 }
 
 template < class R >
 LineC3<R CGAL_CTAG>::
-LineC3(const LineC3<R CGAL_CTAG>::Point_3 &p,
-       const LineC3<R CGAL_CTAG>::Direction_3 &d)
+LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
+       const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
 {
   new_rep(p, d.vector());
 }
@@ -113,14 +113,14 @@ LineC3<R CGAL_CTAG>::id() const
 }
 
 template < class R >
-LineC3<R CGAL_CTAG>::Point_3
+typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point() const
 {
   return ptr()->e0;
 }
 
 template < class R >
-LineC3<R CGAL_CTAG>::Direction_3
+typename LineC3<R CGAL_CTAG>::Direction_3
 LineC3<R CGAL_CTAG>::direction() const
 {
   return ((ptr()->e1) - ORIGIN).direction();
@@ -128,17 +128,17 @@ LineC3<R CGAL_CTAG>::direction() const
 
 
 template < class R >
-LineC3<R CGAL_CTAG>::Point_3
+typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point(int i) const
 {
-  return LineC3<R CGAL_CTAG>::Point_3(point() + FT(i) * ((ptr()->e1) - ORIGIN));
+  return Point_3(point() + FT(i) * ((ptr()->e1) - ORIGIN));
 }
 
 template < class R >
-LineC3<R CGAL_CTAG>::Plane_3
-LineC3<R CGAL_CTAG>::perpendicular_plane(const LineC3<R CGAL_CTAG>::Point_3 &p) const
+typename LineC3<R CGAL_CTAG>::Plane_3
+LineC3<R CGAL_CTAG>::perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return LineC3<R CGAL_CTAG>::Plane_3(p, direction().vector());
+  return Plane_3(p, direction().vector());
 }
 
 template < class R >
@@ -149,9 +149,9 @@ LineC3<R CGAL_CTAG>::opposite() const
 }
 
 template < class R >
-LineC3<R CGAL_CTAG>::Point_3
+typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::
-projection(const LineC3<R CGAL_CTAG>::Point_3 &p) const
+projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
   // Use a construction on FT for this?
   return point() + ( ((direction().vector() * (p - point())) /
@@ -163,7 +163,7 @@ projection(const LineC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 bool
 LineC3<R CGAL_CTAG>::
-has_on(const LineC3<R CGAL_CTAG>::Point_3 &p) const
+has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return collinear(point(), point()+direction().vector(), p);
 }
@@ -173,14 +173,14 @@ template < class R >
 bool
 LineC3<R CGAL_CTAG>::is_degenerate() const
 {
-  return direction() == LineC3<R CGAL_CTAG>::Direction_3(0,0,0);
+  return direction() == Direction_3(0,0,0);
 }
 
 template < class R >
 inline
 LineC3<R CGAL_CTAG>
 LineC3<R CGAL_CTAG>::
-transform(const LineC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename LineC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return LineC3<R CGAL_CTAG>( t.transform(point()), t.transform(direction()));
 }
@@ -205,7 +205,7 @@ std::ostream &operator<<(std::ostream &os, const LineC3<R CGAL_CTAG> &l)
 template < class R >
 std::istream &operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
 {
-    LineC3<R CGAL_CTAG>::Point_3 p, q;
+    typename LineC3<R CGAL_CTAG>::Point_3 p, q;
     is >> p >> q;
     l = LineC3<R CGAL_CTAG>(p, q);
     return is;

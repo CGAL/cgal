@@ -1,3 +1,8 @@
+Version 3.2.3 (September 2 1999)
+- added needed typename in all <CGAL/Cartesian/*.C>
+  indeed, Class_3<R>::Subclass needs a typename qualifier for MIPSPRO 7.3
+  although it worked with the other compilers
+
 Version 3.2.2 (September 2 1999)
 - fixed include files that still included <CGAL/...C2.h>
   [worked with symlinks, but not in releases newer than 2.1-I-13]

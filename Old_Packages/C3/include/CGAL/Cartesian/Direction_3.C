@@ -29,7 +29,7 @@ DirectionC3(const DirectionC3<R CGAL_CTAG> &d)
 
 template < class R >
 DirectionC3<R CGAL_CTAG>::
-DirectionC3(const DirectionC3<R CGAL_CTAG>::Vector_3 &v)
+DirectionC3(const typename DirectionC3<R CGAL_CTAG>::Vector_3 &v)
   : Handle(v) {}
 
 template < class R >
@@ -80,17 +80,17 @@ DirectionC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-DirectionC3<R CGAL_CTAG>::Vector_3
+typename DirectionC3<R CGAL_CTAG>::Vector_3
 DirectionC3<R CGAL_CTAG>::vector() const
 {
-  return DirectionC3<R CGAL_CTAG>::Vector_3(*this);
+  return Vector_3(*this);
 }
 
 template < class R >
 inline
 DirectionC3<R CGAL_CTAG>
 DirectionC3<R CGAL_CTAG>::
-transform(const DirectionC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+transform(const typename DirectionC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   return t.transform(*this);
 }
@@ -140,8 +140,8 @@ DirectionC3<R CGAL_CTAG>::dz() const
 
 template < class R >
 inline
-typename
-R::FT DirectionC3<R CGAL_CTAG>::hdx() const
+typename R::FT
+DirectionC3<R CGAL_CTAG>::hdx() const
 {
   return ptr()->e0;
 }
@@ -175,7 +175,7 @@ DirectionC3<R CGAL_CTAG>::hw() const
 template < class R >
 std::ostream &operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 {
-  DirectionC3<R CGAL_CTAG>::Vector_3 v = d.vector();
+  typename DirectionC3<R CGAL_CTAG>::Vector_3 v = d.vector();
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y()  << ' ' << v.z();

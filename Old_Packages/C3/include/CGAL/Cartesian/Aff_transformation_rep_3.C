@@ -9,7 +9,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC3<R>::Aff_transformation_3
+typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::inverse() const
   {
     return Aff_transformation_3(
@@ -34,7 +34,7 @@ Aff_transformation_repC3<R>::inverse() const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC3<R>::Aff_transformation_3
+typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::general_form() const
   {
     return Aff_transformation_3(t11, t12, t13, t14,
@@ -44,7 +44,7 @@ Aff_transformation_repC3<R>::general_form() const
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC3<R>::Aff_transformation_3
+typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::transpose() const
   {
     FT ft0(0);

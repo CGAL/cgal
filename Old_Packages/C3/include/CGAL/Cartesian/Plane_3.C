@@ -32,9 +32,9 @@ new_rep(const typename R::FT &a, const typename R::FT &b,
 template < class R >
 inline
 void
-PlaneC3<R CGAL_CTAG>::new_rep(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
-                              const PlaneC3<R CGAL_CTAG>::Point_3 &q,
-                              const PlaneC3<R CGAL_CTAG>::Point_3 &r)
+PlaneC3<R CGAL_CTAG>::new_rep(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
+                              const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
+                              const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
 {
   PlaneC3<R CGAL_CTAG> h = plane_from_points(p,q,r);
   new_rep(h.a(), h.b(), h.c(), h.d());
@@ -58,9 +58,9 @@ PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const PlaneC3<R CGAL_CTAG>::Point_3 &q,
-        const PlaneC3<R CGAL_CTAG>::Point_3 &r)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
+        const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
+        const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
 {
   new_rep(p, q, r);
 }
@@ -68,8 +68,8 @@ PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const PlaneC3<R CGAL_CTAG>::Direction_3 &d)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
+        const typename PlaneC3<R CGAL_CTAG>::Direction_3 &d)
 {
   PlaneC3<R CGAL_CTAG> h = plane_from_point_direction(p,d);
   new_rep(h.a(), h.b(), h.c(), h.d());
@@ -78,8 +78,8 @@ PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Point_3 &p,
-        const PlaneC3<R CGAL_CTAG>::Vector_3 &v)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
+        const typename PlaneC3<R CGAL_CTAG>::Vector_3 &v)
 {
   FT a, b, c, d;
   plane_from_point_directionC3(p.x(),p.y(),p.z(),v.x(),v.y(),v.z(),a,b,c,d);
@@ -100,8 +100,8 @@ PlaneC3(const typename R::FT &a,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Line_3 &l,
-        const PlaneC3<R CGAL_CTAG>::Point_3 &p)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
+        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
 {
   new_rep(l.point(), l.point()+l.direction().vector(), p);
 }
@@ -109,8 +109,8 @@ PlaneC3(const PlaneC3<R CGAL_CTAG>::Line_3 &l,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Segment_3 &s,
-        const PlaneC3<R CGAL_CTAG>::Point_3 &p)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Segment_3 &s,
+        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
 {
   new_rep(s.start(), s.end(), p);
 }
@@ -118,8 +118,8 @@ PlaneC3(const PlaneC3<R CGAL_CTAG>::Segment_3 &s,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const PlaneC3<R CGAL_CTAG>::Ray_3 &r,
-        const PlaneC3<R CGAL_CTAG>::Point_3 &p)
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Ray_3 &r,
+        const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
 {
   new_rep(r.start(), r.second_point(), p);
 }
@@ -189,36 +189,36 @@ typename R::FT PlaneC3<R CGAL_CTAG>::d() const
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Point_3
+typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::point() const
 {
   return point_on_plane(*this);
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Point_3
+typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
-projection(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+projection(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return CGAL::projection(p, *this);
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Vector_3
+typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::orthogonal_vector() const
 {
-  return PlaneC3<R CGAL_CTAG>::Vector_3(a(), b(), c());
+  return Vector_3(a(), b(), c());
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Direction_3
+typename PlaneC3<R CGAL_CTAG>::Direction_3
 PlaneC3<R CGAL_CTAG>::orthogonal_direction() const
 {
-  return PlaneC3<R CGAL_CTAG>::Direction_3(a(), b(), c());
+  return Direction_3(a(), b(), c());
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Vector_3
+typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base1() const
 {
   if( a() == FT(0) )  // parallel to x-axis
@@ -230,11 +230,12 @@ PlaneC3<R CGAL_CTAG>::base1() const
   if (c() == FT(0) )  // parallel to z-axis
       return Vector_3(FT(0), FT(0), FT(1));
 
-  return PlaneC3<R CGAL_CTAG>::Vector_3(-b(), a(), FT(0));
+  return Vector_3(-b(), a(), FT(0));
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Vector_3 PlaneC3<R CGAL_CTAG>::base2() const
+typename PlaneC3<R CGAL_CTAG>::Vector_3
+PlaneC3<R CGAL_CTAG>::base2() const
 {
   if ( a() == FT(0) ) // parallel to x-axis  x-axis already returned in base1
     {
@@ -256,9 +257,9 @@ PlaneC3<R CGAL_CTAG>::Vector_3 PlaneC3<R CGAL_CTAG>::base2() const
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Point_3
+typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
-to_plane_basis(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+to_plane_basis(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   const Vector_3 &e1 = base1();
   const Vector_3 &e2 = base2();
@@ -270,12 +271,12 @@ to_plane_basis(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Point_2
+typename PlaneC3<R CGAL_CTAG>::Point_2
 PlaneC3<R CGAL_CTAG>::
-to_2d(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+to_2d(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  const PlaneC3<R CGAL_CTAG>::Vector_3 &e1 = base1();
-  const PlaneC3<R CGAL_CTAG>::Vector_3 &e2 = base2();
+  const Vector_3 &e1 = base1();
+  const Vector_3 &e2 = base2();
   FT alpha, beta, gamma;
 
   solve(e1, e2, orthogonal_vector(), p - point(), alpha, beta, gamma);
@@ -284,21 +285,21 @@ to_2d(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Point_3
+typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
-to_3d(const PlaneC3<R CGAL_CTAG>::Point_2 &p) const
+to_3d(const typename PlaneC3<R CGAL_CTAG>::Point_2 &p) const
 {
-  PlaneC3<R CGAL_CTAG>::Vector_3 e1 = base1(),
+  Vector_3 e1 = base1(),
                e2 = base2();
   return point() + p.x() * e1 + p.y() * e2;
 }
 
 template < class R >
-PlaneC3<R CGAL_CTAG>::Line_3
+typename PlaneC3<R CGAL_CTAG>::Line_3
 PlaneC3<R CGAL_CTAG>::
-perpendicular_line(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+perpendicular_line(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return PlaneC3<R CGAL_CTAG>::Line_3(p, orthogonal_direction());
+  return Line_3(p, orthogonal_direction());
 }
 
 template < class R >
@@ -311,7 +312,7 @@ PlaneC3<R CGAL_CTAG>::opposite() const
 template < class R >
 PlaneC3<R CGAL_CTAG>
 PlaneC3<R CGAL_CTAG>::
-transform(const PlaneC3<R CGAL_CTAG>::Aff_transformation_3& t) const
+transform(const typename PlaneC3<R CGAL_CTAG>::Aff_transformation_3& t) const
 {
   return PlaneC3<R CGAL_CTAG>( t.transform(point()), (t.is_even())
            ?   t.transpose().inverse().transform(orthogonal_direction())
@@ -322,7 +323,7 @@ template < class R >
 inline
 Oriented_side
 PlaneC3<R CGAL_CTAG>::
-oriented_side(const PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+oriented_side(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return side_of_oriented_plane(*this,p);
 }
@@ -331,7 +332,7 @@ template < class R >
 inline
 bool
 PlaneC3<R CGAL_CTAG>::
-has_on_boundary(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_boundary(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
@@ -340,7 +341,7 @@ template < class R >
 inline
 bool
 PlaneC3<R CGAL_CTAG>::
-has_on(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+has_on(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return has_on_boundary(p);
 }
@@ -349,7 +350,7 @@ template < class R >
 inline
 bool
 PlaneC3<R CGAL_CTAG>::
-has_on_boundary(const  PlaneC3<R CGAL_CTAG>::Line_3 &l) const
+has_on_boundary(const  typename PlaneC3<R CGAL_CTAG>::Line_3 &l) const
 {
   return has_on_boundary(l.point())
      &&  has_on_boundary(l.point() + l.direction().vector());
@@ -359,7 +360,7 @@ template < class R >
 inline
 bool
 PlaneC3<R CGAL_CTAG>::
-has_on_positive_side(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_positive_side(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return oriented_side(p) == ON_POSITIVE_SIDE;
 }
@@ -368,7 +369,7 @@ template < class R >
 inline
 bool
 PlaneC3<R CGAL_CTAG>::
-has_on_negative_side(const  PlaneC3<R CGAL_CTAG>::Point_3 &p) const
+has_on_negative_side(const  typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
   return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
