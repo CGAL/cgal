@@ -66,7 +66,7 @@ print_table()
 
       echo "<TD NOWRAP>"
       if [ -f version ] ; then
-        cat version
+	head -n 1 version
       else
         echo "version not available"
       fi
@@ -148,11 +148,11 @@ print_new_index()
 cat << EOF
 <OL>
 <LI><A HREF="#recentsubmissions">Recent submissions</A> </LI>
-<LI><A HREF="$OLD_PACKAGES_NAME">Old submissions</A> </LI>
 <LI><A HREF="index.html">The latest internal release</A> </LI>
 </OL>
 <HR>
 EOF
+#<LI><A HREF="$OLD_PACKAGES_NAME">Old submissions</A> </LI>
 }
 
 print_old_index()
@@ -179,16 +179,16 @@ $SCRIPTDIR/print_cgal_trailer >> $TEMPPAGE
 chmod 664 $NEW_PACKAGES_PAGE
 chgrp cgal $NEW_PACKAGES_PAGE
 
-/bin/rm -f $TEMPPAGE
-echo "creating file $OLD_PACKAGES_PAGE ..."
+#/bin/rm -f $TEMPPAGE
+#echo "creating file $OLD_PACKAGES_PAGE ..."
 $SCRIPTDIR/print_cgal_header "CGAL Internal Release Page" > $TEMPPAGE
-print_old_header >> $TEMPPAGE
-print_old_index >> $TEMPPAGE
-print_old_submissions >> $TEMPPAGE
-$SCRIPTDIR/print_cgal_trailer >> $TEMPPAGE
-/bin/mv $TEMPPAGE $OLD_PACKAGES_PAGE
-chmod 664 $OLD_PACKAGES_PAGE
-chgrp cgal $OLD_PACKAGES_PAGE
+#print_old_header >> $TEMPPAGE
+#print_old_index >> $TEMPPAGE
+#print_old_submissions >> $TEMPPAGE
+#$SCRIPTDIR/print_cgal_trailer >> $TEMPPAGE
+#/bin/mv $TEMPPAGE $OLD_PACKAGES_PAGE
+#chmod 664 $OLD_PACKAGES_PAGE
+#chgrp cgal $OLD_PACKAGES_PAGE
 
 rm -f $LOCKFILE
 fi
