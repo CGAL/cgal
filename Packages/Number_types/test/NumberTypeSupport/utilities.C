@@ -7,12 +7,12 @@
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #include <CGAL/Filtered_exact.h> 
-#endif // CGAL_CFG_MATCHING_BUG_2
+#endif
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#endif // CGAL_USE_GMP
+#endif
 
 #ifdef CGAL_USE_GMPXX
 #include <CGAL/gmpxx.h>
@@ -117,7 +117,6 @@ int main()
   TESTIT(FEDR, "Filtered_exact<double, leda_real>");
 #endif // CGAL_CFG_MATCHING_BUG_2
 #endif // CGAL_USE_LEDA
-
 
   return 0;
 }
