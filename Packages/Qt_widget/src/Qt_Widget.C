@@ -107,6 +107,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   else
     set_scale_center(xcentre, ycentre);
   emit(resized());
+  emit(redrawed());
   redraw();
 }
 
@@ -395,6 +396,7 @@ void Qt_widget::redraw()
       unlock();
       if (has_tool())
 	current_tool->widget_repainted();
+      emit(redrawed());
     }
   };
   
