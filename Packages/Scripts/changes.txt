@@ -1,3 +1,7 @@
+22 July 2004 Sylvain Pion
+- create_internal_release : remove headers editing of obsolete fields
+  "file", "release" and "release_date".
+
 21 July 2004 Radu Ursu
 - create_modules removes temporary dirs at the end of the modules creation.
 
