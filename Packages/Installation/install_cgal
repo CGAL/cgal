@@ -685,6 +685,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
@@ -699,6 +700,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on irix
@@ -713,6 +715,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM=""
 	    ;;
 	*IRIX*g++-2*)
 	    #### settings for GCC2 on irix
@@ -727,6 +730,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG=''
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM=""
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -741,6 +745,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-R "
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*SunOS*5.*g++-egcs*|*SunOS*5.*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on solaris
@@ -755,6 +760,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-R "
 	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for GNU compiler on solaris
@@ -769,6 +775,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-R "
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*Linux*g++-egcs*|*Linux*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on linux
@@ -783,6 +790,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*Linux*g++*)
 	    #### settings for GNU compiler on linux
@@ -797,6 +805,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*)
 	    #### settings for unknown compiler 
@@ -811,6 +820,7 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG=''
 	    LONG_NAME_PROBLEM_CXXFLAGS=""
 	    LONG_NAME_PROBLEM_LDFLAGS=""
+	    PRINT_STACKTRACE_PROGRAM=""
 	    ;;
     esac
 }
@@ -3670,6 +3680,17 @@ create_include_makefile()
   # 
   ${_printf} "%s\n" \
     "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o" \
+    >> ${FILE}
+
+  #
+  # PRINT_STACKTRACE_PROGRAM
+  #
+  print_as_shell_comment \
+    "*** only used for the testsuite" >> ${FILE}
+  print_as_shell_comment \
+    "*** program used to create stacktrace from coredump" >> ${FILE}
+  ${_printf} "%s\n\n" \
+    "PRINT_STACKTRACE_PROGRAM = ${PRINT_STACKTRACE_PROGRAM}" \
     >> ${FILE}
 
   makefile_header "EOF" >> ${FILE}
