@@ -163,6 +163,21 @@ write_constraints(const CDT& t, std::ostream &f)
       }
 }
 
+struct Vertex_to_point {
+  const Point_2& operator()(const Vertex& v) const
+  {
+    return v.point();
+  }
+};
+
+struct Edge_to_segment {
+  const Segment_2 operator()(const Edge& e) const
+  {
+    return Segment_2(e.first->vertex(Tr::cw (e.second))->point(),
+                     e.first->vertex(Tr::ccw(e.second))->point());
+  }
+};
+
 template <class Tr>
 class Show_marked_faces : public CGAL::Qt_widget_layer
 {
@@ -241,13 +256,14 @@ public:
   }
 };
 
-template <class Mesher>
 class Meshing_debugging_layer : public CGAL::Qt_widget_layer
 {
+  Q_OBJECT
   Mesher* m;
+  bool point_on;
 public:
   Meshing_debugging_layer(QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name), m(0)
+    : Qt_widget_layer(parent, name), m(0), point_on(false)
   {
   }
   
@@ -260,9 +276,47 @@ public:
   {
     if( m != 0 )
       {
+        if( m->is_refinement_done() ) return;
+
         widget->lock();
         {
-          
+          QColor old_color = widget->color();
+          int old_line_width = widget->lineWidth();
+          CGAL::PointStyle old_point_style = widget->pointStyle();
+          int old_point_size = widget->pointSize();
+
+          if( m->is_edges_refinement_done() )
+            {
+              QColor old_fill_color = widget->fillColor();
+
+              const Tr::Face_handle fh = m->next_bad_face();
+
+              *widget << CGAL::FillColor(CGAL::RED)
+                      << CGAL::LineWidth(0)
+                      << Triangle_2(fh->vertex(0)->point(),
+                                    fh->vertex(1)->point(),
+                                    fh->vertex(2)->point());
+
+              widget->setFillColor(old_fill_color);
+            }
+          else
+            {
+              Edge_to_segment edge_to_segment;
+
+              *widget << CGAL::PURPLE
+                      << CGAL::LineWidth(2)
+                      << edge_to_segment(m->next_encroached_edge());
+            }
+
+          *widget << CGAL::BLACK
+                  << CGAL::PointStyle(CGAL::PLUS)
+                  << CGAL::PointSize(3)
+                  << m->next_refinement_point()
+                  << CGAL::PointSize(old_point_size)
+                  << CGAL::PointStyle(old_point_style);
+
+          widget->setLineWidth(old_line_width);
+          widget->setColor(old_color);
         }
         widget->unlock();
       }
@@ -297,21 +351,6 @@ public:
   {
     widget->setCursor(oldcursor);
   };
-};
-
-struct Vertex_to_point {
-  const Point_2& operator()(const Vertex& v) const
-  {
-    return v.point();
-  }
-};
-
-struct Edge_to_segment {
-  const Segment_2 operator()(const Edge& e) const
-  {
-    return Segment_2(e.first->vertex(Tr::cw (e.second))->point(),
-                     e.first->vertex(Tr::ccw(e.second))->point());
-  }
 };
 
 class MyWindow : public QMainWindow
@@ -473,6 +512,9 @@ public:
         new Show_bad_faces<Mesher>(0, CGAL::Color(0,160,0),
                                    this, "Show bad faces");
 
+      debug_layer = new Meshing_debugging_layer(this,
+                                                "Debug layer");
+
       show_circles =
         new CGAL::Qt_layer_show_circles<Tr>(&cdt, CGAL::GRAY, 1,
                                             CGAL::WHITE, false,
@@ -485,7 +527,7 @@ public:
 
       show_clusters = new Show_clusters<Mesher>(mesher,
                                                 CGAL::BLACK,3,CGAL::RECT,
-                                                CGAL::BLACK,2,
+                                                CGAL::BLACK,CGAL::BLUE,2,
                                                 this,
                                                 "Show clusters");
 
@@ -496,10 +538,11 @@ public:
       widget->attach(show_constraints);
       widget->attach(show_circles);
       widget->attach(show_encroached_edges);
-      widget->attach(show_clusters);
       widget->attach(show_points);
       widget->attach(show_seeds);
       widget->attach(show_coordinates);
+      widget->attach(debug_layer);
+      widget->attach(show_clusters); // should be last
 
       show_circles->deactivate();
       show_encroached_edges->deactivate();
@@ -809,6 +852,7 @@ private slots:
     show_clusters->change_mesher(mesher);
     show_encroached_edges->set_container(mesher);
     show_bad_faces->set_container(mesher);
+    debug_layer->set_container(mesher);
   }
 
   void after_inserted_input()
@@ -1179,6 +1223,7 @@ public slots:
       if( mesher == 0 )
         {
           mesher = create_mesher();
+          mesher->init();
           emit initializedMesher();
         }
       mesher->set_criteria(criteria);
@@ -1236,6 +1281,7 @@ private:
   Show_points_from_triangulation* show_points;
   Show_seeds* show_seeds;
   Show_encroached_edges* show_encroached_edges;
+  Meshing_debugging_layer* debug_layer;
   Show_bad_faces<Mesher>* show_bad_faces;
   CGAL::Qt_layer_show_triangulation<Tr>* show_triangulation;
   CGAL::Qt_layer_show_triangulation_constraints<Tr>* show_constraints;

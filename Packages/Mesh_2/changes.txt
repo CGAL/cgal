@@ -5,7 +5,13 @@
   not documented.
 - CGAL::Mesh_2::Refine_edges now has Tr::Edge has Element type. It 
   decreases number of calls to Tr::is_edge().
-- There is still a bug.
+- Removed debugging outputs to std::cerr.
+- The step by step demo now display the edge of the face that will be refined.
+- Modified Mesh_2::Clusters::get_cluster and Mesh_2::Clusters::update_clusters
+  to fix a bug in debugging functions (can we call that a "meta-bug"?).
+- Added a function check_bad_faces() in Refine_faces. For the moment, it
+  checks that no bad face has three collinear vertices. It is used in a
+  CGAL_expensive_assertion.
 
 6 October 2004 Laurent Rineau
 - Patch for gcc-3.4

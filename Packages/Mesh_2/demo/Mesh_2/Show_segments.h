@@ -77,7 +77,6 @@ public:
               ++it)
             {
               *widget << Transform()(*it);
-              std::cerr << Transform()(*it);
             }
 
           widget->setColor(old_color);

@@ -62,6 +62,7 @@ class Refine_edges_base_with_clusters :
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
   typedef typename Clusters<Tr>::Cluster Cluster;
+  typedef typename Clusters<Tr>::iterator clusters_iterator;
 
 
   /* --- private data --- */
@@ -70,6 +71,7 @@ class Refine_edges_base_with_clusters :
   bool va_has_a_cluster, vb_has_a_cluster;
   bool cluster_splitted;
   Cluster ca, cb;
+  clusters_iterator ca_it, cb_it;
 
 public:
   /** \name CONSTRUCTORS */
@@ -95,8 +97,8 @@ public:
     
     // true bellow to remove ca and cb because they will
     // be restored by update_cluster(...).
-    if( clusters.get_cluster(this->va,this->vb,ca,true) ) {   
-      if( clusters.get_cluster(this->vb,this->va,cb,true) )
+    if( clusters.get_cluster(this->va,this->vb,ca,ca_it) ) {
+      if( clusters.get_cluster(this->vb,this->va,cb,cb_it) )
         { // both ends are clusters
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
@@ -108,7 +110,7 @@ public:
         return split_cluster_point(this->va,this->vb,ca);
       }
     } else
-    if( clusters.get_cluster(this->vb,this->va,cb,true) ){
+    if( clusters.get_cluster(this->vb,this->va,cb,cb_it) ){
       // vb only is a cluster
       vb_has_a_cluster = true;
       return split_cluster_point(this->vb,this->va,cb);
@@ -120,12 +122,18 @@ public:
 
   void do_after_insertion(const Vertex_handle& v)
   {
+    std::cerr << "update_clusters" << std::endl;
+    std::cerr << "va_has_a_cluster=" << va_has_a_cluster
+              << std::endl
+              << "vb_has_a_cluster=" << vb_has_a_cluster
+              << std::endl;
+    std::cerr << "clusters.size()=" << clusters.size() << std::endl;
     Super::do_after_insertion(v);
     if( va_has_a_cluster ) 
-      clusters.update_cluster(ca,this->va,this->vb,v,cluster_splitted);
-    // false == 'edge not reduced'
+      clusters.update_cluster(ca,ca_it,this->va,this->vb,v,cluster_splitted);
     if( vb_has_a_cluster )
-      clusters.update_cluster(cb,this->vb,this->va,v,cluster_splitted);
+      clusters.update_cluster(cb,cb_it,this->vb,this->va,v,cluster_splitted);
+    std::cerr << "clusters.size()=" << clusters.size() << std::endl;
   }
 
   /**
@@ -152,8 +160,8 @@ public:
 
             split_the_face = false;
 
-            bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca);
-            bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb);
+            bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca,ca_it);
+            bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb,cb_it);
 
           if( ( v1_has_a_cluster && v2_has_a_cluster) ||
               (!v1_has_a_cluster && !v2_has_a_cluster) )

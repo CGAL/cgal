@@ -25,6 +25,7 @@
 #include <CGAL/Mesh_2/Filtered_queue_container.h>
 
 #include <utility>
+#include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
@@ -289,8 +290,10 @@ protected:
   Tr& tr; /**< The triangulation itself. */
 
   /** Predicates to filter edges. */
-  const typename details::Refine_edges_base_types<Tr>::
-    Is_really_a_constrained_edge is_really_a_constrained_edge;
+  typedef typename details::Refine_edges_base_types<Tr>
+     ::Is_really_a_constrained_edge Is_really_a_constrained_edge;
+
+  const Is_really_a_constrained_edge is_really_a_constrained_edge;
 
   Container edges_to_be_conformed; /**< Edge queue */
 
@@ -362,7 +365,7 @@ public:
   }
 
   /** Get the next edge to conform. */
-  Edge do_get_next_element()
+  Edge do_get_next_element() 
   {
     Constrained_edge edge = edges_to_be_conformed.get_next_element();
 
@@ -386,7 +389,7 @@ public:
       clusters. The refinement point of an edge is just the middle point of
       the segment.
       Saves the handles of the edge that will be splitted. */
-  Point get_refinement_point(const Edge& edge) const
+  Point get_refinement_point(const Edge& edge) 
   {
     typename Geom_traits::Construct_midpoint_2
       midpoint = tr.geom_traits().construct_midpoint_2_object();
@@ -419,10 +422,6 @@ public:
                                        Zone& z)
   {
     bool no_edge_is_encroached = true;
-    std::cerr << "do_test_point_conflict_from_superior(" << p 
-              << ", ...)\n";
-    std::cerr << "test de " << z.boundary_edges.size()
-              << "aretes" << std::endl;
     
     for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
@@ -436,9 +435,6 @@ public:
             no_edge_is_encroached = false;
           }
       }
-
-    std::cerr << "no_edge_is_encroached=" 
-              << no_edge_is_encroached << std::endl;
 
     return std::make_pair(no_edge_is_encroached, false);
   }
@@ -526,23 +522,33 @@ private: /** \name DEBUGGING TYPES AND DATAS */
   // -- private data member --
   From_pair_of_vertex_to_edge converter;
 
-public:  /** \name DEBUGGING FUNCTIONS */
+private:
 
-  typedef typename boost::transform_iterator<
+  typedef boost::filter_iterator<Is_really_a_constrained_edge,
+                                 typename Container::const_iterator>
+    Aux_edges_filter_iterator;
+
+public:  /** \name DEBUGGING FUNCTIONS */
+  typedef boost::transform_iterator<
     From_pair_of_vertex_to_edge,
-    typename Container::const_iterator>
-  Edges_const_iterator;
+    Aux_edges_filter_iterator> Edges_const_iterator;
 
   Edges_const_iterator begin() const
   {
-    return Edges_const_iterator(this->edges_to_be_conformed.begin(),
-                                converter);
+    return Edges_const_iterator(
+       Aux_edges_filter_iterator(is_really_a_constrained_edge,
+                                 this->edges_to_be_conformed.begin(),
+                                 this->edges_to_be_conformed.end()),
+       converter);
   }
 
   Edges_const_iterator end() const
   {
-    return Edges_const_iterator(this->edges_to_be_conformed.end(),
-                                converter);
+    return Edges_const_iterator(
+       Aux_edges_filter_iterator(is_really_a_constrained_edge,
+                                 this->edges_to_be_conformed.end(),
+                                 this->edges_to_be_conformed.end()),
+       converter);
   }
 }; // end class Refine_edges_base
 

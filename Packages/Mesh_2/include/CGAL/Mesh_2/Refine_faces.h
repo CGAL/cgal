@@ -98,7 +98,7 @@ public:
   }
 
   /** Tells if the map of faces to be conformed is empty or not. */
-  bool is_no_longer_element_to_refine()
+  bool is_no_longer_element_to_refine() const
   {
     return bad_faces.empty();
   }
@@ -107,9 +107,12 @@ public:
   Face_handle do_get_next_element()
   {
     Face_handle fh = bad_faces.front()->second;
-    std::cerr << "Refine_faces::do_get_next_element()\n";
-    std::cerr<< tr.circumcenter(fh) << std::endl;
 
+    CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
+                        tr.geom_traits().orientation_2_object());
+    CGAL_assertion(orientation(fh->vertex(0)->point(),
+                               fh->vertex(1)->point(),
+                               fh->vertex(2)->point()) != COLLINEAR );
     return fh;
   }
 
@@ -154,7 +157,15 @@ public:
         ++fh_it)
       {
         if(*fh_it != fh && (*fh_it)->is_marked() )
+        {
+#ifdef DEBUG
+          std::cerr << "bad_faces.erase("
+                    << (*fh_it)->vertex(0)->point() << ","
+                    << (*fh_it)->vertex(1)->point() << ","
+                    << (*fh_it)->vertex(2)->point() << ")\n";
+#endif // DEBUG
           bad_faces.erase(*fh_it);
+        }
         (*fh_it)->set_marked(false);
       }
   }
@@ -220,6 +231,17 @@ inline
 void Refine_faces_base<Tr, Criteria>::
 push_in_bad_faces(Face_handle fh, const Quality& q)
 {
+#ifdef DEBUG
+  std::cerr << "push_in_bad_faces("
+            << fh->vertex(0)->point() << ","
+            << fh->vertex(1)->point() << ","
+            << fh->vertex(2)->point() << ")\n";
+#endif // DEBUG
+  CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
+                      tr.geom_traits().orientation_2_object());
+  CGAL_assertion( orientation(fh->vertex(0)->point(),
+                              fh->vertex(1)->point(),
+                              fh->vertex(2)->point()) != COLLINEAR );
   CGAL_assertion(fh->is_marked());
   bad_faces.insert(fh, q);
 }
@@ -277,6 +299,8 @@ class Refine_faces :
     Refine_faces<Tr, Criteria, Previous, Base>,
     Previous>::Faces_mesher_level
 {
+  typedef typename Tr::Geom_traits Geom_traits;
+
   template <class Pair>
   struct Pair_get_first: public std::unary_function<Pair,
                                                     typename Pair::first_type>
@@ -317,6 +341,31 @@ public:
   {
     return Bad_faces_const_iterator(this->bad_faces.end());
   }
+
+  bool check_bad_faces()
+  {
+    CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
+                        tr.geom_traits().orientation_2_object());
+    for(Bad_faces_const_iterator fit = begin();
+        fit != end();
+        ++fit)
+      if( orientation((*fit)->vertex(0)->point(),
+                      (*fit)->vertex(1)->point(),
+                      (*fit)->vertex(2)->point()) == COLLINEAR )
+        {
+          std::cerr << "collinear("
+                    << (*fit)->vertex(0)->point() << ", "
+                    << (*fit)->vertex(1)->point() << ", "
+                    << (*fit)->vertex(2)->point()<< ") == true"
+                    << std::endl;
+          std::cerr << "Dump of bad_faces:" << std::endl;
+          this->bad_faces.dump_direct_func(std::cerr);
+
+          return false;
+        }
+    return true;  
+  }
+
 }; // end Refine_faces
 
 } // end namespace Mesh_2

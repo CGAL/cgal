@@ -284,26 +284,22 @@ public:
 
   typedef typename Edges_level::Constrained_edge Constrained_edge;
 
-  Edge next_encroached_edge() const
+  bool is_edges_refinement_done()
   {
-    Constrained_edge e = edges_level.get_next_element();
-
-    Face_handle fh;
-    int index;
-
-    CGAL_assertion_code(bool should_be_true= )
-    tr.is_edge(e.first, e.second, fh, index);
-    CGAL_assertion(should_be_true == true);
-
-    return Edge(fh, index);
+    return edges_level.is_algorithm_done();
   }
 
-  const Face_handle next_bad_face() const
+  Edge next_encroached_edge() 
+  {
+    return edges_level.get_next_element();
+  }
+
+  const Face_handle next_bad_face() 
   {
     return faces_level.get_next_element();
   }
 
-  const Point next_refinement_point() const
+  const Point next_refinement_point() 
   {
     if( !edges_level.is_algorithm_done() )
       return edges_level.get_refinement_point(next_encroached_edge());

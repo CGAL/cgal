@@ -61,21 +61,25 @@ public:
   typedef typename Tr::Vertex_handle	Vertex_handle;
   typedef typename Tr::Geom_traits::FT	FT;
   typedef typename Mesher::Clusters Clusters;
+  typedef typename Clusters::Cluster Cluster;
   typedef typename Clusters::Cluster_vertices_iterator CVIt;
   typedef typename Clusters::Vertices_in_cluster_iterator ViCIt;
+  typedef typename Clusters::const_iterator Clusters_const_iterator;
   typedef std::list<Point> List_of_points;
   typedef typename List_of_points::const_iterator Point_iterator;
 
   Show_clusters(Mesher* m,
-		CGAL::Color color = CGAL::GREEN,
+		CGAL::Color color_ = CGAL::GREEN,
 		int pointsize = 3,
 		CGAL::PointStyle pointstyle = CGAL::DISC,
 		CGAL::Color lc = CGAL::RED,
+                CGAL::Color reduced_line_color_ = CGAL::BLUE,
 		int linewidth = 2,
                 QObject* parent = 0, const char* name = 0)
     : Show_clusters_aux(parent, name),
-      mesher(m), dt(), _color(color),
-      size(pointsize), style(pointstyle), _line_color(lc),
+      mesher(m), dt(), color(color_),
+      size(pointsize), style(pointstyle), line_color(lc),
+      reduced_line_color(reduced_line_color_),
       width(linewidth) 
     {
       reinit_clusters();
@@ -113,7 +117,7 @@ public:
     int oldPointSize = widget->pointSize();
     CGAL::PointStyle oldStyle = widget->pointStyle();
     
-    *widget << _color << CGAL::PointStyle(style)
+    *widget << color << CGAL::PointStyle(style)
     	    << CGAL::PointSize(size);
     
     for(Vertices_iterator it = dt.finite_vertices_begin();
@@ -152,7 +156,7 @@ public:
 
     widget->get_painter().drawPixmap(0, 0, oldPixmap);
 
-    *widget << _line_color << CGAL::LineWidth(width);
+    *widget << CGAL::LineWidth(width);
 
     typename Tr::Locate_type lt;
     int i;
@@ -167,6 +171,13 @@ public:
       {
 	std::pair<ViCIt,ViCIt> seq = 
           mesher->clusters().vertices_in_cluster_sequence(v2, j);
+        Cluster c;
+        Clusters_const_iterator dummy_c_it;
+        mesher->clusters().get_cluster(v2, *(seq.first), c, dummy_c_it);
+        if( c.is_reduced() )
+          *widget << reduced_line_color;
+        else
+          *widget << line_color;
 	for(ViCIt it = seq.first;
 	    it != seq.second;
 	    ++it)
@@ -191,10 +202,11 @@ private:
   DT_vertex_handle oldVertex;
   QPixmap oldPixmap;
   bool  should_restore_pixmap;
-  CGAL::Color _color;
+  CGAL::Color color;
   int size;
   CGAL::PointStyle style;
-  CGAL::Color _line_color;
+  CGAL::Color line_color;
+  CGAL::Color reduced_line_color;
   int width;
 };
 

@@ -132,6 +132,9 @@ private:
   Cluster_map cluster_map;
 
 public:
+  typedef typename Cluster_map::const_iterator const_iterator;
+  typedef typename Cluster_map::iterator iterator;
+
   Clusters(Tr& tr_) : tr(tr_)
   {
   }
@@ -162,22 +165,21 @@ public:
    * Update the cluster of [\c va,\c vb], putting \c vm instead of \c vb.
    * If reduction=false, the edge [va,vm] is not set reduced. 
    */
-  void update_cluster(Cluster& c,
+  void update_cluster(Cluster& c, iterator it,
                       const Vertex_handle va, const Vertex_handle vb,
                       const Vertex_handle vm,
                       bool reduction = true);
 
   /**
    * Returns the cluster of [\c va,\c vb] in \c c and return true
-   * if it is in a cluster. If \c erase=\c true, the cluster is remove from
-   * the cluster map.
+   * if it is in a cluster. Returns also a const_iterator in \c it.
    */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
-                   Cluster& c, bool erase = false);
+                   Cluster& c, iterator& it);
 
-  /** Const version of get_cluster. */
+  /** Const version of get_cluster(). */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
-                   Cluster& c) const;
+                   Cluster& c, const_iterator& it) const;
 
   /** \name Auxiliary functions that return a boolean. */
 
@@ -273,11 +275,13 @@ public:
 
 template <typename Tr>
 void Clusters<Tr>::
-update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
-               Vertex_handle vm, bool reduction)
+update_cluster(Cluster& c, iterator it, Vertex_handle va,
+               Vertex_handle vb, Vertex_handle vm, bool reduction)
 {
   typename Geom_traits::Compute_squared_distance_2 squared_distance =
     tr.geom_traits().compute_squared_distance_2_object();
+
+  cluster_map.erase(it);
 
   c.vertices.erase(vb);
   c.vertices[vm] = reduction;
@@ -303,26 +307,23 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   if(c.is_reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
                               c.smallest_angle.second->point())/FT(4);
-
   cluster_map.insert(std::make_pair(va,c));
 }
 
 template <typename Tr>
 bool Clusters<Tr>::
-get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c, bool erase)
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c,
+            const_iterator& it) const
 {
-  typedef typename Cluster_map::iterator Iterator;
-  typedef std::pair<Iterator, Iterator> Range;
+  typedef std::pair<const_iterator, const_iterator> Range;
 
   Range range = cluster_map.equal_range(va);
 
-  for(Iterator it = range.first; it != range.second; it++)
+  for(it = range.first; it != range.second; it++)
     {
-      Cluster &cl = it->second;
+      const Cluster &cl = it->second;
       if(cl.vertices.find(vb)!=cl.vertices.end()) {
         c = it->second;
-        if(erase)
-          cluster_map.erase(it);
         return true;
       }
     }
@@ -331,14 +332,14 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c, bool erase)
 
 template <typename Tr>
 bool Clusters<Tr>::
-get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c) const
+get_cluster(Vertex_handle va, Vertex_handle vb, Cluster& c,
+            iterator& it) 
 {
-  typedef typename Cluster_map::const_iterator Iterator;
-  typedef std::pair<Iterator, Iterator> Range;
+  typedef std::pair<iterator, iterator> Range;
 
   Range range = cluster_map.equal_range(va);
 
-  for(Iterator it = range.first; it != range.second; it++)
+  for(it = range.first; it != range.second; it++)
     {
       const Cluster &cl = it->second;
       if(cl.vertices.find(vb)!=cl.vertices.end()) {
@@ -423,9 +424,13 @@ create_clusters_of_vertex(const Vertex_handle v)
   if(in_a_cluster)
     {
       Cluster c;
-      if(get_cluster(v, target(begin), c, true))
-        // get the cluster and erase it from the clusters map
-        construct_cluster(v, cluster_begin, begin, c);
+      iterator it;
+      if(get_cluster(v, target(begin), c, it))
+        {
+          // get the cluster and erase it from the clusters map
+          cluster_map.erase(it);
+          construct_cluster(v, cluster_begin, begin, c);
+        }
       else
         construct_cluster(v, cluster_begin, current);
     }

@@ -51,7 +51,7 @@ struct Null_mesher_level {
     return std::make_pair(true, true);
   }
 
-  bool is_algorithm_done()
+  bool is_algorithm_done() const
   {
     return true;
   }
