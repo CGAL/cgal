@@ -1,5 +1,6 @@
 1.60 (25 August 2003)
 - Fix bug in Handle_for::copy_on_write (used by Polynomial).
+- Comment out the unfinished documentation of Weighted_point_[23].
 
 1.59 (14 August 2003)
 - Handle_for<> cleanups.
