@@ -123,7 +123,7 @@ public:
    */
   void curve_split (const X_monotone_curve_2 & cv,
                     X_monotone_curve_2 & c1, X_monotone_curve_2 & c2, 
-		    const Point_2 & split_pt) const
+                    const Point_2 & split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_compare_y_at_x(split_pt, cv) == EQUAL);
@@ -192,34 +192,36 @@ public:
       Comparison_result src_pt = compare_xy_f(src, pt);
       Comparison_result trg_pt = compare_xy_f(trg, pt);
 
-      // If the subcurve is completely to the right, return it:
+      /* If the subcurve is completely to the right, return it. Notice that
+       * the case src_pt == EQUAL && trg_pt == EQUAL is impossible, cause
+       * src and trg must be different!
+       */
       if (src_pt != SMALLER && trg_pt != SMALLER)
         return (res);
 
       // The target is to the left and the source is to the right. 
       // Trim the trg:
-      if (trg_pt == SMALLER && src_pt != SMALLER)
-      {
-	Point_2  p1 = _vertical_ray_shoot (pt, c1);
+      if (trg_pt == SMALLER && src_pt == LARGER) {
+        Point_2  p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
 
-	if (equal_2_object() (p1, src))
-	  return (construct_object_f(src));
-	else
-	  return (construct_object_f(X_monotone_curve_2(p1, src)));
+        if (equal_2_object() (p1, src))
+          return (construct_object_f(src));
+        else
+          return (construct_object_f(X_monotone_curve_2(p1, src)));
       }
 
       // The source is to the left and the target is to the right.
       // Trim the src:
-      if (src_pt == SMALLER && trg_pt != SMALLER)
+      if (src_pt == SMALLER && trg_pt == LARGER)
       {
- 	Point_2  p1 = _vertical_ray_shoot (pt, c1);
+        Point_2  p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
         
-	if (equal_2_object() (p1, trg))
-	  return (construct_object_f(trg));
-	else
-	  return (construct_object_f(X_monotone_curve_2(p1, trg)));
+        if (equal_2_object() (p1, trg))
+          return (construct_object_f(trg));
+        else
+          return (construct_object_f(X_monotone_curve_2(p1, trg)));
       }
 
       // The subcurve is completely to the left:
@@ -285,34 +287,37 @@ public:
       Comparison_result src_pt = compare_xy_f (src, pt);
       Comparison_result trg_pt = compare_xy_f (trg, pt);
 
-      // If the subcurve is completely to the right, return it:
+      /* If the subcurve is completely to the right, return it. Notice that
+       * the case src_pt == EQUAL && trg_pt == EQUAL is impossible, cause
+       * src and trg must be different!
+       */
       if (src_pt != LARGER && trg_pt != LARGER)
         return (res);
       
       // The target is to the right and the source is to the left.
       // Trim the trg:
-      if (trg_pt == LARGER && src_pt != LARGER)
+      if (trg_pt == LARGER && src_pt == SMALLER)
       {
         Point_2 p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
         
-	if (equal_2_object() (p1, src))
-	  return (construct_object_f(src));
-	else
-	  return (construct_object_f(X_monotone_curve_2(src, p1)));
+        if (equal_2_object() (p1, src))
+          return (construct_object_f(src));
+        else
+          return (construct_object_f(X_monotone_curve_2(src, p1)));
       }
 
       // The source is to the right and the target is to the left. 
       // Trim the src:
-      if (src_pt == LARGER && trg_pt != LARGER)
+      if (src_pt == LARGER && trg_pt == SMALLER)
       {
         Point_2 p1 = _vertical_ray_shoot (pt, c1);
         Construct_object_2 construct_object_f = construct_object_2_object();
         
-	if (equal_2_object() (p1, trg))
-	  return (construct_object_f(trg));
-	else
-	  return (construct_object_f(X_monotone_curve_2(trg, p1)));
+        if (equal_2_object() (p1, trg))
+          return (construct_object_f(trg));
+        else
+          return (construct_object_f(X_monotone_curve_2(trg, p1)));
       }
 
       // The subcurve is completely to the right:
@@ -400,7 +405,7 @@ private:
    * \return The resulting point.
    */
   Point_2 _vertical_ray_shoot (const Point_2& pt, 
-			       const X_monotone_curve_2& cv) const
+                               const X_monotone_curve_2& cv) const
   {
     // If the curve contains pt, return it.
     if (has_on_2_object() (cv, pt))
