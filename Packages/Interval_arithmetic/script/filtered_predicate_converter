@@ -39,7 +39,7 @@ while (<>)
     result = $function_name(
 ";
     foreach (@args) {
-      print "\t\tCGAL_to_interval_nt($_.value)";
+      print "\t\tCGAL_to_Interval_nt_advanced($_.value)";
       if ($_ ne $last_arg) { print ",\n"; }
       else { print ");"; }
     }
