@@ -25,18 +25,13 @@ intersection.
 
 
 \ccInclude{CGAL/Polygons_bops_2.h}
-  
 
-The \ccClassTemplateName\ class contains one function
-object checking whether the two given polygons intersect.
+\ccMemberFunction{template <class Polygon>
+   bool operator()(const Polygon& polygon1,const Polygon& polygon2);}
+{Checking whether the two given polygons intersect.
 This function returns a boolean flag, 
 indicating whether the intersection is non-empty.
-
-\ccMethod{
-   template <class Polygon>
-   bool 
-   operator()(const Polygon& polygon1,
-   const Polygon& polygon2);}
+}
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -65,7 +60,7 @@ indicating whether the intersection is non-empty.
 % curves.
 
 
-\end{ccRefClass}
+\end{ccRefFunctionObjectClass}
 
 % FILL IN THE REST OF THE FILES
 % +------------------------------------------------------------------------+

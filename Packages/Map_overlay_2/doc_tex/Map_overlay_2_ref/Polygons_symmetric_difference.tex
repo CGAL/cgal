@@ -24,29 +24,26 @@ returning the symmetric intersection of two given polygons.
 
 
 \ccInclude{CGAL/Polygons_bops_2.h}
-  
 
-The \ccClassTemplateName\ class contains one function
-object for computing symmetric difference on two input polygons.
-This function returns three containers (as output irerators):
-the first container is the points in the symmetric difference, 
-the second is the subcurves in the symmetric difference,
-and the third is all polygons in the symmetric difference.
-The three output containers are given as templated 
-output iterators.
-
-\ccMethod{
+\ccMemberFunction{
    template <class Polygon,
    class PolygonOutputIterator,
    class CurvesOutputIterator,
    class PointsOutputIterator>    
-   void 
-   operator()(
+   void operator()(
    const Polygon& polygon1,
    const Polygon& polygon2,
    PolygonOutputIterator polygons,
    CurvesOutputIterator curves,
    PointsOutputIterator points);}
+{Computes symmetric difference on two input polygons.
+This function returns three containers (as output irerators):
+The first container is the points in the symmetric difference, 
+the second is the subcurves in the symmetric difference,
+and the third is all polygons in the symmetric difference.
+The three output containers are given as template
+output iterators.
+}
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -82,7 +79,7 @@ output iterators.
 % curves.
 
 
-\end{ccRefClass}
+\end{ccRefFunctionObjectClass}
 
 % FILL IN THE REST OF THE FILES
 % +------------------------------------------------------------------------+

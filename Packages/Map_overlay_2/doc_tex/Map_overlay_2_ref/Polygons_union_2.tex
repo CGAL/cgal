@@ -24,29 +24,27 @@ returning the union of two given polygons.
 
 
 \ccInclude{CGAL/Polygons_bops_2.h}
-  
 
-The \ccClassTemplateName\ class contains one function
-object for computing the union on two input polygons.
-This function returns three containers (as output iterators):
-the first container is the points in the union, 
-the second is the subcurves in the union,
-and the third is all polygons in the union.
-The three output containers are given as templated 
-output iterators.
-
-\ccMethod{
+\ccMemberFunction{
    template <class Polygon,
    class PolygonOutputIterator,
    class CurvesOutputIterator,
    class PointsOutputIterator>    
-   void 
-   operator()(
+   void operator()(
    const Polygon& polygon1,
    const Polygon& polygon2,
    PolygonOutputIterator polygons,
    CurvesOutputIterator curves,
    PointsOutputIterator points);}
+{Computes the union on two input polygons.
+This function returns three containers (as output iterators):
+The first container is the points in the union, 
+the second is the subcurves in the union,
+and the third is all polygons in the union.
+The three output containers are given as template 
+output iterators.
+}
+
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -96,7 +94,7 @@ And the output of the program looks like this:
 
 \ccIncludeExampleCode{Polygons_bops/example1.cout}
 
-\end{ccRefClass}
+\end{ccRefFunctionObjectClass}
 
 % FILL IN THE REST OF THE FILES
 % +------------------------------------------------------------------------+

@@ -25,28 +25,25 @@ returning the difference between two given polygons.
 
 \ccInclude{CGAL/Polygons_bops_2.h}
   
-
-The \ccClassTemplateName\ class contains one function
-object for computing the difference of two input polygons.
-This function returns three containers (as output iterators):
-the first container is the points in the difference, 
-the second is the subcurves in the difference,
-and the third is all polygons in the difference.
-The three output containers are given as templated 
-output iterators.
-
-\ccMethod{
+\ccMemberFunction{
    template <class Polygon,
    class PolygonOutputIterator,
    class CurvesOutputIterator,
    class PointsOutputIterator>    
-   void 
-   operator()(
+   void operator()(
    const Polygon& polygon1,
    const Polygon& polygon2,
    PolygonOutputIterator polygons,
    CurvesOutputIterator curves,
    PointsOutputIterator points);}
+{Computes the difference of two input polygons.
+This function returns three containers (as output iterators):
+The first container is the points in the difference, 
+the second is the subcurves in the difference,
+and the third is all polygons in the difference.
+The three output containers are given as template
+output iterators.
+}
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -81,7 +78,7 @@ output iterators.
 % curves.
 
 
-\end{ccRefClass}
+\end{ccRefFunctionObjectClass}
 
 % FILL IN THE REST OF THE FILES
 % +------------------------------------------------------------------------+
@@ -98,5 +95,5 @@ output iterators.
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "Polygons_do_intersect_2"
+%%% TeX-master: "Polygons_difference"
 %%% End: 
