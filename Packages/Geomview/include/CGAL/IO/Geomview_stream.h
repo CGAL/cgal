@@ -520,7 +520,7 @@ is_prefix(const char* p, const char* w)
 #ifdef CGAL_POINT_3_H
 template < class R >
 void
-parse_point(char* pickpoint, Point_3<R> &point)
+parse_point(const char* pickpoint, Point_3<R> &point)
 {
     std::strstream ss;
     ss << pickpoint << std::ends ;
@@ -553,7 +553,7 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     parse_point(pickpoint, point);
 
     // we echo the input
-    gv << point;
+    gv << point; // FIXME : have an echo_mode boolean ?
 
     // we are done and tell geomview to stop sending pick events
     gv << "(uninterest " << gclpick  << ") (pickable pickplane no)" ;
