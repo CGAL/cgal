@@ -167,8 +167,8 @@ name.
    \item[{\tt cgal\_test}]\index{cgal_test script@{\tt cgal\_test} script|(}
         is the script that will be called when the entire
         test suite is run. It will be created automatically, so usually there
-	is no need to submit it. (Submitting it is {\bf discouraged}.)
-	It should rely on four environment variables:
+        is no need to submit it. (Submitting it is {\bf discouraged}.)
+        It should rely on four environment variables:
         \begin{description}
             \item[{\tt \$CGAL\_MAKEFILE}]%
                  \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}%
@@ -231,7 +231,7 @@ name.
 
         Whan a test program runs correctly, it should return
         \ccIndexSubsubitem{test suite}{program}{return value} the
-	value zero, or, more precisely, the value \verb|std::EXIT_WITH_SUCCESS|
+        value zero, or, more precisely, the value \verb|std::EXIT_WITH_SUCCESS|
         defined in \verb|<cstdlib>|.
         Test programs may not be graphical and they may not require any user 
         interaction.\ccIndexSubitem{test suite}{program}   
@@ -256,27 +256,11 @@ name.
 \ccIndexSubitemBegin{source files}{documentation}
 
 As described in Chapter~\ref{chap:specification}, the \cgal\ documentation is
-currently divided into six separate manuals.  This division is reflected
-in the structure of the {\tt doc\_tex} directory, which contains the 
-documentation source files: 
-\begin{verbatim}
-      doc_tex
-           +--- installation/
-           |
-           +--- kernel/
-           |
-           +--- basic/
-           |
-           +--- support/
-           |
-           +--- use_of_stl/
-\end{verbatim}
-
-The {\tt basic/} and {\tt support/} directories each contain subdirectories
-that correspond to the packages documented in these manuals.  Contained in these
+organized in subdirectories for each package and the different manuals
+are assembled from these packages. Contained in these
 subdirectories are the files required for producing a package's contributions
-to the reference manual and users' manual. The users' manual input files are
-located in the package's directory; the reference manual files are
+to the different reference amd users' manuals. The users' manual input
+files are located in the package's directory; the reference manual files are
 be located in a directory named $<Package>${\tt \_ref}
 \index{ref directory@{\tt \_ref} directory}.  
 For both the users' manual and reference manual parts, the input can be
@@ -286,84 +270,66 @@ see Section~\ref{sec:ref_manual}.), but there must be a file called
 {\tt main.tex} in both the user and reference manual directories that inputs 
 all the other files for that manual part.
 ({\bf Note}: You should use the \verb|\input| command and NOT the 
-\verb|\include| command to input other source files in this file.)  
+\verb|\include| command to input other source files in this file, and
+they have to include their files using relativ paths starting in the
+\texttt{doc\_tex} directory.)  
 
 For example, the optimisation package of 
 the basic library can have the following documentation. 
 \begin{verbatim}
-      doc_tex/basic/Optimisation
-                          |- main.tex
-                          |
-                          |- *.tex
-                          |
-                          |- *.eps
-                          |
-                          |- *.gif
-                          |
-                          |- *.html
-                          |
-                          |- htmlfiles
-                          |
-                          |- cgal.bib
-                          |
-      doc_tex/basic/Optimisation_ref/
-                          |- main.tex
-                          |
-                          |- *.tex
-                          |
-                          |- *.eps
-                          |
-                          |- *.gif
-                          |
-                          |- *.html
-                          |
-                          |- htmlfiles
-                          |
-                          |- cgal.bib
+      doc_tex/Optimisation
+                 |--- main.tex
+                 |
+                 |--- *.tex
+                 |
+                 +--- *.((ps)|(eps)|(pdf)|(gif)|(jpg)|(png))
+
+      doc_tex/Optimisation_ref/
+                 |--- main.tex
+                 |
+                 |--- intro.tex
+                 |
+                 |--- *.tex
+                 |
+                 +--- *.((ps)|(eps)|(pdf)|(gif)|(jpg)|(png))
+
 \end{verbatim}
 
 \begin{description}
- \item[\ccAnchor{example/doc_tex/basic/Package/main_tex}{{\tt main.tex}}]%
-      \ccIndexMainItem{\tt main.tex}\ccIndexSubitem{users' manual}{\tt main.tex}
-      must contain one or more chapters. It must NOT 
+ \item[\ccAnchor{example/doc_tex/Package/main_tex}{{\tt main.tex}}]%
+      \ccIndexMainItem{\tt main.tex}\ccIndexSubitem{users' manual}{\tt
+      main.tex} must contain one chapter. It must NOT 
       contain a preamble (so no {\tt documentclass}, {\tt usepackage}, 
       \verb|\begin{document}| or \verb|\end{document}| commands). 
-      Until the new manual style is used, this file should also input the
-      {\tt main.tex} file for the reference manual pages for this package.
- \item[{\tt *.tex}] -- the source files for the Users' Manual that are input
-      by {\tt main.tex} 
- \item[{\tt *.eps}] -- the PostScript pictures included in the documentation
- \item[{\tt *.gif}] -- the corresponding {\tt gif} figures for the HTML 
-      documentation
- \item[{\tt *.html}] -- auxiliary HTML files ({\em i.e.}, other than those
-      generated by {\tt cc\_manual\_to\_html}) that are used in the HTML 
-      documentation.
- \item[\ccAnchor{example/doc_tex/basic/Package/htmlfiles}{{\tt htmlfiles}}]%
-      \index{htmlfiles file@{\tt htmlfiles} file}%
-      -- a list of auxiliary files ({\em e.g.} the {\tt .gif} and {\tt .html}
-      files) required for the HTML documentation.  Each file name should be
-      on a separate line in this file.  When the manual is created, these 
-      files will be copied to the directory containing the HTML manuals.
- \item[{\tt cgal.bib}]\index{cgal_bib@{\tt cgal.bib}} -- a list of citations
-      for items {\bf not found} in the 
-      \ccAnchor{http://www.cs.uu.nl/usr/cgi-bin/bib-search/geom}{{\tt geombib}}
-      data base.  Citations from this database will be
-      resolved automatically when the manual is created. 
- \item[{\tt Optimisation\_ref/}] -- directory containing the source files
-      for the reference manual pages for this package. 
- \item[\ccAnchor{example/doc_tex/basic/Package_ref/main_tex}{{\tt Optimisation\_ref/main.tex}}]
-      \ccIndexMainItem{\tt main.tex}\ccIndexSubitem{reference manual}{\tt main.tex}%
-       -- the file that inputs the source files for the reference manual pages,
-      with the same restrictions as above. 
- \item[{\tt Optimisation\_ref/*.tex}] -- the source files for the reference
-      manual, with each item documented in a separate file.
- \item[{\tt Optimisation\_ref/*.eps}, {\tt Optimisation\_ref/*.gif}] -- 
-      same as above.
- \item[{\tt Optimisation\_ref/htmlfiles}] -- same as above.
+      If you want more than one chapter in the documentation of this
+      package you have to put each chapter in its own \LaTeX\ file,
+      such that they get included by \texttt{main.tex} at the end.
+ \item[\ccAnchor{example/doc_tex/Package/intro_tex}{{\tt intro.tex}}]%
+      \ccIndexMainItem{\tt intro.tex}%
+      \ccIndexSubitem{reference manual}{\tt intro.tex}
+      is not mandatory but common for reference manual chapter. It
+      contains a brief introduction to the package (one paragraph) and
+      lists the different concepts, classes, functions, etc. that are
+      contained in this package in a systematic way.
+ \item[{\tt *.tex}] -- the source files for the Users' and Reference
+      Manual that are input by {\tt main.tex} 
+ \item[{\tt *.((ps)|(eps))}] -- the PostScript pictures included in
+        the PostScript documentation.
+ \item[{\tt *.pdf}] -- the PDF pictures included in
+        the PDF documentation.
+ \item[{\tt *.((gif)|(jpg)|(png))}] -- the raster images included in
+        the HTML documentation.
 \end{description}
 \ccIndexSubitemEnd{source files}{documentation}
 \ccIndexSubitemEnd{manuals}{source files} 
 \index{doc_tex directory@{\tt doc\_tex} directory|)}
+
+A note on files that were previously needed: The \texttt{htmlfiles} are
+not needed and also not evaluated anymore. They are replaced by an
+automatism in the \texttt{latex\_to\_html} converter to find and copy
+the included raster images automatically. The \texttt{cgal.bib} files
+are not used anymore. They are replaced by a common file
+\texttt{doc\_tex/Manual/cgal\_manual.bib}  in the \texttt{Manual} package.
 
 \section{{\tt examples} subdirectory}
 \label{sec:examples_subdirectory}
