@@ -38,6 +38,7 @@
 #include <CGAL/Pm_default_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
+#include <CGAL/Pm_dummy_point_location.h>
 
 #include <CGAL/Bench.h>
 #include <CGAL/Bench.C>
@@ -99,6 +100,7 @@ typedef std::list<Curve>                                CurveList;
 typedef CGAL::Pm_default_point_location<Pm>             Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
+typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
 
 typedef CGAL::Bench_parse_args::TypeId                  TypeId;
 typedef CGAL::Bench_parse_args::StrategyId              StrategyId;
@@ -259,14 +261,8 @@ public:
   }
 };
 
-typedef Aggregate_pmwx<Trap_point_location>     Trap_agg_pmwx;
-typedef CGAL::Bench<Trap_agg_pmwx>              Trap_agg_pmwx_bench;
-
-typedef Aggregate_pmwx<Naive_point_location>    Naive_agg_pmwx;
-typedef CGAL::Bench<Naive_agg_pmwx>             Naive_agg_pmwx_bench;
-
-typedef Aggregate_pmwx<Walk_point_location>     Walk_agg_pmwx;
-typedef CGAL::Bench<Walk_agg_pmwx>              Walk_agg_pmwx_bench;
+typedef Aggregate_pmwx<Dummy_point_location>    Dummy_agg_pmwx;
+typedef CGAL::Bench<Dummy_agg_pmwx>             Dummy_agg_pmwx_bench;
 
 /*!
  */
@@ -360,6 +356,9 @@ typedef CGAL::Bench<Naive_dis_pmwx>           Naive_dis_pmwx_bench;
 
 typedef Display_pmwx<Walk_point_location>     Walk_dis_pmwx;
 typedef CGAL::Bench<Walk_dis_pmwx>            Walk_dis_pmwx_bench;
+
+typedef Display_pmwx<Dummy_point_location>    Dummy_dis_pmwx;
+typedef CGAL::Bench<Dummy_dis_pmwx>           Dummy_dis_pmwx_bench;
 
 /*
  */
@@ -461,52 +460,20 @@ int main(int argc, char * argv[])
   // Construct Aggregately
   typeId = CGAL::Bench_parse_args::TYPE_AGGREGATE;
   if (typeMask & (0x1 << typeId)) {
-    // Trapezoidal point location:
-    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_TRAPEZOIDAL;
+    // Dummy point location:
+    StrategyId strategyId = CGAL::Bench_parse_args::STRATEGY_DUMMY;
     if (strategyMask & (0x1 << strategyId)) {
       std::string name =
           std::string(parseArgs.getTypeName(typeId)) + " " +
           std::string(parseArgs.getStrategyName(strategyId)) + " " +
           "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
           " " + INSERT_TYPE + " (" + std::string(filename) + ")";
-      Trap_agg_pmwx_bench benchInst(name, seconds, false);
-      Trap_agg_pmwx & benchUser = benchInst.getBenchUser();
-      runBench<Trap_agg_pmwx_bench,Trap_agg_pmwx>(benchInst, benchUser,
-                                                  fullname, format,
-                                                  samples, iterations,
-                                                  verbose);
-    }
-
-    // Naive point location:
-    strategyId = CGAL::Bench_parse_args::STRATEGY_NAIVE;
-    if (strategyMask & (0x1 << strategyId)) {
-      std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
-          "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
-      Naive_agg_pmwx_bench benchInst(name, seconds, false);
-      Naive_agg_pmwx & benchUser = benchInst.getBenchUser();
-      runBench<Naive_agg_pmwx_bench,Naive_agg_pmwx>(benchInst, benchUser,
+      Dummy_agg_pmwx_bench benchInst(name, seconds, false);
+      Dummy_agg_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Dummy_agg_pmwx_bench,Dummy_agg_pmwx>(benchInst, benchUser,
                                                     fullname, format,
                                                     samples, iterations,
                                                     verbose);
-    }
-
-    // Walk point location:
-    strategyId = CGAL::Bench_parse_args::STRATEGY_WALK;
-    if (strategyMask & (0x1 << strategyId)) {
-      std::string name =
-          std::string(parseArgs.getTypeName(typeId)) + " " +
-          std::string(parseArgs.getStrategyName(strategyId)) + " " +
-          "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
-          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
-      Walk_agg_pmwx_bench benchInst(name, seconds, false);
-      Walk_agg_pmwx & benchUser = benchInst.getBenchUser();
-      runBench<Walk_agg_pmwx_bench,Walk_agg_pmwx>(benchInst, benchUser,
-                                                  fullname, format,
-                                                  samples, iterations,
-                                                  verbose);
     }
   }
   
@@ -560,8 +527,24 @@ int main(int argc, char * argv[])
                                                   samples, iterations,
                                                   verbose);
     }
+
+    // Dummy point location:
+    strategyId = CGAL::Bench_parse_args::STRATEGY_DUMMY;
+    if (strategyMask & (0x1 << strategyId)) {
+      std::string name =
+          std::string(parseArgs.getTypeName(typeId)) + " " +
+          std::string(parseArgs.getStrategyName(strategyId)) + " " +
+          "PMWX " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + NUMBER_TYPE +
+          " " + INSERT_TYPE + " (" + std::string(filename) + ")";
+      Dummy_dis_pmwx_bench benchInst(name, seconds, false);
+      Dummy_dis_pmwx & benchUser = benchInst.getBenchUser();
+      runBench<Dummy_dis_pmwx_bench,Dummy_dis_pmwx>(benchInst, benchUser,
+                                                    fullname, format,
+                                                    samples, iterations,
+                                                    verbose);
+    }
   }
-    
+  
   return 0;
 }
 
