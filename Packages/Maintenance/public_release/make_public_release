@@ -1,5 +1,7 @@
 #!/sw/bin/perl5 -w
 my ($major,$minor) = (0,0);
+#my $release_date_option = "-d '2000, January 11'";
+my $release_date_option = "";
 
 my $explanation=<<'EOF';
 What to do to make a public release
@@ -44,7 +46,7 @@ system ("rm -rf test");
 system ("rm -rf developer_scripts");
 system ("rm -rf doc_tex");
 system("find . -name '*.[hC]' -print > filenames");
-system("make_public_header -v CGAL-$major.$minor -f filenames");
+system("make_public_header -v CGAL-$major.$minor -f filenames $release_date_option");
 unlink 'filenames';
 my $version_nr = sprintf "1%03d%03d100",$major,$minor;
 my $config_file = 'include/CGAL/config.h';
