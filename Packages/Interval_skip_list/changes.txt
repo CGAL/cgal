@@ -1,3 +1,6 @@
+1.5 (17 May 2003) [af]
+- bug fix: replaced iterator with const_iterator
+
 1.4 (15 April 2003) [af]
 - added missing typename
 
