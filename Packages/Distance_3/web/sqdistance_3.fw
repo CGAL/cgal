@@ -80,7 +80,7 @@ This code does not belong in this chapter. It should be moved to the vector
 class.
 @$@<3D squared distance general utilities@>+=@{
 template <class R>
-bool CGAL_is_null(const CGAL_Vector_3<R> &v)
+bool is_null(const Vector_3<R> &v)
 {
     typedef typename R::RT RT;
     return v.hx()==RT(0) && v.hy()==RT(0) && v.hz()==RT(0);
@@ -106,17 +106,17 @@ Note the double occurrence of the factor @{wq@} in the latter definition.
 
 template <class R>
 R_RT_return(R)
-CGAL_wdot(const CGAL_Vector_3<R> &u,
-    const CGAL_Vector_3<R> &v)
+wdot(const Vector_3<R> &u,
+    const Vector_3<R> &v)
 {
     return  (R_RT_return(R))(u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-RT CGAL_wdot(const CGAL_Point_3< CGAL_Homogeneous<RT> > &p,
-    const CGAL_Point_3<CGAL_Homogeneous<RT> > &q,
-    const CGAL_Point_3<CGAL_Homogeneous<RT> > &r)
+RT wdot(const Point_3< Homogeneous<RT> > &p,
+    const Point_3<Homogeneous<RT> > &q,
+    const Point_3<Homogeneous<RT> > &r)
 {
     return  (q.hw()*p.hx() - p.hw()*q.hx())*(q.hw()*r.hx() - r.hw()*q.hx()) +
             (q.hw()*p.hy() - p.hw()*q.hy())*(q.hw()*r.hy() - r.hw()*q.hy()) +
@@ -126,9 +126,9 @@ RT CGAL_wdot(const CGAL_Point_3< CGAL_Homogeneous<RT> > &p,
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-FT CGAL_wdot(const CGAL_Point_3< CGAL_Cartesian<FT> > &p,
-    const CGAL_Point_3< CGAL_Cartesian<FT> > &q,
-    const CGAL_Point_3< CGAL_Cartesian<FT> > &r)
+FT wdot(const Point_3< Cartesian<FT> > &p,
+    const Point_3< Cartesian<FT> > &q,
+    const Point_3< Cartesian<FT> > &r)
 {
     return  (p.hx() - q.hx())*(r.hx() - q.hx()) +
             (p.hy() - q.hy())*(r.hy() - q.hy()) +
@@ -157,10 +157,10 @@ definition of the wcross product for points.
 
 
 template <class R>
-CGAL_Vector_3<R> CGAL_wcross(const CGAL_Vector_3<R> &u,
-    const CGAL_Vector_3<R> &v)
+Vector_3<R> wcross(const Vector_3<R> &u,
+    const Vector_3<R> &v)
 {
-    return CGAL_Vector_3<R>(
+    return Vector_3<R>(
         u.hy()*v.hz() - u.hz()*v.hy(),
         u.hz()*v.hx() - u.hx()*v.hz(),
         u.hx()*v.hy() - u.hy()*v.hx());
@@ -168,10 +168,10 @@ CGAL_Vector_3<R> CGAL_wcross(const CGAL_Vector_3<R> &u,
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-CGAL_Vector_3< CGAL_Homogeneous<RT> >
-CGAL_wcross(const CGAL_Point_3< CGAL_Homogeneous<RT> > &p,
-    const CGAL_Point_3< CGAL_Homogeneous<RT> > &q,
-    const CGAL_Point_3< CGAL_Homogeneous<RT> > &r)
+Vector_3< Homogeneous<RT> >
+wcross(const Point_3< Homogeneous<RT> > &p,
+    const Point_3< Homogeneous<RT> > &q,
+    const Point_3< Homogeneous<RT> > &r)
 {
     RT x,y,z;
     x =  p.hy() * (q.hz()*r.hw() - q.hw()*r.hz() )
@@ -183,22 +183,22 @@ CGAL_wcross(const CGAL_Point_3< CGAL_Homogeneous<RT> > &p,
     z =  p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
        + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
        + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
-    return CGAL_Vector_3< CGAL_Homogeneous<RT> >(x, y, z);
+    return Vector_3< Homogeneous<RT> >(x, y, z);
 }
 #endif // CGAL_HOMOGENEOUS_H
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-CGAL_Vector_3< CGAL_Cartesian<FT> >
-CGAL_wcross(const CGAL_Point_3< CGAL_Cartesian<FT> > &p,
-    const CGAL_Point_3< CGAL_Cartesian<FT> > &q,
-    const CGAL_Point_3< CGAL_Cartesian<FT> > &r)
+Vector_3< Cartesian<FT> >
+wcross(const Point_3< Cartesian<FT> > &p,
+    const Point_3< Cartesian<FT> > &q,
+    const Point_3< Cartesian<FT> > &r)
 {
     FT x,y,z;
     x = (q.y()-p.y())*(r.z()-q.z()) - (q.z()-p.z())*(r.y()-q.y());
     y = (q.z()-p.z())*(r.x()-q.x()) - (q.x()-p.x())*(r.z()-q.z());
     z = (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
-    return CGAL_Vector_3< CGAL_Cartesian<FT> >(x, y, z);
+    return Vector_3< Cartesian<FT> >(x, y, z);
 }
 #endif // CGAL_CARTESIAN_H
 @}
@@ -215,56 +215,56 @@ Then we can use the routines @{wdot@} and @{wcross@} for this purpose.
 @D@<Sharp or obtuse@>
 
 Here are routines to decide whether an angle is sharp, straight or obtuse.
-There should also be an enum with three values (@{CGAL_ACUTE@},
-@{CGAL_STRAIGHT@},@{CGAL_OBTUSE@}) and a routine that returns such a value.
+There should also be an enum with three values (@{ACUTE@},
+@{STRAIGHT@},@{OBTUSE@}) and a routine that returns such a value.
 
 @$@<3D squared distance general utilities@>+=@{
 template <class R>
-inline bool CGAL_is_acute_angle(const CGAL_Vector_3<R> &u,
-    const CGAL_Vector_3<R> &v)
+inline bool is_acute_angle(const Vector_3<R> &u,
+    const Vector_3<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) > RT(0) ;
+    return RT(wdot(u, v)) > RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_straight_angle(const CGAL_Vector_3<R> &u,
-    const CGAL_Vector_3<R> &v)
+inline bool is_straight_angle(const Vector_3<R> &u,
+    const Vector_3<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) == RT(0) ;
+    return RT(wdot(u, v)) == RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_obtuse_angle(const CGAL_Vector_3<R> &u,
-    const CGAL_Vector_3<R> &v)
+inline bool is_obtuse_angle(const Vector_3<R> &u,
+    const Vector_3<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) < RT(0) ;
+    return RT(wdot(u, v)) < RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_acute_angle(const CGAL_Point_3<R> &p,
-    const CGAL_Point_3<R> &q, const CGAL_Point_3<R> &r)
+inline bool is_acute_angle(const Point_3<R> &p,
+    const Point_3<R> &q, const Point_3<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) > RT(0) ;
+    return RT(wdot(p, q, r)) > RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_straight_angle(const CGAL_Point_3<R> &p,
-    const CGAL_Point_3<R> &q, const CGAL_Point_3<R> &r)
+inline bool is_straight_angle(const Point_3<R> &p,
+    const Point_3<R> &q, const Point_3<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) == RT(0) ;
+    return RT(wdot(p, q, r)) == RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_obtuse_angle(const CGAL_Point_3<R> &p,
-    const CGAL_Point_3<R> &q, const CGAL_Point_3<R> &r)
+inline bool is_obtuse_angle(const Point_3<R> &p,
+    const Point_3<R> &q, const Point_3<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) < RT(0) ;
+    return RT(wdot(p, q, r)) < RT(0) ;
 }
 @}
 
@@ -276,11 +276,11 @@ of the difference vector.
 @$@<3D squared distance 0 header declarations@>+=@{@-
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> & pt1,
-    const CGAL_Point_3<R> & pt2)
+squared_distance(
+    const Point_3<R> & pt1,
+    const Point_3<R> & pt2)
 {
-    CGAL_Vector_3<R> vec(pt1-pt2);
+    Vector_3<R> vec(pt1-pt2);
     return vec*vec;
 }
 
@@ -301,9 +301,9 @@ This specialised routine is used extensively in other routines.
 @$@<3D squared distance 0 header declarations@>+=@{@-
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_to_plane(
-    const CGAL_Vector_3<R> & normal,
-    const CGAL_Vector_3<R> & diff);
+squared_distance_to_plane(
+    const Vector_3<R> & normal,
+    const Vector_3<R> & diff);
 @}
 
 @C@<Implementation@>
@@ -311,16 +311,16 @@ CGAL_squared_distance_to_plane(
 @$@<3D squared distance 0 outline definitions@>+=@{@-
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_to_plane(
-    const CGAL_Vector_3<R> & normal,
-    const CGAL_Vector_3<R> & diff)
+squared_distance_to_plane(
+    const Vector_3<R> & normal,
+    const Vector_3<R> & diff)
 {
     typedef typename R::RT RT;
     RT dot, squared_length;
-    dot = CGAL_wdot(normal, diff);
-    squared_length = CGAL_wdot(normal, normal);
+    dot = wdot(normal, diff);
+    squared_length = wdot(normal, normal);
     return (R_FT_return(R))
-        ((dot*dot) / CGAL_wmult((R*)0, squared_length, diff.hw(), diff.hw()));
+        ((dot*dot) / wmult((R*)0, squared_length, diff.hw(), diff.hw()));
 }
 @}
 
@@ -337,26 +337,26 @@ point on the line.
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Line_3<R> &line);
+squared_distance(
+    const Point_3<R> &pt,
+    const Line_3<R> &line);
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> & line,
-    const CGAL_Point_3<R> & pt)
+squared_distance(
+    const Line_3<R> & line,
+    const Point_3<R> & pt)
 {
-    return CGAL_squared_distance(pt, line);
+    return squared_distance(pt, line);
 }
 @}
 
 @$@<3D squared distance 0 header declarations@>+=@{@-
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_to_line(
-    const CGAL_Vector_3<R> & dir,
-    const CGAL_Vector_3<R> & diff);
+squared_distance_to_line(
+    const Vector_3<R> & dir,
+    const Vector_3<R> & diff);
 @}
 
 @C@<Implementation@>
@@ -374,27 +374,27 @@ the point to the line. Squaring everything, we get the square distance.
 @$@<3D squared distance 0 outline definitions@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_to_line(
-    const CGAL_Vector_3<R> & dir,
-    const CGAL_Vector_3<R> & diff)
+squared_distance_to_line(
+    const Vector_3<R> & dir,
+    const Vector_3<R> & diff)
 {
     typedef typename R::RT RT;
-    CGAL_Vector_3<R> wcr = CGAL_wcross(dir, diff);
+    Vector_3<R> wcr = wcross(dir, diff);
     return (R_FT_return(R))((wcr*wcr)/
-        CGAL_wmult((R*)0, RT(CGAL_wdot(dir, dir)), diff.hw(), diff.hw()));
+        wmult((R*)0, RT(wdot(dir, dir)), diff.hw(), diff.hw()));
 }
 @}
 
 @$@<3D squared distance outline definitions@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Line_3<R> &line)
+squared_distance(
+    const Point_3<R> &pt,
+    const Line_3<R> &line)
 {
-    CGAL_Vector_3<R> dir(line.direction().vector());
-    CGAL_Vector_3<R> diff = pt - line.point();
-    return CGAL_squared_distance_to_line(dir, diff);
+    Vector_3<R> dir(line.direction().vector());
+    Vector_3<R> diff = pt - line.point();
+    return squared_distance_to_line(dir, diff);
 }
 @}
 
@@ -405,17 +405,17 @@ CGAL_squared_distance(
 @$@<3D squared distance header declarations@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Ray_3<R> &ray);
+squared_distance(
+    const Point_3<R> &pt,
+    const Ray_3<R> &ray);
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> & ray,
-    const CGAL_Point_3<R> & pt)
+squared_distance(
+    const Ray_3<R> & ray,
+    const Point_3<R> & pt)
 {
-    return CGAL_squared_distance(pt, ray);
+    return squared_distance(pt, ray);
 }
 @}
 
@@ -431,15 +431,15 @@ point.
 @$@<3D squared distance outline definitions@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Ray_3<R> &ray)
+squared_distance(
+    const Point_3<R> &pt,
+    const Ray_3<R> &ray)
 {
-    CGAL_Vector_3<R> diff = pt-ray.start();
-    const CGAL_Vector_3<R> &dir = ray.direction().vector();
-    if (!CGAL_is_acute_angle(dir,diff) )
+    Vector_3<R> diff = pt-ray.start();
+    const Vector_3<R> &dir = ray.direction().vector();
+    if (!is_acute_angle(dir,diff) )
         return (R_FT_return(R))(diff*diff);
-    return CGAL_squared_distance_to_line(dir, diff);
+    return squared_distance_to_line(dir, diff);
 }
 @}
 
@@ -449,18 +449,18 @@ CGAL_squared_distance(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Segment_3<R> &seg);
+squared_distance(
+    const Point_3<R> &pt,
+    const Segment_3<R> &seg);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> & seg,
-    const CGAL_Point_3<R> & pt)
+squared_distance(
+    const Segment_3<R> & seg,
+    const Point_3<R> & pt)
 {
-    return CGAL_squared_distance(pt, seg);
+    return squared_distance(pt, seg);
 }
 
 @}
@@ -482,22 +482,22 @@ segment is taken.
 @$@<3D squared distance outline definitions@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Segment_3<R> &seg)
+squared_distance(
+    const Point_3<R> &pt,
+    const Segment_3<R> &seg)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
     // assert that the segment is valid (non zero length).
-    CGAL_Vector_3<R> diff = pt-seg.start();
-    CGAL_Vector_3<R> segvec = seg.end()-seg.start();
-    RT d = CGAL_wdot(diff,segvec);
+    Vector_3<R> diff = pt-seg.start();
+    Vector_3<R> segvec = seg.end()-seg.start();
+    RT d = wdot(diff,segvec);
     if (d <= (RT)0)
         return (R_FT_return(R))(FT(diff*diff));
-    RT e = CGAL_wdot(segvec,segvec);
-    if (CGAL_wmult((R*)0 ,d, segvec.hw()) > CGAL_wmult((R*)0, e, diff.hw()))
-        return CGAL_squared_distance(pt, seg.end());
-    return CGAL_squared_distance_to_line(segvec, diff);
+    RT e = wdot(segvec,segvec);
+    if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
+        return squared_distance(pt, seg.end());
+    return squared_distance_to_line(segvec, diff);
 }
 @}
 
@@ -508,9 +508,9 @@ CGAL_squared_distance(
 @$@<3D squared distance header declarations@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &,
-    const CGAL_Segment_3<R> &);
+squared_distance(
+    const Segment_3<R> &,
+    const Segment_3<R> &);
 
 
 @}
@@ -531,16 +531,16 @@ taken.
 @$@<3D seg seg squared distance main routine start@>==@{@-
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg1,
-    const CGAL_Segment_3<R> &seg2)
+squared_distance(
+    const Segment_3<R> &seg1,
+    const Segment_3<R> &seg2)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Point_3<R> &start1 = seg1.start();
-    const CGAL_Point_3<R> &start2 = seg2.start();
-    const CGAL_Point_3<R> &end1 = seg1.end();
-    const CGAL_Point_3<R> &end2 = seg2.end();
+    const Point_3<R> &start1 = seg1.start();
+    const Point_3<R> &start2 = seg2.start();
+    const Point_3<R> &end1 = seg1.end();
+    const Point_3<R> &end2 = seg2.end();
 @}
 
 First we check if one of the segments is degenerate (coinciding start and
@@ -553,16 +553,16 @@ This is dealt with as a special case.
 
 @$@<3D seg seg squared distance main routine degeneracy checking@>==@{@-
 if (start1 == end1)
-    return CGAL_squared_distance(start1, seg2);
+    return squared_distance(start1, seg2);
 if (start2 == end2)
-    return CGAL_squared_distance(start2, seg1);
+    return squared_distance(start2, seg1);
 
-CGAL_Vector_3<R> dir1, dir2, normal;
+Vector_3<R> dir1, dir2, normal;
 dir1 = seg1.direction().vector();
 dir2 = seg2.direction().vector();
-normal = CGAL_wcross(dir1, dir2);
-if (CGAL_is_null(normal))
-    return CGAL_squared_distance_parallel(seg1, seg2);
+normal = wcross(dir1, dir2);
+if (is_null(normal))
+    return squared_distance_parallel(seg1, seg2);
 @}
 
 We decide if the segments intersects the extension plane of the other segment.
@@ -591,16 +591,16 @@ measure from the start point of @{seg1@} to the extension plane of @{seg2@}.
 @$@<3D seg seg squared distance main routine crossing computation@>==@{@-
 bool crossing1, crossing2;
 RT sdm_s1to2, sdm_e1to2, sdm_s2to1, sdm_e2to1;
-CGAL_Vector_3<R> perpend1, perpend2, s2mins1, e2mins1, e1mins2;
-perpend1 = CGAL_wcross(dir1, normal);
-perpend2 = CGAL_wcross(dir2, normal);
+Vector_3<R> perpend1, perpend2, s2mins1, e2mins1, e1mins2;
+perpend1 = wcross(dir1, normal);
+perpend2 = wcross(dir2, normal);
 s2mins1 = start2-start1;
 e2mins1 = end2-start1;
 e1mins2 = end1-start2;
-sdm_s1to2 = -RT(CGAL_wdot(perpend2, s2mins1));
-sdm_e1to2 = CGAL_wdot(perpend2, e1mins2);
-sdm_s2to1 = CGAL_wdot(perpend1, s2mins1);
-sdm_e2to1 = CGAL_wdot(perpend1, e2mins1);
+sdm_s1to2 = -RT(wdot(perpend2, s2mins1));
+sdm_e1to2 = wdot(perpend2, e1mins2);
+sdm_s2to1 = wdot(perpend1, s2mins1);
+sdm_e2to1 = wdot(perpend1, e2mins1);
 
 if (sdm_s1to2 < RT(0)) {
     crossing1 = (sdm_e1to2 >= RT(0));
@@ -637,7 +637,7 @@ arbitrary point in the plane.
 @$@<3D seg seg squared distance main routine two crossings case@>==@{@-
 if (crossing1) {
     if (crossing2) {
-        return CGAL_squared_distance_to_plane(normal, s2mins1);
+        return squared_distance_to_plane(normal, s2mins1);
     }
 @}
 
@@ -646,37 +646,37 @@ distance of one of the endpoints of this (non intersecting) segment to the
 other (intersecting) segment. Which endpoint? The one that is closest to
 the extension plane of the other segment. This latter property can easily
 be computed with the value of the signed distance measure that was
-computed earlier. The function @{CGAL__distance_measure_sub@} makes this
+computed earlier. The function @{_distance_measure_sub@} makes this
 comparison (it subtracts the two absolute values of the signed distance
 measure, first corrected by homogenising factors).
 
 @$@<3D seg seg squared distance main routine one crossing case@>==@{@-
     RT dm;
-    dm = CGAL__distance_measure_sub(
+    dm = _distance_measure_sub(
               sdm_s2to1, sdm_e2to1, s2mins1, e2mins1);
     if (dm < RT(0)) {
-        return CGAL_squared_distance(start2, seg1);
+        return squared_distance(start2, seg1);
     } else {
         if (dm > RT(0)) {
-            return CGAL_squared_distance(end2, seg1);
+            return squared_distance(end2, seg1);
         } else {
             // should not happen with exact arithmetic.
-            return CGAL_squared_distance_parallel(seg1, seg2);
+            return squared_distance_parallel(seg1, seg2);
         }
     }
 } else {
     if (crossing2) {
         RT dm;
-        dm =CGAL__distance_measure_sub(
+        dm =_distance_measure_sub(
              sdm_s1to2, sdm_e1to2, s2mins1, e1mins2);
         if (dm < RT(0)) {
-            return CGAL_squared_distance(start1, seg2);
+            return squared_distance(start1, seg2);
         } else {
             if (dm > RT(0)) {
-                return CGAL_squared_distance(end1, seg2);
+                return squared_distance(end1, seg2);
             } else {
                 // should not happen with exact arithmetic.
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             }
         }
     } else {
@@ -694,20 +694,20 @@ other segment and take the minimum.
 @$@<3D seg seg squared distance main routine no crossing case@>==@{@-
         FT min1, min2;
         RT dm;
-        dm = CGAL__distance_measure_sub(
+        dm = _distance_measure_sub(
                  sdm_s1to2, sdm_e1to2, s2mins1, e1mins2);
         if (dm == RT(0)) // should not happen with exact arithmetic.
-           return CGAL_squared_distance_parallel(seg1, seg2);
+           return squared_distance_parallel(seg1, seg2);
         min1 = (dm < RT(0)) ?
-            CGAL_squared_distance(seg1.start(), seg2):
-            CGAL_squared_distance(end1, seg2);
-        dm = CGAL__distance_measure_sub(
+            squared_distance(seg1.start(), seg2):
+            squared_distance(end1, seg2);
+        dm = _distance_measure_sub(
                  sdm_s2to1, sdm_e2to1, s2mins1, e2mins1);
         if (dm == RT(0)) // should not happen with exact arithmetic.
-            return CGAL_squared_distance_parallel(seg1, seg2);
+            return squared_distance_parallel(seg1, seg2);
         min2 = (dm < RT(0)) ?
-            CGAL_squared_distance(start2, seg1):
-            CGAL_squared_distance(end2, seg1);
+            squared_distance(start2, seg1):
+            squared_distance(end2, seg1);
         return (min1 < min2)
                ? (R_FT_return(R))(min1)
                : (R_FT_return(R))(min2);
@@ -728,12 +728,12 @@ For this we have to compensate, which accounts for the last two parameters.
 
 @$@<3D segment segment squared distance helper routine@>==@{
 template <class RT, class R>
-RT CGAL__distance_measure_sub(RT startwdist, RT endwdist,
-const CGAL_Vector_3<R> &start, const CGAL_Vector_3<R> &end
+RT _distance_measure_sub(RT startwdist, RT endwdist,
+const Vector_3<R> &start, const Vector_3<R> &end
 )
 {
-    return  CGAL_abs(CGAL_wmult((R*)0, startwdist, end.hw())) -
-            CGAL_abs(CGAL_wmult((R*)0, endwdist, start.hw()));
+    return  abs(wmult((R*)0, startwdist, end.hw())) -
+            abs(wmult((R*)0, endwdist, start.hw()));
 }
 @}
 
@@ -755,38 +755,38 @@ to make the necessary decisions.
 
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_parallel(
-    const CGAL_Segment_3<R> &seg1,
-    const CGAL_Segment_3<R> &seg2)
+squared_distance_parallel(
+    const Segment_3<R> &seg1,
+    const Segment_3<R> &seg2)
 {
     bool same_direction;
-    const CGAL_Vector_3<R> &dir1 = seg1.direction().vector();
-    const CGAL_Vector_3<R> &dir2 = seg2.direction().vector();
-    if (CGAL_abs(dir1.hx()) > CGAL_abs(dir1.hy())) {
-        if (CGAL_abs(dir1.hx()) > CGAL_abs(dir1.hz())) {
-            same_direction = (CGAL_sign(dir1.hx()) == CGAL_sign(dir2.hx()));
+    const Vector_3<R> &dir1 = seg1.direction().vector();
+    const Vector_3<R> &dir2 = seg2.direction().vector();
+    if (abs(dir1.hx()) > abs(dir1.hy())) {
+        if (abs(dir1.hx()) > abs(dir1.hz())) {
+            same_direction = (sign(dir1.hx()) == sign(dir2.hx()));
         } else {
-            same_direction = (CGAL_sign(dir1.hz()) == CGAL_sign(dir2.hz()));
+            same_direction = (sign(dir1.hz()) == sign(dir2.hz()));
         }
     } else {
-        if (CGAL_abs(dir1.hy()) > CGAL_abs(dir1.hz())) {
-            same_direction = (CGAL_sign(dir1.hy()) == CGAL_sign(dir2.hy()));
+        if (abs(dir1.hy()) > abs(dir1.hz())) {
+            same_direction = (sign(dir1.hy()) == sign(dir2.hy()));
         } else {
-            same_direction = (CGAL_sign(dir1.hz()) == CGAL_sign(dir2.hz()));
+            same_direction = (sign(dir1.hz()) == sign(dir2.hz()));
         }
     }
     if (same_direction) {
-        if (!CGAL_is_acute_angle(seg1.start(), seg1.end(), seg2.start()))
-            return CGAL_squared_distance(seg1.end(), seg2.start());
-        if (!CGAL_is_acute_angle(seg1.end(), seg1.start(), seg2.end()))
-            return CGAL_squared_distance(seg1.start(), seg2.end());
+        if (!is_acute_angle(seg1.start(), seg1.end(), seg2.start()))
+            return squared_distance(seg1.end(), seg2.start());
+        if (!is_acute_angle(seg1.end(), seg1.start(), seg2.end()))
+            return squared_distance(seg1.start(), seg2.end());
     } else {
-        if (!CGAL_is_acute_angle(seg1.start(), seg1.end(), seg2.end()))
-            return CGAL_squared_distance(seg1.end(), seg2.end());
-        if (!CGAL_is_acute_angle(seg1.end(), seg1.start(), seg2.start()))
-            return CGAL_squared_distance(seg1.start(), seg2.start());
+        if (!is_acute_angle(seg1.start(), seg1.end(), seg2.end()))
+            return squared_distance(seg1.end(), seg2.end());
+        if (!is_acute_angle(seg1.end(), seg1.start(), seg2.start()))
+            return squared_distance(seg1.start(), seg2.start());
     }
-    return CGAL_squared_distance(seg2.start(), seg1.supporting_line());
+    return squared_distance(seg2.start(), seg1.supporting_line());
 }
 @}
 
@@ -814,18 +814,18 @@ CGAL_squared_distance_parallel(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Ray_3<R> &ray);
+squared_distance(
+    const Segment_3<R> &seg,
+    const Ray_3<R> &ray);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> & ray,
-    const CGAL_Segment_3<R> & seg)
+squared_distance(
+    const Ray_3<R> & ray,
+    const Segment_3<R> & seg)
 {
-    return CGAL_squared_distance(seg, ray);
+    return squared_distance(seg, ray);
 }
 
 @}
@@ -847,22 +847,22 @@ each other.  This is dealt with as a special case.
 @$@<3D ray segment squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Ray_3<R> &ray)
+squared_distance(
+    const Segment_3<R> &seg,
+    const Ray_3<R> &ray)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Point_3<R> & ss (seg.start());
-    const CGAL_Point_3<R> & se (seg.end());
+    const Point_3<R> & ss (seg.start());
+    const Point_3<R> & se (seg.end());
     if (ss == se)
-        return CGAL_squared_distance(ss, ray);
-    CGAL_Vector_3<R> raydir, segdir, normal;
+        return squared_distance(ss, ray);
+    Vector_3<R> raydir, segdir, normal;
     raydir = ray.direction().vector();
     segdir = seg.direction().vector();
-    normal = CGAL_wcross(segdir, raydir);
-    if (CGAL_is_null(normal))
-        return CGAL_squared_distance_parallel(seg, ray);
+    normal = wcross(segdir, raydir);
+    if (is_null(normal))
+        return squared_distance_parallel(seg, ray);
 @}
 
 We decide if the objects intersect the extension plane of the other object.
@@ -884,13 +884,13 @@ the segment end point(@{se@}) to the extension plane of the ray(@{r@}).
 @$@<3D ray segment squared distance computation@>+=@{
     bool crossing1, crossing2;
     RT sdm_ss2r, sdm_se2r, sdm_rs2s, sdm_re2s;
-    CGAL_Vector_3<R> perpend2seg, perpend2ray, ss_min_rs, se_min_rs;
-    perpend2seg = CGAL_wcross(segdir, normal);
-    perpend2ray = CGAL_wcross(raydir, normal);
+    Vector_3<R> perpend2seg, perpend2ray, ss_min_rs, se_min_rs;
+    perpend2seg = wcross(segdir, normal);
+    perpend2ray = wcross(raydir, normal);
     ss_min_rs = ss-ray.start();
     se_min_rs = se-ray.start();
-    sdm_ss2r = CGAL_wdot(perpend2ray, ss_min_rs);
-    sdm_se2r = CGAL_wdot(perpend2ray, se_min_rs);
+    sdm_ss2r = wdot(perpend2ray, ss_min_rs);
+    sdm_se2r = wdot(perpend2ray, se_min_rs);
     if (sdm_ss2r < RT(0)) {
         crossing1 = (sdm_se2r >= RT(0));
     } else {
@@ -901,8 +901,8 @@ the segment end point(@{se@}) to the extension plane of the ray(@{r@}).
         }
     }
 
-    sdm_rs2s = -RT(CGAL_wdot(perpend2seg, ss_min_rs));
-    sdm_re2s = CGAL_wdot(perpend2seg, raydir);
+    sdm_rs2s = -RT(wdot(perpend2seg, ss_min_rs));
+    sdm_re2s = wdot(perpend2seg, raydir);
     if (sdm_rs2s < RT(0)) {
         crossing2 = (sdm_re2s >= RT(0));
     } else {
@@ -927,35 +927,35 @@ further commentary.
 @$@<3D ray segment squared distance computation@>+=@{
     if (crossing1) {
         if (crossing2) {
-            return CGAL_squared_distance_to_plane(normal, ss_min_rs);
+            return squared_distance_to_plane(normal, ss_min_rs);
         }
-        return CGAL_squared_distance(ray.start(), seg);
+        return squared_distance(ray.start(), seg);
     } else {
         if (crossing2) {
             RT dm;
-            dm = CGAL__distance_measure_sub(
+            dm = _distance_measure_sub(
                     sdm_ss2r, sdm_se2r, ss_min_rs, se_min_rs);
             if (dm < RT(0)) {
-                return CGAL_squared_distance(ss, ray);
+                return squared_distance(ss, ray);
             } else {
                 if (dm > RT(0)) {
-                    return CGAL_squared_distance(se, ray);
+                    return squared_distance(se, ray);
                 } else {
                     // parallel, should not happen (no crossing)
-                    return CGAL_squared_distance_parallel(seg, ray);
+                    return squared_distance_parallel(seg, ray);
                 }
             }
         } else {
             FT min1, min2;
             RT dm;
-            dm = CGAL__distance_measure_sub(
+            dm = _distance_measure_sub(
                     sdm_ss2r, sdm_se2r, ss_min_rs, se_min_rs);
             if (dm == RT(0))
-                return CGAL_squared_distance_parallel(seg, ray);
+                return squared_distance_parallel(seg, ray);
             min1 = (dm < RT(0))
-                 ? CGAL_squared_distance(ss, ray)
-                 : CGAL_squared_distance(se, ray);
-            min2 = CGAL_squared_distance(ray.start(), seg);
+                 ? squared_distance(ss, ray)
+                 : squared_distance(se, ray);
+            min2 = squared_distance(ray.start(), seg);
             return (min1 < min2)
                 ? (R_FT_return(R))(min1)
                 : (R_FT_return(R))(min2);
@@ -967,26 +967,26 @@ further commentary.
 @$@<3D ray segment squared distance parallel case@>==@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_parallel(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Ray_3<R> &ray)
+squared_distance_parallel(
+    const Segment_3<R> &seg,
+    const Ray_3<R> &ray)
 {
     bool same_direction;
-    const CGAL_Vector_3<R> &dir1 = seg.direction().vector();
-    const CGAL_Vector_3<R> &dir2 = ray.direction().vector();
-    if (CGAL_abs(dir1.hx()) > CGAL_abs(dir1.hy())) {
-        same_direction = (CGAL_sign(dir1.hx()) == CGAL_sign(dir2.hx()));
+    const Vector_3<R> &dir1 = seg.direction().vector();
+    const Vector_3<R> &dir2 = ray.direction().vector();
+    if (abs(dir1.hx()) > abs(dir1.hy())) {
+        same_direction = (sign(dir1.hx()) == sign(dir2.hx()));
     } else {
-        same_direction = (CGAL_sign(dir1.hy()) == CGAL_sign(dir2.hy()));
+        same_direction = (sign(dir1.hy()) == sign(dir2.hy()));
     }
     if (same_direction) {
-        if (!CGAL_is_acute_angle(seg.start(), seg.end(), ray.start()))
-            return CGAL_squared_distance(seg.end(), ray.start());
+        if (!is_acute_angle(seg.start(), seg.end(), ray.start()))
+            return squared_distance(seg.end(), ray.start());
     } else {
-        if (!CGAL_is_acute_angle(seg.end(), seg.start(), ray.start()))
-            return CGAL_squared_distance(seg.start(), ray.start());
+        if (!is_acute_angle(seg.end(), seg.start(), ray.start()))
+            return squared_distance(seg.start(), ray.start());
     }
-    return CGAL_squared_distance(ray.start(), seg.supporting_line());
+    return squared_distance(ray.start(), seg.supporting_line());
 }
 @}
 
@@ -1005,18 +1005,18 @@ CGAL_squared_distance_parallel(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Line_3<R> &line);
+squared_distance(
+    const Segment_3<R> &seg,
+    const Line_3<R> &line);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> & line,
-    const CGAL_Segment_3<R> & seg)
+squared_distance(
+    const Line_3<R> & line,
+    const Segment_3<R> & seg)
 {
-    return CGAL_squared_distance(seg, line);
+    return squared_distance(seg, line);
 }
 
 @}
@@ -1030,26 +1030,26 @@ We do not repeat the comments of the code that is the same.
 @$@<3D line segment squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Line_3<R> &line)
+squared_distance(
+    const Segment_3<R> &seg,
+    const Line_3<R> &line)
 {
     typedef typename R::RT RT;
-    const CGAL_Point_3<R> &linepoint = line.point();
-    const CGAL_Point_3<R> &start = seg.start();
-    const CGAL_Point_3<R> &end = seg.end();
+    const Point_3<R> &linepoint = line.point();
+    const Point_3<R> &start = seg.start();
+    const Point_3<R> &end = seg.end();
 @}
 
 We start with checking for degenerate cases.
 
 @$@<3D line segment squared distance computation@>+=@{
     if (start == end)
-        return CGAL_squared_distance(start, line);
-    CGAL_Vector_3<R> linedir = line.direction().vector();
-    CGAL_Vector_3<R> segdir = seg.direction().vector();
-    CGAL_Vector_3<R> normal = CGAL_wcross(segdir, linedir);
-    if (CGAL_is_null(normal))
-        return CGAL_squared_distance_to_line(linedir, start-linepoint);
+        return squared_distance(start, line);
+    Vector_3<R> linedir = line.direction().vector();
+    Vector_3<R> segdir = seg.direction().vector();
+    Vector_3<R> normal = wcross(segdir, linedir);
+    if (is_null(normal))
+        return squared_distance_to_line(linedir, start-linepoint);
 @}
 
 Then we test for intersection with the extension planes.  Things are a bit
@@ -1061,12 +1061,12 @@ are parallel to each other. This is the reason why there is only one
 @$@<3D line segment squared distance computation@>+=@{
     bool crossing;
     RT sdm_ss2l, sdm_se2l;
-    CGAL_Vector_3<R> perpend2line, start_min_lp, end_min_lp;
-    perpend2line = CGAL_wcross(linedir, normal);
+    Vector_3<R> perpend2line, start_min_lp, end_min_lp;
+    perpend2line = wcross(linedir, normal);
     start_min_lp = start-linepoint;
     end_min_lp = end-linepoint;
-    sdm_ss2l = CGAL_wdot(perpend2line, start_min_lp);
-    sdm_se2l = CGAL_wdot(perpend2line, end_min_lp);
+    sdm_ss2l = wdot(perpend2line, start_min_lp);
+    sdm_se2l = wdot(perpend2line, end_min_lp);
     if (sdm_ss2l < RT(0)) {
         crossing = (sdm_se2l >= RT(0));
     } else {
@@ -1082,15 +1082,15 @@ Finally, we compute the squared distance, depending on which case applies.
 
 @$@<3D line segment squared distance computation@>+=@{
     if (crossing) {
-        return CGAL_squared_distance_to_plane(normal, start_min_lp);
+        return squared_distance_to_plane(normal, start_min_lp);
     } else {
         RT dm;
-        dm = CGAL__distance_measure_sub(
+        dm = _distance_measure_sub(
                 sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp);
         if (dm <= RT(0)) {
-            return CGAL_squared_distance_to_line(linedir, start_min_lp);
+            return squared_distance_to_line(linedir, start_min_lp);
         } else {
-            return CGAL_squared_distance_to_line(linedir, end_min_lp);
+            return squared_distance_to_line(linedir, end_min_lp);
         }
     }
 }
@@ -1108,9 +1108,9 @@ Finally, we compute the squared distance, depending on which case applies.
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> &ray1,
-    const CGAL_Ray_3<R> &ray2);
+squared_distance(
+    const Ray_3<R> &ray1,
+    const Ray_3<R> &ray2);
 
 @}
 
@@ -1126,43 +1126,43 @@ Look at that routine for comments.
 @$@<3D ray ray squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> &ray1,
-    const CGAL_Ray_3<R> &ray2)
+squared_distance(
+    const Ray_3<R> &ray1,
+    const Ray_3<R> &ray2)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Point_3<R> & s1 (ray1.start());
-    const CGAL_Point_3<R> & s2 (ray2.start());
-    CGAL_Vector_3<R> dir1, dir2, normal;
+    const Point_3<R> & s1 (ray1.start());
+    const Point_3<R> & s2 (ray2.start());
+    Vector_3<R> dir1, dir2, normal;
     dir1 = ray1.direction().vector();
     dir2 = ray2.direction().vector();
-    normal = CGAL_wcross(dir1, dir2);
-    CGAL_Vector_3<R> s1_min_s2 = s1-s2;
-    if (CGAL_is_null(normal))
-        return CGAL_ray_ray_squared_distance_parallel(dir1, dir2, s1_min_s2);
+    normal = wcross(dir1, dir2);
+    Vector_3<R> s1_min_s2 = s1-s2;
+    if (is_null(normal))
+        return ray_ray_squared_distance_parallel(dir1, dir2, s1_min_s2);
 
     bool crossing1, crossing2;
     RT sdm_s1_2, sdm_s2_1;
-    CGAL_Vector_3<R> perpend1, perpend2;
-    perpend1 = CGAL_wcross(dir1, normal);
-    perpend2 = CGAL_wcross(dir2, normal);
+    Vector_3<R> perpend1, perpend2;
+    perpend1 = wcross(dir1, normal);
+    perpend2 = wcross(dir2, normal);
 
-    sdm_s1_2 = CGAL_wdot(perpend2, s1_min_s2);
+    sdm_s1_2 = wdot(perpend2, s1_min_s2);
     if (sdm_s1_2 < RT(0)) {
-        crossing1 = (RT(CGAL_wdot(perpend2, dir1)) >= RT(0));
+        crossing1 = (RT(wdot(perpend2, dir1)) >= RT(0));
     } else {
-        if (RT(CGAL_wdot(perpend2, dir1)) <= RT(0)) {
+        if (RT(wdot(perpend2, dir1)) <= RT(0)) {
             crossing1 = true;
         } else {
             crossing1 = (sdm_s1_2 == RT(0));
         }
     }
-    sdm_s2_1 = -RT(CGAL_wdot(perpend1, s1_min_s2));
+    sdm_s2_1 = -RT(wdot(perpend1, s1_min_s2));
     if (sdm_s2_1 < RT(0)) {
-        crossing2 = (RT(CGAL_wdot(perpend1, dir2)) >= RT(0));
+        crossing2 = (RT(wdot(perpend1, dir2)) >= RT(0));
     } else {
-        if (RT(CGAL_wdot(perpend1, dir2)) <= RT(0)) {
+        if (RT(wdot(perpend1, dir2)) <= RT(0)) {
             crossing2 = true;
         } else {
             crossing2 = (sdm_s2_1 == RT(0));
@@ -1170,15 +1170,15 @@ CGAL_squared_distance(
     }
     if (crossing1) {
         if (crossing2)
-            return CGAL_squared_distance_to_plane(normal, s1_min_s2);
-        return CGAL_squared_distance(ray2.start(), ray1);
+            return squared_distance_to_plane(normal, s1_min_s2);
+        return squared_distance(ray2.start(), ray1);
     } else {
         if (crossing2) {
-            return CGAL_squared_distance(ray1.start(), ray2);
+            return squared_distance(ray1.start(), ray2);
         } else {
           FT min1, min2;
-            min1 = CGAL_squared_distance(ray1.start(), ray2);
-            min2 = CGAL_squared_distance(ray2.start(), ray1);
+            min1 = squared_distance(ray1.start(), ray2);
+            min2 = squared_distance(ray2.start(), ray1);
             return (min1 < min2)
                 ? (R_FT_return(R))(min1)
                 : (R_FT_return(R))(min2);
@@ -1200,32 +1200,32 @@ line of the other.
 @$@<3D ray ray squared distance parallel case@>==@{
 template <class R>
 R_FT_return(R)
-CGAL_ray_ray_squared_distance_parallel(
-    const CGAL_Vector_3<R> &ray1dir,
-    const CGAL_Vector_3<R> &ray2dir,
-    const CGAL_Vector_3<R> &s1_min_s2)
+ray_ray_squared_distance_parallel(
+    const Vector_3<R> &ray1dir,
+    const Vector_3<R> &ray2dir,
+    const Vector_3<R> &s1_min_s2)
 {
-    if (!CGAL_is_acute_angle(ray2dir, s1_min_s2)) {
+    if (!is_acute_angle(ray2dir, s1_min_s2)) {
         bool same_direction;
-        if (CGAL_abs(ray1dir.hx()) > CGAL_abs(ray1dir.hy())) {
-            if (CGAL_abs(ray1dir.hx()) > CGAL_abs(ray1dir.hz()))
+        if (abs(ray1dir.hx()) > abs(ray1dir.hy())) {
+            if (abs(ray1dir.hx()) > abs(ray1dir.hz()))
                 same_direction =
-                    (CGAL_sign(ray1dir.hx()) == CGAL_sign(ray2dir.hx()));
+                    (sign(ray1dir.hx()) == sign(ray2dir.hx()));
             else
                 same_direction =
-                    (CGAL_sign(ray1dir.hz()) == CGAL_sign(ray2dir.hz()));
+                    (sign(ray1dir.hz()) == sign(ray2dir.hz()));
         } else {
-            if (CGAL_abs(ray1dir.hy()) > CGAL_abs(ray1dir.hz()))
+            if (abs(ray1dir.hy()) > abs(ray1dir.hz()))
                 same_direction =
-                    (CGAL_sign(ray1dir.hy()) == CGAL_sign(ray2dir.hy()));
+                    (sign(ray1dir.hy()) == sign(ray2dir.hy()));
             else
                 same_direction =
-                    (CGAL_sign(ray1dir.hz()) == CGAL_sign(ray2dir.hz()));
+                    (sign(ray1dir.hz()) == sign(ray2dir.hz()));
         }
         if (!same_direction)
             return (R_FT_return(R))(s1_min_s2*s1_min_s2);
     }
-    return CGAL_squared_distance_to_line(ray1dir, s1_min_s2);
+    return squared_distance_to_line(ray1dir, s1_min_s2);
 }
 @}
 
@@ -1241,18 +1241,18 @@ CGAL_ray_ray_squared_distance_parallel(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line,
-    const CGAL_Ray_3<R> &ray);
+squared_distance(
+    const Line_3<R> &line,
+    const Ray_3<R> &ray);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> & ray,
-    const CGAL_Line_3<R> & line)
+squared_distance(
+    const Ray_3<R> & ray,
+    const Line_3<R> & line)
 {
-    return CGAL_squared_distance(line, ray);
+    return squared_distance(line, ray);
 }
 
 @}
@@ -1266,30 +1266,30 @@ fewer endpoints, things get ever simpler to compute.
 @$@<3D squared distance outline definitions@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line,
-    const CGAL_Ray_3<R> &ray)
+squared_distance(
+    const Line_3<R> &line,
+    const Ray_3<R> &ray)
 {
     typedef typename R::RT RT;
-    const CGAL_Point_3<R> & rs (ray.start());
-    CGAL_Vector_3<R> raydir, linedir, normal;
+    const Point_3<R> & rs (ray.start());
+    Vector_3<R> raydir, linedir, normal;
     linedir = line.direction().vector();
     raydir = ray.direction().vector();
-    normal = CGAL_wcross(raydir, linedir);
-    CGAL_Vector_3<R> rs_min_lp = rs-line.point();
-    if (CGAL_is_null(normal))
-        return CGAL_squared_distance_to_line(linedir, rs_min_lp);
+    normal = wcross(raydir, linedir);
+    Vector_3<R> rs_min_lp = rs-line.point();
+    if (is_null(normal))
+        return squared_distance_to_line(linedir, rs_min_lp);
 
     bool crossing;
     RT sdm_sr_l;
-    CGAL_Vector_3<R> perpend2l;
-    perpend2l = CGAL_wcross(linedir, normal);
+    Vector_3<R> perpend2l;
+    perpend2l = wcross(linedir, normal);
 
-    sdm_sr_l = CGAL_wdot(perpend2l, rs_min_lp);
+    sdm_sr_l = wdot(perpend2l, rs_min_lp);
     if (sdm_sr_l < RT(0)) {
-        crossing = (RT(CGAL_wdot(perpend2l, raydir)) >= RT(0));
+        crossing = (RT(wdot(perpend2l, raydir)) >= RT(0));
     } else {
-        if (RT(CGAL_wdot(perpend2l, raydir)) <= RT(0)) {
+        if (RT(wdot(perpend2l, raydir)) <= RT(0)) {
             crossing = true;
         } else {
             crossing = (sdm_sr_l == RT(0));
@@ -1297,9 +1297,9 @@ CGAL_squared_distance(
     }
 
     if (crossing)
-        return CGAL_squared_distance_to_plane(normal, rs_min_lp);
+        return squared_distance_to_plane(normal, rs_min_lp);
     else
-        return CGAL_squared_distance_to_line(linedir, rs_min_lp);
+        return squared_distance_to_line(linedir, rs_min_lp);
 }
 @}
 
@@ -1309,9 +1309,9 @@ CGAL_squared_distance(
 @$@<3D squared distance header declarations@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line1,
-    const CGAL_Line_3<R> &line2);
+squared_distance(
+    const Line_3<R> &line1,
+    const Line_3<R> &line2);
 @}
 
 @C@<Implementation@>
@@ -1326,18 +1326,18 @@ plane.
 @$@<3D squared distance outline definitions@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line1,
-    const CGAL_Line_3<R> &line2)
+squared_distance(
+    const Line_3<R> &line1,
+    const Line_3<R> &line2)
 {
-    CGAL_Vector_3<R> dir1, dir2, normal, diff;
+    Vector_3<R> dir1, dir2, normal, diff;
     dir1 = line1.direction().vector();
     dir2 = line2.direction().vector();
-    normal = CGAL_wcross(dir1, dir2);
+    normal = wcross(dir1, dir2);
     diff = line2.point() - line1.point();
-    if (CGAL_is_null(normal))
-        return CGAL_squared_distance_to_line(dir2, diff);
-    return CGAL_squared_distance_to_plane(normal, diff);
+    if (is_null(normal))
+        return squared_distance_to_line(dir2, diff);
+    return squared_distance_to_plane(normal, diff);
 }
 @}
 
@@ -1352,17 +1352,17 @@ CGAL_squared_distance(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> &pt,
-    const CGAL_Plane_3<R> &plane);
+squared_distance(
+    const Point_3<R> &pt,
+    const Plane_3<R> &plane);
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Plane_3<R> & plane,
-    const CGAL_Point_3<R> & pt)
+squared_distance(
+    const Plane_3<R> & plane,
+    const Point_3<R> & pt)
 {
-    return CGAL_squared_distance(pt, plane);
+    return squared_distance(pt, plane);
 }
 @}
 
@@ -1371,12 +1371,12 @@ CGAL_squared_distance(
 @$@<3D squared distance 2 outline definitions@>+=@{@-
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_3<R> & pt,
-    const CGAL_Plane_3<R> & plane)
+squared_distance(
+    const Point_3<R> & pt,
+    const Plane_3<R> & plane)
 {
-    CGAL_Vector_3<R> diff(pt-plane.point());
-    return CGAL_squared_distance_to_plane(plane.orthogonal_vector(), diff);
+    Vector_3<R> diff(pt-plane.point());
+    return squared_distance_to_plane(plane.orthogonal_vector(), diff);
 }
 
 @}
@@ -1389,7 +1389,7 @@ for detecting whether a line is parallel to a plane.
 @$@<3D squared distance general utilities 2@>==@{
 template <class R>
 bool
-contains_vector(const CGAL_Plane_3<R> &pl, const CGAL_Vector_3<R> &vec)
+contains_vector(const Plane_3<R> &pl, const Vector_3<R> &vec)
 {
     typedef typename R::RT RT;
     return pl.a()*vec.hx() + pl.b()*vec.hy() + pl.c() * vec.hz() == RT(0);
@@ -1400,18 +1400,18 @@ contains_vector(const CGAL_Plane_3<R> &pl, const CGAL_Vector_3<R> &vec)
 @$@<3D squared distance 2 header declarations@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line,
-    const CGAL_Plane_3<R> &plane);
+squared_distance(
+    const Line_3<R> &line,
+    const Plane_3<R> &plane);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Plane_3<R> & p,
-    const CGAL_Line_3<R> & line)
+squared_distance(
+    const Plane_3<R> & p,
+    const Line_3<R> & line)
 {
-    return CGAL_squared_distance(line, p);
+    return squared_distance(line, p);
 }
 @}
 
@@ -1423,13 +1423,13 @@ arbitrary point of the line to the plane. Otherwise the distance is zero.
 @$@<3D squared distance 2 outline definitions@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_3<R> &line,
-    const CGAL_Plane_3<R> &plane)
+squared_distance(
+    const Line_3<R> &line,
+    const Plane_3<R> &plane)
 {
     typedef typename R::FT FT;
     if (contains_vector(plane, line.direction().vector() ))
-        return CGAL_squared_distance(plane, line.point());
+        return squared_distance(plane, line.point());
     return (R_FT_return(R))(FT(0));
 }
 @}
@@ -1441,18 +1441,18 @@ CGAL_squared_distance(
 @$@<3D squared distance 2 header declarations@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> &ray,
-    const CGAL_Plane_3<R> &plane);
+squared_distance(
+    const Ray_3<R> &ray,
+    const Plane_3<R> &plane);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Plane_3<R> & plane,
-    const CGAL_Ray_3<R> & ray)
+squared_distance(
+    const Plane_3<R> & plane,
+    const Ray_3<R> & ray)
 {
-    return CGAL_squared_distance(ray, plane);
+    return squared_distance(ray, plane);
 }
 @}
 
@@ -1462,32 +1462,32 @@ CGAL_squared_distance(
 @$@<3D squared distance 2 outline definitions@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_3<R> &ray,
-    const CGAL_Plane_3<R> &plane)
+squared_distance(
+    const Ray_3<R> &ray,
+    const Plane_3<R> &plane)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Point_3<R> &start = ray.start();
-//    const CGAL_Vector_3<R> &end = ray.direction().vector();
-    const CGAL_Point_3<R> &planepoint = plane.point();
-    CGAL_Vector_3<R> start_min_pp = start - planepoint;
-    CGAL_Vector_3<R> end_min_pp = ray.direction().vector();
-    const CGAL_Vector_3<R> &normal = plane.orthogonal_vector();
-    RT sdm_rs2pp = CGAL_wdot(normal, start_min_pp);
-    RT sdm_re2pp = CGAL_wdot(normal, end_min_pp);
-    switch (CGAL_sign(sdm_rs2pp)) {
+    const Point_3<R> &start = ray.start();
+//    const Vector_3<R> &end = ray.direction().vector();
+    const Point_3<R> &planepoint = plane.point();
+    Vector_3<R> start_min_pp = start - planepoint;
+    Vector_3<R> end_min_pp = ray.direction().vector();
+    const Vector_3<R> &normal = plane.orthogonal_vector();
+    RT sdm_rs2pp = wdot(normal, start_min_pp);
+    RT sdm_re2pp = wdot(normal, end_min_pp);
+    switch (sign(sdm_rs2pp)) {
     case -1:
         if (sdm_re2pp > RT(0))
             return (R_FT_return(R))(FT(0));
-        return CGAL_squared_distance_to_plane(normal, start_min_pp);
+        return squared_distance_to_plane(normal, start_min_pp);
     case 0:
     default:
         return (R_FT_return(R))(FT(0));
     case 1:
         if (sdm_re2pp < RT(0))
             return (R_FT_return(R))(FT(0));
-        return CGAL_squared_distance_to_plane(normal, start_min_pp);
+        return squared_distance_to_plane(normal, start_min_pp);
     }
 }
 @}
@@ -1498,18 +1498,18 @@ CGAL_squared_distance(
 @$@<3D squared distance 2 header declarations@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Plane_3<R> &plane);
+squared_distance(
+    const Segment_3<R> &seg,
+    const Plane_3<R> &plane);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Plane_3<R> & plane,
-    const CGAL_Segment_3<R> & seg)
+squared_distance(
+    const Plane_3<R> & plane,
+    const Segment_3<R> & seg)
 {
-    return CGAL_squared_distance(seg, plane);
+    return squared_distance(seg, plane);
 }
 @}
 
@@ -1519,30 +1519,30 @@ CGAL_squared_distance(
 @$@<3D squared distance 2 outline definitions@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_3<R> &seg,
-    const CGAL_Plane_3<R> &plane)
+squared_distance(
+    const Segment_3<R> &seg,
+    const Plane_3<R> &plane)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Point_3<R> &start = seg.start();
-    const CGAL_Point_3<R> &end = seg.end();
+    const Point_3<R> &start = seg.start();
+    const Point_3<R> &end = seg.end();
     if (start == end)
-        return CGAL_squared_distance(start, plane);
-    const CGAL_Point_3<R> &planepoint = plane.point();
-    CGAL_Vector_3<R> start_min_pp = start - planepoint;
-    CGAL_Vector_3<R> end_min_pp = end - planepoint;
-    const CGAL_Vector_3<R> &normal = plane.orthogonal_vector();
-    RT sdm_ss2pp = CGAL_wdot(normal, start_min_pp);
-    RT sdm_se2pp = CGAL_wdot(normal, end_min_pp);
-    switch (CGAL_sign(sdm_ss2pp)) {
+        return squared_distance(start, plane);
+    const Point_3<R> &planepoint = plane.point();
+    Vector_3<R> start_min_pp = start - planepoint;
+    Vector_3<R> end_min_pp = end - planepoint;
+    const Vector_3<R> &normal = plane.orthogonal_vector();
+    RT sdm_ss2pp = wdot(normal, start_min_pp);
+    RT sdm_se2pp = wdot(normal, end_min_pp);
+    switch (sign(sdm_ss2pp)) {
     case -1:
         if (sdm_se2pp >= RT(0))
             return (R_FT_return(R))(FT(0));
         if (sdm_ss2pp >= sdm_se2pp)
-            return CGAL_squared_distance_to_plane(normal, start_min_pp);
+            return squared_distance_to_plane(normal, start_min_pp);
         else
-            return CGAL_squared_distance_to_plane(normal, end_min_pp);
+            return squared_distance_to_plane(normal, end_min_pp);
     case 0:
     default:
         return (R_FT_return(R))(FT(0));
@@ -1550,9 +1550,9 @@ CGAL_squared_distance(
         if (sdm_se2pp <= RT(0))
             return (R_FT_return(R))(FT(0));
         if (sdm_ss2pp <= sdm_se2pp)
-            return CGAL_squared_distance_to_plane(normal, start_min_pp);
+            return squared_distance_to_plane(normal, start_min_pp);
         else
-            return CGAL_squared_distance_to_plane(normal, end_min_pp);
+            return squared_distance_to_plane(normal, end_min_pp);
     }
 }
 @}
@@ -1562,7 +1562,7 @@ CGAL_squared_distance(
 Here we collect all code in the appropriate header files.
 
 @O@<../include/CGAL/squared_distance_3_0.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_0.h@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1587,7 +1587,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_3_0.C@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_0.C@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1608,7 +1608,7 @@ Saarbruecken@)
 
 
 @O@<../include/CGAL/squared_distance_3_1.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_1.h@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1639,7 +1639,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_3_1.C@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_1.C@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1657,16 +1657,16 @@ Saarbruecken@)
 #ifndef CGAL_WMULT_H
 #include <CGAL/wmult.h>
 #endif // CGAL_WMULT_H
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
+#ifndef SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
+#endif // SQUARED_DISTANCE_3_0_H
 
 @<3D squared distance outline definitions@>
 @}
 
 
 @O@<../include/CGAL/squared_distance_3_2.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_2.h@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1701,7 +1701,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_3_2.C@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3_2.C@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1722,16 +1722,16 @@ Saarbruecken@)
 #ifndef CGAL_WMULT_H
 #include <CGAL/wmult.h>
 #endif // CGAL_WMULT_H
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
+#ifndef SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
+#endif // SQUARED_DISTANCE_3_0_H
 
 @<3D squared distance general utilities 2@>
 @<3D squared distance 2 outline definitions@>
 @}
 
 @O@<../include/CGAL/squared_distance_3.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_3.h@,@-
 sqdistance_3.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -1740,15 +1740,15 @@ Saarbruecken@)
 #ifndef CGAL_DISTANCE_3_H
 #define CGAL_DISTANCE_3_H
 
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
+#ifndef SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
-#ifndef CGAL_SQUARED_DISTANCE_3_1_H
+#endif // SQUARED_DISTANCE_3_0_H
+#ifndef SQUARED_DISTANCE_3_1_H
 #include <CGAL/squared_distance_3_1.h>
-#endif // CGAL_SQUARED_DISTANCE_3_1_H
-#ifndef CGAL_SQUARED_DISTANCE_3_2_H
+#endif // SQUARED_DISTANCE_3_1_H
+#ifndef SQUARED_DISTANCE_3_2_H
 #include <CGAL/squared_distance_3_2.h>
-#endif // CGAL_SQUARED_DISTANCE_3_2_H
+#endif // SQUARED_DISTANCE_3_2_H
 
 #endif
 @}

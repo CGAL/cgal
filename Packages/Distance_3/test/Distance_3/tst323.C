@@ -7,8 +7,8 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_3< TestR > point_t;
-typedef CGAL_Ray_3< TestR > ray_t;
+typedef CGAL::Point_3< TestR > point_t;
+typedef CGAL::Ray_3< TestR > ray_t;
 
 
 int main()
@@ -29,7 +29,7 @@ int main()
     point_t tp1(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1*z1), to_nt(w1));
     point_t tp2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2*z2), to_nt(w2));
     ray_t ray(tp1, tp2);
-    d = CGAL_squared_distance(pt, ray);
-    cout << CGAL_to_double(d) << '\n';
+    d = CGAL::squared_distance(pt, ray);
+    cout << CGAL::to_double(d) << '\n';
     return 0;
 }

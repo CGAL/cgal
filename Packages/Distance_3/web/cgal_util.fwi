@@ -10,7 +10,7 @@ inline bool CGAL_do_intersect(
 }@-
 @}
 
-@$@<CGAL_heading@>@(@4@)@Z@M==@{@-
+@$@<cgal_heading@>@(@4@)@Z@M==@{@-
 @!  parameter description with an example value
 @! file : include/CGAL/Optimisation/Min_circle_2.h
 @! source  : web/Optimisation/Min_circle_2.aw

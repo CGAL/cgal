@@ -7,8 +7,8 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_3< TestR > point_t;
-typedef CGAL_Plane_3< TestR > plane_t;
+typedef CGAL::Point_3< TestR > point_t;
+typedef CGAL::Plane_3< TestR > plane_t;
 
 
 int main()
@@ -25,7 +25,7 @@ int main()
     if (!cin)
 	return 1;
     plane_t plane(to_nt(x), to_nt(y), to_nt(z), to_nt(w));
-    d = CGAL_squared_distance(pt, plane);
-    cout << CGAL_to_double(d) << '\n';
+    d = CGAL::squared_distance(pt, plane);
+    cout << CGAL::to_double(d) << '\n';
     return 0;
 }
