@@ -56,7 +56,7 @@ public:
     UNDER_CURVE = -1,
     ABOVE_CURVE = 1,
     ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0,
+    CURVE_NOT_IN_RANGE = 0
   } Curve_point_status;
 
 
