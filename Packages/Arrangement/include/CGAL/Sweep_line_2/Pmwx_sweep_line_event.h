@@ -32,6 +32,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! @class Pmwx_sweep_line_event
+ *
+ * Stores the data associated with an event.
+ * In addition to the information stored in Sweep_line_event, when 
+ * constructing a * planar map, additional information is kept, in 
+ * order to speed insertion of curves into the planar map.
+ *
+ * The additional infomation contains the following:
+ * - among the left curves of the event, we keep the highest halfedge that 
+ *   was inserted into the planar map at any given time.
+ * - an array of booleans that indicates for each curve to the right of 
+ *   the event, whether it is already in the planar map or not. This is 
+ *   used to speed insertions of curves into the planar map.
+ * - an array of events that occur on the vertical curves that go through 
+ *   this event. This is used instead of the array of points that is kept 
+ *   in the base class.
+ *
+ * Inherits from Sweep_line_event.
+ * \sa Sweep_line_event
+ */
+
 template<class SweepLineTraits_2, class CurveWrap>
 class Pmwx_sweep_line_event : 
   public Sweep_line_event<SweepLineTraits_2, CurveWrap>
@@ -51,7 +72,7 @@ public:
   typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
 
   typedef std::list<Self *> VerticalXEventList;
-  typedef VerticalXEventList::iterator VerticalXEventListIter; 
+  typedef typename VerticalXEventList::iterator VerticalXEventListIter; 
 
   typedef typename PmwxInsertInfo::Halfedge_handle Halfedge_handle;
 
@@ -65,15 +86,18 @@ public:
   }
 
   /*! Insert a new intersection point on any of the vertical curves.
-      The list of points is sorted by their y values.
-      If the requireSort flag is true, the appripriate place in the list 
-      is searched for. If not, the point is assumed to have the largest y 
-      value, and is inserted at the end of the list. 
-      If the pioint already exists, the point is nott inserted again.
-      @param p a reference to the point
-      @param requireSort false if the point is to be added at the end
-      of the list.
-  */
+   *  The list of points is sorted by their y values.
+   *  If the requireSort flag is true, the appripriate place in the list 
+   *  is searched for. If not, the point is assumed to have the largest y 
+   *  value, and is inserted at the end of the list. 
+   *  If the pioint already exists, the point is nott inserted again.
+   *
+   *  @param p a reference to the point
+   *  @param requireSort false if the point is to be added at the end
+   *  of the list.
+   *
+   *  TODO - change the data structure of the vertical events to a set
+   */
   void addVerticalCurveXEvent(Self *e, bool requireSort=false) 
   {
     if ( m_verticalCurveXEvents.empty() ) 
@@ -111,13 +135,24 @@ public:
     return m_verticalCurveXEvents;
   }
 
-  void MarkRightCurves()
+  /*! Initialize the array that indicates wheter a curve to the right of the
+   * event was already inserted into the planar map.
+   */
+  void initRightCurves()
   {
     m_isCurveInPm.reserve(getNumRightCurves());
     for ( int i = 0 ; i < getNumRightCurves() ; i++ )
       m_isCurveInPm[i] = false;
   }
   
+  /*! Caculates the number of halfedges in the planar map between the highest
+   *  halfedge to the left of the event (which is stored in the insertInfo 
+   *  member) and the position of the the specified curve around the vertex 
+   *  in the planar map.
+   *
+   * @param curve a pointer to a curve that is going to be inserted 
+   * @return the number of halfedges to skip before inserting the curve
+   */
   int getHalfedgeJumpCount(CurveWrap *curve)
   {
     int i = 0;
@@ -136,13 +171,13 @@ public:
     }
     
     assert(curve->getId() == (*iter)->getId());
-    m_isCurveInPm[counter];
 
     return i;
   }
 
-  // returns true if the curve is the highest among the right curves 
-  //that were already inserted into the planar map.
+  /*! Returns true if the curve is the highest one among the right curves 
+   *  that were already inserted into the planar map.
+   */
   bool isCurveLargest(CurveWrap *curve)
   {
     int counter = 0;
@@ -155,7 +190,6 @@ public:
       counter++;
       --iter;
     }
-    m_isCurveInPm[counter];
     return true;
   }
 

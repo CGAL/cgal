@@ -33,6 +33,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! @class Pmwx_sweep_line_curve 
+ *  
+ * a class that holds information about a curve that is added to 
+ * the planar map.
+ * In addition to the information that is contained in Sweep_line_subcurve,
+ * when a planar map is constructed, a reference to an event that was 
+ * handled last on the curve is stored. This information is used to retrieve
+ * hints when a subcurve of this curve is inserted into the planar map.
+ *
+ * Inherits from Sweep_line_subcurve
+ * \sa Sweep_line_subcurve
+ */
+
 template<class SweepLineTraits_2, class VertexHandle, class HalfedgeHandle>
 class Pmwx_sweep_line_curve : public Sweep_line_subcurve<SweepLineTraits_2>
 {
@@ -71,7 +84,10 @@ public:
 
 private:
 
+  /* the insert information  of this curve */
   PmwxInsertInfo *m_insertInfo;
+
+  /*! the last event that was handled on the curve */
   Event *m_lastEvent;
   
 };
