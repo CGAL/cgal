@@ -19,4 +19,4 @@ echo "Now adapt version and description.txt and run make_zip"
 
 
 cd ..
-cvs -q commit -m "" src include
+cvs -q commit -m "" include
