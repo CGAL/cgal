@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999,2002 The CGAL Consortium
+// Copyright (c) 1999,2000,2001,2002,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -566,10 +566,15 @@ namespace CartesianKernelFunctors {
 			 l2.a(), l2.b(), l2.c(), h2.a(), h2.b(), h2.c());
     }
 
+    // The 2 following are not documented (temporary try for TAU).
     Comparison_result
     operator()( const Segment_2& s1, int i1,
                 const Segment_2& s2, int i2) const
     { return operator()(s1.vertex(i1), s2.vertex(i2)); }
+
+    Comparison_result
+    operator()( const Segment_2& s1, int i1, const Point_2& p) const
+    { return operator()(s1.vertex(i1), p); }
   };
 
   template <typename K>

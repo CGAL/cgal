@@ -1,3 +1,7 @@
+2.92 (17 June 2003)
+- Add another unfinished functor to CompareX_2
+  operator()( const Segment_2& s1, int i1, const Point_2 & p)
+
 2.91 (5 June 2003)
 - Add unfinished functor to CompareX_2
   operator()( const Segment_2& s1, int i1, const Segment_2& s2, int i2)

@@ -994,10 +994,15 @@ namespace HomogeneousKernelFunctors {
       return compare_x( lip, hip );
     } // FIXME
 
+    // The 2 following are undocumented temporary stuff for TAU.
     Comparison_result
     operator()( const Segment_2& s1, int i1,
                 const Segment_2& s2, int i2) const
     { return operator()(s1.vertex(i1), s2.vertex(i2)); }
+
+    Comparison_result
+    operator()( const Segment_2& s1, int i1, const Point_2 &p) const
+    { return operator()(s1.vertex(i1), p); }
    };
 
   template <typename K>
