@@ -31,7 +31,7 @@ to the Alpha Shape.
 #define GEOMVIEW_SUPPORT
 #endif
 
-#if defined(GEOMSVIEW_SUPPORT)
+#if defined(GEOMVIEW_SUPPORT)
 #include <CGAL/IO/Geomview_stream.h>
 #endif
 
