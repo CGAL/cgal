@@ -91,30 +91,6 @@ public:
 
 
 public:
-
-  //returns true iff the intersection is strictly right of pt
-  bool do_intersect_to_right(const X_curve_2 & c1, const X_curve_2 & c2,
-                             const Point_2 & pt) const 
-  {
-    return intersection_base(c1, c2, pt, true, false, dummy_pnt1, dummy_pnt2, 
-			     dummy_int);
-
-    // Following implementation was commented out during to the 
-    // introduction of intersection_base by Eyal to speed up the traits class.
-    /*	if (!c1.intersection(c2))
-	return false;
-	X_curve_2 xcv;
-	bool res = c1.intersection(c2, xcv);
-	if (!res) return false;
-    
-	if (lexicographically_xy_larger(xcv.source(),pt) || 
-        lexicographically_xy_larger(xcv.target(),pt))
-	return true;
-    
-	return false;
-    */
-  }
-
   
   bool nearest_intersection_to_right(const X_curve_2 & c1,
                                      const X_curve_2 & c2,
@@ -164,23 +140,6 @@ public:
   }
       
 #else
-  bool do_intersect_to_left(const X_curve_2 & c1, const X_curve_2 & c2,
-			    const Point_2 & pt) const 
-  {
-    return intersection_base(c1, c2, pt, false, false, dummy_pnt1, dummy_pnt2,
-			     dummy_int);
-    /*	if (!c1.intersection(c2))
-	return false;
-	X_curve_2 xcv;
-	bool res = c1.intersection(c2, xcv);
-	if (!res) return false;
-		
-	if (lexicographically_xy_smaller(xcv.source(),pt) || 
-	lexicographically_xy_smaller(xcv.target(),pt))
-	return true;
-		
-	return false;*/
-  }
 
   /*!
    */

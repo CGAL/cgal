@@ -1148,69 +1148,6 @@ class Arr_segment_circle_traits
     return;
   }
 
-  // Check whether the intersection point between the two given curves is
-  // lexicographically strictly to right of the given point.
-  bool do_intersect_to_right(const X_curve_2& curve1, const X_curve_2& curve2,
-                             const Point_2& p) const 
-  {
-    CGAL_precondition(is_x_monotone(curve1));
-    CGAL_precondition(is_x_monotone(curve2));
-
-    // Deal with overlapping curves:
-    int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
-
-    n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
-    CGAL_assertion (n_ovlps < 2);
-
-    if (n_ovlps == 1)
-    {
-      // Check if at least one end-point of the overlapping curve is to the
-      // right of p.
-      return (compare_lexicographically_xy (ovlp_arcs[0].source(), 
-					    p) == LARGER ||
-	      compare_lexicographically_xy (ovlp_arcs[0].target(), 
-					    p) == LARGER);
-    }
-
-    // In case there are no overlaps and the base conics are the same,
-    // there cannot be any intersection points, unless the two x-monotone
-    // curves share an end point.
-    if (curve1.conic() == curve2.conic())
-    {
-      if ((curve1.source() == curve2.source() ||
-	   curve1.source() == curve2.target()) &&
-	  compare_lexicographically_xy (curve1.source(), p) == LARGER)
-      {
-	return (true);
-      }
-
-      if ((curve1.target() == curve2.source() ||
-	   curve1.target() == curve2.target()) &&
-	  compare_lexicographically_xy (curve1.target(), p) == LARGER)
-      {
-	return (true);
-      }
-      
-      // No overlaps at all: the two curves do not intersect.
-      return (false);
-    }
-
-    // Find the intersection points and decide accordingly.
-    int   n;
-    Point_2 ps[4];
-  
-    n = curve1.intersections_with (curve2, ps);
-
-    for (int i = 0; i < n; i++)
-    {
-      if (compare_lexicographically_xy (ps[i], p) == LARGER)
-	return (true);
-    }
-
-    return (false);
-  }
-
   // Find the nearest intersection point between the two given curves to the
   // right of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the

@@ -142,7 +142,7 @@ protected:
 public:
 
   /*!
-   * Defalut constructor.
+   * Default constructor.
    */
   Arr_segment_cached_traits_2() {}
 
@@ -153,7 +153,7 @@ public:
    * Compare the x-coordinates of two given points.
    * \param p1 The first point.
    * \param p2 The second point.
-   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL.
+   * \return LARGER if x(p1) > x(p2); SMALLER if x(p1) < x(p2); or else EQUAL.
    */
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   {
@@ -215,7 +215,7 @@ public:
    * \param cv2 The second curve.
    * \param q The point.
    * \pre The point q is in the x-range of the two curves.
-   * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q);
+   * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q));
    *  or else EQUAL.
    */
   Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
@@ -683,58 +683,6 @@ public:
     c2.is_vert = cv.is_vert;
 
     return;
-  }
-
-  /*! 
-   * Check whether the two given curves intersect at a point to the right of
-   * a given reference point.
-   * \param cv1 The first curve.
-   * \param cv2 The second curve.
-   * \param p The reference point.
-   * \return (true) if cv1 and cv2 intersect at a point that is 
-   * lexicographically larger than p, that is above or to the right of p 
-   * (but not on p).    
-   */
-  bool do_intersect_to_right(const X_curve_2& cv1, const X_curve_2& cv2,
-                             const Point_2& p) const 
-  {
-    bool     is_overlap;
-    Point_2  ip1, ip2;
-
-    if (! _find_intersection (cv1, cv2, is_overlap, ip1, ip2))
-      return (false);
-
-    if (! is_overlap) 
-      return (compare_xy_2_object()(ip1, p) == LARGER);
-
-    // Since always ip1 < ip2.
-    return (compare_xy_2_object()(ip2, p) == LARGER);
-  }
-
-  /*! 
-   * Check whether the two given curves intersect at a point to the left of
-   * a given reference point.
-   * \param cv1 The first curve.
-   * \param cv2 The second curve.
-   * \param p The reference point.
-   * \return (true) if cv1 and cv2 intersect at a point that is 
-   * lexicographically smaller than p, that is under or to the left of p 
-   * (but not on p).    
-   */
-  bool do_intersect_to_left(const X_curve_2 & cv1, const X_curve_2 & cv2,
-                            const Point_2 & p) const 
-  {
-    bool     is_overlap;
-    Point_2  ip1, ip2;
-
-    if (! _find_intersection (cv1, cv2, is_overlap, ip1, ip2))
-      return (false);
-
-    if (! is_overlap) 
-      return (compare_xy_2_object()(ip1, p) == SMALLER);
-
-    // Since always ip1 < ip2.
-    return (compare_xy_2_object()(ip1, p) == SMALLER);
   }
 
   /*!

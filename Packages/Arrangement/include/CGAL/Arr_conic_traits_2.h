@@ -946,139 +946,6 @@ class Arr_conic_traits_2
     return;
   }
 
-  // Check whether the intersection point between the two given curves is
-  // lexicographically strictly to right of the given point.
-  bool do_intersect_to_right(const X_curve_2& curve1, const X_curve_2& curve2,
-                             const Point_2& p) const 
-  {
-    CGAL_precondition(is_x_monotone(curve1));
-    CGAL_precondition(is_x_monotone(curve2));
-
-    // Deal with overlapping curves:
-    int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
-
-    n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
-    CGAL_assertion (n_ovlps < 2);
-
-    if (n_ovlps == 1)
-    {
-      // Check if at least one end-point of the overlapping curve is to the
-      // right of p.
-      return (ovlp_arcs[0].source().compare_lex_xy(p) == LARGER ||
-	      ovlp_arcs[0].target().compare_lex_xy(p) == LARGER);
-    }
-
-    // In case there are no overlaps and the base conics are the same,
-    // there cannot be any intersection points, unless the two x-monotone
-    // curves share an end point.
-    if (curve1.has_same_base_conic(curve2))
-    {
-      if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == LARGER)
-      {
-	return (true);
-      }
-
-      if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == LARGER)
-      {
-	return (true);
-      }
-      
-      // No overlaps at all: the two curves do not intersect.
-      return (false);
-    }
-
-    // Find the intersection points and decide accordingly.
-    int   n;
-    Point_2 ps[4];
-  
-#ifdef CGAL_CONIC_ARC_USE_CACHING
-    n = curve1.intersections_with (curve2, ps, &inter_list);
-#else
-    n = curve1.intersections_with (curve2, ps);    
-#endif
-
-    for (int i = 0; i < n; i++)
-    {
-      if (ps[i].compare_lex_xy(p) == LARGER)
-	return (true);
-    }
-
-    return (false);
-  }
-
-  // RWRW: {
-  // THE NEXT FUNCTION IS NOT REALLY USED AND WILL BE OVERRIDEN BY THE WRAPPER.
-  // Check whether the intersection point between the two given curves is
-  // lexicographically strictly to left of the given point.
-  bool do_intersect_to_left (const X_curve_2& curve1, const X_curve_2& curve2,
-                             const Point_2& p) const 
-  {
-    CGAL_precondition(is_x_monotone(curve1));
-    CGAL_precondition(is_x_monotone(curve2));
-
-    // Deal with overlapping curves:
-    int     n_ovlps;
-    X_curve_2 ovlp_arcs[2];
-
-    n_ovlps = curve1.overlaps (curve2, ovlp_arcs);
-    CGAL_assertion (n_ovlps < 2);
-
-    if (n_ovlps == 1)
-    {
-      // Check if at least one end-point of the overlapping curve is to the
-      // left of p.
-      return (ovlp_arcs[0].source().compare_lex_xy(p) == SMALLER ||
-	      ovlp_arcs[0].target().compare_lex_xy(p) == SMALLER);
-    }
-
-    // In case there are no overlaps and the base conics are the same,
-    // there cannot be any intersection points, unless the two x-monotone
-    // curves share an end point.
-    if (curve1.has_same_base_conic(curve2))
-    {
-      if ((curve1.source().equals(curve2.source()) ||
-	   curve1.source().equals(curve2.target())) &&
-	  curve1.source().compare_lex_xy(p) == SMALLER)
-      {
-	return (true);
-      }
-
-      if ((curve1.target().equals(curve2.source()) ||
-	   curve1.target().equals(curve2.target())) &&
-	  curve1.target().compare_lex_xy(p) == SMALLER)
-      {
-	return (true);
-      }
-      
-      // No overlaps at all: the two curves do not intersect.
-      return (false);
-    }
-
-    // Find the intersection points and decide accordingly.
-    int   n;
-    Point_2 ps[4];
-  
-#ifdef CGAL_CONIC_ARC_USE_CACHING
-    n = curve1.intersections_with (curve2, ps, &inter_list);
-#else
-    n = curve1.intersections_with (curve2, ps);    
-#endif
-
-    for (int i = 0; i < n; i++)
-    {
-      if (ps[i].compare_lex_xy(p) == SMALLER)
-	return (true);
-    }
-
-    return (false);
-  }
-  // RWRW: }
-
   // Find the nearest intersection point between the two given curves to the
   // right of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
@@ -1209,8 +1076,6 @@ class Arr_conic_traits_2
     return (false);
   }
 
-  // RWRW: {
-  // THE NEXT FUNCTION IS NOT REALLY USED AND WILL BE OVERRIDEN BY THE WRAPPER.
   // Find the nearest intersection point between the two given curves to the
   // left of the given point.
   // In case of an overlap, p1 and p2 are the source and destination of the
@@ -1340,7 +1205,6 @@ class Arr_conic_traits_2
     // No intersection found.
     return (false);
   }
-  // RWRW: }
 
   // Check whether two curves overlap.
   bool curves_overlap (const X_curve_2& curve1, const X_curve_2& curve2) const

@@ -139,26 +139,6 @@ public:
     return result;
   }
 
-  // maps the curves to their mirror images over the y coordinate
-  // and calls do_intersect_to_right (see there).
-  bool do_intersect_to_left(const X_curve_2 & ca, const X_curve_2 & cb,
-			    const Point_2 & pt) const
-  { return do_intersect_to_left_imp(ca, cb, pt, Has_left_category()); }
-
-  bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
-                                const Point_2 & pt, Tag_true) const
-  { return Base::do_intersect_to_left(ca, cb, pt); }
-    
-  bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
-                                const Point_2 & pt, Tag_false) const
-  {
-      Point_2 rpt = point_reflect_in_x_and_y( pt);
-      X_curve_2 rca = curve_reflect_in_x_and_y( ca);
-      X_curve_2 rcb = curve_reflect_in_x_and_y( cb);
-
-      return do_intersect_to_right(rca, rcb, rpt);
-  }
-
 };
 
 CGAL_END_NAMESPACE

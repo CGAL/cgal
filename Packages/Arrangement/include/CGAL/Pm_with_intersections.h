@@ -148,15 +148,6 @@ public:
                                               Change_notification * en)
   {
     bool intersection_exists;
-    if (direction_right)
-      intersection_exists =
-        pmwx_traits->do_intersect_to_right(cv, he->curve(), ref_point);
-    else
-      intersection_exists = 
-        pmwx_traits->do_intersect_to_left(cv, he->curve(), ref_point);
-
-    if ( ! intersection_exists)
-      return false;
 
     if (direction_right)
       intersection_exists = pmwx_traits->nearest_intersection_to_right
@@ -165,7 +156,8 @@ public:
       intersection_exists = pmwx_traits->nearest_intersection_to_left
         (orig_cv, curve(he, en), ref_point, xp1, xp2);
 
-    CGAL_assertion (intersection_exists);
+    if ( ! intersection_exists)
+      return false;
                 
     // check for an intersection on the real curves. assume there is none.
     intersection_exists = false;

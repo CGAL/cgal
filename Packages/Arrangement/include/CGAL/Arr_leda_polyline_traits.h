@@ -522,172 +522,23 @@ public:
 
   }
 
-  bool do_intersect_to_right(const X_curve_2 & ca, 
-                             const X_curve_2 & cb,
-                             const Point_2   & pt) const 
-  {
-    bool res = do_intersect_to_right_1(ca, cb, pt);
-
-    Curve_2 cv3(ca), cv4(cb);
-    cv3=curve_flip(cv3);
-    cv4=curve_flip(cv4);
-    CGAL_assertion(do_intersect_to_right_1(cv3, cv4, pt) == res);
-
-    return res;
-  }
-
-  //returns true iff the intersection is lexicographically strictly right of pt
-
-  bool do_intersect_to_right_1(const X_curve_2 & ca, 
-                             const X_curve_2 & cb,
-                             const Point_2   & pt) const 
-  {
-    CGAL_precondition(is_x_monotone(ca));
-    CGAL_precondition(is_x_monotone(cb));
-
-    // Check if both first points are left of pt, if they are reach the 
-    // points directly left of pt, and check if their segments intersect  
-    // to the right of pt, if not continue with a normal sweep until 
-    // we find an intersection point or we reach the end.
-
-    // Local copies of curves
-    X_curve_2 c1(ca),c2(cb);
-
-    // We make sure the local curves are oriented from left to right
-    //uses LEDA's compare function that compares two rat_points 
-    //lexicographically
-    if (CGAL_LEDA_SCOPE::compare(curve_source(ca),curve_target(ca)) > 0 )
-      c1=curve_flip(ca);
-    if (CGAL_LEDA_SCOPE::compare(curve_source(cb),curve_target(cb)) > 0)
-      c2=curve_flip(cb);
-
-    typename X_curve_2::const_iterator i1s = c1.begin();
-    typename X_curve_2::const_iterator i1t = i1s; ++i1t;
-
-    typename X_curve_2::const_iterator i2s = c2.begin();
-    typename X_curve_2::const_iterator i2t = i2s; ++i2t;
-
-    // For some reason MSVC requires the following:
-    typename X_curve_2::const_iterator c1End = c1.end();
-    typename X_curve_2::const_iterator c2End = c2.end();
-
-    //increment this variable if curve starts left of pt
-    int number_to_left = 0; 
-
-    if (CGAL_LEDA_SCOPE::compare(*i1s, pt) <= 0) {
-      //increment to nearest from the left of pt
-      ++number_to_left;
-      for (; i1t != c1End; ++i1s, ++i1t) 
-      {
-        if (CGAL_LEDA_SCOPE::compare(*i1t, pt) > 0) break;
-      }
-      if (i1t == c1End) return false; //c1 ends to the left of pt
-    }
-    //now i1s holds the source vertex and i1t holds the target
-
-    if (CGAL_LEDA_SCOPE::compare(*i2s, pt) <= 0) {
-      ++number_to_left;
-      for (; i2t != c2End; ++i2s, ++i2t) {
-        if (CGAL_LEDA_SCOPE::compare(*i2t, pt) > 0) break;
-      }
-      if (i2t == c2End) return false; //c2 ends to the left of pt
-    }
-
-    if (number_to_left == 2) {
-      // Check if intersection exists and is lexicographically larger
-      Segment i_seg;
-      Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
-      if (s1.intersection(s2, i_seg)) 
-      {
-        if ( (CGAL_LEDA_SCOPE::compare(i_seg.source(), pt) > 0) ||
-             (CGAL_LEDA_SCOPE::compare(i_seg.target(), pt) > 0) )
-          return true;
-      }
-    
-      // advance to the nearer point
-      if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) {
-        ++i1s; ++i1t;
-        if (i1t == c1End) return false;
-      }
-      else {
-        ++i2s; ++i2t;
-        if (i2t == c2End) return false;
-      }
-
-    }
-
-    // Now we can start sweeping the chains
-    while ( true ) 
-    {
-      // Check for intersection of the segments
-      Segment i_seg;
-      Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
-      if (s1.intersection(s2, i_seg)) {
-        return true;
-      }
-
-      if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) 
-      {
-        ++i1s; ++i1t;
-        if (i1t == c1End) return false;
-      }
-      else {
-        ++i2s; ++i2t;
-        if (i2t == c2End) return false;
-      }
-    }
-  }
-
-  bool nearest_intersection_to_right(const X_curve_2& cv1,
-                                     const X_curve_2& cv2,
-                                     const Point_2& pt,
-                                     Point_2& p1,
-                                     Point_2& p2) const 
-  {
-    bool res = nearest_intersection_to_right_1(cv1, cv2, pt, p1, p2);
-
-    /*!\todo
-      The following lines have to be under comments, since they add
-      redundency in computation.
-      However, we found a bug. Try to use the test of map-overlay
-      with leda polyline traits.
-      There is a function in the test computing intersection points,
-      when using this function, we have that (may be the last) 
-      intersection point to be computed cause a bug, 
-      since the reversed curves (by flip) do not intersect.
-      Hence p3 and p4 remain uninitialized.
-    */
-    //Point_2 p3, p4;
-    //Curve_2 cv3(cv1), cv4(cv2);
-    //cv3=curve_flip(cv3);
-    //cv4=curve_flip(cv4);
-    //nearest_intersection_to_right_1(cv3, cv4, pt, p3, p4);
-
-    //cout<<"p1="<<p1<<"  p3="<<p3<<endl;
-    //cout<<"p2="<<p1<<"  p4="<<p3<<endl;
-
-    //CGAL_assertion( p1 == p3 );
-    //CGAL_assertion( p2 == p4 );
-    
-    return res;
-  }
-
   // NOTE: in the following function:
   // if there is an overlap, we return only a segment of overlap 
   // (not the whole chain) - this is easier to implement and is sufficient 
   // for our needs
-  bool nearest_intersection_to_right_1(const X_curve_2& cv1,
-                                     const X_curve_2& cv2,
-                                     const Point_2& pt,
-                                     Point_2& p1,
-                                     Point_2& p2) const 
+  bool nearest_intersection_to_right (const X_curve_2& cv1,
+				      const X_curve_2& cv2,
+				      const Point_2& pt,
+				      Point_2& p1,
+				      Point_2& p2) const 
   {
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
 
     bool found = false;
 
-    if ( ! do_intersect_to_right(cv1,cv2,pt)) return false;
+    if ( ! _do_curves_intersect_to_right (cv1,cv2,pt))
+      return false;
     
     // Makes x increase.
     X_curve_2 c1(cv1),c2(cv2);
@@ -885,13 +736,7 @@ public:
     return found;
   }
 
-  bool curves_overlap(const X_curve_2& ca, const X_curve_2& cb) const 
-  {
-    CGAL_assertion(curves_overlap_1(ca, cb) == 
-                   curves_overlap_1(curve_flip(ca), curve_flip(cb)));
-    return curves_overlap_1(ca, cb);
-  }
-  bool curves_overlap_1(const X_curve_2& ca, const X_curve_2& cb) const 
+  bool curves_overlap (const X_curve_2& ca, const X_curve_2& cb) const 
   {
     CGAL_assertion(is_x_monotone(ca));
     CGAL_assertion(is_x_monotone(cb));
@@ -1010,6 +855,109 @@ private:
   Point_2 point_to_right(const Point_2& p) const {
     return Point_2(p.xcoord()+1, p.ycoord());
   }
+
+  //returns true iff the intersection is lexicographically strictly right of pt
+  bool _do_curves_intersect_to_right (const X_curve_2 & ca, 
+				      const X_curve_2 & cb,
+				      const Point_2   & pt) const 
+  {
+    CGAL_precondition(is_x_monotone(ca));
+    CGAL_precondition(is_x_monotone(cb));
+
+    // Check if both first points are left of pt, if they are reach the 
+    // points directly left of pt, and check if their segments intersect  
+    // to the right of pt, if not continue with a normal sweep until 
+    // we find an intersection point or we reach the end.
+
+    // Local copies of curves
+    X_curve_2 c1(ca),c2(cb);
+
+    // We make sure the local curves are oriented from left to right
+    //uses LEDA's compare function that compares two rat_points 
+    //lexicographically
+    if (CGAL_LEDA_SCOPE::compare(curve_source(ca),curve_target(ca)) > 0 )
+      c1=curve_flip(ca);
+    if (CGAL_LEDA_SCOPE::compare(curve_source(cb),curve_target(cb)) > 0)
+      c2=curve_flip(cb);
+
+    typename X_curve_2::const_iterator i1s = c1.begin();
+    typename X_curve_2::const_iterator i1t = i1s; ++i1t;
+
+    typename X_curve_2::const_iterator i2s = c2.begin();
+    typename X_curve_2::const_iterator i2t = i2s; ++i2t;
+
+    // For some reason MSVC requires the following:
+    typename X_curve_2::const_iterator c1End = c1.end();
+    typename X_curve_2::const_iterator c2End = c2.end();
+
+    //increment this variable if curve starts left of pt
+    int number_to_left = 0; 
+
+    if (CGAL_LEDA_SCOPE::compare(*i1s, pt) <= 0) {
+      //increment to nearest from the left of pt
+      ++number_to_left;
+      for (; i1t != c1End; ++i1s, ++i1t) 
+      {
+        if (CGAL_LEDA_SCOPE::compare(*i1t, pt) > 0) break;
+      }
+      if (i1t == c1End) return false; //c1 ends to the left of pt
+    }
+    //now i1s holds the source vertex and i1t holds the target
+
+    if (CGAL_LEDA_SCOPE::compare(*i2s, pt) <= 0) {
+      ++number_to_left;
+      for (; i2t != c2End; ++i2s, ++i2t) {
+        if (CGAL_LEDA_SCOPE::compare(*i2t, pt) > 0) break;
+      }
+      if (i2t == c2End) return false; //c2 ends to the left of pt
+    }
+
+    if (number_to_left == 2) {
+      // Check if intersection exists and is lexicographically larger
+      Segment i_seg;
+      Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
+      if (s1.intersection(s2, i_seg)) 
+      {
+        if ( (CGAL_LEDA_SCOPE::compare(i_seg.source(), pt) > 0) ||
+             (CGAL_LEDA_SCOPE::compare(i_seg.target(), pt) > 0) )
+          return true;
+      }
+    
+      // advance to the nearer point
+      if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) {
+        ++i1s; ++i1t;
+        if (i1t == c1End) return false;
+      }
+      else {
+        ++i2s; ++i2t;
+        if (i2t == c2End) return false;
+      }
+
+    }
+
+    // Now we can start sweeping the chains
+    while ( true ) 
+    {
+      // Check for intersection of the segments
+      Segment i_seg;
+      Segment s1(*i1s, *i1t), s2(*i2s, *i2t);
+      if (s1.intersection(s2, i_seg)) {
+        return true;
+      }
+
+      if (CGAL_LEDA_SCOPE::compare(*i2t, *i1t) > 0) 
+      {
+        ++i1s; ++i1t;
+        if (i1t == c1End) return false;
+      }
+      else {
+        ++i2s; ++i2t;
+        if (i2t == c2End) return false;
+      }
+    }
+  }
+
+
   
 protected:
   Point_2 point_normalize(const Point_2 &pt) const {

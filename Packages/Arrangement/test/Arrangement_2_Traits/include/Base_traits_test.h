@@ -60,7 +60,6 @@ protected:
   bool curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
                                             CGAL::Tag_false);
 
-  bool do_intersect_to_right_wrapper( std::istringstream& strLine );
   bool nearest_intersection_to_right_wrapper( std::istringstream& strLine );
   bool curves_overlap_wrapper( std::istringstream& strLine );
 
@@ -216,9 +215,6 @@ perform_test( std::ifstream& is )
     }
     else if( strCommand == "curve_reflect_in_x_and_y" ) {
       test_result &= curve_reflect_in_x_and_y_wrapper( strLine );
-    }
-    else if( strCommand == "do_intersect_to_right" ) {
-      test_result &= do_intersect_to_right_wrapper( strLine );
     }
     else if( strCommand == "nearest_intersection_to_right" ) {
       test_result &= nearest_intersection_to_right_wrapper( strLine ); 
@@ -608,37 +604,6 @@ curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
     std::cout << "Was NOT successful" << std::endl;
     return false;
   }
-}
-
-/*!
- * input case:
- * do_intersect_to_right n1 n2 n3 BOOL_RESULT, where
- * n1, n2 - curves indeces in all_curves_vec
- * n3 - point index in all_point_vec
- * BOOL_RESULT - expected result, or FALSE or TRUE string  
- */
-template< class Traits_class, class Number_type >
-bool Base_traits_test< Traits_class, Number_type >::
-do_intersect_to_right_wrapper( std::istringstream& strLine )
-{
-  int index1, index2, index3;
-  bool exp_answer, real_answer;
-
-  strLine >> index1 >> index2 >> index3;
-  exp_answer = get_expected_boolean( strLine );
-  std::cout << "Test: do_intersect_to_right( Curve" << index1 << ", "
-       << "Curve " << index2 << ", " << all_points_vec[index3] 
-       << " ) ? " << exp_answer << std::endl; 
-  if( !( tr.is_x_monotone( all_curves_vec[index1] ) &&
-         tr.is_x_monotone( all_curves_vec[index2] ) ) ) {
-    std::cout << "Was NOT successful" << std::endl;
-    std::cout << "The input curve must be X-monotone" << std::endl;
-    return false;    
-  }
-  real_answer = tr.do_intersect_to_right( all_curves_vec[index1], 
-                                          all_curves_vec[index2],
-                                          all_points_vec[index3] );
-  return print_was_successful_or_not( exp_answer, real_answer );
 }
 
 /*!

@@ -550,119 +550,6 @@ public:
 
   }
 
-  //returns true iff the intersectionis lexicographically strictly right of pt
-
-  bool do_intersect_to_right(const X_curve_2& ca, const X_curve_2& cb,
-                             const Point_2& pt) const 
-  {
-    CGAL_assertion(is_x_monotone(ca));
-    CGAL_assertion(is_x_monotone(cb));
-
-
-    // check if both first points are left of pt, if they are reach the 
-    // points directly left of pt, and check if their segments intersect  
-    //to the right of pt, if not continue with a normal sweep until 
-    //we find an intersection point or we reach the end.
-    
-    //do a flip or can we assume they are left to right ??
-    X_curve_2 c1(ca),c2(cb);
-    if (lexicographically_xy_larger(curve_source(ca), curve_target(ca)) ==
-	LARGER )
-      c1=curve_flip(ca);
-    if (lexicographically_xy_larger(curve_source(cb),curve_target(cb)) == 
-	LARGER )
-      c2=curve_flip(cb);
-
-    typename X_curve_2::const_iterator i1s=c1.begin(),i1e=c1.end();
-    typename X_curve_2::const_iterator i1t=i1s; ++i1t;
-
-    typename X_curve_2::const_iterator i2s=c2.begin(),i2e=c2.end();
-    typename X_curve_2::const_iterator i2t=i2s; ++i2t;
-
-    int number_to_left=0; //increment this variable if curve starts left of pt
-
-    if (!lexicographically_xy_larger (*i1s,pt)) {
-
-      //increment to nearest from the left of pt
-      ++number_to_left;
-      for (; i1t!=i1e; ++i1s,++i1t) {
-	if (lexicographically_xy_larger (*i1t,pt)) break;
-      }
-      if (i1t==i1e) return false; //c1 ends to the left of pt
-    }
-    //now i1s holds the source vertex and i1t holds the target
-
-    if (!lexicographically_xy_larger (*i2s,pt)) {
-      //increment 
-      ++number_to_left;
-      for (; i2t!=i2e; ++i2s,++i2t) {
-	if (lexicographically_xy_larger (*i2t,pt)) break;
-      }
-      if (i2t==i2e) return false; //c2 ends to the left of pt
-    }
-
-    if (number_to_left==2) {
-      //check if intersection exists and is lex larger
-      Object result;
-      Point_2 i_pt;
-      Segment_2 i_seg;
-      
-      result = intersection(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t));
-      if (assign(i_pt,result)) {
-        //check if intersection point to the right of pt
-        if (lexicographically_xy_larger (i_pt,pt)) 
-	  {
-	    return true;
-	  }
-      }
-      else
-
-	if (assign(i_seg,result)) {
-	  //check if intersection seg to the right of pt
-	  if (lexicographically_xy_larger (i_seg.source(),pt) ||
-	      lexicographically_xy_larger (i_seg.target(),pt))
-	    {
-	      return true;
-	    }
-	}
-      //debug
-	else {
-	  //cerr << "segments don't intersect ??" << endl;
-	}
-      //advance to the nearer point
-      if (lexicographically_xy_larger (*i2t,*i1t)) {
-	++i1s; ++i1t;
-        if (i1t==i1e) return false;
-      }
-      else {
-	++i2s; ++i2t;
-        if (i2t==i2e) return false;
-      }
-
-    }
-    //NOW we can start sweeping the chains
-
-    while (1) {
-      //check for intersection of the segments
-      if (do_intersect(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t)))
-	{
-	  return true;
-	}
-      
-      //advance to the nearer point
-      if (lexicographically_xy_larger (*i2t,*i1t)) {
-	++i1s; ++i1t;
-        if (i1t==i1e) return false;
-      }
-      else {
-	++i2s; ++i2t;
-        if (i2t==i2e) return false;
-      }
-    }
-
-  }
-
-
   //NOTE: when there is an overlap we will always return a SEGMENT (i.e.,
   //      p1 and p2 will be on a segment) even if the overlap is a polyline
   //      , this is still sufficient for the arrangement. might be
@@ -678,9 +565,9 @@ public:
 
     bool found( false);
 
-    // bug fix:
     // curves do not necessarily intersect
-    if ( ! do_intersect_to_right(cv1,cv2,pt)) return false;
+    if ( ! _do_curves_intersect_to_right(cv1,cv2,pt)) 
+      return false;
 
     X_curve_2 c1(cv1),c2(cv2);
     if ( ! lexicographically_xy_smaller (curve_source(c1),curve_target(c1)))
@@ -992,6 +879,118 @@ private:
   }
   Point_2 point_to_right(const Point_2& p) const {
     return p+Vector_2(1,0);;
+  }
+
+  //returns true iff the intersectionis lexicographically strictly right of pt
+  bool _do_curves_intersect_to_right (const X_curve_2& ca, 
+				      const X_curve_2& cb,
+				      const Point_2& pt) const 
+  {
+    CGAL_assertion(is_x_monotone(ca));
+    CGAL_assertion(is_x_monotone(cb));
+
+
+    // check if both first points are left of pt, if they are reach the 
+    // points directly left of pt, and check if their segments intersect  
+    //to the right of pt, if not continue with a normal sweep until 
+    //we find an intersection point or we reach the end.
+    
+    //do a flip or can we assume they are left to right ??
+    X_curve_2 c1(ca),c2(cb);
+    if (lexicographically_xy_larger(curve_source(ca), curve_target(ca)) ==
+	LARGER )
+      c1=curve_flip(ca);
+    if (lexicographically_xy_larger(curve_source(cb),curve_target(cb)) == 
+	LARGER )
+      c2=curve_flip(cb);
+
+    typename X_curve_2::const_iterator i1s=c1.begin(),i1e=c1.end();
+    typename X_curve_2::const_iterator i1t=i1s; ++i1t;
+
+    typename X_curve_2::const_iterator i2s=c2.begin(),i2e=c2.end();
+    typename X_curve_2::const_iterator i2t=i2s; ++i2t;
+
+    int number_to_left=0; //increment this variable if curve starts left of pt
+
+    if (!lexicographically_xy_larger (*i1s,pt)) {
+
+      //increment to nearest from the left of pt
+      ++number_to_left;
+      for (; i1t!=i1e; ++i1s,++i1t) {
+	if (lexicographically_xy_larger (*i1t,pt)) break;
+      }
+      if (i1t==i1e) return false; //c1 ends to the left of pt
+    }
+    //now i1s holds the source vertex and i1t holds the target
+
+    if (!lexicographically_xy_larger (*i2s,pt)) {
+      //increment 
+      ++number_to_left;
+      for (; i2t!=i2e; ++i2s,++i2t) {
+	if (lexicographically_xy_larger (*i2t,pt)) break;
+      }
+      if (i2t==i2e) return false; //c2 ends to the left of pt
+    }
+
+    if (number_to_left==2) {
+      //check if intersection exists and is lex larger
+      Object result;
+      Point_2 i_pt;
+      Segment_2 i_seg;
+      
+      result = intersection(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t));
+      if (assign(i_pt,result)) {
+        //check if intersection point to the right of pt
+        if (lexicographically_xy_larger (i_pt,pt)) 
+	  {
+	    return true;
+	  }
+      }
+      else
+
+	if (assign(i_seg,result)) {
+	  //check if intersection seg to the right of pt
+	  if (lexicographically_xy_larger (i_seg.source(),pt) ||
+	      lexicographically_xy_larger (i_seg.target(),pt))
+	    {
+	      return true;
+	    }
+	}
+      //debug
+	else {
+	  //cerr << "segments don't intersect ??" << endl;
+	}
+      //advance to the nearer point
+      if (lexicographically_xy_larger (*i2t,*i1t)) {
+	++i1s; ++i1t;
+        if (i1t==i1e) return false;
+      }
+      else {
+	++i2s; ++i2t;
+        if (i2t==i2e) return false;
+      }
+
+    }
+    //NOW we can start sweeping the chains
+
+    while (1) {
+      //check for intersection of the segments
+      if (do_intersect(Segment_2(*i1s, *i1t), Segment_2(*i2s, *i2t)))
+	{
+	  return true;
+	}
+      
+      //advance to the nearer point
+      if (lexicographically_xy_larger (*i2t,*i1t)) {
+	++i1s; ++i1t;
+        if (i1t==i1e) return false;
+      }
+      else {
+	++i2s; ++i2t;
+        if (i2t==i2e) return false;
+      }
+    }
+
   }
 
 public:
