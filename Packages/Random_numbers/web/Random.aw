@@ -365,8 +365,8 @@ numbers.
 \clearpage
 \section{Files}
 
-@file <include/CGAL/Random/CGAL/Random.h> = @begin
-    @<Random header>("include/CGAL/Random/CGAL/Random.h")
+@file <include/CGAL/Random.h> = @begin
+    @<Random header>("include/CGAL/Random.h")
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H

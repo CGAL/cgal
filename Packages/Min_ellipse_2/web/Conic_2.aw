@@ -3124,8 +3124,8 @@ representation type @prg{R}. These are the declarations of the enumeration
 types @prg{CGAL_Conic_type} and @prg{CGAL_Convex_side}, the conic ouput
 function and the functions in connection with the solution of cubic equations.
 
-@file <include/CGAL/Optimisation/CGAL/Conic_misc.h> = @begin
-@<Conic_2 header>("include/CGAL/Optimisation/CGAL/Conic_misc.h")
+@file <include/CGAL/Conic_misc.h> = @begin
+@<Conic_2 header>("include/CGAL/Conic_misc.h")
 
 #ifndef CONIC_MISC_H
 #define CONIC_MISC_H
@@ -3153,8 +3153,8 @@ Depending on the loaded representation classes, the representation specific
 classes @prg{CGAL_ConicHPA2<PT,DA>} and/or  @prg{CGAL_ConicCPA2<PT,DA>} are
 included before that. 
 
-@file <include/CGAL/Optimisation/CGAL/Conic_2.h> = @begin
-@<Conic_2 header>("include/CGAL/Optimisation/CGAL/Conic_2.h")
+@file <include/CGAL/Conic_2.h> = @begin
+@<Conic_2 header>("include/CGAL/Conic_2.h")
 
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
@@ -3193,8 +3193,8 @@ included before that.
 
 Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 
-@file <include/CGAL/Optimisation/CGAL/ConicHPA2.h> = @begin
-@<Conic_2 header>("include/CGAL/Optimisation/CGAL/ConicHPA2.h")
+@file <include/CGAL/ConicHPA2.h> = @begin
+@<Conic_2 header>("include/CGAL/ConicHPA2.h")
 
 #ifndef CGAL_CONICHPA2_H
 #define CGAL_CONICHPA2_H
@@ -3226,8 +3226,8 @@ Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
 \ldots and the class @prg{CGAL_ConicCPA2<PT,DA>}.
 
 
-@file <include/CGAL/Optimisation/CGAL/ConicCPA2.h> = @begin
-@<Conic_2 header>("include/CGAL/Optimisation/CGAL/ConicCPA2.h")
+@file <include/CGAL/ConicCPA2.h> = @begin
+@<Conic_2 header>("include/CGAL/ConicCPA2.h")
 
 // includes
 #ifndef CGAL_CONICCPA2_H

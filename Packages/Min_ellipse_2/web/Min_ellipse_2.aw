@@ -2831,8 +2831,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2.h")
+@file <include/CGAL/Min_ellipse_2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_H
     #define CGAL_MIN_ELLIPSE_2_H
@@ -2889,8 +2889,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2.C}
 
-@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2.C> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2.C")
+@file <include/CGAL/Min_ellipse_2.C> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2907,8 +2907,8 @@ end of each file.
 
 \subsection{Optimisation\_ellipse\_2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.h> = @begin
-    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.h")
+@file <include/CGAL/Optimisation_ellipse_2.h> = @begin
+    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation_ellipse_2.h")
 
     #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
     #define CGAL_OPTIMISATION_ELLIPSE_2_H
@@ -2953,8 +2953,8 @@ end of each file.
 
 \subsection{Optimisation\_ellipse\_2.C}
 
-@file <include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.C> = @begin
-    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_ellipse_2.C")
+@file <include/CGAL/Optimisation_ellipse_2.C> = @begin
+    @<Optimisation_ellipse_2 header>("include/CGAL/Optimisation_ellipse_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2976,8 +2976,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2\_adapterC2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterC2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterC2.h")
+@file <include/CGAL/Min_ellipse_2_adapterC2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_adapterC2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
@@ -3043,8 +3043,8 @@ end of each file.
 
 \subsection{Min\_ellipse\_2\_adapterH2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterH2.h> = @begin
-    @<Min_ellipse_2 header>("include/CGAL/Optimisation/CGAL/Min_ellipse_2_adapterH2.h")
+@file <include/CGAL/Min_ellipse_2_adapterH2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_adapterH2.h")
 
     #ifndef CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
     #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H

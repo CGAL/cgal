@@ -2657,8 +2657,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_circle_2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2.h")
+@file <include/CGAL/Min_circle_2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
@@ -2715,8 +2715,8 @@ end of each file.
 
 \subsection{Min\_circle\_2.C}
 
-@file <include/CGAL/Optimisation/CGAL/Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2.C")
+@file <include/CGAL/Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2733,8 +2733,8 @@ end of each file.
 
 \subsection{Optimisation\_circle\_2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Optimisation_circle_2.h> = @begin
-    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_circle_2.h")
+@file <include/CGAL/Optimisation_circle_2.h> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation_circle_2.h")
 
     #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
     #define CGAL_OPTIMISATION_CIRCLE_2_H
@@ -2779,8 +2779,8 @@ end of each file.
 
 \subsection{Optimisation\_circle\_2.C}
 
-@file <include/CGAL/Optimisation/CGAL/Optimisation_circle_2.C> = @begin
-    @<Optimisation_circle_2 header>("include/CGAL/Optimisation/CGAL/Optimisation_circle_2.C")
+@file <include/CGAL/Optimisation_circle_2.C> = @begin
+    @<Optimisation_circle_2 header>("include/CGAL/Optimisation_circle_2.C")
 
     // Class implementation (continued)
     // ================================
@@ -2802,8 +2802,8 @@ end of each file.
 
 \subsection{Min\_circle\_2\_adapterC2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_circle_2_adapterC2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2_adapterC2.h")
+@file <include/CGAL/Min_circle_2_adapterC2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterC2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERC2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERC2_H
@@ -2838,8 +2838,8 @@ end of each file.
 
 \subsection{Min\_circle\_2\_adapterH2.h}
 
-@file <include/CGAL/Optimisation/CGAL/Min_circle_2_adapterH2.h> = @begin
-    @<Min_circle_2 header>("include/CGAL/Optimisation/CGAL/Min_circle_2_adapterH2.h")
+@file <include/CGAL/Min_circle_2_adapterH2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterH2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
     #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
