@@ -36,11 +36,11 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/Nef_3/Decomposition_mark.h>
 #include <CGAL/Nef_3/SNC_items.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/IO/Qt_widget_Nef_3.h>
+// #include <CGAL/IO/Qt_widget_Nef_3.h>
+#include "Qt_widget_Nef_3.h"
 #endif
 
 #include <iostream>
@@ -358,7 +358,8 @@ int eval( int argc, char* argv[]) {
 
 #ifdef CGAL_USE_QT
 	    QApplication a(argc, argv);
-	    Qt_widget_Nef_3* w = new Qt_widget_Nef_3(nef.back());
+	    Qt_widget_Nef_3<Nef_polyhedron>* w = 
+	      new Qt_widget_Nef_3<Nef_polyhedron>(nef.back());
 	    a.setMainWidget(w);
 	    w->show();
 	    return a.exec();
