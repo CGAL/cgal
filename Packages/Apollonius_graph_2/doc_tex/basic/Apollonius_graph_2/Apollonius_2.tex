@@ -20,7 +20,7 @@
 %//
 %//============================================================================
 
-\chapter{2D Apollonius graph}
+\chapter{2D Apollonius graphs}
 \label{chapter-apollonius2}
 
 \minitoc
@@ -454,7 +454,6 @@ otherwise it is a finite edge.
 \end{ccHtmlOnly}
 \end{figure}
 
-
 The last predicate that we want to discuss is called
 \ccc{Is_degenerate_edge_2}. It tells us whether an edge in the
 Apollonius diagram is degenerate, that is if its two endpoints
@@ -462,9 +461,53 @@ coincide. In the Apollonius graph such an edge corresponds to one of
 the additional edges that we use to triangulate the non-triangular
 faces.
 
-% TALK ABOUT THE METHOD TAG AND THE FILTERED AND NON-FILTERED TRAITS
+The afore mentioned predicates are part of the
+\ccc{ApolloniusGraphTraits_2} concept of \cgal. \cgal{} also provides
+a model for this concept, the
+\ccc{Apollonius_graph_traits_2<K,Method_tag>} class. The first
+template parameter of this class must be a model of the \ccc{Kernel}
+concept. The second template parameter is a tag that indicates what
+operations are allowed in the computations that take place within the
+traits class.
+The two possible values of the \ccc{Method_tag} parameter are
+\ccc{CGAL::Ring_tag} and \ccc{CGAL::Sqrt_field_tag}. When
+\ccc{CGAL::Ring_tag} is used, only ring operations are used during the
+evaluation of the predicates, whereas if \ccc{CGAL::Sqrt_field_tag} is
+chosen, all four field operations, as well as square roots, as used
+during the predicate evaluation.
 
+The \ccc{Apollonius_graph_traits_2<K,Method_tag>} class provides exact
+predicates if the number type in the kernel \ccc{K} is an exact number
+type. This is to be associated with the type of operations allowed for
+the predicate evaluation. For example \ccc{CGAL::MP_Float} as number
+type, with \ccc{CGAL::Ring_tag} as tag will give exact predicates,
+whereas \ccc{CGAL::MP_Float} with \ccc{CGAL::Sqrt_field_tag} will give
+inexact predicates.
 
+Since using an exact number type may be too slow, the
+\ccc{Apollonius_graph_traits_2<K,Method_tag>} class is designed to
+support the dynamic filtering of \cgal{} through the
+\ccc{Filtered_exact<CT,ET>} mechanism. In particular if \ccc{CT} is an
+inexact number type that supports the operations denoted by the tag
+\ccc{Method_tag} and \ccc{ET} is an exact number type for these
+operations, then kernel with number type \ccc{Filtered_exact<CT,ET>}
+will yield exact predicates for the Apollonius graph traits. To give a
+concrete example, \ccc{Filtered_exact<double,MP_Float>} with
+\ccc{CGAL::Ring_tag} will produce exact predicates.
+
+Another possibility for fast and exact predicate evalutation is to use
+the
+\ccc{Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+class. This class is the analog of a filtered kernel. It takes a
+constructions kernel \ccc{CK}, a filtering kernel \ccc{FK} and an
+exact kernel \ccc{EK}, as well as the corresponding tags
+(\ccc{CM}, \ccc{FM} and \ccc{EM}, respectively).
+It evaluates the predicates by first using the filtering kernel, and
+if this fails the evaluation is performed using the exact kernel. The
+constructions are done using the kernel \ccc{CK}, which means that
+they are not necessarily exact. All template parameters except
+\ccc{CK} have default values, which are explained in the reference
+manual.
 
 
 
