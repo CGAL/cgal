@@ -77,6 +77,9 @@
 \newcommand{\ledapage}{\path'http://www.mpi-sb.mpg.de/LEDA'}
 \newcommand{\gmppage}{\path'http://www.gnu.org/software/gmp'}
 \newcommand{\clnpage}{\path'http://clisp.cons.org/~haible/packages-cln.html'}
+\newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
+\newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
+\newcommand{\qtmocpage}{\path'http://doc.trolltech.com/moc.html'}
 
 %% write index in typewriter type. (c) Susan :-)
 \newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
@@ -95,8 +98,10 @@ This document describes how to install \cgal\ on your system.  Besides
 that, you will find some information about the makefile structure of
 \cgal\ and the support for simultaneously using \cgal\ and \leda, the
 Library of Efficient Datatypes and Algorithms\footnote{\ledapage}
-Multiple Precision library GMP\footnote{\gmppage} and/or the Class
-Library for Numbers (CLN)\footnote{\clnpage}.
+Multiple Precision library GMP\footnote{\gmppage}, the Class
+Library for Numbers (CLN)\footnote{\clnpage}, and
+Trolltech\footnote{\trolltechpage} Qt toolkit.
+
 
 \section{Prerequisites}\label{sec:prerequisites}
 
@@ -365,6 +370,7 @@ A menu similar to the following will appear on your screen.\index{main
   **   <L>  LEDA Menu                                           **
   **   <G>  GMP Menu                                            **
   **   <M>  CLN Menu                                            **
+  **   <K>  Qt Menu                                             **
   **   <T>  Test (and save) setup                               **
   **   <A>  Run all setup tests (no cache)                      **
   **                                                            **
@@ -434,12 +440,12 @@ the error messages from compiler or linker).
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the
 main menu and proceed by installing for a different compiler (go to
 the compiler menu and choose ``\texttt{c}'' to get a list of supported
-compilers detected on your system) or with \leda, GMP or CLN support
-(go to the \leda, GMP, CLN menu resp.) or simply quit the install
-script by typing ``\texttt{q}''. When leaving the script, you get a
-list of successful builds during the session. Furthermore, the script
-prints the setting of \texttt{CGAL\_MAKEFILE} for the last active
-configuration. Remember to set this environment variable before
+compilers detected on your system) or with \leda, GMP, CLN or Qt
+support (go to the \leda, GMP, CLN, or Qt menu resp.) or simply quit
+the install script by typing ``\texttt{q}''. When leaving the script,
+you get a list of successful builds during the session. Furthermore,
+the script prints the setting of \texttt{CGAL\_MAKEFILE} for the last
+active configuration. Remember to set this environment variable before
 compiling \cgal\ applications. On bourne shell derivatives, you would
 type in our example
 \begin{alltt}
@@ -542,22 +548,24 @@ where you can choose the compiler you want to work with and set custom
 compiler or linker options.  The compiler menu is described in section
 \ref{sec:compiler-menu}.
 
-If you want to use \leda, GMP or CLN with \cgal, you will have to go
-to the \textit{leda menu}, \textit{gmp menu} or \textit{cln menu}.
+If you want to use \leda, GMP, CLN or Qt with \cgal, you will have to go
+to the \textit{leda menu}, \textit{gmp menu}, \textit{cln menu} or
+\textit{qt menu}.
 These are described in section \ref{sec:leda-menu},
 \ref{sec:gmp-menu}, \ref{sec:cln-menu}, respectively.
 
 Finally you can build the \cgal\ libraries by typing \texttt{b}.
 However, it is recommended to run the \textit{setup test} which is
 available in all menus as option \texttt{t} before. The setup test
-includes an \stl\ test, a \leda\ test, a GMP test and a CLN test. But
+includes an \stl\ test, a \leda\ test, a GMP test, a CLN test and a Qt
+test. But
 not all tests are performed always; e.g. the \leda\ test is only done,
 if you enabled \leda\ support. The install script keeps track of the
 tests passed and only tests again, if you change the setup in a way
 that might affect the test result. If you want to redo \textit{all}
 tests, you have to choose option ``\texttt{a}'' from the main menu.
-This also retests for \leda/GMP/CLN installation in system directories
-which otherwise is only done the first time you enable \leda/GMP/CLN
+This also retests for \leda/GMP/CLN/Qt installation in system directories
+which otherwise is only done the first time you enable \leda/GMP/CLN/Qt
 support for an OS/compiler combination.
 
 \subsection{Files created during installation}\label{sec:filescreated}
@@ -750,7 +758,105 @@ differently.\bigskip
 \end{minipage}
 \hfill}
 
-\section{The non-interactive mode (Unix/Cygwin)}\label{sec:non-interactive}
+\subsection{The Qt Menu}\label{sec:qt-menu}
+\index{Qt!menu}\index{menus!Qt}
+
+This menu is to set Qt specific options, if you plan to use Qt
+together with \cgal . Note that for use with \cgal, Qt version 2.2 (or
+later) if required. In order to enable Qt support in \cgal, Qt has to
+be installed on your system first.
+Unlike for GMP, there is no option to install Qt from the \cgal\ 
+installation script.  For information on Qt, please refer to
+\begin{quote}
+  \qtpage
+\end{quote}
+
+\begin{ccAdvanced}
+The Qt menu has a basic mode and an advanced one. If your Qt
+installation is standard, you shouldn't have to go into the advanced
+mode.
+
+The Qt menu starts in basic mode, unless Qt is installed in standard
+system directories (because in that case, the advanced mode is quicker).
+\end{ccAdvanced}
+
+\subsubsection{Basic mode (to use with a standard Qt installation)}
+
+If Qt support is enabled the first time, the script tests whether the
+\texttt{\$QTDIR} environment variable points to a valid Qt directory.
+is installed in standard system directories. If that is not the case,
+you have to supply the Qt directory containing your Qt
+installation. Even if the test passed, you still have the option to
+set this directory differently.
+If your Qt installation is not standard, you would have to go into the
+advanced mode.\bigskip
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf Qt basic Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$K$>$] Enable/Disable Qt support in \cgal.\index{Qt!enable
+    support}
+\item[$<$A$>$] (\textit{present if Qt support is enabled)} Go to the
+  advanced mode
+\item[$<$D$>$] (\textit{present if Qt support is enabled}) Set the
+  Qt directory.
+\item[$<$E$>$] (\textit{present if Qt support is enabled,
+    \texttt{\$QTDIR} points to a valid Qt directory and {\tt QT\_DIR}
+    has been set}) Use \texttt{\$QTDIR} as Qt directory.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+
+
+\begin{ccAdvanced}
+\subsubsection{Advanced mode (to use with a non-standard Qt
+  installation) }
+
+In that mode, you have to specify separately directories containing the Qt
+header files (\texttt{QT\_INCL\_DIR})\TTindex{QT\_INCL\_DIR} and the
+Qt library (\texttt{QT\_LIB\_DIR})\TTindex{QT\_LIB\_DIR}, and the
+path to the MOC\footnote{\qtmocpage} executable
+(\texttt{QT\_MOC})\TTindex{QT\_MOC} unless they are in system
+directories. Even in that case, you still have the option to set them
+differently.
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf Qt advanced Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$K$>$] Enable/Disable Qt support in \cgal.\index{Qt!enable
+    support}
+\item[$<$B$>$] (\textit{present if Qt support is enabled)} Go to the
+  basic mode
+\item[$<$I$>$] (\textit{present if Qt support is enabled}) Set the
+  directory containing Qt headers.
+\item[$<$J$>$] (\textit{present if Qt support is enabled, Qt headers
+    are in system directories and {\tt QT\_INCL\_DIR} has been set})
+  Use Qt headers from system include directories.
+\item[$<$L$>$] (\textit{present if Qt support is enabled}) Set the
+  directory containing Qt library.
+\item[$<$M$>$] (\textit{present if Qt support is enabled, Qt library
+    is in system directories and {\tt QT\_LIB\_DIR} has been set})
+  Use Qt library from system library directories.
+\item[$<$O$>$] (\textit{present if Qt support is enabled}) Set the
+  path to MOC executable.
+\item[$<$P$>$] (\textit{present if Qt support is enabled, MOC is in path and {\tt QT\_MOC} has been set})
+  Use Qt MOC executable in path.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\end{ccAdvanced}
+
+\section{The non-interactive mode}\label{sec:non-interactive}
 \index{non-interactive
   installation}\index{installation!non-interactive}
 \TTsubindex{install\_cgal}{non-interactive mode}
@@ -783,6 +889,8 @@ more of the following conditions apply to you:
   \ref{sec:gmp-setup}) \textit{or}
 \item you want to use CLN together with \cgal\ (section
   \ref{sec:cln-setup}).
+\item you want to use Qt together with \cgal\ (section
+  \ref{sec:qt-setup}).
 \end{itemize}
 
 Once you started the script, it should give you a message indicating
@@ -852,6 +960,24 @@ containing the CLN header files (``\texttt{--CLN\_INCL\_DIR}
 \textit{$<$dir$>$}'')\TTindex{CLN\_INCL\_DIR} and the CLN library
 (``\texttt{--CLN\_LIB\_DIR}
 \textit{$<$dir$>$}'')\TTindex{CLN\_LIB\_DIR}.
+
+\subsection{Setting up support for Qt}\label{sec:qt-setup}
+\index{Qt!enable support}
+
+By default there is no support for Qt, but you can change this easily
+by use of the command line option ``\texttt{-qt}''. If Qt is installed
+in system directories on your system or the \texttt{\$QTDIR}
+environment variable points to the Qt directory, you are already done
+now. If this is not the case, you have to supply either the Qt
+directory (``\texttt{--QT\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_DIR}
+if your Qt installation is standard, either directories containing the
+Qt header files
+(``\texttt{--QT\_INCL\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_INCL\_DIR}
+and the Qt library
+(``\texttt{--QT\_LIB\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_LIB\_DIR},
+and the path to the MOC\footnote{\qtmocpage} executable
+(``\texttt{--QT\_MOC} \textit{$<$exe$>$}'')\TTindex{QT\_MOC} if your
+Qt installation is not standard.
 
 \subsection{Setting custom compiler/linker flags}\label{sec:custom-setup}
 \index{compilers!setting custom flags}
