@@ -470,7 +470,7 @@ void print() const
   std::cerr << std::endl;
 }
 
-Unit_sphere(const Unit_sphere& S) 
+Unit_sphere(const Unit_sphere& S) : switches(2)
 { TRACEN("copyconstruction");
   sphere_ = gluNewQuadric();
   initialized_ = S.initialized_;
