@@ -65,8 +65,5 @@ typedef TestR::RT inputt;
 
 #endif
 
-#if BBOX == 1
 typedef CGAL::Pm_segment_traits_2<TestR>        Traits;
-#else
-typedef CGAL::Pm_straight_traits_2<TestR>       Traits;
-#endif
+
