@@ -225,7 +225,7 @@ element of the linked list.
 @end
 
 A @prg{CGAL_Min_circle_2} object maintains an array
-@prg{i_support_points} of at most three \emph{support points} (the
+@prg{support_points} of at most three \emph{support points} (the
 actual number is given by @prg{n_support_points}, which at the end of
 the computation contains the indices of a minimal subset $S \subseteq
 P$ with $\mc(P)= \mc(S)$. (Note: that subset is not necessarily
@@ -235,7 +235,7 @@ see the introduction above.
 
 @macro <private data members> += @begin
     int               n_support_points;
-    int               i_support_points[ 3];
+    CGAL_Point_2<R>   support_points[ 3];
 @end
 
 Finally, an actual circle is stored in a @prg{CGAL_Min_circle_2}
@@ -298,8 +298,11 @@ method $\mc$ to compute $\mc(P)=\mc(P,\emptyset)$.
 	    copy( first, last, back_inserter( points));
 
 	    // shuffle points at random
-	    if ( randomize)
-		random_shuffle( points.begin(), points.end());
+	    if ( randomize) {
+	        long  seed;
+		time( &seed);
+		srand( seed);
+		random_shuffle( points.begin(), points.end()); }
 
 	    // link points
 	    for ( int i = 0; i < number_of_points(); ++i) {
@@ -347,7 +350,7 @@ $\mc(\emptyset)$.
 	n_support_points( 1),
 	min_circle( p, R::FT( 0))
     {
-	i_support_points[ 0] = 0;
+	support_points[ 0] = p;
     }
 
     // constructor for two points
@@ -428,7 +431,7 @@ the `main' constructor above.
 	if ( has_on_unbounded_side( p)) {
 
 	    // p new support point
-	    i_support_points[ 0] = old_n;
+	    support_points[ 0] = p;
 
 	    // recompute mc
 	    mc( old_n, 1); }
@@ -524,7 +527,7 @@ the data members of @prg{CGAL_Min_circle_2}.
     {
 	CGAL_Min_circle_2_precondition( (i >= 0) &&
 					(i <  number_of_support_points()));
-	return( points[ i_support_points[ i]].point);
+	return( support_points[ i]);
     }
 
     template < class R > inline
@@ -543,7 +546,7 @@ the data members of @prg{CGAL_Min_circle_2}.
         CGAL_Min_circle_2_precondition( ! is_empty());
 	// ensure positive orientation
 	if ( min_circle.orientation() == CGAL_NEGATIVE)
-	    const_cast< CGAL_Circle_2<R>&>(min_circle) = min_circle.opposite();
+	    const_cast( CGAL_Circle_2<R>&, min_circle) = min_circle.opposite();
 	CGAL_Min_circle_2_assertion(min_circle.orientation() == CGAL_POSITIVE);
 	return( min_circle);
     }
@@ -613,18 +616,17 @@ noting that $|B| \leq 3$.
     {
 	switch ( n_support_points) {
 	  case 3:
-	    min_circle = CGAL_Circle_2<R>( points[ i_support_points[0]].point,
-					   points[ i_support_points[1]].point,
-					   points[ i_support_points[2]].point);
+	    min_circle = CGAL_Circle_2<R>( support_points[0],
+					   support_points[1],
+					   support_points[2]);
             break;
 	  case 2: {
-	    const CGAL_Point_2<R>& p0( points[ i_support_points[ 0]].point);
-	    const CGAL_Point_2<R>& p1( points[ i_support_points[ 1]].point);
+	    const CGAL_Point_2<R>& p0( support_points[ 0]);
+	    const CGAL_Point_2<R>& p1( support_points[ 1]);
 	    min_circle = CGAL_Circle_2<R>( p0 + (p1-p0)/R::RT(2), p0); }
 	    break;
 	  case 1:
-	    min_circle = CGAL_Circle_2<R>( points[ i_support_points[ 0]].point,
-					   R::FT( 0));
+	    min_circle = CGAL_Circle_2<R>( support_points[ 0], R::FT( 0));
 	    break;
 	  case 0:
 	    min_circle = CGAL_Circle_2<R>( CGAL_Point_2<R>( ), R::FT( 0));
@@ -668,7 +670,7 @@ pseudocode above.
 	    if ( has_on_unbounded_side( p.point)) {
 
 		// recursive call with p as additional support point
-		i_support_points[ n_sp] = index;
+		support_points[ n_sp] = p.point;
 		mc( i, n_sp+1);
 
 		// move current point to front
@@ -902,10 +904,10 @@ set is minimal only if the center lies properly inside the triangle.
     // ===============
     // includes
     #ifndef CGAL_POINT_2_H
-    #include <CGAL/Point_2.h>
+    #  include <CGAL/Point_2.h>
     #endif
     #ifndef CGAL_CIRCLE_2_H
-    #include <CGAL/Circle_2.h>
+    #  include <CGAL/Circle_2.h>
     #endif
     #include <vector.h>
 
@@ -924,6 +926,8 @@ set is minimal only if the center lies properly inside the triangle.
     #include <CGAL/Triangle_2.h>
     #endif
     #include <algo.h>
+    #include <sys/types.h>
+    #include <time.h>
 
     // check macros
     // ------------
@@ -956,6 +960,20 @@ set is minimal only if the center lies properly inside the triangle.
     #define CGAL_Min_circle_2_postcondition(EX) ((void)0)
     #define CGAL_Min_circle_2_postcondition_msg(EX,MSG) ((void)0)
     #endif // CGAL_CHECK_POSTCONDITIONS
+
+    // workaround for new C++-style casts
+    // ----------------------------------
+    #if (__SUNPRO_CC)
+    #define      static_cast(type,expr) (type)( expr)
+    #define       const_cast(type,expr) (type)( expr)
+    #define reinterpret_cast(type,expr) (type)( expr)
+    #define     dynamic_cast(type,expr) (type)( expr)
+    #else
+    #define      static_cast(type,expr)      static_cast< type>( expr)
+    #define       const_cast(type,expr)       const_cast< type>( expr)
+    #define reinterpret_cast(type,expr) reinterpret_cast< type>( expr)
+    #define     dynamic_cast(type,expr)     dynamic_cast< type>( expr)
+    #endif // (__SUNPRO_CC)
 
     @<Min_circle_2 implementation>
 
