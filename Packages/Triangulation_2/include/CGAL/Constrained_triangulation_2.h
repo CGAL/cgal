@@ -120,10 +120,6 @@ public:
   void insert(Point a, Point b);
   void insert(Vertex_handle va, 
 	      Vertex_handle  vb);
-  void insert(Vertex_handle  va, 
-	      Vertex_handle  vb,
-	      List_edges& new_edges);
-
   void          push_back(const Constraint& c);
 
   void remove(Vertex_handle  v);
@@ -164,8 +160,7 @@ protected:
   void mark_constraint(Face_handle fr, int i);
   Vertex_handle  insert_part(Vertex_handle va, 
 			     Vertex_handle  vb,
-			     Vertex_handle vaa,
-			     List_edges & new_edges);
+			     Vertex_handle vaa);
 			     
   Vertex_handle find_intersected_faces(Vertex_handle va, 
 				       Vertex_handle vb,
@@ -173,12 +168,15 @@ protected:
 				       List_faces & intersected_faces,
 				       List_edges & list_ab, 
 				       List_edges & list_ba);
+
+  void triangulate_hole(List_faces& intersected_faces,
+			List_edges& conflict_boundary_ab,
+			List_edges& conflict_boundary_ba);
   
   void triangulate_hole(List_faces& intersected_faces,
 			List_edges& conflict_boundary_ab,
 			List_edges& conflict_boundary_ba,
-			List_edges& new_edges,
-			Vertex_handle );
+			List_edges& new_edges);
   
   void triangulate_half_hole(List_edges & list_edges, 
 			     List_edges & new_edges);
@@ -299,33 +297,45 @@ insert(Point a, Point b)
   insert(va,vb);
 }
 
+// template < class Gt, class Tds >
+// inline void
+// Constrained_triangulation_2<Gt,Tds>::
+// insert(Vertex_handle  va, Vertex_handle vb)
+// {
+//   List_edges new_edges;
+//   insert(va, vb, new_edges);
+// }
+
+// template < class Gt, class Tds >
+// inline void
+// Constrained_triangulation_2<Gt,Tds>::
+// insert(Vertex_handle  va, 
+//        Vertex_handle vb, 
+//        List_edges&   new_edges)
+//   // the new_edges created by the insertion of (va,vb)
+//   // are listed in new_edges
+//   // to help in Constrained_Delaunay_triangulation_2
+// {
+//   Vertex_handle vaa = va;
+//   while (vaa != vb) {
+//     Vertex_handle vbb = insert_part(va,vb,vaa,new_edges);
+//     vaa=vbb;
+//   }    
+//   return;
+// }
+
 template < class Gt, class Tds >
 inline void
 Constrained_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, Vertex_handle vb)
 {
-  List_edges new_edges;
-  insert(va, vb, new_edges);
-}
-
-template < class Gt, class Tds >
-inline void
-Constrained_triangulation_2<Gt,Tds>::
-insert(Vertex_handle  va, 
-       Vertex_handle vb, 
-       List_edges&   new_edges)
-  // the new_edges created by the insertion of (va,vb)
-  // are listed in new_edges
-  // to help in Constrained_Delaunay_triangulation_2
-{
   Vertex_handle vaa = va;
   while (vaa != vb) {
-    Vertex_handle vbb = insert_part(va,vb,vaa,new_edges);
+    Vertex_handle vbb = insert_part(va,vb,vaa);
     vaa=vbb;
   }    
   return;
 }
-
 
 template <class Gt, class Tds >
 inline
@@ -467,8 +477,8 @@ Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 insert_part(Vertex_handle  va, 
 	    Vertex_handle  vb,
-	    Vertex_handle vaa,
-	    List_edges & new_edges)
+	    Vertex_handle vaa)
+  // //	    List_edges & new_edges)
   // insert the portion of the constraint (va,vb)
   // from the current vertex vaa, up to the next encountered vertex vbb
   // return vbb
@@ -491,11 +501,24 @@ insert_part(Vertex_handle  va,
 			       conflict_boundary_ba);
   triangulate_hole(intersected_faces,
 		   conflict_boundary_ab,
-		   conflict_boundary_ba,
-		   new_edges,
-		   vbb);
+		   conflict_boundary_ba);
   return vbb;
 }       
+
+template < class Gt, class Tds >
+inline void
+Constrained_triangulation_2<Gt,Tds>::
+triangulate_hole(List_faces& intersected_faces,
+		 List_edges& conflict_boundary_ab,
+		 List_edges& conflict_boundary_ba)
+{
+  List_edges new_edges;
+  triangulate_hole(intersected_faces,
+		   conflict_boundary_ab,
+		   conflict_boundary_ba,
+		   new_edges);
+}
+
 
 
 template < class Gt, class Tds >
@@ -504,12 +527,11 @@ Constrained_triangulation_2<Gt,Tds>::
 triangulate_hole(List_faces& intersected_faces,
 		 List_edges& conflict_boundary_ab,
 		 List_edges& conflict_boundary_ba,
-		 List_edges& new_edges,
-		 Vertex_handle)
+		 List_edges& new_edges)
   // triangulate the hole limited by conflict_boundary_ab
   // and conflict_boundary_ba
-  // insert the new edges in new-edges
-  // deete the faces of intersected_faces
+  // insert the new edges in new-edges 
+  // delete the faces of intersected_faces
 {
   if ( !conflict_boundary_ab.empty() ) {
     triangulate_half_hole(conflict_boundary_ab, new_edges);

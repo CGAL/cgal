@@ -149,12 +149,13 @@ public:
  
 protected:
   void remove_2D(Vertex_handle v );
- // to be called from Constrained_triangulation_plus
+  Vertex_handle insert_part(Vertex_handle va, 
+			    Vertex_handle vb, 
+			    Vertex_handle vaa);
   void triangulate_hole(List_faces& intersected_faces,
 			List_edges& conflict_boundary_ab,
-			List_edges& conflict_boundary_ba,
-			List_edges& new_edges,
-			Vertex_handle vb);
+			List_edges& conflict_boundary_ba);
+
 public:
   // MESHING 
   double twice_area_of_triangle(const Point &p, 
@@ -533,31 +534,62 @@ inline void
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 insert(Vertex_handle  va, Vertex_handle vb)
 {
-  List_edges new_edges;
-  Ctr::insert(va,vb,new_edges);
-  propagating_flip(new_edges);
+  Vertex_handle vaa = va;
+  while (vaa != vb) {
+    Vertex_handle vbb = insert_part(va,vb,vaa);
+    vaa=vbb;
+  }    
+  return;
 }
 
 
-// fonction creee pour constrained triangulation plus
-// a supprimer
+template < class Gt, class Tds >
+Constrained_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+insert_part(Vertex_handle  va, 
+	    Vertex_handle  vb,
+	    Vertex_handle vaa)
+  // //	    List_edges & new_edges)
+  // insert the portion of the constraint (va,vb)
+  // from the current vertex vaa, up to the next encountered vertex vbb
+  // return vbb
+{
+ Vertex_handle vbb;
+
+ Face_handle fr;
+  int i;
+  if(includes_edge(vaa,vb,vbb,fr,i)) {
+    mark_constraint(fr,i);
+    return vbb;
+  }
+      
+  List_faces intersected_faces;
+  List_edges conflict_boundary_ab, conflict_boundary_ba;
+  
+  vbb = find_intersected_faces(va, vb, vaa, 
+			       intersected_faces,
+			       conflict_boundary_ab,
+			       conflict_boundary_ba);
+  triangulate_hole(intersected_faces,
+		   conflict_boundary_ab,
+		   conflict_boundary_ba);
+  return vbb;
+}       
+
+
 template < class Gt, class Tds >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 triangulate_hole(List_faces& intersected_faces,
 		 List_edges& conflict_boundary_ab,
-		 List_edges& conflict_boundary_ba,
-		 List_edges& new_edges,
-		 Vertex_handle vbb)
+		 List_edges& conflict_boundary_ba)
 {
+  List_edges new_edges;
   Ctr::triangulate_hole(intersected_faces,
 		       conflict_boundary_ab,
 		       conflict_boundary_ba,
-		       new_edges,
-		       vbb);
+		       new_edges);
   propagating_flip(new_edges);
-  // for vbb=intersection point (in a  Constrained_triangulate_plus_2)
-  flip_around(vbb); 
   return;
 }
 
