@@ -71,7 +71,6 @@ public:
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
-  int         id() const;
 
   Point_2     start() const;
   Point_2     source() const;
