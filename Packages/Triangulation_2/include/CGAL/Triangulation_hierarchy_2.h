@@ -100,7 +100,7 @@ public:
   void clear();
 
   // CHECKING
-  bool is_valid() const;
+  bool is_valid(bool verbose = false, int level = 0) const;
 
   // INSERT REMOVE
   Vertex_handle insert(const Point &p, Face_handle start = Face_handle(NULL) );
@@ -255,14 +255,14 @@ clear()
 template <class Tr>
 bool
 Triangulation_hierarchy_2<Tr>:: 
-is_valid() const
+is_valid(bool verbose, int level) const
 {
   bool result = true;
   int i;
   Vertex_iterator it;
   //verify correctness of triangulation at all levels
   for(i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
-	result = result && hierarchy[i]->is_valid();
+	result = result && hierarchy[i]->is_valid(verbose,level);
   //verify that lower level has no down pointers
   for( it = hierarchy[0]->vertices_begin(); 
        it != hierarchy[0]->vertices_end(); ++it) 

@@ -1,3 +1,5 @@
+- doc de le triangulation reguliere a mettre a jour
+  Julia a signale un bug sur le return des fonctions insert et remove
 - test de la regular hierarchy
 - input output of regular triangulation
   (may be outputing for each face the hidden points

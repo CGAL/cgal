@@ -259,7 +259,7 @@ copy_triangulation(const Self &tr )
   }
   Hidden_vertices_iterator hvit = hidden_vertices_begin();
   for( ; hvit !=  hidden_vertices_end() ; hvit++){
-    hvit->face()->vertex_list().push_back(hvit);
+    hvit->face()->vertex_list().push_back(&(*hvit));
   }
   CGAL_triangulation_postcondition(is_valid());
   return;
@@ -911,7 +911,7 @@ Regular_triangulation_2<Gt,Tds>::
 remove_hidden(Vertex_handle v )
 {
   _hidden_vertices--;
-  v->face()->vertex_list().remove(v);
+  v->face()->vertex_list().remove(&(*v));
   delete_vertex(v);
   return;
 }
