@@ -49,7 +49,8 @@ all:            \
                 cln_io$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
-                quotient_io$(EXE_EXT) 
+                quotient_io$(EXE_EXT) \
+                utilities$(EXE_EXT)
 
 MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
@@ -78,6 +79,9 @@ floattst$(EXE_EXT): floattst$(OBJ_EXT)
 quotient_io$(EXE_EXT): quotient_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quotient_io quotient_io$(OBJ_EXT) $(LDFLAGS)
 
+utilities$(EXE_EXT): utilities$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)utilities utilities$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    MP_Float.clean \
                    _test_sign.clean \
@@ -87,7 +91,8 @@ clean: \
                    cln_io.clean \
                    doubletst.clean \
                    floattst.clean \
-                   quotient_io.clean 
+                   quotient_io.clean \
+                   utilities.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
