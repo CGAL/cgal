@@ -1,3 +1,6 @@
+5 March 2005 Sylvain Pion
+- New numbering scheme for CGAL_VERSION_NR
+
 22 September 2004 Sylvain Pion
 - Leftturn_2 -> Left_turn_2.
 

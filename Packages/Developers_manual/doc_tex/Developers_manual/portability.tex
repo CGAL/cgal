@@ -130,27 +130,28 @@ with question marks are not decided yet) :
 \ccIndexSubitem{version number}{of \leda}
 \ccIndexSubitem{macros}{for version numbers}
 
-Every release of \cgal\ defines (in \texttt{<CGAL/config.h>}) two
+Every release of \cgal\ defines (in \texttt{<CGAL/version.h>}) two
 macros:
 \begin{description}
 \item[\texttt{CGAL\_VERSION}]
      \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
      -- a textual description of the
-     current release (\eg, or 1.2 or 2.2-I-1), and 
+     current release (\eg, or 1.2 or 2.2-I-1 or 3.2.1-I-15), and 
 \item[\texttt{CGAL\_VERSION\_NR}], 
      \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
      --  a numerical description of
      the current release such that more recent releases have higher
      number.
 
-     More precisely, it is defined as \texttt{1vvvmmmiii},
-     where \texttt{vvv} is the major release number (currently 002),
-     \texttt{mmm} is the minor release number (currently 004), and
-     \texttt{iii} is the internal release number (currently 001). For
-     public releases, the latter is defined as 100, at least as long as we
-     manage to get out something with less than 100 internal releases.
-     \texttt{:-)} Examples: for the public release 2.0 this number is 
-     1002000100; for internal release 2.2-I-1, it is 1002002001.
+     More precisely, it is defined as \texttt{1MMmmbiiii},
+     where \texttt{MM} is the major release number (e.g. 03),
+     \texttt{mm} is the minor release number (e.g. 02),
+     \texttt{b} is the bug-fix release number (e.g. 0), and
+     \texttt{iiii} is the internal release number (e.g. 0001). For
+     public releases, the latter is defined as 1000.
+     Examples: for the public release 3.2.4 this number is 
+     1030241000; for internal release 3.2-I-1, it is 1030200001.
+     Note that the scheme was modified around 3.2-I-30.
 \end{description}
  
 \noindent \leda\ defines a macro \texttt{\_\_LEDA\_\_}
