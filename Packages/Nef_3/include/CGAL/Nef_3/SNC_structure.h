@@ -2193,7 +2193,7 @@ public:
 	  hx = i % 2 ? -1 : 1;
 	  hy = i % 4 > 1 ? -1 : 1;
 	  hz = i > 3 ? -1 : 1;
-	  vh->point_at_center_ = Point_3(RT(0,hx), RT(0,hy), RT(0,hz), RT(1));
+	  vh->point_at_center_ = Infi_box::create_extended_point(hx, hy, hz);
 	  vh->mark_ = 1;		
 	}
 
@@ -2250,7 +2250,7 @@ public:
 	    hz = hy = 0;
 	  }
 	  hw = ((i%4) == 1 || (i%4) == 2) ? 1 : -1;
-	  fh->supporting_plane_ = Plane_3(RT(hx),RT(hy),RT(hz),RT(0,hw));
+	  fh->supporting_plane_ = Infi_box::create_extended_plane(hx,hy,hz,hw);
 	  fh->mark_ = 1;
 	}
 

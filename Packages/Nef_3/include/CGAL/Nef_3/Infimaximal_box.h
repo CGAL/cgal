@@ -119,8 +119,13 @@ class Infimaximal_box {
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
     std::cerr << "function should not be called" << std::endl;
-    while(1);
+    //    CGAL_nef3_assertion_msg(0,"function should not be called");
     return Point_3(0,0,0);
+  }
+
+  static Plane_3 create_extended_plane(NT a, NT b, NT c, NT d) {
+    std::cerr << "function should not be called" << std::endl;
+    return Plane_3(1,0,0,0);
   }
 
   template <typename SNC_decorator, typename Point>
@@ -247,6 +252,10 @@ class Infimaximal_box<Tag_true, Kernel> {
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
     return Kernel::epoint(x,0,y,0,z,0,1);
+  }
+
+  static Plane_3 create_extended_plane(NT a, NT b, NT c, NT d) {
+    return Plane_3(a,b,c,RT(0,d));
   }
 
   template <typename SNC_structure>

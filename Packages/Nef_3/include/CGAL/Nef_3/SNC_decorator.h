@@ -982,14 +982,14 @@ public:
     //    SETDTHREAD(19*131*43);
     
     TRACEN("=> binary operation");
-
+    /*
     TRACEN("=> first operand:");
     SNC_io_parser<SNC_structure> O0(std::cout, *sncp());
     O0.print();
     TRACEN("=> second operand:");
     SNC_io_parser<SNC_structure> O1(std::cout, snc1i);
     O1.print();
-
+    */
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");

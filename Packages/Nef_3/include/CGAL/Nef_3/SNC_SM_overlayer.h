@@ -1015,7 +1015,6 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     SHalfedge_handle e_below = halfedge_below(v);
     if ( v == v_start ) {     
       for (int i=0; i<2; ++i){
-	/* 
 	SHalfedge_around_sface_circulator e(first_out_edge(v)), end(e);
 	CGAL_For_all(e,end) {
 	  if(supp_object(e,i) != NULL)
@@ -1039,9 +1038,8 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	else {
 	  m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
 	  TRACEN("no initial support");
-	}
-	*/
-	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+	}     
+//	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
       }
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
