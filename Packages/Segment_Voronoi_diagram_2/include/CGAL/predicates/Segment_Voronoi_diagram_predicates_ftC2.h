@@ -515,6 +515,7 @@ struct Svd_predicate_caller<Result_t, Predicate, 5>
 
 //--------------------------------------------------------------------------
 
+#if 0
 template<template<class Kernel> class Predicate_t,
 	 typename Return_t, class FT, class ITag,
 	 unsigned int Num_sites>
@@ -601,7 +602,7 @@ svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
 
   return result;
 }
-
+#endif
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
