@@ -35,28 +35,27 @@ compile_and_run()
   echo "---$1---"
 
   # running general test
-  if compile $1 $2 $3 ; then
+  if compile test_arr $2 $3 ; then
     echo "   compilation of $1 succeeded" >> $ERRORFILE  
     REVERSE="no"
-    run $1 $2 $3
+    run test_arr $2 $3
     REVERSE="reverse"
-    run $1 $2 $3
+    run test_arr $2 $3
   else
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
    
   # running io test (not for segment_circle_traits).
   if [ $3 -ne $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
-    if compile $1_io $2 $3 ; then
+    if compile test_io $2 $3 ; then
 	echo "   compilation of $1_io succeeded" >> $ERRORFILE  
-	run_io $1_io $2 $3
+	run_io test_io $2 $3
     else
 	echo "   ERROR: compilation of $1_io failed" >> $ERRORFILE
     fi 
   fi
 
   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
-
 }
 
 run()
