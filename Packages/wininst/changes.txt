@@ -1,3 +1,5 @@
+2.1.31(11/06/03)  rursu: updated cl_1300.h and cl_1310.h
+
 2.1.29(03/06/03)  rursu: modified the projects files and the configuration 
 			 files in include/CGAL/config/msvc7/cl13xx.h
 
