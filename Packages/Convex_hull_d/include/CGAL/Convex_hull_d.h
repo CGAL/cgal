@@ -769,7 +769,7 @@ public:
           }
         }
       }
-      num_of_unbounded_simplices += NewSimplices.size();
+      num_of_unbounded_simplices -= VisibleFacets.size();
       if ( vertex_of_simplex(start_facet_,0) != Vertex_handle() )
         start_facet_ = *(--NewSimplices.end());
       CGAL_assertion( vertex_of_simplex(start_facet_,0)==Vertex_handle() );
@@ -1201,7 +1201,7 @@ Convex_hull_d<R>::insert(const Point_d& x)
               }
             }
           }
-          num_of_unbounded_simplices += NewSimplices.size(); 
+          num_of_unbounded_simplices -= visible_simplices.size(); 
           if ( vertex_of_simplex(start_facet_,0) != Vertex_handle() )
             start_facet_ = *(--NewSimplices.end());
           CGAL_assertion( vertex_of_simplex(start_facet_,0)==Vertex_handle() );
