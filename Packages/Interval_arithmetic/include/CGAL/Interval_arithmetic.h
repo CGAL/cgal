@@ -125,17 +125,7 @@ struct Interval_nt_advanced
   IA & operator*= (const IA & d);
   IA & operator/= (const IA & d);
 
-  // For speed...
-  IA  operator+ (const double d) const
-  {
-      return IA(-CGAL_IA_FORCE_TO_DOUBLE(-_inf-d),
-	         CGAL_IA_FORCE_TO_DOUBLE(_sup+d));
-  };
-  IA  operator- (const double d) const
-  {
-      return IA(-CGAL_IA_FORCE_TO_DOUBLE(d-_inf),
-	         CGAL_IA_FORCE_TO_DOUBLE(_sup-d));
-  };
+  // For speed.
   IA  operator* (const double d) const;
   IA  operator/ (const double d) const;
 
@@ -322,6 +312,9 @@ inline
 Interval_nt_advanced
 operator/ (const double d, const Interval_nt_advanced & t)
 {
+#ifdef CGAL_IA_DEBUG
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
+#endif
   if ( (t.inf()<=0) && (t.sup()>=0) ) // t~0
       return CGAL_IA_LARGEST;
 
@@ -411,6 +404,9 @@ inline
 Interval_nt_advanced
 square (const Interval_nt_advanced & d)
 {
+#ifdef CGAL_IA_DEBUG
+      CGAL_assertion(FPU_get_cw() == FPU_cw_up);
+#endif
   if (d.inf()>=0)
       return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d.inf()*-d.inf()),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d.sup()*d.sup()));
@@ -521,18 +517,18 @@ struct Interval_nt : public Interval_nt_advanced
     { return IA(-_sup, -_inf); }
 
   // The member functions that have to be protected against rounding mode.
-  IA operator+(const IA & d) const ;
-  IA operator-(const IA & d) const ;
-  IA operator*(const IA & d) const ;
-  IA operator/(const IA & d) const ;
-  // For speed...
+  IA operator+(const IA & d) const;
+  IA operator-(const IA & d) const;
+  IA operator*(const IA & d) const;
+  IA operator/(const IA & d) const;
+
   IA operator*(const double d) const;
-  // These have exactly the same code as the advanced class.
-  // How can I avoid duplicating the code ?
-  IA & operator+=(const IA & d) ;
-  IA & operator-=(const IA & d) ;
-  IA & operator*=(const IA & d) ;
-  IA & operator/=(const IA & d) ;
+  IA operator/(const double d) const;
+
+  IA & operator+=(const IA & d);
+  IA & operator-=(const IA & d);
+  IA & operator*=(const IA & d);
+  IA & operator/=(const IA & d);
 };
 
 
@@ -623,8 +619,23 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
 
 inline
 Interval_nt
+operator+ (const double d, const Interval_nt & t)
+{ return t+d; }
+
+inline
+Interval_nt
+operator- (const double d, const Interval_nt & t)
+{ return -(t-d); }
+
+inline
+Interval_nt
 operator* (const double d, const Interval_nt & t)
 { return t*d; }
+
+inline
+Interval_nt
+operator/ (const double d, const Interval_nt & t)
+{ return Interval_nt(d)/t; }
 
 inline
 Interval_nt
@@ -637,11 +648,16 @@ Interval_nt::operator/ (const Interval_nt & d) const
   return tmp;
 }
 
-
 inline
 Interval_nt
-operator/ (const double d, const Interval_nt & t)
-{ return Interval_nt(d)/t; }
+Interval_nt::operator/ (const double d) const
+{
+  FPU_CW_t backup = FPU_get_cw();
+  FPU_set_cw(FPU_cw_up);
+  Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
+  FPU_set_cw(backup);
+  return tmp;
+}
 
 inline
 Interval_nt &
