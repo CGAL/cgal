@@ -22,7 +22,11 @@
 
 #include "triangulation_2_edit_vertex.h"
 
-void triangulation_2_edit_vertex_helper::delete_vertex() { delete_vertexi(); };
+void triangulation_2_edit_vertex_helper::delete_vertex()
+{ 
+  delete_vertexi();
+  emit(triangulation_changed());
+};
 void triangulation_2_edit_vertex_helper::move_vertex() { move_vertexi(); };
 void triangulation_2_edit_vertex_helper::change_weight() { change_weighti(); };
 void triangulation_2_edit_vertex_helper::stateChanged(int i){

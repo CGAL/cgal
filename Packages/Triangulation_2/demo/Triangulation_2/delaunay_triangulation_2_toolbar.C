@@ -34,6 +34,7 @@
   Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 			       Delaunay *t) : QToolBar(mw, "NT")
   {
+    dt = t;
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
     //set the widget
@@ -82,10 +83,9 @@
         &input_line_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
         &edit_vertex_layer, SLOT(stateChanged(int)));
-  
+  connect(&edit_vertex_layer, SIGNAL(triangulation_changed()),
+	  this, SLOT(triangulation_changed()));
 };
-
-
 
 #include "delaunay_triangulation_2_toolbar.moc"
 

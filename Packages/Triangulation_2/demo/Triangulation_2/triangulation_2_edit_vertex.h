@@ -33,17 +33,21 @@
 class triangulation_2_edit_vertex_helper : public CGAL::Qt_widget_layer
 {
   Q_OBJECT
-  public:
+public:
   virtual void delete_vertexi(){};
   virtual void move_vertexi(){};
   virtual void change_weighti(){};
 
+protected:
+  void emit_signal(){emit(triangulation_changed());}
 
 public slots:
   void stateChanged(int i);
   void delete_vertex();
   void move_vertex();
   void change_weight();
+signals:
+  void triangulation_changed();
 };
 
 template <class T>
@@ -80,12 +84,13 @@ private:
   {
     if(e->button() == Qt::LeftButton && on_first)
     {
-      on_first = FALSE;
+      on_first = false;
+      emit_signal();
     }
     if(e->button() == Qt::RightButton)
     {
-	    if (dt->dimension()<2) return;
-	    FT x, y;
+      if (dt->dimension()<2) return;
+      FT x, y;
       widget->x_real(e->x(), x);
       widget->y_real(e->y(), y);
       Point p(x, y);
@@ -147,13 +152,15 @@ private:
   void move_vertexi(){
     on_first = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
+                            QPoint(widget->x_pixel(
+			    old_point.x()), widget->y_pixel(old_point.y()))));
   };
 };//end class 
 
 
 template <class T>
-class triangulation_2_edit_weightedpoint : public triangulation_2_edit_vertex_helper
+class triangulation_2_edit_weightedpoint : 
+  public triangulation_2_edit_vertex_helper
 {
 public:
 
@@ -286,7 +293,8 @@ private:
         Bare_point lastp = current_v->point().point();
 
         t->remove(current_v);
-        current_v = t->insert(Weighted_point(lastp, CGAL::squared_distance(lastp, Bare_point(x, y))));
+        current_v = t->insert(Weighted_point(
+		    lastp, CGAL::squared_distance(lastp, Bare_point(x, y))));
         widget->redraw();	//redraw the scenes
         old_point = lastp;
       }
@@ -323,7 +331,8 @@ private:
     change_weight_pressed = false;
     move_button_pressed = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
+                            QPoint(widget->x_pixel(old_point.x()), 
+				   widget->y_pixel(old_point.y()))));
   }
   
   void 
@@ -332,7 +341,8 @@ private:
     move_button_pressed = false;
     change_weight_pressed = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
+                            QPoint(widget->x_pixel(old_point.x()), 
+				   widget->y_pixel(old_point.y()))));
   }
 };//end class 
 

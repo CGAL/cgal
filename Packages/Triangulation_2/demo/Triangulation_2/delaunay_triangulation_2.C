@@ -141,9 +141,13 @@ public:
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
       this, SLOT(get_new_object(CGAL::Object)));
 
+    connect(newtoolbar, SIGNAL(changed()), 
+	    this, SLOT(something_changed()));
+
     //application flag stuff
     got_point = FALSE;
     old_state = 0;
+    triangulation_changed = true;
   };
 
   void  init_coordinates(){
@@ -160,6 +164,7 @@ private slots:
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
+    triangulation_changed = true;
     something_changed();
   }
 	
@@ -190,6 +195,7 @@ private slots:
       got_point = TRUE;
       show_conflicts(p);
       tr1.insert(p);
+      triangulation_changed = true;
     } 
   }
 
@@ -246,9 +252,21 @@ private slots:
   }
 
   void timerDone(){
+    if(triangulation_changed){
+      if(tr1.number_of_vertices() > 2)
+        newtoolbar->set_line_enabled(true);
+      else
+        newtoolbar->set_line_enabled(false);
+      if(tr1.number_of_vertices() > 2)
+        newtoolbar->set_move_enabled(true);
+      else
+	newtoolbar->set_move_enabled(false);
+      triangulation_changed = false;
+    }
     if(old_state!=current_state){
       widget->redraw();
       old_state = current_state;
+      triangulation_changed = true;
     }
   }	
 
@@ -273,6 +291,7 @@ private slots:
     }
     stoolbar->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
+    triangulation_changed = true;
     something_changed();
   }
 	
@@ -341,15 +360,19 @@ private:
         *widget << tr1.segment( *eit );
     }		
   }
+
+public slots:
   inline  void something_changed(){current_state++;};
 
-
+private:
   CGAL::Qt_widget                   *widget;		
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   Tools_toolbar                     *newtoolbar;
   Layers_toolbar                    *vtoolbar;
   bool                              got_point;	
 	  //if a CGAL::Point is received should be true
+  bool                              triangulation_changed;
+          //true only when triangulation has changed
   int                               old_state;
 };//endclass
 

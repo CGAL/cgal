@@ -39,6 +39,8 @@ class Tools_toolbar : public QToolBar
   Q_OBJECT
 public:
   Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  void set_line_enabled(bool t){but[2]->setEnabled(t);}
+  void set_move_enabled(bool t){but[3]->setEnabled(t);}
 private:
   QToolButton        *but[10];
   CGAL::Qt_widget    *widget;
@@ -46,7 +48,12 @@ private:
   int                activebutton;
   bool               is_active;
   int                nr_of_buttons;
-	
+  Delaunay           *dt;
+private slots:
+  void               triangulation_changed(){emit(changed());}
+signals:
+  void               changed();
+private:	
   CGAL::Qt_widget_get_line<Rep>         input_line_layer;
   CGAL::Qt_widget_get_point<Rep>        input_point_layer;
   triangulation_2_edit_vertex<Delaunay> edit_vertex_layer;
