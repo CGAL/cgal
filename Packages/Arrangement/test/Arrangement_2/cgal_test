@@ -208,25 +208,25 @@ else
   SIMPLE=4
 
   # run test with generic segment traits
-#   (compile_and_run test $TRAP   $CGAL_SEGMENT_TRAITS)
-#   (compile_and_run test $NAIVE  $CGAL_SEGMENT_TRAITS)
-#   (compile_and_run test $WALK   $CGAL_SEGMENT_TRAITS)
-#   (compile_and_run test $SIMPLE $CGAL_SEGMENT_TRAITS)
+   (compile_and_run test $TRAP   $CGAL_SEGMENT_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_SEGMENT_TRAITS)
+   (compile_and_run test $WALK   $CGAL_SEGMENT_TRAITS)
+   (compile_and_run test $SIMPLE $CGAL_SEGMENT_TRAITS)
   # run test with generic segment traits
-#   (compile_and_run test $TRAP   $CGAL_SEGMENT_CACHED_TRAITS)
-#   (compile_and_run test $NAIVE  $CGAL_SEGMENT_CACHED_TRAITS)
-#   (compile_and_run test $WALK   $CGAL_SEGMENT_CACHED_TRAITS)
-#   (compile_and_run test $SIMPLE $CGAL_SEGMENT_CACHED_TRAITS)
+   (compile_and_run test $TRAP   $CGAL_SEGMENT_CACHED_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_SEGMENT_CACHED_TRAITS)
+   (compile_and_run test $WALK   $CGAL_SEGMENT_CACHED_TRAITS)
+   (compile_and_run test $SIMPLE $CGAL_SEGMENT_CACHED_TRAITS)
   # run test with generic polyline traits
-#   (compile_and_run test $TRAP   $CGAL_POLYLINE_TRAITS)
-#   (compile_and_run test $NAIVE  $CGAL_POLYLINE_TRAITS)
-#   (compile_and_run test $WALK   $CGAL_POLYLINE_TRAITS)
-#   (compile_and_run test $SIMPLE $CGAL_POLYLINE_TRAITS)
+   (compile_and_run test $TRAP   $CGAL_POLYLINE_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_POLYLINE_TRAITS)
+   (compile_and_run test $WALK   $CGAL_POLYLINE_TRAITS)
+   (compile_and_run test $SIMPLE $CGAL_POLYLINE_TRAITS)
   # run test with generic polyline traits
-#   (compile_and_run test $TRAP   $CGAL_POLYLINE_CACHED_TRAITS)
-#   (compile_and_run test $NAIVE  $CGAL_POLYLINE_CACHED_TRAITS)
-#   (compile_and_run test $WALK   $CGAL_POLYLINE_CACHED_TRAITS)
-#   (compile_and_run test $SIMPLE $CGAL_POLYLINE_CACHED_TRAITS)
+   (compile_and_run test $TRAP   $CGAL_POLYLINE_CACHED_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_POLYLINE_CACHED_TRAITS)
+   (compile_and_run test $WALK   $CGAL_POLYLINE_CACHED_TRAITS)
+   (compile_and_run test $SIMPLE $CGAL_POLYLINE_CACHED_TRAITS)
   # run test with segment conic traits
    (compile_and_run test $WALK   $CGAL_CONIC_TRAITS)
 
