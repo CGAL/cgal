@@ -124,12 +124,12 @@ namespace CGAL {
         ~Binary_node() {switch (the_node_type) {
 
 			case LEAF: {
-				delete []data;
-			     	break;}
+				delete []data;}
+			     	break;
 
 			case INTERNAL: { 
-				delete sep; delete lower_ch; delete upper_ch;
-				break;}
+				delete sep; delete lower_ch; delete upper_ch;}
+				break;
 			/*
 			case EXTENDED_INTERNAL:
 				delete sep; delete lower_ch; delete upper_ch;
