@@ -644,8 +644,8 @@ You will see in the next tutorial a solution to this problem.
 \subsection*{Tutorial 6}
 
 The sixth tutorial uses for the first time a tool. It is declared the
-class My\_Tool derived from \ccStyle{Qt\_widget\_tool}, that is used to create a
-\cgal\ point every time you click on the widget.
+class My\_Tool derived from \ccStyle{Qt\_widget\_tool}, that is used
+to create a \cgal\ point every time you click on the widget.
 \begin{ccExampleCode}
 class My_Tool : public CGAL::Qt_widget_tool{
 public:
@@ -698,18 +698,15 @@ object have been received you have to use CGAL::assign. If you are
 already familiar with \cgal\ this will be a piece of cake to you.
 
 You can insert new points in the triangulation by clicking on the
-widget. You can notice that after the first use of the standard
-toolbar, you cannot insert more points in the triangulation. It's
-because some tools from standard toolbar detach the current tool
-before attaching. Due to the conflicts that may appear, it is
-preferable to do it this way.
+widget. When you use the standard toolbar, your already attached tool
+will be put on waiting state, untill you finish working with it. For
+example if you click on the hand tool and you use it, then you click
+once again for detaching it, your attached tool will receive the
+focus, being brought to life.
 
 It is written in the documentation that when a new tool is attached to the
 \ccStyle{Qt\_widget}, the last tool attached, is detached. Two tools will
 never be attached in the same time on the widget.
-
-To attach again the tool created in this tutorial you have to create
-some button that lets you attach it or detach it at run time.
 
 \subsection*{Tutorial 7}
 
