@@ -16,24 +16,16 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline
-_Twotuple< typename RayC2<R CGAL_CTAG>::Point_2 > *
-RayC2<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<Point_2>*)PTR;
-}
-
-template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2()
 {
-  PTR = new _Twotuple<Point_2>;
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG>  &r)
-  : Handle((Handle&)r)
+  : Handle_for<Twotuple<typename R::Point_2> >(r)
 {}
 
 template < class R >
@@ -41,30 +33,22 @@ CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
                           const typename RayC2<R CGAL_CTAG>::Point_2 &secondp)
 {
-  PTR = new _Twotuple<Point_2>(sp, secondp);
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, secondp);
 }
+
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
                           const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
 {
-  PTR = new _Twotuple<Point_2>(sp, sp + d.to_vector());
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, sp + d.to_vector());
 }
 
 template < class R >
 inline
 RayC2<R CGAL_CTAG>::~RayC2()
 {}
-
-template < class R >
-inline
-RayC2<R CGAL_CTAG> &
-RayC2<R CGAL_CTAG>::operator=(const RayC2<R CGAL_CTAG> &r)
-{
-  Handle::operator=(r);
-  return *this;
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -81,20 +65,13 @@ RayC2<R CGAL_CTAG>::operator!=(const RayC2<R CGAL_CTAG> &r) const
   return !(*this == r);
 }
 
-template < class R >
-inline
-int
-RayC2<R CGAL_CTAG>::id() const
-{
-  return (int) PTR;
-}
 
 template < class R >
 inline
 typename RayC2<R CGAL_CTAG>::Point_2
 RayC2<R CGAL_CTAG>::start() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -102,7 +79,7 @@ inline
 typename RayC2<R CGAL_CTAG>::Point_2
 RayC2<R CGAL_CTAG>::source() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -110,7 +87,7 @@ inline
 typename RayC2<R CGAL_CTAG>::Point_2
 RayC2<R CGAL_CTAG>::second_point() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -119,8 +96,8 @@ typename RayC2<R CGAL_CTAG>::Point_2
 RayC2<R CGAL_CTAG>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
-  if (i == 0) return ptr()->e0;
-  if (i == 1) return ptr()->e1;
+  if (i == 0) return ptr->e0;
+  if (i == 1) return ptr->e1;
   return source() + (second_point() - source()) * FT(i);
 }
 

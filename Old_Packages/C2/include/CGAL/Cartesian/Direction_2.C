@@ -15,33 +15,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-inline
-_Twotuple<typename DirectionC2<R CGAL_CTAG>::FT>*
-DirectionC2<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<FT>*)PTR;
-}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::DirectionC2()
 {
-  PTR = new _Twotuple<FT>();
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(); 
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
 DirectionC2(const DirectionC2<R CGAL_CTAG> &d)
-  : Handle((Handle&)d)
+  : Handle_for<Twotuple<typename R::FT> >(d)
 {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 DirectionC2<R CGAL_CTAG>::
-DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v) :
-  Handle((Handle&)v)
+DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v)
+ : Handle_for<Twotuple<typename R::FT> >(v)
 {}
 
 template < class R >
@@ -50,7 +43,7 @@ DirectionC2<R CGAL_CTAG>::
 DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
             const typename DirectionC2<R CGAL_CTAG>::FT &y)
 {
-  PTR = new _Twotuple<FT>(x, y);
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
 }
 
 template < class R >
@@ -58,21 +51,13 @@ inline
 DirectionC2<R CGAL_CTAG>::~DirectionC2()
 {}
 
-template < class R >
-CGAL_KERNEL_INLINE
-DirectionC2<R CGAL_CTAG> &
-DirectionC2<R CGAL_CTAG>::operator=(const DirectionC2<R CGAL_CTAG> &d)
-{
-  Handle::operator=(d);
-  return *this;
-}
 
 template < class R >
 inline
 bool
 DirectionC2<R CGAL_CTAG>::operator==(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  if ( id() == d.id() ) return true;
+  if ( ptr == d.ptr ) return true;
   return equal_direction(*this, d);
 }
 
@@ -84,13 +69,7 @@ DirectionC2<R CGAL_CTAG>::operator!=(const DirectionC2<R CGAL_CTAG> &d) const
   return !( *this == d );
 }
 
-template < class R >
-inline
-int
-DirectionC2<R CGAL_CTAG>::id() const
-{
-  return (int)PTR;
-}
+
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -196,7 +175,7 @@ inline
 typename DirectionC2<R CGAL_CTAG>::FT
 DirectionC2<R CGAL_CTAG>::dx() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -204,7 +183,7 @@ inline
 typename DirectionC2<R CGAL_CTAG>::FT
 DirectionC2<R CGAL_CTAG>::dy() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC2

@@ -16,7 +16,7 @@ class PointC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
- : public Handle // Later we will use the handles of Lutz and Michael
+ : public Handle_for< Twotuple<typename R_::FT> >
 {
 public:
   typedef R_                                    R;
@@ -54,12 +54,9 @@ public:
   PointC2(const Vector_2 &v);
   ~PointC2();
 
-  Self    &operator=(const Self &p);
-
   bool    operator==(const Self &p) const;
   bool    operator!=(const Self &p) const;
-  int     id() const;
-
+ 
   FT      x() const;
   FT      y() const;
   FT      cartesian(int i) const;
@@ -76,8 +73,6 @@ public:
 
   Self transform(const Aff_transformation_2 &) const;
 
-private:
-  _Twotuple<FT>*  ptr() const;
 };
 
 CGAL_END_NAMESPACE

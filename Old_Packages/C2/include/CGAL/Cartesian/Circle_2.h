@@ -16,7 +16,7 @@ class CircleC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+: public Handle_for< Circle_repC2<R_> >
 {
 public:
   typedef R_                                    R;
@@ -56,11 +56,8 @@ public:
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
   ~CircleC2();
 
-  Self   &operator=(const Self &t);
-
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
-  int            id() const;
 
   Point_2    center() const;
   FT             squared_radius() const;
@@ -87,8 +84,6 @@ public:
 
   Bbox_2         bbox() const;
 
-private:
-  Circle_repC2<R> *ptr() const;
 };
 
 CGAL_END_NAMESPACE

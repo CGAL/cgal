@@ -21,13 +21,13 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2()
 {
-  PTR = new _Twotuple< Point_2 >;
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>  &s)
-  : Handle((Handle&)s)
+  : Handle_for<Twotuple<typename R::Point_2> >(s)
 {}
 
 template < class R >
@@ -36,7 +36,7 @@ SegmentC2<R CGAL_CTAG>::
 SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
           const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
 {
-  PTR = new _Twotuple< Point_2 >(sp, ep);
+   new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, ep);
 }
 
 template < class R >
@@ -44,14 +44,7 @@ inline
 SegmentC2<R CGAL_CTAG>::~SegmentC2()
 {}
 
-template < class R >
-inline
-SegmentC2<R CGAL_CTAG> &
-SegmentC2<R CGAL_CTAG>::operator=(const SegmentC2<R CGAL_CTAG> &s)
-{
-  Handle::operator=(s);
-  return *this;
-}
+
 
 template < class R >
 inline
@@ -69,20 +62,13 @@ SegmentC2<R CGAL_CTAG>::operator!=(const SegmentC2<R CGAL_CTAG> &s) const
   return !(*this == s);
 }
 
-template < class R >
-inline
-int
-SegmentC2<R CGAL_CTAG>::id() const
-{
-  return (int) PTR;
-}
 
 template < class R >
 inline
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::start() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -90,7 +76,7 @@ inline
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::end() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -98,7 +84,7 @@ inline
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::source() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -106,7 +92,7 @@ inline
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::target() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >

@@ -16,7 +16,7 @@ class RayC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Twotuple< typename R_::Point_2> >
 {
 public:
   typedef R_                                    R;
@@ -52,8 +52,6 @@ public:
   RayC2(const Point_2 &sp, const Direction_2 &d);
   ~RayC2();
 
-  Self        &operator=(const Self &r);
-
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
   int         id() const;
@@ -75,8 +73,6 @@ public:
   bool        has_on(const Point_2 &p) const;
   bool        collinear_has_on(const Point_2 &p) const;
 
-private:
-  _Twotuple< Point_2 > *ptr() const;
 };
 
 CGAL_END_NAMESPACE

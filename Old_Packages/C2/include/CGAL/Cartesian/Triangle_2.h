@@ -16,7 +16,7 @@ class TriangleC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Threetuple< typename R_::Point_2> >
 {
 public:
   typedef R_                                    R;
@@ -51,11 +51,8 @@ public:
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
   ~TriangleC2();
 
-  Self           &operator=(const Self &t);
-
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
-  int            id() const;
 
   Point_2        vertex(int i) const;
   Point_2        operator[](int i) const;
@@ -79,8 +76,6 @@ public:
 
   Bbox_2         bbox() const;
 
-private:
-  _Threetuple< Point_2 >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

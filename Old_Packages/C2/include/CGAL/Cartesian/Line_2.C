@@ -18,13 +18,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-inline
-_Threetuple<typename LineC2<R CGAL_CTAG>::FT>*
-LineC2<R CGAL_CTAG>::ptr() const
-{
-  return (_Threetuple<FT>*)PTR;
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -33,7 +26,7 @@ LineC2<R CGAL_CTAG>::new_rep(const typename LineC2<R CGAL_CTAG>::FT &a,
                              const typename LineC2<R CGAL_CTAG>::FT &b,
 			     const typename LineC2<R CGAL_CTAG>::FT &c)
 {
-  PTR = new _Threetuple<FT> (a, b, c);
+  new ( static_cast< void*>(ptr)) Threetuple<FT>(a, b, c);
 }
 
 template < class R >
@@ -50,13 +43,13 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>::LineC2()
 {
-  PTR = new _Threetuple<FT>;
+  new ( static_cast< void*>(ptr)) Threetuple<FT>();
 }
 
 template < class R >
 inline
 LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>  &l)
-  : Handle((Handle&)l)
+  : Handle_for<Threetuple<typename R::FT> >(l)
 {}
 
 template < class R >
@@ -64,7 +57,7 @@ inline
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
                             const typename LineC2<R CGAL_CTAG>::Point_2 &q)
 {
-  new_rep(p, q);
+  new_rep(p,q);
 }
 
 template < class R >
@@ -80,14 +73,14 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Segment_2 &s)
 {
-  new_rep(s.start(), s.end());
+  new_rep(s.source(), s.target());
 }
 
 template < class R >
 inline
 LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Ray_2 &r)
 {
-  new_rep(r.start(), r.second_point());
+  new_rep(r.point(0), r.point(1));
 }
 
 template < class R >
@@ -104,20 +97,13 @@ inline
 LineC2<R CGAL_CTAG>::~LineC2()
 {}
 
-template < class R >
-CGAL_KERNEL_INLINE
-LineC2<R CGAL_CTAG> &
-LineC2<R CGAL_CTAG>::operator=(const LineC2<R CGAL_CTAG> &l)
-{
-  Handle::operator=(l);
-  return *this;
-}
+
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 {
-  if ( id() == l.id() ) return true;
+  if ( ptr == l.ptr ) return true;
   return equal_line(*this,l);
 }
 
@@ -129,20 +115,13 @@ LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
   return !(*this == l);
 }
 
-template < class R >
-inline
-int
-LineC2<R CGAL_CTAG>::id() const
-{
-  return (int) PTR;
-}
 
 template < class R >
 inline
 typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::a() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -150,7 +129,7 @@ inline
 typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::b() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -158,7 +137,7 @@ inline
 typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::c() const
 {
-  return ptr()->e2;
+  return ptr->e2;
 }
 
 template < class R >

@@ -16,7 +16,7 @@ class DirectionC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Twotuple<typename R_::FT> >
 {
 public:
   typedef R_                                    R;
@@ -52,8 +52,6 @@ public:
   DirectionC2(const FT &x, const FT &y);
   ~DirectionC2();
 
-  Self     &operator=(const Self &d);
-
   bool     operator==(const Self &d) const;
   bool     operator!=(const Self &d) const;
   bool     operator>=(const Self &d) const;
@@ -61,8 +59,7 @@ public:
   bool     operator>(const Self &d) const;
   bool     operator<(const Self &d) const;
   bool     counterclockwise_in_between( const Self &d1, const Self &d2) const;
-  int      id() const;
-
+  
   Vector_2 to_vector() const;
 
   Self     perpendicular(const Orientation &o) const;
@@ -73,9 +70,6 @@ public:
   FT       delta(int i) const;
   FT       dx() const;
   FT       dy() const;
-
-private:
-  _Twotuple<FT>*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

@@ -15,26 +15,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-inline
-_Twotuple< typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 > *
-Iso_rectangleC2<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<Point_2>*)PTR;
-}
 
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>::Iso_rectangleC2()
 {
-  PTR = new _Twotuple<Point_2>;
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
 }
 
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>::
 Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG> &r)
-  : Handle((Handle&)r)
+  : Handle_for<Twotuple<typename R::Point_2> >(r)
 {}
 
 template < class R >
@@ -48,8 +41,8 @@ Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
   else               { minx = q.x(); maxx = p.x(); }
   if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
   else               { miny = q.y(); maxy = p.y(); }
-  PTR = new _Twotuple<Point_2 >(Point_2(minx, miny),
-                                Point_2(maxx, maxy));
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(Point_2(minx, miny),
+						    Point_2(maxx, maxy));
 }
 
 template < class R >
@@ -57,14 +50,6 @@ inline
 Iso_rectangleC2<R CGAL_CTAG>::~Iso_rectangleC2()
 {}
 
-template < class R >
-inline
-Iso_rectangleC2<R CGAL_CTAG> &
-Iso_rectangleC2<R CGAL_CTAG>::operator=(const Iso_rectangleC2<R CGAL_CTAG> &r)
-{
-  Handle::operator=(r);
-  return *this;
-}
 
 template < class R >
 inline
@@ -84,20 +69,13 @@ operator!=(const Iso_rectangleC2<R CGAL_CTAG> &r) const
   return !(*this == r);
 }
 
-template < class R >
-inline
-int
-Iso_rectangleC2<R CGAL_CTAG>::id() const
-{
-  return (int)PTR;
-}
 
 template < class R >
 inline
 typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::min() const
 {
-  return  ptr()->e0;
+  return  ptr->e0;
 }
 
 template < class R >
@@ -105,7 +83,7 @@ inline
 typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
 Iso_rectangleC2<R CGAL_CTAG>::max() const
 {
-  return  ptr()->e1;
+  return  ptr->e1;
 }
 
 template < class R >

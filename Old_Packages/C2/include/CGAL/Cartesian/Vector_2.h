@@ -16,7 +16,7 @@ class VectorC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Twotuple<typename R_::FT> >
 {
 public:
   typedef R_                                    R;
@@ -55,8 +55,6 @@ public:
   VectorC2(const FT &x, const FT &y);
   ~VectorC2();
 
-  Self            &operator=(const Self &v);
-
   bool            operator==(const Self &v) const;
   bool            operator!=(const Self &v) const;
   bool            operator==(const Null_vector &) const;
@@ -72,7 +70,6 @@ public:
   FT              hw() const;
   FT              homogeneous(int i) const;
 
-  int             id() const;
   int             dimension() const;
 
   Self            operator+(const Self &w) const;
@@ -85,8 +82,6 @@ public:
   Self            perpendicular(const Orientation &o) const;
   Self            transform(const Aff_transformation_2 &) const;
 
-private:
-  _Twotuple<FT>*  ptr() const;
 };
 
 CGAL_END_NAMESPACE

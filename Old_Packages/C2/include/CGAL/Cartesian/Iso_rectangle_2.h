@@ -16,7 +16,7 @@ class Iso_rectangleC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Twotuple< typename R_::Point_2> >
 {
 public:
   typedef R_                                    R;
@@ -51,11 +51,8 @@ public:
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q);
   ~Iso_rectangleC2();
 
-  Self           &operator=(const Self &r);
-
   bool            operator==(const Self &s) const;
   bool            operator!=(const Self &s) const;
-  int             id() const;
 
   Point_2         min() const;
   Point_2         max() const;
@@ -77,9 +74,6 @@ public:
   FT              ymin() const;
   FT              xmax() const;
   FT              ymax() const;
-
-private:
-  _Twotuple< Point_2 >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

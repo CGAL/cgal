@@ -1,4 +1,4 @@
-// revision      : $Revision$
+ // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -8,7 +8,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-class Circle_repC2 : public Rep
+class Circle_repC2 
+//: public Rep
+  : public Ref_counted
 {
 public:
   typedef typename R::FT                        FT;

@@ -18,30 +18,22 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline
-_Twotuple<typename VectorC2<R CGAL_CTAG>::FT>*
-VectorC2<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<FT>*)PTR;
-}
-
-template < class R >
 VectorC2<R CGAL_CTAG>::VectorC2()
 {
-  PTR = new _Twotuple<typename VectorC2<R CGAL_CTAG>::FT>();
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(); 
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const VectorC2<R CGAL_CTAG>  &v) :
-  Handle((Handle&)v)
+  Handle_for<Twotuple<typename R::FT> >(v)
 {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const Null_vector &)
 {
-  PTR = new _Twotuple<FT>(FT(0), FT(0));
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(FT(0), FT(0));
 }
 
 template < class R >
@@ -50,10 +42,10 @@ VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &hx,
                                 const typename VectorC2<R CGAL_CTAG>::FT &hy,
 				const typename VectorC2<R CGAL_CTAG>::FT &hw)
 {
-  if ( hw == FT(1))
-    PTR = new _Twotuple<FT>(hx, hy);
+  if( hw != FT(1))
+    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx/hw, hy/hw);
   else
-    PTR = new _Twotuple<FT>(hx/hw, hy/hw);
+    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx, hy);
 }
 
 template < class R >
@@ -61,7 +53,7 @@ CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::VectorC2(const typename VectorC2<R CGAL_CTAG>::FT &x,
                                 const typename VectorC2<R CGAL_CTAG>::FT &y)
 {
-  PTR = new _Twotuple<FT>(x, y);
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
 }
 
 template < class R >
@@ -69,27 +61,20 @@ inline
 VectorC2<R CGAL_CTAG>::~VectorC2()
 {}
 
-template < class R >
-inline
-VectorC2<R CGAL_CTAG> &
-VectorC2<R CGAL_CTAG>::operator=(const VectorC2<R CGAL_CTAG> &v)
-{
-  Handle::operator=(v);
-  return *this;
-}
+
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Point_2 &p)
-  : Handle((Handle&)p)
+  : Handle_for<Twotuple<typename R::FT> > (p)
 {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorC2<R CGAL_CTAG>::
 VectorC2(const typename VectorC2<R CGAL_CTAG>::Direction_2 &d)
-  : Handle((Handle&)d)
+  : Handle_for<Twotuple<typename R::FT> > (d)
 {}
 
 template < class R >
@@ -124,20 +109,13 @@ VectorC2<R CGAL_CTAG>::operator!=(const Null_vector &v) const
   return !(*this == v);
 }
 
-template < class R >
-inline
-int
-VectorC2<R CGAL_CTAG>::id() const
-{
-  return (int) PTR;
-}
 
 template < class R >
 inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::x() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -145,7 +123,7 @@ inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::y() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -178,7 +156,7 @@ inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::hx() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -186,7 +164,7 @@ inline
 typename VectorC2<R CGAL_CTAG>::FT
 VectorC2<R CGAL_CTAG>::hy()  const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >

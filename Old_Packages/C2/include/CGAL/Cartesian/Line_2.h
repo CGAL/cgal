@@ -16,7 +16,7 @@ class LineC2
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Threetuple<typename R_::FT> >
 {
 public:
   typedef R_                                    R;
@@ -55,11 +55,8 @@ public:
   LineC2(const Point_2 &p, const Direction_2 &d);
   ~LineC2();
 
-  Self            &operator=(const Self &l);
-
   bool            operator==(const Self &l) const;
   bool            operator!=(const Self &l) const;
-  int             id() const;
 
   FT              a() const;
   FT              b() const;
@@ -90,7 +87,6 @@ public:
   Self            transform(const Aff_transformation_2 &t) const;
 
 private:
-  _Threetuple<FT>* ptr() const;
   void            new_rep(const Point_2 &p, const Point_2 &q);
   void            new_rep(const FT &a, const FT &b, const FT &c);
 };
