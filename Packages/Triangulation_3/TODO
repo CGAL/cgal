@@ -60,7 +60,9 @@ Gestion memoire
   comment ca peut etre vraiment fiable).
 - M doit se faire expliquer par S dans le detail une fois pour toutes ce 
   que ce qui precede veut dire, et qu'il n'y a aucun pb si l'utilisateur 
-  change la cell_base.
+  change la cell_base --> apres explications... il y a un pb, les infos
+  eventuellement rajoutees par l'utilisateur dans sa cell_base ont une 
+  valeur "aleatoire" pour les cellules creees par insert().
 
 Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
