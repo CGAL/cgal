@@ -1,3 +1,6 @@
+1.49 (24 July 2003)
+- Remove the unused CGAL_FRIEND_INLINE.
+
 1.48 (24 July 2003)
 - Add the new "Exact_*_kernel*" typedefs.
 
