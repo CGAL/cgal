@@ -73,6 +73,7 @@ public:
   typedef Compare_lexicographicallyCd<Self> Compare_lexicographically_d; 
   typedef Lt_from_compare<Self> Less_lexicographically_d;
   typedef Le_from_compare<Self> Less_or_equal_lexicographically_d;
+  typedef Eq_from_method<Self> Equal_d;
   typedef Center_of_circleCd<Self> Center_of_circle_d;
   typedef Contained_in_linear_hullCd<Self> Contained_in_linear_hull_d;  
   typedef Linear_rankCd<Self> Linear_rank_d;
@@ -105,6 +106,8 @@ public:
   { return Affine_rank_d(); }
   Affinely_independent_d affinely_independent_d_object() const
   { return Affinely_independent_d(); }
+  Equal_d equal_d_object() const
+  { return Equal_d(); }
   Compare_lexicographically_d compare_lexicographically_d_object() const
   { return Compare_lexicographically_d(); }
   Less_lexicographically_d less_lexicographically_d_object() const

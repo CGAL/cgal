@@ -19,5 +19,12 @@ struct Le_from_compare {
     return cmp(p1,p2) != LARGER; }
 };
 
+template <class R>
+struct Eq_from_method {
+  typedef typename R::Point_d Point_d;
+  bool operator()(const Point_d& p1, const Point_d& p2) const
+  { return p1 == p2; }
+};
+
 CGAL_END_NAMESPACE
 #endif //SIMPLE_OBJECTS_H
