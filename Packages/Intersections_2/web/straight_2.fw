@@ -240,7 +240,7 @@ cut_right_off(Line_2<R> const & cutter)
         return;
     Point_2<R> ispoint;
     bool new_point;
-    Line_2_Line_2_pair<R> pair(&_support, &cutter);
+    Line_2_Line_2_pair<R> pair(&support_, &cutter);
     switch (pair.intersection_type()) {
     case Line_2_Line_2_pair<R>::NO:
         if (cutter.has_on_negative_side(support_.point()))
