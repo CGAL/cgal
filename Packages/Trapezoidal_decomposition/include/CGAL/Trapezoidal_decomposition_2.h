@@ -1661,7 +1661,9 @@ output: trapezoid iterator
     if (right>left)
     {
       int d=(int)CGAL_CLIB_STD::floor((double(right+left))/2);
-      Point p=ar[d]->right();
+      // Replacing operator [] of map with find to please MSVC 7
+      Point p = (ar.find(d)->second)->right();
+      //Point p=ar[d]->right();
       Data_structure curr=
         Data_structure(
         X_trapezoid(&p,&p,0,0),
@@ -1677,7 +1679,9 @@ output: trapezoid iterator
       return curr;
     }
     else
-      return ar[left];
+      // Replacing operator [] of map with find to please MSVC 7
+      return ar.find(left)->second;
+      //return ar[left];
   }
   /*==============================================
   Trapezoidal_decomposition_2 public member functions
@@ -2090,7 +2094,8 @@ public:
           !bottom_it->is_bottom_unbounded() ? &bottom_it->bottom() : 0,
           !top_it->is_top_unbounded() ? &top_it->top() : 0)));
       new_array.insert(pair);
-      Data_structure& curr=new_array[sz++];
+      Data_structure & curr = (new_array.find(sz))->second;
+      ++sz;
       curr->set_node(&curr);
       curr->set_lb(bottom_it->left_bottom_neighbour());
       curr->set_lt(top_it->left_top_neighbour());
