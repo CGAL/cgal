@@ -22,6 +22,42 @@ ERRORFILE=${CURRENTDIR}/error.txt
 rm -f $ERRORFILE
 touch $ERRORFILE
 
+wait_for_process()
+{
+    count=$2
+    while [ $count -ne 0 ]
+    do
+	count=`expr $count - 1`
+	if ps |grep $1 >/dev/null
+	then
+	    sleep $3
+	else
+	    count=0
+	fi
+    done
+
+    if ps |grep $1 >/dev/null
+    then
+# Send signal Terminate (SIGTERM) to the whole process group.
+# First disable the default action (quit) for the current process.
+        trap true 15
+        kill -15 0
+        trap 15
+        return 1
+    fi
+    return 0
+}
+
+run_local_cgal_test()
+{
+    eval ./cgal_test >current_compiler_output 2>&1
+    exit_value=$?
+    if [ $exit_value -ne 0 ]
+    then
+         echo $exit_value > test_failure
+    fi
+}
+
 #test_directory <directory>
 test_directory()
 {
@@ -52,15 +88,23 @@ test_directory()
     if [ -f cgal_test -a -x cgal_test ] ; then
       export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
       rm -f error.txt
-      ./cgal_test >current_compiler_output 2>&1
-      exit_value=$?
+      run_local_cgal_test &
+
+      if wait_for_process "$!" "60" "30"
+      then
+	if [ -f test_failure  ] ; then
+            exit_failure=`cat test_failure`
+	    rm -f test_failure
+	    echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERRORFILE
+	    echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERROR_OUTPUT
+	fi
+      else
+	echo "ERROR: cgal_test did not finish within the time bound set" >> $ERRORFILE
+	echo "ERROR: cgal_test did not finish within the time bound set" >> $ERROR_OUTPUT
+      fi
       cat current_compiler_output >> $COMPILER_OUTPUT
       cat current_compiler_output
       rm -f current_compiler_output 
-      if [ "$exit_value" -ne 0 ] ; then
-	echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERRORFILE
-	echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERROR_OUTPUT
-      fi
 
       if [ -f error.txt ] ; then
         cat error.txt >> $ERRORFILE
