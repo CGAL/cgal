@@ -35,5 +35,4 @@
 // Has no effect, probably bug in MSVC
 #pragma warning(disable:4503)
 #endif
-
 #endif
