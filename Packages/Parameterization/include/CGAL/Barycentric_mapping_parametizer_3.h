@@ -85,11 +85,10 @@ protected:
 				}
 
 				// Check if 3D -> 2D mapping is 1 to 1
-				//
-				// Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
-				//          and if the surface boundary is mapped onto a 2D convex polygon
-				virtual bool  is_one_to_one_mapping (const Matrix& A)
+				virtual bool  is_one_to_one_mapping (const MeshAdaptor_3& mesh, const Solver& solver_u, const Solver& solver_v)
 				{
+					// Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
+					//          and if the surface boundary is mapped onto a 2D convex polygon
 					// All Wij coefficients = 1 (for j vertex neighbor of i), thus  
 					// mapping is guaranteed if the surface boundary is mapped onto a 2D convex polygon
 					return get_border_parametizer().is_border_convex ();

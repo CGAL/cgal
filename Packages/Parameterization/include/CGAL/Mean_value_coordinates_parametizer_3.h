@@ -104,16 +104,16 @@ protected:
 					assert(len != 0.0);												// 2 points are identical!
 					if(len != 0.0)
 						weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
+					assert(weight > 0);
 
 					return weight;
 				}
 
 				// Check if 3D -> 2D mapping is 1 to 1
-				//
-				// Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
-				//          and if the surface boundary is mapped onto a 2D convex polygon
-				virtual bool  is_one_to_one_mapping (const Matrix& A)
+				virtual bool  is_one_to_one_mapping (const MeshAdaptor_3& mesh, const Solver& solver_u, const Solver& solver_v)
 				{
+					// Theorem: 1 to 1 mapping is guaranteed if all Wij coefficients are > 0 (for j vertex neighbor of i)
+					//          and if the surface boundary is mapped onto a 2D convex polygon
 					// Floater formula above implies that Wij > 0 (for j vertex neighbor of i), thus  
 					// mapping is guaranteed if the surface boundary is mapped onto a 2D convex polygon
 					return get_border_parametizer().is_border_convex ();

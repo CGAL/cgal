@@ -132,6 +132,9 @@ private:
 				// * 3D -> 2D mapping is 1 to 1
 				virtual ErrorCode check_parameterize_postconditions(const MeshAdaptor_3& mesh, const LeastSquaresSolver& solver);
 
+				// Check if 3D -> 2D mapping is 1 to 1
+				bool  is_one_to_one_mapping (const MeshAdaptor_3& mesh, const LeastSquaresSolver& solver);
+
 // Fields
 private:
 				// Object that maps (at least 2) border vertices onto a 2D space
@@ -472,6 +475,7 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 {
 	ErrorCode status = OK;
 
+	// LS 02/2005: comment out this section because OpenNL::LinearSolver does not provide a is_solvable() method
 	//// Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
 	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
 	//if (status != OK)
@@ -480,13 +484,68 @@ LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits
 	//if (status != OK)
 	//	return status;
 
-// LS 02/04/2005: commented out because this check fails with conformal parameterization/square boundary even though the result seems correct
-//	// Check if 3D -> 2D mapping is 1 to 1
-//	CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(A) ? OK : ERROR_NO_1_TO_1_MAPPING) == OK);
-//	if (status != OK)
-//		return status;
+	// Check if 3D -> 2D mapping is 1 to 1
+	CGAL_parameterization_expensive_postcondition((status = is_one_to_one_mapping(mesh, solver) ? OK : ERROR_NO_1_TO_1_MAPPING) == OK);
+	if (status != OK)
+		return status;
 
 	return status;
+}
+
+// Check if 3D -> 2D mapping is 1 to 1
+template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
+inline 
+bool LSCM_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::is_one_to_one_mapping (const MeshAdaptor_3& mesh, 
+																												 const LeastSquaresSolver& solver)
+{
+	Vector_3	first_triangle_normal;
+
+	for (Face_const_iterator faceIt = mesh.mesh_faces_begin(); faceIt != mesh.mesh_faces_end(); faceIt++) 
+	{
+		// Get 3 vertices of the face
+		Vertex v0, v1, v2;
+		int vertexIndex = 0;
+		Vertex_around_face_const_circulator vertexCir    = mesh.face_vertices_begin(*faceIt), 
+											vertexCirEnd = vertexCir;
+		CGAL_For_all(vertexCir, vertexCirEnd) 
+		{
+			if (vertexIndex == 0)
+				v0 = *vertexCir;
+			else if (vertexIndex == 1)
+				v1 = *vertexCir;
+			else if (vertexIndex == 2)
+				v2 = *vertexCir;
+
+			vertexIndex++;
+		}
+		CGAL_parameterization_assertion(vertexIndex >= 3);
+
+		// Get the 3 vertices position IN 2D
+		Point_2 p0 = mesh.get_vertex_uv(v0) ; 
+		Point_2 p1 = mesh.get_vertex_uv(v1) ;
+		Point_2 p2 = mesh.get_vertex_uv(v2) ;
+
+		// Compute the face normal
+		Point_3 p0_3D(p0.x(), p0.y(), 0);
+		Point_3 p1_3D(p1.x(), p1.y(), 0);
+		Point_3 p2_3D(p2.x(), p2.y(), 0);
+		Vector_3 v01_3D = p1_3D - p0_3D;
+		Vector_3 v02_3D = p2_3D - p0_3D;
+		Vector_3 normal = CGAL::cross_product(v01_3D, v02_3D);
+
+		// Check that all normals are oriented the same way => no 2D triangle is flipped
+		if (vertexCir == mesh.face_vertices_begin(*faceIt))
+		{
+			first_triangle_normal = normal;
+		}
+		else
+		{	
+			if (first_triangle_normal * normal < 0)
+				return false;
+		}
+	}
+
+	return true;								// OK if we reach this point
 }
 
 
