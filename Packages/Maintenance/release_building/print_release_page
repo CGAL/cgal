@@ -24,7 +24,9 @@ cat <<"EOF"
 
 Download the latest internal release:
 EOF
-echo "<FONT SIZE=\"+1\"><A HREF=\"$RELEASE.tar.gz\">$RELEASE.tar.gz</A></FONT> ."
+echo "<FONT SIZE=\"+1\"> <A HREF="
+echo "\"http://www.cs.uu.nl/CGAL/Members/Develop/updates/$RELEASE.tar.gz\">"
+echo "$RELEASE.tar.gz</A></FONT> ."
 
 if [ -r "$PATCHFILE" ]
 then
