@@ -262,7 +262,7 @@ public:
                        vend = svertices_end();
       while (vit != vend) {
         SVertex_iterator vdel = vit++;
-        sncp()->delete_svertex_only(vdel);
+        sncp()->delete_halfedge_only(vdel);
       }
       svertices_begin_ = svertices_last_ = sncp()->halfedges_end();
 
@@ -278,6 +278,8 @@ public:
                      fend = sfaces_end();
       while (fit != fend) {
         SFace_iterator fdel = fit++;
+	/* TO VERIFY: next statement needs access to a private attribute */
+	sncp()->reset_object_list(fdel->boundary_entry_objects_);
         sncp()->delete_sface_only(fdel);
       }
       sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();
@@ -727,12 +729,13 @@ public:
                                           SFace_cycle_const_iterator;
     Vertex_handle  center_vertex_;
     Volume_handle  incident_volume_;
-    SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+    //SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
     GenPtr         info_;
     // temporary needed:
     Mark           mark_;
 
   public:
+    SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
     SFace() : center_vertex_(), incident_volume_(), info_(), mark_() {}
 

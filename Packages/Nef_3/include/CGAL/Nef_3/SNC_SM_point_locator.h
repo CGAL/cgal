@@ -33,7 +33,7 @@
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #undef _DEBUG
-#define _DEBUG 143
+#define _DEBUG 47
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -34,6 +34,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
 
+#undef _DEBUG
+#define _DEBUG  59
+#include <CGAL/Nef_3/debug.h>
+#include <string>
+#include <sstream>
+
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions print_title=yes }*/ 
@@ -320,9 +326,8 @@ SVertex_handle new_vertex(const Sphere_point& p = Sphere_point()) const
 SHalfedge_handle new_edge_pair() const
 /*{\Xop creates a new edge pair. No connectivity is provided.}*/
 { Vertex_handle v(psm_); 
-  SHalfedge_iterator sen = v->shalfedges_end();
-  SHalfedge_iterator se = sncp()->shalfedges_.insert(sen, * new SHalfedge() );
-  SHalfedge_iterator set = sncp()->shalfedges_.insert(sen, * new SHalfedge() );
+  SHalfedge_iterator se = sncp()->new_shalfedge_only();
+  SHalfedge_iterator set = sncp()->new_shalfedge_only();
   if ( v->shalfedges_begin() == sncp()->shalfedges_end() ) v->init_range(se);
   v->shalfedges_last_ = set;
   make_twins(se,set);
@@ -333,9 +338,8 @@ SHalfloop_handle new_loop_pair() const
 \precond No sloop pair exists in the local graph.}*/ 
 { Vertex_handle v(psm_); 
   CGAL_nef3_assertion( !has_loop() );
-  SHalfloop_iterator sln = sncp()->shalfloops_end();
-  SHalfloop_iterator sl =  sncp()->shalfloops_.insert(sln, * new SHalfloop() );
-  SHalfloop_iterator slt = sncp()->shalfloops_.insert(sln, * new SHalfloop() );
+  SHalfloop_iterator sl =  sncp()->new_shalfloop_only();
+  SHalfloop_iterator slt = sncp()->new_shalfloop_only();
   make_twins(sl,slt);
   v->shalfloop_ = sl;
   return sl; 
@@ -344,8 +348,7 @@ SHalfloop_handle new_loop_pair() const
 SFace_handle new_face() const
 /*{\Mop creates a new face.}*/
 { Vertex_handle v(psm_);
-  SFace_iterator sf = 
-    sncp()->sfaces_.insert(v->sfaces_end(), * new SFace() );
+  SFace_iterator sf =  sncp()->new_sface_only();
   if ( v->sfaces_begin() == sncp()->sfaces_end() ) v->init_range(sf);
   else v->sfaces_last_ = sf;
   sf->center_vertex_ = v;
@@ -360,7 +363,7 @@ void delete_vertex_only(SVertex_handle v) const
     vc->init_range(sncp()->halfedges_end()); }
   else if ( vc->svertices_begin() == v ) ++(vc->svertices_begin_);
   else if ( vc->svertices_last() == v ) --(vc->svertices_last_);
-  sncp()->delete_svertex_only(v);
+  sncp()->delete_halfedge_only(v);
 }
 
 void delete_halfedge_only(SHalfedge_handle e) const
@@ -402,18 +405,57 @@ template <typename H>
 bool is_boundary_object(H h) const
 { return sncp()->is_sm_boundary_object(h); }
 
+/* debug code */
+std::string print_sface(SFace_handle f) const
+{ 
+  std::stringstream os; 
+  set_pretty_mode(os); 
+
+  os<<" sface { vertex, fclist, ivlist, sloop }"<<std::endl;
+  os << &*f << " { " << &*(f->center_vertex_) << ", "; 
+  SFace_cycle_iterator it;
+  CGAL_nef3_forall_sface_cycles_of(it,f)
+    if ( it.is_shalfedge() ) os << &*(SHalfedge_handle(it)) << ' ';
+  os << ", ";
+  CGAL_nef3_forall_sface_cycles_of(it,f)
+    if ( it.is_svertex() ) os << &*(SVertex_handle(it)) << ' ';
+  os << ", ";
+  CGAL_nef3_forall_sface_cycles_of(it,f)
+    if ( it.is_shalfloop() ) os << &*(SHalfloop_handle(it));
+  os << " }";
+  return os.str();
+}
+
 template <typename H>
-void store_boundary_object(H h, SFace_handle f) const
-{ f->boundary_entry_objects_.push_back(SObject_handle(h));
+void store_boundary_object(H h, SFace_handle f) const {
+  TRACEN("storing boundary object "<<&*h<<" on sface: ");
+  TRACEN(print_sface(f));
+  CGAL_nef3_assertion(!sncp()->is_sm_boundary_object(h));
+  f->boundary_entry_objects_.push_back(SObject_handle(h));
   sncp()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
+  TRACEN("result: "<<std::endl<<print_sface(f)<<std::endl);
 }
 
 template <typename H>
 void undo_boundary_object(H h, SFace_handle f) const
 { CGAL_nef3_assertion(sncp()->is_sm_boundary_object(h));
+  TRACEN("unmarking boundary sobject "<<h->debug());
   SFace_cycle_iterator it = sncp()->sm_boundary_item(h);
   sncp()->undef_sm_boundary_item(h);
+  TRACEN("removing boundary object "<<&*h<<
+	 " (item "<<&*it<<"->"<<&*SHalfedge_handle(it)<<") from sface: ");
+  TRACEN(print_sface(f)<<std::endl);
+  /* debug code */ {
+    SFace_cycle_iterator o = f->sface_cycles_begin(), 
+      oe = f->sface_cycles_end();
+    bool boundary_item_found = false;
+    CGAL_For_all( o, oe)
+      if( &*o == &*it)
+	boundary_item_found = true;
+    CGAL_assertion( boundary_item_found == true);
+  }
   f->boundary_entry_objects_.erase(it);
+  TRACEN("result: "<<std::endl<<print_sface(f)<<std::endl);
 }
 
 void link_as_face_cycle(SHalfedge_handle e, SFace_handle f) const

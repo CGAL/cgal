@@ -85,8 +85,6 @@ graphs of the vertices of a Nef polyhedron, which describe the
 point set completely. All other concepts are either derived from
 the local graph or added for the comfort of the user.}*/
 
-public:
-  /*{\Mtypes 7}*/
   typedef Items_                 Items;
   typedef SNC_structure<Items>   Self;
 
@@ -94,23 +92,26 @@ public:
   friend class SNC_decorator<Self>;
   friend class SNC_io_parser<Self>;
 
+public:
+  /*{\Mtypes 7}*/
+
   typedef SNC_SM_decorator<Self> SM_decorator;
   typedef SNC_decorator<Self>    SNC_decorator;
 
-  typedef typename Items::Kernel Kernel;
+  typedef typename Items::Kernel        Kernel;
   typedef typename Items::Sphere_kernel Sphere_kernel;
 
-  typedef typename Kernel::Point_3  Point_3;
+  typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/
-  typedef typename Kernel::Plane_3  Plane_3;
+  typedef typename Kernel::Plane_3      Plane_3;
   /*{\Mtypemember supporting facets.}*/
-  typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Vector_3     Vector_3;
   /*{\Mtypemember normal vectors.}*/
-  typedef typename Kernel::Direction_3 Direction_3;
+  typedef typename Kernel::Direction_3  Direction_3;
   /*{\Mtypemember normal directions.}*/
-  typedef typename Kernel::Segment_3 Segment_3;
+  typedef typename Kernel::Segment_3    Segment_3;
   /*{\Mtypemember segments in space.}*/
-  typedef typename Kernel::Line_3 Line_3;
+  typedef typename Kernel::Line_3       Line_3;
   /*{\Mtypemember lines in space.}*/
 
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
@@ -135,6 +136,7 @@ public:
 
   typedef typename Items::template Vertex<Self>    Vertex;
   typedef CGAL::In_place_list<Vertex,false>        Vertex_list;
+  typedef CGAL_ALLOCATOR(Vertex)                   Vertex_alloc;
   typedef typename Vertex_list::iterator           Vertex_handle;
   typedef typename Vertex_list::const_iterator     Vertex_const_handle;
   typedef typename Vertex_list::iterator           Vertex_iterator;
@@ -142,6 +144,7 @@ public:
 
   typedef typename Items::template Halfedge<Self>  Halfedge;
   typedef CGAL::In_place_list<Halfedge,false>      Halfedge_list;
+  typedef CGAL_ALLOCATOR(Halfedge)                 Halfedge_alloc;
   typedef typename Halfedge_list::iterator         Halfedge_handle;
   typedef typename Halfedge_list::const_iterator   Halfedge_const_handle;
   typedef typename Halfedge_list::iterator         Halfedge_iterator;
@@ -149,6 +152,7 @@ public:
 
   typedef typename Items::template Halffacet<Self> Halffacet;
   typedef CGAL::In_place_list<Halffacet,false>     Halffacet_list;
+  typedef CGAL_ALLOCATOR(Halffacet)                Halffacet_alloc;
   typedef typename Halffacet_list::iterator        Halffacet_handle;
   typedef typename Halffacet_list::const_iterator  Halffacet_const_handle;
   typedef typename Halffacet_list::iterator        Halffacet_iterator;
@@ -156,12 +160,14 @@ public:
 
   typedef typename Items::template Volume<Self>    Volume;
   typedef CGAL::In_place_list<Volume,false>        Volume_list;
+  typedef CGAL_ALLOCATOR(Volume)                   Volume_alloc;
   typedef typename Volume_list::iterator           Volume_handle;
   typedef typename Volume_list::const_iterator     Volume_const_handle;
   typedef typename Volume_list::iterator           Volume_iterator;
   typedef typename Volume_list::const_iterator     Volume_const_iterator;
 
   typedef typename Items::template Halfedge<Self>  SVertex;
+  // typedef CGAL_ALLOCATOR(SVertex)                  Svertex_alloc;
   typedef typename Halfedge_list::iterator         SVertex_handle;
   typedef typename Halfedge_list::const_iterator   SVertex_const_handle;
   typedef typename Halfedge_list::iterator         SVertex_iterator;
@@ -169,6 +175,7 @@ public:
 
   typedef typename Items::template SHalfedge<Self> SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>     SHalfedge_list;
+  typedef CGAL_ALLOCATOR(SHalfedge)                SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator        SHalfedge_handle;
   typedef typename SHalfedge_list::const_iterator  SHalfedge_const_handle;
   typedef typename SHalfedge_list::iterator        SHalfedge_iterator;
@@ -176,6 +183,7 @@ public:
 
   typedef typename Items::template SHalfloop<Self> SHalfloop;
   typedef CGAL::In_place_list<SHalfloop,false>     SHalfloop_list;
+  typedef CGAL_ALLOCATOR(SHalfloop)                SHalfloop_alloc;
   typedef typename SHalfloop_list::iterator        SHalfloop_handle;
   typedef typename SHalfloop_list::const_iterator  SHalfloop_const_handle;
   typedef typename SHalfloop_list::iterator        SHalfloop_iterator;
@@ -183,6 +191,7 @@ public:
 
   typedef typename Items::template SFace<Self>     SFace;
   typedef CGAL::In_place_list<SFace,false>         SFace_list;
+  typedef CGAL_ALLOCATOR(SFace)                    SFace_alloc;
   typedef typename SFace_list::iterator            SFace_handle;
   typedef typename SFace_list::const_iterator      SFace_const_handle;
   typedef typename SFace_list::iterator            SFace_iterator;
@@ -414,8 +423,7 @@ public:
     return *this;
   }
 
-  void clear()
-  { 
+  void clear() { 
     boundary_item_.clear();
     sm_boundary_item_.clear();
     vertices_.destroy();
@@ -426,44 +434,6 @@ public:
     shalfloops_.destroy();
     sfaces_.destroy();
   }
-
-
-  Point_3& point(Vertex_handle v) const
-  { return v->point(); }
-  Mark& mark(Vertex_handle v) const
-  { return v->mark(); }
-
-  Sphere_point& sphere_point(Halfedge_handle e) const
-  { return e->sphere_point(); }
-  Mark mark(Halfedge_handle e) const
-  { return e->mark_; }
-  Vertex_handle source(Halfedge_handle e) const
-  { return e->center_vertex_; }
-  Vertex_handle target(Halfedge_handle e) const
-  { return e->twin_->center_vertex_; }
-  Halfedge_handle twin(Halfedge_handle e) const
-  { return e->twin_; }
-  Halffacet_handle twin(Halffacet_handle f) const
-  { return f->twin_; }
-
-  Plane_3& supporting_plane(Halffacet_handle f)
-  { return f->supporting_plane_; }
-  Mark& mark(Halffacet_handle f)
-  { return f->mark_; }
-  Volume_handle volume(Halffacet_handle f)
-  { return f->volume_; }
-
-  Halffacet_cycle_iterator facet_cycles_begin(Halffacet_handle f)
-  { return f->facet_cycles_begin(); }
-  Halffacet_cycle_iterator facet_cycles_end(Halffacet_handle f)
-  { return f->facet_cycles_end(); }
-
-
-  Shell_entry_iterator shells_begin(Volume_handle c)
-  { return c->shells_begin(); }
-  Shell_entry_iterator shells_end(Volume_handle c)
-  { return c->shells_end(); }
-
 
   template <typename H>
   bool is_boundary_object(H h) 
@@ -525,29 +495,39 @@ public:
   /*{\Moperations 2.5 3}*/
 
   // The constant iterators and circulators.
-  Vertex_const_iterator   vertices_begin()  const { return vertices_.begin();}
-  Vertex_const_iterator   vertices_end()    const { return vertices_.end();}
-  Halfedge_const_iterator halfedges_begin() const { return halfedges_.begin();}
-  Halfedge_const_iterator halfedges_end()   const { return halfedges_.end();}
+  Vertex_const_iterator vertices_begin() const 
+    { return vertices_.begin();}
+  Vertex_const_iterator vertices_end() const 
+    { return vertices_.end();}
+  Halfedge_const_iterator halfedges_begin() const 
+    { return halfedges_.begin();}
+  Halfedge_const_iterator halfedges_end() const 
+    { return halfedges_.end();}
   Halffacet_const_iterator halffacets_begin() const 
-  { return halffacets_.begin();}
-  Halffacet_const_iterator halffacets_end()   const 
-  { return halffacets_.end();}
-  Volume_const_iterator   volumes_begin()   const { return volumes_.begin();}
-  Volume_const_iterator   volumes_end()     const { return volumes_.end();}
+    { return halffacets_.begin();}
+  Halffacet_const_iterator halffacets_end() const 
+    { return halffacets_.end();}
+  Volume_const_iterator   volumes_begin() const 
+    { return volumes_.begin();}
+  Volume_const_iterator   volumes_end() const 
+    { return volumes_.end();}
 
-  SVertex_const_iterator svertices_begin() const { return halfedges_.begin();}
-  SVertex_const_iterator svertices_end()   const { return halfedges_.end();}
+  SVertex_const_iterator svertices_begin() const 
+    { return halfedges_.begin();}
+  SVertex_const_iterator svertices_end() const 
+    { return halfedges_.end();}
   SHalfedge_const_iterator shalfedges_begin() const 
     { return shalfedges_.begin();}
   SHalfedge_const_iterator shalfedges_end() const 
     { return shalfedges_.end();}
   SHalfloop_const_iterator shalfloops_begin() const 
     { return shalfloops_.begin();}
-  SHalfloop_const_iterator shalfloops_end()   const 
+  SHalfloop_const_iterator shalfloops_end() const 
     { return shalfloops_.end();}
-  SFace_const_iterator sfaces_begin() const { return sfaces_.begin();}
-  SFace_const_iterator sfaces_end()   const { return sfaces_.end();}
+  SFace_const_iterator sfaces_begin() const 
+    { return sfaces_.begin();}
+  SFace_const_iterator sfaces_end() const 
+    { return sfaces_.end();}
 
   Vertex_iterator    vertices_begin()   { return vertices_.begin();}
   Vertex_iterator    vertices_end()     { return vertices_.end();}
@@ -558,14 +538,14 @@ public:
   Volume_iterator    volumes_begin()    { return volumes_.begin();}
   Volume_iterator    volumes_end()      { return volumes_.end();}
 
-  SVertex_iterator   svertices_begin() { return halfedges_.begin();}
-  SVertex_iterator   svertices_end()   { return halfedges_.end();}
+  SVertex_iterator   svertices_begin()  { return halfedges_.begin();}
+  SVertex_iterator   svertices_end()    { return halfedges_.end();}
   SHalfedge_iterator shalfedges_begin() { return shalfedges_.begin();}
   SHalfedge_iterator shalfedges_end()   { return shalfedges_.end();}
   SHalfloop_iterator shalfloops_begin() { return shalfloops_.begin();}
   SHalfloop_iterator shalfloops_end()   { return shalfloops_.end();}
-  SFace_iterator     sfaces_begin()    { return sfaces_.begin();}
-  SFace_iterator     sfaces_end()      { return sfaces_.end();}
+  SFace_iterator     sfaces_begin()     { return sfaces_.begin();}
+  SFace_iterator     sfaces_end()       { return sfaces_.end();}
 
   /*{\Mtext The list of all objects can be accessed via iterator ranges.
   For comfortable iteration we also provide iterations macros. 
@@ -617,7 +597,7 @@ public:
     os << std::endl;
   }
 
-  bool empty() const 
+  bool is_empty() const 
   { return number_of_vertices() == 0 &&
            number_of_halfedges() == 0 &&
            number_of_halffacets() == 0 &&
@@ -628,8 +608,7 @@ public:
   }
 
   Vertex_handle new_vertex(const Point_3& p = Point_3(), Mark m = Mark())
-  /*{\Mop returns a new vertex at point |p| marked by |m|.}*/
-  { 
+  /*{\Mop returns a new vertex at point |p| marked by |m|.}*/ { 
     Vertex_handle vh = new_vertex_only();
     vh->point_at_center_ = p;
     vh->mark_ = m;
@@ -641,15 +620,10 @@ public:
     return vh;
   }
 
-  template <typename H>
-  void make_twins(H h1, H h2)
-  { h1->twin_ = h2; h2->twin_ = h1; }
-
   Halfedge_handle new_halfedge_pair(Vertex_handle v1, Vertex_handle v2,
 				    Mark m = Mark())
   /*{\Mop creates a new halfedge pair between the vertices $v_1$
-  and $v_2$. The edge is marked by |m|.}*/
-  { 
+  and $v_2$. The edge is marked by |m|.}*/ { 
     SM_decorator D1(v1);
     SM_decorator D2(v2);
     SVertex_handle e1 = D1.new_vertex();
@@ -659,12 +633,10 @@ public:
     return e1;
   }
 
-
   Halffacet_handle new_halffacet_pair(const Plane_3& h = Plane_3(), 
 				      Mark m = Mark())
   /*{\Mop creates a new facet supported by the plane |h| and
-  marked with |m|.}*/
-  {
+  marked with |m|.}*/ {
     Halffacet_handle f1 = new_halffacet_only();
     Halffacet_handle f2 = new_halffacet_only();
     f1->supporting_plane_ = h; f2->supporting_plane_ = h.opposite();
@@ -674,20 +646,30 @@ public:
   }
 
   Volume_handle new_volume(Mark m = Mark())
-  /*{\Mop creates a new volume marked with |m|.}*/
-  { Volume_handle vh = new_volume_only();
+  /*{\Mop creates a new volume marked with |m|.}*/ { 
+    Volume_handle vh = new_volume_only();
     vh->mark_ = m;
     return vh;
   }
 
+  template <typename H>
+  void make_twins(H h1, H h2) { 
+    h1->twin_ = h2; h2->twin_ = h1; 
+  }
+
   void delete_vertex(Vertex_handle v)
-  /*{\Mop deletes the vertex including the objects in its local graph.}*/
-  { v->clear_local_graph(); vertices_.erase(v); delete &* v; }
+  /*{\Mop deletes the vertex including the objects in its local graph.}*/  { 
+    TRACEN("~ deleting vertex "<<&*v<<" from "<<&*this);
+    v->clear_local_graph(); 
+    delete_vertex_only(v);
+    TRACEN("~~ vertex deleted"<<&*v);
+  }
 
   void delete_halfedge_pair(Halfedge_handle e)
   /*{\Mop deletes the halfedge pair of |e,twin(e)|.  Does not care about
-  incident objects in the local graph of |source(e)|.}*/ 
-  { Halfedge_handle et = e->twin_;
+  incident objects in the local graph of |source(e)|.}*/ { 
+    TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin_)<<" from "<<&*this);
+    Halfedge_handle et = e->twin_;
     SM_decorator D1(e->center_vertex_), D2(et->center_vertex_);
     D1.delete_vertex(e);
     D2.delete_vertex(et);
@@ -695,51 +677,171 @@ public:
 
   void delete_halffacet_pair(Halffacet_handle f)
   /*{\Mop deletes the halffacet pair |f,twin(f)|. Does not care about
-  boundary cycle objects.}*/ 
-  { reset_object_list(f->boundary_entry_objects_);
+  boundary cycle objects.}*/ { 
+    TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin_)<<" from "<<&*this);
+    reset_object_list(f->boundary_entry_objects_);
     reset_object_list(f->twin_->boundary_entry_objects_);
-    halffacets_.erase(f->twin_);  delete &* (f->twin_);
-    halffacets_.erase(f);         delete &* f;
+    delete_halffacet_only(f->twin_);
+    delete_halffacet_only(f);
   }
 
-  void delete_volume(Volume_handle v)
-  /*{\Mop deletes the volume |v|. Does not care about shell objects.}*/
-  { reset_object_list(v->shell_entry_objects_);
-    volumes_.erase(v); delete &* v;
+  void delete_volume(Volume_handle c)
+  /*{\Mop deletes the volume |c|. Does not care about shell objects.}*/ { 
+    TRACEN("~ deleting volume "<<&*c<<" from "<<&*this);
+    reset_object_list(c->shell_entry_objects_);
+    delete_volume_only(c);
+  }
+
+  Vertex_alloc vertex_allocator;
+  Vertex* get_vertex_node( const Vertex& t) {
+    Vertex* p = vertex_allocator.allocate(1);
+    vertex_allocator.construct( p, Vertex());
+    return p;
+  }
+  void put_vertex_node( Vertex* p) {
+    vertex_allocator.destroy(p);
+    vertex_allocator.deallocate( p, 1);
+  }
+
+  Halfedge_alloc halfedge_allocator;
+  Halfedge* get_halfedge_node( const Halfedge& t) {
+    Halfedge* p = halfedge_allocator.allocate(1);
+    halfedge_allocator.construct( p, Halfedge());
+    return p;
+  }
+  void put_halfedge_node( Halfedge* p) {
+    halfedge_allocator.destroy(p);
+    halfedge_allocator.deallocate( p, 1);
+  }
+
+  Halffacet_alloc halffacet_allocator;
+  Halffacet* get_halffacet_node( const Halffacet& t) {
+    Halffacet* p = halffacet_allocator.allocate(1);
+    halffacet_allocator.construct( p, Halffacet());
+    return p;
+  }
+  void put_halffacet_node( Halffacet* p) {
+    halffacet_allocator.destroy(p);
+    halffacet_allocator.deallocate( p, 1);
+  }
+
+  Volume_alloc volume_allocator;
+  Volume* get_volume_node( const Volume& t) {
+    Volume* p = volume_allocator.allocate(1);
+    volume_allocator.construct( p, Volume());
+    return p;
+  }
+  void put_volume_node( Volume* p) {
+    volume_allocator.destroy(p);
+    volume_allocator.deallocate( p, 1);
+  }
+
+  SHalfedge_alloc shalfedge_allocator;
+  SHalfedge* get_shalfedge_node( const SHalfedge& t) {
+    SHalfedge* p = shalfedge_allocator.allocate(1);
+    shalfedge_allocator.construct( p, SHalfedge());
+    return p;
+  }
+  void put_shalfedge_node( SHalfedge* p) {
+    shalfedge_allocator.destroy(p);
+    shalfedge_allocator.deallocate( p, 1);
+  }
+
+  SHalfloop_alloc shalfloop_allocator;
+  SHalfloop* get_shalfloop_node( const SHalfloop& t) {
+    SHalfloop* p = shalfloop_allocator.allocate(1);
+    shalfloop_allocator.construct( p, SHalfloop());
+    return p;
+  }
+  void put_shalfloop_node( SHalfloop* p) {
+    shalfloop_allocator.destroy(p);
+    shalfloop_allocator.deallocate( p, 1);
+  }
+
+  SFace_alloc sface_allocator;
+  SFace* get_sface_node( const SFace& t) {
+    SFace* p = sface_allocator.allocate(1);
+    sface_allocator.construct( p, SFace());
+    return p;
+  }
+  void put_sface_node( SFace* p) {
+    sface_allocator.destroy(p);
+    sface_allocator.deallocate( p, 1);
   }
 
 
-  Vertex_handle new_vertex_only()
-  { vertices_.push_back( * new Vertex); return --vertices_end(); }
+  Vertex_handle new_vertex_only() { 
+    vertices_.push_back( * get_vertex_node(Vertex()));
+    return --vertices_end(); 
+  }
+  Halfedge_handle new_halfedge_only(Halfedge_handle e)  { 
+    return halfedges_.insert(e, * get_halfedge_node(Halfedge()));
+  }
+  Halfedge_handle new_halfedge_only()  { 
+    halfedges_.push_back( * get_halfedge_node(Halfedge()));
+    return --halfedges_end();
+  }
+  Halffacet_handle new_halffacet_only()  { 
+    halffacets_.push_back( * get_halffacet_node(Halffacet()));
+    return --halffacets_end(); 
+  } 
+  Volume_handle new_volume_only()  { 
+    volumes_.push_back( * get_volume_node(Volume()));
+    return --volumes_end(); 
+  }
+  SHalfedge_handle new_shalfedge_only()  {
+    shalfedges_.push_back( * get_shalfedge_node(SHalfedge()));
+    return --shalfedges_end();
+  }
+  SHalfloop_handle new_shalfloop_only()  {
+    shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
+    return --shalfloops_end(); 
+  }
+  SFace_handle new_sface_only() {
+    sfaces_.push_back( * get_sface_node(SFace()));
+    return --sfaces_end(); 
+  }
 
-  Halfedge_handle new_halfedge_only(Halfedge_handle e)
-  { return halfedges_.insert(e, * new Halfedge ); }
-  Halfedge_handle new_halfedge_only()
-  { halfedges_.push_back( * new Halfedge ); return --halfedges_end(); }
-
-  Halffacet_handle new_halffacet_only()
-  { halffacets_.push_back( * new Halffacet ); return --halffacets_end(); } 
-
-  Volume_handle new_volume_only()
-  { volumes_.push_back( * new Volume ); return --volumes_end(); }
-
-  SHalfedge_handle new_shalfedge_only()
-  { shalfedges_.push_back( * new SHalfedge ); return --shalfedges_end(); }
-
-  SHalfloop_handle new_shalfloop_only()
-  { shalfloops_.push_back( * new SHalfloop ); return --shalfloops_end(); }
-
-  SFace_handle new_sface_only()
-  { sfaces_.push_back( * new SFace ); return --sfaces_end(); }
-
-  void delete_svertex_only(SVertex_handle h)
-  { halfedges_.erase(h); delete &* h; }
-  void delete_shalfedge_only(SHalfedge_handle h)
-  { shalfedges_.erase(h); delete &* h; }
-  void delete_shalfloop_only(SHalfloop_handle h)
-  { shalfloops_.erase(h); delete &* h; }
-  void delete_sface_only(SFace_handle h)
-  { sfaces_.erase(h); delete &* h; }
+ 
+  void delete_vertex_only(Vertex_handle h) {
+    TRACEN("~ deleting vertex only "<<&*h<<" from "<<&*this);
+    vertices_.erase(h);
+    put_vertex_node(&*h);
+  }
+  void delete_halfedge_only(Halfedge_handle h) { 
+    TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
+    CGAL_nef3_assertion(!is_sm_boundary_object(h));
+    halfedges_.erase(h);
+    put_halfedge_node(&*h);
+  }
+  void delete_halffacet_only(Halffacet_handle h) { 
+    TRACEN("~ deleting halffacet only "<<&*h<<" from "<<&*this);
+    halffacets_.erase(h);         
+    put_halffacet_node(&*h);
+  }
+  void delete_volume_only(Volume_handle h) {
+    TRACEN("~ deleting volume only "<<&*h<<" from "<<&*this);
+    volumes_.erase(h); 
+    put_volume_node(&*h);
+  }
+  void delete_shalfedge_only(SHalfedge_handle h)  { 
+    TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
+    CGAL_nef3_assertion(!is_sm_boundary_object(h));
+    shalfedges_.erase(h);
+    put_shalfedge_node(&*h);
+  }
+  void delete_shalfloop_only(SHalfloop_handle h)  { 
+    TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
+    CGAL_nef3_assertion(!is_sm_boundary_object(h));
+    shalfloops_.erase(h); 
+    put_shalfloop_node(&*h);
+  }
+  void delete_sface_only(SFace_handle h)  { 
+    TRACEN("~ deleting sface only "<<&*h<<" from "<<&*this);
+    CGAL_nef3_assertion(!is_boundary_object(h));
+    sfaces_.erase(h);
+    put_sface_node(&*h);
+  }
   
   SNC_io_parser<SNC_structure> *IO;
 
@@ -862,14 +964,12 @@ public:
        facet, checking if its local graph consists just of a sloop and
        two incident sfaces. */ {
     SM_decorator SD(v);
-    CGAL_nef3_assertion(!is_empty_range(SD.svertices_begin(),SD.svertices_end()) ||
- 		    is_empty_range(SD.shalfedges_begin(),SD.shalfedges_end()));
+    CGAL_nef3_assertion( !is_empty_range( SD.svertices_begin(),
+					  SD.svertices_end()) ||
+			 is_empty_range( SD.shalfedges_begin(),
+					 SD.shalfedges_end()));
     return( SD.has_loop() &&
 	    is_empty_range( SD.svertices_begin(), SD.svertices_end()));
-  }
-
-  bool is_vertex(Vertex_handle v) {
-    return !is_part_of_facet(v) && !is_part_edge(v);
   }
 
   bool is_part_of_edge(Vertex_handle v) {
@@ -879,7 +979,7 @@ public:
     bool is_part = false;
     SM_decorator SD(v);
     if( !SD.has_loop()) {
-      TRACE(point(v)<<" is in edge interior? ");
+      TRACE(SNC_decorator(*this).point(v)<<" is in edge interior? ");
       SVertex_iterator sv(SD.svertices_begin());
       SVertex_handle p1(sv++), p2(sv++); // TODO: is it dangerous?
       if( sv == SD.svertices_end()) {
@@ -1204,7 +1304,8 @@ public:
 	D.store_boundary_object( u_min, f);
       else {
 	SHalfedge_handle f_sedge;
-	CGAL_nef3_assertion( assign( f_sedge, f->boundary_entry_objects_.front()));
+	CGAL_nef3_assertion( assign( f_sedge, 
+				     f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
 	Point_3 p(D.point(D.vertex(f_sedge)));
 	if( lexicographically_xyz_smaller( D.point(D.vertex(u_min)), p))

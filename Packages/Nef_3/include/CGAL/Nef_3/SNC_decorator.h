@@ -51,8 +51,8 @@ class SNC_decorator {
   typedef SNC_structure_ SNC_structure;
   typedef SNC_decorator<SNC_structure>        Self;
   typedef SNC_constructor<SNC_structure>      SNC_constructor;
+  typedef SNC_ray_shoter<SNC_structure>       SNC_ray_shoter;
   typedef SNC_SM_decorator<SNC_structure>     SM_decorator;
-  typedef SNC_ray_shoter<SNC_structure>           SNC_ray_shoter;
   typedef SNC_SM_overlayer<SNC_structure>     SM_overlayer;
   typedef SNC_SM_point_locator<SNC_structure> SM_point_locator;
   SNC_structure* sncp_;
@@ -355,9 +355,10 @@ public:
   };
 
   void clear_outer_box_marks() {
+    SObject_handle o = shells_begin(volumes_begin());
     SFace_handle sf;
-    CGAL_nef3_assertion( assign( sf, shells_begin(volumes_begin())));
-    assign( sf, shells_begin(volumes_begin()));
+    CGAL_nef3_assertion( assign( sf, o));
+    assign( sf, o);
     Shell_mark_setter Setter( *this, false);
     visit_shell_objects( sf, Setter );
   }
@@ -492,131 +493,48 @@ public:
 
   template <typename Selection>
     Vertex_handle binop_local_views( Vertex_handle v0, Vertex_handle v1,
-				     const Selection& BOP) 
-    /*{\op }*/ {
+				     const Selection& BOP, SNC_structure& rsnc)
+    /*{\opOverlays two spheres maps.}*/ {
     typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
     SNC_SM_io_parser IO0( std::cerr, v0);
     SNC_SM_io_parser IO1( std::cerr, v1);
+    TRACEN(" sphere maps before local binary operation");
     TRACEN(v0->debug());
     TRACEN(v1->debug());
     IO0.print();
     IO1.print();
-    
-    Vertex_handle v01 = sncp()->new_vertex();
+    CGAL_assertion( point(v0) == point(v1));
+    Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
+    TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(v01);
     O.subdivide( v0, v1);
     O.select( BOP);
     O.simplify();
+    TRACEN(" result sphere map:");
+    SNC_SM_io_parser IO01( std::cerr, v01);
+    TRACEN(v01->debug());
+    IO01.print();
+    TRACEN(" sphere maps after local binary operation");
+    IO0.print();
+    IO1.print();
     return v01;
   }
 
-#ifdef DEADCODE
-  Vertex_handle create_local_version_of( Vertex_handle v) {
-    SM_decorator D(v);
-    Vertex_handle v = sncp()->new_vertex( point(v), ma);
-    SVertex_iterator sv;
-    SHalfedge_iterator se;
-    SHalfloop_iterator sl;
-    SFace_iterator sf;
-    CGAL_nef3_forall_svertices_of( sv, v) {
-    }
-    CGAL_nef3_forall_shalfedges_of( sv, v) {
-    }
-    // sloops ?    
-    CGAL_nef3_forall_sfaces_of( sv, v) {
-    }
-  }
-#endif
-
   Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
     SNC_constructor C(*sncp());
-    TRACEN("<-> edge local view on "<<p);
     return C.create_from_edge( e, p);
-
-    /*
-    CGAL_nef3_assertion( segment(e).has_on(p));  // TODO: in interior
-    Vertex_handle v = snc()->new_vertex(p, mark(e));
-
-    Sphere_point spa(point(e)-p), spb(point(twin(e))-p);
-    CGAL_nef3_assertion( sp0 == sp1.antipode());
-    SM_decorator D(vertex(e)), ND(v);
-    ND.new_vertex(sp0);
-    ND.new_vertex(sp1);
-
-    SHalfedge_around_svertex_circulator se(e), se0(se), send(se);
-    if( is_empty_range( se, send)) {
-      SFace_handle sf = ND.new_face();
-      mark(sf) = mark(D.face(e));
-      return v;
-    }
-
-    SHalfedge_handle ns0 = SD.new_edge_pair( spa, spb);
-    circle(ns0) = D.circle(se);
-    circle(twin(ns0)) = D.circle(D.twin(se));
-    se++;
-    
-    CGAL_For_all( se, send) {
-      SHalfedge_handle ns = SD.new_edge_pair( spa, spb);
-      ND.circle(ns) = D.circle(se);
-      ND.circle(twin(ns)) = D.circle(D.twin(se));
-      ND.link_as_prev_next( ns, twin(nsp));
-      ND.link_as_prev_next( twin(nsp), ns);
-      ND.link_as_prev_next( twin(ns), nsp);
-      ND.link_as_prev_next( nsp, twin(ns));
-      SFace_handle sf = ND.new_face();
-      ND.link_as_face_cycle( ns, sf);
-      mark(sf) = D.mark(D.face(se));
-      se++;
-    }
-
-    ns = ns0;
-    ND.circle(ns) = D.circle(se);
-    ND.circle(twin(ns)) = D.circle(D.twin(se));
-    ND.link_as_prev_next( ns, twin(nsp));
-    ND.link_as_prev_next( twin(nsp), ns);
-    ND.link_as_prev_next( twin(ns), nsp);
-    ND.link_as_prev_next( nsp, twin(ns));
-    SFace_handle sf = ND.new_face();
-    ND.link_as_face_cycle( ns, sf);
-    mark(sf) = D.mark(D.face(se));
-
-    ND.check_integrity_and_topological_planarity();
-
-    return v; */
   }
 
   Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
     SNC_constructor C(*sncp());
-    TRACEN("<-> facet local view on "<<p);
     return C.create_from_facet( f, p);
-
-    /* 
-    CGAL_nef3_assertion( segment(e).has_on(p));  // TODO: in interior
-    Vertex_handle v = snc()->new_vertex(p, mark(e));
-
-    SM_decorator D(v);
-    SHalfloop_handle sl = ND.new_loop_pair();
-    SFace_handle f1 = D.new_face(), f2 = D.new_face();
-    D.link_as_loop( l, f1);
-    D.link_as_loop( twin(l), f2);
-    Sphere_circle c(plane(f));
-    D.circle(l) = c;
-    D.circle(D.twin(l)) = c.opposite();
-    D.mark(f1) = mark(volume(f));
-    D.mark(f2) = mark(volume(twin(f)));
-    D.mark(l) = mark(f);
-
-    D.check_integrity_and_topological_planarity();
-
-    return v; */
   }
 
   Vertex_handle create_local_view_on( const Point_3& p, Volume_handle c) {
     Vertex_handle v = sncp()->new_vertex( p, mark(c));
-    SM_decorator D(v);
-    SFace_handle f = D.new_face();
-    D.mark(f) = mark(c);
-    TRACEN("<-> volume local view on "<<p);
+    SM_decorator SD(v);
+    SFace_handle f = SD.new_face();
+    SD.mark(f) = mark(c);
     return v;
   }
 
@@ -633,44 +551,115 @@ public:
       TRACEN("<-> vertex local view on "<<point(v));
       return v;
     }
-    else if( assign( e, o))
+    else if( assign( e, o)) {
+      TRACEN("<-> edge local view on "<<p);
       return create_local_view_on( p, e);
-    else if( assign( f, o))
+    }
+    else if( assign( f, o)) {
+      TRACEN("<-> facet local view on "<<p);
       return create_local_view_on( p, f);
-    else if( assign( c, o))
+    }
+    else if( assign( c, o)) {
+      TRACEN("<-> volume local view on "<<p);
       return create_local_view_on( p, c);
+    }
     else CGAL_nef3_assertion_msg(0, "Where is the point then?");
     return Vertex_handle(); // never reached
   }
 
   template <typename Selection>
-    void binary_operation( SNC_structure& snc1i, const Selection& BOP)
-    /*{\op }*/ {
+    SNC_structure binary_operation( SNC_structure& snc1i, 
+				     const Selection& BOP)
+    /*{\opPerforms a binary operation defined on |BOP| between two
+      SNC structures.  The input structures are not modified and the
+      result SNC is returned.}*/ {
     typedef Unique_hash_map<Vertex_handle, bool> Hash_map;
-    Hash_map Stay(false);
-    SNC_ray_shoter rs(*sncp());
+    SNC_structure rsnc;
+    Hash_map Ignore(false);
     Vertex_iterator v0, v1;
+    
+    TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
+
+    TRACEN("vertices on snc0:");
+    CGAL_nef3_forall_vertices( v0, *sncp()) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc1:");
+    CGAL_nef3_forall_vertices( v0, snc1i) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc01:");
+    CGAL_nef3_forall_vertices( v0, rsnc) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    
+    TRACEN("number of vertices on snc0 sn1 snc01: "<<
+	   sncp()->number_of_vertices()<<' '<<
+	   snc1i.number_of_vertices()<<' '<<
+	   rsnc.number_of_vertices());
+
     CGAL_nef3_forall_vertices( v0, *sncp()) {
-      if( Stay[v0]) continue;
+      CGAL_nef3_assertion(!Ignore[v0]);
       v1 = qualify_with_respect( point(v0), snc1i);
-      TRACEN("bionop of vertices "<<&*v0<<" "<<&*v1);
-      Stay[binop_local_views( v0, v1, BOP)] = true;
+      TRACEN("=> overlay of vertices v0 "<<&*v0<<" v1 "<<&*v1);
+      binop_local_views( v0, v1, BOP, rsnc);
+      if( v1->sncp() == sncp()) /* v1 is a local copy */
+	sncp()->delete_vertex(v1);
+      else
+	Ignore[v1] = true;
+
+      TRACEN("vertices on snc0 sn1 snc01: "<<
+	     sncp()->number_of_vertices()<<' '<<
+	     snc1i.number_of_vertices()<<' '<<
+	     rsnc.number_of_vertices());
     }
+
+    TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
+
+    TRACEN("vertices on snc0:");
+    CGAL_nef3_forall_vertices( v0, *sncp()) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc1:");
+    CGAL_nef3_forall_vertices( v0, snc1i) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc01:");
+    CGAL_nef3_forall_vertices( v0, rsnc) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+
     CGAL_nef3_forall_vertices( v1, snc1i) {
-      if( Stay[v1]) continue;
+      if( Ignore[v1]) continue;
       v0 = qualify_with_respect( point(v1), *sncp());
-      TRACEN("bionop of vertices "<<&*v0<<" "<<&*v1);
-      Stay[binop_local_views( v0, v1, BOP)] = true;
+      TRACEN("=> overlay of vertices v1 "<<&*v1<<" v0 "<<&*v0);
+      binop_local_views( v0, v1, BOP, rsnc);
+      sncp()->delete_vertex(v0);
+
+      TRACEN("vertices on snc0 sn1 snc01: "<<
+	     sncp()->number_of_vertices()<<' '<<
+	     snc1i.number_of_vertices()<<' '<<
+	     rsnc.number_of_vertices());
     }
+
+    TRACEN("=> edge facet intersection");
+
+    TRACEN("vertices on snc0:");
+    CGAL_nef3_forall_vertices( v0, *sncp()) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc1:");
+    CGAL_nef3_forall_vertices( v0, snc1i) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+    TRACEN("vertices on snc01:");
+    CGAL_nef3_forall_vertices( v0, rsnc) TRACEN(point(v0)<<&*(v0->sncp_));
+    TRACEN("end vertices"<<std::endl);
+
+    SNC_ray_shoter rs(*sncp());
+
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
     CGAL_nef3_forall_edges( e0, *sncp()) { 
       CGAL_nef3_forall_facets( f1, snc1i) { 
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e0), f1, ip )) {
+	  TRACEN(" edge0 face1 intersection...");
 	  v0 = qualify_with_respect( ip, *sncp());
 	  v1 = qualify_with_respect( ip, snc1i);
-	  Stay[binop_local_views( v0, v1, BOP)] = true;
+	  binop_local_views( v0, v1, BOP, rsnc);
 	}
       }
     }
@@ -678,37 +667,52 @@ public:
       CGAL_nef3_forall_facets( f0, *sncp()) { 
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
+	  TRACEN(" edge1 face0 intersection...");
 	  v1 = qualify_with_respect( ip, snc1i);
 	  v0 = qualify_with_respect( ip, *sncp());
-	  Stay[binop_local_views( v0, v1, BOP)] = true;
+	  binop_local_views( v0, v1, BOP, rsnc);
 	}
       }
     }
+    TRACEN("=> edge edge intersection");
     CGAL_nef3_forall_edges( e0, *sncp()) { 
       CGAL_nef3_forall_edges( e1, snc1i) { 
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e0), segment(e1), ip )) {
+	  TRACEN(" edge0 edge1 intersection...");
 	  Vertex_handle v0, v1;
 	  v0 = qualify_with_respect( ip, *sncp());
 	  v1 = qualify_with_respect( ip, snc1i);
-	  Stay[binop_local_views( v0, v1, BOP)] = true;
+	  binop_local_views( v0, v1, BOP, rsnc);
 	}
       }
     }
-    CGAL_nef3_forall_vertices( v0, *sncp())
-      if( !Stay[v0]) sncp()->delete_vertex(v0);
+    TRACEN("=> resultant vertices: ");
+    CGAL_nef3_forall_vertices( v0, rsnc) {
+      TRACEN(&*v0<<" "<<point(v0)<<&*(v0->sncp_));
+    }
+    TRACEN("=> pre-construction result");
+    SNC_io_parser<SNC_structure> O(std::cout, rsnc);
+    O.print();
 
-    // remove vertices whose local view is not that of a vertex
-    // TO VERIFY: clean adjacency information before next step?
+    // TODO: remove vertices whose local view is not that of a vertex
     // synthesis of spatial structure
-
     // this code corresponds to build_external_extructure on
     // Nef_polyhedron_3.h
-    SNC_constructor C(*sncp());
+
+    SNC_constructor C(rsnc);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
+    rsnc.simplify();
+
+    TRACEN("=> construction completed, result: ");
+    SNC_io_parser<SNC_structure> Op(std::cout, rsnc);
+    Op.print();
+
+    TRACEN("=> end binary operation. ");
+    return rsnc;
   }
 
   template <typename Visitor>
@@ -723,11 +727,11 @@ public:
   Volume_iterator   volumes_begin()    { return sncp()->volumes_begin(); }
   Volume_iterator   volumes_end()      { return sncp()->volumes_end(); }
 
-  Shell_entry_iterator  shells_begin(Volume_handle c) {
-	return sncp()->shells_begin(c);
+  Shell_entry_iterator shells_begin(Volume_handle c) {
+    return c->shells_begin();
   }
-  Shell_entry_iterator  shells_end(Volume_handle c) {
-	return sncp()->shells_end(c);
+  Shell_entry_iterator shells_end(Volume_handle c) {
+    return c->shells_end();
   }
 
   Size_type number_of_vertices() const  

@@ -318,6 +318,8 @@ public:
   typedef typename Refs_::Mark Mark;
   /*{\Mtypemember the mark of sphere map objects.}*/
 
+  typedef typename Base::GenPtr GenPtr;
+
   /*{\Mgeneralization SNC_SM_decorator<Refs_>}*/
 
 protected:
@@ -1168,6 +1170,10 @@ void SNC_SM_overlayer<Refs_>::simplify() const
         set_face(source(e),face(e));
       if ( is_closed_at_source(twin(e)) ) 
         set_face(target(e),face(e));
+      if( is_boundary_object(e))
+	sncp()->undef_sm_boundary_item(e);
+      if( is_boundary_object(twin(e)))
+	sncp()->undef_sm_boundary_item(twin(e));
       delete_edge_pair(e);
     }
   }

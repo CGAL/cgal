@@ -32,7 +32,7 @@
 #define CGAL_NEF_POLYHEDRON_3_H
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#define SNC_VISUALIZOR
+// #define SNC_VISUALIZOR
 // #define SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
@@ -224,46 +224,47 @@ protected:
     CGAL_nef3_assertion(CGAL_NTS abs(x) == 
 		   CGAL_NTS abs(y) == 
 		   CGAL_NTS abs(z) == 1);
+    SNC_decorator D(snc());
     Vertex_handle v = snc().new_vertex();
-    snc().point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
+    D.point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
     /* TODO: to replace the IMMN constant by a real infimaximal number */
-    SM_decorator D(v);
+    SM_decorator SD(v);
     Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			  Sphere_point(0, -y, 0), 
 			  Sphere_point(0, 0, -z) };
     /* create box vertices */
     SVertex_handle sv[3];
     for(int vi=0; vi<3; ++vi)
-      sv[vi] = D.new_vertex(sp[vi]);
+      sv[vi] = SD.new_vertex(sp[vi]);
     /* create facet's edge uses */
     Sphere_segment ss[3];
     SHalfedge_handle she[3];
     for(int si=0; si<3; ++si) {
-      she[si] = D.new_edge_pair(sv[si], sv[(si+1)%3]);
+      she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
       ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
-      D.circle(she[si]) = ss[si].sphere_circle();
-      D.circle(D.twin(she[si])) = ss[si].opposite().sphere_circle();
+      SD.circle(she[si]) = ss[si].sphere_circle();
+      SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
     }
     /* create facets */
-    SFace_handle fi = D.new_face();
-    SFace_handle fe = D.new_face();
-    D.link_as_face_cycle(she[0], fi);
-    D.link_as_face_cycle(D.twin(she[0]), fe);
+    SFace_handle fi = SD.new_face();
+    SFace_handle fe = SD.new_face();
+    SD.link_as_face_cycle(she[0], fi);
+    SD.link_as_face_cycle(SD.twin(she[0]), fe);
     /* set boundary marks */
-    SHalfedge_iterator e = D.shalfedges_begin();
+    SHalfedge_iterator e = SD.shalfedges_begin();
     SFace_handle f;
-    Sphere_point p1 = D.point(D.source(e));
-    Sphere_point p2 = D.point(D.target(e));
-    Sphere_point p3 = D.point(D.target(D.next(e)));
+    Sphere_point p1 = SD.point(SD.source(e));
+    Sphere_point p2 = SD.point(SD.target(e));
+    Sphere_point p3 = SD.point(SD.target(SD.next(e)));
     if ( spherical_orientation(p1,p2,p3) > 0 )
-      f = D.face(e);
+      f = SD.face(e);
     else
-      f = D.face(D.twin(e));
-    D.mark(f) = space;
+      f = SD.face(SD.twin(e));
+    SD.mark(f) = space;
     CGAL_nef3_forall_sedges_of(e, v)
-      D.mark(e) = D.mark(D.source(e)) = space;
-    D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-    D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+      SD.mark(e) = SD.mark(SD.source(e)) = space;
+    SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+    SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
     return v;
   }
 
@@ -448,12 +449,13 @@ public:
     return res;
   }
 
-  Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1) const
-  /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(snc(), true); // a copy
-    SNC_decorator D(res.snc());
+  Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
+    /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
+    SNC_decorator D(snc());
     AND _and;
-    D.binary_operation( N1.snc(), _and);
+    SNC_structure res_snc = D.binary_operation( N1.snc(), _and); //copy?
+    //SNC_io_parser::dump( res_snc);
+    Nef_polyhedron_3<T> res(res_snc, false);
     res.clear_box_marks();
     return res;
   }
@@ -503,7 +505,7 @@ public:
   operation \emph{complement}. There are also the corresponding
   modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_3<T>  operator*(Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T>  operator*(Nef_polyhedron_3<T>& N1) 
   { return intersection(N1); }
 
   Nef_polyhedron_3<T>  operator+(const Nef_polyhedron_3<T>& N1) const
