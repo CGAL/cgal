@@ -133,9 +133,9 @@ Here is an example:
 
 \ccIncludeExampleCode{kl.C}
 
-While \verb+gcc 2.95+ and the Kai \CC\ compiler don't have problems
-with correctly compiling the program above, the mips compiler on {\sc IRIX} 
-does not implement Koenig lookup, so it fails:
+While \verb+gcc+ doesn't have problems with correctly compiling the program
+above, the MipsPro compiler on {\sc IRIX} (up till version 7.30) does not
+implement Koenig lookup, so it fails:
 
 {\small
 \begin{verbatim}
@@ -207,6 +207,15 @@ By the way, \verb+gcc 2.95+ uses the function defined at the
 point of definition.
 
 \section{Namespace CGAL::NTS}
+
+{\em Note: this section is in the process of being revisited once CGAL 3.0
+is out.\footnote{It causes problems with g++ 3.4, which is more picky about
+two-phase name lookup.  At the moment (3.0), CGAL::NTS doesn't exist anymore,
+and the \ccc{CGAL_NTS} macro boils down to CGAL::.  The future interface
+is still not fixed, it could be to allow Koenig Lookup or to use a traits
+class interface for number types.  It's interesting to note that the standard
+library has similar issues, e.g. for swap(), see issues 225, 226, 299.}}
+
 What are the conclusions from the previous subsection. If \ccc{A}
 plays the role of \ccc{std} and \ccc{B} the role of \cgal, we can
 conclude that \cgal\ should not define template
