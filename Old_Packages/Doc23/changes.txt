@@ -1,3 +1,6 @@
+2.30    (12 July 2001)
+- Documented which functors are model for AdaptableFunctor.
+
 2.29    (10 July 2001)
 - More additions of function objects as a result of kernel traits discussion
 - New predicate : coplanar_orientation(3 points).
