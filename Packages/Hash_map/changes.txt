@@ -1,5 +1,9 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
+
+16 September 2004 Andreas Fabri
+- Added missing boost related forward declarations
+
 14 September 2004 Andreas Fabri
 - Added boost::associative_property_map, put and get  for class Unique_hash_map
 

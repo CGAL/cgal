@@ -115,10 +115,15 @@ public:
     void statistics() const { m_map.statistics(); }
 };
 
+
+
 CGAL_END_NAMESPACE
 
-// skip the next three functions as they will go to Unique_hash_map.h
 namespace boost {
+  template <typename UniquePairAssociativeContainer>
+  class associative_property_map;
+
+  struct lvalue_property_map_tag;
 
   template <typename KeyType, typename ValueType>
   class associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >
@@ -137,6 +142,14 @@ namespace boost {
   private:
     C* m_c;
   };
+
+
+  template <typename KeyType, typename ValueType>
+  associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >
+  make_assoc_property_map(CGAL::Unique_hash_map<KeyType,ValueType> & c)
+  {
+    return associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >(c);
+  }
   
   
   template <typename KeyType, typename ValueType>
@@ -150,8 +163,9 @@ namespace boost {
   {
     uhm[key] = val;
   }
-} // namespace boost 
 
+
+}
 
 
 
