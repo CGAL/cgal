@@ -3,42 +3,42 @@
 CVS_MODULE_NAME=C3
 Package=C3
 
-.PHONY: Package Test Submit Version Rtag
+.PHONY: package test submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-Package: clean $(Package).tar.gz
+package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "------------ Penser à: -----------"
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
-	@echo "---- make Test                ----"
-	@echo "---- make VERSION=X.X Version ----"
-	@echo "---- make Commit              ----"
-	@echo "---- make VERSION=X.X Rtag    ----"
-	@echo "---- make Package             ----"
-	@echo "---- make submit              ----"
+	@echo "---- make test                ----"
+	@echo "---- make VERSION=X.X version ----"
+	@echo "---- make commit              ----"
+	@echo "---- make VERSION=X.X rtag    ----"
+	@echo "---- make package             ----"
+	@echo "---- make Submit              ----"
 
 	@echo "----------------------------------"
 
 symlinks:
 	cd include/CGAL/Cartesian ; sh ./create_symlinks_3
 
-Test:
+test:
 	cd test/Kernel ; ./cgal_test
 
-Version:
+version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
 
-Commit:
+commit:
 	cvs commit
 
-Rtag:
+rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
-Submit: Package
+submit: Package
 	cp $(Package).tar.gz version description.txt long_description.txt \
 	   changes.txt $(WWW_dir)
 	echo > $(TMP_file)

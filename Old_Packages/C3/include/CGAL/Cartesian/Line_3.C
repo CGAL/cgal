@@ -41,6 +41,9 @@
 #ifndef CGAL_CARTESIAN_PLANE_3_H
 #include <CGAL/Cartesian/Plane_3.h>
 #endif // CGAL_CARTESIAN_PLANE_3_H
+#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_3_H
+#include <CGAL/Cartesian/constructions_on_lines_3.h>
+#endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -70,8 +73,8 @@ LineC3<R CGAL_CTAG>::LineC3()
 }
 
 template < class R >
-LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG>  &l) :
-  Handle((Handle&)l)
+LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG>  &l)
+  : Handle((Handle&)l)
 {}
 
 template < class R >
@@ -101,7 +104,7 @@ LineC3<R CGAL_CTAG>::
 LineC3(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
        const typename LineC3<R CGAL_CTAG>::Direction_3 &d)
 {
-  new_rep(p, d.vector());
+  new_rep(p, d.to_vector());
 }
 
 template < class R >
@@ -147,6 +150,13 @@ LineC3<R CGAL_CTAG>::point() const
 }
 
 template < class R >
+typename LineC3<R CGAL_CTAG>::Point_3
+LineC3<R CGAL_CTAG>::second_point() const
+{
+  return ptr()->e1;
+}
+
+template < class R >
 typename LineC3<R CGAL_CTAG>::Direction_3
 LineC3<R CGAL_CTAG>::direction() const
 {
@@ -158,14 +168,16 @@ template < class R >
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point(int i) const
 {
-  return Point_3(point() + FT(i) * ((ptr()->e1) - ORIGIN));
+  // use a construction for that?
+  return CGAL::point_on_line(*this,i);
 }
 
 template < class R >
 typename LineC3<R CGAL_CTAG>::Plane_3
-LineC3<R CGAL_CTAG>::perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
+LineC3<R CGAL_CTAG>::
+perpendicular_plane(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return Plane_3(p, direction().vector());
+  return Plane_3(p, direction().to_vector());
 }
 
 template < class R >
@@ -177,22 +189,17 @@ LineC3<R CGAL_CTAG>::opposite() const
 
 template < class R >
 typename LineC3<R CGAL_CTAG>::Point_3
-LineC3<R CGAL_CTAG>::
-projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
+LineC3<R CGAL_CTAG>::projection(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  // Use a construction on FT for this?
-  return point() + ( ((direction().vector() * (p - point())) /
-                      (direction().vector() * direction().vector()))
-                     * direction().vector() );
+  return CGAL::projection_line(p,*this);
 }
-
 
 template < class R >
 bool
 LineC3<R CGAL_CTAG>::
 has_on(const typename LineC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return collinear(point(), point()+direction().vector(), p);
+  return collinear(point(), point()+direction().to_vector(), p);
 }
 
 

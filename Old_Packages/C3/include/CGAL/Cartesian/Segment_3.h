@@ -51,22 +51,14 @@ public:
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC3<R CGAL_CTAG>           Self;
   typedef typename R::Point_3              Point_3;
-  typedef typename R::Vector_3             Vector_3;
   typedef typename R::Direction_3          Direction_3;
   typedef typename R::Line_3               Line_3;
-  typedef typename R::Plane_3              Plane_3;
-  typedef typename R::Ray_3                Ray_3;
-  typedef typename R::Triangle_3           Triangle_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 #else
   typedef SegmentC3<R>                          Self;
   typedef typename R::Point_3_base              Point_3;
-  typedef typename R::Vector_3_base             Vector_3;
   typedef typename R::Direction_3_base          Direction_3;
   typedef typename R::Line_3_base               Line_3;
-  typedef typename R::Plane_3_base              Plane_3;
-  typedef typename R::Ray_3_base                Ray_3;
-  typedef typename R::Triangle_3_base           Triangle_3;
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 

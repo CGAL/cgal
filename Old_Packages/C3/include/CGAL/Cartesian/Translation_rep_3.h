@@ -29,63 +29,107 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 class Translation_repC3 : public Aff_transformation_rep_baseC3<R>
 {
-public:
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
-  typedef Aff_transformation_rep_baseC3<R>      Aff_t_base_3;
-  typedef typename Aff_t_base_3::Point_3                Point_3;
-  typedef typename Aff_t_base_3::Vector_3               Vector_3;
-  typedef typename Aff_t_base_3::Direction_3            Direction_3;
-  typedef typename Aff_t_base_3::Plane_3                Plane_3;
-  typedef typename Aff_t_base_3::Aff_transformation_3   Aff_transformation_3;
+  friend class Aff_transformation_repC3<R>;
+  friend class Scaling_repC3<R>;
 
-friend Aff_transformation_3 operator* CGAL_NULL_TMPL_ARGS
-                            (const Aff_transformation_3 &a,
-                             const Aff_transformation_3 &b);
+public:
+  typedef typename R::FT                                FT;
+  typedef typename R::RT                                RT;
+  typedef Aff_transformation_rep_baseC3<R>              Transformation_base_3;
+  typedef Aff_transformation_repC3<R>                   Transformation_3;
+  typedef Translation_repC3<R>                          Translation_3;
+  typedef Scaling_repC3<R>                              Scaling_3;
+  typedef typename Transformation_base_3::Point_3       Point_3;
+  typedef typename Transformation_base_3::Vector_3      Vector_3;
+  typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Aff_transformation_3
+	                                                Aff_transformation_3;
 
   Translation_repC3() {}
-  Translation_repC3(const Vector_3 &tv) : translationvector(tv) {}
-  ~Translation_repC3() {}
+  Translation_repC3(const Vector_3 &tv) : _translationvector(tv) {}
+  virtual ~Translation_repC3() {}
 
-  Point_3        transform(const Point_3 &p) const
+  virtual Point_3     transform(const Point_3 &p) const
   {
-    return p + translationvector;
+    return p + _translationvector;
   }
 
-  Vector_3       transform(const Vector_3 &v) const
+  virtual Vector_3    transform(const Vector_3 &v) const
   {
     return v;
   }
 
-  Direction_3    transform(const Direction_3 &d) const
+  virtual Direction_3 transform(const Direction_3 &d) const
   {
     return d;
   }
 
-  Aff_transformation_3 inverse() const
+  virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
   {
-    return Aff_transformation_3(TRANSLATION, - translationvector);
+    return t.compose(*this);
   }
 
-  Aff_transformation_3 transpose() const
+  virtual Aff_transformation_3 compose(const Transformation_3 &t) const
   {
-    FT ft0(0), ft1(1);
-
-    return Aff_transformation_3(ft1, ft0, ft0, ft0,
-                                ft0, ft1, ft0, ft0,
-                                ft0, ft0, ft1, ft0);
+    return Aff_transformation_3(t.t11,
+                                t.t12,
+				t.t13,
+				t.t11 * _translationvector.x()
+				+ t.t12 * _translationvector.y()
+				+ t.t13 * _translationvector.z() + t.t14,
+				
+				t.t21,
+                                t.t22,
+				t.t23,
+				t.t21 * _translationvector.x()
+				+ t.t22 * _translationvector.y()
+				+ t.t23 * _translationvector.z() + t.t24,
+				
+				t.t31,
+                                t.t32,
+				t.t33,
+				t.t31 * _translationvector.x()
+				+ t.t32 * _translationvector.y()
+				+ t.t33 * _translationvector.z() + t.t34);
   }
 
-  Aff_transformation_3 general_form() const
+  virtual Aff_transformation_3 compose(const Translation_3 &t) const
   {
-    FT ft0(0), ft1(1);
-    return Aff_transformation_3(ft1, ft0, ft0, translationvector.x(),
-                                ft0, ft1, ft0, translationvector.y(),
-                                ft0, ft0, ft1, translationvector.z());
+    return Aff_transformation_3(TRANSLATION,
+                                _translationvector + t._translationvector);
   }
 
+  virtual Aff_transformation_3 compose(const Scaling_3 &t) const
+  {
+    FT ft0(0);
+    return Aff_transformation_3(t._scalefactor,
+                                ft0,
+				ft0,
+				t._scalefactor * _translationvector.x(),
+				
+				ft0,
+                                t._scalefactor,
+				ft0,
+				t._scalefactor * _translationvector.y(),
+				
+				ft0,
+                                ft0,
+				t._scalefactor,
+				t._scalefactor * _translationvector.z());
+  }
 
-  virtual bool            is_even() const
+  virtual Aff_transformation_3 inverse() const
+  {
+    return Aff_transformation_3(TRANSLATION, - _translationvector);
+  }
+
+  virtual Aff_transformation_3 transpose() const
+  {
+    FT ft1(1), ft0(0);
+    return Aff_transformation_3(TRANSLATION, _translationvector);
+  }
+  
+  virtual bool is_even() const
   {
     return true;
   }
@@ -93,26 +137,21 @@ friend Aff_transformation_3 operator* CGAL_NULL_TMPL_ARGS
   virtual FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);
-    if (j==3) return translationvector[i];
+    if (j==3) return _translationvector[i];
     return FT(0);
   }
 
-  std::ostream &print(std::ostream &os) const
+  virtual std::ostream &print(std::ostream &os) const
   {
     FT ft0(0), ft1(1);
-    os << "                   "<< ft1 <<' '<< ft0 <<' '<< ft0 <<' '
-       << translationvector.x() << "\n";
-
-    os << "                   "<< ft0 <<' '<< ft1 <<' '<< ft0 <<' '
-       << translationvector.y() << "\n";
-
-    os << "                   "<< ft0 <<' '<< ft0 <<' '<< ft1 <<' '
-       << translationvector.z() << ")\n";
+    os << "Aff_transformationC3(VectorC3("<< _translationvector.x() << ","
+       << _translationvector.y() << ","
+       << _translationvector.z() << "))\n";
     return os;
   }
 
 private:
-  Vector_3   translationvector;
+  Vector_3   _translationvector;
 };
 CGAL_END_NAMESPACE
 

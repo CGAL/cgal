@@ -60,7 +60,7 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 SphereC3<R CGAL_CTAG>::
 SphereC3(const typename SphereC3<R CGAL_CTAG>::Point_3 &center,
-         const typename SphereC3<R CGAL_CTAG>::FT &squared_radius,
+         const typename R::FT &squared_radius,
          const Orientation &orient = COUNTERCLOCKWISE)
 {
   CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
@@ -174,7 +174,7 @@ SphereC3<R CGAL_CTAG>::center() const
 
 template < class R >
 inline
-typename SphereC3<R CGAL_CTAG>::FT
+typename R::FT
 SphereC3<R CGAL_CTAG>::squared_radius() const
 {
  return ptr()->squared_radius;
@@ -357,7 +357,7 @@ CGAL_KERNEL_INLINE
 std::istream& operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
 {
     typename SphereC3<R CGAL_CTAG>::Point_3 center;
-    typename SphereC3<R CGAL_CTAG>::FT squared_radius;
+    typename R::FT squared_radius;
     int o;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
@@ -370,7 +370,7 @@ std::istream& operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
     c = SphereC3<R CGAL_CTAG>(center, squared_radius, (Orientation)o);

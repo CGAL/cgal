@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Fourtuple<typename PlaneC3<R CGAL_CTAG>::FT>*
+_Fourtuple<typename R::FT>*
 PlaneC3<R CGAL_CTAG>::ptr() const
 {
     return (_Fourtuple<FT>*)PTR;
@@ -50,8 +50,10 @@ template < class R >
 inline
 void
 PlaneC3<R CGAL_CTAG>::
-new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a, const typename PlaneC3<R CGAL_CTAG>::FT &b,
-        const typename PlaneC3<R CGAL_CTAG>::FT &c, const typename PlaneC3<R CGAL_CTAG>::FT &d)
+new_rep(const typename R::FT &a,
+        const typename R::FT &b,
+        const typename R::FT &c,
+        const typename R::FT &d)
 {
   PTR = new _Fourtuple<FT>(a, b, c, d);
 }
@@ -116,10 +118,10 @@ PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
-        const typename PlaneC3<R CGAL_CTAG>::FT &b,
-        const typename PlaneC3<R CGAL_CTAG>::FT &c,
-        const typename PlaneC3<R CGAL_CTAG>::FT &d)
+PlaneC3(const typename R::FT &a,
+        const typename R::FT &b,
+        const typename R::FT &c,
+        const typename R::FT &d)
 {
   new_rep(a, b, c, d);
 }
@@ -130,7 +132,7 @@ PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
 {
-  new_rep(l.point(), l.point()+l.direction().vector(), p);
+  new_rep(l.point(), l.point()+l.direction().to_vector(), p);
 }
 
 template < class R >
@@ -189,28 +191,32 @@ long PlaneC3<R CGAL_CTAG>::id() const
 
 template < class R >
 inline
-typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::a() const
+typename R::FT
+PlaneC3<R CGAL_CTAG>::a() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::b() const
+typename R::FT
+PlaneC3<R CGAL_CTAG>::b() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 inline
-typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::c() const
+typename R::FT
+PlaneC3<R CGAL_CTAG>::c() const
 {
   return ptr()->e2;
 }
 
 template < class R >
 inline
-typename PlaneC3<R CGAL_CTAG>::FT PlaneC3<R CGAL_CTAG>::d() const
+typename R::FT
+PlaneC3<R CGAL_CTAG>::d() const
 {
   return ptr()->e3;
 }
@@ -227,7 +233,7 @@ typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 projection(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return CGAL::projection(p, *this);
+  return CGAL::projection_plane(p, *this);
 }
 
 template < class R >
@@ -380,7 +386,7 @@ PlaneC3<R CGAL_CTAG>::
 has_on_boundary(const  typename PlaneC3<R CGAL_CTAG>::Line_3 &l) const
 {
   return has_on_boundary(l.point())
-     &&  has_on_boundary(l.point() + l.direction().vector());
+     &&  has_on_boundary(l.point() + l.direction().to_vector());
 }
 
 template < class R >
@@ -436,7 +442,7 @@ std::ostream &operator<<(std::ostream &os, const PlaneC3<R CGAL_CTAG> &p)
 template < class R >
 std::istream &operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
 {
-    typename PlaneC3<R CGAL_CTAG>::FT a, b, c, d;
+    typename R::FT a, b, c, d;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> a >> b >> c >> d;

@@ -41,58 +41,99 @@ CGAL_BEGIN_NAMESPACE
 template < class R >
 class Scaling_repC3 : public Aff_transformation_rep_baseC3<R>
 {
-public:
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
-  typedef Aff_transformation_rep_baseC3<R>      Aff_t_base_3;
-  typedef typename Aff_t_base_3::Point_3                Point_3;
-  typedef typename Aff_t_base_3::Vector_3               Vector_3;
-  typedef typename Aff_t_base_3::Direction_3            Direction_3;
-  typedef typename Aff_t_base_3::Plane_3                Plane_3;
-  typedef typename Aff_t_base_3::Aff_transformation_3   Aff_transformation_3;
+  friend class Aff_transformation_repC3<R>;
+  friend class Translation_repC3<R>;
 
-friend Aff_transformation_3 operator* CGAL_NULL_TMPL_ARGS
-                              (const Aff_transformation_3 &a,
-                               const Aff_transformation_3 &b);
+public:
+  typedef typename R::FT                                FT;
+  typedef typename R::RT                                RT;
+  typedef Aff_transformation_rep_baseC3<R>              Transformation_base_3;
+  typedef Aff_transformation_repC3<R>                   Transformation_3;
+  typedef Translation_repC3<R>                          Translation_3;
+  typedef Scaling_repC3<R>                              Scaling_3;
+  typedef typename Transformation_base_3::Point_3       Point_3;
+  typedef typename Transformation_base_3::Vector_3      Vector_3;
+  typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Aff_transformation_3
+	                                                Aff_transformation_3;
 
   Scaling_repC3() {}
-  Scaling_repC3(const FT &s) : scalefactor(s) {}
-  ~Scaling_repC3() {}
+  Scaling_repC3(const FT &s) : _scalefactor(s) {}
+  virtual ~Scaling_repC3() {}
 
-  Point_3      transform(const Point_3 &p) const
+  virtual Point_3      transform(const Point_3 &p) const
   {
-    return Point_3(scalefactor * p.x(), scalefactor * p.y(),
-                   scalefactor * p.z());
+    return Point_3(_scalefactor * p.x(),
+                   _scalefactor * p.y(),
+                   _scalefactor * p.z());
   }
 
-  Vector_3     transform(const Vector_3 &v) const
+  virtual Vector_3     transform(const Vector_3 &v) const
   {
-    return Vector_3(scalefactor * v.x(), scalefactor * v.y(),
-                    scalefactor * v.z());
+    return Vector_3(_scalefactor * v.x(), _scalefactor * v.y(),
+                    _scalefactor * v.z());
   }
 
-  Direction_3  transform(const Direction_3 &d) const
+  virtual Direction_3  transform(const Direction_3 &d) const
   {
     return d;
   }
 
-  Aff_transformation_3 inverse() const
+  virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
   {
-    return Aff_transformation_3(SCALING, FT(1)/scalefactor);
+    return t.compose(*this);
   }
 
-  Aff_transformation_3 general_form() const
+  virtual Aff_transformation_3 compose(const Transformation_3 &t) const
+  {
+    return Aff_transformation_3(_scalefactor * t.t11,
+                                _scalefactor * t.t12,
+                                _scalefactor * t.t13,
+                                t.t14,
+				
+                                _scalefactor * t.t21,
+                                _scalefactor * t.t22,
+                                _scalefactor * t.t23,
+                                t.t24,
+				
+                                _scalefactor * t.t31,
+                                _scalefactor * t.t32,
+                                _scalefactor * t.t33,
+                                t.t34);
+  }
+
+  virtual Aff_transformation_3 compose(const Translation_3 &t) const
   {
     FT ft0(0);
-
-    return Aff_transformation_3(scalefactor, ft0, ft0,
-                                ft0, scalefactor, ft0,
-                                ft0, ft0, scalefactor);
+    return Aff_transformation_3(_scalefactor,
+                                ft0,
+                                ft0,
+				t._translationvector.x(),
+				
+                                ft0,
+				_scalefactor,
+                                ft0,
+				t._translationvector.y(),
+				
+                                ft0,
+                                ft0,
+				_scalefactor,
+				t._translationvector.z());
   }
 
-  Aff_transformation_3 transpose() const
+  virtual Aff_transformation_3 compose(const Scaling_3 &t) const
   {
-    return general_form();
+    return Aff_transformation_3(SCALING, _scalefactor*t._scalefactor);
+  }
+
+  virtual Aff_transformation_3 inverse() const
+  {
+    return Aff_transformation_3(SCALING, FT(1)/_scalefactor);
+  }
+
+  virtual Aff_transformation_3 transpose() const
+  {
+    return Aff_transformation_3(SCALING, _scalefactor);
   }
 
   virtual bool            is_even() const
@@ -104,25 +145,18 @@ friend Aff_transformation_3 operator* CGAL_NULL_TMPL_ARGS
   {
     if (i!=j) return FT(0);
     if (i==3) return FT(1);
-    return scalefactor;
+    return _scalefactor;
   }
-
 
   virtual std::ostream &print(std::ostream &os) const
   {
     FT ft0(0);
-    os << "                   "<< scalefactor <<' '<< ft0 <<' '<< ft0 << ' '
-       << ft0 << "\n";
-    os << "                   "<< ft0 <<' '<< scalefactor <<' '<< ft0 << ' '
-       << ft0 << "\n";
-    os << "                   "<< ft0 <<' '<<  ft0 <<' '<< scalefactor <<' '
-       << ft0 << ")\n";
-
+    os << "Aff_transformationC3(" << _scalefactor << ")";
     return os;
   }
 
 private:
-  FT   scalefactor;
+  FT   _scalefactor;
 };
 
 CGAL_END_NAMESPACE

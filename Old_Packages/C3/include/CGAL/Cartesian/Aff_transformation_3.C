@@ -73,7 +73,8 @@ Aff_transformationC3(const Translation,
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
 Aff_transformationC3(const Scaling,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &s, const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &s,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Scaling_repC3<R>(s/w);
@@ -84,14 +85,19 @@ Aff_transformationC3(const Scaling,
 
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m14,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m24,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m34,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
+Aff_transformationC3(const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m14,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m24,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m34,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
@@ -104,11 +110,17 @@ Aff_transformationC3(
 }
 
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32, const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
-  const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
+Aff_transformationC3<R CGAL_CTAG>::
+Aff_transformationC3(const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
+                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
     PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
@@ -123,148 +135,6 @@ Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::~Aff_transformationC3()
 {}
-template < class R >
-typename Aff_transformationC3<R CGAL_CTAG>::Point_3
-Aff_transformationC3<R CGAL_CTAG>::
-transform(const typename Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
-{
-  return ptr()->transform(p);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Point_3
-Aff_transformationC3<R CGAL_CTAG>::
-operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Point_3 &p) const
-{
-  return transform(p);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Vector_3
-Aff_transformationC3<R CGAL_CTAG>::
-transform(const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
-{
-  return ptr()->transform(v);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Vector_3
-Aff_transformationC3<R CGAL_CTAG>::
-operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v) const
-{
-  return transform(v);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Direction_3
-Aff_transformationC3<R CGAL_CTAG>::
-transform(const typename Aff_transformationC3<R CGAL_CTAG>::Direction_3 &d) const
-{
-  return ptr()->transform(d);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Direction_3
-Aff_transformationC3<R CGAL_CTAG>::
-operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Direction_3& d) const
-{
-  return transform(d);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Plane_3
-Aff_transformationC3<R CGAL_CTAG>::
-transform(const typename Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
-{
-  return p.transform(*this);
-}
-
-template < class R >
-inline
-typename Aff_transformationC3<R CGAL_CTAG>::Plane_3
-Aff_transformationC3<R CGAL_CTAG>::
-operator()(const typename Aff_transformationC3<R CGAL_CTAG>::Plane_3& p) const
-{
-  return transform(p);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>
-Aff_transformationC3<R CGAL_CTAG>::inverse() const
-{
-  return ptr()->inverse();
-}
-
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>
-Aff_transformationC3<R CGAL_CTAG>::general_form() const
-{
-  return ptr()->general_form();
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>
-Aff_transformationC3<R CGAL_CTAG>::transpose() const
-{
-  return ptr()->transpose();
-}
-
-template < class R >
-bool  Aff_transformationC3<R CGAL_CTAG>::is_even() const
-{
-  return ptr()->is_even();
-}
-
-template < class R >
-bool  Aff_transformationC3<R CGAL_CTAG>::is_odd() const
-{
-  return ! (ptr()->is_even());
-}
-
-
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>
-_general_transformation_composition(const Aff_transformation_repC3<R> &l,
-                                    const Aff_transformation_repC3<R> &r )
-{
-return Aff_transformationC3<R CGAL_CTAG>(
-            l.t11*r.t11 + l.t12*r.t21 + l.t13*r.t31,
-            l.t11*r.t12 + l.t12*r.t22 + l.t13*r.t32,
-            l.t11*r.t13 + l.t12*r.t23 + l.t13*r.t33,
-            l.t11*r.t14 + l.t12*r.t24 + l.t13*r.t34 + l.t14,
-
-            l.t21*r.t11 + l.t22*r.t21 + l.t23*r.t31,
-            l.t21*r.t12 + l.t22*r.t22 + l.t23*r.t32,
-            l.t21*r.t13 + l.t22*r.t23 + l.t23*r.t33,
-            l.t21*r.t14 + l.t22*r.t24 + l.t23*r.t34 + l.t24,
-
-            l.t31*r.t11 + l.t32*r.t21 + l.t33*r.t31,
-            l.t31*r.t12 + l.t32*r.t22 + l.t33*r.t32,
-            l.t31*r.t13 + l.t32*r.t23 + l.t33*r.t33,
-            l.t31*r.t14 + l.t32*r.t24 + l.t33*r.t34 + l.t34);
-}
-
-
-// this is really quick and dirty.  As in the 2D case the composition of
-// translations or scalings should be a translation or a scaling
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>
-operator*(const Aff_transformationC3<R CGAL_CTAG> &a,
-          const Aff_transformationC3<R CGAL_CTAG> &b)
-{
-  return _general_transformation_composition(
-         *(Aff_transformation_repC3<R>*)(a.general_form().ptr()),
-         *(Aff_transformation_repC3<R>*)(b.general_form().ptr()));
-}
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >

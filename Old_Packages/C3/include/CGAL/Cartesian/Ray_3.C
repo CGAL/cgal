@@ -68,7 +68,7 @@ RayC3<R CGAL_CTAG>::
 RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
       const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
 {
-  PTR = new _Twotuple< Point_3 >(sp, sp + d.vector());
+  PTR = new _Twotuple< Point_3 >(sp, sp + d.to_vector());
 }
 
 

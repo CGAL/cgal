@@ -78,13 +78,13 @@ point_on_plane(const PlaneC3<R CGAL_CTAG>& p)
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 PointC3<R CGAL_CTAG>
-projection(const PointC3<R CGAL_CTAG>& p,
-           const PlaneC3<R CGAL_CTAG>& h)
+projection_plane(const PointC3<R CGAL_CTAG>& p,
+                 const PlaneC3<R CGAL_CTAG>& h)
 {
   typename R::FT x,y,z;
-  projectionC3(h.a(),h.b(),h.c(),h.d(),
-               p.x(),p.y(),p.z(),
-               x,y,z);
+  projection_planeC3(h.a(),h.b(),h.c(),h.d(),
+                     p.x(),p.y(),p.z(),
+                     x,y,z);
   return PointC3<R CGAL_CTAG>(x,y,z);
 }
 

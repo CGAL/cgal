@@ -83,6 +83,34 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   z = sz + num_z*inv;
 }
 
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+point_on_lineC3(const FT &px, const FT &py, const FT &pz,
+                const FT &qx, const FT &qy, const FT &qz,
+		int i,
+                FT &x, FT &y, FT &z)
+{
+  x = px + (qx-px)*i;
+  y = py + (qy-py)*i;
+  z = pz + (qz-pz)*i;
+}
+
+template <class FT>
+CGAL_KERNEL_MEDIUM_INLINE
+void
+projection_lineC3(const FT &px, const FT &py, const FT &pz,
+                  const FT &qx, const FT &qy, const FT &qz,
+                  const FT &rx, const FT &ry, const FT &rz,
+                  FT &x, FT &y, FT &z)
+{
+  // projects r on the line pq
+  x = px + (qx-px) * (rx-px);
+  y = py + (qy-py) * (ry-py);
+  z = pz + (qz-pz) * (rz-pz);
+}
+
+
 template <class FT> 
 CGAL_KERNEL_MEDIUM_INLINE
 void            
@@ -130,9 +158,9 @@ point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
 void
-projectionC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
-             const FT &px, const FT &py, const FT &pz,
-             FT &x, FT &y, FT &z)
+projection_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
+                   const FT &px, const FT &py, const FT &pz,
+                   FT &x, FT &y, FT &z)
 {
   // the equation of the plane is Ax+By+Cz+D=0
   // the normal direction is (A,B,C)
