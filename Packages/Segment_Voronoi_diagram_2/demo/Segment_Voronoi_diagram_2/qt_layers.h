@@ -12,12 +12,18 @@ public:
   Voronoi_diagram_layer(T& svd) : svd(svd) {}
 
   void draw() {
+#if 1
+    draw_diagram(*widget, svd);
+#else 
+
     *widget << CGAL::BLUE;
 #if !defined (__POWERPC__)
     *widget << CGAL::PointSize(3);
     *widget << CGAL::LineWidth(3);
 #endif
     svd.draw_dual(*widget);
+
+#endif
   }
 
 };
@@ -45,7 +51,7 @@ private:
 public:
   Sites_layer(T& svd) : svd(svd) {}
 
-  void draw(){
+  void draw() {
     *widget << CGAL::RED;
 #if !defined (__POWERPC__)
     *widget << CGAL::PointSize(6);

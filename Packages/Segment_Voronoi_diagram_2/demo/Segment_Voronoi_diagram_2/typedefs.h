@@ -1,5 +1,5 @@
-#ifndef _MK___TYPEDEFS_H
-#define _MK___TYPEDEFS_H
+#ifndef SVD_TYPEDEFS_H
+#define SVD_TYPEDEFS_H
 
 #include <CGAL/basic.h>
 
@@ -47,4 +47,4 @@ typedef Gt::Site_2             Site;
 typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>          SVD_2;
 //typedef CGAL::Segment_Voronoi_diagram_2<Gt>          SVD_2;
 
-#endif  // _MK___TYPEDEFS_H
+#endif  // SVD_TYPEDEFS_H

@@ -20,9 +20,9 @@
 #include <list>
 #include <vector>
 
-#include "typedefs.h"
-#include "svd_insert.h"
-#include "svd_draw.h"
+#include "pvd_typedefs.h"
+#include "pvd_insert.h"
+#include "pvd_draw.h"
 
 #include "qt_file_toolbar.h"
 #include "qt_layers_toolbar.h"
