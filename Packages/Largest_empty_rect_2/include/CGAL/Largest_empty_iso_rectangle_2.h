@@ -32,7 +32,6 @@
 CGAL_BEGIN_NAMESPACE
 
 
-
 template<class T>
 class Largest_empty_iso_rectangle_2 {
 public: 
