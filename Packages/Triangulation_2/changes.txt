@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.08 (19/08/03)
+- added in CVS forgotten examples files hierarchy.C 
+  and constrained_hierarchy_plus.C
+- partial update of the doc
+
 ver 8.07 (12/08/03)
 - updated examples
 - updated user manuel

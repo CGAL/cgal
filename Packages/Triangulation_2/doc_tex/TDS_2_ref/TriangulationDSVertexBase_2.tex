@@ -18,51 +18,125 @@
 
 \ccDefinition
   
-The concept \ccRefName\ does this and that.
+The concept \ccRefName\ describes the requirements for the
+vertex base class of a \ccc{Triangulation_data_structure_2<Vb,Fb>}.
 
-\ccGeneralizes
+Note that if  the \ccc{Triangulation_data_structure_2} 
+is plugged  into a triangulation class, 
+the vertex base class has additional geometric
+requirements depending on the triangulation class.
 
-ThisConcept \\
-ThatConcept
+At the base level,  
+provides access to one of its incident
+face through a \ccc{Face_handle}.
+
+Since the \ccc{Triangulation_data_structure_2} is the class 
+which defines the handle
+types, the face base class has to be somehow 
+parameterized by the triangulation
+data structure.  But since the \ccc{Triangulation_data_structure_2}
+itself is parameterized by the face and vertex
+base classes, there is a cycle in the definition of these classes.  
+In order
+to break the cycle, the base classes for face and vertex  which are given as
+arguments for the  \ccc{Triangulation_data_structure_2}
+use a \ccc{void} as triangulation
+data structure parameter, and the
+\ccc{Triangulation_data_structure_2}
+ then uses a {\it rebind}  mecanism (similar to the one specified in
+\ccc{std::allocator}) in order to plug itself 
+as parameter to the face and vertex  base classes. 
+This mecanism requires that the base class  provides
+a templated nested class \ccc{Rebind_TDS} which
+itself provides the {\it rebound} version of the base class
+as the subtype \ccc{Rebind_TDS<TDS2>::Other}.
+ This {\it rebound} base class is  the class
+which is used as actual base class for the vertex class
+of \ccc{Triangulation_data_structure_2}.
+
 
 \ccTypes
+\ccThree{typedef TriangulationDataStructure_2::Vertex_handle}{}{}
+\ccThreeToTwo
+The concept \ccRefName\ has to provide the following types.
 
-\ccNestedType{TYPE}{some nested types}
+\ccNestedType{
+  template <typename TDS2>
+  struct Rebind_TDS;}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} vertex, in which the actual 
+\ccc{Triangulation_data_structure_2} is  plugged.
+This type  \ccc{Other}  will be the real base
+class used for the \ccc{Vertex}  of \ccc{Triangulation_data_structure_2}.}
+
+
+\ccTypedef{typedef TriangulationDataStructure_2 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Face_handle Face_handle;}{}
+
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{v}  %% choose variable name
+
+\ccThree{Vertex_handle}{Facetxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
 \ccConstructor{TriangulationDSVertexBase_2();}{default constructor.}
+\ccGlue
+\ccConstructor{TriangulationDSVertexBase_2(Face_handle f);}
+{Constructs a vertex pointing to face  \ccc{f}.}
 
-\ccOperations
+\ccAccessFunctions
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{Face_handle face() const;}
+{returns an incident face.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_face(Face_handle c);}
+{Sets the incident face.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose=false) const;}
+{Performs any desired test on a vertex. Checks that the
+pointer to an incident face is not \ccc{NULL}.}
+
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_2}
+  because it uses \ccc{Compact_container} to store its faces.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationDSVertexBase_2 & v);}
+{Inputs the non-combinatorial information possibly stored in the vertex.} 
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationDSVertexBase_2 & v);}
+{Outputs the non combinatorial operation possibly stored in the
+vertex.}
 
 \ccHasModels
 
-\ccc{Some_class},
-\ccc{Some_other_class}.
+\ccc{CGAL::Triangulation_ds_vertex_base_2<Tds>}\\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
+\ccc{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>} \\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>} 
+\ccc{CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,vb>}
 
 \ccSeeAlso
+\ccc{TriangulationVertexBase_2}\\
+\ccc{TriangulationDSFaceBase_2}\\
+\ccc{TriangulationFaceBase_2}
+\ccc{TriangulationDataStructure::Vertex} \\
+\ccc{Triangulation_data_structure_2<Vb,Fb>} \\
 
-Some\_other\_concept,
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Package/TriangulationDSVertexBase_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{examples/Package/TriangulationDSVertexBase_2_prog.C}
 
 \end{ccRefConcept}
 

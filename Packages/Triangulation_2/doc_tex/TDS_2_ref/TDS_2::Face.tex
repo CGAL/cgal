@@ -1,11 +1,11 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Triangulation_data_structure_2::Face.tex
+% | Reference manual page: TDS_2::Face.tex
 % +------------------------------------------------------------------------+
 % | 07.04.2000   Author
 % | Package: Package
 % | 
-\RCSdef{\RCSTriangulationdatastructure::FaceRev}{$Revision$}
-\RCSdefDate{\RCSTriangulationdatastructure::FaceDate}{$Date$}
+\RCSdef{\RCSTdsFace}{$Revision$}
+\RCSdefDate{\RCSTdsFaceDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
@@ -44,13 +44,14 @@ the triangulation data structure
 except the iterators and the circulators.
 
 \ccCreationVariable{f}  %% choose variable name
-\begin{ccAdvanced}
+
 \ccCreation
 
-User defined triangulation algorithms  that needs to
-to define new faces and delete non longer used ones,
-have to call the methods \ccc{create_face} and
-\ccc{delete_face()} of the triangulation data structure.
+The methods \ccc{create_face} and
+\ccc{delete_face()}
+have to be used to 
+define new faces and delete non longer used ones.
+
 
 %\ccConstructor{TriangulationDataStructure_2::Face();}{default
 %constructor,
@@ -70,35 +71,6 @@ have to call the methods \ccc{create_face} and
 %                    Face_handle n1,
 %                    Face_handle n2);}
 %{introduces a face \ccVar, and initializes the vertices and the neighbors.}
-
-
-\ccHeading{Setting}
-
-\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
-\ccMethod{void set_vertex(int i, Vertex_handle v);}
-{sets vertex \ccc{i} to be \ccc{v}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{void set_neighbor(int i, Face_handle n);}
-{sets neighbor \ccc{i} to be \ccc{n}.
-\ccPrecond $0\leq i \leq 2$.
-}
-\ccGlue
-\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
-\ccGlue
-\ccMethod{void set_vertices(Vertex_handle v0,
-		    Vertex_handle v1,
-		    Vertex_handle v2);}{sets the vertices pointers.}
-\ccGlue
-\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
-\ccGlue
-\ccMethod{void set_neighbors(Face_handle n0,
-		     Face_handle n1,
-		     Face_handle n2);}{sets the neighbors pointers.}
-
-\end{ccAdvanced}
-
 
 \ccHeading{Vertex Access Functions}
 
@@ -149,6 +121,32 @@ compute the index \ccc{i} of \ccc{n}.}
 
 
 \begin{ccAdvanced}
+\ccHeading{Setting}
+
+\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Face_handle n);}
+{sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(Vertex_handle v0,
+		    Vertex_handle v1,
+		    Vertex_handle v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(Face_handle n0,
+		     Face_handle n1,
+		     Face_handle n2);}{sets the neighbors pointers.}
+
+
 \ccHeading{Checking}
 
 \ccMethod{bool is_valid() const;}
