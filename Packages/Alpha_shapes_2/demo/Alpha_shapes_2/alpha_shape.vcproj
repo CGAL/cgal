@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/alpha_shape.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
+				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib $(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/alpha_shape.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD"
