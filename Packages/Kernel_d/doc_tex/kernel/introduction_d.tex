@@ -1,7 +1,6 @@
 \chapter{Introduction}
-\input{common_intro.tex}
 
-{This} part of the reference manual covers the higher-dimensional
+This part of the reference manual covers the higher-dimensional
 kernel.  The kernel contains objects of constant size, such as point,
 vector, direction, line, ray, segment, circle.  With each type comes a
 set of functions which can be applied to an object of this type.  You
@@ -57,7 +56,7 @@ For an iterator range \ccc{[first,last)} we define \ccc{T = tuple
   [first,last)} as the ordered tuple $(T[0],T[1], \ldots T[d-1])$
 where $S[i] = *++^{(i)}\mathit{first}$ (the element obtained by $i$
 times forwarding the iterator by operator \ccc{++} and then
-dereferencing it to get the value to which it points).  We write \cc{d
+dereferencing it to get the value to which it points).  We write \ccc{d
   = size [first,last)} and \ccc{S = set [first,last)} to denote the
 unordered set of elements of the corresponding tuple.
 
