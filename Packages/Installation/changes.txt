@@ -1,3 +1,6 @@
+28/03/2003 (rursu) 1.183
+removed stlport from README
+
 28/03/2003 (rursu)
 ----------
 modified install_cgal script to support Qt 2, 3 on Windows
