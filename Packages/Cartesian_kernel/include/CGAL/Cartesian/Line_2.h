@@ -282,7 +282,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, LineC2<R CGAL_CTAG> &l)
 {
-    typename LineC2<R CGAL_CTAG>::FT a, b, c;
+    typename R::FT a, b, c;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> a >> b >> c;

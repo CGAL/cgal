@@ -107,8 +107,6 @@ public:
 
   CircleC2           opposite() const;
 
-//  EllipseC2<FT> transform(const Aff_transformation_2 &t) const;
-
   CircleC2           orthogonal_transform(const Aff_transformation_2 &t) const;
 
   Oriented_side  oriented_side(const Point_2 &p) const;
@@ -271,19 +269,6 @@ CircleC2<R CGAL_CTAG>::orthogonal_transform
                                            : CGAL::opposite(orientation()));
 }
 
-/*
-template < class R >
-inline
-EllipseC2<CircleC2<R CGAL_CTAG>::FT>
-CircleC2<R CGAL_CTAG>::
-transform(const Aff_transformationC2<CircleC2<R CGAL_CTAG>::FT> &t) const
-{
-  return CircleC2<R CGAL_CTAG>(t.transform(center()),
-                               squared_radius(),
-                               orientation());
-}
-*/
-
 #ifndef CGAL_NO_OSTREAM_INSERT_CIRCLEC2
 template < class R >
 CGAL_KERNEL_INLINE
@@ -325,8 +310,8 @@ CGAL_KERNEL_INLINE
 std::istream&
 operator>>(std::istream &is, CircleC2<R CGAL_CTAG> &c)
 {
-    typename CircleC2<R CGAL_CTAG>::Point_2 center;
-    typename CircleC2<R CGAL_CTAG>::FT squared_radius;
+    typename R::Point_2 center;
+    typename R::FT squared_radius;
     int o;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :

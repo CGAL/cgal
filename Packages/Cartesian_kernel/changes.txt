@@ -1,3 +1,6 @@
+Version 6.34 (31 October 2001)
+- Use R::FT instead of Point_2::FT and co.
+
 Version 6.33 (24 October 2001)
 - Use Handle_for/Ref_counted in Aff_[23].
 - Bring Simple_cartesian in sync with Cartesian.

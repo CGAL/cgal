@@ -172,7 +172,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
 {
-    typename PointC2<R CGAL_CTAG>::FT x, y;
+    typename R::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> x >> y;
