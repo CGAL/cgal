@@ -240,7 +240,11 @@ class Polygon_2 {
    template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
             Traits p_traits = Traits())
-        : d_container(first,last), traits(p_traits), m_flags(CF_EMPTY) {}
+        : d_container(), traits(p_traits), m_flags(CF_EMPTY) 
+  {
+    // The Sun STL switches off member templates for binary backward compatibility 
+    std::copy(first, last, std::back_inserter(d_container));
+  }
 
     //--------------------------------------------------------
     //             Operations
