@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.72
+- remove name of unused argument in copy constructor and assignement operator
+of Triangulation_euclidean_traits_xy_3.h Triangulation_euclidean_traits_xz_3.h
+Triangulation_euclidean_traits_yz_3.h
+
 Ver 4.71 
 - deleted superflous CGAL_TYPENAME_MSVC_NULL in Triangulation_iterators_2.h
 - Renamed  the variabled previuosly named "or" in Triangulation_line_face_circulator_2.h  
