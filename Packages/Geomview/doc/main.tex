@@ -103,6 +103,13 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
 
 
+\ccFunction{template <class Traits, class HDS>
+CGAL_Geomview_stream&
+operator<<(CGAL_Geomview_stream &G,
+           const CGAL_Polyhedron_3<Traits,HDS> &P);}
+{Inserts the polyhedron \ccc{P} into the stream \ccVar.}
+
+
 \ccMethod{CGAL_Geomview_stream&
           operator<<(const CGAL_Bbox_2& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
@@ -121,7 +128,7 @@ can be moved anywhere with the left mouse button, before a point is entered.
 \ccFunction{template <class R>
             CGAL_Geomview_stream&
             operator>>(CGAL_Geomview_stream& G,
-                       CGAL_Point_2<R>& p);}
+                       CGAL_Point_3<R>& p);}
 {Extracts the point \ccc{p} from the stream \ccVar. The point is
  echoed.}
 
