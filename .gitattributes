@@ -720,36 +720,47 @@ Packages/Apollonius_graph_2/demo/Apollonius_graph_2/removecircle.xpm -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-entire_edge.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-entire_edge.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-entire_edge_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-entire_edge_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-interior.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-interior.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-interior_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-interior_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-left_vertex.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-left_vertex.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-left_vertex_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-left_vertex_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-no_conflict.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-no_conflict.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-no_conflict_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-no_conflict_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-right_vertex.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-right_vertex.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-right_vertex_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-right_vertex_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-false.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-false.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-false_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-false_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-true.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-true.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-true_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-vertex_conflict-true_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_diagram_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph.gif -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph_bw.eps -text
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius_graph_bw.png -text svneol=unset#unset
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text
 Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#unset
+Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#unset
 Packages/Arrangement/demo/Arrangement_2/icons/conic.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/conic_types.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/delete.xpm -text

@@ -1,3 +1,7 @@
+4 August 2004:  Menelaos Karavelas
+- added image files in the PNG format for the PDF version of the manual
+- fixed problem with hardcoded .eps extension in the manual files
+
 24 June 2004:  Menelaos Karavelas
 - added fix for SGI compiler for the kernel wrapper
 - fixed warning for testsuite when CGAL_NO_ASSERTIONS is defined.
