@@ -19,31 +19,39 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-
 #include <CGAL/basic.h>
+#include <iostream>
 
-//#include <CGAL/Fixed_precision_nt.h> 
-//#define Fixed_precision_nt FIX
+#include <CGAL/_test_types.h>
 #include <CGAL/Cartesian.h>
 
-#include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Delaunay_hierarchy_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Line_2.h>
+#include <CGAL/Direction_2.h>
+#include <CGAL/Ray_2.h>
 
-#include <CGAL/_test_cls_triangulation_short_2.C>
+#include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_data_structure_using_list_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_hierarchy_2.h>
+
 #include <CGAL/_test_cls_delaunay_hierarchy_2.C>
 
 int main()
 {
   std::cout << "Testing Delaunay_hierarchy_2 " << std::endl; 
-  std::cout << " with Cartesian points, Fixed coordinates: "<<
-    std::endl;
-  // typedef CGAL::Fixed_precision_nt    Coord_type;
+  std::cout << " with Cartesian<double> points "<<  std::endl;
+
   typedef double                      Coord_type;
   typedef CGAL::Cartesian<Coord_type> Gt;
-  typedef CGAL::Delaunay_hierarchy_vertex_base_2<Gt> Vb;
+  typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
+  typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
-  typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-  typedef CGAL::Delaunay_hierarchy_2<Gt,Tds>  Dh;
+   typedef CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>  Tdsul;
+  typedef CGAL::Delaunay_triangulation_2<Gt,Tdsul>  Dt;
+  typedef CGAL::Triangulation_hierarchy_2<Dt>  Dh;
 
- _test_cls_delaunay_hierarchy_2( Dh() );
+  _test_cls_delaunay_hierarchy_2( Dh() );
 }

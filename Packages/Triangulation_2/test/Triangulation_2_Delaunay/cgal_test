@@ -72,5 +72,6 @@ if [ $# -ne 0 ] ; then
 else
   compile_and_run test_delaunay_triangulation_2
   compile_and_run test_regular_triangulation_2
+  compile_and_run test_delaunay_hierarchy_2
 fi
 
