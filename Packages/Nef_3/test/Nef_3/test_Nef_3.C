@@ -101,7 +101,8 @@ private:
       Done[h]=true;
     }
 
-    void visit(Vertex_const_handle h) { 
+    void visit(Vertex_const_handle h) {
+      cerr << "visit " << E.point(h) << std::endl;
       if(first) {
 	v_min = h;
 	first=false; 
@@ -378,10 +379,12 @@ private:
 			  E.plane(fin) == E.plane(E.twin(fout)));
     }
     
+    std::cerr << std::endl;
+
     Volume_const_iterator Cin;
     Volume_handle Cout;
     Vector_3 vec(1,1,1);
-    vec = vec / RT(2);
+    vec = vec / RT(10);
     SFace_visited_hash Done(false);
     CGAL_nef3_forall_volumes(Cin,E) {
       Shell_explorer SE(E,Done);
@@ -390,11 +393,16 @@ private:
 	E.visit_shell_objects(SFace_const_handle(it),SE);
       Point_3 p(E.point(SE.minimal_vertex()));
       Object_handle o;
-      if(Cin == E.volumes_begin())
+      if(Cin == E.volumes_begin()) {
+	cerr << "locate- " << p-vec << std::endl;
 	o = N.locate(p-vec);
-      else
+      }
+      else {
 	o = N.locate(p+vec);
+	cerr << "locate+ " << p+vec << std::endl;
+      }
       CGAL_nef3_assertion(assign(Cout,o));
+      cerr << &*Cout << std::endl;
       CGAL_nef3_assertion(Cin == Cout);
     }
   }
@@ -678,14 +686,14 @@ private:
       vi++; ++i;
       CGAL_assertion(E.point(vi) == Point_3(45133849, 45554371, -6449, 37023709));
       SME = N.SMexplorer(vi);
-      //      CGAL_assertion(SME.mark_of_halfsphere(-1) == 0);
-      //      CGAL_assertion(SME.mark_of_halfsphere(+1) == 0);
+      CGAL_assertion(SME.mark_of_halfsphere(-1) == 1);
+      CGAL_assertion(SME.mark_of_halfsphere(+1) == 1);
 
       vi++; ++i;
       CGAL_assertion(E.point(vi) == Point_3(57993689, -27367811, -6449, 37023709));
       SME = N.SMexplorer(vi);
-      //      CGAL_assertion(SME.mark_of_halfsphere(-1) == 1);
-      //      CGAL_assertion(SME.mark_of_halfsphere(+1) == 1);
+      CGAL_assertion(SME.mark_of_halfsphere(-1) == 0);
+      CGAL_assertion(SME.mark_of_halfsphere(+1) == 0);
       
 
       N = load_nef3("two_edges.nef3.SH");
@@ -1032,9 +1040,9 @@ public:
     //        loadSave();
     //        newell();
     //        construction(); 
-    //        point_location_SNC();
+            point_location_SNC();
     //        intersection();   
-            point_location_SM();
+    //        point_location_SM();
     //        simplification_SNC();
     //        simplification_SM();
     //	      synthesis();
