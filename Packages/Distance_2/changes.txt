@@ -1,4 +1,4 @@
-2.5.1 (11 December 2001)
+2.5.2 (11 December 2001)
 + Made point-line distance computation significantly faster (10 to 30 times)
 
 2.5 (7 December 2001)
