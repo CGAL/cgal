@@ -1,5 +1,5 @@
-
-- Towards an extensible kernel
+2.20 (2 September 2003)
+- Towards an extensible kernel [af]
 
 2.17 (10 August 2003)
 - Changes in Straight_2.h as it uses low level stuff from Distance_2 package [af]
