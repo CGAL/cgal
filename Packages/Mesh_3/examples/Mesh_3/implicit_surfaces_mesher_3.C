@@ -53,6 +53,7 @@ typedef Simple_kernel::Point_2 Point;
 /// Global variables 
 std::ostream *out = 0;
 std::string filename = std::string();
+std::string function_name = "sphere";
 bool output_to_file = false;
 bool dump_distribution = false;
 std::string distribution_filename;
@@ -63,79 +64,79 @@ int distribution_size = 50;
 void usage(char *argv0, std::string error = "")
 {
   if( error != "" )
-    std:: cerr << error << std::endl;
+    std:: cerr << "Error: " << error << std::endl;
   std::cerr << "Usage:\n  " 
             << argv0
             << " [-d <output_distribution_pixmap.png> [-s x y] [-n N] ]"
+            << " [-f function_name]"
             << " [output_file.mesh|-]\n"
             << "If output_file.mesh is '-', outputs to standard out.\n"
             << "-d  Output distribution to file"
             << " output_distribution_pixmap.png\n"
             << "-s  define pixmap size (x, y), default is (200,100)\n" 
             << "-n  define size of the distribution, default is 50\n"
+            << "-f  define the implicite function to use\n"
             << std::endl;
   exit(1);
 }
 
-void parse_argv(int argc, char** argv)
+void parse_argv(int argc, char** argv, int extra_args = 0)
 {
-  int extra_args= 0;
-  if (argc >=2)
+  if (argc >=(2 + extra_args))
     {
-      std::string arg = argv[1];
+      std::string arg = argv[1+extra_args];
       if( arg == "-d" )
 	{
 	  dump_distribution = true;
           if( argc < 3)
-            usage(argv[0]);
-          distribution_filename = argv[2];
-          extra_args += 2;
+            usage(argv[0], "-d must be followed by a filename!");
+          distribution_filename = argv[2 + extra_args];
+          parse_argv(argc, argv, extra_args + 2);
         }
-      if( argc >= (2+extra_args) )
+      else if( arg == "-s" )
         {
-          arg = argv[1+extra_args];
-          if( arg == "-s" )
-            {
-              if( argc < (4+extra_args) )
-                usage(argv[0], "-s x y!");
-              {
-                std::stringstream s;
-                s << argv[2+extra_args];
-                s >> distribution_x;
-                if( !s )
-                  usage(argv[0], "x!");
-              }
-              {
-                std::stringstream s;
-                s << argv[3+extra_args];
-                s >> distribution_y;
-                if( !s )
-                  usage(argv[0], "y!");
-              }
-              extra_args += 3;
-            }
+          if( argc < (4+extra_args) )
+            usage(argv[0], "-s must be followed by x y!");
+          {
+            std::stringstream s;
+            s << argv[2+extra_args];
+            s >> distribution_x;
+            if( !s )
+              usage(argv[0], "Bad integer x!");
+          }
+          {
+            std::stringstream s;
+            s << argv[3+extra_args];
+            s >> distribution_y;
+            if( !s )
+              usage(argv[0], "Bad integer y!");
+          }
+          parse_argv(argc, argv, extra_args + 3);
         }
-      if( argc >= (2+extra_args) )
+      else if( arg == "-n" )
         {
-          arg = argv[1+extra_args];
-          if( arg == "-n" )
-            {
-              if( argc < (3+extra_args) )
-                usage(argv[0]);
-              std::stringstream s;
-              s << argv[2+extra_args];
-              s >> distribution_size;
-              if( !s )
-                usage(argv[0]);
-              extra_args += 2;
-            }
+          if( argc < (3+extra_args) )
+            usage(argv[0], "-n must be followed by an integer!");
+          std::stringstream s;
+          s << argv[2+extra_args];
+          s >> distribution_size;
+          if( !s )
+            usage(argv[0], "Bad integer N!");
+          parse_argv(argc, argv, extra_args + 2);
+        }
+      else if( arg == "-f" )
+        {
+          if( argc < (3 + extra_args) )
+            usage(argv[0], "-f must be followed by a function name!");
+          function_name = argv[2 + extra_args];
+          parse_argv(argc, argv, extra_args + 2);
+        }
+      else 
+        {
+          output_to_file = true;
+          filename = argv[1+extra_args];
         }
     }
-
-  if (argc >= (2 + extra_args)) {
-    output_to_file = true;
-    filename = argv[1+extra_args];
-  }
 }
 
 template <typename K>
@@ -258,7 +259,6 @@ void output_distribution_to_png(Triangulation& tr,
 //     }
 }
 
-
 /////////////// Main function /////////////// 
 
 int main(int argc, char **argv) {
@@ -267,8 +267,10 @@ int main(int argc, char **argv) {
   
   parse_argv(argc, argv);
 
+  init_functions();
+  
   // Function
-  Func F;
+  Func F(functions[function_name]);
 
   // Oracle (NB: parity oracle is toggled)
   Oracle O (F, K::Point_3 (0,0,0),

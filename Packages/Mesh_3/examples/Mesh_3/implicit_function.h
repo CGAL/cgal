@@ -21,19 +21,35 @@
 // type "pointer to implicit function"
 typedef int (*Implicit_function) (double, double, double);
 
+int sphere_function(double, double, double);
+
+void init_functions();
+
 // vector of functions
 typedef std::map<std::string, Implicit_function> Implicit_function_map;
 
-template <class FT> class Function {
-  Implicit_function *implicit_function;
-public:  
+extern Implicit_function_map functions;
 
+template <class FT>
+class Function {
+  Implicit_function implicit_function;
+public:  
+  Function(Implicit_function func = &sphere_function)
+    : implicit_function(func)
+  {
+  }
+  
   enum SURFACE_LOCATION {IN = -1, ON = 0, OUT = 1};
   
+  void set_function(Implicit_function func)
+  {
+    implicit_function = func;
+  }
+
   SURFACE_LOCATION operator()(FT x, FT y, FT z) const { 
-    int res = implicit_function (CGAL::to_double (x), 
-				 CGAL::to_double (y), 
-				 CGAL::to_double (z));
+    int res = (*implicit_function) (CGAL::to_double (x), 
+                                    CGAL::to_double (y), 
+                                    CGAL::to_double (z));
     
     switch (res) {
     case -1: return IN;
@@ -43,7 +59,6 @@ public:
     }
     return OUT;  // never used
   }
-};
-  
+}; // end class Function
 
 #endif
