@@ -63,7 +63,8 @@ public:
   typedef void* GenPtr;
 
  private:
-  std::istream& in; std::ostream& out;
+  std::istream& in; 
+  std::ostream& out;
   bool verbose;
   CGAL::Object_index<Vertex_iterator>   VI;
   CGAL::Object_index<Halfedge_iterator> EI;
@@ -154,13 +155,13 @@ public:
 };
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::istream& is, EW& W) : 
   Base(W), in(is), out(std::cout) 
 { CGAL_nef3_assertion(W.is_empty());
   verbose = false; }
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, EW& W) : 
   Base(W), in(std::cin), out(os),
   VI(W.vertices_begin(),W.vertices_end(),'V'),
   EI(W.halfedges_begin(),W.halfedges_end(),'E'),
