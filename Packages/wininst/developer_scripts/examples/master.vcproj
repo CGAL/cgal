@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib"
+				AdditionalOptions="CGAL.lib gmp.lib mpfr.lib"
 				OutputFile="$(OutDir)/test_msvc7.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
@@ -76,7 +76,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="CGAL.lib gmp.lib"
+				AdditionalOptions="CGAL.lib gmp.lib mpfr.lib"
 				OutputFile="$(OutDir)/test_msvc7.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib\msvc7&quot;"
