@@ -796,14 +796,16 @@ public:
   void
   incident_cells(Vertex_handle v, 
 		 std::set<Cell*, std::less<Cell*> > & cells,
-		 Cell_handle c = (Cell*) NULL ) const;
+		 Cell_handle c = (Cell*) NULL,
+		 int dummy_for_windows = 0) const;
 
 
   void
   incident_vertices(Vertex_handle v, 
 		    std::set<Vertex*, std::less<Vertex*> > 
 		    & vertices,
-		    Cell_handle c = (Cell*) NULL ) const;
+		    Cell_handle c = (Cell*) NULL,
+		    int dummy_for_windows = 0) const;
 
 private:
   void 
@@ -819,7 +821,8 @@ private:
 			 & vertices,
 			 std::set<Cell*, std::less<Cell*> > 
 			 & cells,
-			 Cell_handle c ) const;
+			 Cell_handle c,
+			 int dummy_for_windows = 0) const;
   inline
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 			  Vertex_handle v2, Vertex_handle v3,
@@ -3326,7 +3329,8 @@ void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
 	       std::set<Cell*, std::less<Cell*> > & cells,
-	       Cell_handle c ) const
+	       Cell_handle c,
+	       int dummy_for_windows) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -3346,7 +3350,7 @@ incident_cells(Vertex_handle v,
       
   for ( int j=0; j<4; j++ ) {
     if ( j != c->index(v) ) {
-      incident_cells( v, cells, c->neighbor(j) );
+      incident_cells( v, cells, c->neighbor(j), dummy_for_windows);
     }
   }
 }
@@ -3386,7 +3390,8 @@ void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
 		  std::set<Vertex*, std::less<Vertex*> > & vertices,
-		  Cell_handle c ) const
+		  Cell_handle c,
+		  int dummy_for_windows) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -3401,7 +3406,7 @@ incident_vertices(Vertex_handle v,
   }
 
   std::set<Cell*, std::less<Cell*> > cells;
-  util_incident_vertices(v, vertices, cells, c);
+  util_incident_vertices(v, vertices, cells, c, dummy_for_windows);
   return;
   // previous buggy version !
   //       int found = 0;
@@ -3455,7 +3460,8 @@ Triangulation_3<GT,Tds>::
 util_incident_vertices(Vertex_handle v, 
 		       std::set<Vertex*, std::less<Vertex*> > & vertices,
 		       std::set<Cell*, std::less<Cell*> > & cells,
-		       Cell_handle c ) const
+		       Cell_handle c,
+		       int dummy_for_windows) const
 {
   if ( cells.find( &(*c) ) != cells.end() ) {
     return; // c was already visited
@@ -3469,7 +3475,8 @@ util_incident_vertices(Vertex_handle v,
       if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() ) {
 	vertices.insert( &(*(c->vertex(j))) );
       }
-      util_incident_vertices( v, vertices, cells, c->neighbor(j) );
+      util_incident_vertices( v, vertices, cells, c->neighbor(j), 
+			      dummy_for_windows);
     }
   }
       
