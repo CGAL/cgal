@@ -57,11 +57,11 @@ public:
 
   Point_3 min() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   Point_3 max() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;

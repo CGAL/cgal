@@ -70,11 +70,11 @@ public:
 
   FT x() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   FT y() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
 
   FT hx() const

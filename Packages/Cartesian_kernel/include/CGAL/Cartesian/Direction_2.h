@@ -82,11 +82,11 @@ public:
   FT delta(int i) const;
   FT dx() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   FT dy() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
 };
 

@@ -73,15 +73,15 @@ public:
 
   FT a() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   FT b() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
   FT c() const
   {
-      return ptr->e2;
+      return Ptr()->e2;
   }
 
   FT              x_at_y(const FT &y) const;

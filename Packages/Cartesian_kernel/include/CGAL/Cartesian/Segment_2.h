@@ -74,11 +74,11 @@ public:
 
   Point_2     source() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   Point_2     target() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
   
   Point_2     start() const;

@@ -190,7 +190,7 @@ inline
 CircleC2<R CGAL_CTAG>::Point_2
 CircleC2<R CGAL_CTAG>::center() const
 {
- return ptr->center;
+ return Ptr()->center;
 }
 
 template < class R >
@@ -198,7 +198,7 @@ inline
 CircleC2<R CGAL_CTAG>::FT
 CircleC2<R CGAL_CTAG>::squared_radius() const
 {
- return ptr->squared_radius;
+ return Ptr()->squared_radius;
 }
 
 template < class R >
@@ -206,7 +206,7 @@ inline
 Orientation
 CircleC2<R CGAL_CTAG>::orientation() const
 {
- return ptr->orient;
+ return Ptr()->orient;
 }
 
 template < class R >

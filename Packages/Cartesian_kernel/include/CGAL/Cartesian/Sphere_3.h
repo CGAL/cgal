@@ -69,17 +69,17 @@ public:
 
   Point_3 center() const
   {
-      return ptr->center;
+      return Ptr()->center;
   }
   FT squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return ptr->squared_radius;
+      return Ptr()->squared_radius;
   }
   Orientation orientation() const
   {
-      return ptr->orient;
+      return Ptr()->orient;
   }
 
   Self orthogonal_transform(const Aff_transformation_3 &t) const;

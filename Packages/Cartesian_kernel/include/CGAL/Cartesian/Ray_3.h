@@ -60,11 +60,11 @@ public:
   Point_3     start() const;
   Point_3     source() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   Point_3     second_point() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
   Point_3     point(int i) const;
 

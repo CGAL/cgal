@@ -71,11 +71,11 @@ public:
 
   Point_3     point() const
   {
-      return ptr->basepoint;
+      return Ptr()->basepoint;
   }
   Direction_3 direction() const
   {
-      return ptr->direction;
+      return Ptr()->direction;
   }
 
   Point_3     point(int i) const;

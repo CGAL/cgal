@@ -70,12 +70,12 @@ public:
   Point_2     start() const;
   Point_2     source() const
   {
-      return ptr->e0;
+      return Ptr()->e0;
   }
   Point_2     point(int i) const;
   Point_2     second_point() const
   {
-      return ptr->e1;
+      return Ptr()->e1;
   }
 
   Direction_2 direction() const;
