@@ -1,0 +1,3 @@
+* check TODO file in include/CGAL
+- restore the changes in the examples directory (example1.C,
+  example3.C and example4.C)
