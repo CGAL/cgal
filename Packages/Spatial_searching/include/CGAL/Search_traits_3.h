@@ -40,6 +40,9 @@ namespace CGAL {
     typedef typename K::Iso_cuboid_3 Iso_box_d;
     typedef typename K::Sphere_3 Sphere_d;
     typedef typename K::Construct_iso_cuboid_3 Construct_iso_box_d;
+
+    typedef typename K::Construct_center_3 Construct_center_d;
+    typedef typename K::Construct_squared_radius_3 Construct_squared_radius_d;
     typedef typename K::FT FT;
  
   };
