@@ -197,23 +197,6 @@ public:
     }
   }
 
-  Self opposite_site() const {
-    CGAL_precondition( is_segment() );
-    if ( is_input() ) {
-      return construct_site_2(p_[1], p_[0]);
-    }
-
-    CGAL_assertion( !is_input(0) || !is_input(1) );
-
-    if ( is_input(0) && !is_input(1) ) {
-      return construct_site_2(p_[1], p_[0], p_[4], p_[5], false);
-    } else if ( !is_input(0) && is_input(1) ) {
-      return construct_site_2(p_[1], p_[0], p_[2], p_[3], true);
-    } else {
-      return construct_site_2(p_[1], p_[0], p_[4], p_[5], p_[2], p_[3]);
-    }
-  }
-
 #if 1
   // MK::ERROR: at some point I want to remove these
   Segment_2 supporting_segment() const {

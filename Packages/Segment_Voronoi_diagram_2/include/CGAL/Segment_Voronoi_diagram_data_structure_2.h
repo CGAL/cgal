@@ -24,6 +24,7 @@
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_DATA_STRUCTURE_2_H
 
 #include <list>
+#include <boost/tuple/tuple.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
 
@@ -94,7 +95,8 @@ public:
   //              ccw(j2)      v4      cw(j1)
   //
   */
-  Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+//  Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+  boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
   split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   {
     CGAL_precondition( this->dimension() == 2 );
@@ -170,7 +172,8 @@ public:
     g2->set_neighbor(this->ccw(j2), g );
 
     // 6. return the new stuff
-    return Quadruple<VH, VH, FH, FH>(v1, v2, f, g);
+    return boost::tuples::tuple<VH, VH, FH, FH>(v1, v2, f, g);
+//    return Quadruple<VH, VH, FH, FH>(v1, v2, f, g);
   }
 };
 

@@ -25,6 +25,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 

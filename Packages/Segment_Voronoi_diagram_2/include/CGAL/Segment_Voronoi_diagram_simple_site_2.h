@@ -115,11 +115,6 @@ public:
     return Self::construct_site_2(p_[1]);
   }
 
-  Self opposite_site() const {
-    CGAL_precondition( is_segment() );
-    return Self::construct_site_2(p_[1],p_[0]);
-  }
-
   Self supporting_site() const {
     CGAL_precondition( is_segment() );
     return *this;

@@ -578,21 +578,22 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 
   Face_pair fpair = find_faces_to_split(v, t);
 
-  Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+  boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
 
   Intersections_tag itag;
   // now I need to update the sites for vertices v1 and v2
-  Vertex_handle v1 = qq.first;
+  Vertex_handle v1 = boost::tuples::get<0>(qq); //qq.first;
   Storage_site_2 ssv1 = split_storage_site(ssitev, ss, 0, itag);
   v1->set_site( ssv1 );
 
-  Vertex_handle v2 = qq.second;
+  Vertex_handle v2 = boost::tuples::get<1>(qq); //qq.second;
   Storage_site_2 ssv2 = split_storage_site(ssitev, ss, 1, itag);
   v2->set_site( ssv2 );
 
+  Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
   Vertex_handle vsx =
-    this->_tds.insert_in_edge(qq.third, cw(qq.third->index(v1)));
+    this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   vsx->set_site(ss);
 
@@ -617,11 +618,11 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 
   Face_pair fpair = find_faces_to_split(v, ssx.site());
 
-  Quadruple<Vertex_handle, Vertex_handle, Face_handle, Face_handle>
+  boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
 
   // now I need to update the sites for vertices v1 and v2
-  Vertex_handle v1 = qq.first;
+  Vertex_handle v1 = boost::tuples::get<0>(qq); //qq.first;
   Storage_site_2 ssv1;
   Site_2 sv1;
   if ( sitev.is_input(0) ) {
@@ -632,7 +633,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   sv1 = ssv1.site();
   v1->set_site( ssv1 );
 
-  Vertex_handle v2 = qq.second;
+  Vertex_handle v2 = boost::tuples::get<1>(qq); //qq.second;
   Storage_site_2 ssv2;
   Site_2 sv2;
   if ( sitev.is_input(1) ) {
@@ -643,8 +644,9 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   sv2 = ssv2.site();
   v2->set_site( ssv2 );
 
+  Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
   Vertex_handle vsx =
-    this->_tds.insert_in_edge(qq.third, cw(qq.third->index(v1)));
+    this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   vsx->set_site(ssx);
 
