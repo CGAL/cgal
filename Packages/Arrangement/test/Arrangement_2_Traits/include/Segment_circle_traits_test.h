@@ -63,7 +63,7 @@ read_curve (std::ifstream& is, Curve& cv)
     
     str_line >> x0 >> y0 >> r2;
     
-    Circle circle (Point (x0, y0), r2);
+    Circle circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
 
     if (type == 'c' || type == 'C')
     {
