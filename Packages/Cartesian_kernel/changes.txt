@@ -1,3 +1,7 @@
+Version 102.20 (19 January 2004) [mk]
+- added fixes for g++ 2.95.3 and SunPRO CC 5.3 and used the
+  new macro CGAL_CFG_USING_BASE_MEMBER_BUG
+
 Version 102.19 (18 January 2004)
 - Remove CGAL_CFG_USING_NAMESPACE_BUG workaround.
 
