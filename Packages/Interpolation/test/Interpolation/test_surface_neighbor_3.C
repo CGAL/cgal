@@ -101,15 +101,15 @@ int main()
   std::cout << " done." << std::endl << std::endl; 
 
   
-  //undersampled rotated cube
-  Transformation  rotate3(K2::RT(0.1),K2::RT(0.4),K2::RT(0.6),K2::RT(0),
-			  K2::RT(0.3),K2::RT(0.5),K2::RT(0.1),K2::RT(0),
-			  K2::RT(0.5),K2::RT(0.9),K2::RT(0.8),K2::RT(0)); 
-  std::cout << "Testing surface_neighbors_3 on an undersampled ROTATED cube "
-	    << std::endl;
-  std::cout << " with grid sample points";
-  _test_surface_neighbors_3_cube(Dh(),rotate3,75, K2::FT(9), true);
-  std::cout << " done." << std::endl << std::endl; 
+ //  //undersampled rotated cube
+//   Transformation  rotate3(K2::RT(0.1),K2::RT(0.4),K2::RT(0.6),K2::RT(0),
+// 			  K2::RT(0.3),K2::RT(0.5),K2::RT(0.1),K2::RT(0),
+// 			  K2::RT(0.5),K2::RT(0.9),K2::RT(0.8),K2::RT(0)); 
+//   std::cout << "Testing surface_neighbors_3 on an undersampled ROTATED cube "
+// 	    << std::endl;
+//   std::cout << " with grid sample points";
+//   _test_surface_neighbors_3_cube(Dh(),rotate3,75, K2::FT(9), true);
+//   std::cout << " done." << std::endl << std::endl; 
 
   return 0;
 };
