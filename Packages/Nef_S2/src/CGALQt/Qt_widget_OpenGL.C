@@ -30,7 +30,7 @@ Qt_widget_OpenGL::virtual_sphere_transformation( double old_x, double old_y,
     if ( norm != 0) {
         double x = v_old*v_new/ norm;
         if ( x <= -1)
-        angle = M_PI;
+        angle = CGAL_PI;
         if ( x < 1)
             angle = std::acos(x);
     }
