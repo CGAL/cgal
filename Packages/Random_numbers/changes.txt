@@ -1,5 +1,12 @@
 Changes done to the `Random_numbers' package
 
+Version 2.2.1 on 01-Nov-2000
+- adapted to CGAL-2.2
+
+
+CGAL-2.2
+--------
+
 Version 2.2 on 02-Feb-2000
 - removed `CGAL_..._cast' macros.
 
