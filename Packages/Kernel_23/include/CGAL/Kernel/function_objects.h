@@ -197,7 +197,11 @@ class Call_perpendicular_to_get
 {
   public:
     typedef ReturnType     result_type;
-
+    typedef  Arity_tag< 2 >   Arity;
+  
+  // This is only called for Vector_2, Direction_2, and Line_2
+  // and in all cases only the two parameter variant is documented
+  
     template <class Cls>
     ReturnType
     operator()( const Cls& c) const
