@@ -52,13 +52,15 @@
   \ccHtmlNoLinksFrom{
   The \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
   types of the planar map are defined as part of the planar map DCEL
-  While the face of planar map is a face of the topological map, the Vertex and Halfedge have additional
-  functionality. A Vertex has the additional \ccc{point} and \ccc{set_point} operations. A Halfedge has
+  While the face of planar map is a face of the topological map, the
+  Vertex and Halfedge have additional functionality. A Vertex has the
+  additional \ccc{point} and \ccc{set_point} operations. A Halfedge has
   the additional \ccc{curve} and \ccc{set_curve} operations. 
   } % ccHtmlNoLinksFrom
   See concepts \ccc{PlanarMapDcel_2}\lcTex{ (\ccRefPage{PlanarMapDcel_2})},
   \ccc{PlanarMapDcelVertex_2} \lcTex{(\ccRefPage{PlanarMapDcelVertex_2})}
-  and \ccc{PlanarMapDcelHalfedge_2} \lcTex{(\ccRefPage{PlanarMapDcelHalfedge_2})}.
+  and \ccc{PlanarMapDcelHalfedge_2}
+  \lcTex{(\ccRefPage{PlanarMapDcelHalfedge_2})}.
 %\ccc{Dcel::Vertex}\\
 %\ccc{Dcel::Halfedge}\\
 
@@ -72,9 +74,11 @@
   \ccNestedType{Face}{represents a face of the topological map.}}
 
 
-  \ccTypedef{typedef typename Traits::X_curve X_curve;}{a curve of the planar map.}
+  \ccTypedef{typedef typename Traits::X_curve_2 X_curve_2;}
+  {a curve of the planar map.}
   \ccGlue
-  \ccTypedef{typedef typename Traits::Point Point;}{a point of the planar map.}
+  \ccTypedef{typedef typename Traits::Point_2 Point_2;}
+  {a point of the planar map.}
 
 
 %    \ccNestedType{Vertex}{Represents a vertex of the planar-map.}
@@ -125,7 +129,7 @@
     
     \ccc{Self} here is an abbreviation for the \ccRefName\ type.
 
-    %\ccConstructor{Planar_map<I>( list<X_curve> &l
+    %\ccConstructor{Planar_map<I>( list<X_curve_2> &l
 %       );} {construct the planar-map of the curves  of \ccStyle{l}
 %       \ccPrecond{The curves are $x$-monotone} 
 %       \ccPrecond{no pair of curves of $l$ intersect in their interiors} 
@@ -200,15 +204,16 @@ The \ccc{Pm_dynamic_open_bounding_box} strategy is the one used by default by th
 \ccMethod{bool read (istream &in);}
          {reading ccRefName\ from a given input stream. The input
          stream should support the extractor operator (\ccc{>>}) for
-         the \ccStyle{Point} and \ccStyle{X_curve} types of
+         the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of
          \ccc{Planar_map}. Note that the verbose format is not meant
          to be read.}
 
 \ccStyle{template <class Scanner>}
 \ccMethod{bool read (istream &in, Scanner& scanner);}
-{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.
-   The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
-   and \ccStyle{X_curve} types of \ccc{Planar_map} }
+{reading \ccRefName\ from a given input stream when taking the scanner
+class as a parameter.
+The input stream should support the extractor operator (\ccc{>>})
+for the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of \ccc{Planar_map} }
 
 \end{ccAdvanced}
 
@@ -221,7 +226,7 @@ The \ccc{Pm_dynamic_open_bounding_box} strategy is the one used by default by th
 The following two functions are query functions. Their time complexity
 depends on the point location strategy used.
 
-\ccMethod{Halfedge_handle locate(const Point& p , 
+\ccMethod{Halfedge_handle locate(const Point_2& p , 
    Locate_type& lt );}{
    \ccHtmlNoLinksFrom{computes the location in \ccStyle{pm}
    where  \ccStyle{p} lies;  
@@ -237,7 +242,7 @@ depends on the point location strategy used.
    }
     
 %\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p, 
-\ccMethod{ Halfedge_handle vertical_ray_shoot(const Point& p, 
+\ccMethod{ Halfedge_handle vertical_ray_shoot(const Point_2& p, 
    Locate_type& lt, bool up_direction );} {if
    \ccStyle{up_direction} is \ccStyle{true} (respectively,
    \ccStyle{false}) returns the first edge of \ccStyle{pm} that
@@ -258,6 +263,16 @@ depends on the point location strategy used.
       in which \ccStyle{p} is found, null valued if none is 
       found. } } 
 
+\ccMethod{bool is_point_in_face(const Point_2 & p, Face_const_handle f);}
+{determines whether the given point \ccc{p} lies within the interior of
+ the given face \ccc{f}. A point lies within a face interior, iff the
+ number of intersections between the face boundary and a ray emanating
+ from the point is even.
+ Note that if \ccc{f} is the unbounded face, and it has no holes,
+ the point must lie within the face interior.
+ \ccc{is_point_in_face()} returns true if \ccc{p} lies within the
+ interior of \ccc{f}, and false otherwise. }
+
 \begin{ccAdvanced}
     For some applications the users may want to have direct access to
     the point location strategy (e.g., query the default strategy about
@@ -273,7 +288,7 @@ depends on the point location strategy used.
 
 \ccModifiers
 
-  \ccMethod{Halfedge_handle insert( const X_curve & cv );} 
+  \ccMethod{Halfedge_handle insert( const X_curve_2 & cv );} 
   {inserts the curve \ccc{cv} into the map. \ccc{insert()} returns 
    a handle to a new halfedge directed in the same way as the curve \ccc{cv}. 
    That is, the curve source and target points coincide with the points of the 
@@ -283,7 +298,8 @@ depends on the point location strategy used.
    \ccPrecond{\ccc{cv} is not equivalent to a point. } 
   }                
 
-  \ccMethod{Halfedge_handle insert(const X_curve_2_iterator & begin, 
+  \ccMethod{template <X_curve_2_iterator>
+            Halfedge_handle insert(const X_curve_2_iterator & begin, 
                                    const X_curve_2_iterator & end);}
   {iterates through a given range of curves, inserting the curves into the
    map. \ccc{begin} and \ccc{end} are input iterators that point to the first
@@ -307,7 +323,7 @@ these functions with the naive point location strategy.
 %the time is spent in any case on the updating of the internal point location
 %structure). 
     
-  \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve & cv, 
+  \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve_2 & cv, 
                                                      Face_handle f);}
   {inserts the curve \ccc{cv} as a new inner component of the face \ccc{f}. 
    \ccc{insert_in_face_interior()} returns a handle to a new halfedge directed
@@ -317,20 +333,22 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
 
-  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve & cv,
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
                                                Vertex_handle v);}
-  {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
-   point of the given vertex \ccc{v}, that is already in the map. 
+  {inserts the curve \ccc{cv} into the map. The given vertex \ccc{v},
+  that is already in the map, holds one endpoint of \ccc{cv}. 
    \ccc{insert_from_vertex} returns a handle to a new halfedge that has 
    \ccc{v} as its source vertex.
    \ccPrecond{\ccc{v} is a vertex of the map. }
    \ccPrecond{the point of \ccc{v} coincides with one endpoint of \ccc{cv}. }
    \ccPrecond{no vertex of the map has a point that coincides with the other 
     endpoint of \ccc{cv}. }
+   \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
+    interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
     
-  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve & cv,
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
                                                Vertex_handle v1, 
                                                Vertex_handle v2 );}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
@@ -341,10 +359,12 @@ these functions with the naive point location strategy.
    \ccPrecond{\ccc{v1} and \ccc{v2} are vertices of the map. }
    \ccPrecond{the points of \ccc{v1} and \ccc{v2} coincide with the two 
     endpoints of \ccc{cv} respectively. } 
+   \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
+    interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
 
-  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve & cv,
+  \ccMethod{Halfedge_handle insert_from_vertex(const X_curve_2 & cv,
                                                Halfedge_handle h);}
   {inserts the curve \ccc{cv} into the map. One endpoint of \ccc{cv} is the 
    point of the target vertex, \ccc{v}, of the given halfedge \ccc{h}.
@@ -361,10 +381,12 @@ these functions with the naive point location strategy.
     endpoint of \ccc{cv}. }
    \ccPrecond{\ccc{cv} is after the curve of \ccc{h} in the clockwise order of
     curves around the common point of \ccc{v}. }
+   \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
+    interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
     
-  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve & cv,
+  \ccMethod{Halfedge_handle insert_at_vertices(const X_curve_2 & cv,
                                                Halfedge_handle h1, 
                                                Halfedge_handle h2 );}
   {inserts the curve \ccc{cv} into the map. The two endpoints of \ccc{cv} are
@@ -386,14 +408,15 @@ these functions with the naive point location strategy.
     curves around the common point of \ccc{v1}. }
    \ccPrecond{\ccc{cv} is after the curve of \ccc{h2} in the clockwise order of
     curves around the common point of \ccc{v2}. }
+   \ccPrecond{no curve of \ccc{pm} intersects \ccc{cv} in the
+    interiors of the curve itself and \ccc{cv}. }
    \ccPrecond{\ccc{cv} is not equivalent to a point. }
   }
 
 \end{ccAdvanced}              
 
-\ccMethod{Halfedge_handle split_edge (
-   Halfedge_handle e, const X_curve& c1, 
-   const X_curve& c2);}
+\ccMethod{Halfedge_handle split_edge (Halfedge_handle e, const X_curve_2 & c1, 
+                                      const X_curve_2 & c2);}
 {splits the edge \ccStyle{e} into \ccStyle{e1} and  \ccStyle{e2} , and
    add a vertex in the splitting point. If the source point of \ccStyle{e}
    is identical to the source of the curve \ccStyle{c1} then \ccStyle{c1}
@@ -413,7 +436,7 @@ these functions with the naive point location strategy.
    }
 
 \ccMethod{Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
-   const X_curve& cv);}
+                                     const X_curve_2 & cv);}
 {merges the edges \ccStyle{e1} and \ccStyle{e2} into one edge which will hold 
    the curve \ccStyle{cv}. The return value is the halfedge with the same 
    source vertex that \ccc{e1} had and the same target \ccc{e2} had.
