@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.3 (?? ???????? 2000)
+- to_double -> CGAL::to_double.
+
 Ver 3.2 (24 November 2000)
 - Forgot to submit the test/ directory.
 

@@ -160,8 +160,8 @@ operator<<(Geomview_stream &gv, const Point_2<R> &p)
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 " ;
 
-    gv << to_double(p.x())
-       << to_double(p.y())
+    gv << CGAL::to_double(p.x())
+       << CGAL::to_double(p.y())
        << 0.0
        << "1 0\n"
        << "}})" ;
@@ -187,9 +187,9 @@ operator<<(Geomview_stream &gv, const Point_3<R> &p)
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 "
 
-       << to_double(p.x())
-       << to_double(p.y())
-       << to_double(p.z())
+       << CGAL::to_double(p.x())
+       << CGAL::to_double(p.y())
+       << CGAL::to_double(p.z())
        << "1 0\n"
        << "}})" ;
 
@@ -216,11 +216,11 @@ operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
        << 1               // and it has 1 color
 
     // here are start and end points
-       << to_double(segment.source().x())
-       << to_double(segment.source().y())
+       << CGAL::to_double(segment.source().x())
+       << CGAL::to_double(segment.source().y())
        << 0.0
-       << to_double(segment.target().x())
-       << to_double(segment.target().y())
+       << CGAL::to_double(segment.target().x())
+       << CGAL::to_double(segment.target().y())
        << 0.0
 
     // and the color of the segment and its opaqueness
@@ -254,12 +254,12 @@ operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
        << 1             // and it has 1 color
 
     // here are start and end points
-       << to_double(segment.source().x())
-       << to_double(segment.source().y())
-       << to_double(segment.source().z())
-       << to_double(segment.target().x())
-       << to_double(segment.target().y())
-       << to_double(segment.target().z())
+       << CGAL::to_double(segment.source().x())
+       << CGAL::to_double(segment.source().y())
+       << CGAL::to_double(segment.source().z())
+       << CGAL::to_double(segment.target().x())
+       << CGAL::to_double(segment.target().y())
+       << CGAL::to_double(segment.target().z())
 
     // and the color of the segment and its opaqueness
         << gv.ecr()  << gv.ecg()  << gv.ecb()  << 1.0
@@ -293,8 +293,8 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
        << 3 << 1 << 3;
 
     for(int i=0; i<3; i++){
-        gv << to_double(t[i].x())
-           << to_double(t[i].y())
+        gv << CGAL::to_double(t[i].x())
+           << CGAL::to_double(t[i].y())
            << 0.0;
     }
 
@@ -329,9 +329,9 @@ operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
        << 3 << 1 << 3;
 
     for(int i=0; i<3; i++){
-        gv << to_double(t[i].x())
-           << to_double(t[i].y())
-           << to_double(t[i].z());
+        gv << CGAL::to_double(t[i].x())
+           << CGAL::to_double(t[i].y())
+           << CGAL::to_double(t[i].z());
     }
 
     // the face
@@ -364,9 +364,9 @@ operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 
     // the vertices
     for(int i=0; i<4; i++){
-        gv << to_double(t[i].x())
-           << to_double(t[i].y())
-           << to_double(t[i].z());
+        gv << CGAL::to_double(t[i].x())
+           << CGAL::to_double(t[i].y())
+           << CGAL::to_double(t[i].z());
     }
 
     // the faces
@@ -397,10 +397,10 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
        << "(geometry " << id << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
-       << sqrt(to_double(S.squared_radius())) << "\n"
-       << to_double(S.center().x()) << " "
-       << to_double(S.center().y()) << " "
-       << to_double(S.center().z()) << "}})";
+       << CGAL_CLIB_STD::sqrt(CGAL::to_double(S.squared_radius())) << "\n"
+       << CGAL::to_double(S.center().x()) << " "
+       << CGAL::to_double(S.center().y()) << " "
+       << CGAL::to_double(S.center().z()) << "}})";
 
     return gv;
 }
@@ -457,9 +457,9 @@ operator<<(Geomview_stream &gv, const Tetrahedralization_simplex<V>* s)
 
     // the vertices
     for(int i=0; i<4; i++){
-        gv << to_double(s->vertex(i)->point().x())
-           << to_double(s->vertex(i)->point().y())
-           << to_double(s->vertex(i)->point().z()) ;
+        gv << CGAL::to_double(s->vertex(i)->point().x())
+           << CGAL::to_double(s->vertex(i)->point().y())
+           << CGAL::to_double(s->vertex(i)->point().z()) ;
     }
 
     // the faces
@@ -488,9 +488,9 @@ operator<<(Geomview_stream &gv, const Tetrahedralization_vertex<P>* v)
     std::ostrstream os;
     os << "Vertex_" << (unsigned long int)v  << std::ends ;
     char *id = os.str();
-    double x = to_double(v->point().x());
-    double y = to_double(v->point().y());
-    double z = to_double(v->point().z());
+    double x = CGAL::to_double(v->point().x());
+    double y = CGAL::to_double(v->point().y());
+    double z = CGAL::to_double(v->point().z());
     double radius = gv.get_vertex_radius();
     gv << ascii
        << "(geometry " << id  << "  {appearance {}{ "
