@@ -1,32 +1,6 @@
-% +------------------------------------------------------------------------+
-% | Reference manual chapter: overlay_ref.tex (Map Overlay)
-% +------------------------------------------------------------------------+
-% | 
-% | Package: ovl (Map Overlay)
-% | 
-% +------------------------------------------------------------------------+
-
-%+----------------------------------------------------------------------------80
-%| update log
-%|
-%| 01 April 2002 - Eti Ezra
-%|    Separated from map_overlay.tex (See previous changes in change log there).
-%|     
-%+----------------------------------------------------------------------------80
-
-
 % +========================================================================+
-%   Introduction
-% +========================================================================+
-%\clearpage
-%\section{Reference Pages for 2D Planar Maps}
-%\ccRefLabel{Pm_Ref_intro}
-
-\chapter{2D Map Overlays}
-\label{chap:map_overlay_2_ref}
-\ccRefLabel{Ovl_map_overlay}
 \section{Introduction}
-
+\label{secMapOverlayIntro}
 Given two planar subdivisions $R$ and $B$, 
 the overlay of $R$ and $B$, 
 denoted by $O(R,B)$, is the subdivision of the plane 
@@ -82,19 +56,18 @@ constructed arrangement.
 \end{itemize}
 
 \begin{figure}[h]
-    \begin{ccTexOnly}
-        \centerline{
-           \includegraphics{Map_overlay_2/overlay_example}
-           }
-    \end{ccTexOnly}
-    \caption{Two rectangles (left) and their overlay (right). 
-       We denote the subdivision induced by the first rectangle by $R$ and the second by $B$. 
-       The face $f$ of the overlay is below $f_1$ and the unbounded face of $B$. 
-       The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two face pointers 
-       to $f_1$ and to $f_2$ (note that $e$ lies in the interior of $f_1$). 
-       The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
-       pointer to $e_2$ and lies below $f_1$ and $f_2$.}
-    \label{fig:overlay_example}
+  \begin{ccTexOnly}
+    \centerline{\includegraphics{Map_overlay_2/overlay_example}}
+  \end{ccTexOnly}
+  \caption{Two rectangles (left) and their overlay (right). 
+    We denote the subdivision induced by the first rectangle by $R$
+    and the second by $B$. The face $f$ of the overlay is below $f_1$
+    and the unbounded face of $B$. The halfedge $e$ of the overlay
+    contains a halfedge pointer to $e_2$ and two face pointers to
+    $f_1$ and to $f_2$ (note that $e$ lies in the interior of
+    $f_1$). The vertex $v$ of the overlay points to $v_2$, contains a
+    halfedge pointer to $e_2$ and lies below $f_1$ and $f_2$.}
+  \label{fig:overlay_example}
 \end{figure}
 
 
@@ -110,7 +83,7 @@ representing the overlay and its two creators.
  \ccStyle{Planar_Map_With_Intersections_2}.
 % or an a \ccc{Arrangement}.
 Notice that the choice of a subdivision type determines the choice 
-of a DCEL and a traits class (see~\ccRefPage{I1_ChapterPlanarMap}).
+of a DCEL and a traits class (see~\ref{I1_ChapterPlanarMap}).
 (ii) {\it Notifier} is the class used to update the overlay components. 
 {\it Notifier} should be a model of the 
 \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
@@ -177,7 +150,7 @@ Handling degenerate cases is gained directly from the usage of the
 The sweep-line algorithm constructs the arrangement induced by $O(R,B)$, 
 by sweeping all curves in $R$ and in $B$ simultaneously. 
 In our implementation we employ the \ccc{Sweep Line} 
-package~\ccRefPage{I1_ChapterSweepLine}. 
+package~\ref{I1_ChapterSweepLine}. 
 The sweep-line algorithm requires $O(N\log{N} + k\log{N})$ time,
 where $N$ and $k$ are defined as before.
 
@@ -206,7 +179,7 @@ subdivision should be a \ccStyle{Planar_Map}, and the recommended
 point-location strategy, in this case, is the ``walk along a line'' 
 strategy, since it does not suffer from the overhead of maintaining 
 the trapeziods and their respective data-structure.
-This recommendation is mentioned in~\ccRefPage{I1_ChapterSweepLine}.
+This recommendation is mentioned in Chapter~\ref{I1_ChapterSweepLine}.
 
 In addition, the sweep-line implementation has been optimized in order to
 save the usage of geometric predicates. 
@@ -311,10 +284,11 @@ See Figure~\ref{fig:overlay_example} for an illustration.
 
 \section{Map Overlay Notifier}
 \label{sec:notifier}
-Updating the DCEL additional attributes is performed by the {\em Notifier} class.
+Updating the DCEL additional attributes is performed by the
+{\em Notifier} class.
 We extend and override the notification functions of the basic {\em Notifier}, 
 defined in the \ccc{Planar_Map_2<Dcel,Traits>} package 
-(see~\ccRefPage{I1_ChapterPlanarMap}), 
+(see~\ref{I1_ChapterPlanarMap}), 
 in order to update the corresponding features constructed by the overlay. 
 
 The \ccc{Map_overlay_default_notifier<Subdivision>} class 
@@ -324,7 +298,7 @@ The notifier class overrides only the functions \ccStyle{add_edge}
 and \ccStyle{split_edge} of the basic notifier defined for \ccStyle{Planar_Map}.
 In our implementation these functions update 
 the pointers of the halfedges and the vertices in the DCEL 
-presenting the overlay, see~\ccRefPage{I1_ChapterPlanarMap} for details.
+presenting the overlay, see~\ref{I1_ChapterPlanarMap} for details.
 In order to update the pointers of a face, we define a new function in our 
 notifier, which we call \ccStyle{update_all_faces}. 
 This function traverses all components in the overlay in a DFS manner and 
