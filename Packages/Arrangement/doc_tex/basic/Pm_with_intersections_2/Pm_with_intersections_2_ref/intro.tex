@@ -40,9 +40,9 @@
   Since the planar map with intersections has an additional
   functionality of handling non $x$-monotone and intersecting curves
   it needs additional functionality of the traits class. We describe
-  the \ccc{Planar_map_with_intersections_traits} concept following in
+  the \ccc{PlanarMapwithIntersectionsTraits_2} concept following in
   this chapter. Nevertheless, we do not have specific implementation
-  of this concept, and we use models of the \ccc{Arrangement_traits}
+  of this concept, and we use models of the \ccc{ArrangementTraits_2}
   concept, which is a refinement thereof instead (see
   Chapter~\ref{I1_ChapterArrangement}).
 
@@ -69,10 +69,10 @@
   subcurves in the container or not.
 
   The sweep line utility calculates intersections of curves.  The
-  \ccc{Planar_map_with_intersection_traits} concepts requires this
+  \ccc{PlanarMapWithIntersectionTraits_2} concepts requires this
   very functionality.  Thus, the sweep line functions have to use
   traits classes that model the above concept. This is true even for
-  the case where an instance of \ccc{Planar_map_2} is built.
+  the case where an instance of \ccc{Planar_map_2<Dcel, Traits>} is built.
 
   See the sweep line functions reference pages for implementation
   details (\ccc{sweep_to_construct_planar_map}\lcTex{
@@ -136,8 +136,8 @@ Total number of edges 5
 \begin{ccTexOnly}
 
 \subsection*{Concepts}
-\ccRefConceptPage{Planar_Map_with_Intersections_Traits}\\
-\ccRefConceptPage{Planar_Map_with_Intersections_Change_Notification}\\
+\ccRefConceptPage{PlanarMapWithIntersectionsTraits_2}\\
+\ccRefConceptPage{PlanarMapWithIntersectionsChangeNotification_2}\\
 
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Planar_map_with_intersections_2<Planar_map>}%\\
