@@ -27,6 +27,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
+#include <CGAL/Number_type_traits.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Handle.h>
 #include <CGAL/misc.h>
@@ -234,9 +235,9 @@ template <typename ET>
 class Lazy_exact_nt : public Handle
 {
 public :
-  typedef Tag_false  Has_gcd;
-  typedef Tag_true   Has_division;
-  typedef Tag_true   Has_sqrt;
+  typedef typename Number_type_traits<ET>::Has_gcd      Has_gcd;
+  typedef typename Number_type_triats<ET>::Has_division Has_division;
+  typedef typename Number_type_traits<ET>::Has_sqrt     Has_sqrt;
 
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
