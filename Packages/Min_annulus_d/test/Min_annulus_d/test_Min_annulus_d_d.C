@@ -8,16 +8,16 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : test/Min_annulus_d/test_Min_annulus_d_d.C
-// package       : Min_annulus_d 1.0.1 (20 Mar 2001)
+// package       : $CGAL_Package: Min_annulus_d $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_annulus_d.aw
 // revision      : 1.8
-// revision_date : 2000/09/26 10:08:52
+// revision_date : 2000/09/26
 //
 // author(s)     : Sven Schönherr
 // maintainer    : Sven Schönherr <sven@inf.ethz.ch>
