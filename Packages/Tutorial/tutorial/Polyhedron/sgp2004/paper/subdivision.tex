@@ -1,31 +1,33 @@
-Subdivision surfaces \cite{cc,ds,loop,sqrt3,qts}
-are the limit surface resulting from the
-application of a subdivision algorithm to a control mesh.
-Subdivision algorithms recursively \emph{refine} (subdivide) the
-control mesh and \emph{modify} (smooth) the geometry according
-to a stencil on the source mesh.  
-Further details on subdivisions can be found at \cite{Sub:course:2000}
-and \cite{Warren:subdivision}. The OpenMesh library has
-supports of Loop and $\sqrt{3}$ subdivisions \cite{Abhijit:2004:APISUB}.
+%Subdivision surfaces \cite{cc,ds,loop,sqrt3,qts}
+%are the limit surface resulting from the
+%application of a subdivision algorithm to a control mesh.
+%Subdivision algorithms recursively \emph{refine} (subdivide) the
+%control mesh and \emph{modify} (smooth) the geometry according
+%to a stencil on the source mesh.  
+%Further details on subdivisions can be found at \cite{Sub:course:2000}
+%and \cite{Warren:subdivision}. The OpenMesh library has
+%supports of Loop and $\sqrt{3}$ subdivisions \cite{Abhijit:2004:APISUB}.
 
-Subdivision algorithms contain two major
-components: \emph{\tr} and \emph{\gm}.
-The \tr\ reparameterizes the source mesh into a refined 
-mesh. The \gm\ transforms a submesh on the source mesh
-to a vertex on the refined mesh. The source submesh (with
+Subdivision algorithms \cite{Warren:subdivision, Sub:course:2000} 
+contain two major steps: \emph{\tr} and \emph{\gm}.
+The \tr\ reparameterizes the control mesh into a refined 
+mesh. The \gm\ transforms a submesh on the control mesh
+to a vertex on the refined mesh. The submesh (with
 the normalized weights) is called the
-\emph{stencil}. A proper combination of a \tr\ and a set of 
-rules of \gm\ define a valid subdivision scheme.
+\emph{stencil}. A subdivision algorithm recursively 
+applies these two steps on the control mesh and generate
+the limit surfaces. 
+%A proper combination of a \tr\ and a set of 
+%rules of \gm\ define a valid subdivision scheme.
 
-Fig.\ref{fig:RefSchemes} shows the local configurations 
-of the major refinements
-employed in subdivision algorithms, which include Catmull-Clark
+The local configurartions of refinements employed in subdivision
+algoruthms are shown in Fig.\ref{fig:RefSchemes}, including Catmull-Clark
 subdivision (PQQ) \cite{cc}, Loop subdivision (PTQ) \cite{loop},
 Doo-Sabin subdivision (DQQ) \cite{ds} and $\sqrt{3}$ subdivision
 \cite{sqrt3}. Subdivisions, such as Quad-Triangle subdivision 
 \cite{qts,l-pg-03}, may employ a hybrid refinement consisting
-of two different refinements (PQQ and PTQ).
-\begin{figure}
+of two different refinements.
+\begin{figure}[htb]
   \centering
   \psfrag{PQQ}[]{\scriptsize PQQ} 
   \psfrag{PTQ}[]{\scriptsize PTQ}
@@ -40,14 +42,11 @@ of two different refinements (PQQ and PTQ).
   \label{fig:RefSchemes}
 \end{figure}
 The \gm\ multiplies the stencils and
-generates the corresponding vertex on the refined mesh.
-%The stencil usually specifies an affine map of the 
-%submesh. 
-Fig.\ref{fig:RefMap} demonstrates the examples of the
-correspondence between a stencil and its vertex. According 
-to the employed refinement scheme, subdivisions 
-may have several distinct stencils 
-(Fig.\ref{fig:RefMap} (a-c)). 
+results the vertices on the refined mesh.
+Examples of the correspondence between a stencil and its 
+vertex are shown in Fig.\ref{fig:RefMap}, where 
+Catmull-Clark subdivision has three distinct stencils 
+and Doo-Sabin subdivision has only one stencil.
 \begin{figure}
   \centering
   \psfrag{A}[]{(a)}
@@ -66,11 +65,11 @@ may have several distinct stencils
 
 
 % templated rules: a generic framework for subdivisions 
-%\subsection{Generic Subdivisions}
+\subsubsection{Generic Subdivision Solution}
 %\label{sec:subtempl}
 \input subtempl
 
-\subsection{Sqrt 3}
+\subsubsection{Sqrt 3}
 % connectivity ops: specific polyhedron algorithms (sqrt3 subdivisions) 
 %\subsection{$\sqrt{3}$-Subdivision using Euler Operators}
 \input sqrt3

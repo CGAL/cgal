@@ -11,10 +11,11 @@ structures consist almost entirely of pointers for all sort of
 incidence informations. Maintaining them consistently during mesh
 operations is not anymore a trivial linked-list update operation. So,
 moving from a students exercise to a reliable research implementation
-including maintaining and optimizing such an implementation is a
-respectable software task, just imagine to introduce a back-pointer for
-an existing incidence pointer and change all operations on the mesh to
-handle this additional pointer consistently.
+, including maintaining and optimizing such an implementation, is a
+respectable software task.
+%, just imagine to introduce a back-pointer for
+%an existing incidence pointer and change all operations on the mesh to
+%handle this additional pointer consistently.
 
 What is common practice for simple data structures, such as linked
 lists, should be common practice even more so for mesh data
@@ -28,23 +29,23 @@ algorithms exists in the \emph{Computational Geometry Algorithms Library},
 
 We will review the design of the polygonal boundary representation
 \cgalpoly\ in \cgal\ that is based on the halfedge data structure.
-Our main new contribution is a tutorial on how to write mesh
-algorithms based on this data structure and other elements of \cgal.
+Our main new contribution is \emph{a tutorial on how to write mesh
+algorithms based on this data structure and other elements of \cgal}.
 The tutorial consists of many example implementations of state-of-art
-algorithms from recent years and an interactive visualizer that serves
-as a platform, among others, for efficient experimentation and that
-helps in preparing figures for publications.
-
-The mesh algorithms that we discuss fall into three categories;
+algorithms from recent years. 
+%and an interactive visualizer that serves
+%as a platform, among others, for efficient experimentation and that
+%helps in preparing figures for publications.
+These mesh algorithms fall into three categories:
 subdivision, remeshing, and supporting geometric algorithms. With
-subdivisions algorithms, we will introduce the different approaches of
+subdivision algorithms, we will introduce the different approaches of
 algorithm design with the mesh data structure. Its highlight will be a
-generic subdivision framework, where we excel from being mere users
+generic subdivision solution, where we excel from being mere users
 of \cgal, but instead we develop our own new generic library. With
-remeshing algorithms we review how algorithm development based on
+remeshing algorithms, we review how algorithm development based on
 \cgalpoly\ and the other parts of \cgal\ enabled exciting new
 implementations in research within feasible time frames. With the
-auxiliary geometric algorithms we give an outlook on geometric
+auxiliary geometric algorithms, we give an outlook on geometric
 algorithms that are available in \cgal\ and that can be helpful in
 the mesh processing context, for example, a fast self intersection
 test, the smallest enclosing sphere, or the minimum width of a point set.
@@ -52,13 +53,13 @@ test, the smallest enclosing sphere, or the minimum width of a point set.
 We strongly believe that such a tutorial with its wealth of
 information will give a head start to new research and implementations
 of mesh algorithms. We also believe that it will raise the quality of
-implementations: Firstly, it encourages the use of well tested and
+implementations. Firstly, it encourages the use of well tested and
 over time matured implementations, e.g., \cgalpoly\ in its current
 design is about five years publicly released and used. Secondly, it
 documents good implementation choices, e.g., the example programs can
 be used as starting points for evolutionary software development.
 Thirdly, it offers easy access to additional functionality, such as
-the efficient  self intersection test, that otherwise could be too
+the efficient self intersection test, that otherwise could be too
 cumbersome to implement for a research prototype.
 
 What are potential obstacles in using a library? We want to address
@@ -75,24 +76,24 @@ tutorial.
     \emph{generic programming\/} and \emph{compile-time
     polymorphism\/} to realize flexibility without affecting optimal
     runtime.
-
-    Another argument is the interface design of \cgalpoly. Can the
-    abstraction into Euler operators be used for subdivision surface
-    algorithms without loosing performance? The comparison of the
-    $\sqrt{3}$ subdivision algorithm in \openmesh\ with our
-    implementation discussed below gives a favorable answer for our
-    implementation.
+%    Another argument is the interface design of \cgalpoly. Can the
+%    abstraction into Euler operators be used for subdivision surface
+%    algorithms without loosing performance? The comparison of the
+%    $\sqrt{3}$ subdivision algorithm in \openmesh\ with our
+%    implementation discussed below gives a favorable answer for our
+%    implementation.
   \item
     Is it small enough? Yes. The \cgalpoly\ can be tailored to store
     exactly the required incidences and other required data, not more and
-    not less. We give the details in the next section.
+    not less. %We give the details in the next section.
   \item
     Is it flexible enough? Yes, probably. Certainly within its design
     space of oriented 2-manifold meshes with boundary that was
     sufficient for the range of applications illustrated with our
-    example programs. \cgalpoly\ cannot represent non-manifold edges,
-    non-manifold vertices, nor facets with multiple boundary cycles
-    (the facet needs to be split into several facets).
+    example programs. 
+    %\cgalpoly\ cannot represent non-manifold edges,
+    %non-manifold vertices, nor facets with multiple boundary cycles
+    %(the facet needs to be split into several facets).
   \item
     Is it easy enough to use? Yes. This paper and the tutorial
     programs are exactly the starting point for using \cgalpoly. The
@@ -100,9 +101,9 @@ tutorial.
     certainly a learning curve for mastering \CC\ to a decent level
     including the use of templates, but it has to be emphasized that
     using templated code is far easier then developing templated code.
-    Also, a library does not free a user to understand the data
-    structures and algorithms used, at least to some extend, such as 
-    specification, runtime, and space behavior.
+%    Also, a library does not free a user to understand the data
+%    structures and algorithms used, at least to some extend, such as 
+%    specification, runtime, and space behavior.
   \item
     What is the license, can I use it? Yes, we hope so. \cgal\ since
     release 3.0 and our tutorial programs have open source
@@ -112,7 +113,9 @@ tutorial.
 \end{enumerate}
 
 The intended audience of this paper are researchers, developers and
-students in the graphics community and related fields who are
+students
+% in the graphics community and related fields 
+who are
 developing algorithms with and for polygonal meshes. Prerequisites are
 experience with \CC\ and templates, generic programming, basic
 knowledge of edge-based data structure for meshes, and the mesh

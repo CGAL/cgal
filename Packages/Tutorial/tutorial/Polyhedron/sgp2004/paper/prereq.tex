@@ -1,7 +1,7 @@
 \subsection{Generic Programming, \CC\ and Templates}
 
 \cgal\ is a \CC\ library and follows in its design the \emph{generic
-  programming paradigm\/}~\cite{cgal:ms-aogl-94,cgal:sl-stl-95} and in
+programming paradigm\/}~\cite{cgal:ms-aogl-94,cgal:sl-stl-95} and in
 a few places also design patterns~\cite{Gamma:1995:DP}. Generic
 programming has found wide spread acceptance in the \CC\ community
 with the \emph{Standard Template Library}, \stl, as its prominent
@@ -11,20 +11,18 @@ introduction and reference book~\cite{cgal:a-gps-98} coins the terms
 parameter, and \emph{model\/} for all types that fulfill the set of
 requirements and can thus be used as template argument. An example
 function template:
-
 \begin{lstlisting}
 template <typename T>
 void swap( T& a, T& b) {
   T tmp = a; a = b; b = tmp;
 }
 \end{lstlisting}
-
 This generic \CodeFmt{swap} function requires from the template
 parameter \CodeFmt{T} to have a copy constructor and an assignment
 operator. This is collectively summarized under the \emph{concept\/}
 \textsc{Assignable}. Now, each builtin type, such as \CodeFmt{double},
 has a copy constructor and assignment operator and thus is a
-\emph{model\/} of \textsc{Assignable}. Now, in the \stl\ concepts are
+\emph{model\/} of \textsc{Assignable}. In the \stl , concepts are
 defined for container classes, iterators that link container classes
 with algorithms, function objects that are an efficient and type safe
 generalization of function pointers, allocators, and many more. In
@@ -45,7 +43,6 @@ Library, started in 1995 and the first public release appeared in June
 1997. \cgal\ is since its release 3.0 in November 2003 an Open Source
 project initiated by a consortium of European and Israelean research
 institutes with the goal to
-
 \begin{quote}
     {\em make the large body of geometric algorithms developed in the field
     of computational geometry available for industrial application.}
@@ -73,7 +70,7 @@ connection to the geometric primitives, predicates, and constructions.
 For suitable subsets we define concepts, for example,
 that are sufficient to run the two-dimensional convex hull algorithms,
 and call them the \emph{geometric traits concept for two-dimensional
-  convex hull}. For many geometric traits classes a \cgal\ geometric
+convex hull}. For many geometric traits classes, a \cgal\ geometric
 kernel is a valid model.
 
 There are many choices for a \cgal\ geometric kernel. One can choose
@@ -93,7 +90,8 @@ efficiently in the conventional \CodeFmt{float} or \CodeFmt{double}
 value. On the other hand, exact constructions needs a more powerful
 number type in the geometric primitive coefficients that can also
 represent newly constructed geometric primitives exactly. This means
-usually exact long integer arithmetic. We see an example below.
+usually exact long integer arithmetic. 
+%We see an example below.
 
 \subsection{Edge-based Mesh Data Structures}
 
@@ -104,7 +102,7 @@ even simple traversals in the mesh neighborhood needed case
 distinctions. The key inside was the split of the edge into two
 halfedges~\cite{Weiler85,Maentylae88} (also referred to as DCEL
 nowadays), which allows to encode orientation in the mesh and
-traversal simplifies to mere pointer traversal. Actually, the edge
+traversal simplifies to mere pointer traversal. The edge
 split can be done in two ways, either assigning a halfedge to each
 incident facets, or assigning a halfedge to each incident
 vertex~\cite{Weiler85}, these are duals of each other. Thinking of
@@ -165,20 +163,16 @@ triangles~\cite{Botsch:2002:OPENMESH}. This redesign comes at a price
 in readability of the user code; while the design of \cgalpoly\ allows
 the direct traversal from item to item, i.e., direct expressions such
 as
-
 \begin{lstlisting}
 facet_handle->halfedge()->opposite()->facet()
 \end{lstlisting}
-
 are possible, while in \openmesh\ the choice of an index always
 requires the knowledge of the data structure itself, and potentially
 more costly array arithmetic to access an item, such as in the
 equivalent example now written for \openmesh
-
 \begin{lstlisting}
-hds.face_handle( hds.opposite_halfedge_handle(hds.halfedge_handle(facet_handle))).
+hds.face_handle(hds.opposite_halfedge_handle(hds.halfedge_handle(facet_handle))).
 \end{lstlisting}
-
 The obvious question is, does it matter, and if, for which design. We
 have a first answer in favior for the more readable \cgal\ design with
 a runtime comparison of the $\sqrt{3}$ subdivision algorithm in
