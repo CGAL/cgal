@@ -467,7 +467,7 @@ public:
       facet to one of the sphere segments on the boundary of |sf|.
       \precondition |ray| target is on |v| and the intersection between
       |ray| and the 2-skeleton incident to v is empty. }*/ {
-    SETDTHREAD(19);
+    //SETDTHREAD(19);
     Halffacet_handle f_visible;
     CGAL_nef3_assertion( ray.target() == point(v));
     Sphere_point sp(ray.source() - point(v));

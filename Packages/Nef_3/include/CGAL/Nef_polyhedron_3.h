@@ -370,7 +370,7 @@ protected:
 
     typename std::list<Point_3>::const_iterator p,prev,next;
     for(p=points.begin();p!=points.end();p++)
-      cerr << *p << std::endl;
+      TRACEN(*p);
 
     for(p=points.begin();p!=points.end();p++){
 
@@ -479,9 +479,6 @@ protected:
     SNC_constructor C(snc());
     C.pair_up_halfedges();
     
-    SNC_io_parser Op(std::cout, snc());
-    Op.print();
-
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
