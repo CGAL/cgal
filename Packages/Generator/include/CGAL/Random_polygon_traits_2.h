@@ -50,10 +50,10 @@ class Random_polygon_traits_2
   public:
     typedef R_                            R;
     typedef typename R::FT                FT;
-    typedef Point_2<R>                    Point_2;
-    typedef ::CGAL::Segment_2<R>          Segment_2;
-    typedef ::CGAL::Vector_2<R>           Vector_2;
-    typedef ::CGAL::p_Less_yx<Point_2>    Less_yx;
+    typedef typename R::Point_2           Point_2;
+    typedef typename R::Segment_2         Segment_2;
+    typedef typename R::Vector_2          Vector_2;
+    typedef typename R::Less_yx_2         Less_yx_2;
 
     bool lexicographically_yx_smaller_or_equal(const Point_2& p,
                                                const Point_2& q) const
