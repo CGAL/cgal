@@ -1,6 +1,8 @@
 Manual_tools/TO_DO
 ==================
 
+-- fix [cgal:cite] problem
+
 -- OS License GPL for Manual tools: ask ETH/MPI for allowance
 
 -- Merge all three manuals into one to get active cross-links
@@ -62,9 +64,6 @@ latex_to_html
 -------------
 -- Document new filename macros: \lciInputPath, \lciOutputFilename, 
    ...Rootname, ...FilePath, ...Uppath
-
--- Make script find all image files (like for cc_... images already),
-   and copy them automatically (not via htmlfiles)
 
 -- Embedd latex2gif scripts into converter, apply it to figures (check
    if a *.gif or *.png is provided before converting automatically)

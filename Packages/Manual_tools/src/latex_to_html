@@ -115,24 +115,27 @@ usage() {
     version
     cat  1>&2 <<EOF
 ${BoldColor}Usage: $ProgName [<options>] <tex-files...>${ResetColor}
-           ${BoldColor}-defaults${ResetColor}           show the settings of the internal variables.
-           ${BoldColor}-date${ResetColor}     <text>    set a date for the manual.
-           ${BoldColor}-release${ResetColor}  <text>    set a release number for the manual.
-           ${BoldColor}-title${ResetColor}    <text>    set a title text for the manual.
-           ${BoldColor}-author${ResetColor}   <text>    set an author address (email) for the manual.
-           ${BoldColor}-config${ResetColor}   <dir>     set the path where to find the config files.
-           ${BoldColor}-tmp${ResetColor}      <dir>     set the path where to put intermediate files.
-           ${BoldColor}-header${ResetColor}   <dir>     set the path where the C headers are.
-           ${BoldColor}-o${ResetColor}        <dir>     output directory for the generated HTML manual
-           ${BoldColor}-aux${ResetColor}      <file>    auxiliary file where the \\bibcite\'s are in.
-           ${BoldColor}-sty${ResetColor}      <style>   use style file.
-           ${BoldColor}-quiet${ResetColor}              no output, no warnings for unknown macros.
-           ${BoldColor}-realquiet${ResetColor}          quiet and also suppresses error messages.
-           ${BoldColor}-macrodef${ResetColor}           trace macro definitions.
-           ${BoldColor}-macroexp${ResetColor}           trace macro expansions.
-           ${BoldColor}-stymacro${ResetColor}           trace style macros as well.
-           ${BoldColor}-stacktrace${ResetColor}         stack trace for each error.
-           ${BoldColor}-flexwarn${ResetColor}           show warnings produced by flex.
+${BoldColor}Options:${ResetColor}
+    ${BoldColor}-o${ResetColor}        <dir>     output directory for the generated HTML manual
+    ${BoldColor}-header${ResetColor}   <dir>     set the path where the C headers are.
+    ${BoldColor}-config${ResetColor}   <dir>     set the path where to find the config files.
+    ${BoldColor}-tmp${ResetColor}      <dir>     set the path where to put intermediate files.
+    ${BoldColor}-aux${ResetColor}      <file>    auxiliary file where the \\bibcite\'s are in.
+    ${BoldColor}-sty${ResetColor}      <style>   use style file.
+    ${BoldColor}-quiet${ResetColor}              no output, no warnings for unknown macros.
+    ${BoldColor}-realquiet${ResetColor}          quiet and also suppresses error messages.
+${BoldColor}Parameter-Options:${ResetColor}
+    ${BoldColor}-date${ResetColor}     <text>    set a date for the manual.
+    ${BoldColor}-release${ResetColor}  <text>    set a release number for the manual.
+    ${BoldColor}-title${ResetColor}    <text>    set a title text for the manual.
+    ${BoldColor}-author${ResetColor}   <text>    set an author address (email) for the manual.
+${BoldColor}Debug-Options:${ResetColor}
+    ${BoldColor}-defaults${ResetColor}           show the settings of the internal variables.
+    ${BoldColor}-macrodef${ResetColor}           trace macro definitions.
+    ${BoldColor}-macroexp${ResetColor}           trace macro expansions.
+    ${BoldColor}-stymacro${ResetColor}           trace style macros as well.
+    ${BoldColor}-stacktrace${ResetColor}         stack trace for each error.
+    ${BoldColor}-flexwarn${ResetColor}           show warnings produced by flex.
 EOF
 }
 
@@ -579,22 +582,30 @@ Verbose=0
 Flex="flex -t -8 -w"
 MakePath="mkdir -p"
 
-BlueColor=""
-BoldColor=""
-OkColor=""
-ErrorColor=""
-WarnColor=""
-ResetColor=""
+set_no_color() {
+    ExtractOptions="`echo $ExtractOptions | sed 's/-color//g'`"
+    BlueColor=""
+    BoldColor=""
+    OkColor=""
+    ErrorColor=""
+    WarnColor=""
+    ResetColor=""
+}
+set_color() {
+    ExtractOptions="$ExtractOptions -color"
+    BlueColor='[1m[34m'    # blue boldface
+    BoldColor='[1m'          # boldface
+    OkColor='[32m'           # green
+    ErrorColor='[1m[31m'   # red boldface
+    WarnColor='[35m'         # magenta
+    ResetColor='[30m[00m'  # black, reset attribute
+}
+
+set_no_color
 if [ -t 2 ] ; then # is stderr connected to a terminal
   case "$TERM" in
     xterm* | vt100* | console* ) # terminals believed to have color capability
-      ExtractOptions="$ExtractOptions -color"
-      BlueColor='[1m[34m'    # blue boldface
-      BoldColor='[1m'          # boldface
-      OkColor='[32m'           # green
-      ErrorColor='[1m[31m'   # red boldface
-      WarnColor='[35m'         # magenta
-      ResetColor='[30m[00m'  # black, reset attribute
+          set_color
       ;;
   esac
 fi
@@ -620,6 +631,12 @@ while [ $# -gt 0 ]; do
         ;;
     -defaults)
 	ShowDefaults=1
+        ;;
+    -color)
+	set_color
+        ;;
+    -nocolor)
+	set_no_color
         ;;
     -config)
         shift
@@ -683,7 +700,7 @@ while [ $# -gt 0 ]; do
         ;;
     -quiet)
         Quiet=1;
-        ExtractOptions="$ExtractOptions $1"
+        # see run_command, ExtractOptions="$ExtractOptions $1"
         ;;
     -realquiet)
         Quiet=1;
@@ -785,7 +802,7 @@ done
 
 # Cleanup
 # -------
-#\rm -r ${TmpDir}
+\rm -r ${TmpDir}
 
 # -------------
 # End of script
