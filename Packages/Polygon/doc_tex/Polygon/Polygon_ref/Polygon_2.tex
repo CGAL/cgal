@@ -18,7 +18,30 @@
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
+The class \ccRefName\ implements polygons.
+The \ccRefName\ is parameterised by a traits class and a container class.
+The latter can be any class that fulfills the requirements for an STL container.
+It defaults to the vector class.
+
+\ccHeading{Caching}
+By default, \ccRefName\ does not use caching. That means that every time that
+a member function like \ccc{is_simple} is called, the result is computed from
+scratch.  This behaviour can be changed by defining a macro.
+\begin{ccExampleCode}
+#define CGAL_POLYGON_2_CACHED
+\end{ccExampleCode}
+
+In the future, this caching behavior will be the default. The only reason that
+it is not at the moment is that some compilers have problems when the
+\ccc{CGAL_POLYGON_2_CACHED} flag is set. This can be fixed by setting a second
+preprocessor flag as well:
+\begin{ccExampleCode}
+CGAL_POLYGON_2_MOD_ITER
+\end{ccExampleCode}
+The drawback of setting this flag is that some illegal operations will be
+allowed which can lead to wrong results.
+The iterators of the polygon are mutable in this case, but modifying the polygon
+through them will not invalidate the cache.
 
 \ccInclude{Polygon_2.h}
 
@@ -44,27 +67,20 @@ The following types denote iterators that allow to traverse the vertices and
 edges of a polygon. 
 Since it is questionable whether a polygon should be viewed as a circular or 
 as a linear data structure both circulators and iterators are defined.
-The circulators and iterators with `const' in their name are non-mutable, the 
-others are mutable.
+The circulators and iterators are non-mutable.\footnote{At least conceptually.
+The enforcement depends on preprocessor flags.}
 The iterator category is in all cases bidirectional, except for
-\ccStyle{Vertex_iterator} and \ccStyle{Vertex_const_iterator}, which have the
+\ccStyle{Vertex_iterator}, which has the
 same iterator category as \ccStyle{Container::iterator}.
 {\bf N.B.} In fact all of them should have the same iterator category as
 \ccStyle{Container::iterator}. However, due to compiler problems this is currently
-not possible. This will be corrected when iterator traits become available.
-The consequence of using iterators / circulators with an incorrect iterator
-category is that when an STL algorithm is applied to such a range,
-the wrong (i.e. inefficient) version of an STL algorithm may be selected. 
+not possible.
 
 For vertices we define
 
 \ccNestedType{Vertex_iterator}{}
 \ccGlue
-\ccNestedType{Vertex_const_iterator}{}
-\ccGlue
 \ccNestedType{Vertex_circulator}{}
-\ccGlue
-\ccNestedType{Vertex_const_circulator}{}
 
 Their value type is \ccStyle{Point_2}.
 
@@ -80,27 +96,21 @@ Their value type is \ccStyle{Segment_2}.
 \ccCreation
 \ccCreationVariable{pgn}  %% choose variable name
 
-  \ccConstructor{Polygon_2();}{Creates an empty polygon \ccVar.}
+  \ccConstructor{Polygon_2(Traits p_traits = Traits());}{Creates an empty polygon \ccVar.}
   \ccConstructor{template <class InputIterator>
-      Polygon_2( InputIterator first, InputIterator last ); }
+      Polygon_2( InputIterator first, InputIterator last,
+                 Traits p_traits = Traits()); }
     { Introduces a polygon \ccVar\ with vertices from the sequence defined by
       the range \ccStyle{[first,last)}.
-      The value type of \ccStyle{InputIterator} must be
-                 \ccStyle{Point_2}.
-    }
-
-  \ccConstructor{template <class ForwardCirculator>
-      Polygon_2( ForwardCirculator start); }
-    { Introduces a polygon \ccVar\ with vertices from the sequence defined by
-      the range \ccStyle{[start,start]}.
-      \ccPrecond The value type of \ccStyle{InputIterator} is
-                 \ccStyle{Point_2}.
+      The value type of \ccStyle{InputIterator} must be \ccc{Point_2}.
     }
 
 
-\ccOperations
+\ccModifiers
 
-The following operations allow to modify a polygon.
+  \ccMethod{void set(Vertex_iterator pos, const Point_2& x);}
+    { Acts as \ccc{*pos = x}, except that that would be illegal because the
+      iterator is not mutable.}
 
   \ccMethod{ Vertex_iterator insert(Vertex_iterator i, const Point_2& q);}
     { Inserts the vertex \ccStyle{q} before \ccStyle{i}.
@@ -110,10 +120,8 @@ The following operations allow to modify a polygon.
       void insert(Vertex_iterator i, InputIterator first, InputIterator last);}
     { Inserts the vertices in the range \ccStyle{[first, last)} before
       \ccStyle{i}.
-      \ccPrecond The value type of points in the range \ccStyle{[first,last)} is
+      The value type of points in the range \ccStyle{[first,last)} must be
                  \ccStyle{Point_2}.
-      %Note: this method is only available if the compiler supports member templat
-es.
     }
 
   \ccMethod{ void push_back(const Point_2& q);}
@@ -129,30 +137,19 @@ es.
     { Reverses the orientation of the polygon. The vertex pointed to by
       \ccStyle{p.vertices_begin()} remains the same. }
 
-\ccHeading{Traversal of a polygon}
+\ccAccessFunctions
 The following methods of the class \ccClassName\ return
 circulators and iterators that allow to traverse the vertices and edges.
 
-  \ccMethod{ Vertex_iterator vertices_begin(); }
-    { Returns a mutable iterator that allows to traverse the vertices of
+  \ccMethod{ Vertex_iterator vertices_begin() const; }
+    { Returns a constant iterator that allows to traverse the vertices of
       the polygon \ccStyle{p}.}
 
-  \ccMethod{ Vertex_iterator vertices_end(); }
+  \ccMethod{ Vertex_iterator vertices_end() const; }
     { Returns the corresponding past-the-end iterator. }
 
-  \ccMethod{ Vertex_const_iterator vertices_begin(); }
-    { Returns a non-mutable iterator that allows to traverse the vertices of
-      the polygon \ccStyle{p}.}
-
-  \ccMethod{ Vertex_const_iterator vertices_end() const; }
-    { Returns the corresponding past-the-end iterator. }
-
-  \ccMethod{ Vertex_circulator vertices_circulator(); }
+  \ccMethod{ Vertex_circulator vertices_circulator() const; }
     { Returns a mutable circulator that allows to traverse the vertices of
-      the polygon \ccStyle{p}.}
-
-  \ccMethod{ Vertex_const_circulator vertices_circulator() const;}
-    { Returns a non-mutable circulator that allows to traverse the vertices of
       the polygon \ccStyle{p}.}
 
   \ccMethod{ Edge_const_iterator edges_begin() const;}
@@ -166,7 +163,7 @@ circulators and iterators that allow to traverse the vertices and edges.
     { Returns a non-mutable circulator that allows to traverse the edges of
       the polygon \ccStyle{p}.}
 
-\ccHeading{Predicates}
+\ccPredicates
 
   \ccMethod{bool is_simple() const;}
     { Returns whether \ccStyle{p} is a simple polygon.}
@@ -219,7 +216,6 @@ circulators and iterators that allow to traverse the vertices and edges.
     { Returns the bottommost vertex of the polygon \ccStyle{p} with the smallest
      \ccStyle{x}-coordinate. }
     
-\newpage
 For convenience we provide the following boolean functions:    
 \ccThree{Segment_2}{}{\hspace*{10cm}}
 
@@ -230,7 +226,6 @@ For convenience we provide the following boolean functions:
 \ccMethod{bool is_clockwise_oriented() const;}
     {}
 
-\ccGlue
 \ccMethod{bool is_collinear_oriented() const;}
     {}
 
@@ -324,7 +319,12 @@ The methods
 \ccStyle{bottom_vertex}
 are all implemented using the algorithms on sequences of 2D points described
 in section \ref{sec:poly_algo}. There you can find information about which
-algorithms were used and what their complexity they have.
+algorithms were used and what complexity they have.
+
+If caching is turned on, all functions are cached except those that compute on
+which side of the polygon a point is situated.
+The cache is invalidated after any operation that modifies the polygon.
+
 
 
 \ccExample

@@ -33,6 +33,8 @@ Computes the signed area of the polygon defined by the range of points
 \ccc{first} \ldots\ \ccc{last}. The area is returned in the parameter
 \ccc{result}. The sign is positive for counterclockwise polygons, negative for
 clockwise polygons. If the polygon is not simple, the area is not well defined.
+The functionality is also available by the \ccc{polygon_area_2} function, which
+returns the area instead of taking it as a parameter.
 }
 
 \ccHeading{Requirements}
@@ -53,6 +55,7 @@ clockwise polygons. If the polygon is not simple, the area is not well defined.
 
 \ccSeeAlso
 
+\ccRefIdfierPage{polygon_area_2} \\
 \ccRefIdfierPage{PolygonTraits_2} \\
 \ccRefIdfierPage{CGAL::orientation_2} \\
 \ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
