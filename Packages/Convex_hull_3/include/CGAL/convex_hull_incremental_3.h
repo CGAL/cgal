@@ -40,7 +40,7 @@ convex_hull_incremental_3(InputIterator first, InputIterator beyond,
 
   ChullType CH(3);
   for ( ; first != beyond ; ++first)  CH.insert(*first);
-  if ( test_correctness ) assert(CH.is_valid());
+  if ( test_correctness ) CGAL_assertion(CH.is_valid());
   CGAL::convex_hull_d_to_polyhedron_3(CH,P);
 }
 CGAL_END_NAMESPACE
