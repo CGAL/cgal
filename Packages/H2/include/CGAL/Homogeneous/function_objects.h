@@ -1916,8 +1916,8 @@ namespace HomogeneousKernelFunctors {
     Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { 
-      return Vector_2( p.hx()*q.hw() - q.hx()*p.hw(),
-		       p.hy()*q.hw() - q.hy()*p.hw(),
+      return Vector_2( q.hx()*p.hw() - p.hx()*q.hw(),
+		       q.hy()*p.hw() - p.hy()*q.hw(),
 		       p.hw()*q.hw() );
     }
 
@@ -1969,10 +1969,10 @@ namespace HomogeneousKernelFunctors {
     Vector_3
     operator()( const Point_3& p, const Point_3& q) const
     { 
-      return Vector_3(p.hx()*q.hw() - q.hx()*p.hw(),
-		      p.hy()*q.hw() - q.hy()*p.hw(),
-		      p.hz()*q.hw() - q.hz()*p.hw(),
-		      p.hw()*q.hw() );
+      return Vector_3(q.hx()*p.hw() - p.hx()*q.hw(),
+		      q.hy()*p.hw() - p.hy()*q.hw(),
+		      q.hz()*p.hw() - p.hz()*q.hw(),
+		      q.hw()*p.hw() );
     }
 
     Vector_3
