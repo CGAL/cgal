@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.71 on 25 February 2001
+- Split MP_Float.h into src/MP_Float.C.
+- Test-suite fixes.
+
 Version 4.70 on 21 February 2001
 - Fixes for Homogeneous filtering.
 
