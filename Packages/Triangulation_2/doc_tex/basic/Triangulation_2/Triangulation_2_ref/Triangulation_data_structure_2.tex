@@ -43,9 +43,9 @@ and do not depend on the geometric embedding.
 \ccGlue
 \ccNestedType{Face}{}
 \ccGlue
-\ccTypedef{typedef std::pair<Face*,int> Edge}{ Edge type.}
+\ccTypedef{typedef std::pair<Face*,int> Edge;}{ Edge type.}
 \ccGlue
-\ccTypedef{typedef std::list<Edge> List_edges}{ Lists of edges.}
+\ccTypedef{typedef std::list<Edge> List_edges;}{ Lists of edges.}
 
 To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
 described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
@@ -242,11 +242,10 @@ of the resulting triangulation.
 {stars the hole \ccc{hole} using vertex \ccc{v}.}
 \ccGlue
 \ccMethod{void make_hole(Vertex* v, List_edges& hole);}
-{removes the vertex v, and store in hole the list of edges
+{removes the vertex v, and store in \ccc{hole} the list of edges
 on the boundary of the hole.}
-hole \ccc{hole}}
-\ccGlue
-\ccMethod{Vertex* create_vertex()}{adds a new vertex.}
+
+\ccMethod{Vertex* create_vertex();}{adds a new vertex.}
 \ccGlue
 \ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
 f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
