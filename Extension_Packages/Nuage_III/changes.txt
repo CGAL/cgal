@@ -1,3 +1,4 @@
+- Removed conversion
 - Added output of the missed points in vrml2
 - Added support for xyz format
 - Changed Vertex* to Vertex_handle for Unique_hash_map
