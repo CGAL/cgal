@@ -88,7 +88,7 @@ public:
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
 
-  virtual QSize sizeHint(){return QSize(geometry().width(),
+  virtual QSize sizeHint() const {return QSize(geometry().width(),
 					geometry().height());} 
   
   // properties
