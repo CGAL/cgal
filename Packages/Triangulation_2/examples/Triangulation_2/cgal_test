@@ -72,5 +72,6 @@ else
   compile_and_run points
   compile_and_run voronoi
   compile_and_run colored_face
+  compile_and_run triangulation_prog1
 fi
 

@@ -48,6 +48,9 @@ voronoi: voronoi.o
 colored_face : colored_face.o
 	$(CGAL_CXX) -o colored_face colored_face.o $(LDFLAGS)
 
+triangulation_prog1 : triangulation_prog1.o
+	$(CGAL_CXX) -o triangulation_prog1 triangulation_prog1.o $(LDFLAGS)
+
 clean:
 	rm -rf *~ *.o core tr
 
