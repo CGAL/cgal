@@ -72,7 +72,12 @@ enum MaxFilesNumber {
 #include <CORE/BigInt.h>
 #include <CGAL/Arr_conic_traits_2_core.h>
 #if defined(USE_CGAL_WINDOW)
+
+//#include <CGAL/IO/Conic_arc_2_Window_stream_core.h>
+//#include <CGAL/Arrangement_2/Conic_arc_2_core.h>
+
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
+
 #else
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
 #endif
@@ -157,8 +162,11 @@ enum MaxFilesNumber {
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_dummy_point_location.h>
-#include <CGAL/Pm_triangle_point_location.h>
 #include <CGAL/Pm_simple_point_location.h>
+
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
+#include <CGAL/Pm_triangle_point_location.h>
+#endif
 
 #include <CGAL/Bench.h>
 #include <CGAL/Bench.C>
@@ -309,9 +317,10 @@ typedef CGAL::Pm_trapezoid_dag_point_location<Pm>       Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
 typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
 typedef CGAL::Pm_triangle_point_location<Pm>            Triangle_point_location;
+#endif
 typedef CGAL::Pm_simple_point_location<Pm>              Simple_point_location;
-
 typedef CGAL::Bench_parse_args::TypeId                  Type_id;
 typedef CGAL::Bench_parse_args::StrategyId              Strategy_id;
 typedef CGAL::Bench_parse_args::FormatId                Format_id;
@@ -464,8 +473,10 @@ typedef CGAL::Bench<Naive_inc_pm>               Naive_inc_pm_bench;
 typedef Increment_pm<Walk_point_location>       Walk_inc_pm;
 typedef CGAL::Bench<Walk_inc_pm>                Walk_inc_pm_bench;
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
 typedef Increment_pm<Triangle_point_location>   Triangle_inc_pm;
 typedef CGAL::Bench<Triangle_inc_pm>            Triangle_inc_pm_bench;
+#endif
 
 typedef Increment_pm<Simple_point_location>     Simple_inc_pm;
 typedef CGAL::Bench<Simple_inc_pm>              Simple_inc_pm_bench;
@@ -511,8 +522,10 @@ typedef CGAL::Bench<Naive_agg_pm>               Naive_agg_pm_bench;
 typedef Aggregate_pm<Simple_point_location>     Simple_agg_pm;
 typedef CGAL::Bench<Simple_agg_pm>              Simple_agg_pm_bench;
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
 typedef Aggregate_pm<Triangle_point_location>   Triangle_agg_pm;
 typedef CGAL::Bench<Triangle_agg_pm>            Triangle_agg_pm_bench;
+#endif
 
 typedef Aggregate_pm<Trap_point_location>       Trap_agg_pm;
 typedef CGAL::Bench<Trap_agg_pm>                Trap_agg_pm_bench;
@@ -663,8 +676,10 @@ typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
 typedef Display_pm<Dummy_point_location>        Dummy_dis_pm;
 typedef CGAL::Bench<Dummy_dis_pm>               Dummy_dis_pm_bench;
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
 typedef Display_pm<Triangle_point_location>     Triangle_dis_pm;
 typedef CGAL::Bench<Triangle_dis_pm>            Triangle_dis_pm_bench;
+#endif
 
 typedef Display_pm<Simple_point_location>       Simple_dis_pm;
 typedef CGAL::Bench<Simple_dis_pm>              Simple_dis_pm_bench;
@@ -674,15 +689,12 @@ typedef CGAL::Bench<Simple_dis_pm>              Simple_dis_pm_bench;
 template <class Strategy>
 class Locate_Pm {
 public:
-  //  enum MaxFilesNumber {
-  //MAX_FILES_NUMBER = 20
-  //};
 
   /*! */
   Locate_Pm() :
     m_verbose(false), m_postscript(false), 
-    m_strategy(), m_pm(&m_strategy)
-    //m_bbox(0.0,0.0,0.0,0.0),
+    m_strategy(), m_pm(&m_strategy), 
+    m_bbox(0.0,0.0,0.0,0.0)
     //m_width(1024), m_height(1024)
   { 
     for (int j=0; j<MAX_FILES_NUMBER; j++) {
@@ -696,7 +708,6 @@ public:
   virtual void op() 
   {
     if (m_verbose) std::cout << "op Locate_Pm" << std::endl;
-    //    Strategy strategy;
     Locate_type lt;
     Pm_Halfedge_iterator e;
     Point_list::const_iterator i;
@@ -729,18 +740,42 @@ public:
       std::cout << "file[0] = "<< m_filename[0] 
 		<< "file[1] = " << m_filename[1]  << std::endl;
     }
-    //read the planar map from the first input file
-    std::ifstream inp(m_filename[0]);
-    if (!inp.is_open()) {
-      std::cerr << "Cannot open file " << m_filename[0] << "!" << std::endl;
-      return -1;
-    }
-    //inp >> pm;
-    m_pm.read(inp);
 
-    //ixx: create points reader ?
-    Point_reader<Traits> reader;
-    int rc = reader.read_data(m_filename[1], std::back_inserter(m_point_list),
+//     //read the planar map a file written as a planar map (increment insert)
+//     std::ifstream inp(m_filename[0]);
+//     if (!inp.is_open()) {
+//       std::cerr << "Cannot open file " << m_filename[0] << "!" << std::endl;
+//       return -1;
+//     }
+//     m_pm.read(inp);
+
+    int rc;
+    //read curves from file into list
+#if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == SEGMENT_CACHED_TRAITS
+    Segment_reader<Traits> reader;
+
+#elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
+    Polyline_reader<Traits> reader;
+
+#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
+      BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
+      BENCH_TRAITS == EXACUS_CONIC_TRAITS
+    Conic_reader<Traits> reader;
+
+#else
+#error "Run out of options!"
+#endif
+    rc = reader.read_data(m_filename[0], std::back_inserter(m_curve_list),
+                              m_format, m_bbox);
+    if (rc < 0) return rc;
+    if (m_verbose) std::cout << m_curve_list.size() << " curves" << std::endl;
+
+    //insert (aggreagte) the curves into the planar_map (must be pmwx !)
+    m_pm.insert(m_curve_list.begin(), m_curve_list.end());
+    
+    //read points from file into list
+    Point_reader<Traits> p_reader;
+    rc = p_reader.read_data(m_filename[1], std::back_inserter(m_point_list),
                               m_format);
     if (rc < 0) return rc;
     if (m_verbose) std::cout << m_point_list.size() << " points" << std::endl;
@@ -768,17 +803,14 @@ public:
 protected:
   const char * m_filename[MAX_FILES_NUMBER];
   Point_list m_point_list;
+  Curve_list m_curve_list;
   bool m_verbose;
   bool m_postscript;
   Format_id m_format;
-  //  CGAL::Bbox_2 m_bbox;
-  //  Pmwx m_pm;
   Strategy m_strategy;
-  //  Pmwx pm(&strategy);
   Planar_map m_pm;
-
+  CGAL::Bbox_2 m_bbox;
   //  int m_width, m_height;
-  //  float m_x0, m_x1, m_y0, m_y1;
 };
 
 typedef Locate_Pm<Trap_point_location>     Trap_loc_pm;
@@ -790,14 +822,15 @@ typedef CGAL::Bench<Naive_loc_pm>          Naive_loc_pm_bench;
 typedef Locate_Pm<Walk_point_location>     Walk_loc_pm;
 typedef CGAL::Bench<Walk_loc_pm>           Walk_loc_pm_bench;
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
 typedef Locate_Pm<Triangle_point_location> Triangle_loc_pm;
 typedef CGAL::Bench<Triangle_loc_pm>       Triangle_loc_pm_bench;
+#endif
 
 typedef Locate_Pm<Simple_point_location>   Simple_loc_pm;
 typedef CGAL::Bench<Simple_loc_pm>         Simple_loc_pm_bench;
 
 /***************************************/
-
 
 /*! */
 template <class Bench_inst, class Benchable>
@@ -950,6 +983,7 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
      
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS    
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -966,6 +1000,7 @@ int main(int argc, char * argv[])
 						       samples, iterations,
 						       verbose, postscript);
     }
+#endif
 
     // Simple point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_SIMPLE;
@@ -1064,7 +1099,8 @@ int main(int argc, char * argv[])
                                                samples, iterations,
                                                verbose, postscript);
     }
-     
+
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS     
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1081,6 +1117,7 @@ int main(int argc, char * argv[])
 						       samples, iterations,
 						       verbose, postscript);
     }
+#endif
 
     // Simple point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_SIMPLE;
@@ -1159,6 +1196,7 @@ int main(int argc, char * argv[])
                                                    verbose, postscript);
     }
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1175,6 +1213,7 @@ int main(int argc, char * argv[])
                                                    samples, iterations,
                                                    verbose, postscript);
     }
+#endif
 
     // Simple point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_SIMPLE;
@@ -1284,7 +1323,8 @@ int main(int argc, char * argv[])
 					       verbose, postscript,
 					       fullname[1]);
     }
-     
+
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS     
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1303,6 +1343,7 @@ int main(int argc, char * argv[])
 						       verbose, postscript,
 						       fullname[1]);
     }
+#endif
 
     // Simple point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_SIMPLE;
