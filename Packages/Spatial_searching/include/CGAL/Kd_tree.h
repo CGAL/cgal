@@ -232,11 +232,12 @@ public:
   int item_number() {return the_item_number;}
 
   // Print statistics of the tree.
-  void statistics () {
-    std::cout << "Tree statistics:" << std::endl;
-    std::cout << "Number of items stored: " 
+  std::ostream& statistics (std::ostream& s) {
+    s << "Tree statistics:" << std::endl;
+    s << "Number of items stored: " 
 		  << tree_root->num_items() << std::endl;
-    std::cout << " Tree depth: " << tree_root->depth() << std::endl;
+    s << " Tree depth: " << tree_root->depth() << std::endl;
+    return s;
   }
 
 

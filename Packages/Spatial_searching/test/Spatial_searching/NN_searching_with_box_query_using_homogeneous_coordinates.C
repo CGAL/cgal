@@ -86,7 +86,7 @@ int main() {
      " nn= " << *(nearest_neighbours[j].first) << std::endl; 
   }
 
-  NN.statistics();
+  NN.statistics(std::cout);
   
   return 0;
 }; 

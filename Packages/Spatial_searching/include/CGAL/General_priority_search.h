@@ -114,8 +114,9 @@ class iterator;
 		return *past_the_end;
     }
 
-    void statistics() {
-	start->statistics();
+    std::ostream&  statistics(std::ostream& s) {
+	start->statistics(s);
+	return s;
     }
 
     class iterator {
@@ -184,8 +185,9 @@ class iterator;
         return !(*this == It);
     }
 
-    void statistics () {
-    	Ptr_implementation->statistics();
+    std::ostream& statistics (std::ostream& s) {
+    	Ptr_implementation->statistics(s);
+        return s;
     }
 
     ~iterator() {
@@ -354,16 +356,17 @@ class Distance_smaller
 
 
     // Print statistics of the general priority search process.
-    void statistics () {
-    	std::cout << "General priority search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" << 
+    std::ostream& statistics (std::ostream& s) {
+    	s << "General priority search statistics:" << std::endl;
+    	s << "Number of internal nodes visited:" << 
 		      number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" << 
+    	s << "Number of leaf nodes visited:" << 
 	number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of points visited:" << 
+    	s << "Number of points visited:" << 
 	number_of_items_visited << std::endl;
-        std::cout << "Number of neighbours computed:" << 
+        s << "Number of neighbours computed:" << 
 	number_of_neighbours_computed << std::endl;
+        return s;
     }
 
     //destructor

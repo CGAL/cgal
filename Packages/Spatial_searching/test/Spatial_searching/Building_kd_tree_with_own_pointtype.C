@@ -110,7 +110,7 @@ int main() {
 
   std::cout << "created kd tree using splitting rule "  
   << data_point_number << " points. " << std::endl;
-  d.statistics();
+  d.statistics(std::cout);
   return 0;
 
 };

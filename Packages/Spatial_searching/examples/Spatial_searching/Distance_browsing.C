@@ -1,7 +1,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Euclidean_distance.h>
+#include <CGAL/Euclidean_distance.h> 
 
 #include <vector>  
 #include <iostream>

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream> 
 
-#include <CGAL/Iso_box_d.h>
+#include <CGAL/Kernel_d/Iso_box_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>

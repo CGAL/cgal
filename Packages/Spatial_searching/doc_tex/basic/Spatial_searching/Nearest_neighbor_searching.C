@@ -32,19 +32,19 @@ int main() {
   Vector query_points;
   CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
 
-  std::vector<Neighbor_search::Point_with_distance> nearest_neighbors;
+  std::vector<Neighbor_search::Point_with_distance> the_nearest_neighbors;
   
   for (int i=0; i < query_point_number; i++) { 
      Neighbor_search N(d, query_points[i]); 
-     N.the_k_neighbors(std::back_inserter(nearest_neighbors));
+     N.the_k_neighbors(std::back_inserter(the_nearest_neighbors));
   }
   
-  // report query points q, nearest neighbors nn and their distance
+  // report query points q, nearest neighbors and their distance
   for (int j=0; j < query_point_number; j++) { 
        std::cout << "q= " << query_points[j] << " ";
-       std::cout << "nn= "    << *(nearest_neighbors[j].first) << " ";
+       std::cout << "nn= "    << *(the_nearest_neighbors[j].first) << " ";
        std::cout << " d(q, nn)= "
-       << sqrt(nearest_neighbors[j].second)  
+       << sqrt(the_nearest_neighbors[j].second)  
                  << std::endl;
   } 
 

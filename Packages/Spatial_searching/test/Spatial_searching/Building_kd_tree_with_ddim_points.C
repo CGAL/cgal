@@ -197,7 +197,7 @@ int main() {
   
   std::cout << "created kd tree using extended nodes containing "   
   << data_point_number << " points. " << std::endl;
-  d1.statistics();
+  d1.statistics(std::cout);
 
   
   Traits tr2(bucket_size, 3.0, false);
@@ -206,12 +206,12 @@ int main() {
 
   std::cout << "created kd tree using no extended nodes containing "
   << data_point_number << " points. " << std::endl;
-  d2.statistics();
+  d2.statistics(std::cout);
   
   // neighbour searching
   const int query_point_number=5;
   Query_vector query_points;
-  CGAL::copy_n( g, query_point_number+1, std::back_inserter(query_points));
+  CGAL::copy_n(g, query_point_number+1, std::back_inserter(query_points));
   
   Point3D_distance tr_dist;
 

@@ -57,7 +57,7 @@ int main() {
 
   std::cout << "created kd tree using "  
   << data_point_number << " points. " << std::endl;
-  d.statistics();
+  d.statistics(std::cout);
 
 };
 

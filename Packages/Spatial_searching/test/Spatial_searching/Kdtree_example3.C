@@ -1,7 +1,7 @@
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
  * example3.C -
  *    Simple example the CGAL KD-tree module.
- *    Example with user defined point_d.    
+ *    Example with user defined point_d.     
  *
  * Written by Sariel Har-Peled 
  *            Iddo Hanniel

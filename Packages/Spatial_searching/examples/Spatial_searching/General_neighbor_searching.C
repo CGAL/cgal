@@ -1,6 +1,6 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Iso_box_d.h>
+#include <CGAL/Kernel_d/Iso_box_d.h>
 #include <CGAL/Manhattan_distance_rectangle_point.h>
 #include <CGAL/General_standard_search.h>
 

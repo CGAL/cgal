@@ -230,7 +230,7 @@ int main() {
   CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
  
   
-  NN.statistics();
+  NN.statistics(std::cout);
   
 
   for (int i=0; i < nearest_neighbour_number; ++i) { 

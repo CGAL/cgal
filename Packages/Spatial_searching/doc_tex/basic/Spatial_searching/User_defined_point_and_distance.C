@@ -205,29 +205,31 @@ int main() {
 
   Point3D_distance<My_point> tr_dist;
 
-  // nearest neighbour searching 
-  std::vector<NN_orthogonal_search::Point_with_distance> nearest_neighbour;
+  // nearest neighbor searching 
+  std::vector<NN_orthogonal_search::Point_with_distance> 
+  the_nearest_neighbors;
   
-  // furthest neighbour searching 
-  std::vector<NN_orthogonal_search::Point_with_distance> furthest_neighbour;
+  // furthest neighbor searching 
+  std::vector<NN_orthogonal_search::Point_with_distance> 
+  the_furthest_neighbors;
   
   for (int i=0; i < query_point_number; i++) { 
      // nearest neighbour searching
      NN_orthogonal_search NN1(d, query_points[i], tr_dist);
-     NN1.the_k_neighbors(std::back_inserter(nearest_neighbour));
+     NN1.the_k_neighbors(std::back_inserter(the_nearest_neighbors));
      
      // furthest neighbour searching
      NN_orthogonal_search NN2(d, query_points[i], tr_dist, 1, 0.0, false);
-     NN2.the_k_neighbors(std::back_inserter(furthest_neighbour));
+     NN2.the_k_neighbors(std::back_inserter(the_furthest_neighbors));
   }
   
-  std::cout << "results neighbour searching:" << std::endl;
+  std::cout << "results neighbor searching:" << std::endl;
 
   for (int j=0; j < query_point_number; j++) { 
-     std::cout << " d(q, nearest neighbour)=  " << 
-     tr_dist.inverse_of_transformed_distance(nearest_neighbour[j].second) << 
-     "    d(q, furthest neighbour)= " << 
-     tr_dist.inverse_of_transformed_distance(furthest_neighbour[j].second) << std::endl; 
+     std::cout << " d(q, nearest neighbor)=  " << 
+     tr_dist.inverse_of_transformed_distance(the_nearest_neighbors[j].second) << 
+     "    d(q, furthest neighbor)= " << 
+     tr_dist.inverse_of_transformed_distance(the_furthest_neighbors[j].second) << std::endl; 
   } 
 
   return 0;
