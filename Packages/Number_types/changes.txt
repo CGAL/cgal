@@ -1,3 +1,8 @@
+4.58     (2 July 02)
+- New square(MP_Float) specialization.
+
+----------------------------- CGAL 2.4 -----------------------------
+
 4.57     (29 April 02)
 - split of user and reference manuals
 

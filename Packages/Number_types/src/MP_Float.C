@@ -111,8 +111,8 @@ compare_noinline (const MP_Float & a, const MP_Float & b)
 // Common code for operator+ and operator-.
 template <class BinOp>
 inline
-void
-Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b, const BinOp &op)
+MP_Float
+Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
 {
   CGAL_assertion(!b.is_zero());
 
@@ -127,6 +127,7 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b, const BinOp &op)
     max_exp = std::max(a.max_exp(), b.max_exp());
   }
 
+  MP_Float r;
   r.exp = min_exp;
   r.v.resize(max_exp - min_exp + 1); // One more for the carry.
   r.v[0] = 0;
@@ -138,6 +139,7 @@ Add_Sub(MP_Float &r, const MP_Float &a, const MP_Float &b, const BinOp &op)
     r.v[i+1] = MP_Float::higher_limb(tmp);
   }
   r.canonicalize();
+  return r;
 }
 
 MP_Float
@@ -148,9 +150,7 @@ MP_Float::operator+(const MP_Float &b) const
   if (b.is_zero())
     return *this;
 
-  MP_Float r;
-  Add_Sub(r, *this, b, std::plus<limb2>());
-  return r;
+  return Add_Sub(*this, b, std::plus<limb2>());
 }
 
 MP_Float
@@ -159,18 +159,19 @@ MP_Float::operator-(const MP_Float &b) const
   if (b.is_zero())
     return *this;
 
-  MP_Float r;
-  Add_Sub(r, *this, b, std::minus<limb2>());
-  return r;
+  return Add_Sub(*this, b, std::minus<limb2>());
 }
 
 MP_Float
 MP_Float::operator*(const MP_Float &b) const
 {
-  MP_Float r;
   if (is_zero() || b.is_zero())
-    return r;
+    return MP_Float();
 
+  if (this == &b)
+    return square(*this);
+
+  MP_Float r;
   r.exp = exp + b.exp;
   r.v.assign(v.size() + b.v.size(), 0);
   for(unsigned i=0; i<v.size(); i++)
@@ -189,6 +190,77 @@ MP_Float::operator*(const MP_Float &b) const
   r.canonicalize();
   return r;
 }
+
+// Squaring simplifies things and is faster, so we specialize it.
+MP_Float
+square(const MP_Float &a)
+{
+  typedef MP_Float::limb2 limb2;
+
+  if (a.is_zero())
+    return MP_Float();
+
+  MP_Float r;
+  r.exp = 2*a.exp;
+  r.v.assign(2*a.v.size(), 0);
+  for(unsigned i=0; i<a.v.size(); i++)
+  {
+    unsigned j;
+    limb2 carry = 0, carry2 = 0;
+    for(j=0; j<i; j++)
+    {
+      // There a risk of overflow here :(
+      // It can only happen when a.v[i] == a.v[j] == -2^15 (log_limb...)
+      limb2 tmp0 = std::multiplies<limb2>()(a.v[i], a.v[j]);
+      limb2 tmp1 = carry + (limb2) r.v[i+j] + tmp0;
+      limb2 tmp = tmp0 + tmp1;
+
+      r.v[i+j] = tmp;
+      carry = MP_Float::higher_limb(tmp) + carry2;
+
+      // Is there a more efficient way to handle this carry ?
+      if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
+      {
+        // If my calculations are correct, this case should never happen.
+	CGAL_assertion(false);
+      }
+      else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
+        carry2 = 1;
+      else
+        carry2 = 0;
+    }
+    // last round for j=i :
+    limb2 tmp0 = carry + (limb2) r.v[i+i]
+                       + std::multiplies<limb2>()(a.v[i], a.v[i]);
+    r.v[i+i] = tmp0;
+    r.v[i+i+1] = MP_Float::higher_limb(tmp0);
+    CGAL_assertion(carry2 == 0);
+  }
+  r.canonicalize();
+  return r;
+}
+
+// Division by Newton (code by Valentina Marotta & Chee Yap) :
+/*
+Integer reciprocal(const Integer A, Integer k) {
+  Integer t, m, ld;
+  Integer e, X, X1, X2, A1;
+  if (k == 1)
+    return 2;
+
+  A1 = A >> k/2;   // k/2 most significant bits
+  X1 = reciprocal(A1, k/2);
+  // To avoid the adjustment :
+  Integer E = (1 << (2*k - 1)) - A*X1;
+  if (E > A)
+    X1 = X1 + 1;
+
+  e = 1 << 3*k/2; // 2^(3k/2)
+  X2 = X1*e - X1*X1*A;
+  X = X2 >> k-1;
+  return X;
+}
+*/
 
 MP_Float
 MP_Float::operator/(const MP_Float &d) const

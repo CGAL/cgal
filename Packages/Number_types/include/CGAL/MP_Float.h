@@ -120,6 +120,7 @@ public:
   }
 
   MP_Float()
+      : exp(0)
   {
     CGAL_assertion(sizeof(limb2) == 2*sizeof(limb));
     CGAL_assertion(v.empty());
@@ -243,6 +244,7 @@ public:
   int exp;
 };
 
+MP_Float square(const MP_Float&);
 
 namespace NTS {
 
@@ -251,6 +253,13 @@ Sign
 sign (const MP_Float &a)
 {
   return a.sign();
+}
+
+inline
+MP_Float
+square(const MP_Float &f)
+{
+  return CGAL::square(f);
 }
 
 } // namespace NTS

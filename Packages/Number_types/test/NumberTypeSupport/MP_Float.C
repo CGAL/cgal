@@ -32,6 +32,16 @@ void bench(int loops)
   }
 }
 
+void square_test()
+{
+  for (int i = 0; i<1000; ++i)
+  {
+    double d = CGAL::default_random.get_double();
+    MPF D(d);
+    CGAL_assertion(D*D == CGAL::square(D));
+  }
+}
+
 MPF factoriel (short i)
 {
   MPF r(1);
@@ -124,6 +134,8 @@ int main(int argc, char **argv)
   CGAL_assertion(MPF(-2) == -MPF(2));
 
   print_test();
+
+  square_test();
 
   return 0;
 }
