@@ -1,3 +1,5 @@
+#ifdef CGAL_USE_QT
+
 #include "qt_layer.h"
 #include "demo_tab.h"
 #include <qtabwidget.h>
@@ -54,3 +56,6 @@ void Qt_layer::draw()
   
 }
 
+
+
+#endif // CGAL_USE_QT
