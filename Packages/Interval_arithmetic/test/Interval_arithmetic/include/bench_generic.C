@@ -19,6 +19,7 @@ typedef TESTED_TYPE IA;
 void bench()
 {
   const int loops = 10000000;
+  int i;
   CGAL_Timer t;
   double dt;
   const double dd = 1.0;
@@ -38,14 +39,14 @@ void bench()
 
 #define BENCH_MACRO(op) { \
   dt = t.time(); t.start(); c = 1; \
-  for (int i=0; i<loops; i++) { c = a op b; } \
+  for (i=0; i<loops; i++) { c = a op b; } \
   t.stop(); \
   cout << c << "\t" #op " " << t.time()-dt << endl; \
 }
 
 #define BENCH_MACRO_eq(op1,op2) { \
   dt = t.time(); t.start(); c = 1; \
-  for (int i=0; i<loops; i++) { c op1 b; c op2 b; } \
+  for (i=0; i<loops; i++) { c op1 b; c op2 b; } \
   t.stop(); \
   cout << c << "\t" #op1 " " #op2 " " << t.time()-dt << endl; \
 }
@@ -59,22 +60,22 @@ void bench()
   BENCH_MACRO_eq (*=, /=);
 
   dt = t.time(); t.start();
-  for (int i=0; i<loops; i++) { c = sqrt(b); }
+  for (i=0; i<loops; i++) { c = sqrt(b); }
   t.stop();
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
-  for (int i=0; i<loops; i++) { c = b; }
+  for (i=0; i<loops; i++) { c = b; }
   t.stop();
   cout << c << "\t=\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
-  for (int i=0; i<loops; i++) { c = c * dd; }
+  for (i=0; i<loops; i++) { c = c * dd; }
   t.stop();
   cout << c << "\tia*dbl\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
-  for (int i=0; i<loops; i++) { c = dd * c; }
+  for (i=0; i<loops; i++) { c = dd * c; }
   t.stop();
   cout << c << "\tdbl*ia\t" << t.time()-dt << endl;
 }
