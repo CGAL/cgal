@@ -54,14 +54,12 @@ Gestion memoire
   chainees.
   Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
   NB: Ca serait bien de factoriser ce probleme avec T2D !!!
-
 -  De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
   constructions/destructions (encore que je doute de l'utilite, je ne vois pas
   comment ca peut etre vraiment fiable).
-
-- en tout cas, il est INDISPENSABLE de trouver un moyen de laisser le
-  droit a l'utilisateur de changer la cell_base sans que ca plante,
-  c'est dans le cahier des charges.
+- M doit se faire expliquer par S dans le detail une fois pour toutes ce 
+  que ce qui precede veut dire, et qu'il n'y a aucun pb si l'utilisateur 
+  change la cell_base.
 
 Regular :
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
