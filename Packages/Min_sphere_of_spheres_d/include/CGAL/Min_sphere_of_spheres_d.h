@@ -53,6 +53,8 @@
 
 #include <CGAL/Min_sphere_of_spheres_d_configure.h>
 #include <cassert>
+#include <cstdlib>                 // for std::rand()
+#include <cmath>
 
 #include <vector>
 #include <iostream>
