@@ -70,6 +70,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   typedef typename SNC_structure::Line_3         Line_3;
   typedef typename SNC_structure::Ray_3          Ray_3;
   typedef typename SNC_structure::Plane_3        Plane_3;
+  typedef typename SNC_structure::Triangle_3     Triangle_3;
 
  public:
 
@@ -88,9 +89,60 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 				const Point_3& p) const {
     if( !plane(f).has_on(p))
       return false;
-    return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
+    return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE); 
   }
 
+  bool does_contain_on_boundary( Halffacet_const_handle f, const Point_3& p) const {
+    typedef Project_halfedge_point
+      < SHalfedge, const Point_3, SNC_const_decorator> Project;
+    typedef Circulator_project
+      < SHalfedge_around_facet_circulator, Project, 
+      const Point_3&, const Point_3*> Circulator;
+    Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+    SHalfedge_handle se;
+    CGAL_nef3_assertion( assign( se, fc));
+    if ( assign( se, fc) ) {
+      SHalfedge_around_facet_circulator hfc(se);
+      Circulator c(hfc), cp(c), cend(c);
+      do {
+	c++;
+	TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
+	       Segment_3( *c, *cp).has_on(p));
+	if( Segment_3( *c, *cp).has_on(p))
+	  return true;
+	cp++;
+      }
+      while( c != cend); 
+    } 
+    Halffacet_cycle_const_iterator fe = f->facet_cycles_end();
+    ++fc;
+    CGAL_For_all(fc, fe) {
+      SHalfloop_handle l;
+      if ( assign(l,fc) ) { 
+	TRACEN("isolated point on "<<point(vertex(l))<<"? "<<
+	       point(vertex(l)));
+	if( point(vertex(l)) == p)
+	  return true;
+      } 
+      else if ( assign(se,fc) ) {
+	SHalfedge_around_facet_circulator hfc(se);
+	Circulator c(hfc), cp(c), cend(c);
+	do {
+	  c++;
+	  TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
+		 Segment_3( *c, *cp).has_on(p));
+	  if( Segment_3( *c, *cp).has_on(p))
+	    return true;
+	  cp++;
+	} 
+	while( c != cend);
+      }
+      else 
+	CGAL_nef3_assertion_msg(0, "Damn wrong handle.");
+    }
+    return false;
+  }
+  
 #ifdef LINE3_LINE3_INTERSECTION
   
   bool does_intersect_internally( const Segment_3& s1, 
@@ -160,35 +212,86 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     
 #endif // LINE3_LINE3_INTERSECTION
 
-  bool does_intersect_internally( const Ray_3& seg,
+  bool does_intersect( const Ray_3& r, const Triangle_3& tr,
+		       Point_3& ip) const {
+    // Intersection between an open ray and
+    // a closed 2d-triangular region in the space
+    TRACEN("-> Intersection triangle - ray");
+    TRACEN(" -> Ray: "<<r);
+    TRACEN(" -> Triangle: "<<tr);
+    CGAL_nef3_assertion( !r.is_degenerate());
+    Plane_3 h( tr.supporting_plane());
+    CGAL_nef3_assertion( !h.is_degenerate());
+    if( h.has_on( r.source()))
+      return false;
+    Object o = intersection( h, r);
+    if( !assign( ip, o))
+      return false;
+    TRACEN(" -> intersection point: "<<ip);
+    return tr.has_on(ip);
+  }
+
+  bool does_intersect( const Segment_3& s, const Triangle_3& tr,
+		       Point_3& ip) const {
+    // Intersection between a open segment and
+    // a closed 2d-triangular region in the space
+    TRACEN("-> Intersection triangle - segment");
+    TRACEN(" -> Segment: "<<s);
+    TRACEN(" -> Triangle: "<<tr);
+    CGAL_nef3_assertion( !s.is_degenerate());
+    Plane_3 h( tr.supporting_plane());
+    CGAL_nef3_assertion( !h.is_degenerate());
+    if( h.has_on( s.source()) || h.has_on( s.target()))
+      return false;
+    Object o = intersection( h, s);
+    if( !assign( ip, o))
+      return false;
+    TRACEN(" -> intersection point: "<<ip);
+    return tr.has_on(ip);
+  }
+
+  bool does_intersect_internally( const Ray_3& ray,
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
-    TRACEN("-> Intersection face - ray");
+    TRACEN("-> Intersection facet - ray");
     Plane_3 h( plane(f));
-    TRACEN("-> facet plane " << h);
-    TRACEN("-> a point on " << h.point());
-    TRACEN("-> seg segment " << seg);
-    CGAL_nef3_assertion( !h.is_degenerate());
-    if( seg.is_degenerate())
+    TRACEN("-> facet's plane: " << h);
+    TRACEN("-> a point on the plane: " << h.point());
+    TRACEN("-> ray: " << ray);
+    if( ray.is_degenerate())
       /* no possible internal intersection */
       return false;
-    if( h.has_on( seg.source()))
+    if( h.has_on( ray.source()))
       /* no possible internal intersection */
 	return false;
-    Object o = intersection( h, seg);
+    Object o = intersection( h, ray);
     if( !assign( p, o))
       return false;
-    TRACEN( "-> intersection point " << p );
-    TRACEN( "-> point in facet? "<<locate_point_in_halffacet(p, f));
+    TRACEN( "-> intersection point: " << p );
+    TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
     return does_contain_internally( f, p);
   }
 
   bool does_intersect_internally( const Segment_3& seg,
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
-    if(plane(f).has_on(seg.target())) return false;
-    return (does_intersect_internally(Ray_3(seg.source(),seg.target()),f,p)
-	    && seg.has_on(p));
+    TRACEN("-> Intersection facet - segment");
+    Plane_3 h( plane(f));
+    TRACEN("-> facet's plane: " << h);
+    TRACEN("-> a point on the plane: " << h.point());
+    TRACEN("-> segment: " << seg);
+    if( seg.is_degenerate())
+      /* no possible internal intersection */
+      return false;
+    if( h.has_on( seg.source()) || h.has_on(seg.target()))
+      /* no possible internal intersection */
+      return false;
+    Object o = intersection( h, seg);
+    if( !assign( p, o))
+      return false;
+    TRACEN( "-> intersection point: " << p );
+    TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
+    return( does_contain_internally( f, p));
   }
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
