@@ -3548,6 +3548,17 @@ create_include_makefile()
     >> ${FILE}
 
   # 
+  # CGAL_EXTRA_OBJECTS
+  # 
+  case ${SYST} in
+    *IRIX*) 
+	${_printf} "%s\n" \
+	"CGAL_EXTRA_OBJECTS = Interval_arithmetic/workaround_4_irix.o" \
+	>> ${FILE}
+	;;
+  esac
+
+  # 
   # CGAL_LIB
   # 
   ${_printf} "%s\n" "CGAL_LIB = libCGAL.a" >> ${FILE}
