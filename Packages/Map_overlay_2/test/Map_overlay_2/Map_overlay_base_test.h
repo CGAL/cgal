@@ -178,17 +178,15 @@ protected:
     Point p = leftmost(leftmost(traits.curve_source(cv1),traits.curve_target(cv1)), 
                        leftmost(traits.curve_source(cv2),traits.curve_target(cv2)));
     
-    //cout<<"p="<<p<<endl;
-    
     Point xp1, xp2;
-    while (traits.nearest_intersection_to_right(cv1, cv2, p, xp1, xp2)){
-      //cout<<"xp1="<<xp1<<endl;
-      points.push_back(xp1);
-      if (xp1 != xp2)
-        points.push_back(xp2);
-      
-      p = xp2;  // if there is no overlap - put xp1, else put xp2.
-    }
+    while (traits.nearest_intersection_to_right(cv1, cv2, p, xp1, xp2))
+      {
+        points.push_back(xp1);
+        if (xp1 != xp2)
+          points.push_back(xp2);
+        
+        p = xp2;  // if there is no overlap - put xp1, else put xp2.
+      }
   }
 
   void read_file_build_creator(std::ifstream& file, Planar_map& pm)
@@ -202,7 +200,7 @@ protected:
     // read number of curves
     unsigned int num_curves = get_next_int(file);
     
-    cout<<"num_curves="<<num_curves<<endl;
+    //cout<<"num_curves="<<num_curves<<endl;
     
     // read curves (test specific)
     while (num_curves--) {
@@ -237,19 +235,20 @@ protected:
         vertices[h->target().operator->()] = h->target();
     }
 
-    for (v_iter = pm2.vertices_begin(); v_iter != pm2.vertices_end(); ++v_iter){
-      Locate_type lt;
-      Halfedge_const_handle  h=map_overlay.subdivision().locate(v_iter->point(), lt);
-      CGAL_assertion(lt == Subdivision::VERTEX);
-
-      // marking the vertices handle.
-      if (h->source()->point() == v_iter->point())
-        vertices[h->source().operator->()] = h->source();
-      else
-        vertices[h->target().operator->()] = h->target();
-    }
+    for (v_iter = pm2.vertices_begin(); v_iter != pm2.vertices_end(); ++v_iter)
+      {
+        Locate_type lt;
+        Halfedge_const_handle  h=map_overlay.subdivision().locate(v_iter->point(), lt);
+        CGAL_assertion(lt == Subdivision::VERTEX);
+        
+        // marking the vertices handle.
+        if (h->source()->point() == v_iter->point())
+          vertices[h->source().operator->()] = h->source();
+        else
+          vertices[h->target().operator->()] = h->target();
+      }
     
-    cout<<"check_that_vertices_are_in_map_overlay -- passed"<<endl;
+    std::cout<<"check_that_vertices_are_in_map_overlay -- passed"<<std::endl;
   }
 
   void check_that_intersections_are_in_map_overlay(const Subdivision& pm1, 
@@ -259,27 +258,28 @@ protected:
     for (Halfedge_const_handle h_iter1 = pm1.halfedges_begin(); 
          h_iter1 != pm1.halfedges_end(); ++h_iter1, ++h_iter1)
       for (Halfedge_const_handle h_iter2 = pm2.halfedges_begin(); 
-           h_iter2 != pm2.halfedges_end(); ++h_iter2, ++h_iter2){
-        std::list<Point>  points;
-        find_intersections(h_iter1->curve(), h_iter2->curve(), points);
-        
-        for (std::list<Point>::iterator p_iter = points.begin(); 
-             p_iter != points.end(); ++p_iter){
-          Locate_type lt;
-          Halfedge_const_handle  h=map_overlay.subdivision().locate(*p_iter, lt);
-          CGAL_assertion(lt == Subdivision::VERTEX);
+           h_iter2 != pm2.halfedges_end(); ++h_iter2, ++h_iter2)
+        {
+          std::list<Point>  points;
+          find_intersections(h_iter1->curve(), h_iter2->curve(), points);
           
-          // marking the vertices handle.
-          if (h->source()->point() == *p_iter)
-            vertices[h->source().operator->()] = h->source();
-          else
-            vertices[h->target().operator->()] = h->target();
+          for (std::list<Point>::iterator p_iter = points.begin(); 
+               p_iter != points.end(); ++p_iter){
+            Locate_type lt;
+            Halfedge_const_handle  h=map_overlay.subdivision().locate(*p_iter, lt);
+            CGAL_assertion(lt == Subdivision::VERTEX);
+            
+            // marking the vertices handle.
+            if (h->source()->point() == *p_iter)
+              vertices[h->source().operator->()] = h->source();
+            else
+              vertices[h->target().operator->()] = h->target();
+          }
         }
-      }
-
-    cout<<"Check_that_intersections_are_in_map_overlay -- passed"<<endl;
+    
+    std::cout<<"Check_that_intersections_are_in_map_overlay -- passed"<<std::endl;
   }
-
+  
   void  check_that_halfedges_are_in_map_overlay(const Subdivision& pm1, 
                                                 const Subdivision& pm2, 
                                                 const MapOverlay& map_overlay)
@@ -287,7 +287,7 @@ protected:
     check_that_halfedges_are_in_map_overlay(pm1,map_overlay);
     check_that_halfedges_are_in_map_overlay(pm2,map_overlay);
 
-    cout<<"Check_that_halfedges_are_in_map_overlay -- passed"<<endl;
+    std::cout<<"Check_that_halfedges_are_in_map_overlay -- passed"<<std::endl;
   }
   
   void  check_that_halfedges_are_in_map_overlay(const Subdivision& pm, 
@@ -296,93 +296,96 @@ protected:
     Traits traits;
     
     for (Halfedge_const_iterator h_iter = pm.halfedges_begin();
-         h_iter != pm.halfedges_end(); ++h_iter, ++h_iter){
-      // At each iteration we move on consecutive intersection points 
-      // on h_iter->curve() from left to right.
-      
+         h_iter != pm.halfedges_end(); ++h_iter, ++h_iter)
+      {
+        // At each iteration we move on consecutive intersection points 
+        // on h_iter->curve() from left to right.
+        
 #ifdef OVL_DEBUG_TEST
-      cout<<"walking along "<<h_iter->curve() << endl;
+        std::cout<<"walking along "<<h_iter->curve() << std::endl;
 #endif
       
-      Point s = leftmost(h_iter->source()->point(),h_iter->target()->point());
-      Point t = rightmost(h_iter->source()->point(),h_iter->target()->point());
-      
-      bool finish_traversal = false;
-      
-      while (!finish_traversal){
-        Locate_type lt;
-        Halfedge_const_handle  h = 
-          map_overlay.subdivision().locate(s,lt);
+        Point s = leftmost(h_iter->source()->point(),h_iter->target()->point());
+        Point t = rightmost(h_iter->source()->point(),h_iter->target()->point());
         
-        CGAL_assertion(lt == Subdivision::VERTEX);
+        bool finish_traversal = false;
         
-        Vertex_const_handle vertex = (h->source()->point() == s) ?
-          h->source() : h->target();
+        while (!finish_traversal)
+          {
+            Locate_type lt;
+            Halfedge_const_handle  h = 
+              map_overlay.subdivision().locate(s,lt);
         
-        Halfedge_around_vertex_const_circulator  halfedge=vertex->incident_halfedges();
-        
-        // finding the halfdge in the overlay corresponding to the
-        // original halfedge h_iter.
-        
+            CGAL_assertion(lt == Subdivision::VERTEX);
+            
+            Vertex_const_handle vertex = (h->source()->point() == s) ?
+              h->source() : h->target();
+            
+            Halfedge_around_vertex_const_circulator  halfedge=vertex->incident_halfedges();
+            
+            // finding the halfdge in the overlay corresponding to the
+            // original halfedge h_iter.
+            
 #ifdef OVL_DEBUG_TEST
-        cout<<"--- vertex is "<<vertex->point()<<endl;
+            std::cout<<"--- vertex is "<<vertex->point()<<std::endl;
 #endif
-        do {
+            do {
 #ifdef OVL_DEBUG_TEST
-          cout<<"walking around vertex: "<< halfedge->curve() <<endl;
+              std::cout<<"walking around vertex: "<< halfedge->curve() <<std::endl;
 #endif
-          // finding the first halfedge which is part of h_iter->curve() and 
-          // continues from the right of vertex->point().
-          if (CGAL::compare_lexicographically_xy(
-                            rightmost(halfedge->source()->point(),
-                                      halfedge->target()->point()), 
-                            vertex->point()) == CGAL::LARGER && 
-              traits.curves_overlap(halfedge->curve(), h_iter->curve()))
-            break;
-        } while (++halfedge != vertex->incident_halfedges());
-        
+              // finding the first halfedge which is part of h_iter->curve() and 
+              // continues from the right of vertex->point().
+              if (CGAL::compare_lexicographically_xy(
+                                  rightmost(halfedge->source()->point(),
+                                            halfedge->target()->point()), 
+                                  vertex->point()) == CGAL::LARGER && 
+                  traits.curves_overlap(halfedge->curve(), h_iter->curve()))
+                break;
+            } while (++halfedge != vertex->incident_halfedges());
+            
 #ifdef OVL_DEBUG_TEST
-          cout<<"After walking around vertex, halfedge is "<< halfedge->curve() <<endl;
+            std::cout<<"After walking around vertex, halfedge is "<< 
+              halfedge->curve() <<std::endl;
 #endif  
-          CGAL_assertion(CGAL::compare_lexicographically_xy(
-                               rightmost(halfedge->source()->point(),
-                                         halfedge->target()->point()), 
-                               vertex->point()) == CGAL::LARGER &&
-                         traits.curves_overlap(halfedge->curve(), h_iter->curve()));
-        
-        halfedges[halfedge.operator->()] = halfedge;          // marking the corresponding
-        halfedges[halfedge->twin().operator->()] = halfedge->twin();  // halfedge from the overlay.
-        
-        Point p1,p2;  // the intersection points: p1=s and p2 is the next intersection 
-                      // point on h_iter->curve();
-        CGAL_assertion(traits.nearest_intersection_to_right(halfedge->curve(),
-                                                            h_iter->curve(),s,p1,p2));
-       
+            CGAL_assertion(CGAL::compare_lexicographically_xy(
+                                 rightmost(halfedge->source()->point(),
+                                           halfedge->target()->point()), 
+                                 vertex->point()) == CGAL::LARGER &&
+                           traits.curves_overlap(halfedge->curve(), h_iter->curve()));
+            
+            halfedges[halfedge.operator->()] = halfedge;          // marking the corresponding
+            halfedges[halfedge->twin().operator->()] = halfedge->twin();  // halfedge from the overlay.
+            
+            Point p1,p2;  // the intersection points: p1=s and p2 is the next intersection 
+            // point on h_iter->curve();
+            CGAL_assertion(traits.nearest_intersection_to_right(halfedge->curve(),
+                                                                h_iter->curve(),s,p1,p2));
+            
 #ifdef OVL_DEBUG_TEST
-        cout<<"p1 and p2  "<<p1<<" "<<p2<<endl; 
-        cout<<"rightmost(p1,p2) "<<rightmost(p1,p2)<<endl;
-        cout<<"leftmost(p1,p2) "<<leftmost(p1,p2)<<endl;
-        cout<<"s and t are "<< s <<" "<<t <<endl;
+            std::cout<<"p1 and p2  "<<p1<<" "<<p2<<std::endl; 
+            std::cout<<"rightmost(p1,p2) "<<rightmost(p1,p2)<<std::endl;
+            std::cout<<"leftmost(p1,p2) "<<leftmost(p1,p2)<<std::endl;
+            std::cout<<"s and t are "<< s <<" "<<t <<std::endl;
 #endif
-        
-        //       CGAL_assertion(p1 == s);
-        
-        Point next_point = find_rightmost_intersection(halfedge->curve(),
-                                                       h_iter->curve(), s);
-
-        
-        // Here we assume that h_iter->curve() is x-monotone due to the fact
-        // it is a part of Planar map.
-        CGAL_assertion(CGAL::compare_lexicographically_xy(s,next_point) == CGAL::SMALLER);
-      
-        if (next_point == t)  // reaching the right endpoint of h_iter->curve().
-          finish_traversal=true;
-        else
-          s = next_point; //rightmost(p1,p2);
+            
+            //       CGAL_assertion(p1 == s);
+            
+            Point next_point = find_rightmost_intersection(halfedge->curve(),
+                                                           h_iter->curve(), s);
+            
+            
+            // Here we assume that h_iter->curve() is x-monotone due to the fact
+            // it is a part of Planar map.
+            CGAL_assertion(CGAL::compare_lexicographically_xy(s,next_point) == CGAL::SMALLER);
+            
+            if (next_point == t)  // reaching the right endpoint of h_iter->curve().
+              finish_traversal=true;
+            else
+              s = next_point; //rightmost(p1,p2);
+          }
       }
-    }
   }
-
+  
   void  check_that_faces_are_in_map_overlay(const MapOverlay& map_overlay)
   {
     const MapOverlay_change_notification*  notifier = map_overlay.change_notification();
@@ -391,58 +394,60 @@ protected:
     //Pm_file_writer<Subdivision>  pm_writer(std::cout, map_overlay.subdivision());
     
     for (Face_const_iterator f_iter = map_overlay.subdivision().faces_begin(); 
-         f_iter != map_overlay.subdivision().faces_end(); ++f_iter){
-      //cout<<"f_iter"<<endl;
-      //write_face(f_iter);
-      
-      Face_const_handle  face_creator1 = notifier->get_first_face_above(f_iter);
-      Face_const_handle  face_creator2 = notifier->get_second_face_above(f_iter);
-      
-      faces[face_creator1.operator->()] = face_creator1;
-      faces[face_creator2.operator->()] = face_creator2;
-      
-      //cout<<"face_creator1"<<endl;
-      //write_face(face_creator1);
-
-      //cout<<"face_creator2"<<endl;
-      //write_face(face_creator2);
-      // asserting that all halfedges along the holes of f_iter points to the same faces.
-      for (Holes_const_iterator hit = f_iter->holes_begin(); 
-           hit != f_iter->holes_end(); ++hit) {
-        Ccb_halfedge_const_circulator hole_halfedge(*hit);
-        do {
-          // for debugging
-          //cout<<"notifier->get_first_face_above(hole_halfedge)"<<endl;
-          //write_face(notifier->get_first_face_above(hole_halfedge));
-          //cout<<"notifier->get_second_face_above(hole_halfedge)"<<endl;
-          //write_face(notifier->get_second_face_above(hole_halfedge));
+         f_iter != map_overlay.subdivision().faces_end(); ++f_iter)
+      {
+        //cout<<"f_iter"<<endl;
+        //write_face(f_iter);
+        
+        Face_const_handle  face_creator1 = notifier->get_first_face_above(f_iter);
+        Face_const_handle  face_creator2 = notifier->get_second_face_above(f_iter);
+        
+        faces[face_creator1.operator->()] = face_creator1;
+        faces[face_creator2.operator->()] = face_creator2;
+        
+        //cout<<"face_creator1"<<endl;
+        //write_face(face_creator1);
+        
+        //cout<<"face_creator2"<<endl;
+        //write_face(face_creator2);
+        // asserting that all halfedges along the holes of f_iter points to the same faces.
+        for (Holes_const_iterator hit = f_iter->holes_begin(); 
+             hit != f_iter->holes_end(); ++hit) 
+          {
+            Ccb_halfedge_const_circulator hole_halfedge(*hit);
+            do {
+              // for debugging
+              //cout<<"notifier->get_first_face_above(hole_halfedge)"<<endl;
+              //write_face(notifier->get_first_face_above(hole_halfedge));
+              //cout<<"notifier->get_second_face_above(hole_halfedge)"<<endl;
+              //write_face(notifier->get_second_face_above(hole_halfedge));
+              
+              CGAL_assertion(notifier->get_first_face_above(hole_halfedge) == 
+                             face_creator1);
+              CGAL_assertion(notifier->get_second_face_above(hole_halfedge) == 
+                             face_creator2);
+              // a queue to hold all faces involed with hit.
+            } while (++hole_halfedge != *hit);
+          }
+        
+        if (!f_iter->is_unbounded()){
+          Ccb_halfedge_const_circulator face_halfedge = f_iter->outer_ccb();
           
-          CGAL_assertion(notifier->get_first_face_above(hole_halfedge) == 
-                         face_creator1);
-          CGAL_assertion(notifier->get_second_face_above(hole_halfedge) == 
-                         face_creator2);
-          // a queue to hold all faces involed with hit.
-        } while (++hole_halfedge != *hit);
-      }
-      
-      if (!f_iter->is_unbounded()){
-        Ccb_halfedge_const_circulator face_halfedge = f_iter->outer_ccb();
-
-        do {
-           // for debugging
-          //cout<<"notifier->get_first_face_above(hole_halfedge)"<<endl;
-          //write_face(notifier->get_first_face_above(face_halfedge));
-          //cout<<"notifier->get_second_face_above(hole_halfedge)"<<endl;
-          //write_face(notifier->get_second_face_above(face_halfedge));
+          do {
+            // for debugging
+            //cout<<"notifier->get_first_face_above(hole_halfedge)"<<endl;
+            //write_face(notifier->get_first_face_above(face_halfedge));
+            //cout<<"notifier->get_second_face_above(hole_halfedge)"<<endl;
+            //write_face(notifier->get_second_face_above(face_halfedge));
           
-          CGAL_assertion(notifier->get_first_face_above(face_halfedge)==face_creator1);
-          CGAL_assertion(notifier->get_second_face_above(face_halfedge)==face_creator2);
-          // a queue to hold all faces involed with hit.
-        } while (++face_halfedge != f_iter->outer_ccb());
-      }
+            CGAL_assertion(notifier->get_first_face_above(face_halfedge)==face_creator1);
+            CGAL_assertion(notifier->get_second_face_above(face_halfedge)==face_creator2);
+            // a queue to hold all faces involed with hit.
+          } while (++face_halfedge != f_iter->outer_ccb());
+        }
     }
-
-    cout<<"Check_that_faces_are_in_map_overlay -- passed"<<endl;
+    
+    std::cout<<"Check_that_faces_are_in_map_overlay -- passed"<<std::endl;
   }
 
   void  check_all_features_are_marked(const MapOverlay& map_overlay)
@@ -451,13 +456,14 @@ protected:
     for (Vertex_const_iterator v_iter = map_overlay.subdivision().vertices_begin();
          v_iter != map_overlay.subdivision().vertices_end(); ++v_iter)
       CGAL_assertion(vertices.find(&*v_iter) != vertices.end());
-
+    
     // Checking halfedges.
     for (Halfedge_const_iterator h_iter = map_overlay.subdivision().halfedges_begin();
-         h_iter != map_overlay.subdivision().halfedges_end(); ++h_iter){
-      CGAL_assertion(halfedges.find(&*h_iter) != halfedges.end());
-    }
-
+         h_iter != map_overlay.subdivision().halfedges_end(); ++h_iter)
+      {
+        CGAL_assertion(halfedges.find(&*h_iter) != halfedges.end());
+      }
+    
     // Checking faces of creators.
     Face_const_iterator f_iter;
     for (f_iter = map_overlay.first_creator()->subdivision().faces_begin();
@@ -468,40 +474,40 @@ protected:
          f_iter != map_overlay.second_creator()->subdivision().faces_end(); ++f_iter)
       CGAL_assertion(faces.find(&*f_iter) != faces.end());
 
-    cout<<"check_all_features_are_marked -- passed"<<endl;
+    std::cout<<"check_all_features_are_marked -- passed"<<std::endl;
   }
-
-  /**** debugging ***
-        void write_face(Face_const_handle f) {
-    
-    std::cout<<"writing face"<<std::endl;
-    
-    std::cout<<"pointer of face="<<f.operator->()<<std::endl;
-    
-    if (f->is_unbounded()){
-      std::cout<<"UNBOUNDED"<<std::endl;
-      std::cout<<"number halfedges on outer boundary"<<std::endl;
-      std::cout<<"0"<<std::endl;
-    }
-    else {
-      std::cout<<"outer ccb"<<std::endl;
-      
-      Ccb_halfedge_const_circulator first = f->outer_ccb(), iter = first;
-
-      std::size_t n = 0;
-      do {
-        std::cout<<iter->curve()<<" ";
-        n++;
-        iter++;
-      } while (iter != first);
-
-      std::cout<<"number halfedges on outer boundary"<<std::endl;
-      std::cout<< n <<std::endl;
-      
-      std::cout << std::endl;
-      }
-      }*/
-        
+  
+  /////////////// debugging //////////////
+  //         void write_face(Face_const_handle f) {
+  
+  //      std::cout<<"writing face"<<std::endl;
+  
+  //      std::cout<<"pointer of face="<<f.operator->()<<std::endl;
+  
+  //      if (f->is_unbounded()){
+  //        std::cout<<"UNBOUNDED"<<std::endl;
+  //        std::cout<<"number halfedges on outer boundary"<<std::endl;
+  //        std::cout<<"0"<<std::endl;
+  //      }
+  //      else {
+  //        std::cout<<"outer ccb"<<std::endl;
+  
+  //        Ccb_halfedge_const_circulator first = f->outer_ccb(), iter = first;
+  
+  //        std::size_t n = 0;
+  //        do {
+  //          std::cout<<iter->curve()<<" ";
+  //          n++;
+  //          iter++;
+  //        } while (iter != first);
+  
+  //        std::cout<<"number halfedges on outer boundary"<<std::endl;
+  //        std::cout<< n <<std::endl;
+  
+  //        std::cout << std::endl;
+  //        }
+  //          }
+  
   /****************************
    * Class Interface
    ****************************/
@@ -600,6 +606,9 @@ public:
 
 
 #endif
+
+
+
 
 
 
