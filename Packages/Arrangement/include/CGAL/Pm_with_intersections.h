@@ -268,18 +268,24 @@ public:
 	  return;
 	}
       }
+      if (!traits->curves_overlap( cv, next->curve())) {
+		    // in case of overlap, will find it in the next step.
+		    // this condition is redundant if curve_is_between_cw does
+		    // not return true when overlap occurs, but it is needed
+		    // since it is not a defined behaviour (in specs).
       
-      if (next != prev) 
-      {
-	if (( pmwx_traits->curve_is_between_cw
-	      (cv, prev->curve(), next->curve(), vh->point()) ))
-	{
-	  prev_halfedge = prev;
-	  is_overlap = false;
-	  CGAL_PM_END_OP(1);
-	  return;
-	}
-      }
+        if (next != prev) 
+				{
+          if (( pmwx_traits->curve_is_between_cw
+	                (cv, prev->curve(), next->curve(), vh->point()) ))
+					{
+	          prev_halfedge = prev;
+	          is_overlap = false;
+	          CGAL_PM_END_OP(1);
+	          return;
+					}
+				}
+			}
       ++next;
       ++prev;
     } while (prev != start);
@@ -1142,3 +1148,4 @@ Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
 CGAL_END_NAMESPACE
 
 #endif
+
