@@ -36,7 +36,8 @@ LDFLAGS = \
 
 all:            \
                 test_interpolation_functions_2$(EXE_EXT) \
-                test_regular_neighbors_2$(EXE_EXT) 
+                test_regular_neighbors_2$(EXE_EXT) \
+                test_surface_neighbor_3$(EXE_EXT) 
 
 test_interpolation_functions_2$(EXE_EXT): test_interpolation_functions_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_interpolation_functions_2 test_interpolation_functions_2$(OBJ_EXT) $(LDFLAGS)
@@ -44,9 +45,13 @@ test_interpolation_functions_2$(EXE_EXT): test_interpolation_functions_2$(OBJ_EX
 test_regular_neighbors_2$(EXE_EXT): test_regular_neighbors_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_regular_neighbors_2 test_regular_neighbors_2$(OBJ_EXT) $(LDFLAGS)
 
+test_surface_neighbor_3$(EXE_EXT): test_surface_neighbor_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_surface_neighbor_3 test_surface_neighbor_3$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    test_interpolation_functions_2.clean \
-                   test_regular_neighbors_2.clean 
+                   test_regular_neighbors_2.clean \
+                   test_surface_neighbor_3.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
