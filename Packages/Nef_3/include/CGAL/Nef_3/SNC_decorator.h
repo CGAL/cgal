@@ -22,6 +22,10 @@
 #ifndef CGAL_SNC_DECORATOR_H
 #define CGAL_SNC_DECORATOR_H
 
+//#define CGAL_NEF3_SM_VISUALIZOR
+//#define CGAL_NEF3_DUMP_SPHERE_MAPS
+//#define CGAL_NEF3_DUMP_SNC_OPERATORS
+
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
@@ -43,7 +47,6 @@
 #endif // CGAL_NEF3_SM_VISUALIZOR
 #undef _DEBUG
 #define _DEBUG 19
-//#define CGAL_NEF3_DUMP_SPHERE_MAPS
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -205,7 +208,7 @@ public:
   /* Halffacet queries */
 
   using(point);
-  // using(tmp_point);
+  using(tmp_point);
   // using(calc_point);
 
   using(segment);
@@ -331,7 +334,7 @@ public:
 		   ep.hw().eval_at(1000));
   }
 
-  Sphere_point tmp_point(Halfedge_handle e) const
+  const Sphere_point& tmp_point(Halfedge_handle e) const
   { return e->tmp_point(); }
   Sphere_point calc_point(Halfedge_handle e) const
   { CGAL_nef3_assertion(twin(e)!=Halfedge_handle());
@@ -807,6 +810,7 @@ public:
     TRACEN(v0->debug());
     TRACEN(v1->debug());
     IO0.debug();    IO1.debug();
+    IO0.print();    IO1.print();
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
     CGAL_assertion( point(v0) == point(v1));
     Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
@@ -986,9 +990,9 @@ public:
     CGAL_nef3_assertion( result.is_empty());
     CGAL_nef3_assertion( pl1 != NULL);
 
-    //    Progress_indicator_cout v_qualifying
-    //      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
-    //       "binary_operator: qualifying vertices...");
+    Progress_indicator_clog v_qualifying
+      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
+       "binary_operator: qualifying vertices...");
 
     Unique_hash_map<Vertex_handle, bool> ignore(false);
     Vertex_iterator v0, v1;
@@ -997,19 +1001,20 @@ public:
     //    SETDTHREAD(19*131*43);
     
     TRACEN("=> binary operation");
-    /*
+#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> first operand:");
     SNC_io_parser<SNC_structure> O0(std::cout, *sncp());
     O0.print();
     TRACEN("=> second operand:");
     SNC_io_parser<SNC_structure> O1(std::cout, snc1i);
     O1.print();
-    */
+#endif // CGAL_NEF3_DUMP_SNC_OPERATORS
+
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
     CGAL_nef3_forall_vertices( v0, *sncp()) {
-      //      v_qualifying++;
+      v_qualifying++;
       CGAL_nef3_assertion(!ignore[v0]);
       Point_3 p0(point(v0));
       Vertex_handle v;
@@ -1054,7 +1059,7 @@ public:
 
     TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
     CGAL_nef3_forall_vertices( v1, snc1i) {
-      //      v_qualifying++;
+      v_qualifying++;
       if(ignore[v1]) continue;
       Point_3 p1(point(v1));
       Vertex_handle v;
@@ -1102,9 +1107,9 @@ public:
 
     Halfedge_iterator e0, e1;
 
-    //    Progress_indicator_cout ee_intersections
-    //      (sncp()->number_of_edges(),
-    //       "binary_operator: finding edge-edge intersections...");
+    Progress_indicator_clog ee_intersections
+      (sncp()->number_of_edges(),
+       "binary_operator: finding edge-edge intersections...");
 
     Intersection_call_back<Selection> call_back0
       ( *sncp(), snc1i, BOP, result);
@@ -1113,26 +1118,26 @@ public:
 
     TRACEN("=> finding edge-edge intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
-      //      ee_intersections++;
+      ee_intersections++;
       pl1->intersect_with_edges( e0, call_back0);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
-    //    Progress_indicator_cout ef_intersections
-    //      (sncp()->number_of_edges()+snc1i.number_of_edges(),
-    //       "binary_operator: finding edge-facet intersections...");
+    Progress_indicator_clog ef_intersections
+      (sncp()->number_of_edges()+snc1i.number_of_edges(),
+       "binary_operator: finding edge-facet intersections...");
 
     TRACEN("number of vertices (so far...) = "<<result.number_of_vertices());
     TRACEN("=> finding edge0-facet1 intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
-      //      ef_intersections++;
+      ef_intersections++;
       pl1->intersect_with_facets( e0, call_back0);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> finding edge1-facet0 intersections...");
     CGAL_nef3_forall_edges( e1, snc1i) {
-      //      ef_intersections++;
+      ef_intersections++;
       pl()->intersect_with_facets( e1, call_back1);
     }
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
@@ -1141,6 +1146,7 @@ public:
     CGAL_nef3_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));
 
     result.vertex_simplification(NO_SNC);
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> resultant vertices (after simplification): ");
     CGAL_nef3_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));

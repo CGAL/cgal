@@ -89,9 +89,13 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
              << " c " << *c << " next " << *next  << std::endl;
 #endif
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
+   typename Traits::Collinear_are_ordered_along_line_2 
+     collinear_are_ordered_along_line_2
+     = traits.collinear_are_ordered_along_line_2_object();
 
    if (compare_y_2(*previous, *c) == EQUAL &&
-       compare_y_2(*next, *c) == EQUAL)
+       compare_y_2(*next, *c) == EQUAL &&
+       collinear_are_ordered_along_line_2( *previous, *c, *next))
       return PARTITION_Y_MONO_COLLINEAR_VERTEX;
 
    typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
@@ -470,7 +474,7 @@ void  partition_y_monotone_2( InputIterator first, InputIterator beyond,
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    std::cout << "Initial vertex list: ";
-   for(std::vector<Circulator>::const_iterator it = circulators.begin();
+   for( typename std::vector<Circulator>::const_iterator it = circulators.begin();
        it != circulators.end();
        it++){
      std::cout << **it << " " ; 

@@ -35,7 +35,6 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Timer.h>
-
 #include <fstream>
 
 template<typename Kernel>
@@ -150,8 +149,9 @@ private:
 
   Nef_polyhedron load_off( char* name) {
     Polyhedron poly;
-    std::ifstream in(name);
-    in >> poly;
+    std::ifstream off_file(name);
+    CGAL_assertion(off_file != NULL);
+    off_file >> poly;
     Nef_polyhedron N(poly);
     return N;
   }
@@ -903,7 +903,7 @@ private:
       CGAL_assertion(N.is_valid(0,0));
       CGAL_assertion(does_nef3_equals_file(N,"cube_created_from_halfspaces.nef3.SH"));
     }
-    
+
     Nef_polyhedron N,N2,P,R,S,T;
     N = load_off("data/centered_cube.off");
     CGAL_assertion(N.is_valid(0,0));
@@ -1052,11 +1052,12 @@ template<typename Kernel>
 const char* test<Kernel>::datadir="data/";
 
 int main() {
-
   typedef CGAL::Gmpz                         NT;
   typedef CGAL::Simple_homogeneous<NT>       SH_Kernel;
   typedef CGAL::Extended_homogeneous_3<NT>   EH_Kernel;
   
+  //std::cin>>debugthread;
+
   CGAL::Timer t;
   t.start();
 
