@@ -92,7 +92,6 @@ public:
   typedef typename Tds::Face_iterator          All_faces_iterator;
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
-
   typedef Filter_iterator<All_faces_iterator, 
                            Infinite_tester>
                                                Finite_faces_iterator_base;
