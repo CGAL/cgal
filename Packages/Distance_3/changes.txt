@@ -1,3 +1,19 @@
+2.7 (7 August 2003) [mh,af]
+
+A first step towards the extendible Kernel:
+
+* All functionality is moved into namespace CGALi, in namespace CGAL
+  there remain forward functions for the geometric types from the CGAL
+  kernel thereby fully maintaining backwards compatibility; nothing
+  changes on the user level.
+
+* In the CGALi part, all types are referred to as K::Type rather than
+  Type<K>.
+
+* In the CGALi part, all functions have a kernel object as last
+  argument, not only to ease the matching (no explicit template
+  argument needed), but also to be able to handle kernels with state.
+
 2.6 (4 April 2003)
 - Did the changes in 2.5.5 in the web files instead of the header files
 
