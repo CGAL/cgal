@@ -28,14 +28,12 @@ LIBPATH = \
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS) \
-          -lCGALQt
-
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: convex_hull_2
+all: max_k-gon
 
 Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
@@ -43,17 +41,17 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
-convex_hull_2.moc: convex_hull_2.C Qt_widget_toolbar$(OBJ_EXT) 
-	${QT_MOC} -o convex_hull_2.moc convex_hull_2.C
+max_k-gon.moc: max_k-gon.C Qt_widget_toolbar$(OBJ_EXT) 
+	${QT_MOC} -o max_k-gon.moc max_k-gon.C
 
-convex_hull_2$(OBJ_EXT): convex_hull_2.C convex_hull_2.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) convex_hull_2.C
+max_k-gon$(OBJ_EXT): max_k-gon.C max_k-gon.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) max_k-gon.C
 
-convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)convex_hull_2 convex_hull_2$(OBJ_EXT) \
+max_k-gon$(EXE_EXT): max_k-gon$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)max_k-gon max_k-gon$(OBJ_EXT) \
 	 Qt_widget_toolbar$(OBJ_EXT) $(LDFLAGS)
 
-clean: convex_hull_2.clean \
+clean: max_k-gon.clean \
        Qt_widget_toolbar.clean
 
 #---------------------------------------------------------------------#
