@@ -34,8 +34,8 @@ int main()
   int                 num_segments;
   std::vector<Curve>  segments;
   
-  std::cout << " * * * Demonstrating a trivial usage of the sweep line algorithm";
-  std::cout << std::endl << std::endl;
+  std::cout << " * * * Demonstrating a trivial usage of the sweep line ";
+  std::cout << "algorithm" << std::endl << std::endl;
   
   // Read input
 

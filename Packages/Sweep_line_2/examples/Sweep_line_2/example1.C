@@ -52,12 +52,13 @@ int main()
 
   // Construct the planar map  
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(segments.begin(),segments.end(), traits, pm);
+  CGAL::sweep_to_construct_planar_map_2(segments.begin(),segments.end(),
+					traits, pm);
 
   // Write output 
   
-  std::cout << " * * * Printing list of all halfedges of the resulting Planar map" 
-	    << std::endl;
+  std::cout << " * * * Printing list of all halfedges of the resulting Planar";
+  std::cout << " map" << std::endl;
 
   Pm_writer verbose_writer(std::cout, pm, true);
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());

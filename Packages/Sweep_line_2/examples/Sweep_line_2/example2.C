@@ -98,7 +98,8 @@ int main()
   // Construct the planar map  
 
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), traits, pm);
+  CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
+					traits, pm);
 
   // Write output 
   
