@@ -59,6 +59,7 @@ PROGRAM_FILES =		cc_extract			\
 			cc_build_checker		\
 			cc_extract_html			\
 	        	cc_extract_images		\
+			cc_index_link                   \
 			cc_index_sort
 #			cc_unique
 
@@ -67,6 +68,7 @@ SCRIPT_FILES  = 	cc_check			\
 			cc_manual_to_html		\
 			cc_extract_include		\
 			cc_patch_anchor_pages		\
+			cc_patch_anchor_index		\
 			cc_patch_anchor_toc_index	\
 			cc_patch_anchor_filter          \
                         cc_remove_unwanted_links
@@ -150,6 +152,8 @@ OBJHTML    = html_lex.o          \
 cc_extract_html : $(OBJHTML)
 	${CXX} ${CXXFLAGS} -o $@ ${OBJHTML} ${LDFLAGS}
 
+cc_index_link : cc_index_link.o
+	${CXX} ${CXXFLAGS} -o $@ $@.o ${LD_FLAGS}
 
 # =====================================================================
 # Generic Production Rules:

@@ -520,7 +520,8 @@ main( int argc, char **argv) {
     HREF_stream =  open_file_for_write( tmp_path + 
                                            macroX( "\\lciHREFFilename"));
 
-    HREF_counter =  open_counter_file_for_read( tmp_path + "HREF_counter");
+    HREF_counter =  open_counter_file_for_read( tmp_path +  
+                                           macroX("\\lciHREFCounterFilename"));
     
 /*
     if ( ! noheader_switch)
