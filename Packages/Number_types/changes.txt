@@ -1,3 +1,6 @@
+6 September 2004 Menelaos Karavelas
+- number_type_basic.h: added "#include<CGAL/_QP_solver/Double.h>"
+
 5 September 2004 Menelaos Karavelas & Sylvain Pion
 - added specs for the new number type tags: Has_exact_ring_operations,
   Has_exact_division, Has_exact_sqrt
