@@ -7,24 +7,33 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: changed order in compiler tests: first check standard headers
+GLOB: STL test is now just one among many other compiler tests
+GLOB: changed to support Cygwin
+GLOB: corrected OS description on Linux
 GLOB: removed explicit support for "external" STL.
 GLOB: internal tests now use standard headers and namespace.
 ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
 GLOB: New Upgrade option.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+SRC : added Fixed_precision_nt.o.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.2
+//---------------------------------------------------------------------
+
 GLOB: added -Wall flag for gcc2.8/egcs.
 GLOB: added standard header redirection by Geert-Jan.
 GLOB: added namespace disabling for SGI-7.2.1 in tests.
 GLOB: removed geomview support (now in geomview package).
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
-DOCS: sample installation now with egcs
-DOCS: removed support for "external" STL
-DOCS: removed obsolete paragraph about LEDA/STL problems
-DOCS: updated upgrade section.
-DOCS: updated list of supported compilers.
 DOCS: adopted to new html-converter.
-SRC : added Fixed_precision_nt.o.
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.

@@ -4,6 +4,20 @@
 
 
 //---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 1.36
+//---------------------------------------------------------------------
+
+GLOB: changed order in compiler tests: first check standard headers
+GLOB: STL test is now just one among many other compiler tests
+GLOB: changed to support Cygwin
+GLOB: corrected OS description on Linux
+
+//---------------------------------------------------------------------
 //	revision 1.35
 //---------------------------------------------------------------------
 
@@ -23,7 +37,6 @@ ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
 GLOB: New Upgrade option.
-TEST: Initial revision
 SRC : added Fixed_precision_nt.o.
 
 //---------------------------------------------------------------------
@@ -59,7 +72,6 @@ SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
-TEST: Update for CGAL-2.0.
 
 //---------------------------------------------------------------------
 //	revision 1.28
