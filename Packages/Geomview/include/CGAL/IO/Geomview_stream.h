@@ -30,16 +30,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
 
-#include <cstdio>
-#include <unistd.h>
-#include <signal.h>
-#include <cstring>
-#include <strstream>
-#include <iomanip>
-
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <cstdlib>
+#include <string>
+#include <strstream> // deprecated
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,15 +75,14 @@ public:
     int get_line_width() const;
     int set_line_width(int w);
 
-    Geomview_stream &operator<<(const char *cptr);
-
+    Geomview_stream &operator<<(const std::string s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(double d);
 
     bool get_trace() const;
     bool set_trace(bool b);
 
-    void trace(const char *cptr) const;
+    void trace(const std::string s) const;
     void trace(double d) const;
     void trace(int i) const;
 
@@ -129,18 +120,18 @@ private:
 
 inline
 Geomview_stream&
-binary(Geomview_stream &os)
+binary(Geomview_stream &gv)
 {
-    os.set_binary_mode();
-    return os;
+    gv.set_binary_mode();
+    return gv;
 }
 
 inline
 Geomview_stream&
-ascii(Geomview_stream &os)
+ascii(Geomview_stream &gv)
 {
-    os.set_ascii_mode();
-    return os;
+    gv.set_ascii_mode();
+    return gv;
 }
 
 #if defined CGAL_POINT_2_H && \
@@ -150,12 +141,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
-    std::ostrstream os;
-    os << "p" << gv.point_count++ << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id
+       << "(geometry P" << gv.point_count++
        << " {appearance {linewidth 5 material {edgecolor "
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 " ;
@@ -177,12 +164,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
-    std::ostrstream os;
-    os << "p" << gv.point_count++ << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id
+       << "(geometry P" << gv.point_count++
        << " {appearance {linewidth 5 material {edgecolor "
        << gv.vcr() << gv.vcg() << gv.vcb()
        << "}}{SKEL 1 1 "
@@ -204,12 +187,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
 {
-    std::ostrstream os;
-    os << "seg" << gv.segment_count++ << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {appearance {linewidth "
+       << "(geometry Seg" << gv.segment_count++
+       << " {appearance {linewidth "
        << gv.get_line_width() << "}{VECT "
        << 1 <<  2 << 1    // 1 polyline, two vertices, 1 color
        << 2               // the first polyline contains 2 vertices
@@ -240,12 +220,8 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 {
-    std::ostrstream os;
-    os << "seg" << gv.segment_count++ << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id
+       << "(geometry Seg" << gv.segment_count++
        << " {appearance {linewidth "
        << gv.get_line_width()
        << " }{VECT "
@@ -278,12 +254,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 {
-    std::ostrstream os;
-    os << "tr" << gv.triangle_count++ << std::ends;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {appearance {+edge material {edgecolor "
+       << "(geometry Tr" << gv.triangle_count++
+       << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  " } shading constant}{ "
        << binary
     // it's a planar polygon
@@ -314,12 +287,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
 {
-    std::ostrstream os;
-    os << "tr" << gv.triangle_count++ << std::ends;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {appearance {+edge material {edgecolor "
+       << "(geometry Tr" << gv.triangle_count++
+       << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << binary
     // it's a planar polygon
@@ -350,12 +320,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 {
-    std::ostrstream os;
-    os << "tetra" << gv.tetrahedron_count++ << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id  << "  {appearance {}{ "
+       << "(geometry Tetra" << gv.tetrahedron_count++
+       << " {appearance {}{ "
        << binary
        << "OFF BINARY\n"
 
@@ -389,12 +356,9 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
 {
-    std::ostrstream os;
-    os << "Sph" << gv.sphere_count++ << std::ends;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id << " {appearance {+edge material {edgecolor "
+       << "(geometry Sph" << gv.sphere_count++
+       << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
        << CGAL_CLIB_STD::sqrt(CGAL::to_double(S.squared_radius())) << "\n"
@@ -443,12 +407,9 @@ template < class V >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedralization_simplex<V>* s)
 {
-    std::ostrstream os;
-    os << "Simplex_" << (unsigned long int)s  << std::ends ;
-    char *id = os.str();
-
     gv << ascii
-       << "(geometry " << id  << "  {appearance {+edge material {edgecolor "
+       << "(geometry Simplex_" << (unsigned long int)s
+       << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << binary
        << "OFF BINARY\n";
@@ -456,11 +417,10 @@ operator<<(Geomview_stream &gv, const Tetrahedralization_simplex<V>* s)
     gv << 4 << 4 << 6 ;
 
     // the vertices
-    for(int i=0; i<4; i++){
+    for(int i=0; i<4; i++)
         gv << CGAL::to_double(s->vertex(i)->point().x())
            << CGAL::to_double(s->vertex(i)->point().y())
-           << CGAL::to_double(s->vertex(i)->point().z()) ;
-    }
+           << CGAL::to_double(s->vertex(i)->point().z());
 
     // the faces
     double r = gv.fcr(),
@@ -485,15 +445,13 @@ template < class P >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Tetrahedralization_vertex<P>* v)
 {
-    std::ostrstream os;
-    os << "Vertex_" << (unsigned long int)v  << std::ends ;
-    char *id = os.str();
     double x = CGAL::to_double(v->point().x());
     double y = CGAL::to_double(v->point().y());
     double z = CGAL::to_double(v->point().z());
     double radius = gv.get_vertex_radius();
     gv << ascii
-       << "(geometry " << id  << "  {appearance {}{ "
+       << "(geometry Vertex_" << (unsigned long int)v
+       << " {appearance {}{ "
        << binary
        << "OFF BINARY\n"
 
