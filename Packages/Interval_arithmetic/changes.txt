@@ -1,6 +1,7 @@
 Changes done to the Interval Arithmetic package.
 
 Version 4.62 on 23 January 2001
+- New predicate side_of_bounded_circle.
 - First submission by tag.
 
 Version 4.61 on 4 January 2001
