@@ -37,7 +37,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Line_handle_2             Line_handle_2;
-  typedef typename R::Line_ref_2                Line_ref_2;
+  typedef typename Line_handle_2::element_type  Line_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef LineC2<R,Cartesian_tag>               Self;

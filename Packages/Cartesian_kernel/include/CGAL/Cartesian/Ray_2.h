@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Ray_handle_2              Ray_handle_2;
-  typedef typename R::Ray_ref_2                 Ray_ref_2;
+  typedef typename Ray_handle_2::element_type   Ray_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef RayC2<R,Cartesian_tag>                Self;

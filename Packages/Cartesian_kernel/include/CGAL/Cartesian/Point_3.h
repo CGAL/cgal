@@ -38,7 +38,7 @@ public:
   typedef typename R::RT                   RT;
 
   typedef typename R::Point_handle_3       Point_handle_3;
-  typedef typename R::Point_ref_3          Point_ref_3;
+  typedef typename Point_handle_3::element_type Point_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PointC3<R CGAL_CTAG>             Self;

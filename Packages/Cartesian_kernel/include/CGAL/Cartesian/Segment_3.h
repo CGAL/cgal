@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Segment_handle_3          Segment_handle_3;
-  typedef typename R::Segment_ref_3             Segment_ref_3;
+  typedef typename Segment_handle_3::element_type Segment_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC3<R CGAL_CTAG>                Self;

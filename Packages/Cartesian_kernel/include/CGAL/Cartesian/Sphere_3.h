@@ -37,7 +37,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Sphere_handle_3           Sphere_handle_3;
-  typedef typename R::Sphere_ref_3              Sphere_ref_3;
+  typedef typename Sphere_handle_3::element_type Sphere_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SphereC3<R CGAL_CTAG>                 Self;

@@ -37,7 +37,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Plane_handle_3            Plane_handle_3;
-  typedef typename R::Plane_ref_3               Plane_ref_3;
+  typedef typename Plane_handle_3::element_type Plane_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef PlaneC3<R,Cartesian_tag>              Self;

@@ -37,7 +37,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Segment_handle_2          Segment_handle_2;
-  typedef typename R::Segment_ref_2             Segment_ref_2;
+  typedef typename Segment_handle_2::element_type Segment_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SegmentC2<R,Cartesian_tag>            Self;

@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Triangle_handle_3         Triangle_handle_3;
-  typedef typename R::Triangle_ref_3            Triangle_ref_3;
+  typedef typename Triangle_handle_3::element_type Triangle_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TriangleC3<R CGAL_CTAG>               Self;

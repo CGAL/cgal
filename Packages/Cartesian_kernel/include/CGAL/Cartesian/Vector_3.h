@@ -35,8 +35,8 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-  typedef typename R::Vector_ref_3	   	Vector_ref_3;
   typedef typename R::Vector_handle_3	   	Vector_handle_3;
+  typedef typename Vector_handle_3::element_type   	Vector_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorC3<R CGAL_CTAG>                 Self;

@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                   RT;
 
   typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3;
-  typedef typename R::Iso_cuboid_ref_3     Iso_cuboid_ref_3;
+  typedef typename Iso_cuboid_handle_3::element_type Iso_cuboid_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Iso_cuboidC3<R CGAL_CTAG>        Self;

@@ -38,7 +38,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Circle_handle_2           Circle_handle_2;
-  typedef typename R::Circle_ref_2              Circle_ref_2;
+  typedef typename Circle_handle_2::element_type Circle_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef CircleC2<R,Cartesian_tag>             Self;

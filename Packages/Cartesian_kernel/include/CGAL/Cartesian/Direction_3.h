@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                   RT;
 
   typedef typename R::Direction_handle_3   Direction_handle_3;
-  typedef typename R::Direction_ref_3      Direction_ref_3;
+  typedef typename Direction_handle_3::element_type Direction_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC3<R CGAL_CTAG>         Self;

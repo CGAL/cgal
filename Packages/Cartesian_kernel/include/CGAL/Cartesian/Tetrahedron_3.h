@@ -40,7 +40,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Tetrahedron_handle_3      Tetrahedron_handle_3;
-  typedef typename R::Tetrahedron_ref_3         Tetrahedron_ref_3;
+  typedef typename Tetrahedron_handle_3::element_type Tetrahedron_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef TetrahedronC3<R CGAL_CTAG>            Self;

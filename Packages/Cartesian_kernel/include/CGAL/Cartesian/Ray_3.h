@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Ray_handle_3              Ray_handle_3;
-  typedef typename R::Ray_ref_3                 Ray_ref_3;
+  typedef typename Ray_handle_3::element_type   Ray_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef RayC3<R CGAL_CTAG>                    Self;

@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Direction_handle_2        Direction_handle_2;
-  typedef typename R::Direction_ref_2           Direction_ref_2;
+  typedef typename Direction_handle_2::element_type Direction_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC2<R,Cartesian_tag>          Self;

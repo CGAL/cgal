@@ -36,7 +36,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Vector_handle_2		Vector_handle_2;
-  typedef typename R::Vector_ref_2		Vector_ref_2;
+  typedef typename Vector_handle_2::element_type	Vector_ref_2;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorC2<R,Cartesian_tag>             Self;

@@ -38,7 +38,7 @@ public:
   typedef typename R::RT                        RT;
 
   typedef typename R::Line_handle_3             Line_handle_3;
-  typedef typename R::Line_ref_3                Line_ref_3;
+  typedef typename Line_handle_3::element_type  Line_ref_3;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef LineC3<R CGAL_CTAG>                   Self;

@@ -161,52 +161,51 @@ struct Simple_Cartesian_v2_base :
   
     typedef typename Kernel_base_d::Point_d             Point_d;
 
-    // The typedefs that allow to specify the representation and the handle
-    // of each type.
-    typedef CGAL::Simple_Twotuple<FT>			Point_ref_2;
-    typedef CGAL::Simple_Twotuple<FT>			Vector_ref_2;
-    typedef CGAL::Simple_Twotuple<FT>			Direction_ref_2;
-    typedef CGAL::Simple_Threetuple<FT>		        Line_ref_2;
-    typedef CGAL::Simple_Twotuple<Point_2>		Ray_ref_2;
-    typedef CGAL::Simple_Twotuple<Point_2>		Segment_ref_2;
-    typedef CGAL::Circle_repC2<R>			Circle_ref_2;
-    typedef CGAL::Simple_Threetuple<Point_2>		Triangle_ref_2;
-    typedef CGAL::Simple_Twotuple<Point_2>		Iso_rectangle_ref_2;
+    // The typedefs that allow to specify the handle of each type.
 
-    typedef CGAL::Simple_Threetuple<FT>			Point_ref_3;
-    typedef CGAL::Simple_Threetuple<FT>			Vector_ref_3;
-    typedef CGAL::Simple_Threetuple<FT>			Direction_ref_3;
-    typedef CGAL::Line_repC3<R>		                Line_ref_3;
-    typedef CGAL::Simple_Fourtuple<FT>			Plane_ref_3;
-    typedef CGAL::Simple_Twotuple<Point_3>		Ray_ref_3;
-    typedef CGAL::Simple_Twotuple<Point_3>		Segment_ref_3;
-    typedef CGAL::Sphere_repC3<R>			Sphere_ref_3;
-    typedef CGAL::Simple_Threetuple<Point_3>		Triangle_ref_3;
-    typedef CGAL::Simple_Fourtuple<Point_3>		Tetrahedron_ref_3;
-    typedef CGAL::Simple_Twotuple<Point_3>		Iso_cuboid_ref_3;
-
-    typedef CGAL::Simple_Handle_for<Point_ref_2>		Point_handle_2;
-    typedef CGAL::Simple_Handle_for<Vector_ref_2>		Vector_handle_2;
-    typedef CGAL::Simple_Handle_for<Direction_ref_2>		Direction_handle_2;
-    typedef CGAL::Simple_Handle_for<Line_ref_2>		Line_handle_2;
-    typedef CGAL::Simple_Handle_for<Ray_ref_2>		        Ray_handle_2;
-    typedef CGAL::Simple_Handle_for<Segment_ref_2>		Segment_handle_2;
-    typedef CGAL::Simple_Handle_for<Circle_ref_2>		Circle_handle_2;
-    typedef CGAL::Simple_Handle_for<Triangle_ref_2>		Triangle_handle_2;
-    typedef CGAL::Simple_Handle_for<Iso_rectangle_ref_2>	Iso_rectangle_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<FT> >	
+	                                                Point_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<FT> >
+                                                        Vector_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<FT> >
+                                                 	Direction_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<FT> >
+                                                        Line_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_2> >
+                                                       	Ray_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_2> >
+                                                      	Segment_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Circle_repC2<R> >
+                                                      	Circle_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<Point_2> >
+                                                       	Triangle_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_2> >
+                                                 	Iso_rectangle_handle_2;
     typedef CGAL::Handle			Aff_transformation_handle_2;
 
-    typedef CGAL::Simple_Handle_for<Point_ref_3>		Point_handle_3;
-    typedef CGAL::Simple_Handle_for<Vector_ref_3>		Vector_handle_3;
-    typedef CGAL::Simple_Handle_for<Direction_ref_3>		Direction_handle_3;
-    typedef CGAL::Simple_Handle_for<Line_ref_3>		Line_handle_3;
-    typedef CGAL::Simple_Handle_for<Plane_ref_3>		Plane_handle_3;
-    typedef CGAL::Simple_Handle_for<Ray_ref_3>		        Ray_handle_3;
-    typedef CGAL::Simple_Handle_for<Segment_ref_3>		Segment_handle_3;
-    typedef CGAL::Simple_Handle_for<Sphere_ref_3>		Sphere_handle_3;
-    typedef CGAL::Simple_Handle_for<Triangle_ref_3>		Triangle_handle_3;
-    typedef CGAL::Simple_Handle_for<Tetrahedron_ref_3>		Tetrahedron_handle_3;
-    typedef CGAL::Simple_Handle_for<Iso_cuboid_ref_3>	        Iso_cuboid_handle_3;
+
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<FT> >
+                                                    	Point_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<FT> >
+                                                   	Vector_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<FT> >
+                                                  	Direction_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Line_repC3<R> >
+                                                     	Line_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Fourtuple<FT> >
+                                                   	Plane_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_3> >
+                                                  	Ray_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_3> >
+                                                   	Segment_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Sphere_repC3<R> >
+                                                    	Sphere_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Threetuple<Point_3> >
+                                                  	Triangle_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Fourtuple<Point_3> >
+                                                   	Tetrahedron_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Simple_Twotuple<Point_3> >
+                                                	Iso_cuboid_handle_3;
     typedef CGAL::Handle	Aff_transformation_handle_3;
 };
 
