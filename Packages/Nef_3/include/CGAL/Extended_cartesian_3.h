@@ -16,11 +16,11 @@
 // $Name$
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-#ifndef CGAL_EXTENDED_HOMOGENEOUS_3_H
-#define CGAL_EXTENDED_HOMOGENEOUS_3_H
+#ifndef CGAL_EXTENDED_CARTESIAN_3_H
+#define CGAL_EXTENDED_CARTESIAN_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Homogeneous.h> 
+#include <CGAL/Cartesian.h> 
 #include <CGAL/number_utils.h>
 #include <CGAL/Nef_2/Nef_polynomial.h>
 #undef _DEBUG
@@ -30,14 +30,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class RT_>
-class Extended_homogeneous_3 : public 
-  CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> > { 
+class Extended_cartesian_3 : public 
+  CGAL::Cartesian< CGAL::Nef_polynomial<RT_> > { 
 
 public:
-  typedef CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> >  Base;
-  typedef Extended_homogeneous_3<RT_>                     Self;
+  typedef CGAL::Cartesian< CGAL::Nef_polynomial<RT_> >  Base;
+  typedef Extended_cartesian_3<RT_>                     Self;
 
-  typedef CGAL::Homogeneous<RT_>                Standard_kernel;
+  typedef CGAL::Cartesian<RT_>                Standard_kernel;
   typedef RT_                                   Standard_RT;
   typedef typename Standard_kernel::FT          Standard_FT;
   typedef typename Standard_kernel::Point_3     Standard_point_3;
@@ -51,9 +51,14 @@ public:
   typedef typename Base::Point_3      Point_3;
   typedef typename Base::Segment_3    Segment_3;
   typedef typename Base::Line_3       Line_3;
-  typedef typename Base::Aff_transformation_3       Aff_transformation_3;
 
   public:
+  static Point_3 epoint(const Standard_RT& m1, const Standard_RT& n1, 
+			const Standard_RT& m2, const Standard_RT& n2, 
+			const Standard_RT& m3, const Standard_RT& n3, 
+			const Standard_RT& n4) 
+    { return Point_3(RT(n1,m1),RT(n2,m2),RT(n3,m3),RT(n4));}
+  
   
   static bool is_standard(const Point_3& p) { 
     CGAL_assertion(p.hx().degree()>=0 && p.hy().degree()>=0 && p.hz().degree()>=0 );
@@ -97,4 +102,4 @@ public:
 };
 
 CGAL_END_NAMESPACE
-#endif // CGAL_EXTENDED_HOMOGENEOUS_3_H
+#endif // CGAL_EXTENDED_CARTESIAN_3_H
