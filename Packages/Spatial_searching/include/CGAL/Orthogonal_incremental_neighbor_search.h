@@ -196,10 +196,8 @@ class Iterator_implementation {
     }
 
     // postfix operator
-    std::auto_ptr<Point_with_distance> operator++(int) {
-        Point_with_distance Value = *(Item_PriorityQueue->top());
-        std::auto_ptr<Point_with_distance>
-        result(new Point_with_distance(Value));
+    Point_with_distance operator++(int) {
+        Point_with_distance result = *(Item_PriorityQueue->top());
         ++*this;
         return result;
     }
@@ -447,9 +445,8 @@ class iterator;
     }
 
     // postfix operator
-    std::auto_ptr<Point_with_distance> operator++(int) {
-        std::auto_ptr<Point_with_distance> result = (*Ptr_implementation)++;
-        return result;
+    Point_with_distance operator++(int) {
+        return (*Ptr_implementation)++;
     }
 
 
