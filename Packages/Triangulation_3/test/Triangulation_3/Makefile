@@ -17,23 +17,15 @@ include $(CGAL_MAKEFILE)
 #CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
-	-I../../../Cartesian_kernel/include \
-	-I../../../Cd/include \
-	-I../../../_2/include \
-	-I../../../_3/include \
-	-I../../../H2/include \
-	-I../../../H3/include \
-	-I../../../Kernel_basic/include \
-	-I../../../Number_types/include \
 	-I../../include \
 	-I./include \
 	 $(CGAL_CXXFLAGS) \
 	 $(TESTSUITE_CXXFLAGS) \
-	-DCGAL_CHECK_EXPENSIVE \
 	-W -Wall \
 	-g # -Wold-style-cast # -pedantic
 	# -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS \
+	# -DCGAL_CHECK_EXPENSIVE \
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	# -gdwarf-2
 	# -O2 -fno-default-inline \
