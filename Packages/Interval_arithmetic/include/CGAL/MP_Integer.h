@@ -32,10 +32,11 @@
 #include <utility>
 
 // TODO :
+// - add "explicit" for the ctors ?
 // - the non-inline stuff must go in src/MP_Integer.C.
+// - Use iterators instead of operator[], it should be faster and cleaner.
 // - implement missing CGAL requirements.
 // - Documentation.
-// - Use concept checking ( REQUIRE() ) to test sizeof(limb2)=2sizeof(limb) ?
 // - Implement Karatsuba in order to have less than quadratic multiplication
 //   for large operands ?  Maybe not worth it, but maybe worth a bench.
 
