@@ -740,7 +740,9 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   std::map< int, TdsCell* > C;
 
   int m;
-  read_cells(is, tr._tds, V, m, C);
+  //read_cells(is, tr._tds, V, m, C);
+  tr._tds.read_cells(is, V, m, C);
+
   for (int j=0 ; j < m; j++)
     is >> *(C[j]);
 
@@ -820,8 +822,8 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   }
 
   // asks the tds for the combinatorial information 
-  //  print_cells(os, tr.tds(), n+1, V);
-  print_cells(os, tr.tds(), V);
+  //print_cells(os, tr.tds(), V);
+  tr.tds().print_cells(os, V);
   
   return os ;
 }
