@@ -2,15 +2,45 @@
 //	Revision History for package Installation
 //=====================================================================
 
+
+//---------------------------------------------------------------------
+//	revision 1225
+//---------------------------------------------------------------------
+
+GLOB: Fix dynamiclib flags for Darwin.
+GLOB: I take back the QTDIR related fix.
+GLOB: Fixed two bugs in QT installation reported by Lutz:
+GLOB: - changed order of libCGALQt and libQT in ldflags
+GLOB: - if QTDIR is set, do not overwrite later with a possible QT installation
+GLOB: in system directories
+DOCS: Comment on standard abi problems with gcc-3.3.0.
+
 //---------------------------------------------------------------------
 //	revision 1224
 //---------------------------------------------------------------------
-- --upgrade now also copies the GMPXX stuff.
+
+GLOB: - --upgrade now also copies the GMPXX stuff.
+GLOB: Set CORE_INSTALLATION = CGAL with cmdline-option -core.
+GLOB: There is no example/makefile anymore.
 
 //---------------------------------------------------------------------
 //	revision 1223
 //---------------------------------------------------------------------
-- Add "-qt_mt" to install_cgal to select thread support.
+
+GLOB: - Add "-qt_mt" to install_cgal to select thread support.
+GLOB: typo
+DOCS: Fix a typo. Seems that this text was copy-pasted from a quoted-printable
+DOCS: encoded email.
+
+//---------------------------------------------------------------------
+//	revision 1222
+//---------------------------------------------------------------------
+
+GLOB: Fix two bugs for non-bash shells:
+GLOB: "[ a == a ]" is a bashism.
+GLOB: "if ! function arg" does not seem to be portable if function is a shell
+GLOB: function and arg is an argument. The fix seems to be portable.
+DOCS: Added remark regarding G++ 3.2 ABI problems.
 
 //---------------------------------------------------------------------
 //	revision 1221
@@ -460,6 +490,10 @@ GLOB: Qt license updates
 //	revision 1158
 //---------------------------------------------------------------------
 
+DOCS: Comment on standard abi problems with gcc-3.3.0.
+DOCS: Fix a typo. Seems that this text was copy-pasted from a quoted-printable
+DOCS: encoded email.
+DOCS: Added remark regarding G++ 3.2 ABI problems.
 DOCS: Updated wrt the recent changes in install_cgal.
 DOCS: Added sections for support menu and Core.
 DOCS: - removed stlport from LICENSE
