@@ -13,7 +13,7 @@ class  CGAL_Triangulation_ds_face_2
   : public Fb
 {
 public:
-  typedef typename Fb::Triangle Triangle;
+  //typedef typename Fb::Triangle Triangle;
   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
   typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
 
@@ -119,9 +119,16 @@ public:
   }
     
   //Miscelleanous
-  //inline int ccw(int i) const
-  //  inline int cw(int i) const
-  inherited from Fb
+  inline int ccw(int i) const
+  {
+    return (i+1) % 3;
+  }
+    
+  inline int cw(int i) const
+  {
+    return (i+2) % 3;
+  }
+   
 
   //Additionnal Operations
   void insert_in_face(Vertex*& v)
@@ -189,24 +196,24 @@ public:
       n->flip(in); 
   }
 
-  bool insert_outside(const Vertex* v, int i)
-  {
-    CGAL_triangulation_precondition(v != NULL);
-        if(neighbor(i) != NULL) {
-            cerr << "Insert_outside impossible as neighbor face already exists" << endl;
-            return false;
-        }
-        Face* f = new Face(v, vertex(cw(i)), vertex(ccw(i)),
-                           this, NULL, NULL);
-        set_neighbor(i, f);
-        v->set_face(f);
-        Vertex* w = vertex(ccw(i));
-        if(w != NULL){
-            w->set_face(f);
-        }
-    
-        return true;
-    }
+//   bool insert_outside(const Vertex* v, int i)
+//   {
+//     CGAL_triangulation_precondition(v != NULL);
+//         if(neighbor(i) != NULL) {
+//             cerr << "Insert_outside impossible as neighbor face already exists" << endl;
+//             return false;
+//         }
+//         Face* f = new Face(v, vertex(cw(i)), vertex(ccw(i)),
+//                            this, NULL, NULL);
+//         set_neighbor(i, f);
+//         v->set_face(f);
+//         Vertex* w = vertex(ccw(i));
+//         if(w != NULL){
+//             w->set_face(f);
+//         }
+//     
+//         return true;
+//     }
     
 
   bool remove(Vertex* v)
@@ -220,30 +227,30 @@ public:
         left = neighbor(cw(i));
         right = neighbor(ccw(i));
     
-        if(left == NULL || right == NULL) {
-            if(left == NULL && right == NULL) {
-                Face* n = neighbor(i);
-                if(n != NULL) {
-                    int ni = n->index(this);
-                    n->set_neighbor(ni, NULL);
-                    Vertex* q = vertex(cw(i));
-                    if(q != NULL){
-                        q->set_face(n);
-                    }
-                } else {
-                    cerr << "removal of boundary vertex failed as face has"
-                         << "no neighbors" << endl;
-                }
-                handle().Delete();
-                v.Delete();
-                return true;
-            } else {
-                cerr << "removal of boundary vertex with degree != 2 failed";
-                cerr << endl;
-                return false;
-            }
-        }
-    
+//         if(left == NULL || right == NULL) {
+//             if(left == NULL && right == NULL) {
+//                 Face* n = neighbor(i);
+//                 if(n != NULL) {
+//                     int ni = n->index(this);
+//                     n->set_neighbor(ni, NULL);
+//                     Vertex* q = vertex(cw(i));
+//                     if(q != NULL){
+//                         q->set_face(n);
+//                     }
+//                 } else {
+//                     cerr << "removal of boundary vertex failed as face has"
+//                          << "no neighbors" << endl;
+//                 }
+//                 handle().Delete();
+//                 v.Delete();
+//                 return true;
+//             } else {
+//                 cerr << "removal of boundary vertex with degree != 2 failed";
+//                 cerr << endl;
+//                 return false;
+//             }
+//         }
+//     
         if(v->degree() != 3){
             cerr << "removal of internal vertex with degree != 3 failed";
             cerr << endl;
@@ -344,8 +351,33 @@ public:
     }
   }
 
-  // bool is_valid(bool verbose = false, int level = 0) const
-  // inherited from Fb
+   bool is_valid(bool verbose = false, int level = 0) const
+  {
+    bool result = true;
+    for(int i = 0; i < 3; i++) {
+      Face* n = neighbor(i);
+            
+      // The following seems natural, but it may fail if the faces
+      // this and n are neighbors on two edges (1-dim triangulation,
+      // with infinite faces
+      // int ni = n->index(this);
+
+      //  int ni = cw(n->index(vertex(cw(i))));
+      // CGAL_triangulation_assertion( this == n->neighbor(ni) );
+      // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
+      // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
+
+      int in;
+      if (! n->has_vertex(vertex(cw(i)),in )) return false;
+      in = cw(in); 
+      result = result && ( this == n->neighbor(in) );
+      result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
+
+    }
+    return result;
+  }
+   
+
 };
 
 #endif CGAL_TRIANGULATION_DS_FACE_2_H
