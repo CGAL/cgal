@@ -259,25 +259,27 @@ public:
   typedef typename Decorator::Mark      Mark;
   /*{\Mtypemember the attribute type of plane map objects.}*/
 
-  #define USING(t) typedef typename Decorator::t t
+
   typedef typename Decorator::Base Const_decorator;
-  USING(Halfedge_handle);
-  USING(Vertex_handle);
-  USING(Face_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Face_iterator);
-  USING(Halfedge_const_handle);
-  USING(Vertex_const_handle);
-  USING(Face_const_handle);
-  USING(Halfedge_const_iterator);
-  USING(Vertex_const_iterator);
-  USING(Face_const_iterator);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_face_circulator);
-  USING(Hole_iterator);
-  USING(Isolated_vertex_iterator);
-  #undef USING
+  typedef typename Decorator::Halfedge_handle Halfedge_handle;
+  typedef typename Decorator::Vertex_handle Vertex_handle;
+  typedef typename Decorator::Face_handle Face_handle;
+  typedef typename Decorator::Vertex_iterator Vertex_iterator;
+  typedef typename Decorator::Halfedge_iterator Halfedge_iterator;
+  typedef typename Decorator::Face_iterator Face_iterator;
+  typedef typename Decorator::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Decorator::Vertex_const_handle Vertex_const_handle;
+  typedef typename Decorator::Face_const_handle Face_const_handle;
+  typedef typename Decorator::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename Decorator::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Decorator::Face_const_iterator Face_const_iterator;
+  typedef typename Decorator::Halfedge_around_vertex_circulator 
+    Halfedge_around_vertex_circulator;
+  typedef typename Decorator::Halfedge_around_face_circulator 
+    Halfedge_around_face_circulator;
+  typedef typename Decorator::Hole_iterator Hole_iterator;
+  typedef typename Decorator::Isolated_vertex_iterator Isolated_vertex_iterator;
+
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }

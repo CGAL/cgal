@@ -36,7 +36,6 @@
 #define leda_color CGAL::color
 #endif
 
-#define USING(t) typedef typename PMCDEC::t t
 #define LGREY CGAL::Color(190,190,190)
 #define DGREY CGAL::Color(130,130,130)
 CGAL_BEGIN_NAMESPACE
@@ -44,10 +43,10 @@ CGAL_BEGIN_NAMESPACE
 template <typename PMCDEC>
 class PM_BooleColor 
 {
-  USING(Vertex_const_handle);   
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle);
-  USING(Mark);
+  typedef typename PMCDEC::Vertex_const_handle Vertex_const_handle;   
+  typedef typename PMCDEC::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename PMCDEC::Face_const_handle Face_const_handle;
+  typedef typename PMCDEC::Mark Mark;
 public:
   Color color(Vertex_const_handle, const Mark& m) const
   { return ( m ? CGAL::BLACK : LGREY ); }
@@ -73,10 +72,11 @@ public:
   PM_DefColor(CGAL::Color cs, CGAL::Color cf, int wv, int we) : 
     _cs(cs), _cf(cf), _wv(wv), _we(we) {}
 
-  USING(Vertex_const_handle);   
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle);
-  USING(Mark);
+  typedef typename PMCDEC::Vertex_const_handle Vertex_const_handle;   
+  typedef typename PMCDEC::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename PMCDEC::Face_const_handle Face_const_handle;
+  typedef typename PMCDEC::Mark Mark;
+
   Color color(Vertex_const_handle, const Mark&) const
   { return _cs; }
   int width(Vertex_const_handle, const Mark&) const
@@ -114,19 +114,22 @@ public:
   typedef PM_visualizor<PMCDEC,GEOM,COLORDA> Self;
   typedef PMCDEC Base;
 
-  USING(Plane_map);
-  USING(Vertex_const_handle);   
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle);     
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Face_const_iterator);
-  USING(Halfedge_around_face_const_circulator);
-  USING(Halfedge_around_vertex_const_circulator);
-  USING(Hole_const_iterator);
-  USING(Isolated_vertex_const_iterator);
-  USING(Point);
-  USING(Mark);
+  typedef typename PMCDEC::Plane_map Plane_map;
+  typedef typename PMCDEC::Vertex_const_handle Vertex_const_handle;   
+  typedef typename PMCDEC::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename PMCDEC::Face_const_handle Face_const_handle;     
+  typedef typename PMCDEC::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename PMCDEC::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename PMCDEC::Face_const_iterator Face_const_iterator;
+  typedef typename PMCDEC::Halfedge_around_face_const_circulator 
+    Halfedge_around_face_const_circulator;
+  typedef typename PMCDEC::Halfedge_around_vertex_const_circulator 
+    Halfedge_around_vertex_const_circulator;
+  typedef typename PMCDEC::Hole_const_iterator Hole_const_iterator;
+  typedef typename PMCDEC::Isolated_vertex_const_iterator 
+    Isolated_vertex_const_iterator;
+  typedef typename PMCDEC::Point Point;
+  typedef typename PMCDEC::Mark Mark;
   typedef typename GEOM::Segment_2 Segment;
   typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 
