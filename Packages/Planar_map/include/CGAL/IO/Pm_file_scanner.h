@@ -153,7 +153,7 @@ public:
     
     //  not an unbounded face. Scanning the outer ccb.
     if (num_halfedges_on_outer_ccb > 0){
-      std::size_t  index, prev_index, first_index;
+      std::size_t  index, prev_index = 0, first_index;
       
       for (unsigned int j = 0; j < num_halfedges_on_outer_ccb; j++) {
         
