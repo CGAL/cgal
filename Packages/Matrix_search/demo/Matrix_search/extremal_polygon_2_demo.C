@@ -168,12 +168,14 @@ main()
       } // for (;;)
     } // if ( !p.empty())
     
+    #ifndef _MSC_VER
     char vertices_message[80];
     int num( points.size());
     std::sprintf( vertices_message,
                   "Polygon has %d vertices.",
                   num);
     W.message( vertices_message);
+    #endif // ! _MSC_VER
     
     
 
