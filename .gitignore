@@ -80,6 +80,7 @@ Packages/Optimisation_basic/.tmp
 Packages/Optimisation_basic/Makefile
 Packages/Optimisation_basic/bin
 Packages/Optimisation_basic/doc_ps
+Packages/Optimisation_basic/src/Optimisation
 Packages/Polytope_distance_d/*.aux
 Packages/Polytope_distance_d/*.bbl
 Packages/Polytope_distance_d/*.blg
