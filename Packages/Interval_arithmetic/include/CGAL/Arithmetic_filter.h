@@ -27,10 +27,13 @@
 #ifndef CGAL_ARITHMETIC_FILTER_H
 #define CGAL_ARITHMETIC_FILTER_H
 
-#include <iostream.h>	// Because we declare operator<< and >>.
+#include <iostream>	// Because we declare operator<< and >>.
+#include <CGAL/Interval_arithmetic.h>
+#if 0 // The following are already included from Interval_arithmetic.h.
 #include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
 #include <CGAL/IO/io_tags.h>            // For CGAL_io_tag().
 #include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
+#endif
 
 // Check that the filtering stuff will work...
 #ifdef CGAL_IA_NO_EXCEPTION
@@ -42,39 +45,52 @@
 // (CGAL_Interval_nt_advanced) = used for filtering.
 //
 // 2 exact conversion functions must be provided:
-// - CGAL_convert_to<CGAL_Interval_nt_advanced> (CT)
+// - CGAL_convert_to <CGAL_Interval_nt_advanced> (CT)
 //     which gives an interval SURELY containing the CT value.
-// - CGAL_convert_to<ET> (CT)
+// - CGAL_convert_to <ET> (CT)
 //     which converts EXACTLY the CT value to ET.
 
 template <class CT, class ET>
 struct CGAL_Filtered_exact
 {
-  CT value;
-
-  CGAL_Filtered_exact () {}
-  template <class NT>
-  CGAL_Filtered_exact (const NT & nt) : value(nt)  {}
-  // The following one for Quotient<>.
-  template <class NT>
-  CGAL_Filtered_exact (const NT & num, const NT & den) : value(num, den)  {}
-  CGAL_Filtered_exact (const CGAL_Filtered_exact<CT,ET> & fil)
-      : value(fil.value)  {}
-  // CGAL_Filtered_exact (const double & d)	: value(d)  {}
-  // CGAL_Filtered_exact (const CT & ct)	: value(ct) {}
-
   typedef CGAL_Filtered_exact<CT,ET> Fil;
   typedef CGAL_Interval_nt_advanced IA;
 
+  CT value;
+#ifdef CGAL_FILTER_USE_CACHE
+  IA cache;
+  void recompute_cache() { cache = CGAL_convert_to<IA>(value); }
+#else
+  void recompute_cache() {}
+#endif
+
+  CGAL_Filtered_exact () {}
+  template <class NT>
+  CGAL_Filtered_exact (const NT & nt)
+      : value(nt)  { recompute_cache(); }
+  // The following one is used for Quotient<>.
+  template <class NT>
+  CGAL_Filtered_exact (const NT & num, const NT & den)
+      : value(num, den)   { recompute_cache(); }
+  CGAL_Filtered_exact (const CGAL_Filtered_exact<CT,ET> & fil)
+      : value(fil.value)  { recompute_cache(); }
+  // CGAL_Filtered_exact (const double & d)	: value(d)  {}
+  // CGAL_Filtered_exact (const CT & ct)	: value(ct) {}
+
   // The two conversion functions are provided by the global scope.
   // Note that we could "cache" interval_value() [will be done].
+#ifdef CGAL_FILTER_USE_CACHE
+  IA interval() const { return cache; }
+#else
   IA interval() const { return CGAL_convert_to<IA>(value); }
+#endif
   ET exact()    const { return CGAL_convert_to<ET>(value); }
+
   // This one should not be needed, at least for now.
   // CT stored_value()   const { return value; }
 
   // Check Stroustrup if it's ok for assignment/ctors.
-  Fil& operator= (const Fil& fil) { value = fil.value; return *this; }
+  Fil& operator= (const Fil& fil) { value = fil.value; recompute_cache(); return *this; }
 
   Fil  operator- ()               const { return Fil(-value); }
   bool operator< (const Fil& fil) const { return value <  fil.value; }
@@ -90,10 +106,10 @@ struct CGAL_Filtered_exact
   Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
   Fil operator/(const Fil& fil) const { return Fil(value / fil.value); }
 
-  Fil& operator+=(const Fil& fil) { value += fil.value; return *this; }
-  Fil& operator-=(const Fil& fil) { value -= fil.value; return *this; }
-  Fil& operator*=(const Fil& fil) { value *= fil.value; return *this; }
-  Fil& operator/=(const Fil& fil) { value /= fil.value; return *this; }
+  Fil& operator+=(const Fil& fil) { value += fil.value; recompute_cache(); return *this; }
+  Fil& operator-=(const Fil& fil) { value -= fil.value; recompute_cache(); return *this; }
+  Fil& operator*=(const Fil& fil) { value *= fil.value; recompute_cache(); return *this; }
+  Fil& operator/=(const Fil& fil) { value /= fil.value; recompute_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
