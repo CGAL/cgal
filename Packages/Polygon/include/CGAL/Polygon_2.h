@@ -241,7 +241,7 @@ class Polygon_2 {
             Traits p_traits = Traits())
         : d_container(), traits(p_traits), m_flags(CF_EMPTY) 
   {
-    // The Sun STL switches off member templates for binary backward compatibility 
+    // Sun STL switches off member templates for binary backward compatibility
     std::copy(first, last, std::back_inserter(d_container));
   }
 
