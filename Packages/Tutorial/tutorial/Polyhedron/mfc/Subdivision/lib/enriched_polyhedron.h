@@ -162,11 +162,12 @@ public :
 	typedef	typename kernel::FT	FT;
 	typedef	typename kernel::Point_3 Point;
 	typedef	typename kernel::Vector_3	Vector;
+	typedef	typename kernel::Iso_cuboid_3 Iso_cuboid;
 
 private	:
+
 	// bounding box
-	FT m_min[3];
-	FT m_max[3];
+	Iso_cuboid m_bbox;
 
 	// type
 	bool m_pure_quad;
@@ -203,48 +204,54 @@ public :
 		compute_normals_per_vertex();
 	}
 
+	// bounding box
+	Iso_cuboid& bbox() { return m_bbox; }
+	const Iso_cuboid bbox() const { return m_bbox; }
+
 	// compute bounding	box
-	void compute_bounding_box(FT &xmin,
-														FT &xmax,
-														FT &ymin,
-														FT &ymax,
-														FT &zmin,
-														FT &zmax)
+	void compute_bounding_box()
 	{
-		CGAL_assertion(size_of_vertices()	>	0);
-		Vertex_iterator	pVertex	=	vertices_begin();
+		if(size_of_vertices()	== 0)
+		{
+			ASSERT(false);
+			return;
+		}
+
+		FT xmin,xmax,ymin,ymax,zmin,zmax;
+		Vertex_iterator	pVertex = vertices_begin();
 		xmin = xmax = pVertex->point().x();
 		ymin = ymax = pVertex->point().y();
 		zmin = zmax = pVertex->point().z();
-		for(;pVertex !=	vertices_end();pVertex++)
+		for(;
+			  pVertex !=	vertices_end();
+				pVertex++)
 		{
 			const Point& p = pVertex->point();
-			xmin	=	std::min(xmin,p.x());
-			ymin	=	std::min(ymin,p.y());
-			zmin	=	std::min(zmin,p.z());
-			xmax	=	std::max(xmax,p.x());
-			ymax	=	std::max(ymax,p.y());
-			zmax	=	std::max(zmax,p.z());
+
+			xmin =	std::min(xmin,p.x());
+			ymin =	std::min(ymin,p.y());
+			zmin =	std::min(zmin,p.z());
+
+			xmax =	std::max(xmax,p.x());
+			ymax =	std::max(ymax,p.y());
+			zmax =	std::max(zmax,p.z());
 		}
-		m_min[0] = xmin; m_max[0] = xmax;
-		m_min[1] = ymin; m_max[1] = ymax;
-		m_min[2] = zmin; m_max[2] = zmax;
+		m_bbox = Iso_cuboid(xmin,ymin,zmin,
+			                  xmax,ymax,zmax);
 	}
 
 	// bounding box
-	FT xmin() { return m_min[0]; }
-	FT xmax() { return m_max[0]; }
-	FT ymin() { return m_min[1]; }
-	FT ymax() { return m_max[1]; }
-	FT zmin() { return m_min[2]; }
-	FT zmax() { return m_max[2]; }
+	FT xmin() { return m_bbox.xmin(); }
+	FT xmax() { return m_bbox.xmax(); }
+	FT ymin() { return m_bbox.ymin(); }
+	FT ymax() { return m_bbox.ymax(); }
+	FT zmin() { return m_bbox.zmin(); }
+	FT zmax() { return m_bbox.zmax(); }
 
 	// copy bounding box
 	void copy_bounding_box(Enriched_polyhedron<kernel,items> *pMesh)
 	{
-		m_min[0] = pMesh->xmin(); m_max[0] = pMesh->xmax();
-		m_min[1] = pMesh->ymin(); m_max[1] = pMesh->ymax();
-		m_min[2] = pMesh->zmin(); m_max[2] = pMesh->zmax();
+		m_bbox = pMesh->bbox();
 	}
 
 	// degree	of a face
@@ -295,10 +302,10 @@ public :
 	// tag all facets
 	void tag_facets(const	int	tag)
 	{
-		for(Facet_iterator pFace	=	facets_begin();
-				pFace	!= facets_end();
-				pFace++)
-			pFace->tag(tag);
+		for(Facet_iterator pFacet	=	facets_begin();
+				pFacet	!= facets_end();
+				pFacet++)
+			pFacet->tag(tag);
 	}
 
 	// set index for all vertices
@@ -526,33 +533,37 @@ public :
 	void gl_draw_bounding_box()
 	{
 		::glBegin(GL_LINES);
+
 			// along x axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
 			// along y axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
 			// along z axis
-			::glVertex3f(m_min[0],m_min[1],m_min[2]);
-			::glVertex3f(m_min[0],m_min[1],m_max[2]);
-			::glVertex3f(m_min[0],m_max[1],m_min[2]);
-			::glVertex3f(m_min[0],m_max[1],m_max[2]);
-			::glVertex3f(m_max[0],m_min[1],m_min[2]);
-			::glVertex3f(m_max[0],m_min[1],m_max[2]);
-			::glVertex3f(m_max[0],m_max[1],m_min[2]);
-			::glVertex3f(m_max[0],m_max[1],m_max[2]);
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
+			::glVertex3f(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+
 		::glEnd();
 	}
 
@@ -561,46 +572,23 @@ public :
 	{
 		unsigned int nb = 0;
 		tag_halfedges(0);
-		Halfedge_handle	seed_halfedge	=	NULL;
-		while((seed_halfedge = get_border_halfedge_tag(0)) !=	NULL)
+		for(Halfedge_iterator he = halfedges_begin();
+			  he != halfedges_end();
+				he++)
 		{
-			nb++;
-			seed_halfedge->tag(1);
-			Vertex_handle	seed_vertex	=	seed_halfedge->prev()->vertex();
-			Halfedge_handle	current_halfedge = seed_halfedge;
-			Halfedge_handle	next_halfedge;
-			do
+			if(he->is_border() && he->tag() == 0)
 			{
-				next_halfedge	=	current_halfedge->next();
-				next_halfedge->tag(1);
-				current_halfedge = next_halfedge;
+				nb++;
+				Halfedge_handle	curr = he;
+				do
+				{
+					curr	=	curr->next();
+					curr->tag(1);
+				}
+				while(curr != he);
 			}
-			while(next_halfedge->prev()->vertex()	!= seed_vertex);
 		}
 		return nb;
-	}
-
-	// get any border	halfedge with	tag
-	Halfedge_handle	get_border_halfedge_tag(int	tag)
-	{
-		for(Halfedge_iterator pHalfedge	=	halfedges_begin();
-				pHalfedge	!= halfedges_end();
-				pHalfedge++)
-			if(pHalfedge->is_border()	&&
-				 pHalfedge->tag()	== tag)
-				return pHalfedge;
-		return NULL;
-	}
-
-	// get any facet with	tag
-	Facet_handle get_facet_tag(const int tag)
-	{
-		for(Facet_iterator pFace	=	facets_begin();
-				pFace	!= facets_end();
-				pFace++)
-			if(pFace->tag()	== tag)
-				return pFace;
-		return NULL;
 	}
 
 	// tag component 
@@ -635,11 +623,15 @@ public :
 	{
 		unsigned int nb = 0;
 		tag_facets(0);
-		Facet_handle seed_facet	=	NULL;
-		while((seed_facet	=	get_facet_tag(0))	!= NULL)
+		for(Facet_iterator pFacet = facets_begin();
+			  pFacet != facets_end();
+				pFacet++)
 		{
-			nb++;
-			tag_component(seed_facet,0,1);
+			if(pFacet->tag() == 0)
+			{
+				nb++;
+				tag_component(pFacet,0,1);
+			}
 		}
 		return nb;
 	}

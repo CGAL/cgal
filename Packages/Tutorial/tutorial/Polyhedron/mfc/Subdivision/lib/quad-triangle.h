@@ -406,7 +406,7 @@ class CSubdivider_quad_triangle
 	public:
 		void subdivide(Polyhedron &OriginalMesh,
                    Polyhedron &NewMesh,
-                   bool smooth_boundary = true)
+                   const bool smooth_boundary = true)
     {
       // subdivide, then smooth
       CModifierQuadTriangle<HalfedgeDS,Polyhedron,kernel> builder(&OriginalMesh);

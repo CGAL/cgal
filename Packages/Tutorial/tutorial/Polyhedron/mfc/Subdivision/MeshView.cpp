@@ -778,13 +778,16 @@ void CMeshView::ViewAll(bool check_first)
 
 	// set up the camera to visualize the whole object
 	TRACE("setup camera.");
-	float xmin,xmax,ymin,ymax,zmin,zmax;
-	pDoc->m_pMesh->compute_bounding_box(xmin,xmax,ymin,ymax,zmin,zmax);
+	pDoc->m_pMesh->compute_bounding_box();
   CMatrix44 ArcballMatrix = m_Arcball.GetMatrix();
 
   CVector3d minBound, maxBound;
-	minBound.Set(xmin,ymin,zmin);
-	maxBound.Set(xmax,ymax,zmax);
+	minBound.Set(pDoc->m_pMesh->xmin(),
+		           pDoc->m_pMesh->ymin(),
+							 pDoc->m_pMesh->zmin());
+	maxBound.Set(pDoc->m_pMesh->xmax(),
+		           pDoc->m_pMesh->ymax(),
+							 pDoc->m_pMesh->zmax());
   minBound = ArcballMatrix * minBound;
   maxBound = ArcballMatrix * maxBound;
 	m_Camera.ViewAll(minBound[0],

@@ -27,6 +27,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				TreatWChar_tAsBuiltInType="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -87,6 +88,7 @@
 				MinimalRebuild="FALSE"
 				RuntimeLibrary="0"
 				TreatWChar_tAsBuiltInType="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
@@ -95,7 +97,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="$(CGALROOT)/lib/msvc7/cgal.lib"
+				AdditionalOptions="$(CGALROOT)/lib/msvc7/cgal_mt_release.lib"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="FALSE"
@@ -346,5 +348,8 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="Mesh.rc"/>
 	</Globals>
 </VisualStudioProject>
