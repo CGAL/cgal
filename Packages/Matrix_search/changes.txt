@@ -10,7 +10,11 @@
 ALL : Changed concept names.
 ALL : Added help button to pcenter demo.
 ALL : Restricted options in pcenter demo to reasonable values.
+ALL : Use new functor adaptors.
+ALL : Worked over traits classes -> Kernel Traits.
 ALL : Fixed warning on gcc3.
+DOCS: -> nohead, due to long filename problems on the stupid platform.
+DOCS: noheader -> nohead.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.2
@@ -54,6 +58,7 @@ ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
 ALL : Initial revision
+DOCS: -> nohead, due to long filename problems on the stupid platform.
 DOCS: Minimum_enclosing_* -> Min_*
 DOCS: maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
 DOCS: extremal_polygon -> extremal_polygon_2
@@ -64,6 +69,8 @@ ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+DOCS: Use new functor adaptors.
+DOCS: Worked over traits classes -> Kernel Traits.
 SRC : Fixed bug in four-center computation.
 SRC : Fixed range bug in expensive_assertion in extremal_polygon.
 SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
