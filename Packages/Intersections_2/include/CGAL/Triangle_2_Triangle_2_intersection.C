@@ -121,7 +121,7 @@ protected:
 };
 
 template <class R>
-inline bool do_intersect(
+bool do_intersect(
     const Triangle_2<R> &p1,
     const Triangle_2<R> &p2)
 {
