@@ -1,3 +1,6 @@
+3.41   (18 June 2001)
+- #include all _2 and _3 classes in user_classes.h.
+
 3.40   (7 June 2001)
 - Move homogeneous-only files to H2.
 
