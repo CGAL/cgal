@@ -23,34 +23,33 @@ CGAL_BEGIN_NAMESPACE
 ///////////////////////////////////////////////////////////////
 
 template <class Face_base>
-class Arr_2_face_overlay : public Face_base {
+class Face_overlay : public Face_base {
 public:
   typedef Face_base                       face_base;
-  typedef Arr_2_face_overlay              face_overlay;
+  typedef Face_overlay                    face_overlay;
   typedef const face_overlay              const_face_overlay;
   typedef const_face_overlay*             const_pointer;
   typedef const_face_overlay&             const_ref;
+  typedef void*                           Face_pointer;
   
   enum COLOR {WHITE=0, GRAY=1, BLACK=2};
   
-  Arr_2_face_overlay() : face_base()
+  Face_overlay() : face_base()
   { 
     num_faces_above = 0; 
-    faces_above[0] = faces_above[1] = NULL; 
+    faces_above[0] = faces_above[1] = 0; 
     color = WHITE;
   }
 
-  Arr_2_face_overlay(const_pointer f) : face_base(*f) 
+  Face_overlay(const_pointer f) : face_base(*f) 
   {
     num_faces_above = 0;
     set_first_face_above(f->get_first_face_above());
     set_second_face_above(f->get_second_face_above());
     set_color(f->get_color());
-    // debug only!
-    // num_faces_above = 0; faces_above[0] = faces_above[1] = NULL;
   }
 
-  Arr_2_face_overlay(const_ref f) : face_base(f) 
+  Face_overlay(const_ref f) : face_base(f) 
   { 
     num_faces_above = 0;
     set_first_face_above(f.get_first_face_above());
@@ -58,7 +57,7 @@ public:
     set_color(f.get_color());
   } 
 
-  virtual ~Arr_2_face_overlay() {}
+  virtual ~Face_overlay() {}
   
   const_ref operator=(const_ref f) 
   {
@@ -77,7 +76,7 @@ public:
     //cout<<"set_faces_above - number of faces above: "<<num_faces_above<<"\n";
 
     // updating only if the value is not NULL and not already in the array.
-    if (face != NULL && faces_above[0] != face && faces_above[1] != face){
+    if (face && faces_above[0] != face && faces_above[1] != face){
       //assert(num_faces_above < 2);
 
       faces_above[0] = face;
@@ -90,7 +89,7 @@ public:
     //cout<<"set_faces_above - number of faces above: "<<num_faces_above<<"\n";
 
     // updating only if the value is not NULL and not already in the array.
-    if (face != NULL && faces_above[0] != face && faces_above[1] != face){
+    if (face && faces_above[0] != face && faces_above[1] != face){
       //assert(num_faces_above < 2);
 
       faces_above[1] = face;
@@ -110,7 +109,7 @@ public:
 
   void  reset()
   {
-    num_faces_above = 0; faces_above[0] = faces_above[1] = NULL; 
+    num_faces_above = 0; faces_above[0] = faces_above[1] = 0; 
   }
   
   void set_color(COLOR c) { color = c;}
@@ -121,11 +120,11 @@ public:
     {
       int res = 0;
 
-      if (get_first_face_above() == NULL && get_second_face_above() == NULL)
+      if (get_first_face_above() == 0 && get_second_face_above() == 0)
         return 0;
-      else if (get_first_face_above() != NULL)
+      else if (get_first_face_above())
         res += ((const_pointer) get_first_face_above())->get_num_faces_above() + 1;
-      if (get_second_face_above() != NULL)
+      if (get_second_face_above())
         res += ((const_pointer) get_second_face_above())->get_num_faces_above() + 1;
 
       return res;
@@ -137,34 +136,33 @@ public:
   }
 
 protected:
-  const void*    faces_above[2];
-  int            num_faces_above;
-  COLOR          color;
- //const_pointer first_above;
-  //const_pointer second_above;
+  const void*   faces_above[2];
+  int                  num_faces_above;
+  COLOR                color;
 };
 
 //template <class X_curve>
 //class Pm_halfedge_overlay : public Pm_halfedge_base<X_curve>
 
 template <class Halfedge_base>
-class Arr_2_halfedge_overlay : public Halfedge_base
+class Halfedge_overlay : public Halfedge_base
 {
 public:
   typedef Halfedge_base                   halfedge_base;
-  typedef Arr_2_halfedge_overlay          halfedge_overlay;
+  typedef Halfedge_overlay                halfedge_overlay;
   typedef const halfedge_overlay          const_halfedge_overlay;
   typedef const_halfedge_overlay*         const_pointer;
   typedef const_halfedge_overlay&         const_ref;
+  typedef void*                           Halfedge_pointer;
   
-  Arr_2_halfedge_overlay() : halfedge_base()
+  Halfedge_overlay() : halfedge_base()
   {
     num_faces_above = num_halfedges_above = 0; 
-    halfedges_above[0] = halfedges_above[1] = NULL;
-    faces_above[0] = faces_above[1] = NULL;
+    halfedges_above[0] = halfedges_above[1] = 0;
+    faces_above[0] = faces_above[1] = 0;
   }
 
-  Arr_2_halfedge_overlay(const_pointer e) : halfedge_base(*e) 
+  Halfedge_overlay(const_pointer e) : halfedge_base(*e) 
   {
     num_faces_above = num_halfedges_above = 0; 
     
@@ -174,11 +172,11 @@ public:
     set_first_face_above(e->get_first_face_above());
     set_second_face_above(e->get_second_face_above());
 
-    //halfedges_above[0] = halfedges_above[1] = NULL;
-    //faces_above[0] = faces_above[1] = NULL;
+    //halfedges_above[0] = halfedges_above[1] = 0;
+    //faces_above[0] = faces_above[1] = 0;
   }
 
-  Arr_2_halfedge_overlay(const_ref e) : halfedge_base(e) 
+  Halfedge_overlay(const_ref e) : halfedge_base(e) 
   {
     num_faces_above = num_halfedges_above = 0; 
     
@@ -188,10 +186,10 @@ public:
     set_first_face_above(e.get_first_face_above());
     set_second_face_above(e.get_second_face_above());
 
-    //faces_above[0] = faces_above[1] = NULL;
+    //faces_above[0] = faces_above[1] = 0;
   } 
  
-  virtual ~Arr_2_halfedge_overlay() {}
+  virtual ~Halfedge_overlay() {}
   
   const_ref operator=(const_ref e) 
   {
@@ -212,8 +210,8 @@ public:
   {
     //cout<<"set_halfedge_above - number of halfedges above: "<<num_halfedges_above<<"\n";
 
-    // updating only if the value is not NULL and not already in the array.
-    if (halfedge != NULL &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
+    // updating only if the value is not 0 and not already in the array.
+    if (halfedge &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
       assert(num_halfedges_above < 2);
 
       halfedges_above[0] = halfedge;
@@ -225,8 +223,8 @@ public:
   {
     //cout<<"set_halfedge_above - number of halfedges above: "<<num_halfedges_above<<"\n";
 
-    // updating only if the value is not NULL and not already in the array.
-    if (halfedge != NULL &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
+    // updating only if the value is not 0 and not already in the array.
+    if (halfedge &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
       assert(num_halfedges_above < 2);
 
       halfedges_above[1] = halfedge;
@@ -247,8 +245,8 @@ public:
   // -------------------------------  add faces above halfedges (not to their sides).
   void  set_first_face_above(const void*  face)
   {
-    // updating only if the value is not NULL and not already in the array.
-    if (face != NULL &&  faces_above[0] != face && faces_above[1] != face){
+    // updating only if the value is not 0 and not already in the array.
+    if (face &&  faces_above[0] != face && faces_above[1] != face){
       //assert(num_halfedges_above < 2);
 
       faces_above[0] = face;
@@ -258,8 +256,8 @@ public:
   
   void  set_second_face_above (const void*  face)
   {
-    // updating only if the value is not NULL and not already in the array.
-    if (face != NULL &&  faces_above[0] != face && faces_above[1] != face){
+    // updating only if the value is not 0 and not already in the array.
+    if (face &&  faces_above[0] != face && faces_above[1] != face){
       //assert(num_halfedges_above < 2);
       
       faces_above[1] = face;
@@ -293,13 +291,13 @@ protected:
   void reset_halfedges_above()
   { 
     num_halfedges_above = 0;
-    halfedges_above[0] = halfedges_above[1] = NULL;
+    halfedges_above[0] = halfedges_above[1] = 0;
   }
   
   void reset_faces_above()
   { 
     num_faces_above = 0;
-    faces_above[0] = faces_above[1] = NULL;
+    faces_above[0] = faces_above[1] = 0;
   }
 
   const void*  halfedges_above[2];
@@ -309,23 +307,24 @@ protected:
 
 
 template <class Vertex_base>
-class Arr_2_vertex_overlay : public Vertex_base
+class Vertex_overlay : public Vertex_base
 {
 public:
   typedef Vertex_base                   vertex_base;
-  typedef Arr_2_vertex_overlay          vertex_overlay;
+  typedef Vertex_overlay                vertex_overlay;
   typedef const vertex_overlay          const_vertex_overlay;
   typedef const_vertex_overlay*         const_pointer;
   typedef const_vertex_overlay&         const_ref;
-  
-  Arr_2_vertex_overlay() : vertex_base() {
+  typedef void*                         Vertex_pointer;
+
+  Vertex_overlay() : vertex_base() {
     num_faces_above = num_halfedges_above = num_vertices_above = 0; 
-    vertices_above[0] = vertices_above[1] = NULL;
-    halfedges_above[0] = halfedges_above[1] = NULL;
-    faces_above[0] = faces_above[1] = NULL;
+    vertices_above[0] = vertices_above[1] = 0;
+    halfedges_above[0] = halfedges_above[1] = 0;
+    faces_above[0] = faces_above[1] = 0;
   }
 
-  Arr_2_vertex_overlay(const_pointer v) : vertex_base(*v) {
+  Vertex_overlay(const_pointer v) : vertex_base(*v) {
     num_faces_above = num_halfedges_above = num_vertices_above = 0; 
     
     set_first_vertex_above(v->get_first_vertex_above());
@@ -338,7 +337,7 @@ public:
     set_second_face_above(v->get_second_face_above());
   }
   
-  Arr_2_vertex_overlay(const_ref v) : vertex_base(v) {
+  Vertex_overlay(const_ref v) : vertex_base(v) {
     num_faces_above = num_halfedges_above = num_vertices_above = 0; 
     
     set_first_vertex_above(v.get_first_vertex_above());
@@ -351,7 +350,7 @@ public:
     set_second_face_above(v.get_second_face_above());
   } 
 
-  virtual ~Arr_2_vertex_overlay() {}
+  virtual ~Vertex_overlay() {}
   
   const_ref operator=(const_ref v) 
   {
@@ -372,8 +371,8 @@ public:
   }
 
   void  set_first_vertex_above(const void* const vertex) {
-    // updating only if the value is not NULL and not already in the array.
-    if (vertex != NULL && vertices_above[0] != vertex && vertices_above[1] != vertex){
+    // updating only if the value is not 0 and not already in the array.
+    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex){
       //assert(num_faces_above < 2);
       
       vertices_above[0] = vertex;
@@ -382,8 +381,8 @@ public:
   }
 
   void  set_second_vertex_above(const void* const vertex) {
-    // updating only if the value is not NULL and not already in the array.
-    if (vertex != NULL && vertices_above[0] != vertex && vertices_above[1] != vertex){
+    // updating only if the value is not 0 and not already in the array.
+    if (vertex && vertices_above[0] != vertex && vertices_above[1] != vertex){
       //assert(num_faces_above < 2);
 
       vertices_above[1] = vertex;
@@ -401,7 +400,8 @@ public:
   
   void  set_first_halfedge_above(const void* const halfedge) {
     
-    if (halfedge != NULL &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
+    if (halfedge && halfedges_above[0] != halfedge && 
+        halfedges_above[1] != halfedge){
       //assert(num_halfedges_above < 2);
 
       halfedges_above[0] = halfedge;
@@ -410,7 +410,8 @@ public:
   }
   
   void  set_second_halfedge_above(const void* const halfedge) {
-    if (halfedge != NULL &&  halfedges_above[0] != halfedge && halfedges_above[1] != halfedge){
+    if (halfedge && halfedges_above[0] != halfedge && 
+        halfedges_above[1] != halfedge){
       //assert(num_halfedges_above < 2);
 
       halfedges_above[1] = halfedge;
@@ -427,8 +428,8 @@ public:
   }
   
   void  set_first_face_above(const void*  face) {
-    // updating only if the value is not NULL and not already in the array.
-    if (face != NULL &&  faces_above[0] != face && faces_above[1] != face){
+    // updating only if the value is not 0 and not already in the array.
+    if (face && faces_above[0] != face && faces_above[1] != face){
       //assert(num_halfedges_above < 2);
 
       faces_above[0] = face;
@@ -437,8 +438,8 @@ public:
   }
   
   void  set_second_face_above (const void*  face) {
-    // updating only if the value is not NULL and not already in the array.
-    if (face != NULL &&  faces_above[0] != face && faces_above[1] != face){
+    // updating only if the value is not 0 and not already in the array.
+    if (face && faces_above[0] != face && faces_above[1] != face){
       //assert(num_halfedges_above < 2);
       
       faces_above[1] = face;
@@ -457,9 +458,9 @@ public:
 
   void reset() { 
     num_faces_above = num_halfedges_above = num_vertices_above = 0; 
-    vertices_above[0] = vertices_above[1] = NULL; 
-    halfedges_above[0] = halfedges_above[1] = NULL; 
-    faces_above[0] = faces_above[1] = NULL; 
+    vertices_above[0] = vertices_above[1] = 0; 
+    halfedges_above[0] = halfedges_above[1] = 0; 
+    faces_above[0] = faces_above[1] = 0; 
   }
 
   virtual void assign(const_ref v)
@@ -469,8 +470,8 @@ public:
   
 protected:
   const void*    vertices_above[2];
-  const void*    halfedges_above[2];
-  const void*    faces_above[2];
+  const void*             halfedges_above[2];
+  const void*             faces_above[2];
   int            num_vertices_above, num_halfedges_above, num_faces_above;
 };
 
@@ -478,9 +479,9 @@ template <class Traits,
   class Vertex_base = Pm_vertex_base<typename Traits::Point>, 
   class Halfedge_base = Pm_halfedge_base<typename Traits::X_curve> , 
   class Face_base =  Pm_face_base> 
-class Map_overlay_default_dcel : public Pm_dcel<Arr_2_vertex_overlay<Vertex_base> , 
-                                                Arr_2_halfedge_overlay<Halfedge_base>, 
-                                                Arr_2_face_overlay<Face_base> > 
+class Map_overlay_default_dcel : public Pm_dcel<Vertex_overlay<Vertex_base> , 
+                                                Halfedge_overlay<Halfedge_base>, 
+                                                Face_overlay<Face_base> > 
 {
 public:  // CREATION
   Map_overlay_default_dcel() {} 
@@ -489,6 +490,12 @@ public:  // CREATION
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
+
+
 
 
 
