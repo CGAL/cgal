@@ -1262,35 +1262,56 @@ a precise indication of the kind of invalidity encountered.}
 \section{Models of Base Vertices and Cells}
 \label{TDS3-sec-class-Base}
 
-	\begin{ccClassTemplate}{Triangulation_vertex_base_3<Traits>}
-	\subsection{The Base Class \protect \ccClassTemplateName}
-	\label{TDS3-sec-class-Base_Vertex}
-
-This class is provided by \cgal\ as a base vertex class. It is
-templated by a geometric traits class \ccc{Traits} that provides the
-geometric types. The user who uses the geometric layer
-(Section~\ref{TDS3-sec-design} and 
+\cgal\ provides two base vertex classes. Both are templated by a
+geometric traits class \ccc{Traits} that provides the geometric
+types. The user who uses the geometric layer
+(Section~\ref{TDS3-sec-design} and
 Chapter~\ref{chapter-Triangulation3}) is strongly advised to use the
 same geometric traits class \ccc{Traits} as the one used for
 \ccc{Triangulation_3<Traits,Tds>}. In this way, the point type
-defined by \ccClassTemplateName\ is the same as the point type defined by the
-geometric traits class. The default geometric traits class provided by 
-\cgal\ is presented in Section~\ref{Triangulation3-sec-Traits}.
+defined by the base vertex is the same as the point type defined by
+the geometric traits class. The default geometric traits class
+provided by \cgal\ is presented in
+Section~\ref{Triangulation3-sec-Traits}. 
 
-This base class can be used directly or can serve as a base to derive
+These base classes can be used directly or can serve as a base to derive
 other base classes with some additionnal attributes (a color for
 example) tuned for a specific application.
 
 \ccInclude{CGAL/Triangulation_vertex_base_3.h}
 
+The same include file proposes the two classes described in
+Sections~\ref{TDS3-sec-class-Base_Vertex} 
+and~\ref{TDS3-sec-class-Base_Vertex_pointer}.
+
+	\begin{ccClassTemplate}{Triangulation_vertex_base_3<Traits>}
+	\subsection{The Base Class \protect \ccClassTemplateName}
+	\label{TDS3-sec-class-Base_Vertex}
+
+With this class, a vertex stores a point, which means that the points
+of the user will be duplicated. This allows the user to delete his
+points before the deletion of the triangulation.
+
 	\end{ccClassTemplate} 
+
+	\begin{ccClassTemplate}{Triangulation_vertex_base_pointer_3<Traits>}
+	\subsection{The Base Class \protect \ccClassTemplateName}
+	\label{TDS3-sec-class-Base_Vertex_pointer}
+
+This base class offers the same functionalities that the class
+\ccc{Triangulation_vertex_base_3}. The difference between them is that 
+it does not copy points. The user should of course be careful not to
+delete his points while the triangulation is using them. 
+
+	\end{ccClassTemplate}
 
 	\begin{ccClassTemplate}{Triangulation_cell_base_3<Traits>}
 	\subsection{The Base Class \protect \ccClassTemplateName}
 
 This class is provided by \cgal\ as a base cell class, and is similar
-to the case of the base vertex class. (See
-Section~\ref{TDS3-sec-class-Base_Vertex}.)
+to the base vertex classes. (See
+Sections~\ref{TDS3-sec-class-Base_Vertex}
+and~\ref{TDS3-sec-class-Base_Vertex_pointer}.) 
 
 \ccInclude{CGAL/Triangulation_cell_base_3.h}
 
