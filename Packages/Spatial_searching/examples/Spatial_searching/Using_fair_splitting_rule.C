@@ -2,11 +2,8 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point_2.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <list>
-#include <iostream>
 
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_2 Point;
@@ -19,11 +16,8 @@ typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits,Distance,Fair> Neighbor_se
 typedef Neighbor_search::Tree Tree;
 typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 
-int 
-main() {
-
+int main() {
   const int N = 1000;
-  
   // generator for random data points in the square ( (-1,-1), (1,1) ) 
   Random_points_iterator rpit( 1.0);
 
@@ -34,7 +28,6 @@ main() {
 	    fair);
 
   Point query(0,0);
-  
   // the container for the result
   Neighbors neighbors;
   
