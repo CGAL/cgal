@@ -50,11 +50,25 @@ public:
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
-  PointC3();
-  PointC3(const Origin &o);
-  PointC3(const Vector_3 &v);
-  PointC3(const FT &x, const FT &y, const FT &z);
-  PointC3(const FT &x, const FT &y, const FT &z, const FT &hw);
+  PointC3()
+    : Point_handle_3(Point_ref_3()) {}
+
+  PointC3(const Origin &)
+    : Point_handle_3(Point_ref_3(FT(0), FT(0), FT(0))) {}
+
+  PointC3(const Vector_3 &v)
+    : Point_handle_3(v) {}
+
+  PointC3(const FT &x, const FT &y, const FT &z)
+    : Point_handle_3(Point_ref_3(x, y, z)) {}
+
+  PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
+  {
+    if (w != FT(1))
+      initialize_with(Point_ref_3(x/w, y/w, z/w));
+    else
+      initialize_with(Point_ref_3(x, y, z));
+  }
 
   bool operator==(const Self &p) const
   {
@@ -107,44 +121,11 @@ public:
   }
   Bbox_3 bbox() const;
 
-  Self transform( const Aff_transformation_3 &) const;
+  Self transform(const Aff_transformation_3 &t) const
+  {
+    return t.transform(*this);
+  }
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::PointC3()
-  : Point_handle_3(Point_ref_3()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::PointC3(const Origin &)
-  : Point_handle_3(Point_ref_3(FT(0), FT(0), FT(0)) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
-                              const typename PointC3<R CGAL_CTAG>::FT &y,
-			      const typename PointC3<R CGAL_CTAG>::FT &z)
-  : Point_handle_3(Point_ref_3(x, y, z) ) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::PointC3(const typename PointC3<R CGAL_CTAG>::FT &x,
-                              const typename PointC3<R CGAL_CTAG>::FT &y,
-			      const typename PointC3<R CGAL_CTAG>::FT &z,
-			      const FT &w)
-{
-  if (w != FT(1))
-    initialize_with(Point_ref_3(x/w, y/w, z/w) );
-  else
-    initialize_with(Point_ref_3(x, y, z) );
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC3<R CGAL_CTAG>::
-PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v)
-  : Point_handle_3(v) {}
 
 template < class R >
 inline
@@ -155,7 +136,7 @@ PointC3<R CGAL_CTAG>::cartesian(int i) const
   // return (i==0) ? x() :
 //          (i==1) ? y() : z();
   if (i==0) return x();
-  else if (i==1) return y();
+  if (i==1) return y();
   return z();
 }
 
@@ -178,19 +159,10 @@ PointC3<R CGAL_CTAG>::homogeneous(int i) const
 }
 
 template < class R >
-inline
-PointC3<R CGAL_CTAG>
-PointC3<R CGAL_CTAG>::
-transform(const typename PointC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
-{
-  return t.transform(*this);
-}
-
-template < class R >
 Bbox_3
 PointC3<R CGAL_CTAG>::bbox() const
 {
-  // Not robust...
+  // FIXME: Not robust...
   double bx = CGAL::to_double(x());
   double by = CGAL::to_double(y());
   double bz = CGAL::to_double(z());
