@@ -112,13 +112,13 @@ template <class R_> struct Convex_hull_d_traits_3
       int a = A.size();
       CGAL_assertion( a <= 4 );
       if (a == 4) {
-        Tetrahedron_3<R_> t( A[0], A[1], A[2], A[3] );
+        R_::Tetrahedron_3 t( A[0], A[1], A[2], A[3] );
         return !t.has_on_unbounded_side(p);
       } else if (a == 3) {
-        Triangle_3<R_> t( A[0], A[1], A[2] );
+        R_::Triangle_3 t( A[0], A[1], A[2] );
         return t.has_on(p);
       } else if (a == 2) {
-        Segment_3<R_> s( A[0], A[1] );
+        R_::Segment_3 s( A[0], A[1] );
         return s.has_on(p);
       } else if (a == 1) {
         return ( A[0] == p);
@@ -203,17 +203,17 @@ template <class R_> struct Convex_hull_d_traits_3
       std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
 #endif
       int a = A.size(); CGAL_assertion( a <= 3 );
-      Plane_3<R_> pl;
+      R_::Plane_3 pl;
       if (a == 3) {
-        pl = Plane_3<R_>( A[0], A[1], A[2] );
+        pl = R_::Plane_3( A[0], A[1], A[2] );
       }
       if (a == 2) {
-        Point_3<R_> hp =
+        R_::Point_3 hp =
               A[0] + cross_product( p - A[0], A[1] - A[0] );
-        pl = Plane_3<R_>( A[0], A[1], hp );
+        pl = R_::Plane_3( A[0], A[1], hp );
       }
       if (a == 1) {
-        pl = Plane_3<R_>( A[0], A[0] - p);
+        pl = R_::Plane_3( A[0], A[0] - p);
       }
       if (side != 0) {
         if ( pl.oriented_side(p) !=  side ) { pl = pl.opposite(); }
