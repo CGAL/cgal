@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1997,1998 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -13,8 +13,8 @@
 //
 // file          : demo/Optimisation/demo_Min_ellipse_2.C
 // chapter       : $CGAL_Chapter: Geometric Optimisation $
-// package       : $CGAL_Package: Optimisation WIP $
-
+// package       : $CGAL_Package: Min_ellipse_2 WIP $
+//
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
