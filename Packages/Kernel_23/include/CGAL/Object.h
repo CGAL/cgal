@@ -29,7 +29,7 @@
 
 #ifdef CGAL_CFG_NO_DYNAMIC_CAST
 #error fatal error: dynamic cast not supported
-#endif // CGAL_CFG_NO_DYNAMIC_CAST
+#endif
 
 #include <CGAL/Handle_for.h>
 
