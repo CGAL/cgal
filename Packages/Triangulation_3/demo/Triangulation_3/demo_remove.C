@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : demo/Triangulation3/demo.C
+// file          : demo/Triangulation3/demo_remove.C
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
