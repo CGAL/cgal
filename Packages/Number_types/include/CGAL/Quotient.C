@@ -27,11 +27,10 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
 
-
-#include <CGAL/Quotient.h>
-
 #ifndef CGAL_QUOTIENT_C
 #define CGAL_QUOTIENT_C
+
+#include <CGAL/Quotient.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -401,98 +400,6 @@ operator<(const NumberType& x, const Quotient<NumberType>& y)
 {
   return quotient_cmp(Quotient<NumberType>(x),y) == SMALLER; // < 0
 }
-#ifndef CGAL_NO_STL_PROVIDED_REL_OPS
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const Quotient<NumberType>& x, const Quotient<NumberType>& y)
-{ return x.num * y.den != x.den * y.num; }
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const Quotient<NumberType>& x, const Quotient<NumberType>& y)
-{
-  return quotient_cmp(x,y) != LARGER; // <= 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>(const Quotient<NumberType>& x, const Quotient<NumberType>& y)
-{
-  return  quotient_cmp(x,y) == LARGER; // > 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const Quotient<NumberType>& x, const Quotient<NumberType>& y)
-{
-  return quotient_cmp(x,y) != SMALLER; // >= 0
-}
-#endif // CGAL_NO_STL_PROVIDED_REL_OPS
-#ifndef CGAL_NO_STL_PROVIDED_REL_OPS
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const Quotient<NumberType>& x, const NumberType& y)
-{ return x.den * y != x.num; }
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const NumberType& x, const Quotient<NumberType>& y)
-{ return y.den * x != y.num; }
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const Quotient<NumberType>& x, const NumberType& y)
-{
-  return quotient_cmp(x,Quotient<NumberType>(y)) != LARGER; // <= 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const NumberType& x, const Quotient<NumberType>& y)
-{
-  return quotient_cmp(Quotient<NumberType>(x),y) != LARGER; // <= 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>(const Quotient<NumberType>& x, const NumberType& y)
-{
-  return  quotient_cmp(x,Quotient<NumberType>(y)) == LARGER; // > 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>(const NumberType& x, const Quotient<NumberType>& y)
-{
-  return  quotient_cmp(Quotient<NumberType>(x),y) == LARGER; // > 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const Quotient<NumberType>& x, const NumberType& y)
-{
-  return quotient_cmp(x,Quotient<NumberType>(y)) != SMALLER; // >= 0
-}
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const NumberType& x, const Quotient<NumberType>& y)
-{
-  return quotient_cmp(Quotient<NumberType>(x),y) != SMALLER; // >= 0
-}
-#endif // CGAL_NO_STL_PROVIDED_REL_OPS
 
 template <class NumberType>
 double
@@ -559,6 +466,5 @@ gcd(const NumberType&, const NumberType&)
 { return NumberType(1); }
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_QUOTIENT_C

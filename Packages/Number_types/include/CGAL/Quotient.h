@@ -27,30 +27,20 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
 
-
-#ifndef CGAL_BASIC_H
-#include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
 
-#ifndef CGAL_NO_STL_PROVIDED_REL_OPS
-#  if ((__GNUC__ == 2) && (__GNUC_MINOR__ <= 8))
-#    define CGAL_NO_STL_PROVIDED_REL_OPS
-#  endif // g++ 2.8
-#endif // CGAL_NO_STL_PROVIDED_REL_OPS
+#include <CGAL/basic.h>
 
-
+#include <utility>
 
 #ifndef CGAL_CFG_NO_LOCALE
-#include <locale>
+#  include <locale>
 #else
-#include <cctype>
-#endif // CGAL_CFG_NO_LOCALE
-#ifndef IO_IO_TAGS_H
+#  include <cctype>
+#endif
+
 #include <CGAL/IO/io_tags.h>
-#endif // IO_IO_TAGS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -191,68 +181,6 @@ CGAL_KERNEL_INLINE
 bool
 operator< (const NumberType& q, const Quotient<NumberType>& r);
 
-#ifndef CGAL_NO_STL_PROVIDED_REL_OPS
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator> (const Quotient<NumberType>& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const Quotient<NumberType>& q, const NumberType& a);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator!=(const NumberType& n, const Quotient<NumberType>& q);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const Quotient<NumberType>& q, const NumberType& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator<=(const NumberType& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator> (const Quotient<NumberType>& q, const NumberType& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator> (const NumberType& q, const Quotient<NumberType>& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const Quotient<NumberType>& q, const NumberType& r);
-
-template <class NumberType>
-CGAL_KERNEL_INLINE
-bool
-operator>=(const NumberType& q, const Quotient<NumberType>& r);
-#endif // CGAL_NO_STL_PROVIDED_REL_OPS
-
 template <class NumberType>
 std::istream&
 operator>>(std::istream& in, Quotient<NumberType>& q);
@@ -289,8 +217,6 @@ class Quotient
   
   ~Quotient() {}
   
-  
-  
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
   Quotient<NT>& operator*= (const Quotient<NT>& r);
@@ -300,18 +226,14 @@ class Quotient
   Quotient<NT>& operator*= (const NT& r);
   Quotient<NT>& operator/= (const NT& r);
   
-  
   Quotient<NT>&    normalize();
-  
   
   NT   numerator() const;
   NT   denominator() const;
-  
 
  public:
   NT   num;
   NT   den;
-  
 };
 
 template <class RT>
@@ -323,7 +245,6 @@ to_interval (const Quotient<RT>& z)
 }
 
 CGAL_END_NAMESPACE
-
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Quotient.C>
@@ -347,7 +268,6 @@ class Quotient<int>
   
   int
   denominator() const { return den; }
-  
   
   Quotient<int>&
   operator+= (const Quotient<int>& r)
@@ -413,11 +333,9 @@ class Quotient<int>
  public:
   int num;
   int den;
-  
 };
 
 CGAL_END_NAMESPACE
-
 
 #include <CGAL/iterator_traits_pointer_specs_for_cartesian_quotient.h>
 
