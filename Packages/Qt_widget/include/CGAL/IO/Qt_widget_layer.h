@@ -42,7 +42,7 @@ public:
   virtual void keyReleaseEvent(QKeyEvent *) {};
   virtual void enterEvent(QEvent *) {};
   virtual void leaveEvent(QEvent *) {};
-  virtual bool event(QEvent *) {return true;};
+  virtual bool event(QEvent *e) {QObject::event(e); return true;};
 
   bool    is_active(){return active;};	//return true if this layer is active
 
