@@ -6,6 +6,14 @@ include/CGAL/IO/Geomview_stream.h
 src/Geomview_stream.C
 
 CHANGES
+
+Ver 2.7 (13 janvier 00)
+undo the previous, 
+and replace "ends" by "std::ends"
+
+Ver 2.6 (13 janvier 00)
+added std:: in front of "flush" ans "ends"
+
 Ver 2.5 (27 July 1999)
 added std:: in front of "flush" ans "ends"
 
