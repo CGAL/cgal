@@ -114,6 +114,43 @@
 \newcommand{\plageo}{{\sc Plageo}}
 
 % +--------------------------------------------------------------------------
+% | Support macros for HTML manual generation:
+% |
+% | \begin{TexOnly} ...,  \begin{HtmlOnly} ...,  \LatexHtml{}{}
+% +--------------------------------------------------------------------------
+
+\gdef\HTMLcatcode {%
+                       \CCcatcode
+                       \catcode`\{=12
+                       \catcode`\}=12
+                       \catcode`\\=12
+                  }
+\gdef\HTMLdefcatcode {%
+                       \catcode`\|=0
+                       \catcode`\[=1
+                       \catcode`\]=2
+                       \catcode`\{=12
+                       \catcode`\}=12
+                       \catcode`\\=12
+                  }
+
+\def\LatexHtml #1#2{#1}
+\def\Anchor #1#2{#2}
+\newenvironment{TexOnly}{}{}
+\newenvironment{HtmlOnly}{\begingroup\HTMLcatcode \ParseHtmlOnlyBody}{
+                          \endgroup}
+
+%  Take care: catcodes changes a lot here!!
+\begingroup
+\HTMLdefcatcode
+|gdef|ParseHtmlOnlyBody #1\end{HtmlOnly}[%
+  |csname endHtmlOnly|endcsname|@checkend[HtmlOnly]%
+  |expandafter|endgroup|if@endpe|@doendpe|fi
+  |if@ignore|global|@ignorefalse|ignorespaces|fi
+]
+|endgroup
+
+% +--------------------------------------------------------------------------
 % | Structuring macros (similar to LEDA Manual):
 % |
 % | \CCsection, \definition, \creation, \operations, \implementation,
@@ -127,6 +164,10 @@
 
 \def\definition    {\bigskip\pagebreak[1]
                     {\bf Definition}
+                    \par\nopagebreak }
+
+\def\types         {\bigskip\pagebreak[1]
+                    {\bf Types}
                     \par\nopagebreak }
 
 \def\creation      {\bigskip\pagebreak[1]
@@ -242,6 +283,10 @@
                    \global\CCWfunctionsecond=#2
                    }
 
+\def\constructorcolumn #1{%
+                   \global\CCWconstructorsecond=#1
+                   }
+
 \def\constructor {%
                    \begingroup\CCcatcode\constructorX}
 
@@ -354,6 +399,10 @@
     \gdef\hidden{}%
 }
 
+% An \unchecked macro expands to nothing. It is used by the checker tool
+% where it denotes that the following declarations is not subject of any
+% check.
+\def\unchecked{}
 
 % All simple macros work also at the global level. The following
 % `global' versions are only shortcuts to omit the comment parameter,
