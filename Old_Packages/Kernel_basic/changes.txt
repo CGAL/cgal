@@ -1,3 +1,6 @@
+3.40   (7 June 2001)
+- Move homogeneous-only files to H2.
+
 3.39   (30 May 2001)
 - Remove Compare_distance_to_point_[23].
 
