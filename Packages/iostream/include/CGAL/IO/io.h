@@ -26,7 +26,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
-#include <iostream.h>
+#include <iostream>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Object.h>
@@ -68,7 +68,7 @@ inline io_Read_write io_tag(char){ return io_Read_write(); }
 template < class T >
 inline
 void
-write(ostream& os, const T& t, const io_Read_write&)
+write(std::ostream& os, const T& t, const io_Read_write&)
 {
     os.write((char*)&t, sizeof(t));
 }
@@ -77,7 +77,7 @@ write(ostream& os, const T& t, const io_Read_write&)
 template < class T >
 inline
 void
-write(ostream& os, const T& t, const io_Operator&)
+write(std::ostream& os, const T& t, const io_Operator&)
 {
     os << t;
 }
