@@ -79,7 +79,260 @@ set( int n, int m,
     } else {
 	  art_A.reserve( qp_m);
     }
+    set_up_auxiliary_problem(is_perturbed);
+    
+    e = qp_m-slack_A.size(); // number of equalities
+    l = std::min( n+e+1, m);
 
+    // diagnostic output
+    CGAL_qpe_debug {
+	if ( vout.verbose()) {
+	    if ( vout2.verbose()) {
+		vout2.out() << "======" << std::endl
+			    << "Set-Up" << std::endl
+			    << "======" << std::endl;
+	    }
+	    vout.out() << "[ " << ( is_LP ? "LP" : "QP")
+		       << ", " << n << " variables, " << m << " constraints";
+	    if ( vout2.verbose() && ( ! slack_A.empty())) {
+		vout2.out() << " (" << slack_A.size() << " inequalities)";
+	    }
+	    vout.out() << " ]" << std::endl;
+	    if ( vout2.verbose()) {
+		if ( is_QP) {
+		    vout2.out() << "flag: D "
+				<< ( check_tag( Is_symmetric()) ? "" : "not ")
+				<< "symmetric" << std::endl;
+		}
+		vout2.out() << "flag: " << ( has_ineq ? "has" : "no")
+			    << " inequality constraints" << std::endl;
+		if ( vout4.verbose()) print_program();
+	    }
+	}
+    }
+
+    // set up pricing strategy
+    if ( strategyP != static_cast< Pricing_strategy*>( 0)) {
+	strategyP->set( *this, vout2);
+    }
+
+    // set up basis inverse
+    inv_M_B.set( qp_n, qp_m, e);
+
+    // set phase
+    m_phase    = 0;
+    is_phaseI  = false;
+    is_phaseII = false;
+}
+
+template < class Rep_ >
+void
+QPE_solver<Rep_>::
+set_up_auxiliary_problemI(Tag_true)
+{
+    // initialize slack and artificial part of `A'
+    A_entry  max_lc_A(0);
+    B_entry  b0( 0), b_max( b0), max_lc_b(0);
+    C_entry  c1( 1);
+    int              i_max = -1;
+    int              row_le;
+    int              inf_max_le = qp_n + 2;
+    
+    for ( int i = 0; i < qp_m; ++i) {
+
+        if ( has_ineq && ( qp_r[ i] != Rep::EQUAL)) {   // slack variable
+            row_le = signed_leading_exponent(i);
+	    if ( qp_r[ i] == Rep::LESS_EQUAL) {                 // '<='
+		if ( row_le < 0) {
+
+                    // special entry '< -0'
+		    art_s[ i] = -c1;
+		    if ( -row_le < inf_max_le) {
+			i_max = slack_A.size();
+			inf_max_le = -row_le;
+			if (inf_max_le > 1) {
+			    max_lc_A = -qp_A[inf_max_le - 1][i];
+			} else {
+			    max_lc_b = -qp_b[i];
+			}
+		    } else {
+		        if (-row_le == inf_max_le) {
+			    if (inf_max_le > 1) {
+			        if (-qp_A[inf_max_le - 1][i] > max_lc_A) {
+				    i_max = slack_A.size();
+				    max_lc_A = -qp_A[inf_max_le - 1][i];
+				}
+			    } else {
+			        if (-qp_b[i] > max_lc_b) {
+				    i_max = slack_A.size();
+				    max_lc_b = -qp_b[i];
+				}
+			    }
+			}
+		    }
+		} 
+
+		// store slack column
+		slack_A.push_back( std::make_pair( i, false));
+
+	    } else {                                            // '>='
+		if ( row_le > 0) {
+
+                    // special entry '> +0'
+		    art_s[ i] = c1;
+		    if (  row_le < inf_max_le) {
+			i_max = slack_A.size();
+		        inf_max_le = row_le;
+			if (inf_max_le > 1) {
+			    max_lc_A = qp_A[inf_max_le - 1][i];
+			} else {
+			    max_lc_b = qp_b[i];
+			}
+		    } else {
+		        if (row_le == inf_max_le) {
+			    if (inf_max_le > 1) {
+			        if (qp_A[inf_max_le - 1][i] > max_lc_A) {
+				    i_max = slack_A.size();
+				    max_lc_A = qp_A[inf_max_le - 1][i];
+				}
+			    } else {
+			        if (qp_b[i] > max_lc_b) {
+				    i_max = slack_A.size();
+				    max_lc_b = qp_b[i];
+				}
+			    }
+			}
+		    }
+		}
+
+		// store slack column
+		slack_A.push_back( std::make_pair( i, true));
+	    }
+
+        } else {                                        // artificial variable
+
+            art_A.push_back( std::make_pair( i, qp_b[ i] < b0));
+
+	}
+    }
+    // special artificial column needed?
+    if ( i_max >= 0) {
+	art_s_i = -i_max;
+    } else {
+	art_s_i = -1;
+	art_s.clear();
+    }
+}
+
+template < class Rep_ >
+void
+QPE_solver<Rep_>::
+set_up_auxiliary_problem(Tag_true)
+{
+    // initialize slack and artificial part of `A'
+    A_entry  max_lc_A( 0);
+    B_entry  b0( 0), b_max( b0), max_lc_b( 0);
+    C_entry  c1( 1);
+    int              i_max = -1;
+    int              row_le;
+    int              inf_max_le = qp_n + 1;
+
+    for ( int i = 0; i < qp_m; ++i) {
+
+        if ( has_ineq && ( qp_r[ i] != Rep::EQUAL)) {   // slack variable
+
+	    if ( qp_r[ i] == Rep::LESS_EQUAL) {                 // '<='
+		if ( qp_b[ i] < b0) {
+
+                    // special entry '< -0'
+		    art_s[ i] = -c1;
+		    if ( -qp_b[ i] > b_max) {
+			i_max = slack_A.size();
+			inf_max_le = 0;
+			max_lc_b = -qp_b[ i];
+		    }
+		} else {
+		    if (qp_b[i] == b0) {
+		        row_le = signed_leading_exponent(i);
+			if (row_le < 0) {
+			    art_s[ i] = -c1;
+			    if (-row_le < inf_max_le) {
+			        i_max = slack_A.size();
+				inf_max_le = -row_le;
+				max_lc_A = qp_A[inf_max_le - 1][i];
+			    } else {
+			        if (-row_le == inf_max_le) {
+				    if (-qp_A[inf_max_le - 1][i] > max_lc_A) {
+				        i_max = slack_A.size();
+					max_lc_A = -qp_A[inf_max_le - 1][i];
+				    }
+				}
+			    } 
+			}
+		    }
+		}
+
+		// store slack column
+		slack_A.push_back( std::make_pair( i, false));
+
+	    } else {                                            // '>='
+		if ( qp_b[ i] > b0) {
+
+                    // special entry '> +0'
+		    art_s[ i] = c1;
+		    if (  qp_b[ i] > b_max) {
+			i_max = slack_A.size();
+			inf_max_le = 0;
+			max_lc_b = qp_b[ i];
+		    }
+		} else {
+		    if (qp_b[i] == b0) {
+		        row_le = signed_leading_exponent(i);
+			if (row_le > 0) {
+			    art_s[ i] = c1;
+			    if (row_le < inf_max_le) {
+			        i_max = slack_A.size();
+				inf_max_le = row_le;
+				max_lc_A = qp_A[inf_max_le - 1][i];
+			    } else {
+			        if (row_le == inf_max_le) {
+				    if (qp_A[inf_max_le - 1][i] > max_lc_A) {
+				        i_max = slack_A.size();
+					max_lc_A = qp_A[inf_max_le - 1][i];
+				    }
+				}
+			    }
+			}
+		    }
+		}
+
+		// store slack column
+		slack_A.push_back( std::make_pair( i, true));
+	    }
+
+        } else {                                        // artificial variable
+            row_le = signed_leading_exponent(i);
+            art_A.push_back( std::make_pair( i, ((qp_b[ i] < b0) ||
+	        (qp_b[i] == b0) && (row_le < 0))));
+
+	}
+    }
+    // special artificial column needed?
+    if ( i_max >= 0) {
+	art_s_i = -i_max;
+    } else {
+	art_s_i = -1;
+	art_s.clear();
+    }
+}
+
+
+
+template < class Rep_ >
+void
+QPE_solver<Rep_>::
+set_up_auxiliary_problem(Tag_false)
+{
     // initialize slack and artificial part of `A'
     B_entry  b0( 0), b_max( b0);
     C_entry  c1( 1);
@@ -123,9 +376,6 @@ set( int n, int m,
 
 	}
     }
-    e = qp_m-slack_A.size(); // number of equalities
-    l = std::min( n+e+1, m);
-
     // special artificial column needed?
     if ( i_max >= 0) {
 	art_s_i = -i_max;
@@ -133,47 +383,8 @@ set( int n, int m,
 	art_s_i = -1;
 	art_s.clear();
     }
-
-    // diagnostic output
-    CGAL_qpe_debug {
-	if ( vout.verbose()) {
-	    if ( vout2.verbose()) {
-		vout2.out() << "======" << std::endl
-			    << "Set-Up" << std::endl
-			    << "======" << std::endl;
-	    }
-	    vout.out() << "[ " << ( is_LP ? "LP" : "QP")
-		       << ", " << n << " variables, " << m << " constraints";
-	    if ( vout2.verbose() && ( ! slack_A.empty())) {
-		vout2.out() << " (" << slack_A.size() << " inequalities)";
-	    }
-	    vout.out() << " ]" << std::endl;
-	    if ( vout2.verbose()) {
-		if ( is_QP) {
-		    vout2.out() << "flag: D "
-				<< ( check_tag( Is_symmetric()) ? "" : "not ")
-				<< "symmetric" << std::endl;
-		}
-		vout2.out() << "flag: " << ( has_ineq ? "has" : "no")
-			    << " inequality constraints" << std::endl;
-		if ( vout4.verbose()) print_program();
-	    }
-	}
-    }
-
-    // set up pricing strategy
-    if ( strategyP != static_cast< Pricing_strategy*>( 0)) {
-	strategyP->set( *this, vout2);
-    }
-
-    // set up basis inverse
-    inv_M_B.set( qp_n, qp_m, e);
-
-    // set phase
-    m_phase    = 0;
-    is_phaseI  = false;
-    is_phaseII = false;
 }
+
 
 // initialization (phase I)
 template < class Rep_ >
@@ -396,6 +607,22 @@ init_additional_data_members( )
     if ( ! tmp_x_2.empty()) tmp_x_2.clear();
     tmp_x_2.insert( tmp_x_2.end(), l, et0);
 }
+// returns signed * (most significant exponent + 1) if <> 0
+// 0 otherwise
+template < class Rep_ >
+int
+QPE_solver<Rep_>::
+signed_leading_exponent(int row)
+{
+    A_entry  a0( 0);
+    
+    int col = 0;
+    while ((col < qp_n) && (qp_A[col][row] == a0)) {
+    	++col;
+    }
+    return ((qp_A[col][row] > a0) ? col + 1 : -(col + 1));
+}
+
 
 // transition (to phase II)
 // ------------------------
@@ -909,14 +1136,14 @@ ratio_test_2( Tag_false)
     Value_iterator  q_it = q_x_O.begin();
     Index_iterator  i_it;
     for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it > et0) && ( ( *x_it * q_i) > ( x_i * *q_it))) {
+	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
 	    i = *i_it; x_i = *x_it; q_i = *q_it;
 	}
     }
     x_it = x_B_S.begin();
     q_it = q_x_S.begin();
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it > et0) && ( ( *x_it * q_i) > ( x_i * *q_it))) {
+	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
 	    i = *i_it; x_i = *x_it; q_i = *q_it;
 	}
     }
