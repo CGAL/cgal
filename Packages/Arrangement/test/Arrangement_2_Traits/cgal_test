@@ -51,7 +51,7 @@ compile_and_run()
 	fi
     done
   else
-    echo   "   ERROR:    not executed   ${EXEC_AND_DATAFILE}" >> $ERRORFILE
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
   fi
 
   eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
