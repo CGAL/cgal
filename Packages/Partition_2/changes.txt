@@ -1,5 +1,8 @@
 - Added missing typename
 
+1.51 (28 June 2003) [rursu]
+- fixed demo/Partition_2/makefile for FreeBSD
+
 1.50
 - Bugfix: Replaced one more occurence of  Circulator_list with std::vector
 1.49 (20 June 2003)
