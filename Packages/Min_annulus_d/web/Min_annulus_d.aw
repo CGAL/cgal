@@ -52,6 +52,8 @@
     \ccGlobalScope\ccc{ON_BOUNDARY},}
   \ccPropagateThreeToTwoColumns}
 
+\newcommand{\ccRequirements}{\ccHeading{Requirements}}
+\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
 
 @! ============================================================================
 @! Title
@@ -284,13 +286,6 @@ in the \cgal\ Reference Manual.
 @p maximum_input_line_length = 81
 
 @! ----------------------------------------------------------------------------
-@! Concept: Min_annulus_d_traits
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Concept}{Min\_annulus\_d\_traits}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_annulus_d_traits.tex}
-
-@! ----------------------------------------------------------------------------
 @! Class: Min_annulus_d
 @! ----------------------------------------------------------------------------
 
@@ -320,6 +315,13 @@ in the \cgal\ Reference Manual.
 \subsectionRef{Class}{%
   CGAL::Min\_annulus\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_annulus_d_traits_d.tex}
+
+@! ----------------------------------------------------------------------------
+@! Concept: Min_annulus_d_traits
+@! ----------------------------------------------------------------------------
+
+\subsectionRef{Concept}{Min\_annulus\_d\_traits}
+\input{../doc_tex/basic/Optimisation/Optimisation_ref/Min_annulus_d_traits.tex}
 
 @p maximum_input_line_length = 80
 

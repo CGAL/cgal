@@ -47,41 +47,45 @@ algorithm computes a pair of support sets $S_P$ and $S_Q$ with realizing
 points $p$ and $q$ which remain fixed until the next set, insert, or clear
 operation.
 
-The class \ccRefName\ expects a model of the concept
-\ccc{Polytope_distance_d_traits} as its template argument. We provide the
-models \ccc{Polytope_distance_d_traits_2},
-\ccc{Polytope_distance_d_traits_3}, and \ccc{Polytope_distance_d_traits_d}
-for two-, three-, and $d$-dimensional input points, respectively.
-
 \ccInclude{CGAL/Polytope_distance_d.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{Traits} is a model for
+\ccc{Polytope_distance_d_traits}.
+
+We provide the models \ccc{Polytope_distance_d_traits_2},
+\ccc{Polytope_distance_d_traits_3}, and \ccc{Polytope_distance_d_traits_d}
+using the two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSetTwoColumns{\ccRefName:: Point}{}
 
-\ccNestedType{ Point}{ Typedef to \ccc{Traits::Point_d}.
+\ccNestedType{ Point}{ typedef to \ccc{Traits::Point_d}.
         Point type used to represent the input points.}
 
-\ccNestedType{ FT}{ Typedef to \ccc{Traits::FT}.
+\ccNestedType{ FT}{ typedef to \ccc{Traits::FT}.
         Number type used to return the squared distance
         between the two polytopes.}
 
-\ccNestedType{ ET}{ Typedef to \ccc{Traits::ET}.
+\ccNestedType{ ET}{ typedef to \ccc{Traits::ET}.
         Number type used to do the exact computations in the underlying
         solver for quadratic programs (cf.~\textbf{Implementation}).}
 
 \ccNestedType{ Point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the points
         of the two polytopes.}
 
 \ccNestedType{ Support_point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the support points.}
 
 \ccNestedType{ Coordinate_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{ET}. Used to access the coordinates of
         the realizing points.}
 
@@ -334,53 +338,55 @@ for two-, three-, and $d$-dimensional input points, respectively.
         \ccVar\ccc{.ambient_dimension()}.}
 
 % -----------------------------------------------------------------------------
-\begin{ccAdvanced}
-  \nopagebreak
-  \ccHeading{Validity Check}
+\ccHeading{Validity Check}
 
-  An object \ccVar\ is valid, iff
-  \ldots
-  \begin{itemize}
-    \item \ccVar\ contains all points of its defining set $P$,
-    \item \ccVar\ is the smallest sphere containing its support set $S$, and
-    \item $S$ is minimal, i.e.\ no support point is redundant.
-  \end{itemize}
+An object \ccVar\ is valid, iff
+\ldots
+\begin{itemize}
+  \item \ccVar\ contains all points of its defining set $P$,
+  \item \ccVar\ is the smallest sphere containing its support set $S$, and
+  \item $S$ is minimal, i.e.\ no support point is redundant.
+\end{itemize}
 
-  \ccMemberFunction{ bool is_valid( bool verbose = false,
-                                    int  level   = 0    ) const;}{
-        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
-        \ccc{true}, some messages concerning the performed checks are
-        written to standard error stream. The second parameter
-        \ccc{level} is not used, we provide it only for consistency
-        with interfaces of other classes.}
-
-\end{ccAdvanced}
+\ccMemberFunction{ bool is_valid( bool verbose = false,
+                                  int  level   = 0    ) const;}{
+      returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
+      \ccc{true}, some messages concerning the performed checks are
+      written to standard error stream. The second parameter
+      \ccc{level} is not used, we provide it only for consistency
+      with interfaces of other classes.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
 
+\def\ccTagRmConstRefPair{\ccFalse}
+
 \ccMemberFunction{ const Traits&  traits( ) const;}{
         returns a const reference to the traits class object.}
+
+\def\ccTagRmConstRefPair{\ccTrue}
 
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
 
-\ccFunction{ ostream& operator << ( ostream& os,
-                               const Polytope_distance_d<Traits>& poly_dist);}{
+\ccFunction{ std::ostream&
+             operator << ( std::ostream& os,
+                           const Polytope_distance_d<Traits>& poly_dist);}{
         writes \ccVar\ to output stream \ccc{os}.
-        \ccPrecond  The output operator is defined for \ccc{Point_d}.}
+        \ccRequire  The output operator is defined for \ccc{Point_d}.}
 
-\ccFunction{ istream& operator >> ( istream& is,
-                                    Polytope_distance_d<Traits>& poly_dist);}{
+\ccFunction{ std::istream&
+             operator >> ( std::istream& is,
+                           Polytope_distance_d<Traits> poly_dist&);}{
         reads \ccVar\ from input stream \ccc{is}.
-        \ccPrecond  The input operator is defined for \ccc{Point_d}.}
+        \ccRequire  The input operator is defined for \ccc{Point_d}.}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{\ccPureGlobalScope Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
 \ccRefIdfierPage{Polytope_distance_d_traits}
 
 % -----------------------------------------------------------------------------

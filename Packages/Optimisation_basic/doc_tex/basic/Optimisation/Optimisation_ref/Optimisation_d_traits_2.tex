@@ -20,10 +20,15 @@
 The class \ccRefName\ is a traits class for \ccc{Min_annulus_d<Traits>}
 using the two-dimensional \cgal\ kernel.
  
-The first template argument is expected to be a \cgal\ representation class.
-The second and third template argument have default type \ccc{R::RT}.
-
 \ccInclude{CGAL/Min_annulus_d_traits_2.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{R} is a model for \ccc{Kernel}. Template
+parameters \ccc{ET} and \ccc{NT} are models for \ccc{RingNumberType}.
+
+The second and third template parameter have default type \ccc{R::RT}.
 
 % -----------------------------------------------------------------------------
 \ccIsModel
@@ -36,31 +41,31 @@ The second and third template argument have default type \ccc{R::RT}.
 \ccSaveThreeColumns
 \ccSetTwoColumns{Min_annulus_d_traits_2<R,ET,NT>:: Rep_tag}{}
 
-\ccNestedType{Point_d}{Typedef to \ccc{R::Point_2}.}
+\ccNestedType{Point_d}{typedef to \ccc{R::Point_2}.}
 
-\ccNestedType{Rep_tag}{Typedef to \ccc{R::Rep_tag}.}
+\ccNestedType{Rep_tag}{typedef to \ccc{R::Rep_tag}.}
 
-\ccNestedType{RT}{Typedef to \ccc{R::RT}.}
-\ccNestedType{FT}{Typedef to \ccc{R::FT}.}
+\ccNestedType{RT}{typedef to \ccc{R::RT}.}
+\ccNestedType{FT}{typedef to \ccc{R::FT}.}
 
 \ccNestedType{Access_dimension_d}{%
-  Typedef to \ccc{R::Access_dimension_2}.}
+  typedef to \ccc{R::Access_dimension_2}.}
 \ccNestedType{Access_coordinates_begin_d}{%
-  Typedef to \ccc{R::Access_coordinates_begin_2}.}
+  typedef to \ccc{R::Access_coordinates_begin_2}.}
 
 \ccNestedType{Construct_point_d}{%
-  Typedef to \ccc{R::Construct_point_2}.}
+  typedef to \ccc{R::Construct_point_2}.}
 
-\ccNestedType{ET}{Second template argument (default is \ccc{R::RT}).}
-\ccNestedType{NT}{Third  template argument (default is \ccc{R::RT}).}
+\ccNestedType{ET}{second template parameter (default is \ccc{R::RT}).}
+\ccNestedType{NT}{third  template parameter (default is \ccc{R::RT}).}
 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{ Min_annulus_d_traits_2( );}{Default constructor.}
+\ccConstructor{ Min_annulus_d_traits_2( );}{default constructor.}
 \ccConstructor{ Min_annulus_d_traits_2(
-                   const Min_annulus_d_traits_2<R,ET,NT>&);}{Copy constructor.}
+                   const Min_annulus_d_traits_2<R,ET,NT>&);}{copy constructor.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
@@ -84,9 +89,10 @@ object.
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d<Traits>}\\[1ex]
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{Min_annulus_d_traits}
 
 % -----------------------------------------------------------------------------
 

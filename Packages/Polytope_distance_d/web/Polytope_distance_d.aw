@@ -46,9 +46,10 @@
 \newcommand{\cgalColumnLayout}{%
   \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
   \ccPropagateThreeToTwoColumns}
-\newcommand{\cgalPolytopeDistanceLayout}{%
-  \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
-  \ccPropagateThreeToTwoColumns}
+\newcommand{\cgalPolytopeDistanceLayout}{\cgalColumnLayout}
+
+\newcommand{\ccRequirements}{\ccHeading{Requirements}}
+\newcommand{\ccRequire}{\ccCommentHeading{Requirements}}
 
 
 @! ============================================================================
@@ -173,13 +174,6 @@ in the \cgal\ Reference Manual.
 @p maximum_input_line_length = 87
 
 @! ----------------------------------------------------------------------------
-@! Concept: Polytope_distance_d_traits
-@! ----------------------------------------------------------------------------
-
-\subsectionRef{Concept}{Polytope\_distance\_d\_traits}
-\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits.tex}
-
-@! ----------------------------------------------------------------------------
 @! Class: Polytope_distance_d
 @! ----------------------------------------------------------------------------
 
@@ -209,6 +203,13 @@ in the \cgal\ Reference Manual.
 \subsectionRef{Class}{%
   CGAL::Polytope\_distance\_d\_traits\_d\texttt{<}R,ET,NT\texttt{>}}
 \input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits_d.tex}
+
+@! ----------------------------------------------------------------------------
+@! Concept: Polytope_distance_d_traits
+@! ----------------------------------------------------------------------------
+
+\subsectionRef{Concept}{Polytope\_distance\_d\_traits}
+\input{../doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d_traits.tex}
 
 @p maximum_input_line_length = 80
 

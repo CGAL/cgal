@@ -39,52 +39,55 @@ The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
 empty or points may occur more than once. The algorithm computes a support
 set $S$ which remains fixed until the next set, insert, or clear operation.
 
-The class \ccRefName\ expects a model of the concept
-\ccc{Min_annulus_d_traits} as its template argument. We provide the
-models \ccc{Min_annulus_d_traits_2}, \ccc{Min_annulus_d_traits_3}, and
-\ccc{Min_annulus_d_traits_d} for two-, three-, and $d$-dimensional
-input points, respectively.
-
 \ccInclude{CGAL/Min_annulus_d.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{Traits} is a model for \ccc{Min_annulus_d_traits}.
+
+We provide the models \ccc{Min_annulus_d_traits_2},
+\ccc{Min_annulus_d_traits_3}, and \ccc{Min_annulus_d_traits_d} using the
+two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSetTwoColumns{\ccRefName:: Point}{}
 
-\ccNestedType{ Point}{ Typedef to \ccc{Traits::Point_d}.
+\ccNestedType{ Point}{ typedef to \ccc{Traits::Point_d}.
         Point type used to represent the input points.}
 
-\ccNestedType{ FT}{ Typedef to \ccc{Traits::FT}.
+\ccNestedType{ FT}{ typedef to \ccc{Traits::FT}.
         Number type used to return the squared radii of the smallest
         enclosing annulus.}
 
-\ccNestedType{ ET}{ Typedef to \ccc{Traits::ET}.
+\ccNestedType{ ET}{ typedef to \ccc{Traits::ET}.
         Number type used to do the exact computations in the underlying
         solver for quadratic programs (cf.~\textbf{Implementation}).}
 
 \ccNestedType{ Point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the points
         of the smallest enclosing annulus.}
 
 \ccNestedType{ Support_point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the support points
         of the smallest enclosing annulus.}
 
 \ccNestedType{ Inner_support_point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the inner support points
         of the smallest enclosing annulus.}
 
 \ccNestedType{ Outer_support_point_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{Point}. Used to access the outer support points
         of the smallest enclosing annulus.}
 
 \ccNestedType{ Coordinate_iterator}{
-        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
         with value type \ccc{ET}. Used to access the coordinates of
         the center of the smallest enclosing annulus.}
 
@@ -229,7 +232,7 @@ and the outer sphere. The boundary is the union of both spheres. By
 definition, an empty annulus has no boundary and no bounded side, i.e.~its
 unbounded side equals the whole space $\E_d$.
 
-\ccMemberFunction{ \ccGlobalScope Bounded_side
+\ccMemberFunction{ \ccPureGlobalScope Bounded_side
                    bounded_side( const Point& p) const;}{
         returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
         \ccGlobalScope\ccc{ON_BOUNDARY}, or
@@ -292,53 +295,55 @@ unbounded side equals the whole space $\E_d$.
         \ccVar\ccc{.ambient_dimension()}.}
 
 % -----------------------------------------------------------------------------
-\begin{ccAdvanced}
-  \nopagebreak
-  \ccHeading{Validity Check}
+\ccHeading{Validity Check}
 
-  An object \ccVar\ is valid, iff
-  \begin{itemize}
-    \item \ccVar\ contains all points of its defining set $P$,
-    \item \ccVar\ is the smallest annulus containing its support set $S$, and
-    \item $S$ is minimal, i.e.\ no support point is redundant.
-  \end{itemize}
+An object \ccVar\ is valid, iff
+\begin{itemize}
+  \item \ccVar\ contains all points of its defining set $P$,
+  \item \ccVar\ is the smallest annulus containing its support set $S$, and
+  \item $S$ is minimal, i.e.\ no support point is redundant.
+\end{itemize}
 
-  \ccMemberFunction{ bool is_valid( bool verbose = false,
-                                    int  level   = 0    ) const;}{
-        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
-        \ccc{true}, some messages concerning the performed checks are
-        written to standard error stream. The second parameter
-        \ccc{level} is not used, we provide it only for consistency
-        with interfaces of other classes.}
-
-\end{ccAdvanced}
+\ccMemberFunction{ bool is_valid( bool verbose = false,
+                                  int  level   = 0    ) const;}{
+      returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
+      \ccc{true}, some messages concerning the performed checks are
+      written to standard error stream. The second parameter
+      \ccc{level} is not used, we provide it only for consistency
+      with interfaces of other classes.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Miscellaneous}
 
+\def\ccTagRmConstRefPair{\ccFalse}
+
 \ccMemberFunction{ const Traits&  traits( ) const;}{
         returns a const reference to the traits class object.}
+
+\def\ccTagRmConstRefPair{\ccTrue}
 
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
 
-\ccFunction{ ostream& operator << ( ostream& os,
-                                   const Min_annulus_d<Traits>& min_annulus);}{
+\ccFunction{ std::ostream&
+             operator << ( std::ostream& os,
+                           const Min_annulus_d<Traits>& min_annulus);}{
         writes \ccVar\ to output stream \ccc{os}.
-        \ccPrecond  The output operator is defined for \ccc{Point_d}.}
+        \ccRequire  The output operator is defined for \ccc{Point}.}
 
-\ccFunction{ istream& operator >> ( istream& is,
-                                    Min_annulus_d<Traits>& min_annulus);}{
+\ccFunction{ std::istream&
+             operator >> ( std::istream& is,
+                           Min_annulus_d<Traits> min_annulus&);}{
         reads \ccVar\ from input stream \ccc{is}.
-        \ccPrecond  The input operator is defined for \ccc{Point_d}.}
+        \ccRequire  The input operator is defined for \ccc{Point}.}
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_2<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_3<R,ET,NT>}\\
-\ccRefIdfierPage{CGAL::Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{\ccPureGlobalScope Min_sphere_d<Traits>}\\[1ex]
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{\ccPureGlobalScope Min_annulus_d_traits_d<R,ET,NT>}\\[1ex]
 \ccRefIdfierPage{Min_annulus_d_traits}
 
 % -----------------------------------------------------------------------------
@@ -352,10 +357,8 @@ programs~\cite{gs-eegqp-00}.
 
 The creation time is almost always linear in the number of points.
 Access functions and predicates take constant time, inserting a point
-might take up to linear time.
-%, but substantially less than computing
-%the new smallest enclosing annulus from scratch.
-The clear operation and the check for validity each take linear time.
+might take up to linear time.  The clear operation and the check for
+validity each take linear time.
 
 % -----------------------------------------------------------------------------
 
