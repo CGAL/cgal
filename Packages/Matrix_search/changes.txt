@@ -5,3 +5,7 @@
 //-----------------------------------------------------------------------
 //	actual revision
 //-----------------------------------------------------------------------
+DEMO: some minor changes to prevent warnings for gcc -Wall.
+DOCS: some minor changes to prevent warnings for gcc -Wall.
+TEST: some minor changes to prevent warnings for gcc -Wall.
+SRC : some minor changes to prevent warnings for gcc -Wall.
