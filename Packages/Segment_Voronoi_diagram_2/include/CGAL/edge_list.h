@@ -28,7 +28,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define USE_BF 0
+#define USE_BF      0
+#define USE_STD_MAP 1
+#define USE_INIT    0
 
 namespace CGALi {
 
@@ -44,7 +46,7 @@ public:
   template<class Edge>
   result_type operator()(const Edge& e) const
   {
-    return Base::operator()(e.first) * (e.second + 1);
+    return (Base::operator()(e.first)) << e.second;
   }
 };
 
@@ -57,21 +59,23 @@ private:
   typedef Edge_list_item<Edge>        Self;
 
 private:
-  Edge next_;
   Edge prev_;
+  Edge next_;
 
 public:
   // remove the following method and make SENTINEL_EDGE a static const
   // member of the class.
   static Edge sentinel_edge() {
-    return Edge(Face_handle(), sentinel_index());
+    static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
+    return SENTINEL_EDGE;
   }
 private:
   static int sentinel_index() { return -1; }
 
 private:
+#if USE_INIT
   void init() {
-    Edge SENTINEL_EDGE = sentinel_edge();
+    static Edge SENTINEL_EDGE = sentinel_edge();
     init( SENTINEL_EDGE, SENTINEL_EDGE );
   }
 
@@ -79,13 +83,19 @@ private:
     next_ = next;
     prev_ = prev;
   }
+#endif
 
 public:
+#if USE_INIT
   Edge_list_item() { init(); }
   Edge_list_item(const Edge& prev, const Edge& next)
-  {
-    init(prev, next);
-  }
+  { init(prev, next); }
+#else
+  Edge_list_item()
+    : prev_(sentinel_edge()), next_(sentinel_edge()) {}
+  Edge_list_item(const Edge& prev, const Edge& next)
+    : prev_(prev), next_(next) {}
+#endif
 
   bool is_in_list() const
   {
@@ -119,8 +129,12 @@ class Edge_list
 {
 private:
   typedef CGALi::Edge_list_item<Edge>     List_item;
+#if USE_STD_MAP
+  typedef std::map<Edge,List_item>        Edge_map;
+#else
   typedef
   Unique_hash_map<Edge,List_item,CGALi::Edge_hash_function> Edge_map;
+#endif
 
 public:
   // TYPES
@@ -176,8 +190,14 @@ public:
   bool is_valid() const { return true; }
 
   bool is_in_list(const Edge& e) const {
+#if USE_STD_MAP
+    if ( emap.find(e) == emap.end() ) { return false; }
+    return emap.find(e)->second.is_in_list();
+    //    return li_e.is_in_list();
+#else
     if ( !emap.is_defined(e) ) { return false; }
     return emap[e].is_in_list();
+#endif
   }
 
 public:
@@ -189,12 +209,20 @@ public:
 
   const Edge& next(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
+#if USE_STD_MAP
+    return emap.find(e)->second.next();
+#else
     return emap[e].next();
+#endif
   }
 
   const Edge& previous(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
+#if USE_STD_MAP
+    return emap.find(e)->second.previous();
+#else
     return emap[e].previous();
+#endif
   }
 
   const Edge& front() const {
