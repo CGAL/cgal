@@ -1748,6 +1748,7 @@ Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stl_concepts.eps -text 
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/stock.ppt -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/subdivision.eps -text
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/teaser.eps -text
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/trimming.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Visibility_complex/doc_tex/Visibility_complex/fig/halfedge.ips -text

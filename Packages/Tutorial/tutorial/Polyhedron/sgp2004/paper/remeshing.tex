@@ -9,13 +9,13 @@ remeshing. Most meshes, be they modeled or acquired by a scanning
 device, can this way be considerably improved in order to ease the
 visualization as well as the processing (see \cite{ss-dgp-01}). CGAL
 has proven successful at easing the combination of several components
-used for remeshing. We now give some details over the components used
-for isotropic~\cite{acdi-isr-03} as well as for anisotropic
-remeshing~\cite{acdld-apr-03}.
+used for remeshing. We now give some details over the software
+components used for isotropic~\cite{acdi-isr-03} as well as for
+anisotropic remeshing~\cite{acdld-apr-03}.
 
 \subsection{Isotropic Remeshing}
 
-% isotropic remeshing, what is that ?
+% isotropic remeshing, what for ?
 
 Isotropic remeshing leads to well-shaped triangles, and thus
 high-quality meshes for applications where the compactness of the mesh
@@ -43,7 +43,7 @@ Fig.\ref{fig:isotropic}).
 
 % CGAL components
 
-Two data structures from CGAL have been used to assemble the
+Two key data structures from CGAL have been used to assemble the
 algorithm:
 
 \begin{itemize}
@@ -51,58 +51,102 @@ algorithm:
 \item 
 The \emph{Polyhedron} has been used to represent the input mesh, after
 having enriched its primitives to store $u,v$ parameter coordinates
-per halfedge in addition to the 3D coordinates per vertex.
+per halfedge (hence per corner) in addition to the 3D coordinates per
+vertex.
 
 \item 
-After initial sampling the \emph{constrained Delaunay triangulation}
-has been used together with Lloyd's clustering algorithm to build a
-weighted centroidal Voronoi diagram over the new sample points in
-parameter space. The fast point location in a triangulation provided
-by CGAL has been used to determine the final 3D coordinates of the
-sample points.
+After initial sampling the \emph{2D constrained Delaunay
+triangulation} has been used together with Lloyd's clustering
+algorithm to build a weighted centroidal Voronoi diagram over the new
+sample points in parameter space. The fast point location in a
+triangulation provided by CGAL has been used to determine the final 3D
+coordinates of the sample points.
 
 \end{itemize}
 
-The CGAL kernel is used to template these two data structures as well
-as all algorithms involved in our remeshing technique
-(parameterization, error diffusion for sampling, Lloyd's clustering
-for sample placement and point location), which nicely unifies all
-components of the algorithm and provides us with genericity for all
-geometric entities and predications. An important feature provided by
-CGAL is the filtered kernel~\cite{bbp-iayed-01,p-iaeia-99}, which
-gives robustness required for complex models by mixing exact and
-floating point arithmetic in a transparent manner for the programmer.
+The CGAL kernel is used as template parameter in these two data
+structures as well as in all algorithms involved in our remeshing
+technique (parameterization, error diffusion for sampling, Lloyd's
+clustering for sample placement and point location). The kernel thus
+nicely unifies all components of the algorithm and provides us with
+genericity for all simple geometric primitives and predicates. An
+important feature provided by CGAL is the \emph{filtered}
+kernel~\cite{bbp-iayed-01,p-iaeia-99}, which gives robustness required
+for complex models by mixing exact and floating point arithmetic in a
+transparent manner for the programmer.
 
 \subsection{Anisotropic Remeshing}
 
-% anisotropic remeshing, what is that ?
+% anisotropic remeshing, what for ?
 
 Beside quality of the mesh elements, remeshing techniques are also
 concerned by approximation efficiency. When accurate representation is
-needed, a strategic sizing, alignement and aspect ratio of the mesh
+needed, a strategic sizing, alignment and aspect ratio of the mesh
 elements is crucial. This is a consequence of the natural anisotropic
 nature of generic surfaces.
 
 % main idea
 
 The main idea of the anisotropic remeshing technique described in
-\cite{acdld-apr-03} consists of tracing two orthogonal sets of streamlines
-in a conformal parameter space to align mesh edges along principal
-curvature lines and therefore respect the local symmetries. A careful
-control of the streamline density allows us to improve the mesh
-efficiency so as to match the optimality conditions for the $\Ltwo$
-metric in the limit. Such a strategy produces quad-dominant meshes as
-illustrated by Fig.\ref{fig:anisotropic}.
+\cite{acdld-apr-03} consists of tracing on anisotropic areas two 
+orthogonal sets of streamlines in a conformal parameter space to align
+mesh edges along principal curvature lines and therefore respect the
+local symmetries. A careful control of the density of streamlines
+allows us to improve the mesh efficiency so as to match the optimality
+conditions for the $\Ltwo$ metric in the limit. On spherical areas the
+algorithm simply switches to isotropic point sampling strategy. This
+remeshing technique produces quad-dominant meshes as illustrated by
+Fig.\ref{fig:anisotropic}.
 
+% figure anisotropic remeshing
+\begin{figure}
+  \centering
+  \epsfig{file=figs/anisotropic.eps, width=\linewidth}
+  \caption{Anisotropic remeshing.}
+  \label{fig:anisotropic}
+\end{figure}
 
-Building blocks taken from CGAL:
-- Polyhedron (enriched primitives to store curvature tensors per
-vertex or per corner, plus uv coordinates)
-- 2D constrained Delaunay triangulation
+As for the isotropic remeshing technique described above, the
+\emph{Polyhedron} has been used to represent the input mesh. Its
+primitives have been enriched so as to store two $u,v$ parameter
+coordinates per halfedge, and both 3D and 2D curvature tensors per
+vertex, or per halfedge on feature vertices.
 
-Algorithms:
-- Conformal parameterization
-- Curvature tensor estimator
-- Placement of streamlines
-- A bunch of algorithms which I cannot list here
+Extracting the new quad-dominant mesh is another matter since it has
+to be deduced from intersection, then straightening of streamlines.
+In anisotropic regions, we traced lines of curvature using polyline
+approximations while we used regular sample points on spherical
+regions. The \italic{vertices} will therefore be the intersections of
+curvature lines, and the isotropic samples that we spread. While the
+isotropic samples do not require any specific treatment, computing the
+line intersection has to be performed.  In order to perform these
+intersections quickly, as well as to prepare the straightening stage,
+we make use of the 2D constrained Delaunay triangulation (CDT) from
+CGAL, in parameter space. The key idea is to embed the quad-dominant
+polygon mesh within a triangulation through the constrained edges. We
+enter all the little segments defining the streamlines sequentially as
+constraints.  Finally, the isotropic samples are added as vertices in
+the CDT. The vertices, intersection of streamlines, have
+\italic{automatically} been added to the CDT since two intersecting
+edge constraints will generate a vertex insertion. The
+edge-straightening stage is applied by repeatedly eliminating vertices
+from the triangulation while adding new constrained edges until only
+intersection and isotropic vertices remain (see
+Fig.\ref{fig:trimming}).
+
+% figure trimming
+\begin{figure}
+  \centering
+  \epsfig{file=figs/trimming.eps, width=\linewidth}
+  \caption{Remeshing phase: a dome-like shape is sampled with lines of
+  curvatures. All the curvature line segments (red/blue) and the
+  feature edges (green) are added as constraints in a CDT in parameter
+  space. The CDT creates a dense triangulation; a rapid vertex
+  decimation (A,B) then suppresses most small edges, and leaves only
+  few vertices, defining a coarse polygonal mesh. Adding constraint
+  edges to the umbilic (center) point takes care of the near-spherical
+  cap.}
+  \label{fig:trimming}
+\end{figure}
+
 
