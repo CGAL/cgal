@@ -1,3 +1,6 @@
+2.25
+- Added time_t to std for msvc.
+
 2.24
 - Borland fix.
 
