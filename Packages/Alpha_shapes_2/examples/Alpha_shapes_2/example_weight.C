@@ -118,7 +118,7 @@ file_input(std::list<Point>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(p);
+      L.push_back(Point (p.point(),10.0));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
