@@ -212,6 +212,7 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
 //--------------------------------------------------------------------
 // insertion of a point
 //--------------------------------------------------------------------
+
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
@@ -350,9 +351,6 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
     s = incircle(f, t);
 
-    //    std::cout << "t: " << t << std::endl;
-    //    std::cout << "incircle: " << s << std::endl;
-
     sign_map[f] = s;
 
     if ( s == NEGATIVE ) {
@@ -384,9 +382,6 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 	// still check pretending that both signs where positive
 	interior_in_conflict = edge_interior(e, t, POSITIVE);
       }
-
-      std::cout << "t: " << t << std::endl;
-      std::cout << "interior: " << interior_in_conflict << std::endl;
 
       if ( interior_in_conflict ) { break; }
       ++ec;
@@ -425,8 +420,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 }
 
 //--------------------------------------------------------------------
-// insertion of a on a segment point
+// insertion of a point that lies on a segment
 //--------------------------------------------------------------------
+
 template<class Gt, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Face_pair
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
@@ -649,20 +645,19 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	return insert_intersecting_segment(ss, t, vv, itag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
 	Intersections_tag itag;
-	// MK::ERROR: this works only if vv has is_exact(1)
-	Point_handle ph = vv->storage_site().point_handle(1);
-	Storage_site_2 ssi(ph);
-	Storage_site_2 sss = split_storage_site(ss, ssi, 1, itag);
-	Vertex_handle vp = second_endpoint_of_segment(vv);
+
+	Vertex_handle vp = second_endpoint_of_segment(vv);	
+	Storage_site_2 ssvp = vp->storage_site();
+	Storage_site_2 sss = split_storage_site(ss, ssvp, 1, itag);
+
 	return insert_segment_interior(sss.site(), sss, vp);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
 	Intersections_tag itag;
-	// MK::ERROR: this works only if vv has is_exact(0)
-	//	CGAL_assertion( false );
-	Point_handle ph = vv->storage_site().point_handle(0);
-	Storage_site_2 ssi(ph);
-	Storage_site_2 sss = split_storage_site(ss, ssi, 0, itag);
-	Vertex_handle vp = first_endpoint_of_segment(vv);
+
+	Vertex_handle vp = first_endpoint_of_segment(vv);	
+	Storage_site_2 ssvp = vp->storage_site();
+	Storage_site_2 sss = split_storage_site(ss, ssvp, 0, itag);
+
 	return insert_segment_interior(sss.site(), sss, vp);
       } else {
 	// this should never be reached; the only possible values for
@@ -935,23 +930,7 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
     if ( !interior_in_conflict ) { continue; }
 
-    if ( face_registered ) {
-#if 0
-      Edge e = sym_edge(f, i);
-      if ( l.is_in_list(e) ||
-	   l.is_in_list(sym_edge(e)) ) {
-	l.remove(e);
-	l.remove(sym_edge(e));
-
-	// we should have never reached this point...
-	// this check is done mainly for debugging; in the final
-	// version these if-statements should be removed.
-	bool loop_in_conflict_region_found(false);
-	CGAL_assertion( loop_in_conflict_region_found );
-      }
-#endif
-      continue;
-    }
+    if ( face_registered ) { continue; }
 
     Edge e = sym_edge(f, i);
 

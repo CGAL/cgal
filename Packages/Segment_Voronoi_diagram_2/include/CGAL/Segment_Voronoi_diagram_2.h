@@ -493,7 +493,12 @@ public:
     return insert_segment(Site_2::construct_site_2(p0, p1), vnear);
   }
 
-  Vertex_handle  insert(const Site_2& t) {
+  inline Vertex_handle  insert(const Site_2& t) {
+    return insert(t, Vertex_handle());
+  }
+
+  Vertex_handle  insert(const Site_2& t, Vertex_handle vnear)
+  {
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
     CGAL_precondition( t.is_exact() );
@@ -502,21 +507,15 @@ public:
     register_input_site(t);
 
     if ( t.is_segment() ) {
-      return insert_segment(t, Vertex_handle());
+      return insert_segment(t, vnear);
     } else if ( t.is_point() ) {
-      return insert_point(t.point(), Vertex_handle());
+      return insert_point(t.point(), vnear);
     } else {
       CGAL_precondition ( t.is_defined() );
       return Vertex_handle(); // to avoid compiler error
     }
   }
 
-#if 0
-  Vertex_handle  insert(const Site_2& t, Vertex_handle vnear)
-  {
-    return insert(t, vnear, true);
-  }
-#endif
 
 protected:
   inline void register_input_site(const Point_2& p)
@@ -1100,14 +1099,6 @@ protected:
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
 			    const Site_2& t3, const Site_2& t4,
 			    const Site_2& q,  Sign sgn) const {
-#if 0
-    std::cout << "t1: " << t1 << std::endl;
-    std::cout << "t2: " << t2 << std::endl;
-    std::cout << "t3: " << t3 << std::endl;
-    std::cout << "t4: " << t4 << std::endl;
-    std::cout << "q : " << q << std::endl;
-    std::cout << "sign: " << sgn << std::endl;
-#endif
     return
       geom_traits().finite_edge_interior_conflict_2_object()
       (t1,t2,t3,t4,q,sgn);
