@@ -11,7 +11,6 @@
 // release_date  : 
 //
 // file          : include/CGAL/Kernel/function_objects.h
-// package       : Kernel_basic
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra <Stefan.Schirra@@mpi-sb.mpg.de>
@@ -1007,7 +1006,7 @@ class Compare_xy
     template <class T1, class T2>
     Comparison_result
     operator()( const T1& a1, const T2& a2) const
-    { return compare_lexicographically_xy(a1,a2); }
+    { return compare_xy(a1,a2); }
 };
 
 class Compare_xyz
@@ -1019,7 +1018,7 @@ class Compare_xyz
     template <class T1, class T2>
     Comparison_result
     operator()( const T1& a1, const T2& a2) const
-    { return compare_lexicographically_xyz(a1,a2); }
+    { return compare_xyz(a1,a2); }
 };
 
 class Compare_y_at_x

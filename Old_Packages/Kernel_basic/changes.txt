@@ -1,3 +1,10 @@
+3.53   (?? July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and 
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
 3.52   (18 July 2001)
 - changed Less_distance_to_point_[23] to use default construction
 - changed Less_rotate_ccw_2 to use default construction

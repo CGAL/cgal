@@ -34,8 +34,13 @@ enum  Sign
 
 typedef Sign Orientation;
 
+const Orientation  LEFT_TURN  = POSITIVE;
+const Orientation  RIGHT_TURN = NEGATIVE;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 const Orientation  LEFTTURN   = POSITIVE;
 const Orientation  RIGHTTURN  = NEGATIVE;
+#endif
 
 const Orientation  CLOCKWISE  = NEGATIVE;
 const Orientation  COUNTERCLOCKWISE = POSITIVE;

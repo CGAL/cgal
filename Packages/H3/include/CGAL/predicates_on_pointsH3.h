@@ -11,8 +11,8 @@
 // release       : 
 // release_date  : 
 // 
-// file          : predicates_on_pointsH3.h
-// package       : H3
+// file          : include/CGAL/predicates_on_pointsH3.h
+// package       : H3 
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -53,8 +53,7 @@ z_equal(const PointH3<R> &p,
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_lexicographically_xyz(const PointH3<R>& p,
-                                   const PointH3<R>& q)
+compare_xyz(const PointH3<R>& p, const PointH3<R>& q)
 {
   typedef typename R::RT RT;
   RT pV = p.hx()*q.hw();
@@ -90,6 +89,16 @@ compare_lexicographically_xyz(const PointH3<R>& p,
       return (qV < pV) ? LARGER : EQUAL;
   }
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_xyz(const PointH3<R>& p, const PointH3<R>& q)
+{
+   return compare_xyz(p, q);
+}
+#endif
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -195,8 +204,7 @@ bool lexicographically_xy_smaller(const PointH3<R> &p,
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_lexicographically_xy(const PointH3<R>& p,
-                             const PointH3<R>& q)
+compare_xy(const PointH3<R>& p, const PointH3<R>& q)
 {
   typedef typename R::RT RT;
   RT pV = p.hx()*q.hw();
@@ -223,6 +231,16 @@ compare_lexicographically_xy(const PointH3<R>& p,
   // same x and y
   return EQUAL;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_xy(const PointH3<R>& p, const PointH3<R>& q)
+{
+   return compare_xy(p, q);
+}
+#endif
 
 template < class R >
 inline

@@ -121,7 +121,7 @@ Comparison_result
 compare_xy(const PointC3<R CGAL_CTAG> &p, 
 	   const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xy(p.x(), p.y(), q.x(), q.y()); 
+  return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()); 
 }
 
 template < class R >
@@ -149,6 +149,15 @@ lexicographically_xy_smaller(const PointC3<R CGAL_CTAG> &p,
 			     const PointC3<R CGAL_CTAG> &q)
 { 
   return compare_lexicographically_xy(p, q) == SMALLER;
+}
+
+template < class R >
+Comparison_result
+compare_xyz(const PointC3<R CGAL_CTAG> &p,
+                              const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xyzC3(p.x(), p.y(), p.z(),
+                                         q.x(), q.y(), q.z());
 }
 
 template < class R >

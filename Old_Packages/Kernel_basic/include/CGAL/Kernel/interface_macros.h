@@ -254,9 +254,14 @@ CGAL_Kernel_pred(CGALi::Compare_angle_with_x_axis<Direction_2>,
 CGAL_Kernel_pred(CGALi::Counterclockwise_in_between,
 	         Counterclockwise_in_between_2,
 		 counterclockwise_in_between_2_object)
-CGAL_Kernel_pred(CGAL ::p_Leftturn<Point_2>,
+CGAL_Kernel_pred(CGAL ::p_Left_turn<Point_2>,
+                 Left_turn_2,
+                 left_turn_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
+CGAL_Kernel_pred(CGAL ::p_Left_turn<Point_2>,
 	         Leftturn_2,
 		 leftturn_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_pred(CGALi::p_Angle,
 	         Angle_2,
 		 angle_2_object)

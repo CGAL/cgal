@@ -39,7 +39,7 @@ public:
         {}
 
   bool  operator()(const Point& c) const
-        { return leftturn( p_a, p_b, c ); }
+        { return left_turn( p_a, p_b, c ); }
 
 private:
     Point p_a;
@@ -58,7 +58,7 @@ public:
         {}
 
   bool  operator()(const Point& c) const
-        { return rightturn( p_a, p_b, c ); }
+        { return right_turn( p_a, p_b, c ); }
 
 private:
     Point p_a;
@@ -79,7 +79,7 @@ public:
   bool  operator()(const Point& c) const
         {
           if ( (c == p_a) || ( c == p_b ) ) return false;
-          return leftturn( p_a, p_b, c );
+          return left_turn( p_a, p_b, c );
         }
 
 private:
@@ -142,7 +142,7 @@ public:
   bool  operator()(const Point& c, const Point& d) const
         {
           Comparison_result 
-            res = cmp_signed_dist_to_line( p_a, p_b, c, d);
+            res = compare_signed_distance_to_line( p_a, p_b, c, d);
           if ( res == LARGER )
           {
               return false;
@@ -173,7 +173,7 @@ public:
                    const Point& c, const Point& d) const
         {
           Comparison_result 
-            res = cmp_signed_dist_to_line( a, b, c, d);
+            res = compare_signed_distance_to_line( a, b, c, d);
           if ( res == LARGER )
           {
               return false;
@@ -204,7 +204,7 @@ public:
   bool  operator()(const Point& c, const Point& d) const
         {
           Comparison_result 
-            res = cmp_signed_dist_to_line( p_a, p_b, c, d);
+            res = compare_signed_distance_to_line( p_a, p_b, c, d);
           if ( res == LARGER )
           {
               return true;
@@ -409,7 +409,7 @@ public:
 
   bool  operator()(const Point& c, const Point& d) const
         {
-          Comparison_result res = cmp_signed_dist_to_line(l_ab, c, d);
+          Comparison_result res = compare_signed_distance_to_line(l_ab, c, d);
           if ( res == SMALLER )
           {
               return false;
@@ -449,7 +449,7 @@ public:
              line_constructed = true;
              l_ab = Line(a,b);
           }
-          Comparison_result res = cmp_signed_dist_to_line(l_ab, c, d);
+          Comparison_result res = compare_signed_distance_to_line(l_ab, c, d);
           if ( res == SMALLER )
           {
               return true;
@@ -487,7 +487,7 @@ public:
 
   bool  operator()(const Point& c, const Point& d) const
         {
-          Comparison_result res = cmp_signed_dist_to_line(l, c, d);
+          Comparison_result res = compare_signed_distance_to_line(l, c, d);
           if ( res == LARGER )
           {
               return true;
@@ -507,15 +507,35 @@ private:
 };
 
 template <class Point>
+struct p_Left_turn
+{
+  typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
+
+  bool  operator()(const Point& p, const Point& q, const Point& r) const
+        { return left_turn(p,q,r); }
+};
+
+template <class Point>
+struct p_Right_turn
+{
+  typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
+
+  bool  operator()(const Point& p, const Point& q, const Point& r) const
+        { return right_turn(p,q,r); }
+};
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class Point>
 struct p_Leftturn
 {
   typedef bool    result_type;
   typedef  Arity_tag< 3 >   Arity;
 
   bool  operator()(const Point& p, const Point& q, const Point& r) const
-        { return leftturn(p,q,r); }
+        { return left_turn(p,q,r); }
 };
-
 template <class Point>
 struct p_Rightturn
 {
@@ -523,8 +543,9 @@ struct p_Rightturn
   typedef  Arity_tag< 3 >   Arity;
 
   bool  operator()(const Point& p, const Point& q, const Point& r) const
-        { return rightturn(p,q,r); }
+        { return right_turn(p,q,r); }
 };
+#endif // CGAL_NO_DEPRECATED_CODE
 
 template <class Point>
 struct p_Orientation
