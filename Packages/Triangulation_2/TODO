@@ -1,3 +1,5 @@
+- change the return of get_conflicts and find_conflict to
+  an output iterator ?
 - doc de le triangulation reguliere a mettre a jour
   Julia a signale un bug sur le return des fonctions insert et remove
 - test de la regular hierarchy

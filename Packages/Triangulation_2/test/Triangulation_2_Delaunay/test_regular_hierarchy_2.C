@@ -26,54 +26,37 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/Weighted_point.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
-#include <CGAL/_test_cls_regular_triangulation_2.C>
 
-//__________
-typedef CGAL::Regular_triangulation_euclidean_traits_2  <Test_rep_cartesian, Ftype> RGt;
+#include <CGAL/_test_cls_regular_hierarchy_2.C>
+
+typedef CGAL::Regular_triangulation_euclidean_traits_2 <TestK, double> RGt;
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt> Vbb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
 typedef CGAL::Regular_triangulation_face_base_2<RGt>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>  Tds;
 typedef CGAL::Regular_triangulation_2<RGt,Tds>  Rt;
-typedef CGAL::Triangulation_hierarchy_2<Rt> Regular_triangulation_cartesian;
+typedef CGAL::Triangulation_hierarchy_2<Rt> Regular_hierarchy_cartesian;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Triangulation_hierarchy_2<Rt>;
 
-//__________
-typedef CGAL::Regular_triangulation_euclidean_traits_2  <Test_rep_homogeneous, Rtype> RGt2;
-typedef CGAL::Regular_triangulation_vertex_base_2<RGt2> Vbb2;
-typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb2> Vb2;
-typedef CGAL::Regular_triangulation_face_base_2<RGt2>  Fb2;
-typedef CGAL::Triangulation_data_structure_2<Vb2,Fb2>  Tds2;
-typedef CGAL::Regular_triangulation_2<RGt2,Tds2>  Rt2;
-typedef CGAL::Triangulation_hierarchy_2<Rt2> Regular_triangulation_homogeneous;
-// Explicit instantiation of the whole class :
-template class CGAL::Triangulation_hierarchy_2<Rt2>;
-
-
-
 
 int main()
 {
-  std::cout << "Testing Triangulation_hierarchy_2<Regular_triangulation_2>" <<std::endl;
+  std::cout << "Testing Triangulation_hierarchy_2<Regular_triangulation_2>" 
+	    <<std::endl;
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
 	    <<std::endl;
   std::cout << "using  Cartesian  points "   <<  std::endl;
 
   std::cout << "Testing hierarchy" << std::endl;
-  _test_cls_reg_triangulation_2( Regular_triangulation_cartesian() );
+  _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian() );
 
-  std::cout << "Testing Triangulation_hierarchy_2<Regular_triangulation_2>" <<std::endl;
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
-	    <<std::endl;
-  std::cout << "using  Homogeneous points "<< std::endl;
-
-  _test_cls_reg_triangulation_2( Regular_triangulation_homogeneous() );
 
   return 0;
 }

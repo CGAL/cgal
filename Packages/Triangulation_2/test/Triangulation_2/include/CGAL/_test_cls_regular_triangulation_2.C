@@ -56,7 +56,8 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   typedef typename Cls::Geom_traits          Gt;
 
   typedef typename Cls::Point                Point;
-  typedef typename Cls::Weighted_point       WPoint;
+  typedef typename Cls::Bare_point           Bare_point;
+  typedef typename Cls::Weighted_point       Weighted_point;
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;
 
@@ -89,49 +90,49 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   // p1,p3,p2,p9,p8 aligned in this order
   // p0,p5,p7 also
 
-  Point p0(5,6,1);
-  Point p1(1,9,1);
-  Point p2(6,14,1);
-  Point p3(4,12,1);
-  Point p4(3,29,1);
-  Point p5(6,7,1);
-  Point p6(6,39,1);
-  Point p7(8,9,1);
-  Point p8(10,18,1);
-  Point p9(75625,155625,10000); // intersection of p2,p8 and p6,p7
-  Point p10(10,50,2);
-  Point p11(6,15,2); // midpoint p1,p0
-  Point p12(6,16,2); // slightly above, in face
-  Point p13(10,11,1);
-  Point p14(10,40,1);
-  Point p15(60,-10,1);
+  Bare_point p0(5,6,1);
+  Bare_point p1(1,9,1);
+  Bare_point p2(6,14,1);
+  Bare_point p3(4,12,1);
+  Bare_point p4(3,29,1);
+  Bare_point p5(6,7,1);
+  Bare_point p6(6,39,1);
+  Bare_point p7(8,9,1);
+  Bare_point p8(10,18,1);
+  Bare_point p9(75625,155625,10000); // intersection of p2,p8 and p6,p7
+  Bare_point p10(10,50,2);
+  Bare_point p11(6,15,2); // midpoint p1,p0
+  Bare_point p12(6,16,2); // slightly above, in face
+  Bare_point p13(10,11,1);
+  Bare_point p14(10,40,1);
+  Bare_point p15(60,-10,1);
 
   int px=1, py=1;
   int qx=-1, qy=2;
 
   
-  WPoint wp0(p0,1);
-  WPoint wp1(p1,20);
-  WPoint wp2(p2,20);
-  WPoint wp3(p3,1); 
-  //WPoint wp3(p3,1);
-  WPoint wp4(p4,1);
-  WPoint wp5(p5,8);
-  WPoint wp6(p6,1);
-  WPoint wp7(p7,1);
-  WPoint wp8(p8,20);
-  WPoint wp9(p9,1); // intersection of p2,p8 and p6,p7
-  WPoint wp10(p10,2);
-  WPoint wp11(p11,2); // midpoint p1,p0
-  WPoint wp12(p12,2); // slightly above, in face
-  WPoint wp13(p13,1);
-  WPoint wp14(p14,1);
-  WPoint wp15(p15,1);
-  WPoint wp16(p2,1);
-  WPoint wp17(p3,20);
-  WPoint wp19(p9,0.5);
-  WPoint wp29(p9,22);
-  WPoint wp22(p12,300);
+  Weighted_point wp0(p0,1);
+  Weighted_point wp1(p1,20);
+  Weighted_point wp2(p2,20);
+  Weighted_point wp3(p3,1); 
+  //Weighted_point wp3(p3,1);
+  Weighted_point wp4(p4,1);
+  Weighted_point wp5(p5,8);
+  Weighted_point wp6(p6,1);
+  Weighted_point wp7(p7,1);
+  Weighted_point wp8(p8,20);
+  Weighted_point wp9(p9,1); // intersection of p2,p8 and p6,p7
+  Weighted_point wp10(p10,2);
+  //Weighted_point wp11(p11,2); // midpoint p1,p0
+  Weighted_point wp12(p12,2); // slightly above, in face
+  //Weighted_point wp13(p13,1);
+  //Weighted_point wp14(p14,1);
+  //Weighted_point wp15(p15,1);
+  Weighted_point wp16(p2,1);
+  Weighted_point wp17(p3,20);
+  Weighted_point wp19(p9,0.5);
+  Weighted_point wp29(p9,22);
+  Weighted_point wp22(p12,300);
 
   Cls T;
   assert(power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
@@ -139,11 +140,11 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert(power_test(wp2,wp8,wp9) == CGAL::ON_NEGATIVE_SIDE);
   assert(power_test(wp1,wp9,wp3) == CGAL::ON_POSITIVE_SIDE);
  
-  std::list<WPoint> lw; lw.push_back(wp0);
+  std::list<Weighted_point> lw; lw.push_back(wp0);
   lw.push_back(wp1); lw.push_back(wp2); lw.push_back(wp3);
  
    
-  std::vector<WPoint> vw; vw.push_back(wp0);
+  std::vector<Weighted_point> vw; vw.push_back(wp0);
   vw.push_back(wp1); vw.push_back(wp2); vw.push_back(wp3);
  
 
@@ -268,7 +269,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   int m, p;
   for (m=0; m<3; m++)
     for (p=0; p<3; p++)
-      T2_7.push_back( WPoint(Point(m*px+p*qx, m*py+p*qy), 1) );
+      T2_7.push_back( Weighted_point(Bare_point(m*px+p*qx, m*py+p*qy), 1) );
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid(verbose) );
 
@@ -428,6 +429,43 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   Vertex_handle V2_31_22  = T2_3_1.insert(wp22);
   T2_3_1.is_valid(verbose);
  
+
+  //massive insertion
+//  Cls tr;
+//   int nn=10;
+//    int sign = 1;
+//    for(int i = 0; i < nn; i++) {
+//      for(int j = 0; j< nn; j++) {
+//        sign= -sign;
+//        Bare_point p( i,j);
+//        Weighted_point wp(p,500 + sign*500);
+//        tr.insert(wp);
+//        tr.is_valid();
+//      }
+//    }
+//    tr.is_valid();
+
+//  tr.clear();
+//    Cls tr;
+//    Weighted_point wp;
+//    std::ifstream input("data"); CGAL::set_ascii_mode(input);
+//    int in = 0; 
+//    while(input){
+//      in = in+1;
+//      input >> wp;
+//      std::cerr << in << " wpoint " << wp.point() << " " <<
+//        wp.weight() <<std::endl;
+//      tr.insert(wp);
+//      tr.is_valid(true);
+//    }
+
+//    // remove all
+//    std::cout <<  "  removal of all points" << std::endl;
+//    while( tr.number_of_vertices() >0) {
+//     tr.is_valid(true);
+//     tr.remove(tr.finite_vertices_begin());
+//   }
+
 /*************************/
   /******* Iterators *******/
   std::cout << "    iterators" << std::endl;
@@ -463,7 +501,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   ++fc;
   --fc;
   //Point pp(0,0.5,1);
-  Point pp(0,1,2);
+  Bare_point pp(0,1,2);
   loc = T2_3.locate(pp,lt,li);
   // assert(lt==Cls::VERTEX); no longer true, I've changed the triangulation
   fc= T2_3.line_walk(pp,p10,loc);
@@ -475,15 +513,15 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   --fc;
   // testing with dummy triangulations
   Cls T2_8;
-     T2_8.insert(Point(0,0,1));
-     T2_8.insert(Point(1,0,1));
-     T2_8.insert(Point(1,1,1));
-     T2_8.insert(Point(0,1,1));
+     T2_8.insert(Bare_point(0,0,1));
+     T2_8.insert(Bare_point(1,0,1));
+     T2_8.insert(Bare_point(1,1,1));
+     T2_8.insert(Bare_point(0,1,1));
   int n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
   assert(T2_8.number_of_vertices()>=2);
   assert(T2_8.is_valid(verbose));
-  fc= T2_8.line_walk(Point(5,4,10),Point(5,5));
+  fc= T2_8.line_walk(Bare_point(5,4,10),Bare_point(5,5));
   fc2=fc;
   n=0;
   assert(fc==fc2);
@@ -491,14 +529,14 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert(n==4);
   // the two point are vertices of the triangulation.
   Cls TT;
-  TT.insert(Point(0,0)); TT.insert(Point(1,0));
-  TT.insert(Point(0,1)); TT.insert(Point(1,1));
+  TT.insert(Bare_point(0,0)); TT.insert(Bare_point(1,0));
+  TT.insert(Bare_point(0,1)); TT.insert(Bare_point(1,1));
   assert(TT.dimension()==2);
   assert(TT.is_valid(verbose));
   assert(TT.number_of_vertices()==4);
-  loc = TT.locate(Point(0,0));
-  fc = TT.line_walk(Point(0,0),Point(1,1));
-  fc2 = TT.line_walk(Point(0,0),Point(1,1),loc);
+  loc = TT.locate(Bare_point(0,0));
+  fc = TT.line_walk(Bare_point(0,0),Bare_point(1,1));
+  fc2 = TT.line_walk(Bare_point(0,0),Bare_point(1,1),loc);
   assert(fc==fc2);
   n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);

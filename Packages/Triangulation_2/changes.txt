@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.63 ()
+- fixes typos in doc
+
 Ver 7.62 (7/03/03)
 - fixes doc typos 
 - fixed a bug in debug function show_all()

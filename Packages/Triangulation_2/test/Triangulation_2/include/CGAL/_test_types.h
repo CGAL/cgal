@@ -32,11 +32,11 @@ typedef CGAL::MP_Float Rtype;
 //#include <CGAL/Quotient.h>
 typedef CGAL::MP_Float  Ftype;
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 
-typedef CGAL::Cartesian<Ftype>         Test_rep_cartesian;
-typedef CGAL::Homogeneous<Rtype>       Test_rep_homogeneous;
+typedef CGAL::Simple_cartesian<Ftype>         Test_rep_cartesian;
+typedef CGAL::Homogeneous<Rtype>              Test_rep_homogeneous;
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
