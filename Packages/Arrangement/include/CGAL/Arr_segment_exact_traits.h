@@ -24,7 +24,7 @@
 // ======================================================================
 #ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
 #define CGAL_ARR_SEGMENT_EXACT_TRAITS_H
-#include <CGAL/Pm_segment_exact_traits.h>
+#include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 
 #include <list>
