@@ -52,6 +52,7 @@ public:
   typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
   typedef typename Tr_Base::Vertex             Vertex;
   typedef typename Tr_Base::Locate_type        Locate_type;
+  typedef typename Tr_Base::Finite_vertex_iterator    Finite_vertex_iterator;
 
 private:
   // here is the stack of triangulations which form the hierarchy
@@ -180,14 +181,14 @@ copy_triangulation(const Triangulation_hierarchy_3<Tr> &tr)
   // up and down have been copied in straightforward way
   // compute a map at lower level
 
-  for( Vertex_iterator it=hierarchy[0]->finite_vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it)
+  for( Finite_vertex_iterator it=hierarchy[0]->finite_vertices_begin(); 
+       it != hierarchy[0]->finite_vertices_end(); ++it)
     if (it->up())
       V[ ((Vertex*)(it->up()))->down() ] = &(*it);
 
   for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j) {
-    for( Vertex_iterator it=hierarchy[j]->finite_vertices_begin();
-	 it != hierarchy[j]->vertices_end(); ++it) {
+    for( Finite_vertex_iterator it=hierarchy[j]->finite_vertices_begin();
+	 it != hierarchy[j]->finite_vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
 	it->set_down(V[it->down()]);
 	// make reverse link
@@ -228,7 +229,6 @@ clear()
 	hierarchy[i]->clear();
 }
 
-
 template <class Tr>
 bool
 Triangulation_hierarchy_3<Tr>:: 
@@ -241,27 +241,25 @@ is_valid(bool verbose, int level) const
 	result = result && hierarchy[i]->is_valid(verbose, level);
 
   //verify that lower level has no down pointers
-  for( Vertex_iterator it = hierarchy[0]->finite_vertices_begin(); 
-       it != hierarchy[0]->vertices_end(); ++it) 
+  for( Finite_vertex_iterator it = hierarchy[0]->finite_vertices_begin(); 
+       it != hierarchy[0]->finite_vertices_end(); ++it) 
     result = result && ( it->down() == 0 );
 
   //verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j)
-    for( Vertex_iterator it = hierarchy[j]->finite_vertices_begin(); 
-	 it != hierarchy[j]->vertices_end(); ++it) 
-      result = result && 
-	       ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
+    for( Finite_vertex_iterator it = hierarchy[j]->finite_vertices_begin(); 
+	 it != hierarchy[j]->finite_vertices_end(); ++it) 
+      result = result && ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
 
   //verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<Triangulation_hierarchy_3__maxlevel-1; ++k)
-    for( Vertex_iterator it = hierarchy[k]->finite_vertices_begin(); 
-	 it != hierarchy[k]->vertices_end(); ++it) 
+    for( Finite_vertex_iterator it = hierarchy[k]->finite_vertices_begin(); 
+	 it != hierarchy[k]->finite_vertices_end(); ++it) 
       result = result && ( ((Vertex*)it->up() == NULL) ||
 	       ( ((Vertex*)((Vertex*)it->up())->down()) ==  &(*it) ));
 
   return result;
 }
-
   
 template <class Tr>
 Triangulation_hierarchy_3<Tr>::Vertex_handle

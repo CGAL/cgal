@@ -28,13 +28,15 @@ int
 _test_vertex_iterator( const Triangulation &T )
 {
     typedef typename Triangulation::Vertex_iterator Vertex_iterator;
+    typedef typename Triangulation::Finite_vertex_iterator Finite_vertex_iterator;
     int n = 0;
     Vertex_iterator vit;
-    for (vit = T.all_vertices_begin(); vit != T.vertices_end(); ++vit)
+    for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
       n++;
     assert( n-1 == T.number_of_vertices() );
     n=0;
-   for (vit = T.finite_vertices_begin(); vit != T.vertices_end(); ++vit)
+    Finite_vertex_iterator fvit;
+   for (fvit = T.finite_vertices_begin(); fvit != T.finite_vertices_end(); ++fvit)
       n++;
     assert( n == T.number_of_vertices() );
     return n;
@@ -44,6 +46,11 @@ template < class Triangulation >
 int
 _test_triangulation_iterator( const Triangulation &T )
 {
+  typedef typename Triangulation::Finite_cell_iterator   Finite_cell_iterator;
+  typedef typename Triangulation::Finite_facet_iterator  Finite_facet_iterator;
+  typedef typename Triangulation::Finite_edge_iterator   Finite_edge_iterator;
+  typedef typename Triangulation::Finite_vertex_iterator Finite_vertex_iterator;
+
   typedef typename Triangulation::Cell_iterator   Cell_iterator;
   typedef typename Triangulation::Facet_iterator  Facet_iterator;
   typedef typename Triangulation::Edge_iterator   Edge_iterator;
@@ -57,64 +64,68 @@ _test_triangulation_iterator( const Triangulation &T )
   Facet_iterator Fit;
   Edge_iterator Eit;
   Vertex_iterator Vit;
+  Finite_cell_iterator FCit;
+  Finite_facet_iterator FFit;
+  Finite_edge_iterator FEit;
+  Finite_vertex_iterator FVit;
   if (T.dimension()==3) {
-  for (Cit = T.finite_cells_begin(); Cit != T.cells_end(); ++Cit)
+  for (FCit = T.finite_cells_begin(); FCit != T.finite_cells_end(); ++FCit)
      t++;
-  for (Fit = T.finite_facets_begin(); Fit != T.facets_end(); ++Fit)
+  for (FFit = T.finite_facets_begin(); FFit != T.finite_facets_end(); ++FFit)
      f++;
-  for (Eit = T.finite_edges_begin(); Eit != T.edges_end(); ++Eit)
+  for (FEit = T.finite_edges_begin(); FEit != T.finite_edges_end(); ++FEit)
      m++;
-  for (Vit = T.finite_vertices_begin(); Vit != T.vertices_end(); ++Vit)
+  for (FVit = T.finite_vertices_begin(); FVit != T.finite_vertices_end(); ++FVit)
      n++;
   assert((n-m+f-t)==1);
   n=0 ; m=0 ; f=0 ; t=0;
-  for (Cit = T.all_cells_begin(); Cit != T.cells_end(); ++Cit)
+  for (Cit = T.cells_begin(); Cit != T.cells_end(); ++Cit)
      t++;
-  for (Fit = T.all_facets_begin(); Fit != T.facets_end(); ++Fit)
+  for (Fit = T.facets_begin(); Fit != T.facets_end(); ++Fit)
      f++;
-  for (Eit = T.all_edges_begin(); Eit != T.edges_end(); ++Eit)
+  for (Eit = T.edges_begin(); Eit != T.edges_end(); ++Eit)
      m++;
-  for (Vit = T.all_vertices_begin(); Vit != T.vertices_end(); ++Vit)
+  for (Vit = T.vertices_begin(); Vit != T.vertices_end(); ++Vit)
      n++;
   assert((n-m+f-t)==0);
   }
   if (T.dimension()==3)
     {
-  Cell_iterator Cit2;
-  Cit = T.finite_cells_begin();
-  Cit2=Cit;
-  assert(T.tetrahedron(&*Cit)==T.tetrahedron(&*Cit2));
-  Cit++ ; Cit-- ; ++Cit ; --Cit ;
-  assert(Cit==Cit2);
-  assert(T.tetrahedron(&*Cit)==T.tetrahedron(&*Cit2));
+  Finite_cell_iterator Cit2;
+  FCit = T.finite_cells_begin();
+  Cit2=FCit;
+  assert(T.tetrahedron(&*FCit)==T.tetrahedron(&*Cit2));
+  FCit++ ; FCit-- ; ++FCit ; --FCit ;
+  assert(FCit==Cit2);
+  assert(T.tetrahedron(&*FCit)==T.tetrahedron(&*Cit2));
     }
   if (T.dimension() >=2)
     {
-  Facet_iterator Fit2;
-  Fit = T.finite_facets_begin();
-  Fit2=Fit;
-  assert(*Fit==*Fit2);
-  Fit++ ; Fit-- ; ++Fit ; --Fit ;
-  assert(Fit==Fit2);
-  assert(*Fit==*Fit2);
+  Finite_facet_iterator Fit2;
+  FFit = T.finite_facets_begin();
+  Fit2=FFit;
+  assert(*FFit==*Fit2);
+  FFit++ ; FFit-- ; ++FFit ; --FFit ;
+  assert(FFit==Fit2);
+  assert(*FFit==*Fit2);
     }
   if (T.dimension() >=1)
     {
-  Edge_iterator Eit2;
-  Eit = T.finite_edges_begin(); 
-  Eit2=Eit;
-  assert(*Eit==*Eit2);
-  Eit++ ; Eit-- ; ++Eit ; --Eit ;
-  assert(Eit==Eit2);
-  assert(*Eit==*Eit2);
+  Finite_edge_iterator Eit2;
+  FEit = T.finite_edges_begin(); 
+  Eit2=FEit;
+  assert(*FEit==*Eit2);
+  FEit++ ; FEit-- ; ++FEit ; --FEit ;
+  assert(FEit==Eit2);
+  assert(*FEit==*Eit2);
     }
-  Vertex_iterator Vit2;
-  Vit = T.finite_vertices_begin(); 
-  Vit2=Vit;
-  assert(Vit->point()==Vit2->point());
-  Vit++ ; Vit-- ; ++Vit ; --Vit ;
-  assert(Vit==Vit2);
-  assert(Vit->point()==Vit2->point());
+  Finite_vertex_iterator Vit2;
+  FVit = T.finite_vertices_begin(); 
+  Vit2=FVit;
+  assert(FVit->point()==Vit2->point());
+  FVit++ ; FVit-- ; ++FVit ; --FVit ;
+  assert(FVit==Vit2);
+  assert(FVit->point()==Vit2->point());
   return(n-m+f-t);
 }
 

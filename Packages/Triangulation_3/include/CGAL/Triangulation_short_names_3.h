@@ -44,10 +44,8 @@
 #define Triangulation_vertex_handle_3               T_vh
 #define Triangulation_cell_handle_3                 T_ch
 
-#define Triangulation_vertex_iterator_3             T_vit
-#define Triangulation_edge_iterator_3               T_eit
-#define Triangulation_facet_iterator_3              T_fit
-#define Triangulation_cell_iterator_3               T_cit
+#define Triangulation_finite_iterator_3             T_Fit
+#define Triangulation_finite_iterator2_3            T_Fit2
 
 #define Delaunay_triangulation_3                    DT
 #define Delaunay_remove_tds_face_3_2                DRf32

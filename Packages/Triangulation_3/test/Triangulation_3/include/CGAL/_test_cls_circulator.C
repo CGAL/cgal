@@ -30,6 +30,8 @@ template < class Triangulation >
 int
 _test_circulator( const Triangulation &T )
 {
+  typedef typename Triangulation::Finite_edge_iterator    Finite_edge_iterator;
+  typedef typename Triangulation::Finite_vertex_iterator  Finite_vertex_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Facet_circulator Facet_circulator;
@@ -42,10 +44,11 @@ _test_circulator( const Triangulation &T )
   int n = 0;
   Cell_circulator cc, cc0;
   Edge_iterator eit;
+  Finite_edge_iterator feit;
 
   // testing incident_cells(edge *); 
-//   for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
-  eit=T.all_edges_begin();
+//   for (eit=T.edges_begin(); eit!=T.edges_end();  eit++)
+  eit=T.edges_begin();
   {
     cc0=cc=T.incident_cells(*eit);
     do {
@@ -55,18 +58,18 @@ _test_circulator( const Triangulation &T )
     } while (cc != cc0);
   }
   // test of incident_cells(cellhandle,int,int) and --
-  eit=T.finite_edges_begin();
+  feit=T.finite_edges_begin();
   {
-    cc0=cc=T.incident_cells((*eit).first,(*eit).second,(*eit).third);
+    cc0=cc=T.incident_cells((*feit).first,(*feit).second,(*feit).third);
       do {
-	assert(cc->has_vertex((*eit).first->vertex((*eit).second)));
-	assert(cc->has_vertex((*eit).first->vertex((*eit).third)));
+	assert(cc->has_vertex((*feit).first->vertex((*feit).second)));
+	assert(cc->has_vertex((*feit).first->vertex((*feit).third)));
 	cc--; n++;
       } while (cc != cc0);
     }
   // testing incident_cells(edge *,cell *); and ++
-//   for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
-  eit=T.all_edges_begin();
+//   for (eit=T.edges_begin(); eit!=T.edges_end();  eit++)
+  eit=T.edges_begin();
   {
     cc0=cc=T.incident_cells(*eit,(*eit).first);
     do {
@@ -76,13 +79,13 @@ _test_circulator( const Triangulation &T )
     } while (cc != cc0);
   }
   // test of incident_cells(cellhandle,int,int,cellhandle) and --
-  eit=T.finite_edges_begin();
+  feit=T.finite_edges_begin();
   {
-    cc0=cc=T.incident_cells((*eit).first,(*eit).second,(*eit).third, 
-			    (*eit).first);
+    cc0=cc=T.incident_cells((*feit).first,(*feit).second,(*feit).third, 
+			    (*feit).first);
       do {
-	assert(cc->has_vertex((*eit).first->vertex((*eit).second)));
-	assert(cc->has_vertex((*eit).first->vertex((*eit).third)));
+	assert(cc->has_vertex((*feit).first->vertex((*feit).second)));
+	assert(cc->has_vertex((*feit).first->vertex((*feit).third)));
 	cc--; n++;
       } while (cc != cc0);
     }
@@ -107,9 +110,9 @@ _test_circulator( const Triangulation &T )
   std::set<Vertex_handle > vertices ;
 
   Vertex_iterator vit;
-  //  for (vit=T.all_vertices_begin(); vit!=T.vertices_end() ; vit++)
+  //  for (vit=T.vertices_begin(); vit!=T.vertices_end() ; vit++)
   {
-    vit=T.all_vertices_begin();
+    vit=T.vertices_begin();
     T.incident_cells(&*vit,cells);
     T.incident_cells(&*vit,cells,vit->cell());
     T.incident_vertices(&*vit, vertices);
@@ -118,8 +121,8 @@ _test_circulator( const Triangulation &T )
 
    Facet_circulator fc, fc0;
    int i,j;
-   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-   eit=T.all_edges_begin(); // test (edge)
+   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
+   eit=T.edges_begin(); // test (edge)
    {
      fc0=fc=T.incident_facets(*eit);
       do {
@@ -129,20 +132,20 @@ _test_circulator( const Triangulation &T )
 	fc++; n++;
       } while (fc != fc0);
     }
-   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-   eit=T.finite_edges_begin(); // test (cell*,int,int)
+   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
+   feit=T.finite_edges_begin(); // test (cell*,int,int)
     {
-     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third);
+     fc0=fc=T.incident_facets((*feit).first,(*feit).second,(*feit).third);
       do {
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).second), i));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).third), j));
 	assert( (*fc).second == T.next_around_edge(i,j) );
 	fc--; n++;
       } while (fc != fc0);
     }
 //   int fi;
-   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-    eit=T.all_edges_begin(); // test (edge, Cell*,int)
+   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
+    eit=T.edges_begin(); // test (edge, Cell*,int)
     {
 //      for (fi=0; fi!=4 ; fi++) 
 //        {
@@ -157,21 +160,21 @@ _test_circulator( const Triangulation &T )
         } while (fc != fc0);
 //       }
     }
-   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-   eit=T.finite_edges_begin(); // test (Cell*,int,int,cell*,int)
+   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
+   feit=T.finite_edges_begin(); // test (Cell*,int,int,cell*,int)
     {
-     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
-			      (*eit).first,
-			      T.next_around_edge((*eit).second,(*eit).third));
+     fc0=fc=T.incident_facets((*feit).first,(*feit).second,(*feit).third,
+			      (*feit).first,
+			      T.next_around_edge((*feit).second,(*feit).third));
       do {
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).second), i));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).third), j));
 	assert( (*fc).second == T.next_around_edge(i,j) );
 	fc--; n++;
       } while (fc != fc0);
     }
 
-    eit=T.all_edges_begin(); // test (edge, Facet)
+    eit=T.edges_begin(); // test (edge, Facet)
     {
 //      for (fi=0; fi!=4 ; fi++) 
 //        {
@@ -187,16 +190,16 @@ _test_circulator( const Triangulation &T )
         } while (fc != fc0);
 //       }
     }
-   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-   eit=T.finite_edges_begin(); // test (Cell*,int,int,Facet)
+   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
+   feit=T.finite_edges_begin(); // test (Cell*,int,int,Facet)
     {
-     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
-			      std::make_pair( (*eit).first,
-			       T.next_around_edge((*eit).second,
-					       (*eit).third)) );
+     fc0=fc=T.incident_facets((*feit).first,(*feit).second,(*feit).third,
+			      std::make_pair( (*feit).first,
+			       T.next_around_edge((*feit).second,
+					       (*feit).third)) );
       do {
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).second), i));
-	assert((*fc).first->has_vertex((*eit).first->vertex((*eit).third), j));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).second), i));
+	assert((*fc).first->has_vertex((*feit).first->vertex((*feit).third), j));
 	assert( (*fc).second == T.next_around_edge(i,j) );
 	fc--; n++;
       } while (fc != fc0);

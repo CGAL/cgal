@@ -519,8 +519,8 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Cell_iterator it;
-      for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
+      Finite_cell_iterator it;
+      for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
 	is_valid_finite(&*it);
 	for ( i=0; i<4; i++ ) {
 	  if ( side_of_power_sphere (&*it, 
@@ -537,8 +537,8 @@ is_valid(bool verbose, int level) const
     }
   case 2:
     {
-      Facet_iterator it;
-      for ( it = finite_facets_begin(); it != facets_end(); ++it ) {
+      Finite_facet_iterator it;
+      for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for ( i=0; i<3; i++ ) {
 	  if ( side_of_power_circle
@@ -557,8 +557,8 @@ is_valid(bool verbose, int level) const
     }
   case 1:
     {
-      Edge_iterator it;
-      for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
+      Finite_edge_iterator it;
+      for ( it = finite_edges_begin(); it != finite_edges_end(); ++it ) {
 	is_valid_finite((*it).first);
 	for ( i=0; i<2; i++ ) {
 	  if ( side_of_power_segment

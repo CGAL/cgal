@@ -91,6 +91,14 @@ which are bidirectional and non-mutable.
 \ccGlue
 \ccNestedType{Vertex_iterator}{iterator over vertices}
 
+\ccNestedType{Finite_cell_iterator}{iterator over finite cells}
+\ccGlue
+\ccNestedType{Finite_facet_iterator}{iterator over finite facets}
+\ccGlue
+\ccNestedType{Finite_edge_iterator}{iterator over finite edges}
+\ccGlue
+\ccNestedType{Finite_vertex_iterator}{iterator over finite vertices}
+
 \ccNestedType{Cell_circulator}{circulator over all cells incident to a
 given edge} 
 \ccGlue
@@ -695,12 +703,15 @@ their value types are respectively \ccc{Cell}, \ccc{Facet}, \ccc{Edge}
 and \ccc{Vertex}. They are all invalidated by any change in the
 triangulation. 
 
-\ccMethod{Vertex_iterator finite_vertices_begin() const;}
+\ccMethod{Finite_vertex_iterator finite_vertices_begin() const;}
 {Starts at an arbitrary finite vertex. Then \ccc{++} and \ccc{--} will
-iterate over finite vertices. Returns \ccc{vertices_end()} when
+iterate over finite vertices. Returns \ccc{finite_vertices_end()} when
 \ccVar.\ccc{number_of_vertices()} $<1$.} 
 \ccGlue
-\ccMethod{Vertex_iterator all_vertices_begin() const;}
+\ccMethod{Finite_vertex_iterator finite_vertices_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_begin() const;}
 {Starts at an arbitrary vertex. Iterates over all vertices (even infinite
 ones). Returns \ccc{vertices_end()} when
 \ccVar.\ccc{number_of_vertices()} $<1$.}  
@@ -708,24 +719,30 @@ ones). Returns \ccc{vertices_end()} when
 \ccMethod{Vertex_iterator vertices_end() const;}
 {Past-the-end iterator}
 
-\ccMethod{Edge_iterator finite_edges_begin() const;}
+\ccMethod{Finite_edge_iterator finite_edges_begin() const;}
 {Starts at an arbitrary finite edge. Then \ccc{++} and \ccc{--} will
-iterate over finite edges. Returns \ccc{edges_end()} when
+iterate over finite edges. Returns \ccc{finite_edges_end()} when
 \ccVar.\ccc{dimension()} $<1$.} 
 \ccGlue
-\ccMethod{Edge_iterator all_edges_begin() const;}
+\ccMethod{Finite_edge_iterator finite_edges_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin() const;}
 {Starts at an arbitrary edge. Iterates over all edges (even infinite
 ones). Returns \ccc{edges_end()} when \ccVar.\ccc{dimension()} $<1$.}
 \ccGlue
 \ccMethod{Edge_iterator edges_end() const;}
 {Past-the-end iterator}
 
-\ccMethod{Facet_iterator finite_facets_begin() const;}
+\ccMethod{Finite_facet_iterator finite_facets_begin() const;}
 {Starts at an arbitrary finite facet. Then \ccc{++} and \ccc{--} will
-iterate over finite facets. Returns \ccc{facets_end()} when
+iterate over finite facets. Returns \ccc{finite_facets_end()} when
 \ccVar.\ccc{dimension()} $<2$.}
 \ccGlue
-\ccMethod{Facet_iterator all_facets_begin() const;}
+\ccMethod{Finite_facet_iterator finite_facets_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Facet_iterator facets_begin() const;}
 {Starts at an arbitrary facet. Iterates over all facets (even infinite
 ones). Returns \ccc{facets_end()} when 
 \ccVar.\ccc{dimension()} $<2$.}
@@ -733,12 +750,15 @@ ones). Returns \ccc{facets_end()} when
 \ccMethod{Facet_iterator facets_end() const;}
 {Past-the-end iterator}
 
-\ccMethod{Cell_iterator finite_cells_begin() const;}
+\ccMethod{Finite_cell_iterator finite_cells_begin() const;}
 {Starts at an arbitrary finite cell. Then \ccc{++} and \ccc{--} will
-iterate over finite cells. Returns \ccc{cells_end()} when
+iterate over finite cells. Returns \ccc{finite_cells_end()} when
 \ccVar.\ccc{dimension()} $<3$.}
 \ccGlue
-\ccMethod{Cell_iterator all_cells_begin() const;}
+\ccMethod{Finite_cell_iterator finite_cells_end() const;}
+{Past-the-end iterator}
+\ccGlue
+\ccMethod{Cell_iterator cells_begin() const;}
 {Starts at an arbitrary cell. Iterates over all cells (even infinite
 ones). Returns \ccc{cells_end()} when 
 \ccVar.\ccc{dimension()} $<3$.}

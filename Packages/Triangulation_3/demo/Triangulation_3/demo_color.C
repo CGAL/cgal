@@ -44,26 +44,13 @@ class My_vertex_base
 {
 public :
   CGAL::Color color;
-  typedef typename Traits::Point_3 Point;
 
   My_vertex_base() 
     : CGAL::Triangulation_vertex_base_3<Traits>(), color(CGAL::WHITE)
     {}
-
-  My_vertex_base(const Point & p) 
-    : CGAL::Triangulation_vertex_base_3<Traits>(p), color(CGAL::WHITE)
-    {}
-
-  My_vertex_base(const Point & p, void* c) 
-    : CGAL::Triangulation_vertex_base_3<Traits>(p,c), color(CGAL::WHITE)
-    {} 
-
-  My_vertex_base(void* c)
-    : CGAL::Triangulation_vertex_base_3<Traits>(c), color(CGAL::WHITE)
-    {} 
 };
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
+struct K : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
 
 typedef K::Point_3 Point;
 
@@ -71,9 +58,6 @@ typedef CGAL::Triangulation_cell_base_3<K> Cb;
 typedef My_vertex_base<K> Vb;
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds> Delaunay;
-
-typedef Delaunay::Vertex_iterator Vertex_iterator;
-typedef Delaunay::Vertex_handle Vertex_handle;
 
 int main()
 {
@@ -90,9 +74,9 @@ int main()
   T.insert(Point(2,2,2));  
   T.insert(Point(-1,0,1));  
 
-  Vertex_iterator vit;
-  std::set<Vertex_handle> adjacent;
-  for (vit = T.finite_vertices_begin(); vit != T.vertices_end(); ++vit) {
+  Delaunay::Finite_vertex_iterator vit;
+  std::set<Delaunay::Vertex_handle> adjacent;
+  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
     T.incident_vertices( &*vit, adjacent);
     if (adjacent.size() == 6) 
       vit->color = CGAL::RED;
@@ -106,7 +90,7 @@ int main()
 	    << "           red for degree 6 (counting infinite vertex)" 
 	    << std::endl 
 	    << "           white otherwise" << std::endl;
-  for (vit = T.finite_vertices_begin(); vit != T.vertices_end(); ++vit) {
+  for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit) {
     gv << vit->color;
     gv << vit->point();
   }

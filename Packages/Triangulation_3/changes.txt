@@ -6,6 +6,7 @@ Version 1.87 (?? September 01)
 - TDS functions now use handles instead of pointers.
 - Triangulation::Vertex == TDS::Vertex.  Idem for Cell.
 - Handles can't be constructed from iterators/circulators : &* is needed.
+- Split *_iterators into Finite_*_iterators versions.
 
 Version 1.86 (31 August 01)
 - Remove non default constructors in [ds_]vertex and [ds_]cell.

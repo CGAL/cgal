@@ -61,6 +61,9 @@ _test_cls_delaunay_3(const Triangulation &)
   typedef typename Cls::Locate_type          Locate_type;
   typedef std::list<Point>                        list_point;
 
+  typedef typename Cls::Finite_vertex_iterator      Finite_vertex_iterator;
+  typedef typename Cls::Finite_cell_iterator        Finite_cell_iterator;
+
 
   // +++ We define now some points for building triangulations +++++//
 
@@ -425,8 +428,8 @@ _test_cls_delaunay_3(const Triangulation &)
     
     std::vector<Vertex_handle> vertices(Tdel.number_of_vertices());
     int i = 0;
-    for(Vertex_iterator vi=Tdel.finite_vertices_begin();
-	vi!=Tdel.vertices_end();vi++) {
+    for(Finite_vertex_iterator vi=Tdel.finite_vertices_begin();
+	vi!=Tdel.finite_vertices_end();vi++) {
       vertices[i++] = &*vi;
     }
     int n = Tdel.number_of_vertices();
@@ -678,10 +681,9 @@ _test_cls_delaunay_3(const Triangulation &)
   v0=T0.infinite_vertex();
   assert(T0.is_infinite(v0));
 
-  Vertex_iterator vit;
+  Finite_vertex_iterator vit;
   Vertex_handle w;
-  for
-    (vit=T3_1.finite_vertices_begin();vit!=T3_1.vertices_end();vit++)
+  for (vit=T3_1.finite_vertices_begin();vit!=T3_1.finite_vertices_end();vit++)
     assert(T3_1.is_vertex(vit->point(), w));
          
        // geometric functions
@@ -706,11 +708,11 @@ _test_cls_delaunay_3(const Triangulation &)
     // or it will not be Delaunay any longer --> not valid
     std::cout << "  Test flip " << std::endl;
     assert( T3_1.is_valid());
-    Cell_iterator cit, cdone = T3_1.cells_end();
+    Finite_cell_iterator cit, cdone = T3_1.finite_cells_end();
     int nbflips=0;
     bool flipped;
     cit = T3_1.finite_cells_begin();
-    Cell_iterator next_cell;
+    Finite_cell_iterator next_cell;
     while ( cit != cdone ) {
       // NOTE : cells are deleted during loop
       // the cell_iterator is modified "by hand" (not using ++)
