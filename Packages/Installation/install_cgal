@@ -599,21 +599,9 @@ init_logfiles()
 	>>${INSTALL_RIS_LOGFILE}
 }
 
-# first do a confidence test, if ${CGAL_DIR} is really 
-# the CGAL directory
-# check ${CGAL_CONF_DIR}: create it, if not existent
+# check ${CGAL_INSTALL_CONF_DIR}: create it, if not existent
 check_conf_dir()
 {
-    # confidence tests
-    case `${_basename} ${CGAL_DIR}` in
-	CGAL*) 
-	    log_print "Confidence test passed."
-	    ;;
-	*)
-	    exit_on_error "The name of this directory" \
-		"does not start with \"CGAL\""
-	    ;;
-    esac
     _check_dir_exists ${CGAL_MAKE_DIR}
     _check_dir_exists ${CGAL_SRC_DIR}
     _check_dir_exists ${CGAL_INCL_DIR}
