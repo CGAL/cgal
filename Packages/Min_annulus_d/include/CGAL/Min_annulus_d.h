@@ -635,7 +635,7 @@ operator << ( std::ostream& os,
 {
     CGAL_USING_NAMESPACE_STD
 
-    typedef  Min_annulus_d<Traits_>::Point  Point;
+    typedef  typename Min_annulus_d<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>       Os_it;
     typedef  typename Traits_::ET          ET;
     typedef  ostream_iterator<ET>          Et_it;
@@ -711,7 +711,7 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 
       case CGAL::IO::ASCII:
       case CGAL::IO::BINARY:
-        typedef  CGAL::Min_annulus_d<Traits_>::Point  Point;
+        typedef  typename CGAL::Min_annulus_d<Traits_>::Point  Point;
         typedef  istream_iterator<Point>             Is_it;
         min_annulus.set( Is_it( is), Is_it());
         break;
