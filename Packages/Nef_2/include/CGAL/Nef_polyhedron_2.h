@@ -1,0 +1,835 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/Nef_polyhedron_2.h
+// package       : Nef_2 
+// chapter       : Nef Polyhedra
+//
+// source        : nef_2d/Nef_polyhedron_2.lw
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
+//
+// implementation: Nef polyhedra in the plane
+// ============================================================================
+
+#ifndef CGAL_NEF_POLYHEDRON_2_H
+#define CGAL_NEF_POLYHEDRON_2_H
+
+#include <CGAL/basic.h>
+#include <CGAL/Handle_for.h>
+#undef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+#include <CGAL/Nef_2/HDS_items.h>
+#include <CGAL/Nef_2/HalfedgeDS_default.h>
+#include <CGAL/Nef_2/PM_explorer.h>
+#include <CGAL/Nef_2/PM_decorator.h>
+#include <CGAL/Nef_2/PM_io_parser.h>
+#include <CGAL/Nef_2/PM_overlayer.h>
+//#include <CGAL/Nef_2/PM_transformer.h>
+#include <CGAL/Nef_2/PM_point_locator.h>
+#include <vector>
+#include <list>
+
+#undef _DEBUG
+#define _DEBUG 11
+#include <CGAL/Nef_2/debug.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <typename T> class Nef_polyhedron_2;
+template <typename T> class Nef_polyhedron_2_rep;
+
+template <typename T>
+std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T>&); 
+template <typename T>
+std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&); 
+template <typename T>
+class Nef_polyhedron_2_rep : public Ref_counted
+{ 
+  friend class Nef_polyhedron_2<T>;
+  struct HDS_traits {
+    typedef typename T::Point_2 Point;
+    typedef bool                Mark;
+  };
+  typedef HalfedgeDS_default<HDS_traits,HDS_items>       Plane_map;
+  typedef CGAL::PM_const_decorator<Plane_map>            PM_const_decorator;
+  typedef CGAL::PM_decorator<Plane_map>                  PM_decorator;
+  typedef CGAL::PM_naive_point_locator<PM_decorator,T>   PM_slocator;
+  typedef CGAL::PM_point_locator<PM_decorator,T>         PM_locator;
+  typedef CGAL::PM_overlayer<PM_decorator,T>             PM_overlayer;
+
+  //typedef CGAL::PM_transformer<PM_decorator,T> PM_transformer;
+  Plane_map _pm;
+  PM_locator* pPML;
+  
+  void init_locator() 
+  { if ( !pPML ) pPML = new PM_locator(_pm); }
+  void clear_locator() 
+  { if ( pPML ) delete pPML; }
+public:
+  Nef_polyhedron_2_rep() : _pm(), pPML(0) {}
+  ~Nef_polyhedron_2_rep() { _pm.erase_all(); clear_locator(); }
+};
+
+/*{\Moptions print_title=yes }*/ 
+/*{\Manpage {Nef_polyhedron_2} {T} {Nef Polyhedra in the Plane}{N}}*/
+
+/*{\Mdefinition
+An instance of data type |\Mname| is a subset of the plane which is the
+result of forming complements and intersections starting from a set |H| of
+halfspaces. |\Mtype| is closed under all binary set operations |intersection|,
+|union|, |difference|, |complement| and under the topological operations
+|boundary|, |closure|, and |interior|. 
+
+The template parameter is specified via an extended kernel concept. 
+|T| must be a model of the concept |Extended_geometry|.}*/
+
+template <typename T>
+class Nef_polyhedron_2 : public Handle_for< Nef_polyhedron_2_rep<T> >
+{ 
+public:
+typedef T Extended_kernel;
+static T EPD; // static extended kernel
+
+  /*{\Mtypes 7}*/
+  typedef Nef_polyhedron_2<T> Self;
+  typedef Handle_for< Nef_polyhedron_2_rep<T> > Base;
+  typedef typename T::Point_2 EPoint;
+  typedef typename T::Segment_2 ESegment;
+
+  typedef typename T::sLine_2 Line;
+  /*{\Mtypemember the oriented lines modeling halfplanes}*/
+  typedef typename T::sPoint_2 Point;
+  /*{\Mtypemember the affine points of the plane.}*/
+  typedef typename T::sDirection_2 Direction;
+  /*{\Mtypemember directions in our plane.}*/
+  typedef typename T::sAff_transformation_2  Aff_transformation;
+  /*{\Mtypemember affine transformations of the plane.}*/
+
+  typedef bool Mark;
+  /*{\Xtypemember marking set membership or exclusion.}*/
+
+  enum Boundary { EXCLUDED=0, INCLUDED=1 };
+  /*{\Menum construction selection.}*/
+
+  enum Content { EMPTY=0, COMPLETE=1 };
+  /*{\Menum construction selection}*/
+
+protected:
+  struct AND { bool operator()(bool b1, bool b2)  const { return b1&&b2; }  };
+  struct OR { bool operator()(bool b1, bool b2)   const { return b1||b2; }  };
+  struct DIFF { bool operator()(bool b1, bool b2) const { return b1&&!b2; } };
+  struct XOR { bool operator()(bool b1, bool b2)  const 
+                                           { return (b1&&!b2)||(!b1&&b2); } };
+
+  typedef Nef_polyhedron_2_rep<T>        Nef_rep;
+  typedef typename Nef_rep::Plane_map    Plane_map;
+  typedef typename Nef_rep::PM_decorator PM_decorator;
+  typedef typename Nef_rep::PM_overlayer PM_overlayer;
+  //typedef typename Nef_rep::PM_transformer PM_transformer;
+  typedef typename Nef_rep::PM_locator   PM_locator;
+  typedef typename Nef_rep::PM_slocator  PM_slocator;
+
+  Plane_map& pm() { return ptr->_pm; } 
+  const Plane_map& pm() const { return ptr->_pm; } 
+
+  friend std::ostream& operator<< <>
+      (std::ostream& os, const Nef_polyhedron_2<T>& NP);
+  friend std::istream& operator>> <>
+      (std::istream& is, Nef_polyhedron_2<T>& NP);
+
+  typedef typename PM_decorator::Vertex_handle         Vertex_handle;
+  typedef typename PM_decorator::Halfedge_handle       Halfedge_handle;
+  typedef typename PM_decorator::Face_handle           Face_handle;
+  typedef typename PM_decorator::Vertex_const_handle   Vertex_const_handle;
+  typedef typename PM_decorator::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename PM_decorator::Face_const_handle     Face_const_handle;
+
+  typedef typename PM_decorator::Vertex_iterator       Vertex_iterator;
+  typedef typename PM_decorator::Halfedge_iterator     Halfedge_iterator;
+  typedef typename PM_decorator::Face_iterator         Face_iterator;
+  typedef typename PM_decorator::Vertex_const_iterator   
+    Vertex_const_iterator;
+  typedef typename PM_decorator::Halfedge_const_iterator 
+    Halfedge_const_iterator;
+  typedef typename PM_decorator::Face_const_iterator     
+    Face_const_iterator;
+
+  typedef std::list<ESegment>              ES_list;
+  typedef typename ES_list::const_iterator ES_iterator;
+
+  void fill_with_frame_segs(ES_list& L) const
+  /*{\Xop fills the list with the four segments which span our frame,
+     the convex hull of SW,SE,NW,NE.}*/
+  { L.push_back(ESegment(EPD.SW(),EPD.NW()));
+    L.push_back(ESegment(EPD.SW(),EPD.SE()));
+    L.push_back(ESegment(EPD.NW(),EPD.NE()));
+    L.push_back(ESegment(EPD.SE(),EPD.NE()));
+  }
+
+  struct Link_to_iterator {
+    const PM_decorator& D;
+    Halfedge_handle _e;
+    Vertex_handle   _v;
+    ES_iterator     _it;
+    Mark            _m;
+    Link_to_iterator(const PM_decorator& d, ES_iterator it, Mark m) : 
+      D(d), _e(), _v(), _it(it), _m(m) {}
+
+    void supporting_segment(Halfedge_handle e, ES_iterator it) 
+    { if ( it == _it ) _e = e; D.mark(e) = _m; }
+    void trivial_segment(Vertex_handle v, ES_iterator it) 
+    { if ( it == _it ) _v = v; D.mark(v) = _m; }
+    void starting_segment(Vertex_handle v, ES_iterator it) 
+    { D.mark(v) = _m; }
+    void passing_segment(Vertex_handle v, ES_iterator it) 
+    { D.mark(v) = _m; }
+    void ending_segment(Vertex_handle v, ES_iterator it) 
+    { D.mark(v) = _m; }
+
+  };
+
+  void clear_outer_face_cycle_marks() 
+  { // unset all frame marks
+    PM_decorator D(pm());
+    Face_iterator f = D.faces_begin(); 
+    D.mark(f) = false;
+    Halfedge_handle e = D.holes_begin(f);
+    D.set_marks_in_face_cycle(e, false);
+  }
+
+public:
+  /*{\Mcreation 3}*/
+  Nef_polyhedron_2(Content plane = EMPTY);
+  /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
+  and initializes it to the empty set if |plane == EMPTY|
+  and to the whole plane if |plane == COMPLETE|.}*/
+
+  Nef_polyhedron_2(const Line& l, Boundary line = INCLUDED); 
+  /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the halfplane
+  left of |l| including |l| if |line==INCLUDED|, excluding |l| if 
+  |line==EXCLUDED|.}*/
+
+
+  template <class Forward_iterator>
+  Nef_polyhedron_2(Forward_iterator it, Forward_iterator end,
+    Boundary b = INCLUDED); 
+  /*{\Mcreate creates a Nef polyhedron |\Mvar| from the simple polygon
+  |P| spanned by the list of points in the iterator range |[it,end)| and
+  including its boundary if |b = INCLUDED| otherwise
+  |EXCLUDED|. |Forward_iterator| has to be an iterator with value type
+  |Point|. This construction expects that |P| is simple. The degenerate
+  cases where |P| contains no point, one point or spans just one segment
+  (two points) are correctly handled. In all degenerate cases there's
+  only one unbounded face adjacent to the degenerate polygon. If |b ==
+  INCLUDED| then |\Mvar| is just the boundary. If |b == EXCLUDED| then
+  |\Mvar| is the whole plane without the boundary.}*/
+              
+  Nef_polyhedron_2(const Nef_polyhedron_2<T>& N1) : Base(N1) {}
+  Nef_polyhedron_2& operator=(const Nef_polyhedron_2<T>& N1)
+  { Base::operator=(N1); return (*this); }
+  ~Nef_polyhedron_2() {}
+
+  protected:
+
+  Nef_polyhedron_2(const Plane_map& H, bool cloneit=true);
+  /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
+  underlying structure of |H| is copied into |\Mvar|.}*/
+  void clone_rep() { *this = Nef_polyhedron_2<T>(pm()); }
+
+  /*{\Moperations 4 3 }*/
+  public:
+
+  void clear(Content plane = EMPTY)
+  { *this = Nef_polyhedron_2(plane); }
+  /*{\Mop makes |\Mvar| the empty set if |plane == EMPTY| and the
+  full plane if |plane == COMPLETE|.}*/
+
+  bool is_empty() const
+  /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
+  { PM_const_decorator D(pm());
+    typename PM_const_decorator::Face_const_iterator f = D.faces_begin();
+    return (D.number_of_vertices()==4 &&
+            D.number_of_edges()==4 &&
+            D.number_of_faces()==2 &&
+            D.mark(++f) == false);
+  }
+
+  bool is_plane() const
+  /*{\Mop returns true if |\Mvar| is the whole plane, false otherwise.}*/
+  { PM_const_decorator D(pm());
+    typename PM_const_decorator::Face_const_iterator f = D.faces_begin();
+    return (D.number_of_vertices()==4 &&
+            D.number_of_edges()==4 &&
+            D.number_of_faces()==2 &&
+            D.mark(++f) == true);
+  }
+
+  /*{\Xtext \headerline{Destructive Operations}}*/
+
+  void extract_complement();
+  /*{\Xop converts |\Mvar| to its complement. }*/
+  void extract_interior();
+  /*{\Xop converts |\Mvar| to its interior. }*/
+  void extract_boundary();
+  /*{\Xop converts |\Mvar| to its boundary. }*/
+
+  void extract_closure()
+  /*{\Xop converts |\Mvar| to its closure. }*/
+  { TRACEN("extract closure");
+    extract_complement();
+    extract_interior();
+    extract_complement();
+  }
+
+  void extract_regularization()
+  /*{\Xop converts |\Mvar| to its regularization. }*/
+  { TRACEN("extract regularization");
+    extract_interior();
+    extract_closure();
+  }
+
+  /*{\Mtext \headerline{Constructive Operations}}*/
+
+  Nef_polyhedron_2<T> complement() const
+  /*{\Mop returns the complement of |\Mvar| in the plane.}*/
+  { Nef_polyhedron_2<T> res = *this;
+    res.extract_complement();
+    return res;
+  }
+
+
+  Nef_polyhedron_2<T> interior() const
+  /*{\Mop returns the interior of |\Mvar|.}*/
+  { Nef_polyhedron_2<T> res = *this;
+    res.extract_interior();
+    return res;
+  }
+
+  Nef_polyhedron_2<T> closure() const
+  /*{\Mop returns the closure of |\Mvar|.}*/
+  { Nef_polyhedron_2<T> res = *this;
+    res.extract_closure();
+    return res;
+  }
+
+  Nef_polyhedron_2<T> boundary() const
+  /*{\Mop returns the boundary of |\Mvar|.}*/
+  { Nef_polyhedron_2<T> res = *this;
+    res.extract_boundary();
+    return res;
+  }
+
+  Nef_polyhedron_2<T> regularization() const
+  /*{\Mop returns the regularized polyhedron (closure of interior).}*/
+  { Nef_polyhedron_2<T> res = *this;
+    res.extract_regularization();
+    return res;
+  }
+
+
+  Nef_polyhedron_2<T> intersection(const Nef_polyhedron_2<T>& N1) const
+  /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
+  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+    PM_overlayer PMO(res.pm());
+    PMO.subdivide(pm(),N1.pm());
+    AND _and; PMO.select(_and);
+    res.clear_outer_face_cycle_marks();
+    PMO.simplify();
+    return res;
+  }
+
+
+  Nef_polyhedron_2<T> join(const Nef_polyhedron_2<T>& N1) const
+  /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
+  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+    PM_overlayer PMO(res.pm());
+    PMO.subdivide(pm(),N1.pm());
+    OR _or; PMO.select(_or);
+    res.clear_outer_face_cycle_marks();
+    PMO.simplify();
+    return res;
+  }
+
+  Nef_polyhedron_2<T> difference(const Nef_polyhedron_2<T>& N1) const
+  /*{\Mop returns |\Mvar| $-$ |N1|. }*/
+  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+    PM_overlayer PMO(res.pm());
+    PMO.subdivide(pm(),N1.pm());
+    DIFF _diff; PMO.select(_diff);
+    res.clear_outer_face_cycle_marks();
+    PMO.simplify();
+    return res;
+  }    
+
+  Nef_polyhedron_2<T> symmetric_difference(
+    const Nef_polyhedron_2<T>& N1) const
+  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
+          |T - \Mvar|. }*/
+  { Nef_polyhedron_2<T> res(pm(),false); // empty, no frame
+    PM_overlayer PMO(res.pm());
+    PMO.subdivide(pm(),N1.pm());
+    XOR _xor; PMO.select(_xor);
+    res.clear_outer_face_cycle_marks();
+    PMO.simplify();
+    return res;
+  }
+
+  #if 0
+  Nef_polyhedron_2<T> transform(const Aff_transformation& t) const
+  /*{\Mop returns $t(|\Mvar|)$.}*/
+  { Nef_polyhedron_2<T> res(pm()); // cloned
+    PM_transformer PMT(res.pm());
+    PMT.transform(t);
+    return res;
+  }
+  #endif
+
+  /*{\Mtext Additionally there are operators |*,+,-,^,!| which
+  implement the binary operations \emph{intersection}, \emph{union},
+  \emph{difference}, \emph{symmetric difference}, and the unary
+  operation \emph{complement}. There are also the corresponding
+  modification operations |*=,+=,-=,^=|.}*/
+
+  Nef_polyhedron_2<T>  operator*(const Nef_polyhedron_2<T>& N1) const
+  { return intersection(N1); }
+
+  Nef_polyhedron_2<T>  operator+(const Nef_polyhedron_2<T>& N1) const
+  { return join(N1); }
+
+  Nef_polyhedron_2<T>  operator-(const Nef_polyhedron_2<T>& N1) const
+  { return difference(N1); }
+
+  Nef_polyhedron_2<T>  operator^(const Nef_polyhedron_2<T>& N1) const
+  { return symmetric_difference(N1); }
+
+  Nef_polyhedron_2<T>  operator!() const
+  { return complement(); }
+   
+  Nef_polyhedron_2<T>& operator*=(const Nef_polyhedron_2<T>& N1)
+  { this = intersection(N1); return *this; }
+
+  Nef_polyhedron_2<T>& operator+=(const Nef_polyhedron_2<T>& N1)
+  { this = join(N1); return *this; }
+
+  Nef_polyhedron_2<T>& operator-=(const Nef_polyhedron_2<T>& N1)
+  { this = difference(N1); return *this; }
+
+  Nef_polyhedron_2<T>& operator^=(const Nef_polyhedron_2<T>& N1)
+  { this = symmetric_difference(N1); return *this; }
+
+  /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
+  which implement the relations subset, subset or equal, superset, superset
+  or equal, equality, inequality.}*/
+
+  bool operator==(const Nef_polyhedron_2<T>& N1) const
+  { return symmetric_difference(N1).is_empty(); }
+
+  bool operator!=(const Nef_polyhedron_2<T>& N1) const
+  { return !operator==(N1); }  
+
+  bool operator<=(const Nef_polyhedron_2<T>& N1) const
+  { return difference(N1).is_empty(); } 
+
+  bool operator<(const Nef_polyhedron_2<T>& N1) const
+  { return difference(N1).is_empty() && !N1.difference(*this).is_empty(); } 
+
+  bool operator>=(const Nef_polyhedron_2<T>& N1) const
+  { return N1.difference(*this).is_empty(); } 
+
+  bool operator>(const Nef_polyhedron_2<T>& N1) const   
+  { return N1.difference(*this).is_empty() && !difference(N1).is_empty(); } 
+
+
+  /*{\Mtext \headerline{Exploration - Point location - Ray shooting}
+  As Nef polyhedra are the result of forming complements 
+  and intersections starting from a set |H| of halfspaces which are
+  defined by oriented lines in the plane they can be represented by
+  an attributed plane map $M = (V,E,F)$. For topological queries
+  within |M| the following types and operations allow exploration
+  access to this structure.}*/
+
+  /*{\Mtypes 3}*/
+  typedef typename Nef_rep::PM_const_decorator PM_const_decorator;
+
+  typedef CGAL::PM_explorer<PM_const_decorator,T> PM_explorer;
+  /*{\Mtypemember a decorator to examine the underlying plane map. 
+  See the manual page of |PM_explorer|.}*/
+
+  typedef typename PM_locator::Object_handle Object_handle;
+  /*{\Mtypemember a generic handle to an object of the underlying
+  plane map. The kind of object |(vertex, halfedge, face)| can 
+  be determined and the object can be assigned to a corresponding
+  handle by the three functions:\\
+  |bool assign(Vertex_const_handle& h, Object_handle)|\\
+  |bool assign(Halfedge_const_handle& h, Object_handle)|\\
+  |bool assign(Face_const_handle& h, Object_handle)|\\
+  where each function returns |true| iff the assignment to
+  |h| was done.}*/
+
+  enum Location_mode { DEFAULT, NAIVE, LMWT };
+  /*{\Menum selection flag for the point location mode.}*/
+
+
+  /*{\Moperations 3 1 }*/
+
+  void init_locator() const { ptr->init_locator(); }
+  const PM_locator& locator() const 
+  { assert(ptr->pPML); return *(ptr->pPML); }
+
+
+  bool contains(Object_handle h) const
+  /*{\Mop  returns true iff the object |h| is contained in the set
+  represented by |\Mvar|.}*/
+  { PM_slocator PL(pm()); return PL.mark(h); }
+
+  bool contained_in_boundary(Object_handle h) const
+  /*{\Mop  returns true iff the object |h| is contained in the $1$-skeleton
+  of |\Mvar|.}*/
+  { Vertex_const_handle v;
+    Halfedge_const_handle e;
+    return  ( CGAL::assign(v,h) || CGAL::assign(e,h) );
+  }
+
+
+
+  Object_handle locate(const Point& p, Location_mode m = DEFAULT) const
+  /*{\Mop  returns a generic handle |h| to an object (face, halfedge, vertex) 
+  of the underlying plane map which contains the point |p| in its relative 
+  interior. The point |p| is contained in the set represented by |\Mvar| if 
+  |\Mvar.contains(h)| is true. The location mode flag |m| allows to choose
+  between different point location strategies.}*/
+  { 
+    if (m == DEFAULT || m == LMWT) {
+      ptr->init_locator();
+      EPoint ep = EPD.construct_point(p);
+      return locator().locate(ep);
+    } else if (m == NAIVE) {
+      PM_slocator PL(pm(),EPD);
+      ESegment s(EPD.construct_point(p),PL.point(PL.vertices_begin()));
+      return PL.locate(s); 
+    }
+    CGAL_assertion_msg(0,"location mode not implemented.");
+    return Object_handle();
+  }
+
+  struct INSET {
+    const PM_const_decorator& D;
+    INSET(const PM_const_decorator& Di) : D(Di) {}
+    bool operator()(Vertex_const_handle v) const { return D.mark(v); }
+    bool operator()(Halfedge_const_handle e) const { return D.mark(e); }
+    bool operator()(Face_const_handle f) const { return D.mark(f); }
+  };
+
+  Object_handle ray_shoot(const Point& p, const Direction& d, 
+                          Location_mode m = DEFAULT) const
+  /*{\Mop returns a handle |h| with |\Mvar.contains(h)| which can be
+  converted to a |Vertex_/Halfedge_/Face_const_handle| as described
+  above. The object returned is intersected by the ray starting in |p|
+  with direction |d| and has minimal distance to |p|.  The operation
+  returns the null handle |NULL| if the ray shoot along |d| does not hit
+  any object |h| of |\Mvar| with |\Mvar.contains(h)|. The location mode
+  flag |m| allows to choose between different point location
+  strategies.}*/
+  { 
+    if (m == DEFAULT || m == LMWT) {
+      ptr->init_locator();
+      EPoint ep = EPD.construct_point(p), 
+             eq = EPD.construct_point(p,d);
+      return locator().ray_shoot(EPD.construct_segment(ep,eq),
+                                 INSET(locator())); 
+    } else if (m == NAIVE) {
+      PM_slocator PL(pm(),EPD);
+      EPoint ep = EPD.construct_point(p), 
+             eq = EPD.construct_point(p,d);
+      return PL.ray_shoot(EPD.construct_segment(ep,eq),INSET(PL));
+    }
+    CGAL_assertion_msg(0,"location mode not implemented.");
+    return Object_handle();
+  }
+
+  struct INSKEL {
+    bool operator()(Vertex_const_handle) const { return true; }
+    bool operator()(Halfedge_const_handle) const { return true; }
+    bool operator()(Face_const_handle) const { return false; }
+  };
+
+  Object_handle ray_shoot_to_boundary(const Point& p, const Direction& d, 
+                Location_mode m = DEFAULT) const
+  /*{\Mop returns a handle |h| which can be converted to a
+  |Vertex_/Halfedge_const_handle| as described above. The object
+  returned is part of the $1$-skeleton of |\Mvar|, intersected by the
+  ray starting in |p| with direction |d| and has minimal distance to
+  |p|.  The operation returns the null handle |NULL| if the ray shoot
+  along |d| does not hit any $1$-skeleton object |h| of |\Mvar|. The
+  location mode flag |m| allows to choose between different point
+  location strategies.}*/
+  { 
+    if (m == DEFAULT || m == LMWT) {
+      ptr->init_locator();
+      EPoint ep = EPD.construct_point(p), 
+             eq = EPD.construct_point(p,d);
+      return locator().ray_shoot(EPD.construct_segment(ep,eq),INSKEL()); 
+    } else if (m == NAIVE) {
+      PM_slocator PL(pm(),EPD);
+      EPoint ep = EPD.construct_point(p), 
+             eq = EPD.construct_point(p,d);
+      return PL.ray_shoot(EPD.construct_segment(ep,eq),INSKEL()); 
+    }
+    CGAL_assertion_msg(0,"location mode not implemented.");
+    return Object_handle();
+  }
+
+
+  PM_explorer explorer() const
+  /*{\Mop returns a decorator object which allows read-only access of
+  the underlying plane map. See the manual page |PM_explorer| for its 
+  usage.}*/
+  { return PM_explorer(pm(),EPD); }
+
+  /*{\Mtext\headerline{Input and Output}
+  A Nef polyhedron |\Mvar| can be visualized in a |Window_stream W|. The 
+  output operator is defined in the file 
+  |CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h|.
+  }*/
+
+  /*{\Mimplementation Nef polyhedra are implemented on top of a half edge
+  data structure and use linear space in the number of vertices, edges
+  and facets.  Operations like empty take constant time. The
+  operations clear, complement, interior, closure, boundary,
+  regularization, input and output take linear time. All binary set
+  operations and comparison operations take time $O(N \log N)$ where $N$
+  is the size of the output plus the size of the input.
+
+  The point location and ray shooting operations are implemented in
+  two flavors. The |NAIVE| operations run in linear query time without
+  any preprocessing, the |DEFAULT| operations (equals |LMWT|) run in
+  sub-linear query time, but preprocessing is triggered with the first
+  operation. Preprocessing takes time $O(N^2)$, the sub-linear point
+  location time is either logarithmic when LEDA's persistent
+  dictionaries are present or if not then the point location time is
+  worst case linear, but experiments show often sublinear runtimes.
+  Rayshooting equals point location plus a walk in the constrained
+  triangulation overlayed the plane map representation. The cost of the
+  walk is proportional to the number of triangles passed in direction
+  |d| until an obstacle is met. In a minimum weight triangulation of the
+  obstacles (the plane map representing the polyhedron) the theory
+  provides a $O(\sqrt{n})$ bound for the number of steps. Our locally
+  minimum weight triangulation approximates the minimum weight
+  triangulation only heuristically (the calculation of the minimum
+  weight triangulation is conjectured to be NP hard). Thus we have no
+  runtime guarantee but a strong experimental motivation for its
+  approximation.}*/
+
+  /*{\Mexample Nef polyhedra are parameterized by a so called extended
+  geometric kernel. There are two kernels, one based on a homogeneous
+  representation of extended points called |Extended_homogeneous<RT>|
+  where |RT| is a ring type providing additionally a |gcd| operation and
+  one based on a cartesian representation of extended points called
+  |Extended_cartesian<NT>| where |NT| is a field type. The member types
+  of |Nef_polyhedron_2< Extended_homogeneous<NT> >| map to corresponding
+  types of the CGAL geometry kernel (e.g. |Nef_polyhedron::Line| equals
+  |CGAL::Homogeneous<leda_integer>::Line_2| in the example below).
+  \begin{Mverb}
+  #include <CGAL/basic.h>
+  #include <CGAL/leda_integer.h>
+  #include <CGAL/Extended_homogeneous.h>
+  #include <CGAL/Nef_polyhedron_2.h>
+
+  using namespace CGAL;
+  typedef  Extended_homogeneous<leda_integer> Extended_kernel;
+  typedef  Nef_polyhedron_2<Extended_kernel>  Nef_polyhedron;
+  typedef  Nef_polyhedron::Line               Line;
+
+  int main()
+  {
+    Nef_polyhedron N1(Line(1,0,0));
+    Nef_polyhedron N2(Line(0,1,0), Nef_polyhedron::EXCLUDED);
+    Nef_polyhedron N3 = N1 * N2; // line (*)
+    return 0;
+  }
+  \end{Mverb}
+  After line (*) |N3| is the intersection of |N1| and |N2|.}*/
+
+
+}; // end of Nef_polyhedron_2
+
+template <typename T>
+T Nef_polyhedron_2<T>::EPD;
+
+
+
+template <typename T>
+Nef_polyhedron_2<T>::
+Nef_polyhedron_2(Content plane) : Base(Nef_rep())
+{
+  ES_list L;
+  fill_with_frame_segs(L);
+  PM_overlayer D(pm());
+  Link_to_iterator I(D, --L.end(), false);
+  D.create(L.begin(),L.end(),I);
+  D.mark(++D.faces_begin()) = bool(plane);
+}
+
+
+template <typename T>
+Nef_polyhedron_2<T>::
+Nef_polyhedron_2(const Line& l, Boundary line) : Base(Nef_rep())
+{
+  TRACEN("Nconstruction from line "<<l);
+  ES_list L;
+  fill_with_frame_segs(L);
+  EPoint ep1 = EPD.construct_opposite_point(l);
+  EPoint ep2 = EPD.construct_point(l);
+  L.push_back(EPD.construct_segment(ep1,ep2));
+  PM_overlayer D(pm());
+  Link_to_iterator I(D, --L.end(), false);
+  D.create(L.begin(),L.end(),I);
+  CGAL_assertion( I._e != Halfedge_handle() );
+  Halfedge_handle el = I._e;
+  if ( D.point(D.target(el)) != EPD.target(L.back()) )
+    el = D.twin(el);
+  D.mark(D.face(el)) = true;
+  D.mark(el) = bool(line);
+}
+
+template <typename T> template <class Forward_iterator>
+Nef_polyhedron_2<T>::
+Nef_polyhedron_2(Forward_iterator it, Forward_iterator itend,
+                 Boundary b) : Base(Nef_rep())
+{ 
+  ES_list L;
+  fill_with_frame_segs(L);
+  bool empty = false;  
+  if (it != itend) 
+    {
+      EPoint ef, ep = ef = EPD.construct_point(*it);
+      Forward_iterator itl=it; ++itl;
+      if (itl == itend) // case only one point
+        L.push_back(EPD.construct_segment(ep,ep));
+      else { // at least one segment
+        while( itl != itend ) {
+          EPoint en = EPD.construct_point(*itl);
+          L.push_back(EPD.construct_segment(ep,en));
+          ep = en; ++itl;
+        }
+        L.push_back(EPD.construct_segment(ep,ef));
+      }
+    }
+
+  else empty = true;
+  PM_overlayer D(pm());
+  Link_to_iterator I(D, --L.end(), true);
+  D.create(L.begin(),L.end(),I);
+  if ( empty ) {
+    D.mark(++D.faces_begin()) = !bool(b); return; }
+  CGAL_assertion( I._e != Halfedge_handle() || I._v != Vertex_handle() );
+  if ( EPD.is_degenerate(L.back()) ) {
+    CGAL_assertion(I._v != Vertex_handle());
+    D.mark(D.face(I._v)) = !bool(b); D.mark(I._v) = b;
+  } else {
+    Halfedge_handle el = I._e;
+    if ( D.point(D.target(el)) != EPD.target(L.back()) )
+      el = D.twin(el);  
+    D.set_marks_in_face_cycle(el,bool(b));
+    if ( D.number_of_faces() > 2 ) D.mark(D.face(el)) = true;
+    else                           D.mark(D.face(el)) = !bool(b);
+  }
+  clear_outer_face_cycle_marks();
+
+
+}
+
+template <typename T>
+Nef_polyhedron_2<T>::
+Nef_polyhedron_2(const Plane_map& H, bool cloneit) : Base(Nef_rep())
+{
+  if (cloneit) {
+    PM_decorator D(pm()); // a decorator working on the rep plane map
+    D.clone(H);           // cloning H into pm()
+  }
+}
+
+template <typename T>
+void Nef_polyhedron_2<T>::extract_complement()
+{ TRACEN("extract complement");
+  if ( ptr->is_shared() ) clone_rep();
+  PM_overlayer D(pm());
+  Vertex_iterator v, vend = D.vertices_end();
+  for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = !D.mark(v);
+  Halfedge_iterator e, eend = D.halfedges_end();
+  for(e = D.halfedges_begin(); e != eend; ++(++e)) D.mark(e) = !D.mark(e);
+  Face_iterator f, fend = D.faces_end();
+  for(f = D.faces_begin(); f != fend; ++f)         D.mark(f) = !D.mark(f);
+  clear_outer_face_cycle_marks();
+}
+
+template <typename T>
+void Nef_polyhedron_2<T>::extract_interior()
+{ TRACEN("extract interior");
+  if ( ptr->is_shared() ) clone_rep();
+  PM_overlayer D(pm());
+  Vertex_iterator v, vend = D.vertices_end();
+  for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = false;
+  Halfedge_iterator e, eend = D.halfedges_end();
+  for(e = D.halfedges_begin(); e != eend; ++(++e)) D.mark(e) = false;
+  D.simplify();
+}
+
+
+template <typename T>
+void Nef_polyhedron_2<T>::extract_boundary()
+{ TRACEN("extract boundary");
+  if ( ptr->is_shared() ) clone_rep();
+  PM_overlayer D(pm());
+  Vertex_iterator v, vend = D.vertices_end();
+  for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = true;
+  Halfedge_iterator e, eend = D.halfedges_end();
+  for(e = D.halfedges_begin(); e != eend; ++(++e)) D.mark(e) = true;
+  Face_iterator f, fend = D.faces_end();
+  for(f = D.faces_begin(); f != fend; ++f)         D.mark(f) = false;
+  clear_outer_face_cycle_marks();
+  D.simplify();
+}
+
+template <typename T>
+std::ostream& operator<<
+ (std::ostream& os, const Nef_polyhedron_2<T>& NP)
+{
+  typedef typename Nef_polyhedron_2<T>::PM_decorator PM_decorator;
+  CGAL::PM_io_parser<PM_decorator> O(os, NP.pm());
+  O.print();
+  return os;
+}
+
+template <typename T>
+std::istream& operator>>
+  (std::istream& is, Nef_polyhedron_2<T>& NP)
+{
+  typedef typename Nef_polyhedron_2<T>::PM_decorator PM_decorator;
+  CGAL::PM_io_parser<PM_decorator> I(is, NP.pm());
+  I.read();
+  typename Nef_polyhedron_2<T>::PM_const_decorator D(NP.explorer());
+  D.check_integrity_and_topological_planarity();
+  return is;
+}
+
+
+CGAL_END_NAMESPACE
+
+#endif //CGAL_NEF_POLYHEDRON_2_H
+
+

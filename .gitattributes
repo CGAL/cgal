@@ -196,6 +196,35 @@ Packages/Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/support/Modifier/idraw/modifier.ips -text
 Packages/Modifier/doc_tex/support/Modifier/modifier.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/support/Modifier/modifier_small.gif -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/basic.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/basic2.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/boundary.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/boundary.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/closure.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/closure.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/complement.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/complement.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/diff.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/diff.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/exor.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/exor.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/interior.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/interior.xpm -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/intersection.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/intersection.xpm -text
+Packages/Nef_2/demo/Nef_2/xpms/nef.xpm -text
+Packages/Nef_2/demo/Nef_2/xpms/newclosed.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/newopen.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/newpoly.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/union.pcx -text svneol=unset#unset
+Packages/Nef_2/demo/Nef_2/xpms/union.xpm -text svneol=unset#unset
+Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/complex.gif svneol=native#unset
+Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/extsegs.gif svneol=native#unset
+Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/halfplane.gif svneol=native#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/complex.gif svneol=native#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/extsegs.gif svneol=native#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/halfplane.gif svneol=native#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/PS_Stream/doc_tex/support/PS_Stream/exemple.ps -text
