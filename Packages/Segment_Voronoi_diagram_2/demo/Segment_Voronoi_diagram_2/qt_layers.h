@@ -48,7 +48,40 @@ public:
     *widget << CGAL::RED;
     *widget << CGAL::PointSize(6);
     *widget << CGAL::LineWidth(3);
+#if 0
     svd.draw_sites(*widget);
+#else
+    {
+      typename T::Finite_vertices_iterator vit;
+      for (vit = svd.finite_vertices_begin();
+	   vit != svd.finite_vertices_end(); ++vit) {
+	typename T::Site_2 s = vit->site();
+	//	if ( s.is_exact() ) {
+	*widget << CGAL::RED;
+	//	} else {
+	//	  *widget << CGAL::GREEN;
+	//	}
+	if ( s.is_segment() ) {
+	  *widget << s.segment();
+	}
+      }
+    }
+    {
+      typename T::Finite_vertices_iterator vit;
+      for (vit = svd.finite_vertices_begin();
+	   vit != svd.finite_vertices_end(); ++vit) {
+	typename T::Site_2 s = vit->site();
+	if ( s.is_exact() ) {
+	  *widget << CGAL::RED;
+	} else {
+	  *widget << CGAL::YELLOW;
+	}
+	if ( s.is_point() ) {
+	  *widget << s.point();
+	}
+      }
+    }
+#endif
   }
 };
 
