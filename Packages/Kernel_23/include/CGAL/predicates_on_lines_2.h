@@ -154,7 +154,6 @@ compare_y_at_x(const Point_2<R> &p,
                const Line_2<R> &h1,
                const Line_2<R> &h2)
 {
-  CGAL_kernel_precondition( (! h1.is_vertical()) && (! h2.is_vertical()) );
   typedef typename  R::Point_2_base  RPoint_2;
   typedef typename  R::Line_2_base  RLine_2 ;
   return compare_y_at_x((const RPoint_2&)p,
@@ -170,9 +169,61 @@ compare_y_at_x(const Line_2<R> &l1,
                const Line_2<R> &h1,
                const Line_2<R> &h2)
 {
-  CGAL_kernel_precondition( (! h1.is_vertical()) && (! h2.is_vertical()) );
   typedef typename  R::Line_2_base  RLine_2 ;
   return compare_y_at_x((const RLine_2&)l1,
+                        (const RLine_2&)l2,
+                        (const RLine_2&)h1,
+                        (const RLine_2&)h2);
+}
+
+template < class R >
+inline
+Comparison_result
+compare_x_at_y(const Point_2<R> &p, const Line_2<R> &h)
+{
+  typedef typename  R::Point_2_base  RPoint_2;
+  typedef typename  R::Line_2_base  RLine_2 ;
+  return compare_x_at_y((const RPoint_2&)p,
+                        (const RLine_2&)h);
+}
+
+template < class R >
+inline
+Comparison_result
+compare_x_at_y(const Line_2<R> &l1,
+                    const Line_2<R> &l2,
+                    const Line_2<R> &h)
+{
+  typedef typename  R::Line_2_base  RLine_2 ;
+  return compare_x_at_y((const RLine_2&)l1,
+                        (const RLine_2&)l2,
+                        (const RLine_2&)h) ;
+}
+
+template < class R >
+inline
+Comparison_result
+compare_x_at_y(const Point_2<R> &p,
+               const Line_2<R> &h1,
+               const Line_2<R> &h2)
+{
+  typedef typename  R::Point_2_base  RPoint_2;
+  typedef typename  R::Line_2_base  RLine_2 ;
+  return compare_x_at_y((const RPoint_2&)p,
+                             (const RLine_2&)h1,
+                             (const RLine_2&)h2);
+}
+
+template < class R >
+inline
+Comparison_result
+compare_x_at_y(const Line_2<R> &l1,
+               const Line_2<R> &l2,
+               const Line_2<R> &h1,
+               const Line_2<R> &h2)
+{
+  typedef typename  R::Line_2_base  RLine_2 ;
+  return compare_x_at_y((const RLine_2&)l1,
                         (const RLine_2&)l2,
                         (const RLine_2&)h1,
                         (const RLine_2&)h2);

@@ -1,3 +1,6 @@
+3.12 (1 May 2001)
+- added compare_x_at_y
+
 3.12 (?? Mar 2001)
 - Fix too long lines.
 

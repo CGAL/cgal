@@ -1,5 +1,6 @@
-Version 6.16 (?? April 2001)
+Version 6.16 (1 May 2001)
 - angle()
+- compare_x_at_y()
 
 Version 6.15 (26 April 2001)
 - Change coplanar_side_of_oriented_circle
