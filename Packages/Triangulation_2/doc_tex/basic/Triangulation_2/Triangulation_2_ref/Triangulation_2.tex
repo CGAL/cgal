@@ -122,7 +122,7 @@ concept described on page~\ccRefPage{Triangulation_traits_2}.
 The second parameter expects a model of the
 \ccc{Triangulation_data_structure_2} described
  on page~\ccRefPage{Triangulation_data_structure_2}.
-This second parameter admits a default the class
+Dy befault, the second template parameter is instanciated by
 \ccc{CGAL::Triangulation_data_structure_using_list_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Triangulation_face_base_2<Gt> > >}.
@@ -193,7 +193,11 @@ ones.
 \ccNestedType{Finite_edges_iterator
 }{iterator over finite edges.}
 \ccGlue
-\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices.}
+\ccNestedType{Finite_vertices_iterator}{iterator over finite
+vertices.}
+\ccGlue
+\ccNestedType{Point_iterator}{iterator over the points corresponding the
+finite vertices of the triangulation.} 
 
 
 \ccNestedType{Line_face_circulator}{circulator over faces intersected by a line.}
@@ -633,8 +637,12 @@ They are all invalidated by any change in the triangulation.
 
 \ccMethod{Finite_faces_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
 \ccGlue
-\ccMethod{Finite_faces_iterator finite_faces_end() const;}{Past-the-end iterator}
-
+\ccMethod{Finite_faces_iterator finite_faces_end()
+const;}{Past-the-end iterator}
+\ccGlue
+\ccMethod{Point_iterator points_begin() const;}{}
+\ccGlue
+\ccMethod{Point_iterator points_end() const;}{Past-the-end iterator}
 
 The following iterators allow respectively to visit all
 (finite or infinite) faces, edges and vertices
