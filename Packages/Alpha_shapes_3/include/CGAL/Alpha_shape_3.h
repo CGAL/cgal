@@ -498,9 +498,9 @@ public:
     // `alpha', or the corresponding past-the-end iterator if such an
     // element is not found.
     {
-      return find(alpha_spectrum.begin(),
-		  alpha_spectrum.end(),
-		  alpha);
+      return std::find(alpha_spectrum.begin(),
+		       alpha_spectrum.end(),
+		       alpha);
     }
 
   Alpha_iterator alpha_lower_bound(const NT& alpha) const
