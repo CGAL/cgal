@@ -188,6 +188,7 @@ public:
     do {
       fc->set_marked(true);
     } while (++fc != fcbegin);
+    compute_new_bad_faces(v);
   }
 
 private:
