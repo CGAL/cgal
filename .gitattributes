@@ -927,21 +927,29 @@ Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
+Packages/Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
+Packages/Interpolation/doc_tex/Interpolation/nn_coords.xml -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrlinthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrlintwo.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrthree2.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrtwo.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/arrtwo2.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.ipe -text
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare1.pdf -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.ipe -text
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare2.pdf -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.eps -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.fig -text
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=unset#unset
+Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#unset
 Packages/Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text

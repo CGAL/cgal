@@ -1,3 +1,6 @@
+24 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 24 August 2004 Sylvain Pion
 - Add #include <CGAL/IO/io.h> in Bbox_[23].h.
 

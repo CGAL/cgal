@@ -1,0 +1,60 @@
+<ipe creator="ipe5toxml 2003/04/10">
+<page mediabox="-300.75 -384.411 294.25 457.589">
+<path stroke="black" pen="0.4">
+-161.214 58.2883 m
+-91.3385 46.0963 l
+</path>
+<path stroke="black" pen="0.4">
+-165.276 41.2195 m
+-97.026 63.1651 l
+</path>
+<mark stroke="black" pos="-129.436 52.7437" shape="3" size="2.8"/>
+<mark stroke="black" pos="-145.438 18.6944" shape="2" size="2.8"/>
+<text stroke="black" pos="-173.062 56.0832" size="10" type="label" valign="bottom">$l_1$</text>
+<text stroke="black" pos="-175.5 38.2016" size="10" type="label" valign="bottom">$l_2$</text>
+<text stroke="black" pos="-157.625 16.256" size="10" type="label" valign="bottom">$p$</text>
+<path stroke="black" pen="0.4">
+-24.375 70.7136 m
+17.0625 24.384 l
+</path>
+<path stroke="black" pen="0.4">
+-41.4375 17.8816 m
+-11.375 69.088 l
+</path>
+<path stroke="black" pen="0.4">
+-45.5 27.6352 m
+22.75 37.3888 l
+</path>
+<text stroke="black" pos="-35.75 72.3392" size="10" type="label" valign="bottom">$l$</text>
+<text stroke="black" pos="20.3125 39.0144" size="10" type="label" valign="bottom">$h_1$</text>
+<text stroke="black" pos="-38.873 40.513" size="10" type="label" valign="bottom">$h_2$</text>
+<mark stroke="black" pos="-15.9505 61.2945" shape="3" size="2.8"/>
+<mark stroke="black" pos="7.39375 35.1942" shape="3" size="2.8"/>
+<path stroke="black" pen="0.4">
+82.875 43.8912 m
+154.375 24.384 l
+</path>
+<path stroke="black" pen="0.4">
+99.125 49.5808 m
+87.75 23.5712 l
+</path>
+<path stroke="black" pen="0.4">
+105.625 75.5904 m
+169 75.5904 l
+</path>
+<path stroke="black" pen="0.4">
+134.875 82.9056 m
+165.75 56.0832 l
+</path>
+<mark stroke="black" pos="95.1697 40.5369" shape="3" size="2.8"/>
+<mark stroke="black" pos="143.295 75.5904" shape="3" size="2.8"/>
+<text stroke="black" pos="73.125 40.64" size="10" type="label" valign="bottom">$l_1$</text>
+<text stroke="black" pos="77.1875 21.9456" size="10" type="label" valign="bottom">$l_2$</text>
+<text stroke="black" pos="92.625 72.3392" size="10" type="label" valign="bottom">$h_1$</text>
+<text stroke="black" pos="163.312 60.96" size="10" type="label" valign="bottom">$h_2$</text>
+<text stroke="black" pos="-139.363 -7.8232" size="12" type="label" valign="bottom">(a)</text>
+<text stroke="black" pos="-25.1051 -9.7282" size="12" type="label" valign="bottom">(b)</text>
+<text stroke="black" pos="122.795 -9.7282" size="12" type="label" valign="bottom">(c)</text>
+<mark stroke="black" pos="-145.438 18.6944" shape="3" size="2.8"/>
+</page>
+</ipe>
