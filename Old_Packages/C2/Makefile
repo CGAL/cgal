@@ -18,8 +18,7 @@ package: clean $(Package).tar.gz
 	@echo "---- make VERSION=3.1 version ----"
 	@echo "---- make commit               ----"
 	@echo "---- make VERSION=3.1 rtag    ----"
-	@echo "---- make Package             ----"
-	@echo "---- make Submit              ----"
+	@echo "---- make submit              ----"
 	@echo "----------------------------------"
 
 symlinks:
