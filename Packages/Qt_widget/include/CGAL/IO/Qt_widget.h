@@ -36,7 +36,6 @@
 namespace CGAL {
 
 class Qt_widget_tool;
-class Qt_widget_standard_tool;
 class Qt_widget_layer;
 
 typedef 
@@ -200,7 +199,7 @@ protected:
 
 private:
   //Standard toolbar
-  void	      attach_standard(Qt_widget_standard_tool* tool);
+  void	      attach_standard(Qt_widget_tool* tool);
   inline bool has_standard_tool() const { return _has_standard_tool; };
   void	      detach_current_standard_tool(); 
 
@@ -232,7 +231,7 @@ private:
   bool _has_tool;
   bool _has_standard_tool;
   Qt_widget_tool	    *current_tool;
-  Qt_widget_standard_tool   *current_standard_tool;
+  Qt_widget_tool   *current_standard_tool;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;

@@ -26,7 +26,7 @@
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/holddown.xpm>
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_standard_tool.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 #include <qrect.h>
 
 
@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-class Qt_widget_handtool : public Qt_widget_standard_tool
+class Qt_widget_handtool : public Qt_widget_tool
 {
 public:
   Qt_widget_handtool() : wasrepainted(TRUE), on_first(FALSE){};

@@ -103,10 +103,6 @@ SOURCE=.\Qt_widget_move_point.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_tool.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File

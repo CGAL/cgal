@@ -24,7 +24,6 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
-#include <CGAL/IO/Qt_widget_standard_tool.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
@@ -362,7 +361,7 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 *Ursu Radu coding ....
 *
 *********************************************/
-void Qt_widget::attach_standard(Qt_widget_standard_tool* tool) {
+void Qt_widget::attach_standard(Qt_widget_tool* tool) {
   if (has_standard_tool()) {
     current_standard_tool->detach();
     emit(detached_standard_tool());

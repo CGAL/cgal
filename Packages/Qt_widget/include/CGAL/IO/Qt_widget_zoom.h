@@ -22,12 +22,12 @@
 #define CGAL_QT_WIDGET_ZOOM_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_standard_tool.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 #include <qcolor.h>
 
 namespace CGAL {
 
-class Qt_widget_zoom : public Qt_widget_standard_tool
+class Qt_widget_zoom : public Qt_widget_tool
 {
 private:
   int	x2, y2;
