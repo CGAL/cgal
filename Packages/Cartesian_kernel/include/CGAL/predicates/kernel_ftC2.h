@@ -220,8 +220,8 @@ orientationC2(const FT &px, const FT &py,
               const FT &qx, const FT &qy,
               const FT &rx, const FT &ry)
 {
-  return Orientation (sign_of_determinant2x2(px-rx, py-ry,
-                                             qx-rx, qy-ry));
+  return Orientation (sign_of_determinant2x2(qx-px, qy-py,
+                                             rx-px, ry-py));
 }
 
 template < class FT >
@@ -267,20 +267,20 @@ side_of_oriented_circleC2(const FT &px, const FT &py,
   //                         qx, qy, qx*qx + qy*qy, 1,
   //                         rx, ry, rx*rx + ry*ry, 1,
   //                         tx, ty, tx*tx + ty*ty, 1));
-  // We first translate so that t is the new origin.
-  FT ptx = px-tx;
-  FT pty = py-ty;
-  FT qtx = qx-tx;
-  FT qty = qy-ty;
-  FT rtx = rx-tx;
-  FT rty = ry-ty;
+  // We first translate so that p is the new origin.
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT tpx = tx-px;
+  FT tpy = ty-py;
 // The usual 3x3 formula can be simplified a little bit to a 2x2.
-//           sign_of_determinant3x3(ptx, pty, square(ptx) + square(pty),
-//                                  qtx, qty, square(qtx) + square(qty),
-//                                  rtx, rty, square(rtx) + square(rty)));
-  return Oriented_side( sign_of_determinant2x2(
-                             ptx*qty - pty*qtx, qtx*(qx-px) + qty*(qy-py),
-                             ptx*rty - pty*rtx, rtx*(rx-px) + rty*(ry-py)));
+//         - sign_of_determinant3x3(qpx, qpy, square(qpx) + square(qpy),
+//                                  rpx, rpy, square(rpx) + square(rpy),
+//                                  tpx, tpy, square(tpx) + square(tpy)));
+  return Oriented_side(sign_of_determinant2x2(
+                             qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
+                             qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy)));
 }
 
 template < class FT >
@@ -291,9 +291,6 @@ side_of_bounded_circleC2(const FT &px, const FT &py,
                          const FT &rx, const FT &ry,
                          const FT &tx, const FT &ty)
 {
-  // Note: if the code of these is inlined, and if they are implemented
-  // in a good way, some CSE can be done by the compiler.
-  // Or it could be rewritten more efficiently.
   return Bounded_side( side_of_oriented_circleC2(px,py,qx,qy,rx,ry,tx,ty)
                                  * orientationC2(px,py,qx,qy,rx,ry) );
 }
