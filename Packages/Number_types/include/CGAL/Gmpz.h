@@ -595,7 +595,7 @@ operator>>(std::istream& is, Gmpz &z)
   if (sign(tmp) != ZERO && negative)
       tmp = -tmp;
   if (!good)
-      is.setstate(std::ios_base::failbit);
+      is.setstate(std::ios::failbit);
   if (is)
       z = tmp;
   return is;
