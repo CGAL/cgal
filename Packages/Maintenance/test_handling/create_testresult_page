@@ -51,9 +51,9 @@ EOF
 
   my (@version_nr_vector, @version_name_vector);
   my ($i, $j);
+  my $temp;
   $i = 0;
   foreach $_ (glob("results-*.*-I-*\.html")) {
-    my $temp, $filename;
     $temp = $_;
     $temp =~ /results-(.)\.(.)-I-(.+)\.html/;
     $version_nr_vector[$i] = ${3};
