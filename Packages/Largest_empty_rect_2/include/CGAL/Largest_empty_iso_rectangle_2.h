@@ -157,7 +157,6 @@ private:
   NT largest_rect_size;
   //  Polygon *polygon;
 
-template<class T>
 
   bool insert(const Point& _p,Point_type i_type);
   void phase_1();
@@ -327,7 +326,7 @@ bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 {
   // check that the point is inside the bounding box 
-  if(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
+  if(_p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
      _p.y() <= bl_p.y() || _p.y() >= tr_p.y())
     return(false);
 
@@ -456,7 +455,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 					 Point_type i_type)
 {
   // check that the point is inside the bounding box 
-  if((i_type == REG) && _(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
+  if((i_type == REG) && (_p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
      _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
     return(false);
 
