@@ -246,7 +246,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 Iso_rectangleC2<R CGAL_CTAG>::
-bounded_side(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 { // FIXME : predicate
   bool x_incr = (xmin() < p.x()) && (p.x() < xmax()),
        y_incr = (ymin() < p.y()) && (p.y() < ymax());
