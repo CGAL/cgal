@@ -121,3 +121,6 @@ Changes from 2.30/2.31:
 
 Changes from 2.32
    - Added VC7-0 workaround
+
+Changes from 2.33
+   - Replace \ccFont by \ccc for the HTML index.
