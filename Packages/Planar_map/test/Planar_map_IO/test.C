@@ -412,8 +412,8 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       file1.getline(s1, STR_LEN);
       file2.getline(s2, STR_LEN);
       
-      //std::cout<<s1<<endl;
-      //std::cout<<s2<<endl;
+      //std::cout<<s1<<std::endl;
+      //std::cout<<s2<<std::endl;
       
       CGAL_assertion(std::string(s1) == std::string(s2));
     }
