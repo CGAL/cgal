@@ -34,6 +34,10 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
+#if defined(TEST)
+#include <CGAL/kdtree_d.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 /*!
@@ -71,6 +75,12 @@ public:
   typedef Internal_point                Point;
   typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
   typedef T                             Traits;
+
+#if defined(TEST)
+    typedef CGAL::Kdtree_interface_2d<Point_2>  kd_interface;
+    typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
+    typedef typename kd_tree::Box Kd_box;
+#endif
 
   class Point_data;
   class Less_yx;
@@ -164,6 +174,10 @@ public:
    */
   Iso_rectangle_2 
   get_largest_empty_iso_rectangle();
+
+#if defined(TEST)
+  void kd_test(Iso_rectangle_2 rec);
+#endif
 
   //! Retrieve four points from the input that define the largest
   //! empty iso rectangle.
@@ -1289,13 +1303,44 @@ Largest_empty_iso_rectangle_2<T>::update()
     largest_rect_size = 0;
 
     phase_1();
-
     phase_2();
     phase_3();
     empty_tents();
     cache_valid = true;
   }
 }
+
+#if defined(TEST)
+template<class T>
+void Largest_empty_iso_rectangle_2<T>::kd_test(Iso_rectangle_2 rec)
+{
+  kd_tree *tree = new kd_tree(2);
+  std::list<Point_2> l;
+
+  for(const_iterator it = begin();
+      it != end();
+      ++it){
+    const Point_2& p = *it;
+    l.push_back(p);
+  }
+
+  tree->build(l);
+
+  if(!tree->is_valid() )
+    tree->dump();
+  assert(tree->is_valid());
+
+  list<Point_2> res;
+  Kd_box b(rec.min(),rec.max(),2);
+  tree->search(std::back_inserter(res),b);
+
+  for(list<Point_2>::iterator iter = res.begin();
+                              iter != res.end();
+                              ++iter)
+    if(rec.has_on_bounded_side(*iter))
+       std::cout << "LER has points inside!!!!!!!!!!!!!!!\n";
+}
+#endif
 
 template<class T>
 typename Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
@@ -1305,6 +1350,18 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
     return(get_bounding_box());
   }
   update();
+#if defined(TEST)
+  kd_test(Iso_rectangle_2(
+           less_xy_point(left_p.x_part,right_p.x_part) ?
+                 left_p.x_part : right_p.x_part,
+           less_xy_point(left_p.x_part,right_p.x_part) ?
+                 right_p.x_part : left_p.x_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ?
+                 bottom_p.y_part : top_p.y_part,
+           less_yx_point(bottom_p.x_part,top_p.x_part) ?
+	   top_p.y_part : bottom_p.y_part));
+#endif
+
   return(Iso_rectangle_2(
            less_xy_point(left_p.x_part,right_p.x_part) ?
                  left_p.x_part : right_p.x_part,
