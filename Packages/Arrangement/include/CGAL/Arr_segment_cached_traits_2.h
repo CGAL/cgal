@@ -447,15 +447,16 @@ public:
     return (true);
   }
   
-  /*!
-   * Split the given curve, to x-monotone sub-curves.
-   * In case of segments does nothing, since a sgement is always x-monotone.
+  /*! Cut the given curve into x-monotone subcurves and stores them in the
+   * given list. While segments are x_monotone, still need to cast their type.
    * \param cv The curve.
    * \param x_curves A list of the output x-monotone sub-curves.
-   * \pre cv is not x-monotone (and not a vertical segment).
    */
-  void make_x_monotone(const Curve_2&, std::list<Curve_2>& ) const
-  {} 
+  void make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) const
+  {
+    l.clear();
+    l.push_back(X_curve_2(cv));
+  } 
 
   /*!
    * Flip a given curve.

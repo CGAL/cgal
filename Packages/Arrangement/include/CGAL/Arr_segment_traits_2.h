@@ -77,9 +77,13 @@ public:
   /*! make_x_monotone() cuts the given curve into x-monotone subcurves and
    * stores them in the given list. The order in which they are inserted into
    * the list defines their order in the hierarchy tree.
-   * Segments are x_monotone!
+   * While segments are x_monotone, still need to cast their type.
    */
-  void make_x_monotone(const Curve_2 & /*cv*/, std::list<Curve_2>& /*l*/) {} 
+  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  {
+    l.clear();
+    l.push_back(X_curve_2(cv));
+  } 
 
   /*! curve_flip() flips a given curve
    * \param cv the curve

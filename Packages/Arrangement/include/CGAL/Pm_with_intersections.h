@@ -1137,33 +1137,32 @@ public:
                             bool                       source_vertex_valid,
                             Change_notification      * en = NULL)
   {
-    if (traits->is_x_monotone(c))
+//    if (0 && traits->is_x_monotone(c))
+//    {
+//      return insert_intersecting_xcurve(c, source_vertex, target_vertex, 
+//                                        source_vertex_valid, en);
+//    }
+//    else
+//    {
+    Vertex_handle         src, tgt;
+    Halfedge_handle last_he;
+    std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve_2> x_list;
+    typename std::list<
+      CGAL_TYPENAME_MSVC_NULL Traits::X_curve_2>::const_iterator it;
+    traits->make_x_monotone(c, x_list);
+    src = source_vertex;
+    tgt = target_vertex;
+    for (it = x_list.begin(); it != x_list.end(); it++)
     {
-      return insert_intersecting_xcurve(c, source_vertex, target_vertex, 
-                                        source_vertex_valid, en);
+      if (it == x_list.begin()) 
+        last_he = insert_intersecting_xcurve(*it, src, tgt, 
+                                             source_vertex_valid, en); 
+      else
+        last_he = insert_intersecting_xcurve(*it, src, tgt, true, en); 
+      src = tgt;
     }
-    else
-    {
-      Vertex_handle         src, tgt;
-      Halfedge_handle last_he;
-      std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve_2> x_list;
-      typename std::list<
-        CGAL_TYPENAME_MSVC_NULL Traits::X_curve_2>::const_iterator it;
-      traits->make_x_monotone(c, x_list);
-      src = source_vertex;
-      tgt = target_vertex;
-      for (it = x_list.begin(); it != x_list.end(); it++)
-      {
-        if (it == x_list.begin()) 
-          last_he = insert_intersecting_xcurve(*it, src, tgt, 
-                                               source_vertex_valid, en); 
-        else
-          last_he = insert_intersecting_xcurve(*it, src, tgt, true, en); 
-        src = tgt;
-      }
-      target_vertex = tgt;
-      return last_he;
-    }
+    target_vertex = tgt;
+    return last_he;
   }
 
   // return the last inserted halfedge whose target points to the last 
@@ -1281,12 +1280,12 @@ public:
   // ------------
 protected:
 
-  bool in_x_range(const Curve_2 & cv1, const Curve_2 & cv2)
+  bool in_x_range(const X_curve_2 & cv1, const X_curve_2 & cv2)
   {
     return  (curve_in_x_range(cv1,cv2) || curve_in_x_range(cv2,cv1));   
   }
   
-  bool curve_in_x_range(const Curve_2 & cv1, const Curve_2 & cv2)
+  bool curve_in_x_range(const X_curve_2 & cv1, const X_curve_2 & cv2)
   {
     
     return ((traits->curve_is_in_x_range(cv1, traits->curve_source(cv2)) ||

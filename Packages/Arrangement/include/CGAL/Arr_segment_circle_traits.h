@@ -759,7 +759,12 @@ class Arr_segment_circle_traits
   void make_x_monotone (const Curve_2& curve, 
 			std::list<X_curve_2>& x_curves) const
   {
-    CGAL_precondition(!is_x_monotone(curve));
+    if (is_x_monotone(curve))
+    {
+      x_curves.clear();
+      x_curves.push_back(X_curve(curve));
+      return;
+    } 
 
     // Clear the output list.
     x_curves.clear();

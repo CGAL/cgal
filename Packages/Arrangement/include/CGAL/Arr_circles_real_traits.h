@@ -422,9 +422,18 @@ public:
     return cv.is_x_monotone();
   }
 
-  void make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) const {
+  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  {
     // Require:
-    CGAL_precondition( ! is_x_monotone(cv) );
+//    CGAL_precondition( ! is_x_monotone(cv) );
+
+    if (is_x_monotone(cv))
+    {
+      l.clear();
+      l.push_back(X_curve(cv));
+      return;
+    } 
+
     bool   switch_orientation  = false;
     
     // is cv a closed circle ?

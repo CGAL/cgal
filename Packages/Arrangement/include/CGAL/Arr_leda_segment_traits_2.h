@@ -68,7 +68,11 @@ public:
 public:
   bool is_x_monotone(const Curve_2 & cv) {return true;}
   //segments are x_monotone:
-  void make_x_monotone(const Curve_2 & cv, std::list<Curve_2>& l) {} 
+  void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
+  {
+    l.clear();
+    l.push_back(X_curve_2(cv));
+  } 
 
   X_curve_2 curve_flip(const X_curve_2 & cv) const {
       return cv.reversal();

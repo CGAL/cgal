@@ -698,14 +698,17 @@ private:
 		           << prev->target()->point();
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-	  //res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
-	  //				     m_change_not);
+#if !defined(CGAL_NO_CURVE_FLIP)
 	  X_curve_2 flipped = m_traits->curve_flip(cv);
 	  res = pm.non_intersecting_insert_at_vertices(flipped, 
 						       hhandle,
 						       prev,
 						       m_change_not);
 	  res = res->twin();
+#else
+	  res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
+                                                       m_change_not);
+#endif
       } else {
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  from vertex (2)";
