@@ -1116,9 +1116,13 @@ create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size,
   Vertex_handle v=sncp()->new_vertex(normalized(center), boundary);
   SM_decorator SD(&*v); 
 
+  TRACEN("create_SM_on_infibox: center = " << center);
+
   TRACEN("create svertices");
   SVertex_handle sv[size];
+  TRACEN("create_SM_on_infibox: size = " << size);
   for(int i=0; i<size; ++i) {
+    TRACEN("                      SP["<< i << "]=" << SP[i]);
     sv[i] = SD.new_svertex(SP[i]);
     mark(sv[i]) = (i < 2 ? boundary : 1);
   }
@@ -1134,7 +1138,11 @@ create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size,
   }
 
   she[size-1] = SD.new_shalfedge_pair(she[0], sv[size-1], -1);
-  she[size]   = SD.new_shalfedge_pair(sv[size-1], SD.twin(she[0]), 1);
+  CGAL_assertion(SD.next(she[size-1]) == SD.twin(she[size-1]));
+  CGAL_assertion(SD.previous(SD.twin(she[size-1])) == she[size-1]);
+  CGAL_assertion(SD.twin(SD.previous(SD.twin(she[size-1]))) == SD.twin(she[size-1]));
+
+  she[size]   = SD.new_shalfedge_pair(SD.twin(she[size-1]), SD.twin(she[0]), 1, 1);
   
   CGAL_assertion(SD.next(she[0]) == she[1]);
   CGAL_assertion(SD.next(she[1]) == she[2]);

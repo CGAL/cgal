@@ -206,7 +206,7 @@ public:
   { return v->point(); }
 
   static Vector_3 vector(Halfedge_const_handle e)
-  { return Vector_3(e->point()); }
+  { return Vector_3(e->point()-CGAL::ORIGIN); }
 
   static Segment_3 segment(Halfedge_const_handle e)
   { return Segment_3(point(source(e)),
