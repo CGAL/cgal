@@ -77,6 +77,28 @@ double Static_Filtered_equal_directionC2_4::_epsilon_3;
 double Static_Filtered_equal_directionC2_4::_epsilon_4;
 double Static_Filtered_equal_directionC2_4::_bound = -1.0;
 
+double Static_Filtered_compare_slopesC2_4::_epsilon_0;
+double Static_Filtered_compare_slopesC2_4::_epsilon_1;
+double Static_Filtered_compare_slopesC2_4::_epsilon_2;
+double Static_Filtered_compare_slopesC2_4::_epsilon_3;
+double Static_Filtered_compare_slopesC2_4::_epsilon_4;
+double Static_Filtered_compare_slopesC2_4::_epsilon_5;
+double Static_Filtered_compare_slopesC2_4::_bound = -1.0;
+
+double Static_Filtered_compare_slopesC2_8::_epsilon_0;
+double Static_Filtered_compare_slopesC2_8::_epsilon_1;
+double Static_Filtered_compare_slopesC2_8::_epsilon_2;
+double Static_Filtered_compare_slopesC2_8::_epsilon_3;
+double Static_Filtered_compare_slopesC2_8::_epsilon_4;
+double Static_Filtered_compare_slopesC2_8::_epsilon_5;
+double Static_Filtered_compare_slopesC2_8::_epsilon_6;
+double Static_Filtered_compare_slopesC2_8::_epsilon_7;
+double Static_Filtered_compare_slopesC2_8::_epsilon_8;
+double Static_Filtered_compare_slopesC2_8::_epsilon_9;
+double Static_Filtered_compare_slopesC2_8::_epsilon_10;
+double Static_Filtered_compare_slopesC2_8::_epsilon_11;
+double Static_Filtered_compare_slopesC2_8::_bound = -1.0;
+
 double Static_Filtered_compare_deltax_deltayC2_4::_epsilon_0;
 double Static_Filtered_compare_deltax_deltayC2_4::_bound = -1.0;
 
