@@ -1,13 +1,14 @@
 \chapter{2D Triangulation Data Structure} 
-\label{Chapter_2D_Triangulation_Data_structure}
+\label{User_chapter_2D_Triangulation_Data_Structure}
 
 \minitoc
 
 The second template parameter of a 2D triangulation class
 has to be instanciated with a model
 of \ccc{TriangulationDataStructure_2}.
-This model is decribed in section~\ref{2D_TDS_Concept}.
-\cgal\ provides two classes which are models for this concept.
+Section~\ref{2D_TDS_Concept} describes the concept
+of \ccc{TriangulationDataStructure_2}.
+
 These models are described in section~\ref{2D_TDS_Models}.
 Section~\ref{2D_TDS_Base_Classes} described the base
 vertex and face classes of a triangulation.
@@ -101,18 +102,6 @@ removal of a vertex lowering the dimension of the triangulation.\\
 
 
 
-\section{Models of Triangulation Data Structure}
-\label{2D_TDS_Models}
-
-\cgal\ currently offers  two models of triangulation data structures.
-The first one, called \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
->}
-is very economic with respect to memory space but its use is
-restricted
-to planar embedded triangulations. The second one, called
-\ccc{Triangulation_data_structure_using_list_2<Vb,Fb>} can be used for 
-the representation of any  orientable triangulations.
-
 
 \subsection{Software design}
 According to the software design described in 
@@ -134,53 +123,6 @@ his own base classes tuned for  his application.
 
 
 
-
-
-\subsection{The Default Triangulation Data Structure}
-\cgal\ proposes the class 
-\ccc{Triangulation_default_data_structure_2<TdsGt,Vb,Fb >}
-as a model  for the triangulation data structure class of a triangulation.
-This class has three  template parameters.
-In addition to the template parameters 
-\ccc{Vb} and \ccc{Fb} for the base classes, 
- this model of triangulation data structure has a template parameter
-\ccc{TdsGt}
-which is a geometric traits class. This may be surprising because
-the triangulation data structure is supposed to deal only 
-with the combinatorial
-aspect of the triangulation and not with its geometric embedding.
-The reason for that is the following.
-The class \ccc{Triangulation_default_data_structure_2<TdsGt,Vb,Fb >}
-does not use any additional data structure
-such as a list or a vector to act as a container for faces and vertices.
-The iterators which allows to visit all faces and vertices of the
-triangulation
-data structure
-is implemented using  an implicit tree structure over the faces
-as described by
- de Berg et al. in  \cite{bkoo-stses-97}.
- This tree structure is  based on the planar
-geometric embedding
-the triangulation. Each face 
- can find its parent 
-and its children using only simple comparisons on the
-coordinates of the points embedding its vertices.
-This  tree structure remain implicit 
-and does not require any additional memory. 
-
-The requirements concerning the geometric traits \ccc{TdsGt} of
-\ccc{Triangulation_default_data_structure_2}
- are very light and form a subset of the requirements needed
-for the geometric traits of the triangulations. 
-This class is required  to provide a type \ccc{Point_2}
-and coordinate comparison predicates.
-The point type
-defined by the geometric traits class of the triangulation data
-structure
-and the point type defined by the geometric traits of the triangulation
-have to be the same.
-This is automatically achieved if the same model is used for both
-traits classes which is recommended but not compulsory.
 
 
 

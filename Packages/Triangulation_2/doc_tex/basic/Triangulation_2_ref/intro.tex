@@ -13,6 +13,7 @@
 %\clearpage
 %\section{Reference pages for 2D Triangulations}
 \chapter{2D Triangulations}
+\label{ref_chapter_2D_Triangulations}
 
 \subsection*{Definition}
 A triangulation is a 2-dimensional simplicial complex which is pure
@@ -37,7 +38,9 @@ The second template parameter stands for a model
 of  triangulation data
 structure acting as a container for faces and vertices
 while  taking care of the combinatorial aspects of the triangulation. 
-
+The concepts and models relative to the triangulation data structure
+and to the faces and vertices of a triangulation.
+are described in Chapter~\ref{ref_chapter_2D_Triangulation_Data_Structure}
 
 
 \subsection*{Concepts}
@@ -46,6 +49,14 @@ while  taking care of the combinatorial aspects of the triangulation.
 \ccRefConceptPage{RegularTriangulationTraits_2} \\
 \ccRefConceptPage{ConstrainedTriangulationTraits_2} \\
 \ccRefConceptPage{ConstrainedDelaunayTriangulationTraits_2} 
+
+\ccRefConceptPage{TriangulationDataStructure_2}\\
+\ccRefConceptPage{TriangulationDataStructure_2::Face}\\
+\ccRefConceptPage{TriangulationDataStructure_2::Vertex}\\
+\ccRefConceptPage{TriangulationFaceBase_2}\\
+\ccRefConceptPage{TriangulationVertexBase_2}\\
+\ccRefConceptPage{ConstrainedTriangulationFaceBase_2}\\
+\ccRefConceptPage{RegularTriangulationFaceBase_2}
 
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>}\\
@@ -61,9 +72,11 @@ while  taking care of the combinatorial aspects of the triangulation.
 \ccRefIdfierPage{CGAL::Triangulation_euclidean_traits_xy_3<R>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>}\\
 
-
-\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Face}\\
-\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Vertex}\\
+\ccRefIdfierPage{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_face_base_2<Traits>}\\
 
 \ccRefIdfierPage{CGAL::Weighted_point<Pt,Wt>}\\
 \ccRefIdfierPage{CGAL::Triangulation_cw_ccw_2}\\

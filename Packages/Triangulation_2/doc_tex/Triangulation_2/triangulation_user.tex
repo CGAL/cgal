@@ -1,6 +1,7 @@
 \newcommand{\triangulationcomment}[1]{}
 
-\chapter{2D Triangulations} \label{Chapter_2D_Triangulations}
+\chapter{2D Triangulations} 
+\label{user_chapter_2D_Triangulations}
 
 \minitoc
 
@@ -784,7 +785,7 @@ triangulation. However the triangulation may include
 include other vertices as well.
 There are three versions of  constrained triangulations.
 In the basic version, the constrained triangulation 
-do not handle intersecting constraints, and the set of input 
+does not handle intersecting constraints, and the set of input 
 constraints is required to be a set of segments that do not intersect
 except possibly at their endpoints. Any number of constrained edges
 are allowed to share the same endpoint.  Vertical constrained edges or
@@ -793,20 +794,20 @@ The two other versions support intersecting input constraints.
 In those versions, input constraints are allowed to be
 intersecting, overlapping or partially
 overlapping segments.
-The triangulation introduce  additional  vertices at each point which
-is a proper intersection points of  two 
+The triangulation introduces  additional  vertices at each point that
+is the proper intersection points of  two 
 constraints. A single constraint intersecting other
 constraints will then appear as several edges in the triangulation.
-The two versions dealing with intersecting constraints, slightly differ
+The two versions dealing with intersecting constraints differ
 in the way intersecting constraints are dealt with. One of them is
 designed to be robust when predicates are evaluated exactly but
 constructions (i. e.  intersection computations) are
 approximative.
 The other one is designed to be used 
-with an exact arithmetic (meaning exact
+with exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
 This last version finds its full efficiency  when used in conjunction
-with a constraint hierarchy data structure (which allows to avoid the
+with a constraint hierarchy data structure (which allows one to avoid the
 cascading of intersection computations)
 as provided in the class
 \ccc{Constrained_triangulation_plus_2}. See section~\ref{Section_2D_Constrained_triangulation_plus}.
@@ -865,7 +866,7 @@ insertion of a new constraint, given by its two endpoints
 or the removal of a constraint.
 
 \subsubsection{The Base Face of a Constrained Triangulation}
- The information about constrained edges is store in the 
+ The information about constrained edges is stored in the 
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
 additonnal functionalities to deal with this information.
@@ -886,7 +887,7 @@ for constrained triangulations. This class, named
 \ccc{Constrained_triangulation_face_base_2<Traits>},
 derives from the class
 \ccc{Triangulation_face_base_2<Traits>}
-and add three boolean to store the status of its edges. 
+and adds three booleans to store the status of its edges. 
 
 %\subsubsection{A Constrained Triangulation Class for Animation Purposes
 %\cgal\ provides 
@@ -1037,7 +1038,7 @@ of constrained edges of the triangulation, and for each
 constrained edge,  the set of input constraints that overlap it.
 
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
-is especially usefull when the base constrained triangulation class
+is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
 i.e. when its intersection tag is \ccc{CGAL::Exact_intersections_tag}.
 Indeed in this case, the \ccc{Constrained_triangulation_plus_2<Tr>}
