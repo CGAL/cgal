@@ -1,3 +1,7 @@
+version 3.14
+- Made demo/demo_alpha.C compile under Windows
+- Fixes to make operator<< for ostream work
+
 version 3.13:
 - Use STL_extension's Triple.
 
