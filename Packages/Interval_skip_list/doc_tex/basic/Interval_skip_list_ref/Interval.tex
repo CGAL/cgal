@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Interval.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSIntervalRev}{$Revision$}
+\RCSdefDate{\RCSIntervalDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Interval}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the
+interval class of a \ccc{Interval_skip_list<Interval>}.
+
+
+
+\ccCreation
+\ccCreationVariable{in}  %% choose variable name
+
+\ccConstructor{Interval();}{default constructor.}
+\ccTypes
+
+\ccNestedType{Value}{The type of infimum and supremum of the interval.}
+
+
+\ccAccessFunctions
+\ccMethod{Value inf() const;}
+{returns  the infimum.}
+\ccGlue
+\ccMethod{Value sup() const;}{returns the supremum.}
+
+
+\ccMethod{bool contains(const Value& v) const;}
+{returns \ccc{true}, iff \ccc{in} contains \ccc{v}.}
+
+\ccMethod{bool contains_interval(const Value& i, const Value& s) const;}
+{returns \ccc{true}, iff \ccc{in} contains \ccc{(i,s)}.}
+
+\ccMethod{bool operator==(const Interval& I) const;}
+{Equality test.}
+
+\ccMethod{bool operator!=(const Interval& I) const;}
+{Unequality test.}
+
+\ccHasModels
+
+\ccc{CGAL::Interval_skip_list_interval<Value>}\\
+\ccc{CGAL::Face_interval}
+
+
+\ccSeeAlso
+
+\ccc{Interval_skip_list} 
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

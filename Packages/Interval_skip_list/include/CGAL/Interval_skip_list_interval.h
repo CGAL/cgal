@@ -24,11 +24,7 @@
 #ifndef CGAL_INTERVAL_SKIP_LIST_INTERVAL_H
 #define CGAL_INTERVAL_SKIP_LIST_INTERVAL_H
 
-#include <cassert>
-#include <stdio.h>
 #include <iostream>
-#include <CGAL/Random.h>
-#include <list>
 
 
 namespace CGAL {

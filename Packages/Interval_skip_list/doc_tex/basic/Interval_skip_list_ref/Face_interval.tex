@@ -40,20 +40,25 @@
 %
 % ======================================================================
 
-\RCSdef{\alphashapeRevision}{$Revision$}
-\RCSdefDate{\alphashapeDate}{$Date$}
+\RCSdef{\FaceIntervalRevision}{$Revision$}
+\RCSdefDate{\FaceIntervalDate}{$Date$}
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Interval_skip_list_interval<Value>}
+\begin{ccRefClass} {Face_interval<FaceHandle>}
 
 \ccDefinition
 
-The class \ccClassTemplateName\ represents intervals with infimum 
-and supremum of type \ccc{Value}, and which can be open or closed.
+The class \ccClassTemplateName\ represents intervals for the minimum and
+maximum value of the \ccc{z}-coordinate of a face of a triangulation.
 
-\ccInclude{CGAL/Interval_skip_list_interval.h}
+{\it Remark: Here we will exploit that the face type  knows the vertex type,
+who knows the point type, who is known by the kernel traits who knows the FT,
+which will become the type Value.}
 
+\ccInclude{CGAL/Face_interval.h}
+
+\ccTypes
 \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
 \ccThreeToTwo
 
@@ -62,15 +67,12 @@ and supremum of type \ccc{Value}, and which can be open or closed.
 \ccCreation
 \ccCreationVariable{i}
 
-\ccConstructor{Interval_skip_list_interval();}
+\ccConstructor{Face_interval();}
 {Default constructor.}
 
-\ccConstructor{Interval_skip_list_interval(char lb, 
-							      const Value& i, 
-							      const Value& s, 
-							      char rb);}
-{Constructs the interval with infimum \ccc{i} and supremum \ccc{s}.
-The arguments \ccc{lb} and \ccc{rb} can be \ccc{,} and \ccc{,} respectively.}
+\ccConstructor{Face_interval(FaceHandle fh);}
+{Constructs the interval with smallest and largest \ccc{z} coordinate of the points
+stored in the vertices of the face..}
 
 \ccOperations
 
@@ -80,20 +82,15 @@ The arguments \ccc{lb} and \ccc{rb} can be \ccc{,} and \ccc{,} respectively.}
 \ccMethod{Value sup() const;}
 {returns the supremum.}
 
-\ccMethod{char lbound() const;}
-{returns the left bound.}
-
-\ccMethod{char rbound() const;}
-{returns the right bound.}
+\ccMethod{FaceHandle face_handle();}
+{returns the face handle.}
 
 \ccHeading{I/O}
 
-The output operator is defined for \ccc{std::ostream}.
-
 \ccFunction{ostream& operator<<(ostream& os,
-                  const Interval_skip_list_interval<V>& i);}
-{Inserts the interval \ccc{i} into the stream \ccc{os}.\\
-\ccPrecond The output operator for \ccc{Value} is defined.}
+                  const Face_interval<FaceHandle>& i);}
+{Inserts the interval \ccc{i} into the stream \ccc{os}.
+\ccPrecond The output operator for \ccc{*Face_handle} is defined.}
 
 \end{ccRefClass}
 

@@ -49,10 +49,11 @@
 
 \ccDefinition
 
-The class \ccClassTemplateName\ represents .
+The class \ccClassTemplateName\ represents intervals with infimum 
+and supremum of type \ccc{Value}, and which can be open or closed.
 
+\ccInclude{CGAL/Interval_skip_list_interval.h}
 
-\ccTypes
 \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
 \ccThreeToTwo
 
@@ -64,23 +65,35 @@ The class \ccClassTemplateName\ represents .
 \ccConstructor{Interval_skip_list_interval();}
 {Default constructor.}
 
+\ccConstructor{Interval_skip_list_interval(char lb, 
+							      const Value& i, 
+							      const Value& s, 
+							      char rb);}
+{Constructs the interval with infimum \ccc{i} and supremum \ccc{s}.
+The arguments \ccc{lb} and \ccc{rb} can be \ccc{,} and \ccc{,} respectively.}
 
 \ccOperations
 
-\ccMethod{(Value inf() const;}
+\ccMethod{Value inf() const;}
 {returns the infimum.}
 
-\ccMethod{(Value sup() const;}
+\ccMethod{Value sup() const;}
 {returns the supremum.}
+
+\ccMethod{char lbound() const;}
+{returns the left bound.}
+
+\ccMethod{char rbound() const;}
+{returns the right bound.}
 
 \ccHeading{I/O}
 
-The output operator is defined for \ccc{std::ostream}
+The output operator is defined for \ccc{std::ostream}.
 
 \ccFunction{ostream& operator<<(ostream& os,
                   const Interval_skip_list_interval<V>& i);}
-{Inserts the interval \ccc{i} into the stream \ccc{os}.}
-
+{Inserts the interval \ccc{i} into the stream \ccc{os}.\\
+\ccPrecond The output operator for \ccc{Value} is defined.}
 
 \end{ccRefClass}
 

@@ -1,0 +1,2 @@
+- Added a destructor for Interval_skip_list as the constructor calls new
+- Added function clear()

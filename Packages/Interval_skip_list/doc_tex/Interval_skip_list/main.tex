@@ -1,0 +1,60 @@
+
+\RCSdef{\IntervalskiplistRev}{$Revision$}
+\RCSdefDate{\IntervalskiplistDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\chapter{Interval Skiplist}
+\label{chapter_Interval_skip_list}
+\ccChapterRelease{\IntervalskiplistRev. \ \IntervalskiplistDate}\\
+\ccChapterAuthor{Andreas Fabri}
+
+
+
+
+% +========================================================================+
+\section{Definition}
+% +========================================================================+
+  
+An interval skiplist is a data strucure for finding all intervals 
+that overlap a point. The implementation we provide is dynamic, that
+is the user can insert and remove intervals. 
+ 
+% +========================================================================+
+\section{Example Programs}
+% +========================================================================+
+\label{sectionIntervalskiplistExamples}
+
+We give two examples. The first one uses a basic interval class.
+The second one stores face handles to faces of a Delaunay
+triangulation of 3D points representing a terrain model.
+
+% +-------------------------------------------------------------+
+\subsection{First Example with Simple Interval}
+
+The first example reads two numbers \ccc{n} and \ccc{d} from \ccc{std::cin}.
+It creates n intervals of length \ccc{d} with the left endpoint at \ccc{n}.
+It then reads out the intervals for at the 1-dimensional point with
+coordinate $0 ... n+d$. 
+
+\ccIncludeExampleCode{../../examples/Interval_skip_list/intervals.C}
+
+% +-------------------------------------------------------------+
+\subsection{Example with Faces of a Triangulated Terrain}
+
+This example creates an interval skiplist for the faces of a terrains.
+We read the points from a file, and we write all faces to \ccc{std::cout}
+that intersect the plane parallel to the \ccc{xy}-plane and with \ccc{z}
+coordinate 50.
+
+\ccIncludeExampleCode{../../examples/Interval_skip_list/terrain.C}
+
+
+% +--------------------------------------------------------+
+
+\input{Interval_skip_list_ref/main}
+
+% EOF
+
+

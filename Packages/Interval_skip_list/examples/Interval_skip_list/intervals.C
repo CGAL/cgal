@@ -6,10 +6,8 @@
 typedef CGAL::Interval_skip_list_interval<double> Interval;
 typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 
-void
-fct()
+int main()
 {
- 
   Interval_skip_list isl;
   int i, n, d;
 
@@ -20,9 +18,7 @@ fct()
   }
   std::random_shuffle(intervals.begin(), intervals.end());
 
-  for(i = 0; i < n; i++) {
-    isl.insert(intervals[i]);
-  }
+  isl.insert(intervals.begin(), intervals.end());
 
   for(i = 0; i < n+d; i++) {
     std::list<Interval> L;
@@ -33,25 +29,11 @@ fct()
     std::cout << std::endl;
   }
 
-  std::cout << isl;
-  std::cout << std::endl;
-
-  std::cout << * isl.begin();
   for(i = 0; i < n; i++) {
     isl.remove(intervals[i]);
   }
-  std::cout << isl;
-  std::cout << std::endl;
-  
-}
-
-int
-main()
-{
-
-  fct();
   return 0;
 
 }
 
-  
+
