@@ -1,3 +1,7 @@
+2.21
++ Forgot to add CGAL_CFG_MATCHING_BUG_3.C in test/Configuration too.
++ Remove definition of non standard M_PI for VC++.
+
 2.20
 + CGAL/config/msvc7/iterators_specializations.h added for VC7.
 
