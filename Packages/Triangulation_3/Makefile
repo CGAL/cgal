@@ -1,7 +1,7 @@
 #  Makefile for CGAL's Triangulation3 package.
 
-CVS_MODULE_NAME=tet
 Package=Triangulation3
+CVS_MODULE_NAME=$(Package)
 
 .PHONY: doc package test submit version rtag
 
