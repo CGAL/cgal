@@ -446,6 +446,283 @@
 
 \end{ccRefFunction}
 
+%% +=========================================================================+
+
+\begin{ccRefClass}{Emptyset_iterator}
+  \label{sectionEmptysetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassName\ defines an
+  \ccc{OutputIterator} that ignores everything written to it. One can
+  think of it as being connected to \texttt{/dev/null}.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+  
+  \ccCreation
+
+  \ccTwo{Emptyset_iterator()}{}
+  
+  \ccConstructor{Emptyset_iterator();}{default constructor.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Oneset_iterator}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Oneset_iterator<T>}
+  \label{sectionOnesetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{OutputIterator} that always refers to one specific object of
+  type \ccc{T}.
+  
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+  
+  \ccCreation
+
+  \ccTwo{Oneset_iterator(T& t);}{}
+  
+  \ccTagFullDeclarations\ccConstructor{Oneset_iterator(T& t);}{creates
+    an iterator referring to \ccc{t}.}\ccTagDefaults
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Emptyset_iterator}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Counting_iterator<Iterator, Value>}
+  \label{sectionCountingIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The iterator adaptor \ccClassTemplateName\ adds a
+  counter to the internal iterator of type \ccc{Iterator} and defines
+  equality of two instances in terms of this counter. It can be used
+  to create finite sequences of possibly infinite sequences of values
+  from input iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{InputIterator}
+  
+  \ccHeading{Requirements} \ccc{Iterator} is a model for
+  \ccc{InputIterator}.
+
+  \ccCreation
+
+  \ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Counting_iterator( std::size_t n = 0);}{initializes
+    the internal counter to $n$ and \ccVar\ has a singular value.}
+  
+  \ccConstructor{Counting_iterator( Iterator j, std::size_t n = 0);}{
+    initializes the internal counter to $n$ and \ccVar\ to $j$.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::copy_n}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}
+  \ccCreationVariable{i}
+  
+  \ccDefinition The adaptor \ccRefName\ changes the step width of the
+  iterator or circulator class \ccStyle{I} to $N$. It is itself an
+  iterator or circulator respectively. The value type is \ccc{Val} and
+  the distance type is \ccStyle{Dst}. The iterator category is
+  \ccc{Ctg}. For a mutable iterator, the parameters \ccc{Ref} and
+  \ccc{Ptr} must be set to \ccc{Val&} and \ccc{Val*} respectively. For
+  a non-mutable iterator the types must be set to \ccc{const Val&} and
+  \ccc{const Val*} respectively. With iterator traits classes
+  \ccc{Val}, \ccc{Dst} and \ccStyle{Ctg} will be superfluous.
+  
+  The behavior is undefined if the adaptor is used on a range [$i,j$)
+  where $j-i$ is not a multiple of $n$.
+  
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccCreation
+  \ccTwo{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg> i( I
+    j);;M}{}
+  
+  \ccConstructor{N_step_adaptor(const I& j);}{down cast.}
+  
+  \ccOperations
+  
+  The adaptor conforms to the iterator or circulator category stated
+  with the parameter \ccc{Ctg}. {\em Precondition:\/} The iterator or
+  circulator $I$ must be at least of this category.
+
+\end{ccRefClass}
+
+%% +---------------------------------------------+
+
+\begin{ccRefClass}{Join_input_iterator_1<Iterator, Creator>}
+  \label{sectionJoinInputIterator}
+  
+  \ccDefinition The class \ccRefName\ joins an input iterator and a
+  creator function object. The result is again an input iterator which
+  reads an object from the stream and applies the creator function
+  object to that object whenever it advances.
+
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccIsModel \ccc{InputIterator}
+
+  \ccTypes
+  \ccNestedType{value_type}{typedef to \ccc{Creator::result_type}.}
+  
+  \ccCreation\ccCreationVariable{join}
+  
+  \ccConstructor{Join_input_iterator_1( Iterator i);} {the join of a
+    single iterator $i$. Applies \ccc{Creator} to each item read from
+    $i$.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}
+\end{ccRefClass}
+
+
+%%  +--------------------------------------------------------+
+\begin{ccRefClass}{Inverse_index<IC>}
+  
+  \ccDefinition The class \ccClassTemplateName\ constructs an inverse
+  index for a given range [$i,j$) of two iterators or circulators of
+  type \ccc{IC}.  The first element $I$ in the range [$i,j$) has the
+  index 0.  Consecutive elements are numbered incrementally. The
+  inverse index provides a query for a given iterator or circulator
+  $k$ to retrieve its index number. {\em Precondition:}\/ The iterator
+  or circulator must be either of the random access category or the
+  dereference operator must return stable and distinguishable
+  addresses for the values, e.g.~proxies or non-modifiable iterator
+  with opaque values will not work.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccCreation\ccCreationVariable{inverse}
+  
+  \ccTwo{Inverse_index< IC,> inverse( IC i, IC j);;}{}
+  \ccConstructor{Inverse_index();}{invalid index.}
+  
+  \ccGlue\ccConstructor{Inverse_index( const IC& i);}{empty inverse
+    index initialized to start at $i$.}
+  
+  \ccGlue\ccConstructor{Inverse_index( const IC& i, const IC& j);}
+  {inverse index initialized with range [$i,j$).}
+
+  \ccOperations
+  \ccThree{std::size_t}{inverse.find( const T* p);}{}
+  
+  \ccMethod{std::size_t operator[]( const IC& k);}{returns inverse
+    index of $k$. \ccPrecond $k$ has been stored in the inverse
+    index.}
+  
+  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
+    indices.}
+
+  \ccImplementation
+  
+  For random access iterators or circulators, it is done in constant
+  time by subtracting $i$. For other iterator categories, an \stl\ 
+  \ccc{map} is used, which results in a $\log j-i$ query time. The
+  comparisons are done using the operator \ccc{operator<} on pointers.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Random_access_adaptor<IC>}
+  
+  \ccDefinition The class \ccClassTemplateName\ provides a random
+  access for data structures. Either the data structure supports
+  random access iterators or circulators where this class maps
+  function calls to the iterator or circulator, or a \stl\ 
+  \ccc{std::vector} is used to provide the random access. The iterator
+  or circulator of the data structure are of type \ccc{IC}.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccTypes
+
+  \ccNestedType{size_type}{size type of the \stl\ \ccc{std::vector}.}
+
+  \ccCreation\ccCreationVariable{random_access}
+
+  \ccTwo{Random_access_adaptor< IC> random_access;}{}
+  \ccConstructor{Random_access_adaptor();}{invalid index.}
+  
+  \ccConstructor{Random_access_adaptor( const IC& i);} {empty random
+    access index initialized to start at $i$.}
+  
+  \ccConstructor{Random_access_adaptor( const IC& i, const IC& j);}
+  {random access index initialized to the range [$i,j$).}
+  
+  \ccThree{Dist}{random_access.push_back( IC k);}{} \ccMethod{void
+    reserve( size_type r);}{reserve $r$ entries, if a
+    \ccc{std::vector} is used internally.}
+  
+  \ccOperations
+  
+  \ccMethod{IC operator[]( size_type n);}{returns iterator or
+    circulator to the $n$-th item.  \ccPrecond $n <$ number of items
+    in \ccVar.}
+  
+  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
+    indices.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\end{ccRefClass}
+
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Random_access_value_adaptor<IC,T>}
+  
+  \ccDefinition The class \ccClassTemplateName\ provides a random
+  access for data structures. It is derived from
+  \ccc{Random_access_adaptor<IC>}. Instead of returning iterators from
+  the \ccc{operator[]} methods, it returns the dereferenced value of
+  the iterator.  The iterator or circulator of the data structure are
+  of type \ccc{IC}. Their value type is $T$.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccOperations
+  
+  Creation and operations see \ccc{Random_access_adaptor<IC>}, with
+  the exception of:
+  
+  \ccCreationVariable{random_access}
+
+  \ccThree{Dist}{random_access.push_back( IC k);}{}
+  
+  \ccMethod{T& operator[]( size_type n);}{returns a reference to the
+    $n$-th item.  \ccPrecond $n <$ number of items in \ccVar.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}
+
+\end{ccRefClass}
+
+%% +=========================================================================+
+
 %% +-----------------------------------------------------------------+
 
 \begin{ccRefFunction}{swap_1}
@@ -1663,229 +1940,6 @@
 \end{ccRefFunctionObjectClass}
 
 %% +=========================================================================+
-
-\begin{ccRefClass}{Counting_iterator<Iterator, Value>}
-  \label{sectionCountingIterator}
-
-  \ccCreationVariable{i}
-  
-  \ccDefinition The iterator adaptor \ccClassTemplateName\ adds a
-  counter to the internal iterator of type \ccc{Iterator} and defines
-  equality of two instances in terms of this counter. It can be used
-  to create finite sequences of possibly infinite sequences of values
-  from input iterators.
-
-  \ccInclude{CGAL/Counting_iterator.h}
-
-  \ccIsModel
-  \ccc{InputIterator}
-  
-  \ccHeading{Requirements} \ccc{Iterator} is a model for
-  \ccc{InputIterator}.
-
-  \ccCreation
-
-  \ccTwo{Identity<Value>MMMMMM}{}
-  
-  \ccConstructor{Counting_iterator( std::size_t n = 0);}{initializes
-    the internal counter to $n$ and \ccVar\ has a singular value.}
-  
-  \ccConstructor{Counting_iterator( Iterator j, std::size_t n = 0);}{
-    initializes the internal counter to $n$ and \ccVar\ to $j$.}
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::copy_n}
-
-\end{ccRefClass}
-
-%% +--------------------------------------------------------+
-\begin{ccRefClass}{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}
-  \ccCreationVariable{i}
-  
-  \ccDefinition The adaptor \ccRefName\ changes the step width of the
-  iterator or circulator class \ccStyle{I} to $N$. It is itself an
-  iterator or circulator respectively. The value type is \ccc{Val} and
-  the distance type is \ccStyle{Dst}. The iterator category is
-  \ccc{Ctg}. For a mutable iterator, the parameters \ccc{Ref} and
-  \ccc{Ptr} must be set to \ccc{Val&} and \ccc{Val*} respectively. For
-  a non-mutable iterator the types must be set to \ccc{const Val&} and
-  \ccc{const Val*} respectively. With iterator traits classes
-  \ccc{Val}, \ccc{Dst} and \ccStyle{Ctg} will be superfluous.
-  
-  The behavior is undefined if the adaptor is used on a range [$i,j$)
-  where $j-i$ is not a multiple of $n$.
-  
-  \ccInclude{CGAL/N_step_adaptor.h}
-  
-  \ccCreation
-  \ccTwo{N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg> i( I
-    j);;M}{}
-  
-  \ccConstructor{N_step_adaptor(const I& j);}{down cast.}
-  
-  \ccOperations
-  
-  The adaptor conforms to the iterator or circulator category stated
-  with the parameter \ccc{Ctg}. {\em Precondition:\/} The iterator or
-  circulator $I$ must be at least of this category.
-
-\end{ccRefClass}
-
-%% +---------------------------------------------+
-
-\begin{ccRefClass}{Join_input_iterator_1<Iterator, Creator>}
-  \label{sectionJoinInputIterator}
-  
-  \ccDefinition The class \ccRefName\ joins an input iterator and a
-  creator function object. The result is again an input iterator which
-  reads an object from the stream and applies the creator function
-  object to that object whenever it advances.
-
-  \ccInclude{CGAL/Join_input_iterator.h}
-  
-  \ccIsModel \ccc{InputIterator}
-
-  \ccTypes
-  \ccNestedType{value_type}{typedef to \ccc{Creator::result_type}.}
-  
-  \ccCreation\ccCreationVariable{join}
-  
-  \ccConstructor{Join_input_iterator_1( Iterator i);} {the join of a
-    single iterator $i$. Applies \ccc{Creator} to each item read from
-    $i$.}
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}
-\end{ccRefClass}
-
-
-%%  +--------------------------------------------------------+
-\begin{ccRefClass}{Inverse_index<IC>}
-  
-  \ccDefinition The class \ccClassTemplateName\ constructs an inverse
-  index for a given range [$i,j$) of two iterators or circulators of
-  type \ccc{IC}.  The first element $I$ in the range [$i,j$) has the
-  index 0.  Consecutive elements are numbered incrementally. The
-  inverse index provides a query for a given iterator or circulator
-  $k$ to retrieve its index number. {\em Precondition:}\/ The iterator
-  or circulator must be either of the random access category or the
-  dereference operator must return stable and distinguishable
-  addresses for the values, e.g.~proxies or non-modifiable iterator
-  with opaque values will not work.
-
-  \ccInclude{CGAL/Inverse_index.h}
-
-  \ccCreation\ccCreationVariable{inverse}
-  
-  \ccTwo{Inverse_index< IC,> inverse( IC i, IC j);;}{}
-  \ccConstructor{Inverse_index();}{invalid index.}
-  
-  \ccGlue\ccConstructor{Inverse_index( const IC& i);}{empty inverse
-    index initialized to start at $i$.}
-  
-  \ccGlue\ccConstructor{Inverse_index( const IC& i, const IC& j);}
-  {inverse index initialized with range [$i,j$).}
-
-  \ccOperations
-  \ccThree{std::size_t}{inverse.find( const T* p);}{}
-  
-  \ccMethod{std::size_t operator[]( const IC& k);}{returns inverse
-    index of $k$. \ccPrecond $k$ has been stored in the inverse
-    index.}
-  
-  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
-    indices.}
-
-  \ccImplementation
-  
-  For random access iterators or circulators, it is done in constant
-  time by subtracting $i$. For other iterator categories, an \stl\ 
-  \ccc{map} is used, which results in a $\log j-i$ query time. The
-  comparisons are done using the operator \ccc{operator<} on pointers.
-
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
-  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
-
-\end{ccRefClass}
-
-%% +--------------------------------------------------------+
-\begin{ccRefClass}{Random_access_adaptor<IC>}
-  
-  \ccDefinition The class \ccClassTemplateName\ provides a random
-  access for data structures. Either the data structure supports
-  random access iterators or circulators where this class maps
-  function calls to the iterator or circulator, or a \stl\ 
-  \ccc{std::vector} is used to provide the random access. The iterator
-  or circulator of the data structure are of type \ccc{IC}.
-
-  \ccInclude{CGAL/Random_access_adaptor.h}
-
-  \ccTypes
-
-  \ccNestedType{size_type}{size type of the \stl\ \ccc{std::vector}.}
-
-  \ccCreation\ccCreationVariable{random_access}
-
-  \ccTwo{Random_access_adaptor< IC> random_access;}{}
-  \ccConstructor{Random_access_adaptor();}{invalid index.}
-  
-  \ccConstructor{Random_access_adaptor( const IC& i);} {empty random
-    access index initialized to start at $i$.}
-  
-  \ccConstructor{Random_access_adaptor( const IC& i, const IC& j);}
-  {random access index initialized to the range [$i,j$).}
-  
-  \ccThree{Dist}{random_access.push_back( IC k);}{} \ccMethod{void
-    reserve( size_type r);}{reserve $r$ entries, if a
-    \ccc{std::vector} is used internally.}
-  
-  \ccOperations
-  
-  \ccMethod{IC operator[]( size_type n);}{returns iterator or
-    circulator to the $n$-th item.  \ccPrecond $n <$ number of items
-    in \ccVar.}
-  
-  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
-    indices.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
-  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
-
-\end{ccRefClass}
-
-
-%% +--------------------------------------------------------+
-\begin{ccRefClass}{Random_access_value_adaptor<IC,T>}
-  
-  \ccDefinition The class \ccClassTemplateName\ provides a random
-  access for data structures. It is derived from
-  \ccc{Random_access_adaptor<IC>}. Instead of returning iterators from
-  the \ccc{operator[]} methods, it returns the dereferenced value of
-  the iterator.  The iterator or circulator of the data structure are
-  of type \ccc{IC}. Their value type is $T$.
-
-  \ccInclude{CGAL/Random_access_value_adaptor.h}
-
-  \ccOperations
-  
-  Creation and operations see \ccc{Random_access_adaptor<IC>}, with
-  the exception of:
-  
-  \ccCreationVariable{random_access}
-
-  \ccThree{Dist}{random_access.push_back( IC k);}{}
-  
-  \ccMethod{T& operator[]( size_type n);}{returns a reference to the
-    $n$-th item.  \ccPrecond $n <$ number of items in \ccVar.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
-  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}
-
-\end{ccRefClass}
-
 
 %% +--------------------------------------------------------+
 \ccParDims

@@ -28,10 +28,11 @@ to work together with the Standard Template Library (\stl)
 \cite{ansi-is14882,a-gps-98}. This chapter documents non-geometric
 \stl-like components that are not provided in the \stl\ standard but
 in \cgal: a doubly-connected list managing items in place (where
-inserted items are not copied), generic functions, function objects
-for projection and creation, classes for composing function objects
-and adaptor classes around iterators and circulators. See also
-circulators in Chapter~\ref{chapterCirculators}.
+inserted items are not copied), generic algorithms, iterators, functor
+adaptors for binding and swapping arguments and for composition,
+functors for projection and creation and adaptor classes around
+iterators and circulators. See also circulators in
+Chapter~\ref{chapterCirculators}.
 
 \subsection*{Doubly-Connected List Managing Items in Place.}
 
@@ -63,7 +64,31 @@ current \stl\ implementations).
 \ccRefIdfierPage{CGAL::min_element_if}\\
 \ccRefIdfierPage{CGAL::max_element_if}
 
-\subsection*{Function Object Adaptors.}
+\subsection*{Iterators and Iterator/Circulator Adaptors.}
+
+\ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+\ccRefIdfierPage{CGAL::Oneset_iterator<T>}\\
+\ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
+\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}\\
+\ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
+\ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\subsection*{Functor Adaptors.}
+
+The standard library contains some adaptors for binding functors, that
+is fixing one argument of a functor to a specific value thereby
+creating a new functor that takes one arguments less than the original
+functor.  Also, though non-standard, some STL implementations (such as
+SGI) provide adaptors to compose function objects. Unfortunately,
+these bind and compose adaptors are limited to unary and binary
+functors only, and these functors must not be overloaded.
+
+Since there are a number of functors in \cgal\ that take more than two
+arguments, and since functors may also be overloaded, i.e. accept
+several different sets of arguments, we have to define our own
+adaptors to be used with \cgal\ functors.
 
 \ccRefIdfierPage{CGAL::swap_1}\\
 \ccRefIdfierPage{CGAL::swap_2}\\
@@ -116,44 +141,5 @@ current \stl\ implementations).
 \ccRefIdfierPage{CGAL::Creator_uniform_7<Arg, Result>}\\
 \ccRefIdfierPage{CGAL::Creator_uniform_8<Arg, Result>}\\
 \ccRefIdfierPage{CGAL::Creator_uniform_9<Arg, Result>}
-
-\subsection*{Function Object Composition.}
-
-Although they are not in the standard, some STL implementations (such
-as SGI) provide two global functions for composing function objects,
-\ccStyle{compose1} and \ccStyle{compose2}. Since for both the
-resulting function is unary, one can only construct unary function
-objects in this way. This seems to be quite a limitation, since many
-algorithms are to be parameterized with binary (e.g. comparison)
-functions.
-
-%%We overcome these problems by defining our own composition functions
-%%in \cgal. Also the naming is slightly different to easily distinguish
-%%our implementation from eventually existing others:
-%%\ccStyle{composei_j} where \ccStyle{i}, \ccStyle{j} are either \ccc{1}
-%%or \ccc{2}.  \ccStyle{j} denotes the arity of the resulting function,
-%%\ccStyle{i} the arity of the outermost function in the composition.
-%%E.g. \ccStyle{compose2_1} takes three functions \ccc{f}, \ccc{g} and
-%%\ccc{h} and computes \ccc{x}~$\rightarrow$~\ccc{f(g(x),h(x))}.
-%%
-%%\ccRefIdfierPage{CGAL::compose1_1}\\
-%%\ccRefIdfierPage{CGAL::compose1_2}\\
-%%\ccRefIdfierPage{CGAL::compose2_1}\\
-%%\ccRefIdfierPage{CGAL::compose2_2}\\
-%%\ccRefIdfierPage{CGAL::Unary_compose_1<Op1, Op2>}\\
-%%\ccRefIdfierPage{CGAL::Unary_compose_2<Op1, Op2>}\\
-%%\ccRefIdfierPage{CGAL::Binary_compose_1<Op1, Op2, Op3>}\\
-%%\ccRefIdfierPage{CGAL::Binary_compose_2<Op1, Op2, Op3>}\\
-%%\ccRefConceptPage{AdaptableUnaryFunction}\\
-%%\ccRefConceptPage{AdaptableBinaryFunction}
-
-\subsection*{Adaptor Classes around Iterators and Circulators.}
-
-\ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
-\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}\\
-\ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
-\ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
-\ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
-\ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
 
 %% EOF
