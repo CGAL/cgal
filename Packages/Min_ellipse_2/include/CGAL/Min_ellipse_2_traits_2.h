@@ -20,10 +20,7 @@
 #ifndef CGAL_MIN_ELLIPSE_2_TRAITS_2_H
 #define CGAL_MIN_ELLIPSE_2_TRAITS_2_H
 
-// includes
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
+
 #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
 #  include <CGAL/Optimisation_ellipse_2.h>
 #endif
@@ -45,7 +42,7 @@ class Min_ellipse_2_traits_2 {
   public:
     // types
     typedef  K_                               K;
-    typedef  CGAL::Point_2<K>                 Point;
+    typedef  typename K::Point_2              Point;
     typedef  CGAL::Optimisation_ellipse_2<K>  Ellipse;
 
 private:
