@@ -1,4 +1,0 @@
-d-dimensional cartesian kernel classes
-
-CONTENTS
-include/CGAL/PointCd.h
