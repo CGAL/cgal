@@ -362,9 +362,9 @@ public:
     return Comparison_result_from_int(
 
 #if (__LEDA__ >= 380)
-                                      Point_2::cmp_x(p1,p2)
+      Pm_leda_segment_traits_2::Point_2::cmp_x(p1,p2)
 #else // backward compatability to LEDA
-                                      compare(p1.xcoord(),p2.xcoord())
+      compare(p1.xcoord(),p2.xcoord())
 #endif
 
                                       );
@@ -385,9 +385,9 @@ public:
     return Comparison_result_from_int(
 
 #if (__LEDA__ >= 380)
-                                      Point_2::cmp_y(p1,p2)
+      Pm_leda_segment_traits_2::Point_2::cmp_y(p1,p2)
 #else // backward compatability to LEDA   
-                                      compare(p1.ycoord(),p2.ycoord()) 
+      compare(p1.ycoord(),p2.ycoord()) 
 #endif
 
                                       );
