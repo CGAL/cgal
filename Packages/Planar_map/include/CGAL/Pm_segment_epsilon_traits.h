@@ -36,6 +36,8 @@
 #include <CGAL/Segment_2.h>
 #endif
 
+#include <cmath> // for fabs()
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -526,23 +528,3 @@ private:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PM_SEGMENT_EPSILON_TRAITS_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
