@@ -86,7 +86,15 @@ Vertex_handle_ closest_vertex(const TRIANGULATION &T,
                Face_handle_ f,
                const Point_& p)
 {
-    Vertex_handle_ v = f->vertex(0);
+  Vertex_handle_ v ;
+  if( T.is_infinite(f)){
+    int i = f->index(T.infinite_vertex());
+    Rp::FT dcw = CGAL::squared_distance(p,f->vertex(f->cw(i))->point());
+    Rp::FT dccw = CGAL::squared_distance(p,f->vertex(f->ccw(i))->point());
+    v = dcw < dccw ? f->vertex(f->cw(i)) : f->vertex(f->ccw(i));
+  }
+  else{ 
+    v = f->vertex(0);
     Rp::FT d  = CGAL::squared_distance(p, v->point());
     Rp::FT d2 = CGAL::squared_distance(p, f->vertex(1)->point());
     if(d2 < d){
@@ -97,6 +105,7 @@ Vertex_handle_ closest_vertex(const TRIANGULATION &T,
     if(d2 < d){
         v = f->vertex(2);
     }
+  }
     return v;
 }
 
@@ -134,7 +143,7 @@ void window_input(TRIANGULATION &T,
                                 == CGAL::ON_NEGATIVE_SIDE );
             vertex_change = face_change ||
                             ( mouse_moved &&
-                              ( hv != closest_vertex(T, highlight, p)));
+                              ( hv != closest_vertex(T,highlight, p)));
 
             leda_drawing_mode dm = W.set_mode(leda_xor_mode);
             if(vertex_change){
@@ -543,24 +552,27 @@ void show_conflicts( Delaunay_ &T, Window_stream &W )
     std::list<Face_handle_> conflict_faces;
     std::list<Edge_>  hole_bd;
     T.find_conflicts(p, 
-		     back_inserter(conflict_faces),
-		     back_inserter(hole_bd));
+		     std::back_inserter(conflict_faces),
+		     std::back_inserter(hole_bd));
     std::list<Face_handle_>::iterator fit = conflict_faces.begin();
     std::list<Edge_>::iterator eit = hole_bd.begin();
     for( ; fit != conflict_faces.end(); fit++)  {
       draw_face( *fit, T, W);
-      any_button(W);
     }
     W << CGAL::BLACK;
     for( ; eit != hole_bd.end(); eit++)  {
       draw_edge( *eit, T, W);
-      any_button(W);
     }
     
     any_button(W);
     T.insert(p);
-    W.set_mode(leda_xor_mode);
-    W << CGAL::GREEN << T;
+    //W.set_mode(leda_xor_mode);
+    W << CGAL::BLUE << T;
+    W << CGAL::BLACK;
+    for(eit=hole_bd.begin() ; eit != hole_bd.end(); eit++)  {
+      draw_edge( *eit, T, W);
+    }
+
     any_button(W);
     W.clear();
     W.set_mode(leda_src_mode);
@@ -637,7 +649,9 @@ int main(int argc, char* argv[])
     draw_faces_along_line(T, W);
     draw_incident_edges(T, W);
     draw_convex_hull(T, W);
-    show_faces_iterator(T,W);
+    // The show_faces_iterator is not so nice using any-button
+    // and sleep is not portable 
+    //show_faces_iterator(T,W);
  
     std::cout <<std::endl<<std::endl<< "DELAUNAY TRIANGULATION"<<std::endl;
     T_global = (Triangulation_ *)&D;
