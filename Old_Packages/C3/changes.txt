@@ -1,3 +1,6 @@
+Version 4.8 (? ??? 2000)
+- Fixed namespace issues for number type utilities [syl].
+
 Version 4.7 (2 May 2000)
 - make the following classes derive from HandleCfor instead of Handle
 DirectionC3

@@ -34,15 +34,15 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
   FT psx = px-sx;
   FT psy = py-sy;
   FT psz = pz-sz;
-  FT ps2 = square(psx) + square(psy) + square(psz);
+  FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
   FT qsx = qx-sx;
   FT qsy = qy-sy;
   FT qsz = qz-sz;
-  FT qs2 = square(qsx) + square(qsy) + square(qsz);
+  FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
   FT rsx = rx-sx;
   FT rsy = ry-sy;
   FT rsz = rz-sz;
-  FT rs2 = square(rsx) + square(rsy) + square(rsz);
+  FT rs2 = CGAL_NTS square(rsx) + CGAL_NTS square(rsy) + CGAL_NTS square(rsz);
 
   FT num_x = det3x3_by_formula(psy,psz,ps2,
                                qsy,qsz,qs2,
@@ -166,7 +166,8 @@ FT
 squared_distanceC3( const FT &px, const FT &py, const FT &pz,
                     const FT &qx, const FT &qy, const FT &qz)
 {
-  return square(px-qx) + square(py-qy) + square(pz-qz);
+  return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy) +
+	 CGAL_NTS square(pz-qz);
 }
 
 template < class FT >

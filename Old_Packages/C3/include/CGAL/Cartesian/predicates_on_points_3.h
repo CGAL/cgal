@@ -10,7 +10,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 inline
 bool
@@ -34,7 +33,6 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
   return p.z() == q.z();
 }
-
 
 template < class R >
 inline
@@ -65,7 +63,7 @@ inline
 Comparison_result
 compare_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
-  return CGAL::compare(p.x(), q.x());
+  return CGAL_NTS compare(p.x(), q.x());
 }
 
 template < class R >
@@ -73,7 +71,7 @@ inline
 Comparison_result
 compare_y(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
- return CGAL::compare(p.y(), q.y());
+  return CGAL_NTS compare(p.y(), q.y());
 }
 
 template < class R >
@@ -81,9 +79,8 @@ inline
 Comparison_result
 compare_z(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
- return CGAL::compare(p.z(), q.z());
+  return CGAL_NTS compare(p.z(), q.z());
 }
-
 
 template < class R >
 inline
@@ -97,7 +94,7 @@ template < class R >
 inline
 Comparison_result
 compare_xy(const PointC3<R CGAL_CTAG> &p, 
-			     const PointC3<R CGAL_CTAG> &q)
+	   const PointC3<R CGAL_CTAG> &q)
 {
   return compare_lexicographically_xy(p.x(),p.y(),q.x(),q.y()); 
 }
@@ -115,7 +112,7 @@ template < class R >
 inline
 bool
 lexicographically_xy_smaller_or_equal(const PointC3<R CGAL_CTAG> &p, 
-			     const PointC3<R CGAL_CTAG> &q)
+				      const PointC3<R CGAL_CTAG> &q)
 { 
   return compare_lexicographically_xy(p,q) != LARGER;
 }
@@ -152,7 +149,7 @@ lexicographically_xyz_smaller_or_equal(const PointC3<R CGAL_CTAG> &p,
                                        const PointC3<R CGAL_CTAG> &q)
 {
   return compare_lexicographically_xyz(p,q) != LARGER;
- }
+}
 
 template < class R >
 bool
@@ -161,7 +158,6 @@ lexicographically_xyz_smaller(const PointC3<R CGAL_CTAG> &p,
 {
   return compare_lexicographically_xyz(p,q) == SMALLER;
 }
-
 
 template < class R >
 inline
@@ -183,13 +179,12 @@ dominance(const PointC3<R CGAL_CTAG> &p,
 		     q.x(), q.y(), q.z());
 }
 
-
 template < class R >
 inline
 bool
 collinear(const PointC3<R CGAL_CTAG> &p,
-               const PointC3<R CGAL_CTAG> &q,
-               const PointC3<R CGAL_CTAG> &r)
+          const PointC3<R CGAL_CTAG> &q,
+          const PointC3<R CGAL_CTAG> &r)
 {
   return collinearC3(p.x(), p.y(), p.z(),
                      q.x(), q.y(), q.z(),
@@ -273,8 +268,8 @@ are_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
                        const PointC3<R CGAL_CTAG> &q,
                        const PointC3<R CGAL_CTAG> &r)
 {
-  return (collinear(p, q, r)) ? collinear_are_ordered_along_line(p, q, r)
-                              : false;
+  return collinear(p, q, r) ? collinear_are_ordered_along_line(p, q, r)
+                            : false;
 }
 
 template < class R >
