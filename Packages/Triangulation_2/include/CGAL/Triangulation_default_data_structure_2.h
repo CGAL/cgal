@@ -259,9 +259,38 @@ public:
 
   void insert_in_face(Vertex* v, Face* f)
     //insert in face
+    // vertex v will replace f->vertex(0)
   {
     CGAL_triangulation_precondition( v != NULL & f != NULL);
-    f->insert_in_face(v);
+    
+    Vertex* v0 = f->vertex(0);
+    Vertex* v2 = f->vertex(2);
+    Vertex* v1 = f->vertex(1);
+    
+    Face* n1 = f->neighbor(1);
+    Face* n2 = f->neighbor(2);
+    int i1,i2 ;
+    if (n1 != NULL) {i1= cw(n1->index(f->vertex(cw(1))));}
+    if (n2 != NULL) {i2 = cw(n2->index(f->vertex(cw(2))));}
+    
+    Face* f1 = new Face(v0, v, v2,
+			f, n1, NULL);
+    
+    Face* f2 = new Face(v0, v1, v,
+			f, NULL, n2);
+
+    f1->set_neighbor(2, f2);
+    f2->set_neighbor(1, f1);
+    if (n1 != NULL) {n1->set_neighbor(i1,f1);}
+    if (n2 != NULL) {n2->set_neighbor(i2,f2);}
+
+    f->set_vertex(0, v);
+    f->set_neighbor(1, f1);
+    f->set_neighbor(2, f2);
+
+    if( v0->face() == f  ) {  v0->set_face(f2); }
+    v->set_face(f);
+
     set_number_of_vertices(number_of_vertices() +1);
   }
 
@@ -281,9 +310,9 @@ public:
     int in;
     CGAL_triangulation_assertion( n->has_vertex(f->vertex(cw(i)), in));
     in = cw(in);
-    f->insert_in_face(v);
+    insert_in_face(v,f);
     flip(n,in); 
-    set_number_of_vertices(number_of_vertices() +1);
+    return;
   }
 
   // the following function insert in 1_dim triangulation
@@ -310,20 +339,46 @@ public:
   void remove_degree_3(Vertex* v, Face* f = NULL)
     // remove a vertex of degree 3
   {
-    CGAL_triangulation_assertion(v != NULL);
-    CGAL_triangulation_assertion(v != _infinite_vertex);
-    CGAL_triangulation_assertion(v->degree() == 3);
-
-    // this cannot happens because of third assertion;
-//     if (number_of_vertices()==1){
-//       set_number_of_vertices(0);
-//       set_finite_vertex(NULL);
-//       delete v;
-//       return;
-//     }
+    CGAL_triangulation_precondition(v != NULL);
+    CGAL_triangulation_precondition(v != _infinite_vertex);
+    CGAL_triangulation_precondition(v->degree() == 3);
 
     if (f == NULL) {f= v->face();}
     else { CGAL_triangulation_assertion( f->has_vertex(v));}
+      
+    int i = f->index(v);
+    Face* left = f->neighbor(cw(i));
+    Face* right = f->neighbor(ccw(i));
+    Face *ll, *rr;
+        
+    int li = left->index(this);
+    int ri = right->index(this);
+    Vertex* q = left->vertex(li);
+    CGAL_triangulation_assertion( left->vertex(li) == right->vertex(ri));
+    
+    ll = left->neighbor(cw(li));
+    if(ll != NULL) {
+      int lli = ll->index(left);
+      ll->set_neighbor(lli, f);
+    } 
+    f->set_neighbor(cw(i), ll);
+    if (f->vertex(ccw(i))->face() == left) f->vertex(ccw(i))->set_face(f);    
+        
+    rr = right->neighbor(ccw(ri));
+    if(rr != NULL) {
+      int rri = rr->index(right);
+      rr->set_neighbor(rri, f);
+    } 
+    f->set_neighbor(ccw(i), rr);
+    if (f->vertex(cw(i))->face() == right) f->vertex(cw(i))->set_face(f);  
+        
+    f->set_vertex(i, q);
+    if (q->face() == right || q->face() == left) {
+	   q->set_face(f);
+    }
+    delete right;
+    delete left;
+        
     // take care of _finite_vertex data member
     if (finite_vertex() == v){
       int i=f->index(v);
@@ -332,23 +387,8 @@ public:
       set_finite_vertex( vv);
     }
 
-// this cannot happens because of third assertion;
-//     if (number_of_vertices() == 2){
-//       Face* ff = f->neighbor(f->index(infinite_vertex()));
-//       delete f;
-//       delete ff;
-//       delete v;
-//       set_number_of_vertices(1);
-//     }
-//    else
-      {
-      f->remove(v); //f->remove returns true because degree 3 has been asserted
-      delete v;
-      //update number of vertices
-      // Vertex* vv= finite_vertex();
-      //Face* f = vv->face();
-      set_number_of_vertices( number_of_vertices() -1);
-    }
+    delete v;
+    set_number_of_vertices( number_of_vertices() -1);
   } 
 
   void remove_second(Vertex* v)
