@@ -45,14 +45,10 @@ public:
   typedef typename Base::Site_2               Site_2;
   typedef typename Base::Storage_site_2       Storage_site_2;
 
-private:
-  typedef typename Base::Segment_Voronoi_diagram_data_structure_2  DS;
+  typedef typename Base::Data_structure       Data_structure;
 
-public:
-  typedef DS                 Segment_Voronoi_diagram_data_structure_2;
-
-  typedef typename DS::Face_handle    Face_handle;
-  typedef typename DS::Vertex_handle  Vertex_handle;
+  typedef typename Data_structure::Face_handle    Face_handle;
+  typedef typename Data_structure::Vertex_handle  Vertex_handle;
 
 
   template < typename DS2 >
