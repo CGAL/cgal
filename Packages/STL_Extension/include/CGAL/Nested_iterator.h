@@ -96,7 +96,6 @@ public:
   typedef typename Tr::Nested_iterator          Iterator;
 
 protected:
-  typedef Nested_iterator<Base_iterator, Traits>  Self;
   typedef CGALi::
   FI_w_begin_end< Filter_iterator<Base_iterator,
 				  CGALi::Emptyness_predicate<Tr> > >
@@ -122,7 +121,7 @@ public:
     }
   }
 
-  Self& operator++()
+  Nested_iterator& operator++()
   {
     if ( nested_it_ != end( this->base() ) ) {
       ++nested_it_;
@@ -136,14 +135,14 @@ public:
     return *this;
   }
 
-  Self operator++(int)
+  Nested_iterator operator++(int)
   {
-    Self tmp = *this;
+    Nested_iterator tmp = *this;
     ++(*this);
     return tmp;
   }
 
-  Self& operator--()
+  Nested_iterator& operator--()
   {
     if ( this->is_end() ) {
       Filter_base_iterator::operator--();
@@ -159,9 +158,9 @@ public:
     return *this;
   }
 
-  Self operator--(int)
+  Nested_iterator operator--(int)
   {
-    Self tmp = *this;
+    Nested_iterator tmp = *this;
     --(*this);
     return tmp;
   }
@@ -177,7 +176,8 @@ public:
     return nested_it_.operator->();
   }
 
-  friend bool operator== <>(const Self&, const Self&);
+  friend bool operator== <>(const Nested_iterator&,
+			    const Nested_iterator&);
 
 protected:
   Iterator       nested_it_;
