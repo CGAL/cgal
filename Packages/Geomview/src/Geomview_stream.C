@@ -134,6 +134,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         // the back-compatible echo command.
         // In the very long run, we'll be able to get rid of all this code as
         // well.
+	// Maybe we should simply read the pipe, till we find "CGAL-3D" ?
 
         *this << "(echo \"CGAL-3D\")";
 
@@ -142,9 +143,9 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 
         if (::strncmp(inbuf, "started", 7) == 0)
         {
-            std::cerr << "You still have a .geomview file with the\n"
-                      << "(echo \"started\") command. Note that this is not\n"
-                      << "compulsory anymore, since CGAL 2.3" << std::endl;
+            // std::cerr << "You still have a .geomview file with the\n"
+                   // << "(echo \"started\") command. Note that this is not\n"
+                   // << "compulsory anymore, since CGAL 2.3" << std::endl;
 
             // Then the next one is supposed to be CGAL-3D.
             ::read(in, inbuf, 7);
@@ -153,8 +154,8 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         }
         else if (::strncmp(inbuf, "CGAL-3D", 7) == 0)
         {
-            std::cerr << "Good, you don't have a .geomview file with the\n"
-                      << "(echo \"started\") command" << std::endl;
+            // std::cerr << "Good, you don't have a .geomview file with the\n"
+                      // << "(echo \"started\") command" << std::endl;
         }
         else
         {
