@@ -37,10 +37,7 @@ lib: lib_no_install
 lib_no_install: $(CGAL_OBJECTS) 
 	$(CGAL_LIB_CREATE)$(CGAL_CORE_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_LIB
-
-
-_LDFLAGS)
+		$(CGAL_LIB_LDFLAGS)
 	rm $(CGAL_OBJECTS) 
 
 clean:
