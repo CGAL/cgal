@@ -23,8 +23,8 @@
 #include <CGAL/basic.h>
 #include <list>
 
-
 #include <CGAL/Cartesian.h>
+
 #include <CGAL/Circle_2.h>
 #include <CGAL/Point_2.h>
 //#include <CGAL/squared_distance_2.h>
@@ -50,16 +50,22 @@ public:
   Circ_Curve(const NT& x, const NT& y, const NT& r2, 
 	     const Point& src , const Point& trgt) :
     c(Point(x,y),r2), s(src),t(trgt)
-  {}
+  {
+    CGAL_precondition(c.has_on_boundary(src));
+    CGAL_precondition(c.has_on_boundary(trgt));
+  }
   
   //a ctr with cgal_circle
   Circ_Curve(const Circle& _c) : c(_c), 
     s(_c.center().x()-CGAL::sqrt(c.squared_radius()), _c.center().y()),
     t(_c.center().x()-CGAL::sqrt(c.squared_radius()), _c.center().y()) {}
   
-  Circ_Curve(const Circle& _c, const Point& _s, const Point& _t) :
-    c(_c), s(_s), t(_t)
-  {}
+  Circ_Curve(const Circle& _c, const Point& src, const Point& trgt) :
+    c(_c), s(src), t(trgt)
+  { 
+    CGAL_precondition(c.has_on_boundary(src));
+    CGAL_precondition(c.has_on_boundary(trgt));
+  }  
 
   Circ_Curve () {}
   Circ_Curve (const Circ_Curve& cv) : c(cv.c),s(cv.s),t(cv.t)
@@ -86,24 +92,24 @@ public:
     return false;
   }
   
-  
-  
   friend class Arr_circles_real_traits<NT>;
   
-  friend ::std::ostream& operator <<  
-  (::std::ostream& os,const Circ_Curve& cv) {  
-    os << "Curve:\n" ;
-    os << "s: " << cv.s << std::endl;
-    os << "t: " << cv.t << std::endl;
-    os << "circle: " << cv.c << std::endl;
-    return os;
-  }
-
 private:
   Circle c;
   Point s,t;  //source, target
 };
 
+// DEBUG
+// template <class NT> 
+//   ::std::ostream& operator <<  
+//   (::std::ostream& os,const Circ_Curve<NT>& cv) {  
+//     os << "Curve:\n" ;
+//     os << "s: " << cv.source() << std::endl;
+//     os << "t: " << cv.target() << std::endl;
+//     os << "circle: " << cv.circle() << std::endl;
+//     return os;
+//   }
+// DEBUG
 
 template <class _NT>
 class Arr_circles_real_traits {
@@ -192,9 +198,6 @@ public:
     if ( (compare_x(curve_source(cvb),p)!=SMALLER) &&
          (compare_x(curve_target(cvb),p)!=SMALLER) )
       return EQUAL;
-
-
-
 
     Comparison_result r = curve_compare_at_x(cva, cvb, p);
     
@@ -508,61 +511,145 @@ public:
   }
 
   void make_x_monotone(const Curve& cv, std::list<Curve>& l) const {
-    CGAL_precondition(!is_x_monotone(cv));
-
-    //for arrangements of circles this is all that is needed
+    // Require:
+    CGAL_precondition( ! is_x_monotone(cv) );
+    bool   switch_orientation  = false;
+    
+    // is cv a closed circle ?
     if (cv.s==cv.t) {
+      // for arrangements of circles this is all that is needed
       Point src(cv.c.center().x()-CGAL::sqrt(cv.c.squared_radius()), 
 		cv.c.center().y());
       Point trg(cv.c.center().x()+CGAL::sqrt(cv.c.squared_radius()), 
 		cv.c.center().y());
-      l.push_back(Curve(cv.c.center().x(),cv.c.center().y(),
-			cv.c.squared_radius(),src,trg));
-      l.push_back(Curve(cv.c.center().x(),cv.c.center().y(),
-			cv.c.squared_radius(),trg,src));
+
+      // bug fix, Shai, 12 Feb. 2001
+      // x-monotone curves did not respect the original orintation
+      Curve::Circle circ(cv.circle().center(), cv.circle().squared_radius(),
+			 cv.circle().orientation());
+
+      Curve top_arc(circ, src, trg);
+      l.push_back(top_arc);
+
+      Curve bottom_arc(circ, trg, src);
+      l.push_back(bottom_arc);
+    }
+    else { 
+      //if we get a curve that is not a closed circle - for completeness
+      // bug fix, Shai, 12 Feb. 2001
+      // curves that are split to 3 x-monotone sub curves were not handled
+      const Point &center(cv.circle().center());
+      Point  mid1, mid2;
+      NT     sq_radius(cv.c.squared_radius());
+      Curve  work_cv;
+      bool   two_cuts            = false,
+             left_cut_is_first   = false;
+      
+      // for simplicity work on CCW curve
+      if (cv.c.orientation() == CLOCKWISE) {
+	work_cv = curve_flip(cv);
+	switch_orientation = true;
+      } 
+      else {
+	work_cv = Curve(cv);
+      }
+
+      CGAL_assertion(work_cv.circle().orientation() == COUNTERCLOCKWISE);
+      const Point &src(work_cv.source()),
+	&trg(work_cv.target());
+
+      // now we work on a CCW circular curve which is, by precondition
+      // NOT x-monotone. 
+      // There are four cases, denote the quadrants: II  I  
+      // denote s - source, t - target               III IV
+      // In two of them there is ONE spliting point, in the other two
+      // there are TWO split points.
+
+      // First, we check in which scenario we are
+      if ( compare_y(src, center) == LARGER ) {
+	left_cut_is_first = true;
+	if ( compare_y(trg, center) == LARGER ) {
+	  // s is in II, t is in I
+	  two_cuts = true;
+	}
+	else {
+	  // s is in II, t is in III or IV
+	}
+      }
+      else {
+	// source is lower then center
+	if ( compare_y(trg, center) == SMALLER ) {
+	  // s is in IV, t is in III
+	  two_cuts = true;
+	}
+	else {
+	  // s is in IV, t is in I or II
+	}
+      }
+
+      // Second, we calculate the two or three split points
+      if ( left_cut_is_first ){
+	mid1 = Point(center.x() - CGAL::sqrt(sq_radius), center.y());
+	if ( two_cuts ) {
+	  mid2 = Point(center.x() + CGAL::sqrt(sq_radius), center.y());;
+	}
+	else {
+	}
+      }
+      else {
+	mid1 = Point(center.x() + CGAL::sqrt(sq_radius), center.y());
+	if ( two_cuts ) {
+	  mid2 = Point(center.x() - CGAL::sqrt(sq_radius), center.y());
+	}
+      }
+
+      // Third, we build the split curves
+      l.push_back(Curve(work_cv.circle(), src, mid1));
+      if ( two_cuts ) {
+	l.push_back(Curve(work_cv.circle(), mid1, mid2));
+	l.push_back(Curve(work_cv.circle(), mid2, trg));
+      }
+      else {
+	l.push_back(Curve(work_cv.circle(), mid1, trg));
+      }
+
+      // If we switched the orientation, we have to switch back
+      if ( switch_orientation ) {
+	for (list<Curve>::iterator lit = l.begin(); lit != l.end(); lit++) {
+ 	  *lit = curve_flip(*lit);
+	}
+      } 
     }
 
-    else { //if we get a curve that is not a closed circle - for completeness
-      Point src(cv.s);
-      Point trg(cv.t);
-      NT R2(cv.c.squared_radius());
-      NT px;
-      if (compare_y(cv.s,cv.c.center())*cv.c.orientation() >0) {
-        //either s is under center and orient is cw or
-        //s is above and orient is ccw
-        px=cv.c.center().x()-CGAL::sqrt(R2);
-      }
-      else
-	if (compare_y(cv.s,cv.c.center())*cv.c.orientation() < 0) {
-	  //either s is under center and orient is ccw or
-	  //s is above and orient is cw
-	  px=cv.c.center().x()+CGAL::sqrt(R2);
-	}
-	else 
-	  { //s is one of the endpoints of the circle choos other endpoint
-	    if (compare_x(cv.s,cv.c.center())==SMALLER)
-	      px=cv.c.center().x()+CGAL::sqrt(R2);
-	    else
-	      px=cv.c.center().x()-CGAL::sqrt(R2);
-	  }
-      
-      Point mid(px,cv.c.center().y());
-      Curve c1(cv.c.center().x(),cv.c.center().y(),
-	       cv.c.squared_radius(),src,mid);
-      Curve c2(cv.c.center().x(),cv.c.center().y(),
-	       cv.c.squared_radius(),mid,trg);
-      //the following is needed because orientation is not in the ctr
-      //(need to make a ctr with circle and s,t
-      if (c1.c.orientation()!=cv.c.orientation())
-        c1=c1.c.opposite();
-      if (c2.c.orientation()!=cv.c.orientation())
-        c2=c2.c.opposite();
+    // Ensure:
+    // There are indeed 2 or 3 split points
+    CGAL_postcondition(l.size() >= 2 && l.size() <= 3);
+    // The orientations of the split curves are the same as of cv
+    CGAL_postcondition_code(
+			    if ( switch_orientation ) l.reverse();
+			    Orientation cv_or = cv.circle().orientation();
+			    list<Curve>::iterator lit;
+			    list<Curve>::iterator next_it; );
+    // Check consistency of end points
+    CGAL_postcondition( l.begin()->source() == cv.source() );
+    CGAL_postcondition_code( lit = l.end(); lit--; );
+    CGAL_postcondition( lit->target() == cv.target() );
 
-      
-      l.push_back(c1);
-      l.push_back(c2);
-    } //else (case of non-x-monotone)
+    CGAL_postcondition_code(//for all x-monotone parts
+			    for(lit = l.begin();
+				lit != l.end();
+				lit++) {
+			      next_it = lit; next_it++;  );
 
+    CGAL_postcondition( lit->circle().orientation()  == cv_or );
+    // Consistency of split points
+    CGAL_postcondition( next_it == l.end() || 
+			lit->target() == next_it->source() );
+    // Split points are on circle
+    CGAL_postcondition( cv.circle().has_on_boundary(lit->target()) );
+    // parts are indeed x-monotone
+    CGAL_postcondition( is_x_monotone(*lit) );
+    CGAL_postcondition_code( } ); // end of for
   }
 
     
