@@ -1,6 +1,10 @@
-1.82 (Shai)
+1.86 (Shai)
 ====
-Added the test for Pm_with_intersections.
+- Added documentation for Pm_with_intersections.
+
+1.85 (Shai)
+====
+- Added the test for Pm_with_intersections.
  
 1.81 (Eti)
 ====
@@ -9,7 +13,7 @@ Added the test for Pm_with_intersections.
 
 1.79 (Shai)
 ====
-Made typedefs public in Arr_traits_test.
+- Made typedefs public in Arr_traits_test.
 
 1.78 (Shai)
 ====
