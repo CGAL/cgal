@@ -18,6 +18,7 @@ Exactly one of the options -h or -r must be present.
     -h show this message and quit
     -r release version to be created
 
+    -m module name
     -n version number
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/All
@@ -59,6 +60,7 @@ my $TEMPFILE="TEMPFILE.$$";
 #----------------------------------------------------#
 
 my (
+    $MODULE_NAME,
     $VERSION,
     $VERSION_NR,
     $LOCKFILE,
@@ -106,7 +108,7 @@ sub unlock()
 }
 
 sub create_packages_dir(){
-  print "Creating $VERSION/Packages directory ...\n";
+  print "Creating $MODULE_NAME/Packages directory ...\n";
   chdir $RELEASEDIR or die;
   if (! -f $packages_file){
     print STDERR "$packages_file file does not exist\n";
@@ -125,21 +127,21 @@ sub create_packages_dir(){
   opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
   while (defined($package_name = readdir(ALLPACKAGESDIR))) {
     next unless $is_permitted_package{$package_name};
-    chdir "$RELEASEDIR/$VERSION" or die;
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     mkdir('Packages', 0775);
     chdir 'Packages';
     mkdir($package_name, 0775);
     if (-f "$ALLPACKAGESDIR/$package_name/maintainer"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/maintainer", "$RELEASEDIR/$VERSION/Packages/$package_name");
+      system('cp', "$ALLPACKAGESDIR/$package_name/maintainer", "$RELEASEDIR/$MODULE_NAME/Packages/$package_name");
     }
     if  (-f "$ALLPACKAGESDIR/$package_name/version"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/version", "$RELEASEDIR/$VERSION/Packages/$package_name");
+      system('cp', "$ALLPACKAGESDIR/$package_name/version", "$RELEASEDIR/$MODULE_NAME/Packages/$package_name");
     }
     if (-f "$ALLPACKAGESDIR/$package_name/changes.txt"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/changes.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
+      system('cp', "$ALLPACKAGESDIR/$package_name/changes.txt", "$RELEASEDIR/$MODULE_NAME/Packages/$package_name");
     }
     if (-f "$ALLPACKAGESDIR/$package_name/description.txt"){
-      system('cp', "$ALLPACKAGESDIR/$package_name/description.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
+      system('cp', "$ALLPACKAGESDIR/$package_name/description.txt", "$RELEASEDIR/$MODULE_NAME/Packages/$package_name");
     }
 
   }
@@ -178,17 +180,17 @@ sub install_packages() {
     } else {
       system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=wrapper.tex', '--exclude=version', '--exclude=.cvsignore',"$package_name");
     }
-    system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
+    system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$MODULE_NAME/");
     
 
-    chdir "$RELEASEDIR/$VERSION" or die;
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     system('tar', '-xf', "temppack.tar");
     opendir packagename, "$package_name";
     @fichiers = readdir packagename;
     closedir packagename;
     shift @fichiers; shift @fichiers;
     foreach $fichier (@fichiers){
-      system('cp', '-r', "$package_name/$fichier", "$RELEASEDIR/$VERSION");
+      system('cp', '-r', "$package_name/$fichier", "$RELEASEDIR/$MODULE_NAME");
     }
     system('rm', '-rf', "$package_name");
 
@@ -204,7 +206,7 @@ sub install_packages() {
 
 sub create_version_file()
 {
-    chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
+    chdir "$RELEASEDIR/$MODULE_NAME/include/CGAL" or die;
     open(TEMPFILE, ">tempfile") or die;
 
 #if VERSION starts with CGAL-, we remove "CGAL-" from version   
@@ -237,7 +239,7 @@ EOF
 
 sub create_version_tex_file()
 {
-    chdir "$RELEASEDIR/$VERSION/doc_tex" or die;
+    chdir "$RELEASEDIR/$MODULE_NAME/doc_tex" or die;
     open(TEMPFILE, ">tempfile") or die;
 #if VERSION starts with CGAL-, we remove "CGAL-" from version
 #the $newver variable will store the right version
@@ -270,7 +272,7 @@ EOF
 
 
 sub make_src_makefiles(){
-  chdir "$RELEASEDIR/$VERSION" or die;
+  chdir "$RELEASEDIR/$MODULE_NAME" or die;
   if ( -d "src"){
     print "Creating makefiles in src ...";
     chdir 'src' or die;
@@ -407,8 +409,8 @@ EOF
 sub CreateExampleTestDirs()
 {
     my $DIR;
-    print "Creating $VERSION/test/example directories ...\n";
-    chdir "$RELEASEDIR/$VERSION" or die;
+    print "Creating $MODULE_NAME/test/example directories ...\n";
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     chdir 'examples' or return;
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
@@ -426,8 +428,8 @@ sub CreateExampleTestDirs()
 sub CreateDemoTestDirs()
 {
     my $DIR;
-    print "Creating $VERSION/test/demo directories ...\n";
-    chdir "$RELEASEDIR/$VERSION" or die;
+    print "Creating $MODULE_NAME/test/demo directories ...\n";
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     chdir 'demo' or return;
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
@@ -493,8 +495,8 @@ EOF
 
 
 sub CreateConfigurationTestdir(){
-  print "Creating $VERSION/test/Configuration directory ...\n";
-  chdir "$RELEASEDIR/$VERSION" or die;
+  print "Creating $MODULE_NAME/test/Configuration directory ...\n";
+  chdir "$RELEASEDIR/$MODULE_NAME" or die;
   system('cp', '-r', 'config/testfiles', 'test/Configuration');
 }
 
@@ -505,8 +507,8 @@ sub CreateConfigurationTestdir(){
 
 sub CreateCoreTestDir()
 {
-    print "Creating $VERSION/test/Core directory ...\n";
-    chdir "$RELEASEDIR/$VERSION/" or die;
+    print "Creating $MODULE_NAME/test/Core directory ...\n";
+    chdir "$RELEASEDIR/$MODULE_NAME/" or die;
     system('cp', '-r', 'src/Core', 'test');
     rename('test/Core/makefile_Core','test/Core/makefile');
     open(CGAL_TEST,">test/Core/cgal_test");
@@ -576,8 +578,8 @@ EOF
 
 sub CreateSrcTestDir()
 {
-    print "Creating $VERSION/test/src directory ...\n";
-    chdir "$RELEASEDIR/$VERSION" or die;
+    print "Creating $MODULE_NAME/test/src directory ...\n";
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     system('cp', '-r', 'src', 'test');
     rename('test/src/makefile_lib','test/src/makefile');
     open(CGAL_TEST,">test/src/cgal_test");
@@ -745,7 +747,7 @@ EOF
 sub make_testscripts()
 {
     my ($DIR, $BASEDIR);
-    chdir "$RELEASEDIR/$VERSION" or die;
+    chdir "$RELEASEDIR/$MODULE_NAME" or die;
     $BASEDIR = cwd();
     print "Creating and checking makefiles ...\n";
 
@@ -883,7 +885,7 @@ sub check_and_update_file($$)
 sub set_file_headers()
 {
     print "Setting file headers...\n";
-    chdir "$RELEASEDIR/$VERSION";
+    chdir "$RELEASEDIR/$MODULE_NAME";
     $release_date =
 	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
     chomp($release_date);
@@ -913,7 +915,7 @@ sub file_header_setting
 
 sub main(){
 
-getopts('hr:a:d:l:p:s:n:');
+getopts('hr:a:d:l:p:s:n:m:');
 if ($::opt_h ) {
   usage();
   die "\n";
@@ -924,6 +926,12 @@ if ($::opt_d){
   $SCRIPTSDIR = "$RELEASEDIR";
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $packages_file="$RELEASEDIR/include_in_release";
+}
+
+if ($::opt_m){
+  $MODULE_NAME = $::opt_m;
+} else {
+    $MODULE_NAME = "NEW_MODULE";
 }
 
 if ($::opt_r){
@@ -957,11 +965,11 @@ if ($::opt_p){
   print "  Packages file : $packages_file\n";
   umask(002);
   chdir $RELEASEDIR or die;
-  if (! -d $VERSION){
-    print "Creating release directory ${VERSION} ...\n";
-    mkdir($VERSION, 0775);
+  if (! -d $MODULE_NAME){
+    print "Creating CGAL module ${MODULE_NAME} ...\n";
+    mkdir($MODULE_NAME, 0775);
   } else {
-    print "$VERSION already exists in $RELEASEDIR\n";
+    print "$MODULE_NAME already exists in $RELEASEDIR\n";
     print "Please remove it first\n";
     exit 1;
   }
@@ -980,7 +988,7 @@ make_src_makefiles();
 #CreateSrcTestDir();
 #CreateCoreTestDir();
 
-chdir "$RELEASEDIR/$VERSION" or die;
+chdir "$RELEASEDIR/$MODULE_NAME" or die;
 system("rm", "-rf", "test");
 
 unlock;

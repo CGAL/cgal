@@ -1,4 +1,8 @@
-26 May Radu Ursu
+27 May 2004 Radu Ursu
+- added -m option to create_internal_module script
+- fixed all the other issues related to the VERSION which is no longer used as the module name. 
+
+26 May 2004 Radu Ursu
 - added create_internal_module script on the CVS. This script is an adaptation
   of create_internal_release to a script that creates modules instead of 
   internal releases. This is a preliminary version. 
