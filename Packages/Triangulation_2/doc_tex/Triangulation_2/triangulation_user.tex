@@ -196,7 +196,7 @@ describes a class to handle a constrained triangulation,
 that is a triangulation in which certain edges are enforced.
 Constrained triangulations allow in particular to build  
 triangulations of planar polygons.
-At last section~\ref{I1_Sect_Hierarchy} describes the
+FAt last section~\ref{I1_Sect_Hierarchy} describes the
 Triangulation hierarchy, a hierarchical data
 structure which may be used to improve the efficiency
 of point location queries.
@@ -347,7 +347,7 @@ counterclockwise order.
 
 
 
-\subsection{The class \protect \ccc{Triangulation_2<Traits,Tds}}
+\subsection{The class \protect \ccc{Triangulation_2<Traits,Tds>}}
 
 The triangulations are represented in \cgal\ through the class
 \ccc{Triangulation_2<Traits,Tds>}
@@ -484,7 +484,8 @@ Finally points on the convex hull are written to {\tt cout}.
 \ccIncludeExampleCode{Triangulation/triangulation_prog1.C}
 
 
-\ccHeading{Implementation}
+%\ccHeading{Implementation}
+\subsubsection{Implementation}
 
 Locate is implemented by a line walk from a vertex of the face given
 as optional parameter (or from a finite vertex of
@@ -783,7 +784,7 @@ other base classes with some additional attribute (a color for example)
 tuned for a specific application.
 
 
-\subsection{Using one's own Base Face}.
+\subsection{Using one's own Base Face}
 The following example derives a new base face class from the default
 one and add a color to the faces of the triangulation. 
 The face of the triangulation data structure
@@ -888,7 +889,6 @@ of these points.
 \ccIncludeExampleCode{Triangulation/terrain.C}
 
 \ccHeading{Implementation}
-
 The insertion of a new point in the Delaunay triangulation
 is performed using first the insertion member function
 of the basic triangulation and second 
@@ -914,7 +914,7 @@ for vertices distributed uniformly at random  and any query point.
 \subsection{The Geometric Traits of a Delaunay Triangulation}
 \label{I1_Sect_Delaunay_geom_traits}
 
-\ccHeading{Requirements}
+\subsubsection{Requirements}
 In addition to the requirements described in section~\ref{I1_Sect_Geom_traits}
 for the geometrics traits of any triangulation,
 the geometrics traits of a Delaunay triangulation
@@ -941,7 +941,7 @@ if nearest neighbor queries are issued.
 
 
 
-\ccHeading{Predefined Geometric Traits Class}
+\subsubsection{Predefined Geometric Traits Class}
 The class \ccc{Triangulation_euclidean_traits_2<R>}
 introduced in section~\ref{I1_Sect_Geom_traits} is 
  designed to be 
@@ -1113,7 +1113,7 @@ of a set of weighted points.
 
 \subsection{The Face Type of a Regular Triangulation}
 
-\ccHeading{Requirements for the Base Face}
+\subsubsection{Requirements for the Base Face}
 The regular triangulation of a set of weighted point does not
 necessarily
 have one vertex for each of the input points. Some of the input
@@ -1140,7 +1140,7 @@ is required to provide access to a list of weigthed points,
 designed to store the points hidden by the face.
 
 
-\ccHeading{A Default Base Face .}
+\subsubsection{A Default Base Face}
 \cgal\ provides the templated class 
 \ccc{Regular_triangulation_face_base_2<Traits>}
 which derives from \ccc{Triangulation_face_base_2<Traits>}
@@ -1150,7 +1150,7 @@ and can be used as a default base class for faces of regular triangulations.
 
 \subsection{The Geometric Traits of a Regular Triangulation}
 
-\ccHeading{Requirements}
+\subsubsection{Requirements}
 
 The geometrics traits class of a regular triangulation
 must fulfill the requirements of section~\ref{I1_Sect_Geom_traits}
@@ -1180,12 +1180,12 @@ derived from the type \ccc{Point} of
 
 \subsection{Weighted Points}
 
-\ccHeading{Requirements for a weighted-point}
+\subsubsection{Requirements for a weighted-point}
 The weighted point type  
 is required to provide access to the underlying  point and to its weight.
 
 
-\ccHeading{Predefined Weighted Point}
+\subsubsection{Predefined Weighted Point}
 \cgal\ provides the class \ccc{Weighted_point<Point,Weight>}
 as a default type for a  weighted point.
 This default type has two template parameters \ccc{Point}
@@ -1259,7 +1259,7 @@ insertion of a new constraint, given by its two endpoints
 or the removal of a constraint.
 
 
-\ccHeading{Implementation}
+\subsubsection{Implementation}
 
 The constructors from a list of constrained edges
 build the triangulation using a sweeping line
@@ -1417,7 +1417,7 @@ The locate queries are also overwritten taking advantage of the data
 structure for a fast processing.
 
 \subsection{The Vertex type of a Triangulation Hierachy}
-\ccHeading{Requirements}
+\subsubsection{Requirements}
 The vertex of a triangulation  
 included in a  triangulation hierarchy has to provided
 some pointers to the corresponding vertices in the
@@ -1431,7 +1431,7 @@ access and setting member fonctions
 for two pointers  to the corresponding vertex in the 
 triangulations of the next and preceeding levels.
 
-\ccHeading{A predefined Vertex Base type}
+\subsubsection{A predefined Vertex Base type}
 \cgal provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Traits>}
 which is a model for the concept 
 \ccc{Triangulation_hierarchy_vertex_base_2_concept}
