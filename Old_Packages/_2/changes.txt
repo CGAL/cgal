@@ -1,3 +1,6 @@
+3.32 (24 January 2001)
+- Remove useless predicate_classes_2.h.
+
 3.31 (23 January 2001)
 - Remove Point_2_base and such typedefs.
 
