@@ -1,6 +1,5 @@
 #include <CGAL/Qt_Window.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/IO/esprit_logo.xpm>
 
 namespace CGAL {
 

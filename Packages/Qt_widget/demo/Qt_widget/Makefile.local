@@ -41,7 +41,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-SOURCE = ../../Qt_Window.o
+SOURCE = ../../src/Qt_Window.o
 
 all:            \
                 constrained$(EXE_EXT) \
