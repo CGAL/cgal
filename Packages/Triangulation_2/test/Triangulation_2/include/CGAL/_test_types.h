@@ -11,6 +11,9 @@
 #ifndef CGAL_GMPZ_H
 #include <CGAL/Gmpz.h>
 #endif // CGAL::GMPZ
+#include <CGAL/Quotient.h>
+#include<CGAL/Arithmetic_filter.h>
+
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -19,8 +22,11 @@
 #endif // CGAL_HOMOGENEOUS_H
 
 
-
-typedef CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> > Test_rep_cartesian;
+typedef CGAL::Quotient<CGAL::Gmpz> CT;
+typedef CGAL::Quotient<CGAL::Gmpz> ET;
+//typedef CGAL::Filtered_exact<CT,ET> coord_type;
+typedef CGAL::Quotient<CGAL::Gmpz> coord_type;
+typedef CGAL::Cartesian<coord_type> Test_rep_cartesian;
 //typedef CGAL::Cartesian<CGAL::Gmpz>  Test_rep_cartesian;
 typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
 

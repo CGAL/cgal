@@ -637,7 +637,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert(T2_8.number_of_vertices()>=2);
   assert(T2_8.is_valid());
   //fc= T2_8.line_walk(Point(0.5,0.4),Point(5,5));
-  fc= T2_8.line_walk(Point(25,20,5),Point(5,5));
+  fc= T2_8.line_walk(Point(5,4,10),Point(5,5));
   fc2=fc;
   n=0;
   assert(fc==fc2);

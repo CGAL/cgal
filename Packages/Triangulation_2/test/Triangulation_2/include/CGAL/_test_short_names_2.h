@@ -4,9 +4,10 @@
 
 // Define shorter names to please linker (g++/egcs)
 
-   #define Cartesian Cart
-   #define Homogeneous Hom
+   #define Cartesian Ct
+   #define Homogeneous Hg
    #define Quotient Qt
+   #define Filtered_exact Fe
 
    #define Triangulation_test_point Ttp
    #define Triangulation_test_segment Tts
