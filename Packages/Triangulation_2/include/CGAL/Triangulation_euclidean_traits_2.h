@@ -6,6 +6,7 @@
 #include <CGAL/Triangle_2.h>
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Distance_2.h>
 
