@@ -37,7 +37,7 @@ public:
 
 };  // Sphere_d_rep<R>
 
-/*{\Manpage {Sphere_d}{RT}{Simple Spheres}{S}}*/ 
+/*{\Manpage {Sphere_d}{R}{Simple Spheres}{S}}*/ 
 
 template <class _R>
 class Sphere_d : public Handle_for< Sphere_d_rep<_R> > {

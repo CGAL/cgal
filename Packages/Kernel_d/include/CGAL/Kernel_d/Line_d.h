@@ -12,7 +12,7 @@ std::istream& operator>>(std::istream&, Line_d<R>&);
 template <class R>
 std::ostream& operator<<(std::ostream&, const Line_d<R>&);
 
-/*{\Manpage {Line_d}{RT}{Lines in d-space}{l}}*/
+/*{\Manpage {Line_d}{R}{Lines in d-space}{l}}*/
 
 template <class p_R>
 class Line_d : public Handle_for< Pair_d<p_R> > { 
