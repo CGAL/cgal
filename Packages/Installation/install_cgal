@@ -834,6 +834,16 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
+        *SunOS*5.*KCC*)
+            #### settings for KAI C++ compiler on solaris
+            ADDITIONAL_CXXFLAGS="--one_instantiation_per_object"
+            CGAL_LIB_CREATE="\$(CGAL_CXX) -o ''"
+            CGAL_SHARED_LIB_CXXFLAGS="-Kpic"
+            CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+            WINDOW_DIR="/usr/openwin/lib"
+            RUNTIME_LINKER_FLAG="-R "
+            PRINT_STACKTRACE_PROGRAM="dbx"
+            ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-pto"
