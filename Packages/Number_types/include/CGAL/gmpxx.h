@@ -55,6 +55,16 @@ struct Number_type_traits<mpf_class> {
   typedef Tag_true  Has_sqrt;
 };
 
+template <>
+struct Rational_traits<mpq_class> {
+  typedef mpz_class RT;
+ RT numerator   (const mpq_class & r) const { return r.num_ref(); }
+ RT denominator (const mpq_class & r) const { return r.den_ref(); }
+
+ mpq_class make_rational(const RT & n, const RT & d) const
+ { return mpq_class(n, d); } 
+};
+
 inline
 mpz_class
 sqrt(const mpz_class &e)
