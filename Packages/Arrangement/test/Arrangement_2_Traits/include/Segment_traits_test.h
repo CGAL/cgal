@@ -3,10 +3,10 @@
 template< class Traits_class, class Number_type >
 class Segment_traits_test : public Base_traits_test< Traits_class, Number_type >{
 public:
-  typedef Number_type  NT;
-  typedef typename Traits_class::Point     Point;
-  typedef typename Traits_class::X_curve   X_curve;
-  typedef typename Traits_class::Curve     Curve;
+  typedef Number_type                           NT;
+  typedef typename Traits_class::Point_2        Point;
+  typedef typename Traits_class::X_curve_2      X_curve;
+  typedef typename Traits_class::Curve_2        Curve;
 public:
   Segment_traits_test( int argc, char** argv );
   virtual void read_curve( std::ifstream& is, Curve& cv );
