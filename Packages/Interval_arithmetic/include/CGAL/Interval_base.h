@@ -40,6 +40,12 @@ struct Interval_base
 
   Interval_base () {}
 
+  // This copy ctor, normally equivalent to the one created by the compiler,
+  // appears to fix a code generation problem with GCC 3.0.4...
+  // (see test/IA/gcc_3.0.bug.C).
+  Interval_base (const Interval_base &i)
+    : inf_(i.inf_), sup_(i.sup_) {}
+
   Interval_base (const double d)
     : inf_(d), sup_(d) {}
 

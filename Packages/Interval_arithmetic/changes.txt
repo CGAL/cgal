@@ -1,3 +1,6 @@
+Version 4.140 on 15 April 2002
+- Workaround a bug in GCC 3.0.4 detected by Matthias.
+
 Version 4.139 on 13 April 2002
 - Shorten symbol names in test/Filtered_kernel.C.
 
