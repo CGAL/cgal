@@ -67,9 +67,10 @@ private:
   };
 
 public:
-  typedef std::set<const_pointer,less_face>::iterator Inner_faces_iterator;
-  typedef std::set<const_pointer,less_face>::const_iterator
-    Inner_faces_const_iterator;
+  typedef typename std::set<const_pointer,less_face>::iterator 
+                                                          Inner_faces_iterator;
+  typedef typename std::set<const_pointer,less_face>::const_iterator
+                                                    Inner_faces_const_iterator;
   
   Pm_face_plus_area() : face_base() {}
 
