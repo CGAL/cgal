@@ -1,3 +1,7 @@
+12 April 2004 Sylvain Pion
+- Add an assertion (denominator != 0) to prevent looping with Gmpq...
+  (the real bug is not fixed though)
+
 8 April 2004 Andreas Fabri
 - changed variable name to get rid of a warning
 

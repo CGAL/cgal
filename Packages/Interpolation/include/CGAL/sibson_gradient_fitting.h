@@ -53,7 +53,8 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
   for(;first!=beyond; ++first){
     Coord_type square_dist = traits.compute_squared_distance_d_object()
       (first->first, p);
-    Coord_type  scale(first->second/(norm*square_dist));
+    CGAL_assertion(square_dist != 0);
+    Coord_type scale = first->second/(norm*square_dist);
     typename Traits::Vector_d d= 
       traits.construct_vector_d_object()(p, first->first);
  
