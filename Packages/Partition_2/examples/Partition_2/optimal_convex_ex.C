@@ -44,7 +44,7 @@ void make_polygon(Polygon_2& polygon)
    polygon.push_back(Point_2(196,326));
 }
 
-int main( int argc, char** argv )
+int main()
 {
    Polygon_2             polygon;
    Polygon_list          partition_polys;

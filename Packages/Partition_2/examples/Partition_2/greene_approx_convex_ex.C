@@ -40,7 +40,7 @@ void make_polygon(Polygon_2& polygon)
 }
 
 
-int main( int argc, char** argv )
+int main()
 {
    Polygon_2    polygon;
    Polygon_list partition_polys;
