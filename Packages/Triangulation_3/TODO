@@ -68,9 +68,8 @@ des tetraedres presque plats) rounding ?
 Regular :
 - la cell_base speciale qui stocke une liste de points caches ou pas (et un
   tag qui dit si oui ou non elle stocke les points caches ou pas), et un
-  iterator pour y acceder.
-- remove - devrait etre pareil que pour delaunay (a part les points caches a
-  re-inserer apres coup).
+  iterator pour y acceder.  A DOCUMENTER.
+- remove - les dimensions 1 et 2 ne sont pas gerees.
 - faire marcher la hierarchie avec.  Le probleme est qu'on delete des
   vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui
   pointent dans l'espace, du coup...
