@@ -2225,6 +2225,7 @@ homogeneous representation with number type \ccc{CGAL_Gmpz}.
     #include <CGAL/Min_circle_2_adapterH2.h>
     #include <CGAL/IO/Verbose_ostream.h>
     #include <assert.h>
+    #include <string.h>
     #include <fstream.h>
 
     #ifdef CGAL_USE_LEDA
