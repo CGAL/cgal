@@ -112,15 +112,18 @@ void Geomview_stream::setup_geomview(const char *machine,
         std::cerr << "execl geomview failed" << std::endl ;
         switch(errno) {
         case EACCES:
-            std::cerr << "please check your environment variable PATH" << std::endl;
-            std::cerr << "make sure the file `geomview' is contained in it" << std::endl;
+            std::cerr << "please check your environment variable PATH" 	      
+		      << std::endl;
+            std::cerr << "make sure the file `geomview' is contained in it" 
+		      << std::endl;
             std::cerr << "and is executable" << std::endl;
             break;
         case ELOOP:
             std::cerr << "too many links for filename `geomview'" << std::endl;
             break;
         default:
-            std::cerr << "error number " << errno << " (check `man execlp')" << std::endl;
+            std::cerr << "error number " << errno << " (check `man execlp')" 
+		      << std::endl;
         };
         exit(-1);
     default:              // The parent process
