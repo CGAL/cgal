@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.37 on 11 November 1999
+- Removed stupid Borland warning.
+
 Version 4.36 on  7 November 1999
 - Added C9X standard compliant rounding mode functions.
 - Changed the enums FPU_cw_near... to macros CGAL_FE_TONEAREST...
