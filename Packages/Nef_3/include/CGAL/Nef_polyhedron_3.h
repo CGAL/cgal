@@ -21,7 +21,7 @@
 // author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>Plane_3(h.a(),h.b(),h.c(),RT(0)
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
@@ -30,8 +30,6 @@
 // ============================================================================
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
-
-
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -51,6 +49,8 @@
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
+
+#include <CGAL/IO/Verbose_ostream.h>
 
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -115,12 +115,11 @@ struct circle_lt {
 
   circle_lt(int m) :max(m) {};
   bool operator()(const Point_3& p1, const Point_3& p2) const { 
-    
+        
     const Quotient<RT> zero(RT(0));
     Quotient<RT> x[2];
     Quotient<RT> y[2];
-    //    Quotient<RT> w[2];
-    
+
     switch(max) {
     case 0:
       x[0] = p1.y(); 
@@ -310,6 +309,8 @@ protected:
 
   void create_vertices_of_box_with_plane(const Plane_3& h, Boundary b) {
 
+    // SETDTHREAD(19*43*11);
+
     typedef typename Kernel::RT::NT NT;
     typedef typename Kernel::RT     RT;
 
@@ -321,9 +322,13 @@ protected:
     orth_coords[1] = orth.hy()[0];
     orth_coords[2] = orth.hz()[0];
 
+    int add_corners = 0;
+    while(orth_coords[add_corners] == 0) add_corners++;
+    CGAL_assertion(add_corners < 3);
+
     std::list<Point_3> points;
     for(int dir=0; dir<3;++dir) {
- 
+
       NT cnst[3];
       for(int i=0; i<3;i++)
 	cnst[i] = (i==dir? -h.d()[0] : 0);
@@ -344,8 +349,8 @@ protected:
       cross[2][(dir+2)%3] = cross[3][(dir+2)%3] = -orth_coords[dir];
 
       for(int i=0; i<4; ++i)
-	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,cross[i][3])) ||
-	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,cross[i][3])) && dir==0))
+	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,orth_coords[dir])) ||
+	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,orth_coords[dir])) && dir == add_corners))
 	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],cross[i][1],cnst[1],cross[i][2],cnst[2],cross[i][3]));
       
     }
@@ -403,7 +408,7 @@ protected:
       TRACEN("sps " << sp1 << "     " << sp2);
       TRACEN(orth_coords[min] << "|" << orth_coords[(min+1)%3] << "|" << orth_coords[(min+2)%3]);
 
-      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3]) 
+      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3] && h.d() == 0) 
 	C.create_degenerate_corner_frame_point(*p,sp1,sp2,min, max, (b==INCLUDED));
       else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
 	C.create_corner_frame_point(*p,sp1,sp2,max,(b==INCLUDED));
@@ -411,19 +416,49 @@ protected:
 	C.create_frame_point(*p,sp1,sp2,h,(b==INCLUDED));
     }
 
-    RT sum;
-    sum= h.a()+h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum=-h.a()+h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum= h.a()-h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum=-h.a()-h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum= h.a()+h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum=-h.a()+h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum= h.a()-h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
-    sum=-h.a()-h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
-    
+    RT sum= h.a()+h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner( 1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()+h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner(-1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()-h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner( 1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()-h.b()+h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner(-1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()+h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner( 1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()+h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner(-1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum= h.a()-h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner( 1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
+    sum=-h.a()-h.b()-h.c(); 
+    if(h.d()!=0 || sum!= 0) { 
+      TRACEN(sum); 
+      C.create_extended_box_corner(-1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));
+    }
   }
 
-
+  /*
   void add_box_corners(const Plane_3& h, Boundary& b) {
 
     TRACEN("add box corner");
@@ -468,6 +503,7 @@ protected:
     SNC_constructor C(snc());
     C.create_facet(min, max, cross, h);
   }
+  */
 
   void check_h_for_intersection_of_12_cube_edges_and_add_vertices
   (const Plane_3& p);
@@ -478,7 +514,7 @@ protected:
   void build_external_structure() {
     SNC_constructor C(snc());
     C.pair_up_halfedges();
-    
+
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
@@ -608,7 +644,20 @@ public:
     P.delegate(bp);
   }
 
-  void dump() { SNC_io_parser::dump( snc()); }
+  void dump(std::ostream& os = std::cerr) { SNC_io_parser::dump( snc(), os); }
+
+  bool is_valid( bool verb = false, int level = 0) {
+    // checks the combinatorial consistency.
+    Verbose_ostream verr(verb);
+    verr << "begin CGAL::Nef_polyhedron_3<...>::is_valid( verb=true, "
+      "level = " << level << "):" << std::endl;
+
+    SNC_decorator D(snc());
+    bool valid = D.is_valid(verb, level);
+    verr << "end of CGAL::Nef_polyhedron_3<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+    return valid;
+  }
 
   bool is_simple() {
 
@@ -798,7 +847,7 @@ public:
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _and, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
-    res.clear_box_marks();
+    //    res.clear_box_marks();
     return res;
   }
 
@@ -823,7 +872,7 @@ public:
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _diff, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
-    res.clear_box_marks();
+    //    res.clear_box_marks();
     return res;
   }    
 
@@ -836,7 +885,7 @@ public:
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _xor, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
-    res.clear_box_marks();
+    //    res.clear_box_marks();
     return res;
   }
 

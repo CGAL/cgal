@@ -36,6 +36,7 @@
 #include <CGAL/Nef_2/Object_handle.h>
 #include <string>
 #include <sstream>
+#include <CGAL/IO/Verbose_ostream.h>
 
 #undef _DEBUG
 #define _DEBUG 83
@@ -314,6 +315,65 @@ public:
       return os.str();
     }
 
+    bool check_basic_functions() {
+      /*
+      if(svertices_begin_ == sncp()->svertices_end())
+        CGAL_assertion(svertices_end() == sncp()->svertices_end());
+      if(shalfedges_begin_ == sncp()->shalfedges_end())
+        CGAL_assertion(shalfedges_end() == sncp()->shalfedges_end());
+      if(sfaces_begin_ == sncp()->sfaces_end())
+        CGAL_assertion(sfaces_end() == sncp()->sfaces_end());
+      */
+    }
+
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::Vertex::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+      
+      bool valid = (sncp_ != NULL);
+      valid = valid && (svertices_begin_ != NULL && svertices_begin_ != SVertex_iterator());
+      valid = valid && (svertices_last_  != NULL && svertices_last_  != SVertex_iterator());
+      valid = valid && (shalfedges_begin_ != NULL && shalfedges_begin_ != SHalfedge_iterator());
+      valid = valid && (shalfedges_last_  != NULL && shalfedges_last_  != SHalfedge_iterator());
+      valid = valid && (sfaces_begin_ != NULL && sfaces_begin_ != SFace_iterator());
+      valid = valid && (sfaces_last_  != NULL && sfaces_last_  != SFace_iterator());
+      valid = valid && (shalfloop_ != NULL && shalfloop_ != SHalfloop_iterator());
+
+      if(svertices_begin_ == svertices_last_)             
+	valid = valid && (shalfedges_begin_ == sncp()->shalfedges_end());   
+      else
+	valid = valid && (shalfedges_begin_ != sncp()->shalfedges_end());
+      
+
+      if(shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
+	valid = valid && (svertices_begin_ == svertices_last_);       // zero or one svertex 
+	if(shalfloop_ != sncp()->shalfloops_end())
+	  valid = valid && (++SFace_const_iterator(sfaces_begin_) == sfaces_last_);
+	else 
+	  valid = valid && (sfaces_begin_ == sfaces_last_);
+      }
+      else {
+	valid = valid && (svertices_begin_ != svertices_last_);
+	valid = valid && (shalfedges_begin_ != sncp()->shalfedges_end());
+      }
+      
+      valid = valid && (sfaces_begin_ != sncp()->sfaces_end());
+      if(sfaces_begin_ == sfaces_last_) {
+	valid = valid && (shalfedges_begin_ == sncp()->shalfedges_end() ||
+	        ++SHalfedge_const_iterator(shalfedges_begin_) == shalfedges_last_);
+	valid = valid && (shalfloop_ == sncp()->shalfloops_end());
+      }
+      else
+       valid = valid && (sfaces_begin_->sface_cycles_begin() != 
+			  sfaces_begin_->sface_cycles_end());
+     
+      verr << "end of CGAL::SNC_items<...>::Vertex::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+      return valid;
+    }
+    
   }; // Vertex
 
 
@@ -330,6 +390,7 @@ public:
     friend class SNC_SM_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
+    typedef typename Refs::Halfedge_handle  Halfedge_handle;
     typedef typename Refs::SVertex_handle   SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SFace_handle     SFace_handle;
@@ -398,6 +459,27 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::Halfedge::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+
+      bool valid = (center_vertex_ != NULL && center_vertex_ != Vertex_handle());
+      valid = valid && (twin_ != NULL && twin_ != SVertex_handle() &&
+			                 twin_ != Halfedge_handle());
+      //      valid = valid && (out_sedge_ != NULL);
+      //      valid = valid && (incident_sface_ != SFace_handle());
+      
+      valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
+		       (out_sedge_ == NULL && incident_sface_ != NULL));
+      
+      verr << "end of CGAL::SNC_items<...>::Halfedge::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
+
   }; // Halfedge
 
 
@@ -416,7 +498,10 @@ public:
     friend class SNC_FM_decorator<Refs>;
     typedef typename Refs::Halffacet_handle   Halffacet_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
+    typedef typename Refs::SHalfedge_handle SHalfedge_handle;
+    typedef typename Refs::SHalfloop_handle SHalfloop_handle;
     typedef typename Refs::Object_list    Object_list;
+    typedef typename Refs::Object_const_iterator Object_iterator;
     typedef typename Refs::Halffacet_cycle_iterator
                                           Halffacet_cycle_iterator;
     typedef typename Refs::Halffacet_cycle_const_iterator
@@ -479,6 +564,26 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::Halffacet::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+
+      bool valid = (twin_ != NULL && twin_ != Halffacet_handle());
+      valid = valid && (volume_ != NULL && volume_ != Volume_handle());
+      
+      valid = valid && (supporting_plane_.a() != 0 || 
+			supporting_plane_.b() != 0 ||
+			supporting_plane_.c() != 0);
+      
+      valid = valid && (!boundary_entry_objects_.empty());
+
+      verr << "end of CGAL::SNC_items<...>::Halffacet::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
 
   }; // Halffacet
 
@@ -540,7 +645,19 @@ public:
     Shell_entry_const_iterator shells_end() const
     { return shell_entry_objects_.end(); }
 
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::Volume::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
 
+      bool valid = (!shell_entry_objects_.empty());
+
+      verr << "end of CGAL::SNC_items<...>::Volume::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
 
   }; // Volume
 
@@ -552,6 +669,7 @@ public:
   class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
   { 
     typedef typename Refs::Items Items;
+    typedef typename Refs::Halfedge_handle Halfedge_handle;
     typedef typename Refs::SVertex_handle SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
@@ -648,6 +766,34 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::SHalfedge::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+
+      bool valid = (source_ != SVertex_handle() &&
+		    source_ != NULL &&
+		    source_ != Halfedge_handle());
+      valid = valid && (twin_  != SHalfedge_handle() && twin_  != NULL);
+      valid = valid && (sprev_ != SHalfedge_handle() && sprev_ != NULL);
+      valid = valid && (snext_ != SHalfedge_handle() && snext_ != NULL);
+      valid = valid && (prev_  != SHalfedge_handle() && prev_  != NULL);
+      valid = valid && (next_  != SHalfedge_handle() && next_  != NULL);
+      
+      valid = valid && (incident_sface_ != SFace_handle() && 
+			incident_sface_ != NULL);
+      valid = valid && (incident_facet_ != Halffacet_handle() &&
+			incident_facet_ != NULL);
+      valid = valid && (circle_.d() == 0);
+      valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
+      
+      verr << "end of CGAL::SNC_items<...>::SHalfedge::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
+
   }; // SHalfedge
 
 
@@ -725,6 +871,26 @@ public:
 
     bool is_twin() const { return (&*twin_ < this); }
 
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::SHalfloop::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+
+      bool valid = (twin_  != SHalfloop_handle() && twin_  != NULL);
+      valid = valid && (incident_sface_ != SFace_handle() && 
+			incident_sface_ != NULL);
+      valid = valid && (incident_facet_ != Halffacet_handle() &&
+			incident_facet_ != NULL);
+      valid = valid && (circle_.d() == 0);
+      valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
+      
+      verr << "end of CGAL::SNC_items<...>::SHalfloop::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
+
   }; // SHalfloop
 
 
@@ -797,6 +963,26 @@ public:
 
     Mark& tmp_mark() 
     { return mark_; }
+
+    bool is_valid( bool verb = false, int level = 0) const {
+      
+      Verbose_ostream verr(verb);
+      verr << "begin CGAL::SNC_items<...>::SFace::is_valid( verb=true, "
+	"level = " << level << "):" << std::endl;
+
+      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != NULL);
+      valid = valid && (incident_volume_ != Volume_handle() &&
+			incident_volume_ != NULL);
+
+      if(boundary_entry_objects_.empty()) {
+	valid = valid && 
+	  (center_vertex_->shalfedges_begin() == center_vertex_->shalfedges_end());
+      }
+      verr << "end of CGAL::SNC_items<...>::SFace::is_valid(): structure is "
+	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+      return valid;
+    }
 
   }; // SFace
 

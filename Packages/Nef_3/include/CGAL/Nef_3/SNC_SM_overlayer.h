@@ -1242,7 +1242,7 @@ select(const Selection& SP) const
 template <typename Refs_>
 void SNC_SM_overlayer<Refs_>::simplify() const
 {
-
+  // SETDTHREAD(131);
   TRACEN("simplifying"); 
 
   SVertex_handle vy;
@@ -1259,8 +1259,10 @@ void SNC_SM_overlayer<Refs_>::simplify() const
      CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
      CGAL::Partition<SFace_handle> FP; */
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem;
+  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
+  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
   CGAL::Union_find< SFace_handle> UF;
+  
 
   SFace_iterator f;
   CGAL_nef3_forall_sfaces(f,*this) {
@@ -1284,10 +1286,15 @@ void SNC_SM_overlayer<Refs_>::simplify() const
 			 Pitem[face(twin(e))] );
 	  TRACEN("unioning disjoint faces");
 	}
+	
+	TRACEN("is_closed_at_source " << is_closed_at_source(e) << " " << is_closed_at_source(twin(e)));
+	
 	if ( is_closed_at_source(e) )
-	  set_face(source(e),face(e));
+	  Vitem[source(e)] = Pitem[face(e)];
+      
 	if ( is_closed_at_source(twin(e)))
-	  set_face(target(e),face(e));
+	  Vitem[target(e)] = Pitem[face(e)];
+     
 	delete_edge_pair(e);
       }
     }
@@ -1321,10 +1328,21 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   for(v = svertices_begin(); v != svertices_end(); v=vn) {
     vn=v; ++vn;
     if ( is_isolated(v) ) {
+    
+      if(Vitem[v] != NULL) {
+	set_face(v,*(UF.find(Vitem[v])));
+	TRACEN("incident face of " << PH(v) << " set to " << &*(face(v)));
+      }
+      else {
+	set_face(v, *(UF.find(Pitem[face(v)])));
+	TRACEN("isolated svertex " << PH(v) << " already has incident face " << &*(face(v)));
+      }
+
       if ( mark(v) == mark(face(v)) ) {
         TRACEN("removing isolated vertex"<<PH(v));
         delete_vertex_only(v);  
-      } else
+      } 
+      else 
         store_boundary_object(v,face(v)); // isolated, but should stay
     } else { // v not isolated
       SHalfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
@@ -1342,8 +1360,10 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
     ++fn;
     Union_find_handle pit = Pitem[f];
-    if ( UF.find(pit) != pit ) 
+    if ( UF.find(pit) != pit ) {
+      TRACEN("delete face " << &*f);
       delete_face_only(f);
+    }
   }
 
   SVertex_handle vx;

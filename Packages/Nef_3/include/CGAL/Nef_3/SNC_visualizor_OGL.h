@@ -908,7 +908,6 @@ public:
 
   void draw() const
   { 
-      //SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();

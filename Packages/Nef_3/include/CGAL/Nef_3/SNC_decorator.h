@@ -20,7 +20,7 @@
 //
 // author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
-//                 Susan ert      <hert@mpi-sb.mpg.de>
+//                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
@@ -40,6 +40,8 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
+#include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/IO/Verbose_ostream.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
@@ -118,6 +120,8 @@ public:
   DECUSING(SHalfedge_around_svertex_const_circulator);
   DECUSING(SHalfedge_around_svertex_circulator);
 #undef DECUSING
+
+  typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
 
   typedef void* GenPtr;
 
@@ -230,7 +234,10 @@ public:
   { return v->point(); }
   Point_3 standard_point(Vertex_handle v) const {
     Point_3 ep = v->point();
-    return Point_3(ep.hx().eval_at(1000), ep.hy().eval_at(1000), ep.hz().eval_at(1000), ep.hw().eval_at(1000));
+    return Point_3(ep.hx().eval_at(1000), 
+		   ep.hy().eval_at(1000), 
+		   ep.hz().eval_at(1000), 
+		   ep.hw().eval_at(1000));
   }
 
   Sphere_point tmp_point(Halfedge_handle e) const
@@ -387,7 +394,8 @@ public:
     if((c.a() == 0 && c.b() == 0 && CGAL_NTS abs(p.hz())== R) || 
        (c.a() == 0 && c.c() == 0 && CGAL_NTS abs(p.hy())== R) ||
        (c.b() == 0 && c.c() == 0 && CGAL_NTS abs(p.hx())== R))
-      if(is_edge_on_infibox(SD.source(sh)) && is_edge_on_infibox(SD.target(sh)))
+      if(is_edge_on_infibox(SD.source(sh)) && 
+	 is_edge_on_infibox(SD.target(sh)))
 	return true;
 
     return false;
@@ -404,9 +412,12 @@ public:
     RT Outer(0,CGAL_NTS abs(p.hw()[0]));
     CGAL_assertion(p.hw().degree() ==0);
 
-    if(CGAL_NTS abs(p.hx()) == Outer && ((p.hx() > 0 && v.hx() > 0)||(p.hx() < 0 && v.hx() < 0))) return false;
-    if(CGAL_NTS abs(p.hy()) == Outer && ((p.hy() > 0 && v.hy() > 0)||(p.hy() < 0 && v.hy() < 0))) return false;
-    if(CGAL_NTS abs(p.hz()) == Outer && ((p.hz() > 0 && v.hz() > 0)||(p.hz() < 0 && v.hz() < 0))) return false;
+    if(CGAL_NTS abs(p.hx()) == Outer && 
+       ((p.hx() > 0 && v.hx() > 0)||(p.hx() < 0 && v.hx() < 0))) return false;
+    if(CGAL_NTS abs(p.hy()) == Outer && 
+       ((p.hy() > 0 && v.hy() > 0)||(p.hy() < 0 && v.hy() < 0))) return false;
+    if(CGAL_NTS abs(p.hz()) == Outer && 
+       ((p.hz() > 0 && v.hz() > 0)||(p.hz() < 0 && v.hz() < 0))) return false;
 
     if(CGAL_NTS abs(p.hx()) == Outer && v.hx() == 0) return true;
     if(CGAL_NTS abs(p.hy()) == Outer && v.hy() == 0) return true;
@@ -438,7 +449,7 @@ public:
   // returns true if |v| is part of the infinimaximal box. ###################
   // Needs to be fixed for true infbox! LK! ##################################
   bool is_infbox_vertex( Vertex_handle v) const {
-      return !Kernel::is_standard(v->point());
+      return !Infi_box::is_standard(v->point());
   }
 
   /* returns true if |f| is part of the infinimaximal box.*/
@@ -467,13 +478,16 @@ public:
       facet to one of the sphere segments on the boundary of |sf|.
       \precondition |ray| target is on |v| and the intersection between
       |ray| and the 2-skeleton incident to v is empty. }*/ {
-    //SETDTHREAD(19);
+
     Halffacet_handle f_visible;
     CGAL_nef3_assertion( ray.target() == point(v));
     Sphere_point sp(ray.source() - point(v));
     TRACEN( "Locating " << sp <<" in " << point(v));
-    CGAL_assertion(sp.hx().degree() < 2 && sp.hy().degree() < 2 && sp.hz().degree() < 2 && sp.hw().degree() == 0);
-    sp = simplified(sp);
+    CGAL_assertion(sp.hx().degree() < 2 && 
+		   sp.hy().degree() < 2 && 
+		   sp.hz().degree() < 2 && 
+		   sp.hw().degree() == 0);
+    sp = Infi_box::simplify(sp);
     TRACEN( "Locating " << sp <<" in " << point(v));
     SM_point_locator L(v);
     SObject_handle o = L.locate(sp);
@@ -693,7 +707,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    //    SETDTHREAD(43*19*131);
+    //    SETDTHREAD(43*19*37);
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
@@ -778,7 +792,7 @@ public:
       TRACEN(PH(e0));
       if(!Ignore_halfedge[e0]) {
 	CGAL_nef3_forall_facets( f1, snc1i) { 
-	  if(plane(f1).d().degree()>0) continue;
+	  if(Infi_box::degree(plane(f1).d())>0) continue;
 	  Point_3 ip;
 	  if( rs.does_intersect_internally( segment(e0), f1, ip )) {
 	    TRACEN(" edge0 face1 intersection...");
@@ -797,7 +811,7 @@ public:
     TRACEN("start edge1 face0");
     CGAL_nef3_forall_edges( e1, snc1i) { 
       CGAL_nef3_forall_facets( f0, *sncp()) { 
-	if(plane(f0).d().degree()>0) continue;
+	if(Infi_box::degree(plane(f0).d())>0) continue;
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
 	  TRACEN(" edge1 face0 intersection...");
@@ -823,13 +837,13 @@ public:
 	}
       }
     }
-    //   SETDTHREAD(19*37);
+
+    //    SETDTHREAD(19*37);
 
     TRACEN("start edge0 edge1");
     TRACEN("=> edge edge intersection");
     CGAL_nef3_forall_edges( e0, *sncp()) { 
       CGAL_nef3_forall_edges( e1, snc1i) {
-	TRACEN(point(source(e0)) << "->" << point(target(e0)) << "         " << point(source(e1)) << "->" << point(target(e1)));
 	Point_3 ip;
 	if( rs.does_intersect_internally( segment(e0), segment(e1), ip )) {
 	  TRACEN(" edge0 edge1 intersection..." << ip);
@@ -873,6 +887,10 @@ public:
     
     // synthesis of spatial structure
 
+    //    SETDTHREAD(19*43*41);
+    //    SNC_io_parser<SNC_structure> Op(std::cout, result);
+    //    Op.print();
+
     SNC_constructor C(result);
     C.pair_up_halfedges();
     C.link_shalfedges_to_facet_cycles();
@@ -888,6 +906,107 @@ public:
 
     TRACEN("=> end binary operation. ");
   }
+
+  bool is_valid( bool verb = false, int level = 0) {
+    
+    Verbose_ostream verr(verb);
+    verr << "begin CGAL::SNC_decorator<...>::is_valid( verb=true, "
+      "level = " << level << "):" << std::endl;
+    
+    bool valid = true;
+
+    Vertex_iterator vi;
+    CGAL_nef3_forall_vertices(vi,*this) {
+
+      valid = valid && vi->is_valid(verb, level);
+      valid = valid && (vi->sncp()==sncp());
+
+      SM_decorator SD(vi);
+      Unique_hash_map<SVertex_handle, bool> SVvisited(false);
+      Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
+      Unique_hash_map<SFace_handle, bool> SFvisited(false);
+
+      valid = valid && SD.is_valid(SVvisited, SEvisited, SFvisited, verb, level);
+    }
+ 
+  
+    Halfedge_iterator he;
+    CGAL_nef3_forall_halfedges(he,*this) {
+      valid = valid && he->is_valid(verb, level);
+      valid = valid && (twin(he)!=he);
+      valid = valid && (twin(twin(he))==he);
+
+      if(he->is_twin()) {
+	SM_decorator S1(source(he));
+	SM_decorator S2(target(he));
+	SHalfedge_handle se1(S1.first_out_edge(he));
+	SHalfedge_handle se2(S2.first_out_edge(twin(he)));
+	if(se1 != NULL && se2 != NULL) {
+	  SHalfedge_handle start1(se1);
+	  SHalfedge_handle start2(S2.next(twin(se2)));
+	  while(facet(se1) != twin(facet(se2)) && se2 != start2)
+	    se2 = twin(S2.previous(se2));
+	  valid = valid && (facet(se1) == twin(facet(se2)));
+	  start2 = se2;
+	  do {
+	    se1 = S1.next(twin(se1));
+	    se2 = twin(S2.previous(se2));
+	    valid = valid && (facet(se1) == twin(facet(se2)));
+	  } while(se1 != start1);
+	  valid = valid && (se2 == start2);
+	}
+      }
+    }
+
+
+    Halffacet_iterator hfi;
+    CGAL_nef3_forall_halffacets(hfi,*this) {
+      valid = valid && hfi->is_valid(verb, level);
+      valid = valid && (twin(hfi)!=hfi);
+      valid = valid && (twin(twin(hfi))==hfi);
+      valid = valid && (plane(hfi).opposite() == plane(twin(hfi))); 
+
+      Halffacet_cycle_iterator hfci;
+      CGAL_nef3_forall_facet_cycles_of(hfci,hfi) 
+	if(hfci.is_shalfedge())
+	  valid = valid && (SHalfedge_handle(hfci) != SHalfedge_handle());
+	else if(hfci.is_shalfloop())
+	  valid = valid && (SHalfloop_handle(hfci) != SHalfloop_handle()); 
+	else
+	  valid = false;
+    }
+
+    Volume_iterator voli;
+    CGAL_nef3_forall_volumes(voli,*this) {
+      
+      valid = valid && (voli->is_valid(verb, level));
+
+      Shell_entry_iterator si;
+      CGAL_nef3_forall_shells_of(si,voli)
+	valid = valid && (si != NULL && 
+			  SFace_handle(si) != SFace_handle() && 
+			  SFace_handle(si) != NULL);
+
+    }
+
+    SHalfedge_iterator she;
+    CGAL_nef3_forall_shalfedges(she,*sncp()) {
+      valid = valid && (next(she) != she);
+      valid = valid && (previous(she) != she);
+      valid = valid && (previous(next(she)) == she);
+      valid = valid && (next(previous(she)) == she);
+      valid = valid && (next(twin(next(she))) == twin(she));
+      valid = valid && (previous(twin(previous(she))) == twin(she)); 
+      valid = valid && (twin(facet(she)) == facet(twin(she))); 
+    }
+
+
+    verr << "end of CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+    return valid;
+  }
+
 
   template <typename Visitor>
   void visit_shell_objects(SFace_handle f, Visitor& V) const;
@@ -1017,14 +1136,17 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           V.visit(v); // report edge
           Done[v] = Done[twin(v)] = true;
           // note that v is isolated, thus twin(v) is isolated too
-	  SM_decorator SD;
-	  SFace_handle fo;
+	  //	  SM_decorator SD;
+	  //	  SFace_handle fo;
+	  //	  fo = sface(twin(v));
+	  /*
 	  if(SD.is_isolated(v)) 
 	    fo = source(v)->sfaces_begin();
 	  else
 	    fo = sface(twin(v));
-	  if ( Done[fo] ) continue;
-          SFaceCandidates.push_back(fo); Done[fo] = true;
+	  */
+	  //	  if ( Done[fo] ) continue;
+	  //          SFaceCandidates.push_back(fo); Done[fo] = true;
         } else if ( assign(l,fc) ) {
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;

@@ -54,7 +54,7 @@ using std::exit;
 
 // Types
 typedef CGAL::Gmpz                      NT;
-//typedef CGAL::Simple_homogeneous<NT>     Kernel;
+// typedef CGAL::Simple_homogeneous<NT>     Kernel;
 
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
 // struct Kernel : public CGAL::Extended_homogeneous_3<NT>  {};
@@ -87,6 +87,8 @@ void help_message( std::ostream& out) {
 "    clear                  clears stack\n"
 "    size                   prints stack and top polyhedron size to stdout.\n"
 "    simple                 tests if top is convertible to Polyhedron_2.\n"
+"    valid                  tests if the data structure of top is valid.\n"
+"    plane <a> <b> <c> <d>  creates a halfspace bounded by the plane ax+by+cz+d=0.\n"
 "    loadoff <filename>     loads file in OFF format and pushes it on stack.\n"
 "    saveoff <filename>     saves top in OFF format if top is simple.\n"
 "    dump                   dump Ascii description of top to stderr.\n"
@@ -201,6 +203,23 @@ int eval( int argc, char* argv[]) {
                 cout << "Top of stack is simple." << endl;
             else
                 cout << "Top of stack is _not_ simple." << endl;
+        } else if ( strcmp( argv[i], "valid") == 0) {
+            if ( nef.size() == 0) {
+                cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
+                error = 2;
+                continue;
+            }
+	    if ( assert_argc( argv[i], 2, argc - i - 1)) {
+	      bool verb( std::atoi( argv[i+1]));
+	      int level( std::atoi( argv[i+2]));
+	      if ( nef.back().is_valid(verb, level))
+                cout << "Top of stack is valid." << endl;
+	      else
+                cout << "Top of stack is _NOT_ valid." << endl;
+	      i += 2;
+	    } else {
+	      error = 4;
+	    }
         } else if ( strcmp( argv[i], "loadoff") == 0) {
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
                 std::ifstream in( argv[i+1]);

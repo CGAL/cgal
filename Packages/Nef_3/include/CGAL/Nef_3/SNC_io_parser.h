@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : include/CGAL/Nef_3/SNC_io_parser.h
+// file          : include/CGAL/Nef_3/SNC_io_parser.hs
 // package       : Nef_3
 // chapter       : 3D-Nef Polyhedra
 //

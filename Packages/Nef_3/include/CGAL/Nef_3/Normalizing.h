@@ -27,18 +27,12 @@
 #ifndef CGAL_NORMALIZING_H
 #define CGAL_NORMALIZING_H
 
+#include <CGAL/Nef_3/Infimaximal_box.h>
+
 #include <CGAL/basic.h>
 #undef _DEBUG
 #define _DEBUG 307
 #include <CGAL/Nef_3/debug.h>
-
-template <typename R>
-CGAL::Point_3<R> simplified(CGAL::Point_3<R>& p)
-{
-  int deg = (p.hx().degree() > p.hy().degree() ? p.hx().degree() : p.hy().degree());
-  deg = (p.hz().degree() > deg ? p.hz().degree() : deg);
-  return CGAL::Point_3<R>(p.hx()(deg),p.hy()(deg),p.hz()(deg),p.hw()[0]);
-}
 
 template <typename R>
 CGAL::Point_3<R> normalized(CGAL::Point_3<R>& p)
@@ -66,7 +60,12 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
   
   typedef typename R::RT     RT;
 
-  RT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1: h.d()): h.c()): h.b()): h.a();
+  RT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1 
+						              : h.d())
+                                                : h.c())
+                                  : h.b())
+                    : h.a();
+
   
   TRACE("gcd... i"<<' ');
   
@@ -91,11 +90,16 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
   return CGAL::Plane_3<R>(pa,pb,pc,pd);
 }
 
+
+/*
 template <typename R>
 CGAL::Plane_3<R> normalized_old(CGAL::Plane_3<R>& h)
 { 
   //  TRACEN("  before normalizing "<<h);
-  CGAL_nef3_assertion(h.a().degree()==0 && h.b().degree()==0 && h.c().degree()==0 && h.d().degree()<2);
+  CGAL_nef3_assertion(Infi_box::degree(h.a())==0 && 
+		      Infi_box::degree(h.b())==0 && 
+		      Infi_box::degree(h.c())==0 && 
+		      Infi_box::degree(h.d())<2);
   
   typedef typename R::RT::NT NT;
   typedef typename R::RT     RT;
@@ -107,16 +111,16 @@ CGAL::Plane_3<R> normalized_old(CGAL::Plane_3<R>& h)
       d=CGAL_NTS gcd(d,h.d()[1]);
 
   NT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
-  //  TRACE("gcd... i"<<x<<' ');
+  TRACE("gcd... i"<<x<<' ');
   x = ( a != 0 ? a : x);
-  //  TRACE(x<<' ');
+  TRACE(x<<' ');
   x = ( b != 0 ? CGAL_NTS gcd(x,b) : x );
-  //  TRACE(x<<' ');
+  TRACE(x<<' ');
   x = ( c != 0 ? CGAL_NTS gcd(x,c) : x );
-  //  TRACE(x<<' ');
+  TRACE(x<<' ');
   x = ( d != 0 ? CGAL_NTS gcd(x,d) : x );
-  //  TRACEN(x);
-  //  CGAL_nef3_assertion( h == CGAL::Plane_3<R>(a/x,b/x,c/x,d/x));
+  TRACEN(x);
+  CGAL_nef3_assertion( h == CGAL::Plane_3<R>(a/x,b/x,c/x,d/x));
 
  
   RT pa = a/x;
@@ -126,5 +130,6 @@ CGAL::Plane_3<R> normalized_old(CGAL::Plane_3<R>& h)
   
   return CGAL::Plane_3<R>(pa,pb,pc,pd);
 }
+*/
 
 #endif // CGAL_NORMALIZING_H

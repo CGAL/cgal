@@ -42,12 +42,24 @@
 #include <CGAL/Union_find.h>
 #include <list>
 
+#include <CGAL/Extended_homogeneous_3.h>
+
 #undef _DEBUG
 #define _DEBUG 41
 #include <CGAL/Nef_3/debug.h>
 #include <CGAL/Nef_2/Object_index.h>
 
 CGAL_BEGIN_NAMESPACE
+
+template<class Kernel>
+struct Is_extended_kernel {
+       typedef Tag_false value_type;
+};
+
+template<class NT>
+struct Is_extended_kernel<Extended_homogeneous_3<NT> > {
+       typedef Tag_true value_type;
+};
 
 // Const Circulators: 
 template <typename HE>
@@ -1060,6 +1072,7 @@ public:
   }
   
   void simplify() {
+
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
     SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
@@ -1094,6 +1107,7 @@ public:
     /* 
      * Volumes simplification 
      */
+    
     Halffacet_handle f(D.halffacets_begin());
     while( f != D.halffacets_end() && f->is_twin())
       f++;
@@ -1104,6 +1118,8 @@ public:
 	f_next++;
       while( f_next != D.halffacets_end() && f_next->is_twin());
       CGAL_nef3_assertion( f != D.twin(f));
+      //    Halffacet_iterator f;
+      //    CGAL_nef3_forall_facets(f,D) {
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
       TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
       	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
@@ -1119,13 +1135,11 @@ public:
       f = f_next;
     }
 
-    Halffacet_iterator hf;
-    CGAL_nef3_forall_halffacets( hf, *this) {
-      hash_facet[hf] = uf_facet.make_set(hf);
-      reset_object_list(hf->boundary_entry_objects_);
-
+    CGAL_nef3_forall_halffacets( f, *this) {
+      hash_facet[f] = uf_facet.make_set(f);
+      reset_object_list(f->boundary_entry_objects_);
     }
-   
+    
     /* 
      * Edges simplification
      */
@@ -1139,10 +1153,9 @@ public:
       do 
 	e_next++;
       while( e_next != D.halfedges_end() && e_next->is_twin());
-      
       SM_decorator SD(D.source(e));
       if( SD.is_isolated(e)) {
-	if(D.mark(e) == D.mark(D.volume(D.source(e)->sfaces_begin()))) {
+	if(D.mark(e) == D.mark(D.volume(D.sface(e)))) {
 	  TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(D.twin(e)));
 	  delete_halfedge_pair(e);
 	}
@@ -1166,21 +1179,18 @@ public:
 	  }
 	}
       }
-
       e = e_next;
     }
- 
 
     /* 
      * Vertices simplification
      */
+
     Vertex_iterator v = (*this).vertices_begin();
     while( v != (*this).vertices_end()) {
       SM_decorator SD(v);
       Vertex_iterator v_next(v);
       v_next++;
-
-      CGAL_nef3_assertion( SD.sfaces_begin() != SFace_handle());
       if( is_part_of_volume(v)) {
 	TRACEN("mark("<<IO->index(v)<<")="<<D.mark(v)<<", "<<
 	       "mark("<<IO->index(D.volume(SD.sfaces_begin()))<<")="<<
@@ -1292,14 +1302,21 @@ public:
 	 SD.delete_face_only(sf);
        }
      }
+
      Halffacet_iterator f;
-     CGAL_nef3_forall_halffacets( f, *this) {
-       if(f->is_twin() || hash_facet[f] != NULL) continue;
+     std::list<Halffacet_handle> flist;
+     CGAL_nef3_forall_facets( f, *this) {
+       TRACEN("facet "<<IO->index(f));
        if( uf_facet.find(hash_facet[f]) != hash_facet[f]) {
 	 TRACEN("no find object "<<IO->index(f));
-	 delete_halffacet_pair(f);
+	 flist.push_back(f);
        }
      }
+     
+     typename std::list<Halffacet_handle>::const_iterator li;
+     for(li = flist.begin(); li != flist.end(); li++)
+       delete_halffacet_pair(*li);
+
      Volume_iterator c;
      CGAL_nef3_forall_volumes( c, *this) {
        if( uf_volume.find(hash_volume[c]) != hash_volume[c]) {
@@ -1591,4 +1608,3 @@ SNC_structure<Items>::undef_;
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SNC_STRUCTURE_H
-

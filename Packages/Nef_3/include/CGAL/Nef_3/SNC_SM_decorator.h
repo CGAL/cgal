@@ -37,6 +37,7 @@
 #undef _DEBUG
 #define _DEBUG  23
 #include <CGAL/Nef_3/debug.h>
+#include <CGAL/Unique_hash_map.h>
 #include <string>
 #include <sstream>
 
@@ -930,6 +931,58 @@ void transform( const Aff_transformation_3& linear) {
         circle(twin(shalfloop()))
             = Sphere_circle(circle(twin(shalfloop())).transform( linear));
     }
+}
+
+bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
+	       Unique_hash_map<SHalfedge_handle,bool>& se_hash,
+	       Unique_hash_map<SFace_handle,bool>& sf_hash,
+	       bool verb = false, int level = 0) {
+    
+  Verbose_ostream verr(verb);
+  verr << "begin CGAL::SNC_SM_decorator<...>::is_valid( verb=true, "
+    "level = " << level << "):" << std::endl;
+    
+  bool valid = true;
+
+  SVertex_handle sv;
+  CGAL_nef3_forall_svertices_of(sv,this) {
+    valid = valid && (!sv_hash[sv]);
+    sv_hash[sv] = true;
+  }
+
+  SHalfedge_iterator she;
+  CGAL_nef3_forall_shalfedges_of(she, this) {
+    valid = valid && she->is_valid(verb, level);
+    valid = valid && (twin(she) != she);
+    valid = valid && (twin(twin(she)) == she);
+    valid = valid && (previous(next(she)) == she);
+    valid = valid && ((previous(she) != she && next(she) != she) || 
+		      (previous(she) == she && next(she) == she));
+    valid = valid && (face(she) == face(next(she)));
+    valid = valid && (face(she) == face(previous(she)));
+    valid = valid && (!se_hash[she]);
+    se_hash[she] = true;
+  }
+
+  if(has_loop()) {
+    SHalfloop_handle shl = shalfloop();
+    valid = valid && shl->is_valid();
+    valid = valid && twin(shl)->is_valid();
+    valid = valid && (twin(shl) != shl);
+    valid = valid && (twin(twin(shl)) == shl);
+  }
+
+  SFace_iterator sf;
+  CGAL_nef3_forall_sfaces_of(sf, this) {
+    valid = valid && sf->is_valid(verb, level);
+    valid = valid && (!sf_hash[sf]);
+    sf_hash[sf] = true;
+  }
+
+  verr << "end of CGAL::SNC_SM_decorator<...>::is_valid(): structure is "
+       << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
+  return valid;
 }
 
 }; // SNC_SM_decorator
