@@ -37,8 +37,6 @@ template <class I>
 class Delaunay_remove_tds_vertex_3_2
 {
 public :
-  struct Point {}; // Because the TDS_2::Vertex requires it (unfortunately).
-
   Delaunay_remove_tds_vertex_3_2() 
     : _f(NULL) {}
 
@@ -69,8 +67,7 @@ private:
 
 
 /* We derive the face class, because we need additional pointers to 
-   a successor and precessor. This is already realized in the TDS, 
-   but there we cannot change the order of the list. 
+   a successor and precessor.
  
    We want to change the order to avoid looking at faces too often.
    When we make an operation (flip of an edge / removal of a vertex)
