@@ -5,6 +5,7 @@
 #include <CGAL/Map_overlay.h>
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/Planar_map_2.h>
+#include <CGAL/Pm_with_intersections.h>
 
 #include <iostream>
 #include <vector>
@@ -19,7 +20,7 @@ typedef Traits::Curve_2                                 Curve_2;
 
 typedef CGAL::Map_overlay_default_dcel<Traits>          Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>                 Planar_map;
-typedef CGAL::Planar_map_with_intersections_2<PM>       Pmwx;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map>     Pmwx;
 typedef CGAL::Map_overlay_2<Planar_map>                 MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
