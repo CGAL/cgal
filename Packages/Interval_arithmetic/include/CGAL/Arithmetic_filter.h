@@ -28,14 +28,7 @@
 #define CGAL_ARITHMETIC_FILTER_H
 
 #include <CGAL/basic.h>
-
-// #include <iostream>
 #include <CGAL/Interval_arithmetic.h>
-#if 0 // The following are already included from Interval_arithmetic.h.
-#include <CGAL/enum.h>  // Because we overload {sign,compare,abs,min,max}
-#include <CGAL/IO/io_tags.h>            // For io_tag().
-#include <CGAL/number_type_tags.h>      // For number_type_tag()
-#endif
 
 // Check that the filtering stuff will work...
 // It will go away when the overlap_action() will be definable dynamically.
@@ -55,66 +48,56 @@ CGAL_BEGIN_NAMESPACE
 // - convert_to <ET> (CT)
 //     which converts EXACTLY the CT value to ET.
 
-// Third template parameter is either
-// No_Filter_Cache (the default) or Interval_nt_advanced.
+// The third template parameter is either:
+// No_Filter_Cache (the default)
+// or Filter_Cache (alias Interval_nt_advanced).
 struct No_Filter_Cache {};
 typedef Interval_nt_advanced Filter_Cache;
 
-template <class CT>
-inline
-Interval_nt_advanced
-give_interval (const CT &value, const No_Filter_Cache &)
+
+template <class CT, class ET, class Cache_t = No_Filter_Cache >
+class Filtered_exact
 {
+  typedef Filtered_exact<CT,ET,Cache_t> Fil;
+  typedef Interval_nt_advanced IA;
+
+  // Cache managing functions.
+
+  IA give_interval (const IA &inter) const
+  { return inter; }
+  IA give_interval (const No_Filter_Cache &) const
+  {
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
     return convert_to<Interval_nt_advanced>(value);
 #else
     return convert_from_to(Interval_nt_advanced(), value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-}
+  }
 
-template <class CT>
-inline
-Interval_nt_advanced
-give_interval (const CT &value, const Interval_nt_advanced &inter)
-{ return inter; }
+  void compute_cache (const No_Filter_Cache &) const
+  { }
+  void compute_cache (IA &inter) const
+  { inter = give_interval (No_Filter_Cache()); }
 
-template <class CT>
-inline
-void
-compute_cache (const CT &, No_Filter_Cache &)
-{ }
-
-template <class CT>
-inline
-void
-compute_cache (const CT &value, Interval_nt_advanced &inter)
-{ inter = give_interval(value, No_Filter_Cache()); }
-
-template <class CT, class ET, class Cache_t = No_Filter_Cache >
-struct Filtered_exact
-{
-  typedef Filtered_exact<CT,ET,Cache_t> Fil;
-  typedef Interval_nt_advanced IA;
+  void update_cache() { compute_cache (cache); }
 
   Cache_t cache;
   CT value;
-  void recompute_cache() { compute_cache (value, cache); }
+
+public:
 
   Filtered_exact () {}
   template <class NT>
   Filtered_exact (const NT & nt)
-      : value(nt)  { recompute_cache(); }
-  // The following ctor is used for Quotient<>.
+      : value(nt)  { update_cache(); }
   template <class NT>
-  Filtered_exact (const NT & num, const NT & den)
-      : value(num, den)   { recompute_cache(); }
+  Filtered_exact (const NT & num, const NT & den) // For Quotient<>.
+      : value(num, den)   { update_cache(); }
   Filtered_exact (const Filtered_exact<CT,ET,Cache_t> & fil)
-      : value(fil.value)  { recompute_cache(); }
-  // Filtered_exact (const double & d)	: value(d)  {}
-  // Filtered_exact (const CT & ct)	: value(ct) {}
+      : value(fil.value)  { update_cache(); }
 
-  // The two conversion functions are provided by the global scope.
-  IA interval() const { return give_interval(value, cache); }
+  // The two conversion functions.
+  IA interval() const { return give_interval(cache); }
   ET exact()    const
   {
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -123,13 +106,6 @@ struct Filtered_exact
     return convert_from_to(ET(), value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
-
-  // This one should not be needed, at least for now.
-  // CT stored_value()   const { return value; }
-
-  // Check Stroustrup if it's ok for assignment/ctors.
-  Fil& operator= (const Fil& fil)
-    { value = fil.value; recompute_cache(); return *this; }
 
   Fil  operator- ()               const { return Fil(-value); }
   bool operator< (const Fil& fil) const { return value <  fil.value; }
@@ -146,13 +122,13 @@ struct Filtered_exact
   Fil operator/(const Fil& fil) const { return Fil(value / fil.value); }
 
   Fil& operator+=(const Fil& fil)
-    { value += fil.value; recompute_cache(); return *this; }
+    { value += fil.value; update_cache(); return *this; }
   Fil& operator-=(const Fil& fil)
-    { value -= fil.value; recompute_cache(); return *this; }
+    { value -= fil.value; update_cache(); return *this; }
   Fil& operator*=(const Fil& fil)
-    { value *= fil.value; recompute_cache(); return *this; }
+    { value *= fil.value; update_cache(); return *this; }
   Fil& operator/=(const Fil& fil)
-    { value /= fil.value; recompute_cache(); return *this; }
+    { value /= fil.value; update_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
