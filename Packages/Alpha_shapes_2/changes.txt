@@ -1,4 +1,6 @@
-
+version 11.25 (07/05/03) rursu
+- fixed template parameters in instanciations of Regular_face_base_2
+  in examples/Alpha_shapes_2/example_width.C (11.23 did only in one example)
 
 version 11.24 (08/05/03) MY
 - put the code of template member function get_alpha_shape_vertices 
