@@ -12,7 +12,7 @@ if [ -d $h ]; then
   for i in *.C ; do
     jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
     k=`echo $i|sed -e "s/\.C//"`; 
-    sed -e"s/master/$k/g" master.vcproj > ./text/$jp; 
+    sed -e"s/master/$k/g" ../master.vcproj > ./text/$jp; 
     mv ./text/$jp ./; 
   done
 
