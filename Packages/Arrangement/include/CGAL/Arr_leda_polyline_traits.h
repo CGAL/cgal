@@ -837,19 +837,19 @@ public:
              CGAL_LEDA_SCOPE::compare( p1, *i2t ) == 0 ){
           Segment tmp_seg1( *s1, *t1 );
           Segment tmp_seg2( *s2, *t2 );
-	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
 	}
 	else if ( CGAL_LEDA_SCOPE::compare( p1, *i1t ) == 0 ){
           Segment tmp_seg1( *s1, *t1 );
           Segment tmp_seg2( *i2s, *i2t );
-	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
 	}
 	else if ( is_same( p1, *i2t)) {
           Segment tmp_seg1( *i1s, *i1t );
           Segment tmp_seg2( *s2, *t2 );
-	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+	  if( !tmp_seg1.intersection( tmp_seg2, i_seg ) )
             return false;
 	}
 	// no need to check whether intersection seg to the right of pt, 
