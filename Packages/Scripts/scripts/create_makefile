@@ -131,27 +131,27 @@ create_makefile()
   header "target entries"
   echo
   printf "all:            "
-  for file in `ls *.C` ; do
+  for file in `ls *.C 2>/dev/null` ; do
       printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
   done
-  for file in `ls *.cpp` ; do
+  for file in `ls *.cpp 2>/dev/null` ; do
       printf "\\\\\n                `basename $file .cpp`\$(EXE_EXT) "
   done
   echo
   echo
-  for file in `ls *.C` ; do
+  for file in `ls *.C 2>/dev/null` ; do
     base=`basename $file .C`
     create_makefile_entry $base
   done
-  for file in `ls *.cpp` ; do
+  for file in `ls *.cpp 2>/dev/null` ; do
     base=`basename $file .cpp`
     create_makefile_entry_cpp $base
   done
   printf "clean: "
-  for file in `ls *.C` ; do
+  for file in `ls *.C 2>/dev/null` ; do
       printf "\\\\\n                   `basename $file .C`.clean "
   done
-  for file in `ls *.cpp` ; do
+  for file in `ls *.cpp 2>/dev/null` ; do
       printf "\\\\\n                   `basename $file .cpp`.clean "
   done
   printf    "\n\n"
