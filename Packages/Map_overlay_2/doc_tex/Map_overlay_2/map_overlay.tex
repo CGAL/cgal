@@ -28,23 +28,20 @@ regarding its creators, namely, every feature of $O(S_1,S_2)$ holds pointers
 to the respected features from $S_1$ and $S_2$ which caused its creation.
 When a feature $f \in O(S_1,S_2)$ is contained in two other features 
 $f_1 \in S_1$ and $f_2 \in S_2$, we say that $f_1$ and $f_2$ 
-lay {\em above} $f$, alternatively, we say that 
-$f$ is {\em below} $f_1$ and $f_2$.
+lay {\em above} $f$, alternatively, we say that $f$ is {\em below} $f_1$ and $f_2$.
 Every feature in the overlay $O(S_1, S_2)$ maintains the 
 information regarding the features from $S_1$ and $S_2$ laying above it.
 
 The subdivision, representing the overlay and its two creators, 
-can be either a {\it planar map} 
-(see Chapter~\ref{I1_ChapterPlanarMap}) 
-or a {\it planar map with intersections} 
-(see Chapter~\ref{I1_ChapterPmwx}).
+can be either a {\it planar map} (see Chapter~\ref{I1_ChapterPlanarMap}) 
+or a {\it planar map with intersections} (see Chapter~\ref{I1_ChapterPmwx}).
 %or an {\it arrangement} (see Chapter~\ref{I1_ChapterArrangement_2}).
 
 Figure~\ref{OVL_sec:overlay_example} displays an overlay of two given rectangles.
 
 % \begin{figure}
 %     \begin{center}
-%         \ \psfig{figure=.overlay_example.ps,width=14cm} \
+%         \ \psfig{figure=overlay_example.ps,width=14cm} \
 %     \end{center}
 %     \vspace{-2ex}
 %     \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
@@ -56,20 +53,20 @@ Figure~\ref{OVL_sec:overlay_example} displays an overlay of two given rectangles
 %     \label{OVL_sec:overlay_example}
 % \end{figure}
 
-% \begin{figure}[h]
-% \begin{ccTexOnly}
-%     \centerline{
-%       \includegraphics{overlay_example.ps}
-%     }
-% \end{ccTexOnly}
-
-% \caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
-% induced by the first rectangle by $S_1$ and the second by $S_2$. 
-% The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
-% The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
-% to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
-% pointer to $e_2$ and is lying below $f_1$ and $f_2$.
-% \label{OVL_sec:overlay_example}}
+\begin{figure}[h]
+\begin{ccTexOnly}
+    \centerline{
+      \includegraphics{overlay_example.ps}
+    }
+\end{ccTexOnly}
+\caption{Two rectangles (left) and their overlay (right). We denote the subdivision 
+induced by the first rectangle by $S_1$ and the second by $S_2$. 
+The face $f$ of the overlay is below $f_1$ and the unbounded face of $S_2$. 
+The halfedge $e$ of the overlay contains a halfedge pointer to $e_2$ and two faces pointers 
+to $f_1$ and to $f_2$. The vertex $v$ of the overlay points to $v_2$, contains a halfedge 
+pointer to $e_2$ and is lying below $f_1$ and $f_2$.
+\label{OVL_sec:overlay_example}}
+\end{figure}
 
 \section{Software Design}
 The \ccc{Map_overlay<Subdivision,Notifier>} class 
