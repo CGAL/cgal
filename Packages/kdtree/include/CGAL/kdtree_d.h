@@ -9,14 +9,14 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, December 4
+// release_date  : 2001, December 5
 //
 // file          : include/CGAL/kdtree_d.h
-// package       : kdtree (2.2.22)
+// package       : kdtree (2.2.24)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // source        : 
 // revision      : 
-// revision_date : 
+// revision_date : 2001, December 5
 // author(s)     : Sariel Har-Peled (sariel@math.tau.ac.il)
 //                 Eyal Flato (flato@math.tau.ac.il)
 //
