@@ -8,6 +8,8 @@
 1 September 2004 Sylvain Pion
 - number_utils.h : remove #include <CGAL/kernel_basic.h>.
 - Add src/Gmp.C to break cyclic include dependency with Quotient.
+- include all number type files from CGAL/number_type_basic.h when
+  CGAL_CFG_HAS_TWO_STAGE_NAME_LOOKUP is defined (g++ 3.4).
 
 21 August 2004 Sylvain Pion
 - Undo last change
