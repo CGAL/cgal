@@ -140,6 +140,13 @@ unsigned Static_Filtered_side_of_bounded_circleC2_8::number_of_updates = 0;
 
 unsigned Static_Filtered_side_of_bounded_circleC2_8::number_of_failures = 0;
 
+double Static_Filtered_side_of_bounded_circleC2_6::_epsilon_0;
+double Static_Filtered_side_of_bounded_circleC2_6::_bound = -1.0;
+
+unsigned Static_Filtered_side_of_bounded_circleC2_6::number_of_updates = 0;
+
+unsigned Static_Filtered_side_of_bounded_circleC2_6::number_of_failures = 0;
+
 double Static_Filtered_cmp_dist_to_pointC2_6::_epsilon_0;
 double Static_Filtered_cmp_dist_to_pointC2_6::_bound = -1.0;
 
