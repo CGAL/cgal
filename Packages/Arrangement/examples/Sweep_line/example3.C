@@ -6,7 +6,7 @@
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/sweep_to_produce_planar_map_subcurves.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <vector>
 
 typedef CGAL::Quotient<int>              NT;

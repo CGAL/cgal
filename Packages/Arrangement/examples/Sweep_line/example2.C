@@ -12,7 +12,7 @@
 
 #include <CGAL/IO/Pm_iostream.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <vector>
 
 //uncomment if you have LEDA installed.

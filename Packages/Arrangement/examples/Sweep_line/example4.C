@@ -11,7 +11,7 @@
 #include <CGAL/Arr_polyline_traits.h>
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 
-#include <iostream.h>
+#include <iostream>
 #include <vector>
 
 typedef CGAL::Quotient<int>                  NT;
