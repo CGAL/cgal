@@ -129,7 +129,7 @@ public:
   }
   Bbox_3 bbox() const;
 
-  PointC3 transform(const Aff_transformation_3 &t) const
+  Point_3 transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
   }

@@ -29,13 +29,14 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-PointC3<R>
+typename R::Point_3
 midpoint(const PointC3<R> &p,
          const PointC3<R> &q)
 {
   typename R::FT x, y, z;
+  typedef typename R::Point_3 Point_3;
   midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
-  return PointC3<R>(x, y, z);
+  return Point_3(x, y, z);
 }
 
 template < class R >
