@@ -94,69 +94,91 @@ struct CGAL_Filtered_exact
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET>
-inline CGAL_Filtered_exact<CT,ET>
+inline
+CGAL_Filtered_exact<CT,ET>
 sqrt (const CGAL_Filtered_exact<CT,ET>& fil)
 { return sqrt(fil.value); }
 
 template <class CT, class ET>
-inline CGAL_Filtered_exact<CT,ET>
+inline
+CGAL_Filtered_exact<CT,ET>
 CGAL_square (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_square(fil.value); }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET>
-inline bool CGAL_is_valid    (const CGAL_Filtered_exact<CT,ET>& fil)
+inline
+bool
+CGAL_is_valid (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_is_valid(fil.value); }
 
 template <class CT, class ET>
-inline bool CGAL_is_finite   (const CGAL_Filtered_exact<CT,ET>& fil)
+inline
+bool
+CGAL_is_finite (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_is_finite(fil.value); }
 
 template <class CT, class ET>
-inline double CGAL_to_double (const CGAL_Filtered_exact<CT,ET>& fil)
+inline
+double
+CGAL_to_double (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_to_double(fil.value); }
 
 template <class CT, class ET>
-inline CGAL_Sign CGAL_sign (const CGAL_Filtered_exact<CT,ET>& fil)
+inline
+CGAL_Sign
+CGAL_sign (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_Sign(fil.value); }
 
 template <class CT, class ET>
 inline
-CGAL_Comparison_result CGAL_compare (	const CGAL_Filtered_exact<CT,ET>& fil,
-					const CGAL_Filtered_exact<CT,ET>& fil2)
+CGAL_Comparison_result
+CGAL_compare (	const CGAL_Filtered_exact<CT,ET>& fil,
+		const CGAL_Filtered_exact<CT,ET>& fil2)
 { return CGAL_compare(fil.value, fil2.value); }
 
 template <class CT, class ET>
 inline
-CGAL_Filtered_exact<CT,ET> CGAL_abs (const CGAL_Filtered_exact<CT,ET>& fil)
+CGAL_Filtered_exact<CT,ET>
+CGAL_abs (const CGAL_Filtered_exact<CT,ET>& fil)
 { return CGAL_abs(fil.value); }
 
 template <class CT, class ET>
 inline
-CGAL_Filtered_exact<CT,ET> CGAL_min (	const CGAL_Filtered_exact<CT,ET>& fil,
-					const CGAL_Filtered_exact<CT,ET>& fil2)
+CGAL_Filtered_exact<CT,ET>
+CGAL_min (	const CGAL_Filtered_exact<CT,ET>& fil,
+		const CGAL_Filtered_exact<CT,ET>& fil2)
 { return CGAL_min(fil.value, fil2.value); }
 
 template <class CT, class ET>
 inline
-CGAL_Filtered_exact<CT,ET> CGAL_max (	const CGAL_Filtered_exact<CT,ET>& fil,
-					const CGAL_Filtered_exact<CT,ET>& fil2)
+CGAL_Filtered_exact<CT,ET>
+CGAL_max (	const CGAL_Filtered_exact<CT,ET>& fil,
+		const CGAL_Filtered_exact<CT,ET>& fil2)
 { return CGAL_max(fil.value, fil2.value); }
 
 template <class CT, class ET>
-inline CGAL_io_Operator CGAL_io_tag(CGAL_Filtered_exact<CT,ET> &fil)
+inline
+CGAL_io_Operator
+CGAL_io_tag (const CGAL_Filtered_exact<CT,ET> &fil)
 { return CGAL_io_tag(fil.value); }
 
 template <class CT, class ET>
-inline CGAL_Number_tag CGAL_number_type_tag(CGAL_Filtered_exact<CT,ET> &fil)
+inline
+CGAL_Number_tag
+CGAL_number_type_tag (const CGAL_Filtered_exact<CT,ET> &fil)
 { return CGAL_number_type_tag(fil.value); }
 
 template <class CT, class ET>
-inline ostream& operator<<(ostream& os, const CGAL_Filtered_exact<CT,ET>& d)
+inline
+ostream &
+operator<< (ostream& os, const CGAL_Filtered_exact<CT,ET>& d)
 { return os << d.value; }
 
 template <class CT, class ET>
-inline istream &operator>>(istream &is, CGAL_Filtered_exact<CT,ET>& d)
+inline
+istream &
+operator>> (istream &is, CGAL_Filtered_exact<CT,ET>& d)
 { return is >> d.value; }
 
 
