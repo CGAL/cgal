@@ -507,6 +507,9 @@ private:
   // return the squared length of the triangle corresponding to the
   // face f
   Squared_length shortest_edge_squared_length(Face_handle f);
+
+  // -- debugging functions --
+  bool is_bad_faces_valid();
 }; // end of Mesh_2
 
 // CONSTRUCTORS
@@ -1078,6 +1081,12 @@ inline
 void Mesh_2<Tr>::
 push_in_bad_faces(Face_handle fh)
 {
+  const Point
+    & va = fh->vertex(0)->point(),
+    & vb = fh->vertex(1)->point(),
+    & vc = fh->vertex(2)->point();
+  //  std::cerr << "push_in_bad_faces(" << va << ",  " << vb << ", " << vc << ")" << std::endl;  
+  CGAL_assertion(fh->is_marked());
   bad_faces.insert(fh, squared_minimum_sine(fh));
 }
 
@@ -1097,6 +1106,8 @@ template <class Tr>
 void Mesh_2<Tr>::
 fill_facette_map()
 {
+  //  std::cerr << "bad_faces.size() = " << bad_faces.size() << std::endl;
+ 
   for(Finite_faces_iterator fit = finite_faces_begin();
       fit != finite_faces_end();
       ++fit)
@@ -1133,8 +1144,17 @@ inline
 void Mesh_2<Tr>::
 process_one_face()
 {
+  //  std::cerr << "bad_faces.size() = " << bad_faces.size() << std::endl;
   Face_handle f = bad_faces.front()->second;
   bad_faces.pop_front();
+  const Point
+    & va = f->vertex(0)->point(),
+    & vb = f->vertex(1)->point(),
+    & vc = f->vertex(2)->point();
+  //  std::cerr << "process_one_face(" << va << ",  " << vb << ", " << vc << ")" << std::endl;
+
+  std::cerr << number_of_vertices() << std::endl;
+
   refine_face(f);
 }
 
@@ -1247,6 +1267,7 @@ refine_face(const Face_handle f)
 //       Locate_type lt;
 //       locate(pc,lt,li,f);
 //       if(lt!=OUTSIDE_CONVEX_HULL)
+      CGAL_assertion(f->is_marked());
       if(f->is_marked())
 	split_face(f, pc);
     }
@@ -1441,7 +1462,20 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 
   List_of_face_handles zone_of_p;
 
-  get_conflicts(p, std::back_inserter(zone_of_p), fh);
+  // deconstrain the edge before finding the conflicts
+  //  fh->set_constraint(edge_index,false);
+  //  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),false);
+
+  get_conflicts_and_boundary(p, 
+			     std::back_inserter(zone_of_p), 
+			     Emptyset_iterator(), 
+			     EDGE, fh, edge_index);
+
+  // reconstrain the edge
+  //  fh->set_constraint(edge_index,true);
+  //  fh->neighbor(edge_index)->set_constraint(fh->mirror_index(edge_index),true);
+  
+  //  std::cerr << "insert_in_the_edge: conflict_size=" << zone_of_p.size() << std::endl;
   for(typename List_of_face_handles::iterator fh_it = zone_of_p.begin();
       fh_it != zone_of_p.end();
       ++fh_it)
@@ -1451,6 +1485,8 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // TODO, WARNING: this is not robust!
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
+
+  //  CGAL_assertion(is_bad_faces_valid());
 
   is_edge(va, vp, fh, edge_index); 
   // set fh to the face at the right of [va,vb]
@@ -1513,6 +1549,48 @@ shortest_edge_squared_length(Face_handle f)
   b = squared_distance(pc, pa);
   c = squared_distance(pa, pb);
   return (min(a, min(b, c)));
+}
+
+template <class Tr>
+bool Mesh_2<Tr>::
+is_bad_faces_valid()
+{
+  std::cerr << "is_bad_faces_valid()" << std::endl;
+  typedef std::list<std::pair<double, Face_handle> > Bad_faces_list;
+  
+  bool result = true;
+
+  Bad_faces_list bad_faces_list;
+
+  while(!bad_faces.empty())
+    {
+      double d = bad_faces.front()->first;
+      Face_handle fh = bad_faces.front()->second;
+      bad_faces.pop_front();
+      
+      bad_faces_list.push_back(std::make_pair(d, fh));
+
+      const Vertex_handle
+	& va = fh->vertex(0),
+	& vb = fh->vertex(1),
+	& vc = fh->vertex(2);
+
+      Face_handle fh2;
+      if( ! ( is_face(va, vb, vc, fh2) && (fh == fh2) && 
+	  fh->is_marked() && is_bad(fh) ) )
+	{
+	  result = false;
+	  std::cerr << "Invalid bad face: (" << va->point() << ", "
+		    << vb->point() << ", " << vc->point() << ")" << std::endl;
+	}
+    }
+
+  for(Bad_faces_list::iterator it = bad_faces_list.begin();
+      it != bad_faces_list.end();
+      ++it)
+    bad_faces.insert(it->second, it->first);
+  
+  return result;
 }
 
 CGAL_END_NAMESPACE
