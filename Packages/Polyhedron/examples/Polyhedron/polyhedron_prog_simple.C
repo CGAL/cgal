@@ -14,6 +14,7 @@ typedef Polyhedron::Halfedge_handle                           Halfedge_handle;
 int main() {
     Polyhedron P;
     Halfedge_handle h = P.make_tetrahedron();
-    CGAL_assertion( P.is_tetrahedron( h));
-    return 0;
+    if ( P.is_tetrahedron( h))
+	return 0;
+    return 1;
 }
