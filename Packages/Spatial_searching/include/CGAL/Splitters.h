@@ -33,9 +33,10 @@ namespace CGAL {
 
 template <class Item>
 class Median_of_max_spread {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3)) {        
         sep=Plane_separator<NT>(c0.max_tight_span_coord(),NT(0));
@@ -46,9 +47,10 @@ public:
 
 template <class Item>
 class Fair {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3)) {
 	// find legal cut with max spread
@@ -62,9 +64,10 @@ public:
 
 template <class Item>
 class Sliding_fair {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3))  {
     // find legal cut with max spread
@@ -81,9 +84,10 @@ public:
 
 template <class Item>
 class Sliding_midpoint {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3))
   {
@@ -105,9 +109,10 @@ public:
 
 template <class Item>
 class Median_of_rectangle {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3))
   {
@@ -119,9 +124,10 @@ public:
 
 template <class Item>
 class Midpoint_of_max_spread {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3))
   {
@@ -133,9 +139,10 @@ public:
 
 template <class Item>
 class Midpoint_of_rectangle {
-public:
+private:
   typedef typename Item::R::FT NT;
-  void split(Plane_separator<NT>& sep, Point_container<Item>& c0,
+public:
+  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
   			     Point_container<Item>& c1, 
   			     NT Aspect_ratio=NT(3))
   {

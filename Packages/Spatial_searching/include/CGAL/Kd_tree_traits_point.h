@@ -71,7 +71,7 @@ namespace CGAL {
     	           Point_container<Item>& c0, Point_container<Item>& c1) 
 	{
 		Splitter S;
-		S.split(sep,c0,c1,the_aspect_ratio);
+		S(sep,c0,c1,the_aspect_ratio);
     	}
 
   };

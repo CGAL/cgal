@@ -78,13 +78,6 @@ int main() {
   std::cout << "neighbour searching statistics without using extended nodes: " << std::endl;
   
   
-
-  std::vector<NN_priority_search::Item_with_distance>::iterator it = nearest_neighbours.begin();
-  
-   
-  
-  
-  
   int neighbour_number_copy=nearest_neighbour_number;
   
   
