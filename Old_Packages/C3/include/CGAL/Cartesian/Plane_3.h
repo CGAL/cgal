@@ -16,7 +16,7 @@ class PlaneC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Fourtuple<typename R_::FT> >
 {
 public:
   typedef R_                                    R;
@@ -55,11 +55,8 @@ public:
   PlaneC3(const Ray_3 &r, const Point_3 &p);
   ~PlaneC3();
 
-  Self       &operator=(const Self &p);
-
   bool         operator==(const Self &p) const;
   bool         operator!=(const Self &p) const;
-  long         id() const;
 
   FT           a() const;
   FT           b() const;
@@ -94,7 +91,6 @@ public:
   bool         is_degenerate() const;
 
 private:
-  _Fourtuple<FT>*   ptr() const;
   void              new_rep(const Point_3 &p,
                             const Point_3 &q,
                             const Point_3 &r);

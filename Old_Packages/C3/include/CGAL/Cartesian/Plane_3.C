@@ -21,14 +21,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Fourtuple<typename R::FT>*
-PlaneC3<R CGAL_CTAG>::ptr() const
-{
-    return (_Fourtuple<FT>*)PTR;
-}
-
-template < class R >
-inline
 void
 PlaneC3<R CGAL_CTAG>::
 new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a,
@@ -36,7 +28,7 @@ new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a,
         const typename PlaneC3<R CGAL_CTAG>::FT &c,
         const typename PlaneC3<R CGAL_CTAG>::FT &d)
 {
-  PTR = new _Fourtuple<FT>(a, b, c, d);
+  new ( static_cast< void*>(ptr)) Fourtuple<FT>(a, b, c, d);
 }
 
 template < class R >
@@ -55,14 +47,14 @@ inline
 PlaneC3<R CGAL_CTAG>::
 PlaneC3()
 {
-  PTR = new _Fourtuple<FT>();
+  new ( static_cast< void*>(ptr)) Fourtuple<FT>();
 }
 
 template < class R >
 inline
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
-  : Handle(p)
+  : Handle_for<Fourtuple<typename R::FT> >(p)
 {}
 
 template < class R >
@@ -139,21 +131,13 @@ inline
 PlaneC3<R CGAL_CTAG>::~PlaneC3()
 {}
 
-template < class R >
-inline
-PlaneC3<R CGAL_CTAG> &PlaneC3<R CGAL_CTAG>::
-operator=(const PlaneC3<R CGAL_CTAG> &p)
-{
-  Handle::operator=(p);
-  return *this;
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool PlaneC3<R CGAL_CTAG>::
 operator==(const PlaneC3<R CGAL_CTAG> &p) const
 {
-  if (id() == p.id()) return true;
+  if (ptr == p.ptr) return true;
   return has_on_boundary(p.point()) &&
          (orthogonal_direction() == p.orthogonal_direction());
 
@@ -169,17 +153,10 @@ operator!=(const PlaneC3<R CGAL_CTAG> &p) const
 
 template < class R >
 inline
-long PlaneC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
-
-template < class R >
-inline
 typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::a() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -187,7 +164,7 @@ inline
 typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::b() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -195,7 +172,7 @@ inline
 typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::c() const
 {
-  return ptr()->e2;
+  return ptr->e2;
 }
 
 template < class R >
@@ -203,7 +180,7 @@ inline
 typename PlaneC3<R CGAL_CTAG>::FT
 PlaneC3<R CGAL_CTAG>::d() const
 {
-  return ptr()->e3;
+  return ptr->e3;
 }
 
 template < class R >
