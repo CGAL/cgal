@@ -33,7 +33,7 @@ Interval_arithmetic.tar.gz:
 doc: doc_ps/Interval_arithmetic.ps
 
 filters:
-	$(MAKE) -C include/CGAL/Filter all
+	$(MAKE) -C include/CGAL/Arithmetic_filter all
 
 doc_ps/Interval_arithmetic.ps: doc_tex/support/Interval_arithmetic/main.tex
 	$(MAKE) -C doc_tex/support/Interval_arithmetic
