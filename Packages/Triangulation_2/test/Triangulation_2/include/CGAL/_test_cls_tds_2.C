@@ -205,7 +205,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds1d.clear();
   Tds tds1e;
   Vertex *w1e= tds1e.copy_tds(tds1,w1);
-  assert(tds1e.is_valid() && tds1e.has_vertex(w1e));
+  assert(tds1e.is_valid() && tds1e.is_vertex(w1e));
 
   Tds tds2b(tds2);
   assert(tds2b.is_valid());
@@ -217,7 +217,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds2d.clear();
   Tds tds2e;
   Vertex *w2e= tds2e.copy_tds(tds2,w2);
-  assert(tds2e.is_valid() && tds2e.has_vertex(w2e));
+  assert(tds2e.is_valid() && tds2e.is_vertex(w2e));
 
   Tds tds3b(tds3);
   assert(tds3b.is_valid());
@@ -229,7 +229,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds3d.clear();
   Tds tds3e;
   Vertex *w3e= tds3e.copy_tds(tds3,w3);
-  assert(tds3e.is_valid()&& tds3e.has_vertex(w3e));
+  assert(tds3e.is_valid()&& tds3e.is_vertex(w3e));
 
 
   Tds tds4b(tds4);
@@ -242,7 +242,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds4d.clear();
   Tds tds4e;
   Vertex *w4e= tds4e.copy_tds(tds4,w4);
-  assert(tds4e.is_valid() && tds4e.has_vertex(w4e));
+  assert(tds4e.is_valid() && tds4e.is_vertex(w4e));
 
    //iterators are tested by is_valid()
   //test circulators and v->degree()
@@ -259,11 +259,11 @@ _test_cls_tds_2( const Tds &, const Gt &)
   _test_tds_iterators(tds3);
   _test_tds_iterators(tds4);
 
-  //has_vertex
-  std::cout << "    has_vertex" << std::endl;
-  assert (tds4.has_vertex(v4_5));
-  assert (tds3.has_vertex(v3));
-  assert (tds2.has_vertex(v2));
+  //is_vertex
+  std::cout << "    is_vertex" << std::endl;
+  assert (tds4.is_vertex(v4_5));
+  assert (tds3.is_vertex(v3));
+  assert (tds2.is_vertex(v2));
   
 
 
