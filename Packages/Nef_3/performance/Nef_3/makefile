@@ -16,7 +16,7 @@ include $(CGAL_MAKEFILE)
 #           -O2 -DNDEBUG \
 
 CXXFLAGS = \
-           $(ADDITIONAL_CXXFLAGS) \
+	   $(ADDITIONAL_CXXFLAGS) \
            -DCGAL_NEF3_DUMP_STATISTICS \
            -DCGAL_NEF3_TIMER_INITIALIZE_KDTREE \
            -DCGAL_NEF3_TIMER_PLANE_SWEEPS \
@@ -52,7 +52,8 @@ all:            \
                 union_of_rotated_cylinders$(EXE_EXT) \
 	        two_tetrahedra_fields$(EXE_EXT) \
 	       	tetrahedra_and_grid$(EXE_EXT) \
-                big_and_small$(EXE_EXT)
+                big_and_small$(EXE_EXT) \
+                quadratic$(EXE_EXT)
 
 union_of_rotated_cylinders$(EXE_EXT): union_of_rotated_cylinders$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)union_of_rotated_cylinders union_of_rotated_cylinders$(OBJ_EXT) $(LDFLAGS)
@@ -62,12 +63,15 @@ tetrahedra_and_grid$(EXE_EXT): tetrahedra_and_grid$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tetrahedra_and_grid tetrahedra_and_grid$(OBJ_EXT) $(LDFLAGS)
 big_and_small$(EXE_EXT): big_and_small$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)big_and_small big_and_small$(OBJ_EXT) $(LDFLAGS)
+quadratic$(EXE_EXT): quadratic$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quadratic quadratic$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    union_of_rotated_cylinders.clean \
 	           two_tetrahedra_fields.clean \
 	           tetrahedra_and_grid.clean \
-	           big_and_small.clean
+	           big_and_small.clean \
+	           quadratic.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
