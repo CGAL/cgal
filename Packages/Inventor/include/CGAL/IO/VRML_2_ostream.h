@@ -78,13 +78,13 @@ private:
                 "                }\n"
                 "            geometry NULL\n"
                 "        }\n"
-                "        #-- End of file header" << endl;
+                "        #-- End of file header" << std::endl;
     }
     void footer() {
         os() << "        #-- Begin of file footer\n"
                 "    ]\n"
                 "}\n"
-                "#-- End of file footer" << endl;
+                "#-- End of file footer" << std::endl;
     }
     ostream*  m_os;
 };
@@ -141,7 +141,7 @@ operator<<(VRML_2_ostream& os,
              "                        } #IndexedFaceSet\n"
              "                } #Shape\n"
              "            ] #children\n"
-             "        } #Group" << endl;
+             "        } #Group" << std::endl;
   return os;
 }
 

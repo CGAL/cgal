@@ -52,7 +52,7 @@ public:
     void open(ostream& o)        { m_os = &o; }
     void close() {
         if ( m_os)
-            os() << endl;
+            os() << std::endl;
         m_os = 0;
     }
     typedef const void* Const_void_ptr;
@@ -85,8 +85,8 @@ public:
     }
 private:
     void header() {
-        os() << "#Inventor V2.0 ascii" << endl;
-        os() << "# File written with the help of the CGAL Library" << endl;
+        os() << "#Inventor V2.0 ascii" << std::endl;
+        os() << "# File written with the help of the CGAL Library" << std::endl;
     }
 };
 
