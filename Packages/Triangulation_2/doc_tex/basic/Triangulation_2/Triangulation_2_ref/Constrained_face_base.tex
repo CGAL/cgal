@@ -11,14 +11,14 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Constrained_triangulation_face_base_2_concept}
+\begin{ccRefConcept}{ConstrainedTriangulationFaceBase_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 The concept \ccRefName\ is  an extension of the concept
-\ccc{Triangulation_face_base_2_concept} 
+\ccc{TriangulationFaceBase_2} 
 providing functionalities to deal with
 constraints.  
 In a constrained triangulation,
@@ -38,24 +38,24 @@ has to be a model of the concept
 required functionalities.
 
 The concept \ccRefName\ is  an extension of 
-\ccc{Triangulation_face_base_2_concept}. Only additionnal
+\ccc{TriangulationFaceBase_2}. Only additionnal
 requirements are listed below.
 
 \ccTypes
-Defines the same types as the \ccc{Triangulation_face_base_2} concept
+Defines the same types as the \ccc{TriangulationFaceBase_2} concept
 
 
 \ccCreation
 \ccCreationVariable{f}  %% choose variable name
 
-\ccConstructor{Constrained_triangulation_face_base_2_concept();}{default constructor.}
+\ccConstructor{ConstrainedTriangulationFaceBase_2();}{default constructor.}
 \ccGlue
-\ccConstructor{Constrained_triangulation_face_base_2_concept(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Constrained_triangulation_face_base_2_concept(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
 {constructor setting the incident vertices and the neighboring faces.}
 \ccGlue
-\ccConstructor{Constrained_triangulation_face_base_2_concept(void* v0, void* v1, void*  v2,
+\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void*  v2,
 void* n0, void* n1, void* n2, bool c0, bool c1, bool c2)}
  {constructor setting the incident vertices, the neighboring faces and 
 the status (constrained or not constrained) of the edges of the face}
@@ -109,7 +109,7 @@ in face \ccVar and its neighbors.}
 
 
 \ccSeeAlso
-\ccc{Triangulation_face_base_2_concept} \\
+\ccc{TriangulationFaceBase_2} \\
 \ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
 \ccc{CGAL::Constrained_triangulation_face_base_2<Traits>}
 

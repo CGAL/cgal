@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Triangulation_data_structure_2::Face}
+\begin{ccRefConcept}{TriangulationDataStructure_2::Face}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -46,18 +46,18 @@ except the iterators and the circulators.
 For user defined triangulation algorithms, faces need to
 be explicitly constructed and linked to their neighbors.
 
-\ccConstructor{Triangulation_data_structure_2::Face();}{default
+\ccConstructor{TriangulationDataStructure_2::Face();}{default
 constructor,
 initializes all vertices and neighbors 
  with \ccc{NULL}.}
 
-\ccConstructor{Triangulation_data_structure_2::Face(Vertex* v0,
+\ccConstructor{TriangulationDataStructure_2::Face(Vertex* v0,
                                            Vertex* v1,
                                            Vertex* v2);}
 {introduces a face \ccVar, and initializes the vertices. The 
 neighbors are initialized with \ccc{NULL}.}
 
-\ccConstructor{Triangulation_data_structure_2::Face(Vertex* v0,
+\ccConstructor{TriangulationDataStructure_2::Face(Vertex* v0,
                     Vertex* v1,
                     Vertex* v2,
                     Face* n0,
@@ -170,9 +170,9 @@ in correct reverse order.}
 
 
 \ccSeeAlso
-\ccc{Triangulation_data_structure_2}, \\
-\ccc{Triangulation_data_structure_2::Vertex}, \\
-\ccc{Triangulation_2::Face_base}.
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{TriangulationDataStructure_2::Vertex}, \\
+\ccc{TriangulationFaceBase_2}.
 
 
 \end{ccRefConcept}

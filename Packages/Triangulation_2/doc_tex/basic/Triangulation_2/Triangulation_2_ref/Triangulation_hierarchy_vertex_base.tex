@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Triangulation_hierarchy_vertex_base_2_concept}
+\begin{ccRefConcept}{TriangulationHierarchyVertexBase_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -21,32 +21,32 @@ The vertex of a triangulation
 included in a  triangulation hierarchy has to provide
 some pointers to the corresponding vertices in the
 triangulations of the next and preceeding levels.
-Therefore, the concept \ccc{Triangulation_hierarchy_vertex_base_2_concept}
-extends the concept \ccc{Triangulation_vertex_base_2_concept},
+Therefore, the concept \ccc{TriangulationHierarchyVertexBase_2}
+extends the concept \ccc{TriangulationVertexBase_2},
 adding two \ccc{void*} pointers to the correponding vertices in the
 next and previous level triangulations.
 
 
 
 \ccGeneralizes
-\ccc{Triangulation_vertex_base_2_concept}
+\ccc{TriangulationVertexBase_2}
 
 
 \ccTypes
-\ccc{Triangulation_hierarchy_vertex_base_2_concept} does not introduce other
-types than those of \ccc{Triangulation_vertex_base_2_concept}.
+\ccc{TriangulationHierarchyVertexBase_2} does not introduce other
+types than those of \ccc{TriangulationVertexBase_2}.
 
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
 
-\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept();}{default
+\ccConstructor{TriangulationHierarchyVertexBase_2();}{default
 constructor.}
 \ccGlue
-\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept(const
+\ccConstructor{TriangulationHierarchyVertexBase_2(const
 Point & p).}{constructs a vertex embedding the point \ccc{p}.}
 \ccGlue
-\ccConstructor{Triangulation_hierarchy_vertex_base_2_concept(const
+\ccConstructor{TriangulationHierarchyVertexBase_2(const
 Point & p, void* f).}{constructs a vertex embedding the point \ccc{p}
 and pointing to face \ccc{f}.}
 
@@ -68,8 +68,8 @@ of the previous level triangulation;}
 \ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
 
 \ccSeeAlso
-\ccc{Triangulation_vertex_base_2_concept} \\
-\ccc{Triangulation_hierarchy_vertex_base_2<Vb>}\\
+\ccc{TriangulationVertexBase_2} \\
+\ccc{TriangulationHierarchyVertexBase_2<Vb>}\\
 \ccc{Triangulation_hierarchy_2<Tr>}. 
 
 \ccExample

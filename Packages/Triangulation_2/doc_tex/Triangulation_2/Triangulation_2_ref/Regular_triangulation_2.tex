@@ -109,17 +109,17 @@ so it is natural to derive  the class \ccRefName\
 from the basic class \ccc{Triangulation_2<Traits,Tds>}.
 The template parameters \ccc{Traits} and \ccc{Tds} 
 are to be instantiated with models of respectively
-\ccc{Regular_triangulation_traits_2}  and
-\ccc{Triangulation_data_structure_2}.
+\ccc{RegularTriangulationTraits_2}  and
+\ccc{TriangulationDataStructure_2}.
 
 
 The concept of triangulation data structure
-is described in \ccRefPage{Triangulation_data_structure_2}
+is described in \ccRefPage{TriangulationDataStructure_2}
 and the same models can be used to instantiate the
 triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
 or a \ccRefName.
-The  concept of \ccc{Regular_triangulation_traits_2},
-described page~\ccRefPage{Triangulation_data_structure_2}, 
+The  concept of \ccc{RegularTriangulationTraits_2},
+described page~\ccRefPage{RegularTriangulationTraits_2}, 
 must provide a weighted point type
 and a power test on these weighted points. 
 
@@ -256,10 +256,11 @@ and additionally test the regularity of the triangulation. This method is
 
 
 \ccSeeAlso
-\ccc{Triangulation_2<Traits,Tds>}, \\
-\ccc{Triangulation_data_structure_2}, \\
-\ccc{Regular_triangulation_traits_2} \\
-\ccc{regular_triangulation_face_base_2}
+\ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{RegularTriangulationTraits_2} \\
+\ccc{RegularTriangulationFaceBase_2} \\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits>}
 
 
 %\ccExample

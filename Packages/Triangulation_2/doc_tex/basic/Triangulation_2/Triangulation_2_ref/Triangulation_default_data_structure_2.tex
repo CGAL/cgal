@@ -20,7 +20,7 @@
 \ccDefinition
   
 The class \ccRefName\ is the default model for the concept
-\ccc{Triangulation_default_data_structure_2}.
+\ccc{TriangulationDataStructure_2}.
 The class \ccRefName 
 is highly economic with respect to memory space but its use is
 restricted
@@ -29,8 +29,8 @@ to planar embedded triangulation.
 As required this class has two template parameters \ccc{Vb} anf \ccc{Fb}
 which have 
 to be models for respectively the
-\ccc{Triangulation_2::Vertex_base} and 
-the \ccc{Triangulation_2::Face_base} concepts.
+\ccc{TriangulationVertexBase_2} and 
+the \ccc{TriangulationFaceBase_2} concepts.
 
 In addition, the class \ccClassTemplateName\ has a first template parameter
 which is a geometric traits class. This may be surprising because
@@ -74,12 +74,12 @@ which is recommended but not compulsory.
 
 \ccIsModel
 
-\ccc{Triangulation_data_structure_2}
+\ccc{TriangulationDataStructure_2}
 
 
 \ccSeeAlso
 
-\ccc{Triangulation_data_structure_2},
+\ccc{TriangulationDataStructure_2},
 \ccc{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}.
 
 

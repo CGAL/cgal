@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Triangulation_data_structure_2::Vertex}
+\begin{ccRefConcept}{TriangulationDataStructure_2::Vertex}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -42,18 +42,18 @@ except the iterators.
 \ccCreation
 
 
-\ccConstructor{Triangulation_data_structure_2::Vertex();}{default
+\ccConstructor{TriangulationDataStructure_2::Vertex();}{default
 constructor.
  The geometric information is
  initialized by the default constructor of class \ccc{Point}.
 The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{Triangulation_data_structure_2::Vertex(const Point&
+\ccConstructor{TriangulationDataStructure_2::Vertex(const Point&
 p);}
 {introduces a vertex \ccVar, and initializes the geometric information.
 The pointer to the incident face is initialized with \ccc{NULL}.}
 
-\ccConstructor{Triangulation_data_structure_2::Vertex(const Point& p,
+\ccConstructor{TriangulationDataStructure_2::Vertex(const Point& p,
                       Face* f);}
 {introduces a vertex \ccVar, and initializes the geometric information and 
 the pointer to the incident face.}
@@ -134,9 +134,9 @@ and the crculators begins with the face
 
 
 \ccSeeAlso
-\ccc{Triangulation_data_structure_2} \\
-\ccc{Triangulation_data_structure_2::Face} \\
-\ccc{Triangulation_2::Vertex_base}.
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationVertexBase_2}.
 
 
 

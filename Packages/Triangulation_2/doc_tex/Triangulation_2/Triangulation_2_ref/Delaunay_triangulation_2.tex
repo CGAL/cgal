@@ -34,12 +34,12 @@ A Delaunay triangulation is a special triangulation of a set of points.
 So it is natural to derive  the class \ccRefName\
 from the basic class \ccc{Triangulation_2<Traits,Tds>}.
 The template parameters \ccc{Traits} and \ccc{Tds} 
-are to be instantiated with models of respectively
-\ccc{Delaunay_triangulation_traits_2}  and
-\ccc{Triangulation_data_structure_2}.
+are to be respectively instantiated with models of the concepts
+\ccc{DelaunayTriangulationTraits_2}  and
+\ccc{TriangulationDataStructure_2}.
 
 The concept of triangulation data structure
-is described \ccRefPage{Triangulation_data_structure_2}
+is described \ccRefPage{TriangulationDataStructure_2}
 and the same models can be used to instantiate the
 triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
 or a \ccRefName. 
@@ -66,8 +66,8 @@ which means that convex hull edges have to be Delaunay edges.
 This is granted for any smooth convex metric (like $L_2$)
 and can be ensured for other metrics (like  $L_{\infty}$)
 by the addition to the point set of well chosen sentinel points
-The concept of \ccc{Delaunay_triangulation_traits_2} is  described
-\ccRefPage{Delaunay_triangulation_traits_2}.
+The concept of \ccc{DelaunayTriangulationTraits_2} is  described
+\ccRefPage{DelaunayTriangulationTraits_2}.
 
 
 \ccInclude{Delaunay_triangulation_2.h}
@@ -266,8 +266,8 @@ template < class Stream>
 \ccSeeAlso
 
 \ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
-\ccc{Triangulation_data_structure_2}, \\
-\ccc{Delaunay_triangulation_traits_2}
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{DelaunayTriangulationTraits_2}
 
 %\ccExample
 

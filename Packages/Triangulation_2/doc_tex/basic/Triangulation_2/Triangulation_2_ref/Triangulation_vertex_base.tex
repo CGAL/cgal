@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Triangulation_vertex_base_2_concept}
+\begin{ccRefConcept}{TriangulationVertexBase_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -29,10 +29,10 @@ face through a
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
 
-\ccConstructor{Triangulation_vertex_base_2();}{default constructor.}
-\ccConstructor{Triangulation_vertex_base_2(Point p);}
+\ccConstructor{TriangulationVertexBase_2();}{default constructor.}
+\ccConstructor{TriangulationVertexBase_2(Point p);}
 {constructs a vertex embedded in point \ccc{p}.}
-\ccConstructor{Triangulation_vertex_base_2(Point p,
+\ccConstructor{TriangulationVertexBase_2(Point p,
                      void* f);}{constructs a vertex embedded in point \ccc{p}
 and pointing on face \ccc{f}.}
 
@@ -55,13 +55,13 @@ and pointing on face \ccc{f}.}
 
 \ccHasModels
 
-\ccc{CGAL::Triangulation_vertex_base_2<Traits>}.
+\ccc{CGAL::TriangulationVertexBase_2<Traits>}.
 
 
 \ccSeeAlso
 
-\ccc{Triangulation_data_structure_2} \\
-\ccc{Triangulation_data_structure_2::Vertex} \\
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
 \ccc{CGAL::Triangulation_vertex_base_2<Traits>}
 
 

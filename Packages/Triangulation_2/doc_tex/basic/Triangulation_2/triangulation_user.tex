@@ -694,8 +694,8 @@ as a default for the triangulation data structure class of a triangulation.
 This class has two template parameters \ccc{Vb} anf \ccc{Fb}
 which have 
 to be models for respectively the
-\ccc{Triangulation_vertex_base_2_concept} and 
-\ccc{Triangulation_face_base_2_concept} concepts whose requirements are described in next 
+\ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2} concepts whose requirements are described in next 
 section~\ref{I1_Sect_Base_classes}. 
 
 In addition, this model of triangulation data structure has a first template parameter
@@ -770,8 +770,8 @@ order around the face. The neighbor indexed \ccc{i}
 \ccc{Triangulation_face_base_2<Traits>} and
 \ccc{Triangulation_vertex_base_2<Traits>} for 
 respectively 
-the \ccc{Triangulation_vertex_base_2_concept} and the 
-\ccc{Triangulation_face_base_2_concept} concepts.
+the \ccc{TriangulationVertexBase_2} and the 
+\ccc{TriangulationFaceBase_2} concepts.
 Both of them are templated by a geometric traits class.
 Using for this traits class, the geometric traits class used for the triangulation class
 is strongly recommended. 
@@ -1421,8 +1421,8 @@ triangulations of the next and preceeding levels.
 Therefore the base vertex of a triangulation used as
 the base class of a triangulation hierarchy has to be a model of the
 concept
-\ccc{Triangulation_hierarchy_vertex_base_2_concept} which extends
-the concept \ccc{Triangulation_vertex_base_2_concept}, adding
+\ccc{TriangulationHierarchyVertexBase_2} which extends
+the concept \ccc{TriangulationVertexBase_2}, adding
 access and setting member functions 
 for two pointers  to the corresponding vertices in the 
 triangulations of the next and preceeding levels.
@@ -1430,10 +1430,10 @@ triangulations of the next and preceeding levels.
 \subsubsection{A predefined Vertex Base type}
 \cgal\ provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>}
 which is a model for the concept 
-\ccc{Triangulation_hierarchy_vertex_base_2_concept}.
+\ccc{TriangulationHierarchyVertexBase_2}.
 This class is templated by a parameter \ccc{Vb}
 which is to be instantiated by a model of  the concept
-\ccc{Triangulation_vertex_base_2_concept}.
+\ccc{TriangulationVertexBase_2}.
 The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
 from its template parameter \ccc{Vb}.
 This design allows to use either the default

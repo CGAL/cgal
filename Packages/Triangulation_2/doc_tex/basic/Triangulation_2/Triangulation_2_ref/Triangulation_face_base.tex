@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Triangulation_face_base_2_concept}
+\begin{ccRefConcept}{TriangulationFaceBase_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -30,11 +30,11 @@ order around the face. Neighbor $i$ lies opposite to vertex $i$.
 \ccCreation
 \ccCreationVariable{f}  %% choose variable name
 
-\ccConstructor{Triangulation_face_base_2_concept();}{default constructor.}
-\ccConstructor{Triangulation_face_base_2_concept(void* v0, void* v1, void* v2);}
+\ccConstructor{TriangulationFaceBase_2();}{default constructor.}
+\ccConstructor{TriangulationFaceBase_2(void* v0, void* v1, void* v2);}
 {neighbors are initialized to
 \ccc{NULL}.}
-\ccConstructor{Triangulation_face_base_2_concept(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} {initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
+\ccConstructor{TriangulationFaceBase_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} {initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
 \ccc{n0, n1, n2}.}
 
 \ccAccessFunctions
@@ -98,8 +98,8 @@ with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
 
 
 \ccSeeAlso
-\ccc{Triangulation_data_structure_2} \\
-\ccc{Triangulation_data_structure_2::Face} \\
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure::Face} \\
 \ccc{CGAL::Triangulation_face_base_2<Traits>}
 
 

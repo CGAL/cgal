@@ -46,8 +46,8 @@ The class \ccRefName\ of the CGAL library
 implements constrained triangulations.
 The template parameters \ccc{Traits} and \ccc{Tds}
 are to be instantiated with models of respectively
-\ccc{Triangulation_traits_2}  and
-\ccc{Triangulation_data_structure_2}.
+\ccc{TriangulationTraits_2}  and
+\ccc{TriangulationDdataStructure_2}.
  The information about constrained edges is store in the 
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
@@ -59,7 +59,7 @@ are requirements which have to be fulfilled
 by the base face.
 The base face of a constrained triangulation
 has to be a model of the concept
-\ccc{Constrained_triangulation_face_base_2}.
+\ccc{ConstrainedTriangulationFaceBase_2}.
 
 \ccInclude{CGAL/Constrained_triangulation_2.h} 
  
@@ -177,9 +177,9 @@ write ``C'' or ``N'' depending whether edge
 
 \ccSeeAlso
 \ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
-\ccc{Triangulation_data_structure_2}, \\
-\ccc{Triangulation_traits_2} \\
-\ccc{Constrained_triangulation_face_base_2}
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2}
 
 
 

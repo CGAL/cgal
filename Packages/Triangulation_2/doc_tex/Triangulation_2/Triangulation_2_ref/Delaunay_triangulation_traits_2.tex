@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Delaunay_triangulation_traits_2}
+\begin{ccRefConcept}{DelaunayTriangulationTraits_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -19,8 +19,8 @@
 \ccDefinition
   
 In addition to the requirements 
-of the concept \ccc{Triangulation_traits_2}
-described \ccRefPage{Triangulation_traits_2},
+of the concept \ccc{TriangulationTraits_2}
+described \ccRefPage{TriangulationTraits_2},
 the concept \ccRefName\
 has to  provide a predicate type  \ccc{Side_of_oriented_circle_2} 
 to implement the \ccc{side_of_oriented_circle} test.
@@ -93,13 +93,13 @@ a ray from a point and a direction. Must provide
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Delaunay_triangulation_traits_2();}{default constructor.}
+\ccConstructor{DelaunayTriangulationTraits_2();}{default constructor.}
 \ccGlue
-\ccConstructor{Delaunay_triangulation_traits_2(Delaunay_triangulation_traits_2 
+\ccConstructor{DelaunayTriangulationTraits_2(DelaunayTriangulationTraits_2 
 dtt);}{copy constructor}
 \ccGlue
-\ccMethod{Delaunay_triangulation_traits_2 
-operator=(Delaunay_triangulation_traits_2);}{Assignment operator.}
+\ccMethod{DelaunayTriangulationTraits_2 
+operator=(DelaunayTriangulationTraits_2);}{Assignment operator.}
 
 
 \ccHeading{Access to predicate and constructor objects}
@@ -133,7 +133,7 @@ relative to the dual Voronoi diagram are called.}
 \ccc{CGAL::Triangulation_euclidean_traits_zx_3<Rep>}.
 
 \ccSeeAlso
-\ccc{Triangulation_traits_2}
+\ccc{TriangulationTraits_2}
 
 \end{ccRefConcept}
 

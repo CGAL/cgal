@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Regular_triangulation_face_base_2_concept}
+\begin{ccRefConcept}{RegularTriangulationFaceBase_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -40,8 +40,8 @@ in the base face of a regular triangulation.
 
 The concept \ccRefName\ 
 has to fulfills the following requirements
-in addition to the requirements of \ccc{Triangulation_face_base_2_concept},
-described \ccRefPage{Triangulation_face_base_2_concept}
+in addition to the requirements of \ccc{TriangulationFaceBase_2},
+described \ccRefPage{TriangulationFaceBase_2}
 
 \ccTypes
 \ccNestedType{ Weighted_point}
@@ -57,11 +57,11 @@ defined by the geometric traits class of the regular triangulation.}
 \ccCreation
 \ccCreationVariable{rfb}  %% choose variable name
 
-\ccConstructor{Regular_triangulation_face_base_2_concept();}{default constructor.}
+\ccConstructor{RegularTriangulationFaceBase_2();}{default constructor.}
 \ccGlue
-\ccConstructor{Regular_triangulation_face_base_2_concept(void* v0, void* v1, void* v2)}{Constructor setting the incident vertices.}
+\ccConstructor{RegularTriangulationFaceBase_2(void* v0, void* v1, void* v2)}{Constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Regular_triangulation_face_base_2_concept(void* v0, void* v1, void*  v2, void*
+\ccConstructor{RegularTriangulationFaceBase_2(void* v0, void* v1, void*  v2, void*
 n0, void* n1, void* n2)} {Constructor setting the incident vertices and 
 the neighboring faces.}
 
@@ -75,7 +75,7 @@ hidden by the face.}
 \ccc{CGAL::Regular_triangulation_face_base_2}
 
 \ccSeeAlso
-\ccc{Triangulation_face_base_2_concept}
+\ccc{TriangulationFaceBase_2}
 \ccc{CGAL::Regular_triangulation_face_base_2}
 
 \end{ccRefConcept}

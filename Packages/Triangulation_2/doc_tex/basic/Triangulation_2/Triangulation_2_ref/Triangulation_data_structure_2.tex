@@ -10,7 +10,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefConcept}{Triangulation_data_structure_2}
+\begin{ccRefConcept}{TriangulationDataStructure_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -54,8 +54,8 @@ and in Chapter~\ref{I1_Chapter_Triangulations}, a model of
 from two template parameters \ccc{Vb} and \ccc{Fb}.
 The parameters \ccc{Vb} and \ccc{Fb}
 have to be instantiated respectively
-by models of \ccc{Triangulation_vertex_base_2} and 
-\ccc{Triangulation_face_base_2}.
+by models of \ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2}.
 
 
 
@@ -76,15 +76,15 @@ incident to a given vertex. They are all bidirectional and non mutable.
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
 
-\ccConstructor{Triangulation_data_structure_2();}{default constructor.}
+\ccConstructor{TriangulationDataStructure_2();}{default constructor.}
 
-\ccConstructor{Triangulation_data_structure_2( const Tds& tds1)}
+\ccConstructor{TriangulationDataStructure_2( const Tds& tds1)}
 {Copy constructor. All the vertices and faces are duplicated.}
 
-\ccMethod{Triangulation_data_structure_2<Vb,Fb> operator=(Triangulation_data_structure_2<Vb,Fb> tds1);}
+\ccMethod{TriangulationDataStructure_2<Vb,Fb> operator=(TriangulationDataStructure_2<Vb,Fb> tds1);}
 {Assignation. All the vertices and faces are duplicated.}
 
-\ccMethod{void swap(Triangulation_data_structure_2<Vb,Fb> tds1);}
+\ccMethod{void swap(TriangulationDataStructure_2<Vb,Fb> tds1);}
 {Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1})
 when tds1 is deleted after that.}
 \ccMethod{void clear();}{Deletes all faces and all finite vertices.}
@@ -338,8 +338,8 @@ between numbers of vertices, faces and edges.}
 \ccc{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}.
 
 \ccSeeAlso
-\ccc{Triangulation_data_structure_2::Face} \\
-\ccc{Triangulation_data_structure_2::Vertex} \\
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
 \ccc{CGAL::Triangulation_2<Traits,Tds>}
 
 \end{ccRefConcept}

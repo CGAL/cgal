@@ -117,12 +117,12 @@ of~\ccc{f} (see Figure~\ref{Triangulation_ref_Fig_neighbors}).
 
 \ccParameters
 The class \ccRefName\ depends on  two template parameters. The first one
-\ccc{Traits} expects a model of the \ccc{Triangulation_traits_2}
-concept described on page~\ccRefPage{Triangulation_traits_2}.
+\ccc{Traits} expects a model of the \ccc{TriangulationTraits_2}
+concept described on page~\ccRefPage{TriangulationTraits_2}.
 The second parameter expects a model of the
-\ccc{Triangulation_data_structure_2} described
- on page~\ccRefPage{Triangulation_data_structure_2}.
-Dy befault, the second template parameter is instanciated by
+\ccc{TriangulationDataStructure_2} described
+ on page~\ccRefPage{TriangulationDataStructure_2}.
+By befault, the second template parameter is instanciated by
 \ccc{CGAL::Triangulation_data_structure_using_list_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Triangulation_face_base_2<Gt> > >}.
@@ -934,8 +934,8 @@ of the triangulation data structure.
 
 \ccc{CGAL::Triangulation_2<Traits,Tds>::Face} \\
 \ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex} \\
-\ccc{Triangulation_traits_2} \\
-\ccc{Triangulation_data_structure} \\
+\ccc{TriangulationTraits_2} \\
+\ccc{TriangulationDataStructure} \\
 \ccc{CGAL::Triangulation_default_data_structure} \\
 \ccc{CGAL::Triangulation_data_structure_using_list} \\
 \ccc{CGAL::Triangulation_vertex_base_2} \\

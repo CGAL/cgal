@@ -20,10 +20,10 @@
 \ccDefinition
   
 The class \ccRefName\ is a model of the concept
-\ccc{Triangulation_hierarchy_vertex_base_2_concept}.
+\ccc{TriangulationHierarchyVertexBase_2}.
 This class is templated by a parameter \ccc{Vb}
 which is to be instantiated by a model of  the concept
-\ccc{Triangulation_vertex_base_2_concept}.
+\ccc{TriangulationVertexBase_2}.
 The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
 from the class \ccc{Vb}.
 This design allows to use either the default
@@ -33,7 +33,7 @@ vertex base with additionnal functionalities.
 \ccInclude{CGAL/Triangulation_hierarchy_2.h}
 
 \ccIsModel
-\ccc{Triangulation_hierarchy_vertex_base_2_concept}
+\ccc{TriangulationHierarchyVertexBase_2}
 
 \ccInheritsFrom
 \ccc{Vb}
@@ -42,8 +42,8 @@ vertex base with additionnal functionalities.
 \ccTypedef{Vb::Point Point;}{The point type.}
 
 \ccSeeAlso
-\ccc{Triangulation_vertex_base_2_concept} \\
-\ccc{Triangulation_hierarchy_vertex_base_2_concept} \\
+\ccc{TriangulationVertexBase_2} \\
+\ccc{TriangulationHierarchyVertexBase_2} \\
 \ccc{CGAL::Triangulation_vertex_base_2<Traits>}
 
 
