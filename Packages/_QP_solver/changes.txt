@@ -1,5 +1,7 @@
-0.9.9  05-06-2003 rursu
-------------------
+Version 0.9.10 on 10-Jun-2003
+- Added workaround for missing member templates in Sun STL [af]
+
+Version 0.9.9  on 05-Jun-2003 rursu
  - replaced CGAL_TYPENAME_MSVC_NULL by typename keyword
 
 
