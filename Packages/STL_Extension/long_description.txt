@@ -4,26 +4,33 @@
 
 
 //---------------------------------------------------------------------
-//	revision 2.21
+//	revision 222
+//---------------------------------------------------------------------
+
+ALL : Added merge and sort parameterized with a StrictWeakOrdering to in-place
+ALL :  list.
+
+//---------------------------------------------------------------------
+//	revision 221
 //---------------------------------------------------------------------
 
 DOCS: Changed to new manual structure.
 
 //---------------------------------------------------------------------
-//	revision 2.20
+//	revision 220
 //---------------------------------------------------------------------
 
 TEST: Fixed std::distance(...) calls.
 
 //---------------------------------------------------------------------
-//	revision 2.19
+//	revision 219
 //---------------------------------------------------------------------
 
 TEST: Fixed warnings with NDEBUG.
 ALL : Fixed leading underscore names.
 
 //---------------------------------------------------------------------
-//	revision 2.18
+//	revision 218
 //---------------------------------------------------------------------
 
 DOCS: Changed compose function/class.
@@ -32,7 +39,7 @@ SRC : Fixed composition class/functions.
 TEST: Initial revision
 
 //---------------------------------------------------------------------
-//	revision 2.17
+//	revision 217
 //---------------------------------------------------------------------
 
 DOCS: Replaced "\to" by "\rightarrow" to please html-converter.
@@ -40,13 +47,13 @@ ALL : Removed conditional include checks.
 SRC : Fixed bug in min/max_element_if.
 
 //---------------------------------------------------------------------
-//	revision 2.16
+//	revision 216
 //---------------------------------------------------------------------
 
 SRC : Removed superfluous template parameter D in operator+(D,*).
 
 //---------------------------------------------------------------------
-//	revision 2.15
+//	revision 215
 //---------------------------------------------------------------------
 
 TEST: Initial revision
@@ -54,26 +61,26 @@ SRC : Introduced CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
 SRC : Don't use iterator_category(...), if iterator traits are there.
 
 //---------------------------------------------------------------------
-//	revision 2.14
+//	revision 214
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 2.13
+//	revision 213
 //---------------------------------------------------------------------
 
 ALL : Added file algorithm.h.
 ALL : New functions min_max_element and min/max_element_if.
 
 //---------------------------------------------------------------------
-//	revision 2.10
+//	revision 210
 //---------------------------------------------------------------------
 
 SRC : Added N_step_adaptor_derived.
 SRC : Fixed _Circulator_size_traits to I_Circulator_size_traits.
 
 //---------------------------------------------------------------------
-//	revision 2.9
+//	revision 29
 //---------------------------------------------------------------------
 
 DOCS: now joind into stl_extension.tex.
@@ -84,7 +91,7 @@ SRC : Removed obsolete workaround flags.
 ALL : Removed line directives.
 
 //---------------------------------------------------------------------
-//	revision 2.8
+//	revision 28
 //---------------------------------------------------------------------
 
 SRC : Added typedefs for types from base class that are not visible

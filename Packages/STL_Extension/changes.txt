@@ -7,6 +7,13 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Added merge and sort parameterized with a StrictWeakOrdering to in-place
+ALL :  list.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.2
+//---------------------------------------------------------------------
+
 DOCS: Changed to new manual structure.
 DOCS: Changed compose function/class.
 TEST: Fixed warnings with NDEBUG.
@@ -17,7 +24,7 @@ TEST: Initial revision
 TEST: Fixed std::distance(...) calls.
 
 //---------------------------------------------------------------------
-//	 CGAL-2.1
+//	 CGAL 2.1
 //---------------------------------------------------------------------
 
 DOCS: now joind into stl_extension.tex.
