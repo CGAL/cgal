@@ -1,7 +1,7 @@
-2.15   (?? ??? 2001)
+2.15   (13 Feb 2001)
 - Macro cleanups.
 - area() functions added
-- Towards Simple_homogeneous : PointH2<FT,RT> => PointH2<R> and similar.
+- Simple_homogeneous.
 - Remove old style casts.
 - Put the class Data_accessorH2 in its own file.
 

@@ -34,20 +34,19 @@ class LineH2
   : public R_::Line_handle_2
 {
 public:
-  typedef R_                                    R;
-  typedef typename R::FT                        FT;
-  typedef typename R::RT                        RT;
+    typedef R_                                    R;
+    typedef typename R::FT                        FT;
+    typedef typename R::RT                        RT;
 
-  typedef typename R::Line_handle_2             Line_handle_2_;
-  typedef typename Line_handle_2_::element_type Line_ref_2;
+    typedef typename R::Line_handle_2             Line_handle_2_;
+    typedef typename Line_handle_2_::element_type Line_ref_2;
 
-                   LineH2();
-                   LineH2(const PointH2<R>& p, const PointH2<R>& q);
-                   LineH2(const RT& a, const RT& b, const RT& c);
-                   LineH2(const SegmentH2<R>& s);
-                   LineH2(const RayH2<R>& r);
-                   LineH2(const PointH2<R>& p,
-                          const DirectionH2<R>& d);
+    LineH2();
+    LineH2(const PointH2<R>& p, const PointH2<R>& q);
+    LineH2(const RT& a, const RT& b, const RT& c);
+    LineH2(const SegmentH2<R>& s);
+    LineH2(const RayH2<R>& r);
+    LineH2(const PointH2<R>& p, const DirectionH2<R>& d);
 
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
@@ -55,9 +54,9 @@ public:
     RT             a() const;
     RT             b() const;
     RT             c() const;
-    const RT&      a_ref() const { return ptr->e0; }
-    const RT&      b_ref() const { return ptr->e1; }
-    const RT&      c_ref() const { return ptr->e2; }
+    const RT&      a_ref() const { return Ptr()->e0; }
+    const RT&      b_ref() const { return Ptr()->e1; }
+    const RT&      c_ref() const { return Ptr()->e2; }
 
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
@@ -91,8 +90,7 @@ LineH2<R>::LineH2()
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-LineH2<R>::LineH2(const PointH2<R>& p,
-                      const PointH2<R>& q)
+LineH2<R>::LineH2(const PointH2<R>& p, const PointH2<R>& q)
  : Line_handle_2_ ( Line_ref_2(
   //  a() * X + b() * Y + c() * W() == 0
   //      |    X        Y       W     |
@@ -101,7 +99,7 @@ LineH2<R>::LineH2(const PointH2<R>& p,
 
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
-            p.hx()*q.hy() - p.hy()*q.hx()       ))
+            p.hx()*q.hy() - p.hy()*q.hx() ))
 {}
 
 template < class R >
@@ -116,7 +114,7 @@ LineH2<R>::LineH2(const SegmentH2<R>& s)
 {
   PointH2<R> p = s.start();
   PointH2<R> q = s.end();
-  initialize_with( Threetuple<RT> (
+  initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
@@ -128,7 +126,7 @@ LineH2<R>::LineH2(const RayH2<R>& r)
 {
   PointH2<R> p = r.start();
   PointH2<R> q = r.second_point();
-  initialize_with( Threetuple<RT> (
+  initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
@@ -140,7 +138,7 @@ LineH2<R>::LineH2(const PointH2<R>& p,
                       const DirectionH2<R>& d)
 {
   PointH2<R> q = p + VectorH2<R>(d);
-  initialize_with( Threetuple<RT> (
+  initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() ) );
@@ -150,19 +148,19 @@ template < class R >
 inline
 typename R::RT
 LineH2<R>::a() const
-{ return ptr->e0; }
+{ return Ptr()->e0; }
 
 template < class R >
 inline
 typename R::RT
 LineH2<R>::b() const
-{ return ptr->e1; }
+{ return Ptr()->e1; }
 
 template < class R >
 inline
 typename R::RT
 LineH2<R>::c() const
-{ return ptr->e2; }
+{ return Ptr()->e2; }
 
 
 template < class R >
@@ -367,6 +365,7 @@ inline
 bool
 LineH2<R>::is_degenerate() const
 { return (a() == RT(0)  )&&(b() == RT(0)  ) ; }
+
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool

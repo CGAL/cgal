@@ -34,9 +34,21 @@ template < class R >
 class Segment_repH2 : public Ref_counted
 {
 public:
-            Segment_repH2();
-            Segment_repH2(const PointH2<R>& sp,
-                          const PointH2<R>& ep);
+    Segment_repH2() {}
+    Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
+	: start(sp), end(ep) {}
+
+    PointH2<R>  start;
+    PointH2<R>  end;
+};
+
+template < class R >
+class Simple_Segment_repH2
+{
+public:
+    Simple_Segment_repH2() {}
+    Simple_Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
+	: start(sp), end(ep) {}
 
     PointH2<R>  start;
     PointH2<R>  end;
@@ -51,11 +63,21 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-            SegmentH2();
-            SegmentH2( const PointH2<R>& sp,
-                       const PointH2<R>& ep);
-            SegmentH2( const RT& sw, const RT& sx, const RT& sy,
-                       const RT& ew, const RT& ex, const RT& ey);
+  typedef typename R::Segment_handle_2          Segment_handle_2_;
+  typedef typename Segment_handle_2_::element_type Segment_ref_2;
+
+    SegmentH2()
+      : Segment_handle_2_(Segment_ref_2()) {}
+
+    SegmentH2( const PointH2<R>& sp, const PointH2<R>& ep)
+      : Segment_handle_2_(Segment_ref_2(sp, ep)) {}
+
+#if 1 // FIXME : should this exist at all ?
+    SegmentH2( const RT& sx, const RT& sy, const RT& sw,
+               const RT& ex, const RT& ey, const RT& ew)
+      : Segment_handle_2_( Segment_ref_2( PointH2<R>(sx,sy,sw),
+                                          PointH2<R>(ex,ey,ew) ) ) {}
+#endif
 
     bool    operator==(const SegmentH2<R>& s) const;
     bool    operator!=(const SegmentH2<R>& s) const;
@@ -82,72 +104,35 @@ public:
     DirectionH2<R> direction() const;
     LineH2<R>      supporting_line() const;
     SegmentH2<R>   opposite() const;
-    Bbox_2             bbox() const;
+    Bbox_2         bbox() const;
 
-    SegmentH2<R>
-            transform( const Aff_transformationH2<R> & t) const;
-
+    SegmentH2<R> transform( const Aff_transformationH2<R> & t) const;
 };
 
-
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Segment_repH2<R>::Segment_repH2()
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Segment_repH2<R>::
-Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
- : start(sp), end(ep)
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentH2<R>::SegmentH2()
- : Handle_for< Segment_repH2<R> >( Segment_repH2<R>() )
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentH2<R>::SegmentH2( const PointH2<R>& sp,
-                             const PointH2<R>& ep)
- : Handle_for< Segment_repH2<R> >( Segment_repH2<R>(sp,ep) )
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentH2<R>::SegmentH2(const RT& sx, const RT& sy, const RT& sw,
-                            const RT& ex, const RT& ey, const RT& ew)
- : Handle_for< Segment_repH2<R> >( Segment_repH2<R>(
-                                         PointH2<R>(sx,sy,sw),
-                                         PointH2<R>(ex,ey,ew) ) )
-{}
 
 template < class R >
 inline
 PointH2<R>
 SegmentH2<R>::source() const
-{ return ptr->start; }
+{ return Ptr()->start; }
 
 template < class R >
 inline
 PointH2<R>
 SegmentH2<R>::start() const
-{ return ptr->start; }
+{ return Ptr()->start; }
 
 template < class R >
 inline
 PointH2<R>
 SegmentH2<R>::target() const
-{ return ptr->end; }
+{ return Ptr()->end; }
 
 template < class R >
 inline
 PointH2<R>
 SegmentH2<R>::end() const
-{ return ptr->end; }
+{ return Ptr()->end; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -183,8 +168,8 @@ SegmentH2<R>::vertex(int i) const
 {
   switch (i%2)
   {
-    case 0:  return ptr->start;
-    case 1:  return ptr->end;
+    case 0:  return Ptr()->start;
+    case 1:  return Ptr()->end;
   };
   return PointH2<R>(); // otherwise the SGI compiler complains
 }
@@ -205,7 +190,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename R::FT
 SegmentH2<R>::squared_length() const
-{ return  (ptr->end - ptr->start) * (ptr->end - ptr->start); }
+{ return  (Ptr()->end - Ptr()->start) * (Ptr()->end - Ptr()->start); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -213,7 +198,7 @@ DirectionH2<R>
 SegmentH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( ptr->end - ptr->start );
+  return DirectionH2<R>( Ptr()->end - Ptr()->start );
 }
 
 template < class R >
@@ -222,14 +207,14 @@ LineH2<R>
 SegmentH2<R>::supporting_line() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<R>(ptr->start, ptr->end);
+  return LineH2<R>(Ptr()->start, Ptr()->end);
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 SegmentH2<R>
 SegmentH2<R>::opposite() const
-{ return SegmentH2<R>(ptr->end, ptr->start); }
+{ return SegmentH2<R>(Ptr()->end, Ptr()->start); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -237,8 +222,8 @@ SegmentH2<R>
 SegmentH2<R>::
 transform(const Aff_transformationH2<R>& t) const
 {
-  return SegmentH2<R>(t.transform(ptr->start),
-                               t.transform(ptr->end)   );
+  return SegmentH2<R>(t.transform(Ptr()->start),
+                               t.transform(Ptr()->end)   );
 }
 
 template < class R >
@@ -281,8 +266,8 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::is_horizontal() const
 {
-  return (    ptr->start.hy() * ptr->end.hw()
-           == ptr->end.hy() * ptr->start.hw() );
+  return (    Ptr()->start.hy() * Ptr()->end.hw()
+           == Ptr()->end.hy() * Ptr()->start.hw() );
 }
 
 template < class R >
@@ -290,8 +275,8 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::is_vertical() const
 {
-  return (    ptr->start.hx() * ptr->end.hw()
-           == ptr->end.hx() * ptr->start.hw() );
+  return (    Ptr()->start.hx() * Ptr()->end.hw()
+           == Ptr()->end.hx() * Ptr()->start.hw() );
 }
 
 template < class R >
@@ -304,7 +289,7 @@ CGAL_KERNEL_INLINE
 bool
 SegmentH2<R>::has_on(const PointH2<R>& p) const
 {
-  if ( collinear(ptr->start, p, ptr->end ) )
+  if ( collinear(Ptr()->start, p, Ptr()->end ) )
   {
       return collinear_has_on(p);
   }

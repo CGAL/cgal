@@ -29,7 +29,6 @@
 #define CGAL_VECTORH2_H
 #define CGAL_DIRECTIONH2_H
 
-#include <CGAL/Threetuple.h>
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
@@ -265,9 +264,9 @@ CGAL_KERNEL_CTOR_INLINE
 PointH2<R>::PointH2(const RT& hx, const RT& hy, const RT& hw)
 {
    if ( hw >= RT(0)   )
-   { initialize_with( Threetuple<RT>( hx, hy, hw)); }
+   { initialize_with( Point_ref_2( hx, hy, hw)); }
    else
-   { initialize_with( Threetuple<RT>(-hx,-hy,-hw)); }
+   { initialize_with( Point_ref_2(-hx,-hy,-hw)); }
 }
 
 template < class R >
@@ -311,19 +310,19 @@ template < class R >
 inline
 typename R::RT
 PointH2<R>::hx() const
-{ return  ptr->e0 ; }
+{ return Ptr()->e0 ; }
 
 template < class R >
 inline
 typename R::RT
 PointH2<R>::hy() const
-{ return  ptr->e1 ; }
+{ return Ptr()->e1 ; }
 
 template < class R >
 inline
 typename R::RT
 PointH2<R>::hw() const
-{ return  ptr->e2; }
+{ return Ptr()->e2; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -364,19 +363,19 @@ template < class R >
 inline
 const typename R::RT&
 PointH2<R>::hx_ref() const
-{ return  ptr->e0 ; }
+{ return Ptr()->e0 ; }
 
 template < class R >
 inline
 const typename R::RT&
 PointH2<R>::hy_ref() const
-{ return  ptr->e1 ; }
+{ return Ptr()->e1 ; }
 
 template < class R >
 inline
 const typename R::RT&
 PointH2<R>::hw_ref() const
-{ return  ptr->e2; }
+{ return Ptr()->e2; }
 
 
 template < class R >
@@ -419,9 +418,9 @@ CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2(const RT& x, const RT& y, const RT& w)
 {
   if ( w >= RT(0)   )
-  { initialize_with( Threetuple<RT>( x,  y,  w)); }
+  { initialize_with( Vector_ref_2( x,  y,  w)); }
   else
-  { initialize_with( Threetuple<RT>(-x, -y, -w)); }
+  { initialize_with( Vector_ref_2(-x, -y, -w)); }
 }
 
 template < class R >
@@ -474,7 +473,7 @@ typename R::FT
 VectorH2<R>::x()  const
 {
     typedef typename R::FT FT;
-    return FT(ptr->e0 )/FT(ptr->e2 ) ;
+    return FT(Ptr()->e0 )/FT(Ptr()->e2 ) ;
 }
 
 template < class R >
@@ -483,26 +482,26 @@ typename R::FT
 VectorH2<R>::y()  const
 {
     typedef typename R::FT FT;
-    return FT(ptr->e1 )/FT(ptr->e2 ) ;
+    return FT(Ptr()->e1 )/FT(Ptr()->e2 ) ;
 }
 
 template < class R >
 inline
 typename R::RT
 VectorH2<R>::hx() const
-{ return  ptr->e0 ; }
+{ return  Ptr()->e0 ; }
 
 template < class R >
 inline
 typename R::RT
 VectorH2<R>::hy() const
-{ return  ptr->e1 ; }
+{ return  Ptr()->e1 ; }
 
 template < class R >
 inline
 typename R::RT
 VectorH2<R>::hw() const
-{ return  ptr->e2 ; }
+{ return  Ptr()->e2 ; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -595,9 +594,9 @@ CGAL_KERNEL_CTOR_INLINE
 DirectionH2<R>::DirectionH2(const RT& x, const RT& y, const RT& w )
 {
   if (w > RT(0)   )
-  { initialize_with( Threetuple<RT>( x, y, w)); }
+  { initialize_with( Direction_ref_2( x, y, w)); }
   else
-  { initialize_with( Threetuple<RT>(-x,-y,-w)); }
+  { initialize_with( Direction_ref_2(-x,-y,-w)); }
 }
 
 template <class R >
@@ -632,13 +631,13 @@ template <class R >
 inline
 typename R::RT
 DirectionH2<R>::dx() const
-{ return ptr->e0; }
+{ return Ptr()->e0; }
 
 template <class R >
 inline
 typename R::RT
 DirectionH2<R>::dy() const
-{ return ptr->e1; }
+{ return Ptr()->e1; }
 
 template <class R >
 CGAL_KERNEL_INLINE
@@ -657,13 +656,13 @@ template <class R >
 inline
 typename R::RT
 DirectionH2<R>::x() const
-{ return ptr->e0; }
+{ return Ptr()->e0; }
 
 template <class R >
 inline
 typename R::RT
 DirectionH2<R>::y() const
-{ return ptr->e1; }
+{ return Ptr()->e1; }
 
 
 template <class R>

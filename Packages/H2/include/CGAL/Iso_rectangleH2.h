@@ -21,11 +21,9 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_ISO_RECTANGLEH2_H
 #define CGAL_ISO_RECTANGLEH2_H
 
-#include <CGAL/Twotuple.h>
 #include <CGAL/PointH2.h>
 #include <CGAL/predicates_on_pointsH2.h>
 
@@ -40,9 +38,13 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 
-            Iso_rectangleH2();
-            Iso_rectangleH2(const PointH2<R>& p,
-                            const PointH2<R>& q);
+  typedef typename R::Iso_rectangle_handle_2    Iso_rectangle_handle_2_;
+  typedef typename Iso_rectangle_handle_2_::element_type Iso_rectangle_ref_2;
+
+  Iso_rectangleH2()
+    : Iso_rectangle_handle_2_(Iso_rectangle_ref_2()) {}
+
+  Iso_rectangleH2(const PointH2<R>& p, const PointH2<R>& q);
 
   bool      operator==(const Iso_rectangleH2<R>& s) const;
   bool      operator!=(const Iso_rectangleH2<R>& s) const;
@@ -51,8 +53,6 @@ public:
   PointH2<R>  max() const;
   PointH2<R>  vertex(int i) const;
   PointH2<R>  operator[](int i) const;
-
-
 
   Iso_rectangleH2<R>
             transform(const Aff_transformationH2<R>& t) const;
@@ -65,8 +65,7 @@ public:
   bool      has_on_unbounded_side(const PointH2<R>& p) const;
   bool      is_degenerate() const;
 
-  Bbox_2
-            bbox() const;
+  Bbox_2    bbox() const;
 
   FT        xmin() const;
   FT        ymin() const;
@@ -74,21 +73,11 @@ public:
   FT        ymax() const;
 
   FT        area() const;
-
 };
-
-
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_rectangleH2<R>::Iso_rectangleH2()
- : Handle_for< Twotuple< PointH2<R> > >( Twotuple< PointH2<R> >() )
-{}
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-Iso_rectangleH2<R>::Iso_rectangleH2(const PointH2<R>& p,
-                                        const PointH2<R>& q)
+Iso_rectangleH2<R>::Iso_rectangleH2(const PointH2<R>& p, const PointH2<R>& q)
 {
   bool px_g_qx = ( p.hx()*q.hw() > q.hx()*p.hw() );
   bool py_g_qy = ( p.hy()*q.hw() > q.hy()*p.hw() );
@@ -96,19 +85,19 @@ Iso_rectangleH2<R>::Iso_rectangleH2(const PointH2<R>& p,
   {
       if ( px_g_qx && py_g_qy )
       {
-          initialize_with( Twotuple<PointH2<R> >(q,p) );
+          initialize_with( Iso_rectangle_ref_2(q,p) );
       }
       else
       {
          if ( px_g_qx )
          {
-             initialize_with( Twotuple<PointH2<R> >(
+             initialize_with( Iso_rectangle_ref_2(
              PointH2<R>(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ),
              PointH2<R>(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() )) );
          }
          if ( py_g_qy )
          {
-             initialize_with( Twotuple<PointH2<R> >(
+             initialize_with( Iso_rectangle_ref_2(
              PointH2<R>(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ),
              PointH2<R>(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() )) );
          }
@@ -116,7 +105,7 @@ Iso_rectangleH2<R>::Iso_rectangleH2(const PointH2<R>& p,
   }
   else
   {
-      initialize_with( Twotuple< PointH2<R> >(p,q) );
+      initialize_with( Iso_rectangle_ref_2(p,q) );
   }
 }
 
@@ -131,17 +120,18 @@ inline
 bool
 Iso_rectangleH2<R>::operator!=(const Iso_rectangleH2<R>& r) const
 { return !(*this == r); }
+
 template < class R >
 inline
 PointH2<R>
 Iso_rectangleH2<R>::min() const
-{ return  ptr->e0; }
+{ return  Ptr()->e0; }
 
 template < class R >
 inline
 PointH2<R>
 Iso_rectangleH2<R>::max() const
-{ return  ptr->e1; }
+{ return  Ptr()->e1; }
 
 template < class R >
 inline
@@ -270,8 +260,7 @@ Iso_rectangleH2<R>
 Iso_rectangleH2<R>::
 transform(const Aff_transformationH2<R>&t) const
 {
-  return Iso_rectangleH2<R>(t.transform(min() ),
-                                t.transform(max() ) );
+  return Iso_rectangleH2<R>(t.transform(min() ), t.transform(max() ) );
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEH2
