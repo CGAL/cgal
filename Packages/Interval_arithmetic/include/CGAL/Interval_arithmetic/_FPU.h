@@ -46,8 +46,8 @@
 #error "Architecture not recognized."
 #endif
 
-#if ( (defined(__i386) || defined(__sparc) || defined(__alpha)) && \
-      defined(__GNUC__))
+#if ( (defined(__i386) || defined(__sparc) || defined(__alpha) || \
+	defined(__mips)) && defined(__GNUC__))
 #define __USE_ASSEMBLY
 #endif
 
@@ -71,35 +71,41 @@
 #ifdef __sun
 #include <ieeefp.h>
 #endif
-#else	/* __USE_ASSEMBLY */
+#else	// __USE_ASSEMBLY
 #ifdef __i386
 #define SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
-/* x86:                       rounding   | precision  | default mask */
-static const unsigned int CGAL_FPU_cw_zero = 0xC00      | 0x200      | 0x107f; 
-static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x200      | 0x107f;
-static const unsigned int CGAL_FPU_cw_up   = 0x800      | 0x200      | 0x107f; 
-static const unsigned int CGAL_FPU_cw_down = 0x400      | 0x200      | 0x107f;
+// #define GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
+// x86:                                       rounding | precision | def. mask
+static const unsigned short CGAL_FPU_cw_zero = 0xC00   |  0x200    | 0x107f; 
+static const unsigned short CGAL_FPU_cw_near = 0x0     |  0x200    | 0x107f;
+static const unsigned short CGAL_FPU_cw_up   = 0x800   |  0x200    | 0x107f; 
+static const unsigned short CGAL_FPU_cw_down = 0x400   |  0x200    | 0x107f;
 #endif
 #ifdef __sparc
 #define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "g" (CW))
-/* Sparc:                     rounding   | precision  | default mask */
+// Sparc:                                    rounding   | precision  | def. mask
 static const unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
 #endif
+#ifdef __mips
+#define SETFPCW(CW) asm volatile ("lw $8,%0; ctc1 $8 $31": :"m" (CW))
+// #define GETFPCR(CW) asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
+// Mips:
+static const unsigned int CGAL_FPU_cw_zero = 0x1;
+static const unsigned int CGAL_FPU_cw_near = 0x0;
+static const unsigned int CGAL_FPU_cw_up   = 0x2;
+static const unsigned int CGAL_FPU_cw_down = 0x3;
+#endif
 #ifdef __alpha
 #define SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f" (CW))
-/* Alpha:                      rounding */
+// Alpha:                      rounding
 static const unsigned long CGAL_FPU_cw_zero = 0x0000000000000000UL;
 static const unsigned long CGAL_FPU_cw_near = 0x0800000000000000UL;
 static const unsigned long CGAL_FPU_cw_up   = 0x0c00000000000000UL;
 static const unsigned long CGAL_FPU_cw_down = 0x0400000000000000UL;
 #endif
-#endif
-
-#if !defined(__GNUC__) && !defined(__cplusplus)
-#define inline /* */
 #endif
 
 static inline void CGAL_FPU_set_rounding_to_zero (void);
@@ -250,4 +256,4 @@ static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 #endif
 }
 
-#endif /* CGAL_FPU_H */
+#endif // CGAL_FPU_H
