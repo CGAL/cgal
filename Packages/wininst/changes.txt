@@ -1,4 +1,4 @@
-2.1.17(05/07/02)  Removed the CGALQt.dsp and CGALQt.vcproj from wininst package
+2.1.18(05/07/02)  Removed the CGALQt.dsp and CGALQt.vcproj from wininst package
 		  They should be in the Qt_widget package
 		  Have tried to put good headers in compiler_config.h
 
