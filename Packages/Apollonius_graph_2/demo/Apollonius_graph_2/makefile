@@ -40,11 +40,10 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                demo$(EXE_EXT) 
+all: apollonius_graph_2$(EXE_EXT) 
 
-demo.moc:  demo.C
-	$(QT_MOC) -o demo.moc demo.C
+apollonius_graph_2.moc:  apollonius_graph_2.C
+	$(QT_MOC) -o apollonius_graph_2.moc apollonius_graph_2.C
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
 	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
@@ -52,13 +51,15 @@ qt_file_toolbar.moc:  qt_file_toolbar.h
 qt_layers_toolbar.moc:  qt_layers_toolbar.h
 	$(QT_MOC) -o qt_layers_toolbar.moc qt_layers_toolbar.h
 
-demo$(OBJ_EXT): demo.moc qt_file_toolbar.moc qt_layers_toolbar.moc
+apollonius_graph_2$(OBJ_EXT): apollonius_graph_2.moc \
+	qt_file_toolbar.moc qt_layers_toolbar.moc
 
-demo$(EXE_EXT): demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
+apollonius_graph_2$(EXE_EXT): apollonius_graph_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)apollonius_graph_2 \
+	apollonius_graph_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   demo.clean ; rm -f *.moc 
+	apollonius_graph_2.clean ; rm -f *.moc 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

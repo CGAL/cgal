@@ -1,0 +1,5 @@
+1.42 04/09/2003 [rursu]
+-----------------------
+	- added project to build the demo (apollonius_graph_2.vcproj)
+	- renamed demo.C in apollonius_graph_2.C
+	- Demo use now CGAL common demoicon as the main window icon :)

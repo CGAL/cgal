@@ -5,6 +5,7 @@
 
 #include <qapplication.h>
 #include <qmainwindow.h>
+#include <qpixmap.h>
 
 //#include <CGAL/IO/Color.h>
 #include <CGAL/IO/Qt_widget.h>
@@ -12,6 +13,7 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 
 #include "typedefs.h"
@@ -254,7 +256,7 @@ private slots:
 
 #include "qt_file_toolbar.moc"
 #include "qt_layers_toolbar.moc"
-#include "demo.moc"
+#include "apollonius_graph_2.moc"
 
 int
 main(int argc, char* argv[])
@@ -264,6 +266,8 @@ main(int argc, char* argv[])
   QApplication app( argc, argv );
   My_Window W(size,size);
   app.setMainWidget( &W );
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  W.setIcon(cgal_icon);
   W.show();
   W.set_window(0,size,0,size);
   W.setCaption("Apollonius diagram 2");
