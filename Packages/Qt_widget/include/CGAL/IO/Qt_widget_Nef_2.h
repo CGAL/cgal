@@ -243,7 +243,8 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     }
     
     ws.setRasterOp(old_raster);
-    bitBlt(&widget_pixmap, 0, 0, &copy_of_pixmap, 0, 0, ws.width(), ws.height(), Qt::XorROP, true);
+    bitBlt(&widget_pixmap, 0, 0, &copy_of_pixmap,
+      0, 0, ws.width(), ws.height(), Qt::XorROP, true);
     return ws;
 }
 
