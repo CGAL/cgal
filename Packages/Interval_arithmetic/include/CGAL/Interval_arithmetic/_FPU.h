@@ -84,7 +84,7 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_IA_SETFPCW(CW) __asm__ volatile ("fldcw %0" : :"m" (CW))
 #define CGAL_IA_GETFPCW(CW) __asm__ volatile ("fstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
-enum {  //               rounding | def. mask
+enum {
     FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
     FPU_cw_zero = _FPU_RC_ZERO    | 0x127f,
     FPU_cw_up   = _FPU_RC_UP      | 0x127f,
@@ -96,7 +96,7 @@ enum {  //               rounding | def. mask
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
-enum {         // rounding        | def.mask
+enum {
     FPU_cw_near = _FPU_RC_NEAREST | _FPU_DEFAULT,
     FPU_cw_zero = _FPU_RC_ZERO    | _FPU_DEFAULT,
     FPU_cw_up   = _FPU_RC_UP      | _FPU_DEFAULT,
@@ -186,11 +186,11 @@ enum {
 #define CGAL_IA_SETFPCW(CW) __asm fldcw CW
 #define CGAL_IA_GETFPCW(CW) __asm fstcw CW
 typedef unsigned short FPU_CW_t;
-enum {  //               rounding | def. mask
-    FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
-    FPU_cw_zero = _FPU_RC_ZERO    | 0x127f,
-    FPU_cw_up   = _FPU_RC_UP      | 0x127f,
-    FPU_cw_down = _FPU_RC_DOWN    | 0x127f
+enum {
+    FPU_cw_near = 0x0   | 0x127f,
+    FPU_cw_zero = 0xC00 | 0x127f,
+    FPU_cw_up   = 0x800 | 0x127f,
+    FPU_cw_down = 0x400 | 0x127f
 };
 #endif // _MSC_VER
 
