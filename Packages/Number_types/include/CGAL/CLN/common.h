@@ -62,7 +62,7 @@ struct workaround_4_CLN
   workaround_4_CLN() { cl_default_print_flags.rational_base = 10; }
 };
  
-static workaround_4_CLN workaroung_4_CLN_object;                                
+static workaround_4_CLN workaroung_4_CLN_object;
 
 CGAL_END_NAMESPACE
 
