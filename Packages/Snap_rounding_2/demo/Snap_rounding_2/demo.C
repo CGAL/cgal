@@ -349,7 +349,7 @@ int main(int argc,char *argv[])
             i1 != s.segments_end();
             ++i1) {
           Local_segment_2 l_s(Local_point_2(i1->source().x(),i1->source().y()),
-                              Local_point_2(i1->target().x(),i1->target().y()));
+              Local_point_2(i1->target().x(),i1->target().y()));
           dist = CGAL::squared_distance(Local_point_2(x3,y3),l_s);
 
           if(min_dist == -1 || dist < min_dist) {
