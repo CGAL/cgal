@@ -1,3 +1,7 @@
+1.15 (16 July 2001)
+    fixed initialization bug in Partition_vertex_map
+    changed asserts to CGAL_assertions 
+
 1.14 (12 July 2001)
     minor fix in doc.
 
