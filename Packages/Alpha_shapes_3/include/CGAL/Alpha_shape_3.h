@@ -1141,21 +1141,21 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   for( vit = A.alpha_shape_vertices_begin();
        vit != A.alpha_shape_vertices_end();
        ++vit) {
-    V[Vertex_handle(vit)] = number_of_vertices++;
-    os << vit->point() << std::endl;
+    V[*vit] = number_of_vertices++;
+    os << (*vit)->point() << std::endl;
   }
 
   Cell_handle c;
   int i;
   Alpha_shape_facets_iterator fit;
-  for( fit = A.alpha_shape_faces_begin();
-       fit != A.alpha_shape_faces_end();
+  for( fit = A.alpha_shape_facets_begin();
+       fit != A.alpha_shape_facets_end();
        ++fit) {
     c = fit->first;
     i = fit->second;
     // the following ensures that regulat facets are output
     // in ccw order
-    if (A.classify(fit) == AS::REGULAR && A.classify(c) == AS::EXTERIOR){
+    if (A.classify(*fit) == AS::REGULAR && A.classify(c) == AS::EXTERIOR){
       c = c->neighbor(i);
       i = c->index(fit->first);
     }
