@@ -74,7 +74,7 @@ class Approximator {
     double cosalpha = v0*v3 / v0l / v3l; 
     double alpha = acos(cosalpha);
     const int units_per_halfcircle = 50;
-    int units = int(units_per_halfcircle/M_PI * alpha);
+    int units = int(units_per_halfcircle/CGAL__PI * alpha);
     if (units == 0) ++units;
     bool seg_is_short = s.is_short();
     bool seg_is_halfcircle = s.is_halfcircle();
@@ -92,8 +92,8 @@ class Approximator {
 	     v0.z(),v1.z(),v2.z());
     VSegment S(units+1);
     for (int i=0; i<units; ++i) 
-      S[i] = VPoint(cos(M_PI*i/double(units_per_halfcircle)),
-		    sin(M_PI*i/double(units_per_halfcircle)),
+      S[i] = VPoint(cos(CGAL_PI*i/double(units_per_halfcircle)),
+		    sin(CGAL_PI*i/double(units_per_halfcircle)),
 		    0.0);
     double sinalpha = 1 - cosalpha*cosalpha;
     if (sinalpha <0) sinalpha = 0; 
@@ -130,8 +130,8 @@ class Approximator {
 	     v0.z(),v1.z(),v2.z());
     VSegment S(units);
     for (int i=0; i<units; ++i) {
-      S[i] = VPoint(cos(2.0*M_PI*i/double(units)),
-		    sin(2.0*M_PI*i/double(units)),
+      S[i] = VPoint(cos(2.0*CGAL_PI*i/double(units)),
+		    sin(2.0*CGAL_PI*i/double(units)),
 		    0.0);
     }
     VSegment::iterator it;
