@@ -1,3 +1,16 @@
+Version 3.8 (2 Mai 2000)
+- make the following classes derive from Handle_for instead of Handle
+CircleC2
+DirectionC2
+Iso_rectangleC2
+LineC2.
+PointC2
+RayC2.
+SegmentC2
+TriangleC2
+VectorC2
+Remain to be done Aff_transformationC2
+
 Version 3.7 (21 April 2000)
 - fixed a bug related to previous
   removing of  leading underscores in variables names
