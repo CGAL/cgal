@@ -18,7 +18,8 @@
 // NB : with doubles, I've got reliability problems of the benchmarks,
 //      probably because of alignment...
 //      float is a little bit better it seems, but still...
-typedef int FT;
+// typedef int FT;
+typedef double FT;
 
 // The second line is the direct Point, not the wrapper provided by the _2
 // classes.  They are indeed more efficient, as shown by the benchmark, and
