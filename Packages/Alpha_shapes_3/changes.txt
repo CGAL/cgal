@@ -1,3 +1,6 @@
+Version 3.23 (18/07/03) [af]
+- Introduced caching for the vertex and facet list
+
 Version 3.22 (9/06/03)
 - Replaced const int& with int in parameter list of Alpha_shape_3::classify(..)
 
