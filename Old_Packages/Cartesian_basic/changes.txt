@@ -1,3 +1,11 @@
+Version 3.2.4 (September 2 1999)
+- Removed references to <CGAL/Kernel/function_objects_?.h>
+  and copy pasted directly into Cartesian_? classes,
+  because M$VC++ doesn't accept this (legal?) design
+- Added definitions of Cartesian_3::*_2, even though I do not include the
+  corresponding <CGAL/Cartesian/*_2.?> (except for Point_2)
+  This only works if the compiler does lazy instantiation
+
 Version 3.2.3 (September 2 1999)
 - Release for M$VC++ which doesn't understand Base::
   I renamed it to Kernel_base in all the Cartesian* classes

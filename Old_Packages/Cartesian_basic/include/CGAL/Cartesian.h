@@ -99,8 +99,9 @@ struct Cartesian_base :
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Kernel/Construction_objects.h>
-#include <CGAL/Kernel/Predicate_objects.h>
+// #include <CGAL/Kernel/Construction_objects_2.h>
+// #include <CGAL/Kernel/Predicate_objects_2.h>
+#include <CGAL/Kernel/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -216,11 +217,179 @@ struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
     static   RT FT_numerator(const FT &r)                { return r;}
     static   RT FT_denominator(const FT &)               { return RT(1);}
 
-    typedef Kernel_construction_objects<Self>             Construction_objects;
-    typedef Kernel_predicate_objects<Self>                Predicate_objects;
-    // These macros are defined in Kernel_function_objects
-    CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS(typename Construction_objects)
-    CGAL_UNPACK_KERNEL_PREDICATE_OBJECTS(typename Predicate_objects)
+typedef CGALi::Construct<Point_2>              Construct_point_2;
+typedef CGALi::Construct<Vector_2>             Construct_vector_2;
+typedef CGALi::Construct<Direction_2>          Construct_direction_2;
+typedef CGALi::Construct<Segment_2>            Construct_segment_2;
+typedef CGALi::Construct<Line_2>               Construct_line_2;
+typedef CGALi::Construct<Ray_2>                Construct_ray_2;
+typedef CGALi::Construct<Circle_2>             Construct_circle_2;
+typedef CGALi::Construct<Triangle_2>           Construct_triangle_2;
+typedef CGALi::Construct<Aff_transformation_2> Construct_aff_transformation_2;
+
+Construct_point_2 
+construct_point_2_object() const { return Construct_point_2(); }
+Construct_vector_2
+construct_vector_2_object() const { return Construct_vector_2(); }
+Construct_direction_2
+construct_direction_2_object() const { return Construct_direction_2(); }
+Construct_segment_2
+construct_segment_2_object() const { return Construct_segment_2(); }
+Construct_line_2
+construct_line_2_object() const { return Construct_line_2(); }
+Construct_ray_2
+construct_ray_2_object() const { return Construct_ray_2(); }
+Construct_circle_2
+construct_circle_2() const { return Construct_circle_2(); }
+Construct_triangle_2
+construct_triangle_2_object() const { return Construct_triangle_2(); }
+Construct_aff_transformation_2
+construct_aff_transformation_2_object() const { return Construct_aff_transformation_2(); }
+
+typedef CGALi::Call_point_to_get<Point_2>              Construct_point_on_2;
+Construct_point_on_2
+construct_point_on_2_object() const { return Construct_point_on_2(); }
+
+typedef CGALi::Call_second_point_to_get<Point_2>       Construct_second_point_on_2;
+Construct_second_point_on_2
+construct_second_point_on_2_object() const { return Construct_second_point_on_2(); }
+
+typedef CGALi::Call_perpendicular_to_get<Vector_2>     Construct_perpendicular_vector_2;
+Construct_perpendicular_vector_2
+construct_perpendicular_vector_2_object() const { return Construct_perpendicular_vector_2(); }
+
+typedef CGALi::Call_perpendicular_to_get<Direction_2>  Construct_perpendicular_direction_2;
+Construct_perpendicular_direction_2
+construct_perpendicular_direction_2_object() const { return Construct_perpendicular_direction_2(); }
+
+typedef CGALi::Call_perpendicular_to_get<Line_2>       Construct_perpendicular_line_2;
+Construct_perpendicular_line_2
+construct_perpendicular_line_2_object() const { return Construct_perpendicular_line_2(); }
+
+typedef CGALi::p_Midpoint<Point_2>                     Construct_midpoint_2;
+Construct_midpoint_2
+construct_midpoint_2_object() const { return Construct_midpoint_2(); }
+
+typedef CGALi::p_Circumcenter<Point_2>                 Construct_circumcenter_2;
+Construct_circumcenter_2
+construct_circumcenter_2_object() const { return Construct_circumcenter_2(); }
+
+typedef CGALi::pl_Bisector<Point_2, Line_2>            Construct_bisector_2;
+Construct_bisector_2
+construct_bisector_2_object() const { return Construct_bisector_2(); }
+
+typedef CGALi::Intersect                               Intersect_2;
+Intersect_2
+intersect_2_object() const { return Intersect_2(); }
+
+typedef CGALi::Call_y_at_x_to_get<FT>                  Compute_y_at_x;
+Compute_y_at_x
+compute_y_at_x_object() const { return Compute_y_at_x(); }
+
+typedef CGALi::Call_squared_length_to_get<FT>          Compute_squared_length;
+Compute_squared_length
+Compute_squared_length_object() const { return Compute_squared_length(); }
+
+/*
+typedef CGALi::std::equal_to                                  Equal_2;
+Equal_2
+equal_2_object() const { return Equal_2(); }
+
+typedef CGALi::p_Equal_xy                              Equal_xy_2;
+Equal_xy_2
+equal_xy_2_object() const { return Equal_xy_2(); }
+*/
+
+typedef p_Less_xy<Point_2>                       Less_xy_2;
+Less_xy_2
+less_xy_2_object() const { return Less_xy_2(); }
+
+/*
+typedef CGALi::p_Less_dist_to_point<Point_2>           Less_distance_to_point_2;
+Less_distance_to_point_2
+less_distance_to_point_2_object() const { return Less_distance_to_point_2(); }
+*/
+
+typedef p_Less_dist_to_line_2p<Point_2>         Less_signed_distance_to_line_2;
+Less_signed_distance_to_line_2
+less_signed_distance_to_line_2_object() const { return Less_signed_distance_to_line_2(); }
+
+typedef p_Leftturn<Point_2>                     Leftturn_2;
+Leftturn_2
+leftturn_2_object() const { return Leftturn_2(); }
+
+typedef p_Left_of_line_2p<Point_2>              Left_of_line_2;
+Left_of_line_2
+left_of_line_2_object() const { return Left_of_line_2(); }
+
+typedef CGALi::Collinear                               Collinear_2;
+Collinear_2
+collinear_2_object() const { return Collinear_2(); }
+
+typedef p_Orientation<Point_2>                  Orientation_2;
+Orientation_2
+orientation_2_object() const { return Orientation_2(); }
+
+typedef CGALi::Side_of_oriented_circle                 Side_of_oriented_circle_2;
+Side_of_oriented_circle_2
+side_of_oriented_circle_2_object() const { return Side_of_oriented_circle_2(); }
+
+typedef CGALi::Call_is_horizontal                      Is_horizontal_2;
+Is_horizontal_2
+is_horizontal_2_object() const { return Is_horizontal_2(); }
+
+typedef CGALi::Call_is_vertical                        Is_vertical_2;
+Is_vertical_2
+is_vertical_2_object() const { return Is_vertical_2(); }
+
+typedef CGALi::Call_is_degenerate                      Is_degenerate_2;
+Is_degenerate_2
+is_degenerate_2_object() const { return Is_degenerate_2(); }
+
+typedef CGALi::Call_has_on_bounded_side                Has_on_bounded_side_2;
+Has_on_bounded_side_2
+has_on_bounded_side_2_object() const { return Has_on_bounded_side_2(); }
+
+typedef CGALi::Call_has_on_unbounded_side              Has_on_unbounded_side_2;
+Has_on_unbounded_side_2
+has_on_unbounded_side_2_object() const { return Has_on_unbounded_side_2(); }
+
+typedef CGALi::Call_has_on_boundary                    Has_on_boundary_2;
+Has_on_boundary_2
+has_on_boundary_2_object() const { return Has_on_boundary_2(); }
+
+typedef CGALi::Call_has_on_positive_side               Has_on_positive_side_2;
+Has_on_positive_side_2
+has_on_positive_side_2_object() const { return Has_on_positive_side_2(); }
+
+typedef CGALi::Call_has_on_negative_side               Has_on_negative_side_2;
+Has_on_negative_side_2
+has_on_negative_side_2_object() const { return Has_on_negative_side_2(); }
+
+typedef CGALi::Call_oriented_side                      Oriented_side_2;
+Oriented_side_2
+oriented_side_2_object() const { return Oriented_side_2(); }
+
+typedef CGALi::Compare_x                               Compare_x_2;
+Compare_x_2
+compare_x_2_object() const { return Compare_x_2(); }
+
+typedef CGALi::Compare_y                               Compare_y_2;
+Compare_y_2
+compare_y_2_object() const { return Compare_y_2(); }
+
+typedef CGALi::Compare_y_at_x                          Compare_y_at_x_2;
+Compare_y_at_x_2
+compare_y_at_x_2_object() const { return Compare_y_at_x_2(); }
+
+typedef CGALi::Are_ordered_along_line                  Are_ordered_along_line_2 ;
+Are_ordered_along_line_2
+are_ordered_along_line_2_object() const { return Are_ordered_along_line_2(); }
+
+typedef CGALi::Are_strictly_ordered_along_line         Are_strictly_ordered_along_line_2;
+Are_strictly_ordered_along_line_2
+are_strictly_ordered_along_line_2_object() const { return Are_strictly_ordered_along_line_2(); }
+
 };
 
 CGAL_END_NAMESPACE
