@@ -5,7 +5,7 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1998 The CGAL Consortium
+# Copyright (c) 1998, 1999 The CGAL Consortium
 #
 # This software and related documentation is part of the
 # Computational Geometry Algorithms Library (CGAL).
@@ -32,8 +32,9 @@
 #
 # The CGAL Consortium consists of Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Free University of Berlin (Germany),
-# INRIA Sophia-Antipolis (France), Max-Planck-Institute Saarbrucken
-# (Germany), RISC Linz (Austria), and Tel-Aviv University (Israel).
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany) Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).
 #
 # ---------------------------------------------------------------------
 
@@ -45,7 +46,7 @@
 # CGAL specific:
 
 # ---------------------------------------------
-CGAL_VERSION='1.2'
+CGAL_VERSION='2.0'
 # ---------------------------------------------
 CGAL_INSTALL_VERSION='$Revision$'
 # ---------------------------------------------
@@ -123,6 +124,10 @@ CGAL_TESTSUITE='y'
 # is to be supported
 SUPPORT_MIPSPRO_64='y'
 
+# ---------------------------------------------
+# the directory of an existing CGAL installation
+# we want to upgrade 
+UPGRADE_FROM=''
 
 # ---------------------------------------------
 # LEDA specific:
@@ -213,6 +218,10 @@ INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 # The strings are set in search_for_compilers resp. compiler_absolute
 COMPILER=''
 
+# indicates whether the compiler is supported by CGAL or not
+# empty <=> unsupported
+CGAL_SUPPORT_COMPILER=''
+
 # string defining OS and compiler
 # (used for naming makefiles and lib directories)
 CGAL_OS_COMPILER=''
@@ -248,10 +257,10 @@ If you get stuck, please read the documentation."
 print_usage_information()
 {
 	${_printf} "%s\n\n" \
-"usage: `basename $0`  
-      [--help | --version | -i | --interactive |
-       -ni <comp> | --non-interactive <comp> | -os <comp> |
-       --build-all | --rebuild-all]
+"usage: `basename $0`
+      [--help | --version | -i | --interactive | -u <dir> | 
+       --upgrade <dir> | --build-all | --rebuild-all |
+       -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-gmp] [--verbose]
       [--CGAL_DIR <dir>] [--STL_DIR <dir>]
       [--leda-sys-incl] [--leda-sys-lib]
@@ -267,6 +276,17 @@ print_usage_information()
   --interactive  
                runs the script in interactive mode
                (other options - except for --CGAL_DIR - are ignored)
+  --upgrade <dir>
+               runs the script in upgrade mode
+	       Use this option, if you upgrade from CGAL-1.*
+	       and supply the directory where CGAL-1 is installed
+	       on your system.
+	       The config/install files and GMP installations will 
+	       be copied from there.
+  --rebuild-all
+	       (Re)build compiler configuration files and libraries
+	       for all compilers for which a config/install file
+	       exists.
   --non-interactive <comp>   
                runs the script in non-interactive mode
                i.e. makefiles are generated for C++ compiler
@@ -442,7 +462,7 @@ _check_dir_exists_create()
     if [ ! -d "${1}" ]; then
 	log_print \
 	    "WARNING: Directory ${1} does not exist, it will be created."
-	${_mkdir} ${1}
+	${_mkdir} -p ${1}
     fi
     _check_read ${1}
     _check_write ${1}
@@ -559,6 +579,8 @@ check_for_utils()
     _check_for_sysutil fgrep y
     _check_for_sysutil sed y
     _check_for_sysutil awk y
+    _check_for_sysutil tee y
+    _check_for_sysutil find y
     if [ -n "${PAGER}" -a ! -x "${PAGER}" ]; then
 	_check_for_sysutil `$_basename ${PAGER}` y
 	PAGER=`eval "echo \$\_$PAGER"`
@@ -888,7 +910,7 @@ create_replacement_header()
 #
     if [ -s ${replacement_header} ]
     then
-	mv ${replacement_header} "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/${header_name}${header_suffix}"
+	mv ${replacement_header} "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/${header_name}${header_suffix}"
     fi
 }
 
@@ -1419,8 +1441,8 @@ search_for_compilers()
 	    _search_compiler gcc g++ ''
 	    ;;
 	*IRIX*|*SunOS*)
-	    _search_compiler cc CC ''
 	    _search_compiler gcc g++ ''
+	    _search_compiler cc CC ''
 	    ;;
 	*)
 	    _search_compiler gcc g++ ''
@@ -1891,6 +1913,18 @@ check_STL_DIR()
 	else
 	    return 1
 	fi
+    fi
+    return 0
+}
+
+check_UPGRADE_FROM()
+{
+    if [ ! -d "${UPGRADE_FROM}/include/CGAL" ]; then
+	$1 "WARNING: UPGRADE_FROM should contain a subdirectory \"include/CGAL\"." 
+    elif [ ! -d "${UPGRADE_FROM}/lib" ]; then
+	$1 "WARNING: UPGRADE_FROM should contain a subdirectory \"lib\"." 
+    else
+	return 1
     fi
     return 0
 }
@@ -2883,6 +2917,29 @@ _choose_compiler()
     fi
 }
 
+# sets the CGAL_SUPPORT_COMPILER variable for CGAL_COMPILER to
+# empty (unsupported) or 'y' (supported).
+_set_support()
+{
+    case `compiler_description` in
+	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
+	*MIPSPRO*n32*) 
+	    case `compiler_version` in
+		7.2*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*GNU*)
+	    case `compiler_version` in
+		2.8.1*) CGAL_SUPPORT_COMPILER='y';;
+		egcs-2*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*) CGAL_SUPPORT_COMPILER='';;
+    esac
+}
+
 # set COMPILER to ${COMPILER}_$1 (for $1 in {1..${_COMPILER_NUMBER}-1})
 _set_compiler()
 {
@@ -2893,6 +2950,7 @@ _set_compiler()
     _tmp=`eval "echo '$'_COMPILER_$1"`
     _tmp=`eval "echo ${_tmp}"`
     COMPILER=${_tmp}
+    _set_support
 }
 
 
@@ -2924,6 +2982,11 @@ menu_header()
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     print_line     "GMP:                 ${_tmp}supported." 
     print_empty_line
+    if [ -n "${CGAL_SUPPORT_COMPILER}" ]; then
+	print_line     "Compiler is supported by CGAL."
+    else
+	print_line     "Compiler is NOT supported by CGAL."
+    fi
     if [ -z "${SETUP_COMPLETE}" ]; then
 	print_line "The setup has ${_bold_on}not${_bold_off} been tested." 
     else
@@ -4006,7 +4069,9 @@ build_cgal()
 	${_printf} "\n${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
 	    >> ${INSTALL_RIS_LOGFILE}
-	_do_compile sharedlib
+	if _do_compile sharedlib; then
+	    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+	fi
     fi
     write_buffer "\n"
     print_filled_line
@@ -4023,6 +4088,48 @@ lib_menu()
 
     # build the libs:
     build_cgal
+}
+
+
+# ---------------------------------------------------------------------
+# (re)build all function
+#
+build_all()
+{
+    guess_os log_print
+    ${_printf} "\n\n"
+    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    do
+	INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a ${INSTALL_LOGFILE}"
+	log_print
+	log_print \
+	    "--------------------------------------------------------"
+	log_print "Build on `${_basename} ${i}`:" 
+	log_print \
+	    "--------------------------------------------------------"
+	INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+	try_to_get_var_from_file COMPILER ${i}
+	if [ -n "${COMPILER}" ]; then
+	    set_ostype
+	    set_compiler_flags
+	    retrieve_compiler_settings
+	    case ${_WHAT_TO_DO} in
+		*rebuild-all*)
+		    test_compiler_specifica "${INSTALL_VERBOSE}";;
+	    esac
+	    lib_menu
+	    store_compiler_settings
+	else
+	    log_print "Cannot rebuild the library."
+	    print_filled_line
+	    print_empty_line
+	    print_headline "Cannot build on `${_basename} ${i}` !" 
+	    print_headline "No COMPILER defined in config/install/..."
+	    print_filled_line
+	    write_buffer "\n"
+	    flush_buffer
+	fi
+    done
 }
 
 
@@ -4063,6 +4170,94 @@ test_menu()
 
 
 # ---------------------------------------------------------------------
+# upgrade menu
+#
+
+upgrade()
+{
+    _check_read ${UPGRADE_FROM}
+    _check_execute ${UPGRADE_FROM}
+    # copy config install files
+    write_buffer "\n"
+    print_filled_line
+    print_headline "Upgrading from ${UPGRADE_FROM}"
+    print_filled_line
+    print_line "copying config install files"
+    print_filled_line
+    flush_buffer
+    log_print "copy config install files ... "
+    ${_cp} -r ${UPGRADE_FROM}/config/install ${CGAL_DIR}/config
+    log_print "done."
+
+    # copy gmp header and libs
+    if [ -f ${UPGRADE_FROM}/include/gmp.h ]; then
+	go_up_lines 1
+	print_line "copying gmp header"
+	print_filled_line
+	flush_buffer
+	log_print "copy gmp header ... "
+	${_cp} ${UPGRADE_FROM}/include/gmp.h ${CGAL_INCL_DIR}
+	log_print "done."
+    fi
+    go_up_lines 1
+    print_line "searching/copying evt. gmp libs"
+    print_filled_line
+    flush_buffer
+    log_print "copy gmp libs ... "
+    for i in `${_find} ${UPGRADE_FROM} -follow -name "libgmp.a" -print`; do
+	go_up_lines 1
+	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {i=NF-1;print $i}'`"
+	print_filled_line
+	flush_buffer
+	newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/lib${CGAL_LIB_DIR}g"`
+	_check_dir_exists_create ${newdir}
+	cp ${i} ${newdir}
+    done
+    print_headline "D O N E"
+    go_up_lines 1
+    print_filled_line
+    flush_buffer
+    log_print "done."
+}
+
+upgrade_menu()
+{
+    # try to find CGAL-1.* directories first
+    for try in ${CGAL_DIR}/../CGAL-1*; do
+	if [ -d "${try}" -a -r "${try}" -a -x "${try}" ]; then
+	    UPGRADE_FROM="`cd ${try}; pwd`"
+	fi
+    done
+    while [ 0 ]; do
+	clear_screen
+	print_filled_line
+	print_headline "CGAL $CGAL_VERSION Installation Upgrade Menu"
+	print_line     "OS: ${SYST}"
+	print_empty_line
+	print_line     "${_bold_on}<U>${_bold_off}  Upgrade from an existing CGAL Installation" 
+	print_line     "  in ${UPGRADE_FROM:-<undefined>}" 
+	print_line     "${_bold_on}<D>${_bold_off}  Change directory for upgrade" 
+	menu_tailer 'Main Menu'
+
+	case ${KEY} in
+	    u|U) print_empty_line
+		 upgrade
+		 _WHAT_TO_DO=rebuild-all
+		 go_up_lines 2
+		 flush_buffer
+		 build_all
+		 ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+		 return
+		 ;;
+	    d|D) change_dir UPGRADE_FROM dir;;
+	    q|Q) return;;
+	esac
+    done
+}
+
+
+
+# ---------------------------------------------------------------------
 # main menu
 #
 
@@ -4093,6 +4288,9 @@ main_menu()
 	if [ -n "${CGAL_TESTSUITE}" -a -n "${LIB_COMPILED}" ]; then
 	    print_line     "${_bold_on}<S>${_bold_off}  Run CGAL testsuite" 
 	fi
+	if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
+	    print_line "${_bold_on}<U>${_bold_off}  Upgrade from an existing CGAL installation" 
+	fi
 	menu_tailer 'OS'
 
 	case $KEY in
@@ -4100,6 +4298,11 @@ main_menu()
 	    l|L) leda_menu;;
 	    g|G) gmp_menu;;
 	    b|B) lib_menu;;
+	    u|U)
+		if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
+		    upgrade_menu
+		fi
+		;;
 	    a|A)
 		reset_all_test_variables
 		go_down_lines 3
@@ -4235,10 +4438,12 @@ set_variable_from_command_line()
 	eval "$1=\"${_tmp}\""
 	write_buffer "${_LEFTSPACE}Set $1 to \"`value_of $1`\".\n" 
 	return 1
-    else
+    elif [ -n "$3" ]; then
 	eval "$1=\"$3\""
 	write_buffer "${_LEFTSPACE}Set $1 to \"`value_of $1`\".\n" 
 	return 0
+    else
+	exit_on_error "Argument \"${1}\" expected"
     fi
 }
 
@@ -4333,6 +4538,15 @@ while [ ${#} -gt 0 ]; do
 		_CONFLICT='y'
 	    fi
 	    _WHAT_TO_DO='interactive'
+	    ;;
+	--upgrade*|-u*|-U*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    if set_variable_from_command_line 'UPGRADE_FROM' "$1" "$2"; then
+		shift
+	    fi
+	    _WHAT_TO_DO='upgrade'
 	    ;;
 	--verbose*|-verbose*)
 	    INSTALL_VERBOSE='y'
@@ -4430,6 +4644,14 @@ case ${_WHAT_TO_DO} in
 	${_printf} "%s\n" \
 	    "--------------------------------------------------------"
 	;;
+    *upgrade*)
+	cgal_install_header
+	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	startup_interactive
+	guess_os log_print
+	upgrade
+	finish_interactive
+	;;
     *interactive*)
 	cgal_install_header
 	# start interactive part
@@ -4460,39 +4682,7 @@ case ${_WHAT_TO_DO} in
 	cgal_install_header
 	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
 	startup_interactive
-	guess_os log_print
-	${_printf} "\n\n"
-	for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
-	do
-	    log_print
-	    log_print \
-		"--------------------------------------------------------"
-	    log_print "Build on `${_basename} ${i}`:" 
-	    log_print \
-		"--------------------------------------------------------"
-	    try_to_get_var_from_file COMPILER ${i}
-	    if [ -n "${COMPILER}" ]; then
-		set_ostype
-		set_compiler_flags
-		retrieve_compiler_settings
-		case ${_WHAT_TO_DO} in
-		    *rebuild-all*)
-			test_compiler_specifica "${INSTALL_VERBOSE}"
-			;;
-		esac
-		lib_menu
-		store_compiler_settings
-	    else
-		log_print "Cannot rebuild the library."
-		print_filled_line
-		print_empty_line
-		print_headline "Cannot build on `${_basename} ${i}` !" 
-		print_headline "No COMPILER defined in config/install/..."
-		print_filled_line
-		write_buffer "\n"
-		flush_buffer
-	    fi
-	done
+	build_all
 	finish_interactive
 	;;
     *help*)
