@@ -87,17 +87,21 @@ template <typename ET>
 struct Lazy_exact_rep : public Rep
 {
   Interval_base in; // could be const, except for rafinement ? or mutable ?
-  ET *et;
+  ET *et; // mutable as well ?
 
   Lazy_exact_rep (const Interval_base i)
       : in(i), et(NULL) {}
+
+private:
+  Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
+public:
 
   Interval_nt<true> approx() const  // Better return a const ref instead ?
   {
       return in;
   }
 
-  ET exact()  // Better return a const ref instead ?
+  const ET & exact()
   {
       if (et==NULL)
           update_exact();
@@ -106,7 +110,7 @@ struct Lazy_exact_rep : public Rep
 
   virtual void update_approx() = 0;  // Not used anymore...  at the moment :)
   virtual void update_exact() = 0;
-  virtual ~Lazy_exact_rep () {};
+  virtual ~Lazy_exact_rep () { delete et; };
 };
 
 // int constant

@@ -1,3 +1,6 @@
+Version 4.144 on 14 August 2002
+- Fix memleak in Lazy_exact_nt, and avoid a few copies.
+
 Version 4.143 on 13 August 2002
 - Move to_interval(long long) from Interval_arithmetic.h to long_long.h.
 
