@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+23 March 2004 Radu Ursu
+- Put splitters between the widgets of the demo so that the drawing area 
+  could become bigger
+
 10 February 2004 Radu Ursu
 - Updated headers in examples
 

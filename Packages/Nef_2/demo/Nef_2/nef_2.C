@@ -66,6 +66,7 @@ int main(int, char*)
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qsplitter.h>
+#include <qsplitter.h>
 #include <qstatusbar.h>
 #include <qtimer.h>
 #include <qtoolbar.h>
@@ -122,14 +123,13 @@ public:
   Layout_widget(QWidget *parent = 0, const char *name = 0)
     : QWidget(parent, name)
   {
-    QBoxLayout *topLayout = new QVBoxLayout( this, 5 );    
-    QBoxLayout *bottomLayout = new QHBoxLayout( topLayout );
-    nef_list1 = new Nef_2_list_box(this, "Nef_list_1");
-    nef_list2 = new Nef_2_list_box(this, "Nef_list_2");
-    bottomLayout->addWidget(nef_list1);
-    bottomLayout->addWidget(nef_list2);    
-    widget = new CGAL::Qt_widget(this);
-    topLayout->addWidget(widget);
+    QBoxLayout *topLayout = new QVBoxLayout( this, 5 );
+    QSplitter *top_splitter = new QSplitter(Qt::Vertical, this);
+    topLayout->addWidget(top_splitter);
+    QSplitter *splitter1 = new QSplitter(top_splitter);
+    nef_list1 = new Nef_2_list_box(splitter1, "Nef_list_1");
+    nef_list2 = new Nef_2_list_box(splitter1, "Nef_list_2");
+    widget = new CGAL::Qt_widget(top_splitter);
   };
   CGAL::Qt_widget* get_qt_widget(){return widget;}
   Nef_2_list_box* get_nef_list1(){return nef_list1;}
