@@ -21,22 +21,25 @@
 // ============================================================================
  
 
-#include <CGAL/basic.h>
-#include <cassert>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/_test_misc.C>
+
+#include <cassert>
+
+#include <CGAL/_test_cls_object.h>
 #include <CGAL/_test_cls_quotient.C>
 #include <CGAL/_test_fct_point_conversion.h>
 #include <CGAL/_test_fct_determinant.C>
+
 #include <CGAL/MP_Float.h>
 #include <CGAL/Precise_numbers.h>
 #ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
+#  include <CGAL/Gmpz.h>
 #endif
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
+#  include <CGAL/leda_integer.h>
 #endif
 
 int
@@ -44,11 +47,13 @@ main()
 {
   std::cout << "Testing miscellaneous" << std::endl;
   typedef   CGAL::Homogeneous<Precise_integer>                 H_Cls;
+  typedef   CGAL::Simple_homogeneous<Precise_integer>          SH_Cls;
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >  C_Cls;
-  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >  S_Cls;
+  typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >  SC_Cls;
   _test_cls_object( C_Cls() );
   _test_cls_object( H_Cls() );
-  _test_cls_object( S_Cls() );
+  _test_cls_object( SC_Cls() );
+  _test_cls_object( SH_Cls() );
   _test_cls_quotient( int(1) );
   _test_cls_quotient( double(1.0) );
   _test_cls_quotient( long(1) );
