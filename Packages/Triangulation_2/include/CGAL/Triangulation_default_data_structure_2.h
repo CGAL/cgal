@@ -841,10 +841,10 @@ is_valid(bool verbose, int level) const
  
   // vertex count
   int vertex_count = 0;
-  for(Vertex_iterator it = vertices_begin(); it != vertices_end();
-      ++it) {
-    CGAL_triangulation_assertion( it->face() != NULL);
-    result = result && it->is_valid(verbose,level);
+  for(Vertex_iterator vit = vertices_begin(); vit != vertices_end();
+      ++vit) {
+    CGAL_triangulation_assertion( vit->face() != NULL);
+    result = result && vit->is_valid(verbose,level);
     CGAL_triangulation_assertion( result );
     ++vertex_count;
   }
@@ -853,13 +853,13 @@ is_valid(bool verbose, int level) const
     
   //edge count
   int edge_count = 0;
-  for(Edge_iterator it = edges_begin(); it != edges_end(); ++it) { 
+  for(Edge_iterator eit = edges_begin(); eit != edges_end(); ++eit) { 
     ++edge_count;
   }
 
   // face count
   int face_count = 0;
-  for(Face_iterator it = faces_begin(); it != faces_end(); ++it) {
+  for(Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
     ++face_count;
   }
         
@@ -967,18 +967,18 @@ copy_tds(const Tds &tds, const Vertex* v)
   }
 
   // link each vertex to a face
-  for( Vertex_iterator it = tds.vertices_begin();
-       it != tds.vertices_end() ; ++it) {
-    v2 = (Vertex*) V[&(*it)];
-    v2->set_face( (Face*) F[it->face()] );
+  for( Vertex_iterator vit = tds.vertices_begin();
+       vit != tds.vertices_end() ; ++vit) {
+    v2 = (Vertex*) V[&(*vit)];
+    v2->set_face( (Face*) F[vit->face()] );
   }
 
   // hook neighbor of the  faces
- for( Iterator_base ib = tds.iterator_base_begin();
-      ib != tds.iterator_base_end(); ++ib){
+ for( Iterator_base ibb = tds.iterator_base_begin();
+      ibb != tds.iterator_base_end(); ++ibb){
    for(int j = 0; j <= tds.dimension(); ++j){
-     f2 = (Face*) F[&(*ib)];
-     f2->set_neighbor(j, (Face*) F[ib->neighbor(j)] );
+     f2 = (Face*) F[&(*ibb)];
+     f2->set_neighbor(j, (Face*) F[ibb->neighbor(j)] );
    }
  }
 
@@ -1162,22 +1162,26 @@ file_input( std::istream& is, bool skip_first)
 
   // Creation of the faces
   int index;
-  for(i = 0; i < m; ++i) {
-    F[i] = new Face() ;
-    for(int j = 0; j < dimension()+1; ++j){
-      is >> index;
-      F[i]->set_vertex(j, V[index]);
-      // The face pointer of vertices is set too often,
-      // but otherwise we had to use a further map
-      V[index]->set_face(F[i]);
+  {
+    for(i = 0; i < m; ++i) {
+      F[i] = new Face() ;
+      for(int j = 0; j < dimension()+1; ++j){
+	is >> index;
+	F[i]->set_vertex(j, V[index]);
+	// The face pointer of vertices is set too often,
+	// but otherwise we had to use a further map
+	V[index]->set_face(F[i]);
+      }
     }
   }
 
   // Setting the neighbor pointers 
-  for(i = 0; i < m; ++i) {
-    for(int j = 0; j < dimension()+1; ++j){
-      is >> index;
-      F[i]->set_neighbor(j, F[index]);
+  {
+    for(i = 0; i < m; ++i) {
+      for(int j = 0; j < dimension()+1; ++j){
+	is >> index;
+	F[i]->set_neighbor(j, F[index]);
+      }
     }
   }
   
