@@ -635,11 +635,12 @@ in Section~\ref{sec:using_qp_solver}.
 
 @macro <Min_annulus_d types> += @begin
 
+    typedef  typename Index_vector::const_iterator IVCI;
     typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+                 IVCI, Point_by_index >
                                         Inner_support_point_iterator;
     typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+                 IVCI, Point_by_index >
                                         Outer_support_point_iterator;
 @end
 
@@ -1189,9 +1190,9 @@ The matrix $A$ and the vectors $b$ and $c$ are stored in the data members
     typedef  std::vector<NT>            NT_vector;
     typedef  std::vector<NT_vector>     NT_matrix;
 
+    typedef  CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator NTMCI;
     typedef  CGAL::Join_random_access_iterator_1<
-                 CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator,
-                 LP_rep_row_of_a<NT> >  A_iterator;
+                 NTMCI, LP_rep_row_of_a<NT> >  A_iterator;
     typedef  typename NT_vector::const_iterator
                                         B_iterator;
     typedef  typename NT_vector::const_iterator
@@ -1661,7 +1662,7 @@ respective number type is available.
 
 @macro <Min_annulus_d test: test variant output>(1) many = @begin
     verr << endl
-	 << "==================================="
+         << "==================================="
          << "===================================" << endl
          << "Testing `Min_annulus_d' with traits class model" << endl
          << "==> " << TEST_VARIANT_@1 << endl

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2001 The CGAL Consortium
 //
@@ -6,13 +6,14 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Min_annulus_d.h
-// package       : $CGAL_Package: Min_annulus_d $
+// package       : Min_annulus_d (1.1.3)
+// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_annulus_d.aw
@@ -23,7 +24,7 @@
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Smallest enclosing annulus in arbitrary dimension
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
@@ -162,11 +163,13 @@ class Min_annulus_d {
                  CGAL::Unary_compose_1<Point_by_index,Divide> >
                                         Support_point_iterator;
     
+    
+    typedef  typename Index_vector::const_iterator IVCI;
     typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+                 IVCI, Point_by_index >
                                         Inner_support_point_iterator;
     typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+                 IVCI, Point_by_index >
                                         Outer_support_point_iterator;
     
     typedef  typename ET_vector::const_iterator
@@ -533,9 +536,9 @@ struct LP_rep_min_annulus_d {
     typedef  std::vector<NT>            NT_vector;
     typedef  std::vector<NT_vector>     NT_matrix;
     
+    typedef  CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator NTMCI;
     typedef  CGAL::Join_random_access_iterator_1<
-                 CGAL_TYPENAME_MSVC_NULL NT_matrix::const_iterator,
-                 LP_rep_row_of_a<NT> >  A_iterator;
+                 NTMCI, LP_rep_row_of_a<NT> >  A_iterator;
     typedef  typename NT_vector::const_iterator
                                         B_iterator;
     typedef  typename NT_vector::const_iterator
