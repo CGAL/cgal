@@ -1,5 +1,6 @@
-#include <stdio.h>
-#include        "Timing.h"
+#include <cstdio>
+#include <ctime>
+#include "Timing.h"
 
 #ifndef CLK_TCK
 #define CLK_TCK 100
@@ -11,17 +12,17 @@ extern "C" {
  * Structure returned by times()
  */
 struct tms {
-	clock_t	tms_utime;		/* user time */
-	clock_t	tms_stime;		/* system time */
-	clock_t	tms_cutime;		/* user time, children */
-	clock_t	tms_cstime;		/* system time, children */
+	std::clock_t	tms_utime;		/* user time */
+	std::clock_t	tms_stime;		/* system time */
+	std::clock_t	tms_cutime;		/* user time, children */
+	std::clock_t	tms_cstime;		/* system time, children */
 };
 
 #if !defined(_KERNEL)
 #if defined(__STDC__)
-  clock_t times(struct tms *);
+  std::clock_t times(struct tms *);
 #else
-  clock_t times();
+  std::clock_t times();
 #endif
 #endif
 

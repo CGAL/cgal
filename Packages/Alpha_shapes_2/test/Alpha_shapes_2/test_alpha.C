@@ -75,7 +75,7 @@ Construst_Alpha_shape(const std::list<Point> &V_p,
   Alpha_shape_2 A;
   
   int  n = A.make_Alpha_shape(V_p.begin(), V_p.end());
-  cerr << "Inserted " << n  << " points" << endl;
+  std::cerr << "Inserted " << n  << " points" << std::endl;
   
   if (mode) 
     { A.set_mode(Alpha_shape_2::GENERAL); } 
