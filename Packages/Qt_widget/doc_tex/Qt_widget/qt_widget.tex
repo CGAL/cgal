@@ -489,7 +489,7 @@ The private member redraw() is used to output the triangulation on the screen.
 private:
   void redraw()
   {
-    Qt\_widget::redraw();
+    Qt_widget::redraw();
     *this << dt;
   }
 \end{ccExampleCode}
@@ -656,8 +656,8 @@ private:
     if(e->button() == Qt::LeftButton)
     {
       double
-	x=static_cast<double>(widget->x_real(e->x())),
-	y=static_cast<double>(widget->y_real(e->y()));
+        x=static_cast<double>(widget->x_real(e->x())),
+        y=static_cast<double>(widget->y_real(e->y()));
       widget->new_object(CGAL::make_object(Point(x, y)));
     }
   }
@@ -668,7 +668,7 @@ is called by \ccStyle{Qt\_widget} if the tool is attached.
 
 In My\_Window class an instance of My\_Tool is created:
 \begin{ccExampleCode}
-My_Tool	t;
+My_Tool t;
 \end{ccExampleCode}
 In the constructor of My\_Window we attach the tool:
 \begin{ccExampleCode}
@@ -687,8 +687,8 @@ tool calls the new\_object() member function from \ccStyle{Qt\_widget}, that emi
 a signal new\_cgal\_object(CGAL::Object). To receive this signal, in the
 constructor of My\_Window a connect is declared:
 \begin{ccExampleCode}
-connect(widget, SIGNAL(new\_cgal\_object(CGAL::Object)), 
-             this, SLOT(get\_object(CGAL::Object)));
+connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+             this, SLOT(get_object(CGAL::Object)));
 \end{ccExampleCode}
 
 This connect tells the application that every time \ccStyle{Qt\_widget} emits the
@@ -757,7 +757,7 @@ addToolBar(tools_toolbar, Top, FALSE);
 To add a button in the toolbar you have to:
 -declare the button in My\_Window:
 \begin{ccExampleCode}
-QToolButton *get_point_but;	//the toolbar button
+QToolButton *get_point_but;     //the toolbar button
 \end{ccExampleCode}
 -add the button in the toolbar:
 \begin{ccExampleCode}
