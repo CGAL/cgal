@@ -212,15 +212,15 @@ void Assert_iterator( const I &) {
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
-    typedef std::iterator_traits<I> Traits;
+    typedef typename std::iterator_traits<I>::iterator_category category;
     Assert_compile_time_tag( std::input_iterator_tag(),
-			     Traits::iterator_category());
+			     category())
 }
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
-  typedef std::iterator_traits<I> Traits;
+  typedef typename std::iterator_traits<I>::iterator_category category;
     Assert_compile_time_tag( std::output_iterator_tag(),
-			     Traits::iterator_category());
+			     category());
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
