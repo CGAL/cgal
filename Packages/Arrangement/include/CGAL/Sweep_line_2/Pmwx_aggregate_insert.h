@@ -80,22 +80,14 @@ public:
   void insert_curves(CurveInputIterator begin, 
                      CurveInputIterator end)
   {
-    if(m_arr->edges_begin() == m_arr->edges_end())
+    std::vector<X_monotone_curve_2>      xcurves_vec;
+    for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
     {
-       m_sweep_line.init(begin, end);
-       m_sweep_line.sweep();
+      xcurves_vec.push_back(eit->curve());
     }
-    else
-    {
-      std::vector<X_monotone_curve_2>      curves_vec(begin,end);
-      for (Edge_iterator eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) 
-      {
-        curves_vec.push_back(eit->curve());
-      }
-      m_arr->clear();
-      m_sweep_line.init(curves_vec.begin(), curves_vec.end());
-      m_sweep_line.sweep();
-    }
+    m_arr->clear();
+    m_sweep_line.init(begin, end, xcurves_vec.begin(), xcurves_vec.end());
+    m_sweep_line.sweep();
   }
 
 
