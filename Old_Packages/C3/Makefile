@@ -56,11 +56,11 @@ clean:
 	cd test/Kernel ; make distclean
 
 $(Package).tar.gz:
-	./check_headers.pl -u include/CGAL/*/*.[Ch]
+#	./check_headers.pl -u include/CGAL/*/*.[Ch]
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version maintainer \
 	long_description.txt description.txt changes.txt \
 	include
-	./check_headers.pl -u include/CGAL/*/*.[Ch]
+#	./check_headers.pl -u include/CGAL/*/*.[Ch]

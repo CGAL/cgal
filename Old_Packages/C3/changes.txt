@@ -1,4 +1,4 @@
-Version 4.3 (29 March 2000) [my]
+Version 4.3  (29 March 2000) [my]
 - fixed bugs in Iso_cuboid_3.C :
  #include <CGAL/Cartesian/predicates_on_points_3.h> 
 instead of
