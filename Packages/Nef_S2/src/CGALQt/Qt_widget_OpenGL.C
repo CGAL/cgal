@@ -10,8 +10,10 @@ Qt_widget_OpenGL::Qt_widget_OpenGL(int width, int height, double scale) :
   motion_mode(ROTATE),
   dx(0),
   dy(0),
+  dz(0),
   s(scale),
-  init_s(scale) {}
+  init_s(scale),
+  rotation(CGAL::IDENTITY){}
   
 CGAL::OGL::OGL_base_object::Affine_3
 Qt_widget_OpenGL::virtual_sphere_transformation( double old_x, double old_y, 
