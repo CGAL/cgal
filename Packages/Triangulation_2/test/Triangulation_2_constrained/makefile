@@ -11,6 +11,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+	-I../../include \
 	-I../Triangulation_2/include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(EXTRA_FLAGS) \
