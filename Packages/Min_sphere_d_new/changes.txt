@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.11 on 01-Nov-2000
+- removed `Min_sphere_d.tex' from submission to avoid conflicts with old Min.
+
 Version 0.10 on 28-Sep-2000
 - unified traits class models for dD optimisation algorithms
 - added indexing commands
