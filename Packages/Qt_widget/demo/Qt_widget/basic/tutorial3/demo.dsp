@@ -99,10 +99,6 @@ SOURCE=..\..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\CGALQt\Qt_widget_tool.C
-# End Source File
-# Begin Source File
-
 SOURCE=.\tutorial3.C
 # End Source File
 # End Group
@@ -116,10 +112,6 @@ SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget.h
 # Begin Source File
 
 SOURCE=..\..\..\..\include\CGAL\IO\Qt_widget_layer.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget_tool.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
