@@ -450,7 +450,7 @@ exact number type, these routines cannot simply return numbers of type
 coordinates and radius.  Consequently, the routines \code{radius()}
 and \code{center\_begin()} produce instances of type
 \code{Min\_\-sphere\_\-of\_\-spheres\_d\angl{T}::Re\-sult}.
-When the exact miniball is computed, this type is a 
+When the exact miniball is computed, this type is a
 derived class of \code{std::pair\angl{\code{FT},\code{FT}}}: Denoting
 the first component of a pair by~$a$ and its second by~$b$, an
 instance of class \code{Result} then represents
