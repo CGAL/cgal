@@ -484,6 +484,7 @@ create_wrapper() {
 
 \documentclass{book}
 \usepackage{Manual/cgal_manual}
+\gdef\lciManualTitle{$1 Package}%
 
 \makeindex
 EOF
