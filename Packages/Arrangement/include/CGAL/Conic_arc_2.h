@@ -52,7 +52,7 @@ public:
   typedef typename R::Point_2 Base;
   typedef typename R::RT      RT;
 
-  enum Type
+  typedef enum 
   {
     User_defined,
     Tangency,
@@ -60,7 +60,7 @@ public:
     Intersection_approx,
     Ray_shooting_exact,
     Ray_shooting_approx
-  };
+  } Type;
 
 private:
   Type       _type;
@@ -190,8 +190,12 @@ class Conic_arc_2
  public:
 
   typedef Cartesian<NT>        R;
-  typedef Point_2_ex<R>        Point;
-  typedef Conic_2<R>           Conic;
+  typedef Point_2_ex<R>        Point_2;
+  typedef typename R::Conic_2  Conic_2;
+
+  // Obsolete, for backward compatibility
+  typedef Point_2              Point;
+  typedef Conic_2              Conic;
 
  private:
 
