@@ -1,4 +1,4 @@
-2.6 () MY
+2.6 (06 May 2003) MY
 + added Triangle_3 intersection tests
 
 2.5 (28 September 2001)
