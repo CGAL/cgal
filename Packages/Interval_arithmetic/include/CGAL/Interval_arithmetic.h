@@ -42,14 +42,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
-// Some useful constants
-
-// Smallest interval strictly containing zero.
-#define CGAL_IA_SMALLEST (CGAL::Interval_nt_advanced(-CGAL_IA_MIN_DOUBLE, \
-                                                      CGAL_IA_MIN_DOUBLE))
-// [-inf;+inf]
-#define CGAL_IA_LARGEST (CGAL::Interval_nt_advanced(-HUGE_VAL, HUGE_VAL))
-
 CGAL_BEGIN_NAMESPACE
 
 struct Interval_nt_advanced
@@ -59,7 +51,6 @@ struct Interval_nt_advanced
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
-  friend IA operator/     (const double, const IA &);
   friend IA sqrt          (const IA &);
   friend IA square        (const IA &);
   friend IA abs           (const IA &);
@@ -173,14 +164,25 @@ struct Interval_nt_advanced
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
-  { return IA(std::min(_inf,d._inf), std::max(_sup,d._sup)); }
+  { return IA(std::min(_inf, d._inf), std::max(_sup, d._sup)); }
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
-  { return IA(std::max(_inf,d._inf), std::min(_sup,d._sup)); }
+  { return IA(std::max(_inf, d._inf), std::min(_sup, d._sup)); }
 
 protected:
   bound_t _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 };
+
+// Two useful constant intervals.
+// Smallest interval strictly containing zero.
+static const Interval_nt_advanced Interval_Smallest
+             (-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
+// [-inf;+inf]
+static const Interval_nt_advanced Interval_Largest (-HUGE_VAL, HUGE_VAL);
+
+// I'll remove those macros once it's tested.
+#define CGAL_IA_SMALLEST CGAL::Interval_Smallest
+#define CGAL_IA_LARGEST  CGAL::Interval_Largest
 
 inline
 Interval_nt_advanced
