@@ -78,8 +78,10 @@ public:
     Vertex_handle v0 = f->vertex( this->ccw(i) );
     Vertex_handle v1 = f->vertex( this->cw(i)  );
 
-    Face_handle f1 = this->create_face(v0, v, v1, NULL, f, NULL);
-    Face_handle f2 = this->create_face(v0, v1, v, NULL, NULL, g);
+    Face_handle f_undef;
+
+    Face_handle f1 = this->create_face(v0, v, v1, f_undef, f, f_undef);
+    Face_handle f2 = this->create_face(v0, v1, v, f_undef, f_undef, g);
 
     f1->set_neighbor(0, f2);
     f1->set_neighbor(2, f2);
