@@ -100,6 +100,10 @@ public:
   }
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 inline
 bool
@@ -190,6 +194,10 @@ operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &d)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

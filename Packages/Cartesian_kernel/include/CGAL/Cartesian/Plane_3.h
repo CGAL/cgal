@@ -142,6 +142,10 @@ public:
   bool         is_degenerate() const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -396,6 +400,10 @@ operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANEC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

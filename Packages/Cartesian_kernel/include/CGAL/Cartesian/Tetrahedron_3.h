@@ -90,6 +90,10 @@ public:
   bool       is_degenerate() const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 bool
 TetrahedronC3<R CGAL_CTAG>::
@@ -286,6 +290,10 @@ operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

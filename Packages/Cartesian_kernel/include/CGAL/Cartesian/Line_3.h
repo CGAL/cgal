@@ -105,6 +105,10 @@ public:
   }
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 inline
 bool
@@ -202,6 +206,10 @@ operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
     return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINEC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

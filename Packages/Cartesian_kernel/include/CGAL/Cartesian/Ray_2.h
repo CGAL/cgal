@@ -101,6 +101,10 @@ public:
   bool        collinear_has_on(const Point_2 &p) const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -247,6 +251,10 @@ operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

@@ -79,6 +79,10 @@ public:
   Bbox_3     bbox() const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 bool
 TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
@@ -190,6 +194,10 @@ operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

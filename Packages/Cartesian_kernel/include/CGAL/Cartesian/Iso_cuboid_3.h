@@ -98,6 +98,10 @@ public:
   FT           zmax() const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -286,6 +290,10 @@ operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

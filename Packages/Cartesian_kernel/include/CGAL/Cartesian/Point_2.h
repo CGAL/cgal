@@ -137,6 +137,10 @@ public:
   }
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 CGAL_KERNEL_INLINE
 typename PointC2<R CGAL_CTAG>::FT
@@ -209,6 +213,10 @@ operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINTC2
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 
