@@ -1,3 +1,6 @@
+22 February 2005 Sylvain Pion
+- Added Curved_kernel to the internal release.
+
 11 February 2005 Sylvain Pion
 - create_testresult_page : cleanups, fix version selector when first
   execution, and remove obsolete option "-p".
