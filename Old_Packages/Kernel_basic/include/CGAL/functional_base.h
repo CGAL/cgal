@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1997, 1998, 1999, 2000, 2001 The CGAL Consortium
+// Copyright (c) 1997-2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,19 +8,17 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-68 $
-// release_date  : $CGAL_Date: 2002/03/26 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/functional_base.h
-// package       : Kernel_basic (3.87)
-// maintainer    : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+// package       : Kernel_basic 
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@cs.unc.edu>
 //
 // Basics for CGAL Functors.
-// coordinator   : ?
 // ======================================================================
 
 #ifndef CGAL_FUNCTIONAL_BASE_H
