@@ -31,10 +31,10 @@ convert_from_to (const Interval_nt_advanced&, const leda_real & z)
 {
     CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
     FPU_set_cw(CGAL_FE_TONEAREST);
-    double approx = to_double(z);
+    double approx = CGAL::to_double(z);
     double rel_error = z.get_double_error();
     FPU_set_cw(CGAL_FE_UPWARD);
-    Interval_nt_advanced result = approx
+    Interval_nt_advanced result = Interval_nt_advanced(approx)
 	* ( Interval_nt_advanced(-rel_error,rel_error) + 1 );
     CGAL_expensive_assertion_code(FPU_set_cw(CGAL_FE_TONEAREST);)
     CGAL_expensive_assertion( leda_real(result.inf()) <= z &&

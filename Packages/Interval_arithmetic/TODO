@@ -111,6 +111,11 @@ Concerning the new filters:
 
 Concerning the main code:
 -------------------------
+- There are problems with Handle_for if the allocator is not standard, because
+  I allocate with new.  Handle_for cannot work because the allocation doesn't
+  work for virtual derived types from RefCounted.  I guess that's why it fails
+  for Aff_transformation too...  What's the solution.  Ask Stefan if he has a
+  clue.
 - GCC 2.96 fails right now (and in a different way with -g and -O2...).......
   Maybe it's temporary, so let's wait and retry later... [ today's 14 June 00 ]
 - in _FPU.h, some functions are outside namespace CGAL...
@@ -154,6 +159,7 @@ Concerning the script:
 
 Concerning the doc:
 -------------------
+- Documentation seriously needs to be updated !!!!
 - In the 2.0 HTML doc, my enums are indexed twice.
   probably a cc_manual compliance bug from me.
   Idem, my fct to_double(Ia) is not the same as the others...

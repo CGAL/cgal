@@ -5,9 +5,14 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/leda_real.h>
 #include <CGAL/Arithmetic_filter.h>
 #include <CGAL/Lazy_exact_nt.h>
+
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_real.h>
+#else
+typedef double leda_real; // :)
+#endif
 
 #ifdef __GNUG__
 #define UNUSED __attribute__((unused))
@@ -39,7 +44,9 @@ void predicats()
   Point B(NT(2.0)/NT(3),NT(3.0)/NT(3));
   Point C(NT(3.0)/NT(3),NT(4.0)/NT(3));
   Point D(NT(4.0)/NT(3),NT(3.0)/NT(3));
-  cout << A << B << C << endl;
+  cout << "A : " << A << endl;
+  cout << "B : " << B << endl;
+  cout << "C : " << C << endl;
   cout << (int) CGAL::orientation(A,B,C) << endl;
 }
 

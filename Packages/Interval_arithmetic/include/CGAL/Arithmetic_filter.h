@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999 The CGAL Consortium
+// Copyright (c) 1998,1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -23,6 +23,9 @@
 // This file contains a wrapper type for number types, that helps for
 // specializing template predicates, to use interval arithmetic as a filter.
 
+// Note: This stuff will one day be made obsolete by a filtered scheme at the
+//       kernel level.
+
 #ifndef CGAL_ARITHMETIC_FILTER_H
 #define CGAL_ARITHMETIC_FILTER_H
 
@@ -36,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
 // CT = construction type
 // ET = exact type (used for exact predicate evaluation)
 // Type = Static/Dynamic
-// Protection = Advanced/Protected
+// Protection = false/true (used to be Advanced/Protected)
 // Cache = Filter_Cache/No_Filter_Cache
 //
 //   Static  + Protected : static adaptative
@@ -59,14 +62,12 @@ CGAL_BEGIN_NAMESPACE
 
 struct Static {};
 struct Dynamic {};
-struct Protected {};
-struct Advanced {};
 struct No_Filter_Cache {};
 typedef Interval_nt_advanced Filter_Cache;
 
 
 template < class CT, class ET, class Type = Dynamic,
-           class Protection = Protected, class Cache = No_Filter_Cache >
+           bool Protection = true, class Cache = No_Filter_Cache >
 class Filtered_exact
 {
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
@@ -86,7 +87,7 @@ class Filtered_exact
   }
 
   void compute_cache (const No_Filter_Cache &) const
-  { }
+  {}
   void compute_cache (IA &inter) const
   { inter = give_interval (No_Filter_Cache()); }
 
@@ -101,7 +102,7 @@ public:
 
   Filtered_exact () {}
   Filtered_exact (const Filtered_exact<CT, ET, Type, Protection, Cache> & fil)
-      : _value(fil._value), _cache(fil._cache)  { }
+      : _value(fil._value), _cache(fil._cache)  {}
   Filtered_exact (const CT & ct)
       : _value(ct)  { update_cache(); }
   template <class NT>
@@ -119,7 +120,7 @@ public:
     return convert_from_to(ET(), _value);
 #endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
-  double to_double() const { return to_double(_value); }
+  double to_double() const { return CGAL::to_double(_value); }
   Restricted_double dbl() const { return Restricted_double(to_double()); }
 
   Fil  operator- ()               const { return Fil(-_value); }
@@ -153,15 +154,15 @@ public:
 // io_tag, number_type_tag, operator>>, operator<<.
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 sqrt (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return sqrt(fil.value()); }
+{ return CGAL::sqrt(fil.value()); }
 
 namespace NTS {
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 square (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
@@ -170,40 +171,40 @@ square (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 } // namespace NTS
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 bool
 is_valid (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return is_valid(fil.value()); }
+{ return CGAL::is_valid(fil.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 bool
 is_finite (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return is_finite(fil.value()); }
+{ return CGAL::is_finite(fil.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 double
 to_double (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return to_double(fil.value()); }
+{ return CGAL::to_double(fil.value()); }
 
 namespace NTS {
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Sign
 sign (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 { return CGAL_NTS sign(fil.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Comparison_result
 compare (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil,
 	 const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
 { return CGAL_NTS compare(fil.value(), fil2.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 abs (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
@@ -211,33 +212,33 @@ abs (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
 
 } // namespace NTS
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 min (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil,
      const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
 { return min(fil.value(), fil2.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 max (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil,
      const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
 { return max(fil.value(), fil2.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 io_Operator
 io_tag (const Filtered_exact<CT,ET,Type,Protection,Cache> &fil)
 { return io_tag(fil.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 Number_tag
 number_type_tag (const Filtered_exact<CT,ET,Type,Protection,Cache> &fil)
 { return number_type_tag(fil.value()); }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 std::ostream &
 operator<< (std::ostream& os,
@@ -246,7 +247,7 @@ operator<< (std::ostream& os,
     return os << d.value();
 }
 
-template <class CT, class ET, class Type, class Protection, class Cache>
+template <class CT, class ET, class Type, bool Protection, class Cache>
 inline
 std::istream &
 operator>> (std::istream &is, Filtered_exact<CT,ET,Type,Protection,Cache>& d)

@@ -51,11 +51,13 @@ IA_nt test_mult_4_hand_optimized_bis (const IA_nt &a)
                 CGAL_IA_FORCE_TO_DOUBLE(4.0*a.sup()));
 }
 
+#if 0
 IA_nt test_mult_2a(const IA_nt &a) { return 2.0 * a; }
 IA_nt test_mult_a2(const IA_nt &a) { return a * 2.0; }
 
 IA_nt test_mult_4a(const IA_nt &a) { return 4.0 * a; }
 IA_nt test_mult_a4(const IA_nt &a) { return a * 4.0; }
+#endif // 0
 
 IA_nt test_square(const IA_nt &a) { return CGAL_NTS square(a); }
 IA_nt test_sqr(const IA_nt &a) { return a*a; }
@@ -149,9 +151,9 @@ bool overflow_test()
 
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
-         c.is_same(CGAL::Interval_nt_advanced::Largest) &&
-         d.is_same(CGAL::Interval_nt_advanced::Largest) &&
-	 e.is_same(CGAL::Interval_nt_advanced::Largest) &&
+         c.is_same(IA_nt::Largest) &&
+         d.is_same(IA_nt::Largest) &&
+	 e.is_same(IA_nt::Largest) &&
 	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
 	 g.is_same(-f);
 }
@@ -172,7 +174,7 @@ bool underflow_test()
   for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
-      && b.is_same(CGAL::Interval_nt_advanced::Smallest)
+      && b.is_same(IA_nt::Smallest)
       && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
 }
 
@@ -190,8 +192,8 @@ bool division_test()
 
   while (++i < 100)
   {
-    b = (1/d + d)/4 + 0.5;
-    a = (-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
+    b = (IA_nt(1)/d + d)/4 + 0.5;
+    a = (IA_nt(-1)/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
     DEBUG( std::cout << d << e << std::endl; )
     if ( b.is_same(d) && a.is_same(e) )
       break;
@@ -201,7 +203,7 @@ bool division_test()
   DEBUG( std::cout << d << e << i << std::endl; )
   DEBUG( std::cout << d-1 << e+1 << std::endl; )
 
-  return c.is_same(CGAL::Interval_nt_advanced::Largest) && i == 54;
+  return c.is_same(IA_nt::Largest) && i == 54;
 }
 
 
@@ -220,7 +222,7 @@ bool multiplication_test()
 
   // When CGAL_IA_DEBUG is defined, it'll test the current rounding mode for
   // these operations.
-  double k = 1;
+  IA_nt k = 1;
   i=2;
   h = k+i; h = i+k; h += k; h += i;
   h = k-i; h = i-k; h -= k; h -= i;
@@ -237,7 +239,7 @@ bool utility_test()
 {
   bool tmpflag, flag = true;
   const IA_nt a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
-  IA_nt h = 1/c;
+  IA_nt h = IA_nt(1)/c;
 
   tmpflag = (CGAL_NTS sign(c) == CGAL::ZERO) &&
             (CGAL_NTS sign(e) == CGAL::POSITIVE) &&
@@ -433,7 +435,7 @@ int main()
   TEST_MACRO(is_valid_test);
   TEST_MACRO(is_finite_test);
 
-  print_res(0.0 < IA_nt(1));
+  print_res(IA_nt(0) < IA_nt(1));
 
 #ifdef ADVANCED
   CGAL::FPU_set_cw(backup);

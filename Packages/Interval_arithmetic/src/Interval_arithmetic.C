@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -42,19 +42,20 @@ CGAL_BEGIN_NAMESPACE
 #include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
 #endif
 
-unsigned Interval_nt_advanced::number_of_failures = 0;
-const Interval_nt_advanced Interval_nt_advanced::Largest (-HUGE_VAL, HUGE_VAL);
-const Interval_nt_advanced Interval_nt_advanced::Smallest
-             (-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
+unsigned Interval_base::number_of_failures;
+
+const Interval_base Interval_base::Largest (-HUGE_VAL, HUGE_VAL);
+const Interval_base Interval_base::Smallest (-CGAL_IA_MIN_DOUBLE,
+                                              CGAL_IA_MIN_DOUBLE);
 
 std::ostream &
-operator<< (std::ostream & os, const Interval_nt_advanced & I)
+operator<< (std::ostream & os, const Interval_base & I)
 {
     return os << "[" << I.inf() << ";" << I.sup() << "]";
 }
 
 std::istream &
-operator>> (std::istream & is, Interval_nt_advanced & I)
+operator>> (std::istream & is, Interval_base & I)
 {
     double d;
     is >> d;

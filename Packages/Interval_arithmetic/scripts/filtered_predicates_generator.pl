@@ -10,8 +10,9 @@
 
 # TODO:
 # - Split the lines only if the result is larger than 80 characters ?
-# - Separate the class in other files ?  (they are needed by libCGAL)
-# - while parsing, remove CGAL_assertion() and co from the original code.
+#   ( or use a C++ code indenter ? )
+# - Separate the classes in other files ?  (they are needed by libCGAL)
+# - While parsing, remove CGAL_assertion() and co from the original code.
 # - Add assertions about the epsilons being updated.
 
 use vars qw($opt_p $opt_h $opt_d $opt_v $opt_l); # Suppress warnings
@@ -113,52 +114,33 @@ sub print_CGAL_header {
 
 # Print dynamic versions
 sub print_dynamic {
-  my ($adv, $CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
+  my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
   my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic,"
-             ." $adv, CGAL_IA_CACHE>";
+             ." CGAL_IA_PROTECTED, CGAL_IA_CACHE>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
   my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
 
   print FO
 "#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
 #endif
 /* $inline */
 $ret_type
 $fct_name($args_call)
-{";
-
-  if ($adv eq "Advanced") {
-    print FO "
-  CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
+{
   try
   {
+    ${CGAL}Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
-    ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(CGAL_FE_TONEAREST);
-    $ret_type result = $fct_name($args_exact);
-    ${CGAL}FPU_set_cw(backup);
-    return result;
-  }";
-  } else {
-    print FO "
-  ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  try
-  {
-    $ret_type result = $fct_name($args_inter);
-    ${CGAL}FPU_set_cw(backup);
-    return result;
-  } 
-  catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
-  {
-    ${CGAL}FPU_set_cw(backup);
+    ${CGAL}Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
-  }";
   }
-  print FO "\n}\n\n";
+}\n\n";
 }
 
 # Print static infos
@@ -356,8 +338,7 @@ sub print_predicates {
     my ($CGAL) = @{$predicates[$i]};
     print FO "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
     print FO "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
-    print_dynamic("Protected", @{$predicates[$i]});
-    print_dynamic("Advanced", @{$predicates[$i]});
+    print_dynamic(@{$predicates[$i]});
     print FO "#ifdef CGAL_IA_NEW_FILTERS\n\n";
     print_predicate_struct(@{$predicates[$i]});
     print_static("Protected", @{$predicates[$i]});

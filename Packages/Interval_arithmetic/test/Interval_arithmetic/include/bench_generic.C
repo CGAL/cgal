@@ -77,14 +77,14 @@ void bench()
 
   BENCH_MACRO_generic(EMPTY, c = CGAL::sqrt(b), "sqrt");
   BENCH_MACRO_generic(EMPTY, c = CGAL_NTS square(b), "square");
-  BENCH_MACRO_generic(EMPTY, c = c * dd, "ia*d");
-  BENCH_MACRO_generic(EMPTY, c = dd * c, "d*ia");
-  BENCH_MACRO_generic(EMPTY, c = c + dd, "ia+d");
-  BENCH_MACRO_generic(EMPTY, c = dd + c, "d+ia");
-  BENCH_MACRO_generic(EMPTY, c = c - dd, "ia-d");
-  BENCH_MACRO_generic(EMPTY, c = dd - c, "d-ia");
-  BENCH_MACRO_generic(EMPTY, c = dd / c, "d/ia");
-  BENCH_MACRO_generic(EMPTY, c = c / dd, "ia/d");
+  BENCH_MACRO_generic(EMPTY, c = c * IA_nt(dd), "ia*d");
+  BENCH_MACRO_generic(EMPTY, c = IA_nt(dd) * c, "d*ia");
+  BENCH_MACRO_generic(EMPTY, c = c + IA_nt(dd), "ia+d");
+  BENCH_MACRO_generic(EMPTY, c = IA_nt(dd) + c, "d+ia");
+  BENCH_MACRO_generic(EMPTY, c = c - IA_nt(dd), "ia-d");
+  BENCH_MACRO_generic(EMPTY, c = IA_nt(dd) - c, "d-ia");
+  BENCH_MACRO_generic(EMPTY, c = IA_nt(dd) / c, "d/ia");
+  BENCH_MACRO_generic(EMPTY, c = c / IA_nt(dd), "ia/d");
 }
 
 // OrientationC2() benchmark.

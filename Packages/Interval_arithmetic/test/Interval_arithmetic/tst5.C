@@ -60,7 +60,7 @@ void bench(void);
 int main()
 {
   // Interval_nt ia (2);
-  // double d = to_double(ia);
+  // double d = CGAL::to_double(ia);
   // cin >> ia;
   // std::cout << ia << std::endl;
   CGAL::set_eps(0.0001);
@@ -104,7 +104,7 @@ int test()
   CGAL::Filtered_exact< CGAL::Quotient<leda_integer>, CGAL::Quotient<leda_integer> > jj (4,5);
 
   CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  CGAL::Interval_nt nt = jj.interval();
+  CGAL::Interval_nt_advanced nt = jj.interval();
   CGAL::FPU_set_cw(backup);
 
   std::cout << nt << std::endl;

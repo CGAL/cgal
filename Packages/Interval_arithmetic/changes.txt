@@ -1,9 +1,17 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.49 on ?? June 2000
+- Fixed a bunch of namespace issues.
+- Interval_nt is now a template class.
+- Template parameter "Protection" of Filtered_exact is now a bool.
+- The filtered predicates now use Protect_FPU_rounding, and the 2 dynamic
+  versions are merged.  They could become nice function-try-blocks if GCC
+  produced working code for them !!!
+
 Version 4.48 on 15 June 2000
 - Removed obsolete (and buggy) references to
   CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.
-- Interval_nt<> operations boosted with Protect_FPU_rounding().
+- Interval_nt operations boosted with Protect_FPU_rounding().
 
 Version 4.47 on 13 June 2000
 - Removed useless "template <>" before full specializations of function

@@ -35,10 +35,11 @@ convert_from_to (const Interval_nt_advanced&, const leda_rational & z)
 {
     CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
     FPU_set_cw(CGAL_FE_TONEAREST);
-    double approx = to_double(z);
+    double approx = CGAL::to_double(z);
     FPU_set_cw(CGAL_FE_UPWARD);
 
-    Interval_nt_advanced result = approx + Interval_nt_advanced::Smallest;
+    Interval_nt_advanced result = Interval_nt_advanced(approx) +
+	    Interval_nt_advanced::Smallest;
     // We play it safe:
     result += Interval_nt_advanced::Smallest;
     result += Interval_nt_advanced::Smallest;
