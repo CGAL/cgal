@@ -27,7 +27,8 @@ int main() {
     CGAL::copy_n( g, 600, std::back_inserter(points));
 
     // Create 200 points from a 15 x 15 grid.
-    points_on_square_grid_2(0.95, 200, std::back_inserter(points),Creator());
+    CGAL::points_on_square_grid_2(0.95, 200, std::back_inserter(points),
+                                  Creator());
 
     // Select 100 points randomly and append them at the end of
     // the current vector of points.
