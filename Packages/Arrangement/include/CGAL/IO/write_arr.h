@@ -131,7 +131,8 @@ void write_arr(const Arrangement& arr,
 
   
   // creating the edge node indices table.
-  for (Curve_const_iterator cv_iter = arr.curve_node_begin(); 
+  Curve_const_iterator cv_iter;
+  for (cv_iter = arr.curve_node_begin(); 
        cv_iter != arr.curve_node_end(); cv_iter++){
      En_index en_index(cv_iter->edges_begin(), cv_iter->edges_end());
 
@@ -139,13 +140,13 @@ void write_arr(const Arrangement& arr,
   }
   
   int number_of_curves = 0;
-  for (Curve_const_iterator cv_iter = arr.curve_node_begin(); 
+  for (cv_iter = arr.curve_node_begin(); 
        cv_iter != arr.curve_node_end(); cv_iter++, number_of_curves++);
   writer.write_comment("number of curves");
   writer.write_value(number_of_curves);
   
   unsigned int curve_index = 0;
-  for (Curve_const_iterator cv_iter = arr.curve_node_begin(); 
+  for (cv_iter = arr.curve_node_begin(); 
        cv_iter != arr.curve_node_end(); cv_iter++, curve_index++){
     unsigned int number_of_edge_nodes = 0;
     
