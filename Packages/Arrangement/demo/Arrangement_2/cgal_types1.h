@@ -1,8 +1,8 @@
 #ifndef CGAL_TYPES_HEADER
 #define CGAL_TYPES_HEADER
 
-//#include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget.h"
+#include <CGAL/IO/Qt_widget.h>
+//#include "Qt_widget.h"
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/leda_window.h>
