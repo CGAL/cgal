@@ -1,3 +1,8 @@
+2.1.11(30/04/02)   modified the master dsp for VC6 and the script to generate 
+		   the VC6 directory.
+		   added the dsps and vcprojs for the demos
+		   
+
 2.1.9 (21/03/02)   added Timer and Real_timer in src/makefile_lib.mak
 
 2.1.8 (20/12/01    Created directory include/CGAL/config/msvc7
