@@ -75,7 +75,7 @@ typedef CGAL::Map_overlay_default_dcel<Traits>      Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>            PM;
 
 typedef CGAL::Map_overlay_default_notifier<PM>                Ovl_change_notification;
-typedef CGAL::Map_overlay<PM, Ovl_change_notification>        MapOverlay;
+typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>      MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
 

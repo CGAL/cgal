@@ -67,8 +67,8 @@ typedef CGAL::Planar_map_with_intersections_2<PM>     Pmwx;
 
 typedef CGAL::Map_overlay_default_notifier<PM>      MapOverlay_change_notification;
 typedef CGAL::Map_overlay_incremental<Pmwx, MapOverlay_change_notification>   
-                                                                 MapOverlay_incremental;
-typedef CGAL::Map_overlay<Pmwx, MapOverlay_change_notification>  MapOverlay;
+                                                            MapOverlay_incremental;
+typedef CGAL::Map_overlay_2<Pmwx, MapOverlay_change_notification>  MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
 
