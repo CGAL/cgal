@@ -1,7 +1,10 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.9 on 26-Sep-2000
+- unified traits class models for dD optimisation algorithms
+
 Version 0.8 on 15-Sep-2000
-- added indexing command.
+- added indexing command
 
 Version 0.7.1 on 13-Sep-2000
 - replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
