@@ -100,6 +100,8 @@ die "Can't find file \"$databaseFile\"" unless -f $databaseFile;
 
 doStart();
 
+printEnv();
+
 my $parser = new XML::Parser(ErrorContext => 2,
 			     Handlers     => {Start      => \&start_handler,
 					      End        => \&end_handler,
@@ -447,6 +449,22 @@ sub processEndCmd
   $benchFailed++  if ($attrTable->{'status'}  eq 'failed');
   $indentCnt -= $indentInc;
   $curSvr = $maxSvr;
+}
+
+sub printEnv
+{
+  OS_SWITCH: {
+      $compInfo = `cl -? 2>&1`, $compInfo =~ s/([^\n]*)\n.*/$1/g,
+      $compName = 'cl', last OS_SWITCH if $OSNAME =~ /MSWin32/;
+      $compInfo = `gcc --version`, $compName = 'gcc', last OS_SWITCH if $OSNAME =~ /Linux/;
+      $compInfo = '', $compName = 'unrecognized';
+  }
+    printf("COMPILER NAME: $compName\n");
+    printf("COMPILER INFO: $compInfo\n");
+
+    $sysInfo = `uname -a`;
+    printf("OS NAME: $OSNAME\n");
+    printf("OS INFO: $sysInfo\n");
 }
 
 # Tell Emacs that this is really a perl script
