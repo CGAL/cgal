@@ -864,7 +864,7 @@ set_compiler_flags()
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*IRIX*g++*)
-	    #### settings for egcs/gcc on irix
+	    #### settings for gcc on irix
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
@@ -872,17 +872,6 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-        *SunOS*5.*KCC*)
-            #### settings for KAI C++ compiler on solaris
-            ADDITIONAL_CXXFLAGS="--one_instantiation_per_object"
-            CGAL_LIB_CREATE="\$(CGAL_CXX) -o ''"
-            CGAL_SHARED_LIB_CXXFLAGS="-Kpic"
-            CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
-	    WINDOW_INCLUDE="/usr/openwin/include"
-            WINDOW_DIR="/usr/openwin/lib"
-            RUNTIME_LINKER_FLAG="-R "
-            PRINT_STACKTRACE_PROGRAM="dbx"
-            ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-pto -D_RWSTD_ALLOCATOR"
@@ -895,7 +884,7 @@ set_compiler_flags()
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*SunOS*5.*g++*)
-	    #### settings for egcs/gcc2.8 on solaris
+	    #### settings for gcc on solaris
 	    #ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
@@ -915,24 +904,15 @@ set_compiler_flags()
              PRINT_STACKTRACE_PROGRAM="gdb"
              ;;
 	*Linux*g++*)
-	    #### settings for egcs/gcc2.8 on linux
+	    #### settings for gcc on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
-	*CYGWIN*g++-egcs*)
-	    #### settings for egcs/gcc2.8 on linux
-	    ADDITIONAL_CXXFLAGS="-Wall -D__STL_NO_DRAND48"
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
-	    WINDOW_DIR=
-	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
-	    PRINT_STACKTRACE_PROGRAM="gdb"
-	    EXE_EXT=".exe"
-	    ;;
 	*CYGWIN*g++*)
-	    #### settings for gcc-2.95.2 on Cygwin
+	    #### settings for gcc on Cygwin
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR=
@@ -972,7 +952,6 @@ set_compiler_flags()
     case `compiler_description` in
 	*GNU*) 
 	    case `compiler_version` in
-		egcs*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
 		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
 	    esac
 	    ;;
@@ -1831,13 +1810,6 @@ int main()
     output_first_ciff_separate(__MWERKS__, 16);
     CGAL_STDCOUT << CGAL_STDENDL;
 # endif // (__MWERKS__ == 1)
-#elif defined(__KCC)
-  // KAI CC
-  CGAL_STDCOUT << "KAI CC@";
-  output_first_ciff_separate(__KCC_VERSION / 100, 10);
-  if (__KCC_VERSION % 100 != 0) 
-    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
-  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(_MSC_VER)
   // Microsoft Visual C++
   CGAL_STDCOUT << "VC++@" << _MSC_VER << CGAL_STDENDL;
@@ -2084,6 +2056,7 @@ search_for_compilers()
 	fi
     done
 
+    _search_compiler gcc g++ ''
     case ${SYST} in 
 	*IRIX64*)
 	    if _search_compiler cc CC 'n'; then
@@ -2096,8 +2069,6 @@ search_for_compilers()
 			"`_add_flags \"${COMPILER}\" '-64' ' (64)' ' -64'`"
 		fi
 	    fi
-	    _search_compiler gcc g++ ''
-	    _search_compiler cc KCC ''
 	    ;;
 	*IRIX*-6*)
 	    if _search_compiler cc CC 'n'; then
@@ -2106,23 +2077,14 @@ search_for_compilers()
 		_check_and_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 	    fi
-	    _search_compiler gcc g++ ''
-	    _search_compiler cc KCC ''
 	    ;;
 	*IRIX*|*SunOS*)
-	    _search_compiler gcc g++ ''
-	    _search_compiler cc KCC ''
 	    _search_compiler cc CC ''
 	    ;;
 	*CYGWIN*)
 	    _search_compiler CL.EXE CL.EXE ''
 	    _search_compiler bcc32.exe bcc32.exe ''
-	    _search_compiler gcc g++ ''
 	    _search_compiler mwcc.exe mwcc.exe ''
-	    ;;
-	*)
-	    _search_compiler gcc g++ ''
-	    _search_compiler cc KCC ''
 	    ;;
     esac
     if [ ${_COMPILER_NUMBER} = 1 ]; then
@@ -5695,9 +5657,6 @@ create_include_makefile()
   case ${CGAL_OS_COMPILER} in 
 	mips_IRIX*-6*_CC-*32-*) 
 	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
-	*_KCC-*) 
-	    ${_printf} " ti_files/\$*.ti*\n" >> ${FILE}
-	    ${_printf} "\trm -rf ti_files/\$*\n" >> ${FILE};;
 	*)  
 	    ${_printf} "\n" >> ${FILE};;
   esac
@@ -5707,7 +5666,6 @@ create_include_makefile()
   # CGAL_CXX
   # 
   makefile_header "compiler" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_CC  = `quote \`c_compiler_bin\``" >> ${FILE}
   ${_printf} "%s\n" "CGAL_CXX = `quote ${CGAL_CXX}`" >> ${FILE}
 
   write_compiler_flags
