@@ -1190,7 +1190,7 @@ Convex_hull_d<R>::insert(const Point_d& x)
                     associate_vertex_with_simplex(T,i,vertex_of_simplex(S,i)); 
                 }
                 if (k != dcur) 
-                  associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur)); 
+                  associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur));
                 associate_vertex_with_simplex(T,dcur,z); 
                 associate_vertex_with_simplex(T,0,anti_origin_); 
                 /* in the above, it is tempting to drop the tests ( i != k ) 
