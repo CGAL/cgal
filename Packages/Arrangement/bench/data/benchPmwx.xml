@@ -54,23 +54,79 @@
   <file name="random_segments_100_x.dat" format="int" curves="100"
     vertices="1129" halfedges="3916" faces="831"></file>
 
+
+
   <bench samples="1" enable="true">
     <benchPmwx file="onebig_100_x.dat" header="true"/>
-    <benchPmwxLedaKernel file="onebig_100_x.dat"/>
-    <benchPmwxLazyRat file="onebig_100_x.dat"/>
-    <benchPmwxMPFloat file="onebig_100_x.dat"/>
-    <benchPmwxLazyQuotient file="onebig_100_x.dat"/>
-    <benchPmwxGmpq file="onebig_100_x.dat"/>
-    <benchPmwxLazyGmpq file="onebig_100_x.dat"/>
+    <benchPmwxCached file="onebig_100_x.dat"/>
+    <benchPmwxTight file="onebig_100_x.dat"/>
+    <benchPmwxCachedTight file="onebig_100_x.dat"/>
   </bench>
 
   <bench samples="1" enable="true">
-    <benchPmwxCached file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLedaKernel file="onebig_100_x.dat" header="true"/>
     <benchPmwxLedaKernelCached file="onebig_100_x.dat"/>
-    <benchPmwxLazyRatCached file="onebig_100_x.dat"/>
-    <benchPmwxMPFloatCached file="onebig_100_x.dat"/>
-    <benchPmwxLazyQuotientCached file="onebig_100_x.dat"/>
-    <benchPmwxGmpqCached file="onebig_100_x.dat"/>
-    <benchPmwxLazyGmpqCached file="onebig_100_x.dat"/>
+    <benchPmwxLedaKernelTight file="onebig_100_x.dat"/>
+    <benchPmwxLedaKernelCachedTight file="onebig_100_x.dat"/>
   </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyRat file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLazyRatCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyRatTight file="onebig_100_x.dat"/>
+    <benchPmwxLazyRatCachedTight file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxMPFloat file="onebig_100_x.dat" header="true"/>
+    <benchPmwxMPFloatCached file="onebig_100_x.dat"/>
+    <benchPmwxMPFloatTight file="onebig_100_x.dat"/>
+    <benchPmwxMPFloatCachedTight file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyQuotient file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLazyQuotientCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyQuotientTight file="onebig_100_x.dat"/>
+    <benchPmwxLazyQuotientCachedTight file="onebig_100_x.dat"/>
+  </bench>
+
+
+
+  <bench samples="1" enable="true">
+    <benchPmwx file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxCached file="random_segments_100_x.dat"/>
+    <benchPmwxTight file="random_segments_100_x.dat"/>
+    <benchPmwxCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLedaKernel file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLedaKernelCached file="random_segments_100_x.dat"/>
+    <benchPmwxLedaKernelTight file="random_segments_100_x.dat"/>
+    <benchPmwxLedaKernelCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyRat file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLazyRatCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyRatTight file="random_segments_100_x.dat"/>
+    <benchPmwxLazyRatCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxMPFloat file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxMPFloatCached file="random_segments_100_x.dat"/>
+    <benchPmwxMPFloatTight file="random_segments_100_x.dat"/>
+    <benchPmwxMPFloatCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyQuotient file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLazyQuotientCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyQuotientTight file="random_segments_100_x.dat"/>
+    <benchPmwxLazyQuotientCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+
 </bench>
