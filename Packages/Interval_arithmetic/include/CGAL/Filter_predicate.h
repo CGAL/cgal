@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template <class EP, class AP, class EC, class AC, bool Protection = true>
-class Filtered_predicate
+class Filter_predicate
 {
   EP Exact_predicate;
   AP Approx_predicate;
@@ -54,33 +54,31 @@ class Filtered_predicate
 public:
 
   typedef typename AP::result_type  result_type;
+  // Should be the same type as EP::result_type.
 
-  Filtered_predicate()
-  {
-    assert_equal_types(typename AP::result_type(), typename EP::result_type());
-  }
+  Filter_predicate()
+  {}
 
   // These constructors are used for constructive predicates.
   // You should try to avoid constructive predicates, as they will construct
   // the exact values systematically (in the ctor), rather than lazily.
   template <class O>
-  Filtered_predicate(const O &o1)
+  Filter_predicate(const O &o1)
     : Exact_predicate(To_Exact(o1)), Approx_predicate(To_Approx(o1))
-  {
-    assert_equal_types(typename AP::result_type(), typename EP::result_type());
-  }
+  {}
 
   template <class O>
-  Filtered_predicate(const O &o1, const O &o2)
+  Filter_predicate(const O &o1, const O &o2)
     : Exact_predicate(To_Exact(o1), To_Exact(o2)),
       Approx_predicate(To_Approx(o1), To_Approx(o2))
-  {
-    assert_equal_types(typename AP::result_type(), typename EP::result_type());
-  }
+  {}
 
   template <class A1>
   result_type
   operator()(const A1 &a1) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -93,14 +91,14 @@ public:
       return Exact_predicate(To_Exact(a1));
     }
   }
+#endif
 
   template <class A1, class A2>
   result_type
-  operator()(const A1 &a1, const A2 &a2) const;
-#if 0
-  template <class A1, class A2>
-  result_type
   operator()(const A1 &a1, const A2 &a2) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -118,10 +116,9 @@ public:
   template <class A1, class A2, class A3>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const;
-#if 0
-  template <class A1, class A2, class A3>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -139,10 +136,9 @@ public:
   template <class A1, class A2, class A3, class A4>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const;
-#if 0
-  template <class A1, class A2, class A3, class A4>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -163,6 +159,9 @@ public:
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -177,11 +176,15 @@ public:
 	      To_Exact(a4), To_Exact(a5));
     }
   }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5, class A6>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -196,12 +199,16 @@ public:
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6));
     }
   }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5, class A6,
             class A7>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
 	     const A5 &a5, const A6 &a6, const A7 &a7) const
+#ifndef _MSC_VER
+  ;
+#else
   {
     try
     {
@@ -216,16 +223,36 @@ public:
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6), To_Exact(a7));
     }
   }
+#endif
 
   // Idem for more than 7 arguments.  Do it on demand.
 };
 
+#ifndef _MSC_VER
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1>
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1) const
+{
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1));
+    }
+}
+
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2) const
-  {
+{
     try
     {
       Protect_FPU_rounding<Protection> P;
@@ -236,13 +263,14 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2));
     }
-  }
+}
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-  {
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+{
     try
     {
       Protect_FPU_rounding<Protection> P;
@@ -253,15 +281,14 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::operator()(const A1 &a1, const A2 &a
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3));
     }
-  }
-
+}
 
 template <class EP, class AP, class EC, class AC, bool Protection>
   template <class A1, class A2, class A3, class A4>
-Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
-Filtered_predicate<EP,AP,EC,AC,Protection>::
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-  {
+{
     try
     {
       Protect_FPU_rounding<Protection> P;
@@ -274,7 +301,50 @@ Filtered_predicate<EP,AP,EC,AC,Protection>::
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4));
     }
-  }
+}
+
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1, class A2, class A3, class A4, class A5>
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+	     const A5 &a5) const
+{
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
+	      To_Approx(a4), To_Approx(a5));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
+	      To_Exact(a4), To_Exact(a5));
+    }
+}
+
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1, class A2, class A3, class A4, class A5, class A6>
+Filter_predicate<EP,AP,EC,AC,Protection>::result_type
+Filter_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
+	     const A5 &a5, const A6 &a6) const
+{
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
+	      To_Approx(a4), To_Approx(a5), To_Approx(a6));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
+	      To_Exact(a4), To_Exact(a5), To_Exact(a6));
+    }
+}
+#endif
 
 CGAL_END_NAMESPACE
 
