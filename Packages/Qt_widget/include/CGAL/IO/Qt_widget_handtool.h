@@ -25,8 +25,8 @@
 #include <cstdio>
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/holddown.xpm>
-#include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_tool.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 #include <qrect.h>
 
 

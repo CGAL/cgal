@@ -21,8 +21,8 @@
 #ifndef CGAL_QT_SCENESWIDGET_H
 #define CGAL_QT_SCENESWIDGET_H
 
-#include <CGAL/IO/Qt_Window.h>
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_scene.h>
 #include <map>
 
 namespace CGAL {

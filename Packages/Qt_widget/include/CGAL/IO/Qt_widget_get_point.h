@@ -21,8 +21,8 @@
 #ifndef CGAL_QT_WIDGET_GET_POINT_H
 #define CGAL_QT_WIDGET_GET_POINT_H
 
-#include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_tool.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_tool.h>
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
 #define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton

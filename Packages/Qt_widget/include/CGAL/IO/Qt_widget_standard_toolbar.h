@@ -27,10 +27,10 @@
 
 
 // TODO: check if some of those includes shouldn't be in the .C file
-#include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_Zoom.h>
-#include <CGAL/IO/Qt_Widget_Zoomrect.h>
-#include <CGAL/IO/Qt_Widget_Handtool.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_zoom.h>
+#include <CGAL/IO/Qt_widget_zoomrect.h>
+#include <CGAL/IO/Qt_widget_handtool.h>
 
 
 #include <qobject.h>
