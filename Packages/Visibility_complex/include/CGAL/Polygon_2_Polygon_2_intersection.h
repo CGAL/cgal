@@ -75,7 +75,7 @@ bool do_intersect( const Polygon_2<Traits,Container>& P,
 	*/
 	Segment_2 s1(*apred,*a);
 	Segment_2 s2(*bpred,*b);
-	if ( do_intersect(s1,s2) ) return true;
+	if ( Traits().do_intersect_2_object()(s1,s2) ) return true;
 	// ---------------------------------------------------------------------
 	// Else Advance 
 	// ---------------------------------------------------------------------
