@@ -15,15 +15,16 @@
 
 \ccDefinition
 
-The function \ccRefName\ computes natural neighbor coordinates for
-surface points associated to a finite set of sample points issued from
-the surface. The coordinates are computed from the intersection of the
-Voronoi cell of the query point \ccc{p} with the tangent plane to the
-surface at \ccc{p}. If the sampling is sufficiently dense, the
-coordinate systems meets the properties described in the manual pages
-and in \cite{bf-lcss-02},\cite{prisme-these-flototto}.  The query
-point \ccc{p} needs to lie inside the convex hull of the projection of
-the sample points onto the tangent plane at \ccc{p}.
+Given a set of sample points issued from the surface and a query point
+\ccc{p}, the function \ccRefName\ computes the neighbors of \ccc{p} on
+a surface within the sample points. If the sampling is sufficiently
+dense, the neighbors meets the properties described in the manual
+pages and in \cite{bf-lcss-02},\cite{prisme-these-flototto}. Notably,
+they are provably close to the point \ccc{p} on the surface.  The
+neighbors are defined to be the neighbors of \ccc{p} in the regular
+triangulation that is dual to the power diagram representing the
+intersection of the Voronoi cell of the query point \ccc{p} with the
+tangent plane to the surface at \ccc{p}.  
 
 \ccInclude{CGAL/surface_neighbors_3.h}
 
@@ -38,7 +39,7 @@ the sample points onto the tangent plane at \ccc{p}.
   \ccc{p} and the vector \ccc{normal}.  The
   parameter \ccc{K} determines the kernel type. \\
   The surface neighbors of \ccc{p} are computed which are the
-  neighbors of p in the regular triangulation that is dual to the
+  neighbors of \ccc{p} in the regular triangulation that is dual to the
   intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with the
   tangent plane. The sequence of point that is computed by the
   function is placed starting at \ccc{out}. The function returns an
@@ -82,7 +83,7 @@ been considered.
   InputIterator beyond, const typename Kernel::Point_2& p, const
   typename Kernel::FT& max_distance, OutputIterator out, const
   Kernel& kernel);} { The same as above except that this function
-  takes the maximal distance from p to the points in the range
+  takes the maximal distance from \ccc{p} to the points in the range
   $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as add.
   parameter.}
 
@@ -143,8 +144,7 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \item \ccc{Dt} is equivalent to the class
   \ccc{Delaunay_triangulation_3}.
 \item \ccc{OutputIterator::value_type} is equivalent to
-  \ccc{std::pair<Dt::Point_3, Dt::Geom_traits::FT>}, i.e.\ a pair
-  associating a point and its natural neighbor coordinate.
+  \ccc{Dt::Point_3}, i.e.\ a point type.
 \item  \ccc{ITraits} is equivalent to the class \ccc{Voronoi_intersection_2_traits_3<K>}.
 \end{enumerate}
 
@@ -152,10 +152,11 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}
 \ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2} 
 
-\ccImplementation This function computes the areas stolen from the
-Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The
-total area of the Voronoi cell of \ccc{p} is also computed and
-returned by the function.
+\ccImplementation This function computes the regular triangulation of
+the sample points and the point \ccc{p} using a traits class
+equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. The functions
+which certify the result, need to compute the Voronoi vertices of the
+cell of \ccc{p} in this diagram.
 
 \ccIndexSubitemEnd{Interpolation}{surface_neighbors_3}
 \end{ccRefFunction}
