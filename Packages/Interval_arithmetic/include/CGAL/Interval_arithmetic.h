@@ -395,7 +395,7 @@ inline
 bool
 is_valid (const Interval_nt_advanced & d)
 {
-#if defined _MSC_VER || defined __sgi
+#if defined _MSC_VER || defined __sgi || defined __BORLANDC__
     return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
 #else
     // The 2 first is_valid() are implicitely done by the 3rd test ;-)
