@@ -1,3 +1,6 @@
+27 May Sylvain Pion
+- Try to fix create_internal_release again.
+
 28 May 2004 Radu Ursu
 - modified autotest_cgal behaviour which could be now used for installing new versions of CGAL without running the testsuite
 

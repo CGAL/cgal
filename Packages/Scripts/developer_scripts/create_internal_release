@@ -791,7 +791,7 @@ sub make_testscripts()
 
     # Windows specific stuff
     print "Creating VC++ projects in examples\n";
-    system("$SCRIPTSDIR/../developer_scripts/examples/C2vcproj", "*");
+    system("../developer_scripts/examples/C2vcproj", glob("*"));
 
     print "Creating makefiles in examples\n";
     foreach $DIR (glob("*")) {
