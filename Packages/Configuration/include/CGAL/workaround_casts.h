@@ -28,30 +28,14 @@
 #ifndef CGAL_WORKAROUND_CASTS_H
 #define CGAL_WORKAROUND_CASTS_H 1
 
-// workaround for C++-style casts
-#if defined( CGAL_CFG_NO_STATIC_CAST)
-#  define  CGAL_static_cast(type,expr)  (type)( expr)
-#else
-#  define  CGAL_static_cast(type,expr)  static_cast< type >(expr)
-#endif // CGAL_CFG_NO_STATIC_CAST
 
-#if defined( CGAL_CFG_NO_CONST_CAST)
-#  define  CGAL_const_cast(type,expr)  (type)( expr)
-#else
-#  define  CGAL_const_cast(type,expr)  const_cast< type >(expr)
-#endif // CGAL_CFG_NO_CONST_CAST
+// workaround for C++-style casts
 
 #if defined( CGAL_CFG_NO_DYNAMIC_CAST)
 #  define  CGAL_dynamic_cast(type,expr)  (type)( expr)
 #else
 #  define  CGAL_dynamic_cast(type,expr)  dynamic_cast< type >(expr)
 #endif // CGAL_CFG_NO_DYNAMIC_CAST
-
-#if defined( CGAL_CFG_NO_REINTERPRET_CAST)
-#  define  CGAL_reinterpret_cast(type,expr)  (type)( expr)
-#else
-#  define  CGAL_reinterpret_cast(type,expr)  reinterpret_cast< type >(expr)
-#endif // CGAL_CFG_NO_REINTERPRET_CAST
 
 #endif // CGAL_WORKAROUND_CASTS_H
 
