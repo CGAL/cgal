@@ -73,7 +73,7 @@ public:
   typedef CGAL_Triangulation_cell_iterator<Gt,Tds> Cell_iterator;
 
   CGAL_Triangulation_cell_iterator()
-    : _ib(), _tr(), _inf()
+    : _ib(), _tr(NULL), _inf(true)
   {}
         
   CGAL_Triangulation_cell_iterator(CGAL_Triangulation<Gt,Tds> *tr, bool inf)
@@ -91,7 +91,7 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   CGAL_Triangulation_cell_iterator(CGAL_Triangulation<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr), _inf()
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
   { }
        
   CGAL_Triangulation_cell_iterator(const Cell_iterator & cit)
@@ -457,7 +457,7 @@ public:
   }
         
   CGAL_Triangulation_facet_iterator(CGAL_Triangulation<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr), _inf()
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
   { }
        
   CGAL_Triangulation_facet_iterator(const Facet_iterator & fi)
