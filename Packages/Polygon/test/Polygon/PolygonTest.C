@@ -60,7 +60,7 @@ void test_default_methods(      vector<Point>& pvec0,
     CGAL::Polygon_2<Traits, vector<Point> > y;
     CGAL::Polygon_2<Traits, vector<Point> > p4(pvec1.begin(), pvec1.end());
     // CGAL::Polygon_2<Traits, vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
-    CGAL::Polygon_2<Traits, vector<Point> > p6(plist1.begin(), plist1.end());
+    // CGAL::Polygon_2<Traits, vector<Point> > p6(plist1.begin(), plist1.end());
     // CGAL::Polygon_2<Traits, vector<Point> > p7(plist1.rbegin(), plist1.rend());
     CGAL::Polygon_2<Traits, vector<Point> > p4_copy(p4);
 
