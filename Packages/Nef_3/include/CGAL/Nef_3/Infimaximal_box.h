@@ -258,7 +258,8 @@ class Infimaximal_box<Tag_true, Kernel> {
   }
 
   static bool is_standard(const Point_3& p) {
-    return Kernel::is_standard(p);
+    CGAL_assertion(p.hw().degree()==0);
+    return (p.hx().degree()==0 && p.hy().degree()==0 && p.hz().degree()==0);
   }
 
   static bool is_standard(const Plane_3& p) {
@@ -305,7 +306,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   }
 
   static Point_3 target_for_ray_shoot_on_minus_x_direction(Point_3 p) {
-    CGAL_warning( Kernel::is_standard(p));
+    CGAL_warning(is_standard(p));
     return Point(RT(0,-1), RT(p.hy()[0]), RT(p.hz()[0]), RT(p.hw()[0]));
   }
 
@@ -546,7 +547,7 @@ class Infimaximal_box<Tag_true, Kernel> {
   static bool is_edge_on_infibox(SHalfedge_handle e) {
 
     Point_3 p  = e->center_vertex()->point();
-    if(Kernel::is_standard(p)) return false;
+    if(is_standard(p)) return false;
 
     Vector_3 v(e->vector());
     CGAL_assertion(p.hw().degree() == 0);
@@ -571,7 +572,7 @@ class Infimaximal_box<Tag_true, Kernel> {
 
     Point_3 p = sh->source()->center_vertex()->point();
     TRACEN("Point " << p);
-    if(Kernel::is_standard(p)) return false;
+    if(is_standard(p)) return false;
 
     TRACEN("Circle " << sh->circle() << 
 	   " has signum " << sign_of(sh->circle()));
