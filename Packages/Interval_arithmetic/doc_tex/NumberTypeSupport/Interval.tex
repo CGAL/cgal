@@ -344,10 +344,9 @@ predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
 \end{verbatim}
 
 For each predicate file, the overloaded code is generated automatically by a
-\ccc{PERL} script
-(\ccc{examples/Interval_arithmetic/filtered_predicate_converter}) that you can
-use for your own predicates (see \ccc{examples/Interval_arithmetic/README}).
-This script parses the template declaration of the functions and generates the
+\ccc{PERL} script (\ccc{scripts/filtered_predicates_generator.pl}) that you can
+use for your own predicates. % (see \ccc{examples/Interval_arithmetic/README})
+This script parses the template functions and generates the
 overloaded code the following way:
 \begin{itemize}
 \item convert the entries to intervals using
@@ -365,8 +364,8 @@ overloaded code the following way:
 \ccExample
 
 The low level template predicates of {\cgal} are in files named
-\ccc{CGAL/predicates_on_ftC2.h} (resp. ftC3), the script is used
-to produce the files \ccc{CGAL/Arithmetic_filter/predicates_on_ftC2.h}
+\ccc{CGAL/predicates/kernel_ftC2.h} (resp. ftC3), the script is used
+to produce the files \ccc{CGAL/Arithmetic_filter/predicates/kernel_ftC2.h}
 (resp. ftC3).
 
 For the moment, only the cartesian predicates of the kernel are supported,
