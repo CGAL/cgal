@@ -180,17 +180,8 @@ public:
   //! Returns a constant iterator to the output of the first input segment.
   const Polyline_const_iterator polylines_begin();
 
-  /*! Returns a constant iterator to the after-the-last of the output of
-   *  the input segments.
-   */
-  const Polyline_const_iterator polylines_end();
-
-  //! insert a segment
-  bool insert(const Segment_2& seg);
-
-  //! Insertion of an iterator range.
-  template < class InputIterator >
-    int insert(InputIterator first, InputIterator last);
+  //! Returns a constant iterator to the after-the end
+  const Polyline_const_iterator polylines_end  ();
 
   template<class Out>
   void output(Out &o);
@@ -763,37 +754,6 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
       ++begin;
     }
   }
-
-template<class Rep_>
-bool Snap_rounding_2<Rep_>::insert(const Segment_2& seg)
-  {
-    need_sr = true;
-    seg_list.push_back(Segment_data<Rep_>(
-					  seg.source(),
-                         seg.target()));
-
-    seg_2_list.push_back(seg);
-    ++number_of_segments;
-
-    return(true);
-  }
-
-template < class Rep_ >
-template < class InputIterator >
-int
-Snap_rounding_2<Rep_>::insert(InputIterator first, InputIterator last)
-  {
-    need_sr = true;
-    int n = 0;
-    while(first != last){
-      if(insert(*first)){
-	n++;
-      }
-      ++first;
-    }
-    return n;
-  }
-
 
 template<class Rep_>
 const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
