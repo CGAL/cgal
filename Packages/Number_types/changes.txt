@@ -1,3 +1,6 @@
+8 March 2005 Sylvain Pion
+- Use <boost/operators.hpp> to simplify Gmpz and Gmpq.
+
 6 March 2005 Sylvain Pion
 - Mark template ctor of Quotient<NT> explicit, as it is too greedy,
   complement it by constructors from NT, int and double.

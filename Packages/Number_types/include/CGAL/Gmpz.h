@@ -40,6 +40,8 @@
 #include <gmp.h>
 #include <mpfr.h>
 
+#include <boost/operators.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 class Gmpz_rep
@@ -88,7 +90,10 @@ public:
 };
 
 class Gmpz
-  : public Handle_for<Gmpz_rep>
+  : Handle_for<Gmpz_rep>,
+    boost::ordered_euclidian_ring_operators1< Gmpz
+  , boost::ordered_euclidian_ring_operators2< Gmpz, int
+    > >
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
@@ -126,21 +131,19 @@ public:
 
   Gmpz operator-() const;
 
-  Gmpz operator%(const Gmpz &z) const;
-
   Gmpz& operator+=(const Gmpz &z);
-  Gmpz operator+=(int i);
+  Gmpz& operator+=(int i);
 
   Gmpz& operator-=(const Gmpz &z);
-  Gmpz operator-=(int i);
+  Gmpz& operator-=(int i);
 
   Gmpz& operator*=(const Gmpz &z);
-  Gmpz operator*=(int i);
+  Gmpz& operator*=(int i);
 
   Gmpz& operator%=(const Gmpz &z);
 
   Gmpz& operator/=(const Gmpz &z);
-  Gmpz operator/=(int i);
+  Gmpz& operator/=(int i);
 
   size_t approximate_decimal_length() const;
 
@@ -154,33 +157,14 @@ public:
 
 inline
 bool
-operator==(const Gmpz &a, const Gmpz &b)
-{ return mpz_cmp(a.mpz(), b.mpz()) == 0; }
-
-inline
-bool
 operator<(const Gmpz &a, const Gmpz &b)
 { return mpz_cmp(a.mpz(), b.mpz()) < 0; }
 
 inline
 bool
-operator<=(const Gmpz &a, const Gmpz &b)
-{ return ! (b < a); }
+operator==(const Gmpz &a, const Gmpz &b)
+{ return mpz_cmp(a.mpz(), b.mpz()) == 0; }
 
-inline
-bool
-operator>(const Gmpz &a, const Gmpz &b)
-{ return b < a; }
-
-inline
-bool
-operator>=(const Gmpz &a, const Gmpz &b)
-{ return ! (a < b); }
-
-inline
-bool
-operator!=(const Gmpz &a, const Gmpz &b)
-{ return ! (a == b); }
 
 // mixed operators.
 inline
@@ -190,58 +174,13 @@ operator<(const Gmpz &a, int b)
 
 inline
 bool
-operator<(int a, const Gmpz &b)
-{ return mpz_cmp_si(b.mpz(), a) > 0; }
-
-inline
-bool
 operator==(const Gmpz &a, int b)
 { return mpz_cmp_si(a.mpz(), b) == 0; }
 
 inline
 bool
-operator==(int a, const Gmpz &b)
-{ return b == a; }
-
-inline
-bool
-operator<=(const Gmpz &a, int b)
-{ return ! (b < a); }
-
-inline
-bool
-operator<=(int a, const Gmpz &b)
-{ return ! (b < a); }
-
-inline
-bool
 operator>(const Gmpz &a, int b)
-{ return b < a; }
-
-inline
-bool
-operator>(int a, const Gmpz &b)
-{ return b < a; }
-
-inline
-bool
-operator>=(const Gmpz &a, int b)
-{ return ! (a < b); }
-
-inline
-bool
-operator>=(int a, const Gmpz &b)
-{ return ! (a < b); }
-
-inline
-bool
-operator!=(const Gmpz &a, int b)
-{ return ! (a == b); }
-
-inline
-bool
-operator!=(int a, const Gmpz &b)
-{ return ! (a == b); }
+{ return mpz_cmp_si(a.mpz(), b) > 0; }
 
 
 inline
@@ -255,194 +194,105 @@ Gmpz::operator-() const
 
 
 inline
-Gmpz
-operator+(const Gmpz &a, const Gmpz &b)
+Gmpz&
+Gmpz::operator+=(const Gmpz &z)
 {
     Gmpz Res;
-    mpz_add(Res.mpz(), a.mpz(), b.mpz());
-    return Res;
-}
-
-inline
-Gmpz
-operator+(const Gmpz &a, int b)
-{
-    if (b>0)
-    {
-        Gmpz Res;
-        mpz_add_ui(Res.mpz(), a.mpz(), b);
-        return Res;
-    }
-    return a + Gmpz(b);
+    mpz_add(Res.mpz(), mpz(), z.mpz());
+    swap(Res);
+    return *this;
 }
 
 inline
 Gmpz&
-Gmpz::operator+=(const Gmpz &z)
-{
-    *this = *this + z;
-    return *this;
-}
-
-inline
-Gmpz
-Gmpz::operator+=(int i)
-{
-    *this = *this + Gmpz(i);
-    return *this;
-}
-
-inline
-Gmpz
-operator-(const Gmpz &a, const Gmpz &b)
-{
-    Gmpz Res;
-    mpz_sub(Res.mpz(), a.mpz(), b.mpz());
-    return Res;
-}
-
-inline
-Gmpz
-operator-(const Gmpz &a, int b)
+Gmpz::operator+=(int b)
 {
     if (b>0)
     {
         Gmpz Res;
-        mpz_sub_ui(Res.mpz(), a.mpz(), b);
-        return Res;
+        mpz_add_ui(Res.mpz(), mpz(), b);
+        swap(Res);
+        return *this;
     }
-    return a - Gmpz(b);
+    return *this += Gmpz(b);
 }
 
 inline
 Gmpz&
 Gmpz::operator-=(const Gmpz &z)
 {
-    *this = *this - z;
-    return *this;
-}
-
-inline
-Gmpz
-Gmpz::operator-=(int i)
-{
-    *this = *this - Gmpz(i);
-    return *this;
-}
-
-inline
-Gmpz
-operator*(const Gmpz &a, const Gmpz &b)
-{
     Gmpz Res;
-    mpz_mul(Res.mpz(), a.mpz(), b.mpz());
-    return Res;
+    mpz_sub(Res.mpz(), mpz(), z.mpz());
+    swap(Res);
+    return *this;
 }
 
 inline
-Gmpz
-operator*(const Gmpz &a, int b)
+Gmpz&
+Gmpz::operator-=(int b)
 {
     if (b>0)
     {
         Gmpz Res;
-        mpz_mul_ui(Res.mpz(), a.mpz(), b);
-        return Res;
+        mpz_sub_ui(Res.mpz(), mpz(), b);
+        swap(Res);
+        return *this;
     }
-    return a * Gmpz(b);
+    return *this -= Gmpz(b);
 }
 
 inline
 Gmpz&
 Gmpz::operator*=(const Gmpz &z)
 {
-    *this = *this * z;
+    Gmpz Res;
+    mpz_mul(Res.mpz(), mpz(), z.mpz());
+    swap(Res);
     return *this;
 }
 
 inline
-Gmpz
+Gmpz&
 Gmpz::operator*=(int i)
 {
-    *this = *this * Gmpz(i);
-    return *this;
-}
-
-inline
-Gmpz
-operator/(const Gmpz &a, const Gmpz &b)
-{
-    CGAL_precondition(b != 0);
-    Gmpz Res;
-    mpz_tdiv_q(Res.mpz(), a.mpz(), b.mpz());
-    return Res;
-}
-
-inline
-Gmpz
-operator/(const Gmpz &a, int b)
-{
-    if (b>0)
-    {
-        Gmpz Res;
-        mpz_tdiv_q_ui(Res.mpz(), a.mpz(), b);
-        return Res;
-    }
-    return a / Gmpz(b);
+    return *this *= Gmpz(i);
 }
 
 inline
 Gmpz&
 Gmpz::operator/=(const Gmpz &z)
 {
-    *this = *this / z;
-    return *this;
-}
-
-inline
-Gmpz
-Gmpz::operator/=(int i)
-{
-    *this = *this / Gmpz(i);
-    return *this;
-}
-
-inline
-Gmpz
-operator+(int i, const Gmpz &z)
-{ return z + i; }
-
-inline
-Gmpz
-operator-(int i, const Gmpz &z)
-{ return Gmpz(i) - z; }
-
-inline
-Gmpz
-operator*(int i, const Gmpz &z)
-{ return z * i; }
-
-inline
-Gmpz
-operator/(int i, const Gmpz &z)
-{ return Gmpz(i) / z; }
-
-inline
-Gmpz
-Gmpz::operator%(const Gmpz &z) const
-{
+    CGAL_precondition(z != 0);
     Gmpz Res;
-    mpz_tdiv_r(Res.mpz(), mpz(), z.mpz());
-    return Res;
+    mpz_tdiv_q(Res.mpz(), mpz(), z.mpz());
+    swap(Res);
+    return *this;
+}
+
+inline
+Gmpz&
+Gmpz::operator/=(int b)
+{
+    if (b>0)
+    {
+        Gmpz Res;
+        mpz_tdiv_q_ui(Res.mpz(), mpz(), b);
+        swap(Res);
+        return *this;
+    }
+    return *this /= Gmpz(b);
 }
 
 inline
 Gmpz&
 Gmpz::operator%=(const Gmpz &z)
 {
-    *this = *this % z;
+    Gmpz Res;
+    mpz_tdiv_r(Res.mpz(), mpz(), z.mpz());
+    swap(Res);
     return *this;
 }
+
 
 inline
 double

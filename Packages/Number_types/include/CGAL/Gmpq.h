@@ -32,9 +32,11 @@
 
 #include <utility>
 #include <string>
+
 #include <gmp.h>
 #include <mpfr.h>
 
+#include <boost/operators.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -154,8 +156,12 @@ public:
 };
 
 
+// TODO : add mixed operators with Gmpz
 class Gmpq
-  : public Handle_for<Gmpq_rep>
+  : Handle_for<Gmpq_rep>,
+    boost::ordered_field_operators1< Gmpq
+  , boost::ordered_field_operators2< Gmpq, int
+    > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -221,13 +227,9 @@ public:
   Gmpq operator-() const;
 
   Gmpq& operator+=(const Gmpq &z);
-
   Gmpq& operator-=(const Gmpq &z);
-
   Gmpq& operator*=(const Gmpq &z);
-
   Gmpq& operator/=(const Gmpq &z);
-
 
   double to_double() const;
   Sign sign() const;
@@ -247,26 +249,6 @@ bool
 operator<(const Gmpq &a, const Gmpq &b)
 { return mpq_cmp(a.mpq(), b.mpq()) < 0; }
 
-inline
-bool
-operator<=(const Gmpq &a, const Gmpq &b)
-{ return ! (b < a); }
-
-inline
-bool
-operator>(const Gmpq &a, const Gmpq &b)
-{ return b < a; }
-
-inline
-bool
-operator>=(const Gmpq &a, const Gmpq &b)
-{ return ! (a < b); }
-
-inline
-bool
-operator!=(const Gmpq &a, const Gmpq &b)
-{ return ! (a == b); }
-
 
 // mixed operators.
 inline
@@ -276,59 +258,13 @@ operator<(const Gmpq &a, int b)
 
 inline
 bool
-operator<(int a, const Gmpq &b)
-{ return mpq_cmp_si(b.mpq(), a, 1) > 0; }
+operator>(const Gmpq &a, int b)
+{ return mpq_cmp_si(a.mpq(), b, 1) > 0; }
 
 inline
 bool
 operator==(const Gmpq &a, int b)
 { return mpq_cmp_si(a.mpq(), b, 1) == 0; }
-
-inline
-bool
-operator==(int a, const Gmpq &b)
-{ return b == a; }
-
-inline
-bool
-operator<=(const Gmpq &a, int b)
-{ return ! (b < a); }
-
-inline
-bool
-operator<=(int a, const Gmpq &b)
-{ return ! (b < a); }
-
-inline
-bool
-operator>(const Gmpq &a, int b)
-{ return b < a; }
-
-inline
-bool
-operator>(int a, const Gmpq &b)
-{ return b < a; }
-
-inline
-bool
-operator>=(const Gmpq &a, int b)
-{ return ! (a < b); }
-
-inline
-bool
-operator>=(int a, const Gmpq &b)
-{ return ! (a < b); }
-
-inline
-bool
-operator!=(const Gmpq &a, int b)
-{ return ! (a == b); }
-
-inline
-bool
-operator!=(int a, const Gmpq &b)
-{ return ! (a == b); }
-
 
 
 inline
@@ -340,76 +276,45 @@ Gmpq::operator-() const
     return Res;
 }
 
-inline
-Gmpq
-operator+(const Gmpq &a, const Gmpq &b)
-{
-    Gmpq Res;
-    mpq_add(Res.mpq(), a.mpq(), b.mpq());
-    return Res;
-}
-
 
 inline
 Gmpq&
 Gmpq::operator+=(const Gmpq &z)
 {
-    *this = *this + z;
+    Gmpq Res;
+    mpq_add(Res.mpq(), mpq(), z.mpq());
+    swap(Res);
     return *this;
 }
-
-
-inline
-Gmpq
-operator-(const Gmpq &a, const Gmpq &b)
-{
-    Gmpq Res;
-    mpq_sub(Res.mpq(), a.mpq(), b.mpq());
-    return Res;
-}
-
 
 inline
 Gmpq&
 Gmpq::operator-=(const Gmpq &z)
 {
-    *this = *this - z;
-    return *this;
-}
-
-inline
-Gmpq
-operator*(const Gmpq &a, const Gmpq &b)
-{
     Gmpq Res;
-    mpq_mul(Res.mpq(), a.mpq(), b.mpq());
-    return Res;
+    mpq_sub(Res.mpq(), mpq(), z.mpq());
+    swap(Res);
+    return *this;
 }
 
 inline
 Gmpq&
 Gmpq::operator*=(const Gmpq &z)
 {
-    *this = *this * z;
-    return *this;
-}
-
-
-inline
-Gmpq
-operator/(const Gmpq &a, const Gmpq &b)
-{
-    CGAL_precondition(b != 0);
     Gmpq Res;
-    mpq_div(Res.mpq(), a.mpq(), b.mpq());
-    return Res;
+    mpq_mul(Res.mpq(), mpq(), z.mpq());
+    swap(Res);
+    return *this;
 }
 
 inline
 Gmpq&
 Gmpq::operator/=(const Gmpq &z)
 {
-    *this = *this / z;
+    CGAL_precondition(z != 0);
+    Gmpq Res;
+    mpq_div(Res.mpq(), mpq(), z.mpq());
+    swap(Res);
     return *this;
 }
 
