@@ -21,66 +21,27 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
-#ifndef CGAL_LEDA_RATIONAL_H
 #include <CGAL/leda_rational.h> 
+#include <CGAL/enum.h>
+#include <CGAL/predicates_on_points_2.h>
+#include <CGAL/Random.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/intersection_2.h>
+#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits.h>
+#include <CGAL/Timer.h>
+
+#ifdef ISR_DEBUG
+#include <CGAL/IO/leda_window.h>
 #endif
 
 #include <iostream.h>
-
-#ifndef CGAL_ENUM_H
-#include <CGAL/enum.h>
-#endif
-
-#ifndef CGAL_PREDICATES_ON_POINTS_2_H
-#include <CGAL/predicates_on_points_2.h>
-#endif
-
-#ifndef CGAL_RANDOM_H
-#include <CGAL/Random.h>
-#endif
-
-#ifndef CGAL_SQUARED_DISTANCE_2_H
-#include <CGAL/squared_distance_2.h>
-#endif
-
-#ifndef CGAL_POINT_GENERATORS_2_H
-#include <CGAL/point_generators_2.h>
-#endif
-
-#ifndef CGAL_INTERSECTION_2_H
-#include <CGAL/intersection_2.h>
-#endif
-
-#ifndef SWEEP_TO_PRODUCE_PLANAR_MAP_SUBCURVES_H
-#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
-#endif
-
-#ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
-#include <CGAL/Arr_segment_exact_traits.h>
-#endif
-
-#ifndef CGAL_ARR_POLYLINE_TRAITS_H
-#include <CGAL/Arr_polyline_traits.h>
-#endif
-
-#ifndef CGAL_TIMER_H
-#include <CGAL/Timer.h>
-#endif
-
-#ifdef ISR_DEBUG
-
-#ifndef CGAL_LEDA_WINDOW_H
-#include <CGAL/IO/leda_window.h>
-#endif
-#endif
 #include <list.h>
 #include <set.h>
 
-
-#ifndef CGAL_REAL_H
 #include <CGAL/leda_real.h>
-#endif
-
 #include <CGAL/Snap_rounding_kd_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -167,7 +128,7 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_exact_traits<Rep_ > Traits;
+typedef CGAL::Arr_segment_traits_2<Rep_ > Traits;
 typedef Rep_ Rep;
 typedef typename Rep::FT NT;
 typedef CGAL::Segment_2<Rep> Segment_2;
