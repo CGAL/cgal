@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 1.1
-// release_date  : %-e Dec 1999
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
-// file          : include/CGAL/Cartesian/d_utils.h
-// package       : Cd (1.1)
+// file          : include/CGAL/Kernel_d/d_utils.h
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author        : Herve Broennimann
@@ -35,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Object >
 struct print_d
 {
-  char *       _separator;
+  const char *  _separator;
   std::ostream*_os;
   bool         _print_sep;
 

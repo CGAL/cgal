@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-67 $
-// release_date  : $CGAL_Date: 2001/05/29 $
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Kernel_d/VectorCd.C
-// package       : Kernel_d (0.9.19)
+// package       : Kernel_d (0.9.54)
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Susan Hert <hert@mpi-sb.mpg.de>

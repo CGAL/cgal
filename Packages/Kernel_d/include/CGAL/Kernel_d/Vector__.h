@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,24 +6,24 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Kernel_d/Vector__.h
-// package       : Kernel_d
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Kernel
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
 //
 // implementation: Higher dimensional geometry
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_VECTOR___H
 #define CGAL_VECTOR___H
@@ -477,7 +477,7 @@ std::istream& operator>>(std::istream& is, Vector_<NT_,AL_>& v)
 
 
 template <class NT_, class AL_>
-Vector_<NT_,AL_>::allocator_type Vector_<NT_,AL_>::MM;
+typename Vector_<NT_,AL_>::allocator_type Vector_<NT_,AL_>::MM;
 
 /*{\Ximplementation Vectors are implemented by arrays of type
 |NT|. All operations on a vector |v| take time $O(|v.dimension()|)$,

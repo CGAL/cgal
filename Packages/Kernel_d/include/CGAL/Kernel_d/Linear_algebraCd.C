@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 1.1
-// release_date  : %-e Dec 1999
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
-// file          : include/CGAL/Linear_algebraCd.C
-// package       : Kernel_d
+// file          : include/CGAL/Kernel_d/Linear_algebraCd.C
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr

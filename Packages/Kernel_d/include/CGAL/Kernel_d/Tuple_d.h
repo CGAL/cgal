@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Kernel_d/Tuple_d.h
-// package       : Kernel_d
-// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
@@ -181,7 +181,7 @@ FIXTUPLE(const NT*)
   void invert(int d)
   { for (int i=0; i<d; ++i) v[i]=-v[i]; }
 
-  void print(std::ostream& out, char*) const;
+  void print(std::ostream& out, const char*) const;
   void read(std::istream& in);
   void homogeneous_add(const Self* a, const Self* b)
   { register int d = a->size()-1;
@@ -266,7 +266,7 @@ Comparison_result operator()(
 
 
 template <typename NT, typename LA>
-void Tuple_d<NT,LA>::print(std::ostream& os, char* l) const
+void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
 { int i;
   switch( os.iword(CGAL::IO::mode) ) {
     case CGAL::IO::ASCII :
@@ -304,7 +304,7 @@ void Tuple_d<NT,LA>::read(std::istream& is)
 
 template <class ForwardIterator>
 void tuple_dim_check(ForwardIterator first, ForwardIterator last, 
-                     char* file, int line, char* op)
+                     const char* file, int line, const char* op)
 { if (first==last) return;
   int d = first->dimension(); ++first;
   for (; first!=last; ++first) 

@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
+//
+// file          : include/CGAL/Kernel_d/intersection_objects_d.h
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// author(s)     : ?
+// coordinator   : ?
+//
+// ======================================================================
 #ifndef CGAL_INTERSECTION_OBJECTS_D_H
 #define CGAL_INTERSECTION_OBJECTS_D_H
 
@@ -25,7 +45,7 @@ public:
 };
 
 template <class R>
-Line_d_Line_d_pair<R>::Intersection_result
+typename Line_d_Line_d_pair<R>::Intersection_result
 Line_d_Line_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -82,7 +102,7 @@ public:
 };
 
 template <class R>
-Line_d_Ray_d_pair<R>::Intersection_result
+typename Line_d_Ray_d_pair<R>::Intersection_result
 Line_d_Ray_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -141,7 +161,7 @@ public:
 };
 
 template <class R>
-Line_d_Segment_d_pair<R>::Intersection_result
+typename Line_d_Segment_d_pair<R>::Intersection_result
 Line_d_Segment_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -211,7 +231,7 @@ public:
 };
 
 template <class R>
-Ray_d_Ray_d_pair<R>::Intersection_result
+typename Ray_d_Ray_d_pair<R>::Intersection_result
 Ray_d_Ray_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -301,7 +321,7 @@ public:
 };
 
 template <class R>
-Ray_d_Segment_d_pair<R>::Intersection_result
+typename Ray_d_Segment_d_pair<R>::Intersection_result
 Ray_d_Segment_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -384,7 +404,7 @@ public:
 };
 
 template <class R>
-Segment_d_Segment_d_pair<R>::Intersection_result
+typename Segment_d_Segment_d_pair<R>::Intersection_result
 Segment_d_Segment_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -485,7 +505,7 @@ public:
 };
 
 template <class R>
-Line_d_Hyperplane_d_pair<R>::Intersection_result
+typename Line_d_Hyperplane_d_pair<R>::Intersection_result
 Line_d_Hyperplane_d_pair<R>::intersection_type()
 { if (_known) return _result;
   _known = true;
@@ -541,7 +561,7 @@ public:
 };
 
 template <class R>
-Ray_d_Hyperplane_d_pair<R>::Intersection_result
+typename Ray_d_Hyperplane_d_pair<R>::Intersection_result
 Ray_d_Hyperplane_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;
@@ -605,7 +625,7 @@ public:
 };
 
 template <class R>
-Segment_d_Hyperplane_d_pair<R>::Intersection_result
+typename Segment_d_Hyperplane_d_pair<R>::Intersection_result
 Segment_d_Hyperplane_d_pair<R>::intersection_type()
 { 
   if (_known) return _result;

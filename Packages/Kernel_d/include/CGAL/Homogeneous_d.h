@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Homogeneous_d.h
-// package       : Kernel_d
-// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
@@ -188,17 +188,17 @@ public:
   { return Linear_base_d(); }
 
   // Intersection objects:
-  typedef Line_line_intersectionHd<Self> Line_line_intersection_d;
-  typedef Line_hyperplane_intersectionHd<Self> Line_hyperplane_intersection_d;
-  typedef Line_d_Line_d_pair<Self> Line_d_Line_d_pair;
-  typedef Ray_d_Ray_d_pair<Self> Ray_d_Ray_d_pair;
-  typedef Segment_d_Segment_d_pair<Self> Segment_d_Segment_d_pair;
-  typedef Line_d_Ray_d_pair<Self> Line_d_Ray_d_pair;
-  typedef Line_d_Segment_d_pair<Self> Line_d_Segment_d_pair;
-  typedef Ray_d_Segment_d_pair<Self> Ray_d_Segment_d_pair;
-  typedef Line_d_Hyperplane_d_pair<Self> Line_d_Hyperplane_d_pair;
-  typedef Ray_d_Hyperplane_d_pair<Self> Ray_d_Hyperplane_d_pair;
-  typedef Segment_d_Hyperplane_d_pair<Self> Segment_d_Hyperplane_d_pair;
+  typedef CGAL::Line_line_intersectionHd<Self> Line_line_intersection_d;
+  typedef CGAL::Line_hyperplane_intersectionHd<Self> Line_hyperplane_intersection_d;
+  typedef CGAL::Line_d_Line_d_pair<Self> Line_d_Line_d_pair;
+  typedef CGAL::Ray_d_Ray_d_pair<Self> Ray_d_Ray_d_pair;
+  typedef CGAL::Segment_d_Segment_d_pair<Self> Segment_d_Segment_d_pair;
+  typedef CGAL::Line_d_Ray_d_pair<Self> Line_d_Ray_d_pair;
+  typedef CGAL::Line_d_Segment_d_pair<Self> Line_d_Segment_d_pair;
+  typedef CGAL::Ray_d_Segment_d_pair<Self> Ray_d_Segment_d_pair;
+  typedef CGAL::Line_d_Hyperplane_d_pair<Self> Line_d_Hyperplane_d_pair;
+  typedef CGAL::Ray_d_Hyperplane_d_pair<Self> Ray_d_Hyperplane_d_pair;
+  typedef CGAL::Segment_d_Hyperplane_d_pair<Self> Segment_d_Hyperplane_d_pair;
 
   typedef CGALi::Intersect Intersect_d;
   Intersect_d intersect_d_object() const 

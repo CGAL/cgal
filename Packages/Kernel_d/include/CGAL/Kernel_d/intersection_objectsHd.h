@@ -1,3 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
+//
+// file          : include/CGAL/Kernel_d/intersection_objectsHd.h
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// author(s)     : ?
+// coordinator   : ?
+//
+// ======================================================================
 #ifndef CGAL_INTERSECTION_OBJECTSHD_H
 #define CGAL_INTERSECTION_OBJECTSHD_H
 

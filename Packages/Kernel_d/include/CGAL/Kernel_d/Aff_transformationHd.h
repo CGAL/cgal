@@ -8,12 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-64 $
+// release_date  : $CGAL_Date: 2002/03/18 $
 //
 // file          : include/CGAL/Kernel_d/Aff_transformationHd.h
-// package       : Kernel_d
-// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// package       : Kernel_d (0.9.54)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Seel
