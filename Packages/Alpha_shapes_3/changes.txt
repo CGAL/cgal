@@ -1,4 +1,4 @@
-version 3.18 (25/05/03)
+version 3.19 (25/05/03)
 - Upgrade to Triangulation_3's new design.
 - Remove calls to undocumented .handle().
 
