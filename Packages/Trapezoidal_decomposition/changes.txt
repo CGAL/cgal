@@ -1,3 +1,6 @@
+7 May 2004 Sylvain Pion
+- Fix "friend bug" for PGCC and ICC.
+
 1.39 (af)
 - Test for empty range before calling std::random_shuffle as SGI CC core dumps
 
