@@ -21,7 +21,6 @@
 //
 // ============================================================================
 
-
 #ifndef CGAL_INTERVAL_ARITHMETIC_H
 #define CGAL_INTERVAL_ARITHMETIC_H
 
@@ -619,7 +618,7 @@ Number_tag
 number_type_tag (const Interval_nt_advanced &)
 { return Number_tag(); }
 
-
+CGAL_END_NAMESPACE
 
 // Finally we deal with the convert_to<Interval_nt_advanced>(NT)
 // functions from other NTs, when necessary.
@@ -627,8 +626,6 @@ number_type_tag (const Interval_nt_advanced &)
 //
 // For the builtin types (well, all those that can be casted to double
 // exactly), the template in misc.h is enough.
-
-CGAL_END_NAMESPACE
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -657,33 +654,5 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_QUOTIENT_H
 #include <CGAL/Interval_arithmetic/IA_Quotient.h>
 #endif
-
-CGAL_BEGIN_NAMESPACE
-
-template <class FT>
-inline
-Interval_nt
-convert_from_to (const Interval_nt&, const FT & z)
-{
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-    Interval_nt tmp(convert_from_to(Interval_nt_advanced(), z));
-    FPU_set_cw(backup);
-    return tmp;
-}
-
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-template <class FT>
-inline
-Interval_nt
-convert_to (const FT & z)
-{
-    FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-    Interval_nt tmp(convert_to<Interval_nt_advanced>(z));
-    FPU_set_cw(backup);
-    return tmp;
-}
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-
-CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
