@@ -1,3 +1,6 @@
+2.8.30
+- new headers
+- protect demo with CGAL_USE_LEDA
 
 2.8.29
 - current version number appears in window frame label

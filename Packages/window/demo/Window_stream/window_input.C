@@ -20,6 +20,13 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main() {
+  std::cout << "This demo requires LEDA Window to compile." << std::endl;
+  return 0;
+}
+#else
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -113,4 +120,4 @@ main()
   W.acknowledge("THE END");
   return 0;
 }
-
+#endif
