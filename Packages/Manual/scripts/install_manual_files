@@ -127,7 +127,7 @@ echo "***copying Handle_ref to Handles_and_Circs_ref***"
 echo "***copying Circulator_ref to Handles_and_Circs_ref***"
 \cp $TARGET_DIR/support/Circulator_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
 echo "***editing Handles_and_Circs_ref/intro.tex to include Handle and pointer***"
-sed 's/\\chapter{Circulators}/\\chapter{Handles and Circulators}/; s/\\ccc{Random_access_circulator}/&\\\\ \\ccRefConceptPage{Handle}/; s/\\ccRefIdfierPage{CGAL::Circulator_traits<C>}/&\\\\ \\ccRefIdfierPage{CGAL::Pointer<T>}/; s/\\section\*{Summary}/& \\input{handle_intro}/' $TARGET_DIR/support/Circulator_ref/intro.tex > $TARGET_DIR/support/Handles_and_Circs_ref/intro.tex 
+sed 's/\\chapter{Circulators}/\\chapter{Handles and Circulators}/; s/\\ccc{Random_access_circulator}/&\\\\ \\ccRefConceptPage{Handle}/; s/\\section\*{Summary}/& \\input{handle_intro}/' $TARGET_DIR/support/Circulator_ref/intro.tex > $TARGET_DIR/support/Handles_and_Circs_ref/intro.tex 
 
 echo "***copying Timer to Miscellany***"
 \cp $TARGET_DIR/support/Timer/* $TARGET_DIR/support/Miscellany
