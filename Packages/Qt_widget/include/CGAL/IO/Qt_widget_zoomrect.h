@@ -98,7 +98,8 @@ private:
       widget->lock();
       widget->setColor(Qt::green);
       if(!widgetrepainted)
-	      widget->get_painter().drawRect(first_x, first_y, x2 - first_x, y2 - first_y);
+	      widget->get_painter().drawRect(first_x, first_y, 
+										 x2 - first_x, y2 - first_y);
       widget->get_painter().drawRect(first_x, first_y, x - first_x, y - first_y);
       widget->unlock();
       widget->setColor(old_color);
