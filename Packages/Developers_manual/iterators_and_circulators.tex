@@ -82,10 +82,10 @@ and circulator concepts,  this not possible.
 Thus iterator traits have been introduced to resolve this problem.
 An algorithm using an iterator of the type \ccc{Iter} will find the 
 relevant types in an instantiation of a small templated class 
-\ccc{iterators_traits}.
+\ccc{iterator_traits}.
 
 There is a  general templated version
-of \ccc{iterators_traits} that looks like:
+of \ccc{iterator_traits} that looks like:
 \begin{verbatim}
 template <class Iter> 
 struct iterator_traits {
@@ -96,7 +96,7 @@ struct iterator_traits {
   typedef typename Iter::reference          reference;
 };
 \end{verbatim}
-and a partial specialization of \ccc{iterators_traits} classes for pointers:
+and a partial specialization of \ccc{iterator_traits} classes for pointers:
 \ccIndexSubitem{iterator traits}{for pointers}
 \begin{verbatim}
 template <class T> 
@@ -113,7 +113,7 @@ Iterators traits are not fully supported by compilers, such as MS Visual \CC,
 that do not allow partial specialization 
 \ccIndexSubitem{partial specialization}{for iterator traits}
 This means that, when using these compilers,
-the class \ccc{iterators_traits<It>} has to be be explicitely
+the class \ccc{iterator_traits<It>} has to be be explicitely
 instantiated whenever \ccc{<It>} is a C pointer.
 
 \cgal\ provides these instantiations for pointers to 
