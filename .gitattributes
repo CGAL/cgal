@@ -1444,6 +1444,12 @@ Packages/Nef_S2/doc_tex/Nef_S2/fig/halfspace.ps -text
 Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.eps -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.gif -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.eps -text
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.gif -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#unset

@@ -4,7 +4,7 @@
   
 \ccDefinition
 
-An instance of data type \ccc{Nef_polyhedron_S2<K>} is a subset of
+An instance of data type \ccc{Nef_polyhedron_S2<Traits>} is a subset of
 the sphere $S_2$ that is the result of forming complements and 
 intersections starting from a finite set \ccc{H} of halfspaces 
 bounded by a plane containing the origin. Halfspaces correspond to 
@@ -19,23 +19,26 @@ operations \ccc{boundary}, \ccc{closure}, and \ccc{interior}.
 \ccParameters
 
 \begin{tabbing}
-\ccc{template <} \=\ccc{class NefSphereKernelTraits_2,}\\
-                 \>\ccc{class NefSphereItems_2 = CGAL::SM_items,}\\
+\ccc{template <} \=\ccc{class Nef_polyhedronTraits_S2,}\\
+                 \>\ccc{class Nef_polyhedronItems_S2 = CGAL::SM_items,}\\
                  \>\ccc{class Nef_polyhedronMarks = bool}\\
     \ccc{class Nef_polyhedron_S2;}
 \end{tabbing}
 
-The first template parameter must be a model of the concept
-\ccc{NefSphereKernelTraits_2}.
+The first parameter requires one of the following exact kernels:
+\ccc{Homogeneous}, \ccc{Simple_homogeneous} 
+parametrized with \ccc{Gmpz}, \ccc{leda_integer} or any other number type
+modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian} parametrized with 
+\ccc{Gmpq}, \ccc{leda_rational},\ccc{Quotient<Gmpz>} or any other number 
+type modeling \Q.
 
-The second parameter expects a model of the concept
-\ccc{Nef_polyhedronItems_3}.  The default is the \ccc{CGAL::SNC_items}
-class.
+The second parameter and the third parameter are for future considerations.
+Neither \ccc{Nef_polyhedronItems_S2} nor \ccc{Nef_polyhedronMarks} is
+specifed, yet. Do not use other than the default types for these two 
+template parameters.
 
-The third parameter expects a model of the concept \ccc{Nef_polyhedronMarks}.
-The default is the basic type \ccc{bool}.
-
-\ccSetOneOfTwoColumns{7cm}
+\ccThree{Nef_poly:SHalfedge_const_iterator}{h.halfedge() const;;}{}
+\ccThreeToTwo
 
 \ccTypes
 
@@ -76,7 +79,7 @@ The default is the basic type \ccc{bool}.
 
 \ccNestedType{Mark}{attributes of objects (vertices, edges, faces).}
 
-\ccNestedType{Size_type}{size type.}
+\ccNestedType{size_type}{size type}
 
 \ccEnum{enum Boundary { EXCLUDED, INCLUDED }}{construction selection.}
 
@@ -109,7 +112,7 @@ The default is the basic type \ccc{bool}.
   \ccc{Forward_iterator} has to be an iterator with value type
   \ccc{Sphere_segment}.  }
 
-\ccSetTwoOfThreeColumns{4cm}{3cm}
+\ccSetTwoOfThreeColumns{3.4cm}{3cm}
 
 \ccOperations
 

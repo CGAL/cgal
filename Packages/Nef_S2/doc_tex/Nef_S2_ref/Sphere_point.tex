@@ -1,6 +1,7 @@
 % begin cgal manual page
 
-\begin{ccRefClass}{Sphere_point<R>}\ccCreationVariable{p}
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_point}
+\ccCreationVariable{p}
 
 \ccDefinition
 
@@ -13,17 +14,15 @@ nontrivial vectors under normalization.
 
 \ccTypes
 
-\ccNestedType{R}{representation class.}
-
 \ccNestedType{RT}{ring number type.}
 
 \ccSetOneOfTwoColumns{5cm}
 
 \ccCreation
 
-\ccConstructor{Sphere_point<R>()}{ creates some sphere point.  }
+\ccConstructor{Sphere_point()}{ creates some sphere point.  }
 
-\ccConstructor{Sphere_point<R>(RT x, RT y, RT z)}{ creates a sphere
+\ccConstructor{Sphere_point(RT x, RT y, RT z)}{ creates a sphere
   point corresponding to the point of intersection of the ray starting
   at the origin in direction $(x,y,z)$ and the surface of $S_2$.  }
 
@@ -40,10 +39,10 @@ Note that the vector $(x,y,z)$ is not normalized.
 
 \ccMethod{RT z() ;}{ the $z$-coordinate.  }
 
-\ccMethod{bool operator==(const Sphere_point<R>& q) ;}{Equality.}
+\ccMethod{bool operator==(const Sphere_point& q) ;}{Equality.}
 
-\ccMethod{bool operator!=(const Sphere_point<R>& q) ;}{Inequality.}
+\ccMethod{bool operator!=(const Sphere_point& q) ;}{Inequality.}
 
-\ccMethod{Sphere_point<R> antipode() ;}{returns the antipode of \ccc{p}.}
+\ccMethod{Sphere_point antipode() ;}{returns the antipode of \ccc{p}.}
 
 \end{ccRefClass}
