@@ -1658,14 +1658,16 @@ merge_edge
  const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv, 
  Change_notification * en)
 {
-	std::cout << "e1 source " << e1->source()->point() << std::endl;
-	std::cout << "e1 target " << e1->target()->point() << std::endl;
-	std::cout << "e2 source " << e2->source()->point() << std::endl;
-	std::cout << "e2 target " << e2->target()->point() << std::endl;
-	std::cout << "e1 source degree" << e1->source()->degree() << std::endl;
-	std::cout << "e1 target degree" << e1->target()->degree() << std::endl;
-	std::cout << "e2 source degree" << e2->source()->degree() << std::endl;
-	std::cout << "e2 target degree" << e2->target()->degree() << std::endl;
+	//std::cout << "cv source " << traits->curve_source(cv) << std::endl;
+	//std::cout << "cv target " << traits->curve_target(cv) << std::endl;
+	//std::cout << "e1 source " << e1->source()->point() << std::endl;
+	//std::cout << "e1 target " << e1->target()->point() << std::endl;
+	//std::cout << "e2 source " << e2->source()->point() << std::endl;
+	//std::cout << "e2 target " << e2->target()->point() << std::endl;
+	//std::cout << "e1 source degree" << e1->source()->degree() << std::endl;
+	//std::cout << "e1 target degree" << e1->target()->degree() << std::endl;
+	//std::cout << "e2 source degree" << e2->source()->degree() << std::endl;
+	//std::cout << "e2 target degree" << e2->target()->degree() << std::endl;
 
   CGAL_precondition((traits->point_equal(traits->curve_source(cv),
                                            e1->source()->point()) &&
