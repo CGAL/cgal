@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationHierarchyVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 
+\RCSdef{\RCSTriangulationvbRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationvbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TriangulationHierarchyVertexBase_3}
+
+\ccDefinition
+
+The vertex base used by \ccc{Triangulation_hierarchy_3} has to provide
+access to two vertex handles for linking between the levels of the hierarchy.
+
+\ccRefines{\ccc{TriangulationVertexBase_3}}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{Triangulatixon}{Facetxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{Vertex_handle up() const;}
+{Returns the \ccc{Vertex_handle} pointing to the level above.}
+\ccMethod{Vertex_handle down() const;}
+{Returns the \ccc{Vertex_handle} pointing to the level below.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_up(Vertex_handle v);}
+{Sets the \ccc{Vertex_handle} pointing to the level above to \ccc{v}.}
+\ccMethod{void set_down(Vertex_handle v);}
+{Sets the \ccc{Vertex_handle} pointing to the level below to \ccc{v}.}
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_3}
+
+%% \ccExample
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_vb_prog.C}
+
+\end{ccRefConcept}

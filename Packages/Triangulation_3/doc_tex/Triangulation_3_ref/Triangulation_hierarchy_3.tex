@@ -12,29 +12,26 @@
 
 
 \begin{ccRefClass}{Triangulation_hierarchy_3<Tr>}
-%% add template arg's if necessary
 
 \ccDefinition
-The class \ccRefName\ implements a triangulation augmented with
-a data structure which allows fast point location queries.
-As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
-when it is built for Delaunay triangulations.
-However it can be used as well for other triangulations
-and the \ccRefName\ class is templated by a parameter
-which must be instantiated by one of the \cgal\ triangulation
-classes.
 
-\textit{In the current implementation, \ccc{Triangulation_hierarchy_3} 
-supports only Delaunay triangulations:}\\
-\ccc{Tr} must be defined as\\
-\ccc{Delaunay_triangulation_3<TriangulationHierarchyTraits_3,TriangulationDataStructure_3>}\\
-and, in addition to the requirements given by the concept
-\ccc{TriangulationDataStructure_3}, the triangulation data structure
-class must be parametrized by 
-\ccc{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
-and \ccc{TriangulationCellBase_3}.
+The class \ccc{Triangulation_hierarchy_3} implements a triangulation augmented
+with a data structure which allows fast point location queries.  As proved
+in~\cite{d-iirdt-98}, this structure has an optimal behavior when it is built
+for Delaunay triangulations.  It can however be used for other triangulations.
 
 \ccInclude{CGAL/Triangulation_hierarchy_3.h}
+
+\ccParameters
+
+It is templated by a parameter which must be instantiated by one of the \cgal\
+triangulation classes.  \textit{In the current implementation, only
+\ccc{Delaunay_triangulation_3} is supported for \ccc{Tr}.}
+
+\ccc{Tr::Vertex} has to be a model of the concept
+\ccc{TriangulationHierarchyVertexBase_3}.\\
+\ccc{Tr::Geom_traits} has to be a model of the concept
+\ccc{TriangulationHierarchyTraits_3}.
 
 \ccInheritsFrom
 
@@ -48,7 +45,7 @@ Note that, since the algorithms that are provided are randomized, the
 running time of constructing a triangulation with a hierarchy may be
 improved when shuffling the data points.
 
-However, the I/0 operations are not overloaded. So, writing a
+However, the I/O operations are not overloaded. So, writing a
 hierarchy into a file will lose the hierarchic structure and reading
 it from the file will result in an ordinary triangulation whose
 efficiency will be the same as \ccc{Tr}.
@@ -74,12 +71,7 @@ queries on real
 data. 
 
 \ccSeeAlso
-\ccc{CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}\\
-\ccc{TriangulationHierarchyTraits_3}
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_3}\\
+\ccc{CGAL::Delaunay_triangulation_3}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+

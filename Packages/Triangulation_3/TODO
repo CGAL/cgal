@@ -45,8 +45,8 @@ TDS
 - nettoyer les trucs 2d only (face_circulator etc)
 
 T3
-- virer push_back (qui n'est deja plus documente, mais il manque des trucs
-  dans STL_extensions pour pouvoir le virer completement).
+- virer push_back/copy_triangulation apres 3.0.
+- degree() devrait-il, au niveau geometrique, ne pas compter le sommet infini ?
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
   donner un effet de perspective), vrml, viewer_3...

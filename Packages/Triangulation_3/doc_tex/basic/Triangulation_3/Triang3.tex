@@ -381,21 +381,36 @@ Delaunay triangulation.
 
 \section{Examples}
 \label{Triangulation3-sec-examples}
-\subsection{First example}
-This example shows the incremental construction of a 3D triangulation, 
-the location of a point, and how to manipulate elementary operations
-on indices in a cell. It uses the default parameters proposed by
-\cgal\ for the \ccc{Triangulation_3} class.
+\subsection{Basic example}
+This example shows the incremental construction of a 3D triangulation, the
+location of a point and how to perform elementary operations on indices in a
+cell. It uses the default parameter of the \ccc{Triangulation_3} class.
 
 \ccIncludeExampleCode{Triangulation_3/example_simple.C}
 
-\subsection{Example changing the vertex base}
-This example shows how the user can plug his own vertex base in a
-triangulation.
+\subsection{Changing the vertex base}
+The following two examples show how the user can plug his own vertex base in a
+triangulation.  Changing the cell base is similar.
+
+\subsubsection{Adding a color}
+When the user doesn't need to add a type in a vertex which depends on the
+\ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
+\ccc{Cell_handle}), then he can use the
+\ccc{Triangulation_vertex_base_with_info_3} class to add his own information
+easily in the vertices.  The example below shows how to add a \ccc{CGAL::Color}
+this way.
 
 \ccIncludeExampleCode{Triangulation_3/example_color.C}
 
-\subsection{Use of the Delaunay Hierarchy}
+\subsubsection{Adding handles}
+When the user needs to add a type in a vertex which depends on the
+\ccc{TriangulationDataStructure_3} (e.g. a \ccc{Vertex_handle} or
+\ccc{Cell_handle}), then he has to derive his own vertex base class,
+like the following example shows.
+
+\ccIncludeExampleCode{Triangulation_3/example_adding_handles.C}
+
+\subsection{Use of the Delaunay hierarchy}
 
 \ccIncludeExampleCode{Triangulation_3/example_hierarchy.C}
 

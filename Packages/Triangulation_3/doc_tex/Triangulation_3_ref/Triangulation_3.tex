@@ -11,30 +11,32 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 
 \ccDefinition
-  
-The class \ccRefName\ expects a model of a \ccc{geometric traits
-class} as its first template argument and a model of a \ccc{triangulation data
-structure} as its second argument. 
 
-The second argument has a default value, which is
-\ccc{Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> 
->}. 
-
+The class \ccc{Triangulation_3} represents a 3-dimensional tetrahedralization
+of points.
 
 \ccInclude{CGAL/Triangulation_3.h}
+
+\ccParameters
+
+The first template argument has to be a model of the
+\ccc{TriangulationTraits_3} concept.
+
+The second template argument has to be a model of the
+\ccc{TriangulationDataStructure_3} concept.
+It has the default value \ccc{Triangulation_data_structure_3<
+Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> 
+>}. 
 
 \ccInheritsFrom{\ccc{Triangulation_utils_3}}
 
 \ccTypes
-The class \ccClassTemplateName\ defines the following types:
-\ccThree{typedef TriangulationTraits_3::Tetrahedron Tetrahedron;}
-{Tetrahedron}{}
+The class \ccc{Triangulation_3} defines the following types:
+\ccThree{typedef TriangulationTraits_3::Tetrahedron Tetraxxx;}
+{Tetrahedronxxxxx}{}
 \ccThreeToTwo
 
 \ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
@@ -79,6 +81,10 @@ the user can pass them directly as arguments to the functions.
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}
 {handle to a cell}
 
+\ccThree{typedef TriangulationTraits_3::Tetrahedron Tetraxxxx;}
+{Tetrahedronxxxxxxx}{}
+\ccThreeToTwo
+
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_iterator All_cells_iterator;}
 {iterator over cells}
 \ccGlue
@@ -91,6 +97,10 @@ the user can pass them directly as arguments to the functions.
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator;}
 {iterator over vertices}
 
+\ccThree{typedef TriangulationTraits_3::Tetrahedron ;}
+{Tetrahedron}{}
+\ccThreeToTwo
+
 \ccNestedType{Finite_cells_iterator}{iterator over finite cells}
 \ccGlue
 \ccNestedType{Finite_facets_iterator}{iterator over finite facets}
@@ -101,6 +111,9 @@ the user can pass them directly as arguments to the functions.
 \ccGlue
 \ccNestedType{Point_iterator}{iterator over the points corresponding to the
 finite vertices of the triangulation.}
+
+\ccThree{typedef TriangulationTraits_3::Tetrahedron Tetrahedro;}{T}{}
+\ccThreeToTwo
 
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator;}
 {circulator over all cells incident to a given edge} 
@@ -119,51 +132,45 @@ OUTSIDE_AFFINE_HULL};}
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
-\ccThree{Triangulation_3<>}{Facet }{}
+\ccThree{Triangulation_3<>}{Facetxxx }{}
+\ccThreeToTwo
 
-\ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
+\ccConstructor{Triangulation_3
 (const TriangulationTraits_3 & traits = TriangulationTraits_3());}
 {Introduces a triangulation \ccVar\ having only one vertex which is the
 infinite vertex.} 
 
-\ccConstructor{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>(const
-Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);} 
+\ccConstructor{Triangulation_3 (const Triangulation_3 & tr);} 
 {Copy constructor. All vertices and faces are duplicated.}
 
 \ccConstructor{template < class InputIterator>
-       Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
-       (InputIterator first, InputIterator last,
+       Triangulation_3 (InputIterator first, InputIterator last,
         const TriangulationTraits_3 & traits = TriangulationTraits_3() );}
 {Introduces a triangulation \ccVar\ constructed by the repeated insertion
 of the iterator range \ccc{[first,last)} of value type \ccc{Point}.} 
 
-\ccFunction{void ~t();}
-{Destructor. All vertices (including the infinite vertex) and cells are
-deleted.}
-
-\ccOperations
-
 \ccHeading{Assignment}
 
-\ccMethod{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>
-	operator=(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
+\ccMethod{Triangulation_3 & operator=(const Triangulation_3 & tr);}
 {The triangulation \ccc{tr} is duplicated, and modifying the copy after the 
-duplication does not modify the original.}
+duplication does not modify the original. The previous triangulation held
+by \ccVar\ is deleted.}
 
-\ccMethod{void copy_triangulation
-		(const Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
-{The triangulation is duplicated.}
-
-The previous two methods are equivalent.
-
-\ccMethod{void swap(Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3> & tr);}
+\ccMethod{void swap(Triangulation_3 & tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
 \ccVar.\ccc{swap(tr)} should be preferred to \ccVar\ = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that. Indeed, there is no
 copy of cells and vertices, thus this method runs in constant time.}
 
+\ccMethod{void clear();}
+{Deletes all finite vertices and all cells of \ccVar.}
+
+\ccFunction{ ~t();}
+{Destructor. All vertices (including the infinite vertex) and cells are
+deleted.}
+
 \ccAccessFunctions
-\ccThree{Vertex_handle}{t.number_of_finite_edges()toto}{}
+\ccThree{TriangulationDataStructure_3&}{number_of_finite_edges}{}
 
 \ccMethod{const TriangulationTraits_3 & geom_traits() const;}
 {Returns a const reference to the geometric traits object.}
@@ -184,11 +191,16 @@ algorithms.
  
 \end{ccAdvanced}
 
+\ccThree{Triangulationx}{number_of_finite_edges}{}
+
 \ccMethod{int dimension() const;}
 {Returns the dimension of the affine hull.}
 \ccGlue
 \ccMethod{int number_of_vertices() const;}
 {Returns the number of finite vertices.}
+\ccGlue
+\ccMethod{int number_of_cells() const;}
+{Returns the number of cells or 0 if \ccVar.\ccc{dimension()}$<3$.}
 
 \ccMethod{Vertex_handle infinite_vertex();}
 {Returns the infinite vertex.}
@@ -204,9 +216,7 @@ infinite cell is a
 cell incident to the infinite vertex. Similarly we call
 an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 
-\ccMethod{int number_of_cells() const;}
-{The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
-\ccGlue
+\ccThree{Tria}{t.number_of_finite_edges()toto}{}
 \ccMethod{int number_of_facets() const;}
 {The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
@@ -707,11 +717,6 @@ v->set_point(p)}.
 is connected, its boundary is connected, and \ccc{p} lies inside the
 hole, which is star-shaped wrt \ccc{p}}.}
 
-\ccHeading{Removal}
-
-\ccMethod{void clear();}
-{Removes all finite vertices and all cells of \ccVar.}
-
 \ccHeading{Traversal of the Triangulation}
 
 The triangulation class provides several iterators and circulators
@@ -905,16 +910,14 @@ See the chapter on Geomview in the Support Library manual.
 % Cross referencing to other manuals is not (yet) possible
 %See Chapter~\ref{ChapterGeomview}. 
 
-\ccFunction{istream& operator>>
-(istream& is, Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3> &t);}
+\ccFunction{istream& operator>> (istream& is, Triangulation_3 &t);}
 {Reads the underlying combinatorial triangulation from \ccc{is} by
 calling the corresponding input operator of the triangulation data
 structure class, and the non-combinatorial information by calling the
 corresponding input operators of the vertex and the cell
 classes. Assigns the resulting triangulation to \ccc{t}.}
 
-\ccFunction{ostream& operator<<
-(ostream& os, const Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3> &t);}
+\ccFunction{ostream& operator<< (ostream& os, const Triangulation_3 &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the dimension, the number of
@@ -928,17 +931,10 @@ cells.
 
 \ccSeeAlso
 
-\ccc{TriangulationDataStructure_3::Vertex},\\
-\ccc{TriangulationDataStructure_3::Cell}.
+\ccc{TriangulationDataStructure_3::Vertex}\\
+\ccc{TriangulationDataStructure_3::Cell}
 
 %\ccExample
-
 %%\ccIncludeExampleCode{examples/Triangulation3/example1.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

@@ -193,11 +193,13 @@ public:
   Vertex_handle insert(const Point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
  
-  // Obsolete.
+#ifndef CGAL_NO_DEPRECATED_CODE
   Vertex_handle push_back(const Point & p)
   {
+      bool THIS_FUNCTION_IS_DEPRECATED; // Use insert() or CGAL::Inserter<>
       return insert(p);
   }
+#endif
 
   template <class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,

@@ -285,17 +285,12 @@ public:
 
   Triangulation_3 & operator=(const Triangulation_3 & tr)
     {
-      copy_triangulation(tr);
+      Triangulation_3 tmp = tr;
+      swap(tmp);
       return *this;
     }
 
   // HELPING FUNCTIONS
-   
-  void copy_triangulation(const Triangulation_3 & tr)
-    {
-      _gt = tr._gt;
-      infinite = _tds.copy_tds( tr._tds, tr.infinite );
-    }
 
   void swap(Triangulation_3 &tr)
     {
@@ -507,11 +502,19 @@ public:
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
  
-  // Obsolete.
+#ifndef CGAL_NO_DEPRECATED_CODE
   Vertex_handle push_back(const Point & p)
   {
+      bool THIS_FUNCTION_IS_DEPRECATED; // use insert() and CGAL::Inserter<>
       return insert(p);
   }
+
+  void copy_triangulation(const Triangulation_3 & tr)
+    {
+      bool THIS_FUNCTION_IS_DEPRECATED; // Use assignment operator instead.
+      *this = tr;
+    }
+#endif
 
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)

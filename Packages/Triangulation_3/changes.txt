@@ -1,3 +1,12 @@
+Version 1.145 (2 June 03)
+- Actively deprecate copy_triangulation() and push_back().
+- Move doc of Triangulation_utils_3 to TDS chapter.
+- Document new concept TriangulationHierarchyVertexBase_3.
+- Various doc improvements.
+- Add Triangulation_vertex_base_with_info<Info, GT, Vb>.
+- Add Triangulation_cell_base_with_info<Info, GT, Cb>.
+- Add create_vertex(Vertex_handle), and document it as well as create_cell(Ch).
+
 Version 1.144 (30 May 03)
 - Functions taking output iterators as argument now return them
   (find_conflicts, incident_vertices, incident_cells).

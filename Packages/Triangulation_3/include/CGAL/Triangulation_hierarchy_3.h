@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998, 2001 The CGAL Consortium
+// Copyright (c) 1998, 2001, 2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -14,7 +14,7 @@
 // file          : include/CGAL/Triangulation_hierarchy_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// package       : Triangulation3
+// package       : Triangulation_3
 // author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
@@ -77,11 +77,15 @@ public:
       insert(first, last);
   }
  
-  Triangulation_hierarchy_3 &operator=(const  Triangulation_hierarchy_3& tr);
+  Triangulation_hierarchy_3 & operator=(const Triangulation_hierarchy_3& tr)
+  {
+    Triangulation_hierarchy_3 tmp(tr);
+    swap(tmp);
+    return *this;
+  }
+
   ~Triangulation_hierarchy_3();
 
-  //Helping
-  void copy_triangulation(const Triangulation_hierarchy_3 &tr);
   void swap(Triangulation_hierarchy_3 &tr);
   void clear();
 
@@ -91,10 +95,19 @@ public:
   // INSERT REMOVE
   Vertex_handle insert(const Point &p);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   Vertex_handle push_back(const Point &p)
   {
+      bool THIS_FUNCTION_IS_DEPRECATED; // Use insert() or CGAL::Inserter<>
       return insert(p);
   }
+
+  void copy_triangulation(const Triangulation_hierarchy_3 &tr)
+  {
+    bool THIS_FUNCTION_IS_DEPRECATED; // Use assignment instead.
+    *this = tr;
+  }
+#endif
  
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -163,39 +176,16 @@ Triangulation_hierarchy_3(const Geom_traits& traits)
 template <class Tr>
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
-    : Tr_Base(), random((long)0)
+    : Tr_Base(tr), random((long)0)
 { 
-  // create an empty triangulation to be able to delete it !
-  hierarchy[0] = this; 
-  for(int i=1;i<Triangulation_hierarchy_3__maxlevel;++i)
-    hierarchy[i] = new Tr_Base(tr.geom_traits());
-  copy_triangulation(tr);
-} 
- 
-
-//Assignement
-template <class Tr>
-Triangulation_hierarchy_3<Tr> &
-Triangulation_hierarchy_3<Tr>::
-operator=(const Triangulation_hierarchy_3<Tr> &tr)
-{
-  copy_triangulation(tr);
-  return *this;
-}
-
-
-template <class Tr>
-void
-Triangulation_hierarchy_3<Tr>::   
-copy_triangulation(const Triangulation_hierarchy_3<Tr> &tr)
-{
-  std::map< Vertex_handle, Vertex_handle > V;
-
-  for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
-    hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
+  hierarchy[0] = this;
+  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+    hierarchy[i] = new Tr_Base(*tr.hierarchy[i]);
 
   // up and down have been copied in straightforward way
   // compute a map at lower level
+
+  std::map< Vertex_handle, Vertex_handle > V;
 
   for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it)

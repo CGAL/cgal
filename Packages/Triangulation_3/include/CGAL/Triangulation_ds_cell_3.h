@@ -60,6 +60,22 @@ public:
       set_in_conflict_flag(0);
   }
 
+  Triangulation_ds_cell_3(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3)
+    : Cb(v0, v1, v2, v3)
+  {
+      set_in_conflict_flag(0);
+  }
+
+  Triangulation_ds_cell_3(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3,
+                          Cell_handle   n0, Cell_handle   n1,
+                          Cell_handle   n2, Cell_handle   n3)
+    : Cb(v0, v1, v2, v3, n0, n1, n2, n3)
+  {
+      set_in_conflict_flag(0);
+  }
+
   int mirror_index(int i) const
   {
       CGAL_triangulation_precondition ( i>=0 && i<4 );

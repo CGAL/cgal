@@ -11,18 +11,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
 
 \ccDefinition
   
-The class \ccRefName\ represents a three-dimensional Delaunay
-triangulation.
+The class \ccc{Delaunay_triangulation_3} represents a three-dimensional
+Delaunay triangulation.
 
-The user is advised to use \ccc{Triangulation_hierarchy<Tr>} rather
-than the basic Delaunay triangulation. It offers the same
+The user is advised to use the class \ccc{Triangulation_hierarchy_3} rather
+than this basic Delaunay triangulation class~: it offers the same
 functionalities but is much more efficient for large data sets.
 
 \ccInclude{CGAL/Delaunay_triangulation_3.h}
@@ -45,22 +42,19 @@ construction of the Voronoi diagram:
 \ccTypedef{typedef DelaunayTriangulationTraits_3::Object_3 Object;}{}
 
 \ccCreation
-\ccCreationVariable{dt}  %% choose variable name
+\ccCreationVariable{dt}
 \ccThree{Vertex_handle}{dt.remove(Point p)toto}{}
 
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
+\ccConstructor{Delaunay_triangulation_3
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
 {Creates an empty Delaunay triangulation, eventually specifying a traits class
 \ccc{traits}.}
 
-\ccConstructor{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
-(const
-Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3> & dt1)}
+\ccConstructor{Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1)}
 {Copy constructor.}
 
 \ccConstructor{template < class InputIterator >
-       Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>
-(InputIterator first, InputIterator last,
+       Delaunay_triangulation_3 (InputIterator first, InputIterator last,
  const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
 {Creates a Delaunay triangulation of the points specified by the iterator range
 \ccc{[first,last)} of value type \ccc{Point}, eventually specifying a traits
@@ -77,8 +71,7 @@ triangulations.
 In the degenerate case when there are cospherical points, the Delaunay
 triangulation is known not to be uniquely defined. In this case, CGAL
 chooses a particular Delaunay triangulation using a symbolic perturbation
-scheme.
-% TODO FIXME XXX : rajouter un ref au papier !
+scheme~\cite{dt-pvr3d-03}.
 
 \ccThree{Vertex_handle}{dt.remove()}{}
 
@@ -101,10 +94,8 @@ number of inserted points.
 \ccMethod{template < class InputIterator >
           int
           insert(InputIterator first, InputIterator last);}
-{Inserts the points in the range $\left[\right.$\ccc{first},
-\ccc{last}$\left.\right)$. 
-\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
-\ccc{Point}.}}
+{Inserts the points in the iterator range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$, of value type \ccc{Point}.}
 
 \ccHeading{Removal}
 
@@ -254,16 +245,10 @@ These methods are  mainly a debugging help for the users of advanced features.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_hierarchy_3<Tr>}.
+\ccc{CGAL::Triangulation_hierarchy_3}.
 
 %% \ccExample
 
 %% \ccIncludeExampleCode{examples/Triangulation3/Delaunay_triangulation_3_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

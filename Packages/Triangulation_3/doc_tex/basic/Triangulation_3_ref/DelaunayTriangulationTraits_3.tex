@@ -13,88 +13,87 @@
 
 \begin{ccRefConcept}{DelaunayTriangulationTraits_3}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
-To be used by \protect 
-\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3, TriangulationDataStructure_3>}
-
 \ccDefinition
-In addition to the requirements described for the traits class of a 3D 
-triangulation \ccc{TriangulationTraits_3}, 
-the geometric traits
-class of a Delaunay triangulation must fulfill the following
-requirements:
+The concept \ccRefName\ is the first template parameter of the class
+\ccc{Delaunay_triangulation_3}. It defines the geometric objects (points,
+segments...) forming the triangulation together with a few geometric
+predicates and constructions on these objects.
 
-\ccTwo{DelaunayTriangulationTraits_3}{}
+\ccRefines \ccc{TriangulationTraits_3}
 
-\ccNestedType{Side_of_oriented_sphere_3}{Predicate object. Must provide
-the operator\\
-\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s, Point test)}
-which determines on which side of the oriented sphere circumscribing 
-\ccc{p, q, r, s} the point \ccc{test} lies.}
-%
-\ccGlue
-%
-\ccNestedType{Coplanar_side_of_bounded_circle_3}{Predicate object. Must provide
-the operator\\
-\ccc{Bounded_side operator()(Point p, Point q, Point r, Point s)}
-which determines the bounded side of the circle defined
-by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
-\ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
-\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+In addition to the requirements described for the traits class of
+\ccc{Triangulation_3}, the geometric traits class of a
+Delaunay triangulation must fulfill the following requirements~:
 
-\ccNestedType{Compare_distance_3}{Predicate object.
-Must provide the operator\\
-\ccc{Comparison_result operator()(Point p, Point q, Point r)}
-which compares the distance between \ccc{p} and \ccc{q} to the distance
-between \ccc{p} and \ccc{r}.}
-
+\ccTypes
 \ccTwo{DelaunayTriangulationTraits_3::Object_3_xxxxx}{}
 
 \ccNestedType{Line_3}{The line type.}
 \ccGlue
+\ccNestedType{Object_3}{The object type.}
+\ccGlue
 \ccNestedType{Plane_3}{The plane type.}
 \ccGlue
 \ccNestedType{Ray_3}{The ray type.}
+
+\ccTwo{DelaunayTriangulationTraits}{}
+
+\ccNestedType{Compare_distance_3}
+{A predicate object which must provide the function operator\\
+\ccc{Comparison_result operator()(Point p, Point q, Point r)},\\
+which compares the distance between \ccc{p} and \ccc{q} to the distance
+between \ccc{p} and \ccc{r}.}
 \ccGlue
-\ccNestedType{Object_3}{The object type.}
+\ccNestedType{Coplanar_side_of_bounded_circle_3}
+{A predicate object which must provide the function operator\\
+\ccc{Bounded_side operator()(Point p, Point q, Point r, Point s)},\\
+which determines the bounded side of the circle defined
+by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
+\ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+\ccGlue
+\ccNestedType{Side_of_oriented_sphere_3}
+{A predicate object which must provide the function operator\\
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s, Point t)},\\
+which determines on which side of the oriented sphere circumscribing 
+\ccc{p, q, r, s} the point \ccc{t} lies.}
 
 In addition, in order to display a Voronoi diagram, the traits class
-must provide the following:
+must provide the following~:
 
 \ccTwo{DelaunayTriangulationTraits_3}{}
-\ccNestedType{Construct_circumcenter_3}{A constructor object that
-must provide the operator\\
-\ccc{Point_3 operator()(Point_3 p, Point_3 q, 
-                                         Point_3 r, Point_3 s)}
-that contructs the circumcenter of four non coplanar points and the operator\\
-\ccc{Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
-that contructs the circumcenter of three non collinear points.}
+\ccNestedType{Construct_circumcenter_3}
+{A constructor object which must provide the function operator\\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)},\\
+which contructs the circumcenter of four points.
+\ccPrecond{\ccc{p}, \ccc{q}, \ccc{r} and \ccc{s} must be non coplanar.}\\
+It must also provide the function operator\\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)},\\
+which contructs the circumcenter of three points.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} must be non collinear.}}
 \ccGlue
-\ccNestedType{Construct_plane_3}{A constructor object
-that must provide the operator\\
-\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
-that constructs the plane passing through the non collinear points
-\ccc{p}, \ccc{q} and \ccc{r}.}
-\ccGlue
-\ccNestedType{Construct_perpendicular_line_3}{A constructor object
-that must provide the operator\\
-\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)}
-that constructs the line perpendicular to \ccc{pl} and passing through
-\ccc{p}.}
-\ccGlue
-\ccNestedType{Construct_ray_3}{A constructor object
-that must provide the operator\\
-\ccc{Ray_3 operator()(Point_3 p, Line_3 l)} that constructs the
-ray starting at \ccc{p} and with direction given by \ccc{l}.}
-\ccGlue
-\ccNestedType{Construct_object_3}{A constructor object
-that must provide the operators\\
+\ccNestedType{Construct_object_3}
+{A constructor object which must provide the function operators\\
 \ccc{Object_3 operator()(Point_3 p)},\\
 \ccc{Object_3 operator()(Segment_3 s)} and\\
 \ccc{Object_3 operator()(Ray_3 r)}\\
 that construct an object respectively from a point, a segment and a ray.}
+\ccGlue
+\ccNestedType{Construct_perpendicular_line_3}
+{A constructor object which must provide the function operator\\
+\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)},\\
+which constructs the line perpendicular to \ccc{pl} passing through \ccc{p}.}
+\ccGlue
+\ccNestedType{Construct_plane_3}
+{A constructor object which must provide the function operator\\
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)},\\
+which constructs the plane passing through \ccc{p}, \ccc{q} and \ccc{r}.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} are non collinear.}}
+\ccGlue
+\ccNestedType{Construct_ray_3}
+{A constructor object which must provide the function operator\\
+\ccc{Ray_3 operator()(Point_3 p, Line_3 l)},\\
+which constructs the ray starting at \ccc{p} with direction given by \ccc{l}.}
 
 
 \ccOperations
@@ -102,13 +101,13 @@ that construct an object respectively from a point, a segment and a ray.}
 The following functions give access to the predicate and construction objects:
 
 \ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
-\ccCreationVariable{traits}  %% choose variable name
+\ccCreationVariable{traits}
 
-\ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
+\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
 \ccGlue
 \ccMethod{Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();}{}
 \ccGlue
-\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
+\ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
 
 The following functions must be provided only if the methods of 
 \ccc{Delaunay_triangulation_3} returning elements of the Voronoi diagram 
@@ -116,22 +115,20 @@ are instantiated:
 
 \ccMethod{Construct_circumcenter_3 construct_circumcenter_3_object();}{}
 \ccGlue
+\ccMethod{Construct_object_3 construct_object_3_object();}{}
+\ccGlue
 \ccMethod{Construct_perpendicular_line_3 construct_perpendicular_line_object();}{}
 \ccGlue
 \ccMethod{Construct_plane_3 construct_plane_3_object();}{}
 \ccGlue
 \ccMethod{Construct_ray_3 construct_ray_3_object();}{}
-\ccGlue
-\ccMethod{Construct_object_3 construct_object_3_object();}{}
 
 \ccHasModels
 
-The Cartesian and homogeneous kernels provided by \cgal.
+\ccc{CGAL::Cartesian}\\
+\ccc{CGAL::Homogeneous}\\
+\ccc{CGAL::Simple_cartesian}\\
+\ccc{CGAL::Simple_homogeneous}\\
+\ccc{CGAL::Filtered_kernel}
 
 \end{ccRefConcept}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

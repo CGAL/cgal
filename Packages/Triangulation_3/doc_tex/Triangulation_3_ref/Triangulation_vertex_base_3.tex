@@ -11,49 +11,52 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>}
 
 \ccDefinition
 
-The class \ccRefName\ can store the base vertex for a 3D-triangulation and a 3D-triangulation data structure. It is templated by a
-geometric traits class \ccc{TriangulationTraits_3} that provides the geometric
-types. The user who uses the geometric layer
-(Section~\ref{TDS3-sec-design} and
-Chapter~\ref{chapter-Triangulation3}) is strongly advised to use the
-same geometric traits class \ccc{TriangulationTraits_3} as the one used for
-\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}.
-In this way, the point type
-defined by the base vertex is the same as the point type defined by
-the geometric traits class.
+The class \ccc{Triangulation_vertex_base_3} is a model of the concept
+\ccc{TriangulationVertexBase_3}, the base vertex of a 3D-triangulation.
+This class stores a point.
 
-This base class can be used directly or can serve as a base to derive
-other base classes with some additional attributes (a color for
-example) tuned for a specific application.
-
-With this class, a vertex stores a point, which means that the points
-of the user will be copied.
+This class can be used directly or can serve as a base to derive other classes
+with some additional attributes (a color for example) tuned for a specific
+application.
 
 \ccInclude{CGAL/Triangulation_vertex_base_3.h}
 
-\ccIsModel
+\ccParameters
 
-\ccc{TriangulationVertexBase_3}
+The first template argument is the geometric traits class
+\ccc{TriangulationTraits_3} which provides the point type, \ccc{Point_3}.
+Users of the geometric triangulations (Section~\ref{TDS3-sec-design} and
+Chapter~\ref{chapter-Triangulation3}) are strongly advised to use the same
+geometric traits class \ccc{TriangulationTraits_3} as the one used for
+\ccc{Triangulation_3}.  This way, the point type defined by the base vertex is
+the same as the point type defined by the geometric traits class.
+
+The second template argument is a combinatorial vertex base class from which
+\ccc{Triangulation_vertex_base_3} derives.
+It has a default value~: \ccc{Triangulation_ds_vertex_base_3<>}.
+
+\ccIsModel \ccc{TriangulationVertexBase_3}
+
+\ccInheritsFrom \ccc{TriangulationDSVertexBase_3}
+
+\ccTypes
+
+\ccThree{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+\ccThreeToTwo
+\ccTypedef{typedef TriangulationTraits_3::Point_3  Point;}{}
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_cell_base_3<TriangulationTraits_3,TriangulationDSCellBase_3>}.
+\ccc{CGAL::Triangulation_cell_base_3}\\
+\ccc{CGAL::Triangulation_ds_vertex_base_3}\\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_3}
 
 %% \ccExample
 
 %% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_vertex_base_3_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

@@ -13,9 +13,6 @@
 
 \begin{ccRefConcept}{TriangulationCellBase_3}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
 \ccDefinition
 
 The cell base required by the geometric triangulations does not store any
@@ -23,11 +20,11 @@ geometric information, so only the requirements of the triangulation data
 structure apply.  However, we provide this concept for symetry with the
 vertex case.
 
-\ccRefines{\ccc{TriangulationDSCellBase_3}}
+\ccRefines \ccc{TriangulationDSCellBase_3}
 
 \ccHasModels
 
-\ccc{CGAL::Triangulation_cell_base_3<TriangulationTraits_3,TriangulationDSCellBase_3>}.
+\ccc{CGAL::Triangulation_cell_base_3}
 
 \ccSeeAlso
 
@@ -38,9 +35,3 @@ vertex case.
 %% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_cb_3_prog.C}
 
 \end{ccRefConcept}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

@@ -113,36 +113,29 @@ bidirectional, non-mutable iterators.
 The following circulators allow us to visit all the cells and facets
 incident to a given edge. They are bidirectional and non-mutable.
 
-Iterators and circulators are convertible to the corresponding handles, thus
-the user can pass them directly as arguments to the functions.
-
 \ccNestedType{Facet_circulator}{}
 \ccGlue
 \ccNestedType{Cell_circulator}{}
 
+Iterators and circulators are convertible to the corresponding handles, thus
+the user can pass them directly as arguments to the functions.
+
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{TriangulationDataStructure_3;}{tds.set_number}{}
+\ccThree{TriangulationDataStructxure_3;}{tds.set_number}{}
 \ccThreeToTwo
 
 \ccConstructor{TriangulationDataStructure_3();}
-{A default constructor.}
+{Default constructor.}
 
 \ccConstructor{TriangulationDataStructure_3(const TriangulationDataStructure_3 & tds1);}
-{Copy constructor. All the vertices and cells are duplicated.}
+{Copy constructor. All vertices and cells are duplicated.}
 
-\ccMethod{TriangulationDataStructure_3 operator = (const TriangulationDataStructure_3 & tds1);}
-{Assignment. All the vertices and cells are duplicated.}
+\ccMethod{TriangulationDataStructure_3& operator= (const TriangulationDataStructure_3 & tds1);}
+{Assignment operator. All vertices and cells are duplicated, and the former
+data structure of \ccc{tds} is deleted.}
 
-The previous two methods are equivalent.
-
-\ccThree{Vertex_handle_}{tds.insert_in_facet()xxxxx}{}
-
-\ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
-{Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
-thus this method runs in constant time. This method should be preferred to
-\ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
-that.}
+\ccThree{Vertex_handle_}{tds.insert_in_facet}{}
 
 \ccMethod{Vertex_handle
 copy_tds(const TriangulationDataStructure_3 & tds1, Vertex_handle v = NULL);}
@@ -150,17 +143,28 @@ copy_tds(const TriangulationDataStructure_3 & tds1, Vertex_handle v = NULL);}
 corresponding to \ccc{v} is returned, otherwise \ccc{NULL} is returned.
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
 
-\ccFunction{void ~tds();}
+\ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
+{Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
+thus this method runs in constant time. This method should be preferred to
+\ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
+that.}
+\ccGlue
+\ccMethod{void clear();}
+{Deletes all cells and vertices. \ccVar\ is reset as a triangulation
+data structure constructed by the default constructor.}
+\ccGlue
+\ccFunction{ ~tds();}
 {Destructor. All vertices and cells are deleted, and \ccVar\ itself is
 deleted.} 
 
 \ccOperations
 
 \ccAccessFunctions
+\ccThree{Vert}{tds.insert_in_facet()xxxxxxxxxxx}{}
 
 \ccMethod{int dimension() const;}
 {The dimension of the triangulated topological sphere.}
-
+\ccGlue
 \ccMethod{int number_of_vertices() const;}
 {The number of vertices. Note that the triangulation data structure has one
 more vertex than an associated geometric triangulation, if there is
@@ -316,6 +320,7 @@ known to be flippable.
 \ccPrecond{The facet is flippable.}}
 
 \ccHeading{Insertions}
+\ccThree{Vertex_handle}{tds.insert_in_facet()xxxxx}{}
 
 The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
@@ -427,10 +432,6 @@ dimension 3, \ccVar.\ccc{insert_in_facet(v)} in dimension 2, and
 \ccPrecond{\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{dimension()+1}.}
 }
 
-\ccMethod{void clear();}
-{Deletes all cells and vertices. \ccVar\ is reset as a triangulation
-data structure constructed by the default constructor.}
-
 
 \begin{ccAdvanced}
 \ccHeading{Other modifiers}
@@ -441,21 +442,30 @@ data structure.
 {Changes the orientation of all cells of the triangulation data structure.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$.}}
 
-\ccMethod{Vertex_handle create_vertex();}
-{Creates a vertex and adds it to the triangulation data structure.}
+\ccMethod{Vertex_handle create_vertex(const Vertex &v = Vertex());}
+{Adds a copy of the vertex \ccc{v} to the triangulation data structure.}
 
-\ccMethod{Cell_handle create_cell();}
-{Creates a cell and adds it to the triangulation data structure. Its 
-vertices and neighbors are initialized to \ccc{NULL}.
-The setting functions of the cell can be used later to modify them.}
+\ccMethod{Vertex_handle create_vertex(Vertex_handle v);}
+{Creates a vertex which is a copy of the one pointed to by \ccc{v}
+and adds it to the triangulation data structure.}
 
-\ccMethod{Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);}
+\ccMethod{Cell_handle create_cell(const Cell &c = Cell());}
+{Adds a copy of the cell \ccc{c} to the triangulation data structure.}
+
+\ccMethod{Cell_handle create_cell(Cell_handle c);}
+{Creates a cell which is a copy of the one pointed to by \ccc{c}
+and adds it to the triangulation data structure.}
+
+\ccMethod{Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                                  Vertex_handle v2, Vertex_handle v3);}
 {Creates a cell and adds it into the triangulation data
 structure. Initializes the vertices of the cell, its neighbor handles
 being initialized with \ccc{NULL}.}
 
-\ccMethod{Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
-		     Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3);}
+\ccMethod{Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1,
+                                   Vertex_handle v2, Vertex_handle v3,
+		                   Cell_handle n0, Cell_handle n1,
+                                   Cell_handle n2, Cell_handle n3);}
 {Creates a cell, initializes its vertices and neighbors, and adds it
 into the triangulation data structure.}
 
@@ -469,11 +479,13 @@ into the triangulation data structure.}
 
 \ccMethod{template <class VertexIt>
           void delete_vertices(VertexIt first, VertexIt last);}
-{Calls \ccc{delete_vertex} over an iterator range.}
+{Calls \ccc{delete_vertex} over an iterator range of value type
+\ccc{Vertex_handle}.}
 
 \ccMethod{template <class CellIt>
           void delete_cells(CellIt first, CellIt last);}
-{Calls \ccc{delete_cell} over an iterator range.}
+{Calls \ccc{delete_cell} over an iterator range of value type
+\ccc{Cell_handle}.}
 
 \end{ccAdvanced}
 
@@ -495,8 +507,7 @@ into the triangulation data structure.}
 \ccGlue
 \ccMethod{Edge_iterator edges_end() const;}{}
 \ccGlue
-\ccMethod{Vertex_iterator vertices_begin() const;}
-{Returns \ccc{vertices_end()} when \ccVar.\ccc{number_of_vertices()}~$<$~1.}
+\ccMethod{Vertex_iterator vertices_begin() const;}{}
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end() const;}{}
 
@@ -599,17 +610,11 @@ for faces of maximal dimension instead of cells.
 
 \ccHasModels
 
-\ccc{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}.
+\ccc{CGAL::Triangulation_data_structure_3}
 
 \ccSeeAlso
 
-\ccc{TriangulationDataStructure_3::Vertex},\\
-\ccc{TriangulationDataStructure_3::Cell}.
+\ccc{TriangulationDataStructure_3::Vertex}\\
+\ccc{TriangulationDataStructure_3::Cell}
 
 \end{ccRefConcept}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

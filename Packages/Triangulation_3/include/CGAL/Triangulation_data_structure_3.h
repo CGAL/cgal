@@ -218,35 +218,32 @@ public:
 
   void set_dimension(int n) { _dimension = n; }
 
-  Vertex_handle create_vertex()
+  Vertex_handle create_vertex(const Vertex &v = Vertex())
   {
-      return vertex_container().insert(Vertex());
+      return vertex_container().insert(v);
   }
 
-  Cell_handle create_cell() 
+  Vertex_handle create_vertex(Vertex_handle v)
+  {
+      return create_vertex(*v);
+  }
+
+  Cell_handle create_cell(const Cell &c = Cell()) 
     { 
-      Cell_handle r = cell_container().insert(Cell());
+      Cell_handle r = cell_container().insert(c);
       r->init();
       return r;
     }
 
   Cell_handle create_cell(Cell_handle c)
     {
-      Cell_handle cnew = create_cell();
-      *cnew = *c;
-      cnew->init();
-      return cnew; 
+      return create_cell(*c); 
     }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 	                  Vertex_handle v2, Vertex_handle v3)
     {
-      Cell_handle c = create_cell();
-      c->set_vertex(0, v0);
-      c->set_vertex(1, v1);
-      c->set_vertex(2, v2);
-      c->set_vertex(3, v3);
-      return c; 
+      return create_cell(Cell(v0, v1, v2, v3));
     }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
@@ -254,27 +251,19 @@ public:
 		          Cell_handle n0, Cell_handle n1,
 			  Cell_handle n2, Cell_handle n3)
     {
-      Cell_handle c = create_cell();
-      c->set_vertices(v0,v1,v2,v3);
-      c->set_neighbors(n0,n1,n2,n3);
-      return c; 
+      return create_cell(Cell(v0, v1, v2, v3, n0, n1, n2, n3));
     }
 
   Cell_handle create_face()
     {
       CGAL_triangulation_precondition(dimension()<3);
-      Cell_handle c = create_cell();
-      return c; 
+      return create_cell();
     }
 
   Cell_handle create_face(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      Cell_handle c = create_cell();
-      c->set_vertex(0, v0);
-      c->set_vertex(1, v1);
-      c->set_vertex(2, v2);
-      return c; 
+      return create_cell(Cell(v0, v1, v2, Vertex_handle()));
     }
 
   // The following functions come from TDS_2.
@@ -2422,10 +2411,8 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   std::map< Vertex_handle, Vertex_handle > V;
   std::map< Cell_handle, Cell_handle > F;
 
-  for (i=0; i <= n-1; i++) {
-    V[ TV[i] ] = create_vertex();
-    *V[ TV[i] ] = *TV[i];
-  }
+  for (i=0; i <= n-1; ++i)
+    V[ TV[i] ] = create_vertex(TV[i]);
 
   // Create the cells.
   for (Cell_iterator cit = tds.cell_container().begin();

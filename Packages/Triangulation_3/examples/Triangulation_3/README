@@ -15,6 +15,13 @@ triangulation.
 
 --------------------------------------------------------------
 
+------- example_adding_handles -------------------------------
+
+This example shows how the user can plug his own vertex base
+in a triangulation, when he needs to add handles in it.
+
+--------------------------------------------------------------
+
 ------- example_hierarchy ------------------------------------
 
 This example shows the use of the hierarchy to speed up the 

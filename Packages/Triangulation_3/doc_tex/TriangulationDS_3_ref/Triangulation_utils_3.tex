@@ -11,10 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_utils_3}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Triangulation_utils_3}
 
 \ccDefinition
   
@@ -22,6 +19,8 @@ The class \ccRefName\ defines operations on the indices of vertices
 and neighbors within a cell.
 
 \ccInclude{CGAL/Triangulation_utils_3.h}
+
+\ccOperations
 
 \ccThree{unsigned int}{ccw(unsigned int i)toto}{}
 
@@ -40,7 +39,7 @@ opposite to this neighbor \ccc{n}. (see Figure~\ref{Triangulation3-fig-utils}).
 \ccc{i} in counterclockwise direction. (see
 Figure~\ref{Triangulation3-fig-utils}).  
 \ccPrecond{\ccc{i<3}.}}
-
+\ccGlue
 \ccFunction{unsigned int cw(unsigned int i) const;}
 {Same for clockwise.}
 
@@ -59,16 +58,4 @@ Figure~\ref{Triangulation3-fig-utils}).
 \end{ccHtmlOnly}
 \end{figure} 
 
-
-
-%% \ccExample
-
-%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_utils_3_prog.C}
-
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

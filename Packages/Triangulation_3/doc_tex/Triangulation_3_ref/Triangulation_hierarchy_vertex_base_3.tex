@@ -12,44 +12,52 @@
 
 
 \begin{ccRefClass}{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
-%% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-This class is designed to be used as the vertex base class for the
-hierarchic triangulation \ccc{Triangulation_hierarchy_3<Tr>}.
+This class is designed to be used as the vertex base class for
+\ccc{Triangulation_hierarchy_3}.
 
-It is templated
-by a parameter that must be instantiated by a model of  the concept
-\ccc{TriangulationVertexBase_3}. The class
-\ccc{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
-inherits from \ccc{TriangulationVertexBase_3}.  
-This design allows to use either the default vertex base class or a
-user customized vertex base with additional functionalities.
+It inherits from its parameter \ccc{TriangulationVertexBase_3}, and adds the
+requirements in order to match the concept
+\ccc{TriangulationHierarchyVertexBase_3}, it does so by storing two
+\ccc{Vertex_handle}s.  This design allows to use either a vertex base class
+provided by CGAL, or a user customized vertex base with additional
+functionalities.
 
 \ccInclude{CGAL/Triangulation_hierarchy_vertex_base_3.h}
 
-%\ccIsModel
-%\ccc{Triangulation_hierarchy_vertex_base_3_concept}
+\ccParameters
 
-\ccInheritsFrom
-\ccc{TriangulationVertexBase_3}
+It is parameterized by a model of the concept \ccc{TriangulationVertexBase_3}.
 
-\ccTypes
-\ccThree{typedef TriangulationVertexBase_3Traits_3::Pointxx}{Pointxx}{}
-\ccThreeToTwo
-\ccTypedef{TriangulationVertexBase_3::Point Point;}{The point type.}
+\ccIsModel \ccc{TriangulationHierarchyVertexBase_3}
+
+\ccInheritsFrom \ccc{TriangulationVertexBase_3}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{Triangulatixon}{Facetxxxxxxxxxxxxxxx}{}
+\ccTagFullDeclarations
+
+\ccMethod{Vertex_handle up() const;}
+{Returns the \ccc{Vertex_handle} pointing to the level above.}
+\ccGlue
+\ccMethod{Vertex_handle down() const;}
+{Returns the \ccc{Vertex_handle} pointing to the level below.}
+
+\ccHeading{Setting}
+\ccThree{Trian}{Facetxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{void set_up(Vertex_handle v);}
+{Sets the \ccc{Vertex_handle} pointing to the level above to \ccc{v}.}
+\ccGlue
+\ccMethod{void set_down(Vertex_handle v);}
+{Sets the \ccc{Vertex_handle} pointing to the level below to \ccc{v}.}
 
 \ccSeeAlso
-\ccc{CGAL::Triangulation_hierarchy_3<Tr>}\\
-\ccc{CGAL::Triangulation_vertex_base_3<TriangulationTraits_3,TriangulationDSVertexBase_3>}
+\ccc{CGAL::Triangulation_hierarchy_3}\\
+\ccc{CGAL::Triangulation_vertex_base_3}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+

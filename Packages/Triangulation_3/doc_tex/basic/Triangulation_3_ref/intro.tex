@@ -57,6 +57,7 @@ Figure~\ref{Triangulation3-fig-orient}.
 
 \ccRefConceptPage{TriangulationCellBase_3}\\
 \ccRefConceptPage{TriangulationVertexBase_3}\\
+\ccRefConceptPage{TriangulationHierarchyVertexBase_3}\\
 
 \ccRefConceptPage{TriangulationDataStructure_3}\\
 \ccRefConceptPage{WeightedPoint}\\
@@ -65,29 +66,21 @@ Figure~\ref{Triangulation3-fig-orient}.
 
 \subsubsection*{Main classes}
 
-\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
-
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}\\
 \ccRefIdfierPage{CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
 \ccRefIdfierPage{CGAL::Triangulation_hierarchy_3<Tr>}\\
 \ccRefIdfierPage{CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
 
 \ccRefIdfierPage{CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cell_base_with_info_3<Info, TriangulationTraits_3, TriangulationCellBase_3>}\\
 \ccRefIdfierPage{CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_with_info_3<Info, TriangulationTraits_3, TriangulationVertexBase_3>}\\
 \ccRefIdfierPage{CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
 
 \subsubsection*{Traits classes}
 
 \ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}
 
-\subsubsection*{A class of tools}
-
-\ccRefIdfierPage{CGAL::Triangulation_utils_3}
-
-It defines operations on the indices of vertices and neighbors within
-a cell of a triangulation.
-
 \subsection*{Enums}
 
-\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3, TriangulationDataStructure_3>::Locate_type}
-
-%% EOF %%
+\ccRefIdfierPage{CGAL::Triangulation_3::Locate_type}

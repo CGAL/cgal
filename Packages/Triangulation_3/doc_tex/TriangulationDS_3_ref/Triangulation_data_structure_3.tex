@@ -11,50 +11,40 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}
 
 \ccDefinition
-The class \ccRefName\ stores a 3D-triangulation data structure
-and provides the optional
+The class \ccc{Triangulation_data_structure_3} stores a 3D-triangulation data
+structure and provides the optional
 geometric functionalities to be used as a parameter for a 
 3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}). 
 
-It is parameterized by base classes for vertices and cells, which have the
-default values \ccc{Triangulation_ds_vertex_base_3<>} and
-\ccc{Triangulation_ds_cell_base_3<>} respectively.
+\ccInclude{CGAL/Triangulation_data_structure_3.h}
+
+\ccParameters
+It is parameterized by base classes for vertices and cells which have to match
+the requirements for the concepts \ccc{TriangulationDSVertexBase_3} and
+\ccc{TriangulationDSCellBase_3} respectively.
 \lcTex{(See \ccRefPage{TriangulationDSVertexBase_3} 
 and \ccRefPage{TriangulationDSCellBase_3}.)}
 
-\ccIsModel
+They have the default values \ccc{Triangulation_ds_vertex_base_3<>} and
+\ccc{Triangulation_ds_cell_base_3<>} respectively.
 
-\ccc{TriangulationDataStructure_3}
+\ccIsModel \ccc{TriangulationDataStructure_3}
 
-\ccInheritsFrom{\ccc{Triangulation_utils_3}}
+\ccInheritsFrom{\ccc{CGAL::Triangulation_utils_3}}
 
-This class \ccc{Triangulation_utils_3} defines basic computations on
+The class \ccc{Triangulation_utils_3} defines basic computations on
 indices of vertices and neighbors of cells. 
-
-\ccInclude{CGAL/Triangulation_data_structure_3.h}
 
 \ccSeeAlso
 
-\ccc{Triangulation_ds_vertex_base_3<>},\\
-\ccc{Triangulation_ds_cell_base_3<>},\\
-\ccc{TriangulationDSVertexBase_3},\\
-\ccc{TriangulationDSCellBase_3}.
+\ccc{CGAL::Triangulation_ds_vertex_base_3}\\
+\ccc{CGAL::Triangulation_ds_cell_base_3}
 
 %% \ccExample
-
 
 %% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_data_structure_3_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-

@@ -264,13 +264,6 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1.is_valid());
   T1.clear();
 
-  // duplication
-    
-  T1.copy_triangulation(T0);
-  assert(T1.dimension() == 3);
-  assert(T1.number_of_vertices() == 4);
-  assert(T1.is_valid());
-  T1.clear();
 
   T1.swap(T0);
   assert(T1.dimension() == 3);

@@ -11,10 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}  %% add template arg's if necessary
-
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+\begin{ccRefClass}{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
 
 \ccDefinition
   Let ${S}^{(w)}$ be a set of weighted points in $\R^3$. Let
@@ -46,8 +43,6 @@ of all simplices are regular.
 \ccTypes
 \ccThree{typedef RegularTriangulationTraits_3::Weighted_point}{Weighted_point}{}
 
-Inherits the types of \ccc{Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}.
-
 \ccTypedef{typedef RegularTriangulationTraits_3::Bare_point Bare_point;}
 {The type for points
 \ccc{p} of weighted points ${p}^{(w)}=(p,w_p)$}
@@ -55,25 +50,22 @@ Inherits the types of \ccc{Triangulation_3<RegularTriangulationTraits_3,Triangul
 \ccTypedef{typedef RegularTriangulationTraits_3::Weighted_point Weighted_point;}{}
 
 \ccCreation
-\ccCreationVariable{rt}  %% choose variable name
+\ccCreationVariable{rt}
 
 
 \ccThree{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
 {rt( RegularTriangulationTraits_3 traits );xxx}{}
 
-\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
+\ccConstructor{Regular_triangulation_3
 (const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3())}
 {Creates an empty regular triangulation, eventually specifying a traits class
 \ccc{traits}.}
 
-\ccConstructor{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
-(const
-Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3> & rt1)}
-{Copy constructor.}
+\ccConstructor{Regular_triangulation_3
+(const Regular_triangulation_3 & rt1)} {Copy constructor.}
 
 \ccConstructor{template < class InputIterator >
-               Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>
-               (InputIterator first, InputIterator last,
+       Regular_triangulation_3 (InputIterator first, InputIterator last,
  const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3())}
 {Creates a regular triangulation of the points specified by the iterator range
 \ccc{[first,last)} of value type \ccc{Weighted_point}, eventually specifying a
@@ -104,14 +96,15 @@ The optional argument \ccc{start} is used as a starting place for the search.}
  parameter the return values of a previous location query.  See description of
  \ccc{locate()} above.}
 
-The following method allows one to insert several points. It returns the
-number of inserted points. 
+The following method allows one to insert several points.
 
 \ccMethod{template < class InputIterator >
           int
           insert(InputIterator first, InputIterator last);}
 {Inserts the points in the range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$. 
+It returns the difference of the number of vertices between after and
+before the insertions (it may be negative due to hidden points).
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
 
@@ -237,9 +230,3 @@ advanced features.
 %% \ccIncludeExampleCode{examples/Triangulation3/Regular_triangulation_3_prog.C}
 
 \end{ccRefClass}
-
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
-
