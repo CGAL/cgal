@@ -627,3 +627,4 @@ if (! $TESTING) {
    system("cp", "versions_$VERSION", "$VERSIONSDIR");
 }
 
+system('rm', '-rf', "$VERSION");
