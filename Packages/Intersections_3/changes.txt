@@ -1,3 +1,6 @@
+2.7 (27 May 03) my
+- fixed cgal_test so that it compiles and run triangle_other
+
 2.6 (06 May 2003) MY
 + added Triangle_3 intersection tests
 

@@ -1,14 +1,51 @@
 #!/bin/sh
 OUTPUTFILE=error.txt
 DIFFOUTPUT=ErrorDiff
+ERRORFILE=error.txt
 
 use_purify=0
 
+compile_and_run()
+{
+   echo "Compiling $1 ... "
+   if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+            TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+            TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+     echo "   compilation of $1 succeeded" >> $ERRORFILE
+   else
+     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+   fi
+
+   if [ -f $1 ] ; then
+      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+     rm -f $OUTPUTFILE
+     COMMAND="./$1"
+     if [ -f $1.cmd ] ; then
+       COMMAND="$COMMAND `cat $1.cmd`"
+     fi
+     if [ -f $1.cin ] ; then
+       COMMAND="cat $1.cin | $COMMAND"
+     fi
+     echo "Executing $1 ... "
+     echo
+     if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
+       echo "   execution of $1 succeeded" >> $ERRORFILE
+     else
+       echo "   ERROR: execution of $1 failed" >> $ERRORFILE
+     fi
+   else
+     echo "   ERROR: could not execute $1" >> $ERRORFILE
+   fi
+
+   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE $1.clean > /dev/null "
+}
+
+
 one_run()
 {
-    goodresult=RESULT/${base}/`basename ${datafile}`
-    if "./${base}" < ${datafile} >output
-    then
+     goodresult=RESULT/${base}/`basename ${datafile}`
+     if "./${base}" < ${datafile} >output
+     then
 	if [ -r ${goodresult} ]
 	then
 	    if diff -b output ${goodresult} > diffoutput
@@ -17,34 +54,34 @@ one_run()
 	    else
 		succes=nee
 		echo "input: ${datafile}" >> ProgramOutput.${base}.$PLATFORM
-        	cat diffoutput >> ProgramOutput.${base}.$PLATFORM
+         	cat diffoutput >> ProgramOutput.${base}.$PLATFORM
 	    fi
 	else
 	    succes=ja
 	fi
-    else
+     else
 	succes=nee
 	explanation="non zero return code"
-    fi
-    if [ ${succes} = ja ]
-    then
+     fi
+     if [ ${succes} = ja ]
+     then
 	echo "succes: ${base} < ${datafile}">> $OUTPUTFILE
-    else
+     else
 	echo "ERROR:  ${base} < ${datafile}" >> $OUTPUTFILE
 	echo "    " "$explanation" >> $OUTPUTFILE
-    fi
+     fi
 }
 
 make_and_execute()
 {
-    if [ -r ii_files/${base}.ii.$1 ]
-    then
+     if [ -r ii_files/${base}.ii.$1 ]
+     then
 	mv ii_files/${base}.ii.$1 ii_files/${base}.ii
-    fi
-    EXTRA_FLAGS="-DTESTR=$1"
-    export EXTRA_FLAGS
-    if make ${base} # 2>/dev/null
-    then
+     fi
+     EXTRA_FLAGS="-DTESTR=$1"
+     export EXTRA_FLAGS
+     if make ${base} # 2>/dev/null
+     then
 	echo "succes: compiling ${file} with TESTR=$1" >> $OUTPUTFILE
 	if [ -r ii_files/${base}.ii ]
 	then
@@ -62,10 +99,10 @@ make_and_execute()
 		one_run
 	    fi
 	done
-    else
+     else
 	echo "ERROR:  compiling ${file}  with TESTR=$1" >> $OUTPUTFILE
-    fi
-    make ${base}.clean
+     fi
+     make ${base}.clean
 }
 
 echo ${CGAL_LIB_DIR}
@@ -77,40 +114,40 @@ touch $DIFFOUTPUT
 
 if [ $# -ne 0 ]
 then
-    sourcefiles="$*"
+     sourcefiles="$*"
 else
-    sourcefiles="*.C"
+     sourcefiles="*.C"
 fi
 
 
 for file in ${sourcefiles}
 do
-    base=`basename ${file} .C`
-    rm -f ProgramOutput.${base}.$PLATFORM
-    touch -f ProgramOutput.${base}.$PLATFORM
-    xdatafiles="DATA/${base}.x.*"
+     base=`basename ${file} .C`
+     rm -f ProgramOutput.${base}.$PLATFORM
+     touch -f ProgramOutput.${base}.$PLATFORM
+     xdatafiles="DATA/${base}.x.*"
 #    idatafiles="DATA/${base}.i.*"
 #    ixdatafiles="DATA/${base}.ix.*"
 #    datafiles="${idatafiles} ${ixdatafiles}"
 #    datafiles="${ixdatafiles}"
-    if [ -d  "DATA/${base}" ]
-    then
+     if [ -d  "DATA/${base}" ]
+     then
 	datafiles="DATA/${base}/ix.*"
-    else
+     else
 	datafiles=""
-    fi
-    if [  "${datafiles}" ]
-    then
-        echo "TESTR=1" >> ProgramOutput.${base}.$PLATFORM
+     fi
+     if [  "${datafiles}" ]
+     then
+         echo "TESTR=1" >> ProgramOutput.${base}.$PLATFORM
 	make_and_execute 1;
-    fi
+     fi
 #    datafiles="${xdatafiles} ${ixdatafiles}"
-    if [  "${datafiles}" ]
-    then
-        echo "TESTR=5" >> ProgramOutput.${base}.$PLATFORM
+     if [  "${datafiles}" ]
+     then
+         echo "TESTR=5" >> ProgramOutput.${base}.$PLATFORM
 	make_and_execute 5;
-    fi
+     else
+	compile_and_run ${base}
+     fi
 done
-
-
 
