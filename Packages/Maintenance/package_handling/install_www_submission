@@ -81,19 +81,6 @@ sub print_usage()
     print STDERR "usage: $0 <sender> <url1> \n";
 }
 
-#sub strip_version()
-#{
-#  echo $* | $AWK '/^C2$/ { print; exit } \
-#                  /^C3$/ { print; exit } \
-#                  /^H2$/ { print; exit } \
-#                  /^H3$/ { print; exit } \
-#                  /^_2$/ { print; exit } \
-#                  /^_3$/ { print; exit } \
-#                  /^Convex_hull_3$/ { print; exit } \
-#                  /^Opti.*doc.*/ { print "Optimisation_doc"; exit } \
-#                  /^Opti.*imp.*/ { print "Optimisation_imp"; exit } \
-#                  { gsub("([0-9]|\\.)+[a-zA-Z]?$", ""); print; exit }'
-#}
 
 sub make_package_name($)
 {
@@ -112,6 +99,22 @@ sub make_package_name($)
 # or should that be
     s|([-\.]\d+)+[a-zA-Z]?$||;
     return $_;
+}
+
+
+sub belongs_to_release($)
+# parameter 1 is the name of the package
+{
+    open PACKAGES_TO_INCLUDE, "$::packagedir/include_in_release" or die;
+    while (<PACKAGES_TO_INCLUDE>) {
+	chomp;
+	if (/^\s*$_[0]\s*$/) {
+	    close PACKAGES_TO_INCLUDE;
+	    return 1;
+	}
+    }
+    close PACKAGES_TO_INCLUDE;
+    return 0;
 }
 
 sub create_package_dir()
@@ -190,14 +193,18 @@ sub check_version($)
 	$old_nr = shift @oversion;
 	$old_nr = 0 if !defined($old_nr);
 	if ($new_nr < $old_nr) {
-	    log_msg "Version $new_version_string is not bigger than $old_version_string";
+	    log_msg
+	"Version $new_version_string is not bigger than $old_version_string";
 	    return 0;
 	}
 	if ($new_nr > $old_nr) {
+	    log_msg
+		"Version $new_version_string will replace $old_version_string";
 	    return 1;
 	}
     }
-    log_msg "Version $new_version_string is not bigger than $old_version_string";
+    log_msg
+	"Version $new_version_string is not bigger than $old_version_string";
     return 0;
 }
 
@@ -276,16 +283,12 @@ sub move_packagedir($)
     system 'chmod', '-R', 'ug+w', "$::packagedir/$package_name" ;
 }
 
-sub install_submission($)
+sub install_submission($$)
 {
     my ($file_name, $file_pathname, $package_name);
     $file_name = shift;
+    $package_name = shift;
     $file_pathname = "$::download_dir/$file_name";
-    $package_name = make_package_name($file_name);
-    if ($package_name !~ /^[a-zA-Z_]\w*$/) {
-	log_msg "Filename $file_name was turned into the illegal package name $package_name";
-	return 0;
-    }
 
     chdir($::tempdir);
     if (! unpack_package( $file_pathname) ) {
@@ -309,21 +312,34 @@ sub install_submission($)
 
 sub do_submission($)
 {
-    my ($url, $url_with_password,$FILE);
+    my ($url, $url_with_password,$file_name,$package_name);
     $url = shift;
     $url_with_password = $url;
-    $url_with_password =~ s|http://|http://member1:cg4any1@|;
+    ($file_name) = ($url =~ m|^.*/(.*?)\s*$|);
+    $package_name = make_package_name($file_name);
+    if ($package_name !~ /^[a-zA-Z_]\w*$/) {
+	log_header
+   "ERROR: Filename $file_name was turned into the illegal package name $package_name";
+	return 0;
+    }
 
+    if (!belongs_to_release($package_name) ) {
+	log_msg "WARNING: package $package_name will not go into releases";
+	log_msg "Send a separate mail to cgal_submit if you want that";
+    }
+    $url_with_password =~ s|http://|http://member1:cg4any1@|;
     unlink glob("$::download_dir/*") if (! $::TESTING);
     log_header "downloading $url";
-    system("$::WGET $url_with_password >> $::ACTUAL_LOGFILE 2>&1") if (! $::TESTING);
-    ($FILE) = ($url =~ m|^.*/(.*?)\s*$|);
-    if ( ! -f "$::download_dir/$FILE" ) {
+    my $logfileno = fileno(LOGFILE);
+    die "Log file not open" if ! defined($logfileno);
+    system("$::WGET $url_with_password >>$logfileno 2>&$logfileno");
+#    system("$::WGET $url_with_password >> $::ACTUAL_LOGFILE 2>&1") if (! $::TESTING);
+    if ( ! -f "$::download_dir/$file_name" ) {
 	log_msg "ERROR: download failed!";
 	return 0;
     } 
     
-    if (install_submission("$FILE") ) {
+    if (install_submission("$file_name",$package_name) ) {
 	log_header "Package was successfully installed!";
     } else {
 	log_header "ERROR: Installation of the package failed!";
@@ -367,8 +383,9 @@ foreach $::submission ( @ARGV) {
 }
 
 close LOGFILE;
-system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submissions @ARGV\" $::maintainer" if !$::TESTING;
-system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission @ARGV\" $::SENDER";
+$ARGV[0] =~ s|.*/||;
+system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $::maintainer" if !$::TESTING;
+system "cat $::ACTUAL_LOGFILE | Mail -s \"CGAL submission $ARGV[0]\" $::SENDER";
 
 unlink $::ACTUAL_LOGFILE;
 
