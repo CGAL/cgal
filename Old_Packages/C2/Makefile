@@ -47,6 +47,7 @@ submit: package
 clean:
 	rm -f $(Package).tar.gz
 	cd include/CGAL/Cartesian ; sh ./remove_symlinks
+	cd test/Kernel ; make clean
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \

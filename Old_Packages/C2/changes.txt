@@ -15,6 +15,7 @@ Version 3.0 (August 26 1999)
 ****IMPORTANT: please note
 - for now, while we still have two versions, two scripts (create_symlinks and
   remove_symlinks) are included which have to be run before the test suite.
+  when using Michael's design. (Nothing to be done for Stefan's design!)
   This is to prevent inclusion of the wrong files *C2.h and *_2.h
   (now we want to include <CGAL/Cartesian/*_2.h> instead of *C2.h)
 ****BUGS FIXES: in addition, since 2.1.6
