@@ -1690,6 +1690,7 @@ off_file_input( std::istream& is, bool verbose)
      Face_handle fn = create_face( vinf, 
 				   fh->vertex(cw(ih)), 
 				   fh->vertex(ccw(ih)));
+     vinf->set_face(fn);
      set_adjacency(fn, 0, fh, ih);
      set_adjacency(fn, 1, inf_edge_map);
      set_adjacency(fn, 2, inf_edge_map);
