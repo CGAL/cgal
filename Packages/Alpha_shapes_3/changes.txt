@@ -1,3 +1,5 @@
+25 March 2004 Radu Ursu
+- changed doc to work with the current manual tools implementation
 
 25 February 2004 MY
 - sMade find_alpha_solid faster even faster
