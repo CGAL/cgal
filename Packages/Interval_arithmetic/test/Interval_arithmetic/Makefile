@@ -57,12 +57,12 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst0 tst1 tst2 tst5 tstlink # tst6
+test:  tst0 tst1 tst2 tst5 tst7 # tst6
 	./tst0
 	./tst1
 	./tst2
 	./tst5
-	./tstlink
+	./tst7
 	# ./tst6
 
 bench_isolate: ./a.out
@@ -98,10 +98,6 @@ tst3.o: tst3.C include/bench_generic.C
 
 tst4.o: tst4.C include/bench_generic.C
 
-tstlink1.o: tstlink1.C include/tstlink.h
-
-tstlink2.o: tstlink2.C include/tstlink.h
-
 
 tst0: tst0.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
@@ -127,11 +123,8 @@ tst6: tst6.o
 tst7: tst7.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
-tstlink: tstlink1.o tstlink2.o
-	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
-
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink *.rpo .pure
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst? *.rpo .pure
 
 #---------------------------------------------------------------------#
 #                    suffix rules
