@@ -5,16 +5,12 @@
 // #define TESTED_TYPE Interval_nt_advanced // For tst3.C
 // #define TESTED_TYPE Interval_nt          // For tst4.C
 
-#define CGAL_IA_NO_EXCEPTION
-#define CGAL_IA_NO_WARNINGS
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
 #include <cassert>
-
-using namespace CGAL;
 
 typedef TESTED_TYPE IA_nt;
 
@@ -36,7 +32,7 @@ void bench()
 #endif
 
   int i;
-  Timer t;
+  CGAL::Timer t;
   double dt;
   const double dd = 1.0000001;
   const IA_nt a(0.12);
@@ -89,7 +85,7 @@ void bench()
 
 #if 1
   std::cout << a<<b<<c<<d<<std::endl;
-  Orientation o;
+  CGAL::Orientation o;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
     o = orientationC2(a,b,c,d,e,f);
@@ -102,8 +98,8 @@ void bench()
 int main()
 {
 #ifdef ADVANCED
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   std::cout << "Benching the class Interval_nt_advanced.\n";
 #else
   std::cout << "Benching the class Interval_nt.\n";
@@ -126,7 +122,7 @@ int main()
 #endif
 
 #ifdef ADVANCED
-  FPU_set_cw(backup);
+  CGAL::FPU_set_cw(backup);
 #endif
 
   return 0;
