@@ -369,8 +369,13 @@ public:
 
 private:
 
-  //a private implementation which defines if prev1 is on an outer ccb of 
-  //the new face (returns true) or on an inner ccb (returns false)
+  /*! Returns the length of the path from prev2 to prev1, if they are
+   * connected, and -1 otherwise. Returns 0 if they are identical.
+   */
+  int path_length(Halfedge_const_handle prev1, Halfedge_const_handle prev2);
+  
+  //! a private implementation which defines if prev1 is on an outer ccb of 
+  // the new face (returns true) or on an inner ccb (returns false)
   bool prev1_inside_hole(Halfedge_const_handle prev1,
                          Halfedge_const_handle prev2,
                          const X_curve_2& cv);  
@@ -1200,6 +1205,26 @@ insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_curve_2 & cv,
 #endif
 }
 
+/*! Returns the length of the path from prev2 to prev1, if they are
+ * connected, and -1 otherwise. Returns 0 if they are identical.
+ */
+template < class Dcel, class Traits >
+int
+Planar_map_2< Dcel, Traits >::
+path_length(typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle prev1,
+            typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle prev2)
+{
+  Ccb_halfedge_const_circulator first(prev2), curr(prev2), last(prev1);
+  ++last;
+
+  int cnt = 0;
+  for (++curr; curr != last; ++curr) {
+    cnt++;
+    if (curr == first) return -1;
+  }
+  return cnt;
+}
+
 /*!
  */
 template < class Dcel, class Traits >
@@ -1226,11 +1251,25 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
 
   Size num_before = number_of_faces();
 
-  bool prev1_before_prev2 = prev1_inside_hole(prev1, prev2, cv);
+  bool prev1_before_prev2 = true;
+  int cnt1 = path_length(prev1, prev2);
+
+  // If the 2 halfedge (targets) are disconnected, the insertion of the curve
+  // into the topological map does not generate a new face. Otherwise, it
+  // much more efficient to calculate the shortest path and apply the test
+  // to it.
+  if (cnt1 != -1) {
+    int cnt2 = path_length(prev2, prev1);
+    prev1_before_prev2 = (cnt1 < cnt2) ?
+      prev1_inside_hole(prev1, prev2, cv) :
+      !prev1_inside_hole(prev2, prev1, cv);
+  }
+  
+  // bool prev1_before_prev2 = prev1_inside_hole(prev1, prev2, cv);
   Halfedge_handle h = (prev1_before_prev2) ?
     Topological_map<Dcel>::insert_at_vertices(prev1, prev2) : 
     Topological_map<Dcel>::insert_at_vertices(prev2, prev1); 
-
+  
   h->set_curve(cv);
   h->twin()->set_curve(cv);
 
@@ -1263,8 +1302,7 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
   pl->insert(h, cv);
   // Notifying change.
   if (en != NULL) {
-    Face_handle orig_face =
-        (!prev1_before_prev2) ? h->face() : h->twin()->face();
+    Face_handle orig_face = prev1_before_prev2 ? h->twin()->face() : h->face();
 
     en->add_edge(cv, h, true, false);
       
@@ -1277,7 +1315,7 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,
     // we surely know h->face() is the new face.
     // en->split_face(h->twin()->face(), h->face());
   }
-    
+
   return h;
 }
 
@@ -1386,15 +1424,15 @@ prev1_inside_hole(
 
   do {
     //source
-    b=false;
+    b = false;
     if (traits->point_is_left( curr->source()->point(),left)) 
-      b=true;
+      b = true;
     else
       if (traits->point_is_same(curr->source()->point(),left)) 
       {
         if (traits->curve_is_vertical(curr->curve()) &&
             traits->point_is_left_low(curr->target()->point(),left) ) {
-          b=true;
+          b = true;
 	}
         else
 	{
@@ -1407,23 +1445,23 @@ prev1_inside_hole(
 		traits->curve_compare_at_x_right(curr->curve(),
 						 left_edge->curve(),
 						 left) == SMALLER))) 
-            b=true;
+            b = true;
 	}
       }
 
     if (b) {
-      left=curr->source()->point();
-      left_edge=curr;
+      left = curr->source()->point();
+      left_edge = curr;
     }
 
     //target
-    b=false;
+    b = false;
     if (traits->point_is_left( curr->target()->point(),left))
-      b=true;
+      b = true;
     if (traits->point_is_same(curr->target()->point(),left)) {
       if (traits->curve_is_vertical(curr->curve()) &&
           traits->point_is_left_low(curr->source()->point(),left) ) {
-        b=true;
+        b = true;
       }
       else {
 	Comparison_result cres;
@@ -1435,20 +1473,20 @@ prev1_inside_hole(
 	      traits->curve_compare_at_x_right(curr->curve(),
 					       left_edge->curve(),
 					       left) == SMALLER))) {
-          b=true;
+          b = true;
 	}
 	//we want in the degenerate case to return the halfedge 
 	//pointing _at_ the left point 
         else {
           if ( (curr)==(left_edge->twin()) )
-            b=true;
+            b = true;
 	}
       }
     }
 
     if (b) {
-      left=curr->target()->point();
-      left_edge=curr;
+      left = curr->target()->point();
+      left_edge = curr;
     }
 
     ++curr;
