@@ -107,7 +107,7 @@ public:
 
   typedef Triangulation_cell_3<GT,Tds> Cell;
   typedef Triangulation_vertex_3<GT,Tds> Vertex;
-  typedef pair<Cell_handle, int> Facet;
+  typedef std::pair<Cell_handle, int> Facet;
   typedef triple<Cell_handle, int, int> Edge;
 
 
@@ -707,13 +707,13 @@ public:
   void
   incident_cells(Vertex_handle v, 
 		 std::set<Cell*, std::less<Cell*> > & cells,
-		 Cell_handle c = NULL ) const;
+		 Cell_handle c = (Cell*) NULL ) const;
 
 
   void
   incident_vertices(Vertex_handle v, 
 		    std::set<Vertex*, std::less<Vertex*> > & vertices,
-		    Cell_handle c = NULL ) const;
+		    Cell_handle c = (Cell*) NULL ) const;
 
 private:
   void 
@@ -2791,7 +2791,7 @@ void
 Triangulation_3<GT,Tds>::
 incident_cells(Vertex_handle v, 
 	       std::set<Cell*, std::less<Cell*> > & cells,
-	       Cell_handle c = NULL ) const
+	       Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -2821,7 +2821,7 @@ void
 Triangulation_3<GT,Tds>::
 incident_vertices(Vertex_handle v, 
 		  std::set<Vertex*, std::less<Vertex*> > & vertices,
-		  Cell_handle c = NULL ) const
+		  Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
@@ -2888,7 +2888,7 @@ util_incident_vertices(Vertex_handle v,
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   if ( ! _tds.is_valid(verbose,level) ) {
     if (verbose) { std::cerr << "invalid data structure" << std::endl; }
@@ -2945,7 +2945,7 @@ is_valid(bool verbose = false, int level = 0) const
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
-is_valid(Cell_handle c, bool verbose = false, int level = 0) const
+is_valid(Cell_handle c, bool verbose, int level) const
 {
   int i;
   if ( ! (&(*c))->is_valid(t.dimension(),verbose,level) ) {
@@ -2968,8 +2968,7 @@ is_valid(Cell_handle c, bool verbose = false, int level = 0) const
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
-is_valid_finite(Cell_handle c, 
-		bool verbose = false, int level = 0) const
+is_valid_finite(Cell_handle c, bool verbose, int level) const
 {
   switch ( dimension() ) {
   case 3:

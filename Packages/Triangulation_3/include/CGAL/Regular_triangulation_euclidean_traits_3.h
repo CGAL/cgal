@@ -49,7 +49,7 @@ class Regular_triangulation_euclidean_traits_3
 {
 public:
   typedef Triangulation_geom_traits_3 <Rep>     Traits;
-  typedef Traits::Point                         Bare_point;
+  typedef typename Traits::Point                         Bare_point;
   typedef Weighted_point <Bare_point, Weight>   Weighted_point;
   typedef Weighted_point                        Point;
 

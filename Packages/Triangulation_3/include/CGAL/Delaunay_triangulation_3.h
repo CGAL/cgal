@@ -576,7 +576,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   if ( ! tds().is_valid(verbose,level) ) {
     if (verbose) { std::cerr << "invalid data structure" << std::endl; }

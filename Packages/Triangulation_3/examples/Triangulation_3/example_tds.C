@@ -46,8 +46,8 @@ typedef CGAL::Triangulation_cell_base_3<Gt> Cb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
 
-typedef typename Tds::Cell TDSCell;
-typedef typename Tds::Vertex TDSVertex;
+typedef Tds::Cell TDSCell;
+typedef Tds::Vertex TDSVertex;
 
 int main()
 {
@@ -97,7 +97,7 @@ int main()
   assert( T.dimension() == 3 );
   assert( T.is_valid() );
 
-  std::ofstream oFileT("output_tds",ios::out);
+  std::ofstream oFileT("output_tds",std::ios::out);
   // writing file output_tds; 
   oFileT << T; 
 

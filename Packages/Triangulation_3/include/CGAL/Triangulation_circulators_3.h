@@ -52,8 +52,8 @@ public:
   typedef Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
-  typedef Triangulation_3<Gt,Tds> Triangulation_3;
-  typedef typename Triangulation_3::Edge Edge;
+  typedef Triangulation_3<Gt,Tds> Triangulation;
+  typedef typename Triangulation_3<Gt,Tds>::Edge Edge;
 
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
@@ -61,12 +61,12 @@ public:
     : _cb(), _tr(NULL)
     {}
 
-  Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
+  Triangulation_cell_circulator_3(Triangulation * tr, Edge e)
     : _cb( &(tr->_tds), make_triple( (Ctds *) &(*(e.first)), 
 				     e.second, e.third ) ), _tr(tr)
     {}
 
-   Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e, Cell_handle c)
+   Triangulation_cell_circulator_3(Triangulation * tr, Edge e, Cell_handle c)
     : _cb( &(tr->_tds), 
 	   make_triple( (Ctds *) &(*(e.first)), e.second, e.third ),
 	   (Ctds *) &(*c) ), 
@@ -139,7 +139,7 @@ public:
 
 private: 
   Circulator_base _cb;
-  Triangulation_3 * _tr;
+  Triangulation * _tr;
 };
 
 CGAL_END_NAMESPACE

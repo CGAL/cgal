@@ -29,8 +29,7 @@
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_geom_traits.C>
 
-int
-main()
+int main()
 {
   std::cout << "Testing Triangulation_geom_traits" << std::endl;
   std::cout << "   with Cartesian" << std::endl;
@@ -114,5 +113,7 @@ typedef Cls1::Point  Pt1;
   };
 
    _test_cls_geom_traits(p3, Cls3());
+
+   return 0;
 }
 

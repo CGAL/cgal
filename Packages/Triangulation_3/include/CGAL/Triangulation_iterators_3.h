@@ -58,14 +58,20 @@ class Triangulation_vertex_iterator_3;
 
 template < class Gt, class Tds>
 class Triangulation_cell_iterator_3
-  : public bidirectional_iterator<Triangulation_cell_3<Gt,Tds>,ptrdiff_t>
 {
 public:
+  typedef typename Triangulation_3<Gt,Tds>::Cell       value_type;
+  typedef typename Triangulation_3<Gt,Tds>::Cell *     pointer;
+  typedef typename Triangulation_3<Gt,Tds>::Cell &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Cell Ctds;
   typedef typename Tds::Cell_iterator Iterator_base;
 
-  typedef Triangulation_cell_3<Gt,Tds> Cell;
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triang;
@@ -192,13 +198,19 @@ private:
 
 template < class Gt, class Tds>
 class Triangulation_vertex_iterator_3
-  : public bidirectional_iterator<Triangulation_vertex_3<Gt, Tds>,ptrdiff_t>
 {
 public:
+  typedef typename Triangulation_3<Gt,Tds>::Vertex       value_type;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex *     pointer;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Vertex_iterator Iterator_base;
 
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef Triangulation_3<Gt,Tds> Triang;
 
@@ -322,10 +334,15 @@ private:
 
 template < class Gt, class Tds>
 class Triangulation_edge_iterator_3
-  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Edge,
-    ptrdiff_t>
 {
 public:
+  typedef typename Triangulation_3<Gt,Tds>::Edge       value_type;
+  typedef typename Triangulation_3<Gt,Tds>::Edge *     pointer;
+  typedef typename Triangulation_3<Gt,Tds>::Edge &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Edge Etds;
   typedef typename Tds::Edge_iterator  Iterator_base;
 
@@ -457,10 +474,15 @@ private:
 
 template < class Gt, class Tds>
 class Triangulation_facet_iterator_3
-  : public bidirectional_iterator<typename Triangulation_3<Gt,Tds>::Facet,
-    ptrdiff_t>
 {
 public:
+  typedef typename Triangulation_3<Gt,Tds>::Facet       value_type;
+  typedef typename Triangulation_3<Gt,Tds>::Facet *     pointer;
+  typedef typename Triangulation_3<Gt,Tds>::Facet &     reference;
+  typedef std::size_t     size_type;
+  typedef std::ptrdiff_t  difference_type;
+  typedef std::bidirectional_iterator_tag   iterator_category;
+
   typedef typename Tds::Facet Ftds;
   typedef typename Tds::Facet_iterator  Iterator_base;
 

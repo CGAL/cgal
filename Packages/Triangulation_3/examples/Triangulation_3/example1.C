@@ -46,9 +46,9 @@ typedef CGAL::Triangulation_cell_base_3<Gt>  Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> TDS;
 typedef CGAL::Triangulation_3<Gt,TDS> Triangulation;
 
-typedef typename Triangulation::Cell_handle Cell_handle;
-typedef typename Triangulation::Vertex_handle Vertex_handle;
-typedef typename Triangulation::Locate_type Locate_type;
+typedef Triangulation::Cell_handle Cell_handle;
+typedef Triangulation::Vertex_handle Vertex_handle;
+typedef Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point Point;
 
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
   assert(  nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  std::ofstream oFileT("output",ios::out);
+  std::ofstream oFileT("output",std::ios::out);
   // writing file output; 
   oFileT << T; 
 

@@ -39,6 +39,13 @@ public:
   typedef typename Gt::Bare_point Bare_point;
   typedef typename Gt::Weighted_point Weighted_point;
 
+  typedef Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
+  typedef Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef Triangulation_3<Gt,Tds>::Facet Facet;
+  typedef Triangulation_3<Gt,Tds>::Edge Edge;
+
   Regular_triangulation_3()
     : Triangulation_3<Gt,Tds>() {}
   
@@ -159,7 +166,7 @@ private:
 			Cell_handle c, Cell_handle & ac, int & i);
 
   void find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
-			const Point & p,
+			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
 
   std::set<void*, std::less<void*> > 
@@ -202,7 +209,7 @@ template < class Gt, class Tds >
 void 
 Regular_triangulation_3<Gt,Tds>::
 find_conflicts_2(std::set<void*, std::less<void*> > & conflicts, 
-		 const Point & p,
+		 const Weighted_point & p,
 		 Cell_handle c, Cell_handle & ac, int & i)
 {
   if ( ( conflicts.find( (void *) &(*c) ) ) != conflicts.end() )
@@ -359,7 +366,7 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 }
 
 template < class Gt, class Tds >
-Regular_triangulation_3<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
 insert(const Weighted_point & p )
 {
@@ -376,7 +383,7 @@ insert(const Weighted_point & p )
 }  
 
 template < class Gt, class Tds >
-Regular_triangulation_3<Gt,Tds>::Vertex_handle
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
 insert(const Weighted_point & p, Cell_handle start ) 
 {
@@ -675,4 +682,4 @@ is_valid(bool verbose = false, int level = 0) const
 }
 CGAL_END_NAMESPACE
 
-#endif CGAL_REGULAR_TRIANGULATION_3_H
+#endif // CGAL_REGULAR_TRIANGULATION_3_H

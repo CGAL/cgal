@@ -53,7 +53,6 @@ public:
   typedef typename Tds::Cell Ctds;
 
   typedef Triangulation_cell_3<Gt,Tds> Cell;
-  typedef Triangulation_vertex_3<Gt,Tds> Vertex;
   
   typedef Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
   typedef Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
