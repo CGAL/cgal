@@ -1,3 +1,5 @@
+3.17 rursu: replaced Leda_window based demo with Qt_widget based demo
+
 Changes done to the `Min_circle_2' package
 
 Version 3.16 on 7-May-2003
