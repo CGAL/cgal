@@ -28,10 +28,6 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/triple.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_geom_traits_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/_test_cls_triangulation_3.C>
@@ -40,15 +36,11 @@ bool del = false;
 
 int main()
 {
-  std::cout << " with Triangulation_test_traits_3 : " << std::endl;
-  typedef CGAL::Triangulation_geom_traits_3<Test_rep_cartesian>     traits;
+  typedef Test_rep_cartesian                                        traits;
   // Using vertex_base_pointer induces a memory leak (not a bug, but the test
   // program is not adapted), so we use the normal vertex.
   // typedef CGAL::Triangulation_vertex_base_pointer_3<traits>        Vb;
-  typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
-  typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
-  typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
-  typedef CGAL::Triangulation_3<traits,Tds>                         Cls3;
+  typedef CGAL::Triangulation_3<traits>                         Cls3;
 
   _test_cls_triangulation_3( Cls3() );
 

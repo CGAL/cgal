@@ -29,13 +29,7 @@
 
 #include <CGAL/_test_types.h>
 
-#include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-
-#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/Regular_triangulation_3.h>
 
@@ -49,10 +43,7 @@ int main()
 
   typedef CGAL::Regular_triangulation_euclidean_traits_3<Test_rep_cartesian> traits;
 
-  typedef CGAL::Triangulation_vertex_base_pointer_3<traits>         Vb;
-  typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
-  typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
-  typedef CGAL::Regular_triangulation_3<traits,Tds>                 Cls;
+  typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 
   //  _test_cls_regular_3( Cls() );
   typedef traits::Bare_point Point;
