@@ -494,6 +494,15 @@ EOF
     echo "\\cgaltitlepage{$1 Package}" | sed 's/_/\\_/g'
     cat <<EOF
 
+\cleardoublepage
+\pagenumbering{roman}
+\setcounter{page}{1}
+\ifthenelse{\boolean{useminitoc}}{\lcTex{\dominitoc}}{}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
 \cgalchapters{
 EOF
     if [ $# -eq 1 ]; then
