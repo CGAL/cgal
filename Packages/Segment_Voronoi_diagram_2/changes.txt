@@ -1,0 +1,4 @@
+15 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- the point container is not hardcoded
+- the traits classes is now split in two different classes; there is
+  no intersection tag as a template parameter
