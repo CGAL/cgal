@@ -155,15 +155,13 @@ public:
 
   void add_hole(void* halfedge_ptr)
   {
-
     holes.push_back(halfedge_ptr);
-
   }
-
 
   void erase_hole(Holes_iterator hit) {
     holes.erase(hit);
   }
+    
   void erase_holes(Holes_iterator first, Holes_iterator last) {
     holes.erase(first,last);
   }
@@ -352,9 +350,9 @@ public:
   
 protected:
   // Three managed in-place lists for the elements. 
-  typedef In_place_list<Vertex,true>      Vertex_list;
-  typedef In_place_list<Halfedge,true>    Halfedge_list;
-  typedef In_place_list<Face,true>       Face_list;
+  typedef In_place_list<Vertex,false>   Vertex_list;
+  typedef In_place_list<Halfedge,false> Halfedge_list;
+  typedef In_place_list<Face,false>     Face_list;
 public:
   typedef typename Halfedge_list::size_type   Size;
   typedef typename Halfedge_list::size_type   size_type;
@@ -368,7 +366,6 @@ protected:
     Face_list     faces;
 
 public:
-
 
   typedef typename Vertex_list::iterator      Vertex_iterator;
   typedef typename Halfedge_list::iterator    Halfedge_iterator;
@@ -390,7 +387,12 @@ private:
   // Forbid copy constructor and assignment (will be implemented later).
   Pm_dcel( const Self&) {}
   Self& operator=( const Self&)            { return *this;}
-  
+
+  // DESTRUCTION
+
+public:
+  ~Pm_dcel() { delete_all(); }
+
 public:
   // Access Member Functions
   
@@ -440,26 +442,32 @@ public:
   }
   */
 
-  Halfedge* new_edge() {
-    // creates a new pair of opposite halfedges.
-    Halfedge* h = new Halfedge;
-    Halfedge* g = new Halfedge;
-    h->H::set_opposite(g);
-    g->H::set_opposite(h);
-
-    halfedges.push_back( *h);
-    halfedges.push_back( *g);
+  Halfedge * new_halfedge() {
+    Halfedge * h = new Halfedge;
+    halfedges.push_back(*h);
     return h;
   }
-  
-  Halfedge* new_edge( const Halfedge* he) {
-    Halfedge* h = new Halfedge( *he);
-    Halfedge* g = new Halfedge(* (he->opposite()));
+
+  Halfedge * new_halfedge(const Halfedge * he) {
+    Halfedge * h = new Halfedge( *he);
+    halfedges.push_back(*h);
+    return h;
+  }
+
+  Halfedge * new_edge() {
+    // creates a new pair of opposite halfedges.
+    Halfedge * h = new_halfedge();
+    Halfedge * g = new_halfedge();
     h->H::set_opposite(g);
     g->H::set_opposite(h);
+    return h;
+  }
 
-    halfedges.push_back( *h);
-    halfedges.push_back( *g);
+  Halfedge * new_edge( const Halfedge * he) {
+    Halfedge * h = new_halfedge(he);
+    Halfedge * g = new_halfedge(he->opposite());
+    h->H::set_opposite(g);
+    g->H::set_opposite(h);
     return h;
   }
   
@@ -476,16 +484,16 @@ public:
     halfedges.push_back( *g);
     return h;
   }*/
-  
-  Face* new_face(){
-    Face* f = new Face;
-    faces.push_back( *f);
+
+  Face * new_face() {
+    Face * f = new Face;
+    faces.push_back(*f);
     return f;
   }
   
-  Face* new_face( const Face* g) {
-    Face* f = new Face(*g);
-    faces.push_back( *f);
+  Face * new_face(const Face * g) {
+    Face * f = new Face(*g);
+    faces.push_back(*f);
     return f;
   }
   
@@ -495,25 +503,54 @@ public:
   // Halfedges are always deallocated in pairs of opposite halfedges. Erase
   // of single elements is optional. The deletion of all is mandatory.
 
-  void delete_vertex( Vertex* v) { vertices.erase(v);}
+  void delete_vertex(Vertex * v) {
+    vertices.erase(v);
+    delete v;
+  }
   
-  void delete_edge( Halfedge* h) {
-    // deletes the pair of opposite halfedges h.
-    Halfedge* g = h->opposite();
+  void delete_halfedge(Halfedge * h) {
     halfedges.erase(h);
-    halfedges.erase(g);
+    delete h;
+  }
+    
+  void delete_edge(Halfedge * h) {
+    // deletes the pair of opposite halfedges h.
+    Halfedge * g = h->opposite();
+    delete_halfedge(h);
+    delete_halfedge(g);
   }
 
-  void delete_face( Face* f) { faces.erase(f);}
+  void delete_face(Face * f) {
+    faces.erase(f);
+    delete f;
+  }
   
   void delete_all() {
-    vertices.destroy();
-    halfedges.destroy();
-    faces.destroy();
+    for (Vertex_iterator vi = vertices.begin(); vi != vertices.end();) {
+      Vertex_iterator curr = vi;
+      ++vi;
+      delete_vertex(&(*curr));
+    }
+
+    for (Halfedge_iterator hi = halfedges.begin(); hi != halfedges.end();) {
+      Halfedge_iterator curr = hi;
+      ++hi;
+      delete_halfedge(&(*curr));
+    }
+
+    for (Face_iterator fi = faces.begin(); fi != faces.end();) {
+      Face_iterator curr = fi;
+      ++fi;
+      delete_face(&(*curr));
+    }
+
+    // vertices.destroy();
+    // halfedges.destroy();
+    // faces.destroy();
   }
   
   // returns the unbounded face in the assigned map
-  void *assign(const Self &d, void *u_face)
+  void * assign(const Self & d, void * u_face)
   {
     //typedef std::map<Vertex_list::iterator, Vertex_list::iterator> VertexMap;
     //typedef std::map<Halfedge_list::iterator, 
@@ -534,90 +571,82 @@ public:
     Face_const_iterator fit;
 
     for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
-      {
-	Vertex* nv = new Vertex;
-	nv->assign(*vit);
-	vertices.push_back(*nv);
-	vm.insert(ConnectMap::value_type((void*)&(*vit), (void*)nv));
-      }
+    {
+	  Vertex * nv = new_vertex();
+      nv->assign(*vit);
+      vm.insert(ConnectMap::value_type((void*)&(*vit), (void*)nv));
+    }
 
     for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
-      {
-	Halfedge* nh = new Halfedge;
-	nh->assign(*hit);
-	halfedges.push_back(*nh);
-	hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
-      }
+    {
+	  Halfedge * nh = new_halfedge();
+	  nh->assign(*hit);
+	  hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
+    }
 
     for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
-      {
-	Face* nf = new Face;
-	nf->assign(*fit);
-	faces.push_back(*nf);
-	fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
-      }
+    {
+	  Face * nf = new_face();
+      nf->assign(*fit);
+      fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
+    }
 
 
     // update pointers
     for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
-      {
-	void *he, *nhe, *nv, *v;
-	v = (void*)(&(*vit));
-	nv = (void*)(vm.find(v)->second);
-	he = (void*)vit->halfedge();
-	nhe = (void*)(hm.find(he)->second);
-	((Vertex*)nv)->set_halfedge((Halfedge*)nhe);
-      }
-
+    {
+      void *he, *nhe, *nv, *v;
+      v = (void*)(&(*vit));
+      nv = (void*)(vm.find(v)->second);
+      he = (void*)vit->halfedge();
+      nhe = (void*)(hm.find(he)->second);
+      ((Vertex*)nv)->set_halfedge((Halfedge*)nhe);
+    }
 	  
     for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
-      {
-	void *he, *nhe, *v, *nv, *f, *nf, *op, *nop, *xt, *nxt;
-	he = (void*)(&(*hit));
-	nhe = hm.find(he)->second;
-	v = (void*)hit->vertex();
-	f = (void*)hit->face();
-	op = (void*)hit->opposite();
-	xt = (void*)hit->next();
+    {
+      void *he, *nhe, *v, *nv, *f, *nf, *op, *nop, *xt, *nxt;
+      he = (void*)(&(*hit));
+      nhe = hm.find(he)->second;
+      v = (void*)hit->vertex();
+      f = (void*)hit->face();
+      op = (void*)hit->opposite();
+      xt = (void*)hit->next();
 
-	nv = vm.find(v)->second;
-	nf = fm.find(f)->second;
-	nop = hm.find(op)->second;
-	nxt = hm.find(xt)->second;
+      nv = vm.find(v)->second;
+      nf = fm.find(f)->second;
+      nop = hm.find(op)->second;
+      nxt = hm.find(xt)->second;
 
-	((Halfedge*)nhe)->set_vertex((Vertex*)nv);
-	((Halfedge*)nhe)->set_face((Face*)nf);
-	((Halfedge*)nhe)->set_opposite((Halfedge*)nop);
-	((Halfedge*)nhe)->set_next((Halfedge*)nxt);
-      }
+      ((Halfedge*)nhe)->set_vertex((Vertex*)nv);
+      ((Halfedge*)nhe)->set_face((Face*)nf);
+      ((Halfedge*)nhe)->set_opposite((Halfedge*)nop);
+      ((Halfedge*)nhe)->set_next((Halfedge*)nxt);
+    }
 
     for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
-      {
-	void *f, *nf, *he, *nhe, *h, *nh;
-	typename Face::Holes_const_iterator holes;
-	f = (void*)(&(*fit));
-	nf = fm.find(f)->second;
-	he = (void*)fit->halfedge();
-	if (he != NULL)
-	  nhe = hm.find(he)->second;
-	else
-	  nhe = NULL;
-	((Face*)nf)->set_halfedge((Halfedge*)nhe);
-
+    {
+      void *f, *nf, *he, *nhe, *h, *nh;
+      typename Face::Holes_const_iterator holes;
+      f = (void*)(&(*fit));
+      nf = fm.find(f)->second;
+      he = (void*)fit->halfedge();
+      if (he != NULL)
+        nhe = hm.find(he)->second;
+      else
+        nhe = NULL;
+      ((Face*)nf)->set_halfedge((Halfedge*)nhe);
 		  
-	for (holes = fit->holes_begin(); holes != fit->holes_end(); holes++)
+      for (holes = fit->holes_begin(); holes != fit->holes_end(); holes++)
 	  {
 	    h = (void*)(*holes);
 	    nh = hm.find(h)->second;
 	    ((Face*)nf)->add_hole((Halfedge*)nh);
 	  }
-      }
+    }
     return fm.find(u_face)->second;
   }
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////
 //               DEFAULT DCEL
