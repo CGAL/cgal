@@ -33,6 +33,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// There's a hack to be able to read "a/b" as a Quotient<cl_I>.
+template <class FT> class Quotient;
+std::istream&
+operator>> (std::istream& in, Quotient<cl_I>& z);
+
 // Requirements.
 
 inline bool	is_valid	(const cl_I & ) { return true; } 
