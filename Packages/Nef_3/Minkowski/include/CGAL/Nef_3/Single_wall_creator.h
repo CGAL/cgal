@@ -111,7 +111,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	if(sh->twin()->source() == ein->twin()) // tighther, i.e. sedge with circle(svs,ein)
 	  res |= 2;
     }
-    
+
     /*
     SVertex_handle sv;
     if(assign(sv,os)) {
@@ -169,8 +169,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       int tmp = (ntcw & (i+1));
       std::cerr << "ntcw " << ntcw << "&" << (i+1) << "=" << tmp << std::endl;
 
-      //      if((ntcw & (i+1)) != 0)
-      //	continue;
+      /*
+      if((ntcw & (i+1)) != 0)
+	continue;
+      */
 
       Vertex_handle v;
       Halfedge_handle e;
