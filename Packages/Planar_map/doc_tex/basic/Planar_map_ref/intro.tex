@@ -65,6 +65,15 @@ and use the CGAL kernel (\ccStyle{Point} is of type
 We also supply a traits class that uses LEDA's rational kernel and makes use
 of its efficient predicates. The different supplied traits classes are described at the end of this chapter.
 
+Models of PlanarMapTraits\_2 are meant to serve as arguments for the respective
+template parameter of \ccRefName\. However, it should be noted that
+each model of PlanarMapTraits\_2 defines a family of curves and
+primitive geometric operations thereof. Sometimes, the only
+implementation available for the manipulation of a certain family of
+curves is one of the supplied traits classes. A scenario where one
+uses a traits class object to manipulate such curves without
+maintaining planar maps is certainly possible.
+
 The \ccc{PlanarMapWithIntersectionsTraits_2} and \ccc{ArrangementTraits_2} 
 concepts are refinements of the \ccc{PlanarMapTraits_2} concept.
 Therefore, all models of the formers are models of the latter. 
