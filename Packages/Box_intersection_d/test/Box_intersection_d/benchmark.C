@@ -13,6 +13,7 @@
 #include <vector>
 #include <cstdio>
 #include <cmath>
+#include <fstream>
 
 static unsigned int failed = 0;
 
@@ -119,78 +120,79 @@ unsigned int countDuplicates( Storage& storage ) {
 } */
 
 static void
-test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_intersection_d::BIPARTITE )
+test_n( unsigned int n, std::ostream& outfile )
 {
     Box_container boxes1, boxes2;
     //Result_container result_allpairs, result_scanner, result_tree;
     std::cout << "generating random box sets with size " << n << " ... " << std::flush;
     fill_boxes( n, boxes1 );
-    bool bipartite = setting == CGAL::Box_intersection_d::BIPARTITE;
-
-    if( bipartite )
-        fill_boxes( n, boxes2 );
-    else
-        boxes2 = boxes1;
+    fill_boxes( n, boxes2 );
     std::cout << std::endl;
-    Counter_callback callback0, callback1, callback2;
-    Timer timer;
+    Counter_callback callback1, callback2;
+    Timer timer, timer_scan;
 
-    if( n < 20000 ) {
-        std::cout << "all pairs ... " << std::flush;
-        timer.start();
-        CGAL::all_pairs( boxes1.begin(), boxes1.end(),
-                         boxes2.begin(), boxes2.end(), callback0, Traits(), DIM - 1 );
-        timer.stop();
-        std::cout << "got " << callback0.counter << " intersections in "
-                  << timer.t << " seconds."
-            << std::endl;
-        timer.reset();
-    }
     std::cout << "one way scan ... " << std::flush;
-    timer.start();
+    timer_scan.start();
     CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(), callback1, Traits(), DIM - 1 );
-    if( bipartite )
-        CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                            boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
-    timer.stop();
+    CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
+                        boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
+    timer_scan.stop();
     std::cout << "got " << callback1.counter << " intersections in "
-              << timer.t << " seconds."
+              << timer_scan.t << " seconds."
               << std::endl;
 
-    std::cout << "segment tree ... " << std::flush;
-    timer.reset();
-    timer.start();
-    unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
-    CGAL::box_intersection_d_custom( boxes1.begin(), boxes1.end(),
-                                     boxes2.begin(), boxes2.end(), callback2, Traits(), cutoff, setting );
-    timer.stop();
-    std::cout << "got " << callback2.counter << " intersections in "
-              << timer.t << " seconds." << std::endl;
+    std::cout << "segment tree ... " << std::endl;
+    unsigned int problemsize = boxes1.size() + boxes2.size();
+    unsigned int cutoff = 0;
+    unsigned int stepsize = 500;
+    float last_time = 1e30;
+    if( problemsize > 3000 )
+        cutoff = 500;
+    while( true )
+    {
+        timer.reset();
+        timer.start();
+        CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
+                                  boxes2.begin(), boxes2.end(), callback2, cutoff );
+        if( problemsize < 500 ) {
+            CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
+                                      boxes2.begin(), boxes2.end(), callback2, cutoff );
+            CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
+                                      boxes2.begin(), boxes2.end(), callback2, cutoff );
 
-    if( callback1.counter != callback2.counter || n < 20000 && callback0.counter != callback1.counter ) {
-        ++failed;
-        /*unsigned int missing    = countMissingItems( result_scanner,
-                                                     result_tree );
-        unsigned int duplicates = countDuplicates( result_tree );*/
-        std::cout << "!! failed !! " << std::endl;
-        /*std::cout << "!! failed !! " << missing  << " missing and "
-             << duplicates << " duplicate intersections in tree result. "
-             << std::endl;*/
+            timer.stop();
+            timer.t /= 3.0;
+        } else
+            timer.stop();
+        std::cout << "cutoff = " << cutoff << " -> t = " << timer.t << std::endl;
+        if( last_time < timer.t || timer.t < 1e-4) {
+            if( cutoff > 2*stepsize )
+                cutoff -= 2*stepsize;
+            else
+                cutoff = 0;
+            if( problemsize < 2000 && problemsize / stepsize > 10 || problemsize / stepsize > 1000 )
+                break;
+            stepsize /= 2;
+        }
+        cutoff += stepsize;
+        last_time = timer.t;
+
     }
-    else
-        std::cout << "--- passed --- " << std::endl;
+    std::cout << "optimal cutoff = " << cutoff << std::endl;
+    outfile << problemsize << " " << last_time << " " << timer_scan.t << std::endl;
 }
 
 void operator()() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "DIM = " << DIM << std::endl;
     std::cout << "-------------------------" << std::endl;
-    for( unsigned int n = 8; n < 200000; n = (int)(n * 1.3)) {
-        std::cout << "bipartite case: " << std::endl;
-        test_n( n, CGAL::Box_intersection_d::BIPARTITE );
-        //std::cout << "complete case: " << std::endl;
-        //test_n( n, CGAL::Box_intersection_d::COMPLETE );
+    std::ofstream outfile( "benchmark.data" );
+    outfile << "# problemsize streamingtime scanningtime" << std::endl;
+    outfile.precision(9);
+    outfile << std::fixed;
+    for( unsigned int n = 8; n < 1000000; n = (int)(n * 1.5)) {
+        test_n( n, outfile );
     }
 }
 
@@ -227,29 +229,8 @@ struct test
 
 
 int main( int argc, char ** argv ) {
-    //test<unsigned int> a;
-    //test<int> b;
     test<float> c;
-    //test<double> d;
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "unsigned int" << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    //a();
-    std::cout << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "signed int" << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    //b();
-    std::cout << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "float" << std::endl;
-    std::cout << "-------------------------" << std::endl;
     c();
-    std::cout << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "double" << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    //d();
 
     if( failed != 0 )
         std::cout << "a total number of " << failed << " tests failed!" << std::endl;

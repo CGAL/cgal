@@ -115,7 +115,7 @@ Usually, the default predicates need not be changed. Detailed requirements for b
 
 \texttt{template< class BoxTraits, bool closed > struct Default\_Box\_Predicate\_Traits\_d}
 
-Box access is required inside the predefined predicates, therefore a box traits class (which models an adapter) has to be given to the predicate traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation.
+Box access is required inside the predefined predicates, therefore a box traits class (which models an adapter) has to be given to the default predicate traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation.
 
 
 \subsection*{Usage}
@@ -129,6 +129,8 @@ Here, the box type is exactly the default box using three dimensions and \texttt
 
 Notice that the default box adapter is a template with a box type argument. The box type needed for the adapter is infered from the iterator's value type. It may be a class type or a pointer to a class. Default box traits templates exist for both kinds of types.
 
+It may be surprising, but here using plain structures instead of pointers to boxes is actually faster. Copying pointers is of course much faster than copying a whole structure, which may be eight times larger. But accessing a set of structures is faster when they are grouped together, so that the range of memory already cached in some way. While processing, the boxes are sorted and partitioned so that cacheing becomes effective. Of course, if the used hardware has no cache capabilities at all, there is no point in prefering plain structures against pointers.
+
 \subsubsection*{Performance Parameters}
 Internally, the bounding box check uses a streamed segment tree. A cutoff threshold parameter specifies the minimum amount of boxes so that the segment tree is used. Below this minimum, a simpler algorithm is used that has less overhead and performs well only for low number of boxes and dimension. The choice of a cutoff parameter can have a significant effect on runtime. If the cutoff value is near to the overall number of boxes, the runtime may in extreme cases equal that of the simpler algorithm because it is invoked too early. Threshold values that are too low invoke the simpler algorithm too late and add some unneccessary overhead to the overall runtime.
 
@@ -141,20 +143,37 @@ In general:
   \item Space requirement is $O(n+m)$ for the user provided boxes. No new space is allocated while computing.
 \end{itemize}
 
+Of course, in the complete case $n+m$ has to be substituted with $n$.
+
 \section*{Examples}
-All examples use closed boxes and the bipartite setting. \texttt{fill\_boxes}, \texttt{callback} and \texttt{main} are almost identical.
-\subsection*{Minimal Example}
-Minimal example using random boxes. Boxes are default boxes without any geometric primitives inside. Each intersection is directly reported as a pair of numbers.
-\ccIncludeExampleCode{../../../examples/Box_intersection_d/minimal.cc}
+All examples use closed boxes. No cutoff parameter is specified, so the default of 10 is used. 
 
 \subsection*{Custom Box}
-box containing some nondeterministic primitive.
+This shows how to use a custom box, together with the default box traits. For simplicity, the custom box inherits from the default box. A primitive field is added. Primitives intersect each other with a certain fixed probability. The point here is, that the box traits class need not be specified. If pointers to the custom box were stored inside the box container, the pointer specialization of the box traits template is used automatically, with the custom box as the template parameter.
+
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/custombox.cc}
 
-\subsection*{Custom BoxAdapter }
-Here, a bounding box is a cube. This saves some space, at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions.
-
+\subsection*{Custom Box Traits }
+Here, a bounding box is a cube. This saves some space at the expense of precision. The custom box only contains a vector to the minimal point plus a size for all three dimensions. The primitive class is the same as in the custom box example above. Invocation differs only where the box traits must be supplied as an argument.
 \ccIncludeExampleCode{../../../examples/Box_intersection_d/customadapter.cc}
+
+\newpage
+\section*{Implementation}
+\cgal{} makes liberal use of exact number types, which often has a significant impact on performance. Many algorithms depend on the usage of exact number types. However, 
+the bounding box intersection presented here only approximates some geometric primitives, and as such does not rely on exact representation of numbers. An important consequence is that \ccc{float} and \ccc{double} number types can be used, which are much faster, also because of hardware implementation. To demonstrate that box intersection can be done quite fast, different box sets are intersected in the range between 4 and 800000 boxes. Here, the size is the sum both set's sizes. Only plain default boxes are used, without carrying additional data fields. Boxes use closed topology, are of dimension three and as number type 32 bit \ccc{floats} are used. All boxes are stored as plain structures, not as pointers. Hardware used is a Xeon 2.4GHz equipped with 4GB of memory.
+
+For each box set, a near-optimal cutoff parameter is determined using an adaptive approximation. The runtime required for streaming is compared against usual scanning. Each box intersection is reported to a dummy callback, which itself does nothing. Results can be seen in figure \ref{fig_benchmark}. As can be seen, for low numbers of boxes, pure scanning is still faster than streaming with optimal cutoff, which would just delegate the box sets to the scanning algorithm. As there are more and more boxes, the overhead becomes less important.
+
+\begin{ccTexOnly}
+ \begin{figure}
+  \begin{center}
+  \includegraphics[width=0.5\textwidth]{benchmark.eps}
+  \caption{Runtime comparison scanning vs. streaming.}
+  \label{fig_benchmark}
+  \end{center}
+ \end{figure}
+\end{ccTexOnly}
+
 
 
 %% EOF %%

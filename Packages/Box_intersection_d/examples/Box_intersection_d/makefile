@@ -58,7 +58,7 @@ clean: \
                    custombox.clean \
                    customadapter.clean
 depend:
-	$(CXX) *.cc  $(CXXFLAGS) -MM > .depend
+	$(CXX) *.cc  $(CXXFLAGS) -MM | grep "/KM/projects" -v > .depend
 
 include .depend
 #---------------------------------------------------------------------#

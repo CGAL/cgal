@@ -54,6 +54,7 @@ struct Default_box_d : public Box_intersection_d::Unique_numbers {
     typedef NT_ NT;
 
     Default_box_d() { init(); }
+    Default_box_d(bool complete) { init(complete); }
     Default_box_d(NT l[N], NT h[N]) {
         std::copy( l, l + N, lo );
         std::copy( h, h + N, hi );

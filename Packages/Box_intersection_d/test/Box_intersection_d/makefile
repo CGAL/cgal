@@ -47,12 +47,16 @@ automated_test$(EXE_EXT): automated_test$(OBJ_EXT)
 random_set_test$(EXE_EXT): random_set_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)random_set_test random_set_test$(OBJ_EXT) $(LDFLAGS)
 
+benchmark$(EXE_EXT): benchmark$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)benchmark benchmark$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    automated_test.clean \
-                   random_set_test.clean
+                   random_set_test.clean \
+                   benchmark.clean
 
 depend:
-	$(CXX) *.C  $(CXXFLAGS) -MM > .depend
+	$(CXX) *.C  $(CXXFLAGS) -MM | grep "/KM/projects" -v > .depend
 
 include .depend
 
