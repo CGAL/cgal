@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.44 on ? ??? 2000
+- Removed "coordinator" field.
+- Use the relational operators from <utility> in Interval_nt*.
+
 Version 4.43 on 4 May 2000
 - Don't forget to submit it...
 
