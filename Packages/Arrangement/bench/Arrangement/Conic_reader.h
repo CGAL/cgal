@@ -16,16 +16,16 @@ class Conic_reader
 {
 
 public:
-  typedef typename Traits::Point_2      Point_2;
-  typedef typename Traits::Curve_2      Curve_2;
-  typedef typename Traits::Circle_2     Circle_2;
-  typedef typename Traits::Segment_2    Segment_2;
-  typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
-  typedef std::list<Curve_2>            CurveList;
+  typedef typename Traits::Point_2              Point_2;
+  typedef typename Traits::Curve_2              Curve_2;
+  typedef typename Traits::Circle_2             Circle_2;
+  typedef typename Traits::Segment_2            Segment_2;
+  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+  typedef std::list<Curve_2>                    Curve_list;
 
-  int ReadData(const char * filename, CurveList & curves,
-               CGAL::Bench_parse_args::FormatId format,
-               CGAL::Bbox_2 & bbox)
+  int read_data(const char * filename, Curve_list & curves,
+                CGAL::Bench_parse_args::FormatId format,
+                CGAL::Bbox_2 & bbox)
   {
     Curve_2 cv;
     char dummy[256];

@@ -6,8 +6,11 @@
 #include <CGAL/basic.h>
 #include "bench_config.h"
 
-#if BENCH_NT == LEDA_REAL_NT
-#include <CGAL/leda_real.h>
+#if BENCH_NT == DOUBLE_NT
+#include "Double.h"
+
+#elif BENCH_NT == GMPZ_NT
+#include <CGAL/gmpxx.h>
 
 #elif BENCH_NT == LEDA_RAT_NT
 #include <CGAL/leda_rational.h>
@@ -36,8 +39,8 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 
-#elif BENCH_NT == DOUBLE_NT
-#include "Double.h"
+#elif BENCH_NT == LEDA_REAL_NT
+#include <CGAL/leda_real.h>
 
 // #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
 // #include <NiX/Arithmetic_traits.h>
@@ -52,10 +55,19 @@
 #error No Number Type (NT) specified! 
 #endif
 
-#if BENCH_NT == LEDA_REAL_NT
-typedef leda_real                                       NT;
+// Typedefs:
+
+#if BENCH_NT == DOUBLE_NT
+typedef CGAL::Double                                    NT;
 typedef NT                                              WNT;
-#define NUMBER_TYPE "Leda Real"
+#define NUMBER_TYPE "Double"
+
+#elif BENCH_NT == GMPZ_NT
+typedef ::mpz_class                                     NT;
+typedef NT                                              WNT;
+typedef NT                                              RT;
+typedef NT                                              FT;
+#define NUMBER_TYPE "Gmpz"
 
 #elif BENCH_NT == LEDA_RAT_NT
 typedef leda_rational                                   NT;
@@ -92,10 +104,10 @@ typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Quotient MP Float"
 
-#elif BENCH_NT == DOUBLE_NT
-typedef CGAL::Double                                    NT;
+#elif BENCH_NT == LEDA_REAL_NT
+typedef leda_real                                       NT;
 typedef NT                                              WNT;
-#define NUMBER_TYPE "Double"
+#define NUMBER_TYPE "Leda Real"
 
 // #elif BENCH_NT == NIX_ARITHMETIC_TRAITS_NT
 // typedef NiX::Arithmetic_traits                       Arithmetic_traits;

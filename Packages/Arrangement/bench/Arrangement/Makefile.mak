@@ -4,7 +4,7 @@ include $(ROOT)/include/make/cgaldef.mak
 
 # Initialize:
 CARTESIAN_KERNEL =              0
-SIMPLE_CARETSIAN_KERNEL =       1
+SIMPLE_CARTESIAN_KERNEL =       1
 LEDA_KERNEL =                   2
 MY_KERNEL =                     3
 
@@ -18,16 +18,17 @@ EXACUS_CONIC_TRAITS =           6
 CK_CONIC_TRAITS =               7
 
 DOUBLE_NT =                     0
-LEDA_RAT_NT =                   1
-QUOTIENT_MP_FLOAT_NT =          2
-QUOTIENT_GMPZ_NT =              3
-GMPQ_NT =                       4
-LAZY_RATIONAL_NT =              5
-LAZY_GMPQ_NT =                  6
-LAZY_QUOTIENT_MP_FLOAT_NT =     7
-LEDA_REAL_NT =                  8
-NIX_LEDA_FIELD_WITH_SQRT_NT =   9
-NIX_CORE_FIELD_WITH_SQRT_NT =   10
+GMPZ_NT =                       1
+LEDA_RAT_NT =                   2
+QUOTIENT_MP_FLOAT_NT =          3
+QUOTIENT_GMPZ_NT =              4
+GMPQ_NT =                       5
+LAZY_RATIONAL_NT =              6
+LAZY_GMPQ_NT =                  7
+LAZY_QUOTIENT_MP_FLOAT_NT =     8
+LEDA_REAL_NT =                  9
+NIX_LEDA_FIELD_WITH_SQRT_NT =   10
+NIX_CORE_FIELD_WITH_SQRT_NT =   11
 
 # Force values:
 ifeq ($(BENCH_KERNEL), LEDA_KERNEL)
@@ -242,12 +243,12 @@ LCPPINCS+= -I$(BASEDIR)/../../../Planar_map/include
 LCPPINCS+= -I$(BASEDIR)/../../../Arrangement/include
 LCPPINCS+= -I$(BASEDIR)/../../../Trapezoidal_decomposition/include
 LCPPINCS+= -I$(BASEDIR)/../../../Sweep_line_2/include
-ifeq ($(KERNEL), LEDA_KERNEL)
+ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
 LCPPINCS+= -I$(BASEDIR)/../../../Leda_rat_kernel/include
 endif
-ifeq ($(TRAITS), EXACUS_CONIC_TRAITS)
+ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 endif
-ifeq ($(TRAITS), CK_CONIC_TRAITS)
+ifeq ($(BENCH_TRAITS), $(CK_CONIC_TRAITS))
 LCPPINCS+= -I$(CURVED_KERNEL_ROOT)/include
 endif
 LCPPINCS+= $(CGALINCS)
@@ -490,7 +491,7 @@ core_exacus_conic_inst:
 	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
 
 ck_conic_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
+	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
 
 # Miscellaneous
 insert_old:

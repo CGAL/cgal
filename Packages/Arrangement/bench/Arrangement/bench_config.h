@@ -16,16 +16,17 @@
 #define CK_CONIC_TRAITS                 7
 
 #define DOUBLE_NT                       0
-#define LEDA_RAT_NT                     1
-#define QUOTIENT_MP_FLOAT_NT            2
-#define QUOTIENT_GMPZ_NT                3
-#define GMPQ_NT                         4
-#define LAZY_RATIONAL_NT                5
-#define LAZY_GMPQ_NT                    6
-#define LAZY_QUOTIENT_MP_FLOAT_NT       7
-#define LEDA_REAL_NT                    8
-#define NIX_LEDA_FIELD_WITH_SQRT_NT     9
-#define NIX_CORE_FIELD_WITH_SQRT_NT     10
+#define GMPZ_NT                         1
+#define LEDA_RAT_NT                     2
+#define QUOTIENT_MP_FLOAT_NT            3
+#define QUOTIENT_GMPZ_NT                4
+#define GMPQ_NT                         5
+#define LAZY_RATIONAL_NT                6
+#define LAZY_GMPQ_NT                    7
+#define LAZY_QUOTIENT_MP_FLOAT_NT       8
+#define LEDA_REAL_NT                    9
+#define NIX_LEDA_FIELD_WITH_SQRT_NT     10
+#define NIX_CORE_FIELD_WITH_SQRT_NT     11
 
 // Default value based on dependencies:
 #if BENCH_KERNEL == LEDA_KERNEL
