@@ -1,3 +1,13 @@
+- tester operator -> poue Edge_iterator
+- Mettre la doc a jour
+- virer Dummy_output_iterator et le remplacer par empty_set_iterator
+- Harmoniser find_conflicts() avec le 3d
+- tester entree vrml
+- faire des fonctions globales pour les entrees sorties
+  les mettre dans un fichier separe
+  pour ne pas etre oblige d'inclure iostream obligatoirement
+ 
+
 - ajouter dans la doc du line face circulator, la precondition p!= q
 - documenter Constrained_triangulation_plus_2
 - tester Constrained_triangulation_plus_2 avec le Tag exact
@@ -22,9 +32,6 @@
 
 - rendre les iterator vraiment const
   creer les classe const_handle
-- factorize the code duplicated in
-  Triangulation_default_data_structure_2
-  Triangulation_data_structure_using_list_2
 
 A verifier
 - Corriger la doc pour includes_edge in Triangulation_2

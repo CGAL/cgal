@@ -205,16 +205,18 @@ _test_cls_tds_2( const Tds &, const Gt &)
    //clear(), swap() and copy_constructor and copy
   std::cout << "    clear, swap, assign and copy " << std::endl;
   Tds tds1b(tds1);
-  assert(tds1b.is_valid());
-  Tds tds1c = tds1b;
+  assert(tds1b.is_valid() && tds1b.number_of_full_dim_faces() == 1);
+  Tds tds1c = tds1;
   assert(tds1c.is_valid());
+  assert(tds1.is_valid() && tds1.number_of_full_dim_faces() == 1);
   Tds tds1d;
   tds1d.swap(tds1c);
-  assert(tds1d.is_valid() & tds1d.number_of_vertices()==1);
+  assert(tds1d.is_valid() && tds1d.number_of_vertices()==1);
   tds1d.clear();
   Tds tds1e;
   Vertex_handle w1e= tds1e.copy_tds(tds1,w1);
-  assert(tds1e.is_valid() && tds1e.is_vertex(w1e));
+  assert(tds1e.is_valid());
+  assert(tds1e.is_vertex(w1e));
 
   Tds tds2b(tds2);
   assert(tds2b.is_valid());
@@ -223,7 +225,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Tds tds2d;
   tds2d.swap(tds2c);
   assert(tds2d.is_valid() & tds2d.number_of_vertices()==2);
-  tds2d.clear();
+//   tds2d.clear();
   Tds tds2e;
   Vertex_handle w2e= tds2e.copy_tds(tds2,w2);
   assert(tds2e.is_valid() && tds2e.is_vertex(w2e));
@@ -235,11 +237,10 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Tds tds3d;
   tds3d.swap(tds3c);
   assert(tds3d.is_valid() & tds3d.number_of_vertices()==4);
-  tds3d.clear();
+//   tds3d.clear();
   Tds tds3e;
   Vertex_handle w3e= tds3e.copy_tds(tds3,w3);
   assert(tds3e.is_valid()&& tds3e.is_vertex(w3e));
-
 
   Tds tds4b(tds4);
   assert(tds4b.is_valid());
@@ -248,12 +249,12 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Tds tds4d;
   tds4d.swap(tds4c);
   assert(tds4d.is_valid() && tds4d.number_of_vertices()==6);
-  tds4d.clear();
+//      tds4d.clear();
   Tds tds4e;
   Vertex_handle w4e= tds4e.copy_tds(tds4,w4);
   assert(tds4e.is_valid() && tds4e.is_vertex(w4e));
 
-  //test circulators and v->degree()
+  //test circulators and  iterators
   std::cout << "    circulators" <<std::endl;
   _test_tds_circulators(tds0);
   _test_tds_circulators(tds1);
@@ -267,13 +268,23 @@ _test_cls_tds_2( const Tds &, const Gt &)
   _test_tds_iterators(tds3);
   _test_tds_iterators(tds4);
 
-  //is_vertex
+    //is_vertex
   std::cout << "    is_vertex" << std::endl;
   assert (tds4.is_vertex(v4_5));
   assert (tds3.is_vertex(v3));
   assert (tds2.is_vertex(v2));
   
-
+  // test compatibility of iterators and circulators with handle()
+  Vertex_iterator vit=tds4.vertices_begin();
+  assert(tds4.is_vertex(vit));
+  Face_iterator fit =tds4.faces_begin();
+  u4 = tds4.insert_in_face(fit);
+  tds4.remove_degree_3(u4);
+  Vertex_circulator vc=tds4.incident_vertices(vit);
+  assert(tds4.is_vertex(vc));
+  fc = tds4.incident_faces(vit);
+  u4 = tds4.insert_in_face(fc);
+  tds4.remove_degree_3(u4);
 
   //test input, output
 
@@ -285,7 +296,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   w3->set_point(p1);
   v3->set_point(p1);
   w4->set_point(p1); 
-  Vertex_iterator vit = tds3.vertices_begin();
+  vit = tds3.vertices_begin();
   for ( ; vit != tds3.vertices_end(); vit++) {
     vit->set_point(p1);
   }
@@ -411,19 +422,19 @@ _test_tds_iterators( const Tds&  tds)
   Face f;
   Edge e;
 
-  for (Iterator_base itbp = tds.iterator_base_begin();
-       itbp != tds.iterator_base_end();
-       ++itbp) {
-   f = *itbp;
-   nb += 1;
-  }
-  assert(nb == tds.number_of_full_dim_faces());
-  for (Iterator_base itbm = tds.iterator_base_end();
-       itbm != tds.iterator_base_begin();
-       --itbm) {
-    nb -= 1;
-  }
-  assert(nb == 0);
+//   for (Iterator_base itbp = tds.iterator_base_begin();
+//        itbp != tds.iterator_base_end();
+//        ++itbp) {
+//    f = *itbp;
+//    nb += 1;
+//   }
+//   assert(nb == tds.number_of_full_dim_faces());
+//   for (Iterator_base itbm = tds.iterator_base_end();
+//        itbm != tds.iterator_base_begin();
+//        --itbm) {
+//     nb -= 1;
+//   }
+//   assert(nb == 0);
 
   for (Vertex_iterator vitp = tds.vertices_begin();
        vitp != tds.vertices_end();

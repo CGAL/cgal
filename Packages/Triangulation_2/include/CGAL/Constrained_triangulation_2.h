@@ -649,8 +649,7 @@ remove_2D(Vertex_handle v)
     List_edges shell=hole; //save hole because it will be emptied by fill_hole
     fill_hole(v, hole);
     update_constraints(shell);
-    delete &(*v);
-    set_number_of_vertices(number_of_vertices()-1);
+    delete_vertex(v);
   }
   return;       
 }

@@ -65,8 +65,6 @@ public:
   Face_circulator operator++(int);
   Face_circulator& operator--();
   Face_circulator operator--(int);
-  //Face& operator*() const  ;
-  //Face* operator->() const ;
 
   bool operator==(const Face_circulator &fc) const ;
   bool operator!=(const Face_circulator &fc) const;
@@ -81,7 +79,6 @@ public:
     CGAL_triangulation_precondition(pos != NULL && _v != NULL);
     return const_cast<Face&>(*pos);
   }
-  
 
   Face*
   operator->() const
@@ -90,6 +87,7 @@ public:
     return const_cast<Face*>(pos) ;
   }
   
+  operator Face_handle() const {return (*this)->handle();}
   
 };
 
@@ -147,6 +145,8 @@ public:
     CGAL_triangulation_precondition(pos != NULL && _v != NULL);
     return &*(pos->vertex(_ri));
   }
+
+   operator Vertex_handle() const {return (*this)->handle();}
 
 };
 

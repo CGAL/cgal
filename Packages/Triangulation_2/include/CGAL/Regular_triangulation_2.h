@@ -649,8 +649,7 @@ remove_2D(Vertex_handle v)
     std::list<Edge> hole;
     make_hole(v, hole);
     fill_hole_regular(hole);
-    delete &(*v);
-    set_number_of_vertices(number_of_vertices()-1);
+    delete_vertex(v);
   }
   return;   
 }

@@ -36,17 +36,6 @@
 #include <CGAL/_test_line_face_circulator.C>
 
 
-
-template < class VIt >
-class V2p_adaptor : public VIt {
-public:
-  typedef typename VIt::Vertex::Point Point;
-  V2p_adaptor(const VIt &vit) : VIt(vit) {}
-  //V2p_adaptor(VIt &vit) : VIt(vit) {}
-  const Point& operator*() const { return (VIt::operator*()).point(); }
-};
-
-
 template <class Triangulation>
 void
 _test_cls_triangulation_2( const Triangulation & )
@@ -72,6 +61,7 @@ _test_cls_triangulation_2( const Triangulation & )
   typedef typename Cls::Finite_vertices_iterator  Finite_vertices_iterator;
   typedef typename Cls::Finite_faces_iterator     Finite_faces_iterator;
   typedef typename Cls::Finite_edges_iterator     Finite_edges_iterator;
+  typedef typename Cls::Point_iterator            Point_iterator;
 
   typedef typename Cls::Vertex_circulator    Vertex_circulator;
   typedef typename Cls::Face_circulator      Face_circulator;
@@ -152,12 +142,14 @@ _test_cls_triangulation_2( const Triangulation & )
   Cls T0_0;
   assert( T0_0.dimension() == -1 );
   assert( T0_0.number_of_vertices() == 0 );
+  assert( T0_0.number_of_faces() == 0);
   assert( T0_0.is_valid() );
 
   Cls T0_1; 
   Vertex_handle v0_1_0 = T0_1.insert(p0); assert( !v0_1_0.is_null() );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
+  assert( T0_1.number_of_faces() == 0);
   assert( T0_1.is_valid() );
 
   // test insert_first()
@@ -166,6 +158,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( !v0_2_0.is_null() );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
+  assert( T0_2.number_of_faces() == 0);
   assert( T0_2.is_valid() );
   
   /******** 1-dimensional triangulations ******/
@@ -237,6 +230,8 @@ _test_cls_triangulation_2( const Triangulation & )
   Vertex_handle v2_1_10 = T2_1.insert(p10);  // inside the face p2,p4,p6
   assert( T2_1.dimension() == 2 );
   assert( T2_1.number_of_vertices() == 11 );
+  assert( T2_1.number_of_faces() == 2 * 12 - 4 
+                                 - T2_1.infinite_vertex()->degree() );
   
   // test is_valid for 2-triangulations
   assert( T2_1.is_valid() );
@@ -253,7 +248,7 @@ _test_cls_triangulation_2( const Triangulation & )
   Vertex_handle v2_3_4 = T2_3.insert(p4);
   assert( T2_3.dimension() == 2 );
   Vertex_handle v2_3_6 = T2_3.insert(p6, T2_3.finite_faces_begin());
-  Vertex_handle v2_3_0 = T2_3.insert(p0, ++T2_3.finite_faces_begin());
+   Vertex_handle v2_3_0 = T2_3.insert(p0, ++T2_3.finite_faces_begin());
   Vertex_handle v2_3_5 = T2_3.insert(p5);
   Vertex_handle v2_3_7 = T2_3.insert(p7);
   loc = T2_3.locate(p10,lt,li);
@@ -261,7 +256,6 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( lt == Cls::FACE );
   assert( T2_3.dimension() == 2 );
   assert( T2_3.number_of_vertices() == 11 );
-  // assert( T2_3.number_of_faces() == 13 );
   assert( T2_3.is_valid() );
   
   // make sure inserting on a previous point does not insert it again
@@ -274,12 +268,10 @@ _test_cls_triangulation_2( const Triangulation & )
 
   // test generic iterator insert
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-  typedef V2p_adaptor<Finite_vertices_iterator> Point_iterator;
   Cls T2_4; T2_4.insert( Point_iterator(T2_1.finite_vertices_begin()),
                          Point_iterator(T2_1.finite_vertices_end()) );
   assert( T2_4.dimension() == 2 );
   assert( T2_4.number_of_vertices() == 11 );
-  // assert( T2_4.number_of_faces() == 13 );
   assert( T2_4.is_valid() );
 #endif
 
@@ -288,7 +280,6 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_5.insert(l.begin(), l.end()) == 10 );
   assert( T2_5.dimension() == 2 );
   assert( T2_5.number_of_vertices() == 10 );
-  // assert( T2_5.number_of_faces() == 13 );
   assert( T2_5.is_valid() );
 
   // test list iterator insert
@@ -296,7 +287,6 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_6.insert(v.begin(), v.end()) == 10 );
   assert( T2_6.dimension() == 2 );
   assert( T2_6.number_of_vertices() == 10 );
-  // assert( T2_6.number_of_faces() == 13 );
   assert( T2_6.is_valid() );
   
   // test grid insert
@@ -326,7 +316,7 @@ _test_cls_triangulation_2( const Triangulation & )
   //make_hole star_hole
   std::list<Edge> hole;
   T2_3.make_hole(v2_3_10, hole);
-  T2_3.set_number_of_vertices(T2_3.number_of_vertices()-1);
+  T2_3.delete_vertex(v2_3_10);
   v2_3_10 = T2_3.star_hole(p10, hole.begin(), hole.end());
   assert( T2_3.is_valid());
 

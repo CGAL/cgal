@@ -36,17 +36,6 @@
 #include <CGAL/_test_triangulation_circulators.C>
 
 
-
-template < class VIt >
-class V2p_adaptor : public VIt {
-public:
-  typedef typename VIt::Vertex::Point Point;
-  V2p_adaptor(const VIt &vit) : VIt(vit) {}
-  //V2p_adaptor(VIt &vit) : VIt(vit) {}
-  const Point& operator*() const { return (VIt::operator*()).point(); }
-};
-
-
 template <class Triangul>
 void
 _test_cls_triangulation_short_2( const Triangul &)
@@ -69,9 +58,11 @@ _test_cls_triangulation_short_2( const Triangul &)
 
   typedef std::pair<Face_handle,int>              Edge;
 
-  typedef typename Triangul::Finite_vertices_iterator  Finite_vertices_iterator;
-  typedef typename Triangul::Finite_faces_iterator     Finite_faces_iterator;
-  typedef typename Triangul::Finite_edges_iterator     Finite_edges_iterator;
+  typedef typename Triangul::Finite_vertices_iterator  
+                                                      Finite_vertices_iterator;
+  typedef typename Triangul::Finite_faces_iterator    Finite_faces_iterator;
+  typedef typename Triangul::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename Triangul::Point_iterator           Point_iterator;
 
   typedef typename Triangul::Vertex_circulator    Vertex_circulator;
   typedef typename Triangul::Face_circulator      Face_circulator;
@@ -213,7 +204,6 @@ _test_cls_triangulation_short_2( const Triangul &)
 
   // test generic iterator insert
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-  typedef V2p_adaptor<Finite_vertices_iterator> Point_iterator;
   Triangul T2_4; T2_4.insert( Point_iterator(T2_3.finite_vertices_begin()),
                          Point_iterator(T2_3.finite_vertices_end()) );
   assert( T2_3.dimension() == 2 );

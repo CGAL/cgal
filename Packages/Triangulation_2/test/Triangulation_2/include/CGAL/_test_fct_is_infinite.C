@@ -26,8 +26,8 @@ void
 _test_fct_is_infinite( const Triangulation &T )
 {
   typedef typename Triangulation::Edge    Edge;
-  typedef typename Triangulation::Finite_edges_iterator
-                                  Finite_edges_iterator;
+  typedef typename Triangulation::All_edges_iterator
+                                  All_edges_iterator;
 
   // test infinite_face() and is_infinite(Face_handle)
   if ( !T.infinite_face().is_null() )
@@ -56,8 +56,11 @@ _test_fct_is_infinite( const Triangulation &T )
     assert( T.is_infinite( T.infinite_vertex()->incident_edges()) );
 
   // test is_infinite(Edge_iterator)
-  for(Finite_edges_iterator fei = T.finite_edges_begin();
-                           fei != T.finite_edges_end(); fei++) {
-    assert( ! T.is_infinite( fei));
+  // -> for edge iterator
+  for(All_edges_iterator aei = T.all_edges_begin();
+                           aei != T.all_edges_end(); aei++) {
+    if (T.is_infinite(aei)) 
+	assert ( T.is_infinite(aei->first->vertex(T.ccw(aei->second)))
+	      || T.is_infinite(aei->first->vertex(T.cw(aei->second))));
   }
 }

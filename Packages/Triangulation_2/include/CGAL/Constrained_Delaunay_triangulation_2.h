@@ -621,8 +621,7 @@ remove_2D(Vertex_handle v)
     std::list<Edge> shell=hole; //because hole will be emptied by fill_hole
     fill_hole_delaunay(hole);
     update_constraints(shell);
-    delete &(*v);
-    set_number_of_vertices(number_of_vertices()-1);
+    delete_vertex(v);
   }
   return;
 }

@@ -185,7 +185,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
   of2_2_bis << T2_4; of2_2_bis.close();
   All_faces_iterator fit2 = T2_2.all_faces_begin();
   All_faces_iterator fit2_bis = T2_4.all_faces_begin();
-  for( ; fit2 != T2_2.faces_end(); ++fit2, ++fit2_bis) {
+  for( ; fit2 != T2_2.all_faces_end(); ++fit2, ++fit2_bis) {
     for(int i=0; i<3 ; i++)  
     assert( fit2->is_constrained(i) ==  fit2_bis->is_constrained(i) );
   }
