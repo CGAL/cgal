@@ -35,7 +35,7 @@ int main()
     Point p(0,0);
     Point q(1000,800);
 
-    shortest_path_2(O.begin(),O.end(), 
+    CGAL::shortest_path_2(O.begin(),O.end(), 
 		    p,q, 
 		    std::ostream_iterator<Segment>(std::cout,"\n"),
 		    Gt());

@@ -49,10 +49,10 @@ int main()
     // Otput the segments of the shortest path from p to q in reverse order.
     W << CGAL::RED;
     W.set_line_width(3);
-    shortest_path_2(O.begin(),O.end(), 
-		    p,q, 
-		    CGAL::Ostream_iterator<Segment,Window_stream>(W),
-		    Gt());
+    CGAL::shortest_path_2(O.begin(),O.end(), 
+			  p,q, 
+			  CGAL::Ostream_iterator<Segment,Window_stream>(W),
+			  Gt());
 
     // Output the segments in BLACK
     W << CGAL::BLACK;
