@@ -781,6 +781,28 @@ int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
     return string( (const char)( 'A' + i - 1), 1);
 }
 
+// Some special characters hard to print otherwise
+// ======================================================================
+string 
+backslash_char( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    return string( "\\lciRawOutputN{1}\\");
+}
+
+string 
+open_brace_char( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    return string( "\\lciRawOutputN{1}{");
+}
+
+string 
+close_brace_char( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    return string( "\\lciRawOutputN{1}}");
+}
+
+
+
 // Error and message output
 // ======================================================================
 string 
@@ -1120,6 +1142,10 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciToRomanUpper", int_to_roman_upper, 1);
     insertInternalGlobalMacro( "\\lciToAlpha",      int_to_alpha, 1);
     insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
+
+    insertInternalGlobalMacro( "\\lciBackslash",   backslash_char, 0);
+    insertInternalGlobalMacro( "\\lciOpenBrace",   open_brace_char, 0);
+    insertInternalGlobalMacro( "\\lciCloseBrace",  close_brace_char, 0);
 
     insertInternalGlobalMacro( "\\lciError",   html_error, 1);
     insertInternalGlobalMacro( "\\lciMessage", html_message, 1);
