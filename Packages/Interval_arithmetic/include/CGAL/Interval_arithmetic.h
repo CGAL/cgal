@@ -33,34 +33,28 @@
 #include <iostream.h>
 #include <CGAL/assertions.h>
 #include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
-#include <CGAL/number_utils.h>  // For CGAL_{sign,compare,abs,min,max...}
+#include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
+#include <CGAL/number_utils.h>  // For CGAL_max(double, double).
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
 struct CGAL_Interval_nt_advanced
 {
   typedef CGAL_Interval_nt_advanced IA;
   struct unsafe_comparison{};  // Exception class.
+
 protected:
   double inf, sup;	// "inf" stores the OPPOSITE of the lower bound.
 			// "sup" stores the upper bound of the interval.
 private:
   int overlap_action() const throw (unsafe_comparison)
-  {
-#if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
-    CGAL_warning_msg(false, " Comparison between overlapping intervals");
-#endif
-#ifndef CGAL_IA_DONT_THROW_EXCEPTION
-    throw unsafe_comparison();
-#endif
-    return 0; // Return a value to prevent compiler warnings.
-  }
+  { throw unsafe_comparison(); }
 
 public:
   friend IA	sqrt     (const IA &);
   friend IA	CGAL_abs (const IA &);
   friend IA	CGAL_min (const IA &, const IA &);
   friend IA	CGAL_max (const IA &, const IA &);
-  friend IA	operator* (const double, const IA &);
+  // friend IA	operator* (const double, const IA &);
   friend double CGAL_to_double (const IA &);
   friend bool   CGAL_is_valid  (const IA &);
   friend bool   CGAL_is_finite (const IA &);
@@ -143,6 +137,9 @@ public:
 
   bool operator!=(const IA & d) const
   { return !(d == *this); }
+  
+  bool is_same(const IA & d) const
+  { return (inf == d.inf) && (sup == d.sup); }
 
   double lower_bound() const { return -inf; }
   double upper_bound() const { return sup; }
@@ -318,10 +315,49 @@ ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 
 struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 {
-  friend CGAL_Interval_nt sqrt(const CGAL_Interval_nt&);
-  friend CGAL_Interval_nt operator* (const double &, const CGAL_Interval_nt &);
+private:
+  // Private constructor for casts.
+  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
+      : CGAL_Interval_nt_advanced(d) {}
+
+  // For this one to be overriden, it must be virtual...
+#if 0
+  int overlap_action() const
+  {
+#if !defined(CGAL_IA_NO_WARNINGS) && !defined(CGAL_NO_WARNINGS)
+     CGAL_warning_msg(false, " Comparison between overlapping intervals");
+#endif
+     return 0; // Return a "random" value.
+  }
+#endif
 
 public:
+  typedef CGAL_Interval_nt IA;
+
+  friend IA     sqrt     (const IA &);
+  // How to share those definitions ?
+  friend IA     CGAL_abs (const IA & d)
+    { return CGAL_abs((CGAL_Interval_nt_advanced) d); }
+  friend IA     CGAL_min (const IA & d, const IA & e)
+    { return CGAL_min((CGAL_Interval_nt_advanced) d,
+	              (CGAL_Interval_nt_advanced) e);
+    }
+  friend IA     CGAL_max (const IA & d, const IA & e)
+    { return CGAL_max((CGAL_Interval_nt_advanced) d,
+	              (CGAL_Interval_nt_advanced) e);
+    }
+  // friend IA     operator* (const double &, const IA &);
+  friend double CGAL_to_double (const IA &);
+  friend bool   CGAL_is_valid  (const IA & d)
+    { return CGAL_is_valid((CGAL_Interval_nt_advanced) d); }
+  friend bool   CGAL_is_finite (const IA & d)
+    { return CGAL_is_finite((CGAL_Interval_nt_advanced) d); }
+  friend CGAL_Sign CGAL_sign   (const IA & d)
+    { return CGAL_sign((CGAL_Interval_nt_advanced) d); }
+  friend CGAL_Comparison_result CGAL_compare (const IA &d, const IA &e)
+    { return CGAL_compare((CGAL_Interval_nt_advanced) d,
+	                  (CGAL_Interval_nt_advanced) e);
+    }
 
   // Constructors are identical.
   CGAL_Interval_nt()
@@ -341,18 +377,13 @@ public:
   CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const ;
   CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const ;
   // For speed...
-  CGAL_Interval_nt operator*(const double& d) const;
+  CGAL_Interval_nt operator*(const double d) const;
   // These have exactly the same code as the advanced class.
   // How can I avoid duplicating the code ?
   CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d) ;
   CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d) ;
   CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d) ;
   CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d) ;
-
-private:
-  // Private constructor for casts.
-  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
-      : CGAL_Interval_nt_advanced(d) {}
 };
 
 // Here we use the GNU extension of "Named return value".
@@ -398,7 +429,7 @@ inline CGAL_Interval_nt CGAL_Interval_nt::operator*(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-inline CGAL_Interval_nt CGAL_Interval_nt::operator* (const double& d)
+inline CGAL_Interval_nt CGAL_Interval_nt::operator* (const double d)
     const CGAL_NAMED_RETURN_VALUE_OPT_1
 {
   CGAL_FPU_set_rounding_to_infinity();
@@ -415,7 +446,7 @@ inline CGAL_Interval_nt CGAL_Interval_nt::operator* (const double& d)
 }
 
 inline CGAL_Interval_nt operator*
-  (const double& d, const CGAL_Interval_nt &t)
+  (const double d, const CGAL_Interval_nt &t)
 { return t*d; }
 
 inline CGAL_Interval_nt CGAL_Interval_nt::operator/(const CGAL_Interval_nt& d)
@@ -450,7 +481,7 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const double &d)
+inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const double d)
 { return (CGAL_Interval_nt_advanced) d; }
 
 // Finally we source the "cast" functions from other NTs, when necessary.
