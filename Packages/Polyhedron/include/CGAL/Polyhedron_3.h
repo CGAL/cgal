@@ -268,7 +268,7 @@ public:
 
     bool is_border_edge() const {
         // is true if `h' or `h.opposite()' is a border halfedge.
-        return (this->opposite()->is_border() || is_border());
+        return (this->opposite()->is_border() || this->is_border());
     }
 
     // a circulator of halfedges around the vertex (clockwise).
