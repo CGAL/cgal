@@ -147,7 +147,7 @@ Iso_cuboidC3<R CGAL_CTAG>::operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::xmin() const
 {
   return min().x();
@@ -155,7 +155,7 @@ Iso_cuboidC3<R CGAL_CTAG>::xmin() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::ymin() const
 {
   return min().y();
@@ -163,7 +163,7 @@ Iso_cuboidC3<R CGAL_CTAG>::ymin() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::zmin() const
 {
   return min().z();
@@ -171,7 +171,7 @@ Iso_cuboidC3<R CGAL_CTAG>::zmin() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::xmax() const
 {
   return max().x();
@@ -179,7 +179,7 @@ Iso_cuboidC3<R CGAL_CTAG>::xmax() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::ymax() const
 {
   return max().y();
@@ -187,7 +187,7 @@ Iso_cuboidC3<R CGAL_CTAG>::ymax() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::zmax() const
 {
   return max().z();
@@ -195,7 +195,7 @@ Iso_cuboidC3<R CGAL_CTAG>::zmax() const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );
@@ -209,7 +209,7 @@ Iso_cuboidC3<R CGAL_CTAG>::min_coord(int i) const
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::FT
+typename Iso_cuboidC3<R CGAL_CTAG>::FT
 Iso_cuboidC3<R CGAL_CTAG>::max_coord(int i) const
 {
   CGAL_kernel_precondition( i == 0 || i == 1 || i == 2 );

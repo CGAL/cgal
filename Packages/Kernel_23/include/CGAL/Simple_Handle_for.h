@@ -32,7 +32,7 @@ public:
     typedef Stored element_type;
 
     Simple_Handle_for(const Stored& rc)
-	: s(rc) {}
+	: _s(rc) {}
 
     Simple_Handle_for()
     {}
@@ -40,7 +40,7 @@ public:
     void
     initialize_with(const Stored& rc)
     {
-      s = rc;
+      _s = rc;
     }
 
     void
@@ -49,17 +49,17 @@ public:
 
     long int
     id() const
-    { return reinterpret_cast<long int>(&s); }
+    { return reinterpret_cast<long int>(&_s); }
 
     bool
     identical(const Simple_Handle_for& h) const
     { return id() == h.id(); } // Or should it always return false ?
 
     const Stored * Ptr() const
-    { return &s; }
+    { return &_s; }
 
 private:
-    Stored s;
+    Stored _s;
 };
 
 CGAL_END_NAMESPACE

@@ -73,7 +73,7 @@ public:
     : RPlane_3(s,p)
   {}
 
-  Plane_3(CGAL::Ray_3<R>& r, const CGAL::Point_3<R>& p)
+  Plane_3(const CGAL::Ray_3<R>& r, const CGAL::Point_3<R>& p)
     : RPlane_3(r,p)
   {}
 
@@ -107,7 +107,7 @@ public:
   CGAL::Point_3<R>      to_3d(const CGAL::Point_2<R>& p) const
   { return RPlane_3::to_3d(p); }
 
-  CGAL::Plane_3<R>      transform( CGAL::Aff_transformation_3<R>& t) const
+  CGAL::Plane_3<R>      transform(const CGAL::Aff_transformation_3<R>& t) const
   { return CGAL::Plane_3<R>( RPlane_3::transform(t) ); }
 };
 

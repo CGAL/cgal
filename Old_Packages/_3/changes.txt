@@ -1,3 +1,8 @@
+3.24 (12 September 2001)
+- Fixes for SunPro.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%  Release 2.3 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 3.23 (27 Jun 2001)
 - Put the IO operators back in, they are needed by Borland.
 

@@ -185,7 +185,7 @@ private:
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
-Aff_transformation_repC2<R>::Aff_transformation_2
+typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
 inverse() const // FIXME : construction
 {
