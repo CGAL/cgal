@@ -9,17 +9,21 @@ left to all curves. While we sweep the imaginary line, we keep track of all
 curves intersecting it.
 
 This type of algorithm is called a {\em plane sweep algorithm} and the line 
-$l$ is called the {\em sweep line}. The {\em status} of the sweep line if 
+$l$ is called the {\em sweep line}. The {\em status} of the sweep line is 
 the set of curves intersecting it. The status changes while the sweep line 
-moves to right, but not continuously. Only at particular points is an update of the status required. We call these points the {\em event points} of the 
-plane sweep algorithm. In this algorithm we initialize the event points with 
-the endpoints of the curves.
+moves to right, but not continuously. The sweep line status is updated at 
+specific points called the {\em event points}. These points are actually
+the endpoints of all curves and their intersection points. The initial set of 
+{\em event points} are only the endpoints of the curves. More {\em event points}
+are added as intersection points are calculated.
 
 % Put here a description of what's in this chapter
 
 This chapter describes the functions provided in
 \cgal\ for producing the corresponding disjoint-interior 
 subcurves and intersection points of a given collection 
-$C:=\{c_1, \ldots c_n\}$ of planar curves, 
-as well as constructing planar maps induced by the above 
-collection.
+$C:=\{c_1, \ldots c_n\}$ of planar curves.
+
+We take advantage of the sweep line algorithm implemented here to provide
+an efficient construction of a Planar Map with Intersection. See 
+\ccc{CGAL::Pm_with_intersection} for more deatils.

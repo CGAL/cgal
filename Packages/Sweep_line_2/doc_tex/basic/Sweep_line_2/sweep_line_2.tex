@@ -7,75 +7,44 @@ Given a collection $C$ of possibly intersecting
 We stress this fact because some implementation, such as, 
 \ccc{Planar_map_2<Dcel,Traits>} assume all curves are $x$-monotone 
 in order to gain simplicity and speed.}) 
-curves in the plane, the sweep line algorithm can produce 
-the collections of their intersections and the disjoint-interior 
-subcurves induced by $C$, or rather 
-construct the planar map induced by $C$. 
-Use the functions \ccc{sweep_to_produce_points_2},
-\ccc{sweep_to_produce_subcurves_2} and \ccc{sweep_to_construct_planar_map_2} respectively.
-The sweep line algorithm can only check whether the curves in $C$
-induce intersections, or can report all subsets of curves meeting in 
-a common point. For the latter, use the functions 
-\ccc{sweep_do_curves_intersect_2} and 
-\ccc{sweep_to_report_intersecting_curves_2} respectively.
+curves in a plane, the \ccStyle{Sweep_line_2} class provides the following 
+operations that can be performed on $C$:
 
-The sweep line implementation supports not only segments but rather 
-general curves, and hence users may define their own geometry by providing a 
-suitable {\em Traits} class and gain all sweep line functionality. 
+\begin{itemize}
+\item calculate the intersection points between the curves.
+\item calculate the interior-disjoint segments induced by $C$.
+\item calculate the intersection points and return a list of curves 
+participating at each intersection point.
+\item query for the existance of an intersection point between any two curves.
+\end{itemize}
+
+
+The \ccStyle{Sweep_line_2} implementation supports not only line segments 
+but also 
+general curves. Hence users may define their own geometry and by providing a 
+suitable {\em Traits} class they can gain all sweep line functionality. 
 In addition, the sweep line implementation supports degenerate cases such as  
 vertical curves, tangency between two different curves and overlapping curves. 
-In the latter case, the sweep line implementation can report all overlapping cases 
-in a given collection of curves. 
+
  
-An important advancement gained by using the sweep line algorithm 
-is the ability to construct a planar map much faster.
-A \ccc{Planar Map with Intersections} can be built incrementally by
-inserting one curve after the other into the map. 
-In general, it is much faster to perform the sweep line algorithm on
-the collection of input curves in order to produce their planar map 
-rather using the \ccc{Planar_map_with_intersections_2<Planar_map>} 
-or \ccc{Arrangement_2<Dcel,Traits,Base_node>} packages, due to an 
-efficient calculation of intersections and avoiding the usage of 
-point location operations when inserting curves to the planar map. 
-The sweep line implementation has been also optimized in order to 
-save geometric predicates. The above optimization speeds up performance. 
-The utility can either report the pairwise interior disjoint subcurves
-computed, report the intersection points of all curves, 
-or rather build the induced planar map, 
-
-%If no additional insertions of intersecting curves are planned following the building of the map it is possible to perform a sweep
-%line operation that will build the simpler class \ccc{Planar_map_2}.
-%This is possible since the output of the sweep line operation is a
-%collection of $x$-monotone pairwise interior disjoint, which are
-%supported by the \ccc{Planar Map} package. 
-When constructing a planar map by the sweep line process the user 
-provides a (possibly empty) planar map as the resulting parameter. 
-The result of applying the sweep line algorithm to a 
-collection of curves and a non-empty map is equal to that 
-of applying the algorithm to the union of the
-planar map curves and the collection of input curves. Simply put,
-the intersections of input curves and planar map curves are also
-calculated.
-
 % Put examples here
-\section{Example using Sweep Line to construct a Planar map}
+
+\section{Example using \ccStyle{Sweep_Line_2}}
 \label{ssec:example1_sweep}
 The following example demonstrates the usage of the 
-\ccc {Sweep line} algorithm. 
-It reports all disjoint-interior subsegments out of four segments
---- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
-(an hourglass shape), two of them are intersecting in their
-interior. A resulting container which will contain all the disjoint
-interior sub-segments obtained by the calculation of the sweep
-line algorithm is constructed. For clarity, we printed all the halfedges of the
-resulting planar map to the standard output using the I/O functions
-for the \ccc{Planar map} package.
+\ccc {Sweep_line_2} algorithm to find all subcurves created by 
+intersecting a set of curves.
 
-\ccIncludeExampleCode{Sweep_line_2/example3.C}
+The input is a set of curves $(10,1)-(20,1)$, $(10,-4)-(20,6)$,
+$(12,-4)-(12,3)$, $(20,6)-(20,1)$. These curves intersect at 3 
+interior points ont he curves and 2 end points. A total of 10 
+segments are calculated after intersecting the curves.
+
+\ccIncludeExampleCode{Sweep_line_2/example1.C}
 
 The output of the program looks like this:
 
-\ccIncludeExampleCode{Sweep_line_2/example3.cout}
+\ccIncludeExampleCode{Sweep_line_2/example1.cout}
 
 % EOF ------------------------------------------------------------------------80
 
