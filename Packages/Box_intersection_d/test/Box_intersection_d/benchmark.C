@@ -1,9 +1,6 @@
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 #include <CGAL/Box_intersection_d.h>
-// compare segment tree against brute force and simple implementations
-#include <CGAL/Box_intersection_d/one_way_scan.h>
-#include <CGAL/Box_intersection_d/all_pairs.h>
 
 #include <CGAL/Timer.h>
 

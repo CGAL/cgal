@@ -1,9 +1,27 @@
+// Copyright (c) 2004  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+//                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
+
 #ifndef CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 #define CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Box_intersection_d/one_way_scan.h>
-#include <CGAL/Box_intersection_d/modified_two_way_scan.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <algorithm>
@@ -18,6 +36,129 @@ CGAL_BEGIN_NAMESPACE
 namespace Box_intersection_d {
 
 #define BOX_INTERSECTION_DEBUG 0
+
+
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class Traits >
+void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+                Callback& callback, Traits traits, unsigned int last_dim )
+{
+    for( RandomAccessIter1 p = p_begin; p != p_end; ++p ) {
+        for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
+            if (Traits::get_id(*p) >= Traits::get_id(*i) )
+                continue;
+            for( unsigned int dim = 0; dim <= last_dim; ++dim )
+                if( !Traits::does_intersect( *p, *i, dim ) )
+                    goto no_intersection1;
+            callback( *p, *i );
+        no_intersection1:
+            ;
+        }
+    }
+
+}
+
+
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class Traits >
+void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                   RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+                   Callback& callback, Traits traits, unsigned int last_dim,
+                   bool in_order = true )
+{
+    typedef typename Traits::Compare Compare;
+    std::sort( p_begin, p_end, Compare( 0 ) );
+    std::sort( i_begin, i_end, Compare( 0 ) );
+
+    // for each box viewed as interval i
+    for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
+        // look for the first box b with i.min <= p.min
+        for( ; p_begin != p_end && Traits::is_lo_less_lo( *p_begin, *i, 0 );
+             ++p_begin );
+
+        // look for all boxes with p.min < i.max
+        for( RandomAccessIter1 p = p_begin;
+             p != p_end && Traits::is_lo_less_hi( *p, *i, 0 );
+             ++p )
+        {
+            if( Traits::get_id( *p ) == Traits::get_id( *i ) )
+                continue;
+            for( unsigned int dim = 1; dim <= last_dim; ++dim )
+                if( !Traits::does_intersect( *p, *i, dim ) )
+                    goto no_intersection;
+            if( in_order )
+                callback( *p, *i );
+            else
+                callback( *i, *p );
+        no_intersection:
+            ;
+        }
+    }
+
+}
+
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class Traits >
+void modified_two_way_scan(
+    RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
+    Callback& callback, Traits traits, unsigned int last_dim,
+    bool in_order = true )
+{
+    typedef typename Traits::Compare Compare;
+
+    std::sort( p_begin, p_end, Compare( 0 ) );
+    std::sort( i_begin, i_end, Compare( 0 ) );
+
+    // for each box viewed as interval
+    while( i_begin != i_end && p_begin != p_end ) {
+        if( Traits::is_lo_less_lo( *i_begin, *p_begin, 0 ) ) {
+            for( RandomAccessIter1 p = p_begin;
+                 p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
+                 ++p )
+            {
+                if( Traits::get_id( *p ) == Traits::get_id( *i_begin ) )
+                    continue;
+
+                for( unsigned int dim = 1; dim <= last_dim; ++dim )
+                    if( !Traits::does_intersect( *p, *i_begin, dim ) )
+                        goto no_intersection1;
+                if( Traits::contains_lo_point( *i_begin, *p, last_dim ) ) {
+                    if( in_order )
+                        callback( *p, *i_begin );
+                    else
+                        callback( *i_begin, *p );
+                }
+            no_intersection1:
+                ;
+            }
+            ++i_begin;
+        } else {
+            for( RandomAccessIter2 i = i_begin;
+                 i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
+                 ++i )
+            {
+                if( Traits::get_id( *p_begin ) == Traits::get_id( *i ) )
+                    continue;
+                for( unsigned int dim = 1; dim <= last_dim; ++dim )
+                    if( !Traits::does_intersect( *p_begin, *i, dim ) )
+                        goto no_intersection2;
+                if( Traits::contains_lo_point( *i, *p_begin, last_dim ) ) {
+                    if( in_order )
+                        callback( *p_begin, *i );
+                    else
+                        callback( *i, *p_begin );
+                }
+            no_intersection2:
+                ;
+            }
+            ++p_begin;
+        }
+    }
+
+}
+
 
 template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
@@ -122,9 +263,10 @@ struct Counter {
    ~Counter() { --value; }
 };
 
-template<class RandomAccessIter,class Callback,class T,class Predicate_traits>
-void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
-                   RandomAccessIter i_begin, RandomAccessIter i_end,
+template< class RandomAccessIter1, class RandomAccessIter2,
+          class Callback, class T, class Predicate_traits >
+void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
+                   RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback& callback, Predicate_traits traits,
                    unsigned int cutoff, unsigned int dim, bool in_order )
@@ -151,12 +293,12 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
 #if SEGMENT_TREE_CHECK_INVARIANTS
     {
         // first: each point is inside segment [lo,hi)
-        for( RandomAccessIter it = p_begin; it != p_end; ++it ) {
+        for( RandomAccessIter1 it = p_begin; it != p_end; ++it ) {
             assert( Lo_less( hi, dim )(*it) );
             assert( Lo_less( lo, dim )(*it) == false );
         }
         // second: each interval intersects segment [lo,hi)
-        for( RandomAccessIter it = i_begin; it != i_end; ++it )
+        for( RandomAccessIter2 it = i_begin; it != i_end; ++it )
             assert( Hi_greater( lo, dim )(*it) && Lo_less( hi, dim )(*it) );
     }
 #endif
@@ -180,7 +322,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         return;
     }
 
-    RandomAccessIter i_span_end = lo == inf || hi == sup ? i_begin :
+    RandomAccessIter2 i_span_end = lo == inf || hi == sup ? i_begin :
         std::partition( i_begin, i_end, Spanning( lo, hi, dim ) );
 
     if( i_begin != i_span_end ) {
@@ -193,7 +335,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     }
 
     T mi;
-    RandomAccessIter p_mid = split_points( p_begin, p_end, traits, dim, mi );
+    RandomAccessIter1 p_mid = split_points( p_begin, p_end, traits, dim, mi );
 
     if( p_mid == p_begin || p_mid == p_end )  {
         DUMP( "unable to split points! ")
@@ -204,7 +346,7 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
         return;
     }
 
-    RandomAccessIter i_mid;
+    RandomAccessIter2 i_mid;
     // separate left intervals.
     // left intervals have a low point strictly less than mi
     i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
@@ -219,7 +361,10 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
                   callback, traits, cutoff, dim, in_order );
 }
 
+#undef BOX_INTERSECTION_DEBUG
+
 } // end namespace Box_intersection_d
+
 
 
 CGAL_END_NAMESPACE

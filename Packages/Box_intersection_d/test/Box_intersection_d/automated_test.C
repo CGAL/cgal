@@ -2,8 +2,6 @@
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 #include <CGAL/Box_intersection_d.h>
 
-#include <CGAL/Box_intersection_d/all_pairs.h>
-#include <CGAL/Box_intersection_d/one_way_scan.h>
 #include <CGAL/Timer.h>
 
 #include <iostream>
@@ -26,7 +24,7 @@ typedef std::pair< Box, Box >   Box_pair;
 typedef std::vector< Box_pair > Result_container;
 
 
-static void readBoxesFromFile( FILE *infile, Box_container& boxes )
+void readBoxesFromFile( FILE *infile, Box_container& boxes )
 {
   int numBoxes, numDim;
   int boxNum, dim;
@@ -42,7 +40,7 @@ static void readBoxesFromFile( FILE *infile, Box_container& boxes )
   }
 }
 
-static void assertIntersection( const Box& a, const Box& b ) {
+void assertIntersection( const Box& a, const Box& b ) {
     for( unsigned int dim = 0; dim < 3; ++dim ) {
         if( Traits::does_intersect( a, b, dim ) == false ) {
             std::cout << "does not intersect!" << std::endl;
@@ -103,7 +101,7 @@ unsigned int countDuplicates( Storage& storage ) {
     return counter;
 }
 
-static void
+void
 test( const char* filename1, const char* filename2 )
 {
     Box_container boxes1, boxes2;
@@ -151,9 +149,9 @@ test( const char* filename1, const char* filename2 )
     timer.start();
     const unsigned int n = boxes1.size();
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
-    CGAL::box_intersection_d_custom( boxes1.begin(), boxes1.end(),
-                                     boxes2.begin(), boxes2.end(),
-                                     callback2, Traits(), cutoff );
+    CGAL::box_intersection_d_custom_predicates( boxes1.begin(), boxes1.end(),
+                                                boxes2.begin(), boxes2.end(),
+                                                callback2, Traits(), cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;
