@@ -1,3 +1,5 @@
+- bug fix in include/CGAL/squared_distance_3_0.h
+
 2.11 (11 September 2003)
 - Replaced begin()/end() of segment and ray with source()/target()
 - Replaced subtraction of points with functor Construct_vector_3
