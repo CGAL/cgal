@@ -40,7 +40,6 @@
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
-using CGAL::Polygon_traits_2;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
@@ -48,13 +47,12 @@ using CGAL::maximum_area_inscribed_k_gon_2;
 using CGAL::maximum_perimeter_inscribed_k_gon_2;
 
 // typedefs:
-typedef double                             FT;
-//typedef leda_real                        FT;
-typedef Cartesian< FT >                    K;
-typedef K::Point_2                         Point;
-typedef Polygon_traits_2< K >              P_traits;
-typedef vector< Point >                    Cont;
-typedef CGAL::Polygon_2< P_traits, Cont >  Polygon;
+typedef double                      FT;
+//typedef leda_real                 FT;
+typedef Cartesian< FT >             K;
+typedef K::Point_2                  Point;
+typedef vector< Point >             Cont;
+typedef CGAL::Polygon_2< K, Cont >  Polygon;
 
 // do random convex set generation always with double
 // (coordinates get too long with exact computation)
