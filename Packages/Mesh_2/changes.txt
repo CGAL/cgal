@@ -1,7 +1,7 @@
 
 version 0.9.4 (2003/10/9) [af]
 --------------------------
-o Bug fix in Is_locally_conforming_Gabriel
+o Bug fix in Is_locally_conforming_Gabriel and in Is_locally_conforming_Delaunay
 
 version 0.9.4
 --------------------------
