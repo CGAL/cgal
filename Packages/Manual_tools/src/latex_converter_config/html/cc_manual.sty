@@ -31,6 +31,8 @@
 \newcommand{\ccTrue}{\lcTrue}
 \newcommand{\ccAuto}{\lcAuto}
 
+
+
 % ###########################################################################
 % |
 % |   o   Link User <--> Reference
@@ -38,22 +40,24 @@
 % ###########################################################################
 
 
-\newcommand{\lciIfRefCrossLink}{\ccFalse}
+\newcommand{\lciIfRef}{\ccFalse}
 
 
 \newcommand{\ccUserChapter}[2]{
- \gdef{\lciIfRefCrossLink}{\ccTrue}
+ \gdef{\lciIfRef}{\ccTrue} 
  \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP>}
  \lcHtml{\ref{#2}} \lcRawHtml{ Reference Manual</TD> </TR> </TABLE> }
- \gdef{\lciIfRefCrossLink}{\ccFalse}
+ \gdef{\lciIfRef}{\ccFalse}
 }
 
-\newcommand{\ccRefChapter}[2]{
- \gdef{\lciIfRefCrossLink}{\ccTrue}
- \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP > }
+\newcommand{\ccRefChapter}[2]{ 
+ \gdef{\lciIfRef}{\ccTrue} 
+ \chapter{#1} \lcRawHtml{ <TD ALIGN=RIGHT VALIGN=TOP > } 
  \lcHtml{\ref{#2}} \lcRawHtml{  User Manual</TD> </TR> </TABLE> }
- \gdef{\lciIfRefCrossLink}{\ccFalse}
+ \gdef{\lciIfRef}{\ccFalse}
 }
+
+
 
 
 % ___________________________________________________________________________
@@ -417,6 +421,7 @@
 \gdef\ccIsFunctionObjectClass{\ccFalse}
 \newcommand{\ccIsFunctionObjectConcept}{}
 \gdef\ccIsFunctionObjectConcept{\ccFalse}
+\gdef\ccIsRefFunction{\ccFalse}
 
 \newcommand{\ccRefPageBegin}{}
 \newcommand{\ccRefPageEnd}{}
@@ -453,6 +458,7 @@
                    \def\ccPureRefScope{}%
                    \def\ccRefScope{}%
                    \def\ccPureRefName{}%
+                   \gdef{\ccIndexClassName}{}%
                    \renewcommand{\ccRefName}{}%
                    % needed for compliance with ccClass
                    \def\ccPureClassTemplateName{}%
@@ -465,6 +471,7 @@
                    \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
                }
+
 \newcommand{\begin@ccRefDeclaration@mo}{%
                    \def\ccRefCategory{#C1}%
                    \def\ccPureRefScope{#C2}%
@@ -496,11 +503,13 @@
 \newcommand{\lciRefDeclDefFilenameX}[3]{%
     \newcommand{\ccPureClassName}{#XC1#C2}%
     \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
+    \gdef{\ccIndexClassName}{\ccClassName}%
     \newcommand{\ccRefFilename}{#XC1#C2}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
     \begin{ccHtmlClassFile}{#XC3_#XC1#C2.html}{\ccRefName}%
     \lciIfHtmlClassLinks{\ccHtmlCrossLink{#XC1#C2}}{}%
-    \ccHtmlIndexC[\ccRefCategory]{#XC1#C2}%
+%    \ccHtmlIndexC[\ccRefCategory]{#C2}% 
+    \ccIndexRefName{#1}{\ccc{#2}}{#3}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
     \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
@@ -543,8 +552,11 @@
                    \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunction}{%
+                   \gdef\ccIsRefFunction{\lcTrue}% 
                    \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
-                   \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
+                   \begin{ccRefDeclaration}{Function}}%
+                   {\gdef\ccIsRefFunction{\lcFalse}% 
+                   \end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunctionObjectConcept}{%
                    \gdef\ccRefPureGlobalScope{}%
@@ -594,15 +606,29 @@
 % +--------------------------------------------------------------------------
 
 % class environments
-\newenvironment{ccClass}{\lciParseCC{\lciClassCont}}{\end{lciClassEnvironment}}
+\newenvironment{ccClass}{%
+    \lciParseCC{\lciClassCont} 
+}{%
+    \end{lciClassEnvironment}
+}
 
 % traits class environments
-\newenvironment{ccTraitsClass}{\lciParseCC{\lciClassCont}}{\end{lciClassEnvironment}}
+\newenvironment{ccTraitsClass}{\lciParseCC{\lciClassContforTraits}}{\end{lciClassEnvironment}}
+
+\newcommand{\lciClassContforTraits}{\lciClassContforTraitsX\lciCCParameter}
+\newcommand{\lciClassContforTraitsX}[3]{
+    \newcommand{\ccPureClassName}{#XC1}%
+    \newcommand{\ccClassName}{\ccc{#XC1}}% 
+    \ccIndexTraitsClassBegin{#XC1}{#XC2}{#XC3}% 
+    \ccIndexTraitsClassEnd%
+    \begin{lciClassEnvironment}{#1}%
+}
+
 
 \newcommand{\lciClassCont}{\lciClassContX\lciCCParameter}
 \newcommand{\lciClassContX}[1]{
     \newcommand{\ccPureClassName}{#XC1}%
-    \newcommand{\ccClassName}{\ccc{#XC1}}%
+    \newcommand{\ccClassName}{\ccc{#XC1}}% 
     \begin{lciClassEnvironment}{#1}%
 }
 
@@ -630,6 +656,7 @@
     \newcommand{\ccVar}{\ccc{*this}}%
     \newcommand{\ccPureClassTemplateName}{#XC1}%
     \newcommand{\ccClassTemplateName}{\ccc{#XC1}}%
+    \gdef{\ccIndexClassName}{\ccClassName}%
     \lciIfEmpty{#XC1}{%
      \lciError{The class environments need a non-empty classname parameter}}{}%
     \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
@@ -653,6 +680,7 @@
     \lciUndef{\ccPureClassTemplateName}%
     \lciUndef{\ccVar}%
     \lciUndef{\ccClassName}%
+    \gdef\ccIndexClassName{}%
     \lciUndef{\ccClassTemplateName}%
 }
 
@@ -669,7 +697,9 @@
 % | \ccTypedef, \ccNestedType, \ccVariable, \ccEnum, \ccStruct
 % +--------------------------------------------------------------------------
 
-
+\newcommand{\lciMainIndexItem}{}
+\newcommand{\lciSubIndexItem}{}
+\newcommand{\lciSubSubIndexItem}{}
 
 
 %% The single char encodes the category for the continuation
@@ -701,10 +731,13 @@
         <P></TABLE><!2>
 }}
 
+\gdef\ccIsFunctionTemplate{\ccFalse}
 
 %% Simply omit the first argument and hope that ParameterMode
 %% can parse it (i.e. no % symbol in it).
-\newcommand{\ccFunctionTemplate}[1]{\ccFunction}
+\newcommand{\ccFunctionTemplate}[1]{%
+    \gdef\ccIsFunctionTemplate{\ccTrue}
+    \ccFunction}
 
 \newcommand{\ccMemberFunction}{\ccMethod}
 
@@ -723,6 +756,7 @@
     {\lciThreeColumnLayout{#1}{0}#C2\lciThreeColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \gdef\ccIsFunctionTemplate{\ccFalse}%
 }
 
 \newcommand{\lciThreeColsEnd}{\lcRawHtml{
