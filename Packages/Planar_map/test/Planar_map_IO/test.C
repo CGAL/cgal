@@ -425,7 +425,9 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
     std::cout<<"Reading and writing file  - O.K"<<std::endl;
   }
   
-  void read_file_build_arrangement(std::ifstream& input_file, std::ifstream& file, bool reverse_order)
+  void read_file_build_arrangement(std::ifstream & input_file,
+                                   std::ifstream & file,
+                                   bool /* reverse_order */)
   {
       NT    x,y; 
       X_curve curr_curve;
