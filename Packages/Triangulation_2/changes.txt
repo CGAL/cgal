@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.17 (05/04/02)
+- try to fixed "unused parameter warnings"
+
 Ver 7.16 (04/04/12)
 - try to fixed "unused parameter warnings" from Constrained triangulations
 
