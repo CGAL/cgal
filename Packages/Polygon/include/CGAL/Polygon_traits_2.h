@@ -49,9 +49,9 @@
 #ifndef CGAL_PREDICATES_ON_POINTS_2_H
 #include <CGAL/predicates_on_points_2.h>
 #endif // CGAL_PREDICATES_ON_POINTS_2_H
-#ifndef CGAL_PREDICATE_OBJECTS_ON_POINTS_2_H
-#include <CGAL/predicate_objects_on_points_2.h>
-#endif // CGAL_PREDICATE_OBJECTS_ON_POINTS_2_H
+#ifndef CGAL_PREDICATES_CLASSES_2_H
+#include <CGAL/predicate_classes_2.h>
+#endif // CGAL_PREDICATES_CLASSES_2_H
 #ifndef CGAL_SEGMENT_2_SEGMENT_2_INTERSECTION_H
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 #endif // CGAL_SEGMENT_2_SEGMENT_2_INTERSECTION_H
@@ -76,8 +76,8 @@ class Polygon_traits_2_aux : public _R
     typedef Segment_2<_R>            Segment_2;
     typedef Vector_2<_R>             Vector_2;
 
-    typedef p_Less_xy<Point_2>       Less_xy;
-    typedef p_Less_yx<Point_2>       Less_yx;
+    typedef Less_xy_2<Point_2>       Less_xy;
+    typedef Less_yx_2<Point_2>       Less_yx;
 
     bool lexicographically_xy_smaller(const Point_2& p, const Point_2& q) const
     {
@@ -118,7 +118,7 @@ class Polygon_traits_2_aux : public _R
                       const Point_2& p2,
                       const Point_2& q2) const
     {
-      return do_intersect(::CGAL::Segment_2(p1,q1), ::CGAL::Segment_2(p2,q2));
+      return ::CGAL::do_intersect(Segment_2(p1,q1), Segment_2(p2,q2));
     }
 
     Orientation orientation(const Point_2& p,
