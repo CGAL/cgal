@@ -39,12 +39,12 @@
 #define CORE_POLY_H
 
 #include <CORE/BigFloat.h>
-#include <CORE/Expr.h>
+
 #include <vector>
 
 CORE_BEGIN_NAMESPACE
 
-
+class Expr;
 // ==================================================
 // Typedefs 
 // ==================================================

@@ -1,3 +1,6 @@
+Version 0.12 (15 September 2003)
+- Going back to the previous version that worked for all compilers but VC 7.1
+
 Version 0.11 (12 September 2003) [af]
 - bug fix for VC7.1
 - Added some CORE_INLINEs
