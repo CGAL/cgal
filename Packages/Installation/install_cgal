@@ -1906,15 +1906,14 @@ set_lib_compiled_flag()
 # ($1 non-empty indicates verbosity)
 search_gmp()
 {
-    # test, if GMP is installed in CGAL tree
-    make_lib_dir
-    GMP_INSTALLATION='c'
-    if test_gmp 'GMP CGAL' "$1"; then
-	log_print "remark: GMP is installed in CGAL tree."
+    GMP_INSTALLATION='s'
+    if test_gmp 'GMP syslib' "$1"; then
+	log_print "remark: GMP is installed in sysdirs."
     else
-	GMP_INSTALLATION='s'
-	if test_gmp 'GMP syslib' "$1"; then
-	    log_print "remark: GMP is installed in sysdirs."
+	make_lib_dir
+	GMP_INSTALLATION='c'
+	if test_gmp 'GMP CGAL' "$1"; then
+	    log_print "remark: GMP is installed in CGAL tree."
 	else
 	    GMP_INSTALLATION='e'
 	    if test_gmp 'GMP' "$1"; then
@@ -3439,7 +3438,7 @@ main_menu()
 		    test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
-		    search_gmp
+		    search_gmp "${INSTALL_VERBOSE}"
 		fi
 		test_for_builtin_stl
 		test_setup;;
