@@ -51,10 +51,14 @@ CGAL_BEGIN_NAMESPACE
 //                          Polygon_2
 //-----------------------------------------------------------------------//
 
-template <class Traits_P, class Container_P>
+
+template <class Traits_P, class Container_P
+        = std::vector<CGAL_TYPENAME_MSVC_NULL Traits_P::Point_2> >
 class Polygon_2 {
+
   private:
     Container_P d_container;
+    Traits_P traits;
 
   public:
     //--------------------------------------------------------
@@ -100,16 +104,17 @@ class Polygon_2 {
     //             Creation
     //--------------------------------------------------------
 
-    Polygon_2()
+    Polygon_2(Traits p_traits = Traits()) : traits(p_traits)
       { }
 
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
-      : d_container(polygon.d_container) { }
+      : d_container(polygon.d_container), traits(polygon.traits) { }
 
     Polygon_2<Traits_P,Container_P>&
     operator=(const Polygon_2<Traits_P,Container_P>& polygon)
     {
       d_container = polygon.d_container;
+      traits = polygon.traits;
       return *this;
     }
 
@@ -145,8 +150,10 @@ class Polygon_2 {
       { copy(first, last, back_inserter(d_container)); }
 #else
    template <class InputIterator>
-    Polygon_2(InputIterator first, InputIterator last)
-      { std::copy(first, last, std::back_inserter(d_container)); }
+    Polygon_2(InputIterator first, InputIterator last,
+            Traits p_traits = Traits())
+        : d_container(first,last), traits(p_traits) {}
+//      { std::copy(first, last, std::back_inserter(d_container)); }
 
 /*
     template <class Circulator>
@@ -231,41 +238,31 @@ class Polygon_2 {
     //--------------------------------------------------------
 
     bool is_simple() const
-      { return is_simple_2(d_container.begin(),
-                                d_container.end(),
-                                Traits()); }
+      { return is_simple_2(d_container.begin(), d_container.end(), traits); }
 
     bool is_convex() const
     {
-      return is_convex_2(d_container.begin(),
-                              d_container.end(),
-                              Traits());
+      return is_convex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Orientation orientation() const
     {
       CGAL_polygon_precondition(is_simple());
-      return orientation_2(d_container.begin(),
-                                d_container.end(),
-                                Traits());
+      return orientation_2(d_container.begin(), d_container.end(), traits);
     }
 
     Oriented_side oriented_side(const Point_2& value) const
     {
       CGAL_polygon_precondition(is_simple());
-      return oriented_side_2(d_container.begin(),
-                                  d_container.end(),
-                                  value,
-                                  Traits());
+      return oriented_side_2(d_container.begin(), d_container.end(),
+                                  value, traits);
     }
 
     Bounded_side bounded_side(const Point_2& value) const
     {
       CGAL_polygon_precondition(is_simple());
-      return bounded_side_2(d_container.begin(),
-                                 d_container.end(),
-                                 value,
-                                 Traits());
+      return bounded_side_2(d_container.begin(), d_container.end(),
+                                 value, traits);
     }
 
     Bbox_2 bbox() const
@@ -274,64 +271,48 @@ class Polygon_2 {
     FT area() const
     {
       FT area(0);
-      area_2(d_container.begin(), d_container.end(), area, Traits());
+      area_2(d_container.begin(), d_container.end(), area, traits);
       return area;
     }
 
     Vertex_const_iterator left_vertex() const
     {
-      return left_vertex_2(d_container.begin(),
-                                d_container.end(),
-                                Traits());
+      return left_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_iterator left_vertex()
     {
-      return left_vertex_2(d_container.begin(),
-                                d_container.end(),
-                                Traits());
+      return left_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_const_iterator right_vertex() const
     {
-      return right_vertex_2(d_container.begin(),
-                                 d_container.end(),
-                                 Traits());
+      return right_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_iterator right_vertex()
     {
-      return right_vertex_2(d_container.begin(),
-                                 d_container.end(),
-                                 Traits());
+      return right_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_const_iterator top_vertex() const
     {
-      return top_vertex_2(d_container.begin(),
-                               d_container.end(),
-                               Traits());
+      return top_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_iterator top_vertex()
     {
-      return top_vertex_2(d_container.begin(),
-                               d_container.end(),
-                               Traits());
+      return top_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_const_iterator bottom_vertex() const
     { 
-      return bottom_vertex_2(d_container.begin(),
-                                  d_container.end(),
-                                  Traits());
+      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     Vertex_iterator bottom_vertex()
     {
-      return bottom_vertex_2(d_container.begin(),
-                                  d_container.end(),
-                                  Traits());
+      return bottom_vertex_2(d_container.begin(), d_container.end(), traits);
     }
 
     bool is_counterclockwise_oriented() const
@@ -394,6 +375,9 @@ class Polygon_2 {
 
     bool identical(const Polygon_2<Traits_P,Container_P> &q) const
       { return this == &q; }
+
+
+    Traits_P const &traits_member() const { return traits;}
 };
 
 //-----------------------------------------------------------------------//
