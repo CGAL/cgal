@@ -54,7 +54,7 @@ Doc:
 	rm -rf doc_tex/basic/Triangulation/*.*
 	rm -rf doc_ps/triangulation.ps.gz
 	cp doc/*.tex doc/*.ltex doc/*.ipe doc/*.gif doc_tex/basic/Triangulation
-	cp doc/*.gif doc_html/basic/Triangulation
+	cp doc/*.gif doc/*.png doc_html/basic/Triangulation
 	rm -rf doc_tex/support/Handle/*.*
 	cp doc/pointer.tex doc_tex/support/Handle/main.tex
 	cd doc;\
@@ -80,6 +80,9 @@ print: tex
 
 #-----------------------------  RCS  -----------------------
 # $Log$
+# Revision 1.3  2000/01/06 14:12:33  yvinec
+# OK
+#
 # Revision 1.2  2000/01/04 08:10:39  yvinec
 # added to CVS files : TODO changes.txt description.txt makefile version
 #
