@@ -1,3 +1,6 @@
+1.62 (6 January 2004) [mk]
+- moved Qt_widget related I/O to a separate file
+
 1.61 (6 January 2004) [mk]
 - removed inclusion of Qt_widget.h from Parabola*2.h and Hyperbola_segment_2.h
   Qt_widget.h is not used in these files.
