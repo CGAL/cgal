@@ -133,12 +133,11 @@ public:
     point_factory = new CGAL::Qt_widget_get_point<Rep>();
     connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this,
 	    SLOT(new_point(CGAL::Object)));
-    win << point_factory;
+    win.attach(*point_factory);
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
 
-    // TODO: change this connect when Qt_scenes_widget come back.
-    connect(&win, SIGNAL(redrawed()), this, SLOT(redrawWin()));
+    connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
     statusBar();
     
     // file menu
