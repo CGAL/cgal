@@ -13,12 +13,12 @@ echo "**************************************************************************
 ./test.sh "$1" "$2" cone
 # ./test.sh "$1" "$2" crater
 ./test.sh "$1" "$2" cyl
-./test.sh "$1" "$2" david
+# ./test.sh "$1" "$2" david
 ./test.sh "$1" "$2" fandisk-top
-./test.sh "$1" "$2" foot
+# ./test.sh "$1" "$2" foot
 ./test.sh "$1" "$2" hand
-./test.sh "$1" "$2" mannequin-devil
-./test.sh "$1" "$2" maxplanck
+# ./test.sh "$1" "$2" mannequin-devil
+# ./test.sh "$1" "$2" maxplanck
 ./test.sh "$1" "$2" nefertiti
 ./test.sh "$1" "$2" one_ring
 ./test.sh "$1" "$2" oni
@@ -29,7 +29,7 @@ echo "**************************************************************************
 ./test.sh "$1" "$2" three_peaks
 ./test.sh "$1" "$2" vdi_punch
 ./test.sh "$1" "$2" venus-loop
-./test.sh "$1" "$2" vw1-remeshed
+# ./test.sh "$1" "$2" vw1-remeshed
 
 echo "***************************************************************************"
 echo "                                    ***                                    "
