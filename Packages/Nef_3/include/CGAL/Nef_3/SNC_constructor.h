@@ -372,77 +372,35 @@ public:
     return false;
   }
 
-  bool strictly_ordered_ccw_3( const Direction_3& a, 
-       const Direction_3& b, const Direction_3& c, const Plane_3& h) const {
-    TRACEN("--> facet plane " << h);
-    CGAL_assertion( !h.is_degenerate());
-    Point_2 (*t)(Point_3);
-    Vector_3 hv( h.orthogonal_vector()), 
-      hxy( 0, 0, 1), hyz( 1, 0, 0), hzx( 0, 1, 0);
-    bool mirror = false;
-    if( !is_zero( hv * hzx) ) {
-      /* the plane is not perpendicular to the ZX plane */
-      t = &point_3_get_z_x_point_2< Point_2, Point_3>;
-      if( is_negative( hv * hzx)) mirror = true;
-    }
-    else if( !is_zero( hv * hyz) ) {
-      /* the plane is not perpendicular to the YZ plane */
-      t = &point_3_get_y_z_point_2< Point_2, Point_3>;
-      if( is_negative( hv * hyz)) mirror = true;
-    }
-    else {
-      CGAL_assertion( !is_zero( hv * hxy) );
-      /* the plane is not perpendicular to the XY plane */
-      t = &point_3_get_x_y_point_2< Point_2, Point_3>;
-      if( is_negative( hv * hxy)) mirror = true;
-    }
-    Direction_2 da( t( ORIGIN + Vector_3(a) ) - ORIGIN),
-      db( t( ORIGIN + Vector_3(b)) - ORIGIN), 
-      dc( t( ORIGIN + Vector_3(c)) - ORIGIN);
-    if( mirror ) {
-      da = Direction_2(-da.dx(), da.dy());
-      db = Direction_2(-db.dx(), db.dy());
-      dc = Direction_2(-dc.dx(), dc.dy());
-    }
-    TRACEN( "CCW ordered " << a << ", " << b << ", " << c << ": ");
-    TRACEN( "CCW ordered " << da << ", " << db << ", " << dc);
-    TRACEN( "? " << strictly_ordered_ccw( da, db, dc));
-    return strictly_ordered_ccw( da, db, dc);
-  }
-
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
 				      const Segment_3& ray) const {
-    CGAL_assertion( segment(e).has_on(ray.target()));
-    SM_decorator D;
-    if( D.is_isolated(e))
+    SM_decorator SD;
+    if( SD.is_isolated(e))
       return Halffacet_handle();
-    
-    Direction_3 d_r = -ray.direction(), d_e = segment(e).direction();
-    Plane_3 h_ref( segment(e).source(), d_e);
-    TRACEN("--> ref plane " << h_ref);
 
-    SHalfedge_handle se = D.first_out_edge(e);
-    Plane_3 h_se = plane(facet(twin(se)));
-    Vector_3 v_se = cross_product( Vector_3(h_se.orthogonal_direction()),
-				   Vector_3(d_e));
-    Direction_3 d_se = Direction_3(v_se);
-    
-    SHalfedge_around_svertex_circulator sc(se), sce(sc);
-    CGAL_For_all(sc, sce) {
-      Plane_3 h_sc = plane(facet(twin(sc)));
-      Vector_3 v_sc = cross_product( Vector_3(h_sc.orthogonal_direction()),
-				     Vector_3(d_e));
-      Direction_3 d_sc = Direction_3(v_sc);
-
-      if ( strictly_ordered_ccw_3(d_se, d_sc, d_r, h_ref)) {
-	se = sc;
-	d_se = d_sc;
+    Direction_3 ed(segment(e).direction()), rd(-ray.direction());
+    Vector_3 ev(ed), rv(ed);
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), sg(sh);
+    Vector_3 h(plane(facet(twin(sh))).orthogonal_vector());
+    TRACEN("initial face candidate "<<&*facet(twin(sh)));
+    sg++;
+    while ( true ) {
+      Vector_3 g(plane(facet(twin(sg))).orthogonal_vector());
+      if( is_positive( cross_product(g, ev) * h)) {
+	if( is_negative( rv * g))
+	  return facet(twin(sh));
+	else {
+	  sh = sg;
+	  h = g;
+	  TRACEN("new candidate "<<&*facet(twin(sh)));
+	}
       }
+      else
+	return facet(twin(sh));
     }
-    TRACEN(" --> CCW order end.");
-    return facet(twin(se));
+    return Halffacet_handle(); // never reached
   }
-
+  
   Halffacet_handle get_visible_facet( const Halffacet_handle f,
 				      const Segment_3& ray) const {
     Halffacet_handle f_visible;
@@ -1002,7 +960,9 @@ create_volumes() const
       SFace_handle f = EntrySFace[i];
       CGAL_assertion( Shell[EntrySFace[i]] == i );
       if( Closed[f] ) {
+	SM_decorator SD(v);
 	Volume_handle c = sncp()->new_volume();
+	mark(c) = SD.mark(f);
 	link_as_outer_shell(f, c );
 	TRACE( "Shell #" << i <<" linked as outer shell");
 	TRACEN( "(sface" << (assign(sfc,o)?"":" not") << " hit case)");

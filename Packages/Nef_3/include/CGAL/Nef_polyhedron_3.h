@@ -213,7 +213,7 @@ protected:
   typedef typename SNC_structure::Sphere_segment   Sphere_segment;
   typedef typename SNC_structure::Sphere_circle    Sphere_circle;
   
-  Vertex_handle create_cube_corner(int x, int y, int z, bool boundary=true) {
+  Vertex_handle create_cube_corner(int x, int y, int z, bool space=false) {
     CGAL_assertion(CGAL_NTS abs(x) == 
 		   CGAL_NTS abs(y) == 
 		   CGAL_NTS abs(z) == 1);
@@ -249,22 +249,22 @@ protected:
       f = D.face(e);
     else
       f = D.face(D.twin(e));
-    D.mark(f) = true;
+    D.mark(f) = space;
     CGAL_forall_sedges_of(e, v)
-      D.mark(e) = D.mark(D.source(e)) = boundary;
-    D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-    D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+      D.mark(e) = D.mark(D.source(e)) = true;
+    // D.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+    // D.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
   }
 
   void initialize_simple_cube_vertices(Content space) {
-    create_cube_corner( 1, 1, 1 );
-    create_cube_corner(-1, 1, 1 );
-    create_cube_corner( 1,-1, 1 );
-    create_cube_corner(-1,-1, 1 );
-    create_cube_corner( 1, 1,-1 );
-    create_cube_corner(-1, 1,-1 );
-    create_cube_corner( 1,-1,-1 );
-    create_cube_corner(-1,-1,-1 );
+    create_cube_corner( 1, 1, 1, space );
+    create_cube_corner(-1, 1, 1, space );
+    create_cube_corner( 1,-1, 1, space );
+    create_cube_corner(-1,-1, 1, space );
+    create_cube_corner( 1, 1,-1, space );
+    create_cube_corner(-1, 1,-1, space );
+    create_cube_corner( 1,-1,-1, space );
+    create_cube_corner(-1,-1,-1, space );
   }
 
   void check_h_for_intersection_of_12_cube_edges_and_add_vertices
@@ -315,7 +315,7 @@ public:
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, ews() );
     build_external_structure();
-    simplify();
+    //simplify();
   }
   
   void dump() { SNC_io_parser::dump( ews()); }
