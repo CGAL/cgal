@@ -69,10 +69,10 @@ template < class K >
 class Compare_weight_2
 {
 public:
-  typedef typename K::Site_2  Site_2;
-  typedef Comparison_result             result_type;
+  typedef typename K::Site_2   Site_2;
+  typedef Comparison_result    result_type;
+  typedef Arity_tag<2>         Arity;
 
-  inline
   Comparison_result operator()(const Site_2& p,
 			       const Site_2& q) const
   {
@@ -140,7 +140,8 @@ class Is_hidden_2
 {
 public:
   typedef typename K::Site_2   Site_2;
-  typedef bool                           result_type;
+  typedef bool                 result_type;
+  typedef Arity_tag<2>         Arity;
 
   inline bool operator()(const Site_2 &p,
 			 const Site_2 &q) const
@@ -234,8 +235,9 @@ class Oriented_side_of_bisector_2
 {
 public:
   typedef typename K::Point_2             Point_2;
-  typedef typename K::Site_2    Site_2;
+  typedef typename K::Site_2              Site_2;
   typedef Oriented_side                   result_type;
+  typedef Arity_tag<3>                    Arity;
 
   inline Oriented_side operator()(const Site_2& p1,
 				  const Site_2& p2,
@@ -381,7 +383,8 @@ class Vertex_conflict_2
 {
 public:
   typedef typename K::Site_2      Site_2;
-  typedef Sign                               result_type;
+  typedef Sign                    result_type;
+  struct Arity {};
 
   inline
   Sign operator()(const Site_2& p1,
@@ -679,7 +682,8 @@ class Finite_edge_interior_conflict_2
 {
 public:
   typedef typename K::Site_2  Site_2;
-  typedef bool                           result_type;
+  typedef bool                result_type;
+  struct Arity {};
 
   inline
   bool operator()(const Site_2& p1,
@@ -802,10 +806,10 @@ template < class K, class Method_tag >
 class Infinite_edge_interior_conflict_2
 {
 public:
-  typedef typename K::Site_2 Site_2;
-  typedef bool                          result_type;
+  typedef typename K::Site_2   Site_2;
+  typedef bool                 result_type;
+  typedef Arity_tag<5>         Arity;
 
-  inline
   bool operator()(const Site_2& p2,
 		  const Site_2& p3,
 		  const Site_2& p4,
@@ -909,7 +913,8 @@ class Is_degenerate_edge_2
 {
 public:
   typedef typename K::Site_2    Site_2;
-  typedef bool                             result_type;
+  typedef bool                  result_type;
+  typedef Arity_tag<4>          Arity;
 
   inline
   bool operator()(const Site_2& p1,
@@ -939,8 +944,10 @@ public:
   // BASIC TYPES
   //------------
 private:  
-  typedef Apollonius_graph_kernel_wrapper_2<Rep>        Kernel;
   typedef Apollonius_graph_traits_2<Rep,MTag>           Self;
+
+public:
+  typedef Apollonius_graph_kernel_wrapper_2<Rep>        Kernel;
 
 public:
   typedef Rep                                           R;
@@ -1074,36 +1081,72 @@ public:
 };
 
 
-#if 0
-// I AM REMOVING THE FILTERED KERNEL STUFF SO THAT I DON'T GET ANY
-// PROBLEMS WITH PARTIAL SPECIALIZATION AND ALSO BECAUSE THE CURRENT
-// DEFINITION OF FILTERED KERNEL DOES NOT SUPPORT MORE THAN ONE
-// TEMPLATE ARGUMENT
-
-// CHANGE THE TEMPLATE NAMES SO THAT THERE IS NO UNDERSCROEE IN THE
-// BEGINNING
-
 //-----------------------------------------------------------------------
-// the Traits class for a filtered kernel
+// the filtered Traits class
 //-----------------------------------------------------------------------
-template<class C_Traits,
-	 class E_Traits =
-	 Apollonius_graph_traits_2<Cartesian<MP_Float> > >
-	 
+template<class CK_t, class FK_MTag = Ring_tag,
+	 class EK_t = Simple_cartesian<MP_Float>,
+	 class EK_MTag = FK_MTag,
+	 class C2E_t = Cartesian_converter<CK_t, EK_t> >
 class Apollonius_graph_filtered_traits_2
 {
 private:
-  typedef typename C_Traits::R                             CK;
-  typedef typename E_Traits::R                             EK;
-  typedef typename Simple_cartesian<Interval_nt_advanced>  FK;
+  typedef Apollonius_graph_traits_2<CK_t, FK_MTag>    CK_traits;
+  typedef Apollonius_graph_traits_2<EK_t, EK_MTag>    EK_traits;
 
-  typedef Apollonius_graph_traits_2<
+  typedef typename CK_traits::Kernel    CK;
+  typedef typename EK_traits::Kernel    EK;
 
-  typedef Apollonius_graph_kernel_wrapper_2<_CK>  CK;
-  typedef Apollonius_graph_kernel_wrapper_2<_EK>  EK;
-  typedef Apollonius_graph_kernel_wrapper_2<_FK>  FK;
-  typedef Extended_cartesian_converter<_C2E>  C2E;
-  typedef Extended_cartesian_converter<_C2F>  C2F;
+  typedef
+  Apollonius_graph_cartesian_converter<CK, EK, C2E_t>   C2E;
+
+
+  // Types for the construction kernel
+  typedef typename CK::Point_2                CK_Point_2;
+  typedef typename CK::Site_2                 CK_Site_2;
+
+  typedef typename CK::Line_2                 CK_Line_2;
+  typedef typename CK::Ray_2                  CK_Ray_2;
+  typedef typename CK::Segment_2              CK_Segment_2;
+
+  typedef typename CK::FT                     CK_FT;
+  typedef typename CK::RT                     CK_RT;
+
+  typedef FK_MTag                             CK_MTag;
+
+  // Types for the exact kernel
+  typedef typename EK::Point_2                EK_Point_2;
+  typedef typename EK::Site_2                 EK_Site_2;
+
+  typedef typename EK::Line_2                 EK_Line_2;
+  typedef typename EK::Ray_2                  EK_Ray_2;
+  typedef typename EK::Segment_2              EK_Segment_2;
+
+  typedef typename EK::FT                     EK_FT;
+  typedef typename EK::RT                     EK_RT;
+
+  // Types for the filtering kernel
+  typedef Simple_cartesian<Interval_nt<true> >      FK_t;
+  typedef Apollonius_graph_traits_2<FK_t, FK_MTag>  FK_traits;
+
+  typedef typename FK_traits::Kernel                FK;
+
+
+  typedef typename FK::Point_2                FK_Point_2;
+  typedef typename FK::Site_2                 FK_Site_2;
+
+  typedef typename FK::Line_2                 FK_Line_2;
+  typedef typename FK::Ray_2                  FK_Ray_2;
+  typedef typename FK::Segment_2              FK_Segment_2;
+
+  typedef typename FK::FT                     FK_FT;
+  typedef typename FK::RT                     FK_RT;
+
+  typedef
+  Cartesian_converter<CK_t, FK_t, To_interval<CK_RT> >  C2F_t;
+
+  typedef
+  Apollonius_graph_cartesian_converter<CK, FK, C2F_t>     C2F;
 
 public:
   //-----------------------------------------------------------------------
@@ -1112,111 +1155,157 @@ public:
 
   // BASIC TYPES
   //------------
-  typedef Kernel_wrapper_2< Filtered_kernel<CK,EK,FK,C2E,C2F> >  Kernel;
-  typedef Kernel                                         Rep;
-  typedef MTag                                           Method_tag;
-  typedef typename Kernel::RT                            Weight;
-  typedef typename Kernel::Point_2                       Point_2;
-  typedef typename Kernel::Site_2                        Site_2;
-  //
-  typedef typename Kernel::Object_2                      Object_2;
-  typedef typename Kernel::Line_2                        Line_2;
-  typedef typename Kernel::Ray_2                         Ray_2;
-  typedef typename Kernel::Segment_2                     Segment_2;
-  typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
-  /*                                                  */ Parabola_segment_2;
-  typedef CGAL::Hyperbola_2<Point_2,Weight>         Hyperbola_2;
-  typedef CGAL::Hyperbola_ray_2<Point_2,Weight>     Hyperbola_ray_2;
-  typedef CGAL::Hyperbola_segment_2<Point_2,Weight> Hyperbola_segment_2;
+  typedef CK                            Kernel;
+  typedef FK_MTag                       Method_tag;
+
+  typedef Kernel                        Construction_kernel;
+  typedef EK                            Exact_kernel;
+  typedef FK_MTag                       Filtering_kernel_method_tag;
+  typedef EK_MTag                       Exact_kernel_method_tag;
+
+  typedef typename Kernel::Point_2                      Point_2;
+  typedef typename Kernel::Site_2                       Site_2;
+
+  typedef typename Kernel::Line_2                       Line_2;
+  typedef typename Kernel::Ray_2                        Ray_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+
+  typedef typename Kernel::Object_2                     Object_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename Kernel::RT                           RT;
+
 
 public:
-  // CONSTRUCTIONS
+  // OBJECT CONSTRUCTION & ASSIGNMENT
+  //---------------------------------
+  typedef typename CK_traits::Construct_object_2     Construct_object_2;
+  typedef typename CK_traits::Assign_2               Assign_2;
+
+// CONSTRUCTIONS
   //--------------
   // vertex and dual site
-  typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
-  /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_site_2<Kernel>
-  /*                                        */ Construct_Apollonius_site_2;
+  typedef typename CK_traits::Construct_Apollonius_vertex_2
+  Construct_Apollonius_vertex_2;
 
-  // bisectors and subsets
-  typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
-  /*                                    */ Construct_Apollonius_bisector_2;
-  typedef CGAL::Construct_Apollonius_bisector_ray_2<Kernel>
-  /*                                */ Construct_Apollonius_bisector_ray_2;
-  typedef CGAL::Construct_Apollonius_bisector_segment_2<Kernel>
-  /*                            */ Construct_Apollonius_bisector_segment_2;
-
-  // primal edges
-  typedef CGAL::Construct_Apollonius_primal_ray_2<Kernel>
-  /*                                   */ Construct_Apollonius_primal_ray_2;
-  typedef CGAL::Construct_Apollonius_primal_segment_2<Kernel>
-  /*                               */ Construct_Apollonius_primal_segment_2;
-
+  typedef typename CK_traits::Construct_Apollonius_site_2
+  Construct_Apollonius_site_2;
 
 private:
-  // Predicates for the construction kernel
-  typedef CGAL::Compare_weight_2<CK>                   CK_compare_weight_2;
-  typedef CGAL::Is_hidden_2<CK,MTag>                   CK_is_hidden_2;
-  typedef CGAL::Oriented_side_of_bisector_2<CK,MTag> 
-  /*                                      */ CK_oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_2<CK,MTag >            CK_vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_2<CK,MTag >
-  /*                                  */ CK_finite_edge_interior_conflict_2;
-  typedef CGAL::Infinite_edge_interior_conflict_2<CK,MTag>
-  /*                                */ CK_infinite_edge_interior_conflict_2;
-  typedef CGAL::Is_degenerate_edge_2<CK,MTag>       CK_is_degenerate_edge_2;
-
-  // Predicates for the exact kernel
-  typedef CGAL::Compare_weight_2<EK>                   EK_compare_weight_2;
-  typedef CGAL::Is_hidden_2<EK,MTag>                   EK_is_hidden_2;
-  typedef CGAL::Oriented_side_of_bisector_2<EK,MTag> 
-  /*                                      */ EK_oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_2<EK,MTag >            EK_vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_2<EK,MTag >
-  /*                                  */ EK_finite_edge_interior_conflict_2;
-  typedef CGAL::Infinite_edge_interior_conflict_2<EK,MTag>
-  /*                                */ EK_infinite_edge_interior_conflict_2;
-  typedef CGAL::Is_degenerate_edge_2<EK,MTag>       EK_is_degenerate_edge_2;
+  // PREDICATES FOR THE TWO KERNELS
+  //-------------------------------
 
   // Predicates for the filtering kernel
-  typedef CGAL::Compare_weight_2<FK>                   FK_compare_weight_2;
-  typedef CGAL::Is_hidden_2<FK,MTag>                   FK_is_hidden_2;
-  typedef CGAL::Oriented_side_of_bisector_2<FK,MTag> 
-  /*                                      */ FK_oriented_side_of_bisector_2;
-  typedef CGAL::Vertex_conflict_2<FK,MTag >            FK_vertex_conflict_2;
-  typedef CGAL::Finite_edge_interior_conflict_2<FK,MTag >
-  /*                                  */ FK_finite_edge_interior_conflict_2;
-  typedef CGAL::Infinite_edge_interior_conflict_2<FK,MTag>
-  /*                                */ FK_infinite_edge_interior_conflict_2;
-  typedef CGAL::Is_degenerate_edge_2<FK,MTag>       FK_is_degenerate_edge_2;
+
+  typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
+  typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
+  typedef typename FK_traits::Compare_weight_2   FK_Compare_weight_2;
+  typedef typename FK_traits::Orientation_2      FK_Orientation_2;
+  typedef typename FK_traits::Is_hidden_2        FK_Is_hidden_2;
+
+  typedef typename FK_traits::Oriented_side_of_bisector_2
+  FK_Oriented_side_of_bisector_2;
+
+  typedef typename FK_traits::Vertex_conflict_2  FK_Vertex_conflict_2;
+
+  typedef typename FK_traits::Finite_edge_interior_conflict_2
+  FK_Finite_edge_interior_conflict_2;
+
+  typedef typename FK_traits::Infinite_edge_interior_conflict_2
+  FK_Infinite_edge_interior_conflict_2;
+
+  typedef typename FK_traits::Is_degenerate_edge_2
+  FK_Is_degenerate_edge_2;
+
+
+  // Predicates for the exact kernel
+  typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
+  typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
+  typedef typename EK_traits::Compare_weight_2   EK_Compare_weight_2;
+  typedef typename EK_traits::Orientation_2      EK_Orientation_2;
+  typedef typename EK_traits::Is_hidden_2        EK_Is_hidden_2;
+
+  typedef typename EK_traits::Oriented_side_of_bisector_2
+  EK_Oriented_side_of_bisector_2;
+
+  typedef typename EK_traits::Vertex_conflict_2  EK_Vertex_conflict_2;
+
+  typedef typename EK_traits::Finite_edge_interior_conflict_2
+  EK_Finite_edge_interior_conflict_2;
+
+  typedef typename EK_traits::Infinite_edge_interior_conflict_2
+  EK_Infinite_edge_interior_conflict_2;
+
+  typedef typename EK_traits::Is_degenerate_edge_2
+  EK_Is_degenerate_edge_2;
+
 
 public:
   // PREDICATES
   //-----------
-  typedef typename Kernel::Compare_x_2                   Compare_x_2;
-  typedef typename Kernel::Compare_y_2                   Compare_y_2;
-  typedef Filtered_predicate<EK_compare_weight_2,
-    FK_compare_weight_2,C2E,C2F> Compare_weight_2;
-  typedef typename Kernel::Orientation_2                 Orientation_2;
-  typedef Filtered_predicate<EK_is_hidden_2,
-    FK_is_hidden_2,C2E,C2F> Is_hidden_2;
-  typedef Filtered_predicate<EK_oriented_side_of_bisector_2,
-    FK_oriented_side_of_bisector_2,C2E,C2F> Oriented_side_of_bisector_2;
-  typedef Filtered_predicate<EK_vertex_conflict_2,
-    FK_vertex_conflict_2,C2E,C2F> Vertex_conflict_2;
-  typedef Filtered_predicate<EK_finite_edge_interior_conflict_2,
-    FK_finite_edge_interior_conflict_2,C2E,C2F>
+
+
+  typedef
+  Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
+  Compare_x_2;
+
+  typedef
+  Filtered_predicate<EK_Compare_y_2, FK_Compare_y_2, C2E, C2F>
+  Compare_y_2;
+
+  typedef
+  Filtered_predicate<EK_Compare_weight_2, FK_Compare_weight_2,
+		     C2E, C2F>
+  Compare_weight_2;
+
+  typedef
+  Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
+  Orientation_2;
+
+  typedef
+  Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
+  Is_hidden_2;
+
+  typedef
+  Filtered_predicate<EK_Oriented_side_of_bisector_2,
+		     FK_Oriented_side_of_bisector_2, C2E, C2F>
+  Oriented_side_of_bisector_2;
+
+  typedef
+  Filtered_predicate<EK_Vertex_conflict_2,
+		     FK_Vertex_conflict_2, C2E, C2F>
+  Vertex_conflict_2;
+
+  typedef
+  Filtered_predicate<EK_Finite_edge_interior_conflict_2,
+		     FK_Finite_edge_interior_conflict_2, C2E, C2F>
   Finite_edge_interior_conflict_2;
-  typedef Filtered_predicate<EK_infinite_edge_interior_conflict_2,
-    FK_infinite_edge_interior_conflict_2,C2E,C2F>
+
+  typedef
+  Filtered_predicate<EK_Infinite_edge_interior_conflict_2,
+		     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
   Infinite_edge_interior_conflict_2;
-  typedef Filtered_predicate<EK_is_degenerate_edge_2,
-    FK_is_degenerate_edge_2,C2E,C2F> Is_degenerate_edge_2;
+
+  typedef
+  Filtered_predicate<EK_Is_degenerate_edge_2,
+		     FK_Is_degenerate_edge_2, C2E, C2F>
+  Is_degenerate_edge_2;
 
 public:
   //-----------------------------------------------------------------------
   //                  ACCESS TO OBJECTS
   //-----------------------------------------------------------------------
+
+  // OBJECT CONSTRUCTION & ASSIGNMENT
+  Assign_2
+  assign_2_object() const {
+    return Assign_2();
+  }
+
+  Construct_object_2
+  construct_object_2_object() const { 
+    return Construct_object_2();
+  }
+
 
   // CONSTRUCTIONS
   //--------------
@@ -1228,31 +1317,6 @@ public:
   Construct_Apollonius_site_2
   construct_Apollonius_site_2_object() const {
     return Construct_Apollonius_site_2();
-  }
-
-  Construct_Apollonius_bisector_2
-  construct_Apollonius_bisector_2_object() const {
-    return Construct_Apollonius_bisector_2();
-  }
-
-  Construct_Apollonius_bisector_ray_2
-  construct_Apollonius_bisector_ray_2_object() const {
-    return Construct_Apollonius_bisector_ray_2();
-  }
-
-  Construct_Apollonius_bisector_segment_2
-  construct_Apollonius_bisector_segment_2_object() const { 
-    return Construct_Apollonius_bisector_segment_2(); 
-  }
-
-  Construct_Apollonius_primal_ray_2
-  construct_Apollonius_primal_ray_2_object() const {
-    return Construct_Apollonius_primal_ray_2(); 
-  }
-
-  Construct_Apollonius_primal_segment_2
-  construct_Apollonius_primal_segment_2_object() const { 
-    return Construct_Apollonius_primal_segment_2();
   }
 
   // PREDICATES
@@ -1308,7 +1372,6 @@ public:
   }
 
 };
-#endif
 
 
 CGAL_END_NAMESPACE

@@ -38,9 +38,13 @@ class Apollonius_graph_kernel_wrapper_2 : public Kernel_base_2
 {
 public:
   typedef CGAL::Apollonius_site_2<Kernel_base_2>  Site_2;
+  typedef Kernel_base_2                           Base;
 
   struct Compare_x_2 : public Kernel_base_2
   {
+    typedef Comparison_result   result_type;    
+    typedef Arity_tag<2>        Arity;
+
     Comparison_result operator()(const Site_2& s1,
 				 const Site_2& s2) const
     {
@@ -50,6 +54,9 @@ public:
 
   struct Compare_y_2 : public Kernel_base_2
   {
+    typedef Comparison_result   result_type;
+    typedef Arity_tag<2>        Arity;
+
     Comparison_result operator()(const Site_2& s1,
 				 const Site_2& s2) const
     {
@@ -59,6 +66,9 @@ public:
 
   struct Orientation_2 : public Kernel_base_2
   {
+    typedef Orientation     result_type;
+    typedef Arity_tag<3>    Arity;
+
     Orientation operator()(const Site_2& s1,
 			   const Site_2& s2,
 			   const Site_2& s3) const
@@ -72,19 +82,16 @@ public:
 };
 
 
-#if 0
-template<class Cartesian_converter>
-class Extended_cartesian_converter
-{};
-
 template<class K1, class K2, class Converter >
-class Extended_cartesian_converter < Cartesian_converter<K1,K2,
-  Converter> >
-    : public Cartesian_converter<K1,K2,Converter>
+class Apollonius_graph_cartesian_converter
+  : public Converter
 {
 private:
-  typedef Apollonius_graph_kernel_wrapper_2<K1> K1W;
-  typedef Apollonius_graph_kernel_wrapper_2<K2> K2W;
+  typedef typename K2::Site_2                         K2_Site_2;
+  typedef typename K2::Point_2                        K2_Point_2;
+  typedef Converter                                   Base;
+  typedef typename Converter::Number_type_converter   NT_converter;
+
 
 public:
   bool
@@ -92,16 +99,23 @@ public:
     return b;
   }
 
-  typename K2W::Site_2
-  operator()(const typename K1W::Site_2& wp) const
+  K2_Point_2
+  operator()(const typename K1::Point_2& p) const
   {
-    Converter c;
+    return Base::operator()(p);
+  }
 
-    typename K2W::Point_2 p(c(wp.x()), c(wp.y()));
-    return typename K2W::Site_2( p, c(wp.weight()) );
+  K2_Site_2
+  operator()(const typename K1::Site_2& t) const
+  {
+    NT_converter nt_cv;
+
+    return K2_Site_2( Base::operator()(t.point()),
+		      nt_cv(t.weight())
+		      );
   }
 };
-#endif
+
 
 CGAL_END_NAMESPACE
 
