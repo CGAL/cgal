@@ -38,7 +38,7 @@
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 #define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
-
+   
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
       (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
@@ -462,6 +462,20 @@ public:
       // Read data from file. Build Arrangement.
       std::ifstream file(filename);
       read_file_build_arrangement(file, reverse_order);
+
+      typedef Subdivision::Halfedge_const_iterator Halfedge_const_iterator;
+      Halfedge_const_iterator it     = subd.halfedges_begin();
+      Halfedge_const_iterator it_end = subd.halfedges_end();
+      int num = 1;
+      CGAL_For_all(it, it_end)
+      {
+	std::cout << "Curve " << num << std::endl;
+	std::copy(it->curve().begin(), it->curve().end(), 
+		  std::ostream_iterator<Point>(std::cout, " "));
+	std::cout << std::endl << std::endl;
+	++it; ++num;
+	//std::cout << it->curve() << std::endl;
+      }
       
       // DEBUG
       //print_vertices(subd);
@@ -519,3 +533,4 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
+
