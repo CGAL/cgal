@@ -122,7 +122,7 @@ public:
     }
     
     //cout<<"After creating Arr\n";
-    change_notf->update_all_faces(result, a1, a2);
+    change_notf->update_all_faces(result);
   }
 
 };
