@@ -124,8 +124,7 @@ when the only vertex of the triangulation is the infinite one.
 
 The same cell class is used in all cases: triangular faces in
 2D can be considered as degenerate cells, having only three vertices
-(resp. neighbors)
-numbered $(0,1,2)$, and one $NULL$ vertex (resp. neighbor);
+(resp. neighbors) numbered $(0,1,2)$;
 edges in 1D have only two vertices (resp. neighbors) numbered $0$ and $1$. 
 
 The implicit representation of facets (resp. edges) still holds
@@ -213,9 +212,10 @@ In addition to the requirements described before, the geometric traits
 class of a Delaunay triangulation must define predicates for the
 \textit{empty sphere property}.
 
-The kernels provided by CGAL~: \ccc{Cartesian<R>}, \ccc{Homogeneous<R>},
-\ccc{Simple_cartesian<R>}, \ccc{Simple_homogeneous<R>}, can all be used as
-models for the geometric traits parameter.
+The kernels provided by CGAL~: \ccc{Cartesian<FT>}, \ccc{Homogeneous<RT>},
+\ccc{Simple_cartesian<FT>}, \ccc{Simple_homogeneous<RT>} and
+\ccc{Filtered_kernel<R>} can all be used as models for the geometric traits
+parameter.
 They supply the user with all the functionalities described for the concepts
 \ccc{TriangulationTraits_3}\lcTex{
 (\ccRefPage{TriangulationTraits_3})},
