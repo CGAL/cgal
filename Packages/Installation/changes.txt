@@ -1,3 +1,6 @@
+30 August 2004 Radu Ursu
+- fixed warning for cl and icl compilers concerning the EXE_OPT in install_cgal
+
 29 August 2004 Sylvain Pion
 - install_cgal :
   - Use the CGAL_CFG_NO_GMP.C and co files from config/testfiles directly.
