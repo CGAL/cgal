@@ -52,16 +52,22 @@ LDFLAGS = \
 
 all: demo_arr
 
-demoA$(OBJ_EXT): demoA.C cgal_types1.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoA.C
+MyWindow$(OBJ_EXT): MyWindow.C cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow.C
 
-demoB$(OBJ_EXT): demoB.C cgal_types1.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoB.C
+MyWindow_files$(OBJ_EXT): MyWindow_files.C cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_files.C
 
-demoC$(OBJ_EXT): demoC.C cgal_types1.h demo_tab.h
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) demoC.C
+MyWindow_overlay$(OBJ_EXT): MyWindow_overlay.C cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_overlay.C
+	
+MyWindow_operations$(OBJ_EXT): MyWindow_operations.C cgal_types.h demo_tab.h
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) MyWindow_operations.C
 
-moc_demo1.C: demo1.h
+moc_MyWindow$(OBJ_EXT): moc_MyWindow.C 
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) moc_MyWindow.C
+
+moc_MyWindow.C: MyWindow.h
 	$(QT_MOC) $< -o $@
 
 forms$(OBJ_EXT): forms.C 
@@ -76,16 +82,16 @@ moc_forms.C: forms.h
 qt_layer$(OBJ_EXT): qt_layer.C 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.C
 
-demo_arr$(EXE_EXT): demoA$(OBJ_EXT) demoB$(OBJ_EXT) demoC$(OBJ_EXT) \
-    moc_demo1$(OBJ_EXT)	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
+demo_arr$(EXE_EXT): MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) MyWindow_overlay$(OBJ_EXT) \
+    MyWindow_operations$(OBJ_EXT) moc_MyWindow$(OBJ_EXT) forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
 	qt_layer$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)demo_arr demoA$(OBJ_EXT) demoB$(OBJ_EXT) \
-	demoC$(OBJ_EXT) moc_demo1$(OBJ_EXT) \
+	$(CGAL_CXX) $(EXE_OPT)demo_arr MyWindow$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
+	MyWindow_overlay$(OBJ_EXT) MyWindow_operations$(OBJ_EXT) moc_MyWindow$(OBJ_EXT) \
 	forms$(OBJ_EXT) moc_forms$(OBJ_EXT) \
 	qt_layer$(OBJ_EXT) $(LDFLAGS)
 
-clean: demoA.clean demoB.clean demoC.clean forms.clean qt_layer.clean
-	rm -rf moc_forms.* moc_demo1.* demo_arr
+clean: MyWindow.clean MyWindow_files.clean MyWindow_overlay.clean MyWindow_operations.clean forms.clean qt_layer.clean
+	rm -rf moc_forms.* moc_MyWindow.* demo_arr
 
 #---------------------------------------------------------------------#
 #                    suffix rules

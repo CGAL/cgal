@@ -21,7 +21,7 @@
 #include <qpainter.h> 
 #include <qpen.h>
 
-#include "cgal_types1.h"
+#include "cgal_types.h"
 #include "seg_notif.h"
 #include "pol_notif.h"
 #include "conic_notif.h"
@@ -911,24 +911,21 @@ void visit_ccb_faces(Face_handle & fh , Function func)
             break;
         }	
 
-		Vertex_iterator   vit;
-		bool is_already_vertex = false;
-		// we dont want to split an already existed vertex...
+		    Vertex_iterator   vit;
+		    bool is_already_vertex = false;
+		    // we dont want to split an already existed vertex...
         for (vit = m_curves_arr.vertices_begin(); 
              vit != m_curves_arr.vertices_end(); vit++)
         {
-		  Pm_point_2 temp = (*vit).point();
+		      Pm_point_2 temp = (*vit).point();
           if (p1 == temp)
-		    is_already_vertex = true;
-		}
+		        is_already_vertex = true;
+		    }
         m_tab_traits.draw_xcurve(this, hei->curve());
         if (hei != m_curves_arr.halfedges_end() && !is_already_vertex)
-		{
-			//std::cout << "\nthe split point: " << p1 << "\n";
           m_tab_traits.split_edge(hei , p1 , this);
-		}
         
-      }
+      }// else
     }    
   }
 
@@ -1318,6 +1315,59 @@ void visit_ccb_faces(Face_handle & fh , Function func)
   }
 
 
+  void update_curves_date_after_split(Halfedge_handle & e1 , Xcurve & c1, Xcurve & c2)
+  {
+	  Xcurve my_c1 , my_c2;  //temp variable
+
+    if(m_tab_traits.is_curve_and_halfedge_same_direction(e1,c1)) // check that e1 is indeed the halfede of c1
+	  {
+		  my_c1 = c1;
+		  my_c2 = c2;
+	  }
+	  else
+	  {
+		  my_c1 = c2;
+		  my_c2 = c1;
+	  }
+
+
+      // update my_c1
+	  Data d1 = my_c1.get_data();
+  		
+	  if(m_tab_traits.is_curve_and_halfedge_same_direction(e1 , my_c1))
+	    d1.halfedge_handle = e1;
+	  else
+	    d1.halfedge_handle = (Halfedge_handle)e1->opposite();
+  		
+	  e1->curve().set_data( d1 );
+	  e1->opposite()->curve().set_data( d1 );
+
+	  // update my_c2
+	  Data d2 = my_c2.get_data();
+	  if(m_tab_traits.is_curve_and_halfedge_same_direction((Halfedge_handle)e1->next() , my_c2))
+	    d2.halfedge_handle = (Halfedge_handle)e1->next();
+	  else
+	    d2.halfedge_handle = (Halfedge_handle) e1->next()->opposite();
+
+	  e1->next()->curve().set_data( d2 );
+	  e1->next()->opposite()->curve().set_data( d2 );
+  }
+
+
+
+  void update_curve_data_after_merge(Halfedge_handle &h ,Xcurve &c)
+  { 
+	  
+    Data d = c.get_data();
+	  if(m_tab_traits.is_curve_and_halfedge_same_direction(h , c))
+	    d.halfedge_handle = h;
+	  else
+	    d.halfedge_handle = (Halfedge_handle)h->opposite();
+
+	  h->curve().set_data( d );
+	  h->opposite()->curve().set_data( d );
+  }
+
 };
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -1390,6 +1440,8 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	return (he->source()->point() == cv.source());
 }
 
+
+
 /*! fill_face - fill a face with its color (which is stored at the face)
  * it creates a polyong from the outer boundary of the face and 
  * uses CGAL opertaor << of polygons 
@@ -1423,8 +1475,12 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
       else
         w->setFillColor(f->info());
 
+       QPen old_penstyle = w->get_painter().pen();
+       w->get_painter().setPen(Qt::NoPen);
 	    (*w) << pgn ;  // draw the polyong 
-	      w->setFilled(false);
+	    w->setFilled(false);       
+      w->get_painter().setPen(old_penstyle);
+
     }// if
   }// fill face
 
@@ -1654,33 +1710,28 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	    base = new Base_curve(t, t1);
 	  else if ( s == t1 )
       base = new Base_curve(t, s1);
-	  //std::cout<<"#5\n";
+
     Curve_data cd;
     cd.m_type = Curve_data::LEAF;
     cd.m_index = w->index;
     cd.m_ptr.m_curve = base;
-	  //std::cout<<"#6\n";
     Curve *seg = new Curve( *base, cd );
     std::list<Xcurve> xcurve_list;
 	  m_traits.curve_make_x_monotone(*seg, std::back_inserter(xcurve_list));
     Xcurve c = xcurve_list.front();
-	  //std::cout<<"mergeing..."<<std::endl;
     Halfedge_handle h = w->m_curves_arr.merge_edge( closest_curve , second_curve , c); 
-    //std::cout<<"source of halfedge after mereging: " << h->source()->point();
-    //std::cout<<"target of halfedge after mereging: " << h->target()->point();
-
-	  //std::cout<<"finished mergeing..."<<std::endl;
       
-	  // update c
-	  
-    Curve_data d = c.get_data();
-	  if(is_curve_and_halfedge_same_direction(h , c))
-	    d.halfedge_handle = h;
-	  else
-	    d.halfedge_handle = (Halfedge_handle)h->opposite();
+    w->update_curve_data_after_merge(h , c); 
+	  //// update c
+	  //
+   // Curve_data d = c.get_data();
+	  //if(is_curve_and_halfedge_same_direction(h , c))
+	  //  d.halfedge_handle = h;
+	  //else
+	  //  d.halfedge_handle = (Halfedge_handle)h->opposite();
 
-	  h->curve().set_data( d );
-	  h->opposite()->curve().set_data( d );
+	  //h->curve().set_data( d );
+	  //h->opposite()->curve().set_data( d );
 
 	}
   }
@@ -1730,44 +1781,9 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 
 	// update the halfedge_handle field in the Curve_Data of c1 ,c2 Curve_Data
 
+	w->update_curves_date_after_split(e1 , c1, c2);
+
 	
-
-	Xcurve my_c1 , my_c2;  //temp variable
-
-	if(e1->source()->point() == c1.source()) // check that e1 is indeed the halfede of c1
-	{
-		my_c1 = c1;
-		my_c2 = c2;
-	}
-	else
-	{
-		my_c1 = c2;
-		my_c2 = c1;
-	}
-
-
-    // update my_c1
-	Curve_data d1 = my_c1.get_data();
-		
-	if(is_curve_and_halfedge_same_direction(e1 , my_c1))
-	  d1.halfedge_handle = e1;
-	else
-	  d1.halfedge_handle = (Halfedge_handle)e1->opposite();
-		
-	e1->curve().set_data( d1 );
-	e1->opposite()->curve().set_data( d1 );
-
-	// update my_c2
-	Curve_data d2 = my_c2.get_data();
-	if(is_curve_and_halfedge_same_direction((Halfedge_handle)e1->next() , my_c2))
-	  d2.halfedge_handle = (Halfedge_handle)e1->next();
-	else
-	  d2.halfedge_handle = (Halfedge_handle) e1->next()->opposite();
-
-	e1->next()->curve().set_data( d2 );
-	e1->next()->opposite()->curve().set_data( d2 );
-	
-
   }
 
   /*! temporary points of the created segment */
@@ -1890,10 +1906,14 @@ public:
 	 if (! f->info().isValid())
 	    w->setFillColor(def_bg_color);
     else
-      w->setFillColor(f->info());
-	
+   w->setFillColor(f->info());
+   QPen old_penstyle = w->get_painter().pen();
+   w->get_painter().setPen(Qt::NoPen);
+
 	(*w) << pgn ;  // draw the polyong 
-	 w->setFilled(false);
+	 w->setFilled(false);  
+   w->get_painter().setPen(old_penstyle);
+
 	}  
   }
 
@@ -2191,15 +2211,16 @@ public:
 	  }
 
 	  Base_curve *base = new Base_curve(temp_points.begin(), temp_points.end());
-      Curve_pol_data cd;
-      cd.m_type = Curve_pol_data::LEAF;
-      cd.m_index = w->index;
-      cd.m_ptr.m_curve = base;
-      Curve *curve = new Curve( *base, cd );
+    Curve_pol_data cd;
+    cd.m_type = Curve_pol_data::LEAF;
+    cd.m_index = w->index;
+    cd.m_ptr.m_curve = base;
+    Curve *curve = new Curve( *base, cd );
 	  std::list<Xcurve> xcurve_list;
 	  m_traits.curve_make_x_monotone(*curve, std::back_inserter(xcurve_list));
-      const Xcurve cc = xcurve_list.front();
-	  w->m_curves_arr.merge_edge( closest_curve , second_curve , cc); 
+    Xcurve cc = xcurve_list.front();
+	  Halfedge_handle h = w->m_curves_arr.merge_edge( closest_curve , second_curve , cc); 
+    w->update_curve_data_after_merge(h , cc);
 	}
   }
 
@@ -2223,7 +2244,7 @@ public:
     cd1.m_ptr.m_curve = base1;
     Curve *seg1 = new Curve( *base1, cd1 );
     m_traits.curve_make_x_monotone(*seg1, std::back_inserter(xcurve_list));
-    const Xcurve c1 = xcurve_list.front();
+    Xcurve c1 = xcurve_list.front();
 	
 	xcurve_list.clear();
 
@@ -2234,10 +2255,10 @@ public:
     cd2.m_ptr.m_curve = base2;
     Curve *seg2 = new Curve( *base2, cd2 );
     m_traits.curve_make_x_monotone(*seg2, std::back_inserter(xcurve_list));
-    const Xcurve c2 = xcurve_list.front();
-	w->m_curves_arr.split_edge(hei , c1 , c2);
+    Xcurve c2 = xcurve_list.front();
+	Halfedge_handle e1 = w->m_curves_arr.split_edge(hei , c1 , c2);
 
-//	points.clear();
+ 	w->update_curves_date_after_split(e1 , c1, c2);
   }
 
 private:
@@ -2252,7 +2273,7 @@ private:
     cd.m_type = Curve_pol_data::LEAF;
     cd.m_index = w->index;
     cd.m_ptr.m_curve = base_pol_p;
-    Pm_pol_2 * pol = new Pm_pol_2( *base_pol_p, cd );
+    Curve * pol = new Curve( *base_pol_p, cd );
     w->m_curves_arr.insert( *pol , &pol_notif);
 	CGAL::Bbox_2 curve_bbox = pol->bbox();
 	w->bbox = w->bbox + curve_bbox;
@@ -2454,8 +2475,7 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	      w->setFilled(false);
     }// if
   }
- 
-  
+   
   /*! draw_xcurve - same as draw_curve */
   void draw_xcurve(Qt_widget_demo_tab<Conic_tab_traits> * w , Xcurve c )
   {
@@ -3013,19 +3033,55 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
 	  
     Conic_notification conic_notif;
 
-	  w->m_curves_arr.remove_edge(closest_curve);
+    // save the colors of the incident faces (to restore them later)
+    QColor color1 = closest_curve->face()->info();
+    QColor color2 = closest_curve->opposite()->face()->info();
+	  
+    Pm_point_2 closest_curve_source = closest_curve->source()->point();
+    Pm_point_2 closest_curve_target = closest_curve->target()->point();
+
+    w->m_curves_arr.remove_edge(closest_curve);
 	  w->m_curves_arr.remove_edge(second_curve);
 
+    
+
     Pm_conic_2 c( curve , cd1);
-	  Halfedge_handle h = w->m_curves_arr.insert(c , & conic_notif);	
- 
-	  // update c
-	  
-    Curve_conic_data d = c.get_data();
+	  Halfedge_handle h = w->m_curves_arr.insert(c );	
+
+
+    //restore the color of the incident faces of 'h'
+    //check that 'closest_curev' and 'h' are at the dame direction
+    if(closest_curve_source == h->source()->point() || 
+       closest_curve_target == h->target()->point()    )
+    {
+      h->face()->set_info(color1);
+      h->opposite()->face()->set_info(color2);
+    }
+    else  
+    {
+      h->face()->set_info(color2);
+      h->opposite()->face()->set_info(color1);
+    }
+    
+
+
+    Data d = c.get_data();
+	  if(is_curve_and_halfedge_same_direction(h , curve))
 	  d.halfedge_handle = h;
+	  else
+	    d.halfedge_handle = (Halfedge_handle)h->opposite();
 
 	  h->curve().set_data( d );
 	  h->opposite()->curve().set_data( d );
+    //w->update_curve_data_after_merge(h , c);
+ 
+	  //// update c
+	  //
+   // Curve_conic_data d = c.get_data();
+	  //d.halfedge_handle = h;
+
+	  //h->curve().set_data( d );
+	  //h->opposite()->curve().set_data( d );
 	}
   }
 
@@ -3046,33 +3102,36 @@ bool is_curve_and_halfedge_same_direction (const Halfedge_handle&  he , const Xc
       cd1.m_index = hei->curve().get_data().m_index;
       cd1.m_ptr.m_curve = hei->curve().get_data().m_ptr.m_curve;
 
-	  Pm_conic_2   sub_curve1 (sbc1, cd1);
+	  Pm_conic_2    sub_curve1 (sbc1, cd1);
 
 	  Curve_conic_data cd2;
       cd2.m_type = Curve_conic_data::LEAF;
       cd2.m_index = hei->curve().get_data().m_index;
       cd2.m_ptr.m_curve =hei->curve().get_data().m_ptr.m_curve;
 
-	  Pm_conic_2   sub_curve2 (sbc2, cd2);
+	  Pm_conic_2    sub_curve2 (sbc2, cd2);
     Conic_notification conic_notif;
 
-	  w->m_curves_arr.remove_edge(hei);
+	//  w->m_curves_arr.remove_edge(hei);
 	  Halfedge_handle h1 = w->m_curves_arr.insert(sub_curve1 , & conic_notif);
 	  Halfedge_handle h2 = w->m_curves_arr.insert(sub_curve2 , & conic_notif);
 
-   // update data
-	  
-    Curve_conic_data d1 = sub_curve1.get_data();
-	  d1.halfedge_handle = h1;
+   // 
+   //	w->update_curves_date_after_split(hei , sub_curve1, sub_curve2);
 
-	  h1->curve().set_data( d1 );
-	  h1->opposite()->curve().set_data( d1 );
+   //// update data
+	  //
+   // Curve_conic_data d1 = sub_curve1.get_data();
+	  //d1.halfedge_handle = h1;
 
-    Curve_conic_data d2 = sub_curve2.get_data();
-	  d2.halfedge_handle = h2;
+	  //h1->curve().set_data( d1 );
+	  //h1->opposite()->curve().set_data( d1 );
 
-	  h2->curve().set_data( d2 );
-	  h2->opposite()->curve().set_data( d2 );
+   // Curve_conic_data d2 = sub_curve2.get_data();
+	  //d2.halfedge_handle = h2;
+
+	  //h2->curve().set_data( d2 );
+	  //h2->opposite()->curve().set_data( d2 );
   }
 
   Traits m_traits;

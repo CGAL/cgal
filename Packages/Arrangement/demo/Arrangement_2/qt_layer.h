@@ -3,7 +3,7 @@
  */
 #include <CGAL/IO/Qt_widget_layer.h>
 
-#include "cgal_types1.h"
+#include "cgal_types.h"
 
 class QTabWidget;
 

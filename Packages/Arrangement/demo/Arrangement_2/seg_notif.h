@@ -6,7 +6,7 @@
 
 #ifndef SEG_NOTIF
 #define SEG_NOTIF
-#include"cgal_types1.h"
+#include"cgal_types.h"
 
 
 

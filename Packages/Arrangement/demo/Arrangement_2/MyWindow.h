@@ -38,7 +38,7 @@
 #include <qpainter.h>
 #include <qprinter.h>
 
-#include "cgal_types1.h"
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget_handtool.h>
 
 //#include <CGAL/IO/Pm_Postscript_file_stream.h>

@@ -6,7 +6,7 @@
 
 #ifndef POL_NOTIF
 #define POL_NOTIF
-#include"cgal_types1.h"
+#include"cgal_types.h"
 
 
 

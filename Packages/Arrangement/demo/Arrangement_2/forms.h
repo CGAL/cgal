@@ -20,7 +20,7 @@
 #include <qcheckbox.h> 
 #include <qvbuttongroup.h> 
 
-#include "cgal_types1.h"
+#include "cgal_types.h"
 
 class QDragEnterEvent; 
 class QDragDropEvent; 
