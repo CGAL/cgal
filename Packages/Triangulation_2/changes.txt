@@ -1,5 +1,5 @@
-Package triangulation: provides triangulations Delaunay triangulations, 
-constrained and regular triangulations with  tests and examples.
+18 December 2004 Sylvain Pion
+- Fix headers of demo files.
 
 14 decembre 2004
 - doc : fix figure in html

@@ -1,31 +1,29 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : regular_triangulation_2.C
-// package       : Qt_widget
-// author(s)     : Radu Ursu 
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
 
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
-int main(int, char*)
+int main()
 {
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
+  std::cout << "Sorry, this demo needs QT." << std::endl;
   return 0;
 }
 #else
@@ -67,7 +65,7 @@ class Window : public QMainWindow
   Q_OBJECT
 public:
   Window(int w, int h)
-  { 
+  {
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
 
@@ -77,7 +75,7 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Load Triangulation", this, 
+    file->insertItem("&Load Triangulation", this,
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_S);
@@ -111,24 +109,24 @@ public:
 
 
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
-    
+
     //create a timer to check if something changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()),
     this, SLOT(timerDone()) );
     timer->start( 200, FALSE );
-    old_state = 0; 
+    old_state = 0;
 
   }
-  void 
+  void
   init_coordinates(){
     xmin = -1; xmax = 1;
     ymin = -1; ymax = 1;
   }
 private slots:
-  void 
+  void
   new_instance(){
     widget->lock();
     widget->clear();
@@ -139,10 +137,10 @@ private slots:
     widget->unlock();
     something_changed();
   }
-  void 
+  void
   new_window(){
     Window *ed = new Window(500, 500);
-    ed->setCaption("Layer");    
+    ed->setCaption("Layer");
     if(rt.number_of_vertices() > 1){
       Finite_vertices_iterator it = rt.finite_vertices_begin();
       xmin = xmax = (*it).point().x();
@@ -164,8 +162,8 @@ private slots:
     ed->show();
     something_changed();
   }
-  
-  void 
+
+  void
   timerDone(){
     if(old_state!=current_state){
       widget->redraw();
@@ -173,30 +171,30 @@ private slots:
     }
   }
 
-  void 
+  void
   howto(){
     QString home;
     home = "help/rindex.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
   }
 
-  void 
+  void
   about(){
     QMessageBox::about( this, title_string,
 		"This is a demo for Regular_triangulation_2\n"
   		"Copyright CGAL @2003");
   }
 
-  void 
+  void
   aboutQt(){
     QMessageBox::aboutQt( this, title_string );
   }
 
-  void 
+  void
   get_new_object(CGAL::Object obj){
     Point_2 p;
     Circle c;
@@ -219,7 +217,7 @@ private slots:
     rt.clear();
 
     //Gt::Weighted_point wp;
-    
+
   }
   void
   save_triangulation(){
@@ -248,8 +246,8 @@ main(int argc, char **argv)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
 #endif
-  W.show();  
-  W.init_coordinates();  
+  W.show();
+  W.init_coordinates();
   current_state = -1;
   return app.exec();
 }

@@ -1,23 +1,22 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : demo/Qt_widget/Triangulation_2/triangulation_2_layers.h
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
+
 
 #ifndef CGAL_TRIANGULATION_2_LAYERS_H
 #define CGAL_TRIANGULATION_2_LAYERS_H
@@ -39,13 +38,13 @@ public:
 
   void draw()
   {
-    *widget << CGAL::BLUE; 
+    *widget << CGAL::BLUE;
     *widget << tr;
   };
 	
 private:
   T &tr;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_voronoi : public CGAL::Qt_widget_layer
@@ -61,7 +60,7 @@ public:
 	
 private:
   T	&tr;
-};//end class 
+};//end class
 
 template <class T>
 class Qt_layer_show_points : public CGAL::Qt_widget_layer {
@@ -74,20 +73,20 @@ public:
   Qt_layer_show_points(T &t) : tr(t){};
 
   void draw()
-  {  
-    Vertex_iterator it = tr.vertices_begin(), 
+  {
+    Vertex_iterator it = tr.vertices_begin(),
 		beyond = tr.vertices_end();
-    *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);    
-    while(it != beyond) {      
+    *widget << CGAL::GREEN << CGAL::PointSize (3)
+		<< CGAL::PointStyle (CGAL::DISC);
+    while(it != beyond) {
       *widget << (*it).point();
       ++it;
     }
   };
 private:
   T	&tr;
-  
-};//end class 
+
+};//end class
 
 template <class T>
 class Qt_layer_nearest_vertex : public CGAL::Qt_widget_layer
@@ -128,7 +127,7 @@ public:
     widget->lock();
     RasterOp old = widget->rasterOp();	//save the initial raster mode
     widget->setRasterOp(XorROP);
-    *widget << CGAL::GREEN << CGAL::PointSize (10) 
+    *widget << CGAL::GREEN << CGAL::PointSize (10)
 		<< CGAL::PointStyle (CGAL::CIRCLE);
     *widget << oldPoint;	
     widget->unlock();
@@ -142,7 +141,7 @@ private:
 	Point oldPoint, newPoint;
 	bool  first_time;
 	
-};//end class 
+};//end class
 
 
 template <class T>
@@ -171,8 +170,8 @@ public:
     if(!tr.is_infinite(f)){
       Point circum_center = tr.dual(f);
       Vertex_handle v1 = (*f).vertex(1);
-      newCircle = Circle(circum_center, 
-			 CGAL::squared_distance((*v1).point(), 
+      newCircle = Circle(circum_center,
+			 CGAL::squared_distance((*v1).point(),
 						circum_center));
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
@@ -215,7 +214,7 @@ private:
 	Circle oldCircle, newCircle;
 	bool		first_time;
 	
-};//end class 
+};//end class
 
 
 #endif

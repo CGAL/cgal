@@ -1,24 +1,24 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//	
-// ----------------------------------------------------------------------------
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// file          : triangulation_2_edit_vertex.h
-// package       : QT_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// ============================================================================
-#ifndef TRIANGULATION_2_EDIT_VERTEX_HELPER
-#define TRIANGULATION_2_EDIT_VERTEX_HELPER
+// Author(s)     : Radu Ursu
+
+#ifndef CGAL_TRIANGULATION_2_EDIT_VERTEX_HELPER
+#define CGAL_TRIANGULATION_2_EDIT_VERTEX_HELPER
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -73,7 +73,7 @@ protected:
   T                                                 *dt;
   QPopupMenu                                        *popup;
 public:
-  triangulation_2_edit_vertex() : 
+  triangulation_2_edit_vertex() :
     wasrepainted(true), on_first(false), do_not_remove(false) {};
   void set_Delaunay (T *t) {dt = t;}
 private:
@@ -100,7 +100,7 @@ private:
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       widget->setRasterOp(XorROP);
       widget->lock();
-          *widget << CGAL::GREEN << CGAL::PointSize (7) 
+          *widget << CGAL::GREEN << CGAL::PointSize (7)
               << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
         *widget << old_point;
@@ -125,7 +125,7 @@ private:
       if(!wasrepainted)
 	*widget << old_point;
       *widget << Point(x, y);
-      if(!do_not_remove)  
+      if(!do_not_remove)
 	dt->remove(current_v);
       Locate_type lt;
       int li;
@@ -135,12 +135,12 @@ private:
 	do_not_remove = false;
       } else
 	do_not_remove = true;
-  
+
       widget->redraw();	//redraw the scenes
       old_point = Point(x, y);
     }
   };
- 
+
   void activating()
   {
     oldcursor = widget->cursor();
@@ -165,11 +165,11 @@ private:
                             QPoint(widget->x_pixel(
 			    old_point.x()), widget->y_pixel(old_point.y()))));
   };
-};//end class 
+};//end class
 
 
 template <class T>
-class triangulation_2_edit_weightedpoint : 
+class triangulation_2_edit_weightedpoint :
   public triangulation_2_edit_vertex_helper
 {
 public:
@@ -185,13 +185,13 @@ protected:
   FT                                                  first_x, first_y;
   FT                                                  x2, y2;
   bool                                                wasrepainted;
-  bool                                                on_first; 
+  bool                                                on_first;
            //true if right mouse button was pressed
   bool
-  move_button_pressed; 
+  move_button_pressed;
            //true if the popup's move button was pressed
   bool
-  change_weight_pressed; 
+  change_weight_pressed;
           //true if the popup's change_weight button was pressed
   Vertex_handle                                       current_v;
           //the vertex that will be processed
@@ -205,8 +205,8 @@ public:
   triangulation_2_edit_weightedpoint() : wasrepainted(true), on_first(false)
             , move_button_pressed(false), change_weight_pressed(false) {};
   void set_triangulation (T *tr) {t = tr;}
-  
-  template < class TRIANGULATION > 
+
+  template < class TRIANGULATION >
   Vertex_handle
   closest_vertex(const TRIANGULATION &T,
 			      Face_handle f,
@@ -223,24 +223,24 @@ public:
       v =  cmp(p, pcwi, pccwi) == CGAL::SMALLER ? f->vertex(f->cw(i)) :
                                                   f->vertex(f->ccw(i));
     }
-    else{ 
+    else{
       v = f->vertex(0);
-      if (cmp(p, f->vertex(1)->point(), v->point()) == CGAL::SMALLER) 
+      if (cmp(p, f->vertex(1)->point(), v->point()) == CGAL::SMALLER)
         v = f->vertex(1);
-      if (cmp(p, f->vertex(2)->point(), v->point()) == CGAL::SMALLER) 
+      if (cmp(p, f->vertex(2)->point(), v->point()) == CGAL::SMALLER)
         v = f->vertex(2);
     }
     return v;
-  } 
+  }
 private:
   QCursor oldcursor;
 
-  void 
+  void
   draw(){
     wasrepainted = true;
   }
 
-  void 
+  void
   mousePressEvent(QMouseEvent *e)
   {
     if(e->button() == Qt::LeftButton && on_first)
@@ -259,7 +259,7 @@ private:
        RasterOp old = widget->rasterOp();	//save the initial raster mode
        widget->setRasterOp(XorROP);
        widget->lock();
-        *widget << CGAL::GREEN << CGAL::PointSize (7) 
+        *widget << CGAL::GREEN << CGAL::PointSize (7)
               << CGAL::PointStyle (CGAL::DISC);
         if(!wasrepainted)
           *widget << old_point;
@@ -273,8 +273,8 @@ private:
        on_first = FALSE;
     }	
   }
-  
-  void 
+
+  void
   mouseMoveEvent(QMouseEvent *e)
   {
     if(on_first)
@@ -311,7 +311,7 @@ private:
     }
   }
 
-  void 
+  void
   activating()
   {
     oldcursor = widget->cursor();
@@ -323,37 +323,37 @@ private:
     popup->insertItem("Change Weight", this, SLOT(change_weight()));
   }
 
-  void 
+  void
   deactivating()
   {
     widget->setCursor(oldcursor);
   }
-  
-  void 
+
+  void
   delete_vertexi(){
     t->remove(current_v);
     widget->redraw();	//redraw the scenes
   }
-  
-  void 
+
+  void
   move_vertexi(){
     on_first = true;
     change_weight_pressed = false;
     move_button_pressed = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), 
+                            QPoint(widget->x_pixel(old_point.x()),
 				   widget->y_pixel(old_point.y()))));
   }
-  
-  void 
+
+  void
   change_weighti(){
     on_first = true;
     move_button_pressed = false;
     change_weight_pressed = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(widget->x_pixel(old_point.x()), 
+                            QPoint(widget->x_pixel(old_point.x()),
 				   widget->y_pixel(old_point.y()))));
   }
-};//end class 
+};//end class
 
 #endif

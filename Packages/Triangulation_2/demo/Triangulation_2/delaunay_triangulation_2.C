@@ -1,32 +1,30 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : delaunay_triangulation_2.C
-// package       : Qt_widget
-// author(s)     : Radu Ursu 
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
 
 
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
 
-int main(int, char*)
+int main()
 {
-  std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl;
+  std::cout << "Sorry, this demo needs QT." << std::endl;
   return 0;
 }
 
@@ -77,9 +75,9 @@ public:
   {
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
-    
+
     connect(widget, SIGNAL(s_mouseReleaseEvent(QMouseEvent*)), this,
-          SLOT(insert_after_show_conflicts(QMouseEvent*)));    
+          SLOT(insert_after_show_conflicts(QMouseEvent*)));
 	
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
@@ -93,7 +91,7 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Load Triangulation", this, 
+    file->insertItem("&Load Triangulation", this,
 		      SLOT(load_triangulation()), CTRL+Key_L);
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_S);
@@ -125,7 +123,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this, &tr1);	
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &tr1);
-  
+
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
     *widget << CGAL::LineWidth(2);
 
@@ -135,10 +133,10 @@ public:
     widget->setMouseTracking(TRUE);
 	
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)),
       this, SLOT(get_new_object(CGAL::Object)));
 
-    connect(newtoolbar, SIGNAL(changed()), 
+    connect(newtoolbar, SIGNAL(changed()),
 	    this, SLOT(something_changed()));
 
     //application flag stuff
@@ -174,7 +172,7 @@ private slots:
       if (tr1.dimension()<2) return;
       widget->redraw();
       widget->lock();
-      Line_face_circulator lfc = 
+      Line_face_circulator lfc =
          tr1.line_walk(l.point(1), l.point(2)), done(lfc);
       if(lfc == (CGAL_NULL_TYPE) NULL){
       } else {
@@ -193,7 +191,7 @@ private slots:
       show_conflicts(p);
       tr1.insert(p);
       triangulation_changed = true;
-    } 
+    }
   }
 
   void insert_after_show_conflicts(QMouseEvent*){
@@ -207,7 +205,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window *help = new
       CGAL::Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
@@ -226,7 +224,7 @@ private slots:
 
   void new_window(){
     Window *ed = new Window(500, 500);
-    ed->setCaption("Layer");    
+    ed->setCaption("Layer");
     if(tr1.number_of_vertices() > 1){
       Vertex_iterator it = tr1.vertices_begin();
       xmin = xmax = (*it).point().x();
@@ -295,14 +293,14 @@ private slots:
 	
   void save_triangulation()
   {
-    QString fileName = 
-      QFileDialog::getSaveFileName( "triangulation.cgal", 
+    QString fileName =
+      QFileDialog::getSaveFileName( "triangulation.cgal",
 				  "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {
       // got a file name
       std::ofstream out(fileName);
       CGAL::set_ascii_mode(out);
-      out << tr1 << std::endl;    
+      out << tr1 << std::endl;
     }
   }
 
@@ -342,7 +340,7 @@ private:
     if(tr1.dimension()<2) return;
     std::list<Face_handle> conflict_faces;
     std::list<Edge>  hole_bd;
-    tr1.get_conflicts_and_boundary(p, 
+    tr1.get_conflicts_and_boundary(p,
     std::back_inserter(conflict_faces),
     std::back_inserter(hole_bd));
     std::list<Face_handle>::iterator fit = conflict_faces.begin();
@@ -388,8 +386,8 @@ main(int argc, char **argv)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   W.setIcon(cgal_icon);
 #endif
-  W.show();  
-  W.init_coordinates();  
+  W.show();
+  W.init_coordinates();
   current_state = -1;
   return app.exec();
 }

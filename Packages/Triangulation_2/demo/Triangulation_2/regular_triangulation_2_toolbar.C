@@ -1,22 +1,21 @@
-// ============================================================================
+// Copyright (c) 1997-2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : regular_triangulation_2_toolbar.C
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// $Source$
+// $Revision$ $Date$
+// $Name$
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
+// Author(s)     : Radu Ursu
 
 #ifdef CGAL_USE_QT
 
@@ -60,10 +59,10 @@
     but[0]->setIconSet(set0);
     but[1] = new QToolButton(this, "pointinput layer");
     but[1]->setIconSet(set1);
-    but[1]->setTextLabel("Input Point");    
+    but[1]->setTextLabel("Input Point");
     but[2] = new QToolButton(this, "circleinput layer");
     but[2]->setIconSet(set2);
-    but[2]->setTextLabel("Input WeightedPoint");    
+    but[2]->setTextLabel("Input WeightedPoint");
     but[3] = new QToolButton(this, "movedelete layer");
     but[3]->setIconSet(set3);
     but[3]->setTextLabel("Edit Vertex");
@@ -77,7 +76,7 @@
   }
   button_group->setExclusive(true);
   connect(but[1], SIGNAL(stateChanged(int)),
-        &input_point_layer, SLOT(stateChanged(int)));  
+        &input_point_layer, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
         &input_circle_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
