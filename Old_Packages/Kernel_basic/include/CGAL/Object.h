@@ -15,10 +15,11 @@
 // package       : Kernel_basic
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Stefan.Schirra  <Stefan.Schirra@mpi-sb.mpg.de>
+// author(s)     : Stefan Schirra
 //                 Andreas Fabri
 //                 Geert-Jan Giezeman
 //                 Michael Seel
+//                 Sylvain Pion
 //
 // coordinator   : MPI Saarbruecken, Germany 
 //
@@ -27,18 +28,10 @@
 #ifndef CGAL_OBJECT_H
 #define CGAL_OBJECT_H
 
-#ifdef CGAL_CFG_NO_DYNAMIC_CAST
-#error fatal error: dynamic cast not supported
-#endif
-
 #include <CGAL/Handle_for.h>
+#include <CGAL/New_delete_allocator.h>
 
-namespace CGAL {
-
-class Object;
-class Object_base;
-template <class T> class Wrapper;
-
+CGAL_BEGIN_NAMESPACE
 
 class Object_base : public Ref_counted  
 {
@@ -55,7 +48,7 @@ class Wrapper : public Object_base
 
     Wrapper() {}
 
-    operator T() { return _object; }
+    operator T() const { return _object; }
 
     virtual   ~Wrapper() {}
 
@@ -65,64 +58,58 @@ class Wrapper : public Object_base
 
 
 class Object
+  : public Handle_for<Object_base, New_delete_allocator<Object_base> >
 {
+    struct empty{};
+    typedef Handle_for<Object_base, New_delete_allocator<Object_base> > base;
+
   public:
-    Object() : ptr( static_cast<Object_base*>(0) ) {}
-
-    Object(Object_base *base) 
-    { 
-      ptr = base; 
-      CGAL_kernel_assertion( !ptr || (ptr->count == 1));
-    }
-
-    Object(const Object& o) : ptr(o.ptr)
-    { if (ptr) ptr->count++; }
-
-    ~Object()
-    { if (ptr && (--ptr->count == 0)) { delete ptr; } }
-
-    Object&       
-    operator=(const Object& o)
-    {
-      if (o.ptr) o.ptr->count++;
-      if (ptr && (--ptr->count == 0)) { delete ptr; }
-      ptr = o.ptr;
-      return *this;
-    }
-
-    bool          
-    is_empty() const { return ptr == static_cast<Object_base*>(0); }
 
     template <class T>
     friend bool assign(T& t, const Object& o);
 
-#ifndef __SUNPRO_CC
-  protected:
-#endif
-    Object_base*  ptr;
+    Object()
+    {
+	initialize_with(Wrapper<empty>());
+    }
+
+    Object(const Object &o)
+	: base(o) {}
+
+    template <class T>
+    Object(const T&t)
+    {
+	initialize_with(Wrapper<T>(t));
+    }
+
+    bool
+    is_empty() const
+    {
+	empty E;
+	return assign(E, *this);
+    }
 };
 
 
 template <class T>
 Object
 make_object(const T& t)
-{ return Object(new Wrapper< T >(t)); }
+{
+    return Object(t);
+}
 
 
 template <class T>
 bool
 assign(T& t, const Object& o)
 {
-# ifdef CGAL_CFG_DYNAMIC_CAST_BUG
-  Wrapper<T>   instantiate_it;
-# endif // CGAL_CFG_DYNAMIC_CAST_BUG
-  Wrapper<T>*  wp = dynamic_cast<Wrapper<T>*>(o.ptr);
-  if ( wp == static_cast<Wrapper<T>*>(0) ) { return false; }
+  const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o.Ptr());
+  if ( wp == static_cast<Wrapper<T> *>(0) )
+      return false;
   t = *(wp);
   return true;
 }
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_OBJECT_H
-
