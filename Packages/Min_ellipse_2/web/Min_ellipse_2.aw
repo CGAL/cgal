@@ -2794,6 +2794,11 @@ representation) and corresponding data accessors.
 
 @macro <Min_ellipse_2 test (point classes)> = @begin
     // 2D Cartesian point class
+    class MyPointC2;
+
+    std::ostream&  operator << ( std::ostream&, const MyPointC2&);
+    std::istream&  operator >> ( std::istream&,       MyPointC2&);
+    
     class MyPointC2 {
       public:
         typedef  ::Ft  FT;
@@ -2858,6 +2863,11 @@ representation) and corresponding data accessors.
 
 
     // 2D homogeneous point class
+    class MyPointH2;
+
+    std::ostream&  operator << ( std::ostream&, const MyPointH2&);
+    std::istream&  operator >> ( std::istream&,       MyPointH2&);
+    
     class MyPointH2 {
       public:
         typedef  ::Rt  RT;
