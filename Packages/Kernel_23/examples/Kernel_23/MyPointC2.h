@@ -93,11 +93,11 @@ public:
 
     Point_2
     operator()(CGAL::Origin o) const
-    { return Point_2(0,0); }
+    { return Point_2(0, 0, 0); }
 
     Point_2
     operator()(const RT& x, const RT& y) const
-    { return Point_2(x, y); }
+    { return Point_2(x, y, 0); }
 
     
     // We need this one, as such a functor is in the Filtered_kernel
@@ -105,9 +105,9 @@ public:
     operator()(const RT& x, const RT& y, const RT& w) const
     { 
       if(w != 1){
-	return Point_2(x/w, y/w); 
+	return Point_2(x/w, y/w, 0); 
       } else {
-	return Point_2(x,y);
+	return Point_2(x,y, 0);
       }
     }
   };
