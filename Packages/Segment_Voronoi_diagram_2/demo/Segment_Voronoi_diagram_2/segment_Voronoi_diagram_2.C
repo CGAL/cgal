@@ -46,7 +46,7 @@ to_nt(const Segment_double_2& s)
 //************************************
 SVD_2 svd;
 int num_selected;
-std::vector<SVD_2::Site> sitelist;
+std::vector<Site> sitelist;
 
 //************************************
 // my window
@@ -405,7 +405,7 @@ private slots:
 	    vh = svd.insert(t.source(), t.target());
 	    got_location = true;
 	  } else
-	    vh = svd.Base::insert(t.source(), t.target(), vh);
+	    vh = svd.insert(t.source(), t.target(), vh);
 	  tbox = tbox + s.bbox();
 	  counter++;
 	  p1 = p2;
