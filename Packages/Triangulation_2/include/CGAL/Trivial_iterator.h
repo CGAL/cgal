@@ -136,7 +136,8 @@ public:
 #if !defined CGAL_CFG_NO_ITERATOR_TRAITS && \
     defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   template <class I2, class Ref2, class Ptr2, class Val2, class Dist2>
-  Trivial_comparable_iterator(const Trivial_comparable_iterator<I2, Ref2, Ptr2, Val2, Dist2> &t)
+  Trivial_comparable_iterator(const Trivial_comparable_iterator<I2, 
+			      Ref2, Ptr2, Val2, Dist2> &t)
     : base_(t.base()) {}
 #else
   template <class Iter>
