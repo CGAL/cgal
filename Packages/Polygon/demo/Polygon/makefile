@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,14 +15,19 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
-           -g
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
 LDFLAGS = \
-          $(CGAL_WINDOW_LDFLAGS)
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -30,18 +36,16 @@ LDFLAGS = \
 all:            \
                 PolygonDemo 
 
-PolygonDemo: PolygonDemo.o
-	$(CGAL_CXX) -o PolygonDemo PolygonDemo.o $(LDFLAGS)
+PolygonDemo$(EXE_EXT): PolygonDemo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)PolygonDemo PolygonDemo$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	/bin/rm -f *.o \
-                   PolygonDemo \
-                   core
+clean: \
+                   PolygonDemo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
