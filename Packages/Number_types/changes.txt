@@ -1,3 +1,6 @@
+4.78      (6 Feb 03)
+- doc fix : GREATER -> LARGER.
+
 4.77      (21 January 03)
 - Fix typo __GUNG__ instead of __GNUG__...
 
