@@ -40,12 +40,14 @@ public:
   typedef Circle_2<R>		Circle;
   typedef typename R::FT	FT;
 
-  Qt_widget_get_circle() {};
+  Qt_widget_get_circle() : firstpoint(false), 
+			 firsttime(true){};
+
 
 private:
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON && !firstpoint)
     {
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
@@ -55,8 +57,34 @@ private:
       x2 = x;
       y2 = y;
       firstpoint = TRUE;
+    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+	widget->new_object(make_object(Circle(Point(x1,y1),
+				squared_distance(Point(x1, y1), Point(x,y)))));
+	firstpoint = FALSE;
     }
   };
+
+  void leaveEvent(QEvent *)
+  {
+    if(firstpoint)
+    {
+      QColor old_color = widget->color();
+      RasterOp old_raster = widget->rasterOp();	//save the initial raster mode
+      
+      widget->lock();
+	widget->setRasterOp(XorROP);
+	*widget << CGAL::GREEN;
+	*widget << Circle(Point(x1,y1),
+		squared_distance(Point(x1, y1), Point(x2,y2)));
+      widget->unlock();
+      widget->setRasterOp(old_raster);
+      widget->setColor(old_color);
+      firsttime = true;
+    }
+  }
 
   void mouseMoveEvent(QMouseEvent *e)
   {
@@ -65,38 +93,27 @@ private:
       FT
 	x=static_cast<FT>(widget->x_real(e->x())),
 	y=static_cast<FT>(widget->y_real(e->y()));
-	  QColor oldcolor = widget->color();
-      RasterOp old = widget->rasterOp();	//save the initial raster mode		
+      QColor old_color = widget->color();
+      RasterOp old_raster = widget->rasterOp();	//save the initial raster mode		
       widget->setRasterOp(XorROP);
       widget->lock();
       *widget << CGAL::GREEN;
+      if(!firsttime)
+	*widget << Circle(Point(x1,y1),
+		      squared_distance(Point(x1, y1), Point(x2,y2)));
       *widget << Circle(Point(x1,y1),
-						squared_distance(Point(x1, y1), Point(x2,y2)));
-      *widget << Circle(Point(x1,y1),
-						squared_distance(Point(x1, y1), Point(x,y)));
+		      squared_distance(Point(x1, y1), Point(x,y)));
       widget->unlock();
-      widget->setRasterOp(old);
-	  widget->setColor(oldcolor);
+      widget->setRasterOp(old_raster);
+      widget->setColor(old_color);
 
       //save the last coordinates to redraw the screen
       x2 = x;
       y2 = y;	
+      firsttime = false;
     }
   };
-  void mouseReleaseEvent(QMouseEvent *e)
-  {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)		
-    {
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
-    //  if(x1!=x || y1!=y)
-	widget->new_object(make_object(Circle(Point(x1,y1),
-				squared_distance(Point(x1, y1), Point(x,y)))));
-	firstpoint = FALSE;
-    }
-  }
-
+  
   void attaching()
   {
     oldcursor = widget->cursor();
@@ -106,12 +123,15 @@ private:
   void detaching()
   {
     widget->setCursor(oldcursor);
-  
+    firstpoint = false;
   };
 
-  FT	x1, y1;
-  FT	x2, y2;
-  bool	firstpoint;
+  FT	x1, //the X of the first point
+	y1; //the Y of the first point
+  FT	x2, //the old second point's X
+	y2; //the old second point's Y
+  bool	firstpoint, //true if the user left clicked once
+	firsttime;  //true if the line is not drawn
 };//end class 
 
 } // namespace CGAL
