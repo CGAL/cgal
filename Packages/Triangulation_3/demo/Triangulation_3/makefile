@@ -42,11 +42,14 @@ all: demo blind_demo
 demo$(EXE_EXT): demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
 
+demo_remove$(EXE_EXT): demo_remove$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_remove demo_remove$(OBJ_EXT) $(LDFLAGS)
+
 blind_demo$(EXE_EXT): blind_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)blind_demo blind_demo$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	demo.clean blind_demo.clean
+	demo.clean blind_demo.clean demo_remove.clean
 	rm -f data/output core
 
 #---------------------------------------------------------------------#
