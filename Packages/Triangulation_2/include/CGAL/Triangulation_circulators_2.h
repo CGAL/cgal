@@ -137,7 +137,8 @@ public:
   Vertex_circulator& operator--()  { --_bvc; return *this; }      
   Vertex_circulator operator++(int);
   Vertex_circulator operator--(int);
-  bool operator==(const Vertex_circulator &vc) const {return (_bvc == vc._bvc);}
+  bool operator==(const Vertex_circulator &vc) const 
+    {return (_bvc == vc._bvc);}
   bool operator!=(const Vertex_circulator &vc) const {return ! (*this == vc);}
   bool is_empty() const { return( _bvc.is_empty()); }
   bool  operator==(CGAL_NULL_TYPE n) const {return _bvc==n;}

@@ -115,7 +115,8 @@ is_valid(bool verbose = false, int level = 0) const
   CGAL_triangulation_assertion(result);
   if (dimension() == 2) {
     for(int i = 0; i < 3; i++) {
-      Constrained_face_base*  n=static_cast<Constrained_face_base*>(neighbor(i));
+      Constrained_face_base*  n = 
+	static_cast<Constrained_face_base*>(neighbor(i));
       if(n != NULL){
 	int ni = n->face_index(this);
 	result = result && ( is_constrained(i) == n->is_constrained(ni));

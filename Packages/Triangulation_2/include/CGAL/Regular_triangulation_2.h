@@ -72,7 +72,8 @@ public:
   Vertex_handle insert(const Weighted_point &p,
 	 	       Locate_type &lt,
 		       Face_handle f = Face_handle() );
-  Vertex_handle insert(const Weighted_point &p, Face_handle f = Face_handle() );
+  Vertex_handle insert(const Weighted_point &p, 
+		       Face_handle f = Face_handle() );
   Vertex_handle insert_in_face(const Weighted_point &p, Face_handle f);
   Vertex_handle insert_in_edge(const Weighted_point &p, Face_handle f, int i);
   void flip(Face_handle f, int i);
@@ -92,15 +93,14 @@ private:
   void hide_vertex(const Face_handle& f, const Weighted_point& p);
 
   void stack_flip(Vertex_handle v, Faces_around_stack &faces_around);
-        
   void stack_flip_4_2(Face_handle f, int i, int j, 
 		      Faces_around_stack &faces_around);
-
   void stack_flip_3_1(Face_handle f, int i, int j,
 		      Faces_around_stack &faces_around);
-
-  void stack_flip_2_2(Face_handle f, int i, Faces_around_stack &faces_around);
-  void stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around); 
+  void stack_flip_2_2(Face_handle f, int i, 
+		      Faces_around_stack &faces_around);
+  void stack_flip_dim1(Face_handle f, int i, 
+		       Faces_around_stack &faces_around); 
 
 
 public:
@@ -269,76 +269,78 @@ void
 Regular_triangulation_2<Gt,Tds>::
 affiche_tout()
 {
-  cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<endl;
+  std::cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<std::endl;
   Finite_faces_iterator fi , fi_end=finite_faces_end();
 
-  cerr << endl<<"====> "<<this<<endl;
+  std::cerr << std::endl<<"====> "<<this<<std::endl;
   fi=finite_faces_begin();
-  cerr<<"***"<<endl;
+  std::cerr<<"***"<<std::endl;
   while(fi != fi_end)
     {	
-      cerr << "face : "<<(void*)&(*fi)<<" => "<<endl;
-      cerr <<"point :"<<(fi->vertex(0)->point())
+      std::cerr << "face : "<<(void*)&(*fi)<<" => "<<std::endl;
+      std::cerr <<"point :"<<(fi->vertex(0)->point())
 	   <<" / voisin "<<&(*(fi->neighbor(0)))
 	   <<"["<<(fi->neighbor(0))->vertex(0)->point()
 	   <<"/"<<(fi->neighbor(0))->vertex(1)->point()
 	   <<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
-	   <<endl;
-      cerr <<"point :"<<(fi->vertex(1)->point())
+	   <<std::endl;
+      std::cerr <<"point :"<<(fi->vertex(1)->point())
 	   <<" / voisin "<<&(*(fi->neighbor(1)))
 	   <<"["<<(fi->neighbor(1))->vertex(0)->point()
 	   <<"/"<<(fi->neighbor(1))->vertex(1)->point()
 	   <<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
-	   <<endl;
-      cerr <<"point :"<<(fi->vertex(2)->point())
+	   <<std::endl;
+      std::cerr <<"point :"<<(fi->vertex(2)->point())
 	   <<" / voisin "<<&(*(fi->neighbor(2)))
 	   <<"["<<(fi->neighbor(2))->vertex(0)->point()
 	   <<"/"<<(fi->neighbor(2))->vertex(1)->point()
 	   <<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
-	   <<endl;
+	   <<std::endl;
 
       Weighted_point_list::iterator current;
-      cerr << "  +++++>>>    ";
+      std::cerr << "  +++++>>>    ";
       for (current= fi->point_list().begin() ; 
 	   current!= fi->point_list().end() ; current++ )
 	{
-	  cerr <<"[ "<< (*current) << " ] ,  ";
+	  std::cerr <<"[ "<< (*current) << " ] ,  ";
 	}
-      cerr <<endl;
+      std::cerr <<std::endl;
       ++fi;
     }
-  cerr <<"faces infinies "<<endl;
+  std::cerr <<"faces infinies "<<std::endl;
 			
   if ( number_of_vertices() <= 2) {return;}
-  Face_circulator fc = infinite_vertex()->incident_faces(),fcdone(fc);
+  Face_circulator fc = 
+    infinite_vertex()->incident_faces(),fcdone(fc);
   do {	
-    cerr<<(void*)&(*fc) <<" = "<< fc->vertex(0)->point()<<" / "
+    std::cerr<<(void*)&(*fc) <<" = "<< fc->vertex(0)->point()<<" / "
 	<< fc->vertex(1)->point()<<" / "<< fc->vertex(2)->point()
 	<<" / ";
     Weighted_point_list::iterator current;
-    cerr << "  +++++>>>    ";
+    std::cerr << "  +++++>>>    ";
     for (current= fc->point_list().begin() ; 
 	 current!= fc->point_list().end() ; current++ )
       {
-	cerr <<"[ "<< (*current) << " ] ,  ";
+	std::cerr <<"[ "<< (*current) << " ] ,  ";
       }
-    cerr <<endl;
+    std::cerr <<std::endl;
   }while(++fc != fcdone);
 
-  cerr <<endl;
+  std::cerr <<std::endl;
 
   if (number_of_vertices()>1) {
-    cerr << "affichage des sommets de la triangulation reguliere"<<endl;
+    std::cerr << "affichage des sommets de la triangulation reguliere"
+	      <<std::endl;
     Finite_vertices_iterator vi;
     vi=finite_vertices_begin();
     if (number_of_vertices()>1) {
       while ( vi!=vertices_end() ) {
-	//cerr << "* "<< &(*vi) <<"  /  ";
-	cerr << "* "<< vi->point() <<"  / face associee : "
-	     << (void*)(&(*(vi->face())))<<endl;;
+	//std::cerr << "* "<< &(*vi) <<"  /  ";
+	std::cerr << "* "<< vi->point() <<"  / face associee : "
+	     << (void*)(&(*(vi->face())))<<std::endl;;
 	++vi;
       }
-      cerr<<endl;
+      std::cerr<<std::endl;
     }
   }
 }

@@ -83,9 +83,6 @@ public:
   typedef Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
   typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
-  //TODO for compatibility with previous version
-  //add old names typedef iterators and functions
-
   typedef Triangulation_all_faces_iterator_2<Gt,Tds>    All_faces_iterator;
   typedef Triangulation_all_edges_iterator_2<Gt,Tds>    All_edges_iterator;
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All_vertices_iterator;
@@ -96,6 +93,11 @@ public:
                                                     Finite_edges_iterator;
   typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> 
                                                     Finite_vertices_iterator;
+
+  //for compatibility with previous version
+  typedef Triangulation_finite_faces_iterator_2<Gt,Tds>    Face_iterator;
+  typedef Triangulation_finite_edges_iterator_2<Gt,Tds>    Edge_iterator;
+  typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> Vertex_iterator;
 
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
 
@@ -215,6 +217,14 @@ public:
   All_vertices_iterator all_vertices_end() const;
   All_edges_iterator all_edges_begin() const;
   All_edges_iterator all_edges_end() const; 
+
+  //for compatibility with previous versions
+  Face_iterator faces_begin() const {return finite_faces_begin();}
+  Face_iterator faces_end() const {return finite_faces_end();}
+  Edge_iterator edges_begin() const (return finite_edges_begin();}
+  Edge_iterator edges_end() const (return finite_edges_end();}
+  Vertex_iterator vertices_begin() const {return finite_vertices_begin();}
+  Vertex_iterator vertices_end() const {return finite_vertices_end();}
 
   Face_circulator incident_faces( Vertex_handle v, 
 				  Face_handle f = Face_handle()) const;
@@ -1668,36 +1678,42 @@ show_face( typename Tds::Face_iterator fi)
   int i = fi->dimension(); 
   switch(i){
   case 0:
-    std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
-	 <<"["<<(fi->neighbor(0))->vertex(0)->point()<<"]"
-      	<<std::endl;
+    std::cerr <<"point :"<<(fi->vertex(0)->point())
+	      <<" / voisin "<<&(*(fi->neighbor(0)))
+	      <<"["<<(fi->neighbor(0))->vertex(0)->point()<<"]"
+	      <<std::endl;
     break;
   case 1:
-     std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
-				<<"["<<(fi->neighbor(0))->vertex(0)->point()
-				<<"/"<<(fi->neighbor(0))->vertex(1)->point()<<"]"
-  	<<std::endl;
-     std::cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
-				<<"["<<(fi->neighbor(1))->vertex(0)->point()
-				<<"/"<<(fi->neighbor(1))->vertex(1)->point()<<"]"
-				<<std::endl;
+     std::cerr <<"point :" <<(fi->vertex(0)->point())
+	       <<" / voisin "<<&(*(fi->neighbor(0)))
+	       <<"["<<(fi->neighbor(0))->vertex(0)->point()
+	       <<"/"<<(fi->neighbor(0))->vertex(1)->point()<<"]"
+	       <<std::endl;
+     std::cerr <<"point :"<<(fi->vertex(1)->point())
+	       <<" / voisin "<<&(*(fi->neighbor(1)))
+	       <<"["<<(fi->neighbor(1))->vertex(0)->point()
+	       <<"/"<<(fi->neighbor(1))->vertex(1)->point()<<"]"
+	       <<std::endl;
      break;
   case 2:
-  std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
-				<<"["<<(fi->neighbor(0))->vertex(0)->point()
-				<<"/"<<(fi->neighbor(0))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
-					<<std::endl;
-  std::cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
-				<<"["<<(fi->neighbor(1))->vertex(0)->point()
-				<<"/"<<(fi->neighbor(1))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
-				<<std::endl;
-  std::cerr <<"point :"<<(fi->vertex(2)->point())<<" / voisin "<<&(*(fi->neighbor(2)))
-				<<"["<<(fi->neighbor(2))->vertex(0)->point()
-				<<"/"<<(fi->neighbor(2))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
-				<<std::endl;
+  std::cerr <<"point :"<<(fi->vertex(0)->point())
+	    <<" / voisin "<<&(*(fi->neighbor(0)))
+	    <<"["<<(fi->neighbor(0))->vertex(0)->point()
+	    <<"/"<<(fi->neighbor(0))->vertex(1)->point()
+	    <<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
+	    <<std::endl;
+  std::cerr <<"point :"<<(fi->vertex(1)->point())
+	    <<" / voisin "<<&(*(fi->neighbor(1)))
+	    <<"["<<(fi->neighbor(1))->vertex(0)->point()
+	    <<"/"<<(fi->neighbor(1))->vertex(1)->point()
+	    <<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
+	    <<std::endl;
+  std::cerr <<"point :"<<(fi->vertex(2)->point())
+	    <<" / voisin "<<&(*(fi->neighbor(2)))
+	    <<"["<<(fi->neighbor(2))->vertex(0)->point()
+	    <<"/"<<(fi->neighbor(2))->vertex(1)->point()
+	    <<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
+	    <<std::endl;
   }
   return;
 }
