@@ -23,6 +23,7 @@
 
 #include <CGAL/IO/Qt_widget.h>
 #include <qobject.h>
+#include <qcursor.h>
 #include <list>
 
 
