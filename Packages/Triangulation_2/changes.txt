@@ -5,7 +5,10 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
-Ver 7.42 ()
+Ver 7.43 ()
+- small doc fixes
+
+Ver 7.42 (13/12/02)
 - changed deprecated Construct_direction_of_line_2 to
   Construct_direction_2
 
