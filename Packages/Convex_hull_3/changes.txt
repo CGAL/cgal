@@ -1,3 +1,7 @@
+2.8     (?? May 2001)
+- fixed paths to example code in doc.
+
+
 2.7     (22 May 2001)
 
 - added doc_tex directory with new documentation style.
