@@ -193,8 +193,8 @@ sub check_version($)
     }
     if (!defined($package_maintainer)) {
 	log_msg "Version file does not contain a maintainer line!";
-#	return ();
-$package_maintainer = '?';
+	return ();
+#$package_maintainer = '?';
     }
     ($old_version_string, $old_date) =
 	get_version("$packagedir/$package_name/version");
@@ -258,6 +258,23 @@ sub check_codefiles($$)
     }
 }
 
+sub append_maintainer_file_to_version_file()
+{
+    open(MAINTAINER,'maintainer') or return;
+    $_ = <MAINTAINER>;
+    if (/^\s*$/) {
+	close(MAINTAINER);
+	return;
+    }
+    open(VERSION,'>>version');
+    if ($_ !~ /^maintainer\s*:/) {
+	print VERSION "maintainer: ";
+    }
+    print VERSION $_;
+    close(VERSION);
+    close(MAINTAINER);
+}
+
 sub check_package($)
 {
     my ($version, $prev_version, $package_maintainer);
@@ -265,7 +282,11 @@ sub check_package($)
 	log_msg "ERROR: File version is missing!";
 	return 0;
     }
-    if ( ! (($version, $prev_version, $package_maintainer) = check_version($_[0])) ) {
+    if (-f 'maintainer') {
+	append_maintainer_file_to_version_file();
+    }
+    if ( ! (($version, $prev_version, $package_maintainer) = 
+						check_version($_[0])) ) {
 	log_msg "ERROR: version file does not pass the checks!";
 	return 0;
     }
