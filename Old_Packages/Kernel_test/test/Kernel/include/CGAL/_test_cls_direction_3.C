@@ -53,11 +53,22 @@ _test_cls_direction_3(const R& )
  CGAL::Direction_3<R> d4( d3 );
  CGAL::Direction_3<R> d5 = d3;
 
+ CGAL::Point_3<R> p1(n3, n2, n0); // (4,2,10)
+ CGAL::Line_3<R> l1(p1, d3);
+ CGAL::Ray_3<R> r1(p1, d2);
+ CGAL::Segment_3<R> s1(p1, p1 + d4.vector());
+ CGAL::Direction_3<R> d6( l1);
+ CGAL::Direction_3<R> d7( r1);
+ CGAL::Direction_3<R> d8( s1);
+
  assert( d3 == d3 );
  assert( d3 == d4 );
  assert( d5 == d3 );
  assert( d2 != d3 );
  assert( d3 != d2 );
+ assert( d6 == d8 );
+ assert( d6 != d7 );
+ assert( d7 != d8 );
 
  std::cout << '.';
 #if (__GNUG__ == 2) && (__GNUC_MINOR__==91)

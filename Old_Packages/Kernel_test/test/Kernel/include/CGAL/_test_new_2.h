@@ -32,7 +32,9 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Circle_2.h>
 #include <CGAL/Triangle_2.h>
+#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/Aff_transformation_2.h>
+#endif // CGAL_NO_DEPRECATED_CODE
 #include <CGAL/intersections.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/predicates_on_lines_2.h>
@@ -66,7 +68,9 @@ test_new_2(const R& rep)
   typedef typename R::Circle_2                    Circle_2;
   typedef typename R::Triangle_2                  Triangle_2;
   typedef typename R::Iso_rectangle_2             Iso_rectangle_2;
+#ifndef CGAL_NO_DEPRECATED_CODE
   typedef typename R::Aff_transformation_2        Aff_transformation_2;
+#endif // CGAL_NO_DEPRECATED_CODE
   typedef typename R::Object_2                    Object2;
 
   typename R::Construct_point_2 construct_point =
@@ -91,6 +95,8 @@ test_new_2(const R& rep)
   Direction_2 d1 = construct_direction();
   Direction_2 d2 = construct_direction(v3);
   Direction_2 d3 = construct_direction(1,4);
+  // remaining constructions tested below, after the 
+  // corresponding types have been introduced
 
   typename R::Construct_segment_2 construct_segment
         = rep.construct_segment_2_object();
@@ -112,6 +118,11 @@ test_new_2(const R& rep)
   Line_2 l5 = construct_line(s2);
   Line_2 l6 = construct_line(r2);
 
+  // remaining construct_direction tests
+  Direction_2 d4 = construct_direction(l3);
+  Direction_2 d5 = construct_direction(r2);
+  Direction_2 d6 = construct_direction(s2);
+  
   typename R::Construct_circle_2 construct_circle
         = rep.construct_circle_2_object();
   Circle_2 c1 = construct_circle(p2,1);
@@ -130,6 +141,7 @@ test_new_2(const R& rep)
         = rep.construct_iso_rectangle_2_object();
   Iso_rectangle_2 rec2 = construct_iso_rectangle(p4,p5);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_aff_transformation_2 construct_aff_transformation
         = rep.construct_aff_transformation_2_object();
   Aff_transformation_2 a1 = construct_aff_transformation(Translation(),v2);
@@ -143,13 +155,14 @@ test_new_2(const R& rep)
   Aff_transformation_2 a51 = construct_aff_transformation(1,2,3,4,5,6,1);
   Aff_transformation_2 a6 = construct_aff_transformation(1,2,3,4);
   Aff_transformation_2 a61 = construct_aff_transformation(1,2,3,4,1);
-
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_point_on_2 construct_point_on
         = rep.construct_point_on_2_object();
   Point_2 tmp1 = construct_point_on(l2);
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_second_point_on_2 construct_second_point_on
         = rep.construct_second_point_on_2_object();
   Point_2 tmp2 = construct_second_point_on(r2);
@@ -174,8 +187,16 @@ test_new_2(const R& rep)
         = rep.construct_max_point_2_object();
   Point_2 tmp6a = construct_max_point(s2);
   Point_2 tmp6b = construct_max_point(rec2);
+#endif // CGAL_NO_DEPRECATED_CODE
+
+  typename R::Construct_vertex_2 construct_vertex_2
+        = rep.construct_vertex_2_object();
+  Point_2 tmp6c = construct_vertex_2(s2, 0);
+          tmp6c = construct_vertex_2(rec2, 0);
+          tmp6c = construct_vertex_2(t2, 0);
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_direction_of_line_2 construct_direction_from
         = rep.construct_direction_of_line_2_object();
   Direction_2 tmp7a = construct_direction_from(l2);
@@ -183,6 +204,7 @@ test_new_2(const R& rep)
   typename R::Construct_direction_of_ray_2 construct_direction_from_ray
         = rep.construct_direction_of_ray_2_object();
   Direction_2 tmp7b = construct_direction_from_ray(r2);
+#endif // CGAL_NO_DEPRECATED_CODE
 
 
   typename R::Construct_supporting_line_2 construct_supporting_line
@@ -225,6 +247,11 @@ test_new_2(const R& rep)
   Line_2 tmp14 = construct_bisector(p2,p3);
 
 
+  typename R::Construct_opposite_direction_2 construct_opposite_direction
+        = rep.construct_opposite_direction_2_object();
+  Direction_2 tmp14a = construct_opposite_direction(d3);
+
+
   typename R::Construct_opposite_segment_2 construct_opposite_segment
         = rep.construct_opposite_segment_2_object();
   Segment_2 tmp15 = construct_opposite_segment(s2);
@@ -253,11 +280,12 @@ test_new_2(const R& rep)
         = rep.construct_opposite_vector_2_object();
   Vector_2 tmp19a = construct_opposite_vector(v2);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Transform_2 transform
         = rep.transform_2_object();
   Point_2 tmp20a = transform(p2,a3);
   Line_2 tmp20b = transform(l2,a3);
-
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Intersect_2 intersect
         = rep.intersect_2_object();
@@ -303,7 +331,14 @@ test_new_2(const R& rep)
   typename R::Equal_2 equal
         = rep.equal_2_object();
   bool tmp24 = equal(p2,p3);
-
+  bool tmp24a = equal(v2,v3);
+  bool tmp24b = equal(d2,d3);
+  bool tmp24c = equal(s2,s2);
+  bool tmp24d = equal(r2,r3);
+  bool tmp24e = equal(l2,l3);
+  bool tmp24f = equal(c2,c31);
+  bool tmp24g = equal(t2,t2);
+  bool tmp24h = equal(rec2,rec2);
 
   typename R::Equal_x_2 equal_x
         = rep.equal_x_2_object();
@@ -376,6 +411,10 @@ test_new_2(const R& rep)
   typename R::Compare_distance_2 compare_dist
         = rep.compare_distance_2_object();
   Comparison_result tmp34ab = compare_dist(p1,p2,p3);
+
+  typename R::Compare_angle_with_x_axis_2 compare_angle
+        = rep.compare_angle_with_x_axis_2_object();
+  Comparison_result tmp34ac = compare_angle(d3,d2);
 
   typename R::Less_signed_distance_to_line_2 less_signed_distance_to_line
         = rep.less_signed_distance_to_line_2_object(p4,p5);
@@ -451,18 +490,21 @@ test_new_2(const R& rep)
         = rep.has_on_bounded_side_2_object();
   bool tmp48a = has_on_bounded_side(c2,p2);
   bool tmp48b = has_on_bounded_side(t2,p2);
+  bool tmp48c = has_on_bounded_side(rec2,p2);
 
 
   typename R::Has_on_unbounded_side_2 has_on_unbounded_side
         = rep.has_on_unbounded_side_2_object();
   bool tmp49a = has_on_unbounded_side(c2,p2);
   bool tmp49b = has_on_unbounded_side(t2,p2);
+  bool tmp49c = has_on_unbounded_side(rec2,p2);
 
 
   typename R::Has_on_boundary_2 has_on_boundary
         = rep.has_on_boundary_2_object();
   bool tmp50a = has_on_boundary(c2,p2);
   bool tmp50b = has_on_boundary(t2,p2);
+  bool tmp50c = has_on_boundary(rec2,p2);
 
 
   typename R::Has_on_positive_side_2 has_on_positive_side
@@ -521,10 +563,11 @@ test_new_2(const R& rep)
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab);
+  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab); use(tmp34ac); 
   use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
-  use(tmp39a); use(tmp36a);
-  use(tmp_bool);
+  use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c); 
+  use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);
+  use(tmp24g); use(tmp24h); use(tmp24);use(tmp_bool);
 
   return true;
 }

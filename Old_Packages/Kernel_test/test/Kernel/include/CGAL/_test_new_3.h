@@ -56,7 +56,9 @@ test_new_3(const R& rep)
   typedef typename R::Triangle_3                  Triangle_3;
   typedef typename R::Tetrahedron_3               Tetrahedron_3;
   typedef typename R::Iso_cuboid_3                Iso_cuboid_3;
+#ifndef CGAL_NO_DEPRECATED_CODE
   typedef typename R::Aff_transformation_3        Aff_transformation_3;
+#endif // CGAL_NO_DEPRECATED_CODE
   typedef typename R::Object_3                    Object3;
 
   typename R::Construct_point_3 construct_point
@@ -82,6 +84,8 @@ test_new_3(const R& rep)
   Direction_3 d2 = construct_direction(v3);
   Direction_3 d3 = construct_direction(1,1,5);
   Direction_3 d4 = construct_direction(1,5,5);
+  // remaining constructions tested below, after the 
+  // corresponding types have been introduced
 
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
@@ -103,6 +107,11 @@ test_new_3(const R& rep)
   Line_3 l5 = construct_line(s2);
   Line_3 l6 = construct_line(r2);
 
+  // remaining construct_direction tests
+  Direction_3 d5 = construct_direction(l3);
+  Direction_3 d6 = construct_direction(r2);
+  Direction_3 d7 = construct_direction(s2);
+  
   typename R::Construct_plane_3 construct_plane
         = rep.construct_plane_3_object();
   Plane_3 h1 = construct_plane();
@@ -140,6 +149,7 @@ test_new_3(const R& rep)
         = rep.construct_iso_cuboid_3_object();
   Iso_cuboid_3 iso1 = construct_iso_cuboid(p3,p6);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_aff_transformation_3 construct_aff_transformation
         = rep.construct_aff_transformation_3_object();
   Aff_transformation_3 a1 = construct_aff_transformation();
@@ -154,6 +164,7 @@ test_new_3(const R& rep)
         construct_aff_transformation(1,2,3,4,5,6,7,8,9);
   Aff_transformation_3 a61 =
         construct_aff_transformation(1,2,3,4,5,6,7,8,9,10);
+#endif // CGAL_NO_DEPRECATED_CODE
 
 
   typename R::Construct_point_on_3 construct_point_on
@@ -161,6 +172,7 @@ test_new_3(const R& rep)
   Point_3 tmp1 = construct_point_on(l2);
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_second_point_on_3 construct_second_point_on
         = rep.construct_second_point_on_3_object();
   Point_3 tmp2 = construct_second_point_on(r2);
@@ -182,7 +194,16 @@ test_new_3(const R& rep)
         = rep.construct_max_point_3_object();
           tmp2d = construct_max_point(s2);
           tmp2e = construct_max_point(iso1);
+#endif // CGAL_NO_DEPRECATED_CODE
 
+  typename R::Construct_vertex_3 construct_vertex_3
+        = rep.construct_vertex_3_object();
+  Point_3 tmp2f = construct_vertex_3(s2, 0);
+          tmp2f = construct_vertex_3(iso1, 0);
+          tmp2f = construct_vertex_3(t2, 0);
+          tmp2f = construct_vertex_3(th2, 0);
+  
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_direction_of_line_3 construct_direction_from
         = rep.construct_direction_of_line_3_object();
   Direction_3 tmp7a = construct_direction_from(l2);
@@ -190,6 +211,7 @@ test_new_3(const R& rep)
   typename R::Construct_direction_of_ray_3 construct_direction_from_ray
         = rep.construct_direction_of_ray_3_object();
   Direction_3 tmp7b = construct_direction_from_ray(r2);
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_supporting_line_3 construct_supporting_line
         = rep.construct_supporting_line_3_object();
@@ -230,6 +252,12 @@ test_new_3(const R& rep)
         = rep.construct_cross_product_vector_3_object();
   Vector_3 tmp9 = construct_cross_product(v3,v4);
 
+
+  typename R::Construct_opposite_direction_3 construct_opposite_direction
+        = rep.construct_opposite_direction_3_object();
+  Direction_3 tmp14a = construct_opposite_direction(d3);
+
+
   typename R::Construct_opposite_segment_3 construct_opposite_segment
         = rep.construct_opposite_segment_3_object();
   Segment_3 tmp5 = construct_opposite_segment(s2);
@@ -257,10 +285,12 @@ test_new_3(const R& rep)
   Plane_3 tmp8 = construct_supporting_plane(t2);
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Transform_3 transform
         = rep.transform_3_object();
   Point_3 tmp9a = transform(p2,a2);
   Triangle_3 tmp9b = transform(t2,a2);
+#endif // CGAL_NO_DEPRECATED_CODE
 
 
   typename R::Intersect_3 intersect
@@ -307,12 +337,19 @@ test_new_3(const R& rep)
   FT tmp11b = compute_volume(th2);
   FT tmp11c = compute_volume(iso1);
 
-
   typename R::Equal_3 equal
         = rep.equal_3_object();
        tmp12a = equal(p2,p3);
        tmp12b = equal(l2,l3);
-
+       bool tmp12d = equal(d2,d3);
+       bool tmp12e = equal(s2,s2);
+       bool tmp12f = equal(r2,r3);
+       bool tmp12g = equal(h2,h3);
+       bool tmp12h = equal(sp2,sp3);
+       bool tmp12i = equal(t2,t2);
+       bool tmp12j = equal(th2,th2);
+       bool tmp12k = equal(iso1,iso1);
+       bool tmp12l = equal(v2,v3);
 
   typename R::Equal_x_3 equal_x
         = rep.equal_x_3_object();
@@ -441,17 +478,25 @@ test_new_3(const R& rep)
   typename R::Has_on_bounded_side_3 has_on_bounded_side
         = rep.has_on_bounded_side_3_object();
   bool tmp34 = has_on_bounded_side(th2,p2);
+  bool tmp34a = has_on_bounded_side(sp2,p2);
+  bool tmp34b = has_on_bounded_side(iso1,p2);
 
 
   typename R::Has_on_unbounded_side_3 has_on_unbounded_side
         = rep.has_on_unbounded_side_3_object();
   bool tmp35 = has_on_unbounded_side(th2,p2);
+  bool tmp35a = has_on_unbounded_side(sp2,p2);
+  bool tmp35b = has_on_unbounded_side(iso1,p2);
 
 
   typename R::Has_on_boundary_3 has_on_boundary
         = rep.has_on_boundary_3_object();
+#ifndef CGAL_NO_DEPRECATED_CODE
   bool tmp36a = has_on_boundary(h2,p2);
+#endif // CGAL_NO_DEPRECATED_CODE
   bool tmp36b = has_on_boundary(th2,p2);
+  bool tmp36c = has_on_boundary(sp2,p2);
+  bool tmp36d = has_on_boundary(iso1,p2);
 
 
   typename R::Has_on_positive_side_3 has_on_positive_side
@@ -513,9 +558,11 @@ test_new_3(const R& rep)
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
   use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp36a); use(tmp35);
   use(tmp34); use(tmp33b); use(tmp33a); use(tmp32); use(tmp31); use(tmp30);
-  use(tmp28a); use(tmp33c);
+  use(tmp28a); use(tmp33c); use(tmp35a); use(tmp35b); use(tmp34a); use(tmp34b); 
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
+  use(tmp12d); use(tmp12e); use(tmp12f); use(tmp12g); use(tmp12l); 
+  use(tmp12h); use(tmp12i); use(tmp12j); use(tmp12k); use(tmp36c); use(tmp36d); 
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
   use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
   use(tmp39a);

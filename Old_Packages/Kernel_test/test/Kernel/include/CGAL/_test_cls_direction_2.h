@@ -24,12 +24,24 @@
 #ifndef CGAL__TEST_CLS_DIRECTION_2_H
 #define CGAL__TEST_CLS_DIRECTION_2_H
 
+#ifndef CGAL_POINT_2_H
+#include <CGAL/Point_2.h>
+#endif // CGAL_POINT_2_H
 #ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
 #endif // CGAL_VECTOR_2_H
 #ifndef CGAL_DIRECTION_2_H
 #include <CGAL/Direction_2.h>
 #endif // CGAL_DIRECTION_2_H
+#ifndef CGAL_LINE_2_H
+#include <CGAL/Line_2.h>
+#endif // CGAL_LINE_2_H
+#ifndef CGAL_RAY_2_H
+#include <CGAL/Ray_2.h>
+#endif // CGAL_RAY_2_H
+#ifndef CGAL_SEGMENT_2_H
+#include <CGAL/Segment_2.h>
+#endif // CGAL_SEGMENT_2_H
 
 
 template <class R> bool _test_cls_direction_2(const R& );

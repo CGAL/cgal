@@ -51,12 +51,22 @@ _test_cls_direction_2(const R& )
  CGAL::Direction_2<R> d3( n0, n1);   // (10,8)
  CGAL::Direction_2<R> d4( d3 );
  CGAL::Direction_2<R> d5 = d3;
+ CGAL::Point_2<R> p1(n3, n2); // (4,2)
+ CGAL::Line_2<R> l1(p1, d3);
+ CGAL::Ray_2<R> r1(p1, d2);
+ CGAL::Segment_2<R> s1(p1, p1 + d4.vector());
+ CGAL::Direction_2<R> d6( l1);
+ CGAL::Direction_2<R> d7( r1);
+ CGAL::Direction_2<R> d8( s1);
 
  assert( d3 == d3 );
  assert( d3 == d4 );
  assert( d5 == d3 );
  assert( d2 != d3 );
  assert( d3 != d2 );
+ assert( d6 == d8 );
+ assert( d6 != d7 );
+ assert( d7 != d8 );
 
  std::cout << '.';
  CGAL::Vector_2<R> vv = d2.vector();
