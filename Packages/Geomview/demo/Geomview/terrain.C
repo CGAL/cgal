@@ -52,7 +52,7 @@ int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(150, 150, 150, 350, 350, 350));
   gv.set_line_width(4);
-  gv.set_trace(false);
+  // gv.set_trace(true);
   gv.set_bg_color(CGAL::Color(0, 200, 200));
   gv.clear();
 
