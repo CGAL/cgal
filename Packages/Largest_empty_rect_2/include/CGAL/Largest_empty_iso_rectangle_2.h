@@ -281,26 +281,19 @@ public:
 };
 
 
-template<class T>
+template<class Ptr>
 struct Delete {
-  void operator()(T it){
-    delete(*it);
+  void operator()(Ptr ptr)const {
+    delete(ptr);
   }
 };
 
 template<class T>
 Largest_empty_iso_rectangle_2<T>::~Largest_empty_iso_rectangle_2()
 {
-  for(Point_data_set_of_x::iterator iter = x_sorted.begin();
-      iter != x_sorted.end();
-      ++iter)
-    delete(*iter);
-  /*  
-  // Why does this not compile ????
   std::for_each(x_sorted.begin(), 
 	   x_sorted.end(), 
-	   Delete<Point_data_set_of_x::iterator>());
-  */
+	   Delete<Point_data*>());
 }
 
 template<class T>
