@@ -2,10 +2,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-//#include <CGAL/Largest_empty_iso_rectangle_2.h>
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -82,19 +82,19 @@ void show_biggest_rec(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W
   //W << Segment(Point(x2,y2),Point(x2,y1));
 
   std::cout << "\nThe largest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
-  std::cout << "Its size is " << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << endl;
+  std::cout << "Its size is " << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << std::endl;
 }
 
 int main(int argc,char *argv[])
 {
   CGAL::Window_stream W(600, 600);
-  ifstream *is_ptr;
+  std::ifstream *is_ptr;
   bool automatic_show = false;
 
   if(argc == 1) {
     // initialize window
     W.init(-2,13,-2);
-    W.set_mode(leda_src_mode);
+    W.set_mode(CGAL::src_mode);
     W.set_node_width(3);
     W.button("Show Biggest Empty Rectangle",1);
     W.button("Clear",2);
@@ -104,14 +104,14 @@ int main(int argc,char *argv[])
     W.display();
   } else if(argc == 2) {
     // initialize input file
-    is_ptr = new ifstream(argv[1]);
+    is_ptr = new std::ifstream(argv[1]);
     if(is_ptr->bad()) {
-      cerr << "Bad input file : " << argv[1] << endl;
+      std::cerr << "Bad input file : " << argv[1] << std::endl;
       return(1);
     }
     W.display();
   } else {
-    cerr << "Syntax : EmptyRect [input file name]\n";
+    std::cerr << "Syntax : EmptyRect [input file name]\n";
     return(1);
   }
 
@@ -138,7 +138,7 @@ int main(int argc,char *argv[])
 
     //double x1_double = x1.to_double(),x2_double = x2.to_double(),y1_double = y1.to_double(),y2_double = y2.to_double();
     W.init(x1 - 2,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
-    W.set_mode(leda_src_mode);
+    W.set_mode(CGAL::src_mode);
     W.set_node_width(3);
   }
 
