@@ -142,7 +142,7 @@ private:
   
 public:
 
-// CONSTRUCTORS
+  // CONSTRUCTORS
   CGAL_Triangulation_3()
     : _tds(), _gt()
   {
@@ -197,7 +197,7 @@ public:
    }
 
  //ACCESS FUNCTIONS
-  inline
+  inline 
   const GT & geom_traits() const 
     { return _gt;}
   
@@ -763,104 +763,104 @@ public:
   }
 
 private:
-Cell_handle
-hat(Vertex_handle v, Cell_handle c)
-  // recursive traversal of the set of facets of the convex hull
-  // that are visible from v
-  // v replaces infinite_vertex in these cells
-  // on the boundary, new cells with vertices v, infinite_vertex
-  // and the two vertices of an edge of the boumdary are created
-  // returns a cell inside the "hat", having a facet on its boundary
-{
-  static Cell_handle bound;
+  Cell_handle
+  hat(Vertex_handle v, Cell_handle c)
+    // recursive traversal of the set of facets of the convex hull
+    // that are visible from v
+    // v replaces infinite_vertex in these cells
+    // on the boundary, new cells with vertices v, infinite_vertex
+    // and the two vertices of an edge of the boumdary are created
+    // returns a cell inside the "hat", having a facet on its boundary
+  {
+    static Cell_handle bound;
 
-  int inf = c->index(infinite_vertex());
-  c->set_vertex( inf , v );
+    int inf = c->index(infinite_vertex());
+    c->set_vertex( inf , v );
 
-  Cell_handle cni, cnew;
-  Locate_type loc;
-  int li,lj;
+    Cell_handle cni, cnew;
+    Locate_type loc;
+    int li,lj;
 
-  int i, i1, i2;
-  for ( i=0; i<4; i++ ) {
-    if ( i!= inf ) {
-      cni = c->neighbor(i);
-      if ( ! cni->has_vertex( v ) ) {
-	if ( side_of_cell( v->point(), cni, loc, li, lj )
-	     == CGAL_ON_BOUNDED_SIDE ) {
-	  hat( v, cni );
+    int i, i1, i2;
+    for ( i=0; i<4; i++ ) {
+      if ( i!= inf ) {
+	cni = c->neighbor(i);
+	if ( ! cni->has_vertex( v ) ) {
+	  if ( side_of_cell( v->point(), cni, loc, li, lj )
+	       == CGAL_ON_BOUNDED_SIDE ) {
+	    hat( v, cni );
+	  }
+	  else { // we are on the boundary of the set of facets of the
+	    // convex hull that are visible from v
+	    i1 = nextposaroundij(i,inf);
+	    i2 = 6-i-i1-inf;
+	    cnew = new Cell( _tds,
+			     c->vertex(i1), c->vertex(i2), 
+			     v, infinite_vertex(),
+			     NULL, NULL, cni, c );
+	    c->set_neighbor(i,cnew);
+	    cni->set_neighbor( cni->index(c), cnew );
+
+	    bound = c;
+	  }
 	}
-	else { // we are on the boundary of the set of facets of the
-	  // convex hull that are visible from v
-	  i1 = nextposaroundij(i,inf);
-	  i2 = 6-i-i1-inf;
-	  cnew = new Cell( _tds,
-			   c->vertex(i1), c->vertex(i2), 
-			   v, infinite_vertex(),
-			   NULL, NULL, cni, c );
-	  c->set_neighbor(i,cnew);
-	  cni->set_neighbor( cni->index(c), cnew );
-
-	  bound = c;
-	}
+      }// no else
+    } // for
+    return bound;
+  } // hat
+  void
+  link(Vertex_handle v, Cell_handle c)
+    // c belongs to the hat of v and has a facet on its boundary
+    // traverses the boundary of the hat and finds adjacencies
+    // traversal is done counterclockwise as seen from v
+  {
+    // finds a facet ib of c on the boundary of the hat
+    int iv = c->index(v);
+    int ib;
+    for ( ib=0; ib<4; ib++ ) {
+      if ( ( ib != iv ) && c->neighbor(ib)->has_vertex(infinite) ) {
+	break;
       }
-    }// no else
-  } // for
-  return bound;
-} // hat
-void
-link(Vertex_handle v, Cell_handle c)
-  // c belongs to the hat of v and has a facet on its boundary
-  // traverses the boundary of the hat and finds adjacencies
-  // traversal is done counterclockwise as seen from v
-{
-  // finds a facet ib of c on the boundary of the hat
-  int iv = c->index(v);
-  int ib;
-  for ( ib=0; ib<4; ib++ ) {
-    if ( ( ib != iv ) && c->neighbor(ib)->has_vertex(infinite) ) {
-      break;
     }
-  }
   
-  infinite->set_cell(c->neighbor(ib));
+    infinite->set_cell(c->neighbor(ib));
 
-  Cell_handle bound = c;
-  int i = ib;
-  int next;
-  Vertex_handle v1;
+    Cell_handle bound = c;
+    int i = ib;
+    int next;
+    Vertex_handle v1;
 
-  do {
-    iv = bound->index(v);
-    // indices of the vertices != v of bound on the boundary of the hat
-    // such that (i,i1,i2,iv) positive
-    int i1 = nextposaroundij(i,iv);
-    int i2 = 6-i-i1-iv;
+    do {
+      iv = bound->index(v);
+      // indices of the vertices != v of bound on the boundary of the hat
+      // such that (i,i1,i2,iv) positive
+      int i1 = nextposaroundij(i,iv);
+      int i2 = 6-i-i1-iv;
 
-    // looking for the neighbor i2 of bound :
-    // we turn around i1 until we reach the boundary of the hat
-    v1 = bound->vertex(i1);
+      // looking for the neighbor i2 of bound :
+      // we turn around i1 until we reach the boundary of the hat
+      v1 = bound->vertex(i1);
 
-    Cell_handle cur = bound;
+      Cell_handle cur = bound;
 
-    next = nextposaroundij(i1,iv);
-    while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
-      cur = cur->neighbor(next);
-      next = nextposaroundij(cur->index(v1),cur->index(v));
-    }
-    Cell_handle current = bound->neighbor(i);
-    Cell_handle found = cur->neighbor(next);
-    current->set_neighbor( current->index(bound->vertex(i2)), found);
-    found->set_neighbor( 6 - found->index(v) - 
-			 found->index(infinite) -
-			 found->index(v1), current );
-    bound = cur;
-    i = next;
-  } while ( ( bound != c ) || ( i != ib ) );
-  // c may have two facets on the boundary of the hat
-  // test bound != c is not enough, we must test whether
-  // facet ib of c has been treated
-}// end link
+      next = nextposaroundij(i1,iv);
+      while ( ! cur->neighbor(next)->has_vertex(infinite) ) {
+	cur = cur->neighbor(next);
+	next = nextposaroundij(cur->index(v1),cur->index(v));
+      }
+      Cell_handle current = bound->neighbor(i);
+      Cell_handle found = cur->neighbor(next);
+      current->set_neighbor( current->index(bound->vertex(i2)), found);
+      found->set_neighbor( 6 - found->index(v) - 
+			   found->index(infinite) -
+			   found->index(v1), current );
+      bound = cur;
+      i = next;
+    } while ( ( bound != c ) || ( i != ib ) );
+    // c may have two facets on the boundary of the hat
+    // test bound != c is not enough, we must test whether
+    // facet ib of c has been treated
+  }// end link
 public:
 
   Vertex_handle
@@ -911,15 +911,16 @@ public:
     Locate_type lt;
     int li, lj;
     Cell_handle c;
-    if ( dimension() > 1 ) {
-      // there is at least one finite "cell" (or facet)
-      Cell_handle start = infinite_vertex()->cell()
+    Cell_handle start;
+    if ( dimension() >= 1 ) {
+      // there is at least one finite "cell" (or facet or edge)
+      start = infinite_vertex()->cell()
 	->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
-      c = locate_quick( p, start, lt, li, lj);
     }
     else {
-      c = locate( p, lt, li, lj);
+      start = NULL;
     }
+    c = locate( p, start, lt, li, lj);
     switch (lt) {
     case VERTEX:
       return c->vertex(li);
@@ -999,10 +1000,10 @@ public:
 #endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
 
   Cell_handle
-  locate(const Point & p,
-	 Locate_type & lt,
-	 int & li,
-	 int & lj) const
+  locate_old(const Point & p,
+	     Locate_type & lt,
+	     int & li,
+	     int & lj) const
     // returns the (finite or infinite) cell p lies in
     // if lt == OUTSIDE_CONVEX_HULL, li is the
     // index of a facet separating p from the rest of the triangulation
@@ -1043,51 +1044,51 @@ public:
 	  }
 	}
 	return &(*cit);
-	  // the sequel was written to return a finite cell in any case:
-// 	if ( is_infinite(&(*cit)) ) {
-// 	  switch ( lt ) {
-// 	  case CELL:
-// 	    {
-// 	      // returns the finite cell sharing the finite facet of cit
-// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
-// 	      lt = OUTSIDE_CONVEX_HULL;
-// 	      li = n->index(&(*cit));
-// 	      return n;
-// 	    }
-// 	  case FACET:
-// 	    {
-// 	      // returns the finite cell sharing the finite facet of cit
-// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
-// 	      li = n->index(&(*cit));
-// 	      return n;
-// 	    }
-// 	  case EDGE:
-// 	    {
-// 	      // returns the finite cell sharing the finite facet of cit
-// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
-// 	      cerr << cit->vertex(li)->point() << endl
-// 		   << cit->vertex(lj)->point() << endl;
-// 	      li = n->index(cit->vertex(li));
-// 	      lj = n->index(cit->vertex(lj));
-// 	      return n;
-// 	    }
-// 	  case VERTEX:
-// 	    {
-// 	      // returns the finite cell sharing the finite facet of cit
-// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
-// 	      li = n->index(cit->vertex(li));
-// 	      return n;
-// 	    }
-// 	  default:
-// 	    {
-// 	      CGAL_triangulation_assertion(false);
-// 	      return NULL;
-// 	    }
-// 	  }
-// 	}
-// 	else { // finite cell
-//	  return &(*cit);
-//	}
+	// the sequel was written to return a finite cell in any case:
+	// 	if ( is_infinite(&(*cit)) ) {
+	// 	  switch ( lt ) {
+	// 	  case CELL:
+	// 	    {
+	// 	      // returns the finite cell sharing the finite facet of cit
+	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
+	// 	      lt = OUTSIDE_CONVEX_HULL;
+	// 	      li = n->index(&(*cit));
+	// 	      return n;
+	// 	    }
+	// 	  case FACET:
+	// 	    {
+	// 	      // returns the finite cell sharing the finite facet of cit
+	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
+	// 	      li = n->index(&(*cit));
+	// 	      return n;
+	// 	    }
+	// 	  case EDGE:
+	// 	    {
+	// 	      // returns the finite cell sharing the finite facet of cit
+	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
+	// 	      cerr << cit->vertex(li)->point() << endl
+	// 		   << cit->vertex(lj)->point() << endl;
+	// 	      li = n->index(cit->vertex(li));
+	// 	      lj = n->index(cit->vertex(lj));
+	// 	      return n;
+	// 	    }
+	// 	  case VERTEX:
+	// 	    {
+	// 	      // returns the finite cell sharing the finite facet of cit
+	// 	      Cell_handle n = cit->neighbor(cit->index(infinite));
+	// 	      li = n->index(cit->vertex(li));
+	// 	      return n;
+	// 	    }
+	// 	  default:
+	// 	    {
+	// 	      CGAL_triangulation_assertion(false);
+	// 	      return NULL;
+	// 	    }
+	// 	  }
+	// 	}
+	// 	else { // finite cell
+	//	  return &(*cit);
+	//	}
 	break;
       }
     case 2:
@@ -1095,9 +1096,9 @@ public:
 	//first tests whether p is coplanar with the current triangulation
 	Facet_iterator finite_fit = finite_facets_begin();
 	if ( geom_traits().orientation( p, 
-			       (*finite_fit).first->vertex(0)->point(),
-			       (*finite_fit).first->vertex(1)->point(),
-			       (*finite_fit).first->vertex(2)->point() ) 
+					(*finite_fit).first->vertex(0)->point(),
+					(*finite_fit).first->vertex(1)->point(),
+					(*finite_fit).first->vertex(2)->point() ) 
 	     != CGAL_DEGENERATE ) {
 	  lt = OUTSIDE_AFFINE_HULL;
 	  li = 3; // only one facet : any cell is degenerate in dimension 2
@@ -1132,51 +1133,51 @@ public:
 	} 
 	return (*fit).first;
 	// the sequel was written to return a finite facet in any case:
-// 	if ( is_infinite(*fit) ) {
-// 	      // returns the finite facet sharing the finite edge of (*fit)
-// 	  switch ( lt ) {
-// 	  case FACET:
-// 	    {
-// 	      Cell_handle 
-// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
-// 	      li = n->index( (*fit).first->vertex
-// 			     (cw((*fit).first->index(infinite))) );
-// 	      lj = n->index( (*fit).first->vertex
-// 			     (ccw((*fit).first->index(infinite))) );
-// 	      lt = OUTSIDE_CONVEX_HULL;
-// 	      return n;
-// 	    }
-// 	  case EDGE:
-// 	    {
-// 	      Cell_handle 
-// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
-// 	      li = n->index((*fit).first->vertex(li));
-// 	      lj = n->index((*fit).first->vertex(lj));
-// 	      return n;
-// 	    }
-// 	  case VERTEX:
-// 	    {
-// 	      Cell_handle 
-// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
-// 	      li = n->index((*fit).first->vertex(li));
-// 	      return n;
-// 	    }
-// 	  default:
-// 	    {
-// 	      // cannot happen, only to avoid warning with eg++
-// 	      return (*fit).first;
-// 	    }
-// 	  }
-// 	}
-// 	else { // finite facet
-// 	  if ( lt == FACET ) {
-// 	    li = 3;
-// 	  }
-// 	  // case vertex or edge : li and lj already correct
-// 	  // because the index of the vertices in the facet is the same as the
-// 	  // index in the underlying degenerate cell
-// 	  return (*fit).first;
-// 	}
+	// 	if ( is_infinite(*fit) ) {
+	// 	      // returns the finite facet sharing the finite edge of (*fit)
+	// 	  switch ( lt ) {
+	// 	  case FACET:
+	// 	    {
+	// 	      Cell_handle 
+	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+	// 	      li = n->index( (*fit).first->vertex
+	// 			     (cw((*fit).first->index(infinite))) );
+	// 	      lj = n->index( (*fit).first->vertex
+	// 			     (ccw((*fit).first->index(infinite))) );
+	// 	      lt = OUTSIDE_CONVEX_HULL;
+	// 	      return n;
+	// 	    }
+	// 	  case EDGE:
+	// 	    {
+	// 	      Cell_handle 
+	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+	// 	      li = n->index((*fit).first->vertex(li));
+	// 	      lj = n->index((*fit).first->vertex(lj));
+	// 	      return n;
+	// 	    }
+	// 	  case VERTEX:
+	// 	    {
+	// 	      Cell_handle 
+	// 		n = (*fit).first->neighbor((*fit).first->index(infinite));
+	// 	      li = n->index((*fit).first->vertex(li));
+	// 	      return n;
+	// 	    }
+	// 	  default:
+	// 	    {
+	// 	      // cannot happen, only to avoid warning with eg++
+	// 	      return (*fit).first;
+	// 	    }
+	// 	  }
+	// 	}
+	// 	else { // finite facet
+	// 	  if ( lt == FACET ) {
+	// 	    li = 3;
+	// 	  }
+	// 	  // case vertex or edge : li and lj already correct
+	// 	  // because the index of the vertices in the facet is the same as the
+	// 	  // index in the underlying degenerate cell
+	// 	  return (*fit).first;
+	// 	}
 	break;
       }
     case 1:
@@ -1184,8 +1185,8 @@ public:
 	//first tests whether p is collinear with the current triangulation
 	Edge_iterator finite_eit = finite_edges_begin();
 	if ( ! geom_traits().collinear(p,
-			      (*finite_eit).first->vertex(0)->point(),
-			      (*finite_eit).first->vertex(1)->point()) ) {
+				       (*finite_eit).first->vertex(0)->point(),
+				       (*finite_eit).first->vertex(1)->point()) ) {
 	  lt = OUTSIDE_AFFINE_HULL;
 	  return (*finite_eit).first;
 	}
@@ -1205,50 +1206,49 @@ public:
 	  CGAL_triangulation_assertion(false);
 	  return NULL;
 	}
-	if ( is_infinite(*eit) ) {
-	  if ( lt == EDGE ) {
+	if ( lt == EDGE ) {
+	  if ( is_infinite(*eit) ) {
 	    lt = OUTSIDE_CONVEX_HULL;
 	    lj = (*eit).first->index(infinite);// 0 or 1
 	    li = 1-lj;
 	  }
-	}
-	else {
-	  li = (*eit).second;
-	  lj = (*eit).third;
-	}
+	  else {
+	    lj = 1-li;
+	  }
+	} // else li is already the right index
 	return (*eit).first;
 	// the sequel was written to return a finite edge in any case
-// 	if ( is_infinite(*eit) ) {
-// 	  // returns the finite edge sharing the finite vertex of *eit
-// 	  switch ( lt ) {
-// 	  case EDGE:
-// 	    {
-// 	      Cell_handle 
-// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
-// 	      li = n->index( (*eit).first->vertex
-// 			     ( 1 - (*eit).first->index(infinite) ) );
-// 	      lj = 1-li;
-// 	      lt = OUTSIDE_CONVEX_HULL;
-// 	      return n;
-// 	    }
-// 	  case VERTEX:
-// 	    {
-// 	      Cell_handle 
-// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
-// 	      li = n->index((*eit).first->vertex(li));
-// 	      return n;
-// 	    }
-// 	  default :
-// 	    {
-// 	      return (*eit).first;
-// 	    }
-// 	  }
-// 	}
-// 	else { // finite edge
-// 	  li = (*eit).second;
-// 	  lj = (*eit).third;
-// 	  return (*eit).first;
-// 	}
+	// 	if ( is_infinite(*eit) ) {
+	// 	  // returns the finite edge sharing the finite vertex of *eit
+	// 	  switch ( lt ) {
+	// 	  case EDGE:
+	// 	    {
+	// 	      Cell_handle 
+	// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
+	// 	      li = n->index( (*eit).first->vertex
+	// 			     ( 1 - (*eit).first->index(infinite) ) );
+	// 	      lj = 1-li;
+	// 	      lt = OUTSIDE_CONVEX_HULL;
+	// 	      return n;
+	// 	    }
+	// 	  case VERTEX:
+	// 	    {
+	// 	      Cell_handle 
+	// 		n = (*eit).first->neighbor((*eit).first->index(infinite));
+	// 	      li = n->index((*eit).first->vertex(li));
+	// 	      return n;
+	// 	    }
+	// 	  default :
+	// 	    {
+	// 	      return (*eit).first;
+	// 	    }
+	// 	  }
+	// 	}
+	// 	else { // finite edge
+	// 	  li = (*eit).second;
+	// 	  lj = (*eit).third;
+	// 	  return (*eit).first;
+	// 	}
 	break;
       }
     case 0:
@@ -1281,7 +1281,7 @@ public:
   }
 
   Cell_handle
-  locate_quick(const Point & p,
+  locate(const Point & p,
 	       Cell_handle start,
 	       Locate_type & lt,
 	       int & li,
@@ -1299,14 +1299,15 @@ public:
     // separating p from the rest of the triangulation
     // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
   {
-    CGAL_triangulation_precondition( (start != NULL) 
-				     && ( ! start->has_vertex(infinite) ) );
     static CGAL_Random rand( (long) 0 );
     int i, inf;
     Point p0,p1,p2,p3;
     switch (dimension()) {
     case 3:
       {
+	CGAL_triangulation_precondition
+	  ( (start != NULL) 
+	    && ( ! start->has_vertex(infinite) ) );
 	Cell_handle c = start;
 	CGAL_Orientation o[4];
 	while (1) {
@@ -1424,6 +1425,9 @@ public:
       }
     case 2:
       {
+	CGAL_triangulation_precondition
+	  ( (start != NULL) 
+	    && ( ! start->has_vertex(infinite) ) );
 	//first tests whether p is coplanar with the current triangulation
 	Facet_iterator finite_fit = finite_facets_begin();
 	if ( geom_traits().orientation
@@ -1433,7 +1437,7 @@ public:
 	       (*finite_fit).first->vertex(2)->point() ) 
 	     != CGAL_DEGENERATE ) {
 	  lt = OUTSIDE_AFFINE_HULL;
-	  // li = 3; // only one facet : any cell is degenerate in dimension 2
+	  li = 3; // only one facet in dimension 2
 	  return (*finite_fit).first;
 	}
 	// if p is coplanar, location in the triangulation
@@ -1507,113 +1511,189 @@ public:
 	// to avoid warning
 	return start;
       }
+    case 1:
+      {
+	CGAL_triangulation_precondition
+	  ( (start != NULL) 
+	    && ( ! start->has_vertex(infinite) ) );
+	//first tests whether p is collinear with the current triangulation
+	Edge_iterator finite_eit = finite_edges_begin();
+	if ( ! geom_traits().collinear(p,
+			      (*finite_eit).first->vertex(0)->point(),
+			      (*finite_eit).first->vertex(1)->point()) ) {
+	  lt = OUTSIDE_AFFINE_HULL;
+	  return (*finite_eit).first;
+	}
+	// if p is collinear, location :
+	Cell_handle c = start;
+	bool notfound = true;
+	do {
+	  if ( side_of_edge( p, c, 0, 1, lt, li ) != CGAL_ON_UNBOUNDED_SIDE ) {
+	    notfound = false;
+	  }
+	  else {
+	    if ( geom_traits().compare_x(p,c->vertex(1)->point()) 
+		 == CGAL_LARGER ) {
+	      c = c->neighbor(0);
+	    }
+	    else {
+	      c = c->neighbor(1);
+	    }
+	  }
+	} while ( notfound );
+	if ( lt == EDGE ) {
+	  if ( c->has_vertex(infinite) ) {
+	    lt = OUTSIDE_CONVEX_HULL;
+	  }
+	  lj = 1-li;
+	} // else vertex, li is already the right index
+	return c;
+      }
+    case 0:
+      {
+	Vertex_iterator vit = finite_vertices_begin();
+	if ( p != vit->point() ) {
+	  lt = OUTSIDE_AFFINE_HULL;
+	}
+	else {
+	  lt = VERTEX;
+	  li = 0;
+	}
+	return vit->cell();
+	break;
+      }
+    case -1:
+      {
+	lt = OUTSIDE_AFFINE_HULL;
+	return NULL;
+      }
+    default:
+      {
+	CGAL_triangulation_assertion(false);
+	return NULL;
+      }
     }
     // to avoid warning
+    CGAL_triangulation_assertion(false);
     return start;
   }
 	  
+  inline Cell_handle
+  locate(const Point & p, Cell_handle start) const
+    {
+      Locate_type lt;
+      int li, lj;
+      return locate( p, start, lt, li, lj);
+    }
+
   inline Cell_handle
   locate(const Point & p) const
     {
       Locate_type lt;
       int li, lj;
-      if ( dimension() > 1 ) {
-	// there is at least one finite "cell" (or facet)
-	Cell_handle start = infinite_vertex()->cell()
-	  ->neighbor( infinite_vertex()->cell()->index( infinite_vertex()) );
-	c = locate_quick( p, start, lt, li, lj);
+      Cell_handle start;
+      if ( dimension() >= 1 ) {
+	// there is at least one finite "cell" (or facet or edge)
+	start = infinite_vertex()->cell()->neighbor( 
+	  infinite_vertex()->cell()->index( infinite_vertex()) 
+	  );
       }
       else {
-	c = locate( p, lt, li, lj);
+	start = NULL;
       }
-      //      return locate(p, lt, li, lj);
-    }
-
-inline Cell_handle
-locate_quick(const Point & p) const
-{
-      Locate_type lt;
-      int li, lj;
-      Cell_handle start = *finite_cells_begin();
-      return locate_quick(p, start, lt, li, lj);
+      return locate( p, start, lt, li, lj);
     }
 
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Cell_iterator finite_cells_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, false); // false means "without infinite cells"
   }
   Cell_iterator all_cells_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, true); // true means "with infinite cells"
   }
   Cell_iterator cells_end() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis); // not second argument -> past-end
   }
 
   Vertex_iterator finite_vertices_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, false);
   }
   Vertex_iterator all_vertices_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, true);
   }
   Vertex_iterator vertices_end() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis);
   }
 
   Edge_iterator finite_edges_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, false);
   }
   Edge_iterator all_edges_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, true);
   }
   Edge_iterator edges_end() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis);
   }
 
   Facet_iterator finite_facets_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, false);
   }
   Facet_iterator all_facets_begin() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, true);
   }
   Facet_iterator facets_end() const
   {
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis);
   }
 
   Cell_circulator incident_cells(Edge e) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Cell_circulator(ncthis,e);
   }
 
   Cell_circulator incident_cells(Edge e, Cell_handle c) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
-    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis 
+      = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Cell_circulator(ncthis,e,c);
   }
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
