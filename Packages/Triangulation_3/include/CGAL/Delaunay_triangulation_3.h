@@ -488,8 +488,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
       Vertex_handle v2 = infinite_vertex();
       const Point &p0 = v0->point();
       const Point &p1 = v1->point();
-      const Point *p2;
-      Vertex_handle vv;
+      const Point *p2 = NULL; // Initialize to NULL to avoid warning.
   
       typename Hole::iterator hdone = hole.end();
       typename Hole::iterator hit = hole.begin();
@@ -502,7 +501,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
       for (; hit != hdone; ++hit) {
 	fn = hit->first;
 	in = hit->second;
-	vv = fn->vertex(ccw(in));
+        Vertex_handle vv = fn->vertex(ccw(in));
 	if (is_infinite(vv)) {
 	  if (is_infinite(v2))
 	      cut_after = hit;
@@ -511,8 +510,8 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 	  const Point &p = vv->point();
 	  if (coplanar_orientation(p0, p1, p) == COUNTERCLOCKWISE) {
 	    if (is_infinite(v2) ||
-	      ((Oriented_side) coplanar_side_of_bounded_circle(p0, p1, *p2, p))
-		      == ON_POSITIVE_SIDE){
+	        coplanar_side_of_bounded_circle(p0, p1, *p2, p)
+		  == ON_BOUNDED_SIDE) {
 		v2 = vv;
 		p2 = &p;
 		cut_after = hit;
