@@ -1,4 +1,8 @@
+Version 3.28 (7 July 2003)
+- Made typedef typename Traits::Iso_box_d Box; public [af]
 - Made type  Midpoint_of_rectangle<>::Separator   public [af]
+
+
 
 - Replaced new/delete with Compact_container and std::vector
 - Point_container::size() returns unsigned int instead of int
