@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
@@ -58,28 +57,31 @@ public:
   Base;
   typedef typename Base::Value Value;
 
-  All_furthest_neighbor_matrix( RandomAccessIC f,
-                                RandomAccessIC l)
-  : Base( f, l, f, l)
+  All_furthest_neighbor_matrix(RandomAccessIC f, RandomAccessIC l)
+  : Base(f, l, f, l)
   {}
 
-  int
-  number_of_columns() const
-  { return 2 * number_of_rows() - 1; }
+  All_furthest_neighbor_matrix(RandomAccessIC f,
+                               RandomAccessIC l,
+                               const Operation& o)
+  : Base(f, l, f, l, o)
+  {}
+
+  int number_of_columns() const { return 2 * number_of_rows() - 1; }
 
   Value
   operator()( int r, int c) const
   {
-    CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
-    CGAL_optimisation_precondition( c >= 0 && c < number_of_columns());
-    if ( c <= r)
-      return Value( c - r);
-    else if ( c >= r + number_of_rows())
-      return Value( 0);
-    else if ( c >= number_of_rows())
-      return Base::operator()( r, c - number_of_rows());
+    CGAL_optimisation_precondition(r >= 0 && r < number_of_rows());
+    CGAL_optimisation_precondition(c >= 0 && c < number_of_columns());
+    if (c <= r)
+      return Value(c - r);
+    else if (c >= r + number_of_rows())
+      return Value(0);
+    else if (c >= number_of_rows())
+      return Base::operator()(r, c - number_of_rows());
     else
-      return Base::operator()( r, c);
+      return Base::operator()(r, c);
   }
 };
 
@@ -148,7 +150,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
   // compute maxima:
   monotone_matrix_search(
     dynamic_matrix(
-      Afn_matrix( points_begin, points_end)),
+      Afn_matrix(points_begin, points_end, t.distance_object())),
     v.begin());
 
   // output result:

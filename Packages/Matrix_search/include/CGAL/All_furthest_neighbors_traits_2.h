@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
@@ -40,8 +39,8 @@ struct Squared_distance
 : public CGAL_STD::binary_function< T1, T2, typename T1::R::FT >
 {
   typename T1::R::FT
-  operator()( const T1& t1, const T2& t2) const
-  { return squared_distance( t1, t2); }
+  operator()(const T1& t1, const T2& t2) const
+  { return squared_distance(t1, t2); }
 };
 
 CGAL_END_NAMESPACE
@@ -50,10 +49,10 @@ CGAL_END_NAMESPACE
 #endif
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class All_furthest_neighbors_traits {
 public:
-  typedef _R                                    R;
+  typedef R_                                    R;
   typedef Point_2< R >                          Point_2;
   typedef Squared_distance< Point_2, Point_2 >  Distance;
 
@@ -63,6 +62,9 @@ public:
   typedef typename std::vector< int >::reverse_iterator
     OutputIterator;
 #endif
+
+  // return distance object
+  Distance distance_object() const { return d; }
 
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC >
@@ -81,6 +83,9 @@ public:
     Polygon_2 p( points_begin, points_end);
     return p.is_convex();
   } // is_convex( points_begin, points_end)
+
+private:
+  Distance d;
 };
 
 template < class RandomAccessIC, class OutputIterator >

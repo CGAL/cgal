@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
@@ -60,12 +59,12 @@ struct Wastebasket {
   { return *this; }
 };
 
-template < class _Traits >
+template < class Traits_ >
 struct Loc_domain {
   // ---------------------------------------------
   // types:
 
-  typedef _Traits                               Traits;
+  typedef Traits_                               Traits;
   typedef typename Traits::FT                   FT;
   typedef typename Traits::Point_2              Point_2;
 
@@ -209,9 +208,9 @@ public:
   Traits traits;
 
 }; // class Loc_domain
-template < class _Traits >
-struct Staircases : public Loc_domain< _Traits > {
-  typedef _Traits                           Traits;
+template < class Traits_ >
+struct Staircases : public Loc_domain< Traits_ > {
+  typedef Traits_                           Traits;
   typedef Loc_domain< Traits >              Base;
   typedef typename Base::Container          Container;
   typedef typename Base::Iterator           Iterator;

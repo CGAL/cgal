@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // Predefined Traits classes for Extremal Polygon Computation
 // ============================================================================
 
@@ -48,18 +47,18 @@ Kgon_triangle_area( const Point_2< R >& p,
                    r.x() * ( p.y() - q.y()));
 }
 
-template < class _R >
-class _Kgon_area_operator
-: public CGAL_STD::binary_function< Point_2< _R >,
-                                    Point_2< _R >,
-                                    typename _R::FT >
+template < class R_ >
+class Kgon_area_operator
+: public CGAL_STD::binary_function< Point_2< R_ >,
+                                    Point_2< R_ >,
+                                    typename R_::FT >
 {
 public:
-  typedef _R                 R;
+  typedef R_                 R;
   typedef Point_2< R >  Point_2;
   typedef typename R::FT     FT;
 
-  _Kgon_area_operator( const Point_2& p)
+  Kgon_area_operator( const Point_2& p)
   : root( p)
   {}
 
@@ -73,14 +72,14 @@ private:
 
 
 
-template < class _R >
+template < class R_ >
 class Kgon_area_traits
 {
 public:
-  typedef          _R                   R;
+  typedef          R_              R;
   typedef          Point_2< R >    Point_2;
-  typedef typename _R::FT               FT;
-  typedef _Kgon_area_operator< R > Operation;
+  typedef typename R::FT           FT;
+  typedef Kgon_area_operator< R >  Operation;
 
   int
   min_k() const
@@ -115,7 +114,7 @@ public:
   //  the points described by the range [points_begin, points_end)
   //  form the boundary of a convex polygon oriented counterclockwise.
   //
-  // POST: write the points of [points_begin, points_end)
+  // POST: write indices of the points from [points_begin, points_end)
   //  forming a min_k()-gon rooted at points_begin[0]
   //  of maximum area to o in counterclockwise order and return
   //  the past-the-end iterator for that range (== o + min_k()).
@@ -191,29 +190,24 @@ CGAL_END_NAMESPACE
 #endif // CGAL_USE_LEDA
 CGAL_BEGIN_NAMESPACE
 
-template < class _FT >
-struct Sqrt
-: public CGAL_STD::binary_function< _FT, _FT, _FT >
+template < class FT_ >
+struct Sqrt : public CGAL_STD::binary_function< FT_, FT_, FT_ >
 {
-  typedef _FT  FT;
-
-  FT
-  operator()( const FT& x) const
-  { return CGAL::sqrt( x); }
-
+  typedef FT_  FT;
+  FT operator()(const FT& x) const { return CGAL::sqrt(x); }
 };
-template < class _R >
-class _Kgon_perimeter_operator
-: public CGAL_STD::binary_function< Point_2< _R >,
-                                    Point_2< _R >,
-                                    typename _R::FT >
+template < class R_ >
+class Kgon_perimeter_operator
+: public CGAL_STD::binary_function< Point_2< R_ >,
+                                    Point_2< R_ >,
+                                    typename R_::FT >
 {
 public:
-  typedef _R              R;
+  typedef R_              R;
   typedef Point_2< R >    Point_2;
   typedef typename R::FT  FT;
 
-  _Kgon_perimeter_operator( const Point_2& p)
+  Kgon_perimeter_operator( const Point_2& p)
   : root( p)
   {}
 
@@ -231,14 +225,14 @@ private:
 };
 
 
-template < class _R >
+template < class R_ >
 class Kgon_perimeter_traits
 {
 public:
-  typedef          _R                    R;
+  typedef          R_                    R;
   typedef          Point_2< R >          Point_2;
-  typedef typename _R::FT                FT;
-  typedef _Kgon_perimeter_operator< R >  Operation;
+  typedef typename R::FT                 FT;
+  typedef Kgon_perimeter_operator< R >   Operation;
 
   int
   min_k() const
@@ -267,16 +261,17 @@ public:
                      OutputIterator o) const
   // RandomAccessIC is a random access iterator or
   // circulator with value_type Point_2.
-  // OutputIterator has value_type Point_2.
+  // OutputIterator accepts int as value_type.
   //
   // PRE: n := | [points_begin, points_end) | >= min_k() and
   //  the points described by the range [points_begin, points_end)
   //  form the boundary of a convex polygon oriented counterclockwise.
   //
-  // POST: write the points of [points_begin, points_end)
+  // POST: write indices of the points from [points_begin, points_end)
   //  forming a min_k()-gon rooted at points_begin[0] of maximum
-  //  perimeter to o in counterclockwise order and return the
-  //  past-the-end iterator for that range (== o + min_k()).
+  //  perimeter to o in counterclockwise order, set max_perimeter
+  //  to twice this perimeter and return the past-the-end iterator
+  //  for the range (== o + min_k()).
   {
 #ifndef CGAL_CFG_NO_NAMESPACE
     using std::bind2nd;
@@ -297,11 +292,12 @@ public:
         points_end,
         compose2_2(
           less< FT >(),
-          bind2nd( operation( points_begin[0]), points_begin[0]),
-          bind2nd( operation( points_begin[0]), points_begin[0]))));
+          bind2nd(operation(points_begin[0]), points_begin[0]),
+          bind2nd(operation(points_begin[0]), points_begin[0]))));
     
     // give result:
-    *o++ = iterator_distance( points_begin, maxi);
+    max_perimeter = operation(*points_begin)(*maxi, *points_begin);
+    *o++ = iterator_distance(points_begin, maxi);
     *o++ = 0;
     
     return o;

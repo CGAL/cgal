@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // Compute extremal polygons of a convex polygon
 // ============================================================================
 
@@ -55,24 +54,24 @@ public:
 };
 
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
-template < class _RandomAccessIC_object,
-           class _RandomAccessIC_value,
-           class _Operation >
+template < class RandomAccessIC_object_,
+           class RandomAccessIC_value_,
+           class Operation_ >
 #else
-template < class _RandomAccessIC_object,
-           class _RandomAccessIC_value,
-           class _Operation,
-           class _Object,
-           class _Value >
+template < class RandomAccessIC_object_,
+           class RandomAccessIC_value_,
+           class Operation_,
+           class Object_,
+           class Value_ >
 #endif
 // This class describes the kind of matrices used for the
 // computation of extremal polygons.
 //
-// _RandomAccessIC_object is a random access iterator or circulator
+// RandomAccessIC_object is a random access iterator or circulator
 //   with value type Object
-// _RandomAccessIC_value is a random access iterator or circulator
+// RandomAccessIC_value is a random access iterator or circulator
 //   with value type Value
-// _Operation is an adatable binary function:
+// Operation is an adatable binary function:
 //   Object x Object -> Value
 //
 // objects can be constructed using the helper function
@@ -80,9 +79,9 @@ template < class _RandomAccessIC_object,
 //
 class Extremal_polygon_matrix {
 public:
-  typedef _RandomAccessIC_object RandomAccessIC_object;
-  typedef _RandomAccessIC_value  RandomAccessIC_value;
-  typedef _Operation             Operation;
+  typedef RandomAccessIC_object_ RandomAccessIC_object;
+  typedef RandomAccessIC_value_  RandomAccessIC_value;
+  typedef Operation_             Operation;
 
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
   typedef typename
@@ -92,8 +91,8 @@ public:
     std::iterator_traits< RandomAccessIC_value >::value_type
   Value;
 #else
-  typedef _Object                Object;
-  typedef _Value                 Value;
+  typedef Object_                Object;
+  typedef Value_                 Value;
 #endif
 
   Extremal_polygon_matrix(
@@ -112,9 +111,9 @@ public:
   //   begin_value[c] + op( begin_row[r], begin_col[c]).
   //
   : op( o),
-    _begin_row( begin_row),
-    _begin_col( begin_col),
-    _begin_value( begin_value),
+    begin_row_( begin_row),
+    begin_col_( begin_col),
+    begin_value_( begin_value),
     n_rows( iterator_distance( begin_row, end_row)),
     n_cols( iterator_distance( begin_col, end_col))
   {
@@ -136,15 +135,14 @@ public:
   {
     CGAL_optimisation_precondition( r >= 0 && r < n_rows);
     CGAL_optimisation_precondition( c >= 0 && c < n_cols);
-    return _begin_value[c] +
-      op( _begin_row[r], _begin_col[c]);
+    return begin_value_[c] + op( begin_row_[r], begin_col_[c]);
   }
 
 private:
   Operation              op;
-  RandomAccessIC_object  _begin_row;
-  RandomAccessIC_object  _begin_col;
-  RandomAccessIC_value   _begin_value;
+  RandomAccessIC_object  begin_row_;
+  RandomAccessIC_object  begin_col_;
+  RandomAccessIC_value   begin_value_;
   int                    n_rows;
   int                    n_cols;
 };
@@ -155,8 +153,8 @@ template < class RandomAccessIC_object,
            class Operation >
 inline
 Extremal_polygon_matrix< RandomAccessIC_object,
-                              RandomAccessIC_value,
-                              Operation >
+                         RandomAccessIC_value,
+                         Operation >
 extremal_polygon_matrix(
   RandomAccessIC_object begin_row,
   RandomAccessIC_object end_row,
@@ -167,8 +165,8 @@ extremal_polygon_matrix(
   const Operation&      o)
 {
   return Extremal_polygon_matrix< RandomAccessIC_object,
-                                       RandomAccessIC_value,
-                                       Operation >
+                                  RandomAccessIC_value,
+                                  Operation >
   ( begin_row, end_row,
     begin_col, end_col,
     begin_value, end_value,

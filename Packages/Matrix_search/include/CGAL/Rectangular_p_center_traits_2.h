@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999, 2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -19,8 +19,7 @@
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
-// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
-//
+// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
@@ -351,12 +350,12 @@ struct Rectangular_p_center_default_traits_2 : public R
   { return Max_y_2(greater_y_2_object()); }
 };
 
-template < class _Traits, class _PiercingFunction >
+template < class Traits_, class PiercingFunction_ >
 struct Rectangular_p_center_matrix_search_traits_2 {
-  typedef _Traits                        Traits;
+  typedef Traits_                        Traits;
   typedef typename Traits::FT            FT;
   typedef typename Traits::Point_2       Point_2;
-  typedef _PiercingFunction              PiercingFunction;
+  typedef PiercingFunction_              PiercingFunction;
   typedef Staircases< Traits >           LD;
   typedef typename LD::size_type         size_type;
 
