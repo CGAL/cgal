@@ -1,4 +1,4 @@
-3.45   (?? June 2001)
+3.45   (20 June 2001)
 - Cleanup misc.h and don't include it from basic.h.
 - Added Construct_orthogonal_vector_[23]
 - Added Construct_opposite_vector_[23]
