@@ -1,4 +1,4 @@
-3.51  (? Oct 2002)
+3.51  (9 Oct 2002)
 - Remove useless file _test_misc, _test_pvd_[23].
 
 3.50  (8 Oct 2002)
