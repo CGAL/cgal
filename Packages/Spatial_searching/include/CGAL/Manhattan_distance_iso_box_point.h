@@ -52,7 +52,7 @@ namespace CGAL {
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 		  qe = construct_it(q.max(),1), qminit = construct_it(q.min()),
 		  pit = construct_it(p);
-		for (; qmaxit != qe; ++qmaxit) {
+		for (; qmaxit != qe; ++pit,++qmaxit,++qminit) {
 			if ((*pit)>(*qmaxit)) distance += 
 			(*pit)-(*qmaxit); 
 			else if ((*pit)<(*qminit)) distance += 
@@ -68,7 +68,7 @@ namespace CGAL {
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 		  qe = construct_it(q.max(),1), qminit = construct_it(q.min());
-		for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++i)  {
+		for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
 			if (r.min_coord(i)>(*qmaxit)) 
 			  distance +=(r.min_coord(i)-(*qmaxit)); 
 			if (r.max_coord(i)<(*qminit)) 
@@ -85,7 +85,7 @@ namespace CGAL {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
       typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
 	qe = construct_it(q.max(),1), qminit = construct_it(q.min());
-      for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++i)  {
+      for (unsigned int i = 0; qmaxit != qe; ++ qmaxit, ++qminit, ++i)  {
 	if ( r.max_coord(i)-(*qminit) >(*qmaxit)-r.min_coord(i) )  
 	  distance += (r.max_coord(i)-(*qminit));
 	else 
