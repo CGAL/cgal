@@ -1,3 +1,6 @@
+4.7      (25 Jan 01)
+- Merge the CLN package.
+
 4.6      (25 Jan 01)
 - included the documentation source in the doc_tex directory
 

@@ -1,0 +1,12 @@
+CLN :
+-----
+- to_interval() is missing.
+- Switch to the New CLN version.
+- Add min/max wrappers depending on what is decided for CGAL.
+- Should I provide operator/(cl_I, cl_I) ?  Not sure.
+- Things that are supported by Gmpz, and should (?) be ported to cl_I:
+  - exact_division  (exquo())
+  - approximate_decimal_length
+  - convert_to<IA>
+- The test suite needs to be more exhaustive...
+  How about a generic NT test-suite ?
