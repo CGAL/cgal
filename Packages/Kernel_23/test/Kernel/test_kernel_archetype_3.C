@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1999,2003 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+// 
+// release       :
+// release_date  :
+// 
+// file          : test_kernel_archetype_3.C
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Matthias Baesken
+//
+//
+// coordinator   : MPI, Saarbruecken
+// ============================================================================
+ 
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 

@@ -48,7 +48,10 @@ all:            \
                 Homogeneous$(EXE_EXT) \
                 Simple_cartesian$(EXE_EXT) \
                 Simple_homogeneous$(EXE_EXT) \
-                test_kernel__$(EXE_EXT) 
+                test_kernel__$(EXE_EXT) \
+		test_kernel_archetype_2$(EXE_EXT) \
+		test_kernel_archetype_3$(EXE_EXT)
+		
 
 Cartesian$(EXE_EXT): Cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Cartesian Cartesian$(OBJ_EXT) $(LDFLAGS)
@@ -65,12 +68,21 @@ Simple_homogeneous$(EXE_EXT): Simple_homogeneous$(OBJ_EXT)
 test_kernel__$(EXE_EXT): test_kernel__$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernel__ test_kernel__$(OBJ_EXT) $(LDFLAGS)
 
+test_kernel_archetype_2$(EXE_EXT): test_kernel_archetype_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernel_archetype_2 test_kernel_archetype_2$(OBJ_EXT) $(LDFLAGS)
+
+test_kernel_archetype_3$(EXE_EXT): test_kernel_archetype_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernel_archetype_3 test_kernel_archetype_3$(OBJ_EXT) $(LDFLAGS)
+
+
 clean: \
                    Cartesian.clean \
                    Homogeneous.clean \
                    Simple_cartesian.clean \
                    Simple_homogeneous.clean \
-                   test_kernel__.clean 
+                   test_kernel__.clean \
+		   test_kernel_archetype_2.clean \
+		   test_kernel_archetype_3.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

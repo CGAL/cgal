@@ -1,3 +1,6 @@
+1.11 (9 January 2003)
+- tests added for kernel concept archetype
+
 1.1 (8 January 2003)
 - CGAL kernel concept archetype files added
 

@@ -75,5 +75,7 @@ else
   compile_and_run Simple_cartesian
   compile_and_run Simple_homogeneous
   compile_and_run test_kernel__
+  compile_and_run test_kernel_archetype_2
+  compile_and_run test_kernel_archetype_3
 fi
 
