@@ -8,13 +8,27 @@
 #endif // CGAL_BASIC_H
 #include <iostream>
 #include <cassert>
-// #ifndef CGAL_GMPZ_H
-// #include <CGAL/Gmpz.h>
-// #endif // CGAL_GMPZ_H
-// #include <CGAL/Quotient.h>
-//#include<CGAL/Arithmetic_filter.h>
-#include <CGAL/leda_integer.h>
 
+#ifdef CGAL_USE_CLN
+#include <CGAL/CLN/cl_integer.h>
+typedef cl_I Rtype;
+#else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz Rtype;
+#else
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer Rtype;
+#else
+#include <CGAL/double.h>
+typedef double Rtype;
+#endif // CGAL_USE_LEDA
+#endif // CGAL_USE_GMP
+#endif // CGAL_USE_CLN
+
+#include <CGAL/Quotient.h>
+typedef CGAL::Quotient<Rtype>   Ftype;
 
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
@@ -23,6 +37,8 @@
 #include <CGAL/Homogeneous.h>
 #endif // CGAL_HOMOGENEOUS_H
 
+typedef CGAL::Cartesian<Ftype>         Test_rep_cartesian;
+typedef CGAL::Homogeneous<Rtype>       Test_rep_homogeneous;
 
 // typedef CGAL::Quotient<CGAL::Gmpz> CT;
 // typedef CGAL::Quotient<CGAL::Gmpz> ET;
@@ -30,9 +46,5 @@
 // typedef CGAL::Quotient<CGAL::Gmpz> coord_type;
 // typedef CGAL::Cartesian<coord_type> Test_rep_cartesian;
 // typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
-typedef leda_integer                   Rtype;
-typedef CGAL::Quotient<leda_integer>   Ftype;
-typedef CGAL::Cartesian<Ftype>         Test_rep_cartesian;
-typedef CGAL::Homogeneous<Rtype>       Test_rep_homogeneous;
 
 #endif

@@ -141,16 +141,10 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1.dimension() == -1 ); 
   assert( T1.number_of_vertices() == 0 );
 
-  // Cls T2(Gt()), T3(T2);
   Cls T3(T1);
-  // assert( T3.geom_traits() == T2.geom_traits() ); // assert identity of traits
-
   Cls T4 = T1;
-  // assert( T4.geom_traits() == T1.geom_traits() ); // assert identity of traits
-  
   T3.swap(T1);
-  // assert( T1.geom_traits() == T2.geom_traits() );
-  // assert( T3.geom_traits() == T4.geom_traits() );
+  
 
   /**************************/
   /******* INSERTIONS *******/
@@ -197,7 +191,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1_2.number_of_faces() == 0 );
   assert( T1_2.is_valid() );
   
-  // p1,p2,p3  [endpoints first]
+  // p1,p3,p2  [endpoints first]
   Cls T1_3_0;
   Vertex_handle v1_3_0_1 = T1_3_0.insert(p1); assert( !v1_3_0_1.is_null() );
   Vertex_handle v1_3_0_3 = T1_3_0.insert(p3); assert( !v1_3_0_3.is_null() );
@@ -210,8 +204,8 @@ _test_cls_triangulation_2( const Triangulation & )
   // p1,p2,p3  [middle point first]
   Cls T1_3_1;
   Vertex_handle v1_3_1_1 = T1_3_1.insert(p1); assert( !v1_3_1_1.is_null() );
-  Vertex_handle v1_3_1_3 = T1_3_1.insert(p3); assert( !v1_3_1_3.is_null() );
-  Vertex_handle v1_3_1_2 = T1_3_1.insert(p2); assert( !v1_3_1_2.is_null() );
+  Vertex_handle v1_3_1_3 = T1_3_1.insert(p2); assert( !v1_3_1_3.is_null() );
+  Vertex_handle v1_3_1_2 = T1_3_1.insert(p3); assert( !v1_3_1_2.is_null() );
   assert( T1_3_1.dimension() == 1 );
   assert( T1_3_1.number_of_vertices() == 3 );
   assert( T1_3_1.number_of_faces() == 0 );
