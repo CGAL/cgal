@@ -190,7 +190,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(px.to_double(),
+    return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pw.to_double(),
 		qx.to_double(),

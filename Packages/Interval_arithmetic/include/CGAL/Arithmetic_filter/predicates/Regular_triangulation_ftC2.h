@@ -230,7 +230,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testC2_12::epsilon_variant(px.to_double(),
+    return Static_Filtered_power_testC2_12::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pwt.to_double(),
 		qx.to_double(),
@@ -459,7 +460,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testC2_9::epsilon_variant(px.to_double(),
+    return Static_Filtered_power_testC2_9::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pwt.to_double(),
 		qx.to_double(),

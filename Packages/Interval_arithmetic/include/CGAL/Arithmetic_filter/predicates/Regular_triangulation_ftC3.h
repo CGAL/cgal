@@ -306,7 +306,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testC3_20::epsilon_variant(px.to_double(),
+    return Static_Filtered_power_testC3_20::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		pwt.to_double(),
@@ -657,7 +658,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testC3_16::epsilon_variant(px.to_double(),
+    return Static_Filtered_power_testC3_16::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		pwt.to_double(),
@@ -947,7 +949,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testC3_12::epsilon_variant(px.to_double(),
+    return Static_Filtered_power_testC3_12::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		pwt.to_double(),

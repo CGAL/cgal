@@ -372,7 +372,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_power_testH3_25::epsilon_variant(phx.to_double(),
+    return Static_Filtered_power_testH3_25::epsilon_variant(
+		phx.to_double(),
 		phy.to_double(),
 		phz.to_double(),
 		phw.to_double(),

@@ -174,7 +174,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_xC2_7::epsilon_variant(px.to_double(),
+    return Static_Filtered_compare_xC2_7::epsilon_variant(
+		px.to_double(),
 		l1a.to_double(),
 		l1b.to_double(),
 		l1c.to_double(),
@@ -404,7 +405,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_xC2_12::epsilon_variant(l1a.to_double(),
+    return Static_Filtered_compare_xC2_12::epsilon_variant(
+		l1a.to_double(),
 		l1b.to_double(),
 		l1c.to_double(),
 		l2a.to_double(),
@@ -571,7 +573,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_y_at_xC2_5::epsilon_variant(px.to_double(),
+    return Static_Filtered_compare_y_at_xC2_5::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		la.to_double(),
 		lb.to_double(),
@@ -745,7 +748,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_y_at_xC2_7::epsilon_variant(px.to_double(),
+    return Static_Filtered_compare_y_at_xC2_7::epsilon_variant(
+		px.to_double(),
 		l1a.to_double(),
 		l1b.to_double(),
 		l1c.to_double(),
@@ -942,7 +946,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_y_at_xC2_9::epsilon_variant(l1a.to_double(),
+    return Static_Filtered_compare_y_at_xC2_9::epsilon_variant(
+		l1a.to_double(),
 		l1b.to_double(),
 		l1c.to_double(),
 		l2a.to_double(),
@@ -1178,7 +1183,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_y_at_xC2_12::epsilon_variant(l1a.to_double(),
+    return Static_Filtered_compare_y_at_xC2_12::epsilon_variant(
+		l1a.to_double(),
 		l1b.to_double(),
 		l1c.to_double(),
 		l2a.to_double(),
@@ -1328,7 +1334,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_compare_deltax_deltayC2_4::epsilon_variant(px.to_double(),
+    return Static_Filtered_compare_deltax_deltayC2_4::epsilon_variant(
+		px.to_double(),
 		qx.to_double(),
 		ry.to_double(),
 		sy.to_double(),
@@ -1475,7 +1482,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_orientationC2_6::epsilon_variant(px.to_double(),
+    return Static_Filtered_orientationC2_6::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		qx.to_double(),
 		qy.to_double(),
@@ -1672,7 +1680,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_side_of_oriented_circleC2_8::epsilon_variant(px.to_double(),
+    return Static_Filtered_side_of_oriented_circleC2_8::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		qx.to_double(),
 		qy.to_double(),
@@ -1853,7 +1862,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_side_of_bounded_circleC2_8::epsilon_variant(px.to_double(),
+    return Static_Filtered_side_of_bounded_circleC2_8::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		qx.to_double(),
 		qy.to_double(),
@@ -2011,7 +2021,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_dist_to_pointC2_6::epsilon_variant(px.to_double(),
+    return Static_Filtered_cmp_dist_to_pointC2_6::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		qx.to_double(),
 		qy.to_double(),
@@ -2172,7 +2183,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_lineC2_7::epsilon_variant(la.to_double(),
+    return Static_Filtered_cmp_signed_dist_to_lineC2_7::epsilon_variant(
+		la.to_double(),
 		lb.to_double(),
 		lc.to_double(),
 		px.to_double(),
@@ -2343,7 +2355,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_lineC2_8::epsilon_variant(px.to_double(),
+    return Static_Filtered_cmp_signed_dist_to_lineC2_8::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		qx.to_double(),
 		qy.to_double(),

@@ -132,7 +132,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(a00.to_double(),
+    return Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(
+		a00.to_double(),
 		a01.to_double(),
 		a10.to_double(),
 		a11.to_double(),
@@ -307,7 +308,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(a00.to_double(),
+    return Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(
+		a00.to_double(),
 		a01.to_double(),
 		a02.to_double(),
 		a10.to_double(),
@@ -550,7 +552,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(a00.to_double(),
+    return Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(
+		a00.to_double(),
 		a01.to_double(),
 		a02.to_double(),
 		a03.to_double(),
@@ -881,7 +884,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_sign_of_determinant5x5_25::epsilon_variant(a00.to_double(),
+    return Static_Filtered_sign_of_determinant5x5_25::epsilon_variant(
+		a00.to_double(),
 		a01.to_double(),
 		a02.to_double(),
 		a03.to_double(),
@@ -1320,7 +1324,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_sign_of_determinant6x6_36::epsilon_variant(a00.to_double(),
+    return Static_Filtered_sign_of_determinant6x6_36::epsilon_variant(
+		a00.to_double(),
 		a01.to_double(),
 		a02.to_double(),
 		a03.to_double(),

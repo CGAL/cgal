@@ -200,7 +200,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_collinearC3_9::epsilon_variant(px.to_double(),
+    return Static_Filtered_collinearC3_9::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		qx.to_double(),
@@ -411,7 +412,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_orientationC3_12::epsilon_variant(px.to_double(),
+    return Static_Filtered_orientationC3_12::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		qx.to_double(),
@@ -684,7 +686,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(px.to_double(),
+    return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		qx.to_double(),
@@ -947,7 +950,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(px.to_double(),
+    return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		qx.to_double(),
@@ -1143,7 +1147,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(px.to_double(),
+    return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(
+		px.to_double(),
 		py.to_double(),
 		pz.to_double(),
 		qx.to_double(),
@@ -1334,7 +1339,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(pa.to_double(),
+    return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(
+		pa.to_double(),
 		pb.to_double(),
 		pc.to_double(),
 		pd.to_double(),
@@ -1577,7 +1583,8 @@ re_adjust:
 
   try
   {
-    return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(ppx.to_double(),
+    return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(
+		ppx.to_double(),
 		ppy.to_double(),
 		ppz.to_double(),
 		pqx.to_double(),
