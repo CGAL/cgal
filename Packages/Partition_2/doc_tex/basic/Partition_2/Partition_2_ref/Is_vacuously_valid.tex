@@ -27,12 +27,12 @@ Function object class that indicates all sequences of points are valid.
 \ccCreationVariable{f}  %% choose variable name
 
 \ccConstructor{Is_vacuously_valid(const Traits& t);}{}
-\ccThree{boolxxx}{operator()(InputIterator first, InputIterator last)xxx}{}
+\ccThree{boolxxx}{operator()(InputIterator first, InputIterator beyond)xxx}{}
 \ccOperations
 
 \ccMethod{
 template<class InputIterator>
-bool operator()(InputIterator first, InputIterator last);}
+bool operator()(InputIterator first, InputIterator beyond);}
 {
   returns \ccc{true}.
 }
@@ -41,6 +41,10 @@ bool operator()(InputIterator first, InputIterator last);}
 
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccImplementation
+
+This test requires $O(1)$ time.
 
 \end{ccRefFunctionObjectClass}
 
