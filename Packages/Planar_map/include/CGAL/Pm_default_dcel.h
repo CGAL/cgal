@@ -305,11 +305,12 @@ public:
   typename F::Holes_iterator,
   const Halfedge*,
   typename F::Holes_const_iterator::difference_type,
-  typename F::Holes_const_iterator::iterator_category>       Holes_const_iterator;
+  typename F::Holes_const_iterator::iterator_category>   Holes_const_iterator;
 
   void add_hole(Halfedge* h) { F::add_hole(h); }
   void erase_hole(Holes_iterator hit) {F::erase_hole(hit.current_iterator());}
-  void erase_holes(Holes_iterator first, Holes_iterator last) {F::erase_holes(first.current_iterator(), last.current_iterator());}
+  void erase_holes(Holes_iterator first, Holes_iterator last) 
+  {F::erase_holes(first.current_iterator(), last.current_iterator());}
 
 
   Holes_iterator holes_begin() {return F::holes_begin();}
@@ -509,103 +510,104 @@ public:
   // returns the unbounded face in the assigned map
   void *assign(const Self &d, void *u_face)
   {
-	  //typedef std::map<Vertex_list::iterator, Vertex_list::iterator> VertexMap;
-	  //typedef std::map<Halfedge_list::iterator, Halfedge_list::iterator> HalfedgeMap;
-	  //typedef std::map<Face_list::iterator, Face_list::iterator> FaceMap;
-	  typedef std::map<void*, void*> ConnectMap;
+    //typedef std::map<Vertex_list::iterator, Vertex_list::iterator> VertexMap;
+    //typedef std::map<Halfedge_list::iterator, 
+    //                 Halfedge_list::iterator> HalfedgeMap;
+    //typedef std::map<Face_list::iterator, Face_list::iterator> FaceMap;
+    typedef std::map<void*, void*> ConnectMap;
 
-	  delete_all();
-
-	  
-	  ConnectMap vm, hm, fm;
-	  //VertexMap vm;
-	  //HalfedgeMap hm;
-	  //FaceMap fm;
-
-	  Vertex_const_iterator vit;
-	  Halfedge_const_iterator hit;
-	  Face_const_iterator fit;
-
-	  for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
-	  {
-		  Vertex* nv = new Vertex;
-		  nv->assign(*vit);
-		  vertices.push_back(*nv);
-		  vm.insert(ConnectMap::value_type((void*)&(*vit), (void*)nv));
-	  }
-
-	  for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
-	  {
-		  Halfedge* nh = new Halfedge;
-		  nh->assign(*hit);
-		  halfedges.push_back(*nh);
-		  hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
-	  }
-
-	  for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
-	  {
-		  Face* nf = new Face;
-		  nf->assign(*fit);
-		  faces.push_back(*nf);
-		  fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
-	  }
-
-
-	  // update pointers
-	  for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
-	  {
-		  void *he, *nhe, *nv, *v;
-		  v = (void*)(&(*vit));
-		  nv = (void*)(vm.find(v)->second);
-		  he = (void*)vit->halfedge();
-		  nhe = (void*)(hm.find(he)->second);
-		  ((Vertex*)nv)->set_halfedge((Halfedge*)nhe);
-	  }
+    delete_all();
 
 	  
-	  for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
-	  {
-		  void *he, *nhe, *v, *nv, *f, *nf, *op, *nop, *xt, *nxt;
-		  he = (void*)(&(*hit));
-		  nhe = hm.find(he)->second;
-		  v = (void*)hit->vertex();
-		  f = (void*)hit->face();
-		  op = (void*)hit->opposite();
-		  xt = (void*)hit->next();
+    ConnectMap vm, hm, fm;
+    //VertexMap vm;
+    //HalfedgeMap hm;
+    //FaceMap fm;
 
-		  nv = vm.find(v)->second;
-		  nf = fm.find(f)->second;
-		  nop = hm.find(op)->second;
-		  nxt = hm.find(xt)->second;
+    Vertex_const_iterator vit;
+    Halfedge_const_iterator hit;
+    Face_const_iterator fit;
 
-		  ((Halfedge*)nhe)->set_vertex((Vertex*)nv);
-		  ((Halfedge*)nhe)->set_face((Face*)nf);
-		  ((Halfedge*)nhe)->set_opposite((Halfedge*)nop);
-		  ((Halfedge*)nhe)->set_next((Halfedge*)nxt);
-	  }
+    for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
+      {
+	Vertex* nv = new Vertex;
+	nv->assign(*vit);
+	vertices.push_back(*nv);
+	vm.insert(ConnectMap::value_type((void*)&(*vit), (void*)nv));
+      }
 
-	  for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
-	  {
-		  void *f, *nf, *he, *nhe, *h, *nh;
-		  typename Face::Holes_const_iterator holes;
-		  f = (void*)(&(*fit));
-		  nf = fm.find(f)->second;
-		  he = (void*)fit->halfedge();
-		  if (he != NULL)
-			  nhe = hm.find(he)->second;
-		  else
-			  nhe = NULL;
-		  ((Face*)nf)->set_halfedge((Halfedge*)nhe);
+    for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
+      {
+	Halfedge* nh = new Halfedge;
+	nh->assign(*hit);
+	halfedges.push_back(*nh);
+	hm.insert(ConnectMap::value_type((void*)(&(*hit)), (void*)nh));
+      }
+
+    for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
+      {
+	Face* nf = new Face;
+	nf->assign(*fit);
+	faces.push_back(*nf);
+	fm.insert(ConnectMap::value_type((void*)&(*fit), (void*)nf));
+      }
+
+
+    // update pointers
+    for (vit = d.vertices_begin(); vit != d.vertices_end(); vit++)
+      {
+	void *he, *nhe, *nv, *v;
+	v = (void*)(&(*vit));
+	nv = (void*)(vm.find(v)->second);
+	he = (void*)vit->halfedge();
+	nhe = (void*)(hm.find(he)->second);
+	((Vertex*)nv)->set_halfedge((Halfedge*)nhe);
+      }
+
+	  
+    for (hit = d.halfedges_begin(); hit != d.halfedges_end(); hit++)
+      {
+	void *he, *nhe, *v, *nv, *f, *nf, *op, *nop, *xt, *nxt;
+	he = (void*)(&(*hit));
+	nhe = hm.find(he)->second;
+	v = (void*)hit->vertex();
+	f = (void*)hit->face();
+	op = (void*)hit->opposite();
+	xt = (void*)hit->next();
+
+	nv = vm.find(v)->second;
+	nf = fm.find(f)->second;
+	nop = hm.find(op)->second;
+	nxt = hm.find(xt)->second;
+
+	((Halfedge*)nhe)->set_vertex((Vertex*)nv);
+	((Halfedge*)nhe)->set_face((Face*)nf);
+	((Halfedge*)nhe)->set_opposite((Halfedge*)nop);
+	((Halfedge*)nhe)->set_next((Halfedge*)nxt);
+      }
+
+    for (fit = d.faces_begin(); fit != d.faces_end(); fit++)
+      {
+	void *f, *nf, *he, *nhe, *h, *nh;
+	typename Face::Holes_const_iterator holes;
+	f = (void*)(&(*fit));
+	nf = fm.find(f)->second;
+	he = (void*)fit->halfedge();
+	if (he != NULL)
+	  nhe = hm.find(he)->second;
+	else
+	  nhe = NULL;
+	((Face*)nf)->set_halfedge((Halfedge*)nhe);
 
 		  
-		  for (holes = fit->holes_begin(); holes != fit->holes_end(); holes++)
-		  {
-			  h = (void*)(*holes);
-			  nh = hm.find(h)->second;
-			  ((Face*)nf)->add_hole((Halfedge*)nh);
-		  }
+	for (holes = fit->holes_begin(); holes != fit->holes_end(); holes++)
+	  {
+	    h = (void*)(*holes);
+	    nh = hm.find(h)->second;
+	    ((Face*)nf)->add_hole((Halfedge*)nh);
 	  }
-	  return fm.find(u_face)->second;
+      }
+    return fm.find(u_face)->second;
   }
 
 };
