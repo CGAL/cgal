@@ -1,7 +1,7 @@
 /****************************************************************************
 ** MyWindow meta object code from reading C++ file 'convex_hull_2.C'
 **
-** Created: Tue Jan 15 18:01:29 2002
+** Created: Wed Jan 16 14:58:58 2002
 **      by: The Qt MOC ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -63,8 +63,6 @@ QMetaObject* MyWindow::staticMetaObject()
     typedef void(MyWindow::*m1_t6)();
     typedef void(MyWindow::*m1_t7)();
     typedef void(MyWindow::*m1_t8)();
-    typedef void(MyWindow::*m1_t9)();
-    typedef void(MyWindow::*m1_t10)();
     m1_t0 v1_0 = Q_AMPERSAND MyWindow::set_window;
     m1_t1 v1_1 = Q_AMPERSAND MyWindow::new_instance;
     m1_t2 v1_2 = Q_AMPERSAND MyWindow::redrawWin;
@@ -74,10 +72,8 @@ QMetaObject* MyWindow::staticMetaObject()
     m1_t6 v1_6 = Q_AMPERSAND MyWindow::new_window;
     m1_t7 v1_7 = Q_AMPERSAND MyWindow::timerDone;
     m1_t8 v1_8 = Q_AMPERSAND MyWindow::gen_points;
-    m1_t9 v1_9 = Q_AMPERSAND MyWindow::save_triangulation;
-    m1_t10 v1_10 = Q_AMPERSAND MyWindow::load_triangulation;
-    QMetaData *slot_tbl = QMetaObject::new_metadata(11);
-    QMetaData::Access *slot_tbl_access = QMetaObject::new_metaaccess(11);
+    QMetaData *slot_tbl = QMetaObject::new_metadata(9);
+    QMetaData::Access *slot_tbl_access = QMetaObject::new_metaaccess(9);
     slot_tbl[0].name = "set_window(double,double,double,double)";
     slot_tbl[0].ptr = *((QMember*)&v1_0);
     slot_tbl_access[0] = QMetaData::Public;
@@ -105,15 +101,9 @@ QMetaObject* MyWindow::staticMetaObject()
     slot_tbl[8].name = "gen_points()";
     slot_tbl[8].ptr = *((QMember*)&v1_8);
     slot_tbl_access[8] = QMetaData::Private;
-    slot_tbl[9].name = "save_triangulation()";
-    slot_tbl[9].ptr = *((QMember*)&v1_9);
-    slot_tbl_access[9] = QMetaData::Private;
-    slot_tbl[10].name = "load_triangulation()";
-    slot_tbl[10].ptr = *((QMember*)&v1_10);
-    slot_tbl_access[10] = QMetaData::Private;
     metaObj = QMetaObject::new_metaobject(
 	"MyWindow", "QMainWindow",
-	slot_tbl, 11,
+	slot_tbl, 9,
 	0, 0,
 #ifndef QT_NO_PROPERTIES
 	0, 0,

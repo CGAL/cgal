@@ -37,6 +37,12 @@ namespace CGAL {
 
 class Qt_widget_tool;
 class Qt_widget_view;
+typedef 
+struct toggleview{
+  CGAL::Qt_widget_view  *view;
+  bool			active;
+}toggleview;
+
 
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
@@ -77,13 +83,7 @@ public:
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
   
-  inline
-  Qt_widget& operator<<(Qt_widget_view* s)
-  {
-    add_view(s);
-    return *this;
-  };
-
+  
   // properties
   // ~~~~~~~~~~
   // color
@@ -153,12 +153,20 @@ public:
   void	      attach(Qt_widget_tool& tool);
   inline bool has_tool() const { return _has_tool; };
   void	      detach_current_tool(); 
-  /*  
-  Qt_widget& operator<<(Qt_widget_tool* tool);
-  Qt_widget& operator>>(Qt_widget_tool &tool);
-  */	
+
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
+  
+  //views
   virtual void redraw();
+  inline
+  void attach(Qt_widget_view* view) { add_view(view);}
+  // add a view in the list of displayable views
+  void add_view(Qt_widget_view* s);
+
+  // remove a view from the list of displayable scenes
+  void detach(Qt_widget_view* s);
+  void activate(Qt_widget_view* s);
+  void deactivate(Qt_widget_view* s);
 
 signals:
   void mousePressed(QMouseEvent *e);
@@ -167,7 +175,6 @@ signals:
   void resized();
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
-  void redrawed();	//emited when the user should update the screen
   void detached_tool();
 
 protected:
@@ -183,18 +190,6 @@ protected:
   void enterEvent(QEvent *e);
   void leaveEvent(QEvent *e);
 
-public slots:
-  // redraw shown scenes
-  // ***** Should be call when:
-  //    - an editable scene is changed (should be call by tools)
-  //    - ranges are changed
-  //virtual void redraw();
-  
-  // add a scene in the list of displayable scenes
-  void add_view(Qt_widget_view* s);
-
-  // remove a scene from the list of displayable scenes
-  void remove_view(Qt_widget_view* s);
 
 private:
   void	  set_scales(); // set xscal and yscal
@@ -224,8 +219,9 @@ private:
   bool _has_tool;
   Qt_widget_tool *current_tool;
 
-  //for scenes
-  std::list<Qt_widget_view*>	qt_scenes;
+  //for views
+  std::list<Qt_widget_view*>	qt_views;
+  std::list<toggleview>		qt_toggle_views;
 };//end Qt_widget class
 
 // manipulators

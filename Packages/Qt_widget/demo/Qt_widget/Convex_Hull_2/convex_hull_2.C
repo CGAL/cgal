@@ -65,7 +65,7 @@ public:
   Qt_view_show_ch(){};
 
 
-  void draw_view(CGAL::Qt_widget &win)
+  void draw(CGAL::Qt_widget &win)
   {
      win.lock();
     win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
@@ -129,9 +129,6 @@ public:
   file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
   file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
   file->insertSeparator();
-  file->insertItem("&Load Triangulation", this, SLOT(load_triangulation()), CTRL+Key_L);
-  file->insertItem("&Save Triangulation", this, SLOT(save_triangulation()), CTRL+Key_T);
-  file->insertSeparator();
   file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
   file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
@@ -172,7 +169,7 @@ public:
   old_state = 0;
 
   //views
-  win << &testview;
+  win.attach(&testview);
   };
 
   ~MyWindow()
@@ -252,32 +249,6 @@ private slots:
     something_changed();
   }
 	
-  void save_triangulation()
-  {
-    QString fileName = 
-      QFileDialog::getSaveFileName( "triangulation.cgal", 
-				    "Cgal files (*.cgal)", this );
-    if ( !fileName.isNull() ) {                 // got a file name
-      std::ofstream out(fileName);
-      CGAL::set_ascii_mode(out);
-      //out << tr1 << std::endl;    
-    }
-  }
-
-	
-
-  void load_triangulation()
-  {
-    QString s( QFileDialog::getOpenFileName( QString::null,
-			    "CGAL files (*.cgal)", this ) );
-    if ( s.isEmpty() )
-        return;
-    std::ifstream in(s);
-    CGAL::set_ascii_mode(in);
-    //in >> tr1;
-    something_changed();
-  }
-
 	
 
 private:

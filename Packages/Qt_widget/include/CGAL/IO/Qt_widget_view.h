@@ -45,7 +45,7 @@ public:
   virtual void leaveEvent(QEvent *, Qt_widget&) {};
 
 public slots:
-  virtual void draw_view(Qt_widget&)=0;
+  virtual void draw(Qt_widget&)=0;
 signals:
   void dying(Qt_widget_view*);
 public:

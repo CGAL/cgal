@@ -37,7 +37,7 @@ public:
 
   Qt_view_show_points(T &t) : tr(t){};
 
-  void draw_view(Qt_widget &widget)
+  void draw(Qt_widget &widget)
   {
     Vertex v;
     Vertex_iterator it = tr.vertices_begin(), 

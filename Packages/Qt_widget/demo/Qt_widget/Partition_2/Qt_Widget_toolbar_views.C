@@ -54,6 +54,13 @@ namespace CGAL {
     window = mw;
     window->statusBar();
 
+    widget->attach(showMC);
+    widget->attach(showP);
+    widget->attach(showGA);
+    widget->attach(showYM);
+    widget->attach(showOC);
+    widget->attach(showPP);
+
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
     but[0] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
@@ -109,18 +116,20 @@ namespace CGAL {
 
     
     nr_of_buttons = 6;		
-    for(int i =0; i<nr_of_buttons; i++)
+    for(int i =0; i<nr_of_buttons; i++){
 	but[i]->setToggleButton(TRUE);
+	but[i]->toggle();
+    }
 			    
   }	
   void Views_toolbar::show_coordinates()
   {
     if (but[0]->isOn())
     {
-      *widget << showMC;
+      widget->activate(showMC);
       window->statusBar();
     } else {
-      widget->remove_scene (showMC);
+      widget->deactivate(showMC);
       window->statusBar()->clear();
     }
   }
@@ -129,9 +138,9 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      *widget << showP;
+      widget->activate(showP);
     } else {
-      widget->remove_scene(showP);
+      widget->deactivate(showP);
     }
     widget->redraw();
   }
@@ -140,9 +149,9 @@ namespace CGAL {
   {
     if (but[2]->isOn())
     {
-      *widget << showGA;
+      widget->activate(showGA);
     } else {
-      widget->remove_scene(showGA);
+      widget->deactivate(showGA);
     }
     widget->redraw();
   }
@@ -150,9 +159,9 @@ namespace CGAL {
   {
     if (but[3]->isOn())
     {
-      *widget << showYM;
+      widget->activate(showYM);
     } else {
-      widget->remove_scene(showYM);
+      widget->deactivate(showYM);
     }
     widget->redraw();
   }
@@ -160,9 +169,9 @@ namespace CGAL {
   {
     if (but[4]->isOn())
     {
-      *widget << showOC;
+      widget->activate(showOC);
     } else {
-      widget->remove_scene(showOC);
+      widget->deactivate(showOC);
     }
     widget->redraw();
   }
@@ -170,9 +179,9 @@ namespace CGAL {
   {
     if (but[5]->isOn())
     {
-      *widget << showPP;
+      widget->activate(showPP);
     } else {
-      widget->remove_scene(showPP);
+      widget->deactivate(showPP);
     }
     widget->redraw();
   }

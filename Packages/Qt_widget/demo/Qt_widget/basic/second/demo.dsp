@@ -91,11 +91,11 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_Window.C
+SOURCE=..\..\..\..\src\Qt_Widget.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\Qt_Window_tool.C
+SOURCE=..\..\..\..\src\Qt_Widget_tool.C
 # End Source File
 # Begin Source File
 
@@ -107,11 +107,11 @@ SOURCE=.\second.C
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Window.h
+SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Window_tool.h
+SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget_tool.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

@@ -171,12 +171,7 @@ private slots:
     if (CGAL::assign(poly, obj))
     {
       polygon = poly;
-      /*
-      win << CGAL::GREEN;
-      win.lock();
-      win << poly;
-      win.unlock();
-      */
+      something_changed();
     }
     win.redraw();
   };

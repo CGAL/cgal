@@ -46,6 +46,13 @@ namespace CGAL {
     window = mw;
     window->statusBar();
 
+    widget->attach(showT);
+    widget->attach(showV);
+    widget->attach(showNV);
+    widget->attach(showP);
+    widget->attach(showMC);
+    widget->deactivate(showNV);
+    
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
@@ -93,15 +100,19 @@ namespace CGAL {
     nr_of_buttons = 5;
 	
     for(int i =0; i<nr_of_buttons; i++)
+    {
 	but[i]->setToggleButton(TRUE);
+	but[i]->toggle();
+    }
+    but[2]->toggle();
   }
   void Views_toolbar::draw_triangulation()
   {
     if (but[0]->isOn())
     {
-      *widget << showT;
+      widget->activate(showT);
     } else {
-      widget->remove_scene( showT );
+      widget->deactivate(showT);
     }
     widget->redraw();
   }
@@ -110,9 +121,9 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      *widget << showV;
+      widget->activate(showV);
     } else {
-      widget->remove_scene( showV );
+      widget->deactivate(showV);
     }
     widget->redraw();
   }
@@ -120,18 +131,18 @@ namespace CGAL {
   {
     if (but[2]->isOn())
     {
-      *widget << showNV;
+      widget->activate(showNV);
     } else {
-      widget->remove_scene ( showNV );
+      widget->deactivate(showNV);
     }
   }
   void Views_toolbar::draw_points()
   {
     if (but[3]->isOn())
     {
-      *widget << showP;
+      widget->activate(showP);
     } else {
-      widget->remove_scene( showP);
+      widget->deactivate(showP);
     }
     widget->redraw();
   }
@@ -140,10 +151,10 @@ namespace CGAL {
   {
     if (but[4]->isOn())
     {
-      *widget << showMC;
+      widget->activate(showMC);
       window->statusBar();
     } else {
-      widget->remove_scene (showMC);
+      widget->deactivate(showMC);
       window->statusBar()->clear();
     }
   }

@@ -35,7 +35,7 @@ public:
   
 
   Qt_view_show_polygon_points(T &p) : polygon(p){};
-  void draw_view(Qt_widget &widget)
+  void draw(Qt_widget &widget)
   {
     typename T::const_iterator vert_it;
 

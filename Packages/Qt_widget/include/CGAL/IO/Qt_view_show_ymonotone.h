@@ -40,7 +40,7 @@ public:
 
   Qt_view_show_ymonotone(T &p) : polygon(p)
   {};
-  void draw_view(Qt_widget &widget)
+  void draw(Qt_widget &widget)
   {
     ymonotone.clear();
     

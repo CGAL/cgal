@@ -43,8 +43,6 @@ private:
     Qt_widget::mousePressEvent(e);
     dt.insert(Point(x_real(e->x()), y_real(e->y())));
     redraw();
-    //clear();
-    //*this << dt;
   }
 };
 
