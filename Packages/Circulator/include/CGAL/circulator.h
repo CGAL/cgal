@@ -9,12 +9,11 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 1999, September 02
+// release_date  : 
 //
 // file          : circulator.h
-// package       : Circulator (3.4)
+// package       : Circulator
 // chapter       : $CGAL_Chapter: Circulators $
-// source        : circulator.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -25,26 +24,13 @@
 // ======================================================================
 
 #ifndef CGAL_CIRCULATOR_H
-#define CGAL_CIRCULATOR_H 1
+#define CGAL_CIRCULATOR_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_FUNCTIONAL
 #include <functional>
-#define CGAL_PROTECT_FUNCTIONAL
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-#ifndef CGAL_CIRCULATOR_BASES_H
 #include <CGAL/circulator_bases.h>
-#endif
 
 #ifndef CGAL_NULL_TYPE
 #if defined( __GNUG__ )
@@ -223,32 +209,32 @@ void Assert_iterator( const I &i) {
     Assert_compile_time_tag( Iterator_tag(), query_circulator_or_iterator(i));
 }
 template <class I> inline
-void Assert_input_category( const I &i) {
+void Assert_input_category( const I &/*i*/) {
     Assert_compile_time_tag( std::input_iterator_tag(),
 			     // std::iterator_category(i));
 			     std::iterator_traits<I>::iterator_category());
 }
 template <class I> inline
-void Assert_output_category( const I &i) {
+void Assert_output_category( const I &/*i*/) {
     Assert_compile_time_tag( std::output_iterator_tag(),
                              //std::iterator_category(i));
 			     std::iterator_traits<I>::iterator_category());
 }
 template <class IC> inline
-void Assert_forward_category( const IC &ic) {
+void Assert_forward_category( const IC &/*ic*/) {
     Assert_compile_time_tag( std::forward_iterator_tag(),
                              //std::iterator_category(ic));
 			     std::iterator_traits<IC>::iterator_category());
 }
 template <class IC> inline
-void Assert_bidirectional_category( const IC &ic) {
+void Assert_bidirectional_category( const IC &/*ic*/) {
     Assert_compile_time_tag( std::bidirectional_iterator_tag(),
                              //std::iterator_category(ic));
 			     std::iterator_traits<IC>::iterator_category());
     
 }
 template <class IC> inline
-void Assert_random_access_category( const IC &ic) {
+void Assert_random_access_category( const IC &/*ic*/) {
     Assert_compile_time_tag( std::random_access_iterator_tag(),
                              //std::iterator_category(ic));
 			     std::iterator_traits<IC>::iterator_category());
@@ -293,31 +279,31 @@ inline void I_Has_to_be_at_least( std::random_access_iterator_tag,
 
 // The is-at-least assertions.
 template <class I> inline
-void Assert_is_at_least_input_category( const I& i) {
+void Assert_is_at_least_input_category( const I& /*i*/) {
     I_Has_to_be_at_least( std::input_iterator_tag(),
                           //std::iterator_category(i));
 			  std::iterator_traits<I>::iterator_category());
 }
 template <class I> inline
-void Assert_is_at_least_output_category( const I& i) {
+void Assert_is_at_least_output_category( const I& /*i*/) {
     I_Has_to_be_at_least( std::output_iterator_tag(),
                           //std::iterator_category(i));
 			  std::iterator_traits<I>::iterator_category());
 }
 template <class IC> inline
-void Assert_is_at_least_forward_category( const IC& ic) {
+void Assert_is_at_least_forward_category( const IC& /*ic*/) {
     I_Has_to_be_at_least( std::forward_iterator_tag(),
                           //std::iterator_category(ic));
 			  std::iterator_traits<IC>::iterator_category());
 }
 template <class IC> inline
-void Assert_is_at_least_bidirectional_category( const IC& ic) {
+void Assert_is_at_least_bidirectional_category( const IC& /*ic*/) {
     I_Has_to_be_at_least( std::bidirectional_iterator_tag(),
                           //std::iterator_category(ic)) ;
 			  std::iterator_traits<IC>::iterator_category());
     }
 template <class IC> inline
-void Assert_is_at_least_random_access_category( const IC& ic) {
+void Assert_is_at_least_random_access_category( const IC& /*ic*/) {
     I_Has_to_be_at_least( std::random_access_iterator_tag(),
                           //std::iterator_category(ic));
 			  std::iterator_traits<IC>::iterator_category());
