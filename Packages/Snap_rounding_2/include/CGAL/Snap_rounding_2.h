@@ -157,10 +157,6 @@ public:
   typedef typename Rep::Point_2   Point_2;
   typedef std::list<Point_2> PointList;
   typedef typename std::list<std::list<Point_2> > Polylines_container;
-  typedef typename Polylines_container::const_iterator Polyline_const_iterator;
-  typedef typename Polylines_container::iterator Polyline_iterator;
-  typedef typename std::list<typename Rep::Point_2> Points_container;
-  typedef typename Points_container::const_iterator Point_const_iterator;
 
   void find_hot_pixels_and_create_kd_trees(
        NT pixel_size,
