@@ -73,6 +73,8 @@ namespace CGAL {
   
   void Qt_widget_standard_toolbar::fill_toolbar(QMainWindow *mw)
   {
+    is_button_pressed[0] = false; is_button_pressed[1] = false;
+    is_button_pressed[2] = false; is_button_pressed[3] = false;
     Qt_widget_focus* focuslayer = 
       new Qt_widget_focus(this, "focuslayer");
     Qt_widget_zoomrect* zoomrectlayer = 
@@ -105,7 +107,7 @@ namespace CGAL {
     QIconSet forward_pixmap(QPixmap( (const char**)forward_small_xpm ),
 			    QPixmap( (const char**)forward_xpm ));
 
-    QToolButton* nolayerBt = new QToolButton(this, "nolayer");
+    nolayerBt = new QToolButton(this, "nolayer");
     nolayerBt->setIconSet(arrow_pixmap);
     nolayerBt->setTextLabel("Deactivate Standard Layer");
   
@@ -141,17 +143,17 @@ namespace CGAL {
 				"Zoom out");
     zoomoutBt->setTextLabel("Scaling factor 1/2");
   
-    QToolButton* zoomrectBt = new QToolButton(this, "focus on region");
+    zoomrectBt = new QToolButton(this, "focus on region");
     zoomrectBt->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
     zoomrectBt->setTextLabel("Focus on region");
 
     addSeparator();
 
-    QToolButton* focusBt = new QToolButton(this, "focus");
+    focusBt = new QToolButton(this, "focus");
     focusBt->setPixmap(QPixmap( (const char**)focus_xpm ));
     focusBt->setTextLabel("Focus on point");
 
-    QToolButton* handtoolBt = new QToolButton(this, "handtool");
+    handtoolBt = new QToolButton(this, "handtool");
     handtoolBt->setPixmap(QPixmap( (const char**)hand_xpm ));
     handtoolBt->setTextLabel("Pan tool");
 
@@ -203,7 +205,49 @@ namespace CGAL {
             forwardBt, SLOT(setEnabled(bool)));
     history->clear();
 
+    connect(nolayerBt, SIGNAL(clicked()),
+	    this, SLOT(toggle_nlb()));
+    connect(zoomrectBt, SIGNAL(clicked()),
+	    this, SLOT(toggle_zrb()));
+    connect(focusBt, SIGNAL(clicked()),
+	    this, SLOT(toggle_fb()));
+    connect(handtoolBt, SIGNAL(clicked()),
+	    this, SLOT(toggle_htb()));
+
   };
+
+  void Qt_widget_standard_toolbar::toggle_nlb(){
+    if(is_button_pressed[0])
+	nolayerBt->toggle();
+    is_button_pressed[0] = !is_button_pressed[0];
+    is_button_pressed[1] = false;
+    is_button_pressed[2] = false;
+    is_button_pressed[3] = false;
+  }
+  void Qt_widget_standard_toolbar::toggle_zrb(){
+    if(is_button_pressed[1])
+	zoomrectBt->toggle();
+    is_button_pressed[1] = !is_button_pressed[1];
+    is_button_pressed[0] = false;
+    is_button_pressed[2] = false;
+    is_button_pressed[3] = false;
+  }
+  void Qt_widget_standard_toolbar::toggle_fb(){
+    if(is_button_pressed[2])
+	focusBt->toggle();
+    is_button_pressed[2] = !is_button_pressed[2];
+    is_button_pressed[0] = false;
+    is_button_pressed[1] = false;
+    is_button_pressed[3] = false;
+  }
+  void Qt_widget_standard_toolbar::toggle_htb(){
+    if(is_button_pressed[3])
+	handtoolBt->toggle();
+    is_button_pressed[3] = !is_button_pressed[3];
+    is_button_pressed[0] = false;
+    is_button_pressed[1] = false;
+    is_button_pressed[2] = false;
+  }
   void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom(2); //
