@@ -1,9 +1,9 @@
 #include <CGAL/basic.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <strstream.h>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+#include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
 
@@ -36,7 +36,7 @@ typedef Triangulation_default_data_structure_2<Traits_,Vb,Fb> Tds;
 typedef Delaunay_triangulation_2<Traits_,Tds>  Delaunay_;
 
 
-
+using namespace std;
 
 int main(int argc, char* argv[])
 {
