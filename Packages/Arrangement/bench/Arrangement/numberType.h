@@ -132,11 +132,13 @@ typedef NT                                              WNT;
 typedef NiX::LEDA_arithmetic_traits                     Arithmetic_traits;
 typedef Arithmetic_traits::Field_with_sqrt              NT;
 typedef NT                                              WNT;
+#define NUMBER_TYPE "NiX Leda Real"
 
 #elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
 typedef NiX::CORE_arithmetic_traits                     Arithmetic_traits;
 typedef Arithmetic_traits::Field_with_sqrt              NT;
 typedef NT                                              WNT;
+#define NUMBER_TYPE "NiX Core Expr"
 
 #else
 #error No Number Type (NT) Specified
