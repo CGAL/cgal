@@ -54,11 +54,12 @@ struct Triangulation_utils_3
     return tab_next_around_edge[i][j];
   }
 
+  static unsigned int random_value, count, val;
+
+  // rand_4() outputs pseudo random unsigned ints < 4.
+  // We compute random 16 bit values, that we slice/shift to make it faster.
   unsigned int rand_4() const
   {
-      static unsigned int random_value = 0;
-      static unsigned int count = 0;
-      static unsigned int val;
       if (count==0)
       {
           count = 16;

@@ -31,4 +31,8 @@ const char Triangulation_utils_3::tab_next_around_edge[4][4] = {
       {1, 3, 5, 0},
       {2, 0, 1, 5} };
 
+unsigned int Triangulation_utils_3::random_value = 0;
+unsigned int Triangulation_utils_3::count = 0;
+unsigned int Triangulation_utils_3::val;
+
 CGAL_END_NAMESPACE
