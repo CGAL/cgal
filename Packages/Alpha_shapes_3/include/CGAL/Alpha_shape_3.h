@@ -758,7 +758,7 @@ Alpha_shape_3<Dt>::initialize_alpha_cell_map()
 
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it) {
     alpha = squared_radius(cell_it);
-    alpha_cell_map.insert(std::make_pair(alpha, cell_it));
+    alpha_cell_map.insert(Alpha_cell_map::value_type(alpha, cell_it));
 
     // cross references
     cell_it->set_alpha(alpha);
@@ -805,13 +805,13 @@ Alpha_shape_3<Dt>::initialize_alpha_facet_maps(bool reinitialize)
 	as->set_is_on_chull(false);
 	as->set_alpha_mid(alpha_mid);
 	as->set_alpha_max(alpha_max);
-	alpha_mid_facet_map.insert(std::make_pair(alpha_mid, *fit));
-	//alpha_max_facet_map.insert(std::make_pair(alpha_max, *fit));
+	alpha_mid_facet_map.insert(Alpha_facet_map::value_type(alpha_mid, *fit));
+	//alpha_max_facet_map.insert(Alpha_facet_map::value_type(alpha_max, *fit));
       }
       else { // on the convex hull
 	alpha_mid = !is_infinite(pCell) ? pCell->get_alpha() 
 	                                : pNeighbor->get_alpha();
-	alpha_mid_facet_map.insert(std::make_pair(alpha_mid, *fit));
+	alpha_mid_facet_map.insert(Alpha_facet_map::value_type(alpha_mid, *fit));
 	as->set_alpha_mid(alpha_mid);
 	as->set_is_on_chull(true);
       }
@@ -833,7 +833,7 @@ Alpha_shape_3<Dt>::initialize_alpha_facet_maps(bool reinitialize)
 	as->set_is_Gabriel(true);
 	alpha_min = squared_radius(*fit);
 	as->set_alpha_min(alpha_min);
-	alpha_min_facet_map.insert(std::make_pair(alpha_min, *fit));
+	alpha_min_facet_map.insert(Alpha_facet_map::value_type(alpha_min, *fit));
       }
       else as->set_is_Gabriel(false);
     }
@@ -880,7 +880,7 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool reinitialize)
 	}
       } while (++fcirc != done);
  
-      alpha_mid_edge_map.insert(std::make_pair(as->alpha_mid(), *eit));
+      alpha_mid_edge_map.insert(Alpha_edge_map::value_type(as->alpha_mid(), *eit));
       
       //cross links
       Vertex_handle_pair vhp = make_vertex_handle_pair(
@@ -903,7 +903,7 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool reinitialize)
 	alpha = squared_radius(*eit);
 	as->set_is_Gabriel(true);
 	as->set_alpha_min(alpha);
-	alpha_min_edge_map.insert(std::make_pair(alpha,*eit));
+	alpha_min_edge_map.insert(Alpha_edge_map::value_type(alpha,*eit));
       }
       else as->set_is_Gabriel(false);
     }
@@ -928,7 +928,7 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool reinitialize)
 	    as->set_alpha_mid(asf->alpha_min());
 	}
       } while (++fcirc != done);
-      alpha_mid_edge_map.insert(std::make_pair(as->alpha_mid(), *eit));
+      alpha_mid_edge_map.insert(Alpha_edge_map::value_type(as->alpha_mid(), *eit));
     }
   }
   return;
@@ -969,7 +969,7 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
 	}
       }
 
-      alpha_mid_vertex_map.insert(std::make_pair(as->alpha_mid(),vit));
+      alpha_mid_vertex_map.insert(Alpha_vertex_map::value_type(as->alpha_mid(),vit));
   
       // cross link
       vit->set_alpha_status(as);
