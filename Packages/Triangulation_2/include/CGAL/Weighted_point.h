@@ -31,7 +31,7 @@ public:
   typedef Pt Point;
   //typedef typename Point::RT RT;
 
-  explicit Weighted_point (const Point &p=Point(), const Weight &w = Weight(0))
+  Weighted_point (const Point &p=Point(), const Weight &w = Weight(0))
       : Point(p), _weight(w) {}
 
   const Point & point() const

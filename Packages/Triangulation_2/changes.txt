@@ -1,6 +1,18 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+
+31 March 2004 Mariette Yvinec
+- Weighted_point : remake the constructor from Point implicit 
+  otherwise predicate on Bare_point cannot be called with Bare_point.
+- Replace the typedef or Regular_triangulation_euclidean_traits :
+  typedef Weighted_point                        Point_2;
+  by a Weighted_point_mapper_2.
+  This will be necessary to adapt Kernel traits when Weighted_point
+  will be in Kernel 
+  but  this does not slove satisfactory the  Weighted_point_2 - Point_2
+  type problem of regular, hence the need for the implicit converter.
+
 25 March 2004 Radu Ursu
 - made doc work with the new implementation of Manual tools.
 

@@ -172,7 +172,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert( T0_0.is_valid(verbose) );
 
   Cls T0_1; 
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
+  Vertex_handle v0_1_0 = T0_1.insert(wp0); assert( v0_1_0 != NULL );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid(verbose) );
@@ -343,9 +343,9 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   // Check point location in 1-dimensional triangulations
   std::cout << "    point locations 1-dim" << std::endl;
   Cls T1_3_2;
-  T1_3_2.insert(p1);
-  T1_3_2.insert(p2);
-  T1_3_2.insert(p9); 
+  T1_3_2.insert(wp1);
+  T1_3_2.insert(wp2);
+  T1_3_2.insert(wp9); 
   T1_3_2.is_valid(verbose);
   loc = T1_3_2.locate(p1,lt,li); assert( lt == Cls::VERTEX );
   assert( T1_3_2.xy_equal(loc->vertex(li)->point(), p1) );
@@ -354,10 +354,10 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   loc = T1_3_2.locate(p9,lt,li); assert( lt == Cls::VERTEX );
   assert( T1_3_2.xy_equal(loc->vertex(li)->point(), p9) );
   loc = T1_3_2.locate(p3,lt,li); assert( lt == Cls::EDGE );
-  assert( (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point(), p1)
-        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point(), p2))
-       || (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point(), p2)
-        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point(), p1)));
+  assert( (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p1)
+        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point().point(), p2))
+       || (T1_3_2.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p2)
+        && T1_3_2.xy_equal(loc->vertex(loc->cw(li))->point().point(), p1)));
   loc = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   loc = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
   loc = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
@@ -368,32 +368,32 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
   loc = T2_3.locate(p0,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p0) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p0) );
   loc = T2_3.locate(p1,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p1) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p1) );
   loc = T2_3.locate(p2,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p2) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p2) );
   loc = T2_3.locate(p4,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p4) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p4) );
   loc = T2_3.locate(p5,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p5) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p5) );
   loc = T2_3.locate(p6,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p6) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p6) );
   loc = T2_3.locate(p7,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p7) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p7) );
   loc = T2_3.locate(p8,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p8) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p8) );
   loc = T2_3.locate(p10,lt,li); assert( lt == Cls::VERTEX );
-  assert( T2_3.xy_equal(loc->vertex(li)->point(), p10) );
+  assert( T2_3.xy_equal(loc->vertex(li)->point().point(), p10) );
 
   
   loc = T2_3.locate(p3,lt,li); assert( lt == Cls::EDGE );
   loc = T2_3.locate(p9,lt,li); assert( lt == Cls::EDGE );
   loc = T2_3.locate(p11,lt,li); assert( lt == Cls::EDGE);
-  assert( (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), p1)
-        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), p0))
-       || (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point(), p0)
-        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point(), p1)));
+  assert( (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p1)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point().point(), p0))
+       || (T2_3.xy_equal(loc->vertex(loc->ccw(li))->point().point(), p0)
+        && T2_3.xy_equal(loc->vertex(loc->cw(li))->point().point(), p1)));
   loc = T2_3.locate(p12,lt,li); assert( lt == Cls::FACE );
   assert( T2_3.oriented_side(loc,p12) == CGAL::ON_POSITIVE_SIDE );
   loc = T2_3.locate(p13,lt,li,loc); assert( lt == Cls::OUTSIDE_CONVEX_HULL );

@@ -1,3 +1,10 @@
+- virer le typedef 
+  typedef Weighted_point  Point_2; de  Regular_triangulation_euclidean_traits_2
+  et 
+  Triangulation_vertex_base_2.h
+  et surcharger le fonction point()  en 
+  Gt::Weigthed_point_2 point()
+  
 - bencher Triangulation_2 avec un insert virtuel
   insert virtuel permettrait de resoudre le pb de design
   de Mesh_2 et Alpha_shapes_[23]

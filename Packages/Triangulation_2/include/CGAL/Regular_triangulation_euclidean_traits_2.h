@@ -306,14 +306,15 @@ public:
   typedef W                                     Weight;
   typedef R                                     Traits;
   typedef typename Traits::Point_2              Bare_point;
-  typedef CGAL::Weighted_point <Bare_point, W>  Weighted_point;
+  typedef typename Traits::Point_2              Point_2;
+  typedef CGAL::Weighted_point<Bare_point, W>   Weighted_point_2;
   // This is required for the point() function of vertex base class
   // to be correctly return a weighted_point;
   // patch 27/11/00
   // 18/03/03 I put now the same typedef in Regulat_triangulation_2
   // for the need of hierarchy
   // don't know if this is definitive
-  typedef Weighted_point                        Point_2;
+  //typedef Weighted_point                        Point_2;
 
   typedef CGAL::Power_test_2<Bare_point, W>     Power_test_2;
   typedef CGAL::Power_test_degenerated_2<Bare_point, W>  

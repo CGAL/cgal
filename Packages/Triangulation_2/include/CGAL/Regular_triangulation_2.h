@@ -23,24 +23,33 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
-//#include <CGAL/Triangulation_iterator_adaptator.h>
 
 CGAL_BEGIN_NAMESPACE 
+
+template < typename K >
+struct Weighted_point_mapper_2 
+  :   public K 
+{
+  typedef typename K::Weighted_point_2 Point_2;
+
+  Weighted_point_mapper_2() {}
+  Weighted_point_mapper_2(const K& k) : K(k) {}
+};
 
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<Gt>,
 		        Regular_triangulation_face_base_2<Gt> > >
-class Regular_triangulation_2 : public Triangulation_2<Gt,Tds>
+class Regular_triangulation_2 
+  : public Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>
 {
-  typedef Regular_triangulation_2<Gt, Tds>     Self;
-  typedef Triangulation_2<Gt,Tds>              Base;
+  typedef Regular_triangulation_2<Gt, Tds>                         Self;
+  typedef Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>         Base;
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
-  typedef typename Gt::Bare_point              Bare_point;
-  typedef typename Gt::Weighted_point          Weighted_point;
-  typedef typename Gt::Weighted_point          Point;
+  typedef typename Gt::Point_2                 Bare_point;
+  typedef typename Gt::Weighted_point_2        Weighted_point;
   typedef typename Gt::Weight                  Weight;
 
   typedef typename Base::size_type             size_type;
@@ -132,23 +141,13 @@ public:
   typedef Finite_vertices_iterator             Vertex_iterator;
 
  
-//  typedef Filter_iterator<All_vib,Hidden_tester>      All_filtered;
-//   typedef Filter_iterator<Finite_vib,Hidden_tester>   Finite_filtered;
-//   typedef Filter_iterator<Finite_vib,Unhidden_tester> Hidden_filtered;
-
-// public:
-//   typedef Triangulation_iterator_handle_adaptor
-//                   <All_filtered, Vertex_handle>    All_vertices_iterator;
-//   typedef Triangulation_iterator_handle_adaptor
-//                <Finite_filtered, Vertex_handle>    Finite_vertices_iterator;
-//   typedef Triangulation_iterator_handle_adaptor
-//                 <Hidden_filtered,Vertex_handle>    Hidden_vertices_iterator;
-
 private:
   size_type _hidden_vertices;
 
 public:
-  Regular_triangulation_2(const Gt& gt=Gt()) : Base(gt), _hidden_vertices(0) {}
+  Regular_triangulation_2(const Gt& gt=Gt()) 
+    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0) {}
+
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
   
   Regular_triangulation_2 & operator=(const Regular_triangulation_2 &tr);
@@ -162,6 +161,7 @@ public:
   }
 
   // CHECK - QUERY
+
   Oriented_side power_test(const Weighted_point &p,
 			   const Weighted_point &q,
 			   const Weighted_point &r,
@@ -195,18 +195,18 @@ public:
   //                                                 Face_handle()) const;
   // template <class OutputItFaces, class OutputItBoundaryEdges> 
   // std::pair<OutputItFaces,OutputItBoundaryEdges>
-  // get_conflicts_and_boundary(const Point  &p, 
+  // get_conflicts_and_boundary(const Weighted_point  &p, 
   // 		                OutputItFaces fit, 
   // 		                OutputItBoundaryEdges eit,
   // 		                Face_handle start) const;
   // template <class OutputItFaces>
   // OutputItFaces
-  // get_conflicts (const Point  &p, 
+  // get_conflicts (const Weighted_point  &p, 
   //                OutputItFaces fit, 
   // 		    Face_handle start ) const;
   // template <class OutputItBoundaryEdges>
   // OutputItBoundaryEdges
-  // get_boundary_of_conflicts(const Point  &p, 
+  // get_boundary_of_conflicts(const Weighted_point  &p, 
   // 			       OutputItBoundaryEdges eit, 
   // 			       Face_handle start ) const;
   //   template <class OutputItBoundaryEdges, class OutputItHiddenVertices> 
@@ -219,9 +219,9 @@ public:
   //   template <class OutputItHiddenVertices> 
   //   OutputItHiddenVertices
   //   get_hidden_vertices(const Weighted_point  &p, 
-  // 						OutputItHiddenVertices vit,
-  // 						Face_handle start= 
-  //                                                  Face_handle()) const;
+  // 			   OutputItHiddenVertices vit,
+  // 			   Face_handle start= 
+  //                       Face_handle()) const;
   
   // DUAL
   Bare_point dual (Face_handle f) const;
@@ -1183,7 +1183,7 @@ Regular_triangulation_2<Gt,Tds>::
 flip(Face_handle f, int i)
 {
   Face_handle n = f->neighbor(i);
-  Triangulation_2<Gt,Tds>::flip(f,i);
+  Base::flip(f,i);
   update_hidden_points_2_2(f,n);
 }
 
@@ -1196,7 +1196,7 @@ remove_degree_3(Vertex_handle v, Face_handle f)
   if (f == Face_handle())    f=v->face();
   update_hidden_points_3_1(f, f->neighbor( cw(f->index(v))),
 			   f->neighbor(ccw(f->index(v))));
-  Triangulation_2<Gt,Tds>::remove_degree_3(v,f);
+  Base::remove_degree_3(v,f);
   if (is_infinite(f)) { //the list of f is given to its finite neighbor
     Face_handle fn = f->neighbor(f->index(infinite_vertex()));
     set_face(f->vertex_list(),fn);
