@@ -23,18 +23,12 @@ typedef K::Iso_rectangle_2              Iso_rectangle_2;
 typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 
-void display_bounding_box(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void display_bounding_box(Largest_empty_rect &empty_rectangle,
+			  CGAL::Window_stream &W)
 {
   Iso_rectangle_2 b = empty_rectangle.get_bounding_box();
-  //double x1 = (b.first.first).to_double(),y1 = (b.first.second).to_double(),
-  //       x2 = (b.second.first).to_double(),y2 = (b.second.second).to_double();
 
   W << CGAL::BLACK << b;
-
-  //W << Segment(Point(x1,y1),Point(x2,y1));
-  //W << Segment(Point(x1,y1),Point(x1,y2));
-  //W << Segment(Point(x1,y2),Point(x2,y2));
-  //W << Segment(Point(x2,y2),Point(x2,y1));
 }
 
 void clear(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
@@ -56,33 +50,24 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
       iter != empty_rectangle.end();
       ++iter)
     W << *iter;
-
-  // display points
-  //list<pair<Number_Type,Number_Type> > points_list;
-
-  //empty_rectangle.get_list_of_points(points_list);
-
-  //for(list<pair<Number_Type,Number_Type> >::iterator iter = points_list.begin();iter != points_list.end();++iter)
-  //  W << Point(iter->first,iter->second);
 }
 
 
-void show_biggest_rec(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void show_biggest_rec(Largest_empty_rect &empty_rectangle,
+		      CGAL::Window_stream &W)
 {
-   Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
-
-  //double x1 = (b.first.first).to_double(),y1 = (b.first.second).to_double(),
-  //      x2 = (b.second.first).to_double(),y2 = (b.second.second).to_double();
+  Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
 
   W << CGAL::RED << b;
 
-  //W << Segment(Point(x1,y1),Point(x2,y1));
-  //W << Segment(Point(x1,y1),Point(x1,y2));
-  //W << Segment(Point(x1,y2),Point(x2,y2));
-  //W << Segment(Point(x2,y2),Point(x2,y1));
-
-  std::cout << "\nThe largest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
-  std::cout << "Its size is " << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << std::endl;
+  std::cout
+    << "\nThe largest rectangle is :\n   buttom-left point - ("
+    << b.min().x() << ":" << b.min().y()
+    << ")\n   top-right point   - (" << b.max().x() << ":"
+    << b.max().y() << ")\n";
+  std::cout << "Its size is "
+    << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y()))
+    << std::endl;
 }
 
 int main(int argc,char *argv[])
@@ -136,7 +121,6 @@ int main(int argc,char *argv[])
       y2 = tmp;
     }
 
-    //double x1_double = x1.to_double(),x2_double = x2.to_double(),y1_double = y1.to_double(),y2_double = y2.to_double();
     W.init(x1 - 2,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
@@ -160,7 +144,8 @@ int main(int argc,char *argv[])
     for (;;) {
       mouse_input = W.read_mouse(x,y);
 
-      if(mouse_input == -1 && x >= MIN_X && x <= MAX_X && y >= MIN_Y && y <= MAX_Y) {
+      if(mouse_input == -1 && x >= MIN_X && x <= MAX_X &&
+	 y >= MIN_Y && y <= MAX_Y) {
         if(biggest_rect_shown) {
           // remove biggest rectangle
           biggest_rect_shown = false;
@@ -198,10 +183,16 @@ int main(int argc,char *argv[])
 	// cctor and operator + . Should be removed later
 	// Largest_empty_rect empty_rectangle2(empty_rectangle);
 	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
-	// std::cout << "\nCCTOR :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+	// std::cout << "\nCCTOR :\n   buttom-left point - ("
+	// << b.min().x() << ":" << b.min().y()
+	// << ")\n   top-right point   - (" << b.max().x()
+	// << ":" << b.max().y() << ")\n";
 	// empty_rectangle2 = empty_rectangle;
 	// b = empty_rectangle2.get_largest_empty_iso_rectangle();
-	// std::cout << "\noperator= :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+	// std::cout << "\noperator= :\n   buttom-left point - ("
+	// << b.min().x() << ":" << b.min().y()
+	// << ")\n   top-right point   - (" << b.max().x()
+	// << ":" << b.max().y() << ")\n";
 	// *********************************************
 
       } else if(mouse_input == 4) {
