@@ -40,7 +40,7 @@
 \newcommand{\ccPortability}{\ccFalse}
 
 % debug option, use only for small files!
-%\tracingmacros=1
+% \tracingmacros=1
 
 % \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
 % There is also the code to print the message during the typesetting.
@@ -56,14 +56,20 @@
 % ###########################################################################
 % +--------------------------------------------------------------------------
 % | Dimensions (from the LEDA Manual):
+% | They are commented out since Release 2.9 because I don't know their
+% | impact and I don't want to restrict the cc_manual.sty to a certain
+% | point size. Especially the \spaceskip definition makes the 
+% | verbatim environment faulty (no fixed size font any more since the
+% | space can vary in its width).
 % +--------------------------------------------------------------------------
 %\hoffset=-0.5truemm \voffset=0.5truecm
 %\hsize=16truecm     \vsize=23.5truecm
 %\hsize=13.3truecm   \vsize=19.8truecm
 
-\baselineskip 14pt
-\spaceskip  .4em plus .25em minus .25em
-\xspaceskip .65em
+% \baselineskip 14pt
+% \spaceskip  .4em plus .25em minus .25em  %% This one makes verbatim false.
+% \xspaceskip .65em
+
 \newcommand{\ccParDims}{%
     \parskip 11pt plus 1pt minus 1pt
     \parindent 0pt
@@ -227,6 +233,7 @@
 % | Customization tags for the style: here are the defaults defined.
 % +--------------------------------------------------------------------------
 \newcommand{\ccTagChapterAuthor}{}    % true -> the author is shown.
+\newcommand{\ccTagChapterRelease}{}   % true -> the release is shown.
 \newcommand{\ccTagReplacePrefix}{}    % true -> prefixes are replaced.
 \newcommand{\ccTagReplaceInclude}{}   % true -> include file prefixes
                                       % are replaced when 
@@ -251,7 +258,8 @@
 
 
 \newcommand{\ccTagDefaults}{%
-    \def\ccTagChapterAuthor{\ccTrue}%
+    \def\ccTagChapterAuthor{\ccFalse}%
+    \def\ccTagChapterRelease{\ccFalse}%
     \def\ccTagReplacePrefix{\ccFalse}%
     \def\ccTagReplaceInclude{\ccFalse}%
     \def\ccLongParamLayout{\ccFalse}%
@@ -591,11 +599,18 @@
 % |
 % | \ccSection, \definition, \constants, \types, \creation, \operations, 
 % | \implementation, \example, \precond, \postcond, 
-% | \ccChapterAuthor, \ccChapterSubTitle
+% | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
 \newcommand{\ccChapterAuthor}[1]{%
     \ifnum\ccTagChapterAuthor=\ccTrue
+        \noindent\setlength{\unitlength}{1mm}%
+        \begin{picture}(0,0)% 
+            \put(0,11){{\em #1}}%
+        \end{picture}%
+    \fi}
+\newcommand{\ccChapterRelease}[1]{%
+    \ifnum\ccTagChapterRelease=\ccTrue
         \noindent\setlength{\unitlength}{1mm}%
         \begin{picture}(0,0)% 
             \put(0,11){{\em #1}}%
@@ -610,13 +625,11 @@
 
 \newcommand{\ccSection}[1]{%
                    \section[#1 (\protect\ccPrintSingleTokenSemi
-                   \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}
-                   \label{#1}}
+                   \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}}
 
 \newcommand{\ccSubsection}[1]{%
                    \subsection[#1 (\protect\ccPrintSingleTokenSemi
-                         \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}
-                   \label{#1}}
+                   \ccPureClassTemplateName;)]{#1 (\ccClassTemplateName)}}
 
 \newcommand{\ccInclude}[1]{\noindent\ccc{##include <#1>}}
 
@@ -1023,9 +1036,11 @@
     \ccHtmlCrossLinkX
 }
 \def\ccHtmlCrossLinkX #1{\endgroup}
-\newcommand{\ccHtmlNoClassLinks}{}
 \newcommand{\ccHtmlNoClassFile}{}
+\newcommand{\ccHtmlNoClassLinks}{}
 \newcommand{\ccHtmlNoClassIndex}{}
+\newcommand{\ccHtmlNoLinks}{}
+\newcommand{\ccHtmlNoIndex}{}
 
 \newenvironment{ccHtmlClassFile}{%
     \begingroup\ccCatcode
@@ -1298,24 +1313,96 @@
                          \fi
                        \fi
                        \ifnum\ccBool=\ccFalse
-                           \ccSeparateFunction{}#3 #4::\ccEnd%
-                           \setbox\returntypebox=\hbox{{\ccFont
-                               \unhcopy\templatedeclbox
-                               \unhbox\returntypebox
-                           }}
-                           \setbox\functioncallbox=\hbox{{\ccFont
-                               \ifnum#1=0 \ccVar.\fi
-                               \unhcopy\functionnamebox(% 
-                               \isEmpty{#5}\ifnum\ccBool=\ccFalse
-                                   \ \ccPrintParamList{#5)#6}%
-                               \fi)\unhcopy\trailingconstbox}}
+                           \ccBool=\ccTagOperatorLayout\ccInvert
+                           \ifnum\ccBool=\ccTrue
+                               \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
+                                   \isConversionOperator{#3 #4(#5)#6}
+                                   \ifnum\ccBool=\ccTrue
+                                       \ccConversionFunctionCall
+                                           {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                                       \ccBool=\ccTrue
+                                   \else
+                                       \isParenthesisOperator{#3 #4(#5)#6}%
+                                       \ifnum\ccBool=\ccTrue
+                                           \ccOperatorFunctionCall
+                                               {#1}{#2}#3 #4(#5)#6;#7\ccEnd
+                                           \ccBool=\ccTrue
+                                       \fi
+                                   \fi
+                               \fi
+                           \fi
+                           \ifnum\ccBool=\ccFalse
+                               \ccSeparateFunction{}#3 #4::\ccEnd%
+                               \setbox\returntypebox=\hbox{{\ccFont
+                                   \unhcopy\templatedeclbox
+                                   \unhbox\returntypebox
+                               }}
+                               \setbox\functioncallbox=\hbox{{\ccFont
+                                   \ifnum#1=0 \ccVar.\fi
+                                   \unhcopy\functionnamebox(% 
+                                   \isEmpty{#5}\ifnum\ccBool=\ccFalse
+                                       \ \ccPrintParamList{#5)#6}%
+                                   \fi)\unhcopy\trailingconstbox}}
+                               \ccBool=\ccTrue
+                           \else
+                               \ccBool=\ccFalse
+                           \fi
                        \fi
+                       \ifnum\ccBool=\ccTrue
+                           \setbox\callnamebox=\hbox{{\ccFont
+                               \ifnum#1=0 \ccVar.\fi
+                               \unhbox\functionnamebox}}%
+                           \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
+                               \trailingconstbox}{#2}%
+                       \fi
+                       \fi % from \isTemplate
+                     }
+
+
+
+% This macro is used to format function operators "operator()(....)",
+% if they are not formatted in operator notation.
+\def\ccOperatorFunctionCall #1#2#3 #4(#5(#6)#7;#8\ccEnd{%
+                       \def\ccExtendedFormat{\ }% Switches ext. format OFF.
+                       \ccSeparateFunction{}#3 #4(#5::\ccEnd%
+                       \setbox\returntypebox=\hbox{{\ccFont
+                           \unhcopy\templatedeclbox
+                           \unhbox\returntypebox
+                       }}
+                       \setbox\functioncallbox=\hbox{{\ccFont
+                           \ifnum#1=0 \ccVar.\fi
+                           \unhcopy\functionnamebox(% 
+                           \isEmpty{#6}\ifnum\ccBool=\ccFalse
+                               \ \ccPrintParamList{#6)#7}%
+                           \fi)\unhcopy\trailingconstbox}}
+                       \setbox\callnamebox=\hbox{{\ccFont
+                           \ifnum#1=0 \ccVar.\fi
+                           \unhbox\functionnamebox}}%
+                       \ccLayoutThreeColumns{(}{#6)#7}{)\unhbox
+                           \trailingconstbox}{#2}%
+                     }
+
+% This macro is used to format conversion operators "operator type(....)",
+% if they are not formatted in operator notation.
+\def\ccConversionFunctionCall #1#2#3operator #4(#5)#6;#7\ccEnd{%
+                       \def\ccExtendedFormat{\ }% Switches ext. format OFF.
+                       \setbox\functionnamebox=\hbox{{\ccFont
+                           \ccPrintTokens operator #4\ccEnd}}%
+                       \setbox\returntypebox=\hbox{{\ccFont
+                           \unhcopy\templatedeclbox
+                           \ccPrintTokens #4\ccEnd
+                       }}
+                       \setbox\functioncallbox=\hbox{{\ccFont
+                           \ifnum#1=0 \ccVar.\fi
+                           \unhcopy\functionnamebox(% 
+                           \isEmpty{#5}\ifnum\ccBool=\ccFalse
+                               \ \ccPrintParamList{#5)#6}%
+                           \fi)\unhcopy\trailingconstbox}}
                        \setbox\callnamebox=\hbox{{\ccFont
                            \ifnum#1=0 \ccVar.\fi
                            \unhbox\functionnamebox}}%
                        \ccLayoutThreeColumns{(}{#5)#6}{)\unhbox
                            \trailingconstbox}{#2}%
-                       \fi % from \isTemplate
                      }
 
 \def\ccExtendedFormat{\ }% Default: Extended Format switched OFF.
@@ -1579,7 +1666,7 @@
                 \setbox\trailingconstbox=\hbox{{ % here is one space !
                     \ccFont\ccPrintTokens #1\ccEnd}}%
             \else
-                \ccSeparateFunctionXX #2\ccEnd
+                \ccSeparateTrailingConst #2\ccEnd
             \fi
         \fi
     \fi
