@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.79 ()
+- Triangulation data structure uses Compact_container
+- Vertex_handle and Face_handle are now nested class of TDS
+- remove handle() functions
+- make Finite_[vertices|faces]_iterator nested class of Triangulation_2
+
 ver 7.78 ()
 - changed the flip(Facs_handle,int) in Constrained_Delaunay_triangulation_2.h
 - fixed bug introduced by Menelaos with the opeartor= of Triangulation_ds_circulator_2

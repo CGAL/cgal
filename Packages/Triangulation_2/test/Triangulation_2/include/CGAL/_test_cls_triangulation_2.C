@@ -28,8 +28,6 @@
 #include <utility>
 #include <list>
 
-#include <CGAL/_test_cls_triangulation_vertex.C>
-#include <CGAL/_test_cls_triangulation_face.C>
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
 #include <CGAL/_test_triangulation_circulators.C>
@@ -109,11 +107,6 @@ _test_cls_triangulation_2( const Triangul & )
   v.push_back(p4); v.push_back(p5); v.push_back(p6);
   v.push_back(p7); v.push_back(p8); v.push_back(p9);
   
-  /***********************/
-  /***** SUBCLASSES ******/
-  // not needed anymore 
-  // _test_cls_triangulation_vertex(Vertex());
-  //  _test_cls_triangulation_face(Face());
   
   /*****************************/
   /***** CONSTRUCTORS (1) ******/

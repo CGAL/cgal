@@ -27,10 +27,7 @@
 
 #include <utility>
 #include <list>
-//#include <vector>
 
-#include <CGAL/_test_cls_triangulation_vertex.C>
-#include <CGAL/_test_cls_triangulation_face.C>
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
 #include <CGAL/_test_triangulation_circulators.C>

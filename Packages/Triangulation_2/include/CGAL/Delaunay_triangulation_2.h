@@ -328,10 +328,10 @@ nearest_vertex_1D(const Point& p) const
   Vertex_handle nn;
   
   Finite_vertices_iterator vit=finite_vertices_begin();
-  nn = vit->handle();
+  nn = vit;
   for ( ; vit != finite_vertices_end(); ++vit){
     if (compare_distance(p, vit->point(), nn->point()) == SMALLER) 
-      nn=vit->handle();
+      nn = vit;
   } 
   return nn;
 }

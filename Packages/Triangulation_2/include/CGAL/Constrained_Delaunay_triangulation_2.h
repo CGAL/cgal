@@ -283,7 +283,7 @@ flip (Face_handle& f, int i)
   // The following precondition prevents the test suit 
   // of triangulation to work on constrained Delaunay triangulation
   //CGAL_triangulation_precondition(is_flipable(f,i));
-  this->_tds.flip( &(*f), i);
+  this->_tds.flip(f, i);
    
   // restore constraint status
   f->set_constraint(f->index(g), false);

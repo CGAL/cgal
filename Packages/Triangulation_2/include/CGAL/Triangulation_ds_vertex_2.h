@@ -117,6 +117,7 @@ is_valid(bool verbose, int level)
 			 &*face()->vertex(1) == this ||
 			 &*face()->vertex(2) == this );
   }
+  CGAL_triangulation_assertion(result);
   return result;
 }
 

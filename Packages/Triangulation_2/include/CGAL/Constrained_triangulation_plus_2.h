@@ -211,11 +211,15 @@ Constrained_triangulation_plus_2<Tr>::
 copy(const Constrained_triangulation_plus_2 &ctp)
 {
   copy_triangulation(ctp);
+  //the following assume that the triangulation and its copy
+  // iterates on their vertices on the same order 
   std::map<Vertex_handle,Vertex_handle> vmap;
   Vertex_iterator vit = ctp.vertices_begin();
   Vertex_iterator vvit = vertices_begin();
-  for( ; vit != ctp.vertices_end(); ++vit, ++vvit) 
-    vmap[vit->handle()] = vvit->handle();
+  for( ; vit != ctp.vertices_end(); ++vit, ++vvit) {
+    assert (vit->point() == vvit->point());
+    vmap[vit] = vvit;
+  }
   hierarchy.copy(ctp.hierarchy, vmap);
 }
 

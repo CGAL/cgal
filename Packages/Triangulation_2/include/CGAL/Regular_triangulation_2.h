@@ -28,7 +28,8 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
-//#include <CGAL/Filter_iterator_with_handle.h>
+//#include <CGAL/Triangulation_iterator_adaptator.h>
+
 CGAL_BEGIN_NAMESPACE 
 
 template < class Gt, 
@@ -70,17 +71,61 @@ private:
   typedef typename Base::All_vertices_iterator     All_vib;
   typedef typename Base::Finite_vertices_iterator  Finite_vib;
 
-  typedef Filter_iterator<All_vib,Hidden_tester>      All_filtered;
-  typedef Filter_iterator<Finite_vib,Hidden_tester>   Finite_filtered;
-  typedef Filter_iterator<Finite_vib,Unhidden_tester> Hidden_filtered;
-
 public:
-  typedef Triangulation_iterator_handle_adaptor
-                  <All_filtered, Vertex_handle>    All_vertices_iterator;
-  typedef Triangulation_iterator_handle_adaptor
-               <Finite_filtered, Vertex_handle>    Finite_vertices_iterator;
-  typedef Triangulation_iterator_handle_adaptor
-                <Hidden_filtered,Vertex_handle>    Hidden_vertices_iterator;
+  // We derive in order to add a conversion to handle.
+  class All_vertices_iterator :
+    public Filter_iterator<All_vib, Hidden_tester> {
+    typedef Filter_iterator<All_vib, Hidden_tester> Base;
+    typedef All_vertices_iterator                     Self;
+     public:
+    All_vertices_iterator() : Base() {}
+    All_vertices_iterator(const Base &b) : Base(b) {}
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Vertex_handle() const { return Base::base(); } 
+  };
+
+  class Finite_vertices_iterator :
+    public Filter_iterator<Finite_vib, Hidden_tester> {
+    typedef Filter_iterator<Finite_vib, Hidden_tester> Base; 
+    typedef Finite_vertices_iterator                          Self;
+  public:
+    Finite_vertices_iterator() : Base() {}
+    Finite_vertices_iterator(const Base &b) : Base(b) {}
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Vertex_handle() const { return Base::base(); }
+ };
+
+  class Hidden_vertices_iterator :
+    public Filter_iterator<Finite_vib, Unhidden_tester> {
+    typedef Filter_iterator<Finite_vib, Unhidden_tester> Base; 
+    typedef Hidden_vertices_iterator                     Self;
+  public:
+    Hidden_vertices_iterator() : Base() {}
+    Hidden_vertices_iterator(const Base &b) : Base(b) {}
+    Self & operator++() { Base::operator++(); return *this; }
+    Self & operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator Vertex_handle() const { return Base::base(); }
+ };
+
+//  typedef Filter_iterator<All_vib,Hidden_tester>      All_filtered;
+//   typedef Filter_iterator<Finite_vib,Hidden_tester>   Finite_filtered;
+//   typedef Filter_iterator<Finite_vib,Unhidden_tester> Hidden_filtered;
+
+// public:
+//   typedef Triangulation_iterator_handle_adaptor
+//                   <All_filtered, Vertex_handle>    All_vertices_iterator;
+//   typedef Triangulation_iterator_handle_adaptor
+//                <Finite_filtered, Vertex_handle>    Finite_vertices_iterator;
+//   typedef Triangulation_iterator_handle_adaptor
+//                 <Hidden_filtered,Vertex_handle>    Hidden_vertices_iterator;
 
 private:
   int _hidden_vertices;
@@ -262,14 +307,14 @@ copy_triangulation(const Self &tr )
   // not good
   // clear them and next
   // scan the hidden vertices to retablish the list in faces
-  typename Tds::Face_iterator_base 
+  typename Tds::Face_iterator 
                        baseit= this->_tds.face_iterator_base_begin();
   for( ; baseit !=  this->_tds.face_iterator_base_end(); baseit++){
     baseit->vertex_list().clear();
   }
   Hidden_vertices_iterator hvit = hidden_vertices_begin();
   for( ; hvit !=  hidden_vertices_end() ; ++hvit){
-    hvit->face()->vertex_list().push_back(&(*hvit));
+    hvit->face()->vertex_list().push_back(hvit);
   }
   CGAL_triangulation_postcondition(is_valid());
   return;
@@ -584,7 +629,7 @@ show_all() const
     for( vi = all_vertices_begin(); vi != all_vertices_end(); vi++){
       show_vertex(vi);
       std::cerr << "  / face associee : "
-	     << (void*)(&(*(vi->face())))<< std::endl;
+	     <<  &*(vi->face()) << std::endl;
       }
       std::cerr<<std::endl;
   }
@@ -594,7 +639,7 @@ show_all() const
    for( ; hvi != hidden_vertices_end(); hvi++) {
      show_vertex(hvi);
       std::cerr << "  / face associee : "
-	     << (void*)(&(*(hvi->face())))<< std::endl;
+	     << &*(hvi->face()) << std::endl;
    }
   return;
 }
@@ -937,7 +982,7 @@ Regular_triangulation_2<Gt,Tds>::
 remove_hidden(Vertex_handle v )
 {
   _hidden_vertices--;
-  v->face()->vertex_list().remove(&(*v));
+  v->face()->vertex_list().remove(v);
   delete_vertex(v);
   return;
 }
@@ -959,7 +1004,7 @@ remove(Vertex_handle v )
   if(number_of_vertices() == 2 ) {
     Hidden_vertices_iterator hit = hidden_vertices_begin();
     for( ; hit != hidden_vertices_end(); hit = hidden_vertices_begin())
-      remove_hidden(hit->handle());
+      remove_hidden(hit);
   }
  
   // As we want to reinsert close to where the point we remove
@@ -1154,7 +1199,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
 	  newf->set_neighbor(0,fn);
 	  fn->set_neighbor(in,newf);
 	  hole.pop_front();
-	  hole.push_front(Edge(&(*newf),1));
+	  hole.push_front(Edge(newf,1));
 	  hole_list.push_front(hole);
 	}
       else
@@ -1166,7 +1211,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
 	      newf->set_neighbor(1,fn);
 	      fn->set_neighbor(in,newf);
 	      hole.pop_back();
-	      hole.push_back(Edge(&(*newf),0));
+	      hole.push_back(Edge(newf,0));
 	      hole_list.push_front(hole);
 	    }
 	  else
@@ -1179,8 +1224,8 @@ fill_hole_regular(std::list<Edge> & first_hole)
 		  hole.pop_front();
 		}
  
-	      hole.push_front(Edge(&(*newf),1));
-	      new_hole.push_front(Edge(&(*newf),0));
+	      hole.push_front(Edge(newf,1));
+	      new_hole.push_front(Edge(newf,0));
 	      hole_list.push_front(hole);
 	      hole_list.push_front(new_hole);
 	    }
@@ -1498,7 +1543,7 @@ stack_flip_4_2(Face_handle f, int i, int j, Faces_around_stack & faces_around)
     //Face_handle gn = g->neighbor(g->index(f->vertex(i)));
     Vertex_handle vq = f->vertex(j);
     
-    this->_tds.flip( &(*f), i); //not using flip because the vertex j is flat.
+    this->_tds.flip( f, i); //not using flip because the vertex j is flat.
     update_hidden_points_2_2(f,fn);
     Face_handle h1 = ( f->has_vertex(vq) ? fn : f);
     //hide_vertex(h1, vq);

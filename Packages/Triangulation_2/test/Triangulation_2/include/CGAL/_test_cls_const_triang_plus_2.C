@@ -79,7 +79,9 @@ _test_cls_const_triang_plus_2( const TrP & )
   std::cout << "test copy and swap" << std::endl;
   TrP  trp2(trp);
   TrP  trp3 = trp2;
+  //trp.print_hierarchy();
   //trp2.print_hierarchy();
+  //trp3.print_hierarchy();
   assert(trp3.number_of_constraints() == trp.number_of_constraints());
   assert(trp3.number_of_subconstraints() == trp.number_of_subconstraints());
   trp2.clear();

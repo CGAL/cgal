@@ -581,7 +581,7 @@ is_valid(bool verbose, int level) const
   if (dimension() <= 0 ||
       (dimension()==1 && number_of_vertices() == 2 ) ) return result;
 
-    if (dimension() == 1) {
+  if (dimension() == 1) {
     Finite_vertices_iterator it1 = finite_vertices_begin(),
                              it2(it1), it3(it1);
     ++it2;

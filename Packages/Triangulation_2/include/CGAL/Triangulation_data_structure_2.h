@@ -1370,7 +1370,6 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   for( ; vit1 != tds.vertices_end(); ++vit1) {
     vmap[vit1] = create_vertex(vit1);
   }
-  
 
   //create faces 
   Face_iterator fit1 = tds.face_container().begin();
@@ -1392,8 +1391,10 @@ copy_tds(const Tds &tds, Vertex_handle vh)
 	fmap[fit1]->set_neighbor(j, fmap[fit1->neighbor(j)]);
       }
     }
-  
-  CGAL_triangulation_postcondition( is_valid() );
+   
+  // remove the post condition because it is false when copying the
+  // TDS of a regular triangulation because of hidden vertices
+  // CGAL_triangulation_postcondition( is_valid() );
   return (vh == Vertex_handle())  ? Vertex_handle() : vmap[vh];
 }
  

@@ -1048,7 +1048,7 @@ file_output(std::ostream& os) const
   Triangulation_2<Gt, Tds>::file_output(os);
 
   // write constrained status
-  typename Tds::Face_iterator_base ib = this->_tds.face_iterator_base_begin();
+  typename Tds::Face_iterator ib = this->_tds.face_iterator_base_begin();
   for( ; ib != this->_tds.face_iterator_base_end(); ++ib) {
     for(int j = 0; j < 3; ++j){
       if (ib->is_constrained(j)) { os << "C";}
