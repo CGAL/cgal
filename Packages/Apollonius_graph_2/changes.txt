@@ -1,3 +1,6 @@
+1.68 (08 February 2004) [rursu]
+- updated the headers of the examples files
+
 1.67 (1 February 2004) [mk]
 - fixed bugs that gcc 3.4 was complaining about; mainly added "this->"
   in front of inherited methods

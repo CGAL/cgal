@@ -1,4 +1,11 @@
+// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+//
 // file: example4.C
+
 #include <CGAL/basic.h>
 
 // standard includes
