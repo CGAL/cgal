@@ -37,7 +37,14 @@ extern "C" {
 #include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #include <ieeefp.h>
-#elif defined __osf || defined __osf__ || defined __BORLANDC__
+#elif defined __osf || defined __osf__ 
+#  ifdef __GNUG__
+     // GCC seems to remove (fixincludes) read_rnd/write_rnd...
+#    include "/usr/include/float.h"
+#  else
+#    include <float.h>
+#  endif
+#elif defined __BORLANDC__
 #include <float.h>
 #elif defined __sgi
     // The 3 C functions provided on IRIX 6.5 do not work !
@@ -65,6 +72,7 @@ inline double IA_force_to_double(double x)
 {
 #ifdef __GNUG__
   asm("" : "=m"(x) : "m"(x));  // Portable assembly :)
+  // asm("" : "+m"(x) );
   return x;
 #else
   volatile double e = x;
