@@ -250,11 +250,11 @@ test_script()
 	cd ../test_${2}
 	make_global_makefile
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
-        if [ "${NUMBER_OF_PROCESSORS} = "1" ] ; then
+        if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
           remote_command ${1} \
                 "CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
                 export CGAL_MAKEFILE;cd ${CGAL_DIR}/test_${2};
-                nice -19 make >> ${ACTUAL_LOGFILE}.${1} 2>&1
+                nice -19 make" >> ${ACTUAL_LOGFILE}.${1} 2>&1
         else 
 	  remote_command ${1} \
 		"CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
