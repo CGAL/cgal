@@ -1477,9 +1477,8 @@ emptiness and degeneracy, resp.
     CGAL_Bounded_side
     bounded_side( const Point& p) const
     {
-        return( CGAL_static_cast( CGAL_Bounded_side,
-                                  CGAL_sign( CGAL_squared_distance( p, _center)
-                                             - _squared_radius)));
+        return( CGAL_Bounded_side(
+            CGAL_sign( CGAL_squared_distance( p, _center) - _squared_radius)));
     }
 
     inline
@@ -1888,7 +1887,7 @@ it is declared \ccc{friend}.
             FT  px;
             FT  py;
             dao.get( p, px, py);
-            return( CGAL_static_cast( CGAL_Bounded_side,
+            return( CGAL_Bounded_side( 
                 CGAL_sign( sqr_dist( px, py, center_x, center_y) - sqr_rad)));
         }
 
@@ -2253,7 +2252,7 @@ it is declared \ccc{friend}.
             RT  phy;
             RT  phw;
             dao.get( p, phx, phy, phw);
-            return( CGAL_static_cast( CGAL_Bounded_side,
+            return( CGAL_Bounded_side(
                         CGAL_sign( sqr_dist( phx, phy, phw,
                                              center_hx, center_hy, center_hw)
                                    - sqr_rad)));

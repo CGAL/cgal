@@ -1541,8 +1541,7 @@ one.
                 return( c.convex_side( p)); }
             else {
                 int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-                return( CGAL_static_cast( CGAL_Bounded_side,
-                                          CGAL_sign( tau_star))); } }
+                return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
           default:
             CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
@@ -2006,8 +2005,7 @@ it is declared \ccc{friend}.
                     return( c.convex_side( p)); }
                 else {
                     int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-                    return( CGAL_static_cast( CGAL_Bounded_side,
-                                              CGAL_sign( tau_star))); } }
+                    return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                              ( n_boundary_points <= 5) ); }
@@ -2400,8 +2398,7 @@ it is declared \ccc{friend}.
                     return( c.convex_side( p)); }
                 else {
                     int tau_star = -c.vol_derivative( dr, ds, dt, du, dv, dw);
-                    return( CGAL_static_cast( CGAL_Bounded_side,
-                                              CGAL_sign( tau_star))); } }
+                    return( CGAL_Bounded_side( CGAL_sign( tau_star))); } }
               default:
                 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
                                              ( n_boundary_points <= 5) ); }
