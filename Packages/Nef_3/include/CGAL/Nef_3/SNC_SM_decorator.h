@@ -1080,6 +1080,48 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
   return valid;
 }
 
+  template <typename Selection>
+  void change_marks(const Mark& m, const Selection& SP) {
+   
+    psm_->mark_ = SP(m, psm_->mark_);
+
+    SVertex_iterator v;
+    CGAL_nef3_forall_svertices(v,*this)
+      mark(v) = SP(m, mark(v));
+
+    SHalfedge_iterator e;
+    CGAL_nef3_forall_sedges(e,*this)
+      mark(e) = SP(m, mark(e));
+
+    SFace_iterator f;
+    CGAL_nef3_forall_sfaces(f,*this) 
+      mark(f) = SP(m, mark(f));
+
+    mark_of_halfsphere(-1) = SP(m, mark_of_halfsphere(-1));
+    mark_of_halfsphere(+1) = SP(m, mark_of_halfsphere(+1));
+  }
+
+  template <typename Selection>
+  void change_marks(const Selection& SP, const Mark& m) {
+   
+    psm_->mark_ = SP(psm_->mark_, m);
+
+    SVertex_iterator v;
+    CGAL_nef3_forall_svertices(v,*this)
+      mark(v) = SP(mark(v),m);
+
+    SHalfedge_iterator e;
+    CGAL_nef3_forall_sedges(e,*this)
+      mark(e) = SP(mark(e),m);
+
+    SFace_iterator f;
+    CGAL_nef3_forall_sfaces(f,*this) 
+      mark(f) = SP(mark(f),m);
+
+    mark_of_halfsphere(-1) = SP(mark_of_halfsphere(-1), m);
+    mark_of_halfsphere(+1) = SP(mark_of_halfsphere(+1), m);
+  }
+
 }; // SNC_SM_decorator
 
 

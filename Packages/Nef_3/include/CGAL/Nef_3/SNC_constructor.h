@@ -349,6 +349,9 @@ public:
 				 const Point_3& p) const; 
   /*{\Mop produces the sphere map at point $p$ representing the local
      view of $e$. \precond $p$ is part of $e$.}*/
+
+  Vertex_handle clone_SM( Vertex_handle vin);
+
  private:
   void pair_up_halfedges() const;
   /*{\Mop pairs all halfedge stubs to create the edges in 3-space.}*/
@@ -1052,6 +1055,84 @@ create_from_edge(Halfedge_handle e,
 }
 
 template <typename SNC_>
+typename SNC_::Vertex_handle
+SNC_constructor<SNC_>::
+clone_SM( typename SNC_::Vertex_handle vin) {
+
+  typedef typename SNC_::SVertex_handle      SVertex_handle;
+  typedef typename SNC_::SHalfedge_handle    SHalfedge_handle;
+  typedef typename SNC_::SHalfloop_handle    SHalfloop_hanlde;
+  typedef typename SNC_::SFace_handle        SFace_handle;
+  
+  CGAL::Unique_hash_map<SVertex_handle, SVertex_handle>         VM;
+  CGAL::Unique_hash_map<SHalfedge_handle, SHalfedge_handle>     EM;
+  CGAL::Unique_hash_map<SHalfloop_handle, SHalfloop_handle>     LM;
+  CGAL::Unique_hash_map<SFace_handle, SFace_handle>             FM;
+  
+  SM_decorator E(vin);
+  Vertex_handle vout = sncp()->new_vertex(point(vin), mark(vin));
+  SM_decorator D(vout);
+  
+  SVertex_handle sv;
+  CGAL_nef3_forall_svertices(sv, E)
+    VM[sv] = D.new_vertex(E.point(sv));
+
+  SHalfedge_handle se;
+  CGAL_nef3_forall_sedges(se, E) {
+    EM[se] = D.new_edge_pair();
+    EM[D.twin(se)] = E.twin(EM[se]);
+  }
+  
+  SFace_handle sf;
+  CGAL_nef3_forall_sfaces(sf, E)
+    FM[sf] = D.new_face();
+
+  SHalfloop_handle sl;
+  if(E.has_loop()) {
+    sl = LM[E.shalfloop()] = E.new_loop_pair();
+    LM[E.twin(E.shalfloop())] = D.twin(sl);
+    D.set_face(sl, FM[E.face(E.shalfloop())]);
+    D.set_face(D.twin(sl), FM[E.face(E.twin(E.shalfloop()))]);
+    D.circle(sl) = E.circle(E.shalfloop());
+    D.circle(D.twin(sl)) = E.circle(E.twin(E.shalfloop()));
+  }
+
+  CGAL_nef3_forall_svertices(sv, E) {
+    D.set_first_out_edge(VM[sv], EM[E.first_out_edge(sv)]);
+    D.set_face(VM[sv], FM[E.face(sv)]);
+    D.mark(VM[sv]) = E.mark(sv);
+  }
+  
+  CGAL_nef3_forall_shalfedges(se, E) {
+    D.mark(EM[se]) = E.mark(se);
+    D.set_source(EM[se], VM[E.source(se)]);
+    D.set_prev(EM[se], EM[E.previous(se)]); 
+    D.set_next(EM[se], EM[E.next(se)]);
+    D.set_face(EM[se], FM[E.face(se)]);
+    D.circle(EM[se]) = E.circle(se);
+  }
+
+  CGAL_nef3_forall_sfaces(sf, E) {
+    D.mark(FM[sf]) = E.mark(sf);
+    SFace_cycle_iterator sfc;
+    for(sfc = sf->sface_cycles_begin(); sfc != sf->sface_cycles_end(); ++sfc) {
+      if ( assign(sv,sfc) )
+	D.store_boundary_object(VM[sv],FM[sf]);
+      else if ( assign(se,sfc) )
+	D.store_boundary_object(EM[se],FM[sf]);
+      else if ( assign(sl,sfc) )
+	D.store_boundary_object(LM[sl],FM[sf]);
+      else CGAL_nef3_assertion_msg(0,"damn wrong handle.");
+    }
+  }
+
+  D.mark_of_halfsphere(-1) = E.mark_of_halfsphere(-1);
+  D.mark_of_halfsphere(+1) = E.mark_of_halfsphere(+1);
+
+  return vout;
+}
+
+template <typename SNC_>
 typename SNC_::Halffacet_handle 
 SNC_constructor<SNC_>::
 get_facet_below( Vertex_handle vi) const {
@@ -1289,7 +1370,6 @@ link_shalfedges_to_facet_cycles() const
 
     CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
     CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 
-    SNC_io_parser<SNC_structure> Op(std::cerr, *sncp());
     CGAL_For_all(ce,cee) { 
       CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
       CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 

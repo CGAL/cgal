@@ -1022,14 +1022,16 @@ public:
 	TRACEN("p0 found on facet");
       }
       else if( assign( c, o)) {
-	//	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
-	  // TODO: to copy the SM on v0, instead of create a volume local view
-	  // and operate it with the vertex?
-	  v1 = D.create_local_view_on( p0, c);
-	  binop_local_views( v0, v1, BOP, result);
-	  result.delete_vertex(v1);
+	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
+
+	  SNC_constructor C(result);
+	  v1 = C.clone_SM(v0);
+	  SM_decorator SM(v1);
+	  SM.change_marks(BOP, mark(c));
+	  SM_overlayer O(v1);
+	  O.simplify();
 	  TRACEN("p0 found on volume");
-	  //	}
+	}
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
@@ -1059,14 +1061,15 @@ public:
 	TRACEN("p1 found on facet");
       } 
       else if( assign( c, o)) {
-	//	if( BOP( mark(c), true) != BOP( mark(c), false)) {
-	  // TODO: to copy the SM on v0, instead of create a volume local view
-	  // and operate it with the vertex?
-	  v0 = D.create_local_view_on( p1, c);
-	  binop_local_views( v0, v1, BOP, result);
-	  result.delete_vertex(v0);
-	  TRACEN("p1 found on volume");
-	  //	}
+	if( BOP( mark(c), true) != BOP( mark(c), false)) {
+	  SNC_constructor C(result);
+	  v0 = C.clone_SM(v1);
+	  SM_decorator SM(v0);
+	  SM.change_marks(mark(c), BOP);
+	  SM_overlayer O(v0);
+	  O.simplify();
+       	  TRACEN("p1 found on volume");
+	}
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
@@ -1145,7 +1148,7 @@ public:
     CGAL_nef3_assertion(!result.simplify());
     TRACEN("=> end binary operation. ");
   }
-
+  
   void compute_all_marks_of_halfspheres() {
     
     Vertex_handle v;
@@ -1171,7 +1174,6 @@ public:
     int count = 0;
 
     bool valid = true;
-
     Vertex_iterator vi;
     std::list<Point_3> Points(false);   // durch hashmap ersetzen    
     CGAL_nef3_forall_vertices(vi,*this) {
