@@ -98,16 +98,9 @@ private:
 			       0, this);
       str = "Saves the actual document under a new filename";
       fileSaveAs->setStatusTip(tr(str));
-      str =
-	tr("Save As\n\nSaves the actual document under a new filename");
-      fileSaveAs->setWhatsThis(str);
+      str = "Save As\n\nSaves the actual document under a new filename";
+      fileSaveAs->setWhatsThis(tr(str));
       connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSaveAs()));
-#if 0
-      fileSaveAs = new QAction(tr("Save File As"), tr("Save &as..."), 0, this);
-      fileSaveAs->setStatusTip(tr("Saves the actual document under a new filename"));
-      fileSaveAs->setWhatsThis(tr("Save As\n\nSaves the actual document under a new filename"));
-      connect(fileSaveAs, SIGNAL(activated()), this, SLOT(slotFileSave()));
-#endif
 
       fileClose = new QAction(tr("Close File"), tr("&Close"),
 			      0, this);
