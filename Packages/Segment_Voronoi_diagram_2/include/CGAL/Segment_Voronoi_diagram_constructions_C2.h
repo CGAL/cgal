@@ -190,8 +190,8 @@ private:
     RT a1 = lq.a(), b1 = lq.b(), c1_ = lq.c();
     RT a2 = lr.a(), b2 = lr.b(), c2_ = lr.c();
 
-    CGAL_precondition( c1_ >= 0 );
-    CGAL_precondition( c2_ >= 0 );
+    CGAL_precondition( c1_ >= RT(0) );
+    CGAL_precondition( c2_ >= RT(0) );
 
     RT n1 = CGAL_NTS square(a1) + CGAL_NTS square(b1);
     RT n2 = CGAL_NTS square(a2) + CGAL_NTS square(b2);
