@@ -5,6 +5,8 @@
   to be done or redone : copy swap and delete
 - Constraint_hierarchy_3 
   to be done or redone : copy swap and delete
+- utiliser  Emptyset_iterator et virer le fichier Dummy_output_iterator.h
+- harmoniser les fonctions find-conflicts avec le 3d.
 	
 - k orderVoronoi diagram (code de Julia)
 - Natural neighbor (code de Franck)
