@@ -224,7 +224,7 @@ void
 construct_delaunay(const std::vector<Point> &V_p,
 		   Triangulation_3& T)
 {
-  std::cout << "   Compute Delaunay Tetrahedrization" << std::endl; 
+  std::cout << "   Compute Delaunay Tetrahedrization " << std::endl; 
   t1.start();
   {
     for(std::vector<Point>::const_iterator v_it = V_p.begin();
