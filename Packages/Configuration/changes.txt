@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.28
+
+Added CGAL_CFG_NO_STDC_NAMESPACE.C and CGAL_CFG_NO_STDIO_NAMESPACE.C.
+Defined CGAL as std in config.h.
+
+//-----------------------------------------------------------------------//
 // Changes in 1.26
 
 Added a std:: prefix in CGAL_CFG_NO_ITERATOR_TRAITS

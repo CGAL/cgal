@@ -50,7 +50,7 @@
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
 #  define CGAL_STD
-#  define CGAL
+#  define CGAL std
 #else
 #  define CGAL_USING_NAMESPACE_STD using namespace std;
 #  define CGAL_STD std
