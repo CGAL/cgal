@@ -1,8 +1,13 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
 
+3.37 (8 Jan 2004)
+- Moved Handle concept documentation from Triangulation_2.
+
 3.36 (17 Nov 2003)
 - Removed CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS workarounds.
+
+=========================== CGAL 3.0 ============================
 
 3.35 (21 Oct 2003)
 - fix headers
