@@ -1,5 +1,4 @@
 - Remove the polygon stuff
 - add default constructor + init method, copy constructor, assignment
-- why do we need get_list_of_points
-- Why do we need point_data inside and can't do it with Point_2 ??
-- Move .h file in a CGAL subdirectory so that one can #include<CGAL/LER.h>
+- Remove these 0.000001 constants
+- Check if the lengthy name problem is still an issue

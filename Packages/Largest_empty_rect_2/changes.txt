@@ -1,3 +1,16 @@
+Version 1.3 (16 May 01) [af]
+- removed get_list_of_points
+- replaced NT x, y by Point_2 in nested class Point_data
+- replaced all comparison functions with the ones from the kernel
+- changed Point_tpye: capitalized the type and uppercased the value constants
+- Moved the enum Point_type into class scope
+- Moved .h file in subdirectory ./include/CGAL, 
+  so that one can #include<CGAL/Largest_empty_iso_rectangle_2.h>
+- Changed filename EmptyRect.h to Largest_empty_iso_rectangle_2.h
+- Removed the public_set. The set x_sorted also does it. 
+  Used iterator adaptors to get Point_2 as value type.
+
+
 Version 1.2 (16 May 01) [af]
 - put it in namespace. 
 - changed Largest_Empty_Rect to Largest_empty_iso_rectangle_2
