@@ -33,6 +33,7 @@
 #include <CGAL/is_y_monotone_2.h>
 #include <list>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Cartesian<double>               CR;
 typedef CR::Point_2                           CPoint_2;

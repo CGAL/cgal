@@ -26,18 +26,17 @@
 // implementation: Testing of y-monotone partitioning function
 // ============================================================================
 
-#include <CGAL/basic.h>
-#include "rep_include.h"
+#include "kernel_include.h"
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
 
-#include "rep_def.h"
+#include "kernel_def.h"
 
-typedef R::Point_2                         Point_2;
-typedef CGAL::Polygon_traits_2<R>          Traits;
+typedef K::Point_2                         Point_2;
+typedef CGAL::Polygon_traits_2<K>          Traits;
 typedef std::list<Point_2>                 Container;
 typedef CGAL::Polygon_2<Traits, Container> Polygon_2;
 
