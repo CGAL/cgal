@@ -24,7 +24,7 @@ CXXFLAGS = -I../../../include/ \
 
 LIBPATH = \
           $(CGAL_LIBPATH)
-	  
+
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
