@@ -1,3 +1,7 @@
+5 September 2004 Menelaos Karavelas & Sylvain Pion
+- added specs for the new number type tags: Has_exact_ring_operations,
+  Has_exact_division, Has_exact_sqrt
+
 5 September 2004 Menelaos Karavelas
 - number_type_basic.h: put declarations for GMP, GMPXX and CORE inside
   the proper #ifdef CGAL_USE_* / #endif blocks
