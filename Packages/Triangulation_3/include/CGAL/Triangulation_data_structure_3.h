@@ -2327,6 +2327,9 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   int n = tds.number_of_vertices();
   set_dimension(tds.dimension());
 
+  // Number of pointers to cell/vertex to copy per cell.
+  int dim = std::max(1, dimension() + 1);
+
   if (n == 0)
       return vert;
 
@@ -2357,10 +2360,8 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   for (Cell_iterator cit = tds.cell_container().begin();
 	  cit != tds.cells_end(); ++cit) {
       F[cit] = create_cell(cit);
-      F[cit]->set_vertices(V[cit->vertex(0)],
-			   V[cit->vertex(1)],
-			   V[cit->vertex(2)],
-			   V[cit->vertex(3)]);
+      for (int j = 0; j < dim; j++)
+        F[cit]->set_vertex(j, V[cit->vertex(j)] );
   }
 
   // Link the vertices to a cell.
@@ -2371,7 +2372,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   // Hook neighbor pointers of the cells.
   for (Cell_iterator cit2 = tds.cell_container().begin();
 	  cit2 != tds.cells_end(); ++cit2) {
-    for (int j = 0; j < 4; j++)
+    for (int j = 0; j < dim; j++)
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
