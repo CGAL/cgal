@@ -88,7 +88,7 @@ public:
           double maxt = maxx;
           if (maxt < maxy) maxt = maxy;
 
-          double eps = 1.24406e-14 * maxx * maxy * (maxt*maxt);
+          double eps = 8.886122e-15 * maxx * maxy * (maxt*maxt);
 
           if (det >  eps) return ON_POSITIVE_SIDE;
           if (det < -eps) return ON_NEGATIVE_SIDE;
@@ -103,7 +103,7 @@ public:
   static double compute_epsilon()
   {
     typedef CGAL::Static_filter_error F;
-    F t1 = F(1, F::ulp());         // First translation
+    F t1 = F(1, F::ulp()/2);         // First translation
     F a = t1*t1 - t1*t1;
     F b = t1*t1 + t1*t1;
     F det = det2x2_by_formula(a, b, a, b);

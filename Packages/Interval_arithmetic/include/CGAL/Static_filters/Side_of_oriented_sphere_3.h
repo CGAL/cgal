@@ -95,7 +95,7 @@ public:
           if (maxt < maxy) maxt = maxy;
           if (maxt < maxz) maxt = maxz;
 
-          double eps = 1.546186e-13 * maxx * maxy * maxz * (maxt * maxt);
+          double eps = 1.14631e-13 * maxx * maxy * maxz * (maxt * maxt);
 
           double det = det4x4_by_formula(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
@@ -114,7 +114,7 @@ public:
   static double compute_epsilon()
   {
     typedef CGAL::Static_filter_error F;
-    F t1 = F(1,F::ulp());         // First translation
+    F t1 = F(1,F::ulp()/2);         // First translation
     F sq = t1*t1+t1*t1+t1*t1; // squares
     F det = det4x4_by_formula(t1, t1, t1, sq,
                               t1, t1, t1, sq,

@@ -65,7 +65,7 @@ public:
           if (maxx < fabs(prx)) maxx = fabs(prx);
           double maxy = fabs(pqy);
           if (maxy < fabs(pry)) maxy = fabs(pry);
-          double eps = 1.33292e-15 * maxx * maxy;
+          double eps = 8.886122e-16 * maxx * maxy;
 
           if (det > eps)  return POSITIVE;
           if (det < -eps) return NEGATIVE;
@@ -80,7 +80,7 @@ public:
   static double compute_epsilon()
   {
     typedef Static_filter_error F;
-    F t1 = F(1, F::ulp());         // First translation
+    F t1 = F(1, F::ulp()/2);         // First translation
     F det = det2x2_by_formula(t1, t1,
                               t1, t1); // Full det
     double err = det.error();

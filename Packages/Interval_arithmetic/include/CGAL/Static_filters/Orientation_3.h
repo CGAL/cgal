@@ -74,7 +74,7 @@ public:
           double maxz = fabs(pqz);
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
-          double eps = 6.886744e-15 * maxx * maxy * maxz;
+          double eps = 4.887367e-15 * maxx * maxy * maxz;
 
           double det = det3x3_by_formula(pqx, pqy, pqz,
                                          prx, pry, prz,
@@ -93,7 +93,7 @@ public:
   static double compute_epsilon()
   {
     typedef Static_filter_error F;
-    F t1 = F(1, F::ulp());         // First translation
+    F t1 = F(1, F::ulp()/2);         // First translation
     F det = det3x3_by_formula(t1, t1, t1,
                               t1, t1, t1,
                               t1, t1, t1); // Full det
