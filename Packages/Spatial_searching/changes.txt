@@ -1,3 +1,8 @@
+Version 3.30 (11 July 2003)
+rursu:
+ - removed "\" character in demo makefile trying to solve problem 
+	on IRIX platform
+
 Version 3.29 (8 July 2003)
 rursu:
  - added demo for ASPAS(Spatial_searching)
