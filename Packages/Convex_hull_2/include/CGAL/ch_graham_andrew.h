@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 // {\it Precondition:} The points in [|first|,|last|) are sorted with respect
 // to $pq$ and the range [|first|,|last|) contains at least two different 
 // points.
-// {\sc traits}: uses |Traits::Left_turn_2| operating on the 
+// {\sc traits}: uses |Traits::Left_turn_2| and |Traits::Equal_2| operating on the 
 // point type |Traits::Point_2|.
 template <class BidirectionalIterator, class OutputIterator, class Traits>
 OutputIterator
