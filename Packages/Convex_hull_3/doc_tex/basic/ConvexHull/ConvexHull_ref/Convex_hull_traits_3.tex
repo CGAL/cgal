@@ -27,7 +27,7 @@ function.
 
 \ccTypes
 %\ccThree{typedef Halfedge_data_structure_polyhedron_default_3<R>}{HDS;}{}
-\ccThree{typedef Construct_orthogonal_vector_3<Plane_3, Vector_3>}{HDS;}{}
+\ccThree{typedef R::Construct_orthogonal_vector_3<Plane_3, Vector_3>}{HDS;}{}
 
 \ccAutoIndexingOff
 \setlength\parskip{0mm}
@@ -57,9 +57,9 @@ function.
 \ccGlue
 \ccTypedef{typedef R::Construct_triangle_3       Construct_triangle_3; }{}
 \ccGlue
-\ccTypedef{typedef Construct_centroid_3<Point_3> Construct_centroid_3; }{}
+\ccTypedef{typedef R::Construct_centroid_3<Point_3> Construct_centroid_3; }{}
 \ccGlue
-\ccTypedef{typedef Construct_orthogonal_vector_3<Plane_3, Vector_3>
+\ccTypedef{typedef R::Construct_orthogonal_vector_3<Plane_3, Vector_3>
                                            Construct_orthogonal_vector_3; }{}
 
 \ccGlue
@@ -93,15 +93,17 @@ function.
 \ccTypedef{  R::Intersect_3                Intersect_3; }{}
 
 
+\ccThree{Less_signed_distance_to_plane_3}{traits.construct_orthogonal_vector_3_object()}{}
+\ccThreeToTwo
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Convex_hull_traits_3();}{default constructor.}
+\ccConstructor{Convex_hull_traits_3(Convex_hull_traits_2& t);}%
+              {copy constructor.}
 
 \ccOperations
 
-\ccThree{Less_signed_distance_to_plane_3}{traits.construct_orthogonal_vector_3_object()}{}
 \ccMemberFunction{  Construct_segment_3
   construct_segment_3_object() const; }{}
 \ccGlue
@@ -151,8 +153,8 @@ function.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::convex_hull_points_2}
-%\ccRefIdfierPage{CGAL::convex_hull_3_from_d}
+\ccRefIdfierPage{CGAL::convex_hull_2}
+%\ccRefIdfierPage{CGAL::convex_hull_incremental_3}
 
 \ccParDims
 %\ccIndexTraitsClassEnd
