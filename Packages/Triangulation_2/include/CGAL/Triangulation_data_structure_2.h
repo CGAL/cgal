@@ -1485,14 +1485,12 @@ file_input( std::istream& is, bool skip_first)
   // read vertices
   int i = 0;
   if(skip_first){
-    //V[0] = new Vertex();
     V[0] = create_vertex();
     ++i;
   }
   for( ; i < n; ++i) {
     typename Vertex_base::Point p;
     is >> p;
-    //V[i] = new Vertex(p);
     V[i] = create_vertex();
     V[i]->set_point(p);
   }

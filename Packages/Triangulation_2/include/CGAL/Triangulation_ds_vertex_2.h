@@ -47,9 +47,6 @@ public:
  
   //CREATORS
   Triangulation_ds_vertex_2() : Vb() {}
-  //Triangulation_ds_vertex_2(const Point& p) :  Vb(p)  {}
-  //Triangulation_ds_vertex_2(const Point& p, Face_handle f) 
-  //  : Vb(p, &*f )  {}
 
   //SETTING
   void set_face(Face_handle f)  { Vb::set_face(&*f);}
