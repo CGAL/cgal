@@ -26,58 +26,53 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_MEDIUM_INLINE */
 Oriented_side
-in_smallest_orthogonalcircleC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &pw,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &qw,
-    const Static_filter_error &tx,
-    const Static_filter_error &ty,
-    const Static_filter_error &tw,
-    double & epsilon_0)
+in_smallest_orthogonalcircleC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qw,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw)
 {
-  typedef Static_filter_error FT;
-
-  FT dpx = px-qx;
-  FT dpy = py-qy;
-  FT dtx = tx-qx;
-  FT dty = ty-qy;
-  FT dpz = square(dpx)+square(dpy);
- 
-  return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
-			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
-		epsilon_0));
-}
-
-inline
-Oriented_side
-in_smallest_orthogonalcircleC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &pw,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &qw,
-    const Restricted_double &tx,
-    const Restricted_double &ty,
-    const Restricted_double &tw,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  FT dpx = px-qx;
-  FT dpy = py-qy;
-  FT dtx = tx-qx;
-  FT dty = ty-qy;
-  FT dpz = square(dpx)+square(dpy);
- 
-  return Oriented_side (sign_SAF((square(dtx)+square(dty)-tw+qw)*dpz
-			     -(dpz-pw+qw)*(dpx*dtx+dpy*dty),
-		epsilon_0));
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  try
+  {
+    Oriented_side result = in_smallest_orthogonalcircleC2(
+		px.interval(),
+		py.interval(),
+		pw.interval(),
+		qx.interval(),
+		qy.interval(),
+		qw.interval(),
+		tx.interval(),
+		ty.interval(),
+		tw.interval());
+    FPU_set_cw(backup);
+    return result;
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_set_cw(backup);
+    return in_smallest_orthogonalcircleC2(
+		px.exact(),
+		py.exact(),
+		pw.exact(),
+		qx.exact(),
+		qy.exact(),
+		qw.exact(),
+		tx.exact(),
+		ty.exact(),
+		tw.exact());
+  }
 }
 
 inline
@@ -159,55 +154,6 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return in_smallest_orthogonalcircleC2(
-		px.exact(),
-		py.exact(),
-		pw.exact(),
-		qx.exact(),
-		qy.exact(),
-		qw.exact(),
-		tx.exact(),
-		ty.exact(),
-		tw.exact());
-  }
-}
-
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#endif
-/* CGAL_MEDIUM_INLINE */
-Oriented_side
-in_smallest_orthogonalcircleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &pw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qw,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw)
-{
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  try
-  {
-    Oriented_side result = in_smallest_orthogonalcircleC2(
-		px.interval(),
-		py.interval(),
-		pw.interval(),
-		qx.interval(),
-		qy.interval(),
-		qw.interval(),
-		tx.interval(),
-		ty.interval(),
-		tw.interval());
-    FPU_set_cw(backup);
-    return result;
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_set_cw(backup);
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
 		py.exact(),

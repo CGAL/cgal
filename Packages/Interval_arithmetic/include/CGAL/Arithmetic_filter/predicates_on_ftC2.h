@@ -26,54 +26,47 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-compare_xC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &l1a,
-    const Static_filter_error &l1b,
-    const Static_filter_error &l1c,
-    const Static_filter_error &l2a,
-    const Static_filter_error &l2b,
-    const Static_filter_error &l2c,
-    double & epsilon_0,
-    double & epsilon_1)
+compare_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  typedef Static_filter_error FT;
-
-  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_0);
-  Sign sign2 = sign_of_determinant3x3_SAF(l1a, l1b, l1c,
-                                      l2a, l2b, l2c,
-                                      -FT(1), FT(0), px,
-		epsilon_1);
-  CGAL_kernel_assertion( sign1 != 0 );
-  return Comparison_result (sign1 * sign2);
-}
-
-inline
-Comparison_result
-compare_xC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &l1a,
-    const Restricted_double &l1b,
-    const Restricted_double &l1c,
-    const Restricted_double &l2a,
-    const Restricted_double &l2b,
-    const Restricted_double &l2c,
-    const double & epsilon_0,
-    const double & epsilon_1)
-{
-  typedef Restricted_double FT;
-
-  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_0);
-  Sign sign2 = sign_of_determinant3x3_SAF(l1a, l1b, l1c,
-                                      l2a, l2b, l2c,
-                                      -FT(1), FT(0), px,
-		epsilon_1);
-  CGAL_kernel_assertion( sign1 != 0 );
-  return Comparison_result (sign1 * sign2);
+  CGAL_assertion(Interval_nt_advanced::want_exceptions);
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
+  try
+  {
+    Comparison_result result = compare_xC2(
+		px.interval(),
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
+    FPU_set_cw(backup);
+    return result;
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    FPU_set_cw(backup);
+    return compare_xC2(
+		px.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
+  }
 }
 
 inline
@@ -165,26 +158,36 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
     Comparison_result result = compare_xC2(
-		px.interval(),
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
 		l2a.interval(),
 		l2b.interval(),
-		l2c.interval());
+		l2c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -192,88 +195,19 @@ compare_xC2(
   {
     FPU_set_cw(backup);
     return compare_xC2(
-		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
 		l2a.exact(),
 		l2b.exact(),
-		l2c.exact());
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
   }
-}
-
-inline
-Comparison_result
-compare_xC2_SAF(
-    const Static_filter_error &l1a,
-    const Static_filter_error &l1b,
-    const Static_filter_error &l1c,
-    const Static_filter_error &l2a,
-    const Static_filter_error &l2b,
-    const Static_filter_error &l2c,
-    const Static_filter_error &h1a,
-    const Static_filter_error &h1b,
-    const Static_filter_error &h1c,
-    const Static_filter_error &h2a,
-    const Static_filter_error &h2b,
-    const Static_filter_error &h2c,
-    double & epsilon_0,
-    double & epsilon_1,
-    double & epsilon_2)
-{
-  typedef Static_filter_error FT;
-
-  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_0);
-  Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b,
-		epsilon_1);
-  
-  
-  FT FT0(0);
-  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
-                                      l2a, l2b, FT0, l2c,
-                                      h1a, FT0, h1b, h1c,
-                                      h2a, FT0, h2b, h2c,
-		epsilon_2);
-  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
-  return Comparison_result (- sign1 * sign2 * sign3);
-}
-
-inline
-Comparison_result
-compare_xC2_SAF(
-    const Restricted_double &l1a,
-    const Restricted_double &l1b,
-    const Restricted_double &l1c,
-    const Restricted_double &l2a,
-    const Restricted_double &l2b,
-    const Restricted_double &l2c,
-    const Restricted_double &h1a,
-    const Restricted_double &h1b,
-    const Restricted_double &h1c,
-    const Restricted_double &h2a,
-    const Restricted_double &h2b,
-    const Restricted_double &h2c,
-    const double & epsilon_0,
-    const double & epsilon_1,
-    const double & epsilon_2)
-{
-  typedef Restricted_double FT;
-
-  Sign sign1 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_0);
-  Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b,
-		epsilon_1);
-  
-  
-  FT FT0(0);
-  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
-                                      l2a, l2b, FT0, l2c,
-                                      h1a, FT0, h1b, h1c,
-                                      h2a, FT0, h2b, h2c,
-		epsilon_2);
-  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
-  return Comparison_result (- sign1 * sign2 * sign3);
 }
 
 inline
@@ -397,99 +331,36 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_MEDIUM_INLINE */
 Comparison_result
-compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
+compare_y_at_xC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Comparison_result result = compare_xC2(
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval(),
-		h1a.interval(),
-		h1b.interval(),
-		h1c.interval(),
-		h2a.interval(),
-		h2b.interval(),
-		h2c.interval());
+    Comparison_result result = compare_y_at_xC2(
+		px.interval(),
+		py.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return compare_xC2(
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
-		h1a.exact(),
-		h1b.exact(),
-		h1c.exact(),
-		h2a.exact(),
-		h2b.exact(),
-		h2c.exact());
+    return compare_y_at_xC2(
+		px.exact(),
+		py.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact());
   }
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &la,
-    const Static_filter_error &lb,
-    const Static_filter_error &lc,
-    double & epsilon_0,
-    double & epsilon_1)
-{
-  typedef Static_filter_error FT;
-
-  Sign sign1 = CGAL::sign_SAF(lb,
-		epsilon_0);
-  Sign sign2 = CGAL::sign_SAF(la*px + lb*py + lc,
-		epsilon_1);
-  CGAL_kernel_assertion( sign1 != 0 );
-  return Comparison_result (sign1 * sign2);
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &la,
-    const Restricted_double &lb,
-    const Restricted_double &lc,
-    const double & epsilon_0,
-    const double & epsilon_1)
-{
-  typedef Restricted_double FT;
-
-  Sign sign1 = CGAL::sign_SAF(lb,
-		epsilon_0);
-  Sign sign2 = CGAL::sign_SAF(la*px + lb*py + lc,
-		epsilon_1);
-  CGAL_kernel_assertion( sign1 != 0 );
-  return Comparison_result (sign1 * sign2);
 }
 
 inline
@@ -570,10 +441,12 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 Comparison_result
 compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
@@ -581,10 +454,12 @@ compare_y_at_xC2(
   {
     Comparison_result result = compare_y_at_xC2(
 		px.interval(),
-		py.interval(),
-		la.interval(),
-		lb.interval(),
-		lc.interval());
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -593,63 +468,13 @@ compare_y_at_xC2(
     FPU_set_cw(backup);
     return compare_y_at_xC2(
 		px.exact(),
-		py.exact(),
-		la.exact(),
-		lb.exact(),
-		lc.exact());
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
   }
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &l1a,
-    const Static_filter_error &l1b,
-    const Static_filter_error &l1c,
-    const Static_filter_error &l2a,
-    const Static_filter_error &l2b,
-    const Static_filter_error &l2c,
-    double & epsilon_0,
-    double & epsilon_1,
-    double & epsilon_2)
-{
-  typedef Static_filter_error FT;
-
-  Sign sign1 = CGAL::sign_SAF(l1b,
-		epsilon_0);
-  Sign sign2 = CGAL::sign_SAF(l2b,
-		epsilon_1);
-  Sign sign3 = sign_of_determinant2x2_SAF(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
-		epsilon_2);
-  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
-  return Comparison_result (- sign1 * sign2 * sign3);
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &l1a,
-    const Restricted_double &l1b,
-    const Restricted_double &l1c,
-    const Restricted_double &l2a,
-    const Restricted_double &l2b,
-    const Restricted_double &l2c,
-    const double & epsilon_0,
-    const double & epsilon_1,
-    const double & epsilon_2)
-{
-  typedef Restricted_double FT;
-
-  Sign sign1 = CGAL::sign_SAF(l1b,
-		epsilon_0);
-  Sign sign2 = CGAL::sign_SAF(l2b,
-		epsilon_1);
-  Sign sign3 = sign_of_determinant2x2_SAF(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
-		epsilon_2);
-  CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
-  return Comparison_result (- sign1 * sign2 * sign3);
 }
 
 inline
@@ -741,29 +566,33 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-/* CGAL_KERNEL_MEDIUM_INLINE */
+/* CGAL_KERNEL_LARGE_INLINE */
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
-		px.interval(),
 		l1a.interval(),
 		l1b.interval(),
 		l1c.interval(),
 		l2a.interval(),
 		l2b.interval(),
-		l2c.interval());
+		l2c.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -771,72 +600,16 @@ compare_y_at_xC2(
   {
     FPU_set_cw(backup);
     return compare_y_at_xC2(
-		px.exact(),
 		l1a.exact(),
 		l1b.exact(),
 		l1c.exact(),
 		l2a.exact(),
 		l2b.exact(),
-		l2c.exact());
+		l2c.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
   }
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Static_filter_error &l1a,
-    const Static_filter_error &l1b,
-    const Static_filter_error &l1c,
-    const Static_filter_error &l2a,
-    const Static_filter_error &l2b,
-    const Static_filter_error &l2c,
-    const Static_filter_error &ha,
-    const Static_filter_error &hb,
-    const Static_filter_error &hc,
-    double & epsilon_0,
-    double & epsilon_1,
-    double & epsilon_2,
-    double & epsilon_3)
-{
-  typedef Static_filter_error FT;
-
-  Sign sign0 = sign_of_determinant2x2_SAF(l1a,l1b,l2a,l2b,
-		epsilon_0);
-  Sign sign1 = sign_of_determinant3x3_SAF(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
-		epsilon_1);
-  CGAL_kernel_assertion( (sign0 != ZERO) && (sign_SAF(hb,
-		epsilon_2) != ZERO) );
-  return Comparison_result (sign0 * CGAL::sign_SAF(hb,
-		epsilon_3) * sign1);
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Restricted_double &l1a,
-    const Restricted_double &l1b,
-    const Restricted_double &l1c,
-    const Restricted_double &l2a,
-    const Restricted_double &l2b,
-    const Restricted_double &l2c,
-    const Restricted_double &ha,
-    const Restricted_double &hb,
-    const Restricted_double &hc,
-    const double & epsilon_0,
-    const double & epsilon_1,
-    const double & epsilon_2,
-    const double & epsilon_3)
-{
-  typedef Restricted_double FT;
-
-  Sign sign0 = sign_of_determinant2x2_SAF(l1a,l1b,l2a,l2b,
-		epsilon_0);
-  Sign sign1 = sign_of_determinant3x3_SAF(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
-		epsilon_1);
-  CGAL_kernel_assertion( (sign0 != ZERO) && (sign_SAF(hb,
-		epsilon_2) != ZERO) );
-  return Comparison_result (sign0 * CGAL::sign_SAF(hb,
-		epsilon_3) * sign1);
 }
 
 inline
@@ -952,9 +725,12 @@ compare_y_at_xC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ha,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
@@ -967,9 +743,12 @@ compare_y_at_xC2(
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval(),
-		ha.interval(),
-		hb.interval(),
-		hc.interval());
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -983,84 +762,13 @@ compare_y_at_xC2(
 		l2a.exact(),
 		l2b.exact(),
 		l2c.exact(),
-		ha.exact(),
-		hb.exact(),
-		hc.exact());
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
   }
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Static_filter_error &l1a,
-    const Static_filter_error &l1b,
-    const Static_filter_error &l1c,
-    const Static_filter_error &l2a,
-    const Static_filter_error &l2b,
-    const Static_filter_error &l2c,
-    const Static_filter_error &h1a,
-    const Static_filter_error &h1b,
-    const Static_filter_error &h1c,
-    const Static_filter_error &h2a,
-    const Static_filter_error &h2b,
-    const Static_filter_error &h2c,
-    double & epsilon_0,
-    double & epsilon_1,
-    double & epsilon_2,
-    double & epsilon_3)
-{
-  typedef Static_filter_error FT;
-
-  FT FT0(0);
-  Sign s1 = lexicographical_sign_SAF(h1b, -h1a,
-		epsilon_0);
-  Sign s2 = lexicographical_sign_SAF(h2b, -h2a,
-		epsilon_1);
-  Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_2);
-  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
-                                   l1a, FT0, l1b, l1c,
-                                   l2a, FT0, l2b, l2c,
-                                   h1a, h1b, FT0, h1c,
-		epsilon_3);
-  return Comparison_result (s1 * s2 * s3 * s4);
-}
-
-inline
-Comparison_result
-compare_y_at_xC2_SAF(
-    const Restricted_double &l1a,
-    const Restricted_double &l1b,
-    const Restricted_double &l1c,
-    const Restricted_double &l2a,
-    const Restricted_double &l2b,
-    const Restricted_double &l2c,
-    const Restricted_double &h1a,
-    const Restricted_double &h1b,
-    const Restricted_double &h1c,
-    const Restricted_double &h2a,
-    const Restricted_double &h2b,
-    const Restricted_double &h2c,
-    const double & epsilon_0,
-    const double & epsilon_1,
-    const double & epsilon_2,
-    const double & epsilon_3)
-{
-  typedef Restricted_double FT;
-
-  FT FT0(0);
-  Sign s1 = lexicographical_sign_SAF(h1b, -h1a,
-		epsilon_0);
-  Sign s2 = lexicographical_sign_SAF(h2b, -h2a,
-		epsilon_1);
-  Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b,
-		epsilon_2);
-  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
-                                   l1a, FT0, l1b, l1c,
-                                   l2a, FT0, l2b, l2c,
-                                   h1a, h1b, FT0, h1c,
-		epsilon_3);
-  return Comparison_result (s1 * s2 * s3 * s4);
 }
 
 inline
@@ -1185,89 +893,35 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-/* CGAL_KERNEL_LARGE_INLINE */
+/* inline */
 Comparison_result
-compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
+compare_deltax_deltayC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Comparison_result result = compare_y_at_xC2(
-		l1a.interval(),
-		l1b.interval(),
-		l1c.interval(),
-		l2a.interval(),
-		l2b.interval(),
-		l2c.interval(),
-		h1a.interval(),
-		h1b.interval(),
-		h1c.interval(),
-		h2a.interval(),
-		h2b.interval(),
-		h2c.interval());
+    Comparison_result result = compare_deltax_deltayC2(
+		px.interval(),
+		qx.interval(),
+		ry.interval(),
+		sy.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return compare_y_at_xC2(
-		l1a.exact(),
-		l1b.exact(),
-		l1c.exact(),
-		l2a.exact(),
-		l2b.exact(),
-		l2c.exact(),
-		h1a.exact(),
-		h1b.exact(),
-		h1c.exact(),
-		h2a.exact(),
-		h2b.exact(),
-		h2c.exact());
+    return compare_deltax_deltayC2(
+		px.exact(),
+		qx.exact(),
+		ry.exact(),
+		sy.exact());
   }
-}
-
-inline
-Comparison_result
-compare_deltax_deltayC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &qx,
-    const Static_filter_error &ry,
-    const Static_filter_error &sy,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-    return CGAL::compare_SAF(abs(px-qx), abs(ry-sy),
-		epsilon_0);
-}
-
-inline
-Comparison_result
-compare_deltax_deltayC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &qx,
-    const Restricted_double &ry,
-    const Restricted_double &sy,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-    return CGAL::compare_SAF(abs(px-qx), abs(ry-sy),
-		epsilon_0);
 }
 
 inline
@@ -1336,68 +990,40 @@ re_adjust:
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* inline */
-Comparison_result
-compare_deltax_deltayC2(
+Orientation
+orientationC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Comparison_result result = compare_deltax_deltayC2(
+    Orientation result = orientationC2(
 		px.interval(),
+		py.interval(),
 		qx.interval(),
-		ry.interval(),
-		sy.interval());
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return compare_deltax_deltayC2(
+    return orientationC2(
 		px.exact(),
+		py.exact(),
 		qx.exact(),
-		ry.exact(),
-		sy.exact());
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
   }
-}
-
-inline
-Orientation
-orientationC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &rx,
-    const Static_filter_error &ry,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-  return sign_of_determinant2x2_SAF(px-rx,py-ry,qx-rx,qy-ry,
-		epsilon_0);
-}
-
-inline
-Orientation
-orientationC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &rx,
-    const Restricted_double &ry,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  return sign_of_determinant2x2_SAF(px-rx,py-ry,qx-rx,qy-ry,
-		epsilon_0);
 }
 
 inline
@@ -1477,109 +1103,47 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-/* inline */
-Orientation
-orientationC2(
+/* CGAL_KERNEL_LARGE_INLINE */
+Oriented_side
+side_of_oriented_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Orientation result = orientationC2(
+    Oriented_side result = side_of_oriented_circleC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
 		qy.interval(),
 		rx.interval(),
-		ry.interval());
+		ry.interval(),
+		tx.interval(),
+		ty.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return orientationC2(
+    return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
 		rx.exact(),
-		ry.exact());
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
   }
-}
-
-inline
-Oriented_side
-side_of_oriented_circleC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &rx,
-    const Static_filter_error &ry,
-    const Static_filter_error &tx,
-    const Static_filter_error &ty,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-  
-  
-  
-  
-  
-  
-  FT ptx = px-tx;
-  FT pty = py-ty;
-  FT qtx = qx-tx;
-  FT qty = qy-ty;
-  FT rtx = rx-tx;
-  FT rty = ry-ty;
-  return Oriented_side(
-           sign_of_determinant3x3_SAF(ptx, pty, square(ptx) + square(pty),
-                                  qtx, qty, square(qtx) + square(qty),
-                                  rtx, rty, square(rtx) + square(rty),
-		epsilon_0));
-}
-
-inline
-Oriented_side
-side_of_oriented_circleC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &rx,
-    const Restricted_double &ry,
-    const Restricted_double &tx,
-    const Restricted_double &ty,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  
-  
-  
-  
-  
-  
-  FT ptx = px-tx;
-  FT pty = py-ty;
-  FT qtx = qx-tx;
-  FT qty = qy-ty;
-  FT rtx = rx-tx;
-  FT rty = ry-ty;
-  return Oriented_side(
-           sign_of_determinant3x3_SAF(ptx, pty, square(ptx) + square(pty),
-                                  qtx, qty, square(qtx) + square(qty),
-                                  rtx, rty, square(rtx) + square(rty),
-		epsilon_0));
 }
 
 inline
@@ -1672,8 +1236,8 @@ re_adjust:
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* CGAL_KERNEL_LARGE_INLINE */
-Oriented_side
-side_of_oriented_circleC2(
+Bounded_side
+side_of_bounded_circleC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
@@ -1687,7 +1251,7 @@ side_of_oriented_circleC2(
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Oriented_side result = side_of_oriented_circleC2(
+    Bounded_side result = side_of_bounded_circleC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
@@ -1702,7 +1266,7 @@ side_of_oriented_circleC2(
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return side_of_oriented_circleC2(
+    return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
@@ -1712,54 +1276,6 @@ side_of_oriented_circleC2(
 		tx.exact(),
 		ty.exact());
   }
-}
-
-inline
-Bounded_side
-side_of_bounded_circleC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &rx,
-    const Static_filter_error &ry,
-    const Static_filter_error &tx,
-    const Static_filter_error &ty,
-    double & epsilon_0,
-    double & epsilon_1)
-{
-  typedef Static_filter_error FT;
-
-  Oriented_side s = side_of_oriented_circleC2_SAF(px,py,qx,qy,rx,ry,tx,ty,
-		epsilon_0);
-  Orientation o = orientationC2_SAF(px,py,qx,qy,rx,ry,
-		epsilon_1);
-
-  return Bounded_side (s * o);
-}
-
-inline
-Bounded_side
-side_of_bounded_circleC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &rx,
-    const Restricted_double &ry,
-    const Restricted_double &tx,
-    const Restricted_double &ty,
-    const double & epsilon_0,
-    const double & epsilon_1)
-{
-  typedef Restricted_double FT;
-
-  Oriented_side s = side_of_oriented_circleC2_SAF(px,py,qx,qy,rx,ry,tx,ty,
-		epsilon_0);
-  Orientation o = orientationC2_SAF(px,py,qx,qy,rx,ry,
-		epsilon_1);
-
-  return Bounded_side (s * o);
 }
 
 inline
@@ -1854,83 +1370,41 @@ re_adjust:
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-/* CGAL_KERNEL_LARGE_INLINE */
-Bounded_side
-side_of_bounded_circleC2(
+/* inline */
+Comparison_result
+cmp_dist_to_pointC2(
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Bounded_side result = side_of_bounded_circleC2(
+    Comparison_result result = cmp_dist_to_pointC2(
 		px.interval(),
 		py.interval(),
 		qx.interval(),
 		qy.interval(),
 		rx.interval(),
-		ry.interval(),
-		tx.interval(),
-		ty.interval());
+		ry.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return side_of_bounded_circleC2(
+    return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
 		qx.exact(),
 		qy.exact(),
 		rx.exact(),
-		ry.exact(),
-		tx.exact(),
-		ty.exact());
+		ry.exact());
   }
-}
-
-inline
-Comparison_result
-cmp_dist_to_pointC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &rx,
-    const Static_filter_error &ry,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-  return CGAL::compare_SAF(squared_distanceC2(px,py,qx,qy),
-                       squared_distanceC2(px,py,rx,ry),
-		epsilon_0);
-}
-
-inline
-Comparison_result
-cmp_dist_to_pointC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &rx,
-    const Restricted_double &ry,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  return CGAL::compare_SAF(squared_distanceC2(px,py,qx,qy),
-                       squared_distanceC2(px,py,rx,ry),
-		epsilon_0);
 }
 
 inline
@@ -2012,77 +1486,42 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
 /* inline */
 Comparison_result
-cmp_dist_to_pointC2(
+cmp_signed_dist_to_lineC2(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
-    Comparison_result result = cmp_dist_to_pointC2(
+    Comparison_result result = cmp_signed_dist_to_lineC2(
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
 		px.interval(),
 		py.interval(),
 		qx.interval(),
-		qy.interval(),
-		rx.interval(),
-		ry.interval());
+		qy.interval());
     FPU_set_cw(backup);
     return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    return cmp_dist_to_pointC2(
+    return cmp_signed_dist_to_lineC2(
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
 		px.exact(),
 		py.exact(),
 		qx.exact(),
-		qy.exact(),
-		rx.exact(),
-		ry.exact());
+		qy.exact());
   }
-}
-
-inline
-Comparison_result
-cmp_signed_dist_to_lineC2_SAF(
-    const Static_filter_error &la,
-    const Static_filter_error &lb,
-    const Static_filter_error &lc,
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-  return CGAL::compare_SAF(scaled_distance_to_directionC2(la,lb,px,py),
-                       scaled_distance_to_directionC2(la,lb,qx,qy),
-		epsilon_0);
-}
-
-inline
-Comparison_result
-cmp_signed_dist_to_lineC2_SAF(
-    const Restricted_double &la,
-    const Restricted_double &lb,
-    const Restricted_double &lc,
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  return CGAL::compare_SAF(scaled_distance_to_directionC2(la,lb,px,py),
-                       scaled_distance_to_directionC2(la,lb,qx,qy),
-		epsilon_0);
 }
 
 inline
@@ -2171,26 +1610,28 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 /* inline */
 Comparison_result
 cmp_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
     const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
   CGAL_assertion(Interval_nt_advanced::want_exceptions);
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
-		la.interval(),
-		lb.interval(),
-		lc.interval(),
 		px.interval(),
 		py.interval(),
 		qx.interval(),
-		qy.interval());
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		sx.interval(),
+		sy.interval());
     FPU_set_cw(backup);
     return result;
   } 
@@ -2198,54 +1639,15 @@ cmp_signed_dist_to_lineC2(
   {
     FPU_set_cw(backup);
     return cmp_signed_dist_to_lineC2(
-		la.exact(),
-		lb.exact(),
-		lc.exact(),
 		px.exact(),
 		py.exact(),
 		qx.exact(),
-		qy.exact());
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
   }
-}
-
-inline
-Comparison_result
-cmp_signed_dist_to_lineC2_SAF(
-    const Static_filter_error &px,
-    const Static_filter_error &py,
-    const Static_filter_error &qx,
-    const Static_filter_error &qy,
-    const Static_filter_error &rx,
-    const Static_filter_error &ry,
-    const Static_filter_error &sx,
-    const Static_filter_error &sy,
-    double & epsilon_0)
-{
-  typedef Static_filter_error FT;
-
-  return CGAL::compare_SAF(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
-                       scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
-		epsilon_0);
-}
-
-inline
-Comparison_result
-cmp_signed_dist_to_lineC2_SAF(
-    const Restricted_double &px,
-    const Restricted_double &py,
-    const Restricted_double &qx,
-    const Restricted_double &qy,
-    const Restricted_double &rx,
-    const Restricted_double &ry,
-    const Restricted_double &sx,
-    const Restricted_double &sy,
-    const double & epsilon_0)
-{
-  typedef Restricted_double FT;
-
-  return CGAL::compare_SAF(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
-                       scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
-		epsilon_0);
 }
 
 inline
@@ -2322,52 +1724,6 @@ re_adjust:
       goto re_adjust;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
-    return cmp_signed_dist_to_lineC2(
-		px.exact(),
-		py.exact(),
-		qx.exact(),
-		qy.exact(),
-		rx.exact(),
-		ry.exact(),
-		sx.exact(),
-		sy.exact());
-  }
-}
-
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
-#endif
-/* inline */
-Comparison_result
-cmp_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx,
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
-{
-  CGAL_assertion(Interval_nt_advanced::want_exceptions);
-  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  try
-  {
-    Comparison_result result = cmp_signed_dist_to_lineC2(
-		px.interval(),
-		py.interval(),
-		qx.interval(),
-		qy.interval(),
-		rx.interval(),
-		ry.interval(),
-		sx.interval(),
-		sy.interval());
-    FPU_set_cw(backup);
-    return result;
-  } 
-  catch (Interval_nt_advanced::unsafe_comparison)
-  {
-    FPU_set_cw(backup);
     return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
