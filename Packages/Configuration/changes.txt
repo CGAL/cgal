@@ -1,12 +1,13 @@
+2.5 (1 December 2000)
++ Adapted CGAL_CFG_STDC_NAMESPACE.C
+
 2.4 (8 June 2000)
 + added CGAL_CFG_USING_USING_BUG.C
 
-//-----------------------------------------------------------------------//
-// 2.3
+2.3
 + added CGAL_CFG_NO_ITERATOR_TRAITS.C again. install_cgal depended on this.
 
-//-----------------------------------------------------------------------//
-// 2.2
+2.2
 + made the long name in CGAL_CFG_NO_LONGNAME_PROBLEM.C longer.
 + removed  several tests that pass on all supported platforms
 	CGAL_CFG_MATCHING_BUG_1.C
@@ -17,18 +18,16 @@
 	CGAL_CFG_NO_STDIO_NAMESPACE.C
 	CGAL_CFG_NO_STD_NAMESPACE.C
 
-//-----------------------------------------------------------------------//
-// 2.1
+2.1
 + removed macros
    CGAL_static_cast, CGAL_const_cast, CGAL_reinterpret_cast
    R_FT_return, R_RT_return
 
-//-----------------------------------------------------------------------//
-// 1.54
+
+1.54
 + Added copy_n to Borland_fixes.h
 
-//-----------------------------------------------------------------------//
-// 1.53
+1.53
 + Changed CGAL_CFG_NO_STD_NAMESPACE.C, so that it returns the correct
   answer for Borland (Borland requires std::, but lacks cwctype).
 + Added macro CGAL_CLIB_STD to config.h.
@@ -36,32 +35,25 @@
   Importing in namespace std does not always work correctly and is now
   superseded by the use of the CGAL_CLIB_STD macro.
 
-//-----------------------------------------------------------------------//
-// 1.52
+1.52
 + Removed assertions from testfiles. Replaced them by booleans.
 
-//-----------------------------------------------------------------------//
-// 1.51
+1.51
 + MSVC_standard_header_fixes.h: added strcmp, sscanf and sprintf to std::
 
-//-----------------------------------------------------------------------//
-// 1.50
+1.50
 + Added using std::time_t and std::size_t for Borland.
 
-//-----------------------------------------------------------------------//
-// 1.49
+1.49
 + Added pragma for MSVC to report truncation of names only once.
 
-//-----------------------------------------------------------------------//
-// 1.48
+1.48
 + Added file Borland_fixes.h that gets included by config.h
 
-//-----------------------------------------------------------------------//
-// 1.47
+1.47
 + Added strlen to namespace std under MSVC
 
-//-----------------------------------------------------------------------//
-// 1.46
+1.46
 + Added a fix for Borland (including time.h) in config.h.
 
 //-----------------------------------------------------------------------//
