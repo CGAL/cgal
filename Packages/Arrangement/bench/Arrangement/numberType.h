@@ -124,7 +124,7 @@ typedef CGAL::Gmpq                                      NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 typedef CGAL::Gmpz                                      RT;
 typedef CGAL::Gmpq                                      FT;
-#define NUMBER_TYPE "Lazy CGAL Gmpq"
+#define NUMBER_TYPE "Lazy Cgal Gmpq"
 
 #elif BENCH_NT == QUOTIENT_MP_FLOAT_NT
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;

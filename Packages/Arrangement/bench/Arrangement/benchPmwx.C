@@ -377,6 +377,12 @@ public:
       std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
     }
+
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+    // Clear the exacus cache:
+    CST::Algebraic_curve_2::clear_cache();
+    CST::Point_2::clear_cache();
+#endif
   }
 };
 
@@ -411,6 +417,11 @@ public:
       std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
     }
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+    // Clear the exacus cache:
+    CST::Algebraic_curve_2::clear_cache();
+    CST::Point_2::clear_cache();
+#endif
   }
 };
 
@@ -476,7 +487,13 @@ public:
       // ps_stream << pm;
     }
 #endif
-  }
+
+#if BENCH_TRAITS == EXACUS_CONIC_TRAITS
+    // Clear the exacus cache:
+    CST::Algebraic_curve_2::clear_cache();
+    CST::Point_2::clear_cache();
+#endif
+}
   
   /*! */
   int init()

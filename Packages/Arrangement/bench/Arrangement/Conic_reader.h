@@ -14,6 +14,10 @@
 #include <LiS/file_io.h>
 #endif
 
+#if BENCH_NT == CORE_EXPR_NT
+#include <CORE/BigInt.h>
+#endif
+
 template <class Traits>
 class Conic_reader
 {
@@ -33,6 +37,8 @@ public:
 #endif
 #if 0
   typedef typename Linear_k::RT                 CfRT;
+#elif BENCH_NT == CORE_EXPR_NT
+  typedef CORE::BigInt                          CfRT;
 #else
   typedef RT                                    CfRT;
 #endif
@@ -438,7 +444,12 @@ public:
     else
     {
 #if BENCH_TRAITS == CK_CONIC_TRAITS
-      cv = Curve_2 (conic, source, target);
+      if (conic.is_ellipse()) {
+        cv = Curve_2 (conic, source, target);
+      } else {
+        std::cerr << "Skipping Non Ellipse" << std::endl;
+        return false;
+      }
 #elif BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2 (r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
 #else
