@@ -67,9 +67,12 @@ _test_fct_point_line_2(const R& )
  CGAL::Point_2<R>  p14( n5,-n1);      // ( 5,-1)
  CGAL::Point_2<R>  p16(n12, n9, n3);  // ( 4, 3)
  CGAL::Point_2<R>  p17( n0,n1);       // ( 0, 1)
+ CGAL::Point_2<R>  p18( n3,n2);       // ( 3, 2)
+ CGAL::Point_2<R>  p19( n4, n6, n2);  // ( 2, 3)
 
  CGAL::Line_2<R>   l14( p1, p4 );
  CGAL::Line_2<R>   l23( p2, p3 );
+ CGAL::Line_2<R>   l56( p5, p6 );
  CGAL::Line_2<R>   l67( p6, p7 );
  CGAL::Line_2<R>   l58( p5, p8 );
  CGAL::Line_2<R>   l1617( p16, p17);
@@ -78,6 +81,9 @@ _test_fct_point_line_2(const R& )
  CGAL::Line_2<R>   l1411( p14, p11);
  CGAL::Line_2<R>   l013( p0, p13 );
  CGAL::Line_2<R>   l910( p9, p10 );
+ CGAL::Line_2<R>   l018( p0, p18 );
+ CGAL::Line_2<R>   l418( p4, p18 );
+ CGAL::Line_2<R>   l219( p2, p19 );
 
  std::cout << '.';
 
@@ -138,6 +144,35 @@ _test_fct_point_line_2(const R& )
  assert( CGAL::compare_y_at_x( l1617, l013, l67, l910 ) == CGAL::LARGER);
  assert( CGAL::compare_y_at_x( l1617, l013, l1114, l910 ) == CGAL::EQUAL);
  assert( CGAL::compare_y_at_x( l1617, l013, l910, l1114 ) == CGAL::EQUAL);
+
+ std::cout << '.';
+
+ assert( CGAL::compare_x_at_y( p6, l23 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( p6, l23.opposite() ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( p10, l23 ) == CGAL::LARGER );
+ assert( CGAL::compare_x_at_y( p9, l23 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( p17, l56 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( p0, l23 ) == CGAL::LARGER );
+ assert( CGAL::compare_x_at_y( p8, l58 ) == CGAL::EQUAL );
+ assert( CGAL::compare_x_at_y( p2, l1617 ) == CGAL::EQUAL );
+
+ assert( CGAL::compare_x_at_y( p1, l23, l58 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( p1, l58, l23 ) == CGAL::LARGER );
+ assert( CGAL::compare_x_at_y( p10, l1617, l013) == CGAL::EQUAL);
+
+ assert( CGAL::compare_x_at_y( l14, l23, l58 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( l67, l58, l23 ) == CGAL::LARGER );
+ assert( CGAL::compare_x_at_y( l219, l1716, l1114) == CGAL::EQUAL);
+
+ assert( CGAL::compare_x_at_y( l14, l23, l58, l67 ) == CGAL::LARGER );
+ assert( CGAL::compare_x_at_y( l14, l23, l67, l58 ) == CGAL::SMALLER );
+ assert( CGAL::compare_x_at_y( l14, l23, l1411, l1114 ) == CGAL::EQUAL );
+
+ assert( CGAL::compare_x_at_y( l1617, l013, l56, l67 ) == CGAL::SMALLER);
+ assert( CGAL::compare_x_at_y( l1617, l013, l67, l56 ) == CGAL::LARGER);
+ assert( CGAL::compare_x_at_y( l1617, l013, l018, l56 ) == CGAL::EQUAL);
+ assert( CGAL::compare_x_at_y( l1617, l013, l018, l418 ) == CGAL::EQUAL);
+ assert( CGAL::compare_x_at_y( l1617, l013, l56, l018 ) == CGAL::EQUAL);
 
  std::cout << "done" << std::endl;
  return true;

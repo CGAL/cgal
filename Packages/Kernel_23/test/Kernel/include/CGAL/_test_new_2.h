@@ -354,15 +354,12 @@ test_new_2(const R& rep)
   Comparison_result tmp34c = compare_y_at_x(l2,l3,l4);
   Comparison_result tmp34d = compare_y_at_x(l2,l3,l4,l5);
 
-//
-//  the compare_x_at_y function is not yet available in the Cartesian kernel
-//
-//  typename R::Compare_x_at_y_2 compare_x_at_y
-//        = rep.compare_x_at_y_2_object();
-//  Comparison_result tmp34aa = compare_x_at_y(p2,l2);
-//  Comparison_result tmp34bb = compare_x_at_y(p2,l2,l3);
-//  Comparison_result tmp34cc = compare_x_at_y(l2,l3,l4);
-//  Comparison_result tmp34dd = compare_x_at_y(l2,l3,l4,l5);
+  typename R::Compare_x_at_y_2 compare_x_at_y
+        = rep.compare_x_at_y_2_object();
+  Comparison_result tmp34aa = compare_x_at_y(p2,l2);
+  Comparison_result tmp34bb = compare_x_at_y(p2,l2,l3);
+  Comparison_result tmp34cc = compare_x_at_y(l2,l3,l4);
+  Comparison_result tmp34dd = compare_x_at_y(l2,l3,l4,l5);
 
   typename R::Less_distance_to_point_2 less_distance_to_point
         = rep.less_distance_to_point_2_object(p2);
@@ -511,7 +508,7 @@ test_new_2(const R& rep)
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
   use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab); 
-// use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
+  use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
   use(tmp39a); use(tmp36a);
   use(tmp_bool);
 

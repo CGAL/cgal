@@ -392,6 +392,10 @@ test_new_3(const R& rep)
         = rep.less_distance_to_point_3_object(p4);
   bool tmp28 = less_distance_to_point(p2,p3);
 
+  typename R::Less_signed_distance_to_plane_3 less_signed_distance_to_plane
+        = rep.less_signed_distance_to_plane_3_object();
+  bool tmp28a = less_signed_distance_to_plane(tmp8,p2,p3);
+
   typename R::Compare_distance_to_point_3 compare_dist_to_point
         = rep.compare_distance_to_point_3_object(p2);
   Comparison_result tmp34ab = compare_dist_to_point(p3,p4);
@@ -431,6 +435,7 @@ test_new_3(const R& rep)
         = rep.has_on_3_object();
   bool tmp33a = has_on(l2,p2);
   bool tmp33b = has_on(t2,p2);
+  bool tmp33c = has_on(tmp8,p2);
 
 
   typename R::Has_on_bounded_side_3 has_on_bounded_side
@@ -503,6 +508,7 @@ test_new_3(const R& rep)
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
   use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp36a); use(tmp35);
   use(tmp34); use(tmp33b); use(tmp33a); use(tmp32); use(tmp31); use(tmp30);
+  use(tmp28a); use(tmp33c);
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);

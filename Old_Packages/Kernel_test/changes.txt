@@ -1,6 +1,9 @@
-3.20   (?? Apr 2001)
+3.20   (1 May 2001)
 - angle.
 - Removed obsolete uses of CGAL_STRICT21 and CGAL_STRICT_09.
+- compare_x_at_y 
+- Less_signed_distance_to_plane_3
+- Has_on_3(Plane, Point)
 
 3.19   (27 Apr 2001)
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
