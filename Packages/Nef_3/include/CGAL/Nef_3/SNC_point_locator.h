@@ -30,7 +30,7 @@
 // ============================================================================
 //#ifndef CGAL_SNC_POINT_LOCATOR_H
 #ifdef  CGAL_NEF3_DEPRECATED_CLASS
-/* funcionality now provided by SNC_ray_shoter.h */
+#error funcionality now provided by SNC_ray_shoter.h 
 #define CGAL_SNC_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>

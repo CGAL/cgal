@@ -123,7 +123,7 @@ std::string index(SHalfloop_handle l) const
 std::string index(SFace_handle f) const 
 { return FI(f,verbose); }
 
-static void dump(Vertex_handle v, std::ostream& os = cerr);
+static void dump(Vertex_handle v, std::ostream& os = std::cerr);
 /*{\Mstatic prints the plane map decorated by |D| to |os|.}*/
 
 }; // SNC_SM_io_parser<Refs_>

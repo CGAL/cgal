@@ -165,7 +165,7 @@ public:
 template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) : 
   Base(W), in(is), out(std::cout) 
-{ CGAL_nef3_assertion(W.empty());
+{ CGAL_nef3_assertion(W.is_empty());
   verbose = false; }
 
 template <typename EW>

@@ -284,7 +284,7 @@ Size_type number_of_sface_cycles() const;
 Size_type number_of_connected_components() const;
 /*{\Mop calculates the number of connected components of |P|.}*/
 
-void print_statistics(std::stringstream& os = std::cout) const
+void print_statistics(std::ostream& os = std::cout) const
 /*{\Mop print the statistics of |P|: the number of vertices, edges, 
 and faces.}*/
 {

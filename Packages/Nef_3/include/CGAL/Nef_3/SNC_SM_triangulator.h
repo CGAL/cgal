@@ -137,6 +137,7 @@ public:
 #define USING(t) typedef typename Base::t t
   USING(Vertex_handle);
   USING(Halfedge_handle);
+  USING(Halfedge_const_handle);
   USING(Halfloop_handle);
   USING(Face_handle);
   USING(Vertex_iterator);
@@ -158,6 +159,8 @@ public:
   USING(SHalfloop_const_handle);
   USING(SFace_const_handle);
 #undef USING
+
+  typedef typename Base::Kernel Kernel;
 
   typedef std::pair<Halfedge_handle,Halfedge_handle> Halfedge_pair;
 

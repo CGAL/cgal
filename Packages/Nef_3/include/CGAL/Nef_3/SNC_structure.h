@@ -919,14 +919,17 @@ public:
 	  TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(SD.twin(u)));
 	  Halfedge_handle src(SD.source(u)), tgt(SD.target(u));
 	  if ( SD.is_closed_at_source(u) ) 
-	    SD.set_face( SD.source(u), SD.face(u));
+	    SD.set_face( src, fu);
 	  if ( SD.is_closed_at_source( SD.twin(u)) ) 
- 	    SD.set_face( SD.target(u), SD.face(u));
+ 	    SD.set_face( tgt, fu);
+	  /* TO VERIFY: does is_closed_at_source(u) imply is_isolated(src)?
+	     if it is true, the svertex face update is not necesary. */
 	  SD.delete_edge_pair(u); 
 	  if( SD.is_isolated(src))
 	    SD.delete_vertex_only(src);
 	  if( SD.is_isolated(tgt))
 	    SD.delete_vertex_only(tgt);
+	  /* TO VERIFY: can both svertices be isolated at the same time? */
       }
       }
       else if( assign(l, fc)) {

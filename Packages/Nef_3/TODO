@@ -6,5 +6,6 @@ Nef_3 Package: TODO
 - Extended kernel with infimaximal box
 - Define endpoint of segments used for ray shoting to be in the 
   infimaximal box.
+- Constructor from a halfspace.
 - Write a SNC_const_decorator class cloning the current SNC_decorator
   class methods but using constant attributes.

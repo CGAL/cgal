@@ -234,7 +234,7 @@ protected:
     SVertex_handle sv[3];
     for(int vi=0; vi<3; ++vi) {
       sv[vi] = SD.new_vertex(sp[vi]);
-      D.mark(sv[vi]) = space;
+      D.mark(sv[vi]) = true;
     }
     /* create facet's edge uses */
     Sphere_segment ss[3];
@@ -244,27 +244,31 @@ protected:
       ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
       SD.circle(she[si]) = ss[si].sphere_circle();
       SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
-      SD.mark(she[si]) = space;
+      SD.mark(she[si]) = true;
     }
     /* create facets */
     SFace_handle fi = SD.new_face();
     SFace_handle fe = SD.new_face();
     SD.link_as_face_cycle(she[0], fi);
     SD.link_as_face_cycle(SD.twin(she[0]), fe);
+    SD.mark(fi) = true;
+    SD.mark(fe) = true;
     /* set face mark */
-    SHalfedge_iterator e = SD.shalfedges_begin();
-    SFace_handle f;
-    Sphere_point p1 = SD.point(SD.source(e));
-    Sphere_point p2 = SD.point(SD.target(e));
-    Sphere_point p3 = SD.point(SD.target(SD.next(e)));
-    if ( spherical_orientation(p1,p2,p3) > 0 )
-      f = SD.face(e);
-    else
-      f = SD.face(SD.twin(e));
-    SD.mark(f) = space;
+    if( space == EMPTY) {
+      SHalfedge_iterator e = SD.shalfedges_begin();
+      SFace_handle f;
+      Sphere_point p1 = SD.point(SD.source(e));
+      Sphere_point p2 = SD.point(SD.target(e));
+      Sphere_point p3 = SD.point(SD.target(SD.next(e)));
+      if ( spherical_orientation(p1,p2,p3) > 0 )
+	f = SD.face(e);
+      else
+	f = SD.face(SD.twin(e));
+      SD.mark(f) = false;
+    }
     // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
     // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
-    /* TODO: to check if the commented code above is wrong */
+    /* TODO: to check if the commented code above could be wrong */
     SM_point_locator L(v);
     L.init_marks_of_halfspheres();
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
@@ -588,8 +592,8 @@ public:
   bool contains(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
-    // TO IMPLEMENT: { SNC_point_locator PL(snc()); return PL.mark(h);} 
-    { return false; }
+    // { SNC_point_locator PL(snc()); return PL.mark(h);} 
+    { CGAL_nef3_assertion_msg( 0, "not implemented."); }
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton
