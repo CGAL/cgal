@@ -74,7 +74,7 @@ created in Section~4.
 \renewcommand{\ccEndFont}{}
 \ccSetThreeColumns{CGAL_Random}{random.restore_seed( Seed seed)}{}
 \ccPropagateThreeToTwoColumns
-\input{../spec/Random/Random.tex}
+\input{../../spec/Random/Random.tex}
 
 @! ============================================================================
 @! Implementation
@@ -361,8 +361,8 @@ numbers.
 \clearpage
 \section{Files}
 
-@file <include/CGAL/Random/Random.h> = @begin
-    @<Random header>("include/CGAL/Random/Random.h")
+@file <include/CGAL/Random/CGAL/Random.h> = @begin
+    @<Random header>("include/CGAL/Random/CGAL/Random.h")
 
     #ifndef CGAL_RANDOM_H
     #define CGAL_RANDOM_H
@@ -433,11 +433,13 @@ numbers.
     @<end of file line>
 @end
 
-@i file_header.awi
+@i ../file_header.awi
 
 @macro <Random header>(1) many = @begin
     @<file header>("Random Numbers Generator",@1,"Random",
-		   "Sven Schönherr (sven@@inf.fu-berlin.de)",
+		   "Sven Schönherr <sven@@inf.fu-berlin.de>",
+		   "N.N.",
+		  "MPI Saarbrucken (Stefan Schirra <stschirr@@mpi-sb.mpg.de>)",
 		   "$Revision$","$Date$")
 @end
 
