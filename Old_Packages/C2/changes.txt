@@ -1,3 +1,6 @@
+Version 3.1 (August 31 1999)
+- Added Identity into Aff_transformation
+
 Version 3.0 (August 26 1999)
 ****EXTENSIVE CHANGES -- enough to warrant a new 3.0 release***** 
 - new <CGAL/Cartesian/...> subdirectory
