@@ -187,7 +187,7 @@ public:
 
   //INSERTION - DELETION - Flip
 public:
-  void   flip(Face_handle& f, int i);
+  void   flip(Face_handle f, int i);
   
   Vertex_handle insert_first(const Point& p);
   Vertex_handle insert_second(const Point& p);
@@ -712,7 +712,7 @@ segment(const All_edges_iterator& ei) const
 template <class Gt, class Tds >
 void
 Triangulation_2<Gt, Tds>::
-flip(Face_handle& f, int i)
+flip(Face_handle f, int i)
 {
   CGAL_triangulation_precondition ( ! f.is_null() );
   CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
