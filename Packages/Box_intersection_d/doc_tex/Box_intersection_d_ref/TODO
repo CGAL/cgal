@@ -1,4 +1,0 @@
-- Box_d konzept <-> Box_d<> template
-- (seite 8) static NT .get_lo(blabla) -> static NT get_lo
-- (seite 9) Funktion von Function objects: verbal, haskell oder c++? oder gleich ganz weglassen?
--

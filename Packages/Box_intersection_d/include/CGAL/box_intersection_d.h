@@ -66,7 +66,8 @@ void box_intersection_d(
     BoxTraits box_traits,
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
-    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE)
+    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
+    typename BoxTraits::NT nt = typename BoxTraits::NT(1))
 {
     if (topology == Box_intersection_d::CLOSED) {
         typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
@@ -103,7 +104,8 @@ void box_self_intersection_d(
     Callback callback,
     BoxTraits box_traits,
     std::ptrdiff_t cutoff = 10,
-    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED)
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+    typename BoxTraits::NT nt = typename BoxTraits::NT(1))
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type Box_t;
     std::vector< Box_t> i( begin, end);
