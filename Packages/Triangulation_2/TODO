@@ -1,3 +1,4 @@
+- suppress function set_number_of_vertices(int )
 - add examples for Triangulation hierarchy
   and for the use of both Constrained_plus and triangulation hierarchy
 - corriger le figure "three_layers" dans la doc 
