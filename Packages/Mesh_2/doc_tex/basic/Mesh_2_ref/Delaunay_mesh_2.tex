@@ -28,7 +28,7 @@ The class \ccRefName{} derives from
   
   The domain to be mesh is defined by the constrained edges and a set
   of seed points. The constrained edges divide the plan into several
-  connected components. Usually, the seeds are used to mesh the holes,
+  connected components. Usually, the seeds are used to mark the holes,
   that is the connected components which do not have to be meshed and
   and the domain of the mesh is the union of the bounded components
   not including a seed point. Conversely, the seed points can be used
@@ -37,9 +37,9 @@ The class \ccRefName{} derives from
   The domain has to be bounded. Therefore the unbounded component will
   not be part of it\new{, whatever is the set of seed points}. By
   default, if the set of seeds is empty, the domain to be meshed is
-  the union of of bounded components. Note that the constrained edges
+  the union of the bounded components. Note that the constrained edges
   have to bound the domain to be meshed and that the domain will be
-  empty if constrained edges do not define bounded components.
+  empty if the constrained edges do not define bounded components.
 
 The refinement process needs to know which faces have to be
   refined, that's why the base face of the triangulation \ccc{CDT} has
@@ -152,7 +152,7 @@ meshing algorithm step by step, using the following methods.
              that is when all vertices and constrained edges have been
              inserted in the constrained Delaunay triangulation. It
              must be called again before any subsequent calls of the
-             step by step refinement if new vertices of constrained
+             step by step refinementmethod if new vertices or constrained
              edges have been inserted since the last call.}
 
 \ccMethod{ bool step_by_step_refine_mesh(); }
