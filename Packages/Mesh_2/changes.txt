@@ -1,3 +1,7 @@
+version 1.0.1 (2003/12/07) [Laurent]
+--------------------------
+Submit the documentation too.
+
 version 1.0.0 (2003/12/07) [Laurent]
 --------------------------
 o Bix Conforming_Delaunay_triangulation_2 where a typename was missing.
