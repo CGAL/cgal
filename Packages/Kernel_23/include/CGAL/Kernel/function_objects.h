@@ -2624,6 +2624,12 @@ public:
     { return r.is_vertical(); }
 };
 
+// We qualify the call to the global function with the CGAL namespace because
+// otherwise ambigiuties arise when Point_2 is a leda_point (or leda_rat_point)
+// and using LEDA versions earlier than 4.4 (where the leda namespace was
+// introduced).  Compilers cannot decide between the left_turn from LEDA in
+// global namespace and the left_turn in CGAL namespace defined in 
+// (rat_)leda_for_CGAL_2.h.
 template <typename K>
 class Left_turn_2
 {
@@ -2634,7 +2640,7 @@ public:
 
     bool
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return left_turn(p, q, r); }
+    { return CGAL::left_turn(p, q, r); }
 };
 
 template <typename K>
@@ -3009,7 +3015,7 @@ public:
 
     bool
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return left_turn(p, q, r); }
+    { return CGAL::left_turn(p, q, r); }
 };
 
 template <typename K>

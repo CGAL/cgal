@@ -39,9 +39,6 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
                                  const NT &  eps_num,  // quality_bound
                                  const NT &  eps_den )
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::swap;
-#endif // CGAL_CFG_NO_NAMESPACE
 
   const NT& n   = eps_num;
   const NT& d   = eps_den;
@@ -63,7 +60,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
 
   if (dy > dx)
   {
-     swap (dx,dy);
+     std::swap (dx,dy);
   }
   // approximate sin = dy / sqrt(sq_hypotenuse)
   // if ( dy / sqrt(sq_hypotenuse) < n/d )

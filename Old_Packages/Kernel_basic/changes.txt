@@ -1,3 +1,7 @@
+3.97   (5 November 2002)
+- qualify left_turn with CGAL:: to remove ambiguity when LEDA < 4.4 used
+- remove obsolete config flag in rational_rotation related to std::swap
+
 3.96   (25 October 2002)
 - Rewrite iterator traits pointer specs.
 
