@@ -49,6 +49,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+enum Direction {SEG_UP_RIGHT,SEG_UP_LEFT,SEG_DOWN_RIGHT,SEG_DOWN_LEFT,
+                SEG_UP,SEG_DOWN,SEG_LEFT,SEG_RIGHT,SEG_POINT_SEG};
+
 template<class Rep_>
 class Segment_data {
 
@@ -171,8 +174,6 @@ public:
 
 private:
   Rep _gt;
-  enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
-                  RIGHT,POINT_SEG};
 
   static Direction seg_dir;
   static const int default_number_of_kd_trees = 1;
@@ -207,6 +208,9 @@ private:
   static inline Direction get_direction() {return(seg_dir);}
   static inline void set_direction(Direction dir) {seg_dir = dir;}
 };
+
+template<class Rep>
+Direction Snap_rounding_2<Rep>::seg_dir;
 
 // ctor
 template<class Rep_>
@@ -245,25 +249,25 @@ void Segment_data<Rep_>::determine_direction()
 
   if(cx == SMALLER) {
    if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_RIGHT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_UP_RIGHT);
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::RIGHT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_RIGHT);
     else
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_RIGHT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN_RIGHT);
   } else if(cx == EQUAL) {
     if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP);
+      Snap_rounding_2<Rep_>::set_direction(SEG_UP);
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::POINT_SEG);
+      Snap_rounding_2<Rep_>::set_direction(SEG_POINT_SEG);
     else
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN);
+      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN);
   } else {
     if(cy == SMALLER)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::UP_LEFT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_UP_LEFT);
     else if(cy == EQUAL)
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::LEFT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_LEFT);
     else
-      Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_LEFT);
+      Snap_rounding_2<Rep_>::set_direction(SEG_DOWN_LEFT);
   }
 }
 
@@ -347,9 +351,9 @@ bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg) const
       Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),p_up);
 
       return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::UP_LEFT && c_source != EQUAL ||
+             SEG_UP_LEFT && c_source != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::DOWN_RIGHT && c_target != EQUAL);
+             SEG_DOWN_RIGHT && c_target != EQUAL);
     } else if(assign(s,result))
       return(true);
     else
@@ -375,9 +379,9 @@ bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
 
       if(c1 == EQUAL)
         return(Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT && c3 != EQUAL ||
+               SEG_UP_RIGHT && c3 != EQUAL ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_LEFT && c4 != EQUAL);
+               SEG_DOWN_LEFT && c4 != EQUAL);
       else if(c2 == EQUAL)
         return(false);// was checked
       else {
@@ -387,18 +391,18 @@ bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
              _gt.compare_x_2_object()(p_right,seg.source());
 
         return((Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::LEFT ||
+                SEG_LEFT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::DOWN_LEFT ||
+                SEG_DOWN_LEFT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::UP_LEFT) &&
+                SEG_UP_LEFT) &&
                 c_target != EQUAL ||
                 (Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::RIGHT ||
+                SEG_RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::DOWN_RIGHT ||
+                SEG_DOWN_RIGHT ||
                 Snap_rounding_2<Rep_>::get_direction() ==
-                Snap_rounding_2<Rep_>::UP_RIGHT) &&
+                SEG_UP_RIGHT) &&
                 c_source != EQUAL);
       }
     } else
@@ -422,9 +426,9 @@ bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg) const
             (seg.source(),p_right);
 
       return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::UP_LEFT && c_target != EQUAL ||
+             SEG_UP_LEFT && c_target != EQUAL ||
              Snap_rounding_2<Rep_>::get_direction() ==
-             Snap_rounding_2<Rep_>::DOWN_RIGHT && c_source != EQUAL);
+             SEG_DOWN_RIGHT && c_source != EQUAL);
     } else if(assign(s,result))
       return(true);
     else
@@ -451,17 +455,17 @@ bool Hot_Pixel<Rep_>::intersect_top(const Segment_2& seg) const
         return(false);// were checked
       else
         return((Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN ||
+               SEG_DOWN ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_LEFT ||
+               SEG_DOWN_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_RIGHT) && c3 != EQUAL ||
+               SEG_DOWN_RIGHT) && c3 != EQUAL ||
                (Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP ||
+               SEG_UP ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_LEFT ||
+               SEG_UP_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT) && c4 != EQUAL);
+               SEG_UP_RIGHT) && c4 != EQUAL);
     } else
     return(false);
   }
@@ -503,29 +507,29 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
   return(
      // Point segment intersects only one pixel, thus ignored
     Snap_rounding_2<Rep_>::get_direction() ==
-    Snap_rounding_2<Rep_>::UP_RIGHT &&
+    SEG_UP_RIGHT &&
     (cx == SMALLER || 
     cx == EQUAL && cy == SMALLER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
-    Snap_rounding_2<Rep_>::UP_LEFT &&
+    SEG_UP_LEFT &&
     (cx == LARGER || 
     cx == EQUAL && cy == SMALLER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
-    Snap_rounding_2<Rep_>::DOWN_RIGHT &&
+    SEG_DOWN_RIGHT &&
     (cx == SMALLER || 
     cx == EQUAL && cy == LARGER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
-    Snap_rounding_2<Rep_>::DOWN_LEFT &&
+    SEG_DOWN_LEFT &&
     (cx == LARGER || 
     cx == EQUAL && cy == LARGER) ||
-    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::UP &&
+    Snap_rounding_2<Rep_>::get_direction() == SEG_UP &&
     cy == SMALLER ||
-    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::DOWN &&
+    Snap_rounding_2<Rep_>::get_direction() == SEG_DOWN &&
     cy == LARGER ||
-    Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::LEFT &&
+    Snap_rounding_2<Rep_>::get_direction() == SEG_LEFT &&
     cx == LARGER ||
     Snap_rounding_2<Rep_>::get_direction() ==
-    Snap_rounding_2<Rep_>::RIGHT &&
+    SEG_RIGHT &&
     cx == SMALLER);
 }
 
@@ -746,9 +750,6 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
     find_hot_pixels_and_create_kd_trees(pixel_size,number_of_kd_trees);
     iterate(output_container,pixel_size,int_output,do_isr);
   }
-
-template<class Rep>
-typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;
 
 CGAL_END_NAMESPACE
 
