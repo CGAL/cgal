@@ -1,3 +1,5 @@
+#define  CGAL_SWEEP_LINE_DEBUG  
+
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
 #ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
@@ -30,8 +32,8 @@
 #ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
 #endif
-#ifndef CGAL_ARR_PMWX_H
-#include <CGAL/Arr_pmwx.h>
+#ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H  
+#include <CGAL/Pm_with_intersections.h>
 #endif
 #ifndef SWEEP_TO_CONSTRUCT_PLANAR_MAP_H
 #include <CGAL/sweep_to_construct_planar_map.h>
@@ -53,7 +55,7 @@
 #ifndef CGAL_ARR_TEST_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
 #endif
 
@@ -160,7 +162,7 @@ typedef Traits::X_curve                        X_curve;
 typedef Traits::Curve                          Curve;
 typedef CGAL::Pm_default_dcel<Traits>          Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>       PM;
-typedef CGAL::Arr_pmwx<PM>                     Pmwx;
+typedef CGAL::Planar_map_with_intersections_2<PM>    Pmwx;
 typedef Pmwx::Pmwx_change_notification         Notifier;
  
 // we use the namespace std for compatability with MSVC
