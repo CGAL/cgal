@@ -27,6 +27,7 @@
 #include "CGAL/Segment_2_Segment_2_intersection.h"
 
 #include <vector>
+#include <list>
 
 namespace CGAL{
   template <class R>
@@ -34,8 +35,8 @@ namespace CGAL{
   intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r)
   {
     typedef typename R::FT FT;
-    typedef typename Segment_2<R> Segment;
-    typedef typename Point_2<R>   Point;
+    typedef Segment_2<R> Segment;
+    typedef Point_2<R>   Point;
 
     FT xr1, yr1, xr2, yr2;  
     bool position[3][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
