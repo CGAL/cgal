@@ -75,7 +75,7 @@ public:
 
   template<class Gt>
   Triangulation_ds_face_handle_2(
-	      const Triangulation_line_face_circulator_2<Gt,Tds>& lfc)
+	      Triangulation_line_face_circulator_2<Gt,Tds> lfc)
     : Pointer_(lfc->handle())
     {}
 
