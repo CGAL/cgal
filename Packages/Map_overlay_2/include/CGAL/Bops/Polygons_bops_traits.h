@@ -49,14 +49,14 @@ class Polygons_bops_traits_2 : public Arr_segment_exact_traits<Kernel_>
 public:
   typedef Arr_segment_exact_traits<Kernel>   Base;
   
-  typedef Base::Point_2   Point_2;
-  typedef Base::X_curve_2 X_curve_2;
+  typedef typename Base::Point_2   Point_2;
+  typedef typename Base::X_curve_2 X_curve_2;
   typedef X_curve_2       Curve_2;
   
   typedef typename Kernel::Ray_2       Ray_2;   // a new type for this class.
   typedef typename Kernel::Direction_2 Direction_2;
   
-  typedef Base::Curve_point_status Curve_point_status;
+  typedef typename Base::Curve_point_status Curve_point_status;
   
   // Obsolete, for backward compatibility
   typedef Point_2                  Point;
@@ -64,7 +64,7 @@ public:
   typedef Curve_2                  Curve;
 
 protected:
-  typedef Base::Curve_status           Curve_status;
+  typedef typename Base::Curve_status           Curve_status;
   
 public:
   
