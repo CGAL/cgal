@@ -25,7 +25,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Qt_widget.h>
-
+#include <qmainwindow.h>
 #include "min_quadrilateral_layers.h"
 
 #include <qobject.h>
