@@ -10,7 +10,7 @@
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips -Ppdf -G0 -t letter -z -o paper.ps paper.dvi
 %DVIPSParameters: dpi=8000, compressed
-%DVIPSSource:  TeX output 2004.04.08:1820
+%DVIPSSource:  TeX output 2004.04.08:1833
 %%BeginProcSet: tex.pro
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
@@ -883,8 +883,8 @@ cleartomark
 %%EndFont 
 TeXDict begin 40258431 52099146 1000 8000 8000 (paper.dvi)
 @start /Fa 41[575 13[487 109[487 575 575 752 575 575
-487 443 532 1[443 575 575 709 487 575 1[265 575 575 1[487
-575 532 532 575 65[{TeXBase1Encoding ReEncodeFont}25
+487 443 532 1[443 575 575 709 487 575 1[265 575 575 443
+487 575 532 532 575 65[{TeXBase1Encoding ReEncodeFont}26
 797.011 /Times-Roman rf /Fb 196[277 59[{}1 996.264 /CMMI10
 rf /Fc 252[454 3[{}1 774.872 /CMSY7 rf /Fd 212[598 43[{
 TeXBase1Encoding ReEncodeFont}1 996.264 /Courier rf /Fe
