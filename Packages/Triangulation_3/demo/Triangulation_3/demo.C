@@ -52,10 +52,10 @@ typedef double NT;
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-typedef CGAL::Cartesian<NT> Gt;
+typedef CGAL::Cartesian<NT> K;
 
-typedef CGAL::Triangulation_3<Gt> Triangulation;
-typedef CGAL::Delaunay_triangulation_3<Gt> Delaunay;
+typedef CGAL::Triangulation_3<K> Triangulation;
+typedef CGAL::Delaunay_triangulation_3<K> Delaunay;
 
 typedef Triangulation::Vertex_iterator Vertex_iterator;
 typedef Triangulation::Edge_iterator Edge_iterator;
@@ -69,7 +69,7 @@ typedef Triangulation::Cell_handle Cell_handle;
 typedef Triangulation::Vertex_handle Vertex_handle;
 typedef Triangulation::Locate_type Locate_type;
 
-typedef Gt::Point_3 Point;
+typedef K::Point_3 Point;
 
 ////////////////////// 
 // VISU GEOMVIEW

@@ -15,10 +15,10 @@ class empty_traits {
 public:
   class Point_3 {};
 };
-typedef empty_traits Gt;
+typedef empty_traits K;
 
-typedef CGAL::Triangulation_vertex_base_3<Gt>       Vb;
-typedef CGAL::Triangulation_cell_base_3<Gt>         Cb;
+typedef CGAL::Triangulation_vertex_base_3<K>       Vb;
+typedef CGAL::Triangulation_cell_base_3<K>         Cb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
 

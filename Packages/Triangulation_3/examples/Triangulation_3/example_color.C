@@ -40,14 +40,14 @@ typedef double NT;
 // 
 // typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
-typedef CGAL::Cartesian<NT> Gt;
+typedef CGAL::Cartesian<NT> K;
 
-typedef Gt::Point_3 Point;
+typedef K::Point_3 Point;
 
-typedef CGAL::Triangulation_cell_base_3<Gt> Cb;
-typedef My_vertex_base<Gt> Vb;
+typedef CGAL::Triangulation_cell_base_3<K> Cb;
+typedef My_vertex_base<K> Vb;
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Gt, Tds> Delaunay;
+typedef CGAL::Delaunay_triangulation_3<K, Tds> Delaunay;
 
 typedef Delaunay::Vertex_iterator Vertex_iterator;
 typedef Delaunay::Vertex_handle Vertex_handle;

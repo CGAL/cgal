@@ -28,17 +28,17 @@ typedef double NT;
 // chosing the representation (cartesian or homogeneous)
 ////////////////////// 
 
-typedef CGAL::Cartesian<NT> Gt;
+typedef CGAL::Cartesian<NT> K;
 
 ////////////////////// 
 
-typedef CGAL::Triangulation_3<Gt> Triangulation;
+typedef CGAL::Triangulation_3<K> Triangulation;
 
 typedef Triangulation::Cell_handle Cell_handle;
 typedef Triangulation::Vertex_handle Vertex_handle;
 typedef Triangulation::Locate_type Locate_type;
 
-typedef Gt::Point_3 Point;
+typedef K::Point_3 Point;
 
 int main()
 {
