@@ -15,7 +15,7 @@ all:
 	make pdf
 
 clean:
-	\rm -f *.aux *.dvi *.log *.out *.blg *.bbl
+	\rm -f *.aux *.dvi *.log *.out *.blg *.bbl *.tmp *.ps *.pdf
 
 superclean:
 	\rm -f *.ps *.pdf *~
