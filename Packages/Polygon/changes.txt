@@ -1,3 +1,10 @@
+4.5 (30 October 2001)
++ Susan made a base class for Vertex_data so it can be shared with the
+  Vertex_data used in generating random polygons (Generator package)
++ Susan changed template parameters of some internal class to make
+  code sharing easier
++ Susan made traits classes passed by const-ref
+
 4.4 (21 September 2001)
 + Fixed a bug in the simplicity test.
 
