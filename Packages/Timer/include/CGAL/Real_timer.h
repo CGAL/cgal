@@ -27,6 +27,8 @@
 #define CGAL_REAL_TIMER_H 1
 
 #include <CGAL/basic.h>
+// For the numerical limits
+#include <float.h>
 
 CGAL_BEGIN_NAMESPACE
 

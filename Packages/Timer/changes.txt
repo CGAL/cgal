@@ -1,6 +1,10 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.3 (20 Mar 2002)
+
+    - Added missing float.h file to include/CGAL/Real_timer.h.
+
 2.2 (18 Mar 2002)
 
     - Improved Timer based on getrusage() on POSIX systems (does
