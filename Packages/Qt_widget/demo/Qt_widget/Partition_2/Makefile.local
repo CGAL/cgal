@@ -35,7 +35,8 @@ LDFLAGS = \
 
 SOURCES = ../../../src/Qt_Widget$(OBJ_EXT) ../../../src/Qt_Widget_tool$(OBJ_EXT) \
 	Qt_Widget_toolbar$(OBJ_EXT) Qt_Widget_toolbar_views$(OBJ_EXT) \
-	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT)
+	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT) \
+	../../../src/Qt_Widget_standard_toolbar$(OBJ_EXT)
 #	../../../src/Qt_ScenesWidget$(OBJ_EXT)
 
 CGAL_INCL = ../../../include
@@ -61,12 +62,11 @@ Qt_Widget_toolbar_views$(OBJ_EXT): Qt_Widget_toolbar_views.C \
 
 Qt_Widget_toolbar_views.moc: Qt_Widget_toolbar_views.h \
                       $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_points.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Nearest_vertex.h \
 		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_polygon.h \
 		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_green_approximation.h \
 		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_ymonotone.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Mouse_coordinates.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Mouse_coordinates.h \
 		      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_polygon_points.h
 	$(QT_MOC) -o Qt_Widget_toolbar_views.moc $<
 

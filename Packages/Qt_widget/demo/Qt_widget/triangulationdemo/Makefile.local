@@ -35,7 +35,8 @@ LDFLAGS = \
 
 SOURCES = ../../../src/Qt_Widget$(OBJ_EXT) ../../../src/Qt_Widget_tool$(OBJ_EXT) \
 	Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) \
-	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT)
+	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT) \
+	../../../src/Qt_Widget_standard_toolbar$(OBJ_EXT)
 #	../../../src/Qt_ScenesWidget$(OBJ_EXT)
 
 CGAL_INCL = ../../../include
@@ -61,11 +62,10 @@ Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
 
 Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
                       $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_voronoi.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_triangulation.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Show_points.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget_Mouse_coordinates.h
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_voronoy.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_triangulation.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Nearest_vertex.h \
+                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Mouse_coordinates.h
 	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
 
 triangulationdemo.moc: triangulationdemo.C $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
