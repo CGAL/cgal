@@ -490,9 +490,9 @@ svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
 
 
 template<class FT, class ITag>
-struct Svd_are_same_points_ftC2
+class Svd_are_same_points_ftC2
 {
-
+ public:
   inline
   bool operator()(const FT v[], const char site_types[]) const
   {
@@ -544,9 +544,9 @@ bool svd_are_same_points_C2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 
 template<class FT, class ITag>
-struct Svd_orientation_ftC2
+class Svd_orientation_ftC2
 {
-
+ public:
   inline
   Orientation operator()(const FT v[], const char site_types[]) const
   {
@@ -602,8 +602,9 @@ Orientation svd_orientation_C2(const typename K::Site_2& p,
 
 
 template<class FT, class MTag, class ITag>
-struct Svd_oriented_side_of_bisector_ftC2
+class Svd_oriented_side_of_bisector_ftC2
 {
+ public:
   inline
   Oriented_side operator()(const FT v[], const char site_types[]) const
   {
@@ -663,8 +664,9 @@ svd_oriented_side_of_bisector_ftC2(const typename K::Site_2& p,
 
 
 template<class FT, class MTag, class ITag, int Num_sites>
-struct Svd_vertex_conflict_ftC2
+class Svd_vertex_conflict_ftC2
 {
+ public:
   inline
   Sign
   operator()(const FT v[], const char site_types[]) const
@@ -762,9 +764,9 @@ svd_vertex_conflict_ftC2(const typename K::Site_2& p,
 
 
 template<class FT, class MTag, class ITag, int Num_sites>
-struct Svd_finite_edge_conflict_ftC2
+class Svd_finite_edge_conflict_ftC2
 {
-
+ public:
   inline
   bool operator()(const FT v[], Sign sgn, const char site_types[]) const
   {
@@ -895,9 +897,9 @@ svd_finite_edge_conflict_ftC2(const typename K::Site_2& p,
 
 
 template<class FT, class MTag, class ITag>
-struct Svd_infinite_edge_conflict_ftC2
+class Svd_infinite_edge_conflict_ftC2
 {
-
+ public:
 
   inline
   bool operator()(const FT v[], Sign sgn, const char site_types[]) const
@@ -957,9 +959,9 @@ svd_infinite_edge_conflict_ftC2(const typename K::Site_2& q,
 //--------------------------------------------------------------------------
 
 template<class FT, class MTag, class ITag>
-struct Svd_is_degenerate_edge_ftC2
+class Svd_is_degenerate_edge_ftC2
 {
-
+ public:
   inline
   bool operator()(const FT v[], const char site_types[]) const
   {
@@ -1017,8 +1019,9 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 
 template<class FT, class MTag, class ITag>
-struct Svd_arrangement_type_ftC2
+class Svd_arrangement_type_ftC2
 {
+ public:
   typedef Simple_cartesian<FT>                                Rep;
   typedef Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
   typedef Svd_arrangement_type_C2<Kernel>                     Predicate;
@@ -1075,9 +1078,9 @@ svd_arrangement_type_C2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 
 template<class FT, class ITag>
-struct Svd_are_parallel_ftC2
+class Svd_are_parallel_ftC2
 {
-
+ public:
   inline
   bool operator()(const FT v[], const char site_types[]) const
   {
@@ -1132,9 +1135,9 @@ svd_are_parallel_C2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 
 template<class FT, class MTag, class ITag, int Num_sites>
-struct Svd_oriented_side_ftC2
+class Svd_oriented_side_ftC2
 {
-
+ public:
   inline
   Oriented_side operator()(const FT v[], const char site_types[]) const
   {

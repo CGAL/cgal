@@ -1,3 +1,8 @@
+4 October 2004:  Menelaos Karavelas
+- fixed warnings for VC++ IDE mentioned by Andreas (a class was initially
+  defined as a struct but a specilization of which as a class; now everything
+  is a class)
+
 22 September 2004:  Menelaos Karavelas
 - added specializations of the non-filtered traits classes for the
   Filtered_kernel
