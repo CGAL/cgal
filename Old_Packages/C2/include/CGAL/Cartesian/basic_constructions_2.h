@@ -26,8 +26,8 @@
 #ifndef CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
 #define CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
 
-#warning "basic_constructionsC2.h: this file will disappear"
-#warning "  please include <CGAL/Cartesian/constructions_on_....h>"
+// #warning "basic_constructionsC2.h: this file will disappear"
+// #warning "  please include <CGAL/Cartesian/constructions_on_....h>"
 
 #include <CGAL/Cartesian/constructions_on_points_2.h>
 #include <CGAL/Cartesian/constructions_on_lines_2.h>
