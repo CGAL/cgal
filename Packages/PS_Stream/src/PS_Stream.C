@@ -15,7 +15,7 @@
 // package       : PS_Stream
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     :
+// author(s)     : Carine Bonetto
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ======================================================================
@@ -198,11 +198,7 @@ PS_Manipulator_creator<const char*>
 PS_Manipulator_creator<unsigned int>
   font_size(&PS_Stream::set_font_size);
 
-
-
-
 #endif  //PS_MANIP_DEF
-
 
 PS_Stream& PS_Stream::set_border_color(const Color& color)
 {
@@ -262,9 +258,8 @@ PS_Stream& PS_Stream::set_fill(bool test)
 
 PS_Stream& PS_Stream::set_default_context(void)
 {
-  
-setdefault();
-return *this;
+  setdefault();
+  return *this;
 }
 
 PS_Stream& PS_Stream::set_current_context(const PS_Stream::Context& c)
@@ -286,8 +281,6 @@ PS_Stream& PS_Stream::set_current_context(const PS_Stream::Context& c)
   ctxt=c;
   return *this;
 }
-
-
 
 PS_Stream& PS_Stream::set_point(Point_2< Cartesian <double> > p)
 {
@@ -416,10 +409,6 @@ PS_Stream& PS_Stream::set_font_size(unsigned int i)
     }
   return *this;
 }
-
-
-
-
 
 void PS_Stream::setdefault()
 {
@@ -554,8 +543,8 @@ os() << "} def" << std::endl;
  }
 
 
- #ifndef _PS_LABEL_
- #define _PS_LABEL_
+#ifndef _PS_LABEL_
+#define _PS_LABEL_
 
 PS_Stream& operator << (PS_Stream& ps, const PS_Stream::Border& b)
 {
@@ -653,7 +642,6 @@ PS_Stream& operator << (PS_Stream& ps,const PS_Stream::Axis& g)
     }
   test=true;
   return ps;
-
 }
 
 #endif
