@@ -32,7 +32,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                ch_demo 
+                ch_demo \
+                convex_hull_points_2_demo  \
+                ch_of_polyline  
 
 ch_demo$(EXE_EXT): ch_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_demo ch_demo$(OBJ_EXT) $(LDFLAGS)
@@ -40,8 +42,13 @@ ch_demo$(EXE_EXT): ch_demo$(OBJ_EXT)
 convex_hull_points_2_demo$(EXE_EXT): convex_hull_points_2_demo$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_points_2_demo convex_hull_points_2_demo$(OBJ_EXT) $(LDFLAGS)
 
+ch_of_polyline$(EXE_EXT): ch_of_polyline$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ch_of_polyline ch_of_polyline$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   ch_demo.clean 
+                   ch_demo.clean \
+                   convex_hull_points_2_demo.clean  \
+                   ch_of_polyline.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
