@@ -13,6 +13,7 @@ Version 1.7 on ??? July 1998.
   quoi ?  Est-il utile pour nous, ou GMP fait-il strictement mieux ?  (sauf
   qu'il faut l'installer, mais est-ce un big deal ?)
 - Doc update: cgal.bib removed, geombib is updated.
+- Using CVS.
 
 Version 1.6 on 10 May 1998.
 - "package" line added in the headers.

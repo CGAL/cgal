@@ -1,2 +1,1 @@
 Interval arithmetic as a number type for CGAL.
-C'est pas du pipo.
