@@ -2,7 +2,7 @@
 @! The CGAL Project
 @! Implementation: 2D Smallest Enclosing Circle
 @! ----------------------------------------------------------------------------
-@! file  : Library/web/Min_circle_2.aw
+@! file  : web/Optimisation/Min_circle_2.aw
 @! author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 @! ----------------------------------------------------------------------------
 @! $Revision$
@@ -20,7 +20,7 @@
 @article
 
 \input{cprog.sty}
-\setlength{\parskip}{0.6ex}
+\setlength{\parskip}{1ex}
 
 @! LaTeX macros
 \newenvironment{pseudocode}[1]%
@@ -69,16 +69,18 @@
 \section*{Introduction}
 
 We provide an implementation of an optimisation algorithm for computing
-the smallest (w.r.t.\ area) enclosing circle of a finite point set $P$ in
-the plane. The class template \ccc{CGAL_Min_circle_2<I>} is implemented
-as a semi-dynamic data structure, thus allowing to insert points while
-maintaining the smallest enclosing circle. It is parameterized with an
-interface class, that defines the interface between the optimisation
-algorithm and the primitives it uses.
+the smallest (w.r.t.\ area) enclosing circle of a finite point set $P$
+in the plane. The class template \ccc{CGAL_Min_circle_2<Traits>} is
+implemented as a semi-dynamic data structure, thus allowing to insert
+points while maintaining the smallest enclosing circle. It is
+parameterized with a traits class, that defines the abstract interface
+between the optimisation algorithm and the primitives it uses. For ease
+of use, we provide traits class adapters that interface the
+optimisation algorithm with user supplied point classes.
 
 This document is organized as follows. The algorithm is described in
-Section~1. Section~2 contains the specification as it appears in the
-CGAL Reference Manual. Section~3 gives the implementation. In
+Section~1. Section~2 contains the specifications as they appear in the
+CGAL Reference Manual. Section~3 gives the implementations. In
 Section~4 we provide a test program which performs some correctness
 checks. Finally the product files are created in Section~5.
 
@@ -141,33 +143,42 @@ method to be very slow -- random shuffling gives these orders a very
 small probability.
 
 @! ============================================================================
-@! Specification
+@! Specifications
 @! ============================================================================
 
 \clearpage
-\section{Specification}
+\section{Specifications}
 
-{\em Note:} Below some references are undefined, they refer to sections
+\emph{Note:} Below some references are undefined, they refer to sections
 in the \cgal\ Reference Manual.
 
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{Support_point_iterator}{Circle;}{}
+\ccSetThreeColumns{typedef Traits::Circle}{}{%
+  creates a variable \ccc{min_circle} of type \ccc{CGAL_Min_circle_2<Traits>}.}
 \ccPropagateThreeToTwoColumns
 \input{../spec/Min_circle_2.tex}
+\input{../spec/Min_circle_2_adapterC2.tex}
+\input{../spec/Min_circle_2_adapterH2.tex}
 
 @! ============================================================================
-@! Implementation
+@! Implementations
 @! ============================================================================
 
 \clearpage
-\section{Implementation}
+\section{Implementations}
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_circle_2<Traits>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_circle\_2<Traits>}
 
 First, we declare the class template \ccc{CGAL_Min_circle_2}.
 
 @macro<Min_circle_2 declaration> = @begin
-    template < class I >
+    template < class _Traits >
     class CGAL_Min_circle_2;
 @end
 
@@ -176,7 +187,7 @@ functions \ccc{mc} and \ccc{compute_circle}. The former directly
 realizes the pseudocode of $\mc(P,B)$, the latter solves the basic
 case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
 
-{\em Workaround:} The GNU compiler (g++ 2.7.*) does not accept types
+\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
 with scope operator as argument type or return type in class template
 member functions. Therefore, all member functions are implemented in
 the class interface.
@@ -184,7 +195,7 @@ the class interface.
 The class interface looks as follows.
 
 @macro <Min_circle_2 interface> = @begin
-    template < class _I >
+    template < class _Traits >
     class CGAL_Min_circle_2 {
       public:
 	@<Min_circle_2 public interface>
@@ -194,8 +205,9 @@ The class interface looks as follows.
 	@<Min_circle_2 private data members>
 
 	// copying and assignment not allowed!
-	CGAL_Min_circle_2( CGAL_Min_circle_2<_I> const&);
-	CGAL_Min_circle_2<_I>& operator = ( CGAL_Min_circle_2<_I> const&);
+	CGAL_Min_circle_2( CGAL_Min_circle_2<_Traits> const&);
+	CGAL_Min_circle_2<_Traits>&
+            operator = ( CGAL_Min_circle_2<_Traits> const&);
 
     @<dividing line>
 
@@ -237,54 +249,58 @@ The class interface looks as follows.
 	// --------------
 	@<Min_circle_2 validity check>
 
-	// I/O
-	// ---
-	@<Min_circle_2 I/O operators>
+	// Miscellaneous
+	// -------------
+	@<Min_circle_2 miscellaneous>
     };
 @end   
 
 @! ----------------------------------------------------------------------------
-\subsection{Public Interface}
+\subsubsection{Public Interface}
 
 The functionality is described and documented in the specification
 section, so we do not comment on it here.
 
 @macro <Min_circle_2 public interface> = @begin
     // types
-    typedef           _I                           I;
-    typedef typename  _I::Point                    Point;
-    typedef typename  _I::Distance		   Distance;
-    typedef typename  _I::Circle                   Circle;
+    typedef           _Traits                      Traits;
+    typedef typename  _Traits::Point               Point;
+    typedef typename  _Traits::Circle              Circle;
     typedef typename  list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                Support_point_iterator;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.*) does not accept types with
-    scope operator as argument type or return type in class template
+    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
+    with scope operator as argument type or return type in class template
     member functions. Therefore, all member functions are implemented in
     the class interface.
 
     // creation
-    CGAL_Min_circle_2( I const& i = I());
-    CGAL_Min_circle_2( Point const& p,
-		       I const& i = I());
-    CGAL_Min_circle_2( Point const& p,
-                       Point const& q,
-		       I const& i = I());
-    CGAL_Min_circle_2( Point const& p1,
-                       Point const& p2,
-                       Point const& p3,
-		       I const& i = I());
-    CGAL_Min_circle_2( const Point* first,
-                       const Point* last,
-                       bool randomize = false,
-                       CGAL_Random& random = CGAL_random,
-		       I const& i = I());
+    CGAL_Min_circle_2( const Point*  first,
+                       const Point*  last,
+                       bool          randomize = false,
+                       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits());
     CGAL_Min_circle_2( list<Point>::const_iterator first,
                        list<Point>::const_iterator last,
-                       bool randomize = false,
-                       CGAL_Random& random = CGAL_random,
-		       I const& i = I());
+                       bool          randomize = false,
+                       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits());
+    CGAL_Min_circle_2( istream_iterator<Point,ptrdiff_t> first,
+                       istream_iterator<Point,ptrdiff_t> last,
+		       bool          randomize = false,
+		       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits())
+    CGAL_Min_circle_2( Traits const& traits = Traits());
+    CGAL_Min_circle_2( Point  const& p,
+		       Traits const& traits = Traits());
+    CGAL_Min_circle_2( Point  const& p,
+                       Point  const& q,
+		       Traits const& traits = Traits());
+    CGAL_Min_circle_2( Point  const& p1,
+                       Point  const& p2,
+                       Point  const& p3,
+		       Traits const& traits = Traits());
     ~CGAL_Min_circle_2( );
 
     // access functions
@@ -299,7 +315,7 @@ section, so we do not comment on it here.
 
     Point const&  support_point( int i) const;
 
-    Circle  circle( ) const;
+    Circle const&  circle( ) const;
 
     // predicates
     CGAL_Bounded_side  bounded_side( Point const& p) const;
@@ -311,24 +327,30 @@ section, so we do not comment on it here.
     bool  is_degenerate( ) const;
 
     // modifiers
-    void  insert ( Point const& p);
+    void  insert( Point const& p);
+    void  insert( const Point* first,
+                  const Point* last );
+    void  insert( list<Point>::const_iterator first,
+                  list<Point>::const_iterator last );
+    void  insert( istream_iterator<Point,ptrdiff_t> first,
+                  istream_iterator<Point,ptrdiff_t> last );
+    void  clear( );
 
     // validity check
     bool  is_valid( bool verbose = false, int level = 0) const;
 
-    // I/O
-    friend ostream& operator << ( ostream& os, CGAL_Min_circle_2<I> const& mc);
-    friend istream& operator >> ( istream& is, CGAL_Min_circle_2<I>      & mc);
+    // miscellaneous
+    Traits const&  traits( ) const;
     **************************************************************************/
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Private Data Members}
+\subsubsection{Private Data Members}
 
-First, the interface class object is stored.
+First, the traits class object is stored.
 
 @macro <Min_circle_2 private data members> += @begin
-    I            ico;				// interface class object
+    Traits       tco;				// traits class object
 @end
 
 The points of $P$ are internally stored as a linked list that allows to
@@ -345,7 +367,7 @@ given by \ccc{n_support_points}. During the computations, the set of
 support points coincides with the set $B$ appearing in the pseudocode
 for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
-{\em Workaround:} The array of support points is allocated dynamically,
+\emph{Workaround:} The array of support points is allocated dynamically,
 because the SGI compiler (mipspro CC 7.1) does not accept a static
 array here.
 
@@ -354,34 +376,27 @@ array here.
     Point*       support_points;		// array of support points
 @end
 
-Finally, an actual circle is stored in \ccc{center} and
-\ccc{squared_radius}, by the end of computation equal to
-$mc(P)$. During computation, this circle equals the circle $mc$
-appearing in the pseudocode for $\mc(P,B)$, see
-Section~\ref{sec:algo}. An empty circle is represented by a negative
-squared radius.
-
-@macro <Min_circle_2 private data members> += @begin
-    Point        center;			// current circle
-    Distance	 squared_radius;
-@end  
+Finally, the actual circle is stored in a variable \ccc{circle}
+provided by the traits class object, by the end of computation equal to
+$mc(P)$. During computation, \ccc{tco.circle} equals the circle $mc$
+appearing in the pseudocode for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
 @! ----------------------------------------------------------------------------
-\subsection{Constructors and Destructor}
+\subsubsection{Constructors and Destructor}
 
 We provide several different constructors, which can be put into two
 groups. The constructors in the first group, i.e. the more important
-ones, build the smallest enclosing circle $mc(P)$ from a point set
-$P$, given by a begin iterator and a past-the-end iterator. Usually
-this would be done by a single member template, but since most
-compilers do not support member templates yet, we provide specialized
-constructors for C~arrays (using pointers as iterators) and for STL
-sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
-Actually, the constructors for a C~array and a \ccc{vector<point>} are
-the same, since the random access iterator of \ccc{vector<Point>} is
-implemented as \ccc{Point*}.
+ones, build the smallest enclosing circle $mc(P)$ from a point set $P$,
+given by a begin iterator and a past-the-end iterator. Usually this
+would be done by a single template member function, but since most
+compilers do not support this yet, we provide specialized constructors
+for C~arrays (using pointers as iterators), for STL sequence containers
+\ccc{vector<Point>} and \ccc{list<Point>} and for the STL input stream
+iterator \ccc{istream_iterator<Point>}.  Actually, the constructors for
+a C~array and a \ccc{vector<point>} are the same, since the random
+access iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
 
-Both constructors of the first group copy the points into the
+All three constructors of the first group copy the points into the
 internal list \ccc{points}. If randomization is demanded, the points
 are copied to a vector and shuffled at random, before being copied to
 \ccc{points}. Finally the private member function $mc$ is called to
@@ -389,17 +404,17 @@ compute $mc(P)=mc(P,\emptyset)$.
 
 @macro <Min_circle_2 constructors> += @begin
     // STL-like constructor for C array and vector<Point>
-    CGAL_Min_circle_2( const Point* first,
-		       const Point* last,
-		       bool         randomize = false,
-		       CGAL_Random& random    = CGAL_random,
-		       I const&     i         = I())
-	: ico( i)
+    CGAL_Min_circle_2( const Point*  first,
+		       const Point*  last,
+		       bool          randomize = false,
+		       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits())
+	: tco( traits)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
 
-	// compute number of points
+	// range not empty?
 	if ( ( last-first) > 0) {
 
 	    // store points
@@ -419,17 +434,17 @@ compute $mc(P)=mc(P,\emptyset)$.
     // STL-like constructor for list<Point>
     CGAL_Min_circle_2( list<Point>::const_iterator first,
 		       list<Point>::const_iterator last,
-		       bool         randomize = false,
-		       CGAL_Random& random    = CGAL_random,
-		       I const&     i         = I())
-	: ico( i)
+		       bool          randomize = false,
+		       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits())
+	: tco( traits)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
 
 	// compute number of points
 	list<Point>::size_type n = 0;
-	__distance( first, last, n, bidirectional_iterator_tag());
+	CGAL__distance( first, last, n);
 	if ( n > 0) {
 
 	    // store points
@@ -447,6 +462,36 @@ compute $mc(P)=mc(P,\emptyset)$.
 	// compute mc
 	mc( points.end(), 0);
     }
+
+    // STL-like constructor for input stream iterator istream_iterator<Point>
+    CGAL_Min_circle_2( istream_iterator<Point,ptrdiff_t>  first,
+                       istream_iterator<Point,ptrdiff_t>  last,
+		       bool          randomize = false,
+		       CGAL_Random&  random    = CGAL_random,
+		       Traits const& traits    = Traits())
+	: tco( traits)
+    {
+	// allocate support points' array
+	support_points = new Point[ 3];
+
+	// range not empty?
+	if ( first != last) {
+
+	    // store points
+	    if ( randomize) {
+
+	        // shuffle points at random
+		vector<Point> v;
+		copy( first, last, back_inserter( v));
+		random_shuffle( v.begin(), v.end(), random);
+		copy( v.begin(), v.end(), back_inserter( points)); }
+	    else
+		copy( first, last, back_inserter( points)); }
+
+	// compute mc
+	mc( points.end(), 0);
+    }
+
 @end
 
 The remaining constructors are actually specializations of the
@@ -464,33 +509,39 @@ building $mc(\emptyset)$.
 
     // default constructor
     inline
-    CGAL_Min_circle_2( I const& i = I())
-	: ico( i), n_support_points( 0),
-	  center( CGAL_ORIGIN), squared_radius( -Distance( 1))
+    CGAL_Min_circle_2( Traits const& traits = Traits())
+	: tco( traits), n_support_points( 0)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
+
+	// initialize circle
+	tco.circle.set();
 
 	CGAL_optimisation_postcondition( is_empty());
     }
 
     // constructor for one point
     inline
-    CGAL_Min_circle_2( Point const& p, I const& i = I())
-	: ico( i), points( 1, p), n_support_points( 1),
-	  center( p), squared_radius( 0)
+    CGAL_Min_circle_2( Point const& p, Traits const& traits = Traits())
+	: tco( traits), points( 1, p), n_support_points( 1)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
 
+	// initialize circle
 	support_points[ 0] = p;
+	tco.circle.set( p);
+
 	CGAL_optimisation_postcondition( is_degenerate());
     }
 
     // constructor for two points
     inline
-    CGAL_Min_circle_2( Point const& p1, Point const& p2, I const& i = I())
-	: ico( i)
+    CGAL_Min_circle_2( Point const& p1,
+		       Point const& p2,
+		       Traits const& traits = Traits())
+	: tco( traits)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
@@ -508,8 +559,8 @@ building $mc(\emptyset)$.
     CGAL_Min_circle_2( Point const& p1,
 		       Point const& p2,
 		       Point const& p3,
-		       I const& i = I())
-	: ico( i)
+		       Traits const& traits = Traits())
+	: tco( traits)
     {
 	// allocate support points' array
 	support_points = new Point[ 3];
@@ -536,12 +587,12 @@ The destructor only frees the memory of the support points' array.
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Access Functions}
+\subsubsection{Access Functions}
 
 These functions are used to retrieve information about the current
-status of the \ccc{CGAL_Min_circle_2<I>} object. They are all very
+status of the \ccc{CGAL_Min_circle_2<Traits>} object. They are all very
 simple (and therefore \ccc{inline}) and mostly rely on corresponding
-access functions of the data members of \ccc{CGAL_Min_circle_2<I>}.
+access functions of the data members of \ccc{CGAL_Min_circle_2<Traits>}.
 
 First, we define the \ccc{number_of_...} methods.
 
@@ -605,31 +656,24 @@ Then, we have the access functions for points and support points.
     }
 @end
 
-Finally, the access function \ccc{circle}. Note that it is
-\ccc{const} to the outside world, but internally we check the
-orientation of the current circle and reverse it, if necessary
-(logical constness).
+Finally, the access function \ccc{circle}.
 
 @macro <Min_circle_2 access functions> += @begin
     // circle
     inline
-    Circle
+    Circle const&
     circle( ) const
     {
-	if ( is_empty()) {
-	    Circle c;			// WORKAROUND: needed by g++
-	    return( c); }
-	else
-	    return( Circle( center, squared_radius));
+	return( tco.circle);
     }
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Predicates}
+\subsubsection{Predicates}
 
 The predicates \ccc{is_empty} and \ccc{is_degenerate} are used in
-preconditions and postconditions of some member functions. Therefore we define
-them \ccc{inline} and put them in a separate macro.
+preconditions and postconditions of some member functions. Therefore we
+define them \ccc{inline} and put them in a separate macro.
 
 @macro <Min_circle_2 predicates `is_...'> = @begin
     // is_... predicates
@@ -657,49 +701,48 @@ corresponding predicates of class \ccc{Circle}.
     CGAL_Bounded_side
     bounded_side( Point const& p) const
     {
-	return( CGAL_static_cast( CGAL_Bounded_side, 
-	        CGAL_sign( ico.squared_distance( center,p) - squared_radius)));
+	return( tco.circle.bounded_side( p));
     }
 
     inline
     bool
     has_on_bounded_side( Point const& p) const
     {
-	return( ico.squared_distance( center, p) < squared_radius);
+	return( tco.circle.has_on_bounded_side( p));
     }
 
     inline
     bool
     has_on_boundary( Point const& p) const
     {
-	return( ico.squared_distance( center, p) == squared_radius);
+	return( tco.circle.has_on_boundary( p));
     }
 
     inline
     bool
     has_on_unbounded_side( Point const& p) const
     {
-	return( ico.squared_distance( center, p) > squared_radius);
+	return( tco.circle.has_on_unbounded_side( p));
     }
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Modifiers}
+\subsubsection{Modifiers}
 
 There is another way to build up $mc(P)$, other than by supplying
 the point set $P$ at once. Namely, $mc(P)$ can be built up
 incrementally, adding one point after another. If you look at the
 pseudocode in the introduction, this comes quite naturally. The
 modifying method \ccc{insert}, applied with point $p$ to a
-\ccc{CGAL_Min_circle_2<I>} object representing $mc(P)$, computes
-$mc(P \cup \{p\})$, where work has to be done only if $p$ lies
-outside $mc(P)$. In this case, $mc(P \cup \{p\}) = mc(P,\{p\})$
+\ccc{CGAL_Min_circle_2<Traits>} object representing $mc(P)$,
+computes $mc(P \cup \{p\})$, where work has to be done only if $p$
+lies outside $mc(P)$. In this case, $mc(P \cup \{p\}) = mc(P,\{p\})$
 holds, so the private member function \ccc{mc} is called with
 support set $\{p\}$. After the insertion has been performed, $p$ is
-moved to the front of the point list, just like in the pseudocode
-in Section~\ref{sec:algo}.
+moved to the front of the point list, just like in the pseudocode in
+Section~\ref{sec:algo}.
 
-@macro <Min_circle_2 modifiers> = @begin
+@macro <Min_circle_2 modifiers> += @begin
     void
     insert( Point const& p)
     {
@@ -721,19 +764,73 @@ in Section~\ref{sec:algo}.
     }
 @end
 
-@! ----------------------------------------------------------------------------
-\subsection{Validity Check}
+Inserting a range of points would usually be done by a single template
+member function, but since most compilers do not support this yet, we
+provide specialized \ccc{insert} functions for C~arrays (using pointers
+as iterators), for STL sequence containers \ccc{vector<Point>} and
+\ccc{list<Point>} and for the STL input stream iterator
+\ccc{istream_iterator<Point>}. Actually, the \ccc{insert} function for
+a C~array and a \ccc{vector<point>} are the same, since the random
+access iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
 
-A \ccc{CGAL_Min_circle_2<I>} object can be checked for
-validity. This means, it is checked whether (a) the circle contains
-all points of its defining set $P$, (b) the circle is the smallest
-circle spanned by its support set, and (c) the support set is
-minimal, i.e. no support point is redundant. The function
-\ccc{is_valid} is mainly intended for debugging user supplied
-interface classes. If \ccc{verbose} is \ccc{true}, some messages
-concerning the performed checks are written to standard error
-stream. The second parameter \ccc{level} is not used, we provide it
-only for consistency with interfaces of other classes.
+The following \ccc{insert} functions perform for each point \ccc{p} in
+the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$ a call \ccc{insert(p)}.
+
+@macro <Min_circle_2 modifiers> += @begin
+    inline
+    void
+    insert( const Point* first, const Point* last)
+    {
+	for ( ; first != last; ++first)
+	    insert( *first);
+    }
+
+    inline
+    void
+    insert( list<Point>::const_iterator first,
+	    list<Point>::const_iterator last )
+    {
+	for ( ; first != last; ++first)
+	    insert( *first);
+    }
+
+    inline
+    void
+    insert( istream_iterator<Point,ptrdiff_t>  first,
+	    istream_iterator<Point,ptrdiff_t>  last )
+    {
+	for ( ; first != last; ++first)
+	    insert( *first);
+    }
+@end
+
+The member function \ccc{clear} deletes all points from a
+\ccc{CGAL_Min_circle_2<Traits>} object and resets it to the
+empty circle.
+
+@macro <Min_circle_2 modifiers> += @begin
+    void  clear( )
+    {
+	points.erase( points.begin(), points.end());
+	n_support_points = 0;
+	tco.circle.set();
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Validity Check}
+
+A \ccc{CGAL_Min_circle_2<Traits>} object can be checked for validity.
+This means, it is checked whether (a) the circle contains all points
+of its defining set $P$, (b) the circle is the smallest circle spanned
+by its support set, and (c) the support set is minimal, i.e.\ no
+support point is redundant. The function \ccc{is_valid} is mainly
+intended for debugging user supplied traits classes but also for
+convincing the anxious user that the traits class implementation is
+correct. If \ccc{verbose} is \ccc{true}, some messages concerning the
+performed checks are written to standard error stream. The second
+parameter \ccc{level} is not used, we provide it only for consistency
+with interfaces of other classes.
 
 @macro <Min_circle_2 validity check> = @begin
     bool
@@ -741,7 +838,7 @@ only for consistency with interfaces of other classes.
     {
 	CGAL_Verbose_ostream verr( verbose);
 	verr << endl;
-	verr << "CGAL_Min_circle_2<I>::" << endl;
+	verr << "CGAL_Min_circle_2<Traits>::" << endl;
 	verr << "is_valid( true, " << level << "):" << endl;
 	verr << "  |P| = " << number_of_points()
 	     << ", |S| = " << number_of_support_points() << endl;
@@ -816,8 +913,8 @@ be equal to that point, i.e.\ its center must be $p$ and its radius
 $0$.
 
 @macro <Min_circle_2 check one support point> = @begin
-    if ( ( center != support_point( 0)    ) ||
-	 ( ! CGAL_is_zero( squared_radius)) )
+    if ( ( circle().center() != support_point( 0)    ) ||
+	 ( ! CGAL_is_zero( circle().squared_radius())) )
 	return( CGAL__optimisation_is_valid_fail( verr,
        "circle differs from the circle spanned by its single support point."));
 @end
@@ -841,22 +938,22 @@ diameter of the circle.
 		    "the two support points are equal."));
 
     // segment(p,q) is not diameter?
-    if ( ( ! has_on_boundary( p)                           ) ||
-	 ( ! has_on_boundary( q)                           ) ||
-	 ( ico.orientation( p, q, center) != CGAL_COLLINEAR) )
+    if ( ( ! has_on_boundary( p)                                      ) ||
+	 ( ! has_on_boundary( q)				      ) ||
+	 ( tco.orientation( p, q, circle().center()) != CGAL_COLLINEAR) )
 	return( CGAL__optimisation_is_valid_fail( verr,
 		  "circle does not have its two support points as diameter."));
 @end
 
-If the number of support points is three (and they are distinct and not
-collinear), the circle through them is unique, and must therefore equal
-the current circle stored in \ccc{center} and \ccc{squared_radius}. It
-is the smallest one containing the three points if and only if the
-center of the circle lies inside or on the boundary of the triangle
-defined by the three points. The support set is minimal only if the
-center lies properly inside the triangle.
+If the number of support points is three (and they are distinct and
+not collinear), the circle through them is unique, and must therefore
+equal the current circle stored in \ccc{circle}. It is the smallest
+one containing the three points if and only if the center of the
+circle lies inside or on the boundary of the triangle defined by the
+three points. The support set is minimal only if the center lies
+properly inside the triangle.
 
-Both triangle properties are checked by comparing the orientatons of
+Both triangle properties are checked by comparing the orientations of
 three point triples, each containing two of the support points and the
 center of the current circle, resp. If one of these orientations equals
 \ccc{CGAL_COLLINEAR}, the center lies on the boundary of the triangle.
@@ -874,26 +971,22 @@ contained in the triangle.
 		    "at least two of the three support points are equal."));
 
     // p, q, r collinear?
-    if ( ico.orientation( p, q, r) == CGAL_COLLINEAR)
+    if ( tco.orientation( p, q, r) == CGAL_COLLINEAR)
 	return( CGAL__optimisation_is_valid_fail( verr,
 		    "the three support points are collinear."));
 
     // current circle not equal the unique circle through p,q,r ?
-    Point cp( ico.circumcenter( p, q, r));
-    Distance dp( ico.squared_distance( cp, p));
-    Distance dq( ico.squared_distance( cp, q));
-    Distance dr( ico.squared_distance( cp, r));
-    if ( ( center         != cp) ||
-         ( squared_radius != dp) ||
-         ( squared_radius != dq) ||
-         ( squared_radius != dr) )
+    Circle c( circle());
+    c.set( p, q, r);
+    if ( circle() != c)
 	return( CGAL__optimisation_is_valid_fail( verr,
          "circle is not the unique circle through its three support points."));
 
     // circle's center on boundary of triangle(p,q,r)?
-    CGAL_Orientation o_pqz = ico.orientation( p, q, center);
-    CGAL_Orientation o_qrz = ico.orientation( q, r, center);
-    CGAL_Orientation o_rpz = ico.orientation( r, p, center);
+    Point const& center( circle().center());
+    CGAL_Orientation o_pqz = tco.orientation( p, q, center);
+    CGAL_Orientation o_qrz = tco.orientation( q, r, center);
+    CGAL_Orientation o_rpz = tco.orientation( r, p, center);
     if ( ( o_pqz == CGAL_COLLINEAR) ||
 	 ( o_qrz == CGAL_COLLINEAR) ||
 	 ( o_rpz == CGAL_COLLINEAR) )
@@ -907,13 +1000,38 @@ contained in the triangle.
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{I/O}
+\subsubsection{Miscellaneous}
+
+The member function \ccc{traits} returns a const reference to the
+traits class object.
+
+@macro <Min_circle_2 miscellaneous> = @begin
+    inline
+    Traits const&
+    traits( ) const
+    {
+	return( tco);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{I/O}
+
+@macro <Min_circle_2 I/O operators declaration> = @begin
+    template < class _Traits >
+    ostream& operator << ( ostream& os, CGAL_Min_circle_2<_Traits> const& mc);
+
+    template < class _Traits >
+    istream& operator >> ( istream& is, CGAL_Min_circle_2<_Traits>      & mc);
+@end
 
 @macro <Min_circle_2 I/O operators> = @begin
-    friend
+    template < class _Traits >
     ostream&
-    operator << ( ostream& os, CGAL_Min_circle_2<I> const& min_circle)
+    operator << ( ostream& os, CGAL_Min_circle_2<_Traits> const& min_circle)
     {
+	typedef typename  CGAL_Min_circle_2<_Traits>::Point  Point;
+
 	switch ( CGAL_get_mode( os)) {
 
 	  case CGAL_IO::PRETTY:
@@ -931,17 +1049,17 @@ contained in the triangle.
 		  min_circle.support_points_end(),
 		  ostream_iterator<Point>( os, ",\n    "));
 	    os << "}" << endl;
-	    os << "  min_circle = " << min_circle.circle() << endl;
+	    os << "  circle = " << min_circle.circle() << endl;
 	    os << ")" << endl;
 	    break;
 
 	  case CGAL_IO::ASCII:
-	    copy( min_circle.points_begin(), min_circle.points.end(),
+	    copy( min_circle.points_begin(), min_circle.points_end(),
 		  ostream_iterator<Point>( os, "\n"));
 	    break;
 
 	  case CGAL_IO::BINARY:
-	    copy( min_circle.points_begin(), min_circle.points.end(),
+	    copy( min_circle.points_begin(), min_circle.points_end(),
 		  ostream_iterator<Point>( os));
 	    break;
 
@@ -953,24 +1071,25 @@ contained in the triangle.
 	return( os);
     }
 
-    friend
+    template < class Traits >
     istream&
-    operator >> ( istream& is, CGAL_Min_circle_2<I>& min_circle)
+    operator >> ( istream& is, CGAL_Min_circle_2<Traits>& min_circle)
     {
 	switch ( CGAL_get_mode( is)) {
+
 	  case CGAL_IO::PRETTY:
 	    cerr << endl;
 	    cerr << "Stream must be in ascii or binary mode" << endl;
 	    break;
+
 	  case CGAL_IO::ASCII:
 	  case CGAL_IO::BINARY:
-	    min_circle.points.erase( min_circle.points.begin(),
-				     min_circle.points.end());
-	    copy( istream_iterator<Point, ptrdiff_t>( is),
-		  istream_iterator<Point, ptrdiff_t>(),
-		  back_inserter( min_circle.points));
-	    min_circle.mc( min_circle.points.end(), 0);
+	    typedef typename  CGAL_Min_circle_2<Traits>::Point   Point;
+	    typedef           istream_iterator<Point,ptrdiff_t>  Is_it;
+	    min_circle.clear();
+	    min_circle.insert( Is_it( is), Is_it());
 	    break;
+
 	  default:
 	    CGAL_optimisation_assertion_msg( false, "CGAL_IO::mode invalid!");
 	    break; }
@@ -980,7 +1099,7 @@ contained in the triangle.
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Private Member Function {\ccFont compute\_circle}}
+\subsubsection{Private Member Function {\ccFont compute\_circle}}
 
 This is the method for computing the basic case $\mc(\emptyset,B)$,
 the set $B$ given by the first \ccc{n_support_points} in the array
@@ -995,25 +1114,18 @@ noting that $|B| \leq 3$.
     {
 	switch ( n_support_points) {
 	  case 3:
-	    center         = ico.circumcenter( support_points[ 0],
-					       support_points[ 1],
-					       support_points[ 2]);
-	    squared_radius = ico.squared_distance( center,
-						   support_points[ 0]);
+	    tco.circle.set( support_points[ 0],
+			    support_points[ 1],
+			    support_points[ 2]);
             break;
 	  case 2:
-	    center         = ico.midpoint( support_points[ 0],
-					   support_points[ 1]);
-	    squared_radius = ico.squared_distance( center,
-						   support_points[ 0]);
+	    tco.circle.set( support_points[ 0], support_points[ 1]);
 	    break;
 	  case 1:
-	    center         = support_points[ 0];
-	    squared_radius = Distance( 0);
+	    tco.circle.set( support_points[ 0]);
 	    break;
 	  case 0:
-	    center         = Point( CGAL_ORIGIN);
-	    squared_radius = -Distance( 1);
+	    tco.circle.set( );
 	    break;
 	  default:
 	    CGAL_optimisation_assertion( ( n_support_points >= 0) &&
@@ -1022,13 +1134,13 @@ noting that $|B| \leq 3$.
 @end
 
 @! ----------------------------------------------------------------------------
-\subsection{Private Member Function {\ccFont mc}}
+\subsubsection{Private Member Function {\ccFont mc}}
 
-This function computes the general circle $mc(P,B)$, where $P$
-contains the points in the range
-$[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$ is given by the first
-\ccc{n_sp} support points in the array \ccc{support_points}. The
-function is directly modelled after the pseudocode above.
+This function computes the general circle $mc(P,B)$, where $P$ contains
+the points in the range $[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$
+is given by the first \ccc{n_sp} support points in the array
+\ccc{support_points}. The function is directly modelled after the
+pseudocode above.
 
 @macro <Min_circle_2 private member function `mc'> = @begin
     void
@@ -1036,7 +1148,7 @@ function is directly modelled after the pseudocode above.
     {
 	// compute circle through support points
 	n_support_points = n_sp;
-	compute_circle( );
+	compute_circle();
 	if ( n_sp == 3) return;
 
 	// test first n points
@@ -1062,42 +1174,727 @@ function is directly modelled after the pseudocode above.
     }
 @end
 
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_circle_2_adapterC2<PT,DA>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_circle\_2\_adapterC2<PT,DA>}
+
+First, we declare the class templates \ccc{CGAL_Min_circle_2_adapterC2},
+\ccc{CGAL__Min_circle_2_adapterC2__Circle} and \ccc{CGAL_Min_circle_2}
+
+@macro<Min_circle_2_adapterC2 declarations> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_circle_2_adapterC2;
+
+    template < class _PT, class _DA >
+    class CGAL__Min_circle_2_adapterC2__Circle;
+
+    template < class _Traits >
+    class CGAL_Min_circle_2;
+@end
+
+The actual work of the adapter is done in the nested class
+\ccc{Circle}. Therefore, we implement the whole adapter in its
+interface.
+
+The variable \ccc{circle} containing the current circle is declared
+\ccc{private} to disallow the user from directly accessing or modifying
+it. Since the algorithm needs to access and modify the current circle,
+it is declared \ccc{friend}.
+
+@macro <Min_circle_2_adapterC2 interface and implementation> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_circle_2_adapterC2 {
+      public:
+        // types
+	typedef  _PT  PT;
+	typedef  _DA  DA;
+
+	// nested types
+	typedef  PT					      Point;
+	typedef  CGAL__Min_circle_2_adapterC2__Circle<PT,DA>  Circle;
+
+      private:
+	DA      dao;					// data accessor object
+        Circle  circle;					// current circle
+	friend  class CGAL_Min_circle_2< CGAL_Min_circle_2_adapterC2<PT,DA> >;
+
+      public:
+	// creation
+	@<Min_circle_2_adapterC2 constructors>
+
+	// operations
+	@<Min_circle_2_adapterC2 operations>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructors}
+
+@macro <Min_circle_2_adapterC2 constructors> = @begin
+    CGAL_Min_circle_2_adapterC2( DA const& da = DA())
+	: dao( da), circle( da)
+    { }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Operations}
+
+@macro <Min_circle_2_adapterC2 operations> = @begin
+    CGAL_Orientation
+    orientation( Point const& p, Point const& q, Point const& r) const
+    {
+	typedef  _DA::FT  FT;
+
+	FT  px;
+	FT  py;
+	FT  qx;
+	FT  qy;
+	FT  rx;
+	FT  ry;
+	
+	dao.get( p, px, py);
+	dao.get( q, qx, qy);
+	dao.get( r, rx, ry);
+
+	return( CGAL_static_cast( CGAL_Orientation,
+	            CGAL_sign( ( px-rx) * ( qy-ry) - ( py-ry) * ( qx-rx))));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Nested Type \ccFont Circle}
+
+@macro <Min_circle_2_adapterC2 nested type `Circle'> = @begin
+    template < class _PT, class _DA >
+    class CGAL__Min_circle_2_adapterC2__Circle {
+      public:
+        // typedefs
+	typedef  _PT  PT;
+	typedef  _DA  DA;
+
+	typedef  _DA::FT  FT;
+
+      private:
+        // data members
+	DA  dao;				// data accessor object
+
+	FT  center_x;				// center's x-coordinate
+	FT  center_y;				// center's y-coordinate
+	FT  sqr_rad;				// squared radius
+
+	// private member functions
+	FT
+	sqr_dist( FT const& px, FT const& py, FT const& qx, FT const& qy) const
+	{
+	    FT  dx( px - qx);
+	    FT  dy( py - qy);
+	    return( dx*dx + dy*dy);
+	}
+
+      public:
+	// types
+	typedef  PT  Point;
+	typedef  FT  Distance;
+
+	// creation
+	CGAL__Min_circle_2_adapterC2__Circle( DA const& da) : dao( da) { }
+
+	void  set( )
+	{
+	    center_x =  FT( 0);
+	    center_y =  FT( 0);
+	    sqr_rad  = -FT( 1);
+	}
+
+	void  set( Point const& p)
+	{
+	    dao.get( p, center_x, center_y);
+	    sqr_rad = FT( 0);
+	}
+
+	void  set( Point const& p, Point const& q)
+	{
+	    FT  px;
+	    FT  py;
+	    FT  qx;
+	    FT  qy;
+
+	    dao.get( p, px, py);
+	    dao.get( q, qx, qy);
+
+	    center_x = ( px+qx) / FT( 2);
+	    center_y = ( py+qy) / FT( 2);
+	    sqr_rad  = sqr_dist( px, py, center_x, center_y);
+	}
+
+	void  set( Point const& p, Point const& q, Point const& r)
+	{
+	    FT  px;
+	    FT  py;
+	    FT  qx;
+	    FT  qy;
+	    FT  rx;
+	    FT  ry;
+
+	    dao.get( p, px, py);
+	    dao.get( q, qx, qy);
+	    dao.get( r, rx, ry);
+
+	    FT  qx_px( qx - px);
+	    FT  qy_py( qy - py);
+	    FT  rx_px( rx - px);
+	    FT  ry_py( ry - py);
+ 
+	    FT  p2   ( px*px + py*py);
+	    FT  q2_p2( qx*qx + qy*qy - p2); 
+	    FT  r2_p2( rx*rx + ry*ry - p2); 
+	    FT  denom( ( qx_px*ry_py - rx_px*qy_py) * FT( 2));
+
+	    center_x = ( q2_p2*ry_py - r2_p2*qy_py) / denom;
+	    center_y = ( r2_p2*qx_px - q2_p2*rx_px) / denom;
+	    sqr_rad  = sqr_dist( px, py, center_x, center_y);
+	}
+
+	// predicates
+	CGAL_Bounded_side
+	bounded_side( Point const& p) const
+	{
+	    FT  px;
+	    FT  py;
+	    dao.get( p, px, py);
+	    return( CGAL_static_cast( CGAL_Bounded_side,
+		CGAL_sign( sqr_dist( px, py, center_x, center_y) - sqr_rad)));
+	}
+
+	bool
+	has_on_bounded_side( Point const& p) const
+	{
+	    FT  px;
+	    FT  py;
+	    dao.get( p, px, py);
+	    return( sqr_dist( px, py, center_x, center_y) < sqr_rad);
+	}
+
+	bool
+	has_on_boundary( Point const& p) const
+	{
+	    FT  px;
+	    FT  py;
+	    dao.get( p, px, py);
+	    return( sqr_dist( px, py, center_x, center_y) == sqr_rad);
+	}
+
+	bool
+	has_on_unbounded_side( Point const& p) const
+	{
+	    FT  px;
+	    FT  py;
+	    dao.get( p, px, py);
+	    return( sqr_rad < sqr_dist( px, py, center_x, center_y));
+	}
+
+	bool
+	is_empty( ) const
+	{
+	    return( CGAL_is_negative( sqr_rad));
+	}
+
+	bool
+	is_degenerate( ) const
+	{
+	    return( ! CGAL_is_positive( sqr_rad));
+	}
+
+	// additional operations for checking
+	bool
+	operator == (
+	    CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA> const& c) const
+	{
+	    return( ( center_x == c.center_x) &&
+		    ( center_y == c.center_y) &&
+		    ( sqr_rad  == c.sqr_rad ) );
+	}
+
+	Point
+	center( ) const
+	{
+	    Point  p;
+	    dao.set( p, center_x, center_y);
+	    return( p);
+	}
+
+	Distance const&
+	squared_radius( ) const
+	{
+	    return( sqr_rad);
+	}
+
+	// I/O
+	friend
+	ostream&
+	operator << ( ostream& os,
+		      CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA> const& c)
+	{
+	    switch ( CGAL_get_mode( os)) {
+
+	      case CGAL_IO::PRETTY:
+		os << "CGAL_Min_circle_2_adapterC2::Circle( "
+		   << c.center_x << ", "
+		   << c.center_y << ", "
+		   << c.sqr_rad  << ')';
+		break;
+
+	      case CGAL_IO::ASCII:
+		os << c.center_x << ' ' << c.center_y << ' ' << c.sqr_rad;
+		break;
+
+	      case CGAL_IO::BINARY:
+		CGAL_write( os, c.center_x);
+		CGAL_write( os, c.center_y);
+		CGAL_write( os, c.sqr_rad);
+		break;
+
+	      default:
+		CGAL_optimisation_assertion_msg( false,
+					        "CGAL_get_mode( os) invalid!");
+		break; }
+
+	    return( os);
+	}
+
+	friend
+	istream&
+	operator >> ( istream& is,
+		      CGAL__Min_circle_2_adapterC2__Circle<_PT,_DA>& c)
+	{
+	    switch ( CGAL_get_mode( is)) {
+
+	      case CGAL_IO::PRETTY:
+		cerr << endl;
+		cerr << "Stream must be in ascii or binary mode" << endl;
+		break;
+
+	      case CGAL_IO::ASCII:
+		is >> c.center_x >> c.center_y >> c.sqr_rad;
+		break;
+
+	      case CGAL_IO::BINARY:
+		CGAL_read( is, c.center_x);
+		CGAL_read( is, c.center_y);
+		CGAL_read( is, c.sqr_rad);
+		break;
+
+	      default:
+	        CGAL_optimisation_assertion_msg( false,
+						 "CGAL_IO::mode invalid!");
+		break; }
+
+	    return( is);
+	}
+    };
+@end
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_circle_2_adapterH2<PT,DA>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_circle\_2\_adapterH2<PT,DA>}
+
+First, we declare the class templates \ccc{CGAL_Min_circle_2_adapterH2}
+\ccc{CGAL__Min_circle_2_adapterH2__Circle} and \ccc{CGAL_Min_circle_2}
+
+@macro<Min_circle_2_adapterH2 declarations> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_circle_2_adapterH2;
+
+    template < class _PT, class _DA >
+    class CGAL__Min_circle_2_adapterH2__Circle;
+
+    template < class _Traits >
+    class CGAL_Min_circle_2;
+@end
+
+The actual work of the adapter is done in the nested class
+\ccc{Circle}. Therefore, we implement the whole adapter in its
+interface.
+
+The variable \ccc{circle} containing the current circle is declared
+\ccc{private} to disallow the user from directly accessing or modifying
+it. Since the algorithm needs to access and modify the current circle,
+it is declared \ccc{friend}.
+
+@macro <Min_circle_2_adapterH2 interface and implementation> = @begin
+    template < class _PT, class _DA >
+    class CGAL_Min_circle_2_adapterH2 {
+      public:
+        // types
+	typedef  _PT  PT;
+	typedef  _DA  DA;
+
+	// nested types
+	typedef  PT					      Point;
+	typedef  CGAL__Min_circle_2_adapterH2__Circle<PT,DA>  Circle;
+
+      private:
+	DA      dao;					// data accessor object
+        Circle  circle;					// current circle
+	friend  class CGAL_Min_circle_2< CGAL_Min_circle_2_adapterH2<PT,DA> >;
+
+      public:
+	// creation
+	@<Min_circle_2_adapterH2 constructors>
+
+	// operations
+	@<Min_circle_2_adapterH2 operations>
+    };
+@end   
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructors}
+
+@macro <Min_circle_2_adapterH2 constructors> = @begin
+    CGAL_Min_circle_2_adapterH2( DA const& da = DA())
+	: dao( da), circle( da)
+    { }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Operations}
+
+@macro <Min_circle_2_adapterH2 operations> = @begin
+    CGAL_Orientation
+    orientation( Point const& p, Point const& q, Point const& r) const
+    {
+	typedef  _DA::RT  RT;
+
+	RT  phx;
+	RT  phy;
+	RT  phw;
+	RT  qhx;
+	RT  qhy;
+	RT  qhw;
+	RT  rhx;
+	RT  rhy;
+	RT  rhw;
+	
+	dao.get( p, phx, phy, phw);
+	dao.get( q, qhx, qhy, qhw);
+	dao.get( r, rhx, rhy, rhw);
+
+	return( CGAL_static_cast( CGAL_Orientation,
+	            CGAL_sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
+			     - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Nested Type \ccFont Circle}
+
+@macro <Min_circle_2_adapterH2 nested type `Circle'> = @begin
+    template < class _PT, class _DA >
+    class CGAL__Min_circle_2_adapterH2__Circle {
+      public:
+        // typedefs
+	typedef  _PT  PT;
+	typedef  _DA  DA;
+
+	typedef  _DA::RT            RT;
+	typedef  CGAL_Quotient<RT>  FT;
+
+      private:
+	// data members
+	DA  dao;				// data accessor object
+
+	RT  center_hx;				// center's hx-coordinate
+	RT  center_hy;				// center's hy-coordinate
+	RT  center_hw;				// center's hw-coordinate
+	FT  sqr_rad;				// squared radius
+
+	// private member functions
+	FT
+	sqr_dist( RT const& phx, RT const& phy, RT const& phw,
+		  RT const& qhx, RT const& qhy, RT const& qhw) const
+	{
+	    RT  dhx( phx*qhw - qhx*phw);
+	    RT  dhy( phy*qhw - qhy*phw);
+	    RT  dhw( phw*qhw);
+	    return( FT( dhx*dhx + dhy*dhy, dhw*dhw));
+	}
+
+      public:
+	// types
+	typedef  PT  Point;
+	typedef  FT  Distance;
+
+	// creation
+	CGAL__Min_circle_2_adapterH2__Circle( DA const& da) : dao( da) { }
+
+	void  set( )
+	{
+	    center_hx =  RT( 0);
+	    center_hy =  RT( 0);
+	    center_hw =  RT( 1);
+	    sqr_rad   = -FT( 1);
+	}
+
+	void  set( Point const& p)
+	{
+	    dao.get( p, center_hx, center_hy, center_hw);
+	    sqr_rad = FT( 0);
+	}
+
+	void  set( Point const& p, Point const& q)
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    RT  qhx;
+	    RT  qhy;
+	    RT  qhw;
+
+	    dao.get( p, phx, phy, phw);
+	    dao.get( q, qhx, qhy, qhw);
+	    center_hx = ( phx*qhw + qhx*phw);
+	    center_hy = ( phy*qhw + qhy*phw);
+	    center_hw = ( phw*qhw * RT( 2));
+	    sqr_rad   = sqr_dist( phx, phy, phw,
+				  center_hx, center_hy, center_hw);
+	}
+
+	void  set( Point const& p, Point const& q, Point const& r)
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    RT  qhx;
+	    RT  qhy;
+	    RT  qhw;
+	    RT  rhx;
+	    RT  rhy;
+	    RT  rhw;
+
+	    dao.get( p, phx, phy, phw);
+	    dao.get( q, qhx, qhy, qhw);
+	    dao.get( r, rhx, rhy, rhw);
+
+	    RT  qhx_phx( qhx*phw - phx*qhw);
+	    RT  qhy_phy( qhy*phw - phy*qhw);	// denominator: qhw*phw
+
+	    RT  rhx_phx( rhx*phw - phx*rhw);
+	    RT  rhy_phy( rhy*phw - phy*rhw);	// denominator: rhw*phw
+ 
+	    RT  phw2( phw*phw);
+	    RT  qhw2( qhw*qhw);
+	    RT  rhw2( rhw*rhw);
+
+	    RT  p2( phx*phx + phy*phy);		// denominator: phw2
+
+	    RT  q2_p2( ( qhx*qhx + qhy*qhy) * phw2 - p2 * qhw2);
+						// denominator: qhw2*phw2
+
+	    RT  r2_p2( ( rhx*rhx + rhy*rhy) * phw2 - p2 * rhw2);
+						// denominator: rhw2*phw2
+
+	    center_hx = q2_p2*rhy_phy * rhw - r2_p2*qhy_phy * qhw;
+	    center_hy = r2_p2*qhx_phx * qhw - q2_p2*rhx_phx * rhw;
+	    center_hw = ( qhx_phx*rhy_phy - rhx_phx*qhy_phy)
+			  * phw*qhw*rhw * RT( 2);
+	    sqr_rad   = sqr_dist( phx, phy, phw,
+				  center_hx, center_hy, center_hw);
+	}
+
+	// predicates
+	CGAL_Bounded_side
+	bounded_side( Point const& p) const
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    dao.get( p, phx, phy, phw);
+	    return( CGAL_static_cast( CGAL_Bounded_side,
+			CGAL_sign( sqr_dist( phx, phy, phw,
+					     center_hx, center_hy, center_hw)
+				   - sqr_rad)));
+	}
+
+	bool
+	has_on_bounded_side( Point const& p) const
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    dao.get( p, phx, phy, phw);
+	    return( sqr_dist( phx, phy, phw,
+			      center_hx, center_hy, center_hw) < sqr_rad);
+	}
+
+	bool
+	has_on_boundary( Point const& p) const
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    dao.get( p, phx, phy, phw);
+	    return( sqr_dist( phx, phy, phw,
+			      center_hx, center_hy, center_hw) == sqr_rad);
+	}
+
+	bool
+	has_on_unbounded_side( Point const& p) const
+	{
+	    RT  phx;
+	    RT  phy;
+	    RT  phw;
+	    dao.get( p, phx, phy, phw);
+	    return( sqr_rad < sqr_dist( phx, phy, phw,
+					center_hx, center_hy, center_hw));
+	}
+
+	bool
+	is_empty( ) const
+	{
+	    return( CGAL_is_negative( sqr_rad));
+	}
+
+	bool
+	is_degenerate( ) const
+	{
+	    return( ! CGAL_is_positive( sqr_rad));
+	}
+
+	// additional operations for checking
+	bool
+	operator == (
+	    CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA> const& c) const
+	{
+	    return( ( center_hx*c.center_hw == c.center_hx*center_hw) &&
+		    ( center_hy*c.center_hw == c.center_hy*center_hw) &&
+		    ( sqr_rad  == c.sqr_rad ) );
+	}
+
+	Point
+	center( ) const
+	{
+	    Point  p;
+	    dao.set( p, center_hx, center_hy, center_hw);
+	    return( p);
+	}
+
+	Distance const&
+	squared_radius( ) const
+	{
+	    return( sqr_rad);
+	}
+
+	// I/O
+	friend
+	ostream&
+	operator << ( ostream& os,
+		      CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA> const& c)
+	{
+	    switch ( CGAL_get_mode( os)) {
+
+	      case CGAL_IO::PRETTY:
+		os << "CGAL_Min_circle_2_adapterH2::Circle( "
+		   << c.center_hx << ", "
+		   << c.center_hy << ", "
+		   << c.center_hw << ", "
+		   << c.sqr_rad   << ')';
+		break;
+
+	      case CGAL_IO::ASCII:
+		os << c.center_hx << ' '
+		   << c.center_hy << ' '
+		   << c.center_hw << ' '
+		   << c.sqr_rad;
+		break;
+
+	      case CGAL_IO::BINARY:
+		CGAL_write( os, c.center_hx);
+		CGAL_write( os, c.center_hy);
+		CGAL_write( os, c.center_hw);
+		CGAL_write( os, c.sqr_rad);
+		break;
+
+	      default:
+		CGAL_optimisation_assertion_msg( false,
+					        "CGAL_get_mode( os) invalid!");
+		break; }
+
+	    return( os);
+	}
+
+	friend
+	istream&
+	operator >> ( istream& is,
+		      CGAL__Min_circle_2_adapterH2__Circle<_PT,_DA>& c)
+	{
+	    switch ( CGAL_get_mode( is)) {
+
+	      case CGAL_IO::PRETTY:
+		cerr << endl;
+		cerr << "Stream must be in ascii or binary mode" << endl;
+		break;
+
+	      case CGAL_IO::ASCII:
+		is >> c.center_hx >> c.center_hy >> c.center_hw >> c.sqr_rad;
+		break;
+
+	      case CGAL_IO::BINARY:
+		CGAL_read( is, c.center_hx);
+		CGAL_read( is, c.center_hy);
+		CGAL_read( is, c.center_hw);
+		CGAL_read( is, c.sqr_rad);
+	        break;
+
+	      default:
+	        CGAL_optimisation_assertion_msg( false,
+						 "CGAL_IO::mode invalid!");
+		break; }
+
+	    return( is);
+	}
+    };
+@end
+
 @! ============================================================================
-@! Test
+@! Tests
 @! ============================================================================
 
 \clearpage
 \section{Test}
 
-We test \ccc{CGAL_Min_circle_2} with the default interface class for
-optimisation algorithms, using exact arithmetic, i.e.\ homogeneous
-representation and number type \ccc{integer}.
+We test \ccc{CGAL_Min_circle_2} with the traits class implementation
+for optimisation algorithms, using exact arithmetic, i.e.\ Cartesian
+representation with number type \ccc{CGAL_Quotient<CGAL_Gmpz>} and
+homogeneous representation with number type \ccc{CGAL_Gmpz}.
 
 @macro <Min_circle_2 test (includes and typedefs)> = @begin
-    #include <CGAL/Integer.h>
+    #include <CGAL/Gmpz.h>
+    #include <CGAL/Cartesian.h>
     #include <CGAL/Homogeneous.h>
-    #include <CGAL/Optimisation_default_interface_2.h>
+    #include <CGAL/Optimisation_traits_2.h>
     #include <CGAL/Min_circle_2.h>
+    #include <CGAL/Min_circle_2_adapterC2.h>
+    #include <CGAL/Min_circle_2_adapterH2.h>
     #include <CGAL/Random.h>
     #include <CGAL/IO/Verbose_ostream.h>
     #include <algo.h>
     #include <assert.h>
     #include <fstream.h>
 
-    #include <LEDA/REDEFINE_NAMES.h>
-    typedef  integer				       NT;
-    #include <LEDA/UNDEFINE_NAMES.h>
+    typedef  CGAL_Gmpz				 Rt;
+    typedef  CGAL_Quotient< CGAL_Gmpz >		 Ft;
 
-    typedef  CGAL_Homogeneous<NT>		       R;
-    typedef  CGAL_Optimisation_default_interface_2<R>  I;
-    typedef  CGAL_Min_circle_2<I>		       Min_circle;
-    typedef  Min_circle::Point			       Point;
-    typedef  Min_circle::Circle			       Circle;
+    typedef  CGAL_Cartesian< Ft >		 RepC;
+    typedef  CGAL_Homogeneous< Rt >		 RepH;
+    typedef  CGAL_Optimisation_traits_2< RepC >	 TraitsC;
+    typedef  CGAL_Optimisation_traits_2< RepH >	 TraitsH;
 @end
 
-We call each function of class \ccc{CGAL_Min_circle_2<I>} at least once
-to ensure code coverage. The command line option \ccc{-verbose}
-enables verbose output.
+The command line option \ccc{-verbose} enables verbose output.
 
 @macro <Min_circle_2 test (verbose option)> = @begin
     bool  verbose = false;
@@ -1105,167 +1902,382 @@ enables verbose output.
         verbose = true;
 	--argc;
 	++argv; }
-    CGAL_Verbose_ostream verr( verbose);
 @end
+
+@! ----------------------------------------------------------------------------
+@! Code Coverage
+@! ----------------------------------------------------------------------------
+
+\subsection{Code Coverage}
+
+We call each function of class \ccc{CGAL_Min_circle_2<Traits>} at least
+once to ensure code coverage.
 
 @macro <Min_circle_2 test (code coverage)> = @begin
-    // generate 10 points at random
-    CGAL_Random	 random_x, random_y;
-    Point	 random_points[ 10];
-    int		 i;
-    verr << "10 random points from [0,100)^2:" << endl;
-    for ( i = 0; i < 10; ++i)
-	random_points[ i] = Point( random_x( 100), random_y( 100));
-    if ( verbose)
-	for ( i = 0; i < 10; ++i)
-	    cerr << i << ": " << random_points[ i] << endl;
-
-    verr << endl << "default constructor...";
-    {
-	Min_circle  mc;
-	bool  is_valid = mc.is_valid( verbose);
-	bool  is_empty = mc.is_empty();
-	assert( is_valid); 
-	assert( is_empty);
-    }
-
-    verr << endl << "one point constructor...";
-    {
-	Min_circle  mc( random_points[ 0]);
-	bool  is_valid      = mc.is_valid( verbose);
-	bool  is_degenerate = mc.is_degenerate();
-	assert( is_valid);
-	assert( is_degenerate);
-    }
-
-    verr << endl << "two points constructor...";
-    {
-	Min_circle  mc( random_points[ 1],
-			random_points[ 2]);
-	bool  is_valid = mc.is_valid( verbose);
-	assert( is_valid);
-    }
-
-    verr << endl << "three points constructor...";
-    {    
-	Min_circle  mc( random_points[ 3],
-			random_points[ 4],
-			random_points[ 5]);
-	bool  is_valid = mc.is_valid( verbose);
-	assert( is_valid);
-    }
-
-    verr << endl << "Point* constructor (without randomization)...";
-    {
-	Min_circle  mc( random_points, random_points+9);
-	bool  is_valid = mc.is_valid( verbose);
-	assert( is_valid);
-    }
-
-    verr << endl << "Point* constructor (with randomization)...";
-    Min_circle mc( random_points, random_points+9, true);
-    {
-	bool  is_valid = mc.is_valid( verbose);
-	assert( is_valid);
-    }
-
-    verr << endl << "list<Point>::const_iterator constructor...";
-    {
-	Min_circle  mc2( mc.points_begin(), mc.points_end(), true);
-	bool  is_valid = mc2.is_valid( verbose);
-	assert( is_valid);
-	assert( mc.circle() == mc2.circle());
-    }
-
-    verr << endl << "#points...";
-    {
-	int  number_of_points = mc.number_of_points();
-	assert( number_of_points == 9);
-    }
-
-    verr << endl << "points access already called above.";
-
-    verr << endl << "support points access...";
-    {
-	Point  support_point;
-        Min_circle::Support_point_iterator  iter( mc.support_points_begin());
-        for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter) {
-	    support_point = mc.support_point( i);
-	    assert( support_point == *iter); }
-	Min_circle::Support_point_iterator  end_iter( mc.support_points_end());
-        assert( iter == end_iter);
-    }
-
-    verr << endl << "circle access...";
-    Circle  circle( mc.circle());
-
-    verr << endl << "in-circle predicates...";
-    {
-	Point              p;
-	CGAL_Bounded_side  bounded_side;
-	bool               has_on_bounded_side;
-	bool		   has_on_boundary;
-	bool		   has_on_unbounded_side;
-	for ( i = 0; i < 9; ++i) {
-	    p = random_points[ i];
-	    bounded_side          = mc.bounded_side( p);
-	    has_on_bounded_side   = mc.has_on_bounded_side( p);
-	    has_on_boundary       = mc.has_on_boundary( p);
-	    has_on_unbounded_side = mc.has_on_unbounded_side( p);
-	assert( bounded_side != CGAL_ON_UNBOUNDED_SIDE);
-	assert( has_on_bounded_side || has_on_boundary);
-	assert( ! has_on_unbounded_side); }
-    }
-
-    verr << endl << "is_... predicates already called above.";
-
-    verr << endl << "modifiers...";
-    mc.insert( random_points[ 9]);
-    {
-	bool  is_valid = mc.is_valid( verbose);
-	assert( is_valid);
-    }
-
-    verr << endl << "validity check already called several times.";
-
-    verr << endl << "I/O...";
-    {
-	verr << endl << "  writing `test_Min_circle_2.ascii'...";
-	ofstream os( "test_Min_circle_2.ascii");
-	CGAL_set_ascii_mode( os);
-	os << mc;
-    }
-    {
-	verr << endl << "  writing `test_Min_circle_2.pretty'...";
-	ofstream os( "test_Min_circle_2.pretty");
-	CGAL_set_pretty_mode( os);
-	os << mc;
-    }
-    {
-	verr << endl << "  writing `test_Min_circle_2.binary'...";
-	ofstream os( "test_Min_circle_2.binary");
-	CGAL_set_binary_mode( os);
-	os << mc;
-    }
-    {
-	verr << endl << "  reading `test_Min_circle_2.ascii'...";
-	Min_circle mc_in;
-	ifstream is( "test_Min_circle_2.ascii");
-	CGAL_set_ascii_mode( is);
-	is >> mc_in;
-	assert( mc.circle() == mc_in.circle());
-    }
-    verr << endl;
+    cover_Min_circle_2( verbose, TraitsC(), Rt());
+    cover_Min_circle_2( verbose, TraitsH(), Rt());
 @end
 
-In addition, some data files can be given as command line
-arguments. A data file contains pairs of \ccc{int}, namely the x- and
+@macro <Min_circle_2 test (code coverage test function)> = @begin
+    template < class Traits, class RT >
+    void
+    cover_Min_circle_2( bool verbose, Traits const&, RT const&)
+    {
+	typedef  CGAL_Min_circle_2< Traits >  Min_circle;
+	typedef  Min_circle::Point	      Point;
+	typedef  Min_circle::Circle	      Circle;
+
+	CGAL_Verbose_ostream verr( verbose);
+
+	// generate `n' points at random
+	const int    n = 20;
+	CGAL_Random  random_x, random_y;
+	Point	     random_points[ n];
+	int	     i;
+	verr << n << " random points from [0,128)^2:" << endl;
+	for ( i = 0; i < n; ++i)
+	    random_points[ i] = Point( RT( random_x( 128)),
+				       RT( random_y( 128)));
+	if ( verbose)
+	    for ( i = 0; i < n; ++i)
+		cerr << i << ": " << random_points[ i] << endl;
+
+	// cover code
+	verr << endl << "default constructor...";
+	{
+	    Min_circle  mc;
+	    bool  is_valid = mc.is_valid( verbose);
+	    bool  is_empty = mc.is_empty();
+	    assert( is_valid); 
+	    assert( is_empty);
+	}
+
+	verr << endl << "one point constructor...";
+	{
+	    Min_circle  mc( random_points[ 0]);
+	    bool  is_valid      = mc.is_valid( verbose);
+	    bool  is_degenerate = mc.is_degenerate();
+	    assert( is_valid);
+	    assert( is_degenerate);
+	}
+
+	verr << endl << "two points constructor...";
+	{
+	    Min_circle  mc( random_points[ 1],
+			    random_points[ 2]);
+	    bool  is_valid = mc.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc.number_of_points() == 2);
+	}
+
+	verr << endl << "three points constructor...";
+	{    
+	    Min_circle  mc( random_points[ 3],
+			    random_points[ 4],
+			    random_points[ 5]);
+	    bool  is_valid = mc.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc.number_of_points() == 3);
+	}
+
+	verr << endl << "Point* constructor...";
+	Min_circle  mc( random_points, random_points+9);
+	{
+	    Min_circle  mc2( random_points, random_points+9, true);
+	    bool  is_valid  = mc .is_valid( verbose);
+	    bool  is_valid2 = mc2.is_valid( verbose);
+	    assert( is_valid);
+	    assert( is_valid2);
+	    assert( mc .number_of_points() == 9);
+	    assert( mc2.number_of_points() == 9);
+	    assert( mc.circle() == mc2.circle());
+	}
+
+	verr << endl << "list<Point>::const_iterator constructor...";
+	{
+	    Min_circle  mc1( mc.points_begin(), mc.points_end());
+	    Min_circle  mc2( mc.points_begin(), mc.points_end(), true);
+	    bool  is_valid1 = mc1.is_valid( verbose);
+	    bool  is_valid2 = mc2.is_valid( verbose);
+	    assert( is_valid1);
+	    assert( is_valid2);
+	    assert( mc1.number_of_points() == 9);
+	    assert( mc2.number_of_points() == 9);
+	    assert( mc.circle() == mc1.circle());
+	    assert( mc.circle() == mc2.circle());
+	}
+
+	verr << endl << "#points already called above.";
+
+	verr << endl << "points access already called above.";
+
+	verr << endl << "support points access...";
+	{
+	    Point  support_point;
+	    Min_circle::Support_point_iterator
+		iter( mc.support_points_begin());
+            for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter) {
+		support_point = mc.support_point( i);
+		assert( support_point == *iter); }
+	    Min_circle::Support_point_iterator
+		end_iter( mc.support_points_end());
+	    assert( iter == end_iter);
+	}
+
+	verr << endl << "circle access already called above...";
+
+	verr << endl << "in-circle predicates...";
+	{
+	    Point              p;
+	    CGAL_Bounded_side  bounded_side;
+	    bool               has_on_bounded_side;
+	    bool	       has_on_boundary;
+	    bool	       has_on_unbounded_side;
+	    for ( i = 0; i < 9; ++i) {
+		p = random_points[ i];
+		bounded_side          = mc.bounded_side( p);
+		has_on_bounded_side   = mc.has_on_bounded_side( p);
+		has_on_boundary       = mc.has_on_boundary( p);
+		has_on_unbounded_side = mc.has_on_unbounded_side( p);
+	    assert( bounded_side != CGAL_ON_UNBOUNDED_SIDE);
+	    assert( has_on_bounded_side || has_on_boundary);
+	    assert( ! has_on_unbounded_side); }
+	}
+
+	verr << endl << "is_... predicates already called above.";
+
+	verr << endl << "single point insert...";
+	mc.insert( random_points[ 9]);
+	{
+	    bool  is_valid = mc.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc.number_of_points() == 10);
+	}
+
+	verr << endl << "Point* insert...";
+	mc.insert( random_points+10, random_points+n);
+	{
+	    bool  is_valid = mc.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc.number_of_points() == n);
+	}
+
+	verr << endl << "list<Point>::const_iterator insert...";
+	{
+	    Min_circle  mc2;
+	    mc2.insert( mc.points_begin(), mc.points_end());
+	    bool  is_valid = mc2.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc2.number_of_points() == n);
+	    
+	    verr << endl << "clear...";
+	    mc2.clear();	
+	          is_valid = mc2.is_valid( verbose);
+	    bool  is_empty = mc2.is_empty();
+	    assert( is_valid); 
+	    assert( is_empty);
+    	}
+
+	verr << endl << "validity check already called several times.";
+
+	verr << endl << "traits class access...";
+	{
+	    Traits  traits( mc.traits());
+	}
+
+	verr << endl << "I/O...";
+	{
+	    verr << endl << "  writing `test_Min_circle_2.ascii'...";
+	    ofstream os( "test_Min_circle_2.ascii");
+	    CGAL_set_ascii_mode( os);
+	    os << mc;
+	}
+	{
+	    verr << endl << "  writing `test_Min_circle_2.pretty'...";
+	    ofstream os( "test_Min_circle_2.pretty");
+	    CGAL_set_pretty_mode( os);
+	    os << mc;
+	}
+	{
+	    verr << endl << "  writing `test_Min_circle_2.binary'...";
+	    ofstream os( "test_Min_circle_2.binary");
+	    CGAL_set_binary_mode( os);
+	    os << mc;
+	}
+	{
+	    verr << endl << "  reading `test_Min_circle_2.ascii'...";
+	    Min_circle mc_in;
+	    ifstream is( "test_Min_circle_2.ascii");
+	    CGAL_set_ascii_mode( is);
+	    is >> mc_in;
+	    bool    is_valid = mc_in.is_valid( verbose);
+	    assert( is_valid);
+	    assert( mc_in.number_of_points() == n);
+	    assert( mc_in.circle() == mc.circle());
+	}
+	verr << endl;
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+@! Adapters
+@! ----------------------------------------------------------------------------
+
+\subsection{Traits Class Adapters}
+
+We define two point classes (one with Cartesian, one with homogeneous
+representation) and corresponding data accessors.
+
+@macro <Min_circle_2 test (point classes)> = @begin
+    // 2D Cartesian point class
+    class MyPointC2 {
+      public:
+        typedef  ::Ft  FT;
+      private:
+	FT _x;
+	FT _y;
+      public:
+	MyPointC2( ) { }
+	MyPointC2( FT const& x, FT const& y) : _x( x), _y( y) { }
+
+	FT const&  x( ) const { return( _x); }
+	FT const&  y( ) const { return( _y); }
+
+	bool
+	operator == ( MyPointC2 const& p) const
+	{
+	    return( ( _x == p._x) && ( _y == p._y));
+	}
+
+	friend
+	ostream&
+	operator << ( ostream& os, MyPointC2 const& p)
+	{
+	    return( os << p._x << ' ' << p._y);
+	}
+
+	friend
+	istream&
+	operator >> ( istream& is, MyPointC2& p)
+	{
+	    return( is >> p._x >> p._y);
+	}
+    };
+
+    // 2D Cartesian point class data accessor
+    class MyPointC2DA {
+      public:
+        typedef  ::Ft  FT;
+
+	FT const&  get_x( MyPointC2 const& p) const { return( p.x()); }
+	FT const&  get_y( MyPointC2 const& p) const { return( p.y()); }
+
+	void
+	get( MyPointC2 const& p, FT& x, FT& y) const
+	{
+	    x = get_x( p);
+	    y = get_y( p);
+	}
+
+	void
+	set( MyPointC2& p, FT const& x, FT const& y) const
+	{
+	    p = MyPointC2( x, y);
+	}
+    };
+
+
+    // 2D homogeneous point class
+    class MyPointH2 {
+      public:
+        typedef  ::Rt  RT;
+      private:
+	RT _hx;
+	RT _hy;
+	RT _hw;
+      public:
+	MyPointH2( ) { }
+	MyPointH2( RT const& hx, RT const& hy, RT const& hw = RT( 1))
+	    : _hx( hx), _hy( hy), _hw( hw) { }
+
+	RT const&  hx( ) const { return( _hx); }
+	RT const&  hy( ) const { return( _hy); }
+	RT const&  hw( ) const { return( _hw); }
+
+	bool
+	operator == ( MyPointH2 const& p) const
+	{
+	    return( ( _hx*p._hw == p._hx*_hw) && ( _hy*p._hw == p._hy*_hw));
+	}
+
+	friend
+	ostream&
+	operator << ( ostream& os, MyPointH2 const& p)
+	{
+	    return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
+	}
+
+	friend
+	istream&
+	operator >> ( istream& is, MyPointH2& p)
+	{
+	    return( is >> p._hx >> p._hy >> p._hw);
+	}
+    };
+
+    // 2D homogeneous point class data accessor
+    class MyPointH2DA {
+      public:
+        typedef  ::Rt  RT;
+
+	RT const&  get_hx( MyPointH2 const& p) const { return( p.hx()); }
+	RT const&  get_hy( MyPointH2 const& p) const { return( p.hy()); }
+	RT const&  get_hw( MyPointH2 const& p) const { return( p.hw()); }
+
+	void
+	get( MyPointH2 const& p, RT& hx, RT& hy, RT& hw) const
+	{
+	    hx = get_hx( p);
+	    hy = get_hy( p);
+	    hw = get_hw( p);
+	}
+
+	void
+	set( MyPointH2& p, RT const& hx, RT const& hy, RT const& hw) const
+	{
+	    p = MyPointH2( hx, hy, hw);
+	}
+    };
+@end
+
+To test the traits class adapters we use the code coverage test function.
+
+@macro <Min_circle_2 test (adapters test)> = @begin
+    typedef  CGAL_Min_circle_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
+    typedef  CGAL_Min_circle_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
+    cover_Min_circle_2( verbose, AdapterC2(), Rt());
+    cover_Min_circle_2( verbose, AdapterH2(), Rt());
+@end
+@! ----------------------------------------------------------------------------
+@! External Test Sets
+@! ----------------------------------------------------------------------------
+
+\subsection{External Test Sets}
+
+In addition, some data files can be given as command line arguments.
+A data file contains pairs of \ccc{int}s, namely the x- and
 y-coordinates of a set of points. The first number in the file is the
 number of points. A short description of the test set is given at the
 end of each file.
 
 @macro <Min_circle_2 test (external test sets)> = @begin
     while ( argc > 1) {
+
+	typedef  CGAL_Min_circle_2< TraitsH >  Min_circle;
+	typedef  Min_circle::Point	       Point;
+	typedef  Min_circle::Circle	       Circle;
+
+	CGAL_Verbose_ostream verr( verbose);
 
 	// read points from file
 	verr << endl << "input file: `" << argv[ 1] << "'" << flush;
@@ -1275,7 +2287,7 @@ end of each file.
 	ifstream     in( argv[ 1]);
 	in >> n;
 	assert( in);
-	for ( i = 0; i < n; ++i) {
+	for ( int i = 0; i < n; ++i) {
 	    in >> x >> y;
 	    assert( in);
 	    points.push_back( Point( x, y)); }
@@ -1297,6 +2309,12 @@ end of each file.
 
 \clearpage
 \section{Files}
+
+@! ----------------------------------------------------------------------------
+@! Min_circle_2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_circle\_2.h}
 
 @file <Min_circle_2.h> = @begin
     @<Min_circle_2 header>("include/CGAL/Min_circle_2.h")
@@ -1327,16 +2345,126 @@ end of each file.
 
     @<Min_circle_2 interface>
 
-    #endif // CGAL_MIN_CIRLCE_2_H
+    // Function declarations
+    // =====================
+    // I/O
+    // ---
+    @<Min_circle_2 I/O operators declaration>
+
+    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #  include <CGAL/Min_circle_2.C>
+    #endif
+
+    #endif // CGAL_MIN_CIRCLE_2_H
 
     @<end of file line>
 @end
+
+@! ----------------------------------------------------------------------------
+@! Min_circle_2.C
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_circle\_2.C}
+
+@file <Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2.C")
+
+    // Class implementation (continued)
+    // ================================
+    // I/O
+    // ---
+    @<Min_circle_2 I/O operators>
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Min_circle_2_adapterC2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_circle\_2\_adapterC2.h}
+
+@file <Min_circle_2_adapterC2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterC2.h")
+
+    #ifndef CGAL_MIN_CIRCLE_2_ADAPTERC2_H
+    #define CGAL_MIN_CIRCLE_2_ADAPTERC2_H
+
+    // Class declarations
+    // ==================
+    @<Min_circle_2_adapterC2 declarations>
+
+    // Class interface and implementation
+    // ==================================
+    // includes
+    #ifndef CGAL_BASIC_H
+    #  include <CGAL/basic.h>
+    #endif
+
+    @<Min_circle_2_adapterC2 interface and implementation>
+
+    // Nested type `Circle'
+    @<Min_circle_2_adapterC2 nested type `Circle'>
+
+    #endif // CGAL_MIN_CIRCLE_2_ADAPTERC2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! Min_circle_2_adapterH2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_circle\_2\_adapterH2.h}
+
+@file <Min_circle_2_adapterH2.h> = @begin
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2_adapterH2.h")
+
+    #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
+    #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
+
+    // Class declarations
+    // ==================
+    @<Min_circle_2_adapterH2 declarations>
+
+    // Class interface and implementation
+    // ==================================
+    // includes
+    #ifndef CGAL_BASIC_H
+    #  include <CGAL/basic.h>
+    #endif
+
+    @<Min_circle_2_adapterH2 interface and implementation>
+
+    // Nested type `Circle'
+    @<Min_circle_2_adapterH2 nested type `Circle'>
+
+    #endif // CGAL_MIN_CIRCLE_2_ADAPTERH2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
+@! test_Min_circle_2.C
+@! ----------------------------------------------------------------------------
+
+\subsection{test\_Min\_circle\_2.C}
 
 @file <test_Min_circle_2.C> = @begin
     @<Min_circle_2 header>("test/test_Min_circle_2.C")
 
     @<Min_circle_2 test (includes and typedefs)>
 
+    // code coverage test function
+    // ---------------------------
+    @<Min_circle_2 test (code coverage test function)>
+
+    // point classes for adapters test
+    // -------------------------------
+    @<Min_circle_2 test (point classes)>
+
+    // main
+    // ----
     int
     main( int argc, char* argv[])
     {
@@ -1348,6 +2476,10 @@ end of each file.
 	// code coverage
 	// -------------
 	@<Min_circle_2 test (code coverage)>
+
+	// adapters test
+	// -------------
+	@<Min_circle_2 test (adapters test)>
 
 	// external test sets
 	// -------------------
