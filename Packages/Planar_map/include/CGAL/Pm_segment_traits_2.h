@@ -61,6 +61,7 @@ public:
 
 protected:
   // Functors:
+  typedef typename Kernel::Compare_x_2          Compare_x_2;
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
@@ -110,12 +111,20 @@ public:
    */
   bool point_in_x_range(const X_monotone_curve_2 & cv, const Point_2 & q) const
   {
+#if 1
     Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     const Point_2 & source = construct_vertex(cv, 0);
     const Point_2 & target = construct_vertex(cv, 1);
     Less_x_2 less_x = less_x_2_object();
     return !((less_x(source, q) && less_x(target, q)) ||
              (less_x(q, source) && less_x(q, target)));
+#else
+    Compare_x_2 cmpr_x = compare_x_2_object();
+    return !(((cmpr_x(cv, 0, q) == SMALLER) &&
+              (cmpr_x(cv, 1, q) == SMALLER)) ||
+             ((cmpr_x(cv, 0, q) == LARGER) &&
+              (cmpr_x(cv, 1, q == LARGER))));
+#endif
   }
 
   /*! curves_compare_y_at_x() compares the y-coordinate of two given curves at
