@@ -2497,7 +2497,8 @@ public:
     { 
       // p,q,r,t are supposed to be coplanar.
       // p,q,r determine an orientation of this plane (not collinear).
-      // returns the equivalent of side_of_bounded_circle(p,q,r,t) in this plane
+      // returns the equivalent of side_of_bounded_circle(p,q,r,t) 
+      // in this plane
       CGAL_kernel_exactness_precondition( cp(p,q,r,t) );
       CGAL_kernel_exactness_precondition( !cl(p,q,r) );
       return coplanar_side_of_bounded_circleC3(p.x(), p.y(), p.z(),
@@ -3528,7 +3529,9 @@ public:
     Bounded_side
     operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
     { 
-      return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), t.x(), t.y());
+      return side_of_bounded_circleC2(p.x(), p.y(), 
+				      q.x(), q.y(), 
+				      t.x(), t.y());
     }
 
     Bounded_side
@@ -3590,7 +3593,9 @@ public:
     operator()( const Point_2& p, const Point_2& q,
 	        const Point_2& r, const Point_2& t) const
     {
-      return side_of_oriented_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
+      return side_of_oriented_circleC2(p.x(), p.y(), 
+				       q.x(), q.y(), 
+				       r.x(), r.y(),
 				       t.x(), t.y());
     }
 };
