@@ -138,13 +138,13 @@ public:
     {
       if (inf<=0.0)				/* this>=0 */
 	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/d.inf);
-      else if (sup<=0.0)			/* b<=0 */
+      else if (sup<=0.0)			/* this<=0 */
 	return CGAL_Interval_nt_advanced(-(sup/d.inf), inf/(-d.sup));
       else					/* 0 \in this */
 	return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/(-d.sup));
     }
     else					/* 0 \in [d.inf;d.sup] */
-      return CGAL_Interval_nt_advanced(-(HUGE_VAL), HUGE_VAL);
+      return CGAL_Interval_nt_advanced(-HUGE_VAL, HUGE_VAL);
   }
 
   CGAL_Interval_nt_advanced& operator+=(const CGAL_Interval_nt_advanced& d)
@@ -167,7 +167,7 @@ public:
   // return *this;
   }
 
-  CGAL_Interval_nt_advanced & operator/=(const CGAL_Interval_nt_advanced& d)
+  CGAL_Interval_nt_advanced& operator/=(const CGAL_Interval_nt_advanced& d)
   {
     return *this = *this / d;
     // return *this;
@@ -262,6 +262,11 @@ public:
       : CGAL_Interval_nt_advanced(a,b) {}
   CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
       : CGAL_Interval_nt_advanced(d) {}
+
+  // This particular one needs to be redefined, a pitty...
+  // I should learn C++ before writing...
+  CGAL_Interval_nt operator-() const 
+  { return CGAL_Interval_nt(-(sup), inf); }
 
   // The member functions that have to be protected against rounding mode.
   CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const ;
