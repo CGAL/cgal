@@ -49,11 +49,11 @@
     CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_CACHED_LEDA_TRAITS
 #define CGAL_TRAITS_LEDA
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-#define CGAL_TRAITS_LEDA
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
-#if !defined(CGAL_USE_LEDA) && defined(CGAL_TRAITS_LEDA)
+#if !defined(CGAL_USE_LEDA) && \
+  (defined(CGAL_TRAITS_LEDA) || (CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS))
 
 int main()
 {
