@@ -5,7 +5,7 @@ CFLAGS= -O2 -g
 all: workaround_4_irix.s
 
 clean:
-	rm -f *.o *.obj *.s
+	rm -f *.o *.obj
 
 workaround_4_ms.obj: workaround_4_ms.c
 	cl -c -O2 -nologo workaround_4_ms.c
