@@ -44,7 +44,7 @@ CVS_TAG=""
 cd ${TMPDIR} || return
 
 # The internal release number is considered only in non-public mode.
-if [ $IS_PUBLIC = "n" ]; then
+if [ $IS_PUBLIC_RELEASE = "n" ]; then
     [ -r $VERSION_FILE ] || return
     i=$(( `cat $VERSION_FILE` + 1 ))
     rm -rf $VERSION_FILE
