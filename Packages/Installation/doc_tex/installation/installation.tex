@@ -754,12 +754,28 @@ containing the CLN header files (``\texttt{--CLN\_INCL\_DIR}
 (``\texttt{--CLN\_LIB\_DIR}
 \textit{$<$dir$>$}'')\TTindex{CLN\_LIB\_DIR}.
 
+\subsection{Setting custom compiler/linker flags}\label{sec:custom-setup}
+\index{compilers!setting custom flags}
+
+You can supply custom compiler and linker flags using the options
+\mbox{(``\texttt{--CUSTOM\_CXXFLAGS}
+  \textit{$<$flags$>$}'')\TTindex{CUSTOM\_CXXFLAGS}} and
+\mbox{(``\texttt{--CUSTOM\_LDFLAGS}
+  \textit{$<$flags$>$}'')\TTindex{CUSTOM\_LDFLAGS}}.  These are the
+first flags given to the compiler/linker in every call.
+
+\textit{Note:} Do not forget to quote your options in case they
+contain spaces. Example:
+\begin{verbatim}
+  ./install_cgal -ni g++ --CUSTOM_CXXFLAGS "-I/my/include -O2"
+\end{verbatim}
+
 \subsection{Other Options}\label{sec:other-options}
 
 There are some less important features of the install script we will
 summarize here.
 
-First of all you can get the version number of \texttt{cgal\_install}
+First of all, you can get the version number of \texttt{cgal\_install}
 with option ``\texttt{--version}''. Note that all other options are
 ignored in this case.\TTsubindex{install\_cgal}{version number}
 
@@ -778,7 +794,7 @@ or just by denoting its basename, as long as it is on your path:
 The option is intended for testing purposes and automatic detection of
 the correct include makefile (see also section \ref{sec:makefiles}).
 
-Finally there exists an option
+Finally, there exists an option
 ``\texttt{--verbose}''\TTsubindex{install\_cgal}{verbose mode} that
 can be set in interactive mode as well as in non-interactive mode.
 When set you get a detailed summary of error messages occurring during
