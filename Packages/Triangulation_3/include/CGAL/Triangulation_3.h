@@ -597,59 +597,58 @@ public:
   Cell_circulator incident_cells(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Cell_circulator(this, e);
+      return Cell_circulator(e);
     }
   Cell_circulator incident_cells(Cell_handle c, int i, int j) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Cell_circulator(this,c,i,j);
+      return Cell_circulator(c,i,j);
     }
   Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Cell_circulator(this, e, start);
+      return Cell_circulator(e, start);
     }
   Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 				 Cell_handle start) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Cell_circulator(this, c, i, j, start);
+      return Cell_circulator(c, i, j, start);
     }
 
   // facets around an edge
   Facet_circulator incident_facets(const Edge & e) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, e);
+      return Facet_circulator(e);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, c, i, j);
+      return Facet_circulator(c, i, j);
     }
-  Facet_circulator incident_facets(const Edge & e, 
-				   const Facet & start) const
+  Facet_circulator incident_facets(const Edge & e, const Facet & start) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, e, start);
+      return Facet_circulator(e, start);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 				   const Facet & start) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, c, i, j, start);
+      return Facet_circulator(c, i, j, start);
     }
   Facet_circulator incident_facets(const Edge & e, 
 				   Cell_handle start, int f) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, e, start, f);
+      return Facet_circulator(e, start, f);
     }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 				   Cell_handle start, int f) const  
     {
       CGAL_triangulation_precondition( dimension() == 3 );
-      return Facet_circulator(this, c, i, j, start, f);
+      return Facet_circulator(c, i, j, start, f);
     }
 
   // around a vertex

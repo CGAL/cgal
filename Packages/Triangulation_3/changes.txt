@@ -5,6 +5,11 @@ Version 1.84 (?? August 01)
 - New cell container in DS_Container.h.
 - TDS uses DS_Container.
 - Remove list pointer from ds_cell, to make it more compact.
+- Circulators don't store a TDS* anymore as it's not used.
+- ds_cell_iterator removed, replaced by DS_Container::iterator.
+- other ds_iterators use the one above internally, also don't derive from
+  Triangulation_utils_3.
+- const correctness fixes.
 
 Version 1.83 (3 August 01)
 - Susan added missing .gif and .eps files in the doc_tex/*_ref directories

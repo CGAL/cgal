@@ -35,7 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds > class Triangulation_3;
 template < class Gt, class Tds > class Triangulation_cell_3;
 template < class Gt, class Tds > class Triangulation_vertex_3;
-template < class Gt, class Tds > class Triangulation_3;
 template < class Gt, class Tds > class Triangulation_cell_iterator_3;
 template < class Gt, class Tds > class Triangulation_facet_iterator_3;
 template < class Gt, class Tds > class Triangulation_edge_iterator_3;
@@ -68,8 +67,7 @@ public:
   {}
         
   Triangulation_cell_iterator_3(const Triang *tr, bool inf)
-    : _ib( &(const_cast<Triang *>(tr)->_tds)),
-      _tr(const_cast<Triang *>(tr)), _inf(inf)
+    : _ib( tr->_tds.cells_begin()), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
 	while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -83,23 +81,9 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   Triangulation_cell_iterator_3(const Triang *tr)
-    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
-      _tr(const_cast<Triang *>(tr)), _inf(true)
-  { }
-       
-  Triangulation_cell_iterator_3(const Cell_iterator & cit)
-    : _ib(cit._ib), _tr(cit._tr), _inf(cit._inf)
+    : _ib( tr->_tds.cells_end()), _tr(tr), _inf(true)
   {}
-        
-  Cell_iterator&
-  operator=(const Cell_iterator & cit)
-  { 
-    _ib = cit._ib;
-    _tr = cit._tr;
-    _inf = cit._inf;
-    return *this;
-  }
-  
+
   bool
   operator==(const Cell_iterator & cit) const
   {
@@ -114,7 +98,7 @@ public:
   }
 
   bool
-  operator!=(const Cell_iterator & cit)
+  operator!=(const Cell_iterator & cit) const
   {
     return ( !(*this == cit) );
   }
@@ -177,7 +161,7 @@ public:
      
 private: 
   Iterator_base _ib;
-  Triang * _tr;
+  const Triang * _tr;
   bool _inf; // if _inf == true, traverses all cells
                // else only traverses finite cells
 };
@@ -208,8 +192,7 @@ public:
   {}
         
   Triangulation_vertex_iterator_3(const Triang * tr, bool inf)
-    : _ib( &(const_cast<Triang *>(tr)->_tds)),
-      _tr(const_cast<Triang *>(tr)), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
 	if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
@@ -221,22 +204,9 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   Triangulation_vertex_iterator_3(const Triang * tr)
-    : _ib( &(const_cast<Triang *>(tr)->_tds), 1), _tr(const_cast<Triang *>(tr))
+    : _ib( &(tr->_tds), 1), _tr(tr)
   { }
        
-  Triangulation_vertex_iterator_3(const Vertex_iterator & vi)
-    : _ib(vi._ib), _tr(vi._tr), _inf(vi._inf)
-  {}
-        
-  Vertex_iterator &
-  operator=(const Vertex_iterator & vi)
-  { 
-    _ib = vi._ib;
-    _tr = vi._tr;
-    _inf = vi._inf;
-    return *this;
-  }
-  
   bool
   operator==(const Vertex_iterator & vi) const
   {
@@ -251,7 +221,7 @@ public:
   }
 
   bool
-  operator!=(const Vertex_iterator & vi)
+  operator!=(const Vertex_iterator & vi) const
   {
     return ( !(*this == vi) );
   }
@@ -259,30 +229,20 @@ public:
   Vertex_iterator &
   operator++()
   {
-    if (_inf) {
-      ++_ib;
-    }
-    else {
-      ++_ib; 
-      if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
+    ++_ib;
+    if (!_inf
+	&& _ib != _tr->_tds.vertices_end()
+        && _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) )
 	++_ib;
-      }
-    }
     return *this;   
   }
 
   Vertex_iterator &
   operator--()
   {
-    if (_inf) {
-      --_ib;
-    }
-    else{
-      --_ib;
-      if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
+    --_ib;
+    if (!_inf && _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) )
 	--_ib;
-      }
-    }
     return *this;   
   }
 
@@ -314,7 +274,7 @@ public:
      
 private:
   Iterator_base   _ib;
-  Triang * _tr;
+  const Triang * _tr;
   bool _inf; // if _inf == true, traverses all vertices
                // else only traverses finite vertices
 };
@@ -346,8 +306,7 @@ public:
   {}
         
   Triangulation_edge_iterator_3(const Triang *tr, bool inf)
-    : _ib( &(const_cast<Triang *>(tr)->_tds)),
-      _tr(const_cast<Triang *>(tr)), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
   { 
     if (! _inf) {
 	while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -360,24 +319,10 @@ public:
   }
         
   Triangulation_edge_iterator_3(const Triang *tr)
-    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
-      _tr(const_cast<Triang *>(tr)), _inf(true)
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
     // _inf is initialized but should never be used
   { }
        
-  Triangulation_edge_iterator_3(const Edge_iterator & ei)
-    : _ib(ei._ib), _tr(ei._tr), _inf(ei._inf)
-  {}
-        
-  Edge_iterator &
-  operator=(const Edge_iterator & ei)
-  { 
-    _ib = ei._ib;
-    _tr = ei._tr;
-    _inf = ei._inf;
-    return *this;
-  }
-  
   bool
   operator==(const Edge_iterator & ei) const
   {
@@ -392,7 +337,7 @@ public:
   }
 
   bool
-  operator!=(const Edge_iterator & ei)
+  operator!=(const Edge_iterator & ei) const
   {
     return !(*this == ei);
   }
@@ -457,7 +402,7 @@ public:
      
 private:
   Iterator_base _ib ;
-  Triang * _tr;
+  const Triang * _tr;
   bool _inf; // if _inf == true, traverses all edges
                // else only traverses finite edges
 };
@@ -488,8 +433,7 @@ public:
   {}
         
   Triangulation_facet_iterator_3(const Triang *tr, bool inf)
-    : _ib( &(const_cast<Triang *>(tr)->_tds)),
-      _tr(const_cast<Triang *>(tr)), _inf(inf)
+    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
   {       
     if (! _inf) {
       while ( // ( _ib != _tr->_tds.cells_end() ) &&
@@ -503,24 +447,10 @@ public:
   }
         
   Triangulation_facet_iterator_3(const Triang *tr)
-    : _ib( &(const_cast<Triang *>(tr)->_tds), 1),
-      _tr(const_cast<Triang *>(tr)), _inf(true)
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
   // _inf is initialized but should never be used
-  { }
-       
-  Triangulation_facet_iterator_3(const Facet_iterator & fi)
-    : _ib(fi._ib), _tr(fi._tr), _inf(fi._inf)
   {}
-        
-  Facet_iterator &
-  operator=(const Facet_iterator & fi)
-  { 
-    _ib = fi._ib;
-    _tr = fi._tr;
-    _inf = fi._inf;
-    return *this;
-  }
-  
+       
   bool
   operator==(const Facet_iterator & fi) const
   {
@@ -535,7 +465,7 @@ public:
   }
 
   bool
-  operator!=(const Facet_iterator & fi)
+  operator!=(const Facet_iterator & fi) const
   {
     return !(*this == fi);
   }
@@ -598,7 +528,7 @@ public:
      
 private:
   Iterator_base   _ib ;
-  Triang * _tr;
+  const Triang * _tr;
   bool _inf; // if _inf == true, traverses all facets
                // else only traverses finite facets
 };

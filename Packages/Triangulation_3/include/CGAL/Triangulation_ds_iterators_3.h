@@ -31,114 +31,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Vb, class Cb > class Triangulation_ds_vertex_3;
-template < class Vb, class Cb > class Triangulation_ds_cell_3;
-template < class Vb, class Cb > class Triangulation_data_structure_3;
-template < class Tds >          class Triangulation_ds_cell_circulator_3;
-
-template < class Tds_ >
-class Triangulation_ds_cell_iterator_3
-{
-public:
-  typedef Tds_                                  Tds;
-  typedef typename Tds::Cell                    value_type;
-  typedef typename Tds::Cell *                  pointer;
-  typedef typename Tds::Cell &                  reference;
-  typedef std::size_t                           size_type;
-  typedef std::ptrdiff_t                        difference_type;
-  typedef std::bidirectional_iterator_tag       iterator_category;
-
-  typedef typename Tds::Cell                    Cell;
-  typedef Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
-
-  // CONSTRUCTORS
-
-  Triangulation_ds_cell_iterator_3()
-    {}
-  
-  Triangulation_ds_cell_iterator_3(const Tds * tds)
-    : _tds(const_cast<Tds *>(tds))
-    {
-      if ( _tds->dimension() < 3 )
-	  pos = _tds->past_end_cell(); // there is no cell yet
-      else
-	  pos = _tds->list_of_cells()._next_cell; // first cell of the list
-    }
-
-  // used to initialize the past-the end iterator
-  Triangulation_ds_cell_iterator_3(const Tds* tds, int)
-    : _tds(const_cast<Tds *>(tds))
-    {
-      pos = _tds->past_end_cell();
-    }
-  
-  // OPERATORS
-  
-  Cell_iterator & operator=(const Cell_iterator & fi)
-    {
-      pos = fi.pos;
-      _tds = fi._tds;
-      return *this;
-    }
-
-  bool operator==(const Cell_iterator & fi) const
-    {
-      return pos == fi.pos && _tds == fi._tds;
-    }
-  
-  bool operator!=(const Cell_iterator& fi)
-    {
-      return !(*this == fi);
-    }
-  
-  Cell_iterator & operator++()
-    {
-      pos = pos->_next_cell;
-      return *this;
-    }
-
-  Cell_iterator & operator--()
-    {
-      pos = pos->_previous_cell;
-      return *this;
-    }
-        
-  Cell_iterator operator++(int)
-    {
-      Cell_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
-  
-  Cell_iterator operator--(int)
-    {
-      Cell_iterator tmp(*this);
-      --(*this);
-      return tmp;
-    }
-        
-  Cell & operator*() const
-    {
-      return *pos;
-    }
-    
-  Cell* operator->() const
-    {
-      return pos;
-    }
-
-private:
-  Tds*  _tds;
-  Cell* pos;
-};
-
 template < class Tds_ >
 class Triangulation_ds_vertex_iterator_3
 {
 // traverses the list of cells and reports for each cell 
 // the vertices whose cell() is the current cell
-
 public:
+
   typedef Tds_ Tds;
   typedef typename Tds::Vertex                   value_type;
   typedef typename Tds::Vertex *                 pointer;
@@ -150,40 +49,40 @@ public:
   typedef typename Tds::Vertex                    Vertex;
   typedef typename Tds::Cell                      Cell;
   typedef Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
-  
+  typedef typename Tds::Cell_iterator             Cell_iterator;
+
   Triangulation_ds_vertex_iterator_3()
-    : _tds(NULL), pos(NULL), index(0)
     {}
-  
+
   Triangulation_ds_vertex_iterator_3(const Tds * tds)
-    : _tds(const_cast<Tds *>(tds)), index(0)
+    : _tds(tds), index(0)
     {
       if ( _tds->number_of_vertices() == 0 )
-	pos = _tds->past_end_cell(); 
-      else { 
-	pos = _tds->list_of_cells()._next_cell; 
-	while ( (pos != _tds->past_end_cell())
-             && (pos != pos->vertex(index)->cell()) )
+	pos = _tds->cell_container().end();
+      else {
+	pos = _tds->cell_container().begin();
+	while ( pos != _tds->cell_container().end()
+             && &(*pos) != pos->vertex(index)->cell() )
 	  increment();
       }
     }
-  
+ 
   // used to initialize the past-the end iterator
   Triangulation_ds_vertex_iterator_3(const Tds* tds, int)
-    : _tds(const_cast<Tds *>(tds)), index(0)
+    : _tds(tds), index(0)
     {
-      pos = _tds->past_end_cell();
+      pos = _tds->cell_container().end();
     }
-  
+ 
   Vertex_iterator& operator++()
   {
     do {
       increment();
-    } while ( (pos != _tds->past_end_cell())
-           && (pos != pos->vertex(index)->cell()) );
+    } while ( pos != _tds->cell_container().end()
+           && &(*pos) != pos->vertex(index)->cell() );
     return *this;
   }
-    
+
   Vertex_iterator& operator--()
   {
     do {
@@ -192,15 +91,15 @@ public:
 	int d = _tds->dimension();
 	if ( d >= 0 )
 	    index = d;
-	pos = pos->_previous_cell;
+	--pos;
       }
       else
 	  index--;
-    } while ( pos != _tds->past_end_cell()
-	   && pos != pos->vertex(index)->cell() );
+    } while ( pos != _tds->cell_container().end()
+	   && &(*pos) != pos->vertex(index)->cell() );
     return *this;
   }
-    
+
   Vertex_iterator operator++(int)
     {
       Vertex_iterator tmp(*this);
@@ -236,9 +135,8 @@ public:
     }
 
 private:
-  Tds*  _tds;
-  Cell* pos; // current "cell". Even if the dimension is <3 when 
-             // there is no true cell yet.
+  const Tds*  _tds;
+  Cell_iterator pos; // current cell.
   int index; // index of the current vertex in the current cell
 
   void 
@@ -247,9 +145,9 @@ private:
     if (index >= _tds->dimension()) {
       // all the vertices of the current cell have been examined
       index = 0;
-      pos = pos->_next_cell;
+      ++pos;
     }
-    // be careful : index should always be 0 when pos = past_end_cell
+    // be careful : index should always be 0 when pos = cells_end
     else
 	index++;
   }
@@ -258,10 +156,9 @@ private:
 template < class Tds_>
 class Triangulation_ds_facet_iterator_3
 {
-// traverses the list of cells and report for each cell 
-// the vertices whose cell() is the current cell
-
+// traverses the list of cells and reports all facets.
 public:
+
   typedef Tds_ Tds;
   typedef typename Tds::Facet                    value_type;
   typedef typename Tds::Facet *                  pointer;
@@ -273,38 +170,37 @@ public:
   typedef typename Tds::Cell                     Cell;
   typedef typename Tds::Facet                    Facet;
   typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
-  
+  typedef typename Tds::Cell_iterator            Cell_iterator;
+
   Triangulation_ds_facet_iterator_3()
-    : _tds(NULL), pos(NULL), index(0)
     {}
   
   Triangulation_ds_facet_iterator_3(const Tds * tds)
-    : _tds(const_cast<Tds *>(tds)), index(0)
+    : _tds(tds), index(0)
     {
       switch ( _tds->dimension() ) {
       case 2:
-	pos = _tds->list_of_cells()._next_cell; 
+	pos = _tds->cell_container().begin();
 	index = 3;
 	return;
       case 3:
-	pos = _tds->list_of_cells()._next_cell; 
-	while ( // useless (pos != _tds->past_end_cell()) &&
-	       // there must be at least one facet
-	       pos->neighbor(index) < pos ) {
+	pos = _tds->cell_container().begin();
+	while (// there must be at least one facet
+	       pos->neighbor(index) < &(*pos) ) {
 	  increment();
 	}
 	return;
       default:
-	pos = _tds->past_end_cell();
+	pos = _tds->cell_container().end();
 	return;
       }
     }
   
   // used to initialize the past-the end iterator
   Triangulation_ds_facet_iterator_3(const Tds* tds, int)
-    : _tds(const_cast<Tds *>(tds)), index(0)
+    : _tds(tds), index(0)
     {
-	pos = _tds->past_end_cell();
+	pos = _tds->cell_container().end();
 	if (_tds->dimension() == 2)
 	    index = 3;
     }
@@ -317,14 +213,14 @@ public:
     if (_tds->dimension() == 3) {
       do {
 	increment();
-      } while ( pos != _tds->past_end_cell()
-	     && pos > pos->neighbor(index) );
+      } while ( pos != _tds->cell_container().end()
+	     && &(*pos) > pos->neighbor(index) );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
     }
 
-    pos = pos->_next_cell; // dimension 2
+    ++pos; // dimension 2
     return *this;
   }
     
@@ -334,7 +230,7 @@ public:
 	return *this;
     
     if ( _tds->dimension() == 2 ) {
-      pos = pos->_previous_cell; // index remains 3
+      --pos; // index remains 3
       return *this;
     }
 
@@ -343,12 +239,12 @@ public:
       if (index == 0) {
 	// all the facets of the current cell have been examined
 	index = 3;
-	pos = pos->_previous_cell;
+	--pos;
       }
       else
 	  index--;
-    } while ( pos != _tds->past_end_cell()
-	   && pos > pos->neighbor(index) );
+    } while ( pos != _tds->cell_container().end()
+	   && &(*pos) > pos->neighbor(index) );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
@@ -382,36 +278,33 @@ public:
     {
       // case pos == NULL should not be accessed, there is no facet
       // when dimension <2 
-      return std::make_pair(pos, index);
+      return std::make_pair(&(*pos), index);
     }
-    
+
 private:
-  Tds*  _tds;
-  Cell* pos; // current "cell". Even if the dimension is <3 when 
-              // there is no true cell yet.
+  const Tds*  _tds;
+  Cell_iterator pos; // current "cell".
   int index; // index of the current facet in the current cell
 
   void increment()
   {
     if (index == 3) {
-      // all the feces of the current cell have been examined
+      // all the faces of the current cell have been examined
       index = 0;
-      pos = pos->_next_cell;
+      ++pos;
     }
-    // be careful : index should always be 0 when pos = past_end_cell
+    // be careful : index should always be 0 when pos = cells_end
     else
 	index++;
   }
-
 };
 
 template < class Tds_ >
 class Triangulation_ds_edge_iterator_3
 {
-// traverses the list of cells and report for each cell 
-// the vertices whose cell() is the current cell
-
+// traverses the list of cells and reports each edge.
 public:
+
   typedef Tds_                                    Tds;
   typedef typename Tds::Edge                      value_type;
   typedef typename Tds::Edge *                    pointer;
@@ -423,44 +316,43 @@ public:
   typedef typename Tds::Cell                      Cell;
   typedef typename Tds::Edge                      Edge;
   typedef Triangulation_ds_edge_iterator_3<Tds>   Edge_iterator;
+  typedef typename Tds::Cell_iterator             Cell_iterator;
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
-  
+
   Triangulation_ds_edge_iterator_3()
-    : _tds(NULL), pos(NULL), b(0), e(1)
+    : _tds(NULL), b(0), e(1)
     {}
   
   Triangulation_ds_edge_iterator_3(const Tds * tds)
-    : _tds(const_cast<Tds *>(tds)), b(0), e(1)
+    : _tds(tds), b(0), e(1)
     {
       switch ( _tds->dimension() ) {
       case 1:
 	{
-	  pos = _tds->list_of_cells()._next_cell;
+	  pos = _tds->cell_container().begin();
 	  return;
 	}
       case 2:
 	{
-	  pos = _tds->list_of_cells()._next_cell; 
-	  while ( // useless (pos != _tds->past_end_cell()) && 
-		 // there must be at least one edge
-		 ( pos->neighbor(3-b-e) < pos) ) {
+	  pos = _tds->cell_container().begin();
+	  while ( // there must be at least one edge
+		 pos->neighbor(3-b-e) < &(*pos) ) {
 	    increment2();
 	  }
 	  return;
 	}
       case 3:
 	{
-	  pos = _tds->list_of_cells()._next_cell;
+	  pos = _tds->cell_container().begin();
 	  bool notfound = true;
-	  while ( // useless (pos != _tds->past_end_cell()) &&
-		 // there must be at least one edge
+	  while ( // there must be at least one edge
 		 notfound ) {
-	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
+	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > pos ); 
+	    } while ( &(*ccir) > &(*pos) ); 
 	    // loop terminates since it stops at least when ccir = pos
-	    if ( &(*ccir) == pos ) // pos is the cell with minimum pointer
+	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
 	      notfound = false;
 	    else
 	      increment3();
@@ -469,7 +361,7 @@ public:
 	}
       default:
 	{
-	  pos = _tds->past_end_cell() ; 
+	  pos = _tds->cell_container().end();
 	  return;
 	}
       }
@@ -477,9 +369,9 @@ public:
   
   // used to initialize the past-the end iterator
   Triangulation_ds_edge_iterator_3(const Tds* tds, int)
-    : _tds(const_cast<Tds *>(tds)), b(0), e(1)
+    : _tds(tds), b(0), e(1)
     {
-	pos = tds->past_end_cell();
+	pos = _tds->cell_container().end();
     }
   
   Edge_iterator& operator++()
@@ -487,15 +379,15 @@ public:
     switch ( _tds->dimension() ) {
     case 1:
       {
-	pos = pos->_next_cell;
+	++pos;
 	break;
       }
     case 2:
       {
 	do {
 	  increment2();
-	} while ( pos != _tds->past_end_cell() && 
-		  pos > pos->neighbor(3-b-e) );
+	} while ( pos != _tds->cell_container().end() && 
+		  &(*pos) > pos->neighbor(3-b-e) );
 	break;
       }
     case 3:
@@ -503,18 +395,18 @@ public:
 	bool notfound = true;
 	do {
 	  increment3();
-	  if (pos != _tds->past_end_cell()) {
-	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
+	  if (pos != _tds->cell_container().end()) {
+	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > pos );
-	    if ( &(*ccir) == pos ) // pos is the cell with minimum pointer
+	    } while ( &(*ccir) > &(*pos) );
+	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
 	      notfound = false;
 	  }
 	  else {
 	    b=0; e=1;
 	  }
-	} while ( pos != _tds->past_end_cell() && notfound );
+	} while ( pos != _tds->cell_container().end() && notfound );
 	break;
       }
     default:
@@ -530,7 +422,7 @@ public:
     switch ( _tds->dimension() ) {
     case 1:
       {
-	pos = pos->_previous_cell; // b, e remain 0, 1
+	--pos; // b, e remain 0, 1
 	break;
       }
     case 2:
@@ -538,14 +430,14 @@ public:
 	do {
 	  if (b == 0) {
 	    b = 2; e = 0;
-	    pos = pos->_previous_cell;
+	    --pos;
 	  }
 	  else {
 	    b--; 
 	    e = b+1; // case b==2, e==0 forbids to write e--
 	  }
-	} while ( pos != _tds->past_end_cell() && 
-		  pos > pos->neighbor(3-b-e) );
+	} while ( pos != _tds->cell_container().end() && 
+		  &(*pos) > pos->neighbor(3-b-e) );
 	break;
       }
     case 3:
@@ -556,7 +448,7 @@ public:
 	    if (e == 1) {
 	      // all the edges of the current cell have been examined
 	      b = 2; e = 3;
-	      pos = pos->_previous_cell;
+	      --pos;
 	    }
 	    else
 	      e--;
@@ -569,18 +461,18 @@ public:
 	    else
 	      e--;
 	  }
-	  if (pos != _tds->past_end_cell()) {
-	    Cell_circulator ccir = _tds->incident_cells(pos,b,e);
+	  if (pos != _tds->cell_container().end()) {
+	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > pos );
-	    if ( &(*ccir) == pos ) // pos is the cell with minimum pointer
+	    } while ( &(*ccir) > &(*pos) );
+	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
 	      notfound = false;
 	  }
 	  else {
 	    b=0; e=1;
 	  }
-	} while ( pos != _tds->past_end_cell() && notfound );
+	} while ( pos != _tds->cell_container().end() && notfound );
 	break;
       }
     default :
@@ -617,12 +509,12 @@ public:
     
   Edge operator*() const
     {
-      return make_triple(pos, b, e);
+      return make_triple(&(*pos), b, e);
     }
     
 private:
-  Tds*  _tds;
-  Cell* pos; // current "cell". Even if the dimension is <3 when 
+  const Tds*  _tds;
+  Cell_iterator pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
   int b; // index of the first endpoint of the current edge in the current cell
   int e; // index of the second endpoint of the current edge in the
@@ -633,9 +525,9 @@ private:
     if (b == 2) { // e == 0
       // all the edges of the current cell have been examined
       b = 0; e = 1;
-      pos = pos->_next_cell;
+      ++pos;
     }
-    // be careful : index should always be 0 when pos = past_end_cell
+    // be careful : index should always be 0 when pos = cells_end
     else { 
       b++; 
       if ( b == 2 )
@@ -650,7 +542,7 @@ private:
     if (b == 2) { // then e == 3
       // all the edges of the current cell have been examined
       b = 0; e = 1;
-      pos = pos->_next_cell;
+      ++pos;
     }
     else {
       if (e == 3) {

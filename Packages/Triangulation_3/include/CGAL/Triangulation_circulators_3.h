@@ -54,48 +54,26 @@ public:
   typedef Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
   Triangulation_cell_circulator_3()
-    : _cb(), _tr(NULL)
+    : _cb()
     {}
 
-  Triangulation_cell_circulator_3(const Triangulation * tr, Cell_handle c,
-				  int s, int t)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*c), s, t ),
-      _tr(const_cast<Triangulation *>(tr))
+  Triangulation_cell_circulator_3(Cell_handle c, int s, int t)
+    : _cb( (Ctds *) &(*c), s, t )
     {}
 
-  Triangulation_cell_circulator_3(const Triangulation * tr, const Edge & e)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*(e.first)),
-	    e.second, e.third ), _tr(const_cast<Triangulation *>(tr))
+  Triangulation_cell_circulator_3(const Edge & e)
+    : _cb( (Ctds *) &(*(e.first)), e.second, e.third )
     {}
 
-   Triangulation_cell_circulator_3(const Triangulation * tr, 
-				   Cell_handle c, int s, int t,
+   Triangulation_cell_circulator_3(Cell_handle c, int s, int t,
 				   Cell_handle start)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), 
-	   (Ctds *) &(*c), s, t, (Ctds *) &(*start) ),
-      _tr(const_cast<Triangulation *>(tr))
+    : _cb( (Ctds *) &(*c), s, t, (Ctds *) &(*start) )
     {}
 
-   Triangulation_cell_circulator_3(const Triangulation * tr, const Edge & e, 
-				   Cell_handle start)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), 
-	   (Ctds *) &(*(e.first)), e.second, e.third, 
-	   (Ctds *) &(*start) ),
-      _tr(const_cast<Triangulation *>(tr))
+   Triangulation_cell_circulator_3(const Edge & e, Cell_handle start)
+    : _cb( (Ctds *) &(*(e.first)), e.second, e.third, (Ctds *) &(*start) )
     {}
  
-  Triangulation_cell_circulator_3(const Cell_circulator & ccir)
-    : _cb(ccir._cb), _tr(ccir._tr)
-    {}
-
-  Cell_circulator&
-  operator=(const Cell_circulator & ccir)
-    {
-      _cb = ccir._cb;
-      _tr = ccir._tr;
-      return *this;
-    }
-  
   bool
   operator==(const Cell_circulator & ccir) const
   {
@@ -103,7 +81,7 @@ public:
   }
 
   bool
-  operator!=(const Cell_circulator & ccir)
+  operator!=(const Cell_circulator & ccir) const
   {
     return ( !(*this == ccir) );
   }
@@ -150,7 +128,6 @@ public:
 
 private: 
   Circulator_base _cb;
-  Triangulation * _tr;
 };
 
 template < class Gt, class Tds>
@@ -175,76 +152,47 @@ public:
   typedef Triangulation_facet_circulator_3<Gt,Tds> Facet_circulator;
 
   Triangulation_facet_circulator_3()
-    : _cb(), _tr(NULL)
+    : _cb()
     {}
 
-  Triangulation_facet_circulator_3(const Triangulation * tr, Cell_handle c,
-				  int s, int t)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*c), s, t ),
-      _tr(const_cast<Triangulation *>(tr))
+  Triangulation_facet_circulator_3(Cell_handle c, int s, int t)
+    : _cb( (Ctds *) &(*c), s, t )
     {}
 
-  Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds), (Ctds *) &(*(e.first)),
-	    e.second, e.third ), _tr(const_cast<Triangulation *>(tr))
+  Triangulation_facet_circulator_3(const Edge & e)
+    : _cb( (Ctds *) &(*(e.first)), e.second, e.third )
     {}
 
-   Triangulation_facet_circulator_3(const Triangulation * tr, 
-				   Cell_handle c, int s, int t,
-				   const Facet & start)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
-	   (Ctds *) &(*c), s, t,
-	   std::make_pair((Ctds *) &(*start.first), start.second) ),
-      _tr(const_cast<Triangulation *>(tr))
+   Triangulation_facet_circulator_3(Cell_handle c, int s, int t,
+				    const Facet & start)
+    : _cb( (Ctds *) &(*c), s, t,
+	   std::make_pair((Ctds *) &(*start.first), start.second) )
     {}
 
-   Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e, 
-				   const Facet & start)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
-	   (Ctds *) &(*(e.first)), e.second, e.third, 
-	   std::make_pair((Ctds *) &(*start.first), start.second) ),
-      _tr(const_cast<Triangulation *>(tr))
+   Triangulation_facet_circulator_3(const Edge & e, const Facet & start)
+    : _cb( (Ctds *) &(*(e.first)), e.second, e.third, 
+	   std::make_pair((Ctds *) &(*start.first), start.second) )
     {}
  
-   Triangulation_facet_circulator_3(const Triangulation * tr, 
-				   Cell_handle c, int s, int t,
-				   Cell_handle start, int f)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
-	   (Ctds *) &(*c), s, t,
-	   (Ctds *) &(*start), f ),
-      _tr(const_cast<Triangulation *>(tr))
+   Triangulation_facet_circulator_3(Cell_handle c, int s, int t,
+				    Cell_handle start, int f)
+    : _cb( (Ctds *) &(*c), s, t, (Ctds *) &(*start), f )
     {}
 
-   Triangulation_facet_circulator_3(const Triangulation * tr, const Edge & e, 
-				   Cell_handle start, int f)
-    : _cb( &(const_cast<Triangulation *>(tr)->_tds),
-	   (Ctds *) &(*(e.first)), e.second, e.third, 
-	   (Ctds *) &(*start), f ),
-      _tr(const_cast<Triangulation *>(tr))
+   Triangulation_facet_circulator_3(const Edge & e, Cell_handle start, int f)
+    : _cb( (Ctds *) &(*(e.first)), e.second, e.third, (Ctds *) &(*start), f )
     {}
  
-  Triangulation_facet_circulator_3(const Facet_circulator & ccir)
-    : _cb(ccir._cb), _tr(ccir._tr)
-    {}
-
-  Facet_circulator&
-  operator=(const Facet_circulator & ccir)
-    {
-      _cb = ccir._cb;
-      _tr = ccir._tr;
-      return *this;
-    }
-  
   bool
   operator==(const Facet_circulator & ccir) const
   {
-    return ( _cb == ccir._cb);
+    return _cb == ccir._cb;
   }
 
   bool
-  operator!=(const Facet_circulator & ccir)
+  operator!=(const Facet_circulator & ccir) const
   {
-    return ( !(*this == ccir) );
+    return !(*this == ccir);
   }
 
   Facet_circulator &
@@ -285,7 +233,6 @@ public:
 
 private: 
   Circulator_base _cb;
-  Triangulation * _tr;
 };
 
 CGAL_END_NAMESPACE
