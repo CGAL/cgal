@@ -100,13 +100,11 @@ protected:
 
 template <class RT> RT SPolynomial<RT>::R_;
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
 template <typename RT>
 int sign(const SPolynomial<RT>& p)
 { 
   return p.sign(); 
 }
-#endif
 
 
 template <typename RT>

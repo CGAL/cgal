@@ -1,3 +1,6 @@
+0.3  (18 Jan 2004)
+- Remove CGAL_CFG_MATCHING_BUG_2.
+
 0.2  (18 Jan 2004)
 - Renamed CGAL_TEMPLATE_NULL to "template <>".
 

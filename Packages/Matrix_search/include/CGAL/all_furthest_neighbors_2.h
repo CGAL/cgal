@@ -70,8 +70,6 @@ public:
 };
 
 
-#if !defined(CGAL_CFG_MATCHING_BUG_2)
-
 CGAL_END_NAMESPACE
 #include <iterator>
 CGAL_BEGIN_NAMESPACE
@@ -86,16 +84,6 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                           OutputIterator o,
                           const Traits& t,
                           IteratorCategory)
-#else
-template < class RandomAccessIC,
-           class OutputIterator,
-           class Traits >
-OutputIterator
-all_furthest_neighbors_2( RandomAccessIC points_begin,
-                          RandomAccessIC points_end,
-                          OutputIterator o,
-                          const Traits& t)
-#endif
 {
   using std::vector;
   using std::transform;
@@ -133,7 +121,6 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                     bind_2( modulus< int >(), number_of_points));
 } // all_furthest_neighbors_2( ... )
 
-#if !defined(CGAL_CFG_MATCHING_BUG_2)
 
 template < class RandomAccessIC, class OutputIterator, class Traits >
 OutputIterator
@@ -180,7 +167,6 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
     points_begin, points_end, o, t, iterator_category());
 } // all_furthest_neighbors_2( ... )
 
-#endif // !CGAL_CFG_MATCHING_BUG_2
 
 template < class RandomAccessIC, class OutputIterator >
 inline

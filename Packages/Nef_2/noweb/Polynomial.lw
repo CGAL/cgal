@@ -999,7 +999,6 @@ template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign
   { return p.sign(); }
 #endif // collides with global CGAL sign
 
-#ifndef _MSC_VER
 //------------------------------------------------------------------
 // SPECIALIZE_FUNCTION(NT,int double) START
 
@@ -1074,7 +1073,6 @@ template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign
 
 // SPECIALIZE_FUNCTION(NT,int double) END
 //------------------------------------------------------------------
-#endif // _MSC_VER CGAL_CFG_MATCHING_BUG_2
 
 @ Finally we offer standard I/O operations.
 <<polynomial implementation>>=
