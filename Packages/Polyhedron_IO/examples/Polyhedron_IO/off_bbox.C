@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : off_bbox.C
+// file          : examples/Polyhedron_IO/off_bbox.C
 // package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
 // revision      : $Revision$
 // revision_date : $Date$

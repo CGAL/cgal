@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : geomview_demo.C
+// file          : demo/Polyhedron_IO/geomview_demo.C
 // package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
 // revision      : $Revision$
 // revision_date : $Date$
@@ -23,15 +23,12 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
-typedef  CGAL::Cartesian<double>               R;
-typedef  CGAL::Point_3<R>                      Point;
-typedef  CGAL::Polyhedron_default_traits_3<R>  Traits;
-typedef  CGAL::Polyhedron_3<Traits>            Polyhedron;
+typedef  CGAL::Cartesian<double>               Kernel;
+typedef  Kernel::Point_3                       Point;
+typedef  CGAL::Polyhedron_3<Kernel>            Polyhedron;
 
 int main() {
     Point p( 1.0, 0.0, 0.0);

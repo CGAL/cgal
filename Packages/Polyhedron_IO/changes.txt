@@ -1,6 +1,13 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.6 (29 Jun 2001)
+
+     - Added pathname to example program header line.
+     - Updated demos to new kernel traits.
+     - Added std:: scope to less functor in triangulation_print_OFF.h.
+     - Added CGAL::to_double calls to point coordinates output.
+
 3.5 (25 Jun 2001)
 
      - Adapted to new kernel traits from Polyhedron.

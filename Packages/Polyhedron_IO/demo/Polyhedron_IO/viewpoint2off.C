@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : viewpoint2off.C
+// file          : demo/Polyhedron_IO/viewpoint2off.C
 // package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
 // revision      : $Revision$
 // revision_date : $Date$
@@ -22,8 +22,11 @@
 // Copies from Viewpoint ASCII format into OFF format.
 // ============================================================================
 
-#include <CGAL/basic.h>
-
+#include <CGAL/Cartesian.h>
+#include <CGAL/known_bit_size_integers.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/IO/binary_file_io.h>
+#include <CGAL/IO/File_writer_OFF.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -32,17 +35,11 @@
 #include <strstream>
 #include <vector>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/known_bit_size_integers.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/binary_file_io.h>
-#include <CGAL/IO/File_writer_OFF.h>
 
 using namespace std;
 
-typedef  CGAL::Cartesian<float>                 R;
-typedef  CGAL::Point_3<R>                       Point;
+typedef  CGAL::Cartesian<float>                 Kernel;
+typedef  Kernel::Point_3                        Point;
 typedef  vector<Point>                          Point_vector;
 typedef  vector<int>                            Facet;
 typedef  vector<Facet>                          Facet_vector;

@@ -60,7 +60,7 @@ operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS>& P) {
     // writes P to `out' in PRETTY, ASCII or BINARY format
     // as the stream indicates.
     File_header_OFF header( is_binary( out), ! is_pretty( out), false);
-    print_OFF( out, P, header);
+    CGAL::print_OFF( out, P, header);
     return out;
 }
 
@@ -77,7 +77,7 @@ template < class Traits,
 std::istream& operator>>(std::istream& in, Polyhedron_3<Traits,Items,HDS>& P) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     // reads a polyhedron from `in' and appends it to P.
-    scan_OFF( in, P);
+    CGAL::scan_OFF( in, P);
     return in;
 }
 

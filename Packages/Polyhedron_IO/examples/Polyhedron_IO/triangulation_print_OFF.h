@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : triangulation_print_OFF.h
+// file          : examples/Polyhedron_IO/triangulation_print_OFF.h
 // package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
 // revision      : $Revision$
 // revision_date : $Date$
@@ -44,7 +44,7 @@ triangulation_print_OFF( std::ostream& out,
     typedef typename Triang::Vertex_iterator  Vertex_iterator;
     typedef typename Triang::Face_iterator    Face_iterator;
     // Build a map from vertex pointers to vertex indices.
-    std::map<const Vertex*,std::size_t, less<const Vertex*> > mapping;
+    std::map<const Vertex*,std::size_t, std::less<const Vertex*> > mapping;
     std::size_t vn = 0;
     Vertex_iterator vi = triang.vertices_begin();
     for ( ; vi != triang.vertices_end(); ++vi) {
