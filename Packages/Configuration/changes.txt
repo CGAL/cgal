@@ -1,3 +1,6 @@
+19 August 2004 Sylvain Pion
+- CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG : fix warning.
+
 9 August 2004 Andreas Fabri
 - Changed CGAL_CFG_USING_BASE_MEMBER_BUG_3
 

@@ -39,15 +39,19 @@ public:
   typedef A Res;
 
   template<class C>
-    Res fct(C *i);
+  Res fct(C *i);
 };
 
 template<class A>
 template<class C>  //syntax error
 typename B<A>::Res
-B<A>::fct(C *i){
+B<A>::fct(C *i)
+{
+  typedef typename B<A>::Res R;
+  return R();
 }
 
-int main(){
+int main()
+{
   return 0;
 }
