@@ -23,7 +23,6 @@
 - add the methods insert_polyline and insert_polygon that do some
   optimized insertion for polylines and polygons; add these in both
   the one-level and hierarchy classes
-- fix the bug in insert_third for point
 - add the check for a segment intersecting an existing point and
   a point intersecting an existing segment.
 
