@@ -38,8 +38,8 @@ $P$ may be empty or points may occur more than once. The algorithm
 computes a support set $S$ which remains fixed until the next insert
 or clear operation.
 
-\emph{Note:} In this release correct results are only guaranteed if
-exact arithmetic is used, see Section~\ref{sec:opt_traits_impl}.
+\emph{Note:} In this release correct results are only guaranteed if exact
+arithmetic is used, see Section~\ref{sec:min_circle_2_traits_impl_2D_kernel}.
 
 \ccInclude{CGAL/Min_circle_2.h}
 
@@ -52,11 +52,13 @@ primitives it uses.  For example \ccc{Traits::Point} is a mapping on a
 point class. Think of it as 2D points in the Euclidean plane.
 
 We provide a traits class implementation using the \cgal\ 2D kernel as
-described in Section~\ref{sec:opt_traits_impl}. Traits class adapters
-to user supplied point classes are available, see
-Section~\ref{sec:opt_traits_adapt}. Customizing own traits classes for
-optimisation algorithms can be done according to the requirements for
-traits classes listed in Section~\ref{sec:opt_traits_req}.
+described in Section~\ref{sec:min_circle_2_traits_impl_2D_kernel}.
+Traits class adapters to user supplied point classes are available,
+see Sections~\ref{sec:min_circle_2_traits_adapterC2}
+and~\ref{sec:min_circle_2_traits_adapterH2}. Customizing own traits
+classes for optimisation algorithms can be done according to the
+requirements for traits classes listed in
+Section~\ref{sec:min_circle_2_traits_req}.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -312,11 +314,11 @@ An object \ccVar\ is valid, iff
   \item $S$ is minimal, i.e.\ no support point is redundant.
 \end{itemize}
 Using the traits class implementation for the \cgal\ kernel with exact
-arithmetic as described in Section~\ref{sec:opt_traits_impl}
-guarantees validity of \ccVar. The following function is mainly
-intended for debugging user supplied traits classes but also for
-convincing the anxious user that the traits class implementation is
-correct.
+arithmetic as described in
+Section~\ref{sec:min_circle_2_traits_impl_2D_kernel} guarantees
+validity of \ccVar. The following function is mainly intended for
+debugging user supplied traits classes but also for convincing the
+anxious user that the traits class implementation is correct.
 \begin{ccAdvanced}
 \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
@@ -363,8 +365,8 @@ correct.
 
 \ccc{CGAL_Min_ellipse_2}
   \ccTexHtml{(Section~\ref{sec:min_ellipse_2_spec})}{},
-\ccc{CGAL_Optimisation_traits_2}
-  \ccTexHtml{(Section~\ref{sec:opt_traits_impl_2D_kernel})}{},
+\ccc{CGAL_Min_circle_2_traits_2}
+  \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_impl_2D_kernel})}{},
 \linebreakByHand
 \ccc{CGAL_Min_circle_2_adapterC2}
   \ccTexHtml{(Section~\ref{sec:min_circle_2_traits_adapterC2})}{},
@@ -393,13 +395,13 @@ randomization can be useful in certain cases, we give an example.
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Optimisation_traits_2.h>
+#include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Min_circle_2.h>
 
 typedef  CGAL_Gmpz                      NT;
 typedef  CGAL_Homogeneous<NT>           R;
 typedef  CGAL_Point_2<R>                Point;
-typedef  CGAL_Optimisation_traits_2<R>  Traits;
+typedef  CGAL_Min_circle_2_traits_2<R>  Traits;
 typedef  CGAL_Min_circle_2<Traits>      Min_circle;
 
 int main()
@@ -423,5 +425,17 @@ int main()
 % -----------------------------------------------------------------------------
 
 \end{ccClassTemplate}
+
+% =============================================================================
+
+\input{Min_circle_2_traits_2}
+
+\input{Min_circle_2_adapterC2}
+\input{Min_circle_2_adapterH2}
+
+\input{requirements_adapterC2}
+\input{requirements_adapterH2}
+
+\input{requirements_Min_circle_2}
 
 % ===== EOF ===================================================================
