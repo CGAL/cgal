@@ -1,3 +1,20 @@
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
-  choose ?
-- why are the iterators friend in the ds_cell ?
+  choose ?  Is it worth the complexity (benchmark first) ?
+- Why are the iterators friend in the ds_cell ?
+- Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
+  facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
+  deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
+  d'etre plus rapide, non ?
+- coplanar_orientation()... faire marche arriere et recuperer l'ancienne
+  interface (ie sans Vector) ?
+- remove() : ca plante dans le prog de test de la hierarchie... a investiguer.
+  refaire marcher le vieux remove pour pouvoir tester (voire garder les deux
+  versions si c'est mieux).
+- hierarchie : verifier que l'interface est bonne (ie tous les insert(*) sont
+  interceptes...).  Documenter.
+- Traits : mettre a jour la doc.
+- locate() : verifier que l'interface est la meme que dans T2D concernant la
+  cellule de depart.  Plutot que prendre une cellule sur le bord, on peut
+  peut-etre prendre la premiere cellule de la liste, qui a de bonnes chances
+  d'y avoir ete mise recemment, et donc d'etre plus pret... ?
+- Faire des benchs/profiles de points non-randoms...
