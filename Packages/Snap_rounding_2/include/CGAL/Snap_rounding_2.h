@@ -99,6 +99,7 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
+  static Direction seg_dir;
 
 public:
   template<class Out>
@@ -107,13 +108,16 @@ public:
   ~Hot_Pixel();
   inline Point_2 get_center() const;
   inline Point_2 get_center(bool int_output) const;
-  bool intersect_left(const Segment_2& seg) const;
-  bool intersect_right(const Segment_2& seg) const;
-  bool intersect_bot(const Segment_2& seg) const;
-  bool intersect_top(const Segment_2& seg) const;
-  bool intersect(Segment_data<Rep> &seg) const;
-
+  bool intersect_left(const Segment_2& seg,Direction seg_dir) const;
+  bool intersect_right(const Segment_2& seg,Direction seg_dir) const;
+  bool intersect_bot(const Segment_2& seg,Direction seg_dir) const;
+  bool intersect_top(const Segment_2& seg,Direction seg_dir) const;
+  bool intersect(Segment_data<Rep> &seg,Direction seg_dir) const;
+  void set_direction(Direction inp_seg_dir) {seg_dir = inp_seg_dir;}
+  Direction get_direction() const {return(seg_dir);}
 };
+
+template<class Rep_> Direction Hot_Pixel<Rep_>::seg_dir;
 
 // a function for compare two hot pixels for the set of hot pixels
 template<class Rep_>
@@ -205,7 +209,6 @@ private:
         bool int_output,
         bool do_isr);
   //  void list_copy(std::list<Point_2>& target,std::list<Point_2>& source);
-  static inline Direction get_direction() {return(seg_dir);}
 };
 
 template<class Rep>
@@ -336,7 +339,8 @@ inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg) const
+bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg,
+        Direction seg_dir) const
   {
     Object result;    
     Point_2 p;
@@ -349,10 +353,8 @@ bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg) const
       Comparison_result c_target = _gt.compare_y_2_object()(seg.target(),p_up);
       Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),p_up);
 
-      return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
-             SEG_UP_LEFT && c_source != EQUAL ||
-             Snap_rounding_2<Rep_>::get_direction() ==
-             SEG_DOWN_RIGHT && c_target != EQUAL);
+      return(c_p != EQUAL || seg_dir == SEG_UP_LEFT && c_source != EQUAL ||
+             seg_dir == SEG_DOWN_RIGHT && c_target != EQUAL);
     } else if(assign(s,result))
       return(true);
     else
@@ -361,7 +363,8 @@ bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg) const
 
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
+bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg,
+         Direction seg_dir) const
   {
     Object result;    
     Point_2 p;
@@ -377,10 +380,8 @@ bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
       Comparison_result c4 = _gt.compare_y_2_object()(seg.target(),p_up);
 
       if(c1 == EQUAL)
-        return(Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_UP_RIGHT && c3 != EQUAL ||
-               Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_DOWN_LEFT && c4 != EQUAL);
+        return(seg_dir == SEG_UP_RIGHT && c3 != EQUAL ||
+               seg_dir == SEG_DOWN_LEFT && c4 != EQUAL);
       else if(c2 == EQUAL)
         return(false);// was checked
       else {
@@ -389,27 +390,18 @@ bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
         Comparison_result c_source =
              _gt.compare_x_2_object()(p_right,seg.source());
 
-        return((Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_LEFT ||
-                Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_DOWN_LEFT ||
-                Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_UP_LEFT) &&
-                c_target != EQUAL ||
-                (Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_RIGHT ||
-                Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_DOWN_RIGHT ||
-                Snap_rounding_2<Rep_>::get_direction() ==
-                SEG_UP_RIGHT) &&
-                c_source != EQUAL);
+        return((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
+                seg_dir == SEG_UP_LEFT) && c_target != EQUAL ||
+                (seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
+                seg_dir == SEG_UP_RIGHT) && c_source != EQUAL);
       }
     } else
       return(false);
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg) const
+bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg,
+         Direction seg_dir) const
   {
     Object result;
     Point_2 p;
@@ -424,10 +416,9 @@ bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg) const
       Comparison_result c_source = _gt.compare_x_2_object()
             (seg.source(),p_right);
 
-      return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
-             SEG_UP_LEFT && c_target != EQUAL ||
-             Snap_rounding_2<Rep_>::get_direction() ==
-             SEG_DOWN_RIGHT && c_source != EQUAL);
+      return(c_p != EQUAL || seg_dir == SEG_UP_LEFT &&
+             c_target != EQUAL || seg_dir == SEG_DOWN_RIGHT &&
+             c_source != EQUAL);
     } else if(assign(s,result))
       return(true);
     else
@@ -435,7 +426,8 @@ bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg) const
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_top(const Segment_2& seg) const
+bool Hot_Pixel<Rep_>::intersect_top(const Segment_2& seg,
+         Direction seg_dir) const
   {
     Object result;
     Point_2 p;
@@ -453,29 +445,22 @@ bool Hot_Pixel<Rep_>::intersect_top(const Segment_2& seg) const
       if(c1 == EQUAL || c2 == EQUAL)
         return(false);// were checked
       else
-        return((Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_DOWN ||
-               Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_DOWN_LEFT ||
-               Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_DOWN_RIGHT) && c3 != EQUAL ||
-               (Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_UP ||
-               Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_UP_LEFT ||
-               Snap_rounding_2<Rep_>::get_direction() ==
-               SEG_UP_RIGHT) && c4 != EQUAL);
+        return((seg_dir == SEG_DOWN || seg_dir == SEG_DOWN_LEFT ||
+               seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL ||
+               (seg_dir == SEG_UP || seg_dir == SEG_UP_LEFT ||
+               seg_dir == SEG_UP_RIGHT) && c4 != EQUAL);
     } else
     return(false);
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect(Segment_data<Rep_> &seg) const
+bool Hot_Pixel<Rep_>::intersect(Segment_data<Rep_> &seg,
+                                Direction seg_dir) const
   {
     Segment_2 s = seg.segment();
 
-    return(intersect_bot(s) || intersect_left(s) || intersect_right(s) ||
-           intersect_top(s));
+    return(intersect_bot(s,seg_dir) || intersect_left(s,seg_dir) ||
+           intersect_right(s,seg_dir) || intersect_top(s,seg_dir));
   }
 
 // a function for compare two hot pixels for the set of hot pixels
@@ -502,34 +487,18 @@ bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
       h1->get_center(),h2->get_center());
   Comparison_result cy = _gt.compare_y_2_object()(
       h1->get_center(),h2->get_center());
+  Direction seg_dir = h1->get_direction();
 
   return(
      // Point segment intersects only one pixel, thus ignored
-    Snap_rounding_2<Rep_>::get_direction() ==
-    SEG_UP_RIGHT &&
-    (cx == SMALLER || 
-    cx == EQUAL && cy == SMALLER) ||
-    Snap_rounding_2<Rep_>::get_direction() ==
-    SEG_UP_LEFT &&
-    (cx == LARGER || 
-    cx == EQUAL && cy == SMALLER) ||
-    Snap_rounding_2<Rep_>::get_direction() ==
-    SEG_DOWN_RIGHT &&
-    (cx == SMALLER || 
-    cx == EQUAL && cy == LARGER) ||
-    Snap_rounding_2<Rep_>::get_direction() ==
-    SEG_DOWN_LEFT &&
-    (cx == LARGER || 
-    cx == EQUAL && cy == LARGER) ||
-    Snap_rounding_2<Rep_>::get_direction() == SEG_UP &&
-    cy == SMALLER ||
-    Snap_rounding_2<Rep_>::get_direction() == SEG_DOWN &&
-    cy == LARGER ||
-    Snap_rounding_2<Rep_>::get_direction() == SEG_LEFT &&
-    cx == LARGER ||
-    Snap_rounding_2<Rep_>::get_direction() ==
-    SEG_RIGHT &&
-    cx == SMALLER);
+    seg_dir == SEG_UP_RIGHT && (cx == SMALLER || cx == EQUAL &&
+    cy == SMALLER) || seg_dir == SEG_UP_LEFT && (cx == LARGER || 
+    cx == EQUAL && cy == SMALLER) || seg_dir == SEG_DOWN_RIGHT &&
+    (cx == SMALLER || cx == EQUAL && cy == LARGER) ||
+    seg_dir == SEG_DOWN_LEFT && (cx == LARGER || cx == EQUAL &&
+    cy == LARGER) || seg_dir == SEG_UP && cy == SMALLER ||
+    seg_dir == SEG_DOWN && cy == LARGER || seg_dir == SEG_LEFT &&
+    cx == LARGER || seg_dir == SEG_RIGHT && cx == SMALLER);
 }
 
 template<class Rep_>
@@ -611,8 +580,10 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
 	   Segment_2(seg.segment()),pixel_size);
 
     for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
-      if((*iter)->intersect(seg))
+      if((*iter)->intersect(seg,seg_dir)) {
+        (*iter)->set_direction(seg_dir);
         hot_pixels_intersected_set.insert(*iter);
+      }
     }
 
     number_of_intersections = hot_pixels_intersected_set.size();
