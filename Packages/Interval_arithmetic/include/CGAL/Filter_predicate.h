@@ -28,35 +28,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// This template class is a generic wrapper that implements the filtering
-// for all predicates.
+// This template class is a wrapper that implements the filtering for all
+// predicates (dynamic filters with IA).
 
 // TODO :
-// - CGAL_IA_PROTECTED... this should generalized somehow, if possible.
 // - each predicate in the default kernel should define a tag that says if it
 //   wants to be filtered or not (=> all homogeneous predicate define this tag).
 //   We could even test-suite that automatically.
 // - same thing for constructions => virtual operator() ?
 // - similarly, constructions should have a tag saying if they can throw or
 //   not, or we let all this up to the compiler optimizer to figure out ?
+// - The operators() should probably not be inline (?).
 // - Potential caching is done at the Point_2 level.
-// - The operators() should probably NOT be inline.
 
-#if 0
-// Simple function to check if 2 arguments have the same type.
-template < class T >
-inline void
-same_type_checker(const T&, const T&)
-{}
-#endif
 
-template <class EP, class AP, class EC, class AC>
+template <class EP, class AP, class EC, class AC, bool Protection = true>
 class Filtered_predicate
 {
-  // The following was a template param in the old Filtered_exact<> scheme.
-  // Maybe I can do something about that.
-  static const bool CGAL_IA_PROTECTED = true;
-
   EP Exact_predicate;
   AP Approx_predicate;
   EC To_Exact;
@@ -67,6 +55,13 @@ public:
   typedef typename AP::result_type  result_type;
 
 #if 0
+  // Simple function to check if 2 arguments have the same type.
+  template < class T >
+  inline
+  void
+  same_type_checker(const T&, const T&)
+  {}
+
   Filtered_predicate()
   {
     same_type_checker(typename AP::result_type(), typename EP::result_type());
@@ -79,12 +74,12 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1));
     }
   }
@@ -95,12 +90,12 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2));
     }
   }
@@ -111,12 +106,12 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3));
     }
   }
@@ -127,13 +122,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4));
     }
@@ -146,13 +141,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5));
     }
@@ -165,13 +160,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5), To_Approx(a6));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6));
     }
@@ -185,44 +180,20 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+      Protect_FPU_rounding<Protection> Protection;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5), To_Approx(a6), To_Approx(a7));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6), To_Exact(a7));
     }
   }
 
-  // idem for >7... arguments.  Do it on demand.
+  // Idem for more than 7 arguments.  Do it on demand.
 };
-
-
-#if 0 // attempt to make orientation_3 non-inline.
-template <class EP, class AP, class EC, class AC>
-  template <class A1, class A2, class A3, class A4>
-  inline
-  typename Filtered_predicate<EP,AP,EC,AC>::result_type
-  Filtered_predicate<EP,AP,EC,AC>::operator()(const A1 &a1, const A2 &a2,
-	  const A3 &a3, const A4 &a4) const
-  {
-    try
-    {
-      Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
-      return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
-	      To_Approx(a4));
-    }
-    catch (Interval_nt_advanced::unsafe_comparison)
-    {
-      Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
-      return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
-	      To_Exact(a4));
-    }
-  }
-#endif
 
 CGAL_END_NAMESPACE
 
