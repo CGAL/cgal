@@ -9,10 +9,6 @@ A model for this must provide:
 \ccHidden \ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Line_2 &h);}
  	    {copy constructor.}
 
-\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c);}
-            {introduces a line  with the line equation in Cartesian
-	      coordinates $ax +by +c = 0$.}
-
 \ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Point_2 &p, const Kernel::Point_2 &q);}
             {introduces a line  passing through the points $p$ and $q$. 
              Line  is directed from $p$ to $q$.}
