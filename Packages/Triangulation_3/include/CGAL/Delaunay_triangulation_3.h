@@ -33,6 +33,27 @@ class CGAL_Delaunay_triangulation_3 : public CGAL_Triangulation_3<Gt,Tds>
 {
 public:
   
+  typedef typename Gt::Point Point;
+  typedef typename Gt::Segment Segment;
+  typedef typename Gt::Triangle Triangle;
+  typedef typename Gt::Tetrahedron Tetrahedron;
+
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell Cell;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex Vertex;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet Facet;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge Edge;
+
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_circulator Cell_circulator;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_iterator Cell_iterator;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet_iterator Facet_iterator;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge_iterator Edge_iterator;
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_iterator Vertex_iterator;
+
+  typedef typename CGAL_Triangulation_3<Gt,Tds>::Locate_type Locate_type;
+
   CGAL_Delaunay_triangulation_3()
     : CGAL_Triangulation_3<Gt,Tds>() {}
   
