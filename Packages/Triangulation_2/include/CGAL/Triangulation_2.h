@@ -151,11 +151,14 @@ public:
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
-  bool is_edge(Vertex_handle va, Vertex_handle vb);
+  bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
-	       int & i);
+	       int & i) const;
   bool includes_edge(Vertex_handle va, Vertex_handle & vb,
-		     Face_handle& fr, int & i);
+		     Face_handle& fr, int & i) const;
+  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
+  //bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3
+  //     Face_handle &fr) const;
 
  // GEOMETRIC FEATURES
   Triangle triangle(const Face_handle& f) const;
@@ -521,7 +524,7 @@ is_infinite(const All_edges_iterator& ei) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
-is_edge(Vertex_handle va, Vertex_handle vb)
+is_edge(Vertex_handle va, Vertex_handle vb) const
 {
   return _tds.is_edge( &(*(va)), &(*(vb)));
 }
@@ -529,7 +532,7 @@ is_edge(Vertex_handle va, Vertex_handle vb)
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
-is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i)
+is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const
 {
   Face* f ;
   bool b = _tds.is_edge( &(*(va)), &(*(vb)), f, i);
@@ -541,7 +544,7 @@ template <class Gt, class Tds >
 bool 
 Triangulation_2<Gt, Tds>::
 includes_edge(Vertex_handle va, Vertex_handle & vb,
-	      Face_handle& fr, int & i)
+	      Face_handle& fr, int & i) const
   // returns true if the line segment ab contains an edge e of t 
   // incident to a, false otherwise
   // if true, b becomes the vertex of e distinct from a

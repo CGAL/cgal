@@ -109,8 +109,8 @@ public:
 
   // TEST FEATURES
   bool is_vertex(const Vertex* v) const;
-  bool is_edge(const Vertex* v1, const Vertex* v2);
-  bool is_edge(const Vertex* v1, const Vertex* v2, Face* &fr,  int &i);
+  bool is_edge(const Vertex* va, const Vertex* vb) const;
+  bool is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int &i) const;
   //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3) const;
   //bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
   //     Face* &fr) const;
@@ -179,7 +179,7 @@ private:
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb> ::
 Triangulation_default_data_structure_2(const Geom_traits& gt) 
-  :  _geom_traits(),_infinite_vertex(NULL),
+  :  _geom_traits(gt),_infinite_vertex(NULL),
      _number_of_vertices(0),_dimension(-1)
 { }
 
@@ -259,7 +259,7 @@ is_vertex(const Vertex* v) const
 template <class Gt , class Vb, class Fb>
 bool
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-is_edge(const Vertex* va, const Vertex* vb)
+is_edge(const Vertex* va, const Vertex* vb) const
 // returns true (false) if the line segment ab is (is not) an edge of t
 {
   Vertex_circulator vc= va->incident_vertices(), done(vc);
@@ -274,7 +274,7 @@ is_edge(const Vertex* va, const Vertex* vb)
 template <class Gt , class Vb, class Fb>
 bool
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i)
+is_edge(const Vertex* va, const Vertex* vb, Face* &fr,  int & i) const
 // returns true (false) if the line segment ab is (is not) an edge of t
 // (fr,i) is the edge ab
   // with face fr on the right of a->b
