@@ -34,10 +34,10 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   setCaption("CGAL::Qt_widget");
 
   // initialize ranges and scales
-  xmin = -1;
-  xmax = 1;
-  ymin = -1;
-  ymax = 1;
+  xmin_old = xmin = -1;
+  xmax_old = xmax = 1;
+  ymin_old = ymin = -1;
+  ymax_old = ymax = 1;
   constranges=false;
   set_scales();
   emit(rangesChanged());
@@ -112,6 +112,10 @@ void Qt_widget::set_center(const double x, const double y)
     ymin = y - (height()/yscal)/2;
     ymax = y + (height()/yscal)/2;
   }
+  xmin_old = xmin;
+  xmax_old = xmax;
+  ymin_old = ymin;
+  ymax_old = ymax;  
   redraw();
   emit(rangesChanged());
 }
@@ -141,6 +145,10 @@ void Qt_widget::resize_pixmap()
 void Qt_widget::resizeEvent(QResizeEvent*)
 {
   resize_pixmap();
+  xmin = xmin_old;
+  xmax = xmax_old;
+  ymin = ymin_old;
+  ymax = ymax_old;
   set_scales();
   redraw();
 }
@@ -360,10 +368,10 @@ void Qt_widget::set_window(const double x_min, const double x_max,
 			   const double y_min, const double y_max,
 			   bool const_ranges)
 {
-  xmin = x_min;
-  xmax = x_max;
-  ymin = y_min;
-  ymax = y_max;
+  xmin_old = xmin = x_min;
+  xmax_old = xmax = x_max;
+  ymin_old = ymin = y_min;
+  ymax_old = ymax = y_max;
   constranges = const_ranges;
   set_scales();
   redraw();

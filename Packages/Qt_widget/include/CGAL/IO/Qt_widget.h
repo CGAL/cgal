@@ -72,10 +72,10 @@ public:
 
   inline void move_center(double distx, double disty) 
   {    
-    xmin += distx;
-    xmax += distx;
-    ymin += disty;
-    ymax += disty;
+    xmin += distx; xmin_old += distx;
+    xmax += distx; xmax_old += distx;
+    ymin += disty; ymin_old += disty;
+    ymax += disty; ymax_old += disty;
     redraw();
     emit(rangesChanged());
   }
@@ -282,6 +282,8 @@ private:
   // setFilled(true)
 
   double    xmin, xmax, ymin, ymax; // real dimensions
+  double    xmin_old, xmax_old, ymin_old, ymax_old;
+            //backup ranges for resize
   double    xscal, yscal; // scales int/double
   bool      constranges; // tell if the ranges should be const
 
