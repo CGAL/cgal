@@ -987,6 +987,132 @@ A simple class I with a short single character name. No cross linking rules
 \end{ccClassTemplate}
 
 % ----------------------------------------------------------------------
+\section{Switch Off Linking and Indexing}
+
+\ccThree{boolx}{a.link5( LinkB a, B b)}{}
+\ccThreeToTwo
+
+\ccHtmlNoClassIndex\ccHtmlNoLinks
+\begin{ccClass}{LinkA}
+\ccCreationVariable{a}
+
+A class \ccClassName\ with \verb+\ccHtmlNoClassIndex+ and
+\verb+\ccHtmlNoLinks+ to suppress cross linking:
+
+  \ccFunction{
+     bool link1(const LinkA& a, const B& b);}{%
+             a function is still indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link2(const LinkA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccClass}
+
+
+\begin{ccClass}{LinkB}
+\ccCreationVariable{b}
+
+A class \ccClassName\ without \verb+\ccHtmlNoClassIndex+ but the individual
+declarations are prefixed with \verb+\ccHtmlNoIndex+ and 
+\verb+\ccHtmlNoLinks+:
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link3(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link4(const LinkB& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex
+  \ccStruct{struct LocalY {};}{a nested struct explicitly not indexed.}
+\end{ccClass}
+
+The same for a global function and struct.
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link5(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccStruct{struct GlobalX {};}{a global struct explicitly not indexed and 
+                                not linked.}
+  \ccGlue
+  \ccStruct{struct GlobalY {};}{a global struct indexed and linked.}
+
+
+% ----------------------------------------------------------------------
+\section{Member Function versus Function for Operators}
+
+\begin{ccClass}{CGAL_Geomview_stream}
+\ccCreationVariable{G}
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Point_2<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar. (global function)}
+
+\ccMethod{template <class R>
+          CGAL_Geomview_stream&
+          operator<<(const CGAL_Point_2<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar. (member function)}
+\end{ccClass} 
+
+% ----------------------------------------------------------------------
+\section{Operators Formatted as Functions}
+\begin{ccClass}{FctClass}
+\ccCreationVariable{f}
+
+Use default settings.
+
+\ccGlueBegin
+\ccMethod{void method() const;}{Normal Const Method.}
+\ccMethod{void operator+(FctClass b) const;}{Normal Const Operator.}
+\ccMethod{void operator()();}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i);}{Fct. Operator.}
+\ccMethod{void operator()() const;}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i, double d) const;}{Fct. Operator.}
+\ccMethod{operator int();}{Conversion Operator.}
+\ccGlueEnd
+
+Format full declarations.
+
+\ccTagFullDeclarations
+
+\ccGlueBegin
+\ccMethod{void method() const;}{Normal Const Method.}
+\ccMethod{void operator+(FctClass b) const;}{Normal Const Operator.}
+\ccMethod{void operator()();}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i);}{Fct. Operator.}
+\ccMethod{void operator()() const;}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i, double d) const;}{Fct. Operator.}
+\ccMethod{operator int();}{Conversion Operator.}
+\ccGlueEnd
+
+\ccTagDefaults
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Verbatim Environment}
+
+\begin{verbatim}
+int     x;  // Blabal lkjhdfls hf.s //
+int     i;  // This is an int.      //
+double  d;           //     Double. //
+\end{verbatim}
+
+
+% ----------------------------------------------------------------------
 \end{document}
 
 % EOF %
