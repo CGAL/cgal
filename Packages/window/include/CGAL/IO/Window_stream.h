@@ -32,9 +32,10 @@
 #ifndef IO_TRIANGULATION_WINDOW_STREAM_H
 #include <CGAL/IO/triangulation_Window_stream.h>
 #endif  // IO_TRIANGULATION_WINDOW_STREAM_H
-#ifndef IO_OPTIMISATION_WINDOW_STREAM_H
-#include <CGAL/IO/optimisation_Window_stream.h>
-#endif // IO_OPTIMISATION_WINDOW_STREAM_H
+
+#include <CGAL/IO/Min_circle_2_Window_stream.h>
+#include <CGAL/IO/Min_ellipse_2_Window_stream.h>
+
 #ifndef IO_POLYGON_WINDOW_STREAM_H
 #include <CGAL/IO/polygon_Window_stream.h>
 #endif // IO_POLYGON_WINDOW_STREAM_H
