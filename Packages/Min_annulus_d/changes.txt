@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.0.5 on 21-Mar-2001
+- still playing around with the file header
+
 Version 1.0.4 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
