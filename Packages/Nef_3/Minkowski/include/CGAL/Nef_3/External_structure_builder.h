@@ -1,0 +1,111 @@
+#ifndef CGAL_NEF3_EXTERNAL_STRUCTURE_BUILDER_H
+#define CGAL_NEF3_EXTERNAL_STRUCTURE_BUILDER_H
+
+#include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_S2/SM_walls.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template<typename Nef_>
+class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_PL> {
+  
+  typedef Nef_                                   Nef_polyhedron;
+  typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
+  typedef typename Nef_polyhedron::SNC_structure SNC_structure;
+  typedef CGAL::SNC_decorator<SNC_structure>     Base;
+  typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
+  typedef CGAL::SNC_intersection<SNC_structure>  SNC_intersection;
+  typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
+
+  typedef typename SNC_structure::Sphere_map     Sphere_map;
+  typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;  
+  typedef CGAL::SM_point_locator<SM_decorator>   SM_point_locator; 
+  typedef CGAL::SM_walls<Sphere_map>             SM_walls;
+
+  typedef typename Base::Segment_3               Segment_3;
+  typedef typename Base::Point_3                 Point_3;
+  typedef typename Base::Ray_3                   Ray_3;
+  typedef typename Base::Vector_3                Vector_3;
+  typedef typename Base::Sphere_point            Sphere_point;
+  typedef typename Base::Sphere_circle           Sphere_circle;
+  typedef typename Base::Sphere_segment          Sphere_segment;
+  typedef typename Base::Vertex_handle           Vertex_handle;
+  typedef typename Base::Halfedge_handle         Halfedge_handle;
+  typedef typename Base::Halffacet_handle        Halffacet_handle;
+  typedef typename Base::SVertex_handle          SVertex_handle;
+  typedef typename Base::SHalfedge_handle        SHalfedge_handle;
+  typedef typename Base::SHalfloop_handle        SHalfloop_handle;
+  typedef typename Base::SFace_handle            SFace_handle;
+  typedef typename Base::Object_handle           Object_handle;
+
+  typedef typename Base::SFace_iterator          SFace_iterator;
+  typedef typename Base::SHalfedge_iterator      SHalfedge_iterator;
+  typedef typename Base::SFace_cycle_iterator    SFace_cycle_iterator;
+  typedef typename Base::SHalfedge_around_sface_circulator
+    SHalfedge_around_sface_circulator;
+
+  Halfedge_handle ein;
+  Vector_3 dir;
+  
+ public:
+  External_structure_builder() {}
+
+  void operator()(SNC_and_PL& sncpl) {
+
+    SNC_structure* sncp(sncpl.sncp);
+    SNC_point_locator* pl(sncpl.pl);
+
+    CGAL::SNC_io_parser<SNC_structure> O(std::cerr, *sncp, false);
+    O.print();
+  
+    Unique_hash_map<SHalfedge_handle, SFace_handle> sedge2sface;
+    
+    SFace_iterator sfi;
+    CGAL_forall_sfaces(sfi, *sncp) {
+      SFace_cycle_iterator sfc;
+      for(sfc = sfi->sface_cycles_begin(); sfc != sfi->sface_cycles_end(); ++sfc) {
+	if(sfc.is_shalfedge()){
+	  SHalfedge_around_sface_circulator eaf(sfc), end(eaf);
+	  CGAL_For_all(eaf,end) {
+	    SHalfedge_handle se(eaf);
+	    sedge2sface[eaf] = sfi;
+	  }
+	}
+      }
+    }
+
+    SHalfedge_iterator sei;
+    CGAL_forall_shalfedges(sei, *sncp) {
+      SHalfedge_handle se(sei);
+      if(sedge2sface[se] == SFace_handle()) {
+	SM_decorator SD(&*sei->source()->source());
+	SFace_handle sf_new = SD.new_sface();
+	sf_new->mark() = sei->incident_sface()->mark();
+	SD.link_as_face_cycle(sei, sf_new);
+	
+	SHalfedge_around_sface_circulator eaf(se), end(eaf);
+	CGAL_For_all(eaf,end) {
+	  SHalfedge_handle se(eaf);
+	  sedge2sface[eaf] = sf_new;
+	}	
+
+	// TODO: relink inner sface cycles
+      }
+    }
+
+    CGAL::SNC_io_parser<SNC_structure> O0(std::cerr, *sncp, false);
+    O0.print();
+
+    SNC_point_locator* old_pl = pl;
+    pl = pl->clone();
+    sncpl.pl = pl;
+    delete old_pl;
+    SNC_constructor C(*sncp,pl);
+    C.clear_external_structure();
+    C.build_external_structure();
+  }
+};
+
+CGAL_END_NAMESPACE
+#endif //CGAL_NEF3_EXTERNAL_STRUCTURE_BUILDER_H
