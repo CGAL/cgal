@@ -944,7 +944,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // the infinite vertex is numbered 0
   int i = 1;
 
-  for(Vertex_iterator it=tr.all_vertices_begin(); it!=tr.vertices_end(); it++)
+  for(Vertex_iterator it=tr.all_vertices_begin(); it!=tr.vertices_end(); ++it)
     if ( (&(*it)) != &(*(tr.infinite_vertex())) ) {
       V[&(*it)] = i++;
       os << *it; // uses the << operator of Vertex
@@ -961,19 +961,19 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   switch ( tr.dimension() ) {
   case 3:
     {
-      for(Cell_iterator it=tr.all_cells_begin(); it != tr.cells_end(); it++)
+      for(Cell_iterator it=tr.all_cells_begin(); it != tr.cells_end(); ++it)
 	os << *it; // other information
       break;
     }
   case 2:
     {
-      for(Facet_iterator it=tr.all_facets_begin(); it != tr.facets_end(); it++)
+      for(Facet_iterator it=tr.all_facets_begin(); it != tr.facets_end(); ++it)
 	os << *((*it).first); // other information
       break;
     }
   case 1:
     {
-      for(Edge_iterator it=tr.all_edges_begin(); it != tr.edges_end(); it++)
+      for(Edge_iterator it=tr.all_edges_begin(); it != tr.edges_end(); ++it)
 	os << *((*it).first); // other information 
       break;
     }

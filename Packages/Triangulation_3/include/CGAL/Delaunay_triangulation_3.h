@@ -452,14 +452,14 @@ undo_make_hole_3D(std::list<Facet> & outside,
 {
   std::list<Facet>::iterator cit = inside.begin();
   for(std::list<Facet>::iterator fit = outside.begin(); fit != outside.end();
-      fit++) {
+      ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, (*cit).first);
     CGAL_triangulation_assertion( (*cit).first->neighbor((*cit).second) == ch);
     for(int i = 0; i < 4; i++)
       ch->vertex(i)->set_cell(ch);
 
-    cit++;
+    ++cit;
   }
 }
 
@@ -470,7 +470,7 @@ Delaunay_triangulation_3<Gt,Tds>::
 delete_cells(std::list<Cell_handle> & hole, int /*dummy_for_windows*/)
 {
   for(std::list<Cell_handle>::iterator cit = hole.begin(); cit != hole.end();
-	  cit++)
+	  ++cit)
     _tds.delete_cell( &*(*cit) );
 }
 
@@ -479,7 +479,7 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 delete_cells(std::list<Facet> & hole)
 {
-  for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); cit++)
+  for(std::list<Facet>::iterator cit = hole.begin(); cit != hole.end(); ++cit)
     _tds.delete_cell( &*((*cit).first) );
 }
 
@@ -1556,10 +1556,10 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
   std::list<Cell_handle>::iterator cit = hole.begin();
   for(std::list<Facet>::iterator fit = boundhole.begin();	
       fit != boundhole.end();
-      fit++) {
+      ++fit) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, *cit);
-    cit++;
+    ++cit;
     // the vertices on the boundary of the hole still
     // point to the cells that form the boundary of the hole
   }
@@ -1638,8 +1638,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	bool on_unbounded_side = false;
 	// we now look at all vertices that are on the boundary of the hole
 	for(Surface::Vertex_iterator vit = surface.vertices_begin();
-	    (vit != surface.vertices_end());
-	    vit++) {
+	    vit != surface.vertices_end();
+	    ++vit) {
 	  Vertex *v = (*vit).info();
 	  if( (! is_infinite(Vertex_handle(v)))
 	      && (v != v0) && (v != v1) && (v != v2) && (v != v3)) {
@@ -1703,7 +1703,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    
 	    for(std::set<Vertex_3_2*>::iterator it = cospheric_vertices.begin();
 		it != cospheric_vertices.end();
-		it++) {
+		++it) {
 	      const Point & pit = (*it)->info()->point();
 	      Vertex_circulator_3_2 vc = (*it)->incident_vertices();
 	      Vertex_circulator_3_2 done = vc;

@@ -1,14 +1,14 @@
 
 #ifndef CGAL_DELAUNAY_REMOVE_TDS_3_H
-#define CGAL_DELAUNAY_REMOVE_TDS_3_H 1
-#ifndef CGAL_BASIC_H
+#define CGAL_DELAUNAY_REMOVE_TDS_3_H
+
 #include <CGAL/basic.h>
-#endif
 
 #include <map>
 #include <CGAL/quadruple.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_using_list_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // Instead of deriving from Triangulation_vertex_base_2<Gt> we copy the code
@@ -259,7 +259,7 @@ public:
 
     for(Facet_iterator fit = boundhole.begin() ; 
 	fit != boundhole.end(); 
-	fit++) {
+	++fit) {
       Face_3_2 * f = create_face();
 
       Facet facet = *fit;
@@ -335,9 +335,9 @@ public:
 
     for(std::vector<Halfedge>::iterator it = halfedges.begin();
 	it != halfedges.end();
-	it++) {
+	++it) {
       Halfedge e1 = *it;
-      it++;
+      ++it;
       Halfedge e2 = *it;
       e1.third->set_neighbor(e1.fourth, e2.third);
       e2.third->set_neighbor(e2.fourth, e1.third);
@@ -350,7 +350,7 @@ public:
 
     Face_3_2 *f = dummy;
 
-    for( Face_iterator fit = faces_begin(); fit != faces_end(); fit++) {
+    for( Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
       f->set_n(&(*fit));
       fit->set_p(f);
       f = &(*fit);
@@ -363,11 +363,8 @@ public:
     ((Face_3_2*)dummy->n())->set_p(f);
     delete(dummy);
   }
-
-
 };
 
-
 CGAL_END_NAMESPACE
-#endif // CGAL_DELAUNAY_REMOVE_TDS_3_H //
-// EOF //
+
+#endif // CGAL_DELAUNAY_REMOVE_TDS_3_H
