@@ -25,37 +25,9 @@
 #define CGAL_TRIANGULATION_HIERARCHY_3_H
 
 #include <CGAL/Random.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class Vbb>
-class Triangulation_hierarchy_vertex_base_3
-  : public Vbb
-{
-public:
-  typedef Vbb                      V_Base;
-  typedef typename V_Base::Point   Point;
-
-  Triangulation_hierarchy_vertex_base_3()
-    : V_Base(), _up(0), _down(0) {}
-
-  Triangulation_hierarchy_vertex_base_3(const Point & p, void* f)
-    : V_Base(p,f), _up(0), _down(0) {}
-
-  Triangulation_hierarchy_vertex_base_3(const Point & p)
-    : V_Base(p), _up(0), _down(0) {}
-
-public:  // for use in Triangulation_hierarchy only
-  //  friend class Triangulation_hierarchy_3;
-  void* up() const {return _up;}
-  void* down() const {return _down;}
-  void set_up(void *u) {_up=u;}
-  void set_down(void *d) {if (this) _down=d;}
-
-private:
-  void* _up;    // same vertex one level above
-  void* _down;  // same vertex one level below
-};
 
 // parameterization of the  hierarchy
 //const float Triangulation_hierarchy_3__ratio    = 30.0;

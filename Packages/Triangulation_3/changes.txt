@@ -1,3 +1,6 @@
+Version 1.53 (?? May 01)
+- Put Triangulation_hierarchy_vertex_base_3 in its own file.
+
 Version 1.52 (22 May 01)
 - Regular works again.
 - Fix memleak in TDS.
