@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.29 (8/1/04)
+- Moved Handle concept documentation to Circulator.
+- Removed obsolete Pointer class.
+
 ver 8.28 (29/12/03)
 - fixed a bug in Line_face_circular operators == and !=
   (bug subsequent to changes made for handles defined as iterators)
