@@ -121,7 +121,7 @@ public:
   typedef X_monotone_curve_2                    X_curve;
 
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using TPM::halfedges_begin;
   using TPM::halfedges_end;
   using TPM::vertices_begin;

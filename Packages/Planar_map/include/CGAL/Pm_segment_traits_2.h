@@ -71,7 +71,7 @@ protected:
     
 public:
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Kernel::compare_x_2_object;
   using Kernel::is_vertical_2_object;
   using Kernel::construct_vertex_2_object;
