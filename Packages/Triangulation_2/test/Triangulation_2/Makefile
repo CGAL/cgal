@@ -5,14 +5,8 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_CC-4.2_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_mips_IRIX-6.2_CC-n32-7.20_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-5/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.8.1_LEDA
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66
+
+CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -25,8 +19,8 @@ CXXFLAGS = \
 	-I./include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
-	-g \
-	-B$(UTIL)/Binutils/SunOS/bin/ 
+	-g 
+#	-B$(UTIL)/Binutils/SunOS/bin/ 
 #	$(LONG_NAME_PROBLEM_CXXFLAGS) 
 #	-g \
 #       -B$(UTIL)/Binutils/SunOS/bin/ 
