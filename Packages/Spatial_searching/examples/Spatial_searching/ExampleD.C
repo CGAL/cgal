@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 #include <vector>
 #include <numeric>
 #include <cassert>

@@ -1,6 +1,7 @@
 // Approximate spatial searching: Example08.C
 // Example illustrating for each separate splitting rule 
 // building a kd-tree using orthogonal priority search
+#include <CGAL/basic.h>
 
 #include <vector>
 #include <numeric>
