@@ -1,7 +1,9 @@
 19 October 2004 Laurent Rineau
-- Revert changes from 2004/10/17. Refine_edges_for_refine_faces no longer
-y exists.
-
+- Revert changes from 2004/10/17. Refine_edges_for_refine_faces no
+  longer exists. The conflicts zone of a point is calculated by using
+  propagate_conflicts(), from the CDT. For that, Refine_edges uses a
+  special Triangulation_mesher_level_traits_2.
+- Special_zone is now useless.
 
 18 October 2004 Laurent Rineau
 - Conforming_Delaunay_triangulation_maker_2 renamed to 
