@@ -9,7 +9,7 @@ Stuff to look at, as time permits:
   Check if it's ok (correct and as efficient), and tell Frank to do so.
   The name of this file doesn't have anything to do with what is inside anyway.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
-- SphereC3 should use Handle_for<>.
+- SphereC3 should be tested...  Sphere_3<R> is missing right now, so...
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable on
