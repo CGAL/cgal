@@ -110,8 +110,8 @@ int test()
   Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
 #ifdef CGAL_USE_LEDA
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
-  Quotient<leda_integer> jj (4,5);
-  Interval_nt nt = convert_to<Interval_nt_advanced>(jj);
+  Filtered_exact< Quotient<leda_integer>, Quotient<leda_integer> > jj (4,5);
+  Interval_nt nt = jj.interval();
   cout << nt << endl;
 #endif // CGAL_USE_LEDA
   px=1; py=2; la=3; lb=4; lc=5;
