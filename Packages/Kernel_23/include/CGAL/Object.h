@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
 // file          : include/CGAL/Object.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : Object.lw 
-// revision      : 3.0
-// revision_date : 02 Feb 2000
+// package       : Kernel_basic
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan.Schirra  <Stefan.Schirra@mpi-sb.mpg.de>
 //                 Andreas Fabri
 //                 Geert-Jan Giezeman

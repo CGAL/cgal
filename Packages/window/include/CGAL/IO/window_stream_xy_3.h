@@ -9,15 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, August 22
+// release_date  : 
 //
 // file          : IO/window_stream_xy_3.h
-// package       : window (2.7.1)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
+// package       : window
 // chapter       : $CGAL_Chapter: Window Stream $
-// source        : 
-// revision      : 2.1.3 
-// revision_date : 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Lutz Kettner 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)

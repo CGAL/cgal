@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, December 13
+// release_date  : 
 // 
-// source        : Real.fw
 // file          : leda_real.h
-// package       : Number_types (4.2)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 4.2
-// revision_date : 13 Dec 2000 
+// package       : Number_types
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

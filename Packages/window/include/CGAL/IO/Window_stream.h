@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, August 22
+// release_date  : 
 // 
-// source        : leda_window.fw
 // file          : Window_stream.h
-// package       : window (2.7.1)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 2.7
-// revision_date : 21 Aug 2000 
+// package       : window
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

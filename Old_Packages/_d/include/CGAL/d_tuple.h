@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, July 20
+// release_date  : 
 // 
-// source        : ddim_points.fw
 // file          : d_tuple.h
-// package       : _d (2.4)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 2.4
-// revision_date : 20 Jul 2000 
+// package       : _d
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Sven Schoenherr
 //                 Bernd Gaertner
 //

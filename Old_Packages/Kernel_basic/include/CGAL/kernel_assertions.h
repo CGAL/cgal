@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
-// source        : Generated from script create_assertions.sh
 // file          : include/CGAL/kernel_assertions.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
+// package       : Kernel_basic
 // revision      :
-// revision_date : 15 Mar 1999 
+// revision_date : $Date$
 // author(s)     : script by Geert-Jan Giezeman and Sven Schönherr 
 //
 // coordinator   : MPI, Saarbruecken

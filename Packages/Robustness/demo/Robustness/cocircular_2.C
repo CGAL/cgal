@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : orientation.fw
 // file          : demo/Robustness/cocircular_2.C
-// revision      : 1.5
-// revision_date : 20 Sep 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
-// source        : Traits_helpers.lw
 // file          : include/CGAL/Kernel/traits_aids.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 0.95
-// revision_date : 22 Feb 2000
+// package       : Kernel_basic
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken

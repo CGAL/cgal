@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : test_kernel_programs.fw
 // file          : include/CGAL/rat_leda.h
-// revision      : 3.8
-// revision_date : 08 Oct 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

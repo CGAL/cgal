@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : test_window_stream_xy_3.fw
 // file          : test/WindowStream/test_window_stream_xy_3.C
-// revision      : 2.7
-// revision_date : 21 Aug 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Lutz Kettner
 //                 Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

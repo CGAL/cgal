@@ -10,14 +10,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, July 30
+// release_date  : 
 // 
-// source        : PV_decl_2.fw
 // file          : include/CGAL/point_vector_declarations_2.h
-// package       : _2 (3.6)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.6
-// revision_date : 30 Jul 2000 
+// package       : _2
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

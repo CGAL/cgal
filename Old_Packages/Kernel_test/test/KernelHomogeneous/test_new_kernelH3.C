@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : NewKernel/test_programs.fw
 // file          : test/KernelHomogeneous/test_new_kernelH3.C
-// revision      : 3.8
-// revision_date : 08 Oct 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

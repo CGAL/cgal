@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 // 
-// source        : user_classes.fw
 // file          : basic_classes.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.17
-// revision_date : 10 Dec 2000 
+// package       : Kernel_basic
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Andreas Fabri
 //                 Stefan Schirra
 //

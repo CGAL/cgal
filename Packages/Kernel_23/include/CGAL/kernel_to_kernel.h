@@ -10,14 +10,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 // 
-// source        : webmisc/kernel_to_kernel.fw
 // file          : include/CGAL/kernel_to_kernel.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.17
-// revision_date : 10 Dec 2000 
+// package       : Kernel_basic
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : NewKernel/test_programs.fw
 // file          : test/NewKernel/test_new_kernelH2.C
-// revision      : 3.2
-// revision_date : 04 Apr 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

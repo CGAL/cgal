@@ -12,13 +12,11 @@
 // release       :
 // release_date  :
 // 
-// source        : test_new_kernel.fw
 // file          : test/Kernel/include/CGAL/_test_new_3.h
-// revision      : 3.8
-// revision_date : 08 Oct 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Michael Seel
 //                 Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

@@ -9,12 +9,10 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
 // file          : CGAL/assertions.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : 
+// package       : Kernel_basic
 // author(s)     : Geert-Jan Giezeman and Sven Schönherr
 //
 // coordinator   : MPI, Saarbruecken

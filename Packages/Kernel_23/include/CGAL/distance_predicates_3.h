@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, October 15
+// release_date  : 
 // 
-// source        : distance_predicates_3.fw
 // file          : distance_predicates_3.h
-// package       : _3 (3.9)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.9
-// revision_date : 15 Oct 2000 
+// package       : _3
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
 // file          : iterator_traits_pointer_specs_for_cartesian_quotient.h
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : bangbang.lw
-// revision      : 2.7.1
-// revision_date : 06 Oct 1999
+// package       : Kernel_basic
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken

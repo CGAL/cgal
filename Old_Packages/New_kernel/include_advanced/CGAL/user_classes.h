@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : advanced_user_classes.fw
 // file          : user_classes.h
-// revision      : 3.4
-// revision_date : 07 Apr 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Herve Broennimann
 //                 Stefan Schirra
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

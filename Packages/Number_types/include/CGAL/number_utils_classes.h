@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 13
+// release_date  : 
 //
 // file          : include/CGAL/number_utils_classes.h
-// package       : Number_types (4.2)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : 
-// revision      : 2.0.5
-// revision_date : 14 Mar 99
+// package       : Number_types
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)

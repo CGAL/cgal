@@ -12,10 +12,9 @@
 // release       :
 // release_date  :
 // 
-// source        : Test.fw
 // file          : Ieee_float.h
-// revision      : 2.5
-// revision_date : 08 Oct 1999 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken

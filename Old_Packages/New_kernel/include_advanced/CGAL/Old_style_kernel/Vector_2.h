@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : web_2/advanced_2.fw
 // file          : include/CGAL/Old_style_kernel/Vector_2.h
-// revision      : 3.2
-// revision_date : 06 Apr 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

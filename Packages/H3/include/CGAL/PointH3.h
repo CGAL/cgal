@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, October 15
+// release_date  : 
 // 
-// source        : PointVectorDirectionH3.fw
 // file          : PointH3.h
-// package       : H3 (2.14)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 2.14
-// revision_date : 15 Oct 2000 
+// package       : H3
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //

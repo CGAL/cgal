@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, July 30
+// release_date  : 
 // 
-// source        : Circle_2.fw
 // file          : Circle_2.h
-// package       : _2 (3.6)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 3.6
-// revision_date : 30 Jul 2000 
+// package       : _2
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Andreas Fabri
 //                 Sven Schoenherr
 //

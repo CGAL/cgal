@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : perl script
 // file          : include/CGAL/Old_style_kernel/Point_2.h
-// revision      : 
-// revision_date : 07 04 2000
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

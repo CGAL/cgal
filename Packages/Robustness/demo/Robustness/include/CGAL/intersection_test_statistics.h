@@ -11,13 +11,11 @@
 // release       :
 // release_date  :
 // 
-// source        : online.fw
 // file          : demo/Robustness/include/CGAL/intersection_test_statistics.h
-// revision      : 1.5
-// revision_date : 20 Sep 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

@@ -13,11 +13,10 @@
 // 
 // source        :
 // file          : _test_orientation_and_bounded_side.h
-// revision      : 3.8
-// revision_date : 08 Oct 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================

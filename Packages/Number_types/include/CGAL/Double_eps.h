@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, December 13
+// release_date  : 
 // 
-// source        : Double_eps.fw
 // file          : Double_eps.h
-// package       : Number_types (4.2)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 4.2
-// revision_date : 13 Dec 2000 
+// package       : Number_types
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)

@@ -9,12 +9,10 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, December 10
+// release_date  : 
 //
 // file          : assertions.C
-// package       : Kernel_basic (3.17)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : assertions.fw
+// package       : Kernel_basic
 // author(s)     : Geert-Jan Giezeman and Sven Schönherr
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)

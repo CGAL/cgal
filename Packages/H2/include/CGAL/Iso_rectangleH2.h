@@ -9,14 +9,12 @@
 // ----------------------------------------------------------------------
 // 
 // release       : 
-// release_date  : 2000, October 11
+// release_date  : 
 // 
-// source        : Iso_rectangleH2.fw
 // file          : Iso_rectangleH2.h
-// package       : H2 (2.13)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// revision      : 2.13
-// revision_date : 11 Oct 2000 
+// package       : H2
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 //
