@@ -1,3 +1,6 @@
+1.77 (29 September 2003) [af]
+- Added typename keywords
+
 1.76 (29 September 2003) [af]
 -Added MyKernel
 
