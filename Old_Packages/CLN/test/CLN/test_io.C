@@ -18,9 +18,6 @@
 #include <cl_rational_io.h>
 #include <cl_output.h>
 
-// #include <cl_input.h>
-// extern cl_read_flags cl_I_read_flags;
-
 int
 main ()
 {
@@ -54,25 +51,6 @@ main ()
 
     // Check read(print()) = id().
     ok = (p == pp) && (q == qq) && (r == rr) && (qI == qqII);
-
-    // cout << "Enter integer  : ";
-    // cin >> p;
-    // cout << "fprintdecimal: "; fprintdecimal(cout, p); cout << endl;
-    // cout << "fprintbinary : "; fprintbinary(cout, p);  cout << endl;
-    // cout << "fprint       : "; fprint(cout, p);        cout << endl;
-    // cout << "print_integer: ";
-    // print_integer(cout, cl_default_print_flags, p);
-    // cout << endl;
-    // cout << "print_integer: "; print_integer(cout, 10, p); cout << endl;
-    // cout << "read value   : " << p << endl;
-    // cout << "Calling read_integer() : ";
-    // p = read_integer(cin, cl_I_read_flags);
-    // cout << "Enter rational : ";
-    // cin >> r;
-    // cout << "read value: " << r << endl;
-    // cout << "Enter Quotient<cl_I> : ";
-    // cin >> qI;
-    // cout << "read value: " << qI << endl;
 
     return (ok) ? 0 : -1;
 }
