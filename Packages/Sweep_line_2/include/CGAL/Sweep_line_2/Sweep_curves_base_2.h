@@ -717,7 +717,7 @@ protected:
                                               const Point &q) const {
       Comparison_result result;
       bool update_first_cv = false, update_second_cv = false;
-      X_curve first_cv , second_cv;  // making an optimization.
+      X_curve_plus first_cv , second_cv;  // making an optimization.
         
       // taking care the edge case of vertical segments: if one is
       // vertical, then the order is set according the 'rightmost'
@@ -858,7 +858,7 @@ protected:
       // is between the source and target point of the vertical curve, and 
       // for our definition - it means that the verical curve comes first.
       if ( result == EQUAL && 
-           traits->curve_is_vertical(update_first_cv? first_cv: 
+           traits->curve_is_vertical(update_first_cv ? first_cv: 
                                      cv1.get_curve()) ){
         // if first_cv is vertical and its source tangent to second_cv - 
         // it means that first_cv is above second_cv.
@@ -1159,8 +1159,8 @@ protected:
     // inserting the new event point to curve node, and 
     // then to the status line.
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-    cout<<"inserting the new event point to curve node, 
-and then to the status line"<<std::endl;
+    cout << "inserting the new event point to curve node,"; 
+    cout << "and then to the status line" << std::endl;
 #endif
  
     if (local_status.empty()) {
@@ -1354,8 +1354,8 @@ and then to the status line"<<std::endl;
                 first = false;
               }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-              cout<<"the event point is the right point of the curve - 
-the curve leaves the status"<<std::endl;
+              cout << "the event point is the right point of the curve - ";
+	      cout << "the curve leaves the status" << std::endl;
 #endif
               status.erase(curr_cv_node);
               
@@ -1446,8 +1446,8 @@ the curve leaves the status"<<std::endl;
               first = false;
             }
 #ifdef  CGAL_SWEEP_LINE_DEBUG  
-            cout<<"the event point is the right point of the curve - 
-the curve leaves the status"<<std::endl;
+            cout << "the event point is the right point of the curve - ";
+	    cout << "the curve leaves the status" << std::endl;
 #endif
             status.erase(curr_cv_node);
             
