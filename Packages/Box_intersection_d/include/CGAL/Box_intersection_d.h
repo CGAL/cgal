@@ -78,10 +78,7 @@ void box_intersection_d_custom_traits(
     typedef typename std::iterator_traits<RandomAccessIter>::value_type
         Box_type;
 
-    std::vector< Box_type > i;
-    i.reserve( std::distance( p_begin, p_end ) );
-    std::copy( p_begin, p_end, i.begin() );
-
+    std::vector< Box_type > i( p_begin, p_end);
     box_intersection_d_custom_traits( p_begin, p_end, i.begin(), i.end(),
       callback, box_traits, cutoff, Box_intersection_d::COMPLETE, topology );
 }
