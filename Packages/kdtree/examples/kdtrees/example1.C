@@ -62,7 +62,7 @@ int main()
 
     tree.search( std::back_inserter( res ), r );
     
-    std::cout << "Listing of the points in the square: \n";
+    std::cout << "Listing of the points in the square: \n" ;
     std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout," \n") );
     std::cout << std::endl;
 
