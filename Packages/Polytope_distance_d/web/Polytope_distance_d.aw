@@ -55,6 +55,8 @@
 @! Title
 @! ============================================================================
 
+\thispagestyle{empty}
+
 \RCSdef{\rcsRevision}{$Revision$}
 \RCSdefDate{\rcsDate}{$Date$}
 \newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
@@ -234,7 +236,7 @@ Sections~\ref{sec:Polytope_distance_d_traits_2},
 and~\ref{sec:Polytope_distance_d_traits_d} below.
 
 @macro <Poly_dist_d declarations> += @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Polytope_distance_d;
 @end
 
@@ -243,12 +245,13 @@ in Section~\ref{ccRef_CGAL::Polytope_distance_d<Traits>}.2 and of some private
 types, private member functions, and data members.
 
 @macro <Poly_dist_d interface> = @begin
-    template < class _Traits >
+    template < class Traits_ >
     class Polytope_distance_d {
       public:
         // self
-        typedef  _Traits                    Traits;
-        typedef  Polytope_distance_d<Traits>       Self;
+        typedef  Traits_                    Traits;
+        typedef  Polytope_distance_d<Traits>
+                                            Self;
 
         // types from the traits class
         typedef  typename Traits::Point_d   Point;
@@ -783,9 +786,9 @@ for consistency with interfaces of other classes.
 
 @macro <Poly_dist_d validity check> = @begin
     // validity check
-    template < class _Traits >
+    template < class Traits_ >
     bool
-    Polytope_distance_d<_Traits>::
+    Polytope_distance_d<Traits_>::
     is_valid( bool verbose, int level) const
     {
         CGAL_USING_NAMESPACE_STD
@@ -855,29 +858,29 @@ traits class object.
 
 @macro <Poly_dist_d I/O operators declaration> = @begin
     // I/O operators
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const Polytope_distance_d<_Traits>& poly_dist);
+                  const Polytope_distance_d<Traits_>& poly_dist);
 
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
     operator >> ( std::istream& is,
-                  Polytope_distance_d<_Traits>& poly_dist);
+                  Polytope_distance_d<Traits_>& poly_dist);
 @end
 
 @macro <Poly_dist_d I/O operators> = @begin
     // output operator
-    template < class _Traits >
+    template < class Traits_ >
     std::ostream&
     operator << ( std::ostream& os,
-                  const Polytope_distance_d<_Traits>& poly_dist)
+                  const Polytope_distance_d<Traits_>& poly_dist)
     {
         CGAL_USING_NAMESPACE_STD
 
-        typedef  Polytope_distance_d<_Traits>::Point  Point;
+        typedef  Polytope_distance_d<Traits_>::Point  Point;
         typedef  ostream_iterator<Point>       Os_it;
-        typedef  typename _Traits::ET          ET;
+        typedef  typename Traits_::ET          ET;
         typedef  ostream_iterator<ET>          Et_it;
 
         switch ( CGAL::get_mode( os)) {
@@ -956,10 +959,10 @@ traits class object.
     }
 
     // input operator
-    template < class _Traits >
+    template < class Traits_ >
     std::istream&
     operator >> ( std::istream& is,
-                  CGAL::Polytope_distance_d<_Traits>& poly_dist)
+                  CGAL::Polytope_distance_d<Traits_>& poly_dist)
     {
         CGAL_USING_NAMESPACE_STD
         /*        
@@ -972,7 +975,7 @@ traits class object.
 
           case CGAL::IO::ASCII:
           case CGAL::IO::BINARY:
-            typedef  CGAL::Polytope_distance_d<_Traits>::Point  Point;
+            typedef  CGAL::Polytope_distance_d<Traits_>::Point  Point;
             typedef  istream_iterator<Point>             Is_it;
             poly_dist.set( Is_it( is), Is_it());
             break;
@@ -1011,17 +1014,17 @@ number types and iterators used by the QP solver.
 
 @macro <Poly_dist_d declarations> += @begin
     
-    template < class _ET, class _NT, class Point, class Point_iterator,
+    template < class ET_, class NT_, class Point, class Point_iterator,
                class Access_coord, class Access_dim >
     struct QP_rep_poly_dist_d;
 @end
 
 @macro <Poly_dist_d QP representation> = @begin
-    template < class _ET, class _NT, class Point, class Point_iterator,
+    template < class ET_, class NT_, class Point, class Point_iterator,
                class Access_coord, class Access_dim >
     struct QP_rep_poly_dist_d {
-        typedef  _ET                    ET;
-        typedef  _NT                    NT;
+        typedef  ET_                    ET;
+        typedef  NT_                    NT;
 
         @<Poly_dist_d QP representation: iterator types>
 
@@ -1324,7 +1327,7 @@ realizing the distance.
     typedef  QP_rep_signed_point_iterator< Point, Point_iterator >
                                         Signed_point_iterator;
     Signed_point_iterator
-        signed_pts_it( p_points.begin(), p_points.size(), q_points.begin());
+        signed_pts_it(p_points.begin(), p_points.size(), q_points.begin());
     QP_rep_row_of_d< NT, Point, Signed_point_iterator,
                      Access_coordinates_begin_d, Access_dimension_d >
         row_of_d( signed_pts_it,
@@ -1359,14 +1362,14 @@ realizing the distance.
             for ( int j = 0; j < d; ++j) {
                 p_coords[ j]
                     += value * tco.access_coordinates_begin_d_object()(
-                                                    p_points[ index  ])[ j];
+                                                   p_points[ index  ])[ j];
             }
             p_support_indices.push_back( index);
         } else {
             for ( int j = 0; j < d; ++j) {
                 q_coords[ j]
                     += value * tco.access_coordinates_begin_d_object()(
-                                                    q_points[ index-r])[ j];
+                                                   q_points[ index-r])[ j];
             }
             q_support_indices.push_back( index-r);
         }
@@ -1432,8 +1435,8 @@ requirements of a \cgal\ number type. They have default type
 \ccc{R::RT}.
 
 @macro <Poly_dist_d_traits_2 declaration> = @begin
-    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
-                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
+    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
     class Polytope_distance_d_traits_2;
 @end
 
@@ -1441,13 +1444,13 @@ The interface consists of the types and member functions described in
 Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_2<R,ET,NT>}.3.
 
 @macro <Poly_dist_d_traits_2 interface> = @begin
-    template < class _R, class _ET, class _NT>
+    template < class R_, class ET_, class NT_>
     class Polytope_distance_d_traits_2 {
       public:
         // self
-        typedef  _R                         R;
-        typedef  _ET                        ET;
-        typedef  _NT                        NT;
+        typedef  R_                         R;
+        typedef  ET_                        ET;
+        typedef  NT_                        NT;
         typedef  Polytope_distance_d_traits_2<R,ET,NT>
                                             Self;
 
@@ -1469,7 +1472,7 @@ Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_2<R,ET,NT>}.3.
         // creation
         Polytope_distance_d_traits_2( ) { }
         Polytope_distance_d_traits_2(
-            const Polytope_distance_d_traits_2<_R,_ET,_NT>&) { }
+            const Polytope_distance_d_traits_2<R_,ET_,NT_>&) { }
 
         // operations
         Access_dimension_d
@@ -1502,8 +1505,8 @@ requirements of a \cgal\ number type. They have default type
 \ccc{R::RT}.
 
 @macro <Poly_dist_d_traits_3 declaration> = @begin
-    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
-                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
+    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
     class Polytope_distance_d_traits_3;
 @end
 
@@ -1511,13 +1514,13 @@ The interface consists of the types and member functions described in
 Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_3<R,ET,NT>}.4.
 
 @macro <Poly_dist_d_traits_3 interface> = @begin
-    template < class _R, class _ET, class _NT>
+    template < class R_, class ET_, class NT_>
     class Polytope_distance_d_traits_3 {
       public:
         // self
-        typedef  _R                         R;
-        typedef  _ET                        ET;
-        typedef  _NT                        NT;
+        typedef  R_                         R;
+        typedef  ET_                        ET;
+        typedef  NT_                        NT;
         typedef  Polytope_distance_d_traits_3<R,ET,NT>
                                             Self;
 
@@ -1539,7 +1542,7 @@ Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_3<R,ET,NT>}.4.
         // creation
         Polytope_distance_d_traits_3( ) { }
         Polytope_distance_d_traits_3(
-            const Polytope_distance_d_traits_3<_R,_ET,_NT>&) { }
+            const Polytope_distance_d_traits_3<R_,ET_,NT_>&) { }
 
         // operations
         Access_dimension_d
@@ -1572,8 +1575,8 @@ requirements of a \cgal\ number type. They have default type
 \ccc{R::RT}.
 
 @macro <Poly_dist_d_traits_d declaration> = @begin
-    template < class _R, class _ET = CGAL_TYPENAME_MSVC_NULL _R::RT,
-                         class _NT = CGAL_TYPENAME_MSVC_NULL _R::RT >
+    template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
+                         class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
     class Polytope_distance_d_traits_d;
 @end
 
@@ -1581,13 +1584,13 @@ The interface consists of the types and member functions described in
 Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_d<R,ET,NT>}.5.
 
 @macro <Poly_dist_d_traits_d interface> = @begin
-    template < class _R, class _ET, class _NT>
+    template < class R_, class ET_, class NT_>
     class Polytope_distance_d_traits_d {
       public:
         // self
-        typedef  _R                         R;
-        typedef  _ET                        ET;
-        typedef  _NT                        NT;
+        typedef  R_                         R;
+        typedef  ET_                        ET;
+        typedef  NT_                        NT;
         typedef  Polytope_distance_d_traits_d<R,ET,NT>
                                             Self;
 
@@ -1608,7 +1611,7 @@ Section~\ref{ccRef_CGAL::Polytope_distance_d_traits_d<R,ET,NT>}.5.
         // creation
         Polytope_distance_d_traits_d( ) { }
         Polytope_distance_d_traits_d(
-            const Polytope_distance_d_traits_d<_R,_ET,_NT>&) { }
+            const Polytope_distance_d_traits_d<R_,ET_,NT_>&) { }
 
         // operations
         Access_dimension_d
@@ -2133,124 +2136,14 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_2_H
 
     // includes
-    #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/Optimisation/basic.h>
+    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_2_H
+    #  include <CGAL/Optimisation/Access_dimension_2.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
+    #  include <CGAL/Optimisation/Access_coordinates_begin_2.h>
     #endif
 
     @<namespace begin>("CGAL")
-
-    @<dividing line>
-
-    // Coordinate iterator (should make it into the kernel in the future)
-    // ------------------------------------------------------------------
-
-    template < class _R >
-    class Point_2_coordinate_iterator {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Point_2_coordinate_iterator<R>
-                                            Self;
-        
-        // types
-        typedef  typename R::Point_2        Point;
-        
-        // iterator types
-        typedef  typename R::RT             value_type;
-        typedef  ptrdiff_t                  difference_type;
-        typedef  value_type*                pointer;
-        typedef  value_type&                reference;
-        typedef  std::random_access_iterator_tag
-                                            iterator_category;
-        
-        // forward operations
-        Point_2_coordinate_iterator( const Point&  point = Point(),
-                                     int           index = 0)
-            : p( point), i( index) { }
-        
-        bool        operator == ( const Self& it) const { return ( i == it.i);}
-        bool        operator != ( const Self& it) const { return ( i != it.i);}
-
-        value_type  operator *  ( ) const { return p.homogeneous( i); }
-
-        Self&       operator ++ (    ) {                   ++i; return *this; }
-        Self        operator ++ ( int) { Self tmp = *this; ++i; return tmp;   }
-
-        // bidirectional operations
-        Self&       operator -- (    ) {                   --i; return *this; }
-        Self        operator -- ( int) { Self tmp = *this; --i; return tmp;   }
-
-        // random access operations
-        Self&       operator += ( int n) { i += n; return *this; }
-        Self&       operator -= ( int n) { i -= n; return *this; }
-
-        Self        operator +  ( int n) const
-                                         { Self tmp = *this; return tmp += n; }
-        Self        operator -  ( int n) const
-                                         { Self tmp = *this; return tmp -= n; }
-
-        difference_type
-                    operator -  ( const Self& it) const { return i - it.i; }
-
-        value_type  operator [] ( int n) const { return p.homogeneous( i+n); }
-
-        bool   operator <  ( const Self&) const { return ( i <  it.i); }
-        bool   operator >  ( const Self&) const { return ( i >  it.i); }
-        bool   operator <= ( const Self&) const { return ( i <= it.i); }
-        bool   operator >= ( const Self&) const { return ( i >= it.i); }
-
-    private:
-        const Point&  p;
-        int           i;
-    };
-    
-    // Data accessors (should make it into the kernel in the future)
-    // -------------------------------------------------------------
-
-    template < class _R >
-    class Access_dimension_2 {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_dimension_2<R>      Self;
-
-        // types
-        typedef  typename R::Point_2        Point;
-        
-        // unary function class types
-        typedef  int                        result_type;
-        typedef  Point                      argument_type;
-        
-        // creation
-        Access_dimension_2( ) { }
-
-        // operations
-        int
-        operator() ( const Point& p) const { return p.dimension(); }
-    };
-    
-    template < class _R >
-    class Access_coordinates_begin_2 {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_coordinates_begin_2<R>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_2        Point;
-        typedef  Point_2_coordinate_iterator<R>
-                                            Coordinate_iterator;
-        
-        // creation
-        Access_coordinates_begin_2( ) { }
-
-        // operations
-        Coordinate_iterator
-        operator() ( const Point& p) const { return Coordinate_iterator( p); }
-    };
-    
-    @<dividing line>
 
     // Class declaration
     // =================
@@ -2282,124 +2175,14 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_3_H
 
     // includes
-    #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/Optimisation/basic.h>
+    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_3_H
+    #  include <CGAL/Optimisation/Access_dimension_3.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
+    #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>
     #endif
 
     @<namespace begin>("CGAL")
-
-    @<dividing line>
-
-    // Coordinate iterator (should make it into the kernel in the future)
-    // ------------------------------------------------------------------
-
-    template < class _R >
-    class Point_3_coordinate_iterator {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Point_3_coordinate_iterator<R>
-                                            Self;
-        
-        // types
-        typedef  typename R::Point_3        Point;
-        
-        // iterator types
-        typedef  typename R::RT             value_type;
-        typedef  ptrdiff_t                  difference_type;
-        typedef  value_type*                pointer;
-        typedef  value_type&                reference;
-        typedef  std::random_access_iterator_tag
-                                            iterator_category;
-        
-        // forward operations
-        Point_3_coordinate_iterator( const Point&  point = Point(),
-                                     int           index = 0)
-            : p( point), i( index) { }
-        
-        bool        operator == ( const Self& it) const { return ( i == it.i);}
-        bool        operator != ( const Self& it) const { return ( i != it.i);}
-
-        value_type  operator *  ( ) const { return p.homogeneous( i); }
-
-        Self&       operator ++ (    ) {                   ++i; return *this; }
-        Self        operator ++ ( int) { Self tmp = *this; ++i; return tmp;   }
-
-        // bidirectional operations
-        Self&       operator -- (    ) {                   --i; return *this; }
-        Self        operator -- ( int) { Self tmp = *this; --i; return tmp;   }
-
-        // random access operations
-        Self&       operator += ( int n) { i += n; return *this; }
-        Self&       operator -= ( int n) { i -= n; return *this; }
-
-        Self        operator +  ( int n) const
-                                         { Self tmp = *this; return tmp += n; }
-        Self        operator -  ( int n) const
-                                         { Self tmp = *this; return tmp -= n; }
-
-        difference_type
-                    operator -  ( const Self& it) const { return i - it.i; }
-
-        value_type  operator [] ( int n) const { return p.homogeneous( i+n); }
-
-        bool   operator <  ( const Self&) const { return ( i <  it.i); }
-        bool   operator >  ( const Self&) const { return ( i >  it.i); }
-        bool   operator <= ( const Self&) const { return ( i <= it.i); }
-        bool   operator >= ( const Self&) const { return ( i >= it.i); }
-
-    private:
-        const Point&  p;
-        int           i;
-    };
-    
-    // Data accessors (should make it into the kernel in the future)
-    // -------------------------------------------------------------
-
-    template < class _R >
-    class Access_dimension_3 {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_dimension_3<R>      Self;
-
-        // types
-        typedef  typename R::Point_3        Point;
-        
-        // unary function class types
-        typedef  int                        result_type;
-        typedef  Point                      argument_type;
-        
-        // creation
-        Access_dimension_3( ) { }
-
-        // operations
-        int
-        operator() ( const Point& p) const { return p.dimension(); }
-    };
-    
-    template < class _R >
-    class Access_coordinates_begin_3 {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_coordinates_begin_3<R>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_3        Point;
-        typedef  Point_3_coordinate_iterator<R>
-                                            Coordinate_iterator;
-        
-        // creation
-        Access_coordinates_begin_3( ) { }
-
-        // operations
-        Coordinate_iterator
-        operator() ( const Point& p) const { return Coordinate_iterator( p); }
-    };
-    
-    @<dividing line>
 
     // Class declaration
     // =================
@@ -2431,88 +2214,17 @@ can be enabled by giving a number between 0 and 3 at the command line.
     #define CGAL_POLYTOPE_DISTANCE_D_TRAITS_D_H
 
     // includes
-    #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/Optimisation/basic.h>
+    #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_D_H
+    #  include <CGAL/Optimisation/Access_dimension_d.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
+    #  include <CGAL/Optimisation/Access_coordinates_begin_d.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
+    #  include <CGAL/Optimisation/Construct_point_d.h>
     #endif
 
     @<namespace begin>("CGAL")
-
-    @<dividing line>
-
-    // Constructions (should make it into the kernel in the future)
-    // ------------------------------------------------------------
-
-    template < class _R >
-    class Construct_point_d {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Construct_point_d<R>       Self;
-
-        // types
-        typedef  typename R::Point_d        Point;
-        
-        // creation
-        Construct_point_d( ) { }
-
-        // operations
-        template < class InputIterator >
-        Point
-        operator() ( int d, InputIterator first, InputIterator last) const
-        {
-            return Point( d, first, last);
-        }
-    };
-
-    // Data accessors (should make it into the kernel in the future)
-    // -------------------------------------------------------------
-
-    template < class _R >
-    class Access_dimension_d {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_dimension_d<R>      Self;
-
-        // types
-        typedef  typename R::Point_d        Point;
-        
-        // unary function class types
-        typedef  int                        result_type;
-        typedef  Point                      argument_type;
-        
-        // creation
-        Access_dimension_d( ) { }
-
-        // operations
-        int
-        operator() ( const Point& p) const { return p.dimension(); }
-    };
-    
-    template < class _R >
-    class Access_coordinates_begin_d {
-      public:
-        // self
-        typedef  _R                         R;
-        typedef  Access_coordinates_begin_d<R>
-                                            Self;
-
-        // types
-        typedef  typename R::Point_d        Point;
-        typedef  const typename R::RT *     Coordinate_iterator;
-        
-        typedef  Coordinate_iterator        result_type;
-        typedef  Point                      argument_type;
-        
-        // creation
-        Access_coordinates_begin_d( ) { }
-
-        // operations
-        Coordinate_iterator
-        operator() ( const Point& p) const { return p.begin(); }
-    };
-    
-    @<dividing line>
 
     // Class declaration
     // =================
