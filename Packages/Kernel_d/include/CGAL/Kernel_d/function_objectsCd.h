@@ -285,9 +285,10 @@ bool operator()(ForwardIterator first, ForwardIterator last,
   TUPLE_DIM_CHECK(first,last,Contained_in_simplex_d);
   int k = std::distance(first,last); // |A| contains |k| points
   int d = first->dimension(); 
-  typename R::Affinely_independent_d check_independence;
+  CGAL_assertion_code(
+    typename R::Affinely_independent_d check_independence; )
   CGAL_assertion_msg(check_independence(first,last),
-  "Contained_in_simplex_d: A not affinely independent.");
+    "Contained_in_simplex_d: A not affinely independent.");
   CGAL_assertion(d==p.dimension());
 
   typename LA::Matrix M(d + 1,k); 
