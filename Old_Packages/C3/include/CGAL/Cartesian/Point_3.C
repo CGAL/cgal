@@ -36,7 +36,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 template < class R >
 PointC3<R CGAL_CTAG>::PointC3()
 {
@@ -86,22 +85,6 @@ PointC3(const typename PointC3<R CGAL_CTAG>::Vector_3 &v)
 
 template < class R >
 inline
-bool
-PointC3<R CGAL_CTAG>::operator==(const PointC3<R CGAL_CTAG>& p) const
-{
-  return (x() == p.x()) && (y() == p.y()) && (z() == p.z());
-}
-
-template < class R >
-inline
-bool
-PointC3<R CGAL_CTAG>::operator!=(const PointC3<R CGAL_CTAG>& p) const
-{
-  return !(*this == p);
-}
-
-template < class R >
-inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::x()  const
 {
@@ -113,7 +96,7 @@ inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::y()  const
 {
-  return  ptr->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -121,7 +104,23 @@ inline
 typename PointC3<R CGAL_CTAG>::FT
 PointC3<R CGAL_CTAG>::z()  const
 {
-  return  ptr->e2;
+  return ptr->e2;
+}
+
+template < class R >
+inline
+bool
+PointC3<R CGAL_CTAG>::operator==(const PointC3<R CGAL_CTAG>& p) const
+{
+  return x_equal(*this, p) && y_equal(*this, p) && z_equal(*this, p);
+}
+
+template < class R >
+inline
+bool
+PointC3<R CGAL_CTAG>::operator!=(const PointC3<R CGAL_CTAG>& p) const
+{
+  return !(*this == p);
 }
 
 template < class R >
