@@ -19,6 +19,9 @@ typedef CGAL::Gmpq NT;
 #endif
 
 #ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
+//#include <CGAL/double.h>
+#include <CGAL/Filtered_exact.h>
+//typedef CGAL::Filtered_exact<double,NT> RT;
 #include <CGAL/Nef_3/Filtered_gcd.h>
 #include <CGAL/Lazy_exact_nt.h>
 typedef CGAL::Lazy_exact_nt<NT> RT;
@@ -65,6 +68,7 @@ typdef CGAL::Extended_cartesian<RT> Kernel;
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/rational_rotation.h>
 #include <iostream>
 #include <fstream>
@@ -82,7 +86,7 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
   
   double arc = CGAL_PI * alpha / 180.0;
 
-  NT epsilon = 1;
+  RT epsilon = 1;
   double sin_double = std::sin( arc);
   double cos_double = std::cos( arc);
 
@@ -94,26 +98,26 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
   while(sin_double < 1000 || cos_double < 1000) {
     sin_double *= 10;
     cos_double *= 10;
-    epsilon *= 10;
+    epsilon *= RT(10);
   }
 
   std::cout << "epsilon      : 1/" << epsilon << std::endl; 
 
-  NT sin_alpha(0);
-  NT cos_alpha(0);
-  NT w(0);
+  RT sin_alpha(0);
+  RT cos_alpha(0);
+  RT w(0);
   
   CGAL::Timer t;
   t.start(); 
   CGAL::rational_rotation_approximation( arc,
 					 sin_alpha, cos_alpha, w,
-					 NT(1), NT(epsilon));
+					 RT(1), RT(epsilon));
   t.stop();
   std::cout << "approx. time: " << t.time() << std::endl;
 
-  Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
-			    sin_alpha, cos_alpha, NT(0),
-			    NT(0), NT(0), w,
+  Aff_transformation_3 aff( cos_alpha,-sin_alpha, RT(0),
+			    sin_alpha, cos_alpha, RT(0),
+			    RT(0), RT(0), w,
 			    w);
 
   std::cout << "sin(alpha)*w: " << sin_alpha << std::endl; 
@@ -123,9 +127,9 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
   return aff;
 }
 
-Aff_transformation_3 compute_transformation_matrix(NT sinus, NT cosinus, NT w) {
+Aff_transformation_3 compute_transformation_matrix(RT sinus, RT cosinus, RT w) {
 
-  double sin_double = sinus.to_double() / w.to_double();
+  double sin_double = CGAL::to_double(sinus) / CGAL::to_double(w);
   double arc = std::asin(sin_double);
   double alpha = arc * 180 / CGAL_PI;
 
@@ -137,9 +141,9 @@ Aff_transformation_3 compute_transformation_matrix(NT sinus, NT cosinus, NT w) {
   std::cout << "arc: " << arc << std::endl;
   std::cout << "alpha: " << alpha << std::endl;
   
-  Aff_transformation_3 aff( cosinus,-sinus, NT(0),
-			    sinus, cosinus, NT(0),
-			    NT(0), NT(0), w,
+  Aff_transformation_3 aff( cosinus,-sinus, RT(0),
+			    sinus, cosinus, RT(0),
+			    RT(0), RT(0), w,
 			    w);
   return aff;
 
@@ -167,7 +171,7 @@ int main(int argc, char* argv[]) {
   rotations >> runs;
 
   double alpha;
-  NT sinus, cosinus, w;
+  RT sinus, cosinus, w;
   Aff_transformation_3 aff;
   for(int i=0; i<runs; i++) {
    
