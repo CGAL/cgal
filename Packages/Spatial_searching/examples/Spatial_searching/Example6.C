@@ -33,9 +33,9 @@ typedef CGAL::Point_d<R> Point;
 typedef CGAL::Kernel_traits<Point>::Kernel K;
 typedef K::FT NT;
 typedef CGAL::Plane_separator<NT> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> MyTraits;
+typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef 
-CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour>::iterator 
+CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator 
 NNN_Iterator;
 
 int test_nearest_neighbour_Linf() {
@@ -70,11 +70,12 @@ int test_nearest_neighbour_Linf() {
 
   t.reset(); t.start();
 
-  typedef CGAL::Binary_search_tree<MyTraits> Tree;
+  typedef CGAL::Binary_search_tree<Traits> Tree;
   Tree d2(lpt.begin(), lpt.end(), bucket_size);
   t.stop();
   std::cout << "created binary search tree containing" << std::endl <<
-  point_number << " random points in the d-dim unit square in time " << t.time() <<
+  point_number << " random points in the d-dim unit square in time " 
+  << t.time() <<
   " seconds " << std::endl;
   d2.statistics();
 
@@ -100,8 +101,8 @@ int test_nearest_neighbour_Linf() {
 
   std::cout << "started test copy" << std::endl;
 
-  std::vector<MyTraits::Item_with_distance> result3(point_number);
-  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> 
+  std::vector<Traits::Item_with_distance> result3(point_number);
+  CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour> 
   NNN1(d2,Q,eps);
 
   NNN_Iterator begin, end;
@@ -137,7 +138,7 @@ int test_nearest_neighbour_Linf() {
   // example of browsing
   std::cout << "started testing browsing" << std::endl;
 
-  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> 
+  CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour> 
   NNN2(d2,Q,eps);
 
 
