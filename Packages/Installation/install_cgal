@@ -1082,6 +1082,8 @@ _check_and_register_compiler()
 	else
 	    _register_compiler "${*}"
 	fi
+    else
+	_register_compiler "${*}"
     fi
     COMPILER="${_ORIG_COMPILER}"
 }
