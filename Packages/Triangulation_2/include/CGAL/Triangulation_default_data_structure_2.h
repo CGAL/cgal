@@ -310,16 +310,17 @@ public:
   void remove(Vertex* v)
     // remove a vertex of degree 3
   {
-    CGAL_triangulation_precondition(v != NULL);
-    CGAL_triangulation_precondition(v != _infinite_vertex);
-    CGAL_triangulation_precondition(v->degree() == 3);
+    CGAL_triangulation_assertion(v != NULL);
+    CGAL_triangulation_assertion(v != _infinite_vertex);
+    CGAL_triangulation_assertion(v->degree() == 3);
 
-    if (number_of_vertices()==1){
-      set_number_of_vertices(0);
-      set_finite_vertex(NULL);
-      delete v;
-      return;
-    }
+    // this cannot happens because of third assertion;
+//     if (number_of_vertices()==1){
+//       set_number_of_vertices(0);
+//       set_finite_vertex(NULL);
+//       delete v;
+//       return;
+//     }
 
     Face* f = v->face();
     // take care of _finite_vertex data member
@@ -330,19 +331,21 @@ public:
       set_finite_vertex( vv);
     }
 
-    if (number_of_vertices() == 2){
-      Face* ff = f->neighbor(f->index(infinite_vertex()));
-      delete f;
-      delete ff;
-      delete v;
-      set_number_of_vertices(1);
-    }
-    else{
-      f->remove(v);
+// this cannot happens because of third assertion;
+//     if (number_of_vertices() == 2){
+//       Face* ff = f->neighbor(f->index(infinite_vertex()));
+//       delete f;
+//       delete ff;
+//       delete v;
+//       set_number_of_vertices(1);
+//     }
+//    else
+      {
+      f->remove(v); //f->remove returns true because degree 3 has been asserted
       delete v;
       //update number of vertices
-      Vertex* vv= finite_vertex();
-      Face* f = vv->face();
+      // Vertex* vv= finite_vertex();
+      //Face* f = vv->face();
       set_number_of_vertices( number_of_vertices() -1);
     }
   } 
