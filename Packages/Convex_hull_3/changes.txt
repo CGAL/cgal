@@ -1,3 +1,6 @@
+2.32    (3 Dec 2001)
+- changed Polyhedron_3 typedef in traits class for SunPro
+
 2.31    (26 Nov 2001)
 - made convexity test work for the case when the polyhedron is a single
   triangular face
