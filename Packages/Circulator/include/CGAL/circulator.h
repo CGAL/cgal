@@ -1049,6 +1049,7 @@ operator+=( typename Ctnr::difference_type n) {
     return *this;
 }
 #endif // _MSC_VER
+
 // Note: TT, SS, and DD are here for backwards compatibility, they are
 // not used.
 template < class  I, class TT = int, class SS = int, class DD = int>
@@ -1075,10 +1076,14 @@ private:
     I m_end;
     I current;
 
+    static I null_iterator;
+
 public:
 // CREATION
 
-    Circulator_from_iterator() : m_begin(I()), m_end(I()), current(I()) {}
+    Circulator_from_iterator() : m_begin( null_iterator),
+                                 m_end(   null_iterator),
+                                 current( null_iterator) {}
 
     Circulator_from_iterator( const I& bgn, const I& end)
         : m_begin(bgn), m_end(end), current(bgn) {}
@@ -1176,6 +1181,9 @@ public:
     iterator  current_iterator() const { return current;}
     Self      min_circulator()   const { return Self( m_begin, m_end); }
 };
+
+template < class I, class  T, class Size, class Dist>
+I Circulator_from_iterator< I, T, Size, Dist>::null_iterator = I();
 
 template < class D, class I, class  T, class Size, class Dist> inline
 Circulator_from_iterator< I, T, Size, Dist>

@@ -1,5 +1,11 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+
+3.22 (20 Mar 2002)
+- Fixed problem in Circulator_from_iterator for VC7. Initializes
+  the circulator now from a static member variable instead of
+  each time a new default construction of the internal iterator type.
+
 3.21 (12 December 01)
 - Remove warning.
 
