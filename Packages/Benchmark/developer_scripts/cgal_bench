@@ -338,7 +338,7 @@ sub printInfo
 sub processStartClo
 {
   my ($attrTable) = @_;
-  printInfo("Adding comman line option $attrTable->{'name'}", 1)
+  printInfo("Adding command-line option $attrTable->{'name'}", 1)
     if ($verboseLevel > 1);
   $Clos{$attrTable->{'name'}} = $attrTable;
 }
