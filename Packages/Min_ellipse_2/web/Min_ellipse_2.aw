@@ -1215,9 +1215,9 @@ pseudo-code above.
         if ( n_sp == 5) return;
 
         // test first n points
-        std::list<Point>::iterator  point_iter( points.begin());
+        std::list<Point>::iterator  point_iter = points.begin();
         for ( ; last != point_iter; ) {
-            const Point& p( *point_iter);
+            const Point& p = *point_iter;
 
             // p not in current ellipse?
             if ( has_on_unbounded_side( p)) {
