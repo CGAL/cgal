@@ -35,6 +35,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Kernel_> class Segment_cached_2;
+
+/*!
+ * A traits class for maintaining an arrangement of segments, aoviding cascading
+ * of computations as much as possible.
+ */
 template <class Kernel_>
 class Arr_segment_cached_traits_2 : public Kernel_
 {
@@ -46,24 +52,22 @@ public:
   /*!
    * Representation of a segement with cached data.
    */
-  class Segment_cached_2
+  class My_segment_cached_2
   {
     typedef typename Kernel_::Segment_2             Segment_2;
     typedef typename Kernel_::Point_2               Point_2;
 
-  private:
+  protected:
 
     bool      is_orig;          // Is this an original segment.
     Segment_2 orig_seg;         // The original segment.
     Point_2   ps, pt;           // The source a target points.
     bool      is_vert;          // Is this a vertical segment.
 
-  public:
-
     /*!
      * Default constructor.
      */
-    Segment_cached_2 () :
+    My_segment_cached_2 () :
       is_orig(true),
       orig_seg(),
       is_vert(-1)
@@ -73,7 +77,7 @@ public:
      * Constructor from a segment.
      * \param seg The segment.
      */
-    Segment_cached_2 (const Segment_2& seg) :
+    My_segment_cached_2 (const Segment_2& seg) :
       is_orig(true),
       orig_seg(seg)
     {
@@ -93,7 +97,7 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    Segment_cached_2 (const Point_2& source, const Point_2& target) :
+    My_segment_cached_2 (const Point_2& source, const Point_2& target) :
       is_orig(true),
       orig_seg(source,target)
     {
@@ -105,48 +109,13 @@ public:
       pt = target;
     }
 
-    /*!
-     * Cast to a segment.
-     */
-    operator Segment_2 () const
-    {
-      return (Segment_2(ps, pt));
-    }
-
-    /*!
-     * Create a bounding box for the segment.
-     */
-    Bbox_2 bbox()
-    {
-      Segment_2 seg(ps, pt);
-      return (seg.bbox());
-    }
-
-    /*!
-     * Get the segment source.
-     */
-    const Point_2& source() const 
-    { 
-      return ps; 
-    }
-
-    /*!
-     * Get the segment target.
-     */
-    const Point_2& target() const
-    { 
-      return pt;
-    }
-
-  private:
-
     friend class Arr_segment_cached_traits_2;
   };
 
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
-  typedef Segment_cached_2                X_curve_2;
-  typedef Segment_cached_2                Curve_2;
+  typedef Segment_cached_2<Kernel>        X_curve_2;
+  typedef Segment_cached_2<Kernel>        Curve_2;
 
   // Backward compatability    
   typedef Point_2                         Point;
@@ -174,7 +143,6 @@ protected:
   typedef typename Kernel::Compare_x_2          Compare_x_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
-  typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Orientation_2        Orientation_2;
     
 public:
@@ -396,9 +364,9 @@ public:
    * \param cv2 The second segment.
    * \param p The point around which we rotate cv1.
    * \pre p is an end-point of all three segments.
-   * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 the result
-   * is always (false) and if it overlaps cv2 the reuslt is always (true). If
-   * cv1 and cv2 overlap, the result is (true), unless cv1 also overlaps them.
+   * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 or cv2
+   * the result is always (false). If cv1 and cv2 overlap, the result is (true),
+   * unless cv1 also overlaps them.
    */
   bool curve_is_between_cw(const X_curve_2& cv, 
                            const X_curve_2& cv1, 
@@ -430,7 +398,8 @@ public:
 	if (dir2 == DIR_LEFT)
 	  return (dir == DIR_RIGHT ||
 		  dir == DIR_DOWN ||
-		  _curve_compare_slope_left (cv2, cv) == LARGER);
+                  (dir == DIR_LEFT &&
+                   _curve_compare_slope_left (cv2, cv) == LARGER));
 	else
 	  return (dir == DIR_RIGHT &&
 		  _curve_compare_slope_right (cv2, cv) == SMALLER);
@@ -443,7 +412,8 @@ public:
 	else
 	  return (dir == DIR_LEFT ||
 		  dir == DIR_UP ||
-		  _curve_compare_slope_right (cv2, cv) == SMALLER);
+                  (dir == DIR_RIGHT &&
+                   _curve_compare_slope_right (cv2, cv) == SMALLER));
       }
     }
 
@@ -458,14 +428,16 @@ public:
 	else
 	  return (dir == DIR_LEFT || 
 		  dir == DIR_DOWN ||
-		  _curve_compare_slope_right (cv1, cv) == LARGER);
+                  (dir == DIR_RIGHT &&
+                   _curve_compare_slope_right (cv1, cv) == LARGER));
       }
       else
       {
 	if (dir1 == DIR_LEFT)
 	  return (dir == DIR_RIGHT ||
-		  dir == DIR_UP || 
-		  _curve_compare_slope_left (cv1, cv) == SMALLER);
+		  dir == DIR_UP ||
+                  (dir == DIR_LEFT &&
+                   _curve_compare_slope_left (cv1, cv) == SMALLER));
 	else
 	  return (dir == DIR_RIGHT &&
 		  _curve_compare_slope_left (cv1, cv) == LARGER);
@@ -482,8 +454,8 @@ public:
       {
 	// Case 1(a) : cv1 is above cv2.
 	return (dir != DIR_LEFT ||
-		!(_curve_compare_slope_left (cv1, cv) == LARGER &&
-		  _curve_compare_slope_left (cv2, cv) == SMALLER));
+		_curve_compare_slope_left (cv1, cv) == SMALLER ||
+                _curve_compare_slope_left (cv2, cv) == LARGER);
       }
       else if (l_res == SMALLER)
       {
@@ -515,8 +487,8 @@ public:
       {
 	// Case 2(b): cv1 is below cv2.
 	return (dir != DIR_RIGHT ||
-		!(_curve_compare_slope_right (cv1, cv) == SMALLER &&
-		  _curve_compare_slope_right (cv2, cv) == LARGER));
+		_curve_compare_slope_right (cv1, cv) == LARGER ||
+                _curve_compare_slope_right (cv2, cv) == SMALLER);
       }
       else
       {
@@ -531,7 +503,7 @@ public:
       return ((dir == DIR_LEFT &&
 	       _curve_compare_slope_left (cv1, cv) == SMALLER) ||
 	      (dir == DIR_RIGHT &&
-	       _curve_compare_slope_right (cv2, cv) != LARGER) ||
+	       _curve_compare_slope_right (cv2, cv) == SMALLER) ||
 	      dir == DIR_UP);
     }
     else
@@ -540,7 +512,7 @@ public:
       return ((dir == DIR_RIGHT &&
 	       _curve_compare_slope_right (cv1, cv) == LARGER) ||
 	      (dir == DIR_LEFT &&
-	       _curve_compare_slope_left (cv2, cv) != SMALLER) ||
+	       _curve_compare_slope_left (cv2, cv) == LARGER) ||
 	      dir == DIR_DOWN);
     }
   }
@@ -1028,10 +1000,82 @@ private:
 
 };
 
+/*!
+ * A representation of a segment, as used by the Arr_segment_cached_traits_2
+ * traits class.
+ */
 template <class Kernel_>
-std::ostream& operator<< 
-  (std::ostream& os, 	
-   const typename Arr_segment_cached_traits_2<Kernel_>::Segment_cached_2& seg)
+class Segment_cached_2 :
+    public Arr_segment_cached_traits_2<Kernel_>::My_segment_cached_2
+{
+  typedef typename Arr_segment_cached_traits_2<Kernel_>::My_segment_cached_2
+                                                  Base;
+  typedef typename Kernel_::Segment_2             Segment_2;
+  typedef typename Kernel_::Point_2               Point_2;
+
+  public:
+
+  /*!
+   * Default constructor.
+   */
+  Segment_cached_2 () :
+    Base()
+  {}
+    
+  /*!
+   * Constructor from a segment.
+   * \param seg The segment.
+   */
+  Segment_cached_2 (const Segment_2& seg) :
+    Base(seg)
+  {}
+
+  /*!
+   * Construct a segment from two end-points.
+   * \param source The source point.
+   * \param target The target point.
+   */
+  Segment_cached_2 (const Point_2& source, const Point_2& target) :
+    Base(source,target)
+  {}
+
+  /*!
+   * Cast to a segment.
+   */
+  operator Segment_2 () const
+  {
+    return (Segment_2(ps, pt));
+  }
+
+  /*!
+   * Create a bounding box for the segment.
+   */
+  Bbox_2 bbox()
+  {
+    Segment_2 seg(ps, pt);
+    return (seg.bbox());
+  }
+
+  /*!
+   * Get the segment source.
+   */
+  const Point_2& source() const 
+  { 
+    return ps; 
+  }
+
+  /*!
+   * Get the segment target.
+   */
+  const Point_2& target() const
+  { 
+    return pt;
+  }
+};
+
+template <class Kernel_>
+::std::ostream& operator<< (::std::ostream& os,
+                            const Segment_cached_2<Kernel_>& seg)
 {
   os << static_cast<typename Kernel_::Segment_2>(seg);
   return (os);
