@@ -143,16 +143,11 @@ This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 \ccGlue
 \ccTypedef{typedef Traits::Triangle Triangle;}{the triangle type}
 
-\ccNestedType{Vertex}{the vertex type.}
+\ccTypedef{typedef Tds::Vertex Vertex;}{the vertex type.}
 \ccGlue
-\ccNestedType{Face}{the face type.}
+\ccNestedType{typedef Tds::Face Face }{the face type.}
 \ccGlue
-\ccThree{typedef pair<Face_handle, int>}{}{the triangulation data structure type}
-\ccTypedef{typedef pair<Face_handle, int> Edge;} {the edge type.
-The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 
-\ccc{f.neighbor(i)}. It is also the edge joining the vertices
-\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
-
+\ccTypedef{typedef Tds::Edge  Edge;} {the edge type.}
 
 \ccThree{typedef Traits::Triangle}{}{the triangulation data structure type}
 \ccThreeToTwo

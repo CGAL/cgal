@@ -56,7 +56,11 @@ the two dereference operators \ccc{operator*} and \ccc{operator->}.
 \ccNestedType{Face_handle}{Handle to a face.}
 
 
-\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{ Edge type.}
+\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{ The edge type.
+The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 
+\ccc{f.neighbor(i)}. It is also the edge joining the vertices
+\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
+
 
 The following iterators allow one to visit all the vertices, edges
 and  faces
