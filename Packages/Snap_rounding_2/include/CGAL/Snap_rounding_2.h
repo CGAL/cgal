@@ -853,7 +853,8 @@ Snap_rounding_2<Rep_>::insert(InputIterator first, InputIterator last)
 
 
 template<class Rep_>
-const Snap_rounding_2<Rep_>::Polyline_const_iterator Snap_rounding_2<Rep_>::polylines_begin()
+const Snap_rounding_2<Rep_>::Polyline_const_iterator
+      Snap_rounding_2<Rep_>::polylines_begin()
 {
   if(need_sr) {
     need_sr = false;
@@ -865,7 +866,8 @@ const Snap_rounding_2<Rep_>::Polyline_const_iterator Snap_rounding_2<Rep_>::poly
 }
 
 template<class Rep_>
-const Snap_rounding_2<Rep_>::Polyline_const_iterator Snap_rounding_2<Rep_>::polylines_end()
+const Snap_rounding_2<Rep_>::Polyline_const_iterator
+      Snap_rounding_2<Rep_>::polylines_end()
 {
   if(need_sr) {
     need_sr = false;
