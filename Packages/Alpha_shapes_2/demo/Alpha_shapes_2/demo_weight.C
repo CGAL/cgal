@@ -4,23 +4,7 @@
 //
 // This software and related documentation is part of the
 // Computational Geometry Algorithms Library (CGAL).
-//
-// Every use of CGAL requires a license. Licenses come in three kinds:
-//
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the GALIA Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
-//
+
 // This software and documentation is provided "as-is" and without
 // warranty of any kind. In no event shall the CGAL Consortium be
 // liable for any damage of any kind.
@@ -44,9 +28,8 @@
 //
 // ======================================================================
 
-//#define CGAL_MYTRAITS
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -57,14 +40,10 @@
 
 #include <CGAL/triangulation_assertions.h>
 
+#include <CGAL/Random.h>
 #define CGAL_ALPHA_WINDOW_STREAM
 
-#include <CGAL/Cartesian.h>
-#ifndef CGAL_MYTRAITS
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
-#else
-//#include <CGAL/Alpha_shape_euclidean_mytraits_2.h>
-#endif
 
 #include <CGAL/Circle_2.h>
 #include <CGAL/Weighted_point.h>
@@ -90,17 +69,19 @@
 //typedef leda_real coord_type;
 //typedef CGAL::Fixed coord_type;
 
-typedef CGAL::Cartesian<double>  CRep;
-//typedef CGAL::Homogeneous<coord_type>  CRep;
+typedef CGAL::Cartesian<double>  K;
+//typedef CGAL::Homogeneous<coord_type>  K;
 
-typedef CGAL::Point_2<CRep> Point_base;
+typedef K::Point_2 Point_base;
 typedef CGAL::Weighted_point<Point_base,double>  Point;
-typedef CGAL::Segment_2<CRep>  Segment;
-typedef CGAL::Ray_2<CRep>  Ray;
-typedef CGAL::Line_2<CRep>  Line;
-typedef CGAL::Triangle_2<CRep>  Triangle;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<CRep> Gt;
+typedef K::Segment_2  Segment;
+typedef K::Ray_2  Ray;
+typedef K::Line_2  Line;
+typedef K::Triangle_2  Triangle;
+typedef K::Circle_2 Circle;
+
+typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 
@@ -132,6 +113,16 @@ typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 
 typedef CGAL::Window_stream  Window_stream;
+
+#ifdef CGAL_USE_CGAL_WINDOW
+typedef CGAL::window Window;
+typedef CGAL::panel Panel;
+typedef std::string String;
+#else
+typedef leda_window Window;
+typedef leda_panel Panel;
+typedef leda_string String;
+#endif
 
 //---------------- global variables -----------------------------------
 
@@ -177,7 +168,7 @@ draw_vertices(const Alpha_shape_2& A,
       if (option)
 	{ 
 	  W.draw_filled_node(p.x(), p.y());
-	  W << CGAL::Circle_2<CRep>(p.point(),std::max(p.weight(),DBL_MIN)); 
+	  W << Circle(p.point(),std::max(p.weight(),DBL_MIN)); 
 	}
       else
 	W.draw_filled_node(p.x(), p.y());
@@ -267,10 +258,11 @@ random_input(Alpha_shape_2 &A,
 
   W << VERTEX_COLOR;
 
+  CGAL::Random rand;
   for(int i = 0; i<n; i++)
     { 
-      int x = rand_int(xmin,xmax);
-      int y = rand_int(ymin,ymax);
+      int x = rand.get_int(xmin,xmax);
+      int y = rand.get_int(ymin,ymax);
       Point p(Point::Point((double)x,(double)y));
       V.push_back(p);
      }
@@ -466,7 +458,7 @@ void set_alpha(int alpha_index)
 
 //-------------------------------------------------------------------
 
-void redraw(leda_window* wp, double x0, double y0, double x1, double y1) 
+void redraw(Window* wp, double x0, double y0, double x1, double y1) 
 { 
   wp->flush_buffer(x0,y0,x1,y1);
 }
@@ -533,8 +525,8 @@ int main(int argc,  char* argv[])
 	case 1:
 	  { // get input points
 	    int input_choice;
-	    leda_panel Pin;
-	    leda_string finname(opt.finname);
+	    Panel Pin;
+	    String finname(opt.finname);
 
 	    Pin.text_item("\\bf Get input points");
 	    Pin.text_item("");
@@ -544,7 +536,7 @@ int main(int argc,  char* argv[])
 
 	    if (Pin.open(W) == 0)
 	      { 
-		leda_panel Pfin;
+		Panel Pfin;
 		
 		opt.file_input = (input_choice == 0);
 		switch (input_choice) 
@@ -556,7 +548,11 @@ int main(int argc,  char* argv[])
 			  Pfin.button("Cancel",1);
 			  if (Pfin.open(W) == 1)
 			    break;
+#if defined(CGAL_USE_CGAL_WINDOW)			    
+			  CGAL_CLIB_STD::strcpy(opt.finname, finname.c_str());  
+#else			    
 			  CGAL_CLIB_STD::strcpy(opt.finname, finname);
+#endif
 			  std::cout << opt.finname << std::endl;
 	
 			  clear_all(A, V, W);
@@ -607,11 +603,11 @@ int main(int argc,  char* argv[])
 	case 2:
 	  {
 	    // write points
-	    leda_panel Pout;
+	    Panel Pout;
 	    // panel P;
 	    Pout.text_item("\\bf Save points");
 	    Pout.text_item("");
-	    leda_string foutname(opt.foutname);
+	    String foutname(opt.foutname);
 	    // Get the file name
 	    Pout.string_item("Find file :", foutname);
 	    Pout.button("OK",0);
@@ -620,7 +616,11 @@ int main(int argc,  char* argv[])
 	    if (Pout.open(W) == 0)
 	      { 
 		opt.file_output = true;
+#if defined(CGAL_USE_CGAL_WINDOW)
+		CGAL_CLIB_STD::strcpy(opt.foutname, foutname.c_str());
+#else
 		CGAL_CLIB_STD::strcpy(opt.foutname, foutname);
+#endif
 		file_output(V, opt);
 	      }
 	    break;
@@ -629,7 +629,7 @@ int main(int argc,  char* argv[])
 	case 4:
 	  {
 	    // help infos
-	    leda_panel Pout;
+	    Panel Pout;
 	    Pout.text_item("Open : points input from file or mouse.");
 	    Pout.text_item("");
 	    Pout.text_item("Save : save points.");
@@ -649,7 +649,7 @@ int main(int argc,  char* argv[])
 	  {
 	    // compute an optimal approximation
 	    int nb_comp =1, opt_alpha_index;
-	    leda_panel Popt;
+	    Panel Popt;
 	    // panel P;
 	    Popt.text_item("\\bf Compute optimal approximation");
 	    Popt.text_item("");
@@ -710,9 +710,9 @@ int main(int argc,  char* argv[])
       if (opt.weight) 
 	{ 
 	  W << REGULARIZED_COLOR;
-	  W << CGAL::Circle_2<CRep> (Point_base ((xmax-(xmax-xmin)/15),
-						 (ymin+(xmax-xmin)/15)), 
-				     std::max(A.get_alpha(),DBL_MIN)); 
+	  W << Circle (Point_base ((xmax-(xmax-xmin)/15),
+				   (ymin+(xmax-xmin)/15)), 
+		       std::max(A.get_alpha(),DBL_MIN)); 
 	}
       
       if(opt.Delaunay)
