@@ -226,16 +226,6 @@ do
         fi
     else 
 # Old style segment traits.
-        if ${CAR_TEST}
-        then
-            if [  "${datafiles}" ]
-            then
-                #TESTR BBOX STRATEGY
-                (make_and_execute 1 1 2);
-                (make_and_execute 1 1 1);
-                (make_and_execute 1 1 3);
-            fi
-	fi
         if ${HOM_TEST}
         then
             datafiles="${ixdatafiles}"

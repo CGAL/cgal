@@ -66,7 +66,8 @@ typedef TestR::RT inputt;
 
 #if BBOX == 1
 #if TESTR == 1
-typedef CGAL::Pm_segment_epsilon_traits< TestR > Traits;
+  #error We dont support epsilon traits anymore (shaihi 2000-03-19)
+  //typedef CGAL::Pm_segment_epsilon_traits< TestR > Traits;
 #else
 typedef CGAL::Pm_segment_exact_traits< TestR > Traits;
 #endif
