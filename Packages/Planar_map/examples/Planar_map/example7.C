@@ -1,11 +1,11 @@
 //example7
 
-#include <iostream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Pm_straight_exact_traits.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/IO/Straight_2_stream.h>
+#include <iostream>
 
 typedef double                              	   Number_type;
 typedef CGAL::Cartesian<Number_type>               Coord_t;
