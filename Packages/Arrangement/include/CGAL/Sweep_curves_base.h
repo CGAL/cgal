@@ -53,14 +53,15 @@ class Sweep_curves_base
 {
 protected:
   typedef Sweep_curves_base<Curve_iterator_, Traits_, Point_plus_>  Self;
-  
+  typedef  typename Traits_::X_curve  X_curve;
+
   // X_curve_plus:
   // holds a curve and its id number. 
   // The addition of id number to a curve was made due to overlapping 
   // (in which some binary predicates return EQUAL, 
   // while we are interseted in sharp order relation. 
-  // template <class Traits_>
-  class X_curve_plus: public Traits_::X_curve
+  // template <class Traits_> 
+  class X_curve_plus : public X_curve
   {
   public:
     typedef Traits_                       Traits;
@@ -169,7 +170,10 @@ protected:
   // The points container refers all the intersedction points (including edge points) calculated so far by the sweep line.
   // These points are ordered from left to right on the curve, which means they are sorted in a way we get immidiately all 
   // the disjoint subcurves reduce by the curve.
+  
 
+  class Curve_node;
+  
   //template <class Point_plus>
   class Curve_node_rep : public Rep {
   public:
@@ -238,15 +242,15 @@ protected:
     //typedef  X_curve_plus                               X_curve_plus;
     //typedef  Curve_node                                     Self;
 
-    typedef /*Self::*/ Curve_node_rep                     Curve_node_rep_point_plus;
-    typedef Curve_node_rep_point_plus::Points_container  Points_container;
+    //typedef Self::Curve_node_rep                       Curve_node_rep_point_plus;
+    typedef Curve_node_rep::Points_container             Points_container;
     typedef typename Points_container::iterator          Points_iterator;
     typedef typename Points_container::const_iterator    Points_const_iterator;
 
     Curve_node() : Handle() {}
     
     Curve_node(const X_curve_plus& cv) {
-      PTR = new Curve_node_rep_point_plus(cv);
+      PTR = new Curve_node_rep(cv);
     }
     
     // Curve_node(const X_curve_plus& cv, Vertex_handle v) {
@@ -254,11 +258,11 @@ protected:
     // }
 
     Curve_node(const X_curve_plus& cv, const Point& p) {
-      PTR = new Curve_node_rep_point_plus(cv, p);
+      PTR = new Curve_node_rep(cv, p);
     }
 
     Curve_node(const X_curve_plus& cv, const Point_plus& p) {
-      PTR = new Curve_node_rep_point_plus(cv, p);
+      PTR = new Curve_node_rep(cv, p);
     }
     
     Curve_node(const Curve_node& cv_node) : Handle(cv_node) {}
@@ -315,8 +319,8 @@ protected:
     }
     
   protected:
-    Curve_node_rep_point_plus* ptr() const { 
-      return (Curve_node_rep_point_plus*)PTR;
+    Curve_node_rep* ptr() const { 
+      return (Curve_node_rep*)PTR;
     }
   };
   
@@ -850,7 +854,7 @@ public:
   typedef typename  Traits::X_curve                     X_curve;
   typedef typename  Traits::Point                       Point;
   
-  typedef X_curve_plus                                   X_curve_plus;
+  //typedef X_curve_plus                                   X_curve_plus;
   typedef typename Curve_node::Points_iterator           Points_iterator;  
   typedef typename Curve_node::Points_const_iterator     Points_const_iterator;
   typedef typename Intersection_point_node::Curve_node_iterator     
