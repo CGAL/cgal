@@ -79,7 +79,7 @@ Library of Efficient Datatypes and Algorithms\footnote{see
   \path~http://www.mpi-sb.mpg.de/LEDA/index.html~ for information.},
 and/or the \gnu\ Multiple Precision library GMP.
 
-\section{Prerequisites \label{sec:prerequisites}}
+\section{Prerequisites}\label{sec:prerequisites}
 
 In order to build the \cgal\ libraries you need a \CC\ compiler.
 Currently only a small number of recent compilers on unix platforms
@@ -94,6 +94,7 @@ compilers/operating systems:
 
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}     & \textbf{operating system}\\\hline\hline
     \mipsprocc\ 7.2 (n32) & IRIX 6.2\\\hline
@@ -185,6 +186,7 @@ contains the following subdirectories:
 
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{directory} & \textbf{contents}\\\hline\hline
     \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
@@ -222,7 +224,7 @@ some compatibility issues that need to be addressed first. See
 section~\ref{sec:leda} and \compilerpage\ for more information about
 this.
 
-\section{A Sample Installation \label{sec:sample-inst}}
+\section{A Sample Installation}\label{sec:sample-inst}
 
 In this section we sketch an example installation on a \textsc{Sun}
 running Solaris 2.5 with the \sunprocc{4.2} compiler. For a complete
@@ -244,7 +246,7 @@ will not get informed about this\footnote{If you are that curious what
   \texttt{\cgaldir/install.log}.}, but see some dots written to the
 screen indicating progress.
 
-\begin{scriptsize}
+{\scriptsize
 \begin{alltt}
 --------------------------------------------------------
   This is the install script for CGAL \cgalrelease
@@ -256,8 +258,7 @@ starting interactive mode - one moment, please
   Choosing compiler SUNPRO 4.2.
   Testing for builtin STL ... no.
 .
-\end{alltt}
-\end{scriptsize}
+\end{alltt}}
   
 If there is any compiler installed on your system and accessible
 through your \texttt{PATH} environment variable that is supported by
@@ -273,7 +274,7 @@ from the compiler menu.
 
 A menu similar to the following will appear on your screen.
 
-\begin{scriptsize}\label{pic:main-menu}
+{\scriptsize \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
   **              CGAL 1.1 Installation Main Menu               **
@@ -302,8 +303,7 @@ A menu similar to the following will appear on your screen.
   **   Your Choice:                                             **
   **                                                            **
   ****************************************************************
-\end{alltt}
-\end{scriptsize}
+\end{alltt}}
 
 The first lines below the headline contain some kind of status report:
 current OS and compiler, are \leda\ and GMP supported etc., in this
@@ -318,7 +318,7 @@ libraries, but before that we first have to setup \stl.\footnote{This
   to skip the next section and go directly to section
   \ref{sec:build-the-libs}.}
 
-\subsection{Setting up \stl \label{sec:set-up-stl}}
+\subsection{Setting up \stl}\label{sec:set-up-stl}
 
 Please type ``\texttt{c}'' to go to the compiler menu where all
 compiler specific options can be configured. Then type ``\texttt{i}''
@@ -340,7 +340,7 @@ your compiler works as it should i.e. a feature is supported resp. a
 bug is \textit{not} present. On the other hand \texttt{no} resp.
 \texttt{unfortunately} indicate a lack of support resp. bug.
 
-\begin{scriptsize}
+{\scriptsize
 \begin{verbatim}
   ****************************************************************
   **            CGAL 1.1 Installation Compiler Menu             **
@@ -379,8 +379,7 @@ bug is \textit{not} present. On the other hand \texttt{no} resp.
   <tests for several compiler features>
   ...
   Saving current setup ... done.
-\end{verbatim}
-\end{scriptsize}
+\end{verbatim}}
 
 If the \stl\ test succeeds, the current setup is marked as tested and
 the settings are saved to a file in the directory \cgalinstconfdir.
@@ -388,7 +387,7 @@ Thus, if you run the install script a second time for this
 OS/compiler, you will not have to enter the \stl\ directory again, but
 it is retrieved from the corresponding config file instead.
 
-\subsection{Building the \cgal\ libraries \label{sec:build-the-libs}}
+\subsection{Building the \cgal\ libraries}\label{sec:build-the-libs}
 
 Now we are ready to build the \cgal\ libraries.  First go back to the
 main menu with ``\texttt{q}`` and then type ``{\tt b}'' to start
@@ -404,7 +403,7 @@ compile \cgal\ applications. If everything went ok, the output should
 look as follows (if not, you should have a look at the error messages
 from compiler or linker).
 
-\begin{scriptsize}
+{\scriptsize
 \begin{verbatim}
   ****************************************************************
   **                                                            **
@@ -426,8 +425,7 @@ from compiler or linker).
   ****************************************************************
   **             Please press <ENTER> to continue.              **
   ****************************************************************
-\end{verbatim}
-\end{scriptsize}
+\end{verbatim}}
 
 That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the main
 menu and proceed by installing for a different compiler (go to the
@@ -500,8 +498,9 @@ It follows a list of these files (all are plain ASCII and reside in
 \cgaldir).
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
-    {\bf filename} & {\bf content}\\\hline\hline
+    \textbf{filename} & \textbf{content}\\\hline\hline
     \texttt{install.log} & detailed overall protocol\\\hline
     \texttt{install.completed} & list of systems for which \cgal\ libraries 
     have been built\\\hline
@@ -528,7 +527,7 @@ builtin \stl, you can still choose to use an external \stl\ by setting
 \fbox{
 \begin{minipage}{.95\linewidth}
 \vspace{2pt}
-\centerline{{\large\bf Compiler Menu}}
+\centerline{{\large{\bf Compiler Menu}}}
 \vspace{2pt}
 \begin{description}
 \item[$<$C$>$] Choose the compiler to be used from the list of
@@ -547,7 +546,7 @@ builtin \stl, you can still choose to use an external \stl\ by setting
 \end{description}
 \vspace{2pt}
 \end{minipage}
-\hfil}
+\hfill}
 
 \subsection{The \leda\ Menu}\label{sec:leda-menu}
 
@@ -566,7 +565,7 @@ option to set these directories differently.\bigskip
 \fbox{
 \begin{minipage}{.95\linewidth}
 \vspace{2pt}
-\centerline{{\large\bf \leda\ Menu}}
+\centerline{{\large{\bf \leda\ Menu}}}
 \vspace{2pt}
 \begin{description}
 \item[$<$E$>$] Enable/Disable \leda\ support in \cgal.
@@ -584,7 +583,7 @@ option to set these directories differently.\bigskip
 \end{description}
 \vspace{2pt}
 \end{minipage}
-\hfil}
+\hfill}
 
 \subsection{The GMP Menu}\label{sec:gmp-menu}
 
@@ -605,7 +604,7 @@ option to set these directories differently.\bigskip
 \fbox{
 \begin{minipage}{.95\linewidth}
 \vspace{2pt}
-\centerline{{\large\bf GMP Menu}}
+\centerline{{\large{\bf GMP Menu}}}
 \vspace{2pt}
 \begin{description}
 \item[$<$C$>$] Install the GMP distribution shipped with \cgal\ in the
@@ -622,9 +621,9 @@ option to set these directories differently.\bigskip
 \end{description}
 \vspace{2pt}
 \end{minipage}
-\hfil}
+\hfill}
 
-\section{The non-interactive mode \label{sec:non-interactive}}
+\section{The non-interactive mode}\label{sec:non-interactive}
 
 To run the install script in the non-interactive mode, go to the
 \cgaldir\ directory and enter the command
@@ -754,7 +753,7 @@ not.  This option is not recommended for general use, but it can be
 useful to check why a certain test fails that was expected to be
 passed.
 
-\section{Troubleshooting\label{sec:troubleshooting}}
+\section{Troubleshooting}\label{sec:troubleshooting}
 
 In case you run into problems with \cgal, you should first have a look
 at the \cgal\ homepage:
@@ -802,7 +801,7 @@ Examples are \texttt{mips\_IRIX-6.2\_CC-7.2} or {\tt
 script to get your \cgal-OS description, see section
 \ref{sec:other-options}.
 
-\section{The \cgal\ makefile structure \label{sec:makefiles}}
+\section{The \cgal\ makefile structure}\label{sec:makefiles}
 
 The \cgal\ distribution contains the following makefiles:
 \begin{itemize}
@@ -895,7 +894,7 @@ Furthermore the directories \texttt{\cgaldir/examples} and
 and graphical example programs.  In all these directories you will
 find a makefile that is ready for use.
 
-\section{Using \cgal\ and \leda \label{sec:leda}}
+\section{Using \cgal\ and \leda}\label{sec:leda}
 This section describes how to use \cgal\ and \leda\ simultaneously.
 
 \subsection{Support for \leda}
@@ -980,7 +979,7 @@ One of the libraries needs to be modified. In this case the easiest
 solution seems to prefix the \leda\ color constants with something
 like \texttt{leda\_}.
 
-\section{The Standard Template Library \label{sec:stl}}
+\section{The Standard Template Library}\label{sec:stl}
 
 For using the \cgal\ library, the Standard Template Library is
 required. Recent compilers provide their own implementation of \stl.
@@ -999,14 +998,14 @@ values:
 
 \begin{center}
   \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     CGAL\_STL\_GCC                & \stl\ version that comes with gcc-2.7.2 \\ \hline
     CGAL\_STL\_HP                 & Free HP version \\ \hline
     CGAL\_STL\_SGI\_3\_0          & SGI STL 3.0 or newer \\ \hline
     CGAL\_STL\_SGI\_WWW           & SGI STL prior to 3.0 \\ \hline
     CGAL\_STL\_SGI\_WWW\_OLD      & SGI STL for older compilers \\ \hline
-    CGAL\_STL\_SGI\_CC            & SGI implementation that comes with their\\ 
-    & 7.0/ 7.1 compilers \\ \hline
+    CGAL\_STL\_SGI\_CC            & SGI STL that comes with their 7.0/7.1 compilers \\ \hline
     CGAL\_STL\_UNKNOWN            & unknown \stl\ version (this will probably not work) \\ \hline
   \end{tabular}
 \end{center}
