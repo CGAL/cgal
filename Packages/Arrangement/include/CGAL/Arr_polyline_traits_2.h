@@ -1259,6 +1259,23 @@ private:
   }
 };
 
+/*!
+ * Output operator for a polyline.
+ */
+template <class Segment_traits_, class Stream_>
+Stream_ & operator<< (Stream_ & os, const Polyline_2<Segment_traits_> & cv)
+{
+  typename Polyline_2<Segment_traits_>::const_iterator ps = cv.begin();
+  typename Polyline_2<Segment_traits_>::const_iterator pt = ps; pt++;
+
+  while (pt != cv.end()) {
+    typename Segment_traits_::Curve_2 seg(*ps, *pt);
+    os << seg;
+    ps++; pt++;
+  }
+  return (os);
+}
+
 CGAL_END_NAMESPACE
 
 #endif

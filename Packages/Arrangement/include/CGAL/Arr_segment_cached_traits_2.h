@@ -878,9 +878,8 @@ class Segment_cached_2 :
 /*!
  * Output operator for a cached segment.
  */
-template <class Kernel_>
-::std::ostream& operator<< (::std::ostream& os,
-                            const Segment_cached_2<Kernel_>& seg)
+template <class Kernel_, class Stream_>
+Stream_ & operator<< (Stream_ & os, const Segment_cached_2<Kernel_>& seg)
 {
   os << static_cast<typename Kernel_::Segment_2>(seg);
   return (os);
