@@ -1,0 +1,99 @@
+#!/sw/bin/perl5 -w
+
+use strict;
+use File::Find;
+
+my $filenames_used_file = '/projects/CGAL/admin_scripts/DATA/filenames';
+my %filename_map = ();
+my @conflicts=();
+my ($cgal_package_name, $start_directory);
+
+my @reserved_filenames = ('version','description.txt','changes.txt',
+ 'long_description.txt', 'maintainer', 'submission_info');
+
+sub usage()
+{
+    print STDERR "$0 checks if the filenames in a package are\n";
+    print STDERR "not already used by another package.\n";
+    print STDERR "usage:\n";
+    print STDERR "  $0 package_name directory\n";
+    print STDERR "  package_name: the name of the package that is checked\n";
+    print STDERR "  directory: the root directory of the package\n";
+}
+
+if ( $#ARGV != 1 ) {
+    usage();
+    exit 1;
+}
+
+
+$cgal_package_name = shift;
+$start_directory = shift;
+
+open(FILEMAP,$filenames_used_file) or die;
+while(<FILEMAP>) {
+    chop;
+    if (/^(.*):([^:]*)$/) {
+	next if ($2 eq $cgal_package_name);
+        my $lowercasename;
+        $lowercasename=lc $1;
+	$filename_map{$lowercasename}=$_;
+    } 
+}
+close FILEMAP or die;
+
+foreach (@reserved_filenames) {
+    my $lowercasename = './' . lc($_);
+    $filename_map{$lowercasename}='reserved_name';
+}
+
+chdir $start_directory or die "Can't go to directory $start_directory\n";
+
+sub add_files()
+{
+    if ( -f $_) {
+        my $curfilename = $File::Find::name;
+	my $lowercasename;
+	$lowercasename = lc $curfilename;
+	if (exists($filename_map{$lowercasename}) ) {
+	    if ($filename_map{$lowercasename} ne 'reserved_name') {
+		push @conflicts, $curfilename, $filename_map{$lowercasename};
+	    }
+	} else {
+	    $filename_map{$lowercasename} = "$curfilename:$cgal_package_name";
+	}
+    }
+}
+
+find(\&add_files, ".");
+
+sub write_file($)
+{
+    my ($key, $value,$tmpfile);
+    $tmpfile = shift;
+    open(OFILE,">$tmpfile") or die;
+    while (($key,$value) = each %filename_map) {
+	if ($value ne 'reserved_name') {
+	    print OFILE "$value\n";
+	}
+    }
+    close OFILE or die;
+}
+
+if ($#conflicts != -1) {
+    print STDERR "conflicts:\n";
+    print STDERR "@conflicts\n";
+    return 1;
+}
+my $tmpfile = "tmp_add_pack$$";
+eval "writefile($tmpfile)";
+if ($@) {
+    print STDERR "$0: Error while writing $tmpfile.\n";
+    return 1;
+}
+if (system('mv',"$tmpfile","$filenames_used_file") != 0) {
+    print STDERR "$0: Could not move $tmpfile to $filenames_used_file\n";
+    return 1;
+}
+
+return 0;
