@@ -17,16 +17,13 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_ENUM_H
 #define CGAL_ENUM_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 enum  Sign
       {
@@ -47,8 +44,6 @@ const Orientation  COLLINEAR  = ZERO;
 const Orientation  COPLANAR   = ZERO;
 const Orientation  DEGENERATE = ZERO;
 
-
-
 enum  Oriented_side
       {
         ON_NEGATIVE_SIDE = -1,
@@ -56,14 +51,12 @@ enum  Oriented_side
         ON_POSITIVE_SIDE
       };
 
-
 enum  Bounded_side
       {
         ON_UNBOUNDED_SIDE = -1,
         ON_BOUNDARY,
         ON_BOUNDED_SIDE
       };
-
 
 enum  Comparison_result
       {
@@ -74,9 +67,6 @@ enum  Comparison_result
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_FUNCTIONS_ON_ENUMS_H
 #include <CGAL/functions_on_enums.h>
-#endif // CGAL_FUNCTIONS_ON_ENUMS_H
 
 #endif // CGAL_ENUM_H
