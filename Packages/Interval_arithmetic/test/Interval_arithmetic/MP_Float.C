@@ -1,12 +1,12 @@
-// Test program for the MP_Integer class.
+// Test program for the MP_Float class.
 // Sylvain Pion.
 //
 // We should be able to more deeply test it using an NT checker.
 
-#include <CGAL/MP_Integer.h>
+#include <CGAL/MP_Float.h>
 #include <iostream>
 
-typedef CGAL::MP_Integer MPI;
+typedef CGAL::MP_Float MPI;
 
 void test_equality(int i)
 {
