@@ -10,8 +10,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define INVALID_EDGE Edge(NULL, -1);
-
 template <class Tr, class Mtraits = void>
 class Mesh: public Tr
 {
@@ -68,10 +66,12 @@ private:
   // Bad_faces: list of bad finite faces
   // # warning: some faces could be recycled during insertion in the
   //  triangulation
+  // # TODO: create a const iterator that give real bad faces
   std::multimap<FT, Face_handle>    Bad_faces;
 
   // c_edge_queue: list of encroached constrained edges
   //  warning: some edges could be destroyed
+  // # TODO: idem const iterator
   std::list<Constrained_edge>       c_edge_queue;
 
   //  std::map<Vertex_handle, int>      insertion_time;
@@ -81,6 +81,7 @@ private:
 public:
   //INSERTION-REMOVAL
   void refine_mesh();
+  // TODO: refine_mesh_step(), that do a step of refinment
   void bounds(FT &xmin, FT &ymin, 
 	      FT &xmax, FT &ymax,
 	      FT &xcenter, FT &ycenter);
@@ -169,6 +170,7 @@ private:
 
 inline Vertex_circulator incr_constraint(Vertex_handle v, Vertex_circulator &c)
 {
+  // TODO: create a finite_contraints_circulator
   Vertex_circulator cbegin = c;
   incr(c);
   while(!edge_between(v, c).first->is_constrained(edge_between(v, c).second) 
@@ -186,10 +188,9 @@ inline Vertex_circulator succ_constraint(Vertex_handle v,
 inline bool get_conflicting_edges(const Point &p,
 				  list<Constrained_edge> &cel)
 { //cel = constrained edges list
-  Face_handle start;
   int li;
   Locate_type lt;
-  Face_handle fh = locate(p,lt,li, start);
+  Face_handle fh = locate(p,lt,li);
   switch(lt) {
   case OUTSIDE_AFFINE_HULL:
   case VERTEX:
@@ -474,6 +475,7 @@ refine_face(Face_handle f)
 							   cluster);
 
 
+		    // PROBLEM!!
 		    CGAL_assertion(rmin <= rg);
 
 		    refine_edge(ce.first, ce.second);
@@ -485,10 +487,9 @@ refine_face(Face_handle f)
       }
       else
 	{
- 	  Face_handle start;
  	  int li;
  	  Locate_type lt;
- 	  /*Face_handle fh = */locate(pc,lt,li, start);
+ 	  /*Face_handle fh = */locate(pc,lt,li);
 	  if(lt!=OUTSIDE_CONVEX_HULL) {
 	    v = insert(pc);
 	    update_facette_map(v);
@@ -613,6 +614,7 @@ cut_reduced_cluster(Vertex_handle va, Vertex_handle vb)
   Vertex_handle vm;
   if(is_cluster_reduced(c))
     {
+      // WHY IS IT COMMENTED??
       // vm = insert_in_c_edge(va, vb, va->point() + (vb->point() - va->point())/2.0);
     }
   update_c_edge_queue(va, vb, vm);
@@ -767,6 +769,8 @@ update_cluster(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
     }
 }
 
+// == is_edge ???????????????
+// used by: incr_constraint
 template <class Tr, class Mtraits>
 inline Mesh<Tr, Mtraits>::Edge 
 Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
@@ -783,16 +787,14 @@ Mesh<Tr, Mtraits>::edge_between(Vertex_handle va, Vertex_handle vb) {
     }
     ec++;
   } while(ec != ecbegin);
-  cerr<<"invalid edge"<<endl;
-  return INVALID_EDGE;
+  CGAL_assertion(false); // invalid edge
 }
-
-
-
 
 //CHECK
 
 
+// TO IMPLEMENT WITH A SINGLE SCALAR PRODUCT!
+// ->traits
 template <class Tr, class Mtraits>
 bool Mesh<Tr, Mtraits>::
 is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
@@ -805,7 +807,7 @@ is_encroached(Vertex_handle va, Vertex_handle vb, Point p)
    return false;
 }
 
-
+// NOT ALL VERTICES, ONLY THE TWO NEIGHBORS
 template <class Tr, class Mtraits>
 bool Mesh<Tr, Mtraits>::
 is_encroached(Vertex_handle va, Vertex_handle vb)
@@ -825,15 +827,8 @@ is_encroached(Vertex_handle va, Vertex_handle vb)
 
 }
 
-
-// template <class Tr, class Mtraits>
-// bool Mesh<Tr, Mtraits>::
-// min_insertion_radius(Vertex_handle v, Cluster &c)
-// {
-
-// }
-
-
+// ?????????????
+// ->traits
 //the measure of faces quality
 template <class Tr, class Mtraits>
 bool Mesh<Tr, Mtraits>::
@@ -861,7 +856,7 @@ is_bad(Face_handle f)
 }
 
 
-//
+// -> traits?
 template <class Tr, class Mtraits>
 bool Mesh<Tr, Mtraits>::
 is_small_angle(Vertex_handle vleft,
@@ -880,7 +875,7 @@ is_small_angle(Vertex_handle vleft,
 }
 
 
-//
+// # used by: cut_cluster, cut_reduced_cluster
 template <class Tr, class Mtraits>
 bool Mesh<Tr, Mtraits>::
 is_cluster_reduced(const Cluster& c)
@@ -959,57 +954,8 @@ check_cluster_status( Cluster& cluster)
 
 
 
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-bounds(FT &xmin, FT &ymin, 
-       FT &xmax, FT &ymax,
-       FT &xcenter, FT &ycenter)
-{
-  Vertex_iterator vi=vertices_begin();
-  xmin=xmax=xcenter=vi->point().x();
-  ymin=ymax=ycenter=vi->point().y();
-  vi++;
-  while(vi != vertices_end())
-  {
-    xcenter+=vi->point().x();
-    ycenter+=vi->point().y();
-    if(vi->point().x() < xmin) xmin=vi->point().x();
-    if(vi->point().x() > xmax) xmax=vi->point().x();
-    if(vi->point().y() < ymin) ymin=vi->point().y();
-    if(vi->point().y() > ymax) ymax=vi->point().y();
-    vi++;
-  }
-  xcenter /= number_of_vertices();
-  ycenter /= number_of_vertices();
-}
 
-
-//bounding box
-template <class Tr, class Mtraits>
-void Mesh<Tr, Mtraits>::
-bounding_box()
-{
- 
-  FT span;
-  FT xmin, xmax, ymin, ymax, xcenter, ycenter;
-  bounds(xmin, ymin, xmax, ymax, xcenter, ycenter);
-  span = max((xmax-xmin), (ymax-ymin));
-  Point bb1(xcenter - 1.1*span, ycenter - 1.1*span);
-  Point bb2(xcenter + 1.1*span, ycenter - 1.1*span);
-  Point bb3(xcenter + 1.1*span, ycenter + 1.1*span);
-  Point bb4(xcenter - 1.1*span, ycenter + 1.1*span);
-  insert(bb1);
-  insert(bb2);
-  insert(bb3);
-  insert(bb4);
-  insert(bb1, bb2);
-  insert(bb2, bb3);
-  insert(bb3, bb4);
-  insert(bb4, bb1);
-
-}
-
-
+// ->traits?
 //the angle that are between 2 edges from the triangulation
 template <class Tr, class Mtraits>
 typename Mesh<Tr, Mtraits>::FT Mesh<Tr, Mtraits>::
@@ -1027,7 +973,7 @@ cosinus_of_angle(Vertex_handle vleft, Vertex_handle vmiddle, Vertex_handle vrigh
   return cos_alpha;
 }
 
-
+// ->traits?
 //the shortest edge that are in a triangle
 // # used by: refine_face, aspect_ratio
 template <class Tr, class Mtraits>
@@ -1046,7 +992,7 @@ shortest_edge_squared_lenght(Face_handle f)
   // MIN (Developer Manual)
 }
 
-
+// ->traits
 //the triangle quality is represented by the
 //aspect_ratio value
 // # used by: fill_facette_map, update_facette_map, is_bad

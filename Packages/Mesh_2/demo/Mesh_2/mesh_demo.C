@@ -56,6 +56,7 @@ int main(int, char*)
 typedef CGAL::Simple_cartesian<double>  K1;
 typedef CGAL::Filtered_kernel<K1>       Kernel;
 struct K : public Kernel {}; 
+typedef K::FT                           FT;
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
@@ -66,7 +67,8 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
 typedef K::Point_2 Point;
 typedef CGAL::Polygon_2<K> Polygon;
 
-typedef CGAL::Mesh<Tr> Mesh;
+typedef CGAL::Mesh<Tr> Mesh1;
+struct Mesh: public Mesh1 {};
 
 CGAL::Qt_widget& operator<< (CGAL::Qt_widget& w, const Mesh& mesh)
 {
@@ -84,9 +86,8 @@ public:
     {
       widget = new CGAL::Qt_widget(this,"Main widget");
       setCentralWidget(widget);
-      //      widget->show();
       resize(700,500);
-      widget->set_window(0.,1000.,0.,1000.);
+
 
       // LAYERS
       show_points = new CGAL::Qt_layer_show_points<Mesh>(mesh);
@@ -116,8 +117,13 @@ public:
 
 
       // TOOLBARS
-      // actions: mesh only
+      // actions: bouding box and mesh
       QToolBar *toolBarActions = new QToolBar("Actions",this);
+      QPushButton *pbBounding = 
+	new QPushButton("Insert bounding box", toolBarActions);
+      connect(pbBounding, SIGNAL(clicked()), this,
+	      SLOT(insert_bounding_box()));
+
       QPushButton *pbMesh = 
 	new QPushButton("Mesh", toolBarActions);
       connect(pbMesh, SIGNAL(clicked()), this, SLOT(refineMesh()));
@@ -207,14 +213,15 @@ public:
       connect(bgLayers, SIGNAL(clicked(int)),
 	      widget, SLOT(redraw()));
 
-      setUsesBigPixmaps(true);
-
       // the standard toolbar
       CGAL::Qt_widget_standard_toolbar *std_toolbar =
 	new CGAL::Qt_widget_standard_toolbar(widget, this);
       this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
+
       setUsesBigPixmaps(true);
-      
+
+      widget->clear_history();
+
       // MENUS
       QPopupMenu *pmMesh = new QPopupMenu(this);
       menuBar()->insertItem("&Mesh", pmMesh);
@@ -233,7 +240,27 @@ public:
 
       // STATUSBAR
       statusBar();
+
+      widget->set_window(0.,1000.,0.,1000.);
     };
+
+  // compute bounds of the mesh
+  void bounds(FT &xmin, FT &ymin, 
+	      FT &xmax, FT &ymax)
+    {
+      Mesh::Finite_vertices_iterator vi=mesh.finite_vertices_begin();
+      xmin=xmax=vi->point().x();
+      ymin=ymax=vi->point().y();
+      vi++;
+      while(vi != mesh.finite_vertices_end())
+	{
+	  if(vi->point().x() < xmin) xmin=vi->point().x();
+	  if(vi->point().x() > xmax) xmax=vi->point().x();
+	  if(vi->point().y() < ymin) ymin=vi->point().y();
+	  if(vi->point().y() > ymax) ymax=vi->point().y();
+	  vi++;
+	}
+    }
 
 public slots:
   void get_cgal_object(CGAL::Object obj)
@@ -271,9 +298,36 @@ public slots:
 	*widget << it->point();
       widget->unlock();
     }
-  
+
+    //insert a bounding box around the mesh
+  void insert_bounding_box()
+    {
+      FT xmin, xmax, ymin, ymax;
+      bounds(xmin, ymin, xmax, ymax);
+
+      FT xcenter=(xmin+xmax)/2,
+	ycenter=(ymin+ymax)/2;
+      FT xspan = (xmax-xmin)/2,
+	yspan = (ymax-ymin)/2;
+
+      Point bb1(xcenter - 1.5*xspan, ycenter - 1.5*yspan);
+      Point bb2(xcenter + 1.5*xspan, ycenter - 1.5*yspan);
+      Point bb3(xcenter + 1.5*xspan, ycenter + 1.5*yspan);
+      Point bb4(xcenter - 1.5*xspan, ycenter + 1.5*yspan);
+      mesh.insert(bb1);
+      mesh.insert(bb2);
+      mesh.insert(bb3);
+      mesh.insert(bb4);
+      mesh.insert(bb1, bb2);
+      mesh.insert(bb2, bb3);
+      mesh.insert(bb3, bb4);
+      mesh.insert(bb4, bb1);
+      widget->redraw();
+    }
+
   void refineMesh()
     {
+      saveTriangulationUrgently("last_input.edg");
       mesh.refine_mesh();
       widget->redraw();
     }
@@ -305,9 +359,9 @@ public slots:
       mesh.write(of);
     }
 
-  void saveUrgently()
+  void saveTriangulationUrgently(QString s=QString("dump.edg"))
     {
-      ofstream of("dump.edg");
+      ofstream of(s);
       mesh.write(of);
     }
 
@@ -375,7 +429,7 @@ int main(int argc, char** argv)
     return app.exec();
   }
   catch(Cgal_exception e) {
-    W->saveUrgently();
+    W->saveTriangulationUrgently();
     my_previous_failure_function(e.type, e.expr, e.file, e. line, e.msg);
   }
 }
