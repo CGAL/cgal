@@ -91,7 +91,7 @@ the nearest site triangulation and the test
 the furthest site triangulation.
 }*/
 
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Convex_hull_d.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -492,7 +492,7 @@ public:
   void all_vertices_below(const Lifted_hyperplane_d& h, 
                           Simplex_handle s, 
                           std::list<Vertex_handle>& result,
-                          Hash_map<Vertex_handle,bool>& is_new,
+                          Unique_hash_map<Vertex_handle,bool>& is_new,
                           bool is_cocircular) const;
 
 
@@ -617,8 +617,8 @@ void Delaunay_d<R,Lifted_R>::project(Regular_complex_d<R>& RC, int which) const
 {
   RC.clear(dimension());
   Delaunay_voronoi_kind k = (which == -1 ? NEAREST : FURTHEST);
-  Hash_map<Simplex_const_handle, Simplex_handle > project_simps;
-  Hash_map<Vertex_const_handle,  Vertex_handle >  project_verts;
+  Unique_hash_map<Simplex_const_handle, Simplex_handle > project_simps;
+  Unique_hash_map<Vertex_const_handle,  Vertex_handle >  project_verts;
   int dc = current_dimension();
   RC.set_current_dimension(dc);
 
@@ -923,7 +923,7 @@ void Delaunay_d<R,Lifted_R>::
 all_vertices_below(const Lifted_hyperplane_d& h, 
                    Simplex_handle s, 
                    std::list< Vertex_handle >& result,
-                   Hash_map<Vertex_handle,bool>& is_new,
+                   Unique_hash_map<Vertex_handle,bool>& is_new,
                    bool is_cocircular) const
 { 
   visited_mark(s) = true;
@@ -969,7 +969,7 @@ range_search(const Sphere_d& C) const
   }
   Simplex_handle s = simplex(v);
   bool is_cocircular = const_cast<Self*>(this)->is_S_cocircular();
-  Hash_map<Vertex_handle,bool> is_new(true);
+  Unique_hash_map<Vertex_handle,bool> is_new(true);
   int d = dimension();
   std::vector<Lifted_point_d> P(d + 1);
   typename Lifted_R::Lift_to_paraboloid_d lift =
@@ -1038,7 +1038,7 @@ std::list< CGAL_TYPENAME_MSVC_NULL Delaunay_d<R,Lifted_R>::Vertex_handle >
 Delaunay_d<R,Lifted_R>::
 all_vertices(Delaunay_voronoi_kind k) const
 { 
-  Hash_map<Vertex_handle,bool> is_new_vertex(true);
+  Unique_hash_map<Vertex_handle,bool> is_new_vertex(true);
   std::list<Vertex_handle> result;
   std::list<Simplex_handle> hull_simplices = all_simplices(k);
   typename std::list<Simplex_handle>::iterator it;

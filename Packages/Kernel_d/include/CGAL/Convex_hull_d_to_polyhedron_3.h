@@ -55,7 +55,7 @@ void operator()(HDS& hds )
                    ch.number_of_facets() ); 
   // would be nice to have statistical data on
   // Chull available other than print_statistics()
-  Hash_map<Vertex_handle, int> index( -1);
+  Unique_hash_map<Vertex_handle, int> index( -1);
   std::list<Facet_handle> L = ch.all_facets();
   typename std::list<Facet_handle>::iterator fit;
   Facet_handle f;

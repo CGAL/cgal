@@ -78,7 +78,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 |i = C.index_of_vertex_in_opposite_facet(g,j)|.}*/
 
 #include <CGAL/basic.h>
-#include <CGAL/Hash_map.h>
+#include <CGAL/Unique_hash_map.h>
 #ifndef _MSC_VER
 #include <CGAL/Regular_complex_d.h>
 #else
@@ -500,7 +500,7 @@ public:
     all_pnts_.insert(all_pnts_.end(),first,last);
 
     int dcur = current_dimension();
-    Hash_map<Facet_handle, std::list<Point_d> > PointsOf;
+    Unique_hash_map<Facet_handle, std::list<Point_d> > PointsOf;
     std::list<Facet_handle> FacetCandidates;
     typename R::Oriented_side_d side_of =
       kernel().oriented_side_d_object();
@@ -685,7 +685,7 @@ public:
   |void operator()(Facet_handle) const|}*/
   {
     if (current_dimension() > 1) {
-      Hash_map<Facet_handle,bool> visited(false);
+      Unique_hash_map<Facet_handle,bool> visited(false);
       std::list<Facet_handle> candidates;
       candidates.push_back(start_facet_);
       visited[start_facet_] = true;
