@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997,1998 The CGAL Consortium
+// Copyright (c) 1997,1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -26,18 +26,21 @@
 // ============================================================================
 
 // includes
-#include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
+#include <CGAL/Gmpz.h>
+
+using namespace CGAL;
+using std::cout;
 
 // typedefs
-typedef  CGAL_Gmpz                       NT;
-typedef  CGAL_Homogeneous<NT>            R;
-typedef  CGAL_Point_2<R>                 Point;
-typedef  CGAL_Min_ellipse_2_traits_2<R>  Traits;
-typedef  CGAL_Min_ellipse_2<Traits>      Min_ellipse;
+typedef  Gmpz                       NT;
+typedef  Homogeneous<NT>            R;
+typedef  Point_2<R>                 Point;
+typedef  Min_ellipse_2_traits_2<R>  Traits;
+typedef  Min_ellipse_2<Traits>      Min_ellipse;
 
 // main
 int
@@ -53,7 +56,7 @@ main( int, char**)
     Min_ellipse  me1( P, P+n);           // very slow
     Min_ellipse  me2( P, P+n, true);     // fast
 
-    CGAL_set_pretty_mode( cout);
+    set_pretty_mode( cout);
     cout << me2;
 
     delete[] P;

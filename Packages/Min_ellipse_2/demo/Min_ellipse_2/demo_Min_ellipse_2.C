@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997,1998 The CGAL Consortium
+// Copyright (c) 1997,1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -39,11 +39,13 @@
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
 
+using namespace CGAL;
+
 // typedefs
-typedef  CGAL_Cartesian< double >            Rep;
-typedef  CGAL_Point_2< Rep >                 Point;
-typedef  CGAL_Min_ellipse_2_traits_2< Rep >  Traits;
-typedef  CGAL_Min_ellipse_2< Traits >        Min_ellipse;
+typedef  Cartesian< double >          R;
+typedef  Point_2< R >                 Point;
+typedef  Min_ellipse_2_traits_2< R >  Traits;
+typedef  Min_ellipse_2< Traits >      Min_ellipse;
 
 // main
 int
@@ -57,7 +59,7 @@ main( int, char**)
     Min_ellipse  me;
 
     // open window
-    CGAL_Window_stream ws( "CGAL Demo: Smallest Enclosing Ellipse in 2D");
+    Window_stream ws( "CGAL Demo: Smallest Enclosing Ellipse in 2D");
     ws.set_icon_label("CGAL");
     ws.set_icon_pixrect( ws.create_pixrect( esprit_logo));
     ws.set_node_width( 5);
@@ -74,11 +76,11 @@ main( int, char**)
 	switch ( button) {
 
 	  case MOUSE_BUTTON( 1):                        // left button
-	    ws << CGAL_WHITE << me.ellipse();
+	    ws << WHITE << me.ellipse();
 	    me.insert( ::Point( x, y));
-	    ws << CGAL_BLACK << me;
-	    ws << CGAL_BLUE  << me.ellipse();
-	    ws << CGAL_RED;
+	    ws << BLACK << me;
+	    ws << BLUE  << me.ellipse();
+	    ws << RED;
 	    for ( i = 0; i < me.number_of_support_points(); ++i)
 		ws << me.support_point( i);
 	    break;

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997,1998 The CGAL Consortium
+// Copyright (c) 1997,1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -33,18 +33,19 @@
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // includes
-#include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
 
+using namespace CGAL;
+
 // typedefs
-typedef  CGAL_Homogeneous< double >         Rep;
-typedef  CGAL_Point_2< Rep >                Point;
-typedef  CGAL_Min_circle_2_traits_2< Rep >  Traits;
-typedef  CGAL_Min_circle_2< Traits >        Min_circle;
+typedef  Homogeneous< double >       R;
+typedef  Point_2< R >                Point;
+typedef  Min_circle_2_traits_2< R >  Traits;
+typedef  Min_circle_2< Traits >      Min_circle;
 
 // main
 int
@@ -58,7 +59,7 @@ main( int, char**)
     Min_circle  mc;
 
     // open window
-    CGAL_Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
+    Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
     ws.set_icon_label("CGAL");
     ws.set_icon_pixrect( ws.create_pixrect( esprit_logo));
     ws.set_node_width( 5);
@@ -75,11 +76,11 @@ main( int, char**)
 	switch ( button) {
 
 	  case MOUSE_BUTTON( 1):                        // left button
-	    ws << CGAL_WHITE << mc.circle();
+	    ws << WHITE << mc.circle();
 	    mc.insert( ::Point( x, y));
-	    ws << CGAL_BLACK << mc;
-	    ws << CGAL_BLUE  << mc.circle();
-	    ws << CGAL_RED;
+	    ws << BLACK << mc;
+	    ws << BLUE  << mc.circle();
+	    ws << RED;
 	    for ( i = 0; i < mc.number_of_support_points(); ++i)
 		ws << mc.support_point( i);
 	    break;
