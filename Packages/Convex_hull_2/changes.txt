@@ -1,3 +1,6 @@
+3.13    (11 Jul 2001)
+- really fixed the makefiles for windows
+
 3.12    (11 Jul 2001)
 - made reference page table of contents better for HTML doc.
 - fixed makefile so it works on M$
