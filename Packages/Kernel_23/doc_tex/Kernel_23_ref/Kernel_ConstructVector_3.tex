@@ -14,6 +14,14 @@ A model for this must provide:
                                               const Kernel::Point_3 &b);}
             {introduces the vector $b-a$.}
 
+\ccMemberFunction{Kernel::Vector_3 operator()(const Origin &o,
+                                              const Kernel::Point_3 &b);}
+            {introduces the vector $b$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3 &a,
+                                              const Origin &o);}
+            {introduces the vector $-a$.}
+
 \ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Segment_3 &s);}
             {introduces the vector $s.target()-s.source()$.}
 

@@ -2002,6 +2002,10 @@ public:
     Point_2
     operator()( const Point_2&, const Vector_2&) const
     {  return Point_2(); }
+
+    Point_2
+    operator()( const Origin&, const Vector_2&) const
+    {  return Point_2(); }
 };
 
 template <typename K>
@@ -2015,6 +2019,10 @@ public:
 
     Point_3
     operator()( const Point_3&, const Vector_3&) const
+    {  return Point_3(); }
+
+    Point_3
+    operator()( const Origin&, const Vector_3&) const
     {  return Point_3(); }
 };
 
@@ -2076,6 +2084,14 @@ public:
     { return Vector_2(); }
 
     Vector_2
+    operator()( const Origin&, const Point_2&) const
+    { return Vector_2(); }
+
+    Vector_2
+    operator()( const Point_2&, const Origin&) const
+    { return Vector_2(); }
+
+    Vector_2
     operator()( const Segment_2&) const
     { return Vector_2(); }
 
@@ -2111,6 +2127,14 @@ public:
 
     Vector_3
     operator()( const Point_3&, const Point_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Origin&, const Point_3&) const
+    { return Vector_3(); }
+
+    Vector_3
+    operator()( const Point_3&, const Origin&) const
     { return Vector_3(); }
 
     Vector_3
