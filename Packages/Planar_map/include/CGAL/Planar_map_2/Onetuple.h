@@ -38,7 +38,7 @@ public:
 };
 
 template < class T >
-class Onetuple : public Ref_counted
+class Onetuple
 {
 public:
   T  e0;
