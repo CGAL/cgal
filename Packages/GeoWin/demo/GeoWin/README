@@ -2,27 +2,29 @@ GeoWin demos demonstrating various CGAL data structures
 and algorithms.
 LEDA 4.0 or higher is required.
 
-CGAL2dtree.C / CGAL3dtree.C   : demonstrations of kd-trees 
-CGALafn.C                     : all furthest neighbours
-CGALcircle.C                  : optimisation - minimal enclosing circle
-CGALdemo.C                    : simple demo that lets you construct some scenes of geometric objects
-CGALdtfl.C                    : delaunay triangulation data type demonstration
-CGALhull.C                    : 2d convex hull algorithm
-CGALhull3d.C                  : 3d convex hull algorithm (use Show 3d output in the Window menu to view the
-                                three dimensional output)
-CGALmaxpoly.C                 : maximum area inscribed k-gon demo
-CGALmin_ellipse.C             : optimisation demo for minimal enclosing ellipse
-CGALpolyinout.C               : polygon inside/outside test for points
-CGALsegint.C                  : 2d segment intersection
-CGALtriang.C                  : this one demonstrates triangulations and voronoi diagrams
-CGALplmap.C                   : simple planar map demo incl. ray shooting
-CGALdt3d.C                    : 3d Delaunay triangulations
-D2_demo.C                     : triangulations, Delaunay triangulations, Voronoi diagram,
-                                crust, location on DT
-CGALconstr_triang.C           : constrained triangulations
-CGALmin_sphere                : smallest enclosing sphere demo (use Show 3d output in the Window menu to view the
-                                three dimensional output)
-CGALreg_triang.C              : regular triangulation
+CGAL_kdtree_2.C / CGAL_kdtree_3.C   : demonstrations of kd-trees 
+CGAL_all_furthest_neighbors_2.C     : all furthest neighbours
+CGAL_alpha_shape_2.C                : 2d alpha shapes demo
+CGAL_arrangement_2.C                : 2d segment arrangement
+CGAL_constrained_triang_2.C         : constrained triangulations
+CGAL_min_circle_2.C                 : optimisation - minimal enclosing circle
+CGALdemo.C                          : a simple demo that lets you construct some scenes of geometric objects
+CGAL_delaunay_triang_2.C            : delaunay triangulation data type demonstration
+CGAL_convex_hull_2.C                : 2d convex hull algorithm
+CGAL_convex_hull_3.C                : 3d convex hull algorithm (use Show 3d output in the Window menu to view the
+                                      three dimensional output)
+CGAL_max_k_gon_2.C                  : maximum area inscribed k-gon demo
+CGAL_min_ellipse_2.C                : optimisation demo for minimal enclosing ellipse
+CGAL_polygon_2.C                    : polygon inside/outside test for points
+CGAL_segment_intersection_2.C       : 2d segment intersection
+CGAL_triangulation_2.C              : this one demonstrates triangulations and voronoi diagrams
+CGAL_planar_map_2.C                 : simple planar map demo incl. ray shooting
+CGAL_delaunay_triang_3.C            : 3d Delaunay triangulations
+CGAL_geometry_2.C                   : triangulations, Delaunay triangulations, Voronoi diagram,
+                                      crust, location on DT
+CGAL_min_sphere_3.C                 : smallest enclosing sphere demo (use Show 3d output in the Window menu to view the
+                                      three dimensional output)
+CGAL_regular_triang_2.C             : regular triangulation
 
 
 Note that some demos (like CGAL2dtree, CGALdtfl) use more then one input scene.
