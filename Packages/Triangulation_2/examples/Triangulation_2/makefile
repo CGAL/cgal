@@ -16,10 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include\
 	$(CGAL_CXXFLAGS)\
 	$(LONG_NAME_PROBLEM_CXXFLAGS)
-#	-B$(UTIL)/Binutils/SunOS/bin/
-#	$(LONG_NAME_PROBLEM_CXXFLAGS) 
-#	 \
-#	-g 
 
 
 #---------------------------------------------------------------------#
@@ -37,7 +33,6 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-# QUANTIFY = quantify
 
 all: points example voronoi
 

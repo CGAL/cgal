@@ -221,8 +221,8 @@ public:
   //for compatibility with previous versions
   Face_iterator faces_begin() const {return finite_faces_begin();}
   Face_iterator faces_end() const {return finite_faces_end();}
-  Edge_iterator edges_begin() const (return finite_edges_begin();}
-  Edge_iterator edges_end() const (return finite_edges_end();}
+  Edge_iterator edges_begin() const {return finite_edges_begin();}
+  Edge_iterator edges_end() const {return finite_edges_end();}
   Vertex_iterator vertices_begin() const {return finite_vertices_begin();}
   Vertex_iterator vertices_end() const {return finite_vertices_end();}
 

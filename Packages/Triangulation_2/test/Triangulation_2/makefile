@@ -4,15 +4,6 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_CC-4.2_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-last/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_mips_IRIX-6.2_CC-n32-7.20_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-1.2-I-13/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.57_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-5/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-2.0-I-15/make/makefile_i686_Linux-2.0.36_eg++-egcs-2.91.66_LEDA
-CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
-#CGAL_MAKEFILE = /u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_g++-2.8.1_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -20,23 +11,12 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-#CXXFLAGS = \
-#	-I../../include \
-#	-I./include \
-#	$(CGAL_CXXFLAGS)\
-#	$(TESTSUITE_CXXFLAGS) \
-#	-g
-
 CXXFLAGS = \
 	-I../../include \
 	-I./include \
-	$(CGAL_CXXFLAGS)\
 	$(TESTSUITE_CXXFLAGS) \
-	-g  \
-       -B$(UTIL)/Binutils/SunOS/bin/ 
-#	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
-#	-fhonor-std
-
+	$(CGAL_CXXFLAGS)\
+	$(LONG_NAME_PROBLEM_CXXFLAGS)
 
 
 #---------------------------------------------------------------------#
@@ -44,14 +24,16 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
+	  $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_triangulation_geom_traits test_triangulation_tds \
-	test_triangulation_2 test_delaunay_triangulation_2 test_constrained_triangulation_2
+all: 	test_triangulation_geom_traits test_triangulation_tds \
+	test_triangulation_2 test_delaunay_triangulation_2 \
+	test_constrained_triangulation_2
 
 test_triangulation_geom_traits: test_triangulation_geom_traits.o
 	$(CGAL_CXX) -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
