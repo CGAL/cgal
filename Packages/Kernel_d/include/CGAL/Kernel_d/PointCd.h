@@ -89,9 +89,9 @@ PointCd (int d, InputIterator first, InputIterator last,
 #define FIXPNTCD(I) \
 PointCd(int d, I first, I last) : Base( Tuple(d,first,last) ) \
 { if ( first == last ) return; \
-  CGAL_assertion_msg(*first!=FT(0), \
+  CGAL_assertion_msg(FT(*first)!=FT(0), \
     "PointCd::constructor: denominator must be nonzero."); \
-  for (register int i=0; i<d; ++i) entry(i)/=*first; \
+  for (register int i=0; i<d; ++i) entry(i)/=FT(*first); \
 } \
 PointCd (int d, I first, I last, const FT& D) : Base( Tuple(d,first,last) ) \
 { CGAL_assertion_msg(D!=FT(0),"PointCd::constructor: D must be nonzero."); \
