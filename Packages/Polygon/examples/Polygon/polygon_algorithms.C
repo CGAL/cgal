@@ -6,7 +6,7 @@ typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
 using std::cout; using std::endl;
 
-void check_inside(Point const &pt, Point *pgn_begin, Point *pgn_end, K traits)
+void check_inside(Point pt, Point *pgn_begin, Point *pgn_end, K traits)
 {
   cout << "The point " << pt;
   switch(CGAL::bounded_side_2(pgn_begin, pgn_end,pt, traits)) {
