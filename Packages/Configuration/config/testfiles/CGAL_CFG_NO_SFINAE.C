@@ -58,11 +58,11 @@ template <>           struct IsPoint_2 <My_point>  { enum { value = true  }; };
 
 
 // Enable_if : tool for SFINAE
-template < typename T, typename, bool = T::value >
-struct Enable_if;
+template < bool, typename >
+struct Enable_if {};
 
-template < typename T, typename R >
-struct Enable_if <T, R, true> { typedef R type; };
+template < typename T >
+struct Enable_if <true, T> { typedef T type; };
 
 // Workaround for making the following signature slightly different
 // on the arguments (otherwise g++ 3.2 barfs on it).
@@ -73,20 +73,20 @@ struct Same { typedef T type; };
 
 
 template < typename Vector_2 >
-typename Enable_if< IsVector_2<Vector_2>, Vector_2 >::type
+typename Enable_if< IsVector_2<Vector_2>::value, Vector_2 >::type
 operator-(Vector_2 const &v, Vector_2 const &w) {
   return Vector_2(v.x() - w.x(), v.y() - w.y());
 }
 
 template < typename Vector_2 >
-typename Enable_if< IsVector_2<Vector_2>, Vector_2 >::type
+typename Enable_if< IsVector_2<Vector_2>::value, Vector_2 >::type
 operator+(Vector_2 const &v, Vector_2 const &w) {
   return Vector_2(v.x() + w.x(), v.y() + w.y());
 }
 
 
 template < typename Point_2 >
-typename Enable_if< IsPoint_2<Point_2>, Point_2 >::type::Vector_2
+typename Enable_if< IsPoint_2<Point_2>::value, Point_2 >::type::Vector_2
 operator-(Point_2 const &p, SAME(Point_2) const &q) {
   typedef typename Point_2::Vector_2 Vector_2;
   return Vector_2(p.x() - q.x(), p.y() - q.y());

@@ -1,3 +1,6 @@
+2.71 20/07/2003
+- Slight change to Enable_if in CGAL_CFG_NO_SFINAE.C.
+
 2.70 20/07/2003
 - Make CGAL_CFG_NO_SFINAE.C work with G++ 3.2 (small workaround).
 
