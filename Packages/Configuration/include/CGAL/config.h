@@ -45,6 +45,14 @@
 #   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 #endif // _MSC_VER
 
+//-----
+// Borland builder fix
+//-----
+
+#if defined(__BORLANDC__) && __BORLANDC__ > 0x520
+#include <time.h> // for time_t
+#endif
+
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
