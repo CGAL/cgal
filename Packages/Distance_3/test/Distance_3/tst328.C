@@ -12,6 +12,8 @@ typedef CGAL::Point_3< TestR > point_t;
 typedef CGAL::Line_3< TestR > line_t;
 typedef CGAL::Segment_3< TestR > seg_t;
 
+using std::cin;
+using std::cout;
 
 int main()
 {

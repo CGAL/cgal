@@ -10,6 +10,8 @@
 typedef CGAL::Point_3< TestR > point_t;
 typedef CGAL::Plane_3< TestR > plane_t;
 
+using std::cin;
+using std::cout;
 
 int main()
 {

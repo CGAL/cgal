@@ -12,6 +12,9 @@ typedef CGAL::Line_3< TestR > line_t;
 typedef CGAL::Plane_3< TestR > plane_t;
 
 
+using std::cin;
+using std::cout;
+
 int main()
 {
     randomint ri;
