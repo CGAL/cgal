@@ -183,6 +183,7 @@ protected:
   { return D_.face(e)==f_ || D_.face(D_.twin(e))==f_; }
   };
 
+  friend struct Except_frame_box_edges;
 
   typedef std::list<Extended_segment>      ES_list;
   typedef typename ES_list::const_iterator ES_iterator;
@@ -217,6 +218,8 @@ protected:
     { D.mark(v) = _m; }
 
   };
+
+  friend struct Link_to_iterator;
 
   void clear_outer_face_cycle_marks() 
   { // unset all frame marks
@@ -688,6 +691,8 @@ public:
     bool operator()(Halfedge_const_handle e) const { return D.mark(e); }
     bool operator()(Face_const_handle f) const { return D.mark(f); }
   };
+
+  friend struct INSET;
 
   Object_handle ray_shoot(const Point& p, const Direction& d, 
                           Location_mode m = DEFAULT) const
