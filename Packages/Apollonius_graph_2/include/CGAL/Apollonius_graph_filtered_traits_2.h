@@ -53,34 +53,37 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------
 
 
-template<class CK>
-struct CK_To_interval
-  : public To_interval< typename CK::RT >
-{
-};
+#if defined(__sun) && defined(__SUNPRO_CC)
+// workaround for the Sun CC-5.30 compiler; it does not like default
+// template parameters that are themselves templates and have
+// templates are parameters
+namespace CGALi {
 
-template<class CK, class FK>
-struct AG_Interval_converter
-  : public Cartesian_converter<CK, FK, To_interval<typename CK::RT> >
-{};
+  template<class CK, class FK>
+  struct AG_SUNPRO_CC_Interval_converter
+    : public Cartesian_converter<CK, FK,
+                                 To_interval< typename CK::RT > >
+  {
+  };
+
+}
+#endif
 
 
-
-
-
-
-#if 1
 template<class CK_t,
 	 class CK_MTag = Ring_tag,
 	 class EK_t    = Simple_cartesian< MP_Float >,
 	 class EK_MTag = CK_MTag,
 	 class FK_t    = Simple_cartesian< Interval_nt_advanced >,
 	 class FK_MTag = CK_MTag,
-  class C2E_t   = Cartesian_converter<CK_t, EK_t>,
-  class C2F_t   = AG_Interval_converter<CK_t, FK_t> >
-//class C2F_t =	 Cartesian_converter<CK_t, FK_t,  To_interval<typename CK_t::RT> > >
+         class C2E_t   = Cartesian_converter<CK_t, EK_t>,
+#if defined(__sun) && defined(__SUNPRO_CC)
+         class C2F_t   = CGALi::AG_SUNPRO_CC_Interval_converter<CK_t, FK_t> >
+#else
+         class C2F_t   = Cartesian_converter<CK_t, FK_t,
+	                                     To_interval<typename CK_t::RT> > 
+>
 #endif
-//template<class CK_t>
 class Apollonius_graph_filtered_traits_2
 {
 private:
