@@ -30,8 +30,14 @@ int main(int argc, char *argv[])
   tr.insert(point_t(-140,400,-200));
   tr.insert(point_t(100,-350,0));
   tr.insert(point_t(500,-300,-250));
-
+#ifndef _MSC_VER
   W << CGAL::set_color_1(CGAL::ORANGE) ;
+#else
+  {
+  CGAL::O_manip<CGAL::Color> xxx = CGAL::set_color_1(CGAL::ORANGE);
+  xxx.f(W,xxx.i);
+  }
+#endif
   Delaunay_3::Cell_iterator cit;
   tetra t;
   for (cit = tr.finite_cells_begin(); cit != tr.cells_end(); cit++) {
@@ -39,7 +45,7 @@ int main(int argc, char *argv[])
     W << t;
   }
  W.main_loop();
-
+ return 0;
 }
 
 	  
