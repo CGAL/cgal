@@ -119,6 +119,12 @@ public:
   //                   Unique_hash_map<Halfedge_handle, bool>& E, 
   //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
 
+  virtual void add_facet(Halffacet_handle f) {}
+
+  virtual void add_edge(Halfedge_handle e) {}
+
+  virtual void add_vertex(Vertex_handle v) {}
+
   virtual ~SNC_point_locator() {
     CLOG("");
     CLOG("construction_time:  "<<ct_t.time());
@@ -742,6 +748,19 @@ private:
       return f_below->incident_volume();
     }
     return Base(*this).volumes_begin(); // TODO: Comment this hack!
+  }
+
+public:
+  void add_facet(Halffacet_handle f) {
+    candidate_provider->add_facet(f);
+  }
+
+  void add_edge(Halfedge_handle e) {
+    candidate_provider->add_edge(e);	
+  }
+
+  void add_vertex(Vertex_handle v) {
+    candidate_provider->add_vertex(v);
   }
 
 private:

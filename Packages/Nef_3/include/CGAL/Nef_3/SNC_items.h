@@ -486,9 +486,11 @@ class SNC_items {
       //      valid = valid && (out_sedge_ != NULL);
       //      valid = valid && (incident_sface_ != SFace_handle());
       
-      valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
-		       (out_sedge_ == NULL && incident_sface_ != NULL));
+      //      valid = valid &&((out_sedge_ != NULL && incident_sface_ == NULL) ||
+      //		       (out_sedge_ == NULL && incident_sface_ != NULL));
       
+      valid = valid && (out_sedge_ != NULL || incident_sface_ != NULL);
+
       verr << "end of CGAL::SNC_items<...>::SVertex::is_valid(): structure is "
 	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
 

@@ -852,6 +852,11 @@ public:
     CGAL_NEF_TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
     return --shalfedges_end();
   }
+  SHalfedge_handle new_shalfedge_only(SHalfedge_handle se) {
+    SHalfedge_handle nse = shalfedges_.insert(se, * get_shalfedge_node(SHalfedge()));
+    CGAL_NEF_TRACEN("  after " << &*se << " new shalfedge only " << &*nse);
+    return nse;
+  }
   SHalfloop_handle new_shalfloop_only()  {
     shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
     CGAL_NEF_TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
@@ -861,6 +866,11 @@ public:
     sfaces_.push_back( * get_sface_node(SFace()));
     CGAL_NEF_TRACEN("  new sface only "<<&*(--sfaces_end()));
     return --sfaces_end(); 
+  }
+  SFace_handle new_sface_only(SFace_handle sf) {
+    SFace_handle nsf = sfaces_.insert(sf, * get_sface_node(SFace()));
+    CGAL_NEF_TRACEN("  after " << &*sf << " new sface only " << &*nsf);
+    return nsf;
   }
 
   void delete_vertex_only(Vertex_handle h) {

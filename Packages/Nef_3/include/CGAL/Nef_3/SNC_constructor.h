@@ -1127,7 +1127,7 @@ public:
     
   //  CGAL_NEF_SETDTHREAD(43*31);
     CGAL_NEF_TRACEN(">>>>>link_shalfedges_to_facet_cycles");
-    
+
     //  Progress_indicator_clog progress
     //    (this->sncp()->number_of_halfedges(), 
     //     "SNC_constructor: building facet cycles...");
@@ -1160,17 +1160,23 @@ public:
       
       SHalfedge_around_svertex_circulator sc(D.first_out_edge(e));
       SHalfedge_around_svertex_circulator sct(Dt.first_out_edge(et));
+
+      CGAL_NEF_TRACEN("");
       CGAL_For_all(sc,cee)
       CGAL_NEF_TRACEN("sseg@E addr="<<&*sc<<
       " src="<<D.point(D.source(sc))<<
       " tgt="<<D.point(D.target(sc))<<std::endl<<
       " circle=" << D.circle(sc));
+
+      CGAL_NEF_TRACEN("");
+
       CGAL_For_all(sct,cete)
       CGAL_NEF_TRACEN("sseg@ET addr="<<&*sct<<
       " src="<<Dt.point(Dt.source(sct))<<
       " tgt="<<Dt.point(Dt.target(sct))<<std::endl<<
       " circle=" << Dt.circle(sct));
-      
+      CGAL_NEF_TRACEN("");
+
       #ifdef SM_VISUALIZOR
       typedef CGAL::SNC_SM_visualizor<SNC_structure> SMV;
       CGAL::OGL::add_sphere();
@@ -1263,6 +1269,7 @@ public:
   called before.}*/
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    number_of_ray_shooting_queries=0;
     timer_ray_shooting.reset();
 #endif 
 

@@ -80,7 +80,7 @@ public:
 
 public:
   
-#line 302 "k3_tree.nw"
+#line 314 "k3_tree.nw"
 typedef typename Traits::SNC_decorator SNC_decorator;
 typedef typename Traits::Infimaximal_box Infimaximal_box;
 typedef typename Traits::Vertex_handle Vertex_handle;
@@ -109,7 +109,7 @@ typedef typename Traits::Objects_bbox Objects_bbox;
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
 
-#line 486 "k3_tree.nw"
+#line 560 "k3_tree.nw"
 class Node {
   friend class K3_tree<Traits>;
 public:
@@ -135,8 +135,50 @@ public:
   	splitting_plane = splitting_plane.transform(t);
     }
   }
+  void add_facet(Halffacet_handle f) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(f));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, f);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_facet(f);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_facet(f);
+  }
+
+  void add_edge(Halfedge_handle e) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(e));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, e);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_edge(e);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_edge(e);
+  }
+
+  void add_vertex(Vertex_handle v) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(v));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, v);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_vertex(v);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_vertex(v);
+  }
+
   
-#line 812 "k3_tree.nw"
+#line 928 "k3_tree.nw"
 friend std::ostream& operator<<
   (std::ostream& os, const Node* node) {
   CGAL_assertion( node != 0);
@@ -154,9 +196,9 @@ friend std::ostream& operator<<
   return os;
 }
 
-#line 512 "k3_tree.nw"
+#line 628 "k3_tree.nw"
   
-#line 587 "k3_tree.nw"
+#line 703 "k3_tree.nw"
 ~Node() {
   CGAL_NEF_TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
@@ -165,7 +207,7 @@ friend std::ostream& operator<<
   }
 }
 
-#line 513 "k3_tree.nw"
+#line 629 "k3_tree.nw"
 private:
   Node* parent_node;
   Node* left_node;
@@ -232,7 +274,7 @@ public:
       }
       Self& operator++() {
         
-#line 882 "k3_tree.nw"
+#line 998 "k3_tree.nw"
 if( S.empty())
   node = 0; // end of the iterator
 else {
@@ -296,7 +338,7 @@ else {
         return node;
       }
       
-#line 743 "k3_tree.nw"
+#line 859 "k3_tree.nw"
 inline 
 const Node* get_child_by_side( const Node* node, Oriented_side side) {
   CGAL_assertion( node != NULL);
@@ -361,14 +403,14 @@ private:
 public:
   K3_tree(Object_list& objects, Object_iterator& v_end) {
     
-#line 285 "k3_tree.nw"
+#line 297 "k3_tree.nw"
 typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
 CGAL_NEF_TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
 frexp( (double) n_vertices, &max_depth);
 
 #line 204 "k3_tree.nw"
     
-#line 293 "k3_tree.nw"
+#line 305 "k3_tree.nw"
 // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
 Objects_bbox objects_bbox = traits.objects_bbox_object();
 bounding_box = objects_bbox(objects);
@@ -386,7 +428,7 @@ bounding_box = objects_bbox(objects);
   Object_list objects_around_segment( const Segment_3& s) const {
     Object_list O;
     
-#line 836 "k3_tree.nw"
+#line 952 "k3_tree.nw"
 Objects_around_segment objects( *this, s);
 Unique_hash_map< Vertex_handle, bool> v_mark(false);
 Unique_hash_map< Halfedge_handle, bool> e_mark(false);
@@ -439,6 +481,18 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
     return is_point_on_cell( p, target.get_node(), root);
   }
 
+  void add_facet(Halffacet_handle f) {
+    root->add_facet(f);
+  }
+
+  void add_edge(Halfedge_handle e) {
+    root->add_edge(e);	
+  }
+
+  void add_vertex(Vertex_handle v) {
+    root->add_vertex(v);
+  }
+
   template<typename SNCd>
   class BBox_updater {
     SNCd D;
@@ -487,7 +541,7 @@ for( typename Objects_around_segment::Iterator oar = objects.begin();
   }
 
   
-#line 769 "k3_tree.nw"
+#line 885 "k3_tree.nw"
 #ifdef CODE_DOES_NOT_WORK_WITH_BOTH_KERNELS_AT_THE_SAME_TIME
 template <typename T>
 friend std::ostream& operator<<
@@ -530,9 +584,9 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   return os.str();
 }
 
-#line 270 "k3_tree.nw"
+#line 282 "k3_tree.nw"
   
-#line 525 "k3_tree.nw"
+#line 641 "k3_tree.nw"
 bool update( Unique_hash_map<Vertex_handle, bool>& V, 
              Unique_hash_map<Halfedge_handle, bool>& E, 
              Unique_hash_map<Halffacet_handle, bool>& F) {
@@ -585,18 +639,18 @@ bool update( Node* node,
   return (left_updated || right_updated);
 }
 
-#line 271 "k3_tree.nw"
+#line 283 "k3_tree.nw"
   
-#line 581 "k3_tree.nw"
+#line 697 "k3_tree.nw"
 ~K3_tree() {
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   delete root;
 }
 
-#line 272 "k3_tree.nw"
+#line 284 "k3_tree.nw"
 private:
   
-#line 338 "k3_tree.nw"
+#line 350 "k3_tree.nw"
 template <typename Depth>
 Node* build_kdtree(Object_list& O, Object_iterator v_end, 
 	           Depth depth, Node* parent=0, int non_efective_splits=0) {
@@ -613,23 +667,79 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   Object_list O1, O2;
   Vertex_handle vm,vx;
   CGAL::assign(vm,*median);
+  Side_of_plane sop;
   for(Object_iterator oi=O.begin();oi!=median;++oi) {
     O1.push_back(*oi);
     CGAL::assign(vx,*oi);
-    if(vm->point()[depth%3] == vx->point()[depth%3])
-      O2.push_back(*oi);
+//    std::cerr << vx->point() << " is ";
+    switch(depth%3) {
+    case 0:
+      if(CGAL::compare_x(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 1: 
+      if(CGAL::compare_y(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 2: 
+      if(CGAL::compare_z(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    }
+    O2.push_back(*oi);
+//    sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+//    std::cerr << "on BOUNDARY" << std::endl;
   }
+
   O1.push_back(*median);
   O2.push_back(*median);
+  CGAL::assign(vx,*median);
+//  sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+
   for(Object_iterator oi=median+1;oi!=v_end;++oi) {
     O2.push_back(*oi);
     CGAL::assign(vx,*oi);
-    if(vm->point()[depth%3] == vx->point()[depth%3])
-      O1.push_back(*oi);
+//    std::cerr << vx->point() << " is ";
+    switch(depth%3) {
+    case 0: 
+      if(CGAL::compare_x(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 1: 
+      if(CGAL::compare_y(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 2: 
+      if(CGAL::compare_z(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    }
+    O1.push_back(*oi);
+//    sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+//    std::cerr << "on BOUNDARY" << std::endl;
   }
+
   typename Object_list::size_type v_end1 = O1.size();
   typename Object_list::size_type v_end2 = O2.size();
-  bool splitted = classify_objects( v_end, O.end(), partition_plane, depth,
+  bool splitted = classify_objects( v_end, O.end(), partition_plane, sop,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
@@ -654,7 +764,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   return node;
 }
 
-#line 399 "k3_tree.nw"
+#line 467 "k3_tree.nw"
 template <typename Depth>
 bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth) {
   if( depth >= max_depth)
@@ -664,15 +774,15 @@ bool can_set_be_divided(Object_iterator start, Object_iterator end, Depth depth)
   return true;
 }
 
-#line 414 "k3_tree.nw"
+#line 482 "k3_tree.nw"
 template <typename OutputIterator>
 bool classify_objects(Object_iterator start, Object_iterator end, 
-                      Plane_3 partition_plane, int depth,
+                      Plane_3 partition_plane, Side_of_plane& sop,
                       OutputIterator o1, OutputIterator o2) {
   typename Object_list::difference_type on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   
-  Side_of_plane sop;
+//  Side_of_plane sop;
   for( o = start; o != end; ++o) {
     Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
@@ -684,12 +794,12 @@ bool classify_objects(Object_iterator start, Object_iterator end,
       ++o2;
     }
     if( side == ON_ORIENTED_BOUNDARY)
-      on_oriented_boundary++;
+      ++on_oriented_boundary;
   }
   return (on_oriented_boundary != std::distance(start,end));
 }
 
-#line 442 "k3_tree.nw"
+#line 510 "k3_tree.nw"
 template <typename Object, typename Vertex, typename Explorer, typename Coordinate>
 class Vertex_smaller_than
 {
@@ -701,7 +811,13 @@ public:
     Vertex v1,v2;
     CGAL::assign(v1,o1);
     CGAL::assign(v2,o2);
-    return(v1->point()[coord] < v2->point()[coord]); 
+    switch(coord) {
+    case 0: return CGAL::compare_x(v1->point(), v2->point()) == SMALLER;
+    case 1: return CGAL::compare_y(v1->point(), v2->point()) == SMALLER;
+    case 2: return CGAL::compare_z(v1->point(), v2->point()) == SMALLER;
+    default: CGAL_assertion(false);
+    }
+    return false;
   }
 private:
   Coordinate coord;
@@ -730,9 +846,9 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
   return Plane_3();
 }
 
-#line 274 "k3_tree.nw"
+#line 286 "k3_tree.nw"
   
-#line 601 "k3_tree.nw"
+#line 717 "k3_tree.nw"
 const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   CGAL_precondition( node != 0);
   if( node->is_leaf())
@@ -767,7 +883,7 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
           is_point_on_cell( p, target, current->right()));
 }
 
-#line 275 "k3_tree.nw"
+#line 287 "k3_tree.nw"
 };
 
 CGAL_END_NAMESPACE

@@ -947,7 +947,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       const {
 
 #ifdef CGAL_NEF3_DUMP_STATISTICS
-      number_of_intersections++;
+      ++number_of_intersections;
 #endif
 
       Halfedge_const_handle e;
@@ -1042,6 +1042,23 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
 #ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
     timer_sphere_sweeps.reset();
+    number_of_sphere_sweeps=0;
+    number_of_edge_facet_overlays=0;
+    number_of_clones=0;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION    
+    timer_point_location.reset();
+    number_of_point_location_queries=0;
+#endif
+
+#ifdef CGAL_NEF3_TIMER_OVERLAY
+      timer_overlay.reset();
+#endif
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      number_of_intersections=0;
+      number_of_intersection_candidates=0;
 #endif
 
     Unique_hash_map<Vertex_const_handle, bool> ignore(false);
@@ -1072,8 +1089,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       CGAL_NEF_TRACEN("Locating point " << p0);
 
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
-      timer_point_location.reset();
-      number_of_point_location_queries++;
+      ++number_of_point_location_queries;
       timer_point_location.start();
 #endif 
       Object_handle o = pl2->locate(p0);
@@ -1082,7 +1098,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif 
     
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
-      timer_overlay.reset();
       timer_overlay.start();
 #endif
       if( CGAL::assign( v, o)) {

@@ -1,4 +1,4 @@
-#line 934 "k3_tree.nw"
+#line 1050 "k3_tree.nw"
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -196,12 +196,14 @@ template <class SNC_decorator>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, Halfedge_handle e) {
-  if(!OnSideMap.is_defined(D.source(e)))
-    OnSideMap[D.source(e)] = pl.oriented_side(D.point(D.source(e)));  
-  if(!OnSideMap.is_defined(D.target(e)))
-    OnSideMap[D.target(e)] = pl.oriented_side(D.point(D.target(e)));  
-  Oriented_side src_side = OnSideMap[D.source(e)];
-  Oriented_side tgt_side = OnSideMap[D.target(e)];
+  Vertex_handle v = e->source();
+  Vertex_handle vt = e->twin()->source();
+  if(!OnSideMap.is_defined(v))
+    OnSideMap[v] = pl.oriented_side(v->point());  
+  if(!OnSideMap.is_defined(vt))
+    OnSideMap[vt] = pl.oriented_side(vt->point());  
+  Oriented_side src_side = OnSideMap[v];
+  Oriented_side tgt_side = OnSideMap[vt];
   if( src_side == tgt_side)
     return src_side;
   if( src_side == ON_ORIENTED_BOUNDARY)
@@ -258,11 +260,14 @@ Side_of_plane<SNC_decorator>::operator()
   e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   //CGAL_assertion( iterator_distance( sc, send) >= 3); // TODO: facet with 2 vertices was found, is it possible?
+
   Oriented_side facet_side;
+  Vertex_handle v;
   do {
-    if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
-    facet_side = OnSideMap[D.vertex(sc)];
+    v = sc->source()->center_vertex();
+    if(!OnSideMap.is_defined(v))
+      OnSideMap[v] = pl.oriented_side(v->point());  
+    facet_side = OnSideMap[v];
     ++sc;
   }
   while( facet_side == ON_ORIENTED_BOUNDARY && sc != send);
@@ -270,9 +275,10 @@ Side_of_plane<SNC_decorator>::operator()
     return ON_ORIENTED_BOUNDARY;
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
   while( sc != send) {
-    if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
-    Oriented_side point_side = OnSideMap[D.vertex(sc)];
+    v = sc->source()->center_vertex();
+    if(!OnSideMap.is_defined(v))
+      OnSideMap[v] = pl.oriented_side(v->point());  
+    Oriented_side point_side = OnSideMap[v];
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)
       continue;
