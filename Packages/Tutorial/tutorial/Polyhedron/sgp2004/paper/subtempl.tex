@@ -105,9 +105,10 @@ Most primal refinement schemes are easy to express in Euler
 operations. But dual schemes, e.g.\ Doo-Sabin subdivision, are
 different. A sequence of Euler operations for a DQQ scheme consists of
 twice the midedge refinement \cite{Peters:1997:SSS} and results
-an inefficient implementation. This multipass refinement scheme,
-called subdivision operator factorization, is introduced in
-\cite{Peter:2003:CPDSS}.  To support such schemes efficiently, we use
+an inefficient implementation. The separation of a
+subdivision scheme into multipass refinement is
+called subdivision factorization \cite{Joe:2003:FASS, Denis:2001:UFPDQ}. 
+To support such schemes efficiently, we use
 the modifier callback mechanism and the incremental builder of
 \cgalpoly\ to rebuild the mesh connectivity. In addition to the point
 buffer, we also create a facet list based on the source mesh. Note
