@@ -1,3 +1,7 @@
+Version 4.131 on 15 March 2002
+- Don't submit test/IA/Static_filters.C, as the feature is not ready for
+  CGAL 2.4.
+
 Version 4.130 on 20 February 2002
 - Missing #include <CGAL/MP_Float.h> for VC++.
 

@@ -2,3 +2,4 @@ TODO_static_filters
 KNOWN_PROBLEMS
 Makefile
 tst_static_adaptatif.C
+Static_filters.C
