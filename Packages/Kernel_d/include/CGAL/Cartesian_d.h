@@ -22,6 +22,7 @@
 #include <CGAL/Kernel_d/function_objectsCd.h>
 #include <CGAL/Kernel_d/intersection_objectsCd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>
+#include <CGAL/Kernel_d/simple_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -70,6 +71,8 @@ public:
   typedef Affine_rankCd<Self> Affine_rank_d;
   typedef Affinely_independentCd<Self> Affinely_independent_d;
   typedef Compare_lexicographicallyCd<Self> Compare_lexicographically_d; 
+  typedef Lt_from_compare<Self> Less_lexicographically_d;
+  typedef Le_from_compare<Self> Less_or_equal_lexicographically_d;
   typedef Center_of_circleCd<Self> Center_of_circle_d;
   typedef Contained_in_linear_hullCd<Self> Contained_in_linear_hull_d;  
   typedef Linear_rankCd<Self> Linear_rank_d;
@@ -104,6 +107,11 @@ public:
   { return Affinely_independent_d(); }
   Compare_lexicographically_d compare_lexicographically_d_object() const
   { return Compare_lexicographically_d(); }
+  Less_lexicographically_d less_lexicographically_d_object() const
+  { return Less_lexicographically_d(); }
+  Less_or_equal_lexicographically_d 
+    less_or_equal_lexicographically_d_object() const
+  { return Less_or_equal_lexicographically_d(); }
   Center_of_circle_d center_of_circle_d_object() const
   { return Center_of_circle_d(); }
   Contained_in_linear_hull_d contained_in_linear_hull_d_object() const
@@ -182,6 +190,13 @@ public:
   typedef CGALi::Call_oriented_side Oriented_side_d;
   Oriented_side_d oriented_side_d_object() const
   { return Oriented_side_d(); }
+
+  struct Value_at_d {
+    RT operator()(const Hyperplane_d& h, const Point_d& p) const
+    { return h.value_at(p); }
+  };
+  Value_at_d value_at_d_object() const
+  { return Value_at_d(); }
 
   struct Point_to_vector_d {
     Vector_d operator()(const Point_d& p) const

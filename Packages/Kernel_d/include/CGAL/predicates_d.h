@@ -138,10 +138,25 @@ template <class R>
 Comparison_result compare_lexicographically( 
   const Point_d<R>& p1, const Point_d<R>& p2)
 /*{\Mfunc compares the Cartesian coordiantes of points |p1| and |p2|
-lexicographically.}*/
+   lexicographically.}*/
 { typename R::Compare_lexicographically_d cmp; 
   return cmp(p1,p2); }
 
+template <class R>
+bool lexicographically_smaller( 
+  const Point_d<R>& p1, const Point_d<R>& p2)
+/*{\Mfunc returns true iff $|p1| < |p2|$ in the Cartesian lexicographic
+   order of points.}*/
+{ typename R::Less_lexicographically_d lt;
+  return lt(p1,p2); }
+
+template <class R>
+bool lexicographically_smaller_or_equal(
+  const Point_d<R>& p1, const Point_d<R>& p2)
+/*{\Mfunc returns true iff $|p1| \leq |p2|$ in the Cartesian lexicographic
+   order of points.}*/
+{ typename R::Less_or_equal_lexicographically_d le;
+  return le(p1,p2); }
 
 template <class R, class ForwardIterator>
 bool contained_in_linear_hull(

@@ -129,6 +129,8 @@ int main()
     A.push_back(Point(1,1));
     CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end()));
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER);
+    CGAL_TEST(CGAL::lexicographically_smaller(p0,p1));
+    CGAL_TEST(CGAL::lexicographically_smaller_or_equal(p0,p1));
     CGAL_TEST(CGAL::compare_lexicographically(p1,p0)==CGAL::LARGER);
     CGAL_TEST(CGAL::compare_lexicographically(p1,p1)==CGAL::EQUAL);
   }
@@ -620,6 +622,8 @@ int main()
     A.push_back(Point(1,1));
     CGAL_TEST(!CGAL::affinely_independent(A.begin(),A.end()));
     CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER);
+    CGAL_TEST(CGAL::lexicographically_smaller(p0,p1));
+    CGAL_TEST(CGAL::lexicographically_smaller_or_equal(p0,p1));
     CGAL_TEST(CGAL::compare_lexicographically(p1,p0)==CGAL::LARGER);
     CGAL_TEST(CGAL::compare_lexicographically(p1,p1)==CGAL::EQUAL);
   }
