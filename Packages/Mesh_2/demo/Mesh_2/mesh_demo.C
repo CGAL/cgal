@@ -33,13 +33,7 @@ int main(int, char*)
 //#include <CGAL/IO/Qt_widget_get_polygon.h>
 #include "Qt_widget_get_polygon.h"
 
-#include <CGAL/IO/pixmaps/polygon.xpm>
-#include <CGAL/IO/pixmaps/point.xpm>
-#include <CGAL/IO/pixmaps/points.xpm>
-#include "contraints.xpm"
-#include "marked.xpm"
-#include <CGAL/IO/pixmaps/circle.xpm>
-#include <CGAL/IO/pixmaps/triangulation.xpm>
+#include "icons.h"
 
 #include "Qt_layer_show_points.h"
 #include "Qt_layer_show_triangulation.h"
@@ -256,7 +250,7 @@ public:
 			this, SLOT(fake_slot()), 
 			toolbarInputs, "point");
       QToolButton *pbSeed = 
-	new QToolButton(QPixmap( (const char**)point_xpm ),
+	new QToolButton(QPixmap( (const char**)marked_xpm ),
 			"Seed", "Insert a seed to define a region to mesh", 
 			this, SLOT(fake_slot()), 
 			toolbarInputs, "seed");
@@ -291,7 +285,7 @@ public:
 	      show_points, SLOT(stateChanged(int)));
 
       QToolButton *pbShowSeeds
-	= new QToolButton(QPixmap( (const char**)points_xpm ),
+	= new QToolButton(QPixmap( (const char**)seeds_xpm ),
 			  "Show seeds", "Display seeds that define the "
 			  "region to mesh",
 			  this, SLOT(fake_slot()), 
