@@ -29,3 +29,9 @@ the input file.
 
 
 
+example11: Example of the usage for I/O functions. 
+The input file for this program is example11.cin, 
+and users have to use the example when redirecting 
+the input file.
+By: Eti Ezra.
+
