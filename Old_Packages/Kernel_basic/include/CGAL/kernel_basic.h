@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : kernel_basic.h
+// file          : include/CGAL/kernel_basic.h
 // package       : Kernel_basic
 // revision      : $Revision$
 // revision_date : $Date$
@@ -24,6 +24,8 @@
 
 #ifndef CGAL_KERNEL_BASIC_H
 #define CGAL_KERNEL_BASIC_H
+
+#include <CGAL/Kernel_traits.h>
 
 #ifndef CGAL_KERNEL_INLINE
 #  define CGAL_KERNEL_INLINE inline

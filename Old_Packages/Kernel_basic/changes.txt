@@ -1,3 +1,6 @@
+3.51   (12 July 2001)
+- Add Kernel_traits<>.
+
 3.50   (12 July 2001)
 - Added Arity to Call_perpendicular_to_get.
 
