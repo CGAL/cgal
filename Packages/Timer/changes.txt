@@ -1,6 +1,9 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.11 (22 Oct 2003)
+- new headers
+
 2.10 (22 Sep 2003)
 - new headers
 

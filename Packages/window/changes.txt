@@ -1,3 +1,6 @@
+2.8.32
+- new header
+
 2.8.31
 - CGAL_Window_stream needs LEDA installed
 

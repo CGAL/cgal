@@ -1,6 +1,9 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.9 (22 Oct 2003)
+- new headers
+
 1.8 (22 Sep 2003)
 - new headers
 

@@ -1,6 +1,6 @@
 Changes done to the `Random_numbers' package
 
-4.29 (22 October 2003) [af]
+Version 2.3.7 (22 October 2003) [af]
 - new headers
 
 Version 2.3.6 on 22-Sep-2003

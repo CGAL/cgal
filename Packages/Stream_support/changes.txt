@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.25 (22 Octo 2003)
+- changed headers
+
 2.24 (10 Oct 2003)
 - resubmit
 
