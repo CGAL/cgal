@@ -87,6 +87,30 @@ unsigned Static_Filtered_equal_directionC3_6::number_of_updates = 0;
 
 unsigned Static_Filtered_equal_directionC3_6::number_of_failures = 0;
 
+double Static_Filtered_equal_planeC3_8::_epsilon_0;
+double Static_Filtered_equal_planeC3_8::_epsilon_1;
+double Static_Filtered_equal_planeC3_8::_epsilon_2;
+double Static_Filtered_equal_planeC3_8::_epsilon_3;
+double Static_Filtered_equal_planeC3_8::_epsilon_4;
+double Static_Filtered_equal_planeC3_8::_epsilon_5;
+double Static_Filtered_equal_planeC3_8::_epsilon_6;
+double Static_Filtered_equal_planeC3_8::_epsilon_7;
+double Static_Filtered_equal_planeC3_8::_epsilon_8;
+double Static_Filtered_equal_planeC3_8::_epsilon_9;
+double Static_Filtered_equal_planeC3_8::_epsilon_10;
+double Static_Filtered_equal_planeC3_8::_epsilon_11;
+double Static_Filtered_equal_planeC3_8::_epsilon_12;
+double Static_Filtered_equal_planeC3_8::_epsilon_13;
+double Static_Filtered_equal_planeC3_8::_epsilon_14;
+double Static_Filtered_equal_planeC3_8::_epsilon_15;
+double Static_Filtered_equal_planeC3_8::_epsilon_16;
+double Static_Filtered_equal_planeC3_8::_epsilon_17;
+double Static_Filtered_equal_planeC3_8::_bound = -1.0;
+
+unsigned Static_Filtered_equal_planeC3_8::number_of_updates = 0;
+
+unsigned Static_Filtered_equal_planeC3_8::number_of_failures = 0;
+
 double Static_Filtered_side_of_oriented_planeC3_7::_epsilon_0;
 double Static_Filtered_side_of_oriented_planeC3_7::_bound = -1.0;
 

@@ -1940,6 +1940,370 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
 #else
 static
 #endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+equal_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &hd,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pa,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Dynamic, CGAL_IA_PROTECTED, CGAL_IA_CACHE> &pd)
+{
+  try
+  {
+    Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
+    return equal_planeC3(
+		ha.interval(),
+		hb.interval(),
+		hc.interval(),
+		hd.interval(),
+		pa.interval(),
+		pb.interval(),
+		pc.interval(),
+		pd.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+    Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
+    return equal_planeC3(
+		ha.exact(),
+		hb.exact(),
+		hc.exact(),
+		hd.exact(),
+		pa.exact(),
+		pb.exact(),
+		pc.exact(),
+		pd.exact());
+  }
+}
+
+#ifdef CGAL_IA_NEW_FILTERS
+
+struct Static_Filtered_equal_planeC3_8
+{
+  static double _bound;
+  static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8,_epsilon_9,_epsilon_10,_epsilon_11,_epsilon_12,_epsilon_13,_epsilon_14,_epsilon_15,_epsilon_16,_epsilon_17;
+  static unsigned number_of_failures; // ?
+  static unsigned number_of_updates;
+
+  static bool update_epsilon(
+	const Static_filter_error &ha,
+	const Static_filter_error &hb,
+	const Static_filter_error &hc,
+	const Static_filter_error &hd,
+	const Static_filter_error &pa,
+	const Static_filter_error &pb,
+	const Static_filter_error &pc,
+	const Static_filter_error &pd,
+	double & epsilon_0,
+	double & epsilon_1,
+	double & epsilon_2,
+	double & epsilon_3,
+	double & epsilon_4,
+	double & epsilon_5,
+	double & epsilon_6,
+	double & epsilon_7,
+	double & epsilon_8,
+	double & epsilon_9,
+	double & epsilon_10,
+	double & epsilon_11,
+	double & epsilon_12,
+	double & epsilon_13,
+	double & epsilon_14,
+	double & epsilon_15,
+	double & epsilon_16,
+	double & epsilon_17)
+  {
+    typedef Static_filter_error FT;
+  
+      if (!Static_Filtered_equal_directionC3_6::update_epsilon(ha, hb, hc, pa, pb, pc,
+  		epsilon_0,
+  		epsilon_1,
+  		epsilon_2,
+  		epsilon_3,
+  		epsilon_4,
+  		epsilon_5,
+  		epsilon_6,
+  		epsilon_7,
+  		epsilon_8))
+  	return false; 
+  
+      CGAL::Sign s1a = CGAL_NTS Static_Filtered_sign_1::update_epsilon(ha,
+  		epsilon_9);
+      if (s1a != ZERO)
+          return s1a == CGAL_NTS Static_Filtered_sign_1::update_epsilon(pa,
+  		epsilon_10)
+              && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(pa, pd, ha, hd,
+  		epsilon_11) == ZERO;
+      CGAL::Sign s1b = CGAL_NTS Static_Filtered_sign_1::update_epsilon(hb,
+  		epsilon_12);
+      if (s1b != ZERO)
+          return s1b == CGAL_NTS Static_Filtered_sign_1::update_epsilon(pb,
+  		epsilon_13)
+              && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(pb, pd, hb, hd,
+  		epsilon_14) == ZERO;
+      return CGAL_NTS Static_Filtered_sign_1::update_epsilon(pc,
+  		epsilon_15) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(hc,
+  		epsilon_16)
+          && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(pc, pd, hc, hd,
+  		epsilon_17) == ZERO;
+  }
+
+  // Call this function from the outside to update the context.
+  static void new_bound (const double b) // , const double error = 0)
+  {
+    _bound = b;
+    number_of_updates++;
+    // recompute the epsilons: "just" call it over Static_filter_error.
+    // That's the tricky part that might not work for everything.
+    (void) update_epsilon(b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3,_epsilon_4,_epsilon_5,_epsilon_6,_epsilon_7,_epsilon_8,_epsilon_9,_epsilon_10,_epsilon_11,_epsilon_12,_epsilon_13,_epsilon_14,_epsilon_15,_epsilon_16,_epsilon_17);
+    // TODO: We should verify that all epsilons have really been updated.
+  }
+
+  static bool epsilon_variant(
+	const Restricted_double &ha,
+	const Restricted_double &hb,
+	const Restricted_double &hc,
+	const Restricted_double &hd,
+	const Restricted_double &pa,
+	const Restricted_double &pb,
+	const Restricted_double &pc,
+	const Restricted_double &pd,
+	const double & epsilon_0,
+	const double & epsilon_1,
+	const double & epsilon_2,
+	const double & epsilon_3,
+	const double & epsilon_4,
+	const double & epsilon_5,
+	const double & epsilon_6,
+	const double & epsilon_7,
+	const double & epsilon_8,
+	const double & epsilon_9,
+	const double & epsilon_10,
+	const double & epsilon_11,
+	const double & epsilon_12,
+	const double & epsilon_13,
+	const double & epsilon_14,
+	const double & epsilon_15,
+	const double & epsilon_16,
+	const double & epsilon_17)
+  {
+    typedef Restricted_double FT;
+  
+      if (!Static_Filtered_equal_directionC3_6::epsilon_variant(ha, hb, hc, pa, pb, pc,
+  		epsilon_0,
+  		epsilon_1,
+  		epsilon_2,
+  		epsilon_3,
+  		epsilon_4,
+  		epsilon_5,
+  		epsilon_6,
+  		epsilon_7,
+  		epsilon_8))
+  	return false; 
+  
+      CGAL::Sign s1a = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(ha,
+  		epsilon_9);
+      if (s1a != ZERO)
+          return s1a == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(pa,
+  		epsilon_10)
+              && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(pa, pd, ha, hd,
+  		epsilon_11) == ZERO;
+      CGAL::Sign s1b = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(hb,
+  		epsilon_12);
+      if (s1b != ZERO)
+          return s1b == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(pb,
+  		epsilon_13)
+              && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(pb, pd, hb, hd,
+  		epsilon_14) == ZERO;
+      return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(pc,
+  		epsilon_15) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(hc,
+  		epsilon_16)
+          && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(pc, pd, hc, hd,
+  		epsilon_17) == ZERO;
+  }
+};
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+equal_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &hc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &hd,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pa,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, true, CGAL_IA_CACHE> &pd)
+{
+//   bool re_adjusted = false;
+  const double SAF_bound = Static_Filtered_equal_planeC3_8::_bound;
+
+  // Check the bounds.  All arguments must be <= SAF_bound.
+  if (
+	fabs(ha.to_double()) > SAF_bound ||
+	fabs(hb.to_double()) > SAF_bound ||
+	fabs(hc.to_double()) > SAF_bound ||
+	fabs(hd.to_double()) > SAF_bound ||
+	fabs(pa.to_double()) > SAF_bound ||
+	fabs(pb.to_double()) > SAF_bound ||
+	fabs(pc.to_double()) > SAF_bound ||
+	fabs(pd.to_double()) > SAF_bound)
+  {
+// re_adjust:
+    // Compute the new bound.
+    double NEW_bound = 0.0;
+    NEW_bound = max(NEW_bound, fabs(ha.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hd.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pa.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pd.to_double()));
+    // Re-adjust the context.
+    Static_Filtered_equal_planeC3_8::new_bound(NEW_bound);
+  }
+
+  try
+  {
+    return Static_Filtered_equal_planeC3_8::epsilon_variant(
+		ha.dbl(),
+		hb.dbl(),
+		hc.dbl(),
+		hd.dbl(),
+		pa.dbl(),
+		pb.dbl(),
+		pc.dbl(),
+		pd.dbl(),
+		Static_Filtered_equal_planeC3_8::_epsilon_0,
+		Static_Filtered_equal_planeC3_8::_epsilon_1,
+		Static_Filtered_equal_planeC3_8::_epsilon_2,
+		Static_Filtered_equal_planeC3_8::_epsilon_3,
+		Static_Filtered_equal_planeC3_8::_epsilon_4,
+		Static_Filtered_equal_planeC3_8::_epsilon_5,
+		Static_Filtered_equal_planeC3_8::_epsilon_6,
+		Static_Filtered_equal_planeC3_8::_epsilon_7,
+		Static_Filtered_equal_planeC3_8::_epsilon_8,
+		Static_Filtered_equal_planeC3_8::_epsilon_9,
+		Static_Filtered_equal_planeC3_8::_epsilon_10,
+		Static_Filtered_equal_planeC3_8::_epsilon_11,
+		Static_Filtered_equal_planeC3_8::_epsilon_12,
+		Static_Filtered_equal_planeC3_8::_epsilon_13,
+		Static_Filtered_equal_planeC3_8::_epsilon_14,
+		Static_Filtered_equal_planeC3_8::_epsilon_15,
+		Static_Filtered_equal_planeC3_8::_epsilon_16,
+		Static_Filtered_equal_planeC3_8::_epsilon_17);
+  }
+  catch (...)
+  {
+    // if (!re_adjusted) {  // It failed, we re-adjust once.
+      // re_adjusted = true;
+      // goto re_adjust;
+    // }
+    Static_Filtered_equal_planeC3_8::number_of_failures++;
+    return equal_planeC3(
+		ha.exact(),
+		hb.exact(),
+		hc.exact(),
+		hd.exact(),
+		pa.exact(),
+		pb.exact(),
+		pc.exact(),
+		pd.exact());
+  }
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
+#else
+static
+#endif
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+equal_planeC3(
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &ha,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &hb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &hc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &hd,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pa,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pb,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pc,
+    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, Static, false, CGAL_IA_CACHE> &pd)
+{
+  CGAL_assertion_code(
+    const double SAF_bound = Static_Filtered_equal_planeC3_8::_bound; )
+  CGAL_assertion(!(
+	fabs(ha.to_double()) > SAF_bound ||
+	fabs(hb.to_double()) > SAF_bound ||
+	fabs(hc.to_double()) > SAF_bound ||
+	fabs(hd.to_double()) > SAF_bound ||
+	fabs(pa.to_double()) > SAF_bound ||
+	fabs(pb.to_double()) > SAF_bound ||
+	fabs(pc.to_double()) > SAF_bound ||
+	fabs(pd.to_double()) > SAF_bound));
+
+  try
+  {
+    return Static_Filtered_equal_planeC3_8::epsilon_variant(
+		ha.dbl(),
+		hb.dbl(),
+		hc.dbl(),
+		hd.dbl(),
+		pa.dbl(),
+		pb.dbl(),
+		pc.dbl(),
+		pd.dbl(),
+		Static_Filtered_equal_planeC3_8::_epsilon_0,
+		Static_Filtered_equal_planeC3_8::_epsilon_1,
+		Static_Filtered_equal_planeC3_8::_epsilon_2,
+		Static_Filtered_equal_planeC3_8::_epsilon_3,
+		Static_Filtered_equal_planeC3_8::_epsilon_4,
+		Static_Filtered_equal_planeC3_8::_epsilon_5,
+		Static_Filtered_equal_planeC3_8::_epsilon_6,
+		Static_Filtered_equal_planeC3_8::_epsilon_7,
+		Static_Filtered_equal_planeC3_8::_epsilon_8,
+		Static_Filtered_equal_planeC3_8::_epsilon_9,
+		Static_Filtered_equal_planeC3_8::_epsilon_10,
+		Static_Filtered_equal_planeC3_8::_epsilon_11,
+		Static_Filtered_equal_planeC3_8::_epsilon_12,
+		Static_Filtered_equal_planeC3_8::_epsilon_13,
+		Static_Filtered_equal_planeC3_8::_epsilon_14,
+		Static_Filtered_equal_planeC3_8::_epsilon_15,
+		Static_Filtered_equal_planeC3_8::_epsilon_16,
+		Static_Filtered_equal_planeC3_8::_epsilon_17);
+  }
+  catch (...)
+  {
+    Static_Filtered_equal_planeC3_8::number_of_failures++;
+    return equal_planeC3(
+		ha.exact(),
+		hb.exact(),
+		hc.exact(),
+		hd.exact(),
+		pa.exact(),
+		pb.exact(),
+		pc.exact(),
+		pd.exact());
+  }
+}
+
+#endif // CGAL_IA_NEW_FILTERS
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
+           class CGAL_IA_CACHE >
+#else
+static
+#endif
 /* CGAL_KERNEL_LARGE_INLINE */
 Oriented_side
 side_of_oriented_planeC3(
