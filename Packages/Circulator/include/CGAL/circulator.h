@@ -238,7 +238,7 @@ template <class IC> inline
 void Assert_forward_category( const IC &ic) {
     Assert_compile_time_tag( std::forward_iterator_tag(),
                              //std::iterator_category(ic));
-			     std::iterator_traits<I>::iterator_category());
+			     std::iterator_traits<IC>::iterator_category());
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &ic) {
