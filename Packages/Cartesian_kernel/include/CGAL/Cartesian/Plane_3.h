@@ -244,7 +244,8 @@ to_plane_basis(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 { // FIXME : construction
   FT alpha, beta, gamma;
 
-  solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
+  solve(base1(), base2(), orthogonal_vector(), p - point(),
+	alpha, beta, gamma);
 
   return Point_3(alpha, beta, gamma);
 }
@@ -256,7 +257,8 @@ to_2d(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 { // FIXME : construction
   FT alpha, beta, gamma;
 
-  solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
+  solve(base1(), base2(), orthogonal_vector(), p - point(),
+	alpha, beta, gamma);
 
   return Point_2(alpha, beta);
 }
