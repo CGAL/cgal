@@ -2,6 +2,7 @@
 #define SNC_DECORATOR_TRAITS_H
 
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
+#include <CGAL/Nef_S2/SM_decorator.h>
 
 template <typename S> class SM_decorator;
 template <typename S> class SM_const_decorator;
