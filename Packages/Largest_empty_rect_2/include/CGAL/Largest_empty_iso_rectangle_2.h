@@ -1,5 +1,5 @@
 // =======================================================================
-// iii
+//
 // Copyright (c) 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
@@ -155,7 +155,8 @@ public:
   get_left_bottom_right_top()
   {
     if(x_sorted.size() == 4) {
-      return(make_quadruple(bl_p.original, bl_p.original, tr_p.original, tr_p.original));
+      return(make_quadruple(bl_p.original, bl_p.original,
+                            tr_p.original, tr_p.original));
     }
     update();
     return(make_quadruple(left_p.original, bottom_p.original, 
@@ -405,7 +406,8 @@ private:
   // the first phase is divided to work on the x-axis and work on the y-axis
   void phase_1_on_x();
   void phase_1_on_y();
-  // the second phase is divided to four parts, one for each edge of the bounding box
+  // the second phase is divided to four parts,
+  // one for each edge of the bounding box
   void phase_2_on_bot();
   void phase_2_on_top();
   void phase_2_on_left();
