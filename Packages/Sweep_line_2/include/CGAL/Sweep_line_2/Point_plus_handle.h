@@ -77,7 +77,7 @@ protected:
 // The handle to Point_plus.
 template <class PM_>
 class Point_plus_handle : public  Handle_for<Point_plus_rep<PM_> > {
-  typedef Handle_for<Point_plus_rep<PM_> >                 Handle_for_Point_plus_rep;
+  typedef Handle_for<Point_plus_rep<PM_> > Handle_for_Point_plus_rep;
 public:
   typedef PM_                         PM;
   typedef typename PM::Traits         Traits;
@@ -87,15 +87,20 @@ public:
   
   Point_plus_handle() : Handle() {}
   
-  Point_plus_handle(const Point& p) : Handle_for_Point_plus_rep(Point_plus_rep_pm(p)) {  
+  Point_plus_handle(const Point& p) : 
+    Handle_for_Point_plus_rep(Point_plus_rep_pm(p)) 
+  {  
     //PTR = new Point_plus_rep_pm(p); 
   }
   
-  Point_plus_handle(const Point& p, Vertex_handle v) : Handle_for_Point_plus_rep(Point_plus_rep_pm(p,v)) { 
+  Point_plus_handle(const Point& p, Vertex_handle v) : 
+    Handle_for_Point_plus_rep(Point_plus_rep_pm(p,v)) 
+  { 
     //PTR = new Point_plus_rep_pm(p,v); 
   }
   
-  Point_plus_handle(const Point_plus_handle& p_plus) : Handle_for_Point_plus_rep(p_plus) {}
+  Point_plus_handle(const Point_plus_handle& p_plus) : 
+    Handle_for_Point_plus_rep(p_plus) {}
   
   ~Point_plus_handle() {}
   
