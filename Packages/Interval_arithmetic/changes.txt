@@ -1,4 +1,5 @@
-Changes done to the Interval Arithmetic package.
+Version 4.121 on 4 October 2001
+- Added Coplanar_orientation_3 to Static_filters.
 
 Version 4.120 on 3 October 2001
 - Added Side_of_oriented_circle_2 to Static_filters.

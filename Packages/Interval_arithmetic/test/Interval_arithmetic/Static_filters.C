@@ -37,6 +37,8 @@ int main()
         k.side_of_oriented_circle_2_object();
   const CGAL::Static_filters<K>::Side_of_oriented_sphere_3 & my_s3 =
         k.side_of_oriented_sphere_3_object();
+  const CGAL::Static_filters<K>::Coplanar_orientation_3 & my_co3 =
+        k.coplanar_orientation_3_object();
 
   // K::Orientation_3 inexact_o;
   // KE::Orientation_3 ore;
@@ -74,6 +76,8 @@ int main()
       ooo = my_o2(p2, q2, r2);      //  2.62 s -> 2.22 s
       os = my_c2(p2, q2, r2, s2);
       os = my_s3(p, q, r, s, t);
+      ooo = my_co3(p, q, r);
+      ooo = my_co3(p, q, r, s);
 
       // ooo = ore(pe, qe, re, se);   // 15.07 s  (!prot:13.5) static: 4.35 s (!p:3 -> 1.45)
       // ooo = orf(pf, qf, rf, sf);   // 0.68 s -> 0.85 s

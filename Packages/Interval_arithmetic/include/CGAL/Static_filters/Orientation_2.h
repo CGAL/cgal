@@ -57,6 +57,9 @@ protected:
   template < class R >
   friend class Static_filters;
 
+  template < class Pt, class Or2 >
+  friend class SF_Coplanar_orientation_3;
+
   // These operations are reserved to Static_filters<>, because the context of
   // a predicate is linked to the one of the Static_filter<> it is a member of.
   SF_Orientation_2(const SF_Orientation_2 &) {}
