@@ -1,0 +1,4 @@
+
+18 Jan 2004
+
+- Remove support/to_cgal_namespace (now obsolete).
