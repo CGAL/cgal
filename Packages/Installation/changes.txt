@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
 GLOB: Fixed makefile_Win adaption (do only if dir is there).
 GLOB: Updated license header.
