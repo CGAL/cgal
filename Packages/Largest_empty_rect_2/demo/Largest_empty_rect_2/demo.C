@@ -128,10 +128,13 @@ int main(int argc,char *argv[])
       y2 = tmp;
     }
 
-    W.init(x1 - 2,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
+    W.init(x1 - 3,x2 - x1 > y2 - y1 ? x2 + 2 : y2 - y1 + x1 + 2,y1 - 2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
   }
+
+  W.text_box(-1.5,-1,10,"manual");
+  W.text_box(-1.5,-1,9.5,"add points");
 
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
 
@@ -211,6 +214,7 @@ int main(int argc,char *argv[])
         // automatic display of biggest rectangle
         show_biggest_rec(empty_rectangle,W);
         biggest_rect_shown = true;
+        //W.text_box(-1.5,-1,10,"auto");
       }
     } else if(mouse_input == 1) {
       // show biggest rectangle
@@ -227,6 +231,9 @@ int main(int argc,char *argv[])
       W.disable_button(3);
       W.disable_button(1);
       biggest_rect_shown = true;
+      redraw(empty_rectangle,W);
+      show_biggest_rec(empty_rectangle,W);
+      biggest_rect_shown = true;
     } else if(mouse_input == 4) {
       // change to manual mode
       automatic_show = false;
@@ -235,17 +242,31 @@ int main(int argc,char *argv[])
       W.disable_button(4);
       biggest_rect_shown = false;
       redraw(empty_rectangle,W);
+      //W.text_box(-1.5,-1,10,"manual");
     } else if(mouse_input == 5) {
       W.enable_button(6);
       W.disable_button(5);
       remove_points = false;
+      redraw(empty_rectangle,W);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_points = true;
-    } else if(mouse_input == 7)
+      redraw(empty_rectangle,W);
+    } else if(mouse_input == 7) {
       // finish
       break;
+    }
+
+    if(automatic_show)
+      W.text_box(-1.5,-1,10,"auto");
+    else
+      W.text_box(-1.5,-1,10,"manual");
+
+    if(remove_points)
+      W.text_box(-1.5,-1,9.5,"remove points");
+    else
+      W.text_box(-1.5,-1,9.5,"add points");
   }
 
   if(argc == 2)
