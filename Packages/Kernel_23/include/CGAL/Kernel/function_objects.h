@@ -25,6 +25,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
+#include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1357,6 +1359,53 @@ namespace CommonKernelFunctors {
     { return s.bbox(); }
   };
 
+  template <typename K>
+  class Construct_cartesian_coordinate_const_iterator_2
+  {
+    typedef typename K::Point_2          Point_2;
+    typedef typename K::Cartesian_coordinate_const_iterator_2
+    Cartesian_coordinate_const_iterator_2;
+    
+  public:
+    typedef Cartesian_coordinate_const_iterator_2 result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_const_iterator_2
+    operator()( const Point_2& p) const
+      {
+	return p.cartesian_begin();
+      }
+    
+    Cartesian_coordinate_const_iterator_2
+    operator()( const Point_2& p, int) const
+    {
+      return p.cartesian_end();
+    }
+  };
+
+  template <typename K>
+  class Construct_cartesian_coordinate_const_iterator_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Cartesian_coordinate_const_iterator_3
+    Cartesian_coordinate_const_iterator_3;
+    
+  public:
+    typedef Cartesian_coordinate_const_iterator_3 result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_const_iterator_3
+    operator()( const Point_3& p) const
+      {
+	return p.cartesian_begin();
+      }
+    
+    Cartesian_coordinate_const_iterator_3
+    operator()( const Point_3& p, int) const
+    {
+      return p.cartesian_end();
+    }
+  };
   template <typename K>
   class Counterclockwise_in_between_2
   {

@@ -246,6 +246,15 @@ test_new_2(const R& rep)
   Bbox_2 bb4 = construct_bbox_2(c1); // Circle_2
   Bbox_2 bb5 = construct_bbox_2(rec2); // Iso_rectangle_2
 
+  typename R::Construct_cartesian_coordinate_const_iterator_2 
+    construct_cartesian_coordinate_const_iterator_2
+    = rep.construct_cartesian_coordinate_const_iterator_2_object();
+
+  typename R::Cartesian_coordinate_const_iterator_2 cccit;
+
+  cccit = construct_cartesian_coordinate_const_iterator_2(p1);
+  cccit = construct_cartesian_coordinate_const_iterator_2(p1,0);
+  
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_direction_of_line_2 construct_direction_from
         = rep.construct_direction_of_line_2_object();

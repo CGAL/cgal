@@ -273,6 +273,13 @@ inline bool operator!=(const Tetrahedron_3_archetype& obj1,
 { return true; }
 #endif
 
+struct Cartesian_coordinate_const_iterator_3_archetype {
+  Cartesian_coordinate_const_iterator_3_archetype() { }
+  Cartesian_coordinate_const_iterator_3_archetype& 
+  operator=(const Cartesian_coordinate_const_iterator_3_archetype&) 
+  { return *this; }
+};
+
 CGAL_END_NAMESPACE
 
 #undef CGAL_concept_archetype_constructors

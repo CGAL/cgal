@@ -37,8 +37,6 @@ T(const T1&,const T2&,const T3&,const T4&,const T5&) { }
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 struct Point_2_archetype {
   Point_2_archetype() {  }
   Point_2_archetype(const Point_2_archetype& t) { }
@@ -230,6 +228,13 @@ inline bool operator!=(const Iso_rectangle_2_archetype& obj1,
                        const Iso_rectangle_2_archetype& obj2)
 { return true; }
 #endif
+
+struct Cartesian_coordinate_const_iterator_2_archetype {
+  Cartesian_coordinate_const_iterator_2_archetype() { }
+  Cartesian_coordinate_const_iterator_2_archetype& 
+  operator=(const Cartesian_coordinate_const_iterator_2_archetype&) 
+  { return *this; }
+};
 
 CGAL_END_NAMESPACE
 

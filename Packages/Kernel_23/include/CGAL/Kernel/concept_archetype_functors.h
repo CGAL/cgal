@@ -28,6 +28,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
 
 // see kernel functors for original version
 // all deprecated stuff was removed ...
@@ -2094,6 +2095,53 @@ public:
     { Bbox_3 b; return b;  }
 };
 
+  template <typename K>
+  class Construct_cartesian_coordinate_const_iterator_2
+  {
+    typedef typename K::Point_2          Point_2;
+    typedef typename K::Cartesian_coordinate_const_iterator_2 
+      Cartesian_coordinate_const_iterator_2;
+    
+  public:
+    typedef Cartesian_coordinate_const_iterator_2 result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_const_iterator_2
+      operator()( const Point_2& p) const
+      {
+	return Cartesian_coordinate_const_iterator_2();
+      }
+
+    Cartesian_coordinate_const_iterator_2
+      operator()( const Point_2& p, int) const
+      {
+	return Cartesian_coordinate_const_iterator_2();
+      }
+  };
+
+  template <typename K>
+  class Construct_cartesian_coordinate_const_iterator_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Cartesian_coordinate_const_iterator_3 
+      Cartesian_coordinate_const_iterator_3;
+    
+  public:
+    typedef Cartesian_coordinate_const_iterator_3 result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Cartesian_coordinate_const_iterator_3
+      operator()( const Point_3& p) const
+      {
+	return Cartesian_coordinate_const_iterator_3();
+      }
+
+    Cartesian_coordinate_const_iterator_3
+      operator()( const Point_3& p, int) const
+      {
+	return Cartesian_coordinate_const_iterator_3();
+      }
+  };
 
 template <typename K>
 class Coplanar_orientation_3

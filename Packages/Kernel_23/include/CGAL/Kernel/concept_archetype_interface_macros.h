@@ -663,6 +663,18 @@ CGAL_Kernel_cons(Construct_bbox_3,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_CONSTRUCT_CARTESIAN_COORDINATE_ITERATOR_2)
+CGAL_Kernel_cons(Construct_cartesian_coordinate_const_iterator_2,
+		 construct_cartesian_coordinate_const_iterator_2_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+     defined(CGAL_CA_CONSTRUCT_CARTESIAN_COORDINATE_ITERATOR_3)
+CGAL_Kernel_cons(Construct_cartesian_coordinate_const_iterator_3,
+		 construct_cartesian_coordinate_const_iterator_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_COPLANAR_ORIENTATION_3)
 CGAL_Kernel_pred(Coplanar_orientation_3,
 		 coplanar_orientation_3_object)
