@@ -20,7 +20,7 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/bbox_intersection_3.h>
 
@@ -33,7 +33,7 @@ intersection_bl(const Bbox_3 &box,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-    typedef Cartesian<double> R_cd;
+    typedef Simple_cartesian<double> R_cd;
     Point_3<R_cd> ref_point(lpx,lpy, lpz);
     Vector_3<R_cd> dir(ldx, ldy, ldz);
     double seg_min = 0.0, seg_max = 1.0;

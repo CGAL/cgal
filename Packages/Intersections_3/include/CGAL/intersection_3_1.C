@@ -99,9 +99,9 @@ intersection(const Plane_3<R> &plane, const Line_3<R>&line)
     const Direction_3<R> &line_dir = line.direction();
     RT num,  den;
     num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-        + plane.c()*line_pt.hz() + wmult((R*)0, plane.d(), line_pt.hw());
+          + plane.c()*line_pt.hz() + wmult((R*)0, plane.d(), line_pt.hw());
     den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
-        + plane.c()*line_dir.dz();
+          + plane.c()*line_dir.dz();
     if (den == RT(0)) {
         if (num == RT(0)) {
             // all line
