@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <bench name_length="64" header="false" type_mask="0x18">
+
+  <class name="cls111" key="segs"/>
+  <class name="cls112" key="segs"/>
+  <class name="cls121" key="Tight"/>
+  <class name="cls122" key="Tight"/>
+
   <clo name="format" string="-If="></clo> 
   <clo name="samples" string="-s"/> 
   <clo name="header" string="-bh="/> 
@@ -38,7 +44,7 @@
     <benchSweepLDSegments file="eurcut.dat" header="true"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="eurcut.dat"></benchSweepLDSegments_fast>
   </bench>
-  
+
   <bench samples="2" enable="true">
     <benchSweepLDSegments file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments_fast>
@@ -63,12 +69,12 @@
     <benchSweepLDSegments file="random_segments_100.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="random_segments_100.dat"></benchSweepLDSegments_fast>
   </bench>
-    
+
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="onebig_100_x.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="onebig_100_x.dat"></benchSweepLDSegments_fast>
   </bench>
-  
+
   <bench samples="3" enable="true">
     <benchSweepLDSegments file="random_segments_100_x.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="random_segments_100_x.dat"></benchSweepLDSegments_fast>
