@@ -1,3 +1,10 @@
+Version 3.29 (8 July 2003)
+rursu:
+ - added demo for ASPAS(Spatial_searching)
+   - nearest neighbour
+   - iso_rectangle_2 query
+   - circle_2 query
+
 Version 3.28 (7 July 2003)
 - Made typedef typename Traits::Iso_box_d Box; public [af]
 - Made type  Midpoint_of_rectangle<>::Separator   public [af]
