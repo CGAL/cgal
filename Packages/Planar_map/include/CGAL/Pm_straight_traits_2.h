@@ -79,15 +79,31 @@ class Pm_straight_traits_2
 {
 public:
   typedef R_ R;
-  typedef typename R::FT FT;
-  typedef typename R::RT RT;
-  typedef Point_2<R> Point;
-  typedef Point_2<R> Point_2;
-  typedef Vector_2<R> Vector;
-  typedef Direction_2<R> Direction;
-  typedef Segment_2<R> Segment;
-  typedef Ray_2<R> Ray;
-  typedef Line_2<R> Line;
+  typedef typename R::FT          FT;
+  typedef typename R::RT          RT;
+  typedef typename R::Point_2     Point_2;
+  typedef typename R::Vector_2    Vector_2;
+  typedef typename R::Direction_2 Direction_2;
+  typedef typename R::Segment_2   Segment_2;
+  typedef typename R::Ray_2       Ray_2;
+  typedef typename R::Line_2      Line_2;
+
+  // Obsolete, for backward compatability
+  typedef Point_2     Point;
+  typedef Vector_2    Vector;
+  typedef Direction_2 Direction;
+  typedef Segment_2   Segment;
+  typedef Ray_2       Ray;
+  typedef Line_2      Line;
+
+  //typedef Point_2<R> Point;
+  //typedef Point_2<R> Point_2;
+  //typedef Vector_2<R> Vector;
+  //typedef Direction_2<R> Direction;
+  //typedef Segment_2<R> Segment;
+  //typedef Ray_2<R> Ray;
+  //typedef Line_2<R> Line;
+
   typedef Segment X_bounded_curve;        // [ - curve -> ] 
   typedef Ray X_target_unbounded_curve;        // [ - curve -> ) 
   typedef Ray X_source_unbounded_curve;        // ( - curve -> ]        
@@ -105,8 +121,8 @@ public:
   typedef Ray_2_Ray_2_pair<R> Ray_X_source_unbounded_curve;
   typedef Ray_2_Ray_2_pair<R> Ray_X_target_unbounded_curve; 
   typedef Ray_2_Line_2_pair<R> Ray_X_unbounded_curve;
-  typedef Straight_2_<R> X_curve;
   typedef Straight_2_<R> X_curve_2;
+  typedef X_curve_2 X_curve;
   
   typedef std::vector<Point> Point_container;
   typedef std::vector<X_curve> X_curve_container;
