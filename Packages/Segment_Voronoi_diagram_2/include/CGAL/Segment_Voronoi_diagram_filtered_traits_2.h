@@ -87,7 +87,7 @@ template<class CK,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> > >
+         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> >
 #else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
@@ -114,7 +114,7 @@ template<class CK,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> > >
+         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> >
 #else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
