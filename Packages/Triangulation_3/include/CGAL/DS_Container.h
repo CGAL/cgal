@@ -201,9 +201,9 @@ public:
     {
 	for (iterator it = begin(); it != end(); ++it)
 	    alloc.destroy(&*it);
-	for (typename Array_vect::iterator it = array_vect.begin();
-		it != array_vect.end(); ++it)
-	    alloc.deallocate(*it, DS_Container_allocation_size);
+	for (typename Array_vect::iterator ait = array_vect.begin();
+		ait != array_vect.end(); ++ait)
+	    alloc.deallocate(*ait, DS_Container_allocation_size);
 	array_vect.clear();
         init_free_list();
     }
