@@ -70,10 +70,12 @@ if [ "$LATEX_CONV_DATE" == "" ]; then
     LATEX_CONV_DATE=`date +"%a, %B %e, %Y"`
 fi
 if [ "$LATEX_CONV_AUTHOR" == "" ]; then
-    LATEX_CONV_AUTHOR='The <A HREF="http://www.cgal.org">CGAL Project</A>'
+    # no longer CGAL default, the cgal_manual script sets it explicitly
+    # LATEX_CONV_AUTHOR='The <A HREF="http://www.cgal.org">CGAL Project</A>'
+    LATEX_CONV_AUTHOR=""
 fi
 if [ "$LATEX_CONV_TITLE" == "" ]; then
-    LATEX_CONV_TITLE="Reference Manual"
+    LATEX_CONV_TITLE=""
 fi
 if [ "$LATEX_CONV_RELEASE" == "" ]; then
     LATEX_CONV_RELEASE=""
