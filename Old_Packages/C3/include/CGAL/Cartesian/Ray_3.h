@@ -1,24 +1,6 @@
-// ======================================================================
-//
-// Copyright (c) 2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------
-//
-// release       : 4.3
-// release_date  :  6 Apr 2000
-//
-// file          : include/CGAL/Cartesian/Ray_3.h
-// package       : C3 (4.3)
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
-//
-// ======================================================================
 
 #ifndef CGAL_CARTESIAN_RAY_3_H
 #define CGAL_CARTESIAN_RAY_3_H

@@ -1,24 +1,6 @@
-// ======================================================================
-//
-// Copyright (c) 2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------
-//
-// release       : 4.3
-// release_date  :  6 Apr 2000
-//
-// file          : include/CGAL/Cartesian/Iso_cuboid_3.C
-// package       : C3 (4.3)
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Hervé Brönnimann
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
-//
-// ======================================================================
 
 #ifndef CGAL_CARTESIAN_ISO_CUBOID_3_C
 #define CGAL_CARTESIAN_ISO_CUBOID_3_C
