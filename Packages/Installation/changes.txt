@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Do "make -i" for the libs in internal releases.
+GLOB: Set LONG_NAME_PROBLEM flags only when really needed.
 GLOB: Changed -Zm400 to -Zm900 for msvc. // DVP
 GLOB: Remove __STL_DEBUG from the list of options for msvc // DVP
 GLOB: Corrected CGAL_WINDOW_LDFLAGS for MSVC.
