@@ -799,9 +799,6 @@ public:
         --*this;
         return tmp;
     }
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-    Self& operator+=( difference_type n);
-#else
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != NULL);
         CGAL_assertion( i != ctnr->end());
@@ -815,7 +812,6 @@ public:
         i = ctnr->begin() + j;
         return *this;
     }
-#endif
     Self operator+( difference_type n) const {
         Self tmp = *this;
         return tmp += n;
@@ -848,26 +844,6 @@ operator+( typename Circulator_from_container<Ctnr>::difference_type n,
     Circulator_from_container<Ctnr> tmp = c;
     return tmp += n;
 }
-
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-template <class Ctnr>
-Circulator_from_container<Ctnr>&
-Circulator_from_container<Ctnr>::
-operator+=( typename Circulator_from_container<Ctnr>::difference_type n) {
-    CGAL_assertion( ctnr != NULL);
-    CGAL_assertion( i != ctnr->end());
-    typename Ctnr::difference_type j    = i - ctnr->begin();
-    typename Ctnr::difference_type size = ctnr->size();
-    CGAL_assertion( j    >= 0);
-    CGAL_assertion( size >= 0);
-    j = non_negative_mod( j + n, size);
-    CGAL_assertion( j >= 0);
-    CGAL_assertion( j < size);
-    i = ctnr->begin() + j;
-    return *this;
-}
-#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS //
-
 
 template < class  Ctnr>
 class Const_circulator_from_container {
@@ -956,9 +932,6 @@ public:
         --*this;
         return tmp;
     }
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-    Self& operator+=( difference_type n);
-#else
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != NULL);
         CGAL_assertion( i != ctnr->end());
@@ -972,7 +945,6 @@ public:
         i = ctnr->begin() + j;
         return *this;
     }
-#endif
     Self operator+( difference_type n) const {
         Self tmp = *this;
         return tmp += n;
@@ -1006,24 +978,6 @@ operator+( typename Const_circulator_from_container<Ctnr>::difference_type n,
     return tmp += n;
 }
 
-#ifndef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
-template <class Ctnr>
-Const_circulator_from_container<Ctnr>&
-Const_circulator_from_container<Ctnr>::
-operator+=( typename Const_circulator_from_container<Ctnr>::difference_type n){
-    CGAL_assertion( ctnr != NULL);
-    CGAL_assertion( i != ctnr->end());
-    typename Ctnr::difference_type j    = i - ctnr->begin();
-    typename Ctnr::difference_type size = ctnr->size();
-    CGAL_assertion( j    >= 0);
-    CGAL_assertion( size >= 0);
-    j = non_negative_mod( j + n, size);
-    CGAL_assertion( j >= 0);
-    CGAL_assertion( j < size);
-    i = ctnr->begin() + j;
-    return *this;
-}
-#endif // CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
 
 // Note: TT, SS, and DD are here for backwards compatibility, they are
 // not used.
