@@ -104,8 +104,10 @@ public:
 
   const ET & exact()
   {
-      if (et==NULL)
+      if (et==NULL) {
           update_exact();
+	  in = CGAL::to_interval(*et);
+      }
       return *et;
   }
 
@@ -298,9 +300,25 @@ public :
   const ET & exact() const
   { return ptr()->exact(); }
 
+  static const double & get_relative_precision_of_to_double()
+  {
+      return relative_precision_of_to_double;
+  }
+
+  static void set_relative_precision_of_to_double(const double & d)
+  {
+      CGAL_assertion(d > 0 && d < 1);
+      relative_precision_of_to_double = d;
+  }
+
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
+
+  static double relative_precision_of_to_double;
 };
+
+template <typename ET>
+double Lazy_exact_nt<ET>::relative_precision_of_to_double = 0.00001;
 
 template <typename ET>
 bool
@@ -512,10 +530,22 @@ operator/(int a, const Lazy_exact_nt<ET>& b)
 
 
 template <typename ET>
-inline
 double
 to_double(const Lazy_exact_nt<ET> & a)
 {
+    const Interval_nt<true>& app = a.approx();
+    if (app.sup() == app.inf())
+	return app.sup();
+
+    // If it's precise enough, then OK.
+    if ((app.sup() - app.inf())
+	    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
+	      * std::max(std::fabs(app.inf()), std::fabs(app.sup())) )
+        return CGAL::to_double(app);
+
+    // Otherwise we trigger exact computation first,
+    // which will refine the approximation.
+    a.exact();
     return CGAL::to_double(a.approx());
 }
 
