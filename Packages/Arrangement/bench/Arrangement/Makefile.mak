@@ -133,18 +133,21 @@ else
 GCPPOPTS = -O3
 
 ifeq ($(BENCH_TRAITS), $(CORE_CONIC_TRAITS))
-GCPPOPTS = -O2 -fno-strict-aliasing
+# GCPPOPTS = -O2 -fno-strict-aliasing
+GCPPOPTS = -O3
 endif
 
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 ifeq ($(BENCH_NT), $(NIX_CORE_FIELD_WITH_SQRT_NT))
-GCPPOPTS = -O2 -fno-strict-aliasing
+# GCPPOPTS = -O2 -fno-strict-aliasing
+GCPPOPTS = -O3
 endif
 endif
 
 ifeq ($(BENCH_TRAITS), $(CK_CIRCLE_TRAITS))
 ifeq ($(BENCH_NT), $(CORE_EXPR_NT))
-GCPPOPTS = -O2 -fno-strict-aliasing
+# GCPPOPTS = -O2 -fno-strict-aliasing
+GCPPOPTS = -O3
 endif
 endif
 
@@ -381,7 +384,7 @@ LCPPINCS+= $(CGALINCS)
 
 # ifneq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDOPTS = -L$(CORE_LIB_DIR)
-LLDLIBS = -lcore
+LLDLIBS = -lcore++
 # else
 ifeq ($(BENCH_TRAITS), $(EXACUS_CONIC_TRAITS))
 LLDLIBS+= $(EXACUS_ROOT)/ConiX/src/.libs/libCnX.so
