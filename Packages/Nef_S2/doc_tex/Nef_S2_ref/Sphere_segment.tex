@@ -1,0 +1,104 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Sphere_segment<R>}\ccCreationVariable{s}
+
+\ccDefinition
+
+An object \ccc{s} of type \ccc{Sphere_segment<R>} is a segment in the
+surface of a unit sphere that is part of a great circle trough the
+origin. Sphere segments are represented by two sphere points $p$ and
+$q$ plus an oriented plane $h$ that contains $p$ and $q$. The plane
+determines the sphere segment. Let $c$ be the circle in the
+intersection of $h$ and $S_2$. Then $s$ is that part of $c$ that is
+swept, when we rotate $p$ into $q$ in counterclockwise rotation around
+the normal vector of $h$ as seen from the positive halfspace.
+
+\ccSetOneOfTwoColumns{6cm}
+
+\ccTypes
+
+\ccNestedType{R}{ representation class.  }
+
+\ccNestedType{RT}{ ring number type.  }
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_segment<R>(Sphere_point<R> p1, Sphere_point<R>
+  p2, bool shorter_arc=true)}{ creates a spherical segment spanning
+  the shorter arc from \ccc{p1} to \ccc{p2} if \ccc{shorter_arc ==
+    true}. Otherwise the longer arc is created. \ccPrecond \ccc{p1 !=
+    p2} and \ccc{p1 != p2.opposite()}.  }
+
+\ccConstructor{Sphere_segment<R>(Sphere_point<R> p1, Sphere_point<R>
+  p2, Sphere_circle<R> c)}{ creates a spherical segment spanning the
+  arc from \ccc{p1} to \ccc{p2} as part of the oriented circle \ccc{c}
+  (\ccc{p1 == p2} or \ccc{p1 == p2.opposite()} are possible.)
+  \ccPrecond \ccc{p1} and \ccc{p2} are contained in \ccc{c}.  }
+
+\ccConstructor{Sphere_segment<R>(Sphere_circle<R> c1, Sphere_circle<R>
+  c2)}{ creates the spherical segment as part of \ccc{c1} that is part
+  of the halfsphere left of the oriented circle \ccc{c2}.  \ccPrecond
+  \ccc{c1 != c2} as unoriented circles.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{const Sphere_point<R>& source() ;}{ the source point of
+  \ccc{s}.  }
+
+\ccMethod{const Sphere_point<R>& target() ;}{ the target point of
+  \ccc{s}.  }
+
+\ccMethod{const Sphere_circle<R>& sphere_circle() ;}{ the great circle
+  supporting \ccc{s}.  }
+
+\ccMethod{Sphere_segment<R> opposite() ;}{ returns the sperical
+  segment oriented from \ccc{target()} to \ccc{source()} with the same
+  point set as \ccc{s}.  }
+
+\ccMethod{Sphere_segment<R> complement() ;}{ returns the sperical
+  segment oriented from \ccc{target()} to \ccc{source()} with the
+  point set completing \ccc{s} to a full circle.  }
+
+\ccMethod{int intersection(const Sphere_circle<R>& c,
+  Sphere_segment<R>& s1, Sphere_segment<R>& s2) ;}{ returns the number
+  of non-trivial connected components of the intersection of \ccc{s}
+  and the closed halfsphere left of \ccc{c}.  }
+
+\ccMethod{Sphere_point<R> intersection(const Sphere_segment<R>& so)
+  ;}{ returns the point of intersection of \ccc{s} and \ccc{so}.
+  \ccPrecond \ccc{s} and \ccc{so} do intersect.  }
+
+\ccMethod{void split_halfcircle(Sphere_segment<R>& s1,
+  Sphere_segment<R>& s2) ;}{ splits a halfcircle into two equally
+  sized segments.  \ccPrecond \ccc{s} is a halfcircle.  }
+
+\ccMethod{bool is_short() ;}{ a segment is short iff it is shorter
+  than a half-circle.  }
+
+\ccMethod{bool is_long() ;}{ a segment is long iff it is longer than a
+  half-circle.  }
+
+\ccMethod{bool is_degenerate() ;}{ return true iff \ccc{s} is
+  degenerate.  }
+
+\ccMethod{bool is_halfcircle() ;}{ return true iff \ccc{s} is a
+  half-circle.  }
+
+\ccMethod{bool has_on(const Sphere_point<R>& p) ;}{ return true iff
+  \ccc{s} contains \ccc{p}.  }
+
+\ccMethod{bool has_in_relative_interior(const Sphere_point<R>& p) ;}{
+  return true iff \ccc{s} contains \ccc{p} in its relative interior.
+  }
+
+\ccFunction{template <typename R> bool do_intersect_internally(const
+  Sphere_segment<R>& s1, const Sphere_segment<R>& s2, Sphere_point<R>&
+  p);}{ return true iff \ccc{s1} and \ccc{s2} intersect internally
+  (non-degenerately).  If \ccc{true} the parameter \ccc{p} returns the
+  point of intersection.  }
+
+\end{ccRefClass}

@@ -1,0 +1,199 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Explorer}\ccCreationVariable{D}
+
+\ccDefinition
+
+... 
+
+
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{Sphere_point}{embedding vertices.}
+
+\ccNestedType{Sphere_segment}{embedding edges.}
+
+\ccNestedType{Sphere_circle}{embedding loops.}
+
+\ccNestedType{Mark}{attributes of objects (vertices, edges, faces).}
+
+\ccNestedType{Size_type}{size type.}
+
+Local types are handles, iterators and circulators of the following
+kind: \ccc{Vertex_handle}, \ccc{Vertex_iterator},
+\ccc{Halfedge_handle}, \ccc{Halfedge_iterator}, \ccc{Halfloop_handle},
+\ccc{Halfloop_iterator}, \ccc{Face_handle}, \ccc{Face_iterator}.
+Additionally the following circulators are defined.
+
+
+
+\ccNestedType{Halfedge_around_vertex_const_circulator}{circulating the
+  adjacency list of an vertex \ccc{v}.  }
+
+\ccNestedType{Halfedge_around_face_const_circulator}{circulating the
+  face cycle of an face \ccc{f}.  }
+
+\ccNestedType{Face_cycle_const_iterator}{iterating all face cycles of
+  an face \ccc{f}.  The iterator has method \ccc{bool is_vertex()},
+  \ccc{bool is_halfedge()}, \ccc{bool is_halfloop()}, and can be
+  converted to the corresponding handles \ccc{Vertex_const_handle},
+  \ccc{Halfedge_const_handle}, or \ccc{Halfloop_const_handle}.  }
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+an explorer is copy constructible and available via the corresponding
+method of \ccc{Nef_polyhedron_S2}.
+
+\ccSetTwoOfThreeColumns{4cm}{4cm}
+
+\ccOperations
+
+\ccMethod{Vertex_const_handle source(Halfedge_const_handle e)
+  ;}{returns the source of \ccc{e}.  }
+
+\ccMethod{Vertex_const_handle target(Halfedge_const_handle e)
+  ;}{returns the target of \ccc{e}.  }
+
+\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e)
+  ;}{returns the twin of \ccc{e}.  }
+
+\ccMethod{Halfloop_const_handle twin(Halfloop_const_handle l)
+  ;}{returns the twin of \ccc{l}.  }
+
+\ccMethod{bool is_isolated(Vertex_const_handle v) ;}{returns
+  \ccc{true} when \ccc{v} is linked to the interior of a face.  }
+
+\ccMethod{Halfedge_const_handle first_out_edge(Vertex_const_handle v)
+  ;}{returns one edge with source \ccc{v}. It's the starting point for
+  the circular iteration over the edges with source \ccc{v}.
+  \ccPrecond \ccc{!is_isolated(v)}.  }
+
+\ccMethod{Halfedge_const_handle last_out_edge(Vertex_const_handle v)
+  ;}{returns one edge with source \ccc{v}. \ccPrecond
+  \ccc{!is_isolated(v)}.  }
+
+\ccMethod{Halfedge_const_handle cyclic_adj_succ(Halfedge_const_handle
+  e) ;}{returns the edge after \ccc{e} in the cyclic ordered adjacency
+  list of \ccc{source(e)}.  }
+
+\ccMethod{Halfedge_const_handle cyclic_adj_pred(Halfedge_const_handle
+  e) ;}{returns the edge before \ccc{e} in the cyclic ordered
+  adjacency list of \ccc{source(e)}.  }
+
+\ccMethod{Halfedge_const_handle next(Halfedge_const_handle e)
+  ;}{returns the next edge in the face cycle containing \ccc{e}.  }
+
+\ccMethod{Halfedge_const_handle previous(Halfedge_const_handle e)
+  ;}{returns the previous edge in the face cycle containing \ccc{e}.
+  }
+
+\ccMethod{Face_const_handle face(Halfedge_const_handle e) ;}{returns
+  the face incident to \ccc{e}.  }
+
+\ccMethod{Face_const_handle face(Halfloop_const_handle l) ;}{returns
+  the face incident to \ccc{l}.  }
+
+\ccMethod{Face_const_handle face(Vertex_const_handle v) ;}{returns the
+  face incident to \ccc{v}.  \ccPrecond \ccc{is_isolated(v)}.  }
+
+\ccHeading{Iteration} 
+
+\ccMethod{Halfloop_const_handle halfloop() ;}{returns access to the
+  loop.  }
+
+\ccMethod{bool has_loop() ;}{returns true iff there is a loop.  }
+
+\ccMethod{Halfedge_around_vertex_const_circulator
+  out_edges(Vertex_const_handle v) ;}{returns a circulator for the
+  cyclic adjacency list of \ccc{v}.  \ccPrecond the adjacency list is
+  not empty.  }
+
+\ccMethod{Face_cycle_const_iterator
+  face_cycles_begin(Face_const_handle f) ;}{returns an iterator for
+  all bounding face cycles of \ccc{f}.  The iterator is is convertable
+  to \ccc{Vertex_const_handle}, \ccc{Halfloop_const_handle}, or
+  \ccc{Halfedge_const_handle}.  }
+
+\ccMethod{Face_cycle_const_iterator face_cycles_end(Face_const_handle
+  f) ;}{returns the past the end iterator of \ccc{f}.  }
+
+\ccHeading{Statistics and Integrity} 
+
+\ccMethod{Size_type number_of_vertices() ;}{returns the number of
+  vertices.  }
+
+\ccMethod{Size_type number_of_halfedges() ;}{returns the number of
+  halfedges.  }
+
+\ccMethod{Size_type number_of_edges() ;}{returns the number of edges.
+  }
+
+\ccMethod{Size_type number_of_halfloops() ;}{returns the number of
+  halfloops.  }
+
+\ccMethod{Size_type number_of_loops() ;}{returns the number of loops.
+  }
+
+\ccMethod{Size_type number_of_faces() ;}{returns the number of faces.
+  }
+
+\ccMethod{Size_type number_of_face_cycles() ;}{returns the number of
+  face cycles.  }
+
+\ccMethod{Size_type number_of_connected_components() ;}{calculates the
+  number of connected components of \ccc{P}.  }
+
+\ccMethod{void print_statistics(std::ostream& os = std::cout) ;}{print
+  the statistics of \ccc{P}: the number of vertices, edges, and faces.
+  }
+
+\ccMethod{void check_integrity_and_topological_planarity(bool
+  faces=true) ;}{checks the link structure and the genus of \ccc{P}.
+  }
+
+\ccHeading{Associated Information}
+
+\ccMethod{const Sphere_point& point(Vertex_const_handle v) ;}{returns
+  the embedding of \ccc{v}.  }
+
+\ccMethod{const Sphere_circle& circle(Halfedge_const_handle e)
+  ;}{returns the circle supporting \ccc{e}.  }
+
+\ccMethod{const Sphere_circle& circle(Halfloop_const_handle l)
+  ;}{returns the circle supporting \ccc{l}.  }
+
+\ccMethod{Mark mark(Vertex_const_handle v) ;}{returns the mark of
+  \ccc{v}.  }
+
+\ccMethod{Mark mark(Halfedge_const_handle e) ;}{returns the mark of
+  \ccc{e}.  }
+
+\ccMethod{Mark mark(Halfloop_const_handle l) ;}{returns the mark of
+  \ccc{l}.  }
+
+\ccMethod{Mark mark(Face_const_handle f) ;}{returns the mark of
+  \ccc{f}.  }
+
+\ccHeading{Iteration} 
+
+The list of all objects can be accessed via iterator ranges.
+For comfortable iteration we also provide iterations macros. 
+The iterator range access operations are of the following kind:\\
+\ccc{Vertex_iterator   vertices_begin()/vertices_end()}\\
+\ccc{Halfedge_iterator halfedges_begin()/halfedges_end()}\\
+\ccc{Halfloop_iterator halfloops_begin()/halfloops_end()}\\
+\ccc{Face_iterator     faces_begin()/faces_end()}
+
+The macros are then \ccc{CGAL_forall_vertices(v,M)},
+\ccc{CGAL_forall_halfedges(e,M)}, \ccc{CGAL_forall_faces(f,M)},
+\ccc{CGAL_forall_face_cycles_of(fc,F)} where \ccc{M} is a sphere map
+and \ccc{F} is a face.
+
+\end{ccRefClass}
+
+

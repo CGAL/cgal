@@ -1,0 +1,44 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Sphere_triangle<R>}\ccCreationVariable{t}
+
+\ccDefinition
+
+An object \ccc{t} of type \ccc{Sphere_triangle<R>} is a triangle on
+the surface of the unit sphere.
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{R}{ representation class.  }
+
+\ccNestedType{RT}{ ring type.  }
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_triangle<R>()}{ creates some triangle.  }
+
+\ccConstructor{Sphere_triangle<R>(Sphere_point<R> p0, Sphere_point<R>
+  p1, Sphere_point<R> p2, Sphere_circle<R> c0, Sphere_circle<R> c1,
+  Sphere_circle<R> c2)}{ creates a triangle spanned by the three
+  points \ccc{p0}, \ccc{p1}, \ccc{p2}, where the triangle is left of
+  the three circles \ccc{c0}, \ccc{c1}, \ccc{c2}. \ccPrecond $c_i$
+  contains $p_i$ and $p_{i+1}$ mod 3.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{const Sphere_point<R>& point(unsigned i) ;}{ returns the ith
+  point of \ccc{t}.  }
+
+\ccMethod{const Sphere_circle<R>& circle(unsigned i) ;}{ returns the
+  ith circle of \ccc{t}.  }
+
+\ccMethod{Sphere_triangle<R> opposite() ;}{ returns the opposite of
+  \ccc{t}.  }
+
+\end{ccRefClass}

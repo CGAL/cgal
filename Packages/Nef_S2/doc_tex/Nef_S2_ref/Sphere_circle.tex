@@ -1,0 +1,86 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Sphere_circle<R>}\ccCreationVariable{c}
+  
+\ccDefinition
+
+An object \ccc{c} of type \ccc{Sphere_circle<R>} is an oriented great
+circle on the surface of a unit sphere.  Such circles correspond to
+the intersection of an oriented plane (that contains the origin) and
+the surface of $S_2$. The orientation of the great circle is that of a
+counterclockwise walk along the circle as seen from the positive
+halfspace of the oriented plane.
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{R}{ representation class.  }
+
+\ccNestedType{RT}{ ring type.  }
+
+\ccNestedType{Sphere_segment_pair}{ sphere segment pair.  }
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_circle<R>()}{ creates some great circle.  }
+
+\ccConstructor{Sphere_circle<R>(Sphere_point<R> p, Sphere_point<R>
+  q)}{ creates a great circle through $p$ and $q$.  If $p$ and $q$ are
+  not opposite on $S_2$, then this circle is unique and oriented such
+  that a walk along \ccc{c} meets $p$ just before the shorter segment
+  between $p$ and $q$. If $p$ and $q$ are opposite of each other then
+  we create any great circle that contains $p$ and $q$.  }
+
+\ccConstructor{Sphere_circle<R>(CGAL::Plane_3<R> h)}{ creates the
+  circle corresponding to the plane \ccc{h}.  \ccPrecond \ccc{h}
+  contains the origin.  }
+
+\ccConstructor{Sphere_circle<R>(RT x, RT y, RT z)}{ creates the circle
+  orthogonal to the vector $(x,y,z)$.  }
+
+\ccConstructor{Sphere_circle<R>(Sphere_circle<R> c, Sphere_point<R>
+  p)}{ creates a great circle orthogonal to $c$ that contains $p$.
+  \ccPrecond $p$ is not part of $c$.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{Sphere_circle<R> opposite() ;}{ returns the opposite of
+  \ccc{c}.  }
+
+\ccMethod{bool has_on(const Sphere_point<R>& p) ;}{ returns true iff
+  \ccc{c} contains \ccc{p}.  }
+
+\ccMethod{Plane_3 plane() ;}{ returns the plane supporting \ccc{c}.  }
+
+\ccMethod{Sphere_point<R> orthogonal_pole() ;}{ returns the point that
+  is the pole of the hemisphere left of \ccc{c}.  }
+
+\ccMethod{Sphere_segment_pair split_at(const Sphere_point<R>& p) ;}{
+  returns the pair of circle segments that is the result of splitting
+  \ccc{c} at \ccc{p} and \ccc{p.opposite()}.  }
+
+\ccMethod{Sphere_segment_pair split_at_xy_plane() ;}{ returns the pair
+  of circle segments that is the result of splitting \ccc{c} at the
+  $x$-$y$-coordinate plane if \ccc{c} is not part of it. Otherwise
+  \ccc{c} is split at the $x$-$z$-coordinate plane.  }
+
+\ccHeading{Global functions} 
+
+
+
+\ccFunction{template <class R> bool equal_as_sets(const
+  CGAL::Sphere_circle<R>& c1, const CGAL::Sphere_circle<R>& c2) ;}{
+  returns true iff \ccc{c1} and \ccc{c2} are equal as unoriented
+  circles.  }
+
+\ccFunction{template <typename R> Sphere_point<R> intersection(const
+  Sphere_circle<R>& c1, const Sphere_circle<R>& c2) ;}{ returns one of
+  the two intersection points of \ccc{c1} and \ccc{c2}. \ccPrecond
+  \ccc{c1 != c2} as sets.  }
+
+\end{ccRefClass}

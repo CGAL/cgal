@@ -1,0 +1,216 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Nef_polyhedron_S2<K>}\ccCreationVariable{N}
+  
+\ccDefinition
+
+An instance of data type \ccc{Nef_polyhedron_S2<K>} is a subset of
+$S_2$ that is the result of forming complements and intersections
+starting from a finite set \ccc{H} of half-spaces bounded by a plane
+containing the origin. Halfspaces correspond to hemispheres of $S_2$
+and are therefore modeled by oriented great circles of type
+\ccc{Sphere_circle}. \ccc{Nef_polyhedron_S2} is closed under all
+binary set operations \ccc{intersection}, \ccc{union},
+\ccc{difference}, \ccc{complement} and under the topological
+operations \ccc{boundary}, \ccc{closure}, and \ccc{interior}.
+
+The template parameter \ccc{Kernel} is specified via a kernel concept.
+\ccc{Kernel} must be a model of the concept
+\ccc{NefSphereKernelTraits_2}.
+
+\ccSetOneOfTwoColumns{7cm}
+
+\ccTypes
+
+\ccNestedType{Sphere_point}{points in the sphere surface.}
+
+\ccNestedType{Sphere_segment}{segments in the sphere surface.}
+
+\ccNestedType{Sphere_circle}{oriented great circles modeling spatial
+  half-spaces.}
+
+\ccEnum{enum Boundary { EXCLUDED, INCLUDED }}{construction selection.}
+
+\ccEnum{enum Content { EMPTY, COMPLETE }}{construction selection.}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Nef_polyhedron_S2<K>(Content sphere = EMPTY)}{creates
+  an instance \ccc{N} of type \ccc{Nef_polyhedron_S2<K>} and
+  initializes it to the empty set if \ccc{sphere == EMPTY} and to the
+  whole sphere if \ccc{sphere == COMPLETE}.  }
+
+\ccConstructor{Nef_polyhedron_S2<K>(Sphere_circle c, Boundary circle =
+  INCLUDED)}{creates a Nef polyhedron \ccc{N} containing the
+  half-sphere left of \ccc{c} including \ccc{c} if
+  \ccc{circle==INCLUDED}, excluding \ccc{c} if \ccc{circle==EXCLUDED}.
+  }
+
+\ccConstructor{template <class Forward_iterator>
+  Nef_polyhedron_S2<K>(Forward_iterator first, Forward_iterator
+  beyond, Boundary b = INCLUDED)}{creates a Nef polyhedron \ccc{N}
+  from the set of sphere segments in the iterator range
+  \ccc{[first,beyond)}. If the set of sphere segments is a simple
+  polygon that separates the sphere surface into two regions, then the
+  polygonal region that is left of the segment \ccc{*first} is
+  selected. The polygonal region includes its boundary if \ccc{b =
+    INCLUDED} and excludes the boundary otherwise.
+  \ccc{Forward_iterator} has to be an iterator with value type
+  \ccc{Sphere_segment}.  }
+
+\ccSetTwoOfThreeColumns{4cm}{3cm}
+
+\ccOperations
+
+\ccMethod{ void clear(Content plane = EMPTY) ;}{makes \ccc{N} the
+  empty set if \ccc{plane == EMPTY} and the full plane if \ccc{plane
+    == COMPLETE}.  }
+
+\ccMethod{ bool is_empty() ;}{returns true if \ccc{N} is empty, false
+  otherwise.  }
+
+\ccMethod{ bool is_plane() ;}{returns true if \ccc{N} is the whole
+  plane, false otherwise.  }
+
+\ccHeading{Constructive Operations} 
+
+\ccMethod{ Nef_polyhedron_S2<K> complement() ;}{returns the complement
+  of \ccc{N} in the plane.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> interior() ;}{returns the interior of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> closure() ;}{returns the closure of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> boundary() ;}{returns the boundary of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> regularization() ;}{returns the
+  regularized polyhedron (closure of interior).  }
+
+\ccMethod{ Nef_polyhedron_S2<K> intersection(const
+  Nef_polyhedron_S2<K>& N1) ;}{returns \ccc{N} $\cap$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> join(const Nef_polyhedron_S2<K>& N1)
+  ;}{returns \ccc{N} $\cup$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>&
+  N1) ;}{returns \ccc{N} $-$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> symmetric_difference( const
+  Nef_polyhedron_S2<K>& N1) ;}{returns the symmectric difference
+  \ccc{N - T} $\cup$ \ccc{T - N}.  }
+
+Additionally there are operators \ccc{*,+,-,^,!} which implement the
+binary operations \emph{intersection}, \emph{union},
+\emph{difference}, \emph{symmetric difference}, and the unary
+operation \emph{complement} respectively. There are also the
+corresponding modification operations \ccc{*=,+=,-=,^=}.
+
+There are also comparison operations like \ccc{<,<=,>,>=,==,!=} which
+implement the relations subset, subset or equal, superset, superset or
+equal, equality, inequality, respectively.
+
+\ccHeading{Exploration - Point location - Ray shooting} As Nef
+polyhedra are the result of forming complements and intersections
+starting from a set \ccc{H} of half-spaces that are defined by
+oriented lines in the plane, they can be represented by an attributed
+plane map $M = (V,E,F)$. For topological queries within \ccc{M} the
+following types and operations allow exploration access to this
+structure.
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccTypes
+
+\ccNestedType{Explorer}{a decorator to examine the underlying plane
+  map.  See the manual page of \ccc{Explorer}.  }
+
+\ccNestedType{Object_handle}{a generic handle to an object of the
+  underlying plane map. The kind of object \ccc{(vertex, halfedge,
+    face)} can be determined and the object can be assigned to a
+  corresponding
+  handle by the three functions:\\
+  \ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Face_const_handle& h, Object_handle)}\\
+  where each function returns \ccc{true} iff the assignment to \ccc{h}
+  was done.  }
+
+\ccSetTwoOfThreeColumns{3cm}{1cm}
+
+\ccOperations
+
+\ccMethod{ bool contains(Object_handle h) ;}{returns true iff the
+  object \ccc{h} is contained in the set represented by \ccc{N}.  }
+
+\ccMethod{ bool contained_in_boundary(Object_handle h) ;}{returns true
+  iff the object \ccc{h} is contained in the $1$-skeleton of \ccc{N}.
+  }
+
+\ccMethod{ Object_handle locate(const Sphere_point& p) ;}{returns a
+  generic handle \ccc{h} to an object (face, halfedge, vertex) of the
+  underlying plane map that contains the point \ccc{p} in its relative
+  interior. The point \ccc{p} is contained in the set represented by
+  \ccc{N} if \ccc{N.contains(h)} is true. The location mode flag
+  \ccc{m} allows one to choose between different point location
+  strategies.  }
+
+\ccMethod{ Object_handle ray_shoot(const Sphere_point& p, const
+  Sphere_direction& d) ;}{returns a handle \ccc{h} with
+  \ccc{N.contains(h)} that can be converted to a
+  \ccc{Vertex_/Halfedge_/Face_const_handle} as described above. The
+  object returned is intersected by the ray starting in \ccc{p} with
+  direction \ccc{d} and has minimal distance to \ccc{p}.  The
+  operation returns the null handle \ccc{NULL} if the ray shoot along
+  \ccc{d} does not hit any object \ccc{h} of \ccc{N} with
+  \ccc{N.contains(h)}.  }
+
+\ccMethod{ Object_handle ray_shoot_to_boundary(const Sphere_point& p,
+  const Sphere_direction& d) ;}{returns a handle \ccc{h} that can be
+  converted to a \ccc{Vertex_/Halfedge_const_handle} as described
+  above. The object returned is part of the $1$-skeleton of \ccc{N},
+  intersected by the ray starting in \ccc{p} with direction \ccc{d}
+  and has minimal distance to \ccc{p}.  The operation returns the null
+  handle \ccc{NULL} if the ray shoot along \ccc{d} does not hit any
+  $1$-skeleton object \ccc{h} of \ccc{N}. The location mode flag
+  \ccc{m} allows one to choose between different point location
+  strategies.  }
+
+\ccMethod{ Explorer explorer() ;}{returns a decorator object which
+  allows read-only access of the underlying plane map. See the manual
+  page \ccc{Explorer} for its usage.  }
+
+\ccHeading{Input and Output} A Nef polyhedron \ccc{N} can be
+visualized in an open GL window. The output operator is defined in the
+file \ccc{CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h}.
+   
+\ccImplementation
+
+Nef polyhedra are implemented on top of a halfedge data structure and
+use linear space in the number of vertices, edges and facets.
+Operations like \ccc{empty} take constant time. The operations
+\ccc{clear}, \ccc{complement}, \ccc{interior}, \ccc{closure},
+\ccc{boundary}, \ccc{regularization}, input and output take linear
+time. All binary set operations and comparison operations take time
+$O(n \log n)$ where $n$ is the size of the output plus the size of the
+input.
+
+The point location and ray shooting operations are implemented in the
+naive way. The operations run in linear query time without any
+preprocessing.
+
+\ccExample
+
+Nef polyhedra are parameterized by a standard CGAL kernel.
+
+\ccIncludeExampleCode{Nef_S2/simple.C}
+
+After line (*) \ccc{N3} is the intersection of \ccc{N1} and \ccc{N2}. 
+
+\end{ccRefClass}
+
+
