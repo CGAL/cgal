@@ -135,7 +135,11 @@ public:
   std::size_t find( const IC& k, std::forward_iterator_tag) const {
     return find( k, std::input_iterator_tag());
   }
-  std::size_t find( const IC& k, std::bidirectional_iterator_tag) const {
+  std::size_t find( const IC& k, std::bidirectional_iterator_tag
+#if defined( _MSC_VER ) && (_MSC_VER < 1300 )
+  , int dummy=0
+#endif //_MSC_VER
+  ) const {
     return find( k, std::input_iterator_tag());
   }
   std::size_t find( const IC& k, Forward_circulator_tag) const {
