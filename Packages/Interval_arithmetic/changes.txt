@@ -1,5 +1,15 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.33 on 28 October 1999
+- New filters:
+  - Comment out the re-adjustment stuff.  The bound only grows now.
+  - Add counters per predicate: "number_of_failures" and "number_of_updates".
+  - Restricted_double is now a typedef for double, unless
+    CGAL_IA_CHECK_RESTRICT is defined.
+- Workarounds for Borland:
+  - initialize the FPU mask correctly so that we don't get useless FPE.
+  - it doesn't have correct IEEE comparisons -> is_valid() workaround.
+
 Version 4.32 on 22 October 1999
 - Enable the sqrt workaround for Cygwin/GCC too.
 - New flag CGAL_IA_NO_INLINE which makes static instead of inline the

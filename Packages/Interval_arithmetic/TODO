@@ -10,7 +10,7 @@ Concerning the new filters:
 - /*DEGREE=2*/ attribute to the arguments ?
 - /*CGAL_NO_FILTER*/ attribute instead of //CGAL_FILTER(BEGIN|END) ?
 - Long term: match operator<(a,b) and co ?
-- Or use the GCC interface as a parser ?
+- Or use G++ interface as a parser ?
 - # of bounds  : one per predicate, or one per argument ?  give choice.
 - # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
 - Check that the compiler optimizes the epsilon computation
@@ -20,8 +20,8 @@ Concerning the new filters:
 - In case there are loops, we must take the max() of the epsilons.
   This should not happen often, imho...  Wait and see.
 - Move static_infos in src/.
-- Have a ::number_of_failure for the static filters too.
-- Optimize Restricted_double, conditionnaly #define it to "double" ?
+- Have a global ::number_of_failure for the static filters too.
+  (don't use IA_nt's one)
 - Replace:
   NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
   by:
@@ -32,9 +32,12 @@ Concerning the new filters:
   .dbl_approx()
   .bound()      (basically a bound on: fabs(.dbl_approx()))
   .error()
+- Add a "number of bits" field in Static_filter_error ?
+  (so that we get the same thing as Fixed for 24 bits)
 
 Concerning the main code:
 -------------------------
+- Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
 - volatile should be removed from FPU_empiric_test() now that we enforce this
   everywhere.
 - Replace the macros CGAL_IA_SMALLEST/CGAL_IA_LARGEST by consts ?  See if it
@@ -52,9 +55,6 @@ Concerning the main code:
   Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
-- Expertiser le bench de Stefan... à la prochaine version.
-- Drop the class Interval_nt ?  It's 130 lines for nothing...
-  Or have a boolean template parameter, instead or the derivation ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
@@ -63,6 +63,7 @@ Concerning the main code:
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
+? See C9X and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
 - Should IA_nt _privately_ derive from IA_nt_advanced ?
 
@@ -79,6 +80,8 @@ Concerning the doc:
 - add a pointer to my MISC'99 paper.
 - Use the new doc format.
 - DOCUMENT the script, the new static stuff, the Lazy_exact_nt<> ...
+- Add a long_description.txt file, with the directory/file structure of the
+  package (see RV's mail in folder "cgal", from 23/9/99).
 
 Concerning the test-suite:
 --------------------------
