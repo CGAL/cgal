@@ -143,9 +143,6 @@ typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
-//typedef typename Traits::compare_x_2_object                  compare_x_2_object;
-//typedef typename Traits::compare_y_2_object                  compare_y_2_object;
-
 public:
   friend class Segment_data<Rep>;
   friend class Hot_Pixel<Rep>;
