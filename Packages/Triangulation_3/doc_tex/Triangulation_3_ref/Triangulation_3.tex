@@ -242,7 +242,7 @@ an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 \ccMethod{Triangle triangle(const Cell_handle c, int i) const;}
 {Returns the triangle formed by the three vertices of facet
 \ccc{(c,i)}. The triangle is oriented so that its normal points to the
-outside of cell \ccc{c}. 
+inside of cell \ccc{c}. 
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and $i \in \{0,1,2,3\}$
 in dimension~3, $i = 3$ in dimension~2, and the facet is finite.}}
 \ccGlue
