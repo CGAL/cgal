@@ -3013,6 +3013,10 @@ test_leda()
 	    #error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
 	    #endif // ! LEDA_STD_HEADERS
 	    #endif // MSVC || BORLAND
+	    
+	    #if defined(LEDA_NAMESPACE)
+	    using namespace leda;
+	    #endif
 
 	    #include <LEDA/REDEFINE_NAMES.h>
 	    typedef integer I;
