@@ -2075,7 +2075,8 @@ void push_in_edge_list(const typename Traits::X_curve& cv,
   e->set_edge_node(en);
   e->twin()->set_edge_node(en);
   
-  if (traits->point_is_same(e->target()->point(),traits->curve_target(en->curve())))
+  if (traits->point_is_same(e->target()->point(),
+                            traits->curve_target(en->curve())))
     en->set_halfedge(Halfedge_handle(e));
   else
     en->set_halfedge(Halfedge_handle(e->twin())); 
