@@ -68,6 +68,11 @@
 \newcommand{\ccHtmlNoRefLinks}{\gdef{\lciIfHtmlClassLinks}{\lcFalse}}
 \newcommand{\ccHtmlNoRefIndex}{\gdef{\lciIfHtmlClassIndex}{\lcFalse}}
 
+% possibly nested control blocks that suppress cross-linking
+\newcommand{\lcNoLinkBegin}{\lcRawHtml{<!NoLinkBegin>}}
+\newcommand{\lcNoLinkEnd}{\lcRawHtml{<!NoLinkEnd>}}
+\newcommand{\lcNoLinkSync}{\lcRawHtml{<!NoLinkSync>}}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % |
