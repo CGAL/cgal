@@ -761,7 +761,6 @@ set_compiler_flags()
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
-    CGAL_OPENGL_LIBS="-lGL -lGLU"
     CGAL_QT_LIBNAME="libCGALQt.a"
     CORE_LIBNAME="libCore.a"
     CGAL_WIN_EXTRA_DIR=x11
@@ -769,6 +768,7 @@ set_compiler_flags()
     GMPXX_LIBNAME="libgmpxx.a"
     MPFR_LIBNAME="libmpfr.a"
     MATH_LIB="m"
+    OPENGL_LIBS="-lGL -lGLU"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
@@ -796,7 +796,6 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CORE_LIBNAME="libCore.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -804,6 +803,7 @@ set_compiler_flags()
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=""
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    SEPARATE_LIBPATH="y"
 	    ;;
 	*ICL.*|*icl.*)
@@ -830,13 +830,14 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
+	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*CL.*|*cl.*)
@@ -863,7 +864,6 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -871,6 +871,7 @@ set_compiler_flags()
 	    GMPXX_LIBNAME="gmpxx.lib"
             MPFR_LIBNAME="mpfr.lib"
 	    MATH_LIB=
+	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*IRIX*5.*CC*)
@@ -5439,6 +5440,15 @@ write_linker_flags()
   else
     ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS =" >> ${FILE}
   fi
+
+
+  #
+  # OPENGL_LIBS
+  #
+  print_as_shell_comment \
+    "*** the libs to link against when using OpenGL" >> ${FILE}
+    ${_printf} "%s\n\n" "OPENGL_LIBS = ${OPENGL_LIBS}" \
+    >> ${FILE}
 
   #
   # CGAL_LIBPATH
