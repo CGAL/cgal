@@ -192,5 +192,5 @@ else
     (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS "DATA/polylines")
    
   # run test with conic traits
-#    (compile_and_run test $WALK  $CGAL_CONIC_TRAITS "DATA/segment_circles")
+    (compile_and_run test $WALK  $CGAL_CONIC_TRAITS "DATA/segment_circles")
 fi
