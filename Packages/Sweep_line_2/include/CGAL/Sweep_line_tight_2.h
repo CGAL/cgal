@@ -559,7 +559,8 @@ protected:
   {
     m_tmpOut.clear();
     SL_DEBUG(std::cout << "IntersectCurveGroup (with out)\n";)
-    SL_DEBUG(std::cout << "Intersecting with " << mylist.size() << " curves\n";)
+    SL_DEBUG(std::cout << "Intersecting with " << mylist.size()
+             << " curves\n";)
     SubCurveListIter i = mylist.begin();
     while ( i != mylist.end())
     {
@@ -772,13 +773,15 @@ protected:
 
 	while (slIter != m_statusLine->end() &&
 	       m_traits->point_in_x_range((*slIter)->getCurve(),
-					     topPoint) &&
+                                          topPoint) &&
 	       m_traits->curve_compare_y_at_x(topPoint,
-                                              (*slIter)->getCurve()) == LARGER &&
+                                              (*slIter)->getCurve()) ==
+               LARGER &&
 	       m_traits->point_in_x_range((*slIter)->getCurve(), 
-					     bottomPoint) && 
+                                          bottomPoint) && 
 	       m_traits->curve_compare_y_at_x(bottomPoint,
-                                              (*slIter)->getCurve()) == SMALLER)
+                                              (*slIter)->getCurve()) ==
+               SMALLER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
