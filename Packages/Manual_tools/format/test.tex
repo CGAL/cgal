@@ -449,6 +449,9 @@ as a function template:
 
 \globalvariable{int CGAL_global;}Thats it.
 
+
+
+% ----------------------------------------------------------------------
 \section{New Features Introduced with Version 1.9}
 
 \begin{class}{Demo_Class}
@@ -517,7 +520,48 @@ The \verb+\+verb+CCstyle+ macro is not appropriate to format multiple lines
 of \CC\ code. Use other environments like the {\tt cprog} style.
 
 
+% ----------------------------------------------------------------------
+\section{New Features Introduced with Version 1.13}
 
+A tool called {\tt cgal\_extract\_html} is able to convert the \cgal\
+Kernel Manual in a semi automatic fashion to a fully hyperlinked
+manual in HTML. A couple of new macros are provided to support these
+cases where the automatic coonversion fails, i.e. tables and complex
+mathematical formulas are not handled automatically.
+
+Two environments are provided that encapsulates either \TeX\ or HTML
+code. These are 
+
+\begin{itemize}
+    \item
+        \verb+\begin{TexOnly} ... \end{TexOnly}+ for parts only valid
+        in \TeX.
+    \item
+        \verb+\begin{HtmlOnly} ... \end{HtmlOnly}+ for parts only valid
+        in the HTML manual. Note that this environment modifies the 
+        catcodes of a couple of characters. So, do not use this
+        environment within a parameter of another \TeX\ macro. On the
+        other hand, this allows the use of {\em unmatched} parantheses
+        and {\em unknown} macros within the HTML text, the special
+        characters are meaningless for \TeX.
+\end{itemize}
+
+\TeX\ and HTML code can be written together within one macro.
+
+\begin{itemize}
+    \item
+        \verb+\LatexHtml{ TeX code ... }{ HTML code ...}+
+\end{itemize}
+
+For convinience a solution is provided that easily includes
+hyperlinks with URL's in the \TeX\ source. This macro translates to a
+fully HTML anchor with the given URL around the \TeX\ source after the
+\TeX\ source has been converted.
+
+\begin{itemize}
+    \item
+        \verb+\Anchor{ URL }{ TeX code ... }+
+\end{itemize}
 
 % ----------------------------------------------------------------------
 \begin{class}{Demo_Class}
