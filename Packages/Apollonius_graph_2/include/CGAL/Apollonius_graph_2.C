@@ -990,7 +990,7 @@ get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
 template< class Gt, class Agds >
 void
 Apollonius_graph_2<Gt,Agds>::
-remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
+remove_hidden_vertices(Vertex_map& vm)
 {
   typename Vertex_map::iterator it;
 
@@ -1143,7 +1143,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
   l.clear();
 
   // 5. remove the hidden vertices
-  remove_hidden_vertices(v, vm, fm);
+  remove_hidden_vertices(vm);
 
   // 6. retriangulate the hole
   //  _tds.star_hole( v, ve.begin(), ve.end(), vf.begin(), vf.end());

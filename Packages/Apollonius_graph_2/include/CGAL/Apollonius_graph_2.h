@@ -938,8 +938,7 @@ protected:
   // MK: this is not currently used
   std::vector<Face*> get_faces_for_recycling(Face_map& fm,
 					     unsigned int n_wanted);
-  void remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm,
-			      Face_map& fm);
+  void remove_hidden_vertices(Vertex_map& vm);
   Vertex_handle retriangulate_conflict_region(const Site_2& p,
 					      List& l,
 					      Face_map& fm,
