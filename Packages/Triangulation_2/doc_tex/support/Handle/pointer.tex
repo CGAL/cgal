@@ -53,7 +53,7 @@ to the same object.}
 %\ccMethod{void Delete();} {deallocate the memory referenced by \ccVar.}
 
 
-\ccHeading{Equality}
+\ccHeading{Equality and Comparison}
 %\ccMethod { bool is_null() const; }{ true if \ccVar\ references no
 %object.}
 %\ccGlue
@@ -63,6 +63,10 @@ to the same object.}
 \ccMethod{ bool operator!=(const Handle<T>& hr) const;}{true if
 \ccVar\ and \ccc{hr} reference distinct objects.}
 
+The following operator is not quite compulsory, but very conveniemt if 
+present to define structures like \ccc{set<Handle<T> >}
+\ccMethod{bool operator<(const Handle<T>& p) const;} {true if 
+\ccc{ptr() < p.ptr()}}
 
 \end{ccClassTemplate} 
 
