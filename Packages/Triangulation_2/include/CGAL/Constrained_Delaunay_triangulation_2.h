@@ -51,10 +51,17 @@ public:
   typedef Constrained_Delaunay_triangulation_2<Gt,Tds>  CD_triangulation;
   typedef typename Constrained_triangulation::Constraint Constraint;
   typedef typename Constrained_triangulation::Vertex_handle Vertex_handle;
+  typedef typename Constrained_triangulation::Face_handle Face_handle;
+  typedef typename Constrained_triangulation::Edge  Edge;
 
-  typedef std::list<Edge> List_edges;  
+  //don't know why this typedef makes the compilation crash
+  // typedef typename Constrained_triangulation::List_edges List_edges;  
+  // typedef typename Constrained_triangulation::List_faces List_faces;
+  // typedef typename Constrained_triangulation::List_vertices  List_vertices;
+
+  typedef std::list<Edge> List_edges;
+  typedef std::list<Vertex_handle> List_vertices;  
   typedef std::list<Face_handle> List_faces;
-  typedef std::list<Vertex_handle> List_vertices;
 
   Constrained_Delaunay_triangulation_2(const Gt& gt=Gt() ) : 
     Constrained_triangulation(gt) { }
