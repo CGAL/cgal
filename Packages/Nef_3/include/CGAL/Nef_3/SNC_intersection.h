@@ -34,12 +34,12 @@ struct Project_halfedge_point {
   typedef Object       result_type;
   Object& operator()( Node& x) const   { 
     DClass D;
-    return D.point(D.source(x));
+    return x.source()->point();
     /* a Point_3& reference must be returned by D.point() */
   }
   const Object& operator()( const Node& x) const   { 
     DClass D;
-    return D.point(D.source(x)); 
+    return x.source()->point(); 
     /* a Point_3& reference must be returned by D.point() */
   }
 };
@@ -326,7 +326,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     CGAL_For_all(fc, fe) {
       SHalfloop_handle l;
       if ( assign(l,fc) ) { 
-        if( point(vertex(sface(l))) == p )
+        if(l->incident_sface()->center_vertex()->point() == p )
 	  inner_bound_pos = CGAL::ON_BOUNDARY;
 	else
 	  inner_bound_pos = CGAL::ON_UNBOUNDED_SIDE;

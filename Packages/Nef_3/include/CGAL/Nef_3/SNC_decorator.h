@@ -168,49 +168,45 @@ class SNC_decorator : public SNC_const_decorator<Map> {
  public:
   typedef void* GenPtr;
 
+
 #define using(f) using Base::f
-  using(mark);
-  using(vertex);
-  using(twin);
-  using(source);
-  using(target);
-  using(sface);
-  /* SVertex queries */
+  //  using(mark);
+  //  using(vertex);
+  //  using(twin);
+  //  using(source);
+  //  using(target);
+  //  using(sface);
 
   // using(vertex);
   // using(twin);
   // using(source);
   // using(target);
-  using(previous);
-  using(next);
+  //  using(previous);
+  //  using(next);
   //  using(facet);
   // using(sface);
-  using(ssource);
-  using(starget);
-  /* SHalfedge queries */
+  //  using(ssource);
+  //  using(starget);
 
   // using(mark);
   // using(twin);
-  using(facet);
+  //  using(facet);
   // using(vertex);
   // using(sface);
-  /* SHalfloop queries */
 
   // using(vertex);
-  using(volume);
-  /* SHalffacet queries */
+  //  using(volume);
 
   //  using(twin);
   // using(volume);
-  /* Halffacet queries */
 
-  using(point);
+  //  using(point);
   //  using(point);
   // using(calc_point);
 
   using(segment);
-  using(plane);
-  using(vector);
+  //  using(plane);
+  //  using(vector);
   //  using(orthogonal_vector);
   // using(mark);
 #undef using
@@ -238,7 +234,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Vertex_handle source( Halfedge_handle e)
   { return e->center_vertex(); }
   static Vertex_handle target( Halfedge_handle e)
-  { return source(twin(e)); }
+  { return e->twin()->source(); }
   static SFace_handle sface( Halfedge_handle e)
   { return e->incident_sface(); }
   /* SVertex queries*/
@@ -787,9 +783,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     IO0.debug();    IO1.debug();
     IO0.print();    IO1.print();
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
-    CGAL_assertion( point(v0) == point(v1));
-    Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( D.mark(v0), D.mark(v1)));
-    //    cerr<<"BOP Vertex "<<mark(v0)<<" "<<mark(v1)<<std::endl;
+    CGAL_assertion( v0->point() == v1->point());
+    Vertex_handle v01 = rsnc.new_vertex( v0->point(), BOP( v0->mark(),v1->mark()));
+    //    cerr<<"BOP Vertex "<<v0->mark()<<" "<<v1->mark()<<std::endl;
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(&*v01);
     O.subdivide( &*v0, &*v1);
@@ -917,7 +913,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
       }
       else if( assign( f, o1)) {
-	TRACEN("face 1 has plane equation " << plane(f));
+	TRACEN("face 1 has plane equation " << f->plane());
       }
       else 
       	CGAL_assertion_msg( 0, "wrong handle");
@@ -991,7 +987,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_forall_vertices( v0, snc1) {
       //      v_qualifying++;
       CGAL_assertion(!ignore[v0]);
-      Point_3 p0(point(v0));
+      Point_3 p0(v0->point());
       Vertex_handle v;
       Halfedge_handle e;
       Halffacet_handle f;
@@ -1035,7 +1031,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_forall_vertices( v0, snc2) {
       //      v_qualifying++;
       if(ignore[v0]) continue;
-      Point_3 p1(point(v0));
+      Point_3 p1(v0->point());
       Halfedge_handle e;
       Halffacet_handle f;
       Volume_handle c;
@@ -1124,7 +1120,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
     TRACEN("=> resultant vertices (before simplification): ");
     CGAL_assertion_code(CGAL_forall_vertices( v0, *sncp()) 
-			  TRACEN(&*v0<<" "<<point(v0)));
+			  TRACEN(&*v0<<" "<<v0->point()));
 
     SNC_simplify simp(*sncp());
     simp.vertex_simplification(NO_SNC);
@@ -1132,7 +1128,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     TRACEN("=> resultant vertices (after simplification): ");
     CGAL_assertion_code(CGAL_forall_vertices( v0, *sncp()) 
-			  TRACEN(&*v0<<" "<<point(v0)));
+			  TRACEN(&*v0<<" "<<v0->point()));
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> pre-construction result");
     SNC_io_parser<SNC_structure> O(std::cerr, *sncp());

@@ -1325,8 +1325,8 @@ typename SNC_::Vertex_handle
 SNC_constructor<SNC_>::
 create_from_facet(Halffacet_const_handle f, const Point_3& p) const
 { 
-  return create_from_plane(plane(f), p, 
-			   mark(f), mark(volume(twin(f))), mark(volume(f)));
+  return create_from_plane(f->plane(), p, 
+			   f->mark(), f->twin()->volume()->mark(), f->volume()->mark());
 }
 
 template <typename SNC_>
@@ -1517,23 +1517,23 @@ create_from_edge(Halfedge_const_handle e,
   typedef typename CGAL::SNC_const_decorator<SNC_structure> SNC_const_decorator;
 
   CGAL_assertion(segment(e).has_on(p));
-  Vertex_handle v = sncp()->new_vertex( p, mark(e));
+  Vertex_handle v = sncp()->new_vertex( p, e->mark());
   SM_decorator D(&*v);
-  SM_const_decorator E(&*source(e));
-  Sphere_point ps = E.point(e);
+  SM_const_decorator E(&*e->source());
+  Sphere_point ps = e->point();
   SVertex_handle v1 = D.new_svertex(ps);
   SVertex_handle v2 = D.new_svertex(ps.antipode());
-  D.mark(v1) = D.mark(v2) = mark(e);
+  v1->mark() = v2->mark() = e->mark();
   bool first = true;
 
   // SETDTHREAD(19*43*131);
  
   SHalfedge_const_handle ceee;
-  TRACEN("---------------------" << point(vertex(e)));
+  TRACEN("---------------------" << e->center_vertex()->point());
   CGAL_forall_shalfedges(ceee,E)
-    TRACEN("|" << E.circle(ceee) <<
-	   "|" << E.mark(ceee) << 
-	   " " << E.mark(E.face(ceee)));
+    TRACEN("|" << ceee->circle() <<
+	   "|" << ceee->mark() << 
+	   " " << ceee->incident_sface()->mark());
   TRACEN(" ");
  
 
@@ -1541,7 +1541,7 @@ create_from_edge(Halfedge_const_handle e,
     SFace_handle f = D.new_sface();
     D.link_as_isolated_vertex(v1,f);
     D.link_as_isolated_vertex(v2,f);
-    D.mark(f) = E.mark(E.face(e));
+    f->mark() = e->incident_sface()->mark();
   }
 
   SHalfedge_around_svertex_const_circulator ec1(E.out_edges(e)), ee(ec1);
@@ -1556,31 +1556,31 @@ create_from_edge(Halfedge_const_handle e,
 
   SHalfedge_handle eee;
   CGAL_forall_shalfedges(eee,D)
-    TRACEN("|" << D.circle(eee));
+    TRACEN("|" << eee->circle());
   TRACEN(" ");
  
 
   ec1 = E.out_edges(e);
   SHalfedge_around_svertex_circulator ec2(D.out_edges(v1));
   CGAL_For_all(ec1,ee) {
-    TRACEN("|" << E.circle(ec1) <<
-	   "|" << E.mark(ec1) << 
-	   " " << E.mark(E.face(ec1)));
-    D.mark(ec2) = D.mark(D.twin(ec2)) = E.mark(ec1);
-    D.circle(ec2) = E.circle(ec1);
-    D.circle(D.twin(ec2)) = E.circle(E.twin(ec1));
+    TRACEN("|" << ec1->circle() <<
+	   "|" << ec1->mark() << 
+	   " " << ec1->incident_sface()->mark());
+    ec2->mark() = ec2->twin()->mark() = ec1->mark();
+    ec2->circle() = ec1->circle();
+    ec2->twin()->circle() = ec1->twin()->circle();
     SFace_handle f = D.new_sface();
     D.link_as_face_cycle(ec2,f);
-    D.mark(f) = E.mark(E.face(ec1));
+    f->mark() = ec1->incident_sface()->mark();
     ++ec2;
   }
 
   TRACEN(" ");
 
   CGAL_forall_shalfedges(eee,D)
-    TRACEN("|" << D.circle(eee) <<
-	   "|" << D.mark(eee) << 
-	   " " << D.mark(D.face(eee)));
+    TRACEN("|" << eee->circle() <<
+	   "|" << eee->mark() << 
+	   " " << eee->incident_sface()->mark());
   TRACEN("---------------------");
 
  
@@ -1607,7 +1607,7 @@ clone_SM( typename SNC_::Vertex_const_handle vin) {
   CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
   
   SM_const_decorator E(&*vin);
-  Vertex_handle vout = sncp()->new_vertex(point(vin), mark(vin));
+  Vertex_handle vout = sncp()->new_vertex(vin->point(), vin->mark());
   SM_decorator D(&*vout);
   
   SVertex_const_handle sv;
@@ -1679,10 +1679,10 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
 
   Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
 
-  SM_decorator D(&*sncp()->new_vertex(p, BOP(mark(e), mark(f))));
-  SM_const_decorator E(&*source(e));
+  SM_decorator D(&*sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
+  SM_const_decorator E(&*e->source());
   
-  Sphere_point ps = E.point(e);
+  Sphere_point ps = e->point();
   ps = normalized(ps);
   SVertex_handle v1 = D.new_svertex(ps);
   SVertex_handle v2 = D.new_svertex(ps.antipode());
@@ -1690,22 +1690,22 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
   TRACEN("new svertex 2 " << ps.antipode());
   Halffacet_const_handle faces_p(f);
   Vector_3 vec(ps-CGAL::ORIGIN);
-  if(plane(faces_p).oriented_side(p+vec) == ON_NEGATIVE_SIDE)
-    faces_p = twin(faces_p);
-  D.mark(v1) = BOP(E.mark(e), mark(volume(faces_p)), inv);
-  D.mark(v2) = BOP(E.mark(e), mark(volume(twin(faces_p))), inv);
-  TRACEN("svertex 1 " << ps << " has mark " << D.mark(v1));
-  TRACEN("svertex 2 " << ps.antipode() << " has mark " << D.mark(v2));
+  if(faces_p->plane().oriented_side(p+vec) == ON_NEGATIVE_SIDE)
+    faces_p = faces_p->twin();
+  v1->mark() = BOP(e->mark(), faces_p->volume()->mark(), inv);
+  v2->mark() = BOP(e->mark(), faces_p->twin()->volume()->mark(), inv);
+  TRACEN("svertex 1 " << ps << " has mark " << v1->mark());
+  TRACEN("svertex 2 " << ps.antipode() << " has mark " << v2->mark());
 
   if(E.is_isolated(e)) {
     TRACEN("edge is isolated");
-    Mark mf1 = BOP(E.mark(E.face(e)), mark(volume(faces_p)), inv);
-    Mark mf2 = BOP(E.mark(E.face(e)), mark(volume(twin(faces_p))), inv);
-    Mark ml = BOP(E.mark(E.face(e)), mark(faces_p), inv);
+    Mark mf1 = BOP(e->incident_sface()->mark(), faces_p->volume()->mark(), inv);
+    Mark mf2 = BOP(e->incident_sface()->mark(), faces_p->twin()->volume()->mark(), inv);
+    Mark ml = BOP(e->incident_sface()->mark(), faces_p->mark(), inv);
 
     SFace_handle f1 = D.new_sface();
     D.link_as_isolated_vertex(v1, f1);
-    D.mark(f1) = mf1;
+    f1->mark() = mf1;
     
     if(mf1 == mf2 && mf1 == ml) {
       D.link_as_isolated_vertex(v2, f1);
@@ -1715,11 +1715,11 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
       SFace_handle f2 = D.new_sface();    
       D.link_as_isolated_vertex(v2, f2);
       D.link_as_loop(l,f1);
-      D.link_as_loop(twin(l),f2);
-      D.circle(l) = Sphere_circle(plane(faces_p)); 
-      D.circle(twin(l)) = D.circle(l).opposite();
-      D.mark(f2) = mf2;
-      D.mark(l) = D.mark(D.twin(l)) = ml;
+      D.link_as_loop(l->twin(),f2);
+      l->circle() = Sphere_circle(faces_p->plane()); 
+      l->twin()->circle() = l->circle().opposite();
+      f2->mark() = mf2;
+      l->mark() = l->twin()->mark() = ml;
     }
   }
   else {
@@ -1728,7 +1728,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
     SHalfedge_handle se1;
     SHalfedge_handle se2;
     SFace_handle sf;
-    Sphere_circle c(plane(f));
+    Sphere_circle c(f->plane());
 
     SHalfedge_handle next_edge;
     SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
@@ -1742,15 +1742,15 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
 	sp = sp.antipode();
       sv = D.new_svertex(sp);
       TRACEN("new svertex 3 " << normalized(sp));
-      D.mark(sv) = BOP(E.mark(ec), mark(f), inv);
+      sv->mark() = BOP(ec->mark(), f->mark(), inv);
       se1 = D.new_shalfedge_pair(v1, sv);
       if(next_edge == SHalfedge_handle())
 	se2 = D.new_shalfedge_pair(sv, v2); 
       else
 	se2 = D.new_shalfedge_pair(sv, next_edge, -1);
       next_edge = twin(se2);
-      D.mark(se1) = D.mark(D.twin(se1)) = BOP(E.mark(ec), mark(volume(faces_p)), inv);
-      D.mark(se2) = D.mark(D.twin(se2)) = BOP(E.mark(ec), mark(volume(twin(faces_p))), inv);
+      se1->mark() = se1->twin()->mark() = BOP(E.mark(ec), faces_p->volume()->mark()), inv);
+      se2->mark() = se2->twin()->mark() = BOP(E.mark(ec), faces_p->twin()->volume()->mark(), inv);
       mark_of_right_sface[se1] = E.mark(E.face(ec));
       D.circle(se1) = D.circle(se2) = E.circle(ec);
       D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
@@ -1763,15 +1763,15 @@ create_edge_facet_overlay( typename SNC_::Halfedge_const_handle e,
       se1 = D.new_shalfedge_pair(twin(ec2), twin(en), -1, 1);
       TRACEN("new edge pair " << ssource(twin(ec2))->vector() << 
 	     " -> " << ssource(twin(en))->vector());
-      D.circle(se1) = Sphere_circle(plane(faces_p));
+      D.circle(se1) = Sphere_circle(faces_p->plane());
       D.circle(D.twin(se1)) = D.circle(se1).opposite();
-      D.mark(se1) = D.mark(D.twin(se1)) = BOP(mark_of_right_sface[ec2], mark(faces_p), inv);
+      D.mark(se1) = D.mark(D.twin(se1)) = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
       
       sf = D.new_sface();
-      D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(faces_p)), inv);
+      D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->volume()->mark(), inv);
       D.link_as_face_cycle(se1,sf);
       sf = D.new_sface();
-      D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(twin(faces_p))), inv);
+      D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->twin()->volume()->mark(), inv);
       D.link_as_face_cycle(D.twin(se1),sf);
     }   
   }

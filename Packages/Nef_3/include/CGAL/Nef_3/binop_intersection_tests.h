@@ -76,10 +76,7 @@ struct binop_intersection_test_segment_tree {
           SHalfedge_around_facet_const_circulator
             start( edge_it ), end( edge_it );
           CGAL_For_all( start, end ) {
-            const Point_3& p =
-              SNC_decorator::point(
-                SNC_decorator::source(
-                  SNC_decorator::previous( start ) ) );
+            const Point_3& p = start->prev()->source()->point();
             extend( p );
           }
         } else
@@ -89,14 +86,14 @@ struct binop_intersection_test_segment_tree {
 
     Nef_box( Halfedge_const_handle e ) :  e(e), type(EDGE)
     {
-      if(!Const_decorator::is_standard( SNC_decorator::source( e ) ) ||
-         !Const_decorator::is_standard( SNC_decorator::target( e ) ) )
+      if(!Const_decorator::is_standard(e->source() ) ||
+         !Const_decorator::is_standard(e->twin()->source() ) )
       {
         init( true );
       } else {
         init( false );
-        extend( SNC_decorator::point( SNC_decorator::source( e ) ) );
-        extend( SNC_decorator::point( SNC_decorator::target( e ) ) );
+        extend( e->source()->point());
+        extend( e->twin()->source()->point());
       }
     }
 
@@ -148,12 +145,12 @@ struct binop_intersection_test_segment_tree {
       Halffacet_const_iterator f1 = box1.get_halffacet();
       if(ignore[ std::make_pair( e0, f1 ) ])
         return;
-      if( Infi_box::degree( SNC_decorator::plane( f1 ).d() ) > 0 )
+      if( Infi_box::degree( f1->plane().d() ) > 0 )
         return;
       Point_3 ip;
       if( is.does_intersect_internally( SNC_decorator::segment(e0), f1, ip )) {
         cb(e0,f1,ip);
-        ignore[ std::make_pair( SNC_decorator::twin( e0 ), f1 ) ] = true;
+        ignore[ std::make_pair( e0->twin(), f1 ) ] = true;
       }
     }
   };
@@ -171,7 +168,7 @@ struct binop_intersection_test_segment_tree {
     void operator()( Nef_box& box0, Nef_box& box1 ) {
       Halfedge_const_iterator  e1 = box0.get_halfedge();
       Halffacet_const_iterator f0 = box1.get_halffacet();
-      if( Infi_box::degree( SNC_decorator::plane( f0 ).d() ) > 0 )
+      if( Infi_box::degree( f0->plane().d() ) > 0 )
         return;
       Point_3 ip;
       if( is.does_intersect_internally( SNC_decorator::segment( e1 ),

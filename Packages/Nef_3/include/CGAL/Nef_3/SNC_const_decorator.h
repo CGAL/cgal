@@ -128,6 +128,7 @@ public:
  public:
   const SNC_structure* sncp() const { return sncp_; }
   
+  /*
   static Vertex_const_handle vertex( Halfedge_const_handle e)
   { return e->center_vertex(); }
   static Halfedge_const_handle twin( Halfedge_const_handle e)
@@ -138,7 +139,7 @@ public:
   { return source(twin(e)); }  
   static SFace_const_handle sface( Halfedge_const_handle e)
   { return e->incident_sface(); }
-  /* SVertex queries*/
+  // SVertex queries
 
   static Vertex_const_handle vertex(SHalfedge_const_handle e)
   { return vertex(e->source()); }
@@ -162,7 +163,7 @@ public:
   { return e->source(); }
   static Halfedge_const_handle starget(SHalfedge_const_handle e)
   { return e->twin()->source(); }
-  /* SHalfedge queries */
+  // SHalfedge queries
 
   static SHalfloop_const_handle twin( SHalfloop_const_handle l)
   { return l->twin(); }
@@ -172,19 +173,20 @@ public:
   { return l->incident_sface()->center_vertex(); }
   static SFace_const_handle sface( SHalfloop_const_handle l)
   { return l->incident_sface(); }
-  /* SHalfloop queries */
+  // SHalfloop queries
 
   static Vertex_const_handle vertex(SFace_const_handle f)
   { return f->center_vertex(); }
   static Volume_const_handle volume(SFace_const_handle f)
   { return f->incident_volume(); }
-  /* SFace queries */
+  // SFace queries 
 
   static Halffacet_const_handle twin(Halffacet_const_handle f)
   { return f->twin(); }
   static Volume_const_handle volume(Halffacet_const_handle f)
     { return f->volume(); }
-  /* Halffacet queries */
+  // Halffacet queries
+*/
 
   SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
     Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
@@ -209,19 +211,19 @@ public:
   { return Vector_3(e->point()-CGAL::ORIGIN); }
 
   static Segment_3 segment(Halfedge_const_handle e)
-  { return Segment_3(point(source(e)),
-		     point(target(e))); }
+  { return Segment_3(e->source()->point(),
+		     e->twin()->source()->point()); }
 
   static const Plane_3 plane(Halffacet_const_handle f)
   { return f->plane(); }
 
-  static Mark mark(Vertex_const_handle v)
+  static const Mark& mark(Vertex_const_handle v)
   { return v->mark(); }
-  static Mark mark(Halfedge_const_handle e)
+  static const Mark& mark(Halfedge_const_handle e)
   { return e->mark(); }
-  static Mark mark(Halffacet_const_handle f)
+  static const Mark& mark(Halffacet_const_handle f)
   { return f->mark(); }
-  static Mark mark(Volume_const_handle c)
+  static const Mark& mark(Volume_const_handle c)
   { return c->mark(); }
 
   template <typename Visitor>
@@ -621,16 +623,16 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
         if ( assign(e,fc) ) {
 	  SHalfedge_const_handle she;
           SHalfedge_around_facet_const_circulator ec(e),ee(e);
-          CGAL_For_all(ec,ee) { she = twin(ec);
-            if ( DoneSF[sface(she)] ) continue;
-            SFaceCandidates.push_back(sface(she));
-            DoneSF[sface(she)] = true;
+          CGAL_For_all(ec,ee) { she = ec->twin();
+            if ( DoneSF[she->incident_sface()] ) continue;
+            SFaceCandidates.push_back(she->incident_sface());
+            DoneSF[she->incident_sface()] = true;
           }
         } else if ( assign(l,fc) ) { 
-	  SHalfloop_const_handle ll = twin(l);
-          if ( DoneSF[sface(ll)] ) continue;
-          SFaceCandidates.push_back(sface(ll));
-          DoneSF[sface(ll)] = true;
+	  SHalfloop_const_handle ll = l->twin();
+          if ( DoneSF[ll->incident_sface()] ) continue;
+          SFaceCandidates.push_back(ll->incident_sface());
+          DoneSF[ll->incident_sface()] = true;
         } else CGAL_assertion_msg(0,"Damn wrong handle.");
       }
     }
@@ -638,11 +640,11 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       SFace_const_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
-      if ( !DoneV[vertex(sf)] )
-        V.visit(vertex(sf)); // report vertex
-      DoneV[vertex(sf)] = true;
+      if ( !DoneV[sf->center_vertex()] )
+        V.visit(sf->center_vertex()); // report vertex
+      DoneV[sf->center_vertex()] = true;
       //      SVertex_const_handle sv;
-      SM_const_decorator SD(&*vertex(sf));
+      SM_const_decorator SD(&*sf->center_vertex());
       /*      
       CGAL_forall_svertices(sv,SD){
 	if(SD.is_isolated(sv) && !DoneSV[sv])
@@ -658,36 +660,36 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
 	  SHalfedge_around_sface_const_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
 	    V.visit(SHalfedge_const_handle(ec));
-            SVertex_const_handle vv = starget(ec);
+            SVertex_const_handle vv = ec->twin()->source();
             if ( !SD.is_isolated(vv) && !DoneSV[vv] ) {
               V.visit(vv); // report edge
-              DoneSV[vv] = DoneSV[twin(vv)] = true;
+              DoneSV[vv] = DoneSV[vv->twin()] = true;
             }
-            Halffacet_const_handle f = facet(twin(ec));
+            Halffacet_const_handle f = ec->twin()->incident_facet();
             if ( DoneF[f] ) continue;
             FacetCandidates.push_back(f); DoneF[f] = true;
           }
         } else if ( assign(v,fc) ) {
           if ( DoneSV[v] ) continue; 
           V.visit(v); // report edge
-	  V.visit(twin(v));
-          DoneSV[v] = DoneSV[twin(v)] = true;
+	  V.visit(v->twin());
+          DoneSV[v] = DoneSV[v->twin()] = true;
 	  CGAL_assertion(SD.is_isolated(v));
-	  SFaceCandidates.push_back(sface(twin(v)));
-	  DoneSF[sface(twin(v))]=true;
+	  SFaceCandidates.push_back(v->twin()->incident_sface());
+	  DoneSF[v->twin()->incident_sface()]=true;
           // note that v is isolated, thus twin(v) is isolated too
 	  //	  SM_const_decorator SD;
 	  //	  SFace_const_handle fo;
-	  //	  fo = sface(twin(v));
+	  //	  fo = v->twin()->incident_sface();
 	  /*
 	  if(SD.is_isolated(v)) 
-	    fo = source(v)->sfaces_begin();
+	    fo = v->source()->sfaces_begin();
 	  else
-	    fo = sface(twin(v));
+	    fo = v->twin()->incident_sface();
 	  */
         } else if ( assign(l,fc) ) {
 	  V.visit(l);
-          Halffacet_const_handle f = facet(twin(l));
+          Halffacet_const_handle f = l->twin()->incident_facet();
           if ( DoneF[f] ) continue;
           FacetCandidates.push_back(f);  DoneF[f] = true;
         } else CGAL_assertion_msg(0,"Damn wrong handle.");
