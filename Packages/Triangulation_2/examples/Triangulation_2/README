@@ -1,0 +1,14 @@
+
+example: 
+Illustrates features of the triangulation package.
+It has no graphical IO and does not depend on any other library.
+
+
+voronoi:
+Illustrate the use of a Delaunay triangulation and
+takes  the dual of the triangulation.
+
+points:
+Illustrates how to input user defined points and a user provided traits
+class in a Triangulation 
+
