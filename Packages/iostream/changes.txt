@@ -1,3 +1,6 @@
+Version 2.13 (10 April 2002)
+- created ref pages for Colors and iostream packages
+
 Version 2.12 (4 September 2001)
 - Susan changed \ccSection to \section since the former doesn't work with 
   the pdf conversion.
