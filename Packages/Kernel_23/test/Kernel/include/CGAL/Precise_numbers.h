@@ -33,9 +33,9 @@ typedef leda_integer                    Precise_integer;
 typedef leda_rational                   Precise_rational;
 #elif defined CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
-#  include <CGAL/Quotient.h>
+#  include <CGAL/Gmpq.h>
 typedef CGAL::Gmpz                      Precise_integer;
-typedef CGAL::Quotient<CGAL::Gmpz>      Precise_rational;
+typedef CGAL::Gmpq                      Precise_rational;
 #else
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
