@@ -20,6 +20,11 @@ typedef leda_rational Number_Type;
 typedef CGAL::Cartesian<Number_Type> Rep;
 typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
+typedef CGAL::Snap_rounding_2<Rep> Snap_rounding_2;
+typedef Snap_rounding_2::Segment_iterator Segment_iterator;
+typedef Snap_rounding_2::Segment_const_iterator Segment_const_iterator;
+typedef Snap_rounding_2::Polyline_const_iterator Polyline_const_iterator;
+typedef Snap_rounding_2::Point_const_iterator Point_const_iterator;
 
 void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg_list,bool &wait_for_click,int &number_of_kd_trees,bool &do_isr)
 {
@@ -74,6 +79,24 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
   }
 }
 
+void print_out(Snap_rounding_2 s)
+{
+  int counter = 0;
+  for(Polyline_const_iterator i = s.polylines_begin();
+      i != s.polylines_end();
+      ++i) {
+    std::cout << "Polyline number " << ++counter << ":\n";
+    for(Point_const_iterator i2 = i->begin();
+        i2 != i->end();
+        ++i2)
+      std::cout << "    (" << i2->x().to_double() << ":"
+                << i2->y().to_double() << ")\n";
+
+    std::cout << endl;
+  }
+}
+
+
 int main(int argc,char *argv[])
 {
   std::list<Segment_2> seg_list;
@@ -83,9 +106,36 @@ int main(int argc,char *argv[])
 
   read_data(argc,argv,prec,seg_list,wait_for_click,number_of_trees,do_isr);
 
-  CGAL::Snap_rounding_2<Rep> i(seg_list.begin(),seg_list.end(),prec,do_isr,number_of_trees);
+  Snap_rounding_2 s1(seg_list.begin(),seg_list.end(),prec,do_isr,number_of_trees);
 
-  i.output(std::cout);
+  //s1.output(std::cout);
+
+  std::cout << "input segments (not const iterator)\n";
+  for(Segment_iterator i1 = s1.segments_begin();
+      i1 != s1.segments_end();
+      ++i1)
+    cout << *i1 << std::endl;
+
+  std::cout << "\ninput segments (const iterator)\n";
+  for(Segment_const_iterator i2 = s1.segments_begin();
+      i2 != s1.segments_end();
+      ++i2)
+    cout << *i2 << std::endl;
+
+  std::cout << "\nthe output\n";
+  print_out(s1);
+
+  std::cout << "\noutput after removing first element\n";
+  s1.remove(*(seg_list.begin()));
+  print_out(s1);
+
+  std::cout << "\noutput after inserting first element\n";
+  s1.insert(*(seg_list.begin()));
+  print_out(s1);
+
+  Snap_rounding_2 i2(prec,do_isr,number_of_trees);;
+
+  
 
   return(0);
 }
