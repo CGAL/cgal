@@ -790,7 +790,7 @@ namespace CGALi {
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   { 
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs == NULL; 
   }
 
   template < class DSC, class Val >
@@ -799,7 +799,7 @@ namespace CGALi {
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   { 
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs == NULL; 
   }
 
 
@@ -809,7 +809,7 @@ namespace CGALi {
 		  CGAL_NULL_TYPE CGAL_assertion_code(n))
   { 
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL; 
+    return &*rhs == NULL; 
   }
 
   
