@@ -7,11 +7,11 @@
 // En principe, si l'allocateur de cellules etait bien fait on aurait pas besoin 
 // de mettre a jour les valeurs rajoutees pour les cellules a  la main...
 
-void re_init_for_free_cells_cache(const Triangulation_3& A, 
+void re_init_for_free_cells_cache(const Triangulation_3& T, 
 				  const Vertex_handle& vh)
 {
   std::list<Cell_handle> ch_set;
-  A.incident_cells(vh, std::back_inserter(ch_set));
+  T.incident_cells(vh, std::back_inserter(ch_set));
   for (std::list<Cell_handle>::iterator c_it = ch_set.begin();
        c_it != ch_set.end(); 
        c_it++)
@@ -20,11 +20,11 @@ void re_init_for_free_cells_cache(const Triangulation_3& A,
 
 //---------------------------------------------------------------------
 
-void swap_selected_facets_on_conflict_boundary(const Triangulation_3& A, 
+void swap_selected_facets_on_conflict_boundary(const Triangulation_3& T, 
 					       const Vertex_handle& vh)
 {
   std::list<Cell_handle> ch_set;
-  A.incident_cells(vh, std::back_inserter(ch_set));
+  T.incident_cells(vh, std::back_inserter(ch_set));
   for (std::list<Cell_handle>::iterator c_it = ch_set.begin();
        c_it != ch_set.end(); c_it++)
     {
@@ -43,8 +43,8 @@ void swap_selected_facets_on_conflict_boundary(const Triangulation_3& A,
 	int i2 = (n_ind+2) & 3;
 	int i3 = (n_ind+3) & 3;
 	Edge_like key(neigh->vertex(i1), neigh->vertex(i2));
-	Border_elt result;
-	if (is_border_elt(key, result))
+
+	if (is_border_elt(key))
 	  {
 	    Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i1, i2), 
 				 n_ind);
@@ -52,7 +52,7 @@ void swap_selected_facets_on_conflict_boundary(const Triangulation_3& A,
 	      IO_edge_type(ei_facet, ei_facet);
 	  }
 	key = Edge_like(neigh->vertex(i1), neigh->vertex(i3));
-	if (is_border_elt(key, result))
+	if (is_border_elt(key))
 	  {
 	    Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i1, i3), 
 				 n_ind);
@@ -60,7 +60,7 @@ void swap_selected_facets_on_conflict_boundary(const Triangulation_3& A,
 	      IO_edge_type(ei_facet, ei_facet);
 	  }
 	key = Edge_like(neigh->vertex(i3), neigh->vertex(i2));
-	if (is_border_elt(key, result))
+	if (is_border_elt(key))
 	  {
 	    Edge_IFacet ei_facet(void_Edge((void*) &*neigh, i3, i2), 
 				 n_ind);
@@ -193,7 +193,7 @@ void retract_border_for_incident_facets(const Vertex_handle& vh)
 
 //---------------------------------------------------------------------
 
-inline bool create_singularity(const Triangulation_3& A, 
+inline bool create_singularity(const Triangulation_3& T, 
 			       const Vertex_handle& vh)
 {
   // Pour reperer le cas de triangle isole 
@@ -208,7 +208,7 @@ inline bool create_singularity(const Triangulation_3& A,
       Vertex_handle vh_3 = (Vertex*) border_elt.first;// sommet 0 ???
       Cell_handle c;
       int i, j, k;
-      if ((vh_3 == vh)&&(A.is_facet(vh, vh_1, vh_2, c, i ,j ,k)))
+      if ((vh_3 == vh)&&(T.is_facet(vh, vh_1, vh_2, c, i ,j ,k)))
 	{
 	  int l = 6-i-j-k;
 	  Cell_handle neigh = c->neighbor(l);
@@ -222,7 +222,7 @@ inline bool create_singularity(const Triangulation_3& A,
 
   // Reperer le cas d'aretes interieures...
   std::list<Vertex_handle> vh_list;
-  A.incident_vertices(vh, back_inserter(vh_list));
+  T.incident_vertices(vh, back_inserter(vh_list));
 
   for (std::list<Vertex_handle>::iterator v_it = vh_list.begin();
        v_it != vh_list.end(); v_it++)
@@ -270,7 +270,7 @@ struct Remove : public std::unary_function<Vertex_handle, bool>
 
 //---------------------------------------------------------------------
 
-bool postprocessing(Triangulation_3& A, const int& NB_BORDER_MAX)
+bool postprocessing(Triangulation_3& T, const int& NB_BORDER_MAX)
 {  
   _postprocessing_cont++;
   t1.start();
@@ -278,7 +278,7 @@ bool postprocessing(Triangulation_3& A, const int& NB_BORDER_MAX)
 
   // Pour prendre en compte tous sommets exterieurs ou sur le bord
 //   for(Finite_vertices_iterator v_it = A.finite_vertices_begin();
-//       v_it != A.finite_vertices_end(); v_it++)
+//       v_it != T.finite_vertices_end(); v_it++)
 //     {
 //       if (v_it->number_of_incident_border() != 0)
 // 	{
@@ -289,11 +289,11 @@ bool postprocessing(Triangulation_3& A, const int& NB_BORDER_MAX)
 
   //  Pour controler les sommets choisis sur le bord...
   
-  // nombre d'aretes a partir duquel on considere que c'est irrecupperable NB_BORDER_MAX
+  // nombre d'aretes a partir duquel on considere que c'est irrecuperable NB_BORDER_MAX
 
   int vh_on_border_inserted(0);
-  for(Finite_vertices_iterator v_it = A.finite_vertices_begin();
-      v_it != A.finite_vertices_end(); 
+  for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
+      v_it != T.finite_vertices_end(); 
       v_it++)
     {
       v_it->erase_incidence_request();
@@ -314,7 +314,7 @@ bool postprocessing(Triangulation_3& A, const int& NB_BORDER_MAX)
 // 	      D_Point p2 = convert()(vsucc_it->point());
 	      // pour imposer une condition sur l'angle d'aretes...
 // 	      if ((p1-p)*(p2-p) > 0)
-		L_v_tmp.push_back(vh_it);
+	      L_v_tmp.push_back(vh_it);
 	      vh_it->set_post_mark(_postprocessing_cont);
 	      vprev_it = vh_it;
 	      v_count++;
@@ -338,27 +338,30 @@ bool postprocessing(Triangulation_3& A, const int& NB_BORDER_MAX)
       (L_v.size() < .1*_A_size_before_postprocessing))
     {
       {
-	//CGAL::Protect_FPU_rounding<true> P;
 	do
 	  {
 	    itmp = L_v.size();
 	    std::list<Vertex_handle>::iterator new_end =
-	      std::remove_if(L_v.begin(), L_v.end(), Remove(A));
+	      std::remove_if(L_v.begin(), L_v.end(), Remove(T));
 	    L_v.erase(new_end, L_v.end());
 	  }
 	while (!L_v.empty() && (L_v.size() < itmp));
       }
       std::cout << "   " << L_v.size() << " points non reguliers." << std::endl;
-      re_compute_values(A);
+      re_compute_values(T);
     }
-  else
+  else{
+    t1.stop();
     return false;
+  }
   // +10% de points retires ou trop d'etapes (>20) -> stop
   if ((L_v_size_mem == L_v.size())||
-      ((_A_size_before_postprocessing-A.number_of_vertices()) >
+      ((_A_size_before_postprocessing - T.number_of_vertices()) >
        .1*_A_size_before_postprocessing)||
-      (_postprocessing_cont > 20))
+      (_postprocessing_cont > 20)){
+    t1.stop();
     return false;
+  }
 
   min_K = HUGE_VAL;
   t1.stop();
