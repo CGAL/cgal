@@ -129,5 +129,18 @@
 #include <pair.h>
 #endif
 
+//----------------------------------------------------------------------//
+//             select old or new style headers
+//----------------------------------------------------------------------//
+
+
+#ifndef CGAL_USE_NEWSTYLE_HEADERS
+#ifndef CGAL_CFG_NO_STANDARD_HEADERS
+#ifndef CGAL_NO_NEWSTYLE_HEADERS
+#define CGAL_USE_NEWSTYLE_HEADERS
+#endif // ! CGAL_NO_NEWSTYLE_HEADERS
+#endif // ! CGAL_CFG_NO_STANDARD_HEADERS
+#endif // ! CGAL_USE_NEWSTYLE_HEADERS
+
 #endif // CGAL_CONFIG_H
 
