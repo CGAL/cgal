@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.24 (20/11/03) [Julia]
+- bug fix in get_conflict functions in Regular_triangulation_2:
+  case that point is located on vertex (+ added tests)	
+
 ver 8.23 (20/11/03) [Julia]
 - nothing changed	
 ver 8.22 (20/11/03) Julia
