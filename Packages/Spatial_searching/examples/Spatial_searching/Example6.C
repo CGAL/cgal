@@ -34,16 +34,16 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 
-int test_nearest_neighbour_Linf() {
-
 typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
 
 typedef CGAL::Kernel_traits<Point>::Kernel K;
 typedef K::FT NT;
 typedef CGAL::Plane_separator<NT> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+typedef CGAL::Kd_tree_traits_point<Separator,Point> MyTraits;
+typedef CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
+
+int test_nearest_neighbour_Linf() {
 
 
 { // start of scope of second test
@@ -73,7 +73,7 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
 
   t.reset(); t.start();
 
-  typedef CGAL::Binary_search_tree<Traits> Tree;
+  typedef CGAL::Binary_search_tree<MyTraits> Tree;
   Tree d2(lpt.begin(), lpt.end(), bucket_size);
   t.stop();
   std::cout << "created binary search tree containing" << std::endl <<
@@ -101,10 +101,13 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
   
   std::cout << "started test copy" << std::endl;
 
-  std::vector<Traits::Item_with_distance> result3(point_number);
-  CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour> NNN1(d2,Q,eps);
+  std::vector<MyTraits::Item_with_distance> result3(point_number);
+  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> NNN1(d2,Q,eps);
 
-  std::copy(NNN1.begin(),NNN1.end(),result3.begin());
+  NNN_Iterator begin, end;
+  begin = NNN1.begin();
+  end = NNN1.end();
+  std::copy(begin,end,result3.begin());
 
   
 
@@ -132,7 +135,7 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
   // example of browsing
   std::cout << "started testing browsing with same input" << std::endl;
 
-  CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour> NNN2(d2,Q,eps);
+  CGAL::Nearest_neighbour_Linf<MyTraits,CGAL::Search_nearest_neighbour> NNN2(d2,Q,eps);
 
 
 
@@ -151,8 +154,10 @@ typedef CGAL::Nearest_neighbour_Linf<Traits,CGAL::Search_nearest_neighbour>::ite
 
   GreaterThan0 pred;
 
-  NNN_Iterator first= NNN2.begin();
-  NNN_Iterator last=NNN2.end();
+  NNN_Iterator first;
+  first = NNN2.begin();
+  NNN_Iterator last;
+  last=NNN2.end();
 
 
   // find_if did not work, but

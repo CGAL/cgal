@@ -28,7 +28,7 @@
 #include <list>
 #include <queue>
 #include <memory>
-#include <CGAL/Internal_node.h>
+#include <CGAL/Binary_node.h>
 #include <CGAL/Box.h>
 namespace CGAL {
 
@@ -40,7 +40,7 @@ public:
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
 typedef Item** Item_iterator;
-typedef Base_node<Tree_traits> Node;
+typedef Binary_node<Tree_traits> Node;
 typedef Binary_search_tree<Tree_traits> Tree;
 typedef Box<NT> Node_box;    
 
@@ -73,6 +73,7 @@ class Cell
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
+// this forward declaration causes problems for g++ 
 class iterator;
 
 class Priority_higher

@@ -23,8 +23,7 @@
 
 #ifndef CGAL_BINARY_SEARCH_TREE_H
 #define CGAL_BINARY_SEARCH_TREE_H
-#include <CGAL/Leaf_node.h>
-#include <CGAL/Extended_internal_node.h>
+#include <CGAL/Binary_node.h>
 namespace CGAL {
 
 
@@ -35,7 +34,7 @@ public:
   typedef typename Traits::Item Item;
   typedef typename std::list<Item>::iterator input_iterator;
   typedef typename Traits::NT NT;
-  typedef Base_node<Traits> Node;
+  typedef Binary_node<Traits> Node;
   typedef Binary_search_tree<Traits> Tree;
 
 private:
@@ -63,13 +62,13 @@ public:
     bbox = new Box<NT>(c.bounding_box());
     the_item_number=c.size();
     if (c.size() <= t.bucket_size())
-      tree_root = new Leaf_node<Traits>(c);
+      tree_root = new Node(c);
     else {
 		if (t.use_extended_nodes())
-		{tree_root = new Extended_internal_node<Traits>(c,t); 
+		{tree_root = new Node(c,t,true); 
 		 std::cout << "using extended internal nodes" << std::endl;}
 		else
-		{tree_root = new Internal_node<Traits>(c,t); 
+		{tree_root = new Node(c,t,false); 
 		 std::cout << "not using extended internal nodes" 
 			   << std::endl;}
 	}
