@@ -8,7 +8,9 @@ A model for this must provide:
         {compares the $y$-coordinates of $p$ and the vertical projection
          of \ccStyle{p} on \ccStyle{h}%
          \ccTexHtml{ (Figure~\ref{fig-compare22} (d))}{, see (d) in the figure 
-         below}.}
+         below}.
+         \ccPrecond \ccStyle{h} is not vertical.
+         }
 
 \begin{ccTexOnly}
 \begin{figure}[h]
@@ -27,7 +29,8 @@ A model for this must provide:
 {This function compares the $y$-coordinates of the vertical projection 
  of \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare2} (e))}{, see (e) in the figure 
- below}.}
+ below}.
+\ccPrecond \ccStyle{h1} and \ccStyle{h2} are not vertical.}
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Line_2 &l1,
                                                const Kernel::Line_2 &l2,
@@ -36,7 +39,10 @@ A model for this must provide:
        This function compares the $y$-coordinates of $p$ and 
        the vertical projection of \ccStyle{p} on \ccStyle{h}%
        \ccTexHtml{ (Figure~\ref{fig-compare2} (f))}{, see (f) in the figure 
-       below}.}
+       below}.
+       \ccPrecond \ccStyle{l1}, \ccStyle{l2} intersect and \ccStyle{h} is not
+       vertical.
+      }
 
 
 
@@ -48,7 +54,10 @@ A model for this must provide:
  compares the $y$-coordinates of the vertical projection of \ccStyle{p} on 
  \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare2} (g))}{, see (g) in the figure 
- below}.}
+ below}.
+ \ccPrecond \ccStyle{l1} and \ccStyle{l2} intersect; \ccStyle{h1} and
+ \ccStyle{h2} are not vertical.
+}
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_2 &p,
                                                const Kernel::Segment_2 &s);}
