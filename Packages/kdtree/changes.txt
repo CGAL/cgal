@@ -1,3 +1,7 @@
+24 June 2004  Sylvain Pion
+- Remove useless empty Node destructor.
+- Constify argument of copy-constructor of Plane (spotted by g++ 3.4).
+
 Version 2.3.3 (09 February 2004) [rursu]
 - Updated headers in examples
 

@@ -595,7 +595,7 @@ private:
             coord = k;
         }
   
-        Plane( Plane  & p )
+        Plane( const Plane  & p )
         {
             coord = p.coord;
             normal = p.normal;
@@ -732,10 +732,6 @@ private:
             left = right = NULL; 
         }
   
-        ~Node() 
-        { 
-        }
-	
         void  copy_subtree_points( back_iter  & result,
                                    const Box  & rect )
         {
