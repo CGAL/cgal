@@ -1,11 +1,12 @@
 \begin{ccRefFunction}{intersection}
 \ccInclude{CGAL/intersections_d.h}
 
-\ccFunction{Object intersection(Type1<R> f1, Type2<R> f2);}
-{returns the intersection result of $f1$ and $f2$ by means of the
-  polymorphic wrapper type \ccc{Object}. The returned object can be
-  tested for the intersection result and assigned by means of the
-  operation \ccc{bool assign(T& t, Object o)}.}
+\ccFunction{Object intersection(Type1<R> f1, Type2<R> f2);} {returns
+  the intersection result of $f1$ and $f2$ by means of the polymorphic
+  wrapper type \ccc{Object}. The returned object can be tested for the
+  intersection result and assigned by means of the operation \ccc{bool
+    assign(T& t, Object o)}.  \ccPrecond The objects are of the same
+  dimension.}
 
 The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and
 the possible return values wrapped in \ccc{Object} are the following:

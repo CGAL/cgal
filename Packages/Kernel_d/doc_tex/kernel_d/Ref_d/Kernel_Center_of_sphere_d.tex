@@ -3,10 +3,10 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{template <class ForwardIterator> 
-Kernel::Point_d operator()(ForwardIterator first, ForwardIterator last);}
-{computes the affine rank of the points in \ccc{A = tuple [first,last)}.
-\ccPrecond value type of \ccc{ForwardIterator} is \ccc{Kernel::Point_d}
-and the objects are of the same dimension.}
+\ccMemberFunction{template <class ForwardIterator> Kernel::Point_d
+  operator()(ForwardIterator first, ForwardIterator last);}{computes
+  the affine rank of the points in \ccc{A = tuple [first,last)}.
+  \ccPrecond The objects are of the same dimension.  \ccRequire The
+  value type of \ccc{ForwardIterator} is \ccc{Kernel::Point_d}.}
 
 \end{ccRefFunctionObjectConcept}

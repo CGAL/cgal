@@ -1,14 +1,11 @@
-% begin cgal manual page
-
 \begin{ccRefConcept}{Matrix}\ccCreationVariable{M}
 
 \ccDefinition
 
 An instance of data type \ccc{Matrix} is a matrix of variables of
 number type \ccc{NT}. The types \ccc{Matrix} and \ccc{Vector} together
-realize many functions of basic linear algebra.  If \ccc{NT} is exact
-all functions on matrices compute the exact result, i.e., there is no
-rounding error. \ccc{Matrix} offers all simple matrix operations.
+realize many functions of basic linear algebra. \ccc{Matrix} offers
+all simple matrix operations.
  
 \ccSetOneOfTwoColumns{5.5cm}
 
@@ -30,108 +27,95 @@ rounding error. \ccc{Matrix} offers all simple matrix operations.
 
 \ccCreation
 
-\ccConstructor{Matrix(int n)}{creates an instance \ccc{M} of type \ccc{Matrix} of
-dimension $n \times n$ initialized to the zero matrix. 
-}
+\ccConstructor{Matrix(int n)}{creates an instance \ccc{M} of type
+  \ccc{Matrix} of dimension $n \times n$ initialized to the zero
+  matrix.  }
 
-\ccConstructor{Matrix(int n, int m)}{creates an instance \ccc{M} of type \ccc{Matrix} of 
-dimension $n \times m$ initialized to the zero matrix. 
-}
+\ccConstructor{Matrix(int n, int m)}{creates an instance \ccc{M} of
+  type \ccc{Matrix} of dimension $n \times m$ initialized to the zero
+  matrix.  }
 
-\ccConstructor{Matrix(int n, Identity, NT x = NT(1))}{creates an instance \ccc{M} of type \ccc{Matrix} of
-dimension $n \times n$ initialized to the identity matrix
-(times \ccc{x}). 
-}
+\ccConstructor{Matrix(int n, Identity, NT x = NT(1))}{creates an
+  instance \ccc{M} of type \ccc{Matrix} of dimension $n \times n$
+  initialized to the identity matrix (times \ccc{x}).  }
 
-\ccConstructor{Matrix(int n, int m, Initialize, NT x)}{
-creates an instance \ccc{M} of type \ccc{Matrix} of dimension $n
-\times m$ initialized to the matrix with \ccc{x} entries.  }
+\ccConstructor{Matrix(int n, int m, Initialize, NT x)}{ creates an
+  instance \ccc{M} of type \ccc{Matrix} of dimension $n \times m$
+  initialized to the matrix with \ccc{x} entries.  }
 
 \ccConstructor{template <class Forward_iterator>
-Matrix(Forward_iterator first, Forward_iterator last)}{
-creates an instance \ccc{M} of type \ccc{Matrix}. Let $S$ be the
-ordered set of $m$ column-vectors of common dimension $n$ as given by
-the iterator range \ccc{[first,last)}.  \ccc{M} is initialized to an
-$n \times m$ matrix with the columns as specified by $S$.  \ccPrecond
-\ccc{Forward_iterator} has a value type \ccc{V} from which we require
-to provide a iterator type \ccc{V::const_iterator}, to have
-\ccc{V::value_type == NT}.\\ Note that \ccc{Vector} or
-\ccc{std::vector<NT,LA>} fulfill these requirements.  }
+  Matrix(Forward_iterator first, Forward_iterator last)}{ creates an
+  instance \ccc{M} of type \ccc{Matrix}. Let $S$ be the ordered set of
+  $m$ column-vectors of common dimension $n$ as given by the iterator
+  range \ccc{[first,last)}.  \ccc{M} is initialized to an $n \times m$
+  matrix with the columns as specified by $S$.  \ccRequire
+  \ccc{Forward_iterator} has a value type \ccc{V} from which we
+  require that it provides an iterator type \ccc{V::const_iterator},
+  and the value type of \ccc{V::const_iterator} is \ccc{NT}.\\ Note
+  that \ccc{Vector} or \ccc{std::vector<NT>} fulfill these
+  requirements.  }
 
-\ccConstructor{Matrix(std::vector< Vector > A)}{
-creates an instance \ccc{M} of type \ccc{Matrix}. Let $A$ be an
-array of $m$ column-vectors of common dimension $n$.  \ccc{M} is
-initialized to an $n \times m$ matrix with the columns as specified
-by $A$.  }
+\ccConstructor{Matrix(std::vector<Vector> A)}{ creates an instance
+  \ccc{M} of type \ccc{Matrix}. Let $A$ be an array of $m$
+  column-vectors of common dimension $n$.  \ccc{M} is initialized to
+  an $n \times m$ matrix with the columns as specified by $A$.  }
 
 \ccSetTwoOfThreeColumns{1.7cm}{3.5cm}
 
 \ccOperations
 
-\ccMethod{int row_dimension()  ;}{
-returns $n$, the number of rows of \ccc{M}.}
+\ccMethod{int row_dimension() ;}{ returns $n$, the number of rows of
+  \ccc{M}.}
 
-\ccMethod{int column_dimension()  ;}{
-returns $m$, the number of columns of \ccc{M}.}
+\ccMethod{int column_dimension() ;}{ returns $m$, the number of
+  columns of \ccc{M}.}
 
-\ccMethod{std::pair<int,int> dimension() ;}{
-returns $(m,n)$, the dimension pair of \ccc{M}.}
+\ccMethod{std::pair<int,int> dimension() ;}{ returns $(m,n)$, the
+  dimension pair of \ccc{M}.}
 
-\ccMethod{Vector row(int i) ;}{
-returns the $i$-th row of \ccc{M} (an $m$ - vector).
-\ccPrecond  $0 \le i \le n - 1$.}
+\ccMethod{Vector row(int i) ;}{ returns the $i$-th row of \ccc{M} (an
+  $m$ - vector).  \ccPrecond $0 \le i \le n - 1$.}
 
-\ccMethod{ Vector column(int i) ;}{
-returns the $i$-th column of \ccc{M} (an $n$ - vector).
-\ccPrecond  $0 \le i \le m - 1$. }
+\ccMethod{Vector column(int i) ;}{ returns the $i$-th column of
+  \ccc{M} (an $n$ - vector).  \ccPrecond $0 \le i \le m - 1$. }
 
-\ccMethod{NT& operator()(int i, int j) ;}{returns $M_{ i,j }$. 
-\ccPrecond $0\le i\le n - 1$ and $0\le j\le m - 1$.}
+\ccMethod{NT& operator()(int i, int j) ;}{returns $M_{ i,j }$.
+  \ccPrecond $0\le i\le n - 1$ and $0\le j\le m - 1$.}
 
-\ccMethod{void swap_columns(int i, int j)  ;}{swaps columns $i$ and $j$. 
-}
+\ccMethod{void swap_columns(int i, int j) ;}{swaps columns $i$ and
+  $j$.  }
 
-\ccMethod{void swap_rows(int i, int j) ;}{swaps rows $i$ and $j$. 
-}
+\ccMethod{void swap_rows(int i, int j) ;}{swaps rows $i$ and $j$.  }
 
-\ccMethod{bool  operator==(const Matrix& M1)  ;}{Test for equality.  
-}
+\ccMethod{bool operator==(const Matrix& M1) ;}{Test for equality.  }
 
-\ccMethod{bool  operator!=(const Matrix& M1)  ;}{Test for inequality.  
-}
+\ccMethod{bool operator!=(const Matrix& M1) ;}{Test for inequality.  }
 
 \ccHeading{Arithmetic Operators} 
 \ccSetTwoOfThreeColumns{2cm}{3cm}
 
-\newcommand{\dimeq}{\\
-\ccc{M.row_dimension() == M1.row_dimension()} and\\
-\ccc{M.column_dimension() == M1.column_dimension()}
-}
+\newcommand{\dimeq}{ \ccc{M.row_dimension() == M1.row_dimension()} and
+  \ccc{M.column_dimension() == M1.column_dimension()} }
  
 \ccMethod{Matrix operator+ (const Matrix& M1);}{
  Addition. \ccPrecond \dimeq.}
 
-\ccMethod{Matrix operator- (const Matrix& M1);}{
- Subtraction. \ccPrecond \dimeq.}
+\ccMethod{Matrix operator- (const Matrix& M1);}{ Subtraction.
+  \ccPrecond \dimeq.}
 
-\ccMethod{Matrix operator-();}{Negation. 
-}
+\ccMethod{Matrix operator-();}{Negation.  }
 
-\ccMethod{Matrix  operator*(const Matrix& M1) ;}{
-Multiplication. \ccPrecond \ccc{M.column_dimension() = M1.row_dimension()}.  
-}
+\ccMethod{Matrix operator*(const Matrix& M1) ;}{ Multiplication.
+  \ccPrecond \ccc{M.column_dimension() = M1.row_dimension()}.  }
 
-\ccMethod{Vector  operator*(const Vector& vec) ;}{
-Multiplication with vector. \ccPrecond 
-\ccc{M.column_dimension() = vec.dimension()}. }
+\ccMethod{Vector operator*(const Vector& vec) ;}{ Multiplication with
+  vector. \ccPrecond \ccc{M.column_dimension() = vec.dimension()}. }
 
 
-\ccFunction{template <class NT, class A>
-Matrix<NT,A>  operator*(const Matrix<NT,A>& M, const NT& x) ;}{
+\ccFunction{ Matrix operator*(const Matrix& M, const NT& x) ;}{
   Multiplication of every entry with \ccc{x}.}
 
-\ccFunction{template <class NT, class A>
-Matrix<NT,A>  operator*(const NT& x, const Matrix<NT,A>& M) ;}{
+\ccFunction{ Matrix operator*(const NT& x, const Matrix& M) ;}{
   Multiplication of every entry with \ccc{x}.}
 
 \end{ccRefConcept}

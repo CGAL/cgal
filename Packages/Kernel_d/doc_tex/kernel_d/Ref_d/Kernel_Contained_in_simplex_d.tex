@@ -3,13 +3,12 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{template <class ForwardIterator>
-Bounded_side operator()(
-  ForwardIterator first, ForwardIterator last, const Kernel::Point_d& p);}
-{determines whether $p$ is contained in the simplex
-of the points in \ccc{A = tuple [first,last)}.
-\ccPrecond value type of \ccc{ForwardIterator} is \ccc{Kernel::Point_d}
-and the objects are of the same dimension. The points in $A$ are
-affinely independent.}
+\ccMemberFunction{template <class ForwardIterator> Bounded_side
+  operator()( ForwardIterator first, ForwardIterator last, const
+  Kernel::Point_d& p);} {determines whether $p$ is contained in the
+  simplex of the points in \ccc{A = tuple [first,last)}.  \ccPrecond
+  The objects in $A$ are of the same dimension and affinely
+  independent. \ccRequire The value type of \ccc{ForwardIterator} is
+  \ccc{Kernel::Point_d}.}
 
 \end{ccRefFunctionObjectConcept}

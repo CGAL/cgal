@@ -1,4 +1,4 @@
-% begin cgal manual page
+\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
 
 \begin{ccRefClass}{Direction_d<R>}\ccCreationVariable{dir}
 
@@ -49,11 +49,12 @@ Direction_d<R>(int d, InputIterator first, InputIterator last)}{
   introduces a variable \ccc{dir} of type \ccc{Direction_d<R>} in
   dimension \ccc{d} with representation tuple \ccc{set [first,last)}.
   \ccPrecond \ccc{d} is nonnegative, \ccc{[first,last)} has \ccc{d}
-  elements and the value type of \ccc{InputIterator} is \ccc{RT}.}
+  elements. \ccRequire The value type of \ccc{InputIterator} is \ccc{RT}.}
 
-\ccConstructor{Direction_d<R>(Base_direction, int d, int i)}{
-  returns a variable \ccc{dir} of type \ccc{Direction_d<R>} initialized  
-  to the direction of the $i$-th base vector of dimension $d$.}
+\ccConstructor{Direction_d<R>(int d, Base_direction, int i)}{ returns
+  a variable \ccc{dir} of type \ccc{Direction_d<R>} initialized to the
+  direction of the $i$-th base vector of dimension $d$.  \ccPrecond $0
+  \leq i < d$.}
 
 \ccConstructor{Direction_d<R>(RT x, RT y)}{
   introduces a variable \ccc{dir} of type \ccc{Direction_d<R>} in 
@@ -87,8 +88,8 @@ Direction_d<R>(int d, InputIterator first, InputIterator last)}{
 \ccMethod{Vector_d<R> vector() ;}{
   returns a vector pointing in direction \ccc{dir}.}
 
-\ccMethod{bool  is_degenerate() ;}{
-  returns true iff \ccc{dir.vector()} is the zero vector.}
+\ccMethod{bool is_degenerate() ;}{
+  returns true iff \ccc{dir.delta(i)==0} for all $0\leq i < d$.}
 
 \ccMethod{Direction_d<R> transform(const Aff_transformation_d<R>& t) ;}{
   returns $t(p)$.}
@@ -100,11 +101,10 @@ Direction_d<R>(int d, InputIterator first, InputIterator last)}{
   returns the direction opposite to \ccc{dir}.}
 
 \ccHeading{Downward compatibility}
-We provide all operations of the lower dimensional interface \ccc{dx()},
+We provide the operations of the lower dimensional interface \ccc{dx()},
 \ccc{dy()}, \ccc{dz()}. 
 
 \ccImplementation
-
 
 Directions are implemented by arrays of integers as an item type.  All
 operations like creation, initialization, tests, inversion, input and
