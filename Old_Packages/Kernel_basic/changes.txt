@@ -2,6 +2,8 @@
 - Added several missing function object classes
 - modified homogeneous_rep.h to include Kernel_common_traits.h to reduce
   code base
+- added function object classes Compute_area_2, Compute_squared_area_3,
+  Compute_volume_3
 
 3.20   (25 Jan 2001)
 - Added iterator_traits_pointer_specs_for_simple_cartesian_kernel.h

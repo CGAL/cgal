@@ -178,6 +178,42 @@ class Call_perpendicular_line_to_get
     { return c.perpendicular_line(a1); }
 };
 
+template <class ReturnType>
+class Call_squared_area_to_get
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class Cls>
+    ReturnType
+    operator()( const Cls& c ) const
+    { return c.squared_area(); }
+};
+
+template <class ReturnType>
+class Call_area_to_get
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class Cls>
+    ReturnType
+    operator()( const Cls& c ) const
+    { return c.area(); }
+};
+
+template <class ReturnType>
+class Call_volume_to_get
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class Cls>
+    ReturnType
+    operator()( const Cls& c ) const
+    { return c.volume(); }
+};
+
 template <class Point>
 class p_Midpoint
 {

@@ -32,6 +32,46 @@
 #include <CGAL/homogeneous_rep.h>
 #include <CGAL/basic_classes.h>
 
+/*
+#include <CGAL/Aff_transformationH2.h>
+#include <CGAL/CircleH2.h>
+#include <CGAL/DirectionH2.h>
+#include <CGAL/Iso_rectangleH2.h>
+#include <CGAL/LineH2.h>
+#include <CGAL/PointH2.h>
+#include <CGAL/RayH2.h>
+#include <CGAL/SegmentH2.h>
+#include <CGAL/TriangleH2.h>
+#include <CGAL/VectorH2.h>
+
+#include <CGAL/basic_constructionsH2.h>
+#include <CGAL/distance_predicatesH2.h>
+#include <CGAL/point_vector_declarationsH2.h>
+#include <CGAL/predicates_on_directionsH2.h>
+#include <CGAL/predicates_on_linesH2.h>
+#include <CGAL/predicates_on_pointsH2.h>
+#include <CGAL/predicates_on_rtH2.h>
+
+#include <CGAL/Aff_transformationH3.h>
+#include <CGAL/DirectionH3.h>
+#include <CGAL/Iso_cuboidH3.h>
+#include <CGAL/LineH3.h>
+#include <CGAL/PlaneH3.h>
+#include <CGAL/PointH3.h>
+#include <CGAL/RayH3.h>
+#include <CGAL/SegmentH3.h>
+#include <CGAL/SphereH3.h>
+#include <CGAL/TetrahedronH3.h>
+#include <CGAL/TriangleH3.h>
+#include <CGAL/VectorH3.h>
+
+#include <CGAL/basic_constructionsH3.h>
+#include <CGAL/distance_predicatesH3.h>
+#include <CGAL/orientation_predicatesH3.h>
+#include <CGAL/predicates_on_pointsH3.h>
+#include <CGAL/predicates_on_pointsH2.h>
+*/
+
 #include <CGAL/iterator_traits_pointer_specs_for_homogeneous_kernel.h>
 
 #endif // CGAL_HOMOGENEOUS_H
