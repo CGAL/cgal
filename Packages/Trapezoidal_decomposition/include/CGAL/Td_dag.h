@@ -30,23 +30,15 @@
 #ifndef CGAL_TD_DAG_H
 #define CGAL_TD_DAG_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
+#include <CGAL/number_utils.h>
+#include <CGAL/kernel_assertions.h>
+#include <CGAL/Handle.h>
 
 #include <cstdlib>
 #include <iostream>
 #include <list>
 #include <functional>
-#ifndef CGAL_NUMBER_UTILS_H
-#include <CGAL/number_utils.h>
-#endif
-#ifndef CGAL_KERNEL_ASSERTIONS_H
-#include <CGAL/kernel_assertions.h>
-#endif
-#ifndef CGAL_HANDLE_H
-#include <CGAL/Handle.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,17 +46,19 @@ template<class T>
 class Td_dag_base : public Handle
 {
 public: //iddo (for CC-7.2) maybe protected?
-  typedef T* pointer;
-  typedef T& reference;
-  typedef const T& const_reference;
+  typedef T * pointer;
+  typedef T & reference;
+  typedef const T & const_reference;
+
 protected:
-  void init() {PTR=0;}
+  void init() { PTR = 0; }
+
 public:
   Td_dag_base() {init();}
-  Td_dag_base(const Td_dag_base<T>& x) : Handle(x) {}
-  Td_dag_base& operator=(const Td_dag_base<T>& x) 
-  {Handle::operator=(x);return *this;}
-  bool operator!() const {return PTR==0;}
+  Td_dag_base(const Td_dag_base<T> & x) : Handle(x) {}
+  Td_dag_base & operator=(const Td_dag_base<T> & x) 
+  {Handle::operator=(x); return *this; }
+  bool operator!() const { return PTR == 0; }
 };
 
 template<class T>
@@ -112,8 +106,9 @@ public:
   Td_dag(const Self& dag):Td_dag_handle(dag){}
   Td_dag(const T& rootValue){PTR = new node(rootValue);}
   Td_dag(const T& rootValue, const Self& left, const Self& right)
-  {PTR= new node(rootValue, left, right);rebalance_depth();}
+  {PTR = new node(rootValue, left, right); rebalance_depth();}
   ~Td_dag(){}
+
   /* --------information retrieval -------*/
   const Self& left() const
   {
