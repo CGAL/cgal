@@ -123,6 +123,21 @@ template <typename RT>
 bool operator<(const SPolynomial<RT>& p1, const SPolynomial<RT>& p2)
 { return (p1-p2).sign()<0; }
 
+template <typename RT>
+bool operator<(int i, const SPolynomial<RT>& p2)
+{ 
+  SPolynomial<RT> p1(i);
+  return (p1-p2).sign()<0; 
+}
+
+
+template <typename RT>
+bool operator<(const SPolynomial<RT>& p1, int i)
+{ 
+  SPolynomial<RT> p2(i);
+  return (p1-p2).sign()<0; 
+}
+
 template <class RT> 
 inline double to_double(const SPolynomial<RT>& p) 
 { return (CGAL::to_double(p.eval_at(SPolynomial<RT>::_R))); }
