@@ -26,9 +26,9 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
   typedef const FT*                        const_iterator;
-protected:
+// protected:
   typedef FT*                              iterator;
-public:
+// public:
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef VectorCd<R CGAL_CTAG>            Self;
   typedef typename R::Point_d              Point_d;
@@ -41,11 +41,13 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
   
+  /*
   friend CGAL_FRIEND_INLINE
   Self operator- CGAL_NULL_TMPL_ARGS (const Point_d &p, const Point_d &q);
 
   friend CGAL_FRIEND_INLINE
   Self operator- CGAL_NULL_TMPL_ARGS (const Point_d &p, const Point_d &q);
+  */
 
   VectorCd(int dim = 0);
   VectorCd(const Self &v);
@@ -95,7 +97,7 @@ public:
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e + dimension(); }
 
-protected:
+// protected:
   iterator       begin()           { return ptr()->e; }
   iterator       end()             { return ptr()->e + dimension(); }
 

@@ -1,9 +1,11 @@
-Ver 1.1 (Nov ?? 1999)
+Ver 1.1 (Dec 7 1999)
 - Added all kernel classes, constructions/predicates and operators
   in include/CGAL/Cartesian
 - Rudimentary test suite, copied from 3D kernel, mostly to see
   if it compiles, and to check basic functionality
 - wrapper and kernel classes to be found in test/KernelCd/include
+- should not change anything to current release,  as long as
+  wrapper classes are not moved from test/KernelCd/include to include
 
 Ver 1.0 (Oct 1 1999)
 - extracted for (int i=...) declarations into "int i; for (i=...)"

@@ -1,3 +1,24 @@
+// ======================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : 1.0
+// release_date  : %-e Dec 1999
+//
+// file          : include/CGAL/predicates/kernel_ftCd.h
+// package       : Cd (1.0)
+// revision      : ?
+// revision_date : ?
+// author(s)     : ?
+// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+//
+// ======================================================================
 #ifndef CGAL_PREDICATES_KERNEL_FTCD_H
 #define CGAL_PREDICATES_KERNEL_FTCD_H
 
