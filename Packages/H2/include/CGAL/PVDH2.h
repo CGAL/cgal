@@ -32,7 +32,6 @@
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 
