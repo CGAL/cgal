@@ -406,7 +406,7 @@ test_new_3(const R& rep)
 
   typename R::Compute_squared_length_3 compute_squared_length
         = rep.compute_squared_length_3_object();
-  FT tmp11 = compute_squared_length(v1);
+  FT tmp11 = compute_squared_length(v3);
   tmp11 = compute_squared_length(s2);
   (void) tmp11;
 

@@ -1,3 +1,6 @@
+1.53 (7 August 2003)
+- Fix test-suite.
+
 1.52 (31 July 2003)
 - Add compute_squared_length for Vector.
 
