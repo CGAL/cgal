@@ -215,7 +215,6 @@ private slots:
     if(got_point)
     {
       got_point = FALSE;
-      widget->redraw();
       something_changed();
     }
   }
