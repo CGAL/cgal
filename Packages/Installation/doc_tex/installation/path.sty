@@ -1,18 +1,16 @@
-%%%    modified for TeX version before 3.0
-%%%     for TeX version after 3.0 check the line indicated by %XXXXX
-%
-%%%  @LaTeX-style-file{
+%%%  @texfile{
 %%%     author          = "Philip Taylor",
-%%%     version         = "3.02",
-%%%     date            = "23-Oct-1991 13:45:12",
+%%%     version         = "3.04",
+%%%     date            = "25 July 1992",
+%%%     time            = "17:07 EDT",
 %%%     filename        = "path.sty",
 %%%     address         = "The Computer Centre
 %%%                        RHBNC, University of London
 %%%                        Egham Hill
-%%%                        Egham, Surrey TW20 0EX, ENGLAND
-%%%                        Tel:   +44 784 443172
-%%%                        Fax:   +44 784 434348
-%%%     checksum        = "20022 300 1599 12491",
+%%%                        Egham, Surrey TW20 0EX, ENGLAND",
+%%%     telephone       = "Tel:   +44 784 443172",
+%%%     FAX             = "Fax:   +44 784 434348",
+%%%     checksum        = "41143 321 1758 13526",
 %%%     email           = "P.Taylor@Vax.Rhbnc.Ac.Uk (Internet)",
 %%%     codetable       = "ISO/ASCII",
 %%%     keywords        = "file name, filename, path name, pathname,
@@ -39,8 +37,7 @@
 %%%
 %%%                        \discretionaries |~!@$%^&*()_+`-=#{"}[]:;'<>,.?\/|
 %%%
-%%%                        However, you can change it as needed, for
-%%%                        example
+%%%                        However, you can change it as needed, for example:
 %%%
 %%%                        \discretionaries +@%!.+
 %%%
@@ -63,8 +60,7 @@
 %%%                        \specialpathdelimitersfalse is the normal
 %%%                        setting.
 %%%
-%%%                        This file may be used in Plain TeX or AmSTeX
-%%%                        by
+%%%                        This file may be used in Plain TeX or AmSTeX by
 %%%
 %%%                        \input path.sty
 %%%
@@ -79,11 +75,10 @@
 %%%                        characters.  This is produced by Robert
 %%%                        Solovay's checksum utility.}
 %%%  }
-%%% ====================================================================
-
+%
 % ======================================================================
 %
-%                          The \path Macro
+%                      History of the \path macro
 %
 % An early prototype of this code which was developed by Nelson H. F.
 % Beebe <beebe@math.utah.edu> used a recursive macro to peel off one
@@ -104,73 +99,112 @@
 % version which fully solves the problem.  Phil therefore gets the
 % author credit in the file header above.  [Gee, thanks !  ** Phil]
 %
+% Then Karl Berry <karl@cs.umb.edu> made minor changes in July 1992.
+% 
+% Revision history (reverse time order):
+%
+% 3.04 [22-Jul-1992]
+% (changes by karl@cs.umb.edu, with Phil's blessing):
+% 1) use \edef to avoid wasting a count register merely to save the
+%    catcode of @.
+% 
+% 2) Expand a macro \pathafterhook (if it's defined) once \path is
+%    entirely finished, for the benefit of macros using \path.
+% 
+% 3) % all blank lines and post-}'s, in the (highly unusual) case that
+%    the file is being read in horizontal mode.  Use only one %, not
+%    three, so the comments can be easily removed automatically.
+% 
+% 4) Remove the \endinput from the end of the file.  What does it add?
+% 
+% 
+% 3.03 [03-Dec-1991]
+% Problem:   A \path|...| entry in a LaTeX index is set with an
+%            preceding blank line.
+% Solution:  Add \leavevmode before \hbox{}; without it, an extra blank
+%            line gets typeset before every invocation of \path in a
+%            LaTeX theindex environment.
+% Diagnosis: To avoid hyphenation, the expansion of \path starts with
+%            an \hbox{} (c.f. the TeXbook, p. 454); LaTeX indices are
+%            basically set in vertical mode, with each index entry a
+%            paragraph in its own right; when an \hbox {} is
+%            encountered in vmode, it is typeset in vmode, and TeX
+%            continues; the first real character is encountered, and
+%            TeX enters unrestricted horizontal mode.  The \hbox {} and
+%            the first character are therefore on separate lines,
+%            separated by \baselineskip.
+%
+% 
+% 3.02 [23-Oct-1991 13:45:12]
+% First released version.
 % ======================================================================
-
-\immediate\write16{This is path.sty, Version 3.02 <23-Oct-1991 13:45:12>}
-\immediate\write16{%
-modified for TeX version<3.0 (10/19/1992) by M.Wat. (bear)}
-% watanabe@akiu.gw.tohoku.ac.jp suggested correction at "XXXXX" below
-% added by bear@hashi1.civil.tohoku.ac.jp
-
-%%% We will regrettably need one \count variable with an open name,
-%%% in which to save the category code of commercial-at ...
-
-\newcount \ATcode
-\ATcode = \catcode `\@
-
-%%% Make commercial-at a letter to provide concealed control sequences
-
-\catcode `\@ = 11
-
-%%% and then declare two \count variables with concealed names
-
+%
+\immediate\write16{path.sty version 3.04 <25 Jul 1992>}%
+\immediate\write16{***modified to include nonlinkedpath***}%
+%
+% The use of `\path' as a temporary control sequence is a kludge, but
+% it's a reasonably simple way to accomplish making @ a letter (to
+% provide ``concealed'' control sequences) without overwriting something
+% (without an `@' in its name) that might already be defined.
+%
+\edef\path{\the\catcode`@}%
+\catcode`@ = 11
+\let\@oldatcatcode = \path
+%
+% 
+% and then declare two \count variables with concealed names
+%
 \newcount \c@tcode
 \newcount \c@unter
-
-%%% and a boolean variable with an open name, to specify the nature of
-%%% the delimiters which will be associated with the \path command
-
+%
+% 
+% and a boolean variable with an open name, to specify the nature of
+% the delimiters which will be associated with the \path command
+%
 \newif \ifspecialpathdelimiters
-
-%%% We need to define control sequences which expand to both
-%%% active and passive spaces ...
-
+%
+% 
+% We need to define control sequences which expand to both
+% active and passive spaces ...
+%
 \begingroup
 \catcode `\ = 10
-\gdef \passivesp@ce { }
+\gdef \passivesp@ce { }%
 \catcode `\ = 13\relax%
 \gdef\activesp@ce{ }%
 \endgroup
-
-%%% \discretionaries will define a macro \discr@ti@n@ri@s which will
-%%% make every character between the first and final <delim> a
-%%% discretionary breakpoint.
-
-\def \discretionaries %%% <delim> <chars> <delim>
+%
+% 
+% \discretionaries will define a macro \discr@ti@n@ri@s which will
+% make every character between the first and final <delim> a
+% discretionary breakpoint.
+%
+\def \discretionaries % <delim> <chars> <delim>
      % start a group (ended in \discr@ti@naries ),
      % make every character (apart from space) active,
      % then transfer control to \discr@tionaries ...
     {\begingroup
         \c@tcodes = 13
         \discr@tionaries
-    }
-
-%%% \discr@tionaries will receive as parameter the initial <delim>
-%%% which will delimit the set of discretionaries; this <delim>
-%%% will be active.
-
-\def \discr@tionaries #1%%% <delim>
+    }%
+%
+%
+% \discr@tionaries will receive as parameter the initial <delim>
+% which will delimit the set of discretionaries; this <delim>
+% will be active.
+%
+\def \discr@tionaries #1% <delim>
      % knowing the initial <delim>, define \discr@ti@naries with a
      % delimited parameter structure, the final delimiter being
      % the second instance of <delim>
-    {\def \discr@ti@naries ##1#1%%% <chars> <delim>
+    {\def \discr@ti@naries ##1#1% <chars> <delim>
           % \discr@ti@naries will receive as parameter the set of
           % characters which are to be made discretionaries; it ends the
           % group and then defines \discr@ti@n@ries, a tail-recursive
           % macro, which will quietly process each of the
           % discretionaries in turn ...
          {\endgroup
-          \def \discr@ti@n@ries ####1%%% <char> or <delim>
+          \def \discr@ti@n@ries ####1% <char> or <delim>
                % by checking to see if it has reached the end of the
                % list, i.e. comparing its parameter with the known final
                % <delim> ...
@@ -205,36 +239,42 @@ modified for TeX version<3.0 (10/19/1992) by M.Wat. (bear)}
      % second instance of <delim> as its parameter (and therefore as the
      % set of characters to be processed).
      \discr@ti@naries
-    }
-
-%%% \path, which is the user interface to \p@th, first checks
-%%% to see whether \specialpathdelimiters is <true> or <false>;
-%%% if <true>, it needs to take special action to ensure that
-%%% \stress {all} characters (apart from <space>) are acceptable
-%%% as delimiters; this is very time-consuming, and should be
-%%% avoided if at all possible.  It also defines \endp@th, to
-%%% close the appropriate number of groups, and finally transfers
-%%% control to \p@th
-
+    }%
+%
+% 
+% If desired, you can define \pathafterhook to be anything.
+% 
+\let\pathafterhook = \relax
+%
+% 
+% \path, which is the user interface to \p@th, first checks to see
+% whether \specialpathdelimiters is <true> or <false>; if <true>, it
+% needs to take special action to ensure that \stress {all} characters
+% (apart from <space>) are acceptable as delimiters; this is very
+% time-consuming, and should be avoided if at all possible.  It also
+% defines \endp@th, to close the appropriate number of groups, and
+% finally transfers control to \p@th.
+%
 \def \path
     {\ifspecialpathdelimiters
         \begingroup
         \c@tcodes = 12
-        \def \endp@th {\endgroup \endgroup}%
+        \def \endp@th {\endgroup \endgroup \pathafterhook}%
      \else
-        \let \endp@th = \endgroup
+        \def \endp@th {\endgroup \pathafterhook}%
      \fi
      \p@th
-    }
-
-%%% \p@th, which has essentially the same syntax as \discretionaries,
-%%% expects to be followed by a <delim>, a <path>, and a second instance
-%%% of <delim>; it will typeset <path> in the \tt font with hyphenation
-%%% inhibited --- breaks (but not true hyphenation) are allowed at any
-%%% or all of the special characters which have
-%%% previously been declared as \discretionaries.
-
-\def \p@th #1%%% <delim>
+    }%
+%
+% 
+% \p@th, which has essentially the same syntax as \discretionaries,
+% expects to be followed by a <delim>, a <path>, and a second instance
+% of <delim>; it will typeset <path> in the \tt font with hyphenation
+% inhibited --- breaks (but not true hyphenation) are allowed at any
+% or all of the special characters which have
+% previously been declared as \discretionaries.
+%
+\def \p@th #1% <delim>
      % it starts by opening a group (ended in \p@@th) ...
      % switches to \tt, and inhibits hyphenation;
      % allows breaks at \discretionaries;  saves the
@@ -262,25 +302,26 @@ modified for TeX version<3.0 (10/19/1992) by M.Wat. (bear)}
              % permissible breakpoints are specified,
              % the path is typeset,
              % and the group(s) ended.
-            {\hbox {}##1%
+            {\leavevmode \hbox {}##1%
              \endp@th
             }%
      \p@@th
-    }
-
-%%% \c@tcodes expects to be followed by the r-h-s of a numeric
-%%% assignment optionally including the assignment operator; it saves
-%%% the value of the r-h-s in \c@tcode, and invokes \c@tc@des.
-
-\def \c@tcodes {\afterassignment \c@tc@des \c@tcode}
-
-%%% \c@tc@des uses the value saved in \c@tcode, and assigns it to the
-%%% \catcode of all characters with the single exception of <space>,
-%%% which retains its normal catcode of 10; on exit, every single
-%%% character apart from <space> will have the catcode which followed
-%%% \c@tcodes.  The code is optimised to avoid unnecessary usage of
-%%% save-stack space.
-
+    }%
+%
+% 
+% \c@tcodes expects to be followed by the r-h-s of a numeric assignment
+%optionally including the assignment operator; it saves the value of the
+%r-h-s in \c@tcode, and invokes \c@tc@des.
+%
+\def \c@tcodes {\afterassignment \c@tc@des \c@tcode}%
+%
+% 
+% \c@tc@des uses the value saved in \c@tcode, and assigns it to the
+% \catcode of all characters with the single exception of <space>, which
+% retains its normal catcode of 10; on exit, every single character
+% apart from <space> will have the catcode which followed \c@tcodes.
+% The code is optimised to avoid unnecessary usage of save-stack space.
+% 
 \def \c@tc@des
     {\c@unter = 0
      \loop
@@ -288,21 +329,20 @@ modified for TeX version<3.0 (10/19/1992) by M.Wat. (bear)}
             \else
                 \catcode \c@unter = \c@tcode
             \fi
-%      \ifnum \c@unter < 255 %XXXXX
-     \ifnum \c@unter < 127
+     \ifnum \c@unter < 255
             \advance \c@unter by 1
      \repeat
      \catcode `\ = 10
-    }
+    }%
+%
+% 
+% Restore the original catcode of commercial-at.
+\catcode `\@ = \@oldatcatcode
+%
+% 
+% Define a default set of discretionary break characters to include all
+% punctuation characters except vertical bar.
+%
+\discretionaries |~!@$%^&*()_+`-=#{}[]:";'<>,.?\/|%
 
-%%% We restore the original catcode of commercial-at
-
-\catcode `\@ = \ATcode
-
-%%% Define a default set of discretionary break characters
-%%% to include all punctuation characters except vertical
-%%% bar
-
-\discretionaries |~!@$%^&*()_+`-=#{}[]:";'<>,.?\/|
-
-\endinput
+\def\nonlinkedpath{\path}

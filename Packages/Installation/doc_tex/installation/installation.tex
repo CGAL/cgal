@@ -989,7 +989,8 @@ directory and add the line
 call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
 \end{verbatim}
 where
-\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
+\nonlinkedpath'C:\PROGRA~1\MICROS~2\'
+%\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
 has to be customized according to where \msvc{} is installed on your
 system.
 
@@ -1271,15 +1272,12 @@ and the corresponding header file \texttt{gmp.h} in
 
 It was created using M.Khan's Cygwin-specific patches to \gmp-2.0.2,
 that are available from
-
 \path'http://www.xraylith.wisc.edu/~khan/software/gnu-win32/'
-
 and then slightly modified (by adding a few routines, like
 \texttt{random}, and creating a separate \msvc{6.0}-compiled library
 that does I/O of the GMP numbers.)  It was checked that all tests that
-come with \gmp\ distribution pass.  See \texttt{CGALROOT\bslsh
-  auxiliary\bslsh wingmp\bslsh gmp-2.0.2\bslsh msvc\bslsh src} for
-details.
+come with \gmp\ distribution pass.  For details see 
+\nonlinkedpath'CGALROOT\auxiliary\wingmp\gmp-2.0.2\msvc\src'.
 
 Subject to time constraints, we might provide a smoother \gmp\ support
 for \msvc\ in the future. A new major release of \gmp\ is expected in
@@ -1327,7 +1325,7 @@ know the keyword \texttt{mutable}.
 For each compiler a file \texttt{<CGAL/compiler\_config.h>} is
 defined, with the correct settings of all flags. This file is
 generated automatically by the \texttt{install\_cgal} script. For this
-the test programs in the directory \texttt{\cgaldir/config/testfiles}
+the test programs in the directory \nonlinkedpath'\cgaldir/config/testfiles'
 are used. The file \texttt{<CGAL/compiler\_config.h>} and the test
 programs contain a description of the problem, so in case of trouble
 with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
@@ -1394,7 +1392,7 @@ A solution is to install the \gnu -binutils\footnote{see
 compiler that it shall use the \gnu-- instead of the native tools.
 From the compiler-menu (described in section \ref{sec:compiler-menu})
 you can set the corresponding option through the custom compiler
-flags, i.e. for \texttt{gcc}/\texttt{egcs} you would add 
+flags, i.e. for \texttt{gcc}/\texttt{egcs} you would add
 \begin{alltt}
   -B/my/path/to/gnu/binutils/bin
 \end{alltt}
@@ -1440,7 +1438,7 @@ and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release\footnote{At the moment
   this is \leda\ 4.0.}, since this is what we test \cgal\ with.
 
-\paragraph{\msvc\-specific problems.}
+\paragraph{\msvc-specific problems.}
 Using \msvc\ with \leda\ requires\footnote{Also applies to \bcc .} the
 latter to be compiled and used with \texttt{LEDA\_STD\_HEADERS} flag
 on. \cgal\ uses new-style C++ standard conformant headers\footnote{the
@@ -1461,10 +1459,7 @@ options controlling the use of debugging and multithreading.
 
 If a binary release of \leda{4.0} is used, make sure that it is one of
 them that uses new-style headers. Namely, among the self-extracting
-executables on
-
-\path'http://www.mpi-sb.mpg.de/LEDA/download/windows/'
-
+executables on \path'http://www.mpi-sb.mpg.de/LEDA/download/windows/'
 choose one of these that have the name ending with \texttt{-std.exe}.
 
 
@@ -1502,12 +1497,12 @@ these instantiations for most commonly used primitive data types and
 \cgal\ kernel types\footnote{\cgal\ \texttt{Point, Segment}, etc.}.
 For other types the user must do this himself.  
 This can be done by using the macro
-\texttt{CGAL\_DEFINE\_ITERATOR\_TRAITS\_POINTER\_SPEC(T)}.
+\nonlinkedpath'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T)'.
 Note that the parameter of this macro cannot contain symbols $<$ and
 $>$. Thus the macro cannot be used with types that contain $<$ and $>$
 directly. However, one can be done by first define a new type using 
 \texttt{typedef} and then applying the macro to this new type.
-See e.g. \texttt{examples/Getting\_started/advanced\_hull.C}
+See e.g. \nonlinkedpath'examples/Getting_started/advanced_hull.C'
 for an example of using this macro.
 
 Note that this macro does not have any effect when other than
@@ -1525,7 +1520,7 @@ meant to be hints only, and do not pretend to be complete, as well.
 supported. Do not use it. Error messages say that ``the class has
 already been declared'', or ``unrecognizable template
 declaration/definition''. See
-\texttt{config/testfiles/CGAL\_CFG\_NO\_PARTIAL\_CLASS\_TEMPLATE\_SPECIALISATION.C}\\
+\nonlinkedpath'config/testfiles/CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C'\\
  for a test program illustrating the problem. \label{msvc::parspec}
 %
 \item Compiler does not always match the most
