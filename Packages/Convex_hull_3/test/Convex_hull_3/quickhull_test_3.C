@@ -36,7 +36,7 @@ void test_small_hull()
            polyhedron1.size_of_facets() == 6 );
   Polyhedron_3 polyhedron2;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron2);
-  assert (is_strongly_convex_3(polyhedron2)); // test default traits class
+  assert (CGAL::is_strongly_convex_3(polyhedron2)); // test default traits class
   assert ( polyhedron2.size_of_vertices() == 5 && 
            polyhedron2.size_of_facets() == 6 );
 }
