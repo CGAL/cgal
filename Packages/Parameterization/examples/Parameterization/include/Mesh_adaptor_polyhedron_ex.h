@@ -167,26 +167,6 @@ public:
 
 				// Default copy constructor and operator =() are fine
 
-				//// Update the adapted Polyhedron_ex mesh when parameterization is over
-				//~Mesh_adaptor_polyhedron_ex() 
-				//{
-				//	// TEMPORARY @@@
-				//	// Update the inner halfedges' (u,v) from their "main" halfedge
-				//	fprintf(stderr,"  update texture coordinates per corner...");
-				//	Polyhedron_ex::Halfedge_iterator pHalfedge;
-				//	for (pHalfedge = m_mesh->halfedges_begin(); pHalfedge != m_mesh->halfedges_end(); pHalfedge++)
-				//	{
-				//		// Skip border halfedges
-				//		if ( !pHalfedge->is_border() && !pHalfedge->opposite()->is_border() )
-				//		{
-				//			Vertex_const_handle adaptor_vertex = get_adaptor_vertex(pHalfedge);
-				//			if (is_vertex_parameterized(adaptor_vertex))
-				//				pHalfedge->uv(adaptor_vertex->u(), adaptor_vertex->v());	
-				//		}
-				//	}
-				//	fprintf(stderr,"ok\n");
-				//}
-
 				//
 				// MESH INTERFACE
 				//
@@ -324,8 +304,6 @@ public:
 				void  set_vertex_uv (Vertex_handle adaptor_vertex, const Point_2& uv) 
 				{
 					assert(is_valid(adaptor_vertex));
-					//adaptor_vertex->u(uv.x());
-					//adaptor_vertex->v(uv.y());
 					// Update all halfedges sharing the same vertex (except outer halfedges)
 					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
 					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
@@ -346,7 +324,6 @@ public:
 				void  set_vertex_parameterized (Vertex_handle adaptor_vertex, bool parameterized) 
 				{
 					assert(is_valid(adaptor_vertex));
-					//adaptor_vertex->is_parameterized(parameterized);
 					// Update all halfedges sharing the same vertex (except outer halfedges)
 					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
 					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
@@ -365,7 +342,6 @@ public:
 				void  set_vertex_index (Vertex_handle adaptor_vertex, int new_index) 
 				{
 					assert(is_valid(adaptor_vertex));
-					//adaptor_vertex->index(new_index);
 					// Update all halfedges sharing the same vertex (except outer halfedges)
 					Polyhedron_ex::Vertex_handle polyhedron_vertex = adaptor_vertex->vertex();
 					Halfedge_around_vertex_circulator cir     = polyhedron_vertex->vertex_begin(), 
