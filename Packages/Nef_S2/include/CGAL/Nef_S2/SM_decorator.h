@@ -359,21 +359,21 @@ void delete_loop_only()
 { map()->delete_shalfloop_pair(); }
 
 template <typename H>
-bool is_boundary_object(H h) const
-{ return map()->is_boundary_object(h); }
+bool is_sm_boundary_object(H h) const
+{ return map()->is_sm_boundary_object(h); }
 
 template <typename H>
-void store_boundary_object(H h, SFace_handle f) {
-  CGAL_assertion(!map()->is_boundary_object(h));
+void store_sm_boundary_object(H h, SFace_handle f) {
+  CGAL_assertion(!map()->is_sm_boundary_object(h));
   f->boundary_entry_objects().push_back(Object_handle(h));
-  map()->store_boundary_item(h, --(f->sface_cycles_end()));
+  map()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
 }
 
 template <typename H>
-void undo_boundary_object(H h, SFace_handle f)
-{ CGAL_assertion(map()->is_boundary_object(h));
-  SFace_cycle_iterator it = map()->boundary_item(h);
-  map()->undef_boundary_item(h);
+void undo_sm_boundary_object(H h, SFace_handle f)
+{ CGAL_assertion(map()->is_sm_boundary_object(h));
+  SFace_cycle_iterator it = map()->sm_boundary_item(h);
+  map()->undef_sm_boundary_item(h);
   f->boundary_entry_objects().erase(it);
 }
 
@@ -383,38 +383,38 @@ void link_as_face_cycle(SHalfedge_handle e, SFace_handle f)
 {
   SHalfedge_around_sface_circulator hfc(e), hend(hfc);
   CGAL_For_all(hfc,hend) hfc->incident_sface() = f;
-  store_boundary_object(e,f);
+  store_sm_boundary_object(e,f);
 } 
 
 void link_as_loop(SHalfloop_handle l, SFace_handle f)
 /*{\Mop creates a new trivial face cycle of |f| and 
    makes |l| the singular object of it.}*/
-{ store_boundary_object(l,f); l->incident_sface() = f; } 
+{ store_sm_boundary_object(l,f); l->incident_sface() = f; } 
 
 void link_as_isolated_vertex(SVertex_handle v, SFace_handle f)
 /*{\Mop creates a new trivial face cycle of |f|.
    (makes |v| an isolated vertex within |f|).}*/
-{ store_boundary_object(v,f); v->incident_sface() = f; } 
+{ store_sm_boundary_object(v,f); v->incident_sface() = f; } 
 
 void unlink_as_face_cycle(SHalfedge_handle e)
 /*{\Mop removes the face cycle defined by |e| from |face(e)|.
     Does not update the face links of the corresponding face cycle
     edges. \precond |e| is the entry object of the face cycle.}*/
-{ undo_boundary_object(e,face(e)); }
+{ undo_sm_boundary_object(e,face(e)); }
   
 void unlink_as_loop(SHalfloop_handle l)
 /*{\Mop removes the trivial face cycle defined by |l| from
    |face(l)|. Does not update |l|'s face link.}*/
-{ undo_boundary_object(l,face(l)); }
+{ undo_sm_boundary_object(l,face(l)); }
 
 void unlink_as_isolated_vertex(SVertex_handle v)
 /*{\Mop removes the trivial face cycle defined by |v| from
    |face(v)|. Does not update |v|'s face link.
    \precond |v| is a trivial face cycle of |face(v)|.}*/
-{ undo_boundary_object(v,face(v)); }
+{ undo_sm_boundary_object(v,face(v)); }
 
 void clear_face_cycle_entries(SFace_handle f)
-{ map()->reset_object_list(f->boundary_entry_objects());
+{ map()->reset_sm_object_list(f->boundary_entry_objects());
   // removes entries of list and the hashed membership
 }
 
@@ -563,10 +563,10 @@ void merge_edge_pairs_at_target(SHalfedge_handle e)
   eo->source() = vn;
 
   if ( first_out_edge(vn) == eno ) set_first_out_edge(vn,eo);
-  if ( is_boundary_object(en) )
-  { undo_boundary_object(en,f1); store_boundary_object(e,f1); }
-  if ( is_boundary_object(eno) )
-  { undo_boundary_object(eno,f2); store_boundary_object(eo,f2); }
+  if ( is_sm_boundary_object(en) )
+  { undo_sm_boundary_object(en,f1); store_sm_boundary_object(e,f1); }
+  if ( is_sm_boundary_object(eno) )
+  { undo_sm_boundary_object(eno,f2); store_sm_boundary_object(eo,f2); }
   delete_vertex_only(v);
   delete_edge_pair_only(en);
   TRACEN("END "<<PH(previous(e))<<PH(e)<<PH(next(e)));
@@ -583,9 +583,9 @@ void convert_edge_to_loop(SHalfedge_handle e)
   SHalfloop_handle l = new_shalfloop_pair();
   SVertex_handle v = target(e);
   SFace_handle f1 = face(e), f2 = face(twin(e));
-  if( is_boundary_object(e)) {
-    CGAL_assertion( is_boundary_object(twin(e)));
-    undo_boundary_object(e,f1); undo_boundary_object(twin(e),f2);
+  if( is_sm_boundary_object(e)) {
+    CGAL_assertion( is_sm_boundary_object(twin(e)));
+    undo_sm_boundary_object(e,f1); undo_sm_boundary_object(twin(e),f2);
   }
   link_as_loop(l,f1), link_as_loop(twin(l),f2);
   circle(l) = circle(e); circle(twin(l)) = circle(twin(e));

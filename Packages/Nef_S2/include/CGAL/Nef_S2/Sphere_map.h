@@ -83,35 +83,38 @@ public:
   There's no type |SLoop_iterator|, as there is
   at most one |SLoop| pair per sphere map.}*/
 
-  typedef typename Items::template SVertex<Self>   SVertex;
-  typedef CGAL::In_place_list<SVertex,false>       SVertex_list;
-  typedef CGAL_ALLOCATOR(SVertex)                  SVertex_alloc;
-  typedef typename SVertex_list::iterator          SVertex_handle;
-  typedef typename SVertex_list::const_iterator    SVertex_const_handle;
-  typedef typename SVertex_list::iterator          SVertex_iterator;
-  typedef typename SVertex_list::const_iterator    SVertex_const_iterator;
+  typedef typename Items::template SVertex<Self>        SVertex_base;
+  typedef SNC_in_place_list_svertex<SVertex_base>       SVertex;
+  typedef CGAL::In_place_list<SVertex,false>            SVertex_list;
+  typedef CGAL_ALLOCATOR(SVertex)                       SVertex_alloc;
+  typedef typename SVertex_list::iterator               SVertex_handle;
+  typedef typename SVertex_list::const_iterator         SVertex_const_handle;
+  typedef typename SVertex_list::iterator               SVertex_iterator;
+  typedef typename SVertex_list::const_iterator         SVertex_const_iterator;
 
-  typedef typename Items::template SHalfedge<Self> SHalfedge;
-  typedef CGAL::In_place_list<SHalfedge,false>     SHalfedge_list;
-  typedef CGAL_ALLOCATOR(SHalfedge)                SHalfedge_alloc;
-  typedef typename SHalfedge_list::iterator        SHalfedge_handle;
-  typedef typename SHalfedge_list::const_iterator  SHalfedge_const_handle;
-  typedef typename SHalfedge_list::iterator        SHalfedge_iterator;
-  typedef typename SHalfedge_list::const_iterator  SHalfedge_const_iterator;
+  typedef typename Items::template SHalfedge<Self>      SHalfedge_base;
+  typedef SNC_in_place_list_shalfedge<SHalfedge_base>   SHalfedge;
+  typedef CGAL::In_place_list<SHalfedge,false>          SHalfedge_list;
+  typedef CGAL_ALLOCATOR(SHalfedge)                     SHalfedge_alloc;
+  typedef typename SHalfedge_list::iterator             SHalfedge_handle;
+  typedef typename SHalfedge_list::const_iterator       SHalfedge_const_handle;
+  typedef typename SHalfedge_list::iterator             SHalfedge_iterator;
+  typedef typename SHalfedge_list::const_iterator       SHalfedge_const_iterator;
 
-  typedef typename Items::template SFace<Self>     SFace;
-  typedef CGAL::In_place_list<SFace,false>         SFace_list;
-  typedef CGAL_ALLOCATOR(SFace)                    SFace_alloc;
-  typedef typename SFace_list::iterator            SFace_handle;
-  typedef typename SFace_list::const_iterator      SFace_const_handle;
-  typedef typename SFace_list::iterator            SFace_iterator;
-  typedef typename SFace_list::const_iterator      SFace_const_iterator;
+  typedef typename Items::template SFace<Self>          SFace_base;
+  typedef SNC_in_place_list_sface<SFace_base>           SFace;
+  typedef CGAL::In_place_list<SFace,false>              SFace_list;
+  typedef CGAL_ALLOCATOR(SFace)                         SFace_alloc;
+  typedef typename SFace_list::iterator                 SFace_handle;
+  typedef typename SFace_list::const_iterator           SFace_const_handle;
+  typedef typename SFace_list::iterator                 SFace_iterator;
+  typedef typename SFace_list::const_iterator           SFace_const_iterator;
 
-  typedef typename Items::template SHalfloop<Self> SHalfloop;
-  typedef SHalfloop*                               SHalfloop_handle;
-  typedef const SHalfloop*                         SHalfloop_const_handle;
-  typedef SHalfloop*                               SHalfloop_iterator;
-  typedef const SHalfloop*                         SHalfloop_const_iterator;
+  typedef typename Items::template SHalfloop<Self>      SHalfloop;
+  typedef SHalfloop*                                    SHalfloop_handle;
+  typedef const SHalfloop*                              SHalfloop_const_handle;
+  typedef SHalfloop*                                    SHalfloop_iterator;
+  typedef const SHalfloop*                              SHalfloop_const_iterator;
 
   typedef CGAL::Object_handle Object_handle;
   /*{\Mtypemember a generic handle to an object of |\Mvar|. 
@@ -258,34 +261,34 @@ public:
   }
 
   template <typename H>
-  bool is_boundary_object(H h) const
+  bool is_sm_boundary_object(H h) const
   { return boundary_item_[h]!=undef_; }
 
   template <typename H>
-  Object_iterator& boundary_item(H h)
+  Object_iterator& sm_boundary_item(H h)
   { return boundary_item_[h]; }
 
   template <typename H>
-  void store_boundary_item(H h, Object_iterator o)
+  void store_sm_boundary_item(H h, Object_iterator o)
   { boundary_item_[h] = o; }
 
   template <typename H>
-  void undef_boundary_item(H h)
+  void undef_sm_boundary_item(H h)
   { CGAL_assertion(boundary_item_[h]!=undef_);
     boundary_item_[h] = undef_; }
 
-  void reset_iterator_hash(Object_iterator it)
+  void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( assign(se,*it) ) { undef_boundary_item(se); return; }
-    if ( assign(sl,*it) ) { undef_boundary_item(sl); return; }
-    if ( assign(sv,*it) ) { undef_boundary_item(sv); return; }
+    if ( assign(se,*it) ) { undef_sm_boundary_item(se); return; }
+    if ( assign(sl,*it) ) { undef_sm_boundary_item(sl); return; }
+    if ( assign(sv,*it) ) { undef_sm_boundary_item(sv); return; }
   }
 
-  void reset_object_list(Object_list& L)
+  void reset_sm_object_list(Object_list& L)
   { Object_iterator oit;
-    CGAL_forall_iterators(oit,L) reset_iterator_hash(oit);
+    CGAL_forall_iterators(oit,L) reset_sm_iterator_hash(oit);
     L.clear();
   }
 
@@ -547,13 +550,13 @@ pointer_update(const Sphere_map<K, I>& D)
 	fci != f->boundary_entry_objects().end(); ++fci) {
       if ( fci.is_svertex() ) 
       { v = SVertex_handle(fci);
-	*fci = Object_handle(VM[v]); store_boundary_item(v,fci); }
+	*fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }
       else if ( fci.is_shalfedge() ) 
       { e = SHalfedge_handle(fci);
-	*fci = Object_handle(EM[e]); store_boundary_item(e,fci); }
+	*fci = Object_handle(EM[e]); store_sm_boundary_item(e,fci); }
       else if ( fci.is_shalfloop() ) 
       { l = SHalfloop_handle(fci);
-	*fci = Object_handle(LM[l]); store_boundary_item(l,fci); }
+	*fci = Object_handle(LM[l]); store_sm_boundary_item(l,fci); }
       else CGAL_assertion_msg(0,"damn wrong boundary item in face.");
     }
   }

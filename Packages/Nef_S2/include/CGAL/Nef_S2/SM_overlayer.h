@@ -1405,8 +1405,8 @@ merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
     link_as_prev_next_pair(e2tp,e1);
     link_as_prev_next_pair(e1,e2tn);
     SFace_handle f = face(e2t);
-    if ( is_boundary_object(e2t) )
-    { undo_boundary_object(e2t,f); store_boundary_object(e1,f); }
+    if ( is_sm_boundary_object(e2t) )
+    { undo_sm_boundary_object(e2t,f); store_sm_boundary_object(e1,f); }
     set_face(e1,f);
     if ( e2 == first_out_edge(source(e2)) )
       set_first_out_edge(source(e2),e1t);
@@ -1497,7 +1497,7 @@ void SM_overlayer<Map>::simplify()
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SFace_handle f = *(UF.find( Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
-    store_boundary_object(e,f);
+    store_sm_boundary_object(e,f);
   }
 
   SVertex_iterator v,vn;
@@ -1520,7 +1520,7 @@ void SM_overlayer<Map>::simplify()
         delete_vertex_only(v);  
       } 
       else 
-        store_boundary_object(v,face(v)); // isolated, but should stay
+        store_sm_boundary_object(v,face(v)); // isolated, but should stay
     } else { // v not isolated
       SHalfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
       if ( has_outdeg_two(v) &&

@@ -287,8 +287,8 @@ SHalfedge_const_handle cap(SHalfedge_const_handle e) const
 { return cyclic_adj_pred(e); }
 
 template <typename H>
-bool is_boundary_object(H h) const
-{ return psm_->is_boundary_object(h); }
+bool is_sm_boundary_object(H h) const
+{ return psm_->is_sm_boundary_object(h); }
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/
 

@@ -33,7 +33,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename K, typename I> class Sphere_map;
+//template <typename K, typename I,typename C> class Sphere_map;
 template <typename SM> class SM_const_decorator;
 template <typename SM> class SM_decorator;
 
@@ -41,7 +41,7 @@ struct SM_items {
 public:
 
   template <typename Refs>
-  class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
+  class SVertex
   { 
     typedef void* GenPtr;
     typedef typename Refs::Mark             Mark;
@@ -110,7 +110,7 @@ public:
 
 
   template <typename Refs>
-  class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
+  class SHalfedge
   { 
     typedef void* GenPtr;
     typedef typename Refs::Mark             Mark;
@@ -200,7 +200,7 @@ public:
   }; // SHalfedge
 
   template <typename Refs> 
-  class SHalfloop : public CGAL::In_place_list_base< SHalfloop<Refs> >
+  class SHalfloop
   {
     typedef void* GenPtr;
     typedef typename Refs::Mark             Mark;
@@ -268,7 +268,7 @@ public:
   }; // SHalfloop
 
   template <typename Refs>
-  class SFace : public CGAL::In_place_list_base< SFace<Refs> >
+  class SFace
   { 
     typedef void* GenPtr;
     typedef typename Refs::Mark                  Mark;
