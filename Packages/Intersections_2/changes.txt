@@ -1,4 +1,8 @@
 -----
+* 2.2.2 *
++ cgal_test now reports diff of program output and expected output.
+
+-----
 * 2.2.1 *
 + Qualified is_finite calls with ::CGAL::.
 
