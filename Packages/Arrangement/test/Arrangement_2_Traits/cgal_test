@@ -80,6 +80,7 @@ else
   compile_and_run Arr_leda_polyline_traits_test        polylines
   compile_and_run Arr_segment_circle_traits_test       segment_circles
   compile_and_run Arr_circles_real_traits_test         circular_arcs
+  compile_and_run Arr_conic_traits_test                conic_arcs
 
 fi
 

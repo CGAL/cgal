@@ -1,0 +1,84 @@
+#-----------------------------------------------------------
+# Data block
+#-----------------------------------------------------------
+# Number of curves (their clock-wise ordering is 0, 1, 2, ..., 7)
+8
+# Curve #0: a vertical segment
+s 0 1  0 0
+# Curve #1: part of the the right portion of the parabola y = x^2
+a 1 0 0 0 -1 0  2 4  0 0
+# Curve #2: the upper-right quarter of the circle x^2 + (y+1)^2 = 1^2
+e 1 1  0 -1  0 0  1 -1
+# Curve #3: a segment
+s 0 0  2 -1
+# Curve #4: a vertical segment
+s 0 0  0 -3
+# Curve #5: the upper-left quarter of the ellipse (x/3)^2 + (y+1)^2 = 1
+e 3 1  0 -1  -3 -1  0 0
+# Curve #6: a horizontal segment
+s -2 0  0 0
+# curve #7: a portion of the hyperbola y + 1 = 1/(x + 1)
+a 0 0 1 1 1 0  -0.9 9  0 0
+#-----------------------------------------------------------
+# Number of "stand alone" points
+1
+0 0        # 0 (an endpoint of all curves)
+#-----------------------------------------------------------
+# Execution block
+#-----------------------------------------------------------
+curve_is_between_cw 2 0 4 0 TRUE.   # Both cv1 and cv2 are vertical.
+curve_is_between_cw 6 0 4 0 FALSE.  # Both cv1 and cv2 are vertical.
+
+curve_is_between_cw 1 0 2 0 TRUE.   # cv1 is vertical (going up), cv2 right.
+curve_is_between_cw 3 0 2 0 FALSE.  # cv1 is vertical (going up), cv2 right.
+curve_is_between_cw 3 0 6 0 TRUE.   # cv1 is vertical (going up), cv2 left.
+curve_is_between_cw 4 0 6 0 TRUE.   # cv1 is vertical (going up), cv2 left.
+curve_is_between_cw 7 0 6 0 FALSE.  # cv1 is vertical (going up), cv2 left.
+
+curve_is_between_cw 7 4 1 0 TRUE.   # cv1 is vertical (going down), cv2 right.
+curve_is_between_cw 0 4 1 0 TRUE.   # cv1 is vertical (going down), cv2 right.
+curve_is_between_cw 2 4 1 0 FALSE.  # cv1 is vertical (going down), cv2 right.
+curve_is_between_cw 6 4 7 0 TRUE.   # cv1 is vertical (going down), cv2 left.
+curve_is_between_cw 3 4 7 0 FALSE.  # cv1 is vertical (going down), cv2 left.
+
+curve_is_between_cw 3 2 0 0 TRUE.   # cv2 is vertical (going up), cv1 right.
+curve_is_between_cw 1 2 0 0 FALSE.  # cv2 is vertical (going up), cv1 right.
+curve_is_between_cw 4 2 0 0 TRUE.   # cv2 is vertical (going up), cv1 right.
+curve_is_between_cw 6 5 0 0 TRUE.   # cv2 is vertical (going up), cv1 left.
+curve_is_between_cw 1 5 0 0 FALSE.  # cv2 is vertical (going up), cv1 left.
+
+curve_is_between_cw 3 2 4 0 TRUE.   # cv2 is vertical (going down), cv1 right.
+curve_is_between_cw 6 2 4 0 FALSE.  # cv2 is vertical (going down), cv1 right.
+curve_is_between_cw 0 7 4 0 TRUE.   # cv2 is vertical (going down), cv1 left.
+curve_is_between_cw 1 7 4 0 TRUE.   # cv2 is vertical (going down), cv1 left.
+curve_is_between_cw 5 7 4 0 FALSE.  # cv2 is vertical (going down), cv1 left.
+
+curve_is_between_cw 0 1 2 0 FALSE.  # cvx is vertical (going up)
+curve_is_between_cw 0 1 5 0 FALSE.  # cvx is vertical (going up)
+curve_is_between_cw 0 5 2 0 TRUE.   # cvx is vertical (going up)
+curve_is_between_cw 0 7 6 0 TRUE.   # cvx is vertical (going up)
+
+curve_is_between_cw 4 1 2 0 FALSE.  # cvx is vertical (going down)
+curve_is_between_cw 4 1 5 0 TRUE.   # cvx is vertical (going down)
+curve_is_between_cw 4 5 2 0 FALSE.  # cvx is vertical (going down)
+curve_is_between_cw 4 7 6 0 TRUE.   # cvx is vertical (going down)
+
+curve_is_between_cw 6 5 7 0 TRUE.   # cv1 left, cv2 left
+curve_is_between_cw 2 5 7 0 FALSE.  # cv1 left, cv2 left
+curve_is_between_cw 1 7 5 0 TRUE.   # cv1 left, cv2 left
+curve_is_between_cw 6 7 5 0 FALSE.  # cv1 left, cv2 left
+
+curve_is_between_cw 2 1 3 0 TRUE.   # cv1 right, cv2 right
+curve_is_between_cw 5 1 3 0 FALSE.  # cv1 right, cv2 right
+curve_is_between_cw 7 3 1 0 TRUE.   # cv1 right, cv2 right
+curve_is_between_cw 2 3 1 0 FALSE.  # cv1 right, cv2 right
+
+curve_is_between_cw 7 6 1 0 TRUE.   # cv1 left, cv2 right
+curve_is_between_cw 5 7 2 0 FALSE.  # cv1 left, cv2 right
+curve_is_between_cw 2 5 3 0 TRUE.   # cv1 left, cv2 right
+curve_is_between_cw 2 5 1 0 FALSE.  # cv1 left, cv2 right
+
+curve_is_between_cw 5 1 6 0 TRUE.   # cv1 right, cv2 left
+curve_is_between_cw 3 2 7 0 TRUE.   # cv1 right, cv2 left
+curve_is_between_cw 1 3 5 0 FALSE.  # cv1 right, cv2 left
+curve_is_between_cw 6 1 5 0 FALSE.  # cv1 right, cv2 left

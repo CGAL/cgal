@@ -1,0 +1,56 @@
+#-----------------------------------------------------------
+# Data block
+#-----------------------------------------------------------
+# Number of curves
+5
+# Curve #0: the upper-right portion of the ellipse (x/5)^2 + (y/3)^2 = 1
+e 5 3  0 0  0 3  5 0
+# Curve #1: a segment
+s -1 3  2 4
+# Curve #2: a vertical segment
+s 0 1  0 0
+# Curve #3: a portion of the hyperbola y = 1/x
+a 0 0 1 0 0 -1  0.1 10  2 0.5
+# Curve #4: a portion of the parabola y = 3*x^2 - 2*x + 5
+a 3 0 0 -2 -1 5  2 13  -1 10
+#-----------------------------------------------------------
+# Number of "stand alone" points
+9
+-2 0       # 0
+-1 0       # 1
+0 0        # 2
+1 0        # 3
+2 0        # 4
+3 0        # 5
+4 0        # 6
+5 0        # 7
+6 0        # 8
+#-----------------------------------------------------------
+# Execution block
+#-----------------------------------------------------------
+curve_is_in_x_range    0 1 FALSE.
+curve_is_in_x_range    0 2 TRUE.
+curve_is_in_x_range    0 4 TRUE.
+curve_is_in_x_range    0 7 TRUE.
+curve_is_in_x_range    0 8 FALSE.
+
+curve_is_in_x_range    1 0 FALSE.
+curve_is_in_x_range    1 1 TRUE.
+curve_is_in_x_range    1 2 TRUE.
+curve_is_in_x_range    1 4 TRUE.
+curve_is_in_x_range    1 5 FALSE.
+
+curve_is_in_x_range    2 1 FALSE.
+curve_is_in_x_range    2 2 TRUE.
+curve_is_in_x_range    2 3 FALSE.
+
+curve_is_in_x_range    3 2 FALSE.
+curve_is_in_x_range    3 3 TRUE.
+curve_is_in_x_range    3 4 TRUE.
+curve_is_in_x_range    3 5 FALSE.
+
+curve_is_in_x_range    4 0 FALSE.
+curve_is_in_x_range    4 1 TRUE.
+curve_is_in_x_range    4 3 TRUE.
+curve_is_in_x_range    4 4 TRUE.
+curve_is_in_x_range    4 6 FALSE.
