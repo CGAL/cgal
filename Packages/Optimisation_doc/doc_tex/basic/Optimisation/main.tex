@@ -1,13 +1,13 @@
 % =============================================================================
 % The CGAL Reference Manual
-% Chapter: Optimisation
+% Chapter: Geometric Optimisation
 % -----------------------------------------------------------------------------
 % file  : doc_tex/basic/Optimisation/main.tex
-% author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
+% author: Bernd Gärtner, Sven Schönherr <sven@inf.fu-berlin.de>
 % -----------------------------------------------------------------------------
+% $CGAL_Package: Optimisation_basic WIP $
 % $Revision$
 % $Date$
-% $CGAL_Package: Optimisation WIP $
 % =============================================================================
 
 \newcommand{\linebreakByHand}{\ccTexHtml{\\}{}}
@@ -28,12 +28,14 @@
 \begin{ccHtmlOnly}<H2>Introduction</H2><P>\end{ccHtmlOnly}
 
 This chapter describes routines for solving geometric optimisation problems.
-The first two sections contain algorithms for computing and updating the
+The first three sections contain algorithms for computing and updating the
 \begin{itemize}
-  \item smallest enclosing circle
-    (Section~\ref{sec:smallest_enclosing_circles}) and the
-  \item smallest enclosing ellipse
-    (Section~\ref{sec:smallest_enclosing_ellipses}), respectively,
+  \item smallest enclosing circle (2D)
+    (Section~\ref{sec:smallest_enclosing_circles}), the
+  \item smallest enclosing ellipse (2D)
+    (Section~\ref{sec:smallest_enclosing_ellipses}), and the
+  \item smallest enclosing sphere (dD)
+    (Section~\ref{sec:smallest_enclosing_spheres}), respectively,
 \end{itemize}
 of a finite point set. The remaining sections describe algorithms for
 searching in matrices with specific properties and some applications.
@@ -86,6 +88,8 @@ checking off, cf.~\cgalReferToAssertions
 \input{smallest_enclosing_circles}
 
 \input{smallest_enclosing_ellipses}
+
+\input{smallest_enclosing_spheres}
 
 \input{spec_extremal_polygons}
  
