@@ -1,1 +1,2 @@
-This package ....bla bla
+The interval skip list is a data strucure for finding all intervals 
+that contain a point, and for stabbing queries.
