@@ -1,6 +1,6 @@
 Changes done to the CLN package.
 
-Version 1.8 on ?? ?? 2000.
+Version 1.8 on 28 June 2000.
 - New maintainer file.
 - Removed old workaround for operator>>(Quotient<cl_I>).
   CLN version >= 1.0.2 is required now.
