@@ -1,8 +1,3 @@
-2.62 (rursu)
---------------
-	Removed stlport/cgal_functional_base.h
-
-
 //=====================================================================
 //	Revision History for package STL_Extension
 //=====================================================================
@@ -12,7 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-GLOB: Fix typo in iterator.h (<- Sylvain)
+GLOB: removed stlport/cgal_functional_base.h
+GLOB: Fix typo in iterator.h
 GLOB: SRC : Excluded vector from MSC VC6.
 GLOB: SRC : Added != and comparison ops for test class X in test_vector.C.
 GLOB: SRC : Changed vector to improve cross platform compilation.
