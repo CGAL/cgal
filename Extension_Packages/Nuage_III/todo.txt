@@ -1,0 +1,3 @@
+
+- Add connected component counter to class
+- Add an API to explore the faces of the triangulated surface.

@@ -1,3 +1,9 @@
+- extraxt.C is new application
+- Moved application code from nuage.C in a class
+- Introduced Boundary_iterator
+- Introduced Outlier_iterator
+
+
 - Removed conversion
 - Added output of the missed points in vrml2
 - Added support for xyz format
