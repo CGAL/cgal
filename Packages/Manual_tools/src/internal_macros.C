@@ -310,6 +310,9 @@ void handleIndex() {
 
 void handleIndex2(string main_item, string sub_item, string sub_sub_item, 
                   int modifier) {
+    remove_separator( main_item);
+    remove_separator( sub_item);
+    remove_separator( sub_sub_item);
    if (modifier==1) 
      *index_stream << "\\indexentry{" 
 		        << main_item<< "<A NAME=\""<<HREF_counter 
