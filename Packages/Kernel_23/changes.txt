@@ -1,3 +1,6 @@
+1.69 (10 September 2003)
+- Fix last change for Iso_rectangle_2 and Iso_cuboid_3.
+
 1.68 (7 September 2003) [af]
 - The operators of Construct_vertex_[2,3] now return const references to points 
   and not copies
