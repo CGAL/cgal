@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+12 August 2004 Andreas Fabri
+- Added #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2 in several header files
+
 02 August 2004 Mariette Yvinec
 - fixed clean of demo/Triangulation_2/makefile
 

@@ -110,9 +110,11 @@ public:
   Vertex_handle push_back(const Point &p);
 
   void  remove(Vertex_handle v );
-  
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
   using Triangulation::cw;
   using Triangulation::ccw;
+#endif
 
 private:
   void restore_Delaunay(Vertex_handle v);

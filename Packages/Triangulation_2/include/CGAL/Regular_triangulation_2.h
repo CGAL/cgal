@@ -68,6 +68,7 @@ public:
   typedef typename Base::Face::Vertex_list     Vertex_list;
   typedef typename Vertex_list::iterator       Vertex_list_iterator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
   using Base::ccw;
   using Base::dimension;
@@ -88,6 +89,7 @@ public:
   using Base::FACE;
   using Base::EDGE;
   using Base::OUTSIDE_CONVEX_HULL;
+#endif
 
 private:
   typedef std::list<Face_handle>      Faces_around_stack; 

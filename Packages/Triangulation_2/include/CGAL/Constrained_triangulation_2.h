@@ -64,6 +64,7 @@ public:
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
   typedef typename Triangulation::Line_face_circulator Line_face_circulator;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::number_of_vertices;
   using Triangulation::cw;
   using Triangulation::ccw;
@@ -71,6 +72,7 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
+#endif
 
   typedef Gt                                 Geom_traits;
   typedef Itag                               Intersection_tag;

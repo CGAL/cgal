@@ -57,11 +57,13 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
   using Triangulation::number_of_vertices;
   using Triangulation::vertices_begin;
+#endif
 
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 

@@ -57,6 +57,7 @@ public:
   typedef typename Ctr::Less_edge less_edge;
   typedef typename Ctr::Edge_set Edge_set;
 
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Ctr::number_of_vertices;
   using Ctr::finite_faces_begin;
   using Ctr::finite_faces_end;
@@ -64,6 +65,7 @@ public:
   using Ctr::cw;
   using Ctr::ccw;
   using Ctr::infinite_vertex;
+#endif
 
   typedef typename Geom_traits::Point_2  Point;
 
