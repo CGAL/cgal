@@ -31,13 +31,14 @@ int main(int, char*)
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_float.h>
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/point_generators_2.h>
 
 #include <fstream>
 
-typedef double					    NT;
+typedef CGAL::MP_Float				    NT;
 typedef CGAL::Cartesian<NT>                         K;
 typedef CGAL::Partition_traits_2<K>                 Traits;
 typedef Traits::Point_2                             Point_2;
@@ -113,7 +114,8 @@ public:
     widget->setMouseTracking(TRUE);
 	
     //connect the widget to the main function that receives the objects
-    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_new_object(CGAL::Object)));
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+		    this, SLOT(get_new_object(CGAL::Object)));
 
     //application flag stuff
     old_state = 0;
@@ -134,7 +136,8 @@ public slots:
     widget->detach_current_tool();
     widget->lock();
     widget->clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+	// set the Visible Area to the Interval
     widget->unlock();
   }
 
@@ -192,6 +195,7 @@ private slots:
     QString fileName = QFileDialog::getSaveFileName( "polygon.cgal", "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
+      out << std::setprecision(15);
       CGAL::set_ascii_mode(out);
       out << polygon << std::endl;
     }

@@ -62,6 +62,10 @@ namespace CGAL {
     widget->attach(showOC);
     widget->attach(showPP);
 
+    widget->deactivate(showGA);
+    widget->deactivate(showYM);
+    widget->deactivate(showOC);
+
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
     but[0] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
@@ -121,7 +125,9 @@ namespace CGAL {
 	but[i]->setToggleButton(TRUE);
 	but[i]->toggle();
     }
-			    
+    but[2]->toggle();
+    but[3]->toggle();
+    but[4]->toggle();	    
   }	
 
   Layers_toolbar::~Layers_toolbar()

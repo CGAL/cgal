@@ -42,6 +42,9 @@ public:
   {};
   void draw(Qt_widget &widget)
   {
+    if(polygon.size() > 2)
+      assert( polygon.is_counterclockwise_oriented());
+
     greene_approx_polys.clear();
     Traits  partition_traits;
     

@@ -25,6 +25,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_float.h>
 #include <CGAL/Partition_traits_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
@@ -34,7 +35,7 @@
 #include <qtoolbar.h>
 #include <qstatusbar.h>
 
-typedef CGAL::Cartesian<double>                           K;
+typedef CGAL::Cartesian<CGAL::MP_Float>                   K;
 typedef CGAL::Partition_traits_2<K>                       Traits;
 typedef Traits::Point_2                                   Point_2;
 typedef Traits::Polygon_2                                 Polygon;

@@ -99,6 +99,10 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
@@ -113,10 +117,6 @@ SOURCE=.\Qt_widget_toolbar.C
 
 SOURCE=.\Qt_widget_toolbar_layers.C
 # End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -124,6 +124,14 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget_layer.C
 # Begin Source File
 
 SOURCE=..\..\include\CGAL\IO\icons.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_greene_approximation.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_polygon.h
 # End Source File
 # Begin Source File
 
@@ -138,6 +146,29 @@ InputPath=..\..\..\include\CGAL\IO\Qt_widget.h
 
 "../../../src/CGALQt/Qt_widget.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget.moc" "../../../Include/CGAL/IO/Qt_widget.h"
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_get_simple_polygon.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
+
+"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
 
 # End Custom Build
 
@@ -214,25 +245,6 @@ InputPath=.\Qt_widget_toolbar_layers.h
 
 "Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_layer.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_widget_layer.h
-
-"../../../src/CGALQt/Qt_widget_layer.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_layer.moc" "../../../Include/CGAL/IO/Qt_widget_layer.h"
 
 # End Custom Build
 
