@@ -1,6 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.12 (25 Apr 2002)
+     - removed CGAL_*_INLINE macros that were in comments in Polynomial.h
+     - make specialized operator - for int and double polynomials defined
+       for MSVC only
+
 1.11 (23 Apr 2002)
      - do not use simple interface for Borland
      - do use SNIHACK for Boralnd, which has touble distinguishing templated

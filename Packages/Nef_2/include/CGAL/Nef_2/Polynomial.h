@@ -137,27 +137,27 @@ get_gcd(const NT& n1, const NT& n2, Tag_false)
 #endif // CGAL_SIMPLE_NEF_INTERFACE
 
 
-template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+template <class NT>  Polynomial<NT>
   operator - (const Polynomial<NT>&);
-template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/  Polynomial<NT>
+template <class NT>  Polynomial<NT>
   operator + (const Polynomial<NT>&, const Polynomial<NT>&);
-template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/  Polynomial<NT>
+template <class NT>  Polynomial<NT>
   operator - (const Polynomial<NT>&, const Polynomial<NT>&);
-template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+template <class NT>  Polynomial<NT>
   operator * (const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT>
   operator / (const Polynomial<NT>&, const Polynomial<NT>&);
 
 #if ! defined(_MSC_VER)
-template<class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
+template<class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p);
 #endif // collides with global CGAL sign
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ double 
+template <class NT> double 
   to_double(const Polynomial<NT>& p) ;
-template <class NT>  /*CGAL_KERNEL_INLINE*/ bool 
+template <class NT> bool 
   is_valid(const Polynomial<NT>& p) ;
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool 
+template <class NT> bool 
   is_finite(const Polynomial<NT>& p) ;
 
 template<class NT>  
@@ -429,7 +429,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-  #else // CGAL_SIMPLE_NEF_INTERFACE
+#else // CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
   { CGAL_assertion( degree()>=0 );
@@ -441,7 +441,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return res;
   }
 
-  #endif
+#endif
 
   static void set_R(const NT& R) { R_ = R; }
 
@@ -451,23 +451,22 @@ determines the sign for the limit process $x \rightarrow \infty$.
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
-  friend  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+  friend Polynomial<NT>
     operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<NT>&);   
                           
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+  friend Polynomial<NT>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
                                     const Polynomial<NT>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+  friend Polynomial<NT>
     operator - CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
                                     const Polynomial<NT>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<NT>
+  friend Polynomial<NT>
     operator * CGAL_NULL_TMPL_ARGS (const Polynomial<NT>&, 
                                     const Polynomial<NT>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
+  friend 
   Polynomial<NT>  operator / CGAL_NULL_TMPL_ARGS 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2);
   /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
@@ -507,7 +506,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the ring |NT[x]|: $f = g*q + r$.  \precond |NT| is a field, i.e.,
   there exists a division operation on |NT|.  }*/
 
-  friend /*CGAL_KERNEL_INLINE*/ double to_double
+  friend double to_double
   CGAL_NULL_TMPL_ARGS (const Polynomial<NT>& p);
 
 
@@ -791,22 +790,22 @@ determines the sign for the limit process $x \rightarrow \infty$.
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
-  friend  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<int>
+  friend  Polynomial<int>
     operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<int>&);   
                           
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<int>
+  friend Polynomial<int>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
                                     const Polynomial<int>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<int>
+  friend Polynomial<int>
     operator - CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
                                     const Polynomial<int>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<int>
+  friend Polynomial<int>
     operator * CGAL_NULL_TMPL_ARGS (const Polynomial<int>&, 
                                     const Polynomial<int>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+  friend 
 
   Polynomial<int>  operator / CGAL_NULL_TMPL_ARGS 
   (const Polynomial<int>& p1, const Polynomial<int>& p2);
@@ -847,7 +846,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the ring |int[x]|: $f = g*q + r$.  \precond |int| is a field, i.e.,
   there exists a division operation on |int|.  }*/
 
-  friend /*CGAL_KERNEL_INLINE*/ double to_double
+  friend double to_double
   CGAL_NULL_TMPL_ARGS (const Polynomial<int>& p);
 
 
@@ -1112,22 +1111,22 @@ determines the sign for the limit process $x \rightarrow \infty$.
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
-  friend  /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<double>
+  friend  Polynomial<double>
     operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
                           
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<double>
+  friend Polynomial<double>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
                                     const Polynomial<double>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<double>
+  friend Polynomial<double>
     operator - CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
                                     const Polynomial<double>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ Polynomial<double>
+  friend Polynomial<double>
     operator * CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
                                     const Polynomial<double>&);
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+  friend 
 
   Polynomial<double>  operator / CGAL_NULL_TMPL_ARGS 
   (const Polynomial<double>& p1, const Polynomial<double>& p2);
@@ -1168,7 +1167,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the ring |double[x]|: $f = g*q + r$.  \precond |double| is a field, i.e.,
   there exists a division operation on |double|.  }*/
 
-  friend /*CGAL_KERNEL_INLINE*/ double to_double
+  friend double to_double
   CGAL_NULL_TMPL_ARGS (const Polynomial<double>& p);
 
 
@@ -1259,19 +1258,19 @@ template <class NT> NT Polynomial<NT>::R_;
 int    Polynomial<int>::R_;
 double Polynomial<double>::R_;
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ double to_double 
+template <class NT> double to_double 
   (const Polynomial<NT>& p) 
   { return (CGAL::to_double(p.eval_at(Polynomial<NT>::R_))); }
 
-template <class NT>  /*CGAL_KERNEL_INLINE*/ bool is_valid 
+template <class NT> bool is_valid 
   (const Polynomial<NT>& p) 
   { return (CGAL::is_valid(p[0])); }
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool is_finite 
+template <class NT> bool is_finite 
   (const Polynomial<NT>& p) 
   { return CGAL::is_finite(p[0]); }
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::io_Operator 
+template <class NT> CGAL::io_Operator 
   io_tag(const Polynomial<NT>&) 
   { return CGAL::io_Operator(); }
 
@@ -1286,6 +1285,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p)
   return res;
 }
 
+/*
 Polynomial<int> operator - (const Polynomial<int>& p)
 {
   CGAL_assertion(p.degree()>=0);
@@ -1303,6 +1303,7 @@ Polynomial<double> operator - (const Polynomial<double>& p)
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
 }
+*/
 
 template <class NT> 
 Polynomial<NT> operator + (const Polynomial<NT>& p1, 
@@ -1322,7 +1323,7 @@ Polynomial<NT> operator + (const Polynomial<NT>& p1,
   return p;
 }
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> operator - (const Polynomial<NT>& p1, 
                             const Polynomial<NT>& p2)
 { 
@@ -1340,7 +1341,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p1,
   return p;
 }
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> operator * (const Polynomial<NT>& p1, 
                             const Polynomial<NT>& p2)
 {
@@ -1361,7 +1362,7 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
 { return divop(p1,p2,Number_type_traits<NT>::Has_gcd()); }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> divop (const Polynomial<NT>& p1, 
                        const Polynomial<NT>& p2,
                        Tag_false)
@@ -1374,7 +1375,7 @@ Polynomial<NT> divop (const Polynomial<NT>& p1,
 }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> divop (const Polynomial<NT>& p1, const Polynomial<NT>& p2,
                        Tag_true)
 { CGAL_assertion(!p2.is_zero());
@@ -1391,32 +1392,32 @@ inline Polynomial<NT>
 gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { return Polynomial<NT>::gcd(p1,p2); }
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator == 
+template <class NT> bool operator == 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() == CGAL::ZERO ); }    
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator != 
+template <class NT> bool operator != 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::ZERO ); }    
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator <  
+template <class NT> bool operator <  
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() == CGAL::NEGATIVE ); }    
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator <= 
+template <class NT> bool operator <= 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::POSITIVE ); }    
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator >  
+template <class NT> bool operator >  
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() == CGAL::POSITIVE ); }    
 
-template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator >= 
+template <class NT> bool operator >= 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
   { return ( (p1-p2).sign() != CGAL::NEGATIVE ); }    
 
 #if ! defined(_MSC_VER)
-template <class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
+template <class NT> CGAL::Sign 
   sign(const Polynomial<NT>& p)
   { return p.sign(); }
 #endif // collides with global CGAL sign
@@ -1866,7 +1867,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
 
 // SPECIALIZE_IMPLEMENTATION(NT,int double) START
 // SPECIALIZING to :
- /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+
 void Polynomial<int>::euclidean_div(
   const Polynomial<int>& f, const Polynomial<int>& g,
   Polynomial<int>& q, Polynomial<int>& r)
@@ -1886,7 +1887,7 @@ void Polynomial<int>::euclidean_div(
 }
 
 
- /*CGAL_KERNEL_MEDIUM_INLINE*/   
+
 void Polynomial<int>::pseudo_div(
   const Polynomial<int>& f, const Polynomial<int>& g, 
   Polynomial<int>& q, Polynomial<int>& r, int& D)
@@ -1919,7 +1920,7 @@ void Polynomial<int>::pseudo_div(
 }
 
 
- /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+
 Polynomial<int> Polynomial<int>::gcd(
   const Polynomial<int>& p1, const Polynomial<int>& p2)
 { TRACEN("gcd("<<p1<<" , "<<p2<<")");
@@ -1950,7 +1951,7 @@ Polynomial<int> Polynomial<int>::gcd(
 
 
 // SPECIALIZING to :
- /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+
 void Polynomial<double>::euclidean_div(
   const Polynomial<double>& f, const Polynomial<double>& g,
   Polynomial<double>& q, Polynomial<double>& r)
@@ -1970,7 +1971,7 @@ void Polynomial<double>::euclidean_div(
 }
 
 
- /*CGAL_KERNEL_MEDIUM_INLINE*/   
+
 void Polynomial<double>::pseudo_div(
   const Polynomial<double>& f, const Polynomial<double>& g, 
   Polynomial<double>& q, Polynomial<double>& r, double& D)
@@ -2031,7 +2032,7 @@ Polynomial<double> Polynomial<double>::gcd(
 
 
 // SPECIALIZE_FUNCTION ORIGINAL
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 void Polynomial<NT>::euclidean_div(
   const Polynomial<NT>& f, const Polynomial<NT>& g,
   Polynomial<NT>& q, Polynomial<NT>& r)
@@ -2051,7 +2052,7 @@ void Polynomial<NT>::euclidean_div(
 }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/   
+template <class NT> 
 void Polynomial<NT>::pseudo_div(
   const Polynomial<NT>& f, const Polynomial<NT>& g, 
   Polynomial<NT>& q, Polynomial<NT>& r, NT& D)
@@ -2084,7 +2085,7 @@ void Polynomial<NT>::pseudo_div(
 }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+template <class NT> 
 Polynomial<NT> Polynomial<NT>::gcd(
   const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { TRACEN("gcd("<<p1<<" , "<<p2<<")");
