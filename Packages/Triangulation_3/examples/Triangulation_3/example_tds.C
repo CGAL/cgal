@@ -8,6 +8,7 @@
 
 typedef CGAL::Triangulation_data_structure_3<>      Tds;
 
+typedef Tds::size_type                              size_type;
 typedef Tds::Cell_handle                            Cell_handle;
 typedef Tds::Vertex_handle                          Vertex_handle;
 
@@ -29,7 +30,7 @@ int main()
   // each of the following insertions of vertices increases the dimension
   for ( int i=1; i<5; i++ ) {
     PV[i] = T.insert_increase_dimension(PV[0]);
-    assert( T.number_of_vertices() == i+1 );
+    assert( T.number_of_vertices() == (size_type) i+1 );
     assert( T.dimension() == i-1 );
     assert( T.is_valid() );
   }

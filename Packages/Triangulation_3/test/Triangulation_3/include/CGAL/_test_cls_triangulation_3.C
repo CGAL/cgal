@@ -47,6 +47,9 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Facet                Facet;
   typedef typename Cls::Edge                 Edge;
 
+  typedef typename Cls::size_type            size_type;
+  typedef typename Cls::difference_type      difference_type;
+
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Cell_handle          Cell_handle; 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
@@ -288,7 +291,7 @@ _test_cls_triangulation_3(const Triangulation &)
   std::cout << "    Constructor6 " << std::endl;
   // triangulation 1-dimensional : vertical line.
   Cls T1_0;
-  int n = T1_0.insert(l1.begin(),l1.end());
+  size_type n = T1_0.insert(l1.begin(),l1.end());
   assert(n==5);
   assert(T1_0.dimension()==1);
   assert(T1_0.number_of_vertices()==n);

@@ -73,6 +73,9 @@ public:
   typedef typename Tds::Facet                  Facet;
   typedef typename Tds::Edge                   Edge;
 
+  typedef typename Tds::size_type              size_type;
+  typedef typename Tds::difference_type        difference_type;
+
   typedef typename Tds::Vertex_handle          Vertex_handle;
   typedef typename Tds::Cell_handle            Cell_handle;
 
@@ -344,19 +347,19 @@ public:
   int dimension() const 
     { return _tds.dimension();}
 
-  int number_of_finite_cells() const;
+  size_type number_of_finite_cells() const;
 
-  int number_of_cells() const;
+  size_type number_of_cells() const;
  
-  int number_of_finite_facets() const;
+  size_type number_of_finite_facets() const;
 
-  int number_of_facets() const;
+  size_type number_of_facets() const;
 
-  int number_of_finite_edges() const;
+  size_type number_of_finite_edges() const;
  
-  int number_of_edges() const;
+  size_type number_of_edges() const;
   
-  int number_of_vertices() const // number of finite vertices
+  size_type number_of_vertices() const // number of finite vertices
     {return _tds.number_of_vertices()-1;}
 
   Vertex_handle infinite_vertex() const
@@ -962,7 +965,7 @@ public:
       return _tds.incident_vertices(v, vertices);
   }
 
-  unsigned int degree(Vertex_handle v) const
+  size_type degree(Vertex_handle v) const
   {
       return _tds.degree(v);
   }
@@ -1154,13 +1157,13 @@ test_dim_down(Vertex_handle v) const
       }
   }
   else // dimension() == 1 or 0
-      return number_of_vertices() == dimension() + 1;
+      return number_of_vertices() == (size_type) dimension() + 1;
 
   return true;
 }
 
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_finite_cells() const 
 { 
@@ -1169,7 +1172,7 @@ number_of_finite_cells() const
 }
   
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_cells() const 
 { 
@@ -1177,7 +1180,7 @@ number_of_cells() const
 }
 
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_finite_facets() const
 {
@@ -1186,7 +1189,7 @@ number_of_finite_facets() const
 }
 
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_facets() const
 {
@@ -1194,7 +1197,7 @@ number_of_facets() const
 }
 
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_finite_edges() const
 {
@@ -1203,7 +1206,7 @@ number_of_finite_edges() const
 }
 
 template < class GT, class Tds >
-int
+typename Triangulation_3<GT,Tds>::size_type
 Triangulation_3<GT,Tds>::
 number_of_edges() const
 {

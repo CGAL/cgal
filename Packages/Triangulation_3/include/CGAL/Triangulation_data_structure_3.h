@@ -84,6 +84,10 @@ private:
   typedef Compact_container<Vertex>                Vertex_container;
 
 public:
+
+  typedef typename Cell_container::size_type       size_type;
+  typedef typename Cell_container::difference_type difference_type;
+
   typedef typename Cell_container::iterator        Cell_iterator;
   typedef typename Vertex_container::iterator      Vertex_iterator;
 
@@ -195,23 +199,23 @@ public:
     return *this;
   }
 
-  int number_of_vertices() const { return vertex_container().size(); }
+  size_type number_of_vertices() const { return vertex_container().size(); }
 
   int dimension() const {return _dimension;}
 
-  int number_of_cells() const 
+  size_type number_of_cells() const 
     { 
       if ( dimension() < 3 ) return 0;
       return cell_container().size();
     }
-  
-  int number_of_facets() const
+
+  size_type number_of_facets() const
     {
       if ( dimension() < 2 ) return 0;
       return std::distance(facets_begin(), facets_end());
     }
 
-  int number_of_edges() const
+  size_type number_of_edges() const
     {
       if ( dimension() < 1 ) return 0;
       return std::distance(edges_begin(), edges_end());
@@ -270,7 +274,8 @@ public:
 		          const Cell_handle& n0, const Cell_handle& n1,
 			  const Cell_handle& n2, const Cell_handle& n3)
     {
-      Cell_handle r =cell_container().construct_insert(v0, v1, v2, v3, n0, n1, n2, n3);
+      Cell_handle r =cell_container().construct_insert(v0, v1, v2, v3,
+	                                               n0, n1, n2, n3);
       r->init();
       return r;
     }
@@ -281,10 +286,12 @@ public:
       return create_cell();
     }
 
-  Cell_handle create_face(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2)
+  Cell_handle create_face(const Vertex_handle& v0, const Vertex_handle& v1,
+	                  const Vertex_handle& v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      Cell_handle r =cell_container().construct_insert(v0, v1, v2, Vertex_handle());
+      Cell_handle r = cell_container().construct_insert(v0, v1, v2,
+	                                                Vertex_handle());
       r->init();
       return r;
       //return cell_container().insert(Cell(v0, v1, v2, Vertex_handle()));
@@ -745,7 +752,7 @@ public:
       return std::copy(tmp_vertices.begin(), tmp_vertices.end(), vertices);
   }
 
-  int degree(const Vertex_handle& v) const;
+  size_type degree(const Vertex_handle& v) const;
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -799,13 +806,13 @@ private:
   Vertex_container _vertex_container;
 
   // used by is-valid :
-  bool count_vertices(int & i, bool verbose = false, int level = 0) const;
+  bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
-  bool count_facets(int & i, bool verbose = false, int level = 0) const;
+  bool count_facets(size_type &i, bool verbose = false, int level = 0) const;
   // counts but does not check
-  bool count_edges(int & i, bool verbose = false, int level = 0) const;
+  bool count_edges(size_type &i, bool verbose = false, int level = 0) const;
   // counts but does not check
-  bool count_cells(int & i, bool verbose = false, int level = 0) const;
+  bool count_cells(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
 };
 
@@ -2070,7 +2077,8 @@ remove_decrease_dimension(const Vertex_handle& v)
     CGAL_triangulation_precondition( dimension() >= -1 );
     CGAL_triangulation_precondition( dimension() != 1 ||
 	                             number_of_vertices() == 3);
-    CGAL_triangulation_precondition( number_of_vertices() > dimension() + 1 );
+    CGAL_triangulation_precondition( number_of_vertices() >
+	                             (size_type) dimension() + 1 );
     CGAL_triangulation_precondition( degree(v) == number_of_vertices()-1 );
 
     if (dimension() <= 0) {
@@ -2120,10 +2128,11 @@ Triangulation_data_structure_3<Vb,Cb>::
 remove_from_maximal_dimension_simplex(const Vertex_handle& v)
 {
     CGAL_triangulation_precondition(dimension() >= 1);
-    CGAL_triangulation_precondition(degree(v) == dimension() + 1);
-    CGAL_triangulation_precondition(number_of_vertices() > dimension() + 1);
+    CGAL_triangulation_precondition(degree(v) == (size_type) dimension() + 1);
+    CGAL_triangulation_precondition(number_of_vertices() >
+	                            (size_type) dimension() + 1);
 
-    if (number_of_vertices() == dimension() + 2) {
+    if (number_of_vertices() == (size_type) dimension() + 2) {
 	remove_decrease_dimension(v);
 	return NULL;
     }
@@ -2271,7 +2280,7 @@ remove_degree_4(const Vertex_handle& v)
 }
 
 template <class Vb, class Cb >
-int
+typename Triangulation_data_structure_3<Vb,Cb>::size_type
 Triangulation_data_structure_3<Vb,Cb>::
 degree(const Vertex_handle& v) const
 {
@@ -2287,7 +2296,7 @@ is_valid(bool verbose, int level ) const
   switch ( dimension() ) {
   case 3:
     {
-      int vertex_count;
+      size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
 	  return false;
       if ( number_of_vertices() != vertex_count ) {
@@ -2297,13 +2306,13 @@ is_valid(bool verbose, int level ) const
 	return false;
       }
 
-      int cell_count;
+      size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
 	  return false;
-      int edge_count;
+      size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
 	  return false;
-      int facet_count;
+      size_type facet_count;
       if ( ! count_facets(facet_count,verbose,level) )
 	  return false;
 
@@ -2319,7 +2328,7 @@ is_valid(bool verbose, int level ) const
     }
   case 2:
     {
-      int vertex_count;
+      size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
 	  return false;
       if ( number_of_vertices() != vertex_count ) {
@@ -2329,7 +2338,7 @@ is_valid(bool verbose, int level ) const
 	return false;
       }
 
-      int edge_count;
+      size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
 	  return false;
       // Euler for edges
@@ -2341,7 +2350,7 @@ is_valid(bool verbose, int level ) const
 	return false;
       }
 
-      int facet_count;
+      size_type facet_count;
       if ( ! count_facets(facet_count,verbose,level) )
 	  return false;
       // Euler for facets
@@ -2356,7 +2365,7 @@ is_valid(bool verbose, int level ) const
     }
   case 1:
     {
-      int vertex_count;
+      size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
 	  return false;
       if ( number_of_vertices() != vertex_count ) {
@@ -2365,7 +2374,7 @@ is_valid(bool verbose, int level ) const
 	CGAL_triangulation_assertion(false);
 	return false;
       }
-      int edge_count;
+      size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
 	  return false;
       // Euler for edges
@@ -2396,7 +2405,7 @@ is_valid(bool verbose, int level ) const
 	return false;
       }
       // vertex count
-      int vertex_count;
+      size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
 	return false;
       if ( number_of_vertices() != vertex_count ) {
@@ -2498,7 +2507,7 @@ clear()
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::
-count_vertices(int & i, bool verbose, int level) const
+count_vertices(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {
   i = 0;
@@ -2518,7 +2527,7 @@ count_vertices(int & i, bool verbose, int level) const
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::
-count_facets(int & i, bool verbose, int level) const
+count_facets(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
   i = 0;
@@ -2538,7 +2547,7 @@ count_facets(int & i, bool verbose, int level) const
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::
-count_edges(int & i, bool verbose, int level) const
+count_edges(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
   i = 0;
@@ -2558,7 +2567,7 @@ count_edges(int & i, bool verbose, int level) const
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::
-count_cells(int & i, bool verbose, int level) const
+count_cells(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {
   i = 0;

@@ -76,6 +76,10 @@ class must provide the following types and operations.
 \ccGlue
 \ccNestedType{Cell}{Cell type}
 
+\ccNestedType{size_type}{Size type (unsigned integral type)}
+\ccGlue
+\ccNestedType{difference_type}{Difference type (signed integral type)}
+
 Vertices and cells are usually manipulated via \ccc{handles}, which support
 the two dereference operators \ccc{operator*} and \ccc{operator->}.
 
@@ -159,25 +163,25 @@ deleted.}
 \ccOperations
 
 \ccAccessFunctions
-\ccThree{Vert}{tds.insert_in_facet()xxxxxxxxxxx}{}
+\ccThree{size_type}{tds.insert_in_facet()xxxxxxxxxxx}{}
 
 \ccMethod{int dimension() const;}
 {The dimension of the triangulated topological sphere.}
 \ccGlue
-\ccMethod{int number_of_vertices() const;}
+\ccMethod{size_type number_of_vertices() const;}
 {The number of vertices. Note that the triangulation data structure has one
 more vertex than an associated geometric triangulation, if there is
 one, since the infinite vertex is a standard vertex and is thus also
 counted.} 
 \ccGlue
-\ccMethod{int number_of_cells() const;}
+\ccMethod{size_type number_of_cells() const;}
 {The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
 
 \ccHeading{Non constant-time access functions}
-\ccMethod{int number_of_facets() const;}
+\ccMethod{size_type number_of_facets() const;}
 {The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
-\ccMethod{int number_of_edges() const;}
+\ccMethod{size_type number_of_edges() const;}
 {The number of edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
 \begin{ccAdvanced}
@@ -576,7 +580,7 @@ output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-\ccMethod{int degree(Vertex_handle v) const;}
+\ccMethod{size_type degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 

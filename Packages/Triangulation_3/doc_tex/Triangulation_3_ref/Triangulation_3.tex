@@ -81,6 +81,12 @@ the user can pass them directly as arguments to the functions.
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}
 {handle to a cell}
 
+\ccTypedef{typedef TriangulationDataStructure_3::size_type size_type;}
+{Size type (an unsigned integral type)}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::difference_type difference_type;}
+{Difference type (a signed integral type)}
+
 \ccThree{typedef TriangulationTraits_3::Tetrahedron Tetraxxxx;}
 {Tetrahedronxxxxxxx}{}
 \ccThreeToTwo
@@ -196,10 +202,10 @@ algorithms.
 \ccMethod{int dimension() const;}
 {Returns the dimension of the affine hull.}
 \ccGlue
-\ccMethod{int number_of_vertices() const;}
+\ccMethod{size_type number_of_vertices() const;}
 {Returns the number of finite vertices.}
 \ccGlue
-\ccMethod{int number_of_cells() const;}
+\ccMethod{size_type number_of_cells() const;}
 {Returns the number of cells or 0 if \ccVar.\ccc{dimension()}$<3$.}
 
 \ccMethod{Vertex_handle infinite_vertex();}
@@ -216,20 +222,20 @@ infinite cell is a
 cell incident to the infinite vertex. Similarly we call
 an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 
-\ccThree{Tria}{t.number_of_finite_edges()toto}{}
-\ccMethod{int number_of_facets() const;}
+\ccThree{size_type}{t.number_of_finite_edges()toto}{}
+\ccMethod{size_type number_of_facets() const;}
 {The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
-\ccMethod{int number_of_edges() const;}
+\ccMethod{size_type number_of_edges() const;}
 {The number of edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
-\ccMethod{int number_of_finite_cells() const;}
+\ccMethod{size_type number_of_finite_cells() const;}
 {The number of finite cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
 \ccGlue
-\ccMethod{int number_of_finite_facets() const;}
+\ccMethod{size_type number_of_finite_facets() const;}
 {The number of finite facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
-\ccMethod{int number_of_finite_edges() const;}
+\ccMethod{size_type number_of_finite_edges() const;}
 {The number of finite edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
 \ccHeading{Geometric access functions}
@@ -872,7 +878,7 @@ output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
 
-\ccMethod{int degree(Vertex_handle v) const;}
+\ccMethod{size_type degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.
 The infinite vertex is counted.
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}

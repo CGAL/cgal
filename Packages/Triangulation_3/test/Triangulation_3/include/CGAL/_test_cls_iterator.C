@@ -24,10 +24,12 @@ template < class Triangulation >
 int
 _test_vertex_iterator( const Triangulation &T )
 {
-    typedef typename Triangulation::Vertex_handle Vertex_handle;
+    typedef typename Triangulation::size_type       size_type;
+    typedef typename Triangulation::Vertex_handle   Vertex_handle;
     typedef typename Triangulation::Vertex_iterator Vertex_iterator;
-    typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
-    int n = 0;
+    typedef typename Triangulation::Finite_vertices_iterator
+                                                    Finite_vertices_iterator;
+    size_type n = 0;
 	
     Vertex_iterator vit;
     for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)

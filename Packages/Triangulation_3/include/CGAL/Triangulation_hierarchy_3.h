@@ -42,6 +42,7 @@ public:
   typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Tr_Base::Point              Point;
+  typedef typename Tr_Base::size_type          size_type;
   typedef typename Tr_Base::Vertex_handle      Vertex_handle;
   typedef typename Tr_Base::Cell_handle        Cell_handle;
   typedef typename Tr_Base::Vertex_iterator    Vertex_iterator;
@@ -376,7 +377,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   int level = maxlevel;
 
   // find the highest level with enough vertices
-  while (hierarchy[--level]->number_of_vertices() < minsize) {
+  while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
     if ( ! level)
 	break;  // do not go below 0
   }
