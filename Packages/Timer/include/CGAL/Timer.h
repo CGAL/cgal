@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, August 11
+// release_date  : 
 //
 // file          : include/CGAL/Timer.h
-// package       : Timer (1.8)
+// package       : Timer (1.9)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.8
-// revision_date : 11 August 2000 
+// revision      : 1.9
+// revision_date : 4 April 2001 
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>  
 //                 Matthias Baesken <baesken@informatik.uni-halle.de>
 // coordinator   : INRIA, Sophia Antipolis
