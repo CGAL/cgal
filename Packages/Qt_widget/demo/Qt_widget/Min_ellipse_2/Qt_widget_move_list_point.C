@@ -8,7 +8,7 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Max_k-gon/Qt_widget_move_point.C
+// file          : demo/Qt_widget/Min_ellipse_2/Qt_widget_move_point.C
 // package       : QT_window
 // author(s)     : Radu Ursu
 // release       : 

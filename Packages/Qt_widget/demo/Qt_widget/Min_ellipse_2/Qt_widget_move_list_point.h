@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Max_k-gon/Qt_widget_move_list_point.h
+// file          : demo/Qt_widget/Min_ellipse_2/Qt_widget_move_list_point.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -133,7 +133,7 @@ private:
       *widget << Point(x, y);
       l_of_p->remove(old_point);
       l_of_p->push_back(Point(x, y));
-      widget->redraw();	//redraw the scenes
+      widget->redraw();	//redraw the layers
       old_point = Point(x, y);
     }
   };
