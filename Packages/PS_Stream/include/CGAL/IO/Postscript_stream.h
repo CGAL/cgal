@@ -24,7 +24,7 @@
 #define CGAL_IO_POSTSCRIPT_STREAM_H
 
 #include <CGAL/IO/PS_Stream.h>
-#include <CGAL/IO/Triangulation_PS_Stream.h>
+#include <CGAL/IO/Triangulation_ps_stream.h>
 #include <CGAL/IO/Polygon_PS_Stream.h>
 
 #endif

@@ -23,13 +23,9 @@
 #ifndef CGAL_PS_STREAM_3_H
 #define CGAL_PS_STREAM_3_H
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cmath>
 #include <list>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Direction_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
@@ -38,10 +34,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Segment_3.h>
 
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 
