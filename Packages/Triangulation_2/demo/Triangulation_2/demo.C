@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <strstream>
+#include <list>
 
 //to get shorter names
 #define Cartesian Ca
@@ -43,6 +44,7 @@ typedef CGAL::Delaunay_triangulation_2<Gt,Tds>  Delaunay_;
 
 typedef Triangulation_::Face  Face_;
 typedef Triangulation_::Vertex Vertex_;
+typedef Triangulation_::Edge   Edge_;
 typedef Vertex_::Vertex_handle Vertex_handle_;
 typedef Face_::Face_handle Face_handle_;
 
@@ -271,6 +273,17 @@ void container_input(Triangulation_ &T,
 
     W.clear();
     W << T;
+}
+
+
+void draw_face(Face_handle_ fh, Triangulation_ &T,Window_stream &W) 
+{
+  if(! T.is_infinite( fh))  W << T.triangle( fh );
+}
+
+void draw_edge(Edge_ e, Triangulation_ &T,Window_stream &W) 
+{
+  if(! T.is_infinite( e ))  W << T.segment( e );
 }
 
 void draw_incident_edges(Triangulation_ &T,
@@ -514,26 +527,67 @@ void fileIO(Delaunay_ &T,
 }
 
 
+void show_conflicts( Delaunay_ &T, Window_stream &W )
+{
+  Point_ p;
+  while(1) {
+    std::cerr << " Conflicts are shown before insertion " << std::endl;
+    std::cerr << "Enter a point with the left button" << std::endl;
+    std::cerr << "or quit with Middle or Right button" << std::endl;
+    double x, y;
+    int b = W.read_mouse(x,y);
+    if(b == MOUSE_BUTTON(2) || b == MOUSE_BUTTON(3) ) return;
+    p = Point_(coord_type(x),coord_type(y));
+    W.set_mode(leda_src_mode);
+    W << CGAL::RED << p;
+    std::list<Face_handle_> conflict_faces;
+    std::list<Edge_>  hole_bd;
+    T.find_conflicts(p, 
+		     back_inserter(conflict_faces),
+		     back_inserter(hole_bd));
+    std::list<Face_handle_>::iterator fit = conflict_faces.begin();
+    std::list<Edge_>::iterator eit = hole_bd.begin();
+    for( ; fit != conflict_faces.end(); fit++)  {
+      draw_face( *fit, T, W);
+      any_button(W);
+    }
+    W << CGAL::BLACK;
+    for( ; eit != hole_bd.end(); eit++)  {
+      draw_edge( *eit, T, W);
+      any_button(W);
+    }
+    
+    any_button(W);
+    T.insert(p);
+    W.set_mode(leda_xor_mode);
+    W << CGAL::GREEN << T;
+    any_button(W);
+    W.clear();
+    W.set_mode(leda_src_mode);
+    W << CGAL::BLUE << T;
+  }
+}
+
 void show_dual( Delaunay_ &T, Window_stream &W )
 {
    std::cerr << "The dual of the triangulation is displayed" << std::endl;
    W << CGAL::RED;
-   // Delaunay_::Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end();
-//     for (fit=fbegin; fit != fend; ++fit)
-//         W << T.dual(fit);
+   Delaunay_::Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end();
+   for (fit=fbegin; fit != fend; ++fit)
+     W << T.dual(fit);
 
-//     Delaunay_::Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end();
-//     for (eit=ebegin; eit != eend; ++eit)
-//     {
-//         CGAL::Object o = T.dual(eit);
-//         Gt::Ray_2 r;
-//         Gt::Segment_2 s;
-// 	Gt::Line_2 l;
-//         if (CGAL::assign(s,o)) W << s;
-//         if (CGAL::assign(r,o)) W << r;
-// 	if (CGAL::assign(l,o)) W << l;
-//     }
-//     any_button(W);
+   Delaunay_::Edge_iterator eit, ebegin=T.edges_begin(), eend=T.edges_end();
+   for (eit=ebegin; eit != eend; ++eit)
+     {
+       CGAL::Object o = T.dual(eit);
+       Gt::Ray_2 r;
+       Gt::Segment_2 s;
+       Gt::Line_2 l;
+       if (CGAL::assign(s,o)) W << s;
+       if (CGAL::assign(r,o)) W << r;
+       if (CGAL::assign(l,o)) W << l;
+     }
+    any_button(W);
    T.draw_dual(W);
    any_button(W);
 }
@@ -602,6 +656,7 @@ int main(int argc, char* argv[])
     W << DCopy;
     show_nearest_vertex(D, W);
     fileIO(D, W, opt);
+    show_conflicts(D,W);
     show_dual(D, W);
 
     return 0;

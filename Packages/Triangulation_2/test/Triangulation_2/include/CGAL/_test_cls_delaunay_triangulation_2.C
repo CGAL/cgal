@@ -21,16 +21,21 @@
 // ============================================================================
 
 #include <iostream>
+#include <iterator>
 //#include <vector>
 
 #include <CGAL/_test_cls_triangulation_short_2.C>
 
 template <class Del>
 void
-_test_cls_delaunay_triangulation_2( const Del & del)
+_test_cls_delaunay_triangulation_2( const Del & )
 {
   //typedef Del  Delaunay;
   typedef typename Del::Point                Point;
+  typedef typename Del::Locate_type          Locate_type;
+  typedef typename Del::Vertex_handle        Vertex_handle;
+  typedef typename Del::Face_handle          Face_handle;
+  typedef typename Del::Edge                 Edge;
 
   /***********************/
   /***** SUBCLASSES ******/
@@ -49,7 +54,8 @@ _test_cls_delaunay_triangulation_2( const Del & del)
   Del T2;
   for (m=0; m<20; m++)
       for (p=0; p<20; p++)
-	  T2.insert( Point(3*m+p, m-2*p) );
+	//	  T2.insert( Point(3*m+p, m-2*p) );
+	T2.insert(Point(m,p));
   assert( T2.is_valid() );
   
   Del T3;
@@ -70,13 +76,43 @@ _test_cls_delaunay_triangulation_2( const Del & del)
  
 
   // test nearest_vertex
-
+  Vertex_handle vnn;
+  Face_handle cible;
+  int i; 
+  Locate_type lt;
+  cible = T2.locate(Point(0,0,1),lt,i);
+  assert( lt == Del::VERTEX);
+  vnn = T2.nearest_vertex(Point(1,1,3));
+  assert(vnn == cible->vertex(i));
+  vnn = T2.nearest_vertex(Point(0,1,3));
+  assert(vnn == cible->vertex(i));
+  vnn = T2.nearest_vertex(Point(0,0,1));
+  assert(vnn == cible->vertex(i));
+  vnn = T2.nearest_vertex(Point(-1,-1,2));
+  assert(vnn == cible->vertex(i));
 
   // test find_conflicts
-  //std::list<Face_handle> conflicts;
-  //assert(T2.find_conflicts(Point(1,1,2), conflicts);
-
-
+  std:: cout << "    find conflicts" << std::endl;
+  std::list<Face_handle> conflicts;
+  std::list<Edge>  hole_bd;
+  assert(T2.find_conflicts(Point(1,1,2), back_inserter(conflicts)));
+  conflicts.clear();	 
+  assert(T2.find_conflicts(Point(1,1,2), 
+			   back_inserter(conflicts),
+			   back_inserter(hole_bd)));
+  assert(hole_bd.size() == conflicts.size() + 2);
+  conflicts.clear();
+  hole_bd.clear();
+  assert(T2.find_conflicts(Point(0,1,2), back_inserter(conflicts)));
+  assert(T2.boundary_of_conflict_zone(Point(0,1,2), 
+				       back_inserter(hole_bd)));
+  assert(hole_bd.size() == conflicts.size() + 2);
+  conflicts.clear();
+  hole_bd.clear();
+  assert(!T2.find_conflicts(Point(0,0,1), back_inserter(conflicts)));
+  conflicts.clear();
+  assert(T2.find_conflicts(Point(-1,-1,1), back_inserter(conflicts)));
+  conflicts.clear();
 
   /********************/
   /***** Duality ******/

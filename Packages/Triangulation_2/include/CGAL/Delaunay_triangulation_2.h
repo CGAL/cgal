@@ -27,6 +27,7 @@
 #define CGAL_DELAUNAY_TRIANGULATION_2_H
 
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Dummy_output_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -75,7 +76,22 @@ public:
   bool does_conflict(const Point  &p, Face_handle fh) const;
   bool find_conflicts(const Point  &p, 
 		      std::list<Face_handle>& conflicts,
-		      Face_handle start = Face_handle()) const;
+		      Face_handle start ) const;
+  //  //template member functions, declared and defined at the end 
+  // template <class Out_it1, class Out_it2> 
+  //   bool find_conflicts (const Point  &p, 
+  // 		       Out_it1 fit, 
+  // 		       Out_it2 eit,
+  // 		       Face_handle start) const;
+  //   template <class Out_it1> 
+  //   bool find_conflicts (const Point  &p, 
+  // 		       Out_it1 fit, 
+  // 		       Face_handle start ) const;
+  //   template <class Out_it2> 
+  //   bool boundary_of_conflict_zone (const Point  &p, 
+  // 				   Out_it2 eit, 
+  // 				   Face_handle start ) const;
+   
  
   // DUAL
   Point dual (Face_handle f) const;
@@ -106,10 +122,14 @@ private:
 			      int i,
 			      Vertex_handle& nn) const;
 
-  void propagate_conflicts(const Point &p, 
-			   Face_handle fh, 
-			   int i,
-			   std::list<Face_handle>& conflicts) const;
+  //   template <class Out_it1, class Out_it2> 
+  //   void propagate_conflicts (const Point  &p,
+  // 			    Face_handle fh, 
+  // 			   int i,
+  // 			    Out_it1 fit, 
+  // 			    Out_it2 eit) const;
+		       
+  
 
 public:
   template < class Stream>
@@ -140,6 +160,75 @@ public:
       return number_of_vertices() - n;
     }
 
+  template <class Out_it1, class Out_it2> 
+  bool 
+  find_conflicts (const Point  &p, 
+		  Out_it1 fit, 
+		  Out_it2 eit,
+		  Face_handle start = Face_handle()) const
+    {
+      CGAL_triangulation_precondition( dimension() == 2);
+      int li;
+      Locate_type lt;
+      Face_handle fh = locate(p,lt,li, start);
+      switch(lt) {
+      case OUTSIDE_AFFINE_HULL:
+      case VERTEX:
+	return false;
+      case FACE:
+      case EDGE:
+      case OUTSIDE_CONVEX_HULL:
+	*fit++ = fh; //put fh in Out_it1
+	propagate_conflicts(p,fh,0,fit,eit);
+	propagate_conflicts(p,fh,1,fit,eit);
+	propagate_conflicts(p,fh,2,fit,eit);
+	return true;    
+      }
+      CGAL_triangulation_assertion(false);
+      return false;
+    }
+
+  template <class Out_it1> 
+  bool 
+  find_conflicts (const Point  &p, 
+		  Out_it1 fit, 
+		  Face_handle start= Face_handle()) const
+    {
+      Dummy_output_iterator eit;
+      return find_conflicts(p, fit, eit, start);
+    }
+
+  template <class Out_it2> 
+  bool 
+  boundary_of_conflict_zone (const Point  &p, 
+			      Out_it2 eit, 
+			      Face_handle start= Face_handle()) const
+    {
+      Dummy_output_iterator fit;
+      return find_conflicts(p, fit, eit, start);
+    }
+
+private:
+ template <class Out_it1, class Out_it2> 
+  void propagate_conflicts (const Point  &p,
+			    Face_handle fh, 
+			    int i,
+			    Out_it1 fit, 
+			    Out_it2 eit) const
+    {
+      Face_handle fn = fh->neighbor(i);
+      if (! does_conflict(p,fn)) {
+	*eit++ = Edge(fn, fn->index(fh));
+	return;
+      }
+      *fit++ = fn;
+      int j = fn->index(fh);
+      propagate_conflicts(p,fn,ccw(j),fit,eit);
+      propagate_conflicts(p,fn,cw(j),fit,eit);
+      return;
+    }
+
+
 };
 
 template < class Gt, class Tds >
@@ -150,49 +239,53 @@ does_conflict(const Point  &p, Face_handle fh) const
   return (side_of_oriented_circle(fh,p) == ON_POSITIVE_SIDE);
 }
 
-template < class Gt, class Tds >
-bool
-Delaunay_triangulation_2<Gt,Tds>::
-find_conflicts(const Point  &p, 
-	       std::list<Face_handle>& conflicts,
-	       Face_handle start)  const
-{
-  int li;
-  Locate_type lt;
-  Face_handle fh = locate(p,lt,li, start);
-  switch(lt) {
-  case OUTSIDE_AFFINE_HULL:
-  case VERTEX:
-    return false;
-  case FACE:
-  case EDGE:
-  case OUTSIDE_CONVEX_HULL:
-    conflicts.push_back(fh);
-    propagate_conflicts(p,fh,0,conflicts);
-    propagate_conflicts(p,fh,1,conflicts);
-    propagate_conflicts(p,fh,2,conflicts);
-    return true;    
-  }
-  CGAL_triangulation_assertion(false);
-  return false;
-}
+// template < class Gt, class Tds >
+// bool
+// Delaunay_triangulation_2<Gt,Tds>::
+// find_conflicts(const Point  &p, 
+// 	       std::list<Face_handle>& conflicts,
+// 	       Face_handle start)  const
+// {
+// //   CGAL_triangulation_precondition( dimension() == 2);
+// //   int li;
+// //   Locate_type lt;
+// //   Face_handle fh = locate(p,lt,li, start);
+// //   switch(lt) {
+// //   case OUTSIDE_AFFINE_HULL:
+// //   case VERTEX:
+// //     return false;
+// //   case FACE:
+// //   case EDGE:
+// //   case OUTSIDE_CONVEX_HULL:
+// //     conflicts.push_back(fh);
+// //     propagate_conflicts(p,fh,0,conflicts);
+// //     propagate_conflicts(p,fh,1,conflicts);
+// //     propagate_conflicts(p,fh,2,conflicts);
+// //     return true;    
+// //   }
+// //   CGAL_triangulation_assertion(false);
+// //   return false;
+//   std::list<Face_handle>::iterator fit=conflicts.begin();
+//   Dummy_output_iterator eit;
+//   find_conflicts(p, fit, eit, start);
+// }
 
-template < class Gt, class Tds >
-void 
-Delaunay_triangulation_2<Gt,Tds>::
-propagate_conflicts(const Point &p, 
-		    Face_handle fh, 
-		    int i,
-		    std::list<Face_handle>& conflicts) const
-{
-  Face_handle fn = fh->neighbor(i);
-  if (! does_conflict(p,fn)) return;
-  conflicts.push_back(fn);
-  int j = fn->index(fh);
-  propagate_conflicts(p,fn,cw(j),conflicts);
-  propagate_conflicts(p,fn,ccw(j),conflicts);
-  return;
-}
+// template < class Gt, class Tds >
+// void 
+// Delaunay_triangulation_2<Gt,Tds>::
+// propagate_conflicts(const Point &p, 
+// 		    Face_handle fh, 
+// 		    int i,
+// 		    std::list<Face_handle>& conflicts) const
+// {
+//   Face_handle fn = fh->neighbor(i);
+//   if (! does_conflict(p,fn)) return;
+//   conflicts.push_back(fn);
+//   int j = fn->index(fh);
+//   propagate_conflicts(p,fn,cw(j),conflicts);
+//   propagate_conflicts(p,fn,ccw(j),conflicts);
+//   return;
+// }
 
 template < class Gt, class Tds >
 bool
