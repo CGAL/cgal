@@ -911,7 +911,8 @@ public:
   }
   
   /*! middle_point - a middle point of a polyline */
-  void middle_point( Coord_point p ,Qt_widget_demo_tab<Polyline_tab_traits> * w)
+  void middle_point( Coord_point p ,
+	  Qt_widget_demo_tab<Polyline_tab_traits> * w)
   {
     if (last_of_poly == p) return;
     rubber_old = p;
