@@ -153,6 +153,13 @@ MakeWrapperOnly=0
 # result pages on the web and copies them there
 MakeTestSuiteResult=0
 
+# Number of lines in the result table before an intermediate table header
+# is written for better overview.
+TestSuiteTableHeightMax=12
+
+# Counter counting the lines written the the testsuite result tables
+TestSuiteTableHeight=0
+
 # The corresponding address in the file space for copying the 
 # test-suite result pages. Needs to be in the file system, because
 # not only are pages copied, but the script manages also a clever 
@@ -1221,6 +1228,7 @@ make_manual() {
     # report testsuite results
     if [ $MakeTestSuiteResult -eq 1 ]; then 
         mv $LogFile testsuite/${LogFile}.txt
+        testsuite_middle_header
         echo "<tr>" >> testsuite/index.html
         echo "  <td align=\"left\" class=\"name\">${WrapperRootName}</td>" >> testsuite/index.html
         if [ $ReturnStatus -eq 2 ]; then
@@ -1260,6 +1268,7 @@ make_manual() {
 #---------------------------------------------------------------------#
 
 testsuite_begin () {
+    TestSuiteTableHeight=0
     if [ ! -d testsuite ]; then mkdir testsuite ; fi
     cat > testsuite/testresult.css <<EOF
 BODY {background-image:url(http://www.cgal.org/images/cgal-bg2.gif);
@@ -1366,13 +1375,13 @@ problems to Lutz Kettner and Peter Hachenberger.</b></p>
   <td colspan="3" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
-  <td><b>Summary</b></td>
-  <td><b>LaTeX</b></td>
-  <td><b>BibTeX</b></td>
-  <td><b>make_index</b></td>
-  <td><b>PdfLaTeX</b></td>
-  <td><b>latex_to_html</b></td>
-  <td><b>PostScript</b></td>
+  <td><b>Sum-<br>mary</b></td>
+  <td><b>La-<br>TeX</b></td>
+  <td><b>Bib-<br>TeX</b></td>
+  <td><b>make_-<br>index</b></td>
+  <td><b>Pdf-<br>LaTeX</b></td>
+  <td><b>latex_-<br>to_html</b></td>
+  <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
 </tr>
@@ -1385,6 +1394,7 @@ EOF
 #---------------------------------------------------------------------#
 
 testsuite_middle () {
+    TestSuiteTableHeight=0
     cat >> testsuite/index.html <<EOF
 </table>
 <p></p>
@@ -1399,17 +1409,48 @@ testsuite_middle () {
   <td colspan="3" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
-  <td><b>Summary</b></td>
-  <td><b>LaTeX</b></td>
-  <td><b>BibTeX</b></td>
-  <td><b>make_index</b></td>
-  <td><b>PdfLaTeX</b></td>
-  <td><b>latex_to_html</b></td>
-  <td><b>PostScript</b></td>
+  <td><b>Sum-<br>mary</b></td>
+  <td><b>La-<br>TeX</b></td>
+  <td><b>Bib-<br>TeX</b></td>
+  <td><b>make_-<br>index</b></td>
+  <td><b>Pdf-<br>LaTeX</b></td>
+  <td><b>latex_-<br>to_html</b></td>
+  <td><b>PS</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
 </tr>
 EOF
+}
+
+#---------------------------------------------------------------------#
+# testsuite_middle_header
+#     - Writes an intermediate table header if enough packages/modules
+#       have been tested
+#       
+#---------------------------------------------------------------------#
+
+testsuite_middle_header () {
+  if [ $TestSuiteTableHeight -ne $TestSuiteTableHeightMax ] ; then
+      declare -i TestSuiteTableHeightIncr="$TestSuiteTableHeight+1"
+      TestSuiteTableHeight=$TestSuiteTableHeightIncr
+  else
+      TestSuiteTableHeight=0
+      # write intermediate table header for better overview
+      cat >> testsuite/index.html <<EOF
+<tr align="center">
+  <td>&nbsp;</td>
+  <td><b>Sum-<br>mary</b></td>
+  <td><b>La-<br>TeX</b></td>
+  <td><b>Bib-<br>TeX</b></td>
+  <td><b>make_-<br>index</b></td>
+  <td><b>Pdf-<br>LaTeX</b></td>
+  <td><b>latex_-<br>to_html</b></td>
+  <td><b>PS</b></td>
+  <td><b>PDF</b></td>
+  <td><b>HTML</b></td>
+</tr>
+EOF
+  fi
 }
 
 #---------------------------------------------------------------------#
