@@ -84,7 +84,8 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
+	bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) 
+        const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 
@@ -96,7 +97,8 @@ namespace CGAL {
 			distance += 
 			(rectangle->max_coord(i)-c[i])*(rectangle->max_coord(i)-c[i]);
 		else
-			distance += (c[i]-rectangle->min_coord(i))*(c[i]-rectangle->min_coord(i));
+			distance += 
+			(c[i]-rectangle->min_coord(i))*(c[i]-rectangle->min_coord(i));
 		}
 		return (distance < squared_radius);
 	}
