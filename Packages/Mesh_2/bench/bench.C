@@ -39,7 +39,7 @@ Mesh* mesh;
 void usage(char** argv)
 {
   std::cerr << "Usage: " << std::endl
-	    << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
+	    << argv[0] << " [-Q] [-a area] input.poly" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -65,7 +65,6 @@ int main(int argc, char** argv)
 		std::istringstream(argv[arg_count+1]) >> area_bound )
 	      {
 		traits.set_area_bound(area_bound);
-		std::cerr << traits.area_bound() << std::endl;
 		++arg_count;
 	      }
 	    else
@@ -101,7 +100,7 @@ int main(int argc, char** argv)
       delaunay.read_poly(input);
       t.stop();
       if(terminal_output)
-	std::cerr << "Delaunay time: " << t.time() << std::endl;
+	std::cout << "Delaunay time: " << t.time() << std::endl;
       
       mesh = new Mesh(delaunay, traits, true);
       mesh->set_geom_traits(traits);
@@ -110,7 +109,7 @@ int main(int argc, char** argv)
       mesh->refine();
       t.stop();
       if(terminal_output)
-	std::cerr << "Meshing time: " << t.time() << std::endl;
+	std::cout << "Meshing time: " << t.time() << std::endl;
     }
   else
     {
@@ -128,7 +127,7 @@ int main(int argc, char** argv)
       mesh->write_poly(output);
     }
   if(terminal_output)
-    std::cerr 
+    std::cout 
       << "Mesh points: " << mesh->number_of_vertices() << std::endl
       << "Mesh triangles: " << mesh->number_of_faces () << std::endl;
 
