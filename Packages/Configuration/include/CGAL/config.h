@@ -37,7 +37,6 @@
 
 #ifdef _MSC_VER
 #   define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
-#   define __STL_DEBUG 1
 #   include <stl_config.h>
 #   include <stl_iterator_base.h>
 #else  // not _MSC_VER
@@ -54,13 +53,13 @@
 //             do some post processing for the flags
 //----------------------------------------------------------------------//
 
-#ifdef CGAL_CFG_NO_TYPENAME
-#  define typename
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#   define CGAL_TYPENAME_MSVC_NULL
+#else
+#   define CGAL_TYPENAME_MSVC_NULL typename
 #endif
 
-#ifdef CGAL_CFG_NO_EXPLICIT
-#define explicit
-#endif
 
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
