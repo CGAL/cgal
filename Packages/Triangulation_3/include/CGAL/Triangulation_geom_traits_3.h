@@ -168,10 +168,10 @@ public:
       CGAL_Orientation or;
       Point O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
 
-      Point P = (or = orientation(p,q,r,O) != CGAL_ZERO) ? O:
-	        (or = orientation(p,q,r,A) != CGAL_ZERO) ? A:
-		(or = orientation(p,q,r,B) != CGAL_ZERO) ? B:
-		(or = orientation(p,q,r,C) != CGAL_ZERO) ? C: C;
+      Point P = ((or = orientation(p,q,r,O)) != CGAL_ZERO) ? O:
+                ((or = orientation(p,q,r,A)) != CGAL_ZERO) ? A:
+                ((or = orientation(p,q,r,B)) != CGAL_ZERO) ? B:
+                ((or = orientation(p,q,r,C)) != CGAL_ZERO) ? C: C;
 
       return CGAL_Oriented_side( or *
 	      CGAL_side_of_oriented_sphere(p, q, r, P, test));
