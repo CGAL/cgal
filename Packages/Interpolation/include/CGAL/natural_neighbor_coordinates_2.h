@@ -101,6 +101,7 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   typedef typename Dt::Edge              Edge;
   typedef typename Dt::Locate_type       Locate_type;
 
+
   Locate_type lt;
   int li;
   Face_handle fh = dt.locate(p, lt, li, start);
@@ -111,8 +112,10 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
      || lt == Dt::OUTSIDE_CONVEX_HULL
      || (lt == Dt::EDGE &&
 	 (dt.is_infinite(fh) ||
-	  dt.is_infinite(fh->neighbor(li)))))
+	  dt.is_infinite(fh->neighbor(li))))){
     return make_triple(out, Coord_type(1), false);
+  }
+  
 
   if (lt == Dt::VERTEX)
   {
@@ -146,6 +149,7 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
 
   typedef typename Dt::Vertex_handle     Vertex_handle;
   typedef typename Dt::Face_circulator   Face_circulator;
+
 
   std::vector<Point_2> vor(3);
 
@@ -209,7 +213,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
 			       const typename Dt::Geom_traits::Point_2& p,
 			       OutputIterator out,
 			       typename Dt::Face_handle start
-			       = typename Dt::Face_handle())
+			       = Dt::Face_handle())
 
 {
   Project_vertex_output_iterator<OutputIterator> op(out);
@@ -266,10 +270,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
     t2.insert(vc->point());
   }
   while(++vc!=done);
-
-  return natural_neighbor_coordinates_2(t2, vh->point(), out,
-					dt.incident_faces(vh));
-}
+  return natural_neighbor_coordinates_2(t2, vh->point(), out);
+ }
 
 //class providing a function object:
 //OutputIterator has value type
