@@ -999,7 +999,7 @@ Regular_triangulation_2<Gt,Tds>::
 insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li) 
 {
   if (number_of_vertices() <= 1) return Base::insert(p);
-  Vertex_handle v();
+  Vertex_handle v;
   Oriented_side os;
   switch (lt) {
   case Base::VERTEX:
