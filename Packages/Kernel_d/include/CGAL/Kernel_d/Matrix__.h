@@ -30,6 +30,7 @@
 
 #include <CGAL/Kernel_d/Vector__.h>
 #include <new>
+#include <cstddef>                 // for std::size_t, std::ptrdiff_t
 
 namespace CGALLA {
 
