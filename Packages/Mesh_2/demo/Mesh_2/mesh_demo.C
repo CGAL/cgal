@@ -19,6 +19,7 @@ int main(int, char*)
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
+#define CGAL_MESH_2_USE_TIMERS
 #include <CGAL/Mesh_2.h>
 #include <CGAL/Mesh_local_size_traits_2.h>
 #include <CGAL/Mesh_size_traits_2.h>

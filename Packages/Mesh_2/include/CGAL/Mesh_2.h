@@ -13,6 +13,10 @@
 #include <CGAL/Filtred_circulator.h>
 #include <CGAL/IO/File_header_extended_OFF.h>
 
+#ifdef CGAL_MESH_2_USE_TIMERS
+#include <CGAL/Timer.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 // auxiliary classes
@@ -229,6 +233,11 @@ private:
   Cluster_map_type cluster_map;
   // each vertex can have several clusters
 
+#ifdef CGAL_MESH_2_USE_TIMERS
+  // Timer to bench
+  Timer timer;
+#endif
+
 public:
   void refine();
   void conform();
@@ -244,12 +253,21 @@ public:
   void refine(Seed_it begin, Seed_it end, bool mark=false)
     {
       init(begin, end, mark);
+
+#ifdef CGAL_MESH_2_USE_TIMERS
+      timer.reset();
+      timer.start();
+#endif
       while(! (c_edge_queue.empty() && Bad_faces.empty()) )
 	{
 	  conform();
 	  if ( !Bad_faces.empty() )
 	    process_one_face();
 	}
+#ifdef CGAL_MESH_2_USE_TIMERS
+      timer.stop();
+      std::cout << "Refine mesh time: " << timer.time() << std::endl;
+#endif
     }
 
   template <class Seed_it> 
@@ -548,7 +566,7 @@ read_poly(std::istream &f)
   // read segments
   unsigned int number_of_segments;
   f >> number_of_segments;
-  skip_until_EOL(f);
+  skip_until_EOL(f); skip_comment_OFF(f);
   for(unsigned int k = 0; k < number_of_segments; ++k)
     {
       unsigned int l, v1, v2;
