@@ -1,0 +1,368 @@
+#!/net/bin/perl5 -w
+#
+# version: 3.0
+# author:  Geert-Jan Giezeman
+#
+# This script creates a WWW page with a table of test suite results.
+#
+# Usage:
+#   create_testpage [-p previous-release] <directory>
+
+use strict;
+use vars qw($opt_p);
+use Getopt::Std;
+
+my $SCRIPTDIR = '/users/www/CGAL/Members/Develop/scripts';
+
+my $TEMPPAGE="tmp$$.html";
+my $WWWPAGE;
+my $release_name;
+my @platforms_to_do;
+my @known_platforms;
+my @available_platforms;
+my @test_directories;
+my @testresults;
+
+
+
+sub list_platforms()
+{
+    my ($filename, @result);
+    foreach $_ (glob("results_*.txt")) {
+	($filename) =  m/results_(.*?)\.txt\s*/;
+	push(@result, $filename) if $filename;
+    }
+    return @result;
+}
+
+sub list_packages($)
+{
+    my ($platform) = @_;
+    @test_directories = ();
+    my $test_result="results_${platform}.txt";
+    open(TESTRESULT, $test_result) or return 0;
+    while (<TESTRESULT>) {
+	if (/^\s*(.*?)\s+(\w)\s*$/) {
+	    push (@test_directories, $1);
+	}
+    }
+    close TESTRESULT or return 0;
+    return 1;
+}
+
+sub collect_results_of_platform($)
+{
+    my ($platform) = @_;
+    my $platform_results = {};
+    my $test_result="results_${platform}.txt";
+    open(TESTRESULT, $test_result) or return $platform_results;
+    while (<TESTRESULT>) {
+	if (/^\s*(.*?)\s+(\w)\s*$/) {
+	    #($package,$succes) = ($1,$2);
+	    $platform_results->{$1} = $2;
+	}
+    }
+    close TESTRESULT;
+    return $platform_results;
+}
+
+sub collect_results()
+{
+    my $platform;
+    foreach $platform (@platforms_to_do) {
+	last if list_packages($platform);
+    }
+    foreach $platform (@platforms_to_do) {
+	push(@testresults, collect_results_of_platform($platform));
+    }
+}
+
+
+
+sub print_resultpage()
+{
+    my $platform_count = scalar(@platforms_to_do);
+    my $pc_plus_2 = $platform_count + 2;
+
+    print OUTPUT <<"EOF";
+<H3><A NAME="testresults">Test Results</H3>
+<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5>
+<TR>
+<TD ALIGN=CENTER COLSPAN=$pc_plus_2>
+<FONT SIZE=+2>Test Suite Results $release_name</FONT></TD>
+</TR>
+
+<TR ALIGN=CENTER>
+<TD ROWSPAN=2><B>Package</B></TD>
+<TD ROWSPAN=2><B>Version</B></TD>
+<TD COLSPAN=$platform_count><B>Test Platform</B></TD>
+</TR>
+<TR ALIGN=CENTER>
+EOF
+
+    my ($platform_num,$platform)=(0,"");
+    foreach $platform (@platforms_to_do) {
+	++$platform_num;
+	print OUTPUT "<TD><B>$platform_num</B></TD>\n";
+    }
+
+    print OUTPUT "</TR>\n";
+    my $test_directory;
+    foreach $test_directory (@test_directories) {
+	my $version;
+	if ( -r "$test_directory/version" ) {
+	    open(VERSION, "$test_directory/version");
+	    while(<VERSION>) {
+		($version) = /^\s*([^\s]*)\s/;
+		last if $version;
+	    }
+	    close VERSION;
+	}
+	print OUTPUT "\n<TR>\n";
+	print OUTPUT "<TD>$test_directory</TD>\n";
+	if ( $version ) {
+	    print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
+	} else {
+	    print OUTPUT "<TD ALIGN=CENTER>?.?</TD>\n";
+	}
+	$platform_num=0;
+	foreach $platform (@platforms_to_do) {
+	    my ($result,$resulttext);
+	    $result = $testresults[$platform_num]->{$test_directory};
+	    if (! defined($result)) {
+		$resulttext = ' ';
+	    } elsif ($result eq 'y' or $result eq 'Y') {
+		$resulttext = 'y';
+	    } elsif ($result eq 'w' or $result eq 'W') {
+		$resulttext = '<FONT COLOR=maroon>w</FONT>';
+	    } elsif ($result eq 'n' or $result eq 'N') {
+		$resulttext = '<FONT COLOR=red>n</FONT>';
+	    } else {
+		$resulttext = ' ';
+	    }
+#	    print OUTPUT '<TD ALIGN=CENTER><FONT SIZE=+2> <A HREF="',
+#	    "\n$release_name/$test_directory/TestReport_$platform.gz",
+#	    '">', "$resulttext</A></FONT></TD>\n";
+
+	    print OUTPUT '<TD ALIGN=CENTER><FONT SIZE=+2> <A HREF=',
+	    "$release_name/$test_directory/TestReport_$platform.gz",
+	    '>', "$resulttext</A></FONT></TD>\n";
+	    ++$platform_num;
+
+	}
+	print OUTPUT "</TR>\n";
+    }
+    print OUTPUT "</TABLE>\n";
+}
+
+sub choose_platforms()
+{
+    my (%av_pf, %kn_pf, $pf);
+    @available_platforms = list_platforms();
+    my $index = 0;
+    for ($index=0; $index < @known_platforms; $index += 2) {
+	$pf = $known_platforms[$index];
+	$kn_pf{$pf} = 1;
+    }
+    foreach $pf (@available_platforms) {
+	$av_pf{$pf} = 1;
+    }
+    @platforms_to_do = ();
+    for ($index=0; $index < @known_platforms; $index += 2) {
+	$pf = $known_platforms[$index];
+	if (exists $av_pf{$pf}) {
+	    push(@platforms_to_do, $pf);;
+	}
+    }
+    foreach $pf (@available_platforms) {
+	if (!exists $kn_pf{$pf}) {
+	    print STDERR
+		"Warning: Platform $pf is unknown and not treated!\n";
+	}
+    }
+    
+}
+
+sub print_platforms()
+{
+    my ($i,$p) = (0,1);
+    print OUTPUT <<'EOF';
+<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
+<TR ALIGN=CENTER>
+<TD COLSPAN=2><B>Test Platform</B></TD>
+<TD><B>Test site</B></TD>
+<TD><B>Contact person</B></TD>
+</TR>
+EOF
+
+    foreach (@platforms_to_do) {
+	print OUTPUT "<TR>\n<TD>$p</TD>\n";
+	$p++;
+	print OUTPUT "<TD NOWRAP><B>$_</B></TD>\n";
+	while ($known_platforms[$i] ne $_) {
+	    $i += 2;
+	    die if $i >= @known_platforms;
+	}
+	my $responsible = $known_platforms[$i+1];
+	if (!defined($responsible)) {
+	    print STDERR "Unknown responsible person.\n";
+	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
+	} elsif ($responsible eq 'Sylvain') {
+	    print OUTPUT "<TD>INRIA Sophia-Antipolis</TD>\n",
+		"<TD><A HREF=mailto:Sylvain.Pion\@sophia.inria.fr>",
+		"Sylvain Pion</A></TD>\n";
+	} elsif ($responsible eq 'Geert') {
+	    print OUTPUT "<TD>Utrecht University</TD>\n",
+		"<TD><A HREF=mailto:geert\@cs.uu.nl>",
+		"Geert-Jan Giezeman</A></TD>\n";
+	} elsif ($responsible eq 'Michael') {
+	    print OUTPUT "<TD>ETH Z&uuml;rich</TD>\n",
+		"<TD><A HREF=mailto:hoffmann\@inf.ethz.ch>",
+		"Michael Hoffmann</A></TD>\n";
+	} else {
+	    print STDERR "Unknown responsible person.\n";
+	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
+	}
+	print OUTPUT "</TR>\n";
+    }
+    print OUTPUT "</TABLE>\n";
+}
+
+sub search_previous_release()
+{
+    if (! -r $WWWPAGE) {
+	print STDERR "Warning: no previous release known.\n";
+	print STDERR "Did you forget the -p option?.\n";
+	return;
+    }
+    open INPUT, $WWWPAGE or die;
+    while (<INPUT>) {
+	if (m/<!-- previous version: (.*) -->/) {
+	    $opt_p = $1;
+	    last;
+	}
+    }
+    close INPUT;
+}
+
+sub result_filename($)
+{
+    return "results".substr($_[0],4).".html";
+#	$name =~ s/-I-/-/;
+}
+
+sub print_header() {
+    print OUTPUT `$SCRIPTDIR/print_cgal_header "CGAL Test Result Page"`;
+    if (defined($opt_p)) {
+	print OUTPUT "<!-- previous version: $opt_p -->\n";
+    }
+    print OUTPUT<<"EOF";
+
+<H1>CGAL Test Result Page</H1>
+This page contains the results from test suite $release_name of supported compilers.
+<P>The results of the tests are presented in a table
+('y' = success, 'w' = warning, 'n' = failure),
+and the error + compiler output from each test can be retrieved by clicking
+on it.
+<BR>
+<B>N.B. The detection of warnings is not exact.
+Look at the output to be sure!</B>
+<OL>
+<LI><A HREF="#testresults">Test Results</A> </LI>
+EOF
+
+    if (defined($opt_p)) {
+	my $prev_page = result_filename($opt_p);
+	print OUTPUT<<"EOF";
+<LI><A HREF="$prev_page">Test Results $opt_p</A></LI>
+EOF
+
+    }
+    print OUTPUT<<'EOF';
+</OL>
+
+<HR>
+<P>
+EOF
+
+}
+
+sub main()
+{
+    getopts('p:');
+    
+    if (scalar(@ARGV)  != 1 ) {
+	print STDERR "usage: $0 [-p previous-release-directory] directory\n";
+	exit 1;
+    }
+
+    $release_name =shift(@ARGV);
+
+    $release_name =~ s<(\s+)$><>;
+    $release_name =~ s<(/)$><>;
+    if ( ! -d $release_name ) {
+	print STDERR "$release_name is not a valid directory\n";
+	exit 1;
+    }
+    $WWWPAGE = result_filename($release_name);
+
+
+    if (defined($opt_p)) {
+	$opt_p =~ s</?\s*$><>;
+    } else {
+	search_previous_release();
+    }
+    undef($opt_p) if (defined ($opt_p) and $opt_p =~ /^\s*$/);
+
+    chdir $release_name or die;
+    choose_platforms();
+    chdir "..";
+
+    umask 0002;
+    unlink $TEMPPAGE;
+    open(OUTPUT,">$TEMPPAGE") or die;
+    chdir $release_name or die;
+    collect_results();
+    print_header();
+    print_platforms();
+    print OUTPUT "<P>\n";
+    print_resultpage();
+    print OUTPUT "<P>\n";
+    print_platforms();
+    print OUTPUT "<P>\n";
+    print OUTPUT `$SCRIPTDIR/print_cgal_trailer`;
+    close OUTPUT;
+    chdir "..";
+    rename $TEMPPAGE, $WWWPAGE;
+    chmod 0664, $WWWPAGE;
+    system("chgrp cgal $WWWPAGE");
+}
+
+#@known_platforms = (
+#    'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
+#    'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
+#    'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
+#    'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
+#    'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
+#    'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
+#    'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
+#    'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
+#);
+
+@known_platforms = (
+    'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
+    'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
+    'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
+    'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
+    'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
+    'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
+    'mips_IRIX64-6.2_CC-n32-7.20_LEDA', 'Michael',
+
+'mips_IRIX64-6.2_CC-n32-7.2.1_LEDA', 'Michael',
+
+    'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
+    'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
+);
+
+main();
+
