@@ -25,9 +25,10 @@ CXXFLAGS = \
 	 $(TESTSUITE_CXXFLAGS) \
 	-W -Wall \
 	-DCGAL_CHECK_EXPENSIVE \
-	-g # -Wold-style-cast # -pedantic
-        # -I$(HOME)/prog/Cgal/Kernel_basic/include \
-        # -I$(HOME)/prog/Cgal/Cartesian_kernel/include \
+	-g
+	# -fprofile-arcs -ftest-coverage # pour Gcov
+	# -Wold-style-cast
+	# -pedantic
 	# -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS \
 	# -DCGAL_CHECK_EXPENSIVE \
