@@ -81,6 +81,7 @@ to_interval (const long long & z)
     (defined(__ppc__)   || defined(__ppc)   || defined(ppc)) || \
     (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
 typedef  long long int           Integer64;
+typedef  unsigned long long int  UInteger64;
 #define CGAL_HAS_INTEGER64
 #endif
 
