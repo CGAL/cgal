@@ -3,9 +3,6 @@
 //  CGAL example program generating a regular triangle pattern.
 
 #include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <algorithm>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -15,7 +12,7 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/leda_window.h>  // only used for visualization
+#include <CGAL/IO/Window_stream.h>  // only used for visualization
 
 using namespace CGAL;
 
@@ -39,7 +36,7 @@ int main() {
     Count_iterator  t_end( 50);
 
     // Open window and copy 50 triangles into window.
-    leda_window* window = create_and_display_demo_window();
+    Window_stream* window = create_and_display_demo_window();
     std::copy( t_begin, t_end,
                Ostream_iterator<Triangle,Window_stream>(*window));
 
@@ -48,4 +45,3 @@ int main() {
     delete window;
     return 0;
 }
-#endif // CGAL_USE_LEDA

@@ -23,18 +23,22 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
-#include <fstream>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
+#include <fstream>
+
+#if !defined(CGAL_USE_CGAL_WINDOW)
 #include <LEDA/menu.h>
 #include <LEDA/panel.h>
 #include <LEDA/point.h>
 #include <LEDA/string.h>
+#else
+#include <CGAL/LEDA/menu.h>
+#include <CGAL/LEDA/panel.h>
+#include <string>
+#endif
+
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Random.h>
@@ -43,16 +47,20 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <list>
 #include <vector>
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_panel CGAL::panel
+#endif
+
 typedef double                             NT;
-typedef CGAL::Cartesian<NT>                R;
-typedef CGAL::Vector_2<R>                  Vector_2;
-typedef CGAL::Polygon_traits_2<R>          Traits;
+typedef CGAL::Cartesian<NT>                K;
+typedef CGAL::Vector_2<K>                  Vector_2;
+typedef CGAL::Polygon_traits_2<K>          Traits;
 typedef Traits::Point_2                    Point_2;
 typedef std::list<Point_2>                 Container;
 typedef CGAL::Polygon_2<Traits, Container> Polygon_2;
 typedef Polygon_2::Vertex_iterator         Vertex_iterator;
 typedef Polygon_2::Vertex_const_iterator   Vertex_const_iterator;
-typedef CGAL::Aff_transformation_2<R>      Transformation_2;
+typedef CGAL::Aff_transformation_2<K>      Transformation_2;
 
 enum Button_nums {QUIT=4, RANDOM_POINT_SET, INPUT_POINT_SET, 
                   SIMPLE_POLYGON};
@@ -74,6 +82,7 @@ leda_panel controls("Controls");
 template <class OutputIterator>
 OutputIterator input_point_set(OutputIterator result)
 {
+   W.acknowledge("Click right mouse button to terminate input of points");
    W << CGAL::RED;
    double x, y;
    while (W.read_mouse(x, y) != MOUSE_BUTTON(3))
@@ -94,9 +103,11 @@ void draw_points(ForwardIterator first, ForwardIterator beyond, CGAL::Color colo
    W << color;
    for (ForwardIterator it = first; it != beyond; it++, i++)
    {
+#if !defined(CGAL_USE_CGAL_WINDOW)   
        leda_point point(CGAL::to_double((*it).x()),CGAL::to_double((*it).y()));
        leda_string label("%d", i);
        W.draw_text(point, label);
+#endif
        W << *it;
    }
 }
@@ -110,14 +121,13 @@ void draw_polygon(const Polygon_2& polygon, CGAL::Color color, int line_width)
 }
 
 
-int main( int argc, char** argv )
+int main( )
 {
    typedef std::vector<Point_2>   Point_vector;
    typedef Point_vector::iterator Point_iterator;
 
    Polygon_2             polygon;
    Point_vector          point_set;
-   Traits                traits;
 
    W.init(0, WINDOW_SIZE, 0);
    W.set_node_width(3);
@@ -168,14 +178,13 @@ int main( int argc, char** argv )
          {
             if (point_set.empty()) break;
 
-            if (!CGAL::duplicate_points(point_set.begin(), point_set.end(), 
-                                        traits))
+            if (!CGAL::duplicate_points(point_set.begin(), point_set.end()) )
             {
                std::random_shuffle(point_set.begin(), point_set.end());
                polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
                CGAL::random_polygon_2(point_set.size(), 
                                       std::back_inserter(polygon), 
-                                      point_set.begin(), traits);
+                                      point_set.begin());
                polygon_computed = true;
             }
             else
@@ -190,4 +199,4 @@ int main( int argc, char** argv )
     }
     return 0;
 }
-#endif // CGAL_USE_LEDA
+

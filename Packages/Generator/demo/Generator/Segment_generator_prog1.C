@@ -3,9 +3,6 @@
 // CGAL example program for the generic segment generator.
 
 #include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -16,7 +13,7 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>  // used for visualization
+#include <CGAL/IO/Window_stream.h>  // used for visualization
 
 using namespace CGAL;
 
@@ -46,7 +43,7 @@ int main() {
     CGAL::copy_n( g, 200, std::back_inserter(segs));
 
     // Visualize segments.
-    leda_window* window = create_and_display_demo_window();
+    Window_stream* window = create_and_display_demo_window();
     for( Vector::iterator i = segs.begin(); i != segs.end(); i++)
         *window << *i;
 
@@ -55,4 +52,4 @@ int main() {
     delete window;
     return 0;
 }
-#endif // CGAL_USE_LEDA
+

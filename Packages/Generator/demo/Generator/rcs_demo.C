@@ -23,12 +23,7 @@
 // Random Convex Point Sets: Demo Program
 // ============================================================================
 
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
@@ -36,6 +31,10 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <iostream>
 #include <cstdlib>
 #include <CGAL/IO/Window_stream.h>
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_window CGAL::window
+#endif
 
 using CGAL::cgalize;
 
@@ -61,9 +60,8 @@ typedef Creator_uniform_2< double, Point >           Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
 
 int
-main( int argc, char* argv[])
+main(int argc, char* argv[])
 {
-  
   // this is not initialized on MIPSPRO:
   set_pretty_mode( cout);
   set_pretty_mode( cerr);
@@ -86,7 +84,6 @@ main( int argc, char* argv[])
   // output polygon:
   cout << "\nHere is the result:" << endl;
 
-#ifdef CGAL_USE_LEDA
   leda_window W;
   cgalize( W);
   W.display();
@@ -95,9 +92,6 @@ main( int argc, char* argv[])
 
   // wait for mouse-click:
   W.read_mouse();
-#else
-  cout << p << endl;
-#endif
 
   // check convexity:
   if ( ! p.is_convex()) {
@@ -109,7 +103,6 @@ main( int argc, char* argv[])
   return 0;
 } // int main( argc, argv)
 
-#endif // CGAL_USE_LEDA
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -3,9 +3,6 @@
 // CGAL example program for point generators creating integer points.
 
 #include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -13,7 +10,7 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/Point_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>  // used for visualization
+#include <CGAL/IO/Window_stream.h>  // used for visualization
 
 using namespace CGAL;
 
@@ -48,7 +45,7 @@ int main() {
     assert( points.size() == 500);
 
     // Visualize point set.
-    leda_window* window = create_and_display_demo_window();
+    Window_stream* window = create_and_display_demo_window();
     window->init(-262.0, 261.0, -262.0);
     for( Vector::iterator i = points.begin(); i != points.end(); i++)
         *window << *i;
@@ -58,4 +55,3 @@ int main() {
     delete window;
     return 0;
 }
-#endif // CGAL_USE_LEDA

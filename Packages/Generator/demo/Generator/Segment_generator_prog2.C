@@ -3,9 +3,6 @@
 // CGAL example program generating a regular segment pattern.
 
 #include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <algorithm>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -15,7 +12,7 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/IO/leda_window.h>  // used for visualization
+#include <CGAL/IO/Window_stream.h>  // used for visualization
 
 using namespace CGAL;
 
@@ -29,7 +26,7 @@ typedef Counting_iterator<Segm_iterator,Segment>   Count_iterator;
 
 int main() {
     // Open window.
-    leda_window* window = create_and_display_demo_window();
+    Window_stream* window = create_and_display_demo_window();
     window->init(-256.0, 255.0, -256.0);
 
     // A horizontal like fan.
@@ -55,4 +52,4 @@ int main() {
     delete window;
     return 0;
 }
-#endif // CGAL_USE_LEDA
+
