@@ -1,3 +1,7 @@
+5 June 2004:  Menelaos Karavelas
+- in io_aux.h replaced char* by const std::string& to avoid warnings by
+  SunPro CC
+
 4 June 2004:  Menelaos Karavelas
 - fixed bug in find_faces_to_split in Segment_Voronoi_diagram_2.C: the
   method was not working when the faces to be split were infinite
