@@ -214,9 +214,13 @@ namespace CGAL {
   {
     history->backward();
   }
-    void Qt_widget_standard_toolbar::forward()
+  void Qt_widget_standard_toolbar::forward()
   {
     history->forward();
+  }
+  void Qt_widget_standard_toolbar::clear_history()
+  {
+    history->clear();
   }
 
 }//end namespace

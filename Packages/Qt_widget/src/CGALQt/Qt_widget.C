@@ -97,6 +97,15 @@ void Qt_widget::set_scales()
     }
 }
 
+void Qt_widget::move_center(const double distx, const double disty)
+{
+  xmin += distx; xmin_old += distx;
+  xmax += distx; xmax_old += distx;
+  ymin += disty; ymin_old += disty;
+  ymax += disty; ymax_old += disty;
+  redraw();
+  emit(rangesChanged());
+}
 void Qt_widget::set_center(const double x, const double y)
 {
   if (set_scales_to_be_done) return;

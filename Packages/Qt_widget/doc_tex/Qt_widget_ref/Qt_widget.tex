@@ -18,7 +18,7 @@ graphical IO. It is a class that is designed to help \cgal\ users
 to visualize easily \cgal\ objects and for advanced users to interact
 with them. This widget is designed for 2D \cgal\ objects only.
 
-\ccInclude{CGAL/Qt_widget.h}
+\ccInclude{CGAL/IO/Qt_widget.h}
 
 \ccInheritsFrom
 \ccc{QWidget}
@@ -35,9 +35,9 @@ which kind of point representation do you want to use:
 \ccSetTwoColumns{Qt_widget}{}
 
 \ccConstructor{Qt_widget(QWidget *parent = 0, const char *name =
-0);}{Constructs a widget which is a child of \ccc{parent}, with the name
-\ccc{name}. The default geometry is xmin = -1, xmax = 1, ymin = -1,
-ymax = 1. By default the X and Y scale factors are equal.}
+);}{Constructs a widget which is a child of \ccc{parent}, with the name
+\ccc{name}. The default visible area is between ranges xmin = -1, xmax
+= 1, ymin = -1, ymax = 1. By default the X and Y scale factors are equal.}
 
 %\ccOperations
 \ccSetThreeColumns{const_iterator}{container.begin() const;}{}
@@ -59,39 +59,53 @@ called after \ccc{resize()} from \ccStyle{QWidget}. If \ccc{u} is
 \ccc{true} the X and Y scale factors will not be equal and the widget
 will not keep the aspect ratio.}
 
-\ccMethod{void set_x_scale(double xscale);}{Set the current X scaling factor.}
+\ccMethod{void set_x_scale(double xscale);}{Set the current X scaling
+factor. Actually the scales are recomputed when you resize, so this
+method is not used very often.}
 
-\ccMethod{void set_y_scale(double yscale);}{Set the current Y scaling factor.}
-
-\ccMethod{void zoom(double ratio);}{Multiply X and Y scaling factor by \ccc{ratio}.}
-
-\ccMethod{void add_to_history();}{This function adds the current
-viewport and transformations to history. You can use the public slots
-\ccc{back()} and \ccc{forth()} to walk into history.}
-
-\ccMethod{void clear_history();}{Clears the history. This means that 
-there are no elements in the history list. Call this method when you
-want to reinitialize the history list.}
-
-\ccHeading{public slots:}
-\ccGlue
-\ccMethod{bool back();}{}
-\ccGlue
-\ccMethod{bool forth();}{This slots permits to walk into history. Return \ccc{true} if succeded.}
+\ccMethod{void set_y_scale(double yscale);}{Set the current Y scaling
+factor. Actually the scales are recomputed when you resize, so this
+method is not used very often.}
 
 \begin{ccAdvanced}
 You should have the same scaling factor for X and Y if you want to
 keep the aspect ratio of your objects.
 \end{ccAdvanced}
 
-\ccMethod{void move_center(double distx, double disty);}{Move the center of the
- widget with \ccc{distx} on the X axis and with \ccc{disty} on the Y axis.}
+\ccMethod{void zoom(double ratio);}{Multiply the X and Y scaling factors by
+\ccc{ratio}, then calls \ccc{redraw}. The center of the visible area
+remains the same.}
 
-\ccMethod{void set_center(double x, double y);}{Set the center of the widget to
+\ccMethod{void zoom(double ratio, double xc, double yc);}{Multiply the 
+X and Y scaling factors by \ccc{ratio}, then calls \ccc{redraw}. The
+center of the visible area becomes (xc, yc).}
+
+\ccMethod{void move_center(const double distx, const double disty);}{Move the center of the
+ widget with \ccc{distx} on the X axis and \ccc{disty} on the Y axis.}
+
+\ccMethod{void set_center(const double x, const double y);}{Set the center of the widget to
  \ccStyle{(x, y)}.}
 
-%PAINTER
-%\ccHeading{Painter}
+\ccMethod{void add_to_history();}{Deprecated: This function adds the current
+viewport and transformations to history. You should use \ccc{save()}
+public slot from \ccc{Qt_widget_history} object.}
+
+\ccMethod{void clear_history();}{Deprecated: Clears the history. This
+means that there are no elements in the history list. Call this method
+when you want to reinitialize the history list. You should use
+\ccc{clear_history()} method from \ccc{Qt_widget_standard_toolbar} or
+the \ccc{clear()} public slot from \ccc{Qt_widget_history} object.}
+
+\ccHeading{public slots:}
+\ccGlue
+\ccMethod{bool back();}{}
+\ccGlue
+\ccMethod{bool forth();}{Deprecated: This slots permit to walk into
+history. Return \ccc{true} if succeded. These slots are
+deprecated. You should use the \ccc{backward()} and \ccc{forward()}
+methods of \ccc{Qt_widget_history} object, or the \ccc{back()} and
+\ccc{forward()} public slots from \ccc{Qt_widget_standard_toolbar} object.}
+
 \ccMethod{void clear();}{Clear the screen. The properties of the
 widget remain the same after calling this member function. You can see 
 a list of the properties that you can set at the properties
@@ -108,8 +122,20 @@ calls is equal to the number of lock calls.}
 
 \ccMethod{void do_paint();}{Refresh the widget calling 
 \ccc{paintEvent(QPaintEvent *e)} for the \ccc{Qt_widget} only if the widget is 
-unlocked. This mean that redraw() is called if and only if the widget is 
+unlocked. This mean that \ccc{redraw()} is called if and only if the widget is 
 unlocked.}
+
+\ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
+overload this function and put your code for drawing here if you don't use 
+\ccc{layers}. The best way is to attach layers to the widget and
+call this method. This method redraws the layers attached and
+active. Before drawing the layers, redraw clear the screen and emit
+\ccc{redraw_on_back()}. Emit \ccc{redraw_on_front()} at the end.}
+
+\ccMethod{void print_to_ps();}{Redraws all the attached and active
+layers into a Postscript device. It could be a file or a
+printer. This method also use signals as \ccc{redraw_on_back()} or \ccc{redraw_on_front()}.}
+
 
 %PROPERTIES
 \ccHeading{Properties}
@@ -149,18 +175,6 @@ are forwarded to layers in the order they have been attached.}
 
 \ccMethod{void detach(Qt_widget_layer* s);}{Remove the layer s from the list. 
 s it's a pointer to an existing layer.}
-
-\ccHeading{public slots:}
-\ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
-overload this function and put your code for drawing here if you don't use 
-\ccc{layers}. The best way is to attach layers to the widget and
-call this method. This method redraws the layers attached and
-active. Before drawing the layers, redraw clear the screen and emit
-\ccc{redraw_on_back()}. Emit \ccc{redraw_on_front()} at the end.}
-
-\ccMethod{void print_to_ps();}{Redraws all the attached and active
-layers into a Postscript device. It could be a file or a
-printer. This method also use signals as \ccc{redraw_on_back()} or \ccc{redraw_on_front()}.}
 
 %Cgal
 \ccHeading{New CGAL Objects}
@@ -287,10 +301,13 @@ from a tool is received. The user should catch this signal if it's working with
 tools that provide \cgal\ objects as input.}
 \ccMethod{void custom_redraw();}{Deprecated: Emitted in the redraw()
 function after the layers are drawn.}
-\ccMethod{void redraw_on_back();}{Emmitted in redraw() method before
+\ccMethod{void redraw_on_back();}{Emmitted in \ccc{redraw()} method before
 calling layer's redraw.}
-\ccMethod{void redraw_on_front();}{Emmitted in redraw() method after
+\ccMethod{void redraw_on_front();}{Emmitted in \ccc{redraw()} method after
 calling layer's redraw.}
+\ccMethod{void rangesChanged();}{Emmitted each time (xmin, xmax) and
+(ymin, ymax) ranges are changed.}
+
 
 \input{Qt_widget_ref/Operators_for_output.tex}
 \input{Qt_widget_ref/Manipulators.tex}

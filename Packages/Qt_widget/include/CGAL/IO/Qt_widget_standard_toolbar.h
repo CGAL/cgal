@@ -51,20 +51,23 @@ public:
   // CGAL-2.4 compatibility
   QToolBar*	toolbar(){return this;}
 
+public slots:
+  void back();
+  void forward();
+  void clear_history();
+
 private slots:
   void zoomin();
   void zoomout();
-  void back();
-  void forward();
 private:
   void fill_toolbar(QMainWindow *mw);
   
 private:
-  Qt_widget	  *widget;
-  Qt_widget_history* history;
-  QButtonGroup* button_group; 
-    // this button has no parent and is destroyed manually in the
-    // destructor
+  Qt_widget          *widget;
+  Qt_widget_history  *history;
+  QButtonGroup*      button_group; 
+  // this group has no parent and is destroyed manually in the
+  // destructor
 
 };//end class
 

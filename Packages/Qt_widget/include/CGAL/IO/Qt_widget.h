@@ -70,16 +70,7 @@ public:
   void set_x_scale(const double xscale){ xscal = xscale; }
   void set_y_scale(const double yscale){ yscal = yscale; }
 
-  inline void move_center(double distx, double disty) 
-  {    
-    xmin += distx; xmin_old += distx;
-    xmax += distx; xmax_old += distx;
-    ymin += disty; ymin_old += disty;
-    ymax += disty; ymax_old += disty;
-    redraw();
-    emit(rangesChanged());
-  }
-
+  void move_center(const double distx, const double disty);
   void set_center(const double x, const double y);
 
   // painting system
