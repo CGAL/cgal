@@ -11,9 +11,13 @@ ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
 DOCS: Added Filter_iterator suggested by Sylvain.
 ALL : Added Emptyset_iterator and Oneset_iterator.
+ALL : Added triple and quadruple.
 SRC : Combined iterators and iterator adaptors into iterator.h.
 SRC : Fixed a few more sunpro problems.
+SRC : Added copy constructors/assignment for iterators on gcc-2.
+SRC : Fixed typename bug for msvc.
 SRC : Moved to Kernel_basic.
+TEST: Fixed "this" problem on msvc7.
 TEST: Fixed double -> int conversion warning.
 
 //---------------------------------------------------------------------

@@ -4,6 +4,17 @@
 
 
 //---------------------------------------------------------------------
+//	revision 244
+//---------------------------------------------------------------------
+
+ALL : Added triple and quadruple.
+SRC : Added copy constructors/assignment for iterators on gcc-2.
+SRC : Fixed typename bug for msvc.
+SRC : Fixed typename bugs for msvc.
+SRC : - VC6 fix to Filter_iterator<>.
+TEST: Fixed "this" problem on msvc7.
+
+//---------------------------------------------------------------------
 //	revision 243
 //---------------------------------------------------------------------
 
