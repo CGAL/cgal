@@ -4,7 +4,7 @@
 
 \begin{ccRefConcept}{BoxIntersectionTraits_d}
 \ccThree{const int}{BoxIntersectiommmmnTraits_d::dimension();}{}
-\ccTwo{BoxIntersectionTraits_d::Id_type;}{}
+\ccTwo{BoxIntersectionTraits_d::Box_handle;}{}
 \ccCreationVariable{traits}
 
 \ccDefinition
@@ -37,7 +37,7 @@ the boxes manipulated in these algorithms.
   boundaries. Supported are the builtin types \ccc{int}, \ccc{unsigned
   int}, \ccc{float}, and \ccc{double}.} 
 
-\ccNestedType{Id_type}{type for the \ccc{id}-number,
+\ccNestedType{ID}{type for the \ccc{id}-number,
   model of the \ccc{LessThanComparable} concept.}
 
 \ccAccessFunctions
@@ -45,7 +45,7 @@ the boxes manipulated in these algorithms.
 \ccFunction{const int BoxIntersectionTraits_d::dimension();}{%
   returns the number of dimensions.}
 
-\ccFunction{Id_type BoxIntersectionTraits_d::id(Box box);}{%
+\ccFunction{ID BoxIntersectionTraits_d::id(Box box);}{%
   returns the unique \ccc{id}-number for the \ccc{box}.}
 
 \ccThree{const int}{BoxIntersec}{}

@@ -28,8 +28,8 @@ parameters have to comply with the following requirements:
     \begin{itemize}
       \item
         \ccc{ID_NONE}: no \ccc{id}-number is provided. Can be useful
-        to have this class as a base class for different
-        implementations of \ccc{id}-numbers than the ones provided
+        if \ccc{Box_d} is used as a base class for a different
+        implementation of \ccc{id}-numbers than the ones provided
         here.
       \item
         \ccc{ID_EXPLICIT}: the \ccc{id}-number is stored explicitly in
@@ -70,7 +70,7 @@ and also automatically with\\
   \ccc{int}, \ccc{unsigned int}, \ccc{float}, and \ccc{double} with the
   class \ccc{CGAL::Box_intersection_d::box_limits<NT>}.}.}  
 
-\ccTypedef{typedef std::size_t Id_type;}{type for the box \ccc{id}-number.}
+\ccTypedef{typedef std::size_t ID;}{type for the box \ccc{id}-number.}
 
 
 \ccCreation
@@ -84,7 +84,9 @@ and also automatically with\\
   set to positive(negative) infinity.} 
 
 \ccConstructor{Box_d(NT lo[N], NT hi[N]);}{initializes the box
-  intervals to [\ccc{lo[i]}, \ccc{hi[i]} for $0 \leq i < $\ccc{dimension()}.}
+  intervals to [\ccc{lo[i]}, \ccc{hi[i]}] for $0 \leq i <
+  $\ccc{dimension()}. \ccPrecond \ccc{lo[i]} $<$ \ccc{hi[i]} for $0 \leq i <
+  $\ccc{dimension()}.}
 
 \ccConstructor{Box_d( const Bbox_2& bbox);}{constructs from bbox,
   exists iff $N=2$ and \ccc{NT}$ \equiv $\ccc{double}.}

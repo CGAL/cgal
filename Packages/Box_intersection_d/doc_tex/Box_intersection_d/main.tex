@@ -9,8 +9,6 @@
 \RCSdefDate{\BoxIntersectionDate}{$Date$}
 % +------------------------------------------------------------------------+
 
-\newcommand{\LK}[1]{\textbf{L.K.:#1???}}
-
 \ccParDims
 
 \chapter{Intersecting Sequences of Iso-oriented Boxes}
@@ -22,43 +20,41 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
+Simple questions on geometric primitives, such as intersection and
+distance computations, can themselves become quite expensive if the
+primitives are not so simple anymore, for example, three-dimensional
+triangles and facets of polyhedral surfaces. Thus algorithms operating
+on these primitives tend to be slow in practice. A common (heuristic)
+optimization approximates the geometric primitives with their
+axis-aligned bounding boxes, runs a suitable modification of the
+algorithm on the boxes, and whenever a pair of boxes has an
+interesting interaction, only then the exact answer is computed on the
+complicated geometric primitives contained in the boxes.
+
 We provide an efficient algorithm~\cite{cgal:ze-fsbi-02} for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,
-typically these will be bounding boxes of more complicated geometries.
-
-Computing information about complex geometric primitives is often
-expensive. Asymptotically efficient algorithms are sometimes of
-theoretical interest only, as they are hard to implement or slow in
-practice if implemented. One general approach is to reduce the problem
-size enough so that a brute force method is feasible and fast. By
-putting axis-aligned bounding boxes around complicated primitives, we
-can compute, in a short amount of time, an approximate answer in the
-form of a small set of pairs with potential interaction.  We then
-refine our answer by looking inside the boxes, computing the exact
-answer for the original data.
-
-Many geometric problems can be restated in terms of box intersections
-since if the bounding boxes of two primitives intersect, we know that
-the primitives may intersect or have close proximity. Some practical
-problems we may solve with this approach include detecting surface
-self-intersection, intersection of two different objects and
-performing proximity queries.
-
+typically these will be such bounding boxes of more complicated geometries.
+One immediate application of this algorithm is the detection of all
+intersections (and self-intersections) for polyhedral surfaces, i.e.,
+applying the algorithm on a large set of triangles in space, we give
+an example program later in this chapter. Not so obvious applications
+are proximity quesries and distance computations among such surfaces,
+see ~\cite{cgal:ze-fsbi-02} for details.
 
 % +------------------------------------------------------------------------+
 \section{Definition}\label{sec:box-inters-def}
 
 A $d$-dimensional iso-oriented box is defined as the Cartesian product
 of $d$ intervals. We call the box \emph{half-open} if the $d$
-intervals $\{ [lo_i,hi_i) | 0 \leq i < d\}$ are half-open intervals,
+intervals $\{ [lo_i,hi_i) \,|\, 0 \leq i < d\}$ are half-open intervals,
 and we call the box \emph{closed} if the $d$ intervals $\{ [lo_i,hi_i]
-| 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
+\,|\, 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
 zero-width boxes and they can intersect at their boundaries, while
 non-empty half-open boxes always have a positive volume and they only
 intersect iff their interiors overlap.  The distinction between closed
-or half-open boxes does not require a different representation of
+and half-open boxes does not require a different representation of
 boxes, just a different interpretation when comparing boxes, which is
-selected with the \ccc{topology} parameter and its two values,
+selected with the two possible values for the \ccc{topology} parameter:
 
 \begin{itemize}
   \item \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
@@ -67,30 +63,26 @@ selected with the \ccc{topology} parameter and its two values,
 
 The number type of the interval boundaries must be one of the builtin
 types \texttt{int}, \texttt{unsigned int}, \texttt{double} or
-\texttt{float}. They are already supported in the
-\ccc{CGAL::Box_intersection_d::box_limits<NT>} traits class that
-determines \ccc{inf()} and \ccc{sup()} values for initializing the
-extreme ends of intervals. (This is probably subject to a better integration
-into \cgal.)
+\texttt{float}.
 
-In addition, a box has an \ccc{id}-number that is distinct for all
-boxes. It is needed in order to have a pair of intersecting boxes to
-be reported only once in the algorithm. This is necessary if boxes of
-identical geometry appear several times in the input sequences.  Boxes
-of equal \ccc{id}-number are not reported as intersecting pairs since
+In addition, a box has an unique \ccc{id}-number. It is used to
+distinguish between otherwise geometrically identical boxes and allows
+us to guarantee that we report a pair of intersecting boxes only once,
+even in the presence of geometrically equal boxes. Boxes
+of equal \ccc{id}-number are not reported as intersecting since
 they are always intersecting trivially.
 
-The box intersection algorithms come in two flavors: One set of
-algorithms is working on one sequence of boxes and computes all
-pairwise intersections, which is the \emph{complete\/} case, for
-example, used in the self-intersection test. The other set of
-algorithms is working on two sequences of boxes and computes the
-pairwise intersections between between boxes of the first sequence
-with boxes from the second sequence, which is the \emph{bipartite\/}
-case. For each pairwise intersection found a callback function is
-called with two arguments; the first argument is a box from the first
-sequence, the second argument a box from the second sequence. In the
-complete case, the second sequence is an internal copy of the first
+The box intersection algorithm comes in two flavors: One algorithm
+works on a single sequence of boxes and computes all pairwise
+intersections, which is called the \emph{complete\/} case, and used,
+for example, in the self-intersection test. The other algorithm works
+on two sequences of boxes and computes the pairwise intersections
+between boxes from the first sequence with boxes from the second
+sequence, which is called the \emph{bipartite\/} case. For each
+pairwise intersection found a callback function is called with two
+arguments; the first argument is a box from the first sequence and the
+second argument a box from the second sequence. In the complete case,
+the second argument is a box from an internal copy of the first
 sequence.
 
 
@@ -467,7 +459,7 @@ the half-open box topology for brevity.
 The requirements for the box implementation are best looked at on
 page~\ccRefPage{BoxIntersectionBox_d} in the Reference Manual. In a
 nutshell, we have to define the type \ccc{NT} for the box coordinates
-and the type \ccc{Id_type} for the \ccc{id}-number. Member functions
+and the type \ccc{ID} for the \ccc{id}-number. Member functions
 give access to the coordinates and the \ccc{id}-number. A static
 member function returns the dimension.
 
@@ -493,7 +485,7 @@ than \ccc{2*eps}.
 The requirements for the box traits class are best looked at on
 page~\ccRefPage{BoxIntersectionTraits_d} in the Reference Manual. In a
 nutshell, we have to define the type \ccc{NT} for the box coordinates,
-the type \ccc{Id_type} for the \ccc{id}-number, and the type \ccc{Box}
+the type \ccc{ID} for the \ccc{id}-number, and the type \ccc{Box}
 for the box type, here \ccc{Point_3*} since we work with the pointers.
 All member functions in the traits class are static. Two functions give
 access to the max and min coordinates that we compute from the point
