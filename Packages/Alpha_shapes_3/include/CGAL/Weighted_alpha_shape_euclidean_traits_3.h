@@ -20,8 +20,8 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-#include <CGAL/constructions/squared_radius_smallest_orthogonal_sphere_ftC3.h>
-#include <CGAL/predicates/in_smallest_orthogonal_sphere_ftC3.h>
+#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
+#include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
