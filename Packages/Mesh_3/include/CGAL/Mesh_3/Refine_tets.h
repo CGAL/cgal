@@ -181,9 +181,17 @@ public:
 
 public:
   /* \name Overriden functions of this level */
-  void before_insertion_impl(const Cell_handle& c, const Point&,
+  void before_insertion_impl(const Cell_handle& c, const Point& point,
 			     Zone& zone)
   {
+	const Point& p = c->vertex(0)->point();
+	const Point& q = c->vertex(1)->point();
+	const Point& r = c->vertex(2)->point();
+	const Point& s = c->vertex(3)->point();
+
+	std::cout << "Point(" << point 
+		  << "), radius=" << squared_radius(p,q,r,s) << "\n";
+
     remove_star_from_bad_cells(c, zone); // FIXME: name
   }
 

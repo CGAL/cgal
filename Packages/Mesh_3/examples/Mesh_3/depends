@@ -1,23 +1,5 @@
 
 
-cut_mesh.o: \
-  ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_surface_mesh_cell_base_3.h \
-  ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
-  ../../include/CGAL/Mesh_3/Complex_2_in_triangulation_cell_base_3.h \
-  ../../include/CGAL/Implicit_surfaces_mesher_3.h \
-  ../../include/CGAL/Mesh_3/Refine_tets.h \
-  ../../../Mesh_2/include/CGAL/Mesher_level.h \
-  ../../include/CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h \
-  ../../include/CGAL/Mesh_3/Double_map_container.h \
-  ../../../Mesh_2/include/CGAL/Double_map.h \
-  ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Chew_4_surfaces.h \
-  ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3.h \
-  ../../../Chew_4_surfaces/include/CGAL/Complex_2_in_triangulation_3_surface_mesh.h \
-  ../../../Chew_4_surfaces/include/CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h \
-  ../../../Chew_4_surfaces/include/CGAL/IO/Complex_2_in_triangulation_3_file_writer.h \
-  ../../include/CGAL/IO/File_medit.h
-
-
 essai.o: \
   ../../include/CGAL/Constrained_regular_triangulation_3.h \
   ../../../Mesh_2/include/CGAL/Delaunay_mesher_2.h \
