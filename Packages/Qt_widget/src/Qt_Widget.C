@@ -23,7 +23,7 @@
 #include <CGAL/IO/Qt_Widget.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/IO/Qt_Widget_tool.h>
-#include <CGAL/IO/Qt_Scene.h>
+#include <CGAL/IO/Qt_widget_view.h>
 
 namespace CGAL {
 
@@ -136,7 +136,7 @@ void Qt_widget::mousePressEvent(QMouseEvent *e)
   emit(mousePressed(e));
   if (has_tool())
     current_tool->mousePressEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->mousePressEvent(e, *this);
   }
@@ -147,7 +147,7 @@ void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
   emit(mouseReleased(e));
   if (has_tool())
     current_tool->mouseReleaseEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->mouseReleaseEvent(e, *this);
   }
@@ -158,7 +158,7 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
   emit(mouseMoved(e));
   if (has_tool())
     current_tool->mouseMoveEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->mouseMoveEvent(e, *this);
   }
@@ -168,7 +168,7 @@ void Qt_widget::wheelEvent(QMouseEvent *e)
 {
   if (has_tool())
     current_tool->wheelEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->wheelEvent(e, *this);
   }
@@ -178,7 +178,7 @@ void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 {
   if (has_tool())
     current_tool->mouseDoubleClickEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->mouseDoubleClickEvent(e, *this);
   }
@@ -188,7 +188,7 @@ void Qt_widget::keyPressEvent(QKeyEvent *e)
 {
   if (has_tool())
     current_tool->keyPressEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->keyPressEvent(e, *this);
   }
@@ -198,7 +198,7 @@ void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 {
   if (has_tool())
     current_tool->keyReleaseEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->keyReleaseEvent(e, *this);
   }
@@ -208,7 +208,7 @@ void Qt_widget::enterEvent(QEvent *e)
 {
   if (has_tool())
     current_tool->enterEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->enterEvent(e, *this);
   }
@@ -218,7 +218,7 @@ void Qt_widget::leaveEvent(QEvent *e)
 {
   if (has_tool())
     current_tool->leaveEvent(e);
-  std::list<Qt_scene*>::iterator it;
+  std::list<Qt_widget_view*>::iterator it;
   for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++){
     (*it)->leaveEvent(e, *this);
   }
@@ -360,7 +360,7 @@ void Qt_widget::detach_current_tool()
 };
 
 
-void Qt_widget::show_scene(Qt_scene* s)
+void Qt_widget::show_scene(Qt_widget_view* s)
 {/*
   if(scenes_to_display.find(s)!=scenes_to_display.end())
   {
@@ -380,7 +380,7 @@ void Qt_widget::redraw()
     {
       clear();
       lock();
-      std::list<Qt_scene*>::iterator it;
+      std::list<Qt_widget_view*>::iterator it;
       for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++)
 	(*it)->draw_scene(*this);
       
@@ -392,14 +392,14 @@ void Qt_widget::redraw()
   };
   
   // add a scene in the list of displayable scenes
-  void Qt_widget::add_scene(Qt_scene* s)
+  void Qt_widget::add_scene(Qt_widget_view* s)
   {
     qt_scenes.push_back(s);
-    connect(s,SIGNAL(dying(Qt_scene*)),this,SLOT(remove_scene(Qt_scene*)));
+    connect(s,SIGNAL(dying(Qt_widget_view*)),this,SLOT(remove_scene(Qt_widget_view*)));
   }
 
   // remove a scene from the list of displayable scenes
-  void Qt_widget::remove_scene(Qt_scene* s)
+  void Qt_widget::remove_scene(Qt_widget_view* s)
   {
     qt_scenes.erase(std::find(qt_scenes.begin(),qt_scenes.end(),s));
   }

@@ -36,7 +36,7 @@
 namespace CGAL {
 
 class Qt_widget_tool;
-class Qt_scene;
+class Qt_widget_view;
 
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
@@ -77,10 +77,10 @@ public:
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
   
-  void show_scene(Qt_scene* s);
+  void show_scene(Qt_widget_view* s);
   
   inline
-  Qt_widget& operator<<(Qt_scene* s)
+  Qt_widget& operator<<(Qt_widget_view* s)
   {
     add_scene(s);
     show_scene(s);
@@ -193,10 +193,10 @@ public slots:
   void redraw();
   
   // add a scene in the list of displayable scenes
-  void add_scene(Qt_scene* s);
+  void add_scene(Qt_widget_view* s);
 
   // remove a scene from the list of displayable scenes
-  void remove_scene(Qt_scene* s);
+  void remove_scene(Qt_widget_view* s);
 
 private:
   void	  set_scales(); // set xscal and yscal
@@ -227,7 +227,7 @@ private:
   Qt_widget_tool *current_tool;
 
   //for scenes
-  std::list<Qt_scene*>	qt_scenes;
+  std::list<Qt_widget_view*>	qt_scenes;
 };//end Qt_widget class
 
 // manipulators
