@@ -131,16 +131,28 @@ Packages/Generator/doc_tex/support/Generator/generators_prog1_small.gif -text sv
 Packages/Generator/doc_tex/support/Generator/generators_prog2.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/support/Generator/generators_prog2.ps -text
 Packages/Generator/doc_tex/support/Generator/generators_prog2_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/euler_center.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/euler_face.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/euler_loop.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/euler_vertex.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.ips -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/hds_optional.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/hds_optional_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/euler_center.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/euler_face.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/euler_loop.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/euler_vertex.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/halfedge.ips -text
 Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/hds_design.ips -text
 Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_optional.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_optional_small.gif -text svneol=unset#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
