@@ -24,28 +24,24 @@ To optimize distance computations transformed distances are used.
 E.g., for an Euclidian distance the transformed distance is the squared Euclidean distance.
 
 
-\ccParameters
-
-\ccc{QueryItem} represents a
-$d$-dimensional
-spatial object.
-\ccc{SpatialPoint} represents a $d$-dimensional point.
-
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccNestedType{NT}{Number type.}
 
+\ccNestedType{Query_item}{Query item type.}
+
+\ccNestedType{Point}{Point type.}
 \ccCreationVariable{d}  %% choose variable name
 
 \ccOperations
 
-\ccMethod{NT distance(QueryItem q, SpatialPoint r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
+\ccMethod{NT distance(Query_item q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_rectangle(QueryItem q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(QueryItem q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<NT> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} furthest to \ccc{q}.}
 
@@ -55,14 +51,14 @@ the point on the boundary of \ccc{r} furthest to \ccc{q}.}
 
 \ccHasModels
 
-\ccc{CGAL::Manhattan_distance_rectangle_point<QueryItem, SpatialPoint>}\\
-\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem, SpatialPoint>}.
+\ccc{CGAL::Manhattan_distance_rectangle_point<PointTraits, IsoBox>}\\
+\ccc{CGAL::Euclidean_distance_sphere_point<PointTraits, Sphere>}.
 
 \ccSeeAlso
 
-OrthogonalDistance,
-\ccc{CGAL::Manhattan_distance_rectangle_point<QueryItem, SpatialPoint>}\\
-\ccc{CGAL::Euclidean_distance_sphere_point<QueryItem, SpatialPoint>}.
+\ccc{OrthogonalDistance},\\
+\ccc{CGAL::Manhattan_distance_rectangle_point<PointTraits, IsoBox>}\\
+\ccc{CGAL::Euclidean_distance_sphere_point<PointTraits, Sphere>}.
 
 \end{ccRefConcept}
 

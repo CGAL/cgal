@@ -1,28 +1,24 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Iso_rectangle_2.h>  
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Kd_tree_traits_point_2.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Fuzzy_iso_box_d.h>
+#include <CGAL/Fuzzy_iso_box.h>
 
 #include <vector>
 #include <iostream>
-#include <fstream>
 
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_2 Point;
+typedef R::Iso_rectangle_2 Box;
 
 typedef CGAL::Creator_uniform_2<double,Point> Creator;
 
-typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
-
-typedef CGAL::Iso_rectangle_2<R> Box;
-
-typedef CGAL::Fuzzy_iso_box_d<Point,Box> Fuzzy_box;	
+typedef CGAL::Kd_tree_traits_point_2<R> Traits;
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef Tree::Splitter Splitter;
+typedef CGAL::Fuzzy_iso_box<Traits,Box> Fuzzy_box;	
 
 int main() {
 
@@ -39,10 +35,9 @@ int main() {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
 
 
-  Traits tr(bucket_size, 3.0, true);
-  typedef CGAL::Kd_tree<Traits> tree;
+Splitter split(bucket_size, 3.0, true);
   
-  tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), split);
  
   // define range query
   

@@ -18,15 +18,12 @@
 
 \ccDefinition
   
-The concept \ccRefName\ provides a model for fuzzy $d$-dimensional spatial objects.
-
-\ccParameters
-
-\ccc{SpatialPoint} represents a $d$-dimensional point.
+The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spatial objects.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
+\ccNestedType{Point}{ represents a $d$-dimensional point.}
+\ccNestedType{NT}{Number type.} 
 
 \ccCreationVariable{q}  %% choose variable name
 
@@ -34,26 +31,26 @@ The concept \ccRefName\ provides a model for fuzzy $d$-dimensional spatial objec
 
 \ccOperations
 
-\ccMethod{bool contains(const SpatialPoint p); const}{test whether $q$ contains $p$.}
+\ccMethod{bool contains(Point p); const}{test whether $q$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle); const}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<PointTraits>& rectangle); const}
 {test whether the inner approximation of the spatial object intersects a rectangle
-associated with a node of a tree.}
+associated with a node of a tree. }
 
-\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle); const}
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<PointTraits>& rectangle); const}
 {test whether the outer approximation of the spatial object encloses a rectangle
 associated with a node of a tree.}
 
 
 \ccHasModels
 
-\ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>},
-\ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}.
+\ccc{CGAL::Fuzzy_sphere<PointTraits>},
+\ccc{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>},
-\ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}.
+\ccc{CGAL::Fuzzy_sphere<PointTraits>},
+\ccc{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>}.
 
 
 \end{ccRefConcept}

@@ -1,22 +1,23 @@
-#include <CGAL/Kd_tree.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Kd_tree_traits_point_2.h>
 #include <CGAL/Euclidean_distance_sphere_point.h>
 #include <CGAL/General_standard_search.h>
-
+#include <CGAL/Random.h>
 #include <vector>
 #include <iostream>
 
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_2 Point;
-typedef Point::R::FT NT;
+typedef R::FT NT;
 
-typedef CGAL::Circle_2<R> Circle;
-typedef CGAL::Plane_separator<NT> Separator;
+typedef R::Circle_2 Circle;
 
-typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
-typedef CGAL::Euclidean_distance_sphere_point<Circle, Point> Distance;
-typedef CGAL::General_standard_search<TreeTraits, Distance, Circle> 
-Neighbor_search;
+typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
+typedef CGAL::Euclidean_distance_sphere_point<TreeTraits, Circle> Distance;
+typedef CGAL::General_standard_search<TreeTraits, Distance> Neighbor_search;
+typedef Neighbor_search::Tree Tree;
+typedef Neighbor_search::Splitter Splitter;
   
 int main() {
 
@@ -39,10 +40,9 @@ int main() {
         data_points.push_front(random_point);
   }
   
-  TreeTraits tr(bucket_size, 3.0, false);
+  Splitter split(bucket_size, 3.0, false);
  
-  typedef CGAL::Kd_tree<TreeTraits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), split);
 
   // define query item
   double c[dim];
@@ -56,9 +56,9 @@ int main() {
 
   std::vector<Neighbor_search::Point_with_distance> neighbors1;
 
-  Distance tr_dist(dim);
+  Distance tr_dist;
 
-  Neighbor_search N1(d, query_item, tr_dist, neighbor_number, 10.0, true);
+  Neighbor_search N1(d, query_item, neighbor_number, 10.0, true);
  
   N1.the_k_neighbors(std::back_inserter(neighbors1)); 
   std::cout << 
@@ -68,12 +68,12 @@ int main() {
   for (int i=0; i < neighbor_number; ++i) { 
      std::cout << " d(q,fn)= " << 
      tr_dist.inverse_of_transformed_distance(neighbors1[i].second) << 
-     " nn= " << *(neighbors1[i].first) << std::endl; 
+     " nn= " << neighbors1[i].first<< std::endl; 
   }
 
   std::vector<Neighbor_search::Point_with_distance> neighbors2;
 
-  Neighbor_search N2(d, query_item, tr_dist, neighbor_number, 0.0, true);
+  Neighbor_search N2(d, query_item, neighbor_number, 0.0, true);
  
   N2.the_k_neighbors(std::back_inserter(neighbors2));
 
@@ -83,7 +83,7 @@ int main() {
   for (int k=0; k < neighbor_number; ++k) { 
      std::cout << " d(q,fn)= " 
      << tr_dist.inverse_of_transformed_distance(neighbors2[k].second) << 
-     " nn= " << *(neighbors2[k].first) << std::endl; 
+     " nn= " << neighbors2[k].first << std::endl; 
   }
   
   return 0;

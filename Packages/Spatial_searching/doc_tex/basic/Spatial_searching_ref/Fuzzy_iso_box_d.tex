@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Fuzzy_iso_box_d.tex
+% | Reference manual page: Fuzzy_iso_box.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}  %% add template arg's if necessary
+\begin{ccRefClass}{Fuzzy_iso_box<PointTraits, IsoBox>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -19,21 +19,18 @@
 \ccDefinition
   
 The class \ccRefName\ implements fuzzy $d$-dimensional iso boxes.
-A fuzzy iso box with fuziness value $\epsilon$ has
+A fuzzy iso box with fuzziness value $\epsilon$ has
 as outer approximation a box  dilated with a $d$-dim square of size $\epsilon$ and
 as inner approximation a box eroded by a $d$-dim square of size $\epsilon$. 
 
-\ccInclude{CGAL/Fuzzy_iso_box_d.h}
+\ccInclude{CGAL/Fuzzy_iso_box.h}
 
 \ccParameters
-Expects for the first template argument
-an implementation for $d$-dimensional points
-of the concept \ccc{SpatialPoint},
-for example \ccc{CGAL::Point_d<Kernel>}.
+Expects for the template argument a model of the concept
+\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 
-Expects for the second template argument parameter \ccc{IsoBox_d} an implementation for a $d$-dimensional iso box
-of the concept \ccc{IsoBox_d},
-for example \ccc{CGAL::Iso_box_d<Kernel>}.
+Expects for the second template argument  a model 
+of the concept \ccc{IsoBox}, for example \ccc{CGAL::Iso_rectangle_2<Kernel>}.
  
 \ccIsModel
 
@@ -41,23 +38,24 @@ FuzzyQueryItem
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{b}  %% choose variable name
 
-\ccConstructor{Fuzzy_iso_box_d(SpatialPoint p, SpatialPoint q, NT epsilon=NT(0));}{Constructs a fuzzy iso box
+\ccConstructor{Fuzzy_iso_box(Point p, Point q, NT epsilon=NT(0));}{Constructs a fuzzy iso box
 specified by the minimal iso box containing $p$ and $q$ and fuzziness value \ccc{epsilon}.}
 
 \ccOperations
 
-\ccMethod{bool contains(SpatialPoint p);}{test whether $b$ contains $p$.}
+\ccMethod{bool contains(Point p);}{test whether $b$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(Kd_tree_rectangle<NT>* rectangle);}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>& rectangle);}
 {test whether the inner box intersects a rectangle
 associated with a node of a tree.}
 
-\ccMethod{bool outer_range_is_contained_by(Kd_tree_rectangle<NT>* rectangle);}
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>& rectangle);}
 {test whether the outer box encloses a rectangle
 associated with a node of a tree.}
 

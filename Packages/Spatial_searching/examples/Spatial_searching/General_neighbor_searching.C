@@ -1,94 +1,68 @@
+//file: examples/Spatial_searching/General_neighbor_searching.C
+
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Kd_tree.h>
-#include <CGAL/Kernel_d/Iso_box_d.h>
+#include <CGAL/point_generators_d.h>
+#include <CGAL/Kd_tree_traits_point_d.h>
 #include <CGAL/Manhattan_distance_rectangle_point.h>
 #include <CGAL/General_standard_search.h>
 
-#include <vector> 
-#include <iostream>
 
-typedef CGAL::Cartesian_d<double> R;
-typedef R::Point_d Point;
-typedef Point::R::FT NT;
+typedef CGAL::Cartesian_d<double> K;
+typedef K::Point_d   Point_d;
+typedef K::Iso_box_d Iso_box_d;
+typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef CGAL::Kd_tree_traits_point_d<K> TreeTraits;
+typedef CGAL::Manhattan_distance_rectangle_point<TreeTraits, Iso_box_d> Distance;
+typedef CGAL::General_standard_search<TreeTraits, Distance> Neighbor_search;
+typedef Neighbor_search::Tree Tree;
+typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 
-typedef CGAL::Iso_box_d<R> Box;
-
-typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
-typedef CGAL::Manhattan_distance_rectangle_point<Box, Point> Distance;
-typedef CGAL::General_standard_search<TreeTraits, Distance, Box> 
-Neighbor_search;
+int 
+main() {
+  const int D = 4;
+  const int N = 1000;
+  const int K = 5;
   
-int main() {
-
-  const int dim=4;
-  const int bucket_size=3;
+  // generator for random data points in the square ( (-1,-1), (1,1) ) 
+  Random_points_iterator rpit(4, 1.0);
   
-  const int data_point_number=500;
-  const int neighbor_number=5;
-  
-  typedef std::list<Point> Point_list;
-  Point_list data_points;
-  
-  // add random points of dimension dim to data_points
-  CGAL::Random rnd;
-  
-  for (int i1=0; i1<data_point_number; i1++) {
-        NT v[dim];
-        for (int i2=0; i2<dim; i2++) v[i2]=rnd.get_double(-1.0,1.0);
-        Point random_point(dim,v,v+dim);
-        data_points.push_front(random_point);
-  }
-  
-  TreeTraits tr(bucket_size, 3.0, false);
+  // Insert N points in the tree
+  Tree tree(N_Random_points_iterator(rpit,0),
+	    N_Random_points_iterator(N));
 
-  typedef CGAL::Kd_tree<TreeTraits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  // define query
+  double p[D] = {0.1, 0.1, 0.1, 0.1};
+  double q[D] = {0.2, 0.2, 0.2, 0.2};
+  Point_d pp(D,p,p+D);
+  Point_d qq(D,q,q+D);
+  Iso_box_d query(pp,qq);
 
-  // define query item
-  double p[dim];
-  double q[dim];
-  for (int i2=0; i2<dim; i2++) {
-  	p[i2]=  0.1;
-        q[i2]=  0.2;
-  }
-  Point pp(dim,p,p+dim);
-  Point qq(dim,q,q+dim);
-  Box query_item(pp,qq);
+  Neighbors neighbors;
+  Neighbors::iterator it;
+  Distance tr_dist;
 
-  std::vector<Neighbor_search::Point_with_distance> neighbors1;
-
-  Distance tr_dist(dim);
-
-  Neighbor_search N1(d, query_item, tr_dist, neighbor_number, 10.0, false);
+  Neighbor_search N1(tree, query, K, 10.0, false);
+  N1.the_k_neighbors(std::back_inserter(neighbors)); 
  
-  N1.the_k_neighbors(std::back_inserter(neighbors1)); 
-  std::cout << 
-  "query item= [0.1,0.2]^4 " << std::endl <<  "5 approximate furthest neighbors are: " 
-  << std::endl; 
-  for (int i=0; i < neighbor_number; ++i) { 
-     std::cout << " d(q,fn)= " << 
-     tr_dist.inverse_of_transformed_distance(neighbors1[i].second) << 
-     " fn= " << *(neighbors1[i].first) << std::endl; 
+  std::cout << "query = [0.1,0.2]^4 " << std::endl 
+	    <<  K << " approximate furthest neighbors are: " << std::endl; 
+  for (it = neighbors.begin();it != neighbors.end();it++) { 
+     std::cout << " d(q,fn)= " << tr_dist.inverse_of_transformed_distance(it->second) 
+	       << " fn= " << it->first << std::endl; 
   }
 
-  std::vector<Neighbor_search::Point_with_distance> neighbors2;
+  neighbors.clear();
 
-  Neighbor_search N2(d, query_item, tr_dist, neighbor_number, 0.0, false);
+  Neighbor_search N2(tree, query, K, 0.0, false);
  
-  N2.the_k_neighbors(std::back_inserter(neighbors2));
+  N2.the_k_neighbors(std::back_inserter(neighbors));
 
-  std::cout << 
-  "query item= [0.1,0.2]^4 " << std::endl <<  "5 exact furthest neighbors are: " 
-  << std::endl; 
-  for (int k=0; k < neighbor_number; ++k) { 
-     std::cout << " d(q,fn)= " 
-     << tr_dist.inverse_of_transformed_distance(neighbors2[k].second) << 
-     " fn= " << *(neighbors2[k].first) << std::endl; 
-  }
-  
+  std::cout << "query = [0.1,0.2]^4 " << std::endl 
+	    <<  K << " exact furthest neighbors are: " << std::endl; 
+  for (it = neighbors.begin(); it != neighbors.end(); it++) { 
+     std::cout << " d(q,fn)= " << tr_dist.inverse_of_transformed_distance(it->second) 
+	       << " fn= " << it->first << std::endl; 
+  }  
   return 0;
-}; 
-  
- 
-
-
+}

@@ -11,28 +11,26 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Weighted_Minkowski_distance<SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Weighted_Minkowski_distance<PointTraits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
    
-The class \ccRefName\ provides an implementation of the concept OrthogonalDistance, with a weighted Minkowski metric
-on $d$-dimensional points
+The class \ccRefName\ provides an implementation of the concept \ccc{OrthogonalDistance}, with a weighted 
+Minkowski metric on $d$-dimensional points
 defined by $l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p})^{1/p}$ for $0 < p <\infty$ and
 defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
 For the purpose of the distance computations it is more efficient to compute
-the transformed distance ${\Sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}$ instead of the actual distance.
+the transformed distance ${\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}$ instead of the actual distance.
 
 \ccInclude{CGAL/Weighted_Minkowski_distance.h}
 
 \ccParameters
 
-Expects for the template argument
-an implementation for $d$-dimensional points
-of the concept \ccc{SpatialPoint},
-for example \ccc{CGAL::Point_d<Kernel>}.
+Expects for the template argument a model of the concept
+\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_2<Kernel>}.
 
 \ccIsModel
 
@@ -40,8 +38,9 @@ OrthogonalDistance
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
-\ccTypedef{std::vector<NT> Weight_vector;}{Vector type used to represent weights.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+
  
 
 \ccCreation
@@ -49,20 +48,22 @@ OrthogonalDistance
 
 \ccConstructor{Weighted_Minkowski_distance(int d);}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
 
-\ccConstructor{Weighted_Minkowski_distance(NT power, int dim, Weight_vector weights);}
-{Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.}
+\ccConstructor{template <class InputIterator>
+               Weighted_Minkowski_distance(NT power, int dim, InputIterator wb, InputIterator we);}
+{Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.
+The values in the iterator range \ccc{[wb,we)} are the weight. }
 
 \ccOperations
 
 
-\ccMethod{NT distance(SpatialPoint q, SpatialPoint r);}{Returns $d^{power}$, 
+\ccMethod{NT distance(Point q, Point r);}{Returns $d^{power}$, 
 where $d$ denotes the distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
@@ -71,14 +72,14 @@ and returns the updated distance.}
 
 \ccMethod{NT transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^p$. Returns for $p=\infty$ $d$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^{1/p}$.}
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns for $0 < p <\infty$ $d^{1/p}$}.
 {Returns for $p=\infty$ $d$.}
  
 
 \ccSeeAlso
 
 OrthogonalDistance,
-\ccc{CGAL::Euclidean_distance<SpatialPoint>}.
+\ccc{CGAL::Euclidean_distance<PointTraits>}.
 
 \end{ccRefClass}
 

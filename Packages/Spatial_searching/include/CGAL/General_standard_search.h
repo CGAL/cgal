@@ -1,108 +1,115 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/General_standard_search.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 3.0
+// revision_date : 2003/07/10 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
-#ifndef  GENERAL_STANDARD_SEARCH_H
-#define  GENERAL_STANDARD_SEARCH_H
+#ifndef  CGAL_GENERAL_STANDARD_SEARCH_H
+#define  CGAL_GENERAL_STANDARD_SEARCH_H
 #include <cstring>
 #include <list>
 #include <queue>
 #include <memory>
 #include <CGAL/Kd_tree_node.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Kd_tree.h>
 #include <CGAL/Euclidean_distance.h>
+#include <CGAL/Splitters.h>
 
 namespace CGAL {
 
-template <class TreeTraits, 
-	  class Distance=Euclidean_distance<typename TreeTraits::Point>, 
-	  class QueryItem=typename TreeTraits::Point, 
-	  class Tree=Kd_tree<TreeTraits> >
+template <class GeomTraits, 
+          class Distance_=Euclidean_distance<GeomTraits>,
+          class Splitter_=Sliding_midpoint<GeomTraits> , 
+	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
 
 class General_standard_search {
 
 public:
-
-typedef typename TreeTraits::Point Point;
-typedef typename TreeTraits::NT NT;
-typedef std::pair<Point*,NT> Point_with_distance;
-
-typedef typename Tree::Node_handle Node_handle;
-
-typedef typename Tree::Point_iterator Point_iterator;
-typedef Kd_tree_rectangle<NT> Rectangle; 
-
+  typedef Splitter_ Splitter;
+  typedef Distance_ Distance;
+  typedef Tree_ Tree;
+  typedef typename GeomTraits::Point Point;
+  typedef typename GeomTraits::NT NT;
+  typedef std::pair<Point,NT> Point_with_distance;
+  
+  typedef typename Tree::Node_handle Node_handle;
+  
+  typedef typename Tree::Point_iterator Point_iterator;
+  typedef Kd_tree_rectangle<GeomTraits> Rectangle;
+  typedef typename Distance::Query_item Query_item;
 private:
 
-int number_of_internal_nodes_visited;
-int number_of_leaf_nodes_visited;
-int number_of_items_visited;
+  int number_of_internal_nodes_visited;
+  int number_of_leaf_nodes_visited;
+  int number_of_items_visited;
+  
+  bool search_nearest;
+  
+  NT multiplication_factor;
+  Query_item query_object;
+  int total_item_number;
+  NT distance_to_root;   
+  
+  typedef std::list<Point_with_distance> NN_list;
 
-bool search_nearest;
-
-NT multiplication_factor;
-QueryItem* query_object;
-int total_item_number;
-NT distance_to_root;   
-
-typedef std::list<Point_with_distance> NN_list;
-
-NN_list l;
-int max_k;
-int actual_k;
-
-Distance* distance_instance;
-
-	inline bool branch(NT distance) {
-		if (actual_k<max_k) return true;
-		else 
-		    if (search_nearest) return 
-		    ( distance * multiplication_factor < l.rbegin()->second);
-		    else return ( distance >
-		    		  l.begin()->second * multiplication_factor);
-		    
-	};
-
-	inline void insert(Point* I, NT dist) {
-		bool insert;
-		if (actual_k<max_k) insert=true;
-		else 
-			if (search_nearest) insert=
-			( dist < l.rbegin()->second ); 
-			else insert=(dist > l.begin()->second);
-        if (insert) {
-	   		actual_k++;	 	
-			typename NN_list::iterator it=l.begin();
-			for (; (it != l.end()); ++it) 
-			{ if (dist < it->second) break;}
-        		Point_with_distance NN_Candidate(I,dist);
-        		l.insert(it,NN_Candidate);
-        		if (actual_k > max_k) {
-				actual_k--;
-                if (search_nearest) l.pop_back();
-				else l.pop_front();
-        	};
-  		}
-
-	};
-
+  NN_list l;
+  int max_k;
+  int actual_k;
+  
+  Distance* distance_instance;
+  
+  inline bool branch(NT distance) {
+    if (actual_k<max_k) return true;
+    else 
+      if (search_nearest) return 
+			    ( distance * multiplication_factor < l.rbegin()->second);
+      else return ( distance >
+		    l.begin()->second * multiplication_factor);
+    
+  };
+  
+  inline void insert(Point* I, NT dist) {
+    bool insert;
+    if (actual_k<max_k) insert=true;
+    else 
+      if (search_nearest) insert=
+			    ( dist < l.rbegin()->second ); 
+      else insert=(dist > l.begin()->second);
+    if (insert) {
+      actual_k++;	 	
+      typename NN_list::iterator it=l.begin();
+      for (; (it != l.end()); ++it) 
+	{ if (dist < it->second) break;}
+      Point_with_distance NN_Candidate(*I,dist);
+      l.insert(it,NN_Candidate);
+      if (actual_k > max_k) {
+	actual_k--;
+	if (search_nearest) l.pop_back();
+	else l.pop_front();
+      };
+    }
+    
+  };
+  
 	
-	public:
+public:
 
 	template<class OutputIterator>  
 	OutputIterator  the_k_neighbors(OutputIterator res)
@@ -114,8 +121,10 @@ Distance* distance_instance;
 
 
     // constructor
-    General_standard_search(Tree& tree, QueryItem& q, 
-    const Distance& d=Distance(), int k=1, NT Eps=NT(0.0), bool Search_nearest=true) {
+    General_standard_search(Tree& tree, const Query_item& q, 
+			    int k=1, NT Eps=NT(0.0), 
+			    bool Search_nearest=true,
+			    const Distance& d=Distance()) {
 
 	distance_instance=new Distance(d);
 
@@ -125,13 +134,10 @@ Distance* distance_instance;
 	max_k=k;
 	actual_k=0;
 	search_nearest = Search_nearest; 
-		
-        
-
        
-        query_object = &q;
+        query_object = q;
 
-        total_item_number=tree.item_number();
+        total_item_number=tree.size();
 
         number_of_leaf_nodes_visited=0;
         number_of_internal_nodes_visited=0;
@@ -164,18 +170,18 @@ Distance* distance_instance;
     private:
    
 
-    void compute_neighbors_general(Node_handle N, Kd_tree_rectangle<NT>* r) {
+  void compute_neighbors_general(Node_handle N, Kd_tree_rectangle<GeomTraits>* r) {
 		
                 if (!(N->is_leaf())) {
                         number_of_internal_nodes_visited++;
                         int new_cut_dim=N->cutting_dimension();
 			NT  new_cut_val=N->cutting_value();
 
-			Kd_tree_rectangle<NT>* r_lower = 
-			new Kd_tree_rectangle<NT>(*r);
+			Kd_tree_rectangle<GeomTraits>* r_lower =
+			  new Kd_tree_rectangle<GeomTraits>(*r);
 
 			// modifies also r_lower to lower half
-			Kd_tree_rectangle<NT>* r_upper = 
+			Kd_tree_rectangle<GeomTraits>* r_upper =
 			r_lower->split(new_cut_dim, new_cut_val);
 
                         NT distance_to_lower_half;
@@ -185,12 +191,12 @@ Distance* distance_instance;
 
                         	distance_to_lower_half = 
                         	distance_instance -> 
-				min_distance_to_queryitem(*query_object, 
+				min_distance_to_queryitem(query_object, 
 							  *r_lower);
 				
                         	distance_to_upper_half = 
                         	distance_instance -> 
-				min_distance_to_queryitem(*query_object, 
+				min_distance_to_queryitem(query_object, 
 							  *r_upper);
 			
 
@@ -200,12 +206,12 @@ Distance* distance_instance;
 
                         	distance_to_lower_half = 
                         	distance_instance -> 
-				max_distance_to_queryitem(*query_object, 
+				max_distance_to_queryitem(query_object, 
 							  *r_lower);
 
                         	distance_to_upper_half = 
                         	distance_instance -> 
-				max_distance_to_queryitem(*query_object, 
+				max_distance_to_queryitem(query_object, 
 							  *r_upper);
 
 			}
@@ -239,7 +245,7 @@ Distance* distance_instance;
                         number_of_items_visited++;
 			NT distance_to_query_object=
                         distance_instance->
-                        distance(*query_object,**it);
+                        distance(query_object,**it);
                         insert(*it,distance_to_query_object);
                   }
 		}

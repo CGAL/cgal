@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance_sphere_point<QueryItem, SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance_sphere_point<PointTraits, Sphere>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,18 +24,20 @@ for the Euclidean distance ($l_2$ metric) between a $d$-dimensional sphere and a
 the Euclidean distance between a $d$-dimensional sphere
 and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 
+
 \ccInclude{CGAL/Euclidean_distance_sphere_point.h}
 
 \ccParameters
-
-Expects for the first template argument an implementation 
-for $d$-dimensional spheres of the concept \ccc{QueryItem},
-for example \ccc{CGAL::Sphere_d<Kernel>}.
-Expects for the second template argument
+Expects for the first template argument
 an implementation for
 $d$-dimensional points of
-the concept \ccc{SpatialPoint}, 
-for example \ccc{CGAL::Point_d<Kernel>}.
+the concept \ccc{PointTraits}, 
+for example \ccc{CGAL::Kd_tree_traits_point_d< Cartesian_d<double> >}.
+
+Expects for the second template argument an implementation 
+for $d$-dimensional spheres of the concept \ccc{Sphere},
+for example \ccc{CGAL::Cartesian_d<double>::Sphere_d}.
+
 
 \ccIsModel
 
@@ -43,27 +45,29 @@ GeneralDistance
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccTypedef{Sphere Query_item;}{Query item type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
 
-\ccConstructor{Euclidean_distance_sphere_point(int d);}
-{Constructor implementing Euclidean distance for
+\ccConstructor{Euclidean_distance_sphere_point();}
+{Default constructor implementing Euclidean distance for
 $d$-dimensional spheres.}
 
 \ccOperations
 
-\ccMethod{NT distance(QueryItem q, SpatialPoint p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(Sphere s, Point p);}{Returns the distance between \ccc{s} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r);}
-{Returns the minimal distance between a point from the sphere \ccc{q} and a point from
-\ccc{r}}
+\ccMethod{NT min_distance_to_queryitem(Sphere s, Kd_tree_rectangle<PointTraits> r);}
+{Returns the minimal distance between a point from the sphere \ccc{s} and a point from
+\ccc{r}.}
 
-\ccMethod{NT max_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r);}
-{Returns the maximal distance between the sphere \ccc{q} and
-a point from \ccc{r} furthest to \ccc{q}.}
+\ccMethod{NT max_distance_to_queryitem(Sphere s, Kd_tree_rectangle<PointTraits> r);}
+{Returns the maximal distance between the sphere \ccc{s} and
+a point from \ccc{r} furthest to \ccc{s}. }
 
 \ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance<SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance<PointTraits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -27,33 +27,31 @@ To optimize distance computations squared distances are used.
 
 \ccParameters
 
-Expects for the template argument
-an implementation for $d$-dimensional points
-of the concept \ccc{SpatialPoint},
-for example \ccc{CGAL::Point_d<Kernel>}.
+Expects for the template argument a model of the concept
+\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_2<Kernel>}.
 
 \ccIsModel
 
 OrthogonalDistance
 
 \ccTypes
-
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
-\ccConstructor{Euclidean_distance(int d);}{Constructor for using the Euclidean distance for $d$-dimensional points.}
+\ccConstructor{Euclidean_distance();}{Default constructor.}
 
 \ccOperations
  
-\ccMethod{NT distance(SpatialPoint q, SpatialPoint p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(Point q, Point p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
 {Returns the squared Euclidean distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_queryitem(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_queryitem(Point q, Kd_tree_rectangle<NT> r;);}
 {Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
@@ -67,7 +65,7 @@ and returns the updated squared distance.}
 \ccSeeAlso
 
 OrthogonalDistance.
-\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>}.
+\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}.
 
 \end{ccRefClass}
 

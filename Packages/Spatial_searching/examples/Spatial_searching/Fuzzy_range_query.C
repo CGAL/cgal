@@ -1,100 +1,61 @@
+// file: examples/Spatial_searching/Fuzzy_range_query.C
+
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/Fuzzy_sphere_d.h>
-#include <CGAL/Fuzzy_iso_box_d.h>
-#include <CGAL/Kernel_d/Iso_box_d.h>
-
-#include <vector>
+#include <CGAL/Kd_tree_traits_point_d.h>
+#include <CGAL/Fuzzy_sphere.h>
+#include <CGAL/Fuzzy_iso_box.h>
 #include <iostream>
 
-typedef CGAL::Homogeneous_d<CGAL::MP_Float> R;
-typedef R::Point_d Point;
+typedef CGAL::MP_Float NT;
+typedef CGAL::Homogeneous_d<NT> R;
+typedef R::Point_d Point_d;
+typedef R::Iso_box_d Iso_box;
+typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef CGAL::Kd_tree_traits_point_d<R> Traits;
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+typedef CGAL::Fuzzy_iso_box<Traits, Iso_box> Fuzzy_iso_box;
 
-typedef Point::R::RT NT;
-
-typedef CGAL::Iso_box_d<R> Iso_box;
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
-
-typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
-typedef CGAL::Fuzzy_iso_box_d<Point, Iso_box> Box;
-
-int main() {
-
-  int bucket_size=1;
-  const int dim=4;
+int 
+main() {
+  const int D = 4;
+  const int N = 1000;
   
-  typedef std::list<Point> Point_list;
-  Point_list data_points;
-  const int data_point_number=20;
+  // generator for random data points in the square ( (-1000,-1000), (1000,1000) ) 
+  Random_points_iterator rpit(4, 1000.0);
   
-  typedef std::vector<Point> Point_vector;
+  // Insert N points in the tree
+  Tree tree(N_Random_points_iterator(rpit,0),
+	    N_Random_points_iterator(N));
 
-  // add random points of dimension dim to data_points
-  CGAL::Random Rnd;
-  
-  for (int i1=0; i1<data_point_number; i1++) {
-        NT v[dim];
-        for (int i2=0; i2<dim; i2++) v[i2]= Rnd.get_double(-1000.0,1000.0);
-        Point random_point(dim,v,v+dim,1.0);
-        data_points.push_front(random_point);
-  }
-  
-  Traits tr(bucket_size, NT(3), false);
-
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
-
-  Point_vector points_in_rectangular_range_query;
-  Point_vector points_in_spherical_range_query;
-
-  // define center point
-  NT c[dim];
-  for (int i1=0; i1<dim; i1++) {
-  	c[i1]=  300.0;
-  }
-  
-  Point center(dim,c,c+dim,1.0);
-  Sphere s(center,700.0,100.0);
-  d.search(std::back_inserter(points_in_spherical_range_query),s);
+  // define spherical range query object
+  NT c[D] = { 300, 300, 300, 300 };
+  Point_d center(D,c,c+D, 1.0);
+  Fuzzy_sphere fs(center, 700.0, 100.0);
 
   std::cout << "points approximately in fuzzy range query" << std::endl; 
   std::cout << "with center (300.0, 300.0, 300.0, 300.0)" << std::endl;
   std::cout << "and fuzzy radius <200.0,400.0> are:" << std::endl;
+  tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fs);
   
-  unsigned int points_in_spherical_range_query_size=
-  points_in_spherical_range_query.size();
-  for (unsigned int j2=0; j2 < points_in_spherical_range_query_size; ++j2) { 
-     std::cout << points_in_spherical_range_query[j2] << std::endl; 
-  }
- 
- // define range query
-  NT p[dim];
-  NT q[dim];
-  for (int i2=0; i2<dim; i2++) {
-  	p[i2]=  -100.0;
-        q[i2]=  900.0;
-  }
-   
-  Point pp(dim,p,p+dim,1.0);
-  Point qq(dim,q,q+dim,1.0);
-
-  Box query(pp,qq,100.0);
-
-  d.search(std::back_inserter(points_in_rectangular_range_query),query);
+  // define rectangular range query object
+  NT pa[D] = { -100.0, -100.0, -100.0, -100.0 };
+  NT qa[D] = { 900.0, 900.0, 900.0, 900.0 };
+  Point_d p(D, pa, pa+D, 1.0);
+  Point_d q(D, qa, qa+D, 1.0);
+  Fuzzy_iso_box fib(p, q, 100.0);
 
   std::cout << "points approximately in fuzzy range query ";
   std::cout << "[<-200,0>,<800,1000>]]^4 are:" << std::endl;
 
-  unsigned int points_in_rectangular_range_query_size=
-               points_in_rectangular_range_query.size();
-  for (unsigned int j3=0; j3 < points_in_rectangular_range_query_size; ++j3) { 
-     std::cout << points_in_rectangular_range_query[j3] << std::endl; 
-  }
-  
+  tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fib);
+ 
   return 0;
-};  
+}
 
   
 

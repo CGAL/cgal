@@ -1,187 +1,35 @@
 #include <CGAL/basic.h>
-
 #include <vector>
-#include <numeric>
 #include <cassert>
-#include <string>
-
 #include <iostream>
-#include <fstream> 
 
-#include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
 
-  // create own Point type (adapted from example3.C from kdtree and Point_3.h)
- 
-class Point
-{
-public:
 
-  class R
-  { 
-  public:
-    typedef double FT;
-  };
+#ifdef CUSTOM_POINTS
 
-private:
-  double   vec[ 3 ];
-  
-public: 
-  
-  Point()
-  { 
-    for  ( int ind = 0; ind < 3; ind++ )
-      vec[ ind ] = 0;
-  }
+#include <CGAL/Kd_tree_traits_point.h>
+#include "../../examples/Spatial_searching/Point.h" 
+typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord_iterator> Traits;
+#else
 
-  Point (double& x, double& y, double& z)
-  {
-    vec[0]=x;
-    vec[1]=y;
-    vec[2]=z;
-  }
-
-  inline
-  int dimension() const
-  {
-    return  3;
-  }
- 
-  inline
-  double x() const
-  { 
-	return vec[ 0 ];
-  }
-
-  inline
-  double y() const
-  { 
- 	return vec[ 1 ];
-  }
-  
-  inline
-  double z() const
-  { 
-	return vec[ 2 ];
-  }
-
-  inline
-  void set_coord(int k, double x)
-  {
-    vec[ k ] = x;
-  }
-  
-  inline
-  double  & operator[](int k)  
-  {
-    return  vec[ k ];
-  }
-
-  inline
-  double  operator[](int k) const
-  {
-    return  vec[ k ];
-  }
-}; //end of class
-
-inline
-bool
-operator!=(const Point& p, const Point& q)
-{
-  return ( (p[0] != q[0]) || (p[1] != q[1]) || (p[2] != q[2]) ); 
-}
-
-inline
-bool
-operator==(const Point& p, const Point& q)
-{
-  return ( (p[0] == q[0]) && (p[1] == q[1]) && (p[2] == q[2]) ) ;
-}
-
-class Point3D_distance
-{
-public:
-
-inline double distance(const Point& p1, const Point& p2)
-{
-    double distx= p1.x()-p2.x();
-    double disty= p1.y()-p2.y();
-    double distz= p1.z()-p2.z();
-    return distx*distx+disty*disty+distz*distz;
-}
-
-inline double min_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
-{   double distance(0.0);
-    double h;
-    h=p.x();
-    if (h < b.min_coord(0)) distance += (b.min_coord(0)-h)*(b.min_coord(0)-h);
-    if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
-    h=p.y();
-    if (h < b.min_coord(1)) distance += (b.min_coord(1)-h)*(b.min_coord(1)-h);
-    if (h > b.max_coord(1)) distance += (h-b.max_coord(1))*(h-b.min_coord(1));
-    h=p.z();
-    if (h < b.min_coord(2)) distance += (b.min_coord(2)-h)*(b.min_coord(2)-h);
-    if (h > b.max_coord(2)) distance += (h-b.max_coord(2))*(h-b.max_coord(2));
-    return distance;
-}
-
-inline double max_distance_to_queryitem(const Point& p,
-                                        const CGAL::Kd_tree_rectangle<double>& b) 
-{   double distance(0.0);
-    double h;
-    h=p.x();
-    if (h >= (b.min_coord(0)+b.max_coord(0))/2.0) 
-                distance += (h-b.min_coord(0))*(h-b.min_coord(0)); 
-	  else
-                distance += (b.max_coord(0)-h)*(b.max_coord(0)-h);
-    h=p.y();
-    if (h >= (b.min_coord(1)+b.max_coord(1))/2.0) 
-                distance += (h-b.min_coord(1))*(h-b.min_coord(1)); 
-	  else
-                distance += (b.max_coord(1)-h)*(b.max_coord(1)-h);
-    h=p.z();
-    if (h >= (b.min_coord(2)+b.max_coord(2))/2.0) 
-                distance += (h-b.min_coord(2))*(h-b.min_coord(2)); 
-	  else
-                distance += (b.max_coord(2)-h)*(b.max_coord(2)-h);
-    return distance;
-}
-
-inline double new_distance(double& dist, double old_off, double new_off,
-                int cutting_dimension)  {
-                return dist + new_off*new_off - old_off*old_off;
-}
-
-inline double transformed_distance(double d) {
-        return d*d;
-}
-
-inline double inverse_of_transformed_distance(double d) {
-        return sqrt(d);
-}
-
-}; // end of class
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Kd_tree_traits_point_3.h>
+typedef CGAL::Simple_cartesian<double> K;
+typedef K::Point_3 Point;
+typedef CGAL::Kd_tree_traits_point_3<K> Traits;
+typedef CGAL::Euclidean_distance<Traits> Distance;
+#endif
 
 
-
-typedef CGAL::Kd_tree_rectangle<double> Rectangle;
-// typedef CGAL::Plane_separator<double> Separator;
-
-// typedef CGAL::Kd_tree_traits_point<Separator,Point,
-// CGAL::Fair<Point> > Traits;
-
-typedef CGAL::Kd_tree_traits_point<Point,
-CGAL::Fair<Point> > Traits;
-
-typedef CGAL::Orthogonal_priority_search<Traits, Point3D_distance> 
-NN_priority_search;
-
+typedef CGAL::Fair<Traits> Splitter; 
+typedef CGAL::Orthogonal_priority_search<Traits, Distance, Splitter>  NN_priority_search;
+typedef NN_priority_search::Tree Tree;
+typedef NN_priority_search::Splitter Splitter;
 
 int main() {
 
@@ -206,13 +54,10 @@ int main() {
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, 3.0, true);
-
-  Point3D_distance tr_dist;
+  Splitter split(bucket_size, 3.0, true);
 
   std::cout << "constructing tree started" << std::endl;
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), split);
   std::cout << "constructing tree ready" << std::endl;
 
   double q[dim];
@@ -222,7 +67,7 @@ int main() {
   std::vector<NN_priority_search::Point_with_distance> nearest_neighbours; 
   nearest_neighbours.reserve(nearest_neighbour_number);
 
-  NN_priority_search NN(d, query_item, tr_dist, 0.0, true);
+  NN_priority_search NN(d, query_item, 0.0, true);
 
   std::vector<NN_priority_search::Point_with_distance>::iterator 
   it = nearest_neighbours.begin();
@@ -237,9 +82,9 @@ int main() {
      std::cout << " d(q,nn)= " << sqrt(nearest_neighbours[i].second)  <<
      // " nn= " << *(nearest_neighbours[i].first) 
      " nn= " << 
-     nearest_neighbours[i].first->x()  << " " <<
-     nearest_neighbours[i].first->y()  << " " <<
-     nearest_neighbours[i].first->z()  << " " 
+     nearest_neighbours[i].first.x()  << " " <<
+     nearest_neighbours[i].first.y()  << " " <<
+     nearest_neighbours[i].first.z()  << " " 
      << std::endl; 
   }
   std::cout << "test ready" << std::endl;

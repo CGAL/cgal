@@ -34,24 +34,18 @@ stored at a leaf node.
 \ccCreation
 \ccCreationVariable{tr}  %% choose variable name
 
-\ccOperations
 
-\ccMethod{void split(Separator& sep, Container<Point>& c0, Container<Point>& c1);}
-{Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator}
-
-\ccMethod{int bucket_size();} {Returns the bucket size of the leaf nodes.}
-
-\ccMethod{int use_extended_nodes();} {Indicates whether a tree with extended internal nodes should be used.}
- 
 \ccHasModels
 
-\ccc{CGAL::Kd_tree_traits_point<SpatialPoint,Splitter>}
+\ccc{CGAL::Kd_tree_traits_point<SpatialPoint, Distance>}
 
 \ccSeeAlso
 
-Tree.
-\ccc{CGAL::Kd_tree_traits_point<SpatialPoint,Splitter>},
-\ccc{CGAL::Kd_tree<TreeTraits>}.
+\ccc{CGAL::Kd_tree_traits_point_2<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point_3<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point_d<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point<Point,CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator>},
+\ccc{CGAL::Kd_tree<Traits>}.
 
 \end{ccRefConcept}
 

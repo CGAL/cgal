@@ -1,21 +1,25 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/Kd_tree_rectangle.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 3.0
+// revision_date : 2003/07/10 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
 #ifndef CGAL_KD_TREE_RECTANGLE_H
 #define CGAL_KD_TREE_RECTANGLE_H
@@ -26,7 +30,7 @@
 
 namespace CGAL {
 
-  template <class Point, class T>
+  template <class GeomTraits, class Point, class T>
   struct set_bounds : public std::unary_function<Point&, void> {
     int dim;
     T *lower;
@@ -34,15 +38,17 @@ namespace CGAL {
     set_bounds(int d, T *l, T *u) : dim(d), lower(l), upper(u) {}
     void operator() (Point& p) {
 		T h;
-		for (int i = 0; i < dim; ++i) {
-			h=p[i]; 
+		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+                typename GeomTraits::Cartesian_const_iterator pit = construct_it(p);
+		for (int i = 0; i < dim; ++i, ++pit) {
+			h=(*pit); 
 			if (h < lower[i]) lower[i] = h;
  			if (h > upper[i]) upper[i] = h;
 		}
     }
   };
 
-  template <class P, class T>
+  template <class GeomTraits, class P, class T>
   struct set_bounds_from_pointer : public std::unary_function<P, void> {
     int dim;
     T *lower;
@@ -51,8 +57,10 @@ namespace CGAL {
 	dim(d), lower(l), upper(u) {}
     void operator() (P p) {
 		T h;
-		for (int i = 0; i < dim; ++i) {
-			h=(*p)[i];
+		typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+                typename GeomTraits::Cartesian_const_iterator pit = construct_it(*p);
+		for (int i = 0; i < dim; ++i, ++pit) {
+			h=(*pit);
 			if (h < lower[i]) lower[i] = h;
 			if (h > upper[i]) upper[i] = h;
 		}
@@ -60,9 +68,10 @@ namespace CGAL {
   };
 
 
-  template <class T> class Kd_tree_rectangle {
+  template <class GeomTraits> class Kd_tree_rectangle {
   public:
-    typedef T NT;
+    typedef typename GeomTraits::NT NT;
+    typedef NT T;
 
   private:
 
@@ -110,7 +119,7 @@ namespace CGAL {
     Kd_tree_rectangle() : dim(0), lower_(0), upper_(0) {}
 
     
-    explicit Kd_tree_rectangle(const Kd_tree_rectangle<NT>& r) : dim(r.dim),
+    explicit Kd_tree_rectangle(const Kd_tree_rectangle<GeomTraits>& r) : dim(r.dim),
       lower_(new NT[dim]), upper_(new NT[dim]) {
         std::copy(r.lower_, r.lower_+dim, lower_);
 	std::copy(r.upper_, r.upper_+dim, upper_);
@@ -119,15 +128,20 @@ namespace CGAL {
 
     template <class PointIter>
     Kd_tree_rectangle(const int d,  PointIter begin,  PointIter end)
-      : dim(d), lower_(new NT[d]), upper_(new NT[d]) {
-	  // initialize with values of first point
-	  for (int i=0; i < dim; ++i)
+      : dim(d), lower_(new NT[d]), upper_(new NT[d]) 
+    {
+      // initialize with values of first point
+      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      typename GeomTraits::Cartesian_const_iterator bit = construct_it(*begin);
+      //      typename GeomTraits::Cartesian_const_iterator be = construct_it(*begin,1);
+
+	  for (int i=0; i < dim; ++bit, ++i)
 	  {
-	    lower_[i]=(*begin)[i]; upper_[i]=lower_[i];
+	    lower_[i]=(*bit); upper_[i]=lower_[i];
 	  }
 	  begin++;
       typedef typename std::iterator_traits<PointIter>::value_type P;
-      std::for_each(begin, end, set_bounds<P,T>(dim, lower_, upper_));
+      std::for_each(begin, end, set_bounds<GeomTraits, P,T>(dim, lower_, upper_));
       set_max_span();
     }
 
@@ -141,15 +155,17 @@ namespace CGAL {
 		  }
 		} else {
           // initialize with values of first point
-	      for (int i=0; i < dim; ++i)
+      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      typename GeomTraits::Cartesian_const_iterator bit = construct_it(**begin);
+	      for (int i=0; i < dim; ++i, ++bit)
 		  {
-	        lower_[i]= (*(*begin))[i]; upper_[i]=lower_[i];
+	        lower_[i]= *bit; upper_[i]=lower_[i];
 		  }
 	      begin++;
           typedef typename 
 	  std::iterator_traits<PointPointerIter>::value_type P;
           std::for_each(begin, end,
-		    set_bounds_from_pointer<P,T>(dim, lower_, upper_));
+		    set_bounds_from_pointer<GeomTraits,P,T>(dim, lower_, upper_));
 		}
         set_max_span();
     }
@@ -208,7 +224,7 @@ namespace CGAL {
     int dimension() const {return dim;}
 
  
-    Kd_tree_rectangle<NT>& operator= (const Kd_tree_rectangle<NT>& r) {
+    Kd_tree_rectangle<GeomTraits>& operator= (const Kd_tree_rectangle<GeomTraits>& r) {
       
       if (this != &r) {
         std::copy(r.lower_, r.lower_+dim, lower_);
@@ -222,8 +238,8 @@ namespace CGAL {
 
 }; // of class Kd_tree_rectangle
 
-  template <class NT>
-    std::ostream& operator<< (std::ostream& s, Kd_tree_rectangle<NT>& r) {
+  template <class GeomTraits>
+    std::ostream& operator<< (std::ostream& s, Kd_tree_rectangle<GeomTraits>& r) {
     return r.print(s);
   }
 

@@ -1,26 +1,23 @@
-#include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Iso_cuboid_3.h>  
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Kd_tree_traits_point_3.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Fuzzy_iso_box_d.h>
-
+#include <CGAL/Fuzzy_iso_box.h>
 
 #include <vector>
 #include <iostream>
-#include <fstream>
 
-typedef CGAL::Simple_cartesian<double> R;
-typedef R::Point_3 Point;
+typedef CGAL::Simple_cartesian<double> K;
+typedef K::Point_3 Point;
+typedef K::Iso_cuboid_3 box;
 
-typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
+typedef CGAL::Kd_tree_traits_point_3<K> Traits;
+typedef CGAL::Fuzzy_iso_box<Traits,box> Fuzzy_box;	
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef Tree::Splitter Splitter;
 
-typedef CGAL::Iso_cuboid_3<R> box;	
-typedef CGAL::Fuzzy_iso_box_d<Point,box> Fuzzy_box;	
 
 int main() {
 
@@ -68,12 +65,11 @@ int main() {
   }; 
   */
   
-  Traits tr(bucket_size, 3.0, true);
-  typedef CGAL::Kd_tree<Traits> tree;
+Splitter split(bucket_size, 3.0, true);
 
    
   t.reset(); t.start(); 
-  tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), split);
   t.stop();
   std::cout << "building time=" << t.time() << std::endl;
   

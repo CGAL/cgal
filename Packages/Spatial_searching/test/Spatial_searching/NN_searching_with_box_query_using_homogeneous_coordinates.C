@@ -1,43 +1,36 @@
-#include <CGAL/basic.h>
-
+#include <CGAL/Homogeneous.h>
 #include <vector>
-#include <numeric>
 #include <cassert>
-#include <string>
 
 #include <iostream>
-#include <fstream> 
 
 #include <CGAL/MP_Float.h>
-
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Kd_tree_traits_point_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/General_priority_search.h>
-#include <CGAL/Homogeneous.h>
-
 #include <CGAL/Manhattan_distance_rectangle_point.h>
 
 typedef CGAL::Homogeneous<CGAL::MP_Float> R;
 
-typedef CGAL::Point_3<R> Point;
-typedef Point::R::FT FT;
-typedef Point::R::RT RT;
+typedef R::Point_3 Point;
+typedef R::FT FT;
+typedef R::RT RT;
 
-typedef CGAL::Iso_cuboid_3<R> Rectangle;
-typedef CGAL::Plane_separator<FT> Separator;
+typedef R::Iso_cuboid_3 Rectangle;
 
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::Manhattan_distance_rectangle_point<Rectangle,Point> L1_distance;
-typedef CGAL::General_priority_search<Traits, L1_distance, Rectangle> 
-NN_priority_search;
+typedef CGAL::Kd_tree_traits_point_3<R> Traits;
+typedef CGAL::Manhattan_distance_rectangle_point<Traits, Rectangle> L1_distance;
+typedef CGAL::General_priority_search<Traits, L1_distance>  NN_priority_search;
+typedef NN_priority_search::Tree Tree;
+typedef NN_priority_search::Splitter Splitter;
 
 typedef CGAL::Creator_uniform_3<RT,Point> Creator;
 
 int main() {
-
+  
   int bucket_size=1;
   const int dim=3;
   
@@ -50,10 +43,9 @@ int main() {
   CGAL::Random_points_in_cube_3<Point,Creator> g(1000.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
-  Traits tr(bucket_size, 3.0, false);
-  L1_distance tr_dist(dim);
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+Splitter split(bucket_size, 3.0, false);
+
+  Tree d(data_points.begin(), data_points.end(), split);
 
   double p[dim];
   double q[dim];
@@ -70,7 +62,7 @@ int main() {
   
   std::vector<NN_priority_search::Point_with_distance> nearest_neighbours;
 
-  NN_priority_search NN(d, query_rectangle, tr_dist, 0);
+  NN_priority_search NN(d, query_rectangle, 0);
   std::cout << "neighbour searching statistics without using extended nodes: " << std::endl;
   
   
@@ -83,13 +75,13 @@ int main() {
   
   for (int j=0; j < nearest_neighbour_number; ++j) { 
      std::cout << " d(q,nn)= " << nearest_neighbours[j].second << 
-     " nn= " << *(nearest_neighbours[j].first) << std::endl; 
+     " nn= " << nearest_neighbours[j].first << std::endl; 
   }
 
   NN.statistics(std::cout);
-  
+
   return 0;
-}; 
+} 
 
 
 

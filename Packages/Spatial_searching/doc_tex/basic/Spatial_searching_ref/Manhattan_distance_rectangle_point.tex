@@ -11,15 +11,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_rectangle_point<QueryItem, SpatialPoint>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_rectangle_point<PointTraits, IsoBox>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ provides an implementation of \\
-the GeneralDistance concept
+The class \ccRefName\ provides an implementation of
+the \ccc{GeneralDistance} concept
 for the Manhattan distance ($l_1$ metric)
 between a $d$-dimensional iso-rectangle and a $d$-dimensional point 
 and the Manhattan distance between a $d$-dimensional iso-rectangle
@@ -28,15 +28,13 @@ and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 \ccInclude{CGAL/Manhattan_distance_rectangle_point.h}
 
 \ccParameters
+Expects for the first template argument
+a model for the concept \ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_3<Kernel>}.
 
-Expects for the first template argument an implementation 
-for $d$-dimensional spheres of the concept \ccc{QueryItem},
-for example \ccc{CGAL::Iso_box_d<Kernel>}.
-Expects for the second template argument
-an implementation for
-$d$-dimensional points of
-the concept \ccc{SpatialPoint}, 
-for example \ccc{CGAL::Point_d<Kernel>}.
+Expects for the second template argument a model
+of the concept \ccc{IsoBox},
+for example \ccc{CGAL::Cartesian<double>::Iso_cuboid_3}.
+
 
 \ccIsModel
 
@@ -44,7 +42,9 @@ GeneralDistance
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccTypedef{IsoBox Query_item;}{Query item type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
@@ -62,20 +62,23 @@ $d$-dimensional iso-rectangles.}
 
 \ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
 
-\ccMethod{NT distance(QueryItem q, SpatialPoint p);}{Returns the distance between \ccc{q} and \ccc{p}.}
+\ccMethod{NT distance(IsoBox b, Point p);}{Returns the distance between \ccc{b} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
-{Returns the minimal distance between a point from \ccc{q} and a point from
-\ccc{r}}
+\ccMethod{NT min_distance_to_queryitem(IsoBox b, Kd_tree_rectangle<PointTraits> r;);}
+{Returns the minimal distance between a point from \ccc{b} and a point from
+\ccc{r}.}
 
-\ccMethod{NT max_distance_to_queryitem(QueryItem q, Kd_tree_rectangle<NT> r;);}
-{Returns the maximal distance between the iso-rectangle \ccc{q} and
+\ccMethod{NT max_distance_to_queryitem(IsoBox b q, Kd_tree_rectangle<PointTraits> r;);}
+{Returns the maximal distance between the iso-rectangle \ccc{b} and
 a point from \ccc{r} furthest to \ccc{q}.}
 
 
 \ccSeeAlso
 
 GeneralDistance.
+
+
+
 
 \end{ccRefClass}
 

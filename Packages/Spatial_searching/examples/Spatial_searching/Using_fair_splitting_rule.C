@@ -1,62 +1,52 @@
+//file: examples/Spatial_searching/Using_fair_splitting_rule.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Orthogonal_standard_search.h>
 #include <CGAL/Kd_tree.h>
-
-#include <vector>
+#include <CGAL/Kd_tree_traits_point_2.h>
+#include <CGAL/Orthogonal_standard_search.h>
+#include <list>
 #include <iostream>
 
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_2 Point;
+typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef CGAL::Kd_tree_traits_point_2<R> TreeTraits;
+typedef CGAL::Euclidean_distance<TreeTraits> Distance;
+typedef CGAL::Fair<TreeTraits> Splitter;
+typedef CGAL::Orthogonal_standard_search<TreeTraits,Distance,Splitter> Neighbor_search;
+typedef Neighbor_search::Tree Tree;
+typedef std::list<Neighbor_search::Point_with_distance> Neighbors;
 
-typedef CGAL::Creator_uniform_2<double,Point> Creator;
-// add splitting rule as a template parameter to the traits class
-typedef CGAL::Kd_tree_traits_point<Point, CGAL::Fair<Point> > TreeTraits;
-typedef CGAL::Orthogonal_standard_search<TreeTraits> Neighbor_search;
-
-typedef std::vector<TreeTraits::Point> Vector;
-
-int main() {
+int 
+main() {
   
-  const int data_point_number=1000;
-  const int bucket_size=5;
+  const int N = 1000;
   
-  typedef std::list<Point> point_list;
-  point_list data_points;
-
-  // generate random data points  
-  CGAL::Random_points_in_square_2<Point,Creator> g( 1.0);
-  CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
+  // generator for random data points in the square ( (-1,-1), (1,1) ) 
+  Random_points_iterator rpit( 1.0);
   
-  typedef CGAL::Kd_tree<TreeTraits> Tree;
-  // set bucket size 
-  TreeTraits tr(bucket_size);
-  Tree d(data_points.begin(), data_points.end(),tr);
+  // Insert number_of_data_points in the tree
+  Tree tree(N_Random_points_iterator(rpit,0),
+	    N_Random_points_iterator(N));
 
-  // generate random query points
-  const int query_point_number=5;
-  CGAL::Random_points_in_square_2<Point,Creator> h( 1.0);
-  Vector query_points;
-  CGAL::copy_n(h, query_point_number, std::back_inserter(query_points));
-
-  std::vector<Neighbor_search::Point_with_distance> the_nearest_neighbors;
+  Point query(0,0);
   
-  for (int i=0; i < query_point_number; i++) { 
-     Neighbor_search N(d, query_points[i]); 
-     N.the_k_neighbors(std::back_inserter(the_nearest_neighbors));
+  // the container for the result
+  Neighbors neighbors;
+  
+  // Initialize the search structure, and search all N points
+  Neighbor_search search(tree, query, N);
+  // Perform the search
+  search.the_k_neighbors(std::back_inserter(neighbors));
+  
+  // report the N nearest neighbors and their distance
+  // This should sort all N points by increasing distance from origin
+  for(Neighbors::iterator it = neighbors.begin();
+      it != neighbors.end();
+      ++it){
+    std::cout << it->first << " "<< sqrt(it->second) << std::endl;
   }
-  
-  // report query points q, nearest neighbors and their distance
-  for (int j=0; j < query_point_number; j++) { 
-       std::cout << "q= " << query_points[j] << " ";
-       std::cout << "nn= "    << *(the_nearest_neighbors[j].first) << " ";
-       std::cout << " d(q, nn)= "
-       << sqrt(the_nearest_neighbors[j].second)  
-                 << std::endl;
-  } 
-
   return 0;
 }
-
-
-

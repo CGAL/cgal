@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_traits_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreetraitspoint2Rev}{$Revision$}
+\RCSdefDate{\RCSKdtreetraitspoint2Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree_traits_point_3<Kernel>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ defines a model of tree traits class, which is used as
+a template parameter of the class \ccc{Kd_tree}.
+
+\ccc{Kernel} must be a \cgal\ kernel.
+
+
+\ccInclude{CGAL/Kd_tree_traits_point_3.h}
+
+\ccParameters
+Expects for the template argument a model of the concept \ccc{Kernel},
+for example \ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<CGAL::Gmp_q>}.
+
+\ccIsModel
+
+PointTraits.
+
+\ccTypes
+
+\ccTypedef {Kernel::Point_3 Point;}{Point type.}
+\ccTypedef {Point** Point_iterator;}{Point iterator.}
+\ccTypedef {Kernel::Cartesian_const_iterator_3 Cartesian_const_iterator;}{An iterator over the coordinates.}
+\ccTypedef {Kernel::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator;}{.}
+\ccTypedef{Kernel::FT NT;}{Number type.}
+
+
+\ccSeeAlso
+
+\ccc{Kd_tree_traits_point_2}\\
+\ccc{Kd_tree_traits_point_d}\\
+\ccc{Kd_tree_traits_point<Point,CartesianConstIterator,ConstructCartesianConstIterator}
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

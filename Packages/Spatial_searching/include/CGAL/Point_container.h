@@ -1,57 +1,62 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/Point_container.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 3.0
+// revision_date : 2003/07/10 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
 
 // custom point container
 #ifndef CGAL_POINT_CONTAINER_H
 #define CGAL_POINT_CONTAINER_H
 #include <list>
-#include <set>
+#include <vector>
 #include <functional>
 #include <algorithm>
 #include <CGAL/Kd_tree_rectangle.h>
 namespace CGAL {
 
-  template <class Point> class Point_container {
+  template <class GeomTraits> class Point_container {
 
   private:
+    typedef typename GeomTraits::Point Point;
     typedef std::vector<Point*> Point_vector;
     typedef Point_container<Point> Self;
 
   public:
-   typedef typename Kernel_traits<Point>::Kernel::FT NT;
+   typedef typename GeomTraits::NT NT;
    typedef std::list<Point*> Point_list; 
 
   private:
     Point_list p_list; // list of pointers to points
     int built_coord;    // a coordinate for which the pointer list is built
     unsigned int the_size;
-    Kd_tree_rectangle<NT> bbox;       // bounding box, i.e. rectangle of node
-    Kd_tree_rectangle<NT> tbox;       // tight bounding box, 
+    Kd_tree_rectangle<GeomTraits> bbox;       // bounding box, i.e. rectangle of node
+    Kd_tree_rectangle<GeomTraits> tbox;       // tight bounding box, 
 				      // i.e. minimal enclosing bounding
 	                	      // box of points
 	                	    
   public:
 
-    inline const Kd_tree_rectangle<NT>& bounding_box() const { return bbox; }
+    inline const Kd_tree_rectangle<GeomTraits>& bounding_box() const { return bbox; }
 
-    inline const Kd_tree_rectangle<NT>& tight_bounding_box() const 
+    inline const Kd_tree_rectangle<GeomTraits>& tight_bounding_box() const 
     { return tbox; }
 
     inline int dimension() const { return bbox.dimension(); } 
@@ -166,7 +171,7 @@ namespace CGAL {
 
         
 
-      bbox = Kd_tree_rectangle<NT>(d, begin, end);
+      bbox = Kd_tree_rectangle<GeomTraits>(d, begin, end);
       tbox = bbox;
 
       // build list 
@@ -181,7 +186,7 @@ namespace CGAL {
 	Point_container(const int d) :
 	the_size(0), bbox(d), tbox(d)  {}
 
-	void swap(Point_container<Point>& c) {
+	void swap(Point_container<GeomTraits>& c) {
 
 		swap(p_list,c.p_list);
 
@@ -197,12 +202,12 @@ namespace CGAL {
                 c.built_coord = h;
 
                 // work-around
-                Kd_tree_rectangle<NT> h_bbox(bbox);
+                Kd_tree_rectangle<GeomTraits> h_bbox(bbox);
                 bbox = c.bbox;
                 c.bbox = h_bbox;
 
                 // work-around
-                Kd_tree_rectangle<NT> h_tbox(tbox);
+                Kd_tree_rectangle<GeomTraits> h_tbox(tbox);
                 tbox = c.tbox;
                 c.tbox = h_tbox;
                 
@@ -223,7 +228,7 @@ namespace CGAL {
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Point_container<Point>& c, Separator& sep,  
+      void split_container(Point_container<GeomTraits>& c, Separator& sep,  
 	bool sliding=false) {
 
 	assert(dimension()==c.dimension());
@@ -241,10 +246,14 @@ namespace CGAL {
 		
 	
 	typename Point_list::iterator pt=p_list.begin();
-				
+			
+	typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+	typename GeomTraits::Cartesian_const_iterator ptit;
+
 	for (; (pt != p_list.end()); ++pt) {
                         
-	if ( (*(*pt))[split_coord] < cutting_value) 
+	  ptit = construct_it(*(*pt));
+	if ( *(ptit+split_coord) < cutting_value) 
 			l_lower.push_back (*pt);
 		else
 			l_upper.push_back (*pt);
@@ -255,8 +264,9 @@ namespace CGAL {
 		  typename Point_list::iterator pt_min=l_upper.begin();
 		  NT min_value=bbox.max_coord(built_coord);
 		  for (pt=l_upper.begin(); (pt != l_upper.end()); ++pt) {
-				if ( (*(*pt))[split_coord] < min_value) {
-					min_value=(*(*pt))[split_coord];
+		    ptit = construct_it((*(*pt)));	
+				if ( *(ptit+split_coord) < min_value) {
+				  min_value= *(ptit+split_coord);
 					pt_min=pt;
 				}
 			}
@@ -266,8 +276,9 @@ namespace CGAL {
 		  typename Point_list::iterator pt_max=l_lower.begin();
 		  NT max_value=bbox.min_coord(built_coord);
 		  for (pt=l_lower.begin(); (pt != l_lower.end()); ++pt) {
-				if ( (*(*pt))[split_coord] > max_value) {
-					max_value=(*(*pt))[split_coord];
+		    ptit = construct_it((*(*pt)));	
+				if ( *(ptit+split_coord) > max_value) {
+					max_value= *(ptit+split_coord) ;
 					pt_max=pt;
 				}
 			}
@@ -299,31 +310,35 @@ namespace CGAL {
 
 
 
-template <class Item_, class Value>
-	struct comp_coord_val {
-        
-	private:
-                Value coord;   
+    template <class GeomTraits2, class Value>
+    struct comp_coord_val {
+      
+    private:
+      Value coord;   
+      
+      typedef typename GeomTraits2::Point Point;
+    public:
+      comp_coord_val (const Value& coordinate) : coord(coordinate) {}
+      
+      bool operator() (const Point *a, const Point *b) {
+	typename GeomTraits2::Construct_cartesian_const_iterator construct_it;
+	typename GeomTraits2::Cartesian_const_iterator ait = construct_it(*a),
+	  bit = construct_it(*b);
+	return *(ait+coord) < *(bit+coord);
+    }
+  };
+  
 
-	public:
-		comp_coord_val (const Value& coordinate) : coord(coordinate) {}
-
-    		bool operator() (const Item_ *a, const Item_ *b) {
-  	    		return (*a)[coord] < (*b)[coord];
-    		}
-  	};
-
-
-      NT median(const int split_coord) {
+  NT median(const int split_coord) {
       
     #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
         Point_vector p_vector;
     	std::copy(p_list.begin(), p_list.end(), std::back_inserter(p_vector));
-    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<Point,int>(split_coord));
+    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<GeomTraits,int>(split_coord));
     	p_list.clear();
     	std::copy(p_vector.begin(), p_vector.end(), std::back_inserter(p_list));
     #else
-        p_list.sort(comp_coord_val<Point,int>(split_coord));
+        p_list.sort(comp_coord_val<GeomTraits,int>(split_coord));
     #endif 
       
       typename Point_list::iterator 
@@ -331,9 +346,12 @@ template <class Item_, class Value>
       for (unsigned int i = 0; i < the_size/2-1; i++, 
 		   median_point_ptr++) {}
       
-      NT val1=(*(*median_point_ptr))[split_coord];
+      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      typename GeomTraits::Cartesian_const_iterator mpit = construct_it((*(*median_point_ptr)));
+      NT val1= *(mpit+split_coord);
       median_point_ptr++;
-      NT val2=(*(*median_point_ptr))[split_coord];
+      mpit = construct_it((*(*median_point_ptr)));
+      NT val2= *(mpit+split_coord);
       
       
       

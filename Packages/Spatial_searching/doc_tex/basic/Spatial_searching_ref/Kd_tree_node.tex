@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_node<TreeTraits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_node<PointTraits, Splitter>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -31,40 +31,25 @@ along the node's cutting dimension.
 \ccHeading{Parameters}
 
 Expects for the template argument an implementation for a tree traits class
-of the concept \ccc{TreeTraits},
-for example \ccc{CGAL::Kd_tree_traits_point<SpatialPoint,Splitter>}.
+of the concept \ccc{PointTraits},
+for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 
 \ccTypes
 
 \ccEnum{ enum Node_type { LEAF, INTERNAL, EXTENDED_INTERNAL};}{Denotes type of node.}
 
-\ccTypedef{Kd_tree<TreeTraits>::Node_handle Node_handle;}{Node handle.}
-\ccTypedef{TreeTraits::Point Point;}{Point provided by the Traits class.}
-\ccTypedef{TreeTraits::Point_iterator Point_iterator;}{Iterator over points.} 
-\ccTypedef{TreeTraits::Container Point_container;} {Point container.}
-\ccTypedef{TreeTraits::NT NT;}{Number type.}
-\ccTypedef{TreeTraits::Separator Separator;}{Separator type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::Point_iterator Point_iterator;}{Iterator over points.} 
+\ccTypedef{Splitter::Container Point_container;} {Point container type.}
+\ccTypedef{Splitter::Separator Separator;}{Separator type.}
+\ccTypedef{Kd_tree<PointTraits>::Node_handle Node_handle;}{Node handle.}
+
 
 \ccCreation
 \ccCreationVariable{n}  %% choose variable name
 
-\ccConstructor{Kd_tree_node(Point_container<Point> c);}
-{
-Creates a leaf node \ccc{n} that stores the points from $c$.
-}
 
-\ccConstructor{Kd_tree_node(Point_container<Point> c, Traits t, bool use_extension);}
-{
-Creates an internal or extended internal node \ccc{n}, which is the root of a subtree 
-storing all the points 
-from \ccc{c}. One subset is stored at the lower child and the other subset at the upper child.
-For each of the childern either a leaf node or an internal node is created as follows.
-If the number of points in the subset does not exceed the \ccc{t.bucket_size()} a leaf node is
-created that stores the points. Otherwise an internal node is created, which is the root of
-a subtree storing the points from the subset. If and only if \ccc{use_extension} 
-is true an extended internal node is created. An extended internal node stores 
-the lower and upper limit of an extended node's rectangle. 
-}
 
 \ccOperations
 
@@ -80,11 +65,10 @@ OutputIterator tree_points(OutputIterator it);}
 
 \ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
 \ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
-\ccMethod{Item_iterator begin();}{Returns the iterator to the first item in a leaf node.}
-\ccMethod{Item_iterator end();}{Returns the iterator to the correspondig past-the-end
-iterator in a leaf node.}
-\ccMethod{Node* lower();}{Returns a pointer to the lower child of an internal node.}
-\ccMethod{Node* upper();}{Returns a pointer to the upper child of an internal node.}
+\ccMethod{Point_iterator begin();}{Returns the iterator to the first item in a leaf node.}
+\ccMethod{Point_iterator end();}{Returns the past-the-end iterator in a leaf node.}
+\ccMethod{Node_handle lower();}{Returns a handle to the lower child of an internal node.}
+\ccMethod{Node_handle upper();}{Returns a handle to the upper child of an internal node.}
 \ccMethod{Separator* separator();}{Returns a pointer to the separator.}
 \ccMethod{NT low_val();}{Returns the lower limit of an exteneded node's rectangle
 along the node's cutting dimension.}

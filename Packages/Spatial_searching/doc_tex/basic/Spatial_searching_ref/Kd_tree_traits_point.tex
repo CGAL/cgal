@@ -11,67 +11,39 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_traits_point<SpatialPoint, Splitter>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_traits_point<NT_, Point_, CartesianConstIterator,ConstructCartesianConstIterator>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ defines a model of tree traits class, which is used as
-a template class for the construction of a $k$-$d$ tree by the class \ccc{Kd_tree}.
-The parameters \ccc{selected_split_rule}, \ccc{aspect_ratio}, \ccc{bucket_size}, and \ccc{use_extended_nodes}  
-define the way in which $k$-$d$ tree is constructed.
+The class \ccRefName\ is a wrapper for the geometric types needed by a kd tree.
 
 
 \ccInclude{CGAL/Kd_tree_traits_point.h}
 
 \ccIsModel
 
-TreeTraits.
+PointTraits.
 
-\ccParameters
-
-Expects for the first template argument
-an implementation for
-$d$-dimensional points of
-the concept \ccc{SpatialPoint}, 
-for example \ccc{CGAL::Point_d<Kernel>}.
-Expects for the second template argument an implementation of the concept {Splitter}, 
-for example \ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, SpatialSeparator>}.
-The second template argument has default value \ccc{CGAL::Sliding_midpoint<SpatialPoint>}.
 
 \ccTypes
+\ccTypedef {NT_ NT;}{The number type of the coordinates.}
+\ccTypedef {Point_ Point;}{Point type.}
+\ccTypedef {Point** Point_iterator;}{Point iterator.}
+\ccTypedef {CartesianConstIterator Cartesian_const_iterator;}{An iterator over the coordinates.}
+\ccTypedef {ConstructCartesianConstIterator Construct_Cartesian_const_iterator;}{A class with
+two function operators, which return the iterator range for the coordinates. The functor for
+begin has as argument a \ccc{Point}. The functor for the past the end iterator, has as argument
+a \ccc{Point} and an \ccc{int}.}
 
-\ccTypedef {SpatialPoint Point;}{Point type.}
-\ccTypedef {Point** Point_Iterator;}{Point iterator.}
-\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.}
-\ccTypedef {Splitter::Container Container;}{Point container.}
-\ccTypedef {Splitter::Separator Separator;}{Separator.}
-
-\ccCreation
-\ccCreationVariable{tr}  %% choose variable name
-
-\ccConstructor{Kd_tree_traits_point
-(int bucket_size=5, NT aspect_ratio=NT(3), bool use_extended_nodes=true);}
-{Constructor assigning values to the parameters.}
-
-\ccOperations
-
-\ccMethod{NT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
-of a cell allowed for fair splitting.}
-
-\ccMethod{int bucket_size();}{Returns the selected bucket size of the leaf nodes.}
-
-\ccMethod{bool use_extended_nodes();}{Indicates whether extened internal nodes
-should be used.}
-
-\ccMethod{void split(Separator& sep, Container<Point>& c0, Container<Point>& c1);}
-{Splits \ccc{c0} into \ccc{c0} and \ccc{c1} and returns the separator.}
 
 \ccSeeAlso
 
-TreeTraits.
+\ccc{Kd_tree_traits_point_2<Kernel>}\\
+\ccc{Kd_tree_traits_point_3<Kernel>}\\
+\ccc{Kd_tree_traits_point_d<Kernel>}
 
 \end{ccRefClass}
 

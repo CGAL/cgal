@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_priority_search<TreeTraits, OrthogonalDistance, SpatialTree>}  %% add template arg's if necessary
+\begin{ccRefClass}{Orthogonal_priority_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -19,46 +19,49 @@
 \ccDefinition
 
 The class \ccRefName\ implements incremental nearest and furthest neighbor searching
-using priority search on a tree. It is required that the tree is
-built with extended nodes.
+using priority search on a tree.
 
 \ccInclude{CGAL/Orthogonal_priority_search.h}
 
 \ccParameters
 
-Expects for the first template argument an implementation of the concept \ccc{TreeTraits},
-for example \ccc{CGAL::Kd_tree_traits<Point, Splitter>}.
-Expects for the second template argument an implementation of the
-concept OrthogonalDistance, for example \ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
-The second template argument has default value
-\ccc{CGAL::Euclidean_distance<TreeTraits::Point>}.
-Expects for third template argument an implementation of the concept SpatialTree,
-for example \ccc{CGAL::Kd_tree<TreeTraits>},
-The third template argument has default value \ccc{CGAL::Kd_tree<TreeTraits>}.
+Expects for the first template argument a model of the concept \ccc{PointTraits},
+for example \ccc{CGAL::Kd_tree_traits_2<Kernel>}.
+
+Expects for the second template argument a model of the
+concept GeneralDistance. The default type is 
+\ccc{CGAL::Euclidean_distance<PointTraits>}.
+
+Expects for third template argument a model of the concept \ccc{Splitter}.
+The default type is \ccc{CGAL::Sliding_midpoint<PointTraits>}.
+
+Expects for fourth template argument a model of the concept \ccc{SpatialTree}.
+The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, Tag_true>}. The 
+template argument \cccTag_true} makes that the tree is built with extended nodes.
 
 \ccTypes
 
-\ccTypedef{TreeTraits::Point Point;}{Point type.}
-\ccTypedef{TreeTraits::NT NT;}{Number type.}
-\ccTypedef{std::pair<Pair*,NT> Point_with_distance;}{Pair of point and distance}
-\ccNestedType{iterator}{Input iterator for searching approximate neighbors with value type \ccc{Point_with_distance}.}
+\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{std::pair<Pair,NT> Point_with_distance;}{Pair of point and distance.}
+\ccNestedType{iterator}{Forward iterator for enumerating approximate neighbors.}
 
+\ccTypedef{SpatialTree Tree;}{The tree type.}
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{Orthogonal_priority_search(Tree tree, QueryItem q, OrthogonalDistance d=OrthogonalDistance(), NT Eps=NT(0.0),
-bool Search_nearest=true);}
-{Constructor for incremental neighbor searching of the query item \ccc{q}
-in the points stored \ccc{tree} using a distance
-traits class $d$ and approximation factor \ccc{Eps}.}
+\ccConstructor{Orthogonal_priority_search(SpatialTree& tree, Point query, NT eps=NT(0.0),
+                                          bool search_nearest=true, 
+                                          OrthogonalDistance d=OrthogonalDistance());}
+{Constructor for incremental neighbor searching of the query item \ccc{query}
+in the points stored \ccc{tree} using a distance \ccc{d} and approximation factor \ccc{eps}.}
 
 \ccOperations
 
 \ccMethod{iterator begin();}{Returns an iterator to the approximate neighbor.}
 
-\ccMethod{iterator end();}{Past-the-end iterator. Denotes that all points in the tree
-have been processed.}
+\ccMethod{iterator end();}{Past-the-end iterator.}
 
 \
 \begin{ccAdvanced}
@@ -70,7 +73,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::General_priority_search<TreeTraits, GeneralDistance, QueryItem, SpatialTree>}.
+\ccc{CGAL::General_priority_search<PointTraits, GeneralDistance, SpatialTree>}.
 
 \end{ccRefClass}
 

@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Splitter.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSplitterRev}{$Revision$}
+\RCSdefDate{\RCSSplitterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Splitter_base}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a base class  for implementing splitting rules.
+
+\ccTypes
+
+\ccNestedType{NT;}{Number type.}
+\ccNestedType{Container;}{Point container.}
+\ccNestedType{Separator;}{Separator.} 
+
+\ccCreationVariable{s}  %% choose variable name
+
+The parameters \ccc{aspect_ratio} and  \ccc{bucket_size}
+define the way in which $k$-$d$ tree is constructed.
+
+\ccOperations
+
+\ccMethod{
+void operator()(Separator& s, Container& c0, Container& c1);} 
+{Modifies the separator $s$, 
+and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
+using the splitting dimension and the splitting value of the modified separator.
+}
+
+\ccMethod{NT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+
+ 
+
+\ccSeeAlso
+\ccc{CGAL::Fair<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_fair<SpatialPoint, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, SpatialSeparator>.}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,21 +1,25 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/Orthogonal_priority_search.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 3.0
+// revision_date : 2003/07/10 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
 #ifndef  ORTHOGONAL_PRIORITY_SEARCH
 #define  ORTHOGONAL_PRIORITY_SEARCH
@@ -28,150 +32,35 @@
 
 namespace CGAL {
 
-template <class TreeTraits, 
-	  class Distance=Euclidean_distance<typename TreeTraits::Point>, 
-	  class Tree=Kd_tree<TreeTraits> >
+
+
+
+
+
+template <class GeomTraits, 
+          class Distance_=Euclidean_distance<GeomTraits>,
+          class Splitter_ = Sliding_midpoint<GeomTraits>,
+	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_true> >
 class Orthogonal_priority_search {
 
 public:
+  typedef Splitter_ Splitter;
+  typedef Tree_  Tree;
+  typedef Distance_ Distance;
+  typedef typename GeomTraits::Point Point;
+  typedef Point Query_item;
+  typedef typename GeomTraits::NT NT;
+  typedef typename Tree::Point_iterator Point_iterator;
+  typedef typename Tree::Node_handle Node_handle;
 
-typedef typename TreeTraits::Point Point;
-typedef typename TreeTraits::Point Query_item;
-typedef typename TreeTraits::NT NT;
-typedef typename Tree::Point_iterator Point_iterator;
-typedef typename Tree::Node_handle Node_handle;
-
-typedef std::pair<Point*,NT> Point_with_distance;
-typedef std::pair<Node_handle,NT> Node_with_distance;
-
-
-class iterator;
-
-    typedef std::vector<Node_with_distance*> Node_with_distance_vector;
-
-    typedef std::vector<Point_with_distance*> Point_with_distance_vector;
-
-    typedef std::vector<NT> Distance_vector;
-
-    iterator *start;
-    iterator *past_the_end;
-
-    public:
-
-    // constructor
-    Orthogonal_priority_search(Tree& tree,  
-	Query_item& q, const Distance& tr=Distance(), NT Eps = NT(0.0), 
-        bool search_nearest=true) 
-    {
-	start = new iterator(tree,q,tr,Eps,search_nearest);
-        past_the_end = new iterator();
-        
-    };
-
-    // destructor
-    ~Orthogonal_priority_search() {
-		delete start;
-                delete past_the_end;
-    };
-
-    iterator begin() {
-		return *start;
-    }
-
-    iterator end() {
-		return *past_the_end;
-    }
-
-    std::ostream& statistics(std::ostream& s) {
-	start->statistics(s);
-	return s;
-    }
-
-    class iterator {
-
-    public:
-
-    typedef std::input_iterator_tag iterator_category;
-    typedef Point_with_distance value_type;
-    typedef int distance_type;
-
-    class Iterator_implementation;
-    Iterator_implementation *Ptr_implementation;
+  typedef std::pair<Point,NT> Point_with_distance;
+  typedef std::pair<Node_handle,NT> Node_with_distance;
+  typedef std::vector<Node_with_distance*> Node_with_distance_vector;
+  typedef std::vector<Point_with_distance*> Point_with_distance_vector;
 
 
-    public:
 
-    // default constructor
-    iterator() {Ptr_implementation=0;}
-
-    int the_number_of_items_visited() {
-        return Ptr_implementation->number_of_items_visited;
-    }
-
-    // constructor
-    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), NT eps=NT(0.0), 
-    bool search_nearest=true){
-        Ptr_implementation =
-        new Iterator_implementation(tree, q, tr, eps, search_nearest);
-    }
-
-    // copy constructor
-    iterator(const iterator& Iter) {
-        Ptr_implementation = Iter.Ptr_implementation;
-        if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
-    }
-
-    Point_with_distance& operator* () {
-                return *(*Ptr_implementation);
-    }
-
-    // prefix operator
-    iterator& operator++() {
-        ++(*Ptr_implementation);
-        return *this;
-    }
-
-    // postfix operator
-    std::auto_ptr<Point_with_distance> operator++(int) {
-        std::auto_ptr<Point_with_distance> result = (*Ptr_implementation)++;
-        return result;
-    }
-
-
-    bool operator==(const iterator& It) const {
-
-        if (
-                ((Ptr_implementation == 0) || 
-		  Ptr_implementation->Item_PriorityQueue.empty()) &&
-                ((It.Ptr_implementation == 0) ||  
-		  It.Ptr_implementation->Item_PriorityQueue.empty())
-        )
-        return true;
-        // else
-        return (Ptr_implementation == It.Ptr_implementation);
-    }
-
-    bool operator!=(const iterator& It) const {
-        return !(*this == It);
-    }
-
-    std::ostream& statistics (std::ostream& s) {
-    	Ptr_implementation->statistics(s);
-        return s;
-    }
-
-    ~iterator() {
-        if (Ptr_implementation != 0) {
-                Ptr_implementation->reference_count--;
-                if (Ptr_implementation->reference_count==0) {
-                        delete Ptr_implementation;
-                        Ptr_implementation = 0;
-                }
-        }
-    }
-
-
-    class Iterator_implementation {
+class Iterator_implementation {
 
     public:
 
@@ -233,9 +122,11 @@ class iterator;
         }
     };
 
+
     std::priority_queue<Node_with_distance*, Node_with_distance_vector,
     Priority_higher>* PriorityQueue;
 
+    public:
     std::priority_queue<Point_with_distance*, Point_with_distance_vector,
     Distance_smaller>* Item_PriorityQueue;
 
@@ -278,7 +169,7 @@ class iterator;
         
         query_point = &q;
 
-        total_item_number=tree.item_number();
+        total_item_number=tree.size();
 
         number_of_leaf_nodes_visited=0;
         number_of_internal_nodes_visited=0;
@@ -297,7 +188,7 @@ class iterator;
     }
 
     // * operator
-    Point_with_distance& operator* () {
+    Point_with_distance& operator* () const {
 			return *(Item_PriorityQueue->top());
     }
 
@@ -318,7 +209,7 @@ class iterator;
     }
 
     // Print statistics of the general priority search process.
-    std::ostream& statistics (std::ostream& s) {
+    std::ostream& statistics (std::ostream& s) const {
     	s << "Orthogonal priority search statistics:" 
 	<< std::endl;
     	s << "Number of internal nodes visited:" 
@@ -372,6 +263,8 @@ class iterator;
 		next_neighbour_found=
 		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
         }
+      typename GeomTraits::Construct_cartesian_const_iterator construct_it;
+      typename GeomTraits::Cartesian_const_iterator query_point_it = construct_it(*query_point);
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
                 Node_with_distance* The_node_top=PriorityQueue->top();
@@ -384,11 +277,11 @@ class iterator;
                         int new_cut_dim=N->cutting_dimension();
                         NT old_off, new_rd;
                         NT new_off =
-                        (*query_point)[new_cut_dim] -
+                        *(query_point_it + new_cut_dim) -
                         N->cutting_value();
                         if (new_off < NT(0.0)) {
 				old_off=
-                                (*query_point)[new_cut_dim]-N->low_value();
+                                *(query_point_it + new_cut_dim)-N->low_value();
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=
                                 Orthogonal_distance_instance->
@@ -411,7 +304,7 @@ class iterator;
                         }
                         else { // compute new distance
 				old_off= N->high_value() -
-                                (*query_point)[new_cut_dim];
+                                *(query_point_it+new_cut_dim);
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=Orthogonal_distance_instance->
                                 new_distance(copy_rd,old_off,new_off,new_cut_dim);  
@@ -440,7 +333,7 @@ class iterator;
                         Orthogonal_distance_instance->
                         distance(*query_point,**it);
                         Point_with_distance *NN_Candidate=
-                        new Point_with_distance(*it,distance_to_query_point);
+                        new Point_with_distance(**it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
                   };
                   // old top of PriorityQueue has been processed,
@@ -468,7 +361,142 @@ class iterator;
         // in the latter case also the item priority quee is empty
     }
 }; // class Iterator_implementaion
+  
+
+
+
+
+
+class iterator;
+
+    typedef std::vector<Node_with_distance*> Node_with_distance_vector;
+
+    typedef std::vector<Point_with_distance*> Point_with_distance_vector;
+
+    typedef std::vector<NT> Distance_vector;
+
+    public:
+
+    // constructor
+    Orthogonal_priority_search(Tree& tree,  
+			       Query_item& q, NT Eps = NT(0.0), 
+			       bool search_nearest=true, const Distance& tr=Distance()) 
+      : start(tree,q,tr,Eps,search_nearest),
+        past_the_end()
+        
+    {}
+
+    iterator begin() {
+      return start;
+    }
+
+    iterator end() {
+      return past_the_end;
+    }
+
+    std::ostream& statistics(std::ostream& s) {
+	start.statistics(s);
+	return s;
+    }
+
+
+
+
+    class iterator {
+
+    public:
+
+      typedef std::forward_iterator_tag iterator_category;
+      typedef Point_with_distance       value_type;
+      typedef Point_with_distance*      pointer;
+      typedef const Point_with_distance&      reference;
+      typedef std::size_t               size_type;
+      typedef std::ptrdiff_t            difference_type;
+      typedef int distance_type;
+
+      //class Iterator_implementation;
+      Iterator_implementation *Ptr_implementation;
+
+
+    public:
+
+    // default constructor
+    iterator() {Ptr_implementation=0;}
+
+    int the_number_of_items_visited() {
+        return Ptr_implementation->number_of_items_visited;
+    }
+
+    // constructor
+    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), NT eps=NT(0.0), 
+    bool search_nearest=true){
+        Ptr_implementation =
+        new Iterator_implementation(tree, q, tr, eps, search_nearest);
+    }
+
+    // copy constructor
+    iterator(const iterator& Iter) {
+        Ptr_implementation = Iter.Ptr_implementation;
+        if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
+    }
+
+      const Point_with_distance& operator* () const {
+                return *(*Ptr_implementation);
+    }
+
+    // prefix operator
+    iterator& operator++() {
+        ++(*Ptr_implementation);
+        return *this;
+    }
+
+    // postfix operator
+    std::auto_ptr<Point_with_distance> operator++(int) {
+        std::auto_ptr<Point_with_distance> result = (*Ptr_implementation)++;
+        return result;
+    }
+
+
+    bool operator==(const iterator& It) const {
+
+        if (
+                ((Ptr_implementation == 0) || 
+		  Ptr_implementation->Item_PriorityQueue->empty()) &&
+                ((It.Ptr_implementation == 0) ||  
+		  It.Ptr_implementation->Item_PriorityQueue->empty())
+        )
+        return true;
+        // else
+        return (Ptr_implementation == It.Ptr_implementation);
+    }
+
+    bool operator!=(const iterator& It) const {
+        return !(*this == It);
+    }
+
+    std::ostream& statistics (std::ostream& s) {
+    	Ptr_implementation->statistics(s);
+        return s;
+    }
+
+    ~iterator() {
+        if (Ptr_implementation != 0) {
+                Ptr_implementation->reference_count--;
+                if (Ptr_implementation->reference_count==0) {
+                        delete Ptr_implementation;
+                        Ptr_implementation = 0;
+                }
+        }
+    }
+
+
 }; // class iterator
+
+
+    iterator start;
+    iterator past_the_end;
+
+
 }; // class 
 
 template <class Traits, class Query_item, class Distance>

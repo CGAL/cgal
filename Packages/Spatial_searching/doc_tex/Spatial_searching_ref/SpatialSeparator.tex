@@ -13,6 +13,8 @@
 
 \begin{ccRefConcept}{SpatialSeparator}
 
+\begin{ccAdvanced}
+
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
@@ -48,8 +50,8 @@ void set_cutting_value(NT v);}
 
 
 
-\ccMethod{template <class SpatialPoint>
-bool has_on_negative_side(const SpatialPoint p);}
+\ccMethod{template <class Point>
+bool has_on_negative_side(const Point p);}
 {Returns true if and only if the point \ccc{p} is on the negative side of the separator.}
 
 
@@ -60,6 +62,8 @@ bool has_on_negative_side(const SpatialPoint p);}
 \ccSeeAlso
 
 \ccc{CGAL::Plane_separator<NT>}.
+
+\end{ccAdvanced}
 
 \end{ccRefConcept}
 

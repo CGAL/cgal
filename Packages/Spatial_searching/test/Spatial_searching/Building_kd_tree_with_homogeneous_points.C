@@ -1,26 +1,12 @@
-#include <CGAL/basic.h>
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 
 #include <CGAL/MP_Float.h>
-
-#include <vector>
-#include <numeric>
-#include <cassert>
-#include <string>
-
 #include <iostream>
-#include <fstream> 
-
-#include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
+#include <CGAL/Kd_tree_traits_point_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Splitters.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 
 
 typedef CGAL::Homogeneous<CGAL::MP_Float> R;
@@ -30,8 +16,10 @@ typedef R::Point_3 Point;
 typedef R::FT FT;
 typedef R::RT RT;
 
-typedef CGAL::Plane_separator<FT> Separator;  
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
+
+typedef CGAL::Kd_tree_traits_point_3<R> Traits;
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef Tree::Splitter Splitter;
 typedef CGAL::Creator_uniform_3<RT,Point> Creator; 
 
 int main() {
@@ -47,13 +35,9 @@ int main() {
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
-  Traits tr(bucket_size, 3, true);
-
+  Splitter  split(bucket_size, 3, true);
   
-  typedef CGAL::Kd_tree<Traits> Tree;
-
-
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), split);
 
   std::cout << "created kd tree using "  
   << data_point_number << " points. " << std::endl;

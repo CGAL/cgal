@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_rectangle<NT>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_rectangle<PointTraits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -27,6 +27,10 @@ E.g. constructors and methods to compute bounding boxes of point sets are provid
 \ccCreation
 \ccCreationVariable{r}  %% choose variable name
 
+\ccTypes
+
+\ccTypedef{PointTraits::NT NT;}{Number type.}
+
 
 \ccConstructor{Kd_tree_rectangle(const int d);}
 {Constructs a $d$-dimensional rectangle \ccc{r} with lower bound and upper bound set to zero 
@@ -40,10 +44,10 @@ Kd_tree_rectangle(const int d, PointIter begin, PointIter end);}
 \ccOperations
 
 \ccMethod{NT min_coord(int i);}
-{Returns the lower bound of the rectangle in dimension \ccc{i}.}
+{Returns the lower bound of the rectangle in dimension~\ccc{i}.}
 
 \ccMethod{NT max_coord(int i);}
-{Returns the upper bound of the rectangle in dimension \ccc{i}.}
+{Returns the upper bound of the rectangle in dimension~\ccc{i}.}
 
 
 
@@ -67,17 +71,17 @@ void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bo
 \ccMethod{int dimension();}
 {Returns the dimension of the rectangle.}
 
-\ccMethod{Kd_tree_rectangle<N>* split(int d, NT value);}
+\ccMethod{Kd_tree_rectangle<PointTraits>* split(int d, NT value);}
 {Splits rectangle in dimension \ccc{d} at coordinate-value \ccc{value} 
  by modifying itself to lower half and returning the upper half.
 Note that the \ccc{Kd_tree} datastructure is responsible for the
 deletion of the pointers to the instances of \ccc{Kd_tree_rectangle}.} 
 
-{\bf Non-Member functions related to \ccc{Kd_tree_rectangle<NT>}}
+{\bf Non-Member functions related to \ccc{Kd_tree_rectangle<PointTraits>}}
 
 \ccGlueBegin
 \ccGlobalFunction{ template<class NT>
-std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<NT>& b);} 
+std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<PointTraits>& b);} 
 {Prints the rectangle \ccc{b} to the output stream \ccc{s} and returns \ccc{s}.}
 \ccGlueEnd
 

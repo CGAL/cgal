@@ -1,21 +1,25 @@
-// Copyright (c) 2002  Utrecht University (The Netherlands).
-// All rights reserved.
+// ======================================================================
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// Copyright (c) 2002 The CGAL Consortium
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// ----------------------------------------------------------------------
 //
-// $Source$
-// $Revision$ $Date$
-// $Name$
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
-// Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// file          : include/CGAL/General_priority_search.h
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// revision      : 3.0
+// revision_date : 2003/07/10
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
+//
+// ======================================================================
 
 
 #ifndef  GENERAL_PRIORITY_SEARCH_H
@@ -27,22 +31,26 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h>
+
 namespace CGAL {
 
-template <class TreeTraits, 
-          class Distance=Euclidean_distance<typename TreeTraits::Point>, 
-	  class QueryItem=typename TreeTraits::Point, 
-	  class Tree=Kd_tree<TreeTraits> >
+template <class GeomTraits, 
+          class Distance_=Euclidean_distance<GeomTraits>,
+          class Splitter_ = Sliding_midpoint<GeomTraits>,
+	  class Tree_=Kd_tree<GeomTraits, Splitter_, Tag_false> >
 class General_priority_search { 
 
 public:
 
-typedef typename TreeTraits::Point Point;
-typedef typename TreeTraits::NT NT;
-typedef typename Tree::Point_iterator Point_iterator;
-typedef typename Tree::Node_handle Node_handle;
-
-typedef Kd_tree_rectangle<NT> Node_box;   
+  typedef Distance_ Distance;
+  typedef Tree_     Tree;
+  typedef typename GeomTraits::Point Point;
+  typedef typename GeomTraits::NT NT;
+  typedef typename Tree::Point_iterator Point_iterator;
+  typedef typename Tree::Node_handle Node_handle;
+  typedef typename Tree::Splitter Splitter;
+  typedef Kd_tree_rectangle<GeomTraits> Node_box;
+  typedef typename Distance::Query_item Query_item;
 
 class Cell 
     {
@@ -70,7 +78,7 @@ class Cell
 
     
 
-typedef std::pair<Point*,NT> Point_with_distance;
+typedef std::pair<Point,NT> Point_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
 // this forward declaration may problems for g++ 
@@ -89,8 +97,9 @@ class iterator;
     public:
 
     // constructor
-    General_priority_search(Tree& tree, QueryItem& q, const Distance& tr=Distance(),
-    NT Eps=NT(0.0), bool search_nearest=true)
+    General_priority_search(Tree& tree, const Query_item& q,
+			    NT Eps=NT(0.0), bool search_nearest=true, 
+			    const Distance& tr=Distance())
     {
         start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
@@ -136,7 +145,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, QueryItem& q, const Distance& tr, NT eps, 
+    iterator(const Tree& tree, const Query_item& q, const Distance& tr, NT eps, 
 	     bool search_nearest) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
@@ -199,15 +208,11 @@ class iterator;
 
     class Iterator_implementation {
 
-    
-
-
-
     private:
 
     NT multiplication_factor;
 
-    QueryItem* query_point;
+    Query_item query_point;
 
     int total_item_number;
 
@@ -274,7 +279,7 @@ class Distance_smaller
     int number_of_neighbours_computed;
 
     // constructor
-    Iterator_implementation(Tree& tree, QueryItem& q,const Distance& tr,
+    Iterator_implementation(const Tree& tree, const Query_item& q,const Distance& tr,
         NT Eps, bool search_nearest)
     {
         
@@ -304,9 +309,9 @@ class Distance_smaller
 
         
 
-        query_point = &q;
+        query_point = q;
 
-        total_item_number=tree.item_number();
+        total_item_number=tree.size();
 
         number_of_leaf_nodes_visited=0;
         number_of_internal_nodes_visited=0;
@@ -425,9 +430,9 @@ class Distance_smaller
 			delete B;
 			if (search_nearest_neighbour) {
 NT distance_to_box_lower =
-Distance_instance->min_distance_to_queryitem(*query_point, *lower_box);
+Distance_instance->min_distance_to_queryitem(query_point, *lower_box);
 NT distance_to_box_upper =
-Distance_instance->min_distance_to_queryitem(*query_point, *upper_box);
+Distance_instance->min_distance_to_queryitem(query_point, *upper_box);
 if (distance_to_box_lower <= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
 	Cell_with_distance *Upper_Child =
@@ -447,9 +452,9 @@ else {
                         }
 			else { // search furthest
 NT distance_to_box_lower =
-Distance_instance->max_distance_to_queryitem(*query_point, *lower_box);
+Distance_instance->max_distance_to_queryitem(query_point, *lower_box);
 NT distance_to_box_upper =
-Distance_instance->max_distance_to_queryitem(*query_point, *upper_box);
+Distance_instance->max_distance_to_queryitem(query_point, *upper_box);
 if (distance_to_box_lower >= distance_to_box_upper) {
 	Cell* C_upper = new Cell(upper_box, N->upper());
 	Cell_with_distance *Upper_Child =
@@ -476,9 +481,9 @@ else {
                         number_of_items_visited++;
                         NT distance_to_query_point=
                         Distance_instance->
-                        distance(*query_point,**it);
+                        distance(query_point,**it);
                         Point_with_distance *NN_Candidate=
-                        new Point_with_distance(*it,distance_to_query_point);
+                        new Point_with_distance(**it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
                   }
                   // old top of PriorityQueue has been processed,
@@ -512,3 +517,4 @@ else {
 
 
 #endif  // GENERAL_PRIORITY_SEARCH_H
+

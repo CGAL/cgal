@@ -27,15 +27,17 @@ both neighbor searching and approximate range searching.
 
 \ccTypes
 
+\ccNestedType{PointTraits}{Point traits.}
 \ccNestedType{Node;}{Node type.}
 \ccNestedType{Node_handle;}{Node handle.}
 \ccNestedType{Point_iterator;}{Iterator over points.}
-\ccNestedType{input_iterator;}{Input iterator over points.}
+\ccNestedType{Splitter}{Splitter.}
+\ccNestedType{Distance}{Distance.}
 
 \ccCreation
 \ccCreationVariable{tree}  %% choose variable name
 
-\ccConstructor{Tree(input_iterator first, input_iterator beyond, TreeTraits t);}
+\ccConstructor{template <class InputIterator> Tree(InputIterator first, InputIterator beyond, TreeTraits t);}
 {
 Constructs a tree on the elements from the sequence 
 \ccc{first, beyond}. 
@@ -52,16 +54,12 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
 OutputIterator report_all_points(OutputIterator it);}
 {Reports all the points contained by the tree.} 
 
-\ccMethod{Traits traits();}
-{
-Returns an instance of the traits class.
-}
 \ccMethod{Node_handle root();}
 {
 Returns a handle to the root node of the tree.
 }
 
-\ccMethod{Kd_tree_rectangle<NT>* bounding_box();}{returns a pointer to the bounding box 
+\ccMethod{Kd_tree_rectangle<PointTraits>* bounding_box();}{returns a pointer to the bounding box 
 of the root node of the tree.}
 
 

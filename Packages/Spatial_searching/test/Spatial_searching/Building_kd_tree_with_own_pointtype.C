@@ -1,96 +1,19 @@
 #include <CGAL/basic.h>
 #include <vector>
-#include <numeric>
-#include <cassert>
-#include <string>
-
-
 #include <iostream>
-#include <fstream> 
 
-#include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Splitters.h>
+
+#include "../../examples/Spatial_searching/Point.h" 
 
 
-// create own Point type  
-class Point
-{
-public:
-
-  class R
-  { 
-  public:
-    typedef double FT;
-  };
-
-private:
-  double   vec[ 3 ];
-  
-public: 
-  
-  Point()
-  { 
-    for  ( int ind = 0; ind < 3; ind++ )
-      vec[ ind ] = 0;
-  }
-
-  Point (double& x, double& y, double& z)
-  {
-    vec[0]=x;
-    vec[1]=y;
-    vec[2]=z;
-  }
-
-  inline
-  int dimension() const
-  {
-    return  3;
-  }
- 
-  inline
-  double x() const
-  { 
-	return vec[ 0 ];
-  }
-
-  inline
-  double y() const
-  { 
- 	return vec[ 1 ];
-  }
-  
-  inline
-  double z() const
-  { 
-	return vec[ 2 ];
-  }
-
-  inline
-  void set_coord(int k, double x)
-  {
-    vec[ k ] = x;
-  }
-  
-  inline
-  double  & operator[](int k)  
-  {
-    return  vec[ k ];
-  }
-
-  inline
-  double  operator[](int k) const
-  {
-    return  vec[ k ];
-  }
-}; // end of class Point
-
-  typedef CGAL::Plane_separator<double> Separator;
-  typedef CGAL::Kd_tree_traits_point<Point> Traits;
-  typedef CGAL::Creator_uniform_3<double,Point> Creator;
+typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord_iterator> Traits;
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef Tree::Splitter Splitter;
+typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
 int main() {
 
@@ -104,9 +27,8 @@ int main() {
   CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
 
-  Traits tr(bucket_size, 3.0, true);
-  typedef CGAL::Kd_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Splitter split(bucket_size, 3.0, true);
+  Tree d(data_points.begin(), data_points.end(), split);
 
   std::cout << "created kd tree using splitting rule "  
   << data_point_number << " points. " << std::endl;

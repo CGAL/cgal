@@ -10,22 +10,22 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefFunctionObjectClass}{Median_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Median_of_rectangle<PointTraits, PointContainer, SpatialSeparator>}
 
 \ccDefinition
 Implements the {\bf median of rectangle} splitting rule.
 
 \ccParameters
 
-Expects for the first template argument an implementation for
-$d$-dimensional points of
-the concept \ccc{SpatialPoint}, 
-for example \ccc{CGAL::Point_d<Kernel>}. Expects for the second argument an implementation
-for a point container of the concept \ccc{PointContainer}, for example \ccc{CGAL::Point_container<SpatialPoint>}.
-Expects for the third template argument an implementation of a $d$-1 dimensional 
-separating plane of the concept \ccc{Separator}, for example \ccc{CGAL::Plane_separator<NT>}.
-The second template argument has default value \ccc{CGAL::Point_container<SpatialPoint>}.
-The third template argument has default value \ccc{CGAL::Plane_separator<Kernel_traits<SpatialPoint>::Kernel::FT>}. 
+Expects for the first template argument a model of
+the concept \ccc{PointTraits}, for example
+the type \ccc{CGAL::Kd_tree_traits_point_3< Cartesian<double> >}.
+
+Expects for the second argument a model of the concept \ccc{PointContainer}. It has as default value
+the type \ccc{CGAL::Point_container<PointTraits::Point>}.
+
+Expects for the third template argument a model of the concept \ccc{Separator}. It has as default value
+the type, \ccc{CGAL::Plane_separator<PointTraits::NT>}.
 
 \ccInclude{CGAL/Splitters.h}
 
@@ -35,7 +35,7 @@ Splitter
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
+\ccTypedef{PointTraits::NT NT;}{Number type.} 
 \ccTypedef{PointContainer Container;}{Point container.}
 \ccTypedef{SpatialSeparator Separator;}{Separator.}
 
@@ -44,7 +44,7 @@ Splitter
 \ccOperations
 
 \ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3));} 
+void operator()(Separator& s, Container& c0, Container& c1);} 
 {Modifies the separator $s$ by the {\bf median of rectangle} splitting rule, 
 and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
 using the splitting dimension and the splitting value of the modified separator.

@@ -11,46 +11,40 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{IsoBox_d}
+\begin{ccRefConcept}{IsoBox}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
   
-The concept \ccRefName\ defines the requirements for $d$-dimensional iso-boxes.
+The concept \ccRefName\ describes the requirements for iso-boxes.
 
-{\bf Refines}
 
-QueryItem
+\ccTypes
 
-\ccParameters
+\ccNestedType{Point;}{Point type.} 
 
-\ccc{SpatialPoint} represents a $d$-dimensional point.
-
+\ccCreation
 \ccCreationVariable{b}  %% choose variable name
 
+\ccConstructor{IsoBox_d(Point p, Point q);}{introduces an iso-oriented box with diagonal opposite points 
+\ccc{p} and \ccc{q}.}
 
 \ccOperations
 
-\ccMethod{SpatialPoint min();}
-{Returns the smallest vertex of the iso-oriented box.}
+\ccMethod{Point min();}
+{Returns the lexicographically smallest vertex of the iso-oriented box.}
 
 
-\ccMethod{SpatialPoint max();}
-{Returns the largest vertex of the iso-oriented box.}
+\ccMethod{Point max();}
+{Returns the  lexicographically largest vertex of the iso-oriented box.}
 
 
 \ccHasModels
 
-\ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
-\ccc{CGAL::Iso_box_d<Kernel>}.
-
-\ccSeeAlso
-
-QueryItem, \ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
-\ccc{CGAL::Iso_box_d<Kernel>}.
-
+\ccc{Kernel::Iso_rectangle_2}, \ccc{Kernel::Iso_cuboid_3}, 
+\ccc{Kernel_d::Iso_box_d}.
 
 \end{ccRefConcept}
 

@@ -35,7 +35,8 @@ $d$-dimensional query items.
 
 \ccTypes
 
-\ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.}
+\ccNestedType{Point}{Point type.}
+\ccNestedType{NT}{Number type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
@@ -44,13 +45,13 @@ $d$-dimensional query items.
 
 \ccOperations
 
-\ccMethod{NT distance(SpatialPoint q, SpatialPoint r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
+\ccMethod{NT distance(Point q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_rectangle(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(SpatialPoint q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r;);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
@@ -59,18 +60,18 @@ the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 \ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
 
 \ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates 
-\ccc{dist} incrementally and returns the updated distance.}
+\ccc{dist} incrementally and returns the updated distance. {\bf AF: I do not understand this.}}
 
 \ccHasModels
 
-\ccc{CGAL::Euclidean_distance<SpatialPoint>},
-\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>}.
+\ccc{CGAL::Euclidean_distance<PointTraits>},
+\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}.
 
 \ccSeeAlso
 
-GeneralDistance,
-\ccc{CGAL::Euclidean_distance<SpatialPoint>},
-\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>}.
+\ccc{GeneralDistance}\\
+\ccc{CGAL::Euclidean_distance<PointTraits>}\\
+\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}
 
 \end{ccRefConcept}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree<TreeTraits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree<PointTraits, Splitter>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -23,31 +23,33 @@ The class \ccRefName\ defines a $k$-$d$ tree.
 
 \ccParameters
 
-Expects for the template argument an implementation for a tree traits class
-of the concept \ccc{TreeTraits},
-for example \ccc{CGAL::Kd_tree_traits_point<SpatialPoint,Splitter>}.
+Expects for the first template argument a model of the concept
+\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+
+Excepts for the second template argument a model for the concept \ccc{Splitter}.
+It defaults  to \ccc{Sliding_midpoint<PointTraits>}
 
 \ccTypes
 
-\ccTypedef{TreeTraits::Point Point;} {Point class.}
-\ccTypedef{TreeTraits::Container Point_container;} {Point container.}
-\ccTypedef{TreeTraits::NT NT;}{Number type.}
-\ccTypedef{Kd_tree_node<TreeTraits> Node;}{Node type.}
-\ccTypedef{Kd_tree<TreeTraits> Tree;}{Tree type.}
-% \ccTypedef{Compact_container<Node>::iterator Node_handle;}{Node handle.}
-\ccTypedef{std::vector<Point*>::iterator Point_iterator;} {Random access iterator 
-with value type pointer to Point.}
-% \ccTypedef{std::list<Point>::iterator input_iterator;}{Input iterator.}
+\ccTypedef{PointTraits::Point Point;} {Point class.}
+\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{Splitter::Container Point_container;} {Point container.}
+\ccTypedef{Kd_tree<PointTraits,Splitter> Tree;}{Tree type.}
+\ccTypedef{Kd_tree_node<PointTraits, Splitter> Node;}{Node type.}
+\ccNestedType{Node_handle;}{A handle with value type \ccc{Node}.}
+\ccNestedType{Point_iterator;} {Random access iterator 
+with value type \ccc{Point*}.}
+
 
 \ccCreation
 \ccCreationVariable{tree}
 
-\ccConstructor{
-template <class input_iterator>
-Kd_tree(input_iterator first, input_iterator beyond, traits t=TreeTraits());}
+\ccConstructor
+{template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter());}
 {
 Constructs a $k$-$d$ tree on the elements from the sequence 
-\ccc{first, beyond} using the splitting rule implemented by \ccc{t}. 
+\ccc{first, beyond} using the splitting rule implemented by \ccc{s}. 
+The value type of the \ccc{InputIterator} must be \ccc{Point}.
 }
 
 % -----------------------------------
@@ -56,32 +58,28 @@ Constructs a $k$-$d$ tree on the elements from the sequence
 \ccMethod{
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
-{Reports the points that are approximately contained by \ccc{q}.} 
+{Reports the points that are approximately contained by~\ccc{q}.
+The type \ccc{FuzzyQueryItem} and \ccc{Point} must fit.} 
 
 \ccMethod{
 template <class OutputIterator>
 OutputIterator report_all_points(OutputIterator it);}
-{Reports all the points contained by the $k$-$d$ tree.} 
-
-\ccMethod{TreeTraits traits();}
-{
-Returns an instance of the traits class.
-}
-\ccMethod{Node_handle root();}
-{
-Returns a handle to the root node of the tree.
-}
-
-\ccMethod{Kd_tree_rectangle<NT>* bounding_box();}{returns a pointer to the bounding box 
-of the root node of the tree.}
+{Reports all the points contained by the $k$-$d$ tree. The value type of \ccc{OutputIterator} must
+be \ccc{Point}.} 
 
 
-\ccMethod{int item_number();}
-{
-Returns the number of items that are stored in the tree.
-}
+
+
+\ccMethod{int size();}
+{Returns the number of items that are stored in the tree.}
 
 \begin{ccAdvanced}
+
+\ccMethod{Node_handle root();}
+{Returns a handle to the root node of the tree.}
+
+\ccMethod{Kd_tree_rectangle<PointTraits>* bounding_box();}{returns a pointer to the bounding box 
+of the root node of the tree.}
 
 \ccMethod{std::ostream& statistics(std::ostream& s);}
 {
@@ -94,8 +92,9 @@ Inserts statistics of the tree into the output stream \ccc{s}.
 
 \ccSeeAlso
 Tree.
-\ccc{CGAL::Kd_tree_node<TreeTraits>},
-\ccc{CGAL::Kd_tree_traits_point<Point,Splitter>}.
+\ccc{CGAL::Kd_tree_node<PointTraits>},\\
+\ccc{CGAL::Kd_tree_traits_point_2<Kernel>},\\
+\ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 
 \end{ccRefClass}
 
