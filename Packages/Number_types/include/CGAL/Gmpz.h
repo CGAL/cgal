@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2003  Utrecht University (The Netherlands),
+// Copyright (c) 1999,2003,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -550,9 +550,11 @@ inline
 std::istream&
 operator>>(std::istream& is, Gmpz &z)
 {
-  int negative = 0;
+  bool negative = false;
+  bool good = false;
   const int null = '0';
   char c;
+  Gmpz tmp;
 
 #ifndef CGAL_CFG_NO_LOCALE
   while (is.get(c) && std::isspace(c, std::locale::classic() ))
@@ -563,7 +565,7 @@ operator>>(std::istream& is, Gmpz &z)
 
   if (c == '-')
   {
-        negative = 1;
+        negative = true;
 #ifndef CGAL_CFG_NO_LOCALE
         while (is.get(c) && std::isspace(c, std::locale::classic() ))
 #else
@@ -577,24 +579,25 @@ operator>>(std::istream& is, Gmpz &z)
   if (std::isdigit(c))
 #endif // CGAL_CFG_NO_LOCALE
   {
-        z = c - null;
+        good = true;
+        tmp = c - null;
 #ifndef CGAL_CFG_NO_LOCALE
         while (is.get(c) && std::isdigit(c, std::locale::classic() ))
 #else
         while (is.get(c) && std::isdigit(c))
 #endif // CGAL_CFG_NO_LOCALE
         {
-            z = 10*z + (c-null);
+            tmp = 10*tmp + (c-null);
         }
   }
   if (is)
-  {
         is.putback(c);
-  }
-  if (sign(z) != static_cast<Sign>(0) && negative)
-  {
-        z = -z;
-  }
+  if (sign(tmp) != ZERO && negative)
+      tmp = -tmp;
+  if (!good)
+      is.setstate(std::ios_base::failbit);
+  if (is)
+      z = tmp;
   return is;
 }
 

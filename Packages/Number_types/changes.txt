@@ -1,3 +1,6 @@
+4 August 2004 Sylvain Pion
+- operator>>(Gmpz) : better failure handling.
+
 24 June 2004 Sylvain Pion
 - Protect some leda number type functions against CGAL_USE_ADL_FOR_NT.
 
