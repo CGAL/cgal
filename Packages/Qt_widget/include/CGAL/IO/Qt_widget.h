@@ -218,6 +218,7 @@ public slots:
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);
+  void showEvent(QShowEvent *e);
   void mousePressEvent(QMouseEvent *e);
   void mouseReleaseEvent(QMouseEvent *e);
   void mouseMoveEvent(QMouseEvent *e);
@@ -233,6 +234,8 @@ protected:
 private:
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(const double xc, const double yc);
+
+  bool set_scales_to_be_done;
   double  xcentre, ycentre; //the center of the axex
   
   Qt_widget_history history;

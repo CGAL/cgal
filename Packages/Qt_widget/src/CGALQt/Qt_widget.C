@@ -28,9 +28,9 @@
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
-  QWidget(parent, name),  Locked(0), _pointSize(4),
-  _pointStyle(DISC)
-{
+  QWidget(parent, name), set_scales_to_be_done(false), Locked(0),
+  _pointSize(4), _pointStyle(DISC) 
+{ 
   setCaption("CGAL::Qt_widget");
 
   // initialize ranges and scales
@@ -65,9 +65,16 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
 
 void Qt_widget::set_scales()
 {
+  if( ! isVisible() )
+    {
+      set_scales_to_be_done = true;
+      return;
+    };
+  set_scales_to_be_done = false;
+
   if(!constranges)
     {
-      double tempmin = min(geometry().width(), geometry().height());
+      double tempmin = min(width(), height());
 	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
@@ -82,6 +89,8 @@ void Qt_widget::set_scales()
 
 void Qt_widget::set_scale_center(const double xc, const double yc)
 {
+  if (set_scales_to_be_done) return;
+
   if(xscal<1) {
     xmin = xc - (int)(geometry().width()/xscal)/2;
     xmax = xc + (int)(geometry().width()/xscal)/2;
@@ -98,7 +107,6 @@ void Qt_widget::set_scale_center(const double xc, const double yc)
 
 void Qt_widget::resizeEvent(QResizeEvent *e)
 {
-  
   // save paint state
   QFont f=painter->font();
   QBrush b=painter->brush();
@@ -124,6 +132,14 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
     set_scale_center(xcentre, ycentre);
   //  emit(resized());
   redraw();
+}
+
+void Qt_widget::showEvent(QShowEvent* e)
+{
+  if( set_scales_to_be_done )
+    set_scales();
+
+  return QWidget::showEvent(e);
 }
 
 void Qt_widget::paintEvent(QPaintEvent *e)
