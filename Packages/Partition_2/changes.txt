@@ -1,4 +1,6 @@
+1.52 (10 July 2003) [af]
 - Added missing typename
+- Made it work on Sun Pro which disables member template functions
 
 1.51 (28 June 2003) [rursu]
 - fixed demo/Partition_2/makefile for FreeBSD

@@ -44,7 +44,8 @@ class Indirect_CW_diag_compare
 public:
    typedef typename Traits::Point_2        Point_2;
    typedef typename Traits::Orientation_2  Orig_orientation;
-
+  
+  Indirect_CW_diag_compare(){}
    Indirect_CW_diag_compare(Point_2 vertex, Iterator prev_ref, 
                          Iterator next_ref) : 
                 _orientation(Traits().orientation_2_object()),
@@ -300,6 +301,7 @@ class Partition_vertex : public Traits_::Point_2
     typedef Traits_                                              Traits;
     typedef typename Traits::Point_2                             Base_point;
     typedef typename Partitioned_polygon_2< Traits >::Circulator Circulator; 
+  typedef Partition_vertex<Traits>                               Self;
 //
 //  It might be better if this were a set that used Indirect_CW_diag_compare
 //  as the Compare object, but the constructor for Indirect_CW_diag_compare
@@ -311,6 +313,14 @@ class Partition_vertex : public Traits_::Point_2
     typedef std::list<Circulator>                         Diagonal_list;
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
+#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+  static Indirect_CW_diag_compare<Circulator,Traits> indirect_cw_diag_compare;
+
+  static bool compare(const Circulator& circ1, const Circulator& circ2)
+  {
+    return indirect_cw_diag_compare(circ1, circ2);
+  }
+#endif
 
     Partition_vertex(Base_point p): Base_point(p) {}
 
@@ -352,8 +362,14 @@ class Partition_vertex : public Traits_::Point_2
     // and remove any duplicate diagonals
     void sort_diagonals(const Circulator& prev, const Circulator& next) 
     {
-       diag_endpoint_refs.sort(
-               Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
+#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+      indirect_cw_diag_compare = Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next);
+      diag_endpoint_refs.sort(&Self::compare);
+     
+#else
+      diag_endpoint_refs.sort(Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
+#endif
+
        diag_endpoint_refs.unique();
        current_diag = diag_endpoint_refs.begin();
     }
@@ -387,6 +403,12 @@ private:
     Diagonal_list diag_endpoint_refs;
     Diagonal_iterator current_diag;
 };
+
+#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+template <class Traits>
+Indirect_CW_diag_compare<typename Partitioned_polygon_2<Traits>::Circulator,Traits>
+Partition_vertex<Traits>::indirect_cw_diag_compare;
+#endif
 
 }
 
