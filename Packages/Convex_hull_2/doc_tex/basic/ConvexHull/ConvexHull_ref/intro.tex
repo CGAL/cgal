@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHull/intro.tex
+% +------------------------------------------------------------------------+
+% | 10.5.2001   Susan Hert and Stefan Schirra
+% | Package: ConvexHull
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\clearpage
+\section{Reference Pages for Convex Hulls and Extreme Points}
+
+A subset $S \subseteq \R^d$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$ is 
+the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex 
+polytope with vertices in $P$.  A point in $P$ is an extreme point 
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex 
+of the convex hull of $P$.
+
+\cgal\ provides functions for computing convex hulls in two and three 
+dimensions as well as functions for testing if a given set of points
+in two or three dimensions is strongly convex or not.  For two dimensions,
+there are also a number of functions available for computing particular
+extreme points and subsequences of the hull points, such as the lower
+hull or upper hull of a set of points.
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{ConvexHull3fromD_Rep}\\
+\ccRefConceptPage{ConvexHullPolyhedron_3}\\
+\ccRefConceptPage{ConvexHullTraits_2}\\
+\ccRefConceptPage{ConvexHullTraits_3} \\
+\ccRefConceptPage{IsStronglyConvexTraits_3}
+
+\subsection*{Traits Classes}
+
+\ccRefIdfierPage{CGAL::convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::convex_hull_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::convex_hull_rat_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::convex_hull_traits_2<R>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>} \\
+
+\subsection*{Convex Hull Functions}
+
+\ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
+\ccRefIdfierPage{CGAL::ch_bykat} \\
+\ccRefIdfierPage{CGAL::ch_eddy} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::ch_melkman} \\
+\ccRefIdfierPage{CGAL::convex_hull_3} \\
+\ccRefIdfierPage{CGAL::convex_hull_3_from_d} \\
+\ccRefIdfierPage{CGAL::convex_hull_points_2} 
+
+\subsection*{Convexity Checking Functions}
+
+\ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_cw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+
+\subsection*{Hull Subsequence Functions}
+
+\ccRefIdfierPage{CGAL::ch_graham_andrew_scan} \\
+\ccRefIdfierPage{CGAL::ch_jarvis_march} \\
+\ccRefIdfierPage{CGAL::lower_hull_points_2} \\
+\ccRefIdfierPage{CGAL::upper_hull_points_2}
+
+\subsection*{Extreme Point Functions}
+
+\ccRefIdfierPage{CGAL::ch_e_point} \\
+\ccRefIdfierPage{CGAL::ch_nswe_point} \\
+\ccRefIdfierPage{CGAL::ch_n_point} \\
+\ccRefIdfierPage{CGAL::ch_ns_point} \\
+\ccRefIdfierPage{CGAL::ch_s_point} \\
+\ccRefIdfierPage{CGAL::ch_w_point} \\
+\ccRefIdfierPage{CGAL::ch_we_point} 
+
+\clearpage
