@@ -93,47 +93,9 @@ operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag> &svd)
 //====================================================================
 //====================================================================
 
-template<class Gt, class STag, class DS, class LTag>
-inline typename 
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-insert(const Site_2& t) {
-  // the intended use is to unify the calls to insert(...);
-  // thus the site must be an exact one; 
-  CGAL_precondition( t.is_exact() );
-
-  this->register_input_site(t);
-
-  if ( t.is_segment() ) {
-    return insert_segment(t.source(), t.target(), UNDEFINED_LEVEL);
-  } else if ( t.is_point() ) {
-    return insert_point(t.point(), UNDEFINED_LEVEL);
-  } else {
-    CGAL_precondition ( t.is_defined() );
-    return Vertex_handle(); // to avoid compiler error
-  }
-}
-
 //--------------------------------------------------------------------
 // insertion of a point
 //--------------------------------------------------------------------
-template<class Gt, class STag, class DS, class LTag>
-inline typename 
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-insert_point(const Point_2& p, int level)
-
-{
-  if ( level == UNDEFINED_LEVEL ) {
-    level = random_level();
-  }
-
-  Vertex_handle vertices[svd_hierarchy_2__maxlevel];
-  
-  insert_point(p, level, vertices);
-
-  return vertices[0];
-}
 
 template<class Gt, class STag, class DS, class LTag>
 void
@@ -767,40 +729,8 @@ is_valid(bool verbose, int level) const
 //  local helper methods
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-template<class Gt, class STag, class DS, class LTag>
-int
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-random_level()
-{
-  unsigned int l = 0;
-  while ( true ) {
-    if ( random(svd_hierarchy_2__ratio) ) break;
-    ++l;
-  }
-  if (l >= svd_hierarchy_2__maxlevel)
-    l = svd_hierarchy_2__maxlevel -1;
-  return l;
-}
 
 template<class Gt, class STag, class DS, class LTag>
-inline typename
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::size_type
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
-find_level(Vertex_handle v) const
-{
-  CGAL_precondition( v != Vertex_handle() );
-  size_type level = 0;
-  Vertex_handle vertex = v;
-  while ( vertex->up() != Vertex_handle() ) {
-    vertex = vertex->up();
-    level++;
-  }
-
-  return level;
-}
-
-template<class Gt, class STag, class DS, class LTag>
-inline
 void
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::
 print_error_message() const

@@ -195,14 +195,40 @@ public:
     return insert(p0, p1);
   }
 
-  Vertex_handle  insert(const Site_2& t);
+  Vertex_handle  insert(const Site_2& t) {
+    // the intended use is to unify the calls to insert(...);
+    // thus the site must be an exact one; 
+    CGAL_precondition( t.is_exact() );
+
+    this->register_input_site(t);
+
+    if ( t.is_segment() ) {
+      return insert_segment(t.source(), t.target(), UNDEFINED_LEVEL);
+    } else if ( t.is_point() ) {
+      return insert_point(t.point(), UNDEFINED_LEVEL);
+    } else {
+      CGAL_precondition ( t.is_defined() );
+      return Vertex_handle(); // to avoid compiler error
+    }
+  }
 
   Vertex_handle  insert(const Site_2& t, Vertex_handle) {
     return insert(t);
   }
 
 protected:
-  Vertex_handle insert_point(const Point_2& p, int level);
+  Vertex_handle insert_point(const Point_2& p, int level) {
+    if ( level == UNDEFINED_LEVEL ) {
+      level = random_level();
+    }
+
+    Vertex_handle vertices[svd_hierarchy_2__maxlevel];
+  
+    insert_point(p, level, vertices);
+
+    return vertices[0];
+  }
+
   void          insert_point(const Point_2& p, int level,
 			     Vertex_handle* vertices);
 
@@ -296,9 +322,28 @@ public:
 protected:
   // LOCAL HELPER METHODS
   //---------------------
-  int random_level();
+  int random_level() {
+    unsigned int l = 0;
+    while ( true ) {
+      if ( random(svd_hierarchy_2__ratio) ) break;
+      ++l;
+    }
+    if (l >= svd_hierarchy_2__maxlevel)
+      l = svd_hierarchy_2__maxlevel -1;
+    return l;
+  }
 
-  size_type find_level(Vertex_handle v) const;
+  size_type find_level(Vertex_handle v) const {
+    CGAL_precondition( v != Vertex_handle() );
+    size_type level = 0;
+    Vertex_handle vertex = v;
+    while ( vertex->up() != Vertex_handle() ) {
+      vertex = vertex->up();
+      level++;
+    }
+
+    return level;
+  }
 
   void print_error_message() const;
 };

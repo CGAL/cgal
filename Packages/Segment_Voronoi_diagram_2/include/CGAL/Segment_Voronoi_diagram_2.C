@@ -36,7 +36,6 @@ CGAL_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 
 template<class Gt, class DS, class LTag>
-inline
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_first(const Point_2& p)
@@ -52,7 +51,6 @@ insert_first(const Point_2& p)
 }
 
 template<class Gt, class DS, class LTag>
-inline
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_second(const Point_2& p)
@@ -72,7 +70,6 @@ insert_second(const Point_2& p)
 }
 
 template<class Gt, class DS, class LTag>
-inline
 typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_third(const Point_2& p)
@@ -958,74 +955,6 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
 // combinatorial operations
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Edge
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-flip(Face_handle& f, int i)
-{
-  CGAL_precondition ( f != Face_handle() );
-  CGAL_precondition (i == 0 || i == 1 || i == 2);
-  CGAL_precondition( this->dimension()==2 ); 
-
-  CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
-
-  this->_tds.flip(f, i);
-
-  return Edge(f, ccw(i));
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Edge
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-flip(Edge e)
-{
-  return flip(e.first, e.second);
-}
-
-template<class Gt, class DS, class LTag>
-inline
-bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-is_degree_2(const Vertex_handle& v) const
-{
-  Face_circulator fc = v->incident_faces();
-  Face_circulator fc1 = fc;
-  ++(++fc1);
-  return ( fc == fc1 );
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_degree_2(Edge e)
-{
-  return this->_tds.insert_degree_2(e.first,e.second);
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Vertex_handle
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-insert_degree_2(Edge e,	const Storage_site_2& ss)
-{
-  Vertex_handle v = insert_degree_2(e);
-  v->set_site(ss);
-  return v;
-}
-
-template<class Gt, class DS, class LTag>
-inline
-void
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-remove_degree_2(Vertex_handle v)
-{
-  CGAL_precondition( is_degree_2(v) );
-
-  this->_tds.remove_degree_2(v);
-}
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
@@ -1094,149 +1023,9 @@ nearest_neighbor(const Site_2& p,
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-// helper methods for creating storage sites
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-
-// the first two objects can only be points, since we always
-// add the endpoints first and then the segment.
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site(const Point_2& p)
-{
-  Point_handle ph = pc_.insert(p);
-  return Storage_site_2(ph);
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site(Vertex_handle v0, Vertex_handle v1)
-{
-  return Storage_site_2( v0->storage_site().point_handle(0),
-			 v1->storage_site().point_handle(0) );
-}
-  
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site(const Storage_site_2& ss0,
-		    const Storage_site_2& ss1)
-{
-  return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
-			 ss1.point_handle(0), ss1.point_handle(1) );
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site(const Storage_site_2& ss0,
-		    const Storage_site_2& ss1,
-		    bool is_first_exact)
-{
-  return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
-			 ss1.point_handle(0), ss1.point_handle(1),
-			 is_first_exact);
-}
-  
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site_type1(const Storage_site_2& ss0,
-			  const Storage_site_2& ss1,
-			  const Storage_site_2& ss2)
-{
-  return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
-			 ss1.point_handle(2), ss1.point_handle(3),
-			 ss2.point_handle(0), ss2.point_handle(1));
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Storage_site_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-create_storage_site_type2(const Storage_site_2& ss0,
-			  const Storage_site_2& ss1,
-			  const Storage_site_2& ss2)
-{
-  return Storage_site_2( ss0.point_handle(0), ss0.point_handle(1),
-			 ss1.point_handle(0), ss1.point_handle(1),
-			 ss2.point_handle(4), ss2.point_handle(5));
-}
-
-
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
 // methods for the predicates
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-same_points(const Site_2& p, const Site_2& q) const
-{
-  return geom_traits().are_same_points_2_object()(p, q);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-same_segments(const Site_2& t, Vertex_handle v) const
-{
-  if ( is_infinite(v) ) { return false; }
-  if ( t.is_point() || v->site().is_point() ) { return false; }
-  return same_segments(t, v->site());
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-same_segments(const Site_2& p, const Site_2& q) const
-{
-  CGAL_precondition( p.is_segment() && q.is_segment() );
-
-  return
-    (same_points(p.source_site(), q.source_site()) &&
-     same_points(p.target_site(), q.target_site())) ||
-    (same_points(p.source_site(), q.target_site()) &&
-     same_points(p.target_site(), q.source_site()));
-}
-
-template<class Gt, class DS, class LTag>
-inline Oriented_side
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-side_of_bisector(const Site_2 &t1, const Site_2 &t2, const Site_2 &q) const
-{
-  return geom_traits().oriented_side_of_bisector_2_object()(t1, t2, q);
-}
-
-
-template<class Gt, class DS, class LTag>
-inline Sign
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-incircle(const Site_2 &t1, const Site_2 &t2,
-	 const Site_2 &t3, const Site_2 &q) const
-{
-  return geom_traits().vertex_conflict_2_object()(t1, t2, t3, q);
-}
-
-template<class Gt, class DS, class LTag>
-inline Sign
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-incircle(const Site_2 &t1, const Site_2 &t2,
-	 const Site_2 &q) const
-{
-  return
-    geom_traits().vertex_conflict_2_object()(t1, t2, q);
-}
-
 
 template<class Gt, class DS, class LTag>
 Sign
@@ -1260,18 +1049,6 @@ incircle(const Face_handle& f, const Site_2& q) const
 		   f->vertex(  cw(inf_i) )->site(), q );
 }
 
-
-template<class Gt, class DS, class LTag>
-inline Sign
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-	 const Vertex_handle& v) const
-{
-  CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
-		     && !is_infinite(v) );
-
-  return incircle( v0->site(), v1->site(), v->site());
-}
 
 template<class Gt, class DS, class LTag>
 Sign
@@ -1299,70 +1076,6 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
   CGAL_assertion( is_infinite(v2) );
   CGAL_precondition( !is_infinite(v0) && !is_infinite(v1) );
   return incircle( v0->site(), v1->site(), v->site());
-}
-
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-finite_edge_interior(const Site_2& t1, const Site_2& t2,
-		     const Site_2& t3, const Site_2& t4,
-		     const Site_2& q, Sign sgn) const
-{
-  return
-    geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,t4,q,sgn);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-finite_edge_interior(const Face_handle& f, int i,
-		     const Site_2& q, Sign sgn) const
-{
-  CGAL_precondition( !is_infinite(f) &&
-		     !is_infinite(f->neighbor(i)) );
-  return finite_edge_interior( f->vertex( ccw(i) )->site(),
-			       f->vertex(  cw(i) )->site(),
-			       f->vertex(     i  )->site(),
-			       f->mirror_vertex(i)->site(), q, sgn);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-finite_edge_interior(const Vertex_handle& v1,
-		     const Vertex_handle& v2,
-		     const Vertex_handle& v3,
-		     const Vertex_handle& v4,
-		     const Vertex_handle& v, Sign sgn) const
-{
-  CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
-		     !is_infinite(v3) && !is_infinite(v4) &&
-		     !is_infinite(v) );
-  return finite_edge_interior( v1->site(), v2->site(),
-			       v3->site(), v4->site(),
-			       v->site(), sgn);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-finite_edge_interior(const Site_2& t1, const Site_2& t2,
-		     const Site_2& t3, const Site_2& q,
-		     Sign sgn) const
-{
-  return
-    geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,q,sgn);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-finite_edge_interior(const Site_2& t1, const Site_2& t2,
-		     const Site_2& q, Sign sgn) const
-{
-  return
-    geom_traits().finite_edge_interior_conflict_2_object()(t1, t2, q, sgn);
 }
 
 
@@ -1423,16 +1136,6 @@ finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
 
   Site_2 t3 = v3->site();
   return finite_edge_interior(t1, t2, t3, q, sgn);
-}
-
-template<class Gt, class DS, class LTag>
-inline bool
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-infinite_edge_interior(const Site_2& t2, const Site_2& t3,
-		       const Site_2& t4, const Site_2& q, Sign sgn) const
-{
-  return
-    geom_traits().infinite_edge_interior_conflict_2_object()(t2,t3,t4,q,sgn);
 }
 
 template<class Gt, class DS, class LTag>
@@ -1579,7 +1282,6 @@ arrangement_type(const Site_2& p, const Site_2& q) const
 
 
 template<class Gt, class DS, class LTag>
-inline
 bool
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 arrangement_type(const Site_2& t, Vertex_handle v) const
@@ -1608,43 +1310,8 @@ arrangement_type(const Site_2& t, Vertex_handle v) const
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-// circumcenter
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Point_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-circumcenter(const Face_handle& f) const
-{
-  CGAL_precondition( this->dimension()==2 || !is_infinite(f) );
-  return circumcenter(f->vertex(0)->site(),
-		      f->vertex(1)->site(),
-		      f->vertex(2)->site());
-}
-
-template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Point_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-circumcenter(const Site_2& t0, const Site_2& t1, 
-	     const Site_2& t2) const
-{
-  return
-    geom_traits().construct_svd_vertex_2_object()(t0, t1, t2);
-}
-
 // primal
 template<class Gt, class DS, class LTag>
-inline
-typename Segment_Voronoi_diagram_2<Gt,DS,LTag>::Point_2
-Segment_Voronoi_diagram_2<Gt,DS,LTag>::
-primal(const Face_handle& f) const
-{
-  return circumcenter(f);
-}
-
-
-template<class Gt, class DS, class LTag>
-inline
 Object
 Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 primal(const Edge e) const
