@@ -19,7 +19,10 @@
 #if defined(__BORLANDC__) && __BORLANDC__ > 0x520
 #define CGAL_MASK_FINITE_VALID 1
 
-#include <time.h> // for time_t
+#include <cstddef>
+using std::size_t;
+#include <ctime> // for time_t
+using std::time_t;
 #include <iterator>
 #include <functional>
 

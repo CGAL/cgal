@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.50
++ Added using std::time_t and std::size_t for Borland.
+
+//-----------------------------------------------------------------------//
 // 1.49
 + Added pragma for MSVC to report truncation of names only once.
 
