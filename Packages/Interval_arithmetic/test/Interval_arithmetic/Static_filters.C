@@ -35,16 +35,16 @@ int main()
   // my_cobc3.cir_3();
 
   for (int i=0; i<100; ++i) {
-    K::Point_3 p = *Rand_3++; k.register_object(p);
-    K::Point_3 q = *Rand_3++; k.register_object(q);
-    K::Point_3 r = *Rand_3++; k.register_object(r);
-    K::Point_3 s = *Rand_3++; k.register_object(s);
-    K::Point_3 t = *Rand_3++; k.register_object(t);
+    K::Point_3 p = *Rand_3++;
+    K::Point_3 q = *Rand_3++;
+    K::Point_3 r = *Rand_3++;
+    K::Point_3 s = *Rand_3++;
+    K::Point_3 t = *Rand_3++;
 
-    K::Point_2 p2 = *Rand_2++; k.register_object(p2);
-    K::Point_2 q2 = *Rand_2++; k.register_object(q2);
-    K::Point_2 r2 = *Rand_2++; k.register_object(r2);
-    K::Point_2 s2 = *Rand_2++; k.register_object(s2);
+    K::Point_2 p2 = *Rand_2++;
+    K::Point_2 q2 = *Rand_2++;
+    K::Point_2 r2 = *Rand_2++;
+    K::Point_2 s2 = *Rand_2++;
 
     for (int j=0; j<1000; ++j) {
       oo = my_o3(p, q, r, s);

@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -35,8 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template <class Point>
 class SF_Side_of_bounded_circle_3
 {
-  double _static_epsilon;
-
   // Computes the epsilon for In_circle_3.
   static double cir_3()
   {
@@ -59,34 +57,7 @@ class SF_Side_of_bounded_circle_3
   static const double epsilon;
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Side_of_bounded_circle_3(const SF_Side_of_bounded_circle_3 &s)
-      : _static_epsilon(s._static_epsilon) {}
-
-  SF_Side_of_bounded_circle_3& operator=(const SF_Side_of_bounded_circle_3 &s)
-  {
-      _static_epsilon = s._static_epsilon;
-      return *this;
-  }
- 
-  SF_Side_of_bounded_circle_3()
-  {
-      _static_epsilon = CGALi::infinity;
-  }
-
-public:
   typedef Bounded_side result_type;
-
-  void update(double dx, double dy, double dz)
-  {
-      double d = std::max(std::max(dx, dy), dz);
-      _static_epsilon = epsilon*d*d*d*d*d*d;
-  }
 
   Bounded_side operator()(const Point &p, const Point &q,
 	                  const Point &r, const Point &t) const
@@ -137,12 +108,6 @@ public:
                                    rtx,rty,rtz,rt2,
                                    qtx,qty,qtz,qt2,
                                    vx,vy,vz,v2);
-
-    // Try a fully static bound first.
-    if (det >  _static_epsilon) return ON_BOUNDED_SIDE;
-    if (det < -_static_epsilon) return ON_UNBOUNDED_SIDE;
-
-    CGAL_PROFILER("In_circle_3 static failures");
 
     // Compute the semi-static bound.
     double maxx = fabs(px);

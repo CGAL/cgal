@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -40,34 +40,7 @@ class SF_Coplanar_orientation_3
   Orientation_2 oxy, oyz, oxz;
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Coplanar_orientation_3(const SF_Coplanar_orientation_3 &s)
-      : oxy(s.oxy), oyz(s.oyz), oxz(s.oxz) {}
-
-  SF_Coplanar_orientation_3 & operator=(const SF_Coplanar_orientation_3 &s)
-  {
-      oxy = s.oxy;
-      oyz = s.oyz;
-      oxz = s.oxz;
-      return *this;
-  }
-
-  SF_Coplanar_orientation_3() {}
-
-public:
   typedef Orientation result_type;
-
-  void update(double dx, double dy, double dz)
-  {
-      oxy.update(dx, dy);
-      oyz.update(dy, dz);
-      oxz.update(dx, dz);
-  }
 
   Orientation operator()(const Point &p, const Point &q, const Point &r) const
   {

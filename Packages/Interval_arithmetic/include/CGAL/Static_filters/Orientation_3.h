@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -35,8 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template <class Point>
 class SF_Orientation_3
 {
-  double _static_epsilon;
-
   // Computes the epsilon for Orientation_3.
   static double ori_3()
   {
@@ -53,33 +51,7 @@ class SF_Orientation_3
   static const double epsilon; // = 3.90799e-14; // ori_3();
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Orientation_3(const SF_Orientation_3 &s)
-      : _static_epsilon(s._static_epsilon) {}
-
-  SF_Orientation_3 & operator=(const SF_Orientation_3 &s)
-  {
-      _static_epsilon = s._static_epsilon;
-      return *this;
-  }
-
-  SF_Orientation_3()
-  {
-      _static_epsilon = CGALi::infinity;
-  }
-
-public:
   typedef Orientation result_type;
-
-  void update(double dx, double dy, double dz)
-  {
-      _static_epsilon = dx*dy*dz*epsilon;
-  }
 
   Orientation operator()(const Point &p, const Point &q,
                          const Point &r, const Point &s) const
@@ -114,14 +86,6 @@ private:
     double det = det3x3_by_formula(pqx, pqy, pqz,
                                    prx, pry, prz,
                                    psx, psy, psz);
-
-#if 1
-    // Fully static filter first.
-    if (det >  _static_epsilon) return POSITIVE;
-    if (det < -_static_epsilon) return NEGATIVE;
-#endif
-
-    CGAL_PROFILER("Orientation_3 static failures");
 
 #if 1
     // Then semi-static filter.

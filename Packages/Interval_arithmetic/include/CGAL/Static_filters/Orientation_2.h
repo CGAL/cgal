@@ -32,14 +32,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R > class Static_filters;
-template < class Pt, class Or2 > class SF_Coplanar_orientation_3;
-
 template <class Point>
 class SF_Orientation_2
 {
-  double _static_epsilon;
-
   // Computes the epsilon for Orientation_2.
   static double ori_2()
   {
@@ -55,36 +50,7 @@ class SF_Orientation_2
   static const double epsilon; // = 3.55271e-15; // ori_2();
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  template < class Pt, class Or2 >
-  friend class SF_Coplanar_orientation_3;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Orientation_2(const SF_Orientation_2 &s)
-      : _static_epsilon(s._static_epsilon) {}
-
-  SF_Orientation_2 & operator=(const SF_Orientation_2 &s)
-  {
-      _static_epsilon = s._static_epsilon;
-      return *this;
-  }
-
-  SF_Orientation_2()
-  {
-      _static_epsilon = CGALi::infinity;
-  }
-
-public:
   typedef Orientation result_type;
-
-  void update(double dx, double dy)
-  {
-      _static_epsilon = dx*dy*epsilon;
-  }
 
   Orientation operator()(const Point &p, const Point &q, const Point &r) const
   {
@@ -93,7 +59,8 @@ public:
 	                      to_double(r.x()), to_double(r.y()));
   }
 
-private:
+//private:
+public: // public because used by Coplanar_orientation_3.
 
   typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_2 P;
 
@@ -111,12 +78,6 @@ private:
 
     double det = det2x2_by_formula(pqx, pqy,
                                    prx, pry);
-
-    // Fully static filter first.
-    if (det >  _static_epsilon) return POSITIVE;
-    if (det < -_static_epsilon) return NEGATIVE;
-
-    CGAL_PROFILER("Orientation_2 static failures");
 
     // Then semi-static filter.
     double maxx = fabs(px);

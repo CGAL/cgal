@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -35,8 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template <class Point>
 class SF_Side_of_oriented_circle_2
 {
-  double _static_epsilon;
-
 public:
   // Computes the epsilon for In_circle_2.
   static void cir_2()
@@ -48,33 +46,7 @@ public:
   static const double epsilon; // = 1.42109e-13; // cir_2();
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Side_of_oriented_circle_2(const SF_Side_of_oriented_circle_2 &s)
-      : _static_epsilon(s._static_epsilon) {}
-
-  SF_Side_of_oriented_circle_2& operator=(const SF_Side_of_oriented_circle_2&s)
-  {
-      _static_epsilon = s._static_epsilon;
-      return *this;
-  }
- 
-  SF_Side_of_oriented_circle_2()
-  {
-      _static_epsilon = CGALi::infinity;
-  }
-
-public:
   typedef Oriented_side result_type;
-
-  void update(double dx, double dy)
-  {
-      _static_epsilon = epsilon*dx*dy*2*(dx*dx+dy*dy);
-  }
 
   Oriented_side operator()(const Point &p, const Point &q,
 	                   const Point &r, const Point &t) const
@@ -104,12 +76,6 @@ public:
     double det = det2x2_by_formula(
                              qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
                              qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy));
-
-    // Try a fully static bound first, when possible.
-    if (det >  _static_epsilon) return ON_POSITIVE_SIDE;
-    if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
-
-    CGAL_PROFILER("In_circle_2 static failures");
 
     // We compute the semi-static bound.
     double maxx = fabs(px);

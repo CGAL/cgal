@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -35,8 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template <class Point>
 class SF_Side_of_oriented_sphere_3
 {
-  double _static_epsilon;
-
   // Computes the epsilon for In_sphere_3.
   static double sph_3()
   {
@@ -55,33 +53,7 @@ class SF_Side_of_oriented_sphere_3
   static const double epsilon; // = 3.6664e-12; // sph_3();
 
 public:
-
-  template < class R >
-  friend class Static_filters;
-
-  // These operations are reserved to Static_filters<>, because the context of
-  // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Side_of_oriented_sphere_3(const SF_Side_of_oriented_sphere_3 &s)
-      : _static_epsilon(s._static_epsilon) {}
-
-  SF_Side_of_oriented_sphere_3& operator=(const SF_Side_of_oriented_sphere_3&s)
-  {
-      _static_epsilon = s._static_epsilon;
-      return *this;
-  }
-  
-  SF_Side_of_oriented_sphere_3()
-  {
-      _static_epsilon = CGALi::infinity;
-  }
-
-public:
   typedef Oriented_side result_type;
-
-  void update(double dx, double dy, double dz)
-  {
-      _static_epsilon = epsilon*dx*dy*dz*2*(dx*dx+dy*dy+dz*dz);
-  }
 
   Oriented_side operator()(const Point &p, const Point &q, const Point &r,
 	                   const Point &s, const Point &t) const
@@ -127,14 +99,6 @@ public:
                                    rtx,rty,rtz,rt2,
                                    qtx,qty,qtz,qt2,
                                    stx,sty,stz,st2);
-
-#if 1
-    // Try a fully static bound first, when possible.
-    if (det >  _static_epsilon) return ON_POSITIVE_SIDE;
-    if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
-#endif
-
-    CGAL_PROFILER("In_sphere_3 static failures");
 
 #if 1
     // We compute the semi-static bound.

@@ -1,3 +1,9 @@
+13 June 2004 Sylvain Pion
+- Remove purely static code from Static_filters.
+  It's pure overhead for now : requires users' intervention, with expected low
+  gain, and is in the way for proper integration.  If it will have to be
+  re-added one day, it should probably be in an different place.
+
 5 June 2004 Sylvain Pion
 - test-suite : specificaly test for constant propagation.
 
