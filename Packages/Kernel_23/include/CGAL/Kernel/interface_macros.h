@@ -184,9 +184,11 @@ CGAL_Kernel_pred(CGALi::Equal_x,
 CGAL_Kernel_pred(CGALi::Equal_y,
 	         Equal_y_2,
 		 equal_y_2_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_pred(CGALi::Equal_xy,
 	         Equal_xy_2,
 		 equal_xy_2_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_pred(CGALi::Less_x,
 	         Less_x_2,
 		 less_x_2_object)
@@ -451,9 +453,11 @@ CGAL_Kernel_pred(CGALi::Equal_z,
 CGAL_Kernel_pred(CGALi::Equal_xy,
 	         Equal_xy_3,
 		 equal_xy_3_object)
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_pred(CGALi::Equal_xyz,
 	         Equal_xyz_3,
 		 equal_xyz_3_object)
+#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_pred(CGALi::Less_x,
 	         Less_x_3,
 		 less_x_3_object)
