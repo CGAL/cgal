@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.84 (10 June 2003) [af]
+- Added workaround for missing member templates in Sun STL
+
 0.9.83 (5 June 2003) [af]
   - Replaced CGAL_TYPENAME_MSVC_NULL with template
 
