@@ -10,26 +10,34 @@ typedef CGAL::Delaunay_triangulation_2<Gt>                 Delaunay;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Edge_iterator  Edge_iterator;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;
 
-void output(CGAL::Window_stream& W, const Delaunay& PSet)
+Delaunay PSet;
+
+void output(CGAL::Window_stream& W, const Delaunay& PS)
 {
   W.clear();
-  Edge_iterator eit = PSet.finite_edges_begin();
+  Edge_iterator eit = PS.finite_edges_begin();
   
-  for(;eit != PSet.finite_edges_end(); eit++) {
-    CGAL::Segment_2<Gt> s= PSet.segment(*eit);
+  for(;eit != PS.finite_edges_end(); eit++) {
+    CGAL::Segment_2<Gt> s= PS.segment(*eit);
     W << s;
   }
 }
 
+void redraw(CGAL::Window_stream* wptr)
+{
+  output(*wptr,PSet);
+}
+
+
 int main()
 {
-  Delaunay PSet;
-
   CGAL::Window_stream W(600,500, "Finding nearest neighbor / k nearest neighbors");  
 
   W.init(-500,500,-400);
   W.set_grid_dist(10.0);
   W.set_grid_mode(10);
+  W.set_redraw(redraw);  
+  
   W.display(100,100);
   
 #if defined(CGAL_USE_CGAL_WINDOW)

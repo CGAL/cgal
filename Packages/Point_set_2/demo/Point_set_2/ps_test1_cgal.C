@@ -18,6 +18,8 @@ typedef CGAL::Iso_rectangle_2<K>     Rectangle;
 typedef CGAL::Triangle_2<K>          Triangle;
 
 
+CGAL::Point_set_2<K,Tds> PS;
+
 void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
 {
   W.clear();
@@ -29,15 +31,18 @@ void output(CGAL::Window_stream& W, const CGAL::Point_set_2<K,Tds>& PSet)
   }
 }
 
+void redraw(CGAL::Window_stream* wptr)
+{
+  output(*wptr,PS);
+}
 
 int main()
 {
-  CGAL::Point_set_2<K,Tds> PS;
-
   CGAL::Window_stream W(600,500,"Range search operations on a point set");  
   //CGAL::cgalize( W);
 
   W.init(-500,500,-400);
+  W.set_redraw(redraw); 
   W.display(100,100);
   
 #if defined(CGAL_USE_CGAL_WINDOW)

@@ -10,6 +10,7 @@ typedef CGAL::Delaunay_triangulation_2<Gt>                 Delaunay;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Edge_iterator  Edge_iterator;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;
 
+Delaunay PS;
 
 void output(CGAL::Window_stream& W, const Delaunay& PSet)
 {
@@ -22,15 +23,17 @@ void output(CGAL::Window_stream& W, const Delaunay& PSet)
   }
 }
 
+void redraw(CGAL::Window_stream* wptr)
+{
+  output(*wptr,PS);
+}
 
 int main()
 {
-  Delaunay PS;
-
   CGAL::Window_stream W(600,500,"Range search operations on a point set");  
 
-
   W.init(-500,500,-400);
+  W.set_redraw(redraw);
   W.display(100,100);
   
 #if defined(CGAL_USE_CGAL_WINDOW)
