@@ -394,24 +394,6 @@ alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 \end{figure} 
 
-\ccMethod{template < class Conflict_test > Vertex *
-insert_conflict(Vertex * v, Cell *c, const Conflict_test &tester);} 
-{Inserts vertex \ccc{v} by replacing all the cells in conflict with 
-\ccc{v} by the cells formed by \ccc{v} and the facets on the boundary
-of the region formed by these conflicting cells.\\
-\ccc{c} is the cell from which the search for conflicting cells
-starts. \ccc{Conflict_test} is a class whose operator \ccc{()} takes a
-\ccc{Cell*} as argument and returns a boolean which determines whether 
-the cell is in conflict with \ccc{v}.\\
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$. \ccc{c != NULL} and
-\ccc{c} conflicts with \ccc{v}. 
-Additionnally, the set of cells in conflict with \ccc{v} is supposed
-to be a set of connected cells of \ccc{t} (this precondition is not
-checked but must be satisfied).}
-}
-
 \ccMethod{void remove_degree_dplus1(Vertex* v, Cell *f = NULL);}
 {Removes \ccc{v}. The incident faces of maximal dimension incident to
 \ccc{v} are replaced by a single face of the same dimension. This
