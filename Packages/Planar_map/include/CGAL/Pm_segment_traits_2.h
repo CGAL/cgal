@@ -119,11 +119,16 @@ public:
     return !((less_x(source, q) && less_x(target, q)) ||
              (less_x(q, source) && less_x(q, target)));
 #else
-    Compare_x_2 cmpr_x = compare_x_2_object();
-    return !(((cmpr_x(cv, 0, q) == SMALLER) &&
-              (cmpr_x(cv, 1, q) == SMALLER)) ||
-             ((cmpr_x(cv, 0, q) == LARGER) &&
-              (cmpr_x(cv, 1, q == LARGER))));
+    // \todo use this code instead, after the calls it uses are supported
+    // in the LEDA kernel.
+    Compare_x_2 compare_x = compare_x_2_object();
+    Comparison_result res1 = compare_x(cv, 0, q);
+    Comparison_result res2 = compare_x (cv, 1, q);
+
+    // We check if x(p) equals the x value of one of the end-points.
+    // If not, we check whether one end-point is to p's left and the other is
+    // to its right.
+    return ((res1 == EQUAL) || (res2 == EQUAL) || (res1 != res2));
 #endif
   }
 
