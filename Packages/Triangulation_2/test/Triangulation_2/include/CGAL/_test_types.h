@@ -12,7 +12,7 @@
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
-#ifndef CGAL_HOMOGENEOUS
+#ifndef CGAL_HOMOGENEOUS_H
 #include <CGAL/Homogeneous.h>
 #endif // CGAL_HOMOGENEOUS_H
 
