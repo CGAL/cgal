@@ -59,6 +59,9 @@ lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
 workaround_4_irix.o:
 	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix.s
 
+workaround_4_irix6.o:
+	$(CGAL_CC) $(CXXFLAGS) -c Interval_arithmetic/workaround_4_irix6.s
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
