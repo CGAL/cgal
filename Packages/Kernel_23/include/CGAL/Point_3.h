@@ -42,11 +42,13 @@ public:
   Point_3(const Origin& o)
       : RPoint_3(o) {}
 
+#if 1
   Point_3(const RPoint_3& p)
       : RPoint_3(p) {}
+#endif
 
-  Point_3(const RT& hx, const RT& hy, const RT& hz)
-    : RPoint_3(hx, hy, hz) {}
+  Point_3(const RT& x, const RT& y, const RT& z)
+    : RPoint_3(x, y, z) {}
 
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
     : RPoint_3(hx, hy, hz, hw) {}
@@ -64,7 +66,7 @@ bool
 operator!=(const Origin& o, const Point_3<R>& p)
 { return p != o; }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_POINT_3
+#if 0 //ndef CGAL_NO_OSTREAM_INSERT_POINT_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_3<R>& p)
@@ -74,7 +76,7 @@ operator<<(std::ostream& os, const Point_3<R>& p)
 }
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
+#if 0 //ndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
 template < class R >
 std::istream& operator>>(std::istream& is, Point_3<R>& p)
 {

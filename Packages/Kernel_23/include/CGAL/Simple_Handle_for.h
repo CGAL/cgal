@@ -39,6 +39,25 @@ public:
     Simple_Handle_for(const Stored& rc)
 	: _s(rc) {}
 
+/* I comment this one for now, since it's preventing the automatic conversions
+   to take place.  We'll see if it's a problem later.
+    template < typename T1 >
+    Simple_handle_for(const T1& t1)
+      : _s(t1) {}
+*/
+
+    template < typename T1, typename T2 >
+    Simple_Handle_for(const T1& t1, const T2& t2)
+      : _s(t1, t2) {}
+
+    template < typename T1, typename T2, typename T3 >
+    Simple_Handle_for(const T1& t1, const T2& t2, const T3& t3)
+      : _s(t1, t2, t3) {}
+
+    template < typename T1, typename T2, typename T3, typename T4 >
+    Simple_Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
+      : _s(t1, t2, t3, t4) {}
+
     Simple_Handle_for&
     operator=(const Stored& rc)
     {
@@ -95,6 +114,23 @@ void
 swap(Simple_Handle_for<Stored> &h1, Simple_Handle_for<Stored> &h2)
 {
     h1.swap(h2);
+}
+
+template < class Stored >
+inline
+bool
+identical(const Simple_Handle_for<Stored> &h1,
+          const Simple_Handle_for<Stored> &h2)
+{
+    return h1.identical(h2);
+}
+
+template <class T>
+inline
+const T&
+get(const Simple_Handle_for<T> &h)
+{
+    return *(h.Ptr());
 }
 
 CGAL_END_NAMESPACE

@@ -1,3 +1,7 @@
+1.97 (1 January 2004)
+- New faster Handle_for interface
+- More work towards extensible kernel.
+
 1.96 (17 December 2003)
 - Added Compute_area_3, and a version of Compute_squared_area_3 taking 3
   points.

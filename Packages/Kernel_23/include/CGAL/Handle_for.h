@@ -58,6 +58,12 @@ public:
         ++(ptr_->count);
     }
 
+    Handle_for(const Handle_for& h)
+      : ptr_(h.ptr_)
+    {
+        ++(ptr_->count);
+    }
+
     // TODO :
     // We should also think about providing template constructors in
     // order to forward the functionality of T to Handle_for<T> without
@@ -71,10 +77,39 @@ public:
         ptr_->count = 1;
     }
 
-    Handle_for(const Handle_for& h)
-      : ptr_(h.ptr_)
+/* I comment this one for now, since it's preventing the automatic conversions
+   to take place.  We'll see if it's a problem later.
+    template < typename T1 >
+    Handle_for(const T1& t1)
+      : ptr_(allocator.allocate(1))
     {
-        ++(ptr_->count);
+        new (&(ptr_->t)) T(t1);
+        ptr_->count = 1;
+    }
+*/
+
+    template < typename T1, typename T2 >
+    Handle_for(const T1& t1, const T2& t2)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) T(t1, t2);
+        ptr_->count = 1;
+    }
+
+    template < typename T1, typename T2, typename T3 >
+    Handle_for(const T1& t1, const T2& t2, const T3& t3)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) T(t1, t2, t3);
+        ptr_->count = 1;
+    }
+
+    template < typename T1, typename T2, typename T3, typename T4 >
+    Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) T(t1, t2, t3, t4);
+        ptr_->count = 1;
     }
 
     ~Handle_for()
@@ -188,6 +223,39 @@ void
 swap(Handle_for<T, Allocator> &h1, Handle_for<T, Allocator> &h2)
 {
     h1.swap(h2);
+}
+
+template <class T, class Allocator>
+inline
+bool
+identical(const Handle_for<T, Allocator> &h1,
+          const Handle_for<T, Allocator> &h2)
+{
+    return h1.identical(h2);
+}
+
+template <class T>
+inline
+bool
+identical(const T &t1, const T &t2)
+{
+    return &t1 == &t2;
+}
+
+template <class T, class Allocator>
+inline
+const T&
+get(const Handle_for<T, Allocator> &h)
+{
+    return *(h.Ptr());
+}
+
+template <class T>
+inline
+const T&
+get(const T &t)
+{
+    return t;
 }
 
 CGAL_END_NAMESPACE

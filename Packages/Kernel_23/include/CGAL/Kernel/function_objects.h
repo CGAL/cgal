@@ -1452,7 +1452,12 @@ namespace CommonKernelFunctors {
     bool
     operator()( const Direction_2& p, const Direction_2& q,
 	        const Direction_2& r) const
-    { return p.counterclockwise_in_between(q, r); }
+    {
+        if ( q < p)
+            return ( p < r )||( r <= q );
+        else
+            return ( p < r )&&( r <= q );
+    }
   };
 
   template <typename K>
