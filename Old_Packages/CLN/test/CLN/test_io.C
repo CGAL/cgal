@@ -1,13 +1,17 @@
-#ifndef CGAL_USE_CLN
-#  error "You need to have CLN installed in order to run this example"
-#endif
-
 // This program tests some basic IO functions for some CLN types.
 
 #include <CGAL/basic.h>
 #include <iostream>
 #include <fstream.h>
 #include <cassert>
+
+#ifndef CGAL_USE_CLN
+int main()
+{
+  std::cout << "CGAL has not been installed with CLN." << std::endl;
+  return 0;
+}
+#else // CGAL_USE_CLN
 
 #include <CGAL/CLN/cl_integer.h>
 #include <CGAL/CLN/cl_rational.h>
@@ -54,3 +58,4 @@ main ()
 
     return (ok) ? 0 : -1;
 }
+#endif // CGAL_USE_CLN
