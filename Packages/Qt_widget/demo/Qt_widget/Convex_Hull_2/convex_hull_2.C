@@ -29,6 +29,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_Widget.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_Widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_view.h>
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -55,6 +56,56 @@ const QString my_title_string("Convex_Hull_2 Demo with"
 //global flags and variables
 int current_state;
 std::list<Point>	  list_of_points;
+
+
+class Qt_view_show_ch : public CGAL::Qt_widget_view
+{
+public:
+	
+  Qt_view_show_ch(){};
+
+
+  void draw_view(CGAL::Qt_widget &win)
+  {
+     win.lock();
+    win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+    win << CGAL::GREEN;
+    std::list<Point>::iterator itp = list_of_points.begin();
+    while(itp!=list_of_points.end())
+    {
+      win << (*itp++);
+    }
+
+    std::list<Point>	out;
+    std::list<Segment>	Sl;
+    CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(out));
+
+    if( out.size() > 1 ) {
+      Point pakt,prev,pstart;
+
+      std::list<Point>::const_iterator it;
+      it=out.begin();
+      prev= *it; pstart=prev;
+      it++;
+
+      for(; it != out.end(); ++it) {
+	pakt= *it;
+	Sl.push_back(Segment(prev,pakt));
+	prev=pakt;
+      }
+      Sl.push_back(Segment(pakt,pstart));
+
+      win << CGAL::RED;
+      std::list<Segment>::iterator its = Sl.begin();
+      while(its!=Sl.end())
+      {
+	win << (*its++);
+      }
+    }
+    win.unlock();
+  };	
+  
+};//end class 
 
 class MyWindow : public QMainWindow
 {
@@ -98,7 +149,7 @@ public:
 
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this);	
+  newtoolbar = new CGAL::Tools_toolbar(&win, this, list_of_points);	
   //the standard toolbar
   stoolbar = new CGAL::Standard_toolbar (&win, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);
@@ -119,6 +170,9 @@ public:
 
   //application flag stuff
   old_state = 0;
+
+  //views
+  win << &testview;
   };
 
   ~MyWindow()
@@ -146,44 +200,8 @@ public slots:
 
   void redrawWin()
   {
-    win.lock();
-    win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-    win << CGAL::GREEN;
-    std::list<Point>::iterator itp = list_of_points.begin();
-    while(itp!=list_of_points.end())
-    {
-      win << (*itp++);
-    }
-
-    std::list<Point>	out;
-    std::list<Segment>	Sl;
-    CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(out));
-
-    if( out.size() > 1 ) {
-      Point pakt,prev,pstart;
-
-      std::list<Point>::const_iterator it;
-      it=out.begin();
-      prev= *it; pstart=prev;
-      it++;
-
-      for(; it != out.end(); ++it) {
-	pakt= *it;
-	Sl.push_back(Segment(prev,pakt));
-	prev=pakt;
-      }
-      Sl.push_back(Segment(pakt,pstart));
-
-      win << CGAL::RED;
-      std::list<Segment>::iterator its = Sl.begin();
-      while(its!=Sl.end())
-      {
-	win << (*its++);
-      }
-    }
-    win.unlock();
   }
-	
+  	
 
 private slots:
   void get_new_object(CGAL::Object obj)
@@ -267,6 +285,7 @@ private:
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
   int			  old_state;  	
+  Qt_view_show_ch	  testview;
 };
 
 #include "convex_hull_2.moc"

@@ -24,12 +24,14 @@
 #include "Qt_widget_toolbar.h"
 
 // icons
+#include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/point.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> &l1) : 
+  my_toolbar_list(l1)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -63,10 +65,19 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Point Tool");
 
+  but[2] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
+			     "Move selected point", 
+			     0, 
+			     this, 
+			     SLOT(movepoint()), 
+			     maintoolbar, 
+			     "Move point");
+
   
   but[1]->setToggleButton(TRUE);
-  
-  nr_of_buttons = 2;
+  but[2]->setToggleButton(TRUE);
+
+  nr_of_buttons = 3;
 
   connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
 };
@@ -96,6 +107,22 @@ namespace CGAL {
       widget->detach_current_tool();
     }
   }
+  void Tools_toolbar::movepoint()
+  {
+    if (but[2]->isOn())
+    {
+      widget->attach(movepointbut);
+      movepointbut.set_list(my_toolbar_list);
+      activebutton = 2;
+      is_active = true;
+    }
+    else
+    {
+      is_active = false;
+      widget->detach_current_tool();
+    }
+  }
+
   void Tools_toolbar::notool()
   {
     if(is_active) {

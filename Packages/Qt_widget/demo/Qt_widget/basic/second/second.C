@@ -32,14 +32,20 @@ public:
   My_Window(int x, int y){ resize(x,y); };
 private:
   
+  void redraw()
+  {
+    Qt_widget::redraw();
+    *this << dt;
+  }
   //this event is called only when the user press mouse
   void mousePressEvent(QMouseEvent *e)
   {
-    clear();
+    Qt_widget::mousePressEvent(e);
     dt.insert(Point(x_real(e->x()), y_real(e->y())));
-    *this << dt;
+    redraw();
+    //clear();
+    //*this << dt;
   }
-  
 };
 
 int main( int argc, char **argv )

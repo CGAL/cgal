@@ -36,7 +36,7 @@ class Qt_view_show_polygon : public Qt_widget_view
 public:
   
   Qt_view_show_polygon(T &p) : polygon(p){};
-  void draw_scene(Qt_widget &widget)
+  void draw_view(Qt_widget &widget)
   {
     widget << LineWidth(3);
     widget << CGAL::BLUE; 

@@ -41,7 +41,7 @@ public:
 
   Qt_view_show_greene_approx(T &p) : polygon(p)
   {};
-  void draw_scene(Qt_widget &widget)
+  void draw_view(Qt_widget &widget)
   {
     greene_approx_polys.clear();
     Traits  partition_traits;

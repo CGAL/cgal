@@ -35,7 +35,7 @@ class Qt_view_mouse_coordinates : public Qt_widget_view
 public:
 	
   Qt_view_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
-  void draw_scene(Qt_widget &widget){};
+  void draw_view(Qt_widget &widget){};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
   {
     char xsir[40], ysir[40], final[80];

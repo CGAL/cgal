@@ -40,7 +40,7 @@ public:
 
   Qt_view_nearest_vertex(T &t) : first_time(TRUE), tr(t){};
 	
-  void draw_scene(Qt_widget &widget){first_time = TRUE;};
+  void draw_view(Qt_widget &widget){first_time = TRUE;};
   void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
   {
     if (tr.dimension()<1) return;

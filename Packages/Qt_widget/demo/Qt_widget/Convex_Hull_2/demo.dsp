@@ -113,6 +113,10 @@ SOURCE=..\..\..\src\Qt_Widget_tool.C
 
 SOURCE=.\Qt_widget_toolbar.C
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\Qt_widget_view.C
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -147,6 +151,21 @@ SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
 # Begin Source File
 
 SOURCE=.\Qt_Widget_MovePoint.h
+
+!IF  "$(CFG)" == "demo - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\Qt_Widget_MovePoint.h
+
+"Qt_Widget_MovePoint.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_Widget_MovePoint.moc" "Qt_Widget_MovePoint.h"
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -204,6 +223,10 @@ InputPath=.\Qt_widget_toolbar.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\include\CGAL\IO\Qt_widget_view.h
 # End Source File
 # Begin Source File
 

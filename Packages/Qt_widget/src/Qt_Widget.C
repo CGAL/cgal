@@ -360,16 +360,6 @@ void Qt_widget::detach_current_tool()
 };
 
 
-void Qt_widget::show_scene(Qt_widget_view* s)
-{/*
-  if(scenes_to_display.find(s)!=scenes_to_display.end())
-  {
-    scenes_to_display[s]=true;
-    redraw();
-  }*/
-};
-
-
 // redraw shown scenes
 // ***** Should be call when:
 //    - an editable scene is changed (should be call by tools)
@@ -382,7 +372,7 @@ void Qt_widget::redraw()
       lock();
       std::list<Qt_widget_view*>::iterator it;
       for(it = qt_scenes.begin(); it!= qt_scenes.end(); it++)
-	(*it)->draw_scene(*this);
+	(*it)->draw_view(*this);
       
       unlock();
       if (has_tool())
@@ -392,14 +382,14 @@ void Qt_widget::redraw()
   };
   
   // add a scene in the list of displayable scenes
-  void Qt_widget::add_scene(Qt_widget_view* s)
+  void Qt_widget::add_view(Qt_widget_view* s)
   {
     qt_scenes.push_back(s);
     connect(s,SIGNAL(dying(Qt_widget_view*)),this,SLOT(remove_scene(Qt_widget_view*)));
   }
 
   // remove a scene from the list of displayable scenes
-  void Qt_widget::remove_scene(Qt_widget_view* s)
+  void Qt_widget::remove_view(Qt_widget_view* s)
   {
     qt_scenes.erase(std::find(qt_scenes.begin(),qt_scenes.end(),s));
   }

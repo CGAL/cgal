@@ -41,7 +41,7 @@ public:
 
   Qt_view_show_optimal_convex(T &p) : polygon(p)
   {};
-  void draw_scene(Qt_widget &widget)
+  void draw_view(Qt_widget &widget)
   {
     optimal_convex.clear();
     Traits  partition_traits;

@@ -24,20 +24,20 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_Widget.h>
 #include <CGAL/IO/Qt_Widget_Get_point.h>
+#include "Qt_Widget_MovePoint.h"
 
 #include <qobject.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qmainwindow.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
+typedef CGAL::Cartesian<double>	  Rp;
+typedef Rp::Point_2		  Point;
 
 namespace CGAL {
 
@@ -45,7 +45,7 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> &l1);
   ~Tools_toolbar()
   {
     delete maintoolbar;
@@ -59,6 +59,7 @@ signals:
 private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
+  void movepoint();
   void pointtool();
   void notool();
   
@@ -71,10 +72,12 @@ private:
   int			activebutton;
   bool			is_active;
   void			setActiveButton(int i);
-  void			addToolButton(QToolButton *b);
   int			nr_of_buttons;
-	
+
+  std::list<Point>	my_toolbar_list;
+
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_movepoint<Rp>	    movepointbut;
 };//end class
 
 };//end namespace

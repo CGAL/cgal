@@ -77,13 +77,10 @@ public:
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
   
-  void show_scene(Qt_widget_view* s);
-  
   inline
   Qt_widget& operator<<(Qt_widget_view* s)
   {
-    add_scene(s);
-    show_scene(s);
+    add_view(s);
     return *this;
   };
 
@@ -161,6 +158,7 @@ public:
   Qt_widget& operator>>(Qt_widget_tool &tool);
   */	
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
+  virtual void redraw();
 
 signals:
   void mousePressed(QMouseEvent *e);
@@ -190,13 +188,13 @@ public slots:
   // ***** Should be call when:
   //    - an editable scene is changed (should be call by tools)
   //    - ranges are changed
-  void redraw();
+  //virtual void redraw();
   
   // add a scene in the list of displayable scenes
-  void add_scene(Qt_widget_view* s);
+  void add_view(Qt_widget_view* s);
 
   // remove a scene from the list of displayable scenes
-  void remove_scene(Qt_widget_view* s);
+  void remove_view(Qt_widget_view* s);
 
 private:
   void	  set_scales(); // set xscal and yscal

@@ -33,7 +33,7 @@ public:
   Qt_view_show_triangulation(T &t) : tr(t){};
 
 
-  void draw_scene(Qt_widget &widget)
+  void draw_view(Qt_widget &widget)
   {
     widget << CGAL::BLUE; 
     widget << tr;
