@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.10.7 on 21-Mar-2001
+- removed 'maintainer' line from file header in example and demo program
+
 Version 3.10.6 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
