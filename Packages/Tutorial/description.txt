@@ -1,0 +1,4 @@
+This package contains the CGAL tutorials.
+For the moment:
+- Polyhedron tutorial
+- Qt_widget tutorial
