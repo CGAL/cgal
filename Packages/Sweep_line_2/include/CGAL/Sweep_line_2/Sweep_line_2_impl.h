@@ -22,6 +22,7 @@
 #include <map>
 #include <set>
 #include <list>
+#include <algorithm>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
@@ -154,11 +155,15 @@ public:
       m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(true),
-      m_queue(NULL),
-      m_statusLine(NULL),
-      m_comp_param(NULL),
+      m_comp_param(new CompareParams(m_traits)),
+      m_queue(new EventQueue(PointLess(m_traits))),
+      m_statusLine(new StatusLine(StatusLineCurveLess(m_comp_param, &m_sweepLinePos))),
       m_xcurves(0),
+      m_status_line_insert_hint(m_statusLine->begin()),
       m_num_of_subCurves(0),
+#ifndef NDEBUG
+      m_eventId(0),
+#endif
       m_visitor(visitor)
   {
     m_visitor->attach(this);
@@ -170,11 +175,15 @@ public:
       m_deallocate_event(deallocate_event),
       m_sweep_line_traits(m_traits),
       m_traitsOwner(false),
-      m_queue(NULL),
-      m_statusLine(NULL),
-      m_comp_param(NULL),
+      m_comp_param(new CompareParams(m_traits)),
+      m_queue(new EventQueue(PointLess(m_traits))),
+      m_statusLine(new StatusLine(StatusLineCurveLess(m_comp_param, &m_sweepLinePos))),
       m_xcurves(0),
+      m_status_line_insert_hint(m_statusLine->begin()),
       m_num_of_subCurves(0),
+#ifndef NDEBUG
+      m_eventId(0),
+#endif
       m_visitor(visitor)
   {
     m_visitor->attach(this);
@@ -189,33 +198,20 @@ public:
   public:
 
 
-  /*! initializes the data structures to work with:
+  /*
    *  - x-monotonize the input curves
    *  - for each end point of each curve create an event
    *  - initialize the event queue
    *  -
    */
   template<class CurveInputIterator>
-  void init(CurveInputIterator begin, CurveInputIterator end)
+  void init(CurveInputIterator curves_begin, CurveInputIterator curves_end)
   {
-    PointLess pred(m_traits); // functor of the event queue(implemented as map)
-    m_queue = new EventQueue(pred);  // allocate event queue (map)
-    m_comp_param = new CompareParams(m_traits);
-    StatusLineCurveLess slcurveless(m_comp_param , &m_sweepLinePos);//the functor of the status line (set)
-    m_statusLine = new StatusLine(slcurveless); // allocate the status line
-    m_status_line_insert_hint = m_statusLine->begin();
-
-  #ifndef NDEBUG
-    m_eventId = 0;
-  #endif
-    
-    CurveInputIterator iter;
-    for ( iter = begin ; iter != end ; ++iter)
+    for(CurveInputIterator iter = curves_begin; iter != curves_end; ++iter)
     {
       m_traits->curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
     }
     m_num_of_subCurves = m_xcurves.size();
-
     m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
 
     for(unsigned int index = 0; index < m_num_of_subCurves ; ++index)
@@ -223,6 +219,25 @@ public:
       init_curve(m_xcurves[index],index);
     }
   }
+
+  template<class CurveInputIterator, class XCurveInputIterator>
+  void init(CurveInputIterator curves_begin, CurveInputIterator curves_end,
+            XCurveInputIterator xcurves_begin, XCurveInputIterator xcurves_end)
+  {
+    for(CurveInputIterator iter = curves_begin; iter != curves_end; ++iter)
+    {
+      m_traits->curve_make_x_monotone(*iter, std::back_inserter(m_xcurves));
+    }
+    std::copy(xcurves_begin, xcurves_end, std::back_inserter(m_xcurves));
+    m_num_of_subCurves = m_xcurves.size();
+    m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+    for(unsigned int index = 0; index < m_num_of_subCurves ; ++index)
+    {
+      init_curve(m_xcurves[index],index);
+    }
+  }
+
+
   
   void init_curve(X_monotone_curve_2 &curve,unsigned int index);
 
@@ -660,29 +675,35 @@ protected:
   /*! a pointer to a traits object */
   Traits *m_traits;
 
+  /*! indicates if events are deallocated at this scope 
+      (if false, the events are not deallocated here)
+   */
   bool m_deallocate_event;
 
+  /*! an object that holds a static trait object 
+   *  to be used by events and subcurves
+   */
   Sweep_line_traits<Traits> m_sweep_line_traits;
 
   /*! an indication to whether the traits should be deleted in the destructor
    */
   bool m_traitsOwner;
 
-  /*! the queue of events (intersection points) to handle */
-  EventQueue *m_queue;
-
-  /*! The subcurves, as created on the fly */
-  Subcurve *m_subCurves;
-
-  /*! The status line */
-  StatusLine *m_statusLine;
+  /*! The current position (in X) of the sweep line */
+  Point_2 m_sweepLinePos;
 
   /*! a struct that holds params associated with the curve compare functor */
   CompareParams *m_comp_param;
 
-  /*! The current position (in X) of the sweep line */
-  Point_2 m_sweepLinePos;
+  /*! the queue of events (intersection points) to handle */
+  EventQueue *m_queue;
 
+  /*! The subcurves array */
+  Subcurve *m_subCurves;
+
+  /*! The status line (Y-str) */
+  StatusLine *m_statusLine;
+ 
   /*! if non x-monotone are specified, this hold the x-monotone 
     curves created when splitting them into x-monotone curves. */
   std::vector<X_monotone_curve_2> m_xcurves;
@@ -699,12 +720,11 @@ protected:
   /*! An allocator for the Subcurve objects */
   SubCurveAlloc m_subCurveAlloc;
 
-  /*! a master Event (created by default c'tor)to be used by allocator */
+  /*! a master Event (created once by default c'tor)to be used by allocator */
   Event m_masterEvent;
 
-  /*! a master Subcurve (created by default c'tor) to be used by allocator */
+  /*! a master Subcurve (created once by default c'tor) to be used by allocator */
   Subcurve m_masterSubcurve;
-
 
   /*! The num of subcurves  */
   unsigned int m_num_of_subCurves;
@@ -712,13 +732,14 @@ protected:
   /*! contains all of the new sub-curve creaed by overlap */
   SubCurveList m_overlap_subCurves;
 
-  SweepVisitor* m_visitor;
- 
 #ifndef NDEBUG
   int m_eventId;
 #endif
 
+  /* pointer to the visitor object which will be notidifed during sweep */
+  SweepVisitor* m_visitor;
 
+ 
 
   bool CurveStartsAtCurve(Subcurve *one, Subcurve *two)
   {
@@ -793,8 +814,6 @@ init_curve(X_monotone_curve_2 &curve,unsigned int j)
  
    m_subCurveAlloc.construct(m_subCurves+j,m_masterSubcurve);
   (m_subCurves+j)->init(curve);
-
- 
  
   const Point_2 &left_end  =  (m_subCurves+j)->get_left_end();
   const Point_2 &right_end =  (m_subCurves+j)->get_right_end();
@@ -938,12 +957,13 @@ intersect(Subcurve *c1, Subcurve *c2)
   SL_DEBUG(std::cout << "\n";)
   SL_DEBUG(std::cout << "relative to " << m_currentEvent->get_point() << "\n";)
 
+
   if ( c1 == c2 )
   {
     SL_DEBUG(std::cout << "same curve, returning....\n";)
     return false;
   }
-
+ 
   const X_monotone_curve_2 &cv1 = c1->get_curve();
   const X_monotone_curve_2 &cv2 = c2->get_curve();
 

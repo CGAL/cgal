@@ -365,7 +365,7 @@ private:
 
   Self *m_orig_subcurve2;
 
-
+ 
   protected:
 
   Traits* traits() const
