@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.71 
+- deleted superflous CGAL_TYPENAME_MSVC_NULL in Triangulation_iterators_2.h
+- Renamed  the variabled previuosly named "or" in Triangulation_line_face_circulator_2.h  
+- add a push_back function in Constrained_triangulation_2.h
+
 Ver 4.70 (2 nov 00)
 - fixed stack_flip_4_2 in Regular_triangulation_2.h
 
