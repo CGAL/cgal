@@ -192,7 +192,7 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-			"This is a demo from Mariette Yvinnec courses,\n"
+			"This is a demo from Mariette Yvinec courses,\n"
 			"adapted to work with CGAL Qt_widget by\n"
 			"Laurent Rineau ( rineau@clipper.ens.fr )");
 
