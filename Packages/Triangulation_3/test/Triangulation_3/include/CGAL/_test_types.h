@@ -6,9 +6,29 @@
 #endif // CGAL_BASIC_H
 #include <iostream>
 #include <cassert>
-#ifndef CGAL_GMPZ_H
+
+// #ifndef CGAL_GMPZ_H
+// #include <CGAL/Gmpz.h>
+// #endif // CGAL_GMPZ_H
+
+// #ifdef CGAL_USE_CLN
+// #include <CGAL/CLN/cl_integer.h>
+// typedef cl_I my_NT;
+// #else
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer my_NT;
+#else
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-#endif // CGAL_GMPZ_H
+typedef CGAL::Gmpz my_NT;
+#else
+#include <CGAL/double.h>
+typedef double my_NT;
+#endif
+#endif
+// #endif
+
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -18,8 +38,8 @@
 
 // #include <CGAL/_test_short_names_2.h>
 
-typedef CGAL::Cartesian<CGAL::Gmpz> Test_rep_cartesian;
-typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
+typedef CGAL::Cartesian<my_NT> Test_rep_cartesian;
+typedef CGAL::Homogeneous<my_NT> Test_rep_homogeneous;
 
 //the following define shorter names to make the (g++/egcs) linker work 
 // #define CGAL__Triangulation_test_traits_3 CGAL::Ttt3

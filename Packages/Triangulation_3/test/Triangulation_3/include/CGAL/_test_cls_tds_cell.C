@@ -40,16 +40,16 @@ _test_cell_tds_3( const Cell &)
   Vertex* v1= new Vertex; 
   Vertex* v2= new Vertex; 
   Vertex* v3= new Vertex;
-  Cell c1(tds,v0, v1 , v2, v3);
+  Cell c1 = *tds.create_cell(v0, v1 , v2, v3);
   c1.has_vertex(v0);
   c1.has_vertex(v1);
   c1.has_vertex(v2);
   c1.has_vertex(v3);
-  Cell* n0=new Cell;
-  Cell* n1=new Cell;
-  Cell* n2=new Cell;
-  Cell* n3=new Cell;
-  Cell c2(tds,v0, v1 , v2, v3, n0, n1, n2, n3);
+  Cell* n0=tds.create_cell();
+  Cell* n1=tds.create_cell();
+  Cell* n2=tds.create_cell();
+  Cell* n3=tds.create_cell();
+  Cell c2 = tds.create_cell(v0, v1 , v2, v3, n0, n1, n2, n3);
 
 
   std::cout << "   Access cell's functions " << std::endl;
