@@ -209,7 +209,8 @@ protected:
     SoGLLazyElement::sendAllMaterial(state);
   
     float complexity = SbClamp(this->getComplexityValue(action), 0.0f, 1.0f);
-    //Complexity value, valid settings range from 0.0 (worst appearance, best perfomance)
+    //Complexity value, valid settings range 
+    //from 0.0 (worst appearance, best perfomance)
     //to 1.0 (optimal appearance, lowest rendering speed)    
 
     glPushMatrix();
@@ -222,7 +223,8 @@ protected:
         glVertex3f(5, 0, 0);
         glVertex3f(5, 5, 0);
       glEnd();
-    } else if(complexity==1){ //render in smooth (specify the normals for the vertices)
+    } else if(complexity==1){ 
+      //render in smooth (specify the normals for the vertices)
       Facet_iterator fit = p.facets_begin();
       while(fit != p.facets_end()){
         Halfedge_around_facet_circulator h = (*fit).facet_begin();
@@ -233,8 +235,9 @@ protected:
             Vector_3 normals_sum(0, 0, 0);
             do{
               Vector_3 normal = CGAL::cross_product(
-                            vh->next()->vertex()->point() - vh->vertex()->point(),
-                            vh->next()->next()->vertex()->point() - vh->next()->vertex()->point());
+                      vh->next()->vertex()->point() - vh->vertex()->point(),
+                      vh->next()->next()->vertex()->point() - 
+                      vh->next()->vertex()->point());
               normals_sum = normals_sum + normal;
               normals_count++;
             }while(++vh != h->vertex()->vertex_begin());
