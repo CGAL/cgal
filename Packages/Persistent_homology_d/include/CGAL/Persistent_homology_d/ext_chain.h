@@ -143,19 +143,19 @@ class Ext_Chain_Z2 {
 
 // Definition of static variables
 template <class PivotHandle, 
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 typename Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::Chain
          Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::temp;
 template <class PivotHandle, 
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 typename Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::size_type
          Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::temp_size = 0;
 template <class PivotHandle, 
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 typename Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::iterator
          Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::temp_end;
 template <class PivotHandle, 
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 const typename Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::Field 
          Ext_Chain_Z2<PivotHandle, CompareWrtoFiltration>::one = 1;
 
@@ -303,31 +303,31 @@ class Ext_Chain_field {
 // Definition of static variable
 template< class PivotHandle,
           class Field_,
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration
 typename Ext_Chain_field< PivotHandle, Field_, CompareWrtoFiltration>::Chain
          Ext_Chain_field< PivotHandle, Field_, CompareWrtoFiltration>::temp;
 template< class PivotHandle, 
 	  class Field_,
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 typename Ext_Chain_field< PivotHandle, Field_, 
 			  CompareWrtoFiltration>::size_type
 	 Ext_Chain_field< PivotHandle, Field_,
 			  CompareWrtoFiltration>::temp_size = 0;
 template< class PivotHandle, 
 	  class Field_, 
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 typename Ext_Chain_field< PivotHandle, Field_, 
 			  CompareWrtoFiltration>::iterator
          Ext_Chain_field< PivotHandle, Field_, 
 			  CompareWrtoFiltration>::temp_end;
 template< class PivotHandle,
           class Field_,
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 const Field_ Ext_Chain_field< PivotHandle, Field_, 
 			      CompareWrtoFiltration>::zero = Field_(0);
 template< class PivotHandle,
           class Field_,
-          class CompareWrtoFiltration = std::less< PivotHandle> >
+          class CompareWrtoFiltration>
 const Field_ Ext_Chain_field< PivotHandle, Field_, 
 			      CompareWrtoFiltration>::one = Field_(1);
 
