@@ -45,7 +45,8 @@ using namespace std; // MSC hates "using std::{blah};"....
 using std::iterator_traits;
 #endif // _MSC_VER
 
-template < class I, class category = typename iterator_traits<I>::iterator_category >
+template < class I,
+           class category = typename iterator_traits<I>::iterator_category >
 class Adaptor {
     I _i;
 public:
