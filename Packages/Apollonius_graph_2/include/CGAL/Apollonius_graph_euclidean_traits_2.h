@@ -26,6 +26,7 @@
 #endif
 
 
+#include <CGAL/Number_type_traits.h>
 
 #include <CGAL/Apollonius_graph_euclidean_traits_2.C>
 
