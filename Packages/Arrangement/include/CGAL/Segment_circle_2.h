@@ -349,7 +349,7 @@ class Segment_circle_2
     return (Segment (_source, _target));
   }
 
-  // Get a segment if the arc is indeed one.
+  // Get a circle if the arc is indeed a circular arc.
   Circle circle() const
   {
     CGAL_precondition(is_circle());
