@@ -1,4 +1,8 @@
 -----
+* 2.2.5 *
++ cgal_test now wroies diff of output and expected output
+
+-----
 * 2.2.4 *
 +cgal_test now writes to ProgramOutput* file
 -----
