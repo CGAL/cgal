@@ -56,11 +56,9 @@
 //----------------------------------------------------------------------//
 
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#   define CGAL_TYPENAME_MSVC_NULL
-#else
-#   define CGAL_TYPENAME_MSVC_NULL typename
-#endif
+// Used to depend on config macros.
+#define CGAL_TYPENAME_MSVC_NULL typename
+#define CGAL_TEMPLATE_NULL      template <>
 
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
@@ -100,8 +98,6 @@
 #  define CGAL_NULL_TMPL_ARGS <>
 #endif
 
-#define CGAL_TEMPLATE_NULL template <>
-
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
 #  define CGAL_CLIB_STD
 #else
@@ -126,25 +122,13 @@
 #include <CGAL/Sun_fixes.h>
 #endif
 
-//----------------------------------------------------------------------//
-//             select old or new style headers
-//----------------------------------------------------------------------//
-
-#ifndef CGAL_USE_NEWSTYLE_HEADERS
-#  ifndef CGAL_CFG_NO_STANDARD_HEADERS
-#    ifndef CGAL_NO_NEWSTYLE_HEADERS
-#      define CGAL_USE_NEWSTYLE_HEADERS
-#    endif // ! CGAL_NO_NEWSTYLE_HEADERS
-#  endif // ! CGAL_CFG_NO_STANDARD_HEADERS
-#endif // ! CGAL_USE_NEWSTYLE_HEADERS
-
 //--------------------------------------------------------------------//
 // This addresses a bug in VC++ 7.0 that (re)defines min(a, b)
 // and max(a, b) in windows.h and windef.h 
 //-------------------------------------------------------------------//
 
 #ifdef _MSC_VER
-#define NOMINMAX 1
+#  define NOMINMAX 1
 #endif
 
 //-----------------------------------------------------------------------//
@@ -155,8 +139,7 @@
 //----------------------------------------------------------------------//
 
 #if defined(_MSC_VER) && ! defined(__INTEL_COMPILER) && (_MSC_VER < 1310)
-#define CGAL_CFG_FUNCTION_OVERLOAD_BUG
+#  define CGAL_CFG_FUNCTION_OVERLOAD_BUG
 #endif
-
 
 #endif // CGAL_CONFIG_H
