@@ -19,6 +19,8 @@ typedef CGAL::Arr_polyline_traits<Kernel>    Traits;
 typedef Traits::Point_2                      Point_2;
 typedef Traits::Curve_2                      Curve_2;
 
+CGAL_BEGIN_NAMESPACE
+
 std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
 {
   typedef Curve_2::const_iterator Points_iterator;
@@ -37,12 +39,14 @@ std::istream & operator>>(std::istream & in, Curve_2 & cv)
   in >> size;
 
   for (unsigned int i = 0; i < size; i++){
-    Point_2 p;
+    Traits::Point_2 p;
     in >> p;
     cv.push_back(p);  
   }
   return in;
 }
+
+CGAL_END_NAMESPACE
 
 // Read polylines from the input
 
