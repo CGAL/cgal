@@ -91,15 +91,15 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\convex_hull_2.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\Qt_Scene.C
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\src\Qt_Widget.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\Qt_Widget_MovePoint.C
 # End Source File
 # Begin Source File
 
@@ -113,57 +113,10 @@ SOURCE=..\..\..\src\Qt_Widget_tool.C
 
 SOURCE=.\Qt_widget_toolbar.C
 # End Source File
-# Begin Source File
-
-SOURCE=.\Qt_widget_toolbar_views.C
-# End Source File
-# Begin Source File
-
-SOURCE=.\triangulationdemo.C
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_Scene.h
-
-"../../../src/Qt_Scene.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_Scene.moc" "../../../Include/CGAL/IO/Qt_Scene.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene_Show_Mouse_coordinates.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene_Show_Nearest_vertex.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene_Show_points.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene_Show_triangulation.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Scene_Show_voronoy.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget.h
@@ -185,38 +138,11 @@ InputPath=..\..\..\include\CGAL\IO\Qt_Widget.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_line.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_segment.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_MovePoint.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_Widget_MovePoint.h
-
-"../../../src/Qt_Widget_MovePoint.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/Qt_Widget_MovePoint.moc" "../../../Include/CGAL/IO/Qt_Widget_MovePoint.h"
-
-# End Custom Build
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -269,25 +195,6 @@ InputPath=.\Qt_widget_toolbar.h
 
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\Qt_widget_toolbar_views.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=.\Qt_widget_toolbar_views.h
-
-"Qt_widget_toolbar_views.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_views.moc" "Qt_widget_toolbar_views.h"
 
 # End Custom Build
 

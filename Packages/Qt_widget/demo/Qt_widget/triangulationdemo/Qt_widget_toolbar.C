@@ -25,13 +25,11 @@
 
 // icons
 #include <CGAL/IO/pixmaps/point.xpm>
-#include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
-#include <CGAL/IO/pixmaps/line.xpm>
 
 
 namespace CGAL {
-  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t) : dt(t)
+  Tools_toolbar::Tools_toolbar(Qt_widget *w, QMainWindow *mw)
   {
     //when it is created, the toolbar has 0 buttons
     nr_of_buttons = 0;
@@ -65,29 +63,10 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Point Tool");
 
-  but[2] = new QToolButton(QPixmap( (const char**)line_xpm ),
-			     "Line Tool", 
-			     0, 
-			     this, 
-			     SLOT(linetool()), 
-			     maintoolbar, 
-			     "Line Tool");
-		
-  but[3] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-			     "Move selected point", 
-			     0, 
-			     this, 
-			     SLOT(movepoint()), 
-			     maintoolbar, 
-			     "Move point");
-		
-		
   
   but[1]->setToggleButton(TRUE);
-  but[2]->setToggleButton(TRUE);
-  but[3]->setToggleButton(TRUE);
   
-  nr_of_buttons = 4;
+  nr_of_buttons = 2;
 
   connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
 };
@@ -102,20 +81,7 @@ namespace CGAL {
       is_active = false;
     }
   }	
-  void Tools_toolbar::linetool()
-  {
-    if (but[2]->isOn())
-    {
-	widget->attach(linebut);
-	activebutton = 2;
-	is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();	
-    }
-  }
+  
   void Tools_toolbar::pointtool()
   {
     if (but[1]->isOn())
@@ -137,23 +103,7 @@ namespace CGAL {
       is_active = false;
     }
   }
-  void Tools_toolbar::movepoint()
-  {
-    if (but[3]->isOn())
-    {
-      widget->detach_current_tool();
-      movepointbut.set_Delaunay(dt);
-      widget->attach(movepointbut);
-      activebutton = 3;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-
+  
 
 }//end namespace
 

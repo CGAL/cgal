@@ -29,8 +29,6 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_Widget.h>
-#include <CGAL/IO/Qt_Widget_MovePoint.h>
-#include <CGAL/IO/Qt_Widget_Get_line.h>
 #include <CGAL/IO/Qt_Widget_Get_point.h>
 
 #include <qobject.h>
@@ -40,8 +38,6 @@
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
-typedef CGAL::Delaunay_triangulation_2<Rp>  Delaunay;
-
 
 namespace CGAL {
 
@@ -49,7 +45,7 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw);
   ~Tools_toolbar()
   {
     delete maintoolbar;
@@ -58,16 +54,14 @@ public:
 
 signals:
   void new_object(CGAL::Object);
-  void was_repainted();
+
 
 private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
   void pointtool();
-  void linetool();
   void notool();
-  void movepoint();
-
+  
   void toggle_button();
 
 private:
@@ -80,10 +74,7 @@ private:
   void			addToolButton(QToolButton *b);
   int			nr_of_buttons;
 	
-  Delaunay			    *dt;
-  CGAL::Qt_widget_get_line<Rp>	    linebut;
   CGAL::Qt_widget_get_point<Rp>	    pointbut;
-  CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
 };//end class
 
 };//end namespace
