@@ -154,7 +154,7 @@ private:
       bool operator()(const typename Tds::Cell *c) const
       {
 	  // We mark the vertices so that we can find the deleted ones easily.
-	  if (t->in_conflict_3(p, (const Cell_handle)(const Cell*)c))
+	  if (t->in_conflict_3(p, (Cell_handle)(Cell*)c))
 	  {
 	      for (int i=0; i<4; i++)
 	      {

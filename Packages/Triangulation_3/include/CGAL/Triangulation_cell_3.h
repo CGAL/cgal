@@ -134,7 +134,7 @@ public:
     return Ctds::has_neighbor( &(*c), i);
   }
  
-  Cell_handle handle() const
+  Cell_handle handle()
   {
     return Cell_handle(this);
   }

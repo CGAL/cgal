@@ -1,5 +1,6 @@
 Version 1.51 (?? May 01)
 - even more for() scope VC++ bug workarounds.
+- fix BCC/KCC warning.
 
 Version 1.50 (4  May 01)
 - Fix recently introduced bug in the hierarchy when dimension() < 3.

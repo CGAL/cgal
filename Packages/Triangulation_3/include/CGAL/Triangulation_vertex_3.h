@@ -90,7 +90,7 @@ public:
     return (Cell *) Vtds::cell();
   }
         
-  Vertex_handle handle() const
+  Vertex_handle handle()
   {
     return Vertex_handle(this);
   }
