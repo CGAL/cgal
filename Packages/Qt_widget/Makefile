@@ -23,7 +23,7 @@ all:
 # clean all object files
 clean: 
 	make -C src/CGALQt -f makefile_Qt clean
-	for dir in ${DEMO_DIRS}; do make -C $$dir clean; done
+	make -C demo/Qt_widget clean
 
 # clean moc files too
 clean-moc: clean
