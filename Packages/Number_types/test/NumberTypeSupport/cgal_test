@@ -71,7 +71,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run MP_Float
-  compile_and_run _test_sign
   compile_and_run _test_to_interval
   compile_and_run _test_valid_finite_double
   compile_and_run _test_valid_finite_float

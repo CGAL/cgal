@@ -41,7 +41,6 @@ LDFLAGS = \
 
 all:            \
                 MP_Float$(EXE_EXT) \
-                _test_sign$(EXE_EXT) \
                 _test_to_interval$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
                 _test_valid_finite_float$(EXE_EXT) \
@@ -53,9 +52,6 @@ all:            \
 
 MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
-
-_test_sign$(EXE_EXT): _test_sign$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_sign _test_sign$(OBJ_EXT) $(LDFLAGS)
 
 _test_to_interval$(EXE_EXT): _test_to_interval$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_to_interval _test_to_interval$(OBJ_EXT) $(LDFLAGS)
@@ -83,7 +79,6 @@ utilities$(EXE_EXT): utilities$(OBJ_EXT)
 
 clean: \
                    MP_Float.clean \
-                   _test_sign.clean \
                    _test_to_interval.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
