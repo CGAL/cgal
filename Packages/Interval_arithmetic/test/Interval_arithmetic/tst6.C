@@ -23,10 +23,12 @@ CGAL::Interval_nt_advanced add( const CGAL::Interval_nt_advanced & a,
 template < class NT >
 void test (const NT &)
 {
+  CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
   NT a;
   NT b=1;
   NT c;
   c = b+a; // a is used but not initialized.
+  CGAL::set_error_behaviour(backup);
 }
 
 int main()
