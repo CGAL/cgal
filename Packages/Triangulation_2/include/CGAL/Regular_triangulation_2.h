@@ -144,21 +144,21 @@ private:
     else if ( f->vertex(0) == infinite_vertex() )
       {	o = geom_traits().orientation(f->vertex(1)->point(),
 				 f->vertex(2)->point(),p);
-      if (dimension()==1 && o==CGAL_COLLINEAR)
+      if (o==CGAL_COLLINEAR)
 	{	return geom_traits().power_test(f->vertex(1)->point(),
 			                         f->vertex(2)->point(),p);
 	}
       } else if ( f->vertex(1) == infinite_vertex() )
 	{	o = geom_traits().orientation(f->vertex(2)->point(),
 					 f->vertex(0)->point(),p);
-	if (dimension()==1 && o==CGAL_COLLINEAR)
+	if (o==CGAL_COLLINEAR)
 	  {	return geom_traits().power_test(f->vertex(2)->point(),
 					   f->vertex(0)->point(),p);
 	  }
 	} else if ( f->vertex(2) == infinite_vertex() )
 	  {	o = geom_traits().orientation(f->vertex(0)->point(),
 			                         f->vertex(1)->point(),p);
-	  if (dimension()==1 && o==CGAL_COLLINEAR)
+	  if (o==CGAL_COLLINEAR)
 	    {	return geom_traits().power_test(f->vertex(0)->point(),
 			                         f->vertex(1)->point(),p);
 	    }
