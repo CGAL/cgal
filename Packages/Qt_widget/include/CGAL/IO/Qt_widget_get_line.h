@@ -32,7 +32,7 @@
 namespace CGAL {
 
 template <class R>
-class Qt_widget_get_line : public Qt_widget_tool
+class Qt_widget_get_line : public Qt_widget_layer
 {
 public:
   typedef Point_2<R>	Point;
@@ -41,7 +41,9 @@ public:
 
   Qt_widget_get_line() : firstpoint(false), 
 			 firsttime(true){};
-
+  void draw(){
+    firsttime = true;
+  }
 private:
   void mousePressEvent(QMouseEvent *e)
   {
