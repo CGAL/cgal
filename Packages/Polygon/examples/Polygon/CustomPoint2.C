@@ -39,7 +39,7 @@ class MyPoint
 //#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
 };
 
-ostream& operator<<(ostream& to, const MyPoint& p)
+std::ostream& operator<<(std::ostream& to, const MyPoint& p)
 {
   return to << "(" << p.x() << ", " << p.y() << ")";
 }
@@ -61,7 +61,7 @@ MyVector operator-(const MyPoint& p, const MyPoint& q)
 
 typedef std::pair<MyPoint,MyPoint> MySegment;
 
-ostream& operator<<(ostream& to, const MySegment& e)
+std::ostream& operator<<(std::ostream& to, const MySegment& e)
 {
   return to << "source = " << e.first << " target = " << e.second;
 }
@@ -174,9 +174,9 @@ class MyTraits
     }
 };
 
-#include <list.h>
+#include <list>
 
-typedef CGAL::Polygon_2<MyTraits, list<MyPoint> > Polygon;
+typedef CGAL::Polygon_2<MyTraits, std::list<MyPoint> > Polygon;
 typedef Polygon::Vertex_iterator     VI;
 typedef Polygon::Edge_const_iterator EI;
 
@@ -200,40 +200,40 @@ int main()
   bool IsClockwise = (p.orientation() == CGAL::CLOCKWISE);
   double Area      = p.area();
 
-  cout << "polygon p is";
-  if (!IsSimple) cout << " not";
-  cout << " simple." << endl;
+  std::cout << "polygon p is";
+  if (!IsSimple) std::cout << " not";
+  std::cout << " simple." << std::endl;
 
-  cout << "polygon p is";
-  if (!IsConvex) cout << " not";
-  cout << " convex." << endl;
+  std::cout << "polygon p is";
+  if (!IsConvex) std::cout << " not";
+  std::cout << " convex." << std::endl;
 
-  cout << "polygon p is";
-  if (!IsClockwise) cout << " not";
-  cout << " clockwise oriented." << endl;
+  std::cout << "polygon p is";
+  if (!IsClockwise) std::cout << " not";
+  std::cout << " clockwise oriented." << std::endl;
 
-  cout << "the area of polygon p is " << Area << endl;
-  cout << endl;
+  std::cout << "the area of polygon p is " << Area << std::endl;
+  std::cout << std::endl;
 
   // apply some algorithms
   MyPoint q(1,1);
-  cout << endl;
+  std::cout << std::endl;
 
   bool IsInside = (p.bounded_side(q) == CGAL::ON_BOUNDED_SIDE);
-  cout << "point q is";
-  if (!IsInside) cout << " not";
-  cout << " inside polygon p." << endl;
-  cout << endl;
+  std::cout << "point q is";
+  if (!IsInside) std::cout << " not";
+  std::cout << " inside polygon p." << std::endl;
+  std::cout << std::endl;
 
   // traverse the vertices and the edges
   int n=0;
   for (VI vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
-    cout << "vertex " << n++ << " = " << *vi << endl;
-  cout << endl;
+    std::cout << "vertex " << n++ << " = " << *vi << std::endl;
+  std::cout << std::endl;
 
   n=0;
   for (EI ei = p.edges_begin(); ei != p.edges_end(); ++ei)
-    cout << "edge " << n++ << " = " << *ei << endl;
+    std::cout << "edge " << n++ << " = " << *ei << std::endl;
 
   return 0;
 }

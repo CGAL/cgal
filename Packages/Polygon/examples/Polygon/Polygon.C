@@ -5,15 +5,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <list.h>
+#include <list>
 
 typedef CGAL::Cartesian<double> R;
 typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
-typedef list<Point> Container;
+typedef std::list<Point> Container;
 typedef CGAL::Polygon_2<Traits,Container> Polygon;
 
-#include <iostream.h>
+#include <iostream>
 
 int main()
 {
@@ -24,7 +24,8 @@ int main()
   p.push_back(Point(1,1));
   p.push_back(Point(0,1));
 
-  cout << "The polygon is " << (p.is_convex() ? "" : "not ") << "convex." << endl;
+  std::cout << "The polygon is " << 
+    (p.is_convex() ? "" : "not ") << "convex." << std::endl;
 
   return 0;
 }

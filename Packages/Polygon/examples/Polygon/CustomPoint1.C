@@ -42,15 +42,15 @@ typedef MyPoint<R> Point;
 //#endif // CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING
 
 #include <CGAL/Polygon_2.h>
-#include <list.h>
+#include <list>
 
 typedef Polygon_traits_2_aux<R, R::FT, Point> Traits;
 // The class MyPoint derives from CGAL::Point, so the polygon traits class
 // CGAL::Polygon_traits_2_aux can be reused.
 
-typedef Polygon_2<Traits, list<Point> > Polygon;
-typedef Polygon_2<Traits, list<Point> >::Vertex_iterator VI;
-typedef Polygon_2<Traits, list<Point> >::Edge_const_iterator EI;
+typedef Polygon_2<Traits, std::list<Point> > Polygon;
+typedef Polygon_2<Traits, std::list<Point> >::Vertex_iterator VI;
+typedef Polygon_2<Traits, std::list<Point> >::Edge_const_iterator EI;
 
 //-----------------------------------------------------------------------//
 //                          main
@@ -66,10 +66,10 @@ int main()
   p.push_back(Point(2,2,Red));
   p.push_back(Point(0,4,Red));
 
-  set_pretty_mode(cout);
-  cout << "created the polygon p:" << endl;
-  cout << p << endl;
-  cout << endl;
+  set_pretty_mode(std::cout);
+  std::cout << "created the polygon p:" << std::endl;
+  std::cout << p << std::endl;
+  std::cout << std::endl;
 
   // determine some properties of the polygon
   bool IsSimple    = p.is_simple();
@@ -77,41 +77,41 @@ int main()
   bool IsClockwise = (p.orientation() == CGAL::CLOCKWISE);
   double Area      = p.area();
 
-  cout << "polygon p is";
-  if (!IsSimple) cout << " not";
-  cout << " simple." << endl;
+  std::cout << "polygon p is";
+  if (!IsSimple) std::cout << " not";
+  std::cout << " simple." << std::endl;
 
-  cout << "polygon p is";
-  if (!IsConvex) cout << " not";
-  cout << " convex." << endl;
+  std::cout << "polygon p is";
+  if (!IsConvex) std::cout << " not";
+  std::cout << " convex." << std::endl;
 
-  cout << "polygon p is";
-  if (!IsClockwise) cout << " not";
-  cout << " clockwise oriented." << endl;
+  std::cout << "polygon p is";
+  if (!IsClockwise) std::cout << " not";
+  std::cout << " clockwise oriented." << std::endl;
 
-  cout << "the area of polygon p is " << Area << endl;
-  cout << endl;
+  std::cout << "the area of polygon p is " << Area << std::endl;
+  std::cout << std::endl;
 
   // apply some algorithms
   Point q(1,1,Blue);
-  cout << "created point q = " << q << endl;
-  cout << endl;
+  std::cout << "created point q = " << q << std::endl;
+  std::cout << std::endl;
 
   bool IsInside = (p.bounded_side(q) == CGAL::ON_BOUNDED_SIDE);
-  cout << "point q is";
-  if (!IsInside) cout << " not";
-  cout << " inside polygon p." << endl;
-  cout << endl;
+  std::cout << "point q is";
+  if (!IsInside) std::cout << " not";
+  std::cout << " inside polygon p." << std::endl;
+  std::cout << std::endl;
 
   // traverse the vertices and the edges
   int n=0;
   for (VI vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
-    cout << "vertex " << n++ << " = " << *vi << endl;
-  cout << endl;
+    std::cout << "vertex " << n++ << " = " << *vi << std::endl;
+  std::cout << std::endl;
 
   n=0;
   for (EI ei = p.edges_begin(); ei != p.edges_end(); ++ei)
-    cout << "edge " << n++ << " = " << *ei << endl;
+    std::cout << "edge " << n++ << " = " << *ei << std::endl;
 
   return 0;
 }
