@@ -62,5 +62,6 @@ example9:
   This example demonsrates a trivial using of reading Planar map from 
   input stream and writing it to output stream. Writing the Planar map 
   to a Postscript file is also demonstated in this example.
+  example9.cin is an example input to the program (example9 < example9.cin).
   By: Eti ezra.
  
