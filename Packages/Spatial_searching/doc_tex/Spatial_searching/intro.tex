@@ -145,7 +145,7 @@ points and with a quadratic form distance, defined by $d_A(x,y)= (x-y)A(x-y)^T$,
 $A$ is positive definite, i.e. $d_A(x,y) \geq 0$. 
 An important class of quadratic form distances are weighted Minkowski distances.
 Given a parameter $p>0$ and parameters $w_i \geq 0, 0 < i \leq d$, the weighted 
-Minkowski distance is defined by  $l_p(w)(r,q)=\root p\of {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
+Minkowski distance is defined by  $l_p(w)(r,q)=\sqrt[p] {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
 defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
 The Manhattan distance ($p=1$, $w_i=1$) and the
 Euclidean distance ($p=2$, $w_i=1$) are examples of a weighted Minkowski metric.

@@ -17,10 +17,10 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
+   
 The class \ccRefName\ provides an implementation of the concept OrthogonalDistance, with a weighted Minkowski metric
 on $d$-dimensional points
-defined by $l_p(w)(r,q)=\root p\of {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
+defined by $l_p(w)(r,q)=\sqrt[p] {\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ for $0 < p <\infty$ and
 defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
 For the purpose of the distance computations it is more efficient to compute
 the transformed distance ${\sum_{i=1}^{i=d} w_i(r_i-q_i)^p}$ instead of the actual distance.
