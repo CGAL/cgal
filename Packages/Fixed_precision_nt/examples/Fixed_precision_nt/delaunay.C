@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -9,7 +9,6 @@
 
 #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/point_generators_2.h>
@@ -25,6 +24,8 @@ typedef CGAL::Delaunay_triangulation_2<Repclass>  Delaunay_;
 
 int main(int argc, char* argv[])
 {
+    CGAL::force_ieee_double_precision();
+
     CGAL::Timer t;
     Delaunay_ D;
 

@@ -1,24 +1,4 @@
-% // ============================================================================
-%//
-%// Copyright (c) 1998 The CGAL Consortium
-%//
-%// This software and related documentation is part of an INTERNAL release
-%// of the Computational Geometry Algorithms Library (CGAL). It is not
-%// intended for general use.
-%//
-%// ----------------------------------------------------------------------------
-%//
-%// release       :
-%// release_date  :
-%//
-%// file          : doc_tex/fixed.tex
-%// revision      : $Revision$
-%//
-%// author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
-%//
-%// coordinator   : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
-%//
-%//============================================================================
+% author : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 
 %\marginparwidth 1.5cm
 %\def\ccTagChapterRelease{\ccTrue}
@@ -52,6 +32,10 @@ the nearest multiple of $2^b$, which yields to a very poor arithmetic.
 The idea is to not use the arithmetic on \ccStyle{Fixed_precision_nt}
 but only the specialized predicates.
 
+Note: you must call \ccc{CGAL::force_ieee_double_precision()} in order for the
+\ccStyle{Fixed_precision_nt} to work properly on Intel platforms.  This
+initializes the FPU to an IEEE compliant rounding mode which is not the
+default.
 
 \ccSetTwoColumns{}{\hspace*{8.5cm}}
 

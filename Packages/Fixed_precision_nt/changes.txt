@@ -1,5 +1,8 @@
 Versions
 
+2.22 (28 June 2001)
+- Update doc/demo/example to use CGAL::force_ieee_double_precision().
+
 2.21 (20 June 2001)
 - Use CGAL window in the demo when LEDA is not present.
 - Update to new style for headers and Point_2<R> => R::Point_2.

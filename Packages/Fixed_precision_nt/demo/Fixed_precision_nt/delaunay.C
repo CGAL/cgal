@@ -1,4 +1,5 @@
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -6,7 +7,6 @@
 #include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
 
@@ -24,6 +24,8 @@ typedef CGAL::Delaunay_triangulation_2<Repclass>  Delaunay_;
 
 int main()
 {
+    CGAL::force_ieee_double_precision();
+
     Delaunay_ D;
     CGAL::Window_stream W(200,200); // physical window size
 
