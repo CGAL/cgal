@@ -111,47 +111,47 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Pair(int i) : Base(i,0) {}
   
     Pair& operator=(const FT& x) {
-      first  = x;
-      second = 0;
+      this->first  = x;
+      this->second = 0;
       return *this;
     }
   
   public:  // arithmetic and comparision:
     inline Pair operator+(const Pair& a) const {
-      return Pair(first+a.first,second+a.second);
+      return Pair(this->first+a.first,this->second+a.second);
     }
   
     inline Pair operator-(const Pair& a) const {
-      return Pair(first-a.first,second-a.second);
+      return Pair(this->first-a.first,this->second-a.second);
     }
   
     inline Pair operator-(const FT& a) const {
-      return Pair(first-a,second);
+      return Pair(this->first-a,this->second);
     }
   
     inline Pair operator*(const FT& a) const {
-      return Pair(first*a,second*a);
+      return Pair(this->first*a,this->second*a);
     }
   
     inline Pair operator/(const FT& a) const {
       CGAL_MINIBALL_ASSERT(a != FT(0));
-      return Pair(first/a,second/a);
+      return Pair(this->first/a,this->second/a);
     }
   
     inline Pair& operator+=(const Pair& p) {
-      first  += p.first;
-      second += p.second;
+      this->first  += p.first;
+      this->second += p.second;
       return *this;
     }
   
     inline Pair& operator-=(const Pair& p) {
-      first  -= p.first;
-      second -= p.second;
+      this->first  -= p.first;
+      this->second -= p.second;
       return *this;
     }
   
     inline bool operator!=(const Pair& p) const {
-      return first!=p.first || second!=p.second;
+      return this->first!=p.first || this->second!=p.second;
     }
   };
   
