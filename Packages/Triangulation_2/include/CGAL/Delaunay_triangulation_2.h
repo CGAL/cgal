@@ -104,7 +104,8 @@ public:
   Object dual(const Finite_edges_iterator& ei) const;
   
   //INSERTION-REMOVAL
-  Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(NULL) );
+  Vertex_handle insert(const Point  &p, 
+		       Face_handle start = Face_handle(NULL) );
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );

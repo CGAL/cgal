@@ -169,10 +169,12 @@ public:
 				    Vertex_handle vb);
   Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb);
-  Vertices_in_constraint_iterator vertices_in_constraint_begin(Vertex_handle va, 
-						      Vertex_handle vb);
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Vertex_handle va, 
-						    Vertex_handle vb);
+  Vertices_in_constraint_iterator 
+                     vertices_in_constraint_begin(Vertex_handle va, 
+						  Vertex_handle vb);
+  Vertices_in_constraint_iterator 
+                     vertices_in_constraint_end(Vertex_handle va, 
+						Vertex_handle vb);
   int number_of_constraints() { return hierarchy.number_of_constraints();}
   int number_of_subconstraints(){return hierarchy.number_of_subconstraints();}
 
