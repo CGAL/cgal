@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+DOCS: (Susan) moved _ref directories up one level and removed cross 
+      references to other manuals (not yet possible)
 ALL : Changed concept names.
 ALL : Added help button to pcenter demo.
 ALL : Restricted options in pcenter demo to reasonable values.

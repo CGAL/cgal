@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.12 on 31-Jul-2001
+- Susan moved Optimisation_ref directory up one level
+
 Version 3.11 on 17-Jul-2001
 - replaced template parameter 'R' by 'K'
 - renamed concept names

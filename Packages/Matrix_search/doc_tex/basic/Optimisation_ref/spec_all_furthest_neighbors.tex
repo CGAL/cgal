@@ -84,19 +84,33 @@
   
   \ccTypes
   
-  \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
+% cross references between manuals not currently possible and you surely
+% don't want the ... page# format here in the ps version.
+%  \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
+%
+%  \ccNestedType{Point_2}{model for
+%    \ccRefConceptPage{Kernel::Point_2}.}
+%  
+%  \ccNestedType{Compute_squared_distance_2}{model for
+%    \ccRefConceptPage{Kernel::Compute_squared_distance_2}.}
+%  
+%  \ccNestedType{Less_xy_2}{model for
+%    \ccRefConceptPage{Kernel::Less_xy_2}.}
+%
+%  \ccNestedType{Orientation_2}{model for
+%    \ccRefConceptPage{Kernel::Orientation_2}.}
   
-  \ccNestedType{Point_2}{model for
-    \ccRefConceptPage{Kernel::Point_2}.}
+
+  \ccNestedType{FT}{model for FieldNumberType.}
+  
+  \ccNestedType{Point_2}{model for Kernel::Point\_2.}
   
   \ccNestedType{Compute_squared_distance_2}{model for
-    \ccRefConceptPage{Kernel::Compute_squared_distance_2}.}
+    Kernel::ComputeSquaredDistance\_2.}
   
-  \ccNestedType{Less_xy_2}{model for
-    \ccRefConceptPage{Kernel::Less_xy_2}.}
+  \ccNestedType{Less_xy_2}{model for Kernel::LessXY\_2.}
   
-  \ccNestedType{Orientation_2}{model for
-    \ccRefConceptPage{Kernel::Orientation_2}.}
+  \ccNestedType{Orientation_2}{model for Kernel::Orientation\_2.}
   
   \ccOperations The following member functions return function objects
   of the types listed above.
@@ -109,10 +123,15 @@
   \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
   
   \ccHasModels 
-  \ccRefIdfierPage{Cartesian<FieldNumberType>},
-  \ccRefIdfierPage{Homogeneous<RingNumberType>},
-  \ccRefIdfierPage{Simple_cartesian<FieldNumberType>},
-  \ccRefIdfierPage{Simple_homogeneous<RingNumberType>}.
+% cross references between manuals not currently possible.
+%  \ccRefIdfierPage{Cartesian<FieldNumberType>},
+%  \ccRefIdfierPage{Homogeneous<RingNumberType>},
+%  \ccRefIdfierPage{Simple_cartesian<FieldNumberType>},
+%  \ccRefIdfierPage{Simple_homogeneous<RingNumberType>}.
+  \ccc{Cartesian<FieldNumberType>},
+  \ccc{Homogeneous<RingNumberType>},
+  \ccc{Simple_cartesian<FieldNumberType>},
+  \ccc{Simple_homogeneous<RingNumberType>}.
 
   \ccSeeAlso
   \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}

@@ -106,3 +106,6 @@ Changes from 2.15:
 
 Changes from 2.25:
    - concept names fixed in documentation
+
+Changes from 2.26:
+   - Susan moved Optimisation_ref directory up one level
