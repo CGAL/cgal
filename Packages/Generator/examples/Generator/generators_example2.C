@@ -1,4 +1,4 @@
-// generators_example2.C
+// examples/Generator/generators_example2.C
 // ------------------------------------------------------------------
 // CGAL example program for point generators creating integer points.
 // Derived from generators_prog2.C, without visualization.

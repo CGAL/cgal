@@ -1,4 +1,4 @@
-// generators_example1.C          
+// examples/Generator/generators_example1.C          
 // -------------------------------------------------------
 // CGAL example program for point generators.
 // Derived from generators_prog1.C, without visualization.
