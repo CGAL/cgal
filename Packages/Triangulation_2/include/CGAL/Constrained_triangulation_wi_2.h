@@ -273,8 +273,6 @@ find_intersected_faces(Vertex_handle va,
   // If segment ab contains a vertex c, 
   // c becomes the new vertex vbb and 
   // only triangles intersected by ac are reported.
-  // If segment ab intersect a constrained edge,
-  // this constraint is splitted and the new vertex becomes vbb.
   // The new edges created by the split which are not constrained 
   // and some of the constrained ones are inserted in new_edges.
   // The new vertex is inserted in new_vertices.

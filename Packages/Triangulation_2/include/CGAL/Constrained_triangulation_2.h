@@ -369,6 +369,9 @@ insert(const Vertex_handle & va,
   // creates new ones
   // fr is the face incident to edge ab and to the right  of ab
   // edge ab=(fr,i).
+  // The constraint ab will be splitted in several edges if it
+  // encounters some vertices of the triangulation.
+  // in this case (fr,i) concerns the last inserted edge.
   // new_edges will contain in the end 
   // all the new edges 
   // to be used e.g. by propagating flip 
@@ -378,7 +381,6 @@ insert(const Vertex_handle & va,
 {
   Vertex_handle vaa=va, vbb=va;
   Face_handle fl;
-  List_faces faces_to_be_removed;
       
   while (vbb != vb) {
     vaa = vbb;
@@ -586,7 +588,6 @@ triangulate(List_edges & list_edges)
   // be cw
   // the edges of list_edges are assumed to be edges of a
   // triangulation that will be updated by the procedure
-  // the faces intersecting ab are put in the list faces_to_be_removed
   // takes linear time
 {
   List_edges new_edges;
