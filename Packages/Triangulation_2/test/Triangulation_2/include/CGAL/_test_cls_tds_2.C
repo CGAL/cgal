@@ -53,7 +53,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   CGAL::_test_cls_tds_face( Face(), Gt() );
 
   // Test constructors
-  cout << "    constructors" << endl;
+  std::cout << "    constructors" << std::endl;
   Tds tds0;
   Tds tds1;
   Tds tds2(tds1); 
@@ -66,7 +66,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   // (), = and  swap to be tested later again with non trivial tds 
 
 //   // Setting functions - access functions
-//   cout << "    setting functions  access functions" << endl;
+//   std::cout << "    setting functions  access functions" << std::endl;
 //   assert(tds1.dimension() == -1);
 //   assert(tds1.number_of_vertices() == 0 );
   
@@ -83,7 +83,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 //   tds1.set_infinite_vertex(vt2);
  
 //   // Finite and infinite vertices and faces
-//   cout << "    finite/infinite faces and vertices" << endl;
+//   std::cout << "    finite/infinite faces and vertices" << std::endl;
 //   assert( !tds1.is_infinite(vt1) );
 //   assert( tds1.is_infinite(vt2) );
 //   assert( !tds1.is_infinite(f1) );
@@ -102,7 +102,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
  
   // misc.
-  cout << "    miscellaneous" << endl;
+  std::cout << "    miscellaneous" << std::endl;
   assert( tds1.ccw(0) == 1 );
   assert( tds1.ccw(1) == 2 );
   assert( tds1.ccw(2) == 0 );
@@ -115,7 +115,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   // tds3 1 dim
   // tds4 2dim
 
-  cout << "    insert and flip" << endl;
+  std::cout << "    insert and flip" << std::endl;
   Vertex* w1 = tds1.insert_first();
   assert(tds1.dimension()== -1); 
   assert(tds1.number_of_vertices() == 1);
@@ -209,7 +209,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   w1 = tds1.insert_first();
 
   //access
-  cout << "    test access" << endl;
+  std::cout << "    test access" << std::endl;
   assert(tds0.dimension() == -1     && tds0.number_of_vertices() == 0 &&
 	 tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&
 	 tds0.number_of_full_dim_faces() == 0);
@@ -228,7 +228,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
  
    //clear(), swap() and copy_constructor and copy
-  cout << "    clear, swap, assign and copy " << endl;
+  std::cout << "    clear, swap, assign and copy " << std::endl;
   Tds tds1b(tds1);
   assert(tds1b.is_valid());
   Tds tds1c = tds1b;
@@ -280,7 +280,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
    //iterators are tested by is_valid()
   //test circulators and v->degree()
-  cout << "    circulators" <<endl;
+  std::cout << "    circulators" <<std::endl;
   _test_tds_circulators(tds0);
   _test_tds_circulators(tds1);
   _test_tds_circulators(tds2);
@@ -294,7 +294,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
   _test_tds_iterators(tds4);
 
   //has_vertex
-  cout << "    has_vertex" << endl;
+  std::cout << "    has_vertex" << std::endl;
   assert (tds4.has_vertex(v4_5));
   assert (tds3.has_vertex(v3));
   assert (tds2.has_vertex(v2));
@@ -302,42 +302,42 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
 
   //test input, output
-  cout << "    output to a file" << endl;
-  ofstream of0("file_tds0");
+  std::cout << "    output to a file" << std::endl;
+  std::ofstream of0("file_tds0");
   CGAL::set_ascii_mode(of0); 
   of0 << tds0 ; 
   of0.close();
-  ofstream of1("file_tds1");
+  std::ofstream of1("file_tds1");
   CGAL::set_ascii_mode(of1); 
   of1 << tds1 ; 
   of1.close();
-  ofstream of2("file_tds2");
+  std::ofstream of2("file_tds2");
   CGAL::set_ascii_mode(of2); 
   of2 << tds2 ; 
   of2.close();
-  ofstream of3("file_tds3");
+  std::ofstream of3("file_tds3");
   CGAL::set_ascii_mode(of3); 
   of3 << tds3 ; 
   of3.close();
-  ofstream of4("file_tds4");
+  std::ofstream  of4("file_tds4");
   CGAL::set_ascii_mode(of4); 
   of4 << tds4 ; 
   of4.close();
 
-  cout << "    input from a file" << endl;
-  ifstream if0("file_tds0"); CGAL::set_ascii_mode(if0);
+  std::cout << "    input from a file" << std::endl;
+  std::ifstream if0("file_tds0"); CGAL::set_ascii_mode(if0);
   Tds tds0f; if0 >> tds0f ;   assert( tds0f.is_valid());
-  ifstream if1("file_tds1"); CGAL::set_ascii_mode(if1);
+  std::ifstream if1("file_tds1"); CGAL::set_ascii_mode(if1);
   Tds tds1f; if1 >> tds1f;  assert( tds1f.is_valid());
-  ifstream if2("file_tds2"); CGAL::set_ascii_mode(if2);
+  std::ifstream if2("file_tds2"); CGAL::set_ascii_mode(if2);
   Tds tds2f; if2 >> tds2f ;   assert( tds2f.is_valid());
-  ifstream if3("file_tds3"); CGAL::set_ascii_mode(if3);
+  std::ifstream if3("file_tds3"); CGAL::set_ascii_mode(if3);
   Tds tds3f; if3 >> tds3f ;   assert( tds3f.is_valid());
-  ifstream if4("file_tds4"); CGAL::set_ascii_mode(if4);
+  std::ifstream if4("file_tds4"); CGAL::set_ascii_mode(if4);
   Tds tds4f; if4 >> tds4f ;   assert( tds4f.is_valid());
 
   // test destructor and return
-  cout << "    destructors and return" << endl;
+  std::cout << "    destructors and return" << std::endl;
 }
 
 template< class Tds>

@@ -38,8 +38,8 @@
 
 int main()
 {
-  cout << "Testing Triangulation_2 " << std::endl; 
-  cout << " with Euclidean_traits_2<Cartesian> : " << std::endl ;
+  std::cout << "Testing Triangulation_2 " << std::endl; 
+  std::cout << " with Euclidean_traits_2<Cartesian> : " << std::endl ;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                       Fb1;
@@ -48,8 +48,8 @@ int main()
 
   _test_cls_triangulation_2( Cls1() );
 
-  cout << std::endl << "Testing Triangulation_2 " <<std::endl; 
-  cout << " with Euclidean_traits_2<Homogeneous> : " << std::endl ;
+  std::cout << std::endl << "Testing Triangulation_2 " <<std::endl; 
+  std::cout << " with Euclidean_traits_2<Homogeneous> : " << std::endl ;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Gt3;
   typedef CGAL::Triangulation_vertex_base_2<Gt3>                     Vb3;
   typedef CGAL::Triangulation_face_base_2<Gt3>                       Fb3;
@@ -58,9 +58,9 @@ int main()
 
   _test_cls_triangulation_2( Cls3() );
 
-  cout << std::endl << "Testing Triangulation_2" <<std::endl;
-  cout << " with Triangulation_test_traits : " << std::endl;
-  cout << " this use double type coordinates " << std::endl;
+  std::cout << std::endl << "Testing Triangulation_2" <<std::endl;
+  std::cout << " with Triangulation_test_traits : " << std::endl;
+  std::cout << " this use double type coordinates " << std::endl;
   typedef CGAL::_Triangulation_test_traits                           Gt2;
   typedef CGAL::Triangulation_vertex_base_2<Gt2>                     Vb2;
   typedef CGAL::Triangulation_face_base_2<Gt2>                       Fb2;

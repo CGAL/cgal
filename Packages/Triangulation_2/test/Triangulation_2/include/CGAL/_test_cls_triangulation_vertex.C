@@ -27,7 +27,7 @@ template <class Vertex>
 void
 _test_cls_triangulation_vertex( const Vertex & )
 {
-  cout << "    vertex" << endl;
+  std::cout << "    vertex" << std::endl;
 
   typedef typename Vertex::Geom_traits          Gt;
 

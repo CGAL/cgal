@@ -51,11 +51,6 @@ template <class Triangulation>
 void
 _test_cls_triangulation_2( const Triangulation & )
 {
-  using std::cout;
-  using std::ofstream;
-  using std::ifstream;
-  using std::endl;
-
   typedef Triangulation                      Cls;
 
   // We assume the traits class has been tested already
@@ -130,7 +125,7 @@ _test_cls_triangulation_2( const Triangulation & )
   
   /*****************************/
   /***** CONSTRUCTORS (1) ******/
-  cout << "    constructors(1)" << endl;
+  std::cout << "    constructors(1)" << std::endl;
 
   Cls T1;
   assert( T1.dimension() == -1 ); 
@@ -152,7 +147,7 @@ _test_cls_triangulation_2( const Triangulation & )
   // so there is no need to put assert at the end of all of them
 
   /******* 0-dimensional triangulations ******/
-  cout << "    insertions 0-dim" << endl;
+  std::cout << "    insertions 0-dim" << std::endl;
   
   Cls T0_0;
   assert( T0_0.dimension() == -1 );
@@ -176,7 +171,7 @@ _test_cls_triangulation_2( const Triangulation & )
   /******** 1-dimensional triangulations ******/
   // T1_n denotes a 1-dimensional triangulation with n vertices
   // when there are several, we use T1_n_p
-  cout << "    insertions 1-dim" << endl;
+  std::cout << "    insertions 1-dim" << std::endl;
   
   Cls T1_2;
   Vertex_handle v1_2_1 = T1_2.insert(p1);
@@ -225,7 +220,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T1_6.is_valid() ); 
   
   /******** 2-dimensional triangulations ******/ 
-  cout << "    insertions 2-dim" << endl;
+  std::cout << "    insertions 2-dim" << std::endl;
   
   Cls T2_1;
   Vertex_handle v2_1_0 = T2_1.insert(p0);
@@ -318,7 +313,7 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_7.is_valid() );
 
   // test flip
-     cout << "    test flip " << endl;
+     std::cout << "    test flip " << std::endl;
      Cls T2_8;
      T2_8.insert(Point(0,0,1));
      T2_8.insert(Point(1,0,1));
@@ -335,7 +330,7 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /****************************/
   /***** CONSTRUCTORS (2) *****/
-  cout << "    constructors (2)" << endl;
+  std::cout << "    constructors (2)" << std::endl;
 
   // test copy_constructor with non-empty 0-triangulation
   Cls T0_1_1( T0_1 );
@@ -373,7 +368,7 @@ _test_cls_triangulation_2( const Triangulation & )
   /*********************************************/
   /****** FINITE/INFINITE VERTICES/FACES *******/
 
-  cout << "    finite/infinite vertices/faces" << endl;
+  std::cout << "    finite/infinite vertices/faces" << std::endl;
   _test_fct_is_infinite( T0_0 );
   _test_fct_is_infinite( T0_1 );
   _test_fct_is_infinite( T1_2 );
@@ -393,7 +388,7 @@ _test_cls_triangulation_2( const Triangulation & )
   // No need because of precondition (at least two vertices)
   
   // Check point location in 1-dimensional triangulations
-  cout << "    point locations 1-dim" << endl;
+  std::cout << "    point locations 1-dim" << std::endl;
   Cls T1_3_2;
   T1_3_2.insert(p1);
   T1_3_2.insert(p2);
@@ -419,7 +414,7 @@ _test_cls_triangulation_2( const Triangulation & )
  
 
   // Check point location in 2-dimensional triangulations
-  cout << "    point locations 2-dim" << endl;
+  std::cout << "    point locations 2-dim" << std::endl;
   f = T2_1.locate(p0,lt,li); assert( lt == Cls::VERTEX );
   assert( T2_1.geom_traits().compare(f->vertex(li)->point(), p0) );
   f = T2_1.locate(p1,lt,li); assert( lt == Cls::VERTEX );
@@ -496,7 +491,7 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /*************************/
   /******* Iterators *******/
-  cout << "    iterators" << endl;
+  std::cout << "    iterators" << std::endl;
   _test_iterators(T0_0);
   _test_iterators(T0_1);
   _test_iterators(T1_2);
@@ -512,7 +507,7 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /***************************/
   /******* Circulators *******/
-  cout << "    circulators" << endl;
+  std::cout << "    circulators" << std::endl;
   _test_circulators(T0_0);
   _test_circulators(T0_1);
   _test_circulators(T1_2);
@@ -527,7 +522,7 @@ _test_cls_triangulation_2( const Triangulation & )
   _test_circulators(T2_7);
   
   // Line_face_circulator
-  cout << "    line face circulator  " << endl;
+  std::cout << "    line face circulator  " << std::endl;
   typedef typename Cls::Line_face_circulator LFC;
   // here == operator needed for Point!
   // testing with the grid triangulation
@@ -579,7 +574,7 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /*****************************/
   /******** Miscellaneaous *****/
-  cout << "    misc." << endl;
+  std::cout << "    misc." << std::endl;
   assert( T0_0.ccw(0) == 1 );
   assert( T0_0.ccw(1) == 2 );
   assert( T0_0.ccw(2) == 0 );
@@ -605,69 +600,69 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /********************/
   /******** I/O *******/
-  cout << "    output to a file" << endl;
-  ofstream of0_0("T00.triangulation", ios::out);
+  std::cout << "    output to a file" << std::endl;
+  std::ofstream of0_0("T00.triangulation", ios::out);
   CGAL::set_ascii_mode(of0_0); 
   of0_0 << T0_0; of0_0.close();
-  ofstream of0_1("T01.triangulation");
+  std::ofstream of0_1("T01.triangulation");
   CGAL::set_ascii_mode(of0_1); 
   of0_1 << T0_1; of0_1.close();
-  ofstream of1_2("T12.triangulation");
+  std::ofstream of1_2("T12.triangulation");
   CGAL::set_ascii_mode(of1_2); 
   of1_2 << T1_2; of1_2.close();
-  ofstream of1_5("T15.triangulation");
+  std::ofstream of1_5("T15.triangulation");
   CGAL::set_ascii_mode(of1_5); 
   of1_5 << T1_5; of1_5.close();
-  ofstream of1_6("T16.triangulation");
+  std::ofstream of1_6("T16.triangulation");
   CGAL::set_ascii_mode(of1_6); 
   of1_6 << T1_6; of1_6.close();
-  ofstream of2_1("T21.triangulation");
+  std::ofstream of2_1("T21.triangulation");
   CGAL::set_ascii_mode(of2_1); 
   of2_1 << T2_1; of2_1.close();
-  ofstream of2_3("T23.triangulation");
+  std::ofstream of2_3("T23.triangulation");
   CGAL::set_ascii_mode(of2_3); 
   of2_3 << T2_3; of2_3.close();
-  ofstream of2_5("T25.triangulation");
+  std::ofstream of2_5("T25.triangulation");
   CGAL::set_ascii_mode(of2_5); 
   of2_5 << T2_5; of2_5.close();
-  ofstream of2_6("T26.triangulation");
+  std::ofstream of2_6("T26.triangulation");
   CGAL::set_ascii_mode(of2_6); 
   of2_6 << T2_6; of2_6.close();
 
-  cout << "    input from a file" << endl;
-  ifstream if0_0("T00.triangulation"); CGAL::set_ascii_mode(if0_0);
+  std::cout << "    input from a file" << std::endl;
+  std::ifstream if0_0("T00.triangulation"); CGAL::set_ascii_mode(if0_0);
   Cls T0_0_copy;   if0_0 >> T0_0_copy;
   assert( T0_0_copy.is_valid() &&
 	  T0_0_copy.number_of_vertices() == T0_0.number_of_vertices() );
-  ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
+  std::ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
   Cls T0_1_copy; if0_1 >> T0_1_copy;
   assert( T0_1_copy.is_valid() &&
 	  T0_1_copy.number_of_vertices() == T0_1.number_of_vertices() );
-  ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2); 
+  std::ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2); 
   Cls T1_2_copy; if1_2 >> T1_2_copy;
   assert( T1_2_copy.is_valid() &&
 	  T1_2_copy.number_of_vertices() == T1_2.number_of_vertices() );
-  ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5); 
+  std::ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5); 
   Cls T1_5_copy; if1_5 >> T1_5_copy;
   assert( T1_5_copy.is_valid() &&
 	  T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
-  ifstream if1_6("T16.triangulation"); CGAL::set_ascii_mode(if1_6);
+  std::ifstream if1_6("T16.triangulation"); CGAL::set_ascii_mode(if1_6);
   Cls T1_6_copy; if1_6 >> T1_6_copy;
   assert( T1_6_copy.is_valid() &&
 	  T1_6_copy.number_of_vertices() == T1_6.number_of_vertices() );
-  ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
+  std::ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
   Cls T2_1_copy; if2_1 >> T2_1_copy;
   assert( T2_1_copy.is_valid() &&
 	  T2_1_copy.number_of_vertices() == T2_1.number_of_vertices() );
-  ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
+  std::ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
   Cls T2_3_copy; if2_3 >> T2_3_copy;
   assert( T2_3_copy.is_valid() &&
 	  T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
-  ifstream if2_5("T25.triangulation"); CGAL::set_ascii_mode(if2_5); 
+  std::ifstream if2_5("T25.triangulation"); CGAL::set_ascii_mode(if2_5); 
   Cls T2_5_copy; if2_5 >> T2_5_copy;
   assert( T2_5_copy.is_valid() &&
 	  T2_5_copy.number_of_vertices() == T2_5.number_of_vertices() );
-  ifstream if2_6("T26.triangulation"); CGAL::set_ascii_mode(if2_6);
+  std::ifstream if2_6("T26.triangulation"); CGAL::set_ascii_mode(if2_6);
   Cls T2_6_copy; if2_6 >> T2_6_copy;
   assert( T2_6_copy.is_valid() &&
 	  T2_6_copy.number_of_vertices() == T2_6.number_of_vertices() );
@@ -676,7 +671,7 @@ _test_cls_triangulation_2( const Triangulation & )
 
   /**********************/
   /***** REMOVALS *******/ 
-  cout << "    removals" << endl;
+  std::cout << "    removals" << std::endl;
 
 //   // test remove_first()
 //   T0_1.remove_first(T0_1.finite_vertex());
@@ -748,5 +743,5 @@ _test_cls_triangulation_2( const Triangulation & )
   assert( T2_7.number_of_vertices() == 0 );
 
   // test destructors and return
-  cout << "    test destructors and return" << endl;
+  std::cout << "    test destructors and return" << std::endl;
 }

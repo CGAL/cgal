@@ -28,7 +28,7 @@ template <class Vertex, class Gt>
 void
 _test_cls_tds_vertex( const Vertex &, const Gt & )
 {
-  cout << "    vertex" << endl;
+  std::cout << "    vertex" << std::endl;
 
   typedef typename Vertex::Point                Point;
   typedef typename Vertex::Face                 Face;

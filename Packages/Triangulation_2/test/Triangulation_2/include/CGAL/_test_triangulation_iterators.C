@@ -28,7 +28,7 @@ _test_iterators( const Triangulation &T )
   int nv = _test_cls_vertex_iterator(T);
   int ne = _test_cls_edge_iterator(T);
   int nf = _test_cls_face_iterator(T);
-  // cout << "Euler's relation: " << nv -ne + nf << endl;
+  // std::cout << "Euler's relation: " << nv -ne + nf << std::endl;
   switch (T.dimension()) {
   case 0 : 
   case -1 : assert( nv == T.number_of_vertices() && ne == 0 && nf == 0);

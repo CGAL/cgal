@@ -37,7 +37,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
    _test_cls_triangulation_2( Delaunay() );
 
   // Constructors
-  cout << "    constructors(3)" << endl;
+  std::cout << "    constructors(3)" << std::endl;
 
   // Build dummy delaunay triangulations, 1- and 2-dimensional
   Delaunay T1;
@@ -70,7 +70,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
  
   /********************/
   /***** Duality ******/
-  cout << "    duality" << endl;
+  std::cout << "    duality" << std::endl;
    _test_delaunay_duality(T1);
    _test_delaunay_duality(T2);
    _test_delaunay_duality(T3);

@@ -29,10 +29,10 @@ template <class Triangulation>
 void 
 _test_cls_constrained_triangulation(const Triangulation &)
 {
-  using std::cout;
-  using std::ofstream;
-  using std::ifstream;
-  using std::endl;
+  //using std::cout;
+  //using std::ofstream;
+  //using std::ifstream;
+  //using std::endl;
 
   typedef Triangulation                       Cls;
 
@@ -57,11 +57,11 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
 
   // Constructors
-  cout << "    constructors    " << endl;
+  std::cout << "    constructors    " << std::endl;
   list_constraints l;
 
   // Empty triangulation (0-dimensional)
-  cout << "    0-Dim " <<endl;
+  std::cout << "    0-Dim " <<std::endl;
   Cls T0_1;
   assert( T0_1.dimension() == -1 );
   assert( T0_1.number_of_vertices() == 0 );
@@ -77,7 +77,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
   // Build dummy triangulations, 1-dimensional
 
-     cout << "    1-Dim "<<endl;
+     std::cout << "    1-Dim "<<std::endl;
     int m;
   for (m=0; m<20; m++)
       l.push_back(Constraint(Point(3*m, 2*m),Point(3*m,2*m) ));
@@ -99,7 +99,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
   // Build triangulations, 2-dimensional
 
-  cout << "    2-Dim "<< endl;
+  std::cout << "    2-Dim "<< std::endl;
   Point lp[5]= {Point(0,0),Point(1,0),Point(0,1),Point(-1,0),Point(0,-1)};
   for (m=1;m<5;m++)
     l.push_back(Constraint(lp[0],lp[m]));
@@ -126,7 +126,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
  
   // Build triangulation with iterator
-   cout << "    With input iterator" << endl;
+   std::cout << "    With input iterator" << std::endl;
    list_iterator first=l.begin();
    list_iterator last=l.end();
    Cls T2_3(first,last);
@@ -142,7 +142,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
    // Points locations
     //to check  if functionnality is accessible
     // 1-dimensional
-   // cout << "    point locations 1-dim" << endl;
+   // std::cout << "    point locations 1-dim" << std::endl;
    Locate_type lt; 
    int            li;
    Face_handle    f;
@@ -161,7 +161,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
   
 
    // 2-dimensional
-   cout << "    point locations 2-dim" << endl;
+   std::cout << "    point locations 2-dim" << std::endl;
    f = T2_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
    assert( T2_2.geom_traits().compare(f->vertex(li)->point(), Point(0,0)) );
    f = T2_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
@@ -181,7 +181,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
    /*************************/
   /******* Iterators *******/
-   cout << "    iterators" << endl;
+   std::cout << "    iterators" << std::endl;
     _test_iterators(T1_1);
    _test_iterators(T1_2);
    _test_iterators(T2_1);
@@ -189,7 +189,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
    /***************************/
   /******* Circulators *******/
-   cout << "    circulators" << endl;
+   std::cout << "    circulators" << std::endl;
    _test_circulators(T1_1);
    _test_circulators(T1_2);
    _test_circulators(T2_1);
@@ -197,7 +197,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
 
 // Line_face_circulator
-  cout << "    line face circulator  " << endl;
+  std::cout << "    line face circulator  " << std::endl;
   typedef typename Cls::Line_face_circulator LFC;
  
   LFC fc= T2_2.line_walk(Point(-1,-1),Point(10,10));
@@ -242,7 +242,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
    /*****************************/
   /******** Miscellaneaous *****/
-  cout << "    misc." << endl;
+  std::cout << "    misc." << std::endl;
   assert( T0_1.ccw(0) == 1 );
   assert( T0_1.ccw(1) == 2 );
   assert( T0_1.ccw(2) == 0 );
@@ -261,7 +261,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
    /********************/
   /******** I/O *******/
-  cout << "    output to a file" << endl;
+  std::cout << "    output to a file" << std::endl;
 
   std::ofstream of0_1("T01.triangulation", std::ios::out);
   CGAL::set_ascii_mode(of0_1);

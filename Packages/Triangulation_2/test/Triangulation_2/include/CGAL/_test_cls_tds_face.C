@@ -29,7 +29,7 @@ template <class Face, class Gt>
 void
 _test_cls_tds_face( const Face &, const Gt & )
 {
-  cout << "    face" << endl;
+  std::cout << "    face" << std::endl;
 
   typedef typename Face::Vertex               Vertex;
   // typedef typename Face::Edge                 Edge;
