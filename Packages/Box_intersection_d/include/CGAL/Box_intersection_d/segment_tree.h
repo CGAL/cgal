@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/one_way_scan.h>
 #include <CGAL/Box_intersection_d/modified_two_way_scan.h>
+#include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <algorithm>
 #include <iterator>
@@ -11,10 +12,6 @@
 #include <cmath>
 #include <functional>
 #include <cassert>
-
-// original limits in g++3.2 is totally wrong. on some systems it is even missing
-#include <my_limits>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -134,8 +131,8 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     typedef typename Predicate_traits::Lo_less    Lo_less;
     typedef typename Predicate_traits::Hi_greater Hi_greater;
 
-    const T inf = workaround::numeric_limits< T >::inf();
-    const T sup = workaround::numeric_limits< T >::sup();
+    const T inf = box_limits< T >::inf();
+    const T sup = box_limits< T >::sup();
 
 #if BOX_INTERSECTION_DEBUG
     Counter<int> bla( level );

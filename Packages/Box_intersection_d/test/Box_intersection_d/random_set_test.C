@@ -20,8 +20,8 @@ template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
 typedef NT Number_type;
 typedef CGAL::Default_box_d< Number_type, DIM >  Box;
-typedef CGAL::Default_box_d_traits< Box > Box_adapter;
-typedef CGAL::Default_box_predicate_traits< Box_adapter, CLOSED > Traits;
+typedef CGAL::Default_box_traits_d< Box > Box_adapter;
+typedef CGAL::Default_box_predicate_traits_d< Box_adapter, CLOSED > Traits;
 typedef std::vector< Box >     Box_container;
 typedef std::pair< Box, Box >  Box_pair;
 typedef std::vector< Box_pair > Result_container;
@@ -60,7 +60,7 @@ struct Storage_callback {
         assert_intersection( a, b );
         ++counter;
         //storage.push_back( std::make_pair( a, b ) );
-        //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
+        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
 
@@ -70,7 +70,7 @@ struct Counter_callback {
     void operator()( const Box& a, const Box& b ) {
         assert_intersection( a, b );
         ++counter;
-        //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
+        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
 

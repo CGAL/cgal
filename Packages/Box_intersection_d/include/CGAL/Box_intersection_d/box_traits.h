@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <my_limits>
 
 CGAL_BEGIN_NAMESPACE
 

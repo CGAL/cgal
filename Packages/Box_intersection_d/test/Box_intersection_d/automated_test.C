@@ -16,9 +16,9 @@
 #include <cmath>
 
 
-typedef CGAL::Default_box_d< int, 3 >         Box;
-typedef CGAL::Default_box_d_traits< Box >    Box_adapter;
-typedef CGAL::Default_box_predicate_traits< Box_adapter, true > Traits;
+typedef CGAL::Default_box_d< int, 3 >     Box;
+typedef CGAL::Default_box_traits_d< Box > Box_adapter;
+typedef CGAL::Default_box_predicate_traits_d< Box_adapter, true > Traits;
 typedef std::vector< Box >     Box_container;
 typedef std::pair< Box, Box >  Box_pair;
 typedef std::vector< Box_pair > Result_container;
@@ -94,8 +94,8 @@ unsigned int countDuplicates( Storage& storage ) {
     for( IT it = storage.begin(); it != storage.end(); ++it )
         for( IT it2 = it; it2 != storage.end(); ++it2 )
             if( it != it2 &&  *it == *it2 ) {
-                //cout << it->first.num() << " <-> "
-                //     << it->second.num() << endl;
+                //cout << it->first.id() << " <-> "
+                //     << it->second.id() << endl;
                 ++counter;
             }
     return counter;

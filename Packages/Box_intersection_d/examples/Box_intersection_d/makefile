@@ -9,6 +9,7 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
+
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
@@ -56,6 +57,10 @@ clean: \
                    minimal.clean \
                    custombox.clean \
                    customadapter.clean
+depend:
+	$(CXX) *.cc  $(CXXFLAGS) -MM > .depend
+
+include .depend
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
@@ -63,3 +68,4 @@ clean: \
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
+# DO NOT DELETE

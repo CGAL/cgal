@@ -30,7 +30,7 @@ void fill_boxes( unsigned int n, std::vector< Box >& boxes ) {
 void callback( const Box &a, const Box &b ) {
     if( a.primitive->intersect( b.primitive ) )
         std::cout << "intersection between box "
-            << a.get_num() << " and " << b.get_num() << std::endl;
+            << a.get_id() << " and " << b.get_id() << std::endl;
 };
 
 int main() {

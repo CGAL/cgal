@@ -51,6 +51,11 @@ clean: \
                    automated_test.clean \
                    random_set_test.clean
 
+depend:
+	$(CXX) *.C  $(CXXFLAGS) -MM > .depend
+
+include .depend
+
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
