@@ -1524,13 +1524,7 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
-Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Generator/generator.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/constrained_delaunay_triangulation_2.vcproj -text
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_point_layer.gif svneol=native#unset
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_polygon_layer.gif svneol=native#unset
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/help/input_segment_layer.gif svneol=native#unset
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text

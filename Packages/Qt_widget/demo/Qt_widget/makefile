@@ -34,19 +34,8 @@ LDFLAGS = \
 
 DEMO_SUBDIRS= \
 ./Constrained_triangulation_2 \
-./Convex_Hull_2 \
-./Generator \
 ./Max_k-gon \
-./Triangulation_2_constrained \
-./Examples \
-./basic/tutorial1 \
-./basic/tutorial2 \
-./basic/tutorial3 \
-./basic/tutorial4 \
-./basic/tutorial5 \
-./basic/tutorial6 \
-./basic/tutorial7 \
-./basic/tutorial8
+./Examples
 
 all:
 	badexit=""; \
