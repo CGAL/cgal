@@ -27,6 +27,7 @@
 
 #include <CGAL/PVDH3.h>
 #include <CGAL/predicates_on_rtH2.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,44 +39,20 @@ orientation( const PointH3<R>& p,
              const PointH3<R>& r,
              const PointH3<R>& s)
 {
-  typedef typename R::RT RT;
-  RT det = det4x4_by_formula(
-               p.hx(), p.hy(), p.hz(), p.hw(),
-               q.hx(), q.hy(), q.hz(), q.hw(),
-               r.hx(), r.hy(), r.hz(), r.hw(),
-               s.hx(), s.hy(), s.hz(), s.hw() );
-/*
-  RT det= - p.hw()*(  q.hx()*( r.hy()*s.hz() - r.hz()*s.hy() )
-                    - r.hx()*( q.hy()*s.hz() - q.hz()*s.hy() )
-                    + s.hx()*( q.hy()*r.hz() - q.hz()*r.hy() ) )
-          + q.hw()*(  p.hx()*( r.hy()*s.hz() - r.hz()*s.hy() )
-                    - r.hx()*( p.hy()*s.hz() - p.hz()*s.hy() )
-                   + s.hx()*( p.hy()*r.hz() - p.hz()*r.hy() ) )
-          - r.hw()*(  p.hx()*( q.hy()*s.hz() - q.hz()*s.hy() )
-                    - q.hx()*( p.hy()*s.hz() - p.hz()*s.hy() )
-                    + s.hx()*( p.hy()*q.hz() - p.hz()*q.hy() ) )
-          + s.hw()*(  p.hx()*( q.hy()*r.hz() - q.hz()*r.hy() )
-                    - q.hx()*( p.hy()*r.hz() - p.hz()*r.hy() )
-                    + r.hx()*( p.hy()*q.hz() - p.hz()*q.hy() ) ) ;
-*/
-  if (det == RT(0))
-  {
-      return COPLANAR;
-  }
-  else
-  {
-      return det < RT(0) ? POSITIVE : NEGATIVE;
-      // switched, because the determinant above has the 1-row at the end
-  }
+  // Two rows are switched, because of the homogeneous column.
+  return (Orientation) sign_of_determinant4x4( p.hx(), p.hy(), p.hz(), p.hw(),
+                                               r.hx(), r.hy(), r.hz(), r.hw(),
+                                               q.hx(), q.hy(), q.hz(), q.hw(),
+                                               s.hx(), s.hy(), s.hz(), s.hw() );
 }
 
 template < class R>
 inline
 bool
 are_positive_oriented( const PointH3<R>& p,
-                            const PointH3<R>& q,
-                            const PointH3<R>& r,
-                            const PointH3<R>& s)
+                       const PointH3<R>& q,
+                       const PointH3<R>& r,
+                       const PointH3<R>& s)
 { return (orientation(p,q,r,s) == POSITIVE); }
 
 template < class R>
