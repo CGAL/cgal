@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,11 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Point_2.C
-// source        : include/CGAL/Cartesian/Point_2.C
-// revision      : $2.14$
+// revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr
-//                 Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -33,15 +31,9 @@
 #define typename
 #endif
 
-#ifndef CGAL_ORIGIN_H
 #include <CGAL/Origin.h>
-#endif // CGAL_ORIGIN_H
-#ifndef CGAL_BBOX_2_H
 #include <CGAL/Bbox_2.h>
-#endif // CGAL_BBOX_2_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -82,14 +74,13 @@ PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
-                    const typename PointC2<R CGAL_CTAG>::FT &hy,
-                    const typename PointC2<R CGAL_CTAG>::FT &hw)
+                              const typename PointC2<R CGAL_CTAG>::FT &hy,
+                              const typename PointC2<R CGAL_CTAG>::FT &hw)
 {
-  if( hw != FT(1)) {
+  if( hw != FT(1))
     PTR = new _Twotuple<FT>(hx/hw, hy/hw);
-  } else {
+  else
     PTR = new _Twotuple<FT>(hx, hy);
-  }
 }
 
 template < class R >
@@ -116,30 +107,40 @@ PointC2<R CGAL_CTAG>::operator=(const PointC2<R CGAL_CTAG> &p)
 
 template < class R >
 inline
-bool PointC2<R CGAL_CTAG>::operator==(const PointC2<R CGAL_CTAG>& p) const
+bool
+PointC2<R CGAL_CTAG>::operator==(const PointC2<R CGAL_CTAG>& p) const
 {
-  return ((x() == p.x()) && (y() == p.y())) ;
+  return x() == p.x() && y() == p.y();
 }
 
 template < class R >
 inline
-bool PointC2<R CGAL_CTAG>::operator!=(const PointC2<R CGAL_CTAG>& p) const
+bool
+PointC2<R CGAL_CTAG>::operator!=(const PointC2<R CGAL_CTAG>& p) const
 {
   return !(*this == p);
 }
 
 template < class R >
 inline
-int PointC2<R CGAL_CTAG>::id() const { return (int)PTR; }
+int
+PointC2<R CGAL_CTAG>::id() const
+{
+  return (int) PTR;
+}
 
 template < class R >
-inline typename PointC2<R CGAL_CTAG>::FT PointC2<R CGAL_CTAG>::x()  const
+inline
+typename PointC2<R CGAL_CTAG>::FT
+PointC2<R CGAL_CTAG>::x() const
 {
   return ptr()->e0;
 }
 
 template < class R >
-inline typename PointC2<R CGAL_CTAG>::FT PointC2<R CGAL_CTAG>::y()  const
+inline
+typename PointC2<R CGAL_CTAG>::FT
+PointC2<R CGAL_CTAG>::y() const
 {
   return  ptr()->e1 ;
 }
@@ -172,7 +173,7 @@ PointC2<R CGAL_CTAG>::dimension() const
 template < class R >
 inline
 typename PointC2<R CGAL_CTAG>::FT
-PointC2<R CGAL_CTAG>::hx()  const
+PointC2<R CGAL_CTAG>::hx() const
 {
   return ptr()->e0;
 }
@@ -180,7 +181,7 @@ PointC2<R CGAL_CTAG>::hx()  const
 template < class R >
 inline
 typename PointC2<R CGAL_CTAG>::FT
-PointC2<R CGAL_CTAG>::hy()  const
+PointC2<R CGAL_CTAG>::hy() const
 {
   return ptr()->e1;
 }
@@ -188,7 +189,7 @@ PointC2<R CGAL_CTAG>::hy()  const
 template < class R >
 inline
 typename PointC2<R CGAL_CTAG>::FT
-PointC2<R CGAL_CTAG>::hw()  const
+PointC2<R CGAL_CTAG>::hw() const
 {
   return FT(1);
 }
@@ -215,7 +216,8 @@ transform( const typename PointC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Bbox_2 PointC2<R CGAL_CTAG>::bbox() const
+Bbox_2
+PointC2<R CGAL_CTAG>::bbox() const
 {
   double bx = CGAL::to_double(x());
   double by = CGAL::to_double(y());
@@ -224,7 +226,8 @@ Bbox_2 PointC2<R CGAL_CTAG>::bbox() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTC2
 template < class R >
-std::ostream &operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
+std::ostream &
+operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -241,7 +244,8 @@ std::ostream &operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_POINTC2
 template < class R >
-std::istream &operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
 {
     typename PointC2<R CGAL_CTAG>::FT x, y;
     switch(is.iword(IO::mode)) {

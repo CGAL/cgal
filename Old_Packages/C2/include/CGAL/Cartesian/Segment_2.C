@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,15 +12,13 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Segment_2.C
-// source        : include/CGAL/Cartesian/Segment_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr, Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
-
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
@@ -50,8 +48,9 @@ SegmentC2<R CGAL_CTAG>::SegmentC2(const SegmentC2<R CGAL_CTAG>  &s)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-SegmentC2<R CGAL_CTAG>::SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
-                                  const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
+SegmentC2<R CGAL_CTAG>::
+SegmentC2(const typename SegmentC2<R CGAL_CTAG>::Point_2 &sp,
+          const typename SegmentC2<R CGAL_CTAG>::Point_2 &ep)
 {
   PTR = new _Twotuple< Point_2 >(sp, ep);
 }
@@ -69,12 +68,13 @@ SegmentC2<R CGAL_CTAG>::operator=(const SegmentC2<R CGAL_CTAG> &s)
   Handle::operator=(s);
   return *this;
 }
+
 template < class R >
 inline
 bool
 SegmentC2<R CGAL_CTAG>::operator==(const SegmentC2<R CGAL_CTAG> &s) const
 {
-  return ( (source() == s.source())  && (target() == s.target()) );
+  return source() == s.source()  && target() == s.target();
 }
 
 template < class R >
@@ -90,7 +90,7 @@ inline
 int
 SegmentC2<R CGAL_CTAG>::id() const
 {
-  return (int) PTR ;
+  return (int) PTR;
 }
 
 template < class R >
@@ -108,7 +108,6 @@ SegmentC2<R CGAL_CTAG>::end() const
 {
   return ptr()->e1;
 }
-
 
 template < class R >
 inline
@@ -131,8 +130,7 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::min() const
 {
-  return (lexicographically_xy_smaller(source(),target())) ? source()
-                                                           : target();
+  return lexicographically_xy_smaller(source(),target()) ? source() : target();
 }
 
 template < class R >
@@ -140,8 +138,7 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::max() const
 {
-  return (lexicographically_xy_smaller(source(),target())) ? target()
-                                                           : source();
+  return lexicographically_xy_smaller(source(),target()) ? target() : source();
 }
 
 template < class R >
@@ -149,7 +146,7 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::vertex(int i) const
 {
-  return (i%2 ==0) ? source() : target();
+  return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
@@ -157,7 +154,7 @@ CGAL_KERNEL_INLINE
 typename SegmentC2<R CGAL_CTAG>::Point_2
 SegmentC2<R CGAL_CTAG>::point(int i) const
 {
-  return (i%2 ==0) ? source() : target();
+  return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
@@ -203,7 +200,8 @@ SegmentC2<R CGAL_CTAG>::opposite() const
 template < class R >
 inline
 SegmentC2<R CGAL_CTAG>
-SegmentC2<R CGAL_CTAG>::transform(const typename SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+SegmentC2<R CGAL_CTAG>::
+transform(const typename SegmentC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   return SegmentC2<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
@@ -246,16 +244,12 @@ bool
 SegmentC2<R CGAL_CTAG>::
 has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return(( p == source() )
-         || ( p == target() )
-         || ( collinear(source(), p, target())
-              &&( Direction_2(p - source())
-                  !=
-                  Direction_2(p - target()))
-             )
-         );
+  return p == source()
+      || p == target()
+      || ( collinear(source(), p, target())
+           && Direction_2(p - source()) != Direction_2(p - target())
+	 );
 }
-
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -282,7 +276,8 @@ collinear_has_on(const typename SegmentC2<R CGAL_CTAG>::Point_2 &p) const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2
 template < class R >
-std::ostream &operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
+std::ostream &
+operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -297,7 +292,8 @@ std::ostream &operator<<(std::ostream &os, const SegmentC2<R CGAL_CTAG> &s)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
 template < class R >
-std::istream &operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
+std::istream &
+operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
 {
     typename SegmentC2<R CGAL_CTAG>::Point_2 p, q;
 
@@ -314,4 +310,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif
+#endif // CGAL_CARTESIAN_SEGMENT_2_C

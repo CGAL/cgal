@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,11 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Direction_2.C
-// source        : include/CGAL/Cartesian/Cartesian_2/Direction_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr
-//                 Herve Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -66,14 +64,16 @@ DirectionC2(const typename DirectionC2<R CGAL_CTAG>::Vector_2 &v) :
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionC2<R CGAL_CTAG>::DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
-                                      const typename DirectionC2<R CGAL_CTAG>::FT &y)
+DirectionC2<R CGAL_CTAG>::
+DirectionC2(const typename DirectionC2<R CGAL_CTAG>::FT &x,
+            const typename DirectionC2<R CGAL_CTAG>::FT &y)
 {
   PTR = new _Twotuple<FT>(x, y);
 }
 
 template < class R >
-inline DirectionC2<R CGAL_CTAG>:: ~DirectionC2()
+inline
+DirectionC2<R CGAL_CTAG>::~DirectionC2()
 {}
 
 template < class R >
@@ -84,7 +84,9 @@ DirectionC2<R CGAL_CTAG>::operator=(const DirectionC2<R CGAL_CTAG> &d)
   Handle::operator=(d);
   return *this;
 }
+
 template < class R >
+inline
 bool
 DirectionC2<R CGAL_CTAG>::operator==(const DirectionC2<R CGAL_CTAG> &d) const
 {
@@ -142,9 +144,9 @@ DirectionC2<R CGAL_CTAG>::operator<=(const DirectionC2<R CGAL_CTAG> &d) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-DirectionC2<R CGAL_CTAG>::counterclockwise_in_between
-   (const DirectionC2<R CGAL_CTAG> &d1,
-    const DirectionC2<R CGAL_CTAG> &d2) const
+DirectionC2<R CGAL_CTAG>::
+counterclockwise_in_between(const DirectionC2<R CGAL_CTAG> &d1,
+                            const DirectionC2<R CGAL_CTAG> &d2) const
 {
   return (d1 < *this) && (*this < d2) ;
 }
@@ -173,7 +175,8 @@ template < class R >
 CGAL_KERNEL_INLINE
 DirectionC2<R CGAL_CTAG>
 DirectionC2<R CGAL_CTAG>::
-transform(const typename DirectionC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename DirectionC2<R CGAL_CTAG>::Aff_transformation_2 &t)
+    const
 {
   return t.transform(*this);
 }
@@ -186,8 +189,6 @@ DirectionC2<R CGAL_CTAG>::operator-() const
   return DirectionC2<R CGAL_CTAG>(-dx(), -dy());
 }
 
-
-
 template < class R >
 CGAL_KERNEL_INLINE
 typename DirectionC2<R CGAL_CTAG>::FT
@@ -196,7 +197,6 @@ DirectionC2<R CGAL_CTAG>::delta(int i) const
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
   return (i==0) ? dx() : dy();
 }
-
 
 template < class R >
 inline
@@ -214,11 +214,10 @@ DirectionC2<R CGAL_CTAG>::dy() const
   return ptr()->e1;
 }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC2
 template < class R >
-std::ostream
-&operator<<(std::ostream &os, const DirectionC2<R CGAL_CTAG> &d)
+std::ostream&
+operator<<(std::ostream &os, const DirectionC2<R CGAL_CTAG> &d)
 {
     typename R::Vector_2 v = d.to_vector();
     switch(os.iword(IO::mode)) {
@@ -235,10 +234,9 @@ std::ostream
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONC2
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC2
-
 template < class R >
-std::istream
-&operator>>(std::istream &is, DirectionC2<R CGAL_CTAG> &p)
+std::istream&
+operator>>(std::istream &is, DirectionC2<R CGAL_CTAG> &p)
 {
     typename DirectionC2<R CGAL_CTAG>::FT x, y;
     switch(is.iword(IO::mode)) {

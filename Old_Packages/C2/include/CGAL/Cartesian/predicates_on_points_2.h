@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,34 +8,24 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/predicates_on_points_2.h
-// source        : include/CGAL/Cartesian/predicates_on_points_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 #define CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #include <CGAL/Cartesian/redefine_names_2.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_POINT_2_H
 #include <CGAL/Cartesian/Point_2.h>
-#endif // CGAL_CARTESIAN_POINT_2_H
-#ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #include <CGAL/predicates/kernel_ftC2.h>
-#endif // CGAL_PREDICATES_KERNEL_FTC2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +37,6 @@ x_equal(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
     return p.x() == q.x();
 }
 
-
 template < class R >
 inline
 bool
@@ -56,19 +45,13 @@ y_equal(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
     return p.y() == q.y();
 }
 
-
 template < class R >
 inline
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
-#include <CGAL/Cartesian/redefine_names_2.h>
-#endif
-
 Comparison_result
 compare_x(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
     return CGAL::compare(p.x(), q.x());
 }
-
 
 template < class R >
 inline
@@ -86,7 +69,7 @@ compare_deltax_deltay(const PointC2<R CGAL_CTAG>& p,
                       const PointC2<R CGAL_CTAG>& r,
                       const PointC2<R CGAL_CTAG>& s)
 {
-  return compare_deltax_deltayC2(p.x(), q.x(), r.y(), s.y());
+    return compare_deltax_deltayC2(p.x(), q.x(), r.y(), s.y());
 }
 
 template < class R >
@@ -95,7 +78,7 @@ Comparison_result
 compare_lexicographically_xy(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyC2(p.x(),p.y(),q.x(),q.y());
+    return compare_lexicographically_xyC2(p.x(),p.y(),q.x(),q.y());
 }
 
 template < class R >
@@ -104,16 +87,16 @@ bool
 lexicographically_xy_smaller_or_equal(const PointC2<R CGAL_CTAG> &p,
                                       const PointC2<R CGAL_CTAG> &q)
 {
-  return ( !( compare_lexicographically_xy(p,q) == LARGER ) );
+    return compare_lexicographically_xy(p,q) != LARGER;
 }
 
 template < class R >
 inline
 bool
 lexicographically_xy_larger_or_equal(const PointC2<R CGAL_CTAG> &p,
-                                      const PointC2<R CGAL_CTAG> &q)
+                                     const PointC2<R CGAL_CTAG> &q)
 {
-  return ( !( compare_lexicographically_xy(p,q) == SMALLER ) );
+    return compare_lexicographically_xy(p,q) != SMALLER;
 }
 
 template < class R >
@@ -122,7 +105,7 @@ bool
 lexicographically_xy_smaller(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xy(p,q) == SMALLER ;
+    return compare_lexicographically_xy(p,q) == SMALLER;
 }
 
 template < class R >
@@ -131,7 +114,7 @@ bool
 lexicographically_xy_larger(const PointC2<R CGAL_CTAG> &p,
                             const PointC2<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xy(p,q) == LARGER ;
+    return compare_lexicographically_xy(p,q) == LARGER;
 }
 
 template < class R >
@@ -140,7 +123,7 @@ Comparison_result
 compare_lexicographically_yx(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyC2(p.y(),p.x(),q.y(),q.x());
+    return compare_lexicographically_xyC2(p.y(),p.x(),q.y(),q.x());
 }
 
 template < class R >
@@ -149,7 +132,7 @@ bool
 lexicographically_yx_smaller_or_equal(const PointC2<R CGAL_CTAG> &p,
                                       const PointC2<R CGAL_CTAG> &q)
 {
-    return  !( compare_lexicographically_yx(p,q) == LARGER ) ;
+    return compare_lexicographically_yx(p,q) != LARGER;
 }
 
 template < class R >
@@ -158,7 +141,7 @@ bool
 lexicographically_yx_larger_or_equal(const PointC2<R CGAL_CTAG> &p,
                                      const PointC2<R CGAL_CTAG> &q)
 {
-    return  !( compare_lexicographically_yx(p,q) == SMALLER ) ;
+    return compare_lexicographically_yx(p,q) != SMALLER;
 }
 
 template < class R >
@@ -167,7 +150,7 @@ bool
 lexicographically_yx_smaller(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_yx(p,q) == SMALLER ;
+    return compare_lexicographically_yx(p,q) == SMALLER;
 }
 
 template < class R >
@@ -176,7 +159,7 @@ bool
 lexicographically_yx_larger(const PointC2<R CGAL_CTAG> &p,
                             const PointC2<R CGAL_CTAG> &q)
 {
-    return  compare_lexicographically_yx(p,q) == LARGER ;
+    return compare_lexicographically_yx(p,q) == LARGER;
 }
 
 template < class R >
@@ -196,10 +179,8 @@ collinear(const PointC2<R CGAL_CTAG> &p,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-  return (orientation(p,q,r) == COLLINEAR);
+    return orientation(p,q,r) == COLLINEAR;
 }
-
-
 
 template < class R >
 inline
@@ -208,10 +189,9 @@ collinear_are_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                                  const PointC2<R CGAL_CTAG> &q,
                                  const PointC2<R CGAL_CTAG> &r)
 {
-  return collinear_are_ordered_along_lineC2
+    return collinear_are_ordered_along_lineC2
              (p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
 }
-
 
 template < class R >
 inline
@@ -220,8 +200,7 @@ are_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                        const PointC2<R CGAL_CTAG> &q,
                        const PointC2<R CGAL_CTAG> &r)
 {
-  if (!collinear(p, q, r)) { return false; }
-  return collinear_are_ordered_along_line(p, q, r);
+    return collinear(p, q, r) && collinear_are_ordered_along_line(p, q, r);
 }
 
 template < class R >
@@ -235,7 +214,6 @@ collinear_are_strictly_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                (p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
 }
 
-
 template < class R >
 inline
 bool
@@ -243,8 +221,8 @@ are_strictly_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                                 const PointC2<R CGAL_CTAG> &q,
                                 const PointC2<R CGAL_CTAG> &r)
 {
-  if (!collinear(p, q, r)) { return false; }
-  return collinear_are_strictly_ordered_along_line(p, q, r);
+    return collinear(p, q, r) &&
+	   collinear_are_strictly_ordered_along_line(p, q, r);
 }
 
 template < class R >
@@ -254,7 +232,7 @@ leftturn(const PointC2<R CGAL_CTAG> &p,
          const PointC2<R CGAL_CTAG> &q,
          const PointC2<R CGAL_CTAG> &r)
 {
-  return (orientation(p,q,r) == LEFTTURN );
+    return orientation(p,q,r) == LEFTTURN;
 }
 
 template < class R >
@@ -264,8 +242,7 @@ leftturn(const Origin &o,
          const PointC2<R CGAL_CTAG> &q,
          const PointC2<R CGAL_CTAG> &r)
 {
-   return (orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y())
-           == LEFTTURN );
+   return orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y()) == LEFTTURN;
 }
 
 template < class R >
@@ -275,8 +252,7 @@ rightturn(const PointC2<R CGAL_CTAG> &p,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-   return (orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y())
-           == RIGHTTURN);
+   return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()) == RIGHTTURN;
 }
 
 template < class R >
@@ -286,8 +262,7 @@ rightturn(const Origin &o,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-   return (orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y())
-           == RIGHTTURN);
+   return orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y()) == RIGHTTURN;
 }
 
 template <class R >
@@ -301,7 +276,6 @@ side_of_oriented_circle(const PointC2<R CGAL_CTAG> &p,
   return side_of_oriented_circleC2
              (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),test.x(),test.y());
 }
-
 
 template <class R >
 inline
@@ -317,4 +291,4 @@ side_of_bounded_circle(const PointC2<R CGAL_CTAG> &p,
 
 CGAL_END_NAMESPACE
 
-#endif  // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H

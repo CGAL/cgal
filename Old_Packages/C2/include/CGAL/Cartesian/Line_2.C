@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,11 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Line_2.C
-// source        : include/CGAL/Cartesian/Line_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr
-//                 Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -30,12 +28,8 @@
 #define typename
 #endif
 
-#ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
 #include <CGAL/Cartesian/constructions_on_lines_2.h>
-#endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
 #include <CGAL/Cartesian/predicates_on_lines_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
 
 #ifndef CGAL_CARTESIAN_LINE_2_C
 #define CGAL_CARTESIAN_LINE_2_C
@@ -123,19 +117,16 @@ LineC2<R CGAL_CTAG>::LineC2(const typename LineC2<R CGAL_CTAG>::Point_2 &p,
   new_rep(l.a(), l.b(), l.c());
 }
 
-
 template < class R >
 inline
 LineC2<R CGAL_CTAG>::~LineC2()
 {}
-
 
 template < class R >
 CGAL_KERNEL_INLINE
 LineC2<R CGAL_CTAG> &
 LineC2<R CGAL_CTAG>::operator=(const LineC2<R CGAL_CTAG> &l)
 {
-
   Handle::operator=(l);
   return *this;
 }
@@ -149,35 +140,40 @@ bool LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 
 template < class R >
 inline
-bool LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
+bool
+LineC2<R CGAL_CTAG>::operator!=(const LineC2<R CGAL_CTAG> &l) const
 {
   return !(*this == l);
 }
 
 template < class R >
 inline
-int LineC2<R CGAL_CTAG>::id() const
+int
+LineC2<R CGAL_CTAG>::id() const
 {
   return (int) PTR;
 }
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::a() const
+typename LineC2<R CGAL_CTAG>::FT
+LineC2<R CGAL_CTAG>::a() const
 {
   return ptr()->e0;
 }
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::b() const
+typename LineC2<R CGAL_CTAG>::FT
+LineC2<R CGAL_CTAG>::b() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 inline
-typename LineC2<R CGAL_CTAG>::FT LineC2<R CGAL_CTAG>::c() const
+typename LineC2<R CGAL_CTAG>::FT
+LineC2<R CGAL_CTAG>::c() const
 {
   return ptr()->e2;
 }
@@ -205,11 +201,11 @@ LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
-LineC2<R CGAL_CTAG>::perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R CGAL_CTAG>::
+perpendicular(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return LineC2<R CGAL_CTAG>( -b() , a() , b() * p.x() - a() * p.y()  );
+  return LineC2<R CGAL_CTAG>( -b(), a(), b() * p.x() - a() * p.y());
 }
-
 
 template < class R >
 inline
@@ -238,7 +234,8 @@ LineC2<R CGAL_CTAG>::point() const
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 typename LineC2<R CGAL_CTAG>::Point_2
-LineC2<R CGAL_CTAG>::projection(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
+LineC2<R CGAL_CTAG>::
+projection(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
   if (is_horizontal()) return Point_2(p.x(), -c()/b());
   if (is_vertical())   return Point_2( -c()/a(), p.y());
@@ -294,21 +291,24 @@ has_on_negative_side(const typename LineC2<R CGAL_CTAG>::Point_2 &p) const
 
 template < class R >
 inline
-bool LineC2<R CGAL_CTAG>::is_horizontal() const
+bool
+LineC2<R CGAL_CTAG>::is_horizontal() const
 {
   return a() == LineC2<R CGAL_CTAG>::FT(0) ;
 }
 
 template < class R >
 inline
-bool LineC2<R CGAL_CTAG>::is_vertical() const
+bool
+LineC2<R CGAL_CTAG>::is_vertical() const
 {
   return b() == FT(0) ;
 }
 
 template < class R >
 inline
-bool LineC2<R CGAL_CTAG>::is_degenerate() const
+bool
+LineC2<R CGAL_CTAG>::is_degenerate() const
 {
   return (a() == FT(0)) && (b() == FT(0)) ;
 }
@@ -319,15 +319,15 @@ LineC2<R CGAL_CTAG>
 LineC2<R CGAL_CTAG>::
 transform(const typename LineC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
-  return LineC2<R CGAL_CTAG>( t.transform(point(0) ), t.transform(direction() ));
+  return LineC2<R CGAL_CTAG>(t.transform(point(0)),
+                             t.transform(direction()));
 }
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_LINEC2
 template < class R >
-std::ostream &operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
+std::ostream &
+operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
 {
-
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
         return os << l.a() << ' ' << l.b() << ' ' << l.c();
@@ -344,7 +344,8 @@ std::ostream &operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_LINEC2
 template < class R >
-std::istream &operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
+std::istream &
+operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
 {
     typename LineC2<R CGAL_CTAG>::FT a, b, c;
     switch(is.iword(IO::mode)) {
@@ -372,4 +373,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif
+#endif // CGAL_CARTESIAN_LINE_2_C

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,15 +12,13 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Triangle_2.C
-// source        : include/CGAL/Cartesian/Triangle_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr, Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
-
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
@@ -30,9 +28,7 @@
 #define typename
 #endif
 
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 #include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 
 #ifndef CGAL_CARTESIAN_TRIANGLE_2_C
 #define CGAL_CARTESIAN_TRIANGLE_2_C
@@ -75,7 +71,6 @@ inline
 TriangleC2<R CGAL_CTAG>::~TriangleC2()
 {}
 
-
 template < class R >
 inline
 TriangleC2<R CGAL_CTAG> &
@@ -84,9 +79,11 @@ TriangleC2<R CGAL_CTAG>::operator=(const TriangleC2<R CGAL_CTAG> &t)
   Handle::operator=(t);
   return *this;
 }
+
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-bool TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
+bool
+TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
 {
   int i;
   for(i=0; i<3; i++)
@@ -98,16 +95,18 @@ bool TriangleC2<R CGAL_CTAG>::operator==(const TriangleC2<R CGAL_CTAG> &t) const
 
 template < class R >
 inline
-bool TriangleC2<R CGAL_CTAG>::operator!=(const TriangleC2<R CGAL_CTAG> &t) const
+bool
+TriangleC2<R CGAL_CTAG>::operator!=(const TriangleC2<R CGAL_CTAG> &t) const
 {
   return !(*this == t);
 }
 
 template < class R >
 inline
-int TriangleC2<R CGAL_CTAG>::id() const
+int
+TriangleC2<R CGAL_CTAG>::id() const
 {
-  return (int)PTR ;
+  return (int) PTR;
 }
 
 template < class R >
@@ -245,7 +244,6 @@ Bbox_2 TriangleC2<R CGAL_CTAG>::bbox() const
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
 }
 
-
 template < class R >
 inline
 TriangleC2<R CGAL_CTAG>
@@ -266,10 +264,10 @@ opposite() const
   return TriangleC2<R CGAL_CTAG>(vertex(0), vertex(2), vertex(1));
 }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC2
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
+std::ostream &
+operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -284,7 +282,8 @@ std::ostream &operator<<(std::ostream &os, const TriangleC2<R CGAL_CTAG> &t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2
 template < class R >
-std::istream &operator>>(std::istream &is, TriangleC2<R CGAL_CTAG> &t)
+std::istream &
+operator>>(std::istream &is, TriangleC2<R CGAL_CTAG> &t)
 {
     TriangleC2<R CGAL_CTAG>::Point_2 p, q, r;
 
@@ -301,4 +300,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif
+#endif // CGAL_CARTESIAN_TRIANGLE_2_C

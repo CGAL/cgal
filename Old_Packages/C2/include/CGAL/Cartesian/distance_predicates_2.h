@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,31 +8,23 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/distance_predicates_2.h
-// source        : include/CGAL/Cartesian/distance_predicates_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_DISTANCE_PREDICATES_2_H
 #define CGAL_CARTESIAN_DISTANCE_PREDICATES_2_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #include <CGAL/Cartesian/redefine_names_2.h>
-#endif
-
-#ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #include <CGAL/predicates/kernel_ftC2.h>
-#endif // CGAL_PREDICATES_KERNEL_FTC2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,6 +57,7 @@ has_smaller_dist_to_point(const PointC2<R CGAL_CTAG>& p,
 {
   return has_smaller_dist_to_pointC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
 }
+
 template <class R>
 inline
 Comparison_result
@@ -72,8 +65,7 @@ cmp_signed_dist_to_line(const LineC2<R CGAL_CTAG>&  l,
                         const PointC2<R CGAL_CTAG>& p,
                         const PointC2<R CGAL_CTAG>& q)
 {
-  return cmp_signed_dist_to_directionC2
-           (l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
+  return cmp_signed_dist_to_directionC2(l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
 }
 
 template <class R>
@@ -97,6 +89,7 @@ has_smaller_signed_dist_to_line(const LineC2<R CGAL_CTAG>&  l,
   return has_smaller_signed_dist_to_directionC2
            (l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
 }
+
 template <class R>
 inline
 Comparison_result
@@ -133,7 +126,6 @@ has_larger_signed_dist_to_line(const PointC2<R CGAL_CTAG>& p,
            (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),s.x(),s.y());
 }
 
-
 CGAL_END_NAMESPACE
 
-#endif //CGAL_CARTESIAN_DISTANCE_PREDICATES_2_H
+#endif // CGAL_CARTESIAN_DISTANCE_PREDICATES_2_H

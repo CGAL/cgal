@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,27 +12,19 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_2.h
-// source        : include/CGAL/Cartesian/Aff_transformation_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr, kettner@inf.fu-berlin.de
+// author(s)     : Andreas Fabri, Lutz Kettner
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #include <CGAL/Cartesian/redefine_names_2.h>
-#endif
-
-#ifndef CGAL_HANDLE_H
 #include <CGAL/Handle.h>
-#endif // CGAL_HANDLE_H
-
 #include <cmath>
 
 CGAL_BEGIN_NAMESPACE
@@ -160,9 +152,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 #include <CGAL/Cartesian/Aff_transformation_2.C>
-#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 #endif
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,15 +12,13 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Aff_transformation_2.C
-// source        : include/CGAL/Cartesian/Aff_transformation_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr, kettner@inf.fu-berlin.de
+// author(s)     : Andreas Fabri, Lutz Kettner
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
 // ============================================================================
-
 
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
@@ -33,13 +31,8 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 
-#ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
-#endif // CGAL_DETERMINANT_H
-
-#ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C
 #include <CGAL/Cartesian/Aff_transformation_rep_2.C>
-#endif // CGAL_CARTESIAN_+AFF_TRANSFORMATION_REP_2_C
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,7 +55,6 @@ Aff_transformationC2<R CGAL_CTAG>::Aff_transformationC2
   (const Aff_transformationC2<R CGAL_CTAG> &t)
   : Handle(t)
 {}
-
 
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
@@ -95,7 +87,6 @@ Aff_transformationC2(
 {
   PTR = new Rotation_repC2<R>(d, num, den);
 }
-
 
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
@@ -183,4 +174,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif
+#endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,22 +12,18 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Data_accessor_2.h
-// source        : include/CGAL/Cartesian/Data_accessor_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_DATA_ACCESSOR_2_H
 #define CGAL_CARTESIAN_DATA_ACCESSOR_2_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #include <CGAL/Cartesian/redefine_names_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,4 +54,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_DATA_ACCESSOR_2_H
-

@@ -11,16 +11,14 @@
 // release       : 
 // release_date  :
 // 
-// source        : include/CGAL/Cartesian/predicates_on_directions_2.h
 // file          : include/CGAL/Cartesian/predicates_on_directions_2.h
-// package       : 
-// revision      : $ $
-// revision_date : $ $
-// author(s)     : Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
+//
 // ======================================================================
-
 
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
 #define CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
@@ -46,6 +44,5 @@ compare_angle_with_x_axis(const DirectionC2<R CGAL_CTAG>& d1,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,11 +12,9 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian/Iso_rectangle_2.C
-// source        : include/CGAL/Cartesian/Cartesian_2/Iso_rectangle_2.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr
-//                 Herve Bronnimann@sophia.inria.fr
+// author(s)     : Andreas Fabri, Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -36,7 +34,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Twotuple< typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 > *
+inline
+_Twotuple< typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 > *
 Iso_rectangleC2<R CGAL_CTAG>::ptr() const
 {
   return (_Twotuple<Point_2>*)PTR;
@@ -54,8 +53,7 @@ inline
 Iso_rectangleC2<R CGAL_CTAG>::
 Iso_rectangleC2(const Iso_rectangleC2<R CGAL_CTAG> &r)
   : Handle((Handle&)r)
-{
-}
+{}
 
 template < class R >
 inline
@@ -70,7 +68,7 @@ Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
 
   bool b1 = false,
        b2 = false;
-  if( (b1 = (vx0 > vx1)) || (b2 = (vy0 > vy1)) ) {
+  if ( (b1 = (vx0 > vx1)) || (b2 = (vy0 > vy1)) ) {
     if (b1 && b2) {
       PTR = new _Twotuple<Point_2>(q,p);
     } else {
@@ -87,34 +85,32 @@ Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
 
       PTR = new _Twotuple<Point_2>(Point_2(vx0,vy0), Point_2(vx1,vy1));
     }
-  }else {
+  } else {
     PTR = new _Twotuple<Point_2>(p,q);
   }
 }
-
 
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>::~Iso_rectangleC2()
 {}
 
-
 template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG> &
 Iso_rectangleC2<R CGAL_CTAG>::operator=(const Iso_rectangleC2<R CGAL_CTAG> &r)
 {
-
   Handle::operator=(r);
   return *this;
 }
+
 template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
 operator==(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 {
-  return  vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2);
+  return vertex(0) == r.vertex(0) && vertex(2) == r.vertex(2);
 }
 
 template < class R >
@@ -128,7 +124,8 @@ operator!=(const Iso_rectangleC2<R CGAL_CTAG> &r) const
 
 template < class R >
 inline
-int Iso_rectangleC2<R CGAL_CTAG>::id() const
+int
+Iso_rectangleC2<R CGAL_CTAG>::id() const
 {
   return (int)PTR;
 }
@@ -151,33 +148,35 @@ Iso_rectangleC2<R CGAL_CTAG>::max() const
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::xmin() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::xmin() const
 {
-  return  min().x();
+  return min().x();
 }
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::ymin() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::ymin() const
 {
-  return  min().y();
+  return min().y();
 }
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::xmax() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::xmax() const
 {
-  return  max().x();
+  return max().x();
 }
 
 template < class R >
 inline
-typename Iso_rectangleC2<R CGAL_CTAG>::FT Iso_rectangleC2<R CGAL_CTAG>::ymax() const
+typename Iso_rectangleC2<R CGAL_CTAG>::FT
+Iso_rectangleC2<R CGAL_CTAG>::ymax() const
 {
-  return  max().y();
+  return max().y();
 }
-
-
 
 template < class R >
 typename Iso_rectangleC2<R CGAL_CTAG>::Point_2
@@ -207,24 +206,16 @@ bounded_side(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
 {
   bool x_incr = (xmin() < p.x()) &&  (p.x() < xmax()),
        y_incr = (ymin() < p.y()) &&  (p.y() < ymax());
-  if( x_incr )
+  if (x_incr)
     {
-      if( y_incr )
-        {
+      if (y_incr)
           return ON_BOUNDED_SIDE;
-        }
-      if( (p.y() == ymin()) || (ymax() == p.y()) )
-        {
+      if ( (p.y() == ymin()) || (ymax() == p.y()) )
           return ON_BOUNDARY;
-        }
     }
-  if( (p.x() == xmin()) || (xmax() == p.x()) )
-    {
-      if( y_incr || (p.y() == ymin()) || (ymax() == p.y()) )
-        {
+  if ( (p.x() == xmin()) || (xmax() == p.x()) )
+      if ( y_incr || (p.y() == ymin()) || (ymax() == p.y()) )
           return ON_BOUNDARY;
-        }
-    }
 
   return ON_UNBOUNDED_SIDE;
 }
@@ -242,7 +233,8 @@ template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
-has_on_bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_bounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
+    const
 {
   return bounded_side(p) == ON_BOUNDED_SIDE;
 }
@@ -251,7 +243,8 @@ template < class R >
 inline
 bool
 Iso_rectangleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
+has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
+    const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
@@ -261,6 +254,7 @@ bool Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
 {
   return (xmin() == xmax()) || (ymin() ==ymax());
 }
+
 template < class R >
 inline
 Bbox_2 Iso_rectangleC2<R CGAL_CTAG>::bbox() const
@@ -273,14 +267,14 @@ template < class R >
 inline
 Iso_rectangleC2<R CGAL_CTAG>
 Iso_rectangleC2<R CGAL_CTAG>::
-transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+transform(const typename Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t)
+    const
 {
   // We need a precondition like this!!!
   // CGAL_kernel_precondition(t.is_axis_preserving());
   return Iso_rectangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
                              t.transform(vertex(2)));
 }
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEC2
 template < class R >
@@ -319,4 +313,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif
+#endif // CGAL_CARTESIAN_ISO_RECTANGLE_2_C

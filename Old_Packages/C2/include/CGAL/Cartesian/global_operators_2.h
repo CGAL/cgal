@@ -14,7 +14,7 @@
 // file          : include/CGAL/Cartesian/global_operators_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve Bronniman
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -23,9 +23,7 @@
 #ifndef CGAL_CARTESIAN_GLOBAL_OPERATORS_2_C
 #define CGAL_CARTESIAN_GLOBAL_OPERATORS_2_C
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #include <CGAL/Cartesian/redefine_names_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
