@@ -729,7 +729,7 @@ CORE_INLINE int RealBigInt::sgn() const
 
 // 31/05/2003 Joaquin Grech
 template<>
-CORE_INLINE std::string RealBigInt::toString(long prec, bool sci) const
+CORE_INLINE std::string RealBigInt::toString(long, bool) const
 { return ker.toString(); }
 
 /////////////////////////////////////////////////////////////
@@ -1297,7 +1297,7 @@ CORE_INLINE int RealBigRat::sgn() const
 
 // 31/05/2003 Joaquin Grech
 template<>
-CORE_INLINE std::string RealBigRat::toString(long prec, bool sci) const
+CORE_INLINE std::string RealBigRat::toString(long, bool) const
 { return ker.toString(); }
 
 //  cast operators
