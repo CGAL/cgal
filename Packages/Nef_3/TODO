@@ -1,9 +1,11 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Test newell code
+* Include the function polyhedron_3_to_nef_3 as a constructor of Nef_3 class.
+- Test newell code (implemented but not tested)
 - Change Partition to Union_find
-- Incorporate code from Facet_plane_3 into main file
+- Fix protected classes included in Nef_polyhedron_3.h from SNC_structure.h
+- Fix new compilation errors on SNC_OGL_visualizor.h when using gcc 3.0.4
 - Synthesizing volumes from SM representation
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces

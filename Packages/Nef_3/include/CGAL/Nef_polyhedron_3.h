@@ -1,3 +1,34 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: $
+// release_date  : $CGAL_Date: $
+//
+// file          : include/CGAL/Nef_3/Nef_polyhedron_3.h
+// package       : Nef_3
+// chapter       : 3D-Nef Polyhedra
+//
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
+//                 Miguel Granados <granados@mpi-sb.mpg.de>
+//                 Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// coordinator   : MPI Saarbruecken
+//
+// Nef polyhedron in the space
+// ============================================================================
+
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
 #include <CGAL/basic.h>
@@ -8,7 +39,7 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
-#include <CGAL/Nef_3/SNC_visualizor_OGL.h>
+//#include <CGAL/Nef_3/SNC_visualizor_OGL.h>
 
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
@@ -16,6 +47,9 @@
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 //#include <CGAL/Nef_3/SNC_SM_visualizor.h>
+
+#include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <list>
 
@@ -43,7 +77,7 @@ class Nef_polyhedron_3_rep : public Rep
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
-  typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
+  //typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
   typedef CGAL::SNC_SM_decorator<SNC_structure>        SM_decorator;
   typedef CGAL::SNC_SM_const_decorator<SNC_structure>  SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
@@ -78,6 +112,7 @@ static  T EK; // static extended kernel
   /*{\Mtypes 7}*/
   typedef Nef_polyhedron_3<T>    Self;
   typedef Handle_for< Nef_polyhedron_3_rep<T> > Base;
+  typedef typename T::Kernel     Kernel;
   typedef typename T::Point_3    Point_3;
   typedef typename T::Plane_3    Plane_3;
 
@@ -103,7 +138,7 @@ protected:
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
-  typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
+  //typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
@@ -268,12 +303,21 @@ public:
   Nef_polyhedron_3& operator=(const Nef_polyhedron_3<T>& N1)
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_3() {}
+  
+  typedef Polyhedron_3< Kernel> Polyhedron;
+  Nef_polyhedron_3( Polyhedron& P) {
+    //construct_from_polyhedron_3( P);
+    polyhedron_3_to_nef_3< Polyhedron, SNC_constructor>( P, ews() );
+
+  }
+  
+  void dump() { SNC_io_parser::dump( ews()); }
 
  protected:
   void clone_rep() { *this = Nef_polyhedron_3<T>(ews()); }
 
- public:
-  // WARNING: this method was protected
+  void construct_from_polyhedron_3(const Polyhedron& P);
+
   Nef_polyhedron_3(const SNC_structure& H, bool cloneit=true);
   /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
   underlying structure of |H| is copied into |\Mvar|.}*/

@@ -1,11 +1,83 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: $
+// release_date  : $CGAL_Date: $
+//
+// file          : include/CGAL/Nef_3/polyhedron_3_to_nef_3.h
+// package       : Nef_3
+// chapter       : 3D-Nef Polyhedra
+//
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
+//                 Miguel Granados <granados@mpi-sb.mpg.de>
+//                 Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// coordinator   : MPI Saarbruecken
+//
+// Constructor of a SNC structure from a Polyhedron
+// ============================================================================
 #ifndef POLYHEDRON_3_TO_NEF_3_H
 #define POLYHEDRON_3_TO_NEF_3_H
 
+#include <CGAL/Circulator_project.h>
+#include <CGAL/normal_vector_newell_3.h>
+
 #undef _DEBUG
 #define _DEBUG 5
-#include <CGAL/debug.h>
+#include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
+
+template < class Node, class Object>
+struct Proj_halfedge {
+  typedef Node                  argument_type;
+  typedef Object                result_type;
+  Object&       operator()( Node& x)       const { return x.vertex()->point();}
+  const Object& operator()( const Node& x) const { return x.vertex()->point();}
+};
+
+struct Facet_plane_3 {
+  template < class Facet_>
+  typename Facet_::Plane_3 operator()( Facet_& f) {
+    typedef Facet_                              Facet;
+    typedef typename Facet::Plane_3             Plane;
+    typedef Kernel_traits< Plane>               KernelTraits;
+    typedef typename KernelTraits::Kernel       Kernel;
+    typedef typename Kernel::Vector_3           Vector;
+    typedef typename Kernel::Direction_3        Direction;
+    typedef typename Facet::Halfedge_around_facet_const_circulator
+                                                Halfedge_circulator;
+    typedef typename Facet::Halfedge            Halfedge;
+    typedef typename Halfedge::Vertex           Vertex;
+    typedef typename Vertex::Point_3            Point;
+    typedef Proj_halfedge< Halfedge, const Point> Proj_halfedge_item;
+    typedef Circulator_project< Halfedge_circulator, Proj_halfedge_item,
+      const Point, const Point*> Circulator;
+    /* TODO: implement a better approach
+       typedef Project_vertex< Halfedge> Project_vertex;
+       typedef Project_point< Vertex> Project_point;
+       typedef Compose< Project_vertex, Project_point> Projector;
+       typedef Circulator_project< Halfedge_circulator, Projector> Circulator;
+    */
+    Circulator point_cir( f.facet_begin());
+    Vector plane_orthogonal_vector;
+    normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
+    return( Plane( *point_cir, Direction( plane_orthogonal_vector)));
+  }
+};
+
 
 template <class Polyhedron_, class SNC_constructor_>
 void polyhedron_3_to_nef_3(Polyhedron_& P,
@@ -24,6 +96,13 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
   typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
                                   
+  std::transform( P.facets_begin(), P.facets_end(),
+		  P.planes_begin(), Facet_plane_3());
+  /* determine the plane of polyhedron's facet */
+  /* CGAL::set_pretty_mode( std::cout);
+     std::copy( P.planes_begin(), P.planes_end(),
+       std::ostream_iterator<Plane>( std::cout, "\n")); */
+
   SNC_constructor C(S);
     
   typename Polyhedron::Vertex_iterator pvi;
@@ -33,7 +112,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
     S.point(nv) = pv.point();
     TRACEN("v "<<pv.point());
 
-#ifdef CGAL_USE_SM_OVERLAY
+#ifdef CGAL_P2NEF3_USE_SM_OVERLAY
     	list<Sphere_point> sp_list;
 	list<Sphere_segment> ss_list;
 	typename Polyhedron_3::Halfedge_around_vertex_const_circulator 
@@ -73,7 +152,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
 	O.create_from_segments(ss_list.begin(),ss_list.end());
 	O.simplify();
 
-#else //CGAL_USE_SM_OVERLAY
+#else // CGAL_P2NEF3_USE_SM_OVERLAY
 
     SM_decorator SM(nv);
     typename Polyhedron::Halfedge_around_vertex_const_circulator
@@ -177,7 +256,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
     SM.mark(fint) = true;
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();
-#endif // CGAL_USE_SM_OVERLAY
+#endif // CGAL_P2NEF3_USE_SM_OVERLAY
 	
     //SMIO::dump(nv);
 #ifdef SM_VISUALIZE

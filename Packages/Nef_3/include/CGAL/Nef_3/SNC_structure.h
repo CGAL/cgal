@@ -1,3 +1,33 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2002 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: $
+// release_date  : $CGAL_Date: $
+//
+// file          : include/CGAL/Nef_3/SNC_structure.h
+// package       : Nef_3
+// chapter       : 3D-Nef Polyhedra
+//
+// revision      : $Revision$
+// revision_date : $Date$
+//
+// author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
+//                 Miguel Granados <granados@mpi-sb.mpg.de>
+//                 Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// coordinator   : MPI Saarbruecken
+//
+// SNC_structure.h         the SNC class, global structure, allocation and
+// ============================================================================
 #ifndef CGAL_SNC_STRUCTURE_H
 #define CGAL_SNC_STRUCTURE_H
 
