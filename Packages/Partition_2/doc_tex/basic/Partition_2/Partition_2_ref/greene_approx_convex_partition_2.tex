@@ -43,10 +43,12 @@ counterclockwise-oriented polygon.
           the postcondition that the convex partition is valid, \ccc{Traits}
           must also be a model of ConvexPartitionIsValidTraits\_2%
           \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}. 
-    \item \ccc{OutputIterator::value_type} should be \ccc{Traits::Polygon_2}.
-    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
-          which should also be the type of the points stored in an object
-          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{OutputIterator::value_type} is equivalent to 
+          \ccc{Traits::Polygon_2}.
+    \item \ccc{InputIterator::value_type} is equivalent to 
+          \ccc{Traits::Point_2},
+          which should also be equivalent to the type of the points stored in 
+          an object of type \ccc{Traits::Polygon_2}.
 \end{enumerate}
 
 The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
