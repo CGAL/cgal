@@ -29,18 +29,6 @@
 #define CGAL_POLYHEDRON_TRAITS_3_H 1
 
 #include <CGAL/basic.h>
-// MS Visual C++ 6.0 does not work with the new design.
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_TWO
-#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
-#endif
-#endif
-
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#include <CGAL/Polyhedron_old/Polyhedron_default_traits_3.h>
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-#define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,6 +55,5 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 #endif // CGAL_POLYHEDRON_TRAITS_3_H //
 // EOF //

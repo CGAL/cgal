@@ -1,6 +1,19 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.32 (05 May 2003)
+
+     - Removed CGAL_USE_POLYHEDRON_DESIGN_ONE parts.
+     - Removed include/CGAL/Polyhedron_default_traits_3.h.
+     - Removed cgal_test and makefile from test and example directories.
+     - Incremental builder:
+       - Changed ABSOLUTE to ABSOLUTE_INDEXING.
+       - Changed RELATIVE to RELATIVE_INDEXING.
+       - Made add_vertex(), begin_facet(), and end_facet() return 
+         useful handles.
+       - Added test_facet() to check for valid facets before modifying.
+       - Added vertex( size_t i) to return Vertex_handle for index i.
+
 3.31 (10 Apr 2003)
 
      - Add missing "this->" spotted by g++ 3.4.

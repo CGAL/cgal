@@ -28,11 +28,6 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-
-// This is the test file for the new design. Skip new design test for 
-// disabled compilers.
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
-
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -123,7 +118,7 @@ Build_tetrahedron_2<HDS>:: operator()( HDS& target) {
         B.end_surface();
     }{
         Builder B( target, true);
-        B.begin_surface( 1, 3, 6, Builder::ABSOLUTE);
+        B.begin_surface( 1, 3, 6, Builder::ABSOLUTE_INDEXING);
         B.add_vertex( Point( 1, 0, 0));
         B.begin_facet();
         B.add_vertex_to_facet( 1);
@@ -949,16 +944,9 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_triangle( h));
     }
 }
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-
-
 
 int main() {
-// This is the test file for the new design. Skip new design test for 
-// disabled compilers.
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
     test_Polyhedron();
-#endif
     return 0;
 }
 // EOF //
