@@ -86,10 +86,14 @@ public:
 };
 
 template <class CK>
+struct Filtered_kernel_adaptor
+  : public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
+{};
+
+template <class CK>
 struct Filtered_kernel
-  : public Type_equality_wrapper<
-                Filtered_kernel_base< CK, Filtered_kernel<CK> >,
-                Filtered_kernel<CK> >
+  : public Type_equality_wrapper< Filtered_kernel_adaptor<CK>, 
+                                  Filtered_kernel<CK> >
 {};
 
 CGAL_END_NAMESPACE
