@@ -19,7 +19,7 @@ typedef CGAL::Quotient<int>                     NT;
 typedef CGAL::Cartesian<NT>                     K;
 typedef CGAL::Arr_segment_traits_2<K>           Traits;
 typedef Traits::Point_2                         Point_2;
-typedef Traits::X_curve_2                       X_curve_2;
+typedef Traits::X_monotone_curve_2                       X_monotone_curve_2;
 typedef Traits::Curve_2                         Curve_2;
 
 typedef CGAL::Bop_default_dcel<Traits>          Dcel;
@@ -51,7 +51,7 @@ int  main()
     cin >> x1 >> y1 >> x2 >> y2;
     
     Point_2 p1(x1,y2), p2(x2,y2);
-    curves.push_back(X_curve_2(p1, p2));
+    curves.push_back(X_monotone_curve_2(p1, p2));
   }
   
   pm1.insert(curves.begin(), curves.end());
@@ -63,7 +63,7 @@ int  main()
     cin >> x1 >> y1 >> x2 >> y2;
     
     Point_2 p1(x1,y2), p2(x2,y2);
-    curves.push_back(X_curve_2(p1, p2));
+    curves.push_back(X_monotone_curve_2(p1, p2));
   }
    
  pm2.insert(curves.begin(),curves.end());

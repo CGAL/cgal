@@ -67,7 +67,7 @@ public:
   typedef Change_notification_                        Change_notification;
   typedef typename Subdivision::Planar_map            Planar_map;
   typedef typename Subdivision::Traits                Traits;
-  typedef typename Traits::X_curve_2                  X_curve_2;  
+  typedef typename Traits::X_monotone_curve_2                  X_monotone_curve_2;  
   typedef typename Traits::Point_2                    Point_2;
 
   typedef Map_overlay_base<Subdivision, Change_notification>  Map_overlay_base;
@@ -390,7 +390,7 @@ public:
   //typedef typename Subdivision::Point_location_base    Point_location_base;
 
   typedef typename Subdivision::Traits                  Traits;
-  typedef typename Traits::X_curve_2                    X_curve_2;  
+  typedef typename Traits::X_monotone_curve_2                    X_monotone_curve_2;  
   typedef typename Traits::Point_2                      Point_2;
 
   typedef Map_overlay_base<Subdivision, Change_notification>  Map_overlay_base;

@@ -33,7 +33,7 @@ must provide the following types and operations.
 \ccNestedType{Subdivision}{
    The subdivision type.}
 
-\ccNestedType{X_curve_2}{
+\ccNestedType{X_monotone_curve_2}{
    curve type.}
 
 \ccNestedType{Point_2}{
@@ -68,7 +68,7 @@ The following three types have constant counterparts.
 and updates all pointers in the overlay components to refer 
 the suitable faces of the creators.}
 
-\ccMethod{void set_curve_attributes(const X_curve_2& cv, 
+\ccMethod{void set_curve_attributes(const X_monotone_curve_2& cv, 
    Halfedge_const_handle  h, bool first_creator);}
 {maintains the halfedge $h$ of a creator in the notifier 
    for future usage. The flag $first_creator$ indicates 

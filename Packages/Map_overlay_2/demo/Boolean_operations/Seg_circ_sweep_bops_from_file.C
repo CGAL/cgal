@@ -47,7 +47,7 @@ typedef Traits::Segment_2                       Segment;
 typedef Traits::Circle                          Circle;
 typedef Traits::Conic                           Conic;
 typedef Traits::Curve_2                         Curve; 
-typedef Traits::X_curve_2                       X_curve;
+typedef Traits::X_monotone_curve_2                       X_curve;
 
 typedef CGAL::Bop_default_dcel<Traits>          Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>        PM;

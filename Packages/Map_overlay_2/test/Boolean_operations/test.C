@@ -72,7 +72,7 @@ public:
   typedef CGAL::Arr_segment_traits_2<R>                 Traits;
 
   typedef Traits::Point_2                               Point;
-  typedef Traits::X_curve_2                             X_curve;
+  typedef Traits::X_monotone_curve_2                             X_curve;
   typedef Traits::Curve_2                               Curve;
 
   typedef CGAL::Polygon_traits_2<R>                     Polygon_traits;
@@ -304,7 +304,7 @@ private:
              e_iter != poly_iter->edges_end() && !found; ++e_iter){
             // *e_iter is CGAL Segment.
           Curve cv(*e_iter);
-          if (traits.curve_get_point_status(cv,*p_iter) == Traits::ON_CURVE)
+          if (traits.curve_compare_y_at_x(cv,*p_iter) == Traits::ON_CURVE)
             found=true;
         }
         if (found)
@@ -487,7 +487,7 @@ private:
         // end debugging. */
 
       return ((h_.curve() == halfedge.curve() || 
-               traits.curve_flip(h_.curve()) ==  halfedge.curve()) &&
+               traits.curve_opposite(h_.curve()) ==  halfedge.curve()) &&
               h_.source()->point() == halfedge.source()->point() &&
               h_.target()->point() == halfedge.target()->point());
     }

@@ -33,15 +33,15 @@
 
 \ccTypes
   \ccNestedType{Point_2}{same as \ccc{SweepLineTraits_2::Point_2}.}
-  \ccNestedType{X_curve_2}{same as \ccc{SweepLineTraits_2::X_curve_2}.}
-  \ccNestedType{Curve_2}{same as \ccc{SweepLineTraits_2::X_curve_2}.}
+  \ccNestedType{X_monotone_curve_2}{same as \ccc{SweepLineTraits_2::X_monotone_curve_2}.}
+  \ccNestedType{Curve_2}{same as \ccc{SweepLineTraits_2::X_monotone_curve_2}.}
 
 \ccOperations
 
 \ccCreationVariable{polygons_bops_traits}
 
 \ccMethod{
-   Point_2 calc_hitting_point(const X_curve_2& cv,const Point_2& p);}{
+   Point_2 calc_hitting_point(const X_monotone_curve_2& cv,const Point_2& p);}{
    Returns the hitting point of a vertical ray emanating from p 
    toward cv, and cv.}
 

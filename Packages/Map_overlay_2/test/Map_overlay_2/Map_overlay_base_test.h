@@ -26,7 +26,7 @@ protected:
   typedef typename Subdivision::Traits                  Traits;
   
   typedef typename Traits::Point_2                      Point;
-  typedef typename Traits::X_curve_2                    X_curve;
+  typedef typename Traits::X_monotone_curve_2                    X_curve;
   typedef typename Traits::Curve_2                      Curve;
   
   //typedef CGAL::Map_overlay_default_dcel<Traits>                Dcel;

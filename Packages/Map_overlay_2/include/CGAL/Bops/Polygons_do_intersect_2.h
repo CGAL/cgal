@@ -33,7 +33,7 @@ class Polygons_do_intersect_2
 {
   typedef Traits_       Traits;
   typedef typename Traits::Point_2           Point_2;
-  typedef typename Traits::X_curve_2         X_curve_2;
+  typedef typename Traits::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Traits::Curve_2           Curve_2;
   typedef Holes_split_dcel<Traits>           Dcel;
   typedef Planar_map_2<Dcel,Traits>          Planar_map;

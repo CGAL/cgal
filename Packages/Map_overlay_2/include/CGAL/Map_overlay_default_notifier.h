@@ -61,7 +61,7 @@ public:
   
   typedef typename Arrangement::Traits                  Traits;
   typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_curve_2                    X_curve_2;
+  typedef typename Traits::X_monotone_curve_2                    X_monotone_curve_2;
 
   typedef typename Arrangement::Planar_map            PM;
   typedef typename PM::Vertex_handle                  Pm_vertex_handle;
@@ -90,7 +90,7 @@ public:
   
   virtual ~Map_overlay_default_notifier() {}
 
-  void add_edge(const X_curve_2& cv, 
+  void add_edge(const X_monotone_curve_2& cv, 
                 Pm_halfedge_handle e, 
                 bool left_to_right, 
                 bool overlap = false)
@@ -235,8 +235,8 @@ public:
   
   void split_edge(Pm_halfedge_handle orig_edge, 
                   Pm_halfedge_handle new_edge, 
-                  const X_curve_2& c1, 
-                  const X_curve_2& c2)
+                  const X_monotone_curve_2& c1, 
+                  const X_monotone_curve_2& c2)
   {
 #ifdef CGAL_NOTF_DEBUG
     std::cout<<"is split_edge" << std::endl;
@@ -285,7 +285,7 @@ public:
   void add_hole(Face_handle in_face, Halfedge_handle new_hole) {}
 
 
-  const X_curve_2 &edge_support_curve(Halfedge_handle edge)
+  const X_monotone_curve_2 &edge_support_curve(Halfedge_handle edge)
   {
     return edge->curve();
   }
@@ -648,7 +648,7 @@ public:
   }
 
   /**** new functions ****/
-  void set_curve_attributes(const X_curve_2& cv, 
+  void set_curve_attributes(const X_monotone_curve_2& cv, 
                             Halfedge_const_handle orig_halfedge1_, 
                             bool first_halfedge_)
   {

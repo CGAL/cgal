@@ -42,8 +42,8 @@ public:
   typedef Arr_segment_traits_2<Kernel>  Base;
   
   typedef typename Base::Point_2        Point_2;
-  typedef typename Base::X_curve_2      X_curve_2;
-  typedef X_curve_2                     Curve_2;
+  typedef typename Base::X_monotone_curve_2      X_monotone_curve_2;
+  typedef X_monotone_curve_2                     Curve_2;
   
   typedef typename Kernel::Ray_2        Ray_2;   // a new type for this class.
   typedef typename Kernel::Direction_2  Direction_2;
@@ -52,7 +52,7 @@ public:
   
   // Obsolete, for backward compatibility
   typedef Point_2                       Point;
-  typedef X_curve_2                     X_curve;
+  typedef X_monotone_curve_2                     X_curve;
   typedef Curve_2                       Curve;
 
   //protected:
@@ -67,10 +67,10 @@ public:
   // cv. We consider the ray as a line since, it is given that the ray
   // hits cv, hence we don't have to calculate the whether p is
   // above/below cv.
-  Point_2 calc_hitting_point(const X_curve_2& cv, 
+  Point_2 calc_hitting_point(const X_monotone_curve_2& cv, 
                              const Point_2& p)
   {
-    Curve_point_status status = curve_get_point_status(cv,p); 
+    Curve_point_status status = curve_compare_y_at_x(cv,p); 
     
     // It is given that p is on cv range.
     CGAL_assertion(status != CURVE_NOT_IN_RANGE);

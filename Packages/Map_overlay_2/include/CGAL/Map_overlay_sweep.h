@@ -32,7 +32,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Map_overlay_base.h>
 #include <CGAL/Sweep_line_2_old/Sweep_curves_base_2.h>
-#include <CGAL/Sweep_line_2_old/Point_plus_handle.h>
+#include <CGAL/Map_overlay_2/Point_handle_plus.h>
 
 #include <vector>
 #include <list>
@@ -43,7 +43,7 @@ template <class PM_>
 class X_curve_plus_id_handle;
 
 template <class PM_>
-class Point_plus_handle;
+class Point_handle_plus;
 
 
 struct Map_overlay_sweep_utils { 
@@ -108,7 +108,7 @@ struct Map_overlay_sweep_utils {
       //return curve::operator==(cv);
       Traits traits;
       
-      return (id_ == cv.id() && traits.curve_is_same(*this, cv));
+      return (id_ == cv.id() && traits.curve_equal(*this, cv));
     }
     
     void  set_id(unsigned int i) { id_ = i; } 
@@ -138,7 +138,7 @@ class Map_overlay_sweep :
   public Map_overlay_base<PM_, Map_overlay_change_notification_>,
   public Sweep_curves_base_2<typename std::list<
     Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >::iterator,
-                         typename PM_::Traits, Point_plus_handle<PM_>, 
+                         typename PM_::Traits, Point_handle_plus<PM_>, 
                          Map_overlay_sweep_utils::X_curve_plus_id_handle<PM_> >
 {
 public:
@@ -147,7 +147,7 @@ public:
   //typedef std::list<typename
     //Map_overlay_sweep_utils::X_curve_plus_id_handle<PM> >::iterator
     //Curve_iterator;
-  typedef Point_plus_handle<PM>                  Point_plus;
+  typedef Point_handle_plus<PM>                  Point_plus;
   typedef Map_overlay_sweep_utils::X_curve_plus_id_handle<PM> X_curve_plus;
   typedef typename std::list<X_curve_plus>::iterator  Curve_iterator;
 
@@ -236,7 +236,7 @@ public:
       X_curve cv(h_iter->curve());
       if ((b = is_right(traits->curve_source(h_iter->curve()), 
                         traits->curve_target(h_iter->curve())) ))
-        cv = traits->curve_flip(h_iter->curve());
+        cv = traits->curve_opposite(h_iter->curve());
 
       Halfedge_const_handle  h = h_iter;
       
@@ -253,7 +253,7 @@ public:
       X_curve cv(h_iter->curve());
       if ((b = is_right(traits->curve_source(h_iter->curve()), 
                         traits->curve_target(h_iter->curve())) ))
-        cv = traits->curve_flip(h_iter->curve());
+        cv = traits->curve_opposite(h_iter->curve());
 
       Halfedge_const_handle  h = h_iter;
 
@@ -328,7 +328,7 @@ private:
       //X_curve cv(*cv_iter);
       //if (is_right(traits.curve_source(*cv_iter), 
       //             traits.curve_target(*cv_iter)) )
-      //  cv = traits.curve_flip(*cv_iter);
+      //  cv = traits.curve_opposite(*cv_iter);
       
 #ifdef  CGAL_SWEEP_LINE_DEBUG
       cout<< *cv_iter <<std::endl;
@@ -507,7 +507,7 @@ private:
       
 //        /*if (!traits.is_x_monotone(*cv_iter)) {
 //          X_curve_list x_monotone_subcurves;
-//          traits.make_x_monotone(*cv_iter, x_monotone_subcurves);
+//          traits.curve_make_x_monotone(*cv_iter, x_monotone_subcurves);
         
 //          #ifdef  CGAL_SWEEP_LINE_DEBUG
 //          std::cout<<"printing x-monotone parts"<<std::endl;
@@ -562,7 +562,7 @@ private:
       
 //        if (is_right(traits.curve_source(*cv_iter), 
 //                     traits.curve_target(*cv_iter)) )
-//          cv = traits.curve_flip(*cv_iter);
+//          cv = traits.curve_opposite(*cv_iter);
       
 //  #ifdef  CGAL_SWEEP_LINE_DEBUG
 //        cout<<cv<<std::endl;
@@ -747,11 +747,11 @@ private:
         xp1 = xp2;
       
       // for debugging.
-      //if (traits.curve_get_point_status(cv1.get_curve(), xp1) !=
+      //if (traits.curve_compare_y_at_x(cv1.get_curve(), xp1) !=
       // Traits::ON_CURVE)
       //  cout<<"The point "<<xp1<<" is not on the curve "
       // <<cv1.get_curve()<<std::endl;
-      //if (traits.curve_get_point_status(cv2.get_curve(),
+      //if (traits.curve_compare_y_at_x(cv2.get_curve(),
       // xp1) != Traits::ON_CURVE)
       //  cout<<"The point "<<xp1<<" is not on the curve "<<cv2.get_curve()
       // <<std::endl;
@@ -778,10 +778,10 @@ private:
           // point before).
           for ( Curve_node_iterator cv_iter = xp_event->second.curves_begin();
           cv_iter != xp_event->second.curves_end(); cv_iter++){
-            if (traits.curve_is_same(cv_iter->get_curve(), cv1.get_curve()) )
+            if (traits.curve_equal(cv_iter->get_curve(), cv1.get_curve()) )
             // fix later : change it to compare the curve nodes it self!
               xp_cv1_in_queue = true;
-            if (traits.curve_is_same(cv_iter->get_curve(), cv2.get_curve()) )
+            if (traits.curve_equal(cv_iter->get_curve(), cv2.get_curve()) )
               xp_cv2_in_queue = true;
           }
           
@@ -888,7 +888,7 @@ private:
 #endif
         if (cv_iter->get_curve().flipped()){
           //cout<<"update subdivision: curve is flipped "<<sub_cv<<endl;
-          sub_cv = traits->curve_flip(sub_cv);
+          sub_cv = traits->curve_opposite(sub_cv);
           //cout<<sub_cv<<endl;
         }
         
@@ -1018,11 +1018,11 @@ private:
     //cout<<"cv="<<cv<<endl;
     //cout<<"h->curve()="<<h->curve()<<endl;
     
-    //if (h->curve() == cv || h->curve() == traits.curve_flip(cv))
+    //if (h->curve() == cv || h->curve() == traits.curve_opposite(cv))
     //  return h;
 
-    if (traits->curve_is_same(h->curve(),cv) || 
-        traits->curve_is_same(h->curve(),traits->curve_flip(cv)) )
+    if (traits->curve_equal(h->curve(),cv) || 
+        traits->curve_equal(h->curve(),traits->curve_opposite(cv)) )
       return h;
      
     Vertex_handle v;
@@ -1036,11 +1036,11 @@ private:
 
     do {
       //cout<<"circ->curve()="<<circ->curve()<<endl;
-      if (traits->curve_is_same(circ->curve(),cv) || 
-          traits->curve_is_same(circ->curve(),traits->curve_flip(cv)))
+      if (traits->curve_equal(circ->curve(),cv) || 
+          traits->curve_equal(circ->curve(),traits->curve_opposite(cv)))
         return Halfedge_handle(circ);
       
-      //if (circ->curve() == cv || circ->curve() == traits.curve_flip(cv))
+      //if (circ->curve() == cv || circ->curve() == traits.curve_opposite(cv))
       //  return Halfedge_handle(circ);
       
     } while (++circ != v->incident_halfedges());
@@ -1311,7 +1311,7 @@ private:
         << *points_iter<<std::endl;
 #endif
         // debugging.
-        if (traits.curve_get_point_status(cv, *points_iter) !=
+        if (traits.curve_compare_y_at_x(cv, *points_iter) !=
         Traits::ON_CURVE){
           cout<<"The point "<<*points_iter<<" is not on the curve "<<cv
           <<std::endl;
@@ -1540,7 +1540,7 @@ private:
           << *points_iter<<std::endl;
           
           // debugging.
-          //if (traits.curve_get_point_status(cv, *points_iter) !=
+          //if (traits.curve_compare_y_at_x(cv, *points_iter) !=
           //Traits::ON_CURVE){
           //  cout<<"The point "<<*points_iter<<" is not on the curve "<<cv
           <<std::endl;

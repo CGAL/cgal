@@ -36,7 +36,7 @@ typedef CGAL::Cartesian<NT>                     R;
 typedef CGAL::Arr_segment_traits_2<R>           Traits;
 
 typedef Traits::Point_2                         Point;
-typedef Traits::X_curve_2                       X_curve;
+typedef Traits::X_monotone_curve_2                       X_curve;
 typedef Traits::Curve_2                         Curve;
 
 typedef CGAL::Map_overlay_default_dcel<Traits>  Dcel;

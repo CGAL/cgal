@@ -15,7 +15,7 @@ typedef CGAL::Quotient<int>                             NT;
 typedef CGAL::Cartesian<NT>                             K;
 typedef CGAL::Arr_polyline_traits<K>                    Traits;
 typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_curve_2                               X_curve_2;
+typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
 typedef Traits::Curve_2                                 Curve_2;
 
 typedef CGAL::Map_overlay_default_dcel<Traits>          Dcel;

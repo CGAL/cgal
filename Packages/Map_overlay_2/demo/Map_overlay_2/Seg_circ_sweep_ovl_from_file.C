@@ -44,7 +44,7 @@ typedef CGAL::Arr_segment_circle_traits<NT>     Traits;
 
 typedef Traits::Point_2                         Point;
 typedef Traits::Curve_2                         Curve; 
-typedef Traits::X_curve_2                       X_curve;
+typedef Traits::X_monotone_curve_2                       X_curve;
 typedef Traits::Segment                         Segment;
 typedef Traits::Circle                          Circle;
 typedef Traits::Conic                           Conic;
