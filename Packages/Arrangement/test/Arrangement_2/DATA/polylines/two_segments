@@ -1,5 +1,5 @@
 # Arr_polyline_traits Test Data File
-# Simple intersection
+# Partial Overlap
 #
 # No. of polylines:
 2 
@@ -7,23 +7,24 @@
 # No. of points:
 2
 # Points:
-0 0   1 1
+0 0  4 4
 # No. of points:
 2
-# points:
-0 1   1 0
+# Points:
+2 2  6 6 
 # No. of test points:
-3
+4
 # Test points (coordinates followed by expected type):
 #             (1 VERTEX, 2 EDGE, 3 FACE, 4 UNBOUNDED_FACE)
-1/2 1/2    1
-3/4 3/4    2
-0 5/2    6
+10   10    6
+ 1    1    2
+ 3    3    2
+ 5    5    2
 # No. of expected vertices :
-5
-# No. of expected edges:
 4
+# No. of expected edges:
+3
 # No. of expected faces    :
 1
 # No. of expected overlaps :
-0
+1

@@ -1,28 +1,24 @@
 # Arr_polyline_traits Test Data File
-# Simple intersection
+# Vertical Segment
 #
 # No. of polylines:
-2 
+1 
 # Polylines:
 # No. of points:
 2
 # Points:
-0 0   1 1
-# No. of points:
-2
-# points:
-0 1   1 0
+0 -1  0 1
 # No. of test points:
 3
 # Test points (coordinates followed by expected type):
 #             (1 VERTEX, 2 EDGE, 3 FACE, 4 UNBOUNDED_FACE)
-1/2 1/2    1
-3/4 3/4    2
-0 5/2    6
-# No. of expected vertices :
-5
+0 0    2
+0 11/10  6
+0 -11/10 6
+# No. of expected points :
+2
 # No. of expected edges:
-4
+1
 # No. of expected faces    :
 1
 # No. of expected overlaps :
