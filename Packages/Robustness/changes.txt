@@ -1,3 +1,6 @@
+1.16    (17 May 2003) [af]
+- Replaced Interval_base::unsafe_comparison with Interval_nt<false>::unsafe_comparison
+
 1.15    (12 April 2003)
 - Replace <strstream> by <sstream>.
 
