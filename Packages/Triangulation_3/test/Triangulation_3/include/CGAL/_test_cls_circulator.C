@@ -92,8 +92,8 @@ _test_circulator( const Triangulation &T )
 //       } while (cc != cc0);
 //     }
 
-  std::set<Cell*, less<Cell*> > cells ;
-  std::set<Vertex*, less<Vertex*> > vertices ;
+  std::set<Cell*, std::less<Cell*> > cells ;
+  std::set<Vertex*, std::less<Vertex*> > vertices ;
 
   Vertex_iterator vit;
   for (vit=T.all_vertices_begin(); vit!=T.vertices_end() ; vit++) {
