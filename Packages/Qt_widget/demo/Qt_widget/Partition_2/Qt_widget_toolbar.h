@@ -40,9 +40,9 @@
 #include <qbuttongroup.h>
 
 typedef CGAL::Cartesian<CGAL::MP_Float>     Rp;
-typedef CGAL::Partition_traits_2<Rp>			  Traits;
+typedef CGAL::Partition_traits_2<Rp>        Traits;
 typedef Traits::Point_2                     Point_2;
-typedef Traits::Polygon_2                   Polygon_2;
+typedef Traits::Polygon_2                   Cgal_Polygon;
 
 
 namespace CGAL {
@@ -67,7 +67,7 @@ private:
   QButtonGroup   *button_group;
   int		 nr_of_buttons;
 	
-  CGAL::Qt_widget_get_simple_polygon<Polygon_2> 
+  CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon>
                  getsimplebut;
 };//end class
 
