@@ -3,7 +3,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Sweep_2.h>
+#include <CGAL/Sweep_line_2.h>
 #include <iostream>
 #include <vector>
 
@@ -14,7 +14,7 @@ typedef Traits::Point_2                                 Point_2;
 typedef Traits::Curve_2                                 Curve_2;
 typedef std::list<Curve_2>                              CurveList;
 typedef CurveList::iterator                             CurveListIter;
-typedef CGAL::Sweep_2<CurveListIter, Traits>            Sweep_line;
+typedef CGAL::Sweep_line_2<CurveListIter, Traits>       Sweep_line;
 int main()
 {
   CurveList  segments;
