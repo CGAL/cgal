@@ -121,6 +121,52 @@ public:
   typedef Construct_vertex<Self> Construct_vertex_d;
 
 
+ template <typename K>
+  class Construct_min_vertex
+  {    
+    typedef typename K::Point_d Point_d;
+    typedef typename K::Iso_box_d Iso_box_d;
+  public:
+    typedef Point_d result_type;
+    typedef Arity_tag< 1 > Arity;
+
+    Point_d operator()(const Iso_box_d&  b)
+    {
+      return b.min();
+    }
+  };
+  typedef Construct_min_vertex<Self> Construct_min_vertex_d;
+
+  Construct_min_vertex_d
+  construct_min_vertex_d_object() const
+  {
+    return Construct_min_vertex_d();
+  }
+
+
+ template <typename K>
+  class Construct_max_vertex
+  {    
+    typedef typename K::Point_d Point_d;
+    typedef typename K::Iso_box_d Iso_box_d;
+  public:
+    typedef Point_d result_type;
+    typedef Arity_tag< 1 > Arity;
+
+    Point_d operator()(const Iso_box_d&  b)
+    {
+      return b.max();
+    }
+  };
+  typedef Construct_max_vertex<Self> Construct_max_vertex_d;
+
+  Construct_max_vertex_d
+  construct_max_vertex_d_object() const
+  {
+    return Construct_max_vertex_d();
+  }
+
+
   typedef Construct_cartesian_const_iterator<Self> 
                            Construct_cartesian_const_iterator_d;
 
