@@ -26,11 +26,9 @@ Installation of the Supporting Tools:
      and recompile your flex parser from sources.
 
 
-(2)  The scripts cc_patch_anchor_filter, cc_patch_anchor_pages, 
-     cc_remove_unwanted_links, and cc_patch_anchor_toc_index are Perl 
-     scripts. The first line in these scripts might need adaption to 
-     where the Perl interpreter is located. These changes need to be done 
-     before installing these scripts.
+(2)  The script cc_remove_unwanted_links is a Perl scripts. The first line
+     in this script might need adaption to where the Perl interpreter is 
+     located. This change needs to be done before installing this script.
 
 
 (3)  Configuring the installation and the use of the tools:
@@ -63,7 +61,7 @@ Installation of the Supporting Tools:
 	  The tools expect the following environment variables to be set:
 
 	  - LATEX_CONV_CONFIG
-	      The same variable is used in the cc_manual_to_html script.
+	      The same variable is used in the latex_to_html script.
 
 
 	  - LATEX_CONV_HEADER
@@ -84,7 +82,7 @@ Installation of the Supporting Tools:
               to present date, author, title, and manual release number in
               the manual header and footer information. They are not 
               necessarily supposed to be set in the environment and
-              reasonable defaults are prepared, see cc_manual_to_html.
+              reasonable defaults are prepared, see latex_to_html.
 
           An example setting for the Gnu g++ and the C-shell could look like
           the following example. Note that the installation on different
@@ -118,7 +116,7 @@ Installation of the Supporting Tools:
           edit are:
 
           - Makefile
-          - cc_manual_to_html
+          - latex_to_html
           - cc_check
 
 
@@ -161,7 +159,7 @@ Installation of the Supporting Tools:
 
 (8)  Demo Example for the -extended Option of the Converter:
 
-     Another test is provided for the new cc_manual_to_html capabilities
+     Another test is provided for the new latex_to_html capabilities
      to convert a manual using multiple directories. This is the example
      mentioned at the end of the manual. It is located in the subdirectory
      `test_html/' and started with the script `./convert', which is located

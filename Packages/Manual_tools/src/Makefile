@@ -19,8 +19,7 @@
 # Path to the configuration files of the latex_converter:
 # Used during installation to copy config files and compiled
 # into the cc_extract_html program as default config path.
-# The same variable is used in the cc_manual_to_html and
-# latex_to_html scripts.
+# The same variable is used in the latex_to_html script.
 # LATEX_CONV_CONFIG = ${PUBLIC}/CGAL/Tools/latex_converter_config
 
 # Path where to copy/move the executables during installation:
@@ -64,18 +63,11 @@ PROGRAM_FILES =		cc_extract			\
 			cc_extract_html			\
 	        	cc_extract_images		\
 			cc_index_link                   \
-			cc_index_sort
-#			cc_unique
 
 # Files that will be copied into LATEX_CONV_BIN upon installation:
 SCRIPT_FILES  = 	cc_check			\
-			cc_manual_to_html		\
 			latex_to_html			\
 			cc_extract_include		\
-			cc_patch_anchor_pages		\
-			cc_patch_anchor_index		\
-			cc_patch_anchor_toc_index	\
-			cc_patch_anchor_filter          \
                         cc_remove_unwanted_links
 
 # Files that will be copied into LATEX_CONV_CONFIG upon installation:
@@ -200,17 +192,17 @@ pathinstall:
 	test -d ${LATEX_CONV_CONFIG}/ref_pages|| mkdir ${LATEX_CONV_CONFIG}/ref_pages
 
 gifinstall:
-	cp ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
+	install ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
 
 refinstall:
-	cp ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
+	install ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
 
 cpinstall:
-	cp ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
-	cp ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
+	install ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
+	install ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
 
 mvinstall: ${PROGRAM_FILES}
-	cp ${PROGRAM_FILES} ${LATEX_CONV_BIN}
+	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}
 
 install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 
