@@ -33,10 +33,6 @@
 #include <list>
 #include <map>
 
-/* Define an empty macro with parameter
-   Used by create_makefile */
-//#define CGAL_MOC_FROM(filename)
-
 namespace CGAL {
 
 class Qt_widget_tool;

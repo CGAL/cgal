@@ -234,7 +234,7 @@ private:
   Constrained_triangulation ct;
 };
 
-// CGAL_MOC_FROM("constrained.C")
+// moc_source_file : constrained.C
 #include "constrained.moc"
 
 int
