@@ -161,6 +161,7 @@ public:
 
   typedef Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_ds_vertex_iterator_2<Tds> Vertex_iterator;
+  typedef Triangulation_ds_iterator_base_2<Tds>::Face Face;
 
 private :
   int index;
@@ -223,6 +224,7 @@ public:
 
   typedef Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_ds_edge_iterator_2<Tds> Edge_iterator;
+  typedef Triangulation_ds_iterator_base_2<Tds>::Face Face;
 
 private:
 int index;
