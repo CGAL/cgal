@@ -46,35 +46,20 @@ public:
   typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
   typedef T                             Traits;
 
-  /* std::ostream & operator<<(CGAL::Window_stream &W, const Internal_point &p)
-{
-  
-
-
-  typedef Curve_2::const_iterator Points_iterator;
-  
-  os << cv.size() << std::endl;
-  for (Points_iterator points_iter = cv.begin(); 
-       points_iter != cv.end(); points_iter++)
-    os << " " << *points_iter;
-
-  return W;
-  }*/
-
 private:
   struct Internal_point {
      Point_2 x_part;
      Point_2 y_part;
 
 
-    /*     Internal_point &
+    Internal_point &
      operator=(const Internal_point &other)
     {
       x_part = other.x_part;
       y_part = other.y_part;
 
-      return(this);
-      }*/
+      return(*this);
+    }
 
     Internal_point() // no real value - just to allow construction of LER
       : x_part(Point_2(0,0)), y_part(Point_2(0,0)) {}
@@ -593,6 +578,7 @@ public:
 template<class Ptr>
 struct Delete {
   void operator()(Ptr ptr)const {
+    
     delete(ptr);
   }
 };
@@ -673,10 +659,6 @@ template<class T>
 bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 {
-  /* // check that the point is inside the bounding box 
-  if(bbox_p.has_on_unbounded_side(_p)) {
-    return(false);
-    }*/
   // check that the point is not already inserted
   Point_data po(_p);
   typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
@@ -816,10 +798,6 @@ bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 					 Point_type i_type)
 {
-  /* // check that the point is inside the bounding box 
-  if((i_type == REG) && bbox_p.has_on_unbounded_side(_p)) {
-    return false;
-    }*/
   // check that the point is not already inserted
   Point_data po(_p);
   typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
@@ -882,8 +860,8 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 	    x_sorted.end(), 
 	    std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
-                               iter2,iter3,first_iter,
-                               beyond = Point_data_list.end();
+    iter2,iter3,first_iter,
+    beyond = Point_data_list.end();
   int points_removed = 0, 
       size = Point_data_list.size();
 
@@ -898,12 +876,11 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 
   while(size - 4 > points_removed && iter3 != Point_data_list.end()) {
     if(less_yx(*iter1, *iter2) && larger_yx(*iter2, *iter3)) {
-
       check_for_larger((*iter1)->p, bl_p, (*iter3)->p, (*iter2)->p);
       tent(*iter1,*iter2,*iter3);
       ++points_removed;
       Point_data_list.erase(iter2);
-      if(iter1 != first_iter) { // move back
+      if(iter1 != first_iter) {
         iter2 = iter1;
         --iter1;
         get_prev_for_bot(iter1);
@@ -951,7 +928,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
       check_for_larger((*iter1)->p,tr_p, (*iter3)->p,(*iter2)->p);
       ++points_removed;
       Point_data_list.erase(iter2);
-      if(iter1 != first_iter) { // move back
+      if(iter1 != first_iter) {
         iter2 = iter1;
         --iter1;
         get_prev_for_top(iter1);
@@ -980,7 +957,8 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
-  int points_removed = 0,size = Point_data_list.size();
+  int points_removed = 0,
+      size = Point_data_list.size();
 
   get_next_for_left(iter1,beyond);
   first_iter = iter1;
@@ -996,7 +974,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
       check_for_larger(bl_p, (*iter1)->p, (*iter2)->p, (*iter3)->p);
       ++points_removed;
       Point_data_list.erase(iter2);
-      if(iter1 != first_iter) { // move back
+      if(iter1 != first_iter) {
         iter2 = iter1;
         --iter1;
         get_prev_for_left(iter1);
