@@ -12,10 +12,11 @@ public Base_traits_test<Traits_class, Number_type>
 {
  public:
   typedef Number_type  NT;
-  typedef typename Traits_class::Point     Point;
-  typedef typename Traits_class::X_curve   X_curve;
-  typedef typename Traits_class::Curve     Curve;
-  typedef typename Traits_class::Conic     Conic;
+
+  typedef typename Traits_class::Point_2        Point;
+  typedef typename Traits_class::X_curve_2      X_curve;
+  typedef typename Traits_class::Curve_2        Curve;
+  typedef typename Traits_class::Curve_2        Conic;
 
  public:
   
@@ -29,13 +30,13 @@ public Base_traits_test<Traits_class, Number_type>
   {}
 
   // Read a curve.
-  virtual void read_curve (std::ifstream& is, Curve& cv);
+  virtual void read_curve (std::ifstream & is, Curve & cv);
   
   // Test the make_x_monotone function.
-  virtual bool make_x_monotone_wrapper (std::istrstream& str_line);
+  virtual bool make_x_monotone_wrapper (std::istringstream& str_line);
   
   // Test the curve_split function.
-  virtual bool curve_split_wrapper (std::istrstream& str_line);
+  virtual bool curve_split_wrapper (std::istringstream& str_line);
 };
 
 //---------------------------------------------------------------------
@@ -43,13 +44,14 @@ public Base_traits_test<Traits_class, Number_type>
 //
 template <class Traits_class, class Number_type>
 void Conic_traits_test<Traits_class, Number_type>::
-read_curve (std::ifstream& is, Curve& cv)
+read_curve (std::ifstream & is, Curve & cv)
 {
   // Read a line from the input file.
   char one_line[128];
 
   skip_comments (is, one_line);
-  std::istrstream str_line( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream str_line (stringvalues, std::istringstream::in);
 
   // Get the arc type.
   char  type;
@@ -180,7 +182,7 @@ read_curve (std::ifstream& is, Curve& cv)
 //
 template<class Traits_class, class Number_type>
 bool Conic_traits_test<Traits_class, Number_type>::
-make_x_monotone_wrapper (std::istrstream& str_line)
+make_x_monotone_wrapper (std::istringstream& str_line)
 {
   // Read the inputs.
   int        cv_index;
@@ -219,7 +221,7 @@ make_x_monotone_wrapper (std::istrstream& str_line)
 //
 template<class Traits_class, class Number_type>
 bool Conic_traits_test<Traits_class, Number_type>::
-curve_split_wrapper (std::istrstream& str_line)
+curve_split_wrapper (std::istringstream& str_line)
 {
   // Read the inputs.
   int     cv_index, pt_index;

@@ -1,12 +1,12 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Quotient.h>
 
 #include "include/Segment_traits_test.h"
 
 typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;
-typedef CGAL::Arr_segment_exact_traits<R>              Traits;
+typedef CGAL::Arr_segment_traits_2<R>                  Traits;
 
 int main(int argc, char * argv[])
 {

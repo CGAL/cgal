@@ -8,10 +8,10 @@ public:
   typedef typename Traits_class::X_curve_2      X_curve;
   typedef typename Traits_class::Curve_2        Curve;
 public:
-  Segment_traits_test( int argc, char** argv );
-  virtual void read_curve( std::ifstream& is, Curve& cv );
-  virtual bool make_x_monotone_wrapper( std::istrstream& strLine );
-  virtual bool curve_split_wrapper( std::istrstream& strLine );
+  Segment_traits_test( int argc, char ** argv );
+  virtual void read_curve( std::ifstream & is, Curve & cv );
+  virtual bool make_x_monotone_wrapper( std::istringstream & strLine );
+  virtual bool curve_split_wrapper( std::istringstream & strLine );
   ~Segment_traits_test();
 };
 
@@ -39,15 +39,18 @@ Segment_traits_test< Traits_class, Number_type >::
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 void Segment_traits_test< Traits_class, Number_type >::
-read_curve( std::ifstream& is, Curve& cv ){
+read_curve( std::ifstream & is, Curve & cv )
+{
   char one_line[128];
   NT x1,y1, x2, y2;
 
   skip_comments( is, one_line );
-  std::istrstream strLine( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream strLine(stringvalues, std::istringstream::in);
   strLine >> x1 >> y1; 
   skip_comments( is, one_line );
-  std::istrstream strLine2( one_line, 128 );
+  std::string stringvalues2(one_line);
+  std::istringstream strLine2(stringvalues, std::istringstream::in);
   strLine2 >> x2 >> y2;
   cv = Curve( Point( x1,y1 ), Point( x2, y2 ) );
 }
@@ -61,7 +64,7 @@ read_curve( std::ifstream& is, Curve& cv ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Segment_traits_test< Traits_class, Number_type >::
-make_x_monotone_wrapper( std::istrstream & /* strLine */){
+make_x_monotone_wrapper( std::istringstream & /* strLine */){
   std::cout << "Test: make_x_monotone - nothing to do in segment case" << std::endl;
   std::cout << "Was successful" << std::endl;
   return true;
@@ -77,7 +80,7 @@ make_x_monotone_wrapper( std::istrstream & /* strLine */){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Segment_traits_test< Traits_class, Number_type >::
-curve_split_wrapper( std::istrstream& strLine ){
+curve_split_wrapper( std::istringstream& strLine ){
   int index1, index2;
   X_curve cv1, cv2;
 

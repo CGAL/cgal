@@ -1,19 +1,22 @@
 #include <iostream>
 #include <fstream>
-#include <strstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
+#include <CGAL/tags.h>
+
 template< class T >
-bool print_was_successful_or_not(  T& exp_answer, 
-                                   T& real_answer );
-void   skip_comments(              std::ifstream& is, 
-                                   char* one_line );
-std::string remove_blanks(         char* str );
+bool print_was_successful_or_not(  T & exp_answer, T & real_answer );
+void skip_comments( std::ifstream & is, char * one_line );
+std::string remove_blanks( char * str );
 
 template< class Traits_class, class Number_type >
 class Base_traits_test {
 public:
+
+  typedef typename Traits_class::Has_left_category      Has_left_category;
+    
   typedef Number_type  NT;
   typedef typename Traits_class::Point     Point;
   typedef typename Traits_class::X_curve   X_curve;
@@ -28,30 +31,41 @@ protected:
   virtual void read_curve( std::ifstream& is, Curve& cv ) = 0;
   void collect_data( std::ifstream& is );
   bool perform_test( std::ifstream& is );
-  bool compare_x_y_wrapper(std::istrstream & strLine,
+  bool compare_x_y_wrapper(std::istringstream & strLine,
                            std::string & strCommand );
-  bool curve_is_vertical_wrapper( std::istrstream& strLine );
-  bool curve_is_in_x_range_wrapper( std::istrstream& strLine );
-  bool curve_compare_at_x_smth_wrapper( std::istrstream& strLine, 
+  bool curve_is_vertical_wrapper( std::istringstream& strLine );
+  bool curve_is_in_x_range_wrapper( std::istringstream& strLine );
+  bool curve_compare_at_x_smth_wrapper( std::istringstream& strLine, 
                                         std::string& strCommand  );
-  bool curve_get_point_status_wrapper( std::istrstream& strLine );
-  bool curve_is_between_cw_wrapper( std::istrstream& strLine );
-  bool curve_is_same_wrapper( std::istrstream& strLine );
-  bool curve_src_trg_wrapper( std::istrstream & strLine,
+  bool curve_get_point_status_wrapper( std::istringstream& strLine );
+  bool curve_is_between_cw_wrapper( std::istringstream& strLine );
+  bool curve_is_same_wrapper( std::istringstream& strLine );
+  bool curve_src_trg_wrapper( std::istringstream & strLine,
                               std::string & strCommand );
-  bool point_to_lr_wrapper( std::istrstream & strLine,
+  bool point_to_lr_wrapper( std::istringstream & strLine,
                             std::string & strCommand );
-  bool is_x_monotone_wrapper( std::istrstream& strLine );
-  virtual bool make_x_monotone_wrapper( std::istrstream& strLine ) = 0;
-  virtual bool curve_split_wrapper( std::istrstream& strLine ) = 0;
-  bool point_reflect_in_x_and_y_wrapper( std::istrstream& strLine );
-  bool curve_reflect_in_x_and_y_wrapper( std::istrstream& strLine );
-  bool do_intersect_to_right_wrapper( std::istrstream& strLine );
-  bool nearest_intersection_to_right_wrapper( std::istrstream& strLine );
-  bool curves_overlap_wrapper( std::istrstream& strLine );
+  bool is_x_monotone_wrapper( std::istringstream& strLine );
+  virtual bool make_x_monotone_wrapper( std::istringstream& strLine ) = 0;
+  virtual bool curve_split_wrapper( std::istringstream& strLine ) = 0;
 
-  bool get_expected_boolean( std::istrstream& strLine );
-  int  get_expected_enum( std::istrstream& strLine );
+  bool point_reflect_in_x_and_y_wrapper(std::istringstream& strLine);
+  bool point_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                            CGAL::Tag_true);
+  bool point_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                            CGAL::Tag_false);
+
+  bool curve_reflect_in_x_and_y_wrapper(std::istringstream& strLine);
+  bool curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                            CGAL::Tag_true);
+  bool curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                            CGAL::Tag_false);
+
+  bool do_intersect_to_right_wrapper( std::istringstream& strLine );
+  bool nearest_intersection_to_right_wrapper( std::istringstream& strLine );
+  bool curves_overlap_wrapper( std::istringstream& strLine );
+
+  bool get_expected_boolean( std::istringstream& strLine );
+  int  get_expected_enum( std::istringstream& strLine );
   bool translate_boolean( std::string& strValue );
   int  translate_enumerator( std::string& strValue );
 
@@ -120,7 +134,8 @@ collect_data( std::ifstream& is )
   int i;
 
   skip_comments( is, one_line );
-  std::istrstream strLine( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream strLine(stringvalues, std::istringstream::in);
   strLine >> n_curves;
   for( i = 0; i < n_curves; i++ ) {
     Curve cv;
@@ -128,11 +143,13 @@ collect_data( std::ifstream& is )
     all_curves_vec.push_back( cv );
   }
   skip_comments( is, one_line );
-  std::istrstream strLine2( one_line, 128 );
+  std::string stringvalues2(one_line);
+  std::istringstream strLine2(stringvalues2, std::istringstream::in);
   strLine2 >> n_points;
   for( i = 0; i < n_points; i++ ) {
     skip_comments( is, one_line );
-    std::istrstream strLine( one_line, 128 );
+    std::string stringvalues(one_line);
+    std::istringstream strLine(stringvalues, std::istringstream::in);
     strLine >> x >> y;
     all_points_vec.push_back( Point( x, y ) );
   } 
@@ -154,7 +171,8 @@ perform_test( std::ifstream& is )
   while( !is.eof() ) {
     buff[0] = '\0';
     skip_comments( is, one_line );
-    std::istrstream strLine( one_line, 128 );
+    std::string stringvalues(one_line);
+    std::istringstream strLine(stringvalues, std::istringstream::in);
     strLine.getline( buff, 128, ' ' );
     std::string strCommand( buff );
     if( strCommand == "compare_x" || strCommand == "compare_y" ) {
@@ -222,7 +240,7 @@ perform_test( std::ifstream& is )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-compare_x_y_wrapper( std::istrstream& strLine, std::string& strCommand )
+compare_x_y_wrapper( std::istringstream& strLine, std::string& strCommand )
 {
   int index1, index2, exp_answer, real_answer;
 
@@ -251,7 +269,7 @@ compare_x_y_wrapper( std::istrstream& strLine, std::string& strCommand )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_vertical_wrapper( std::istrstream& strLine )
+curve_is_vertical_wrapper( std::istringstream& strLine )
 {
   int index;
   bool exp_answer, real_answer;
@@ -278,7 +296,7 @@ curve_is_vertical_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_in_x_range_wrapper( std::istrstream& strLine )
+curve_is_in_x_range_wrapper( std::istringstream& strLine )
 {
   int index1, index2;
   bool exp_answer, real_answer;
@@ -309,7 +327,7 @@ curve_is_in_x_range_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_compare_at_x_smth_wrapper( std::istrstream& strLine, 
+curve_compare_at_x_smth_wrapper( std::istringstream& strLine, 
                                  std::string& strCommand  )
 {
   int index1, index2, index3, exp_answer, real_answer;
@@ -374,7 +392,7 @@ curve_compare_at_x_smth_wrapper( std::istrstream& strLine,
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_get_point_status_wrapper( std::istrstream& strLine )
+curve_get_point_status_wrapper( std::istringstream& strLine )
 {
   int index1, index2, exp_answer, real_answer;
 
@@ -402,7 +420,7 @@ curve_get_point_status_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_between_cw_wrapper( std::istrstream& strLine )
+curve_is_between_cw_wrapper( std::istringstream& strLine )
 {
   int index1, index2, index3, index4;
   bool exp_answer, real_answer;
@@ -435,7 +453,7 @@ curve_is_between_cw_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_is_same_wrapper( std::istrstream& strLine )
+curve_is_same_wrapper( std::istringstream& strLine )
 {
   int index1, index2, exp_answer, real_answer;
 
@@ -463,7 +481,7 @@ curve_is_same_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_src_trg_wrapper( std::istrstream& strLine, std::string& strCommand )
+curve_src_trg_wrapper( std::istringstream& strLine, std::string& strCommand )
 {
   int index1;
   Point real_answer;
@@ -501,7 +519,7 @@ curve_src_trg_wrapper( std::istrstream& strLine, std::string& strCommand )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-is_x_monotone_wrapper( std::istrstream& strLine )
+is_x_monotone_wrapper( std::istringstream& strLine )
 {
   int index;
   bool exp_answer, real_answer;
@@ -522,7 +540,19 @@ is_x_monotone_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-point_reflect_in_x_and_y_wrapper( std::istrstream& strLine )
+point_reflect_in_x_and_y_wrapper( std::istringstream& strLine )
+{ return point_reflect_in_x_and_y_wrapper_imp(strLine, Has_left_category()); }
+
+template< class Traits_class, class Number_type >
+bool Base_traits_test< Traits_class, Number_type >::
+point_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                     CGAL::Tag_true)
+{ return true; }
+
+template< class Traits_class, class Number_type >
+bool Base_traits_test< Traits_class, Number_type >::
+point_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                     CGAL::Tag_false)
 {
   int index;
   NT exp_x, exp_y;
@@ -531,7 +561,7 @@ point_reflect_in_x_and_y_wrapper( std::istrstream& strLine )
   Point exp_answer( exp_x, exp_y );
   std::cout << "Test: point_reflect_in_x_and_y( " << all_points_vec[index]
             << " ) ?"
-       << exp_answer << std::endl;
+            << exp_answer << std::endl;
   Point real_answer = tr.point_reflect_in_x_and_y( all_points_vec[index] );
   return print_was_successful_or_not( exp_answer, real_answer );
 }
@@ -544,7 +574,18 @@ point_reflect_in_x_and_y_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_reflect_in_x_and_y_wrapper( std::istrstream& strLine )
+curve_reflect_in_x_and_y_wrapper( std::istringstream& strLine )
+{ return curve_reflect_in_x_and_y_wrapper_imp(strLine, Has_left_category()); }
+
+template< class Traits_class, class Number_type >
+bool Base_traits_test< Traits_class, Number_type >::
+curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine, CGAL::Tag_true)
+{ return true; }
+
+template< class Traits_class, class Number_type >
+bool Base_traits_test< Traits_class, Number_type >::
+curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+                                     CGAL::Tag_false)
 {
   int index;
 
@@ -577,7 +618,7 @@ curve_reflect_in_x_and_y_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-do_intersect_to_right_wrapper( std::istrstream& strLine )
+do_intersect_to_right_wrapper( std::istringstream& strLine )
 {
   int index1, index2, index3;
   bool exp_answer, real_answer;
@@ -611,7 +652,7 @@ do_intersect_to_right_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-nearest_intersection_to_right_wrapper( std::istrstream& strLine )
+nearest_intersection_to_right_wrapper( std::istringstream& strLine )
 {
   int index1, index2, index3;
   NT x1, y1, x2, y2;
@@ -672,7 +713,7 @@ nearest_intersection_to_right_wrapper( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curves_overlap_wrapper( std::istrstream& strLine )
+curves_overlap_wrapper( std::istringstream& strLine )
 {
   int index1, index2;
   bool exp_answer, real_answer;
@@ -741,7 +782,7 @@ translate_enumerator( std::string& strValue )
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-get_expected_boolean( std::istrstream& strLine )
+get_expected_boolean( std::istringstream& strLine )
 {
   char buff[128];
   strLine.getline( buff, 128, '.' );
@@ -754,7 +795,7 @@ get_expected_boolean( std::istrstream& strLine )
  */
 template< class Traits_class, class Number_type >
 int Base_traits_test< Traits_class, Number_type >::
-get_expected_enum( std::istrstream& strLine )
+get_expected_enum( std::istringstream& strLine )
 {
   char buff[128];
   strLine.getline( buff, 128, '.' );

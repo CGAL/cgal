@@ -23,8 +23,9 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_conic_traits_2.h>
 #include "include/Conic_traits_test.h"
 
-typedef leda_real                         NT;
-typedef CGAL::Arr_conic_traits_2<NT>      Traits;
+typedef leda_real                               NT;
+typedef CGAL::Cartesian<NT>                     Kernel;
+typedef CGAL::Arr_conic_traits_2<Kernel>        Traits;
 
 int main (int argc, char** argv)
 {

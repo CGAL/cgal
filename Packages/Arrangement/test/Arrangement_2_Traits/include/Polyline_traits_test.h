@@ -11,8 +11,8 @@ public:
 public:
   Polyline_traits_test( int argc, char** argv );
   virtual void read_curve( std::ifstream& is, Curve& cv );
-  virtual bool make_x_monotone_wrapper( std::istrstream& strLine );
-  virtual bool curve_split_wrapper( std::istrstream& strLine );
+  virtual bool make_x_monotone_wrapper( std::istringstream& strLine );
+  virtual bool curve_split_wrapper( std::istringstream& strLine );
   ~Polyline_traits_test();
 };
 
@@ -46,11 +46,13 @@ read_curve( std::ifstream& is, Curve& cv ){
   NT x,y;
 
   skip_comments( is, one_line );
-  std::istrstream strLine( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream strLine(stringvalues, std::istringstream::in);
   strLine >> n_verteces;
   for( int j = 0; j < n_verteces; j++ ){
     skip_comments( is, one_line );
-    std::istrstream strLine( one_line, 128 );
+    std::string stringvalues(one_line);
+    std::istringstream strLine(stringvalues, std::istringstream::in);
     strLine >> x >> y;
     cv.push_back( Point( x,y ) );
   }
@@ -65,7 +67,8 @@ read_curve( std::ifstream& is, Curve& cv ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Polyline_traits_test< Traits_class, Number_type >::
-make_x_monotone_wrapper( std::istrstream& strLine ){
+make_x_monotone_wrapper( std::istringstream & strLine )
+{
   int index, exp_number, real_number;
   std::list<X_curve> l;
   typename std::list<X_curve>::iterator it;
@@ -127,7 +130,8 @@ make_x_monotone_wrapper( std::istrstream& strLine ){
 //------------------------------------------------------------------------------
 template< class Traits_class, class Number_type >
 bool Polyline_traits_test< Traits_class, Number_type >::
-curve_split_wrapper( std::istrstream& strLine ){
+curve_split_wrapper( std::istringstream & strLine )
+{
   int index1, index2;
   X_curve cv1, cv2;
 

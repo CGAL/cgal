@@ -31,10 +31,10 @@ public Base_traits_test<Traits_class, Number_type>
   virtual void read_curve (std::ifstream& is, Curve& cv);
   
   // Test the make_x_monotone function.
-  virtual bool make_x_monotone_wrapper (std::istrstream& str_line);
+  virtual bool make_x_monotone_wrapper (std::istringstream& str_line);
   
   // Test the curve_split function.
-  virtual bool curve_split_wrapper (std::istrstream& str_line);
+  virtual bool curve_split_wrapper (std::istringstream& str_line);
 };
 
 //---------------------------------------------------------------------
@@ -48,7 +48,8 @@ read_curve (std::ifstream& is, Curve& cv)
   char one_line[128];
 
   skip_comments (is, one_line);
-  std::istrstream str_line( one_line, 128 );
+  std::string stringvalues(one_line);
+  std::istringstream str_line (stringvalues, std::istringstream::in);
 
   // Get the arc type.
   char type;
@@ -120,7 +121,7 @@ read_curve (std::ifstream& is, Curve& cv)
 //
 template<class Traits_class, class Number_type>
 bool Segment_circle_traits_test<Traits_class, Number_type>::
-make_x_monotone_wrapper (std::istrstream& str_line)
+make_x_monotone_wrapper (std::istringstream& str_line)
 {
   // Read the inputs.
   int        cv_index;
@@ -160,7 +161,7 @@ make_x_monotone_wrapper (std::istrstream& str_line)
 //
 template<class Traits_class, class Number_type>
 bool Segment_circle_traits_test<Traits_class, Number_type>::
-curve_split_wrapper (std::istrstream& str_line)
+curve_split_wrapper (std::istringstream& str_line)
 {
   // Read the inputs.
   int     cv_index, pt_index;

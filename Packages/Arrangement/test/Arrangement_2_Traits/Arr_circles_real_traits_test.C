@@ -27,9 +27,9 @@ int main()
 typedef leda_real                                     NT;
 typedef CGAL::Arr_circles_real_traits<NT>             Traits;
  
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point_2                               Point;
+typedef Traits::X_curve_2                             X_curve;
+typedef Traits::Curve_2                               Curve;
 
 class Arr_circles_real_traits_test : public Arr_traits_test<Traits> {
 
