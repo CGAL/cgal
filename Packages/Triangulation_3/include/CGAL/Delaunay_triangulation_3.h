@@ -250,7 +250,9 @@ public:
       }
   }
 
-  void remove(Vertex_handle v);
+  // We return bool only for backward compatibility (it's always true).
+  // The documentation mentions void.
+  bool remove(Vertex_handle v);
 private:
   typedef Facet Edge_2D;
   void remove_2D(Vertex_handle v);
@@ -611,7 +613,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
 }
 
 template < class Gt, class Tds >
-void
+bool
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
@@ -630,19 +632,19 @@ remove(Vertex_handle v)
 	      tds().reorient();
       }
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return;
+      return true;
   }
 
   if (dimension() == 1) {
       tds().remove_from_maximal_dimension_simplex(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return;
+      return true;
   }
 
   if (dimension() == 2) {
       remove_2D(v);
       CGAL_triangulation_expensive_postcondition(is_valid());
-      return;
+      return true;
   }
 
   CGAL_triangulation_assertion( dimension() == 3 );
@@ -659,6 +661,7 @@ remove(Vertex_handle v)
   tds().delete_cells(hole.begin(), hole.end());
 
   CGAL_triangulation_expensive_postcondition(is_valid());
+  return true;
 }
 
 template < class Gt, class Tds >
