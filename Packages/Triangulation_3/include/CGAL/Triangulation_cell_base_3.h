@@ -172,6 +172,11 @@ public:
     flags = 0;
   }
 
+  int get_flags() const
+  {
+    return flags;
+  }
+
   // CHECKING
 
   // the following trivial is_valid allows

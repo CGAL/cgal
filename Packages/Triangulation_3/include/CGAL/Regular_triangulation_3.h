@@ -142,8 +142,7 @@ private:
   typedef std::set<void *> Conflict_set;
 
   void find_conflicts_3(Conflict_set &conflicts, const Weighted_point & p,
-			Cell_handle c, Cell_handle & ac, int & i,
-                        Cell_handle prev = NULL);
+			Cell_handle c, Cell_handle & ac, int & i);
 
   void find_conflicts_2(Conflict_set & conflicts, const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i);
@@ -166,19 +165,17 @@ template < class Gt, class Tds >
 void 
 Regular_triangulation_3<Gt,Tds>::
 find_conflicts_3(Conflict_set &conflicts, const Weighted_point & p, 
-		 Cell_handle c, Cell_handle & ac, int & i, Cell_handle prev)
+		 Cell_handle c, Cell_handle & ac, int & i)
   // DUPLICATED CODE !!! see Delaunay
 {
   (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
   
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
-    if (test == prev)
-      continue; // We come from there !
     if (conflicts.find((Conflict_set::key_type) &(*test)) != conflicts.end())
       continue; // test was already found
     if ( in_conflict_3(p, test) )
-      find_conflicts_3(conflicts, p, test, ac, i, c);
+      find_conflicts_3(conflicts, p, test, ac, i);
     else {
       ac = c;
       i = j;
