@@ -42,6 +42,8 @@
 #include<CGAL/Gmpz.h>
 #include<CGAL/Gmpq.h>
 
+#include<vector>
+
 
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID , POINT};
@@ -58,6 +60,9 @@ typedef CGAL::Cartesian<Coord_type>                        Coord_kernel;
 typedef Coord_kernel::Point_2                              Coord_point;
 typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
+
+
+typedef CGAL::Polygon_2< Coord_kernel> Polygon;  // polygon is usefull for filling faces
 
 // For the conic traits:
 //#define COORD_SCALE  10
@@ -82,13 +87,26 @@ template <class Info>
 class Face_with_info : public CGAL::Pm_face_base {
   Info data;
   bool _visited;
+  /*! array of info's for overlay issues */
+  std::vector<Info> overlay_info;
 public:
-  Face_with_info() : CGAL::Pm_face_base(), data(),_visited(false) {}
+
+	typedef typename std::vector<Info>::iterator OverlayInfoIterator;  // iterator for overlay_info vector
+
+  Face_with_info() : CGAL::Pm_face_base(), data(),_visited(false) , overlay_info(20) {}
 
   Info info() { return data; }
-  bool visited() { return _visited; }
   void set_info(Info i) { data = i; }
+  bool visited() { return _visited; }
   void set_visited(bool b) { _visited = b; }
+  Info get_overlay_info(int index) { return overlay_info[index]; }
+  void set_overlay_info(int index, Info info) { overlay_info[index] = info; }
+  void assign_overlay_info(std::vector<Info> info){ overlay_info = info; }
+
+  OverlayInfoIterator OverlayInfoBegin() { return overlay_info.begin(); }
+  OverlayInfoIterator OverlayInfoEnd() { return overlay_info.end(); }
+
+ 
 };
 
 

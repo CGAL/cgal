@@ -19,17 +19,31 @@ public:
 	
   void add_edge(const  Traits::X_monotone_curve_2 & x_mon_curve,
                 Planar_map::Halfedge_handle halfedge_handle, 
-                bool  left_to_right , bool overlap = false)
+                bool  original_direction , bool overlap = false)
   {
    
     std::cout << "add_edge" << std::endl;
 
-	// we want to remove the const out of x_mon_curve in order to change its data
-	Traits::X_monotone_curve_2 & my_x_mon_curve = const_cast<Traits::X_monotone_curve_2&>(x_mon_curve); 
+	
+	Planar_map::Halfedge_handle he;
 
-	Curve_data d = my_x_mon_curve.get_data();
-	d.halfedge_handle = halfedge_handle;
-	my_x_mon_curve.set_data( d );    
+	// make sure the halfedge_Handle has the same direction as x_mon_curve
+	if( original_direction)
+		he = halfedge_handle;
+	else
+		he = (Planar_map::Halfedge_handle)halfedge_handle->opposite();
+
+	Traits::X_monotone_curve_2 my_x_mon_curve (x_mon_curve);
+	Curve_data                 d = x_mon_curve.get_data();
+
+	d.halfedge_handle = he;
+	my_x_mon_curve.set_data( d );
+	halfedge_handle->set_curve (my_x_mon_curve);
+    halfedge_handle->opposite()->set_curve (my_x_mon_curve);
+
+	std::cout<<" inside notif (add adge) "<< d.halfedge_handle->source()->point()
+		                                  <<" !!!! " << he->source()->point();
+
     
   }
 
@@ -40,12 +54,12 @@ public:
   {
     std::cout << "split_edge" << std::endl;
 
+	Traits::X_monotone_curve_2 my_c1 (c1);
 	
 
-	// we want to remove the const out of c1 and c2 in order to change their data
-    Traits::X_monotone_curve_2 & my_c1 = const_cast<Traits::X_monotone_curve_2&>(c1); 
-    Traits::X_monotone_curve_2 & my_c2 = const_cast<Traits::X_monotone_curve_2&>(c2); 
-
+	Traits::X_monotone_curve_2 my_c2 (c2);
+	
+	
 	// updating the new curves
 
 	Curve_data d1 = c1.get_data();
@@ -54,7 +68,14 @@ public:
 
 	Curve_data d2 = c2.get_data();
 	d2.halfedge_handle = new_edge;
-	my_c2.set_data( d2 );   
+	my_c2.set_data( d2 );  
+
+
+	orig_edge->set_curve (my_c1);
+    orig_edge->opposite()->set_curve (my_c1);
+
+	new_edge->set_curve (my_c2);
+    new_edge->opposite()->set_curve (my_c2);
 	
 	return;
   }
