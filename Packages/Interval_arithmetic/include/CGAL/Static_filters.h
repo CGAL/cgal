@@ -48,6 +48,7 @@
 //   - left_turn (via generic adapter to orientation)
 //   - power_tests
 //   - others ?
+// - improve fit_in_double() for other NTs (MP_Float, Lazy).
 
 
 CGAL_BEGIN_NAMESPACE
