@@ -65,8 +65,9 @@ int main(int argc, char* argv[])
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 #elif CGAL_ARR_TEST_TRAITS==CGAL_POLYLINE_LEDA_TRAITS
 //#error Currently not supported (July 2000)
-#include <CGAL/leda_rational.h>
-#include <CGAL/Arr_leda_polyline_traits.h>
+  #include <CGAL/leda_rational.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+  #include <CGAL/Arr_leda_polyline_traits.h>
 //#include <CGAL/IO/Arr_leda_polyline_traits_iostream.h>
 #else
   #error No traits defined for test
@@ -123,7 +124,8 @@ int main(int argc, char* argv[])
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_polyline_traits<NT>            Traits;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
 
 #endif
 
@@ -137,13 +139,12 @@ typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >     Arr_2;
 typedef Arr_2::Planar_map                               Planar_map;
  
 // Defining IO operators for polyline curves.
-#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
-
+#if (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
+     CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS)
 
 CGAL_BEGIN_NAMESPACE
 
-std::ostream&  operator<<(std::ostream& os,  
-			  const Curve& cv)
+std::ostream & operator<<(std::ostream & os, const Curve & cv)
 {
   typedef Curve::const_iterator       Points_iterator;
   
@@ -155,19 +156,13 @@ std::ostream&  operator<<(std::ostream& os,
   return os;
 }
 
-
-std::istream&  operator>>(std::istream& in,  
-			  Curve& cv)
+std::istream&  operator>>(std::istream & in, Curve & cv)
 {
   std::size_t  size;
-
   in >> size;
-
   for (unsigned int i = 0; i < size; i++){
     Point  p;
-    
     in >> p;
-    
     cv.push_back(p);  
   }
   
@@ -186,16 +181,20 @@ class Arr_polyline_traits_test
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 4
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3  
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
 #else
   // Trapezoidal decomposition CGAL_ARR_TEST_POINT_LOCATION == 1
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_default_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_default_point_location<Planar_map>) {};
 #endif
 
   /****************************
@@ -228,7 +227,8 @@ private:
       for (hit=arr.halfedges_begin(); hit!=arr.halfedges_end(); ++hit, ++hit) 
 	{
 	  std::cout << (*hit).vertex()->point();
-	  std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
+	  std::cout << (*hit).opposite()->vertex()->point() << ": "
+                    << std::endl;
 	  oe=hit->overlap_edges();
 	  // we count how many edges refer to this halfedge
 	  // there is always at least one.
@@ -237,7 +237,8 @@ private:
 	  do {
 	    std::cout << "     ";
 	    std::cout << (*oe).halfedge()->vertex()->point();
-	    std::cout << (*oe).halfedge()->opposite()->vertex()->point() << std::endl;;
+	    std::cout << (*oe).halfedge()->opposite()->vertex()->point()
+                      << std::endl;;
 	    count ++;
 	  } while (++oe != hit->overlap_edges());
 	  // we substract 1 from edges refering to this halfedge, see above
@@ -300,7 +301,8 @@ private:
       
       for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
 	{
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
@@ -390,7 +392,8 @@ private:
   int get_next_int(std::ifstream& file)
     {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
@@ -614,6 +617,4 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#endif // CGAL_ARR_TEST_LEDA_CONFLICT
-
-
+#endif

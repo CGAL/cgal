@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 //#error Currently not supported (July 2000)
   #include <CGAL/leda_rational.h>
+  #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
   #include <CGAL/leda_real.h>
@@ -108,7 +109,8 @@ int main(int argc, char* argv[])
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                                 NT;
-  typedef CGAL::Arr_leda_polyline_traits<>              Traits;
+  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
+  typedef CGAL::Arr_leda_polyline_traits<Kernel>        Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
   typedef leda_real                                     NT;
@@ -157,16 +159,20 @@ class Arr_polyline_traits_test
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 4
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3  
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
 #else
   // CGAL_ARR_TEST_POINT_LOCATION == 1
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_default_point_location<Planar_map>) {};
+  Arr_polyline_traits_test() :
+    arr(new CGAL::Pm_default_point_location<Planar_map>) {};
   // None
 #endif
 
@@ -232,7 +238,8 @@ private:
   int get_next_int(std::ifstream& file)
     {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
@@ -475,39 +482,45 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
     Vertex_const_iterator  v_iter1, v_iter2;
     
     CGAL_assertion(arr1.number_of_vertices() == arr2.number_of_vertices());
-    std::cout<<"copied arrangement and original arrangement have the same number of vertices"<<std::endl;
+    std::cout << "copied arrangement and original arrangement have the "
+              << "same number of vertices"<<std::endl;
   
     // Comparing Vertices.
     for (v_iter1 = arr1.vertices_begin(), v_iter2 = arr2.vertices_begin(); 
-         v_iter1 != arr1.vertices_end() && v_iter2 != arr2.vertices_end(); ++v_iter1, ++v_iter2)
+         v_iter1 != arr1.vertices_end() && v_iter2 != arr2.vertices_end();
+         ++v_iter1, ++v_iter2)
       CGAL_assertion(v_iter1->point() == v_iter2->point());
     
     std::cout<<"copied vertices == original vertices"<< std::endl;
 
     
     CGAL_assertion(arr1.number_of_halfedges() == arr2.number_of_halfedges());
-    std::cout<<"copied arrangement and original arrangement have the same number of halfedges"<<std::endl;
+    std::cout << "copied arrangement and original arrangement have the "
+              << "same number of halfedges"<<std::endl;
     
     // Comparing Halfedges.
     Halfedge_const_iterator  h_iter1, h_iter2;
     for (h_iter1 = arr1.halfedges_begin(), h_iter2 = arr2.halfedges_begin(); 
-         h_iter1 != arr1.halfedges_end() && h_iter2 != arr2.halfedges_end(); ++h_iter1, ++h_iter2){
+         h_iter1 != arr1.halfedges_end() && h_iter2 != arr2.halfedges_end();
+         ++h_iter1, ++h_iter2){
       CGAL_assertion(h_iter1->curve() == h_iter2->curve());
       CGAL_assertion(h_iter1->source()->point() == h_iter2->source()->point());
       CGAL_assertion(h_iter1->target()->point() == h_iter2->target()->point());
     }
     
-    std::cout<<"copied halfedges == original halfedges"<< std::endl; 
+    std::cout<<"copied halfedges == original halfedges" << std::endl; 
 
 
     CGAL_assertion(arr1.number_of_faces() == arr2.number_of_faces());
-    std::cout<<"copied arrangement and original arrangement have the same number of faces"<<std::endl;
+    std::cout << "copied arrangement and original arrangement have the "
+              << "same number of faces" << std::endl;
     
     // Comparing Faces.
     Face_const_iterator  f_iter1, f_iter2;
     for (f_iter1 = arr1.faces_begin(), f_iter2 = arr2.faces_begin(); 
-         f_iter1 != arr1.faces_end() && f_iter2 != arr2.faces_end(); ++f_iter1, ++f_iter2){
-      
+         f_iter1 != arr1.faces_end() && f_iter2 != arr2.faces_end(); ++f_iter1,
+         ++f_iter2)
+    {  
       CGAL_assertion(f_iter1->is_unbounded() == f_iter2->is_unbounded());
 
       if (!f_iter1->is_unbounded()){
@@ -515,38 +528,49 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
         Ccb_halfedge_const_circulator cc2 = f_iter2->outer_ccb();
         
         CGAL_assertion(Circ_size(cc1) == Circ_size(cc2));
-        std::cout << "copied outer ccb and original outer ccb have the same size"<< std::endl;
+        std::cout << "copied outer ccb and original outer ccb have the "
+                  << "same size"<< std::endl;
           
         do {
           CGAL_assertion(cc1->curve() == cc2->curve());
-        } while (++cc1 != f_iter1->outer_ccb() && ++cc2 != f_iter2->outer_ccb());
+        } while (++cc1 != f_iter1->outer_ccb() &&
+                 ++cc2 != f_iter2->outer_ccb());
 
         // asserting both faces have the same size.
-        //CGAL_assertion(cc1 == f_iter1->outer_ccb() && cc2 == f_iter2->outer_ccb());
+        // CGAL_assertion(cc1 == f_iter1->outer_ccb() &&
+        // cc2 == f_iter2->outer_ccb());
 
         std::cout<<"copied outer ccb == original outer ccb"<<std::endl;
         
-        //CGAL_assertion(std::distance(f_iter1->holes_begin(), f_iter1->holes_end()) && 
-        //               std::distance(f_iter2->holes_begin(), f_iter2->holes_end()) );
-        //std::cout<<"copied arrangement and original arrangement have the same number of holes"<<std::endl;
+        //CGAL_assertion(std::distance(f_iter1->holes_begin(),
+        // f_iter1->holes_end()) && 
+        //               std::distance(f_iter2->holes_begin(),
+        // f_iter2->holes_end()) );
+        //std::cout<<"copied arrangement and original arrangement have the
+        // same number of holes"<<std::endl;
 
         Holes_const_iterator hole_iter1, hole_iter2; 
-        for (hole_iter1 = f_iter1->holes_begin(), hole_iter2 = f_iter2->holes_begin();
-             hole_iter1 != f_iter1->holes_end() && hole_iter2 != f_iter2->holes_end(); 
+        for (hole_iter1 = f_iter1->holes_begin(),
+                 hole_iter2 = f_iter2->holes_begin();
+             hole_iter1 != f_iter1->holes_end() &&
+                 hole_iter2 != f_iter2->holes_end(); 
              ++hole_iter1, ++hole_iter2) {
           Ccb_halfedge_const_circulator cch1(*hole_iter1), cch2(*hole_iter2);
           
           CGAL_assertion(Circ_size(cch1) == Circ_size(cch2));
-          std::cout<<"copied hole and original hole have the same size"<< std::endl;
+          std::cout << "copied hole and original hole have the same size"
+                    << std::endl;
           
           do{
             CGAL_assertion(cch1->curve() == cch2->curve());
           } while (++cch1 != *hole_iter1 && ++cch2 != *hole_iter2);
-          std::cout<<"copied hole == original hole"<<std::endl;
+          std::cout << "copied hole == original hole"<<std::endl;
         }
         
-        CGAL_assertion(hole_iter1 ==  f_iter1->holes_end() && hole_iter2 == f_iter2->holes_end());
-        std::cout<<"copied arrangement and original arrangement have the same number of holes"<<std::endl;
+        CGAL_assertion(hole_iter1 == f_iter1->holes_end() &&
+                       hole_iter2 == f_iter2->holes_end());
+        std::cout << "copied arrangement and original arrangement have the"
+                  << "same number of holes"<<std::endl;
       }
     }
   }
@@ -555,8 +579,10 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
   {
     Curve_const_iterator cn_iter1, cn_iter2;
 
-    CGAL_assertion(arr1.number_of_curve_nodes() == arr2.number_of_curve_nodes());
-    std::cout<<"copied arrangement and original arrangement have the same number of curve nodes"<< std::endl;
+    CGAL_assertion(arr1.number_of_curve_nodes() ==
+                   arr2.number_of_curve_nodes());
+    std::cout << "copied arrangement and original arrangement have the "
+              << "same number of curve nodes"<< std::endl;
     
     for (cn_iter1 = arr1.curve_node_begin(), cn_iter2 = arr2.curve_node_begin();
          cn_iter1 != arr1.curve_node_end() && cn_iter2 != arr2.curve_node_end();
@@ -564,31 +590,41 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
       
       // comparing curve for curve node.
       CGAL_assertion(cn_iter1->curve() == cn_iter2->curve());
-      std::cout<<"copied curve node and original curve node have the same curve"<< std::endl;
+      std::cout << "copied curve node and original curve node have the "
+                << "same curve"<< std::endl;
       
-      CGAL_assertion(cn_iter1->number_of_sc_levels() == cn_iter2->number_of_sc_levels());
-      std::cout<<"copied curve node and original curve node have the same number of levels"<< std::endl;
+      CGAL_assertion(cn_iter1->number_of_sc_levels() ==
+                     cn_iter2->number_of_sc_levels());
+      std::cout << "copied curve node and original curve node have the "
+                << "same number of levels"<< std::endl;
       
       // comparing all subcurves nodes level.
       for (unsigned int i = 0; i < cn_iter1->number_of_sc_levels(); ++i){
         Subcurve_const_iterator scv_iter1, scv_iter2;
         // comparing all subcurves nodes data.
-        for (scv_iter1 = cn_iter1->level_begin(i), scv_iter2 = cn_iter2->level_begin(i);
-             scv_iter1 != cn_iter1->level_end(i), scv_iter2 != cn_iter2->level_end(i);
+        for (scv_iter1 = cn_iter1->level_begin(i),
+                 scv_iter2 = cn_iter2->level_begin(i);
+             scv_iter1 != cn_iter1->level_end(i),
+                 scv_iter2 != cn_iter2->level_end(i);
              ++scv_iter1, ++scv_iter2){
           
           CGAL_assertion(scv_iter1->curve() == scv_iter2->curve());
-          CGAL_assertion(scv_iter1->is_edge_node() == scv_iter2->is_edge_node());
-          CGAL_assertion(scv_iter1->curve_node()->curve() == scv_iter2->curve_node()->curve());
-          CGAL_assertion(scv_iter1->parent()->curve() == scv_iter2->parent()->curve());
-          CGAL_assertion(scv_iter1->children_begin()->curve() == scv_iter2->children_begin()->curve());
+          CGAL_assertion(scv_iter1->is_edge_node() ==
+                         scv_iter2->is_edge_node());
+          CGAL_assertion(scv_iter1->curve_node()->curve() ==
+                         scv_iter2->curve_node()->curve());
+          CGAL_assertion(scv_iter1->parent()->curve() ==
+                         scv_iter2->parent()->curve());
+          CGAL_assertion(scv_iter1->children_begin()->curve() ==
+                         scv_iter2->children_begin()->curve());
 
           Subcurve_const_iterator  last_child1 = scv_iter1->children_end(), 
             last_child2 = scv_iter2->children_end();
 
           CGAL_assertion( (--last_child1)->curve() == (--last_child2)->curve());
 
-          CGAL_assertion(scv_iter1->edges_begin()->curve() == scv_iter2->edges_begin()->curve());
+          CGAL_assertion(scv_iter1->edges_begin()->curve() ==
+                         scv_iter2->edges_begin()->curve());
           
           Edge_const_iterator  last_edge1 = scv_iter1->edges_end(), 
             last_edge2 = scv_iter2->edges_end();
@@ -597,34 +633,45 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
         } 
       }
       
-      std::cout<<"copied hierarchy tree and original hierarchy tree are the same"<< std::endl;
+      std::cout << "copied hierarchy tree and original hierarchy tree "
+                << "are the same"<< std::endl;
       
       // comparing edge nodes.
       Edge_const_iterator edge_iter1, edge_iter2;
-      for (edge_iter1 = cn_iter1->edges_begin(), edge_iter2 = cn_iter2->edges_begin();
-           edge_iter1 != cn_iter1->edges_end(), edge_iter2 != cn_iter2->edges_end();
+      for (edge_iter1 = cn_iter1->edges_begin(),
+               edge_iter2 = cn_iter2->edges_begin();
+           edge_iter1 != cn_iter1->edges_end(),
+               edge_iter2 != cn_iter2->edges_end();
            ++edge_iter1, ++edge_iter2){
         
-        CGAL_assertion(edge_iter1->is_edge_node() == edge_iter2->is_edge_node());
-        CGAL_assertion(edge_iter1->halfedge()->curve() == edge_iter2->halfedge()->curve());
+        CGAL_assertion(edge_iter1->is_edge_node() ==
+                       edge_iter2->is_edge_node());
+        CGAL_assertion(edge_iter1->halfedge()->curve() ==
+                       edge_iter2->halfedge()->curve());
       }
       
-      std::cout<<"copied edge nodes list and original edge nodes list are the same"<< std::endl;
+      std::cout << "copied edge nodes list and original edge nodes list "
+                << "are the same"<< std::endl;
     }
 
     // Finally checking for equality with the overlapping edges.
     Halfedge_const_iterator h_iter1, h_iter2;
     for (h_iter1 = arr1.halfedges_begin(), h_iter2 = arr2.halfedges_begin(); 
-         h_iter1 != arr1.halfedges_end() && h_iter2 != arr2.halfedges_end(); ++h_iter1, ++h_iter2){
-      CGAL_assertion(h_iter1->edge_node()->curve() == h_iter2->edge_node()->curve());
+         h_iter1 != arr1.halfedges_end() && h_iter2 != arr2.halfedges_end();
+         ++h_iter1, ++h_iter2){
+      CGAL_assertion(h_iter1->edge_node()->curve() ==
+                     h_iter2->edge_node()->curve());
       
-      Overlap_const_circulator  ovlp_edges1 = h_iter1->overlap_edges(), ovlp_edges2 = h_iter2->overlap_edges();
+      Overlap_const_circulator ovlp_edges1 = h_iter1->overlap_edges(),
+          ovlp_edges2 = h_iter2->overlap_edges();
       CGAL_assertion(Circ_size(ovlp_edges1) == Circ_size(ovlp_edges2));
-      std::cout<<"copied hole and original hole have the same size"<< std::endl;
+      std::cout << "copied hole and original hole have the same size"
+                << std::endl;
 
       do{
         CGAL_assertion(ovlp_edges1->curve() == ovlp_edges2->curve());
-      } while (++ovlp_edges1 != h_iter1->overlap_edges() && ++ovlp_edges2 != h_iter2->overlap_edges());
+      } while (++ovlp_edges1 != h_iter1->overlap_edges() &&
+               ++ovlp_edges2 != h_iter2->overlap_edges());
     }
   }
 
@@ -684,4 +731,4 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-#endif // CGAL_ARR_TEST_LEDA_CONFLICT
+#endif
