@@ -10,37 +10,36 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Gmpq.h>
 
 #include <iostream>
 #include <vector>
 #include <ctime>
 
-#include "Rational.h"
-
-// The program will work with numbers of type FT.
-// You can change FT to leda_real, for instance.
-typedef Rational FT;
+// The program will work with numbers of type FieldType.
+// You can change FieldType to leda_real, for instance.
+typedef CGAL::Gmpq FieldType;
 
 class Ball {
 private: // representation:
-  FT c[3]; // center in Eucliden coordinates
-  FT r;    // radius
+  FieldType c[3]; // center in Eucliden coordinates
+  FieldType r;    // radius
 
 public: // constructor:
   Ball() {}
 
   template<typename InputIterator>
-  Ball(InputIterator from,const FT& r) : r(r) {
+  Ball(InputIterator from,const FieldType& r) : r(r) {
     c[0] = *from;
     c[1] = *++from;
     c[2] = *++from;
   }
 
 public: // accessors:
-  const FT& radius() const { return r; }
+  const FieldType& radius() const { return r; }
 
 public: // iterator to iterate over the 3 coordinates:
-  typedef const FT *ConstIterator;
+  typedef const FieldType *ConstIterator;
   ConstIterator beginCenter() const { return c; }
 };
 
@@ -49,7 +48,7 @@ struct BallTraits {
   static const int D=3;
   typedef CGAL::LP_algorithm Algorithm;
   typedef CGAL::Tag_false Use_square_roots;
-  typedef ::FT FT;
+  typedef ::FieldType FT;
 
   typedef Sphere::ConstIterator Cartesian_const_iterator;
   static Cartesian_const_iterator center_cartesian_begin(const Sphere& b) {
@@ -60,7 +59,7 @@ struct BallTraits {
   }
 };
 
-double to_double(const std::pair<FT,FT>& p,const FT& disc) {
+double to_double(const std::pair<FieldType,FieldType>& p,const FieldType& disc) {
   return to_double(p.first)+to_double(p.second)*
     std::sqrt(to_double(disc));
 }

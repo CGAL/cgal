@@ -18,18 +18,16 @@
 #include <vector>
 #include <ctime>
 
-#include "Rational.h"
-
-class Sphere {
+class Ball {
 private: // representation:
   double c[3]; // center in Eucliden coordinates
   double r;    // radius
 
 public: // constructor:
-  Sphere() {}
+  Ball() {}
 
   template<typename InputIterator>
-  Sphere(InputIterator from,double r) : r(r) {
+  Ball(InputIterator from,double r) : r(r) {
     c[0] = *from;
     c[1] = *++from;
     c[2] = *++from;
@@ -43,8 +41,8 @@ public: // iterator to iterate over the 3 coordinates:
   ConstIterator beginCenter() const { return c; }
 };
 
-struct SphereTraits {
-  typedef ::Sphere Sphere;
+struct BallTraits {
+  typedef ::Ball Sphere;
   static const int D=3;
   typedef CGAL::LP_algorithm Algorithm;
   typedef CGAL::Tag_true Use_square_roots;
@@ -71,15 +69,15 @@ double uniform() {  // a (platform independent) random number generator
 }
 
 int main(int,char **) {
-  typedef CGAL::Min_sphere_of_spheres_d<SphereTraits> Minsphere;
+  typedef CGAL::Min_sphere_of_spheres_d<BallTraits> Minsphere;
   using namespace std;
 
   // generate a million random spheres:
   const int N = 1000000;
-  vector<Sphere> S;
+  vector<Ball> S;
   for (int i=0; i<N; ++i) {
     double a[3] = { uniform(), uniform(), uniform() };
-    S.push_back(Sphere(a,uniform()));
+    S.push_back(Ball(a,uniform()));
   }
 
   // remember current time:

@@ -5,15 +5,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Gmpq.h>
 
 #include <iostream>
 #include <vector>
 
-#include "Rational.h"
-
 // The program will work with numbers of type FieldType.
 // You can change FieldType to leda_real, for instance.
-typedef Rational FieldType;
+typedef CGAL::Gmpq FieldType;
 
 template<typename FT>
 CGAL::Tag_true is_exact(const FT&) {
