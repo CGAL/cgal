@@ -7,15 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------
-// release       : 
-// release_date  : 2000, August 03
+// release       : $CGAL_Revision: CGAL-2.5-I-50 $
+// release_date  : $CGAL_Date: 2002/12/10 $
 //
-// file          : convexity_check_2.C
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/convexity_check_2.C
+// package       : Convex_hull_2 (3.4.1)
+// maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
+// revision      : $Revision$
+// revision_date : $Date$ 
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -37,10 +36,13 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                           const Traits& ch_traits)
 {
   typedef  typename Traits::Less_xy_2      Less_xy;
-  typedef  typename Traits::Left_turn_2     Left_turn;
-
-  Less_xy  smaller_xy = ch_traits.less_xy_2_object();
-  Left_turn left_turn = ch_traits.left_turn_2_object();
+  typedef  typename Traits::Left_turn_2    Left_turn;
+  // added 
+  typedef  typename Traits::Equal_2        Equal_2;
+  
+  Less_xy  smaller_xy    = ch_traits.less_xy_2_object();
+  Left_turn left_turn    = ch_traits.left_turn_2_object();
+  Equal_2  equal_points  = ch_traits.equal_2_object();   
 
   ForwardIterator iter1;
   ForwardIterator iter2;
@@ -55,7 +57,7 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 
   ++iter3;
 
-  if (iter3 == last ) return ( *first != *iter2 );
+  if (iter3 == last ) return (! equal_points(*first,*iter2) );
 
   iter1 = first;
   short int f = 0;
@@ -90,10 +92,12 @@ bool
 is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
                          const Traits& ch_traits)
 {
-  typedef  typename Traits::Less_xy_2       Less_xy;
-  typedef  typename Traits::Left_turn_2      Left_turn;
+  typedef  typename Traits::Less_xy_2      Less_xy;
+  typedef  typename Traits::Left_turn_2    Left_turn;
+  typedef  typename Traits::Equal_2        Equal_2;  
 
-  Less_xy  smaller_xy = ch_traits.less_xy_2_object();
+  Less_xy  smaller_xy    = ch_traits.less_xy_2_object();
+  Equal_2  equal_points  = ch_traits.equal_2_object();  
 
   ForwardIterator iter1;
   ForwardIterator iter2;
@@ -108,7 +112,7 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
 
   ++iter3;
 
-  if (iter3 == last ) return ( *first != *iter2 );
+  if (iter3 == last ) return (! equal_points(*first,*iter2) );
 
   iter1 = first;
   short int f = 0;
@@ -186,7 +190,8 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
                                   ForwardIterator2 last2,
                                   const Traits& ch_traits )
 {
-  typedef    typename Traits::Left_turn_2    Left_of_line;
+  typedef  typename Traits::Left_turn_2     Left_turn_2;  
+  
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
   ForwardIterator2 iter22;
@@ -197,7 +202,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 
   if ( successor(first2) == last2 ) return true;
 
-  Left_of_line  left_turn = ch_traits.left_turn_2_object();
+  Left_turn_2  left_turn = ch_traits.left_turn_2_object();
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)
