@@ -22,7 +22,7 @@
 
 template < class Triangulation >
 int
-CGAL::_test_cls_edge_iterator( const Triangulation &T )
+_test_cls_edge_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Edge_iterator   Edge_iterator;
 

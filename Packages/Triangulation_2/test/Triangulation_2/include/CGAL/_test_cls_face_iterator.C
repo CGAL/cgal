@@ -23,7 +23,7 @@
 
 template < class Triangulation >
 int
-CGAL::_test_cls_face_iterator( const Triangulation &T )
+_test_cls_face_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Face_iterator   Face_iterator;
 

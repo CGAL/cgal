@@ -50,7 +50,7 @@ main()
 	Pt1(91,312), Pt1(125,300), Pt1(204,253), Pt1(325,0),
 	Pt1(91,312), Pt1(125,300), Pt1(204,253), Pt1(0,0)
   };
-  CGAL::_test_cls_delaunay_geom_traits( p1, Cls1() );
+  _test_cls_delaunay_geom_traits( p1, Cls1() );
   cout << "   with Homogeneous" << endl;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Cls2;
   typedef Cls2::Point  Pt2;
@@ -66,7 +66,7 @@ main()
 	Pt2(91,312,325), Pt2(125,300,325), Pt2(204,253,325), Pt2(1,0,1),
 	Pt2(91,312,325), Pt2(125,300,325), Pt2(204,253,325), Pt2(0,0,43)
   };
-  CGAL::_test_cls_delaunay_geom_traits( p2, Cls2() );
+  _test_cls_delaunay_geom_traits( p2, Cls2() );
 
   cout << "Testing Triangulation_euclidean_traits_xy_3" << endl;
 
@@ -85,7 +85,7 @@ main()
 	Pt3(91,312,5), Pt3(125,300,5), Pt3(204,253,5), Pt3(325,0,5),
 	Pt3(91,312,5), Pt3(125,300,5), Pt3(204,253,5), Pt3(0,0,5)
   };
-  CGAL::_test_cls_geom_traits( p3, Cls3() );
+  _test_cls_geom_traits( p3, Cls3() );
   cout << "   with Homogeneous" << endl;
   typedef CGAL::Triangulation_euclidean_traits_xy_3<Test_rep_homogeneous> Cls4;
   typedef Cls4::Point  Pt4;
@@ -101,7 +101,7 @@ main()
 	Pt4(91,312,42,325),  Pt4(125,300,42,325), Pt4(204,253,542,325), Pt4(1,0,441,1),
 	Pt4(91,312,534,325), Pt4(125,300,21,325), Pt4(204,253,123,325), Pt4(0,423,0,43)
   };
-  CGAL::_test_cls_geom_traits( p4, Cls4() );
+  _test_cls_geom_traits( p4, Cls4() );
 
   cout << "Testing Triangulation_euclidean_traits_yz_3" << endl;
 
@@ -120,7 +120,7 @@ main()
 	Pt5(1,91,312), Pt5(1,125,300), Pt5(1,204,253), Pt5(1,325,0),
 	Pt5(1,91,312), Pt5(1,125,300), Pt5(1,204,253), Pt5(1,0,0)
   };
-  CGAL::_test_cls_geom_traits( p5, Cls5() );
+  _test_cls_geom_traits( p5, Cls5() );
   cout << "   with Homogeneous" << endl;
   typedef CGAL::Triangulation_euclidean_traits_yz_3<Test_rep_homogeneous> Cls6;
   typedef Cls6::Point  Pt6;
@@ -136,7 +136,7 @@ main()
 	Pt6(876,91,312,325), Pt6(722,125,300,325), Pt6(513,204,253,325), Pt6(5,1,0,1),
 	Pt6(533,91,312,325), Pt6(453,125,300,325), Pt6(32,204,253,325), Pt6(532,0,0,43)
   };
-  CGAL::_test_cls_geom_traits( p6, Cls6() );
+  _test_cls_geom_traits( p6, Cls6() );
 
   cout << "Testing Triangulation_euclidean_traits_xz_3" << endl;
 
@@ -155,7 +155,7 @@ main()
 	Pt7(91,3,312), Pt7(125,3,300), Pt7(204,3,253), Pt7(325,42,0),
 	Pt7(91,3,312), Pt7(125,3,300), Pt7(204,3,253), Pt7(0,23,0)
   };
-  CGAL::_test_cls_geom_traits( p7, Cls7() );
+  _test_cls_geom_traits( p7, Cls7() );
   cout << "   with Homogeneous" << endl;
   typedef CGAL::Triangulation_euclidean_traits_xz_3<Test_rep_homogeneous> Cls8;
   typedef Cls8::Point  Pt8;
@@ -171,7 +171,7 @@ main()
 	Pt8(91,632,312,325), Pt8(125,632,300,325), Pt8(204,632,253,325), Pt8(1,632,0,1),
 	Pt8(91,632,312,325), Pt8(125,632,300,325), Pt8(204,632,253,325), Pt8(0,632,0,43)
   };
-  CGAL::_test_cls_geom_traits( p8, Cls8() );
+  _test_cls_geom_traits( p8, Cls8() );
 
   cout << "Testing Triangulation_test_traits for the requirements" << endl;
   typedef CGAL::_Triangulation_test_traits Cls9;
@@ -188,7 +188,7 @@ main()
 	Pt9(91,312), Pt9(125,300), Pt9(204,253), Pt9(325,0),
 	Pt9(91,312), Pt9(125,300), Pt9(204,253), Pt9(0,0)
   };
-  CGAL::_test_cls_geom_traits( p9, Cls9() );
+  _test_cls_geom_traits( p9, Cls9() );
     
   return 0;
 }

@@ -23,7 +23,7 @@
 
 template < class Triangulation >
 int
-CGAL::_test_cls_face_circulator( const Triangulation &T )
+_test_cls_face_circulator( const Triangulation &T )
 {
   typedef typename Triangulation::Vertex_iterator   Vertex_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;

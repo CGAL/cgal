@@ -27,7 +27,7 @@
 
 template<class Traits, class Point>
 void
-CGAL::_test_cls_distance(Point p[34],const Traits &)
+_test_cls_distance(Point p[34],const Traits &)
 {
 
   typedef typename Traits::Distance Distance;

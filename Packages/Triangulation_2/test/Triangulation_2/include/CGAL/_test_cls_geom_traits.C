@@ -38,12 +38,12 @@
 // Point has to be Traits::Point but CC-4.2 at Zurich does not understand
 // template <class Traits>
 // void
-// CGAL::_test_cls_geom_traits(typename Traits::Point p[34], const Traits & )
+// _test_cls_geom_traits(typename Traits::Point p[34], const Traits & )
 
 
 template <class Traits, class Point>
 void
-CGAL::_test_cls_geom_traits(Point p[34], const Traits & )
+_test_cls_geom_traits(Point p[34], const Traits & )
 {
   
   typedef typename Traits::Segment           Segment;
@@ -95,16 +95,16 @@ CGAL::_test_cls_geom_traits(Point p[34], const Traits & )
 
 template <class Traits, class Point>
 void
-CGAL::_test_cls_delaunay_geom_traits(Point p[34], const Traits & )
+_test_cls_delaunay_geom_traits(Point p[34], const Traits & )
 {
   // All the other requirements
-  CGAL::_test_cls_geom_traits(p, Traits() );
+  _test_cls_geom_traits(p, Traits() );
 
   // Constructor
   Traits gt;
 
   // Distance
-  CGAL::_test_cls_distance(p, Traits());
+  _test_cls_distance(p, Traits());
 
   // Test side_of_oriented_circle()
   assert( gt.side_of_oriented_circle(p[18],p[19],p[20],p[21]) == CGAL::ON_NEGATIVE_SIDE );

@@ -28,7 +28,7 @@
 
 template <class Triangulation>
 void 
-CGAL::_test_cls_constrained_triangulation(const Triangulation &)
+_test_cls_constrained_triangulation(const Triangulation &)
 {
   typedef Triangulation                       Cls;
 
@@ -157,10 +157,10 @@ CGAL::_test_cls_constrained_triangulation(const Triangulation &)
   assert( T1_1.geom_traits().compare(f->vertex(li)->point(), Point(0,0)) );
   f = T1_1.locate(Point(1,1),lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_1.infinite_vertex());
-  assert( CGAL::_test_is_to_the_left(T1_1,Point(1,1),f,li) );
+  assert( _test_is_to_the_left(T1_1,Point(1,1),f,li) );
   f = T1_1.locate(Point(0,100),lt,li); assert( lt == Cls::OUTSIDE );
   li = f->index(T1_1.infinite_vertex());
-  assert( CGAL::_test_is_to_the_left(T1_1,Point(0,100),f,li) );
+  assert( _test_is_to_the_left(T1_1,Point(0,100),f,li) );
 
    // 2-dimensional
    cout << "    point locations 2-dim" << endl;
@@ -191,28 +191,28 @@ CGAL::_test_cls_constrained_triangulation(const Triangulation &)
         && T2_2.geom_traits().compare(f->vertex(f->cw(li))->point(),lpt[1])));
    f = T2_2.locate(Point(10,10),lt,li); assert( lt == Cls::OUTSIDE );
    li = f->index(T2_2.infinite_vertex());
-   assert( CGAL::_test_is_to_the_left(T2_2,Point(10,10),f,li) );
+   assert( _test_is_to_the_left(T2_2,Point(10,10),f,li) );
    f = T2_2.locate(Point(-1,3),lt,li); assert( lt == Cls::OUTSIDE );
    li = f->index(T2_2.infinite_vertex());
-   assert( CGAL::_test_is_to_the_left(T2_2,Point(-1,3),f,li) );
+   assert( _test_is_to_the_left(T2_2,Point(-1,3),f,li) );
 
 
 
    /*************************/
   /******* Iterators *******/
    cout << "    iterators" << endl;
-   CGAL::_test_iterators(T1_1);
-   CGAL::_test_iterators(T1_2);
-   CGAL::_test_iterators(T2_1);
-   CGAL::_test_iterators(T2_2);
+   _test_iterators(T1_1);
+   _test_iterators(T1_2);
+   _test_iterators(T2_1);
+   _test_iterators(T2_2);
 
    /***************************/
   /******* Circulators *******/
    cout << "    circulators" << endl;
-   CGAL::_test_circulators(T1_1);
-   CGAL::_test_circulators(T1_2);
-   CGAL::_test_circulators(T2_1);
-   CGAL::_test_circulators(T2_2);
+   _test_circulators(T1_1);
+   _test_circulators(T1_2);
+   _test_circulators(T2_1);
+   _test_circulators(T2_2);
 
 
 // Line_face_circulator

@@ -32,7 +32,7 @@
 
 template <class Triangulation>
 void
-CGAL::_test_cls_delaunay_triangulation_2( const Triangulation & )
+_test_cls_delaunay_triangulation_2( const Triangulation & )
 {
   typedef Triangulation                      Cls;
 
@@ -71,7 +71,7 @@ CGAL::_test_cls_delaunay_triangulation_2( const Triangulation & )
   
   /***********************/
   /***** SUBCLASSES ******/
-  CGAL::_test_cls_triangulation_2( Cls() );
+  _test_cls_triangulation_2( Cls() );
 
   // Constructors
   cout << "    constructors(3)" << endl;
@@ -108,7 +108,7 @@ CGAL::_test_cls_delaunay_triangulation_2( const Triangulation & )
   /********************/
   /***** Duality ******/
   cout << "    duality" << endl;
-  CGAL::_test_delaunay_duality(T1);
-  CGAL::_test_delaunay_duality(T2);
-  CGAL::_test_delaunay_duality(T3);
+  _test_delaunay_duality(T1);
+  _test_delaunay_duality(T2);
+  _test_delaunay_duality(T3);
 }

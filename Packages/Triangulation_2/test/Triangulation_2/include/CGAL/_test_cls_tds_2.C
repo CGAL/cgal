@@ -26,7 +26,7 @@
 #include <CGAL/_test_cls_tds_vertex.C>
 #include <CGAL/_test_cls_tds_face.C>
 
-CGAL_BEGIN_NAMESPACE
+
 
 template <class Tds, class Gt>
 void
@@ -133,4 +133,4 @@ _test_cls_tds_2( const Tds &, const Gt & )
     
 }
 
-CGAL_END_NAMESPACE
+

@@ -27,11 +27,11 @@
 
 template < class Triangulation >
 void
-CGAL::_test_circulators( const Triangulation &T )
+_test_circulators( const Triangulation &T )
 {
-  int nvi = CGAL::_test_cls_vertex_circulator(T); 
-  int nei = CGAL::_test_cls_edge_circulator(T); 
-  int nfi = CGAL::_test_cls_face_circulator(T); 
+  int nvi = _test_cls_vertex_circulator(T); 
+  int nei = _test_cls_edge_circulator(T); 
+  int nfi = _test_cls_face_circulator(T); 
   assert( nvi == nei );
   assert( nvi == nfi );
 
