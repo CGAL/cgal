@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 #else
 
 #include <CGAL/leda_real.h>
-#include <Segment_circle_traits_test.h>
+#include "include/Segment_circle_traits_test.h"
 #include <CGAL/Arr_segment_circle_traits.h>
 
 typedef leda_real                                  NT;

@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/leda_rational.h>
 
-#include <Segment_traits_test.h>
+#include "include/Segment_traits_test.h"
 
 typedef leda_rational                                  NT;
 typedef CGAL::Arr_leda_segment_exact_traits            Traits;

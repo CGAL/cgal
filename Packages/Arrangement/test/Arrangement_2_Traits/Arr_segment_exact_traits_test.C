@@ -2,7 +2,7 @@
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Quotient.h>
 
-#include <Segment_traits_test.h>
+#include "include/Segment_traits_test.h"
 
 typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;

@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
 #include <CGAL/leda_rational.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
-#include <Polyline_traits_test.h>
+#include "include/Polyline_traits_test.h"
 
 typedef CGAL::Arr_leda_polyline_traits<> Traits;
 

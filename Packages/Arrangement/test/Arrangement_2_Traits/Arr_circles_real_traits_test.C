@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_circles_real_traits.h>
 #include <CGAL/leda_real.h> 
 
-#include <Circles_traits_test_base.h>
+#include "include/Circles_traits_test_base.h"
 
 typedef leda_real                                     NT;
 typedef CGAL::Arr_circles_real_traits<NT>             Traits;

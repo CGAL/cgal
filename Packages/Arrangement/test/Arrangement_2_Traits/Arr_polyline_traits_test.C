@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Arr_polyline_traits.h>
-#include <Polyline_traits_test.h>
+#include "include/Polyline_traits_test.h"
 #include <CGAL/Quotient.h>
 
 typedef CGAL::Quotient<int>            NT;
