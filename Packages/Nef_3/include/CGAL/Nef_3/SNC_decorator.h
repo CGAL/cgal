@@ -39,9 +39,9 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shoter.h>
-#ifdef  SM_VISUALIZOR
+#ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
-#endif // SM_VISUALIZOR
+#endif // CGAL_NEF3_SM_VISUALIZOR
 #undef _DEBUG
 #define _DEBUG 19
 #include <CGAL/Nef_3/debug.h>
@@ -349,7 +349,7 @@ public:
       : D(Di), m(mi) {}
     void visit(SFace_handle h)        { /* empty */ }
     void visit(Vertex_handle h)       { D.mark(h) = m; }
-    void visit(Halfedge_handle h)     { D.mark(h) = m; }
+    void visit(Halfedge_handle h)     { D.mark(h) = D.mark(D.twin(h)) = m; }
     void visit(Halffacet_handle h)    { D.mark(h) = m; }
     void set_volume(Volume_handle ci) { /* empty */ }
   };
@@ -496,14 +496,16 @@ public:
     Vertex_handle binop_local_views( Vertex_handle v0, Vertex_handle v1,
 				     const Selection& BOP, SNC_structure& rsnc)
     /*{\opOverlays two spheres maps.}*/ {
+#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
     SNC_SM_io_parser IO0( std::cerr, v0);
     SNC_SM_io_parser IO1( std::cerr, v1);
     TRACEN(" sphere maps before local binary operation");
     TRACEN(v0->debug());
     TRACEN(v1->debug());
-    IO0.print();
-    IO1.print();
+    IO0.debug();
+    IO1.debug();
+#endif // CGAL_NEF3_DUMP_SPHERE_MAPS
     CGAL_assertion( point(v0) == point(v1));
     Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
@@ -513,14 +515,17 @@ public:
     O.simplify();
     O.check_integrity_and_topological_planarity();
 
+#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     TRACEN(" result sphere map:");
     SNC_SM_io_parser IO01( std::cerr, v01);
     TRACEN(v01->debug());
     IO01.print();
     TRACEN(" sphere maps after local binary operation");
-    IO0.print();
-    IO1.print();
-#ifdef SM_VISUALIZOR
+    IO0.debug();
+    IO1.debug();
+#endif //CGAL_NEF3_DUMP_SPHERE_MAPS
+
+#ifdef CGAL_NEF3_SM_VISUALIZOR
     typedef SNC_SM_visualizor<SNC_structure> SMV;
     CGAL::OGL::add_sphere();
     SMV V0(v0, CGAL::OGL::spheres_.back());
@@ -533,7 +538,7 @@ public:
     TRACEN("any key to continue...");
     char c;
     std::cin >> c;
-#endif
+#endif // CGAL_NEF3_VISUALIZOR
     return v01;
   }
 
@@ -601,6 +606,16 @@ public:
     Hash_map Ignore(false);
     Vertex_iterator v0, v1;
     
+    TRACEN("=> binary operation");
+#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
+    TRACEN("=> first operand:");
+    SNC_io_parser<SNC_structure> O0(std::cout, *sncp());
+    O0.print();
+    TRACEN("=> second operand:");
+    SNC_io_parser<SNC_structure> O1(std::cout, snc1i);
+    O1.print();
+#endif // CGAL_NEF3_DUMP_SNC_OPERATORS
+
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
     TRACEN("vertices on snc0:");
@@ -721,9 +736,11 @@ public:
     CGAL_nef3_forall_vertices( v0, result) {
       TRACEN(&*v0<<" "<<point(v0)<<&*(v0->sncp_));
     }
+#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> pre-construction result");
     SNC_io_parser<SNC_structure> O(std::cout, result);
     O.print();
+#endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
     // remove vertices whose local view is not that of a vertex
     Vertex_iterator vi, vin;
@@ -750,9 +767,11 @@ public:
     C.create_volumes();
     result.simplify();
 
+#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> construction completed, result: ");
     SNC_io_parser<SNC_structure> Op(std::cout, result);
     Op.print();
+#endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
     TRACEN("=> end binary operation. ");
   }

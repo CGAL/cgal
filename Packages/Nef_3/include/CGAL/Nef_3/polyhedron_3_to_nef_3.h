@@ -102,14 +102,8 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   /* determine the plane of polyhedron's facet */
-  std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
-	     < typename Polyhedron::Plane_3>( std::cout, "\n"));
-  for( typename Polyhedron::Plane_iterator pi = P.planes_begin();
-       pi != P.planes_end();
-       pi++)
-    TRACEN(*pi);
-  TRACEN("  end facet's planes");
-
+  //std::copy( P.planes_begin(), P.planes_end(), 
+  //   std::ostream_iterator< typename Polyhedron::Plane_3>( std::cout, "\n"));
   SNC_decorator D(S);
     
   typename Polyhedron::Vertex_iterator pvi;
@@ -261,8 +255,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();
     
-    /* Why not? SM_overlayer O(nv); O.simplify(); */
-
 #endif // CGAL_P2NEF3_USE_SM_OVERLAY
 	
 #ifdef SM_VISUALIZOR

@@ -39,13 +39,13 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_3/nef3_assertions.h>
 #include <CGAL/Nef_2/iterator_tools.h>
-#include <CGAL/Nef_2/Object_index.h> /* debug only */
 #include <CGAL/Union_find.h>
 #include <list>
 
 #undef _DEBUG
 #define _DEBUG 41
 #include <CGAL/Nef_3/debug.h>
+#include <CGAL/Nef_2/Object_index.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -624,8 +624,9 @@ public:
     os << std::endl;
   }
 
-  bool is_empty() const 
-  { return number_of_vertices() == 0 &&
+  bool is_empty() const {
+  /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
+    return number_of_vertices() == 0 &&
            number_of_halfedges() == 0 &&
            number_of_halffacets() == 0 &&
            number_of_volumes() == 0 &&
@@ -635,10 +636,11 @@ public:
   }
 
   bool has_bbox_only() const  {
-  /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
+  /*{\Mop returns true if |\Mvar| is only the infimaximal box, 
+    false otherwise.}*/
     return (number_of_vertices() == 8 &&
-	    number_of_halfedges() == 12 &&
-	    number_of_halffacets() == 6 &&
+	    number_of_edges() == 12 &&
+	    number_of_facets() == 6 &&
 	    number_of_volumes() == 2 &&
 	    (++volumes_begin())->mark_ == false);
   }
@@ -814,8 +816,9 @@ public:
     return --vertices_end(); 
   }
   Halfedge_handle new_halfedge_only(Halfedge_handle e)  { 
-    TRACEN("  new halfedge only after "<<&*e);
-    return halfedges_.insert(e, * get_halfedge_node(Halfedge()));
+    Halfedge_handle ne = halfedges_.insert(e, * get_halfedge_node(Halfedge()));
+    TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
+    return ne;
   }
   Halfedge_handle new_halfedge_only()  { 
     TRACEN("  new halfedge only "<<&*(--halfedges_end()));
@@ -1503,11 +1506,31 @@ pointer_update(const SNC_structure<Items>& D)
     se->prev_ = SEM[se->prev_]; se->next_ = SEM[se->next_];
     se->incident_facet_ = FM[se->incident_facet_];
   }
+  for ( sec = D.shalfedges_begin(), se = shalfedges_begin();
+	sec != D.shalfedges_end(); ++sec, ++se) {
+    /* It is possible that the is_twin() property differs for equivalent 
+       sedges on both SNC structures.  So, we need to store the correct
+       selection mark in the correct (non-twin) facet of a shalfedge pair. */
+    CGAL_nef3_assertion_code( if( sec->is_twin() == se->is_twin())
+			 CGAL_nef3_assertion( sec->mark_ == se->mark_));
+    if( !se->is_twin() && sec->is_twin()) se->mark_ = se->twin_->mark_;
+  }
+
   CGAL_nef3_forall_shalfloops(sl,*this) {
     sl->twin_ = SLM[sl->twin_];
     sl->incident_sface_ = SFM[sl->incident_sface_];
     sl->incident_facet_ = FM[sl->incident_facet_];
   }
+  for ( slc = D.shalfloops_begin(), sl = shalfloops_begin();
+	slc != D.shalfloops_end(); ++slc, ++sl) {
+    /* It is possible that the is_twin() property differs for equivalent 
+       sloops on both SNC structures.  So, we need to store the correct
+       selection mark in the correct (non-twin) facet of a shalfloop pair. */
+    CGAL_nef3_assertion_code( if( slc->is_twin() == sl->is_twin())
+			 CGAL_nef3_assertion( slc->mark_ == sl->mark_));
+    if( !sl->is_twin() && slc->is_twin()) sl->mark_ = sl->twin_->mark_;
+  }
+
   CGAL_nef3_forall_sfaces(sf,*this) {
     sf->center_vertex_ = VM[sf->center_vertex_];
     sf->incident_volume_ = CM[sf->incident_volume_];

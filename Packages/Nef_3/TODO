@@ -1,8 +1,10 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Test binary operations
+- Exclude infimaximal box objects during the binary operations.
 - Change &D.mark() to D.set_mark(...) and D.get_mark(...)
 - Extended kernel with infimaximal box
 - Define endpoint of segments used for ray shoting to be in the 
   infimaximal box.
+- Write a SNC_const_decorator class cloning the current SNC_decorator
+  class methods but using constant attributes.

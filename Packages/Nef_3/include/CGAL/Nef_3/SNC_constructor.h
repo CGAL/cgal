@@ -437,6 +437,7 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.mark(f1) = mark(volume(f));
   D.mark(f2) = mark(volume(twin(f)));
   D.mark(l) = mark(f);
+#ifdef CGAL_NEF3_BUGGY_CODE
   Sphere_point q(0,-1,0);
   CGAL::Oriented_side os = c.oriented_side(q);
   switch ( os ) {
@@ -452,7 +453,8 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
       if ( c.a()>=0 && c.c()<=0 ) // normal(c) dx<=0&&dz>=0
         D.mark_of_halfsphere(-1) = true;
   }
-  /* TODO: to check why the code chuck above is wrong */
+  /* TODO: to find why the code chuck above is wrong */
+#endif // CGAL_NEF3_BUGGY_CODE
   SM_point_locator L(v);
   L.init_marks_of_halfspheres();
   return v;

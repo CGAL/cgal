@@ -833,7 +833,8 @@ Sphere_circle& circle(SHalfloop_handle l) const
 
 Mark& mark(SVertex_handle v) const
 /*{\Mop returns the mark of |v|.}*/
-{ return v->mark_; }
+{ TRACEN("  taking "<<v->mark_<<" for "<<&*v);
+  return v->mark_; }
 
 Mark& mark(SHalfedge_handle e) const
 /*{\Mop returns the mark of |e|.}*/

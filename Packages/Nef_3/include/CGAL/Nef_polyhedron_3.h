@@ -32,24 +32,22 @@
 #define CGAL_NEF_POLYHEDRON_3_H
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-// #define SNC_VISUALIZOR
-// #define SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shoter.h>
-#ifdef SNC_VISUALIZOR
+#ifdef CGAL_NEF3_VISUALIZOR
 #include <CGAL/Nef_3/SNC_visualizor_OGL.h>
-#endif // SNC_VISUALIZOR
+#endif // CGAL_NEF3_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
-#ifdef SM_VISUALIZOR
+#ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
-#endif // SM_VISUALIZOR
+#endif // CGAL_NEF3_SM_VISUALIZOR
 
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -80,17 +78,17 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_ray_shoter<SNC_structure>          SNC_ray_shoter;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
-#ifdef SNC_VISUALIZOR
+#ifdef CGAL_NEF3_VISUALIZOR
   typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
-#endif // SNC_VISUALIZOR
+#endif // CGAL_NEF3_VISUALIZOR
   typedef CGAL::SNC_SM_decorator<SNC_structure>        SM_decorator;
   typedef CGAL::SNC_SM_const_decorator<SNC_structure>  SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
   typedef CGAL::SNC_SM_point_locator<SNC_structure>    SM_point_locator;
   typedef CGAL::SNC_SM_io_parser<SNC_structure>        SM_io_parser;
-#ifdef SM_VISUALIZOR
+#ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
-#endif // SM_VISUALIZOR
+#endif // CGAL_NEF3_SM_VISUALIZOR
 
   SNC_structure snc_;
   // SNC_point_locator* pl_;
@@ -145,17 +143,17 @@ protected:
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_ray_shoter      SNC_ray_shoter;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
-#ifdef SNC_VISUALIZOR
+#ifdef CGAL_NEF3_VISUALIZOR
   typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
-#endif // SNC_VISUALIZOR
+#endif // CGAL_NEF3_VISUALIZOR
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SM_io_parser        SM_io_parser;
-#ifdef SM_VISUALIZOR
+#ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef typename Nef_rep::SM_visualizor       SM_visualizor;
-#endif // SM_VISUALIZOR
+#endif // CGAL_NEF3_SM_VISUALIZOR
 
   SNC_structure& snc() { return ptr()->snc_; } 
   const SNC_structure& snc() const { return ptr()->snc_; } 
@@ -234,8 +232,10 @@ protected:
 			  Sphere_point(0, 0, -z) };
     /* create box vertices */
     SVertex_handle sv[3];
-    for(int vi=0; vi<3; ++vi)
+    for(int vi=0; vi<3; ++vi) {
       sv[vi] = SD.new_vertex(sp[vi]);
+      D.mark(sv[vi]) = space;
+    }
     /* create facet's edge uses */
     Sphere_segment ss[3];
     SHalfedge_handle she[3];
@@ -244,13 +244,14 @@ protected:
       ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
       SD.circle(she[si]) = ss[si].sphere_circle();
       SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
+      SD.mark(she[si]) = space;
     }
     /* create facets */
     SFace_handle fi = SD.new_face();
     SFace_handle fe = SD.new_face();
     SD.link_as_face_cycle(she[0], fi);
     SD.link_as_face_cycle(SD.twin(she[0]), fe);
-    /* set boundary marks */
+    /* set face mark */
     SHalfedge_iterator e = SD.shalfedges_begin();
     SFace_handle f;
     Sphere_point p1 = SD.point(SD.source(e));
@@ -261,10 +262,17 @@ protected:
     else
       f = SD.face(SD.twin(e));
     SD.mark(f) = space;
-    CGAL_nef3_forall_sedges_of(e, v)
-      SD.mark(e) = SD.mark(SD.source(e)) = space;
-    SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
-    SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+    // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
+    // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
+    /* TODO: to check if the commented code above is wrong */
+    SM_point_locator L(v);
+    L.init_marks_of_halfspheres();
+#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
+    TRACEN("new bbox corner...");
+    SM_io_parser IO( std::cerr, v);
+    TRACEN(v->debug());
+    IO.debug();
+#endif // CGAL_NEF3_DUMP_SPHERE_MAPS
     return v;
   }
 
@@ -332,12 +340,12 @@ public:
   void dump() { SNC_io_parser::dump( snc()); }
 
   void visualize() { 
-#ifdef SNC_VISUALIZOR
+#ifdef CGAL_NEF3_VISUALIZOR
     SNC_visualizor sncv( snc());
     sncv.draw();
     OGL::polyhedra_.back().debug();
     OGL::start_viewer();
-#endif // SNC_VISUALIZOR
+#endif // CGAL_NEF3_VISUALIZOR
   }
 
   void clear(Content space = EMPTY)
@@ -347,7 +355,7 @@ public:
 
   bool is_empty() //const
     /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/ {
-    return snc()->has_bbox_only();
+    return snc().has_bbox_only();
   }
 
   bool is_space() //const
@@ -444,6 +452,7 @@ public:
 
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
+    TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
     AND _and;
     SNC_structure rsnc;
     SNC_decorator D(snc());
@@ -453,41 +462,39 @@ public:
     return res;
   }
 
-  Nef_polyhedron_3<T> join(const Nef_polyhedron_3<T>& N1) const
-  /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
-  //EW_overlayer EWO(res.snc());
-  //EWO.subdivide(snc(),N1.snc());
-  //OR _or; EWO.select(_or);
-  //EWO.simplify();
-  //EWO.build_external_structure();
+  Nef_polyhedron_3<T> join(Nef_polyhedron_3<T>& N1) 
+  /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
+    TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
+    OR _or;
+    SNC_structure rsnc;
+    SNC_decorator D(snc());
+    D.binary_operation( N1.snc(), _or, rsnc);
+    Nef_polyhedron_3<T> res(rsnc);
     res.clear_box_marks();
     return res;
   }
 
-  Nef_polyhedron_3<T> difference(
-    const Nef_polyhedron_3<T>& N1) const
-  /*{\Mop returns |\Mvar| $-$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
-  //EW_overlayer EWO(res.snc());
-  //EWO.subdivide(snc(),N1.snc());
-  //DIFF _diff; EWO.select(_diff);
-  //EWO.simplify();
-  //EWO.build_external_structure();
+  Nef_polyhedron_3<T> difference(Nef_polyhedron_3<T>& N1)
+  /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
+    TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
+    DIFF _diff;
+    SNC_structure rsnc;
+    SNC_decorator D(snc());
+    D.binary_operation( N1.snc(), _diff, rsnc);
+    Nef_polyhedron_3<T> res(rsnc);
     res.clear_box_marks();
     return res;
   }    
 
-  Nef_polyhedron_3<T> symmetric_difference(
-    const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T> symmetric_difference(Nef_polyhedron_3<T>& N1)
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
-          |T - \Mvar|. }*/
-  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
-  //EW_overlayer EWO(res.snc());
-  //EWO.subdivide(snc(),N1.snc());
-  //XOR _xor; EWO.select(_xor);
-  //EWO.simplify();
-  //EWO.build_external_structure();
+          |T - \Mvar|. }*/ {
+    TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
+    XOR _xor;
+    SNC_structure rsnc;
+    SNC_decorator D(snc());
+    D.binary_operation( N1.snc(), _xor, rsnc);
+    Nef_polyhedron_3<T> res(rsnc);
     res.clear_box_marks();
     return res;
   }
@@ -501,13 +508,13 @@ public:
   Nef_polyhedron_3<T>  operator*(Nef_polyhedron_3<T>& N1) 
   { return intersection(N1); }
 
-  Nef_polyhedron_3<T>  operator+(const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T>  operator+(Nef_polyhedron_3<T>& N1) 
   { return join(N1); }
 
-  Nef_polyhedron_3<T>  operator-(const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T>  operator-(Nef_polyhedron_3<T>& N1) 
   { return difference(N1); }
 
-  Nef_polyhedron_3<T>  operator^(const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T>  operator^(Nef_polyhedron_3<T>& N1) 
   { return symmetric_difference(N1); }
 
   Nef_polyhedron_3<T>  operator!() const
@@ -516,35 +523,37 @@ public:
   Nef_polyhedron_3<T>& operator*=(Nef_polyhedron_3<T>& N1)
   { this = intersection(N1); return *this; }
 
-  Nef_polyhedron_3<T>& operator+=(const Nef_polyhedron_3<T>& N1)
+  Nef_polyhedron_3<T>& operator+=(Nef_polyhedron_3<T>& N1)
   { this = join(N1); return *this; }
 
-  Nef_polyhedron_3<T>& operator-=(const Nef_polyhedron_3<T>& N1)
+  Nef_polyhedron_3<T>& operator-=(Nef_polyhedron_3<T>& N1)
   { this = difference(N1); return *this; }
 
-  Nef_polyhedron_3<T>& operator^=(const Nef_polyhedron_3<T>& N1)
+  Nef_polyhedron_3<T>& operator^=(Nef_polyhedron_3<T>& N1)
   { this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
   or equal, equality, inequality.}*/
 
-  bool operator==(const Nef_polyhedron_3<T>& N1) const
-  { return symmetric_difference(N1).is_empty(); }
+  bool operator==(Nef_polyhedron_3<T>& N1) 
+  { TRACEN(" equality comparision between nef3 "<<&*this<<" and "<<&N1);
+    return symmetric_difference(N1).is_empty(); }
 
-  bool operator!=(const Nef_polyhedron_3<T>& N1) const
-  { return !operator==(N1); }  
+  bool operator!=(Nef_polyhedron_3<T>& N1)
+  { TRACEN(" inequality comparision between nef3 "<<&*this<<" and "<<&N1);
+    return !operator==(N1); }  
 
-  bool operator<(const Nef_polyhedron_3<T>& N1) const
+  bool operator<( Nef_polyhedron_3<T>& N1) 
   { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); } 
 
-  bool operator>(const Nef_polyhedron_3<T>& N1) const   
+  bool operator>( Nef_polyhedron_3<T>& N1)    
   { return difference(*this).is_empty() && !difference(N1).is_empty(); } 
 
-  bool operator<=(const Nef_polyhedron_3<T>& N1) const
+  bool operator<=( Nef_polyhedron_3<T>& N1) 
   { return difference(N1).is_empty(); } 
 
-  bool operator>=(const Nef_polyhedron_3<T>& N1) const
+  bool operator>=( Nef_polyhedron_3<T>& N1) 
   { return N1.difference(*this).is_empty(); } 
 
   /*{\Mtext \headerline{Exploration}
@@ -662,15 +671,16 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
   TRACEN("construction from plane "<<h);
-  initialize_simple_cube_vertices(space);
+  CGAL_nef3_assertion_msg( 0, "not implemented");
+  //initialize_simple_cube_vertices(space);
   //add_box_corners(h, b);
-  build_external_structure();
+  //build_external_structure();
 }
 
 template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const SNC_structure& W, bool clone) : Base(Nef_rep()) {
-  TRACEN("construction from an existing SNC structure");
+  TRACEN("construction from an existing SNC structure (clone="<<clone<<")");
   if (clone) { 
     snc() = W;
   }
@@ -684,7 +694,7 @@ void Nef_polyhedron_3<T>::extract_complement() {
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D) D.mark(v) = !D.mark(v); 
   Halfedge_iterator e;
-  CGAL_nef3_forall_edges(e,D) D.mark(e) = !D.mark(e);
+  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = !D.mark(e);
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
   Volume_iterator c;
@@ -701,7 +711,7 @@ void Nef_polyhedron_3<T>::extract_interior() {
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D) D.mark(v) = false;
   Halfedge_iterator e;
-  CGAL_nef3_forall_edges(e,D) D.mark(e) = false;
+  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = false;
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
   Volume_iterator c;
@@ -717,7 +727,7 @@ void Nef_polyhedron_3<T>::extract_boundary() {
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D) D.mark(v) = true;
   Halfedge_iterator e;
-  CGAL_nef3_forall_edges(e,D) D.mark(e) = true;
+  CGAL_nef3_forall_halfedges(e,D) D.mark(e) = true;
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;

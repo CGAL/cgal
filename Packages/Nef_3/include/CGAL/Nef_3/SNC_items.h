@@ -37,6 +37,10 @@
 #include <string>
 #include <sstream>
 
+#undef _DEBUG
+#define _DEBUG 83
+#include <CGAL/Nef_3/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename K, typename M> class SNC_items;
@@ -290,6 +294,10 @@ public:
     Mark& mark() { return mark_; }
     GenPtr& info() { return info_; }
 
+    ~Vertex() {
+      TRACEN("  destroying Vertex item "<<&*this);
+    }
+
   public:
     std::string debug() const
     { std::stringstream os; 
@@ -344,7 +352,9 @@ public:
       out_sedge_(), incident_sface_(),
       info_(), point_on_surface_() {}
 
-    ~Halfedge() {}
+    ~Halfedge() {
+      TRACEN("  destroying Halfedge item "<<&*this);
+    }
 
     Halfedge(const Halfedge<Refs>& e) 
     { center_vertex_ = e.center_vertex_;
@@ -369,7 +379,8 @@ public:
 
 
     Mark& mark() 
-    { return mark_; }
+    { TRACEN("  taking "<<mark_<<" for "<<&*this);
+      return mark_; }
 
     Sphere_point& tmp_point()
     { return point_on_surface_; }
@@ -425,7 +436,9 @@ public:
     Halffacet(const Plane_3& h, Mark m) :
       supporting_plane_(h), mark_(m) {}
 
-    ~Halffacet() {}
+    ~Halffacet() {
+      TRACEN("  destroying Halffacet item "<<&*this);
+    }
 
     Halffacet(const Halffacet<Refs>& f)
     { supporting_plane_ = f.supporting_plane_;
@@ -496,7 +509,9 @@ public:
 
     Volume(Mark m) : mark_(m) {}
 
-    ~Volume() {}
+    ~Volume() {
+      TRACEN("  destroying Volume item "<<&*this);
+    }
 
     Volume(const Volume<Refs>& v)
     { mark_ = v.mark_;
@@ -572,7 +587,9 @@ public:
      prev_(), next_(), incident_facet_(), 
      info_(), mark_(), circle_() {}
 
-    ~SHalfedge() {}
+    ~SHalfedge() {
+      TRACEN("  destroying SHalfedge item "<<&*this);
+    }
 
     SHalfedge(const SHalfedge<Refs>& e)
     {
@@ -626,6 +643,8 @@ public:
       return os.str();
     }
 
+    bool is_twin() const { return (&*twin_ < this); }
+
   }; // SHalfedge
 
 
@@ -661,8 +680,9 @@ public:
     SHalfloop() : twin_(), incident_sface_(), incident_facet_(), 
       info_(), mark_(), circle_() {}
 
-    ~SHalfloop() {}
-
+    ~SHalfloop() {
+      TRACEN("  destroying SHalfloop item "<<&*this);
+    }
     SHalfloop(const SHalfloop<Refs>& l)
     { twin_ = l.twin_;
       incident_sface_ = l.incident_sface_;
@@ -700,6 +720,8 @@ public:
       return os.str();
     }
 
+    bool is_twin() const { return (&*twin_ < this); }
+
   }; // SHalfloop
 
 
@@ -736,7 +758,9 @@ public:
 
     SFace() : center_vertex_(), incident_volume_(), info_(), mark_() {}
 
-    ~SFace() {}
+    ~SFace() {
+      TRACEN("  destroying SFace item "<<&*this);
+    }
 
     SFace(const SFace<Refs>& f)
     { center_vertex_ = f.center_vertex_;
