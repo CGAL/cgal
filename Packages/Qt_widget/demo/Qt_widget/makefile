@@ -37,7 +37,6 @@ DEMO_SUBDIRS= \
 ./Convex_Hull_2 \
 ./Generator \
 ./Max_k-gon \
-./Nef_2 \
 ./Triangulation_2_constrained \
 ./Examples \
 ./basic/tutorial1 \
