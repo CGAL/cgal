@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Apollonius_graph_2<Gt,StoreHidden,Agds>}
+\begin{ccRefClass}{Apollonius_graph_2<Gt,Agds>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -21,15 +21,12 @@
 
 The class \ccRefName\ represents the
 Apollonius graph. It supports insertions and deletions of weighted
-points. It is templated by three template arguments \ccc{Gt}, which
-must be a model of \ccc{ApolloniusGraphTraits_2}, \ccc{StoreHidden},
-which is a boolean indicating if hidden weighted points are to be
-stored, and \ccc{Agds}, which must be a model of
-\ccc{ApolloniusGraphDataStructure_2}. The second template argument
-defaults to \ccc{true}, but if only insertions of weighted points are
-to be made then the recommended value is \ccc{false}. The third template
-argument defaults to \ccc{CGAL::Apollonius_graph_data_structure_2<
-CGAL::Apollonius_graph_vertex_base_2<Gt>,
+points. It is templated by two template arguments \ccc{Gt}, which
+must be a model of \ccc{ApolloniusGraphTraits_2}, and \ccc{Agds},
+which must be a model of \ccc{ApolloniusGraphDataStructure_2}.
+The third template argument defaults to
+\ccc{CGAL::Apollonius_graph_data_structure_2< 
+CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
 CGAL::Apollonius_graph_face_base_2<Gt> >}.
 
 \ccInclude{CGAL/Apollonius_graph_2.h}
@@ -43,21 +40,18 @@ data structure.}
 \ccGlue
 \ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
 \ccGlue
-\ccTypedef{typedef Gt::Bare_point_2 Point_2;}{A type for the bare
+\ccTypedef{typedef Gt::Point_2 Point_2;}{A type for the
 point defined in the geometric traits.}
 \ccGlue
-\ccTypedef{typedef Gt::Weighted_point_2  Weighted_point_2;}
-{A type for the weighted point defined in the geometric traits.}
+\ccTypedef{typedef Gt::Site_2  Site_2;}
+{A type for the Apollonius site, defined in the geometric traits.}
 \ccGlue
-\ccTypedef{typedef Gt::Weight          Weight;}
-{A type for the weight of the weighted point; using the definition in
-the geometric traits.}
 %
 
 % MK:: in the following copy text from TDS
 
-The vertices and faces of the Apollonius graph are accessed through 
-\ccc{handles}, 
+The vertices and faces of the Apollonius graph are accessed
+through \ccc{handles}, 
 \ccc{iterators} and \ccc{circulators}. 
 The iterators and circulators
 are all bidirectional and non mutable.
@@ -70,12 +64,17 @@ the edge circulators and iterators
 are also bidirectional and non mutable.
 In the following, we called {\it infinite} any face or edge 
 incident  to the infinite vertex and the infinite vertex itself.
- Any other feature (face, edge or vertex) of the Apollonius graph is said 
+Any other feature (face, edge or vertex) of the Apollonius graph is said 
 to be {\it finite}.
 Some iterators (the \ccc{All} iterators ) allow to visit finite or 
 infinite features while the others (the \ccc{Finite} iterators) visit only
 finite features. Circulators visit infinite features as well as finite 
 ones.
+
+In addition to iterators and circulators for vertices and faces,
+iterators for sites are provided. In particular there are iterators
+for the entire set of sites, the hidden sites and the visible sites of
+the Apollonius graph.
 
 \ccThree{typedef std::pair<Face_handle, int>}{}{the apollonius graph,
 the apollonius graph, the graph}
@@ -87,7 +86,7 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
 %
-\ccTwo{Apollonius_graph_2<Gt,StoreHidden,Agds>::Finite_vertices_iterator+}
+\ccTwo{Apollonius_graph_2<Gt,Agds>::Finite_vertices_iterator+}
 {}
 %
 \ccGlue
