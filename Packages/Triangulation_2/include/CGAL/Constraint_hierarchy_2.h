@@ -694,12 +694,12 @@ print() const
       vertex_num.insert(std::make_pair((*vit), num));
     }
   }
-//   typename std::map<T,int>::iterator vnit = vertex_num.begin();
-//   for(; vnit != vertex_num.end(); vnit++) {
-//     vnit->second = ++num;
-//     std::cerr << "vertex num " << num  << " " << vnit->first->point()
-// 	      << std::endl;
-//   }
+//  typename std::map<T,int>::iterator vnit = vertex_num.begin();
+//  for(; vnit != vertex_num.end(); vnit++) {
+//    vnit->second = ++num;
+//    std::cerr << "vertex num " << num  << " " << vnit->first->point()
+//	      << std::endl;
+//  }
 
   H_c_iterator cit=c_begin();
   H_sc_iterator scit=sc_begin();

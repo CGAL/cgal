@@ -4,7 +4,7 @@ constrained and regular triangulations with  tests and examples.
 19 octobre 2004 Mariette
 - made propagate_conflicts of  Constrained_Delaunay_triangulation_2.h
   public
-- add a tag in Constrained triangulation for the hierarachy
+- add a tag in Constrained triangulation for the hierarchy
 
 19 octobre 2004 Mariette
 -  fixed test suite of constrained Delaunay triangulation
