@@ -5469,31 +5469,23 @@ write_compiler_flags()
   #
   ${_printf} "%s\\\\\n" "CGAL_CXXFLAGS = " >> ${FILE}
   makefile_print_line "\$(CUSTOM_CXXFLAGS) ${ADDITIONAL_CXXFLAGS}" >> ${FILE}
+
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ -n "${GMPXX_SUPPORT}" ]; then
       makefile_print_line "-DCGAL_USE_GMP -DCGAL_USE_GMPXX" >> ${FILE}
     else
       makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
     fi
-    if [ "${GMP_INSTALLATION}" = 'x' -o \
-	 "${GMP_INSTALLATION}" = 'z' -o \
-	 "${GMP_INSTALLATION}" = 'e' ]; then
-	makefile_print_line "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
-    fi
   fi
+
   if [ -n "${CLN_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_CLN" >> ${FILE}
-    if [ "${CLN_INSTALLATION}" = 'x' -o \
-	 "${CLN_INSTALLATION}" = 'z' -o \
-	 "${CLN_INSTALLATION}" = 'e' ]; then
-	makefile_print_line "'-I\$(CLN_INCL_DIR)'" >> ${FILE}
-    fi
   fi
+
   if [ -n "${QT_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_QT ${CGAL_QT_CXXFLAGS}" >> ${FILE}
   fi
-  makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
-  makefile_print_line "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+  
   if [ -n "${LEDA_SUPPORT}" ]; then
     case ${CGAL_OS_COMPILER} in
 	*g++-2.8*)
@@ -5502,15 +5494,36 @@ write_compiler_flags()
 		*)
 	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
     esac
+  fi
+
+  makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
+  ${_printf} "\t%s" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+
+  if [ -n "${GMP_SUPPORT}" ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	 ${_printf} "\t%s" "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	 ${_printf} "\t%s" "'-I\$(CLN_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+
+  if [ -n "${LEDA_SUPPORT}" ]; then
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
 	${_printf} "\t%s" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
     fi
   fi
   if [ -n "${QT_SUPPORT}" ]; then
-    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
-	${_printf} "\t%s" "'-I\$(QT_INCL_DIR)'" >> ${FILE}
-    fi
+    ${_printf} "\t%s" "'-I\$(QT_INCL_DIR)'" >> ${FILE}
   fi
+
   ${_printf} "\n\n" >> ${FILE}
 
   #
