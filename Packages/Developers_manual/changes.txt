@@ -1,3 +1,6 @@
+20 June 2004 Sylvain Pion
+- Remove dead URL.
+
 26 May 2004 Radu Ursu
 - added create_internal_module section in the tools.tex
 

@@ -121,8 +121,7 @@ name and no scope resolution%
 \ccIndexMainItem{scope resolution} operator \verb+::+, proceeds like qualified 
 name lookup, but name lookup for a function call is supposed to search also 
 the namespaces of the argument types for a matching function name. 
-This is sometimes called Koenig-lookup.\footnote{%
-\path+http://www.devresource.hp.com/devresource/Docs/TechPapers/KoenigLookup.html+}\ccIndexMainItem{Koenig lookup}
+This is sometimes called Koenig-lookup.\ccIndexMainItem{Koenig lookup}
 \cgal\ checks for Koenig-lookup. If this is not available, 
 the flag \ccc{CGAL_CFG_NO_KOENIG_LOOKUP}%
 \index{CGAL_CFG_NO_KOENIG_LOOKUP flag@{\tt CGAL\_CFG\_NO\_KOENIG\_LOOKUP} flag}
