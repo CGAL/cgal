@@ -96,7 +96,7 @@ public:
                Change_notification* pmwx_change_notf) : 
     arr_(arr), sub_division1(0), sub_division2(0), 
     ovl_change_notf(pmwx_change_notf), ovl(new Map_ovl_sweep), 
-    use_delete_notf (false), use_delete_ovl(true)  
+    use_delete_notf(false), use_delete_ovl(true)  
   { 
     // here we can't use copy Constructor since we have to update arr attributres due to the notifier.
     // An effeicient way doing this is sweeping the original subdivision while using the notifier.
@@ -105,43 +105,32 @@ public:
     //ovl->map_overlay(arr, empty_subdivision, ovl_change_notf, arr_);
   }
   
-  Map_overlay (const Arrangement &arr, Map_ovl_base *ovl_ptr) : arr_(arr), ovl(ovl_ptr) 
-  { 
-    //copy_arr(arr, arr_);
-    
-    ovl_change_notf = new Change_notification;
-    use_delete_notf = true;
-    use_delete_ovl = false;
-    
-    sub_division1 = sub_division2 = 0;
-  }
+  Map_overlay (const Arrangement &arr, 
+               Map_ovl_base *ovl_ptr) : 
+    arr_(arr),  sub_division1(0), sub_division2(0), 
+    ovl_change_notf(new Change_notification), ovl(ovl_ptr), 
+    use_delete_notf(true), use_delete_ovl(false) {}
 
   Map_overlay (const Arrangement &arr,  
                Change_notification* pmwx_change_notf, 
-               Map_ovl_base *ovl_ptr) 
-    : ovl_change_notf(pmwx_change_notf) , ovl(ovl_ptr) , arr_(arr)
-  { 
-    //copy_arr(arr, arr_);
-    
-    use_delete_notf = false;
-    use_delete_ovl = false;
-    
-    sub_division1 = sub_division2 = 0;
-  }
+               Map_ovl_base *ovl_ptr) : 
+    arr_(arr), sub_division1(0), sub_division2(0), 
+    ovl_change_notf(pmwx_change_notf), ovl(ovl_ptr),
+    use_delete_notf(false), use_delete_ovl(false) {}
 
-  /*Map_overlay (const Arrangement &arr1, const Arrangement &arr2)
-    {
-    
-  }*/
-
-  Map_overlay (const Self &ovl1, const Self &ovl2)
+  Map_overlay (const Self &ovl1, const Self &ovl2) : 
+    sub_division1(&ovl1), sub_division2(&ovl2),
+    ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
+                                            &(ovl2.subdivision()) )), 
+    ovl(new Map_ovl_sweep), 
+    use_delete_notf(true), use_delete_ovl(true)
   {
-    ovl = new Map_ovl_sweep;
-    use_delete_ovl = true;
+    //ovl = new Map_ovl_sweep;
+    //use_delete_ovl = true;
 
-    ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
-                                               &(ovl2.subdivision()) );
-    use_delete_notf = true;
+    //ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+    //                                           &(ovl2.subdivision()) );
+    //use_delete_notf = true;
 
     //int c_sweep_t;
     //c_sweep_t = clock();
@@ -149,19 +138,25 @@ public:
     //c_sweep_t = clock() - c_sweep_t;
     //std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
 
-    sub_division1 = (Self *) &ovl1;
-    sub_division2 = (Self *) &ovl2;
+    //sub_division1 = &ovl1;
+    //sub_division2 = &ovl2;
   }
   
   Map_overlay (const Self &ovl1, const Self &ovl2, 
-               Point_location_base *pl_ptr) : arr_(pl_ptr)
+               Point_location_base *pl_ptr) : 
+    arr_(pl_ptr), 
+    sub_division1(&ovl1), sub_division2(&ovl2),
+    ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
+                                            &(ovl2.subdivision()) )), 
+    ovl(new Map_ovl_sweep),
+    use_delete_notf(true), use_delete_ovl(true)
   {
-    ovl = new Map_ovl_sweep;
-    use_delete_ovl = true;
+    //ovl = new Map_ovl_sweep;
+    //use_delete_ovl = true;
 
-    ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
-                                               &(ovl2.subdivision()) );
-    use_delete_notf = true;
+    //ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+    //                                           &(ovl2.subdivision()) );
+    //use_delete_notf = true;
 
     int c_sweep_t;
     c_sweep_t = clock();
@@ -169,8 +164,8 @@ public:
     c_sweep_t = clock() - c_sweep_t;
     std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
 
-    sub_division1 = (Self *) &ovl1;
-    sub_division2 = (Self *) &ovl2;
+    //sub_division1 = (Self *) &ovl1;
+    //sub_division2 = (Self *) &ovl2;
   }
 
   Map_overlay (const Self &ovl1, 
@@ -222,6 +217,9 @@ public:
     if (use_delete_notf) delete ovl_change_notf;
     if (use_delete_ovl)  delete ovl;
   }
+
+  // ------------------- Add a copy contr' 
+  // -------------------- Add assignement operator.
   
   void	 delete_subtree() {
     arr_ = Map_overlay(arr_);
