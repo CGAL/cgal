@@ -1,5 +1,8 @@
+2.58
+- Refine CGAL_CFG_NO_LIMITS for MipsPro.
+
 2.57 (rursu)
--added CGAL_CFG_FUNCTION_OVERLOAD_BUG in config.h
+- added CGAL_CFG_FUNCTION_OVERLOAD_BUG in config.h
 
 2.56 (mh)
 - removed obsolete workaround files

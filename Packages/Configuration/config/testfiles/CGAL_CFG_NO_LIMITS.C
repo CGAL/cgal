@@ -21,19 +21,17 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler doesn't know the limits (g++-2.95)
-//| or has a bug in the implementation (Sun CC 5.4)
+//| If a compiler doesn't know <limits> (g++-2.95)
+//| or has a bug in the implementation (Sun CC 5.4, MipsPro CC)
 //| CGAL_CFG_NO_LIMITS is set. 
 
 #include <limits>
 
-
 int main()
 {
-  if(std::numeric_limits<double>::denorm_min() == 0){
+  double d = std::numeric_limits<double>::denorm_min();
+  double e = std::numeric_limits<double>::min();
+  if (d == 0 || d == e)
     return 1;
-  }
   return 0;
 }
-
-
