@@ -27,7 +27,8 @@
 //#endif
 //#include <CGAL/IO/leda_window.h>  //used for visualization.
 
-//using namespace std;
+using namespace CGAL;
+
 
 typedef CGAL::Quotient<int>                  NT;
 typedef CGAL::Cartesian<NT>                  R;
@@ -61,8 +62,6 @@ std::ostream&  operator<<(std::ostream& os,
 std::istream&  operator>>(std::istream& in,  
 			  Curve& cv)
 {
-  typedef Curve::value_type           Point;
-
   std::size_t  size;
 
   in >> size;
@@ -91,16 +90,18 @@ void read_polylines(Container& curves)
 
   while (num_polylines--) {
     Curve      polyline;
-    int        num_points;
     
-    std::cin >> num_points;
-
-    while (num_points--) {
-      std::cin >> x >> y;
-      Point s(x, y);
-      
-      polyline.push_back(s);
-    }
+    /* int        num_points;
+       
+       std::cin >> num_points;
+       
+       while (num_points--) {
+       std::cin >> x >> y;
+       Point s(x, y);
+       
+       polyline.push_back(s);
+       }*/
+    
     std::cin>>polyline;
     curves.push_back(polyline);
   }
@@ -115,9 +116,9 @@ int main(/*int argc, char* argv[]*/)
 
   CGAL::sweep_to_construct_planar_map(polylines.begin(),polylines.end(), pm);
   
-  std::cout << " * * * Printing list of all halfedges of the resulting Planar map" << endl;
+  std::cout << " * * * Printing list of all halfedges of the resulting Planar map" << std::endl;
   
-  Pm_writer verbose_writer(cout, pm, true);
+  Pm_writer verbose_writer(std::cout, pm, true);
   
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
 
@@ -130,3 +131,6 @@ int main(/*int argc, char* argv[]*/)
   //W.display();
   //W << pm;
 }
+
+
+

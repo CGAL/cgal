@@ -25,7 +25,7 @@ typedef Traits::Point                                 Point;
 typedef Traits::X_curve                               X_curve;
 typedef Traits::Curve                                 Curve;
 
-using namespace std;
+using namespace CGAL;
 
 
 CGAL_BEGIN_NAMESPACE
@@ -47,8 +47,6 @@ std::ostream&  operator<<(std::ostream& os,
 std::istream&  operator>>(std::istream& in,  
 			  Curve& cv)
 {
-  typedef Curve::value_type           Point;
-
   std::size_t  size;
 
   in >> size;
@@ -73,7 +71,7 @@ void read_polylines(Container& curves)
   int      num_polylines = 0;
   NT       x,y;
 
-  cin >> num_polylines;
+  std::cin >> num_polylines;
   std::cout<<"number of polylines is : " << num_polylines<<std::endl;
 
   while (num_polylines--) {
@@ -100,14 +98,18 @@ void read_polylines(Container& curves)
 
 int main(/*int argc, char* argv[]*/)
 {
-  list<Curve>      polylines;
+  std::list<Curve>      polylines;
     
   read_polylines(polylines);
   
   Traits traits;
-  list<Curve> subcurves;
+  std::list<Curve> subcurves;
   CGAL::sweep_to_produce_planar_map_subcurves(polylines.begin(),polylines.end(), traits, subcurves);  
  
-  for (list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)    
-    cout<<*scv_iter<<endl;
+  for (std::list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)    
+    std::cout<<*scv_iter<<std::endl;
 }
+
+
+
+
