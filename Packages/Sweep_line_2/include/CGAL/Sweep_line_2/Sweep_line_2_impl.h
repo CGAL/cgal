@@ -225,6 +225,7 @@ public:
       PrintEventQueue();
     )
     m_includeEndPoints = includeEndPoints;
+    m_found_intersection = false;
     Sweep(points, SweepLineGetPoints());
   }
 
@@ -263,6 +264,7 @@ public:
     m_includeEndPoints = false;
     std::vector<Point_2> dummy;
     m_stop_at_first_int = true;
+    m_found_intersection = false;
     Sweep(std::back_inserter(dummy), SweepLineGetPoints(), true);
     return m_found_intersection;
   }
