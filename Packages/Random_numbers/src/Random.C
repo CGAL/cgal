@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : src/Random.C
-// package       : Random_numbers 2.2.3 (20 Mar 2001)
+// package       : $CGAL_Package: Random_numbers $
 // chapter       : Random Numbers Generator
 //
 // source        : web/Random.aw
-// revision      : 2.4
-// revision_date : 2000/11/01 13:48:56
+// revision      : 2.5
+// revision_date : 2001/03/21
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : INRIA Sophia-Antipolis
 //
 // implementation: Random Numbers Generator

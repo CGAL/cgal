@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Optimisation_d_traits_2.h
-// package       : Optimisation_basic 3.8.3 (20 Mar 2001)
+// package       : $CGAL_Package: Optimisation_basic $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Optimisation_d_traits.aw
-// revision      : 1.2
-// revision_date : 2000/09/26 10:47:49
+// revision      : 1.3
+// revision_date : 2001/03/21
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Traits class (2D) for dD optimisation algorithms

@@ -8,19 +8,18 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Polytope_distance_d.h
-// package       : Polytope_distance_d 1.0.2 (20 Mar 2001)
+// package       : $CGAL_Package: Polytope_distance_d $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Polytope_distance_d.aw
-// revision      : 1.8
-// revision_date : 2000/10/04 14:04:28
+// revision      : 1.9
+// revision_date : 2001/03/21
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: Distance of convex polytopes in arbitrary dimension
