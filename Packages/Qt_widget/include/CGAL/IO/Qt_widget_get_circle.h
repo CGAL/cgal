@@ -33,15 +33,15 @@
 namespace CGAL {
 
 template <class R>
-class Qt_widget_get_circle : public Qt_widget_tool
+class Qt_widget_get_circle : public Qt_widget_layer
 {
 public:
   typedef typename R::Point_2		Point;
   typedef typename R::Circle_2		Circle;
   typedef typename R::FT	FT;
 
-  Qt_widget_get_circle() : firstpoint(false), 
-			 firsttime(true){};
+  Qt_widget_get_circle(const QCursor c=QCursor(Qt::crossCursor)) 
+     : cursor(c), firstpoint(false), firsttime(true){};
   void draw(){
     firsttime = true;
   }
@@ -74,7 +74,7 @@ private:
 	    FT y=static_cast<FT>(widget->y_real(e->y()));
 	    widget->new_object(make_object(Circle(Point(x1,y1),
 		  squared_distance(Point(x1, y1), Point(x,y)))));
-	    firstpoint = false;
+	    firstpoint = false; firsttime = true;
     }
   };
 
@@ -102,7 +102,7 @@ private:
     if(firstpoint==TRUE)
     {		
       FT x=static_cast<FT>(widget->x_real(e->x()));
-	    FT y=static_cast<FT>(widget->y_real(e->y()));
+      FT y=static_cast<FT>(widget->y_real(e->y()));
       QColor old_color = widget->color();
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode		
       widget->setRasterOp(XorROP);
@@ -123,25 +123,28 @@ private:
       firsttime = false;
     }
   };
-  
   void activating()
   {
     oldcursor = widget->cursor();
-    widget->setCursor(crossCursor);
+    widget->setCursor(cursor);
   };
-
+  
   void deactivating()
   {
     widget->setCursor(oldcursor);
     firstpoint = false;
   };
 
+  QCursor cursor;
+  QCursor oldcursor;
+  
+
   FT	x1, //the X of the first point
 		  y1; //the Y of the first point
   FT	x2, //the old second point's X
 		  y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
-		    firsttime;  //true if the line is not drawn
+	firsttime;  //true if the line is not drawn
 };//end class 
 
 } // namespace CGAL
