@@ -28,7 +28,7 @@
 //Define shorter names to please linker (g++/egcs)
 
 
-#define Triangulation_data_structure_2 TDS
+#define Triangulation_data_structure_2 Tds2
 #define Triangulation_vertex_base_2  Tvb
 #define Triangulation_face_base_2  Tfb
 #define Triangulation_euclidean_traits_2 Et2

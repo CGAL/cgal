@@ -37,7 +37,7 @@ _test_cls_tds_vertex( const Vtds&)
   typedef typename Vtds::Face_circulator      Face_circulator;
   typedef typename Vtds::Edge_circulator      Edge_circulator;
 
-  typedef typename Vtds::Tds                  Tds;
+  typedef typename Vtds::Triangulation_data_structure Tds;
   typedef typename Tds::Face                  Face;
   typedef typename Vtds::Vertex               Vertex;
 
