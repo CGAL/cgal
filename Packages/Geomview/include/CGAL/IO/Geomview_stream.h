@@ -74,9 +74,8 @@ public:
     }
     double set_vertex_radius(double r)
     {
-	double old = radius;
-	radius = r;
-	return old;
+	std::swap(r, radius);
+	return r;
     }
 
     int get_line_width() const
@@ -85,9 +84,8 @@ public:
     }
     int set_line_width(int w)
     {
-        int old = line_width;
-        line_width = w;
-        return old;
+	std::swap(w, line_width);
+        return w;
     }
 
     Geomview_stream &operator<<(const Color &c);
@@ -97,11 +95,20 @@ public:
 
     Geomview_stream &operator>>(char *expr);
 
+    bool set_raw(bool b)
+    {
+	std::swap(b, raw_flag);
+	return b;
+    }
+    bool get_raw() const
+    {
+	return raw_flag;
+    }
+
     bool set_trace(bool b)
     {
-	bool old = trace_flag;
-	trace_flag = b;
-	return old;
+	std::swap(b, trace_flag);
+	return b;
     }
     bool get_trace() const
     {
@@ -144,6 +151,7 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color vertex_color, edge_color, face_color;
+    bool raw_flag;    // bool that decides if we output footers and headers.
     bool trace_flag;  // bool that makes operator<<() write a trace on cerr.
     bool binary_flag; // bool that makes operator<< write binary format
     int line_width;   // width of edges
@@ -159,17 +167,19 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_2<R> &p)
 {
-    gv.set_ascii_mode();
-    gv << "(geometry P" << gv.point_count++
-       << " {appearance {linewidth 5 material {edgecolor "
-       << gv.vcr() << gv.vcg() << gv.vcb()
-       << "}}{SKEL 1 1 " ;
+    if (!gv.get_raw()) {
+    	gv.set_ascii_mode();
+    	gv << "(geometry P" << gv.point_count++
+       	   << " {appearance {linewidth 5 material {edgecolor "
+           << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
+    }
 
     gv << CGAL::to_double(p.x())
        << CGAL::to_double(p.y())
-       << 0.0
-       << "1 0\n"
-       << "}})" ;
+       << 0.0;
+
+    if (!gv.get_raw())
+        gv << "1 0\n" << "}})";
 
     return gv;
 }
@@ -182,17 +192,19 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
-    gv.set_ascii_mode();
-    gv << "(geometry P" << gv.point_count++
-       << " {appearance {linewidth 5 material {edgecolor "
-       << gv.vcr() << gv.vcg() << gv.vcb()
-       << "}}{SKEL 1 1 "
+    if (!gv.get_raw()) {
+        gv.set_ascii_mode();
+        gv << "(geometry P" << gv.point_count++
+           << " {appearance {linewidth 5 material {edgecolor "
+           << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
+    }
 
-       << CGAL::to_double(p.x())
+    gv << CGAL::to_double(p.x())
        << CGAL::to_double(p.y())
-       << CGAL::to_double(p.z())
-       << "1 0\n"
-       << "}})" ;
+       << CGAL::to_double(p.z());
+
+    if (!gv.get_raw())
+	gv << "1 0\n" << "}})";
 
     return gv;
 }
