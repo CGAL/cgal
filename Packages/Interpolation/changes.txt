@@ -1,3 +1,6 @@
+1 October 2004 Andreas Fabri
+- When interpolating on a surface in 3D space on must not project the infinite vertex
+
 30 September 2004 Andreas Fabri
 - Replaced "return 1;" with "return 0;" in  the example interpolation.C 
 
