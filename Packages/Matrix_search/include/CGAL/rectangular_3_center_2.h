@@ -319,6 +319,9 @@ struct Rectangular_3_center_2_type2_operations0
   typedef typename Base::Less_x_2             X_compare;
   typedef typename Base::Greater_y_2          Y_compare;
   typedef typename Base::Infinity_distance_2  Distance;
+  typedef typename Base::Construct_iso_rectangle_2
+                                              Construct_iso_rectangle_2;
+  typedef typename Base::Construct_vertex_2   Construct_vertex_2;
 
   Rectangular_3_center_2_type2_operations0(R& r, const Point& p)
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
@@ -464,6 +467,9 @@ struct Rectangular_3_center_2_type2_operations1
   typedef typename Base::Infinity_distance_2  Distance;
   typedef typename Base::Greater_x_2          X_compare;
   typedef typename Base::Greater_y_2          Y_compare;
+  typedef typename Base::Construct_iso_rectangle_2
+                                              Construct_iso_rectangle_2;
+  typedef typename Base::Construct_vertex_2   Construct_vertex_2;
 
   Rectangular_3_center_2_type2_operations1(R& r, const Point& p)
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
@@ -607,6 +613,9 @@ struct Rectangular_3_center_2_type2_operations2
   typedef typename Base::Infinity_distance_2  Distance;
   typedef typename Base::Greater_x_2          X_compare;
   typedef typename Base::Less_y_2             Y_compare;
+  typedef typename Base::Construct_iso_rectangle_2
+                                              Construct_iso_rectangle_2;
+  typedef typename Base::Construct_vertex_2   Construct_vertex_2;
 
   Rectangular_3_center_2_type2_operations2(R& r, const Point& p)
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
@@ -750,6 +759,9 @@ struct Rectangular_3_center_2_type2_operations3
   typedef typename Base::Infinity_distance_2  Distance;
   typedef typename Base::Less_x_2             X_compare;
   typedef typename Base::Less_y_2             Y_compare;
+  typedef typename Base::Construct_iso_rectangle_2
+                                              Construct_iso_rectangle_2;
+  typedef typename Base::Construct_vertex_2   Construct_vertex_2;
 
   Rectangular_3_center_2_type2_operations3(R& r, const Point& p)
   : Rectangular_3_center_2_type2_operations_base< R >(r, p)
