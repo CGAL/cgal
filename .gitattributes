@@ -1729,6 +1729,7 @@ Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb5.bmp -text svneol=
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb6.bmp -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb7.bmp -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/mfc/Subdivision/res/idb8.bmp -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/sgp2004/examples/tetra.off -text
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.eps -text
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/Circulators.fig -text
 Packages/Tutorial/tutorial/Polyhedron/sgp2004/paper/figs/RefMap.eps -text
