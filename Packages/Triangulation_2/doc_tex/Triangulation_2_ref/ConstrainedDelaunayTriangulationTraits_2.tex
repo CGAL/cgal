@@ -19,16 +19,16 @@
 \ccDefinition
   
 The concept \ccRefName\ defines the requirements for the geometric
-traits class of a Delaunay constrained triangulation
-( \ccc{Delaunay_constrained_Triangulation_2<Traits,Tds,Itag>})
-that support intersections of input constraints (i. e.
+traits class of a constrainedDelaunay  triangulation
+( \ccc{Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>})
+that supports intersections of input constraints (i. e.
 when the template parameter \ccc{Itag} is instantiated
-by one one of the tag classes \ccc{Exact_intersections_tag} or
+by one of the tag classes \ccc{Exact_intersections_tag} or
 \ccc{Exact_predicates_tag}). This concept refines both the concept
 \ccc{TriangulationTraits_2} and the concept
 \ccc{ConstrainedTriangulationTraits_2}.
 
-\ccGeneralizes
+\ccRefines
 \ccc{TriangulationTraits_2} \\
 \ccc{ConstrainedTriangulationTraits_2}
 
@@ -39,15 +39,15 @@ by one one of the tag classes \ccc{Exact_intersections_tag} or
 \ccConstructor{ConstrainedDelaunayTriangulationTraits_2();}{default constructor.}
 \ccGlue
 \ccConstructor{ConstrainedDelaunayTriangulationTraits_2(
-                    const ConstrainedDelaunayTriangulationTraits_2& dctraits);}
+                    const ConstrainedDelaunayTriangulationTraits_2& traits2);}
 {Copy constructor}
 
 \ccMethod{ConstrainedDelaunayTriangulationTraits_2 operator=
-	(const ConstrainedDelaunayTriangulationTraits_2& dctraits);}
+	(const ConstrainedDelaunayTriangulationTraits_2& traits2);}
 {Assignment operator.}
 
 \ccHasModels
-The kernels of \cgal are models for this traits class.
+The kernels of \cgal\ are models for this traits class.
 
 \ccSeeAlso
 \ccc{TriangulationTraits_2} \\

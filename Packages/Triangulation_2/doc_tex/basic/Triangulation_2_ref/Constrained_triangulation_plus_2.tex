@@ -24,20 +24,20 @@ that keeps track of  the input constraints and of their refinement
 in the triangulation.
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
 inherits from its template parameter Tr, which has to be instantiated
-by a constraint or Delaunay constraint triangulation.
+by a constrained or constrained Delaunay  triangulation.
 According to its intersection tag, the base class
 will support intersecting input constraints or not.
 When intersections of input constraints are supported,
 the base class constructs a triangulation  of the  arrangement
-of these constraints,
+of the constraints,
 introducing new vertices at each proper intersection
 points and  refining the input constraints into subconstraints
 which are edges (more precisely constrained edges) of the
 triangulation. 
 In this context, the constraint hierarchy 
 keeps track of  the input constraints and of their refinement
-in the triangulation. This data structure keeps track of the
-input constraints and maintain for each of them
+in the triangulation. This data structure 
+maintains for each input constraints 
 the sequence of intersection vertices added on this constraint.
 The constraint hierarchy also allows the user to retrieve the set
 of constrained edges of the triangulation, and for each
@@ -51,7 +51,7 @@ constrained edge,  the set of input constraints that overlap it.
 \ccTypes 
 \ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
 \ccGlue
-\ccTypedef{typedef Itag Intersection_tag;}{the intersection tag}
+\ccTypedef{typedef Itag Intersection_tag;}{the intersection tag.s}
 
 \ccNestedType{Constraint_iterator;}{An iterator to visit
 all the input  constraints. The order of visit is arbitrary.
@@ -74,10 +74,11 @@ constraint. The value type of this iterator is \ccc{Vertex_handle}.}
 \ccTypedef{typedef Context;}{This type is intended to describe
 a constraint including a subconstraint and the position of the
 subconstraint in this constraint.
-It provides three member functions \ccc{first()}, \ccc{last()}
+It provides three member functions \ccc{Vertices_begin()}, \ccc{Vertices_end()}
 and \ccc{current()} returning 
 iterators  on the sequence of vertices of the enclosing constraint.
-\ccc{first()} returns a  \ccc{Vertices_in_constraint} iterator pointing 
+\ccc{Vertices_begin()} returns a  \ccc{Vertices_in_constraint} 
+iterator pointing 
 on the first vertex of the enclosing constraint,
 \ccc{last()} returns a  \ccc{Vertices_in_constraint} iterator 
 pointing past the last vertex on  the enclosing constraint, and 
@@ -100,7 +101,7 @@ is \ccc{Context}.}
 \ccConstructor{Constrained_triangulation_plus_2(const
 Constrained_triangulation_plus_2& ct);}{Copy constructor.}
 
-\ccConstructor{Constrained_triangulation_plus_2(list<Constrained>& lc,
+\ccConstructor{Constrained_triangulation_plus_2(std::list<Constrained>& lc,
 const Geom_traits& t = Geom_traits())}
 {Introduces and builds a constrained triangulation 
 from the list of constraints \ccc{lc}.}
@@ -117,7 +118,7 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  is \ccc{Constraint}.
 }
 
-\ccFunction{void ~ Constrained_triangulation_plus_2();}
+\ccFunction{void ~Constrained_triangulation_plus_2();}
 {Destructor. All vertices and faces are deleted.
 The constraint hierarchy is deleted.}
 
@@ -126,7 +127,7 @@ The constraint hierarchy is deleted.}
 \ccHeading{Assignment}
 
 \ccMethod{Constrained_triangulation_plus_2 operator=(const
-Constrained_triangulation_plus_2 tr);}
+Constrained_triangulation_plus_2& tr);}
 {Assignment. All the vertices and faces are duplicated.
  The constraint hierarchy is also duplicated.}
 
@@ -243,8 +244,8 @@ of a constrained edge of the triangulation.}
 \ccSeeAlso
 \ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
 \ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>} \\
-\ccc{ConstrainedTriangulationPlusTraits_2}
-
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{ConstrainedDelaunayTriangulationTraits_2}
 %\ccExample
 
 %A short example program.

@@ -19,8 +19,12 @@ regular triangulations
 (section~\ref{Section_2D_Triangulations_Regular}),
 constrained triangulations
 (section~\ref{Section_2D_Triangulations_Constrained}),
-and Delaunay constrained triangulations
+and constrained Delaunay triangulations
 (section~\ref{Section_2D_Triangulations_Constrained_Delaunay}).
+Section~\ref{Section_2D_Triangulations_Constrained_Plus}
+describes a class which implements a constrained or
+constrained Delaunay triangulation together with
+a hierarchiacal data structure on the constraints.
 At last, the section~\ref{Section_2D_Triangulations_Hierarchy}
 described a hierarchical data structure for
 fast point location queries.
@@ -801,7 +805,7 @@ approximative.
 The other one is designed to be used 
 with an exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
-This last version finds its full efficiency  when used in conjonction
+This last version finds its full efficiency  when used in conjunction
 with a constraint hierarchy data structure (which allows to avoid the
 cascading of intersection computations)
 as provided in the class
@@ -823,10 +827,13 @@ object of the class \ccc{Constrained_triangulation_2<Traits,Tds,Itag>}.
 The template parameter \ccc{Traits} 
 stands for a geometric traits class. It has to be a model
 of the concept \ccc{TriangulationTraits_2}.
-When intersection of input constraints are supported, 
-the geometric traits class 
-is required to provide additional function object  types
+When intersections of input constraints are supported, 
+the geometric traits class has to be a model 
+of the concept \ccc{ConstrainedTriangulationTraits_2}
+which refines the concept \ccc{TriangulationTraits_2}
+providing  additional function object types
 to compute the intersection of two segments.
+
 The template parameter \ccc{Tds}
 stands for 
 a triangulation data structure class that has to be a model
@@ -842,7 +849,7 @@ exact predicates but approximative constructions \\
 \ccc{CGAL::Exact_intersections_tag} when an exact predicates
 and exact constructions are provided.
 
-The class \ccc{Constrained_triangulation_2<Traits,Tds>}
+The class \ccc{Constrained_triangulation_2<Traits,Tds, Itag>}
 inherits from \ccc{Triangulation_2<Traits,Tds>}.
 It defines an additionnal type \ccc{Constraint}
 to represent the constraints. A
@@ -934,7 +941,7 @@ handle set of constraints which do not intersect except possibly
 at the endpoints. The two other versions 
 handle intersecting input constraints. One of them
  is designed to be designed to be robust
-when used in conjonction with a geometric traits
+when used in conjunction with a geometric traits
 providing exact predicates and approximative constructions
 (such as a \ccc{CGAL::Filtered_Kernel} or any kernel providing
 filtered exact predicates). The third version is designed to be used
@@ -961,6 +968,8 @@ of a Delaunay triangulation and has to a model of the concept
 constraints
 are supported the geometric traits is further required 
 to provide function objects to compute constraints intersections.
+Then the geometric traits has to be at the same time a model
+of the concept \ccc{ConstrainedTriangulationTraits_2}.
 As in the case of constraints triangulation, the third parameter 
 \ccc{Itag} is the intersection tag
 and serves to choose how intersecting constraints
@@ -995,33 +1004,33 @@ property.
 \subsection{Example : a  constrained Delaunay triangulation}
 \label{Subsection_2D_Triangulations_Constrained_Delaunay_Example}
 The following code inputs constraining edges from a file
-and build a Delaunay constrained triangulation.
+and build a constrained Delaunay  triangulation.
 \ccIncludeExampleCode{Triangulation_2/constrained.C}
 
 
 \section{Constrained Triangulations Plus}
-\label{Section_2D_Constrained_triangulation_plus}
+\label{Section_2D_Triangulations_Constrained_Plus}
 
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
-provides a constraint triangulation with an additional data
+provides a constrained triangulation with an additional data
 structure called the  constraint hierarchy 
 that keeps track of  the input constraints and of their refinement
 in the triangulation.
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
 inherits from its template parameter Tr, which has to be instantiated
-by a constraint or Delaunay constraint triangulation.
+by a constrained  or constrained Delaunay  triangulation.
 According to its intersection tag, the base class
 will support intersecting input constraints or not.
 When intersections of input constraints are supported,
 the base class constructs a triangulation  of the  arrangement
-of these constraints,
+of the constraints,
 introducing new vertices at each proper intersection
 points and  refining the input constraints into subconstraints
-which are edges (more precisely constrained edges) of the
+which appear as  edges (more precisely constrained edges) of the
 triangulation. In this context, the constraint hierarchy 
 keeps track of  the input constraints and of their refinement
-in the triangulation. This data structure keeps track of the
-input constraints and maintain for each of them
+in the triangulation. This data structure maintains for each 
+input constraint
 the sequence of intersection vertices added on this constraint.
 The constraint hierarchy also allows the user to retrieve the set
 of constrained edges of the triangulation, and for each
@@ -1029,16 +1038,17 @@ constrained edge,  the set of input constraints that overlap it.
 
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
 is especially usefull when the base constrained triangulation class
-handle intersection of constraints and uses an exact number type,
-i.e. when its intersection tag is \ccc{CGAL::Exact_intersections_tag}
+handles intersections of constraints and uses an exact number type,
+i.e. when its intersection tag is \ccc{CGAL::Exact_intersections_tag}.
 Indeed in this case, the \ccc{Constrained_triangulation_plus_2<Tr>}
-is specially designed to avoid cascading in the computation of
-intersecting points.
+is specially designed to avoid cascading in the computations of
+intersection  points.
 
-\subsection{Example : Building a triangulated arrangement of constraint}
+\subsection{Example : Building a triangulated arrangement of segments}
 
-The following code inputs a set of intersecting constraint segments
-and count the number of constrained edges of the
+The following code iinserts a set of intersecting constraint segments
+into a triangulation 
+and counts the number of constrained edges of the
 resulting triangulation.
 
 

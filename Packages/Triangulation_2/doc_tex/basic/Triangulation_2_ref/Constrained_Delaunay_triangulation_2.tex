@@ -19,10 +19,13 @@
 \ccDefinition
 A constrained Delaunay triangulation is a triangulation with
 constrained edges which tries to be as much Delaunay as possible.
-As constrained edges are not necessarily Delaunay edges,
-the triangles of a constrained Delaunay triangulation do not
+Constrained edges are not necessarily Delaunay edges,
+therefore a constrained Delaunay triangulation is not a Delaunay
+triangulation. A constrained Delaunay is a triangulation
+whose faces do not
 necessarily fulfill the empty circle property
-but they fulfill a weaker constrained empty circle property.
+but fulfill a weaker property called the
+{\em constrained empty circle}.
  To state this property,
 it is convenient to think of  constrained
 edges as blocking the view. Then, a triangulation is 
@@ -36,21 +39,23 @@ constrained Delaunay triangulations.
 
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are offered
-and can be selected through the instantation of the
+depending on wetherthe user wishes to handle
+intersecting input constraints or not.
+The desired version can  be selected through the instantation of the
 third template parameter \ccc{Itag} which can be one of the
-following~:
+following~: \\
 \ccc{CGAL::No_intersection_tag} if  intersections of
  input constraints are disallowed,\\
-\ccc{CGAL::Exact_predicates_tag} allows intersection between input
+\ccc{CGAL::Exact_predicates_tag} allows intersections between input
 constraints
  and is to be used when the traits
 class
 provides exact predicates but approximate constructions of the
 intersection points.
-\ccc{CGAL::Exact_intersections_tag} allows intersection between input
+\ccc{CGAL::Exact_intersections_tag} allows intersections between input
 constraints
- and is to be used in conjonction
-with an exact aritmetic type.
+ and is to be used in conjunction
+with an exact arithmetic type.
 
 
 The template parameters \ccc{Tds} 
@@ -88,7 +93,7 @@ The base face of a constrained triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
 
-\cgal provides a defaults for the template parameters.
+\cgal\ provides a default for the template parameters.
 If \ccc{Gt} is the geometric traits
 parameter,
 the default  for
@@ -96,7 +101,7 @@ the default  for
 \ccc{CGAL::Constrained_triangulation_face_base_2<Gt>}
 and the default for the
 triangulation data structure parameter is the class
-\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+\ccc{CGAL::Triangulation_data_structure_2<
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Constrained_triangulation_face_base_2<Gt>
 >}.
@@ -285,12 +290,14 @@ input triangulation that need to be flipped (plus possibly others). }
 
 
 \ccSeeAlso
-\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds,Itag>} \\
 \ccc{TriangulationDataStructure_2} \\
 \ccc{DelaunayTriangulationTraits_2} \\
-\ccc{ConstrainedTriangulationFaceBase_2}
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{ConstrainedDelaunayTriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2} 
 
-\ccExample
+%\ccExample
 
 
 

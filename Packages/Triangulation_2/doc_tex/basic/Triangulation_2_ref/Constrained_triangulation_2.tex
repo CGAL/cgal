@@ -48,9 +48,8 @@ approximative.
 The other one is designed to be used 
 with an exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
-This last version finds its full efficiency  when used in conjonction
-with a constraint hierarchy data structure (which allows to avoid the
-cascading of intersection computations)
+This last version finds its full efficiency  when used in conjunction
+with a constraint hierarchy data structure 
 as provided in the class
 \ccc{Constrained_triangulation_plus_2}. See section~\ref{Section_2D_Constrained_triangulation_plus}.
 
@@ -91,7 +90,7 @@ strategies to deal with constraint intersections.
 class
 provides exact predicates but approximate constructions of the
 intersection points.\\
-\ccc{CGAL::Exact_intersections_tag} is to be used in conjonction
+\ccc{CGAL::Exact_intersections_tag} is to be used in conjunction
 with an exact aritmetic type.
 
  The information about constrained edges is store in the 
@@ -117,7 +116,7 @@ the default  for
 \ccc{CGAL::Constrained_triangulation_face_base_2<Gt>}
 and the default for the
 triangulation data structure parameter is the class
-\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+\ccc{CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Constrained_triangulation_face_base_2<Gt>
 >}.
@@ -139,11 +138,6 @@ intersections between input constraints are dealt with.}
 
 \ccCreation
 \ccCreationVariable{ct}  %% choose variable name
-The creators of the class build the constrained triangulation from a
-list of constrained edges. Constrained edges are assumed to have no
-intersection other than endpoints. Any number of constrained edges are
-allowed to share the same endpoint.  Vertical constrained edges or
-constrained edges with null length are allowed.
 
 \ccConstructor{Constrained_triangulation_2();}{default constructor.}
 \ccConstructor{Constrained_triangulation_2(const

@@ -21,18 +21,19 @@
 The concept \ccRefName\ defines the requirements for the geometric
 traits class of a constrained triangulation
 ( \ccc{Constrained_Triangulation_2<Traits,Tds,Itag>})
-that support intersections of input constraints (i. e.
+that supports intersections of input constraints (i. e.
 when the template parameter \ccc{Itag} is instantiated
-by one one of the tag classes \ccc{Exact_intersections_tag} or
+by one of the tag classes \ccc{Exact_intersections_tag} or
 \ccc{Exact_predicates_tag}). This concept refines the concept
-\ccc{TriangulationTraits_2}, adding requirement for function objects
+\ccc{TriangulationTraits_2}, adding requirements for function objects
 to compute the intersection points of two constraints.
-When \ccc{Exact_predicates_tag}) is used, the insertion of constraint may
-also require additionnal types
-to compute the square distance between a point and a line
+When \ccc{Exact_predicates_tag}) is used, the 
+traits class is
+also required to provide  additionnal types
+to compute the squared distance between a point and a line
 
 
-\ccGeneralizes
+\ccRefines
 \ccc{TriangulationTraits_2} 
 
 
@@ -40,21 +41,23 @@ to compute the square distance between a point and a line
 
 \ccNestedType{Intersect_2}{A function object whose operator()
 computes the intersection of two segments : \\
-\ccc{Object_2 operator()(Segment s1, Segment s2);}
+\ccc{Object_2 operator()(Segment_2 s1, Segment_2 s2);}
 Returns the intersection of \ccc{s1} and \ccc{s2}.}
 
-The geometric traits of  constrained triangulation is instantiated with
+The geometric traits of a  constrained triangulation instantiated with
 the intersection tag \ccc{Exact_predicates_tag}
 is also required to provide the following types~:
 \ccNestedType{Line_2}{The line type.}
 \ccGlue
 \ccNestedType{Construct_line_2} {A function object whose operator()
-constructs a line (type \ccc{Line_2}) from two points
-(type \ccc{Point_2}).}
+constructs a line from two points
+\ccc{Line_2 operator()(Point_2 p1, Point_2 p2)}.}
 \ccGlue
 \ccNestedType{Compute_squared_distance_2}{A function object with an
 operator() designed to compute the squared distance between
-a line (type \ccc{Line_2}) and a point (type \ccc{Point_2}).}
+a line  and a point. 
+\ccc{RT operator()(Point_2 p1, Line_2);} Return the squared distance
+betwen \ccc{p} and \ccc{l}.}
 
 
 \ccCreation
@@ -63,11 +66,11 @@ a line (type \ccc{Line_2}) and a point (type \ccc{Point_2}).}
 \ccConstructor{ConstrainedTriangulationTraits_2();}{default constructor.}
 \ccGlue
 \ccConstructor{ConstrainedTriangulationTraits_2(
-                    const ConstrainedTriangulationPlusTraits_2& cttraits);}
+                    const ConstrainedTriangulationTraits_2& traits2);}
 {Copy constructor}
 
 \ccMethod{ConstrainedTriangulationTraits_2 operator=
-	(const ConstrainedTriangulationTraits_2& cttraits);}
+	(const ConstrainedTriangulationTraits_2& traits2);}
 {Assignment operator.}
 
 
@@ -82,7 +85,7 @@ the intersection tag is \ccc{Exact_predicates_tag}.}
 
 
 \ccHasModels
-The kernels of \cgal are models for this traits class.
+The kernels of \cgal\ are models for this traits class.
 
 
 
