@@ -1347,10 +1347,15 @@ Polynomial<NT> modop (const Polynomial<NT>& p1,
 }
 
 
+#ifndef CGAL_CFG_MATCHING_BUG_2
+
 template <class NT> 
 inline Polynomial<NT> 
 gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { return Polynomial<NT>::gcd(p1,p2); }
+
+#endif
+
 
 template <class NT> bool operator == 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
