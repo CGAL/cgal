@@ -40,6 +40,9 @@ class Cartesian_converter
 {
 public:
 
+    Cartesian_converter()
+	: c(), k() {}
+
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {

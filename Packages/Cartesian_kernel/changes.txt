@@ -1,3 +1,6 @@
+Version 6.59 (22 April 2002)
+- Add default ctor to Cartesian_converter to shut up SunPro warning.
+
 Version 6.58 (20 March 2002)
 - removed d-dim points
 
