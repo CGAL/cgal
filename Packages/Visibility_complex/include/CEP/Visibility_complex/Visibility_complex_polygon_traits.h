@@ -1,25 +1,13 @@
 #ifndef VISIBILITY_COMPLEX_POLYGON_TRAITS_H
 #define VISIBILITY_COMPLEX_POLYGON_TRAITS_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
 
-#ifndef CGAL_POLYGON_2
 #include <CGAL/Polygon_2.h>
-#endif
-
-#ifndef CGAL_BITANGENT_2_H
 #include <CEP/Visibility_complex/Bitangent_2.h>
-#endif
-
-#ifndef CGAL_CONVEX_ARC_2
 #include <CEP/Visibility_complex/Arc_2.h>
-#endif
-
 #include <CEP/Visibility_complex/Polygon_2_Polygon_2_intersection.h>
 #include <CEP/Visibility_complex/Bitangent_2_Bitangent_2_intersection.h>
-#include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -52,29 +40,32 @@ public:
     // -------------------------------------------------------------------------
     // The two follwing give the chi2 predicate with a point at infinity
     struct Compare_extreme_yx {
-	Point_2 extreme_point(bool b, const Disk& c) const {
+	const Point_2& extreme_point(bool b, const Disk& c) const {
 	    return (b) ? *bottom_vertex_2(c.vertices_begin(),
 					  c.vertices_end())  :
 			 *top_vertex_2   (c.vertices_begin(),
 					  c.vertices_end());
 	}
-	Point_2 extreme_point(bool b, const Bitangent_2& c) const 
+	const Point_2& extreme_point(bool b, const Bitangent_2& c) const 
 	{ return (b) ? c.source() : c.target(); }
 	template < class C , class D >
 	Comparison_result operator() (bool sa , const C& a,
 				      bool sb , const D& b) const { 
-	    Point_2 ap = extreme_point(sa,a);
-	    Point_2 bp = extreme_point(sb,b);
-	    return compare_lexicographically_xyC2(ap.y(),ap.x(),bp.y(),bp.x());
+	    const Point_2& ap = extreme_point(sa,a);
+	    const Point_2& bp = extreme_point(sb,b);
+
+	    Comparison_result cr = compare_y(ap,bp);
+	    cr = (cr != EQUAL) ? cr : compare_x(ap,bp);
+	    return cr;
+	    
 	}
     };
     // -------------------------------------------------------------------------
     struct Is_upward_directed {
 	bool operator()(const Bitangent_2& b) const {
-	    Comparison_result comp = 
-		compare_lexicographically_xyC2(b.source().y(),b.source().x(),
-					       b.target().y(),b.target().x());
-	    return (comp != LARGER);
+	  Comparison_result comp = compare_y(b.source(), b.target());
+	  comp = (comp != EQUAL) ? comp : compare_x(b.source(), b.target());
+	  return (comp != LARGER);
 	}
     };
     // -------------------------------------------------------------------------
