@@ -69,11 +69,21 @@ struct Segment_Voronoi_diagram_traits_2<R,Euclidean_ring_tag>
   }
 };
 
-// Specialization for filtered_kernel
+// Specializations for filtered_kernel
 template<class R>
 struct Segment_Voronoi_diagram_traits_2<Filtered_kernel<R>,Field_tag>
   : public
   Segment_Voronoi_diagram_filtered_traits_2<R,Field_tag,
+					    typename Filtered_kernel<R>::EK,
+					    Field_tag,
+					    typename Filtered_kernel<R>::FK,
+					    Sqrt_field_tag>
+{};
+
+template<class R>
+struct Segment_Voronoi_diagram_traits_2<Filtered_kernel<R>,Sqrt_field_tag>
+  : public
+  Segment_Voronoi_diagram_filtered_traits_2<R,Sqrt_field_tag,
 					    typename Filtered_kernel<R>::EK,
 					    Field_tag,
 					    typename Filtered_kernel<R>::FK,
@@ -113,11 +123,24 @@ Segment_Voronoi_diagram_traits_without_intersections_2<R,Euclidean_ring_tag>
 template<class R>
 struct
 Segment_Voronoi_diagram_traits_without_intersections_2<Filtered_kernel<R>,
-						       Field_tag>
+						       Ring_tag>
   : public
-  Segment_Voronoi_diagram_filtered_traits_without_intersections_2<R,Field_tag,
+  Segment_Voronoi_diagram_filtered_traits_without_intersections_2<R,Ring_tag,
 					    typename Filtered_kernel<R>::EK,
-					    Field_tag,
+					    Ring_tag,
+					    typename Filtered_kernel<R>::FK,
+					    Sqrt_field_tag>
+{};
+
+template<class R>
+struct
+Segment_Voronoi_diagram_traits_without_intersections_2<Filtered_kernel<R>,
+						       Sqrt_field_tag>
+  : public
+  Segment_Voronoi_diagram_filtered_traits_without_intersections_2<R,
+					    Sqrt_field_tag,
+					    typename Filtered_kernel<R>::EK,
+					    Ring_tag,
 					    typename Filtered_kernel<R>::FK,
 					    Sqrt_field_tag>
 {};
