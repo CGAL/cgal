@@ -1,3 +1,6 @@
+2.38
+- The same as 2.37 but also in test/Configuration
+
 2.37
 - Put the main function in CGAL_CFG_NOMINMAX_BUG.C.
 
