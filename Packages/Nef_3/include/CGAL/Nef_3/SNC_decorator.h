@@ -40,6 +40,8 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
+#include <CGAL/Nef_3/SNC_intersection.h>
+
 // #include <CGAL/Nef_3/SegRay.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
@@ -61,6 +63,7 @@ class SNC_decorator {
   typedef SNC_SM_decorator<SNC_structure>     SM_decorator;
   typedef SNC_SM_overlayer<SNC_structure>     SM_overlayer;
   typedef SNC_SM_point_locator<SNC_structure> SM_point_locator;
+  typedef SNC_intersection<SNC_structure>     SNC_intersection;
   SNC_structure* sncp_;
 
 public:
@@ -909,7 +912,7 @@ public:
     CGAL_nef3_forall_vertices( v0, result) TRACEN(point(v0)<<&*(v0->sncp_));
     TRACEN("end vertices"<<std::endl);
 
-    SNC_ray_shooter rs(*sncp());
+    SNC_intersection is(*sncp());
 
     TRACEN("start edge0 face1");
     Halfedge_iterator e0, e1;
@@ -921,7 +924,7 @@ public:
 	CGAL_nef3_forall_facets( f1, snc1i) { 
 	  if(Infi_box::degree(plane(f1).d())>0) continue;
 	  Point_3 ip;
-	  if( rs.does_intersect_internally( segment(e0), f1, ip )) {
+	  if( is.does_intersect_internally( segment(e0), f1, ip )) {
 	    TRACEN(" edge0 face1 intersection...");
 	    ip = normalized(ip);
 	    v0 = qualify_with_respect( ip, *sncp(), result);
@@ -934,13 +937,13 @@ public:
 	}
       }
     }
-
+    
     TRACEN("start edge1 face0");
     CGAL_nef3_forall_edges( e1, snc1i) { 
       CGAL_nef3_forall_facets( f0, *sncp()) { 
 	if(Infi_box::degree(plane(f0).d())>0) continue;
 	Point_3 ip;
-	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
+	if( is.does_intersect_internally( segment(e1), f0, ip )) {
 	  TRACEN(" edge1 face0 intersection...");
 	  ip = normalized(ip);
 	  Halffacet_cycle_iterator it; 
@@ -972,14 +975,14 @@ public:
     CGAL_nef3_forall_edges( e0, *sncp()) { 
       CGAL_nef3_forall_edges( e1, snc1i) {
 	Point_3 ip;
-	if( rs.does_intersect_internally( segment(e0), segment(e1), ip )) {
+	if( is.does_intersect_internally( segment(e0), segment(e1), ip )) {
 	  TRACEN(" edge0 edge1 intersection..." << ip);
 	  ip = normalized(ip);
 	  Vertex_handle v0, v1;
 	  v0 = qualify_with_respect( ip, *sncp(), result);
 	  v1 = qualify_with_respect( ip, snc1i, result);
 
-	  binop_local_views( v0, v1, BOP, result);
+	  binop_local_views( v0, v1,BOP, result);
 	  result.delete_vertex(v0);
 	  result.delete_vertex(v1);
 	}
