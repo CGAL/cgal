@@ -167,7 +167,7 @@ typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) const
 {
   CGAL_kernel_precondition_msg( (a() != FT(0)),
-  "Line::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) is undefined for horizontal line" );
+  "Line::x_at_y(LineC2<R CGAL_CTAG>::FT y) is undefined for horizontal line" );
   return line_x_at_y(*this,y);
 }
 
@@ -177,7 +177,7 @@ typename LineC2<R CGAL_CTAG>::FT
 LineC2<R CGAL_CTAG>::y_at_x(const typename LineC2<R CGAL_CTAG>::FT &x) const
 {
   CGAL_kernel_precondition_msg( (b() != FT(0)),
-  "Line::x_at_y(const typename LineC2<R CGAL_CTAG>::FT &y) is undefined for vertical line");
+  "Line::x_at_y(LineC2<R CGAL_CTAG>::FT y) is undefined for vertical line");
   return line_y_at_x(*this,x);
 }
 
