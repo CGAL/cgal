@@ -1,3 +1,6 @@
+2.46
+- Remove warning in CGAL_CFG_MATCHING_BUG_2.C
+
 2.45 (rursu)
 - removed CGAL_CFG_NO_LONGNAME_PROBLEM.C
 

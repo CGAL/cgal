@@ -26,7 +26,7 @@
 //| This flag is set, if the compiler does not match the most
 //| specialized instance of a function template correctly,
 //| but complains about multiple matches.
-//| (e.g. SGI 7.2)
+//| (e.g. VC++ 7)
 
 template < class T >
 void foo( T, int)
@@ -37,7 +37,7 @@ void foo( T, R)
 {}
 
 int main() {
-  int i;
+  int i = 0;
   foo( i, 1);
   foo( i, 'a');
   return 0;
