@@ -1,3 +1,8 @@
+1.3.43 - 11/07/2003 (rursu)
+---------------------------
+	- added end of line in examples at the end of file
+	- removed -C make option in demos makefile
+
 1.3.42 - 11/07/2003 (rursu)
 ---------------------------
 	- removed demos that were no longer used in our Package
