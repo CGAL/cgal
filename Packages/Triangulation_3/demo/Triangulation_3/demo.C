@@ -62,7 +62,7 @@ typedef Triangulation::Cell_handle Cell_handle;
 typedef Triangulation::Vertex_handle Vertex_handle;
 typedef Triangulation::Locate_type Locate_type;
 
-typedef Gt::Point Point;
+typedef Gt::Point_3 Point;
 //typedef CGAL::Point_3<Rep>  Point;
 
 ////////////////////// 
@@ -87,10 +87,7 @@ void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 	       Cell_handle c)
 {
   if ( ! T.is_infinite(c) )
-    os << Gt::Tetrahedron(c->vertex(0)->point(),
-			  c->vertex(1)->point(),
-			  c->vertex(2)->point(),
-			  c->vertex(3)->point());
+    os << T.tetrahedron(c);
   else 
     os << T.triangle(c,c->index(T.infinite_vertex()));
 }
