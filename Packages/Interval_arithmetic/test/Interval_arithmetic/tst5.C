@@ -40,7 +40,6 @@
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Arithmetic_filter.h>
 
-using namespace std;
 using namespace CGAL;
 
 // Please pay attention to the workaround for MipsPro at the top of the file.
@@ -78,7 +77,7 @@ int main()
   // Interval_nt ia (2);
   // double d = to_double(ia);
   // cin >> ia;
-  // cout << ia << endl;
+  // std::cout << ia << std::endl;
   set_eps(0.0001);
   bench();
   return test();
@@ -101,7 +100,7 @@ void bench()
   for (i=0; i<loops; i++)
     result = compare_y_at_xC2(px, py, la, lb, lc);
   t.stop();
-  cout << (int) result << "\t" << t.time()-dt << endl;
+  std::cout << (int) result << "\t" << t.time()-dt << std::endl;
 }
 
 // The program code is 100% generic/templated, as usual.
@@ -111,20 +110,20 @@ int test()
   NT a (1);
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
-  cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
+  std::cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
 #ifdef CGAL_USE_LEDA
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Filtered_exact< Quotient<leda_integer>, Quotient<leda_integer> > jj (4,5);
   Interval_nt nt = jj.interval();
-  cout << nt << endl;
+  std::cout << nt << std::endl;
 #endif // CGAL_USE_LEDA
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   px=1; py=2; la=3; lb=4; lc=5;
-  cout << "Result 1st test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
-  cout << " ( == 1 )\n";
+  std::cout << "Result 1st test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
+  std::cout << " ( == 1 )\n";
   px=1.1; py=1.7; la=1.3; lb=1.5; lc=-3.98;
-  cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
-  cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
-  cout << a << endl;
+  std::cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
+  std::cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
+  std::cout << a << std::endl;
   return 0;
 }

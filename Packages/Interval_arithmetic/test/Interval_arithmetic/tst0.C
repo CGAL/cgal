@@ -2,7 +2,6 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
-using namespace std;
 using namespace CGAL;
 
 // 5 temporary functions to test the inlining of the compiler.
@@ -22,7 +21,7 @@ Interval_nt_advanced triv (Interval_nt_advanced x)
 { return x; }
 
 void print_res (bool res)
-{ cout << (res ? "ok" : "ERROR") << endl; }
+{ std::cout << (res ? "ok" : "ERROR") << std::endl; }
 
 // Rounding mode empiric testing.
 
@@ -58,10 +57,11 @@ FPU_CW_t FPU_empiric_test_mul ()
     // volatile const double m = CGAL_IA_MIN_DOUBLE;
     volatile double m = 0.5;
     int i;
-    for (i=0; i<10; i++) {m*=m; /* cout <<c << endl; */ }
+    for (i=0; i<10; i++) {m*=m; /* std::cout <<c << std::endl; */ }
     double a = m*m;
     double b = (-m)*m;
-    cout << "m = " << m << "\n m*m = " << a << "\n (-m)*m = " << b << endl;
+    std::cout << "m = " << m << "\n m*m = " << a << "\n (-m)*m = " << b;
+    std::cout << std::endl;
 // Note: it's not supposed to work here like that.
     if ((a == 0.0) && (b == 0.0)) return FPU_cw_near;
     if (a > 0.0) return FPU_cw_up;
@@ -72,11 +72,11 @@ FPU_CW_t FPU_empiric_test_mul ()
 void print_rounding_name (FPU_CW_t r)
 {
   switch (r) {
-  case FPU_cw_near: cout << "FPU_cw_near\n"; break;
-  case FPU_cw_down: cout << "FPU_cw_down\n"; break;
-  case FPU_cw_up:   cout << "FPU_cw_up\n"; break;
-  case FPU_cw_zero: cout << "FPU_cw_zero\n"; break;
-  default:          cout << "unknown !\n";
+  case FPU_cw_near: std::cout << "FPU_cw_near\n"; break;
+  case FPU_cw_down: std::cout << "FPU_cw_down\n"; break;
+  case FPU_cw_up:   std::cout << "FPU_cw_up\n"; break;
+  case FPU_cw_zero: std::cout << "FPU_cw_zero\n"; break;
+  default:          std::cout << "unknown !\n";
   }
 }
 
@@ -85,41 +85,41 @@ int main()
    bool flag = true;
 
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "default: ";
+   std::cout << "default: ";
    print_res(flag);
 
    // Should be a no-op.
    FPU_set_cw(FPU_get_cw());
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "get/set: ";
+   std::cout << "get/set: ";
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to zero.
    FPU_set_cw(FPU_cw_zero);
    flag = flag && (FPU_empiric_test() == FPU_cw_zero);
-   cout << "zero   : ";
+   std::cout << "zero   : ";
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to infinity.
    FPU_set_cw(FPU_cw_up);
    flag = flag && (FPU_empiric_test() == FPU_cw_up);
-   cout << "+inf   : ";
+   std::cout << "+inf   : ";
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to minus infinity.
    FPU_set_cw(FPU_cw_down);
    flag = flag && (FPU_empiric_test() == FPU_cw_down);
-   cout << "-inf   : ";
+   std::cout << "-inf   : ";
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
    // Rounding to nearest.
    FPU_set_cw(FPU_cw_near);
    flag = flag && (FPU_empiric_test() == FPU_cw_near);
-   cout << "near   : ";
+   std::cout << "near   : ";
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 

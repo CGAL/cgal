@@ -11,7 +11,6 @@
 #define CGAL_IA_NO_WARNINGS
 #include <CGAL/Interval_arithmetic.h>
 
-using namespace std;
 using namespace CGAL;
 
 // #define DEBUG(a) a;
@@ -35,7 +34,7 @@ int spiral_test()
     x_i = x_ip1;
     y_i = y_ip1;
     length = square(x_i) + square(y_i);
-    DEBUG(cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
+    DEBUG(std::cout<<i<<": (" << x_i << " , " << y_i << ") : " << length << "\n";)
     if ( x_i.overlap(0) || y_i.overlap(0) )
       break;
   };
@@ -55,12 +54,12 @@ int square_root_test()
   while (++i < 500)
   {
     IA_nt b = sqrt(a);
-    DEBUG( cout << a-1 << endl; )
+    DEBUG( std::cout << a-1 << std::endl; )
     if ( b.is_same(a) )
       break;
     a = b;
   };
-  DEBUG( cout << i; )
+  DEBUG( std::cout << i; )
   a -= 1;
   return i==54
       && a.sup() == - a.inf()
@@ -82,18 +81,18 @@ int overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
 
-  DEBUG( cout << "+infinity = " << HUGE_VAL; )
-  DEBUG( cout << "  maxdouble = " << CGAL_IA_MAX_DOUBLE << endl; )
-  DEBUG( cout << "largest = " << CGAL_IA_LARGEST << endl; )
-  DEBUG( cout << "smallest = " << CGAL_IA_SMALLEST << endl; )
+  DEBUG( std::cout << "+infinity = " << HUGE_VAL; )
+  DEBUG( std::cout << "  maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
+  DEBUG( std::cout << "largest = " << CGAL_IA_LARGEST << std::endl; )
+  DEBUG( std::cout << "smallest = " << CGAL_IA_SMALLEST << std::endl; )
   for (i=0; i<20; i++)
   {
     a *= a;
     b = b * b;
     c *= c;
     d = d * d;
-    DEBUG( cout << a << b << c << d << endl; )
-    // DEBUG( cout << a << endl; )
+    DEBUG( std::cout << a << b << c << d << std::endl; )
+    // DEBUG( std::cout << a << std::endl; )
   }
 
   for (i=0; i<10000; i++)
@@ -148,14 +147,14 @@ int division_test()
   {
     b = (1/d + d)/4 + 0.5;
     a = (-1/e -e*1)/-4 - 0.5; // make it complicated to test more cases.
-    DEBUG( cout << d << e << endl; )
+    DEBUG( std::cout << d << e << std::endl; )
     if ( b.is_same(d) && a.is_same(e) )
       break;
     d = b;
     e = a;
   }
-  DEBUG( cout << d << e << i << endl; )
-  DEBUG( cout << d-1 << e+1 << endl; )
+  DEBUG( std::cout << d << e << i << std::endl; )
+  DEBUG( std::cout << d-1 << e+1 << std::endl; )
 
   return c.is_same(CGAL_IA_LARGEST) && (i == 54);
 }
@@ -198,39 +197,39 @@ int utility_test()
   tmpflag = (sign(c) == ZERO) &&
             (sign(e) == POSITIVE) &&
             (sign(f) == NEGATIVE) ;
-  DEBUG( cout << "Sign test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "Sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = abs(a).is_same(IA_nt(0,1)) && abs(b).is_same(IA_nt(0,1)) &&
             abs(c).is_same(IA_nt(0,0)) && abs(d).is_same(IA_nt(0,1)) &&
             abs(e).is_same(IA_nt(1,2)) && abs(f).is_same(IA_nt(1,2)) &&
             abs(g).is_same(g) ;
-  DEBUG( cout << "abs test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "abs test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = is_valid(a) && is_valid(h);
-  DEBUG( cout << "is_valid test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "is_valid test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = is_finite(a) && !is_finite(h);
-  DEBUG( cout << "is_finite test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = max(a,d).is_same(IA_nt(0,1));
-  DEBUG( cout << "max test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = min(a,b).is_same(IA_nt(-1,0));
-  DEBUG( cout << "max test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = sign(f) == NEGATIVE;
-  DEBUG( cout << "sign test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "sign test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   tmpflag = (compare(b,e) == SMALLER)
          && (compare(g,g) == EQUAL);
-  DEBUG( cout << "compare test :\t" << tmpflag << endl; )
+  DEBUG( std::cout << "compare test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
   return flag;
@@ -238,7 +237,7 @@ int utility_test()
 
 void print_res (bool res)
 {
-  cout << (res ? "ok" : "ERROR") << endl;
+  std::cout << (res ? "ok" : "ERROR") << std::endl;
 }
 
 int main()
@@ -246,19 +245,21 @@ int main()
 #ifdef ADVANCED
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
-  cout << "Stress-testing the class Interval_nt_advanced.\n";
+  std::cout << "Stress-testing the class Interval_nt_advanced.\n";
 #else
-  cout << "Stress-testing the class Interval_nt.\n";
+  std::cout << "Stress-testing the class Interval_nt.\n";
 #endif
 
   bool tmpflag, flag = true;
-  cout.precision(20);
+  std::cout.precision(20);
 
-  cout << "Printing test:" << endl;
-  cout << (IA_nt)-.7 << endl << (IA_nt)7/10 << endl << (IA_nt)1/0 << endl;
+  std::cout << "Printing test:" << std::endl;
+  std::cout << (IA_nt)-.7 << std::endl;
+  std::cout << (IA_nt)7/10 << std::endl;
+  std::cout << (IA_nt)1/0 << std::endl;
 
 #define TEST_MACRO(fn) \
-  cout << #fn << "\t\t"; \
+  std::cout << #fn << "\t\t"; \
   tmpflag = fn(); \
   print_res(tmpflag); \
   flag = tmpflag && flag;

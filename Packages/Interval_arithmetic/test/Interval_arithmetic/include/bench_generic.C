@@ -16,7 +16,6 @@
 
 #include <cassert>
 
-using namespace std;
 using namespace CGAL;
 
 typedef TESTED_TYPE IA_nt;
@@ -48,24 +47,24 @@ void bench()
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
    c = a + b;
-   cout << a << endl;
-   cout << b << endl;
+   std::cout << a << std::endl;
+   std::cout << b << std::endl;
    if (b.is_point())
-     cout << "error due to constant propagation" << endl;
-   cout << c << endl;
+     std::cout << "error due to constant propagation" << std::endl;
+   std::cout << c << std::endl;
 
-  cout << loops << " loops.\n";
+  std::cout << loops << " loops.\n";
 
   dt = t.time(); t.start();
   for (i=0; i<loops; i++) { c = b; }
   t.stop();
-  cout << c << "\t=\t" << t.time()-dt << endl;
+  std::cout << c << "\t=\t" << t.time()-dt << std::endl;
 
 #define BENCH_MACRO_generic(init, op1, op2) { \
   dt = t.time(); t.start(); init \
   for (i=0; i<loops; i++) { op1; } \
   t.stop(); \
-  cout << c << "\t" << op2 << "\t" << t.time()-dt << endl; \
+  std::cout << c << "\t" << op2 << "\t" << t.time()-dt << std::endl; \
   assert( ! c.is_point()); \
 }
 
@@ -89,13 +88,13 @@ void bench()
   BENCH_MACRO_generic(,c = c / dd, "ia/d");
 
 #if 1
-  cout << a<<b<<c<<d<<endl;
+  std::cout << a<<b<<c<<d<<std::endl;
   Orientation o;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
     o = orientationC2(a,b,c,d,e,f);
   t.stop();
-  cout << (int)o << "\tori2\t" << t.time()-dt << endl;
+  std::cout << (int)o << "\tori2\t" << t.time()-dt << std::endl;
 #endif
 }
 
@@ -105,15 +104,15 @@ int main()
 #ifdef ADVANCED
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
-  cout << "Benching the class Interval_nt_advanced.\n";
+  std::cout << "Benching the class Interval_nt_advanced.\n";
 #else
-  cout << "Benching the class Interval_nt.\n";
+  std::cout << "Benching the class Interval_nt.\n";
 #endif
   double d;
   if ((((int) &d) & 7) != 0)
-    cout << "Benchmark might not be meaningful due to bad alignment" << endl;
+    std::cout << "Benchmark might not be meaningful due to bad alignment\n";
 
-  cout.precision(20);
+  std::cout.precision(20);
   bench();
 
   IA_nt a=1, b=2;
@@ -123,7 +122,7 @@ int main()
   // It would be nice if it emitted a warning, because c is not initialized.
   IA_nt c;
   a = c+c;
-  cout << c << a << endl;
+  std::cout << c << a << std::endl;
 #endif
 
 #ifdef ADVANCED
