@@ -168,7 +168,7 @@ private:
     // finds the set conflicts of cells in conflict with p
     // gives a cell ac having a facet on the boundary of conflicts
     // and the index i of its facet on the boundary
-  inline bool
+  bool
   violates( Vertex_handle u, 
 	    Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, 
 	    Facet f);
@@ -1014,77 +1014,67 @@ find_conflicts_3(std::set<void*, std::less<void*> > & conflicts,
 }// find_conflicts_3
 
 template < class Gt, class Tds >
-inline bool
+bool
 Delaunay_triangulation_3<Gt,Tds>::
 violates( Vertex_handle u, 
 	  Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, 
 	  Facet f)
-  {
+{
     // u, v0, v1, v2 supposed to be all different
-    Point pu( u->point() );
+    const Point & pu = u->point();
 
-    int i,j,k,l;
-
-    Point pf[3];
-    pf[0] = (f.first)->vertex((f.second+1)&3)->point();
-    pf[1] = (f.first)->vertex((f.second+2)&3)->point();
-    pf[2] = (f.first)->vertex((f.second+3)&3)->point();
+    const Point * pf[3] = {
+      &(f.first)->vertex((f.second+1)&3)->point(),
+      &(f.first)->vertex((f.second+2)&3)->point(),
+      &(f.first)->vertex((f.second+3)&3)->point()};
  
-    if ( orientation( pu, pf[0], pf[1], pf[2] ) != COPLANAR ) 
+    if ( orientation( pu, *pf[0], *pf[1], *pf[2] ) != COPLANAR ) 
       return false;
 
-    Point p[3];
-    p[0] = v0->point();
-    p[1] = v1->point();
-    p[2] = v2->point();
+    const Point * p[3] = {
+      &v0->point(),
+      &v1->point(),
+      &v2->point()};
+
     Orientation o[3];
-    o[0] = orientation(p[0],pf[0],pf[1],pf[2]);
-    o[1] = orientation(p[1],pf[0],pf[1],pf[2]);
-    o[2] = orientation(p[2],pf[0],pf[1],pf[2]);
+    o[0] = orientation(*p[0],*pf[0],*pf[1],*pf[2]);
+    o[1] = orientation(*p[1],*pf[0],*pf[1],*pf[2]);
+    o[2] = orientation(*p[2],*pf[0],*pf[1],*pf[2]);
 
     if ( ( o[0] != COPLANAR ) && ( o[1] != COPLANAR ) && ( o[2] != COPLANAR ) )
       return false;
 
-    for ( i=0; i<3; i++ ) {
-      if ( pu == pf[i] ) {
-	j = (i+1)%3;
-	k = (i+2)%3;
-	if ( 
-	    ( (o[0] == COPLANAR) && (p[0] != pf[j]) && (p[0] != pf[k]) &&
-	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[0])
-		== NEGATIVE ) ) 
+    for (int i=0; i<3; i++ ) {
+      if ( pu == *pf[i] ) {
+	int j = (i+1)%3;
+	int k = (i+2)%3;
+	return 
+	    ( (o[0] == COPLANAR) && (*p[0] != *pf[j]) && (*p[0] != *pf[k]) &&
+	      ( coplanar_orientation(*pf[j],*pf[k],*pf[i],*p[0]) == NEGATIVE ) )
 	    ||
-	    ( (o[1] == COPLANAR) && (p[1] != pf[j]) && (p[1] != pf[k]) &&
-	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[1])
-		== NEGATIVE ) ) 
+	    ( (o[1] == COPLANAR) && (*p[1] != *pf[j]) && (*p[1] != *pf[k]) &&
+	      ( coplanar_orientation(*pf[j],*pf[k],*pf[i],*p[1]) == NEGATIVE ) )
 	    ||
-	    ( (o[2] == COPLANAR) && (p[2] != pf[j]) && (p[2] != pf[k]) &&
-	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[2])
-		== NEGATIVE ) ) 
-	    )
-	  return true;
-	else
-	  return false;
+	    ( (o[2] == COPLANAR) && (*p[2] != *pf[j]) && (*p[2] != *pf[k]) &&
+	      ( coplanar_orientation(*pf[j],*pf[k],*pf[i],*p[2]) == NEGATIVE ) );
       }
     }
 
-    // here pu is none of pf[i]
-    for ( i=0; i<3; i++ ) {
+    // here pu is none of *pf[i]
+    for (int i=0; i<3; i++ ) {
       if ( o[i] == COPLANAR )
 	{
-	  for ( l=0; l<3; l++ ) {
-	    j = (l+1)%3;
-	    k = (l+2)%3;
-	    if ( p[i] == pf[l] ) {
-	      if ( (pu != pf[j]) && (pu != pf[k]) &&
-		   ( coplanar_orientation(pf[j],pf[k],pf[l],pu)
-		     == NEGATIVE ) )
+	  for (int l=0; l<3; l++ ) {
+	    int j = (l+1)%3;
+	    int k = (l+2)%3;
+	    if ( *p[i] == *pf[l] ) {
+	      if ( (pu != *pf[j]) && (pu != *pf[k]) &&
+		   ( coplanar_orientation(*pf[j],*pf[k],*pf[l],pu) == NEGATIVE ) )
 		return true;
 	      else
 		continue;
 	    }
-	    if ( ( coplanar_orientation(pf[j],pf[k],pu,p[i])
-		   != POSITIVE ) )
+	    if ( coplanar_orientation(*pf[j],*pf[k],pu,*p[i]) != POSITIVE )
 	      return true;
 	  }
 	}
@@ -1093,7 +1083,7 @@ violates( Vertex_handle u,
     }
 
     return false;
-  }
+}
 
 template < class Gt, class Tds >
 void
