@@ -21,8 +21,8 @@
 //
 // ============================================================================
 
-#ifndef IA_QUOTIENT_H
-#define IA_QUOTIENT_H
+#ifndef CGAL_IA_QUOTIENT_H
+#define CGAL_IA_QUOTIENT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,4 +56,4 @@ struct converter<Interval_nt_advanced,Quotient<RT> >
 
 CGAL_END_NAMESPACE
 
-#endif	 // IA_QUOTIENT_H
+#endif	 // CGAL_IA_QUOTIENT_H
