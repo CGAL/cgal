@@ -348,10 +348,10 @@ int main()
   T3.insert(wpp7);
   T3.insert(wpp8);
   Vertex_handle v8 = T3.insert(wpp8);
-  assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v8);
-  assert(T3.nearest_power_vertex(Weighted_point(Point(0.5,0.5,0.5),1.0)) 
-	 == v8 );
- 
+  Point query(0.5,0.5,0.5);
+  assert(T3.nearest_power_vertex(query) == v8);
+  assert(T3.nearest_power_vertex(Weighted_point(query,1.0)) == v8 );
+  assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
   std::cout << " quit " << std::endl;
   return 0;
 }

@@ -497,21 +497,39 @@ _test_cls_delaunay_3(const Triangulation &)
   }
 
   {
-      std::cout << "    Testing nearest_vertex()" << std::endl;
-      // We do a nearest_vertex() query on all points with integer coordinate
-      // in the cube [-1;6]^3, and we check explicitely that it's the nearest
-      // by comparing to all vertices.
-      for (int x = -1; x < 7; ++x)
-        for (int y = -1; y < 7; ++y)
-          for (int z = -1; z < 7; ++z) {
-	    Point p(x, y, z);
-	    Vertex_handle v = T3_13.nearest_vertex(p);
-	    for (typename Cls::Finite_vertices_iterator
+    std::cout << "    Testing nearest_vertex()" << std::endl;
+    // We do a nearest_vertex() and two  neares__vertex_in_cell()
+    // queries  on all points with integer coordinate
+    // in the cube [-1;6]^3. In each case  we check explicitely that the
+    // output is correct
+    // by comparing distance to other  vertices.
+    Cell_handle c1 = T3_13.finite_cells_begin();
+    Cell_handle c2 = T3_13.infinite_vertex()->cell();
+    for (int x = -1; x < 7; ++x)
+      for (int y = -1; y < 7; ++y)
+	for (int z = -1; z < 7; ++z) {
+	  Point p(x, y, z);
+	  Vertex_handle v = T3_13.nearest_vertex(p);
+	  for (typename Cls::Finite_vertices_iterator
 	         fvit = T3_13.finite_vertices_begin();
-		 fvit != T3_13.finite_vertices_end(); ++fvit)
-	      assert(CGAL::squared_distance(p, v->point()) <=
-		     CGAL::squared_distance(p, fvit->point()));
+	       fvit != T3_13.finite_vertices_end(); ++fvit)
+	    assert(CGAL::squared_distance(p, v->point()) <=
+		   CGAL::squared_distance(p, fvit->point()));
+	  Vertex_handle v1 = T3_13.nearest_vertex_in_cell(p,c1);
+	  int i1 = c1->index(v1);
+ 	  for(int i=0; i<4; ++i) {
+	    if (i != i1) 
+	      assert(CGAL::squared_distance(p, v1->point()) <=
+		     CGAL::squared_distance(p, c1->vertex(i)->point()));
 	  }
+	  Vertex_handle v2 = T3_13.nearest_vertex_in_cell(p,c2);
+	  int i2 = c2->index(v2);
+	  for(int i=0; i<4; ++i) { 
+	    if (i != i2 && c2->vertex(i) != T3_13.infinite_vertex())
+	      assert(CGAL::squared_distance(p, v2->point()) <=
+		     CGAL::squared_distance(p, c2->vertex(i)->point()));
+	  }
+	}
   }
 
   {
