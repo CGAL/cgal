@@ -808,7 +808,7 @@ set_compiler_flags()
 	    #### settings Intel C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -Zc:forScope"
+	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:forScope"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
