@@ -38,6 +38,7 @@
 
 namespace CGAL {
 
+/** Default class for the Extras parameter. */
 template <class Tr>
 struct Conforming_Delaunay_triangulation_2_default_extras
 {
@@ -69,12 +70,15 @@ struct Conforming_Delaunay_triangulation_2_default_extras
 };
 
 /**
-   - Tr is a Delaunay constrained triangulation (with intersections or
+  Conforming Delaunay triangulation
+  \param Tr is a Delaunay constrained triangulation (with intersections or
    not).
+  \param Extras is an extra template parameter containing several stuff.
+  Defaults to Conforming_Delaunay_triangulation_2_default_extras<Tr>
 */
 template <class Tr,
-	  class Extras = 
-	    Conforming_Delaunay_triangulation_2_default_extras<Tr> >
+          class Extras =
+            Conforming_Delaunay_triangulation_2_default_extras<Tr> >
 class Conforming_Delaunay_triangulation_2: public Tr
 {
 public:
@@ -84,17 +88,17 @@ public:
   typedef Conforming_Delaunay_triangulation_2<Tr, Extras> Conform;
   typedef Conform Self;
   /**< The \em Self type, for use by nested types. */
-  
+
 
   /** \name Types inherited from the templated base class
       Must be redefined for use in the implementation */
-  //@{
+
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Triangulation_data_structure Tds;
 
   typedef typename Geom_traits::FT FT;
   typedef FT      Squared_length; /**<This typedef is used to remind that
-				     the lenght is squared. */
+                                     the lenght is squared. */
   typedef typename Tr::Vertex                 Vertex;
   typedef typename Tr::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex_circulator      Vertex_circulator;
@@ -109,21 +113,26 @@ public:
   typedef typename Tr::All_faces_iterator     All_faces_iterator;
 
   typedef typename Tr::Locate_type            Locate_type;
-  
+
   typedef typename Tr::Point                  Point;
-  //@}
+
 
   /** \name Types needed to access member datas */
-  //@{
-  enum Initialization { NONE, CLUSTER, DELAUNAY, GABRIEL };
-  //@}
+
+  enum Initialization {
+    NONE,     /**< \c this is not initialized. */
+    CLUSTER,  /**< \c this clusters are initialized. */
+    DELAUNAY, /**< \c this has been \e Delaunay-initialized. */
+    GABRIEL   /**< \c this has been \e Gabriel-initialized. */
+  };
+
 
   /** \name Types needed to mark the domain for Delaunay_mesh_2<Tr> */
-  //@{
+
   typedef std::list<Point> Seeds;
   typedef typename Seeds::const_iterator Seeds_iterator;
   typedef Seeds_iterator Seeds_const_iterator;
-  //@}
+
 
 
 protected:
@@ -137,10 +146,10 @@ protected:
   public:
     Is_edge_constrained()
       {}
-    
+
     bool operator()(const Edge_circulator& ec) const
       {
-	return ec->first->is_constrained(ec->second);
+        return ec->first->is_constrained(ec->second);
       }
   };
 
@@ -159,10 +168,10 @@ protected:
     explicit Is_really_a_constrained_edge(const Conform& m) : _m(m) {}
     bool operator()(const Constrained_edge& ce) const
       {
-	Face_handle fh;
-	int i;
-	return _m.is_edge(ce.first, ce.second, fh,i) &&
-	  fh->is_constrained(i);
+        Face_handle fh;
+        int i;
+        return _m.is_edge(ce.first, ce.second, fh,i) &&
+          fh->is_constrained(i);
       }
   };
 
@@ -184,13 +193,13 @@ protected:
   //@}
 
   typedef std::list<Constrained_edge> List_of_constraints;
-  typedef CGAL::Filtered_container<List_of_constraints, 
+  typedef CGAL::Filtered_container<List_of_constraints,
                                   Is_really_a_constrained_edge>
     Constrained_edges_queue;
 
   // Cluster register several informations about clusters.
   // A cluster is a is a set of vertices v_i incident to one vertice
-  // v_0, so that angles between segments [v_0, v_i] is less than 60°.
+  // v_0, so that angles between segments [v_0, v_i] is less than 60 degres.
   struct Cluster {
     bool reduced ; // Is the cluster reduced
 
@@ -198,10 +207,10 @@ protected:
     // smallest angle in the cluster
     std::pair<Vertex_handle, Vertex_handle> smallest_angle;
 
-    FT rmin; // WARNING: rmin has no meaning if reduced=false!!!
+    FT rmin; // @fixme: rmin has no meaning if reduced=false!!!
     Squared_length minimum_squared_length;
 
-    // The following map tells what vertices are in the cluster and if 
+    // The following map tells what vertices are in the cluster and if
     // the corresponding segment has been splitted once.
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
@@ -220,7 +229,7 @@ protected:
 private:
   template <class Pair>
   struct Pair_get_first: public std::unary_function<Pair,
-						    typename Pair::first_type>
+                                                    typename Pair::first_type>
   {
     typedef typename Pair::first_type result;
     const result& operator()(const Pair& p) const
@@ -232,7 +241,7 @@ private:
   typedef typename Cluster::Vertices_map Cluster_vertices_map;
 
   /** \name Access to clusters */
-  //@{
+
 public:
 #ifdef CGAL_USE_BOOST
   typedef typename boost::transform_iterator<
@@ -254,15 +263,15 @@ public:
     Pair_get_first<typename Cluster_vertices_map::value_type> >
   Vertices_in_cluster_iterator;
 #endif // CGAL_USE_BOOST
-  //@}
+
 
   // -- conform criteria --
 public:
   struct Is_locally_conforming_Gabriel
-  {   
+  {
     bool operator()(Conform& ct,
-		    const Face_handle& fh,
-		    const int i) const
+                    const Face_handle& fh,
+                    const int i) const
       {
         if( ct.extras().is_bad( static_cast<const Tr&>(ct),
                               fh, i ) ) return false;
@@ -281,9 +290,9 @@ public:
 ));
       }
     bool operator()(Conform& ct,
-		    const Face_handle& fh,
-		    const int i,
-		    const Point& p) const	
+                    const Face_handle& fh,
+                    const int i,
+                    const Point& p) const
       {
         if( ct.extras().is_bad( static_cast<const Tr&>(ct),
                               fh, i ) ) return false;
@@ -299,12 +308,12 @@ public:
       }
 
   };
-  
+
   struct Is_locally_conforming_Delaunay
   {
     bool operator()(const Conform& ct,
-		    const Face_handle& fh,
-		    const int i) const
+                    const Face_handle& fh,
+                    const int i) const
       {
         if( ct.extras().is_bad( static_cast<const Tr&>(ct),
                               fh, i ) ) return false;
@@ -337,34 +346,32 @@ public:
   /** default constructor */
   explicit
   Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits(),
-				      const Extras& extras = Extras());
-  //@}
+                                      const Extras& extras = Extras());
 
   /** \name SURCHARGED INSERTION-DELETION FONCTIONS
-      \todo SURCHARGED INSERTION-DELETION FONCTIONS must be done. */
-  //@{
+      @todo SURCHARGED INSERTION-DELETION FONCTIONS must be done. */
 private:
   /** Fake insert() function. */
   void fake_insert() {}
-  //@}
 
   /** \name ASSIGNMENT
-      \todo ASSIGNMENT must be done. */
-  //@{
+      @todo ASSIGNMENT must be done. */
+
 private:
   /** Fake assignment function */
   void operator=(const Self&) {}
 
-  //@}
+
 
 public:
   /** \name ACCESS FUNCTIONS */
-  //@{
 
+
+  /** Returns the 'extra' member. */
   Extras& extras() { return extras_;}
-  const Extras& extras() const { return extras_;} 
+  /** Returns the 'extra' member as const. */
+  const Extras& extras() const { return extras_;}
 
-  
   int number_of_constrained_edges() const;
 
   int number_of_clusters_vertices() const
@@ -393,7 +400,7 @@ public:
   // returns the sequence of vertices bellonging to the n-th cluster of vh
   std::pair<Vertices_in_cluster_iterator, Vertices_in_cluster_iterator>
   vertices_in_cluster_sequence(const Vertex_handle& vh,
-			       const unsigned int n)
+                               const unsigned int n)
   {
     typedef typename Cluster_map::iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
@@ -408,9 +415,9 @@ public:
 
     return
       std::make_pair(Vertices_in_cluster_iterator(c.vertices.begin()),
-		     Vertices_in_cluster_iterator(c.vertices.end()));
+                     Vertices_in_cluster_iterator(c.vertices.end()));
   }
-  //@}
+
 
   bool is_conforming_Delaunay()
   { return is_conforming(Is_locally_conforming_Delaunay()); }
@@ -418,16 +425,18 @@ public:
   bool is_conforming_Gabriel()
   { return is_conforming(Is_locally_conforming_Gabriel()); }
 
+
+
   /** Access to the private initialized member data. */
-  //@{
+
   void set_initialized(Initialization init) { initialized = init; }
   Initialization get_initialized() const { return initialized; }
-  //@}
+
 
   /** \name HELPING FUNCTIONS */
-  //@{
+
   void clear();
-  //@}
+
 
   /** \name MARKING FUNCTIONS */
 
@@ -436,30 +445,30 @@ public:
       Face_base is model of DelaunayMeshFaceBase_2. */
   template <typename Seeds_it>
   void mark_facets(Seeds_it begin,
-		   Seeds_it end,
-		   bool mark = false);
+                   Seeds_it end,
+                   bool mark = false);
 
   /** \name CONFORMING FUNCTIONS */
-  //@{
+
   void make_conforming_Delaunay();
   void make_conforming_Gabriel();
-  //@}
+
 
   /** \name STEP BY STEP FUNCTIONS */
-  //@{
+
 
   /**
-     Initializes the data structures 
+     Initializes the data structures
      (The call of this function is REQUIRED before any step by step
      operation).
   */
   void init_Delaunay()
-    { 
+    {
       initialized = DELAUNAY;
       init(Is_locally_conforming_Delaunay());
     }
   void init_Gabriel()
-    { 
+    {
       initialized = GABRIEL;
       init(Is_locally_conforming_Gabriel());
     }
@@ -478,14 +487,14 @@ public:
     // filtred, its empty() method is not const.
   { return edges_to_be_conformed.empty(); }
 
-  //@}
+
 
   // --- PROTECTED TYPES ---
 protected:
   typedef std::list<Face_handle> List_of_face_handles;
 
   /** \name Traits types */
-  //@{
+
   typedef typename Geom_traits::Vector_2 Vector_2;
   typedef typename Geom_traits::Construct_translated_point_2
       Construct_translated_point_2;
@@ -499,13 +508,13 @@ protected:
       Construct_midpoint_2;
   typedef typename Geom_traits::Orientation_2 Orientation_2;
   typedef typename Geom_traits::Angle_2 Angle_2;
-  //@}
+
 
 private:
   // PRIVATE MEMBER DATAS
 
   // edges_to_be_conformed: list of encroached constrained edges
-  //  warning: some edges could be destroyed, use the same wrapper
+  //  @fixme: some edges could be destroyed, use the same wrapper
   // is_really_a_constrained_edge: tester to filter edges_to_be_conformed
   const Is_really_a_constrained_edge is_really_a_constrained_edge;
   Extras extras_;
@@ -520,7 +529,7 @@ private:
   Initialization initialized;
 
   // --- PRIVATE MEMBER FUNCTIONS ---
-private: 
+private:
 
   /** \name auxiliary functions to set markers
    These functions will only be availlable if Face_base is model of
@@ -535,7 +544,7 @@ private:
 
   /** \name Auxiliary functions to handle clusters
       See more functions about clusters in protected member functions. */
-  //@{
+
   // for all vertices, call create_clusters_of_vertex
   void create_clusters();
 
@@ -546,15 +555,15 @@ private:
   // add the sequence [begin, end] to the cluster c and add it to the
   // clusters of the vertex v
   void construct_cluster(const Vertex_handle v,
-			 Constrained_edge_circulator begin,
-			 const Constrained_edge_circulator& end,
-			 Cluster c = Cluster());
+                         Constrained_edge_circulator begin,
+                         const Constrained_edge_circulator& end,
+                         Cluster c = Cluster());
 
-  //@}
+
 
 
   /** \name Functions that maintain the queue of encroached edges */
-  //@{
+
 
   /** Scans all constrained edges and put them in the queue if they are
       encroached. */
@@ -564,12 +573,12 @@ private:
   /** Update the queue with edges incident to vm. */
   template <class Is_locally_conform>
   void update_edges_to_be_conformed(const Vertex_handle va,
-				    const Vertex_handle vb,
-				    const Vertex_handle vm,
-				    const Is_locally_conform&);
+                                    const Vertex_handle vb,
+                                    const Vertex_handle vm,
+                                    const Is_locally_conform&);
 
   /** \name Inlined functions that compose the refinement process. */
-  //@{
+
 
   /** Templated version that make_conforming_Gabriel and
       make_conforming_Delaunay call. */
@@ -590,72 +599,72 @@ private:
       or insert_middle. */
   template <class Is_locally_conform>
   void refine_edge(const Vertex_handle va, const Vertex_handle vb,
-		   const Is_locally_conform&);
+                   const Is_locally_conform&);
 
   /** \name Auxiliary functions that return a boolean. */
-  //@{
+
   // tell if [va,vb] is encroached, by looking for the two neighbors
   // This function takes care of markers.
-//   bool is_encroached(const Vertex_handle va, 
-// 		     const Vertex_handle vb) const;
+//   bool is_encroached(const Vertex_handle va,
+//                   const Vertex_handle vb) const;
 
 //   // tell if [va,vb] is encroached by p
-//   bool is_encroached(const Vertex_handle va, 
-// 		     const Vertex_handle vb,
-// 		     const Point& p) const;
+//   bool is_encroached(const Vertex_handle va,
+//                   const Vertex_handle vb,
+//                   const Point& p) const;
 
-  // tell if the angle <pleft, pmiddle, pright> is less than 60°
+  // tell if the angle <pleft, pmiddle, pright> is less than 60 degres.
   // Uses squared_cosine_of_angle_times_4 and used by
   // create_clusters_of_vertex
   bool is_small_angle(const Point& pleft,
-		      const Point& pmiddle, 
-		      const Point& pright) const;
-  //@}
+                      const Point& pmiddle,
+                      const Point& pright) const;
+
 
   /** /name Auxiliary functions that are called to split an edge or a face
    */
-  //@{
+
   /** Cuts [va,vb] knowing that it is in the cluster c. */
   Vertex_handle cut_cluster_edge(const Vertex_handle va,
-				 const Vertex_handle vb,
-				 Cluster& c);
+                                 const Vertex_handle vb,
+                                 Cluster& c);
 
   /** Inserts the midpoint of the edge (f,i). */
   Vertex_handle insert_middle(Face_handle f, const int i);
 
 
   /** \name Functions that really insert points. */
-  //@{
+
   /** Virtual function that inserts the point p in the edge
       (fh,edge_index). */
   virtual
   Vertex_handle virtual_insert_in_the_edge(Face_handle fh,
-				   const int edge_index,
-				   const Point& p);
-  
+					   const int edge_index,
+					   const Point& p);
+
   /** \name Helping computing functions */
-  //@{
+
 
   /** Returns the squared cosine of the angle <pleft, pmiddle, pright>
       times 4. */
   FT squared_cosine_of_angle_times_4(const Point& pleft,
-				     const Point& pmiddle,
-				     const Point& pright) const;
+                                     const Point& pmiddle,
+                                     const Point& pright) const;
 
   /** \name Step by step templated functions */
-  //@{
+
   template <class Is_locally_conform>
   void init(const Is_locally_conform&);
 
   template <class Is_locally_conform>
   bool step_by_step(const Is_locally_conform&);
-  //@}
+
 
   /** \name Templated access functions */
-  //@{
+
   template <class Is_locally_conform>
   bool is_conforming(const Is_locally_conform& is_locally_conform);
-  //@}
+
 
   // --- PROTECTED MEMBER FUNCTIONS ---
 protected:
@@ -665,19 +674,19 @@ protected:
   /** Update the cluster of [va,vb], putting vm instead of vb. If
       reduction=false, the edge [va,vm] is not set reduced. */
   void update_cluster(Cluster& c, const Vertex_handle va,
-		      const Vertex_handle vb, const Vertex_handle vm,
-		      bool reduction = true);
+                      const Vertex_handle vb, const Vertex_handle vm,
+                      bool reduction = true);
 
   /** Returns the cluster of [va,vb] in c and return true
       if it is in a cluster. If erase=true, the cluster is remove from
       the cluster map. */
   bool get_cluster(const Vertex_handle va, const Vertex_handle vb,
-		   Cluster &c, bool erase = false);
+                   Cluster &c, bool erase = false);
   //@}
 
   /** Pushes [va,vb] in the queue of edges to be conformed. */
   void add_contrained_edge_to_be_conform(const Vertex_handle& va,
-					 const Vertex_handle& vb)
+                                         const Vertex_handle& vb)
   {
     edges_to_be_conformed.push_back(Constrained_edge(va,vb));
   }
@@ -688,9 +697,9 @@ protected:
 template <class Tr, class Extras>
 Conforming_Delaunay_triangulation_2<Tr, Extras>::
 Conforming_Delaunay_triangulation_2(const Geom_traits& gt,
-				    const Extras& extras)
-  : Tr(gt), is_really_a_constrained_edge(*this), 
-    /** \todo{ *this is used in the constructor!!} */
+                                    const Extras& extras)
+  : Tr(gt), is_really_a_constrained_edge(*this),
+    /** @todo \a *this is used in the constructor!! */
     extras_(extras),
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
@@ -720,7 +729,7 @@ is_conforming(const Is_locally_conform& is_locally_conform)
   for(Finite_edges_iterator ei = this->finite_edges_begin();
       ei != this->finite_edges_end();
       ++ei)
-    if(ei->first->is_constrained(ei->second) && 
+    if(ei->first->is_constrained(ei->second) &&
        !is_locally_conform(*this, ei->first, ei->second) )
       return false;
   return true;
@@ -730,7 +739,7 @@ is_conforming(const Is_locally_conform& is_locally_conform)
 
 template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
-clear() 
+clear()
 {
   cluster_map.clear();
   edges_to_be_conformed.clear();
@@ -743,23 +752,23 @@ template <class Tr, class Extras>
 template <typename Seeds_it>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 mark_facets(Seeds_it begin,
-	    Seeds_it end,
-	    bool mark /* = false */)
+            Seeds_it end,
+            bool mark /* = false */)
 {
   if (this->dimension()<2) return;
   if( begin != end )
     {
       for(All_faces_iterator it=this->all_faces_begin();
-	  it!=this->all_faces_end();
-	  ++it)
-	it->set_marked(!mark);
-	  
+          it!=this->all_faces_end();
+          ++it)
+        it->set_marked(!mark);
+
       for(Seeds_const_iterator sit=begin; sit!=end; ++sit)
-	{
-	  Face_handle fh=locate(*sit);
-	  if(fh!=NULL)
-	    propagate_marks(fh, mark);
-	}
+        {
+          Face_handle fh=locate(*sit);
+          if(fh!=NULL)
+            propagate_marks(fh, mark);
+        }
     }
   else
     mark_convex_hull();
@@ -849,14 +858,14 @@ propagate_marks(const Face_handle fh, bool mark)
       Face_handle fh = face_queue.front();
       face_queue.pop();
       for(int i=0;i<3;i++)
-	{
-	  const Face_handle& nb = fh->neighbor(i);
-	  if( !fh->is_constrained(i) && (mark != nb->is_marked()) )
-	    {
-	      nb->set_marked(mark);
-	      face_queue.push(nb);
-	    }
-	}
+        {
+          const Face_handle& nb = fh->neighbor(i);
+          if( !fh->is_constrained(i) && (mark != nb->is_marked()) )
+            {
+              nb->set_marked(mark);
+              face_queue.push(nb);
+            }
+        }
     }
 }
 
@@ -918,45 +927,45 @@ create_clusters_of_vertex(const Vertex_handle v)
   do
     {
       if(is_small_angle(target(current)->point(), v->point(),
-			target(next)->point()))
-	{
-	  if(!in_a_cluster)
-	    {
-	      // at this point, current is the beginning of a cluster
-	      in_a_cluster = true;
-	      cluster_begin = current;
-	    }
-	}
+                        target(next)->point()))
+        {
+          if(!in_a_cluster)
+            {
+              // at this point, current is the beginning of a cluster
+              in_a_cluster = true;
+              cluster_begin = current;
+            }
+        }
       else
-	if(in_a_cluster)
-	  {
-	    // at this point, current is the end of a cluster and
-	    // cluster_begin is its beginning
- 	    construct_cluster(v, cluster_begin, current);
-	    in_a_cluster = false;
-	  }
+        if(in_a_cluster)
+          {
+            // at this point, current is the end of a cluster and
+            // cluster_begin is its beginning
+            construct_cluster(v, cluster_begin, current);
+            in_a_cluster = false;
+          }
       ++next;
       ++current;
     } while( current!=begin );
   if(in_a_cluster)
     {
       Cluster c;
-      if(get_cluster(v, target(begin), c, true)) 
-	// get the cluster and erase it from the clusters map
-	construct_cluster(v, cluster_begin, begin, c);
+      if(get_cluster(v, target(begin), c, true))
+        // get the cluster and erase it from the clusters map
+        construct_cluster(v, cluster_begin, begin, c);
       else
-	construct_cluster(v, cluster_begin, current);
+        construct_cluster(v, cluster_begin, current);
     }
 }
 
 template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 construct_cluster(Vertex_handle v,
-		  Constrained_edge_circulator begin,
-		  const Constrained_edge_circulator& end,
-		  Cluster c)
+                  Constrained_edge_circulator begin,
+                  const Constrained_edge_circulator& end,
+                  Cluster c)
 {
-  Compute_squared_distance_2 squared_distance = 
+  Compute_squared_distance_2 squared_distance =
     this->geom_traits().compute_squared_distance_2_object();
 
   if(c.vertices.empty())
@@ -964,8 +973,8 @@ construct_cluster(Vertex_handle v,
       c.reduced = false;
       // c.rmin is not initialized because
       // reduced=false!
-      c.minimum_squared_length = 
-	squared_distance(v->point(), target(begin)->point());
+      c.minimum_squared_length =
+        squared_distance(v->point(), target(begin)->point());
       Constrained_edge_circulator second(begin);
       ++second;
       c.smallest_angle.first = target(begin);
@@ -978,11 +987,11 @@ construct_cluster(Vertex_handle v,
     all_edges_in_cluster=true;
 
   const Point& vp = v->point();
-  
-  FT greatest_cosine = 
+
+  FT greatest_cosine =
     squared_cosine_of_angle_times_4(c.smallest_angle.first->point(),
-				    v->point(),
-				    c.smallest_angle.second->point());
+                                    v->point(),
+                                    c.smallest_angle.second->point());
 
   Constrained_edge_circulator next(begin);
   ++next;
@@ -990,23 +999,23 @@ construct_cluster(Vertex_handle v,
     {
       c.vertices[target(begin)] = false;
       Squared_length l = squared_distance(vp,
-					target(begin)->point());
-      c.minimum_squared_length = 
-	std::min(l,c.minimum_squared_length);
-      
+                                        target(begin)->point());
+      c.minimum_squared_length =
+        std::min(l,c.minimum_squared_length);
+
       if(all_edges_in_cluster || begin!=end)
-	{
-	  FT cosine = 
-	    squared_cosine_of_angle_times_4(target(begin)->point(),
-					    v->point(),
-					    target(next)->point());
-	  if(cosine>greatest_cosine)
-	    {
-	      greatest_cosine = cosine;
-	      c.smallest_angle.first = target(begin);
-	      c.smallest_angle.second = target(next);
-	    }
-	}
+        {
+          FT cosine =
+            squared_cosine_of_angle_times_4(target(begin)->point(),
+                                            v->point(),
+                                            target(next)->point());
+          if(cosine>greatest_cosine)
+            {
+              greatest_cosine = cosine;
+              c.smallest_angle.first = target(begin);
+              c.smallest_angle.second = target(next);
+            }
+        }
     }
   while(next++,begin++!=end);
   typedef typename Cluster_map::value_type Value_key_pair;
@@ -1026,13 +1035,13 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
       ei != this->finite_edges_end();
       ++ei)
     {
-      if(ei->first->is_constrained(ei->second) && 
-	 !is_locally_conform(*this, ei->first, ei->second) )
-	{
-	  const Vertex_handle& va = ei->first->vertex(cw(ei->second));
-	  const Vertex_handle& vb = ei->first->vertex(ccw(ei->second));
-	  edges_to_be_conformed.push_back(std::make_pair(va, vb));
-	}
+      if(ei->first->is_constrained(ei->second) &&
+         !is_locally_conform(*this, ei->first, ei->second) )
+        {
+          const Vertex_handle& va = ei->first->vertex(cw(ei->second));
+          const Vertex_handle& vb = ei->first->vertex(ccw(ei->second));
+          edges_to_be_conformed.push_back(std::make_pair(va, vb));
+        }
     }
 }
 
@@ -1042,40 +1051,39 @@ template <class Tr, class Extras>
 template <class Is_locally_conform>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 fill_edge_queue(const Is_locally_conform& is_locally_conform)
-{ 
+{
   for(typename Tr::Subconstraint_iterator it = subconstraints_begin();
       it != subconstraints_end(); ++it) {
-  
-    Vertex_handle va = it->first.first;   
+
+    Vertex_handle va = it->first.first;
     Vertex_handle vb = it->first.second;
 
     Face_handle fh;
     int i;
     is_edge(va, vb, fh, i);
 
-      if(fh->is_constrained(i) && 
-	 !is_locally_conform(*this, fh, i))
-	{
-	  edges_to_be_conformed.push_back(std::make_pair(va, vb));
-	}
+      if(fh->is_constrained(i) &&
+         !is_locally_conform(*this, fh, i))
+        {
+          edges_to_be_conformed.push_back(std::make_pair(va, vb));
+        }
     }
 }
 
 #endif
 
- 
 
 
 //update the encroached segments list
-// TODO: perhaps we should remove destroyed edges too
-// TODO: rewrite this function one day
+// @todo: perhaps we should remove destroyed edges too
+// @todo: rewrite this function one day
 template <class Tr, class Extras>
 template <class Is_locally_conform>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 update_edges_to_be_conformed(Vertex_handle va,
-			     Vertex_handle vb,
-			     Vertex_handle vm,
-			     const Is_locally_conform& is_locally_conform)
+                             Vertex_handle vb,
+                             Vertex_handle vm,
+                             const Is_locally_conform& is_locally_conform)
 {
   Face_circulator fc = incident_faces(vm), fcbegin(fc);
   if( fc == 0 ) return;
@@ -1083,12 +1091,12 @@ update_edges_to_be_conformed(Vertex_handle va,
   do {
     for(int i = 0; i<3; i++) {
        if( fc->is_constrained(i) &&
-	  !is_locally_conform(*this, fc, i) )
-	{
-	  const Vertex_handle& v1 = fc->vertex(this->ccw(i));
-	  const Vertex_handle& v2 = fc->vertex(this->cw(i));
-	  edges_to_be_conformed.push_back(Constrained_edge(v1, v2));
-	}
+          !is_locally_conform(*this, fc, i) )
+        {
+          const Vertex_handle& v1 = fc->vertex(this->ccw(i));
+          const Vertex_handle& v2 = fc->vertex(this->cw(i));
+          edges_to_be_conformed.push_back(Constrained_edge(v1, v2));
+        }
     }
     ++fc;
   } while(fc != fcbegin);
@@ -1121,22 +1129,22 @@ template <class Tr, class Extras>
 template <class Is_locally_conform>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 refine_edge(Vertex_handle va, Vertex_handle vb,
-	    const Is_locally_conform& is_loc_conf)
+            const Is_locally_conform& is_loc_conf)
 {
   Face_handle f;
   int i;
-  is_edge(va, vb, f, i); // get the edge (f,i)
-  CGAL_assertion(f->is_constrained(i));
-  
+  CGAL_assertion_code(bool b =) is_edge(va, vb, f, i); // get the edge (f,i)
+  CGAL_assertion(b && f->is_constrained(i));
+
   Cluster c,c2;
   Vertex_handle vm;
 
-  if( get_cluster(va,vb,c,true) )
-    if( get_cluster(vb,va,c2,true) )
+  if( get_cluster(va,vb,c,true) )     // removes c and c2 because they will
+    if( get_cluster(vb,va,c2,true) )  // be restored by update_cluster(...)
       { // both ends are clusters
-	vm = insert_middle(f,i);
-	update_cluster(c,va,vb,vm,false);
-	update_cluster(c2,vb,va,vm,false);
+        vm = insert_middle(f,i);
+        update_cluster(c,va,vb,vm,false); // false == 'edge not reduced'
+        update_cluster(c2,vb,va,vm,false);
       }
     else {
       // va only is a cluster
@@ -1165,30 +1173,30 @@ refine_edge(Vertex_handle va, Vertex_handle vb,
 //   const Point& candidat_2 = fh->mirror_vertex(i)->point();
 
 //   return ( (/* fh->is_marked() && */
-// 	    is_encroached(va, vb, candidat_1) ) ||
-// 	   (/* fh->neighbor(i)->is_marked() && */
-// 	     is_encroached(va, vb, candidat_2) )
-// 	   );
+//          is_encroached(va, vb, candidat_1) ) ||
+//         (/* fh->neighbor(i)->is_marked() && */
+//           is_encroached(va, vb, candidat_2) )
+//         );
 // }
 
 // -> traits?
-// TODO, FIXME: not robust!
+// @fixme Not robust!
 template <class Tr, class Extras>
 bool Conforming_Delaunay_triangulation_2<Tr, Extras>::
 is_small_angle(const Point& pleft,
-	       const Point& pmiddle,
-	       const Point& pright) const
+               const Point& pmiddle,
+               const Point& pright) const
 {
   Angle_2 angle = this->geom_traits().angle_2_object();
   Orientation_2 orient = this->geom_traits().orientation_2_object();
-  
+
   if( angle(pleft, pmiddle, pright)==OBTUSE )
     return false;
   if( orient(pmiddle,pleft,pright)==RIGHT_TURN)
     return false;
 
   FT cos_alpha = squared_cosine_of_angle_times_4(pleft, pmiddle,
-						 pright);
+                                                 pright);
 
   if(cos_alpha > 1)
     {
@@ -1211,7 +1219,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
     this->geom_traits().construct_scaled_vector_2_object();
   Compute_squared_distance_2 squared_distance =
     this->geom_traits().compute_squared_distance_2_object();
-  Construct_midpoint_2 midpoint = 
+  Construct_midpoint_2 midpoint =
     this->geom_traits().construct_midpoint_2_object();
   Construct_translated_point_2 translate =
     this->geom_traits().construct_translated_point_2_object();
@@ -1228,25 +1236,25 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
   else
     {
       const Point
-	& a = va->point(),
-	& b = vb->point(),
-	& m = midpoint(a, b);
+        & a = va->point(),
+        & b = vb->point(),
+        & m = midpoint(a, b);
 
 
 
       Vector_2 v = vector(a,m);
       v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
-				      squared_distance(a,b)));
+                                      squared_distance(a,b)));
 
       Point i = translate(a,v), i2(i);
 
       do {
-	i = translate(a,v);
-	v = scaled_vector(v,FT(2));
-	i2 = translate(a,v);
-      }	while(squared_distance(a,i2) <= squared_distance(a,m));
+        i = translate(a,v);
+        v = scaled_vector(v,FT(2));
+        i2 = translate(a,v);
+      } while(squared_distance(a,i2) <= squared_distance(a,m));
       if( squared_distance(i,m) > squared_distance(m,i2) )
-	i = i2;
+        i = i2;
       //here i is the best point for splitting
       Face_handle fh;
       int index;
@@ -1278,11 +1286,11 @@ insert_middle(Face_handle f, int i)
 }
 
 template <class Tr, class Extras>
-inline 
+inline
 typename Conforming_Delaunay_triangulation_2<Tr, Extras>::Vertex_handle
 Conforming_Delaunay_triangulation_2<Tr, Extras>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
-  // insert the point p in the edge (fh, edge_index). It updates seeds 
+  // insert the point p in the edge (fh, edge_index). It updates seeds
   // too.
 {
   const Vertex_handle& va = fh->vertex( cw(edge_index));
@@ -1294,7 +1302,7 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   remove_constrained_edge(fh, edge_index);
 
   extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-					       fh, edge_index, p);
+                                                 fh, edge_index, p);
 
   Vertex_handle vp = insert(p, fh);
 
@@ -1303,21 +1311,21 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   insert_constraint(vp, vb);
 
   extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-					      vp);
+                                                vp);
 
   return vp;
 }
 
 // # used by: is_small_angle, create_clusters_of_vertex
 // # compute 4 times the square of the cosine of the angle (ab,ac)
-// # WARNING, TODO: this is not exact with doubles and can lead to crashes!!
+// # @fixme, @todo: this is not exact with doubles and can lead to crashes!!
 template <class Tr, class Extras>
 typename Conforming_Delaunay_triangulation_2<Tr, Extras>::FT
 Conforming_Delaunay_triangulation_2<Tr, Extras>::
 squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
-				const Point& pc) const
+                                const Point& pc) const
 {
-  Compute_squared_distance_2 squared_distance = 
+  Compute_squared_distance_2 squared_distance =
     this->geom_traits().compute_squared_distance_2_object();
 
   const FT
@@ -1336,13 +1344,13 @@ squared_cosine_of_angle_times_4(const Point& pb, const Point& pa,
 template <class Tr, class Extras>
 void Conforming_Delaunay_triangulation_2<Tr, Extras>::
 update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
-	       Vertex_handle vm, bool reduction)
+               Vertex_handle vm, bool reduction)
 {
-  Compute_squared_distance_2 squared_distance = 
+  Compute_squared_distance_2 squared_distance =
     this->geom_traits().compute_squared_distance_2_object();
   c.vertices.erase(vb);
   c.vertices[vm] = reduction;
-  
+
   if(vb==c.smallest_angle.first)
     c.smallest_angle.first = vm;
   if(vb==c.smallest_angle.second)
@@ -1356,14 +1364,14 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
     {
       typename Cluster::Vertices_map::iterator it = c.vertices.begin();
       while(it!=c.vertices.end() && c.is_reduced(it->first))
-	++it; // TODO: use std::find and an object class
+        ++it; // @todo: use std::find and an object class
       if(it==c.vertices.end())
-	c.reduced = true;
+        c.reduced = true;
     }
 
   if(c.is_reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
-			      c.smallest_angle.second->point())/FT(4);
+                              c.smallest_angle.second->point())/FT(4);
   typedef typename Cluster_map::value_type  Value_key_pair;
   cluster_map.insert(Value_key_pair(va,c));
 }
@@ -1380,10 +1388,10 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
     {
       Cluster &cl = it->second;
       if(cl.vertices.find(vb)!=cl.vertices.end()) {
-	c = it->second;
-	if(erase)
-	  cluster_map.erase(it);
-	return true;
+        c = it->second;
+        if(erase)
+          cluster_map.erase(it);
+        return true;
       }
     }
   return false;
@@ -1427,7 +1435,7 @@ read_poly(CDT& t, std::istream &f)
 template <class CDT, class OutputIterator>
 void
 read_poly(CDT& t, std::istream &f,
-	  OutputIterator seeds)
+          OutputIterator seeds)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   typedef typename CDT::Point Point;
@@ -1439,7 +1447,7 @@ read_poly(CDT& t, std::istream &f,
   f >> number_of_points;
   skip_until_EOL(f);
   skip_comment_OFF(f);
-  
+
   // read vertices
   std::vector<Vertex_handle> vertices(number_of_points);
   for(unsigned int i = 0; i < number_of_points; ++i)
@@ -1493,7 +1501,7 @@ write_poly(const CDT& t, std::ostream &f)
   f << "# Shewchuk Triangle .poly file, produced by the CGAL::Mesh_2 package"
     << std::endl
     << "# Neither attributes nor boundary markers are used." << std::endl
-    << t.number_of_vertices() << " " << 2 << " " 
+    << t.number_of_vertices() << " " << 2 << " "
     << 0 << " " << 0 << std::endl;
 
   f << std::endl;
@@ -1524,11 +1532,11 @@ write_poly(const CDT& t, std::ostream &f)
   for(Finite_edges_iterator eit = t.finite_edges_begin();
       eit != t.finite_edges_end();
       ++eit)
-    if(eit->first->is_constrained(eit->second)) 
+    if(eit->first->is_constrained(eit->second))
       f << ++edges_counter << " "
-	<< index[eit->first->vertex(t.cw(eit->second))] << " "
-	<< index[eit->first->vertex(t.ccw(eit->second))] 
-	<< std::endl;
+        << index[eit->first->vertex(t.cw(eit->second))] << " "
+        << index[eit->first->vertex(t.ccw(eit->second))]
+        << std::endl;
 
   f << std::endl;
 

@@ -25,11 +25,15 @@
 namespace CGAL {
 
 /**
-   Tr is a Delaunay constrained triangulation (with intersections or not)
+  2D Delaunay mesh, created by the Delaunay refinement algorithm.
+  \param Tr is a Delaunay constrained triangulation (with intersections or
+  not).
+  \param Extras is an extra template parameter containing several stuff.
+  Defaults to Conforming_Delaunay_triangulation_2_default_extras<Tr>.
 */
 template <class Tr,
-	  class Extras = 
-	    Conforming_Delaunay_triangulation_2_default_extras<Tr> >
+          class Extras =
+            Conforming_Delaunay_triangulation_2_default_extras<Tr> >
 class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr, Extras>
 {
 public:
@@ -40,65 +44,68 @@ public:
   typedef Delaunay_mesh_2<Tr, Extras> Self;
 
   /** \name Types inherited from the templated base class */
-  //@{
+
   typedef typename Base::Geom_traits Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef FT      Squared_length;
 
   typedef typename Base::Vertex_handle        Vertex_handle;
   typedef typename Base::Face_handle          Face_handle;
- 
+
   typedef typename Base::Face_circulator        Face_circulator;
   typedef typename Base::Finite_faces_iterator  Finite_faces_iterator;
   typedef typename Base::All_faces_iterator     All_faces_iterator;
   typedef typename Base::Point                  Point;
-  //@}
+
 
   /** \name Types needed to access member datas
    (Inherited from Conforming_DT.) */
-  //@{
+
   typedef typename Base::Seeds Seeds;
   typedef typename Base::Seeds_const_iterator Seeds_const_iterator;
   typedef Seeds_const_iterator Seeds_iterator;
-  //@}
+
 
   /** \name Traits types */
-  //@{
+
   typedef typename Geom_traits::Quality Quality;
-  //@}
+
 
   /** \name CONSTRUCTORS */
-  //@{
-  
+
+
   explicit Delaunay_mesh_2(const Geom_traits& gt = Geom_traits(),
-			   const Extras& extras = Extras()):
+                           const Extras& extras = Extras()):
     Base(gt, extras) {}
 
-  //@}
+
 
   /** \name ACCESS FUNCTION */
-  //@{
+
+
+
   bool is_bad(const Face_handle fh, Quality& q) const;
   bool is_bad(const Face_handle fh) const ;
+
 
   Seeds_const_iterator seeds_begin() const;
   Seeds_const_iterator seeds_end() const;
 
-  //@}
+
 
   /** \name HELPING FUNCTION */
   void clear();
 
   /** \name MARKING FUNCTIONS */
-  /** The value type of InputIterator should be Point, and represents
-      seeds. Connected components of seeds are marked with the value of 
-      "mark". Other components are marked with !mark. The connected
-      component of infinite faces is always marked with false.
+  /** The value type of \a InputIterator should be \c Point, and represents
+      seeds. Connected components of seeds are marked with the value of
+      \a mark. Other components are marked with \c !mark. The connected
+      component of infinite faces is always marked with \c false.
   */
   template <class InputIterator>
   void set_seeds(InputIterator b, InputIterator e,
-		 const bool mark = false,
-		 const bool do_it_now = false)
+                 const bool mark = false,
+                 const bool do_it_now = false)
   {
     seeds.clear();
     std::copy(b, e, std::back_inserter(seeds));
@@ -118,7 +125,7 @@ public:
 
   /** \name MESHING FUNCTIONS */
 
-  // Perform meshing. 
+  // Perform meshing.
   void refine_mesh();
 
   /** \name REMESHING FUNCTIONS */
@@ -126,7 +133,7 @@ public:
   // Set the geom_traits nut DO NOT recalculate the list of bad faces (must
   // call set_bad_faces of calculate_bad_faces bellow)
   void set_geom_traits(const Geom_traits& gt,
-		       bool recalculate_bad_faces = true);
+                       bool recalculate_bad_faces = true);
 
   // Set the geom_traits and add the sequence [begin, end[ to the list
   // of bad faces.
@@ -144,7 +151,7 @@ public:
   /** \name STEP BY STEP FUNCTIONS */
 
   /**
-     init(): Initialize the data structures 
+     Initialize the data structures
      (The call of this function is REQUIRED before any step by step
      operation).
   */
@@ -154,12 +161,8 @@ public:
       Needs init() see above */
   bool step_by_step_refine_mesh();
 
-private:
-  /** \name PRIVATE TYPES */
-  typedef CGAL::Triple<Vertex_handle,
-                       Vertex_handle,
-                       Vertex_handle> Threevertices; 
-
+private: // --- PRIVATE TYPES ---
+  /** \name types used by several private functions */
   typedef std::list<typename Base::Edge> List_of_edges;
   typedef std::list<Face_handle> List_of_face_handles;
 
@@ -174,42 +177,48 @@ private:
   typedef CGAL::Double_map<Face_handle, Quality> Bad_faces;
 
 private:
-  /** \name PRIVATE MEMBER DATAS */
+  // --- PRIVATE MEMBER DATAS ---
 
-  // bad_faces: list of bad finite faces
-  // warning: some faces could be recycled during insertion in the
-  //  triangulation, that's why we need to be able to remoce faces
-  //  from the map.
+  /** bad_faces: list of bad finite faces
+   * @fixme some faces could be recycled during insertion in the
+   *  triangulation, that's why we need to be able to remove faces
+   *  from the map.
+   */
   Bad_faces bad_faces;
 
+  /** Sequence of seeds */
   Seeds seeds;
+  /** Tells if seeds mark the domain's inside (\c true) or outside (\c false).
+   */
   bool seeds_mark;
 
-private: 
-  /** \name PRIVATE MEMBER FUNCTIONS */
+private:
+  // --- PRIVATE MEMBER FUNCTIONS ---
 
-  // -- functions that maintain the map of bad faces
+  /** \name Functions that maintain the map of bad faces. */
 
-  // auxiliary functions called to put a new face in the map, two
-  // forms
+  /** Auxiliary functions called to put a new face in the map. */
   void push_in_bad_faces(Face_handle fh, const Quality& q);
- 
-  // scan all faces and put them if needed in the map
+
+  /** Scans all faces and put them if needed in the map. */
   void fill_facet_map();
 
-  // update the map with faces incident to the vertex v
+  /** Updates the map with faces incident to the vertex \a v */
   void compute_new_bad_faces(Vertex_handle v);
 
-  /** \name inlined functions that compose the refinement process */
 
-  // take one face in the queue and call refine_face
+  /** \name Inlined functions that compose the refinement process */
+
+  /** Takes one face in the queue and call
+      refine_face(Face_handle, const Quality&). */
   void process_one_face();
 
-  /** handle one face; call split_face or put in the edges_to_be_conformed the
-     list of edges that would be encroached by the circum_center of f
-     This function uses Shewchuk's terminator criteria. 
-     \todo This function calls get_conflicts_and_boundary and should
-     pass the result to split_face. */
+  /** Handles one face. Calls split_face(const Face_handle&, const Point&) or
+      put in the edges_to_be_conformed the list of edges that would be
+      encroached by the circum_center of \a f.
+      This function uses Shewchuk's terminator criteria.
+      @todo This function calls \c get_conflicts_and_boundary and should
+      pass the result to \c split_face. */
   void refine_face(Face_handle f, const Quality& q);
 
   /** \name functions that really insert points */
@@ -220,10 +229,10 @@ private:
   // overrideen functions that inserts the point p in the edge
   // (fh,edge_index)
   Vertex_handle virtual_insert_in_the_edge(Face_handle fh,
-					   const int edge_index,
-					   const Point& p);
+                                           const int edge_index,
+                                           const Point& p);
 
-  /** \name helping computing functions */ 
+  /** \name helping computing functions */
 
   // return the squared length of the triangle corresponding to the
   // face f
@@ -245,7 +254,8 @@ private:
 template <class Tr, class Extras>
 inline
 bool Delaunay_mesh_2<Tr, Extras>::
-is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr, Extras>::Quality& q) const
+is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr, Extras>::Quality& q)
+const
 {
   const Point
     & a = f->vertex(0)->point(),
@@ -259,7 +269,7 @@ template <class Tr, class Extras>
 inline
 bool Delaunay_mesh_2<Tr, Extras>::
 is_bad(const Face_handle f) const
-{ 
+{
   Quality q;
   return is_bad(f, q);
 }
@@ -288,7 +298,7 @@ seeds_end() const
 
 template <class Tr, class Extras>
 void Delaunay_mesh_2<Tr, Extras>::
-clear() 
+clear()
 {
   bad_faces.clear();
   seeds.clear();
@@ -306,7 +316,7 @@ mark_facets()
 
 // --- MESHING FUNCTIONS ---
 
-//the mesh refine function 
+//the mesh refine function
 template <class Tr, class Extras>
 inline
 void Delaunay_mesh_2<Tr, Extras>::
@@ -318,7 +328,7 @@ refine_mesh()
     {
       Conform::make_conforming_Gabriel();
       if ( !bad_faces.empty() )
-	process_one_face();
+        process_one_face();
     }
 }
 
@@ -328,7 +338,7 @@ template <class Tr, class Extras>
 inline
 void Delaunay_mesh_2<Tr, Extras>::
 set_geom_traits(const Geom_traits& gt,
-		bool recalculate_bad_faces/* = true */)
+                bool recalculate_bad_faces/* = true */)
 {
   this->_gt = gt;
   if (recalculate_bad_faces) fill_facet_map();
@@ -385,7 +395,7 @@ fill_facet_map()
     {
       Quality q;
       if( is_bad(fit, q) && fit->is_marked() )
-	push_in_bad_faces(fit, q);
+        push_in_bad_faces(fit, q);
     }
 }
 
@@ -398,7 +408,7 @@ compute_new_bad_faces(Vertex_handle v)
     Quality q;
     if(!is_infinite(fc))
       if( is_bad(fc, q) && fc->is_marked() )
-	push_in_bad_faces(fc, q);
+        push_in_bad_faces(fc, q);
     fc++;
   } while(fc!=fcbegin);
 }
@@ -432,10 +442,10 @@ refine_face(const Face_handle f, const Quality& q)
   List_of_face_handles zone_of_pc;
 
   // find conflicts around pc (starting from f as hint)
-  get_conflicts_and_boundary(pc, 
-			    std::back_inserter(zone_of_pc), 
-			    std::back_inserter(zone_of_pc_boundary), 
-			    f);
+  get_conflicts_and_boundary(pc,
+                            std::back_inserter(zone_of_pc),
+                            std::back_inserter(zone_of_pc_boundary),
+                            f);
   // For the moment, we don't use the zone_of_pc.
   // It will be used when we will destroyed old bad faces in bad_faces
 
@@ -477,14 +487,14 @@ refine_face(const Face_handle f, const Quality& q)
 // encroaches [va,vb] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
-	      if( !c.is_reduced() || 
-		  c.rmin >= shortest_edge_squared_length(f) )
-		{
-		  add_contrained_edge_to_be_conform(va,vb);
-		  keep_the_face_bad = true;
-		}
-	    }
-	}
+              if( !c.is_reduced() ||
+                  c.rmin >= shortest_edge_squared_length(f) )
+                {
+                  add_contrained_edge_to_be_conform(va,vb);
+                  keep_the_face_bad = true;
+                }
+            }
+        }
     }; // after here edges encroached by pc are in the list of edges to
        // be conformed.
 
@@ -509,10 +519,10 @@ split_face(const Face_handle& f, const Point& circum_center)
   List_of_face_handles zone_of_cc;
   List_of_edges zone_of_cc_boundary;
 
-  get_conflicts_and_boundary(circum_center, 
-			     std::back_inserter(zone_of_cc),
-			     std::back_inserter(zone_of_cc_boundary),
-			     f);
+  get_conflicts_and_boundary(circum_center,
+                             std::back_inserter(zone_of_cc),
+                             std::back_inserter(zone_of_cc_boundary),
+                             f);
   CGAL_assertion(is_bad_faces_valid());
   for(typename List_of_face_handles::iterator fh_it = zone_of_cc.begin();
       fh_it != zone_of_cc.end();
@@ -520,22 +530,22 @@ split_face(const Face_handle& f, const Point& circum_center)
     bad_faces.erase(*fh_it);
 
   extras().signal_before_inserted_vertex_in_face(static_cast<const Tr&>(*this),
-						 f,
-						 zone_of_cc_boundary.begin(),
-						 zone_of_cc_boundary.end(),
-						 zone_of_cc.begin(),
-						 zone_of_cc.end(),
-						 circum_center);
+                                                 f,
+                                                 zone_of_cc_boundary.begin(),
+                                                 zone_of_cc_boundary.end(),
+                                                 zone_of_cc.begin(),
+                                                 zone_of_cc.end(),
+                                                 circum_center);
 
   // insert the point in the triangulation with star_hole
   Vertex_handle v = star_hole(circum_center,
-			      zone_of_cc_boundary.begin(),
-			      zone_of_cc_boundary.end(),
-			      zone_of_cc.begin(),
-			      zone_of_cc.end());
+                              zone_of_cc_boundary.begin(),
+                              zone_of_cc_boundary.end(),
+                              zone_of_cc.begin(),
+                              zone_of_cc.end());
 
   extras().signal_after_inserted_vertex_in_face(static_cast<const Tr&>(*this),
-					      v);
+                                                v);
 
   Face_circulator fc = incident_faces(v), fcbegin(fc);
   do {
@@ -546,17 +556,17 @@ split_face(const Face_handle& f, const Point& circum_center)
 }
 
 template <class Tr, class Extras>
-inline 
+inline
 typename Delaunay_mesh_2<Tr, Extras>::Vertex_handle
 Delaunay_mesh_2<Tr, Extras>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
-  // insert the point p in the edge (fh, edge_index). It updates seeds 
+  // insert the point p in the edge (fh, edge_index). It updates seeds
   // too.
 {
   const Vertex_handle& va = fh->vertex( cw(edge_index));
   const Vertex_handle& vb = fh->vertex(ccw(edge_index));
 
-  bool 
+  bool
     mark_at_right = fh->is_marked(),
     mark_at_left = fh->neighbor(edge_index)->is_marked();
 
@@ -565,9 +575,9 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // deconstrain the edge
   remove_constrained_edge(fh, edge_index);
 
-  get_conflicts_and_boundary(p, 
-			     std::back_inserter(zone_of_p), 
-			     Emptyset_iterator(), fh);
+  get_conflicts_and_boundary(p,
+                             std::back_inserter(zone_of_p),
+                             Emptyset_iterator(), fh);
 
   for(typename List_of_face_handles::iterator fh_it = zone_of_p.begin();
       fh_it != zone_of_p.end();
@@ -575,7 +585,7 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
     bad_faces.erase(*fh_it);
 
   extras().signal_before_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-					       fh, edge_index, p);
+                                               fh, edge_index, p);
 
   Vertex_handle vp = insert(p, fh);
 
@@ -584,13 +594,13 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   insert_constraint(vp, vb);
 
   extras().signal_after_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
-						vp);
+                                                vp);
 
   // now, let's update 'in-domain' markers
   int dummy;
   // if we put edge_index instead of dummy, Intel C++ does not find
   // a matching function for is_edge
-  is_edge(va, vp, fh, dummy); 
+  is_edge(va, vp, fh, dummy);
   // set fh to the face at the right of [va,vp]
 
   Face_circulator fc = incident_faces(vp, fh), fcbegin(fc);
@@ -620,7 +630,7 @@ bool Delaunay_mesh_2<Tr, Extras>::
 is_bad_faces_valid()
 {
   typedef std::list<std::pair<Quality, Face_handle> > Bad_faces_list;
-  
+
   bool result = true;
 
   Bad_faces_list bad_faces_list;
@@ -630,13 +640,13 @@ is_bad_faces_valid()
       Quality d = bad_faces.front()->first;
       Face_handle fh = bad_faces.front()->second;
       bad_faces.pop_front();
-      
+
       bad_faces_list.push_back(std::make_pair(d, fh));
 
       const Vertex_handle
-	& va = fh->vertex(0),
-	& vb = fh->vertex(1),
-	& vc = fh->vertex(2);
+        & va = fh->vertex(0),
+        & vb = fh->vertex(1),
+        & vc = fh->vertex(2);
 
       Face_handle fh2;
       Quality q;
@@ -644,24 +654,24 @@ is_bad_faces_valid()
       bool marked = fh->is_marked();
       bool bad = is_bad(fh, q);
       if( ! ( face && marked && bad ) )
-	{
-	  result = false;
-	  std::cerr << "Invalid bad face: (" << va->point() << ", "
-		    << vb->point() << ", " << vc->point() << ")" << std::endl;
-	  if( ! face )
-	    std::cerr << "(not a face)" << std::endl;
-	  if( ! marked )
-	    std::cerr << "(not marked)" << std::endl;
-	  if( ! bad )
-	    std::cerr << "(not bad, quality=" << q << ")" << std::endl;
-	}
+        {
+          result = false;
+          std::cerr << "Invalid bad face: (" << va->point() << ", "
+                    << vb->point() << ", " << vc->point() << ")" << std::endl;
+          if( ! face )
+            std::cerr << "(not a face)" << std::endl;
+          if( ! marked )
+            std::cerr << "(not marked)" << std::endl;
+          if( ! bad )
+            std::cerr << "(not bad, quality=" << q << ")" << std::endl;
+        }
     }
 
   for(typename Bad_faces_list::iterator it = bad_faces_list.begin();
       it != bad_faces_list.end();
       ++it)
     bad_faces.insert(it->second, it->first);
-  
+
   return result;
 }
 
@@ -673,9 +683,9 @@ typename Delaunay_mesh_2<Tr, Extras>::FT
 Delaunay_mesh_2<Tr, Extras>::
 shortest_edge_squared_length(Face_handle f)
 {
-  Compute_squared_distance_2 squared_distance = 
+  Compute_squared_distance_2 squared_distance =
     geom_traits().compute_squared_distance_2_object();
-  const Point 
+  const Point
     & pa = (f->vertex(0))->point(),
     & pb = (f->vertex(1))->point(),
     & pc = (f->vertex(2))->point();
@@ -695,8 +705,8 @@ struct Refine_mesh_2_default_argument_helper : public Tr::Geom_traits {};
 template <class Tr>
 void
 refine_Delaunay_mesh_2(Tr& t,
-		       const typename Tr::Geom_traits& gt
-		       = Refine_mesh_2_default_argument_helper<Tr>() )
+                       const typename Tr::Geom_traits& gt
+                       = Refine_mesh_2_default_argument_helper<Tr>() )
 {
   typedef Delaunay_mesh_2<Tr,
     Conforming_Delaunay_triangulation_2_default_extras<Tr> > Mesh;
@@ -711,10 +721,10 @@ refine_Delaunay_mesh_2(Tr& t,
 template <class Tr, typename InputIterator>
 void
 refine_Delaunay_mesh_2(Tr& t,
-		       InputIterator b, InputIterator e,
-		       bool mark = false,
-		       const typename Tr::Geom_traits& gt
-		       = Refine_mesh_2_default_argument_helper<Tr>())
+                       InputIterator b, InputIterator e,
+                       bool mark = false,
+                       const typename Tr::Geom_traits& gt
+                       = Refine_mesh_2_default_argument_helper<Tr>())
 {
   typedef Delaunay_mesh_2<Tr,
     Conforming_Delaunay_triangulation_2_default_extras<Tr> > Mesh;
