@@ -354,6 +354,11 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 2;
 		    return STRING;
                  }
+[\\]stl{w}         {
+	            yylval.string.text = "STL";
+		    yylval.string.len  = 3;
+		    return STRING;
+                 }
 [\\]leda{w}         {
 	            yylval.string.text = "LEDA";
 		    yylval.string.len  = 4;

@@ -827,6 +827,13 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]stl/{noletter}        {
+		    skipspaces();
+	            /* yylval.string.text = "<TT>STL</TT>"; */
+	            yylval.string.text = "STL";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]leda/{noletter}        {
 		    skipspaces();
 	            /* yylval.string.text = "<TT>LEDA</TT>"; */
