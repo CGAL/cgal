@@ -39,8 +39,9 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
-//#include <CGAL/Nef_3/SNC_visualizor_OGL.h>
-
+#ifdef SNC_VISUALIZOR
+#include <CGAL/Nef_3/SNC_visualizor_OGL.h>
+#endif // SNC_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
@@ -77,7 +78,9 @@ class Nef_polyhedron_3_rep : public Rep
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
-  //typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
+#ifdef SNC_VISUALIZOR
+  typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
+#endif // SNC_VISUALIZOR
   typedef CGAL::SNC_SM_decorator<SNC_structure>        SM_decorator;
   typedef CGAL::SNC_SM_const_decorator<SNC_structure>  SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
@@ -138,7 +141,9 @@ protected:
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
-  //typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
+#ifdef SNC_VISUALIZOR
+  typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
+#endif // SNC_VISUALIZOR
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
@@ -306,12 +311,20 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
-    //construct_from_polyhedron_3( P);
-    polyhedron_3_to_nef_3< Polyhedron, SNC_constructor>( P, ews() );
-
+    polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
+      ( P, ews() );
   }
   
   void dump() { SNC_io_parser::dump( ews()); }
+
+  void visualize() { 
+#ifdef SNC_VISUALIZOR
+    SNC_visualizor sncv( ews());
+    sncv.draw();
+    OGL::polyhedra_.back().debug();
+    OGL::start_viewer();
+#endif // SNC_VISUALIZOR
+  }
 
  protected:
   void clone_rep() { *this = Nef_polyhedron_3<T>(ews()); }
@@ -644,12 +657,6 @@ Nef_polyhedron_3(Content space) : Base(Nef_rep()) {
   TRACEN("construction from empty or space.");
   initialize_simple_cube_vertices(space);
   build_external_structure();
-
-  /*  SNC_io_parser::dump(ews());
-  SNC_visualizor sncv(ews());
-  sncv.draw();
-  CGAL::OGL::polyhedra_.back().debug();
-  CGAL::OGL::start_viewer();*/
 }
 
 template <typename T>

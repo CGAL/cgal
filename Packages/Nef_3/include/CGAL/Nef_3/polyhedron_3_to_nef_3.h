@@ -1,3 +1,4 @@
+//#define CGAL_P2NEF3_USE_SM_OVERLAY
 // ============================================================================
 //
 // Copyright (c) 1997-2002 The CGAL Consortium
@@ -65,7 +66,7 @@ struct Facet_plane_3 {
     typedef Proj_halfedge< Halfedge, const Point> Proj_halfedge_item;
     typedef Circulator_project< Halfedge_circulator, Proj_halfedge_item,
       const Point, const Point*> Circulator;
-    /* TODO: implement a better approach
+    /* TODO: to implement a better approach
        typedef Project_vertex< Halfedge> Project_vertex;
        typedef Project_point< Vertex> Project_point;
        typedef Compose< Project_vertex, Project_point> Projector;
@@ -79,14 +80,11 @@ struct Facet_plane_3 {
 };
 
 
-template <class Polyhedron_, class SNC_constructor_>
-void polyhedron_3_to_nef_3(Polyhedron_& P,
-			   typename SNC_constructor_::SNC_structure& S)
+template <class Polyhedron_, class SNC_structure, class SNC_constructor>
+void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;
-  typedef SNC_constructor_                           SNC_constructor;
-  typedef typename SNC_constructor::SNC_structure    SNC_structure;
-  typedef typename SNC_constructor::SM_decorator     SM_decorator;
+  typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
   typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
@@ -99,9 +97,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   /* determine the plane of polyhedron's facet */
-  /* CGAL::set_pretty_mode( std::cout);
-     std::copy( P.planes_begin(), P.planes_end(),
-       std::ostream_iterator<Plane>( std::cout, "\n")); */
+  CGAL::set_pretty_mode( std::cout);
+  std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
+	     < typename Polyhedron::Plane_3>( std::cout, "\n"));
 
   SNC_constructor C(S);
     
@@ -113,45 +111,44 @@ void polyhedron_3_to_nef_3(Polyhedron_& P,
     TRACEN("v "<<pv.point());
 
 #ifdef CGAL_P2NEF3_USE_SM_OVERLAY
-    	list<Sphere_point> sp_list;
-	list<Sphere_segment> ss_list;
-	typename Polyhedron_3::Halfedge_around_vertex_const_circulator 
-	  ph_edge = pv.vertex_begin();
-	if(ph_edge != 0)
-	  {
-	    do {
-	      Point_3 
-		ph_point(ph_edge++->opposite()->vertex()->point());
-	      Sphere_point sp(ph_point-pv.point());
-	      sp_list.push_back(sp);
-	    }
-	    while(ph_edge != pv.vertex_begin());
-
-	    list<Sphere_point>::iterator sp_prev, sp_cur;
-	    ph_edge = pv.vertex_begin();
-	    sp_cur = sp_list.begin();
-	    sp_prev = sp_cur++;
-	    while(sp_cur != sp_list.end())
-	      {
-		Sphere_circle
-		  ss_circle(ph_edge++->facet()->plane().opposite());
-		CGAL_assertion(ss_circle.has_on(*sp_prev));
-		CGAL_assertion(ss_circle.has_on(*sp_cur));
-		ss_list.
-		  push_back(Sphere_segment(*sp_prev++,*sp_cur++,ss_circle));
-	      }
+    typedef typename SNC_constructor::SM_overlayer SM_overlayer;
+    std::list<Sphere_point> sp_list;
+    std::list<Sphere_segment> ss_list;
+    typename Polyhedron::Halfedge_around_vertex_const_circulator 
+      ph_edge = pv.vertex_begin();
+    if(ph_edge != 0) {
+	do {
+	  Point_3 
+	    ph_point(ph_edge++->opposite()->vertex()->point());
+	  Sphere_point sp(ph_point-pv.point());
+	  sp_list.push_back(sp);
+	}
+	while(ph_edge != pv.vertex_begin());
+	
+	std::list<Sphere_point>::iterator sp_prev, sp_cur;
+	ph_edge = pv.vertex_begin();
+	sp_cur = sp_list.begin();
+	sp_prev = sp_cur++;
+	while(sp_cur != sp_list.end()) {
 	    Sphere_circle
 	      ss_circle(ph_edge++->facet()->plane().opposite());
 	    CGAL_assertion(ss_circle.has_on(*sp_prev));
-	    CGAL_assertion(ss_circle.has_on(*(sp_list.begin())));
+	    CGAL_assertion(ss_circle.has_on(*sp_cur));
 	    ss_list.
-	      push_back(Sphere_segment(*sp_prev,*(sp_list.begin()),ss_circle));
-	    CGAL_assertion(ph_edge == pv.vertex_begin());
+	      push_back(Sphere_segment(*sp_prev++,*sp_cur++,ss_circle));
 	  }
-	SMO O(nv);
-	O.create_from_segments(ss_list.begin(),ss_list.end());
-	O.simplify();
-
+	Sphere_circle
+	  ss_circle(ph_edge++->facet()->plane().opposite());
+	CGAL_assertion(ss_circle.has_on(*sp_prev));
+	CGAL_assertion(ss_circle.has_on(*(sp_list.begin())));
+	ss_list.
+	  push_back(Sphere_segment(*sp_prev,*(sp_list.begin()),ss_circle));
+	CGAL_assertion(ph_edge == pv.vertex_begin());
+      }
+    SM_overlayer O(nv);
+    O.create_from_segments(ss_list.begin(),ss_list.end());
+    O.simplify();
+    
 #else // CGAL_P2NEF3_USE_SM_OVERLAY
 
     SM_decorator SM(nv);

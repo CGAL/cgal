@@ -34,7 +34,7 @@
 #define CGAL_SNC_SM_OVERLAYER_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Partition.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
@@ -1125,12 +1125,16 @@ template <typename Refs_>
 void SNC_SM_overlayer<Refs_>::simplify() const
 {
   TRACEN("simplifying"); 
-  typedef typename CGAL::Partition<SFace_handle>::item partition_item;
-  CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
-  CGAL::Partition<SFace_handle> FP;
+  /* typedef typename CGAL::Partition<SFace_handle>::item partition_item;
+     CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
+     CGAL::Partition<SFace_handle> FP; */
+  typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
+  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem;
+  CGAL::Union_find< SFace_handle> UF;
+
   SFace_iterator f;
   CGAL_forall_sfaces(f,*this) {
-     Pitem[f] = FP.make_block(f);
+     Pitem[f] = UF.make_set(f);
      clear_face_cycle_entries(f);
   }
 
@@ -1140,10 +1144,10 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     if ( mark(e) == mark(face(e)) &&
          mark(e) == mark(face(twin(e))) ) {
       TRACEN("deleting "<<PH(e));
-      if ( !FP.same_block(Pitem[face(e)],
-                          Pitem[face(twin(e))]) ) {
-        FP.union_blocks( Pitem[face(e)],
-                         Pitem[face(twin(e))] );
+      if ( !UF.same_set(Pitem[face(e)],
+			Pitem[face(twin(e))]) ) {
+        UF.unify_sets( Pitem[face(e)],
+		       Pitem[face(twin(e))] );
         TRACEN("unioning disjoint faces");
       }
       if ( is_closed_at_source(e) ) 
@@ -1158,15 +1162,15 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   for (e = shalfedges_begin(); e != shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
-    SFace_handle f = FP.inf(FP.find(Pitem[face(e)]));
+    SFace_handle f = *(UF.find( Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
     store_boundary_object(e,f);
   }
   if ( has_loop() ) {
     SHalfloop_handle l = shalfloop();
-    SFace_handle f = FP.inf(FP.find(Pitem[face(l)]));
+    SFace_handle f = *(UF.find(Pitem[face(l)]));
     link_as_loop(l,f);
-    f = FP.inf(FP.find(Pitem[face(twin(l))]));
+    f = *(UF.find(Pitem[face(twin(l))]));
     link_as_loop(twin(l),f);
   }
 
@@ -1195,8 +1199,8 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   SFace_iterator fn;
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
     ++fn;
-    partition_item pit = Pitem[f];
-    if ( FP.find(pit) != pit ) 
+    Union_find_handle pit = Pitem[f];
+    if ( UF.find(pit) != pit ) 
       delete_face_only(f);
   }
 

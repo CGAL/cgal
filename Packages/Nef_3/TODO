@@ -1,11 +1,11 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-* Include the function polyhedron_3_to_nef_3 as a constructor of Nef_3 class.
-- Test newell code (implemented but not tested)
-- Change Partition to Union_find
-- Fix protected classes included in Nef_polyhedron_3.h from SNC_structure.h
-- Fix new compilation errors on SNC_OGL_visualizor.h when using gcc 3.0.4
+- Expr: cross_product(pd.vector(),Vector_3<R>(0,0,1))==NULL_VECTOR
+  File: ../Nef_3/include/CGAL/Nef_3/bounded_side_3.h
+  Line: 77
+* Fix compilation problem: missing <locale> header (v2.95.3)
+* Change Partition to Union_find (compiled but not tested)
 - Synthesizing volumes from SM representation
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces
