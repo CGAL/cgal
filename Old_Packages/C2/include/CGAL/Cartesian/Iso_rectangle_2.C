@@ -247,6 +247,8 @@ Iso_rectangleC2<R CGAL_CTAG>
 Iso_rectangleC2<R CGAL_CTAG>::
 transform(const Iso_rectangleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
+  // We need a precondition like this!!!
+  // CGAL_kernel_precondition(t.is_axis_preserving());
   return Iso_rectangleC2<R CGAL_CTAG>(t.transform(vertex(0)),
                              t.transform(vertex(2)));
 }

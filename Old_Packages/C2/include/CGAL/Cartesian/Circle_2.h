@@ -33,12 +33,6 @@
 #ifndef CGAL_CARTESIAN_CIRCLE_REP_2_H
 #include <CGAL/Cartesian/Circle_rep_2.h>
 #endif // CGAL_CARTESIAN_CIRCLE_REP_2_H
-#ifndef CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
-#include <CGAL/Cartesian/basic_constructions_2.h>
-#endif // CGAL_CARTESIAN_BASIC_CONSTRUCTIONSC2_H
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
-#include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 
 CGAL_BEGIN_NAMESPACE
 

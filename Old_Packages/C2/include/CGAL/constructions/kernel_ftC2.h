@@ -85,6 +85,65 @@ circumcenterC2( const FT &px, const FT &py,
 }
 
 template < class FT >
+inline
+void
+line_from_pointsC2(const FT &px, const FT &py,
+                   const FT &qx, const FT &qy,
+                   FT &a, FT &b, FT &c) 
+{
+  a = py - qy;
+  b = qx - px;
+  c = px*qy - py*qx;
+}
+
+template < class FT >
+inline
+void
+line_from_point_directionC2(const FT &px, const FT &py,
+                            const FT &dx, const FT &dy,
+                            FT &a, FT &b, FT &c) 
+{
+  a = - dy;
+  b = dx;
+  c = px*dy - py*dx;
+}
+
+template < class FT >
+inline
+FT
+line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
+{
+  return (-a*x-c) / b;
+}
+
+template < class FT > 
+inline
+void
+line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
+                 FT &x, FT &y)
+{
+  if (b==0)
+    {
+      x = (-b-c)/a + i*b;
+      y = FT(1) - i*a;
+    }
+  else
+    {
+      x = FT(1) + i*b;
+      y = -(a+c)/b - i*a;
+    }
+}
+
+template < class FT > 
+inline
+Oriented_side
+line_oriented_sideC2(const FT &a, const FT &b, const FT &c,
+                     const FT &x, const FT &y)
+{
+  return Oriented_side(CGAL::sign(a*x+b*y+c));
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
 squared_circumradiusC2(const FT &px, const FT &py,

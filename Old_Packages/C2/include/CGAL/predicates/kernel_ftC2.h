@@ -41,6 +41,25 @@ CGAL_BEGIN_NAMESPACE
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
+bool
+equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
+               const FT &l2a, const FT &l2b, const FT &l2c)
+{
+  if ( (l1a * l2c != l2a * l1c)
+    || (l1b * l2c != l2b * l1c) )
+    return false;
+  int sc  = CGAL::sign(l1c);
+  int slc = CGAL::sign(l2c);
+  if (sc == slc)
+     return (sc == 0) ?  (l1a*l2b ==  l1b*l2a)
+                      && (CGAL::sign(l1a) == CGAL::sign(l2a))
+                      && (CGAL::sign(l1b) == CGAL::sign(l2b))
+                      : true;
+  return false;
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_xC2(const FT &px,
             const FT &l1a, const FT &l1b, const FT &l1c,
@@ -124,6 +143,38 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
   CGAL_kernel_assertion( s != ZERO );
   return Comparison_result ( s * sign_of_determinant2x2(h2a*num+h2c*den, h2b,
                                                         h1a*num+h1c*den, h1b));
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+bool
+equal_directionC2(const FT &dx1, const FT &dy1,
+                  const FT &dx2, const FT &dy2) 
+{
+  return (CGAL::sign(dx1) == CGAL::sign(dx2))
+      && (CGAL::sign(dy1) == CGAL::sign(dy2))
+      && (dy1*dx2 == dy2*dx1);
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+Comparison_result
+compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
+                            const FT &dx2, const FT &dy2) 
+{
+  // angles are in [-pi,pi], and the angle bewteen Ox and d1 is compared
+  // with the angle bewteen Ox and d2
+  int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
+                                  : ((dy1 >= FT(0))?2:3);
+  int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
+                                  : ((dy2 >= FT(0))?2:3);
+  // We can't use CGAL::compare(quadrant_1,quadrant_2) because in case
+  // of tie, we need additional computation
+  if (quadrant_1 > quadrant_2)
+    return LARGER;
+  else if (quadrant_1 < quadrant_2)
+    return SMALLER;
+  return Comparison_result(-sign_of_determinant2x2(dx1,dy1,dx2,dy2));
 }
 
 template < class FT >

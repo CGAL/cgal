@@ -2,6 +2,14 @@
 #define CGAL_CTAG
 #endif
 
+#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+#include <CGAL/Cartesian/predicates_on_points_2.h>
+#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+
+#ifndef CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
+#include <CGAL/Cartesian/predicates_on_lines_2.h>
+#endif // CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H
+
 #ifndef CGAL_CARTESIAN_LINE_2_C
 #define CGAL_CARTESIAN_LINE_2_C
 
@@ -18,22 +26,21 @@ LineC2<R CGAL_CTAG>::ptr() const
 template < class R >
 CGAL_KERNEL_INLINE
 void
-LineC2<R CGAL_CTAG>::new_rep(const LineC2<R CGAL_CTAG>::Point_2 &p,
-                             const LineC2<R CGAL_CTAG>::Point_2 &q)
-{
-  PTR = new _Threetuple<FT> (p.y() - q.y(),
-                             q.x() - p.x(),
-                             p.x()*q.y() - p.y()*q.x());
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-void
 LineC2<R CGAL_CTAG>::new_rep(const typename R::FT &a,
                              const typename R::FT &b,
 			     const typename R::FT &c)
 {
   PTR = new _Threetuple<FT> (a, b, c);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+void
+LineC2<R CGAL_CTAG>::new_rep(const LineC2<R CGAL_CTAG>::Point_2 &p,
+                             const LineC2<R CGAL_CTAG>::Point_2 &q)
+{
+  LineC2<R CGAL_CTAG> l =  line_from_points(p,q);
+  new_rep(l.a(), l.b(), l.c());
 }
 
 template < class R >
@@ -85,7 +92,8 @@ CGAL_KERNEL_INLINE
 LineC2<R CGAL_CTAG>::LineC2(const LineC2<R CGAL_CTAG>::Point_2 &p,
                             const LineC2<R CGAL_CTAG>::Direction_2 &d)
 {
-  new_rep(-d.dy(), d.dx(), -d.dx()* p.y()  + d.dy() * p.x());
+  LineC2<R CGAL_CTAG> l =  line_from_point_direction(p,d);
+  new_rep(l.a(), l.b(), l.c());
 }
 
 
@@ -109,17 +117,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 bool LineC2<R CGAL_CTAG>::operator==(const LineC2<R CGAL_CTAG> &l) const
 {
-  if (  (a() * l.c() != l.a() * c())
-      ||(b() * l.c() != l.b() * c()) )
-      return false;
-  int sc  = CGAL::sign(c());
-  int slc = CGAL::sign(l.c());
-  if ( sc == slc )
-      return (sc == 0) ?  ( a()*l.b() ==  b()*l.a() )
-                          && (CGAL::sign(a() ) == CGAL::sign( l.a() ))
-                          && (CGAL::sign(b() ) == CGAL::sign( l.b() ))
-                       : true;
-  return false;
+  return equal_line(*this,l);
 }
 
 template < class R >
@@ -164,7 +162,7 @@ LineC2<R CGAL_CTAG>::x_at_y(const typename R::FT &y) const
 {
   CGAL_kernel_precondition_msg( (a() != FT(0)),
   "Line::x_at_y(const typename R::FT &y) is undefined for horizontal line" );
-  return ( -b()*y - c() ) / a();
+  return line_x_at_y(*this,y);
 }
 
 template < class R >
@@ -174,7 +172,7 @@ LineC2<R CGAL_CTAG>::y_at_x(const typename R::FT &x) const
 {
   CGAL_kernel_precondition_msg( (b() != FT(0)),
   "Line::x_at_y(const typename R::FT &y) is undefined for vertical line");
-  return ( -a()*x - c() ) / b();
+  return line_y_at_x(*this,x);
 }
 
 template < class R >
@@ -199,16 +197,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point(int i) const
 {
-  if (i == 0)
-    return is_vertical() ? Point_2( (-b()-c())/a(), FT(1) )
-                         : Point_2( FT(1), -(a()+c())/b());
-  if (i == 1)
-    return is_vertical() ? Point_2( (-b()-c())/a() + b(), FT(1) - a() )
-                         : Point_2( FT(1) + b(), -(a()+c())/b() - a() );
-  // we add i times the direction
-  if (is_vertical())
-    return Point_2( (-b()-c())/a() + FT(i)*b(), FT(1) - FT(i)*a() );
-  return Point_2( FT(1) + FT(i)*b(), -(a()+c())/b() - FT(i)*a() );
+  return line_get_point(*this,i);
 }
 
 template < class R >
@@ -216,8 +205,7 @@ CGAL_KERNEL_INLINE
 LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point() const
 {
-  return is_vertical() ? Point_2( (-b()-c())/a(), FT(1) )
-                       : Point_2( FT(1), -(a()+c())/b());
+  return line_get_point(*this,FT(0));
 }
 
 template < class R >
@@ -256,7 +244,7 @@ bool
 LineC2<R CGAL_CTAG>::
 has_on_boundary(const LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()) == FT(0);
+  return oriented_side(p) == ON_ORIENTED_BOUNDARY;
 }
 
 template < class R >
@@ -265,7 +253,7 @@ bool
 LineC2<R CGAL_CTAG>::
 has_on_positive_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()) >  FT(0);
+  return oriented_side(p) == ON_POSITIVE_SIDE;
 }
 
 template < class R >
@@ -274,7 +262,7 @@ bool
 LineC2<R CGAL_CTAG>::
 has_on_negative_side(const LineC2<R CGAL_CTAG>::Point_2 &p) const
 {
-  return (a()*p.x() + b()*p.y() + c()) <  FT(0);
+  return oriented_side(p) == ON_NEGATIVE_SIDE;
 }
 
 template < class R >

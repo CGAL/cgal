@@ -60,10 +60,7 @@ template < class R >
 bool
 DirectionC2<R CGAL_CTAG>::operator==(const DirectionC2<R CGAL_CTAG> &d) const
 {
-// Use a C2 predicate for that ?
-  return (CGAL::sign(dx()) == CGAL::sign(d.dx()))
-      && (CGAL::sign(dy()) == CGAL::sign(d.dy()))
-      && (dy()*d.dx() == d.dy()*dx());
+  return equal_direction(*this, d);
 }
 
 template < class R >
@@ -87,17 +84,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator<(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  int quadrant_this = (dx() >= FT(0)) ? ((dy() >= FT(0))?1:4)
-                                      : ((dy() >= FT(0))?2:3);
-  int quadrant_d    = (d.dx() >= FT(0)) ? ((d.dy() >= FT(0))?1:4)
-                                        : ((d.dy() >= FT(0))?2:3);
-
-  if(quadrant_this < quadrant_d)
-    return true;
-  else if (quadrant_this > quadrant_d)
-    return false;
-  else
-    return dy() * d.dx() < d.dy() * dx();
+  return compare_angle_with_x_axis(*this,d) == SMALLER;
 }
 
 template < class R >
@@ -113,7 +100,7 @@ CGAL_KERNEL_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator>=(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return (d < *this) || (d == *this) ;
+  return compare_angle_with_x_axis(*this,d) != SMALLER;
 }
 
 template < class R >
@@ -121,7 +108,7 @@ CGAL_KERNEL_INLINE
 bool
 DirectionC2<R CGAL_CTAG>::operator<=(const DirectionC2<R CGAL_CTAG> &d) const
 {
-  return (*this < d) || (d == *this) ;
+  return compare_angle_with_x_axis(*this,d) != LARGER;
 }
 
 template < class R >
@@ -131,7 +118,7 @@ DirectionC2<R CGAL_CTAG>::counterclockwise_in_between
    (const DirectionC2<R CGAL_CTAG> &d1,
     const DirectionC2<R CGAL_CTAG> &d2) const
 {
-  return (d2 > *this) && (*this > d1) ;
+  return (d1 < *this) && (*this < d2) ;
 }
 
 template < class R >

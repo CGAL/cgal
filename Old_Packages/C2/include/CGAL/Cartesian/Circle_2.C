@@ -2,6 +2,13 @@
 #define CGAL_CTAG
 #endif
 
+#ifndef CGAL_CARTESIAN_BASIC_CONSTRUCTIONS_2_H
+#include <CGAL/Cartesian/basic_constructions_2.h>
+#endif // CGAL_CARTESIAN_BASIC_CONSTRUCTIONSC2_H
+#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+#include <CGAL/Cartesian/predicates_on_points_2.h>
+#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+
 #ifndef CGAL_CARTESIAN_CIRCLE_2_C
 #define CGAL_CARTESIAN_CIRCLE_2_C
 
@@ -216,6 +223,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 Bbox_2 CircleC2<R CGAL_CTAG>::bbox() const
 {
+  // Potential robustness problem if sqrt is not rounded up properly
   double cx = CGAL::to_double(center().x());
   double cy = CGAL::to_double(center().y());
   double radius = sqrt(CGAL::to_double(squared_radius()));

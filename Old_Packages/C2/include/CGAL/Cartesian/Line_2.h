@@ -32,9 +32,6 @@
 #ifndef CGAL_THREETUPLE_H
 #include <CGAL/Threetuple.h>
 #endif // CGAL_THREETUPLE_H
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
-#include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 
 CGAL_BEGIN_NAMESPACE
 

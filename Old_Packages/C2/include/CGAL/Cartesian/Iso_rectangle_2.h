@@ -33,9 +33,6 @@
 #ifndef CGAL_TWOTUPLE_H
 #include <CGAL/Twotuple.h>
 #endif // CGAL_TWOTUPLE_H
-#ifndef CGAL_CARTESIAN_POINT_2_H
-#include <CGAL/Point_2.h>
-#endif // CGAL_CARTESIAN_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 

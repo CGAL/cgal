@@ -39,11 +39,17 @@
 #ifndef CGAL_CARTESIAN_LINE_2_H
 #include <CGAL/Cartesian/Line_2.h>
 #endif // CGAL_CARTESIAN_LINE_2_H
-#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
-#include <CGAL/Cartesian/predicates_on_points_2.h>
-#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+
+#include <CGAL/predicates/kernel_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
+
+template < class R >
+bool equal_line(const LineC2<R CGAL_CTAG> &l1,
+                   const LineC2<R CGAL_CTAG> &l2)
+{
+  return equal_lineC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c());
+}
 
 template < class R >
 Comparison_result compare_x(const PointC2<R CGAL_CTAG> &p,
@@ -52,7 +58,6 @@ Comparison_result compare_x(const PointC2<R CGAL_CTAG> &p,
 {
   return compare_xC2(p.x(), l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c());
 }
-
 
 template < class R >
 Comparison_result compare_x(const LineC2<R CGAL_CTAG> &l,

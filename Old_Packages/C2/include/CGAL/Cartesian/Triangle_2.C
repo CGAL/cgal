@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+#include <CGAL/Cartesian/predicates_on_points_2.h>
+#endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
+
 #ifndef CGAL_CARTESIAN_TRIANGLE_2_C
 #define CGAL_CARTESIAN_TRIANGLE_2_C
 
