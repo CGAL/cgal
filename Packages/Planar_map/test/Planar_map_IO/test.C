@@ -1,6 +1,6 @@
 #include <CGAL/config.h> // needed for the LONGNAME flag
 
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
 // Define shorter names to please linker (g++/egcs)
 #define Planar_map_2 Pm
 #define Cartesian Cr
@@ -8,7 +8,9 @@
 #define Quotient Qt
 #define Planar_ma2p_traits_wrap PMTW
 #define _List_iterator Lit
+#if !defined(_MSC_VER)
 #define bidirectional_iterator_tag Bitt
+#endif
 //#define Planar_map_2 Pm2
 #define Pm_default_dcel A2dd
 #define Point_2 Pt2
@@ -83,11 +85,11 @@ int main(int argc, char* argv[])
 #if CGAL_PM_TEST_POINT_LOCATION == 1
   // By default we use Trapezoidal Decomposition
 #elif CGAL_PM_TEST_POINT_LOCATION == 2
-  #include <CGAL/Pm_naive_point_location.h>  
+#include <CGAL/Pm_naive_point_location.h>  
 #elif CGAL_PM_TEST_POINT_LOCATION == 3
-  #include <CGAL/Pm_walk_along_line_point_location.h>
+#include <CGAL/Pm_walk_along_line_point_location.h>
 #else
-  #error No point location strategy defined for test
+#error No point location strategy defined for test
 #endif
  
 
