@@ -1,3 +1,6 @@
+07 January 2005 Mariette
+-fixed a bug in Line_face_circulator
+
 03 January 2005 Mariette
 - fix documentation of index fonctions in concept TriangulationDSFaceBase_2.
  

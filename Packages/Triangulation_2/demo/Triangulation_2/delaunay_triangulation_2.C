@@ -124,7 +124,8 @@ public:
     //the new scenes toolbar
     vtoolbar = new Layers_toolbar(widget, this, &tr1);
 
-    *widget << CGAL::BackgroundColor (CGAL::BLACK);
+    //  *widget << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::BackgroundColor (CGAL::WHITE);
     *widget << CGAL::LineWidth(2);
 
     resize(w,h);
@@ -177,7 +178,7 @@ private slots:
       if(lfc == (CGAL_NULL_TYPE) NULL){
       } else {
         *widget << CGAL::BLUE;
-        *widget << CGAL::FillColor(CGAL::WHITE);
+        *widget << CGAL::FillColor(CGAL::YELLOW);
         do{
           if(! tr1.is_infinite( lfc  ))
           *widget << tr1.triangle( lfc );
@@ -345,16 +346,18 @@ private:
     std::back_inserter(hole_bd));
     std::list<Face_handle>::iterator fit = conflict_faces.begin();
     std::list<Edge>::iterator eit = hole_bd.begin();
-    *widget << CGAL::WHITE ;
+    *widget << CGAL::BLUE ;
+    *widget << CGAL::FillColor(CGAL::YELLOW);
     for( ; fit != conflict_faces.end(); fit++)  {
       if(! tr1.is_infinite( *fit))
         *widget << tr1.triangle( *fit );
     }
-    *widget << CGAL::YELLOW;
+    *widget << CGAL::GREEN;
     for( ; eit != hole_bd.end(); eit++)  {
       if(! tr1.is_infinite( *eit ))
         *widget << tr1.segment( *eit );
-    }		
+    }
+    *widget << CGAL::noFill;
   }
 
 public slots:

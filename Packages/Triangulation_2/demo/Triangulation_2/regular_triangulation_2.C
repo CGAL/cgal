@@ -94,7 +94,7 @@ public:
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-    *widget << CGAL::BackgroundColor(CGAL::BLACK);
+    *widget << CGAL::BackgroundColor(CGAL::WHITE);
     *widget << CGAL::LineWidth(3);
     resize(w, h);
     widget->set_window(-1, 1, -1, 1);
