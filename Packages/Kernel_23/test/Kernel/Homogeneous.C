@@ -19,10 +19,9 @@
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
- 
+
 
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Quotient.h>
 #include <cassert>
 #include <CGAL/intersection_3.h>
 
