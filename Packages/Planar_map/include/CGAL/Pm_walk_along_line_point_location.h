@@ -23,6 +23,9 @@
 #include <CGAL/Pm_point_location_base.h>
 #include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
+//#define CGAL_PM_WALK_DEBUG
+//#define CGAL_PM_DEBUG
+
 #ifdef CGAL_PM_DEBUG
 #ifndef CGAL_NAIVE_POINT_LOCATION_H
 #include <CGAL/Pm_naive_point_location.h>
@@ -45,6 +48,8 @@ public:
   typedef typename Planar_map::Traits_wrap Traits_wrap;
   typedef typename Traits_wrap::Point Point;
   typedef typename Traits_wrap::X_curve X_curve;
+  typedef typename Traits::Point_2                Point_2;
+  typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Planar_map::Locate_type Locate_type;
   typedef typename Planar_map::Vertex_handle Vertex_handle;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;

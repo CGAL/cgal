@@ -450,7 +450,8 @@ find_closest(const Point & p,
         if ((up ? traits->curves_compare_y_at_x_from_bottom(ecv, cv, q) :
              traits->curves_compare_y_at_x_from_top(ecv,cv,q)) == LARGER)
         {
-	  //if type == vertical ray shoot we want to return the edge that points towards q
+	  //if type == vertical ray shoot we want to return the edge that points 
+	  //           towards q
 	  //if type == locate -  
           // ecv is closer to p than cv.
          if (type != (traits->point_equal(curr->target()->point(), q)))
@@ -463,8 +464,10 @@ find_closest(const Point & p,
 
 	 //idit - was moved, and to change to suit down ray shoot
 	 //in this case q is upper point of a vertical edge. 
-	 //in this case we have to take (in locate) the halfedge that q is its source
-	 //in vertical ray shoot we we have to take the halfedge that q is its target
+	 //in this case we have to take (in locate) the halfedge that q is its 
+	 //source
+	 //in vertical ray shoot we we have to take the halfedge that q is its 
+	 //target
 	 if (traits->curve_is_vertical(cv)) {
 	   if (traits->point_is_left_low
 	       (traits->curve_leftlow_most(cv), q))
