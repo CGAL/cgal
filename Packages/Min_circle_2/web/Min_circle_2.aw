@@ -170,6 +170,16 @@ First, we declare the class template \ccc{CGAL_Min_circle_2}.
     class CGAL_Min_circle_2;
 @end
 
+The actual work of the algorithm is done in the private member
+functions \ccc{mc} and \ccc{compute_circle}. The former directly
+realizes the pseudocode of $\mc(P,B)$, the latter solves the basic
+case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
+
+{\em Workaround:} The GNU compiler (g++ 2.7.*) does not accept types
+with scope operator as argument type or return type in class template
+member functions. Therefore, all member functions are implemented in
+the class interface.
+
 The class interface looks as follows.
 
 @macro <Min_circle_2 interface> = @begin
@@ -186,20 +196,47 @@ The class interface looks as follows.
 	CGAL_Min_circle_2( CGAL_Min_circle_2<_I> const&);
 	CGAL_Min_circle_2<_I>& operator = ( CGAL_Min_circle_2<_I> const&);
 
-	// private member functions
-	@<Min_circle_2 private member functions declaration>
+    @<dividing line>
+
+    // Class implementation
+    // ====================
+
+      public:
+	// Access functions and predicates
+	// -------------------------------
+	@<Min_circle_2 access functions `number_of_...'>
+
+	@<Min_circle_2 predicates `is_...'>
+
+	@<Min_circle_2 access functions>
+
+	@<Min_circle_2 predicates>
+
+      private:
+	// Privat member functions
+	// -----------------------
+	@<Min_circle_2 private member function `compute_circle'>
+
+	@<Min_circle_2 private member function `mc'>
+
+      public:
+	// Constructors
+	// ------------
+	@<Min_circle_2 constructors>
+
+	// Destructor
+	// ----------
+	@<Min_circle_2 destructor>
+
+	// Modifiers
+	// ---------
+	@<Min_circle_2 modifiers>
+
+	// Validity check
+	// --------------
+	@<Min_circle_2 validity check>
     };
 @end   
-
-The actual work of the algorithm is done in the private member
-functions \ccc{mc} and \ccc{compute_circle}. The former directly
-realizes the pseudocode of $\mc(P,B)$, the latter solves the basic
-case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
-
-@macro <Min_circle_2 private member functions declaration> = @begin
-    void mc( Point_iterator const& last, int n_sp);
-    void compute_circle( );
-@end
 
 @! ----------------------------------------------------------------------------
 \subsection{Public Interface}
@@ -214,6 +251,12 @@ section, so we do not comment on it here.
     typedef typename  _I::Circle                   Circle;
     typedef typename  list<Point>::const_iterator  Point_iterator;
     typedef           const Point *                Support_point_iterator;
+
+    /**************************************************************************
+    WORKAROUND: The GNU compiler (g++ 2.7.*) does not accept types with
+    scope operator as argument type or return type in class template
+    member functions. Therefore, all member functions are implemented in
+    the class interface.
 
     // creation
     CGAL_Min_circle_2( I const& i = I());
@@ -266,6 +309,7 @@ section, so we do not comment on it here.
 
     // validity check
     bool  is_valid( bool verbose = false, int level = 0) const;
+    **************************************************************************/
 @end
 
 @! ----------------------------------------------------------------------------
@@ -291,7 +335,7 @@ given by \ccc{n_support_points}. During the computations, the set of
 support points coincides with the set $B$ appearing in the pseudocode
 for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
-{\em Note:} The array of support points is allocated dynamically,
+{\em Workaround:} The array of support points is allocated dynamically,
 because the SGI compiler (mipspro CC 7.1) does not accept a static
 array here.
 
@@ -331,17 +375,12 @@ are copied to a vector and shuffled at random, before being copied to
 compute $mc(P)=mc(P,\emptyset)$.
 
 @macro <Min_circle_2 constructors> += @begin
-    #include <vector.h>
-    #include <algo.h>
-
     // STL-like constructor for C array and vector<Point>
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( const CGAL_Min_circle_2<I>::Point* first,
-		       const CGAL_Min_circle_2<I>::Point* last,
-		       bool randomize,
-		       CGAL_Random& random,
-		       I const& i)
+    CGAL_Min_circle_2( const Point* first,
+		       const Point* last,
+		       bool         randomize = false,
+		       CGAL_Random& random    = CGAL_random,
+		       I const&     i         = I())
 	: ico( i)
     {
 	// allocate support points' array
@@ -365,13 +404,11 @@ compute $mc(P)=mc(P,\emptyset)$.
     }
 
     // STL-like constructor for list<Point>
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( list<CGAL_Min_circle_2<I>::Point>::const_iterator first,
-		       list<CGAL_Min_circle_2<I>::Point>::const_iterator last,
-		       bool randomize,
-		       CGAL_Random& random,
-		       I const& i)
+    CGAL_Min_circle_2( list<Point>::const_iterator first,
+		       list<Point>::const_iterator last,
+		       bool         randomize = false,
+		       CGAL_Random& random    = CGAL_random,
+		       I const&     i         = I())
 	: ico( i)
     {
 	// allocate support points' array
@@ -379,7 +416,7 @@ compute $mc(P)=mc(P,\emptyset)$.
 
 	// compute number of points
 	list<Point>::size_type n = 0;
-	distance( first, last, n);
+	__distance( first, last, n, bidirectional_iterator_tag());
 	if ( n > 0) {
 
 	    // store points
@@ -413,9 +450,8 @@ building $mc(\emptyset)$.
 @macro <Min_circle_2 constructors> += @begin
 
     // default constructor
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( I const& i)
+    inline
+    CGAL_Min_circle_2( I const& i = I())
 	: ico( i), n_support_points( 0)
     {
 	// allocate support points' array
@@ -425,9 +461,8 @@ building $mc(\emptyset)$.
     }
 
     // constructor for one point
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( CGAL_Min_circle_2<I>::Point const& p, I const& i)
+    inline
+    CGAL_Min_circle_2( Point const& p, I const& i = I())
 	: ico( i), points( 1, p), n_support_points( 1), min_circle( p)
     {
 	// allocate support points' array
@@ -438,11 +473,8 @@ building $mc(\emptyset)$.
     }
 
     // constructor for two points
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( CGAL_Min_circle_2<I>::Point const& p1,
-		       CGAL_Min_circle_2<I>::Point const& p2,
-		       I const& i)
+    inline
+    CGAL_Min_circle_2( Point const& p1, Point const& p2, I const& i = I())
 	: ico( i)
     {
 	// allocate support points' array
@@ -457,12 +489,11 @@ building $mc(\emptyset)$.
     }
 
     // constructor for three points
-    template < class I >
-    CGAL_Min_circle_2<I>::
-    CGAL_Min_circle_2( CGAL_Min_circle_2<I>::Point const& p1,
-		       CGAL_Min_circle_2<I>::Point const& p2,
-		       CGAL_Min_circle_2<I>::Point const& p3,
-		       I const& i)
+    inline
+    CGAL_Min_circle_2( Point const& p1,
+		       Point const& p2,
+		       Point const& p3,
+		       I const& i = I())
 	: ico( i)
     {
 	// allocate support points' array
@@ -481,8 +512,7 @@ building $mc(\emptyset)$.
 The destructor only frees the memory of the support points' array.
 
 @macro <Min_circle_2 destructor> = @begin
-    template < class I > inline
-    CGAL_Min_circle_2<I>::
+    inline
     ~CGAL_Min_circle_2( )
     {
 	// free support points' array
@@ -502,17 +532,15 @@ First, we define the \ccc{number_of_...} methods.
 
 @macro <Min_circle_2 access functions `number_of_...'> = @begin
     // #points and #support points
-    template < class I > inline
+    inline
     int
-    CGAL_Min_circle_2<I>::
     number_of_points( ) const
     {
 	return( points.size());
     }
 
-    template < class I > inline
+    inline
     int
-    CGAL_Min_circle_2<I>::
     number_of_support_points( ) const
     {
 	return( n_support_points);
@@ -523,42 +551,37 @@ Then, we have the access functions for points and support points.
 
 @macro <Min_circle_2 access functions> += @begin
     // access to points and support points
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Point_iterator
-    CGAL_Min_circle_2<I>::
+    inline
+    Point_iterator
     points_begin( ) const
     {
 	return( points.begin());
     }
 
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Point_iterator
-    CGAL_Min_circle_2<I>::
+    inline
+    Point_iterator
     points_end( ) const
     {
 	return( points.end());
     }
 
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Support_point_iterator
-    CGAL_Min_circle_2<I>::
+    inline
+    Support_point_iterator
     support_points_begin( ) const
     {
 	return( support_points);
     }
 
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Support_point_iterator
-    CGAL_Min_circle_2<I>::
+    inline
+    Support_point_iterator
     support_points_end( ) const
     {
 	return( support_points+n_support_points);
     }
 
     // random access for support points    
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Point const&
-    CGAL_Min_circle_2<I>::
+    inline
+    Point const&
     support_point( int i) const
     {
 	CGAL_optimisation_precondition( (i >= 0) &&
@@ -573,11 +596,9 @@ orientation of the current circle and reverse it, if necessary
 (logical constness).
 
 @macro <Min_circle_2 access functions> += @begin
-
     // circle
-    template < class I > inline
-    CGAL_Min_circle_2<I>::Circle const&
-    CGAL_Min_circle_2<I>::
+    inline
+    Circle const&
     circle( ) const
     {
         CGAL_optimisation_precondition( ! is_empty());
@@ -598,20 +619,18 @@ them \ccc{inline} and put them in a separate macro.
 
 @macro <Min_circle_2 predicates `is_...'> = @begin
     // is_... predicates
-    template < class I > inline
+    inline
     bool
-    CGAL_Min_circle_2<I>::
     is_empty( ) const
     {
 	return( number_of_support_points() == 0);
     }
 
-    template < class I > inline
+    inline
     bool
-    CGAL_Min_circle_2<I>::
     is_degenerate( ) const
     {
-	return( number_of_support_points() < 2);
+	return( number_of_support_points() <  2);
     }
 @end
 
@@ -620,36 +639,31 @@ corresponding predicates of class \ccc{Circle}.
 
 @macro <Min_circle_2 predicates> = @begin
     // in-circle test predicates
-    template < class I > inline
+    inline
     CGAL_Bounded_side
-    CGAL_Min_circle_2<I>::
-    bounded_side( CGAL_Min_circle_2<I>::Point const& p) const
+    bounded_side( Point const& p) const
     {
 	return( is_empty() ? CGAL_ON_UNBOUNDED_SIDE 
 			   : min_circle.bounded_side( p));
     }
 
-    template < class I > inline
+    inline
     bool
-    CGAL_Min_circle_2<I>::
-    has_on_bounded_side( CGAL_Min_circle_2<I>::Point const& p) const
+    has_on_bounded_side( Point const& p) const
     {
 	return( ( ! is_empty()) && ( min_circle.has_on_bounded_side( p)));
     }
 
-    
-    template < class I > inline
+    inline
     bool
-    CGAL_Min_circle_2<I>::
-    has_on_boundary( CGAL_Min_circle_2<I>::Point const& p) const
+    has_on_boundary( Point const& p) const
     {
 	return( ( ! is_empty()) && ( min_circle.has_on_boundary( p)));
     }
 
-    template < class I > inline
+    inline
     bool
-    CGAL_Min_circle_2<I>::
-    has_on_unbounded_side( CGAL_Min_circle_2<I>::Point const& p) const
+    has_on_unbounded_side( Point const& p) const
     {
 	return( ( is_empty()) || ( min_circle.has_on_unbounded_side( p)));
     }
@@ -672,10 +686,8 @@ moved to the front of the point list, just like in the pseudocode
 in Section~\ref{sec:algo}.
 
 @macro <Min_circle_2 modifiers> = @begin
-    template < class I >
     void
-    CGAL_Min_circle_2<I>::
-    insert( CGAL_Min_circle_2<I>::Point const& p)
+    insert( Point const& p)
     {
 	// p not in current circle?
 	if ( has_on_unbounded_side( p)) {
@@ -710,16 +722,12 @@ stream. The second parameter \ccc{level} is not used, we provide it
 only for consistency with interfaces of other classes.
 
 @macro <Min_circle_2 validity check> = @begin
-    #include <CGAL/optimisation_misc.h>
-
-    template < class I>
     bool
-    CGAL_Min_circle_2<I>::
     is_valid( bool verbose = true, int level = 0) const
     {
 	CGAL_Verbose_ostream verr( verbose);
 	verr << endl;
-	verr << "CGAL_Min_circle_2<I>::is_valid( true, "
+	verr << "is_valid( true, "
 	     << level << "):" << endl;
 	verr << "  |P| = " << number_of_points()
 	     << ", |S| = " << number_of_support_points() << endl;
@@ -892,9 +900,8 @@ noting that $|B| \leq 3$.
 
 @macro <Min_circle_2 private member function `compute_circle'> = @begin
     // compute_circle
-    template < class I > inline
+    inline
     void
-    CGAL_Min_circle_2<I>::
     compute_circle( )
     {
 	switch ( n_support_points) {
@@ -928,10 +935,8 @@ $[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$ is given by the first
 function is directly modelled after the pseudocode above.
 
 @macro <Min_circle_2 private member function `mc'> = @begin
-    template < class I >
     void
-    CGAL_Min_circle_2<I>::
-    mc( CGAL_Min_circle_2<I>::Point_iterator const& last, int n_sp)
+    mc( Point_iterator const& last, int n_sp)
     {
 	// compute circle through support points
 	n_support_points = n_sp;
@@ -1138,66 +1143,19 @@ end of each file.
     #ifndef CGAL_RANDOM_H
     #  include <CGAL/Random.h>
     #endif
-    #include <list.h>
-
-    @<Min_circle_2 interface>
-
-    @<dividing line>
-
-    // Class implementation (inline functions)
-    // =======================================
-    // includes
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
     #endif
-
-    // Destructor
-    // ----------
-    @<Min_circle_2 destructor>
-
-    // Access functions and predicates
-    // -------------------------------
-    @<Min_circle_2 access functions `number_of_...'>
-
-    @<Min_circle_2 predicates `is_...'>
-
-    @<Min_circle_2 access functions>
-
-    @<Min_circle_2 predicates>
-
-    // Privat member functions
-    // -----------------------
-    @<Min_circle_2 private member function `compute_circle'>
-
-    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
-    #  include <CGAL/Min_circle_2.C>
+    #ifndef CGAL_OPTIMISATION_MISC_H
+    #  include <CGAL/optimisation_misc.h>
     #endif
+    #include <list.h>
+    #include <vector.h>
+    #include <algo.h>
+
+    @<Min_circle_2 interface>
 
     #endif // CGAL_MIN_CIRLCE_2_H
-
-    @<end of file line>
-@end
-
-@file <Min_circle_2.C> = @begin
-    @<Min_circle_2 header>("src/Min_circle_2.C")
-
-    // Class implementation (continued)
-    // ================================
-    // Constructors
-    // ------------
-    @<Min_circle_2 constructors>
-
-    // Modifiers
-    // ---------
-    @<Min_circle_2 modifiers>
-
-    // Validity check
-    // --------------
-    @<Min_circle_2 validity check>
-
-    // Privat member functions (continued)
-    // -----------------------------------
-    @<Min_circle_2 private member function `mc'>
 
     @<end of file line>
 @end
@@ -1210,6 +1168,9 @@ end of each file.
     #define CGAL_kernel_assertion CGAL_assertion
     #define CGAL_kernel_precondition CGAL_precondition
     #define CGAL_kernel_postcondition CGAL_postcondition
+
+    #define CGAL_nondegeneracy_assertion
+    #define CGAL_nondegeneracy_precondition(cond)
 
     @<Min_circle_2 test (includes and typedefs)>
 
