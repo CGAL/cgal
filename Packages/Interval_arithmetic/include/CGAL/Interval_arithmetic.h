@@ -47,27 +47,26 @@ public:
 #ifndef CGAL_NO_PRECONDITIONS
     CGAL_assertion(i<=s);
 #endif
-    inf = -i; sup = s;
+    inf = -i;
+    sup = s;
   }
 
   CGAL_Interval_nt_advanced(const double d = 0.0)
   {
-    inf = -d; sup = d;
+    inf = -d;
+    sup = d;
   }
 
   CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
   {
-    inf = d.inf; sup = d.sup;
+    inf = d.inf;
+    sup = d.sup;
     return *this;
   }
 
   CGAL_Interval_nt_advanced operator+(const CGAL_Interval_nt_advanced& d) const
   {
     return CGAL_Interval_nt_advanced(-(inf + d.inf), sup + d.sup);
-    // CGAL_Interval_nt_advanced tmp;
-    // tmp.inf = inf + d.inf;
-    // tmp.sup = sup + d.sup;
-    // return tmp;
   }
 
   CGAL_Interval_nt_advanced& operator+=(const CGAL_Interval_nt_advanced& d)
@@ -80,10 +79,6 @@ public:
   CGAL_Interval_nt_advanced operator-(const CGAL_Interval_nt_advanced& d) const
   {
     return CGAL_Interval_nt_advanced(-(inf + d.sup), sup + d.inf);
-    // CGAL_Interval_nt_advanced tmp;
-    // tmp.inf = inf + d.sup;
-    // tmp.sup = sup + d.inf;
-    // return tmp;
   }
 
   CGAL_Interval_nt_advanced& operator-=(const CGAL_Interval_nt_advanced& d)
@@ -175,7 +170,7 @@ public:
 
   bool is_valid() const
   {
-    return CGAL_is_valid(inf) && CGAL_is_valid(sup);
+    return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup > -inf);
   }
 
   bool is_finite() const
@@ -264,9 +259,8 @@ public:
 
   CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const
   {
-    CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
-    tmp = ((CGAL_Interval_nt_advanced) *this) + (CGAL_Interval_nt_advanced) d;
+    CGAL_Interval_nt tmp (-(inf + d.inf), sup + d.sup);
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
@@ -274,16 +268,16 @@ public:
   CGAL_Interval_nt& operator+=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
-    *this = ((CGAL_Interval_nt_advanced) *this) + (CGAL_Interval_nt_advanced)d;
+    inf += d.inf;
+    sup += d.sup;
     CGAL_FPU_set_rounding_to_nearest();
     return *this;
   }
 
   CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const
   {
-    CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
-    tmp = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced) d;
+    CGAL_Interval_nt tmp (-(inf + d.sup), sup + d.inf);
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
@@ -291,16 +285,17 @@ public:
   CGAL_Interval_nt& operator-=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
-    *this = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced)d;
+    inf += d.sup;
+    sup += d.inf;
     CGAL_FPU_set_rounding_to_nearest();
     return *this;
   }
 
   CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const
   {
-    CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
-    tmp = ((CGAL_Interval_nt_advanced) *this) * (CGAL_Interval_nt_advanced) d;
+    CGAL_Interval_nt tmp = ((CGAL_Interval_nt_advanced) *this)
+	* (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
@@ -308,16 +303,17 @@ public:
   CGAL_Interval_nt& operator*=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
-    *this = ((CGAL_Interval_nt_advanced) *this) * (CGAL_Interval_nt_advanced)d;
+    *this = ((CGAL_Interval_nt_advanced) *this)
+	* (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return *this;
   }
 
   CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const
   {
-    CGAL_Interval_nt tmp;
     CGAL_FPU_set_rounding_to_infinity();
-    tmp = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced) d;
+    CGAL_Interval_nt tmp = ((CGAL_Interval_nt_advanced) *this)
+	/ (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
@@ -325,7 +321,8 @@ public:
   CGAL_Interval_nt& operator/=(const CGAL_Interval_nt& d)
   {
     CGAL_FPU_set_rounding_to_infinity();
-    *this = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced)d;
+    *this = ((CGAL_Interval_nt_advanced) *this)
+	/ (CGAL_Interval_nt_advanced) d;
     CGAL_FPU_set_rounding_to_nearest();
     return *this;
   }
@@ -334,17 +331,11 @@ public:
 
 inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 {
-  CGAL_Interval_nt_advanced tmp;
   CGAL_FPU_set_rounding_to_minus_infinity();
-  tmp.inf = -sqrt(-d.inf);
+  CGAL_Interval_nt_advanced tmp ( sqrt(-d.inf), 0);
   CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
-}
-
-inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
-{
-    return (CGAL_Interval_nt) d;
 }
 
 inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
@@ -352,6 +343,11 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   CGAL_Interval_nt tmp = sqrt( (CGAL_Interval_nt_advanced) d);
   CGAL_FPU_set_rounding_to_nearest();
   return tmp;
+}
+
+inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
+{
+    return (CGAL_Interval_nt) d;
 }
 
 inline double CGAL_to_double(const CGAL_Interval_nt_advanced& d)
