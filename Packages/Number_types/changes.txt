@@ -1,3 +1,6 @@
+4.16     (29 May 01)
+- Fix to_interval(leda_integer).
+
 4.15     (28 May 01)
 - to_interval(leda_integer) improvement, by Michael Seel.
 

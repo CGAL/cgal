@@ -64,7 +64,7 @@ sign(const leda_integer& n)
 
 inline
 Interval_base
-to_interval (const leda_integer & z)
+to_interval (const leda_integer & n)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
   double cn = CGAL::to_double(n);
@@ -73,7 +73,7 @@ to_interval (const leda_integer & z)
       return Interval_base(cn);
   else {
     FPU_set_cw(CGAL_FE_UPWARD);
-    return Interval_base(cn)+Interval_base::Smallest;
+    return Interval_nt_advanced(cn)+Interval_nt_advanced::Smallest;
   }
 }
 
