@@ -1,23 +1,4 @@
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Cartesian Cr
-#define Arr_polyline_traits APT
-#define Quotient Qt
-#define Planar_ma2p_traits_wrap PMTW
-#define _List_iterator Lit
-#if !defined(_MSC_VER)
-#define bidirectional_iterator_tag Bitt
-#endif
-#define Planar_map_2 Pm2
-#define Arr_2_default_dcel A2dd
-#define Point_2 Pt2
-#define allocator Altr
-#define Td_X_trapezoid TdXt
-#define Td_traits Tdt
-#endif
+#include "short_names.h"
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
@@ -187,192 +168,196 @@ private:
   // that is every reference from a halfedge of an overlapped edge
   // to its overlapping curves.
   unsigned count_overlaps()
+  {
+    Arr_2::Halfedge_iterator hit;
+    Arr_2::Overlap_circulator oe;
+    unsigned count, counted_overlaps = 0;
+      
+    //std::cout << "halfedge: overlapping edges" << std::endl;
+    for (hit=arr.halfedges_begin(); hit!=arr.halfedges_end(); ++hit, ++hit) 
     {
-      Arr_2::Halfedge_iterator hit;
-      Arr_2::Overlap_circulator oe;
-      unsigned count, counted_overlaps = 0;
-      
-      //std::cout << "halfedge: overlapping edges" << std::endl;
-      for (hit=arr.halfedges_begin(); hit!=arr.halfedges_end(); ++hit, ++hit) 
-	{
-	  //std::cout << (*hit).vertex()->point();
-	  //std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
-	  oe=hit->overlap_edges();
-	  // we count how many edges refer to this halfedge
-	  // there is always at least one.
-	  // if there is more than one, there is an overlap
-	  count = 0;
-	  do {
-	    //std::cout << "     ";
-	    //std::cout << (*oe).halfedge()->vertex()->point();
-	    //std::cout << (*oe).halfedge()->opposite()->vertex()->point() << std::endl;;
-	    count ++;
-	  } while (++oe != hit->overlap_edges());
-	  // we substract 1 from edges refering to this halfedge, see above
-	  counted_overlaps = counted_overlaps + (count - 1);
-	  //std::cout << std::endl;
-	}
-      
-      return counted_overlaps; 
+      //std::cout << (*hit).vertex()->point();
+      //std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
+      oe=hit->overlap_edges();
+      // we count how many edges refer to this halfedge
+      // there is always at least one.
+      // if there is more than one, there is an overlap
+      count = 0;
+      do {
+        //std::cout << "     ";
+        //std::cout << (*oe).halfedge()->vertex()->point();
+        //std::cout << (*oe).halfedge()->opposite()->vertex()->point()
+        //          << std::endl;;
+        count ++;
+      } while (++oe != hit->overlap_edges());
+      // we substract 1 from edges refering to this halfedge, see above
+      counted_overlaps = counted_overlaps + (count - 1);
+      //std::cout << std::endl;
     }
+  
+    return counted_overlaps; 
+  }
  
   void print_vertices(Arr_2 & arr)
-    {
-      Arr_2::Vertex_const_iterator vit;
+  {
+    Arr_2::Vertex_const_iterator vit;
 
-      std::cout << "Vertices in Arrangement:" << std::endl;
-      for(vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++)
-	{
-	  std::cout << (*vit).point() << " , ";
-	}
-      std::cout << std::endl;
-   } 
+    std::cout << "Vertices in Arrangement:" << std::endl;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++)
+    {
+      std::cout << (*vit).point() << " , ";
+    }
+    std::cout << std::endl;
+  } 
  
   void print_kind_of_location(Arr_2::Locate_type &lt)
-    {
-      switch (lt) {
+  {
+    switch (lt) {
       case Arr_2::VERTEX:
-	std::cout << "Vertex ";
-	break;
+        std::cout << "Vertex ";
+        break;
       case Arr_2::EDGE:
-	std::cout<< "Edge ";
-	break;
+        std::cout<< "Edge ";
+        break;
       case Arr_2::FACE:
-	std::cout<< "Face ";
-	break;
+        std::cout<< "Face ";
+        break;
       case Arr_2::UNBOUNDED_VERTEX:
-	std::cout<< "UnBounded Vertex ";
-	break;
+        std::cout<< "UnBounded Vertex ";
+        break;
       case Arr_2::UNBOUNDED_EDGE:
-	std::cout<< "UnBounded Edge ";
-	break;
+        std::cout<< "UnBounded Edge ";
+        break;
       case Arr_2::UNBOUNDED_FACE:
-	std::cout<< "UnBounded Face ";
-	break;
+        std::cout<< "UnBounded Face ";
+        break;
       }
       std::cout << std::endl;
-    }
+  }
   
   bool point_is_in_expected_place(Point &pnt, Arr_2::Locate_type exp_lt)
-    {
-      Arr_2::Locate_type    location_of_vertex;
+  {
+    Arr_2::Locate_type    location_of_vertex;
       
-      arr.locate(pnt ,location_of_vertex);
-      print_kind_of_location(location_of_vertex);
-      return (location_of_vertex == exp_lt);
-    }
+    arr.locate(pnt ,location_of_vertex);
+    print_kind_of_location(location_of_vertex);
+    return (location_of_vertex == exp_lt);
+  }
   
   void check_that_vertices_are_in_arrangement(Point_list & all_points_list)
-    {
-      Point_list::iterator pit;
+  {
+    Point_list::iterator pit;
       
-      for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
-	{
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
-#else
-	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
-#endif
-	  CGAL_assertion(point_is_in_expected_place(*pit, Arr_2::VERTEX) ||
-                         point_is_in_expected_place(*pit, Arr_2::EDGE));
-	}
-    }
-  
-  void points_in_expected_place(Point_list                    & point_list,
-				std::list<Arr_2::Locate_type> & lt_list)
+    for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
     {
-      Point_list::iterator              pit;
-      std::list<Arr_2::Locate_type>::iterator lt_it;
-      
-      for (pit = point_list.begin(), lt_it = lt_list.begin();
-	   pit != point_list.end();
-	   pit++, lt_it++)
-	{
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  //CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || 
-          //    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
+        std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
 #else
-	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
+      std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(*pit, *lt_it));
-	}
+      CGAL_assertion(point_is_in_expected_place(*pit, Arr_2::VERTEX) ||
+                     point_is_in_expected_place(*pit, Arr_2::EDGE));
     }
+  }
+  
+  void points_in_expected_place(Point_list                    & point_list,
+                                std::list<Arr_2::Locate_type> & lt_list)
+  {
+    Point_list::iterator              pit;
+    std::list<Arr_2::Locate_type>::iterator lt_it;
+      
+    for (pit = point_list.begin(), lt_it = lt_list.begin();
+         pit != point_list.end();
+         pit++, lt_it++)
+    {
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+      //#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+      //CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || 
+      //    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+      std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
+#else
+      std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
+#endif
+      CGAL_assertion(point_is_in_expected_place(*pit, *lt_it));
+    }
+  }
 
   void show_comparison()
-    {
-      std::cout << "expected # of vertices: ";
-      std::cout << expected_num_vertices << std::endl;
-      std::cout << "  actual # of vertices: ";
-      std::cout << arr.number_of_vertices() << std::endl;
+  {
+    std::cout << "expected # of vertices: ";
+    std::cout << expected_num_vertices << std::endl;
+    std::cout << "  actual # of vertices: ";
+    std::cout << arr.number_of_vertices() << std::endl;
 
-      std::cout << "expected # of edges: ";
-      std::cout << expected_num_edges << std::endl;
-      std::cout << "  actual # of edges: ";
-      std::cout << arr.number_of_halfedges() / 2<< std::endl;      
+    std::cout << "expected # of edges: ";
+    std::cout << expected_num_edges << std::endl;
+    std::cout << "  actual # of edges: ";
+    std::cout << arr.number_of_halfedges() / 2<< std::endl;      
 
-      std::cout << "expected # of faces: ";
-      std::cout << expected_num_faces << std::endl;
-      std::cout << "  actual # of faces: ";
-      std::cout << arr.number_of_faces() << std::endl;
+    std::cout << "expected # of faces: ";
+    std::cout << expected_num_faces << std::endl;
+    std::cout << "  actual # of faces: ";
+    std::cout << arr.number_of_faces() << std::endl;
 
-      std::cout << "expected # of overlaping edges: ";
-      std::cout << expected_num_overlaps << std::endl;
-      std::cout << "  actual # of overlaping edges: ";
-      std::cout << actual_num_overlaps << std::endl;
-    }
+    std::cout << "expected # of overlaping edges: ";
+    std::cout << expected_num_overlaps << std::endl;
+    std::cout << "  actual # of overlaping edges: ";
+    std::cout << actual_num_overlaps << std::endl;
+  }
 
   NT get_next_num(std::ifstream& file)
+  {
+    CGAL::Quotient<int> num = 0;
+    NT            result(INT_MAX);
+    std::string   s;
+    char          c = 0;
+
+    //file.set_ascii_mode();
+    while ( file && (result == NT(INT_MAX) ))
     {
-      CGAL::Quotient<int> num = 0;
-      NT            result(INT_MAX);
-      std::string   s;
-      char          c = 0;
+      // try to convert next token to integer
+      file >> c;
 
-      //file.set_ascii_mode();
-      while ( file && (result == NT(INT_MAX) ))
-	{
-	  // try to convert next token to integer
-	  file >> c;
-
-	  if (c=='#') // comment
-	    {
-	      std::getline(file, s);
-	    }
-	  else
-	    {
-	      file.putback(c);
+      if (c=='#') // comment
+      {
+        std::cerr << std::endl; // SUNPRO likes this...
+        std::getline(file, s);
+      }
+      else
+      {
+        file.putback(c);
 #if CGAL_ARR_TEST_TRAITS != CGAL_SEGMENT_CIRCLE_TRAITS
-	      file >> num;
-              result = NT(num.numerator(), num.denominator());
+        file >> num;
+        result = NT(num.numerator(), num.denominator());
 #else
-	      num = num;
-	      file >> result;
+        num = num;
+        file >> result;
 #endif
-	    }
-	}
-
-      // convertion failed, data file format error
-      CGAL_assertion(result != NT(INT_MAX));
-
-      return result;
+      }
     }
+
+    // convertion failed, data file format error
+    CGAL_assertion(result != NT(INT_MAX));
+
+    return result;
+  }
 
   int get_next_int(std::ifstream& file)
-    {
+  {
 
-#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-      // The to_long precondition is that number is indeed long
-      // is supplied here since input numbers are small.
-      return get_next_num(file).numerator().to_long();
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
+    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+    // The to_long precondition is that number is indeed long
+    // is supplied here since input numbers are small.
+    return get_next_num(file).numerator().to_long();
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
-      return (int) CGAL::to_double(get_next_num(file));
+    return (int) CGAL::to_double(get_next_num(file));
 #else
-      return get_next_num(file).numerator();
+    return get_next_num(file).numerator();
 #endif
-    }
+  }
 
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -402,7 +387,7 @@ private:
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
+  Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
     Curve                 polyline;
     NT                    x,y; 
@@ -416,102 +401,102 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       x = get_next_num(file); y = get_next_num(file);
       Point s(x,y);
       if (reverse_order)
-	point_list.push_front(s);
+        point_list.push_front(s);
       else
-	point_list.push_back(s);
+        point_list.push_back(s);
     }
     for (plit = point_list.begin(); //, cit = polyline.begin();
-	 plit != point_list.end();
-	 plit++) 
+         plit != point_list.end();
+         plit++) 
       {
-	//std::cout << *plit << std::endl;
-	polyline.push_back(*plit);
+        //std::cout << *plit << std::endl;
+        polyline.push_back(*plit);
       }
     
     all_points_list.splice(all_points_list.end(), point_list); 
     return polyline;
-}
+  }
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
 
-Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
-{
-  Curve cv;
+  Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
+  {
+    Curve cv;
   
-  // Get the arc type.
-  char type;
+    // Get the arc type.
+    char type;
 
-  // Currently expects no comments in input file
-  // Should be changed?
-  file >> type;
+    // Currently expects no comments in input file
+    // Should be changed?
+    file >> type;
   
-  // A full circle (c) or a circular arc (a):
-  if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
-  {  
-    // Read the circle, using the format "x0 y0 r^2"
-    NT     x0, y0, r2;
+    // A full circle (c) or a circular arc (a):
+    if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+    {  
+      // Read the circle, using the format "x0 y0 r^2"
+      NT     x0, y0, r2;
     
-    file >> x0 >> y0 >> r2;
-//     x0 = get_next_num(file);
-//     y0 = get_next_num(file);
-//     r2 = get_next_num(file);
+      file >> x0 >> y0 >> r2;
+      //     x0 = get_next_num(file);
+      //     y0 = get_next_num(file);
+      //     r2 = get_next_num(file);
     
-    Circle circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
+      Circle circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
 
-    if (type == 'c' || type == 'C')
-    {
-      // Create a full circle.
-      cv = Curve(circle);  
+      if (type == 'c' || type == 'C')
+      {
+        // Create a full circle.
+        cv = Curve(circle);  
+      }
+      else
+      {
+        // Read the end points of the circular arc.
+        NT    x1, y1, x2, y2;
+
+        file >> x1 >> y1 >> x2 >> y2;
+        //       x1 = get_next_num(file);
+        //       y1 = get_next_num(file);
+        //       x2 = get_next_num(file);
+        //       y2 = get_next_num(file);
+
+        if ((x1 - x0)*(x1 - x0) + (y1 - y0)*(y1 - y0) != r2)
+          y1 = CGAL::sqrt(r2 - (x1 - x0)*(x1 - x0)) + y0;
+
+        if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) != r2)
+          y2 = CGAL::sqrt(r2 - (x2 - x0)*(x2 - x0)) + y0;
+
+        Point source (x1, y1);
+        Point target (x2, y2);
+
+        // Create the circular arc.
+        cv = Curve (circle, source, target);
+      }
     }
-    else
+    else if (type == 's' || type == 'S')
     {
-      // Read the end points of the circular arc.
+      // Read the end points of the segment.
       NT    x1, y1, x2, y2;
 
       file >> x1 >> y1 >> x2 >> y2;
-//       x1 = get_next_num(file);
-//       y1 = get_next_num(file);
-//       x2 = get_next_num(file);
-//       y2 = get_next_num(file);
-
-      if ((x1 - x0)*(x1 - x0) + (y1 - y0)*(y1 - y0) != r2)
-	y1 = CGAL::sqrt(r2 - (x1 - x0)*(x1 - x0)) + y0;
-
-      if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) != r2)
-	y2 = CGAL::sqrt(r2 - (x2 - x0)*(x2 - x0)) + y0;
-
+      //     x1 = get_next_num(file);
+      //     y1 = get_next_num(file);
+      //     x2 = get_next_num(file);
+      //     y2 = get_next_num(file);
+    
       Point source (x1, y1);
       Point target (x2, y2);
-
-      // Create the circular arc.
-      cv = Curve (circle, source, target);
-    }
-  }
-  else if (type == 's' || type == 'S')
-  {
-    // Read the end points of the segment.
-    NT    x1, y1, x2, y2;
-
-    file >> x1 >> y1 >> x2 >> y2;
-//     x1 = get_next_num(file);
-//     y1 = get_next_num(file);
-//     x2 = get_next_num(file);
-//     y2 = get_next_num(file);
-    
-    Point source (x1, y1);
-    Point target (x2, y2);
    
-    cv = Curve (Segment (source, target));
-  }
-  else
-  {
-    // Illegal type!
-    std::cout << "Failed to read curve." << std::endl;
-  }
+      cv = Curve (Segment (source, target));
+    }
+    else
+    {
+      // Illegal type!
+      std::cout << "Failed to read curve." << std::endl;
+    }
 
-  std::cout << "The read curve: " << cv << std::endl;
-  return cv;
-}
+    std::cout << "The read curve: " << cv << std::endl;
+    return cv;
+  }
 
 #else
   #error No curve read function defined
@@ -519,29 +504,29 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
 
   void read_file_build_arrangement(std::ifstream& file, bool reverse_order)
   {
-      NT    x,y; 
-      Curve curr_curve;
+    NT    x,y; 
+    Curve curr_curve;
 
-      // 1. read polylines and build arrangement
+    // 1. read polylines and build arrangement
 
-      // read number of polylines
-      num_polylines = get_next_int(file);
+    // read number of polylines
+    num_polylines = get_next_int(file);
 
-      // read curves (test specific)
-      while (num_polylines--) {
+    // read curves (test specific)
+    while (num_polylines--) {
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 
-        curr_curve = read_segment_curve(file, reverse_order);
+      curr_curve = read_segment_curve(file, reverse_order);
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-        curr_curve = read_polyline_curve(file, reverse_order);
+      curr_curve = read_polyline_curve(file, reverse_order);
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
 
-        curr_curve = read_seg_circ_curve(file, reverse_order);
+      curr_curve = read_seg_circ_curve(file, reverse_order);
 
 #else
 
@@ -549,43 +534,43 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
 
 #endif
 
-	arr.insert(curr_curve);
-      }
-
-      // 2. read test vertices
-      int num_test_points, exp_type;
-
-      // read no. of test vertices
-      num_test_points = get_next_int(file);
-
-      while (num_test_points--) {
-	x = get_next_num(file); y = get_next_num(file);
-	std::cout << x << "," << y << std::endl;
-	Point s(x,y);
-	test_point_list.push_back(s);
-	
-	exp_type = get_next_int(file);
-	exp_type_list.push_back( (Arr_2::Locate_type) exp_type);
-      }
-
-      // 3. read expected arrangement properties
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_vertices = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_edges = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_faces = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_overlaps = get_next_int(file);
-      
+      arr.insert(curr_curve);
     }
+
+    // 2. read test vertices
+    int num_test_points, exp_type;
+
+    // read no. of test vertices
+    num_test_points = get_next_int(file);
+
+    while (num_test_points--) {
+      x = get_next_num(file); y = get_next_num(file);
+      std::cout << x << "," << y << std::endl;
+      Point s(x,y);
+      test_point_list.push_back(s);
+        
+      exp_type = get_next_int(file);
+      exp_type_list.push_back( (Arr_2::Locate_type) exp_type);
+    }
+
+    // 3. read expected arrangement properties
+    //      std::getline(file, s); // skip
+    //      std::getline(file, s, ':'); // skip
+    expected_num_vertices = get_next_int(file);
+
+    //      std::getline(file, s); // skip
+    //      std::getline(file, s, ':'); // skip
+    expected_num_edges = get_next_int(file);
+
+    //      std::getline(file, s); // skip
+    //      std::getline(file, s, ':'); // skip
+    expected_num_faces = get_next_int(file);
+
+    //      std::getline(file, s); // skip
+    //      std::getline(file, s, ':'); // skip
+    expected_num_overlaps = get_next_int(file);
+      
+  }
 
   /****************************
    * Class Interface
@@ -593,39 +578,38 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
 public:
   
   void start(char * filename, bool reverse_order)
-    {
-      // Read data from file. Build Arrangement.
-      std::ifstream file(filename);
-      read_file_build_arrangement(file, reverse_order);
+  {
+    // Read data from file. Build Arrangement.
+    std::ifstream file(filename);
+    read_file_build_arrangement(file, reverse_order);
       
-      // DEBUG
-      //print_vertices(arr);
+    // DEBUG
+    //print_vertices(arr);
 
-      // debug
-      //   Arr_2::Face_handle    f  = arr->unbounded_face();
-      //   Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
-      //   Arr_2::Ccb            c  = *it;
-      //const X_curve& cv = curr->curve();
+    // debug
+    //   Arr_2::Face_handle    f  = arr->unbounded_face();
+    //   Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
+    //   Arr_2::Ccb            c  = *it;
+    //const X_curve& cv = curr->curve();
 
-      // Check validity of arrangement after insertion
-      CGAL_assertion(arr.is_valid());
+    // Check validity of arrangement after insertion
+    CGAL_assertion(arr.is_valid());
             
-      // Check that vertices read are indeed in the arrangement
-      check_that_vertices_are_in_arrangement(all_points_list);
+    // Check that vertices read are indeed in the arrangement
+    check_that_vertices_are_in_arrangement(all_points_list);
 
-      // count overlaps
-      actual_num_overlaps = count_overlaps(); 
+    // count overlaps
+    actual_num_overlaps = count_overlaps(); 
 
-      show_comparison();   
+    show_comparison();   
       
-      CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
-      // verify that test points are as located in the arrangemet as expected
-      points_in_expected_place(test_point_list, exp_type_list);
-      CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
-      CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
-      CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
-
-    }
+    CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
+    // verify that test points are as located in the arrangemet as expected
+    points_in_expected_place(test_point_list, exp_type_list);
+    CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
+    CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
+    CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
+  }
 };
 
 int main(int argc, char* argv[])
