@@ -1,17 +1,16 @@
 Rineau: fix init stuff [done]
 ---
 Rineau:
-Patch create_makefile [in progess]
 Patch CGALROOT/makefile
 ---
 Rineau: study the effect of QPen::setCapStyle and QPen::setJoinStyle
 ---
 Rineau roadmap 2001/12/17:
  1) merge the branch and the trunc	[done]
- 2) rebuild Qt_scene_widget
+ 2) rebuild Qt_scene_widget		[wont do]
  3) polish the interface		1/2[done]
  4) work on the doc			[done]
- 5) build automaticly makefile
+ 5) build automaticly makefile		[in progress]
  6) review the whole code
  7) work with Qt Designer
  8) change filenames to follow the CGAL naming convention	[done]
