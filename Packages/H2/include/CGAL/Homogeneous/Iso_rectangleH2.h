@@ -83,7 +83,7 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 Iso_rectangleH2<R>::
 Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
 	        const typename Iso_rectangleH2<R>::Point_2& q)

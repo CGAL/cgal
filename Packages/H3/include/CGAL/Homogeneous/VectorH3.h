@@ -93,7 +93,7 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
 {
   if ( w >= RT(0) )

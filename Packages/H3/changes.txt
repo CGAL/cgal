@@ -1,5 +1,6 @@
-2.38   (? October 2001)
+2.38   (23 October 2001)
 - moved *H3.h include files to include/CGAL/Homogeneous directory
+- replaced KERNEL_CTOR* macros with KERNEL_* macros
 
 2.37   (16 October 2001)
 - Replace Handle/Rep by Handle_for/Ref_counted.

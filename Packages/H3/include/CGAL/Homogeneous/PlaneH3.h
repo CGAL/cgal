@@ -182,56 +182,56 @@ PlaneH3<R>::operator!=(const PlaneH3<R>& l) const
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Point_3& q,
                         const typename PlaneH3<R>::Point_3& r)
 { new_rep(p,q,r); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const RT& a, const RT& b,
                         const RT& c, const RT& d)
 { new_rep(a,b,c,d); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p ,
                         const typename PlaneH3<R>::Line_3&  l)
 { new_rep(p, l.point(0), l.point(1) ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Segment_3& s)
 { new_rep(p, s.source(), s.target() ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p ,
                         const typename PlaneH3<R>::Ray_3&  r)
 { new_rep(p, r.start(), r.start() + r.direction().to_vector() ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Line_3& l ,
                         const typename PlaneH3<R>::Point_3& p)
 { new_rep(l.point(0), p, l.point(1) ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Segment_3& s,
                         const typename PlaneH3<R>::Point_3& p)
 { new_rep(s.source(), p, s.target() ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Ray_3&  r,
                         const typename PlaneH3<R>::Point_3& p)
 { new_rep(r.start(), p, r.start() + r.direction().to_vector() ); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Direction_3& d)
 {
@@ -243,7 +243,7 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Vector_3& ov)
 {
@@ -254,7 +254,7 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Direction_3& d1,
                         const typename PlaneH3<R>::Direction_3& d2)

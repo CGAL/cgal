@@ -357,7 +357,7 @@ public:
 #endif
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformation_repH3<R>::Aff_transformation_repH3(
                    const RT& m00, const RT& m01, const RT& m02, const RT& m03,
                    const RT& m10, const RT& m11, const RT& m12, const RT& m13,
@@ -750,25 +750,25 @@ _general_transformation_composition(
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::Aff_transformationH3()
 { initialize_with(Aff_transformation_repH3<R>()); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Identity_transformation&)
 { initialize_with(Identity_repH3<R>()); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Translation&,
 	             const typename Aff_transformationH3<R>::Vector_3& v)
 { initialize_with(Translation_repH3<R>( v )); }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Scaling&, const RT& num, const RT& den)
 {
@@ -780,7 +780,7 @@ Aff_transformationH3(const Scaling&, const RT& num, const RT& den)
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(
                   const RT& m00, const RT& m01, const RT& m02, const RT& m03,
@@ -795,7 +795,7 @@ Aff_transformationH3(
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(
                   const RT& m00, const RT& m01, const RT& m02,

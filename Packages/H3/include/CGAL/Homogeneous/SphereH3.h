@@ -153,7 +153,7 @@ class SphereH3
 
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
                       const FT& squared_radius,
                       const Orientation& o)
@@ -164,7 +164,7 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
 }
 
 template <class R>
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
                       const Orientation& o)
 {
@@ -173,7 +173,7 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& center,
 }
 
 template <class R>
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
                       const typename SphereH3<R>::Point_3& q,
                       const Orientation& o)
@@ -185,7 +185,7 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
 }
 
 template <class R>
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
                       const typename SphereH3<R>::Point_3& q,
                       const typename SphereH3<R>::Point_3& r,
@@ -198,7 +198,7 @@ SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
 }
 
 template <class R>
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 SphereH3<R>::SphereH3(const typename SphereH3<R>::Point_3& p,
                       const typename SphereH3<R>::Point_3& q,
                       const typename SphereH3<R>::Point_3& r,

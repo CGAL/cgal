@@ -86,13 +86,13 @@ public:
 #endif
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 LineH2<R>::LineH2()
  : Line_handle_2_ ( Line_ref_2() )
 {}
 
 template < class R >
-CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CGAL_KERNEL_MEDIUM_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 	          const typename LineH2<R>::Point_2& q)
  : Line_handle_2_ ( Line_ref_2(
@@ -107,13 +107,13 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 {}
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const RT& a, const RT& b, const RT& c)
  : Line_handle_2_ ( Line_ref_2(a,b,c) )
 {}
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 {
   Point_2 p = s.start();
@@ -125,7 +125,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
   Point_2 p = r.start();
@@ -137,7 +137,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 }
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Direction_2& d)
 {
