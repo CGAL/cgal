@@ -1,0 +1,2 @@
+Version 2.1.2
+Fixed a bug in template specialisation syntax.
