@@ -55,11 +55,11 @@ typedef CGAL::Triangulation_cell_iterator_3<Gt,TDS> Cell_iterator;
 typedef CGAL::Triangulation_facet_iterator_3<Gt,TDS> Facet_iterator;
 typedef CGAL::Triangulation_cell_circulator_3<Gt,TDS> Cell_circulator;
 
-typedef typename Triangulation::Cell Cell;
-typedef typename Triangulation::Vertex Vertex;
-typedef typename Triangulation::Cell_handle Cell_handle;
-typedef typename Triangulation::Vertex_handle Vertex_handle;
-typedef typename Triangulation::Locate_type Locate_type;
+typedef Triangulation::Cell Cell;
+typedef Triangulation::Vertex Vertex;
+typedef Triangulation::Cell_handle Cell_handle;
+typedef Triangulation::Vertex_handle Vertex_handle;
+typedef Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point Point;
 //typedef CGAL::Point_3<Rep>  Point;
@@ -69,16 +69,16 @@ int main(int argc, char* argv[])
 
   Delaunay T;
 
-  std::ifstream iFile("data/points",ios::in);
+  std::ifstream iFile("data/points",std::ios::in);
 
   if (! iFile) {
     std::cout <<"A file named points in directory data 
-            containing points should be provided," << endl
-	 <<"see README"<<endl;
+            containing points should be provided," << std::endl
+	 <<"see README"<<std::endl;
     return 1;
   }
 
-  std::cout <<"                reading file data/points" << endl ;
+  std::cout <<"                reading file data/points" << std::endl ;
   Point nouv;
   while ( iFile >> nouv ) {
     T.insert(nouv);
@@ -86,26 +86,26 @@ int main(int argc, char* argv[])
 
   T.is_valid(true);
 
-  std::cout <<"                locating point (1,1,1) :" << endl;
+  std::cout <<"                locating point (1,1,1) :" << std::endl;
   Point p(1,1,1);
   Locate_type lt;
   int li, lj;
   T.locate(p,lt,li,lj);
   if ( lt == Triangulation::CELL ) 
-    std::cout <<"                     CELL" << endl;
+    std::cout <<"                     CELL" << std::endl;
   if ( lt == Triangulation::FACET )
-    std::cout <<"                     FACET" << endl;
+    std::cout <<"                     FACET" << std::endl;
   if ( lt == Triangulation::EDGE ) 
-    std::cout <<"                     EDGE" << endl;
+    std::cout <<"                     EDGE" << std::endl;
   if ( lt == Triangulation::VERTEX )
-    std::cout <<"                     VERTEX" << endl;
+    std::cout <<"                     VERTEX" << std::endl;
   if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) 
-    std::cout <<"                     OUTSIDE_CONVEX_HULL" << endl;
+    std::cout <<"                     OUTSIDE_CONVEX_HULL" << std::endl;
   if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) 
-    std::cout <<"                     OUTSIDE_AFFINE_HULL" << endl;
+    std::cout <<"                     OUTSIDE_AFFINE_HULL" << std::endl;
 
-  std::ofstream oFileT("data/output",ios::out);
-  std::cout <<"                writing file data/output" << endl << flush;
+  std::ofstream oFileT("data/output",std::ios::out);
+  std::cout <<"                writing file data/output" << std::endl << std::flush;
   oFileT << T;
 
   return 1;

@@ -59,11 +59,11 @@ typedef CGAL::Triangulation_cell_iterator_3<Gt,TDS> Cell_iterator;
 typedef CGAL::Triangulation_facet_iterator_3<Gt,TDS> Facet_iterator;
 typedef CGAL::Triangulation_cell_circulator_3<Gt,TDS> Cell_circulator;
 
-typedef typename Triangulation::Cell Cell;
-typedef typename Triangulation::Vertex Vertex;
-typedef typename Triangulation::Cell_handle Cell_handle;
-typedef typename Triangulation::Vertex_handle Vertex_handle;
-typedef typename Triangulation::Locate_type Locate_type;
+typedef Triangulation::Cell Cell;
+typedef Triangulation::Vertex Vertex;
+typedef Triangulation::Cell_handle Cell_handle;
+typedef Triangulation::Vertex_handle Vertex_handle;
+typedef Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point Point;
 //typedef CGAL::Point_3<Rep>  Point;
@@ -77,7 +77,7 @@ void visu_cells(CGAL::Geomview_stream & os, const TRIANGULATION & T)
   Cell_iterator cit = T.finite_cells_begin();
   Cell_iterator cdone = T.cells_end();
   
-  if ( cit == cdone ) { std::cout << "no cell" << endl ;}
+  if ( cit == cdone ) { std::cout << "no cell" << std::endl ;}
   else {
     while(cit != cdone) {
       os << T.tetrahedron(&(*cit));
@@ -103,7 +103,7 @@ void visu_facets(CGAL::Geomview_stream & os, const TRIANGULATION & T)
   Facet_iterator fit = T.finite_facets_begin();
   Facet_iterator fdone = T.facets_end();
   
-  if ( fit == fdone ) { std::cout << "no facet" << endl ;}
+  if ( fit == fdone ) { std::cout << "no facet" << std::endl ;}
   else {
     while(fit != fdone) {
       os << T.triangle(*fit);
@@ -124,7 +124,7 @@ void visu_edges(CGAL::Geomview_stream & os, const TRIANGULATION & T)
   Edge_iterator eit = T.finite_edges_begin();
   Edge_iterator edone = T.edges_end();
   
-  if ( eit == edone ) { std::cout << "no edge" << endl ;}
+  if ( eit == edone ) { std::cout << "no edge" << std::endl ;}
   else {
     while(eit != edone) {
       os << T.segment(*eit);
@@ -145,7 +145,7 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
   Vertex_iterator vit = T.finite_vertices_begin();
   Vertex_iterator vdone = T.vertices_end();
   
-  if ( vit == vdone ) { std::cout << "no vertex" << endl ;}
+  if ( vit == vdone ) { std::cout << "no vertex" << std::endl ;}
   else {
     while(vit != vdone) {
       os << vit->point();
@@ -171,16 +171,16 @@ int main(int argc, char* argv[])
 
   Delaunay T;
 
-  std::ifstream iFile("data/points",ios::in);
+  std::ifstream iFile("data/points",std::ios::in);
 
   if (! iFile) {
     std::cout <<"A file named points in directory data 
-                 containing points should be provided," << endl 
-	      <<"see README"<<endl;
+                 containing points should be provided," << std::endl 
+	      <<"see README"<<std::endl;
     return 1;
   }
 
-  std::cout <<"                reading file data/points" << endl ;
+  std::cout <<"                reading file data/points" << std::endl ;
   Point nouv;
   while ( iFile >> nouv ) {
     T.insert(nouv);
@@ -188,14 +188,14 @@ int main(int argc, char* argv[])
 
   T.is_valid(true);
 
-  std::cout <<"                visualizing vertices and edges" << endl;
+  std::cout <<"                visualizing vertices and edges" << std::endl;
   gv << CGAL::GREEN;
   visu_vertices(gv,T);
   visu_edges(gv,T);
 
   sleep(3);
 
-  std::cout <<"                locating point (1,1,1) :" << endl;
+  std::cout <<"                locating point (1,1,1) :" << std::endl;
   Point p(1,1,1);
   gv.set_vertex_color(CGAL::ORANGE);
   gv << p;
@@ -207,26 +207,26 @@ int main(int argc, char* argv[])
 
   gv << CGAL::VIOLET;
   if ( lt == Triangulation::CELL ) {
-    std::cout <<"                     CELL" << endl;
+    std::cout <<"                     CELL" << std::endl;
     visu_cell(gv,T,c);
   }
   if ( lt == Triangulation::FACET ) {
-    std::cout <<"                     FACET" << endl;
+    std::cout <<"                     FACET" << std::endl;
     visu_facet(gv,T,c,li);
   }
   if ( lt == Triangulation::EDGE ) {
-    std::cout <<"                     EDGE" << endl;
+    std::cout <<"                     EDGE" << std::endl;
     visu_edge(gv,T,c,li,lj);
   }
   if ( lt == Triangulation::VERTEX ) {
-    std::cout <<"                     VERTEX" << endl;
+    std::cout <<"                     VERTEX" << std::endl;
     visu_vertex(gv,T,c,li);
   }
   if ( lt == Triangulation::OUTSIDE_CONVEX_HULL ) {
-    std::cout <<"                     OUTSIDE_CONVEX_HULL" << endl;
+    std::cout <<"                     OUTSIDE_CONVEX_HULL" << std::endl;
   }
   if ( lt == Triangulation::OUTSIDE_AFFINE_HULL ) {
-    std::cout <<"                     OUTSIDE_AFFINE_HULL" << endl;
+    std::cout <<"                     OUTSIDE_AFFINE_HULL" << std::endl;
   }
 
   sleep(6);
@@ -236,17 +236,17 @@ int main(int argc, char* argv[])
   gv.set_edge_color(CGAL::GREEN);
   gv.set_vertex_color(CGAL::RED);
 
-  std::cout <<"                visualizing T" << endl;
+  std::cout <<"                visualizing T" << std::endl;
   visu_cells(gv,T);
   visu_vertices(gv,T);
   visu_edges(gv,T);
 
-  std::ofstream oFileT("data/output",ios::out);
-  std::cout <<"                writing file data/output" << endl ;
+  std::ofstream oFileT("data/output",std::ios::out);
+  std::cout <<"                writing file data/output" << std::endl ;
   oFileT << T;
 
   char ch;
-  std::cout << "enter any character to quit" << endl;
+  std::cout << "enter any character to quit" << std::endl;
   std::cin >> ch;
 
   return 1;
