@@ -113,7 +113,7 @@ int main()
   
   CGAL::Window_stream W(700, 700);
   W.init(-10, 10, -10);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL::src_mode);
   W.set_node_width(3);
   W.button("finish",2);
   W.display();

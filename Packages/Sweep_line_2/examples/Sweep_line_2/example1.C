@@ -11,7 +11,7 @@
 #include <iostream>
 #include <vector>
 
-//uncomment if you have LEDA installed.
+
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/IO/cgal_window.h>  //used for visualization.
 
@@ -66,8 +66,8 @@ int main()
   
   CGAL::Window_stream W(700, 700);
   W.init(-10, 10, -10);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL::src_mode);
   W.set_node_width(3);
   W.display();
-  W << pm; 
+  W << pm;
 }

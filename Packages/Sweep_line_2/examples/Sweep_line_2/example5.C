@@ -3,7 +3,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/leda_real.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -12,7 +11,7 @@
 #include <iostream>
 #include <vector>
 
-//uncomment if you have LEDA installed.
+
 #include <CGAL/IO/Segment_circle_Window_stream.h>
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/IO/cgal_window.h>  //used for visualization.
@@ -65,7 +64,7 @@ int main()
   std::cout << " * * * Printing list of all points in the arrangement ";
   std::cout << "induced by the input segments" << std::endl;
   
-  for (vector<Point>::iterator p_iter = points.begin();
+  for (std::vector<Point>::iterator p_iter = points.begin();
        p_iter != points.end(); ++p_iter)
     std::cout<< *p_iter << std::endl;
   
