@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.20 (10 July 2001)
+- Submission bug.
+
 Ver 3.19 (10 July 2001)
 - Remove warning with GCC 3.0.
 - Update demo code to match new include rules.
