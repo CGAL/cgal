@@ -48,17 +48,25 @@ int check_triangular_range_search(const std::list<Vertex_handle>& L)
 
 int check_rectangular_range_search(const std::list<Vertex_handle>& L)
 {
- std::cout << "check result!\n";
- if (L.size() != 3) return 1; 
- std::list<Vertex_handle>::const_iterator it = L.begin();
- int i=0;
- int w=0;
-    
- for(; it != L.end();it++){
-    if (ar3[i] != (*it)->point()) w=1;
-    i++;
- }
- return w;
+  std::cout << "check result!\n";
+  if (L.size() != 3) return 1; 
+  std::list<Vertex_handle>::const_iterator it = L.begin();
+  int i=0;
+  int w=0;
+  int i_sum=0;
+  
+  for(; it != L.end();it++){
+    for(i=0;i<3;i++){
+      if (ar3[i] == (*it)->point()){
+	i_sum += i;
+	break;
+      }
+    }
+  }
+  w = (i_sum != 3)? 1 : 0;
+  
+  if (w==1) std::cout << "check3 failed!\n";
+  return w;
 }
 
 int main()
