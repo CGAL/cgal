@@ -14,7 +14,7 @@ Additional supported platforms:
 
     * MS Visual C++, version 7.1.
     * SunPro CC versions 5.4 and 5.5 on Solaris
-    * GNU g++ versions 3.2 and 3.3 on Linux, Solaris, Irix and FreeBSD.
+    * GNU g++ versions 3.2 and 3.3 on Linux, Solaris, Irix, cygwin, and FreeBSD.
     * MipsPRO CC 7.30 and 7.40 with both the n32 and n64 ABIs.
 
 Platforms not supported anymore:
@@ -67,15 +67,15 @@ Basic Library:
           searching
         - query items representing points and spatial objects.
 
+    * Kd-tree : this package is deprecated, its documentation is removed.
+      It is replaced by the Spatial Searching package.
+
     * Largest_empty_rectangle_2 (new package in Geometric Optimization):
        Given a set of points P in the plane, the class
        Largest_empty_iso_rectangle_2<T> is a data structure that
        maintains an iso-rectangle with the largest area among all
        iso-rectangles that are inside a given iso-rectangle bounding box,
        and that do not contain any point of the point set P.
-
-    * Kd-tree : this package is deprecated, its documentation is removed.
-      It is replaced by the Spatial Searching package.
 
     * Triangulations 2D and 3D:
       - The classes Triangulation_data_structure_2 (and 3), which implements
@@ -107,6 +107,11 @@ Basic Library:
       - deprecated functions: copy_triangulation(), push_back(),
         set_number_of_vertices().
       - Triangulation_3 now gives non-const access to the data structure.
+
+    * Interval_skip_list (new package)
+      An interval skip list is a data strucure for finding all intervals 
+      that contain a point, and for stabbing queries, that is for answering 
+      the question whether a given point is contained in an interval or not. 
 
     * Planar Maps and Arrangements:
       - Traits classes.
