@@ -1,6 +1,6 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
-
+1.28 (6 May 2003)
      - bug fix in  Stream >> Polynomial      the degree was consumed
      - workaround for MSVC
 
