@@ -32,17 +32,15 @@
 //| big-endian and little-endian machines.
 //| The following definition is set if it is a little-endian machine.
 
-union {
+union T {
   int       testWord;
   char      testByte[sizeof(int)];
 } endianTest;
 
-int main() {
+int main()
+{
     endianTest.testWord = 1;
     if (endianTest.testByte[0] == 1)
 	return 1;  // little-endian
     return 0;      // big-endian
 }
-
-// EOF //
-

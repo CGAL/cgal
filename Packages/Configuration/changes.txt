@@ -1,3 +1,6 @@
+20 June 2004 Sylvain Pion
+- CGAL_CFG_NO_BIG_ENDIAN.C : fix compilation with g++ 3.5.
+
 22 May 2004 Sylvain Pion
 - Add CGAL_CFG_USING_BASE_MEMBER_BUG_2.C for SunPRO 5.3.
 
