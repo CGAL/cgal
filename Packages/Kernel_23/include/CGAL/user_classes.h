@@ -66,28 +66,28 @@ class Aff_transformation_3;
 template < class R >
 class Plane_3;
 
-template < class FT >
+template < class R >
 class Point_3;
 
-template < class FT >
+template < class R >
 class Vector_3;
 
-template < class FT >
+template < class R >
 class Direction_3;
 
 template < class R >
 class Line_3;
 
-template < class FT >
+template < class R >
 class Ray_3;
 
-template < class FT >
+template < class R >
 class Segment_3;
 
-template < class FT >
+template < class R >
 class Triangle_3;
 
-template < class FT >
+template < class R >
 class Tetrahedron_3;
 
 template < class R >
