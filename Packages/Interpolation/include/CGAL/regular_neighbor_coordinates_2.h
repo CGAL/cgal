@@ -78,9 +78,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
   
   if(lt == Rt::VERTEX){
     //the point must be in conflict:
-    CGAL_precondition(power_test(fh->vertex(li)->point(), p) !=
+    CGAL_precondition(rt.power_test(fh->vertex(li)->point(), p) !=
 		      ON_NEGATIVE_SIDE); 
-    if(power_test(fh->vertex(li)->point(), p) ==ON_ORIENTED_BOUNDARY){
+    if(rt.power_test(fh->vertex(li)->point(), p) ==ON_ORIENTED_BOUNDARY){
       *out++= std::make_pair(fh->vertex(li)->point(),Coord_type(1));
       return( std::make_pair(out, Coord_type(1)));
     }
@@ -127,8 +127,9 @@ regular_neighbor_coordinates_2(const Rt& rt,
 
   //no hole because only (exactly!) one vertex is hidden:
   if(hole_begin==hole_end){
-    *out++= std::make_pair((*hidden_vertices_begin)->point(),Coord_type(1));
-    hidden_vertices_begin++;
+    *out++= std::make_pair((*hidden_vertices_begin)->point(),
+			   Coord_type(1));
+    ++hidden_vertices_begin;
     CGAL_assertion(hidden_vertices_begin ==hidden_vertices_end); 
     return(std::make_pair(out, Coord_type(1)));
   }
@@ -186,7 +187,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
   //        vor2, vor 3: duals of two consecutive triangles
   Face_circulator fc, fc_begin;
   for(; hidden_vertices_begin != hidden_vertices_end;
-      hidden_vertices_begin++){  
+      ++hidden_vertices_begin){  
     Coord_type area(0);
     fc_begin = rt.incident_faces(*hidden_vertices_begin);
     vor[0] = rt.dual(fc_begin);
@@ -214,21 +215,22 @@ regular_neighbor_coordinates_2(const Rt& rt,
 /**********************************************************/
 //compute the coordinates for a vertex of the triangulation 
 // with respect to the other points in the triangulation
-template <class Dt, class OutputIterator>
-std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
-regular_neighbor_coordinates_2(const Dt& dt, 
-			       typename Dt::Vertex_handle vh, 
+template <class Rt, class OutputIterator>
+std::pair< OutputIterator, typename Rt::Geom_traits::FT > 
+regular_neighbor_coordinates_2(const Rt& rt, 
+			       typename Rt::Vertex_handle vh, 
 			       OutputIterator out){
   //init the traits class in regular_neighbor_coordinates_2
   // to rt.geom_traits()
-  return regular_neighbor_coordinates_2(t2, vh, out, 
+  return regular_neighbor_coordinates_2(rt, vh, out, 
 					rt.geom_traits());
 };
-template <class Dt, class OutputIterator, class Traits>
-std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
-regular_neighbor_coordinates_2(const Dt& dt, 
-			       typename Dt::Vertex_handle vh, 
-			       OutputIterator out){
+template <class Rt, class OutputIterator, class Traits>
+std::pair< OutputIterator, typename Traits::FT > 
+regular_neighbor_coordinates_2(const Rt& rt, 
+			       typename Rt::Vertex_handle vh, 
+			       OutputIterator out, 
+			       const Traits& traits){
   //this functions creates a small triangulation of the 
   // incident vertices of this vertex and computes the 
   // natural neighbor coordinates of ch->point() wrt. it.
@@ -244,7 +246,21 @@ regular_neighbor_coordinates_2(const Dt& dt,
   while(++vc!=done);
     
   return regular_neighbor_coordinates_2(t2, vh->point(), out, 
-					Traits());
+					traits);
+};
+
+
+//class providing a function object:
+template <class Rt, class OutputIterator>
+class natural_neighbor_coordinates_2_object 
+{
+public:
+  std::pair< OutputIterator, typename Rt::Geom_traits::FT > 
+  operator()(const Rt& rt, 
+	     typename Rt::Vertex_handle vh,
+	     OutputIterator out){
+    return regular_neighbor_coordinates_2(rt, vh, out);
+  }
 };
 
 //-------------------------------------------------------------------
@@ -252,5 +268,3 @@ CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
 #endif // CGAL_REGULAR_NEIGHBORS_2_H
-
-
