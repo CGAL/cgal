@@ -17,15 +17,23 @@
 # Support Library, Number Types, Filtered_exact.
 
 
-# $old_protect_name: contains the protect macro name, e.g. CGAL_BASIC_H:
-#                    It is set by $treat_CGAL_header().
-# $new_protect_name: equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
+$old_protect_name="";	# contains the protect macro name, e.g. CGAL_BASIC_H:
+			# It is set by $treat_CGAL_header().
+$new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
+$line=0;		# current line number.
+
+# Auxiliary routine to emit a warning.
+sub warning {
+  local ($_) = @_;
+  print STDERR "// Warning [line $line]: $_\n";
+}
 
 # Treats the CGAL header.
 sub treat_CGAL_header {
   # skip the old header.
   while (<>)
   {
+    $line++;
     # get $file_name from the "file:" field in the headers.
     if (/\/\/ file[\s]*: include\/CGAL\/(.*)/) {
       $file_name = $1;
@@ -74,12 +82,12 @@ sub treat_CGAL_header {
 
 # Skips a "CGAL_NO_FILTER" section.
 sub skip_no_filter_section {
-  while (<>) { last if /\/\/CGAL_NO_FILTER_END/; }
+  while (<>) { $line++; last if /\/\/CGAL_NO_FILTER_END/; }
 }
 
 # Skips the old body of the function.
 sub skip_old_body {
-  while (<>) { last if /^}$/; }
+  while (<>) { $line++; last if /^}$/; }
 }
 
 # Warns if the return type is not known
@@ -87,7 +95,7 @@ sub skip_old_body {
 sub check_known_type {
   my ($type) = @_;
   if (not $known_return_types{$type}) {
-    print STDERR "// Warning: \"$type\" is an unknown enumerative type\n";
+    warning ("\"$type\" is an unknown enumerative type");
   }
 }
 
@@ -121,6 +129,7 @@ sub put_new_body {
 sub parse_function_declaration {
   local ($inline_decl, $return_type, $function_name, @args, $in_decl);
   while (<>) {
+    $line++;
     # get the eventual inline declaration.
     if (/(CGAL_.*INLINE|inline)/) {
       $inline_decl=$1;
@@ -146,7 +155,10 @@ sub parse_function_declaration {
       # get the arguments.
       s/^.*\(//;
       foreach (split /[,\)]/) {
-        next if /^$/;
+        next if /^\s*$/;
+	if (not /const/) {
+	  warning("Using non const argument \"$_\" in \"$function_name\".");
+	}
         /(\w+)\s*$/;
         push(@args, $1);
       }
@@ -191,6 +203,7 @@ treat_CGAL_header();
 
 while (<>)
 {
+  $line++;
   # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
   if (/\/\/CGAL_NO_FILTER_BEGIN/) {
     skip_no_filter_section();
