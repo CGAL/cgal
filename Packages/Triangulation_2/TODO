@@ -1,3 +1,4 @@
+- doc : relier nerarest-vertex queries a localisation dans Voronoi
 - nettoyer Triangulation_line_face_circulator
   suite aux modifs de Radu ....(voir diff 129-128)
 - Vertex_with_info done remains the doc

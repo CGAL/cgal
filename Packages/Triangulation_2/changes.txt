@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.25 (25/11/03)
+-  fixed #include/CGAL/Triangulation_short_names_3.h in
+   Triangulation_hierarchy_vertex_base_2.h 
+
 ver 8.24 (20/11/03) [Julia]
 - bug fix in get_conflict functions in Regular_triangulation_2:
   case that point is located on vertex (+ added tests)	
