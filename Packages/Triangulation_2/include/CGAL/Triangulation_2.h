@@ -121,7 +121,7 @@ public:
   }
 
   // Helping functions
-   // should be perhaps protected or even removed
+   
   void  copy_triangulation(const CGAL_Triangulation_2 &tr)
   {
      _gt = tr._gt;
@@ -281,7 +281,7 @@ public:
       return v;
     }
     if(number_of_vertices() == 1) {
-      if (p == finite_vertex()->point()) {
+      if (geom_traits().compare(p,finite_vertex()->point()) ) {
 	lt = VERTEX;
 	return finite_vertex();
       }
