@@ -1117,8 +1117,8 @@ public:
   Halfedge_handle insert_from_vertex(const Curve_2 & cv, Vertex_handle src, 
                                      Change_notification * en = NULL)
   {
-    CGAL_precondition(!point_equal(pmwx_traits->curve_source(c),
-                                   pmwx_traits->curve_target(c)));
+    CGAL_precondition(!point_equal(pmwx_traits->curve_source(cv),
+                                   pmwx_traits->curve_target(cv)));
     return insert_intersecting_curve(cv, src,  true, en);
   }
 
