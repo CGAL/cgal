@@ -39,7 +39,7 @@ sub init_variables()
 }
 
 $ENV{PATH}=
-'/net/bin:/net/unsupported/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin:/usr/bin/X11';
+'/net/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin:/usr/bin/X11';
 
 
 
