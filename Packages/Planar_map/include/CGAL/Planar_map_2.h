@@ -618,7 +618,7 @@ public:
   const Point_location_base* get_point_location() const {return pl;}
   const Bounding_box_base* get_bounding_box() const {return bb;}
   
-  const Traits_wrap& get_traits() { return *traits;}
+  const Traits_wrap& get_traits() const { return *traits;}
 
 		
 private:
