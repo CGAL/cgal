@@ -3,6 +3,8 @@
 \ccIndexSubitemBegin{polyhedron}{strongly convex}
 \ccIndexSubitem[C]{convex_hull_3}{postcondition}
 
+\ccDefinition
+
 The function \ccRefName\ implements the tests described in 
 \cite{mnssssu-cgpvg-96} to 
 determine if the vertices of a given polyhedron represents a strongly convex 
@@ -26,7 +28,7 @@ The equations of the facet planes of the polyhedron must have
 already been computed.
 }
 
-The default traits class is the \cgal\ \ccc{Kernel_traits_3} class,%
+The default traits class is the \cgal\ \ccc{Kernel_traits_3} class,
 with the representation determined by \ccc{InputIterator::value_type}.
 
 \ccHeading{Requirements}

@@ -18,7 +18,7 @@ function \ccc{convex_hull_3}.
 \ccGlue
 \ccNestedType{Facet}{ a model of \ccc{Polyhedron_Facet}}
 \ccGlue
-\ccNestedType{Halfedge_data_structure}{halfedge data structure HDS}
+\ccNestedType{Halfedge_data_structure}{halfedge data structure}
 \ccGlue
 \ccNestedType{Halfedge_handle}{handle to halfedge}
 \ccGlue
@@ -33,13 +33,15 @@ function \ccc{convex_hull_3}.
 
 Only a default constructor is required.
 
+\ccConstructor{???}
+
 \ccOperations
 
 \ccAutoIndexingOff
 \ccMethod{Facet_iterator facets_begin();}%
-{iterator over all facets (excluding holes)}
+{iterator over all facets (excluding holes).}
 
-\ccMethod{Facet_iterator facets_end();}{past-the-end iterator}
+\ccMethod{Facet_iterator facets_end();}{past-the-end iterator.}
 
 \ccMethod{Halfedge_iterator border_halfedges_begin();}{halfedge iterator starting with the border edges.}
 
@@ -67,8 +69,8 @@ reference the halfedge incident to the facet right before the
 halfedge incident to the hole. }
 
 \ccMethod{Size size_of_border_halfedges();}{ 
-number of border halfedges.
-(used only for assertion checking) }
+number of border halfedges
+(used only for assertion checking). }
 
 \ccMethod{
 Halfedge_handle 
@@ -99,7 +101,7 @@ halfedges of the hole denoted by h incident to the new facet.
 Returns \ccc{h}.
 }
 
-\ccMethod{void delegate(Modifier_base<HDS>& m);}%
+\ccMethod{void delegate(Modifier_base<Halfedge_data_structure>& m);}%
 {
 calls the \ccc{operator()} of the modifier \ccc{m}. See \ccc{Modifier_base} in 
 the Support Library Manual for a description of modifier design and
