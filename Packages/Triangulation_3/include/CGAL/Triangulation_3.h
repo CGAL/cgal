@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : pipo
+// release       :
 // release_date  :
 //
 // file          : include/CGAL/Triangulation.h
