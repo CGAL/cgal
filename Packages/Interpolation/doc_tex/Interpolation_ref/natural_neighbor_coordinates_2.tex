@@ -31,7 +31,7 @@ of the triangulation.
   computes the natural neighbor coordinates for \ccc{p} with respect
   to the points in the two-dimensional Delaunay triangulation \ccc{dt}.
   The template class \ccc{Dt} should be of type
-  \ccc{Delaunay_triangulation_2}.  The value type of the
+  \ccc{Delaunay_triangulation_2<Traits, Tds>}.  The value type of the
   \ccc{OutputIterator} is a pair of \ccc{Dt::Point_2} and the
   coordinate value of type \ccc{Dt::Geom_traits::FT}. The sequence of
   point-coordinate pairs that is computed by the function is placed
@@ -63,7 +63,7 @@ of the triangulation.
   over the boundary edges of the conflict zone of \ccc{p} in the
   triangulation. It is the result of the function
   \ccc{T.get_boundary_of_conflicts(p,std::back_inserter(hole),
-    start);}, see \ccc{Delaunay_triangulation_2}.}
+    start)}, see \ccc{Delaunay_triangulation_2<Traits, Tds>}.}
 
 \ccFunction{template <class Dt, class OutputIterator> std::pair<
   OutputIterator, typename Dt::Geom_traits::FT >
@@ -74,10 +74,17 @@ of the triangulation.
   \ccc{Dt} excluding \ccc{vh->point()}. The same as above for the
   remaining parameters.}
 
+\ccFunction{template <class Dt, class OutputIterator> 
+  std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
+  regular_neighbor_coordinates_2(const Dt& rt,
+  typename Dt::Vertex_handle vh, OutputIterator out);}{The template
+  parameter \ccc{Traits} of the function above is instantiated to
+  \ccc{Dt::Geom_traits}.}
+
 \ccHeading{Requirements}
 \begin{enumerate}
 \item \ccc{Dt} are equivalent to the class
-  \ccc{Delaunay_triangulation_2}.
+  \ccc{Delaunay_triangulation_2<Traits, Tds>}.
 \item \ccc{OutputIterator::value_type} is equivalent to
   \ccc{std::pair<Dt::Point_2, Dt::Geom_traits::FT>}, i.e.\ a pair
   asscociating a point and its natural neighbor coordinate.
@@ -94,10 +101,10 @@ of the triangulation.
 \end{enumerate}
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::linear_interpolation.h} \\
-\ccRefIdfierPage{CGAL::Sibson_c1_interpolation.h}\\ 
-\ccRefIdfierPage{CGAL::surface_coordinates_3.h} \\
-\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2.h} 
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation}\\ 
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3} \\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} 
 
 \ccImplementation This function computes the areas stolen from the
 Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The

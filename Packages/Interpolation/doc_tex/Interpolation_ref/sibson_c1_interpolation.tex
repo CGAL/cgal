@@ -70,11 +70,11 @@ function gradient given a point.
   the type of the gradient of the function value and a boolean. The
   function gradient type must provide a multiplication operation with
   \ccc{Traits::Vector_d}.
-\item A model of the functor types \ccc{Functor} and \ccc{GradFunctor}
-  resp.\ is provided by the struct \ccc{Data_access}. It must be
-  instantiated accordingly with an associative container (e.g.\ \stl\ 
-  \ccc{std::map}) having the point type as \ccc{key_type} and the
-  function value type and function gradient type resp.\ as
+\item A model of the functor types \ccc{Functor} (resp.\ 
+  \ccc{GradFunctor}) is provided by the struct \ccc{Data_access}. It
+  must be instantiated accordingly with an associative container
+  (e.g.\ \stl\ \ccc{std::map}) having the point type as \ccc{key_type}
+  and the function value type (resp.\ function gradient type) as
   \ccc{mapped_type}.
 \item The number type \ccc{FT} provided by \ccc{Traits} must support
   the square root operation \ccc{sqrt()}.
@@ -82,7 +82,7 @@ function gradient given a point.
 
 \ccFunction{template < class ForwardIterator, class Functor, class
   GradFunctor, class Traits> typename Functor::result_type
-  Sibson_c1_interpolation_square(ForwardIterator first,
+  sibson_c1_interpolation_square(ForwardIterator first,
   ForwardIterator beyond, const typename
   std::iterator_traits<ForwardIterator>::value_type::second_type&
   norm, Functor function_value, GradFunctor function_gradient,const
@@ -101,7 +101,7 @@ function gradient given a point.
 \ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
 \ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
 \ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
-\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2_3}\\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
 %\ccImplementation
 
 \ccIndexSubitemEnd{Interpolation}{sibson_c1_interpolation}

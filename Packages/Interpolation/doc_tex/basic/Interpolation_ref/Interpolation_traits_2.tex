@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Interpolation_traits_2<R>}
+\begin{ccRefClass}{Interpolation_traits_2<K>}
   
 
 
@@ -24,7 +24,7 @@
   \ccc{InterpolationTraits} and can be used to instantiate the
   geometric traits class of interpolation methods applied on a
   bivariate function over a two-dimensional domain. The traits class
-  is templated by a kernel class \ccc{R}.
+  is templated by a kernel class \ccc{K}.
   
   \ccInclude{CGAL/Interpolation_traits_2.h}
 
@@ -33,20 +33,19 @@
   \ccIndexSubitem[c]{InterpolationTraits}{model} \\
   
   \ccTypes
-  \ccSetThreeColumns{typedef R::Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
   \ccThreeToTwo 
-  \ccTypedef{typedef R::FT                            FT;}{}
+  \ccTypedef{typedef K::FT                            FT;}{}
   \ccGlue
-  \ccTypedef{typedef R::Point_2                        Point_d;}{}
+  \ccTypedef{typedef K::Point_2                        Point_d;}{}
   \ccGlue
-  \ccTypedef{typedef R::Vector_2                       Vector_d;}{}
+  \ccTypedef{typedef K::Vector_2                       Vector_d;}{}
   \ccGlue
-  \ccTypedef{typedef R::Construct_vector_2     Construct_vector_d;}{}
+  \ccTypedef{typedef K::Construct_vector_2     Construct_vector_d;}{}
   \ccGlue
-  \ccTypedef{typedef R::Construct_scaled_vector_2 
+  \ccTypedef{typedef K::Construct_scaled_vector_2 
     Construct_scaled_vector_d;}{}
   \ccGlue
-  \ccTypedef{typedef R::Compute_squared_distance_2 
+  \ccTypedef{typedef K::Compute_squared_distance_2 
     Compute_squared_distance_d;}{}
                                            
 \ccOperations
