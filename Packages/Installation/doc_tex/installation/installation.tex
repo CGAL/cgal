@@ -54,7 +54,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-%% \newcommand{\cgalrelease}{2.3}
+\newcommand{\cgalrelease}{3.1}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -1304,10 +1304,9 @@ Cygwin~0.9), located in the cygwin main directory and add the line
 \begin{verbatim}
 call C:\PROGRA~1\MICROS~2\VC98\Bin\MSCVARS32.BAT
 \end{verbatim}
-where
-\nonlinkedpath'C:\PROGRA~1\MICROS~2\'
+%\nonlinkedpath'C:\PROGRA~1\MICROS~2\'
 %\texttt{C:$\backslash$PROGRA$\sim$1$\backslash$MICROS$\sim$2$\backslash$}
-has to be customized according to where \msvc{} is installed on your
+customized according to where \msvc{} is installed on your
 system. Depending on the version of \msvc{} you might have to replace
 \texttt{MSCVARS32.BAT} by \texttt{VCVARS32.BAT}.
 
@@ -1357,7 +1356,7 @@ specific include directory. This directory can be found below
 description (cf. Section~\ref{sec:os-compiler-id}).
 
 The test programs used to generate the \texttt{compiler\_config.h}
-file can be found in \nonlinkedpath'CGAL-3.1/config/testfiles'.
+file can be found in \texttt{config/testfiles}.
 \index{directories!config/testfiles@\texttt{config/testfiles}} Both
 \texttt{compiler\_config.h} and the test programs contain a short
 description of the problem. In case of trouble with one of the
