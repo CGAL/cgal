@@ -20,7 +20,7 @@ int main()
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
 //#include <CGAL/IO/cgal_window_redefine.h>
-#include "../../include/CGAL/Snap_rounding_2.h"
+#include <CGAL/Snap_rounding_2.h>
 
 typedef leda_rational                                  Number_Type;
 typedef CGAL::Cartesian<Number_Type>                   Rep;

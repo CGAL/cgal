@@ -43,7 +43,7 @@
 #include <list>
 #include <set>
 #include <CGAL/leda_real.h>
-#include "../../include/CGAL/Snap_rounding_kd_2.h"
+#include <CGAL/Snap_rounding_kd_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -125,18 +125,18 @@ struct hot_pixel_dir_cmp
 template<class Rep_>
 class Snap_rounding_2 {
 
-typedef CGAL::Arr_segment_traits_2<Rep_ > Traits;
-typedef Rep_ Rep;
-typedef typename Rep::FT NT;
-typedef typename Traits::X_curve X_curve;
-typedef typename Traits::Curve Curve;
-typedef std::list<X_curve>              CurveContainer;
+typedef CGAL::Arr_segment_traits_2<Rep_ >            Traits;
+typedef Rep_                                         Rep;
+typedef typename Rep::FT                             NT;
+typedef typename Traits::X_curve                     X_curve;
+typedef typename Traits::Curve                       Curve;
+typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
 
 public:
   friend class Segment_data<Rep>;
   friend class Hot_Pixel<Rep>;
-  friend class hot_pixel_dir_cmp<Rep>;
+  friend class hot_pixel_dir_cmp<Rep>;spolylines_end
 
   typedef CGAL::Segment_2<Rep> Segment_2;
   typedef CGAL::Point_2<Rep> Point_2;

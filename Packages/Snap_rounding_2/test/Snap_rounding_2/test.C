@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 }
 #else
 #include <CGAL/Cartesian.h>
-#include "../../include/CGAL/Snap_rounding_2.h"
+#include <CGAL/Snap_rounding_2.h>
 
 typedef leda_rational Number_Type;
 
