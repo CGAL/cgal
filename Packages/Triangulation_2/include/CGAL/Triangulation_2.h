@@ -45,6 +45,8 @@
 #include <CGAL/Triangulation_iterators_2.h>
 #include <CGAL/Triangulation_circulators_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
+#include <CGAL/Iterator_project.h>
+#include <CGAL/function_objects.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -114,6 +116,11 @@ public:
 
   typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
 
+  // Auxiliary iterators for convenience
+  //typedef Project_point<Vertex>                           Proj_point;
+  //typedef Iterator_project<Vertex_iterator, Proj_point, Point&, Point*>  
+  //                                                        Points_iterator;
+  
   typedef Point value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
   
@@ -239,6 +246,8 @@ public:
   Finite_vertices_iterator finite_vertices_end() const;
   Finite_edges_iterator finite_edges_begin() const;
   Finite_edges_iterator finite_edges_end() const; 
+  //Points_iterator points_begin() const;
+  //Points_iterator points_end() const;
 
   All_faces_iterator all_faces_begin() const;
   All_faces_iterator all_faces_end() const;
@@ -1779,6 +1788,22 @@ finite_edges_end() const
     ncthis = (Triangulation_2<Gt, Tds>*)this;
   return Finite_edges_iterator(ncthis,1);
 }
+
+// template <class Gt, class Tds >
+// Triangulation_2<Gt, Tds>::Points_iterator
+// Triangulation_2<Gt, Tds>::
+// Points_begin() const
+// {
+//   return Points_iterator(Finite_vertices_iterator(ncthis));
+// }
+
+// template <class Gt, class Tds >
+// Triangulation_2<Gt, Tds>::Points_iterator
+// Triangulation_2<Gt, Tds>::
+// Points_end() const
+// {
+//   return Points_iterator(Finite_vertices_iterator(ncthis,1));
+// }
 
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::All_faces_iterator

@@ -84,9 +84,14 @@ _test_cls_const_Del_triangulation(const Triangulation &)
 				       back_inserter(hole_bd)));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
+  unsigned int nch = hole_bd.size();
+  hole_bd.clear();
+  T2.find_conflicts(Point(0,1,2), hole_bd);
+  assert(hole_bd.size() == nch);
   hole_bd.clear();
   assert(!T2.find_conflicts(Point(0,0,1), back_inserter(conflicts)));
   conflicts.clear();
   assert(T2.find_conflicts(Point(-1,-1,1), back_inserter(conflicts)));
   conflicts.clear();
+   
 }

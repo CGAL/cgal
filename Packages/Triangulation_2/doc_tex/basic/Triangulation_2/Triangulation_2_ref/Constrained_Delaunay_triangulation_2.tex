@@ -126,6 +126,60 @@ e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
 \ccMethod{void remove(Vertex_handle & v);}
 { Removes vertex v. }
 
+\ccHeading{Queries}
+The following template member functions query the
+set of faces in conflict with a point \ccc{p}.
+The notion of conflict refers here to a 
+constrained Delaunay setting which means the following.
+Constrained edges are considered as visibility obstacles
+and a point \ccc{p} is considered to be 
+in conflict with a face \ccc{f} iff it is 
+ visible from the interior of \ccc{f} and 
+included in the circumcircle of \ccc{f}.
+
+\ccMethod{template <class Out_it1, class Out_it2> 
+          bool find_conflicts (const Point  &p, 
+   		       		Out_it1 fit, 
+   		       		Out_it2 eit,
+  		       		Face_handle start) const;} 
+{ 
+\ccc{Out_it1} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value type.
+This members function outputs in the container pointed to by \ccc{fit}
+the faces which are in conflict with point \ccc{p}.
+It outputs in the container pointed to by \ccc{eit} the 
+the boundary of the zone in conflict with \ccc{p}.
+The boundary edges
+of the conflict  zone are ouput in counterclockwise order
+and each edge is described  through its incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is \ccc{true} if some conflicts has been found and 
+\ccc{false}
+otherwise, that is when \ccc{p} coincides with a vertex of the
+triangulation.
+}
+
+\ccMethod{template <class Out_it1> 
+          bool find_conflicts (const Point  &p, 
+   		       		Out_it1 fit, 
+  		       		Face_handle start) const;}
+{Same as above except that only the faces in conflict with \ccc{p}
+are output.}
+\ccMethod{template <class Out_it2> 
+          bool boundary_of_conflict_zone (const Point  &p, 
+   		   		Out_it2 eit,
+  		       		Face_handle start) const;}
+{ \ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value
+type.
+ This functions  outputs in the container pointed to by \ccc{eit},
+the boundary of the zone in conflict with \ccc{p}. The boundary edges
+of the conflict  zone are ouput in counter-clockwise order
+and each edge is described  through the incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is true if some conflicts has been found and false
+otherwise
+(i. e. when \ccc{p} coincide with a vertex of the triangulation)}
+
 
 \ccHeading{Checking}
 
@@ -143,8 +197,7 @@ does not contain the vertex of \ccc{f->neighbor(i)}
 opposite to edge \ccc{(f,i)}. }
 
 \ccMethod{void flip(Face_handle& f, int i);}
-{ Flip \ccc{f} and \ccc{f->neighbor(i)}.
-\ccPrecond \ccc{f->is\_constrained(i) == FALSE}.}
+{ Flip \ccc{f} and \ccc{f->neighbor(i)}.}
 
 
 \ccMethod{void propagating_flip(List_edges & edges);}

@@ -37,6 +37,9 @@ _test_iterators( const Triangulation &T )
     break;
   case 2: assert ( nv == T.number_of_vertices() && nv - ne + nf == 1);
   }
+
+  //  int np = _test_cls_point_iterator(T);
+  //assert( np = nv);
 }
 
 template < class Triangulation >
@@ -91,6 +94,34 @@ _test_cls_vertex_iterator( const Triangulation &T )
 
   return nv;
 }
+
+// template < class Triangulation >
+// int
+// _test_cls_point_iterator( const Triangulation &T )
+// {
+//   typedef typename Triangulation::Points_iterator Points_iterator;
+//   typedef typename Triangulation::Points          Points;
+
+//   int np = 0:
+//   Points_iterator pit;
+//   Points p;
+//   for (pit = T.points_begin(); 
+//        pit != T.points_end(); 
+//        ++pit) {
+//     np ++;
+//     p = *pit;
+//   }
+//   assert( np == T.number_of_vertices() );
+
+//   int n=np;
+//   for (pit = T.points_end(); 
+//        pit != T.points_begin(); 
+//        --pit)
+//     n--;
+//   assert( n == 0 );
+
+//   return np;  
+// }
 
 template < class Triangulation >
 int

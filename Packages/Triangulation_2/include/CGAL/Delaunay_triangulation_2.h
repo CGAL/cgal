@@ -73,11 +73,11 @@ public:
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
   
-  bool test_conflict(const Point  &p, Face_handle fh) const;// deprecated
+  bool does_conflict(const Point  &p, Face_handle fh) const;// deprecated
   bool test_conflict(const Point  &p, Face_handle fh) const;
   bool find_conflicts(const Point  &p,                //deprecated
 		      std::list<Face_handle>& conflicts,
-		      Face_handle start ) const;
+		      Face_handle start= Face_handle() ) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
   //   bool find_conflicts (const Point  &p, 
@@ -246,6 +246,16 @@ Delaunay_triangulation_2<Gt,Tds>::
 does_conflict(const Point  &p, Face_handle fh) const
 {
   return test_conflict(p,fh);
+}
+
+template < class Gt, class Tds >
+inline bool
+Delaunay_triangulation_2<Gt,Tds>::
+find_conflicts(const Point  &p, 
+	       std::list<Face_handle>& conflicts,
+	       Face_handle start ) const
+{
+  return find_conflicts(p, back_inserter(conflicts), start);
 }
 
 template < class Gt, class Tds >

@@ -152,6 +152,46 @@ which is no longer a Delaunay triangulation.
 begins with a location step and
 \ccc{f} may be used to initialize the location.}
 
+\ccMethod{template <class Out_it1, class Out_it2> 
+          bool find_conflicts (const Point  &p, 
+   		       		Out_it1 fit, 
+   		       		Out_it2 eit,
+  		       		Face_handle start) const;}
+{ \ccc{Out_it1} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value type.
+This members function outputs in the container pointed to by \ccc{fit}
+the faces which are in conflict with point \ccc{p}
+i. e. whose circumcircle contains \ccc{p}.
+It outputs in the container pointed to by \ccc{eit} the 
+the boundary of the zone in conflict with \ccc{p}.
+The boundary edges
+of the conflict  zone are ouput in counter-clockwise order
+and each edge is described  through its incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is true if some conflicts has been found and false
+otherwise
+(i. e. when \ccc{p} coincide with a vertex of the triangulation).}
+
+\ccMethod{template <class Out_it1> 
+          bool find_conflicts (const Point  &p, 
+   		       		Out_it1 fit, 
+  		       		Face_handle start) const;}
+{Same as above except that only the faces in conflict with \ccc{p}
+are output.}
+\ccMethod{template <class Out_it2> 
+          bool boundary_of_conflict_zone (const Point  &p, 
+   		   			Out_it2 eit,
+  		       			Face_handle start) const;}
+{ \ccc{Out_it2} stands for an output iterator with \ccc{Edge} as value
+type.
+ This function  outputs in the container pointed to by \ccc{eit},
+the boundary of the zone in conflict with \ccc{p}. The boundary edges
+of the conflict  zone are ouput in counterclockwise order
+and each edge is described  through the incident face
+which is not in conflict with \ccc{p}.
+The ouput boolean is true if some conflicts has been found and false
+otherwise,
+i. e. when \ccc{p} coincides with a vertex of the triangulation.}
 
 
 

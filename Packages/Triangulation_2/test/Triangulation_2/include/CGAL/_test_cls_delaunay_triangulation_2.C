@@ -112,7 +112,11 @@ _test_cls_delaunay_triangulation_2( const Del & )
   assert(!T2.find_conflicts(Point(0,0,1), back_inserter(conflicts)));
   conflicts.clear();
   assert(T2.find_conflicts(Point(-1,-1,1), back_inserter(conflicts)));
+  unsigned int ns = conflicts.size();
   conflicts.clear();
+  assert(T2.find_conflicts(Point(-1,-1,1), conflicts));
+  assert(conflicts.size() == ns);
+  
 
   /********************/
   /***** Duality ******/

@@ -461,37 +461,16 @@ test_conflict(Face_handle fh, const Point& p) const
   return test_conflict(p,fh);
 }
 
-// template < class Gt, class Tds >    
-// void 
-// Constrained_Delaunay_triangulation_2<Gt,Tds>::
-// find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
-// {
-//   // sets in le the counterclocwise list of the edges of the boundary of the 
-//   // union of the faces in conflict with p
-//   // an edge is represented by the incident face that is not in conflict with p
-//   Face_handle fh= locate(p, hint);
-//   le.push_back(Edge(fh->neighbor(0),fh->neighbor(0)->index(fh)));
-//   le.push_back(Edge(fh->neighbor(1),fh->neighbor(1)->index(fh)));
-//   le.push_back(Edge(fh->neighbor(2),fh->neighbor(2)->index(fh)));
-
-//   typename std::list<Edge>::iterator lit=le.begin();
-//   typename std::list<Edge>::iterator litt;
-//   int ih;
-//   while(lit != le.end()){
-//     if ( !((*lit).first->is_constrained((*lit).second)) && 
-// 	 ( test_conflict((*lit).first, p)) ){
-//       fh = (*lit).first;
-//       ih = (*lit).second;
-//       litt = lit; // this one has to be deleted
-//       lit = le.insert(lit, Edge(fh->neighbor(cw(ih)),
-// 				fh->neighbor(cw(ih))->index(fh)) );
-//       lit = le.insert(lit, Edge(fh->neighbor(ccw(ih)),
-// 				fh->neighbor(ccw(ih))->index(fh)) );
-//       le.erase(litt);
-//     }
-//     else { ++lit;}
-//   }
-// }
+template < class Gt, class Tds >    
+void 
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
+{
+  // sets in le the counterclocwise list of the edges of the boundary of the 
+  // union of the faces in conflict with p
+  // an edge is represented by the incident face that is not in conflict with p
+  boundary_of_conflict_zone(p, back_inserter(le), hint);
+}
   
 template < class Gt, class Tds >  
 inline 
