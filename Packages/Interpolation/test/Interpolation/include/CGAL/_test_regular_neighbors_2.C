@@ -154,10 +154,10 @@ _test_regular_neighbors_2( const Triangul & )
   //test with hidden_vertices:
   wp = Weighted_point(Bare_point(0,0),4);
   norm = 
-  CGAL::regular_neighbor_coordinates_2(T2,wp,std::back_inserter(coords)).second;
+    CGAL::regular_neighbor_coordinates_2(T2,wp,std::back_inserter(coords)).second;
   assert(test_barycenter( coords.begin(), coords.end(),norm,wp));
   coords.clear();
-
+  
   //add the middle point of the grid
   T2.insert(Weighted_point(Bare_point(0,0),0));
   
@@ -185,7 +185,14 @@ _test_regular_neighbors_2( const Triangul & )
   norm = CGAL::regular_neighbor_coordinates_2(T2,wp,std::back_inserter(coords)).second;
   assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
   coords.clear();
-  }
+
+  //a vertex v in Reg(P\v->point()):
+  typename Triangul::Vertex_iterator vit = T2.finite_vertices_end();
+  norm = CGAL::regular_neighbor_coordinates_2(T2, --vit, 
+					      std::back_inserter(coords)).second;
+  assert(test_barycenter( coords.begin(), coords.end(),norm,vit->point()));
+  coords.clear();
+}
 
 //end of file
 
