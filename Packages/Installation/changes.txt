@@ -1,3 +1,8 @@
+26/03/2003 (rursu)
+----------
+fixed bug in install_cgal: Borland 5.5 compiler is supported by CGAL
+modifed install_cgal: cl1310 is supported by CGAL
+
 17/03/2003 (rursu)
 ----------
 modified src/CGALWin/makefile_Win

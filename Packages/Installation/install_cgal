@@ -4106,7 +4106,7 @@ _set_support()
     case `compiler_description` in
 	*Borland*)
 	    case `compiler_version` in
-		5.5.1*) CGAL_SUPPORT_COMPILER='y';;
+		5.5*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*SUNPRO*)
@@ -4130,6 +4130,7 @@ _set_support()
 	*VC++*)
 	    case `compiler_version` in
 		1300*) CGAL_SUPPORT_COMPILER='y';;
+		1310*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
     esac
