@@ -32,8 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vb = Triangulation_ds_vertex_base_2<>,
-	  class Fb = Triangulation_ds_face_base_2<> >
+template <class Vb, class Fb>
 class Apollonius_graph_data_structure_2
   : public Triangulation_data_structure_2<Vb, Fb>
 {
