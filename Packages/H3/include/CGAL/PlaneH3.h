@@ -25,11 +25,6 @@
 #ifndef CGAL_PLANEH3_H
 #define CGAL_PLANEH3_H
 
-#if defined(CGAL_CFG_INCOMPLETE_TYPE_BUG_1) && \
-   !defined(CGAL_NO_PLANE_TRANSFORM_IN_AT)
-#define CGAL_NO_PLANE_TRANSFORM_IN_AT
-#endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
-
 #include <CGAL/PointH2.h>
 #include <CGAL/PointH3.h>
 #include <CGAL/LineH3.h>
@@ -393,25 +388,8 @@ template < class R >
 PlaneH3<R>
 PlaneH3<R>::transform(const Aff_transformationH3<R>& t) const
 {
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
  return t.transform(*this);
-#else
- if ( t.is_even() )
- {
-     return PlaneH3<R>(
-             t.transform(point() ),
-             t.transpose().inverse().transform(orthogonal_direction() ));
- }
- else
- {
-     return PlaneH3<R>(
-             t.transform(point() ),
-           - t.transpose().inverse().transform(orthogonal_direction() ));
- }
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 }
-
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE3
 template < class R >

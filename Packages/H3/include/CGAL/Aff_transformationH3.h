@@ -20,15 +20,9 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_AFF_TRANSFORMATIONH3_H
 #define CGAL_AFF_TRANSFORMATIONH3_H
-
-#if defined(CGAL_CFG_INCOMPLETE_TYPE_BUG_1) && \
-   !defined(CGAL_NO_PLANE_TRANSFORM_IN_AT)
-#define CGAL_NO_PLANE_TRANSFORM_IN_AT
-#endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
 
 #include <CGAL/determinant.h>
 
@@ -45,8 +39,7 @@ template < class R >
 Aff_transformationH3<R>
 _general_transformation_composition (
                            Aff_transformation_repH3<R> l,
-                           Aff_transformation_repH3<R> r
-                                         );
+                           Aff_transformation_repH3<R> r);
 
 template <class R_ >
 class Aff_transformation_rep_baseH3 : public Rep
@@ -68,10 +61,8 @@ public:
   virtual  DirectionH3<R>
            transform(const DirectionH3<R>&) const = 0;
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
   virtual  PlaneH3<R>
            transform(const PlaneH3<R>&) const = 0;
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
   virtual  Aff_transformationH3<R>
            inverse() const = 0;
@@ -117,10 +108,8 @@ public:
   virtual  DirectionH3<R>
            transform(const DirectionH3<R>& dir) const;
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
   virtual  PlaneH3<R>
            transform(const PlaneH3<R>& pl) const;
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
   virtual  Aff_transformationH3<R>
            inverse() const;
@@ -186,11 +175,9 @@ public:
            transform(const DirectionH3<R>& dir) const
            { return dir; }
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
   virtual  PlaneH3<R>
            transform(const PlaneH3<R>& pl) const
            { return pl; }
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
   virtual  Aff_transformationH3<R>
            inverse() const
@@ -240,10 +227,8 @@ public:
   virtual  DirectionH3<R>
            transform(const DirectionH3<R>& dir) const;
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
   virtual  PlaneH3<R>
            transform(const PlaneH3<R>& pl) const;
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
   virtual  Aff_transformationH3<R>
            inverse() const;
@@ -302,12 +287,7 @@ public:
                   const RT& m20, const RT& m21, const RT& m22,
                                                                const RT& m33);
 
-#ifdef CGAL_CFG_INCOMPLETE_TYPE_BUG_1
-  Aff_transformationH3(Aff_transformation_repH3<R>* ptr);
-#endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
-
   ~Aff_transformationH3();
-
 
   PointH3<R>
   transform(const PointH3<R>& p) const;
@@ -318,10 +298,8 @@ public:
   DirectionH3<R>
   transform(const DirectionH3<R>& d) const;
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
   PlaneH3<R>
   transform(const PlaneH3<R>& pl) const;
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
   Aff_transformationH3<R>
   inverse()   const;
@@ -425,7 +403,6 @@ Aff_transformation_repH3<R>::transform(const DirectionH3<R>& d) const
 */
 }
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
 template < class R >
 CGAL_KERNEL_INLINE
 PlaneH3<R>
@@ -446,7 +423,6 @@ Aff_transformation_repH3<R>::transform(const PlaneH3<R>& pl) const
                -(transpose().inverse().transform(pl.orthogonal_direction() )));
   }
 }
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -647,7 +623,6 @@ DirectionH3<R>
 Translation_repH3<R>::transform(const DirectionH3<R>& dir) const
 { return dir; }
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
 template < class R >
 inline
 PlaneH3<R>
@@ -655,7 +630,6 @@ Translation_repH3<R>::transform(const PlaneH3<R>& pl) const
 {
   return PlaneH3<R>( transform( pl.point() ), pl.orthogonal_vector() );
 }
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
 template < class R >
 inline
@@ -869,14 +843,12 @@ Aff_transformationH3<R>::
 transform(const DirectionH3<R>& d) const
 { return ptr()->transform(d); }
 
-#ifndef CGAL_NO_PLANE_TRANSFORM_IN_AT
 template < class R >
 inline
 PlaneH3<R>
 Aff_transformationH3<R>::
 transform(const PlaneH3<R>& pl) const
 { return ptr()->transform(pl); }
-#endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
 
 template < class R >
 inline

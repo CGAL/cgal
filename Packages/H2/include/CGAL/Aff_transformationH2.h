@@ -28,12 +28,6 @@
 #include <CGAL/No_op_allocator.h>
 #include <CGAL/rational_rotation.h>
 
-#if defined(CGAL_CFG_INCOMPLETE_TYPE_BUG_1) && \
-   !defined(CGAL_NO_LINE_TRANSFORM_IN_AT)
-#define CGAL_NO_LINE_TRANSFORM_IN_AT
-#endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
-
-
 CGAL_BEGIN_NAMESPACE
 
 template <class R>
@@ -570,9 +564,7 @@ class Aff_transformationH2
     PointH2<R>     transform(const PointH2<R>& p) const;
     VectorH2<R>    transform(const VectorH2<R>& v) const;
     DirectionH2<R> transform(const DirectionH2<R>& d) const;
-#ifndef CGAL_NO_LINE_TRANSFORM_IN_AT
     LineH2<R>      transform(const LineH2<R>& l) const;
-#endif // CGAL_NO_LINE_TRANSFORM_IN_AT
 
     Aff_transformationH2<R> inverse() const;
     bool                    is_even() const;
@@ -712,12 +704,10 @@ DirectionH2<R>
 Aff_transformationH2<R>::transform( const DirectionH2<R>& d) const
 { return ptr->transform(d); }
 
-#ifndef CGAL_NO_LINE_TRANSFORM_IN_AT
 template < class R >
 LineH2<R>
 Aff_transformationH2<R>::transform(const LineH2<R>& l) const
 { return LineH2<R>( transform( l.point(0)), transform( l.point(1)) ); }
-#endif // CGAL_NO_LINE_TRANSFORM_IN_AT
 
 template < class R >
 Aff_transformationH2<R>

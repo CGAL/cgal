@@ -22,25 +22,13 @@
 #ifndef CGAL_SIMPLE_HOMOGENEOUS_REP_H
 #define CGAL_SIMPLE_HOMOGENEOUS_REP_H
 
-#define CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/Simple_Handle_for.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
 
-#include <CGAL/RayH2.h> // for the rep  declaration should be enough
-#include <CGAL/TriangleH2.h>
-#include <CGAL/SegmentH2.h>
-#include <CGAL/CircleH2.h>
 #include <CGAL/RepH3.h>
-#include <CGAL/RayH3.h>
-#include <CGAL/LineH3.h>
-#include <CGAL/SphereH3.h>
-#include <CGAL/SegmentH3.h>
-#include <CGAL/TetrahedronH3.h>
-#include <CGAL/Data_accessorH2.h>
 
 #include <CGAL/Quotient.h>
 
