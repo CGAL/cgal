@@ -142,11 +142,7 @@ public:
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives
-#ifndef NBUG
-    return compare_value(curve_derivative(cv2), curve_derivative(cv1));
-#else
     return compare_slope_2_object()(cv2, cv1);
-#endif
   }
 
   /*! curve_compare_at_x_right() compares the y value of two curves in an
@@ -177,25 +173,7 @@ public:
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
-#if 1
-#ifndef NBUG
-    return compare_value(curve_derivative(cv1), curve_derivative(cv2));
-#else
     return compare_slope_2_object()(cv1, cv2);
-#endif
-#else
-    Comparison_result resGood =
-        compare_value(curve_derivative(cv1), curve_derivative(cv2));
-    Comparison_result resBad = compare_slope_2_object()(cv1, cv2);
-    if (resGood != resBad) {
-        std::cout << "good: " << resGood << std::endl;
-        std::cout << "bad: " << resBad << std::endl;
-        std::cout << "cv1: " << cv1 << std::endl;
-        std::cout << "cv2: " << cv2 << std::endl;
-        std::cout << "  p: " << q << std::endl;
-    }
-    return resGood;
-#endif
   }
     
   /*! Return the curve-point status of the input objects
@@ -255,24 +233,6 @@ public:
    */
   bool point_is_right(const Point_2 & p1, const  Point_2 & p2) const
   { return less_x_2_object()(p2, p1); }
-
-#ifndef NBUG
-private:
-  typename Kernel::FT curve_derivative(const X_curve_2 &cv) const
-  {
-    CGAL_assertion(!curve_is_vertical(cv));
-    return ( (cv.target()).y() - cv.source().y()) / 
-      (cv.target().x() - cv.source().x());
-  }
-    
-  Comparison_result compare_value(const typename Kernel::FT & v1, 
-                                  const typename Kernel::FT & v2) const
-  {
-    typename Kernel::FT d = v1 - v2;
-    typename Kernel::FT z(0);
-    return ((d == z) ? EQUAL : ((z < d) ? LARGER : SMALLER));
-  }
-#endif
 };
 
 CGAL_END_NAMESPACE
