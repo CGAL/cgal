@@ -1,3 +1,9 @@
+26 September 2004 Sylvain Pion
+- install_cgal : get rid of the options --leda-sys-incl and --leda-sys-lib.
+  If users have LEDA installed in system dirs, then they can simply not
+  provide --LEDA_INCL_DIR and --LEDA_LIB_DIR, just like for GMP/QT.
+  Also get rid of NEED_EXTRA_LEDA_IDIR and NEED_EXTRA_LEDA_LDIR.
+
 25 September 2004 Sylvain Pion
 - install_cgal : simplify by changing the default value of the variables :
   CGAL_SHARED_LIB_CREATE, WINDOW_DIR, PRINT_STACKTRACE_PROGRAM.

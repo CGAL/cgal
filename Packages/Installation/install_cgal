@@ -83,14 +83,6 @@ LEDA_SUPPORT=''
 LEDA_INCL_DIR=''
 LEDA_LIB_DIR=''
 
-# do we have to provide extra incl/lib flags for LEDA('y')
-# is it installed in standard system dirs(''),
-# or do we want to provide extra incl/lib flags, although it is
-# installed in sysdirs ('x')?
-# set to 'n', if this has not been tested yet
-NEED_EXTRA_LEDA_IDIR='y'
-NEED_EXTRA_LEDA_LDIR='y'
-
 # did LEDA tests succeed ('' - no, 'y' - yep)
 LEDA_TEST_PASSED=''
 
@@ -280,7 +272,7 @@ print_usage_information()
        --build <config> | --rebuild <config> | --disable-shared |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-core] [-gmp] [-gmpxx] [-qt] [-qt_mt] [--verbose]
-      [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
+      [--CGAL_DIR <dir>]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
       [--CORE_INCL_DIR <dir>] [--CORE_LIB_DIR <dir>]
@@ -1707,7 +1699,7 @@ qt_test_ldflags()
 
 leda_cxxflags()
 {
-    if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+    if [ -n "${LEDA_SUPPORT}" -a -n "${LEDA_INCL_DIR}" ]; then
 	pathname1=`_where_is 'LEDA_INCL_DIR'`
 	pathname2=`filename_for_compiler ${pathname1}`
 	${_printf} "%s" "`include_dir_option ${pathname2}` "
@@ -1717,7 +1709,7 @@ leda_cxxflags()
 leda_libpathflags()
 {
     if [ -n "${SEPARATE_LIBPATH}" -a -n "${LEDA_SUPPORT}" ]; then
-	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	if [ -n "${LEDA_LIB_DIR}" ]; then
 	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
@@ -1727,7 +1719,7 @@ leda_libpathflags()
 leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
-	if [ -z "${SEPARATE_LIBPATH}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a -n "${LEDA_LIB_DIR}" ]; then
 #	    ${_printf} "%s" "${START_LD_OPT}"
 	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
@@ -2788,28 +2780,6 @@ check_ENABLE_SHARED()
     return 1
 }
 
-check_NEED_EXTRA_LEDA_IDIR()
-{
-    if [ -n "${NEED_EXTRA_LEDA_IDIR}" -a \
-	"${NEED_EXTRA_LEDA_IDIR}" != 'y' -a \
-	"${NEED_EXTRA_LEDA_IDIR}" != 'x' ]; then
-	$1  "WARNING: NEED_EXTRA_LEDA_IDIR should be \"x\", \"y\" or empty."
-	return 0
-    fi
-    return 1
-}
-
-check_NEED_EXTRA_LEDA_LDIR()
-{
-    if [ -n "${NEED_EXTRA_LEDA_LDIR}" -a \
-	"${NEED_EXTRA_LEDA_LDIR}" != 'y' -a \
-	"${NEED_EXTRA_LEDA_LDIR}" != 'x' ]; then
-	$1  "WARNING: NEED_EXTRA_LEDA_LDIR should be \"x\", \"y\" or empty."
-	return 0
-    fi
-    return 1
-}
-
 check_LEDA_INCL_DIR()
 {
     if [ -n "${LEDA_INCL_DIR}" ]; then
@@ -3097,42 +3067,6 @@ _link_run_test()
 
 # ---------------------------------------------------------------------
 # LEDA TEST:
-
-# test if leda header files are in some sys include dir
-# and sets NEED_EXTRA_LEDA_IDIR correspondingly
-# ($1 nonzero indicates verbosity)
-test_for_leda_incl_in_sys_incl()
-{
-    ${_printf} "%s\n" "
-    #include <LEDA/basic.h>
-    int main() { return 0; }" > ${TMP_CXX_FILE}.C
-    if _compile_test "LEDA sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
-	cleanup_after_compile
-	${_printf} "%s\n" " ok."
-	NEED_EXTRA_LEDA_IDIR=''
-	return 0
-    fi
-    cleanup_after_compile
-    NEED_EXTRA_LEDA_IDIR='y'
-    return 1
-}
-
-# test if leda libs are in some sys lib dir
-# and sets NEED_EXTRA_LEDA_LDIR correspondingly
-# ($1 nonzero indicates verbosity)
-test_for_leda_lib_in_sys_lib()
-{
-    ${_printf} "%s\n" "int main() { return 0; }" > ${TMP_CXX_FILE}.C
-    if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
-	if _link_run_test "LEDA syslibs" "" \
-	    "${CUSTOM_LDFLAGS} `leda_lib_option P``leda_lib_option G``leda_lib_option L``math_ldflags`" "$1"; then
-	    NEED_EXTRA_LEDA_LDIR=''
-	    return 0
-	fi
-    fi
-    NEED_EXTRA_LEDA_LDIR='y'
-    return 1
-}
 
 # test if LEDA setting works (return 0, iff ok)
 # ($1 nonzero indicates verbosity)
@@ -3591,22 +3525,13 @@ retrieve_compiler_settings()
     fi
 
     # LEDA specific stuff:
-    if try_to_get_var_from_file NEED_EXTRA_LEDA_IDIR "${_file}" || \
-	try_to_get_var_from_file NEED_EXTRA_LEDA_LDIR "${_file}"; then
-	if [ -n "${LEDA_SUPPORT}" ]; then
-	    LEDA_SUPPORT=''
-	    SETUP_COMPLETE=''
-	fi
-	NEED_EXTRA_LEDA_IDIR='n'
-	NEED_EXTRA_LEDA_LDIR='n'
-    fi
     if try_to_get_var_from_file LEDA_INCL_DIR "${_file}"; then
-	if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+	if [ -n "${LEDA_SUPPORT}" ]; then
 	    SETUP_COMPLETE=''
 	fi
     fi
     if try_to_get_var_from_file LEDA_LIB_DIR "${_file}"; then
-	if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	if [ -n "${LEDA_SUPPORT}" ]; then
 	    SETUP_COMPLETE=''
 	fi
     fi
@@ -3786,9 +3711,7 @@ store_compiler_settings()
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
     _store_install_config_variable LEDA_SUPPORT >>${_file}
-    _store_install_config_variable NEED_EXTRA_LEDA_IDIR >>${_file}
     _store_install_config_variable LEDA_INCL_DIR >>${_file}
-    _store_install_config_variable NEED_EXTRA_LEDA_LDIR >>${_file}
     _store_install_config_variable LEDA_LIB_DIR >>${_file}
     _store_install_config_variable GMP_SUPPORT >>${_file}
     _store_install_config_variable GMPXX_SUPPORT >>${_file}
@@ -4307,26 +4230,10 @@ leda_menu()
 	menu_header 'LEDA'
 	print_line     "${_bold_on}<E>${_bold_off}  Toggle LEDA support"
 	if [ -n "${LEDA_SUPPORT}" ]; then
-	    print_line     "${_bold_on}<I>${_bold_off}  LEDA include directory"
-	    if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-		print_line  "     ${LEDA_INCL_DIR:-<undefined>}"
-		if [ "${NEED_EXTRA_LEDA_IDIR}" = "x" ]; then
-		    print_line \
-			"${_bold_on}<J>${_bold_off}  Use LEDA headers from system include."
-		fi
-	    else
-		print_line     "     <system include directory>"
-	    fi
-	    print_line     "${_bold_on}<L>${_bold_off}  LEDA lib directory"
-	    if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-		print_line     "     ${LEDA_LIB_DIR:-<undefined>}"
-		if [ "${NEED_EXTRA_LEDA_LDIR}" = "x" ]; then
-		    print_line \
-			"${_bold_on}<M>${_bold_off}  Use LEDA libs from system libdir."
-		fi
-	    else
-		print_line     "     <system lib directory>"
-	    fi
+	    print_line "${_bold_on}<I>${_bold_off}  LEDA include directory"
+	    print_line "     ${LEDA_INCL_DIR:-<undefined>}"
+	    print_line "${_bold_on}<L>${_bold_off}  LEDA lib directory"
+	    print_line "     ${LEDA_LIB_DIR:-<undefined>}"
 	fi
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Support Menu'
@@ -4337,65 +4244,29 @@ leda_menu()
 		    reassemble_compiler
 		    SETUP_COMPLETE=''
 		    make_lib_dir
-		    # check, if libgmp can be linked
-		    link_gmp
-		    # check, if libgmpxx can be linked
-		    link_gmpxx
-
-		    # test for LEDA sysincl/-lib, if this was not done before
-		    if [ "${NEED_EXTRA_LEDA_IDIR}" = 'n' -o \
-			 "${NEED_EXTRA_LEDA_LDIR}" = 'n' ]; then
-			go_down_lines 3
-			flush_buffer
-			test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
-			test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
-		    fi
 		else
 		    LEDA_SUPPORT=''
 		    reassemble_compiler
-		    # check, if libgmp can be linked
-		    link_gmp
-		    # check, if libgmpxx can be linked
-		    link_gmpxx
 		fi
+		# check, if libgmp can be linked
+		link_gmp
+		# check, if libgmpxx can be linked
+		link_gmpxx
 		;;
 	    i|I)
 		if [ -n "${LEDA_SUPPORT}" ]; then
-			if [ -z "${NEED_EXTRA_LEDA_IDIR}" ]; then
-			    NEED_EXTRA_LEDA_IDIR='x'
-			fi
 		    if change_dir LEDA_INCL_DIR dir; then
-			if [ -z "${NEED_EXTRA_LEDA_IDIR}" ]; then
-			    NEED_EXTRA_LEDA_IDIR='x'
-			fi
 			LEDA_TEST_PASSED=''
 			SETUP_COMPLETE=''
  		    fi
 		fi
 		;;
-	    j|J)
-		if [ "${NEED_EXTRA_LEDA_IDIR}" = "x" ]; then
-		    NEED_EXTRA_LEDA_IDIR=''
-		    LEDA_TEST_PASSED=''
-		    SETUP_COMPLETE=''
-		fi
-		;;
 	    l|L)
 		if [ -n "${LEDA_SUPPORT}" ]; then
 		    if change_dir LEDA_LIB_DIR dir; then
-			if [ -z "${NEED_EXTRA_LEDA_LDIR}" ]; then
-			    NEED_EXTRA_LEDA_LDIR='x'
-			fi
 			LEDA_TEST_PASSED=''
 			SETUP_COMPLETE=''
 		    fi
-		fi
-		;;
-	    m|M)
-		if [ "${NEED_EXTRA_LEDA_LDIR}" = "x" ]; then
-		    NEED_EXTRA_LEDA_LDIR=''
-		    LEDA_TEST_PASSED=''
-		    SETUP_COMPLETE=''
 		fi
 		;;
 	    t|T)
@@ -5212,12 +5083,9 @@ write_compiler_flags()
   #
   # LEDA_INCL_DIR
   #
-  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+  if [ -n "${LEDA_SUPPORT}" -a -n "${LEDA_INCL_DIR}" ]; then
     print_as_shell_comment \
-      "*** Fill in your LEDA include directory ***" \
-      >> ${FILE}
-    print_as_shell_comment \
-      "(e.g. /usr/local/include)" \
+      "*** Fill in your LEDA include directory (e.g. /usr/local/include) ***" \
       >> ${FILE}
     ${_printf} "%s\\\\\n" "LEDA_INCL_DIR = " >> ${FILE}
     ${_printf} "\t%s\n\n" \
@@ -5349,14 +5217,13 @@ write_compiler_flags()
   fi
 
   if [ -n "${CORE_SUPPORT}" -a "${CORE_INSTALLATION}" != 'c' ]; then
-      ${_printf} "\t%s" "'-I\$(CORE_INCL_DIR)'" >> ${FILE}
+    ${_printf} "\t%s" "'-I\$(CORE_INCL_DIR)'" >> ${FILE}
   fi
 
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	${_printf} "\t%s" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
-    fi
+  if [ -n "${LEDA_SUPPORT}" -a -n "${LEDA_INCL_DIR}" ]; then
+    ${_printf} "\t%s" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
   fi
+
   if [ -n "${QT_SUPPORT}" ]; then
     ${_printf} "\t%s" "'-I\$(QT_INCL_DIR)'" >> ${FILE}
   fi
@@ -5388,12 +5255,9 @@ write_linker_flags()
   #
   # LEDA_LIB_DIR
   #
-  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+  if [ -n "${LEDA_SUPPORT}" -a -n "${LEDA_LIB_DIR}" ]; then
     print_as_shell_comment \
-      "*** Fill in your LEDA_lib_directory ***" \
-      >> ${FILE}
-    print_as_shell_comment \
-      "(e.g. /usr/local/lib)" \
+      "*** Fill in your LEDA_lib_directory (e.g. /usr/local/lib) ***" \
       >> ${FILE}
     ${_printf} "%s\\\\\n" "LEDA_LIB_DIR = " >> ${FILE}
     ${_printf} "\t%s\n\n" \
@@ -5477,7 +5341,7 @@ write_linker_flags()
   LIBS="`lib_option CGAL`"
   WLIBS="`lib_option CGAL`"
   if [ -n "${LEDA_SUPPORT}" ] ; then
-    if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+    if [ -n "${LEDA_LIB_DIR}" ]; then
 	if [ -n "${CYGWIN_COMPILER}" ]; then
 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(LEDA_LIB_DIR)'"
 	else
@@ -6330,8 +6194,7 @@ main_menu()
 		go_down_lines 3
 		flush_buffer
 		if [ -n "${LEDA_SUPPORT}" ]; then
-		    test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
-		    test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
+                    test_leda "${INSTALL_VERBOSE}"
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
@@ -6497,21 +6360,11 @@ while [ ${#} -gt 0 ]; do
 	    set_dirs_dependant_on_cgal_dir
 	    initial_check
 	    ;;
-	--leda_sys_incl*|--LEDA_SYS_INCL*|--leda-sys-incl*|--LEDA-SYS-INCL*|\
--leda_sys_incl*|-LEDA_SYS_INCL*|-leda-sys-incl*|-LEDA-SYS-INCL*)
-	    _ANY_OPT='y'
-	    NEED_EXTRA_LEDA_IDIR=''
-	    ;;
 	--leda_incl_dir*|--LEDA_INCL_DIR*|-LEDA_INCL_DIR*|-leda_incl_dir*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'LEDA_INCL_DIR' "$1" "$2"; then
 		shift
 	    fi
-	    ;;
-	--leda_sys_lib*|--LEDA_SYS_LIB*|--leda-sys-lib*|--LEDA-SYS-LIB*|\
--leda_sys_lib*|-LEDA_SYS_LIB*|-leda-sys-lib*|-LEDA-SYS-LIB*)
-	    _ANY_OPT='y'
-	    NEED_EXTRA_LEDA_LDIR=''
 	    ;;
 	--leda_lib_dir*|--LEDA_LIB_DIR*|-LEDA_LIB_DIR*|-leda_lib_dir*)
 	    _ANY_OPT='y'
