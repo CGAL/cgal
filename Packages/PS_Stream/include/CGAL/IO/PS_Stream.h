@@ -588,7 +588,8 @@ PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
     {
       ps.os() << "%CGAL% Parabola" << std::endl;
       ps.os() << "%CGAL% Base "<<p.base().x()<<" "<<p.base().y()<<std::endl;
-      ps.os() << "%CGAL% Vector "<<p.vertor().x()<<" "p.vector().y()<<std::endl;
+      ps.os() << "%CGAL% Vector " << p.vertor().x() << " " << p.vector().y()
+	      << std::endl;
       ps.os() << "%CGAL% Curvature "<<p.curvature()<<std::endl;
     }
   return ps;

@@ -272,7 +272,7 @@ public :
   friend PS_Stream_3& operator <<(PS_Stream_3& ps,Polyhedron_3<Traits,HDS>& p);
   //Allows to add a Triangulation_2 in the PS_Stream_3
   template <class Gt,class Tds>
-  friend PS_Stream_3& operator << (PS_Stream_3& ps, Triangulation_2<Gt,Tds> &t);
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,Triangulation_2<Gt,Tds> &t);
   //Allows to add a Delaunay_triangulation_2 in the PS_Stream_3
   template < class Gt, class Tds >
   friend PS_Stream_3& operator << (PS_Stream_3& ps,
@@ -304,8 +304,8 @@ public :
   //The BBox3
   // Define the bounding box
   PS_BBox3 _bbox3;
+
 private :
-  
 
   //Array of vertices of the bounding box
   Point3 v[8];
@@ -338,7 +338,6 @@ private :
   //Context
   //The current style of filling
   FILLING _current_filling;
-
 };
 
 CGAL_END_NAMESPACE
