@@ -1,3 +1,7 @@
+21 May 2004 Sylvain Pion
+- C2vcproj : pick master.vcproj where it is instead of forcing the release
+             scripts to copy it.
+
 10 May 2004 Sylvain Pion
 - Remove obsolete demo/GeoWin.
 
