@@ -962,6 +962,17 @@ set_compiler_flags()
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
+	*Linux*icc*)
+	    #### settings for icc on linux
+	    #ADDITIONAL_CXXFLAGS="-Wall"
+	    ICCCOMPILERBIN=`compiler_bin`
+	    ICCREALDIRNAME=`echo ${ICCCOMPILERBIN} | ${_sed} 's#bin/icc##g'`
+	    ADDITIONAL_LDFLAGS="-Wl,-R${ICCREALDIRNAME}lib"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR="/usr/X11R6/lib"
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    PRINT_STACKTRACE_PROGRAM="idb"
+	    ;;
 	*CYGWIN*g++*)
 	    #### settings for gcc on Cygwin
 	    ADDITIONAL_CXXFLAGS="-Wall"
@@ -1963,7 +1974,13 @@ void output_first_ciff_separate(int x, int base)
 
 int main()
 {
-#ifdef __GNUC__
+#if defined(__INTEL_COMPILER) && defined(__linux__)
+  // Intel Compiler for linux
+  // it has to be checked before the g++ compiler since it also
+  // defines __GNUC__
+  CGAL_STDCOUT << "ICC@" << __INTEL_COMPILER / 100;
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__GNUC__)
   // GNU cc
   CGAL_STDCOUT << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
 # ifdef __GNUC_PATCHLEVEL__
@@ -4263,6 +4280,7 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
     link_gmp
+    link_gmpxx
 
     # COMPILER
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
@@ -4763,6 +4781,8 @@ leda_menu()
 		    make_lib_dir
 		    # check, if libgmp can be linked 
 		    link_gmp
+		    # check, if libgmpxx can be linked 
+		    link_gmpxx
 
 		    # test for LEDA sysincl/-lib, if this was not done before
 		    if [ "${NEED_EXTRA_LEDA_IDIR}" = 'n' -o \
@@ -4777,6 +4797,8 @@ leda_menu()
 		    reassemble_compiler
 		    # check, if libgmp can be linked 
 		    link_gmp
+		    # check, if libgmpxx can be linked 
+		    link_gmpxx
 		fi
 		;;
 	    i|I)
@@ -5399,6 +5421,29 @@ link_gmp()
     done
 }
 
+link_gmpxx()
+{
+    for i in ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER} \
+      ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}_LEDA; do
+        if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/${GMPXX_LIBNAME} -a \
+	    -r ${i}/${GMPXX_LIBNAME} ]
+	then
+	    case ${CGAL_OS_COMPILER} in 
+		*CYGWIN*) 
+		    ${_cp} ${i}/${GMPXX_LIBNAME} \
+			${CGAL_LIB_DIR}/`full_ostype`
+		    log_print "remark: copied libgmpxx from ${i}" 
+		    ;;
+		*) 
+		    ${_ln} -s ${i}/libgmpxx.* ${CGAL_LIB_DIR}/`full_ostype`
+		    log_print "remark: linked libgmpxx from ${i}" 
+		    ;;
+	    esac
+	    log_print "  to ${CGAL_LIB_DIR}/`full_ostype`."
+	fi
+    done
+}
+
 # used by install_gmp
 install_gmp_sub()
 {
@@ -5530,6 +5575,7 @@ install_gmp()
     # restore os/compiler stuff
     LEDA_SUPPORT="${SAVE_LEDA}"
     link_gmp
+    link_gmpxx
 }
 
 # ---------------------------------------------------------------------

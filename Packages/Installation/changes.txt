@@ -2,6 +2,10 @@
 //	Revision History for package Installation
 //=====================================================================
 
+17 Apr 2004: Menelaos Karavelas <mkaravel@cse.nd.edu>
+- fixed bug with symbolic links to gmpxx libraries when LEDA was present
+- added support for icc on linux
+
 10 Apr 2004: Sylvain Pion
 - Added PGCC support.
 
