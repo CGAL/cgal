@@ -599,6 +599,7 @@ public:
   }
 
 protected:
+#if 0
   template < class Stream >
   Stream& draw_Voronoi_circles(Stream& str) const
   {
@@ -610,7 +611,8 @@ protected:
     }
     return str;
   }
-  
+#endif
+
 public:
   // VALIDITY CHECK
   //---------------
@@ -847,11 +849,13 @@ public:
 		       const Site_2& t1, 
 		       const Site_2& t2) const;
 
+#if 0
   typename Gt::Circle_2 circumcircle(const Face_handle& f) const;
   typename Gt::Circle_2 circumcircle(const Site_2& t0, const Site_2& t1, 
 				     const Site_2& t2) const;
 
   typename Gt::Line_2 circumcircle(const Point_2& p0, const Point_2& p1) const;
+#endif
 
 protected:
   // wrappers for combinatorial operations on the data structure

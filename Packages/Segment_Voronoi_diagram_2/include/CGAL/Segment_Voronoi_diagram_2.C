@@ -122,6 +122,7 @@ circumcenter(const Site_2& t0, const Site_2& t1,
     geom_traits().construct_svd_vertex_2_object()(t0, t1, t2);
 }
 
+#if 0
 // circumcircle
 template<class Gt, class PC, class DS, class LTag>
 inline
@@ -144,7 +145,6 @@ circumcircle(const Site_2& t0, const Site_2& t1, const Site_2& t2) const
   return Construct_svd_circle_2()(t0, t1, t2);
 }
 
-
 template<class Gt, class PC, class DS, class LTag>
 inline
 typename Gt::Line_2
@@ -154,7 +154,7 @@ circumcircle(const Point_2& p0, const Point_2& p1) const
   return
     geom_traits().construct_line_2_object()(p0, p1);
 }
-
+#endif
 
 // primal
 template<class Gt, class PC, class DS, class LTag>

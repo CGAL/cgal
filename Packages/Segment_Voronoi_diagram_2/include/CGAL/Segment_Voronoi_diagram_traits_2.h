@@ -429,10 +429,10 @@ public:
   typedef typename Kernel::Line_2                 Line_2;
   typedef typename Kernel::Segment_2              Segment_2;
   typedef typename Kernel::Ray_2                  Ray_2;
-  typedef typename Kernel::Circle_2               Circle_2;
+  //  typedef typename Kernel::Circle_2               Circle_2;
 
   typedef typename Kernel::Site_2                 Site_2;
-  //  typedef Segment_Voronoi_diagram_site_2<R>       Site_2;
+  typedef typename Kernel::Object_2               Object_2;
 
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;
@@ -440,6 +440,11 @@ public:
   typedef typename Kernel::Rep_tag                Rep_tag;
 
 public:
+// OBJECT CONSTRUCTION & ASSIGNMENT
+  //-------------------------------
+  typedef typename Kernel::Construct_object_2     Construct_object_2;
+  typedef typename Kernel::Assign_2               Assign_2;
+
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
@@ -472,6 +477,18 @@ public:
   //-----------------------------------------------------------------------
   //                  ACCESS TO OBJECTS
   //-----------------------------------------------------------------------
+
+  // OBJECT CONSTRUCTION & ASSIGNMENT
+  //---------------------------------
+  Assign_2
+  assign_2_object() const {
+    return Assign_2();
+  }
+
+  Construct_object_2
+  construct_object_2_object() const { 
+    return Construct_object_2();
+  }
 
   // CONSTRUCTIONS
   //--------------
