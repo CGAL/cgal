@@ -1,27 +1,27 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 	<head>
-		<title>Plannar maps</title>
+		<title>Planar maps</title>
 	</head>
 	<body>
-		<P align="center"><FONT size="5">How to use the Plannar Map demo</FONT></P>
+		<P align="center"><FONT size="5">How to use the Planar Map demo</FONT></P>
 		<br>
-		Introduction This demo demonstrate the use of plannar map with intersection and 
-		some other CGAL libraries. there are three kind of traits for plannar maps: 1. 
-		segments plannar map - consist only segments. 2. Polylines plannar map - 
-		consust only polylines which are set of connected segments 3. Conics plannar 
+		Introduction This demo showa the use of planar maps with intersections and 
+		some other CGAL libraries. There are three kind of traits for planar maps: 1. 
+		segments planar map - consist only segments. 2. Polylines planar map - 
+		consist only polylines which are set of connected segments 3. Conics planar 
 		map - consist only conics which are a curve defined by (at most) two degree 
-		equation (e.g segment , circle , elipse ,parabola and hyperbola)
+		equation,e.g., segment, circle, elipse , parabola and hyperbola.
 		<br>
 		<br>
-		Choosing traits type for plannar map
+		Choosing traits type for planar map
 		<UL>
 			<LI>
-				<A href="#choose_seg">Segments plannar map</A></LI>
+				<A href="#choose_seg">Segments planar map</A></LI>
 			<LI>
-				<A href="#choose_poly">Polylines plannar map</A></LI>
+				<A href="#choose_poly">Polylines planar map</A></LI>
 			<LI>
-				<A href="#choose_conic">Conics plannar map</A></LI> <!-----
+				<A href="#choose_conic">Conics planar map</A></LI> <!-----
 	  <LI><A href="#save_file">Writing input to file</A></LI>
       <LI><A href="#print">Print</A></LI>
       <LI><A href="#close_window">Close the current window</A></LI>
@@ -91,20 +91,20 @@
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="choose_seg"></A> </FONT>
 			</STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
-		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Segments plannar map</FONT></STRONG></P>
+		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Segments planar map</FONT></STRONG></P>
 		By default , this option is selected when starting the application. Press the 
 		"segment traits" button from the toolbar or go to the menu bar -> options -> 
 		segments traits.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"> <A name="choose_poly"></A></FONT>
 			</STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
-		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Polylines plannar map</FONT></STRONG></P>
+		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Polylines planar map</FONT></STRONG></P>
 		Press the "polyline traits" button from the toolbar or go to the menu bar -> 
 		options -> polyline traits.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"> <A name="choose_conic"></A></FONT>
 			</STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
-		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Conics plannar map</FONT></STRONG></P>
+		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Conics planar map</FONT></STRONG></P>
 		Press the "conic traits" button from the toolbar or go to the menu bar -> 
 		options -> conic traits.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="ins"> </A></FONT></STRONG>
@@ -112,60 +112,60 @@
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3">Insert object </FONT></STRONG>
 		</P>
-		First , press the "Insert" button , the type of object that can be inserted 
-		depends on the selected trairs type. Segments: left click the mouse to choose 
-		the source point , move the mouse to determine the segment and close it with 
-		another left click. Polyline: left click the mouse to choose the source point , 
-		keep on moving the mouse and left click to add another middle points , right 
-		click to close it. conics: when the conic trait is selected there are five 
-		options of conic curves at the toolbar ( segment , circle , elipse , circle arc 
-		, 5 points arc) segments : circle: left click the mouse to choose the center 
-		,move the mouse to choose radius and left click to close it/ eilpse : the 
-		elipse is obtained by an enclsing rectangle . left click the mouse to choose 
-		one corner and left click again to choose oppsite corner. circle arc : choose 
-		three not coolinear points by left clicking on the mouse. 5 points arc : choose 
-		five r points by left clicking on the mouse.
+		Firs , press the "Insert" button, the type of object that can be inserted 
+		depends on the selected traits type. Segments: left click the mouse to choose 
+		the source point, move the mouse to determine the segment and close it with 
+		another left click. Polyline: left click the mouse to choose the source point, 
+		keep on moving the mouse and left click to add another middle points, right 
+		click to close it. Conics: when the conic traits is selected there are five 
+		options of conic curves at the toolbar (segment, circle, ellipse, circle arc, 
+		5 points arc) segments : circle: left click the mouse to choose the center, 
+		move the mouse to choose radius and left click to close it. Ellipse : the 
+		ellipse is obtained by an enclosing rectangle. left click the mouse to choose 
+		one corner and left click again to choose the oppsite corner. Circle arc: choose 
+		three non-collinear points by left clicking on the mouse. 5 points arc: choose 
+		five points by left clicking with the mouse.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="del"> </A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Delete</FONT></STRONG></P>
-		press the delete button and left click any object at the plannar map to remove 
+		press the delete button and left click any object at the planar map to remove 
 		it.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="drg"> </A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> drag</FONT></STRONG></P>
-		Press the "drag" button , left click any object while dragging it and release 
+		Press the "drag" button, left click any object while dragging it and release 
 		the mouse button to put it.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"> <A name="loc"></A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"> </FONT></STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Point location</FONT></STRONG></P>
 		Press the "point location" button, and left click on any point and face 
-		containg that point will be highlited.
+		containg that point will be highlighted.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="ray"> </A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Vertical ray shooting</FONT></STRONG></P>
-		First , you have to choose the ray shooting direcion (upword or downord), by 
-		default the upword direction is selected. left click on any point at the 
-		plannar map and a ray will be shooted till hitting a curve or vertex and it 
-		eill be highlited.
+		First, you have to choose the ray shooting direcion (upwards or downwards), by 
+		default the upward direction is selected. Left click on any point at the 
+		planar map and a ray will be shot until hitting a curve or vertex and it 
+		will be highlited.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="spl"> </A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Split</FONT></STRONG></P>
 		Press the split button, choose a splitter segment (the same as with drawing 
-		segments)which intersects a curve at the plannar map and at the intersection , 
-		a new vertex will be added (e.g the edge will be splitted).
+		segments) which intersects a curve at the planar map and at the intersection, 
+		a new vertex will be added, that is the edge will be split.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="meg"> </A></FONT></STRONG>
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Merge</FONT></STRONG></P>
-		Press the merge button, chhose a subcurve that can be mreged by left click , it 
-		will be painted red and stays red if its mergeable, and then choose anotger 
-		neighbour sub_curve that can be merged with him , and it will be painted green 
-		andthe edge will be merged (e.g the vertex between them will be removed ).
+		Press the merge button, chose a subcurve that can be merged by left click, it 
+		will be painted red and stays red if its mergeable, and then choose another 
+		neighbour sub_curve that can be merged with it, and it will be painted green 
+		and the edge will be merged, that is the vertex between them will be removed.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="snap_point"> </A></FONT>
 			</STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
@@ -186,11 +186,11 @@
 			&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT> </STRONG>&nbsp;</P>
 		<P align="left"><STRONG><FONT color="#3300cc" size="3"> Overlay</FONT></STRONG></P>
-		To overlay tow or more planar maps, go to menu bar -> Options -> Overlay. A 
+		To overlay two or more planar maps, go to menu bar -> Options -> Overlay. A 
 		dialog box will open with a list of the current planar maps on the left side. 
 		Drag and drop the planar maps that you want to overlay to the right side and 
 		press OK. You can only overlay planar maps with the same traits, therefore, 
-		after you choose the first one, you allow to choose only planar maps of the 
+		after you choose the first one, you can only choose planar maps of the 
 		same traits.
 		<P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="properties"> </A></FONT>
 			</STRONG>&nbsp;</P>
@@ -200,13 +200,13 @@
 		<br>
 		The properties are:
 		<LI>
-			Hight - window hight.</LI>
+			Height - window height.</LI>
 		<LI>
 			Width - window width.</LI>
 		<LI>
 			Line width - curves width.</LI>
 		<LI>
-			Scaling factor - determain the level of the zoom in/out operations.</LI>
+			Scaling factor - determines the level of the zoom in/out operations.</LI>
 		<LI>
 			Display mode - allow choosing between different or uniform colors in overlay.</LI>
 		<LI>
