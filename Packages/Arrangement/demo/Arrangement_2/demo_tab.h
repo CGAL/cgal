@@ -379,9 +379,12 @@ public:
    */
   void mousePressEvent(QMouseEvent *e)
   {
+    QCursor old = cursor();
+    setCursor(Qt::WaitCursor);
     if (mode == POINT_LOCATION || mode == RAY_SHOOTING)
     {
       mousePressEvent_point_location( e );
+	  setCursor(old);
       return;
     }
     if (mode == DELETE)
@@ -389,6 +392,7 @@ public:
       remove_curve( e );
 	  if( m_curves_arr.number_of_vertices() == 0 )
 	    empty = true;
+	  setCursor(old);
 	  return;
     }
     if (mode == INSERT)
@@ -410,16 +414,19 @@ public:
       unlock();
       if( m_curves_arr.number_of_vertices() > 0 )
 	    empty = false;
+	  setCursor(old);
       return;
     }
     if (mode == DRAG)
     {
       mousePressEvent_drag(e);
+	  setCursor(old);
       return;
     }
 	if (mode == MERGE)
     {
       mousePressEvent_merge(e);
+	  setCursor(old);
       return;
     }
 	if (mode == SPLIT)
@@ -441,6 +448,7 @@ public:
       unlock();
 	  first_time = true;
 	  redraw();
+	  setCursor(old);
       return;
     }
   }
@@ -2216,36 +2224,6 @@ public:
 	}
 	else if (!move_event)	  
 	{	  
-	  /*Pm_point_2 s1 = seconed_curve->curve().source();
-	  Pm_point_2 t1 = seconed_curve->curve().target();
-	  Base_curve *base;
-
-	  if ( t == s1 )
-	    base = new Base_curve(first.conic().r(), first.conic().s(), 
-		first.conic().t(), first.conic().u(), first.conic().v(), 
-		first.conic().w(), s, t1);
-	  else if ( t == t1 )
-	    base = new Base_curve(first.conic().r(), first.conic().s(), 
-		first.conic().t(), first.conic().u(), first.conic().v(), 
-		first.conic().w(), s, s1);
-	  else if ( s == s1 )
-	    base = new Base_curve(first.conic().r(), first.conic().s(), 
-		first.conic().t(), first.conic().u(), first.conic().v(), 
-		first.conic().w(), t1, t);
-	  else if ( s == t1 )
-	  	base = new Base_curve(first.conic().r(), first.conic().s(), 
-		first.conic().t(), first.conic().u(), first.conic().v(), 
-		first.conic().w(), s1, t);
-
-
-      Curve_conic_data cd;
-      cd.m_type = Curve_conic_data::LEAF;
-      cd.m_index = w->index;
-      cd.m_ptr.m_curve = base;
-
-	  w->m_curves_arr.remove_edge(closest_curve);
-	  w->m_curves_arr.remove_edge(seconed_curve);
-	  w->m_curves_arr.insert(Pm_conic_2( *base , cd));*/
 	  Xcurve curve;
 	  const Xcurve seconed = seconed_curve->curve();
 

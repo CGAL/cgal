@@ -753,6 +753,26 @@ Packages/Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -
 Packages/Arrangement/demo/Arrangement_2/icons/conic.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/conic_types.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/delete.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_delete.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_insert.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_merge.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_merge.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_pointlocation.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_pointlocation.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_rayshoot.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_snapgrid.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_snapgrid.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_snapvertex.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_split.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_split.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_zoomin.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_zoomin.xpm -text
+Packages/Arrangement/demo/Arrangement_2/icons/demo_zoomout.bmp -text svneol=unset#unset
+Packages/Arrangement/demo/Arrangement_2/icons/demo_zoomout.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/draw.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/grid.xpm -text
 Packages/Arrangement/demo/Arrangement_2/icons/hand.xpm -text
