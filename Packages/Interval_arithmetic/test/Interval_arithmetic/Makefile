@@ -17,9 +17,9 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W
+	-O2 -W -Winline -Wunused
 	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -O2 -W -Winline
+	# -O2 -W -Winline -Wunused
 	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
 	# -mcpu=ultrasparc -mtune=ultrasparc
 	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
@@ -33,6 +33,7 @@ CXXFLAGS = -I../../include \
 	# -ffast-math         # seems slower !?!
 	# -fhonor-std
 	# -frepo
+	# -pedantic
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -50,11 +51,12 @@ LDFLAGS = \
 
 all: test bench
 
-test:  tst0 tst1 tst2 tst5 tstlink
+test:  tst0 tst1 tst2 tst5 tst6 tstlink
 	./tst0
 	./tst1
 	./tst2
 	./tst5
+	./tst6
 	./tstlink
 
 bench_isolate: ./a.out
@@ -111,6 +113,9 @@ tst4: tst4.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tst5: tst5.o
+	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
+
+tst6: tst6.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 tstlink: tstlink1.o tstlink2.o
