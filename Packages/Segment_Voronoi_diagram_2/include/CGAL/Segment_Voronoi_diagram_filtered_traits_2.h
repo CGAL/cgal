@@ -63,6 +63,110 @@ namespace CGALi {
 }
 #endif
 
+namespace CGALi {
+
+  template<class D, class T, int>
+  struct SVD_Concept_check_tags {};
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Ring_tag,2>
+  {
+    SVD_Concept_check_tags() {
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Ring_tag,4> {
+    SVD_Concept_check_tags() {
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Ring_tag,6> {
+    SVD_Concept_check_tags() {
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  //-------------------------------------------------------------------------
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Euclidean_ring_tag,2>
+  {
+    SVD_Concept_check_tags() {
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Euclidean_ring_tag,4> {
+    SVD_Concept_check_tags() {
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags<D,Euclidean_ring_tag,6> {
+    SVD_Concept_check_tags() {
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  //=========================================================================
+
+  template<class D, class T, int>
+  struct SVD_Concept_check_tags_wi {};
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Field_tag,2>
+  {
+    SVD_Concept_check_tags_wi() {
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Field_tag,4> {
+    SVD_Concept_check_tags_wi() {
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Field_tag,6> {
+    SVD_Concept_check_tags_wi() {
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  //-------------------------------------------------------------------------
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,2>
+  {
+    SVD_Concept_check_tags_wi() {
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,4> {
+    SVD_Concept_check_tags_wi() {
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+  template<class D>
+  struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,6> {
+    SVD_Concept_check_tags_wi() {
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    }
+  };
+
+}
+
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
@@ -82,7 +186,7 @@ template<class CK,
 #else
 	 class EK      = Simple_cartesian< Quotient<MP_Float> >,
 #endif
-	 class EK_MTag = Ring_tag,
+	 class EK_MTag = Field_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
@@ -92,13 +196,146 @@ template<class CK,
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
 #endif
-class Segment_Voronoi_diagram_filtered_traits_2
+struct Segment_Voronoi_diagram_filtered_traits_2
   : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
 							  EK, EK_MTag,
 							  FK, FK_MTag,
 							  C2E, C2F,
 							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,CK_MTag,2>();
+    CGALi::SVD_Concept_check_tags<Ring_tag,EK_MTag,4>();
+    CGALi::SVD_Concept_check_tags<Ring_tag,FK_MTag,6>();
+  }
+};
+
+
+template<class CK, class EK, class EK_MTag, class FK, class FK_MTag,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, Field_tag,
+						 EK, EK_MTag,
+						 FK, FK_MTag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, Ring_tag,
+							  EK, EK_MTag,
+							  FK, FK_MTag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,EK_MTag,4>();
+    CGALi::SVD_Concept_check_tags<Ring_tag,FK_MTag,6>();
+  }
+};
+
+template<class CK, class CK_MTag, class EK, class FK, class FK_MTag,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, CK_MTag,
+						 EK, Field_tag,
+						 FK, FK_MTag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
+							  EK, Ring_tag,
+							  FK, FK_MTag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,CK_MTag,2>();
+    CGALi::SVD_Concept_check_tags<Ring_tag,FK_MTag,6>();
+  }
+};
+
+template<class CK, class CK_MTag, class EK, class EK_MTag, class FK,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, CK_MTag,
+						 EK, EK_MTag,
+						 FK, Field_tag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
+							  EK, EK_MTag,
+							  FK, Ring_tag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,CK_MTag,2>();
+    CGALi::SVD_Concept_check_tags<Ring_tag,EK_MTag,4>();
+  }
+};
+
+template<class CK, class CK_MTag, class EK, class FK,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, CK_MTag,
+						 EK, Field_tag,
+						 FK, Field_tag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
+							  EK, Ring_tag,
+							  FK, Ring_tag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,CK_MTag,2>();
+  }
+};
+
+template<class CK, class EK, class EK_MTag, class FK,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, Field_tag,
+						 EK, EK_MTag,
+						 FK, Field_tag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, Ring_tag,
+							  EK, EK_MTag,
+							  FK, Ring_tag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,EK_MTag,4>();
+  }
+};
+
+template<class CK, class EK, class FK, class FK_MTag,
+	 class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, Field_tag,
+						 EK, Field_tag,
+						 FK, FK_MTag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, Ring_tag,
+							  EK, Ring_tag,
+							  FK, FK_MTag,
+							  C2E, C2F,
+							  Tag_true>
+{
+public:
+  Segment_Voronoi_diagram_filtered_traits_2() {
+    CGALi::SVD_Concept_check_tags<Ring_tag,FK_MTag,6>();
+  }
+};
+
+template<class CK, class EK, class FK, class C2E, class C2F>
+struct Segment_Voronoi_diagram_filtered_traits_2<CK, Field_tag,
+						 EK, Field_tag,
+						 FK, Field_tag,
+						 C2E, C2F>
+  : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, Ring_tag,
+							  EK, Ring_tag,
+							  FK, Ring_tag,
+							  C2E, C2F,
+							  Tag_true>
 {};
+
+//=========================================================================
 
 
 // this traits class does NOT support intersecting segments
@@ -119,14 +356,19 @@ template<class CK,
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
 #endif
-class Segment_Voronoi_diagram_filtered_traits_without_intersections_2
+struct Segment_Voronoi_diagram_filtered_traits_without_intersections_2
   : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
 							  EK, EK_MTag,
 							  FK, FK_MTag,
 							  C2E, C2F,
 							  Tag_false>
-{};
-
+{
+  Segment_Voronoi_diagram_filtered_traits_without_intersections_2() {
+    CGALi::SVD_Concept_check_tags_wi<Ring_tag,CK_MTag,2>();
+    CGALi::SVD_Concept_check_tags_wi<Ring_tag,EK_MTag,4>();
+    CGALi::SVD_Concept_check_tags_wi<Ring_tag,FK_MTag,6>();
+  }
+};
 
 
 CGAL_END_NAMESPACE

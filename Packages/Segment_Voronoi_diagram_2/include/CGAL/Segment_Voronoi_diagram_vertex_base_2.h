@@ -36,33 +36,30 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  template<class Gt, class Handle, class USE_SIMPLE_STORAGE_SITE_Tag>
+  template<class Gt, class USE_SIMPLE_STORAGE_SITE_Tag>
   struct SVDVB2_Which_storage_site;
 
   // use the simple storage site
-  template<class Gt, class Handle>
-  struct SVDVB2_Which_storage_site<Gt,Handle,Tag_false>
+  template<class Gt>
+  struct SVDVB2_Which_storage_site<Gt,Tag_false>
   {
     typedef Gt         Geom_traits;
-    typedef Handle     Point_handle;
     typedef Tag_false  Storage_site_tag;
 
     typedef
-    Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits,
-						  Point_handle>
+    Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits>
     Storage_site_2;
   };
 
   // use the full storage site
-  template<class Gt, class Handle>
-  struct SVDVB2_Which_storage_site<Gt,Handle,Tag_true>
+  template<class Gt>
+  struct SVDVB2_Which_storage_site<Gt,Tag_true>
   {
     typedef Gt         Geom_traits;
-    typedef Handle     Point_handle;
     typedef Tag_true   Storage_site_tag;
 
     typedef
-    Segment_Voronoi_diagram_storage_site_2<Geom_traits,Point_handle>
+    Segment_Voronoi_diagram_storage_site_2<Geom_traits>
     Storage_site_2;
   };
 
@@ -93,8 +90,7 @@ public:
 
 private:
   typedef
-  CGALi::SVDVB2_Which_storage_site<Geom_traits,Point_handle,
-				   Storage_site_tag>
+  CGALi::SVDVB2_Which_storage_site<Geom_traits,Storage_site_tag>
   Which_storage_site;
 
 public:

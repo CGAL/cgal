@@ -33,19 +33,19 @@ CGAL_BEGIN_NAMESPACE
       intersection of two non-parallel segments (if defined)
    */
 
-template <class Gt, class H>
+template <class Gt>
 class Segment_Voronoi_diagram_simple_storage_site_2 
 {
 public:
   typedef Gt                             Geom_traits;
-  typedef H                              Point_handle;
   typedef typename Geom_traits::Site_2   Site_2;
+  typedef typename std::list<typename Site_2::Point_2>::iterator Point_handle;
 
 protected:
   typedef Point_handle                   Handle;
 
   typedef
-  Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits,Handle>
+  Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits>
   Self;
 
 public:
