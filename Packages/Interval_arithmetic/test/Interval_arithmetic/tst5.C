@@ -89,7 +89,9 @@ void bench()
 }
 
 namespace CGAL {
-NT my_abs (const NT &n)
+template <class NT>
+NT
+my_abs (const NT &n)
 {
   return CGAL_NTS abs(n);
 }
