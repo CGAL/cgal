@@ -20,7 +20,7 @@
 
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_2<Gt,SC,DS>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_2<Gt,PC,DS>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -33,7 +33,7 @@ diagram. Currently it supports only insertions of sites.
 %and deletions of sites.
 It is templated by three template arguments \ccc{Gt}, which
 must be a model of \ccc{SegmentVoronoiDiagramTraits_2}, 
-\ccc{SC} which must be a model of the concept \ccc{SimpleContainer},
+\ccc{PC} which must be a model of the concept \ccc{SimpleContainer},
 and \ccc{DS},
 which must be a model of \ccc{SegmentVoronoiDiagramDataStructure_2}.
 The second template argument defaults to
@@ -49,26 +49,25 @@ CGAL::Segment_Voronoi_diagram_face_base_2<Gt> >}.
 
 \ccThree{typedef typename DS::size_type}{Point_container+}{}
 %
+\ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
+\ccGlue
 \ccTypedef{typedef DS  Data_structure;}{A type for the underlying
 data structure.}
 \ccGlue
 \ccTypedef{typedef typename DS::size_type size_type;}{Size type (an
   unsigned integral type)}
 \ccGlue
-\ccTypedef{typedef SC Point_container;}{A type for the container of points.}
-\ccGlue
-\ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
-\ccGlue
 \ccTypedef{typedef Gt::Point_2 Point_2;}{A type for the
 point defined in the geometric traits.}
-\ccGlue
-\ccTypedef{typedef Gt::Segment_2 Segment_2;}{A type for the
-segment defined in the geometric traits.}
 \ccGlue
 \ccTypedef{typedef Gt::Site_2  Site_2;}
 {A type for the segment Voronoi diagram site, defined in the geometric
   traits.}
 \ccGlue
+\ccTypedef{typedef PC Point_container;}{A type for the container of points.}
+\ccGlue
+\ccNestedType{Point_handle;}{A handle for
+  points in the point container.}
 %
 
 % MK:: in the following copy text from TDS
@@ -105,7 +104,7 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 \ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}
 }
 %
-\ccTwo{Semgent_Voronoi_diagram_2<Gt,SC,DS>::Finite_vertices_iterator+}
+\ccTwo{Semgent_Voronoi_diagram_2<Gt,PC,DS>::Finite_vertices_iterator+}
 {}
 %
 \ccGlue
@@ -142,25 +141,26 @@ The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and
 
 
 In addition to iterators and circulators for vertices and faces,
-iterators for sites are provided. In particular there are iterators
-for the entire set of sites, the hidden sites and the visible sites of
-the Apollonius graph.
-
+iterators sites are provided. In particular there are iterators
+for the set of input sites and the set of output sites. The set of
+input sites is the set of sites inserted by the user using the
+\ccc{insert} method of this class. If a site is inserted multiple
+times, every instance of this site will be reported. The set of output
+sites is the set of sites in the segment Voronoi diagram. The value
+type of these iterators is \ccc{Site_2}.
 
 %\ccGlue
-\ccNestedType{Sites_iterator}
-{A type for an iterator over all sites.}
+\ccNestedType{Input_sites_iterator}
+{A type for an iterator over all input sites.}
 \ccGlue
-\ccNestedType{Visible_sites_iterator}
-{A type for an iterator over all visible sites.}
-\ccGlue
-\ccNestedType{Hidden_sites_iterator}
-{A type for an iterator over all hidden sites.}
+\ccNestedType{Output_sites_iterator}
+{A type for an iterator over all output sites (the sites in the
+  diagram).}
 
 \ccCreationVariable{svd}
 
 \ccCreation
-\ccThree{Segment_Voronoi_diagram_2<Gt,SC,DS>}{svd = other other}{}
+\ccThree{Segment_Voronoi_diagram_2<Gt,PC,DS>}{svd = other other}{}
 \ccThreeToTwo
 %
 \ccConstructor{Segment_Voronoi_diagram_2(Gt gt=Gt());}{Creates the
@@ -178,14 +178,14 @@ geometric traits and inserts all sites in the range
 \ccc{Input_iterator} must be either \ccc{Point_2} or \ccc{Site_2}.}}
 %
 \ccConstructor{Segment_Voronoi_diagram_2(const
-  Segment_Voronoi_diagram_2<Gt,SC,DS>& other)}
+  Segment_Voronoi_diagram_2<Gt,PC,DS>& other)}
 {Copy constructor. All faces and vertices are duplicated. After the
   construction, 
   \ccVar\ and \ccc{other} refer to two different segment Voronoi diagrams~: if
   \ccc{other} is modified, \ccVar\ is not.}
 %
-\ccMethod{Segment_Voronoi_diagram_2<Gt,SC,DS>
-operator=(const Segment_Voronoi_diagram_2<Gt,SC,DS>& other);}
+\ccMethod{Segment_Voronoi_diagram_2<Gt,PC,DS>
+operator=(const Segment_Voronoi_diagram_2<Gt,PC,DS>& other);}
 {Assignment. If \ccc{svd} and \ccc{other} are the same object
   nothing is done. Otherwise, all the vertices and faces are
   duplicated. After the assignment, \ccVar\ and \ccc{other} refer to
@@ -203,7 +203,10 @@ operator=(const Segment_Voronoi_diagram_2<Gt,SC,DS>& other);}
 {Returns a reference to the segment Voronoi diagram traits object.}
 \ccGlue
 \ccMethod{int dimension();}
-{Returns the dimension of the segment Voronoi diagram.}
+{Returns the dimension of the segment Voronoi diagram. The dimension
+  is $-1$ is the diagram contains no sites, $0$ is the diagram
+  contains one site, $1$ if it contains two sites and $2$ if it
+  contains three or more sites.}
 \ccGlue
 \ccMethod{size_type number_of_vertices();}
 {Returns the number of finite vertices of the dual of the segment
@@ -225,17 +228,19 @@ operator=(const Segment_Voronoi_diagram_2<Gt,SC,DS>& other);}
 \ccPrecond{The number of (visible) vertices in the Apollonius graph must
   be at least one.}}
 \ccGlue
-\ccMethod{Data_structure data_structure();}{Returns the data structure.}
+\ccMethod{Data_structure data_structure();}{Returns a reference to the
+  segment Voronoi diagram data structure object.}
 \ccGlue
-\ccMethod{Point_container point_container();}{Returns the point container.}
+\ccMethod{Point_container point_container();}{Returns a reference to
+  the point container object.}
 
 
 \ccHeading{Traversal of the dual of the segment Voronoi diagram}
 
 
-An Apollonius graph can be seen as a container of faces and vertices.
-Therefore the Apollonius graph provides several iterators and circulators
-that allow to traverse it (completely or partially).
+A segment Voronoi diagram can be seen as a container of faces and
+vertices. Therefore the \ccRefName\ class provides several iterators
+and circulators that allow to traverse it (completely or partially).
 
 
 
@@ -304,10 +309,16 @@ value type is \ccc{Site_2}. They are all invalidated by any change in
 the segment Voronoi diagram.
 
 
-\ccMethod{Sites_iterator sites_begin();}
-{Starts at an arbitrary site.}
+\ccMethod{Input_sites_iterator input_sites_begin();}
+{Starts at an arbitrary input site.}
 \ccGlue
-\ccMethod{Sites_iterator sites_end();}
+\ccMethod{Input_sites_iterator input_sites_end();}
+{Past-the-end iterator.}
+\ccGlue
+\ccMethod{Output_sites_iterator output_sites_begin();}
+{Starts at an arbitrary output site.}
+\ccGlue
+\ccMethod{Output_sites_iterator output_sites_end();}
 {Past-the-end iterator.}
 
 
@@ -318,20 +329,16 @@ the segment Voronoi diagram.
 
 \ccHeading{Face, Edge and Vertex Circulators}
 
-The \ccRefName\ class also provides
-circulators that allow to visit
-respectively all faces or edges incident to a given vertex
-or all vertices adjacent to a given vertex.
-These circulators are non-mutable and bidirectional.
-The operator \ccc{operator++} moves the circulator
-counterclockwise around the vertex while
-the \ccc{operator--} moves clockwise.
-A face circulator is invalidated by any modification of the face
-pointed to.
-An edge circulator is invalidated by any modification
-in one of the two faces incident to the edge pointed to.
-A vertex circulator is invalidated by any modification
-in any of the faces adjacent to the vertex pointed to.
+The \ccRefName\ class also provides circulators that allow to visit
+respectively all faces or edges incident to a given vertex or all
+vertices adjacent to a given vertex. These circulators are non-mutable
+and bidirectional. The operator \ccc{operator++} moves the circulator
+counterclockwise around the vertex while the \ccc{operator--} moves
+clockwise. A face circulator is invalidated by any modification of the
+face pointed to. An edge circulator is invalidated by any modification
+in one of the two faces incident to the edge pointed to. A vertex
+circulator is invalidated by any modification in any of the faces
+adjacent to the vertex pointed to.
 
 \ccMethod{Face_circulator incident_faces(Vertex_handle v);}
 {Starts at an arbitrary face incident
@@ -364,7 +371,7 @@ in  counterclockwise order around \ccc{v}.
 \ccHeading{Traversal of the Convex Hull}
 
 Applied on the \ccc{infinite_vertex}
-the above  functions  allow to visit the vertices on the convex hull and
+the above methods  allow to visit the vertices on the convex hull and
 the infinite edges and faces. Note that a counterclockwise
 traversal of the vertices adjacent to the \ccc{infinite_vertex} is
 a clockwise traversal of the convex hull.
@@ -421,9 +428,27 @@ the finite or infinite character of any feature.
 \ccMethod{template< class Input_iterator >
 size_type insert(Input_iterator first, Input_iterator beyond);}
 {Inserts the sites in the range
-[\ccc{first},\ccc{beyond}). The number of sites in the range
-  [\ccc{first}, \ccc{beyond}) is returned.
-% MK:: Implement this method with copying and sorting
+[\ccc{first},\ccc{beyond}). The number of additional sites inserted in
+  the diagram is returned.
+\ccPrecond{\ccc{Input_iterator} must be a model of
+  \ccc{InputIterator} and its value type must be
+  either \ccc{Point_2} or \ccc{Site_2}.}}
+%
+\ccMethod{template< class Input_iterator >
+size_type insert(Input_iterator first, Input_iterator beyond, Tag_false);}
+{Same as the previous method.
+\ccPrecond{\ccc{Input_iterator} must be a model of
+  \ccc{InputIterator} and its value type must be
+  either \ccc{Point_2} or \ccc{Site_2}.}}
+%
+\ccMethod{template< class Input_iterator >
+size_type insert(Input_iterator first, Input_iterator beyond, Tag_true);}
+{Inserts the sites in the range
+[\ccc{first},\ccc{beyond}) after performing a random shuffle on
+  them. The input iterator range is not invalidated since the sites
+  are copied locally before the random shuffling is performed.
+  The number of additional sites inserted in the diagram is
+  returned.
 \ccPrecond{\ccc{Input_iterator} must be a model of
   \ccc{InputIterator} and its value type must be
   either \ccc{Point_2} or \ccc{Site_2}.}}
@@ -463,23 +488,23 @@ vnear);}{Inserts the segment whose endpoints are \ccc{p1} and \ccc{p2}
   vertex handle returned by the method
   \ccc{Vertex_handle insert(Point_2 p1, Point_2 p2)}.}
 %
-%\ccGlue
-%\ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
-%vnear);}{Inserts \ccc{s} in the segment Voronoi diagram using the site
-%associated with \ccc{vnear} as an estimate for the nearest neighbor of
-%\ccc{s}, if \ccc{s} is a point, of the first endpoint of \ccc{s}, if
-%\ccc{s} is a segment. The vertex handle returned has the same
-%semantics with the vertex handle returned by the method
-%\ccc{Vertex_handle insert(Site_2 s)}.}
-
-%\ccHeading{Removal}
-%\ccThree{void }{ag.remove(Vertex_handle v)+}{}
+\ccGlue
+\ccMethod{Vertex_handle insert(Site_2 s);}{Inserts the site \ccc{s} in the
+  segment Voronoi diagram. The vertex handle returned has the same
+  semantics with the vertex handle returned by the methods
+  \ccc{Vertex_handle insert(Point_2 p)} and \ccc{Vertex_handle
+    insert(Point_2 p1, Point_2 p2)}, depending on whether \ccc{s}
+  represents a point or a segment respectively.
+\ccPrecond{\ccc{s.is_exact()} must be \ccc{true}.}}
 %
-%\ccMethod{void  remove(Vertex_handle v);}{Removes the site
-%associated to the vertex handle \ccc{v} from the Apollonius
-%graph.
-%\ccPrecond{\ccc{v} must correspond to a valid finite
-%vertex of the Apollonius graph.}}
+\ccGlue
+\ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
+vnear);}{Inserts \ccc{s} in the segment Voronoi diagram using the site
+associated with \ccc{vnear} as an estimate for the nearest neighbor of
+\ccc{s}, if \ccc{s} is a point, or the first endpoint of \ccc{s}, if
+\ccc{s} is a segment. The vertex handle returned has the same
+semantics with the vertex handle returned by the method
+\ccc{Vertex_handle insert(Site_2 s)}.}
 
 
 \ccHeading{Nearest neighbor location}
@@ -530,7 +555,10 @@ returned. If there are no sites in the segment Voronoi diagram
 %  object can be assignable to one of the following: \ccc{Site_2},
 %  \ccc{Gt::Line_2}.}
 
-\newpage
+\begin{ccTexOnly}
+% to make the last I/O method appear in the next page
+\vspace*{20mm}
+\end{ccTexOnly}
 
 \ccHeading{I/O}
 \ccThree{Stream& }{svd.draw_dual(Stream& str)+}{}
@@ -539,18 +567,29 @@ returned. If there are no sites in the segment Voronoi diagram
 Stream& draw_dual(Stream& str);}{Draws the segment Voronoi
 diagram to the stream \ccc{str}.
 \ccPrecond{The following operators must be defined:\\
-\ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
-\ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
-\ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
 }
+%
+\ccMethod{template < class Stream > 
+Stream& draw_skeleton(Stream& str);}{Draws the segment Voronoi
+diagram to the stream \ccc{str}, except the edges of the diagram
+corresponding to a segment and its endpoints.
+\ccPrecond{The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
+}
+%
 \ccGlue
 \ccMethod{template< class Stream >
 Stream& draw_dual_edge(Edge e, Stream& str);}{Draws an edge of the
   segment Voronoi diagram to the stream \ccc{str}.
 \ccPrecond{The following operators must be defined:\\
-\ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
-\ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
-\ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
 }
 
 
@@ -575,7 +614,7 @@ Stream& draw_dual_edge(Edge e, Stream& str);}{Draws an edge of the
   diagram.}
 \ccGlue
 % MK:: add this method make copy(...) protected and see doc of TDS
-\ccMethod{void swap(Segment_Voronoi_diagram_2<Gt,SC,DS>
+\ccMethod{void swap(Segment_Voronoi_diagram_2<Gt,PC,DS>
 other);}{The segment Voronoi diagrams
 \ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)} should
 be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
