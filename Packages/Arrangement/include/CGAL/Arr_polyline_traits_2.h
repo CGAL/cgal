@@ -1340,7 +1340,7 @@ inline std::ostream & operator<<(std::ostream & os,
  */
 template <class Segment_traits_, class Stream_>
 inline Stream_ & operator>>(Stream_ & is,
-                            const Polyline_2<Segment_traits_> & pl)
+                            Polyline_2<Segment_traits_> & pl)
 {
   typedef Polyline_2<Segment_traits_>  Curve_2;
   typedef typename Curve_2::Point_2    Point_2;
