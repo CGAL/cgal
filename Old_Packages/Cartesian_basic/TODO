@@ -1,5 +1,40 @@
 Stuff to look at, as time permits:
 ----------------------------------
+
+*** Before CGAL-2.2 ***
+-----------------------
+- SphereC3 should be able to use Handle_for<>.
+
+*** After CGAL-2.2 ***
+----------------------
+- Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
+  Only in the template parameters, right ?
+- Aff_tranformations can't use Handle_for<> yet.
+- Merging Cartesian and SimpleCartesian : mail to Stefan [+ the list ?]
+  Currently, there are 10000 lines of code in SimpleCartesian kernel, mostly
+  copy-pasted and adapted from the Cartesian kernel.  This is evil in itself
+  from the maintainance point of view.  I think only the low level (FT-based)
+  predicates and constructions are common (and this is already diverging).
+  Moreover, I think it would be good for the Cartesian kernel to somehow
+  have access to raw points/objects, in order to, for example:
+  - easy to have Iso_rectangleC2 being a twotuple of non ref-counted points,
+    whereas now it's a twotuple of ref-counted points, which is a pure lost.
+    (all local, temporary objects don't need any ref-counting)
+  - still my big plans of a kernel offering filtered constructions would be
+    far easier and cleaner if based on the primitives of such a kernel.
+  So, I propose to merge much more of these two kernels : I propose that the
+  ref-counted kernel becomes just a set of wrappers around non ref-counted
+  kernel objects and associated predicates/constructions.
+  So basically, I would like to offer another non-ref counted Cartesian kernel
+  (thus replacing the current SimpleCartesian in the end).
+  Having a central place for the code and a single maintainer for those 2
+  kernels seems a better solution than the current one (which will quickly
+  diverge, like homogeneous and Cartesian did in the past).
+  What do you think ?
+  [ Note : another possibility would have been to have a template parameter
+  to the kernel specifying the ref-countability, and having partial
+  specialization of some rep classes.  But I fear a well-known "compiler"
+  would have problems with this... ]
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
@@ -19,7 +54,10 @@ Stuff to look at, as time permits:
 {
   return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
 }
-- Getting rid of the partial kernels Cartesian_2 and Cartesian_3.  This is a
+- Why can't we simply have : typedef Iso_rectangleC2<double> Bbox_2;  ?
+- Iso_rectangleC2 stores a Twotuple<Point_2>, which means they are
+  ref-counted, which is sub-optimal...  See above.
+- Getting rid of the partial kernels Cartesian_2 and Cartesian_3 ?  This is a
   lot (1Kloc) of redundant code, and this is something only aimed at reducing
   compile time, for which I have some serious doubts anyway.  So:
   - XXX: Make sure it's not needed.  Cartesian seems built on top of it...
@@ -37,7 +75,7 @@ Stuff to look at, as time permits:
 - Eventually merge C2, C3, Cartesian_basic (Cd ?).  Ask if it's a problem for
   others.  If not, merge them inside CVS, so that history won't be lost.
 - Factorize all the new kernel traits stuff of the different kernels in a
-  separate .def file, included in all kernels ?
+  separate .def file, included by all kernels ?
 - Orientation of Circle_2 and Sphere_3.  I wonder if it's used anywhere.
   Wouldn't it have been better if the kernel circles and spheres were not
   oriented, and if someone needs an orientation, he will be able to build one
@@ -52,8 +90,3 @@ Stuff to look at, as time permits:
   but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
-- Factorize Cartesian and SimpleCartesian using an additional boolean template
-  parameter ?  I would prefer having the Cartesian kernel use simple objects
-  internally, and handles around them...  This way, the filtered kernel will be
-  simpler to implement.
-- Make this filtered kernel... first step only the predicates...
