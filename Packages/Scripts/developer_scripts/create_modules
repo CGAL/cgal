@@ -3,6 +3,36 @@
 CVSDIR="/cygdrive/d/CGALCVS"
 MODULES_DIRECTORY="Modules"
 
+
+
+#check the parameters
+while [ ${#} -gt 0 ]; do
+  case ${*} in
+    -h*|-help*|--help*)
+      printf "usage: create_modules (-h|-help|--help)\n\t-d dir\tSets the CVSDIR directory. The default is /cygdrive/d/CGALCVS.\n\t-m mod\tSets the name of the Modules directory from the Installation package. The default name is Modules.\n"
+      exit
+    ;;
+    -d*)
+      CVSDIR="$2"
+      shift
+    ;;
+    -m*)
+      MODULES_DIRECTORY="$2"
+      shift
+    ;;
+  esac
+  shift
+done
+
+printf "Setting CVSDIR=${CVSDIR} ...\n"
+printf "Setting MODULES_DIRECTORY=${MODULES_DIRECTORY} ...\n"
+
+if [ ! -r ${CVSDIR} ]; then
+  printf "Directory ${CVSDIR} does not exist ... EXITING\n"
+  return
+fi
+
+
 cd ${CVSDIR} || return
 if [ -r "Installation" ]; then
   printf "Updating package Installation to get the modules list ...\n"
