@@ -69,9 +69,9 @@ convex_bounding_box_2(
 
   // Four extremes
   ForwardIterator minx = first;
-  ForwardIterator maxx = first;
-  ForwardIterator miny = first;
-  ForwardIterator maxy = first;
+  ForwardIterator maxx;
+  ForwardIterator miny;
+  ForwardIterator maxy;
 
   if (t.less_x_2_object()(*minx, *f) ||
       t.less_y_2_object()(*minx, *f) && !t.less_x_2_object()(*f, *minx))
