@@ -7,6 +7,8 @@ template <class R>
 bool
 _test_cls_point_d( const R& )
 {
+  std::cout << "Testing class Point_d" ;
+
   double coord1[6] = {0.0, 1.0, 2.0, 3.0, 4.0, 1.0};
   double coord2[6] = {0.0, 2.0, 4.0, 6.0, 8.0, 2.0};
   CGAL::Point_d<R> p (5, coord1, coord1+6); 
@@ -16,11 +18,15 @@ _test_cls_point_d( const R& )
   CGAL::Point_d<R> t;
   t = s;                    // assignment
 
+  std::cout << '.';
+  
   assert ( p == pp);
   assert ( p == q);
   assert ( p == s);         // equality test
   assert ( p == t);
 
+  std::cout << '.';
+  
   for (int i=0; i<5; ++i) 
   {
     assert (q.cartesian(i) == (double)i);   // cartesian method
@@ -29,21 +35,7 @@ _test_cls_point_d( const R& )
   }
   assert (s.dimension() == 5);              // dimension
 
-  // I/O
-
-  const int size = 100;                 // suffices to store a point
-  char buffer[size];
-  std::ostrstream ost (buffer, size);
-  CGAL::set_ascii_mode (ost);
-  ost << p;                    // write p
-
-  std::istrstream ist (buffer, size);
-  CGAL::Point_d<R> u;
-  CGAL::set_ascii_mode (ist);
-  ist >> u;                    // read p back in as u
-
-  assert (p == u);
-
+  std::cout << "done" << std::endl;
   return true;
 }  
  

@@ -17,6 +17,7 @@ CXXFLAGS = -g \
            $(TESTSUITE_CXXFLAGS) \
            -I./include \
 	   -DCGAL_CFG_NO_ADVANCED_KERNEL \
+	   -DCGAL_NO_LEDA_HANDLE \
            -I../../include \
 	   -I../../../C2/include \
 	   -I../../../C3/include \

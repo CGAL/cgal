@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 // 
-// source        : test_programs.fw
-// file          : test_kernelCd.C
+// source        : test_kernel_3.fw
+// file          : _test_cls_segment_3.h
 // revision      : 2.2.2
 // revision_date : 28 Sep 1999 
 // author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
@@ -21,21 +21,11 @@
 // ============================================================================
 
 
-#include <iostream>
-#include <strstream>
-#include <cassert>
-#include <CGAL/Cartesian_dynamic_d.h>
-#include <CGAL/_test_d.h>
-#include <CGAL/leda_real.h>
+#ifndef CGAL_SEGMENT_3_H
+#include <CGAL/Segment_3.h>
+#endif // CGAL_SEGMENT_3_H
 
-// typedef double  FT;
-typedef leda_real  FT;
 
-int
-main()
-{
-  typedef   CGAL::Cartesian_dynamic_d<FT>     Cls;
-  std::cout << "Testing dD with Cartesian<double> :" << std::endl;
-  _test_d( Cls() );
-  return 0;
-}
+template <class R> bool _test_cls_segment_3(const R& );
+
+

@@ -31,12 +31,18 @@ struct Cartesian_base_dynamic_d
     typedef CGAL::Vector_d<R,Rep_tag>           Vector_d;
     typedef CGAL::Direction_d<R,Rep_tag>        Direction_d;
     typedef CGAL::Plane_d<R,Rep_tag>            Plane_d;
+    typedef CGAL::Line_d<R,Rep_tag>             Line_d;
+    typedef CGAL::Ray_d<R,Rep_tag>              Ray_d;
+    typedef CGAL::Segment_d<R,Rep_tag>          Segment_d;
 #else
     typedef Linear_algebraCd<FT>                LA;
     typedef PointCd<R>                          Point_d;
     typedef VectorCd<R>                         Vector_d;
     typedef DirectionCd<R>                      Direction_d;
     typedef PlaneCd<R>                          Plane_d;
+    typedef LineCd<R>                           Line_d;
+    typedef RayCd<R>                            Ray_d;
+    typedef SegmentCd<R>                        Segment_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
@@ -48,9 +54,13 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Vector_d.h>
 #include <CGAL/Cartesian/Direction_d.h>
 #include <CGAL/Cartesian/Plane_d.h>
+#include <CGAL/Cartesian/Line_d.h>
+#include <CGAL/Cartesian/Ray_d.h>
+#include <CGAL/Cartesian/Segment_d.h>
 
 #include <CGAL/Cartesian/global_operators_d.h>
 #include <CGAL/Cartesian/constructions_on_planes_d.h>
+#include <CGAL/Cartesian/distance_computations_d.h>
 #include <CGAL/Cartesian/predicates_on_points_d.h>
 #include <CGAL/Cartesian/predicates_on_directions_d.h>
 #include <CGAL/Cartesian/predicates_on_planes_d.h>
@@ -61,6 +71,9 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Vector_d.C>
 #include <CGAL/Cartesian/Direction_d.C>
 #include <CGAL/Cartesian/Plane_d.C>
+#include <CGAL/Cartesian/Line_d.C>
+#include <CGAL/Cartesian/Ray_d.C>
+#include <CGAL/Cartesian/Segment_d.C>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -89,6 +102,9 @@ struct Cartesian_dynamic_d
     typedef typename Kernel_base::Vector_d      Vector_d;
     typedef typename Kernel_base::Direction_d   Direction_d;
     typedef typename Kernel_base::Plane_d       Plane_d;
+    typedef typename Kernel_base::Line_d        Line_d;
+    typedef typename Kernel_base::Ray_d         Ray_d;
+    typedef typename Kernel_base::Segment_d     Segment_d;
 
 #else
     // Now CGAL::Point_d<R> is only a wrapper around CGAL::PointCd<R>
@@ -102,15 +118,21 @@ struct Cartesian_dynamic_d
     typedef typename Kernel_base::Vector_d      Vector_d_base;
     typedef typename Kernel_base::Direction_d   Direction_d_base;
     typedef typename Kernel_base::Plane_d       Plane_d_base;
+    typedef typename Kernel_base::Line_d        Line_d_base;
+    typedef typename Kernel_base::Ray_d         Ray_d_base;
+    typedef typename Kernel_base::Segment_d     Segment_d_base;
 
     // Note: necessary to qualify Point_d by ::CGAL:: to disambiguate between
     // Point_d in the current namespace (nested within CGAL) and
     // CGAL::Point_d< Cartesian_d<FT> > (which is in the CGAL namespace)
 
-    typedef Point_d<Self>                 Point_d;
-    typedef Vector_d<Self>                Vector_d;
-    typedef Direction_d<Self>             Direction_d;
-    typedef Plane_d<Self>                 Plane_d;
+    typedef Point_d<Self>                       Point_d;
+    typedef Vector_d<Self>                      Vector_d;
+    typedef Direction_d<Self>                   Direction_d;
+    typedef Plane_d<Self>                       Plane_d;
+    typedef Line_d<Self>                        Line_d;
+    typedef Ray_d<Self>                         Ray_d;
+    typedef Segment_d<Self>                     Segment_d;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

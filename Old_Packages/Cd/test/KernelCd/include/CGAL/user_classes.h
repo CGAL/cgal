@@ -121,6 +121,33 @@ class Direction_d;
 template < class R>
 class Plane_d;
 
+template < class R>
+class Line_d;
+
+template < class R>
+class Ray_d;
+
+template < class R>
+class Segment_d;
+
+template < class R>
+class Triangle_d;
+
+template < class R>
+class Tetrahedron_d;
+
+template < class R>
+class Sphere_d;
+
+template < class R>
+class Simplex_d;
+
+template < class R>
+class Iso_cuboid_d;
+
+template < class R>
+class Aff_transformation_d;
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_USER_CLASSES_H

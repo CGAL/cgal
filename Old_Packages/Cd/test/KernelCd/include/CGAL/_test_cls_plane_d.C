@@ -83,6 +83,8 @@ _test_cls_plane_d(const gnuR& )
  assert( pl1.has_on( pl1.projection( pp1 ) )  );
 #endif // CGAL_STRICT_09
 
+ std::cout <<'.';
+
  assert( plc.has_on_boundary(plc.point()) );
  assert( plc.orthogonal_direction() == pla.orthogonal_direction() );
  // assert( plc.perpendicular_line( plc.point() )
@@ -91,6 +93,8 @@ _test_cls_plane_d(const gnuR& )
  // == CGAL::Line_d<gnuR>( pl1.point(), pl1.orthogonal_direction()) );
  CGAL::Point_d<gnuR>  gnup(3,RT(345),RT(23),RT(0));
  assert( xy_pl.has_on_boundary( gnup ) );
+
+ std::cout <<'.';
 
  CGAL::Vector_d<gnuR> nov = pl1.orthogonal_vector();
  CGAL::Vector_d<gnuR> vb1 = pl1.base(0);
@@ -105,6 +109,8 @@ _test_cls_plane_d(const gnuR& )
  assert( neg_xy_pl_eq.oriented_side( p1 ) == CGAL::ON_POSITIVE_SIDE );
  assert( xy_pl.oriented_side( p1 ) == CGAL::ON_NEGATIVE_SIDE );
  assert( pl1.oriented_side( p1 ) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( pl1.oriented_side( pz ) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( pl1.oriented_side( p2 ) == CGAL::ON_ORIENTED_BOUNDARY );
  assert( xy_pl.has_on_positive_side( p2 ) );
  assert( xy_pl.has_on_negative_side( p1 ) );
 

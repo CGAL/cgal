@@ -114,7 +114,7 @@ template < class R > class TriangleCd;
 template < class R > class TetrahedronCd;
 template < class R > class SphereCd;
 template < class R > class SimplexCd;
-template < class R > class Iso_rectangleCd;
+template < class R > class Iso_cuboidCd;
 template < class R > class Aff_transformationCd;
 
 CGAL_END_NAMESPACE
