@@ -42,34 +42,29 @@
 #ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
 #endif // CGAL_RECTANGULAR_P_CENTER_2_H
-#ifndef CGAL_COPY_N_H
-#include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
 #ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
 #endif // CGAL_RANDOM_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
+#ifndef CGAL_COPY_N_H
+#include <CGAL/copy_n.h>
+#endif // CGAL_COPY_N_H
+#include <vector>
+#include <functional>
+#include <algorithm>
 #ifdef OUTPUT
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
+#include <iostream>
 #endif
-#ifndef CGAL_PROTECT_STDLIB_H
-#include <stdlib.h>
-#define CGAL_PROTECT_STDLIB_H
-#endif // CGAL_PROTECT_STDLIB_H
+#include <cstdlib>
+
+using std::vector;
+using std::back_inserter;
+using CGAL::Cartesian;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::Random;
+using CGAL::default_random;
+using CGAL::rectangular_p_center_2;
+using CGAL::ORIGIN;
 
 // function class to construct a box
 // around a point p with radius r
@@ -85,20 +80,19 @@ struct Build_box
   }
 };
 
-typedef double                              FT;
-typedef CGAL_Cartesian< FT >                R;
-typedef CGAL_Point_2< R >                   Point_2;
-typedef CGAL_Vector_2< R >                  Vector_2;
-typedef CGAL_Iso_rectangle_2< R >           Square_2;
-typedef Build_box< Point_2, FT, Square_2 >  Build_square;
-typedef vector< Point_2 >                   PCont;
-typedef PCont::iterator                     Piter;
-typedef vector< Square_2 >                  SCont;
-typedef SCont::iterator                     Siter;
-typedef CGAL_Random_points_in_square_2<
-  Point_2,
-  CGAL_Creator_uniform_2< FT, Point_2 > >
-Point_generator;
+typedef double                             FT;
+typedef Cartesian< FT >                    R;
+typedef CGAL::Point_2< R >                 Point;
+typedef CGAL::Vector_2< R >                Vector;
+typedef CGAL::Iso_rectangle_2< R >         Square_2;
+typedef Build_box< Point, FT, Square_2 >   Build_square;
+typedef vector< Point >                    PCont;
+typedef PCont::iterator                    Piter;
+typedef vector< Square_2 >                 SCont;
+typedef SCont::iterator                    Siter;
+typedef Creator_uniform_2< FT, Point >     Creator;
+typedef Random_points_in_square_2< Point, Creator >
+                                             Point_generator;
 
 // translate a range of points by v:
 template < class ForwardIterator, class OutputIterator >
@@ -106,7 +100,7 @@ void
 translate_it( ForwardIterator f,
               ForwardIterator l,
               OutputIterator o,
-              const Vector_2& v)
+              const Vector& v)
 {
   for ( ForwardIterator i( f); i != l; ++i)
     *o++ = *i + v;
@@ -116,7 +110,7 @@ int
 main( int argc, char* argv[])
 {
 #ifdef OUTPUT
-  CGAL_set_pretty_mode( cerr);
+  CGAL::set_pretty_mode( cerr);
 #endif
 
   int number_of_points;
@@ -136,21 +130,21 @@ main( int argc, char* argv[])
 #endif
 
     // generate random seed
-    random_seed = CGAL_random.get_int( 0, (1 << 30));
+    random_seed = default_random.get_int( 0, (1 << 30));
   }
   else
     random_seed = atoi(argv[2]);
 
   // define random source:
-  CGAL_Random rnd( random_seed);
+  Random rnd( random_seed);
 
 #ifdef OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif
   PCont points;
-  CGAL_copy_n( Point_generator( 1, rnd),
-               number_of_points,
-               back_inserter( points));
+  CGAL::copy_n( Point_generator( 1, rnd),
+                number_of_points,
+                back_inserter( points));
 
   for ( int p( 2); p <= 4; ++p) {
 #ifdef OUTPUT
@@ -159,7 +153,7 @@ main( int argc, char* argv[])
 
     PCont centers;
     FT p_radius;
-    CGAL_rectangular_p_center_2(
+    rectangular_p_center_2(
       points.begin(),
       points.end(),
       back_inserter( centers),
@@ -194,7 +188,7 @@ main( int argc, char* argv[])
              << endl;
       } // if ( j == squares.end())
 #endif
-      CGAL_assertion( j != squares.end());
+      assert( j != squares.end());
     } // for all points
 
     // check, whether there is at least one square
@@ -208,7 +202,7 @@ main( int argc, char* argv[])
       if ( pob > 1)
         break;
     } // for all squares
-    CGAL_assertion( j != squares.end());
+    assert( j != squares.end());
 
   } // for ( int p( 2); p < 4; ++p)
 

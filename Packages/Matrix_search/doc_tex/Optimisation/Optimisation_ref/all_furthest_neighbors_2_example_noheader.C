@@ -5,35 +5,35 @@
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/all_furthest_neighbors_2.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <iostream.h>
-#include <vector.h>
+#include <iostream>
+#include <vector>
 
-typedef double                                 FT;
-typedef CGAL_Cartesian< FT >                   R;
-typedef CGAL_Point_2< R >                      Point_2;
-typedef CGAL_Polygon_traits_2< R >             P_traits;
-typedef vector< Point_2 >                      Point_cont;
-typedef CGAL_Polygon_2< P_traits, Point_cont > Polygon_2;
-typedef CGAL_Random_points_in_square_2<
-  Point_2,
-  CGAL_Creator_uniform_2< FT, Point_2 > >
-Point_generator;
-typedef CGAL_Ostream_iterator< int, ostream >  Ostream_iterator;
+using namespace std;
+using CGAL::random_convex_set_2;
+using CGAL::all_furthest_neighbors;
+
+typedef double                                   FT;
+typedef CGAL::Cartesian< FT >                    R;
+typedef CGAL::Point_2< R >                       Point;
+typedef CGAL::Polygon_traits_2< R >              P_traits;
+typedef vector< Point >                          Point_cont;
+typedef CGAL::Polygon_2< P_traits, Point_cont >  Polygon;
+typedef CGAL::Creator_uniform_2< FT, Point >     Creator;
+typedef CGAL::Random_points_in_square_2< Point, Creator >
+  Point_generator;
+typedef CGAL::Ostream_iterator< int, ostream >   Oiterator;
 
 int
 main()
 {
   // generate random convex polygon:
-  Polygon_2 p;
-  CGAL_random_convex_set_2( 10,
-                            back_inserter( p),
-                            Point_generator( 1));
+  Polygon p;
+  random_convex_set_2( 10, back_inserter( p), Point_generator( 1));
 
   // compute all furthest neighbors:
-  CGAL_all_furthest_neighbors(
+  all_furthest_neighbors(
     p.vertices_begin(),
     p.vertices_end(),
-    Ostream_iterator( cout));
+    Oiterator( cout));
   cout << endl;
-
 } 

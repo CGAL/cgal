@@ -24,19 +24,21 @@
 // Frederickson-Johnson matrix search: traits class adaptor
 // ============================================================================
 
-#if ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
-#define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
+#if ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
+#define SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
+
+CGAL_BEGIN_NAMESPACE
 
 template < class _FeasibilityTest, class _Matrix >
-class CGAL_Sorted_matrix_search_traits_adaptor {
+class Sorted_matrix_search_traits_adaptor {
 public:
   typedef _FeasibilityTest         FeasibilityTest;
   typedef _Matrix                  Matrix;
   typedef typename _Matrix::Value  Value;
-  typedef less< Value >            Compare_strictly;
-  typedef less_equal< Value >      Compare_non_strictly;
+  typedef std::less< Value >       Compare_strictly;
+  typedef std::less_equal< Value > Compare_non_strictly;
 
-  CGAL_Sorted_matrix_search_traits_adaptor(
+  Sorted_matrix_search_traits_adaptor(
     const FeasibilityTest& ft)
   : _ft( ft)
   {}
@@ -60,17 +62,19 @@ protected:
 //!!! with iterator traits we replace const Matrix&
 // by an iterator with value type Matrix
 template < class FeasibilityTest, class Matrix >
-CGAL_Sorted_matrix_search_traits_adaptor<
+Sorted_matrix_search_traits_adaptor<
   FeasibilityTest, Matrix >
-CGAL_sorted_matrix_search_traits_adaptor(
+sorted_matrix_search_traits_adaptor(
   const FeasibilityTest& f, const Matrix&)
 {
-  typedef CGAL_Sorted_matrix_search_traits_adaptor<
+  typedef Sorted_matrix_search_traits_adaptor<
     FeasibilityTest, Matrix > Traits;
   return Traits( f);
-} // CGAL_sorted_matrix_search_traits_adaptor( ... )
+} // sorted_matrix_search_traits_adaptor( ... )
 
-#endif // ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
+CGAL_END_NAMESPACE
+
+#endif // ! (SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

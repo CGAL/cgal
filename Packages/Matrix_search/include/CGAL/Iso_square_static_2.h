@@ -24,27 +24,29 @@
 // 2D Iso-squares with static radius
 // ============================================================================
 
-#if ! (CGAL_ISO_SQUARE_STATIC_2_H)
-#define CGAL_ISO_SQUARE_STATIC_2_H 1
+#if ! (ISO_SQUARE_STATIC_2_H)
+#define ISO_SQUARE_STATIC_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
-// class CGAL__Iso_square_static_2 represents a square with center and radius.
+CGAL_BEGIN_NAMESPACE
+
+// class Iso_square_static_2 represents a square with center and radius.
 // all objects have the same radius ==> radius is a static member
 // no handle-rep stuff
 
 template < class _R >
-class CGAL__Iso_square_static_2 {
+class Iso_square_static_2 {
 public:
   typedef _R                       R;
   typedef typename _R::Point_2     Point_2;
   typedef typename _R::FT          FT;
 
-  CGAL__Iso_square_static_2() {}
+  Iso_square_static_2() {}
 
-  CGAL__Iso_square_static_2( const Point_2& p)
+  Iso_square_static_2( const Point_2& p)
   : _center( p)
   {}
 
@@ -101,17 +103,17 @@ private:
 // for output to ostream:
 template< class R >
 ostream& operator<<( ostream& os,
-                     const CGAL__Iso_square_static_2< R >& s)
+                     const Iso_square_static_2< R >& s)
 {
-  switch(os.iword(CGAL_IO::mode)) {
-  case CGAL_IO::ASCII :
+  switch(os.iword(IO::mode)) {
+  case IO::ASCII :
     return os << s.center() << ' ' << s.radius();
-  case CGAL_IO::BINARY :
+  case IO::BINARY :
     os << s.center() << s.radius();
-    // CGAL_write(os, s.radius());
+    // write(os, s.radius());
     return os;
   default:
-    return os << "CGAL__Iso_square_static_2(" << s.center() << ", "
+    return os << "Iso_square_static_2(" << s.center() << ", "
               << s.radius() << ')';
   }
 }
@@ -120,40 +122,40 @@ ostream& operator<<( ostream& os,
 template < class R >
 istream&
 operator>>( istream& is,
-            CGAL__Iso_square_static_2< R >& s)
+            Iso_square_static_2< R >& s)
 {
   typename R::Point_2  c;
   typename R::FT       r;
 
   is >> c >> r;
 
-  s = CGAL__Iso_square_static_2< R >( c);
+  s = Iso_square_static_2< R >( c);
   s.set_radius( r);
   return is;
 }
 
 #ifdef CGAL_WINDOW_STREAM_H
 
-// for output to CGAL_Window_stream:
+// for output to Window_stream:
 template< class R >
-CGAL_Window_stream&
-operator<<( CGAL_Window_stream& w,
-            const CGAL__Iso_square_static_2< R >& s)
+Window_stream&
+operator<<( Window_stream& w,
+            const Iso_square_static_2< R >& s)
 {
-  w.draw_rectangle( CGAL_to_double( s.xmin()),
-                    CGAL_to_double( s.ymin()),
-                    CGAL_to_double( s.xmax()),
-                    CGAL_to_double( s.ymax()));
+  w.draw_rectangle( to_double( s.xmin()),
+                    to_double( s.ymin()),
+                    to_double( s.xmax()),
+                    to_double( s.ymax()));
   return w;
 }
 
-// for input from CGAL_Window_stream:
+// for input from Window_stream:
 template< class R >
-CGAL_Window_stream&
-operator>>( CGAL_Window_stream& w,
-            CGAL__Iso_square_static_2< R >& r)
+Window_stream&
+operator>>( Window_stream& w,
+            Iso_square_static_2< R >& r)
 {
-  CGAL_Window_stream W;
+  Window_stream W;
   drawing_mode old_mode( W.set_mode( leda_xor_mode));
   leda_color old_color( W.set_color( leda_red));
 
@@ -182,20 +184,22 @@ operator>>( CGAL_Window_stream& w,
   W.set_mode( old_mode);
   W.set_color( old_color);
 
-  r = CGAL__Iso_square_static_2< R >( c_x, c_y);
+  r = Iso_square_static_2< R >( c_x, c_y);
   r.set_radius( rad);
   return w << r;
 }
 
 #endif // CGAL_WINDOW_STREAM_H
 
-// the static radius of all CGAL__Iso_square_static_2< R >:
+// the static radius of all Iso_square_static_2< R >:
 template < class R >
-CGAL__Iso_square_static_2< R >::FT
-CGAL__Iso_square_static_2< R >::_radius;
+Iso_square_static_2< R >::FT
+Iso_square_static_2< R >::_radius;
+
+CGAL_END_NAMESPACE
 
 
-#endif // ! (CGAL_ISO_SQUARE_STATIC_2_H)
+#endif // ! (ISO_SQUARE_STATIC_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,8 +24,8 @@
 // 2-4-Center Computation for Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#if ! (CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H)
-#define CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H 1
+#if ! (RECTANGULAR_P_CENTER_2_TRAITS_H)
+#define RECTANGULAR_P_CENTER_2_TRAITS_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -33,20 +33,19 @@
 #ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
 #endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#include <vector>
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
   !defined(CGAL_CFG_MATCHING_BUG_2)
 
-#ifndef CGAL_PROTECT_ITERATOR_H
-#include <iterator.h>
-#define CGAL_PROTECT_ITERATOR_H
-#endif // CGAL_PROTECT_ITERATOR_H
+#ifndef CGAL_PROTECT_ITERATOR
+#include <iterator>
+#define CGAL_PROTECT_ITERATOR
+#endif
 
 #endif // ! (CGAL_CFG_NO_ITERATOR_TRAITS) && ...
+
+CGAL_BEGIN_NAMESPACE
 
 #ifdef CGAL_CARTESIAN_REP_H
 template < class ForwardIterator,
@@ -60,14 +59,16 @@ _CGAL_rectangular_p_center_2(
   OutputIterator o,
   FT& r,
   int p,
-  CGAL_Point_2< CGAL_Cartesian< FT > >*)
+  Point_2< Cartesian< FT > >*)
 {
   typedef
-    CGAL_Piercing_squares_traits_cartesian< CGAL_Cartesian< FT > >
+    //!!! egcs111 sucks here
+    Piercing_squares_traits_cartesian< Cartesian< FT > >
+    //Piercing_traits_cartesian< Cartesian< FT > >
   PTraits;
 
-  return CGAL_rectangular_p_center_2( f, l, o, r, p, PTraits());
-} // CGAL_rectangular_p_center_2( ... )
+  return rectangular_p_center_2( f, l, o, r, p, PTraits());
+} // rectangular_p_center_2( ... )
 #endif // CGAL_CARTESIAN_REP_H
 
 #ifdef CGAL_HOMOGENEOUS_REP_H
@@ -84,23 +85,25 @@ _CGAL_rectangular_p_center_2(
   ForwardIterator l,
   OutputIterator o,
 #ifndef CGAL_CFG_MATCHING_BUG_1
-  CGAL_Homogeneous< RT >::FT& r,
+  Homogeneous< RT >::FT& r,
 #else
   FT& r,
 #endif
   int p,
-  CGAL_Point_2< CGAL_Homogeneous< RT > >*)
+  Point_2< Homogeneous< RT > >*)
 {
   typedef
-    CGAL_Piercing_squares_traits_homogeneous< CGAL_Homogeneous< RT > >
+    //!!! egcs111 sucks here
+    //Piercing_squares_traits_homogeneous< Homogeneous< RT > >
+    Piercing_traits_homogeneous< Homogeneous< RT > >
   PTraits;
 
-  return CGAL_rectangular_p_center_2( f, l, o, r, p, PTraits());
-} // CGAL_rectangular_p_center_2( ... )
+  return rectangular_p_center_2( f, l, o, r, p, PTraits());
+} // rectangular_p_center_2( ... )
 #endif // CGAL_HOMOGENEOUS_REP_H
 
 template < class ForwardIterator, class FT >
-struct CGAL__blow_up_iso_square_static_2
+struct Blow_up_iso_square_static_2
 {
   void
   operator()( ForwardIterator b, ForwardIterator e, FT v) const
@@ -112,25 +115,25 @@ struct CGAL__blow_up_iso_square_static_2
 /*
 template < class ForwardIterator, class FT, class R >
 void
-CGAL__rectangle_blow_up_to( ForwardIterator f,
+_rectangle_blow_up_to( ForwardIterator f,
                             ForwardIterator l,
                             FT diameter,
-                            CGAL_Iso_rectangle_2< R >*)
+                            Iso_rectangle_2< R >*)
 {
   for ( ForwardIterator i( f); i != l; ++i) {
-    CGAL_Point_2< R > c(
+    Point_2< R > c(
       ((*i).xmin() + (*i).xmax()) / FT( 2),
       ((*i).ymin() + (*i).ymax()) / FT( 2));
-    CGAL_Vector_2< R > t( diameter / FT( 2),
+    Vector_2< R > t( diameter / FT( 2),
                           diameter / FT( 2));
-    (*i) = CGAL_Iso_rectangle_2< R >( c - t, c + t);
+    (*i) = Iso_rectangle_2< R >( c - t, c + t);
   }
 }
 */
 
 
 template < class _PiercingFunction >
-class CGAL_Pcenter_default_traits {
+class Pcenter_default_traits {
 public:
   typedef _PiercingFunction                            PiercingFunction;
   typedef typename _PiercingFunction::Iso_rectangle_2  Iso_rectangle_2;
@@ -140,19 +143,18 @@ public:
   typedef typename _PiercingFunction::Y                Y;
   typedef typename _PiercingFunction::Build_point      Build_point;
   typedef typename _PiercingFunction::Build_rectangle  Build_rectangle;
-  typedef vector< Iso_rectangle_2 >                    Cont;
+  typedef std::vector< Iso_rectangle_2 >               Cont;
   typedef typename Cont::size_type                     size_type;
   typedef typename Cont::iterator                      iterator;
-  typedef CGAL__blow_up_iso_square_static_2< iterator, FT >
-    Blow_up_rectangles;
+  typedef Blow_up_iso_square_static_2< iterator, FT >  Blow_up_rectangles;
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
 #else
-  typedef vector< Point_2 >::iterator                  InputIterator;
-  typedef back_insert_iterator< vector< Point_2 > >    OutputIterator;
+  typedef std::vector< Point_2 >::iterator               InputIterator;
+  typedef std::back_insert_iterator< vector< Point_2 > > OutputIterator;
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
-  CGAL_Pcenter_default_traits(
+  Pcenter_default_traits(
     InputIterator f,
     InputIterator l,
     const PiercingFunction& pf)
@@ -180,7 +182,7 @@ public:
     CGAL_optimisation_assertion( !input_data.empty());
     bool ok;
     this->operator()( v,
-                      CGAL_Wastebasket< Point_2 >(),
+                      Wastebasket< Point_2 >(),
                       ok);
     return ok;
   }
@@ -188,8 +190,8 @@ public:
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class OutputIterator >
 #else
-  CGAL_Wastebasket< Point_2 >
-  operator()( FT v, CGAL_Wastebasket< Point_2 > o, bool& ok)
+  Wastebasket< Point_2 >
+  operator()( FT v, Wastebasket< Point_2 > o, bool& ok)
   {
     CGAL_optimisation_assertion( !input_data.empty());
     Blow_up_rectangles blow_it;
@@ -223,7 +225,7 @@ protected:
               InputIterator l,
               random_access_iterator_tag)
   {
-    input_data.reserve( CGAL_iterator_distance( f, l));
+    input_data.reserve( iterator_distance( f, l));
     _data_init( f, l, input_iterator_tag());
   }
 
@@ -248,13 +250,15 @@ protected:
 
 
   // data members:
-  PiercingFunction           _pf;
-  vector< Iso_rectangle_2 >  input_data;
+  PiercingFunction                _pf;
+  std::vector< Iso_rectangle_2 >  input_data;
 
-}; // CGAL_Pcenter_default_traits< PiercingFunction >
+}; // Pcenter_default_traits< PiercingFunction >
+
+CGAL_END_NAMESPACE
 
 
-#endif // ! (CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H)
+#endif // ! (RECTANGULAR_P_CENTER_2_TRAITS_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,34 +24,35 @@
 // Frederickson-Johnson matrix search
 // ============================================================================
 
-#if ! (CGAL_SORTED_MATRIX_SEARCH_H)
-#define CGAL_SORTED_MATRIX_SEARCH_H 1
+#if ! (SORTED_MATRIX_SEARCH_H)
+#define SORTED_MATRIX_SEARCH_H 1
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#ifndef CGAL_PROTECT_ALGORITHM
+#include <algorithm>
+#define CGAL_PROTECT_ALGORITHM
+#endif
+#ifndef CGAL_PROTECT_FUNCTIONAL
+#include <functional>
+#define CGAL_PROTECT_FUNCTIONAL
+#endif
+#ifndef CGAL_PROTECT_VECTOR
+#include <vector>
+#define CGAL_PROTECT_VECTOR
+#endif
 #ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
 #endif // CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 
+CGAL_BEGIN_NAMESPACE
 template < class Matrix >
-class CGAL__Padded_matrix {
+class _Padded_matrix {
 public:
   typedef typename Matrix::Value Value;
 
-  CGAL__Padded_matrix( const Matrix& m) : matrix( &m) {}
+  _Padded_matrix( const Matrix& m) : matrix( &m) {}
 
   Value
   operator()( int x, int y) const
@@ -84,11 +85,11 @@ private:
   const Matrix* matrix;
 };
 template < class PaddedMatrix >
-class CGAL__Matrix_cell {
+class _Matrix_cell {
 public:
   typedef typename PaddedMatrix::Value Value;
 
-  CGAL__Matrix_cell( PaddedMatrix m, int xpos = 0, int ypos = 0)
+  _Matrix_cell( PaddedMatrix m, int xpos = 0, int ypos = 0)
   : base_matrix( m), x( xpos), y( ypos)
   {}
 
@@ -129,8 +130,8 @@ private:
   int y;
 };
 template < class Cell >
-struct CGAL__Cell_min
-: public unary_function< Cell, typename Cell::Value >
+struct _Cell_min
+: public CGAL_STD::unary_function< Cell, typename Cell::Value >
 {
   typename Cell::Value
   operator()( const Cell& c) const
@@ -138,10 +139,10 @@ struct CGAL__Cell_min
 };
 
 template < class Cell >
-struct CGAL__Cell_max
-: public unary_function< Cell, typename Cell::Value > {
+struct _Cell_max
+: public CGAL_STD::unary_function< Cell, typename Cell::Value > {
 
-  CGAL__Cell_max( int offset) : ofs( offset) {}
+  _Cell_max( int offset) : ofs( offset) {}
 
   typename Cell::Value
   operator()( const Cell& c) const
@@ -154,10 +155,10 @@ private:
 
 #ifdef CGAL_CFG_RETURN_TYPE_BUG_1
 template < class T >
-struct CGAL_Traits_value_bug_fix1
+struct Traits_value_bug_fix1
 {
   typedef typename T::Value Value;
-  CGAL_Traits_value_bug_fix1( Value xt)
+  Traits_value_bug_fix1( Value xt)
   { _xt = xt; }
 
   operator Value() const
@@ -172,19 +173,30 @@ template < class InputIterator, class Traits >
 #ifndef CGAL_CFG_RETURN_TYPE_BUG_1
 typename Traits::Value
 #else
-CGAL_Traits_value_bug_fix1< Traits >
+Traits_value_bug_fix1< Traits >
 #endif
-CGAL_sorted_matrix_search( InputIterator f,
+sorted_matrix_search( InputIterator f,
                            InputIterator l,
                            Traits t)
 {
-  typedef typename Traits::Matrix           Matrix;
-  typedef typename Traits::Value            Value;
-  typedef CGAL__Padded_matrix< Matrix >     PaddedMatrix;
-  typedef CGAL__Matrix_cell< PaddedMatrix > Cell;
-  typedef vector< Cell >                    Cell_container;
-  typedef typename Cell_container::iterator
-    Cell_iterator;
+  #ifndef CGAL_CFG_NO_NAMESPACE
+  using std::max;
+  using std::nth_element;
+  using std::iter_swap;
+  using std::remove_if;
+  using std::logical_or;
+  using std::compose1;
+  using std::compose2;
+  using std::bind1st;
+  using std::bind2nd;
+  #endif
+  
+  typedef typename Traits::Matrix            Matrix;
+  typedef typename Traits::Value             Value;
+  typedef _Padded_matrix< Matrix >           PaddedMatrix;
+  typedef _Matrix_cell< PaddedMatrix >       Cell;
+  typedef std::vector< Cell >                Cell_container;
+  typedef typename Cell_container::iterator  Cell_iterator;
   typedef typename Cell_container::reverse_iterator
     Cell_reverse_iterator;
   
@@ -321,10 +333,10 @@ CGAL_sorted_matrix_search( InputIterator f,
     nth_element( active_cells.begin(),
                  active_cells.begin() + upper_median_rank,
                  active_cells.end(),
-                 CGAL_compose2_2(
+                 compose2_2(
                    t.compare_strictly(),
-                   CGAL__Cell_min< Cell >(),
-                   CGAL__Cell_min< Cell >()));
+                   _Cell_min< Cell >(),
+                   _Cell_min< Cell >()));
     
     Cell_iterator lower_median_cell =
       active_cells.begin() + upper_median_rank;
@@ -334,10 +346,10 @@ CGAL_sorted_matrix_search( InputIterator f,
     nth_element( active_cells.begin(),
                  active_cells.begin() + lower_median_rank,
                  active_cells.end(),
-                 CGAL_compose2_2(
+                 compose2_2(
                    t.compare_strictly(),
-                   CGAL__Cell_max< Cell >( ccd),
-                   CGAL__Cell_max< Cell >( ccd)));
+                   _Cell_max< Cell >( ccd),
+                   _Cell_max< Cell >( ccd)));
     
     Cell_iterator upper_median_cell =
       active_cells.begin() + lower_median_rank;
@@ -382,7 +394,7 @@ CGAL_sorted_matrix_search( InputIterator f,
             active_cells.end(),
             compose1(
               bind1st( t.compare_non_strictly(), min_median),
-              CGAL__Cell_min< Cell >()));
+              _Cell_min< Cell >()));
     
       } // lower_median and upper_median are feasible
       else { // lower_median is feasible, but upper_median is not
@@ -404,12 +416,12 @@ CGAL_sorted_matrix_search( InputIterator f,
                 bind1st(
                   t.compare_non_strictly(),
                   lower_median),
-                CGAL__Cell_min< Cell >()),
+                _Cell_min< Cell >()),
               compose1(
                 bind2nd(
                   t.compare_non_strictly(),
                   upper_median),
-                CGAL__Cell_max< Cell >( ccd))));
+                _Cell_max< Cell >( ccd))));
     
       } // lower_median is feasible, but upper_median is not
     else
@@ -433,12 +445,12 @@ CGAL_sorted_matrix_search( InputIterator f,
                 bind1st(
                   t.compare_non_strictly(),
                   upper_median),
-                CGAL__Cell_min< Cell >()),
+                _Cell_min< Cell >()),
               compose1(
                 bind2nd(
                   t.compare_non_strictly(),
                   lower_median),
-                CGAL__Cell_max< Cell >( ccd))));
+                _Cell_max< Cell >( ccd))));
     
       } // upper_median is feasible, but lower_median is not
       else { // both upper_median and lower_median are infeasible
@@ -454,7 +466,7 @@ CGAL_sorted_matrix_search( InputIterator f,
               bind2nd(
                 t.compare_non_strictly(),
                 max( lower_median, upper_median)),
-              CGAL__Cell_max< Cell >( ccd)));
+              _Cell_max< Cell >( ccd)));
     
       } // both upper_median and lower_median are infeasible
     
@@ -466,9 +478,10 @@ CGAL_sorted_matrix_search( InputIterator f,
   CGAL_assertion( ccd == 1);
 
   return (*active_cells.begin()).min();
-}    
+}
+CGAL_END_NAMESPACE
 
-#endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)
+#endif // ! (SORTED_MATRIX_SEARCH_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -24,14 +24,9 @@
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#ifndef CGAL_PROTECT_STDLIB_H
-#include <stdlib.h>
-#define CGAL_PROTECT_STDLIB_H
-#endif // CGAL_PROTECT_STDLIB_H
-#ifndef CGAL_PROTECT_STDIO_H
-#include <stdio.h>
-#define CGAL_PROTECT_STDIO_H
-#endif // CGAL_PROTECT_STDIO_H
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -50,9 +45,6 @@
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
 #endif // CGAL_CIRCULATOR_H
-#ifndef CGAL_COPY_N_H
-#include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
 #ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
 #endif // CGAL_POINT_GENERATORS_2_H
@@ -69,24 +61,35 @@
 #include <LEDA/point_set.h>
 #define CGAL_PROTECT_LEDA_POINT_SET_H
 #endif // CGAL_PROTECT_LEDA_POINT_SET_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
+#include <iostream>
+
+using CGAL::cgalize;
+using CGAL::RED;
+
+using std::vector;
+using CGAL::Cartesian;
+using CGAL::Random_access_circulator_from_container;
+using CGAL::convex_hull_points_2;
+using CGAL::squared_distance;
+using CGAL::maximum_area_inscribed_k_gon;
+using CGAL::maximum_perimeter_inscribed_k_gon;
+using CGAL::Random_points_in_square_2;
+using CGAL::Creator_uniform_2;
+using CGAL::random_convex_set_2;
 
 typedef double                                    FT;
-typedef CGAL_Cartesian< FT >                      RepClass;
-typedef CGAL_Point_2< RepClass >                  Point_2;
-typedef CGAL_Segment_2< RepClass >                Segment;
-typedef vector< Point_2 >                         PointCont;
+typedef Cartesian< FT >                           RepClass;
+typedef CGAL::Point_2< RepClass >                 Point;
+typedef CGAL::Segment_2< RepClass >               Segment;
+typedef vector< Point >                           PointCont;
 typedef PointCont::iterator                       PointIter;
 typedef vector< PointIter >                       PointIterCont;
 typedef vector< PointIter >::iterator             PointIterIter;
 typedef RepClass::FT                              FT;
 typedef PointCont                                 Polygon;
 typedef PointCont::iterator                       Vertex_iterator;
-typedef CGAL_Random_access_circulator_from_container<
-  Polygon >                                       Vertex_circulator;
+typedef Random_access_circulator_from_container< Polygon >
+  Vertex_circulator;
 typedef PointCont::const_iterator                 Vertex_const_iterator;
 typedef vector< Vertex_iterator >                 Vertex_iteratorCont;
 typedef Vertex_iteratorCont::iterator             Vertex_iteratorIter;
@@ -95,11 +98,11 @@ typedef point                                     LEDA_Point;
 typedef point_set< PointIter >                    LEDA_Point_set_PointIter;
 #include <LEDA/UNDEFINE_NAMES.h>
 
-#ifdef CGAL_EXTREMAL_POLYGON_MEASURE
-#ifndef CGAL_PROTECT_TIME_H
-#include <time.h>
-#define CGAL_PROTECT_TIME_H
-#endif // CGAL_PROTECT_TIME_H
+#ifdef EXTREMAL_POLYGON_MEASURE
+#ifndef CGAL_PROTECT_CTIME
+#include <ctime>
+#define CGAL_PROTECT_CTIME
+#endif
 static time_t Measure;
 static long long int measure;
 #define MEASURE(comm) \
@@ -149,6 +152,7 @@ main()
   int quit_button(
     W.button( "End",
               "Quit Program"));
+  cgalize( W);
   W.display();
   W.init( -1.5, 1.5, -1.5);
 
@@ -161,7 +165,7 @@ main()
     if ( polygon_changed) {
       // compute convex hull:
       PointCont ch_points;
-      CGAL_convex_hull_points_2( points.begin(),
+      convex_hull_points_2( points.begin(),
                                  points.end(),
                                  back_inserter( ch_points));
     
@@ -191,7 +195,7 @@ main()
     if ( !p.empty()) {
       Vertex_const_iterator i( p.begin());
       for (;;) {
-        W << CGAL_RED << *i;
+        W << RED << *i;
         W.set_fg_color( leda_blue);
         if ( (i+1) == p.end()) {
           W << Segment( *i, *(p.begin()));
@@ -218,7 +222,7 @@ main()
       k = max( 3, k);
       PointCont k_gon;
       if ( p.size() >= 3) {
-        MEASURE(CGAL_maximum_area_inscribed_k_gon(
+        MEASURE(maximum_area_inscribed_k_gon(
           p.begin(),
           p.end(),
           k,
@@ -236,13 +240,13 @@ main()
       // compute maximum perimeter inscribed k-gon:
       PointCont k_gon;
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-      MEASURE(CGAL_maximum_perimeter_inscribed_k_gon(
+      MEASURE(maximum_perimeter_inscribed_k_gon(
         Vertex_circulator( &p),
         Vertex_circulator( &p),
         k,
         back_inserter( k_gon));)
 #else
-      MEASURE(CGAL_maximum_perimeter_inscribed_k_gon(
+      MEASURE(maximum_perimeter_inscribed_k_gon(
         p.begin(),
         p.end(),
         k,
@@ -271,11 +275,11 @@ main()
         // test for snapping:
         /*
         #ifdef __GNUG__
-        FT di( CGAL_squared_distance( *nearest, Point_2( x, y)));
+        FT di( squared_distance( *nearest, Point( x, y)));
         if ( di < FT( 0.05)) {
         #else
         */
-        if ( CGAL_squared_distance( *nearest, Point_2( x, y)) < FT( 0.05)) {
+        if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
         // #endif
           int v( 0);
           drawing_mode old_drawing_mode( W.set_mode( leda_xor_mode));
@@ -329,7 +333,7 @@ main()
             }
         
             // set new point:
-            *nearest = Point_2( x, y);
+            *nearest = Point( x, y);
         
           } while ( W.read_event( v, x, y) != button_release_event);
         
@@ -351,11 +355,11 @@ main()
         // test for snapping:
         /*
         #ifdef __GNUG__
-        FT di( CGAL_squared_distance( *nearest, Point_2( x, y)));
+        FT di( squared_distance( *nearest, Point( x, y)));
         if ( di < FT( 0.05)) {
         #else
         */
-        if ( CGAL_squared_distance( *nearest, Point_2( x, y)) < FT( 0.05)) {
+        if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
         //#endif
           points.erase( nearest);
           polygon_changed = true;
@@ -383,17 +387,15 @@ main()
         return 0;
       else if ( input == generate_button) {
         // generate random convex polygon with n vertices
-        typedef CGAL_Random_points_in_square_2<
-          Point_2,
-          CGAL_Creator_uniform_2< FT, Point_2 >
+        typedef Random_points_in_square_2<
+          Point,
+          Creator_uniform_2< FT, Point >
         >
         Point_generator;
         
         points.erase( points.begin(), points.end());
         n = max( n, 3);
-        CGAL_random_convex_set_2( n,
-                                  back_inserter( points),
-                                  Point_generator( 1));
+        random_convex_set_2( n, back_inserter( points), Point_generator( 1));
         
         polygon_changed = true;
         break;
@@ -403,7 +405,7 @@ main()
         break;
       else if ( input == MOUSE_BUTTON( 1)) {
         // insert point:
-        points.push_back( Point_2( x, y));
+        points.push_back( Point( x, y));
         polygon_changed = true;
         break;
       }

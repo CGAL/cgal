@@ -16,7 +16,7 @@
 
   \ccHtmlNoClassToc
   \begin{ccHtmlClassFile}{monotone_matrix_search.html}
-    {Function Declaration of \ccc{CGAL_monotone_matrix_search}}
+    {Function Declaration of \ccc{monotone_matrix_search}}
     \ccTexHtml{}{
       <H3>Monotone Matrix Search</H3>
       
@@ -60,7 +60,7 @@
       \ccPropagateThreeToTwoColumns}{}
 
     \ccGlobalFunction{template < class Matrix, class RandomAccessIC,
-      class Compare_strictly > void CGAL_monotone_matrix_search( const
+      class Compare_strictly > void monotone_matrix_search( const
       Matrix& m, RandomAccessIC t, const Compare_strictly&
       compare_strictly = less< Matrix::Value >());}
     
@@ -99,7 +99,7 @@
     
     \ccDefinition A class \ccClassName\ has to provide the following
     types and operations in order to qualify as argument to
-    \ccc{CGAL_monotone_matrix_search}.
+    \ccc{monotone_matrix_search}.
     
     \ccTypes
     
@@ -141,7 +141,7 @@
       \ref{secMonotoneMatrixSearch}), all these operations have to be
       realized in constant time -- except for
       \ccc{extract_all_even_rows} which may take linear time.
-    \item There is an adaptor \ccc{CGAL_Dynamic_matrix} (see section
+    \item There is an adaptor \ccc{Dynamic_matrix} (see section
       \ref{sec_DynamicMatrix}) that can be used to add most of the
       functionality described above to arbitrary matrix classes.
     \end{itemize}
@@ -149,7 +149,7 @@
   \end{ccClass}
 
   \ccHtmlNoClassToc
-  \begin{ccClassTemplate}{CGAL_Dynamic_matrix<M>}
+  \begin{ccClassTemplate}{Dynamic_matrix<M>}
     \ccCreationVariable{d}\ccTagDefaults
     \subsection{An Adaptor for Adding Dynamic Operations to Matrix Classes}
     \label{sec_DynamicMatrix}
@@ -165,7 +165,7 @@
     
     \ccCreation
     
-    \ccConstructor{CGAL_Dynamic_matrix( const M& m);}{initializes
+    \ccConstructor{Dynamic_matrix( const M& m);}{initializes
       \ccVar\ to \ccc{m}. \ccc{m} is \textit{not} copied, we only
       store a reference.}
 

@@ -17,7 +17,7 @@ minimal distance between both sets is minimized.
 
 \ccHtmlNoClassToc
 \begin{ccHtmlClassFile}{rectangular_p_centers.html}
-  {Definition of function \ccc{CGAL_rectangular_p_center_2}}
+  {Definition of function \ccc{rectangular_p_center_2}}
   \ccTexHtml{}{
     <H3>Rectangular <I>p</I>-Centers</H3>
     
@@ -60,7 +60,7 @@ minimal distance between both sets is minimized.
 
   \ccGlobalFunction{template < class ForwardIterator, class
     OutputIterator, class Traits > OutputIterator
-    CGAL_rectangular_p_center_2( ForwardIterator f, ForwardIterator l,
+    rectangular_p_center_2( ForwardIterator f, ForwardIterator l,
     OutputIterator o, Traits::FT& r, int p, const Traits& t =
     Default_traits);}
   
@@ -76,7 +76,7 @@ minimal distance between both sets is minimized.
     \ref{req_RectangularP-centerTraitsClasses},
   \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2}
     or -- if \ccc{t} is not specified explicitly --
-    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R},
+    \ccc{Point_2<R>} for some representation class \ccc{R},
   \item \ccc{OutputIterator} accepts the value type of
     \ccc{ForwardIterator} as value type,
   \item the range [\ccc{f}, \ccc{l}) is not empty \textit{and}
@@ -113,7 +113,7 @@ minimal distance between both sets is minimized.
     
     \ccDefinition A class \ccClassName\ has to provide the following
     types in order to qualify as a traits class for
-    \ccc{CGAL_rectangular_p_center_2}.
+    \ccc{rectangular_p_center_2}.
     
     \ccTypes 
     

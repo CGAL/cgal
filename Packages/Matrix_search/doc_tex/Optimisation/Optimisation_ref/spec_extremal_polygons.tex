@@ -22,7 +22,7 @@ two predefined traits classes to compute a maximum area (see section
 
 \ccHtmlNoClassToc
 \begin{ccHtmlClassFile}{computing_maximum_area_inscribed_k_gon.html}
-  {Function Declaration of \ccc{CGAL_maximum_area_inscribed_k_gon}}
+  {Function Declaration of \ccc{maximum_area_inscribed_k_gon}}
   \ccHtmlNoClassIndex\ccHtmlNoClassLinks
   %% class wrapper to keep the font at a uniform size:
   \begin{ccClass}{dummy}
@@ -42,7 +42,7 @@ two predefined traits classes to compute a maximum area (see section
   \ccGlobalFunction{
     template < class RandomAccessIC, class OutputIterator >
     OutputIterator
-    CGAL_maximum_area_inscribed_k_gon(
+    maximum_area_inscribed_k_gon(
     RandomAccessIC points_begin,
     RandomAccessIC points_end,
     int k,
@@ -56,7 +56,7 @@ two predefined traits classes to compute a maximum area (see section
   \ccHeading{Precondition}
   \begin{enumerate}
   \item Value type of \ccc{RandomAccessIC} has to be
-    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R}.
+    \ccc{Point_2<R>} for some representation class \ccc{R}.
   \item \ccc{OutputIterator} accepts the value type of
     \ccc{RandomAccessIC} as value type,
   \item the -- at least three -- points denoted by the range
@@ -86,7 +86,7 @@ two predefined traits classes to compute a maximum area (see section
     
 \ccHtmlNoClassToc
 \begin{ccHtmlClassFile}{computing_maximum_perimeter_inscribed_k_gon.html}
-  {Function Declaration of \ccc{CGAL_maximum_perimeter_inscribed_k_gon}}
+  {Function Declaration of \ccc{maximum_perimeter_inscribed_k_gon}}
   \ccHtmlNoClassIndex\ccHtmlNoClassLinks
   %% class wrapper to keep the font at a uniform size:
   \begin{ccClass}{dummy}
@@ -106,7 +106,7 @@ two predefined traits classes to compute a maximum area (see section
   \ccGlobalFunction{
     template < class RandomAccessIC, class OutputIterator >
     OutputIterator
-    CGAL_maximum_perimeter_inscribed_k_gon(
+    maximum_perimeter_inscribed_k_gon(
     RandomAccessIC points_begin,
     RandomAccessIC points_end,
     int k,
@@ -120,8 +120,8 @@ two predefined traits classes to compute a maximum area (see section
   \ccHeading{Precondition}
   \begin{enumerate}
   \item Value type of \ccc{RandomAccessIC} has to be
-    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R},
-  \item there is a global function \ccc{R::FT CGAL_sqrt( R::FT)}
+    \ccc{Point_2<R>} for some representation class \ccc{R},
+  \item there is a global function \ccc{R::FT sqrt( R::FT)}
     defined that computes the squareroot of a number,
   \item \ccc{OutputIterator} accepts the value type of
     \ccc{RandomAccessIC} as value type,
@@ -155,7 +155,7 @@ two predefined traits classes to compute a maximum area (see section
 \begin{ccAdvanced}
   \ccHtmlNoClassToc
   \begin{ccHtmlClassFile}{computing_general_extremal_polygons.html}
-    {Function Declaration of \ccc{CGAL_extremal_polygon}}
+    {Function Declaration of \ccc{extremal_polygon}}
     \ccHtmlNoClassIndex\ccHtmlNoClassLinks
     %% class wrapper to keep the font at a uniform size:
     \begin{ccClass}{dummy}
@@ -176,7 +176,7 @@ two predefined traits classes to compute a maximum area (see section
     \ccGlobalFunction{
       template < class RandomAccessIC, class OutputIterator, class Traits >
       OutputIterator
-      CGAL_extremal_polygon(
+      extremal_polygon(
       RandomAccessIC points_begin,
       RandomAccessIC points_end,
       int k,
@@ -216,7 +216,7 @@ two predefined traits classes to compute a maximum area (see section
     
     \ccDefinition A class \ccClassName\ has to provide the following
     types and operations in order to qualify as a traits class for
-    \ccc{CGAL_extremal_polygon}.
+    \ccc{extremal_polygon}.
     
     \ccTypes 
     
@@ -280,8 +280,8 @@ two predefined traits classes to compute a maximum area (see section
     
     \ccSeeAlso \ccInclude{CGAL/Extremal_polygon_traits_2.h}
     
-    The classes \ccc{CGAL_Kgon_area_traits<R>} and
-    \ccc{CGAL_Kgon_perimeter_traits<R>} (templatized with a \cgal\ 
+    The classes \ccc{Kgon_area_traits<R>} and
+    \ccc{Kgon_perimeter_traits<R>} (templatized with a \cgal\ 
     representation class) both fulfill these requirements.
     
   \end{ccClass}

@@ -4,33 +4,36 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/extremal_polygon_2.h>
-#include <iostream.h>
-#include <vector.h>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+using CGAL::random_convex_set_2;
+using CGAL::maximum_area_inscribed_k_gon;
+
+typedef double                                FT;
+typedef CGAL::Cartesian< FT >                 R;
+typedef CGAL::Point_2< R >                    Point;
+typedef CGAL::Polygon_traits_2< R >           P_traits;
+typedef vector< Point >                       Cont;
+typedef CGAL::Polygon_2< P_traits, Cont >     Polygon;
+typedef CGAL::Creator_uniform_2< FT, Point >  Creator;
+typedef CGAL::Random_points_in_square_2< Point, Creator >
+  Point_generator;
 
 int main() {
 
-  typedef double                            FT;
-  typedef CGAL_Cartesian< FT >              R;
-  typedef CGAL_Point_2< R >                 Point_2;
-  typedef CGAL_Polygon_traits_2< R >        P_traits;
-  typedef vector< Point_2 >                 Cont;
-  typedef CGAL_Polygon_2< P_traits, Cont >  Polygon_2;
-  typedef CGAL_Random_points_in_square_2<
-    Point_2,
-    CGAL_Creator_uniform_2< FT, Point_2 > >
-  Point_generator;
-
-  Polygon_2 p;
+  Polygon p;
   int number_of_points( 10);
   int k( 5);
 
-  CGAL_random_convex_set_2( number_of_points,
-                            back_inserter( p),
-                            Point_generator( 1));
+  random_convex_set_2( number_of_points,
+                       back_inserter( p),
+                       Point_generator( 1));
   cout << "Generated Polygon:\n" << p << endl;
 
-  Polygon_2 k_gon;
-  CGAL_maximum_area_inscribed_k_gon(
+  Polygon k_gon;
+  maximum_area_inscribed_k_gon(
     p.vertices_begin(),
     p.vertices_end(),
     k,

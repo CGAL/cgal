@@ -42,10 +42,7 @@
 #ifndef CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <CGAL/all_furthest_neighbors_2.h>
 #endif // CGAL_ALL_FURTHEST_NEIGHBORS_2_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#include <vector>
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
@@ -56,25 +53,30 @@
 #include <LEDA/point_set.h>
 #define CGAL_PROTECT_LEDA_POINT_SET_H
 #endif // CGAL_PROTECT_LEDA_POINT_SET_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
+#include <iostream>
+
+using std::vector;
+using CGAL::Cartesian;
+using CGAL::Polygon_traits_2;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::random_convex_set_2;
+using CGAL::all_furthest_neighbors;
+using CGAL::cgalize;
+using CGAL::RED;
 
 typedef double                                 FT;
-typedef CGAL_Cartesian< FT >                   R;
-typedef CGAL_Point_2< R >                      Point_2;
-typedef CGAL_Polygon_traits_2< R >             P_traits;
-typedef vector< Point_2 >                      Point_cont;
-typedef vector< int >                          Index_cont;
-typedef CGAL_Polygon_2< P_traits, Point_cont > Polygon_2;
-typedef CGAL_Random_points_in_square_2<
-  Point_2,
-  CGAL_Creator_uniform_2< FT, Point_2 > >
-Point_generator;
+typedef Cartesian< FT >                              R;
+typedef CGAL::Point_2< R >                           Point;
+typedef Polygon_traits_2< R >                        P_traits;
+typedef vector< Point >                              Point_cont;
+typedef vector< int >                                Index_cont;
+typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
+typedef Creator_uniform_2< FT, Point >               Creator;
+typedef Random_points_in_square_2< Point, Creator >  Point_generator;
 #include <LEDA/REDEFINE_NAMES.h>
 typedef point                              LEDA_Point;
-typedef point_set< Point_2 >               LEDA_Point_set_Point;
+typedef point_set< Point >               LEDA_Point_set_Point;
 #include <LEDA/UNDEFINE_NAMES.h>
 void
 wait_for_button_release( leda_window& W)
@@ -90,6 +92,7 @@ int
 main()
 {
   leda_window W;
+  cgalize( W);
   W.init( -1.25, 1.25, -1.25);
   W.display();
 
@@ -104,14 +107,14 @@ main()
        << endl;
   int number_of_points( 30);
   // generate random convex polygon:
-  Polygon_2 p;
-  CGAL_random_convex_set_2( number_of_points,
-                            back_inserter( p),
-                            Point_generator( 1));
-  W << CGAL_RED << p;
+  Polygon p;
+  random_convex_set_2( number_of_points,
+                       back_inserter( p),
+                       Point_generator( 1));
+  W << RED << p;
   // compute all furthest neighbors:
   Index_cont neighbors;
-  CGAL_all_furthest_neighbors(
+  all_furthest_neighbors(
     p.vertices_begin(),
     p.vertices_end(),
     back_inserter( neighbors));

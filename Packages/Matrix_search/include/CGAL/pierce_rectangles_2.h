@@ -24,8 +24,8 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#if ! (CGAL_PIERCE_RECTANGLES_2_H)
-#define CGAL_PIERCE_RECTANGLES_2_H 1
+#if ! (PIERCE_RECTANGLES_2_H)
+#define PIERCE_RECTANGLES_2_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -39,14 +39,8 @@
 #ifndef CGAL_TRANSFORM_ITERATOR_H
 #include <CGAL/Transform_iterator.h>
 #endif // CGAL_TRANSFORM_ITERATOR_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#include <algorithm>
+#include <vector>
 #ifdef CGAL_PCENTER_WINDOW_TRACE
 #ifndef CGAL_IO_WINDOW_STREAM_H
 #include <CGAL/IO/Window_stream.h>
@@ -56,26 +50,28 @@
 #endif // CGAL_IO_OSTREAM_ITERATOR_H
 #endif // CGAL_PCENTER_WINDOW_TRACE
 
+CGAL_BEGIN_NAMESPACE
+
 //!!! to function_objects.h
 template < class T1, class T2 >
-struct CGAL_Has_on_unbounded_side
-: public binary_function< T1, T2, bool >
+struct Has_on_unbounded_side
+: public CGAL_STD::binary_function< T1, T2, bool >
 {
   bool
   operator()( const T1& a, const T2& b) const
   { return a.has_on_unbounded_side( b); }
 };
 template < class T1, class T2 >
-struct CGAL_Has_on_bounded_side
-: public binary_function< T1, T2, bool >
+struct Has_on_bounded_side
+: public CGAL_STD::binary_function< T1, T2, bool >
 {
   bool
   operator()( const T1& a, const T2& b) const
   { return a.has_on_bounded_side( b); }
 };
 template < class T1, class T2 >
-struct CGAL_Has_on_boundary
-: public binary_function< T1, T2, bool >
+struct Has_on_boundary
+: public CGAL_STD::binary_function< T1, T2, bool >
 {
   bool
   operator()( const T1& a, const T2& b) const
@@ -84,9 +80,9 @@ struct CGAL_Has_on_boundary
 
 //!!! STL-extensions
 template < class T >
-struct CGAL_Wastebasket : public output_iterator
+struct Wastebasket : public CGAL_STD::output_iterator
 {
-  typedef CGAL_Wastebasket< T > iterator;
+  typedef Wastebasket< T > iterator;
 
   iterator
   operator=( const T&)
@@ -106,7 +102,7 @@ struct CGAL_Wastebasket : public output_iterator
 };
 template < class ForwardIterator, class OutputIterator, class Predicate >
 OutputIterator
-CGAL_remove_copy_if_adjacent( ForwardIterator first,
+remove_copy_if_adjacent( ForwardIterator first,
                               ForwardIterator last,
                               OutputIterator result,
                               Predicate pred)
@@ -128,7 +124,7 @@ CGAL_remove_copy_if_adjacent( ForwardIterator first,
 
 template < class ForwardIterator, class BinaryPredicate >
 ForwardIterator
-CGAL_remove_if_adjacent( ForwardIterator first,
+remove_if_adjacent( ForwardIterator first,
                          ForwardIterator last,
                          BinaryPredicate pred)
 // transform [first, last) such that for all x
@@ -147,14 +143,13 @@ CGAL_remove_if_adjacent( ForwardIterator first,
       last,
       compose1( logical_not< bool >(),
                 bind1st( pred, *save_first)));
-  return CGAL_remove_copy_if_adjacent( next, last, ++save_first, pred);
+  return remove_copy_if_adjacent( next, last, ++save_first, pred);
 }
 template < class ForwardIterator >
-pair< ForwardIterator, ForwardIterator >
-CGAL_min_max_element( ForwardIterator first,
-                      ForwardIterator last)
+std::pair< ForwardIterator, ForwardIterator >
+min_max_element( ForwardIterator first, ForwardIterator last)
 {
-  typedef pair< ForwardIterator, ForwardIterator > FP;
+  typedef std::pair< ForwardIterator, ForwardIterator > FP;
   if ( first == last)
     return FP( first, first);
   FP result( first, first);
@@ -168,13 +163,13 @@ CGAL_min_max_element( ForwardIterator first,
 }
 
 template < class ForwardIterator, class CompareMin, class CompareMax >
-pair< ForwardIterator, ForwardIterator >
-CGAL_min_max_element( ForwardIterator first,
-                      ForwardIterator last,
-                      CompareMin comp_min,
-                      CompareMax comp_max)
+std::pair< ForwardIterator, ForwardIterator >
+min_max_element( ForwardIterator first,
+                 ForwardIterator last,
+                 CompareMin comp_min,
+                 CompareMax comp_max)
 {
-  typedef pair< ForwardIterator, ForwardIterator > FP;
+  typedef std::pair< ForwardIterator, ForwardIterator > FP;
   if ( first == last)
     return FP( first, first);
   FP result( first, first);
@@ -188,7 +183,7 @@ CGAL_min_max_element( ForwardIterator first,
 }
 
 template < class _Traits, class _RandomAccessIC >
-class CGAL__Loc_domain {
+class _Loc_domain {
 public:
   // ---------------------------------------------
   // types:
@@ -206,7 +201,7 @@ public:
   // ---------------------------------------------
   // creation:
 
-  CGAL__Loc_domain( RandomAccessIC b, RandomAccessIC e)
+  _Loc_domain( RandomAccessIC b, RandomAccessIC e)
   {
     CGAL_optimisation_precondition( b != e);
   
@@ -291,13 +286,13 @@ public:
   Point_2
   min() const
   // return lexicographically smallest vertex
-  // (in analogy to CGAL_Iso_rectangle)
+  // (in analogy to Iso_rectangle)
   { return vertex( 0); }
 
   Point_2
   max() const
   // return lexicographically largest vertex
-  // (in analogy to CGAL_Iso_rectangle)
+  // (in analogy to Iso_rectangle)
   { return vertex( 2); }
 
   // ---------------------------------------------
@@ -343,9 +338,9 @@ public:
 private:
   // pointer to defining rectangles:
   RandomAccessIC r[4];
-}; // class CGAL__Loc_domain
+}; // class _Loc_domain
 template < class _Traits, class _RandomAccessIC >
-class CGAL__Rectangle_partition {
+class _Rectangle_partition {
 public:
   typedef _Traits                            Traits;
   typedef _RandomAccessIC                    RandomAccessIC;
@@ -368,7 +363,7 @@ public:
   // TR, TL, L, R, NO are not sorted
   enum set_id { BL, TL, BT, BR, TR, LR, B, T, L, R, NO};
 
-  typedef vector< Iso_rectangle_2 >             Container;
+  typedef std::vector< Iso_rectangle_2 >        Container;
   typedef typename Container::iterator          iterator;
   typedef typename Container::reverse_iterator  reverse_iterator;
   typedef typename Container::const_iterator    const_iterator;
@@ -377,10 +372,10 @@ public:
   // according to d
   // precondition:
   //   d is the location domain associated with [f, l)
-  CGAL__Rectangle_partition(
+  _Rectangle_partition(
     RandomAccessIC f,
     RandomAccessIC l,
-    const CGAL__Loc_domain< _Traits, RandomAccessIC >& d);
+    const _Loc_domain< _Traits, RandomAccessIC >& d);
 
   // ---------------------------------------------------
   // access functions to the partition sets:
@@ -468,7 +463,7 @@ public:
       p = lower_bound( begin( BL),
                        s[BL].end(),
                        v,
-                       CGAL_compose2_2( less< FT >(),
+                       compose2_2( less< FT >(),
                                         xmax,
                                         identity< FT >()));
       CGAL_optimisation_postcondition(
@@ -477,7 +472,7 @@ public:
       p = lower_bound( begin( i),
                        s[i].end(),
                        v,
-                       CGAL_compose2_2( greater_equal< FT >(),
+                       compose2_2( greater_equal< FT >(),
                                         xmax,
                                         identity< FT >()));
       CGAL_optimisation_postcondition( p == end(i) || xmax( *p) < v);
@@ -519,7 +514,7 @@ public:
       lower_bound( begin( i),
                    s[i].end(),
                    v,
-                   CGAL_compose2_2( greater< FT >(),
+                   compose2_2( greater< FT >(),
                                     Xmin(),
                                     identity< FT >()));
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
@@ -577,7 +572,7 @@ public:
       lower_bound( begin( i),
                    s[i].end(),
                    v,
-                   CGAL_compose2_2( less_equal< FT >(),
+                   compose2_2( less_equal< FT >(),
                                     Ymin(),
                                     identity< FT >()));
     CGAL_optimisation_postcondition( p >= begin(i) && p <= end(i));
@@ -599,15 +594,15 @@ private:
     if ( i <= TL)
       sort( s[i].begin() + 1,
             s[i].end(),
-            CGAL_compose2_2( less< FT >(), Xmax(), Xmax()));
+            compose2_2( less< FT >(), Xmax(), Xmax()));
     else if ( i <= TR)
       sort( s[i].begin() + 1,
             s[i].end(),
-            CGAL_compose2_2( greater< FT >(), Xmin(), Xmin()));
+            compose2_2( greater< FT >(), Xmin(), Xmin()));
     else if ( i == LR)
       sort( s[i].begin() + 1,
             s[i].end(),
-            CGAL_compose2_2( less< FT >(), Ymax(), Ymax()));
+            compose2_2( less< FT >(), Ymax(), Ymax()));
   } // sort_set( set_id i)
   void
   remove_containing_rectangles()
@@ -627,19 +622,19 @@ private:
     // s[BL]: discard second, if its top side is above
     CGAL_optimisation_assertion( s[BL].begin() + 1 == begin( BL));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[BL].begin() + 1,
         s[BL].end(),
-        CGAL_compose2_2( less_equal< FT >(), Ymax(), Ymax()));
+        compose2_2( less_equal< FT >(), Ymax(), Ymax()));
     s[BL].erase( new_end, s[BL].end());
   
     // s[TL]: discard second, if its bottom side is below
     CGAL_optimisation_assertion( s[TL].begin() + 1 == begin( TL));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[TL].begin() + 1,
         s[TL].end(),
-        CGAL_compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
+        compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
     s[TL].erase( new_end, s[TL].end());
   
     // ------------------------------------------------------
@@ -648,28 +643,28 @@ private:
     // s[BT]: discard second, if its right side is right
     CGAL_optimisation_assertion( s[BT].begin() + 1 == begin( BT));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[BT].begin() + 1,
         s[BT].end(),
-        CGAL_compose2_2( less_equal< FT >(), Xmax(), Xmax()));
+        compose2_2( less_equal< FT >(), Xmax(), Xmax()));
     s[BT].erase( new_end, s[BT].end());
   
     // s[BR]: discard second, if its top side is above
     CGAL_optimisation_assertion( s[BR].begin() + 1 == begin( BR));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[BR].begin() + 1,
         s[BR].end(),
-        CGAL_compose2_2( less_equal< FT >(), Ymax(), Ymax()));
+        compose2_2( less_equal< FT >(), Ymax(), Ymax()));
     s[BR].erase( new_end, s[BR].end());
   
     // s[TR]: discard second, if its bottom side is below
     CGAL_optimisation_assertion( s[TR].begin() + 1 == begin( TR));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[TR].begin() + 1,
         s[TR].end(),
-        CGAL_compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
+        compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
     s[TR].erase( new_end, s[TR].end());
   
     // ------------------------------------------------------
@@ -678,10 +673,10 @@ private:
     // s[LR]: discard second, if its bottom side is below
     CGAL_optimisation_assertion( s[LR].begin() + 1 == begin( LR));
     new_end =
-      CGAL_remove_if_adjacent(
+      remove_if_adjacent(
         s[LR].begin() + 1,
         s[LR].end(),
-        CGAL_compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
+        compose2_2( greater_equal< FT >(), Ymin(), Ymin()));
     s[LR].erase( new_end, s[LR].end());
   
   } // remove_containing_rectangles()
@@ -702,11 +697,11 @@ private:
   Build_rectangle  build_rectangle;
 };
 template < class _Traits, class _RandomAccessIC >
-CGAL__Rectangle_partition< _Traits, _RandomAccessIC>::
-CGAL__Rectangle_partition(
+_Rectangle_partition< _Traits, _RandomAccessIC>::
+_Rectangle_partition(
   _RandomAccessIC f,
   _RandomAccessIC l,
-  const CGAL__Loc_domain< _Traits, _RandomAccessIC >& d)
+  const _Loc_domain< _Traits, _RandomAccessIC >& d)
 {
   //!!! reserves
 
@@ -806,17 +801,19 @@ CGAL__Rectangle_partition(
 
 } // Rectangle_partition( f, l, d)
 
+CGAL_END_NAMESPACE
 #ifdef CGAL_REP_CLASS_DEFINED
 #ifndef CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #include <CGAL/Pierce_rectangles_2_traits.h>
 #endif // CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #endif // CGAL_REP_CLASS_DEFINED
+CGAL_BEGIN_NAMESPACE
 
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_two_pierce_rectangles(
+two_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
   OutputIterator o,
@@ -826,16 +823,16 @@ CGAL_two_pierce_rectangles(
   CGAL_optimisation_precondition( f != l);
 
   // compute location domain:
-  typedef CGAL__Loc_domain< Traits, RandomAccessIC > Loc_domain;
+  typedef _Loc_domain< Traits, RandomAccessIC > Loc_domain;
   Loc_domain d( f, l);
 
-  return CGAL_two_pierce_rectangles( f, l, d, o, ok);
-} // CGAL_two_pierce_rectangles( f, l, o, ok, i)
+  return two_pierce_rectangles( f, l, d, o, ok);
+} // two_pierce_rectangles( f, l, o, ok, i)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_three_pierce_rectangles(
+three_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
   OutputIterator o,
@@ -845,16 +842,16 @@ CGAL_three_pierce_rectangles(
   CGAL_optimisation_precondition( f != l);
 
   // compute location domain:
-  typedef CGAL__Loc_domain< Traits, RandomAccessIC > Loc_domain;
+  typedef _Loc_domain< Traits, RandomAccessIC > Loc_domain;
   Loc_domain d( f, l);
 
-  return CGAL_three_pierce_rectangles( f, l, d, o, ok);
-} // CGAL_three_pierce_rectangles( f, l, o, ok, i)
+  return three_pierce_rectangles( f, l, d, o, ok);
+} // three_pierce_rectangles( f, l, o, ok, i)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_four_pierce_rectangles(
+four_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
   OutputIterator o,
@@ -864,19 +861,19 @@ CGAL_four_pierce_rectangles(
   CGAL_optimisation_precondition( f != l);
 
   // compute location domain:
-  typedef CGAL__Loc_domain< Traits, RandomAccessIC > Loc_domain;
+  typedef _Loc_domain< Traits, RandomAccessIC > Loc_domain;
   Loc_domain d( f, l);
 
-  return CGAL_four_pierce_rectangles( f, l, d, o, ok);
-} // CGAL_four_pierce_rectangles( f, l, o, ok, i)
+  return four_pierce_rectangles( f, l, d, o, ok);
+} // four_pierce_rectangles( f, l, o, ok, i)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_two_pierce_rectangles(
+two_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
-  const CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+  const _Loc_domain< Traits, RandomAccessIC >& d,
   OutputIterator o,
   bool& ok)
 {
@@ -887,7 +884,7 @@ CGAL_two_pierce_rectangles(
     Point_2;
   typedef typename Traits::Iso_rectangle_2
     Iso_rectangle_2;
-  typedef CGAL_Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
+  typedef Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
     Has_on_unbounded_side;
 
   #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 2
@@ -897,11 +894,11 @@ CGAL_two_pierce_rectangles(
   cerr << "LocDomain is " << d.vertex( 0) << " --> " <<
     d.vertex( 2) << endl;
   /*
-  CGAL_Window_stream W;
+  Window_stream W;
   W.init( -1024 / 5, 1024 + 1024 / 5, -1024 / 5);
-  W << CGAL_RED;
+  W << RED;
   WindowOutput( W, f, l);
-  W << CGAL_GREEN;
+  W << GREEN;
   W << Iso_rectangle_2( d.vertex( 0), d.vertex( 2));
   double x, y;
   while ( W.read_mouse( x, y) != -1) {}
@@ -956,15 +953,15 @@ CGAL_two_pierce_rectangles(
   // no piercing set exists:
   ok = false;
   return o;
-} // CGAL_two_pierce_rectangles( f, l, d, o, ok)
+} // two_pierce_rectangles( f, l, d, o, ok)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_three_pierce_rectangles(
+three_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
-  CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+  _Loc_domain< Traits, RandomAccessIC >& d,
   OutputIterator o,
   bool& ok)
 {
@@ -974,14 +971,12 @@ CGAL_three_pierce_rectangles(
   typedef typename iterator_traits< RandomAccessIC >::difference_type
     difference_type;
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
-  difference_type number_of_points( CGAL_iterator_distance( f, l));
+  difference_type number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
 
   // typedefs:
   typedef typename Traits::Point_2          Point_2;
   typedef typename Traits::Iso_rectangle_2  Iso_rectangle_2;
-  typedef CGAL_Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
-    Has_on_unbounded_side;
 
 #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 3
   cerr << " ++ 3 pierce start ++" << endl;
@@ -996,6 +991,8 @@ CGAL_three_pierce_rectangles(
   typedef vector< Iso_rectangle_2 >   Rectangle_cont;
   typedef Rectangle_cont::size_type   size_type;
   typedef Rectangle_cont::iterator    Rectangle_iterator;
+  typedef Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
+    Does_not_contain;
   Rectangle_cont disjoint;
   disjoint.reserve( number_of_points);
   
@@ -1013,12 +1010,10 @@ CGAL_three_pierce_rectangles(
     
     // extract all rectangles not containing d.vertex( k)
     // into rc and update d:
-    typedef CGAL_Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
-      Does_not_contain;
     
     /*
-    typedef CGAL_Get_address< Iso_rectangle_2 > Rect_address;
-    typedef CGAL_Transform_iterator<
+    typedef Get_address< Iso_rectangle_2 > Rect_address;
+    typedef Transform_iterator<
       back_insert_iterator< Rectangle_cont >,
       Rect_address >
     Address_iterator;
@@ -1052,7 +1047,7 @@ CGAL_three_pierce_rectangles(
       } // if ( Does_not_contain()( *f_not, d.vertex( k)))
     
     // check disjoint for two-pierceability:
-    CGAL_two_pierce_rectangles(
+    two_pierce_rectangles(
       disjoint.begin(),
       disjoint.end(),
       d,
@@ -1075,38 +1070,38 @@ CGAL_three_pierce_rectangles(
   ok = false;
   return o;
 
-} // CGAL_three_pierce_rectangles( f, l, d, o, ok)
+} // three_pierce_rectangles( f, l, d, o, ok)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 inline
 OutputIterator
-CGAL_four_pierce_rectangles(
+four_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
-  CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+  _Loc_domain< Traits, RandomAccessIC >& d,
   OutputIterator o,
   bool& ok)
 {
   // construct partition:
-  typedef CGAL__Rectangle_partition< Traits, RandomAccessIC > Partition;
+  typedef _Rectangle_partition< Traits, RandomAccessIC > Partition;
   Partition p( f, l, d);
 
-  return CGAL_four_pierce_rectangles( f, l, d, p, o, ok);
-} // CGAL_four_pierce_rectangles( f, l, d, o, ok)
+  return four_pierce_rectangles( f, l, d, p, o, ok);
+} // four_pierce_rectangles( f, l, d, o, ok)
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
 OutputIterator
-CGAL_four_pierce_rectangles(
+four_pierce_rectangles(
   RandomAccessIC f,
   RandomAccessIC l,
-  CGAL__Loc_domain< Traits, RandomAccessIC >& d,
-  CGAL__Rectangle_partition< Traits, RandomAccessIC >& p,
+  _Loc_domain< Traits, RandomAccessIC >& d,
+  _Rectangle_partition< Traits, RandomAccessIC >& p,
   OutputIterator o,
   bool& ok)
 {
-  int number_of_points( CGAL_iterator_distance( f, l));
+  int number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
 
 #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
@@ -1117,6 +1112,12 @@ CGAL_four_pierce_rectangles(
        << d.vertex( 2) << endl;
 #endif
 
+  #ifndef CGAL_CFG_NO_NAMESPACE
+  using std::pair;
+  using std::min;
+  using std::max;
+  #endif
+  
   typedef typename Traits::Iso_rectangle_2     Iso_rectangle_2;
   typedef typename Traits::Point_2             Point_2;
   typedef typename Traits::FT                  FT;
@@ -1127,7 +1128,7 @@ CGAL_four_pierce_rectangles(
   typedef typename Traits::Build_point         Build_point;
   typedef typename Traits::Build_rectangle     Build_rectangle;
   typedef pair< FT, FT >                       Intervall;
-  typedef CGAL__Rectangle_partition< Traits, RandomAccessIC >  RP;
+  typedef _Rectangle_partition< Traits, RandomAccessIC >  RP;
   typedef typename RP::const_iterator          iterator;
   typedef pair< iterator, iterator >           iterator_pair;
   
@@ -1144,6 +1145,8 @@ CGAL_four_pierce_rectangles(
   typedef vector< Iso_rectangle_2 >   Rectangle_cont;
   typedef Rectangle_cont::size_type   size_type;
   typedef Rectangle_cont::iterator    Rectangle_iterator;
+  typedef Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
+    Does_not_contain;
   Rectangle_cont disjoint;
   disjoint.reserve( number_of_points);
   
@@ -1161,12 +1164,10 @@ CGAL_four_pierce_rectangles(
     
     // extract all rectangles not containing d.vertex( k)
     // into rc and update d:
-    typedef CGAL_Has_on_unbounded_side< Iso_rectangle_2, Point_2 >
-      Does_not_contain;
     
     /*
-    typedef CGAL_Get_address< Iso_rectangle_2 > Rect_address;
-    typedef CGAL_Transform_iterator<
+    typedef Get_address< Iso_rectangle_2 > Rect_address;
+    typedef Transform_iterator<
       back_insert_iterator< Rectangle_cont >,
       Rect_address >
     Address_iterator;
@@ -1200,7 +1201,7 @@ CGAL_four_pierce_rectangles(
       } // if ( Does_not_contain()( *f_not, d.vertex( k)))
     
     // check disjoint for two-pierceability:
-    CGAL_three_pierce_rectangles(
+    three_pierce_rectangles(
       disjoint.begin(),
       disjoint.end(),
       d,
@@ -1231,10 +1232,10 @@ CGAL_four_pierce_rectangles(
   
   #if defined(CGAL_PCENTER_WINDOW_TRACE)
     // graphic debug window:
-    CGAL_Window_stream Wd;
+    Window_stream Wd;
     const int XYSIZE( 1024);
     double dummy_x, dummy_y;
-    CGAL_Ostream_iterator< Point_2, CGAL_Window_stream > Witer;
+    Ostream_iterator< Point_2, Window_stream > Witer;
     Witer wout;
   #endif
   
@@ -1253,11 +1254,11 @@ CGAL_four_pierce_rectangles(
     if ( p.is_empty( RP::B))
       I_B = Intervall( d.xmin(), d.xmax());
     else {
-      ip = CGAL_min_max_element( p.begin( RP::B),
+      ip = min_max_element( p.begin( RP::B),
                                  p.end( RP::B),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    less< FT >(), Xmax(), Xmax()),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    greater< FT >(), Xmin(), Xmin()));
     
       I_B = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
@@ -1276,11 +1277,11 @@ CGAL_four_pierce_rectangles(
     if ( p.is_empty( RP::L))
       I_L = Intervall( d.ymin(), d.ymax());
     else {
-      ip = CGAL_min_max_element( p.begin( RP::L),
+      ip = min_max_element( p.begin( RP::L),
                                  p.end( RP::L),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    less< FT >(), Ymax(), Ymax()),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    greater< FT >(), Ymin(), Ymin()));
     
       I_L = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
@@ -1299,11 +1300,11 @@ CGAL_four_pierce_rectangles(
     if ( p.is_empty( RP::T))
       I_T = Intervall( d.xmin(), d.xmax());
     else {
-      ip = CGAL_min_max_element( p.begin( RP::T),
+      ip = min_max_element( p.begin( RP::T),
                                  p.end( RP::T),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    less< FT >(), Xmax(), Xmax()),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    greater< FT >(), Xmin(), Xmin()));
     
       I_T = Intervall( Xmin()(*(ip.second)), Xmax()(*(ip.first)));
@@ -1322,11 +1323,11 @@ CGAL_four_pierce_rectangles(
     if ( p.is_empty( RP::R))
       I_R = Intervall( d.ymin(), d.ymax());
     else {
-      ip = CGAL_min_max_element( p.begin( RP::R),
+      ip = min_max_element( p.begin( RP::R),
                                  p.end( RP::R),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    less< FT >(), Ymax(), Ymax()),
-                                 CGAL_compose2_2(
+                                 compose2_2(
                                    greater< FT >(), Ymin(), Ymin()));
     
       I_R = Intervall( Ymin()(*(ip.second)), Ymax()(*(ip.first)));
@@ -1342,11 +1343,11 @@ CGAL_four_pierce_rectangles(
     
     #if defined(CGAL_PCENTER_WINDOW_TRACE)
     Wd.init( -XYSIZE / 5, XYSIZE + XYSIZE / 5, -XYSIZE / 5);
-    Wd << CGAL_RED;
+    Wd << RED;
     copy( f, l, wout);
-    Wd << CGAL_GREEN
-       << CGAL_Iso_rectangleC2<FT>( d.min(), d.max())
-       << CGAL_ORANGE
+    Wd << GREEN
+       << Iso_rectangleC2<FT>( d.min(), d.max())
+       << ORANGE
        << build_point( I_B.first, d.ymin())
        << build_point( I_B.second, d.ymin())
        << build_point( d.xmin(), I_L.first)
@@ -1469,11 +1470,11 @@ CGAL_four_pierce_rectangles(
     
     for (;;) {
       #if defined(CGAL_PCENTER_WINDOW_TRACE)
-      Wd << CGAL_RED;
+      Wd << RED;
       copy( f, l, wout);
-      Wd << CGAL_GREEN
-         << CGAL_Iso_rectangleC2<FT>( d.min(), d.max())
-         << CGAL_BLUE
+      Wd << GREEN
+         << Iso_rectangleC2<FT>( d.min(), d.max())
+         << BLUE
          << build_point( bot, d.ymin()));
       cerr << "** show bottom point" << endl;
       while ( Wd.read_mouse( dummy_x, dummy_y) != -1) {}
@@ -1662,11 +1663,11 @@ CGAL_four_pierce_rectangles(
             *o++ = build_point( d.xmax(), rig);
             
             #if defined(CGAL_PCENTER_WINDOW_TRACE)
-            Wd << CGAL_RED;
+            Wd << RED;
             copy( f, l, wout);
-            Wd << CGAL_GREEN
-               << CGAL_Iso_rectangle_2< R >( d.min(), d.max())
-               << CGAL_BLACK
+            Wd << GREEN
+               << Iso_rectangle_2< R >( d.min(), d.max())
+               << BLACK
                << build_point( bot, d.ymin())
                << build_point( top, d.ymax())
                << build_point( d.xmin(), lef)
@@ -1754,11 +1755,11 @@ CGAL_four_pierce_rectangles(
       *o++ = build_point( d.xmax(), rig);
       
       #if defined(CGAL_PCENTER_WINDOW_TRACE)
-      Wd << CGAL_RED;
+      Wd << RED;
       copy( f, l, wout);
-      Wd << CGAL_GREEN
-         << CGAL_Iso_rectangle_2< R >( d.min(), d.max())
-         << CGAL_BLACK
+      Wd << GREEN
+         << Iso_rectangle_2< R >( d.min(), d.max())
+         << BLACK
          << build_point( bot, d.ymin())
          << build_point( top, d.ymax())
          << build_point( d.xmin(), lef)
@@ -1822,7 +1823,7 @@ CGAL_four_pierce_rectangles(
         goto next_iteration;
       
       #if defined(CGAL_PCENTER_WINDOW_TRACE)
-      Wd << CGAL_BLUE
+      Wd << BLUE
          << build_point( d.xmin(), lef)
          << build_point( d.xmax(), rig);
       cerr << "** show lef and rig" << endl;
@@ -1842,10 +1843,10 @@ CGAL_four_pierce_rectangles(
   ok = false;
   return o;
 
-} // CGAL_four_pierce_rectangles( f, l, d, p, o, ok)
+} // four_pierce_rectangles( f, l, d, p, o, ok)
 
 template < class _Traits >
-class CGAL_Two_piercing_algorithm {
+class Two_piercing_algorithm {
 public:
   // don't touch these typedefs ;)
   // Traits is not enough for sunpro ...
@@ -1870,15 +1871,15 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
-  CGAL_Wastebasket< Point_2 >
+  Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    CGAL_Wastebasket< Point_2 > o,
+    Wastebasket< Point_2 > o,
     bool& ok)
   
   {
-    return CGAL_two_pierce_rectangles( f, l, o, ok, Traits());
+    return two_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -1891,7 +1892,7 @@ public:
     bool& ok)
   
   {
-    return CGAL_two_pierce_rectangles( f, l, o, ok, Traits());
+    return two_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -1901,14 +1902,14 @@ public:
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    const CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+    const _Loc_domain< Traits, RandomAccessIC >& d,
     OutputIterator o,
     bool& ok)
-  { return CGAL_two_pierce_rectangles( f, l, d, o, ok); }
+  { return two_pierce_rectangles( f, l, d, o, ok); }
 
-}; // class CGAL_Two_piercing_algorithm
+}; // class Two_piercing_algorithm
 template < class _Traits >
-class CGAL_Three_piercing_algorithm {
+class Three_piercing_algorithm {
 public:
   // don't touch these typedefs ;)
   // Traits is not enough for sunpro ...
@@ -1933,15 +1934,15 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
-  CGAL_Wastebasket< Point_2 >
+  Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    CGAL_Wastebasket< Point_2 > o,
+    Wastebasket< Point_2 > o,
     bool& ok)
   
   {
-    return CGAL_three_pierce_rectangles( f, l, o, ok, Traits());
+    return three_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -1954,7 +1955,7 @@ public:
     bool& ok)
   
   {
-    return CGAL_three_pierce_rectangles( f, l, o, ok, Traits());
+    return three_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -1964,14 +1965,14 @@ public:
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    const CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+    const _Loc_domain< Traits, RandomAccessIC >& d,
     OutputIterator o,
     bool& ok)
-  { return CGAL_three_pierce_rectangles( f, l, d, o, ok); }
+  { return three_pierce_rectangles( f, l, d, o, ok); }
 
-}; // class CGAL_Three_piercing_algorithm
+}; // class Three_piercing_algorithm
 template < class _Traits >
-class CGAL_Four_piercing_algorithm {
+class Four_piercing_algorithm {
 public:
   // don't touch these typedefs ;)
   // Traits is not enough for sunpro ...
@@ -1996,15 +1997,15 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
-  CGAL_Wastebasket< Point_2 >
+  Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    CGAL_Wastebasket< Point_2 > o,
+    Wastebasket< Point_2 > o,
     bool& ok)
   
   {
-    return CGAL_four_pierce_rectangles( f, l, o, ok, Traits());
+    return four_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -2017,7 +2018,7 @@ public:
     bool& ok)
   
   {
-    return CGAL_four_pierce_rectangles( f, l, o, ok, Traits());
+    return four_pierce_rectangles( f, l, o, ok, Traits());
   }
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -2027,14 +2028,15 @@ public:
   operator()(
     RandomAccessIC f,
     RandomAccessIC l,
-    const CGAL__Loc_domain< Traits, RandomAccessIC >& d,
+    const _Loc_domain< Traits, RandomAccessIC >& d,
     OutputIterator o,
     bool& ok)
-  { return CGAL_four_pierce_rectangles( f, l, d, o, ok); }
+  { return four_pierce_rectangles( f, l, d, o, ok); }
 
-}; // class CGAL_Four_piercing_algorithm
+}; // class Four_piercing_algorithm
+CGAL_END_NAMESPACE
 
-#endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
+#endif // ! (PIERCE_RECTANGLES_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -36,10 +36,7 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #include <CGAL/sorted_matrix_search.h>
 #endif // CGAL_SORTED_MATRIX_SEARCH_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#include <vector>
 template < class Matrix_iterator, class Value >
 Value
 compute_upper_bound( Matrix_iterator f,
@@ -63,20 +60,35 @@ compute_upper_bound( Matrix_iterator f,
   }
   return best;
 } // compute_upper_bound( f, l, b, max)
+using std::vector;
+using std::plus;
+using std::sort;
+using std::less;
+using std::greater_equal;
+using std::max;
+using std::bind2nd;
+using CGAL::Cartesian_matrix;
+using CGAL::Random;
+using CGAL::default_random;
+using CGAL::sorted_matrix_search;
+using CGAL::sorted_matrix_search_traits_adaptor;
+
+typedef int                              Value;
+typedef vector< Value >                  Vector;
+typedef Vector::iterator                 Value_iterator;
+typedef vector< Vector >                 Vector_cont;
+typedef Vector_cont::iterator            Vector_iterator;
+typedef Cartesian_matrix<
+  plus< int >,
+  Value_iterator,
+  Value_iterator >                       Matrix;
+typedef vector< Matrix >                 Matrix_cont;
+
+
+
 int
 main( int argc, char* argv[])
 {
-  typedef int                              Value;
-  typedef vector< Value >                  Vector;
-  typedef Vector::iterator                 Value_iterator;
-  typedef vector< Vector >                 Vector_cont;
-  typedef Vector_cont::iterator            Vector_iterator;
-  typedef CGAL_Cartesian_matrix<
-    plus< int >,
-    Value_iterator,
-    Value_iterator >                       Matrix;
-  typedef vector< Matrix >                 Matrix_cont;
-  
   // seed for random number generator:
   int random_seed;
   // number of matrices:
@@ -106,13 +118,13 @@ main( int argc, char* argv[])
     #endif
   
     // generate random seed
-    random_seed = CGAL_random.get_int( 0, (1 << 30));
+    random_seed = default_random.get_int( 0, (1 << 30));
   }
   else
     random_seed = atoi(argv[4]);
   
   // define random source:
-  CGAL_Random r( random_seed);
+  Random r( random_seed);
   
   #ifdef OUTPUT
   cout << "random seed is " << random_seed << endl;
@@ -124,7 +136,7 @@ main( int argc, char* argv[])
     // generate two vectors a and b to build the cartesian
     // matrix from
     Vector a, b;
-    CGAL_optimisation_assertion( a.size() == 0 && b.size() == 0);
+    assert( a.size() == 0 && b.size() == 0);
   
     // fill a and b with random values and sort them:
     for ( int i = 0; i < dim; ++i) {
@@ -183,10 +195,10 @@ main( int argc, char* argv[])
   cout << "searching upper bound for " << bound << endl;
   #endif
   Value u(
-    CGAL_sorted_matrix_search(
+    sorted_matrix_search(
       matrices.begin(),
       matrices.end(),
-      CGAL_sorted_matrix_search_traits_adaptor(
+      sorted_matrix_search_traits_adaptor(
         bind2nd( greater_equal< Value >(),
                  bound),
         *(matrices.begin()))));

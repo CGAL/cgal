@@ -48,56 +48,53 @@
 #ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
 #endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_COPY_N_H
-#include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
 #ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
 #endif // CGAL_LEDA_REAL_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
-#ifndef CGAL_PROTECT_STDLIB_H
-#include <stdlib.h>
-#define CGAL_PROTECT_STDLIB_H
-#endif // CGAL_PROTECT_STDLIB_H
+#ifndef CGAL_COPY_N_H
+#include <CGAL/copy_n.h>
+#endif // CGAL_COPY_N_H
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <cstdlib>
 
-typedef double                     FT;
-// typedef leda_real                  FT;
-typedef CGAL_Cartesian< FT >       R;
-typedef CGAL_Point_2< R >          Point_2;
-typedef CGAL_Iso_rectangle_2< R >  Square_2;
-typedef vector< Point_2 >          Point_cont;
-typedef CGAL_Random_points_in_square_2<
-  Point_2,
-  CGAL_Creator_uniform_2< FT, Point_2 > >
-Point_generator;
-typedef CGAL_Ostream_iterator< Point_2, leda_window >
+using std::vector;
+using std::ostream_iterator;
+using CGAL::Cartesian;
+using CGAL::Random;
+using CGAL::rectangular_p_center_2;
+using CGAL::default_random;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::Istream_iterator;
+using CGAL::Ostream_iterator;
+using CGAL::set_pretty_mode;
+using CGAL::cgalize;
+using CGAL::BLUE;
+using CGAL::RED;
+using CGAL::ORANGE;
+
+typedef double                            FT;
+// typedef leda_real                      FT;
+typedef Cartesian< FT >                   R;
+typedef CGAL::Point_2< R >                Point;
+typedef CGAL::Iso_rectangle_2< R >        Square_2;
+typedef vector< Point >                   Point_cont;
+typedef Creator_uniform_2< FT, Point >    Creator;
+typedef Random_points_in_square_2< Point, Creator >
+  Point_generator;
+typedef Ostream_iterator< Point, leda_window >
   Window_stream_iterator_point;
-typedef CGAL_Ostream_iterator< Square_2, leda_window >
+typedef Ostream_iterator< Square_2, leda_window >
   Window_stream_iterator_square;
-typedef ostream_iterator< Point_2 >    Ostream_iterator_point;
-typedef ostream_iterator< Square_2 >   Ostream_iterator_square;
-typedef CGAL_Istream_iterator< Point_2, leda_window>
+typedef ostream_iterator< Point >       Ostream_iterator_point;
+typedef ostream_iterator< Square_2 >    Ostream_iterator_square;
+typedef Istream_iterator< Point, leda_window>
   Istream_iterator_point;
 
-#ifndef CGAL_PROTECT_TIME_H
-#include <time.h>
-#define CGAL_PROTECT_TIME_H
-#endif // CGAL_PROTECT_TIME_H
+#include <ctime>
 static time_t Measure;
 static long long int measure;
 #define MEASURE(comm) \
@@ -132,15 +129,15 @@ main( int argc, char* argv[])
   int number_of_points;
   Point_cont input_points;
   Point_cont output_points;
-  typedef Build_box< Point_2, FT, Square_2 >  Build_square;
+  typedef Build_box< Point, FT, Square_2 >  Build_square;
 
   // init CGAL stuff:
   leda_window W;
-  CGAL_cgalize( W);
+  cgalize( W);
   W.init( -1.5, 1.5, -1.5);
   W.display();
-  CGAL_set_pretty_mode( cout);
-  CGAL_set_pretty_mode( cerr);
+  set_pretty_mode( cout);
+  set_pretty_mode( cerr);
   Window_stream_iterator_point wout_p( W);
   Window_stream_iterator_square wout_s( W);
   Ostream_iterator_point cout_p( cout, "\n");
@@ -150,18 +147,18 @@ main( int argc, char* argv[])
     cout << "-- reading input point set\n"
          << "-- press middle mouse button for last point"
          << endl;
-    W << CGAL_BLUE;
+    W << BLUE;
     copy( Istream_iterator_point( W),
           Istream_iterator_point(),
           back_inserter( input_points));
   }
   else {
-    int random_seed( CGAL_random.get_int( 0, (1 << 31)));
+    int random_seed( default_random.get_int( 0, (1 << 31)));
     if ( argc >= 3)
       // get seed from command line
       random_seed = atoi(argv[2]);
 
-    CGAL_Random my_rnd( random_seed);
+    Random my_rnd( random_seed);
     cout << "***********************************************\n"
          << "PCENTER - test with " << number_of_points
          << " points\n  random seed is " << random_seed
@@ -170,20 +167,20 @@ main( int argc, char* argv[])
 
     // generate point set:
     Point_generator gen( 1.0, my_rnd);
-    CGAL_copy_n( gen,
-                 number_of_points,
-                 back_inserter( input_points));
+    CGAL::copy_n( gen,
+                  number_of_points,
+                  back_inserter( input_points));
   } // else
 
   // show point set:
   W.clear();
-  W << CGAL_BLUE;
+  W << BLUE;
   copy( input_points.begin(), input_points.end(), wout_p);
 
   FT result;
   if ( !input_points.empty()) {
     MEASURE(
-      CGAL_rectangular_p_center_2(
+      rectangular_p_center_2(
         input_points.begin(),
         input_points.end(),
         back_inserter( output_points),
@@ -200,13 +197,13 @@ main( int argc, char* argv[])
 #endif
 
   // show center points
-  W << CGAL_RED;
+  W << RED;
   copy( output_points.begin(), output_points.end(), wout_p);
   copy( output_points.begin(), output_points.end(), cout_p);
   cout << endl;
 
   // ... and the corresponding squares:
-  W << CGAL_ORANGE;
+  W << ORANGE;
   transform( output_points.begin(),
              output_points.end(),
              wout_s,

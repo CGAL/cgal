@@ -39,48 +39,42 @@
 #ifndef CGAL_EXTREMAL_POLYGON_2_H
 #include <CGAL/extremal_polygon_2.h>
 #endif // CGAL_EXTREMAL_POLYGON_2_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-
-#ifndef CGAL_PROTECT_DEQUE_H
-#include <deque.h>
-#define CGAL_PROTECT_DEQUE_H
-#endif // CGAL_PROTECT_DEQUE_H
+#include <functional>
+#include <vector>
 
 /*
 #ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
 #endif // CGAL_LEDA_REAL_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
+#include <algorithm>
 */
 
+using std::vector;
+using std::back_inserter;
+using CGAL::Cartesian;
+using CGAL::Polygon_traits_2;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::random_convex_set_2;
+using CGAL::maximum_area_inscribed_k_gon;
+using CGAL::maximum_perimeter_inscribed_k_gon;
+
 // typedefs:
-typedef double                            FT;
-//typedef leda_real                         FT;
-typedef CGAL_Cartesian< FT >              R;
-typedef CGAL_Point_2< R >                 Point_2;
-typedef CGAL_Polygon_traits_2< R >        P_traits;
-typedef vector< Point_2 >                 Cont;
-typedef CGAL_Polygon_2< P_traits, Cont >  Polygon_2;
+typedef double                             FT;
+//typedef leda_real                        FT;
+typedef Cartesian< FT >                    R;
+typedef CGAL::Point_2< R >                 Point;
+typedef Polygon_traits_2< R >              P_traits;
+typedef vector< Point >                  Cont;
+typedef CGAL::Polygon_2< P_traits, Cont >  Polygon;
 
 // do random convex set generation always with double
 // (coordinates get too long with exact computation)
-typedef CGAL_Point_2< CGAL_Cartesian< double > >
-  Point_2_double;
-typedef vector< Point_2_double >          Cont_double;
-typedef CGAL_Random_points_in_square_2<
-  Point_2_double,
-  CGAL_Creator_uniform_2< double, Point_2_double > >
-Point_generator;
+typedef CGAL::Point_2< Cartesian< double > >        Point_double;
+typedef vector< Point_double >                    Cont_double;
+typedef Creator_uniform_2< double, Point_double > Creator;
+typedef Random_points_in_square_2< Point_double, Creator >
+  Point_generator;
 template < class RandomAccessIC,
            class OutputIterator >
 OutputIterator
@@ -97,7 +91,7 @@ brute_force_area_3( RandomAccessIC b,
       RandomAccessIC i3( i2);
       do {
         FT a(
-          CGAL_abs(
+          abs(
             (*i1).x() * ( (*i2).y() - (*i3).y()) +
             (*i2).x() * ( (*i3).y() - (*i1).y()) +
             (*i3).x() * ( (*i1).y() - (*i2).y())));
@@ -135,11 +129,11 @@ brute_force_area_4( RandomAccessIC b,
         RandomAccessIC i4( i3);
         do {
           FT a(
-            CGAL_abs(
+            abs(
               (*i1).x() * ( (*i4).y() - (*i3).y()) +
               (*i4).x() * ( (*i3).y() - (*i1).y()) +
               (*i3).x() * ( (*i1).y() - (*i4).y())) +
-            CGAL_abs(
+            abs(
               (*i1).x() * ( (*i2).y() - (*i3).y()) +
               (*i2).x() * ( (*i3).y() - (*i1).y()) +
               (*i3).x() * ( (*i1).y() - (*i2).y())));
@@ -165,16 +159,16 @@ brute_force_area_4( RandomAccessIC b,
 
 
 /*
-struct D2R : public unary_function< Point_2_double, Point_2 >
+struct D2R : public unary_function< Point_double, Point >
 {
-  Point_2
-  operator()( const Point_2_double& p)
-  { return Point_2( p.x(), p.y()); }
+  Point
+  operator()( const Point_double& p)
+  { return Point( p.x(), p.y()); }
 };
 */
 
 int main() {
-  // CGAL_set_pretty_mode( cout);
+  // set_pretty_mode( cout);
 
   int number_of_points [] = { 20, 51, 102, 500 };
   int k [] = { 3, 7, 12, 27 };
@@ -185,30 +179,30 @@ int main() {
     cout << " : " << number_of_points[n] << endl;
 
     Cont_double p_d;
-    CGAL_random_convex_set_2( number_of_points[n],
-                              back_inserter( p_d),
-                              Point_generator( 1));
+    random_convex_set_2( number_of_points[n],
+                         back_inserter( p_d),
+                         Point_generator( 1));
 
     // build polygon:
-    Polygon_2 p;
+    Polygon p;
     transform( p_d.begin(),
                p_d.end(),
                back_inserter( p),
                D2R());
     */
 
-    Polygon_2 p;
-    CGAL_random_convex_set_2( number_of_points[n],
-                              back_inserter( p),
-                              Point_generator( 1));
-    CGAL_assertion( p.is_convex());
+    Polygon p;
+    random_convex_set_2( number_of_points[n],
+                         back_inserter( p),
+                         Point_generator( 1));
+    assert( p.is_convex());
 
     for ( j = 0; j < 4; ++j) {
       // maximum area:
       Cont k_gon;
       k_gon.reserve( k[j]);
 
-      CGAL_maximum_area_inscribed_k_gon(
+      maximum_area_inscribed_k_gon(
         p.vertices_begin(),
         p.vertices_end(),
         k[j],
@@ -223,11 +217,11 @@ int main() {
         back_inserter( k_gon2));
 
       cout << "k_gon:\n";
-      Polygon_2 pp( k_gon.begin(), k_gon.end());
+      Polygon pp( k_gon.begin(), k_gon.end());
       cout << pp << endl;
 
       FT area_ms(
-        CGAL_abs(
+        abs(
           (*(k_gon.begin())).x() *
           ( (*(k_gon.begin()+1)).y() - (*(k_gon.begin()+2)).y()) +
           (*(k_gon.begin()+1)).x() *
@@ -238,11 +232,11 @@ int main() {
       cout << "area1 = " << area_ms << endl;
 
       cout << "k_gon2:\n";
-      Polygon_2 ppp( k_gon2.begin(), k_gon2.end());
+      Polygon ppp( k_gon2.begin(), k_gon2.end());
       cout << ppp << endl;
 
       FT area_bf(
-        CGAL_abs(
+        abs(
           (*(k_gon2.begin())).x() *
           ( (*(k_gon2.begin()+1)).y() - (*(k_gon2.begin()+2)).y()) +
           (*(k_gon2.begin()+1)).x() *
@@ -261,7 +255,7 @@ int main() {
       // maximum perimeter:
       Cont k_gon;
       k_gon.reserve( k[j]);
-      CGAL_maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon(
         p.vertices_begin(),
         p.vertices_end(),
         k[j],

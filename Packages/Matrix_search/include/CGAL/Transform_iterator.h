@@ -24,8 +24,8 @@
 // An OutputIterator Adaptor applying an unary function
 // ============================================================================
 
-#if ! (CGAL_TRANSFORM_ITERATOR_H)
-#define CGAL_TRANSFORM_ITERATOR_H 1
+#if ! (TRANSFORM_ITERATOR_H)
+#define TRANSFORM_ITERATOR_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
@@ -33,21 +33,23 @@
 #ifndef CGAL_CIRCULATOR_BASES_H
 #include <CGAL/circulator_bases.h>
 #endif // CGAL_CIRCULATOR_BASES_H
-#ifndef CGAL_PROTECT_ITERATOR_H
-#include <iterator.h>
-#define CGAL_PROTECT_ITERATOR_H
-#endif // CGAL_PROTECT_ITERATOR_H
+#ifndef CGAL_PROTECT_ITERATOR
+#include <iterator>
+#define CGAL_PROTECT_ITERATOR
+#endif
+
+CGAL_BEGIN_NAMESPACE
 
 template < class OutputIterator, class Operation >
-class CGAL_Transform_iterator : public output_iterator {
+class Transform_iterator : public output_iterator {
 public:
-  typedef CGAL_Transform_iterator< OutputIterator, Operation >
+  typedef Transform_iterator< OutputIterator, Operation >
     self;
   typedef typename Operation::argument_type
     argument_type;
 
-  CGAL_Transform_iterator( const OutputIterator& o,
-                           const Operation& op)
+  Transform_iterator( const OutputIterator& o,
+                      const Operation& op)
     : _o( o), _op( op)
   {}
 
@@ -75,24 +77,26 @@ private:
 };
 
 template < class OutputIterator, class Operation > inline
-CGAL_Transform_iterator< OutputIterator, Operation >
-CGAL_transform_iterator( const OutputIterator& o,
+Transform_iterator< OutputIterator, Operation >
+transform_iterator( const OutputIterator& o,
                          const Operation& op)
-{ return CGAL_Transform_iterator< OutputIterator, Operation >( o, op); }
+{ return Transform_iterator< OutputIterator, Operation >( o, op); }
 
 template < class OutputIterator, class Operation > inline
 output_iterator_tag
 iterator_category(
-  const CGAL_Transform_iterator< OutputIterator, Operation >&)
+  const Transform_iterator< OutputIterator, Operation >&)
 { return output_iterator_tag(); }
 
 template < class OutputIterator, class Operation > inline
-CGAL_Iterator_tag
-CGAL_query_circulator_or_iterator(
-  const CGAL_Transform_iterator< OutputIterator, Operation >&)
-{ return CGAL_Iterator_tag(); }    
+Iterator_tag
+query_circulator_or_iterator(
+  const Transform_iterator< OutputIterator, Operation >&)
+{ return Iterator_tag(); }
 
-#endif // ! (CGAL_TRANSFORM_ITERATOR_H)
+CGAL_END_NAMESPACE
+
+#endif // ! (TRANSFORM_ITERATOR_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

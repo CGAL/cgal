@@ -24,36 +24,37 @@
 // Monotone Matrix Search
 // ============================================================================
 
-#if ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
-#define CGAL_MONOTONE_MATRIX_SEARCH_H 1
+#if ! (MONOTONE_MATRIX_SEARCH_H)
+#define MONOTONE_MATRIX_SEARCH_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
+#ifndef CGAL_PROTECT_VECTOR
+#include <vector>
+#define CGAL_PROTECT_VECTOR
+#endif
+#ifndef CGAL_PROTECT_FUNCTIONAL
+#include <functional>
+#define CGAL_PROTECT_FUNCTIONAL
+#endif
 
+CGAL_BEGIN_NAMESPACE
 template < class Matrix, class RandomAccessIterator >
 inline
 void
-CGAL_monotone_matrix_search(
+monotone_matrix_search(
   const Matrix& M,
   RandomAccessIterator t)
 {
   typedef typename Matrix::Value V;
-  CGAL_monotone_matrix_search( M, t, less< V >());
-} // CGAL_monotone_matrix_search( M, t)
+  monotone_matrix_search( M, t, less< V >());
+} // monotone_matrix_search( M, t)
 template < class Matrix,
            class RandomAccessIterator,
            class Compare_strictly >
 void
-CGAL_monotone_matrix_search(
+monotone_matrix_search(
   const Matrix& M,
   RandomAccessIterator t,
   const Compare_strictly& compare_strictly)
@@ -111,7 +112,7 @@ CGAL_monotone_matrix_search(
     // set sentinel:
     reduction_table[M_new->number_of_rows()] =
       M.number_of_columns() - 1;
-    CGAL__reduce_matrix( *M_new, reduction_table, compare_strictly);
+    _reduce_matrix( *M_new, reduction_table, compare_strictly);
     CGAL_optimisation_assertion(
       M_new->number_of_columns() == M_new->number_of_rows());
   
@@ -162,7 +163,7 @@ CGAL_monotone_matrix_search(
     // we have just one element ==> no choice
     t_new[0] = 0;
   else
-    CGAL_monotone_matrix_search( *M_new, t_new);
+    monotone_matrix_search( *M_new, t_new);
   
   #ifdef CGAL_MON_SEARCH_TRACE
   cerr << "maximum entries:\n";
@@ -220,14 +221,14 @@ CGAL_monotone_matrix_search(
   delete[] t_new;
   delete[] reduction_table;
 
-} // CGAL_monotone_matrix_search( M, t)
+} // monotone_matrix_search( M, t)
 
 
 template < class Matrix,
            class RandomAccessIterator,
            class Compare_strictly >
 void
-CGAL__reduce_matrix(
+_reduce_matrix(
   Matrix& M,
   RandomAccessIterator t,
   const Compare_strictly& compare_strictly)
@@ -282,9 +283,10 @@ CGAL__reduce_matrix(
   }
   
   M.shrink_to_quadratic_size();
-} // CGAL__reduce_matrix( M, t)
+} // _reduce_matrix( M, t)
+CGAL_END_NAMESPACE
 
-#endif // ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
+#endif // ! (MONOTONE_MATRIX_SEARCH_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

@@ -16,7 +16,7 @@ for the vertices of a convex polygon.
 
 \ccHtmlNoClassToc
 \begin{ccHtmlClassFile}{all_furthest_neighbors.html}
-  {Definition of function \ccc{CGAL_all_furthest_neighbors}}
+  {Definition of function \ccc{all_furthest_neighbors}}
   \ccTexHtml{}{
     <H3>All Furthest Neighbors</H3>
     
@@ -32,7 +32,7 @@ for the vertices of a convex polygon.
   \ccGlobalFunction{
     template < class RandomAccessIC, class OutputIterator, class Traits >
     OutputIterator
-    CGAL_all_furthest_neighbors(
+    all_furthest_neighbors(
     RandomAccessIC points_begin,
     RandomAccessIC points_end,
     OutputIterator o,
@@ -51,7 +51,7 @@ for the vertices of a convex polygon.
   \item If \ccc{t} is specified explicitly, \ccc{Traits} satisfies the
     requirements stated in section \ref{req_AllFurthestNeighborsTraits},
   \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Point_2} or
-    -- if \ccc{t} is not specified explicitly -- \ccc{CGAL_Point_2<R>}
+    -- if \ccc{t} is not specified explicitly -- \ccc{Point_2<R>}
     for some representation class \ccc{R},
   \item \ccc{OutputIterator} accepts \ccc{int} as value type
     \textit{and}
@@ -86,7 +86,7 @@ for the vertices of a convex polygon.
     
     \ccDefinition A class \ccClassName\ has to provide the following
     types and operations in order to qualify as a traits class for
-    \ccc{CGAL_all_furthest_neighbors}.
+    \ccc{all_furthest_neighbors}.
     
     \ccTypes 
     

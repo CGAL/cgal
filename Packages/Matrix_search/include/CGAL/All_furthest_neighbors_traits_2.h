@@ -24,47 +24,55 @@
 // Compute all furthest neighbors for the vertices of a convex polygon
 // ============================================================================
 
-#if ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
-#define CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
+#if ! (ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
+#define ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
 
+#ifndef CGAL_BASIC_H
+#include <CGAL/basic.h>
+#endif // CGAL_BASIC_H
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 //!!! this should go into function_objects.h
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
+#ifndef CGAL_PROTECT_FUNCTIONAL
+#include <functional>
+#define CGAL_PROTECT_FUNCTIONAL
+#endif
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
+
+CGAL_BEGIN_NAMESPACE
+
 template < class T1, class T2 >
-struct CGAL_Squared_distance
+struct Squared_distance
 : public binary_function< T1, T2, typename T1::R::FT >
 {
   typename T1::R::FT
   operator()( const T1& t1, const T2& t2) const
-  { return CGAL_squared_distance( t1, t2); }
+  { return squared_distance( t1, t2); }
 };
 
+CGAL_END_NAMESPACE
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
+#ifndef CGAL_PROTECT_VECTOR
+#include <vector>
+#define CGAL_PROTECT_VECTOR
 #endif
+#endif
+CGAL_BEGIN_NAMESPACE
 
 template < class _R >
-class CGAL_All_furthest_neighbors_traits {
+class All_furthest_neighbors_traits {
 public:
-  typedef _R                                         R;
-  typedef CGAL_Point_2< R >                          Point_2;
-  typedef CGAL_Squared_distance< Point_2, Point_2 >  Distance;
+  typedef _R                                    R;
+  typedef Point_2< R >                          Point_2;
+  typedef Squared_distance< Point_2, Point_2 >  Distance;
 
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-  typedef typename vector< Point_2 >::iterator
+  typedef typename std::vector< Point_2 >::iterator
     RandomAccessIC;
-  typedef typename vector< int >::reverse_iterator
+  typedef typename std::vector< int >::reverse_iterator
     OutputIterator;
 #endif
 
@@ -78,9 +86,9 @@ public:
   // POST: return true, iff the points [ points_begin, points_end)
   //   form a convex chain.
   {
-    typedef CGAL_Polygon_traits_2< R >        P_traits;
-    typedef vector< Point_2 >                 Cont;
-    typedef CGAL_Polygon_2< P_traits, Cont >  Polygon_2;
+    typedef Polygon_traits_2< R >        P_traits;
+    typedef vector< Point_2 >            Cont;
+    typedef Polygon_2< P_traits, Cont >  Polygon_2;
   
     Polygon_2 p( points_begin, points_end);
     return p.is_convex();
@@ -90,9 +98,9 @@ public:
 template < class RandomAccessIC, class OutputIterator >
 inline
 OutputIterator
-CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
-                             RandomAccessIC points_end,
-                             OutputIterator o)
+all_furthest_neighbors( RandomAccessIC points_begin,
+                        RandomAccessIC points_end,
+                        OutputIterator o)
 {
   return
   _CGAL_all_furthest_neighbors(
@@ -100,7 +108,7 @@ CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
     points_end,
     o,
     value_type( points_begin));
-} // CGAL_all_furthest_neighbors( ... )
+} // all_furthest_neighbors( ... )
 
 template < class RandomAccessIC,
            class OutputIterator,
@@ -110,17 +118,19 @@ OutputIterator
 _CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
                               RandomAccessIC points_end,
                               OutputIterator o,
-                              CGAL_Point_2< R >*)
+                              Point_2< R >*)
 {
   return
-  CGAL_all_furthest_neighbors(
+  all_furthest_neighbors(
     points_begin,
     points_end,
     o,
-    CGAL_All_furthest_neighbors_traits< R >());
+    All_furthest_neighbors_traits< R >());
 } // _CGAL_all_furthest_neighbors( ... )
 
-#endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
+CGAL_END_NAMESPACE
+
+#endif // ! (ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

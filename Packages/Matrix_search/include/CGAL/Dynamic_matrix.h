@@ -24,26 +24,27 @@
 // A Representation for Dynamic Matrices
 // ============================================================================
 
-#if ! (CGAL_DYNAMIC_MATRIX_H)
-#define CGAL_DYNAMIC_MATRIX_H 1
+#if ! (DYNAMIC_MATRIX_H)
+#define DYNAMIC_MATRIX_H 1
 
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Matrix >
-class CGAL_Dynamic_matrix
+class Dynamic_matrix
 // adaptor for a matrix class
 // to allow replacement of columns in constant time
 // and extraction of all even rows in linear time
 {
 public:
-  typedef vector< int >                  CoordContainer;
-  typedef CGAL_Dynamic_matrix< Matrix >  ThisMatrixClass;
-  typedef typename Matrix::Value         Value;
+  typedef std::vector< int >        CoordContainer;
+  typedef Dynamic_matrix< Matrix >  ThisMatrixClass;
+  typedef typename Matrix::Value    Value;
 
-  CGAL_Dynamic_matrix( const Matrix& m,
-                       int r_p = 0)
+  Dynamic_matrix( const Matrix& m, int r_p = 0)
   : matrix( &m),
     column_indices( m.number_of_columns()),
     row_power( r_p),
@@ -56,8 +57,7 @@ public:
   int
   number_of_rows() const
   {
-    return
-    ( matrix->number_of_rows() + row_offset) >> row_power;
+    return ( matrix->number_of_rows() + row_offset) >> row_power;
   }
 
   int
@@ -96,9 +96,7 @@ public:
   }
 
 private:
-  CGAL_Dynamic_matrix( const Matrix* m,
-                       const CoordContainer& c_i,
-                       int r_p)
+  Dynamic_matrix( const Matrix* m, const CoordContainer& c_i, int r_p)
   : matrix( m),
     column_indices( c_i),
     row_power( r_p),
@@ -109,8 +107,7 @@ public:
   ThisMatrixClass*
   extract_all_even_rows() const
   {
-    return new ThisMatrixClass(
-      matrix, column_indices, row_power + 1);
+    return new ThisMatrixClass( matrix, column_indices, row_power + 1);
   }
 
 private:
@@ -122,13 +119,13 @@ private:
 
 template < class Matrix >
 inline
-CGAL_Dynamic_matrix< Matrix >
-CGAL_dynamic_matrix( const Matrix& m)
-{ return CGAL_Dynamic_matrix< Matrix >( m); }
+Dynamic_matrix< Matrix >
+dynamic_matrix( const Matrix& m)
+{ return Dynamic_matrix< Matrix >( m); }
 
+CGAL_END_NAMESPACE
 
-
-#endif // ! (CGAL_DYNAMIC_MATRIX_H)
+#endif // ! (DYNAMIC_MATRIX_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

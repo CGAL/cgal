@@ -24,8 +24,8 @@
 // A Representation for Cartesian Matrices
 // ============================================================================
 
-#if ! (CGAL_CARTESIAN_MATRIX_H)
-#define CGAL_CARTESIAN_MATRIX_H 1
+#if ! (CARTESIAN_MATRIX_H)
+#define CARTESIAN_MATRIX_H 1
 
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
@@ -34,22 +34,24 @@
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Operation,
            class RandomAccessIC_row,
            class RandomAccessIC_column >
-class CGAL_Cartesian_matrix {
+class Cartesian_matrix {
 public:
   typedef typename Operation::result_type           Value;
   typedef typename Operation::first_argument_type   RowValue;
   typedef typename Operation::second_argument_type  ColumnValue;
 
   /*
-  CGAL_Cartesian_matrix( Operation o = Operation())
+  Cartesian_matrix( Operation o = Operation())
   : op( o)
   {}
   */
 
-  CGAL_Cartesian_matrix( RandomAccessIC_row r_f,
+  Cartesian_matrix( RandomAccessIC_row r_f,
                          RandomAccessIC_row r_l,
                          RandomAccessIC_column c_f,
                          RandomAccessIC_column c_l)
@@ -59,7 +61,7 @@ public:
     n_columns( c_l - c_f)
   {}
 
-  CGAL_Cartesian_matrix( RandomAccessIC_row r_f,
+  Cartesian_matrix( RandomAccessIC_row r_f,
                          RandomAccessIC_row r_l,
                          RandomAccessIC_column c_f,
                          RandomAccessIC_column c_l,
@@ -93,29 +95,31 @@ protected:
   int                    n_rows;
   int                    n_columns;
   Operation              op;
-}; // class CGAL_Cartesian_matrix< ... >
+}; // class Cartesian_matrix< ... >
 
 template < class Operation,
            class RandomAccessIC_row,
            class RandomAccessIC_column >
 inline
-CGAL_Cartesian_matrix< Operation,
+Cartesian_matrix< Operation,
                        RandomAccessIC_row,
                        RandomAccessIC_column >
-CGAL_cartesian_matrix( RandomAccessIC_row r_f,
+cartesian_matrix( RandomAccessIC_row r_f,
                        RandomAccessIC_row r_l,
                        RandomAccessIC_column c_f,
                        RandomAccessIC_column c_l,
                        const Operation& o)
 {
   return
-  CGAL_Cartesian_matrix< Operation,
+  Cartesian_matrix< Operation,
                          RandomAccessIC_row,
                          RandomAccessIC_column >
   ( r_f, r_l, c_f, c_l, o);
 }
 
-#endif // ! (CGAL_CARTESIAN_MATRIX_H)
+CGAL_END_NAMESPACE
+
+#endif // ! (CARTESIAN_MATRIX_H)
 
 // ----------------------------------------------------------------------------
 // ** EOF

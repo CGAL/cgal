@@ -42,34 +42,29 @@
 #ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
 #endif // CGAL_RECTANGULAR_P_CENTER_2_H
-#ifndef CGAL_COPY_N_H
-#include <CGAL/copy_n.h>
-#endif // CGAL_COPY_N_H
 #ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
 #endif // CGAL_RANDOM_H
-#ifndef CGAL_PROTECT_VECTOR_H
-#include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
-#ifndef CGAL_PROTECT_FUNCTION_H
-#include <function.h>
-#define CGAL_PROTECT_FUNCTION_H
-#endif // CGAL_PROTECT_FUNCTION_H
-#ifndef CGAL_PROTECT_ALGO_H
-#include <algo.h>
-#define CGAL_PROTECT_ALGO_H
-#endif // CGAL_PROTECT_ALGO_H
+#ifndef CGAL_COPY_N_H
+#include <CGAL/copy_n.h>
+#endif // CGAL_COPY_N_H
+#include <vector>
+#include <functional>
+#include <algorithm>
 #ifdef OUTPUT
-#ifndef CGAL_PROTECT_IOSTREAM_H
-#include <iostream.h>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
+#include <iostream>
 #endif
-#ifndef CGAL_PROTECT_STDLIB_H
-#include <stdlib.h>
-#define CGAL_PROTECT_STDLIB_H
-#endif // CGAL_PROTECT_STDLIB_H
+#include <cstdlib>
+
+using std::vector;
+using std::back_inserter;
+using CGAL::Cartesian;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::Random;
+using CGAL::default_random;
+using CGAL::rectangular_p_center_2;
+using CGAL::ORIGIN;
 
 // function class to construct a box
 // around a point p with radius r
@@ -85,20 +80,19 @@ struct Build_box
   }
 };
 
-typedef double                              FT;
-typedef CGAL_Cartesian< FT >                R;
-typedef CGAL_Point_2< R >                   Point_2;
-typedef CGAL_Vector_2< R >                  Vector_2;
-typedef CGAL_Iso_rectangle_2< R >           Square_2;
-typedef Build_box< Point_2, FT, Square_2 >  Build_square;
-typedef vector< Point_2 >                   PCont;
-typedef PCont::iterator                     Piter;
-typedef vector< Square_2 >                  SCont;
-typedef SCont::iterator                     Siter;
-typedef CGAL_Random_points_in_square_2<
-  Point_2,
-  CGAL_Creator_uniform_2< FT, Point_2 > >
-Point_generator;
+typedef double                             FT;
+typedef Cartesian< FT >                    R;
+typedef CGAL::Point_2< R >                 Point;
+typedef CGAL::Vector_2< R >                Vector;
+typedef CGAL::Iso_rectangle_2< R >         Square_2;
+typedef Build_box< Point, FT, Square_2 >   Build_square;
+typedef vector< Point >                    PCont;
+typedef PCont::iterator                    Piter;
+typedef vector< Square_2 >                 SCont;
+typedef SCont::iterator                    Siter;
+typedef Creator_uniform_2< FT, Point >     Creator;
+typedef Random_points_in_square_2< Point, Creator >
+                                             Point_generator;
 
 // translate a range of points by v:
 template < class ForwardIterator, class OutputIterator >
@@ -106,7 +100,7 @@ void
 translate_it( ForwardIterator f,
               ForwardIterator l,
               OutputIterator o,
-              const Vector_2& v)
+              const Vector& v)
 {
   for ( ForwardIterator i( f); i != l; ++i)
     *o++ = *i + v;
@@ -116,7 +110,7 @@ int
 main( int argc, char* argv[])
 {
 #ifdef OUTPUT
-  CGAL_set_pretty_mode( cerr);
+  CGAL::set_pretty_mode( cerr);
 #endif
 
   int number_of_points;
@@ -136,52 +130,52 @@ main( int argc, char* argv[])
 #endif
 
     // generate random seed
-    random_seed = CGAL_random.get_int( 0, (1 << 30));
+    random_seed = default_random.get_int( 0, (1 << 30));
   }
   else
     random_seed = atoi(argv[2]);
 
   // define random source:
-  CGAL_Random rnd( random_seed);
+  Random rnd( random_seed);
 
 #ifdef OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif
 
   PCont points;
-  Vector_2 t;
+  Vector t;
   Point_generator ptgen( 1, rnd);
   FT p_radius;
 
   // generate a random cluster of size number_of_points:
-  CGAL_copy_n( ptgen, number_of_points, back_inserter( points));
+  CGAL::copy_n( ptgen, number_of_points, back_inserter( points));
 
   // and add the most extreme points:
-  points.push_back( Point_2( 1, 1));
-  points.push_back( Point_2( -1, -1));
+  points.push_back( Point( 1, 1));
+  points.push_back( Point( -1, -1));
 
 #ifdef OUTPUT
   cerr << "** check two center **" << endl;
 #endif // OUTPUT
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 0,2);
-    Vector_2 v2( 0,-2);
+    Vector v1( 0,2);
+    Vector v2( 0,-2);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 2);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            2);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -189,23 +183,23 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 2,0);
-    Vector_2 v2( -2,0);
+    Vector v1( 2,0);
+    Vector v2( -2,0);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 2);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            2);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -213,23 +207,23 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 2,2);
-    Vector_2 v2( -2,-2);
+    Vector v1( 2,2);
+    Vector v2( -2,-2);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 2);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            2);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -237,23 +231,23 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -2,2);
-    Vector_2 v2( 2,-2);
+    Vector v1( -2,2);
+    Vector v2( 2,-2);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 2);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            2);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -265,27 +259,27 @@ main( int argc, char* argv[])
 #endif // OUTPUT
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 0,4);
-    Vector_2 v2( 0,0);
-    Vector_2 v3( 0,-4);
+    Vector v1( 0,4);
+    Vector v2( 0,0);
+    Vector v3( 0,-4);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 3);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            3);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 );
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 );
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 );
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 );
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -293,27 +287,27 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -4,0);
-    Vector_2 v2( 0,0);
-    Vector_2 v3( 4,0);
+    Vector v1( -4,0);
+    Vector v2( 0,0);
+    Vector v3( 4,0);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 3);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            3);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 );
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 );
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 );
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 );
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -321,27 +315,27 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -4,0);
-    Vector_2 v2( 0,2);
-    Vector_2 v3( 4,0);
+    Vector v1( -4,0);
+    Vector v2( 0,2);
+    Vector v3( 4,0);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 3);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            3);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 );
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 );
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 );
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 );
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -349,27 +343,27 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -4,-4);
-    Vector_2 v2( 0,2);
-    Vector_2 v3( 4,0);
+    Vector v1( -4,-4);
+    Vector v2( 0,2);
+    Vector v3( 4,0);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 3);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            3);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 );
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 );
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 );
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 );
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -377,27 +371,27 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -4,-4);
-    Vector_2 v2( 2,0);
-    Vector_2 v3( 4,-4);
+    Vector v1( -4,-4);
+    Vector v2( 2,0);
+    Vector v3( 4,-4);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 3);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            3);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 );
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 );
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 );
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 );
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -409,31 +403,31 @@ main( int argc, char* argv[])
 #endif // OUTPUT
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 0,-4);
-    Vector_2 v2( 0,-2);
-    Vector_2 v3( 0,2);
-    Vector_2 v4( 0,4);
+    Vector v1( 0,-4);
+    Vector v2( 0,-2);
+    Vector v3( 0,2);
+    Vector v4( 0,4);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
     translate_it( points.begin(), points.end(), back_inserter( pts), v4);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 4);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            4);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 ||
-                    centers[0] == CGAL_ORIGIN + v4);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 ||
-                    centers[1] == CGAL_ORIGIN + v4);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 ||
+            centers[0] == ORIGIN + v4);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 ||
+            centers[1] == ORIGIN + v4);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -441,31 +435,31 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -4,0);
-    Vector_2 v2( -2,0);
-    Vector_2 v3( 2,0);
-    Vector_2 v4( 4,0);
+    Vector v1( -4,0);
+    Vector v2( -2,0);
+    Vector v3( 2,0);
+    Vector v4( 4,0);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
     translate_it( points.begin(), points.end(), back_inserter( pts), v4);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 4);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            4);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 ||
-                    centers[0] == CGAL_ORIGIN + v4);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 ||
-                    centers[1] == CGAL_ORIGIN + v4);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 ||
+            centers[0] == ORIGIN + v4);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 ||
+            centers[1] == ORIGIN + v4);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -473,31 +467,31 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 0,-2);
-    Vector_2 v2( 0,2);
-    Vector_2 v3( -20,0);
-    Vector_2 v4( 20,1);
+    Vector v1( 0,-2);
+    Vector v2( 0,2);
+    Vector v3( -20,0);
+    Vector v4( 20,1);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
     translate_it( points.begin(), points.end(), back_inserter( pts), v4);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 4);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            4);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 ||
-                    centers[0] == CGAL_ORIGIN + v4);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 ||
-                    centers[1] == CGAL_ORIGIN + v4);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 ||
+            centers[0] == ORIGIN + v4);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 ||
+            centers[1] == ORIGIN + v4);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -505,31 +499,31 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( 0,-2);
-    Vector_2 v2( 0,2);
-    Vector_2 v3( -200,0);
-    Vector_2 v4( 200,1);
+    Vector v1( 0,-2);
+    Vector v2( 0,2);
+    Vector v3( -200,0);
+    Vector v4( 200,1);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
     translate_it( points.begin(), points.end(), back_inserter( pts), v4);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 4);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            4);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 ||
-                    centers[0] == CGAL_ORIGIN + v4);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 ||
-                    centers[1] == CGAL_ORIGIN + v4);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 ||
+            centers[0] == ORIGIN + v4);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 ||
+            centers[1] == ORIGIN + v4);
   
   #ifdef OUTPUT
       cerr << "." << flush;
@@ -537,31 +531,31 @@ main( int argc, char* argv[])
     }
   {
     // vectors to translate the clusters:
-    Vector_2 v1( -2,0);
-    Vector_2 v2( 2,0);
-    Vector_2 v3( 0,-200);
-    Vector_2 v4( 1,200);
+    Vector v1( -2,0);
+    Vector v2( 2,0);
+    Vector v3( 0,-200);
+    Vector v4( 1,200);
     PCont pts, centers;
     translate_it( points.begin(), points.end(), back_inserter( pts), v1);
     translate_it( points.begin(), points.end(), back_inserter( pts), v2);
     translate_it( points.begin(), points.end(), back_inserter( pts), v3);
     translate_it( points.begin(), points.end(), back_inserter( pts), v4);
   
-    CGAL_rectangular_p_center_2( pts.begin(),
-                                 pts.end(),
-                                 back_inserter( centers),
-                                 p_radius,
-                                 4);
+    rectangular_p_center_2( pts.begin(),
+                            pts.end(),
+                            back_inserter( centers),
+                            p_radius,
+                            4);
   
-    CGAL_assertion( p_radius == 2);
-    CGAL_assertion( centers[0] == CGAL_ORIGIN + v1 ||
-                    centers[0] == CGAL_ORIGIN + v2 ||
-                    centers[0] == CGAL_ORIGIN + v3 ||
-                    centers[0] == CGAL_ORIGIN + v4);
-    CGAL_assertion( centers[1] == CGAL_ORIGIN + v1 ||
-                    centers[1] == CGAL_ORIGIN + v2 ||
-                    centers[1] == CGAL_ORIGIN + v3 ||
-                    centers[1] == CGAL_ORIGIN + v4);
+    assert( p_radius == 2);
+    assert( centers[0] == ORIGIN + v1 ||
+            centers[0] == ORIGIN + v2 ||
+            centers[0] == ORIGIN + v3 ||
+            centers[0] == ORIGIN + v4);
+    assert( centers[1] == ORIGIN + v1 ||
+            centers[1] == ORIGIN + v2 ||
+            centers[1] == ORIGIN + v3 ||
+            centers[1] == ORIGIN + v4);
   
   #ifdef OUTPUT
       cerr << "." << flush;
