@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.25 on 6-Oct-2003
+- Seems the last submission failed...
+
 Version 3.24 on 23-Sep-2003
 - New file headers.
 
