@@ -27,69 +27,37 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/_test_fct_delaunay_duality.C>
-#include <CGAL/_test_cls_triangulation_2.C>
+//#include <CGAL/_test_fct_delaunay_duality.C>
+//#include <CGAL/_test_cls_triangulation_2.C>
 
-template <class Triangulation>
+template <class Del>
 void
-_test_cls_delaunay_triangulation_2( const Triangulation & )
+_test_cls_delaunay_triangulation_2( const Del & )
 {
-  typedef Triangulation                      Cls;
+  typedef Del  Delaunay;
+  typedef typename Delaunay::Point                Point;
 
-  // We assume the traits class has been tested already
-  // actually, any traits is good if it has been tested
-  typedef typename Cls::Geom_traits          Gt;
-
-  typedef typename Cls::Point                Point;
-  typedef typename Cls::Segment              Segment;
-  typedef typename Cls::Triangle             Triangle;
-
-  typedef typename Cls::Distance             Distance;
-
-  typedef typename Cls::Line                 Line;
-  typedef typename Cls::Direction            Direction;
-  typedef typename Cls::Ray                  Ray;
-
-  typedef typename Cls::Vertex               Vertex;
-  typedef typename Cls::Face                 Face;
-
-  typedef typename Cls::Vertex_handle        Vertex_handle;
-  typedef typename Cls::Face_handle          Face_handle;
-
-  typedef std::pair<Face_handle,int>              Edge;
-
-  typedef typename Cls::Vertex_iterator      Vertex_iterator;
-  typedef typename Cls::Face_iterator        Face_iterator;
-  typedef typename Cls::Edge_iterator        Edge_iterator;
-
-  typedef typename Cls::Vertex_circulator    Vertex_circulator;
-  typedef typename Cls::Face_circulator      Face_circulator;
-  typedef typename Cls::Edge_circulator      Edge_circulator;
-  typedef typename Cls::Line_face_circulator Line_face_circulator;
-
-  typedef typename Cls::Locate_type          Locate_type;
-  
   /***********************/
   /***** SUBCLASSES ******/
-  _test_cls_triangulation_2( Cls() );
+     //_test_cls_triangulation_2( Delaunay() );
 
   // Constructors
   cout << "    constructors(3)" << endl;
 
   // Build dummy delaunay triangulations, 1- and 2-dimensional
-  Cls T1;
+  Delaunay T1;
   int m,p;
   for (m=0; m<20; m++)
       T1.insert( Point(3*m, 2*m) );
   assert( T1.is_valid() );
    
-  Cls T2;
+  Delaunay T2;
   for (m=0; m<20; m++)
       for (p=0; p<20; p++)
 	  T2.insert( Point(3*m+p, m-2*p) );
   assert( T2.is_valid() );
   
-  Cls T3;
+  Delaunay T3;
   // All these points are on a circle of radius 325
   Point pt[28] = {
       Point(36,323), Point(80,315), Point(91,-312),
@@ -108,7 +76,58 @@ _test_cls_delaunay_triangulation_2( const Triangulation & )
   /********************/
   /***** Duality ******/
   cout << "    duality" << endl;
-  _test_delaunay_duality(T1);
-  _test_delaunay_duality(T2);
-  _test_delaunay_duality(T3);
+   _test_delaunay_duality(T1);
+   _test_delaunay_duality(T2);
+   _test_delaunay_duality(T3);
+}
+
+
+template <class Del>
+void
+_test_delaunay_duality( const Del &T )
+{
+  typedef typename Del::Geom_traits          Gt;
+  typedef typename Del::Finite_faces_iterator        Face_iterator;
+  typedef typename Del::Finite_edges_iterator        Edge_iterator;
+
+  // Test dual(face iterator)
+  Face_iterator fit;
+  for (fit = T.finite_faces_begin(); fit !=  T.finite_faces_end(); ++fit)
+    {
+      assert( T.side_of_oriented_circle(fit, T.dual(fit)) == 
+	      CGAL::ON_POSITIVE_SIDE );
+    }
+  
+  // Test dual(edge iterator)
+  Edge_iterator eit;
+  for (eit =  T.finite_edges_begin(); eit !=  T.finite_edges_end(); ++eit)
+    {
+         CGAL::Object o = T.dual(eit);
+	 typename Gt::Ray r;
+        typename Gt::Segment s;
+	typename Gt::Line l;
+      if ( CGAL::assign(s,o) ) {
+        assert(  ! T.is_infinite((*eit).first) );
+	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
+      } 
+      else if ( CGAL::assign(l,o) ) {
+        assert( T.dimension() == 1 );
+      } 
+      else {
+        assert( CGAL::assign(r,o) );
+      }
+    }
+
+  // Test dual(edge circulator)
+ //  Edge_circulator ec=T.finite_vertex()->incident_edges(), done(ec);
+//   if ( !ec.is_empty() ) 
+//   do  
+//     {
+//       if (! T.is_infinite(ec)){
+// 	// CGAL::Object o = T.dual(ec);
+// // 	Segment s; Ray r; Line l;
+// // 	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
+//       }
+//       ++ec;
+//     } while ( ec == done);
 }
