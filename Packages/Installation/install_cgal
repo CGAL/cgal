@@ -432,19 +432,19 @@ initial_check()
 
 # fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/config.h
 # and compiler-testsuite version id 
-# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_RTTI.C
+# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TYPENAME.C
 get_cgal_version()
 {
-    # this file is assumed to contain one line matching CGAL_VERSION
+    # this file is assumed to contain one line matching "CGAL_VERSION "
     # where the third field describes the CGAL version
     FILE="${CGAL_INCL_DIR}/CGAL/config.h"
     _check_read ${FILE}
-    CGAL_VERSION=`${_fgrep} CGAL_VERSION ${FILE} | \
+    CGAL_VERSION=`${_fgrep} "CGAL_VERSION " ${FILE} | \
 	${_awk} '{printf "%s",$3}'`
     
     # this file is assumed to contain one line matching "revision "
     # where the fourth field describes the compiler-testsuite version
-    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_RTTI.C"
+    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TYPENAME.C"
     _check_read ${FILE}
     CGAL_INSTALL_CONF_VERSION=`${_fgrep} 'revision ' ${FILE} | \
 	${_awk} '{printf "%s",$4}'`
@@ -637,8 +637,20 @@ set_compiler_flags()
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    ;;
-	*IRIX*g++*)
-	    #### settings for GNU compiler on irix
+	*IRIX*g++-egcs*)
+	    #### settings for egcs on irix
+	    ADDITIONAL_CXXFLAGS=
+	    CGAL_LIB_CXXFLAGS=
+	    CGAL_LIB_LDFLAGS=
+	    CGAL_LIB_CREATE="ar cr"
+	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    WINDOW_DIR="/usr/lib/X11"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    ;;
+	*IRIX*g++-2*)
+	    #### settings for GCC2 on irix
 	    ADDITIONAL_CXXFLAGS=
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
@@ -740,7 +752,7 @@ test_compiler_specifica()
 	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
 	_test_name="`value_of_without \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
 	_test_name=`${_basename} "${_test_name}"`
-	_tmp_name="`value_of_without \"_test_name\" \"NO_\"`"
+	_tmp_name="`value_of_without \"_test_name\" \"^NO_\"`"
 	if [ "${_tmp_name}" = "${_test_name}" ]; then
 	  _NO='unfortunately.'
 	else
@@ -1021,9 +1033,9 @@ search_for_compilers()
 	*IRIX64*)
 	    if _search_compiler cc CC 'n'; then
 		_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
-		_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
+		_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 		if [ -n "${SUPPORT_MIPSPRO_64}" ]; then
 		    _register_compiler \
 			"`_add_flags \"${COMPILER}\" '-64' ' (64)' ' -64'`"
@@ -1034,9 +1046,9 @@ search_for_compilers()
 	*IRIX*-6*)
 	    if _search_compiler cc CC 'n'; then
 		_register_compiler \
-		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
-		_register_compiler \
 		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
+		_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
 	    fi
 	    _search_compiler gcc g++ ''
 	    ;;
@@ -3188,7 +3200,7 @@ write_compiler_flags()
   fi
   makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_LEDA" >> ${FILE}
+    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE}
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
 	makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
 	${_printf} "\t-I\$(LEDA_INCL_DIR)\n\n" >> ${FILE}
@@ -3456,15 +3468,15 @@ generatemakefiles()
   fi
   create_include_makefile
 
-  FILE=${CGAL_SRC_DIR}/makefile_lib
-  replace_line ${FILE} CGAL_MAKEFILE \
-    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+  for FILE in ${CGAL_SRC_DIR}/makefile_lib \
+    ${CGAL_SRC_DIR}/makefile_sharedlib \
+    ${CGAL_EXAMPLE_DIR}/makefile
+  do
+    replace_line ${FILE} CGAL_MAKEFILE \
+      "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+  done
 
-  FILE=${CGAL_SRC_DIR}/makefile_sharedlib
-  replace_line ${FILE} CGAL_MAKEFILE \
-    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
-
-  for DIRECTORY in `/bin/ls ${CGAL_EXAMPLE_DIR}`; do
+  for DIRECTORY in `${_ls} ${CGAL_EXAMPLE_DIR}`; do
     if [ -d ${DIRECTORY} ]; then
       FILE=${CGAL_EXAMPLE_DIR}/${DIRECTORY}/makefile
       replace_line ${FILE} CGAL_MAKEFILE \
@@ -3487,7 +3499,7 @@ _do_compile()
 {
     ${_printf} "${_LEFTSPACE}Building CGAL_$1 ..."
     if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
-	/bin/rm -f ${COMPILE_LOGFILE} 
+	${_rm} -f ${COMPILE_LOGFILE} 
     fi
     if make -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
@@ -3500,7 +3512,7 @@ _do_compile()
 	${_printf} "${_LEFTSPACE}You will be shown a log now ...\n"
 	print_filled_line
 	wait_for_enter
-	$_cat ${COMPILE_LOGFILE} | ${PAGER:-${_cat}}
+	${_cat} ${COMPILE_LOGFILE} | ${PAGER:-${_cat}}
 	write_buffer "\n"
 	return 1
     fi
@@ -3606,7 +3618,7 @@ test_menu()
 # (assumed to be in columns 6-8)
 _get_timestamp()
 {
-    $_ls -l $1 | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
+    ${_ls} -l $1 | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
 }
 
 main_menu()
