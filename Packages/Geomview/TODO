@@ -1,8 +1,8 @@
-- Document raw_flag.  Maybe it could apply to Color ?
+- Document raw_flag.  Maybe it could apply to Color as well ?
 - Finish get rid of non standard compliant (and gcc 2.97 friendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
-  It's harder than I thought, since g++ 2.95 doesn't have <sstream>.  Maybe
-  CGAL should define it ?
+  It's harder than I thought, since g++ 2.95 doesn't have <sstream>.
+  Maybe CGAL should define it ?
 - Remove the requirement to have a ./.geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
   There are other problems (sleep(1) is needed), so maybe don't touch...
@@ -26,8 +26,8 @@
   geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
   job ?  Discretisation for Sphere and Circle should be configurable for the
   stream.
-- Check how to do transparency with Geomview ?  (passing the one from
-  CGAL::Color)
+- Check how to do transparency with Geomview ?
+  (passing the one from CGAL::Color)
 - Is there a way to see edges like cylinders somewhat (possibly generate them
   ourselves), so that we know which one is in front of which other one ?
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
@@ -35,6 +35,4 @@
 
 Demo :
 ------
-- move test/ to demo/, it's more appropriate.  Problem (?) is that it requires
-  a makefile, and a README (see developers manual).
-- Add test files for polyhedrons, t2D, t3d.
+- Add demo files for polyhedrons, t2D, t3d.
