@@ -7,7 +7,6 @@
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_incremental_3.h>
-#include <CGAL/Filtered_exact.h>
 #include <vector>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -25,8 +24,7 @@ typedef double RT;
 #endif
 
 
-typedef CGAL::Filtered_exact<double, RT>       NT;
-typedef CGAL::Homogeneous<NT>                  K;
+typedef CGAL::Homogeneous<RT>                  K;
 typedef K::Point_3                             Point_3;
 typedef CGAL::Polyhedron_default_traits_3<K>   PolyTraits;
 typedef CGAL::Polyhedron_3< PolyTraits >       Polyhedron;
