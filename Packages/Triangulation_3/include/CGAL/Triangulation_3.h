@@ -1430,7 +1430,6 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	// i = 0; // For the (remembering) visibility walk. Ok for Delaunay only
 
         Orientation test_or = (i&1)==0 ? NEGATIVE : POSITIVE;
-	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( (i+1)&3 )->point();
 	const Point & p2 = c->vertex( (i+2)&3 )->point();
 	const Point & p3 = c->vertex( (i+3)&3 )->point();
@@ -1450,6 +1449,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	  }
 	} else
 	    o[0] = (Orientation) - test_or;
+
+	const Point & p0 = c->vertex( i )->point();
 
 	next = c->neighbor((i+1)&3);
 	if (previous != next) {
