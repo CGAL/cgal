@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.93 (3 September 2003)
+- In Convex_hull_d_traits_3 we have to use Intersect_3 and not Intersect_2
+
 0.9.92 (3 September 2003)
 - Added missing cstddef include for std::ptrdiff_t.
 
