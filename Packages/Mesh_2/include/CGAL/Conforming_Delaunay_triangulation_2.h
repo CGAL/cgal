@@ -75,20 +75,13 @@ protected:
      constructor. Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is
      a constrained edge in m. */
   class Is_edge_constrained {
-    Conform* _m;
-    Vertex_handle _v;
   public:
-    Is_edge_constrained(Conform* m, Vertex_handle v)
-      : _m(m), _v(v) {}
-
-    bool operator()(const Vertex_handle& v2) const 
+    Is_edge_constrained()
+      {}
+    
+    bool operator()(const Edge_circulator& ec) const
       {
-	if(_m->is_infinite(v2))
-	  return false;
-	Face_handle fh;
-	int i;
-	_m->is_edge(_v,v2,fh,i);
-	return fh->is_constrained(i);
+	return ec->first->is_constrained(ec->second);
       }
   };
 
@@ -114,8 +107,24 @@ protected:
       }
   };
 
-  typedef Filter_circulator<Vertex_circulator, Is_edge_constrained>
-    Constrained_vertex_circulator;
+  typedef Filter_circulator<Edge_circulator, Is_edge_constrained>
+    Constrained_edge_circulator;
+
+
+  // Helper functions to access the two vertices of an Edge
+  // source is the vertex around which the circulator turns
+  Vertex_handle source(const Edge_circulator& ec) const
+  {
+    return ec->first->vertex(cw(ec->second));
+  }
+
+  Vertex_handle target(const Edge_circulator& ec) const
+  {
+    return ec->first->vertex(ccw(ec->second));
+  }
+
+ 
+
 
   typedef std::list<Constrained_edge> List_of_constraints;
   typedef CGAL::Filtered_container<List_of_constraints, 
@@ -441,8 +450,8 @@ private:
   // add the sequence [begin, end] to the cluster c and add it to the
   // clusters of the vertex v
   void construct_cluster(const Vertex_handle v,
-			 Constrained_vertex_circulator begin,
-			 const Constrained_vertex_circulator& end,
+			 Constrained_edge_circulator begin,
+			 const Constrained_edge_circulator& end,
 			 Cluster c = Cluster());
 
   //@}
@@ -686,6 +695,8 @@ step_by_step(const Is_locally_conform& is_loc_conf)
 
 // --- PRIVATE MEMBER FUNCTIONS ---
 
+#ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
+
 template <class Tr>
 void Conforming_Delaunay_triangulation_2<Tr>::
 create_clusters()
@@ -696,18 +707,43 @@ create_clusters()
     create_clusters_of_vertex(vit);
 }
 
+#else
+
+template <class Tr>
+void Conforming_Delaunay_triangulation_2<Tr>::
+create_clusters()
+{
+  Unique_hash_map<Vertex_handle,bool> created(false);
+  for(typename Tr::Subconstraint_iterator it = subconstraints_begin(); it != subconstraints_end(); ++it) {
+    Vertex_handle vh = it->first.first;
+    if(!created[vh]){
+      created[vh] = true;
+      create_clusters_of_vertex(vh);
+    }
+
+    vh = it->first.second;
+    if(!created[vh]){
+      created[vh] = true;
+      create_clusters_of_vertex(vh);
+    }
+  }
+}
+
+#endif
+
 template <class Tr>
 void Conforming_Delaunay_triangulation_2<Tr>::
 create_clusters_of_vertex(const Vertex_handle v)
 {
-  Is_edge_constrained test(this, v);
-  Constrained_vertex_circulator begin(incident_vertices(v),test);
+  Is_edge_constrained test;
+  Constrained_edge_circulator begin(incident_edges(v),test);
+
   // This circulator represents all constrained edges around the
   // vertex v. An edge [v,v'] is represented by the vertex v'.
 
   if(begin == 0) return; // if there is only one vertex
 
-  Constrained_vertex_circulator
+  Constrained_edge_circulator
     current(begin), next(begin), cluster_begin(begin);
   ++next; // next is always just after current.
   if(current == next) return;
@@ -715,11 +751,9 @@ create_clusters_of_vertex(const Vertex_handle v)
   bool in_a_cluster = false;
   do
     {
-      Face_handle f;
-      int i;
-      is_edge(v, next, f, i); // put in f the face on the right side 
-                              // of (v,next)
-      if(is_small_angle(current->point(), v->point(), next->point()))
+      Face_handle f = next->first; // the face to the right side of the edge
+      int i = next->second;
+      if(is_small_angle(target(current)->point(), v->point(), target(next)->point()))
 	{
 	  if(!in_a_cluster)
 	    {
@@ -742,7 +776,7 @@ create_clusters_of_vertex(const Vertex_handle v)
   if(in_a_cluster)
     {
       Cluster c;
-      if(get_cluster(v, begin, c, true)) 
+      if(get_cluster(v, target(begin), c, true)) 
 	// get the cluster and erase it from the clusters map
 	construct_cluster(v, cluster_begin, begin, c);
       else
@@ -753,8 +787,8 @@ create_clusters_of_vertex(const Vertex_handle v)
 template <class Tr>
 void Conforming_Delaunay_triangulation_2<Tr>::
 construct_cluster(Vertex_handle v,
-		  Constrained_vertex_circulator begin,
-		  const Constrained_vertex_circulator& end,
+		  Constrained_edge_circulator begin,
+		  const Constrained_edge_circulator& end,
 		  Cluster c)
 {
   Compute_squared_distance_2 squared_distance = 
@@ -766,11 +800,11 @@ construct_cluster(Vertex_handle v,
       // c.rmin is not initialized because
       // reduced=false!
       c.minimum_squared_length = 
-	squared_distance(v->point(), begin->point());
-      Constrained_vertex_circulator second(begin);
+	squared_distance(v->point(), target(begin)->point());
+      Constrained_edge_circulator second(begin);
       ++second;
-      c.smallest_angle.first = begin;
-      c.smallest_angle.second = second;
+      c.smallest_angle.first = target(begin);
+      c.smallest_angle.second = target(second);
     }
 
   bool all_edges_in_cluster=false; // tell if all incident edges are
@@ -785,27 +819,27 @@ construct_cluster(Vertex_handle v,
 				    v->point(),
 				    c.smallest_angle.second->point());
 
-  Constrained_vertex_circulator next(begin);
+  Constrained_edge_circulator next(begin);
   ++next;
   do
     {
-      c.vertices[begin] = false;
+      c.vertices[target(begin)] = false;
       Squared_length l = squared_distance(vp,
-					begin->point());
+					target(begin)->point());
       c.minimum_squared_length = 
 	std::min(l,c.minimum_squared_length);
       
       if(all_edges_in_cluster || begin!=end)
 	{
 	  FT cosine = 
-	    squared_cosine_of_angle_times_4(begin->point(),
+	    squared_cosine_of_angle_times_4(target(begin)->point(),
 					    v->point(),
-					    next->point());
+					    target(next)->point());
 	  if(cosine>greatest_cosine)
 	    {
 	      greatest_cosine = cosine;
-	      c.smallest_angle.first = begin;
-	      c.smallest_angle.second = next;
+	      c.smallest_angle.first = target(begin);
+	      c.smallest_angle.second = target(next);
 	    }
 	}
     }
@@ -813,6 +847,10 @@ construct_cluster(Vertex_handle v,
   typedef typename Cluster_map::value_type Value_key_pair;
   cluster_map.insert(Value_key_pair(v,c));
 }
+
+
+
+#ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
 
 template <class Tr>
 template <class Is_locally_conform>
@@ -832,6 +870,35 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
 	}
     }
 }
+
+#else
+
+template <class Tr>
+template <class Is_locally_conform>
+void Conforming_Delaunay_triangulation_2<Tr>::
+fill_edge_queue(const Is_locally_conform& is_locally_conform)
+{ 
+  for(typename Tr::Subconstraint_iterator it = subconstraints_begin(); it != subconstraints_end(); ++it) {
+  
+    Vertex_handle va = it->first.first;   
+    Vertex_handle vb = it->first.second;
+
+    Face_handle fh;
+    int i;
+    is_edge(va, vb, fh, i);
+
+      if(fh->is_constrained(i) && 
+	 !is_locally_conform(*this, fh, i))
+	{
+	  edges_to_be_conformed.push_back(std::make_pair(va, vb));
+	}
+    }
+}
+
+#endif
+
+ 
+
 
 //update the encroached segments list
 // TODO: perhaps we should remove destroyed edges too
