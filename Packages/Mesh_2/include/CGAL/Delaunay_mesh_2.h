@@ -308,7 +308,7 @@ mark_facets()
   else
     mark_convex_hull();
   propagate_marks(infinite_face(), false);
-};
+}
 
 // --- MESHING FUNCTIONS ---
 
@@ -406,7 +406,7 @@ propagate_marks(const Face_handle fh, bool mark)
 	    }
 	}
     }
-};
+}
 
 template <class Tr>
 inline
@@ -709,8 +709,8 @@ shortest_edge_squared_length(Face_handle f)
 template <class Tr>
 void
 refine_Delaunay_mesh_2(Tr& t,
-		       const typename Tr::Geom_traits& gt =
-		       typename Tr::Geom_traits() )
+		       const typename Tr::Geom_traits& gt
+		       = typename Tr::Geom_traits() )
 {
   typedef Delaunay_mesh_2<Tr> Mesh;
 
@@ -726,8 +726,8 @@ void
 refine_Delaunay_mesh_2(Tr& t,
 		       InputIterator b, InputIterator e,
 		       bool mark = false,
-		       const typename Tr::Geom_traits& gt =
-		       typename Tr::Geom_traits())
+		       const typename Tr::Geom_traits& gt
+		       = typename Tr::Geom_traits())
 {
   typedef Delaunay_mesh_2<Tr> Mesh;
 

@@ -591,7 +591,8 @@ protected:
 template <class Tr>
 Conforming_Delaunay_triangulation_2<Tr>::
 Conforming_Delaunay_triangulation_2(const Geom_traits& gt)
-  : Tr(gt), is_really_a_constrained_edge(*this),
+  : Tr(gt), is_really_a_constrained_edge(*this), 
+    /** \todo{ *this is used in the constructor!!} */
     edges_to_be_conformed(is_really_a_constrained_edge),
     cluster_map(),
     initialized(NONE)
