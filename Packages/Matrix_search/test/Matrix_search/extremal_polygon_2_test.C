@@ -24,28 +24,16 @@
 // Test program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
-#endif // CGAL_RANDOM_CONVEX_SET_2_H
-#ifndef CGAL_EXTREMAL_POLYGON_2_H
 #include <CGAL/extremal_polygon_2.h>
-#endif // CGAL_EXTREMAL_POLYGON_2_H
 #include <functional>
 #include <vector>
 
 /*
-#ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
-#endif // CGAL_LEDA_REAL_H
 #include <algorithm>
 */
 

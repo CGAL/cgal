@@ -20,6 +20,8 @@ ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : Completely new four-cover implementation.
+SRC : Unified traits classes.
 SRC : Worked around some MSVC using-bugs.
 SRC : Added std:: to vector in several places in extremal_polygon_2.h.
 SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).

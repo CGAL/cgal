@@ -24,33 +24,15 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - test program
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif // CGAL_VECTOR_2_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
-#endif // CGAL_RECTANGULAR_P_CENTER_2_H
-#ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
-#endif // CGAL_RANDOM_H
-#ifndef CGAL_TIMER_H
 #include <CGAL/Timer.h>
-#endif // CGAL_TIMER_H
-#ifndef CGAL_ALGORITHM_H
 #include <CGAL/algorithm.h>
-#endif // CGAL_ALGORITHM_H
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -107,9 +89,9 @@ class Random_p_clusters_2 : public CGAL_STD::_Random_generator_base< P > {
 #else
 template < class P,
            class Creator =
-           CGAL::Creator_uniform_2< typename P::FT, P > >
+           CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::FT, P > >
 class Random_p_clusters_2 : public CGAL::_Random_generator_base< P > {
-#endif
+#endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
     typedef typename P::FT FT;
     double p = _rnd.get_double();

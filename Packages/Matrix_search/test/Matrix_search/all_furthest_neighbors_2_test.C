@@ -24,27 +24,13 @@
 // Test program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_POLYGON_2_H
 #include <CGAL/Polygon_2.h>
-#endif // CGAL_POLYGON_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
-#endif // CGAL_RANDOM_CONVEX_SET_2_H
-#ifndef CGAL_DISTANCE_PREDICATES_2_H
 #include <CGAL/distance_predicates_2.h>
-#endif // CGAL_DISTANCE_PREDICATES_2_H
-#ifndef CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <CGAL/all_furthest_neighbors_2.h>
-#endif // CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <vector>
 
 using std::equal;
@@ -70,12 +56,8 @@ typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
 typedef Creator_uniform_2< FT, Point >               Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
 
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
-#endif // CGAL_SQUARED_DISTANCE_2_H
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif // CGAL_CIRCULATOR_H
 #include <algorithm>
 
 template < class RandomAccessIC,
