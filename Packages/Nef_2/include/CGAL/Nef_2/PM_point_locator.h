@@ -23,8 +23,8 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>
 #include <CGAL/Nef_2/Object_handle.h>
-#undef _DEBUG
-#define _DEBUG 17
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 17
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/geninfo.h>
 #ifdef CGAL_USE_LEDA

@@ -26,8 +26,8 @@
 #include <string>
 #include <map>
 #include <set>
-#undef _DEBUG
-#define _DEBUG 19
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE

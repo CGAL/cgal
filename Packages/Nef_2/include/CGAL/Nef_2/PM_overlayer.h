@@ -25,8 +25,8 @@
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
-#undef _DEBUG
-#define _DEBUG 13
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 13
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_USE_LEDA

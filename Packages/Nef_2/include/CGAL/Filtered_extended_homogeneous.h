@@ -24,8 +24,8 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/number_utils.h>
-#undef _DEBUG
-#define _DEBUG 59
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 59
 #include <CGAL/Nef_2/debug.h>
 
 #define REDUCE_INTERSECTION_POINTS

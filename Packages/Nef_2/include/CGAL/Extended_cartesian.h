@@ -24,8 +24,8 @@
 #include <CGAL/Line_2_Line_2_intersection.h>
 #include <CGAL/Nef_2/Nef_polynomial.h>
 
-#undef _DEBUG
-#define _DEBUG 51
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 51
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/Line_to_epoint.h>
 

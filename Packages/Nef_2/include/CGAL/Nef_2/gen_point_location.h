@@ -30,8 +30,8 @@
 #include <map>
 #include <CGAL/Nef_2/geninfo.h>
 
-#undef _DEBUG
-#define _DEBUG 17
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 17
 #include <CGAL/Nef_2/debug.h>
 
 // #define CHECKING_OFF

@@ -27,8 +27,8 @@
 #include <sstream>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_2/iterator_tools.h>
-#undef _DEBUG
-#define _DEBUG 7
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 7
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE

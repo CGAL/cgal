@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+02 November 2004 Andreas Fabri
+- Replaced macro _DEBUG with CGAL_NEF_DEBUG
+
 28 September 2004 Andreas Fabri
 - Changes for g++-3.4.0
 

@@ -20,8 +20,8 @@
 #define CGAL_SEGMENT_OVERLAY_TRAITS_H
 
 #include <assert.h>
-#undef _DEBUG
-#define _DEBUG 23
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 23
 #include <CGAL/Nef_2/debug.h>
 
 #if defined(CGAL_USE_LEDA)
@@ -37,7 +37,7 @@
 #include <sstream>
 
 namespace CGAL {
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
 #define PIS(s) (s->first())
 #endif
 
