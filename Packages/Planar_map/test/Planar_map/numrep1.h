@@ -1,3 +1,5 @@
+#include <iostream>
+
 // TESTR 
 //   - odd: Cartesian, even: Homogeneous
 //   - 1   : double (Not checked, uses unexisting Pm_segment_epsilon_traits)
