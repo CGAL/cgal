@@ -85,8 +85,8 @@
 #endif
 #else	// CGAL_IA_USE_ASSEMBLY
 #ifdef __i386
-#define SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
-// #define GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
+#define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
+// #define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
 // x86:                                       rounding | precision | def. mask
 static const unsigned short CGAL_FPU_cw_zero = 0xC00   |  0x200    | 0x107f; 
 static const unsigned short CGAL_FPU_cw_near = 0x0     |  0x200    | 0x107f;
@@ -94,7 +94,7 @@ static const unsigned short CGAL_FPU_cw_up   = 0x800   |  0x200    | 0x107f;
 static const unsigned short CGAL_FPU_cw_down = 0x400   |  0x200    | 0x107f;
 #endif
 #ifdef __sparc
-#define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "g" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : : "g" (CW))
 // Sparc:                                    rounding   | precision  |def. mask
 static const unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
@@ -102,8 +102,9 @@ static const unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
 static const unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
 #endif
 #ifdef __mips
-#define SETFPCW(CW) asm volatile ("lw $8,%0; ctc1 $8 $31": :"m" (CW))
-// #define GETFPCR(CW) asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
+#define CGAL_IA_SETFPCW(CW) asm volatile ("lw $8,%0; ctc1 $8 $31": :"m" (CW))
+// #define CGAL_IA_GETFPCW(CW) \
+// asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
 // Mips:
 static const unsigned int CGAL_FPU_cw_zero = 0x1;
 static const unsigned int CGAL_FPU_cw_near = 0x0;
@@ -111,7 +112,7 @@ static const unsigned int CGAL_FPU_cw_up   = 0x2;
 static const unsigned int CGAL_FPU_cw_down = 0x3;
 #endif
 #ifdef __alpha
-#define SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f" (CW))
+#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f" (CW))
 // Alpha:                      rounding
 static const unsigned long CGAL_FPU_cw_zero = 0x0000000000000000UL;
 static const unsigned long CGAL_FPU_cw_near = 0x0800000000000000UL;
@@ -131,7 +132,7 @@ static inline void CGAL_FPU_set_rounding_to_minus_infinity (void);
 static inline void CGAL_FPU_set_rounding_to_zero (void)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
-	SETFPCW(CGAL_FPU_cw_zero);
+	CGAL_IA_SETFPCW(CGAL_FPU_cw_zero);
 #else
 #ifdef __linux
 #ifdef __i386 
@@ -166,7 +167,7 @@ static inline void CGAL_FPU_set_rounding_to_zero (void)
 static inline void CGAL_FPU_set_rounding_to_nearest (void)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
-	SETFPCW(CGAL_FPU_cw_near);
+	CGAL_IA_SETFPCW(CGAL_FPU_cw_near);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RN);
@@ -201,7 +202,7 @@ static inline void CGAL_FPU_set_rounding_to_nearest (void)
 static inline void CGAL_FPU_set_rounding_to_infinity (void)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
-	SETFPCW(CGAL_FPU_cw_up);
+	CGAL_IA_SETFPCW(CGAL_FPU_cw_up);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RP);
@@ -236,7 +237,7 @@ static inline void CGAL_FPU_set_rounding_to_infinity (void)
 static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 {
 #ifdef CGAL_IA_USE_ASSEMBLY
-	SETFPCW(CGAL_FPU_cw_down);
+	CGAL_IA_SETFPCW(CGAL_FPU_cw_down);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RM);
