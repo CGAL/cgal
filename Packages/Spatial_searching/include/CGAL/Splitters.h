@@ -166,10 +166,10 @@ template <class Item, class Item_container=Point_container<Item>,
 class Midpoint_of_rectangle {
 private:
   typedef typename Item::R::FT NT;
-  typedef Separator_ Separator;
 
 public:
   typedef Item_container Container;
+  typedef Separator_ Separator;
   void operator() (Separator& sep, Container& c0,
   			     Container& c1, 
   			     NT Aspect_ratio=NT(3))
