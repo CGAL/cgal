@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_ds_circulators.h
+// file          : include/CGAL/Triangulation_ds_circulators_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -19,18 +19,18 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_H
-#define CGAL_TRIANGULATION_DS_CIRCULATORS_H
+#ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
+#define CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 
 #include <pair.h>
 #include <CGAL/triple.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
 
 template < class Tds >
-class CGAL_Triangulation_ds_cell_circulator
+class CGAL_Triangulation_ds_cell_circulator_3
   : public CGAL_Bidirectional_circulator_base<typename Tds::Cell, ptrdiff_t, size_t>
 {
   // circulates on cells around a given edge
@@ -41,23 +41,23 @@ public:
   typedef typename Tds::Edge Edge;
   typedef typename Tds::Vertex Vertex;
 
-  typedef CGAL_Triangulation_ds_cell_circulator<Tds> Cell_circulator;
+  typedef CGAL_Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   // CONSTRUCTORS
 
-  CGAL_Triangulation_ds_cell_circulator()
-    : _tds(NULL), _e(NULL), pos(NULL), prev(NULL)
+  CGAL_Triangulation_ds_cell_circulator_3()
+    : _Triangulation_data_structure_3(NULL), _e(NULL), pos(NULL), prev(NULL)
   {}
         
-  CGAL_Triangulation_ds_cell_circulator(Tds * tds, Edge e)
-    : _tds(tds), _e(e)
+  CGAL_Triangulation_ds_cell_circulator_3(Tds * Triangulation_data_structure_3, Edge e)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), _e(e)
   {
     CGAL_triangulation_precondition( e.first != NULL && 
 				     (e.second==0 || e.second==1 ||
 				      e.second==2 || e.second==3 ) &&
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) );
-//     if ( _tds->dimension() <3 ) useless since precondition in tds incident_cells
+//     if ( _Triangulation_data_structure_3->dimension() <3 ) useless since precondition in Triangulation_data_structure_3 incident_cells
 //       {
 // 	pos = NULL;
 // 	prev = NULL;
@@ -69,8 +69,8 @@ public:
 //    }
   }
 
-  CGAL_Triangulation_ds_cell_circulator(const Cell_circulator & ccir)
-    : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
+  CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
+    : _Triangulation_data_structure_3(ccir._Triangulation_data_structure_3), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
   {}
         
   Cell_circulator & operator++()
@@ -136,7 +136,7 @@ public:
   
   bool operator==(const Cell_circulator & ccir) const
   {
-    return ( (_tds == ccir._tds) && (_e == ccir._e) && 
+    return ( (_Triangulation_data_structure_3 == ccir._Triangulation_data_structure_3) && (_e == ccir._e) && 
 	     (pos == ccir.pos) && (prev == ccir.prev) );
   }
         
@@ -161,7 +161,7 @@ public:
 //   }
         
 private: 
-  Tds* _tds;
+  Tds* _Triangulation_data_structure_3;
   Edge _e;
   Cell* pos; // current cell
   Cell* prev; // preceding cell
@@ -189,5 +189,5 @@ private:
   }
 };
 
-#endif CGAL_TRIANGULATION_DS_CIRCULATORS_H
+#endif CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
 

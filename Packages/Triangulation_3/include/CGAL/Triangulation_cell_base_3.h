@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_base_cell.h
+// file          : include/CGAL/Triangulation_cell_base_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -23,14 +23,14 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_BASE_CELL_H
-#define CGAL_TRIANGULATION_BASE_CELL_H
+#ifndef CGAL_TRIANGULATION_CELL_BASE_3_H
+#define CGAL_TRIANGULATION_CELL_BASE_3_H
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
 template < class Gt >
-class CGAL_Triangulation_base_cell 
+class CGAL_Triangulation_cell_base_3
 {
 
 public:
@@ -38,21 +38,21 @@ public:
   // CONSTRUCTORS
 
   inline
-  CGAL_Triangulation_base_cell()
+  CGAL_Triangulation_cell_base_3()
   {
     set_vertices();
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_base_cell( void* v0, void* v1, void* v2, void* v3)
+  CGAL_Triangulation_cell_base_3 void* v0, void* v1, void* v2, void* v3)
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_base_cell(void* v0, void* v1, void* v2, void* v3,
+  CGAL_Triangulation_cell_base_3(void* v0, void* v1, void* v2, void* v3,
 				      void* n0, void* n1, void* n2, void* n3)
   {
     set_vertices(v0, v1, v2, v3);
@@ -240,4 +240,4 @@ private:
   void* V[4];
   void* N[4];
 };
-#endif CGAL_TRIANGULATION_BASE_CELL_H
+#endif CGAL_TRIANGULATION_CELL_BASE_3_H

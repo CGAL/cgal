@@ -12,7 +12,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_circulators.h
+// file          : include/CGAL/Triangulation_circulators_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -20,48 +20,48 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_CIRCULATORS_H
-#define CGAL_TRIANGULATION_CIRCULATORS_H
+#ifndef CGAL_TRIANGULATION_CIRCULATORS_3_H
+#define CGAL_TRIANGULATION_CIRCULATORS_3_H
 
 #include <pair.h>
 #include <CGAL/triple.h>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
-#include <CGAL/Triangulation_ds_circulators.h>
+#include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_ds_circulators_3.h>
 
 template < class Gt, class Tds >
-class CGAL_Triangulation;
+class CGAL_Triangulation_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell;
+class CGAL_Triangulation_cell_3;
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_cell_circulator
-  : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_cell<Gt,Tds>, ptrdiff_t, size_t>
+class CGAL_Triangulation_cell_circulator_3
+  : public CGAL_Bidirectional_circulator_base<CGAL_T_cell<Gt,Tds>, ptrdiff_t, size_t>
 {
 public:
-  typedef typename Tds::Cell Ctds;
+  typedef typename Tds::Cell CTriangulation_data_structure_3;
   typedef typename Tds::Cell_circulator Circulator_base;
 
-  typedef CGAL_Triangulation_cell<Gt,Tds> Cell;
-  typedef CGAL_Triangulation_vertex<Gt,Tds> Vertex;
+  typedef CGAL_T_cell<Gt,Tds> Cell;
+  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
   typedef typename Vertex::Vertex_handle Vertex_handle;
   typedef typename Cell::Cell_handle Cell_handle;
-  typedef CGAL_Triangulation<Gt,Tds> Triangulation;
-  typedef typename Triangulation::Edge Edge;
+  typedef CGAL_Triangulation_3<Gt,Tds> Triangulation_3;
+  typedef typename Triangulation_3::Edge Edge;
 
-  typedef CGAL_Triangulation_cell_circulator<Gt,Tds> Cell_circulator;
+  typedef CGAL_Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
-  CGAL_Triangulation_cell_circulator()
+  CGAL_Triangulation_cell_circulator_3()
     : _cb(), _tr()
     {}
 
-  CGAL_Triangulation_cell_circulator(Triangulation * tr, Edge e)
-    : _cb( &(tr->_tds), e ), _tr(tr)
+  CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
+    : _cb( &(tr->_Triangulation_data_structure_3), e ), _tr(tr)
     {}
   
-  CGAL_Triangulation_cell_circulator(const Cell_circulator & ccir)
+  CGAL_Triangulation_cell_circulator_3(const Cell_circulator & ccir)
     : _cb(ccir._cb), _tr(cit._tr)
     {}
 
@@ -125,7 +125,7 @@ public:
 
 private: 
   Circulator_base _cb;
-  Triangulation * _tr;
+  Triangulation_3 * _tr;
 };
 
 #endif

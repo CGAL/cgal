@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_cell.h
+// file          : include/CGAL/T_cell.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -19,25 +19,25 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_CELL_H
-#define CGAL_TRIANGULATION_CELL_H
+#ifndef CGAL_TRIANGULATION_CELL_3_H
+#define CGAL_TRIANGULATION_CELL_3_H
 
 #include <CGAL/Pointer.h>
-#include <CGAL/Triangulation_short_names.h>
-#include <CGAL/Triangulation_data_structure.h>
+#include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex;
+class CGAL_Triangulation_vertex_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_handle;
+class CGAL_Triangulation_vertex_handle_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell_handle;
+class CGAL_Triangulation_cell_handle_3;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_cell  
+class CGAL_T_cell  
   : public Tds::Cell
 {
 public:
@@ -47,40 +47,40 @@ public:
   typedef typename Tds::Vertex Vtds;
   typedef typename Tds::Cell Ctds;
 
-  typedef CGAL_Triangulation_vertex<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_cell<Gt,Tds> Cell;
+  typedef CGAL_Triangulation_vertex_3<Gt,Tds> Vertex;
+  typedef CGAL_T_cell<Gt,Tds> Cell;
 
-  typedef CGAL_Triangulation_vertex_handle<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_cell_handle<Gt,Tds> Cell_handle;
+  typedef CGAL_Triangulation_vertex_handle_3<Gt,Tds> Vertex_handle;
+  typedef CGAL_Triangulation_cell_handle_3<Gt,Tds> Cell_handle;
   //  typedef triple<Cell_handle, int, int>     Edge;
 
   inline
-  CGAL_Triangulation_cell()
-    : Ctds()
+  CGAL_T_cell()
+    : CTriangulation_data_structure_3()
   { }
 
 //   inline 
-//   CGAL_Triangulation_cell(Ctds f)
-//     : Ctds(f)
+//   CGAL_T_cell(CTriangulation_data_structure_3 f)
+//     : CTriangulation_data_structure_3(f)
 //   {}
 // 
   
   inline
-  CGAL_Triangulation_cell(Tds& tds)
-    : Ctds(tds)
+  CGAL_T_cell(Tds& Triangulation_data_structure_3)
+    : CTriangulation_data_structure_3(Triangulation_data_structure_3)
   { }
 
   inline
-  CGAL_Triangulation_cell(Tds& tds,
+  CGAL_T_cell(Tds& Triangulation_data_structure_3,
 			  const Vertex_handle & v0,
 			  const Vertex_handle & v1,
 			  const Vertex_handle & v2,
 			  const Vertex_handle & v3)
-    : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3))
+    : CTriangulation_data_structure_3(Triangulation_data_structure_3, &(*v0), &(*v1), &(*v2), &(*v3))
   {}
     
   inline
-  CGAL_Triangulation_cell(Tds& tds,
+  CGAL_T_cell(Tds& Triangulation_data_structure_3,
 			  const Vertex_handle & v0,
 			  const Vertex_handle & v1,
 			  const Vertex_handle & v2,
@@ -89,7 +89,7 @@ public:
 			  const Cell_handle & n1,
 			  const Cell_handle & n2,
 			  const Cell_handle & n3)
-    : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3), &(*n0), &(*n1), &(*n2), &(*n3)) 
+    : CTriangulation_data_structure_3(Triangulation_data_structure_3, &(*v0), &(*v1), &(*v2), &(*v3), &(*n0), &(*n1), &(*n2), &(*n3)) 
   {}
 
   // Vertex access functions
@@ -179,4 +179,4 @@ public:
 
 };
 
-#endif CGAL_TRIANGULATION_CELL_H
+#endif CGAL_TRIANGULATION_CELL_3_H

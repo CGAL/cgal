@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_base_vertex.h
+// file          : include/CGAL/Triangulation_vertex_base_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -19,13 +19,13 @@
 //
 // ============================================================================
 
-#ifndef CGAL_Triangulation_BASE_VERTEX_H
-#define CGAL_Triangulation_BASE_VERTEX_H
+#ifndef CGAL_TRIANGULATION_VERTEX_BASE_3_H
+#define CGAL_TRIANGULATION_VERTEX_BASE_3_H
 
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
 template < class GT >
-class CGAL_Triangulation_base_vertex 
+class CGAL_Triangulation_vertex_base_3
 {
 
 public:
@@ -34,17 +34,17 @@ public:
   // CONSTRUCTORS
   
   inline 
-  CGAL_Triangulation_base_vertex ()
+  CGAL_Triangulation_vertex_base_3()
     : _p(), _c(NULL)
   {}
   
   inline 
-  CGAL_Triangulation_base_vertex(const Point & p)
+  CGAL_Triangulation_vertex_base_3(const Point & p)
     :  _p(p), _c(NULL)
   {}
     
   inline 
-  CGAL_Triangulation_base_vertex(const Point & p, void* c)
+  CGAL_Triangulation_vertex_base_3(const Point & p, void* c)
     :  _p(p), _c(c)
   {}
 
@@ -86,4 +86,4 @@ private:
   
 };
 
-#endif CGAL_TETRAHEDRALIZATION_BASE_VERTEX_H
+#endif CGAL_TRIANGULATION_VERTEX_BASE_3_H

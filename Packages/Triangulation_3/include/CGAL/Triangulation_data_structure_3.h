@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_data_structure.h
+// file          : include/CGAL/Triangulation_data_structure_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -25,8 +25,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_H
-#define CGAL_TRIANGULATION_DATA_STRUCTURE_H
+#ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
+#define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 
 #include <pair.h>
 #include <CGAL/triple.h>
@@ -34,71 +34,71 @@
 #include <map.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
-#include <CGAL/Triangulation_base_vertex.h>
-#include <CGAL/Triangulation_base_cell.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 
-#include <CGAL/Triangulation_ds_cell.h>
-#include <CGAL/Triangulation_ds_vertex.h>
+#include <CGAL/Triangulation_ds_cell_3.h>
+#include <CGAL/Triangulation_ds_vertex_3.h>
 
-#include <CGAL/Triangulation_ds_iterators.h>
-#include <CGAL/Triangulation_ds_circulators.h>
+#include <CGAL/Triangulation_ds_iterators_3.h>
+#include <CGAL/Triangulation_ds_circulators_3.h>
 
 
 template <class Tds>
-class CGAL_Triangulation_ds_cell_iterator;
+class CGAL_Triangulation_ds_cell_iterator_3;
 template <class Tds>
-class CGAL_Triangulation_ds_facet_iterator;
+class CGAL_Triangulation_ds_facet_iterator_3;
 template <class Tds>
-class CGAL_Triangulation_ds_vertex_iterator;
+class CGAL_Triangulation_ds_vertex_iterator_3;
 template <class Tds>
-class CGAL_Triangulation_ds_cell_circulator;
+class CGAL_Triangulation_ds_cell_circulator_3;
 
 #include <vector.h>
 
 template <class Vb, class Cb>
-class CGAL_Triangulation_data_structure
+class CGAL_Triangulation_data_structure_3
 {
 
   friend istream& operator>> CGAL_NULL_TMPL_ARGS
-  (istream&, CGAL_Triangulation_data_structure<Vb,Cb>&);
+  (istream&, CGAL_Triangulation_data_structure_3<Vb,Cb>&);
 
-  friend void CGAL_Triangulation_ds_cell<Vb,Cb>::add_list
-  (CGAL_Triangulation_data_structure<Vb,Cb>&);
+  friend void CGAL_Triangulation_ds_cell_3<Vb,Cb>::add_list
+  (CGAL_Triangulation_data_structure_3<Vb,Cb>&);
 
-  friend class CGAL_Triangulation_ds_cell_iterator
-  <CGAL_Triangulation_data_structure<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_facet_iterator
-  <CGAL_Triangulation_data_structure<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_edge_iterator
-  <CGAL_Triangulation_data_structure<Vb,Cb> >;
-  friend class CGAL_Triangulation_ds_vertex_iterator
-  <CGAL_Triangulation_data_structure<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_cell_iterator_3
+  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_facet_iterator_3
+  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_edge_iterator_3
+  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_vertex_iterator_3
+  <CGAL_Triangulation_data_structure_3<Vb,Cb> >;
   
 public:
 
-  typedef CGAL_Triangulation_ds_vertex<Vb,Cb> Vertex;
-  typedef CGAL_Triangulation_ds_cell<Vb,Cb> Cell;
+  typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
+  typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;
   typedef pair<Cell*, int>  Facet;
   typedef CGAL_triple<Cell*, int, int> Edge;
 
-  typedef CGAL_Triangulation_data_structure<Vb,Cb> Tds;
+  typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
 
-  typedef CGAL_Triangulation_ds_cell_iterator<Tds> Cell_iterator;
-  typedef CGAL_Triangulation_ds_facet_iterator<Tds> Facet_iterator;
-  typedef CGAL_Triangulation_ds_edge_iterator<Tds> Edge_iterator;
-  typedef CGAL_Triangulation_ds_vertex_iterator<Tds> Vertex_iterator;
-  typedef CGAL_Triangulation_ds_cell_circulator<Tds> Cell_circulator;
+  typedef CGAL_Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
+  typedef CGAL_Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
+  typedef CGAL_Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
+  typedef CGAL_Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
+  typedef CGAL_Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   // CONSTRUCTORS
 
   inline
-  CGAL_Triangulation_data_structure() 
+  CGAL_Triangulation_data_structure_3() 
     : _dimension(-2), _number_of_vertices(0), _list_of_cells() 
   {}
 
-  CGAL_Triangulation_data_structure(const Vertex & v)
+  CGAL_Triangulation_data_structure_3(const Vertex & v)
     : _dimension(-2), _number_of_vertices(0), _list_of_cells()
   {
     insert_outside_affine_hull(&v);
@@ -106,16 +106,16 @@ public:
   }
 
   inline
-  CGAL_Triangulation_data_structure(const Tds & tds)
+  CGAL_Triangulation_data_structure_3(const Tds & Triangulation_data_structure_3)
     : _number_of_vertices(0), _list_of_cells()
-    // _number_of_vertices is set to 0 so that clear() in copy_tds() works
+    // _number_of_vertices is set to 0 so that clear() in copy_Triangulation_data_structure_3() works
   {
-    copy_tds(tds);
+    copy_Triangulation_data_structure_3(Triangulation_data_structure_3);
   }
 
   // DESTRUCTOR
 
-  ~CGAL_Triangulation_data_structure()
+  ~CGAL_Triangulation_data_structure_3()
   {
     clear();
   }
@@ -123,9 +123,9 @@ public:
   // ASSIGNEMENT
 
   inline
-  Tds & operator= (const Tds & tds)
+  Tds & operator= (const Tds & Triangulation_data_structure_3)
   {
-    copy_tds(tds);
+    copy_Triangulation_data_structure_3(Triangulation_data_structure_3);
     return *this;
   }  
     
@@ -480,7 +480,7 @@ public:
 	cnew->set_neighbor(j,c);
 
 	// the code here duplicates a large part of the code 
-	// of CGAL_Triangulation_ds_cell_circulator
+	// of CGAL_Triangulation_ds_cell_circulator_3
 
 	int k=Cell_circulator::other(i,j);
 
@@ -879,7 +879,7 @@ public:
     {
     }
 
-  void copy_tds(const Tds & tds)
+  void copy_Triangulation_data_structure_3(const Tds & Triangulation_data_structure_3)
   {
     map< void*, void*, less<void*> > V;
     map< void*, void*, less<void*> > F;
@@ -888,24 +888,24 @@ public:
 
     clear();
 
-    int n = tds.number_of_vertices();
+    int n = Triangulation_data_structure_3.number_of_vertices();
     set_number_of_vertices(n);
-    set_dimension(tds.dimension());
+    set_dimension(Triangulation_data_structure_3.dimension());
 
     if(n == 0){ return ; }
 
     { // create the vertices
 
-      Vertex_iterator it=tds.vertices_begin();
-      while (it != tds.vertices_end()) {
+      Vertex_iterator it=Triangulation_data_structure_3.vertices_begin();
+      while (it != Triangulation_data_structure_3.vertices_end()) {
 	V[&(*it)] = new Vertex( it->point() );
 	++it;
       }
     }
 
     { // create the cells
-      Cell* it = tds._list_of_cells._next_cell;
-      while ( it != tds.past_end_cell() ){
+      Cell* it = Triangulation_data_structure_3._list_of_cells._next_cell;
+      while ( it != Triangulation_data_structure_3.past_end_cell() ){
 	F[&(*it)]=  new Cell( *this,
 			      (Vertex*) V[it->vertex(0)],
 			      (Vertex*) V[it->vertex(1)],
@@ -917,8 +917,8 @@ public:
 
 //    only works in dimension 3
 //     { // create the cells
-//       Cell_iterator it = tds.cells_begin();
-//       while(it != tds.cells_end()){
+//       Cell_iterator it = Triangulation_data_structure_3.cells_begin();
+//       while(it != Triangulation_data_structure_3.cells_end()){
 // 	F[&(*it)]=  new Cell( *this,
 // 			      (Vertex*) V[it->vertex(0)],
 // 			      (Vertex*) V[it->vertex(1)],
@@ -929,8 +929,8 @@ public:
 //     }
 
     { // link the vertices to a cell
-      Vertex_iterator it = tds.vertices_begin();
-      while(it != tds.vertices_end()) {
+      Vertex_iterator it = Triangulation_data_structure_3.vertices_begin();
+      while(it != Triangulation_data_structure_3.vertices_end()) {
             v = (Vertex*) V[&(*it)];
             v->set_cell( (Cell*) F[it->cell()] );
             ++it;
@@ -938,8 +938,8 @@ public:
     }
 
     { // hook neighbor pointers of the cells
-      Cell* it = tds._list_of_cells._next_cell;
-      while ( it != tds.past_end_cell() ){
+      Cell* it = Triangulation_data_structure_3._list_of_cells._next_cell;
+      while ( it != Triangulation_data_structure_3.past_end_cell() ){
 	for(int j = 0; j < 4; j++){
             f = ((Cell*) F[&(*it)]);
             f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
@@ -950,8 +950,8 @@ public:
 
 //     only works in dimension 3
 //     { // hook neighbor pointers of the cells
-//       Cell_iterator it = tds.cells_begin();
-//       while(it != tds.cells_end()){
+//       Cell_iterator it = Triangulation_data_structure_3.cells_begin();
+//       while(it != Triangulation_data_structure_3.cells_end()){
 //           for(int j = 0; j < 3; j++){
 //             f = ((Cell*) F[&(*it)]);
 //             f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
@@ -964,19 +964,19 @@ public:
   }
  
   
-  void swap(Tds &tds)
+  void swap(Tds &Triangulation_data_structure_3)
   {
     int dim = dimension();
     int nb = number_of_vertices();
     Cell *l = list_of_cells().next_cell;
 
-    set_dimension(tds.dimension());
-    set_number_of_vertices(tds.number_of_vertices());
-    _list_of_cells.next_cell = tds.list_of_cells().next_cell;
+    set_dimension(Triangulation_data_structure_3.dimension());
+    set_number_of_vertices(Triangulation_data_structure_3.number_of_vertices());
+    _list_of_cells.next_cell = Triangulation_data_structure_3.list_of_cells().next_cell;
 
-    tds._dimension = dim;
-    tds._number_of_vertices = nb;
-    tds._list_of_cells.next_cell = l;
+    Triangulation_data_structure_3._dimension = dim;
+    Triangulation_data_structure_3._number_of_vertices = nb;
+    Triangulation_data_structure_3._list_of_cells.next_cell = l;
   }
 
   void clear()
@@ -1129,7 +1129,7 @@ private:
 
 template < class Vb, class Cb>
 istream& operator>>
-(istream& is, CGAL_Triangulation_data_structure<Vb,Cb>& tds)
+(istream& is, CGAL_Triangulation_data_structure_3<Vb,Cb>& Triangulation_data_structure_3)
 {
 
   return is;
@@ -1138,11 +1138,11 @@ istream& operator>>
 
 template < class Vb, class Cb>
 ostream& operator<<
-(ostream& os, const  CGAL_Triangulation_data_structure<Vb,Cb>  &tds)
+(ostream& os, const  CGAL_Triangulation_data_structure_3<Vb,Cb>  &Triangulation_data_structure_3)
 {
   
   return os;
 }
 
 
-#endif CGAL_TRIANGULATION_DATA_STRUCTURE_H
+#endif CGAL_TRIANGULATION_DATA_STRUCTURE_3_H

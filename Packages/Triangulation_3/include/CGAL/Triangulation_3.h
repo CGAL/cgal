@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation.h
+// file          : include/CGAL/Triangulation_3.h
 // revision      : $Revision$
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -21,8 +21,8 @@
 // ============================================================================
 
 
-#ifndef CGAL_TRIANGULATION_H
-#define CGAL_TRIANGULATION_H
+#ifndef CGAL_TRIANGULATION_3_H
+#define CGAL_TRIANGULATION_3_H
 
 #include <iostream.h>
 
@@ -32,84 +32,82 @@
 #include <pair.h>
 #include <CGAL/triple.h>
 
-//#include <CGAL/Triangulation_cw_2.h>
-
 #include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
 
 #include <CGAL/predicates_on_points_3.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
-#include <CGAL/Triangulation_data_structure.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 
-#include <CGAL/Triangulation_cell.h>
-#include <CGAL/Triangulation_vertex.h>
-#include <CGAL/Triangulation_handles.h>
-#include <CGAL/Triangulation_iterators.h>
-#include <CGAL/Triangulation_circulators.h>
-
-template < class GT, class Tds>
-class CGAL_Triangulation_cell_iterator;
+#include <CGAL/Triangulation_cell_3.h>
+#include <CGAL/Triangulation_vertex_3.h>
+#include <CGAL/Triangulation_handles_3.h>
+#include <CGAL/Triangulation_iterators_3.h>
+#include <CGAL/Triangulation_circulators_3.h>
 
 template < class GT, class Tds>
-class CGAL_Triangulation_vertex_iterator;
+class CGAL_Triangulation_cell_iterator_3;
 
 template < class GT, class Tds>
-class CGAL_Triangulation_edge_iterator;
+class CGAL_Triangulation_vertex_iterator_3;
 
 template < class GT, class Tds>
-class CGAL_Triangulation_facet_iterator;
+class CGAL_Triangulation_edge_iterator_3;
 
 template < class GT, class Tds>
-class CGAL_Triangulation_cell_circulator;
+class CGAL_Triangulation_facet_iterator_3;
 
 template < class GT, class Tds>
-class CGAL_Triangulation_cell;
+class CGAL_Triangulation_cell_circulator_3;
+
+template < class GT, class Tds>
+class CGAL_T_cell;
 
 template < class GT, class Tds >
-class CGAL_Triangulation
+class CGAL_Triangulation_3
 {
 //   friend istream& operator>> CGAL_NULL_TMPL_ARGS
-//   (istream& is, CGAL_Triangulation<GT,Tds> &tr);
+//   (istream& is, CGAL_Triangulation_3<GT,Tds> &tr);
 //   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
-//   (ostream& os, const CGAL_Triangulation<GT,Tds> &tr);
+//   (ostream& os, const CGAL_Triangulation_3<GT,Tds> &tr);
 
-  friend class CGAL_Triangulation_cell<GT,Tds>;
-  friend class CGAL_Triangulation_vertex<GT,Tds>;
+  friend class CGAL_T_cell<GT,Tds>;
+  friend class CGAL_Triangulation_vertex_3<GT,Tds>;
 
-  friend CGAL_Triangulation_cell_iterator<GT,Tds>;
-  friend CGAL_Triangulation_facet_iterator<GT,Tds>;
-  friend CGAL_Triangulation_edge_iterator<GT,Tds>;
-  friend CGAL_Triangulation_vertex_iterator<GT,Tds>;
-  friend CGAL_Triangulation_cell_circulator<GT,Tds>;
+  friend CGAL_Triangulation_cell_iterator_3<GT,Tds>;
+  friend CGAL_Triangulation_facet_iterator_3<GT,Tds>;
+  friend CGAL_Triangulation_edge_iterator_3<GT,Tds>;
+  friend CGAL_Triangulation_vertex_iterator_3<GT,Tds>;
+  friend CGAL_Triangulation_cell_circulator_3<GT,Tds>;
 
 public:
-  typedef CGAL_Triangulation<GT,Tds> Triangulation;
+  typedef CGAL_Triangulation_3<GT,Tds> Triangulation_3;
 
   typedef typename GT::Point Point;
   typedef typename GT::Segment Segment;
   typedef typename GT::Triangle Triangle;
   typedef typename GT::Tetrahedron Tetrahedron;
 
-  typedef CGAL_Triangulation_cell_handle<GT,Tds> Cell_handle;
-  typedef CGAL_Triangulation_vertex_handle<GT,Tds> Vertex_handle;
+  typedef CGAL_Triangulation_cell_handle_3<GT,Tds> Cell_handle;
+  typedef CGAL_Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
 
-  typedef CGAL_Triangulation_cell<GT,Tds> Cell;
-  typedef CGAL_Triangulation_vertex<GT,Tds> Vertex;
+  typedef CGAL_T_cell<GT,Tds> Cell;
+  typedef CGAL_Triangulation_vertex_3<GT,Tds> Vertex;
   typedef pair<Cell_handle, int> Facet;
   typedef CGAL_triple<Cell_handle, int, int> Edge;
 
 
-  typedef CGAL_Triangulation_cell_circulator<GT,Tds>      Cell_circulator;
-//   typedef CGAL_Triangulation_edge_circulator<GT,Tds>      Edge_circulator;
-//   typedef CGAL_Triangulation_vertex_circulator<GT,Tds>    Vertex_circulator;
+  typedef CGAL_Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
+//   typedef CGAL_Triangulation_edge_circulator_3<GT,Tds>      Edge_circulator;
+//   typedef CGAL_Triangulation_vertex_circulator_3<GT,Tds>    Vertex_circulator;
 
-  typedef CGAL_Triangulation_cell_iterator<GT,Tds>   Cell_iterator;
-  typedef CGAL_Triangulation_facet_iterator<GT,Tds>   Facet_iterator;
-  typedef CGAL_Triangulation_edge_iterator<GT,Tds>   Edge_iterator;
-  typedef CGAL_Triangulation_vertex_iterator<GT,Tds> Vertex_iterator;
+  typedef CGAL_Triangulation_cell_iterator_3<GT,Tds>   Cell_iterator;
+  typedef CGAL_Triangulation_facet_iterator_3<GT,Tds>   Facet_iterator;
+  typedef CGAL_Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
+  typedef CGAL_Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
 
   enum Locate_type {
     VERTEX=0, 
@@ -120,7 +118,7 @@ public:
     OUTSIDE_AFFINE_HULL };//5
 
 private:
-  Tds _tds;
+  Tds _Triangulation_data_structure_3;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
   
@@ -133,12 +131,12 @@ private:
 //   }
 
   void set_number_of_vertices(int n) 
-    { _tds.set_number_of_vertices(n+1); }
+    { _Triangulation_data_structure_3.set_number_of_vertices(n+1); }
 
-  void init_tds()
+  void init_Triangulation_data_structure_3()
     {
       infinite = new Vertex(Point(500,500,500)); // ?? debug
-      _tds.insert_outside_affine_hull(&(*infinite));
+      _Triangulation_data_structure_3.insert_outside_affine_hull(&(*infinite));
       // forces the compiler to instanciate CGAL_debug :
       CGAL_debug( infinite ); 
       CGAL_debug( Cell_handle() );
@@ -147,53 +145,53 @@ private:
 public:
 
 // CONSTRUCTORS
-  CGAL_Triangulation()
-    : _tds(), _gt()
+  CGAL_Triangulation_3()
+    : _Triangulation_data_structure_3(), _gt()
   {
-    init_tds();
+    init_Triangulation_data_structure_3();
   }
 
-  CGAL_Triangulation(const GT & gt) 
-    : _tds(), _gt(gt)
+  CGAL_Triangulation_3(const GT & gt) 
+    : _Triangulation_data_structure_3(), _gt(gt)
   {
-    init_tds();
+    init_Triangulation_data_structure_3();
   }
 
   // copy constructor duplicates vertices and cells
-  CGAL_Triangulation(const CGAL_Triangulation<GT,Tds> & tr)
-    : _tds(tr._tds), _gt(tr._gt), infinite(tr.infinite)
+  CGAL_Triangulation_3(const CGAL_Triangulation_3<GT,Tds> & tr)
+    : _Triangulation_data_structure_3(tr._Triangulation_data_structure_3), _gt(tr._gt), infinite(tr.infinite)
   {}
 
   // pour la demo
-  CGAL_Triangulation(const Point & p0,
+  CGAL_Triangulation_3(const Point & p0,
 		     const Point & p1,
 		     const Point & p2,
 		     const Point & p3)
-    : _tds(), _gt()
+    : _Triangulation_data_structure_3(), _gt()
     {
-      init_tds();
+      init_Triangulation_data_structure_3();
       insert_outside_affine_hull(p0);
       insert_outside_affine_hull(p1);
       insert_outside_affine_hull(p2);
       insert_outside_affine_hull(p3);
     }
 
-//   CGAL_Triangulation(Tds tds, const GT & gt=GT())
-//     : _tds(),_gt(gt)
+//   CGAL_Triangulation_3(Tds Triangulation_data_structure_3, const GT & gt=GT())
+//     : _Triangulation_data_structure_3(),_gt(gt)
 //   {
-//     _tds.swap(tds);
+//     _Triangulation_data_structure_3.swap(Triangulation_data_structure_3);
 //   }
 
   // DESTRUCTOR
 
-  ~CGAL_Triangulation()
+  ~CGAL_Triangulation_3()
   {
     clear();
   }
 
   void clear()
   {
-    _tds.clear();
+    _Triangulation_data_structure_3.clear();
     infinite.Delete();
   }
 
@@ -203,16 +201,16 @@ public:
     { return _gt;}
   
   inline
-  const Tds & tds() const 
-    { return _tds;}
+  const Tds & Triangulation_data_structure_3() const 
+    { return _Triangulation_data_structure_3;}
   
   inline
   int dimension() const 
-    { return _tds.dimension();}
+    { return _Triangulation_data_structure_3.dimension();}
 
   inline
   int number_of_vertices() const // number of finite vertices
-    {return _tds.number_of_vertices()-1;}
+    {return _Triangulation_data_structure_3.number_of_vertices()-1;}
 
   inline
   Vertex_handle infinite_vertex() const
@@ -230,10 +228,10 @@ public:
 
   
    // ASSIGNMENT
-  CGAL_Triangulation & operator=(const CGAL_Triangulation & tr)
+  CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
-    _tds = tr._tds;
+    _Triangulation_data_structure_3 = tr._Triangulation_data_structure_3;
     _gt = tr._gt;
     infinite = tr.infinite;
     return *this;
@@ -241,15 +239,15 @@ public:
 
   // HELPING FUNCTIONS
    
-  void copy_triangulation(const CGAL_Triangulation & tr)
+  void copy_triangulation(const CGAL_Triangulation_3 & tr)
   {
     clear();
     _gt = tr._gt;
-    _tds.copy_tds(tr._tds);
+    _Triangulation_data_structure_3.copy_Triangulation_data_structure_3(tr._Triangulation_data_structure_3);
     infinite = tr.infinite;
   }
 
-  void swap(CGAL_Triangulation &tr)
+  void swap(CGAL_Triangulation_3 &tr)
   {
     GT t = gt();
     _gt = tr.gt();
@@ -259,13 +257,13 @@ public:
     infinite = tr.infinite_vertex();
     tr.infinite = inf;
 
-    _tds.swap(tr._tds);
+    _Triangulation_data_structure_3.swap(tr._Triangulation_data_structure_3);
   }
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
   {
-    if ( ! _tds.is_valid(verbose,level) ) {
+    if ( ! _Triangulation_data_structure_3.is_valid(verbose,level) ) {
       if (verbose) { cerr << "invalid data structure" << endl; }
       CGAL_triangulation_assertion(false); return false;
     }
@@ -522,7 +520,7 @@ public:
 			     c->vertex(3)->point(),
 			     lt,i,j ) == CGAL_ON_BOUNDED_SIDE );
     Vertex_handle v = new Vertex(p);
-    _tds.insert_in_cell( &(*v), &(*c) );
+    _Triangulation_data_structure_3.insert_in_cell( &(*v), &(*c) );
     return v;
   }
 
@@ -560,7 +558,7 @@ public:
 			  lt,li,lj) == CGAL_ON_BOUNDED_SIDE)
 	);
     Vertex_handle v = new Vertex(p);
-    _tds.insert_in_facet(&(*v), &(*c), i);
+    _Triangulation_data_structure_3.insert_in_facet(&(*v), &(*c), i);
     return v;
   }
 
@@ -614,7 +612,7 @@ public:
 			lt,li ) == CGAL_ON_BOUNDED_SIDE )
       );
     Vertex_handle v = new Vertex(p);
-    _tds.insert_in_edge(&(*v), &(*c), i, j);
+    _Triangulation_data_structure_3.insert_in_edge(&(*v), &(*c), i, j);
     return v;
   }
   
@@ -676,7 +674,7 @@ public:
 	// creation of an infinite facet "at the end" of the sequence
 	// of infinite facets containing p
 	Cell_handle cnew 
-	  = new Cell( _tds,
+	  = new Cell( _Triangulation_data_structure_3,
 		      prev->vertex(ccw(prev->index(v))), v,  
 		      infinite_vertex(), NULL,
 		      NULL, cur, prev, NULL);
@@ -697,7 +695,7 @@ public:
 	}
 	
 	Cell_handle dnew 
-	  = new Cell( _tds,
+	  = new Cell( _Triangulation_data_structure_3,
 		      v, prev->vertex(cw(prev->index(v))), 
 		      infinite_vertex(), NULL,
 		      cur, cnew, prev, NULL);
@@ -761,7 +759,7 @@ hat(Vertex_handle v, Cell_handle c)
 	  // convex hull that are visible from v
 	  i1 = nextposaroundij(i,inf);
 	  i2 = 6-i-i1-inf;
-	  cnew = new Cell( _tds,
+	  cnew = new Cell( _Triangulation_data_structure_3,
 			   c->vertex(i1), c->vertex(i2), 
 			   v, infinite_vertex(),
 			   NULL, NULL, cni, c );
@@ -874,7 +872,7 @@ public:
       break;
     }
     Vertex_handle v = new Vertex(p);
-    _tds.insert_outside_affine_hull(&(*v), &(*infinite_vertex()), reorient);
+    _Triangulation_data_structure_3.insert_outside_affine_hull(&(*v), &(*infinite_vertex()), reorient);
     return v;
   }
 
@@ -1220,65 +1218,65 @@ public:
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Cell_iterator finite_cells_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, false); // false means "without infinite cells"
   }
   Cell_iterator all_cells_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis, true); // true means "with infinite cells"
   }
   Cell_iterator cells_end() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds> *)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds> *)this;
     return Cell_iterator(ncthis); // not second argument -> past-end
   }
 
   Vertex_iterator finite_vertices_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, false);
   }
   Vertex_iterator all_vertices_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis, true);
   }
   Vertex_iterator vertices_end() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Vertex_iterator(ncthis);
   }
 
   Edge_iterator finite_edges_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, false);
   }
   Edge_iterator all_edges_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis, true);
   }
   Edge_iterator edges_end() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Edge_iterator(ncthis);
   }
 
   Facet_iterator finite_facets_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, false);
   }
   Facet_iterator all_facets_begin() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis, true);
   }
   Facet_iterator facets_end() const
   {
-    CGAL_Triangulation<GT, Tds>* ncthis = (CGAL_Triangulation<GT, Tds>*)this;
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
     return Facet_iterator(ncthis);
   }
 
@@ -1859,18 +1857,18 @@ public:
 
 // template <class GT, class Tds >
 // ostream& operator<<
-// (ostream& os, const CGAL_Triangulation<GT, Tds> &tr)
+// (ostream& os, const CGAL_Triangulation_3<GT, Tds> &tr)
 // {
 //     return os ;
 // }
 
 // template < class GT, class Tds >
 // istream& operator>>
-// (istream& is, CGAL_Triangulation<GT, Tds> &tr)
+// (istream& is, CGAL_Triangulation_3<GT, Tds> &tr)
 // {
-//   return operator>>(is, tr._tds);
+//   return operator>>(is, tr._Triangulation_data_structure_3);
 // }
     
 
-#endif CGAL_TRIANGULATION_H
+#endif CGAL_TRIANGULATION_3_H
 

@@ -11,15 +11,15 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_cw_2.h
+// file          : include/CGAL/Triangulation_utils_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
 // coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
 // ============================================================================
-#ifndef CGAL_TRIANGULATION_CW_2_H
-#define CGAL_TRIANGULATION_CW_2_H
+#ifndef CGAL_TRIANGULATION_UTILS_3_H
+#define CGAL_TRIANGULATION_UTILS_3_H
 
 inline unsigned int ccw(const unsigned int i) 
 {
@@ -49,5 +49,5 @@ inline unsigned int nextposaroundij(const unsigned int i,
   return tab_nextposaroundij[i][j];
 }
 
-#endif CGAL_TRIANGULATION_CW_2_H
+#endif CGAL_TRIANGULATION_UTILS_3_H
 

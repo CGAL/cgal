@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_short_names.h
+// file          : include/CGAL/Triangulation_short_names_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -19,33 +19,33 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_SHORT_NAMES_H
-#define CGAL_TRIANGULATION_SHORT_NAMES_H
+#ifndef CGAL_TRIANGULATION_SHORT_NAMES_3_H
+#define CGAL_TRIANGULATION_SHORT_NAMES_3_H
 
 // Define shorter names to please linker (g++/egcs)
-#define CGAL_Triangulation_base_vertex CGAL_Tbv
-#define CGAL_Triangulation_base_cell CGAL_Tbc
+#define CGAL_Triangulation_vertex_base_3 CGAL_Tbv
+#define CGAL_Triangulation_cell_base_3 CGAL_Tbc
 
-#define CGAL_Triangulation_ds_vertex CGAL_Tdsv
-#define CGAL_Triangulation_ds_cell CGAL_Tdsc
-#define CGAL_Triangulation_data_structure CGAL_Tds
+#define CGAL_Triangulation_ds_vertex_3 CGAL_Tdsv
+#define CGAL_Triangulation_ds_cell_3 CGAL_Tdsc
+#define CGAL_Triangulation_data_structure_3 CGAL_Tds
 
-#define CGAL_Triangulation_ds_cell_iterator CGAL_Tdscit
-#define CGAL_Triangulation_ds_vertex_iterator CGAL_Tdsvit
-#define CGAL_Triangulation_ds_facet_iterator CGAL_Tdsfit
-#define CGAL_Triangulation_ds_cell_circulator CGAL_Tdsccir
+#define CGAL_Triangulation_ds_cell_iterator_3 CGAL_Tdscit
+#define CGAL_Triangulation_ds_vertex_iterator_3 CGAL_Tdsvit
+#define CGAL_Triangulation_ds_facet_iterator_3 CGAL_Tdsfit
+#define CGAL_Triangulation_ds_cell_circulator_3 CGAL_Tdsccir
 
-#define CGAL_Triangulation_geom_traits CGAL_Gt
+#define CGAL_Triangulation_geom_traits_3 CGAL_Gt
 
-#define CGAL_Triangulation CGAL_Tr
-#define CGAL_Triangulation_vertex CGAL_V
-#define CGAL_Triangulation_cell CGAL_C
-#define CGAL_Triangulation_vertex_handle CGAL_VH
-#define CGAL_Triangulation_cell_handle CGAL_CH
+#define CGAL_Triangulation_3 CGAL_Tr
+#define CGAL_Triangulation_vertex_3 CGAL_V
+#define CGAL_T_cell CGAL_C
+#define CGAL_Triangulation_vertex_handle_3 CGAL_VH
+#define CGAL_Triangulation_cell_handle_3 CGAL_CH
 
-#define CGAL_Triangulation_cell_iterator CGAL_cit
-#define CGAL_Triangulation_vertex_iterator CGAL_vit
-#define CGAL_Triangulation_facet_iterator CGAL_fit
-#define CGAL_Triangulation_cell_circulator CGAL_ccir
+#define CGAL_Triangulation_cell_iterator_3 CGAL_cit
+#define CGAL_Triangulation_vertex_iterator_3 CGAL_vit
+#define CGAL_Triangulation_facet_iterator_3 CGAL_fit
+#define CGAL_Triangulation_cell_circulator_3 CGAL_ccir
 
-#endif CGAL_TRIANGULATION_SHORT_NAMES_H
+#endif CGAL_TRIANGULATION_SHORT_NAMES_3_H

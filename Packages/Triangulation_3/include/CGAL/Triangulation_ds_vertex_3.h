@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_ds_vertex.h
+// file          : include/CGAL/Triangulation_ds_vertex_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -23,39 +23,39 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_DS_VERTEX_H
-#define CGAL_TRIANGULATION_DS_VERTEX_H
+#ifndef CGAL_TRIANGULATION_DS_VERTEX_3_H
+#define CGAL_TRIANGULATION_DS_VERTEX_3_H
 
-#include <CGAL/Triangulation_short_names.h>
-#include <CGAL/Triangulation_ds_iterators.h>
+#include <CGAL/Triangulation_short_names_3.h>
+#include <CGAL/Triangulation_ds_iterators_3.h>
 
 template <class Vb, class Cb >
-class  CGAL_Triangulation_ds_vertex 
+class  CGAL_Triangulation_ds_vertex_3 
   : public Vb
 {
 
 public:
   typedef typename Vb::Point Point;
-  typedef CGAL_Triangulation_ds_vertex<Vb,Cb> Vertex;
-  typedef CGAL_Triangulation_ds_cell<Vb,Cb> Cell;
-//   typedef CGAL_Triangulation_ds_cell_circulator_2<Vertex,Cell> Cell_circulator;
-//   typedef CGAL_Triangulation_ds_vertex_circulator_2<Vertex,Cell> Vertex_circulator;
-//   typedef CGAL_Triangulation_ds_edge_circulator_2<Vertex,Cell> Edge_circulator;
+  typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
+  typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;
+//   typedef CGAL_Triangulation_ds_cell_circulator_3<Vertex,Cell> Cell_circulator;
+//   typedef CGAL_Triangulation_ds_vertex_circulator_3<Vertex,Cell> Vertex_circulator;
+//   typedef CGAL_Triangulation_ds_edge_circulator_3<Vertex,Cell> Edge_circulator;
 
   // CONSTRUCTORS
 
   inline 
-  CGAL_Triangulation_ds_vertex()
+  CGAL_Triangulation_ds_vertex_3()
     : Vb()
   {}
     
   inline 
-  CGAL_Triangulation_ds_vertex(const Point & p)
+  CGAL_Triangulation_ds_vertex_3(const Point & p)
     :  Vb(p)
   {}
     
   inline 
-  CGAL_Triangulation_ds_vertex(const Point & p, Cell * c)
+  CGAL_Triangulation_ds_vertex_3(const Point & p, Cell * c)
     :  Vb(p, c )
   {}
 
@@ -126,4 +126,4 @@ public:
   }
 };
 
-#endif CGAL_TRIANGULATION_DS_VERTEX_H
+#endif CGAL_TRIANGULATION_DS_VERTEX_3_H

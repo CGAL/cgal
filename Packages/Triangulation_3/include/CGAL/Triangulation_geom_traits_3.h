@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_geom_traits.h
+// file          : include/CGAL/Triangulation_geom_traits_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -23,8 +23,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_GEOM_TRAITS_H
-#define CGAL_TRIANGULATION_GEOM_TRAITS_H
+#ifndef CGAL_TRIANGULATION_GEOM_TRAITS_3_H
+#define CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Point_2.h>
@@ -32,10 +32,10 @@
 #include <CGAL/Tetrahedron_3.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
 template < class R >
-class CGAL_Triangulation_geom_traits 
+class CGAL_Triangulation_geom_traits_3 
 {
 public:
 
@@ -45,13 +45,13 @@ public:
   typedef CGAL_Triangle_3<R> Triangle;
   typedef CGAL_Tetrahedron_3<R> Tetrahedron;
 
-  CGAL_Triangulation_geom_traits()
+  CGAL_Triangulation_geom_traits_3()
     {}
-//   CGAL_Triangulation_geom_traits(const CGAL_Triangulation_geom_traits & gt)
+//   CGAL_Triangulation_geom_traits_3(const CGAL_Triangulation_geom_traits_3 & gt)
 //     {}
 
-//   CGAL_Triangulation_geom_traits_2 & 
-//   operator=(const CGAL_Triangulation_geom_traits & gt)
+//   CGAL_Triangulation_geom_traits_3 & 
+//   operator=(const CGAL_Triangulation_geom_traits_3 & gt)
 //     {return *this;}
 
   // PREDICATES ON POINTS
@@ -168,4 +168,4 @@ public:
 };
 
 
-#endif CGAL_TRIANGULATION_GEOM_TRAITS_H
+#endif CGAL_TRIANGULATION_GEOM_TRAITS_3_H

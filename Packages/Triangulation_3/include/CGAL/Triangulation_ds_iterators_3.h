@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_ds_iterators.h
+// file          : include/CGAL/Triangulation_ds_iterators_3.h
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
@@ -19,62 +19,62 @@
 //
 // ============================================================================
 
-#ifndef CGAL_TRIANGULATION_DS_ITERATORS_H
-#define CGAL_TRIANGULATION_DS_ITERATORS_H
+#ifndef CGAL_TRIANGULATION_DS_ITERATORS_3_H
+#define CGAL_TRIANGULATION_DS_ITERATORS_3_H
 
 #include <pair.h>
 #include <CGAL/triple.h>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_short_names.h>
+#include <CGAL/Triangulation_short_names_3.h>
 
-#include <CGAL/Triangulation_ds_circulators.h>
+#include <CGAL/Triangulation_ds_circulators_3.h>
 
 template < class Vb, class Cb >
-class CGAL_Triangulation_ds_vertex;
+class CGAL_Triangulation_ds_vertex_3;
 template < class Vb, class Cb >
-class CGAL_Triangulation_ds_cell;
+class CGAL_Triangulation_ds_cell_3;
 template < class Vb, class Cb >
-class CGAL_Triangulation_data_structure;
+class CGAL_Triangulation_data_structure_3;
 template <class Tds>
-class CGAL_Triangulation_ds_cell_circulator;
+class CGAL_Triangulation_ds_cell_circulator_3;
 
 template<class Tds>
-class CGAL_Triangulation_ds_cell_iterator
+class CGAL_Triangulation_ds_cell_iterator_3
   : public bidirectional_iterator<typename Tds::Cell, ptrdiff_t>
 {
 public:
   typedef typename Tds::Cell  Cell;
 
-  typedef CGAL_Triangulation_ds_cell_iterator<Tds> Cell_iterator;
+  typedef CGAL_Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
 
   // CONSTRUCTORS
 
-  CGAL_Triangulation_ds_cell_iterator()
-    : _tds(NULL), pos(NULL)
+  CGAL_Triangulation_ds_cell_iterator_3()
+    : _Triangulation_data_structure_3(NULL), pos(NULL)
     {}
   
-  CGAL_Triangulation_ds_cell_iterator(Tds * tds)
-    : _tds(tds)
+  CGAL_Triangulation_ds_cell_iterator_3(Tds * Triangulation_data_structure_3)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3)
     {
-      if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
-      else { pos = _tds->list_of_cells()._next_cell; } // first cell of the list
+      if ( _Triangulation_data_structure_3->dimension() <3 ) { pos = NULL; } // there is no cell yet
+      else { pos = _Triangulation_data_structure_3->list_of_cells()._next_cell; } // first cell of the list
     }
 
   // used to initialize the past-the end iterator
-  CGAL_Triangulation_ds_cell_iterator(Tds* tds, int i)
-    : _tds(tds)
+  CGAL_Triangulation_ds_cell_iterator_3(Tds* Triangulation_data_structure_3, int i)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3)
     {
-      if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
-      else { pos = _tds->past_end_cell(); }
+      if ( _Triangulation_data_structure_3->dimension() <3 ) { pos = NULL; } // there is no cell yet
+      else { pos = _Triangulation_data_structure_3->past_end_cell(); }
     }
   
 // MT ne sert a rien ?
-//   CGAL_Triangulation_ds_iterator_base(Tds* tds, Cell* f)
-//     : pos(f), _tds(tds)
+//   CGAL_Triangulation_ds_iterator_base_3(Tds* Triangulation_data_structure_3, Cell* f)
+//     : pos(f), _Triangulation_data_structure_3(Triangulation_data_structure_3)
 //     {}
-//   CGAL_Triangulation_ds_cell_iterator(const Cell_iterator& fi)
-//     : Iterator_base(fi._tds, fi.pos)
+//   CGAL_Triangulation_ds_cell_iterator_3(const Cell_iterator& fi)
+//     : Iterator_base(fi._Triangulation_data_structure_3, fi.pos)
 //     {}
   
   // OPERATORS
@@ -83,14 +83,14 @@ public:
   operator=(const Cell_iterator & fi)
     {
       pos = fi.pos;
-      _tds = fi._tds;
+      _Triangulation_data_structure_3 = fi._Triangulation_data_structure_3;
       return *this;
     }
 
   bool
   operator==(const Cell_iterator & fi) const
     {
-      return ((pos == fi.pos )&&(_tds==fi._tds));
+      return ((pos == fi.pos )&&(_Triangulation_data_structure_3==fi._Triangulation_data_structure_3));
     }
   
   bool
@@ -107,7 +107,7 @@ public:
 // 	return *this;            
 //       }
       // removed : past the end iterator can go further
-//       if ( pos == _tds->past_end_cell() ){
+//       if ( pos == _Triangulation_data_structure_3->past_end_cell() ){
 // 	return *this;    
 //       } 
       pos = pos->_next_cell;
@@ -122,7 +122,7 @@ public:
 // 	return *this;            
 //       }
       // removed : begin iterator can go backwards
-//       if ( pos == _tds->list_of_cells()._next_cell ) {
+//       if ( pos == _Triangulation_data_structure_3->list_of_cells()._next_cell ) {
 // 	return *this;
 //       }
       pos = pos->_previous_cell;
@@ -156,13 +156,13 @@ public:
     }
 
 private:
-  Tds*  _tds;
+  Tds*  _Triangulation_data_structure_3;
   Cell* pos;
 
 };
 
 template < class Tds>
-class CGAL_Triangulation_ds_vertex_iterator
+class CGAL_Triangulation_ds_vertex_iterator_3
   : public bidirectional_iterator<typename Tds::Vertex, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
@@ -172,19 +172,19 @@ public:
 
   typedef typename Tds::Vertex Vertex;
   typedef typename Tds::Cell  Cell;
-  typedef CGAL_Triangulation_ds_vertex_iterator<Tds> Vertex_iterator;
+  typedef CGAL_Triangulation_ds_vertex_iterator_3<Tds> Vertex_iterator;
   
-  CGAL_Triangulation_ds_vertex_iterator()
-    : _tds(NULL), pos(NULL), index(0)
+  CGAL_Triangulation_ds_vertex_iterator_3()
+    : _Triangulation_data_structure_3(NULL), pos(NULL), index(0)
     {}
   
-  CGAL_Triangulation_ds_vertex_iterator(Tds * tds)
-    : _tds(tds), index(0)
+  CGAL_Triangulation_ds_vertex_iterator_3(Tds * Triangulation_data_structure_3)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), index(0)
     {
-      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
+      if ( _Triangulation_data_structure_3->number_of_vertices() == 0 ) { pos = NULL; }
       else { 
-	pos = tds->list_of_cells()._next_cell; 
-	while ( (pos != _tds->past_end_cell())
+	pos = Triangulation_data_structure_3->list_of_cells()._next_cell; 
+	while ( (pos != _Triangulation_data_structure_3->past_end_cell())
 		  && (pos->vertex(index)->cell() != pos) ) {
 	  increment();
 	}
@@ -192,20 +192,20 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  CGAL_Triangulation_ds_vertex_iterator(Tds* tds, int i)
-    : _tds(tds), index(0)
+  CGAL_Triangulation_ds_vertex_iterator_3(Tds* Triangulation_data_structure_3, int i)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), index(0)
     {
-      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
-      else { pos = tds->past_end_cell() ; }
+      if ( _Triangulation_data_structure_3->number_of_vertices() == 0 ) { pos = NULL; }
+      else { pos = Triangulation_data_structure_3->past_end_cell() ; }
     }
   
   Vertex_iterator&
   operator++()
   {
-    //    if (_tds->number_of_vertices() == 0){ return *this;} should not be accessed
+    //    if (_Triangulation_data_structure_3->number_of_vertices() == 0){ return *this;} should not be accessed
     do {
       increment();
-    } while ( (pos != _tds->past_end_cell())
+    } while ( (pos != _Triangulation_data_structure_3->past_end_cell())
 	      && (pos->vertex(index)->cell() != pos) );
     return *this;
   }
@@ -213,17 +213,17 @@ public:
   Vertex_iterator&
   operator--()
   {
-    // if (_tds->number_of_vertices() == 0) { return *this;} should not be accessed
+    // if (_Triangulation_data_structure_3->number_of_vertices() == 0) { return *this;} should not be accessed
     do{
       if (index == 0){
 	// all the vertices of the current cell have been examined
-	int d = _tds->dimension();
+	int d = _Triangulation_data_structure_3->dimension();
 	if ( d >= 0 ) {index = d;}
 	else {index = 0;}
 	pos = pos->_previous_cell;
       }
       else { index--; }
-    } while ( (pos != _tds->past_end_cell())
+    } while ( (pos != _Triangulation_data_structure_3->past_end_cell())
 	      && (pos->vertex(index)->cell() != pos) );
     return *this;
   }
@@ -244,7 +244,7 @@ public:
     
   bool operator==(const Vertex_iterator& fi) const
     {
-      return ( (_tds == fi._tds) && (pos == fi.pos) && (index == fi.index) );
+      return ( (_Triangulation_data_structure_3 == fi._Triangulation_data_structure_3) && (pos == fi.pos) && (index == fi.index) );
     }
     
   bool operator!=(const Vertex_iterator& fi) const
@@ -265,7 +265,7 @@ public:
     }
 
 private:
-  Tds*  _tds;
+  Tds*  _Triangulation_data_structure_3;
   Cell* pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
   int index; // index of the current vertex in the current cell
@@ -273,7 +273,7 @@ private:
   void 
   increment()
   {
-    if (index >= _tds->dimension()) {
+    if (index >= _Triangulation_data_structure_3->dimension()) {
       // all the vertices of the current cell have been examined
       index = 0;
       pos = pos->_next_cell;
@@ -285,7 +285,7 @@ private:
 };
 
 template < class Tds>
-class CGAL_Triangulation_ds_facet_iterator
+class CGAL_Triangulation_ds_facet_iterator_3
   : public bidirectional_iterator<typename Tds::Facet, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
@@ -295,23 +295,23 @@ public:
 
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Facet Facet;
-  typedef CGAL_Triangulation_ds_facet_iterator<Tds> Facet_iterator;
+  typedef CGAL_Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
   
-  CGAL_Triangulation_ds_facet_iterator()
-    : _tds(NULL), pos(NULL), index(0)
+  CGAL_Triangulation_ds_facet_iterator_3()
+    : _Triangulation_data_structure_3(NULL), pos(NULL), index(0)
     {}
   
-  CGAL_Triangulation_ds_facet_iterator(Tds * tds)
-    : _tds(tds), index(0)
+  CGAL_Triangulation_ds_facet_iterator_3(Tds * Triangulation_data_structure_3)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), index(0)
     {
-      switch ( _tds->dimension() ) {
+      switch ( _Triangulation_data_structure_3->dimension() ) {
       case 2:
-	pos = tds->list_of_cells()._next_cell; 
+	pos = Triangulation_data_structure_3->list_of_cells()._next_cell; 
 	index = 3;
 	return;
       case 3:
-	pos = tds->list_of_cells()._next_cell; 
-	while ( // useless (pos != _tds->past_end_cell()) &&
+	pos = Triangulation_data_structure_3->list_of_cells()._next_cell; 
+	while ( // useless (pos != _Triangulation_data_structure_3->past_end_cell()) &&
 	       // there must be at least one facet
 	       ( pos->neighbor(index) < pos ) ) {
 	  increment();
@@ -324,24 +324,24 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  CGAL_Triangulation_ds_facet_iterator(Tds* tds, int i)
-    : _tds(tds), index(0)
+  CGAL_Triangulation_ds_facet_iterator_3(Tds* Triangulation_data_structure_3, int i)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), index(0)
     {
-      if ( _tds->dimension() < 2 ) { pos = NULL; }
+      if ( _Triangulation_data_structure_3->dimension() < 2 ) { pos = NULL; }
       else { 
-	pos = tds->past_end_cell() ; 
-	if  ( _tds->dimension() == 2 ) { index = 3; }
+	pos = Triangulation_data_structure_3->past_end_cell() ; 
+	if  ( _Triangulation_data_structure_3->dimension() == 2 ) { index = 3; }
       }
     }
   
   Facet_iterator&
   operator++()
   {
-    //    if (_tds->dimension() < 2){ return *this;} should not be accessed
-    if ( _tds->dimension() == 3 ) {
+    //    if (_Triangulation_data_structure_3->dimension() < 2){ return *this;} should not be accessed
+    if ( _Triangulation_data_structure_3->dimension() == 3 ) {
       do {
 	increment();
-      } while ( (pos != _tds->past_end_cell())
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell())
 		&& ( (pos->neighbor(index)) < pos ) );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
@@ -353,8 +353,8 @@ public:
   Facet_iterator&
   operator--()
   {
-    // if (_tds->dimension() < 2) { return *this;} should not be accessed
-    if ( _tds->dimension() == 2 ) {
+    // if (_Triangulation_data_structure_3->dimension() < 2) { return *this;} should not be accessed
+    if ( _Triangulation_data_structure_3->dimension() == 2 ) {
       pos = pos->_previous_cell; // index remains 3
     }
     else { // dimension 3
@@ -365,7 +365,7 @@ public:
 	  pos = pos->_previous_cell;
 	}
 	else { index--; }
-      } while ( (pos != _tds->past_end_cell())
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell())
 		&& (pos->neighbor(index) < pos ) );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
@@ -389,7 +389,7 @@ public:
     
   bool operator==(const Facet_iterator& fi) const
     {
-      return ( (_tds == fi._tds) && (pos == fi.pos) && (index == fi.index) );
+      return ( (_Triangulation_data_structure_3 == fi._Triangulation_data_structure_3) && (pos == fi.pos) && (index == fi.index) );
     }
     
   bool operator!=(const Facet_iterator& fi) const
@@ -405,7 +405,7 @@ public:
     }
     
 private:
-  Tds*  _tds;
+  Tds*  _Triangulation_data_structure_3;
   Cell* pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
   int index; // index of the current facet in the current cell
@@ -413,7 +413,7 @@ private:
   void
   increment()
   {
-//     if ( _tds->dimension() == 2 ) {
+//     if ( _Triangulation_data_structure_3->dimension() == 2 ) {
 //       pos = pos->_next_cell; // index remains 3
 //     }
 //     else { // dimension 3
@@ -430,7 +430,7 @@ private:
 };
 
 template < class Tds>
-class CGAL_Triangulation_ds_edge_iterator
+class CGAL_Triangulation_ds_edge_iterator_3
   : public bidirectional_iterator<typename Tds::Edge, ptrdiff_t>
 {
 // traverses the list of cells and report for each cell 
@@ -440,26 +440,26 @@ public:
 
   typedef typename Tds::Cell Cell;
   typedef typename Tds::Edge Edge;
-  typedef CGAL_Triangulation_ds_edge_iterator<Tds> Edge_iterator;
-  typedef CGAL_Triangulation_ds_cell_circulator<Tds> Cell_circulator;
+  typedef CGAL_Triangulation_ds_edge_iterator_3<Tds> Edge_iterator;
+  typedef CGAL_Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
   
-  CGAL_Triangulation_ds_edge_iterator()
-    : _tds(NULL), pos(NULL), b(0), e(1)
+  CGAL_Triangulation_ds_edge_iterator_3()
+    : _Triangulation_data_structure_3(NULL), pos(NULL), b(0), e(1)
     {}
   
-  CGAL_Triangulation_ds_edge_iterator(Tds * tds)
-    : _tds(tds), b(0), e(1)
+  CGAL_Triangulation_ds_edge_iterator_3(Tds * Triangulation_data_structure_3)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), b(0), e(1)
     {
-      switch ( _tds->dimension() ) {
+      switch ( _Triangulation_data_structure_3->dimension() ) {
       case 1:
 	{
-	  pos = tds->list_of_cells()._next_cell;
+	  pos = Triangulation_data_structure_3->list_of_cells()._next_cell;
 	  return;
 	}
       case 2:
 	{
-	  pos = tds->list_of_cells()._next_cell; 
-	  while ( // useless (pos != _tds->past_end_cell()) && 
+	  pos = Triangulation_data_structure_3->list_of_cells()._next_cell; 
+	  while ( // useless (pos != _Triangulation_data_structure_3->past_end_cell()) && 
 		 // there must be at least one edge
 		 ( pos->neighbor(3-b-e) < pos) ) {
 	    increment2();
@@ -468,12 +468,12 @@ public:
 	}
       case 3:
 	{
-	  pos = tds->list_of_cells()._next_cell;
+	  pos = Triangulation_data_structure_3->list_of_cells()._next_cell;
 	  bool notfound = true;
-	  while ( // useless (pos != _tds->past_end_cell()) &&
+	  while ( // useless (pos != _Triangulation_data_structure_3->past_end_cell()) &&
 		 // there must be at least one edge
 		 notfound ) {
-	    Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+	    Cell_circulator ccir = _Triangulation_data_structure_3->incident_cells(CGAL_make_triple(pos,b,e));
 	    do {
 	      ++ccir;
 	    } while ( &(*ccir) > pos ); 
@@ -496,14 +496,14 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  CGAL_Triangulation_ds_edge_iterator(Tds* tds, int i)
-    : _tds(tds), b(0), e(1)
+  CGAL_Triangulation_ds_edge_iterator_3(Tds* Triangulation_data_structure_3, int i)
+    : _Triangulation_data_structure_3(Triangulation_data_structure_3), b(0), e(1)
     {
-      if ( _tds->dimension() < 1 ) { pos = NULL; }
+      if ( _Triangulation_data_structure_3->dimension() < 1 ) { pos = NULL; }
       else { 
-	pos = tds->past_end_cell() ; 
+	pos = Triangulation_data_structure_3->past_end_cell() ; 
 	// always b == 0 and e == 1 for past-end-cell
-// 	switch ( _tds->dimension() ) {
+// 	switch ( _Triangulation_data_structure_3->dimension() ) {
 // 	  // b and e set to the indices of the "last" --the
 // 	  // edges are lexicographically ordered-- possible edge in a cell
 // 	case 1:
@@ -525,7 +525,7 @@ public:
   Edge_iterator&
   operator++()
   {
-    switch ( _tds->dimension() ) {
+    switch ( _Triangulation_data_structure_3->dimension() ) {
       // dimension < 1 should not occur
     case 1:
       pos = pos->_next_cell;
@@ -533,15 +533,15 @@ public:
     case 2:
       do {
 	increment2();
-      } while ( (pos != _tds->past_end_cell()) && 
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell()) && 
 		( pos->neighbor(3-b-e) < pos) );
       break;
     case 3:
       bool notfound = true;
       do {
 	increment3();
-	if (pos != _tds->past_end_cell()) {
-	  Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+	if (pos != _Triangulation_data_structure_3->past_end_cell()) {
+	  Cell_circulator ccir = _Triangulation_data_structure_3->incident_cells(CGAL_make_triple(pos,b,e));
 	  do {
 	    ++ccir;
 	  } while ( &(*ccir) > pos );
@@ -549,7 +549,7 @@ public:
 	    notfound = false;
 	  }
 	}
-      } while ( (pos != _tds->past_end_cell()) &&
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell()) &&
 		notfound );
       break;
     }
@@ -559,8 +559,8 @@ public:
   Edge_iterator&
   operator--()
   {
-    // if (_tds->dimension() < 2) { return *this;} should not be accessed
-    switch (  _tds->dimension() ) {
+    // if (_Triangulation_data_structure_3->dimension() < 2) { return *this;} should not be accessed
+    switch (  _Triangulation_data_structure_3->dimension() ) {
     case 1:
       pos = pos->_previous_cell; // b, e remain 0, 1
       break;
@@ -574,7 +574,7 @@ public:
 	  b--; 
 	  e = b+1; // case b==2, e==0 forbids to write e--
 	}
-      } while ( (pos != _tds->past_end_cell()) && 
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell()) && 
 		( pos->neighbor(3-b-e) < pos) );
       break;
     case 3:
@@ -599,14 +599,14 @@ public:
 	    e--;
 	  }
 	}
-	Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+	Cell_circulator ccir = _Triangulation_data_structure_3->incident_cells(CGAL_make_triple(pos,b,e));
 	while ( &(*ccir) > pos ) {
 	  --ccir;
 	}
 	if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
 	  notfound = false;
 	}
-      } while ( (pos != _tds->past_end_cell()) &&
+      } while ( (pos != _Triangulation_data_structure_3->past_end_cell()) &&
 		notfound );
       break;
     }
@@ -631,7 +631,7 @@ public:
     
   bool operator==(const Edge_iterator& ei) const
     {
-      return ( (_tds == ei._tds) && (pos == ei.pos) 
+      return ( (_Triangulation_data_structure_3 == ei._Triangulation_data_structure_3) && (pos == ei.pos) 
 	       && (b == ei.b) && (e == ei.e) );
     }
     
@@ -648,7 +648,7 @@ public:
     }
     
 private:
-  Tds*  _tds;
+  Tds*  _Triangulation_data_structure_3;
   Cell* pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
   int b; // index of the first endpoint of the current edge in the current cell
@@ -657,7 +657,7 @@ private:
   void
   increment2()
   {
-//     switch ( _tds->dimension() ) {
+//     switch ( _Triangulation_data_structure_3->dimension() ) {
 //     case 1:
 //       pos = pos->_next_cell; // b, e remain 0, 1
 //     case 2: { 
@@ -702,5 +702,5 @@ private:
   }
 
 };
-#endif CGAL_TRIANGULATION_DS_ITERATORS_H
+#endif CGAL_TRIANGULATION_DS_ITERATORS_3_H
 
