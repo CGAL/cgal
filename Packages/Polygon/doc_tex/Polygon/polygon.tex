@@ -82,11 +82,13 @@ Introduction.
 \ccGlue
 \ccNestedType{Container}{The container type.}
 
-\ccTypedef{typedef Traits::FT FT;}{}
+\ccTypedef{typedef Traits::FT FT;}
+{The number type, which is the {\em field type} of the points of the polygon.} 
 \ccGlue
-\ccTypedef{typedef Traits::Point_2 Point_2;}{}
+\ccTypedef{typedef Traits::Point_2 Point_2;}{The point type of the polygon.}
 \ccGlue
-\ccTypedef{typedef Traits::Segment_2 Segment_2;}{}
+\ccTypedef{typedef Traits::Segment_2 Segment_2;}{The type of a segment between two points 
+of the polygon.}
 
 The following types denote iterators that allow to traverse the vertices and
 edges of a polygon. 
@@ -165,7 +167,7 @@ The following operations allow to modify a polygon.
       \ccStyle{i}.
       \ccPrecond The value type of points in the range \ccStyle{[first,last)} is
                  \ccStyle{Point_2}.
-      Note: this method is only available if the compiler supports member templates.
+      %Note: this method is only available if the compiler supports member templates.
     }
 
   \ccMethod{ void push_back(const Point_2& q);}
@@ -391,15 +393,15 @@ The following code fragment creates a polygon and checks if it is convex.
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <list.h>
+#include <list>
 
-typedef Cartesian<double> R;
-typedef Polygon_traits_2<R> Traits;
+typedef CGAL::Cartesian<double> R;
+typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
-typedef list<Point> Container;
-typedef Polygon_2<Traits,Container> Polygon;
+typedef std::list<Point> Container;
+typedef CGAL::Polygon_2<Traits,Container> Polygon;
 
-#include <iostream.h>
+#include <iostream>
 
 int main()
 {
@@ -437,7 +439,7 @@ algorithms were used and what their complexity they have.
 
 \section{Algorithms on sequences of 2D points \label{sec:poly_algo}}
 
-A number of algorithms on sequences of 2D points is supplied as global functions.
+A number of algorithms on sequences of 2D points are supplied as global functions.
 In all algorithms the points in the range \ccStyle{[first,last)} are interpreted
 as the vertices of a polygon. The vertices in this range should have value type
 \ccStyle{Traits::Point_2}. Most functions take a traits class as their last argument.
@@ -530,13 +532,7 @@ bool is_convex_2(ForwardIterator first,
 }
 {
 Returns \ccStyle{true} if the polygon formed by the points in the range
-\ccStyle{[first,last)} is convex.
-The implementation checks if the polygon is locally convex
-and if there is only one local minimum and one local maximum with respect to
-the lexicographical ordering determined by
-\ccc{Traits::lexicographically_xy_smaller}.
-The complexity of the algorithm is $O(n)$, where $n$ is the number of points
-in the range \ccStyle{[first,last)}.\\
+\ccStyle{[first,last)} is convex.\\
 {\sc traits}: \ccc{Traits::lexicographically_xy_smaller},
                    \ccc{Traits::orientation}.
 }
@@ -551,14 +547,9 @@ bool is_simple_2(ForwardIterator first,
 }
 {
 Returns \ccStyle{true} if the polygon formed by the points in the range
-\ccStyle{[first,last)} is simple.
-The simplicity test of a polygon is a line-segment intersection test.
-For the implementation a plane sweep algorithm is used, see also 
-\cite{ps-cgi-85}, p.276.
-The complexity of the algorithm is $O(n \log n)$ (worst case), where $n$ is 
-the number of points in the range \ccStyle{[first,last)}.\\
+\ccStyle{[first,last)} is simple.\\
 {\sc traits}:\\ 
-  \ccc{Traits::lexicographically_yx_smaller_or_equal}, \quad
+  \ccc{Traits::lexicographically_yx_smaller_or_equal}, \ccTexHtml{\quad}{}
   \ccc{Traits::do_intersect},
   \ccc{Traits::have_equal_direction}.
   \ccc{Traits::compare_x},
@@ -580,8 +571,6 @@ This determines the location of the point \ccStyle{q} with respect to the
 polygon formed by the points in the range \ccStyle{[first,last)}.
 It returns \ccStyle{NEGATIVE_SIDE}, or \ccStyle{POSITIVE_SIDE}, or 
 \ccStyle{ON_ORIENTED_BOUNDARY}, depending on where point \ccStyle{q} is.
-For the implementation a {\em crossing test} algorithm is used with complexity
-$O(n)$, see \cite{h-pps-94}.
 \ccPrecond The points in the range \ccStyle{[first,last)}
 form the vertices of a simple polygon.\\
 {\sc traits}: uses \ccc{Traits::Less_xy},
@@ -630,6 +619,23 @@ form the vertices of a simple polygon.\\
 }
 }
 
+\ccImplementation
+For the implementation of \ccc{oriented_side_2} 
+a {\em crossing test} algorithm is used with complexity
+$O(n)$, see \cite{h-pps-94}.
+The implementation of \ccc{is_convex_2} checks if the polygon is locally convex
+and if there is only one local minimum and one local maximum with respect to
+the lexicographical ordering determined by
+\ccc{Traits::lexicographically_xy_smaller}.
+The complexity of the algorithm is $O(n)$, where $n$ is the number of points
+in the range \ccStyle{[first,last)}.
+The simplicity test \ccc{is_simple_2} of a polygon is a line-segment 
+intersection test. For the implementation a plane sweep algorithm is used, see also 
+\cite{ps-cgi-85}, p.276.
+The complexity of the algorithm is $O(n \log n)$ (worst case), where $n$ is 
+the number of points in the range \ccStyle{[first,last)}.
+
+
 \section{Polygon Traits class requirements}
 
 The polygon algorithms in section \ref{sec:poly_algo} are parameterized with
@@ -649,7 +655,7 @@ be removed from the traits class.
 
 \ccTypes
 \ccNestedType{FT}
-        {The coordinate type of the points of the polygon (i.e. the {\em field type}).}
+        {The coordinate type of the points of the polygon (i.e. a {\em field type}).}
 
 \ccGlue
 \ccNestedType{Point_2}
