@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-11 $
-// release_date  : $CGAL_Date: 2001/09/21 $
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
 //
 // file          : include/CGAL/config.h
-// package       : Configuration (2.14)
+// package       : Configuration (2.29)
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
 // source        :
 // revision      : 1.11
@@ -27,8 +27,8 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
-#define CGAL_VERSION 2.4-I-11
-#define CGAL_VERSION_NR 1002004011
+#define CGAL_VERSION 2.4-I-65
+#define CGAL_VERSION_NR 1002004065
 
 #define CGAL_CFG_NO_ADVANCED_KERNEL 1
 
@@ -40,8 +40,10 @@
 #ifdef _MSC_VER
 #   define CGAL_SCOPE
 #   define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
-#   include <stl_config.h>
-#   include <stl_iterator_base.h>
+#	if _MSC_VER < 1300
+#           include <stl_config.h>
+#           include <stl_iterator_base.h>
+#	endif
 #else  // not _MSC_VER
 #   define CGAL_SCOPE CGAL::
 #   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
@@ -89,6 +91,12 @@
 #  define CGAL_VC7_BUG_PROTECTED protected:
 #else
 #  define CGAL_VC7_BUG_PROTECTED
+#endif
+
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#   define CGAL_MSVC_DUMMY_ARGUMENT , int dummy=1
+#else
+#   define CGAL_MSVC_DUMMY_ARGUMENT
 #endif
 
 #ifdef CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION
