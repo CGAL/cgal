@@ -33,11 +33,11 @@ char * Bench_parse_args::s_bench_opts[] =
    "tn", "tm", "sn", "sm", "h", "nl", NULL};
 
 char * Bench_parse_args::s_type_opts[] =
-  {"increment", "aggregate", "display", "subcurves", "points",
-   "i", "a", "d", "c", "p", NULL};
+  {"increment", "aggregate", "display", "point_location", "subcurves", "points",
+   "i", "a", "d", "l", "c", "p", NULL};
 
 char * Bench_parse_args::s_strategy_opts[] =
-  {"trapezoidal", "naive", "walk", "dummy", "t", "n", "w", "d"};
+  {"trapezoidal", "naive", "walk","simple","triangle", "dummy", "t", "n", "w", "s", "g", "d"};
 
 char * Bench_parse_args::s_bool_opts[] =
   {"true", "false", "t", "f", NULL};

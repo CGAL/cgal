@@ -72,11 +72,13 @@ public:
     TYPE_INCREMENT = 0,
     TYPE_AGGREGATE,
     TYPE_DISPLAY,
+    TYPE_POINT_LOCATION,
     TYPE_SUBCURVES,
     TYPE_POINTS,
     TYPE_I,
     TYPE_A,
     TYPE_D,
+    TYPE_L,
     TYPE_C,
     TYPE_P
   };
@@ -87,10 +89,14 @@ public:
     STRATEGY_TRAPEZOIDAL = 0,
     STRATEGY_NAIVE,
     STRATEGY_WALK,
+    STRATEGY_SIMPLE,
+    STRATEGY_TRIANGLE,
     STRATEGY_DUMMY,
     STRATEGY_T,
     STRATEGY_N,
     STRATEGY_W,
+    STRATEGY_S,
+    STRATEGY_G,
     STRATEGY_D
   };
     
@@ -103,14 +109,20 @@ public:
     BOOL_F
   };
 
+  enum MaxFilesNumber {
+    MAX_FILES_NUMBER = 20
+  };
+
 public:    
   Bench_parse_args(int argc, char * argv[]) :
-      m_argc(argc), m_argv(argv), m_filename(0),
+      m_argc(argc), m_argv(argv), 
       m_verbose(false),
       m_postscript(false),
       m_type_mask(0xffffffff), m_strategy_mask(0xffffffff),
       m_input_format(FORMAT_RAT),
-      m_print_header(true), m_name_length(32), m_seconds(1), m_samples(0),
+      m_print_header(true), m_files_number(0),
+      m_name_length(32), m_seconds(1), 
+      m_samples(0),
 #if (defined _MSC_VER)
       m_iterations(10)
 #else
@@ -125,6 +137,10 @@ public:
     if (root) m_dirs.add(std::string(root) + "/data/Segments_2");
     if (root) m_dirs.add(std::string(root) + "/data/Conics_2");
     if (root) m_dirs.add(std::string(root) + "/data/Polylines_2");
+
+    for (int j=0; j<MAX_FILES_NUMBER; j++) {
+      m_filename[j] = 0;
+    }
   }
 
   /*!
@@ -137,22 +153,31 @@ public:
   int get_samples() const { return m_samples; }
   int get_iterations() const { return m_iterations; }
   int get_seconds() const { return m_seconds; }
+  int get_files_number() const { return m_files_number; }
   bool get_print_header()const { return m_print_header; }
   int get_name_length()const { return m_name_length; }
-  const char * get_full_name() const { return m_fullname.c_str(); }
   const char * get_type_name(TypeId id) const { return s_type_opts[id]; }
   const char * get_strategy_name(StrategyId id) const
   { return s_strategy_opts[id]; }
 
+  const char * get_full_name(int file_index = 0) const 
+  { 
+    if (file_index >= MAX_FILES_NUMBER) {
+      std::cerr << "too large file index" << std::endl;
+      return NULL;
+    }
+    return m_fullname[file_index].c_str(); 
+  }
   /*!
    */
-  const char * get_file_name() const
+  const char * get_file_name(int file_index = 0) const
   {
-    if (!m_filename) {
+    if ((file_index >= MAX_FILES_NUMBER) ||
+	(!m_filename[file_index])) {
       std::cerr << "Data file missing!" << std::endl;
       return NULL;
     }
-    return m_filename;
+    return m_filename[file_index];
   }
   
   /*!
@@ -167,6 +192,7 @@ public:
   \t\t\t\t\ti[ncrement]\t(0x1)\n\
   \t\t\t\t\ta[ggregate]\t(0x2)\n\
   \t\t\t\t\td[isplay]\t(0x4)\n\
+  \t\t\t\t\t[point_]l[ocation]\t(0x8)\n\
   \t\ttype_mask=<mask>\n\
   \t\ttm=<mask>\tset bench type mask to <mask>\n\
   \t\tstrategy_name=<strategy>\n\
@@ -175,7 +201,9 @@ public:
   \t\t\t\t\tt[rapezoidal]\t(0x1)\n\
   \t\t\t\t\tn[aive]\t\t(0x2)\n\
   \t\t\t\t\tw[alk]\t\t(0x4)\n\
-  \t\t\t\t\td[ummy]\t\t(0x8)\n\
+  \t\t\t\t\ts[imple]\t(0x8)\n\
+  \t\t\t\t\t[trian]g[le]\t(0x10)\n\
+  \t\t\t\t\td[ummy]\t\t(0x20)\n\
   \t\tstrategy_mask=<mask>\n\
   \t\tsm=<mask>\tset bench strategy mask to <mask>\n\
   \t\th[eader]=<bool>\tprint header (default true)\n\
@@ -207,6 +235,7 @@ public:
         case 's': m_samples = atoi(optarg); break;
         case 't': m_seconds = atoi(optarg); break;
         case 'v': m_verbose = !m_verbose; break;         
+	  //case 'f': m_files_number = atoi(optarg); break;
         default:
           std::cerr << m_prog_name << ": invalid option -- "
                     << static_cast<char>(c) << std::endl;
@@ -215,15 +244,21 @@ public:
           return -1;
       }
     }
-  
-    if (optind < m_argc) {
-      m_filename = m_argv[optind];
-      if (!m_dirs.find(m_filename, m_fullname)) {
+
+    while (optind < m_argc) {
+      m_filename[m_files_number] = m_argv[optind];
+      if (!m_dirs.find(m_filename[m_files_number], m_fullname[m_files_number])) {
         std::cerr << "Cannot find file " << m_filename << "!" << std::endl;
         return -1;
       }
+      m_files_number++;
+      optind++;
+      if (m_files_number > MAX_FILES_NUMBER) {
+	std::cerr << "Too many input files !" << std::endl;
+        return -1;
+      }
     }
-    
+     
     return 0;
   }
     
@@ -356,6 +391,9 @@ private:
         case TYPE_DISPLAY:
         case TYPE_D:
           m_type_mask = 0x1 << TYPE_DISPLAY; return 0;
+        case TYPE_POINT_LOCATION:
+        case TYPE_L:
+	  m_type_mask = 0x1 << TYPE_POINT_LOCATION; return 0;
         case TYPE_SUBCURVES:
         case TYPE_C:
 	  m_type_mask = 0x1 << TYPE_SUBCURVES; return 0;
@@ -387,6 +425,12 @@ private:
         case STRATEGY_WALK:
         case STRATEGY_W:
           m_strategy_mask = 0x1 << STRATEGY_WALK; return 0;
+        case STRATEGY_SIMPLE:
+        case STRATEGY_S:
+          m_strategy_mask = 0x1 << STRATEGY_SIMPLE; return 0;
+        case STRATEGY_TRIANGLE:
+        case STRATEGY_G:
+          m_strategy_mask = 0x1 << STRATEGY_TRIANGLE; return 0;
         case STRATEGY_DUMMY:
         case STRATEGY_D:
           m_strategy_mask = 0x1 << STRATEGY_DUMMY; return 0;
@@ -411,18 +455,19 @@ private:
   static char s_option_str[];
   const char * m_prog_name;
 
-  std::string m_fullname;
+  std::string m_fullname[MAX_FILES_NUMBER];
   Dir_search m_dirs;
 
   int m_argc;
   char ** m_argv;
-  const char * m_filename;
+  const char * m_filename[MAX_FILES_NUMBER];
   bool m_verbose;
   bool m_postscript;
   unsigned int m_type_mask;
   unsigned int m_strategy_mask;
   FormatId m_input_format;
   bool m_print_header;
+  int m_files_number;
   int m_name_length;
   int m_seconds;
   int m_samples;
