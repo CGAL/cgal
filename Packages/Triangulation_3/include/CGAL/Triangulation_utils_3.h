@@ -44,25 +44,27 @@ public:
 //       return tab_cw[i];
 //     }
 
-  inline unsigned int ccw(const unsigned int i) const
+  inline int ccw(const int i) const
     {
-      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      CGAL_triangulation_precondition( (0 <= i) && (i < 3) );
       return (i==2) ? 0 : i+1;
     }
   
-  inline unsigned int cw(const unsigned int i) const
+  inline int cw(const int i) const
     {
-      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      CGAL_triangulation_precondition( (0 <= i) || (i < 3) );
       return (i==0) ? 2 : i-1;
     }
 
-  inline unsigned int nextposaround(const unsigned int i, 
-				    const unsigned int j) const
+  inline int nextposaround(const int i, 
+			   const int j) const
 {
   // index of the next cell when turning around the
   // oriented edge vertex(i) vertex(j) in 3d
-  CGAL_precondition( ( i < 4 ) && ( j < 4 ) && ( i != j ) );
-  static const unsigned int tab_nextposaroundij[4][4] = {
+  CGAL_precondition( (0 <= i) && ( i < 4 ) && 
+		     (0 <= j) && ( j < 4 ) && 
+		     ( i != j ) );
+  static const int tab_nextposaroundij[4][4] = {
     {5, 2, 3, 1},
     {3, 5, 0, 2},
     {1, 3, 5, 0},

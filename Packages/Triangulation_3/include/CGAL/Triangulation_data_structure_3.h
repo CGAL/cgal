@@ -1615,7 +1615,7 @@ create_star( std::set<void*, std::less<void*> > & region,
 {
   Cell* cnew;
   if ( dimension() == 3 ) {
-    unsigned int i[3];
+    int i[3];
     if ( (li%2) == 1 ) {
       i[0] = (li+1)&3;
       i[1] = (li+2)&3;
