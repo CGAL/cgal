@@ -408,8 +408,8 @@ intersection(const Iso_cuboid_3<R> &box1,
 CGAL_END_NAMESPACE
 
 
-
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/intersection_3_1.C>
-
+#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif // CGAL_INTERSECTION_3_1_H
