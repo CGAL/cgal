@@ -12,7 +12,8 @@
   pour ne pas etre oblige d'inclure iostream obligatoirement
 - ajouter dans la doc du line face circulator, la precondition p!= q
 
- 
+- get rid of  Construct_direction_of_line_2
+  in Triangulation_euclidean_traits_2.h 
 - arranger ca :
   Concernant la Constrained_triangulation_plus_2:
   Ca devrait etre Vertices_in_constraint_iterator a la place de 
