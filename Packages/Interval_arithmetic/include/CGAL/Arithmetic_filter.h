@@ -41,6 +41,7 @@ CGAL_BEGIN_NAMESPACE
 // CT = construction type
 // ET = exact type (used for exact predicate evaluation)
 // (Interval_nt_advanced) = used for filtering.
+// Cache_t = caching type (either Filter_Cache or No_Filter_Cache)
 //
 // 2 conversion functions must be provided:
 // - convert_to <Interval_nt_advanced> (CT)
@@ -81,13 +82,15 @@ class Filtered_exact
 
   void update_cache() { compute_cache (_cache); }
 
+  // Private data members.
+
   CT _value;
   Cache_t _cache;
 
 public:
 
   Filtered_exact () {}
-  Filtered_exact (const Fil & fil)
+  Filtered_exact (const Filtered_exact<CT,ET,Cache_t> & fil)
       : _value(fil._value), _cache(fil._cache)  { }
   template <class NT>
   Filtered_exact (const NT & nt)
