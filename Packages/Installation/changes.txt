@@ -7,6 +7,10 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fixed clocales -> clocale.
+GLOB: Replace "/" by "-" in compiler name (non-interactive mode).
+ALL : Added options for setting CUSTOM_CXX/LDFLAGS from command line.
+GLOB: Changed msvc matching from "CL" to "CL.".
 GLOB: rm -rf ti_files in .clean target.
 GLOB: Added settings for *CYGWIN*g++-2.95*.
 GLOB: OOPS, fixed _LEDA config/install stuff.

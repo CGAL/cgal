@@ -4,6 +4,15 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.115
+//---------------------------------------------------------------------
+
+GLOB: Fixed clocales -> clocale.
+GLOB: Replace "/" by "-" in compiler name (non-interactive mode).
+ALL : Added options for setting CUSTOM_CXX/LDFLAGS from command line.
+GLOB: Changed msvc matching from "CL" to "CL.".
+
+//---------------------------------------------------------------------
 //	revision 1.114
 //---------------------------------------------------------------------
 
