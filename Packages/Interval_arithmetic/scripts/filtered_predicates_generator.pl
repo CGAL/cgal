@@ -238,7 +238,7 @@ sub print_static {
   my $bounds_check  = join " ||",
      map "\n\tfabs($_.to_double()) > SAF_bound", @args;
   my $compute_new_bound = join "",
-     map "\n    NEW_bound = std::max(NEW_bound, fabs($_.to_double()));", @args;
+     map "\n    NEW_bound = max(NEW_bound, fabs($_.to_double()));", @args;
 
   print FO
 "#ifndef CGAL_CFG_MATCHING_BUG_2

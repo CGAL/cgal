@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999 The CGAL Consortium
+// Copyright (c) 1998,1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -39,7 +39,7 @@ convert_from_to (const Interval_nt_advanced&, const Gmpz & z)
 {
 	CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
 	FPU_set_cw(CGAL_FE_TONEAREST);
-	double approx = CGAL::to_double(z);
+	double approx = to_double(z);
 	FPU_set_cw(CGAL_FE_UPWARD);
 	Interval_nt_advanced result = approx + Interval_nt_advanced::Smallest;
 	CGAL_expensive_assertion_code(FPU_set_cw(CGAL_FE_TONEAREST);)
@@ -73,7 +73,7 @@ convert_from_to (const Quotient<Gmpz>&, const double& d)
   // Note: it's not really optimized (it'll do 1000 iterations at worst).
   double num=d;
   double den=1.0;
-  while ( ! CGAL::is_integral(num) )
+  while ( ! is_integral(num) )
   {
     den*=2.0;
     num*=2.0;

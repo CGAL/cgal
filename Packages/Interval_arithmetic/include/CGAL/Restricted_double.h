@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -69,12 +69,12 @@ private:
 inline
 Restricted_double
 sqrt(const Restricted_double &f)
-{ return std::sqrt(f.dbl()); }
+{ return CGAL_CLIB_STD::sqrt(f.dbl()); }
 
 inline
 Restricted_double
 abs(const Restricted_double &f)
-{ return std::fabs(f.dbl()); }
+{ return CGAL_CLIB_STD::fabs(f.dbl()); }
 
 inline
 double

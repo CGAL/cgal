@@ -445,31 +445,31 @@ power_testH3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(phx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(phy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(phz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(phw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qhx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qhy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qhz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qhw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rhx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rhy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rhz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rhw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(shx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(shy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(shz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(shw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(swt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(thx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(thy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(thz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(thw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(twt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(phx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(phy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(phz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(phw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qhx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qhy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qhz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qhw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rhx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rhy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rhz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rhw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(shx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(shy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(shz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(shw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(swt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(thx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(thy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(thz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(thw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
     Static_Filtered_power_testH3_25::new_bound(NEW_bound);
   }

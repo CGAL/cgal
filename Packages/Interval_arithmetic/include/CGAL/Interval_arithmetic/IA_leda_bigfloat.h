@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999 The CGAL Consortium
+// Copyright (c) 1998,1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -34,7 +34,7 @@ convert_from_to (const Interval_nt_advanced&, const leda_bigfloat & z)
 {
 	CGAL_expensive_assertion(FPU_empiric_test() == CGAL_FE_UPWARD);
 	FPU_set_cw(CGAL_FE_TONEAREST);
-	double approx = CGAL::to_double(z);
+	double approx = to_double(z);
 	FPU_set_cw(CGAL_FE_UPWARD);
 	Interval_nt_advanced result = approx + Interval_nt_advanced::Smallest;
 	CGAL_expensive_assertion_code(FPU_set_cw(CGAL_FE_TONEAREST);)

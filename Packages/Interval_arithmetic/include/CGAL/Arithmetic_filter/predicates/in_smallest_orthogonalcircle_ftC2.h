@@ -231,15 +231,15 @@ in_smallest_orthogonalcircleC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qw.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qw.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tw.to_double()));
     // Re-adjust the context.
     Static_Filtered_in_smallest_orthogonalcircleC2_9::new_bound(NEW_bound);
   }

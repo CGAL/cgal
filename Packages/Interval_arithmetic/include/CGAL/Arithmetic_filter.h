@@ -120,7 +120,7 @@ public:
     return convert_from_to(ET(), _value);
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   }
-  double to_double() const { return CGAL::to_double(_value); }
+  double to_double() const { return to_double(_value); }
   Restricted_double dbl() const { return Restricted_double(to_double()); }
 
   Fil  operator- ()               const { return Fil(-_value); }
@@ -164,7 +164,7 @@ template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 square (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return square(fil.value()); }
+{ return CGAL_NTS::square(fil.value()); }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET, class Type, class Protection, class Cache>
@@ -183,26 +183,26 @@ template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 double
 to_double (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return CGAL::to_double(fil.value()); }
+{ return to_double(fil.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Sign
 sign (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return CGAL::sign(fil.value()); }
+{ return CGAL_NTS::sign(fil.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Comparison_result
 compare (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil,
 	 const Filtered_exact<CT,ET,Type,Protection,Cache>& fil2)
-{ return CGAL::compare(fil.value(), fil2.value()); }
+{ return CGAL_NTS::compare(fil.value(), fil2.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
 Filtered_exact<CT,ET,Type,Protection,Cache>
 abs (const Filtered_exact<CT,ET,Type,Protection,Cache>& fil)
-{ return abs(fil.value()); }
+{ return CGAL_NTS::abs(fil.value()); }
 
 template <class CT, class ET, class Type, class Protection, class Cache>
 inline
@@ -252,7 +252,6 @@ operator>> (std::istream &is, Filtered_exact<CT,ET,Type,Protection,Cache>& d)
 
 CGAL_END_NAMESPACE
 
-// include the overloaded predicates.
-#include <CGAL/Arithmetic_filter/dispatch.h>
+#include <CGAL/Arithmetic_filter/dispatch.h> // the overloaded predicates
 
 #endif // CGAL_ARITHMETIC_FILTER_H

@@ -1,3 +1,41 @@
+Concerning the new design of the Filtered_Exact_Cartesian <CT,ET>:
+------------------------------------------------------------------
+- In Cartesian<>, we currently have:
+template < class R >
+inline
+Orientation
+orientation(const PointC2<R CGAL_CTAG> &p,
+            const PointC2<R CGAL_CTAG> &q,
+            const PointC2<R CGAL_CTAG> &r)
+{
+    return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+}                                                                     
+- We'll get something along the lines of LOOK:
+template < class R >
+inline
+Orientation
+orientation(const PointFEC2<R CGAL_CTAG> &p,
+            const PointFEC2<R CGAL_CTAG> &q,
+            const PointFEC2<R CGAL_CTAG> &r)
+{
+    try {
+        return orientationC2(p.interval_x(), p.interval_y(),
+                             q.interval_x(), q.interval_y(),
+                             r.interval_x(), r.interval_y());
+    }
+    catch (...) {
+        return orientationC2(p.exact_x(), p.exact_y(),
+                             q.exact_x(), q.exact_y(),
+                             r.exact_x(), r.exact_y());
+    };
+}                                                                               
+- PointFEC2<> will have:
+  additional virtual member functions: .interval_x(), .exact_x()...
+  additional data member, depending on the exact derivation of it.
+- PointFEC2_midpoint<> will derive from PointFEC2<>, and have the necessary
+  stuff...  Have a look at how midpoint() must look like...
+
+
 Concerning the new filters:
 ---------------------------
 - What to do with branches (e.g. collinearC3() and power_test()):
@@ -23,7 +61,7 @@ Concerning the new filters:
 - Have a global ::number_of_failure for the static filters too.
   (don't use IA_nt's one)
 - Replace:
-  NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+  NEW_bound = max(NEW_bound, fabs(px.to_double()));
   by:
   if (NEW_bound < fabs(px.to_double())) NEW_bound = fabs(px.to_double());
   or even, using a .bound() member function:
@@ -68,11 +106,13 @@ Concerning the new filters:
   +                   BUILT_IN_ISLESSGREATER, BUILT_IN_NORMAL, NULL_PTR);
   +  builtin_function ("__builtin_isunordered", default_function_type,
   +                   BUILT_IN_ISUNORDERED, BUILT_IN_NORMAL, NULL_PTR);
-  [voir le draft C9X]
+  [voir le draft C9X ce que c'est]
 
 
 Concerning the main code:
 -------------------------
+- in _FPU.h, some functions are outside namespace CGAL...
+- Check if the symbols beginning with an underscore must be fixed.
 - Use STL's relational operators from <utility>.  Check produced code before
   switching for all...
 - KCC and GCC 3 support.

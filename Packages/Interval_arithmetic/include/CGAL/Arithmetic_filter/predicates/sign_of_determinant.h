@@ -163,10 +163,10 @@ sign_of_determinant2x2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a01.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a10.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a11.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a00.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a01.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a10.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a11.to_double()));
     // Re-adjust the context.
     Static_Filtered_sign_of_determinant2x2_4::new_bound(NEW_bound);
   }
@@ -435,15 +435,15 @@ sign_of_determinant3x3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a01.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a02.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a10.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a11.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a12.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a20.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a21.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a22.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a00.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a01.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a02.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a10.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a11.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a12.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a20.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a21.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a22.to_double()));
     // Re-adjust the context.
     Static_Filtered_sign_of_determinant3x3_9::new_bound(NEW_bound);
   }
@@ -814,22 +814,22 @@ sign_of_determinant4x4(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a01.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a02.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a03.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a10.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a11.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a12.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a13.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a20.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a21.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a22.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a23.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a30.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a31.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a32.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a33.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a00.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a01.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a02.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a03.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a10.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a11.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a12.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a13.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a20.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a21.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a22.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a23.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a30.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a31.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a32.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a33.to_double()));
     // Re-adjust the context.
     Static_Filtered_sign_of_determinant4x4_16::new_bound(NEW_bound);
   }
@@ -1334,31 +1334,31 @@ sign_of_determinant5x5(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a01.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a02.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a03.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a04.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a10.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a11.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a12.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a13.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a14.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a20.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a21.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a22.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a23.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a24.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a30.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a31.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a32.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a33.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a34.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a40.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a41.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a42.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a43.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a44.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a00.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a01.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a02.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a03.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a04.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a10.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a11.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a12.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a13.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a14.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a20.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a21.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a22.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a23.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a24.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a30.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a31.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a32.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a33.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a34.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a40.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a41.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a42.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a43.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a44.to_double()));
     // Re-adjust the context.
     Static_Filtered_sign_of_determinant5x5_25::new_bound(NEW_bound);
   }
@@ -2029,42 +2029,42 @@ sign_of_determinant6x6(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a00.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a01.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a02.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a03.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a04.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a05.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a10.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a11.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a12.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a13.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a14.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a15.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a20.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a21.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a22.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a23.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a24.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a25.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a30.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a31.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a32.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a33.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a34.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a35.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a40.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a41.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a42.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a43.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a44.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a45.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a50.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a51.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a52.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a53.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a54.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(a55.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a00.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a01.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a02.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a03.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a04.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a05.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a10.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a11.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a12.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a13.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a14.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a15.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a20.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a21.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a22.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a23.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a24.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a25.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a30.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a31.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a32.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a33.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a34.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a35.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a40.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a41.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a42.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a43.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a44.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a45.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a50.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a51.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a52.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a53.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a54.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a55.to_double()));
     // Re-adjust the context.
     Static_Filtered_sign_of_determinant6x6_36::new_bound(NEW_bound);
   }

@@ -45,7 +45,7 @@
 extern "C" { double CGAL_ms_sqrt(double); }
 #define CGAL_IA_SQRT(d) CGAL_ms_sqrt(d)
 #else
-#define CGAL_IA_SQRT(d) std::sqrt(d)
+#define CGAL_IA_SQRT(d) CGAL_CLIB_STD::sqrt(d)
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -125,7 +125,7 @@ public:
 
 #if 1
   // The copy constructors/assignment: useless.
-  // The default ones are ok, but these appear to be faster...
+  // The default ones are ok, but these appear to be faster with gcc 2.95.
   Interval_nt_advanced(const IA & d)
       : _inf(d._inf), _sup(d._sup) {}
 
@@ -226,7 +226,7 @@ operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
     double tmp2 = CGAL_IA_FORCE_TO_DOUBLE(e._sup*(-d._inf));
     double tmp3 = CGAL_IA_FORCE_TO_DOUBLE(e._inf*d._inf);
     double tmp4 = CGAL_IA_FORCE_TO_DOUBLE(e._sup*d._sup);
-    return Interval_nt_advanced(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
+    return Interval_nt_advanced(-max(tmp1,tmp2), max(tmp3,tmp4));
   };
 }
 
@@ -300,7 +300,7 @@ square (const Interval_nt_advanced & d)
       return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
   return Interval_nt_advanced(0.0,
-	  CGAL_IA_FORCE_TO_DOUBLE(square(std::max(-d._inf, d._sup))));
+	  CGAL_IA_FORCE_TO_DOUBLE(square(max(-d._inf, d._sup))));
 }
 
 inline
@@ -408,23 +408,21 @@ abs (const Interval_nt_advanced & d)
 {
   if (d._inf >= 0.0) return d;
   if (d._sup <= 0.0) return -d;
-  return Interval_nt_advanced(0.0, std::max(-d._inf, d._sup));
+  return Interval_nt_advanced(0.0, max(-d._inf, d._sup));
 }
 
 inline
 Interval_nt_advanced
 min (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::min(d._inf, e._inf),
-			      std::min(d._sup, e._sup));
+  return Interval_nt_advanced(min(d._inf, e._inf), min(d._sup, e._sup));
 }
 
 inline
 Interval_nt_advanced
 max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-  return Interval_nt_advanced(std::max(d._inf, e._inf),
-			      std::max(d._sup, e._sup));
+  return Interval_nt_advanced(max(d._inf, e._inf), max(d._sup, e._sup));
 }
 
 // The (join, union, ||) operator.
@@ -432,8 +430,7 @@ inline
 Interval_nt_advanced
 operator|| (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-    return Interval_nt_advanced(std::min(e._inf, d._inf),
-	                        std::max(e._sup, d._sup));
+    return Interval_nt_advanced(min(e._inf, d._inf), max(e._sup, d._sup));
 }
 
 // The (meet, intersection, &&) operator.  Valid if intervals overlap.
@@ -441,8 +438,7 @@ inline
 Interval_nt_advanced
 operator&& (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 {
-    return Interval_nt_advanced(std::max(e._inf, d._inf),
-	                        std::min(e._sup, d._sup));
+    return Interval_nt_advanced(max(e._inf, d._inf), min(e._sup, d._sup));
 }
 
 
@@ -529,7 +525,7 @@ Interval_nt
 square (const Interval_nt & d)
 {
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  Interval_nt tmp = square( (Interval_nt_advanced) d);
+  Interval_nt tmp = CGAL_NTS::square( (Interval_nt_advanced) d);
   FPU_set_cw(backup);
   return tmp;
 }
@@ -557,7 +553,7 @@ Interval_nt::operator/= (const Interval_nt & d)
 inline
 Interval_nt
 abs (const Interval_nt & d)
-{ return abs( (Interval_nt_advanced) d); }
+{ return CGAL_NTS::abs( (Interval_nt_advanced) d); }
 
 inline
 Interval_nt

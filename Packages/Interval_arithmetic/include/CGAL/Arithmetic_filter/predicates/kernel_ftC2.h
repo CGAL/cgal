@@ -225,12 +225,12 @@ equal_lineC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_equal_lineC2_6::new_bound(NEW_bound);
   }
@@ -513,13 +513,13 @@ compare_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ha.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(hb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(hc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ha.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_7::new_bound(NEW_bound);
   }
@@ -832,15 +832,15 @@ compare_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_9::new_bound(NEW_bound);
   }
@@ -1193,18 +1193,18 @@ compare_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_12::new_bound(NEW_bound);
   }
@@ -1489,11 +1489,11 @@ compare_y_at_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_5::new_bound(NEW_bound);
   }
@@ -1760,13 +1760,13 @@ compare_y_at_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_7::new_bound(NEW_bound);
   }
@@ -2069,15 +2069,15 @@ compare_y_at_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ha.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(hb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(hc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ha.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(hc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_9::new_bound(NEW_bound);
   }
@@ -2430,18 +2430,18 @@ compare_y_at_xC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(h2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_12::new_bound(NEW_bound);
   }
@@ -2730,10 +2730,10 @@ equal_directionC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(dx1.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dy1.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dx2.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dy2.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dx1.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dy1.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dx2.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dy2.to_double()));
     // Re-adjust the context.
     Static_Filtered_equal_directionC2_4::new_bound(NEW_bound);
   }
@@ -2956,10 +2956,10 @@ compare_deltax_deltayC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_deltax_deltayC2_4::new_bound(NEW_bound);
   }
@@ -3196,12 +3196,12 @@ orientationC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
     // Re-adjust the context.
     Static_Filtered_orientationC2_6::new_bound(NEW_bound);
   }
@@ -3504,14 +3504,14 @@ side_of_oriented_circleC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_oriented_circleC2_8::new_bound(NEW_bound);
   }
@@ -3800,14 +3800,14 @@ side_of_bounded_circleC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_bounded_circleC2_8::new_bound(NEW_bound);
   }
@@ -4070,12 +4070,12 @@ cmp_dist_to_pointC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_dist_to_pointC2_6::new_bound(NEW_bound);
   }
@@ -4324,12 +4324,12 @@ cmp_signed_dist_to_directionC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_directionC2_6::new_bound(NEW_bound);
   }
@@ -4598,14 +4598,14 @@ cmp_signed_dist_to_lineC2(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_lineC2_8::new_bound(NEW_bound);
   }

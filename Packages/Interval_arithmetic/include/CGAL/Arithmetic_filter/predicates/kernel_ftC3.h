@@ -199,12 +199,12 @@ strict_dominanceC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_strict_dominanceC3_6::new_bound(NEW_bound);
   }
@@ -467,12 +467,12 @@ dominanceC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_dominanceC3_6::new_bound(NEW_bound);
   }
@@ -779,15 +779,15 @@ collinearC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
     Static_Filtered_collinearC3_9::new_bound(NEW_bound);
   }
@@ -1120,18 +1120,18 @@ orientationC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sz.to_double()));
     // Re-adjust the context.
     Static_Filtered_orientationC3_12::new_bound(NEW_bound);
   }
@@ -1456,12 +1456,12 @@ equal_directionC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(dx1.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dy1.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dz1.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dx2.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dy2.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(dz2.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dx1.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dy1.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dz1.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dx2.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dy2.to_double()));
+    NEW_bound = max(NEW_bound, fabs(dz2.to_double()));
     // Re-adjust the context.
     Static_Filtered_equal_directionC3_6::new_bound(NEW_bound);
   }
@@ -1734,13 +1734,13 @@ side_of_oriented_planeC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(a.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(b.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(c.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(d.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(a.to_double()));
+    NEW_bound = max(NEW_bound, fabs(b.to_double()));
+    NEW_bound = max(NEW_bound, fabs(c.to_double()));
+    NEW_bound = max(NEW_bound, fabs(d.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_oriented_planeC3_7::new_bound(NEW_bound);
   }
@@ -2121,21 +2121,21 @@ side_of_oriented_sphereC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_oriented_sphereC3_15::new_bound(NEW_bound);
   }
@@ -2548,21 +2548,21 @@ side_of_bounded_sphereC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_bounded_sphereC3_15::new_bound(NEW_bound);
   }
@@ -2897,15 +2897,15 @@ cmp_dist_to_pointC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_dist_to_pointC3_9::new_bound(NEW_bound);
   }
@@ -3202,15 +3202,15 @@ cmp_signed_dist_to_directionC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(pa.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pb.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pc.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pa.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pb.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pc.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_directionC3_9::new_bound(NEW_bound);
   }
@@ -3571,21 +3571,21 @@ cmp_signed_dist_to_planeC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ppz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pqz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(prz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ppx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ppy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ppz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pqx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pqy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pqz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(prx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(prz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_planeC3_15::new_bound(NEW_bound);
   }

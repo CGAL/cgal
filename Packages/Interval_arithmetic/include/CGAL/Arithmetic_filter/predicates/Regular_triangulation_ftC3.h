@@ -369,26 +369,26 @@ power_testC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(swt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(twt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(swt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
     Static_Filtered_power_testC3_20::new_bound(NEW_bound);
   }
@@ -911,22 +911,22 @@ power_testC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(rwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(twt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(rwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
     Static_Filtered_power_testC3_16::new_bound(NEW_bound);
   }
@@ -1369,18 +1369,18 @@ power_testC3(
 // re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(pwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(qwt.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
-    NEW_bound = std::max(NEW_bound, fabs(twt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(pwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(qwt.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = max(NEW_bound, fabs(tz.to_double()));
+    NEW_bound = max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
     Static_Filtered_power_testC3_12::new_bound(NEW_bound);
   }

@@ -119,7 +119,7 @@ int main()
   std::cout << "Benching the class Interval_nt.\n";
 #endif
   double d;
-  if ((((int) &d) & 7) != 0)
+  if ((((long) &d) & 7) != 0)
     std::cout << "Benchmark might not be meaningful due to bad alignment\n";
 
   std::cout.precision(20);

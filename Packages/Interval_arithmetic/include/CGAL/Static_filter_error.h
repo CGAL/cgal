@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -124,9 +124,9 @@ sqrt(const Static_filter_error &f)
 {
   CGAL_warning_msg(f.degree() & 1 == 0,
 	  "you really want a non integer degree ???");
-  double b = std::sqrt(f.bound());
+  double b = CGAL_CLIB_STD::sqrt(f.bound());
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
-  double e = std::sqrt(f.error()) + Static_filter_error::ulp(b)/2;
+  double e = CGAL_CLIB_STD::sqrt(f.error()) + Static_filter_error::ulp(b)/2;
   FPU_set_cw(backup);
   return Static_filter_error(b, e, f.degree()/2);
 }

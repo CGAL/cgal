@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
-        -I../../include \
+	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
 	-O2 -W -Wall
@@ -48,7 +48,7 @@ CXXFLAGS = \
 # LDFLAGS = Interval_arithmetic$(OBJ_EXT)
 # LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
 
-LDFLAGS = Interval_arithmetic$(OBJ_EXT) \
+LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
