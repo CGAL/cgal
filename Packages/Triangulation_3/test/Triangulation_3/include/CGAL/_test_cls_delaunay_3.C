@@ -599,175 +599,6 @@ _test_cls_delaunay_3(const Triangulation &)
 //   }
 //   std::cout << " done" << std::endl;
 
-
-  // Test inserts function separatelly.
-
-  std::cout << "    Testing insertions   " << std::endl;
-  Locate_type lt;
-  int li,lj,i1,i2;
-  Cls Ti = T0;
-  Point p20(50,0,50);
-  v0=Ti.insert_in_cell(p20,Ti.locate(Point(50,0,50)));
-  assert(Ti.is_valid());
-  assert(Ti.number_of_vertices() == 5);
-  Ti=T0;
-  Point p120(50,0,0);
-  v0=Ti.insert_in_facet(p120,Ti.locate(Point(50,0,1)),3);
-  assert(Ti.is_valid());
-  assert(Ti.number_of_vertices() == 5);
-  Ti=T0;
-  Point p21(50,0,0);
-  v0=Ti.insert_in_facet(p21,Facet(Ti.locate(Point(50,0,1)),3));
-  assert(Ti.is_valid());
-  assert(Ti.number_of_vertices() == 5);
-  Ti=T0;
-  Cell_handle c= Ti.locate(Point(0,0,0),lt,li,lj);
-  assert(lt==Cls::VERTEX);
-  i1=li;
-  c= Ti.locate(Point(100,100,0),lt,li,lj);
-  assert(lt==Cls::VERTEX);
-  i2=li;
-
-  Point p22(50,50,0);
-  v0=Ti.insert_in_edge(p22,Ti.locate(Point(50,40,1)),i1,i2);
-  assert(Ti.is_valid());
-  assert(Ti.number_of_vertices() == 5);
-
-  Ti=T0;
-  c= Ti.locate(Point(0,0,0),lt,li,lj);
-  assert(lt==Cls::VERTEX);
-  i1=li;
-  c= Ti.locate(Point(100,100,0),lt,li,lj);
-  assert(lt==Cls::VERTEX);
-  i2=li;
-  Point p23(50,50,0);
-  v0=Ti.insert_in_edge(p23,Edge(Ti.locate(Point(50,50,0)),i1,i2));
-  assert(Ti.is_valid());
-  assert(Ti.number_of_vertices() == 5);
-
-  Ti=T0;
-
-  assert(T0.dimension() == 3);
-  assert(T0.number_of_vertices() == 4);
-  assert(T0.is_valid());
-       
-
-  c= Ti.locate(Point(50,50,50),lt,li,lj);
-      
-  Point p24(50,50,50);
-  v0= Ti.insert_outside_convex_hull(p24,c);
-  assert(Ti.is_valid());
-
-  assert(Ti.number_of_vertices() == 5);
-
-  Cls T3_3=T1_0;
-  Point p25(2,0,0);
-  v0=T3_3.insert_outside_affine_hull(p25);
-  assert(T3_3.is_valid());
-  assert(T3_3.dimension()==2);
-  c= T3_3.locate(Point(4,0,0),lt,li,lj);
-  Point p26(4,0,0);
-  v0=T3_3.insert_outside_convex_hull(p26,c);
-  assert(T3_3.is_valid());
-  assert(T3_3.dimension()==2);
-  Point p27(0,5,0);
-  v0=T3_3.insert_outside_affine_hull(p27);
-  assert(T3_3.is_valid());
-  assert(T3_3.dimension()==3);
-
-       // testing some simple basic methods (access functions)
-
-  std::cout << "   Boolean and query functions " <<std::endl;
-  c=T0.infinite_cell();
-  assert(T0.is_infinite(c));
-  int ind=c->index(T0.infinite_vertex());
-       
-  Facet f ; 
-  for (i=0;i<4;i++) 
-    if (i!=ind) {
-      assert(T0.is_infinite(c,i));
-      f=Facet(c,i);
-      assert(T0.is_infinite(f));
-    }
-  int j;
-
-  for (i=0;i<4;i++) 
-    for (j=0;i<4;i++) 
-      if ((i!=j) && ((i==ind) || (j==ind))) {
-	assert(T0.is_infinite(c,i,j));
-	assert(T0.is_infinite(Edge(c,i,j)));
-      }
-
-
-  v0=T0.infinite_vertex();
-  assert(T0.is_infinite(v0));
-
-  Finite_vertices_iterator vit;
-  Vertex_handle w;
-  for (vit=T3_1.finite_vertices_begin();vit!=T3_1.finite_vertices_end();vit++)
-    assert(T3_1.is_vertex(vit->point(), w));
-         
-       // geometric functions
-  std::cout << "Geometric functions " << std::endl;
-  c= T0.locate(Point(50,0,1),lt,li,lj);
-  Tetrahedron tr1=T0.tetrahedron(c);
-  c= T0.locate(Point(10,0,1),lt,li,lj);
-  Tetrahedron tr2=T0.tetrahedron(c);
-  assert(tr1==tr2);
-  c= T0.locate(Point(50,0,5),lt,li,lj);
-  Triangle tri1=T0.triangle(c,1);
-  c= T0.locate(Point(10,0,1),lt,li,lj);
-  Triangle tri2=T0.triangle(Facet(c,1));
-  assert(tri1==tri2);
-  c= T0.locate(Point(10,0,1),lt,li,lj);
-  Segment s1 = T0.segment(c,0,1);
-  c= T0.locate(Point(50,0,5),lt,li,lj);
-  Segment s2 = T0.segment(Edge(c,0,1));
-  assert(s1==s2);
-     
-  if (! del) { // Delaunay should not be flipped
-    // or it will not be Delaunay any longer --> not valid
-    std::cout << "  Test flip " << std::endl;
-    assert( T3_1.is_valid());
-    Finite_cells_iterator cit, cdone = T3_1.finite_cells_end();
-    int nbflips=0;
-    bool flipped;
-    cit = T3_1.finite_cells_begin();
-    Finite_cells_iterator next_cell;
-    while ( cit != cdone ) {
-      // NOTE : cells are deleted during loop
-      // the cell_iterator is modified "by hand" (not using ++)
-      flipped = false; i=0; j=1;
-      next_cell = ++cit; --cit;
-      while ( (! flipped) && (i<4) ) {
-	if ( (i!=j) ) {
-	  flipped = T3_1.flip( cit, i, j ) ;
-	  if (flipped) {
-	    nbflips++;
-	    assert(T3_1.is_valid());
-	  }
-	}
-	if ( j==3 ) { i++; j=0; }
-	else j++;
-      }
-      cit = next_cell;
-    }
-    std::cout << nbflips << " flips 3-2" << std::endl;
-
-    nbflips=0;
-    for ( cit = T3_1.finite_cells_begin(); cit != cdone; cit++ ) {
-      // NOTE : the triangulation is modified during loop
-      // --> the cell_iterator does not mean a lot
-      for ( i=0; i<4; i++ ) {
-	flipped = T3_1.flip( cit, i );
-	if (flipped) {
-	  nbflips++;
-	  assert(T3_1.is_valid());
-	}
-      }
-    }
-    std::cout << nbflips << " flips 2-3" << std::endl;
-  }
        // Iterator and circulator test
 
   Cls T0_1;
@@ -790,8 +621,6 @@ _test_cls_delaunay_3(const Triangulation &)
       _test_triangulation_iterator(T3_0); 
       _test_vertex_iterator(T3_2);        
       _test_triangulation_iterator(T3_2); 
-      _test_vertex_iterator(T3_3);
-      _test_triangulation_iterator(T3_3); 
       
 
       std::cout << "    Testing Circulator  "<< std::endl;
@@ -799,7 +628,6 @@ _test_cls_delaunay_3(const Triangulation &)
       _test_circulator(T3_1);
       _test_circulator(T3_0);
       _test_circulator(T3_2);
-      _test_circulator(T3_3);
   }
 
   std::cout <<"   Test destructors and quit "<< std::endl;

@@ -314,5 +314,7 @@ int main()
   assert(T.is_valid());
   assert(T.dimension()==3);
 
+  std::cout << " quit " << std::endl;
+
   return 0;
 }

@@ -560,13 +560,17 @@ is_valid(bool verbose, int level) const
       for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
 	is_valid_finite(it, verbose, level);
 	for (int i=0; i<4; i++ ) {
-	  if ( side_of_power_sphere (it, 
-		 it->vertex(it->neighbor(i)->index(it))->point() )
+	  if ( !is_infinite
+	       (it->neighbor(i)->vertex(it->neighbor(i)->index(it))) ) {
+	    if ( side_of_power_sphere 
+		 (it, 
+		  it->neighbor(i)->vertex(it->neighbor(i)->index(it))->point())
 		  == ON_BOUNDED_SIDE ) {
-	    if (verbose)
-	      std::cerr << "non-empty sphere " << std::endl;
-	    CGAL_triangulation_assertion(false);
-	    return false;
+	      if (verbose)
+		std::cerr << "non-empty sphere " << std::endl;
+	      CGAL_triangulation_assertion(false);
+	      return false;
+	    }
 	  }
 	}
       }
@@ -578,15 +582,20 @@ is_valid(bool verbose, int level) const
       for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
 	is_valid_finite((*it).first, verbose, level);
 	for (int i=0; i<3; i++ ) {
-	  if ( side_of_power_circle
-	       ( (*it).first, 3,
-		 (*it).first->vertex( (((*it).first)->neighbor(i))
-				      ->index((*it).first) )->point() )
-	       == ON_BOUNDED_SIDE ) {
-	    if (verbose)
+	  if( !is_infinite
+	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
+						 ->index((*it).first))) ) {
+	    if ( side_of_power_circle 
+		 ( (*it).first, 3,
+		   (*it).first->neighbor(i)->
+		   vertex( (((*it).first)->neighbor(i))
+			   ->index((*it).first) )->point() )
+		 == ON_BOUNDED_SIDE ) {
+	      if (verbose)
 		std::cerr << "non-empty circle " << std::endl;
-	    CGAL_triangulation_assertion(false);
-	    return false;
+	      CGAL_triangulation_assertion(false);
+	      return false;
+	    }
 	  }
 	}
       }
@@ -598,15 +607,20 @@ is_valid(bool verbose, int level) const
       for ( it = finite_edges_begin(); it != finite_edges_end(); ++it ) {
 	is_valid_finite((*it).first, verbose, level);
 	for (int i=0; i<2; i++ ) {
-	  if ( side_of_power_segment
-	       ( (*it).first,
-		 (*it).first->vertex( (((*it).first)->neighbor(i))
-				      ->index((*it).first) )->point() )
-	       == ON_BOUNDED_SIDE ) {
-	    if (verbose)
+	  if( !is_infinite
+	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
+						 ->index((*it).first))) ) {
+	    if ( side_of_power_segment
+		 ( (*it).first,
+		   (*it).first->neighbor(i)->
+		   vertex( (((*it).first)->neighbor(i))
+			   ->index((*it).first) )->point() )
+		 == ON_BOUNDED_SIDE ) {
+	      if (verbose)
 		std::cerr << "non-empty edge " << std::endl;
-	    CGAL_triangulation_assertion(false);
-	    return false;
+	      CGAL_triangulation_assertion(false);
+	      return false;
+	    }
 	  }
 	}
       }
