@@ -22,20 +22,20 @@
 #ifndef CGAL_BASE_NODE_H
 #define CGAL_BASE_NODE_H
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/PS_stream.h>
+// #include <CGAL/Cartesian.h>
+// #include <CGAL/Segment_2.h>
+// #include <CGAL/PS_stream.h>
 
 namespace CGAL {
 
 	template < class Traits > // = Kd_tree_traits_point >
 	class Base_node {
 	public:
-		typedef Traits::Item typename Item;
-		typedef Traits::Item_iterator Item_iterator;
+		typedef typename Traits::Item typename Item;
+		typedef typename Traits::Item_iterator Item_iterator;
 		typedef Base_node<Traits> Node;
-		typedef Traits::NT NT;
-		typedef Traits::Separator Separator;
+		typedef typename Traits::NT NT;
+		typedef typename Traits::Separator Separator;
 
 		Base_node() {};
 
@@ -69,10 +69,11 @@ namespace CGAL {
         virtual const NT low_value() const {assert(false); return 0;}
         virtual const NT high_value() const {assert(false); return 0;}
 
+        /*
         virtual void data_to_postscript(PS_Stream& PS,
         const int i, const int j,
         const NT mini, const NT maxi,
-	    const NT minj, const NT maxj) {assert(false);};
+	    const NT minj, const NT maxj) {assert(false);};*/
 
         virtual ~Base_node() {};
 

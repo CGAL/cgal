@@ -44,24 +44,25 @@ namespace CGAL {
 
     public:
 
-    typedef Tree_traits::Item Item;
-    typedef Item::FT NT;
-	typedef std::vector<NT> Weight_vector;
+    typedef typename Tree_traits::Item Item;
+    typedef typename Tree_traits::NT NT;
+    typedef std::vector<NT> Weight_vector;
 
-	private:
+    private:
 
-	float p; // p denotes the power
+    float p; // p denotes the power
 
-	unsigned int The_dimension;
+    unsigned int The_dimension;
 
-	Weight_vector *The_weights;
+    Weight_vector *The_weights;
 
-	public:
+    public:
 
     // default constructor
     // default case dim=2, L2.
-    Weighted_Minkowski_distance()
-    { p=2.0; dim=2;
+    Weighted_Minkowski_distance():
+    p(2.0), dim(2) 
+    { 
          The_weights = new Weight_Vector(2);
          The_Weights[0]=1.0;
          The_Weights[1]=1.0;

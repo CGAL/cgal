@@ -2,8 +2,6 @@
 // benchmark example using 10000 data points and 2000 query points
 // both generated with Random_points_in_cube_3<Point_3>
 
-#include <CGAL/compiler_config.h>
-
 #include <CGAL/basic.h>
 
 #include <vector>
@@ -12,7 +10,7 @@
 
 #include <iostream>
 
-#include <CGAL/Cartesian_d.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Binary_search_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -25,11 +23,14 @@
 int test_benchmark_nearest_neighbour_L2() {
 
 typedef CGAL::Cartesian<double> R;
-typedef CGAL::Point_3<R> Point;
+typedef R::Point_3 Point;
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 typedef std::vector<Point> Vector;
 
-typedef CGAL::Plane_separator<double> Separator;
+typedef CGAL::Kernel_traits<Point>::Kernel K;
+typedef K::FT NT;
+
+typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::iterator NNN_Iterator;
 
@@ -40,7 +41,6 @@ typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::itera
   int bucket_size=1;
   double eps=0.0;
 
-  std::cout << "benchmark example, version 1, July 2002" << std::endl;
   std::cout << "test parameters: d=" << dim << " point_number=" << point_number << std::endl;
   std::cout << "query_point_number=" << query_point_number << " bucket_size="
   << bucket_size << " eps=" << eps << std::endl;
@@ -72,7 +72,7 @@ typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::itera
   
   Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
   typedef CGAL::Binary_search_tree<Traits> Tree;
-  Tree d(data_points.begin(), data_points.end(), tr);
+  Tree d(data_points.begin(), data_points.end(), tr, true);
   t.stop();
 
   std::cout << "created binary search tree containing" << std::endl
@@ -83,7 +83,9 @@ typedef CGAL::Nearest_neighbour_L2<Traits,CGAL::Search_nearest_neighbour>::itera
   // end of building binary search tree
 
 
- 
+  /*
+  std::vector<double> v(dim);
+  */
   
   std::vector<Traits::Item_with_distance> nearest_neighbours(query_point_number);
 
@@ -104,8 +106,6 @@ return 0;
 
 int main() {
   test_benchmark_nearest_neighbour_L2();
-  
-
   return 0;
 };
 

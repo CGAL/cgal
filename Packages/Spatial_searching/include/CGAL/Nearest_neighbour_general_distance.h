@@ -44,20 +44,18 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits, class Distance>
 class Nearest_neighbour_general_distance {
 
-    private:
+private:
 
-    typedef Tree_traits::Item Item;
-    typedef Item::FT NT;
-    typedef Item** Item_iterator;
-    typedef Base_node<Tree_traits> Node;
-    typedef Binary_search_tree<Tree_traits> Tree;
-    typedef Box<NT> Node_box;
+typedef typename Tree_traits::Item Item;
+typedef typename Tree_traits::NT NT;
+typedef Item** Item_iterator;
+typedef Base_node<Tree_traits> Node;
+typedef Binary_search_tree<Tree_traits> Tree;
+typedef Box<NT> Node_box;    
 
-    
+public:
 
-    public:
-
-    class Cell 
+class Cell 
     {
     private:
 
@@ -82,12 +80,12 @@ class Nearest_neighbour_general_distance {
     };
 
     
-    typedef Tree_traits::Item_with_distance Item_with_distance;
-    typedef std::pair<Cell*,NT> Cell_with_distance;
+typedef Tree_traits::Item_with_distance Item_with_distance;
+typedef std::pair<Cell*,NT> Cell_with_distance;
 
-    class iterator;
+class iterator;
 
-    class Priority_higher
+class Priority_higher
     {
     public:
 
@@ -104,7 +102,7 @@ class Nearest_neighbour_general_distance {
         }
     };
 
-    class Distance_smaller
+class Distance_smaller
     {
 
     public:
@@ -160,8 +158,8 @@ class Nearest_neighbour_general_distance {
 
     public:
 
-    typedef typename std::input_iterator_tag iterator_category;
-    typedef typename Item_with_distance value_type;
+    typedef std::input_iterator_tag iterator_category;
+    typedef Item_with_distance value_type;
     typedef int distance_type;
 
     class Iterator_implementation;
@@ -170,20 +168,20 @@ class Nearest_neighbour_general_distance {
     public:
 
     // default constructor
-    class iterator() {Ptr_implementation=0;}
+    iterator() {Ptr_implementation=0;}
 
     int the_number_of_items_visited() {
         return Ptr_implementation->number_of_items_visited;
     }
 
     // constructor
-    class iterator(Tree& tree, Item& q, Distance& tr, NT eps=0.0){
+    iterator(Tree& tree, Item& q, Distance& tr, NT eps=0.0){
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps);
     }
 
     // copy constructor
-    class iterator(iterator& Iter) {
+    iterator(iterator& Iter) {
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }
@@ -471,9 +469,9 @@ class Nearest_neighbour_general_distance {
 }; // class Nearest neighbour_L2
 
 template <class Tree_traits, class Search_traits, class Distance>
-void swap (Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator& x,
-        Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator& y) {
-        Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator::Iterator_implementation
+void swap (typename Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator& x,
+        typename Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator& y) {
+        typename Nearest_neighbour_general_distance<Tree_traits, Search_traits, Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

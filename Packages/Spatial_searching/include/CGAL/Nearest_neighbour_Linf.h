@@ -37,24 +37,24 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
 class Nearest_neighbour_Linf {
 
-    private:
+private:
 
-    typedef Tree_traits::Item Item;
-    typedef Item::FT NT;
-    typedef Item** Item_iterator;
-    typedef Base_node<Tree_traits> Node;
-    typedef Binary_search_tree<Tree_traits> Tree;
+typedef typename Tree_traits::Item Item;
+typedef typename Tree_traits::NT NT;
+typedef Item** Item_iterator;
+typedef Base_node<Tree_traits> Node;
+typedef Binary_search_tree<Tree_traits> Tree;
 
-    typedef Tree_traits::Item_with_distance Item_with_distance;
-    typedef std::pair<Node*,NT> Node_with_distance;
+typedef typename Tree_traits::Item_with_distance Item_with_distance;
+typedef std::pair<Node*,NT> Node_with_distance;
 
-    public:
+public:
 
-    class iterator;
+class iterator;
 
-    private:
+private:
 
-    class Priority_higher
+class Priority_higher
     {
     public:
 
@@ -71,7 +71,7 @@ class Nearest_neighbour_Linf {
         }
     };
 
-    class Distance_smaller
+class Distance_smaller
     {
 
     public:
@@ -125,8 +125,8 @@ class Nearest_neighbour_Linf {
 
     public:
 
-    typedef typename std::input_iterator_tag iterator_category;
-    typedef typename Item_with_distance value_type;
+    typedef std::input_iterator_tag iterator_category;
+    typedef Item_with_distance value_type;
     typedef int distance_type;
 
     class Iterator_implementation;
@@ -135,19 +135,19 @@ class Nearest_neighbour_Linf {
     public:
 
     // default constructor
-    class iterator() {Ptr_implementation=0;}
+    iterator() {Ptr_implementation=0;}
 
     int the_number_of_items_visited() {
         return Ptr_implementation->number_of_items_visited;
     }
 
     // constructor
-    class iterator(Tree& tree, Item& q, NT eps=0.0) {
+    iterator(Tree& tree, Item& q, NT eps=0.0) {
         Ptr_implementation = new Iterator_implementation(tree, q, eps);
     }
 
     // copy constructor
-    class iterator(iterator& Iter) {
+    iterator(iterator& Iter) {
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
 
@@ -401,9 +401,9 @@ class Nearest_neighbour_Linf {
 }; // class Nearest neighbour_L2
 
 template <class Tree_traits, class Search_traits>
-void swap (Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& x,
-        Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& y) {
-        Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator::Iterator_implementation
+void swap (typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& x,
+        typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& y) {
+        typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

@@ -52,8 +52,10 @@ namespace CGAL {
   public:
     typedef std::list<Item*> Points_list; 
 
-    typedef typename double NT; // Item::FT NT;
+    typedef Kernel_traits<Item>::Kernel K;
+    typedef K::FT NT;
     typedef Points_container<Item> Self;
+
   private:
     Points_list *p_list; // array of sorted lists of pointers to points
     int built_coord;     // a coordinate for which the pointer list is built
@@ -80,11 +82,11 @@ namespace CGAL {
 
     inline const Box<NT>& bounding_box() const { return bbox; }
 
-	inline const Box<NT>& tight_bounding_box() const { return tbox; }
+    inline const Box<NT>& tight_bounding_box() const { return tbox; }
 
     inline const int dimension() const { return bbox.dimension(); } 
 
-	inline int built_coordinate() { return built_coordinate(); } 
+    inline int built_coordinate() { return built_coord; } 
 
     // coordinate of the maximal span
     inline int max_span_coord() { return bbox.max_span_coord(); }
@@ -288,8 +290,8 @@ namespace CGAL {
 			if (! p_list[i].empty()) {
                 NT min_val=bbox.upper(split_coord); //init with upperbound
 				NT max_val=bbox.lower(split_coord);  //init with lowerbound;
-                Points_list::iterator pt_min=p_list[i].begin();
-                Points_list::iterator pt_max=p_list[i].begin();
+                typename Points_list::iterator pt_min=p_list[i].begin();
+                typename Points_list::iterator pt_max=p_list[i].begin();
 				tmp_list.clear();
 				c.p_list[i].clear();
 				
@@ -401,7 +403,7 @@ namespace CGAL {
          // sort p_list[split_coord]
          p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
       }
-      Points_list::iterator median_point_ptr=p_list[split_coord].begin();
+      typename Points_list::iterator median_point_ptr=p_list[split_coord].begin();
       for (unsigned int i = 0; i < p_list[split_coord].size()/2-1; i++, median_point_ptr++) {}
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;

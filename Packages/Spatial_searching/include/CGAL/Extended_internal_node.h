@@ -30,12 +30,12 @@ template <class Traits> // = Kd_tree_traits_2d>
 class Extended_internal_node : public Internal_node<Traits> {
 
 public:
-  typedef Traits::Item Item;
-  typedef typename double NT; // Item::FT NT;
-  typedef Traits::Separator Separator;
+  typedef typename Traits::Item Item;
+  typedef typename Traits::NT NT;
+  typedef typename Traits::Separator Separator;
   typedef Base_node<Traits> Node;
-  typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
-  typedef CGAL::Segment_2< CGAL::Cartesian<NT> > Segment_2D;
+  // typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
+  // typedef CGAL::Segment_2< CGAL::Cartesian<NT> > Segment_2D;
 
 private:
 

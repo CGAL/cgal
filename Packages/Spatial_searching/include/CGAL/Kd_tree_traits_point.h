@@ -26,15 +26,16 @@
 
 namespace CGAL {
 
-  template <class Separator, class Item>
+  template <class Separator_, class Item_>
   class Kd_tree_traits_point {
 
   public:
-    typedef Separator Separator;
-    typedef Item typename Item;
-    typedef double NT; // Item::FT NT; 
+    typedef Separator_ Separator;
+    typedef Item_ Item;
+    typedef Kernel_traits<Item>::Kernel K;
+    typedef K::FT NT;
     typedef Item** Item_iterator;
-    typedef std::list<Item>::iterator InputIterator;
+    typedef typename std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
 
   private:

@@ -24,10 +24,10 @@
 
 #include <CGAL/Leaf_node.h>
 #include <CGAL/Extended_internal_node.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-#include <iomanip>
-#include <CGAL/PS_Stream.h>
+// #include <CGAL/Cartesian.h>
+// #include <CGAL/Segment_2.h>
+// #include <iomanip>
+// #include <CGAL/PS_Stream.h>
 
 namespace CGAL {
 
@@ -36,9 +36,9 @@ template <class Traits>
 class Binary_search_tree {
 public:
   
-  typedef Traits::Item Item;
-  typedef Traits::InputIterator InputIterator;
-  typedef double NT; // Item::FT NT;
+  typedef typename Traits::Item Item;
+  typedef typename Traits::InputIterator InputIterator;
+  typedef typename Traits::NT NT;
   typedef Base_node<Traits> Node;
   typedef Binary_search_tree<Traits> Tree;
 
@@ -78,6 +78,7 @@ public:
                   delete tree_root; delete bbox;
 	};
 
+  /*
   void generate_postscript_file(const char* filename, const float width,
 	  const int i, const int j) {
 
@@ -112,7 +113,7 @@ public:
           PS << s0 << s1 << s2 << s3;
 	  tree_root->data_to_postscript(PS, i, j, bbox->lower(i), bbox->upper(i),
 		  bbox->lower(j), bbox->upper(j));
-  }
+  }*/
 
   /* previous version
   void generate_postscript_file(const char* filename, const float width,
@@ -155,9 +156,9 @@ public:
     root()->tree_items(it); // store the items in pts_1
     // check that pts_1 and pts contain the same stuff
     assert( pts_1.size() == root()->num_items());
-    std::list<Item>::const_iterator i;
+    typename std::list<Item>::const_iterator i;
     for (i = pts.begin(); i != pts.end(); ++i) {
-      std::list<Item>::iterator j = std::find(pts_1.begin(), pts_1.end(), *i);
+      typename std::list<Item>::iterator j = std::find(pts_1.begin(), pts_1.end(), *i);
       assert(j != pts_1.end());
       assert(*j == *i);
     }

@@ -22,23 +22,23 @@
 #ifndef CGAL_LEAF_NODE_H
 #define CGAL_LEAF_NODE_H
 #include <CGAL/Base_node.h>
-#include <CGAL/Cartesian.h>
-#include <iomanip>
-#include <CGAL/PS_stream.h>
+// #include <CGAL/Cartesian.h>
+// #include <iomanip>
+// #include <CGAL/PS_stream.h>
 
 namespace CGAL {
 
 template <class Traits> // = Kd_tree_traits_Point>
 class Leaf_node: public Base_node<Traits>  {
 public:
-  typedef Traits::Item Item;
-  typedef Traits::Item_iterator Item_iterator;
+  typedef typename Traits::Item Item;
+  typedef typename Traits::Item_iterator Item_iterator;
 private:
   int n;
   Item_iterator data;
 public:
-  typedef typename Traits::NT NT;
-  typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
+  // typedef typename Traits::NT NT;
+  // typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
   
   const bool is_leaf() const { return 1;}
   const int size() const { return n;}
@@ -51,6 +51,7 @@ public:
     // std::cout << "Boxtree_leaf_node_d called" << std::endl;
   }
 
+/*
   void data_to_postscript(PS_Stream& PS,
 	const int i, const int j,
 	const NT mini, const NT maxi,
@@ -60,7 +61,7 @@ public:
 	  Point_2D p ( (*(*it))[i], (*(*it))[j] ); 
 	  PS << p;
 	}
-  } 
+  } */
 
   // removed default constructor !!
   ~Leaf_node() {

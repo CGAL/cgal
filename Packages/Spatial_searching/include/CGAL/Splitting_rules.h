@@ -38,14 +38,16 @@ enum Shrink_rule {NONE, SIMPLE, CENTROID};
 template <class P>
 class Splitter {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   // virtual void rule(Points_container<P>& c, Plane_separator<NT>* sep) {}
 };
 
 template <class P>
 class Median_Of_Max_Spread : public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c) {
         Plane_separator<NT>* sep =
         new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
@@ -57,7 +59,8 @@ public:
 template <class P>
 class Fair : public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
@@ -70,7 +73,8 @@ public:
 template <class P>
 class Sliding_Fair : public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
@@ -83,7 +87,8 @@ public:
 template <class P>
 class Sliding_MidPoint: public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
@@ -103,7 +108,8 @@ public:
 template <class P>
 class Median_Of_Box : public Splitter<P> {
 public:
-  typedef typename double NT;  // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),0.0);
@@ -115,7 +121,8 @@ public:
 template <class P>
 class MidPoint_Of_Max_Spread : public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_tight_span_coord(),
@@ -127,7 +134,8 @@ public:
 template <class P>
 class MidPoint_Of_Box: public Splitter<P> {
 public:
-  typedef typename double NT; // P::FT NT;
+  typedef Kernel_traits<P>::Kernel K;
+  typedef K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),

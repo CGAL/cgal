@@ -22,11 +22,11 @@
 #ifndef CGAL_INTERNAL_NODE_H
 #define CGAL_INTERNAL_NODE_H
 #include <CGAL/base_node.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Point_2.h>
-#include <iomanip>
-#include <CGAL/PS_stream.h>
+// #include <CGAL/Cartesian.h>
+// #include <CGAL/Segment_2.h>
+// #include <CGAL/Point_2.h>
+// #include <iomanip>
+// #include <CGAL/PS_stream.h>
 
 namespace CGAL {
 
@@ -34,12 +34,12 @@ template < class Traits > // = Kd_tree_traits_2d >
 class Internal_node : public Base_node<Traits>  {
 
 public:
-  typedef Traits::Item Item;
-  typedef Traits::NT NT;
-  typedef Traits::Separator Separator;
+  typedef typename Traits::Item Item;
+  typedef typename Traits::NT NT;
+  typedef typename Traits::Separator Separator;
   typedef Base_node<Traits> Node;
-  typedef Point_2< Cartesian<NT> > Point_2D;
-  typedef Segment_2< Cartesian<NT> > Segment_2D;
+  // typedef Point_2< Cartesian<NT> > Point_2D;
+  // typedef Segment_2< Cartesian<NT> > Segment_2D;
 
 protected:
   Node* lower_ch;
@@ -74,6 +74,7 @@ public:
       upper_ch = new Leaf_node<Traits>(c);
   }
 
+  /*
   void data_to_postscript(PS_Stream& PS,
 	const int i, const int j,
 	const NT mini, const NT maxi,
@@ -100,7 +101,7 @@ public:
 	  lower_ch->data_to_postscript(PS,i,j,mini,maxi,minj,maxj);
 	  upper_ch->data_to_postscript(PS,i,j,mini,maxi,minj,maxj);
     }
-  }
+  }*/
 
   ~Internal_node() {
   // std::cout << "~Internal_node called" << std::endl;
