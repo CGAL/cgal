@@ -201,8 +201,17 @@ test_side_of_oriented_sphere_3()
   CGAL::CGALi::side_of_oriented_sphere(t, s, p, q, r, K3());
 }
 
+void compute_epsilons()
+{
+  std::cerr.precision(20);
+  K2::Orientation_3::compute_epsilon();
+}
+
 int main(int argc, char **argv)
 {
+
+  compute_epsilons();
+
   int loops = (argc < 2) ? 1000 : atoi(argv[1]);
 
   std::cout << "#loops = " << loops << " (can be changed on the command line)" << std::endl;
