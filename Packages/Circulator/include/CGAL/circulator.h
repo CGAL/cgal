@@ -214,13 +214,13 @@ template <class I> inline
 void Assert_input_category( const I &/*i*/) {
     Assert_compile_time_tag( std::input_iterator_tag(),
 			     // std::iterator_category(i));
-			     std::iterator_traits<I>::iterator_category());
+		     typename std::iterator_traits<I>::iterator_category());
 }
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
     Assert_compile_time_tag( std::output_iterator_tag(),
                              //std::iterator_category(i));
-			     std::iterator_traits<I>::iterator_category());
+		     typename std::iterator_traits<I>::iterator_category());
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
@@ -284,13 +284,13 @@ template <class I> inline
 void Assert_is_at_least_input_category( const I& /*i*/) {
     I_Has_to_be_at_least( std::input_iterator_tag(),
                           //std::iterator_category(i));
-			  std::iterator_traits<I>::iterator_category());
+		  typename std::iterator_traits<I>::iterator_category());
 }
 template <class I> inline
 void Assert_is_at_least_output_category( const I& /*i*/) {
     I_Has_to_be_at_least( std::output_iterator_tag(),
                           //std::iterator_category(i));
-			  std::iterator_traits<I>::iterator_category());
+		  typename std::iterator_traits<I>::iterator_category());
 }
 template <class IC> inline
 void Assert_is_at_least_forward_category( const IC& /*ic*/) {

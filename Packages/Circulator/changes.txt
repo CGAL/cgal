@@ -1,6 +1,10 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
-	
+
+3.29 (12 Apr 2003)
+
+     - G++ 3.4 support : add missing "typename". [sp]
+
 3.28 (6 Apr 2003)
 
      - G++ 3.4 support : add missing "typename" and "this->". [sp]
