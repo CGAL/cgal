@@ -205,18 +205,18 @@ protected:
 public:
   Parabola_2() {}
 
-  Parabola_2(const Site_2 &p, const Line_2 &l)
+  Parabola_2(const Site_2 &p, const Line_2 &l1)
   {
     this->c = p.point();
 
-    FT d_a = CGAL_NTS to_double(l.a());
-    FT d_b = CGAL_NTS to_double(l.b());
+    FT d_a = CGAL_NTS to_double(l1.a());
+    FT d_b = CGAL_NTS to_double(l1.b());
     FT len = CGAL_NTS sqrt(CGAL_NTS square(d_a) +
 			   CGAL_NTS square(d_b));
 
     FT r = p.weight() * len;
 
-    this->l = Line_2(-l.a(), -l.b(), -l.c() + r);
+    this->l = Line_2(-l1.a(), -l1.b(), -l1.c() + r);
     compute_origin();
   }
 
