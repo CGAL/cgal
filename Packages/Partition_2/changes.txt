@@ -1,3 +1,8 @@
+1.44 (5 Mai 2003)
+ - use defaults to instantiate Constrained_triangulation_2 in partition_approx_convex_2 in order to
+   compile with new design of triangulations
+ - apply Radu patch to get read of MACRO for VC++
+
 1.43 (12 Apr 2003)
   - comment is_valid() since it's not finished and breaks g++ 3.4.
 

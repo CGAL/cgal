@@ -139,13 +139,9 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    typedef Partitioned_polygon_2< Traits >             P_Polygon_2;
    typedef typename P_Polygon_2::iterator              I;
    typedef Circulator_from_iterator<I>                 Circulator;
-   typedef Triangulation_indirect_traits_2<Circulator, Traits>  
-                                                       Gt;
-   typedef Triangulation_vertex_base_2<Gt>             Vb;
-   typedef Constrained_triangulation_face_base_2<Gt>   Fb;
-   typedef Triangulation_default_data_structure_2<Gt, Vb, Fb>   
-                                                       Tds;
-   typedef Constrained_triangulation_2<Gt, Tds>        Constrained_tri_2;
+   typedef Triangulation_indirect_traits_2<Circulator, Traits>  Gt;
+
+   typedef Constrained_triangulation_2<Gt>             Constrained_tri_2;
    typedef typename Constrained_tri_2::Edge_iterator   Edge_iterator;
    typedef typename Constrained_tri_2::Edge_circulator Edge_circulator;
    typedef typename Constrained_tri_2::Vertex_iterator Tri_vertex_iterator;
