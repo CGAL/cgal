@@ -45,8 +45,8 @@ typedef CGAL::Polygon_traits_2_aux<R, R::FT, Point> Traits;
 // CGAL::Polygon_traits_2_aux can be reused.
 
 typedef Polygon_2<Traits, std::list<Point> > Polygon;
-typedef Polygon_2<Traits, std::list<Point> >::Vertex_iterator VI;
-typedef Polygon_2<Traits, std::list<Point> >::Edge_const_iterator EI;
+typedef Polygon::Vertex_iterator VI;
+typedef Polygon::Edge_const_iterator EI;
 
 //-----------------------------------------------------------------------//
 //                          main

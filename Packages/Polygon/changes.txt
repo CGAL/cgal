@@ -1,3 +1,6 @@
+2.19 (29 September 2000)
++ Minor change in examples/Custompoint1.C to keep MSVC happy.
+
 2.18 (1 September 2000)
 + Minor bug fix
 
