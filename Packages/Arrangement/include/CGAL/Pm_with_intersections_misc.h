@@ -52,13 +52,6 @@ public:
     curve_split(cv, split1, split2, split_pnt);
   }
 
-  void points_swap(Point_2 & p1, Point_2 & p2)
-  {
-    Point_2 p = p1;
-    p1 = p2;
-    p2 = p;
-  }
-
   // maps the curves to their mirror images over the y coordinate
   // and calls nearest_intersect_to_right (see there).
   Object nearest_intersection_to_left(const X_monotone_curve_2 & cv1,

@@ -187,7 +187,7 @@ public:
       xp2 = pmwx_traits->curve_target(cv);
 
       if (!is_left_low(xp1, xp2))
-        pmwx_traits->points_swap(xp1, xp2);
+        std::swap(xp1, xp2);
 
       Point_2 left_point =
         traits->point_leftlow_most(pmwx_traits->curve_source(he_cv),
@@ -420,12 +420,12 @@ public:
           if (direction_right)
           {
             if (!is_left_low(xp1, xp2))
-              pmwx_traits->points_swap(xp1, xp2);
+              std::swap(xp1, xp2);
           }
           else
           {
             if (!is_right_top(xp1, xp2))
-              pmwx_traits->points_swap(xp1, xp2);
+              std::swap(xp1, xp2);
           }
           
           xpnt = xp1;
@@ -501,12 +501,12 @@ public:
           if (direction_right)
           {
             if (!is_left_low(xp1, xp2))
-              pmwx_traits->points_swap(xp1, xp2);
+              std::swap(xp1, xp2);
           }
           else
           {
             if (!is_right_top(xp1, xp2))
-              pmwx_traits->points_swap(xp1, xp2);
+              std::swap(xp1, xp2);
           }
           
           xpnt = xp1;
