@@ -32,15 +32,6 @@ CGAL_BEGIN_NAMESPACE
 template < class K >
 inline
 LineC2<K>
-line_from_points(const PointC2<K> &p,
-                 const PointC2<K> &q)
-{
-  return K().construct_line_2_object()(p, q);
-}
-
-template < class K >
-inline
-LineC2<K>
 line_from_point_direction(const PointC2<K> &p,
                           const DirectionC2<K> &d)
 {
