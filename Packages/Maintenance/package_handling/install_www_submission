@@ -321,7 +321,8 @@ sub check_for_ignored_files()
 		"version","doc_tex","stlport","winutils","auxiliary",
 		"developer_scripts","scripts","cgal_config.bat",
 		"install.txt","INSTALL.win32",
-		"submission_info","maintainer","description.txt","changes.txt");
+		"submission_info","maintainer","description.txt",
+		"changes.txt","long_description.txt");
     my @files_in_directory;
     opendir THISDIR, "." or die "Cannot open current directory: $!";
     @files_in_directory = grep !/^\.\.?$/, readdir THISDIR;
