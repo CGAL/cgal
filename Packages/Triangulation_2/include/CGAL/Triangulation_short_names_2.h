@@ -41,7 +41,7 @@
 #define Triangulation_ds_face_2               Tdsf
 #define Triangulation_vertex_2                Tv
 #define Triangulation_face_2                  Tf
-#define Triangulation_vertex_handle_2         Tvh
+#define Triangulation_vertex_handle_2           Tvh
 #define Triangulation_face_handle_2           Tfh
 #define Triangulation_vertex_iterator_2       Tvi
 #define Triangulation_face_iterator_2         Tfi

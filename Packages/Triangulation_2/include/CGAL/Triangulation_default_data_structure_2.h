@@ -447,9 +447,9 @@ insert_in_edge(Face* f, int i)
   if (dimension() == 2) {CGAL_triangulation_precondition(i == 0 || 
 							 i == 1 || 
 							 i == 2);}
-  
-  Vertex * v = new Vertex;
+  Vertex * v;
   if (dimension() == 1) {
+    v = new Vertex;
     Face * ff = f->neighbor(0);
     Vertex * vv = f->vertex(1);
     Face * g = new Face(v,vv,NULL,ff, f, NULL);
@@ -702,6 +702,8 @@ remove_second(Vertex* v)
 {
   CGAL_triangulation_precondition(number_of_vertices()== 2 &&
 				  dimension() == 0);
+  delete v->face()->neighbor(0);
+  delete v->face();
   delete v;
   set_number_of_vertices(1);
   set_dimension(-1);
