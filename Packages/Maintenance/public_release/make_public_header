@@ -131,6 +131,9 @@ sub check_and_update_2($$$)
 	    $header_position = 4;
 	    last;
 	}
+	if ( m<^\s*//\s*maintainer\s*:> ) {
+	    next;
+	}
 	if ( m<^\s*//\s*email\s*:> ) {
 	    next;
 	}
