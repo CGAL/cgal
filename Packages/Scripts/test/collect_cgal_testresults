@@ -25,7 +25,8 @@ print_testresult()
     if eval grep ERROR ErrorOutput_$1 > /dev/null ; then
       RESULT="n"
     else
-      if eval grep '[Ww]arning' CompilerOutput_$1 > /dev/null
+#      if eval grep '[Ww]arning' CompilerOutput_$1 > /dev/null
+      if eval grep -i warning CompilerOutput_$1 > /dev/null
       then
         RESULT="w"
       else
