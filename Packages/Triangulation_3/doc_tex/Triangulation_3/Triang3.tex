@@ -317,12 +317,12 @@ used.
 In order to be used as the traits class for \ccc{Regular_triangulation_3},
 a class must provide functions to compute the \textit{power tests}
 (see Section~\ref{Triangulation3-sec-class-Regulartriangulation}).
-\ccc{Regular_triangulation_euclidean_traits_3<R,Weight>} is a traits class 
+\ccc{Regular_triangulation_euclidean_traits_3<K,Weight>} is a traits class 
  designed to be used by the class
 \ccc{Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>}. It provides
 \ccc{Weighted_point}, a class for weighted points
 needed by the regular triangulation, which derives from the three dimensional
-point class \ccc{R::Point_3}.
+point class \ccc{K::Point_3}.
 It supplies the user with all the functionalities 
 described for the concept \ccc{RegularTriangulationTraits_3}\lcTex{
 (\ccRefPage{RegularTriangulationTraits_3})}. 
