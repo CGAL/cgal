@@ -10,7 +10,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 
-#include <CGAL/predicates/svd_predicates_ftC2.h>
+#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
 
 CGAL_BEGIN_NAMESPACE
 
