@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.35 (13 April 00)
+included reference manual doc pages
+
 Ver 4.34 (18 March 00)
 fixed return statement of remove_first and remove_second in
 Triangulation_data_structure_using_list_2
