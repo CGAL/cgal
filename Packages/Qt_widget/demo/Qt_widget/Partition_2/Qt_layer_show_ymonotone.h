@@ -40,7 +40,7 @@ public:
 
   Qt_layer_show_ymonotone(T &p) : polygon(p)
   {};
-  void draw(Qt_widget &widget)
+  void draw()
   {
     ymonotone.clear();
     
@@ -51,8 +51,8 @@ public:
     std::list<T>::const_iterator p_it;
     for(p_it = ymonotone.begin(); p_it != ymonotone.end(); p_it++)
     {
-      widget << CGAL::RED; 
-      widget << *p_it;
+      *widget << CGAL::RED; 
+      *widget << *p_it;
     }
     
   };

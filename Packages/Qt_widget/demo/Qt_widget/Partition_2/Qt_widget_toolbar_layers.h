@@ -34,6 +34,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>
+#include <qbuttongroup.h>
 
 typedef CGAL::Cartesian<CGAL::MP_Float>                   K;
 typedef CGAL::Partition_traits_2<K>                       Traits;
@@ -61,24 +62,19 @@ signals:
   void new_object(CGAL::Object);
 		
 private slots:
-  void show_coordinates();
-  void show_polygon();
-  void show_greene_approx();
-  void show_ymonotone();
-  void show_optimal();
-  void show_points();
-
+  void redraw_win(int);
 private:
-  QToolBar		*maintoolbar;
+  QToolBar		  *maintoolbar;
   QToolButton		*but[10];
-  Qt_widget		*widget;
-  QMainWindow		*window;	
+  Qt_widget		  *widget;
+  QMainWindow		*window;
+  QButtonGroup  *button_group;
   int			nr_of_buttons;
 
-  CGAL::Qt_layer_mouse_coordinates		*showMC;
-  CGAL::Qt_layer_show_polygon <Polygon>		*showP;
+  CGAL::Qt_layer_mouse_coordinates		          *showMC;
+  CGAL::Qt_layer_show_polygon <Polygon>		      *showP;
   CGAL::Qt_layer_show_greene_approx <Polygon >	*showGA;
-  CGAL::Qt_layer_show_ymonotone <Polygon>	*showYM;
+  CGAL::Qt_layer_show_ymonotone <Polygon>	      *showYM;
   CGAL::Qt_layer_show_optimal_convex <Polygon>	*showOC;
   CGAL::Qt_layer_show_polygon_points <Polygon>	*showPP;
 

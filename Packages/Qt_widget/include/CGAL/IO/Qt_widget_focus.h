@@ -30,7 +30,7 @@
 #include <CGAL/IO/pixmaps/focus3_mask.xpm>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qcolor.h>
 #include <qtimer.h>
 #include <qpixmap.h>
@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-class Qt_widget_focus : public Qt_widget_tool
+class Qt_widget_focus : public Qt_widget_layer
 {
 private:
   int	x2, y2;
@@ -100,21 +100,21 @@ private:
       x=widget->x_real(e->x()),
       y=widget->y_real(e->y());
 	
-	widget->set_center(x, y);
+	  widget->set_center(x, y);
     widget->redraw();
-    emit(redraw()); 
   };
-  void attaching()
-  {
-    oldcursor = widget->cursor();
-	startTimer( 200 );
-	cycle = 1;
+  void deactivating()
+  {    
+    widget->setCursor(oldcursor);
+	  killTimers();
   };
 
-  void detaching()
+  void activating()
   {
-    widget->setCursor(oldcursor);
-	killTimers();
+    oldcursor = widget->cursor();
+	  startTimer( 200 );
+	  cycle = 1;
+
   };
 };//end class 
 

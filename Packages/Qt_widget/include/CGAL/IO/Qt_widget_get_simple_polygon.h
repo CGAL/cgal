@@ -22,14 +22,14 @@
 #define CGAL_QT_WIDGET_GET_SIMPLE_POLYGON_H
 
 
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>  
 #include <list>
 
 
 namespace CGAL {
 template <class Polygon>
-class Qt_widget_get_simple_polygon : public Qt_widget_tool
+class Qt_widget_get_simple_polygon : public Qt_widget_layer
 {
 public:
   typedef typename Polygon::Point_2   Point_2;
@@ -40,7 +40,7 @@ public:
   Qt_widget_get_simple_polygon()
     : active(false), first_time(true) {}
 
-  void widget_repainted()
+  void draw()
   {
     if(poly.size() > 1)
     {
@@ -154,7 +154,7 @@ public:
       widget->unlock();
     }
   };
-  void attaching()
+  void activating()
   {	
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
@@ -162,7 +162,7 @@ public:
     widget->setFocusPolicy(QWidget::StrongFocus);
   };
   
-  void detaching()
+  void deactivating()
   {
     poly.erase(poly.vertices_begin(), poly.vertices_end());
     active = false;
@@ -211,12 +211,12 @@ private:
   }
   
 protected:
-  bool	  active,     //true if the first point was inserted
-	  first_time; //true if it is the first time when 
+  bool	active,     //true if the first point was inserted
+		first_time; //true if it is the first time when 
 		      //draw the rubber band
   Point_2 rubber,     //the new point of the rubber band
-	  last_of_poly,	//the last point of the polygon
-	  rubber_old; //the old point of the rubber band
+		  last_of_poly,	//the last point of the polygon
+		  rubber_old; //the old point of the rubber band
   Polygon poly;	      //the polygon
   QWidget::FocusPolicy	oldpolicy;
 };

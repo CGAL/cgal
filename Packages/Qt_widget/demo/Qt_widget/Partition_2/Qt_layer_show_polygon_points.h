@@ -35,7 +35,7 @@ public:
   
 
   Qt_layer_show_polygon_points(T &p) : polygon(p){};
-  void draw(Qt_widget &widget)
+  void draw()
   {
     typename T::const_iterator vert_it;
 
@@ -44,9 +44,9 @@ public:
 		vert_it != polygon.vertices_end(); vert_it++)
     {
       
-      widget << CGAL::GREEN << CGAL::PointSize (5) 
+      *widget << CGAL::GREEN << CGAL::PointSize (5) 
 			<< CGAL::PointStyle (CGAL::DISC);
-      widget << Point_2((*vert_it).x(), (*vert_it).y());
+      *widget << Point_2((*vert_it).x(), (*vert_it).y());
     }
   };
 	

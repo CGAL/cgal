@@ -98,7 +98,6 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    setUsesBigPixmaps(TRUE);
     newtoolbar = new CGAL::Tools_toolbar(widget, this);	
     //the new scenes toolbar
     vtoolbar = new CGAL::Layers_toolbar(widget, this, &polygon);
@@ -108,11 +107,11 @@ public:
     this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
     this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::BackgroundColor (CGAL::BLACK);
     resize(w,h);
   
     widget->show();
-    widget->setMouseTracking(TRUE);
+    widget->setMouseTracking(true);
 	
     //connect the widget to the main function that receives the objects
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
@@ -134,7 +133,6 @@ public slots:
   }
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     widget->clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
@@ -239,7 +237,7 @@ main(int argc, char **argv)
   app.setPalette( p, TRUE );
   current_state = -1;
   
-  MyWindow widget(800,800); // physical window size
+  MyWindow widget(500,500); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);

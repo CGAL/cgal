@@ -36,11 +36,15 @@ namespace CGAL {
   Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(
 	  Qt_widget *w, QMainWindow *mw)
   {
-    //when it is created, the toolbar has 0 buttons
-    nr_of_buttons = 0;
+
+    w->attach_standard(&zoombut);
+    w->attach_standard(&zoomrectbut);
+    w->attach_standard(&handtoolbut);
+    zoombut.deactivate();
+    zoomrectbut.deactivate();
+    handtoolbut.deactivate();
     //set the widget
     widget = w;
-    is_active = FALSE;
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
@@ -51,103 +55,51 @@ namespace CGAL {
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
-
-    but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
-			     "Detach current tool", 
-			     0, 
-			     this, 
-			     SLOT(notool()), 
-			     maintoolbar, 
-			     "Detach current tool");
-
-    but[1] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
+  but[0] = new QToolButton(maintoolbar, "notool");
+  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  
+  but[1] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
 			     "Zoom in", 
 			     0, 
 			     this, 
 			     SLOT(zoomin()), 
 			     maintoolbar, 
 			     "Zoom in");
-    but[2] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
+  but[2] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
 			     "Zoom out", 
 			     0, 
 			     this, 
 			     SLOT(zoomout()), 
 			     maintoolbar, 
 			     "Zoom out");
-		
-    but[3] = new QToolButton(QPixmap( (const char**)focus_xpm ),
-			     "Focus on a region.", 
-			     0, 
-			     this, 
-			     SLOT(toolregion()), 
-			     maintoolbar, 
-			     "Focus on a region region");
+
+  but[3] = new QToolButton(maintoolbar, "focus");
+  but[3]->setPixmap(QPixmap( (const char**)focus_xpm ));
+  but[4] = new QToolButton(maintoolbar, "focus on region");
+  but[4]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
+  but[5] = new QToolButton(maintoolbar, "handtool");
+  but[5]->setPixmap(QPixmap( (const char**)hand_xpm ));
     
-    but[4] = new QToolButton(QPixmap( (const char**)zoomin_rect_xpm ),
-			     "Layer rectangle", 
-			     0, 
-			     this, 
-			     SLOT(zoominrect()), 
-			     maintoolbar, 
-			     "Layer rectangle");
-		
-    		
-    but[5] = new QToolButton(QPixmap( (const char**)hand_xpm ),
-			"Hand tool", 
-			0, 
-			this, 
-			SLOT(handtool()), 
-			maintoolbar, 
-			"Hand tool");		
-		
-    but[3]->setToggleButton(TRUE);
-    but[4]->setToggleButton(TRUE);
-    but[5]->setToggleButton(TRUE);
+
+	
+    button_group = new QButtonGroup(0, "My_group");
     nr_of_buttons = 6;
-
-    connect(w, SIGNAL(detached_standard_tool()), this, SLOT(toggle_button()));
+    for(int i = 3; i<nr_of_buttons; i++){
+      but[i]->setToggleButton(true);
+      button_group->insert(but[i]);
+    }
+    but[0]->setToggleButton(true);
+    button_group->insert(but[0]);
+    button_group->setExclusive(true);
+  
+    connect(but[3], SIGNAL(stateChanged(int)),
+        &zoombut, SLOT(stateChanged(int)));
+    connect(but[4], SIGNAL(stateChanged(int)),
+        &zoomrectbut, SLOT(stateChanged(int)));	
+    connect(but[5], SIGNAL(stateChanged(int)),
+        &handtoolbut, SLOT(stateChanged(int)));
   };
-
-  //the definition of the slots
-  void Qt_widget_standard_toolbar::toggle_button()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }	
-
-  void Qt_widget_standard_toolbar::toolregion()
-  {
-    if (but[3]->isOn())
-    {
-      widget->attach_standard(&zoombut);
-      activebutton = 3;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_standard_tool();
-    }
-  }
-
-  void Qt_widget_standard_toolbar::zoominrect()
-  {
-    if (but[4]->isOn())
-    {
-      widget->attach_standard(&zoomrectbut);
-      activebutton = 4;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_standard_tool();
-    }
-  }
-
-  void Qt_widget_standard_toolbar::zoomin()
+    void Qt_widget_standard_toolbar::zoomin()
   {
     widget->zoom_in(2);
     widget->redraw();
@@ -157,28 +109,7 @@ namespace CGAL {
     widget->zoom_out(2);
     widget->redraw();
   }
-  void Qt_widget_standard_toolbar::notool()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      widget->detach_current_standard_tool();
-      is_active = false;
-    }
-  }
 
-
-  void Qt_widget_standard_toolbar::handtool()
-  {
-    if (but[5]->isOn())
-    {      
-      widget->attach_standard(&handtoolbut);
-      activebutton = 5;
-      is_active = true;
-    } else {
-      is_active = false;
-      widget->detach_current_standard_tool();
-    }
-  }
 
 }//end namespace
 #include "Qt_widget_standard_toolbar.moc"

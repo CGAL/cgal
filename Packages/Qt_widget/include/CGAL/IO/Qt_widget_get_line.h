@@ -22,7 +22,7 @@
 #define CGAL_QT_WIDGET_GET_LINE_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
 #define CGAL_QT_WIDGET_GET_POINT_BUTTON Qt::LeftButton
@@ -107,13 +107,13 @@ private:
 	firsttime = false;
     }
   };
-  void attaching()
+  void activating()
   {
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
   };
 
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
     firstpoint = false;

@@ -26,7 +26,7 @@
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include <CGAL/IO/pixmaps/holddown.xpm>
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qrect.h>
 
 
@@ -37,13 +37,13 @@
 
 namespace CGAL {
 
-class Qt_widget_handtool : public Qt_widget_tool
+class Qt_widget_handtool : public Qt_widget_layer
 {
 public:
   Qt_widget_handtool() : wasrepainted(TRUE), on_first(FALSE){};
 
 private:
-  void widget_repainted(){
+  void draw(){
     wasrepainted = TRUE;
   };
 
@@ -53,9 +53,9 @@ private:
     {
       widget->setCursor(QCursor( QPixmap( (const char**)holddown_xpm)));
       if (!on_first){
-	first_x = e->x();
-	first_y = e->y();
-	on_first = TRUE;
+	      first_x = e->x();
+	      first_y = e->y();
+	      on_first = TRUE;
       }	
     }
   };
@@ -66,10 +66,10 @@ private:
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
       double
-	x=widget->x_real(e->x()),
-	y=widget->y_real(e->y()),
-	xfirst2 = widget->x_real(first_x),
-	yfirst2 = widget->y_real(first_y);
+	      x=widget->x_real(e->x()),
+	      y=widget->y_real(e->y()),
+	      xfirst2 = widget->x_real(first_x),
+	      yfirst2 = widget->y_real(first_y);
 			
 	double	xmin, xmax, ymin, ymax, distx, disty;
 	if(x < xfirst2) {xmin = x; xmax = xfirst2;}
@@ -80,7 +80,6 @@ private:
 	disty = yfirst2 - y;
 	widget->move_center(distx, disty);
 	widget->redraw();
-	emit(redraw());	
 	on_first = FALSE;
     }
   }
@@ -122,22 +121,22 @@ private:
    
   };
 
-  void attaching()
+  void activating()
   {
     oldcursor = widget->cursor();
     widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
     wasrepainted = TRUE;
   };
 
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
   };
 
-  int  first_x, first_y;
-  int  x2, y2;
-  bool	  wasrepainted;
-  bool	  on_first;
+  int   first_x, first_y;
+  int   x2, y2;
+  bool	wasrepainted;
+  bool	on_first;
 };//end class 
 
 } // namespace CGAL

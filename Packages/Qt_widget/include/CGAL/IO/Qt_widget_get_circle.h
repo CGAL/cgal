@@ -22,7 +22,7 @@
 #define CGAL_QT_WIDGET_GET_CIRCLE_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/squared_distance_2.h> 
 
 #ifndef CGAL_QT_WIDGET_GET_POINT_BUTTON
@@ -114,24 +114,24 @@ private:
     }
   };
   
-  void attaching()
+  void activating()
   {
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
   };
 
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
     firstpoint = false;
   };
 
   FT	x1, //the X of the first point
-	y1; //the Y of the first point
+		y1; //the Y of the first point
   FT	x2, //the old second point's X
-	y2; //the old second point's Y
+		y2; //the old second point's Y
   bool	firstpoint, //true if the user left clicked once
-	firsttime;  //true if the line is not drawn
+		firsttime;  //true if the line is not drawn
 };//end class 
 
 } // namespace CGAL

@@ -22,13 +22,13 @@
 #define CGAL_QT_WIDGET_GET_POLYGON_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <list>
 
 namespace CGAL {
 
 template <class Polygon>
-class Qt_widget_get_polygon : public Qt_widget_tool
+class Qt_widget_get_polygon : public Qt_widget_layer
 {
 public:
   typedef typename Polygon::Point_2 Point_2;
@@ -103,13 +103,13 @@ public:
 	}
     }
   };
-  void attaching()
+  void activating()
   {	
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
   };
   
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
   };

@@ -36,7 +36,7 @@ namespace CGAL {
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    is_active = FALSE;
+    widget->attach(&getsimplebut);
 
 #if QT_VERSION < 300
 // for Qt 2.3 and before
@@ -48,60 +48,25 @@ namespace CGAL {
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif		  
 		
-    but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
-			     "Detach current tool", 
-			     0, 
-			     this, 
-			     SLOT(notool()), 
-			     maintoolbar, 
-			     "Detach current tool");
-		
-    but[1] = new QToolButton(QPixmap( (const char**)polygon_xpm ),
-						"Get Simple Polygon", 
-						0, 
-						this, 
-						SLOT(get_s_polygon()), 
-						maintoolbar, 
-						"Get Simple Polygon");
-
-    but[1]->setToggleButton(TRUE);
-    connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
-    nr_of_buttons = 2;
+  but[0] = new QToolButton(maintoolbar, "notool");
+  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  
+  but[1] = new QToolButton(maintoolbar, "spolygon");
+  but[1]->setPixmap(QPixmap( (const char**)polygon_xpm ));
+  
+  button_group = new QButtonGroup(0, "exclusive_group");
+  button_group->insert(but[0]);
+  button_group->insert(but[1]);
+  button_group->setExclusive(true);
+  
+  but[1]->setToggleButton(TRUE);
+  
+  connect(but[1], SIGNAL(stateChanged(int)),
+        &getsimplebut, SLOT(stateChanged(int)));
+  nr_of_buttons = 2;
   };
 
 	
-  //the definition of the slots
-  void Tools_toolbar::toggle_button ()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }
-	
-  void Tools_toolbar::notool()
-  {
-    if(is_active) {
-      widget->detach_current_tool();
-      is_active = false;
-    }
-  }
-  
-
-  void Tools_toolbar::get_s_polygon()
-  {
-    if (but[1]->isOn())
-    {
-      widget->attach(&getsimplebut);
-      activebutton = 1;
-      is_active = true;
-    } else {
-      is_active = false;
-      widget->detach_current_tool();
-      
-    }
-  }
-
 
 }//end namespace
 

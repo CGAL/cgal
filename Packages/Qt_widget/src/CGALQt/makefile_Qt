@@ -21,7 +21,6 @@ CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS -DC
 
 CGAL_OBJECTS = \
 Qt_widget$(OBJ_EXT) \
-Qt_widget_tool$(OBJ_EXT) \
 Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
 
@@ -47,10 +46,6 @@ clean:
 Qt_widget$(OBJ_EXT):
 	$(QT_MOC) ../../include/CGAL/IO/Qt_widget.h -o Qt_widget.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget.C
-
-Qt_widget_tool$(OBJ_EXT):
-	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_tool.h -o Qt_widget_tool.moc
-	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_tool.C
 
 Qt_widget_layer$(OBJ_EXT):
 	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc

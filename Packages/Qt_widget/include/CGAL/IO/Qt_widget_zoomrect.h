@@ -22,7 +22,7 @@
 #define CGAL_QT_WIDGET_ZOOMRECT_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <qrect.h>
 
 
@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-class Qt_widget_zoomrect : public Qt_widget_tool
+class Qt_widget_zoomrect : public Qt_widget_layer
 {
 public:
   int first_x, first_y, x2, y2;
@@ -44,7 +44,7 @@ public:
   Qt_widget_zoomrect() : widgetrepainted(TRUE), on_first(FALSE) {};
 
 private:
-  void widget_repainted(){
+  void draw(){
     widgetrepainted = TRUE;
   };
   void mousePressEvent(QMouseEvent *e)
@@ -53,9 +53,9 @@ private:
     {
       if (!on_first)
       {
-	first_x = e->x();
-	first_y = e->y();
-	on_first = TRUE;
+	      first_x = e->x();
+        first_y = e->y();
+        on_first = TRUE;
       }
     }
   };
@@ -78,7 +78,6 @@ private:
 
 	widget->set_window(xmin, xmax, ymin, ymax);
 	widget->redraw();
-	emit(redraw());	
 	on_first = FALSE;
 	}
   }
@@ -87,8 +86,8 @@ private:
     if(on_first)
     {
       int
-	x = e->x(),
-	y = e->y();
+	      x = e->x(),
+	      y = e->y();
 			
       RasterOp old = widget->rasterOp();	//save the initial raster mode
       QColor old_color=widget->color();
@@ -96,7 +95,7 @@ private:
       widget->lock();
       widget->setColor(Qt::green);
       if(!widgetrepainted)
-	widget->painter().drawRect(first_x, first_y, x2 - first_x, y2 - first_y);
+	      widget->painter().drawRect(first_x, first_y, x2 - first_x, y2 - first_y);
       widget->painter().drawRect(first_x, first_y, x - first_x, y - first_y);
       widget->unlock();
       widget->setColor(old_color);
@@ -109,14 +108,14 @@ private:
     }
   };
 
-  void attaching()
+  void activating()
   {
     oldcursor = widget->cursor();
     widget->setCursor(crossCursor);
     widgetrepainted = TRUE;
   };
 
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
 		

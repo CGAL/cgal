@@ -37,6 +37,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qmainwindow.h>
+#include <qbuttongroup.h>
 
 namespace CGAL {
 
@@ -49,24 +50,17 @@ public:
 
 
 private slots:
-  void toggle_button();
-  void toolregion();
   void zoomin();
   void zoomout();
-  void zoominrect();
-  void notool();
-  void handtool();
-	
+  
 private:
-  QToolBar		*maintoolbar;
-  QToolButton		*but[10];
-  Qt_widget		*widget;
-  int			activebutton;
-  bool			is_active;
-  void			setActiveButton(int i);
-  int			nr_of_buttons;
+  QToolBar		  *maintoolbar;
+  QToolButton	  *but[10];
+  Qt_widget		  *widget;
+  QButtonGroup  *button_group;
+  int			      nr_of_buttons;
 	
-  CGAL::Qt_widget_focus		    zoombut;
+  CGAL::Qt_widget_focus         zoombut;
   CGAL::Qt_widget_zoomrect	    zoomrectbut;
   CGAL::Qt_widget_handtool	    handtoolbut;
 };//end class

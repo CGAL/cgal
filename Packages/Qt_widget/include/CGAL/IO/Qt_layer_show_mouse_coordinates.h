@@ -34,12 +34,12 @@ class Qt_layer_mouse_coordinates : public Qt_widget_layer
 public:
 	
   Qt_layer_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
-  void draw(Qt_widget &widget){};
-  void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
+  void draw(){};
+  void mouseMoveEvent(QMouseEvent *e)
   {
     char xsir[40], ysir[40], final[80];
-    CGAL_CLIB_STD::sprintf(xsir, "%.15f", widget.x_real(e->x()));
-    CGAL_CLIB_STD::sprintf(ysir, "%.15f", widget.y_real(e->y()));
+    CGAL_CLIB_STD::sprintf(xsir, "%.15f", widget->x_real(e->x()));
+    CGAL_CLIB_STD::sprintf(ysir, "%.15f", widget->y_real(e->y()));
     CGAL_CLIB_STD::sprintf(final, "x=%s  y=%s", xsir, ysir);
     qmw.statusBar()->message(final);
   };

@@ -40,7 +40,7 @@ public:
 
   Qt_layer_show_greene_approx(T &p) : polygon(p)
   {};
-  void draw(Qt_widget &widget)
+  void draw()
   {
     if(polygon.size() > 2)
       assert( polygon.is_counterclockwise_oriented());
@@ -58,8 +58,8 @@ public:
     for(p_it = greene_approx_polys.begin(); 
 		p_it != greene_approx_polys.end(); p_it++)
     {
-      widget << CGAL::GREEN; 
-      widget << *p_it;
+      *widget << CGAL::GREEN; 
+      *widget << *p_it;
     }
     
   };

@@ -35,16 +35,7 @@
 
 namespace CGAL {
 
-class Qt_widget_tool;
 class Qt_widget_layer;
-
-typedef 
-struct togglelayer{
-  CGAL::Qt_widget_layer  *layer;
-  bool			active;
-}togglelayer;
-
-
 enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };
 
 class Qt_widget : public QWidget {
@@ -152,25 +143,15 @@ public:
   inline double x_scal() { return xscal; }
   inline double y_scal() { return yscal; }
 
-  // tool system
-  // ~~~~~~~~~~~
-  void	      attach(Qt_widget_tool* tool);
-  inline bool has_tool() const { return _has_tool; };
-  void	      detach_current_tool();
-  
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
   
   //layers
   virtual void redraw();
-  inline
-  void attach(Qt_widget_layer* layer) { add_layer(layer);}
-  // add a layer in the list of displayable layers
-  void add_layer(Qt_widget_layer* s);
-
+  void attach(Qt_widget_layer *layer);
+  
+  
   // remove a layer from the list of displayable scenes
   void detach(Qt_widget_layer* s);
-  void activate(Qt_widget_layer* s);
-  void deactivate(Qt_widget_layer* s);
 
 signals:
   void mousePressed(QMouseEvent *e);
@@ -180,8 +161,6 @@ signals:
   void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
-  void detached_tool();
-  void detached_standard_tool();
 
 protected:
   void paintEvent(QPaintEvent *e);
@@ -198,12 +177,6 @@ protected:
 
 
 private:
-  //Standard toolbar
-  void	      attach_standard(Qt_widget_tool* tool);
-  inline bool has_standard_tool() const { return _has_standard_tool; };
-  void	      detach_current_standard_tool(); 
-
-
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(double xc, double yc);
   double  xcentre, ycentre; //the center of the axex
@@ -227,15 +200,11 @@ private:
   double xscal, yscal; // scalings int/double
   bool constranges; // tell if the ranges should be const
 
-  // current tool
-  bool _has_tool;
-  bool _has_standard_tool;
-  Qt_widget_tool	    *current_tool;
-  Qt_widget_tool	    *temp_pointer;
-
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
-  std::list<togglelayer>	qt_toggle_layers;
+  std::list<Qt_widget_layer*> qt_standard_layers;
+  void attach_standard(Qt_widget_layer *layer);
+  bool is_standard_active();
   friend class Qt_widget_standard_toolbar;
 };//end Qt_widget class
 

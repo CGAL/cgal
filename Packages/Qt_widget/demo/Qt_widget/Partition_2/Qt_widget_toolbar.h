@@ -28,7 +28,6 @@
 #include <CGAL/Partition_traits_2.h>
 #include <list>
 
-
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_simple_polygon.h>
@@ -38,6 +37,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qmainwindow.h>
+#include <qbuttongroup.h>
 
 typedef CGAL::Cartesian<CGAL::MP_Float>                   Rp;
 typedef CGAL::Partition_traits_2<Rp>			  Traits;
@@ -59,20 +59,13 @@ signals:
   void new_object(CGAL::Object);
 
 private slots:
-  void notool();
-  void toggle_button();
-  void get_s_polygon();
-	
 	
 private:
   QToolBar				*maintoolbar;
-  QToolButton				*but[10];
+  QToolButton		  *but[10];
   Qt_widget				*widget;
-  int					activebutton;
-  bool					is_active;
-  void					setActiveButton(int i);
-  void					addToolButton(QToolButton *b);
-  int					nr_of_buttons;
+  QButtonGroup    *button_group;
+  int					    nr_of_buttons;
 	
   CGAL::Qt_widget_get_simple_polygon<Polygon> getsimplebut;
 };//end class

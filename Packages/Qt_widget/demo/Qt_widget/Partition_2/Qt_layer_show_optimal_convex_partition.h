@@ -40,7 +40,7 @@ public:
 
   Qt_layer_show_optimal_convex(T &p) : polygon(p)
   {};
-  void draw(Qt_widget &widget)
+  void draw()
   {
     optimal_convex.clear();
     Traits  partition_traits;
@@ -53,8 +53,8 @@ public:
     std::list<T>::const_iterator p_it;
     for(p_it = optimal_convex.begin(); p_it != optimal_convex.end(); p_it++)
     {
-      widget << CGAL::YELLOW; 
-      widget << *p_it;
+      *widget << CGAL::YELLOW; 
+      *widget << *p_it;
     }
     
   };

@@ -62,72 +62,51 @@ namespace CGAL {
     widget->attach(showOC);
     widget->attach(showPP);
 
-    widget->deactivate(showGA);
-    widget->deactivate(showYM);
-    widget->deactivate(showOC);
+    showGA->deactivate();
+    showYM->deactivate();
+    showOC->deactivate();
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
-    but[0] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
-					"Show Mouse Coordinates", 
-					0, 
-					this, 
-					SLOT(show_coordinates()), 
-					maintoolbar, 
-					"Show Mouse Coordinates");
-		
-    
-    but[1] = new QToolButton(QPixmap( (const char**)show_polygon_xpm ),
-					"Show Polygon", 
-					0, 
-					this, 
-					SLOT(show_polygon()), 
-					maintoolbar, 
-					"Show Polygon");
 
-    
-    but[2] = new QToolButton(QPixmap( (const char**)green_approx_xpm ),
-					"Show Greene Approximation", 
-					0, 
-					this, 
-					SLOT(show_greene_approx()), 
-					maintoolbar, 
-					"Show Greene Approximation");
-
-    but[3] = new QToolButton(QPixmap( (const char**)ymonotone_xpm ),
-					"Show Y Monotone Partition", 
-					0, 
-					this, 
-					SLOT(show_ymonotone()), 
-					maintoolbar, 
-					"Show Y Monotone Partition");
-
-    but[4] = new QToolButton(QPixmap( (const char**)optimal_convex_xpm ),
-					"Show Optimal Convex Partition", 
-					0, 
-					this, 
-					SLOT(show_optimal()), 
-					maintoolbar, 
-					"Show Optimal Convex Partition");
-
-    but[5] = new QToolButton(QPixmap( (const char**)points_xpm ),
-					"Show Polygon Vertices", 
-					0, 
-					this, 
-					SLOT(show_points()), 
-					maintoolbar, 
-					"Show Polygon Vertices");
-
-
+    but[0] = new QToolButton(maintoolbar, "mouse coordinates");
+    but[0]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[1] = new QToolButton(maintoolbar, "show_polygon");
+    but[1]->setPixmap(QPixmap( (const char**)show_polygon_xpm ));
+    but[2] = new QToolButton(maintoolbar, "greene_approx");
+    but[2]->setPixmap(QPixmap( (const char**)greene_approx_xpm ));
+    but[3] = new QToolButton(maintoolbar, "ymonotone");
+    but[3]->setPixmap(QPixmap( (const char**)ymonotone_xpm ));
+    but[4] = new QToolButton(maintoolbar, "optimal_convex");
+    but[4]->setPixmap(QPixmap( (const char**)optimal_convex_xpm ));
+    but[5] = new QToolButton(maintoolbar, "show_points");
+    but[5]->setPixmap(QPixmap( (const char**)points_xpm ));
     
     nr_of_buttons = 6;		
+    button_group = new QButtonGroup(0, "nonexclusive");
+    
     for(int i =0; i<nr_of_buttons; i++){
-	but[i]->setToggleButton(TRUE);
-	but[i]->toggle();
+	    but[i]->setToggleButton(true);
+	    but[i]->toggle();
+      button_group->insert(but[i]);
     }
     but[2]->toggle();
     but[3]->toggle();
-    but[4]->toggle();	    
+    but[4]->toggle();
+    connect(but[0], SIGNAL(stateChanged(int)),
+        showMC, SLOT(stateChanged(int)));
+    connect(but[1], SIGNAL(stateChanged(int)),
+        showP, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)),
+        showGA, SLOT(stateChanged(int)));
+    connect(but[3], SIGNAL(stateChanged(int)),
+        showYM, SLOT(stateChanged(int)));
+    connect(but[4], SIGNAL(stateChanged(int)),
+        showOC, SLOT(stateChanged(int)));
+    connect(but[5], SIGNAL(stateChanged(int)),
+        showPP, SLOT(stateChanged(int)));
+    connect(button_group, SIGNAL(clicked(int)),
+          this, SLOT(redraw_win(int)));
   }	
 
   Layers_toolbar::~Layers_toolbar()
@@ -138,72 +117,12 @@ namespace CGAL {
     delete showYM;
     delete showOC;
     delete showPP;
+    delete button_group;
   };
 
-  void Layers_toolbar::show_coordinates()
-  {
-    if (but[0]->isOn())
-    {
-      widget->activate(showMC);
-      window->statusBar();
-    } else {
-      widget->deactivate(showMC);
-      window->statusBar()->clear();
-    }
-  }
-  
-  void Layers_toolbar::show_polygon()
-  {
-    if (but[1]->isOn())
-    {
-      widget->activate(showP);
-    } else {
-      widget->deactivate(showP);
-    }
+  void Layers_toolbar::redraw_win(int i){
     widget->redraw();
   }
-
-  void Layers_toolbar::show_greene_approx()
-  {
-    if (but[2]->isOn())
-    {
-      widget->activate(showGA);
-    } else {
-      widget->deactivate(showGA);
-    }
-    widget->redraw();
-  }
-  void Layers_toolbar::show_ymonotone()
-  {
-    if (but[3]->isOn())
-    {
-      widget->activate(showYM);
-    } else {
-      widget->deactivate(showYM);
-    }
-    widget->redraw();
-  }
-  void Layers_toolbar::show_optimal()
-  {
-    if (but[4]->isOn())
-    {
-      widget->activate(showOC);
-    } else {
-      widget->deactivate(showOC);
-    }
-    widget->redraw();
-  }
-  void Layers_toolbar::show_points()
-  {
-    if (but[5]->isOn())
-    {
-      widget->activate(showPP);
-    } else {
-      widget->deactivate(showPP);
-    }
-    widget->redraw();
-  }
-
   
 }//end namespace
 

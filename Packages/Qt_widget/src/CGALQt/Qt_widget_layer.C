@@ -23,9 +23,38 @@
 #include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
-
-Qt_widget_layer::~Qt_widget_layer() { emit(dying(this)); };
-
+	void	Qt_widget_layer::attach(Qt_widget *w) {
+				widget=w;
+        if(activate())
+				  emit(activated(this));
+	}
+  void Qt_widget_layer::stateChanged(int i){
+    if(i==2)
+      activate();
+    else if(i == 0)
+      deactivate();
+  }
+  bool Qt_widget_layer::activate(){
+    if(active)
+      return false;
+    else {
+      active = true;
+      activating();
+      emit(activated(this));
+      return true;
+    }
+  }
+  bool Qt_widget_layer::deactivate(){
+    if(!active)
+      return false;
+    else {
+      active = false;
+      deactivating();
+      emit(deactivated(this));
+      return true;
+    }
+      
+  }
 } // namespace CGAL
 
 #include "Qt_widget_layer.moc"
