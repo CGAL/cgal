@@ -1,4 +1,4 @@
-Version 11.28 (05/06/03)
+Version 11.28 (11/06/03)
 - Remove the typedef for Direction, Type Direction is unused
 
 Version 11.27 (05/06/03)
