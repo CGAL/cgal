@@ -28,7 +28,6 @@
 // directed rounding modes.  There is only support for double precision.
 
 // Some useful constants
-
 #define CGAL_IA_MIN_DOUBLE (5e-324) // subnormal
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
@@ -88,7 +87,20 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef __i386__
+#ifdef __STD_IEC_559__
+// This is a version for the upcoming C9X standard, which should be portable.
+// It should work with GNU libc 2.1.
+#define CGAL_IA_SETFPCW(CW) fesetround(CW)
+#define CGAL_IA_GETFPCW(CW) CW = fegetround()
+typedef int FPU_CW_t;
+enum {
+    FPU_cw_near = FE_TONEAREST,
+    FPU_cw_zero = FE_TOWARDZERO,
+    FPU_cw_up   = FE_UPWARD,
+    FPU_cw_down = FE_DOWNWARD
+};
+
+#elif defined __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
@@ -113,8 +125,8 @@ enum {
 };
 
 #elif defined __SUNPRO_CC
-#define CGAL_IA_GETFPCW(CW) CW = fpgetround()
 #define CGAL_IA_SETFPCW(CW) fpsetround(fp_rnd(CW))
+#define CGAL_IA_GETFPCW(CW) CW = fpgetround()
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = FP_RN,
@@ -135,8 +147,8 @@ enum {  //        rounding   | precision  | def.mask
 };
 
 #elif defined __sgi
-#define CGAL_IA_GETFPCW(CW) CW = CGAL_workaround_IRIX_get_FPU_cw()
 #define CGAL_IA_SETFPCW(CW) CGAL_workaround_IRIX_set_FPU_cw(CW)
+#define CGAL_IA_GETFPCW(CW) CW = CGAL_workaround_IRIX_get_FPU_cw()
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = 0x0,
@@ -157,8 +169,8 @@ enum {
 };
 
 #elif defined __osf || defined __osf__  // Not yet supported.
-#define CGAL_IA_GETFPCW(CW) CW = read_rnd()
 #define CGAL_IA_SETFPCW(CW) write_rnd(CW)
+#define CGAL_IA_GETFPCW(CW) CW = read_rnd()
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = FP_RND_RN,
@@ -171,8 +183,7 @@ enum {
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
-enum { //         rounding
-    // I guess it won't work, because enum == int.
+enum { // I fear it won't work because enum == int.
     FPU_cw_near = 0x0800000000000000UL,
     FPU_cw_zero = 0x0000000000000000UL,
     FPU_cw_up   = 0x0c00000000000000UL,
@@ -180,10 +191,6 @@ enum { //         rounding
 };
 
 #elif defined _MSC_VER
-// Found in BIAS:
-// #define CGAL_IA_SETFPCW(CW) _asm {fldcw word ptr ds:OFFSET CW}
-// #define CGAL_IA_GETFPCW(CW) _asm {fstcw word ptr ds:OFFSET CW}
-//
 // Found in http://msdn.microsoft.com/library/sdkdoc/directx/imover_7410.htm :
 #define CGAL_IA_SETFPCW(CW) __asm fldcw CW
 #define CGAL_IA_GETFPCW(CW) __asm fstcw CW
