@@ -5,10 +5,10 @@
   <class name="cls121" key="aggregate dummy PMWX Conics Cartesian Core Expr"/>
   <class name="cls122" key="aggregate dummy PMWX Conics Simple Cartesian Core Expr"/>
 
-  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Gmpq"/>
-  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Gmpq"/>
-  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Gmpq"/>
-  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Gmpq"/>
+  <class name="cls211" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls212" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Lazy Cgal Gmpq"/>
+  <class name="cls213" key="aggregate dummy PMWX Curved Kernel Circles Cartesian Cgal Gmpq"/>
+  <class name="cls214" key="aggregate dummy PMWX Curved Kernel Circles Simple Cartesian Cgal Gmpq"/>
 
   <class name="cls221" key="aggregate dummy PMWX Curved Kernel Conics Cartesian Gmpz"/>
   <class name="cls222" key="aggregate dummy PMWX Curved Kernel Conics Simple Cartesian Gmpz"/>
@@ -55,8 +55,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
-      <benchPmwxLazyGmpqCartesianCkCircle/>
-      <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpqCartesianCkCircle/>
       <benchPmwxGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpzCartesianCkConic/>
@@ -79,8 +79,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
-      <benchPmwxLazyGmpqCartesianCkCircle/>
-      <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpqCartesianCkCircle/>
       <benchPmwxGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpzCartesianCkConic/>
@@ -113,8 +113,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
-      <benchPmwxLazyGmpqCartesianCkCircle/>
-      <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpqCartesianCkCircle/>
       <benchPmwxGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpzCartesianCkConic/>
@@ -127,8 +127,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
-      <benchPmwxLazyGmpqCartesianCkCircle/>
-      <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpqCartesianCkCircle/>
       <benchPmwxGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpzCartesianCkConic/>
@@ -207,8 +207,8 @@
       <benchPmwxLedaRealSimpleCartesianConic/>
       <benchPmwxCgalWindowCoreExprCartesianCoreConic/>
       <benchPmwxCgalWindowCoreExprSimpleCartesianCoreConic/>
-      <benchPmwxLazyGmpqCartesianCkCircle/>
-      <benchPmwxLazyGmpqSimpleCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqCartesianCkCircle/>
+      <benchPmwxLazyCgalGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpqCartesianCkCircle/>
       <benchPmwxGmpqSimpleCartesianCkCircle/>
       <benchPmwxGmpzCartesianCkConic/>

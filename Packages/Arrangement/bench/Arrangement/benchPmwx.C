@@ -80,16 +80,32 @@
 
 // Curved-kernel Conics:
 #elif BENCH_TRAITS == CK_CIRCLE_TRAITS
+
 // This does not belong here
-#ifdef CGAL_USE_GMP
-#include <ECG/Root_of/CGAL_Gmpq.h>
-#endif
-#ifdef CGAL_USE_GMPXX
-#include <ECG/Root_of/gmpxx.h>
-#endif
-#ifdef CGAL_USE_LEDA
+#if BENCH_NT == DOUBLE_NT
+#include <ECG/Root_of/double.h>
+#elif BENCH_NT == LEDA_REAL_NT
 #include <ECG/Root_of/leda_real.h>
+#elif BENCH_NT == QUOTIENT_MP_FLOAT_NT
+#include <ECG/Root_of/CGAL_Quotient.h>
+#elif BENCH_NT == GMPZ_NT
+#include <ECG/Root_of/gmpxx.h>
+#elif BENCH_NT == GMPQ_NT
+#include <ECG/Root_of/gmpxx.h>
+#elif BENCH_NT == CGAL_GMPQ_NT
+#include <ECG/Root_of/CGAL_Gmpq.h>
+#elif BENCH_NT == LAZY_LEDA_RAT_NT
+#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
+#elif BENCH_NT == LAZY_CGAL_GMPQ_NT
+#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
+#include <ECG/Root_of/gmpxx.h>
+#elif BENCH_NT == LAZY_QUOTIENT_MP_FLOAT_NT
+#include <ECG/Root_of/CGAL_Lazy_exact_nt.h>
+#include <ECG/Root_of/CGAL_Quotient.h>
+#elif BENCH_NT == CORE_EXPR_NT
+#include <ECG/Root_of/CORE_Expr.h>
 #endif
+
 #include <ECG/Root_of/Root_of_2.h>
 
 #include <ECG/Circular_kernel.h>

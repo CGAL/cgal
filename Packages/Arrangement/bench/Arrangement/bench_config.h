@@ -18,18 +18,20 @@
 #define CK_CIRCLE_TRAITS                9
 
 #define DOUBLE_NT                       0
-#define GMPZ_NT                         1
-#define LEDA_RAT_NT                     2
-#define QUOTIENT_MP_FLOAT_NT            3
-#define QUOTIENT_GMPZ_NT                4
-#define GMPQ_NT                         5
-#define LAZY_LEDA_RAT_NT                6
-#define LAZY_GMPQ_NT                    7
-#define LAZY_QUOTIENT_MP_FLOAT_NT       8
-#define LEDA_REAL_NT                    9
-#define CORE_EXPR_NT                    10
-#define NIX_LEDA_FIELD_WITH_SQRT_NT     11
-#define NIX_CORE_FIELD_WITH_SQRT_NT     12
+#define MP_FLOAT_NT                     1
+#define GMPZ_NT                         2
+#define LEDA_RAT_NT                     3
+#define QUOTIENT_MP_FLOAT_NT            4
+#define QUOTIENT_CGAL_GMPZ_NT           5
+#define GMPQ_NT                         6
+#define CGAL_GMPQ_NT                    7
+#define LAZY_LEDA_RAT_NT                8
+#define LAZY_CGAL_GMPQ_NT               9
+#define LAZY_QUOTIENT_MP_FLOAT_NT       10
+#define LEDA_REAL_NT                    11
+#define CORE_EXPR_NT                    12
+#define NIX_LEDA_FIELD_WITH_SQRT_NT     13
+#define NIX_CORE_FIELD_WITH_SQRT_NT     14
 
 // Default value based on dependencies:
 #if BENCH_KERNEL == LEDA_KERNEL

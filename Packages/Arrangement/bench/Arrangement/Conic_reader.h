@@ -26,8 +26,17 @@ public:
   typedef typename Curved_k::Linear_kernel      Linear_k;
   typedef typename Curved_k::Circle_2           Circle_2;
   typedef typename Curved_k::Point_2            Point_2;
-  typedef int                                   CfNT;
-
+#if BENCH_NT == LAZY_CGAL_GMPQ_NT
+  typedef CGAL::Gmpq                            CfNT;
+#else
+  typedef typename Linear_k::FT                 CfNT;
+#endif
+#if 0
+  typedef typename Linear_k::RT                 CfRT;
+#else
+  typedef RT                                    CfRT;
+#endif
+  
 #if BENCH_TRAITS == CK_CONIC_TRAITS
   typedef typename Curved_k::Conic_2            Conic_2;  
 #endif
@@ -37,10 +46,16 @@ public:
 
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
   typedef typename Traits::CfNT                 CfNT;
+  typedef typename Traits::CfNT                 CfRT;
 #elif BENCH_TRAITS != EXACUS_CONIC_TRAITS
   typedef typename Traits::Circle_2             Circle_2;
   typedef typename Traits::Segment_2            Segment_2;
   typedef typename Traits::NT                   CfNT;
+#if 0
+  typedef typename Traits::RT                   CfRT;
+#else
+  typedef typename Traits::NT                   CfRT;
+#endif
 #endif
 #endif
   
@@ -88,17 +103,12 @@ public:
     for (int i = 0; i < count; i++) {
       if (read_curve(inp, cv)) {
         ++curves_out = cv;
-#if BENCH_TRAITS != CK_CIRCLE_TRAITS
         CGAL::Bbox_2 curve_bbox = cv.bbox();
         if (i == 0) bbox = curve_bbox;
         else bbox = bbox + curve_bbox;
-#endif
       }
     }
     inp.close();
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS
-    bbox = CGAL::Bbox_2(-10, -10, 10, 10);
-#endif
     return 0;
 #endif
   }
@@ -143,15 +153,19 @@ public:
       //  ( -------- )  + ( -------- )  = 1
       //       a               b
       //
-      str_line >> a >> b >> x0 >> y0;
+      CfRT a_in, b_in, x0_in, y0_in;
+      str_line >> a_in >> b_in >> x0_in >> y0_in;
+      a = a_in;
+      b = b_in;
+      x0 = x0_in;
+      y0 = y0_in;
           
       if (a == b)
       {
         is_circle = true;
-#if BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS
+#if BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
+    BENCH_TRAITS == CK_CIRCLE_TRAITS
         circle = Circle_2 (Point_2 (x0, y0), a*b, CGAL::CLOCKWISE);
-#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
-        circle = Circle_2 (Point_2 (x0, y0), a*b);
 #endif
       }
       else
@@ -213,7 +227,12 @@ public:
       //       a               b
       //
       CfNT a, b, x0, y0;
-      str_line >> a >> b >> x0 >> y0;
+      CfRT a_in, b_in, x0_in, y0_in;
+      str_line >> a_in >> b_in >> x0_in >> y0_in;
+      a = a_in;
+      b = b_in;
+      x0 = x0_in;
+      y0 = y0_in;
           
       CfNT a_sq = a*a;
       CfNT b_sq = b*b;
@@ -239,7 +258,11 @@ public:
       //  4c*(y - y0) = (x - x0)
       //
       CfNT c, x0, y0;
-      str_line >> c >> x0 >> y0;
+      CfRT c_in, x0_in, y0_in;
+      str_line >> c_in >> x0_in >> y0_in;
+      c = c_in;
+      x0 = x0_in;
+      y0 = y0_in;
           
       r = 1;
       s = 0;
@@ -257,7 +280,14 @@ public:
 #else
 
       // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-      str_line >> r >> s >> t >> u >> v >> w;
+      CfRT r_in, s_in, t_in, u_in, v_in, w_in;
+      str_line >> r_in >> s_in >> t_in >> u_in >> v_in >> w_in;
+      r = r_in;
+      s = s_in;
+      t = t_in;
+      u = u_in;
+      v = v_in;
+      w = w_in;
           
       if (type == 'c' || type == 'C')
       {
@@ -286,8 +316,13 @@ public:
       
       // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
       CfNT x1, y1, x2, y2;
-      str_line >> x1 >> y1 >> x2 >> y2;
-          
+      CfRT x1_in, y1_in, x2_in, y2_in;
+      str_line >> x1_in >> y1_in >> x2_in >> y2_in;
+      x1 = x1_in;
+      y1 = y1_in;
+      x2 = x2_in;
+      y2 = y2_in;
+      
       // Create the segment.
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2(x1, y1, x2, y2);
@@ -308,7 +343,14 @@ public:
 #else
       
       // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-      str_line >> r >> s >> t >> u >> v >> w;
+      CfRT r_in, s_in, t_in, u_in, v_in, w_in;
+      str_line >> r_in >> s_in >> t_in >> u_in >> v_in >> w_in;
+      r = r_in;
+      s = s_in;
+      t = t_in;
+      u = u_in;
+      v = v_in;
+      w = w_in;
           
       // Read the approximated source, along with a general conic 
       // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
@@ -316,8 +358,19 @@ public:
       CfNT r1, s1, t1, u1, v1, w1;
       CfNT x1, y1;
           
-      str_line >> x1 >> y1;
-      str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
+      CfRT x1_in, y1_in;
+      str_line >> x1_in >> y1_in;
+      x1 = x1_in;
+      y1 = y1_in;
+      
+      CfRT r1_in, s1_in, t1_in, u1_in, v1_in, w1_in;
+      str_line >> r1_in >> s1_in >> t1_in >> u1_in >> v1_in >> w1_in;
+      r1 = r1_in;
+      s1 = s1_in;
+      t1 = t1_in;
+      u1 = u1_in;
+      v1 = v1_in;
+      w1 = w1_in;
       
       // Read the approximated target, along with a general conic 
       // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
@@ -325,9 +378,20 @@ public:
       CfNT r2, s2, t2, u2, v2, w2;
       CfNT x2, y2;
       
-      str_line >> x2 >> y2;
-      str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
-          
+      CfRT x2_in, y2_in;
+      str_line >> x2_in >> y2_in;
+      x2 = x2_in;
+      y2 = y2_in;
+
+      CfRT r2_in, s2_in, t2_in, u2_in, v2_in, w2_in;
+      str_line >> r2_in >> s2_in >> t2_in >> u2_in >> v2_in >> w2_in;
+      r2 = r2_in;
+      s2 = s2_in;
+      t2 = t2_in;
+      u2 = u2_in;
+      v2 = v2_in;
+      w2 = w2_in;
+      
       // Create the conic arc.
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
       std::cerr << "Not implemented!" << std::endl;
@@ -349,14 +413,14 @@ public:
       return false;
     }
 
-#if BENCH_TRAITS == CK_CIRCLE_TRAITS
-    std::cerr << "Skipping End Points!" << std::endl;
-    return false;
-#else
-    
     // Read the end points of the arc and create it.
     CfNT x1, y1, x2, y2;
-    str_line >> x1 >> y1 >> x2 >> y2;
+    CfRT x1_in, y1_in, x2_in, y2_in;
+    str_line >> x1_in >> y1_in >> x2_in >> y2_in;
+    x1 = x1_in;
+    y1 = y1_in;
+    x2 = x2_in;
+    y2 = y2_in;
       
     Point_2 source (x1, y1);
     Point_2 target (x2, y2);
@@ -364,8 +428,9 @@ public:
     // Create the conic (or circular) arc.
     if (is_circle)
     {
+#if BENCH_TRAITS != CK_CIRCLE_TRAITS
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
-      cv = Curve_2 (x0, y0, a*b, CGAL::CLOCKWISE, source, target);
+      cv = Curve_2 (x0, y0, a, CGAL::CLOCKWISE, source, target);
 #else
       cv = Curve_2 (circle, source, target);
 #endif
@@ -379,10 +444,10 @@ public:
 #else
       cv = Curve_2 (r, s, t, u, v, w, source, target);
 #endif
+#endif
     }
     
     return true;
-#endif
   }
 
   /*! */
