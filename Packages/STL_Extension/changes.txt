@@ -9,9 +9,11 @@
 
 ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
+DOCS: Added Filter_iterator suggested by Sylvain.
 ALL : Added Emptyset_iterator and Oneset_iterator.
 SRC : Combined iterators and iterator adaptors into iterator.h.
 SRC : Fixed a few more sunpro problems.
+TEST: Fixed double -> int conversion warning.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.3
