@@ -63,17 +63,8 @@ struct CGAL_Filtering
   bool operator>=(const Fil& fil) const { return value >= fil.value; }
   bool operator==(const Fil& fil) const { return value == fil.value; }
   bool operator!=(const Fil& fil) const { return value != fil.value; }
-};
 
-
-template <class CT, class ET>
-struct CGAL_Filtering_allow_inexact : public CGAL_Filtering <CT,ET>
-{
-  CGAL_Filtering_allow_inexact () {}
-  CGAL_Filtering_allow_inexact (const int i) : CGAL_Filtering(i)  {}
-  CGAL_Filtering_allow_inexact (const CT ct) : CGAL_Filtering(ct) {}
-
-  typedef CGAL_Filtering_allow_inexact<CT,ET> Fil;
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
   Fil operator+(const Fil& fil) const { return Fil(value + fil.value); }
   Fil operator-(const Fil& fil) const { return Fil(value - fil.value); }
   Fil operator*(const Fil& fil) const { return Fil(value * fil.value); }
@@ -83,6 +74,7 @@ struct CGAL_Filtering_allow_inexact : public CGAL_Filtering <CT,ET>
   Fil& operator-=(const Fil& fil) { value -= fil.value; return *this; }
   Fil& operator*=(const Fil& fil) { value *= fil.value; return *this; }
   Fil& operator/=(const Fil& fil) { value /= fil.value; return *this; }
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
 
@@ -134,11 +126,11 @@ template <class CT, class ET>
 inline CGAL_Number_tag CGAL_number_type_tag(CGAL_Filtering<CT,ET> &fil)
 { return CGAL_number_type_tag(fil.value); }
 
-// Sqrt() is inexact => restricted.
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 template <class CT, class ET>
-inline CGAL_Filtering_allow_inexact<CT,ET> sqrt
-	(const CGAL_Filtering_allow_inexact<CT,ET>& fil)
+inline CGAL_Filtering<CT,ET> sqrt (const CGAL_Filtering<CT,ET>& fil)
 { return sqrt(fil.value); }
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET>
 inline ostream& operator<<(ostream& os, const CGAL_Filtering<CT,ET>& d)
