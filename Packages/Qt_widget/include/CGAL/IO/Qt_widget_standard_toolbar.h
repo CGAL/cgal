@@ -38,9 +38,6 @@
 #include <qtoolbar.h>
 #include <qmainwindow.h>
 
-typedef double Coord_type;
-typedef CGAL::Cartesian<Coord_type>  Rp;
-
 namespace CGAL {
 
 class Standard_toolbar : public QObject
@@ -77,7 +74,7 @@ private:
 	
   CGAL::Qt_widget_zoom		    zoombut;
   CGAL::Qt_widget_zoomrect	    zoomrectbut;
-  CGAL::Qt_widget_handtool<Rp>	    handtoolbut;
+  CGAL::Qt_widget_handtool	    handtoolbut;
 };//end class
 
 };//end namespace

@@ -37,14 +37,9 @@
 
 namespace CGAL {
 
-template <class R>
 class Qt_widget_handtool : public Qt_widget_tool
 {
 public:
-  typedef Point_2<R>		Point;
-  typedef Segment_2<R>		Segment;
-  typedef typename R::FT	FT;
-
   Qt_widget_handtool() : wasrepainted(TRUE), on_first(FALSE){};
 
 private:
@@ -70,11 +65,11 @@ private:
     if(e->button() == CGAL_QT_WINDOW_GET_POINT_BUTTON)		
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y())),
-	xfirst2 = static_cast<FT>(widget->x_real(first_x)),
-	yfirst2 = static_cast<FT>(widget->y_real(first_y));
+      double
+	x=widget->x_real(e->x()),
+	y=widget->y_real(e->y()),
+	xfirst2 = widget->x_real(first_x),
+	yfirst2 = widget->y_real(first_y);
 			
 	double	xmin, xmax, ymin, ymax, distx, disty;
 	if(x < xfirst2) {xmin = x; xmax = xfirst2;}
@@ -94,7 +89,7 @@ private:
     char tempc1[130], tempc2[40];
     if(on_first)
     {
-      double
+      int
 	x = e->x(),
 	y = e->y();
 	RasterOp old = widget->rasterOp();	//save the initial raster mode
@@ -126,7 +121,6 @@ private:
     }
    
   };
-	
 
   void attaching()
   {
@@ -140,8 +134,8 @@ private:
     widget->setCursor(oldcursor);
   };
 
-  double  first_x, first_y;
-  double  x2, y2;
+  int  first_x, first_y;
+  int  x2, y2;
   bool	  wasrepainted;
   bool	  on_first;
 };//end class 

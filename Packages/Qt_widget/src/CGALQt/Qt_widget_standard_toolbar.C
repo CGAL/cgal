@@ -25,7 +25,6 @@
 
 // icons
 #include <CGAL/IO/pixmaps/zoom_in_rect.xpm>
-#include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/zoom_out.xpm>
 #include <CGAL/IO/pixmaps/zoom_in.xpm>
 #include <CGAL/IO/pixmaps/zoom_reg.xpm>
