@@ -1,3 +1,8 @@
+3.22    (13 Sep 2001)
+- added value_type fixes for SUNPRO compiler
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 3   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 3.21    (31 Jul 2001)
 - moved _ref directories up one level and fixed some broken references to
   Polyhedron ref pages
