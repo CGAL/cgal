@@ -11,6 +11,9 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
 %Pm_file_writer
 \begin{ccRefClass}{Pm_drawer<Planar_map, Window>}
 
@@ -66,6 +69,9 @@ Wherever the handles appear in function parameter lists, the appropriate iterato
 {writes all the faces in the range [Faces\_begin, Faces\_end) to the graphic stream.}
 
 \end{ccRefClass} % Pm_file_writer
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

@@ -10,6 +10,8 @@
 
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
 
 %Pm_file_scanner
 \begin{ccRefClass}{Pm_file_scanner<Planar_map>}
@@ -27,6 +29,8 @@ This class is templated with \ccc{Planar map}, and hence the user can work with 
 %etc., that must be defined for any \ccc{Planar map} file scanner class that can be used to parameterize the reading function of \ccc{Planar map}. 
 
 \ccTypes
+
+\ccTwo{Pm_file_scanner<Planar_map>::D_halfedge_bla}{}
 
 \ccNestedType{Traits}{Representation of a bounded curve.}
 \ccNestedType{Point}{A type to hold the location of a vertex in the plane.}
@@ -60,6 +64,9 @@ does not update its halfedge with the curve.}
 \ccMethod{void scan_face (D_face* f);}{scans a face of the \ccc{Dcel} from the input stream.}
 
 \end{ccRefClass} % Pm_file_scanner
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

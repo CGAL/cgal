@@ -11,6 +11,9 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
 %Pm_file_writer
 \begin{ccRefClass}{Pm_file_writer<Planar_map>}
 
@@ -106,6 +109,9 @@ comments are defined only if the comments flag is set to true:
 {writes all the faces in the range [Faces\_begin, Faces\_end) to the output stream.}
 
 \end{ccRefClass} % Pm_file_writer
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

@@ -11,16 +11,21 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
 %File_header
 \begin{ccRefClass}{File_header}
 
 \ccCreationVariable{file_header}
 
 \ccDefinition
-Generally, the \ccRefName \/ class contains configurations the user defines before using the I/O functions.
-These configurations concern the verbose flag, writing a file with or without comments, etc.
-The class is the base class of the classes \ccc{Pm_file_scanner} and \ccc{Pm_file_writer}.
-The list of parameters for \ccRefName\/ is as follows:
+Generally, the \ccRefName \/ class defines and sets parameters that
+should be defined while using the I/O functions.  This configuration
+includes the verbose flag, a flag that controls writing a file with or
+without comments, etc.  The class is the base class of the classes
+\ccc{Pm_file_scanner} and \ccc{Pm_file_writer}.  The list of
+parameters for \ccRefName\/ is as follows:
 
 \begin{itemize}
 \item {\bf verbose } define a verbose format for printing the \ccc{Planar map}. This flag is set by default to false.
@@ -51,52 +56,57 @@ When creating a \ccRefName \/ object, the user sets the parameters as needed.
 {constructs \ccRefName\ with \ccc{v} vertices \ccc{h} halfedges and \ccc{f} faces, the other parameters can also be set by the user, otherwise they are set to their default values.}
 
 \ccConstructor{File_header(const File_header& file_header);}
-{copy constructor.}
+{copy construction.}
 
 \ccModifiers
 
+\ccThree{size_t}{file_header.set_number_of_verticesaaa(size_t n);}{}
+
 \ccMethod{void set_verbose(bool b);}{sets the verbose flag to b.}
-
+\ccGlue
 \ccMethod{void set_ascii(bool b);} {sets the ascii flag to b.}
-
-\ccMethod{void set_no_comments(bool b);} \ccGlue{sets the no\_comments flag to b.}
-
-\ccMethod{void set_index_offset(int i);} \ccGlue{sets index\_offset to i.}
-
-\ccMethod{void set_colors(bool b);} \ccGlue{sets the colors flag to b.}
-
-\ccMethod{void set_dimension(int i);} \ccGlue{sets the dimension to i.}
-
-\ccMethod{void set_number_of_vertices(size_t n);} \ccGlue{sets the number of vertices to n.}
-
-\ccMethod{void set_number_of_halfedges(size_t n);} \ccGlue{sets the number of halfedges to n.}
-
-\ccMethod{void set_number_of_faces(size_t n);} \ccGlue{sets the number of faces to n.}
+\ccGlue
+\ccMethod{void set_no_comments(bool b);}{sets the no\_comments flag to b.}
+\ccGlue
+\ccMethod{void set_index_offset(int i);}{sets index\_offset to i.}
+\ccGlue
+\ccMethod{void set_colors(bool b);}{sets the colors flag to b.}
+\ccGlue
+\ccMethod{void set_dimension(int i);}{sets the dimension to i.}
+\ccGlue
+\ccMethod{void set_number_of_vertices(size_t n);}{sets the number of vertices to n.}
+\ccGlue
+\ccMethod{void set_number_of_halfedges(size_t n);}{sets the number of halfedges to n.}
+\ccGlue
+\ccMethod{void set_number_of_faces(size_t n);}{sets the number of faces to n.}
 
 \ccAccessFunctions
 %\ccGlueBegin
-\ccMethod{bool verbose();} \ccGlue{returns true if the format is verbose.}
-
-\ccMethod{bool ascii();} \ccGlue{returns true if the format is given by ascii.}
-
-\ccMethod{bool no_comments();} \ccGlue{returns true if the format is defined without comments.}
-
-\ccMethod{bool comments();} \ccGlue{returns true if the format is defined with comments.}
-
-\ccMethod{int index_offset();} \ccGlue{returns the offset defined for the indices in the format.}
-
-\ccMethod{bool has_colors();} \ccGlue{returns true if the format presents the \ccc{Planar map} by colors.}
-
-\ccMethod{int dimension();} \ccGlue{returns the dimension defined by the format.}
-
-\ccMethod{size_t number_of_vertices();} \ccGlue{returns the number of vertices defined by the format.}
-
-\ccMethod{size_t number_of_halfedges();} \ccGlue{returns the number of halfedges defined by the format.}
-
-\ccMethod{size_t number_of_faces();} \ccGlue{returns the number of faces defined by the format.}
+\ccMethod{bool verbose();}{returns true if the format is verbose.}
+\ccGlue
+\ccMethod{bool ascii();}{returns true if the format is given by ascii.}
+\ccGlue
+\ccMethod{bool no_comments();}{returns true if the format is defined without comments.}
+\ccGlue
+\ccMethod{bool comments();}{returns true if the format is defined with comments.}
+\ccGlue
+\ccMethod{int index_offset();}{returns the offset defined for the indices in the format.}
+\ccGlue
+\ccMethod{bool has_colors();}{returns true if the format presents the \ccc{Planar map} by colors.}
+\ccGlue
+\ccMethod{int dimension();}{returns the dimension defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_vertices();}{returns the number of vertices defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_halfedges();}{returns the number of halfedges defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_faces();}{returns the number of faces defined by the format.}
 %\ccGlueEnd
 
 \end{ccRefClass} % File_header
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
