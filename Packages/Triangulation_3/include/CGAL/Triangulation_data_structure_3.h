@@ -718,8 +718,6 @@ public:
     // v->set_cell( create_star( region, v, c, li ) );
     set<void*, less<void*> >::const_iterator it;
     for( it = region.begin(); it != region.end(); ++it) {
-      cerr << "delete : " << endl;
-      pp_tds_cell((Cell*)*it);
       delete( (Cell *) *it);
     }
   }

@@ -103,9 +103,8 @@ public:
   }
 #endif // ITERATOR_H
   
-  int
-  insert(Point* first,
-         Point* last)
+  int insert(Point* first,
+	     Point* last)
   {
     int n = number_of_vertices();
     while(first != last){
@@ -116,11 +115,10 @@ public:
   }
 #endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
 
-  Vertex_handle
-  insert(const Point & p)
+  Vertex_handle insert(const Point & p)
   {
     switch (dimension()) {
-    case 3 :
+    case 3:
       {
 	Locate_type lt;
 	int li, lj;
@@ -140,22 +138,16 @@ public:
 	    int ineighbor;
 	    find_conflicts(conflicts,p,c,aconflict,ineighbor);
 	    tds().star_region(conflicts,&(*v),&(*aconflict),ineighbor);
-// 	    v->set_cell( tds().star_tetra(conflicts,v,aconflict,ineighbor) );
-
-// 	    set<void*, less<void*> >::const_iterator it;
-// 	    for(it=conflicts.begin(); it!=conflicts.end(); ++it) {
-// 	      Delete( (Cell_handle) *it );
-// 	    }
 	    return v;
 	  }
 	case VERTEX:
           return c->vertex(li);
-	default:
+	default :
           CGAL_triangulation_assertion(false);  // impossible
 	}
 	break;
       }
-    case 2 :
+    case 2:
       {
 	// TO BE DONE
 	return CGAL_Triangulation_3<Gt,Tds>::insert(p);
@@ -180,8 +172,6 @@ private:
 	return;   // c was already found
       }
     (void) conflicts.insert( (void *) &(*c) );
-    cerr << "conflit :" << endl;
-    pp_cell(c);
 
     for ( int j=0; j<4; j++ ) {
       if ( side_of_sphere( c->neighbor(j),p ) 
@@ -240,7 +230,7 @@ private:
 		   c->vertex(i2)->point(),
 		   p ) ); 
       }
-    default:
+    default :
       // impossible
       CGAL_triangulation_assertion(false);
       return CGAL_ON_UNBOUNDED_SIDE;
