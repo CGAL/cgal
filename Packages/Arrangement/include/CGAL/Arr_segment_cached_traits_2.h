@@ -13,14 +13,14 @@
 //
 // file          : include/CGAL/Arr_segment_cached_traits_2.h
 // package       : Planar_map (5.87)
-// maintainer    : Efi Fogel         <efif@math.tau.ac.il>
+// maintainer    : Efi Fogel         <efif@post.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
 // author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
 //
 // Chapter       : 
 // ======================================================================
@@ -357,8 +357,8 @@ public:
    * \param cv The curve.
    * \param p The point.
    * \pre p is in the x-range of cv.
-   * \return SMALLER if cv(x(p)) < y(p);
-   *         LARGER if cv(x(p)) > y(p);
+   * \return SMALLER if y(p) < cv(x(p)), that is the point is below the curve;
+   *         LARGER if y(p) > cv(x(p)), that is the point is above the curve;
    *         or else (if p is on the curve) EQUAL.
    */
   Comparison_result curve_compare_y_at_x(const Point_2 & p,
@@ -443,12 +443,13 @@ public:
     return (true);
   }
   
-  /*! Cut the given curve into x-monotone subcurves and insert them to the
+  /*! 
+   * Cut the given curve into x-monotone subcurves and insert them to the
    * given output iterator. While segments are x_monotone, still need to pass
    * them out.
-   * \param cv the curve.
-   * \param o the output iterator
-   * \return the past-the-end iterator
+   * \param cv The curve.
+   * \param o The output iterator
+   * \return The past-the-end iterator
    */
   template<class OutputIterator>
   OutputIterator curve_make_x_monotone(const Curve_2& cv,
@@ -851,7 +852,7 @@ class Segment_cached_2 :
   /*!
    * Create a bounding box for the segment.
    */
-  Bbox_2 bbox()
+  Bbox_2 bbox() const
   {
     Segment_2 seg(ps, pt);
     return (seg.bbox());
