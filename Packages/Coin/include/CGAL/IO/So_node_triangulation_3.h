@@ -260,7 +260,7 @@ protected:
   virtual void  computeBBox(SoAction *action,
     SbBox3f &box, SbVec3f &center){
     Finite_vertices_iterator vit;
-    Traits::FT xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
+    typename Traits::FT xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
     for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit) {
       if((*vit).point().x() < xmin)
         xmin = (*vit).point().x();
