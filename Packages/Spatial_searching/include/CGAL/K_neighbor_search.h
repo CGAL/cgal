@@ -77,7 +77,7 @@ private:
   int max_k;
   int actual_k;
   
-  Distance* distance_instance;
+  Distance distance_instance;
   
   inline bool branch(FT distance) {
     if (actual_k<max_k) return true;
@@ -138,12 +138,11 @@ public:
     K_neighbor_search(Tree& tree, const Query_item& q, 
 			    int k=1, FT Eps=FT(0.0), 
 			    bool Search_nearest=true,
-			    const Distance& d=Distance()) {
-
-	distance_instance=new Distance(d);
+			    const Distance& d=Distance())
+: distance_instance(d) {
 
 	multiplication_factor=
-	distance_instance->transformed_distance(FT(1.0)+Eps);
+	distance_instance.transformed_distance(FT(1.0)+Eps);
         
 	max_k=k;
 	actual_k=0;
@@ -178,7 +177,6 @@ public:
     // destructor
     ~K_neighbor_search() { 
 		l.clear();  
-		delete distance_instance;
    };
 
     private:
@@ -203,14 +201,12 @@ public:
                         if (search_nearest) { 
 
                         	distance_to_lower_half = 
-                        	distance_instance -> 
-				min_distance_to_rectangle(query_object, 
-							  r_lower);
+				  distance_instance. min_distance_to_rectangle(query_object, 
+									       r_lower);
 				
                         	distance_to_upper_half = 
-                        	distance_instance -> 
-				min_distance_to_rectangle(query_object, 
-							  r_upper);
+                        	distance_instance.min_distance_to_rectangle(query_object, 
+									    r_upper);
 			
 
 			} 
@@ -218,14 +214,12 @@ public:
 			{ 
 
                         	distance_to_lower_half = 
-                        	distance_instance -> 
-				max_distance_to_rectangle(query_object, 
-							  r_lower);
+                        	distance_instance.max_distance_to_rectangle(query_object, 
+									    r_lower);
 
                         	distance_to_upper_half = 
-                        	distance_instance -> 
-				max_distance_to_rectangle(query_object, 
-							  r_upper);
+                        	distance_instance.max_distance_to_rectangle(query_object, 
+									    r_upper);
 
 			}
  
@@ -257,8 +251,7 @@ public:
                   for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
 			FT distance_to_query_object=
-                        distance_instance->
-                        transformed_distance(query_object,**it);
+                        distance_instance.transformed_distance(query_object,**it);
                         insert(*it,distance_to_query_object);
                   }
 		}
