@@ -1,6 +1,6 @@
 % begin cgal manual page
 
-\begin{ccRefClass}{Sphere_d<RT>}\ccCreationVariable{S}
+\begin{ccRefClass}{Sphere_d<R>}\ccCreationVariable{S}
 
 \ccDefinition
 
@@ -40,13 +40,13 @@ to the orientation of the defining points, i.e., \ccc{orientation(A)}.
 
 \ccCreation
 
-\ccConstructor{Sphere_d<RT>(int d = 0)}{introduces a variable \ccc{S} of type \ccc{Sphere_d<RT>}. \ccc{S}
+\ccConstructor{Sphere_d<R>(int d = 0)}{introduces a variable \ccc{S} of type \ccc{Sphere_d<R>}. \ccc{S}
 is initialized to the empty sphere centered at the origin of
 $d$-dimensional space.  
 }
 
 \ccConstructor{template <class ForwardIterator>
-Sphere_d<RT>(int d, ForwardIterator first, ForwardIterator last)}{introduces a variable \ccc{S} of type \ccc{Sphere_d<RT>}. \ccc{S} is
+Sphere_d<R>(int d, ForwardIterator first, ForwardIterator last)}{introduces a variable \ccc{S} of type \ccc{Sphere_d<R>}. \ccc{S} is
 initialized to the sphere through the points in \ccc{A = set [first,last)}. 
 \ccPrecond $A$ consists of $d+1$ $d$-dimensional points. 
 }
