@@ -25,6 +25,7 @@ int main(int, char*)
 #include <CGAL/Constrained_triangulation_2.h>
 
 #include <CGAL/IO/Qt_Window.h>
+#include <CGAL/IO/Qt_Window_Get_point.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -127,6 +128,10 @@ class MyWindow : public QMainWindow
 public:
   MyWindow(int x, int y): win(this) {
     setCentralWidget(&win);
+    point_factory = new CGAL::Qt_widget_get_point<Rep>();    
+    connect(point_factory, SIGNAL(new_object(CGAL::Object)), this,
+	    SLOT(new_point(CGAL::Object)));
+    win << point_factory;
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
     connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
@@ -157,7 +162,10 @@ public:
     statusBar()->message("Enter points with the left button");
   };
 
-  ~MyWindow() {};
+  ~MyWindow()
+  {
+    delete(point_factory);
+  };
 public slots:
 
   void redrawWin()
@@ -172,9 +180,17 @@ public slots:
   void mousePressedOnWin(QMouseEvent* e)
   {
     statusBar()->message("Terminate with right button");
-    if(e->button() == Qt::LeftButton)
+    if(e->button() == Qt::RightButton)
       {
-	Point p(win.x_real(e->x()),win.y_real(e->y()));
+	qApp->quit();
+      }
+  };
+
+  void new_point(CGAL::Object obj)
+  {
+    Point p;
+    if (CGAL::assign(p,obj))
+      {
 	win.clear();
 	win.lock();
 	win << CGAL::BLUE <<ct;
@@ -183,11 +199,8 @@ public slots:
 	win << p ;
 	win.unlock();
       }
-    else if(e->button() == Qt::RightButton)
-      {
-	qApp->quit();
-      }
   };
+
 private slots:
   void about()
   {
@@ -219,6 +232,7 @@ private:
   };
 
   CGAL::Qt_widget win;
+  CGAL::Qt_widget_tool* point_factory;
   std::list<Constraint> lc;
   Constrained_triangulation ct;
 };

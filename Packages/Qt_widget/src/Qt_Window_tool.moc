@@ -1,7 +1,7 @@
 /****************************************************************************
 ** CGAL::Qt_widget_tool meta object code from reading C++ file 'Qt_Window_tool.h'
 **
-** Created: Mon Jun 25 15:15:09 2001
+** Created: Mon Jun 25 17:31:03 2001
 **      by: The Qt MOC ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -57,12 +57,12 @@ QMetaObject* CGAL::Qt_widget_tool::staticMetaObject()
 #ifndef QT_NO_PROPERTIES
 #endif // QT_NO_PROPERTIES
     QMetaData::Access *slot_tbl_access = 0;
-    typedef void (CGAL::Qt_widget_tool::*m2_t0)(Object);
-    typedef void (QObject::*om2_t0)(Object);
+    typedef void (CGAL::Qt_widget_tool::*m2_t0)(CGAL::Object);
+    typedef void (QObject::*om2_t0)(CGAL::Object);
     m2_t0 v2_0 = &CGAL::Qt_widget_tool::new_object;
     om2_t0 ov2_0 = (om2_t0)v2_0;
     QMetaData *signal_tbl = QMetaObject::new_metadata(1);
-    signal_tbl[0].name = "new_object(Object)";
+    signal_tbl[0].name = "new_object(CGAL::Object)";
     signal_tbl[0].ptr = (QMember)ov2_0;
     metaObj = QMetaObject::new_metaobject(
 	"CGAL::Qt_widget_tool", "QObject",
@@ -83,14 +83,14 @@ QMetaObject* CGAL::Qt_widget_tool::staticMetaObject()
 #include <qsignalslotimp.h>
 
 // SIGNAL new_object
-void CGAL::Qt_widget_tool::new_object( Object t0 )
+void CGAL::Qt_widget_tool::new_object( CGAL::Object t0 )
 {
-    // No builtin function for signal parameter type Object
-    QConnectionList *clist = receivers("new_object(Object)");
+    // No builtin function for signal parameter type CGAL::Object
+    QConnectionList *clist = receivers("new_object(CGAL::Object)");
     if ( !clist || signalsBlocked() )
 	return;
     typedef void (QObject::*RT0)();
-    typedef void (QObject::*RT1)(Object);
+    typedef void (QObject::*RT1)(CGAL::Object);
     RT0 r0;
     RT1 r1;
     QConnectionListIt it(*clist);

@@ -54,13 +54,12 @@ public:
   virtual void leaveEvent(QEvent *) {};
 
 signals:
-  void new_object(Object);
+  void new_object(CGAL::Object);
 
 protected:
   virtual void attaching()=0;
   virtual void detaching()=0;
 
-private:
   Qt_widget *widget;
 };
 

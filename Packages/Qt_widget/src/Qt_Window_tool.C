@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_Window.C
+// file          : src/Qt_Window_tool.C
 // package       : QT_window
 // author(s)     : Laurent Rineau
 // release       : 
