@@ -1,3 +1,6 @@
+2.8.23 (20 March 2002)
+- changes in PS - support (support of leda namespace)
+
 2.8.22 (12 Feb 2002)
 - Put cgal_logo within namespace CGAL.
 

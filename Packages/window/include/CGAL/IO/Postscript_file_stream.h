@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // 
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
 // 
-// file          : CGAL/IO/Postscript_file_stream.h
-// package       : window
+// file          : include/CGAL/IO/Postscript_file_stream.h
+// package       : window (2.8.22)
+// maintainer    : Susan Hert <hert@mpi-sb.mpg.de>
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -25,6 +26,7 @@
 #ifndef CGAL_POSTSCRIPT_FILE_STREAM_H
 #define CGAL_POSTSCRIPT_FILE_STREAM_H
 
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/IO/Color.h>
 #ifdef LEDA_PS_FILE_H
 # error Internal CGAL error: <LEDA/ps_file.h> should not have been included yet
@@ -56,7 +58,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-typedef ::ps_file   leda_ps_file;
+typedef CGAL_LEDA_SCOPE::ps_file   leda_ps_file;
 
 class Postscript_file_stream : public leda_ps_file
 {
@@ -92,7 +94,7 @@ Postscript_file_stream::change_rgb(const Color& c)
 inline
 bool
 Postscript_file_stream::is_in_colormode()
-{ return (outputmode==colored_mode); }
+{ return (outputmode== CGAL_LEDA_SCOPE::colored_mode); }
 
 
 inline
