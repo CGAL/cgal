@@ -40,11 +40,6 @@
 #include <CGAL/Apollonius_graph_constructions_ftC2.h>
 
 
-#include <CGAL/Kernel_traits.h>
-
-#include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
-
-
 
 CGAL_BEGIN_NAMESPACE
 

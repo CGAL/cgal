@@ -50,7 +50,7 @@ public:
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 
     but[0] = new QToolButton(QPixmap( (const char**)points_small_xpm ),
-			     "Show weighted points", 
+			     "Show sites", 
 			     0, 
 			     this, 
 			     SLOT(show_sites()), 
@@ -92,20 +92,20 @@ public:
     
 #if 0
     but[5] = new QToolButton(QPixmap( (const char**)removecircle_xpm ),
-			     "Remove weighted point", 
+			     "Remove site", 
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
 			     maintoolbar, 
-			     "Remove weighted point");
+			     "Remove site");
 #else
     but[5] = new QToolButton(QPixmap( (const char**)notool_xpm ),
-			     "Remove weighted point", 
+			     "Remove site", 
 			     0, 
 			     this, 
 			     SLOT(remove_mode()), 
 			     maintoolbar, 
-			     "Remove weighted point");
+			     "Remove site");
 #endif
     showDG->deactivate();
 

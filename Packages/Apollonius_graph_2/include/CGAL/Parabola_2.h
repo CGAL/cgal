@@ -29,9 +29,6 @@
 
 #include <CGAL/determinant.h>
 
-#include <CGAL/Apollonius_site_2.h>
-#include <CGAL/Kernel_traits.h>
-
 #ifdef CGAL_USE_QT
 #include <CGAL/IO/Qt_widget.h>
 #endif
@@ -205,7 +202,8 @@ protected:
 public:
   Parabola_2() {}
 
-  Parabola_2(const Site_2 &p, const Line_2 &l1)
+  template<class ApolloniusSite>
+  Parabola_2(const ApolloniusSite &p, const Line_2 &l1)
   {
     this->c = p.point();
 
@@ -219,6 +217,19 @@ public:
     this->l = Line_2(-l1.a(), -l1.b(), -l1.c() + r);
     compute_origin();
   }
+
+  Parabola_2(const Point_2 &p, const Line_2 &l)
+  {
+    this->c = p;
+
+    if ( l.has_on_positive_side(p) ) {
+      this->l = l;
+    } else {
+      this->l = l.opposite();
+    }
+    compute_origin();
+  }
+
 
   Oriented_side
   side_of_parabola(const Point_2& p) const

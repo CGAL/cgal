@@ -58,7 +58,7 @@ public:
   typedef typename AGDS::Face_handle    Face_handle;
   typedef typename AGDS::Edge           Edge;
 
-  // Borland requires this.
+
   template <typename AGDS2>
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<AGDS2>::Other  Vb2;

@@ -51,9 +51,18 @@ protected:
 public:
   Parabola_segment_2() : Parabola_2< Gt >() {}
 
-  Parabola_segment_2(const Site_2 &p, const Line_2 &l,
-		     const Point_2 &p1, const Point_2 &p2) :
-    Parabola_2< Gt >(p, l)
+  template<class ApolloniusSite>
+  Parabola_segment_2(const ApolloniusSite &p, const Line_2 &l,
+		     const Point_2 &p1, const Point_2 &p2)
+    : Parabola_2< Gt >(p, l)
+  {
+    this->p1 = p1;
+    this->p2 = p2;
+  }
+
+  Parabola_segment_2(const Point_2 &p, const Line_2 &l,
+		     const Point_2 &p1, const Point_2 &p2)
+    : Parabola_2< Gt >(p, l)
   {
     this->p1 = p1;
     this->p2 = p2;

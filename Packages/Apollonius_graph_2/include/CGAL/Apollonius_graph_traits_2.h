@@ -27,10 +27,6 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 
-#include <CGAL/Parabola_segment_2.h>
-#include <CGAL/Hyperbola_2.h>
-#include <CGAL/Hyperbola_segment_2.h>
-#include <CGAL/Hyperbola_ray_2.h>
 
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Filtered_predicate.h>
@@ -41,12 +37,10 @@
 
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/Apollonius_graph_ftC2.h>
-#include <CGAL/Apollonius_graph_constructions_ftC2.h>
 #endif
 
 #if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/predicates/Apollonius_graph_rtH2.h>
-#include <CGAL/Apollonius_graph_constructions_rtH2.h>
 #endif
 
 
@@ -54,7 +48,6 @@
 #include <CGAL/Number_type_traits.h>
 
 #include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
-#include <CGAL/Apollonius_graph_constructions_C2.h>
 
 
 
