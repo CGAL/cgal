@@ -40,7 +40,7 @@ resulting hull is a segment or a polyhedron.
 \ccIncludeExampleCode{Convex_hull_3/quickhull_3_ex.C}
 
 
-\section{Example of Incremental Construction}
+\section{Incremental  Convex Hull CConstruction}
 \ccIndexSubitem{convex hull, 3D}{incremental}
 
 The function \ccc{convex_hull_incremental_3} %
@@ -65,9 +65,11 @@ you can instantiate the class \ccc{CGAL::Convex_hull_d<K>} with the adapter
 traits class \ccc{CGAL::Convex_hull_d_traits_3<K>}, as shown in the following
 example.
 
+\subsection{Example}
+
 \ccIncludeExampleCode{Convex_hull_3/incremental_hull_3_demo.C}
 
-\section{Example of Dynamic Construction}
+\section{Dynamic  Convex Hull CConstruction}
 \ccIndexSubitem{convex hull, 3D}{dynamic}
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
@@ -83,6 +85,7 @@ remaining on the hull are determined.  Notice that the vertices incident to the
 infinite vertex of the triangulation are on the convex hull but it may be that
 not all of them are vertices of the hull.
 
+\subsection{Example}
 \ccIncludeExampleCode{Convex_hull_3/dynamic_hull_3_ex.C}
 
 
