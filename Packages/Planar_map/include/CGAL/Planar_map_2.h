@@ -1066,6 +1066,7 @@ insert_in_face_interior(
 /*!
  */
 template < class Dcel, class Traits >
+inline
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_from_vertex(const typename Planar_map_2<Dcel, Traits>::X_curve_2 & cv,

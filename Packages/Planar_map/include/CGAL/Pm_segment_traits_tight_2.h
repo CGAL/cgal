@@ -11,7 +11,7 @@
 // release       : $$
 // release_date  : $$
 //
-// file          : include/CGAL/Pm_segment_traits_fast_2.h
+// file          : include/CGAL/Pm_segment_traits_tight_2.h
 // package       : Planar_map (5.87)
 // maintainer    : Eyal Flato        <flato@math.tau.ac.il>
 // source        : 
@@ -37,7 +37,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel_>
-class Pm_segment_traits_fast_2 : public Kernel_
+class Pm_segment_traits_tight_2 : public Kernel_
 {
 public:
   typedef Kernel_                         Kernel;
@@ -77,7 +77,7 @@ protected:
 
 public:
   // Creation
-  Pm_segment_traits_fast_2() {}
+  Pm_segment_traits_tight_2() {}
 
   // Operations
   // ----------
