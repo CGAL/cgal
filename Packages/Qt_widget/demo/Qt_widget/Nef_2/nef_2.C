@@ -1,22 +1,45 @@
 // ============================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
+
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Every use of CGAL requires a license. 
 //
-// ----------------------------------------------------------------------------
+// Academic research and teaching license
+// - For academic research and teaching purposes, permission to use and copy
+//   the software and its documentation is hereby granted free of charge,
+//   provided that it is not a component of a commercial product, and this
+//   notice appears in all copies of the software and related documentation. 
 //
-// file          : demo/Qt_widget/Max_k-gon/max_k-gon.C
+// Commercial licenses
+// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+//   availability.
+//
+// The CGAL Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).
+//
+// ----------------------------------------------------------------------
+//
+// file          : demo/Qt_widget/Nef_2/nef_2.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// release       : CGAL-2.4
+// release_date  : 2002, May 16
 //
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+// coordinator   : Laurent Rineau
 //
-// ============================================================================
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+// ======================================================================
 
 
 // if QT is not installed, a message will be issued in runtime.
@@ -40,6 +63,15 @@ int main(int, char*)
 #include <set>
 #include <list>
 
+#include "cgal_types.h"
+#include "nef_2.h"
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+#include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <CGAL/IO/Qt_widget_Nef_2.h>
+#include "Qt_widget_toolbar.h"
+
 #include <qplatinumstyle.h>
 #include <qapplication.h>
 #include <qmainwindow.h>
@@ -54,38 +86,13 @@ int main(int, char*)
 #include <qtimer.h>
 
 
-
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/Filtered_extended_homogeneous.h>
-#include <CGAL/Nef_polyhedron_2.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/Nef_2/PM_visualizor.h>
-
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_Polygon_2.h>
-#include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_layer.h>
-#include <CGAL/IO/Qt_widget_Nef_2.h>
-
-typedef double                      Coord_type;
-typedef CGAL::Cartesian<Coord_type> Rep;
-
-typedef CGAL::Gmpz RT;
-typedef CGAL::Filtered_extended_homogeneous<RT> Extended_kernel;
-typedef CGAL::Nef_polyhedron_2<Extended_kernel> Nef_polyhedron;
-typedef Nef_polyhedron::Point Point;
-typedef Nef_polyhedron::Line Line;
-
-
 const QString my_title_string("Nef_2 Demo with"
 			      " CGAL Qt_widget");
 
 //global flags and variables
 int current_state;
-std::list<Point>	  list_of_points;
-Nef_polyhedron N1(Nef_polyhedron::COMPLETE);
+Nef_polyhedron Nef_visible(Nef_polyhedron::EMPTY);
+Nef_polyhedron Nef_visible2(Nef_polyhedron::EMPTY);
 
 
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
@@ -97,7 +104,11 @@ public:
 
   void draw()
   {
-    *widget << N1;
+    widget->setRasterOp(XorROP);
+	  *widget << CGAL::FillColor(CGAL::GRAY) << CGAL::WHITE;
+    *widget << Nef_visible;
+    *widget << CGAL::FillColor(CGAL::RED) << CGAL::GREEN;
+    *widget << Nef_visible2;
   };	
   
 };//end class 
@@ -122,6 +133,9 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
+    file->insertItem("Load Nef_2", this, SLOT(load_nef()), CTRL+Key_L);
+    file->insertItem("Save Nef_2", this, SLOT(save_nef()), CTRL+Key_S);
+    file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
@@ -140,30 +154,21 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    //setUsesBigPixmaps(TRUE);
-    //newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
+    newtoolbar = new CGAL::Tools_toolbar(widget, this);	
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-    //this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
+    Line l1(Point(0, 0), Point(0, 2));
+    Nef_polyhedron N1(l1, Nef_polyhedron::INCLUDED);
+    Nef_visible = N1;
 
+    Line l2(Point(0, 0), Point(2, 0));
+    Nef_polyhedron N2(l2, Nef_polyhedron::INCLUDED);
+    Nef_visible2 = N2;
 
-    //Nef_polyhedron
-    Line l(2,4,2);
-    Nef_polyhedron N2(l, Nef_polyhedron::INCLUDED);
-    Nef_polyhedron N3 = N2.complement();
-    CGAL_assertion(N1 == N2.join(N3));
-
-    Point p1(0, 0), p2(10, 10), p3(-20, 15);
-    Point triangle[3] = {p1, p2, p3};
-    Nef_polyhedron N4(triangle, triangle + 3);
-    Nef_polyhedron N5 = N2.intersection(N4);
-    CGAL_assertion(N5 <= N2 && N5 <= N4);
-
-
-
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
     widget->show();
@@ -192,27 +197,83 @@ public slots:
   void new_instance()
   {
     widget->lock();
-    list_of_points.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
 			// set the Visible Area to the Interval
+	Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
+	Nef_visible = N_temp;
     widget->unlock();
     something_changed();
   }
 
+
+  void load_nef()
+	{
+		QString s( QFileDialog::getOpenFileName( QString::null,
+		    "CGAL files (*.cgal)", this ) );
+		if ( s.isEmpty() )
+			return;
+		std::ifstream in(s);
+		CGAL::set_ascii_mode(in);
+		
+		Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
+		Nef_visible = N_temp;
+		in >> Nef_visible;
+		something_changed();
+	}
+
+  void save_nef()
+	{
+		QString fileName = 
+		QFileDialog::getSaveFileName( "nef_2.cgal", 
+				  "Cgal files (*.cgal)", this );
+		if ( !fileName.isNull() ) {
+			// got a file name
+			std::ofstream out(fileName);
+			CGAL::set_ascii_mode(out);
+			out << Nef_visible << std::endl;    
+		}
+	}//end save_nef()
+
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
-    if(CGAL::assign(p,obj)) {
-      list_of_points.push_back(p);
+    Cartesian_point_2   p;
+    Cartesian_polygon_2 poly;
+    if(CGAL::assign(p, obj)) {
+      CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(p.x());
+      CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(p.y());
+      RT wsx = wsxq.numerator() * wsyq.denominator(); 
+      RT wsy = wsyq.numerator() * wsxq.denominator(); 
+      RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+      Point p1(wsx, wsy, wsh);
+      Point pt[1] = {p1};
+      Nef_polyhedron Nt(pt, pt+1);
+      Nef_visible = Nef_visible + Nt;
       something_changed();
+    } else if(CGAL::assign(poly, obj)){
+      Vertex_iterator it = poly.vertices_begin();
+      std::list<Point> l_of_p;
+      while(it != poly.vertices_end()){
+        double xp = (*it).x();
+        double yp = (*it).y();
+        CGAL::Quotient<RT> wsxq = double_to_quotient<RT>(xp);
+        CGAL::Quotient<RT> wsyq = double_to_quotient<RT>(yp);
+        RT wsx = wsxq.numerator() * wsyq.denominator(); 
+        RT wsy = wsyq.numerator() * wsxq.denominator(); 
+        RT wsh  = wsxq.denominator() * wsyq.denominator(); 
+        Point p1(wsx, wsy, wsh);
+        l_of_p.push_back(p1);
+        it++;
+      }
+      Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(), Nef_polyhedron::INCLUDED);
+      Nef_visible = Nef_visible + Nt;
     }
   };
 
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Maximum inscribed k-gon,\n"
+		"This is a demo for Nef_2,\n"
   		"Copyright CGAL @2002");
   };
 
@@ -237,28 +298,12 @@ private slots:
     }
   }	
 
-  void gen_points()
-  {
-    widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-		// set the Visible Area to the Interval
-
-    // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
-    for(int count=0; count<200; count++) {
-      list_of_points.push_back(*g++);
-    }
-    something_changed();
-  }
-	
-	
-
 private:
-  CGAL::Qt_widget	  *widget;		
-  //  CGAL::Tools_toolbar	  *newtoolbar;
+  CGAL::Qt_widget			*widget;		
+  CGAL::Tools_toolbar		*newtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  int			  old_state;  	
-  Qt_layer_show_ch	  testlayer;
+  int						old_state;  	
+  Qt_layer_show_ch			testlayer;
 
 };
 
