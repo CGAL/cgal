@@ -183,7 +183,7 @@ private slots:
       Tree d(l.begin(), l.end());
       std::cout << "search" << std::endl;
       d.search( std::back_inserter( res ), exact_range);
-      std::cout << "search done" << std::endl;
+      std::cout << "search done. found " << res.size() << " points" << std::endl;
       widget->redraw();
       widget->lock();
       *widget << CGAL::RED;
