@@ -1,47 +1,54 @@
+// ============================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Regular_triangulation_3.h
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Sophie Balaven
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
+//                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//
+// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_REGULAR_TRIANGULATION_3_H
 #define CGAL_REGULAR_TRIANGULATION_3_H
 
-#include <set.h>
+#include <set>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Oriented_side_power_test_3.h>
 
 #define DEBUG_INSERT 0
 #define DEBUG_STAR   0
 #define DEBUG_SIDE_OF_SPHERE   0
 
 template < class Gt, class Tds>
-class CGAL_Regular_triangulation_3 : public CGAL_Triangulation_3<Gt,Tds>
+class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
 public:
   
   typedef typename Gt::Weighted_point Weighted_point;
 
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
-
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell Cell;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet Facet;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge Edge;
-
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_circulator Cell_circulator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Cell_iterator Cell_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Facet_iterator Facet_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Edge_iterator Edge_iterator;
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Vertex_iterator Vertex_iterator;
-
-  typedef typename CGAL_Triangulation_3<Gt,Tds>::Locate_type Locate_type;
-
-  CGAL_Regular_triangulation_3()
-    : CGAL_Triangulation_3<Gt,Tds>() {}
+  Regular_triangulation_3()
+    : Triangulation_3<Gt,Tds>() {}
   
-  CGAL_Regular_triangulation_3(const Gt & gt)
-  : CGAL_Triangulation_3<Gt,Tds>(gt) {}
+  Regular_triangulation_3(const Gt & gt)
+  : Triangulation_3<Gt,Tds>(gt) {}
   
   // copy constructor duplicates vertices and cells
-  CGAL_Regular_triangulation_3(const CGAL_Regular_triangulation_3<Gt,Tds> 
-			       & rt) : CGAL_Triangulation_3<Gt,Tds>(rt)
+  Regular_triangulation_3(const Regular_triangulation_3<Gt,Tds> & rt)
+      : Triangulation_3<Gt,Tds>(rt)
     { 
       CGAL_triangulation_postcondition( is_valid(true) );  
     }
@@ -61,8 +68,8 @@ public:
 #else
 #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
   int
-  insert(list<Point>::const_iterator first,
-         list<Point>::const_iterator last)
+  insert(std::list<Point>::const_iterator first,
+         std::list<Point>::const_iterator last)
   {
     int n = number_of_vertices();
     while(first != last){
@@ -74,8 +81,8 @@ public:
 #endif // LIST_H
 #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
   int
-  insert(vector<Point>::const_iterator first,
-         vector<Point>::const_iterator last)
+  insert(std::vector<Point>::const_iterator first,
+         std::vector<Point>::const_iterator last)
   {
     int n = number_of_vertices();
     while(first != last){
@@ -109,9 +116,7 @@ public:
     }
     return number_of_vertices() - n;
   }
-#endif 
-
-// CGAL_TEMPLATE_MEMBER_FUNCTIONS
+#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
   /// +++  Insertion  +++ //
 
@@ -136,14 +141,14 @@ public:
     Vertex_handle v;
     
     if (DEBUG_INSERT){
-      cout << "dimension dela triangulation avant d'inserer le nouveau point : ";
+      std::cout << "dimension dela triangulation avant d'inserer le nouveau point : ";
     }
     
     switch (dimension()) {
     case 3: 
       {
 	if (DEBUG_INSERT){
-	  cout << "3" << endl;
+	  std::cout << "3" << std::endl;
 	}
 	
 	Locate_type lt;
@@ -157,17 +162,17 @@ public:
 	case EDGE:
 	  {
 	    if (DEBUG_INSERT){
-	      cout << "j'essaye d'inserer un nouveau point en dimension 3\n";
-	      cout << "-- dim = 3 -- " << p << endl;
+	      std::cout << "j'essaye d'inserer un nouveau point en dimension 3\n";
+	      std::cout << "-- dim = 3 -- " << p << std::endl;
 	    }
 	    v = new Vertex(p);
 	    if (DEBUG_INSERT){
-	      cout << "vertex : " << v->point() << endl;
+	      std::cout << "vertex : " << v->point() << std::endl;
 	    }
 	    // a voir : comment compter les sommets redondants ? (***)
 	    // set_number_of_vertices(number_of_vertices()+1);
-	    set<void*, less<void*> > conflicts;
-	    set<void*, less<void*> > deleted_points;
+	    std::set<void*, std::less<void*> > conflicts;
+	    std::set<void*, std::less<void*> > deleted_points;
 	    Cell_handle aconflict;
 	    int ineighbor;
 	    if (in_conflict_3(p, c)) {
@@ -177,13 +182,13 @@ public:
 					  ineighbor);
 	      // debug
 	      if (DEBUG_INSERT){
-		set<void*, less<void*> >::const_iterator it;
-		cout << "##### Points supprimes #####\n";
+		std::set<void*, std::less<void*> >::const_iterator it;
+		std::cout << "##### Points supprimes #####\n";
 		for( it = deleted_points.begin(); it != deleted_points.end(); ++it) {
 		  Point *p_tmp = (Point *) *it;
-		  cout << p_tmp->point() << endl;
+		  std::cout << p_tmp->point() << std::endl;
 		}
-		cout << "############################\n";
+		std::cout << "############################\n";
 	      }
 
 	      // a voir : comment compter les sommets redondants ? (***)
@@ -203,7 +208,7 @@ public:
     case 2:
       {
 	if (DEBUG_INSERT){
-	  cout << "2" << endl;
+	  std::cout << "2" << std::endl;
 	}
 	Locate_type lt;
 	int li, lj;
@@ -224,29 +229,29 @@ public:
 	    // if the 2d triangulation is Regular, the 3d
 	    // triangulation will be Regular 
 	    if (DEBUG_INSERT){
-	      cout << "j'insere un point en dehors de l'enveloppe affine\n";
-	      cout << "-- dim = 2 -- " << p << endl;
+	      std::cout << "j'insere un point en dehors de l'enveloppe affine\n";
+	      std::cout << "-- dim = 2 -- " << p << std::endl;
 	    }
 	    return
-	      CGAL_Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
+	      Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
 	  }
 	}
       }
     default : // dim <= 1
       if (DEBUG_INSERT){
-	if (dimension() == 1) cout << "1" << endl;
-	else cout << "0" << endl;
-	cout << "j'insere un point dans la triangulation de base\n";
-	cout << "-- dim <= 1 -- " << p << endl;
+	if (dimension() == 1) std::cout << "1" << std::endl;
+	else std::cout << "0" << std::endl;
+	std::cout << "j'insere un point dans la triangulation de base\n";
+	std::cout << "-- dim <= 1 -- " << p << std::endl;
       }
-      return CGAL_Triangulation_3<Gt,Tds>::insert(p);
+      return Triangulation_3<Gt,Tds>::insert(p);
     }
-    return CGAL_Triangulation_3<Gt,Tds>::insert(p); // to avoid warning with egcs
+    return Triangulation_3<Gt,Tds>::insert(p); // to avoid warning with egcs
   }
   
 
-  set<void*, less<void*> > 
-  star_region_delete_points( set<void*, less<void*> > & region, Vertex* v,
+  std::set<void*, std::less<void*> > 
+  star_region_delete_points( std::set<void*, std::less<void*> > & region, Vertex* v,
 			     Cell* c, int li)
     // region is a set of connected cells
     // c belongs to region and has facet i on the boundary of region 
@@ -255,64 +260,64 @@ public:
     // deleted weighted points that are not in the triangulation
     // anymore, pts will be the list of deleted points
     {
-      set<void*, less<void*> > vert;
+      std::set<void*, std::less<void*> > vert;
       Cell *c_tmp;
       Vertex *v_tmp;
       Vertex_handle vh;
-      set<void*, less<void*> > pts;
+      std::set<void*, std::less<void*> > pts;
       Point *p;
       int i=0;
  
       if (DEBUG_STAR)
-	cout << "@ star_region_delete_points\n";
+	std::cout << "@ star_region_delete_points\n";
       // for each cell to be deleted, keep vertices
-      set<void*, less<void*> >::const_iterator it;
+      std::set<void*, std::less<void*> >::const_iterator it;
       for( it = region.begin(); it != region.end(); ++it) {
 	c_tmp = (Cell *) *it;
 	if (DEBUG_STAR) {
-	  cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
-	  cout << "Region a detruire : cellule " << i++ << endl;
+	  std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+	  std::cout << "Region a detruire : cellule " << i++ << std::endl;
 	}
 	// store vertices
 	for (int i=0; i<4 ; i++){
 	  vh = c_tmp->vertex(i);
 	  if (DEBUG_STAR)
-	    cout << *vh << endl;
+	    std::cout << *vh << std::endl;
 	  if ( (vert.find((void*) &(*(vh))) == vert.end()) &&
 	       (! is_infinite(v_tmp)) ) {
 	    if (DEBUG_STAR)
-	      cout << "stocke le sommet : " << *vh << endl;
+	      std::cout << "stocke le sommet : " << *vh << std::endl;
 	    vert.insert( (void*) &( *(vh) ) );
 	  }
 	}
       }
       if (DEBUG_STAR)
-	cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
+	std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n";
 
 
       if (DEBUG_STAR)
-	cout << "j'appelle star_region\n";
+	std::cout << "j'appelle star_region\n";
 
       // Create the new faces and delete old ones
       _tds.star_region( region, v, c, li );
       
       // get the vertices incident to v
-      set<Vertex*, less<Vertex*> > inc_vert;
+      std::set<Vertex*, std::less<Vertex*> > inc_vert;
       incident_vertices(v, inc_vert);
 
       // for each vertex, check if it is a vertex incident to v
       // if not, delete it
       if (DEBUG_STAR)
-	cout << "je passe en revue les sommets\n";
+	std::cout << "je passe en revue les sommets\n";
       for( it = vert.begin(); it != vert.end(); ++it) {
 	v_tmp = (Vertex *) *it;
 	if (DEBUG_STAR)
-	  cout << *v_tmp << endl;
+	  std::cout << *v_tmp << std::endl;
 	if ( (inc_vert.find( v_tmp )) == inc_vert.end() ) {
 	  // vertex has to be deleted and point to be stored
 	  p = new Point( v_tmp->point() );
 	  if (DEBUG_STAR) {
-	    cout << "-- Suppression du point -- " << *p << endl;
+	    std::cout << "-- Suppression du point -- " << *p << std::endl;
 	  }
 	  pts.insert( p );
 	  set_number_of_vertices(number_of_vertices()-1);
@@ -327,12 +332,12 @@ public:
 
 
 private:
-  bool in_conflict_3(const Weighted_point & p, Cell_handle c)
+  bool in_conflict_3(const Weighted_point & p, const Cell_handle & c)
     {
-      return ( side_of_sphere( c, p ) ==  CGAL_ON_BOUNDED_SIDE );
+      return side_of_sphere(c, p) == ON_BOUNDED_SIDE;
     }
 
-  void find_conflicts_3(set<void*, less<void*> > &conflicts, 
+  void find_conflicts_3(std::set<void*, std::less<void*> > &conflicts, 
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i)
     {
@@ -355,7 +360,7 @@ private:
     }
  
   
-  void find_conflicts_2(set<void*, less<void*> > &conflicts, 
+  void find_conflicts_2(std::set<void*, std::less<void*> > &conflicts, 
 			const Weighted_point & p,
 			Cell_handle c, Cell_handle & ac, int & i)
     {
@@ -365,20 +370,18 @@ private:
 
 public:
 
-  CGAL_Bounded_side
+  Bounded_side
   side_of_sphere( Cell_handle c, const Weighted_point &p) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     int i3;
     if ( ! c->has_vertex( infinite_vertex(), i3 ) ) {  
       // Cas d'une face de dimension finie
-      CGAL_Oriented_side o = geom_traits().power_test_3(c->vertex(0)->point(),
+      Oriented_side o = geom_traits().power_test_3(c->vertex(0)->point(),
 					       c->vertex(1)->point(),
 					       c->vertex(2)->point(),
 					       c->vertex(3)->point(),p);
-      return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-	       (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-	       CGAL_ON_BOUNDARY );
+      return Bounded_side(o);
     }
     else {
       // cas d'une face infinie
@@ -395,16 +398,16 @@ public:
       }
 
       bool coll = false;
-      CGAL_Oriented_side side;
+      Oriented_side side;
       // on verifie que p n'est pas collineaire a 2 autres points
       // dans ce cas, on traite un cas en dimension 1
       if (geom_traits().collinear(c->vertex(i0)->point(),
 				  c->vertex(i1)->point(), p))
 	{
 	  if (DEBUG_SIDE_OF_SPHERE) {
-	    cout << "le point est collineaire a i0(";
-	    cout << c->vertex(i0)->point() << ") et i1(";
-	    cout << c->vertex(i1)->point() << ")\n";
+	    std::cout << "le point est collineaire a i0(";
+	    std::cout << c->vertex(i0)->point() << ") et i1(";
+	    std::cout << c->vertex(i1)->point() << ")\n";
 	  }
 	  coll = true;
 	  side = geom_traits().power_test_3 
@@ -414,9 +417,9 @@ public:
 				  c->vertex(i2)->point(), p))
 	{
 	  if (DEBUG_SIDE_OF_SPHERE) {
-	    cout << "le point est collineaire a i0(";
-	    cout << c->vertex(i0)->point() << ") et i2(";
-	    cout << c->vertex(i2)->point() << ")\n";
+	    std::cout << "le point est collineaire a i0(";
+	    std::cout << c->vertex(i0)->point() << ") et i2(";
+	    std::cout << c->vertex(i2)->point() << ")\n";
 	  }
 	  coll = true;
 	  side = geom_traits().power_test_3 
@@ -426,9 +429,9 @@ public:
 				       c->vertex(i2)->point(), p))
 	{
 	  if (DEBUG_SIDE_OF_SPHERE) {
-	    cout << "le point est collineaire a i1(";
-	    cout << c->vertex(i1)->point() << ") et i2(";
-	    cout << c->vertex(i2)->point() << ")\n";
+	    std::cout << "le point est collineaire a i1(";
+	    std::cout << c->vertex(i1)->point() << ") et i2(";
+	    std::cout << c->vertex(i2)->point() << ")\n";
 	  }
 	  coll = true;
 	  side = geom_traits().power_test_3 
@@ -436,64 +439,47 @@ public:
 	}
 	 
       if (coll) 
-	{
-	  return ( (side == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-		   (side == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-		   CGAL_ON_BOUNDARY );	   
-	}
+	  return Bounded_side(o);
 
       // teste de quel cote du plan defini par (i0, i1, i2) p repose
-      CGAL_Orientation
+      Orientation
 	o = geom_traits().orientation(c->vertex(i0)->point(),
 				      c->vertex(i1)->point(),
 				      c->vertex(i2)->point(),
 				      p);
       
-      switch (o) {
-      case CGAL_POSITIVE: 
-	{
-	  return CGAL_ON_BOUNDED_SIDE;
-	}
-      case CGAL_NEGATIVE:
-	{
-	  return CGAL_ON_UNBOUNDED_SIDE;
-	}
-      case CGAL_ZERO:
-	{
-	  // i0, i1, i2, p - coplanar
-	  //cout << "les points sont coplanaires\n";
-	  CGAL_Oriented_side s = 
+      if (o != ZERO)
+	  return Bounded_side(o);
+
+      // i0, i1, i2, p - coplanar
+      //std::cout << "les points sont coplanaires\n";
+      Oriented_side s = 
 	    geom_traits().power_test_3
 	    ( c->vertex(i0)->point(),
 	      c->vertex(i1)->point(),
 	      c->vertex(i2)->point(),
 	      p );
 	  
-	  return ( (s == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
-		   (s == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
-		   CGAL_ON_BOUNDARY );
-	}
-      } 
+      return Bounded_side(s);
     }
-    return CGAL_ON_UNBOUNDED_SIDE;// to avoid warning with egcs
+    return ON_UNBOUNDED_SIDE;// to avoid warning with egcs
   }// end side of sphere
 
 
 
 
-  CGAL_Bounded_side side_of_circle( const Facet &f, 
-				    const Weighted_point &p) const;
-  CGAL_Bounded_side side_of_circle( Cell_handle c, int i, 
+  Bounded_side side_of_circle( const Facet &f, const Weighted_point &p) const;
+  Bounded_side side_of_circle( Cell_handle c, int i, 
 				    const Weighted_point &p) const;
 
   bool is_valid(bool verbose = false, int level = 0) const
     {
       if ( ! tds().is_valid(verbose,level) ) {
-	if (verbose) { cerr << "invalid data structure" << endl; }
+	if (verbose) { std::cerr << "invalid data structure" << std::endl; }
 	CGAL_triangulation_assertion(false); return false;
       }
       if ( &(*infinite_vertex()) == NULL ) {
-	if (verbose) { cerr << "no infinite vertex" << endl; }
+	if (verbose) { std::cerr << "no infinite vertex" << std::endl; }
 	CGAL_triangulation_assertion(false); return false;
       }
 
@@ -510,9 +496,9 @@ public:
 		   ( (*it).handle(), 
 		     it->vertex( (it->neighbor(i))->index((*it).handle() ) )
 		     ->point() )
-		   == CGAL_ON_BOUNDED_SIDE ) {
+		   == ON_BOUNDED_SIDE ) {
 		if (verbose) { 
-		  cerr << "non-empty sphere " << endl;
+		  std::cerr << "non-empty sphere " << std::endl;
 		}
 		CGAL_triangulation_assertion(false); return false;
 	      }
@@ -530,9 +516,9 @@ public:
 	//		   ( (*it).first, 3,
 	//		     (*it).first
 	//		     ->vertex( (((*it).first)->neighbor(i))->index((*it).first) )->point() )
-	//		   == CGAL_ON_BOUNDED_SIDE ) {
+	//		   == ON_BOUNDED_SIDE ) {
 	//		if (verbose) { 
-	//		  cerr << "non-empty circle " << endl;
+	//		  std::cerr << "non-empty circle " << std::endl;
 	//		}
 	//		CGAL_triangulation_assertion(false); return false;
 	//	      }
@@ -549,7 +535,7 @@ public:
 	  break;
 	}
       }
-      if (verbose) { cerr << "Regular valid triangulation" << endl;}
+      if (verbose) { std::cerr << "Regular valid triangulation" << std::endl;}
       return true;
     }
 };
