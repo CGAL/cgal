@@ -1,3 +1,6 @@
+4.8.1 (11 April 2002)
++ Corrected typo in Traits name in Edge_const_iterator
+
 4.8 (8 April 2002)
 + Added operator-> for Edge_const_iterator
 
