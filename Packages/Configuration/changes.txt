@@ -1,3 +1,6 @@
+28 September 2004 Andreas Fabri
+- Add CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG.C
+
 11 September 2004 Sylvain Pion
 - Add CGAL_CFG_NO_STL.C (extracted from install_cgal).
 
