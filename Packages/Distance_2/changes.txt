@@ -1,3 +1,6 @@
+2.3.5 (19 June 2000)
++ Qualified calls to 'abs' and 'sign' by CGAL_NTS
+
 -----
 * 2.3.4 *
 + fix to cgal_test
