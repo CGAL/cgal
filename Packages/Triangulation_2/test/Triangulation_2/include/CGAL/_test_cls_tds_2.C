@@ -65,40 +65,40 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds1.is_valid();
   // (), = and  swap to be tested later again with non trivial tds 
 
-  // Setting functions - access functions
-  cout << "    setting functions  access functions" << endl;
-  assert(tds1.dimension() == -1);
-  assert(tds1.number_of_vertices() == 0 );
+//   // Setting functions - access functions
+//   cout << "    setting functions  access functions" << endl;
+//   assert(tds1.dimension() == -1);
+//   assert(tds1.number_of_vertices() == 0 );
   
-  tds1.set_number_of_vertices(1);
-  assert( tds1.number_of_vertices() == 1 );
-  tds1.set_dimension(0);
-  assert(tds1.dimension() == 0);
+//   tds1.set_number_of_vertices(1);
+//   assert( tds1.number_of_vertices() == 1 );
+//   tds1.set_dimension(0);
+//   assert(tds1.dimension() == 0);
 
-  Vertex* vt1 = new Vertex; 
-  Face* f1 = new Face(vt1,NULL,NULL);
-  Vertex *vt2 = new Vertex; 
-  Face *f2  = new Face(vt2,NULL,NULL);
-  vt2->set_face(f2);
-  tds1.set_infinite_vertex(vt2);
+//   Vertex* vt1 = new Vertex; 
+//   Face* f1 = new Face(vt1,NULL,NULL);
+//   Vertex *vt2 = new Vertex; 
+//   Face *f2  = new Face(vt2,NULL,NULL);
+//   vt2->set_face(f2);
+//   tds1.set_infinite_vertex(vt2);
  
-  // Finite and infinite vertices and faces
-  cout << "    finite/infinite faces and vertices" << endl;
-  assert( !tds1.is_infinite(vt1) );
-  assert( tds1.is_infinite(vt2) );
-  assert( !tds1.is_infinite(f1) );
-  assert( tds1.is_infinite(f2) );
-  assert( tds1.is_infinite(f2,1) );
+//   // Finite and infinite vertices and faces
+//   cout << "    finite/infinite faces and vertices" << endl;
+//   assert( !tds1.is_infinite(vt1) );
+//   assert( tds1.is_infinite(vt2) );
+//   assert( !tds1.is_infinite(f1) );
+//   assert( tds1.is_infinite(f2) );
+//   assert( tds1.is_infinite(f2,1) );
 
-  //assert( tds1.infinite_face() == f2 );
-  assert( tds1.infinite_vertex() == vt2 );
-  //assert( tds1.finite_vertex() == vt1 );
+//   //assert( tds1.infinite_face() == f2 );
+//   assert( tds1.infinite_vertex() == vt2 );
+//   //assert( tds1.finite_vertex() == vt1 );
 
    // make tds1 valid in order to allow clear() to work
-  tds1.set_number_of_vertices(0);
-  tds1.set_dimension(-1);
-  tds1.set_infinite_vertex(NULL);
-  assert( tds1.is_valid() );
+//   tds1.set_number_of_vertices(0);
+//   tds1.set_dimension(-1);
+  //  tds1.set_infinite_vertex(NULL);
+  //  assert( tds1.is_valid() );
 
  
   // misc.
@@ -207,6 +207,25 @@ _test_cls_tds_2( const Tds &, const Gt &)
   tds1.remove_first(w1);
   assert(tds1.is_valid()&& tds1.number_of_vertices()==0); 
   w1 = tds1.insert_first();
+
+  //access
+  cout << "    test access" << endl;
+  assert(tds0.dimension() == -1     && tds0.number_of_vertices() == 0 &&
+	 tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&
+	 tds0.number_of_full_dim_faces() == 0);
+  assert(tds1.dimension() == -1     && tds1.number_of_vertices() == 1 &&
+	 tds1.number_of_faces()== 0 && tds1.number_of_edges()    == 0 &&
+	 tds1.number_of_full_dim_faces() == 0);
+  assert(tds2.dimension() == 0      && tds2.number_of_vertices() == 2 &&
+	 tds2.number_of_faces()== 0 && tds2.number_of_edges()    == 0 &&
+	 tds2.number_of_full_dim_faces() == 2);
+  assert(tds3.dimension() == 1      && tds3.number_of_vertices() == 4 &&
+	 tds3.number_of_faces()== 0 && tds3.number_of_edges()    == 4 &&
+	 tds3.number_of_full_dim_faces() == 4);
+  assert(tds4.dimension() == 2      && tds4.number_of_vertices() == 6 &&
+	 tds4.number_of_faces()== 8 && tds4.number_of_edges()    == 12 &&
+	 tds4.number_of_full_dim_faces() == 8);
+
  
    //clear(), swap() and copy_constructor
   cout << "    clear, swap, copy_constructor and assign " << endl;
@@ -248,7 +267,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 	     
 
    //iterators are tested by is_valid()
-  //test circulators
+  //test circulators and v->degree()
   cout << "    circulators" <<endl;
   _test_tds_circulators(tds0);
   _test_tds_circulators(tds1);
@@ -258,7 +277,7 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
   //TODO
   //test input, output
-  cout << "  output to a file" << endl;
+  cout << "    output to a file" << endl;
   ofstream of0("file_tds0");
   CGAL::set_ascii_mode(of0); 
   of0 << tds0 ; 
@@ -311,10 +330,11 @@ _test_tds_circulators( const Tds&  tds)
   int countf = 0;
   int counte = 0;
   int countv = 0;
+  int countvv = 0;
 
   for( Vertex_iterator vit = tds.vertices_begin();
 	               vit != tds.vertices_end(); vit++) {
-
+    
     Face_circulator fc = vit->incident_faces(), fdone(fc);
     if (! fc.is_empty()) {
       do {
@@ -329,12 +349,16 @@ _test_tds_circulators( const Tds&  tds)
       } while (++ec != edone);
     }
 
+    countvv = 0;
     Vertex_circulator vc = vit->incident_vertices(), vdone(vc);
     if (! vc.is_empty()) {
       do {
 	countv +=1;
+	countvv +=1;
       } while (++vc != vdone);
     }
+
+    assert( vit->degree() == countvv);
   }	       
 					     
   assert( countf == 3 * tds.number_of_faces());
