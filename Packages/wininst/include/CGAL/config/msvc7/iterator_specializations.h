@@ -1,7 +1,7 @@
 #ifndef CGAL_ITER_VC7
 #define CGAL_ITER_VC7
-#include <../include/iterator>
-#include <stl_iterator_base.h>
+#include <iterator>
+#include <CGAL/config/msvc7/stl_iterator_base.h>
 namespace std {
 template<class C__> inline
 typename iterator_traits<C__>::iterator_category
