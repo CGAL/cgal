@@ -35,15 +35,15 @@
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 #include <CGAL/IO/Arr_file_scanner.h>
-#include <CGAL/Arr_2_bases.h>
 
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class _Dcel, class _Traits,
-          class Base_node = Arr_base_node<typename _Traits::Curve_2,
-                                          typename _Traits::X_monotone_curve_2> >
+          class Base_node =
+          Arr_base_node<typename _Traits::Curve_2,
+                        typename _Traits::X_monotone_curve_2> >
 class Arrangement_2 {
 public:
 
