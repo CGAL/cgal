@@ -30,6 +30,144 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// First come the CGALi functions.  They should move to another file...
+
+namespace CGALi {
+
+template < typename K >
+inline
+Comparison_result
+compare_angle_with_x_axis(const typename CGAL_WRAP(K)::Direction_2& d1,
+                          const typename CGAL_WRAP(K)::Direction_2& d2,
+                          const K& k)
+{
+  return k.compare_angle_with_x_axis_2_object()(d1, d2);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_x_at_y(const typename CGAL_WRAP(K)::Point_2& p,
+               const typename CGAL_WRAP(K)::Line_2& h, const K& k)
+{
+  return K().compare_x_at_y_2_object()(p, h);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
+               const typename CGAL_WRAP(K)::Segment_2 &s, const K& k)
+{
+  return k.compare_y_at_x_2_object()(p, s);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
+               const typename CGAL_WRAP(K)::Segment_2 &s1,
+               const typename CGAL_WRAP(K)::Segment_2 &s2, const K& k)
+{
+  return k.compare_y_at_x_2_object()(p, s1, s2);
+}
+
+template < class K >
+inline
+typename K::Point_2
+midpoint(const typename CGAL_WRAP(K)::Point_2 &p,
+         const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
+{
+  return k.construct_midpoint_2_object()(p, q);
+}
+
+template <typename K>
+inline
+Orientation
+orientation(const typename CGAL_WRAP(K)::Point_2 &p,
+            const typename CGAL_WRAP(K)::Point_2 &q,
+            const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+{
+  return k.orientation_2_object()(p, q, r);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
+         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
+{
+  return k.are_parallel_2_object()(l1, l2);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Ray_2 &r1,
+         const typename CGAL_WRAP(K)::Ray_2 &r2, const K &k)
+{
+  return k.are_parallel_2_object()(r1, r2);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Segment_2 &s1,
+         const typename CGAL_WRAP(K)::Segment_2 &s2, const K &k)
+{
+  return k.are_parallel_2_object()(s1, s2);
+}
+
+template <typename K>
+inline
+bool
+right_turn(const typename CGAL_WRAP(K)::Point_2 &p,
+           const typename CGAL_WRAP(K)::Point_2 &q,
+           const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+{
+  return CGALi::orientation(p, q, r, k) == RIGHT_TURN;
+}
+
+template <class K>
+inline
+Bounded_side
+side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
+                       const typename CGAL_WRAP(K)::Point_2 &q,
+                       const typename CGAL_WRAP(K)::Point_2 &r,
+                       const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
+{
+  return k.side_of_bounded_circle_2_object()(p, q, r, t);
+}
+
+template <class K>
+inline
+Bounded_side
+side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
+                       const typename CGAL_WRAP(K)::Point_2 &q,
+                       const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
+{
+  return k.side_of_bounded_circle_2_object()(p, q, r);
+}
+
+template <class K>
+inline
+Oriented_side
+side_of_oriented_circle(const typename CGAL_WRAP(K)::Point_2 &p,
+                        const typename CGAL_WRAP(K)::Point_2 &q,
+                        const typename CGAL_WRAP(K)::Point_2 &r,
+                        const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
+{
+  return k.side_of_oriented_circle_2_object()(p, q, r, t);
+}
+
+} // namespace CGALi
+
+// Then come the global normal functions.
+//
+// TODO : Should they call the internal ones so that those get tested
+// systematically ?
+// Or should they call the traits to avoid using too much code ?
+
 template < class K >
 inline
 Angle
@@ -164,16 +302,6 @@ collinear_are_strictly_ordered_along_line(const Point_2<K> &p,
 template < typename K >
 inline
 Comparison_result
-compare_angle_with_x_axis(const typename CGAL_WRAP(K)::Direction_2& d1,
-                          const typename CGAL_WRAP(K)::Direction_2& d2,
-                          const K& k)
-{
-  return k.compare_angle_with_x_axis_2_object()(d1, d2);
-}
-
-template < typename K >
-inline
-Comparison_result
 compare_angle_with_x_axis(const Direction_2<K>& d1,
                           const Direction_2<K>& d2)
 {
@@ -239,17 +367,6 @@ compare_x(const Line_2<K> &l1,
 {
   return K().compare_x_2_object()(l1, h1, l2, h2);
 }
-
-/* Conflicts...
-template < class K >
-inline
-Comparison_result
-compare_x_at_y(const typename CGAL_WRAP(K)::Point_2& p,
-               const typename CGAL_WRAP(K)::Line_2& h, const K& k)
-{
-  return K().compare_x_at_y_2_object()(p, h);
-}
-*/
 
 template < class K >
 inline
@@ -337,18 +454,6 @@ compare_y(const Line_2<K> &l,
   return K().compare_y_2_object()(l, h1, h2);
 }
 
-/*  This one is conflicting with (Point, Segment, Segment)...
-    So disabled for now.
-template < class K >
-inline
-Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Segment_2 &s, const K& k)
-{
-  return k.compare_y_at_x_2_object()(p, s);
-}
-*/
-
 template < class K >
 inline
 Comparison_result
@@ -356,18 +461,6 @@ compare_y_at_x(const Point_2<K> &p, const Segment_2<K> &s)
 {
   return K().compare_y_at_x_2_object()(p, s);
 }
-
-/* Conflicts.
-template < class K >
-inline
-Comparison_result
-compare_y_at_x(const typename CGAL_WRAP(K)::Point_2 &p,
-               const typename CGAL_WRAP(K)::Segment_2 &s1,
-               const typename CGAL_WRAP(K)::Segment_2 &s2, const K& k)
-{
-  return k.compare_y_at_x_2_object()(p, s1, s2);
-}
-*/
 
 template < class K >
 inline
@@ -514,15 +607,6 @@ lexicographically_yx_larger_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 template < class K >
 inline
 typename K::Point_2
-midpoint(const typename CGAL_WRAP(K)::Point_2 &p,
-         const typename CGAL_WRAP(K)::Point_2 &q, const K &k)
-{
-  return k.construct_midpoint_2_object()(p, q);
-}
-
-template < class K >
-inline
-typename K::Point_2
 midpoint(const Point_2<K> &p, const Point_2<K> &q)
 {
   return K().construct_midpoint_2_object()(p, q);
@@ -576,20 +660,6 @@ bool
 operator>=(const Point_2<K>& p, const Point_2<K>& q)
 { return ! K().less_xy_2_object()(p, q); }
 
-namespace CGALi {
-
-template <typename K>
-inline
-Orientation
-orientation(const typename CGAL_WRAP(K)::Point_2 &p,
-            const typename CGAL_WRAP(K)::Point_2 &q,
-            const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
-{
-  return k.orientation_2_object()(p, q, r);
-}
-
-}
-
 template <typename K>
 inline
 Orientation
@@ -603,59 +673,11 @@ orientation(const Point_2<K> &p,
 template <typename K>
 inline
 bool
-parallel(const typename CGAL_WRAP(K)::Line_2 &l1,
-         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
-{
-  return k.are_parallel_2_object()(l1, l2);
-}
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Ray_2 &r1,
-         const typename CGAL_WRAP(K)::Ray_2 &r2, const K &k)
-{
-  return k.are_parallel_2_object()(r1, r2);
-}
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Segment_2 &s1,
-         const typename CGAL_WRAP(K)::Segment_2 &s2, const K &k)
-{
-  return k.are_parallel_2_object()(s1, s2);
-}
-
-template <typename K>
-inline
-bool
-right_turn(const typename CGAL_WRAP(K)::Point_2 &p,
-           const typename CGAL_WRAP(K)::Point_2 &q,
-           const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
-{
-  return CGALi::orientation(p, q, r, k) == RIGHT_TURN;
-}
-
-template <typename K>
-inline
-bool
 right_turn(const Point_2<K> &p,
            const Point_2<K> &q,
            const Point_2<K> &r)
 {
-  return right_turn(p, q, r, K());
-}
-
-template <class K>
-inline
-Bounded_side
-side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                       const typename CGAL_WRAP(K)::Point_2 &q,
-                       const typename CGAL_WRAP(K)::Point_2 &r,
-                       const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
-{
-  return k.side_of_bounded_circle_2_object()(p, q, r, t);
+  return CGALi::right_turn(p, q, r, K());
 }
 
 template <class K>
@@ -672,32 +694,11 @@ side_of_bounded_circle(const Point_2<K> &p,
 template <class K>
 inline
 Bounded_side
-side_of_bounded_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                       const typename CGAL_WRAP(K)::Point_2 &q,
-                       const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
-{
-  return k.side_of_bounded_circle_2_object()(p, q, r);
-}
-
-template <class K>
-inline
-Bounded_side
 side_of_bounded_circle(const Point_2<K> &p,
                        const Point_2<K> &q,
                        const Point_2<K> &r)
 {
   return K().side_of_bounded_circle_2_object()(p, q, r);
-}
-
-template <class K>
-inline
-Oriented_side
-side_of_oriented_circle(const typename CGAL_WRAP(K)::Point_2 &p,
-                        const typename CGAL_WRAP(K)::Point_2 &q,
-                        const typename CGAL_WRAP(K)::Point_2 &r,
-                        const typename CGAL_WRAP(K)::Point_2 &t, const K &k)
-{
-  return k.side_of_oriented_circle_2_object()(p, q, r, t);
 }
 
 template <class K>

@@ -38,7 +38,7 @@ bool
 parallel(const O &o1, const O &o2)
 {
   typedef typename Kernel_traits<O>::Kernel K;
-  return parallel(o1, o2, K());
+  return CGALi::parallel(o1, o2, K());
 }
 
 CGAL_END_NAMESPACE

@@ -1,3 +1,6 @@
+21 Feb 2004 Sylvain Pion
+- Move internal predicates(p,q,K) to CGALi.
+
 19 Feb 2004 Sylvain Pion
 - Remove meaningless constructor Vector_2(Direction_2).
 

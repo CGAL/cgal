@@ -1,3 +1,6 @@
+21 Feb 2004 Sylvain Pion
+- Move internal predicates(p,q,K) to CGALi.
+
 19 Feb 2004 Sylvain Pion
 - Internal *H[23] classes do not publicly derive from the Handle stuff,
   but private data member instead.

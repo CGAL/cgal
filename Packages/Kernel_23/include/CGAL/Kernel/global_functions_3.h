@@ -28,6 +28,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// See comment in CGAL/Kernel/global_functions_2.h.
+namespace CGALi {
+
 template <typename K>
 inline
 typename K::Plane_3
@@ -46,12 +49,71 @@ bisector(const typename CGAL_WRAP(K)::Plane_3 &h1,
   return k.construct_bisector_3_object()(h1, h2);
 }
 
+template < class K >
+inline
+typename K::Point_3
+midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
+         const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+{
+  return k.construct_midpoint_3_object()(p, q);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Line_3 &l1,
+         const typename CGAL_WRAP(K)::Line_3 &l2, const K &k)
+{
+  return k.are_parallel_3_object()(l1, l2);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Plane_3 &h1,
+         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
+{
+  return k.are_parallel_3_object()(h1, h2);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Ray_3 &r1,
+         const typename CGAL_WRAP(K)::Ray_3 &r2, const K &k)
+{
+  return k.are_parallel_3_object()(r1, r2);
+}
+
+template <typename K>
+inline
+bool
+parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
+         const typename CGAL_WRAP(K)::Segment_3 &s2, const K &k)
+{
+  return k.are_parallel_3_object()(s1, s2);
+}
+
+template <typename K>
+inline
+typename K::FT
+squared_area(const typename CGAL_WRAP(K)::Point_3 &p,
+	     const typename CGAL_WRAP(K)::Point_3 &q,
+	     const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+{
+  return k.compute_squared_area_3_object()(p, q, r);
+}
+
+} // namespace CGALi
+
+// global functions.
+
 template <typename K>
 inline
 typename K::Plane_3
 bisector(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return bisector(p, q, K());
+  return CGALi::bisector(p, q, K());
 }
 
 template <typename K>
@@ -59,7 +121,7 @@ inline
 typename K::Plane_3
 bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
 {
-  return bisector(h1, h2, K());
+  return CGALi::bisector(h1, h2, K());
 }
 
 template < class K >
@@ -102,15 +164,6 @@ circumcenter(const Triangle_3<K> &t)
 template < class K >
 inline
 typename K::Point_3
-midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
-         const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
-{
-  return k.construct_midpoint_3_object()(p, q);
-}
-
-template < class K >
-inline
-typename K::Point_3
 midpoint(const Point_3<K> &p, const Point_3<K> &q)
 {
   return K().construct_midpoint_3_object()(p, q);
@@ -139,42 +192,6 @@ inline
 bool
 operator>=(const Point_3<K>& p, const Point_3<K>& q)
 { return ! K().less_xyz_3_object()(p, q); }
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Line_3 &l1,
-         const typename CGAL_WRAP(K)::Line_3 &l2, const K &k)
-{
-  return k.are_parallel_3_object()(l1, l2);
-}
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Plane_3 &h1,
-         const typename CGAL_WRAP(K)::Plane_3 &h2, const K &k)
-{
-  return k.are_parallel_3_object()(h1, h2);
-}
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Ray_3 &r1,
-         const typename CGAL_WRAP(K)::Ray_3 &r2, const K &k)
-{
-  return k.are_parallel_3_object()(r1, r2);
-}
-
-template <typename K>
-inline
-bool
-parallel(const typename CGAL_WRAP(K)::Segment_3 &s1,
-         const typename CGAL_WRAP(K)::Segment_3 &s2, const K &k)
-{
-  return k.are_parallel_3_object()(s1, s2);
-}
 
 template <class K >
 inline
@@ -214,17 +231,7 @@ inline
 typename K::FT
 squared_area(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return squared_area(p, q, r, K());
-}
-
-template <typename K>
-inline
-typename K::FT
-squared_area(const typename K::Point_3 &p,
-	     const typename K::Point_3 &q,
-	     const typename K::Point_3 &r, const K &k)
-{
-  return k.compute_squared_area_3_object()(p, q, r);
+  return CGALi::squared_area(p, q, r, K());
 }
 
 template < class K >

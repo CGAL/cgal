@@ -1,3 +1,6 @@
+21 Feb 2004 Sylvain Pion
+- Move internal predicates(p,q,K) to CGALi.
+
 19 Feb 2004 Sylvain Pion
 - Add missing test-suite for Construct_line_3(Point_3, Vector_3).
 
