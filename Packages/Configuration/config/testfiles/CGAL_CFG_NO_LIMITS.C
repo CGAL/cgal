@@ -21,7 +21,8 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler doesn't know the limits
+//| If a compiler doesn't know the limits (g++-2.95)
+//| or has a bug in the implementation (Sun CC 5.4)
 //| CGAL_CFG_NO_LIMITS is set. 
 
 #include <limits>
@@ -29,6 +30,9 @@
 
 int main()
 {
+  if(std::numeric_limits<double>::denorm_min() == 0){
+    return 1;
+  }
   return 0;
 }
 
