@@ -32,10 +32,6 @@
 #include <functional>
 #include <vector>
 
-/*
-#include <CGAL/leda_real.h>
-#include <algorithm>
-*/
 
 using std::vector;
 using std::back_inserter;
@@ -48,7 +44,6 @@ using CGAL::maximum_perimeter_inscribed_k_gon_2;
 
 // typedefs:
 typedef double                      FT;
-//typedef leda_real                 FT;
 typedef Cartesian< FT >             K;
 typedef K::Point_2                  Point;
 typedef vector< Point >             Cont;
