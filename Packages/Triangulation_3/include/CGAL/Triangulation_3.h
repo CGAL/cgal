@@ -39,7 +39,7 @@
 #include <CGAL/Pointer.h>
 #include <CGAL/circulator.h>
 
-#include <CGAL/predicates_on_points_3.h>
+//#include <CGAL/predicates_on_points_3.h>
 
 #include <CGAL/triangulation_assertions.h>
 
@@ -51,12 +51,12 @@
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
+//#include <CGAL/Delaunay_triangulation_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class GT, class Tds>
-class Delaunay_triangulation_3;
+//template < class GT, class Tds>
+//class Delaunay_triangulation_3;
 
 template < class GT, class Tds>
 class Triangulation_cell_iterator_3;
@@ -86,7 +86,7 @@ class Triangulation_3
   friend class Triangulation_cell_3<GT,Tds>;
   friend class Triangulation_vertex_3<GT,Tds>;
 
-  friend class Delaunay_triangulation_3<GT,Tds>;
+  //  friend class Delaunay_triangulation_3<GT,Tds>;
 
   friend Triangulation_cell_iterator_3<GT,Tds>;
   friend Triangulation_facet_iterator_3<GT,Tds>;
@@ -127,7 +127,7 @@ public:
     OUTSIDE_CONVEX_HULL, //4
     OUTSIDE_AFFINE_HULL };//5
 
-private:
+protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
@@ -2926,7 +2926,7 @@ std::istream& operator>>
   for ( i=0 ; i<m; i++ ) {
     is >> *(C[i]);
   }
-  CGAL_triangulation_assertion( tr.is_valid(true) );
+  CGAL_triangulation_assertion( tr.is_valid(false) );
   return is;
 
 }
