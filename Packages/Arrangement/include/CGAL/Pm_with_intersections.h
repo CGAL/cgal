@@ -1311,20 +1311,16 @@ protected:
   bool pmwx_use_delete_pl;
 
 private:
+
   bool is_left(const Point_2 &p1, const Point_2 &p2) const 
   { return (traits->compare_x(p1, p2) == SMALLER); }
+
   bool is_right(const Point_2 &p1, const Point_2 &p2) const 
   { return (traits->compare_x(p1, p2) == LARGER); }
+
   bool is_same_x(const Point_2 &p1, const Point_2 &p2) const 
   { return (traits->compare_x(p1, p2) == EQUAL); }
-  /* RWRW - deleted!
-  bool is_lower(const Point_2 &p1, const Point_2 &p2) const 
-  { return (traits->compare_y(p1, p2) == SMALLER); }
-  bool is_higher(const Point_2 &p1, const Point_2 &p2) const 
-  { return (traits->compare_y(p1, p2) == LARGER); }
-  bool is_same_y(const Point_2 &p1, const Point_2 &p2) const 
-  { return (traits->compare_y(p1, p2) == EQUAL); }
-  */
+
   bool is_same(const Point_2 &p1, const Point_2 &p2) const
   {
     return (traits->compare_xy(p1, p2) == EQUAL);
@@ -1336,13 +1332,6 @@ private:
   const Point_2& rightmost(const Point_2 &p1, const Point_2 &p2) const
   { return (is_right(p1, p2) ? p1 : p2); }
 
-  /* RWRW - deleted!  
-  const Point_2& lowest(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_lower(p1, p2) ? p1 : p2); }
-  
-  const Point_2& highest(const Point_2 &p1, const Point_2 &p2) const
-  { return (is_higher(p1, p2) ? p1 : p2); }
-  */
 };
 
 //-----------------------------------------------------------------------------

@@ -116,7 +116,6 @@ public:
       VerticalXEventListIter iter = m_verticalCurveXEvents.begin();
       while ( iter != m_verticalCurveXEvents.end() )
       {
-	// RWRW: used to be m_traits->compare_y()
 	if ( m_traits->compare_xy((*iter)->getPoint(), e->getPoint()) 
 	     == SMALLER ) {
 	  ++iter; 

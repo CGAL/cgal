@@ -1430,7 +1430,6 @@ prev1_inside_hole(
   if (traits->point_is_same(traits->curve_target(cv),left)||
       traits->point_is_same(traits->curve_source(cv),left)) {
     if (traits->curve_is_vertical(cv)) {
-      // RWRW - Used to be point_is_lower()
       return (traits->point_is_left_low(prev2->target()->point(),
 					prev1->target()->point()));
     }
