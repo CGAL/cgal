@@ -665,6 +665,17 @@ _sunpro_version()
     fi
 }
 
+# give version numbers for KAI C++ (KCC)
+# ($* is full path to executable)
+_kcc_version()
+{
+    TMP_KCC_FILE=./tmp_kcc.C
+    ${_printf} "%s\n" "int main() {return 0;}" > ${TMP_KCC_FILE}
+    _tmp="`$* --version ${TMP_KCC_FILE} 2>&1 | ${_fgrep} \"KAI C++\" | ${_awk} '{print $3}'`"
+    ${_printf} "%s" "${_tmp}" 
+    ${_rm} -f ${TMP_KCC_FILE}
+}
+
 # give version numbers for IRIX MIPSPRO CC
 # ($* is full path to executable)
 _sgi_version()
@@ -1603,6 +1614,8 @@ get_compiler_version()
 		_borland_version "$*";;
 	*CL*|*cl*)
 		_microsoft_vc_version "$*";;
+	*KCC*)
+		_kcc_version "$*";;
 	*CC*)
 	    case ${SYST} in
 		*IRIX*)  _check_for_sysutil versions y
