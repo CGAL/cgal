@@ -560,6 +560,15 @@ Packages/Triangulation_3/doc_tex/Triangulation_3/sphere.gif -text svneol=unset#u
 Packages/Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/utils.gif svneol=native#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/flips.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/flips.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_affine_hull.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_affine_hull.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/Triangulation_3_ref/utils.gif svneol=native#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.eps -text
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design.gif svneol=native#unset
@@ -591,6 +600,15 @@ Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sphere.gif -text svneol=u
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/utils.gif svneol=native#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/utils.gif svneol=native#unset
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.eps -text
 Packages/Viewer_3/doc_tex/Viewer_3/viewer.gif -text svneol=unset#unset
 Packages/Viewer_3/doc_tex/support/Viewer_3/viewer.eps -text
