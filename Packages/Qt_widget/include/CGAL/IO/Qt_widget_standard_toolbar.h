@@ -11,8 +11,8 @@
 // file          : include/CGAL/IO/Qt_widget_standard_toolbar.h
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// release       :
+// release_date  :
 //
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //
@@ -64,7 +64,7 @@ private slots:
 
 private:
   void fill_toolbar(QMainWindow *mw);
-  
+
 private:
   Qt_widget          *widget;
   Qt_widget_history  *history;
@@ -72,6 +72,7 @@ private:
   // this group has no parent and is destroyed manually in the
   // destructor
 
+  QToolButton* nolayerBt;
 };//end class
 
 };//end namespace

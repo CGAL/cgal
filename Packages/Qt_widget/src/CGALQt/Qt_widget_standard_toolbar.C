@@ -98,6 +98,9 @@ namespace CGAL {
 	widget->setMouseTracking(true);
       }
 
+    const QIconSet
+      arrow_pixmap(QPixmap(static_cast<const char **>(arrow_small_xpm) ),
+		   QPixmap(static_cast<const char **>(arrow_xpm) ));
     const QIconSet 
       back_pixmap(QPixmap(static_cast<const char **>(back_small_xpm) ),
 		  QPixmap(static_cast<const char **>(back_xpm) ));
@@ -138,6 +141,10 @@ namespace CGAL {
 
     addSeparator();
 
+    nolayerBt = new QToolButton(this, "nolayer");
+    nolayerBt->setIconSet(arrow_pixmap);
+    nolayerBt->setTextLabel("Deactivate Standard Layer");
+
     QToolButton* zoomrectBt = new QToolButton(this, "focus on region");
     zoomrectBt->setPixmap(QPixmap(zoomin_rect_xpm ));
     zoomrectBt->setTextLabel("Focus on region");
@@ -161,17 +168,20 @@ namespace CGAL {
     // destructor
 
     // below is the list of buttons in the group
-    QToolButton* const button_group_list[] = { zoomrectBt,
+    QToolButton* const button_group_list[] = { nolayerBt,
+					       zoomrectBt,
 					       focusBt,
 					       handtoolBt };
-    for(int i=0; i<3; ++i)
+    for(int i=0; i<4; ++i)
       {
 	button_group_list[i]->setToggleButton(true);
 	button_group->insert(button_group_list[i]);
       }
-    button_group->setExclusive(false);
+    button_group->setExclusive(true);
     connect(button_group, SIGNAL(clicked(int)),
 	    this, SLOT(group_clicked(int)));
+
+    nolayerBt->setOn(true);
 
     showcoordBt->setToggleButton(true);
     showcoordBt->toggle();
@@ -179,7 +189,7 @@ namespace CGAL {
     connect(zoomrectBt, SIGNAL(stateChanged(int)),
 	    zoomrectlayer, SLOT(stateChanged(int)));
     connect(focusBt, SIGNAL(stateChanged(int)),
-	    focuslayer, SLOT(stateChanged(int)));	
+	    focuslayer, SLOT(stateChanged(int)));
     connect(handtoolBt, SIGNAL(stateChanged(int)),
 	    handtoollayer, SLOT(stateChanged(int)));
     connect(showcoordBt, SIGNAL(stateChanged(int)),
@@ -202,12 +212,27 @@ namespace CGAL {
 
   void Qt_widget_standard_toolbar::group_clicked(int i)
   {
-    QButton* bt = button_group->find(i);
-    
-    if( bt->isOn() )
-      for(int n = 0; n < button_group->count(); n++)
-	if( n != i )
-	  button_group->find(n)->setProperty("on", false);
+    static int id = 0; 
+    // This id is here to keep track of the button from the group that
+    // is on (if all toolbuttons are down, nolayer is on. At the
+    // beginning, it is set to 0, because
+    // button_group.id(nolayerBt)==0.
+
+    if( i == id )
+      {
+	if( i == 0) return;
+	// nolayer is on and cannot be set off like that.
+
+	QToolButton* tBt = 
+	  dynamic_cast<QToolButton*>(button_group->find(i));
+	if( tBt != 0)
+	  tBt->setOn(false);
+
+	nolayerBt->setOn(true);
+	id = 0;
+      }
+    else
+      id = i;
   }
 
   void Qt_widget_standard_toolbar::zoomin()
