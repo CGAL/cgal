@@ -58,9 +58,14 @@ protected:
 
   // These operations are reserved to Static_filters<>, because the context of
   // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Orientation_3(const SF_Orientation_3 &) {}
+  SF_Orientation_3(const SF_Orientation_3 &s)
+      : _static_epsilon(s._static_epsilon) {}
 
-  SF_Orientation_3 & operator=(const SF_Orientation_3 &) {}
+  SF_Orientation_3 & operator=(const SF_Orientation_3 &s)
+  {
+      _static_epsilon = s._static_epsilon;
+      return *this;
+  }
 
   SF_Orientation_3()
   {
@@ -108,6 +113,7 @@ private:
     double det = det3x3_by_formula(pqx, pqy, pqz,
                                    prx, pry, prz,
                                    psx, psy, psz);
+
 #if 1
     // Fully static filter first.
     if (det >  _static_epsilon) return POSITIVE;

@@ -53,10 +53,14 @@ protected:
 
   // These operations are reserved to Static_filters<>, because the context of
   // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Side_of_oriented_circle_2(const SF_Side_of_oriented_circle_2 &) {}
+  SF_Side_of_oriented_circle_2(const SF_Side_of_oriented_circle_2 &s)
+      : _static_epsilon(s._static_epsilon) {}
 
-  SF_Side_of_oriented_circle_2& operator=(const SF_Side_of_oriented_circle_2 &)
-  {}
+  SF_Side_of_oriented_circle_2& operator=(const SF_Side_of_oriented_circle_2&s)
+  {
+      _static_epsilon = s._static_epsilon;
+      return *this;
+  }
  
   SF_Side_of_oriented_circle_2()
   {

@@ -146,12 +146,14 @@ public :
   }
 
 private:
-  // Bounds on fabs() of the coordinates of the Point_3s.
+  // Bounds on fabs() of the coordinates of the Point_2s and Point_3s.
   mutable double max2x, max2y;
   mutable double max3x, max3y, max3z;
 
   // A data member for each predicate.
   // Their state is related to the state of *this.
+  // TODO : maybe they should be separate classes, with a pointer to the
+  // kernel ?  That way we could copy them.
   mutable Orientation_2                     _orientation_2;
   mutable Orientation_3                     _orientation_3;
   mutable Side_of_oriented_circle_2         _side_of_oriented_circle_2;

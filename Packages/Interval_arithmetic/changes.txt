@@ -1,3 +1,7 @@
+Version 4.129 on 28 January 2002
+- Fix bug reported by Tamal : Static_filters<>'s functors copy ctors and
+  assignment operators were empty, while they should copy the data members.
+
 Version 4.128 on 10 January 2002
 - std::abort -> CGAL_CLIB_STD::abort().
 

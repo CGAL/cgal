@@ -63,9 +63,14 @@ protected:
 
   // These operations are reserved to Static_filters<>, because the context of
   // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Orientation_2(const SF_Orientation_2 &) {}
+  SF_Orientation_2(const SF_Orientation_2 &s)
+      : _static_epsilon(s._static_epsilon) {}
 
-  SF_Orientation_2 & operator=(const SF_Orientation_2 &) {}
+  SF_Orientation_2 & operator=(const SF_Orientation_2 &s)
+  {
+      _static_epsilon = s._static_epsilon;
+      return *this;
+  }
 
   SF_Orientation_2()
   {

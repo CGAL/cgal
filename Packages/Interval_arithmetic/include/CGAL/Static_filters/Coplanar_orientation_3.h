@@ -45,9 +45,16 @@ protected:
 
   // These operations are reserved to Static_filters<>, because the context of
   // a predicate is linked to the one of the Static_filter<> it is a member of.
-  SF_Coplanar_orientation_3(const SF_Coplanar_orientation_3 &) {}
+  SF_Coplanar_orientation_3(const SF_Coplanar_orientation_3 &s)
+      : oxy(s.oxy), oyz(s.oyz), oxz(s.oxz) {}
 
-  SF_Coplanar_orientation_3 & operator=(const SF_Coplanar_orientation_3 &) {}
+  SF_Coplanar_orientation_3 & operator=(const SF_Coplanar_orientation_3 &s)
+  {
+      oxy = s.oxy;
+      oyz = s.oyz;
+      oxz = s.oxz;
+      return *this;
+  }
 
   SF_Coplanar_orientation_3() {}
 
