@@ -63,19 +63,19 @@ _test_cls_triangulation_3(const Triangulation &)
 // list of Points for T1_0 , T1_1, T1_2 :
 
 
-Point p[5]=
-    { Point(0,0,0),Point(0,0,1),Point(0,0,2),Point(0,0,3),Point(0,0,4)};
+  Point p[5]=
+  { Point(0,0,0),Point(0,0,1),Point(0,0,2),Point(0,0,3),Point(0,0,4)};
   list_point l1;
   int i;
   for (i=0;i<5;i++)
     l1.push_back(p[i]);
 
-Point pp[5] = { Point(0,0,0),Point(0,0,4),Point(0,0,1),Point(0,0,2),Point(0,0,3)};
+  Point pp[5] = { Point(0,0,0),Point(0,0,4),Point(0,0,1),Point(0,0,2),Point(0,0,3)};
   list_point l2;
   for (i=0;i<5;i++)
     l2.push_back(pp[i]);
 
-Point ppp[5] ={Point(0,0,1),Point(0,0,2),Point(0,0,3),Point(0,0,0),Point(0,0,4)};
+  Point ppp[5] ={Point(0,0,1),Point(0,0,2),Point(0,0,3),Point(0,0,0),Point(0,0,4)};
   list_point l3;
   for (i=0;i<5;i++)
     l3.push_back(ppp[i]);
@@ -91,37 +91,33 @@ Point ppp[5] ={Point(0,0,1),Point(0,0,2),Point(0,0,3),Point(0,0,0),Point(0,0,4)}
   Point p8=Point(0,0,0); 
   Point p9=Point(5,5,0); 
 
-// Points for T3_1 :
-Point q[22] = 
-{
- Point(0,0,0), Point(4,4,0), Point(0,4,0), Point(4,0,0),
- Point(1,3,1), Point(3,1,1), Point(3,3,1), Point(1,1,1), Point(2,2,2),
- Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3), 
- Point(0,0,4), Point(4,4,4), Point(0,4,4), Point(4,0,4),
- Point(1,3,5), Point(3,1,5), Point(3,3,5), Point(1,1,5), Point(2,2,6)};
+  // Points for T3_1 :
+  Point q[22] = 
+  {
+    Point(0,0,0), Point(4,4,0), Point(0,4,0), Point(4,0,0),
+    Point(1,3,1), Point(3,1,1), Point(3,3,1), Point(1,1,1), Point(2,2,2),
+    Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3), 
+    Point(0,0,4), Point(4,4,4), Point(0,4,4), Point(4,0,4),
+    Point(1,3,5), Point(3,1,5), Point(3,3,5), Point(1,1,5), Point(2,2,6)};
 
-// Points for T3_2 :
+  // Points for T3_2 :
 
-list_point lp;
-int a, b, d;
+  list_point lp;
+  int a, b, d;
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
       for (d=0;d!=10;d++)
-       lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
-			  a*a-d*d+b));
+	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+			   a*a-d*d+b));
 
-// Points for T3_2 :
+  // Points for T3_2 :
 
-list_point lp2;
+  list_point lp2;
   for (a=0;a!=4;a++)
     for (b=0;b!=4;b++)
       for (d=0;d!=4;d++)
-       lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
-			  a*a-d*d-b));
-
-
-// triangulation for I/O
-Cls Tfromfile;
+	lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
+			    a*a-d*d-b));
 
   //########################################################################
 
@@ -137,88 +133,113 @@ Cls Tfromfile;
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT1("Test1_triangulation_IO_3",ios::out);
-std::ifstream iFileT1("Test1_triangulation_IO_3",ios::in);
-  oFileT1 << T0;
-  iFileT1 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == -1);
-  assert(Tfromfile.number_of_vertices() == 0);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT1("Test1_triangulation_IO_3",ios::out);
+      std::ifstream iFileT1("Test1_triangulation_IO_3",ios::in);
+      oFileT1 << T0;
+      iFileT1 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == -1);
+      assert(Tfromfile.number_of_vertices() == 0);
+    }
 
-std::cout << "    Constructor1 " << std::endl;
+  std::cout << "    Constructor1 " << std::endl;
   Vertex_handle v0=T0.insert(Point(0,0,0));
   assert(T0.dimension() == 0);
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT2("Test2_triangulation_IO_3",ios::out);
-std::ifstream iFileT2("Test2_triangulation_IO_3",ios::in);
-  oFileT2 << T0;
-  iFileT2 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 0);
-  assert(Tfromfile.number_of_vertices() == 1);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT2("Test2_triangulation_IO_3",ios::out);
+      std::ifstream iFileT2("Test2_triangulation_IO_3",ios::in);
+      oFileT2 << T0;
+      iFileT2 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 0);
+      assert(Tfromfile.number_of_vertices() == 1);
+    }
 
-std::cout << "    Constructor2 " << std::endl;
+  std::cout << "    Constructor2 " << std::endl;
 
   v0=T0.insert(Point(100,100,0));
   assert(T0.dimension() == 1);
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT3("Test3_triangulation_IO_3",ios::out);
-std::ifstream iFileT3("Test3_triangulation_IO_3",ios::in);
-  oFileT3 << T0;
-  iFileT3 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 1);
-  assert(Tfromfile.number_of_vertices() == 2);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT3("Test3_triangulation_IO_3",ios::out);
+      std::ifstream iFileT3("Test3_triangulation_IO_3",ios::in);
+      oFileT3 << T0;
+      iFileT3 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 1);
+      assert(Tfromfile.number_of_vertices() == 2);
+    }
 
-std::cout << "    Constructor3 " << std::endl;
+  std::cout << "    Constructor3 " << std::endl;
   v0=T0.insert(Point(100,-100,0));
   assert(T0.dimension() == 2);
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT4("Test4_triangulation_IO_3",ios::out);
-std::ifstream iFileT4("Test4_triangulation_IO_3",ios::in);
-  oFileT4 << T0;
-  iFileT4 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 2);
-  assert(Tfromfile.number_of_vertices() == 3);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT4("Test4_triangulation_IO_3",ios::out);
+      std::ifstream iFileT4("Test4_triangulation_IO_3",ios::in);
+      oFileT4 << T0;
+      iFileT4 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 2);
+      assert(Tfromfile.number_of_vertices() == 3);
+    }
 
-std::cout << "    Constructor4 " << std::endl;
+  std::cout << "    Constructor4 " << std::endl;
 
   v0=T0.insert(Point(50,0,100));
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT5("Test5_triangulation_IO_3",ios::out);
-std::ifstream iFileT5("Test5_triangulation_IO_3",ios::in);
-  oFileT5 << T0;
-  iFileT5 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 3);
-  assert(Tfromfile.number_of_vertices() == 4);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT5("Test5_triangulation_IO_3",ios::out);
+      std::ifstream iFileT5("Test5_triangulation_IO_3",ios::in);
+      oFileT5 << T0;
+      iFileT5 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 3);
+      assert(Tfromfile.number_of_vertices() == 4);
+    }
 
-std::cout << "    Constructor5 " << std::endl;
+  std::cout << "    Constructor5 " << std::endl;
   v0=T0.insert(Point(50,0,100));
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
   
   // copy constructor
-   Cls T1(T0);
-    assert(T1.dimension() == 3);
-    assert(T1.number_of_vertices() == 4);
-    assert(T1.is_valid());
+  Cls T1(T0);
+  assert(T1.dimension() == 3);
+  assert(T1.number_of_vertices() == 4);
+  assert(T1.is_valid());
    
   T1.clear();
   assert(T1.dimension() == -1);
@@ -228,28 +249,28 @@ std::cout << "    Constructor5 " << std::endl;
 
 
    // Affectation :
-     T1=T0;  
-     assert(T1.dimension() == 3);
-     assert(T1.number_of_vertices() == 4);
-     assert(T1.is_valid());
-     T1.clear();
+  T1=T0;  
+  assert(T1.dimension() == 3);
+  assert(T1.number_of_vertices() == 4);
+  assert(T1.is_valid());
+  T1.clear();
 
-   // duplication
+  // duplication
     
-     T1.copy_triangulation(T0);
-     assert(T1.dimension() == 3);
-     assert(T1.number_of_vertices() == 4);
-     assert(T1.is_valid());
-     T1.clear();
+  T1.copy_triangulation(T0);
+  assert(T1.dimension() == 3);
+  assert(T1.number_of_vertices() == 4);
+  assert(T1.is_valid());
+  T1.clear();
 
-     T1.swap(T0);
-     assert(T1.dimension() == 3);
-     assert(T1.number_of_vertices() == 4);
-     assert(T1.is_valid());
-     assert(T0.dimension() == -1);
-     assert(T0.number_of_vertices() == 0);
-     assert(T0.is_valid());
-      T0.swap(T1);
+  T1.swap(T0);
+  assert(T1.dimension() == 3);
+  assert(T1.number_of_vertices() == 4);
+  assert(T1.is_valid());
+  assert(T0.dimension() == -1);
+  assert(T0.number_of_vertices() == 0);
+  assert(T0.is_valid());
+  T0.swap(T1);
   
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
@@ -258,28 +279,28 @@ std::cout << "    Constructor5 " << std::endl;
 
      //setting
      
-     T1.set_number_of_vertices(100);
-     assert(T1.dimension() == -1);
-     assert(T1.number_of_vertices() == 100);
-     //     assert(T1.is_valid());
+  T1.set_number_of_vertices(100);
+  assert(T1.dimension() == -1);
+  assert(T1.number_of_vertices() == 100);
+  //     assert(T1.is_valid());
 
      // Building some psychotics triangulations :
-std::cout << "    Constructor6 " << std::endl;
-// triangulation 1-dimensional : vertical line.
+  std::cout << "    Constructor6 " << std::endl;
+  // triangulation 1-dimensional : vertical line.
   Cls T1_0;
   int n = T1_0.insert(l1.begin(),l1.end());
   assert(n==5);
   assert(T1_0.dimension()==1);
   assert(T1_0.number_of_vertices()==n);
   assert(T1_0.is_valid());
-std::cout << "    Constructor7 " << std::endl;
+  std::cout << "    Constructor7 " << std::endl;
   Cls T1_1;
   n = T1_1.insert(l2.begin(),l2.end());
   assert(n==5);
   assert(T1_1.dimension()==1);
   assert(T1_1.number_of_vertices()==n);
   assert(T1_1.is_valid());
-std::cout << "    Constructor8 " << std::endl;
+  std::cout << "    Constructor8 " << std::endl;
   Cls T1_2;
   n = T1_2.insert(l3.begin(),l3.end());
   assert(n==5);
@@ -287,16 +308,21 @@ std::cout << "    Constructor8 " << std::endl;
   assert(T1_2.number_of_vertices()==n);
   assert(T1_2.is_valid());
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT6("Test6_triangulation_IO_3",ios::out);
-std::ifstream iFileT6("Test6_triangulation_IO_3",ios::in);
-  oFileT6 << T1_2;
-  iFileT6 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 1);
-  assert(Tfromfile.number_of_vertices() == n);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT6("Test6_triangulation_IO_3",ios::out);
+      std::ifstream iFileT6("Test6_triangulation_IO_3",ios::in);
+      oFileT6 << T1_2;
+      iFileT6 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 1);
+      assert(Tfromfile.number_of_vertices() == n);
+    }
 
-std::cout << "    Constructor9 " << std::endl;
+  std::cout << "    Constructor9 " << std::endl;
   // 2-dimensional triangulations 
 
   Cls T2_0;
@@ -331,16 +357,21 @@ std::cout << "    Constructor9 " << std::endl;
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT7("Test7_triangulation_IO_3",ios::out);
-std::ifstream iFileT7("Test7_triangulation_IO_3",ios::in);
-  oFileT7 << T2_0;
-  iFileT7 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 2);
-  assert(Tfromfile.number_of_vertices() == 8);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT7("Test7_triangulation_IO_3",ios::out);
+      std::ifstream iFileT7("Test7_triangulation_IO_3",ios::in);
+      oFileT7 << T2_0;
+      iFileT7 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 2);
+      assert(Tfromfile.number_of_vertices() == 8);
+    }
 
-std::cout << "    Constructor10 " << std::endl;
+  std::cout << "    Constructor10 " << std::endl;
   // test grid insert
   Cls T2_1;
   int m;
@@ -353,38 +384,42 @@ std::cout << "    Constructor10 " << std::endl;
   assert( T2_1.dimension()==2 );
   assert( T2_1.is_valid() );
 
-std::cout << "    Constructor11 " << std::endl;
+  std::cout << "    Constructor11 " << std::endl;
   // 3-dimensional triangulations
-   // This is a simple grid :
-   int x,y,z;
-   Cls T3_0;
-   for (z=0 ; z<5 ; z++)
-     for (y=0 ; y<5 ; y++)
-       for (x=0 ; x<5 ; x++) 
-           v0=T3_0.insert(Point(x,y,z));
-   assert(T3_0.is_valid());
-   assert(T3_0.number_of_vertices()==125);
-   assert(T3_0.dimension()==3);
-std::cout << "    Constructor12 " << std::endl;
+  // This is a simple grid :
+  int x,y,z;
+  Cls T3_0;
+  for (z=0 ; z<5 ; z++)
+    for (y=0 ; y<5 ; y++)
+      for (x=0 ; x<5 ; x++) 
+	v0=T3_0.insert(Point(x,y,z));
+  assert(T3_0.is_valid());
+  assert(T3_0.number_of_vertices()==125);
+  assert(T3_0.dimension()==3);
+  std::cout << "    Constructor12 " << std::endl;
   Cls T3_1;
   for (i=0;i<22;i++)
-     T3_1.insert(q[i]);
+    T3_1.insert(q[i]);
   assert(T3_1.is_valid());
   assert(T3_1.number_of_vertices()==22);
   assert(T3_1.dimension()==3);
 
-  std::cout << "    I/O" << std::endl;
-std::ofstream oFileT8("Test8_triangulation_IO_3",ios::out);
-std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
-  oFileT8 << T3_1;
-  iFileT8 >> Tfromfile;
-  assert(Tfromfile.is_valid());
-  assert(Tfromfile.dimension() == 3);
-  assert(Tfromfile.number_of_vertices() == 22);
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      Cls Tfromfile;
+      std::cout << "    I/O" << std::endl;
+      std::ofstream oFileT8("Test8_triangulation_IO_3",ios::out);
+      std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
+      oFileT8 << T3_1;
+      iFileT8 >> Tfromfile;
+      assert(Tfromfile.is_valid());
+      assert(Tfromfile.dimension() == 3);
+      assert(Tfromfile.number_of_vertices() == 22);
+    }
 
 
-
-//#######################################################################
+  //#######################################################################
   std::cout << "  list insertion"<< std::endl;
   Cls T3_2_1;
   T3_2_1.insert(lp2.begin(),lp2.end());
@@ -393,7 +428,7 @@ std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
   assert(T3_2_1.dimension()==3);
   //  assert(T3_2.number_of_vertices()==1000);
   std::cout << "   end of insertion " << std::endl;
-//########################################################################
+  //########################################################################
 
 
   std::cout << "  1000 points insertion"<< std::endl;
@@ -413,7 +448,7 @@ std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
         if (count < 1000)
           std::cout << count << '\b' << '\b' << '\b' ;
         else
-           std::cout << count << std::endl;
+	  std::cout << count << std::endl;
     std::cout.flush();
   }
   assert(T3_2.is_valid());
@@ -461,159 +496,163 @@ std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
   // Test inserts function separatelly.
 
   std::cout << "    Testing insertions   " << std::endl;
-       Locate_type lt;
-       int li,lj,i1,i2;
-       Cls Ti = T0;
-       v0=Ti.insert_in_cell(Point(50,0,50),Ti.locate(Point(50,0,50)));
-       assert(Ti.is_valid());
-       assert(Ti.number_of_vertices() == 5);
-       Ti=T0;
-       v0=Ti.insert_in_facet(Point(50,0,0),Ti.locate(Point(50,0,1)),3);
-       assert(Ti.is_valid());
-       assert(Ti.number_of_vertices() == 5);
-       Ti=T0;
-       v0=Ti.insert_in_facet(Point(50,0,0),Facet(Ti.locate(Point(50,0,1)),3));
-       assert(Ti.is_valid());
-       assert(Ti.number_of_vertices() == 5);
-       Ti=T0;
-       Cell_handle c= Ti.locate(Point(0,0,0),lt,li,lj);
-       assert(lt==Cls::VERTEX);
-       i1=li;
-       c= Ti.locate(Point(100,100,0),lt,li,lj);
-       assert(lt==Cls::VERTEX);
-       i2=li;
+  Locate_type lt;
+  int li,lj,i1,i2;
+  Cls Ti = T0;
+  v0=Ti.insert_in_cell(Point(50,0,50),Ti.locate(Point(50,0,50)));
+  assert(Ti.is_valid());
+  assert(Ti.number_of_vertices() == 5);
+  Ti=T0;
+  v0=Ti.insert_in_facet(Point(50,0,0),Ti.locate(Point(50,0,1)),3);
+  assert(Ti.is_valid());
+  assert(Ti.number_of_vertices() == 5);
+  Ti=T0;
+  v0=Ti.insert_in_facet(Point(50,0,0),Facet(Ti.locate(Point(50,0,1)),3));
+  assert(Ti.is_valid());
+  assert(Ti.number_of_vertices() == 5);
+  Ti=T0;
+  Cell_handle c= Ti.locate(Point(0,0,0),lt,li,lj);
+  assert(lt==Cls::VERTEX);
+  i1=li;
+  c= Ti.locate(Point(100,100,0),lt,li,lj);
+  assert(lt==Cls::VERTEX);
+  i2=li;
 
-       v0=Ti.insert_in_edge(Point(50,50,0),Ti.locate(Point(50,40,1)),i1,i2);
-       assert(Ti.is_valid());
-       assert(Ti.number_of_vertices() == 5);
+  v0=Ti.insert_in_edge(Point(50,50,0),Ti.locate(Point(50,40,1)),i1,i2);
+  assert(Ti.is_valid());
+  assert(Ti.number_of_vertices() == 5);
 
-       Ti=T0;
-       c= Ti.locate(Point(0,0,0),lt,li,lj);
-       assert(lt==Cls::VERTEX);
-       i1=li;
-       c= Ti.locate(Point(100,100,0),lt,li,lj);
-       assert(lt==Cls::VERTEX);
-       i2=li;
-       v0=Ti.insert_in_edge(Point(50,50,0),Edge(Ti.locate(Point(50,50,0)),i1,i2));
-       assert(Ti.is_valid());
-       assert(Ti.number_of_vertices() == 5);
+  Ti=T0;
+  c= Ti.locate(Point(0,0,0),lt,li,lj);
+  assert(lt==Cls::VERTEX);
+  i1=li;
+  c= Ti.locate(Point(100,100,0),lt,li,lj);
+  assert(lt==Cls::VERTEX);
+  i2=li;
+  v0=Ti.insert_in_edge(Point(50,50,0),Edge(Ti.locate(Point(50,50,0)),i1,i2));
+  assert(Ti.is_valid());
+  assert(Ti.number_of_vertices() == 5);
 
-       Ti=T0;
+  Ti=T0;
 
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
        
 
-       c= Ti.locate(Point(50,50,50),lt,li,lj);
+  c= Ti.locate(Point(50,50,50),lt,li,lj);
       
-       v0= Ti.insert_outside_convex_hull(Point(50,50,50),c);
-       assert(Ti.is_valid());
+  v0= Ti.insert_outside_convex_hull(Point(50,50,50),c);
+  assert(Ti.is_valid());
 
-       assert(Ti.number_of_vertices() == 5);
+  assert(Ti.number_of_vertices() == 5);
 
-       Cls T3_3=T1_0;
-       v0=T3_3.insert_outside_affine_hull(Point(2,0,0));
-       assert(T3_3.is_valid());
-       assert(T3_3.dimension()==2);
-       c= T3_3.locate(Point(4,0,0),lt,li,lj);
-       v0=T3_3.insert_outside_convex_hull(Point(4,0,0),c);
-       assert(T3_3.is_valid());
-       assert(T3_3.dimension()==2);
-       v0=T3_3.insert_outside_affine_hull(Point(0,5,0));
-       assert(T3_3.is_valid());
-       assert(T3_3.dimension()==3);
+  Cls T3_3=T1_0;
+  v0=T3_3.insert_outside_affine_hull(Point(2,0,0));
+  assert(T3_3.is_valid());
+  assert(T3_3.dimension()==2);
+  c= T3_3.locate(Point(4,0,0),lt,li,lj);
+  v0=T3_3.insert_outside_convex_hull(Point(4,0,0),c);
+  assert(T3_3.is_valid());
+  assert(T3_3.dimension()==2);
+  v0=T3_3.insert_outside_affine_hull(Point(0,5,0));
+  assert(T3_3.is_valid());
+  assert(T3_3.dimension()==3);
 
        // testing some simple basic methods (access functions)
 
-       std::cout << "   Boolean and query functions " <<std::endl;
-       c=T0.infinite_cell();
-       assert(T0.is_infinite(c));
-       int ind=c->index(T0.infinite_vertex());
+  std::cout << "   Boolean and query functions " <<std::endl;
+  c=T0.infinite_cell();
+  assert(T0.is_infinite(c));
+  int ind=c->index(T0.infinite_vertex());
        
-       Facet f ; 
-       for (i=0;i<4;i++) 
-         if (i!=ind) {
-          assert(T0.is_infinite(c,i));
-          f=Facet(c,i);
-          assert(T0.is_infinite(f));
-	 }
-       int j;
+  Facet f ; 
+  for (i=0;i<4;i++) 
+    if (i!=ind) {
+      assert(T0.is_infinite(c,i));
+      f=Facet(c,i);
+      assert(T0.is_infinite(f));
+    }
+  int j;
 
-       for (i=0;i<4;i++) 
-         for (j=0;i<4;i++) 
-           if ((i!=j) && ((i==ind) || (j==ind))) {
-             assert(T0.is_infinite(c,i,j));
-             assert(T0.is_infinite(Edge(c,i,j)));
-	   }
+  for (i=0;i<4;i++) 
+    for (j=0;i<4;i++) 
+      if ((i!=j) && ((i==ind) || (j==ind))) {
+	assert(T0.is_infinite(c,i,j));
+	assert(T0.is_infinite(Edge(c,i,j)));
+      }
 
 
-       v0=T0.infinite_vertex();
-       assert(T0.is_infinite(v0));
+  v0=T0.infinite_vertex();
+  assert(T0.is_infinite(v0));
 
-       Vertex_iterator vit;
-       Vertex_handle w;
-       for
-	 (vit=T3_1.all_vertices_begin();vit!=T3_1.vertices_end();vit++)
-            T3_1.is_vertex(vit->point(), w);
+  Vertex_iterator vit;
+  Vertex_handle w;
+  for
+    (vit=T3_1.all_vertices_begin();vit!=T3_1.vertices_end();vit++)
+    T3_1.is_vertex(vit->point(), w);
          
        // geometric functions
-       std::cout << "Geometric functions " << std::endl;
-       c= T0.locate(Point(50,0,1),lt,li,lj);
-       Tetrahedron tr1=T0.tetrahedron(c);
-       c= T0.locate(Point(10,0,1),lt,li,lj);
-       Tetrahedron tr2=T0.tetrahedron(c);
-       assert(tr1==tr2);
-       c= T0.locate(Point(50,0,5),lt,li,lj);
-       Triangle tri1=T0.triangle(c,1);
-       c= T0.locate(Point(10,0,1),lt,li,lj);
-       Triangle tri2=T0.triangle(Facet(c,1));
-       assert(tri1==tri2);
-       c= T0.locate(Point(10,0,1),lt,li,lj);
-       Segment s1 = T0.segment(c,0,1);
-       c= T0.locate(Point(50,0,5),lt,li,lj);
-       Segment s2 = T0.segment(Edge(c,0,1));
-       assert(s1==s2);
+  std::cout << "Geometric functions " << std::endl;
+  c= T0.locate(Point(50,0,1),lt,li,lj);
+  Tetrahedron tr1=T0.tetrahedron(c);
+  c= T0.locate(Point(10,0,1),lt,li,lj);
+  Tetrahedron tr2=T0.tetrahedron(c);
+  assert(tr1==tr2);
+  c= T0.locate(Point(50,0,5),lt,li,lj);
+  Triangle tri1=T0.triangle(c,1);
+  c= T0.locate(Point(10,0,1),lt,li,lj);
+  Triangle tri2=T0.triangle(Facet(c,1));
+  assert(tri1==tri2);
+  c= T0.locate(Point(10,0,1),lt,li,lj);
+  Segment s1 = T0.segment(c,0,1);
+  c= T0.locate(Point(50,0,5),lt,li,lj);
+  Segment s2 = T0.segment(Edge(c,0,1));
+  assert(s1==s2);
      
 
        // Iterator and circulator test
 
-       Cls T0_1;
-       v0=T0_1.insert(Point(1,3,5));
-       std::cout << "    Testing Iterator   "<< std::endl;
-       _test_vertex_iterator(T0_1);
-       _test_triangulation_iterator(T0_1);
-       _test_vertex_iterator(T0);
-       _test_triangulation_iterator(T0);
-       _test_vertex_iterator(T2_0);
-       _test_triangulation_iterator(T2_0);
-       _test_vertex_iterator(T1_0);
-       _test_triangulation_iterator(T1_0);
-       _test_vertex_iterator(T3_1);
-       _test_triangulation_iterator(T3_1);
-       _test_vertex_iterator(T3_0);
-       _test_triangulation_iterator(T3_0); 
-       _test_vertex_iterator(T3_2);        
-       _test_triangulation_iterator(T3_2); 
-       _test_vertex_iterator(T3_3);
-       _test_triangulation_iterator(T3_3); 
+  Cls T0_1;
+  v0=T0_1.insert(Point(1,3,5));
+  if (! del) // to avoid doing the following tests for both Delaunay
+    // and non Delaunay triangulations 
+    {
+      std::cout << "    Testing Iterator   "<< std::endl;
+      _test_vertex_iterator(T0_1);
+      _test_triangulation_iterator(T0_1);
+      _test_vertex_iterator(T0);
+      _test_triangulation_iterator(T0);
+      _test_vertex_iterator(T2_0);
+      _test_triangulation_iterator(T2_0);
+      _test_vertex_iterator(T1_0);
+      _test_triangulation_iterator(T1_0);
+      _test_vertex_iterator(T3_1);
+      _test_triangulation_iterator(T3_1);
+      _test_vertex_iterator(T3_0);
+      _test_triangulation_iterator(T3_0); 
+      _test_vertex_iterator(T3_2);        
+      _test_triangulation_iterator(T3_2); 
+      _test_vertex_iterator(T3_3);
+      _test_triangulation_iterator(T3_3); 
+      
 
+      std::cout << "    Testing Circulator  "<< std::endl;
+      _test_circulator(T0);
+      _test_circulator(T3_1);
+      _test_circulator(T3_0);
+      _test_circulator(T3_2);
+      _test_circulator(T3_3);
+    }
 
-       std::cout << "    Testing Circulator  "<< std::endl;
-       _test_circulator(T0);
-       _test_circulator(T3_1);
-       _test_circulator(T3_0);
-       _test_circulator(T3_2);
-       _test_circulator(T3_3);
+  std::cout <<"   Test destructors and quit "<< std::endl;
 
-       std::cout <<"   Test destructors and quit "<< std::endl;
-
-       T0.clear();
-       assert(T0.is_valid());
-       T3_0.clear();
-       assert(T3_0.is_valid());
-       assert(T3_0.dimension()==-1);
-       assert(T3_0.number_of_vertices()==0);
+  T0.clear();
+  assert(T0.is_valid());
+  T3_0.clear();
+  assert(T3_0.is_valid());
+  assert(T3_0.dimension()==-1);
+  assert(T3_0.number_of_vertices()==0);
         
        
 

@@ -36,6 +36,7 @@
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_triangulation_3.C>
 
+bool del = false;
 
 int main()
 {

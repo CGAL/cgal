@@ -28,7 +28,7 @@ void
 _test_cls_geom_traits( Point p[55], const Traits & )
 
 {
-  typedef typename Traits::Point             Point;
+  //  typedef typename Traits::Point             Point;
   typedef typename Traits::Segment           Segment;
   typedef typename Traits::Triangle          Triangle;
   typedef typename Traits::Tetrahedron       Tetrahedron;
