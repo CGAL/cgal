@@ -181,8 +181,8 @@ and distance class.
 \subsection{Example of Nearest Neighbor Searching}
 
 The first example illustrates nearest neighbor searching. The random
-data points are preprocessed in a $k$-$d$ tree. For each of the random
-query points its nearest neighbor is obtained.  In this example the
+data points are preprocessed in a $k$-$d$ tree. We then search for the 
+nearest neighbor to the origin.  In this example the
 Euclidean distance is used by default. To avoid the expensive
 computation of square roots, the nearest neighbor searching algorithm
 computes squared distances instead of the Euclidean distance itself.
@@ -191,14 +191,12 @@ taken.
 
 \ccIncludeExampleCode{../../examples/Spatial_searching/Nearest_neighbor_searching.C}
 
-\subsection{Example of selecting a splitting rule and setting the bucket size.}
+\subsection{Example of Selecting a Splitting Rule and Setting the Bucket Size.}
 
 This example program illustrates selecting a splitting rule and
 setting the maximal allowed bucket size.  The only differences with
-the previous example are the definition of the traits class, where
-Fair is selected as a splitting rule, and the declaration of a
-variable \ccc{tr} of type TreeTraits, needed to set the maximal
-allowed bucket size.
+the previous example are the declaration of the Fair 
+splitting rule, needed to set the maximal allowed bucket size.
 
 \ccIncludeExampleCode{../../examples/Spatial_searching/Using_fair_splitting_rule.C}
 
@@ -220,7 +218,7 @@ coordinates.
 \ccIncludeExampleCode{../../examples/Spatial_searching/Fuzzy_range_query.C}
 
 
-\subsection{Example of distance browsing}
+\subsection{Example of Distance Browsing}
 
 This example program illustrates distance browsing for $4$-dimensional
 points with a positive first coordinate using orthogonal priority
@@ -230,10 +228,16 @@ search.
 \ccIncludeExampleCode{../../examples/Spatial_searching/Distance_browsing.C}
 
 
-\subsection{Example illustrating use of user defined point and distance class}
+\subsection{Example Illustrating Use of User Defined Point and Distance Class}
 
 In this example the user provides an implementation of 3-dimensional points and an
 implementation of the Euclidean distance.
+
+We first have to introduce a point class. We have put the glue layer
+in this file as well.
+
+\ccIncludeExampleCode{../../examples/Spatial_searching/Point.h}
+
 
 \ccIncludeExampleCode{../../examples/Spatial_searching/User_defined_point_and_distance.C}
 
