@@ -82,15 +82,23 @@ and through that face to the circular list of its incident faces.
 The edges are not explicitely represented, they are only represented 
 through the adjacencies relations of two faces.
 
+
+\begin{figure}
 \begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-     \input{three_levels.ltex}
-    \end{center}
-	\caption{The three layer design of triangulations.}
-    \label{I1_Fig_three_levels}
-  \end{figure}
+\begin{center}
+\input{three_levels.ltex}
+\end{center}
+\caption{The three layer design of triangulations.}
 \end{ccTexOnly}
+\label{I1_Fig_three_levels}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=threelevels.gif align=center alt="Three_levels"> <br>
+Figure: The three layer design of triangulations.
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
 
 
 The triangulations in \cgal\ are represented
@@ -218,19 +226,21 @@ and special cases at the
 boundary of the convex hull are simpler to deal with.
 
 
-\begin{ccTexOnly}
+
 \begin{figure}
+\begin{ccTexOnly}
 \begin{center} \IpeScale{50} \Ipe{infinite_vertex.ipe} \end{center}
-\caption{The infinite vertex}
-\label{I1_Fig_infinite_vertex}
-\end{figure}
+\caption{The infinite vertex.}
 \end{ccTexOnly}
-
+\label{I1_Fig_infinite_vertex}
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=infinite_vertex.gif align=center alt="Vertices at
-infinity">
+infinity"> <br>
+Figure: The infinite vertex.
+</CENTER>
 \end{ccHtmlOnly}
-
+\end{figure}
 
 
 The class \ccc{Triangulation_2<Gt,Tds>}
@@ -274,20 +284,24 @@ of~\ccc{f}.
 
 
 
-\begin{ccTexOnly}
-%\begin{center} \IpeScale{70} \Ipe{Neighbor_number.ipe} \end{center}
  \begin{figure}
+\begin{ccTexOnly}
     \begin{center}
      \input{neighbors.ltex}
     \end{center}
-    \caption{Vertices and neighbors}
-    \label{I1_Fig_neighbors}
-  \end{figure}
+    \caption{Vertices and neighbors.}
 \end{ccTexOnly} 
-
-\begin{ccHtmlOnly}
+    \label{I1_Fig_neighbors}
+  \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=neighbors.gif align=center alt="Neighbors">
+<br>
+Figure: Vertices and neighbors.
+</CENTER>
 \end{ccHtmlOnly} 
+\end{figure}
+
+
 
 \smallskip
 A triangulation is valid from the combinatorial point of view if the
@@ -309,17 +323,21 @@ Furthermore, it is said to be geometrically valid iff
 counterclockwise order.
 
 \smallskip
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
 \begin{center} \IpeScale{70}\Ipe{valid1.ipe} \end{center}
-\caption{Validity test}
-\label{I1_Fig_valid}
-\end{figure}
+\caption{Validity test.}
 \end{ccTexOnly} 
+\label{I1_Fig_valid}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=valid1.gif align=center alt="Validity">
+<br>
+Figure: Validity test.
+</CENTER>
 \end{ccHtmlOnly} 
+\end{figure}
 
 
 \begin{ccClassTemplate}{Triangulation_2<Gt,Tds>}
@@ -683,66 +701,82 @@ algorithm of where to start.
  \ccPrecond Vertex \ccc{v} must be finite.}
 
 
+\begin{figure}
 \begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-     \input{insert1.ltex}
-    \end{center}
-    \caption{Insertion of a point on an edge}
-    \label{I1_Fig_inser1t}
-  \end{figure}
+\begin{center}
+\input{insert1.ltex}
+\end{center}
+\caption{Insertion of a point on an edge.}
 \end{ccTexOnly}
+\label{I1_Fig_inser1t}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=insert1.gif align=center alt="Insertion in an edge">
+<br>
+Figure: Insertion of a point on an edge.
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure}
 
 
 
 
+\begin{figure}
 \begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-     \input{insert2.ltex}
-    \end{center}
-    \caption{Insertion in a face}
-    \label{I1_Fig_insert2}
-  \end{figure}
+\begin{center}
+\input{insert2.ltex}
+\end{center}
+\caption{Insertion in a face.}
 \end{ccTexOnly}
+\label{I1_Fig_insert2}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=insert2.gif align=center alt="Insertion in a Face">
+<br>
+Figure: Insertion in a face.
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure}
 
 
+\begin{figure}
 \begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-     \input{insert3.ltex}
-    \end{center}
-     \caption{Insertion outside}
-    \label{I1_Fig_insert3}
-  \end{figure}
+\begin{center}
+\input{insert3.ltex}
+\end{center}
+\caption{Insertion outside the convex hull.}
 \end{ccTexOnly}
+\label{I1_Fig_insert3}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=insert3.gif align=center alt="Insertion outside the
 convex hull">
+<br>
+Figure: Insertion outside the convex hull.
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure}
 
+\begin{figure}
 \begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-     \input{remove.ltex}
-    \end{center}
-     \caption{Removal}
-    \label{I1_Fig_remove}
-  \end{figure}
+\begin{center}
+\input{remove.ltex}
+\end{center}
+\caption{Removal}
 \end{ccTexOnly}
+\label{I1_Fig_remove}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=remove.gif align=center alt="Remove">
+<br>
+Figure: Removal.
+</CENTER>
 \end{ccHtmlOnly}
+\end{figure}
 
 
 The following member functions offer more specialized versions of the
@@ -886,17 +920,21 @@ $l_1$ and $l_2$ have no face to their left. Lines $l_3$ and $l_4$
 have faces to their left. Note that the finite faces that are only vertex
 incident to lines $l_3$ and  $l_4$ are not enumerated.
 
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
 \begin{center}  \Ipe{walk.ipe} \end{center}
-\caption{The line face circulator}
-\label{I1_fig_Line_face_circulator}
-\end{figure}
+\caption{The line face circulator.}
 \end{ccTexOnly} 
+\label{I1_fig_Line_face_circulator}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=walk.gif align=center alt="The Infinite Vertex">
+<br>
+Figure: The line face circulator.
+</CENTER>
 \end{ccHtmlOnly} 
+\end{figure}
 
 A line face circulator is invalidated if the face the circulator refers
 to is changed.
@@ -1715,19 +1753,23 @@ the combinatorial validity of the resulting triangulation.
 diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 
 
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
 \begin{center} %\IpeScale{70} \Ipe{Flip.ipe} \end{center}
 \input{flip.ltex}
 \end{center}
-\caption{Flip}
-\label{I1_fig_flip}
-\end{figure}
+\caption{Flip.}
 \end{ccTexOnly} 
+\label{I1_fig_flip}
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=Flip.gif align=center alt="Flip">
+<br>
+Figure : Flip.
+</CENTER>
 \end{ccHtmlOnly} 
+\end{figure}
 
 
 \ccMethod{Vertex* insert_first(Vertex* v);} {creates the first 
@@ -1752,18 +1794,21 @@ The boolean orient decides the final orientation of all
 faces. A pointer to vertex \ccc{v} is returned.
 }
 
-\begin{ccTexOnly}
 \begin{figure}
+\begin{ccTexOnly}
 %\begin{center} \IpeScale{70} \Ipe{Three.ipe} \end{center}
 \begin{center} \input{insert.ltex} \end{center}
 \caption{Insertion}
-\end{figure}
 \end{ccTexOnly} 
 
 \begin{ccHtmlOnly}
+<CENTER>
 <img border=0 src=Three.gif align=center alt="Insertion">
+<br>
+Figure: Insertion.
+</CENTER>
 \end{ccHtmlOnly} 
-
+\end{figure}
 
 
 
