@@ -53,8 +53,8 @@ set $S$ which remains fixed until the next insert or clear operation.
 
 The template parameter \ccc{Traits} is a model for \ccc{MinEllipse2Traits}.
 
-We provide the model \ccc{Min_ellipse_2_traits_2} using the two-dimensional
-\cgal~kernel.
+We provide the model \ccc{CGAL::Min_ellipse_2_traits_2<K>} using the 
+two-dimensional \cgal~kernel.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -64,7 +64,12 @@ We provide the model \ccc{Min_ellipse_2_traits_2} using the two-dimensional
 
 \ccNestedType{ Point  }{ Typedef to \ccc{Traits::Point  }.}
 
-\ccNestedType{ Ellipse}{ Typedef to \ccc{Traits::Ellipse}.}
+\ccNestedType{ Ellipse}{ Typedef to \ccc{Traits::Ellipse}. If you 
+        are using the predefined traits class 
+        \ccc{CGAL::Min_ellipse_2_traits_2<K>},
+        you can access the coefficients of the ellipse, see the 
+        documentation of \ccc{CGAL::Min_ellipse_2_traits_2<K>} and 
+        the example below.}
 
 \ccNestedType{ Point_iterator}{
         Non-mutable model of the \stl\ concept \emph{BidirectionalIterator}
@@ -347,8 +352,9 @@ for validity each takes linear time.
 \ccExample
 \ccIndexSubitem[C]{Min_ellipse_2}{example}
 
-To illustrate the creation of \ccRefName\ and to show that randomization
-can be useful in certain cases, we give an example.
+To illustrate the usage of \ccRefName\ and to show that randomization
+can be useful in certain cases, we give an example. The example also
+shows how the coefficents of the constructed ellipse can be accessed. 
 
 \ccIncludeExampleCode{Optimisation_ref/example_Min_ellipse_2_noheader.C}
 

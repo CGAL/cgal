@@ -22,7 +22,7 @@
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-The class \ccRefName\ is a traits class for \ccc{Min_ellipse_2<Traits>}
+The class \ccRefName\ is a traits class for \ccc{CGAL::Min_ellipse_2<Traits>}
 using the two-di\-men\-sional \cgal\ kernel.
  
 \ccInclude{CGAL/Min_ellipse_2_traits_2.h}
@@ -46,6 +46,18 @@ The template parameter \ccc{K} is a model for \ccc{Kernel}.
 \ccNestedType{Point  }{typedef to \ccc{K::Point_2}.}
 \ccNestedType{Ellipse}{internal type.}
 
+The Ellipse type provides the following access methods not required
+by the model \ccc{MinEllipse2Traits}.
+
+\ccCreationVariable{ellipse}
+
+\ccMemberFunction{ bool is_circle();}{tests whether the ellipse is a circle.}
+
+\ccMemberFunction{ void double_coefficients (double &r, double &s, double &t, double &u, double &v, double &w);}{gives a double approximation of the 
+ellipse's conic equation. If \ccc{K} is a Cartesian kernel, the ellipse 
+is the set of all points (x,y) satisfying rx^2+sy^2+txy+ux+vy+w=0. In the
+Homogeneous case, the ellipse is the set of points (hx,hy,hw) satisfying
+r(hx)^2+s(hy)^2+t(hx)(hy)+u(hx)(hw)+v(hy)(hw)+w(hw)^2=0.} 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{traits}
@@ -53,6 +65,9 @@ The template parameter \ccc{K} is a model for \ccc{Kernel}.
 \ccConstructor{ Min_ellipse_2_traits_2( );}{default constructor.}
 \ccConstructor{ Min_ellipse_2_traits_2(
                     const Min_ellipse_2_traits_2<K>&);}{copy constructor.}
+
+% -----------------------------------------------------------------------------
+
 
 % -----------------------------------------------------------------------------
 \ccSeeAlso
