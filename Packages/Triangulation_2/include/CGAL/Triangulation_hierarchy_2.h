@@ -12,7 +12,6 @@
 // release_date  :
 //
 // file          : include/CGAL/Triangulation_hierarchy_2.h
-// package       : Triangulation
 // source        : $RCSfile$
 // revision      : 
 // revision_date : 
