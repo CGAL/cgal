@@ -242,6 +242,12 @@ CGAL_Kernel_pred(CGALi::Compare_distance<Point_2>,
 CGAL_Kernel_pred(CGAL ::p_Less_dist_to_point<Point_2>,
                  Less_distance_to_point_2,
                  less_distance_to_point_2_object)
+CGAL_Kernel_pred(CGAL ::p_Less_dist_to_line_2<Point_2>,
+                 Less_signed_distance_to_line_2,
+                 less_signed_distance_to_line_2_object)
+CGAL_Kernel_pred(CGAL ::p_Less_rotate_ccw<Point_2>,
+	         Less_rotate_ccw_2,
+		 less_rotate_ccw_2_object)
 CGAL_Kernel_pred(CGALi::Compare_angle_with_x_axis<Direction_2>,
 	         Compare_angle_with_x_axis_2,
 		 compare_angle_with_x_axis_2_object)

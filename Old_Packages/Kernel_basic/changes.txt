@@ -1,5 +1,7 @@
 3.52   (18 July 2001)
 - changed Less_distance_to_point_[23] to use default construction
+- changed Less_rotate_ccw_2 to use default construction
+- removed redundant Left_of_line_2
 
 3.51   (12 July 2001)
 - Add Kernel_traits<>.

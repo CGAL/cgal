@@ -34,7 +34,6 @@ public:
    typedef bool    result_type;
    typedef  Arity_tag< 1 >   Arity;
 
-
         p_Left_of_line_2p(const Point& a, const Point& b)
          : p_a(a), p_b(b)
         {}
@@ -164,6 +163,34 @@ private:
 };
 
 template <class Point>
+class p_Less_dist_to_line_2
+{
+public:
+  typedef bool    result_type;
+  typedef  Arity_tag< 4 >   Arity;
+
+  bool  operator()(const Point&a, const Point& b,
+                   const Point& c, const Point& d) const
+        {
+          Comparison_result 
+            res = cmp_signed_dist_to_line( a, b, c, d);
+          if ( res == LARGER )
+          {
+              return false;
+          }
+          else if ( res == SMALLER )
+          {
+              return true;
+          }
+          else
+          {
+              return lexicographically_xy_smaller( c, d );
+          }
+        }
+
+};
+
+template <class Point>
 class p_Less_negative_dist_to_line_2p
 {
 public:
@@ -202,14 +229,11 @@ class p_Less_rotate_ccw
 {
 public:
   typedef bool    result_type;
-  typedef  Arity_tag< 2 >   Arity;
+  typedef  Arity_tag< 3 >   Arity;
 
-        p_Less_rotate_ccw(const Point& p) : rot_point(p)
-        {}
-
-  bool  operator()(const Point& p, const Point& q) const
+  bool  operator()(const Point& r, const Point& p, const Point& q) const
         {
-          Orientation ori = orientation(rot_point, p, q);
+          Orientation ori = orientation(r, p, q);
           if ( ori == LEFTTURN )
           {
               return true;
@@ -220,19 +244,12 @@ public:
           }
           else
           {
-              if (p == rot_point) return false;
-              if (q == rot_point) return true;
+              if (p == r) return false;
+              if (q == r) return true;
               if (p == q)         return false;
-              return  collinear_are_ordered_along_line( rot_point, q, p);
+              return  collinear_are_ordered_along_line( r, q, p);
           }
         }
-
-  void  set_rotation_center( const Point& p)
-        { rot_point = p; }
-
-
-private:
-    Point  rot_point;
 };
 
 template <class Point>
@@ -336,39 +353,31 @@ class r_Left_of_line
 {
 public:
   typedef bool                 result_type;
-  typedef  Arity_tag< 1 >   Arity;
+  typedef  Arity_tag< 3 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
 
-        r_Left_of_line(const Point& a, const Point& b): 
-           l_ab( a, b ), is_deg( a == b)
+        r_Left_of_line(): line_constructed(false)
         {}
 
-  bool  operator()(const Point& c) const
-        { return ( !is_deg && (l_ab.oriented_side(c) == ON_POSITIVE_SIDE)); }
+  bool  operator()(const Point& a, const Point& b, const Point& c) const
+        { 
+           if (!line_constructed)
+           {
+              line_constructed = true;
+              l_ab = Line(a,b);
+              is_deg = a == b;
+           }
+           return ( !is_deg && (l_ab.oriented_side(c) == ON_POSITIVE_SIDE)); 
+        }
+
 
 private:
-  Line    l_ab;
-  bool    is_deg;
+  mutable bool line_constructed;
+  mutable Line l_ab;
+  mutable bool is_deg;
 };
-
-/*
-template <class Point>
-class p_Less_dist_to_point
-{
- public:
-  typedef bool    result_type;
-
-       p_Less_dist_to_point( const Point& p) : _p(p) 
-       {}
-
-  bool operator()( const Point& p1, const Point& p2) const
-       { return has_smaller_dist_to_point(_p, p1, p2); }
- private:
-  Point _p;
-};
-*/
 
 template <class Point>
 class p_Less_dist_to_point
@@ -424,16 +433,22 @@ class r_Less_dist_to_line
 {
 public:
   typedef bool    result_type;
-  typedef  Arity_tag< 2 >   Arity;
+  typedef  Arity_tag< 4 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
 
-        r_Less_dist_to_line(const Point& a, const Point& b) : l_ab( a, b )
-        {}
-
-  bool  operator()(const Point& c, const Point& d) const
+        r_Less_dist_to_line() : line_constructed( false )
+        { }
+       
+  bool  operator()(const Point& a, const Point& b,
+                   const Point& c, const Point& d) const
         {
+          if (!line_constructed)
+          {
+             line_constructed = true;
+             l_ab = Line(a,b);
+          }
           Comparison_result res = cmp_signed_dist_to_line(l_ab, c, d);
           if ( res == SMALLER )
           {
@@ -450,7 +465,8 @@ public:
         }
 
 private:
-  Line    l_ab;
+  mutable bool line_constructed;
+  mutable Line l_ab;
 };
 
 template <class R>
