@@ -403,7 +403,11 @@ remove_degree_3(Vertex_handle v)
 template< class Gt, class Agds >
 void
 Apollonius_graph_2<Gt,Agds>::
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
 remove_degree_3(Vertex_handle v, Face_handle f) // af:was Face*
+#else
+remove_degree_3(Vertex_handle v, Face* f)
+#endif
 {
   CGAL_triangulation_precondition( v->degree() == 3 );
   this->_tds.remove_degree_3(v, f);

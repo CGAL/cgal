@@ -1,3 +1,7 @@
+1.57 (29 October 2003) [rursu]
+- fixed files for _MSC_VER but not INTEL
+  check for CGAL_T2_USE_ITERATOR_AS_HANDLE 
+
 1.56 (24 October 2003) [af]
 - Vertex_handle and Vertex_iterator are equivalent (change in T2)
 

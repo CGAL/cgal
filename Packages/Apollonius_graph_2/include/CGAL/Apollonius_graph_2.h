@@ -475,12 +475,14 @@ public:
   //-------------------
   typename Gt::Object_2 dual(const Face_handle& f) const;
 
-  /* af: all_faces_iterator  == Face_handle
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  //af: all_faces_iterator  == Face_handle
+#else
   typename Gt::Object_2 dual(const All_faces_iterator& it) const
   {
     return dual(*it);
   }
-  */
+#endif
   Site_2 dual(const Finite_faces_iterator& it) const
   {
     typename Gt::Object_2 o = dual(Face_handle(it));
@@ -903,7 +905,11 @@ protected:
   Vertex_handle insert_degree_2(Edge e, const Site_2& p);
   void          remove_degree_2(Vertex_handle v);
   void          remove_degree_3(Vertex_handle v);
-  void          remove_degree_3(Vertex_handle v, Face_handle f); // af: was Face*
+#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+  void          remove_degree_3(Vertex_handle v, Face_handle f);
+#else
+  void          remove_degree_3(Vertex_handle v, Face* f);
+#endif
 
   // this was defined because the hierarchy needs it
   Vertex_handle create_vertex() {
