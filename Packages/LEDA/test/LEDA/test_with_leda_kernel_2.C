@@ -12,8 +12,8 @@
 // release_date  :
 // 
 // file          : test_with_leda_kernel_2.C
-// revision      : $Revision$
-// revision_date : $Date$
+// revision      : 
+// revision_date : 
 // author(s)     : Stefan Schirra
 //
 //

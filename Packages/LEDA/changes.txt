@@ -1,1 +1,4 @@
+1.0.1 tests from LedaKernel were moved to this package 
+      (and were fixed)
+
 1.0 first version of the new package
