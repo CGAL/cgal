@@ -51,7 +51,7 @@ are orientable triangulations
 embedded in a plane or in a higher dimensional space.
 
 Strictly speaking, the term {\em face} should be used
-to design  a face of any dimension
+to design  a face of any dimension,
 and the two-dimensional faces of a triangulation 
 should be properly called {\em facets}.
 However, following a common usage, we hereafter often call {\em
@@ -104,14 +104,15 @@ surfaces, see Figure~\ref{I1_Fig_three_levels}. \\
 The bottom layer is made of  the base classes for vertices and faces.
 These base classes store some 
 geometric informations such as the coordinate of vertices 
-and any other attribute (such as color, constraint edges etc.)
+and any other attribute (such as a color, or boolean marks
+for constrained edges etc.)
 needed by the application.
 The base classes handle
 incidence and adjacency relations in term of \ccc{void*} pointers.
 The use of \ccc{void*} pointers in the bottom layer 
 makes easy 
-the change one of the base
-class, to deal with an extra attribute like a color for example.\\
+the change of one of the base
+classes, to deal with an extra attribute like a color for example.\\
 The second layer is the \ccc{triangulation data structure}
 which can be can be thought 
 of as a container for faces and vertices
@@ -204,9 +205,8 @@ boundary of the convex hull are simpler to deal with.
 In the following, we called {\it infinite}  the infinite vertex
 and any face or edge 
 incident  to the infinite vertex. Any face or edge non incident
-to the infinite vertex as well as any other vertex
-  is said 
-to be {\it finite}.
+to the infinite vertex as well as any vertex different from
+the infinite vertex  is said to be {\it finite}.
 Although it is convenient to draw a triangulation as in
 figure~\ref{I1_Fig_infinite_vertex}, note that
 the \ccc{infinite vertex} has no significant
@@ -240,7 +240,7 @@ indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
 is opposite to the vertex with the same index.
 
 The edges  are only implicitly represented
-through the adjacency relations betwwen their  two incident
+through the adjacency relations between their  two incident
 faces. Each edge has two implicit representations : the edge
 of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
 can be represented as well as an edge of the \ccc{neighbor(i)} of 
@@ -376,7 +376,7 @@ for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
 retriangulating the hole. Removal takes a time  at most proportionnal to
-\ccTexHtml{$d^2$}{d^2} case, where
+\ccTexHtml{$d^2$}{d^2}, where
  \ccTexHtml{$d$}{d} is the degree of the removed vertex,
 which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
 
@@ -535,12 +535,16 @@ The \cgal\  kernel classes \ccc{Homogeneous<Nt>} and
 \ccc{Cartesian<Nt>}, and the class \ccc{Triangulation_euclidean_traits_2<R>}
 are models of the concept \ccc{DelaunayTriangulationTraits_2}
 for the euclidean metric.
-Three traits classes are provided to deal with
-the Delaunay triangulation of two dimensional points which are
-the \ccc{xy}, \ccc{yz} or \ccc{zx} projections of three dimensional points:\\
+\cgal\  also  provides traits classes to deal with terrains,
+that are  two dimensional triangulated surfaces
+embedded in the three  dimensional space that have project on 
+a two dimensional  Delaunay triangulation. Namely, the traits classes
 \ccc{Triangulation_euclidean_traits_xy_3<R>},\\
 \ccc{Triangulation_euclidean_traits_yz_3<R>}, and\\
 \ccc{Triangulation_euclidean_traits_zx_3<R>} \\
+are to be used to build a a triangulated surface
+projecting on the Delaunay triangulation of respectively
+the \ccc{xy}, \ccc{yz} or \ccc{zx} projections of its vertices:\\
 The requirements for the duality functions and nearest vertex
 queries are not yet satisfied by
 these last three classes.
@@ -612,7 +616,7 @@ in ${  PW}$. In the two-dimensional space,
 the dual of this diagram is a triangulation 
 whose domain covers the convex hull of the set 
 ${  P}= \{ p_i, i = 1, \ldots , n \}$ of center points
-and whose vertices are a subset of ${  P}$.
+and whose vertices form a subset of ${  P}$.
 Such a triangulation is called a regular triangulation.
 Three points $p_i, p_j$ and $p_k$ of ${  P}$
 form a triangle in the regular triangulation of ${  PW}$
@@ -687,8 +691,8 @@ The triangulation data structure has to be a model of the concept
 \ccc{TriangulationDataStructure_2}.
 The geometric traits class must provide a weighted point type
 and a power test on these weighted points
-and the concept for this parameter called
-\ccc{RegularTriangulationTraits_2}
+and the concept for this parameter, called
+\ccc{RegularTriangulationTraits_2},
 is a refinement of the concept
 \ccc{TriangulationTraits_2}. \cgal\ provides 
 the class
@@ -958,7 +962,8 @@ when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations
 and the class \ccc{Triangulation_hierarchy_2<Tr>} is templated by a parameter
 which is to be instantiated by one of the \cgal\ triangulation
-classes.
+classes. More precisely a triangulation hierarchy can be set for all
+two dimensional triangulations of \cgal\ except for regular  triangulations.
 
 
 The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from the
@@ -974,8 +979,7 @@ the base class of a triangulation hierarchy
 has to provide
 some pointers to the corresponding vertices in the
 triangulations of the next and preceeding levels.
-Therefore the base vertex class of such a  triangulation
-the base class of a triangulation hierarchy 
+The base vertex class  of a triangulation hierarchy 
 has to be a model of the
 concept
 \ccc{TriangulationHierarchyVertexBase_2} which extends
