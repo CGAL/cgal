@@ -30,6 +30,7 @@ T3
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
   donner un effet de perspective), vrml, viewer_3...
+- point iterator
 
 Delaunay
 - optimiser remove
