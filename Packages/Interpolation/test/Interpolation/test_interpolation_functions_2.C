@@ -45,5 +45,6 @@ int main()
 	    << std::endl ;
   _test_interpolation_functions_2_delaunay( Dt2(), K2::FT(1e-10));
 
+  std::cout << "test_interpolation_functions_2 is finished" << std::endl;
   return 0;
 }
