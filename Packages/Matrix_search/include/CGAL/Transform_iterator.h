@@ -34,32 +34,25 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class OutputIterator, class Operation >
-class Transform_iterator : public CGAL_STD::output_iterator {
-public:
-  typedef Transform_iterator< OutputIterator, Operation >
-    self;
-  typedef typename Operation::argument_type
-    argument_type;
+struct Transform_iterator {
+  typedef std::output_iterator_tag             iterator_category;
+  typedef Transform_iterator< OutputIterator, Operation >   self;
+  typedef typename Operation::argument_type        argument_type;
 
   Transform_iterator( const OutputIterator& o,
                       const Operation& op)
     : _o( o), _op( op)
   {}
 
-  operator OutputIterator()
-  { return _o; }
+  operator OutputIterator() { return _o; }
 
-  self& operator*()
-  { return *this; }
+  self& operator*() { return *this; }
 
-  self& operator++()
-  { return *this; }
+  self& operator++() { return *this; }
 
-  self& operator++( int)
-  { return *this; }
+  self& operator++( int) { return *this; }
 
-  self& operator=( const argument_type& a)
-  {
+  self& operator=( const argument_type& a) {
     *(_o++) = _op( a);
     return *this;
   }
@@ -74,12 +67,6 @@ Transform_iterator< OutputIterator, Operation >
 transform_iterator( const OutputIterator& o,
                          const Operation& op)
 { return Transform_iterator< OutputIterator, Operation >( o, op); }
-
-template < class OutputIterator, class Operation > inline
-std::output_iterator_tag
-iterator_category(
-  const Transform_iterator< OutputIterator, Operation >&)
-{ return output_iterator_tag(); }
 
 template < class OutputIterator, class Operation > inline
 Iterator_tag

@@ -29,6 +29,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
+#include <CGAL/function_objects.h>
 #include <algorithm>
 #include <functional>
 #include <vector>
@@ -157,8 +158,8 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   using std::remove_if;
   using std::logical_or;
   using std::equal_to;
-  using std::compose1;
-  using std::compose2;
+  using CGAL::compose1_1;
+  using CGAL::compose2_1;
   using std::bind1st;
   using std::bind2nd;
   #endif
@@ -290,7 +291,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       lower_median_cell =
         find_if(active_cells.begin(),
                 active_cells.end(),
-                compose1(
+                compose1_1(
                   bind1st(equal_to< Value >(), lower_median),
                   Cell_min< Cell >()));
     CGAL_optimisation_assertion(lower_median_cell != active_cells.end());
@@ -325,7 +326,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose1(
+            compose1_1(
               bind1st( t.compare_non_strictly(), min_median),
               Cell_min< Cell >()));
     
@@ -343,14 +344,14 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose2(
+            compose2_1(
               logical_or< bool >(),
-              compose1(
+              compose1_1(
                 bind1st(
                   t.compare_non_strictly(),
                   lower_median),
                 Cell_min< Cell >()),
-              compose1(
+              compose1_1(
                 bind2nd(
                   t.compare_non_strictly(),
                   upper_median),
@@ -372,14 +373,14 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose2(
+            compose2_1(
               logical_or< bool >(),
-              compose1(
+              compose1_1(
                 bind1st(
                   t.compare_non_strictly(),
                   upper_median),
                 Cell_min< Cell >()),
-              compose1(
+              compose1_1(
                 bind2nd(
                   t.compare_non_strictly(),
                   lower_median),
@@ -395,7 +396,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin(),
             active_cells.end(),
-            compose1(
+            compose1_1(
               bind2nd(
                 t.compare_non_strictly(),
                 CGAL::max( lower_median, upper_median)),

@@ -77,7 +77,7 @@ rectangular_2_center_2(
   using std::less;
   using std::bind1st;
   using std::binder1st;
-  using std::binary_compose;
+  using CGAL::Binary_compose_1;
 #endif
   typedef typename Traits::Iso_rectangle_2        Rectangle;
   typedef typename Traits::Point_2                Point;
@@ -93,7 +93,7 @@ rectangular_2_center_2(
     P_below_right;
   typedef typename Traits::Construct_point_2_below_left_implicit_point_2
     P_below_left;
-  typedef binary_compose< Min< FT >, binder1st< Dist >, binder1st< Dist > >
+  typedef Binary_compose_1< Min< FT >, binder1st< Dist >, binder1st< Dist > >
     Gamma;
 
   // fetch function objects from traits class
@@ -155,7 +155,7 @@ rectangular_3_center_2_type1(
   using std::nth_element;
   using std::bind1st;
   using std::binder1st;
-  using std::binary_compose;
+  using CGAL::Binary_compose_1;
 #endif
   typedef typename Traits::FT                         FT;
   typedef typename Traits::Iso_rectangle_2            Rectangle;
@@ -174,7 +174,7 @@ rectangular_3_center_2_type1(
     P_below_right;
   typedef typename Traits::Construct_point_2_below_left_implicit_point_2
     P_below_left;
-  typedef binary_compose< Min< FT >, binder1st< Dist >, binder1st< Dist > >
+  typedef Binary_compose_1< Min< FT >, binder1st< Dist >, binder1st< Dist > >
     Gamma;
 
   // fetch function objects from traits class
@@ -931,9 +931,9 @@ rectangular_3_center_2_type2(
   using std::pair;
   using std::binder1st;
   using std::bind1st;
-  using std::compose1;
-  using std::compose2;
-  using std::binary_compose;
+  using CGAL::compose1_1;
+  using CGAL::compose2_1;
+  using CGAL::Binary_compose_1;
 #endif
 
   typedef typename Operations::Point                       Point;
@@ -969,7 +969,7 @@ rectangular_3_center_2_type2(
   {
     // First try whether the best radius so far can be reached at all
     RandomAccessIterator m =
-      partition(f, l, compose1(bind1st(greater< FT >(), rad), op.delta()));
+      partition(f, l, compose1_1(bind1st(greater< FT >(), rad), op.delta()));
     IP pos = min_max_element(m, l, op.compare_x(), op.compare_y());
     // extreme points of the two other squares
     Point q_t =
@@ -983,9 +983,9 @@ rectangular_3_center_2_type2(
     binder1st< greater_equal< FT > >
       le_rad = bind1st(greater_equal< FT >(), rad);
     RandomAccessIterator b1 =
-      partition(m, l, compose1(le_rad, bind1st(op.distance(), q_t)));
+      partition(m, l, compose1_1(le_rad, bind1st(op.distance(), q_t)));
     RandomAccessIterator b2 =
-      partition(b1, l, compose1(le_rad, bind1st(op.distance(), q_r)));
+      partition(b1, l, compose1_1(le_rad, bind1st(op.distance(), q_r)));
 
     if (b2 != l)
       return o;
@@ -1013,9 +1013,9 @@ rectangular_3_center_2_type2(
     binder1st< greater_equal< FT > >
       le_delta_m(bind1st(greater_equal< FT >(), op.delta()(*m)));
     RandomAccessIterator b1 =
-      partition(m + 1, e, compose1(le_delta_m, bind1st(op.distance(), q_t)));
+      partition(m + 1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
     RandomAccessIterator b2 =
-      partition(b1, e, compose1(le_delta_m, bind1st(op.distance(), q_r)));
+      partition(b1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
 
     if (b2 != e)
       s = m;
@@ -1053,14 +1053,14 @@ rectangular_3_center_2_type2(
         (Q_r_empty || op.compute_y_distance(q_r, Q_r) <= op.delta()(*m))) {
       binder1st< less< FT > >
         greater_delta_m(bind1st(less< FT >(), op.delta()(*m)));
-      RandomAccessIterator iii =
+      CGAL_optimisation_assertion_code(RandomAccessIterator iii =)
         find_if(e,
                 l,
-                compose2(logical_and< bool >(),
-                         compose1(greater_delta_m,
-                                  bind1st(op.distance(), q_t)),
-                         compose1(greater_delta_m,
-                                  bind1st(op.distance(), q_r))));
+                compose2_1(logical_and< bool >(),
+                           compose1_1(greater_delta_m,
+                                      bind1st(op.distance(), q_t)),
+                           compose1_1(greater_delta_m,
+                                      bind1st(op.distance(), q_r))));
       CGAL_optimisation_assertion(iii == l);
     }
     // check whether the points in [f,s) are covered
@@ -1068,11 +1068,11 @@ rectangular_3_center_2_type2(
       binder1st< greater_equal< FT > >
       le_delta_m(bind1st(greater_equal< FT >(), op.delta()(*m)));
       RandomAccessIterator iii =
-        partition(f, s, compose1(le_delta_m, op.delta()));
+        partition(f, s, compose1_1(le_delta_m, op.delta()));
       iii = partition(iii, s,
-                      compose1(le_delta_m, bind1st(op.distance(), q_t)));
+                      compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
       iii = partition(iii, s,
-                      compose1(le_delta_m, bind1st(op.distance(), q_r)));
+                      compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
       CGAL_optimisation_assertion(iii == s);
     }
 #endif // CGAL_3COVER_CHECK
@@ -1083,11 +1083,11 @@ rectangular_3_center_2_type2(
     binder1st< greater_equal< FT > >
     le_delta_m(bind1st(greater_equal< FT >(), op.delta()(*m)));
     RandomAccessIterator b2 =
-      partition(m + 1, e, compose1(le_delta_m, bind1st(op.distance(), q_t)));
+      partition(m + 1, e, compose1_1(le_delta_m, bind1st(op.distance(), q_t)));
     RandomAccessIterator b1 =
-      partition(m + 1, b2, compose1(le_delta_m, bind1st(op.distance(), q_r)));
+      partition(m + 1, b2, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
     RandomAccessIterator b3 =
-      partition(b2, e, compose1(le_delta_m, bind1st(op.distance(), q_r)));
+      partition(b2, e, compose1_1(le_delta_m, bind1st(op.distance(), q_r)));
 
 
     // step (c)
@@ -1198,11 +1198,11 @@ rectangular_3_center_2_type2(
     //     R      G cap q_t  G cap q_r      none
     binder1st< greater_equal< FT > >
     le_delta_sb = bind1st(greater_equal< FT >(), op.delta()(*s_b));
-    b2 = partition(s_b + 1, e, compose1(le_delta_sb,
-                                        bind1st(op.distance(), q_t)));
-    b1 = partition(s_b + 1, b2, compose1(le_delta_sb,
-                                         bind1st(op.distance(), q_r)));
-    b3 = partition(b2, e, compose1(le_delta_sb, bind1st(op.distance(), q_r)));
+    b2 = partition(s_b + 1, e, compose1_1(le_delta_sb,
+                                          bind1st(op.distance(), q_t)));
+    b1 = partition(s_b + 1, b2, compose1_1(le_delta_sb,
+                                           bind1st(op.distance(), q_r)));
+    b3 = partition(b2, e, compose1_1(le_delta_sb, bind1st(op.distance(), q_r)));
 
     if (b3 != e ||
         !Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*s_b) ||
@@ -1230,7 +1230,7 @@ rectangular_3_center_2_type2(
     if (s_b == s) {
       CGAL_optimisation_expensive_assertion_code(
         RandomAccessIterator ii =
-        partition(f, l, compose1(le_delta_sb, op.delta()));
+        partition(f, l, compose1_1(le_delta_sb, op.delta()));
         pos = min_max_element(ii, l, op.compare_x(), op.compare_y());
         )
       CGAL_optimisation_expensive_assertion(
@@ -1273,8 +1273,8 @@ rectangular_3_center_2_type2(
     RandomAccessIterator next =
       max_element_if(s, s_b,
                      compose2_2(less< FT >(), op.delta(), op.delta()),
-                     compose1(bind1st(not_equal_to< FT >(),
-                                      op.delta()(*s_b)),
+                     compose1_1(bind1st(not_equal_to< FT >(),
+                                        op.delta()(*s_b)),
                      op.delta()));
     rho_max = op.delta()(*s_b);
     q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
@@ -1288,11 +1288,11 @@ rectangular_3_center_2_type2(
     binder1st< greater_equal< FT > >
     le_delta_next = bind1st(greater_equal< FT >(), op.delta()(*next));
     b2 = partition(s_b, e,
-                   compose1(le_delta_next, bind1st(op.distance(), q_t)));
+                   compose1_1(le_delta_next, bind1st(op.distance(), q_t)));
     b1 = partition(s_b, b2,
-                   compose1(le_delta_next, bind1st(op.distance(), q_r)));
+                   compose1_1(le_delta_next, bind1st(op.distance(), q_r)));
     b3 = partition(b2, e,
-                   compose1(le_delta_next, bind1st(op.distance(), q_r)));
+                   compose1_1(le_delta_next, bind1st(op.distance(), q_r)));
 
     if (b3 != e ||
         !Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*next) ||
@@ -1393,11 +1393,11 @@ rectangular_3_center_2_type2(
           !Q_r_empty && op.compute_y_distance(q_r, Q_r) > try_rho ||
           e != find_if(t + 1,
                        e,
-                       compose2(logical_and< bool >(),
-                                compose1(greater_rho_max,
-                                         bind1st(op.distance(), q_t)),
-                                compose1(greater_rho_max,
-                                         bind1st(op.distance(), q_r))))) {
+                       compose2_1(logical_and< bool >(),
+                                  compose1_1(greater_rho_max,
+                                             bind1st(op.distance(), q_t)),
+                                  compose1_1(greater_rho_max,
+                                             bind1st(op.distance(), q_r))))) {
         rho_min = try_rho;
         q_t_q_r_cover_at_rho_min = 0;
         if (!Q_t_empty)
@@ -1434,10 +1434,10 @@ rectangular_3_center_2_type2(
   FT rad2 = q_t_q_r_cover_at_rho_min;
   typedef binder1st< Distance > Dist_bind;
   if (s_at_rho_min != e_at_rho_min) {
-    binary_compose< Min< FT >, Dist_bind, Dist_bind >
-      mydist(compose2(Min< FT >(),
-                      bind1st(op.distance(), q_t_at_rho_min),
-                      bind1st(op.distance(), q_r_at_rho_min)));
+    Binary_compose_1< Min< FT >, Dist_bind, Dist_bind >
+      mydist(compose2_1(Min< FT >(),
+                        bind1st(op.distance(), q_t_at_rho_min),
+                        bind1st(op.distance(), q_r_at_rho_min)));
     rad2 =
       CGAL::max(
         rad2,

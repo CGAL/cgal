@@ -90,31 +90,14 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                         RandomAccessIC points_end,
                         OutputIterator o)
 {
-  return
-  CGAL_all_furthest_neighbors(
-    points_begin,
-    points_end,
-    o,
-    std::value_type( points_begin));
-} // all_furthest_neighbors( ... )
-
-template < class RandomAccessIC,
-           class OutputIterator,
-           class R >
-inline
-OutputIterator
-CGAL_all_furthest_neighbors( RandomAccessIC points_begin,
-                              RandomAccessIC points_end,
-                              OutputIterator o,
-                              Point_2< R >*)
-{
+  typedef typename std::iterator_traits< RandomAccessIC >::value_type::R R;
   return
   all_furthest_neighbors(
     points_begin,
     points_end,
     o,
     All_furthest_neighbors_traits< R >());
-} // CGAL_all_furthest_neighbors( ... )
+} // all_furthest_neighbors( ... )
 
 CGAL_END_NAMESPACE
 

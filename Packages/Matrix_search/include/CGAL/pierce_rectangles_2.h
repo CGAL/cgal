@@ -32,15 +32,16 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/algorithm.h>
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
 //!!! STL-extensions
 template < class T >
-struct Wastebasket : public CGAL_STD::output_iterator
-{
-  typedef Wastebasket< T > iterator;
+struct Wastebasket {
+  typedef std::output_iterator_tag iterator_category;
+  typedef Wastebasket< T >         iterator;
 
   iterator
   operator=( const T&)
@@ -307,16 +308,16 @@ struct Staircases : public Loc_domain< _Traits > {
       min_element_if(
         pts.begin(), pts.end(),
         traits.less_x_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.less_x_2_object(), p),
-                      std::bind1st(traits.less_y_2_object(), p)));
+        compose2_1(std::logical_and< bool >(),
+                 std::bind1st(traits.less_x_2_object(), p),
+                 std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
         traits.less_x_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.less_x_2_object(), q),
-                      std::bind1st(traits.less_y_2_object(), q)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind2nd(traits.less_x_2_object(), q),
+                   std::bind1st(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxx : *i,
                      j == pts.end() ? minx : *j);
   } // top_intervall()
@@ -333,16 +334,16 @@ struct Staircases : public Loc_domain< _Traits > {
       min_element_if(
         pts.begin(), pts.end(),
         traits.less_x_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.less_x_2_object(), p),
-                      std::bind2nd(traits.less_y_2_object(), p)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind1st(traits.less_x_2_object(), p),
+                   std::bind2nd(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
         traits.less_x_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.less_x_2_object(), q),
-                      std::bind2nd(traits.less_y_2_object(), q)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind2nd(traits.less_x_2_object(), q),
+                   std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxx : *i,
                      j == pts.end() ? minx : *j);
   } // bottom_intervall()
@@ -359,16 +360,16 @@ struct Staircases : public Loc_domain< _Traits > {
       min_element_if(
         pts.begin(), pts.end(),
         traits.less_y_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.less_x_2_object(), p),
-                      std::bind1st(traits.less_y_2_object(), p)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind2nd(traits.less_x_2_object(), p),
+                   std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
         traits.less_y_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind2nd(traits.less_x_2_object(), q),
-                      std::bind2nd(traits.less_y_2_object(), q)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind2nd(traits.less_x_2_object(), q),
+                   std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxy : *i,
                      j == pts.end() ? miny : *j);
   } // left_intervall()
@@ -385,16 +386,16 @@ struct Staircases : public Loc_domain< _Traits > {
       min_element_if(
         pts.begin(), pts.end(),
         traits.less_y_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.less_x_2_object(), p),
-                      std::bind1st(traits.less_y_2_object(), p)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind1st(traits.less_x_2_object(), p),
+                   std::bind1st(traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
         pts.begin(), pts.end(),
         traits.less_y_2_object(),
-        std::compose2(std::logical_and< bool >(),
-                      std::bind1st(traits.less_x_2_object(), q),
-                      std::bind2nd(traits.less_y_2_object(), q)));
+        compose2_1(std::logical_and< bool >(),
+                   std::bind1st(traits.less_x_2_object(), q),
+                   std::bind2nd(traits.less_y_2_object(), q)));
     return Intervall(i == pts.end() ? maxy : *i,
                      j == pts.end() ? miny : *j);
   } // right_intervall()
@@ -493,8 +494,8 @@ two_cover_points(
   bool& ok)
 {
 #ifndef CGAL_CFG_NO_NAMESPACE
-  using std::compose1;
-  using std::compose2;
+  using CGAL::compose1_1;
+  using CGAL::compose2_1;
   using std::bind1st;
   using std::find_if;
   using std::less;
@@ -522,9 +523,9 @@ two_cover_points(
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                compose1(
+                compose1_1(
                   bind1st(lessft, d.r),
-                  compose2(
+                  compose2_1(
                     minft, bind1st(dist, d[0]), bind1st(dist, d[2])))))
       {
         *o++ = d[0];
@@ -537,9 +538,9 @@ two_cover_points(
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                compose1(
+                compose1_1(
                   bind1st(lessft, d.r),
-                  compose2(
+                  compose2_1(
                     minft, bind1st(dist, d[1]), bind1st(dist, d[3])))))
       {
         *o++ = d[1];
@@ -562,7 +563,7 @@ three_cover_points(
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::find_if;
   using std::bind1st;
-  using std::compose1;
+  using CGAL::compose1_1;
   using std::less;
   using std::iter_swap;
 #endif
@@ -584,8 +585,8 @@ three_cover_points(
     
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
-                         compose1(bind1st(lessft, d.r),
-                                  bind1st(dist, corner)));
+                         compose1_1(bind1st(lessft, d.r),
+                                    bind1st(dist, corner)));
     
     // are all points already covered?
     if (i == d.end()) {
@@ -628,12 +629,12 @@ three_cover_points(
     
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
-                          compose1(bind1st(lessft, d.r),
-                                   bind1st(dist, corner))));
+                          compose1_1(bind1st(lessft, d.r),
+                                     bind1st(dist, corner))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
-                         compose1(bind1st(std::greater_equal<FT>(), d.r),
-                                  bind1st(dist, corner))));
+                         compose1_1(bind1st(std::greater_equal<FT>(), d.r),
+                                    bind1st(dist, corner))));
     
     
     two_cover_points(d, o, ok);
@@ -672,7 +673,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   using std::find_if;
   using std::bind1st;
   using std::bind2nd;
-  using std::compose1;
+  using CGAL::compose1_1;
   using std::back_inserter;
   #endif
   
@@ -731,8 +732,8 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
-                         compose1(bind1st(lessft, d.r),
-                                  bind1st(dist, corner)));
+                         compose1_1(bind1st(lessft, d.r),
+                                    bind1st(dist, corner)));
     
     // are all points already covered?
     if (i == d.end()) {
@@ -775,12 +776,12 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
-                          compose1(bind1st(lessft, d.r),
-                                   bind1st(dist, corner))));
+                          compose1_1(bind1st(lessft, d.r),
+                                     bind1st(dist, corner))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
-                         compose1(bind1st(std::greater_equal<FT>(), d.r),
-                                  bind1st(dist, corner))));
+                         compose1_1(bind1st(std::greater_equal<FT>(), d.r),
+                                    bind1st(dist, corner))));
     
     
     three_cover_points(d, o, ok);
