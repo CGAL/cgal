@@ -1109,13 +1109,16 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     f->twin() = FM[f->twin()];
     f->volume() = CM[f->volume()];
     Halffacet_cycle_iterator ftc;
-    for(ftc = f->boundary_entry_objects().begin(); 
-        ftc !=  f->boundary_entry_objects().end(); ++ftc) {
-      if ( assign( se, ftc) ) 
-      { *ftc = Object_handle(SEM[se]); store_boundary_item(se,ftc); }
-      else if ( assign( sl, ftc) ) 
-      { *ftc = Object_handle(SLM[sl]); store_boundary_item(sl,ftc); }
-      else CGAL_assertion_msg(0,"damn wrong boundary item in facet.");
+    for(ftc = f->facet_cycles_begin(); ftc !=  f->facet_cycles_end(); ++ftc) {
+      if (ftc.is_shalfedge() ) {
+	se = SHalfedge_handle(ftc);
+	*ftc = Object_handle(SEM[se]); 
+	store_boundary_item(se,ftc); 
+      } else if (ftc.is_shalfloop() ) {
+	sl = SHalfloop_handle(ftc);
+	*ftc = Object_handle(SLM[sl]); 
+	store_boundary_item(sl,ftc); 
+      } else CGAL_assertion_msg(0,"damn wrong boundary item in facet.");
     }
   }
 

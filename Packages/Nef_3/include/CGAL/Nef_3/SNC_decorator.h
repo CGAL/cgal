@@ -523,7 +523,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	SHalfedge_handle se(fc);
 	TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se"<<PH(se));
-	SM_decorator SD;
 	TRACEN(se->incident_facet()->plane() <<"/"<<
 	       se->snext()->incident_facet()->plane()  <<"/"<< 
 	       se->snext()->snext()->incident_facet()->plane());
@@ -532,14 +531,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       }
       else if ( fc.is_shalfloop()) {
 	SHalfloop_handle sl(fc);
-	SM_decorator SD;
-	TRACEN( "adjacent facet found (SHalfloop cycle)."<<SD.circle(sl) 
+	TRACEN( "adjacent facet found (SHalfloop cycle)."<< sl->circle() 
 		<< " with facet "<<plane(facet(sl)));
 	f_visible = facet(twin(sl));
 	TRACEN("f_visible"<<plane(f_visible));
       }
       else if(fc.is_svertex()) {
-	SVertex_handle sv(fc);
 #ifdef _DEBUG
 	// TODO: is there any warranty that the outter facet cycle enty point is always at first
 	// in the cycles list?
