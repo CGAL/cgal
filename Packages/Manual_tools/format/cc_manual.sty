@@ -70,6 +70,15 @@
 % \spaceskip  .4em plus .25em minus .25em  %% This one makes verbatim false.
 % \xspaceskip .65em
 
+\newdimen\ccwOriginalParskip
+\newdimen\ccwOriginalParindent
+\ccwOriginalParskip   = \parskip
+\ccwOriginalParindent = \parindent
+
+\newcommand{\ccOriginalParDims}{%
+    \parskip   = \ccwOriginalParskip
+    \parindent = \ccwOriginalParindent
+}
 \newcommand{\ccParDims}{%
     \parskip 11pt plus 1pt minus 1pt
     \parindent 0pt
@@ -603,25 +612,25 @@
 % +--------------------------------------------------------------------------
 
 \newcommand{\ccChapterAuthor}[1]{%
-    \ifnum\ccTagChapterAuthor=\ccTrue
+    \mbox{\ifnum\ccTagChapterAuthor=\ccTrue
         \noindent\setlength{\unitlength}{1mm}%
         \begin{picture}(0,0)% 
             \put(0,11){{\em #1}}%
         \end{picture}%
-    \fi}
+    \fi}}
 \newcommand{\ccChapterRelease}[1]{%
-    \ifnum\ccTagChapterRelease=\ccTrue
+    \mbox{\ifnum\ccTagChapterRelease=\ccTrue
         \noindent\setlength{\unitlength}{1mm}%
         \begin{picture}(0,0)% 
             \put(0,11){{\em #1}}%
         \end{picture}%
-    \fi}
+    \fi}}
 \newcommand{\ccChapterSubTitle}[1]{%
-    \noindent\setlength{\unitlength}{1mm}%
+    \mbox{\noindent\setlength{\unitlength}{1mm}%
     \begin{picture}(0,0)% 
         \put(0,11){{\em #1}}%
     \end{picture}%
-    }
+    }}
 
 \newcommand{\ccSection}[1]{%
                    \section[#1 (\protect\ccPrintSingleTokenSemi
@@ -652,6 +661,7 @@
 \newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
 \newcommand{\ccPredicates     }{\ccHeading{Predicates}}
 \newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
+\newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
 
