@@ -27,6 +27,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 
+#include <qnamespace.h>
 
 typedef CGAL::Cartesian<double>::Point_2 Draw_point;
 typedef CGAL::Cartesian<double>::Segment_2 Segment;
@@ -46,7 +47,16 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     typedef typename T::Standard_RT Standard_RT;
     typedef typename Polyhedron::Topological_explorer 
                                     TExplorer;
+    typedef typename TExplorer::Halfedge_around_face_const_circulator 
+      Halfedge_around_face_const_circulator;
+    typedef typename TExplorer::Hole_const_iterator
+      Hole_const_iterator;
+    typedef typename TExplorer::Isolated_vertex_const_iterator
+      Isolated_vertex_const_iterator;
 
+    typedef typename T::Standard_point_2 Standard_point_2;
+    typedef typename T::Standard_segment_2 Standard_segment_2;
+    typedef typename T::Standard_ray_2 Standard_ray_2;
 
     typedef Nef_polyhedron_2<T>::Vertex_const_handle
       Vertex_const_handle;
@@ -62,7 +72,7 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     typedef Nef_polyhedron_2<T>::Face_const_iterator
       Face_const_iterator;
 
-
+    T traits;
     TExplorer D = P.explorer();
     const T& E = Polyhedron::EK;
 
@@ -71,103 +81,95 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 			     frame_radius);
     RT::set_R(frame_radius);
     
-    //Face_const_iterator 
-    //fit = D.faces_begin(), fend = D.faces_end();
+    //The faces
+    Face_const_iterator 
+      fit = D.faces_begin(), fend = D.faces_end();
     // we don't draw the first face outside the box:
-    //for ( ++fit; fit != fend; ++fit) 
-    //  draw(fit);
+    for ( ++fit; fit != fend; ++fit) {
+      if(D.mark(fit))
+	ws << CGAL::GREEN;
+      else
+	ws << CGAL::RED;
+      
+      std::list<Standard_point_2> l;
+      Halfedge_around_face_const_circulator fcirc(D.halfedge(fit)), 
+                                            fend(fcirc);
+      CGAL_For_all(fcirc, fend){
+	if(traits.is_standard(D.point(D.target(fcirc))))
+	   l.push_back(traits.standard_point(D.point(D.target(fcirc))));
+      }
+      QPointArray array(l.size());int i=0;
+      std::list<Standard_point_2>::const_iterator it = l.begin();
+      while(it!=l.end()){
+	array.setPoint(i++, ws.x_pixel(to_double((*it).x())), 
+		       ws.y_pixel(to_double((*it).y())));
+	it++;
+      }
+      ws.get_painter().drawPolygon(array);
 
+      Hole_const_iterator hole_it;
+      for (hole_it = D.holes_begin(fit); 
+	   hole_it != D.holes_end(fit); ++hole_it) {
+	std::list<Standard_point_2> hole;
+	Halfedge_around_face_const_circulator fcirc(hole_it), 
+                                              fend(fcirc);
+	CGAL_For_all(fcirc, fend){
+	  if(traits.is_standard(D.point(D.target(fcirc))))
+	      hole.push_back(traits.standard_point(D.point(D.target(fcirc))));
+	}//end CGAL_For_all
+	QPointArray array(hole.size());int i=0;
+	std::list<Standard_point_2>::const_iterator it = hole.begin();
+	while(it!=hole.end()){
+	  array.setPoint(i++, ws.x_pixel(to_double((*it).x())), 
+		       ws.y_pixel(to_double((*it).y())));
+	  it++;
+	};
+
+	if(D.mark(hole_it))
+	  ws << CGAL::GREEN;
+	else
+	  ws << CGAL::RED;
+	Qt::RasterOp old = ws.rasterOp();
+	ws.setRasterOp(Qt::XorROP);
+	ws.get_painter().drawPolygon(array);
+	ws.setRasterOp(old);
+      }//endfor
+      
+      ws << CGAL::RED << PointSize(5) << PointStyle(PLUS);      
+      Isolated_vertex_const_iterator iv_it;
+      for(iv_it = D.isolated_vertices_begin(fit);
+	  iv_it != D.isolated_vertices_end(fit); ++iv_it)
+	ws << traits.standard_point(D.point(iv_it));
+    }//endfor Face_const_iterator
+    
     // draw segments underlying halfedges: 
-    //Halfedge_const_iterator hit, hend = D.halfedges_end();
-    //for (hit = D.halfedges_begin(); hit != hend; ++(++hit)) 
-      // draw(hit);
-
+    Halfedge_const_iterator hit, hend = D.halfedges_end();
+    for (hit = D.halfedges_begin(); hit != hend; ++(++hit)) {
+      if(D.mark(hit))
+	ws << CGAL::WHITE;
+      else
+	ws << CGAL::GRAY;
+      if(traits.is_standard(D.point(D.source(hit))) 
+	 && traits.is_standard(D.point(D.source(hit))))
+      ws << Standard_segment_2(
+		 traits.standard_point(D.point(D.source(hit))),
+                 traits.standard_point(D.point(D.target(hit))));
+    }
+    
     // draw points underlying vertices:
+    ws << CGAL::YELLOW << PointStyle(DISC);
     Vertex_const_iterator vit, vend = D.vertices_end();
-    for (vit = D.vertices_begin(); vit != vend; ++vit) 
-      //ws << (*vit);
+    for (vit = D.vertices_begin(); vit != vend; ++vit){
+      if(D.mark(vit))
+	ws << CGAL::YELLOW;
+      else
+	ws << CGAL::GRAY;
+      if(traits.is_standard(D.point(vit)))
+            ws << traits.standard_point(D.point(vit));
+    }
     
     return ws;
 }
-
-  
-  //void draw(::Vertex_const_handle v, CGAL::Qt_widget& ws) const
-//{\Mop draws |v| according to the color and width specified by
-//    |C.color(v)| and |C.width(v)|.}
-  //{ 
-  //	ws << CGAL::RED << point(v);
-  //}
-  /*
-void draw(Halfedge_const_handle e) const
-//{\Mop draws |e| according to the color and width specified by
-//    |C.color(e)| and |C.width(e)|.}
-{ 
-  Segment s(point(source(e)),point(target(e));
-  _W << CGAL::LineWidth(2);
-  _W << CGAL::GREEN << s;
-}
-
-void get_point_list(std::list<Draw_point>& L, 
-                    Halfedge_const_iterator e) const
-{
-  Halfedge_around_face_const_circulator fcirc(e), fend(fcirc);
-  CGAL_For_all(fcirc,fend) {
-    Point p = point(target(fcirc));
-    L.push_back(Draw_point(CGAL::to_double(p.x()),
-			   CGAL::to_double(p.y())));
-  }   
-}
-
-void draw(Face_const_handle f) const
-//{\Mop draws |f| with color |C.color(f)|.}
-{ 
-  //CGAL::Color cc = _CO.color(f,mark(f));
-  //leda_color c (cc.r(),cc.g(),cc.b());
-  std::list<Draw_point> outer_cycle;
-  // First the outer face cycle:
-  get_point_list(outer_cycle,halfedge(f));
-
-  double x0 = _W.xmin();
-  double y0 = _W.ymin();
-  double x1 = _W.xmax();
-  double y1 = _W.ymax();
-
-  if ( _W.is_buffering() ) {
-    x0 = _W.xreal(0);
-    y0 = _W.yreal(_W.height());
-    x1 = _W.xreal(_W.width());
-    y1 = _W.yreal(0);
-  }
-
-  _W.reset_clip_mask();
-  std::list<Draw_point> frame;
-  frame.push_back(Draw_point(x0,y0));
-  frame.push_back(Draw_point(x1,y0));
-  frame.push_back(Draw_point(x1,y1));
-  frame.push_back(Draw_point(x0,y1));
-  frame.reverse();
-  draw_face_cycle(frame,0); 
-  // enforcing transparent mode outside f and inside frame
-  draw_face_cycle(outer_cycle,1);
-  // drawing non-transparent outer face cycle
-
-  Hole_const_iterator hole_it;
-  for (hole_it = holes_begin(f); hole_it != holes_end(f); ++hole_it) {
-    std::list<Draw_point> hole;
-    get_point_list(hole,hole_it);
-    draw_face_cycle(hole,0);
-    // enforcing transparent mode for holes
-  }
-  Isolated_vertex_const_iterator iv_it;
-  for (iv_it = isolated_vertices_begin(f); 
-       iv_it != isolated_vertices_end(f); ++iv_it) {
-    draw(iv_it); 
-  }
-  _W.draw_box(x0,y0,x1,y1,c);
-  _W.reset_clip_mask();
-}
-*/
-
 
 }//end namespace CGAL
 
