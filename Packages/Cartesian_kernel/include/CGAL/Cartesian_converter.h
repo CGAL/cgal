@@ -30,6 +30,8 @@
 
 // TODO :
 // - Probably we should use data accessors everywhere !
+// - Aff_transformation_[23] converters loose the internal type
+//   (translation...), so we loose a bit here.
 
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
