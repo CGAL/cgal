@@ -40,23 +40,26 @@ public:
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
 
-  TriangleH3();
+  typedef typename R::Triangle_handle_3         Triangle_handle_3_;
+  typedef typename Triangle_handle_3_::element_type Triangle_ref_3;
+
+  TriangleH3()
+    : Triangle_handle_3_(Triangle_ref_3()) {}
+
   TriangleH3(const PointH3<R> &p,
              const PointH3<R> &q,
-             const PointH3<R> &r);
+             const PointH3<R> &r)
+    : Triangle_handle_3_(Triangle_ref_3(p,q,r)) {}
 
   bool          operator==(const TriangleH3<R> &t) const;
   bool          operator!=(const TriangleH3<R> &t) const;
 
-  PlaneH3<R>
-                supporting_plane() const;
+  PlaneH3<R>    supporting_plane() const;
 
-  TriangleH3<R>
-                transform(const Aff_transformationH3<R> &t) const;
+  TriangleH3<R> transform(const Aff_transformationH3<R> &t) const;
   bool          has_on(const PointH3<R> &p) const;
   bool          nondegenerate_has_on(const PointH3<R> &p) const;
   bool          is_degenerate() const;
-
 
   PointH3<R> vertex(int i) const;
   PointH3<R> operator[](int i) const;
@@ -64,24 +67,7 @@ public:
   FT       squared_area() const;
 
   Bbox_3   bbox() const;
-
 };
-
-
-
-template < class R >
-inline
-TriangleH3<R>::TriangleH3()
- : Handle_for< Threetuple< PointH3<R> > >( Threetuple< PointH3<R> >())
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TriangleH3<R>::TriangleH3(const PointH3<R> &p,
-                              const PointH3<R> &q,
-                              const PointH3<R> &r)
- : Handle_for<Threetuple<PointH3<R> > >(Threetuple<PointH3<R> >(p,q,r))
-{}
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -102,19 +88,17 @@ inline
 bool
 TriangleH3<R>::operator!=(const TriangleH3<R> &t) const
 { return !(*this == t); }
+
 template < class R >
 CGAL_KERNEL_INLINE
 PointH3<R>
 TriangleH3<R>::vertex(int i) const
 {
-  switch (i)
-  {
-      case 0:  return ptr->e0;
-      case 1:  return ptr->e1;
-      case 2:  return ptr->e2;
-      default: return vertex(i%3);
-  }
-  // return PointH3<R>();
+  if (i<0) i=(i%3)+3;
+  else if (i>3) i=i%3;
+  return (i==0) ? Ptr()->e0 :
+         (i==1) ? Ptr()->e1 :
+                  Ptr()->e2;
 }
 
 template < class R >

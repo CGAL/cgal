@@ -40,9 +40,13 @@ public:
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
 
-  Iso_cuboidH3();
+  typedef typename R::Iso_cuboid_handle_3  Iso_cuboid_handle_3_;
+  typedef typename Iso_cuboid_handle_3_::element_type Iso_cuboid_ref_3;
+
+  Iso_cuboidH3()
+    : Iso_cuboid_handle_3_(Iso_cuboid_ref_3()) {}
+
   Iso_cuboidH3(const PointH3<R>& p, const PointH3<R>& q);
-  ~Iso_cuboidH3();
 
   bool      operator==(const Iso_cuboidH3<R>& s) const;
   bool      operator!=(const Iso_cuboidH3<R>& s) const;
@@ -72,12 +76,6 @@ public:
   FT        volume() const;
 
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-Iso_cuboidH3<R>::Iso_cuboidH3()
- : Handle_for< Twotuple< PointH3<R> > >( Twotuple< PointH3<R> >())
-{}
 
 template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
@@ -126,15 +124,9 @@ Iso_cuboidH3(const PointH3<R>& p, const PointH3<R>& q)
       minz = q.hz()*p.hw();
       maxz = p.hz()*q.hw();
   }
-  initialize_with(
-      Twotuple<PointH3<R> >( PointH3<R>(minx, miny, minz, minw),
-                                 PointH3<R>(maxx, maxy, maxz, maxw) ));
+  initialize_with( Iso_cuboid_ref_3 ( PointH3<R>(minx, miny, minz, minw),
+                                      PointH3<R>(maxx, maxy, maxz, maxw) ));
 }
-
-template < class R >
-inline
-Iso_cuboidH3<R>::~Iso_cuboidH3()
-{}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -154,13 +146,13 @@ template < class R >
 inline
 PointH3<R>
 Iso_cuboidH3<R>::min() const
-{ return  ptr->e0; }
+{ return  Ptr()->e0; }
 
 template < class R >
 inline
 PointH3<R>
 Iso_cuboidH3<R>::max() const
-{ return  ptr->e1; }
+{ return  Ptr()->e1; }
 
 template < class R >
 inline

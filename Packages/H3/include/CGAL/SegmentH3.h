@@ -35,11 +35,26 @@ class Segment_repH3 : public Ref_counted
 public:
    Segment_repH3() {}
    Segment_repH3(const PointH3<R>& sp, const PointH3<R>& ep)
-     : startpoint(sp), endpoint(ep)
-   {}
+     : startpoint(sp), endpoint(ep) {}
 
-   PointH3<R>  start() const;
-   PointH3<R>  end()   const;
+   PointH3<R>  start() const { return startpoint; }
+   PointH3<R>  end()   const { return endpoint; }
+
+private:
+   PointH3<R>  startpoint;
+   PointH3<R>  endpoint;
+};
+
+template < class R >
+class Simple_Segment_repH3
+{
+public:
+   Simple_Segment_repH3() {}
+   Simple_Segment_repH3(const PointH3<R>& sp, const PointH3<R>& ep)
+     : startpoint(sp), endpoint(ep) {}
+
+   PointH3<R>  start() const { return startpoint; }
+   PointH3<R>  end()   const { return endpoint; }
 
 private:
    PointH3<R>  startpoint;
@@ -55,8 +70,14 @@ public:
   typedef typename R::RT   RT;
   typedef typename R::FT   FT;
 
-  SegmentH3();
-  SegmentH3( const PointH3<R>& sp, const PointH3<R>& ep);
+  typedef typename R::Segment_handle_3          Segment_handle_3_;
+  typedef typename Segment_handle_3_::element_type Segment_ref_3;
+ 
+  SegmentH3()
+    : Segment_handle_3_(Segment_ref_3()) {}
+
+  SegmentH3( const PointH3<R>& sp, const PointH3<R>& ep)
+    : Segment_handle_3_(Segment_ref_3(sp, ep)) {}
 
   PointH3<R>    source() const;
   PointH3<R>    target() const;
@@ -82,57 +103,32 @@ public:
 
   bool              operator==(const SegmentH3<R>& s) const;
   bool              operator!=(const SegmentH3<R>& s) const;
-
 };
 
-template < class R >
-inline
-PointH3<R>
-Segment_repH3<R>::start() const
-{ return startpoint; }
 
-template < class R >
-inline
-PointH3<R>
-Segment_repH3<R>::end() const
-{ return endpoint; }
-
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentH3<R>::SegmentH3()
- : Handle_for< Segment_repH3<R> >( Segment_repH3<R>() )
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-SegmentH3<R>::SegmentH3( const PointH3<R>& sp,
-                             const PointH3<R>& ep)
- : Handle_for< Segment_repH3<R> >( Segment_repH3<R>(sp,ep) )
-{}
 template < class R >
 inline
 PointH3<R>
 SegmentH3<R>::source() const
-{ return ptr->start(); }
+{ return Ptr()->start(); }
 
 template < class R >
 inline
 PointH3<R>
 SegmentH3<R>::target() const
-{ return ptr->end(); }
+{ return Ptr()->end(); }
 
 template < class R >
 inline
 PointH3<R>
 SegmentH3<R>::start() const
-{ return ptr->start(); }
+{ return Ptr()->start(); }
 
 template < class R >
 inline
 PointH3<R>
 SegmentH3<R>::end() const
-{ return ptr->end(); }
+{ return Ptr()->end(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -177,27 +173,27 @@ CGAL_KERNEL_INLINE
 typename R::FT
 SegmentH3<R>::squared_length() const
 {
-  return  (ptr->end() - ptr->start()) *
-          (ptr->end() - ptr->start())   ;
+  return  (Ptr()->end() - Ptr()->start()) *
+          (Ptr()->end() - Ptr()->start())   ;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 DirectionH3<R>
 SegmentH3<R>::direction() const
-{ return DirectionH3<R>( ptr->end() - ptr->start() ); }
+{ return DirectionH3<R>( Ptr()->end() - Ptr()->start() ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 LineH3<R>
 SegmentH3<R>::supporting_line() const
-{ return LineH3<R>(ptr->start(), ptr->end()); }
+{ return LineH3<R>(Ptr()->start(), Ptr()->end()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 SegmentH3<R>
 SegmentH3<R>::opposite() const
-{ return SegmentH3<R>(ptr->end(), ptr->start()); }
+{ return SegmentH3<R>(Ptr()->end(), Ptr()->start()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -205,8 +201,8 @@ SegmentH3<R>
 SegmentH3<R>::
 transform( const Aff_transformationH3<R>& t) const
 {
-  return SegmentH3<R>(t.transform(ptr->start()),
-                               t.transform(ptr->end())   );
+  return SegmentH3<R>(t.transform(Ptr()->start()),
+                               t.transform(Ptr()->end())   );
 }
 
 template < class R >
@@ -258,9 +254,9 @@ SegmentH3<R>::has_on(const PointH3<R> p) const
   return( ( p == start() )
        || ( p == end() )
        || (  ( collinear(p,source(),target() )
-           &&( DirectionH3<R>( p - ptr->start())
+           &&( DirectionH3<R>( p - Ptr()->start())
                !=
-               DirectionH3<R>( p - ptr->end()))
+               DirectionH3<R>( p - Ptr()->end()))
              )
           )
        );
@@ -273,9 +269,9 @@ SegmentH3<R>::collinear_has_on(const PointH3<R> p) const
 {
   return( ( p == start() )
        || ( p == end() )
-       || ( DirectionH3<R>( p - ptr->start())
+       || ( DirectionH3<R>( p - Ptr()->start())
             !=
-            DirectionH3<R>( p - ptr->end())
+            DirectionH3<R>( p - Ptr()->end())
           )
         );
 }

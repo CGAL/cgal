@@ -1,7 +1,7 @@
-2.16   (?? ??? 2001)
+2.16   (13 Feb 2001)
 - Macro cleanups.
 - squared_area() and volume() functions added
-- Towards Simple_homogeneous : PointH2<FT,RT> => PointH2<R> and similar.
+- Simple_homogeneous.
 - Remove old style casts.
 
 2.15   (22 Jan 2001)

@@ -48,31 +48,26 @@ class PlaneH3
     typedef typename R::RT     RT;
     typedef typename R::FT     FT;
 
-    PlaneH3();
-    PlaneH3(const PointH3<R>& ,
-            const PointH3<R>& ,
+    typedef typename R::Plane_handle_3            Plane_handle_3_;
+    typedef typename Plane_handle_3_::element_type Plane_ref_3;
+
+    PlaneH3()
+      : Plane_handle_3_(Plane_ref_3()) {}
+
+    PlaneH3(const PointH3<R>&,
+            const PointH3<R>&,
             const PointH3<R>& );
     PlaneH3(const RT& a, const RT& b,
             const RT& c, const RT& d );
-    PlaneH3(const PointH3<R>& ,
-            const RayH3<R>& );
-    PlaneH3(const PointH3<R>& ,
-            const LineH3<R>& );
-    PlaneH3(const PointH3<R>& ,
-            const SegmentH3<R>& );
-    PlaneH3(const LineH3<R>& ,
-            const PointH3<R>& );
-    PlaneH3(const SegmentH3<R>& ,
-            const PointH3<R>& );
-    PlaneH3(const RayH3<R>& ,
-            const PointH3<R>& );
-    PlaneH3(const PointH3<R>&,
-            const DirectionH3<R>& );
-    PlaneH3(const PointH3<R>&,
-            const VectorH3<R>& );
-    PlaneH3(const PointH3<R>&,
-            const DirectionH3<R>&,
-            const DirectionH3<R>& );
+    PlaneH3(const PointH3<R>&, const RayH3<R>& );
+    PlaneH3(const PointH3<R>&, const LineH3<R>& );
+    PlaneH3(const PointH3<R>&, const SegmentH3<R>& );
+    PlaneH3(const LineH3<R>&, const PointH3<R>& );
+    PlaneH3(const SegmentH3<R>&, const PointH3<R>& );
+    PlaneH3(const RayH3<R>&, const PointH3<R>& );
+    PlaneH3(const PointH3<R>&, const DirectionH3<R>& );
+    PlaneH3(const PointH3<R>&, const VectorH3<R>& );
+    PlaneH3(const PointH3<R>&, const DirectionH3<R>&, const DirectionH3<R>& );
 
     RT             a() const;
     RT             b() const;
@@ -104,9 +99,7 @@ class PlaneH3
 
     PlaneH3<R> transform(const Aff_transformationH3<R>& ) const;
 
-
-    Aff_transformationH3<R>
-                     transform_to_2d() const;
+    Aff_transformationH3<R> transform_to_2d() const;
     PointH2<R>   to_2d(const PointH3<R>& )  const;
     PointH3<R>   to_3d(const PointH2<R>& )  const;
     VectorH3<R>  base1() const;
@@ -158,7 +151,7 @@ PlaneH3<R>::new_rep(const PointH3<R> &p,
   RT rhz = r.hz();
   RT rhw = r.hw();
 
-  initialize_with( Fourtuple<RT> (
+  initialize_with( Plane_ref_3 (
               phy*( qhz*rhw - qhw*rhz )
             - qhy*( phz*rhw - phw*rhz )     // * X
             + rhy*( phz*qhw - phw*qhz ),
@@ -180,7 +173,7 @@ template < class R >
 inline
 void
 PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
-{ initialize_with( Fourtuple<RT>(a, b, c, d) ); }
+{ initialize_with( Plane_ref_3 (a, b, c, d) ); }
 
 template < class R >
 inline
@@ -189,14 +182,6 @@ PlaneH3<R>::operator!=(const PlaneH3<R>& l) const
 {
  return !(*this == l);
 }
-
-
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneH3<R>::PlaneH3()
- : Handle_for< Fourtuple<RT> >(Fourtuple<RT>() )
-{}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -281,25 +266,25 @@ template < class R >
 inline
 typename R::RT
 PlaneH3<R>::a() const
-{ return ptr->e0; }
+{ return Ptr()->e0; }
 
 template < class R >
 inline
 typename R::RT
 PlaneH3<R>::b() const
-{ return ptr->e1; }
+{ return Ptr()->e1; }
 
 template < class R >
 inline
 typename R::RT
 PlaneH3<R>::c() const
-{ return ptr->e2; }
+{ return Ptr()->e2; }
 
 template < class R >
 inline
 typename R::RT
 PlaneH3<R>::d() const
-{ return ptr->e3; }
+{ return Ptr()->e3; }
 
 template < class R >
 CGAL_KERNEL_INLINE

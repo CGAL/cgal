@@ -34,7 +34,7 @@
 #define CGAL_NO_PLANE_TRANSFORM_IN_AT
 #endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
 
-#ifdef CGAL_HOMOGENEOUS_H
+#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/PlaneH3.h>
 #endif
 

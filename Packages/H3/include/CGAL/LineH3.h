@@ -38,8 +38,22 @@ class Line_repH3 : public Ref_counted
   public:
      Line_repH3() {}
      Line_repH3( const PointH3<R>& p, const DirectionH3<R> d)
-      : basepoint(p), direction(d)
-     {}
+      : basepoint(p), direction(d) {}
+
+  friend class LineH3<R>;
+
+  private:
+    PointH3<R>       basepoint;
+    DirectionH3<R>   direction;
+};
+
+template < class R >
+class Simple_Line_repH3
+{
+  public:
+     Simple_Line_repH3() {}
+     Simple_Line_repH3( const PointH3<R>& p, const DirectionH3<R> d)
+      : basepoint(p), direction(d) {}
 
   friend class LineH3<R>;
 
@@ -58,11 +72,23 @@ public:
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
 
-  LineH3();
-  LineH3(const PointH3<R>& p, const PointH3<R>& q);
-  LineH3(const SegmentH3<R>& s);
-  LineH3(const RayH3<R>& r);
-  LineH3(const PointH3<R>& p, const DirectionH3<R>& d);
+  typedef typename R::Line_handle_3             Line_handle_3_;
+  typedef typename Line_handle_3_::element_type  Line_ref_3;
+
+  LineH3()
+    : Line_handle_3_(Line_ref_3()) {}
+
+  LineH3(const PointH3<R>& p, const PointH3<R>& q)
+    : Line_handle_3_(Line_ref_3(p, (q - p).direction())) {}
+
+  LineH3(const SegmentH3<R>& s)
+    : Line_handle_3_(Line_ref_3(s.start(), s.direction())) {}
+
+  LineH3(const RayH3<R>& r)
+    : Line_handle_3_(Line_ref_3(r.start(), r.direction())) {}
+
+  LineH3(const PointH3<R>& p, const DirectionH3<R>& d)
+    : Line_handle_3_(Line_ref_3(p, d)) {}
 
   PlaneH3<R>  perpendicular_plane(const PointH3<R>& p) const;
   LineH3<R>   opposite() const;
@@ -88,7 +114,6 @@ bool
 LineH3<R>::operator!=(const LineH3<R>& l) const
 { return !(*this == l); }
 
-
 CGAL_END_NAMESPACE
 
 #include <CGAL/PlaneH3.h>
@@ -96,42 +121,10 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineH3<R>::LineH3()
- : Handle_for< Line_repH3<R> >( Line_repH3<R>() )
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineH3<R>::LineH3(const PointH3<R>& p,
-                      const PointH3<R>& q)
- : Handle_for< Line_repH3<R> >(Line_repH3<R>(p, (q - p).direction()))
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineH3<R>::LineH3(const SegmentH3<R>& s)
- : Handle_for< Line_repH3<R> >(Line_repH3<R>(s.start(), s.direction()))
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineH3<R>::LineH3(const RayH3<R>& r)
- : Handle_for< Line_repH3<R> >(Line_repH3<R>(r.start(), r.direction()))
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-LineH3<R>::LineH3(const PointH3<R>& p,
-                      const DirectionH3<R>& d)
- : Handle_for< Line_repH3<R> >(Line_repH3<R>( p, d ) )
-{}
-
-template < class R >
 inline
 PointH3<R>
 LineH3<R>::point() const
-{ return ptr->basepoint; }
+{ return Ptr()->basepoint; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -143,7 +136,7 @@ template < class R >
 inline
 DirectionH3<R>
 LineH3<R>::direction() const
-{ return ptr->direction; }
+{ return Ptr()->direction; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -156,7 +149,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 LineH3<R>
 LineH3<R>::opposite() const
-{ return LineH3<R>( ptr->basepoint, -(ptr->direction ) ); }
+{ return LineH3<R>( Ptr()->basepoint, -(Ptr()->direction ) ); }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -236,8 +229,8 @@ CGAL_KERNEL_INLINE
 bool
 LineH3<R>::operator==(const LineH3<R>& l) const
 {
-  return  (  (l.direction() ==   ptr->direction )
-           &&(l.has_on( ptr->basepoint ) ) );
+  return  (  (l.direction() ==   Ptr()->direction )
+           &&(l.has_on( Ptr()->basepoint ) ) );
 }
 
 CGAL_END_NAMESPACE

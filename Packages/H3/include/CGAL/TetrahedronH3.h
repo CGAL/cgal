@@ -38,7 +38,8 @@ template < class R >
 class Tetrahedron_repH3 : public Ref_counted
 {
  public:
-  Tetrahedron_repH3() : ordertype(DEGENERATE) {}
+  Tetrahedron_repH3()
+      : ordertype(DEGENERATE) {}
   Tetrahedron_repH3(const PointH3<R> &p,
                     const PointH3<R> &q,
                     const PointH3<R> &r,
@@ -49,7 +50,26 @@ class Tetrahedron_repH3 : public Ref_counted
 
  private:
     Fourtuple< PointH3<R> > container;
-    Orientation                 ordertype;
+    Orientation             ordertype;
+};
+
+template < class R >
+class Simple_Tetrahedron_repH3
+{
+ public:
+  Simple_Tetrahedron_repH3()
+      : ordertype(DEGENERATE) {}
+  Simple_Tetrahedron_repH3(const PointH3<R> &p,
+                           const PointH3<R> &q,
+                           const PointH3<R> &r,
+                           const PointH3<R> &s )
+    : container(p,q,r,s), ordertype(orientation(p,q,r,s)) {}
+
+  friend class TetrahedronH3<R>;
+
+ private:
+    Simple_Fourtuple< PointH3<R> > container;
+    Orientation                    ordertype;
 };
 
 
@@ -62,11 +82,17 @@ public:
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
 
-  TetrahedronH3();
+  typedef typename R::Tetrahedron_handle_3      Tetrahedron_handle_3_;
+  typedef typename Tetrahedron_handle_3_::element_type Tetrahedron_ref_3;
+
+  TetrahedronH3()
+    : Tetrahedron_handle_3_(Tetrahedron_ref_3()) {}
+
   TetrahedronH3(const PointH3<R> &p,
                 const PointH3<R> &q,
                 const PointH3<R> &r,
-                const PointH3<R> &s);
+                const PointH3<R> &s)
+    : Tetrahedron_handle_3_(Tetrahedron_ref_3(p,q,r,s)) {}
 
   PointH3<R> vertex(int i) const;
   PointH3<R> operator[](int i) const;
@@ -89,30 +115,12 @@ public:
 };
 
 
-
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TetrahedronH3<R>::TetrahedronH3()
- : Handle_for< Tetrahedron_repH3<R> >( Tetrahedron_repH3<R>() )
-{}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-TetrahedronH3<R>::TetrahedronH3(const PointH3<R> &p,
-                                    const PointH3<R> &q,
-                                    const PointH3<R> &r,
-                                    const PointH3<R> &s)
- : Handle_for< Tetrahedron_repH3<R> >( Tetrahedron_repH3<R>(p,q,r,s))
-{}
-
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 TetrahedronH3<R>::operator==(const TetrahedronH3<R> &t) const
 {
-  if ( ptr == t.ptr ) return true;
+  if ( Ptr() == t.Ptr() ) return true;
   if ( orientation() != t.orientation() ) return false;
 
   std::vector< PointH3<R> > V1;
@@ -144,10 +152,10 @@ TetrahedronH3<R>::vertex(int i) const
 {
   switch (i%4)
   {
-     case 0:  return ptr->container.e0;
-     case 1:  return ptr->container.e1;
-     case 2:  return ptr->container.e2;
-     case 3:  return ptr->container.e3;
+     case 0:  return Ptr()->container.e0;
+     case 1:  return Ptr()->container.e1;
+     case 2:  return Ptr()->container.e2;
+     case 3:  return Ptr()->container.e3;
   }
   return PointH3<R>();
 }
@@ -196,7 +204,7 @@ template < class R >
 inline
 Orientation
 TetrahedronH3<R>::orientation() const
-{ return ptr->ordertype; }
+{ return Ptr()->ordertype; }
 
 template < class R >
 CGAL_KERNEL_INLINE
