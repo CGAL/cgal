@@ -1,3 +1,9 @@
+Version 3.3.2 (September 9 1999)
+- Michael Hoffmann: The declarations of friend functions like
+  _general_transformation_composition have to precede their friend declaration
+  (at least on mips).  
+- corrected TetrahedronC3::operator==() with the correct definition
+
 Version 3.3.1 (September 2 1999)
 - Added headers to *.C so that Utrecht cant complain
 
