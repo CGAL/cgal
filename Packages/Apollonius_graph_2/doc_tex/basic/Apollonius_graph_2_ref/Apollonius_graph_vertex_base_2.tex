@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{ApolloniusGraphVertexBase_2} concept which is the vertex base
+required by the \ccc{ApolloniusGraphDataStructure_2} concept. The
+class \ccRefName\ has two template arguments, the first being the
+geometric traits of the Apollonius graph and should be a model of the
+concept \ccc{ApolloniusGraphTraits_2}. The second is a boolean which
+control whether hidden weighted points are actually stored. Such a
+control is important if the user is not interested in hidden weighted
+points and/or if only insertions are made, in which case no hidden
+weighted point can become non-hidden. If \ccc{StoreHidden} is set to
+\ccc{true}, hidden weighted points are stored, otherwise they are
+discarded. By default \ccc{StoreHidden} is set to \ccc{true}.
+
+\ccInclude{CGAL/Apollonius_graph_vertex_base_2.h}
+
+\ccIsModel
+\ccc{ApolloniusGraphVertexBase_2}
+
+\ccCreation
+\ccCreationVariable{vb}  %% choose variable name
+\ccTwo{Apollonius_graph_vertex_base_2<Gt,StoreHidden>
+vb(Weighted_point p);++}{}
+
+\ccConstructor{Apollonius_graph_bertex_base_2();}{Default constructor.}
+\ccGlue
+\ccConstructor{Apollonius_graph_vertex_base_2(Weighted_point p);}
+{Constructs a vertex associated with the weighted point \ccc{p} and
+embedded at the center of \ccc{p}.}
+\ccGlue
+\ccConstructor{Apollonius_graph_vertex_base_2(Weighted_point p,
+               void* f);}
+{Constructs a vertex associated with
+the weighted point \ccc{p}, embedded at the center of \ccc{p},
+and pointing to face \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{CGAL::Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,544 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Apollonius_graph_2<Gt,StoreHidden,Agds>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+
+The class \ccRefName\ is the one responsible for the creation of the
+Apollonius graph. It supports insertions and deletions of weighted
+points. It is templated by three template arguments \ccc{Gt}, which
+must be a model of \ccc{ApolloniusGraphTraits_2}, \ccc{StoreHidden},
+which is a boolean indicating if hidden weighted points are to be
+stored, and \ccc{Agds}, which must be a model of
+\ccc{ApolloniusGraphDataStructure_2}. The second template argument
+defaults to \ccc{true}, but if only insertions of weighted points are
+to be made then the recommended value is \ccc{false}. The third template
+argument defaults to \ccc{CGAL::Apollonius_graph_data_structure_2<
+CGAL::Apollonius_graph_vertex_base_2<Gt>,
+CGAL::Apollonius_graph_face_base_2<Gt> >}.
+
+\ccInclude{CGAL/Apollonius_graph_2.h}
+
+\ccTypes
+
+\ccThree{typedef typename Gt::Weighted_point}{Weighted_point+}{}
+%
+\ccTypedef{typedef Agds  Data_structure;}{A type for the underlying
+data structure.}
+\ccGlue
+\ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
+\ccGlue
+\ccTypedef{typedef typename Gt::Bare_point Point;}{A type for the bare
+point defined in the geometric traits.}
+\ccGlue
+\ccTypedef{typedef typename Gt::Weighted_point  Weighted_point;}
+{A type for the weighted point defined in the geometric traits.}
+\ccGlue
+\ccTypedef{typedef typename Gt::Weight          Weight;}
+{A type for the weight of the weighted point; using the definition in
+the geometric traits.}
+%
+
+% MK:: in the following copy text from TDS
+
+The vertices and faces of the triangulations are accessed through 
+\ccc{handles}, 
+\ccc{iterators} and \ccc{circulators}. 
+The iterators and circulators
+are all bidirectional and non mutable.
+The circulators and iterators are assignable to the 
+corresponding handle types. Whenever a handle appear in the parameter 
+list of a function, an appropriate iterator or circulator can be used as well.
+The edges of the triangulation can also be visited through iterators
+and circulators,
+the edge circulators and iterators
+are also bidirectional and non mutable.
+In the following, we called {\it infinite} any face or edge 
+incident  to the infinite vertex and the infinite vertex itself.
+ Any other feature (face, edge or vertex) of the triangulation is said 
+to be {\it finite}.
+Some iterators (the \ccc{All} iterators ) allows to visit finite or 
+infinite feature while others (the \ccc{Finite} iterators) visit only
+finite features. Circulators visit infinite features as well as finite 
+ones.
+
+\ccThree{typedef pair<Face_handle, int>}{}{the apollonius graph,
+the apollonius graph, the graph}
+%\ccThreeToTwo
+%
+% MK:: change the edge definition as follows?
+\ccTypedef{typedef pair<Face_handle, int> Edge;} {the edge type.
+The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 
+\ccc{f.neighbor(i)}. It is also the edge joining the vertices
+\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
+%
+\ccTwo{Apollonius_graph_2<Gt,StoreHidden,Agds>::Finite_vertices_iterator+}
+{}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{handle to a vertex.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to a face.}
+\ccGlue
+\ccNestedType{Vertex_circulator}{circulator over vertices incident to
+a given vertex.}
+\ccGlue
+\ccNestedType{Face_circulator}{circulator over faces incident to a
+given vertex.}
+\ccGlue
+\ccNestedType{Edge_circulator}{circulator over edges incident to a
+given vertex.}
+\ccGlue
+\ccNestedType{All_vertices_iterator}{iterator over all vertices.}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices.}
+\ccGlue
+\ccNestedType{All_faces_iterator}{iterator over all faces.}
+\ccGlue
+\ccNestedType{Finite_faces_iterator}{iterator over finite faces.}
+\ccGlue
+\ccNestedType{All_edges_iterator}{iterator over all edges.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator}{iterator over finite edges.}
+
+\ccCreationVariable{ag}
+
+\ccCreation
+\ccThree{Apollonius_graph_2<Gt,StoreHidden,Agds>}{ag = other other}{}
+\ccThreeToTwo
+%
+\ccConstructor{Apollonius_graph_2(Gt gt=Gt());}{Creates an
+Apollonius graph using \ccc{gt} as geometric traits.}
+%
+\ccConstructor{template< class Input_iterator >
+Apollonius_graph_2(Input_iterator first, Input_iterator beyond,
+Gt gt=Gt());} {Creates an Apollonius graph using \ccc{gt} as
+geometric traits and inserts all weighted points in the range
+[\ccc{first}, \ccc{beyond}).
+\ccPrecond{\ccc{Input_iterator} must be a model of
+\ccc{Unidirectional Iterator}. The value type
+\ccc{Input_iterator} must be \ccc{Gt::Weighted_point}.}}
+%
+\ccConstructor{Apollonius_graph_2(const Apollonius_graph_2<Gt,StoreHidden,Agds>& other)}{Copy
+constructor. All faces and vertices are duplicated. After the construction,
+\ccVar\ and \ccc{other} refer to two different Apollonius graphs~: if
+\ccc{other} is modified, \ccVar\ is not.}
+%
+\ccMethod{Apollonius_graph_2<Gt,StoreHidden,Agds>
+operator=(const Apollonius_graph_2<Gt,StoreHidden,Agds>& other);}
+{Assignment. All the vertices and faces are duplicated.
+After the assignement, \ccVar\ and \ccc{other} refer to different
+Apollonius graphs~: if \ccc{other} is modified, \ccVar\ is not.}
+
+
+
+
+\ccAccessFunctions
+% MK:: in the following copy text from TDS
+\ccThree{Vertex_handle}{ag.number_of_vertices()+}{}
+%
+\ccMethod{const Geom_traits& geom_traits();}
+{Returns a const reference to the Apollonius graph traits object.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{Returns the number of finite vertices.}
+\ccGlue
+\ccMethod{Face_handle infinite_face() const;}
+{a  face incident to the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle
+          infinite_vertex();}
+{the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle finite_vertex() const;}
+{a vertex distinct from  the \ccc{infinite_vertex}.}
+
+
+
+
+\ccHeading{Traversal of the Apollonius graph}
+
+
+An Apollonius graph can be seen as a container of faces and vertices.
+Therefore the Apollonius graph provides several iterators and circulators
+that allow to traverse it (completely or partially).
+
+
+
+\ccHeading{Face, Edge and Vertex Iterators}
+
+\ccThree{Finite_vertices_iterator}{ag.finite_vertices_begin()+}{}
+
+The following iterators allow respectively to visit 
+finite faces,  finite edges and  finite vertices
+of the Apollonius graph. These iterators are non-mutable,
+bidirectional and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the Apollonius graph.
+
+\ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
+\ccGlue
+\ccMethod{Finite_vertices_iterator finite_vertices_end() const;}{Past-the-end iterator}
+
+\ccMethod{Finite_edges_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{Finite_faces_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
+\ccGlue
+\ccMethod{Finite_faces_iterator finite_faces_end()
+const;}{Past-the-end iterator}
+
+The following iterators allow respectively to visit all
+(finite or infinite) faces, edges and vertices
+of the Apollonius graph. These iterators are non-mutable, bidirectional
+and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the Apollonius graph.
+
+
+\ccMethod{All_vertices_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
+\ccGlue
+\ccMethod{All_vertices_iterator all_vertices_end() const;}{Past-the-end iterator}
+
+\ccMethod{All_edges_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
+\ccGlue
+\ccMethod{All_edges_iterator all_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{All_faces_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccGlue
+\ccMethod{All_faces_iterator all_faces_end() const;}{Past-the-end iterator}
+
+
+\ccThree{Vertex_circulator}{t.number_of_vertices()x}{}
+\ccThreeToTwo
+
+
+
+\ccHeading{Face, Edge and Vertex Circulators}
+
+The Apollonius graph also provides circulators that allows to visit 
+respectively all faces or edges incident to a given vertex
+or all vertices adjacent to a given vertex.
+These circulator are
+non-mutable
+and bidirectional.
+ The operator \ccc{operator++} moves the circulator
+counterclockwise around the vertex while
+the \ccc{operator--} moves clockwise.
+A face circulator is invalidated by any modification of the face pointed to.
+An edge or a vertex circulator are invalidated by any modification
+of one of the two faces incident to the edge pointed to.
+
+\ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}
+{Starts at an arbitrary face incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;}
+{Starts at face \ccc{f}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}
+{Starts at an arbitrary edge incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;}
+{Starts at the the first edge of \ccc{f} incident to 
+\ccc{v}, in counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}
+{Starts at an arbitrary  vertex incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;}
+{Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
+in  counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+
+
+
+\ccHeading{Traversal of the Convex Hull}
+
+Applied on the \ccc{infinite_vertex}
+the above  functions  allow to visit the vertices on the convex hull and
+the infinite edges and faces. Note that a counterclockwise
+traversal of the vertices adjacent to the \ccc{infinite_vertex} is
+a clockwise traversal of the convex hull.
+
+\ccMethod{Face_circulator incident_faces(t.infinite_vertex()) const;}{}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(t.infinite_vertex(), Face_handle f) const;}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(t.infinite_vertex()) const;}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(t.infinite_vertex(), Face_handle f);}{}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex()) ;} {}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex(), Face_handle f) ;}{}
+
+
+
+
+
+
+\ccPredicates
+The class \ccRefName\ provides methods to test
+the finite or infinite character of any feature.
+\ccThree{bool }{ag.is_infinite( Face_handle f, int i)x}{}
+
+%
+\ccMethod{bool
+          is_infinite(Vertex_handle v) const;}
+{\ccc{true}, iff \ccc{v} is the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Face_handle f) const;}
+{\ccc{true}, iff face \ccc{f} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f, int i) const;}
+{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Edge e) const;}
+{\ccc{true}, iff edge \ccc{e} is infinite.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Edge_circulator ec) const;}
+{\ccc{true}, iff edge \ccc{*ec} is infinite.}
+
+
+
+\ccHeading{Insertion}
+\ccThree{Vertex_handle }{ag.insert(Weighted_point p)x}{}
+%
+
+\ccMethod{template< class Input_iterator >
+void insert(Input_iterator first, Input_iterator beyond);}
+{Inserts the weighted points in the range
+[\ccc{first},\ccc{beyond}).
+% MK:: Implement this method with copying and sorting
+\ccPrecond{\ccc{Input_iterator} must be a model of \ccc{Unidirectional
+Iterator}.}}
+%
+\ccGlue
+\ccMethod{Vertex_handle  insert(Weighted_point p);}{Inserts the
+weighted point \ccc{p} in the Apollonius graph. If \ccc{p} is
+not hidden then the vertex handle of \ccc{p} is returned, otherwise
+the vertex handle returned is pointing to \ccc{NULL}.}
+%
+\ccGlue
+\begin{ccAdvanced}
+\ccMethod{Vertex_handle insert(Weighted_point p, Vertex_handle
+vnear);}{Inserts \ccc{p} in the Apollonius graph using the weighted
+point associated with \ccc{vnear} as
+an estimate for the nearest neighbor of the center of \ccc{p}. If
+\ccc{p} is not hidden then the vertex handle of \ccc{p} is returned,
+otherwise the vertex handle returned is pointing to \ccc{NULL}.}
+\end{ccAdvanced}
+
+
+\ccHeading{Removal}
+\ccThree{void }{ag.remove(Vertex_handle v)+}{}
+%
+\ccMethod{void  remove(Vertex_handle v);}{Removes the weighted point
+associated to the vertex handle \ccc{v} from the Apollonius
+graph.
+\ccPrecond{\ccc{v} must correspond to a valid non-infinite
+vertex of the Apollonius graph.}}
+
+
+\ccHeading{Nearest neighbor location}
+\ccThree{Vertex_handle }{ag.nearest_neighbor(Point p)+}{}
+%
+\ccMethod{Vertex_handle  nearest_neighbor(Point p);}
+{Finds the nearest neighbor of the point \ccc{p}. In other words it
+finds the weighted point the Apollonius region of which contains
+\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
+of \ccc{p} is returned.}
+\ccGlue
+\begin{ccAdvanced}
+\ccMethod{Vertex_handle  nearest_neighbor(Point p,
+Vertex_handle vnear);}{Finds the nearest neighbor of the point
+\ccc{p} using the weighted point associated with \ccc{vnear} as an
+estimate for the nearest neighbor of \ccc{p}. Ties are broken
+arbitrarily and one of the nearest neighbors 
+of \ccc{p} is returned.}
+\end{ccAdvanced}
+
+
+\ccHeading{Access to the dual}
+\ccThree{CGAL::Object}{ag.dual(Finite_edges_iterator ei)+}{}
+%
+\ccMethod{Point  dual(const Face_handle& f) const;}{Returns the
+Apollonius vertex corresponding to the face handle \ccc{f}.
+\ccPrecond{\ccc{f} must be a finite face.}}
+\ccGlue
+\ccMethod{CGAL::Object dual(Edge e);}{Returns the dual of
+the edge \ccc{e}. The return type of this method can be one of the
+following~: \ccc{Gt::Line_2}, \ccc{Gt::Hyperbola_2}, \ccc{Gt::Ray_2},
+\ccc{Gt::Hyperbola_ray_2}, \ccc{Gt::Segment_2},
+\ccc{Gt::Hyperbola_segment_2}.
+\ccPrecond{\ccc{e} must be a finite edge.}}
+\ccGlue
+\ccMethod{CGAL::Object dual(const Edge_circulator& ec) const;}
+{Returns the dual of the edge to which the edge circulator \ccc{ec}
+points to. The return type of this method can be one of the
+following~: \ccc{Gt::Line_2}, \ccc{Gt::Hyperbola_2}, \ccc{Gt::Ray_2},
+\ccc{Gt::Hyperbola_ray_2}, \ccc{Gt::Segment_2},
+\ccc{Gt::Hyperbola_segment_2}.
+\ccPrecond{The edge corresponding to \ccc{ec} must be a finite edge.}}
+\ccGlue
+\ccMethod{CGAL::Object dual(const Finite_edges_iterator& ei) const;}
+{Returns the dual of the edge to which the finite edge iterator
+\ccc{ei} points to. The return type of this method can be one of the
+following~: \ccc{Gt::Line_2}, \ccc{Gt::Hyperbola_2}, \ccc{Gt::Ray_2},
+\ccc{Gt::Hyperbola_ray_2}, \ccc{Gt::Segment_2},
+\ccc{Gt::Hyperbola_segment_2}.}
+
+
+\ccHeading{I/O}
+\ccThree{Stream& }{}
+{\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_segment_2)+}}
+%
+\ccMethod{template < class Stream >
+Stream& write_non_hidden_weighted_points(Stream& str);}{Writes
+all non-hidden weighted points of the Apollonius graph to the stream
+\ccc{str}.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Weighted_point)}.}
+\ccGlue
+\ccMethod{template < class Stream >
+Stream& write_all_weighted_points(Stream& str);}{Writes all
+weighted points of the Apollonius graph, both hidden and non-hidden,
+to the stream \ccc{str}. If the template argument \ccc{StoreHidden}
+is set to \ccc{false} only the non-hidden weighted points are
+written.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Weighted_point)}.}
+\ccGlue
+\ccMethod{template < class Stream >
+Stream& draw_hidden_weighted_points(Stream& str);}{Draws all
+hidden weighted points to the stream \ccc{str}. If the template
+argument \ccc{StoreHidden} is set to false this method does nothing.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Weighted_point)}.}
+\ccGlue
+\ccMethod{template < class Stream >
+Stream& draw_hidden_weighted_point_centers(Stream& str);}{Draws
+the centers of all hidden weighted points to the stream \ccc{str}. If
+the template argument \ccc{StoreHidden} is set to \ccc{false} this
+method does nothing.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Point)}.}
+\ccGlue
+\ccMethod{template < class Stream >
+Stream& draw_non_hidden_weighted_points(Stream& str);}{Draws all
+non-hidden weighted points to the stream \ccc{str}.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Weighted_point)}.}
+\ccGlue
+\ccMethod{template < class Stream >
+Stream& draw_non_hidden_weighted_point_centers(Stream& str);}
+{Draws the centers of all non-hidden weighted points to the stream
+\ccc{str}.
+\ccPrecond The following operator must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Point)}.}
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_primal(Stream& str);}{Draws the Apollonius graph to
+the stream \ccc{str}.
+\ccPrecond{The following operators must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_segment_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Parabola_segment_2)}.}
+}
+\ccGlue
+\ccMethod{template < class Stream > 
+Stream& draw_dual(Stream& str);}{Draws the dual of the
+Apollonius graph, i.e., the Apollonius diagram, to the stream
+\ccc{str}.
+\ccPrecond{The following operators must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_ray_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Hyperbola_segment_2)}.}
+}
+\ccGlue
+\begin{ccAdvanced}
+\ccMethod{template < class Stream > 
+Stream& draw_dual_weighted_points(Stream& str);}{Draws the
+weighted points corresponding to the Apollonius vertices of the
+Apollonius diagram.
+\ccPrecond{The following operators must be defined~:\\
+\ccc{Stream& operator<<(Stream&, Weighted_point)},\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}.}
+}
+\end{ccAdvanced}
+
+
+\ccHeading{Validity check}
+\ccThree{bool}{ag.is_valid(bool verbose = false, int level = 1)+}{}
+%
+\begin{ccAdvanced}
+% MK:: change the output stream in the code
+\ccMethod{bool is_valid(bool verbose = false, int level = 1);}
+{Checks the validity of the Apollonius graph. If \ccc{verbose} is
+\ccc{true} a short message is sent to \ccc{std::cerr}. If \ccc{level}
+is 0, only the data structure is validated. If \ccc{level} is 1, then
+both the data structure and the Apollonius graph are
+validated. Negative values of \ccc{level} always return true, and
+values greater then 1 are equivalent to \ccc{level} being 1.}
+\end{ccAdvanced}
+
+\ccHeading{Miscellaneous}
+\ccThree{void}{ag.swap(& other)+}{}
+%
+\ccMethod{void clear();}{Clears all contents of the Apollonius graph.}
+\ccGlue
+% MK:: add this method make copy(...) protected and see doc of TDS
+\ccMethod{void swap(Apollonius_graph_2<Gt,StoreHidden,Agds>
+other);}{The Apollonius graphs
+\ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)} should
+be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
+\ccc{other} is deleted afterwards.}
+
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphFaceBase_2}\\
+\ccc{CGAL::Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
+\ccc{CGAL::Apollonius_graph_face_base_2<Gt>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

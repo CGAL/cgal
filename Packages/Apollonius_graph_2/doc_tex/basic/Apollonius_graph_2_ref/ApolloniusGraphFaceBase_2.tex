@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphFaceBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ApolloniusGraphFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+The \ccc{ApolloniusGraphFaceBase_2} generalizes the
+\ccc{TriangulationFaceBase_2} concept by adding three \ccc{void*}
+pointers and three integers. These triplets intended to support and
+in-place edge list. Since edges are not represented explicitly, but
+rather as pairs of a \ccc{void*} pointer and an integer, the only way
+to support this in-place edge list is by adding this functionality in
+the face base of the Apollonius graph data structure.
+
+\ccGeneralizes
+\ccc{TriangulationFaceBase_2}
+
+\ccTypes
+\ccc{ApolloniusGraphFaceBase_2} does not introduce any
+types in addition to those of \ccc{TriangulationFaceBase_2}.
+
+\ccCreation
+\ccCreationVariable{fb}
+\ccTwo{ApolloniusGraphFaceBase_2 fb(void* v0, void* v1, void* v2);++}{}
+%
+\ccConstructor{ApolloniusGraphFaceBase_2();}{Default constructor.}
+%\ccGlue
+\ccConstructor{ApolloniusGraphFaceBase_2(void* v0, void* v1, void* v2);}
+{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
+\ccc{v2}. Neighbors are initialized to \ccc{NULL}.}
+%\ccGlue
+\ccConstructor{ApolloniusGraphFaceBase_2(void* v0, void* v1, void* v2,
+void* n0, void* n1, void* n2);}
+{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
+\ccc{v2}. Initializes the neighbors of the face with \ccc{n0},
+\ccc{n1} and \ccc{n2}.}
+
+
+\ccHeading{Operations}
+We only cite the additional operations with resepct to those of the
+\ccc{TriangulationFaceBase_2} concept.
+
+%
+\ccThree{std::pair<void*, int>}{fb.is_in_list(int i)+}{}
+%
+\ccMethod{bool is_in_list(int i);}
+{Checks if the edge corresponding to the pair (\ccc{fb}, \ccc{i})
+is currently in the in-place edge list. Returns \ccc{true} if
+(\ccc{fb}, \ccc{i}) is in the list, \ccc{false} otherwise.}
+\ccGlue
+\ccMethod{void set_next(int i, std::pair<void*,int> next);}
+{Sets the edge defined by the pair \ccc{next} as the successor of
+(\ccc{fb}, \ccc{i}) in the list.
+\ccPrecond \ccc{next} must correspond to a valid edge.}
+\ccGlue
+\ccMethod{void set_previous(int i, std::pair<void*,int> prev);}
+{Sets the edge defined by the pair \ccc{prev} as the predecessor of
+(\ccc{fb}, \ccc{i}) in the list.
+\ccPrecond \ccc{prev} must correspond to a valid edge.}
+\ccGlue
+\ccMethod{std::pair<void*, int> next(int i);}
+{Returns the successor of (\ccc{fb}, \ccc{i}) in the list.}
+\ccGlue
+\ccMethod{std::pair<void*, int> previous(int i);}
+{Returns the predecessor of (\ccc{fb}, \ccc{i}) in the list.}
+
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_face_base_2<Gt>}
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{CGAL::Apollonius_graph_face_base_2<Gt>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_data_structure_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ApolloniusGraphDataStructure_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{agds}
+\ccDefinition
+
+The concept \ccRefName\ refines the concept
+\ccc{TriangulationDataStructure_2}
+described in \ccRefPage{TriangulationDataStructure_2}. In addition
+it provides two methods for the insertion and removal of a degree 2
+vertex in the data structure. We only describe what are the additional 
+requirements with respect to the \ccc{TriangulationDataStructure_2}
+concept.
+
+\ccRefines
+\ccc{TriangulationDataStructure_2}
+
+\ccHeading{Insertion}
+\ccThree{Vertex_handle}{agds.insert_degree_2(Face_handle f, int i)+}{}
+%
+\ccMethod{Vertex_handle insert_degree_2(Face_handle f, int i);}{Inserts 
+a degree two vertex and two faces adjacent to it that have two common
+edges. The edge defined by the face handle \ccc{f} and the integer
+\ccc{i} is duplicated. It returns a handle to the vertex created}
+
+\ccHeading{Removal}
+\ccMethod{void remove_degree_2(Vertex_handle v);}{Removes a degree 2
+vertex and the two faces adjacent to it. The copies of the edges the
+star of \ccc{v} are collapsed.}
+
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}
+
+\ccSeeAlso
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphFaceBase_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphHierarchyVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ApolloniusGraphHierarchyVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{hvb}
+
+
+\ccDefinition 
+The vertex of an Apollonius graph
+included in an Apollonius graph hierarchy has to provide
+some pointers to the corresponding vertices in the
+graphs of the next and preceeding levels.
+Therefore, the concept \ccc{ApolloniusGraphHierarchyVertexBase_2}
+extends the concept \ccc{ApolloniusGraphVertexBase_2}, by
+adding two \ccc{void*} pointers to the correponding vertices in the
+next and previous level graphs.
+
+
+\ccGeneralizes
+\ccc{ApolloniusGraphVertexBase_2}
+
+
+\ccTypes
+\ccc{ApolloniusGraphHierarchyVertexBase_2} does not introduce any
+types in addition to those of \ccc{ApolloniusGraphVertexBase_2}.
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Point p, void* f);++}{}
+%
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2();}{Default
+constructor.}
+\ccGlue
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Point p).}
+{Constructs a vertex embedding the center of the weighted point
+\ccc{p}.}
+\ccGlue
+\ccConstructor
+{ApolloniusGraphHierarchyVertexBase_2(Point p, void* f).}
+{Constructs a vertex embedding the center of the point \ccc{p}
+and pointing to face \ccc{f}.}
+
+\ccOperations
+\ccThree{void*}{v.set_down(void* d)+}{}
+%
+\ccMethod{void* up();}{Returns a pointer to the corresponding vertex
+(if any) of the next level Apollonius graph.}
+\ccGlue
+\ccMethod{void* down();}{Returns a pointer to the corresponding vertex
+ of the previous level Apollonius graph.}
+\ccGlue
+\ccMethod{void set_up(void *u);}{Sets the pointer to the corresponding vertex
+of the next level Apollonius graph.} 
+\ccGlue 
+\ccMethod{void set_down(void *d);}{Sets the pointer to the corresponding vertex
+of the previous level Apollonius graph;}
+
+
+
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>>}
+
+
+\ccSeeAlso
+
+\ccc{ApolloniusGraphDataStructure_2} \\
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>}\\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base<Vb>}
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

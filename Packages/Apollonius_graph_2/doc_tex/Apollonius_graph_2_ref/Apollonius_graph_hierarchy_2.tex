@@ -1,0 +1,210 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_hierarchy_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+We provide an alternative to the class
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} for the dynamic
+construction of the Apollonius graph. The \ccRefName\ class maintains
+an hierarchy of Apollonius graphs. The bottom-most level of the
+hierarchy contains the full Apollonius diagram. A weighted point that
+is in level $i$, is in level $i+1$ with probability $1/\alpha$
+where $\alpha > 1$ is some constant. The difference between the
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class and the
+\ccRefName\ is on how the nearest neighbor location is done. Given a
+point $p$ the location is done at follows: at the top most level we
+find the nearest neighbor of $p$ as in the
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class. At every
+subsequent level $i$ we use the nearest neighbor found at level $i+i$
+to find the nearest neighbor. This is a variant of the corresponding
+hierarchy for points found in \cite{d-iirdt-98}.
+%
+The class has three template parameters which have the same meaning as
+in the \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>}. The second
+template parameter defaults to \ccc{true}, whereas the third one
+defaults to \ccc{Apollonius_graph_data_structure_2<
+Triangulation_hierarchy_vertex_base_2< 
+Apollonius_graph_vertex_base_2<Gt,StoreHidden> >,
+Apollonius_graph_face_base_2<Gt> >}. 
+In the case of the Apollonius graph hierarchy, the vertex and face
+base used in the \ccc{Apollonius_graph_data_structure_2<Vb,Fb>} class
+must be models of the concepts
+\ccc{ApolloniusGraphHierarchyVertexBase_2} and
+\ccc{ApolloniusGraphFaceBase_2}.
+
+The \ccRefName\ class derives publicly from the
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class. The interface is
+the same with its parent class. In the sequel only the methods
+overridden are documented.
+
+
+\ccInclude{CGAL/Apollonius_graph_hierarchy_2.h}
+
+
+
+\ccInheritsFrom
+\ccc{CGAL::Apollonius_graph_2<Gt,StoreHidden,Agds>}
+
+
+\ccTypes
+\ccRefName\ does not introduce other types than those introduced by
+its parent class \ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>}.
+
+\ccCreation
+\ccCreationVariable{agh}
+%
+\ccThree{Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>}
+{agh(Gt gt=Gt());}{}
+\ccThreeToTwo
+%
+\ccConstructor{Apollonius_graph_hierarchy_2(const Gt&
+gt=Gt())}{Creates an hierarchy of Apollonius graphs using \ccc{gt} as
+geometric traits.}
+\ccGlue
+\ccConstructor{template< class Input_iterator >
+Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>(Input_iterator
+first, Input_iterator beyond, Gt gt=Gt())}
+{Creates an Apollonius graph hierarchy using 
+\ccc{gt} as geometric traits and inserts all weighted points in the
+range [\ccc{first}, \ccc{beyond}).}
+\ccGlue
+\ccConstructor{Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>
+(Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds> other)}
+{Copy constructor. All faces, vertices and inter-level pointers
+are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+to two different Apollonius graph hierarchies~: if 
+\ccc{other} is modified, \ccVar\ is not.}
+\ccGlue
+\ccMethod{Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>
+operator=(Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>
+other);}{Assignment. All faces, vertices and inter-level pointers
+are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+to two different Apollonius graph hierarchies~: if 
+\ccc{other} is modified, \ccVar\ is not.} 
+
+
+
+\ccHeading{Insertion}
+\ccThree{Vertex_handle }{agh.insert(Weighted_point p)x}{}
+%
+\ccMethod{template< class Input_iterator >
+void insert(Input_iterator first, Input_iterator beyond);}
+{Inserts the weighted points in the range
+[\ccc{first},\ccc{beyond}).
+% MK:: Implement this method with copying and sorting
+\ccPrecond{\ccc{Input_iterator} must be a model of \ccc{Unidirectional
+Iterator}.}}
+%
+\ccGlue
+\ccMethod{Vertex_handle  insert(Weighted_point p);}{Inserts the
+weighted point \ccc{p} in the Apollonius graph hierarchy. If \ccc{p}
+is not hidden then the vertex handle of \ccc{p} is returned, otherwise 
+the vertex handle returned is pointing to \ccc{NULL}.}
+%
+\ccGlue
+\begin{ccAdvanced}
+\ccMethod{Vertex_handle insert(const Weighted_point& p, Vertex_handle
+vnear);}{Inserts \ccc{p} in the Apollonius graph hierarchy using the
+If \ccc{p} is not hidden then the vertex handle of \ccc{p} is
+returned, otherwise the vertex handle returned is pointing to
+\ccc{NULL}. A call to this method is equivalent to 
+\ccc{agh.insert(p);} and it has been added for the sake of conformity
+with the interface of the
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class.}
+%{Inserts \ccc{p} in the Apollonius graph hierarchy using the
+%weighted point associated with \ccc{vnear} as
+%an estimate for the nearest neighbor of the center of \ccc{p}. If
+%\ccc{p} is not hidden then the vertex handle of \ccc{p} is returned,
+%otherwise the vertex handle returned is pointing to \ccc{NULL}.}
+\end{ccAdvanced}
+
+\ccHeading{Removal}
+\ccThree{void }{agh.remove(Vertex_handle v)+}{}
+%
+\ccMethod{void  remove(Vertex_handle v);}{Removes the weighted point
+associated to the vertex handle \ccc{v} from the Apollonius
+graph hierarchy.
+\ccPrecond{\ccc{v} must correspond to a valid non-infinite
+vertex of the Apollonius graph hierarchy.}}
+
+
+\ccHeading{Nearest neighbor location}
+\ccThree{Vertex_handle }{agh.nearest_neighbor(Point p)+}{}
+%
+\ccMethod{Vertex_handle  nearest_neighbor(Point p);}
+{Finds the nearest neighbor of the point \ccc{p}. In other words it
+finds the weighted point the Apollonius region of which contains
+\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
+of \ccc{p} is returned.}
+\ccGlue
+\begin{ccAdvanced}
+\ccMethod{Vertex_handle  nearest_neighbor(Point p,
+Vertex_handle vnear);}{Finds the nearest neighbor of the point
+\ccc{p}. A call to this method is equivalent to 
+\ccc{agh.nearest_neighbor(p);} and it has been added for the sake of
+conformity with the interface of the
+\ccc{Apollonius_graph_2<Gt,StoreHidden,Agds>} class.}
+\end{ccAdvanced}
+
+
+
+
+\ccHeading{Validity check}
+\begin{ccAdvanced}
+\ccMethod{bool is_valid(bool verbose = false, int level = 1) const;}
+{Checks the validity of the Apollonius graph hierarchy. If
+\ccc{verbose} is \ccc{true} a short message is sent to
+\ccc{std::cerr}. If \ccc{level} is 0, the data structure at all levels 
+is validated, as well as the inter-level pointers. If \ccc{level} is
+1, then the data structure at all levels is validated, the inter-level
+pointers are validated and all levels of the Apollonius graph
+hierarchy are also validated. Negative values of \ccc{level} always
+return \ccc{true}, and values greater then 1 are equivalent to
+\ccc{level} being 1.}
+\end{ccAdvanced}
+
+\ccHeading{Miscellaneous}
+\ccThree{void}{agh.swap(& other)+}{}
+%
+\ccMethod{void clear();}{Clears all contents of the Apollonius graph
+hierarchy.}
+\ccGlue
+% MK:: add this method make copy(...) protected and see doc of TDS
+\ccMethod{void swap(Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>
+other);}
+{The Apollonius graph hierarchies \ccc{other} and \ccVar\ are
+swapped. \ccVar.\ccc{swap(other)} should be preferred to \ccVar\ccc{ =
+other} or to \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{ApolloniusGraphHierarchyVertexBase_2}\\
+\ccc{CGAL::Apollonius_graph_2<Gt,StoreHidden,Agds>}\\
+\ccc{CGAL::Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

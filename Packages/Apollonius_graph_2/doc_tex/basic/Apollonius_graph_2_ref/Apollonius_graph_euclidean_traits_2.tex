@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_euclidean_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+  
+The class \ccRefName\ provides a model for the
+\ccc{ApolloniusGraphTraits_2} concept.
+This class is templated by a representation class \ccc{R},
+a weight type \ccc{W} and a \ccc{Method_tag} which
+corresponds to how predicates are evaluated. There are two predefined
+possible values for \ccc{Method_tag}, namely \ccc{CGAL::Sqrt_tag} and
+\ccc{CGAL::No_sqrt_tag}. The first one must be used when the number
+type used in the representation supports the exact evaluation of signs
+of expressions involving all four basic operations and 
+square roots, whereas the second one requires the exact evaluation of
+signs of expressions involving only additions, subtractions and
+multiplications. 
+
+\ccInclude{CGAL/Apollonius_graph_euclidean_traits_2.h}
+
+\ccIsModel
+\ccc{ApolloniusGraphTraits_2}
+
+\ccCreationVariable{traits}
+\ccCreation
+\ccThree{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+{traits = other}{}
+\ccThreeToTwo
+%
+\ccConstructor{ \ccRefName(); }{Default constructor.}
+\ccGlue
+\ccConstructor{
+\ccRefName(Apollonius_graph_euclidean_traits_2<R,W,Method_tag> other);}
+{Copy constructor.}
+\ccGlue
+\ccMethod{Apollonius_graph_euclidean_traits_2<R,W,Method_tag>
+operator=(Apollonius_graph_euclidean_traits_2<R,W,Method_tag>
+other);}{Assignment operator.}
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphTraits_2} \\
+\ccc{CGAL::Apollonius_graph_2<Gt,StoreHidden,Agds>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,135 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ApolloniusGraphVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the 
+the vertex base class of the \ccc{ApolloniusGraphDataStructure_2}
+concept. At the bottom layer, a vertex stores a weighted point and
+provides access to one of its incident face through a \ccc{void *}
+pointer. In addition to that it maintains a container of weighted
+points. The container stores the hidden weighted points related to the 
+vertex.
+
+\ccTypes
+\ccTwo{ApolloniusGraphVertexBase_2::Hidden_weighted_point_container+}{}
+\ccNestedType{Geom_traits}{A type for the geometric traits that define 
+the weighted point stored. \ccPrecond{The type \ccc{Geom_traits} must
+define the type \ccc{Weighted_point}.}}
+%
+\ccGlue
+\ccNestedType{Weighted_point}{A type for the weighted point stored.
+\ccPrecond{This type must coincide with the type
+\ccc{Geom_traits::Weighted_point}.}}
+%
+\ccGlue
+\ccNestedType{Hidden_weighted_point_container}{A type for the list of
+trivial weighted points stored.
+\ccPrecond The container must be a model of \ccc{Back Insertion
+Container}.}
+%
+\ccGlue
+\ccNestedType{Hidden_weighted_point_iterator}{An iterator that
+iterates over the hidden weighted points in the hidden weighted point
+container.
+\ccPrecond Must be a model of \ccc{Unidirectional Iterator}.}
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccTwo{ApolloniusGraphVertexBase_2 v(Weighted_point p, void* f);++}{}
+%
+\ccConstructor{ApolloniusGraphVertexBase_2();}{Default constructor.}
+\ccGlue
+\ccConstructor{ApolloniusGraphVertexBase_2(Weighted_point p);}
+{Constructs a vertex associated with the weighted point \ccc{p} and
+embedded at the center of \ccc{p}.}
+\ccGlue
+\ccConstructor{ApolloniusGraphVertexBase_2(Weighted_point p,
+                     void* f);}{Constructs a vertex associated with
+the weighted point \ccc{p}, embedded at the center of \ccc{p},
+and pointing to face \ccc{f}.}
+
+
+
+
+
+\ccAccessFunctions
+\ccThree{Hidden_weighted_point_iterator}
+{v.numberof_hidden_weighted_points()+}{}
+%
+\ccMethod{Weighted_point point();}
+{Returns  the weighted point.}
+\ccGlue
+\ccMethod{void* face();}{Returns a pointer to the incident face.}
+\ccGlue
+\ccMethod{unsigned int number_of_hidden_weighted_points();}
+{Returns the number of hidden weighted points in the hidden
+weighted point container.}
+\ccGlue
+\ccMethod{Hidden_weighted_point_iterator
+hidden_weighted_points_begin();}
+{Starts at an arbitrary hidden weighted point.}
+\ccGlue
+\ccMethod{Hidden_weighted_point_iterator
+hidden_weighted_points_end();}
+{Past-the-end iterator.}
+
+
+
+
+\ccHeading{Setting and unsetting}
+\ccThree{void}{v.add_hidden_weighted_point(Weighted_point p)+}{}
+\ccMethod{void set_point(Weighed_point p);}
+{Sets the weighted point.}
+\ccGlue
+\ccMethod{void set_face(void* f);}{Sets the incident face.}
+\ccGlue
+\ccMethod{void add_hidden_weighted_point(Weighted_point p);}
+{Add a hidden weighted point to the container of hidden weighted
+points.}
+\ccGlue
+\ccMethod{void clear_hidden_weighted_point_container();}
+{Clears the container of hidden weighted points.}
+
+
+
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose, int level) const;}
+{Performs any required tests on a vertex.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}.
+
+
+\ccSeeAlso
+
+\ccc{ApolloniusGraphDataStructure_2} \\
+%\ccc{TriangulationDataStructure_2::Vertex} \\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_face_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_face_base_2<Gt>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{fb}
+\ccDefinition
+The class \ccRefName\ provides a model for the concept
+\ccc{ApolloniusGraphFaceBase_2}. It is templetized by the geometric
+traits of the Apollonius graph. It derives publicly from the class
+\ccc{CGAL::Triangulation_face_base_2<Gt>}.
+
+\ccInheritsFrom
+\ccc{CGAL::Triangulation_face_base_2<Gt>}
+
+\ccCreation
+\ccCreationVariable{fb}
+\ccTwo{Apollonius_graph_face_base_2<Gt> fb(void* v0, void* v1, void* v2);++}{}
+%
+\ccConstructor{Apollonius_graph_face_base_2<Gt>();}{Default constructor.}
+%\ccGlue
+\ccConstructor{Apollonius_graph_face_base_2<Gt>(void* v0, void* v1, void* v2);}
+{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
+\ccc{v2}. Neighbors are initialized to \ccc{NULL}.}
+%\ccGlue
+\ccConstructor{Apollonius_graph_face_base_2<Gt>(void* v0, void* v1, void* v2,
+void* n0, void* n1, void* n2);}
+{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
+\ccc{v2}. Initializes the neighbors of the face with \ccc{n0},
+\ccc{n1} and \ccc{n2}.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphFaceBase_2}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
