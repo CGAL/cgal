@@ -1,3 +1,7 @@
+Version 4.134 on 20 March 2002
+- converted to new manual style
+- fixed minor typos
+
 Version 4.133 on 20 March 2002
 - removed _tag from names of number type traits types
 
