@@ -42,6 +42,8 @@
 
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Iterator_project.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,6 +62,7 @@ class Triangulation_3
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
+  class Infinite_tester;
   typedef Triangulation_3<GT, Tds>             Self;
 public:
   typedef Tds                                  Triangulation_data_structure;
@@ -72,11 +75,11 @@ public:
 
   typedef typename Tds::Vertex                 Vertex;
   typedef typename Tds::Cell                   Cell;
-  typedef typename Tds::Vertex_handle          Vertex_handle;
-  typedef typename Tds::Cell_handle            Cell_handle;
-
   typedef typename Tds::Facet                  Facet;
   typedef typename Tds::Edge                   Edge;
+
+  typedef typename Tds::Vertex_handle          Vertex_handle;
+  typedef typename Tds::Cell_handle            Cell_handle;
 
   typedef typename Tds::Cell_circulator        Cell_circulator;
   typedef typename Tds::Facet_circulator       Facet_circulator;
@@ -86,14 +89,31 @@ public:
   typedef typename Tds::Edge_iterator          Edge_iterator;
   typedef typename Tds::Vertex_iterator        Vertex_iterator;
 
-  typedef Triangulation_finite_iterator_3<Self, Cell_iterator>
-                                         Finite_cells_iterator;
-  typedef Triangulation_finite_iterator_3<Self, Vertex_iterator>
-                                         Finite_vertices_iterator;
-  typedef Triangulation_finite_iterator2_3<Self, Edge_iterator>
-                                          Finite_edges_iterator;
-  typedef Triangulation_finite_iterator2_3<Self, Facet_iterator>
-                                          Finite_facets_iterator;
+  typedef Cell_iterator                        All_cells_iterator;
+  typedef Facet_iterator                       All_facets_iterator;
+  typedef Edge_iterator                        All_edges_iterator;
+  typedef Vertex_iterator                      All_vertices_iterator;
+
+  typedef Triangulation_finite_iterator_3<Cell_iterator, Infinite_tester>
+                                               Finite_cells_iterator;
+  typedef Triangulation_finite_iterator_3<Vertex_iterator, Infinite_tester>
+                                               Finite_vertices_iterator;
+  typedef Triangulation_finite_iterator_3<Edge_iterator, Infinite_tester>
+                                               Finite_edges_iterator;
+  typedef Triangulation_finite_iterator_3<Facet_iterator, Infinite_tester>
+                                               Finite_facets_iterator;
+
+private:
+  // Auxiliary iterators for convenience
+  // do not use default template argument to please VC++
+  typedef Project_point<Vertex>                           Proj_point;
+public:
+  typedef Iterator_project<Finite_vertices_iterator, 
+                           Proj_point,
+	                   const Point&, 
+                           const Point*,
+                           std::ptrdiff_t,
+                           std::bidirectional_iterator_tag>  Point_iterator;
 
   typedef Point                         value_type; // to have a back_inserter
   typedef const value_type&             const_reference;
@@ -645,6 +665,37 @@ protected:
       }
   };
 
+  // This class is used to generate the Finite_*_iterators.
+  class Infinite_tester
+  {
+      const Self *t;
+
+  public:
+
+      Infinite_tester(const Self *tr = NULL)
+	  : t(tr) {}
+
+      bool operator()(const Vertex_iterator & v) const
+      {
+	  return t->is_infinite(v->handle());
+      }
+
+      bool operator()(const Cell_iterator & c) const
+      {
+	  return t->is_infinite(c->handle());
+      }
+
+      bool operator()(const Edge_iterator & e) const
+      {
+	  return t->is_infinite(*e);
+      }
+
+      bool operator()(const Facet_iterator & f) const
+      {
+	  return t->is_infinite(*f);
+      }
+  };
+
 public:
 
   //TRAVERSING : ITERATORS AND CIRCULATORS
@@ -652,11 +703,14 @@ public:
   {
       if ( dimension() < 3 )
 	  return finite_cells_end();
-      return Finite_cells_iterator(this, cells_begin(), cells_end());
+      return Finite_cells_iterator(cells_begin(), cells_end(),
+	                           Infinite_tester(this));
   }
   Finite_cells_iterator finite_cells_end() const
   {
-      return Finite_cells_iterator(this, cells_end());
+      return Finite_cells_iterator(cells_end(), cells_end(),
+	                           Infinite_tester(this));
+	      			   
   }
 
   Cell_iterator cells_begin() const
@@ -668,15 +722,26 @@ public:
       return _tds.cells_end();
   }
 
+  All_cells_iterator all_cells_begin() const
+  {
+      return _tds.cells_begin();
+  }
+  All_cells_iterator all_cells_end() const
+  {
+      return _tds.cells_end();
+  }
+
   Finite_vertices_iterator finite_vertices_begin() const
   {
       if ( number_of_vertices() <= 0 )
 	  return finite_vertices_end();
-      return Finite_vertices_iterator(this, vertices_begin(), vertices_end());
+      return Finite_vertices_iterator(vertices_begin(), vertices_end(),
+	                              Infinite_tester(this));
   }
   Finite_vertices_iterator finite_vertices_end() const
   {
-      return Finite_vertices_iterator(this, vertices_end());
+      return Finite_vertices_iterator(vertices_end(), vertices_end(),
+	                              Infinite_tester(this));
   }
 
   Vertex_iterator vertices_begin() const
@@ -688,15 +753,26 @@ public:
       return _tds.vertices_end();
   }
 
+  All_vertices_iterator all_vertices_begin() const
+  {
+      return _tds.vertices_begin();
+  }
+  All_vertices_iterator all_vertices_end() const
+  {
+      return _tds.vertices_end();
+  }
+
   Finite_edges_iterator finite_edges_begin() const
   {
       if ( dimension() < 1 )
 	  return finite_edges_end();
-      return Finite_edges_iterator(this, edges_begin(), edges_end());
+      return Finite_edges_iterator(edges_begin(), edges_end(),
+	                           Infinite_tester(this));
   }
   Finite_edges_iterator finite_edges_end() const
   {
-      return Finite_edges_iterator(this, edges_end());
+      return Finite_edges_iterator(edges_end(), edges_end(),
+	                           Infinite_tester(this));
   }
 
   Edge_iterator edges_begin() const
@@ -708,15 +784,26 @@ public:
       return _tds.edges_end();
   }
 
+  All_edges_iterator all_edges_begin() const
+  {
+      return _tds.edges_begin();
+  }
+  All_edges_iterator all_edges_end() const
+  {
+      return _tds.edges_end();
+  }
+
   Finite_facets_iterator finite_facets_begin() const
   {
       if ( dimension() < 2 )
 	  return finite_facets_end();
-      return Finite_facets_iterator(this, facets_begin(), facets_end());
+      return Finite_facets_iterator(facets_begin(), facets_end(),
+	                            Infinite_tester(this));
   }
   Finite_facets_iterator finite_facets_end() const
   {
-      return Finite_facets_iterator(this, facets_end());
+      return Finite_facets_iterator(facets_end(), facets_end(),
+	                            Infinite_tester(this));
   }
 
   Facet_iterator facets_begin() const
@@ -726,6 +813,24 @@ public:
   Facet_iterator facets_end() const
   {
       return _tds.facets_end();
+  }
+
+  All_facets_iterator all_facets_begin() const
+  {
+      return _tds.facets_begin();
+  }
+  All_facets_iterator all_facets_end() const
+  {
+      return _tds.facets_end();
+  }
+
+  Point_iterator points_begin() const
+  {
+      return Point_iterator(finite_vertices_begin());
+  }
+  Point_iterator points_end() const
+  {
+      return Point_iterator(finite_vertices_end());
   }
 
   // cells around an edge
@@ -993,17 +1098,17 @@ test_dim_down(Vertex_handle v) const
       Finite_facets_iterator cit = finite_facets_begin();
 
       int iv;
-      if ( ! (*cit).first->has_vertex(v,iv) )
+      if ( ! cit->first->has_vertex(v,iv) )
           return false;
-      const Point &p1=(*cit).first->vertex(cw(iv))->point();  
-      const Point &p2=(*cit).first->vertex(ccw(iv))->point();  
+      const Point &p1 = cit->first->vertex(cw(iv))->point();  
+      const Point &p2 = cit->first->vertex(ccw(iv))->point();  
       ++cit;
 
       for (; cit != finite_facets_end(); ++cit ) {
-          if ( ! (*cit).first->has_vertex(v,iv) )
+          if ( ! cit->first->has_vertex(v,iv) )
               return false;
-          if ( !collinear(p1, p2, (*cit).first->vertex(cw(iv))->point()) ||
-	       !collinear(p1, p2, (*cit).first->vertex(ccw(iv))->point()) )
+          if ( !collinear(p1, p2, cit->first->vertex(cw(iv))->point()) ||
+	       !collinear(p1, p2, cit->first->vertex(ccw(iv))->point()) )
 	      return false;
       }
   }
@@ -1420,9 +1525,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
       //first tests whether p is coplanar with the current triangulation
       Finite_facets_iterator finite_fit = finite_facets_begin();
-      if ( orientation( (*finite_fit).first->vertex(0)->point(),
-			(*finite_fit).first->vertex(1)->point(),
-			(*finite_fit).first->vertex(2)->point(),
+      if ( orientation( finite_fit->first->vertex(0)->point(),
+			finite_fit->first->vertex(1)->point(),
+			finite_fit->first->vertex(2)->point(),
 			p ) != DEGENERATE ) {
 	lt = OUTSIDE_AFFINE_HULL;
 	li = 3; // only one facet in dimension 2
@@ -1510,10 +1615,10 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
       //first tests whether p is collinear with the current triangulation
       Finite_edges_iterator finite_eit = finite_edges_begin();
       if ( ! collinear( p,
-			(*finite_eit).first->vertex(0)->point(),
-			(*finite_eit).first->vertex(1)->point()) ) {
+			finite_eit->first->vertex(0)->point(),
+			finite_eit->first->vertex(1)->point()) ) {
 	lt = OUTSIDE_AFFINE_HULL;
-	return (*finite_eit).first;
+	return finite_eit->first;
       }
       // if p is collinear, location :
       while (1) {
@@ -2392,14 +2497,14 @@ is_valid(bool verbose, int level) const
     {
       Finite_facets_iterator it;
       for ( it = finite_facets_begin(); it != finite_facets_end(); ++it )
-	is_valid_finite((*it).first,verbose,level);
+	is_valid_finite(it->first,verbose,level);
       break;
     }
   case 1:
     {
       Finite_edges_iterator it;
       for ( it = finite_edges_begin(); it != finite_edges_end(); ++it )
-	is_valid_finite((*it).first,verbose,level);
+	is_valid_finite(it->first,verbose,level);
       break;
     }
   }

@@ -3,6 +3,9 @@ Version 1.94 (?? September 01)
   remove_from_simplex().
 - Some functions work better in more dimensions : test_dim_down(),
   incident_vertices().
+- TDS::Edge/Facet iterators now support operator->().
+- T_3::Vertex_iterator -> All_vertices_iterator and similar.
+- Point_iterator.
 
 Version 1.93 (27 September 01)
 - Use CGAL/iterator.h.

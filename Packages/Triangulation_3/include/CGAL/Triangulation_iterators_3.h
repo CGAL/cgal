@@ -35,11 +35,12 @@
 CGAL_BEGIN_NAMESPACE
 
 // Wraps an iterator, but skips infinite elements.
-// This one works for Vertex and Cell.
-template <class Tr, class Iterator_base>
+// This class is fully generic, and should move to STL extensions.
+
+template <class Iterator_base, class Tester>
 class Triangulation_finite_iterator_3
 {
-  typedef Triangulation_finite_iterator_3<Tr, Iterator_base> Iterator;
+  typedef Triangulation_finite_iterator_3<Iterator_base, Tester> Iterator;
 public:
   typedef typename Iterator_base::value_type  value_type;
   typedef typename Iterator_base::pointer     pointer;
@@ -49,27 +50,21 @@ public:
   typedef std::bidirectional_iterator_tag     iterator_category;
 
   Triangulation_finite_iterator_3()
-    : _ib(), _end(), _tr(NULL)
   {}
 
-  Triangulation_finite_iterator_3(const Tr *tr,
-	                          Iterator_base it,
-	                          Iterator_base end)
-    : _ib(it), _end(end), _tr(tr)
+  Triangulation_finite_iterator_3(Iterator_base it,
+	                          Iterator_base end,
+				  const Tester & test)
+    : _ib(it), _end(end), _test(test)
   { 
-    while ( _tr->is_infinite(_ib->handle()) )
+    while ( _ib != _end && _test(_ib) )
       ++_ib;
   }
-
-  // Past the end iterator.
-  Triangulation_finite_iterator_3(const Tr *tr, Iterator_base end)
-    : _ib(end), _end(end), _tr(tr)
-  {}
 
   bool
   operator==(const Iterator & it) const
   {
-      return _ib == it._ib && _end == it._end && _tr == it._tr;
+      return _ib == it._ib;
   }
 
   bool
@@ -83,7 +78,7 @@ public:
   {
       do {
 	++_ib; 
-      } while ( _ib != _end && _tr->is_infinite(_ib->handle()) );
+      } while ( _ib != _end && _test(_ib) );
       return *this;
   }
 
@@ -92,7 +87,7 @@ public:
   {
       do {
 	--_ib;
-      } while ( _ib != _end && _tr->is_infinite(_ib->handle()) );
+      } while ( _ib != _end && _test(_ib) );
       return *this;
   }
 
@@ -123,97 +118,8 @@ public:
   }
      
 private:
-  Iterator_base _ib;
-  Iterator_base _end;
-  const Tr * _tr;
-};
-
-// This second version is for Facet/Edge : doesn't support operator->().
-template <class Tr, class Iterator_base>
-class Triangulation_finite_iterator2_3
-{
-  typedef Triangulation_finite_iterator2_3<Tr, Iterator_base> Iterator;
-public:
-  typedef typename Iterator_base::value_type  value_type;
-  typedef typename Iterator_base::pointer     pointer;
-  typedef typename Iterator_base::reference   reference;
-  typedef std::size_t                         size_type;
-  typedef std::ptrdiff_t                      difference_type;
-  typedef std::bidirectional_iterator_tag     iterator_category;
-
-  Triangulation_finite_iterator2_3()
-    : _ib(), _end(), _tr(NULL)
-  {}
-
-  Triangulation_finite_iterator2_3(const Tr *tr,
-	                          Iterator_base it,
-	                          Iterator_base end)
-    : _ib(it), _end(end), _tr(tr)
-  { 
-    while ( _tr->is_infinite(*_ib) )
-      ++_ib;
-  }
-
-  // Past the end iterator.
-  Triangulation_finite_iterator2_3(const Tr *tr, Iterator_base end)
-    : _ib(end), _end(end), _tr(tr)
-  {}
-
-  bool
-  operator==(const Iterator & it) const
-  {
-      return _ib == it._ib && _end == it._end && _tr == it._tr;
-  }
-
-  bool
-  operator!=(const Iterator & it) const
-  {
-      return !(*this == it);
-  }
-
-  Iterator &
-  operator++()
-  {
-      do {
-	++_ib; 
-      } while ( _ib != _end && _tr->is_infinite(*_ib) );
-      return *this;
-  }
-
-  Iterator &
-  operator--()
-  {
-      do {
-	--_ib;
-      } while ( _ib != _end && _tr->is_infinite(*_ib) );
-      return *this;
-  }
-
-  Iterator
-  operator++(int)
-  {
-    Iterator tmp(*this);
-    ++(*this);
-    return tmp;
-  }
-        
-  Iterator
-  operator--(int)
-  {
-    Iterator tmp(*this);
-    --(*this);
-    return tmp;
-  }
-
-  value_type operator*() const
-  {
-    return *_ib;
-  }
-
-private:
-  Iterator_base _ib;
-  Iterator_base _end;
-  const Tr * _tr;
+  Iterator_base _ib, _end;
+  Tester _test;
 };
 
 CGAL_END_NAMESPACE

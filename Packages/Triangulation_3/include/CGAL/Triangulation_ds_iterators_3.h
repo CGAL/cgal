@@ -30,16 +30,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Tds_>
+template < class Tds >
 class Triangulation_ds_facet_iterator_3
 {
 // traverses the list of cells and reports all facets.
 public:
 
-  typedef Tds_ Tds;
   typedef typename Tds::Facet                    value_type;
-  typedef typename Tds::Facet *                  pointer;
-  typedef typename Tds::Facet &                  reference;
+  typedef const typename Tds::Facet *            pointer;
+  typedef const typename Tds::Facet &            reference;
   typedef std::size_t                            size_type;
   typedef std::ptrdiff_t                         difference_type;
   typedef std::bidirectional_iterator_tag        iterator_category;
@@ -52,17 +51,18 @@ public:
     {}
 
   Triangulation_ds_facet_iterator_3(const Tds * tds)
-    : _tds(tds), index(0)
+    : _tds(tds)
     {
+      facet.second = 0;
       switch ( _tds->dimension() ) {
       case 2:
 	pos = _tds->cell_container().begin();
-	index = 3;
+	facet.second = 3;
 	return;
       case 3:
 	pos = _tds->cell_container().begin();
 	while (// there must be at least one facet
-	       pos->neighbor(index) < &(*pos) ) {
+	       pos->neighbor(facet.second) < pos->handle() ) {
 	  increment();
 	}
 	return;
@@ -74,11 +74,12 @@ public:
   
   // used to initialize the past-the end iterator
   Triangulation_ds_facet_iterator_3(const Tds* tds, int)
-    : _tds(tds), index(0)
+    : _tds(tds)
     {
+	facet.second = 0;
 	pos = _tds->cell_container().end();
 	if (_tds->dimension() == 2)
-	    index = 3;
+	    facet.second = 3;
     }
   
   Facet_iterator& operator++()
@@ -90,7 +91,7 @@ public:
       do {
 	increment();
       } while ( pos != _tds->cell_container().end()
-	     && pos->neighbor(index) < pos->handle());
+	     && pos->neighbor(facet.second) < pos->handle());
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
       return *this;
@@ -112,79 +113,84 @@ public:
 
     // dimension 3
     do{
-      if (index == 0) {
+      if (facet.second == 0) {
 	// all the facets of the current cell have been examined
-	index = 3;
+	facet.second = 3;
 	--pos;
       }
       else
-	  index--;
+	  --facet.second;
     } while ( pos != _tds->cell_container().end()
-	   && pos->neighbor(index) < pos->handle() );
+	   && pos->neighbor(facet.second) < pos->handle() );
     // reports a facet when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
     return *this;
   }
-    
+
   Facet_iterator operator++(int)
     {
       Facet_iterator tmp(*this);
       ++(*this);
       return tmp;
     }
-    
+
   Facet_iterator operator--(int)
     {
       Facet_iterator tmp(*this);
       --(*this);
       return tmp;
     }
-    
+
   bool operator==(const Facet_iterator& fi) const
     {
-      return _tds == fi._tds && pos == fi.pos && index == fi.index;
+      return _tds == fi._tds && pos == fi.pos &&
+	     facet.second == fi.facet.second;
     }
-    
+
   bool operator!=(const Facet_iterator& fi) const
     {
       return !(*this == fi);
     }
-    
-  Facet operator*() const
+
+  reference operator*() const
     {
-      // case pos == NULL should not be accessed, there is no facet
-      // when dimension <2 
-      return Facet(pos->handle(), index);
+      facet.first = pos->handle();
+      return facet;
+    }
+
+  pointer operator->() const
+    {
+      facet.first = pos->handle();
+      return &facet;
     }
 
 private:
   const Tds*  _tds;
   Cell_iterator pos; // current "cell".
-  int index; // index of the current facet in the current cell
+  mutable Facet facet; // current facet.
 
   void increment()
   {
-    if (index == 3) {
+    if (facet.second == 3) {
       // all the faces of the current cell have been examined
-      index = 0;
+      facet.second = 0;
       ++pos;
     }
-    // be careful : index should always be 0 when pos = cells_end
+    // be careful : facet.second should always be 0 when pos = cells_end
     else
-	index++;
+	++facet.second;
   }
 };
 
-template < class Tds_ >
+template < class Tds >
 class Triangulation_ds_edge_iterator_3
 {
 // traverses the list of cells and reports each edge.
 public:
 
-  typedef Tds_                                    Tds;
   typedef typename Tds::Edge                      value_type;
-  typedef typename Tds::Edge *                    pointer;
-  typedef typename Tds::Edge &                    reference;
+  typedef const typename Tds::Edge *              pointer;
+  typedef const typename Tds::Edge &              reference;
   typedef std::size_t                             size_type;
   typedef std::ptrdiff_t                          difference_type;
   typedef std::bidirectional_iterator_tag         iterator_category;
@@ -196,12 +202,17 @@ public:
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   Triangulation_ds_edge_iterator_3()
-    : _tds(NULL), b(0), e(1)
-    {}
+    : _tds(NULL)
+    {
+      edge.second = 0;
+      edge.third = 1;
+    }
   
   Triangulation_ds_edge_iterator_3(const Tds * tds)
-    : _tds(tds), b(0), e(1)
+    : _tds(tds)
     {
+      edge.second = 0;
+      edge.third = 1;
       switch ( _tds->dimension() ) {
       case 1:
 	{
@@ -212,7 +223,7 @@ public:
 	{
 	  pos = _tds->cell_container().begin();
 	  while ( // there must be at least one edge
-		 pos->neighbor(3-b-e) < &(*pos) ) {
+		 pos->neighbor(3-edge.second-edge.third) < pos->handle() ) {
 	    increment2();
 	  }
 	  return;
@@ -223,12 +234,14 @@ public:
 	  bool notfound = true;
 	  while ( // there must be at least one edge
 		 notfound ) {
-	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
+	    edge.first = pos->handle();
+	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > &(*pos) ); 
+	    } while ( pos->handle() < ccir->handle() ); 
 	    // loop terminates since it stops at least when ccir = pos
-	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
+	    if ( ccir->handle() == pos->handle() )
+		// pos is the cell with minimal pointer
 	      notfound = false;
 	    else
 	      increment3();
@@ -245,8 +258,10 @@ public:
   
   // used to initialize the past-the end iterator
   Triangulation_ds_edge_iterator_3(const Tds* tds, int)
-    : _tds(tds), b(0), e(1)
+    : _tds(tds)
     {
+	edge.second = 0;
+	edge.third = 1;
 	pos = _tds->cell_container().end();
     }
   
@@ -263,7 +278,7 @@ public:
 	do {
 	  increment2();
 	} while ( pos != _tds->cell_container().end() && 
-		  pos->neighbor(3-b-e) < pos->handle() );
+		  pos->neighbor(3-edge.second-edge.third) < pos->handle() );
 	break;
       }
     case 3:
@@ -272,15 +287,17 @@ public:
 	do {
 	  increment3();
 	  if (pos != _tds->cell_container().end()) {
-	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
+	    edge.first = pos->handle();
+	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( &(*ccir) > &(*pos) );
-	    if ( &(*ccir) == &(*pos) ) // pos is the cell with minimum pointer
+	    } while ( pos->handle() < ccir->handle() );
+	    if ( ccir->handle() == pos->handle() )
+		// pos is the cell with minimal pointer
 	      notfound = false;
 	  }
 	  else {
-	    b=0; e=1;
+	    edge.second=0; edge.third=1;
 	  }
 	} while ( pos != _tds->cell_container().end() && notfound );
 	break;
@@ -298,47 +315,49 @@ public:
     switch ( _tds->dimension() ) {
     case 1:
       {
-	--pos; // b, e remain 0, 1
+	--pos; // edge.second, edge.third remain 0, 1
 	break;
       }
     case 2:
       {
 	do {
-	  if (b == 0) {
-	    b = 2; e = 0;
+	  if (edge.second == 0) {
+	    edge.second = 2; edge.third = 0;
 	    --pos;
 	  }
 	  else {
-	    b--; 
-	    e = b+1; // case b==2, e==0 forbids to write e--
+	    --edge.second;
+	    edge.third = edge.second+1;
+	    // case edge.second==2, edge.third==0 forbids to write edge.third--
 	  }
 	} while ( pos != _tds->cell_container().end() && 
-		  pos->neighbor(3-b-e) < pos->handle() );
+		  pos->neighbor(3-edge.second-edge.third) < pos->handle() );
 	break;
       }
     case 3:
       {
 	bool notfound = true;
 	do {
-	  if (b == 0) {
-	    if (e == 1) {
+	  if (edge.second == 0) {
+	    if (edge.third == 1) {
 	      // all the edges of the current cell have been examined
-	      b = 2; e = 3;
+	      edge.second = 2; edge.third = 3;
 	      --pos;
 	    }
 	    else
-	      e--;
+	      --edge.third;
 	  }
 	  else {
-	    if (e == b+1) {
-	      b--;
-	      e = 3;
+	    if (edge.third == edge.second+1) {
+	      --edge.second;
+	      edge.third = 3;
 	    }
 	    else
-	      e--;
+	      --edge.third;
 	  }
 	  if (pos != _tds->cell_container().end()) {
-	    Cell_circulator ccir = _tds->incident_cells(&(*pos),b,e);
+	    edge.first = pos->handle();
+	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
 	    } while ( pos->handle() < ccir->handle() );
@@ -347,7 +366,7 @@ public:
 	      notfound = false;
 	  }
 	  else {
-	    b=0; e=1;
+	    edge.second=0; edge.third=1;
 	  }
 	} while ( pos != _tds->cell_container().end() && notfound );
 	break;
@@ -376,7 +395,8 @@ public:
     
   bool operator==(const Edge_iterator& ei) const
     {
-      return _tds == ei._tds && pos == ei.pos && b == ei.b && e == ei.e;
+      return _tds == ei._tds && pos == ei.pos &&
+	     edge.second == ei.edge.second && edge.third == ei.edge.third;
     }
     
   bool operator!=(const Edge_iterator& ei) const
@@ -384,50 +404,55 @@ public:
       return !(*this == ei);
     }
 
-  Edge operator*() const
+  reference operator*() const
     {
-      return Edge(pos->handle(), b, e);
+      edge.first = pos->handle();
+      return edge;
+    }
+
+  pointer operator->() const
+    {
+      edge.first = pos->handle();
+      return &edge;
     }
 
 private:
   const Tds*  _tds;
   Cell_iterator pos; // current "cell". Even if the dimension is <3 when 
               // there is no true cell yet.
-  int b; // index of the first endpoint of the current edge in the current cell
-  int e; // index of the second endpoint of the current edge in the
-  // current cell 
+  mutable Edge edge;  // keeps the indices of the current edge.
 
   void increment2()
   {
-    if (b == 2) { // e == 0
+    if (edge.second == 2) { // edge.third == 0
       // all the edges of the current cell have been examined
-      b = 0; e = 1;
+      edge.second = 0; edge.third = 1;
       ++pos;
     }
     // be careful : index should always be 0 when pos = cells_end
     else { 
-      b++; 
-      if ( b == 2 )
-	e = 0;
-      else // b==1
-	e = 2;
+      ++edge.second;
+      if ( edge.second == 2 )
+	edge.third = 0;
+      else // edge.second==1
+	edge.third = 2;
     }
   }
 
   void increment3()
   {
-    if (b == 2) { // then e == 3
+    if (edge.second == 2) { // then edge.third == 3
       // all the edges of the current cell have been examined
-      b = 0; e = 1;
+      edge.second = 0; edge.third = 1;
       ++pos;
     }
     else {
-      if (e == 3) {
-	b++;
-	e = b+1;
+      if (edge.third == 3) {
+	edge.second++;
+	edge.third = edge.second+1;
       }
       else
-	e++;
+	++edge.third;
     }
   }
 };

@@ -39,9 +39,6 @@
 
 #define Triangulation_3                             TR
 
-#define Triangulation_finite_iterator_3             T_Fit
-#define Triangulation_finite_iterator2_3            T_Fit2
-
 #define Delaunay_triangulation_3                    DT
 #define Delaunay_remove_tds_face_3_2                DRf32
 #define Delaunay_remove_tds_vertex_3_2              DRv32
