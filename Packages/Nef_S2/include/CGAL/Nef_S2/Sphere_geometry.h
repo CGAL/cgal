@@ -161,7 +161,7 @@ int orientation(const Segment_2& s, const Point_2& p) const
 { return orientation(s.source(),s.target(),p); }
 
 int compare_xy(const Point_2& p1, const Point_2& p2) const
-{ return CGAL::spherical_compare(p1,p2,((Base*) this)->axis,-1); }
+{ return CGAL::spherical_compare(p1,p2,this->axis,-1); }
 
 }; // Negative_halfsphere_geometry<R>
 
