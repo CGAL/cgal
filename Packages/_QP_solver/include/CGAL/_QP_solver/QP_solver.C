@@ -76,8 +76,8 @@ set_up_auxiliary_problem( )
     int ii;
 
     // delete artifical part of `A' and auxiliary `c', if necessary
-    art_A.erase( art_A.begin(), art_A.end());
-    aux_c.erase( aux_c.begin(), aux_c.end());
+    art_A.clear();
+    aux_c.clear();
 
     // initialize artificial part of `A' and auxiliary `c'
     art_A.reserve( qp_m);
@@ -114,7 +114,7 @@ set_up_basis( )
     int ii;
 
     // initialize basis (with artificial variables)
-    if ( B.size() > 0) B.erase( B.begin(), B.end());
+    if ( B.size() > 0) B.clear();
     B.insert( B.end(), std::vector<int>::size_type(qp_m), 0);
     for ( ii = 0; ii < qp_m; ++ii) B[ ii] = qp_n+ii;
     art_basic = qp_m;
@@ -135,7 +135,7 @@ set_up_basis( )
      
 
     // initialize positions in basis
-    if ( in_B.size() > 0) in_B.erase( in_B.begin(), in_B.end());
+    if ( in_B.size() > 0) in_B.clear();
     in_B.reserve( qp_n+qp_m);
     in_B.insert( in_B.end(), std::vector<int>::size_type(qp_n), -1);
     for ( ii = 0; ii < qp_m; ++ii) in_B.push_back( ii);
@@ -169,10 +169,15 @@ QP_solver<Rep_>::
 set_up_initial_solution( )
 {
     // initialize exact version of `qp_b' (implicit conversion to ET)
+#ifndef CGAL_RWSTD_NO_MEMBER_TEMPLATES
     b = Values( qp_b, qp_b+qp_m);
+#else
+    b = Values ( qp_m );
+    std::copy(qp_b, qp_b+qp_m, std::back_inserter( b ));
+#endif
 
     // initialize exact version of `-aux_c' (implicit conversion to ET)
-    minus_c_B.erase( minus_c_B.begin(), minus_c_B.end());
+    minus_c_B.clear();
     minus_c_B.reserve( qp_m);
     std::transform( aux_c.begin()+qp_n, aux_c.end(),
                     std::back_inserter( minus_c_B), std::negate<ET>());
@@ -294,7 +299,6 @@ transition( )
         vout2 << "----------------------" << std::endl;
         }
          
-
     // remove artificial variables
     in_B.erase( in_B.begin()+qp_n, in_B.end());
 
