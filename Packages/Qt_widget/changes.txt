@@ -1,0 +1,8 @@
+1.0.2 (15 May 2001)
+=====
+Fixes several port bugs. Thanks to Dima Pasechnik
+Attempt to fix bug with Borland C++
+
+1.0.0 (14 May 2001)
+=====
+Initial release
