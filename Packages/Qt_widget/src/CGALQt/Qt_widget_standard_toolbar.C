@@ -27,7 +27,7 @@
 #include <CGAL/IO/pixmaps/zoom_in_rect.xpm>
 #include <CGAL/IO/pixmaps/zoom_out.xpm>
 #include <CGAL/IO/pixmaps/zoom_in.xpm>
-#include <CGAL/IO/pixmaps/zoom_reg.xpm>
+#include <CGAL/IO/pixmaps/focus.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
 
 
@@ -75,13 +75,13 @@ namespace CGAL {
 			     maintoolbar, 
 			     "Zoom out");
 		
-    but[3] = new QToolButton(QPixmap( (const char**)zoomin_reg_xpm ),
-			     "Zoom in a certain region", 
+    but[3] = new QToolButton(QPixmap( (const char**)focus_xpm ),
+			     "Focus on a region.", 
 			     0, 
 			     this, 
 			     SLOT(toolregion()), 
 			     maintoolbar, 
-			     "Zoom in a certain region");
+			     "Focus on a region region");
     
     but[4] = new QToolButton(QPixmap( (const char**)zoomin_rect_xpm ),
 			     "Layer rectangle", 
