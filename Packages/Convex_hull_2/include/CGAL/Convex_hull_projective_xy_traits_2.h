@@ -33,7 +33,8 @@ public:
    bool 
    operator()(const Point_3& p, const Point_3& q) const
    { 
-   return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()) == SMALLER;
+     return 
+        compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()) == SMALLER;
    }
 };
 
@@ -44,7 +45,8 @@ public:
    bool 
    operator()(const Point_3& p, const Point_3& q) const
    { 
-   return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x()) == SMALLER;
+     return 
+        compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x()) == SMALLER;
    }
 };
 

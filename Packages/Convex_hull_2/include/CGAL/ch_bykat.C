@@ -170,7 +170,8 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   #endif // no postconditions ...
   H.push_back( a );
   L.push_back( Pbegin );
-  R.push_back( l = std::partition( Pbegin, Pend, ch_traits.left_of_line_2_object(a,b) ) );
+  R.push_back( l = std::partition( Pbegin, Pend, 
+                                   ch_traits.left_of_line_2_object(a,b) ) );
   r = std::partition( l, Pend, ch_traits.left_of_line_2_object(b,a) );
   
   for (;;)
