@@ -53,16 +53,34 @@ sub list_packages($)
 sub collect_results_of_platform($)
 {
     my ($platform) = @_;
+# Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
+    my ($yeahs, $nays, $warnings) = (0,0,0);
+    my $resulttext;
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
 	if (/^\s*(.*?)\s+(\w)\s*$/) {
 	    #($package,$succes) = ($1,$2);
-	    $platform_results->{$1} = $2;
+	    if ($2 eq 'y' or $2 eq 'Y') {
+		$resulttext = 'y';
+		++$yeahs;
+	    } elsif ($2 eq 'w' or $2 eq 'W') {
+		$resulttext = '<FONT COLOR=maroon>w</FONT>';
+		++$warnings;
+	    } elsif ($2 eq 'n' or $2 eq 'N') {
+		$resulttext = '<FONT COLOR=red>n</FONT>';
+		++$nays;
+	    } else {
+		$resulttext = ' ';
+	    }
+	    $platform_results->{$1} = $resulttext;
 	}
     }
     close TESTRESULT;
+    $platform_results->{"y"} = $yeahs;
+    $platform_results->{"n"} = $nays;
+    $platform_results->{"w"} = $warnings;
     return $platform_results;
 }
 
@@ -128,16 +146,8 @@ EOF
 	$platform_num=0;
 	foreach $platform (@platforms_to_do) {
 	    my ($result,$resulttext);
-	    $result = $testresults[$platform_num]->{$test_directory};
-	    if (! defined($result)) {
-		$resulttext = ' ';
-	    } elsif ($result eq 'y' or $result eq 'Y') {
-		$resulttext = 'y';
-	    } elsif ($result eq 'w' or $result eq 'W') {
-		$resulttext = '<FONT COLOR=maroon>w</FONT>';
-	    } elsif ($result eq 'n' or $result eq 'N') {
-		$resulttext = '<FONT COLOR=red>n</FONT>';
-	    } else {
+	    $resulttext = $testresults[$platform_num]->{$test_directory};
+	    if (! defined($resulttext)) {
 		$resulttext = ' ';
 	    }
 #	    print OUTPUT '<TD ALIGN=CENTER><FONT SIZE=+2> <A HREF="',
@@ -192,9 +202,13 @@ sub print_platforms()
 <TD COLSPAN=2><B>Test Platform</B></TD>
 <TD><B>Test site</B></TD>
 <TD><B>Contact person</B></TD>
+<TD><FONT COLOR=blue>y</FONT></TD>
+<TD><FONT COLOR=maroon>w</FONT></TD>
+<TD><FONT COLOR=red>n</FONT></TD>
 </TR>
 EOF
 
+    my ($platform_num)=(0);
     foreach (@platforms_to_do) {
 	print OUTPUT "<TR>\n<TD>$p</TD>\n";
 	$p++;
@@ -223,7 +237,15 @@ EOF
 	    print STDERR "Unknown responsible person.\n";
 	    print OUTPUT "<TD>?</TD><TD>?</TD>\n";
 	}
+	my $count;
+	$count = $testresults[$platform_num]->{"y"};
+	print OUTPUT "<TD>$count</TD>\n"; 
+	$count = $testresults[$platform_num]->{"w"};
+	print OUTPUT "<TD>$count</TD>\n"; 
+	$count = $testresults[$platform_num]->{"n"};
+	print OUTPUT "<TD>$count</TD>\n"; 
 	print OUTPUT "</TR>\n";
+	++$platform_num;
     }
     print OUTPUT "</TABLE>\n";
 }
@@ -351,10 +373,14 @@ sub main()
 
 @known_platforms = (
     'i686_Linux-2.0.29_eg++-egcs-2.90.27_LEDA', 'Sylvain',
+    'i686_Linux-2.0.29_eg++-egcs-2.91.57', 'Sylvain',
+    'i686_Linux-2.0.29_eg++-egcs-2.91.57_LEDA', 'Sylvain',
     'mips_IRIX-5.3_g++-egcs-2.90.29_LEDA', 'Geert',
     'sparc_SunOS-5.5_g++-egcs-2.90.27_LEDA', 'Michael',
+    'sparc_SunOS-5.6_g++-egcs-2.91.57_LEDA', 'Michael',
     'i686_Linux-2.0.29_g++-2.8.1_LEDA', 'Sylvain',
     'sparc_SunOS-5.5_g++-2.8.1_LEDA', 'Michael',
+    'sparc_SunOS-5.6_g++-2.8.1_LEDA', 'Michael',
     'mips_IRIX-6.2_CC-n32-7.20_LEDA', 'Michael',
     'mips_IRIX64-6.2_CC-n32-7.20_LEDA', 'Michael',
 
@@ -362,6 +388,7 @@ sub main()
 
     'mips_IRIX64-6.2_CC-64-7.20_LEDA', 'Michael',
     'sparc_SunOS-5.5_CC-4.2_LEDA', 'Michael',
+    'sparc_SunOS-5.6_CC-4.2_LEDA', 'Michael',
 );
 
 main();
