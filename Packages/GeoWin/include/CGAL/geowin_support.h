@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.5-I-20 $
+// release_date  : $CGAL_Date: 2002/08/27 $
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.6.1)
+// package       : GeoWin (1.6.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.6.1
-// revision_date : 13 August 2002 
+// revision      : 1.6.2
+// revision_date : 30 August 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -1340,11 +1340,15 @@ bool geowin_IntersectsBox(const CGAL::Polygon_2<TRAITS,CONTAINER>& obj, double x
   return geowin_IntersectsBox(CGAL::convert_to_leda(obj),x1,y1,x2,y2,f); 
 }
 
+
+// switch off the LEDA bbox version for pre-LEDA 4.3 ...
+// (because it is buggy in 4.2 and not present in 4.0/4.1)
+
 template<class TRAITS,class CONTAINER>
 void geowin_BoundingBox(const CGAL::Polygon_2<TRAITS,CONTAINER>& obj,double& x1, double& x2,
 	 double& y1, double& y2)
 {
-#if defined(CGAL_POLYGON_USE_BBOX_AND_AFFINE_TRANSFORMATIONS)
+#if __LEDA__ < 430 || defined(CGAL_POLYGON_USE_BBOX_AND_AFFINE_TRANSFORMATIONS)
   CGAL::Bbox_2 bb= obj.bbox();
   x1= bb.xmin(); x2=bb.xmax(); y1=bb.ymin(); y2=bb.ymax();
 #else
