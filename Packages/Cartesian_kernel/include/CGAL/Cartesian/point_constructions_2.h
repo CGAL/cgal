@@ -52,6 +52,31 @@ circumcenter(const PointC2<R CGAL_CTAG> &p,
 
 template < class R >
 inline
+PointC2<R CGAL_CTAG>
+centroid(const PointC2<R CGAL_CTAG> &p,
+         const PointC2<R CGAL_CTAG> &q,
+         const PointC2<R CGAL_CTAG> &r)
+{
+  typename R::FT x, y;
+  centroidC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), x, y);
+  return PointC2<R CGAL_CTAG>(x, y);
+}
+
+template < class R >
+inline
+PointC2<R CGAL_CTAG>
+centroid(const PointC2<R CGAL_CTAG> &p,
+         const PointC2<R CGAL_CTAG> &q,
+         const PointC2<R CGAL_CTAG> &r,
+         const PointC2<R CGAL_CTAG> &s)
+{
+  typename R::FT x, y;
+  centroidC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), s.x(), s.y(), x, y);
+  return PointC2<R CGAL_CTAG>(x, y);
+}
+
+template < class R >
+inline
 PointC2<R>
 line_get_point(const LineC2<R CGAL_CTAG> &l, int i)
 {

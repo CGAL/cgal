@@ -214,6 +214,11 @@ test_new_2(const R& rep)
         = rep.construct_circumcenter_2_object();
   Point_2 tmp13 = construct_circumcenter(p2,p3,p4);
 
+  typename R::Construct_centroid_2 construct_centroid
+        = rep.construct_centroid_2_object();
+          tmp13 = construct_centroid(p2,p3,p4);
+          tmp13 = construct_centroid(p2,p3,p4,p5);
+
 
   typename R::Construct_bisector_2 construct_bisector
         = rep.construct_bisector_2_object();

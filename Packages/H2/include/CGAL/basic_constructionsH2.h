@@ -111,6 +111,30 @@ midpoint( PointH2<R> const& p, PointH2<R> const& q )
     return( PointH2<R>( hx, hy, hw));
 }
 
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+PointH2<R>
+centroid( const PointH2<R>& p,
+          const PointH2<R>& q,
+          const PointH2<R>& r )
+{
+   typedef typename R::RT  RT;
+   return PointH2<R>((p.hx() + q.hx() + r.hx())/RT(4),
+                     (p.hy() + q.hy() + r.hy())/RT(4));
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+PointH2<R>
+centroid( const PointH2<R>& p,
+          const PointH2<R>& q,
+          const PointH2<R>& r,
+          const PointH2<R>& s )
+{
+   typedef typename R::RT  RT;
+   return PointH2<R>((p.hx() + q.hx() + r.hx() + s.hx())/RT(4),
+                     (p.hy() + q.hy() + r.hy() + s.hy())/RT(4));
+}
 
 template <class R>
 CGAL_KERNEL_LARGE_INLINE

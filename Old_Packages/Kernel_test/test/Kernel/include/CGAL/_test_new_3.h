@@ -230,6 +230,11 @@ test_new_3(const R& rep)
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);
 
+  typename R::Construct_centroid_3 construct_centroid
+        = rep.construct_centroid_3_object();
+          tmp4 = construct_centroid(p2,p3,p4);
+          tmp4 = construct_centroid(p2,p3,p4,p5);
+
   typename R::Construct_cross_product_vector_3 construct_cross_product
         = rep.construct_cross_product_vector_3_object();
   Vector_3 tmp9 = construct_cross_product(v3,v4);

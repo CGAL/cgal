@@ -254,6 +254,22 @@ class p_Circumcenter
     { return circumcenter(p,q,r,s); }
 };
 
+template <class Point>
+class p_Centroid
+{
+  public:
+    typedef Point          result_type;
+
+    Point
+    operator()(const Point& p, const Point& q, const Point& r) const
+    { return centroid(p,q,r); }
+
+    Point
+    operator()(const Point& p, const Point& q, 
+               const Point& r, const Point& s) const
+    { return centroid(p,q,r,s); }
+};
+
 template <class Point, class Line>
 class pl_Bisector
 {

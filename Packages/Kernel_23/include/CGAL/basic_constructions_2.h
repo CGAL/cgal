@@ -57,6 +57,34 @@ circumcenter( const Point_2<R>& p,
                           static_cast<const RPoint_2&>(q),
                           static_cast<const RPoint_2&>(r)));
 }
+
+template < class R >
+inline
+Point_2<R>
+centroid( const Point_2<R>& p,
+          const Point_2<R>& q,
+          const Point_2<R>& r)
+{
+    typedef typename R::Point_2_base  RPoint_2;
+    return( centroid( static_cast<const RPoint_2&>(p),
+                      static_cast<const RPoint_2&>(q),
+                      static_cast<const RPoint_2&>(r)));
+}
+
+template < class R >
+inline
+Point_2<R>
+centroid( const Point_2<R>& p,
+          const Point_2<R>& q,
+          const Point_2<R>& r,
+          const Point_2<R>& s)
+{
+    typedef typename R::Point_2_base  RPoint_2;
+    return( centroid( static_cast<const RPoint_2&>(p),
+                      static_cast<const RPoint_2&>(q),
+                      static_cast<const RPoint_2&>(r),
+                      static_cast<const RPoint_2&>(s)));
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONS_2_H

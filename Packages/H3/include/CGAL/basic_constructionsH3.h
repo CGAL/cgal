@@ -103,6 +103,33 @@ bisector( PointH3<R> const& p,
 { return PlaneH3<R>( midpoint(p,q), q-p); }
 
 template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+PointH3<R>
+centroid( PointH3<R> const& p,
+          PointH3<R> const& q,
+          PointH3<R> const& r,
+          PointH3<R> const& s)
+{
+    typedef typename R::RT  RT;
+    return PointH3<R>((p.hx() + q.hx() + r.hx() + s.hx())/RT(4),
+                      (p.hy() + q.hy() + r.hy() + s.hy())/RT(4),
+                      (p.hz() + q.hz() + r.hz() + s.hz())/RT(4));
+}
+
+template <class R>
+CGAL_KERNEL_MEDIUM_INLINE
+PointH3<R>
+centroid( PointH3<R> const& p,
+          PointH3<R> const& q,
+          PointH3<R> const& r)
+{
+    typedef typename R::RT  RT;
+    return PointH3<R>((p.hx() + q.hx() + r.hx())/RT(4),
+                      (p.hy() + q.hy() + r.hy())/RT(4),
+                      (p.hz() + q.hz() + r.hz())/RT(4));
+}
+
+template <class R>
 PointH3<R>
 circumcenter( PointH3<R> const& p,
               PointH3<R> const& q,

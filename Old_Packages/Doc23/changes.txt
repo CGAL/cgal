@@ -1,4 +1,7 @@
-2.25    (18 June 2001)
+2.26    (19 June 2001)
+- added centroid and Construct_centroid_[23]
+
+2.25    (19 June 2001)
 - Added Bounded_side_2, Bounded_side_3
 
 2.24    (18 June 2001)

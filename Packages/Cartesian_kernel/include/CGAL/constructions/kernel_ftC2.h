@@ -77,6 +77,31 @@ circumcenterC2( const FT &px, const FT &py,
 }
 
 template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+void
+centroidC2( const FT &px, const FT &py,
+            const FT &qx, const FT &qy,
+            const FT &rx, const FT &ry,
+            FT &x, FT &y)
+{
+   x = (px + qx + rx)/FT(3);
+   y = (py + qy + ry)/FT(3);
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+void
+centroidC2( const FT &px, const FT &py,
+            const FT &qx, const FT &qy,
+            const FT &rx, const FT &ry,
+            const FT &sx, const FT &sy,
+            FT &x, FT &y)
+{
+   x = (px + qx + rx + sx)/FT(4);
+   y = (py + qy + ry + sy)/FT(4);
+}
+
+template < class FT >
 inline
 void
 line_from_pointsC2(const FT &px, const FT &py,

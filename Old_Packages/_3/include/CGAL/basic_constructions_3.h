@@ -49,6 +49,34 @@ midpoint( const Point_3<R>& p,
 template < class R >
 inline
 Point_3<R>
+centroid( const Point_3<R>& p,
+          const Point_3<R>& q,
+          const Point_3<R>& r,
+          const Point_3<R>& s)
+{
+    typedef typename R::Point_3_base  RPoint_3;
+    return( centroid( static_cast<const RPoint_3&>(p),
+                      static_cast<const RPoint_3&>(q),
+                      static_cast<const RPoint_3&>(r),
+                      static_cast<const RPoint_3&>(s)));
+}
+
+template < class R >
+inline
+Point_3<R>
+centroid( const Point_3<R>& p,
+          const Point_3<R>& q,
+          const Point_3<R>& r)
+{
+    typedef typename R::Point_3_base  RPoint_3;
+    return( centroid( static_cast<const RPoint_3&>(p),
+                      static_cast<const RPoint_3&>(q),
+                      static_cast<const RPoint_3&>(r)));
+}
+
+template < class R >
+inline
+Point_3<R>
 circumcenter( const Point_3<R>& p,
               const Point_3<R>& q,
               const Point_3<R>& r,

@@ -41,6 +41,36 @@ midpoint(const PointC3<R CGAL_CTAG> &p,
 
 template < class R >
 PointC3<R CGAL_CTAG>
+centroid(const PointC3<R CGAL_CTAG> &p,
+         const PointC3<R CGAL_CTAG> &q,
+         const PointC3<R CGAL_CTAG> &r,
+         const PointC3<R CGAL_CTAG> &s)
+{
+  typename R::FT x, y, z;
+  centroidC3(p.x(), p.y(), p.z(),
+             q.x(), q.y(), q.z(),
+             r.x(), r.y(), r.z(),
+             s.x(), s.y(), s.z(),
+             x, y, z);
+  return PointC3<R CGAL_CTAG>(x, y, z);
+}
+
+template < class R >
+PointC3<R CGAL_CTAG>
+centroid(const PointC3<R CGAL_CTAG> &p,
+         const PointC3<R CGAL_CTAG> &q,
+         const PointC3<R CGAL_CTAG> &r)
+{
+  typename R::FT x, y, z;
+  centroidC3(p.x(), p.y(), p.z(),
+             q.x(), q.y(), q.z(),
+             r.x(), r.y(), r.z(),
+             x, y, z);
+  return PointC3<R CGAL_CTAG>(x, y, z);
+}
+
+template < class R >
+PointC3<R CGAL_CTAG>
 circumcenter(const PointC3<R CGAL_CTAG> &p,
              const PointC3<R CGAL_CTAG> &q,
              const PointC3<R CGAL_CTAG> &r,

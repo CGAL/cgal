@@ -133,6 +133,31 @@ circumcenterC3( const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
+void
+centroidC3( const FT &px, const FT &py, const FT &pz,
+            const FT &qx, const FT &qy, const FT &qz,
+            const FT &rx, const FT &ry, const FT &rz,
+            const FT &sx, const FT &sy, const FT &sz,
+            FT &x, FT &y, FT &z)
+{
+   x = (px + qx + rx + sx)/FT(4);
+   y = (py + qy + ry + sy)/FT(4);
+   z = (pz + qz + rz + sz)/FT(4);
+}
+
+template < class FT >
+void
+centroidC3( const FT &px, const FT &py, const FT &pz,
+            const FT &qx, const FT &qy, const FT &qz,
+            const FT &rx, const FT &ry, const FT &rz,
+            FT &x, FT &y, FT &z)
+{
+   x = (px + qx + rx)/FT(3);
+   y = (py + qy + ry)/FT(3);
+   z = (pz + qz + rz)/FT(3);
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
 squared_radiusC3(const FT &px, const FT &py, const FT &pz,

@@ -65,6 +65,11 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::circumcenter( p101, p001, p010, p100) == p);
   assert( CGAL::circumcenter( p001, p000, p110, p100) == p);
 
+  // centroid
+  Point p_11 = p + Vector(RT0, RT1, RT1);
+  assert( CGAL::centroid( p111, p010, p101, p000) == p);
+  assert( CGAL::centroid( p111, p_11, p011 ) == p_11);
+
   // projection onto a plane
 
   return true;

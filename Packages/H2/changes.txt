@@ -1,3 +1,6 @@
+2.30   (19 June 2001)
+- added centroid
+
 2.29   (18 June 2001)
 - Move definition of CGAL_REP_CLASS_DEFINED.
 
