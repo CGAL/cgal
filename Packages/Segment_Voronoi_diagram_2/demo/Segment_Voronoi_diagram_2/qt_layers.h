@@ -13,8 +13,10 @@ public:
 
   void draw() {
     *widget << CGAL::BLUE;
+#if !defined (__POWERPC__)
     *widget << CGAL::PointSize(3);
     *widget << CGAL::LineWidth(3);
+#endif
     svd.draw_dual(*widget);
   }
 
@@ -31,7 +33,6 @@ public:
   void draw() {
     *widget << CGAL::ORANGE;
     svd.draw_skeleton(*widget);
-    //    svd.draw_Voronoi_circles(*widget);
   }
 
 };
@@ -46,21 +47,16 @@ public:
 
   void draw(){
     *widget << CGAL::RED;
+#if !defined (__POWERPC__)
     *widget << CGAL::PointSize(6);
     *widget << CGAL::LineWidth(3);
-#if 0
-    svd.draw_sites(*widget);
-#else
+#endif
     {
       typename T::Finite_vertices_iterator vit;
       for (vit = svd.finite_vertices_begin();
 	   vit != svd.finite_vertices_end(); ++vit) {
 	typename T::Site_2 s = vit->site();
-	//	if ( s.is_exact() ) {
 	*widget << CGAL::RED;
-	//	} else {
-	//	  *widget << CGAL::GREEN;
-	//	}
 	if ( s.is_segment() ) {
 	  *widget << s.segment();
 	}
@@ -81,7 +77,6 @@ public:
 	}
       }
     }
-#endif
   }
 };
 
