@@ -153,7 +153,7 @@ inline
 ForwardIterator left_vertex_2(ForwardIterator first,
 			      ForwardIterator last)
 {  
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return left_vertex_2(first, last, K());
 }
 
@@ -164,7 +164,7 @@ inline
 ForwardIterator right_vertex_2(ForwardIterator first,
 			       ForwardIterator last)
 { 
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return right_vertex_2(first, last, K());
 }
 
@@ -176,7 +176,7 @@ inline
 ForwardIterator top_vertex_2(ForwardIterator first,
 			     ForwardIterator last)
 {
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return top_vertex_2(first, last, K());
 }
 
@@ -187,7 +187,7 @@ inline
 ForwardIterator bottom_vertex_2(ForwardIterator first,
 				ForwardIterator last)
 {
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return bottom_vertex_2(first, last, K());
 }
 
@@ -199,7 +199,7 @@ void area_2(ForwardIterator first,
 	    ForwardIterator last,
 	    Numbertype& result)
 {
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   area_2(first, last, result, K());
 }
 
@@ -210,7 +210,7 @@ inline
 bool is_convex_2(ForwardIterator first,
 		 ForwardIterator last)
 {
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return is_convex_2(first, last, K());
 }
 
@@ -221,28 +221,28 @@ inline
 bool is_simple_2(ForwardIterator first,
 		 ForwardIterator last)
 {
-  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return is_simple_2(first, last, K());
 }
 
-template <class ForwardIterator, class Point>
+template <class ForwardIterator>
 inline
 Oriented_side oriented_side_2(ForwardIterator first,
 			      ForwardIterator last,
-			      const Point& point)
+			      const typename std::iterator_traits<ForwardIterator>::value_type& point)
 {
-  typedef Kernel_traits<Point>::Kernel K;
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return oriented_side_2(first, last, point, K());
 }
 
 
-template <class ForwardIterator, class Point>
+template <class ForwardIterator>
 inline
 Bounded_side bounded_side_2(ForwardIterator first,
 			    ForwardIterator last,
-			    const Point& point)
+			    const typename std::iterator_traits<ForwardIterator>::value_type& point)
 {
-  typedef Kernel_traits<Point>::Kernel K;
+  typedef Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return bounded_side_2(first, last, point, K());
 }
 

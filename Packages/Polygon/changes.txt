@@ -1,3 +1,7 @@
+4.22 ( 16 September 2003) [af]
+- Added missing typenames
+- deduced point type from the value type of the iterator
+
 4.21 ( 16 September 2003) [af]
 - Removed dependency on Point_2<R> in Polygon_2_algorithms.h
 
