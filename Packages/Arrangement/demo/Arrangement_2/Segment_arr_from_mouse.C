@@ -163,12 +163,10 @@ int main()
   std::cout << "Clicking close to a vertex assumes the location" 
 	    << "is at the vertex"
 	    << std::endl;
-
   std::vector<Point> cv1;
-
   Point pnt;
   bool begin=true;
-
+  W.set_status_string( "Left mouse button - segment input. Finish button -query mode" );
   for (;;) {
     double x, y;
     int b = W.get_mouse(x,y);
@@ -198,7 +196,7 @@ int main()
           }
           else{ 
             arr.insert(X_curve(cv1[0],cv1[1]));
-            W.set_status_string("  ");
+            W.set_status_string("Left mouse button - segment input. Finish button -query mode");
             W << arr;
 	  }
           cv1.clear();
@@ -211,7 +209,8 @@ int main()
   W << arr;
    
   // Point Location Queries
-  std::cout << "\nEnter a point with left button." << std::endl;
+  //std::cout << "\nEnter a point with left button." << std::endl;
+  W.set_status_string("Enter a query point with left mouse button. Finish button - exit." );
   W << CGAL::RED;
 
   Point p;
