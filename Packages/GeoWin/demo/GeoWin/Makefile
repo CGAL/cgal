@@ -21,6 +21,12 @@ LDFLAGS =
 CGDL = \
           $(LDFLAGS) $(CGAL_GEOWIN_LDFLAGS)
 
+CGAL_nef_2$(EXE_EXT) :  CGAL_nef_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_nef_2 CGAL_nef_2$(OBJ_EXT)  $(CGDL)
+
+CGAL_partition_2$(EXE_EXT) :  CGAL_partition_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_partition_2 CGAL_partition_2$(OBJ_EXT)  $(CGDL)
+
 CGAL_alpha_shape_2$(EXE_EXT) :  CGAL_alpha_shape_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_alpha_shape_2 CGAL_alpha_shape_2$(OBJ_EXT)  $(CGDL)
 
@@ -84,12 +90,12 @@ CGAL_min_sphere_3$(EXE_EXT) :  CGAL_min_sphere_3$(OBJ_EXT)
 CGAL_planar_map_2$(EXE_EXT) :  CGAL_planar_map_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)CGAL_planar_map_2 CGAL_planar_map_2$(OBJ_EXT)  $(CGDL)
 
-all: CGAL_alpha_shape_2 CGAL_arrangement_2 CGAL_delaunay_triang_3 CGAL_constrained_triang_2 CGAL_min_sphere_3 CGAL_regular_triang_2 CGAL_delaunay_triang_3 CGAL_geometry_2 CGAL_min_circle_2 CGAL_delaunay_triang_2 CGAL_demo CGAL_convex_hull_2 CGAL_segment_intersection_2 CGAL_triangulation_2 CGAL_max_k_gon_2 CGAL_all_furthest_neighbors_2 CGAL_polygon_2 CGAL_convex_hull_3 CGAL_kdtree_2 CGAL_kdtree_3 CGAL_min_ellipse_2
+all: CGAL_nef_2 CGAL_partition_2 CGAL_alpha_shape_2 CGAL_arrangement_2 CGAL_delaunay_triang_3 CGAL_constrained_triang_2 CGAL_min_sphere_3 CGAL_regular_triang_2 CGAL_delaunay_triang_3 CGAL_geometry_2 CGAL_min_circle_2 CGAL_delaunay_triang_2 CGAL_demo CGAL_convex_hull_2 CGAL_segment_intersection_2 CGAL_triangulation_2 CGAL_max_k_gon_2 CGAL_all_furthest_neighbors_2 CGAL_polygon_2 CGAL_convex_hull_3 CGAL_kdtree_2 CGAL_kdtree_3 CGAL_min_ellipse_2
 
 
 clean :
 	rm -f  tt *~ *.o core *.obj *.exe
-	rm -f  CGAL_alpha_shape_2 CGAL_arrangement_2 CGAL_constrained_triang_2 CGAL_min_sphere_3 CGAL_regular_triang_2 CGAL_delaunay_triang_3 CGAL_geometry_2 CGAL_min_circle_2 CGAL_delaunay_triang_2 CGAL_demo CGAL_convex_hull_2 CGAL_segment_intersection_2 CGAL_triangulation_2 CGAL_max_k_gon_2 CGAL_all_furthest_neighbors_2 CGAL_polygon_2 CGAL_convex_hull_3 CGAL_kdtree_2 CGAL_kdtree_3 CGAL_min_ellipse_2 CGAL_planar_map_2
+	rm -f  CGAL_nef_2 CGAL_partition_2 CGAL_alpha_shape_2 CGAL_arrangement_2 CGAL_constrained_triang_2 CGAL_min_sphere_3 CGAL_regular_triang_2 CGAL_delaunay_triang_3 CGAL_geometry_2 CGAL_min_circle_2 CGAL_delaunay_triang_2 CGAL_demo CGAL_convex_hull_2 CGAL_segment_intersection_2 CGAL_triangulation_2 CGAL_max_k_gon_2 CGAL_all_furthest_neighbors_2 CGAL_polygon_2 CGAL_convex_hull_3 CGAL_kdtree_2 CGAL_kdtree_3 CGAL_min_ellipse_2 CGAL_planar_map_2
 
 
 cleano :
