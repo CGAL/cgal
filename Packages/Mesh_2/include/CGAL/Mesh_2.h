@@ -1447,8 +1447,8 @@ insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
       ++fh_it)
     bad_faces.erase(*fh_it);
 
-  Vertex_handle vp = insert_in_edge(p, fh, edge_index);
-  // TODO, WARNING: insert_in_edge is not robust!
+  Vertex_handle vp = insert(p, EDGE, fh, edge_index);
+  // TODO, WARNING: this is not robust!
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
 
