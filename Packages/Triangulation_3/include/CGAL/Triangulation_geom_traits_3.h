@@ -55,7 +55,6 @@ public:
   typedef typename Rep::Tetrahedron_3  Tetrahedron_3;
   typedef typename Rep::Ray_3          Ray_3;
   typedef typename Rep::Line_3         Line_3;
-  typedef typename Rep::Direction_3    Direction_3;
   typedef typename Rep::Plane_3        Plane_3;
 
   // The next typedef is there for backward compatibility

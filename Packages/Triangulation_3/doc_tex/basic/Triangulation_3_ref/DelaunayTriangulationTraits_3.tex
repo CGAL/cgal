@@ -50,15 +50,13 @@ Must provide the operator\\
 which compares the distance between \ccc{p} and \ccc{q} to the distance
 between \ccc{p} and \ccc{r}.}
 
-\ccTwo{DelaunayTriangulationTraits_3::Direction_3xxx}{}
+\ccTwo{DelaunayTriangulationTraits_3::Object_3_xxxxx}{}
 
 \ccNestedType{Line_3}{The line type.}
 \ccGlue
 \ccNestedType{Plane_3}{The plane type.}
 \ccGlue
 \ccNestedType{Ray_3}{The ray type.}
-\ccGlue
-\ccNestedType{Direction_3}{The direction type.}
 \ccGlue
 \ccNestedType{Object_3}{The object type.}
 
@@ -86,15 +84,10 @@ that must provide the operator\\
 that constructs the line perpendicular to \ccc{pl} and passing through
 \ccc{p}.}
 \ccGlue
-\ccNestedType{Construct_direction_3}{A constructor object
-that must provide the operator\\
-\ccc{Direction_3 operator()(Line_3 l)} that constructs the oriented
-direction of \ccc{l}.} 
-\ccGlue
 \ccNestedType{Construct_ray_3}{A constructor object
 that must provide the operator\\
-\ccc{Ray_3 operator()(Point_3 p, Direction_3 d)} that constructs the
-ray starting at \ccc{p} and with direction \ccc{d}.}
+\ccc{Ray_3 operator()(Point_3 p, Line_3 l)} that constructs the
+ray starting at \ccc{p} and with direction given by \ccc{l}.}
 \ccGlue
 \ccNestedType{Construct_object_3}{A constructor object
 that must provide the operators\\
@@ -126,8 +119,6 @@ are instantiated:
 \ccMethod{Construct_perpendicular_line_3 construct_perpendicular_line_object();}{}
 \ccGlue
 \ccMethod{Construct_plane_3 construct_plane_3_object();}{}
-\ccGlue
-\ccMethod{Construct_direction_3 construct_direction_3_object();}{}
 \ccGlue
 \ccMethod{Construct_ray_3 construct_ray_3_object();}{}
 \ccGlue

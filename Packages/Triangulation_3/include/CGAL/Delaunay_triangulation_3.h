@@ -66,7 +66,6 @@ public:
   typedef typename Gt::Line_3        Line;
   typedef typename Gt::Ray_3         Ray;
   typedef typename Gt::Plane_3       Plane;
-  typedef typename Gt::Direction_3   Direction;
   typedef typename Gt::Object_3      Object;
 
   typedef typename Tr_Base::Cell_handle   Cell_handle;
@@ -126,16 +125,10 @@ protected:
       return geom_traits().construct_plane_3_object()(p, q, r);
   }
 
-  Direction
-  construct_direction(const Line &l) const
-  {
-      return geom_traits().construct_direction_3_object()(l);
-  }
-
   Ray
-  construct_ray(const Point &p, const Direction &d) const
+  construct_ray(const Point &p, const Line &l) const
   {
-      return geom_traits().construct_ray_3_object()(p, d);
+      return geom_traits().construct_ray_3_object()(p, l);
   }
 
   Object
@@ -980,8 +973,7 @@ dual(Cell_handle c, int i) const
   
   Line l = construct_perpendicular_line( construct_plane(p,q,r),
 					 construct_circumcenter(p,q,r) );
-  return construct_object(construct_ray( dual(n),
-	                                 construct_direction(l)));
+  return construct_object(construct_ray( dual(n), l));
 }
 
 template < class Gt, class Tds >
