@@ -12,6 +12,11 @@ int main(int argc, char* argv[])
 }
 
 #else
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_green CGAL::green
+#endif //CGAL_USE_CGAL_WINDOW
+
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
@@ -92,7 +97,8 @@ draw_connected_component(const Point&  p,
   }
 
   // draw
-  win << CGAL::GREEN;
+  //win << CGAL::GREEN;
+  win.set_fill_color(leda_green);
   std::set<Face_handle>::iterator it;
   for ( it = component.begin(); it != component.end(); it++) {
     if (! ct.is_infinite( *it)) win << ct.triangle( *it);

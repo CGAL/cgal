@@ -17,7 +17,8 @@ int main(int argc, char* argv[])
 #define leda_xor_mode CGAL::xor_mode
 #define leda_src_mode CGAL::src_mode
 #define leda_red      CGAL::red
-#endif
+$define leda_pink     CGAL::pink
+#endif //CGAL_USE_CGAL_WINDOW
 
 //to get shorter names
 #define Cartesian Ca
@@ -252,24 +253,19 @@ void draw_faces_along_line(Triangulation &T,
     if(lfc == (CGAL_NULL_TYPE) NULL){
         std::cerr << "Line does not intersect convex hull" << std::endl;
     } else {
+      W.set_fill_color(leda_pink);
         do{
             if(! T.is_infinite( lfc  )){
                 W << T.triangle( lfc );
             }
         }while(++lfc != done);
-
-        any_button(W);
-        // Remove the line and unhighlight again
-        dm = W.set_mode(leda_xor_mode);
-        W << p << q << Line(p,q);
-	W.set_mode(dm);
-	W << CGAL::BLUE;
-	do{
-            if(! T.is_infinite( lfc )){
-                W << T.triangle( lfc );
-            }
-        }while(--lfc != done);
+	//redraw the line
+	W << p << q << Line(p,q);
 	
+        any_button(W);
+	//clear all
+	W.clear();
+	W << CGAL::BLUE << T ;
     }
 }
 
