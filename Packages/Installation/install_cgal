@@ -4441,6 +4441,9 @@ create_include_makefile()
   case ${CGAL_OS_COMPILER} in 
 	mips_IRIX*-6*_CC-*32-*) 
 	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
+	*_KCC-*) 
+	    ${_printf} " ti_files/\$*.ti*\n" >> ${FILE}
+	    ${_printf} "\trm -rf ti_files/\$*\n" >> ${FILE};;
 	*)  
 	    ${_printf} "\n" >> ${FILE};;
   esac
