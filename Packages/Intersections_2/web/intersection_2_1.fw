@@ -23,6 +23,7 @@ MPI, Saarbruecken@)
 #ifndef CGAL_BBOX_2_LINE_2_INTERSECTION_H
 #define CGAL_BBOX_2_LINE_2_INTERSECTION_H
 
+#include <CGAL/Cartesian.h>
 #ifndef CGAL_BBOX_2_H
 #include <CGAL/Bbox_2.h>
 #endif // CGAL_BBOX_2_H
@@ -311,6 +312,7 @@ Saarbruecken@)
 #ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
 #define CGAL_RAY_2_BBOX_2_INTERSECTION_H
 
+#include <CGAL/Cartesian.h>
 #ifndef CGAL_BBOX_2_H
 #include <CGAL/Bbox_2.h>
 #endif // CGAL_BBOX_2_H
@@ -2350,6 +2352,25 @@ CGAL_END_NAMESPACE
 
 @B@<Packing intersections together@>
 
+@O@<../include/CGAL/Bbox_2_intersection.h@>==@{@-
+@<cgal_heading@>@(@-
+include/CGAL/Bbox_2_intersections.h@,@-
+intersection_2_1.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+
+#ifndef CGAL_BBOX_2_INTERSECTIONS_H
+#define CGAL_BBOX_2_INTERSECTIONS_H
+
+#ifndef CGAL_BBOX_2_LINE_2_INTERSECTION_H
+#include <CGAL/Bbox_2_Line_2_intersection.h>
+#endif // CGAL_BBOX_2_LINE_2_INTERSECTION_H
+#ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
+#include <CGAL/Ray_2_Bbox_2_intersection.h>
+#endif // CGAL_RAY_2_BBOX_2_INTERSECTION_H
+@}
+
 @O@<../include/CGAL/intersection_2_1.h@>==@{@-
 @<cgal_heading@>@(@-
 include/CGAL/intersection_2_1.h@,@-
@@ -2361,12 +2382,6 @@ Saarbruecken@)
 #ifndef CGAL_INTERSECTION_2_1_H
 #define CGAL_INTERSECTION_2_1_H
 
-#ifndef CGAL_BBOX_2_LINE_2_INTERSECTION_H
-#include <CGAL/Bbox_2_Line_2_intersection.h>
-#endif // CGAL_BBOX_2_LINE_2_INTERSECTION_H
-#ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
-#include <CGAL/Ray_2_Bbox_2_intersection.h>
-#endif // CGAL_RAY_2_BBOX_2_INTERSECTION_H
 #ifndef CGAL_LINE_2_LINE_2_INTERSECTION_H
 #include <CGAL/Line_2_Line_2_intersection.h>
 #endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
