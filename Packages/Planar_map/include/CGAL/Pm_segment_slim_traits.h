@@ -6,35 +6,101 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class Kernel_, class X_curve_>
+struct Construct_direction_at_endpoint_2 : 
+public Kernel_::Construct_direction_2
+{
+  typedef Kernel_                                Kernel;
+  typedef X_curve_                               X_curve;
+
+  typedef typename Kernel::Construct_direction_2 Base;
+  typedef typename Kernel::Direction_2           Direction_2;
+  typedef typename Kernel::Point_2               Point_2;
+
+  Direction_2 operator()(const X_curve & cv, const Point_2 &) const
+    { 
+      return Base::operator()(cv);
+    }
+};
+
+// Compares the y value of two curves at an x value of the input point
+template <class Kernel_, class X_curve_>
+struct Compare_y_at_x_for_segments_2 :
+public Kernel_::Compare_y_at_x_2
+{
+  typedef Kernel_                           Kernel;
+  typedef X_curve_                          X_curve;
+
+  typedef typename Kernel::Compare_y_at_x_2 Base;
+  typedef typename Kernel::Point_2          Point_2;
+  typedef typename Kernel::Construct_line_2 Construct_line_2;
+
+  Comparison_result 
+  operator()( const Point_2 & q, const X_curve &cv1, const X_curve &cv2) const 
+    {
+      typename Kernel::Line_2 l1 = construct_line(cv1);
+      typename Kernel::Line_2 l2 = construct_line(cv2);
+      return Base::operator()(q, l1, l2);
+    }
+  
+  Construct_line_2 construct_line;
+
+};
+
+/*
+template <class Kernel>
+inline
+Pm_segment_traits<Kernel>::
+Construct_direction_2 
+Pm_segment_traits<Kernel>::
+construct_direction_2_object() const
+{
+  return Construct_direction_2();
+}
+*/
 
 template <class Kernel_>
-class Pm_segment_traits
+class Pm_segment_traits : public Kernel_
 {
 public:
 
   typedef Kernel_                    Kernel;
 
   // traits objects
-  typedef typename Kernel::Point_2   Point_2;
-  typedef Point_2                    Point; // for backward compatability
+  typedef typename Kernel::Point_2     Point_2;
+  typedef Point_2                      Point; // for backward compatability
 
-  typedef typename Kernel::Segment_2 X_curve;
+  typedef typename Kernel::Direction_2 Direction_2;
+
+  typedef typename Kernel::Segment_2   X_curve;
 
   // Things I get from the kernel
   // ----------------------------
   //
   //   Future interface:
   //  
-  //   typedef typename Kernel::Is_vertical_2      Is_vertical_2;
-  //   typedef typename Kernel::Compare_y_at_x_2   Compare_y_at_x_2;
-  //   typedef typename Kernel::Counterclockwise_in_between_2
-  //                                               Counterclockwise_in_between_2;
-  //   typedef typename Kernel::Equal_2            Equal_2;
-  //   typedef typename Kernel::Has_on_2           Has_on_2;
-  //   typedef typename Kernel::Compare_x_2        Compare_x_2;
-  //   typedef typename Kernel::Compare_y_2        Compare_y_2;
-  //   typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
+  typedef typename Kernel::Is_vertical_2      Is_vertical_2;
+  typedef typename Kernel::Counterclockwise_in_between_2
+                                              Counterclockwise_in_between_2;
+  typedef typename Kernel::Equal_2            Equal_2;
+  typedef typename Kernel::Has_on_2           Has_on_2;
+  typedef typename Kernel::Compare_x_2        Compare_x_2;
+  typedef typename Kernel::Compare_y_2        Compare_y_2;
+  typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
+  
+  typedef typename Kernel::Construct_opposite_direction_2
+                                              Construct_opposite_direction_2;
 
+  typedef Construct_direction_at_endpoint_2<Kernel, X_curve>
+                                              Construct_direction_2;
+  typedef Compare_y_at_x_for_segments_2<Kernel, X_curve>
+                                              Compare_y_at_x_2;
+
+  inline Construct_direction_2 construct_direction_2_object() const
+  { return Construct_direction_2(); }
+
+  inline Compare_y_at_x_2 compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(); }
 
   //   Implementation
   //   
@@ -66,24 +132,6 @@ public:
 
   Pm_segment_traits(const Kernel& kernel) : m_kernel(kernel) {}
   
-  // Access to curve source
-  Point_2 curve_source(const X_curve & cv) const 
-  { 
-    return m_kernel.construct_vertex_2_object()(cv, 0);
-  }
-  
-  // Access to curve target
-  Point_2 curve_target(const X_curve & cv) const 
-  {
-    return m_kernel.construct_vertex_2_object()(cv, 1);
-  }
-  
-  // Answers true iff the curve is vertical.
-  bool curve_is_vertical(const X_curve & cv) const 
-  {
-    return m_kernel.is_vertical_2_object()(cv);
-  }
-
   /*
   // Returns the curve-point status of the input objects
   Curve_point_status 
@@ -113,15 +161,6 @@ public:
       }
   }
   */
-  // Compares the y value of two curves at an x value of the input point
-  Comparison_result 
-  curve_compare_at_x(const X_curve &cv1, const X_curve &cv2, const Point_2 &q) 
-    const 
-  {
-    typename Kernel::Line_2 l1 = m_kernel.construct_line_2_object()(cv1);
-    typename Kernel::Line_2 l2 = m_kernel.construct_line_2_object()(cv2);
-    return m_kernel.compare_y_at_x_2_object()(q, l1, l2);
-  }
 
   // Compare the y value of two curves in an epsilon environment to
   // the left of the x value of the input point
@@ -130,19 +169,20 @@ public:
                           const Point_2 &q) const 
   {
     // If one of the curves is vertical then return EQUAL.
-    if ( curve_is_vertical(cv1) || (curve_is_vertical(cv2)) ) return EQUAL;
+    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2)) ) return EQUAL;
     // If one of the curves is not defined at q then return EQUAL.
     if ( ! is_left(leftmost(cv1.source(), cv1.target()), q) ) return EQUAL;
     if ( ! is_left(leftmost(cv2.source(), cv2.target()), q) ) return EQUAL;
     
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
+    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
+
         
     if ( r != EQUAL )
       return r;     // since the curve is continous 
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives
-    return compare_value(curve_derivative(cv2), curve_derivative(cv1));
+    return compare_slope_2_object()(cv2, cv1);
   }
   
   // Compare the y value of two curves in an epsilon environment to
@@ -152,19 +192,19 @@ public:
 			   const Point_2 & q) const 
   {
     // If one of the curves is vertical then return EQUAL.
-    if ( curve_is_vertical(cv1) || (curve_is_vertical(cv2))  ) return EQUAL;
+    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2))  ) return EQUAL;
     // If one of the curves is not defined at q then return EQUAL.
     if ( ! is_right(rightmost(cv1.source(), cv1.target()), q) ) return EQUAL;
     if ( ! is_right(rightmost(cv2.source(), cv2.target()), q) ) return EQUAL;
     
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
+    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
     
     if ( r != EQUAL)
       return r;     // since the curve is continous 
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
-    return compare_value(curve_derivative(cv1), curve_derivative(cv2));
+    return compare_slope_2_object()(cv1, cv2);
   }
   
   // done
@@ -175,16 +215,16 @@ public:
                            const X_curve &second, 
                            const Point_2 &point) const
   {
-    typedef typename Kernel::Direction_2 Direction_2;
-    
-    X_curve my_cv = cv, my_first = first, my_second = second;
-    if ( curve_source(my_cv)    != point ) my_cv     = curve_flip(cv);
-    if ( curve_source(my_first) != point ) my_first  = curve_flip(first);
-    if ( curve_source(my_second)!= point ) my_second = curve_flip(second);
+    Direction_2 d  = construct_direction_2_object()(cv,     point);
+    Direction_2 d1 = construct_direction_2_object()(first , point);
+    Direction_2 d2 = construct_direction_2_object()(second, point);
 
-    Direction_2 d  = m_kernel.construct_direction_2_object()(my_cv);
-    Direction_2 d1 = m_kernel.construct_direction_2_object()(my_first);
-    Direction_2 d2 = m_kernel.construct_direction_2_object()(my_second);
+    if ( construct_vertex_2_object()(cv, 0)      != point ) 
+      d = construct_opposite_direction_2_object()(d);
+    if (  construct_vertex_2_object()(first, 0)  != point )
+      d1 = construct_opposite_direction_2_object()(d1);
+    if (  construct_vertex_2_object()(second, 0) != point )
+      d2 = construct_opposite_direction_2_object()(d2);
 
     return m_kernel.counterclockwise_in_between_2_object()(d, d1, d2);
   }
@@ -211,7 +251,7 @@ public:
               is_left(q, leftmost(cv.source(), cv.target()))	 );
   }
 
-private:
+protected:
   // constructs the opposite segment (with the source and target
   // exchanged)
   // Used internally and in the Arrangement, so shouldn't be part of
@@ -250,35 +290,12 @@ private:
   const Point_2& highest(const Point_2 &p1, const Point_2 &p2) const
   { return (is_higher(p1, p2) ? p1 : p2); }
   
-  // Comment this one ! ##############
-  
-  typename Kernel::FT curve_derivative(const X_curve &cv) const
-  {
-    CGAL_assertion(!curve_is_vertical(cv));
-    
-    return ( (cv.target()).y() - cv.source().y()) / 
-      (cv.target().x() - cv.source().x());
-  }
-  
-  Comparison_result compare_value(const typename Kernel::FT &v1, 
-				  const typename Kernel::FT &v2) const
-  {
-    typename Kernel::FT       delta = v1 - v2;
-    const typename Kernel::FT zero(0);
-    if (delta == zero)
-      return EQUAL;
-    if (zero < delta)
-      return LARGER;
-    else
-      return SMALLER;
-  }
-
   Point_2 construct_vertical_projected_point_2_object(const X_curve &cv, const Point_2 & q) const
     {
       if ( ! curve_is_in_x_range(cv, q) )
 	return cv.source();
       
-      if (curve_is_vertical(cv))
+      if (is_vertical_2_object()(cv))
 	return cv.source();
       
       const Point_2 & a = cv.source();

@@ -48,7 +48,7 @@ public:
 //  typedef  typename I::Info_edge       Info_edge;
 //  typedef  typename I::Info_face       Info_face;
   
-  typedef PlanarMapTraits_2          Base;
+  typedef PlanarMapTraits_2      Base;
   typedef typename Base::X_curve X_curve;
   typedef typename Base::Point_2 Point_2;
   //typedef  typename PlanarMapTraits_2::Point_2 Point; // for backward compat.
@@ -60,6 +60,38 @@ public:
   Planar_map_traits_wrap(const Base& i) : Base(i)
   {
   }
+
+  // Constructing functions
+  // ----------------------
+
+  // Access to curve source
+  Point_2 curve_source(const X_curve & cv) const 
+  { 
+    typename Base::Construct_vertex_2 
+     construct_vertex = construct_vertex_2_object();
+    return construct_vertex(cv, 0);
+  }
+
+  // Access to curve target
+  Point_2 curve_target(const X_curve & cv) const 
+  {
+    return construct_vertex_2_object()(cv, 1);
+  }
+
+  // Answers true iff the curve is vertical.
+  bool curve_is_vertical(const X_curve & cv) const 
+  {
+    return is_vertical_2_object()(cv);
+  }
+
+  Comparison_result curve_compare_at_x(const X_curve & cv1, 
+				       const X_curve & cv2, 
+				       const Point_2 & q) const
+  {
+    return compare_x_at_y_2_objects(q, cv1, cv2);
+  }
+  // Predicate functions
+  // -------------------
 
   /*
   typedef enum
@@ -73,7 +105,7 @@ public:
   */
 
   // Returns the curve-point status of the input objects
-  Curve_point_status 
+  typename Base::Curve_point_status 
   curve_get_point_status(const X_curve &cv, const Point_2 & p) const
   {
     if ( ! curve_is_in_x_range(cv, p))
@@ -83,7 +115,7 @@ public:
 	// Calculate vertical projection on curve
 	const Point_2 & proj = 
 	  construct_vertical_projected_point_2_object(cv, p);
-	int res = m_kernel.compare_y_2_object()(p, proj);
+	int res = compare_y_2_object()(p, proj);
 	if (res == SMALLER) return UNDER_CURVE;
 	if (res == LARGER)	return ABOVE_CURVE;
 
