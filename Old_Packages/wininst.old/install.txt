@@ -1,0 +1,400 @@
+ABSTRACT. This is a short guide to installing and using CGAL with
+Windows compilers using native tools, that is, no extra add-on for the
+development environment, such as Cygwin, is needed.  The present
+document concerns mainly the MSVC 6.0 (Visual C++) compiler and
+IDE. Command-line interface for Borland C++ Builder 4 is very similar
+and is briefly described, as well.
+
+This document addresses Windows-specific issues of using CGAL. General
+questions of CGAL programming are considered in the CGAL Manual.
+
+
+CONTENTS.
+
+ 1.Introduction
+
+ 2.Initial customization
+
+ 3.Building the library, examples and demos
+
+ 4.Developing for CGAL with MSVC
+   Customizing MSVC IDE
+
+ 5. GNU MP support
+
+ Appendix. Using Borland C++ Builder 4 with CGAL.
+
+
+1. Introduction
+
+1.1. What is supported.
+
+The present CGAL release provides a basic support for MSVC 6.0
+compiler.  It can also be considered an early beta release for Inprise
+Borland C++ Builder 4. Using the latter with CGAL is briefly described
+in the Appendix.
+
+Interfaces to arbitrary precision arithmetic packages (GNU MP and
+the corresponding part of LEDA) are supported. A precompiled GNU MP
+librarry is included in the distribution.
+
+A 2D visualization via LEDA Window is supported.
+
+
+1.2. What is not (yet) supported.
+
+MSVC 5.0 is not supported.  Also, Intel's ICL compiler, known as a
+"drop-in replacement for VC++" is not supported, although we might
+decide to support it at some point.
+
+Interface to CLN does not work for MSVC, as CLN cannot be compiled
+into an MSVC compatible library.
+
+There is no 3D visualization supported on Windows at the moment.  Such
+a support will be provided via forthcoming LEDA features.  Also, the
+openGL-based CGAL viewer that interfaces via FLTK library is being
+developed.
+
+
+1.3. What is needed.
+
+In order to use CGAL with MSVC, you need MSVC command line tools
+installed and working. Certain familiarity with using Windows command
+prompt and these tools is assumed. A reasonable  amount of system
+resources, that is enough memory to run large compilations (64 Mb on
+NT4.0)  and about 15MB of disk space, is required.
+
+It is highly recommended that you have a recent (at least 4.0) version
+of LEDA installed. Most of the CGAL demos would not work without LEDA.
+
+
+1.1. Getting CGAL
+
+The easiest way to download CGAL is via the CGAL homepage: 
+http://www.cs.uu.nl/CGAL/
+and go to the `Software' section. 
+Follow the instructions on this page to obtain your copy of the
+library. 
+
+In the near future we plan to make an automated (by means of
+InstallShield or a similar tool) installation available.
+Currently, one should proceed as follows.
+
+Download the file called CGAL-2.1.zip and decompress it into a
+suitable directory.  For the latter, either your web browser is able
+to interact with a decompression program like WinZip 
+(see http://www.winzip.com), or you can save
+the zip-file onto the disk and decompress it using unzip.exe program
+that can be downloaded, for instance, from
+http://www.itribe.net/virtunix/
+
+Do *not* use directory names that have spaces in them for the
+installation path.
+A subdirectory called CGAL-2.1 will be created. 
+The full path to it is referred as CGALROOT in the sequel.
+CGALROOT contains the following subdirectories: 
+
+
+directory  contents  
+
+auxiliary  packages that can optionally be used with CGAL  
+	   in particular, GMP
+config	   configuration files for install script  
+demo	   demo programs (some of them need LEDA, geomview, 
+			 OpenGL or other third-party products)  
+doc_html   documentation (HTML)  
+doc_pdf	   documentation (PDF)  
+doc_ps	   documentation (Postscript)  
+examples   example programs  
+include	   header files  
+lib	   object libraries  
+make	   files with platform dependent makefile settings  
+stlport	   STL header files used with MSVC
+src	   CGAL library source files
+winutils   configuration files and utilities for Windows installation
+
+
+CGAL has interfaces to a number of rather important 3rd party
+packages, that provide, in particular, arbitrary precision arithmetic,
+and visualization. On Windows these packages are LEDA and GNU MP (also
+known as GMP).  GMP is supported by default; see Sect. 5 for details.
+LEDA configuration is described below.
+
+
+2. Initial customization.
+
+Open a Command Prompt (on Win9* it is called MS-DOS Prompt) window.
+(do not try using a Cygwin bash window. If you like to use Cygwin, then
+ use the usual bash script install_cgal instead. See the "generic"
+ Installation manual.)
+Change to CGALROOT and run the batch file cgal_config.bat at the
+prompt.  This script will set the appropriate makefiles for
+subsequent compilation.
+
+cgal_config.bat accepts 4 parameters.
+
+ 1.		the compiler type (msc (or msvc))
+
+ 2. (optional)	compiler options (to enable debugging and/or threads
+		support)
+
+ 3. (optional)	LEDAROOT (the location where LEDA lib files are installed)
+
+ 4. (optional)	the location where LEDA header files are installed.
+		If omitted, it is assumed to be LEDAROOT\incl.
+
+Typically, assuming that LEDA is installed in 
+k:\LEDA-4.1-991117, they would look as follows:
+
+one would run at the command prompt:
+
+K:\cgal\> cgal_config msc k:\LEDA-4.1-991117
+
+Otherwise, if LEDA header files are not in LEDAROOT\incl, one would run, say,
+
+K:\cgal\> cgal_config msc k:\LEDA-4.1-991117\msvc k:\LEDA-4.1-991117\incl
+
+It is assumed that 3. (LEDAROOT) and 4. do not have names with spaces.
+
+Running cgal_config.bat without parameters prints out the detailed
+options list (in particular, for 2. above).
+
+
+3. Building the library, examples and demos
+
+Change to CGALROOT and run make_lib.bat at the command prompt. Namely,
+
+K:\cgal\> make_lib
+
+builds the library with the compiler/options specified in 2.
+For other settings, one would have to reconfigure (see 2.) and recompile
+(same as for LEDA).
+
+K:\cgal\> make_examples
+
+compiles and links the examples and
+
+K:\cgal\> make_demos
+
+compiles and links the demos. 
+
+Note that the amount of disk usage for the executables and temporary
+files can be considerable, up to several hundereds megabytes for all 
+the executable, object and debug files.
+
+Examples and demos can also be built on per directory, or even on per
+executable basis.  Each examples/ and demo/ subdirectory contains a
+file makefile.mak that is an MSVC nmake makefile.  For instance,
+change to CGALROOT\demo\Point_set_2 and type "nmake -f makefile.mak
+all" to build all the examples.  Typing "nmake -f makefile.mak
+ps_test1" will build the particular demo ps_test1.
+
+The corresponding executable(s) then can be run as usual, from the
+command prompt, or via Explorer.
+
+Note that demos requiring LEDA would not work if CGAL was configured
+without LEDA support.
+
+
+LEDA be compiled and used with LEDA_STD_HEADERS flag on. CGAL uses
+new-style C++ standard conformant headers (the ones that do not have
+.h- suffix), while LEDA can work with both styles. Mixing these styles
+is a strict no-no for MSVC.  Before compiling LEDA, edit the file
+LEDAROOT\incl\LEDA\system.h and set #define LEDA_STD_HEADERS there.
+
+
+4. Developing for CGAL with MSVC
+
+Here we give some hints on the use of CGAL with native MSVC tools; C++
+language issues/troubleshooting and the use of CGAL with Cygwin are
+covered in the generic Installation manual.
+
+The most important issue is the following.  CGAL uses C++ STL
+(Standard Template Library) quite extensively.  To resolve many C++
+Standard compliance problems of the native MSVC STL, we chose to use a
+drop-in replacement for it, STLPort (see http://www.stlport.org).  We
+have customized STLPort, version 3.2.1, to partially support
+std::iterator_traits template of STL.
+
+For this to work, the compiler should have STLPort subdirectory first
+in its search path.  This issue is taken care of in the makefiles
+generated.  Customization of IDE is described in Sect 4.2 below.
+
+
+4.1. Using nmake makefiles.
+
+Simply adapt a makefile.mak from an examples/ or demos/ subdirectory.
+This means changing the target "all" and changing the targets that
+create executables (look in the subsection "target entries" there).
+For instance, you would like to create an executable demo_beta.exe
+from a C++ source file demo_beta.C.  Then your makefile, that would
+include the "main" makefile makefile.mak in CGALROOT would have
+
+all: demo_beta
+
+demo_beta: demo_beta.obj
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_beta demo_beta.obj \
+	$(LDFLAGS)
+
+and a "suffix rule" that describes creation of an object file from a
+.C - file, e.g.
+
+.C.obj:
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+Extra compiler and linker options are to be specified by changing
+macros CXXFLAGS and LDFLAGS, respectively.
+
+One way to specify the "main" makefile is by using environment
+variable CGAL_MAKEFILE to specify the full path to makefile.mak in
+CGALROOT.
+
+Probably such a makefile can also be used for "custom build" via an
+IDE, although we never attempted this ourselves.
+
+
+4.2. Using MSVC IDE
+
+The compiler/linker options used to build the CGAL library should
+match those used for the project. This can be done by
+selecting "Project/Settings...", the "C/C++" section,
+"Code Generation" category, and choosing the right
+library in "Use run-time library:"
+
+Single-Threaded			ml (or no option)
+Multi-threaded			mt
+Multi-threaded DLL		md
+Debug Single-Threaded		mld
+Debug Multi-threaded		mtd
+Debug Multi-threaded DLL	mdd
+
+Further necessary customization is as follows.
+We hope that the forthcoming automatic installation will simplify
+these elaborated procedures.
+
+4.2.1. Customizing compilation.
+
+Additional include directories (in the right order!) and preprocessor
+definitions have to be specified.  We assume that either CGAL_ROOT is
+an (already defined) environment variable (and then the include and
+library paths can be entered as shown), or $(CGAL_ROOT) must be
+replaced by the corresponding full path to the CGAL installation.
+
+Select "Project/Settings...", the "C/C++"
+section, "Preprocessor" category. Add (in the following order)
+
+   $(CGAL_ROOT)\stlport
+   $(CGAL_ROOT)\include\CGAL\config\msvc
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\include
+   $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
+
+to "Additional include directories:".
+It is very important that $(CGAL_ROOT)\stlport appears first
+in the list in "Additional include directories:"; otherwise a bunch
+of ugly compiler error messages is guaranteed.
+
+If LEDA is used, don't forget to add 
+   $(LEDAROOT)\incl
+to "Additional include directories:".
+
+Add CGAL_USE_GMP to "Preprocessor definitions:".
+If LEDA is used, also add CGAL_USE_LEDA and LEDA_PREFIX there.
+
+
+Should your source file(s) have non-MSVC-standard suffices,
+(like all the CGAL source files, by the way)
+add /TP to options "Project Settings" in the "C/C++" section,
+"Preprocessor" category.
+
+
+4.2.2. Customizing linking.
+
+Additional library directories have to be specified.
+Select "Project/Settings...", "Link" section, "Input" category. Add 
+	 CGAL.lib
+	 gmp.lib
+in "Object/library modules:" list.
+If LEDA is used, also add there
+   libP.lib 
+   libG.lib 
+   libL.lib
+
+If LEDA Window is used, also add there
+   libW.lib
+In addition, make sure that you link against the system libraries
+  user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib
+(usually IDE has them already on the list).
+
+If LEDA Geowin is used, one should as well add
+   libGeoW.lib 
+   libD3.lib
+to "Object/library modules:.
+
+
+5. GNU MP support
+
+A pre-compiled for MSVC, using Cygwin GNU C compiler and GNU assembler, 
+static object library gmp.lib is located in 
+CGALROOT\auxiliary\wingmp\gmp-2.0.2\msvc
+and the corresponding header file gmp.h in
+CGALROOT\auxiliary\wingmp\gmp-2.0.2
+
+It was created using M.Khan's CYGWIN-specific patches to GNU MP 2.0.2,
+that are available from
+http://www.xraylith.wisc.edu/~khan/software/gnu-win32/ and then
+slightly modified (by adding a few routines, like random, and creating a
+separate MSVC-compiled library that does I/O of the GMP numbers.)  It
+was checked that all tests that come with GMP distribution pass.  See
+CGALROOT\auxiliary\wingmp\gmp-2.0.2\msvc\src for details.
+
+Subject to time constraints, we might provide a smoother GMP support
+for MSVC in the future. A new major release of GMP is expected in
+March 2000, probably CGAL will be upgraded to use it then.
+
+-------------------------------------------------------------------
+Appendix. Using Borland C++ Builder 4 with CGAL
+
+NB. First, we repeat that the support of BCB4 by CGAL 2.1 is not
+complete. Expect that some demos and examples would not
+compile, and some crash at run-time.
+
+Here we describe the differences with MSVC installation described
+above.
+
+Initial customization is very similar to the one for MSVC.
+The only difference is the choice of options for the compiler.
+Run
+	cgal_config bcc [leda-dirs...]
+or 
+	cgal_config bcc d [leda-dirs...]
+
+for debug version of the library.
+
+Building the library, examples and demos using make_lib, make_demo
+and make_examples is the same.
+
+Note that the makefiles created are for nmake, an MSVC tool; batchfiles use
+BCB make tool with "-N" compatibility option. We did not try to use
+them without this option.
+That is, instead of "nmake" above one should use "make -N".
+
+Customizing BCB IDE should not be hard. The same general procedure of
+customizing compilation and linking applies, with an important
+difference that the platform-specific library paths end on bcc rather
+than on msvc, and that stlport include directory should NOT be added
+at all.
+
+GNU MP support for BCB4 is preliminary, and can be considered beta, as
+well.  A precompiled static library is located in
+CGALROOT\auxiliary\wingmp\gmp-2.0.2\bcc
+
+It is built by configuring GMP to be compiled with BCB, and then
+compiled, with BCB. No assembler routines are used, 
+Thus do not expect it to be fast.
+(There are no source code of them in Intel format available.
+ GMP uses AT&T assembler format instead. Unfortunately there is no
+ assembler available that can generate BCB object format, OMF, from the
+ AT&T format source code. Nor a convertor from COFF to OMF
+ that works with GAS output is available.)
+
