@@ -169,6 +169,7 @@ private:
 public slots:
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {
+    widget->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
   }
   void new_instance()

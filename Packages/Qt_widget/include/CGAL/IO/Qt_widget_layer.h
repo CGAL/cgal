@@ -31,7 +31,7 @@ namespace CGAL {
 class Qt_widget_layer : public QObject {
   Q_OBJECT
 public:
-  Qt_widget_layer() : active(false){};
+  Qt_widget_layer() : does_eat_events(false), active(false){};
   // Event handlers
   virtual void mousePressEvent(QMouseEvent *) {} ;
   virtual void mouseReleaseEvent(QMouseEvent *) {};
@@ -45,7 +45,7 @@ public:
   virtual bool event(QEvent *e) {QObject::event(e); return true;};
 
   bool    is_active(){return active;};	//return true if this layer is active
-
+  bool    does_eat_events;
 public slots:
 	virtual void draw(){};
   void    stateChanged(int);

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,17 +6,18 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// file          : src/Qt_widget_standard_toolbar.C
-// package       : Qt_widget
+// file          : src/CGALQt/Qt_widget_standard_toolbar.C
+// package       : Qt_widget (1.2.46)
+// maintainer    : Laurent Rineau <rineau@clipper.ens.fr>
 // author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.5-I-35 $
+// release_date  : $CGAL_Date: 2002/10/18 $
 //
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifdef CGAL_USE_QT
 
@@ -44,7 +45,8 @@ namespace CGAL {
     w->attach_standard(&zoombut);
     w->attach_standard(&zoomrectbut);
     w->attach_standard(&handtoolbut);
-    w->attach(show_coord);
+    w->attach_standard(show_coord);
+    show_coord->does_eat_events = false;
     zoombut.deactivate();
     zoomrectbut.deactivate();
     handtoolbut.deactivate();

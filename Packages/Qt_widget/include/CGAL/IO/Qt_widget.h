@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,17 +6,18 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_widget.h
-// package       : Qt_widget
+// package       : Qt_widget (1.2.46)
+// maintainer    : Laurent Rineau <rineau@clipper.ens.fr>
 // author(s)     : Laurent Rineau
-// release       : 
-// release_date  : 
+// release       : $CGAL_Revision: CGAL-2.5-I-35 $
+// release_date  : $CGAL_Date: 2002/10/18 $
 //
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_QT_WIDGET_H
 #define CGAL_QT_WIDGET_H
@@ -274,6 +275,7 @@ private:
   std::list<Qt_widget_layer*> qt_standard_layers;
   void attach_standard(Qt_widget_layer *layer);
   bool is_standard_active();
+  bool does_standard_eat_events();
   friend class Qt_widget_standard_toolbar;
 };//end Qt_widget class
 
