@@ -1323,6 +1323,7 @@ Packages/Mesh_2/bench/data/square.poly -text
 Packages/Mesh_2/demo/Mesh_2/contraints.xpm -text
 Packages/Mesh_2/demo/Mesh_2/data/clusters.poly -text
 Packages/Mesh_2/demo/Mesh_2/data/fish.poly -text
+Packages/Mesh_2/demo/Mesh_2/data/trivial.poly -text
 Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
 Packages/Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text
