@@ -19,24 +19,16 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline
-_Twotuple< typename Iso_cuboidC3<R CGAL_CTAG>::Point_3 > *
-Iso_cuboidC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<Point_3>*)PTR;
-}
-
-template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
 {
-  PTR = new _Twotuple< Point_3 >;
+  new ( static_cast< void*>(ptr)) Twotuple< Point_3 >();
 }
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
-  : Handle((Handle&)r)
+  : Handle_for<Twotuple<typename R::Point_3> >(r)
 {}
 
 template < class R >
@@ -52,23 +44,14 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
   else               { miny = q.y(); maxy = p.y(); }
   if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
   else               { minz = q.z(); maxz = p.z(); }
-  PTR = new _Twotuple<Point_3 >(Point_3(minx, miny, minz),
-                                Point_3(maxx, maxy, maxz) );
+  new (static_cast< void*>(ptr)) Twotuple<Point_3>(Point_3(minx, miny, minz),
+						   Point_3(maxx, maxy, maxz));
 }
 
 template < class R >
 inline
 Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidC3()
 {}
-
-template < class R >
-CGAL_KERNEL_INLINE
-Iso_cuboidC3<R CGAL_CTAG>&
-Iso_cuboidC3<R CGAL_CTAG>::operator=(const Iso_cuboidC3<R CGAL_CTAG>& r)
-{
- Handle::operator=(r);
- return *this;
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -88,18 +71,10 @@ Iso_cuboidC3<R CGAL_CTAG>::operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 
 template < class R >
 inline
-int
-Iso_cuboidC3<R CGAL_CTAG>::id() const
-{
-  return (int)PTR;
-}
-
-template < class R >
-inline
 Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::min() const
 {
-  return  ptr()->e0;
+  return  ptr->e0;
 }
 
 template < class R >
@@ -107,7 +82,7 @@ inline
 Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::max() const
 {
-  return  ptr()->e1;
+  return  ptr->e1;
 }
 
 template < class R >

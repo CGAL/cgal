@@ -16,22 +16,15 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Threetuple< typename TriangleC3<R CGAL_CTAG>::Point_3 > *
-TriangleC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Threetuple< Point_3 >*)PTR;
-}
-
-template < class R >
 TriangleC3<R CGAL_CTAG>::TriangleC3()
 {
-  PTR = new _Threetuple< Point_3 >;
+  new ( static_cast< void*>(ptr)) Threetuple<Point_3>();
 }
 
 template < class R >
 TriangleC3<R CGAL_CTAG>::
 TriangleC3(const TriangleC3<R CGAL_CTAG> &t)
-  : Handle(t)
+  : Handle_for<Threetuple< typename R::Point_3> >(t)
 {}
 
 template < class R >
@@ -40,27 +33,20 @@ TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
            const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
 {
-  PTR = new _Threetuple<Point_3>(p, q, r);
+  new ( static_cast< void*>(ptr)) Threetuple<Point_3>(p, q, r);
 }
 
 template < class R >
 inline TriangleC3<R CGAL_CTAG>::~TriangleC3()
 {}
 
-template < class R >
-TriangleC3<R CGAL_CTAG> &
-TriangleC3<R CGAL_CTAG>::operator=(const TriangleC3<R CGAL_CTAG> &t)
-{
-  Handle::operator=(t);
-  return *this;
-}
 
 template < class R >
 bool
 TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 {
   int i;
-  if (id() == t.id()) return true;
+  if (ptr == t.ptr) return true;
   for(i=0; i<3; i++)
     if ( vertex(0) == t.vertex(i) )
        break;
@@ -77,22 +63,14 @@ TriangleC3<R CGAL_CTAG>::operator!=(const TriangleC3<R CGAL_CTAG> &t) const
 }
 
 template < class R >
-inline
-long
-TriangleC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
-
-template < class R >
 typename TriangleC3<R CGAL_CTAG>::Point_3
 TriangleC3<R CGAL_CTAG>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
   else if (i>3) i=i%3;
-  return (i==0) ? ptr()->e0 :
-         (i==1) ? ptr()->e1 :
-                  ptr()->e2 ;
+  return (i==0) ? ptr->e0 :
+         (i==1) ? ptr->e1 :
+                  ptr->e2 ;
 }
 
 template < class R >

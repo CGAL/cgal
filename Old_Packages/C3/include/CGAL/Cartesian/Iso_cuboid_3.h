@@ -15,7 +15,7 @@ class Iso_cuboidC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Twotuple< typename R_::Point_3> >
 {
 public:
   typedef R_                               R;
@@ -37,12 +37,9 @@ public:
   Iso_cuboidC3(const Point_3& p, const Point_3& q);
   ~Iso_cuboidC3();
 
-  Self&        operator=(const Self& r);
-
   bool         operator==(const Self& s) const;
   bool         operator!=(const Self& s) const;
   bool         identical(const Self& s) const;
-  int          id() const;
 
   Point_3         min() const;
   Point_3         max() const;
@@ -64,8 +61,6 @@ public:
   FT           ymax() const;
   FT           zmax() const;
 
-protected:
-  _Twotuple<Point_3>*  ptr() const;
 };
 
 CGAL_END_NAMESPACE

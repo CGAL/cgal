@@ -16,7 +16,7 @@ class TriangleC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Threetuple< typename R_::Point_3 > >
 {
 public:
   typedef R_                               R;
@@ -41,11 +41,8 @@ public:
   TriangleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r);
   ~TriangleC3();
 
-  Self       &operator=(const Self &t);
-
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
-  long       id() const;
 
   Plane_3    supporting_plane() const;
 
@@ -59,8 +56,6 @@ public:
 
   Bbox_3     bbox() const;
 
-private:
-  _Threetuple< Point_3 >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE
