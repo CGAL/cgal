@@ -15,17 +15,19 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -DNO_QUOTIENT_INT \
-	   -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
-	   -O2 -mcpu=ultrasparc -mtune=ultrasparc
+	   -W -g
+	   # -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
+	   # -W -O2 -mcpu=ultrasparc -mtune=ultrasparc
 	   # -Winline
 	   # -mcpu=pentiumpro -march=pentiumpro
 	   # -mcpu=ultrasparc -mtune=ultrasparc
 	   # -fomit-frame-pointer
 	   # -fprofile-arcs -ftest-coverage
 	   # -DCGAL_IA_DEBUG
+	   # -DNO_QUOTIENT_INT \
            # -O2 -xtarget=ultra2 # (SunPro)
 	   # -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
+	   # -ffast-math         # seems slower !?!
 	   # -B$(UTIL)/Binutils/$(UNAME)/bin/
 	   # -fhonor-std
 
@@ -99,7 +101,7 @@ tstlink: tstlink1.o tstlink2.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst?
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink
 
 #---------------------------------------------------------------------#
 #                    suffix rules
