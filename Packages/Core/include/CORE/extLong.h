@@ -77,7 +77,7 @@ public:
   /// default constructor
   extLong();
   /// constructor for \c bool
-  inline extLong(bool isNaN);
+  extLong(bool isNaN);
   /// constructor for \c int
   extLong(int);
   /// constructor for \c unsigned int
