@@ -208,7 +208,7 @@ public:
     _gt = tr.geom_traits();
     tr._gt = t; 
 
-    Vertex* inf = infinite_vertex();
+    Vertex_handle inf = infinite_vertex();
     infinite = tr.infinite_vertex();
     tr.infinite = inf;
 
