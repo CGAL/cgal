@@ -92,8 +92,8 @@ class Layout_widget : public QWidget{
 public:
   Layout_widget(QWidget *parent, const char *name=0):
       QWidget(parent, name) {    
-    QBoxLayout *topLayout = new QVBoxLayout( this, 5 );
-    QBoxLayout *topLayout1 = new QHBoxLayout( this, 5 );
+    QBoxLayout *topLayout = new QVBoxLayout( this, 5);
+    QBoxLayout *topLayout1 = new QHBoxLayout( topLayout, 5);
     slider = new QSlider(0, 10000, 1, 10, Qt::Vertical, this, "slider1");
     label = new QLabel(this, "label");
     label->setText("The current alpha value: 0.001");
@@ -102,14 +102,14 @@ public:
     topLayout1->addWidget(widget);
     topLayout1->addWidget(slider);
     topLayout->addWidget(label);
-    topLayout->addLayout(topLayout1);
+    //topLayout->addLayout(topLayout1);
   }
   ~Layout_widget(){}
   CGAL::Qt_widget* get_qt_widget(){return widget;}
   QSlider*  get_slider(){return slider;}
   QLabel*   get_label(){return label;}
 private:
-	CGAL::Qt_widget *widget;
+  CGAL::Qt_widget *widget;
   QSlider         *slider;
   QLabel          *label;
 };
@@ -118,7 +118,7 @@ class MyWindow : public QMainWindow
   Q_OBJECT
 public:
   MyWindow(int w, int h) {
-  Layout_widget *cwidget = new Layout_widget(this);
+  Layout_widget *cwidget = new Layout_widget(this, "Main_layout");
   widget = cwidget->get_qt_widget();
   slider = cwidget->get_slider();
   label  = cwidget->get_label();
