@@ -17,9 +17,16 @@ if ($#ARGV != 1) {
    die "\n";
 }
 
-my @testers = ('geert','dima+cgaltest@cs.uu.nl','hert@mpi-sb.mpg.de',
-		'stschirr@mpi-sb.mpg.de','hoffmann@inf.ethz.ch',
-		'Francois.Rebufat@sophia.inria.fr');
+my @testers = (
+  'geert',
+  'd.pasechnik@twi.tudelft.nl',
+  'hert@mpi-sb.mpg.de',
+#  'stschirr@mpi-sb.mpg.de',
+  'hoffmann@inf.ethz.ch',
+#  'Francois.Rebufat@sophia.inria.fr',
+#  'Mariette.Yvinec@sophia.inria.fr',
+  'Sylvain.Pion@sophia.inria.fr',
+);
 my $scripts_dir= "/projects/CGAL/admin_scripts/";
 my $data_dir= "${scripts_dir}DATA/";
 my $testsuite_dir = '/users/www/CGAL/Members/Develop/testsuite';
@@ -147,7 +154,7 @@ close(NEW_PACKAGES) or die;
 close(DELETED) or die;
 close(FORMATTED_VERSIONS) or die;
 
-make_diffs();
+#make_diffs();
 
 system("${scripts_dir}print_release_page");
 
@@ -159,8 +166,8 @@ sub make_diffs()
 {
     system('mkdir','-p',"$diff_dir");
     chdir $diff_dir;
-    system("gunzip -c $release_dir/$old_version.tar.gz | tar xf - ");
-    system("gunzip -c $release_dir/$new_version.tar.gz | tar xf -" );
+    system("gunzip -c $release_dir/$old_version.tar.gz | gtar xf - ");
+    system("gunzip -c $release_dir/$new_version.tar.gz | gtar xf -" );
     system("diff -urPN $old_version $new_version > diffs_$new_version");
     system('rm','-r',$old_version,$new_version);
     system('gzip', "diffs_$new_version");
