@@ -319,6 +319,22 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
   return CGALi::midpoint(p, q, K());
 }
 
+template < class K >
+inline
+typename K::Point_3
+max_vertex(const Iso_cuboid_3<K> &ic)
+{
+  return CGALi::max_vertex(ic, K());
+}
+
+template < class K >
+inline
+typename K::Point_3
+min_vertex(const Iso_cuboid_3<K> &ic)
+{
+  return CGALi::min_vertex(ic, K());
+}
+
 // FIXME TODO : what to do with teh operators ?
 template < class K >
 inline

@@ -332,6 +332,22 @@ midpoint(const typename CGAL_WRAP(K)::Point_3 &p,
   return k.construct_midpoint_3_object()(p, q);
 }
 
+template < class K >
+inline
+typename K::Point_3
+max_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
+{
+  return k.construct_max_vertex_3_object()(ic);
+}
+
+template < class K >
+inline
+typename K::Point_3
+min_vertex(const typename CGAL_WRAP(K)::Iso_cuboid_3 &ic, const K &k)
+{
+  return k.construct_min_vertex_3_object()(ic);
+}
+
 template <class K >
 inline
 Orientation

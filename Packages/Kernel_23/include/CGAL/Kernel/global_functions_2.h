@@ -576,6 +576,22 @@ midpoint(const Point_2<K> &p, const Point_2<K> &q)
   return CGALi::midpoint(p, q, K());
 }
 
+template < class K >
+inline
+typename K::Point_2
+max_vertex(const Iso_rectangle_2<K> &ir)
+{
+  return CGALi::max_vertex(ir, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+min_vertex(const Iso_rectangle_2<K> &ir)
+{
+  return CGALi::min_vertex(ir, K());
+}
+
 // FIXME TODO : What do we do with the operators ?
 // They have no counter part with the kernel argument...
 template < class K >

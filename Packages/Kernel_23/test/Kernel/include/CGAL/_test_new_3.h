@@ -253,6 +253,13 @@ test_new_3(const R& rep)
           tmp2f = construct_vertex_3(t2, 0);
           tmp2f = construct_vertex_3(th2, 0);
   
+  typename R::Construct_min_vertex_3 construct_min_vertex_3
+        = rep.construct_min_vertex_3_object();
+          tmp2f = construct_min_vertex_3(iso1);
+
+  typename R::Construct_max_vertex_3 construct_max_vertex_3
+        = rep.construct_max_vertex_3_object();
+          tmp2f = construct_max_vertex_3(iso1);
 
   typename R::Construct_bbox_3 construct_bbox_3
     = rep.construct_bbox_3_object();

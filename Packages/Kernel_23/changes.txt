@@ -1,3 +1,6 @@
+7 September 2004 Andreas Fabri
+- Added functions and functor for constructing min and max vertex of iso rectangle and cuboid
+
 5 September 2004 Menelaos Karavelas & Sylvain Pion
 - excluded unsigned numbers from being models of RingNumberType
 

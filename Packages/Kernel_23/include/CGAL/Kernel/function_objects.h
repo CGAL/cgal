@@ -474,6 +474,64 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Construct_max_vertex_2
+  {
+    typedef typename K::Point_2          Point_2;
+    typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+  public:
+    typedef Point_2   result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Point_2
+    operator()(const Iso_rectangle_2& r) const
+    { return r.max(); }
+  };
+
+  template <typename K>
+  class Construct_min_vertex_2
+  {
+    typedef typename K::Point_2          Point_2;
+    typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
+  public:
+    typedef Point_2   result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Point_2
+    operator()(const Iso_rectangle_2& r) const
+    { return r.min(); }
+  };
+
+
+  template <typename K>
+  class Construct_max_vertex_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
+  public:
+    typedef Point_3   result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Point_3
+    operator()(const Iso_cuboid_3& r) const
+    { return r.max(); }
+  };
+
+  template <typename K>
+  class Construct_min_vertex_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
+  public:
+    typedef Point_3   result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Point_3
+    operator()(const Iso_cuboid_3& r) const
+    { return r.min(); }
+  };
+
+
+  template <typename K>
   class Construct_object_2
   {
     typedef typename K::Object_2   Object_2;

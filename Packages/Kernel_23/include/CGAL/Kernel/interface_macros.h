@@ -159,6 +159,14 @@ CGAL_Kernel_cons(Construct_midpoint_2,
 		 construct_midpoint_2_object)
 CGAL_Kernel_cons(Construct_midpoint_3,
 		 construct_midpoint_3_object)
+CGAL_Kernel_cons(Construct_min_vertex_2,
+                 construct_min_vertex_2_object)
+CGAL_Kernel_cons(Construct_max_vertex_2,
+                 construct_max_vertex_2_object)
+CGAL_Kernel_cons(Construct_min_vertex_3,
+                 construct_min_vertex_3_object)
+CGAL_Kernel_cons(Construct_max_vertex_3,
+                 construct_max_vertex_3_object)
 CGAL_Kernel_cons(Construct_object_2,
                  construct_object_2_object)
 CGAL_Kernel_cons(Construct_object_3,
