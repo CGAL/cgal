@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 Ver 4.80 ()
 - added missing std:: in  test for new design
+- added a default for TDS of Triangulation_2
 
 Ver 4.79 (28/12/00)
 - fixed a typename in Regular_triangulation
