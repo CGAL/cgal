@@ -79,7 +79,7 @@ private:
 
       Point p(iter->first);
 
-      rotate(p,angle);
+      _gt.rotate_point(p,angle);
 
       my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);
 
@@ -171,11 +171,6 @@ public:
     }
   }
 
-  void rotate(Point &p,NT angle)
-  {
-    p = _gt.rotate_point(p,angle);
-  }
-
   Point small_x_point(Point p1,Point p2)
   {
      Comparison_result c = _gt.compare_x_2_object()(p1,p2);
@@ -222,8 +217,6 @@ public:
               inp_s.source() : inp_s.target(),
               cy == SMALLER ?
               inp_s.target() : inp_s.source());
-    NT x1 = s.source().x(),y1 = s.source().y(),x2 =
-       s.target().x(),y2 = s.target().y();
 
     // determine right kd-tree to work on, depending on the segment's slope
     double alpha_double = _gt.segment_direction(s);
@@ -262,6 +255,8 @@ public:
     list<my_point<NT,SAVED_OBJECT> > res;
 
     Comparison_result cx = _gt.compare_x_2_object()(s.source(),s.target());
+    NT x1 = s.source().x(),y1 = s.source().y(),x2 =
+       s.target().x(),y2 = s.target().y();
     if(cx == SMALLER) {
       // we use unit_squere instead of unit_squere / 2 in order to
       // find tangency points which are not supported by kd-tree
@@ -282,12 +277,12 @@ public:
       ms6 = Point(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
     }
 
-    rotate(ms1,right_iter->second);
-    rotate(ms2,right_iter->second);
-    rotate(ms3,right_iter->second);
-    rotate(ms4,right_iter->second);
-    rotate(ms5,right_iter->second);
-    rotate(ms6,right_iter->second);
+    _gt.rotate_point(ms1,right_iter->second);
+    _gt.rotate_point(ms2,right_iter->second);
+    _gt.rotate_point(ms3,right_iter->second);
+    _gt.rotate_point(ms4,right_iter->second);
+    _gt.rotate_point(ms5,right_iter->second);
+    _gt.rotate_point(ms6,right_iter->second);
 
     // query
     Point point_left,point_right,point_bot,point_top;
