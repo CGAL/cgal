@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.09 (  )
+- fixed a bug in Constrained_triamgulation_plus_2.h still related
+  to approximate  intersection computation
+
 Ver 7.08 (18/03/02)
 - fixed a bug in Constrained_triamgulation_plus_2.h related to approximate
  intersection computation

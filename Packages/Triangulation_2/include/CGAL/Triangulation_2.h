@@ -124,6 +124,7 @@ public:
 
   typedef Point value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
+  typedef value_type&          reference;
   
 
   enum Locate_type {VERTEX=0, 
