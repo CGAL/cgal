@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added leda_lib_option flag.
+GLOB: Added -Zm400 to ADDITIONAL_CXXFLAGS for msvc.
 GLOB: Added flags for patched STLport to ADDIOTIONAL_CXXFLAGS for MSVC.
 GLOB: Standard header tests give now feedback (ok/no).
 GLOB: Stripped quotes from unix file/pathnames.
