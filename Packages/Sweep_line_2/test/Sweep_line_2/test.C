@@ -411,6 +411,7 @@ private:
         
         if (c=='#') // comment
           {
+            std::cerr << std::endl; // SUNPRO likes this !      
             std::getline(file, s);
           }
         else
@@ -543,7 +544,10 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
 	polyline.push_back(*plit);
       }
     
-    all_points_list.splice(all_points_list.end(), point_list); 
+    // all_points_list.splice(all_points_list.end(), point_list);
+    std::copy(point_list.begin(), point_list.end(),
+              std::back_inserter(all_points_list));
+    
     return polyline;
 }
 
