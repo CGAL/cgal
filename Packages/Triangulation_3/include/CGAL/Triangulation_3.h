@@ -86,13 +86,13 @@ class Triangulation_3
   friend class Triangulation_cell_3<GT,Tds>;
   friend class Triangulation_vertex_3<GT,Tds>;
 
-  friend Triangulation_cell_iterator_3<GT,Tds>;
-  friend Triangulation_facet_iterator_3<GT,Tds>;
-  friend Triangulation_edge_iterator_3<GT,Tds>;
-  friend Triangulation_vertex_iterator_3<GT,Tds>;
+  friend class Triangulation_cell_iterator_3<GT,Tds>;
+  friend class Triangulation_facet_iterator_3<GT,Tds>;
+  friend class Triangulation_edge_iterator_3<GT,Tds>;
+  friend class Triangulation_vertex_iterator_3<GT,Tds>;
 
-  friend Triangulation_cell_circulator_3<GT,Tds>;
-  friend Triangulation_facet_circulator_3<GT,Tds>;
+  friend class Triangulation_cell_circulator_3<GT,Tds>;
+  friend class Triangulation_facet_circulator_3<GT,Tds>;
 
 public:
 

@@ -176,15 +176,15 @@ public:
 
       // test belongs to the circle if and only if it belongs to a
       // sphere passing through pqr
-      Orientation or;
+      Orientation ori;
       Point O(0,0,0), A(1,0,0), B(0,1,0), C(0,0,1);
 
-      Point P = ((or = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
-                ((or = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
-                ((or = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
-                ((or = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
+      Point P = ((ori = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
+                ((ori = CGAL::orientation(p,q,r,A)) != ZERO) ? A:
+                ((ori = CGAL::orientation(p,q,r,B)) != ZERO) ? B:
+                ((ori = CGAL::orientation(p,q,r,C)) != ZERO) ? C: C;
 
-      return Oriented_side( or *
+      return Oriented_side( ori *
 	      CGAL::side_of_oriented_sphere(p, q, r, P, test));
     }
 

@@ -431,7 +431,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
   int i;
 
   Bounded_side sos;
-  Orientation or;
+  Orientation ori;
   bool opp_inf, sticked, created;
   int nbnew = 1; // to detect a loop in the execution due to an
   // impossible case 
@@ -529,9 +529,9 @@ fill_hole_3D( std::set<Facet> & boundhole,
       if ( ! is_infinite(*vit) ) {
 	sos = side_of_sphere(v[0],v[1],v[2],*oppvert.begin(), 
 			     (*vit)->point());
-	or = geom_traits().orientation( v[0]->point(), v[1]->point(),
+	ori = geom_traits().orientation( v[0]->point(), v[1]->point(),
 					v[2]->point(), (*vit)->point() );
-	if ( or == POSITIVE ) {
+	if ( ori == POSITIVE ) {
 	  if ( sos == ON_BOUNDED_SIDE ) {
 	    if ( is_infinite(*oppvert.begin()) ) {
 	      oppvert.erase(infinite_vertex());
@@ -565,7 +565,7 @@ fill_hole_3D( std::set<Facet> & boundhole,
 	  };
 	}
 	else {
-	  if ( (or == COPLANAR) && (opp_inf) && (sos == ON_BOUNDARY) ) {
+	  if ( (ori == COPLANAR) && (opp_inf) && (sos == ON_BOUNDARY) ) {
 	    oppvert.insert(*vit); 
 	    //	    std::cout << "          cocycl" << std::endl;
 	  }
