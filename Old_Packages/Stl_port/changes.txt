@@ -1,3 +1,7 @@
+1.1.1 (19/7/01)
+Made the conversion operator to vector_const_iterator in the vector_iterator
+class const.
+
 1.1 (12/2/01)
 moved vc7/ to include/compilers/
 
