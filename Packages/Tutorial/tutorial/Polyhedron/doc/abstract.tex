@@ -75,7 +75,7 @@ assuming familiarity with the C++ template mechanism and the key
 concepts of the generic programming. The tutorial is organized around
 a mesh subdivision application.  It starts with a polyhedron viewer for a
 customized polyhedron.  The polyhedron viewer demonstrates the basic
-functionalities of the \cgalpoly\ and some extend functionalities such
+functionalities of the \cgalpoly\ and some extended functionalities such
 as file I/O, mesh superimposition, and trackball manipulation.  The
 tutorial also shows how to implement subdivision algorithms in three
 different approaches. These approaches are proposed with increasing
@@ -112,13 +112,13 @@ will certainly speed up the research as well as the development cycle,
 and benefit the community of the graphics modeling and geometry
 processing.
 
-Most of mesh algorithms employ a customized halfedge data structures
+Most mesh algorithms employ a customized halfedge data structures
 and most of the customizations are specialized by customizing the
 primitive data, which are the vertex positions, the facet normals or
 other algorithmic flags. \cgalpoly\ encapsulates a generic design of
 the halfedge data structure allowing users customize the \poly\ with
 the template parameters of the geometry primitives. There are several
-advantages that employing the \poly\ as the core data structure of a
+advantages employing the \poly\ as the core data structure of a
 mesh processing application: \\
 
 \indent $\bullet$ The \poly\ is a \italic{generic} data structure.\\
@@ -131,18 +131,18 @@ is provided within CGAL.\\
 \subsection*{Demo Application}
 
 We have designed and implemented an application based on the
-\cgalpoly. This program provides a polyhedron viewer that supports
+\cgalpoly. This program provides a polyhedron viewer of
 following functionalities:\\
 \indent $\bullet$ File I/O,\\
 \indent $\bullet$ polyhedron rendering,\\ 
 \indent $\bullet$ and trackball manipulation.\\
-In addition to these build-in functions, the viewer is accompanied
+In addition to these built-in functions, the viewer is accompanied
 with a set of subdivision algorithms that generate smooth polyhedron
 surfaces from a coarse polyhedron. \italic{The tutorial instructs the
 readers through the design and the implementation of the polyhedron
 viewer and the subdivisions}. The first part of the tutorial
 highlights the design and implementation issues related to the \poly\
-of the viewer. The second part of the tutorial explains how to
+used in the viewer. The second part of the tutorial explains how to
 implement the connectivity and geometry operations of the subdivision
 algorithms. The source codes are going to be published with the
 releasing of the tutorial.
