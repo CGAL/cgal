@@ -1,5 +1,5 @@
 /* XPM */
-char * alpha_shape_xpm[] = {
+const char *  alpha_shape_xpm[] = {
 "32 32 3 1",
 "       c None",
 ".      c #000080",
@@ -39,7 +39,7 @@ char * alpha_shape_xpm[] = {
 
 
 /* XPM */
-char * alpha_shape_small_xpm[] = {
+const char *  alpha_shape_small_xpm[] = {
 "16 16 3 1",
 "       c None",
 ".      c #35E8D9",
@@ -62,7 +62,7 @@ char * alpha_shape_small_xpm[] = {
 "    ......+.    "};
 
 /* XPM */
-char *arrow_xpm[] = {
+const char * arrow_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -104,7 +104,7 @@ char *arrow_xpm[] = {
 };
 
 /* XPM */
-char * arrow_small_xpm[] = {
+const char *  arrow_small_xpm[] = {
 "16 16 2 1",
 " 	c None",
 ".	c #000000",
@@ -126,7 +126,7 @@ char * arrow_small_xpm[] = {
 "                "};
 
 /* XPM */
-char *back_xpm[] = {
+const char * back_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 6 1",
 "  c opaque",
@@ -171,7 +171,7 @@ char *back_xpm[] = {
 };
 
 /* XPM */
-char * back_small_xpm[] = {
+const char *  back_small_xpm[] = {
 "16 16 2 1",
 " 	c None",
 ".	c #000000",
@@ -193,7 +193,7 @@ char * back_small_xpm[] = {
 "                "};
 
 /* XPM */
-char *circle_xpm[] = {
+const char * circle_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -235,7 +235,7 @@ char *circle_xpm[] = {
 };
 
 /* XPM */
-char * circle_small_xpm[] = {
+const char *  circle_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -259,7 +259,7 @@ char * circle_small_xpm[] = {
 "@@  ........    "};
 
 /* XPM */
-char *constrained_xpm[] = {
+const char * constrained_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -301,7 +301,7 @@ char *constrained_xpm[] = {
 };
 
 /* XPM */
-char * constrained_small_xpm[] = {
+const char *  constrained_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -326,7 +326,7 @@ char * constrained_small_xpm[] = {
 
 
 /* XPM */
-char *focus_xpm[] = {
+const char * focus_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -368,7 +368,7 @@ char *focus_xpm[] = {
 
 
 /* XPM */
-char *focus1_xpm[] = {
+const char * focus1_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -409,7 +409,7 @@ char *focus1_xpm[] = {
 };
 
 /* XPM */
-char *focus1_mask_xpm[] = {
+const char * focus1_mask_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -450,7 +450,7 @@ char *focus1_mask_xpm[] = {
 };
 
 /* XPM */
-char *focus2_xpm[] = {
+const char * focus2_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -491,7 +491,7 @@ char *focus2_xpm[] = {
 };
 
 /* XPM */
-char *focus2_mask_xpm[] = {
+const char * focus2_mask_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -532,7 +532,7 @@ char *focus2_mask_xpm[] = {
 };
 
 /* XPM */
-char *focus3_xpm[] = {
+const char * focus3_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -573,7 +573,7 @@ char *focus3_xpm[] = {
 };
 
 /* XPM */
-char *focus3_mask_xpm[] = {
+const char * focus3_mask_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -614,7 +614,7 @@ char *focus3_mask_xpm[] = {
 };
 
 /* XPM */
-char *forward_xpm[] = {
+const char * forward_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 7 1",
 "  c opaque",
@@ -660,7 +660,7 @@ char *forward_xpm[] = {
 };
 
 /* XPM */
-char * forward_small_xpm[] = {
+const char *  forward_small_xpm[] = {
 "16 16 2 1",
 " 	c None",
 ".	c #000000",
@@ -683,7 +683,7 @@ char * forward_small_xpm[] = {
 
 
 /* XPM */
-char *greene_approx_xpm[] = {
+const char * greene_approx_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -725,7 +725,7 @@ char *greene_approx_xpm[] = {
 };
 
 /* XPM */
-char * greene_approx_small_xpm[] = {
+const char *  greene_approx_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -750,7 +750,7 @@ char * greene_approx_small_xpm[] = {
 
 
 /* XPM */
-char *hand_xpm[] = {
+const char * hand_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c black",
@@ -795,7 +795,7 @@ char *hand_xpm[] = {
 
 
 /* XPM */
- char *handtool_xpm[] = {
+const char * handtool_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -837,7 +837,7 @@ char *hand_xpm[] = {
 };
 
 /* XPM */
- char *holddown_xpm[] = {
+const char * holddown_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c black",
@@ -880,7 +880,7 @@ char *hand_xpm[] = {
 };
 
 /* XPM */
-char * iso_rectangle_small_xpm[] = {
+const char *  iso_rectangle_small_xpm[] = {
 "16 16 4 1",
 "       c None",
 ".      c #EDA1A1",
@@ -904,7 +904,7 @@ char * iso_rectangle_small_xpm[] = {
 "@@  ........    "};
 
 /* XPM */
-char * iso_rectangle_xpm[] = {
+const char *  iso_rectangle_xpm[] = {
 "16 16 4 1",
 "       c None",
 ".      c #EDA1A1",
@@ -928,7 +928,7 @@ char * iso_rectangle_xpm[] = {
 "@@  ........    "};
 
 /* XPM */
-char *line_xpm[] = {
+const char * line_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c opaque",
@@ -970,7 +970,7 @@ char *line_xpm[] = {
 };
 
 /* XPM */
-char * line_small_xpm[] = {
+const char *  line_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -996,7 +996,7 @@ char * line_small_xpm[] = {
 
 
 /* XPM */
- char *min_parallelogram_xpm[] = {
+const char * min_parallelogram_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c black",
@@ -1040,7 +1040,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * min_parallelogram_small_xpm[] = {
+const char *  min_parallelogram_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1063,7 +1063,7 @@ char * line_small_xpm[] = {
 "    ........    "};
 
 /* XPM */
- char *min_rectangle_xpm[] = {
+const char * min_rectangle_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c black",
@@ -1107,7 +1107,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * min_rectangle_small_xpm[] = {
+const char *  min_rectangle_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1130,7 +1130,7 @@ char * line_small_xpm[] = {
 "    ........    "};
 
 /* XPM */
- char *mouse_coord_xpm[] = {
+const char * mouse_coord_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -1171,7 +1171,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char *movepoint_xpm[] = {
+const char * movepoint_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1213,7 +1213,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * movepoint_small_xpm[] = {
+const char *  movepoint_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -1236,7 +1236,7 @@ char * line_small_xpm[] = {
 "    ...+....    "};
 
 /* XPM */
- char *nearest_vertex_xpm[] = {
+const char * nearest_vertex_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1278,7 +1278,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * nearest_vertex_small_xpm[] = {
+const char *  nearest_vertex_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1302,7 +1302,7 @@ char * line_small_xpm[] = {
 "    ..@@....    "};
 
 /* XPM */
- char *notool_xpm[] = {
+const char * notool_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1344,7 +1344,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char *notool_small_xpm[] = {
+const char * notool_small_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1388,7 +1388,7 @@ char * line_small_xpm[] = {
 
 
 /* XPM */
- char *optimal_convex_xpm[] = {
+const char * optimal_convex_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1430,7 +1430,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * optimal_convex_small_xpm[] = {
+const char *  optimal_convex_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1455,7 +1455,7 @@ char * line_small_xpm[] = {
 
 
 /* XPM */
- char *point_xpm[] = {
+const char * point_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -1498,7 +1498,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * point_small_xpm[] = {
+const char *  point_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -1522,7 +1522,7 @@ char * line_small_xpm[] = {
 "@@  ........    "};
 
 /* XPM */
- char *points_xpm[] = {
+const char * points_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 2 1",
 "  c black",
@@ -1563,7 +1563,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * points_small_xpm[] = {
+const char *  points_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1586,7 +1586,7 @@ char * line_small_xpm[] = {
 "    ........    "};
 
 /* XPM */
- char *polygon_xpm[] = {
+const char * polygon_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c opaque",
@@ -1629,7 +1629,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * polygon_small_xpm[] = {
+const char *  polygon_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #EDA1A1",
@@ -1653,7 +1653,7 @@ char * line_small_xpm[] = {
 "@@  ........    "};
 
 /* XPM */
- char *show_polygon_xpm[] = {
+const char * show_polygon_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 4 1",
 "  c black",
@@ -1696,7 +1696,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * show_polygon_small_xpm[] = {
+const char *  show_polygon_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1721,7 +1721,7 @@ char * line_small_xpm[] = {
 
 
 /* XPM */
- char *triangulation_xpm[] = {
+const char * triangulation_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1763,7 +1763,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * triangulation_small_xpm[] = {
+const char *  triangulation_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1786,7 +1786,7 @@ char * line_small_xpm[] = {
 "    ..++....    "};
 
 /* XPM */
- char *voronoi_xpm[] = {
+const char * voronoi_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1828,7 +1828,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * voronoi_small_xpm[] = {
+const char *  voronoi_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1852,7 +1852,7 @@ char * line_small_xpm[] = {
 "    ....+...    "};
 
 /* XPM */
- char *ymonotone_xpm[] = {
+const char * ymonotone_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 3 1",
 "  c black",
@@ -1894,7 +1894,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char * ymonotone_small_xpm[] = {
+const char *  ymonotone_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
@@ -1919,7 +1919,7 @@ char * line_small_xpm[] = {
 
 
 /* XPM */
- char *zoomin_xpm[] = {
+const char * zoomin_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c black",
@@ -1963,7 +1963,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char *zoomin_rect_xpm[] = {
+const char * zoomin_rect_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 6 1",
 "  c black",
@@ -2008,7 +2008,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
- char *zoomout_xpm[] = {
+const char * zoomout_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c black",
@@ -2052,7 +2052,7 @@ char * line_small_xpm[] = {
 };
 
 /* XPM */
-char *demoicon_xpm[] = {
+const char * demoicon_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 7 1",
 "  c black",
