@@ -1,5 +1,3 @@
-AFFTRAFO = Aff_transformationHd.h Aff_transformationHd.C
-PREDS = 
 INTERSECTIONOBJS = intersection_objectsHd.h intersection_objectsCd.h \
 	intersection_objects_d.h 
 FUNCTIONOBJS = function_objectsHd.h function_objectsCd.h 
@@ -19,9 +17,6 @@ intobjs : $(INTERSECTIONOBJS)
 funcobjs : $(FUNCTIONOBJS)
 	cp $(FUNCTIONOBJS) $(KERNELSUB)
 
-afftrafo : $(AFFTRAFO)
-	cp $(AFFTRAFO) $(KERNELSUB)
-
 $(KERNELTESTS) : Kernel_d-tests.lw 
 	notangle -R$@ $< > $@
 
@@ -32,9 +27,6 @@ function_objectsHd.h : function_objectsHd.lw
 	notangle -R$@ $< > $@
 
 function_objectsCd.h : function_objectsCd.lw
-	notangle -R$@ $< > $@
-
-$(AFFTRAFO) : Aff_transformationHd.lw
 	notangle -R$@ $< > $@
 
 

@@ -602,44 +602,93 @@ components.
 
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/simple_transformations_d.h>
 #include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
-typedef leda_integer RT;
+#include <CGAL/leda_rational.h>
+typedef leda_integer  RT_;
+typedef leda_rational FT_;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz RT;
+#include <CGAL/Quotient.h>
+typedef CGAL::Gmpz RT_;
+typedef CGAL::Quotient<RT_> FT_;
 #else
-#include <CGAL/double.h>
-typedef double RT;
+typedef double RT_;
+typedef double FT_;
 #endif
 #endif
 
-typedef CGAL::Homogeneous_d<RT> HKernel;
-typedef HKernel::FT             FT;
-typedef HKernel::LA             LA;
-typedef CGAL::Point_d<HKernel>      Point;
-typedef CGAL::Vector_d<HKernel>     Vector;
-typedef CGAL::Direction_d<HKernel>  Direction;
-typedef CGAL::Hyperplane_d<HKernel> Hyperplane;
-typedef CGAL::Sphere_d<HKernel>     Sphere;
-typedef CGAL::Segment_d<HKernel>    Segment;
-typedef CGAL::Ray_d<HKernel>        Ray;
-typedef CGAL::Line_d<HKernel>       Line;
-typedef LA::Vector                  IVector;
-typedef LA::Matrix                  IMatrix;
-typedef CGAL::Aff_transformation_d<HKernel> Afftrafo;
+#ifdef _MSC_VER
+typedef CGAL::Homogeneous_d<RT_> HKernel;
+typedef CGAL::Point_d<HKernel>   HPNT;
+typedef CGAL::Vector_d<HKernel>  HVEC;
+typedef CGAL::Cartesian_d<FT_>   CKernel;
+typedef CGAL::Point_d<CKernel>   CPNT;
+typedef CGAL::Vector_d<CKernel>  CVEC;
+
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HPNT)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(HVEC)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CPNT)
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(CVEC)
+
+#endif
+
 
 int main()
 { 
   CGAL_TEST_START;
+{ 
+  <<homogeneous trafo typedefs>>
   <<3d simple transformations>>
   <<2d transformations>>
+}
+{
+  <<cartesian trafo typedefs>>
+  <<3d simple transformations>>
+  <<2d transformations>>
+}
   CGAL_TEST_END;
 }
+
+<<homogeneous trafo typedefs>>=
+typedef CGAL::Homogeneous_d<RT_> Kernel;
+typedef Kernel::RT             RT;
+typedef Kernel::FT             FT;
+typedef Kernel::LA             LA;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
+typedef LA::Vector                  IVector;
+typedef LA::Matrix                  IMatrix;
+typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
+
+<<cartesian trafo typedefs>>=
+typedef CGAL::Cartesian_d<FT_> Kernel;
+typedef Kernel::RT             RT;
+typedef Kernel::FT             FT;
+typedef Kernel::LA             LA;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
+typedef LA::Vector                  IVector;
+typedef LA::Matrix                  IMatrix;
+typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
+
 
 <<3d simple transformations>>=
 { 
@@ -730,7 +779,7 @@ int main()
   // sqr(a)
   FT sqr_sin_piforth(1,2);
   // sqr(b)
-  FT sqr_bound(RT(1),CGAL_NTS square(RT(1000)));  
+  FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));  
   // sqr(c)
   FT sqr_sum = sqr_sin_alpha + sqr_sin_piforth - sqr_bound;
   CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) );

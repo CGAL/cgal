@@ -42,7 +42,6 @@
 #include <CGAL/Kernel_d/VectorHd.C>
 #include <CGAL/Kernel_d/DirectionHd.C>
 #include <CGAL/Kernel_d/HyperplaneHd.C>
-#include <CGAL/Kernel_d/Aff_transformationHd.C>
 #include <CGAL/Kernel_d/function_objectsHd.h>
 #include <CGAL/Kernel_d/intersection_objectsHd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>

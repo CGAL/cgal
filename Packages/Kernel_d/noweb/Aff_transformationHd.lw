@@ -1,3 +1,4 @@
+%OLD VERSION!!!
 \documentclass[a4paper,11pt,twoside]{article}
 \usepackage{Lweb}
 
@@ -326,11 +327,11 @@ Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir,
       // |       > sqr(dy) sqr(den) sqr(denom)|
 
       common_part = (CGAL_NTS square(sin)*CGAL_NTS square(den) + 
-		     CGAL_NTS square(num)*CGAL_NTS square(denom))*
-	             sq_hypotenuse;
+                     CGAL_NTS square(num)*CGAL_NTS square(denom))*
+                     sq_hypotenuse;
       diff_part   = RT(2)*num*sin*den*denom*sq_hypotenuse;
       rhs         = CGAL_NTS square(dy)*CGAL_NTS square(den)*
-	            CGAL_NTS square(denom);
+                    CGAL_NTS square(denom);
 
       upper_ok    = (common_part - diff_part < rhs);
       lower_ok    = (common_part + diff_part > rhs);
@@ -339,9 +340,9 @@ Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir,
          if ( CGAL_NTS square(p)%RT(2) + CGAL_NTS square(q)%RT(2) > 1) {
              sin = p*q;
              cos = (CGAL_NTS square(q) - CGAL_NTS square(p))/RT(2);     
-	     // exact division
+             // exact division
              denom = (CGAL_NTS square(p) + CGAL_NTS square(q))/RT(2);   
-	     // exact division
+             // exact division
          } else {
              cos = CGAL_NTS square(q) - CGAL_NTS square(p);
          }
@@ -350,8 +351,8 @@ Aff_transformationHd(int d, Rotation, const DirectionHd<RT,LA>& dir,
       } else {
           /* |if ( dy/sqrt(sq_hypotenuse) < sin/denom )| */
           if ( CGAL_NTS square(dy)*CGAL_NTS square(denom) < 
-	       CGAL_NTS square(sin)*sq_hypotenuse )
-	  { p1 = p; q1 = q; }
+               CGAL_NTS square(sin)*sq_hypotenuse )
+          { p1 = p; q1 = q; }
           else
           { p0 = p; q0 = q; }
       }

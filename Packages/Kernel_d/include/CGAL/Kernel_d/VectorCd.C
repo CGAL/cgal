@@ -44,10 +44,7 @@ direction() const
 template <class FT, class LA>
 VectorCd<FT,LA> VectorCd<FT,LA>::
 transform(const Aff_transformationCd<FT,LA>& t) const
-{ typename LA::Matrix m_at = t.matrix();
-  int d = t.dimension();
-  for (int i = 0; i < d; i++) m_at(i,d) = 0;
-  typename LA::Vector res(m_at*vector_rep());
+{ typename LA::Vector res = t.transform_linearly(vector_rep());
   return VectorCd<FT,LA>(dimension(),res.begin(),res.end());
 }
 

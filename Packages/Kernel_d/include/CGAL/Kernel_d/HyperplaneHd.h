@@ -347,8 +347,9 @@ hyperplane |\Mvar|. }*/
 
 HyperplaneHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const
 /*{\Mop returns $t(h)$.}*/
-{ typename LA::Vector res = 
-    -(LA::transpose(t.inverse().matrix()) * vector_rep());
+{ Aff_transformationHd<RT,LA> t_inv = t.inverse();
+  typename LA::Vector res = LA::transpose(t_inv.matrix())*vector_rep();
+  if ( t_inv.is_odd() ) res = -res;
   return HyperplaneHd<RT,LA>(dimension(),res.begin(),res.end()); }
 
 /*{\Mtext \headerline{Non-Member Functions}}*/

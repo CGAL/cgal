@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-67 $
 // release_date  : $CGAL_Date: 2001/05/29 $
 //
-// file          : include/CGAL/Kernel_d/HyperplaneCd.C
+// file          : include/CGAL/Kernel_d/HyperplaneHd.C
 // package       : Kernel_d (0.9.19)
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>

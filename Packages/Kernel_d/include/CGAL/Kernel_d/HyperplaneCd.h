@@ -241,8 +241,9 @@ bool has_on_negative_side(const PointCd<FT,LA>& p) const
 { return (oriented_side(p) == ON_NEGATIVE_SIDE); }
 
 HyperplaneCd<FT,LA> transform(const Aff_transformationCd<FT,LA>& t) const
-{ typename LA::Vector res = 
-    -(LA::transpose(t.inverse().matrix()) * vector_rep());
+{ Aff_transformationCd<FT,LA> t_inv = t.inverse();
+  typename LA::Vector res = LA::transpose(t_inv.matrix())*vector_rep();
+  if ( t_inv.is_odd() ) res = -res;
   return HyperplaneCd<FT,LA>(dimension(),res.begin(),res.end()); }
 
 static Comparison_result weak_cmp(
