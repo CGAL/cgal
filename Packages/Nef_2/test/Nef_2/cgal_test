@@ -63,7 +63,6 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
-compile_and_run Polynomial-test
 compile_and_run EPoint-test
 compile_and_run Nef_polyhedron_2-test
 

@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.51 (27 Nov 2003) [rursu]
+- removed Polynomial-test from cgal_test in test directory.
+
 1.50 (26 Nov 2003) [rursu]
 - Removed Polynomial files from Nef_2 and moved in Polynomial package
 
