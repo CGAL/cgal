@@ -75,9 +75,10 @@ void remove_separator( string& s) {
     }
 }
 
-// Replaces the <> around any template parameters with -- since - and - cannot
+// Replaces the <> around any template parameters with -- since < and > cannot
 // be used in file names under M$Windows.  Also replaces colons (:)  by -'s
-// since this character is also not allowed by M$.
+// since this character is also not allowed by M$ and commas and space by -'s 
+// since these cause problems as well.
 string replace_template_braces_and_colons( string name) {
     for ( size_t i = 0; i < name.size(); ++i) {
 	if ( name[i]=='<' ) {
@@ -86,7 +87,7 @@ string replace_template_braces_and_colons( string name) {
 	else if ( name[i]=='>' ) {
 	    name.replace(i,1,"-");
 	}
-	else if ( name[i]==':' || name[i]==',' ) {
+	else if ( name[i]==':' || name[i]==',' || name[i]==' ') {
 	    name.replace(i,1,"-");
 	}
     }
