@@ -1,6 +1,14 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.16 (11 Jul 2001)
+
+     - New example illustrating Euler ops creating a cube.
+     - Documented the allocator template parameter.
+     - Proof read and formatted the documentation. 
+     - Removed redundant function parameter in 
+       polyhedron_prog_subdiv_with_boundary.
+
 3.15 (06 Jul 2001)
 
      - Formatted the deprecated manual part.

@@ -32,9 +32,9 @@ as template argument.
 
 \ccNestedType{Plane_3}{plane equation. Even if plane equations 
               are not supported with a particular polyhedral surface this
-              type has to be defined (to some dummy type).}
+              type has to be defined (some dummy type).}
 
-\ccNestedType{Construct_opposite_plane_3}{is an unary function object type
+\ccNestedType{Construct_opposite_plane_3}{is an unary function object
     that reverses the plane orientation. Must provide \ccc{Plane_3
     operator()(Plane_3 plane)} that returns the reversed plane. Required
     only if plane equations are supported and the \ccc{inside_out()} 
@@ -63,6 +63,7 @@ as template argument.
     assignment.}
 
 \ccOperations
+\ccSetThreeColumns{Construct_opposite_plane_3}{}{\hspace*{8.5cm}}
 
 \ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
     returns an instance of this function object.}
@@ -72,15 +73,14 @@ as template argument.
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Polyhedron_traits_3}\\
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}\\
 \ccRefIdfierPage{CGAL::Polyhedron_traits_with_normals_3<Kernel>}\\
 All models of the \ccc{CGAL::Kernel} concept, e.g., 
-\ccc{Simple_cartesian<FieldNumberType>} and 
-\ccc{Homogeneous<RingNumberType>}.
+\ccc{Simple_cartesian<FieldNumberType>}.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Polyhedron_3}
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
 
 \end{ccRefConcept}
 

@@ -15,7 +15,6 @@
 
 
 \begin{ccRefConcept}{PolyhedronItems_3}
-
 \ccDefinition
 
 The \ccRefName\ concept extends the \ccc{HalfedgeDSItems} concept on
@@ -38,10 +37,11 @@ facet. Only the polyhedral surface renames faces to facets.
 \ccHeading{%
   Types in \ccc{PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex}}
 
-\ccNestedType{Point}{point type stored in vertices. Note, \ccc{HalfedgeDS}
-    is dimensionless, so this type is named \ccc{Point} and not \ccc{Point_3}.}
+\ccNestedType{Point}{point type stored in vertices. A \ccc{HalfedgeDS}
+    has no dimension, so this type is named \ccc{Point} and not \ccc{Point_3}.}
 
-\ccNestedType{Supports_vertex_point}{$\equiv$ \ccc{CGAL::Tag_true}.}
+\ccNestedType{Supports_vertex_point}{$\equiv$ \ccc{CGAL::Tag_true}.
+    A point is always required.}
 
 \ccTagFullDeclarations
 \ccOperations
@@ -60,13 +60,13 @@ facet. Only the polyhedral surface renames faces to facets.
 
 Types for (optionally) associated geometry in faces. If it is not
 supported the respective type has to be defined, although it can be
-an arbitrary type, such as \ccc{void*} or \ccc{Tag_false}.
+an arbitrary dummy type, such as \ccc{void*} or \ccc{Tag_false}.
 
 %\ccNestedType{Normal}{surface normal vector stored in faces.}
 %\ccGlue
 
-\ccNestedType{Plane}{plane equation stored in faces.  Note, \ccc{HalfedgeDS}
-    is dimensionless, so this type is named \ccc{Plane} and not \ccc{Plane_3}.}
+\ccNestedType{Plane}{plane type stored in faces.  A \ccc{HalfedgeDS}
+    has no dimension, so this type is named \ccc{Plane} and not \ccc{Plane_3}.}
 
 \ccNestedType{Supports_face_plane}{either \ccc{CGAL::Tag_true}
     or \ccc{CGAL::Tag_false}.}
@@ -106,12 +106,12 @@ an arbitrary type, such as \ccc{void*} or \ccc{Tag_false}.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Polyhedron_3}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_base}
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
 
 \ccExample
 

@@ -37,6 +37,7 @@ LDFLAGS = \
 
 all:            \
                 polyhedron_prog_color \
+                polyhedron_prog_cube \
                 polyhedron_prog_incr_builder \
                 polyhedron_prog_incr_builder_old \
                 polyhedron_prog_normals \
@@ -56,6 +57,9 @@ all:            \
 
 polyhedron_prog_color$(EXE_EXT): polyhedron_prog_color$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_color polyhedron_prog_color$(OBJ_EXT) $(LDFLAGS)
+
+polyhedron_prog_cube$(EXE_EXT): polyhedron_prog_cube$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_cube polyhedron_prog_cube$(OBJ_EXT) $(LDFLAGS)
 
 polyhedron_prog_incr_builder$(EXE_EXT): polyhedron_prog_incr_builder$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_incr_builder polyhedron_prog_incr_builder$(OBJ_EXT) $(LDFLAGS)
@@ -107,6 +111,7 @@ polyhedron_prog_vector$(EXE_EXT): polyhedron_prog_vector$(OBJ_EXT)
 
 clean: \
                    polyhedron_prog_color.clean \
+                   polyhedron_prog_cube.clean \
                    polyhedron_prog_incr_builder.clean \
                    polyhedron_prog_incr_builder_old.clean \
                    polyhedron_prog_normals.clean \

@@ -27,19 +27,24 @@ the stream \ccc{in} does not contain a permissible polyhedral surface
 the \ccc{ios::badbit} of the input stream \ccc{in} is set and $P$ remains 
 unchanged.
 
+For OFF an ASCII and a binary format exist. The stream detects the
+format automatically and can read both.
+
 \ccInclude{CGAL/IO/Polyhedron_iostream.h}
 
 \ccGlobalFunction{template <class PolyhedronTraits_3>
-    istream& operator>>( istream& in, CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
+    istream& operator>>( istream& in,
+                         CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
   
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\ 
-\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3}\\
-\lcTex{\ccc{operator<<}}
+\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3<HDS>}\\
+\lcTex{\ccc{operator<<} \dotfill\ 
+    page~\pageref{refPolyhedron_operator_leftshift}}%
 \lcRawHtml{
-    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>
-}.
+    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
+}
 
 \ccImplementation
 

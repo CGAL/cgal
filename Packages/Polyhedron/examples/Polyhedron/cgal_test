@@ -69,6 +69,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run polyhedron_prog_color
+  compile_and_run polyhedron_prog_cube
   compile_and_run polyhedron_prog_incr_builder
   compile_and_run polyhedron_prog_incr_builder_old
   compile_and_run polyhedron_prog_normals

@@ -29,7 +29,7 @@ it suitable for kernels with local state.
 
 \ccIsModel
 
-\ccc{PolyhedronTraits_3}
+\ccRefConceptPage{PolyhedronTraits_3}
 
 \ccTypes
 \ccThree{typedef Kernel::Construct_opposite_plane_3;}
@@ -61,7 +61,7 @@ it suitable for kernels with local state.
     {traits.construct_opposite_plane_3_object();}{}
 
 \ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
-    forwarded to \ccc{Kernel}.}
+    forwarded to \ccc{kernel}.}
 
 \ccSeeAlso
 
@@ -72,7 +72,7 @@ it suitable for kernels with local state.
 Since the \ccc{PolyhedronTraits_3} concept is a subset of the 3D
 kernel concept, this class just forwards the relevant types and access
 member functions from its template argument. However, it is useful
-as testing class.
+for testing sufficiency of requirements.
 
 \ccExample
 

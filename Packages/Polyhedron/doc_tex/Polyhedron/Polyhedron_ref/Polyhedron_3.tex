@@ -20,9 +20,9 @@
 
 Beginning with \cgal\ R2.3, this package has a new design.  The old
 design is still available for backwards compatibility and to support
-older compiler, such as MSVC++6.0. However their use is deprecated and
-the manual page are not converted into this new manual
-format. Instead, see their old documentation in the manual of 
+older compiler, such as MSVC++6.0. However its use is deprecated and
+the manual pages are not converted into this new manual
+format. Instead, see its old documentation in the manual of 
 deprecated packages.
 
 For the polyhedral surface, old and new design cannot be used
@@ -41,7 +41,7 @@ require different concepts, such as the new \ccc{HalfedgeDS} concept,
 the new \ccc{PolyhedronItems_3} concept, and the new
 \ccc{PolyhedronTraits_3} concept. The \ccc{Polyhedron_3} interface is
 backwards compatible with the old design except that the
-\ccc{normal} member function in the facet and related types disappear.
+\ccc{normal()} member function in the facet and related types disappear.
 Please use the plane equation instead, see also
 \ccc{Polyhedron_traits_with_normals_3}.
 
@@ -87,12 +87,12 @@ facets, normals point outwards (following the right hand rule).
 
 The strict definition can be found in~\cite{k-ugpdd-99}. One
 implication of this definition is that the polyhedral surface is
-always an orientable and oriented 2-manifold with border edges, i.e.
+always an orientable and oriented 2-manifold with border edges, i.e.,
 the neighborhood of each point on the polyhedral surface is either
 homeomorphic to a disc or to a half disc, except for vertices where
-many holes and surfaces can join. Another implication is that the
-smallest representable surface is a triangle (for polyhedral surfaces
-with border edges) or a tetrahedron (for polyhedra). Boundary
+many holes and surfaces with boundary can join. Another implication is
+that the smallest representable surface is a triangle (for polyhedral
+surfaces with border edges) or a tetrahedron (for polyhedra). Boundary
 representations of orientable 2-manifolds are closed under Euler
 operations. They are extended with operations that create or close
 holes in the surface.
@@ -123,13 +123,15 @@ information.
 
 \ccParameters
 
-The full template declaration of \ccClassTemplateName\ states three parameters:
+The full template declaration of \ccClassTemplateName\ states four
+template parameters:
 
 \begin{tabbing}
 \ccc{template <} \=\ccc{class PolyhedronTraits_3,}\\
                  \>\ccc{class PolyhedronItems_3  = CGAL::Polyhedron_items_3,}\\
                  \>\ccc{template < class T, class I>}
-                 \ccc{class HalfedgeDS = CGAL::HalfedgeDS_default>}\\
+                 \ccc{class HalfedgeDS = CGAL::HalfedgeDS_default,}\\
+                 \>\ccc{class Alloc = CGAL_ALLOCATOR(int)>}\\
      \ccc{class Polyhedron_3;}
 \end{tabbing}
    
@@ -141,6 +143,11 @@ preselected. The third parameter is a class template. A model of the
 \ccc{HalfedgeDS} concept is expected. By default, the class
 \ccc{CGAL::HalfedgeDS_default} is preselected, which is a list based
 implementation of the halfedge data structure.
+The fourth parameter \ccc{Alloc} requires a standard allocator for 
+\stl\ container classes. The  \ccc{rebind} mechanism from \ccc{Alloc}
+will be used to create appropriate allocators internally. A default is
+provided with the macro \ccc{CGAL_ALLOCATOR(int)} from the
+\ccc{<CGAL/memory.h>} header file.
 
 \ccTypes
 
@@ -162,6 +169,8 @@ implementation of the halfedge data structure.
 \ccNestedType{circulator_category}{circulator category of all circulators;
   bidirectional category if the \ccc{Items::Halfedge}  provides a \ccc{prev()}
   member function, otherwise forward category.}
+\ccGlue
+\ccNestedType{allocator_type}{allocator type \ccc{Alloc}.}
 
 \ccNestedType{Vertex}{vertex type.}
 \ccGlue
@@ -176,19 +185,19 @@ implementation of the halfedge data structure.
 %\ccGlue
 %\ccNestedType{Normal}{normal vector stored in facets (if supported).}
 
-The following handles, iterators and circulators have appropriate
-non-mutable counterparts, i.e.~\ccc{const_handle},
-\ccc{const_iterator} and \ccc{const_circulator}. The mutable types are
+The following handles, iterators, and circulators have appropriate
+non-mutable counterparts, i.e., \ccc{const_handle},
+\ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
 assignable to their non-mutable counterparts.  Both circulators are
 assignable to the \ccc{Halfedge_iterator}. The iterators are
 assignable to the respective handle types. Wherever the handles appear
 in function parameter lists, the corresponding iterators can be used as
 well. For convenience, the \ccc{Edge_iterator} enumerates every other 
-halfedge. It is based on the \ccc{CGAL::N_step_adaptor} adapter. For
+halfedge. It is based on the \ccc{CGAL::N_step_adaptor} class. For
 convenience, the \ccc{Point_iterator} enumerates all points in the polyhedral
 surface in the same order as the \ccc{Vertex_iterator}, but with the 
 value type \ccc{Point}. It is based on the \ccc{CGAL::Iterator_project} 
-adaptor.
+adaptor. Similarly, a \ccc{Plane_iterator} is provided.
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -196,7 +205,6 @@ adaptor.
 \ccGlue
 \ccNestedType{Facet_handle}{handle to facet.}
 
-\newpage
 \ccNestedType{Vertex_iterator}{iterator over all vertices.}
 \ccGlue
 \ccNestedType{Halfedge_iterator}{iterator over all halfedges.}
@@ -278,11 +286,11 @@ supported or not.
                                            const Point& p3, 
                                            const Point& p4);}{
     a tetrahedron is added to the polyhedral surface with its
-    vertices initialized to $p_1, p_2, p_3$ and $p_4$. Returns that
+    vertices initialized to $p_1, p_2, p_3$, and $p_4$. Returns that
     halfedge of the tetrahedron which incident vertex is initialized
     to $p_1$. The incident vertex of the next halfedge is $p_2$,
     and the vertex thereafter is $p_3$.
-    The remaining fourth vertex is initialized to $p_4$}
+    The remaining fourth vertex is initialized to $p_4$.}
 \vspace{-3mm}
 
 \ccMethod{Halfedge_handle make_triangle();}{a triangle with border edges is
@@ -294,7 +302,7 @@ supported or not.
                                         const Point& p2,
                                         const Point& p3);}{
     a triangle with border edges is added to the polyhedral surface with its
-    vertices initialized to $p_1, p_2$ and $p_3$. Returns that
+    vertices initialized to $p_1, p_2$, and $p_3$. Returns that
     non-border halfedge of the triangle which incident vertex is initialized
     to $p_1$. The incident vertex of the next halfedge is $p_2$,
     and the vertex thereafter is $p_3$.}
@@ -328,6 +336,7 @@ supported or not.
 \ccMethod{size_t bytes_reserved() const;}
     {bytes reserved for the polyhedron.}
 
+\ccMethod{allocator_type     get_allocator() const;}{allocator object.}
 
 \ccMethod{Vertex_iterator    vertices_begin();}{iterator over all vertices.}
 \ccGlue
@@ -415,8 +424,10 @@ unchanged.
     \ccc{join_facet( split_facet( h, g))} returns $h$ and keeps
     the polyhedron unchanged. The time is proportional to the size of the
     facet removed and the time to compute \ccc{h->prev()}.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}. The
-    degree of both vertices incident to $h$ is at least three (no antennas).}
+    \ccPrecond The degree of both vertices incident to $h$ is at least
+    three (no antennas).
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 
 \begin{ccHtmlOnly}
     <CENTER>
@@ -443,7 +454,8 @@ unchanged.
     \ccCommentHeading{Note} A special application of the split is 
     \ccc{split_vertex(h,h->next()->opposite())} which is equivalent to an 
     edge split of the halfedge \ccc{h->next()} that creates a new 
-    vertex on the halfedge \ccc{h->next()}.}
+    vertex on the halfedge \ccc{h->next()}. See also \ccc{split_edge(h)}
+    below.}
 
 \ccMethod{Halfedge_handle join_vertex( Halfedge_handle h);}
     {joins the two vertices incident to $h$. The vertex denoted by
@@ -453,8 +465,21 @@ unchanged.
     $h$ and keeps the polyhedron unchanged. 
     The time is proportional to the degree of the vertex removed and 
     the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}. The
-    size of both facets incident to $h$ is at least four (no multi-edges).}
+    \ccPrecond  The size of both facets incident to $h$ is at least 
+    four (no multi-edges).
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
+
+\ccMethod{Halfedge_handle split_edge( Halfedge_handle h);}{
+    splits the halfedge \ccc{h} into two halfedges inserting a new vertex
+    that is a copy of \ccc{h->opposite()->vertex()}. Is equivalent to
+    \ccc{split_vertex( h->prev(), h->opposite())}. The call of \ccc{prev()}
+    can make this method slower than a direct call of \ccc{split_vertex()}
+    if the previous halfedge is already known and computing it would be 
+    costly when the halfedge data structure does not support the \ccc{prev()}
+    member function. Returns the new halfedge \ccc{hnew} pointing to the
+    inserted vertex. The new halfedge is followed by the old halfedge, i.e.,
+    \ccc{hnew->next() == h}.}
 
 \begin{ccTexOnly}
     \begin{center}
@@ -495,6 +520,7 @@ unchanged.
      prevents the operation from collapsing a volume into two facets
      glued together with opposite orientations, such as would
      happen with any vertex of a tetrahedron.)
+     \ccCommentHeading{Requirement}
      \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 
@@ -518,14 +544,15 @@ unchanged.
 \ccMethod{Halfedge_handle split_loop( Halfedge_handle h,
                                       Halfedge_handle i,
                                       Halfedge_handle j);}
-   {cuts the polyhedron into two parts along the cycle $(h,i,j)$.
+   {cuts the polyhedron into two parts along the cycle $(h,i,j)$ (edge \ccc{j}
+    runs on the backside of the three dimensional figure above).
     Three new vertices (one copy for each vertex in the cycle) and three 
     new halfedges (one copy for each halfedge in the cycle), and two new 
     triangles are created. $h,i,j$ will be incident to the first new triangle.
     The return value will be the halfedge incident to the second new triangle 
     which is the copy of \ccc{h-opposite()}.
     \ccPrecond $h,i,j$ denote distinct, consecutive vertices of the
-    polyhedron and form a cycle: i.e.~\ccc{h->vertex() ==
+    polyhedron and form a cycle: i.e., \ccc{h->vertex() ==
     i->opposite()->vertex()}, \ldots, \ccc{j->vertex() ==
     h->opposite()->vertex()}. The six facets incident to $h,i,j$ are all
     distinct.
@@ -538,9 +565,10 @@ unchanged.
     by $g$ gets removed. Both facets may be holes. The invariant 
     \ccc{join_loop( h, split_loop( h, i, j))} returns $h$ and keeps the 
     polyhedron unchanged.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.
-    The facets denoted by $h$ and $g$ are different and have
-    equal degree (i.e.~number of edges).}
+    \ccPrecond The facets denoted by $h$ and $g$ are different and have
+    equal degree (i.e., number of edges).
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 
 % +-----------------------------------+
 \ccHeading{Modifying Facets and Holes}
@@ -549,8 +577,9 @@ unchanged.
     {removes the incident facet of $h$ and changes all halfedges incident 
     to the facet into border edges. Returns $h$. 
     See \ccc{erase_facet(h)} for a more generalized variant.    
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}. None of the 
-    incident halfedges of the facet is a border edge.}
+    \ccPrecond None of the incident halfedges of the facet is a border edge.
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}{
     fills a hole with a newly created facet. Makes all border halfedges
@@ -612,13 +641,14 @@ unchanged.
      polyhedral surface if they were already border edges.
      If this creates isolated vertices they get removed as well.
      See \ccc{make_hole(h)} for a more specialized variant.    
-     \ccPrecond \ccc{h->is_border() == false}. 
+     \ccPrecond \ccc{h->is_border() == false}. \ccCommentHeading{Requirement}
      \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
     {removes the  vertices, halfedges, and facets that belong to the 
      connected component of $h$. 
-     \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
+     \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void clear();}
     {removes all vertices, halfedges, and facets.}
@@ -629,47 +659,42 @@ unchanged.
 
 \begin{ccAdvanced}
   
-Halfedges incident to a hole are called {\em border
-  halfedges}. An halfedge is a {\em border edge\/} if itself or its
-opposite halfedge are border halfedges. The only requirement to work
-with border halfedges is that the \ccc{Halfedge} class provides a
-member function \ccc{is_border()} returning a \ccc{bool}. Usually,
-the halfedge data structure supports facets and a \ccc{NULL} facet
-pointer will indicate a border halfedge, but this is not the only
-possibility. The \ccc{is_border()} predicate divides the edges into
-two classes, the border edges and the non-border edges. The
-following normalization reorganizes the sequential storage of the
-edges such that the non-border edges precedes the border edges, and
-that for each border edge the latter one of the two halfedges is a
-border halfedge (the first one is a non-border halfedge in conformance
-  with the polyhedral surface definition). The
-normalization stores the number of border halfedges and the halfedge
-iterator the border edges start at within the data
-structure.  Halfedge insertion or removal and changing the border
-status of a halfedge may invalidate these values that are not
+Halfedges incident to a hole are called {\em border halfedges}. An
+halfedge is a {\em border edge\/} if itself or its opposite halfedge
+are border halfedges. The only requirement to work with border
+halfedges is that the \ccc{Halfedge} class provides a member function
+\ccc{is_border()} returning a \ccc{bool}. Usually, the halfedge data
+structure supports facets and a \ccc{NULL} facet pointer will indicate
+a border halfedge, but this is not the only possibility. The
+\ccc{is_border()} predicate divides the edges into two classes, the
+border edges and the non-border edges. The following normalization
+reorganizes the sequential storage of the edges such that the
+non-border edges precede the border edges, and that for each border
+edge the latter one of the two halfedges is a border halfedge (the
+first one is a non-border halfedge in conformance with the polyhedral
+surface definition). The normalization stores the number of border
+halfedges and the halfedge iterator the border edges start at within
+the data structure.  Halfedge insertion or removal and changing the
+border status of a halfedge invalidate these values. They are not
 automatically updated.
 
-\ccThree{Halfe}{dge_handleP.split_f}{}
+\ccThree{Halfedge_iterator}{P.split_f}{}
 
 \ccMethod{void   normalize_border();}
-    {sorts halfedges such that the non-border edges precedes the
+    {sorts halfedges such that the non-border edges precede the
      border edges. For each border edge the halfedge iterator will
     reference the halfedge incident to the facet right before the
     halfedge incident to the hole.} 
 
 \ccMethod{size_type size_of_border_halfedges() const;}
     {number of border halfedges.
-    \ccPrecond \ccc{normalize_border()} has been called and no
-    halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
 
 \ccMethod{size_type size_of_border_edges() const;}
     {number of border edges. Since each border edge of a polyhedral
     surface has exactly one border halfedge,
     this number is equal to \ccc{size_of_border_halfedges()}.
-    \ccPrecond \ccc{normalize_border()} has been called and no
-    halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
 
 \ccMethod{Halfedge_iterator  border_halfedges_begin();}
     {halfedge iterator starting with the border edges. The range
@@ -677,9 +702,7 @@ automatically updated.
     all non-border halfedges. The range
     [\ccStyle{border_halfedges_begin(), halfedges_end()}) denotes all
     border edges.
-    \ccPrecond \ccc{normalize_border()} has been called and no
-    halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
 
 \ccMethod{Edge_iterator  border_edges_begin();}
     {edge iterator starting with the border edges. The range
@@ -687,9 +710,7 @@ automatically updated.
     all non-border edges. The range
     [\ccStyle{border_edges_begin(), edges_end()}) denotes all
     border edges.
-    \ccPrecond \ccc{normalize_border()} has been called and no
-    halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
 
 \end{ccAdvanced}
 
@@ -698,15 +719,6 @@ automatically updated.
 
 \ccMethod{void   inside_out();}
     {reverses facet orientations (incl.\ plane equations if supported).}
-
-\begin{ccAdvanced}
-\ccMethod{void  delegate( CGAL::Modifier_base<HDS>& m);}
-    {calls the \ccc{operator()} of the modifier $m$. See
-    \ccc{CGAL::Modifier_base} in the Support Library Manual for a
-    description of modifier design and its usage.
-    \ccPrecond The polyhedral surface must be valid when the modifier
-    returns from execution.}
-\end{ccAdvanced}
 
 \ccMethod{bool is_valid( bool verbose = false, int level = 0) const;}
    {returns \ccc{true} if the polyhedral surface is combinatorially 
@@ -722,26 +734,36 @@ automatically updated.
   bool verbose = false) const;}{%
     returns \ccc{true} if the border halfedges are in normalized 
     representation, which is when enumerating all halfedges with the
-    iterator: The non-border edges precedes the border edges and for
+    iterator: The non-border edges precede the border edges and for
     border edges, the second halfedge is the border halfedge. The halfedge
     iterator \ccc{border_halfedges_begin()} denotes the first border
     edge. If \ccc{verbose} is \ccc{true}, statistics are
     printed to \ccc{cerr}.
 }
 
+\newpage
+\begin{ccAdvanced}
+\ccMethod{void  delegate( CGAL::Modifier_base<HDS>& m);}
+    {calls the \ccc{operator()} of the modifier $m$. See
+    \ccc{CGAL::Modifier_base} in the Support Library Manual for a
+    description of modifier design and its usage.
+    \ccPrecond The polyhedral surface must be valid when the modifier
+    returns from execution.}
+\end{ccAdvanced}
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\
-\ccRefIdfierPage{PolyhedronTraits_3}\\
-\ccRefIdfierPage{CGAL::Polyhedron_traits_3}\\
-\ccRefIdfierPage{PolyhedronItems_3}\\
+\ccRefConceptPage{PolyhedronTraits_3}\\
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
-\ccRefIdfierPage{HalfedgeDS}\\
+\ccRefConceptPage{HalfedgeDS}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
-\ccRefIdfierPage{CGAL::Modifier_base}\\
-\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3}
+\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3<HDS>}\\
+\ccc{CGAL::Modifier_base} in the Support Library Reference Manual.
 
 \ccExample
 

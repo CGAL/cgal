@@ -1361,7 +1361,7 @@ End %I eop
 
 Begin %I Elli
 %I b 65535
-2 0 0 [] 0 SetB
+1 0 0 [] 0 SetB
 %I cfg Black
 0 0 0 SetCFg
 %I cbg White
@@ -1376,7 +1376,7 @@ End
 
 Begin %I Elli
 %I b 65535
-2 0 0 [] 0 SetB
+1 0 0 [] 0 SetB
 %I cfg Black
 0 0 0 SetCFg
 %I cbg White
@@ -1391,7 +1391,7 @@ End
 
 Begin %I Elli
 %I b 65535
-2 0 0 [] 0 SetB
+1 0 0 [] 0 SetB
 %I cfg Black
 0 0 0 SetCFg
 %I cbg White

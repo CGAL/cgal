@@ -35,10 +35,10 @@ than two border edges at a vertex, the next halfedge along a hole is
 not uniquely defined, but a consistent assignment of the next halfedge
 will be maintained in the data structure. An invariant is that
 successive assignments of the form \ccc{h = h->next()} cycle
-counterclockwise around the facet (hole) and traverses all halfedges
-incident to this facet (hole). A similar invariant is that successive
+counterclockwise around the facet (or hole) and traverse all halfedges
+incident to this facet (or hole). A similar invariant is that successive
 assignments of the form \ccc{h = h->next()->opposite()} cycle
-clockwise around the vertex and traverses all halfedges incident to
+clockwise around the vertex and traverse all halfedges incident to
 this vertex. Two circulators are provided for these circular orders.
 
 \begin{ccTexOnly}
@@ -90,6 +90,7 @@ function \ccc{prev()}, otherwise they are of the forward category.
 
 \ccInclude{CGAL/Polyhedron_3.h}
 
+\vspace*{-1mm}
 \ccTypes
 \ccThree{Halfedge_const_handle}{h.next_on_vertex() const;;}{}
 \ccThreeToTwo
@@ -97,6 +98,7 @@ function \ccc{prev()}, otherwise they are of the forward category.
 \ccNestedType{Vertex}{type of incident vertices.}
 \ccGlue
 \ccNestedType{Facet}{type of incident facets.}
+\vspace*{-3mm}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -120,12 +122,14 @@ function \ccc{prev()}, otherwise they are of the forward category.
 \ccGlue
 \ccNestedType{Halfedge_around_facet_const_circulator}{}
 
-\ccNestedType{Supports_halfedge_prev}{either \ccc{CGAL::Tag_true} or 
+\ccNestedType{Supports_halfedge_prev}{$\equiv$ \ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
 \ccGlue
-\ccNestedType{Supports_halfedge_vertex}{\~{}}
+\ccNestedType{Supports_halfedge_vertex}{$\equiv$  \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
 \ccGlue
-\ccNestedType{Supports_halfedge_face}{\~{}}
+\ccNestedType{Supports_halfedge_face}{$\equiv$  \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
 
 
 \ccCreation
@@ -202,7 +206,7 @@ function \ccc{prev()}, otherwise they are of the forward category.
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\
-\ccRefIdfierPage{CGAL::Polyhedron_3}
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
 
 % +-----------------------------------+
 \ccImplementation

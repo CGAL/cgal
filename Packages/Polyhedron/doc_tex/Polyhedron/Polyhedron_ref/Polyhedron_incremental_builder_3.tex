@@ -27,7 +27,8 @@ Object File Format (OFF)~\cite{p-gmgv15-94},
 OpenInventor~\cite{w-impoo-94} or VRML~\cite{bpp-vrml-95,vrmls-96}.
 \ccClassTemplateName\ needs access to the internal halfedge data
 structure of type \ccc{HDS} of the polyhedral surface. It is intended
-to be used within a modifier, see \ccc{CGAL::Modifier_base}.
+to be used within a modifier, see \ccc{CGAL::Modifier_base} in the 
+Support Library Reference Manual.
 
 The incremental builder might be of broader interest for other uses of
 the halfedge data structures, but it is specifically bound to the
@@ -42,8 +43,8 @@ coordinates and concludes with a list of all facet polygons. Edges are
 not explicitly specified. They are derived from the vertex incidence
 information provided from the facet polygons. The polygons are given as a
 sequence of vertex indices.  The halfedge data structure \ccc{HDS} must
-support vertices (i.e.~\ccc{Supports_halfedge_vertex} $\equiv$
-\ccc{CGAL::Tag_true}). The correct protocol of method calls to build a
+support vertices (i.e., \ccc{Supports_halfedge_vertex} $\equiv$
+\ccc{CGAL::Tag_true}). The correct order of allowed method calls to build a
 polyhedral surface is given as a regular expression below. Vertices and
 facets can be added in arbitrary order as long as
 \ccc{add_vertex_to_facet()} refers only to vertex indices that are
@@ -69,7 +70,7 @@ already known.
 \ccNestedType{size_type}{size type.}
 
 \ccCreation
-\ccThree{void}{B.remove_unconnected_vertices();}{}
+\ccThree{void}{B.remove_unconnected_vertices();;;}{}
 \ccThreeToTwo
 
 \ccConstructor{Polyhedron_incremental_builder_3(HDS& hds, 
@@ -126,9 +127,9 @@ already known.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Polyhedron_3}\\
-\ccRefIdfierPage{CGAL::Modifier_base}\\
-\ccRefIdfierPage{HalfedgeDS}
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccc{CGAL::Modifier_base} in the Support Library Reference Manual.
 
 \ccExample
 

@@ -65,10 +65,11 @@ of the forward category.
 \ccGlue
 \ccNestedType{Halfedge_around_facet_const_circulator}{}
 
-\ccNestedType{Supports_facet_halfedge}{either \ccc{CGAL::Tag_true} or 
+\ccNestedType{Supports_facet_halfedge}{$\equiv$  \ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
 \ccGlue
-\ccNestedType{Supports_facet_plane}{\~{}}
+\ccNestedType{Supports_facet_plane}{$\equiv$  \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
 %\ccGlue
 %\ccNestedType{Supports_facet_normal}{\~{}}
 
@@ -115,14 +116,14 @@ of the forward category.
     {circulator of halfedges around the facet (counterclockwise).}
 
 \ccMethod{void set_halfedge( Halfedge_handle h);}
-    {sets incident halfedge to \ccc{h}
+    {sets incident halfedge to \ccc{h}.
      \ccPrecond \ccc{h} is incident, i.e., \ccc{h->facet() ==} \ccVar.}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
-\ccRefIdfierPage{CGAL::Polyhedron_3}
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
 
 \ccTagDefaults
 \end{ccRefClass}

@@ -121,8 +121,7 @@ void trisect_border_halfedge( Polyhedron& P, Halfedge_handle e) {
 }
 
 template <class OutputIterator>
-void smooth_border_vertices( Polyhedron& P, Halfedge_handle e, 
-                             OutputIterator out) {
+void smooth_border_vertices( Halfedge_handle e, OutputIterator out) {
     CGAL_precondition( e->is_border());
     // We know that the vertex at this edge is from the unrefined mesh.
     // Get the locus vectors of the unrefined vertices in the neighborhood.    
@@ -151,9 +150,9 @@ void subdiv_border( Polyhedron& P) {
     std::vector<Point> pts;  // store new smoothed points temporarily
     do {
         if ( e->opposite()->is_border())
-            smooth_border_vertices( P, e->opposite(), std::back_inserter(pts));
+            smooth_border_vertices( e->opposite(), std::back_inserter(pts));
         else if ( e->is_border())
-            smooth_border_vertices( P, e, std::back_inserter(pts));
+            smooth_border_vertices( e, std::back_inserter(pts));
     } while ( e++ != last_e);
     e = P.edges_begin(); // copy smoothed points back
     std::vector<Point>::iterator i = pts.begin();
