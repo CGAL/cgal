@@ -47,7 +47,7 @@ int main()
     CGAL_Window_stream W(524, 524);
     W.init(-262.0, 261.0, -262.0);
     W << CGAL_BLACK;
-    for( vector<Point>::iterator i = points.begin(); i != points.end(); i++)
+    for( typename vector<Point>::iterator i = points.begin(); i != points.end(); i++)
 	W << *i;
 
     /*  Wait for mouse click in window. */
