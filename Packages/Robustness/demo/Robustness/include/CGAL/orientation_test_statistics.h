@@ -23,6 +23,11 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+#include <sstream>
+#endif
+
+
 template <class ForwardIterator, class Traits>
 void
 orientation_statistics( ForwardIterator first, ForwardIterator last,
@@ -38,9 +43,9 @@ orientation_statistics( ForwardIterator first, ForwardIterator last,
             for( ForwardIterator k = first; k != last; ++k)
                 if ( C[c++] == orientation(*i, *j, *k)) ++success;
 
-    s1 = leda_string("Out of %d orientation tests, %d", c, success);
-    s2 = leda_string("( %2.2f %%) give the correct result.",
-                        (double)success/c * 100);
+    //s1 = leda_string("Out of %d orientation tests, %d", c, success);
+    //s2 = leda_string("( %2.2f %%) give the correct result.",
+    //                    (double)success/c * 100);
 }
 
 template <class ForwardIterator, class Traits>
@@ -70,10 +75,9 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
         for( ForwardIterator j = first; j != last; ++j)
             for( ForwardIterator k = first; k != last; ++k)
                 {
-                  CGAL::Orientation  ori;
                   try
                   {
-                    ori = orientation(*i, *j, *k);
+                    (void) orientation(*i, *j, *k);
                     ++success;
                   }
                   catch ( CGAL::Interval_base::unsafe_comparison )
@@ -81,9 +85,17 @@ orientation_statistics_IA( ForwardIterator first, ForwardIterator last,
                   ++c;
                 }
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+    std::ostringstream OS;
+    OS << "Out of " << c << " orientation tests, " << c;
+    OS << std::ends;
+    s1 = OS.str();
+    s2 = std::string("do not throw an exception.");
+#else
     s1 = leda_string("Out of %d orientation tests, %d", c, success);
     s2 = leda_string("( %2.2f %%) do not throw an exception.",
                         (double)success/c * 100);
+#endif
 }
 
 

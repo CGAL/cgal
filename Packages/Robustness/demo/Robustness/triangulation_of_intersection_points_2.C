@@ -34,7 +34,7 @@ typedef CGAL::Quotient<CGAL::MP_Float.h>  leda_real;
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -49,6 +49,16 @@ typedef CGAL::Quotient<CGAL::MP_Float.h>  leda_real;
 #define CGAL_IA_CACHE No_Filter_Cache
 #endif
 #include <CGAL/Filtered_exact.h>
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_window  CGAL::window
+#define leda_string  std::string
+#define leda_green   CGAL::green
+#define leda_blue    CGAL::blue
+#define leda_black   CGAL::black
+#define leda_red     CGAL::red
+#endif
+
 
 namespace CGAL {
 

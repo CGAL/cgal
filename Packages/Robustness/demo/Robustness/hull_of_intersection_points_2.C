@@ -34,13 +34,23 @@ typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/IO/polygonal_2.h>
 #include <CGAL/Cartesian_converter.h>
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_blue    CGAL::blue
+#define leda_red     CGAL::red
+#define leda_window  CGAL::window
+#define leda_black   CGAL::black
+#define leda_string  std::string
+#define leda_grey2   CGAL::grey2
+#define leda_green   CGAL::green
+#endif
 
 int
 main( int argc, char** argv)

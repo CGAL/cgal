@@ -30,7 +30,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 #else
@@ -40,8 +40,13 @@ typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/kernel_to_kernel.h>
-#include <CGAL/intersection_test_statistics.h>
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_window  CGAL::window
+#define leda_string  std::string
+#endif
+
+#include <CGAL/intersection_test_statistics.h>
 #include <CGAL/further_point_generators_2.h>
 
 using namespace CGAL;

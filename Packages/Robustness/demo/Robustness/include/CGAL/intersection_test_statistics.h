@@ -26,6 +26,10 @@
 
 #include <CGAL/Timer.h>
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+#include <sstream>
+#endif
+
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 void
 intersection_statistics( ForwardIterator1 first1, ForwardIterator1 last1,
@@ -53,6 +57,16 @@ intersection_statistics( ForwardIterator1 first1, ForwardIterator1 last1,
         }
     watch.stop();
 
+#if defined(CGAL_USE_CGAL_WINDOW)
+   std::ostringstream OS;
+   OS << is_count << " intersection points found,\n";
+   OS << bl_count << " of them lie on both segments.\n";
+   OS << "Out of the " << 2*is_count << "\npoint-on-segment tests, \n" <<  ol_count;
+   OS << " are positive.\n";
+   OS << "Computation time " << watch.time() << " secs.\n";
+   OS << std::ends;
+   str = OS.str();
+#else
     str  = leda_string();
     str += leda_string("%d intersection points found,\n",
                        is_count);
@@ -64,6 +78,7 @@ intersection_statistics( ForwardIterator1 first1, ForwardIterator1 last1,
                        (double)ol_count/is_count * 50);
     str += leda_string("Computation time %2.2f secs.\n",
                        watch.time() );
+#endif
 }
 
 

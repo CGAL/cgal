@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>
+#include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
@@ -37,6 +37,12 @@ typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Cartesian_converter.h>
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_window  CGAL::window
+#define leda_string  std::string
+#endif
+
 #include <CGAL/orientation_test_statistics.h>
 
 typedef CGAL::Cartesian<double>                   CartesianDouble;

@@ -28,7 +28,6 @@
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
-#include <CGAL/IO/leda_window.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
@@ -37,8 +36,8 @@
 #  include <CGAL/Quotient.h>
 typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #endif
+
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/orientation_test_statistics.h>
 
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/Min_circle_2.h>
@@ -46,6 +45,17 @@ typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
+
+#if defined(CGAL_USE_CGAL_WINDOW)
+#define leda_window  CGAL::window
+#define leda_string  std::string
+#define leda_blue    CGAL::blue
+#define leda_pink    CGAL::pink
+#define leda_grey1   CGAL::grey1
+#endif
+
+#include <CGAL/orientation_test_statistics.h>
+
 
 typedef CGAL::Cartesian<double>                          CartesianDouble;
 typedef CartesianDouble::Point_2                         Point;
@@ -65,9 +75,8 @@ main(int argc, char** argv)
 {
     int N = (argc > 1) ? CGAL_CLIB_STD::atoi(argv[1]) : 30;
     
-    typedef leda_window  CGAL_Stream;
-    CGAL_Stream W( 500, 550);
-    CGAL_Stream W1( 400, 400);
+    CGAL::Window_stream W( 500, 550);
+    CGAL::Window_stream W1( 400, 400);
     CGAL::cgalize(W);
     CGAL::cgalize(W1);
     
@@ -83,7 +92,7 @@ main(int argc, char** argv)
     
     W1.set_fg_color(leda_pink);
     std::copy( points1.begin(), points1.end(),
-               CGAL::Ostream_iterator< Point, CGAL_Stream>( W1));
+               CGAL::Ostream_iterator< Point, CGAL::Window_stream>( W1));
 
     Min_circle  mc2( points1.begin(), points1.end(), true);
     W1 << mc2.circle();
@@ -104,7 +113,7 @@ main(int argc, char** argv)
     W1 << me2.ellipse();
     W1.set_fg_color(leda_pink);
     std::copy( points1.begin(), points1.end(),
-               CGAL::Ostream_iterator< Point, CGAL_Stream>( W1));
+               CGAL::Ostream_iterator< Point, CGAL::Window_stream>( W1));
     W.draw_ctext(250, 40, "Delaunay triangulation computed");
 
     W.read_mouse();
