@@ -1,0 +1,110 @@
+#!/bin/sh
+# collect_cgal_testresults
+# ========================
+# collect all files to generate the html page
+# containing the testsuite results
+# 
+# to be run in the CGAL/test directory
+
+print_platforms()
+{
+  cd Polygon
+  for FILE in `ls CompilerOutput_*` ; do
+    PLATFORM=`echo $FILE | nawk '{ gsub("CompilerOutput_", ""); print }'`
+    PLATFORM=`echo $PLATFORM | nawk '{ gsub("\.gz", ""); print }'`
+    printf "$PLATFORM "
+  done
+  cd ..
+}
+
+#print_testresult <platform> <directory>
+print_testresult()
+{
+  if [ ! -f ErrorOutput_$1 ] ; then
+    RESULT="?"
+  else
+    if eval grep ERROR ErrorOutput_$1 > /dev/null ; then
+      RESULT="n"
+    else
+      if eval grep '[Ww]arning' CompilerOutput_$1 > /dev/null
+      then
+        RESULT="w"
+      else
+        RESULT="y"
+      fi
+    fi
+  fi
+  echo "$2 $RESULT"
+}
+
+# do_platform <platform>
+do_platform()
+{
+  CURRENT_DIR=`pwd`
+  TEST_REPORT="TestReport_$PLATFORM"
+  RESULT_FILE=$CURRENT_DIR/results_${PLATFORM}.txt
+  rm -f $RESULT_FILE
+  echo "${PLATFORM} $USER" > $RESULT_FILE
+
+  PLATFORM=$1
+
+  for DIR in $TEST_DIRECTORIES ; do
+    if [ -d $DIR ] ; then
+      echo "  $DIR ..."
+      cd $DIR
+
+      print_testresult $PLATFORM $DIR >> $RESULT_FILE
+
+      rm -f ${TEST_REPORT}
+      touch $TEST_REPORT
+
+      if [ ! -f ErrorOutput_${PLATFORM} ] ; then
+        echo "Error: file $DIR/ErrorOutput_${PLATFORM} does not exist!"
+      else
+        cat ErrorOutput_${PLATFORM} >> $TEST_REPORT
+      fi
+
+      if [ ! -f CompilerOutput_${PLATFORM} ] ; then
+        echo "Error: file $DIR/CompilerOutput_${PLATFORM} does not exist!"
+      else
+        cat CompilerOutput_${PLATFORM} >> $TEST_REPORT
+      fi
+
+      if 2>&1 eval ls ProgramOutput.*.${PLATFORM} > /dev/null ; then
+        PROGRAM_OUTPUT=`ls ProgramOutput.*$PLATFORM*`
+        for FILE in $PROGRAM_OUTPUT ; do
+          echo >> $TEST_REPORT
+          echo "------------------------------------------------------------------" >> $TEST_REPORT
+          echo "- $FILE" >> $TEST_REPORT
+          echo "------------------------------------------------------------------" >> $TEST_REPORT
+          cat $FILE >> $TEST_REPORT
+        done
+      fi
+
+      cd ..
+    fi
+  done
+
+  OUTPUT_FILE=results_${PLATFORM}.tar
+  rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
+  tar cf $OUTPUT_FILE results_${PLATFORM}.txt */$TEST_REPORT
+  echo
+  echo "compressing ..."
+  gzip -9f $OUTPUT_FILE
+  echo "results written to file $OUTPUT_FILE.gz"
+  echo
+}
+
+if [ -z "$1" ] ; then
+  TEST_DIRECTORIES=`ls`
+else
+  TEST_DIRECTORIES="$*"
+fi
+
+for PLATFORM in `print_platforms` ; do
+  echo "---------------------------------------------------------------"
+  echo "   Collecting results of platform $PLATFORM"
+  echo "---------------------------------------------------------------"
+  do_platform $PLATFORM
+done
+
