@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.65 (22 April 2002)
+   added missing const for const correctness
+
 0.9.64 (17 April 2002)
    added missing std:: before ptrdiff_t  in Regular_complex....h
 
