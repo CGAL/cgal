@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+29 Apr 2004 Sylvain Pion
+- Upgrade to GMP 4.1.3.
+
 17 Apr 2004 Sylvain Pion
 - Remove -w for PGCC.
 

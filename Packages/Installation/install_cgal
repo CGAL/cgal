@@ -96,7 +96,7 @@ LEDA_TEST_PASSED=''
 #
 
 # version of gmp shipped with CGAL:
-GMP_VERSION='gmp-4.1.2'
+GMP_VERSION='gmp-4.1.3'
 
 # toggles use of GMP ('' - no, '_GMP' - use it)
 GMP_SUPPORT=''
