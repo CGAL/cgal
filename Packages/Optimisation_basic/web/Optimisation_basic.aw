@@ -203,9 +203,9 @@ stream \ccc{verr}.
     _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
                                  const char*            message)
     {
-        verr << "FAILED." << endl;
-        verr << "  --> " << message << endl;
-        verr << "  object is NOT valid!" << endl;
+        verr << "FAILED." << std::endl;
+        verr << "  --> " << message << std::endl;
+        verr << "  object is NOT valid!" << std::endl;
         return( false);
     }
 @end
