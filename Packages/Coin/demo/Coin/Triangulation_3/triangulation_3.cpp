@@ -2,22 +2,13 @@
 #include <stdlib.h> // exit()
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-#include <Inventor/actions/SoRayPickAction.h>
-#include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/nodes/SoCallback.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotation.h>
-#include <Inventor/nodes/SoPickStyle.h>
-#include <Inventor/nodes/SoColorIndex.h>
-#include <Inventor/nodes/SoComplexity.h>
-#include <Inventor/nodes/SoPointLight.h>
-#include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/manips/SoTrackballManip.h>
 #include <Inventor/manips/SoTransformBoxManip.h>
 #include <Inventor/draggers/SoDragPointDragger.h>
@@ -235,8 +226,8 @@ SoSeparator* get_plane(Triangulation &t){
   mat->transparency = 0.5;
   mat->diffuseColor.setValue(0.0, 1.0, 0.0);
 
-  SoPickStyle * pickstyle = new SoPickStyle;
-  sub->addChild(pickstyle);
+//  SoPickStyle * pickstyle = new SoPickStyle;
+//  sub->addChild(pickstyle);
 
 
   SoTransformBoxManip * plane_manip = new SoTransformBoxManip;
@@ -308,6 +299,7 @@ main (int argc, char ** argv)
 
   Node_triangulation_3<Triangulation> *triangl = new Node_triangulation_3<Triangulation>(T);  
 
+  root->ref();
 
   sep1->ref();
   sep1->addChild(material);  
