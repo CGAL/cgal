@@ -110,7 +110,7 @@ std::ostream&
 operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
 {
   typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
-  return os << (const RTetrahedron_3& )t;
+  return os << static_cast<const RTetrahedron_3&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
 
@@ -120,7 +120,7 @@ std::istream&
 operator>>(std::istream& is, Tetrahedron_3<R>& t)
 {
   typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
-  return is >> (RTetrahedron_3& )t;
+  return is >> static_cast<RTetrahedron_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
 

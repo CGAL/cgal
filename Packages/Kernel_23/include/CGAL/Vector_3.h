@@ -61,7 +61,7 @@ friend CGAL::Vector_3<R>
   Vector_3()
   {}
   Vector_3(const CGAL::Vector_3<R>& v)
-    : RVector_3( (const RVector_3& )v )
+    : RVector_3( static_cast<const RVector_3&>(v) )
   {}
   Vector_3(const RVector_3&  v) : RVector_3(v)
   {}
@@ -104,32 +104,45 @@ friend CGAL::Vector_3<R>
   { return cartesian(i); }
   int dimension() const
   { return 3; }
+
   CGAL::Vector_3<R> operator+(const CGAL::Vector_3<R>& w) const
-  { return (const RVector_3& )(*this) + (const RVector_3& )(w); }
+  {
+      return static_cast<const RVector_3&>(*this) +
+             static_cast<const RVector_3&>(w);
+  }
+
   CGAL::Vector_3<R> operator-(const CGAL::Vector_3<R>& w) const
-  { return (const RVector_3& )(*this) - (const RVector_3& )(w); }
+  {
+      return static_cast<const RVector_3&>(*this) -
+	     static_cast<const RVector_3&>(w);
+  }
+
   CGAL::Vector_3<R> operator-() const
   { return RVector_3::operator-(); }
+
   FT operator*(const CGAL::Vector_3<R>& w) const
-  { return (const RVector_3& )(*this) * (const RVector_3& )(w); }
+  {
+      return static_cast<const RVector_3&>(*this) *
+	     static_cast<const RVector_3&>(w);
+  }
 
 #ifndef VECTOR_WRAPPER
   CGAL::Vector_3<R> operator*(const RT& c) const
-  { return c * (const RVector_3& )(*this) ; }
+  { return c * static_cast<const RVector_3&>(*this) ; }
   CGAL::Vector_3<R> operator*(const Quotient<RT>& q) const
   {
-    return (q.numerator() * (const RVector_3& )(*this)) /
+    return (q.numerator() * static_cast<const RVector_3&>(*this)) /
             q.denominator();
   }
   CGAL::Vector_3<R> operator/(const Quotient<RT>& q) const
   {
-    return (q.denominator() * (const RVector_3& )(*this)) /
+    return (q.denominator() * static_cast<const RVector_3&>(*this)) /
             q.numerator();
   }
 #endif // VECTOR_WRAPPER
 
   CGAL::Vector_3<R> operator/(const RT& c) const
-  { return (const RVector_3& )(*this) / c; }
+  { return static_cast<const RVector_3&>(*this) / c; }
   CGAL::Direction_3<R> direction() const
   { return RVector_3::direction(); }
   CGAL::Vector_3<R> transform(const CGAL::Aff_transformation_3<R>& t) const
@@ -154,7 +167,7 @@ std::ostream&
 operator<<(std::ostream& os, const Vector_3<R>& v)
 {
   typedef typename  R::Vector_3_base  RVector_3;
-  return os << (const RVector_3& )v;
+  return os << static_cast<const RVector_3&>(v);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
 
@@ -164,7 +177,7 @@ std::istream&
 operator>>(std::istream& is, Vector_3<R>& p)
 {
   typedef typename  R::Vector_3_base  RVector_3;
-  return is >> (RVector_3& )p;
+  return is >> static_cast<RVector_3&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 
@@ -174,7 +187,8 @@ Vector_3<R>
 cross_product(const Vector_3<R>& v, const Vector_3<R>& w)
 {
   typedef typename  R::Vector_3_base  RVector_3;
-  return cross_product((const RVector_3& )v,(const RVector_3& )w);
+  return cross_product(static_cast<const RVector_3&>(v),
+	               static_cast<const RVector_3&>(w));
 }
 
 CGAL_END_NAMESPACE

@@ -2,6 +2,7 @@
 
 - added squared_area() function for Triangle_3 and volume() function
   for Tetrahedron_3 and Iso_cuboid_3
+- Remove old style casts.
 
 3.11 (24 Jan 2001)
 

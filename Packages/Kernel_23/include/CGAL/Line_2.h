@@ -26,7 +26,7 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/LineH2.h>
@@ -59,7 +59,7 @@ public:
   {}
 
   Line_2(const CGAL::Line_2<R>  &l)
-    : RLine_2((RLine_2&)l)
+    : RLine_2(static_cast<const RLine_2&>(l))
   {}
 
   Line_2(const CGAL::Point_2<R> &p, const CGAL::Point_2<R> &q)
@@ -70,11 +70,9 @@ public:
     : RLine_2(a,b,c)
   {}
 
-
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l)
   {}
-
 
   Line_2(const CGAL::Segment_2<R>& s)
     : RLine_2(s)
@@ -87,7 +85,6 @@ public:
   Line_2(const CGAL::Point_2<R> &p, const CGAL::Direction_2<R> &d)
     : RLine_2(p,d)
   {}
-
 
   bool operator==(const CGAL::Line_2<R> &l) const
   {
@@ -206,14 +203,13 @@ public:
 };
 
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_2<R> &l)
 {
   typedef typename  R::Line_2_base  RLine_2;
-  return os << (const RLine_2&)l;
+  return os << static_cast<const RLine_2&>(l);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINE_2
 
@@ -223,11 +219,10 @@ std::istream &
 operator>>(std::istream &is, Line_2<R> &p)
 {
   typedef typename  R::Line_2_base  RLine_2;
-  return is >> (RLine_2&)p;
+  return is >> static_cast<RLine_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_LINE_2_H

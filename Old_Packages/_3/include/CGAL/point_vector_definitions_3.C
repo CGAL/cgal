@@ -47,7 +47,8 @@ operator+(const Point_3<R>& p, const Vector_3<R>& v)
 {
   typedef typename  R::Point_3_base  RPoint_3;
   typedef typename  R::Vector_3_base  RVector_3;
-  return Point_3<R>((const RPoint_3& )p + (const RVector_3& )v) ;
+  return Point_3<R>(static_cast<const RPoint_3&>(p) +
+                    static_cast<const RVector_3&>(v)) ;
 }
 
 template < class R >
@@ -57,7 +58,8 @@ operator-(const Point_3<R>& p, const Vector_3<R>& v)
 {
   typedef typename  R::Point_3_base  RPoint_3;
   typedef typename  R::Vector_3_base  RVector_3;
-  return Point_3<R>((const RPoint_3& )p - (const RVector_3& )v) ;
+  return Point_3<R>(static_cast<const RPoint_3&>(p) -
+                    static_cast<const RVector_3&>(v));
 }
 
 template < class R >
@@ -78,7 +80,8 @@ Vector_3<R>
 operator-(const Point_3<R>& p, const Point_3<R>& q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return Vector_3<R>((const RPoint_3& )p - (const RPoint_3& )q) ;
+  return Vector_3<R>(static_cast<const RPoint_3&>(p) -
+                     static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -93,10 +96,9 @@ Vector_3<R>
 operator-(const Origin& , const Point_3<R>& p)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return Vector_3<R>(ORIGIN - (const RPoint_3& )p) ;
+  return Vector_3<R>(ORIGIN - static_cast<const RPoint_3&>(p));
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_POINT_VECTOR_DEFINITIONS_3_C

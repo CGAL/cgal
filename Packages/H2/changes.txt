@@ -2,6 +2,7 @@
 - Macro cleanups.
 - area() functions added
 - Towards Simple_homogeneous : PointH2<FT,RT> => PointH2<R> and similar.
+- Remove old style casts.
 
 2.14   (18 Jan 2001)
 - Remove Triangle_repH2 copy ctor, since it caused a warning.

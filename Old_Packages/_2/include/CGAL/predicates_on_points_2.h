@@ -47,7 +47,7 @@ bool x_equal(const Point_2<R>& p,
              const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return x_equal((const RPoint_2&)p, (const RPoint_2&)q);
+  return x_equal(static_cast<const RPoint_2&>(p), static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -56,7 +56,7 @@ bool y_equal(const Point_2<R>& p,
              const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return y_equal((const RPoint_2&)p, (const RPoint_2&)q);
+  return y_equal(static_cast<const RPoint_2&>(p), static_cast<const RPoint_2&>(q));
 }
 
 
@@ -66,7 +66,7 @@ Comparison_result compare_x(const Point_2<R>& p,
                             const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return compare_x((const RPoint_2&)p, (const RPoint_2&)q);
+  return compare_x(static_cast<const RPoint_2&>(p), static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -75,7 +75,7 @@ Comparison_result compare_y(const Point_2<R>& p,
                             const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return compare_y((const RPoint_2&)p, (const RPoint_2&)q);
+  return compare_y(static_cast<const RPoint_2&>(p), static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -87,10 +87,10 @@ compare_deltax_deltay(const Point_2<R>& p,
                       const Point_2<R>& s)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return compare_deltax_deltay((const RPoint_2&)p,
-                               (const RPoint_2&)q,
-                               (const RPoint_2&)r,
-                               (const RPoint_2&)s);
+  return compare_deltax_deltay(static_cast<const RPoint_2&>(p),
+                               static_cast<const RPoint_2&>(q),
+                               static_cast<const RPoint_2&>(r),
+                               static_cast<const RPoint_2&>(s));
 }
 
 template < class R >
@@ -100,8 +100,8 @@ compare_lexicographically_xy(const Point_2<R>& p,
                              const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return  compare_lexicographically_xy((const RPoint_2&)p,
-                                       (const RPoint_2&)q);
+  return  compare_lexicographically_xy(static_cast<const RPoint_2&>(p),
+                                       static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -111,8 +111,8 @@ lexicographically_xy_smaller_or_equal(const Point_2<R>& p,
                                       const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return lexicographically_xy_smaller_or_equal((const RPoint_2&)p,
-                                               (const RPoint_2&)q);
+  return lexicographically_xy_smaller_or_equal(static_cast<const RPoint_2&>(p),
+                                               static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -122,8 +122,8 @@ lexicographically_xy_smaller(const Point_2<R>& p,
                                   const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
- return lexicographically_xy_smaller((const RPoint_2&)p,
-                                     (const RPoint_2&)q);
+ return lexicographically_xy_smaller(static_cast<const RPoint_2&>(p),
+                                     static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -133,8 +133,8 @@ lexicographically_xy_larger_or_equal(const Point_2<R>& p,
                                      const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
- return !lexicographically_xy_smaller((const RPoint_2&)p,
-                                      (const RPoint_2&)q);
+ return !lexicographically_xy_smaller(static_cast<const RPoint_2&>(p),
+                                      static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -144,8 +144,8 @@ lexicographically_xy_larger(const Point_2<R>& p,
                             const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return !lexicographically_xy_smaller_or_equal((const RPoint_2&)p,
-                                                (const RPoint_2&)q);
+  return !lexicographically_xy_smaller_or_equal(static_cast<const RPoint_2&>(p),
+                                                static_cast<const RPoint_2&>(q));
 }
 
 
@@ -156,8 +156,8 @@ compare_lexicographically_yx(const Point_2<R>& p,
                                   const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return  compare_lexicographically_yx((const RPoint_2&)p,
-                                       (const RPoint_2&)q);
+  return  compare_lexicographically_yx(static_cast<const RPoint_2&>(p),
+                                       static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -167,8 +167,8 @@ lexicographically_yx_smaller_or_equal(const Point_2<R>& p,
                                       const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return lexicographically_yx_smaller_or_equal((const RPoint_2&)p,
-                                               (const RPoint_2&)q);
+  return lexicographically_yx_smaller_or_equal(static_cast<const RPoint_2&>(p),
+                                               static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -178,8 +178,8 @@ lexicographically_yx_smaller(const Point_2<R>& p,
                              const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
- return lexicographically_yx_smaller((const RPoint_2&)p,
-                                     (const RPoint_2&)q);
+ return lexicographically_yx_smaller(static_cast<const RPoint_2&>(p),
+                                     static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -189,8 +189,8 @@ lexicographically_yx_larger_or_equal(const Point_2<R>& p,
                                      const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
- return !lexicographically_yx_smaller((const RPoint_2&)p,
-                                      (const RPoint_2&)q);
+ return !lexicographically_yx_smaller(static_cast<const RPoint_2&>(p),
+                                      static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -200,8 +200,8 @@ lexicographically_yx_larger(const Point_2<R>& p,
                             const Point_2<R>& q)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return !lexicographically_yx_smaller_or_equal((const RPoint_2&)p,
-                                                (const RPoint_2&)q);
+  return !lexicographically_yx_smaller_or_equal(static_cast<const RPoint_2&>(p),
+                                                static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -212,9 +212,9 @@ are_ordered_along_line(const Point_2<R>& p,
                        const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return are_ordered_along_line((const RPoint_2&)p,
-                                (const RPoint_2&)q,
-                                (const RPoint_2&)r);
+  return are_ordered_along_line(static_cast<const RPoint_2&>(p),
+                                static_cast<const RPoint_2&>(q),
+                                static_cast<const RPoint_2&>(r));
 }
 
 template < class R >
@@ -225,9 +225,9 @@ collinear_are_ordered_along_line(const Point_2<R>& p,
                                  const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return collinear_are_ordered_along_line((const RPoint_2&)p,
-                                          (const RPoint_2&)q,
-                                          (const RPoint_2&)r);
+  return collinear_are_ordered_along_line(static_cast<const RPoint_2&>(p),
+                                          static_cast<const RPoint_2&>(q),
+                                          static_cast<const RPoint_2&>(r));
 }
 
 template < class R >
@@ -238,9 +238,9 @@ are_strictly_ordered_along_line(const Point_2<R>& p,
                             const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return are_strictly_ordered_along_line((const RPoint_2&)p,
-                                         (const RPoint_2&)q,
-                                         (const RPoint_2&)r);
+  return are_strictly_ordered_along_line(static_cast<const RPoint_2&>(p),
+                                         static_cast<const RPoint_2&>(q),
+                                         static_cast<const RPoint_2&>(r));
 }
 template < class R >
 inline
@@ -251,9 +251,9 @@ collinear_are_strictly_ordered_along_line(const Point_2<R>& p,
 {
   typedef typename R::Point_2_base  RPoint_2;
   return
-  collinear_are_strictly_ordered_along_line((const RPoint_2&)p,
-                                            (const RPoint_2&)q,
-                                            (const RPoint_2&)r);
+  collinear_are_strictly_ordered_along_line(static_cast<const RPoint_2&>(p),
+                                            static_cast<const RPoint_2&>(q),
+                                            static_cast<const RPoint_2&>(r));
 }
 template < class R >
 inline
@@ -263,9 +263,9 @@ collinear(const Point_2<R>& p,
           const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return (collinear((const RPoint_2&)p,
-                    (const RPoint_2&)q,
-                    (const RPoint_2&)r));
+  return (collinear(static_cast<const RPoint_2&>(p),
+                    static_cast<const RPoint_2&>(q),
+                    static_cast<const RPoint_2&>(r)));
 }
 
 template < class R >
@@ -276,9 +276,9 @@ leftturn(const Point_2<R>& p,
          const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return leftturn((const RPoint_2&)p,
-                  (const RPoint_2&)q,
-                  (const RPoint_2&)r);
+  return leftturn(static_cast<const RPoint_2&>(p),
+                  static_cast<const RPoint_2&>(q),
+                  static_cast<const RPoint_2&>(r));
 }
 
 template < class R >
@@ -289,9 +289,9 @@ rightturn(const Point_2<R>& p,
           const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return rightturn((const RPoint_2&)p,
-                   (const RPoint_2&)q,
-                   (const RPoint_2&)r);
+  return rightturn(static_cast<const RPoint_2&>(p),
+                   static_cast<const RPoint_2&>(q),
+                   static_cast<const RPoint_2&>(r));
 }
 
 template < class R >
@@ -302,7 +302,7 @@ rightturn(const Origin& o,
           const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return rightturn(o, (const RPoint_2&)q, (const RPoint_2&)r);
+  return rightturn(o, static_cast<const RPoint_2&>(q), static_cast<const RPoint_2&>(r));
 }
 
 template < class R >
@@ -313,9 +313,9 @@ orientation(const Point_2<R>& p,
             const Point_2<R>& r)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return orientation((const RPoint_2&)p,
-                     (const RPoint_2&)q,
-                     (const RPoint_2&)r);
+  return orientation(static_cast<const RPoint_2&>(p),
+                     static_cast<const RPoint_2&>(q),
+                     static_cast<const RPoint_2&>(r));
 }
 
 template <class R >
@@ -327,10 +327,10 @@ side_of_oriented_circle(const Point_2<R>& p,
                         const Point_2<R>& test)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return side_of_oriented_circle((const RPoint_2&)p,
-                                 (const RPoint_2&)q,
-                                 (const RPoint_2&)r,
-                                 (const RPoint_2&)test);
+  return side_of_oriented_circle(static_cast<const RPoint_2&>(p),
+                                 static_cast<const RPoint_2&>(q),
+                                 static_cast<const RPoint_2&>(r),
+                                 static_cast<const RPoint_2&>(test));
 }
 
 template <class R >
@@ -342,10 +342,10 @@ side_of_bounded_circle(const Point_2<R>& p,
                        const Point_2<R>& test)
 {
   typedef typename R::Point_2_base  RPoint_2;
-  return side_of_bounded_circle((const RPoint_2&)p,
-                                (const RPoint_2&)q,
-                                (const RPoint_2&)r,
-                                (const RPoint_2&)test);
+  return side_of_bounded_circle(static_cast<const RPoint_2&>(p),
+                                static_cast<const RPoint_2&>(q),
+                                static_cast<const RPoint_2&>(r),
+                                static_cast<const RPoint_2&>(test));
 }
 
 CGAL_END_NAMESPACE

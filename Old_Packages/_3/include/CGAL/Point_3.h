@@ -61,7 +61,8 @@ public:
   {}
   Point_3(const Origin& o) : RPoint_3(o)
   {}
-  Point_3(const CGAL::Point_3<R>& p) : RPoint_3( (const RPoint_3& )p )
+  Point_3(const CGAL::Point_3<R>& p)
+      : RPoint_3( static_cast<const RPoint_3&>(p) )
   {}
   Point_3(const RPoint_3&  p) : RPoint_3(p)
   {}
@@ -151,7 +152,7 @@ std::ostream&
 operator<<(std::ostream& os, const Point_3<R>& p)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return os << (const RPoint_3& )p;
+  return os << static_cast<const RPoint_3&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_3
 
@@ -160,7 +161,7 @@ template < class R >
 std::istream& operator>>(std::istream& is, Point_3<R>& p)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return is >> (RPoint_3& )p;
+  return is >> static_cast<RPoint_3&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
 

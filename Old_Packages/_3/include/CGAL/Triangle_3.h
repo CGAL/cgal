@@ -27,7 +27,7 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/TriangleH3.h>
@@ -103,7 +103,7 @@ std::ostream&
 operator<<(std::ostream& os, const Triangle_3<R>& t)
 {
   typedef typename  R::Triangle_3_base  RTriangle_3;
-  return os << (const RTriangle_3& )t;
+  return os << static_cast<const RTriangle_3&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
 
@@ -113,7 +113,7 @@ std::istream&
 operator>>(std::istream& is, Triangle_3<R>& t)
 {
   typedef typename  R::Triangle_3_base  RTriangle_3;
-  return is >> (RTriangle_3& )t;
+  return is >> static_cast<RTriangle_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 

@@ -25,10 +25,7 @@
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H
 
-
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
 #ifndef CGAL_CFG_NO_LOCALE
 #include <locale>
 #else
@@ -161,7 +158,7 @@ public:
 inline
 Gmpz_rep*
 Gmpz::ptr() const
-{ return (Gmpz_rep*) PTR; }
+{ return static_cast<Gmpz_rep*>(PTR); }
 
 inline   // CGAL_KERNEL_CTOR_INLINE
 Gmpz::Gmpz()
@@ -169,7 +166,7 @@ Gmpz::Gmpz()
 
 inline   // CGAL_KERNEL_CTOR_INLINE
 Gmpz::Gmpz(const Gmpz &z)
-  : Handle((Handle&)z)
+  : Handle(static_cast<const Handle&>(z))
 {}
 
 inline   // CGAL_KERNEL_CTOR_INLINE
@@ -229,7 +226,7 @@ Gmpz::operator<(const Gmpz &z) const
 inline
 bool
 Gmpz::operator<(int i) const
-{ return ( mpz_cmp_si(ptr()->mpZ, i) < 0 ); }
+{ return mpz_cmp_si(ptr()->mpZ, i) < 0; }
 
 inline
 bool            /* XXX */
@@ -450,7 +447,7 @@ io_tag(const Gmpz&)
 inline
 Sign
 Gmpz::sign() const
-{ return (Sign)mpz_sgn(ptr()->mpZ); }
+{ return static_cast<Sign>(mpz_sgn(ptr()->mpZ)); }
 
 inline
 Gmpz
@@ -602,7 +599,7 @@ operator>>(std::istream& is, Gmpz &z)
   {
         is.putback(c);
   }
-  if (sign(z) != (Sign)0 && negative)
+  if (sign(z) != static_cast<Sign>(0) && negative)
   {
         z = -z;
   }
@@ -622,7 +619,5 @@ to_interval (const Gmpz & z)
 
 
 CGAL_END_NAMESPACE
-
-
 
 #endif // CGAL_GMPZ_H

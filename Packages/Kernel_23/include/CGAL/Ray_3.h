@@ -27,7 +27,7 @@
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif
 
 #ifdef CGAL_HOMOGENEOUS_H
 #include <CGAL/RayH3.h>
@@ -100,7 +100,7 @@ std::ostream&
 operator<<(std::ostream& os, const Ray_3<R>& r)
 {
   typedef typename  R::Ray_3_base  RRay_3;
-  return os << (const RRay_3& )r;
+  return os << static_cast<const RRay_3&>(r);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAY_3
 
@@ -110,7 +110,7 @@ std::istream&
 operator>>(std::istream& is, Ray_3<R>& r)
 {
   typedef typename  R::Ray_3_base  RRay_3;
-  return is >> (RRay_3& )r;
+  return is >> static_cast<RRay_3&>(r);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3
 

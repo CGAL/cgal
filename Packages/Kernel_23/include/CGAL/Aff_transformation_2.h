@@ -202,7 +202,7 @@ std::ostream &
 operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
 {
   typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
-  return os << (const RAff_transformation_2&)t;
+  return os << static_cast<const RAff_transformation_2&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
 
@@ -212,7 +212,7 @@ std::istream &
 operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
 {
   typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
-  return is >> (RAff_transformation_2&)t;
+  return is >> static_cast<RAff_transformation_2&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2
 

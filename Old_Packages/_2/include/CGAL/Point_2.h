@@ -65,7 +65,7 @@ friend  CGAL_FRIEND_INLINE
   {}
 
   Point_2(const CGAL::Point_2<R>& p)
-    : RPoint_2((RPoint_2&)p)
+    : RPoint_2(static_cast<const RPoint_2&>(p))
   {}
 
   Point_2(const RPoint_2& p)
@@ -158,7 +158,7 @@ std::ostream&
 operator<<(std::ostream& os, const Point_2<R>& p)
 {
   typedef typename  R::Point_2_base  RPoint_2;
-  return os << (const RPoint_2&)p;
+  return os << static_cast<const RPoint_2&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_2
 
@@ -168,7 +168,7 @@ std::istream&
 operator>>(std::istream& is, Point_2<R>& p)
 {
   typedef typename  R::Point_2_base  RPoint_2;
-  return is >> (RPoint_2&)p;
+  return is >> static_cast<RPoint_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_2
 

@@ -22,7 +22,7 @@
  
 
 #ifndef CGAL_FLOAT_H
-#define CGAL_FLOAT_H 1
+#define CGAL_FLOAT_H
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 inline
 double
 to_double(float f)
-{ return (double)f; }
+{ return static_cast<double>(f); }
 
 inline
 Number_tag

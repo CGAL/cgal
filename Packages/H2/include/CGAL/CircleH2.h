@@ -382,12 +382,12 @@ std::ostream &operator<<(std::ostream &os, const CircleH2<R> &c)
   {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
-           << (int)c.orientation();
+           << static_cast<int>(c.orientation());
         break;
     case IO::BINARY :
         os << c.center();
         write(os, c.squared_radius());
-        write(os, (int)c.orientation());
+        write(os, static_cast<int>(c.orientation()));
         break;
     default:
         os << "CircleH2(" << c.center() <<  ", " << c.squared_radius() ;
@@ -426,7 +426,7 @@ std::istream& operator>>(std::istream &is, CircleH2<R> &c)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  c = CircleH2<R>(center, squared_radius, (Orientation)o);
+  c = CircleH2<R>(center, squared_radius, static_cast<Orientation>(o));
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2

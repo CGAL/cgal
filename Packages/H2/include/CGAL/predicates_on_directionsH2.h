@@ -37,10 +37,10 @@ compare_angles_with_x_axis(const DirectionH2<R>& d1,
                            const DirectionH2<R>& d2)
 {
   typedef typename R::RT  RT;
-  CGAL_kernel_precondition( (
-        (Comparison_result)COUNTERCLOCKWISE == LARGER
-      &&(Comparison_result)COLLINEAR        == EQUAL
-      &&(Comparison_result)CLOCKWISE        == SMALLER ) );
+  CGAL_kernel_precondition(
+        static_cast<int>(COUNTERCLOCKWISE) == static_cast<int>(LARGER)
+     && static_cast<int>(COLLINEAR)        == static_cast<int>(EQUAL)
+     && static_cast<int>(CLOCKWISE)        == static_cast<int>(SMALLER) );
 
   const RT RT0(0);
 
@@ -54,10 +54,10 @@ compare_angles_with_x_axis(const DirectionH2<R>& d1,
   CGAL_kernel_precondition( RT0 < p1.hw_ref() );
   CGAL_kernel_precondition( RT0 < p2.hw_ref() );
 
-  int       x_sign1 = (int)CGAL_NTS sign( p1.hx_ref() );
-  int       x_sign2 = (int)CGAL_NTS sign( p2.hx_ref() );
-  int       y_sign1 = (int)CGAL_NTS sign( p1.hy_ref() );
-  int       y_sign2 = (int)CGAL_NTS sign( p2.hy_ref() );
+  int       x_sign1 = static_cast<int>(CGAL_NTS sign( p1.hx_ref() ));
+  int       x_sign2 = static_cast<int>(CGAL_NTS sign( p2.hx_ref() ));
+  int       y_sign1 = static_cast<int>(CGAL_NTS sign( p1.hy_ref() ));
+  int       y_sign2 = static_cast<int>(CGAL_NTS sign( p2.hy_ref() ));
 
   if ( y_sign1 * y_sign2 < 0)
   {
@@ -68,7 +68,8 @@ compare_angles_with_x_axis(const DirectionH2<R>& d1,
 
   if ( 0 < y_sign1 * y_sign2 )
   {
-      return ( (Comparison_result) orientation(origin, p2, p1) );
+      return static_cast<Comparison_result>(static_cast<int>(
+		  orientation(origin, p2, p1)));
 
       // Precondition on the enums:
       // COUNTERCLOCKWISE == LARGER   ( ==  1 )
@@ -90,8 +91,8 @@ compare_angles_with_x_axis(const DirectionH2<R>& d1,
   else
   {
       return (orientation(origin, p1, p2) == COUNTERCLOCKWISE) ?
-                                   (Comparison_result) SMALLER :
-                                   (Comparison_result) LARGER;
+                                   static_cast<Comparison_result>(SMALLER) :
+                                   static_cast<Comparison_result>(LARGER);
   }
 }
 

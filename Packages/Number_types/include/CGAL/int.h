@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 inline
 double
 to_double(int i)
-{ return (double)i; }
+{ return static_cast<double>(i); }
 
 inline
 Number_tag
@@ -61,7 +61,7 @@ io_tag(int)
 inline
 double
 to_double(long int i)
-{ return (double)i; }
+{ return static_cast<double>(i); }
 
 inline
 Number_tag
@@ -88,7 +88,7 @@ io_tag(long int)
 inline
 double
 to_double(short int i)
-{ return (double)i; }
+{ return static_cast<double>(i); }
 
 inline
 Number_tag
@@ -117,7 +117,7 @@ io_tag(short int)
 inline
 double
 to_double(long long i)
-{ return (double)i; }
+{ return static_cast<double>(i); }
 
 inline
 Number_tag

@@ -2,6 +2,7 @@
 - Macro cleanups.
 - squared_area() and volume() functions added
 - Towards Simple_homogeneous : PointH2<FT,RT> => PointH2<R> and similar.
+- Remove old style casts.
 
 2.15   (22 Jan 2001)
 - CGAL::compare -> CGAL_NTS compare in SphereH3 to fix a warning.

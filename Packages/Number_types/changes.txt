@@ -1,3 +1,6 @@
+4.8      (?? ??? 01)
+- Remove old style casts.
+
 4.7      (25 Jan 01)
 - Merge the CLN package.
 

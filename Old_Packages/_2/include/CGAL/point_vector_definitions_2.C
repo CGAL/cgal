@@ -47,7 +47,8 @@ operator+(const Point_2<R>& p, const Vector_2<R>& v)
 {
   typedef typename  R::Point_2_base  RPoint_2;
   typedef typename  R::Vector_2_base  RVector_2;
-  return Point_2<R>((const RPoint_2& )p + (const RVector_2& )v) ;
+  return Point_2<R>(static_cast<const RPoint_2&>(p) +
+                    static_cast<const RVector_2&>(v));
 }
 
 template < class R >
@@ -57,7 +58,8 @@ operator-(const Point_2<R>& p, const Vector_2<R>& v)
 {
   typedef typename  R::Point_2_base  RPoint_2;
   typedef typename  R::Vector_2_base  RVector_2;
-  return Point_2<R>((const RPoint_2& )p - (const RVector_2& )v) ;
+  return Point_2<R>(static_cast<const RPoint_2&>(p) -
+                    static_cast<const RVector_2&>(v));
 }
 
 template < class R >
@@ -78,7 +80,8 @@ Vector_2<R>
 operator-(const Point_2<R>& p, const Point_2<R>& q)
 {
   typedef typename  R::Point_2_base  RPoint_2;
-  return Vector_2<R>((const RPoint_2& )p - (const RPoint_2& )q) ;
+  return Vector_2<R>(static_cast<const RPoint_2&>(p) -
+                     static_cast<const RPoint_2&>(q));
 }
 
 template < class R >
@@ -90,13 +93,12 @@ operator-(const Point_2<R>& p, const Origin& )
 template < class R >
 inline
 Vector_2<R>
-operator-(const Origin& , const Point_2<R>& p)
+operator-(const Origin&, const Point_2<R>& p)
 {
   typedef typename  R::Point_2_base  RPoint_2;
-  return Vector_2<R>(ORIGIN - (const RPoint_2& )p) ;
+  return Vector_2<R>(ORIGIN - static_cast<const RPoint_2&>(p));
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_POINT_VECTOR_DEFINITIONS_2_C

@@ -169,7 +169,7 @@ std::ostream&
 operator<<(std::ostream& os, const Plane_3<R>& p)
 {
   typedef typename  R::Plane_3_base  RPlane_3;
-  return os << (const RPlane_3& )p;
+  return os << static_cast<const RPlane_3&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
 
@@ -179,7 +179,7 @@ std::istream&
 operator>>(std::istream& is, Plane_3<R>& t)
 {
   typedef typename  R::Plane_3_base  RPlane_3;
-  return is >> (RPlane_3& )t;
+  return is >> static_cast<RPlane_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3
 

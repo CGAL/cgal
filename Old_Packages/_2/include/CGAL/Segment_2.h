@@ -59,19 +59,17 @@ public:
   {}
 
   Segment_2(const CGAL::Segment_2<R>& s)
-    : RSegment_2((RSegment_2&)s)  // does the handle stuff
+    : RSegment_2(static_cast<const RSegment_2&>(s))  // does the handle stuff
   {}
 
   Segment_2(const CGAL::Point_2<R> &sp, const CGAL::Point_2<R> &ep)
     :  RSegment_2(sp,ep)
   {}
 
-
   // conversion from implementation class object to interface class object
   Segment_2(const RSegment_2& s)
     : RSegment_2(s)  // does the handle stuff
   {}
-
 
   bool  is_horizontal() const
   { return RSegment_2::is_horizontal(); }
@@ -152,7 +150,7 @@ std::ostream &
 operator<<(std::ostream &os, const Segment_2<R> &s)
 {
   typedef typename  R::Segment_2_base  RSegment_2;
-  return os << (const RSegment_2&)s;
+  return os << static_cast<const RSegment_2&>(s);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_2
 
@@ -162,7 +160,7 @@ std::istream &
 operator>>(std::istream &is, Segment_2<R> &s)
 {
   typedef typename  R::Segment_2_base  RSegment_2;
-  return is >> (RSegment_2&)s;
+  return is >> static_cast<RSegment_2&>(s);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
 

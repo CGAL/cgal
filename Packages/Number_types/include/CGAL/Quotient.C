@@ -148,12 +148,12 @@ quotient_cmp(const Quotient<NumberType>& x, const Quotient<NumberType>& y)
     // on the sign of  den  are made
 
     // code assumes that SMALLER == - 1;
-    CGAL_kernel_precondition( SMALLER == (Comparison_result)(-1) );
+    CGAL_kernel_precondition( SMALLER == static_cast<Comparison_result>(-1) );
 
     int xsign = CGAL_NTS sign(x.num) * CGAL_NTS sign(x.den) ;
     int ysign = CGAL_NTS sign(y.num) * CGAL_NTS sign(y.den) ;
-    if (xsign == 0) return (Comparison_result) -ysign;
-    if (ysign == 0) return (Comparison_result)  xsign;
+    if (xsign == 0) return static_cast<Comparison_result>(-ysign);
+    if (ysign == 0) return static_cast<Comparison_result>(xsign);
     // now (x != 0) && (y != 0)
     int diff = xsign - ysign;
     if (diff == 0)

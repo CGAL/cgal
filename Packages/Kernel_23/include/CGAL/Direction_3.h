@@ -54,7 +54,7 @@ public:
   Direction_3()
   {}
   Direction_3(const CGAL::Direction_3<R>& d)
-    : RDirection_3( (const RDirection_3& )d )
+    : RDirection_3( static_cast<const RDirection_3&>(d) )
   {}
   Direction_3(const RDirection_3&  d)
     : RDirection_3(d)
@@ -73,10 +73,10 @@ public:
   { return !(*this == d); }
 
   CGAL::Vector_3<R> vector() const
-  { return (CGAL::Vector_3<R>)RDirection_3::to_vector(); }
+  { return static_cast<CGAL::Vector_3<R> >(RDirection_3::to_vector()); }
 
   CGAL::Vector_3<R> to_vector() const
-  { return (CGAL::Vector_3<R>)RDirection_3::to_vector(); }
+  { return static_cast<CGAL::Vector_3<R> >(RDirection_3::to_vector()); }
 
   CGAL::Direction_3<R> transform(const CGAL::Aff_transformation_3<R> & t) const
   { return RDirection_3::transform(t); }
@@ -103,7 +103,7 @@ template < class R >
 std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
 {
   typedef typename  R::Direction_3_base  RDirection_3;
-  return os << (const RDirection_3& )d; }
+  return os << static_cast<const RDirection_3&>(d); }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
 
 
@@ -112,7 +112,7 @@ template < class R >
 std::istream& operator>>(std::istream& is, Direction_3<R>& p)
 {
   typedef typename  R::Direction_3_base  RDirection_3;
-  return is >> (RDirection_3& )p; }
+  return is >> static_cast<RDirection_3&>(p); }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
 
 CGAL_END_NAMESPACE

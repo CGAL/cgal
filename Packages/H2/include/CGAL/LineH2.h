@@ -377,8 +377,8 @@ LineH2<R>::operator==(const LineH2<R>& l) const
   {
       return false;
   }
-  int sc  = (int)CGAL_NTS sign(c() );
-  int slc = (int)CGAL_NTS sign(l.c() );
+  int sc  = static_cast<int>(CGAL_NTS sign(c()));
+  int slc = static_cast<int>(CGAL_NTS sign(l.c()));
   if ( sc == slc )
   {
       if (sc == 0)

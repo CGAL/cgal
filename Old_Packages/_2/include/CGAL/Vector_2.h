@@ -55,7 +55,8 @@ friend CGAL_FRIEND_INLINE
 
   Vector_2() {}
 
-  Vector_2(const CGAL::Vector_2<R> &v) : RVector_2((const RVector_2&)v) {}
+  Vector_2(const CGAL::Vector_2<R> &v)
+      : RVector_2(static_cast<const RVector_2&>(v)) {}
 
   Vector_2(const RVector_2& v) : RVector_2(v) {}
 
@@ -117,11 +118,17 @@ friend CGAL_FRIEND_INLINE
 
   CGAL::Vector_2<R>
   operator+(const CGAL::Vector_2<R> &w) const
-  { return (const RVector_2&)(*this) + (const RVector_2&)(w); }
+  {
+      return static_cast<const RVector_2&>(*this) +
+             static_cast<const RVector_2&>(w);
+  }
 
   CGAL::Vector_2<R>
   operator-(const CGAL::Vector_2<R> &w) const
-  { return (const RVector_2&)(*this) - (const RVector_2&)(w); }
+  {
+      return static_cast<const RVector_2&>(*this) -
+             static_cast<const RVector_2&>(w);
+  }
 
   CGAL::Vector_2<R>
   operator-() const
@@ -129,25 +136,34 @@ friend CGAL_FRIEND_INLINE
 
   FT
   operator*(const CGAL::Vector_2<R> &w) const
-  { return (const RVector_2&)(*this) * (const RVector_2&)(w); }
+  {
+      return static_cast<const RVector_2&>(*this) *
+             static_cast<const RVector_2&>(w);
+  }
 
-#ifndef VECTOR_WRAPPER
+#ifndef VECTOR_WRAPPER // FIXME : Bad macro name.
   CGAL::Vector_2<R>
   operator*(const RT &c) const
-  { return c * (const RVector_2&)(*this); }
+  { return c * static_cast<const RVector_2&>(*this); }
 
   CGAL::Vector_2<R>
   operator*(const Quotient<RT> &q) const
-  { return (q.numerator() * (const RVector_2&)(*this)) / q.denominator(); }
+  {
+      return (q.numerator() * static_cast<const RVector_2&>(*this))
+      / q.denominator();
+  }
 
   CGAL::Vector_2<R>
   operator/(const Quotient<RT> &q) const
-  { return (q.denominator() * (const RVector_2&)(*this)) / q.numerator(); }
+  {
+      return (q.denominator() * static_cast<const RVector_2&>(*this))
+	  / q.numerator();
+  }
 #endif // VECTOR_WRAPPER
 
   CGAL::Vector_2<R>
   operator/(const RT &c) const
-  { return (const RVector_2&)(*this) / c; }
+  { return static_cast<const RVector_2&>(*this) / c; }
 
   CGAL::Direction_2<R>
   direction() const
@@ -178,7 +194,7 @@ std::ostream &
 operator<<(std::ostream &os, const Vector_2<R> &v)
 {
   typedef typename  R::Vector_2_base  RVector_2;
-  return os << (const RVector_2&)v;
+  return os << static_cast<const RVector_2&>(v);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
 
@@ -188,7 +204,7 @@ std::istream &
 operator>>(std::istream &is, Vector_2<R> &p)
 {
   typedef typename  R::Vector_2_base  RVector_2;
-  return is >> (RVector_2&)p;
+  return is >> static_cast<RVector_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
 

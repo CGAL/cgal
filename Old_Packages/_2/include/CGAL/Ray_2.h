@@ -57,7 +57,7 @@ public:
   {}
 
   Ray_2(const CGAL::Ray_2<R> &r)
-    : RRay_2((const RRay_2&)r)
+    : RRay_2(static_cast<const RRay_2&>(r))
   {
 
   }
@@ -132,7 +132,7 @@ std::ostream &
 operator<<(std::ostream &os, const Ray_2<R> &r)
 {
   typedef typename  R::Ray_2_base  RRay_2;
-  return os << (const RRay_2&)r;
+  return os << static_cast<const RRay_2&>(r);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAY_2
 
@@ -142,7 +142,7 @@ std::istream &
 operator>>(std::istream &is, Ray_2<R> &r)
 {
   typedef typename  R::Ray_2_base  RRay_2;
-  return is >> (RRay_2&)r;
+  return is >> static_cast<RRay_2&>(r);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAY_2
 

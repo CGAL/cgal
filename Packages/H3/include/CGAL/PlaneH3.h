@@ -556,8 +556,8 @@ PlaneH3<R>::operator==(const PlaneH3<R>& l) const
  {
     return false;
  }
- int sd  = (int)CGAL_NTS sign(d() );
- int sld = (int)CGAL_NTS sign(l.d() );
+ int sd  = static_cast<int>(CGAL_NTS sign(d()));
+ int sld = static_cast<int>(CGAL_NTS sign(l.d()));
  if ( sd == sld )
  {
     if (sd == 0)

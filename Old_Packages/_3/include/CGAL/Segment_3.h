@@ -105,7 +105,7 @@ std::ostream&
 operator<<(std::ostream& os, const Segment_3<R>& s)
 {
   typedef typename  R::Segment_3_base  RSegment_3;
-  return os << (const RSegment_3& )s;
+  return os << static_cast<const RSegment_3&>(s);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 
@@ -115,7 +115,7 @@ std::istream&
 operator>>(std::istream& is, Segment_3<R>& s)
 {
   typedef typename  R::Segment_3_base  RSegment_3;
-  return is >> (RSegment_3& )s;
+  return is >> static_cast<RSegment_3&>(s);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 

@@ -48,8 +48,8 @@ compare_lexicographically_xyz( const Point_3<R> &p,
                                const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_lexicographically_xyz((const RPoint_3& )p,
-                                       (const RPoint_3& )q);
+  return compare_lexicographically_xyz(static_cast<const RPoint_3&>(p),
+                                       static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -59,8 +59,8 @@ lexicographically_xyz_smaller_or_equal(const Point_3<R> &p,
                                        const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return ( !( compare_lexicographically_xyz((const RPoint_3& )p,
-                                            (const RPoint_3& )q)
+  return ( !( compare_lexicographically_xyz(static_cast<const RPoint_3&>(p),
+                                            static_cast<const RPoint_3&>(q))
               == LARGER ) );
 }
 
@@ -71,8 +71,8 @@ lexicographically_xyz_smaller(const Point_3<R> &p,
                               const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return ( compare_lexicographically_xyz((const RPoint_3& )p,
-                                         (const RPoint_3& )q)
+  return ( compare_lexicographically_xyz(static_cast<const RPoint_3&>(p),
+                                         static_cast<const RPoint_3&>(q))
            == SMALLER );
 }
 
@@ -82,7 +82,7 @@ Comparison_result
 compare_x(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_x((const RPoint_3& )p, (const RPoint_3& )q);
+  return compare_x(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 
@@ -92,7 +92,7 @@ Comparison_result
 compare_y(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_y((const RPoint_3& )p, (const RPoint_3& )q);
+  return compare_y(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 
@@ -102,7 +102,7 @@ Comparison_result
 compare_z(const Point_3<R> &p, const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return compare_z((const RPoint_3& )p, (const RPoint_3& )q);
+  return compare_z(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -112,7 +112,7 @@ x_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return x_equal((const RPoint_3& )p, (const RPoint_3& )q);
+  return x_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -122,7 +122,7 @@ y_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return y_equal((const RPoint_3& )p, (const RPoint_3& )q);
+  return y_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -132,7 +132,7 @@ z_equal(const Point_3<R> &p,
         const Point_3<R> &q)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return z_equal((const RPoint_3& )p, (const RPoint_3& )q);
+  return z_equal(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q));
 }
 
 template < class R >
@@ -144,8 +144,8 @@ coplanar(const Point_3<R> &p,
          const Point_3<R> &s)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return ( coplanar((const RPoint_3& )p, (const RPoint_3& )q,
-                         (const RPoint_3& )r, (const RPoint_3& )s) );
+  return ( coplanar(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q),
+                         static_cast<const RPoint_3&>(r), static_cast<const RPoint_3&>(s)) );
 }
 
 template < class R >
@@ -156,9 +156,9 @@ collinear(const Point_3<R> &p,
           const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return (collinear((const RPoint_3& )p,
-                    (const RPoint_3& )q,
-                    (const RPoint_3& )r));
+  return (collinear(static_cast<const RPoint_3&>(p),
+                    static_cast<const RPoint_3&>(q),
+                    static_cast<const RPoint_3&>(r)));
 }
 
 template < class R >
@@ -169,9 +169,9 @@ are_ordered_along_line(const Point_3<R> &p,
                        const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return (are_ordered_along_line((const RPoint_3& )p,
-                                 (const RPoint_3& )q,
-                                 (const RPoint_3& )r));
+  return (are_ordered_along_line(static_cast<const RPoint_3&>(p),
+                                 static_cast<const RPoint_3&>(q),
+                                 static_cast<const RPoint_3&>(r)));
 }
 
 template < class R >
@@ -182,9 +182,9 @@ collinear_are_ordered_along_line(const Point_3<R> &p,
                                  const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return collinear_are_ordered_along_line((const RPoint_3& )p,
-                                          (const RPoint_3& )q,
-                                          (const RPoint_3& )r
+  return collinear_are_ordered_along_line(static_cast<const RPoint_3&>(p),
+                                          static_cast<const RPoint_3&>(q),
+                                          static_cast<const RPoint_3&>(r)
                                               );
 }
 
@@ -196,9 +196,9 @@ are_strictly_ordered_along_line(const Point_3<R> &p,
                                 const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return (are_strictly_ordered_along_line((const RPoint_3& )p,
-                                          (const RPoint_3& )q,
-                                          (const RPoint_3& )r));
+  return (are_strictly_ordered_along_line(static_cast<const RPoint_3&>(p),
+                                          static_cast<const RPoint_3&>(q),
+                                          static_cast<const RPoint_3&>(r)));
 }
 
 template < class R >
@@ -209,9 +209,9 @@ collinear_are_strictly_ordered_along_line(const Point_3<R> &p,
                                           const Point_3<R> &r)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return collinear_are_strictly_ordered_along_line((const RPoint_3& )p,
-                                                   (const RPoint_3& )q,
-                                                   (const RPoint_3& )r
+  return collinear_are_strictly_ordered_along_line(static_cast<const RPoint_3&>(p),
+                                                   static_cast<const RPoint_3&>(q),
+                                                   static_cast<const RPoint_3&>(r)
                                               );
 }
 
@@ -224,8 +224,8 @@ orientation(const Point_3<R> &p,
                  const Point_3<R> &s)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return orientation((const RPoint_3& )p, (const RPoint_3& )q,
-                     (const RPoint_3& )r, (const RPoint_3& )s);
+  return orientation(static_cast<const RPoint_3&>(p), static_cast<const RPoint_3&>(q),
+                     static_cast<const RPoint_3&>(r), static_cast<const RPoint_3&>(s));
 }
 
 template <class R >
@@ -238,11 +238,11 @@ side_of_bounded_sphere( const Point_3<R> &p,
                         const Point_3<R> &test)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return side_of_bounded_sphere((const RPoint_3& )p,
-                                (const RPoint_3& )q,
-                                (const RPoint_3& )r,
-                                (const RPoint_3& )s,
-                                (const RPoint_3& )test);
+  return side_of_bounded_sphere(static_cast<const RPoint_3&>(p),
+                                static_cast<const RPoint_3&>(q),
+                                static_cast<const RPoint_3&>(r),
+                                static_cast<const RPoint_3&>(s),
+                                static_cast<const RPoint_3&>(test));
 }
 
 template <class R >
@@ -255,11 +255,11 @@ side_of_oriented_sphere( const Point_3<R> &p,
                          const Point_3<R> &test)
 {
   typedef typename  R::Point_3_base  RPoint_3;
-  return side_of_oriented_sphere((const RPoint_3& )p,
-                                 (const RPoint_3& )q,
-                                 (const RPoint_3& )r,
-                                 (const RPoint_3& )s,
-                                 (const RPoint_3& )test);
+  return side_of_oriented_sphere(static_cast<const RPoint_3&>(p),
+                                 static_cast<const RPoint_3&>(q),
+                                 static_cast<const RPoint_3&>(r),
+                                 static_cast<const RPoint_3&>(s),
+                                 static_cast<const RPoint_3&>(test));
 }
 
 CGAL_END_NAMESPACE

@@ -841,8 +841,7 @@ template < class R >
 inline
 Aff_transformation_rep_baseH3<R>*
 Aff_transformationH3<R>::ptr() const
-// static_cast
-{ return (Aff_transformation_rep_baseH3<R>*) PTR; }
+{ return static_cast<Aff_transformation_rep_baseH3<R>*>(PTR); }
 
 template < class R >
 inline

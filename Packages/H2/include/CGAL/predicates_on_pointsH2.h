@@ -828,14 +828,14 @@ _where_wrt_L_wedge( const PointH2<R>& p,
   const RT& qhy = q.hy_ref();
   const RT& qhw = q.hw_ref();
 
-  int xs = (int)CGAL_NTS sign( qhx*phw - phx*qhw );  // sign( qx - px )
-  int ys = (int)CGAL_NTS sign( qhy*phw - phy*qhw );  // sign( qy - py )
+  Sign xs = CGAL_NTS sign( qhx*phw - phx*qhw );  // sign( qx - px )
+  Sign ys = CGAL_NTS sign( qhy*phw - phy*qhw );  // sign( qy - py )
 
-  if (( xs == -1 ) || ( ys == -1 ))
+  if (( xs == NEGATIVE ) || ( ys == NEGATIVE ))
   {
       return ON_NEGATIVE_SIDE;
   }
-  if (( xs ==  1 ) && ( ys ==  1 ))
+  if (( xs == POSITIVE ) && ( ys == POSITIVE ))
   {
       return ON_POSITIVE_SIDE;
   }
