@@ -179,11 +179,11 @@ compare_xC2_SAF(
   Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b, epsilon_1);
   
   
-  Static_filter_error Static_filter_error0(0);
-  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, Static_filter_error0, l1c,
-                                      l2a, l2b, Static_filter_error0, l2c,
-                                      h1a, Static_filter_error0, h1b, h1c,
-                                      h2a, Static_filter_error0, h2b, h2c, epsilon_2);
+  Static_filter_error FT0(0);
+  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
+                                      l2a, l2b, FT0, l2c,
+                                      h1a, FT0, h1b, h1c,
+                                      h2a, FT0, h2b, h2c, epsilon_2);
   CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
   return Comparison_result (- sign1 * sign2 * sign3);
 }
@@ -211,11 +211,11 @@ compare_xC2_SAF(
   Sign sign2 = sign_of_determinant2x2_SAF(h1a, h1b, h2a, h2b, epsilon_1);
   
   
-  Restricted_double Restricted_double0(0);
-  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, Restricted_double0, l1c,
-                                      l2a, l2b, Restricted_double0, l2c,
-                                      h1a, Restricted_double0, h1b, h1c,
-                                      h2a, Restricted_double0, h2b, h2c, epsilon_2);
+  Restricted_double FT0(0);
+  Sign sign3 = sign_of_determinant4x4_SAF(l1a, l1b, FT0, l1c,
+                                      l2a, l2b, FT0, l2c,
+                                      h1a, FT0, h1b, h1c,
+                                      h2a, FT0, h2b, h2c, epsilon_2);
   CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
   return Comparison_result (- sign1 * sign2 * sign3);
 }
@@ -756,14 +756,14 @@ compare_y_at_xC2_SAF(
     double & epsilon_2,
     double & epsilon_3)
 {
-  Static_filter_error Static_filter_error0(0);
+  Static_filter_error FT0(0);
   Sign s1 = lexicographical_sign_SAF(h1b, -h1a, epsilon_0);
   Sign s2 = lexicographical_sign_SAF(h2b, -h2a, epsilon_1);
   Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b, epsilon_2);
-  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, Static_filter_error0, h2c,
-                                   l1a, Static_filter_error0, l1b, l1c,
-                                   l2a, Static_filter_error0, l2b, l2c,
-                                   h1a, h1b, Static_filter_error0, h1c, epsilon_3);
+  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
+                                   l1a, FT0, l1b, l1c,
+                                   l2a, FT0, l2b, l2c,
+                                   h1a, h1b, FT0, h1c, epsilon_3);
   return Comparison_result (s1 * s2 * s3 * s4);
 }
 
@@ -787,14 +787,14 @@ compare_y_at_xC2_SAF(
     const double & epsilon_2,
     const double & epsilon_3)
 {
-  Restricted_double Restricted_double0(0);
+  Restricted_double FT0(0);
   Sign s1 = lexicographical_sign_SAF(h1b, -h1a, epsilon_0);
   Sign s2 = lexicographical_sign_SAF(h2b, -h2a, epsilon_1);
   Sign s3 = sign_of_determinant2x2_SAF(l1a, l1b, l2a, l2b, epsilon_2);
-  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, Restricted_double0, h2c,
-                                   l1a, Restricted_double0, l1b, l1c,
-                                   l2a, Restricted_double0, l2b, l2c,
-                                   h1a, h1b, Restricted_double0, h1c, epsilon_3);
+  Sign s4 = sign_of_determinant4x4_SAF(h2a, h2b, FT0, h2c,
+                                   l1a, FT0, l1b, l1c,
+                                   l2a, FT0, l2b, l2c,
+                                   h1a, h1b, FT0, h1c, epsilon_3);
   return Comparison_result (s1 * s2 * s3 * s4);
 }
 
