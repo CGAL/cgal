@@ -86,9 +86,9 @@ possible for vertices, halfedges and faces.
 \end{ccHtmlOnly}
 
 A \ccRefName\ organizes the internal storage of its items.  Examples
-are a list-based or an \stl\ vector-based storage. The \ccRefName\ 
-exhibits most of the characteristics of the container class used
-internally, for example the iterator category. An \stl\ vector resizes
+are a list-based or a vector-based storage. The \ccRefName\ exhibits
+most of the characteristics of the container class used internally,
+for example the iterator category. A vector resizes
 automatically when a new item exceeds the reserved space. Since
 resizing is an expensive operation for a \ccRefName\ in general and
 only possible in a well defined state of the data structure (no
@@ -224,9 +224,10 @@ refers to the instantiated \ccc{HalfedgeDS} --
 Implementing these functions relies on the fundamental assumption that
 an iterator (or handle) of the internally used container class can be
 contructed from a pointer of a contained item only. This is true and
-controlled by us for \ccc{CGAL::In_place_list}. It is true for
-\ccc{std::list} and \ccc{std::vector} of major \stl\ distributions,
-but not necessarily guaranteed.
+controlled by us for \ccc{CGAL::In_place_list}. It is true for the
+\ccc{std::vector} of major \stl\ distributions, but not necessarily 
+guaranteed. We might switch to an internal implementation if need
+arises.
 
 \ccFunction{static Vertex_handle 
   HalfedgeDS::vertex_handle( Vertex_base* v);}{}
@@ -468,9 +469,8 @@ a halfedge. The is no automatic update required.
 \ccHasModels
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_default<Traits>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_in_place_list<Traits,Items>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_list<Traits,Items>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector<Traits,Items>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_list<Traits,Items>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vector<Traits,Items>}
 
 % +-----------------------------------+
 \ccSeeAlso
@@ -502,7 +502,7 @@ following program fragment illustrates this workaround:
     class HalfedgeDS {
     public:
         typedef HalfedgeDS<Traits,Items> Self;
-        HalfedgeDS_using_vector(); // constructors
+        HalfedgeDS_vector(); // constructors
 #else
     struct HalfedgeDS {
     template <class Traits, class Items> 

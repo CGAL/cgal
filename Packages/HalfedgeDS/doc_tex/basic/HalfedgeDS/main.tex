@@ -140,7 +140,7 @@ a plane equation in the face type.
 
 The \ccc{Halfedge_data_structure}, concept \ccc{HalfedgeDS}, is
 responsible of the storage organization of the items. Currently,
-implementations using internally a bidirectional list or an \stl\
+implementations using internally a bidirectional list or a
 vector are provided. The
 \ccc{Halfedge_data_structure} defines the handles and iterators
 belonging to the items. These types are promoted to the declaration of
@@ -151,11 +151,11 @@ provides member functions to insert and delete items, to traverse all
 items, and it gives access to the items in order to manipulate the
 items.
 
-There are already three different models for the \ccc{HalfedgeDS} concept 
-available. Therefore we have kept their interface small. Functionality 
-common to all these models is separated into a helper classes, 
-\ccc{HalfedgeDS_decorator}, \ccc{HalfedgeDS_const_decorator}, and 
-\ccc{HalfedgeDS_items_decorator}, which are not shown in 
+There are two different models for the \ccc{HalfedgeDS} concept
+available and more might come. Therefore we have kept their interface
+small. Functionality common to all these models is separated into a
+helper classes, \ccc{HalfedgeDS_decorator}, \ccc{HalfedgeDS_const_decorator}, 
+and  \ccc{HalfedgeDS_items_decorator}, which are not shown in 
 Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
   <A HREF="Chapter_main.html#figureHalfedgeDSDesign"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
@@ -295,16 +295,11 @@ store this bit as the least significant bit in the next halfedge
 handle.  This example omits the previous pointer. What remains are
 three pointers per halfedge. 
 
-We use the static member function \ccc{halfedge_handle()} to convert 
-from pointers to halfedge handles.
-
-The same solution can be applied to the
-list-based halfedge data structure \ccc{CGAL::HalfedgeDS_using_in_place_list},
-see \texttt{examples/HalfedgeDS/hds\_prog\_compact2.C}. The list-based
-halfedge data structure \ccc{CGAL::HalfedgeDS_using_list} cannot be
-used since the pairwise allocation of halfedges is here not guaranteed 
-to happen in consecutive memory locations. Here is the example for the 
-vector based data structure.
+We use the static member function \ccc{halfedge_handle()} to convert
+from pointers to halfedge handles. The same solution can be applied to
+the list-based halfedge data structure \ccc{CGAL::HalfedgeDS_list},
+see \texttt{examples/HalfedgeDS/hds\_prog\_compact2.C}. Here is the
+example for the vector based data structure.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_compact.C}
 

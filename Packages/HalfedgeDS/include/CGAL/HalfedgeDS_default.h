@@ -29,37 +29,35 @@
 #ifndef CGAL_HALFEDGEDS_ITEMS_2_H
 #include <CGAL/HalfedgeDS_items_2.h>
 #endif
-#ifndef CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H
-#include <CGAL/HalfedgeDS_using_in_place_list.h>
+#ifndef CGAL_HALFEDGEDS_IN_PLACE_LIST_H
+#include <CGAL/HalfedgeDS_list.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     template <class p_Traits, class p_Items = HalfedgeDS_items_2>
-    class HalfedgeDS_default
-        : public HalfedgeDS_using_in_place_list< p_Traits, p_Items> {
+    class HalfedgeDS_default : public HalfedgeDS_list< p_Traits, p_Items> {
     public:
         typedef p_Traits Traits;
-        typedef HalfedgeDS_using_in_place_list<p_Traits, p_Items> DS;
+        typedef HalfedgeDS_list<p_Traits, p_Items> DS;
         typedef typename DS::size_type size_type;
         HalfedgeDS_default() {}
         HalfedgeDS_default( size_type v, size_type h, size_type f)
-            : HalfedgeDS_using_in_place_list< p_Traits, p_Items>(v,h,f) {}
+            : HalfedgeDS_list< p_Traits, p_Items>(v,h,f) {}
     };
     #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
 #else
     struct HalfedgeDS_default {
       template <class p_Traits, class p_Items = HalfedgeDS_items_2>
-      class HDS
-          : public HalfedgeDS_using_in_place_list::HDS<p_Traits, p_Items> {
+      class HDS : public HalfedgeDS_list::HDS<p_Traits, p_Items> {
       public:
           typedef p_Traits Traits;
-          typedef HalfedgeDS_using_in_place_list::HDS<p_Traits, p_Items> DS;
+          typedef HalfedgeDS_list::HDS<p_Traits, p_Items> DS;
           typedef typename DS::size_type size_type;
           //HDS() {}
           //HDS( size_type v, size_type h, size_type f)
-          // : HalfedgeDS_using_in_place_list::HDS<p_Traits, p_Items>(v,h,f) {}
+          // : HalfedgeDS_list::HDS<p_Traits, p_Items>(v,h,f) {}
           HDS();
           HDS( size_type v, size_type h, size_type f);
       };
@@ -70,7 +68,7 @@ CGAL_BEGIN_NAMESPACE
     template <class p_Traits, class p_Items>
     HalfedgeDS_default::HDS<p_Traits, p_Items>::
     HDS( size_type v, size_type h, size_type f)
-        : HalfedgeDS_using_in_place_list::HDS<p_Traits, p_Items>(v,h,f) {}
+        : HalfedgeDS_list::HDS<p_Traits, p_Items>(v,h,f) {}
 
     #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //

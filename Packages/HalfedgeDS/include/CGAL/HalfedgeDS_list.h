@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_using_in_place_list.h
+// file          : HalfedgeDS_list.h
 // chapter       : $CGAL_Chapter: Halfedge Data Structures $
 // package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
 // source        : hds_in_place_list.fw
@@ -24,8 +24,8 @@
 // Halfedge Data Structure Using an in-place List Implementation.
 // ============================================================================
 
-#ifndef CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H
-#define CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H 1
+#ifndef CGAL_HALFEDGEDS_LIST_H
+#define CGAL_HALFEDGEDS_LIST_H 1
 #ifndef CGAL_IN_PLACE_LIST_H
 #include <CGAL/In_place_list.h>
 #endif
@@ -101,11 +101,11 @@ public:
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems>
-class HalfedgeDS_using_in_place_list {
+class HalfedgeDS_list {
 public:
-    typedef HalfedgeDS_using_in_place_list<Traits_,HalfedgeDSItems> Self;
+    typedef HalfedgeDS_list<Traits_,HalfedgeDSItems> Self;
 #else
-struct HalfedgeDS_using_in_place_list {
+struct HalfedgeDS_list {
 template < class Traits_, class HalfedgeDSItems>
 class HDS {
 public:
@@ -223,20 +223,20 @@ private:
 
 public:
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    HalfedgeDS_using_in_place_list()
+    HalfedgeDS_list()
         : nb_border_halfedges(0), nb_border_edges(0) {}
         // the empty polyhedron `P'.
 
-    HalfedgeDS_using_in_place_list( size_type, size_type, size_type)
+    HalfedgeDS_list( size_type, size_type, size_type)
         : nb_border_halfedges(0), nb_border_edges(0) {}
         // Parameter order is v,h,f.
         // a polyhedron `P' with storage reserved for v vertices, h
         // halfedges, and f faces. The reservation sizes are a hint for
         // optimizing storage allocation. They are not used here.
 
-    ~HalfedgeDS_using_in_place_list() { clear(); }
+    ~HalfedgeDS_list() { clear(); }
 
-    HalfedgeDS_using_in_place_list( const Self& hds)
+    HalfedgeDS_list( const Self& hds)
 #else
     HDS() : nb_border_halfedges(0), nb_border_edges(0) {}
     HDS( size_type, size_type, size_type)
@@ -492,9 +492,9 @@ public:
 
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#define CGAL__HDS_IP_List HalfedgeDS_using_in_place_list
+#define CGAL__HDS_IP_List HalfedgeDS_list
 #else
-#define CGAL__HDS_IP_List HalfedgeDS_using_in_place_list::HDS
+#define CGAL__HDS_IP_List HalfedgeDS_list::HDS
 #endif
 
 // A class for comparing handles, used in the maps below.
@@ -620,5 +620,5 @@ normalize_border() {
 #undef CGAL__HDS_IP_List
 
 CGAL_END_NAMESPACE
-#endif // CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H //
+#endif // CGAL_HALFEDGEDS_LIST_H //
 // EOF //

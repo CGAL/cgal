@@ -45,6 +45,7 @@ can be bypassed by the user, but not by accident.)
 
 \ccThree{Halfedge_const_handle}{v.set_halfedge( Halfedge_handle h);}{}
 \ccThreeToTwo
+%\ccTwo{HalfedgeDSFace:: Halfedge_const_handleXX}{}
 
 \ccNestedType{HalfedgeDS}
     {instantiated \ccc{HalfedgeDS} ( $\equiv$ \ccc{Refs}).}
@@ -67,7 +68,7 @@ can be bypassed by the user, but not by accident.)
 \ccGlue
 \ccNestedType{Face_const_handle}{}
 \ccGlue
-\ccNestedType{Supports_face_halfedge}{either \ccc{CGAL::Tag_true} or 
+\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
 
 \ccCreation
@@ -91,15 +92,15 @@ can be bypassed by the user, but not by accident.)
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+\ccIdfierPage{CGAL::HalfedgeDS_face_base<Refs>},
+\ccIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{HalfedgeDS}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
-\ccRefIdfierPage{HalfedgeDSVertex}\\
-\ccRefIdfierPage{HalfedgeDSHalfedge}
+\ccIdfierPage{HalfedgeDS},
+\ccIdfierPage{HalfedgeDSItems},
+\ccIdfierPage{HalfedgeDSVertex},
+\ccIdfierPage{HalfedgeDSHalfedge}.
 
 \ccTagDefaults
 \end{ccRefConcept}

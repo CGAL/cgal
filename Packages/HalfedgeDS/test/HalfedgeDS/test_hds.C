@@ -101,96 +101,19 @@ void test_HalfedgeDS_default() {
     CGAL_assertion_code( Halfedge_iterator i = hds.halfedges_begin(); )
     CGAL_assertion(!(i == hds.halfedges_end()));
 }
-#ifndef CGAL_HALFEDGEDS_USING_LIST_H
-#include <CGAL/HalfedgeDS_using_list.h>
+
+#ifndef CGAL_HALFEDGEDS_VECTOR_H
+#include <CGAL/HalfedgeDS_vector.h>
 #endif
 
-void test_HalfedgeDS_using_list() {
-    // Instantiation of the halfedge data structure using list
-    // and maximal bases for polyhedral surfaces.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef CGAL::HalfedgeDS_using_list< Dummy_traits_3,
-                                         CGAL::Polyhedron_items_3> HDS;
-#else
-    typedef CGAL::HalfedgeDS_using_list::HDS< Dummy_traits_3,
-                                         CGAL::Polyhedron_items_3> HDS;
-#endif
-    typedef HDS::Halfedge          Halfedge;
-    typedef Halfedge::Base         HBase;
-    typedef HDS::Face_handle       Face_handle;
-    typedef CGAL::HalfedgeDS_decorator<HDS> Decorator;
-
-    HDS hds;
-    Decorator D(hds);
-
-    D.create_loop();
-    CGAL_assertion( hds.size_of_vertices() == 1);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 2);
-    CGAL_assertion( D.is_valid( false, 3));
-    D.make_hole( hds.halfedges_begin()->opposite());
-    hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 1);
-    CGAL_assertion( hds.size_of_border_edges() == 1);
-    CGAL_assertion( D.is_valid( false, 4));
-    D.fill_hole( hds.halfedges_begin()->opposite());
-    hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 0);
-    CGAL_assertion( hds.size_of_border_edges() == 0);
-    CGAL_assertion( D.is_valid( false, 4));
-
-    HDS hds2(hds); // copy constructor.
-    CGAL_assertion_code( Decorator D2(hds2); )
-    CGAL_assertion( D2.is_valid( false, 4));
-
-    hds = hds2; // assignment.
-    CGAL_assertion( D.is_valid( false, 4));
-
-    typedef HDS::Halfedge_iterator Halfedge_iterator;
-    CGAL_assertion_code( Halfedge_iterator i = hds.halfedges_begin(); )
-    CGAL_assertion(!(i == hds.halfedges_end()));
-}
-
-void test_HalfedgeDS_using_list_min() {
-    // Instantiation of the halfedge data structure using vector
-    // and minimal bases as for an undirected graph.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef CGAL::HalfedgeDS_using_list< Empty_traits,
-                                         CGAL::HalfedgeDS_min_items> HDS;
-#else
-    typedef CGAL::HalfedgeDS_using_list::HDS< Empty_traits,
-                                         CGAL::HalfedgeDS_min_items> HDS;
-#endif
-    typedef HDS::Halfedge            Halfedge;
-    typedef HDS::Halfedge_iterator   Halfedge_iterator;
-    typedef Halfedge::Base           HBase;
-
-    HDS hds;
-    hds.edges_push_back( Halfedge(), Halfedge());
-    Halfedge_iterator i = hds.halfedges_begin();
-    Halfedge_iterator j = i;
-    ++j;
-    i->HBase::set_next(j);
-    j->HBase::set_next(i);
-    CGAL_assertion( hds.size_of_vertices() == 0);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 0);
-    hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 0);
-    CGAL_assertion( hds.size_of_border_edges() == 0);
-}
-#ifndef CGAL_HALFEDGEDS_USING_VECTOR_H
-#include <CGAL/HalfedgeDS_using_vector.h>
-#endif
-
-void test_HalfedgeDS_using_vector() {
+void test_HalfedgeDS_vector() {
     // Instantiation of the halfedge data structure using vector
     // and maximal bases for polyhedral surfaces.
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef CGAL::HalfedgeDS_using_vector< Dummy_traits_3,
+    typedef CGAL::HalfedgeDS_vector< Dummy_traits_3,
                                            CGAL::Polyhedron_items_3> HDS;
 #else
-    typedef CGAL::HalfedgeDS_using_vector::HDS< Dummy_traits_3,
+    typedef CGAL::HalfedgeDS_vector::HDS< Dummy_traits_3,
                                            CGAL::Polyhedron_items_3> HDS;
 #endif
     typedef HDS::Halfedge          Halfedge;
@@ -227,14 +150,14 @@ void test_HalfedgeDS_using_vector() {
     CGAL_assertion( D.is_valid( false, 4));
 }
 
-void test_HalfedgeDS_using_vector_min() {
+void test_HalfedgeDS_vector_min() {
     // Instantiation of the halfedge data structure using vector
     // and minimal bases as for an undirected graph.
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    typedef CGAL::HalfedgeDS_using_vector< Empty_traits,
+    typedef CGAL::HalfedgeDS_vector< Empty_traits,
                                            CGAL::HalfedgeDS_min_items> HDS;
 #else
-    typedef CGAL::HalfedgeDS_using_vector::HDS< Empty_traits,
+    typedef CGAL::HalfedgeDS_vector::HDS< Empty_traits,
                                            CGAL::HalfedgeDS_min_items> HDS;
 #endif
     typedef HDS::Halfedge   Halfedge;
@@ -256,10 +179,8 @@ void test_HalfedgeDS_using_vector_min() {
 int main() {
     test_HalfedgeDS_polyhedron_default();
     test_HalfedgeDS_default();
-    test_HalfedgeDS_using_list();
-    test_HalfedgeDS_using_list_min();
-    test_HalfedgeDS_using_vector();
-    test_HalfedgeDS_using_vector_min();
+    test_HalfedgeDS_vector();
+    test_HalfedgeDS_vector_min();
     return 0;
 }
 // EOF //

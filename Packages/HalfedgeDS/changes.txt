@@ -1,5 +1,13 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+
+3.10 (24 Jun 2001)
+
+     - Remove the HalfedgeDS_using_list
+     - Rename HalfedgeDS_using_in_place_list to HalfedgeDS_list
+     - Rename HalfedgeDS_using_vector to HalfedgeDS_vector.
+     - Fixed 'emplate' typo that shows with MSVC only.
+
 3.9 (21 Jun 2001)
 
      - Attempt to fix bug in hds_prog_compact.C. 

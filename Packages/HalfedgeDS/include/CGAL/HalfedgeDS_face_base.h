@@ -170,7 +170,7 @@ public:
 
 // We use Tag_false to indicate that no plane type is provided.
 
-emplate < class Pln>
+template < class Pln>
 struct I_HalfedgeDS_face_base_plane {
     typedef Pln  Plane;
     // No longer required.

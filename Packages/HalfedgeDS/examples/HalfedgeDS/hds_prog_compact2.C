@@ -1,7 +1,7 @@
 // hds_prog_compact2.C
 // --------------------------------------------
 #include <CGAL/HalfedgeDS_items_2.h>
-#include <CGAL/HalfedgeDS_using_in_place_list.h>
+#include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <cstddef>
 
@@ -94,9 +94,9 @@ struct My_items : public CGAL::HalfedgeDS_items_2 {
 
 struct Traits { typedef int Point_2; };
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-  typedef CGAL::HalfedgeDS_using_in_place_list     <Traits, My_items> HDS;
+  typedef CGAL::HalfedgeDS_list     <Traits, My_items> HDS;
 #else
-  typedef CGAL::HalfedgeDS_using_in_place_list::HDS<Traits, My_items> HDS;
+  typedef CGAL::HalfedgeDS_list::HDS<Traits, My_items> HDS;
 #endif
 typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
 

@@ -1,14 +1,14 @@
 // hds_prog_vector.C              
 // -------------------------------------
 #include <CGAL/HalfedgeDS_items_2.h>
-#include <CGAL/HalfedgeDS_using_vector.h>
+#include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
-struct Tr { typedef int Point_2; };
+struct Traits { typedef int Point_2; };
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-typedef CGAL::HalfedgeDS_using_vector     < Tr, CGAL::HalfedgeDS_items_2> HDS;
+typedef CGAL::HalfedgeDS_vector     < Traits, CGAL::HalfedgeDS_items_2> HDS;
 #else
-typedef CGAL::HalfedgeDS_using_vector::HDS< Tr, CGAL::HalfedgeDS_items_2> HDS;
+typedef CGAL::HalfedgeDS_vector::HDS< Traits, CGAL::HalfedgeDS_items_2> HDS;
 #endif
 typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
 

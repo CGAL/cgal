@@ -45,9 +45,8 @@ with bidirectional iterators that supports removal.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_in_place_list}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_list}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vector}\\
 \ccRefIdfierPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3}\\
@@ -59,7 +58,7 @@ with bidirectional iterators that supports removal.
 \ccImplementation
 
 Currently, \ccRefName\ is equivalent to
-\ccc{CGAL::HalfedgeDS_using_in_place_list<Traits>}. 
+\ccc{CGAL::HalfedgeDS_list<Traits>}. 
 The copy constructor and the assignment operator are implemented
 sub-optimally in $O(n \log n)$ for the list representation with $n$ the
 total number of vertices, halfedges, and faces.

@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : HalfedgeDS_using_vector.h
+// file          : HalfedgeDS_vector.h
 // chapter       : $CGAL_Chapter: Halfedge Data Structures $
 // package       : $CGAL_Package: HalfedgeDS 3.3 (27 Sep 2000) $
 // source        : hds_vector.fw
@@ -24,8 +24,8 @@
 // Halfedge Data Structure Using a Vector Implementation.
 // ============================================================================
 
-#ifndef CGAL_HALFEDGEDS_USING_VECTOR_H
-#define CGAL_HALFEDGEDS_USING_VECTOR_H 1
+#ifndef CGAL_HALFEDGEDS_VECTOR_H
+#define CGAL_HALFEDGEDS_VECTOR_H 1
 #ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
 #define CGAL_PROTECT_ALGORITHM
@@ -50,11 +50,11 @@ CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems>
-class HalfedgeDS_using_vector {
+class HalfedgeDS_vector {
 public:
-    typedef HalfedgeDS_using_vector<Traits_,HalfedgeDSItems> Self;
+    typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems> Self;
 #else
-struct HalfedgeDS_using_vector {
+struct HalfedgeDS_vector {
 template < class Traits_, class HalfedgeDSItems>
 class HDS {
 public:
@@ -151,11 +151,11 @@ public:
 
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    HalfedgeDS_using_vector()
+    HalfedgeDS_vector()
         : nb_border_halfedges(0), nb_border_edges(0) {}
         // empty halfedge data structure.
 
-    HalfedgeDS_using_vector( size_type v, size_type h, size_type f)
+    HalfedgeDS_vector( size_type v, size_type h, size_type f)
         : nb_border_halfedges(0), nb_border_edges(0) {
         // halfedge data structure with storage reserved for v vertices, h
         // halfedges, and f faces. The reservation sizes are a hint for
@@ -165,7 +165,7 @@ public:
         faces.reserve(f);
     }
 
-    HalfedgeDS_using_vector( const Self& hds)
+    HalfedgeDS_vector( const Self& hds)
 #else
     HDS() : nb_border_halfedges(0), nb_border_edges(0) {}
     HDS( size_type v, size_type h, size_type f)
@@ -393,9 +393,9 @@ public:
 
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#define CGAL__HalfedgeDS_using_vector HalfedgeDS_using_vector
+#define CGAL__HalfedgeDS_vector HalfedgeDS_vector
 #else
-#define CGAL__HalfedgeDS_using_vector HalfedgeDS_using_vector::HDS
+#define CGAL__HalfedgeDS_vector HalfedgeDS_vector::HDS
 #endif
 
 #define CGAL__V_UPDATE(v) (v_new + ( Vertex_CI   (v.iterator()) - v_old))
@@ -404,7 +404,7 @@ public:
 
 template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HalfedgeDS_using_vector<Traits_,HalfedgeDSItems>::
+CGAL__HalfedgeDS_vector<Traits_,HalfedgeDSItems>::
 pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure with vector starting addresses
@@ -439,7 +439,7 @@ pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
 
 template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HalfedgeDS_using_vector<Traits_,HalfedgeDSItems>::
+CGAL__HalfedgeDS_vector<Traits_,HalfedgeDSItems>::
 normalize_border() {
     nb_border_halfedges = 0;
     nb_border_edges = 0;
@@ -572,8 +572,8 @@ normalize_border() {
     }
 }
 
-#undef CGAL__HalfedgeDS_using_vector
+#undef CGAL__HalfedgeDS_vector
 
 CGAL_END_NAMESPACE
-#endif // CGAL_HALFEDGEDS_USING_VECTOR_H //
+#endif // CGAL_HALFEDGEDS_VECTOR_H //
 // EOF //

@@ -1,11 +1,11 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: HalfedgeDS_using_in_place_list.tex
+% | Reference manual page: HalfedgeDS_vector.tex
 % +------------------------------------------------------------------------+
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSHalfedgeDSusinginplacelistRev}{$Revision$}
-\RCSdefDate{\RCSHalfedgeDSusinginplacelistDate}{$Date$}
+\RCSdef{\RCSHalfedgeDSvectorRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSvectorDate}{$Date$}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,32 +14,31 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_using_in_place_list<Traits,HalfedgeDSItems>}
+\begin{ccRefClass}{HalfedgeDS_vector<Traits,HalfedgeDSItems>}
 
 \ccDefinition
   
 The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept.
-\ccRefName\ is a list-based representation with bidirectional
-iterators that supports removal.
+\ccRefName\ is a vector-based representation with random
+access iterators that does not support removal.
 
-\ccInclude{CGAL/HalfedgeDS_using_in_place_list.h}
+\ccInclude{CGAL/HalfedgeDS_vector.h}
 
 \ccIsModel
 
 \ccRefIdfierPage{HalfedgeDS}
 
 \ccTypes
-\ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
+\ccThree{typedef random_access_iterator_tag;}{Supports_removal;;}{}
 
-\ccTypedef{typedef bidirectional_iterator_tag iterator_category;}{}
+\ccTypedef{typedef random_access_iterator_tag iterator_category;}{}
 \ccGlue
-\ccTypedef{typedef CGAL::Tag_true Supports_removal;}{}
+\ccTypedef{typedef CGAL::Tag_false Supports_removal;}{}
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_list}\\
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
 \ccRefIdfierPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
@@ -49,10 +48,15 @@ iterators that supports removal.
 
 \ccImplementation
 
-\ccRefName\ uses internally the \ccc{CGAL::In_place_list} container class.
-gThe copy constructor and the assignment operator are implemented
-sub-optimally in $O(n \log n)$ for the list representation with $n$ the
-number of vertices plus halfedges plus faces.
+\ccRefName\ uses internally the \stl\ \ccc{std::vector} container
+class. We require that we can create a \ccc{std::vector::iterator}
+from a pointer. If this will not be true any longer for any major \stl\
+distribution we might switch to an internal implementation of a vector.
+
+The capacity is restricted to the reserved size. Allocations
+are not possible beyond the capacity without calling reserve again.
+All handles and iterators are invalidated upon a reserve call that
+increases the capacity.
 
 \end{ccRefClass}
 
