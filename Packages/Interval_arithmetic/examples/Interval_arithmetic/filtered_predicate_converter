@@ -73,6 +73,24 @@ sub treat_CGAL_header {
 #ifndef $new_protect_name\n";
 }
 
+# List of CGAL's enum types.
+@CGAL_return_types=("Sign", "Comparison_result", "Orientation",
+	            "Oriented_side", "Bounded_side");
+%known_return_types=("bool", 1);
+
+foreach (@CGAL_return_types) {
+  $known_return_types{$_}=1;
+  $known_return_types{"CGAL::$_"}=1;
+}
+
+# Warns if the return type is not known
+# (to detect functions returning void or FT)
+sub check_known_type {
+  my ($type) = @_;
+  if (not $known_return_types{$type}) {
+    print STDERR "// Warning: \"$type\" is unknown\n";
+  }
+}
 
 # Main program:
 
@@ -100,18 +118,7 @@ while (<>)
     $after_template=0;
     $in_decl=0;
     $in_def=1;
-    if (($result_type ne "bool") &&
-        ($result_type ne "Sign") &&
-        ($result_type ne "Comparison_result") &&
-        ($result_type ne "Orientation") &&
-        ($result_type ne "Oriented_side") &&
-        ($result_type ne "Bounded_side") &&
-        ($result_type ne "CGAL::Sign") &&
-        ($result_type ne "CGAL::Comparison_result") &&
-        ($result_type ne "CGAL::Orientation") &&
-        ($result_type ne "CGAL::Oriented_side") &&
-        ($result_type ne "CGAL::Bounded_side"))
-      {print STDERR "Warning: $result_type is unknown\n"; }
+    check_known_type($result_type);
     print
 "{
   CGAL::FPU_CW_t backup = CGAL::FPU_get_and_set_cw(CGAL::FPU_cw_up);
