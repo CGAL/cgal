@@ -55,7 +55,8 @@ Qt_widget_layer$(OBJ_EXT): Qt_widget_layer.C \
 
 Qt_widget_standard_toolbar$(OBJ_EXT):  Qt_widget_standard_toolbar.C \
 			../../include/CGAL/IO/Qt_widget_standard_toolbar.h \
-			../../include/CGAL/IO/Qt_widget_history.h
+			../../include/CGAL/IO/Qt_widget_history.h \
+			../../include/CGAL/IO/Qt_widget_show_mouse_coordinates.h
 	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_standard_toolbar.C
 
