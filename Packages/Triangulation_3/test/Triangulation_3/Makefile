@@ -23,6 +23,7 @@ CXXFLAGS = \
 	# -Wold-style-cast
 	# -pedantic
 	# -DCGAL_CHECK_EXPENSIVE \
+	# -DCGAL_CHECK_EXACTNESS \
 
 #---------------------------------------------------------------------#
 #                    linker flags
