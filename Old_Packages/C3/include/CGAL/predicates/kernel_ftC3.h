@@ -324,7 +324,7 @@ has_smaller_signed_dist_to_planeC3(
     return cmp_signed_dist_to_planeC3(ppx, ppy, ppz, pqx, pqy, pqz,
 	    prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
 }
-//CGAL_NO_FILTER_BEGIN
+//CGAL_NO_FILTER_END
 
 CGAL_END_NAMESPACE
 

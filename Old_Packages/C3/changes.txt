@@ -1,3 +1,6 @@
+Version 4.1 (October ?? 1999)
+- Filter related typo in kernel_ftC3.h [Sylvain]
+
 Version 4.0 (October 21 1999)
 - Cosmetic changes (indentation) for cgal-submit scripts
 - Other than that, seems ready for CGAL 2.1
