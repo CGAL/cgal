@@ -75,8 +75,6 @@ public:
   class Point_data;
   class Less_yx;
   class Less_xy;
-  class Less_xy_internal_point;
-  class Less_yx_internal_point;
   template < class Node>
   struct Proj_point;
 
@@ -275,6 +273,9 @@ public:
   class Less_yx
   {
   private:
+    class Less_xy_internal_point;
+    class Less_yx_internal_point;
+
     Traits _gt;
 
     const Traits & traits() const {return _gt;};
