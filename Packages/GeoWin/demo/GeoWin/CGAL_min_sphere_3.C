@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 #else 
 
 #include<CGAL/Cartesian.h>
+#include<CGAL/Cartesian_d.h>
 #include <CGAL/geowin_support.h>
 #include<iostream>
 #include<cstdlib>
@@ -81,11 +82,12 @@ typedef double                                NT;
 typedef double                                NT2;
 #endif
 
-typedef CGAL::Cartesian<NT>                    K;
-typedef CGAL::Optimisation_d_traits_d<K>       Traits;
-typedef CGAL::Min_sphere_d<Traits>             Min_sphere;
-typedef K::Point_3                             Point;
-typedef K::Point_d                             Pointd;
+typedef CGAL::Cartesian<NT>                   K;
+typedef CGAL::Cartesian_d<NT>                 Kd;
+typedef CGAL::Optimisation_d_traits_d<Kd>     Traits;
+typedef CGAL::Min_sphere_d<Traits>            Min_sphere;
+typedef K::Point_3                            Point;
+typedef Kd::Point_d                           Pointd;
 
 // dimension
 const int dim = 3; 

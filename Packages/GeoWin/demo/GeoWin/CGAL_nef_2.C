@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 #include <CGAL/IO/Nef_polyhedron_2_Window_stream.h>
 #include <CGAL/geowin_support.h>
 
-
+/*
 template <>
 struct ring_or_field<leda_integer> {
   typedef ring_with_gcd kind;
@@ -76,6 +76,7 @@ struct ring_or_field<leda_integer> {
   static RT gcd(const RT& r1, const RT& r2) 
   { return LEDA_NAMESPACE_NAME::gcd(r1,r2); }
 };
+*/
 
 typedef CGAL::Extended_homogeneous<leda_integer>              EK;
 typedef CGAL::Nef_polyhedron_2<EK>                            Nef;

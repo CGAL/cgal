@@ -1,3 +1,7 @@
+1.4.5 (02 April 2002)
+- Nef_2 and Min_sphere_3 demos changed
+  (because there were changes in these packages breaking code)
+
 1.4.4 (25 March 2002)
 - Nef_2 demo changed and help added
 
