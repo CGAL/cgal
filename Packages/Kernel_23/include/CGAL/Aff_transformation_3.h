@@ -136,7 +136,7 @@ public:
     transform(const CGAL::Plane_3<R>& pl) const
     {
       return
-      (( const RPlane_3&  )pl).transform( (const RAff_transformation_3& )(*this) );
+      ((const RPlane_3& )pl).transform((const RAff_transformation_3& ) *this);
     }
 #endif // CGAL_NO_PLANE_TRANSFORM_IN_AT
   CGAL::Plane_3<R>       operator()(const CGAL::Plane_3<R>& pl) const

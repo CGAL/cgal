@@ -65,7 +65,7 @@ public:
 
 /*
   bool     operator==(const CGAL::Iso_cuboid_3<R>& r) const
-           { return (const RIso_cuboid_3& )*this == (const RIso_cuboid_3& )r ; }
+           { return (const RIso_cuboid_3& )*this == (const RIso_cuboid_3& )r ;}
   bool     operator!=(const CGAL::Iso_cuboid_3<R>& r) const
            { return !(*this == r); }
   CGAL::Point_3<R>
