@@ -849,8 +849,7 @@ update_edges_to_be_conformed(Vertex_handle va,
 
   do {
     for(int i = 0; i<3; i++) {
-       if( fc->is_constrained(i) && !is_infinite(fc,cw(i)) &&
-	  !is_infinite(fc,ccw(i)) &&
+       if( fc->is_constrained(i) &&
 	  !is_locally_conform(*this, fc, i) )
 	{
 	  const Vertex_handle& v1 = fc->vertex(ccw(i));
