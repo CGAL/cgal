@@ -5261,6 +5261,7 @@ write_linker_flags()
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
     GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
+    QLIBS="${QLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
   else
     # no LEDA --> use libCGALWin
     WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
@@ -5300,7 +5301,11 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(QT_LIB_DIR)"
     fi
-    QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	QLIBS="${LIBS} `lib_option qtmain` `lib_option qt-mt230nc`"
+    else
+	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
+    fi
   fi
 
   LIBS="${LIBS} `math_ldflags`"
