@@ -568,7 +568,7 @@ int main(int argc, char* argv[])
     W << T;
     any_button(W);
     // Copy constructor
-    cout << "copy"<<std::endl;
+    std::cout << "copy"<<std::endl;
     Copy = Triangulation_(T);
     W << CGAL::BLUE;
     W << Copy;
@@ -578,7 +578,7 @@ int main(int argc, char* argv[])
     draw_convex_hull(T, W);
     show_faces_iterator(T,W);
  
-    cout <<std::endl<<std::endl<< "DELAUNAY TRIANGULATION"<<std::endl;
+    std::cout <<std::endl<<std::endl<< "DELAUNAY TRIANGULATION"<<std::endl;
     T_global = (Triangulation_ *)&D;
     W.clear();
     window_input(D, W, opt);
@@ -589,7 +589,7 @@ int main(int argc, char* argv[])
     W << D;
     any_button(W);
     // Copy constructor
-    cout << "copy"<<std::endl;
+    std::cout << "copy"<<std::endl;
     DCopy = Delaunay_(D);
     W << CGAL::BLUE;
     W << DCopy;
