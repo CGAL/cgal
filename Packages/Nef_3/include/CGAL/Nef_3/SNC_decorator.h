@@ -543,13 +543,13 @@ public:
     CGAL_nef3_assertion( ray.source() != point(v));
     CGAL_nef3_assertion( ray.has_on(point(v)));
     Sphere_point sp(ray.source() - point(v));
-    TRACEN( "Locating " << sp <<" in " << point(v));
+    TRACEN( "Locating "<<sp <<" in "<<point(v));
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    TRACEN( "Locating " << sp <<" in " << point(v));
+    TRACEN( "Locating "<<sp <<" in "<<point(v));
     SM_point_locator L(v);
     SObject_handle o = L.locate(sp);
 
@@ -578,18 +578,18 @@ public:
       SVertex_handle sv;
       if ( assign( se, fc)) {
 	TRACEN( "adjacent facet found (SEdges cycle).");
-	TRACEN("se" << PH(se));
+	TRACEN("se"<<PH(se));
 	SM_decorator SD;
-	TRACEN(plane(facet(se)) << "/" << plane(facet(SD.next(se))) << "/" << plane(facet(SD.next(SD.next(se)))));
+	TRACEN(plane(facet(se))<<"/"<<plane(facet(SD.next(se)))<<"/"<<plane(facet(SD.next(SD.next(se)))));
 	f_visible = facet(twin(se));
-	TRACEN("f_visible" << plane(f_visible));
+	TRACEN("f_visible"<<plane(f_visible));
       }
       else if ( assign( sl, fc)) {
 	SM_decorator SD;
-	TRACEN( "adjacent facet found (SHalfloop cycle)." << SD.circle(sl) 
-		<< " with facet " << plane(facet(sl)));
+	TRACEN( "adjacent facet found (SHalfloop cycle)."<<SD.circle(sl) 
+		<< " with facet "<<plane(facet(sl)));
 	f_visible = facet(twin(sl));
-	TRACEN("f_visible" << plane(f_visible));
+	TRACEN("f_visible"<<plane(f_visible));
       }
       else if( assign( sv, fc)) {
 #ifdef _DEBUG
@@ -633,7 +633,7 @@ public:
 			    SD.circle(sh)));
     CGAL_nef3_assertion( _ess.has_on(vec0));
     SHalfedge_around_svertex_circulator send(sh);
-    TRACEN("initial face candidate "<< plane(res) << " with vector  " << vec0);
+    TRACEN("initial face candidate "<< plane(res)<<" with vector  "<<vec0);
 
     // We compare the vectors vec0/vec1 of the facets. The one that is nearest 
     // to pointing in the opposite direction of the ray, is chosen. The 
@@ -673,7 +673,7 @@ public:
     if(rv*plane(res).orthogonal_vector() > FT(0))
       res = twin(res);
 
-    TRACEN("return " << plane(res));
+    TRACEN("return "<<plane(res));
     return res; // never reached
   }
 
@@ -709,13 +709,13 @@ public:
     CGAL_nef3_assertion( ray.source() != point(v));
     CGAL_nef3_assertion( ray.has_on(point(v)));
     Sphere_point sp(ray.source() - point(v));
-    TRACEN( "Locating " << sp <<" in " << point(v));
+    TRACEN( "Locating "<<sp <<" in "<<point(v));
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
 		   Infi_box::degree(sp.hy()) < 2 && 
 		   Infi_box::degree(sp.hz()) < 2 && 
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
-    TRACEN( "Locating " << sp <<" in " << point(v));
+    TRACEN( "Locating "<<sp <<" in "<<point(v));
     SM_point_locator L(v);
     SObject_handle o = L.locate(sp);
 
@@ -735,9 +735,9 @@ public:
       SVertex_handle sv;
       if ( assign( se, fc)) {
 	TRACEN( "adjacent facet found (SEdges cycle).");
-	TRACEN("se" << PH(se));
+	TRACEN("se"<<PH(se));
 	f_visible = facet(twin(se));
-	TRACEN("f_visible" << &f_visible);
+	TRACEN("f_visible"<<&f_visible);
       }
       else if ( assign( sl, fc)) {
 	TRACEN( "adjacent facet found (SHalfloop cycle).");
@@ -832,7 +832,7 @@ public:
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
     CGAL_assertion( point(v0) == point(v1));
     Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
-    //    cerr << "BOP Vertex " << mark(v0) << " " << mark(v1) << std::endl;
+    //    cerr<<"BOP Vertex "<<mark(v0)<<" "<<mark(v1)<<std::endl;
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(v01);
     O.subdivide( v0, v1);
@@ -882,7 +882,7 @@ public:
     SM_decorator SD(v);
     SFace_handle f = SD.new_face();
     SD.mark(f) = mark(c);
-    TRACEN("volume " << &*c << " marked as " << mark(c)); 
+    TRACEN("volume "<<&*c<<" marked as "<<mark(c)); 
     SM_point_locator PL(v);
     PL.init_marks_of_halfspheres(); // necessary to init default marks
     return v;
@@ -947,6 +947,7 @@ public:
     void operator()( Halfedge_handle e0, Object_handle o1, const Point_3& p)
       const {
       TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
+#ifdef _DEBUG
       SNC_decorator D0(snc0);
       TRACEN("edge 0 has source " << point(source(e0)) << " and direction " << D0.tmp_point(e0));
       Halfedge_handle e;
@@ -960,7 +961,7 @@ public:
       }
       else 
       	CGAL_nef3_assertion_msg( 0, "wrong handle");
-      
+#endif      
       SNC_decorator D(result);
       Vertex_handle v0, v1;
       v0 = D.qualify_with_respect( p, Object_handle(e0), snc0);
@@ -1003,15 +1004,15 @@ public:
     //    SETDTHREAD(19*509*43);
     
     TRACEN("=> binary operation");
-#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
+
     TRACEN("=> first operand:");
     SNC_io_parser<SNC_structure> O0(std::cout, *sncp());
     O0.print();
     TRACEN("=> second operand:");
     SNC_io_parser<SNC_structure> O1(std::cout, snc1i);
     O1.print();
-#endif
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
     CGAL_nef3_forall_vertices( v0, *sncp()) {
@@ -1044,7 +1045,7 @@ public:
       else if( assign( c, o)) {
 	//	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
 	  // TODO: to copy the SM on v0, instead of create a volume local view
-	  // and operate it with the vertex
+	  // and operate it with the vertex?
 	  v1 = D.create_local_view_on( p0, c);
 	  binop_local_views( v0, v1, BOP, result);
 	  result.delete_vertex(v1);
@@ -1053,7 +1054,7 @@ public:
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
     CGAL_nef3_forall_vertices( v1, snc1i) {
@@ -1081,7 +1082,7 @@ public:
       else if( assign( c, o)) {
 	//	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  // TODO: to copy the SM on v0, instead of create a volume local view
-	  // and operate it with the vertex
+	  // and operate it with the vertex?
 	  v0 = D.create_local_view_on( p1, c);
 	  binop_local_views( v0, v1, BOP, result);
 	  result.delete_vertex(v0);
@@ -1090,12 +1091,12 @@ public:
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     // Each time the intersect method of the point locator for the 
     // SNC structure finds an intersection between the segment defined
     // by an edge on the other SNC structure, the call back method is
-    // called with the intersecting faces and the intersection point.
+    // called with the intersecting objects and the intersection point.
     // The responsability of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
@@ -1118,26 +1119,26 @@ public:
       ee_intersections++;
       pl1->intersect_with_edges( e0, call_back0);
     }
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     Progress_indicator_cout ef_intersections
       (sncp()->number_of_edges()+snc1i.number_of_edges(),
        "binary_operator: finding edge-facet intersections...");
 
-    TRACEN("number of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("number of vertices (so far...) = "<<result.number_of_vertices());
     TRACEN("=> finding edge0-facet1 intersections...");
     CGAL_nef3_forall_edges( e0, *sncp()) {
       ef_intersections++;
       pl1->intersect_with_facets( e0, call_back0);
     }
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> finding edge1-facet0 intersections...");
     CGAL_nef3_forall_edges( e1, snc1i) {
       ef_intersections++;
       pl()->intersect_with_facets( e1, call_back1);
     }
-    TRACEN("\nnumber of vertices (so far...) = " << result.number_of_vertices());
+    TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> resultant vertices (before simplification): ");
     CGAL_nef3_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));

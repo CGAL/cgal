@@ -9,11 +9,11 @@ class Progress_indicator
  protected:
   long total, current;
  public:
-  Progress_indicator( long n) : total(n), current(0) {
-    CGAL_warning( total > 0);
-  }
+  Progress_indicator( long n) : total(n), current(0) {}
+
   void operator++(int) { 
-    CGAL_warning( current != total);
+    CGAL_assertion( total > 0);
+    CGAL_assertion( current != total);
     ++current; 
   }
   void operator++() {
