@@ -1,12 +1,12 @@
 #include <CGAL/Box_intersection_d.h>
 
 #include <iostream>
-#include <cstdlib>
 #include <vector>
+#include <CGAL/Random.h>
 
 struct Primitive {
     float f;
-    Primitive() : f( drand48() ) {}
+    Primitive() : f( CGAL::default_random.get_double() ) {}
     bool intersect( Primitive *other )
     { return f * other->f > 0.6f; }
 };
@@ -17,8 +17,8 @@ struct User_box : public CGAL::Box_intersection_d::Unique_numbers
     float lo[3], size;
     User_box( Primitive *p ) : primitive( p ) {
         for( unsigned int d = 0; d < 3; ++d )
-            lo[d] = 10.0 * drand48();
-        size = 1 + 3.0 * drand48();
+            lo[d] = 10.0 * CGAL::default_random.get_double();
+        size = 1 + 3.0 * CGAL::default_random.get_double();
     }
 };
 

@@ -1,8 +1,8 @@
 #include <CGAL/Box_intersection_d.h>
 
 #include <iostream>
-#include <cstdlib>
 #include <vector>
+#include <CGAL/Random.h>
 
 typedef CGAL::Box_intersection_d::Box_d< double, 3 > Box;
 
@@ -10,8 +10,8 @@ void fill_boxes( unsigned int n, std::vector<Box>& boxes ) {
     double lo[3], hi[3];
     for( unsigned int i = 0; i < n; ++i ) {
         for( unsigned int d = 0; d < 3; ++d ) {
-            lo[d] = 10 * drand48();
-            hi[d] = lo[d] + 1 + drand48();
+            lo[d] = 10 * CGAL::default_random.get_double();
+            hi[d] = lo[d] + 1 + CGAL::default_random.get_double();
         }
         boxes.push_back( Box( lo, hi) );
     }

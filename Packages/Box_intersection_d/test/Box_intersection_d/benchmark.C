@@ -27,12 +27,12 @@
 
 #include <iostream>
 #include <iomanip>
-#include <cstdlib>
 #include <iterator>
 #include <vector>
 #include <cstdio>
 #include <cmath>
 #include <fstream>
+#include <CGAL/Random.h>
 
 static unsigned int failed = 0;
 
@@ -54,8 +54,10 @@ static void fill_boxes( unsigned int n, Box_container& boxes ) {
     for( unsigned int i = 0; i < n; ++i ) {
         NT lo[DIM], hi[DIM];
         for( unsigned int d = 0; d < DIM; ++d ) {
-            lo[d] = (NT)(drand48() * (n - maxEdgeLength));
-            hi[d] = (NT)(lo[d] + 1 + (drand48() * maxEdgeLength));
+            lo[d] =
+                (NT)(CGAL::default_random.get_double() * (n - maxEdgeLength));
+            hi[d] =
+        (NT)(lo[d] + 1 + (CGAL::default_random.get_double() * maxEdgeLength));
         }
         boxes.push_back( Box( &lo[0], &hi[0]) );
     }
