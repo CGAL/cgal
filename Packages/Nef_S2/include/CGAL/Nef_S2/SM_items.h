@@ -29,7 +29,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -101,9 +101,9 @@ public:
                           
     public:
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os);
+    { std::ostringstream os; set_pretty_mode(os);
       os<<"V"<<point_<<' '<<info_<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str()); return res;
     }
  
   }; // SVertex    
@@ -189,10 +189,10 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os); 
+    { std::ostringstream os; set_pretty_mode(os); 
       os <<"e["<<source_->debug()<<", "
          <<twin_->source_->debug()<<" "<<info_<<"]"<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str()); return res;
     }
 
   }; // SHalfedge
@@ -257,9 +257,9 @@ public:
     const GenPtr& info() const { return info_; }
 
     std::string debug() const
-    { std::ostrstream os; set_pretty_mode(os); 
+    { std::ostringstream os; set_pretty_mode(os); 
       os<<"l"<<circle_<<' '<<info_<<'\0';
-      std::string res(os.str()); os.freeze(0); return res;
+      std::string res(os.str()); return res;
     }
 
   }; // SHalfloop
