@@ -859,7 +859,7 @@ set_compiler_flags()
 	    ;;
 	*CYGWIN*g++-egcs*)
 	    #### settings for egcs/gcc2.8 on linux
-	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25 -D__STL_NO_DRAND48"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/X11R6/lib"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
