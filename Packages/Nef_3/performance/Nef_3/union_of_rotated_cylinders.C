@@ -1,13 +1,70 @@
-#include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
+#ifdef CGAL_NEF3_USE_LEDA_INTEGER
 #include <CGAL/leda_integer.h>
-#include <CGAL/gmpxx.h>
+typedef leda_integer NT;
+#endif
+
+#ifdef CGAL_NEF3_USE_GMPZ
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz NT;
+#endif
+
+#ifdef CGAL_NEF3_USE_LAZY_EXACT_NT
+#include <CGAL/Lazy_nt>
+typedef CGAL::Lazy_nt<NT> RT;
+#else
+typedef NT RT;
+#endif
+
+#ifdef CGAL_NEF3_USE_SIMPLE_HOMOGENEOUS
 #include <CGAL/Simple_homogeneous.h>
+typedef CGAL::Simple_homogeneous<RT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_HOMOGENEOUS
+#include <CGAL/Homogeneous.h>
+typedef CGAL::Homogeneous<RT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_FILTERED_HOMOGENEOUS_3
+#include <CGAL/Filtered_homogeneous_3.h>
+typedef CGAL::Filtered_homogeneous_3<RT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_EXTENDED_HOMOGENEOUS
+#include <CGAL/Extended_homogeneous.h>
+typedef CGAL::Extended_homogeneous<RT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_LEDA_RATIONAL
+#include <LEDA/leda_rational.h>
+typedef leda_rational NT;
+#endif
+
+#ifdef CGAL_NEF3_USE_GMPQ
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq NT;
+#endif
+
+#ifdef CGAL_NEF3_USE_SIMPLE_CARTESIAN
+#include <CGAL/Simple_cartesian.h>
+typedef CGAL::Simple_cartesian<NT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_CARTESIAN
+#include <CGAL/Cartesian.h>
+typedef CGAL::Cartesian<NT> Kernel;
+#endif
+
+#ifdef CGAL_NEF3_USE_EXTENDED_CARTESIAN
+#include <CGAL/Extended_cartesian.h>
+typdef CGAL::Extended_cartesian<NT> Kernel;
+#endif
+
+#include <CGAL/basic.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/rational_rotation.h>
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -15,15 +72,9 @@
 #include <cmath>
 #include <cstddef>
 
-typedef leda_integer                           NT;
-// typedef CGAL::Gmpz                             NT;
-// typedef mpz_class                        NT;
-typedef CGAL::Simple_homogeneous<NT>           Kernel;
-typedef CGAL::SNC_items<Kernel, bool>          SNC_items;
-typedef CGAL::SNC_structure<SNC_items>         SNC_structure;
-typedef CGAL::Nef_polyhedron_3<SNC_items>      Nef_polyhedron;
-typedef CGAL::Polyhedron_3<Kernel>             Polyhedron;
-typedef Kernel::Aff_transformation_3           Aff_transformation_3;
+typedef CGAL::Nef_polyhedron_3<Kernel>      Nef_polyhedron;
+typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
+typedef Kernel::Aff_transformation_3        Aff_transformation_3;
 
 
 Aff_transformation_3 compute_transformation_matrix(double alpha) {
@@ -64,7 +115,6 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
 			    NT(0), NT(0), w,
 			    w);
 
-
   std::cerr << std::endl << "sin(alpha)*w = " << sin_alpha; 
   std::cerr << std::endl << "cos(alpha)*w = " << cos_alpha; 
   std::cerr << std::endl << "w            = " << w;
@@ -74,7 +124,7 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
 
 int main() {
 
-  std::ifstream in("off/ngon100.off");
+  std::ifstream in("off/ngon1000.off");
   Polyhedron poly;
   in >> poly;
   Nef_polyhedron N1(poly);
@@ -90,7 +140,7 @@ int main() {
     N2 = N2.join(N1);
     t.stop();
 
-    CGAL_nef3_assertion(N2.number_of_vertices() == 800);
+    CGAL_assertion(N2.number_of_vertices() == 800);
 
     std::cerr << std::endl << "time         = " << t.time();
     alpha/=10;
