@@ -47,6 +47,9 @@ struct Type_equality_wrapper
     typedef CGAL::Iso_rectangle_2<Kernel>           Iso_rectangle_2;
     typedef CGAL::Aff_transformation_2<Kernel>      Aff_transformation_2;
 
+    // Undocumented stuff.
+    typedef CGAL::Conic_2<Kernel>                   Conic_2;
+
     typedef CGAL::Point_3<Kernel>                   Point_3;
     typedef CGAL::Vector_3<Kernel>                  Vector_3;
     typedef CGAL::Direction_3<Kernel>               Direction_3;
