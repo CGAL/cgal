@@ -1,4 +1,4 @@
-Version 1.47 (?? Mar 01)
+Version 1.47 (9 Apr 01)
 - member template definition in class body for VC++.
 
 Version 1.46 (3 Mar 01)
