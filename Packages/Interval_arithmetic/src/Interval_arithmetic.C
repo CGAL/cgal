@@ -21,7 +21,6 @@
 // ======================================================================
  
 #include <CGAL/basic.h>
-#include <CGAL/Interval_base.h>
 
 // M$ VC++ doesn't like them yet.
 #ifdef CGAL_IA_NEW_FILTERS
