@@ -252,81 +252,144 @@ void box_self_intersection_d(
 }
 
 
-// Generic call for trivial all-pairs algorithm with custom predicate traits.
-template< class RandomAccessIter1, class RandomAccessIter2,
-          class Callback, class BoxPredicateTraits >
-void box_intersection_all_pairs_custom_predicates_d(
-    RandomAccessIter1 begin1, RandomAccessIter1 end1,
-    RandomAccessIter2 begin2, RandomAccessIter2 end2,
-    Callback callback, BoxPredicateTraits traits )
-{
-    Box_intersection_d::all_pairs(begin1, end1, begin2, end2, callback,traits);
-}
-
-
 // Generic call for trivial all-pairs algorithm with box traits parameter.
 // - make all default parameters explicit overloads (workaround)
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< class ForwardIter1, class ForwardIter2,
           class Callback, class BoxTraits >
 void box_intersection_all_pairs_d( 
-    RandomAccessIter1 begin1, RandomAccessIter1 end1,
-    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback, BoxTraits traits)
 {
     typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
-    box_intersection_all_pairs_custom_predicates_d(
-        begin1, end1, begin2, end2, callback, Traits());
+    Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+                                   callback, Traits());
 }
 
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< class ForwardIter1, class ForwardIter2,
           class Callback, class BoxTraits >
 void box_intersection_all_pairs_d( 
-    RandomAccessIter1 begin1, RandomAccessIter1 end1,
-    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
+    Callback callback, BoxTraits traits,
+    Box_intersection_d::Topology topology,
+    Box_intersection_d::Setting setting)
+{
+    bool complete_case = (setting != Box_intersection_d::BIPARTITE);
+    if (topology == Box_intersection_d::CLOSED) {
+        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
+        Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+                                       callback, Traits(), complete_case);
+    } else {
+        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,false> Traits;
+        Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+                                       callback, Traits(), complete_case);
+    }
+}
+
+template< class ForwardIter1, class ForwardIter2,
+          class Callback, class BoxTraits >
+void box_intersection_all_pairs_d( 
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback, BoxTraits traits,
     Box_intersection_d::Topology topology)
 {
-    if (topology == Box_intersection_d::CLOSED) {
-        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
-        box_intersection_all_pairs_custom_predicates_d(
-                   begin1, end1, begin2, end2, callback, Traits());
-    } else {
-        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,false> Traits;
-        box_intersection_all_pairs_custom_predicates_d(
-                   begin1, end1, begin2, end2, callback, Traits());
-    }
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2, callback, traits,
+                                  topology, Box_intersection_d::BIPARTITE);
 }
 
 // Specialized call for trivial all-pairs algorithm with default box traits.
 // - make all default parameters explicit overloads (workaround)
-template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
+template< class ForwardIter1, class ForwardIter2, class Callback >
 void box_intersection_all_pairs_d( 
-    RandomAccessIter1 begin1, RandomAccessIter1 end1,
-    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
                                   callback, Box_traits(), 
                                   Box_intersection_d::CLOSED );   
 }
 
-template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
+template< class ForwardIter1, class ForwardIter2, class Callback >
 void box_intersection_all_pairs_d( 
-    RandomAccessIter1 begin1, RandomAccessIter1 end1,
-    RandomAccessIter2 begin2, RandomAccessIter2 end2,
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type val_t;
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
-                                  callback, Box_traits(), topology );   
+                                  callback, Box_traits(), topology);
 }
 
+template< class ForwardIter1, class ForwardIter2, class Callback >
+void box_intersection_all_pairs_d( 
+    ForwardIter1 begin1, ForwardIter1 end1,
+    ForwardIter2 begin2, ForwardIter2 end2,
+    Callback callback,
+    Box_intersection_d::Topology topology,
+    Box_intersection_d::Setting  setting)
+{
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
+                                  callback, Box_traits(), topology, setting);
+}
+
+// Generic call for trivial all-pairs algorithm with box traits parameter
+// specialized for self-intersection test.
+// - make all default parameters explicit overloads (workaround)
+template< class ForwardIter, class Callback, class BoxTraits >
+void box_self_intersection_all_pairs_d( 
+    ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits traits)
+{
+    typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
+    Box_intersection_d::all_pairs( begin1, end1, callback, Traits());
+}
+
+template< class ForwardIter, class Callback, class BoxTraits >
+void box_self_intersection_all_pairs_d( 
+    ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits traits,
+    Box_intersection_d::Topology topology)
+{
+    if (topology == Box_intersection_d::CLOSED) {
+        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
+        Box_intersection_d::all_pairs( begin1, end1, callback, Traits());
+    } else {
+        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,false> Traits;
+        Box_intersection_d::all_pairs( begin1, end1, callback, Traits());
+    }
+}
+
+// Specialized call for trivial all-pairs algorithm with default box traits.
+// specialized for self-intersection test.
+// - make all default parameters explicit overloads (workaround)
+template< class ForwardIter, class Callback >
+void box_self_intersection_all_pairs_d( 
+    ForwardIter begin1, ForwardIter end1, Callback callback)
+{
+    typedef typename std::iterator_traits<ForwardIter>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
+    box_self_intersection_all_pairs_d( begin1, end1, callback, Box_traits(), 
+                                       Box_intersection_d::CLOSED );   
+}
+
+template< class ForwardIter, class Callback >
+void box_self_intersection_all_pairs_d( 
+    ForwardIter begin1, ForwardIter end1, Callback callback,
+    Box_intersection_d::Topology topology)
+{
+    typedef typename std::iterator_traits<ForwardIter>::value_type val_t;
+    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
+    box_self_intersection_all_pairs_d( begin1, end1, callback, Box_traits(),
+                                       topology);
+}
 
 CGAL_END_NAMESPACE
-
 
 #endif

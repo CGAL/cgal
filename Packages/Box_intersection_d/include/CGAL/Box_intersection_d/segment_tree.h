@@ -41,16 +41,17 @@ namespace Box_intersection_d {
 #define BOX_INTERSECTION_DEBUG 0
 
 
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< class ForwardIter1, class ForwardIter2,
           class Callback, class Traits >
-void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
-                RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                Callback callback, Traits traits )
+void all_pairs( ForwardIter1 p_begin, ForwardIter1 p_end,
+                ForwardIter2 i_begin, ForwardIter2 i_end,
+                Callback callback, Traits traits, bool complete_case = false)
 {
     const int last_dim = Traits::dimension() - 1;
-    for( RandomAccessIter1 p = p_begin; p != p_end; ++p ) {
-        for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
-            if (Traits::id(*p) >= Traits::id(*i) )
+    for( ForwardIter1 p = p_begin; p != p_end; ++p ) {
+        for( ForwardIter2 i = i_begin; i != i_end; ++i ) {
+            if ((complete_case && Traits::id(*p) >= Traits::id(*i))
+                || Traits::id(*p) == Traits::id(*i))
                 continue;
             for( int dim = 0; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
@@ -61,6 +62,27 @@ void all_pairs( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         }
     }
 
+}
+
+template< class ForwardIter, class Callback, class Traits >
+void all_pairs( ForwardIter p_begin, ForwardIter p_end,
+                Callback callback, Traits traits)
+{
+    const int last_dim = Traits::dimension() - 1;
+    // loops actually only up to p_end-1, but we stay with the forward iterator
+    // requirement and have one unnecessary but harmless additional iteration
+    for( ForwardIter p = p_begin; p != p_end; ++p ) {
+        ForwardIter i = p;
+        ++i;
+        for( ; i != p_end; ++i ) {
+            for( int dim = 0; dim <= last_dim; ++dim )
+                if( !Traits::does_intersect( *p, *i, dim ) )
+                    goto no_intersection1;
+            callback( *p, *i );
+        no_intersection1:
+            ;
+        }
+    }
 }
 
 
