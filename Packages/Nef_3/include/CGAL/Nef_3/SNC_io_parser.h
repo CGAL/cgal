@@ -485,7 +485,7 @@ print_sedge(SHalfedge_handle e) const
       << index(D.previous(e)) << ", " << index(D.next(e)) << ", "
       << index(D.source(e)) << ", " << index(D.face(e)) << ", "
       << index(previous(e)) << ", " << index(next(e)) << ", "
-      << D.circle(e) << " }\n";
+      << index(facet(e)) << " } " << D.mark(e) << "\n";
 }
 
 template <typename EW>
@@ -561,6 +561,7 @@ template <typename EW>
 void SNC_io_parser<EW>::
 print_sface(SFace_handle f) const
 { // syntax: index { vertex, fclist, ivlist, sloop, volume }
+  SM_decorator D(f->center_vertex_);
   out << index(f) << " { " << index(f->center_vertex_) << ", "; 
   SFace_cycle_iterator it;
   CGAL_nef3_forall_sface_cycles_of(it,f)
@@ -571,7 +572,7 @@ print_sface(SFace_handle f) const
   out << ", ";
   CGAL_nef3_forall_sface_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
-  out << ", " << index(volume(f)) << " }\n";
+  out << ", " << index(volume(f)) << " } " << D.mark(f) <<"\n";
 }
 
 

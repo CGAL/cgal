@@ -171,7 +171,7 @@ void supporting_segment(Halfedge_handle e, IT it) const
   G.is_forward(e) = true;
   if ( si._from == -1 )  return; // equatorial segment
   G.supp_object(e,si._from) = si._o;
-  TRACEN("   supporting "<<si._from<<" "<<*it);
+  TRACEN("   supporting segment "<<si._from<<" "<<*it);
 }
 
 
@@ -1054,7 +1054,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
         { mark(v,i) = PI[i].mark(target(es)); continue; }
         mark(v,i) = PI[i].mark(es); continue;
       }
-      if ( assign(ls,o) ) { mark(v,i) = PI[i].mark(ls); continue; }
+      if ( assign(ls,o) ) { mark(v,i) = PI[i].mark(ls); TRACEN("loop " << PI[i].circle(ls)); continue; }
       CGAL_nef3_assertion_msg(0,"wrong handle");
     } TRACEN(" vertex marks "<<mark(v,0)<<" "<<mark(v,1));
 
@@ -1070,7 +1070,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
             if ( PI[i].circle(ei) != circle(e) ) { ei = PI[i].twin(ei); }
             CGAL_nef3_assertion( PI[i].circle(ei) == circle(e) ); 
             TRACEN("  supporting edge "<<i<<" "<<PH(ei));
-            incident_mark(twin(e),i) = 
+            incident_mark(twin(e),i) =
               PI[i].mark(PI[i].face(PI[i].twin(ei)));
             mark(e,i) = PI[i].mark(ei);
             incident_mark(e,i) = m_buffer[i] =
@@ -1081,7 +1081,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
             if ( PI[i].circle(li) != circle(e) ) { li = PI[i].twin(li); }
             CGAL_nef3_assertion( PI[i].circle(li) == circle(e) ); 
             TRACEN("  supporting loop "<<i<<" "<<PH(li));
-            incident_mark(twin(e),i) = 
+            incident_mark(twin(e),i) =
               PI[i].mark(PI[i].face(PI[i].twin(li)));
             mark(e,i) = PI[i].mark(li);
             incident_mark(e,i) = m_buffer[i] =
@@ -1127,16 +1127,16 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
   SHalfedge_handle e;
   CGAL_nef3_forall_shalfedges(e,*this)
-    TRACEN(PH(e)<< " " << mark(e,0));
+    TRACEN(PH(e)<< " " << mark(e,0) << " " << incident_mark(e,0));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,PI[0])
-    TRACEN(PH(e)<< " " << PI[0].mark(e) << " " << PI[0].mark(PI[0].face(e)));
+    TRACEN(PH(e)<<  "|" << circle(e) <<"|" << PI[0].mark(e) << " " << PI[0].mark(PI[0].face(e)));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,*this)
-    TRACEN(PH(e) << " " << mark(e,1));
+    TRACEN(PH(e) << " " << mark(e,1) << " " << incident_mark(e,1));
   TRACEN(" ");
   CGAL_nef3_forall_shalfedges(e,PI[1])
-    TRACEN(PH(e) << " " << PI[1].mark(e) << " " << PI[1].mark(PI[1].face(e)));
+    TRACEN(PH(e) <<  "|" << circle(e) <<"|" << PI[1].mark(e) << " " << PI[1].mark(PI[1].face(e)));
   TRACEN(" ");
 
     SFace_handle ff;
@@ -1245,6 +1245,16 @@ void SNC_SM_overlayer<Refs_>::simplify() const
 
   TRACEN("simplifying"); 
 
+  SVertex_handle vy;
+  CGAL_nef3_forall_svertices(vy,*this)
+    TRACEN(PH(vy)); // << " " << mark(vy,0) << " " << mark(vy,1));
+  TRACEN(" ");
+
+  SHalfedge_handle ey;
+  CGAL_nef3_forall_shalfedges(ey,*this)
+    TRACEN(PH(ey) << " " << mark(face(ey))); //  << " " << mark(ey,1));
+  TRACEN(" ");
+
   /* typedef typename CGAL::Partition<SFace_handle>::item partition_item;
      CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
      CGAL::Partition<SFace_handle> FP; */
@@ -1261,23 +1271,35 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   SHalfedge_iterator e, en;
   for(e = shalfedges_begin(); e != shalfedges_end(); e = en) { 
     en = e; ++en; if ( en==twin(e) ) ++en;
-    if ( mark(e) == mark(face(e)) &&
-         mark(e) == mark(face(twin(e))) ) {
-      TRACEN("deleting "<<PH(e));
-      if ( !UF.same_set(Pitem[face(e)],
-			Pitem[face(twin(e))]) ) {
-
-        UF.unify_sets( Pitem[face(e)],
-		       Pitem[face(twin(e))] );
-        TRACEN("unioning disjoint faces");
+    SNC_decorator<Refs_> D;
+    TRACEN("can simplify ? " << PH(e));
+    if(!D.is_sedge_on_infibox(e)) {
+      TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
+      if (( mark(e) == mark(face(e)) && mark(e) == mark(face(twin(e))))){
+	TRACEN("deleting "<<PH(e));
+	if ( !UF.same_set(Pitem[face(e)],
+			  Pitem[face(twin(e))]) ) {
+	  
+	  UF.unify_sets( Pitem[face(e)],
+			 Pitem[face(twin(e))] );
+	  TRACEN("unioning disjoint faces");
+	}
+	if ( is_closed_at_source(e) )
+	  set_face(source(e),face(e));
+	if ( is_closed_at_source(twin(e)))
+	  set_face(target(e),face(e));
+	delete_edge_pair(e);
       }
-      if ( is_closed_at_source(e) )
-        set_face(source(e),face(e));
-      if ( is_closed_at_source(twin(e)))
-        set_face(target(e),face(e));
-      delete_edge_pair(e);
     }
   }
+
+  CGAL_nef3_forall_svertices(vy,*this)
+    TRACEN(PH(vy)); // << " " << mark(vy,0) << " " << mark(vy,1));
+  TRACEN(" ");
+    
+  CGAL_nef3_forall_shalfedges(ey,*this)
+    TRACEN(PH(ey)); //<< " " << mark(ey,0) << " " << mark(ey,1));
+  TRACEN(" ");
 
   CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
   for (e = shalfedges_begin(); e != shalfedges_end(); ++e) {
@@ -1324,6 +1346,15 @@ void SNC_SM_overlayer<Refs_>::simplify() const
       delete_face_only(f);
   }
 
+  SVertex_handle vx;
+  CGAL_nef3_forall_svertices(vx,*this)
+    TRACEN(PH(vx)); // << " " << mark(vx,0) << " " << mark(vx,1));
+  TRACEN(" ");
+
+  SHalfedge_handle ex;
+  CGAL_nef3_forall_shalfedges(ex,*this)
+    TRACEN(PH(ex)); // << " " << mark(ex,0) << " " << mark(ex,1));
+  TRACEN(" ");
 }
 
 

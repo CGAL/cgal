@@ -21,7 +21,7 @@
 // author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>Plane_3(h.a(),h.b(),h.c(),RT(0)
 // maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
@@ -104,6 +104,57 @@ class Nef_polyhedron_3_rep : public Ref_counted
  public:
   Nef_polyhedron_3_rep() : snc_() {}
   ~Nef_polyhedron_3_rep() { snc_.clear(); }
+};
+
+template <typename T>
+struct circle_lt {
+  
+  int max;
+  typedef typename T::Point_3                   Point_3;
+  typedef typename T::RT                        RT;
+
+  circle_lt(int m) :max(m) {};
+  bool operator()(const Point_3& p1, const Point_3& p2) const { 
+    
+    const Quotient<RT> zero(RT(0));
+    Quotient<RT> x[2];
+    Quotient<RT> y[2];
+    //    Quotient<RT> w[2];
+    
+    switch(max) {
+    case 0:
+      x[0] = p1.y(); 
+      y[0] = p1.z();
+      x[1] = p2.y(); 
+      y[1] = p2.z();  
+      break;
+    case 1:
+      x[0] = p1.x(); 
+      y[0] = p1.z();
+      x[1] = p2.x(); 
+      y[1] = p2.z();  
+      break;
+    case 2:
+      x[0] = p1.x(); 
+      y[0] = p1.y();
+      x[1] = p2.x(); 
+      y[1] = p2.y();  
+      break;
+    }
+    
+    if(y[0] >= zero) {
+      if(y[1] < zero) return false;
+      if(x[0] != x[1]) return (x[0]<x[1]);
+      if(x[0] < zero) return (y[0]<y[1]);
+      else return (y[0]>y[1]);
+    }
+    else {
+      if(y[1] >= zero) return true;
+      if(x[0]!=x[1]) return(x[0]>x[1]);
+      if(x[0] > zero) return (y[0]<y[1]);
+      else return  (y[0]>y[1]);
+    }
+  }
 };
 
 /*{\Manpage {Nef_polyhedron_3} {T} {Nef Polyhedra in Space}{N}}*/
@@ -257,6 +308,122 @@ protected:
     C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
   }
 
+  void create_vertices_of_box_with_plane(const Plane_3& h, Boundary b) {
+
+    typedef typename Kernel::RT::NT NT;
+    typedef typename Kernel::RT     RT;
+
+    Point_3 loc(-h.d(),0,0,h.a());
+    Vector_3 orth = h.orthogonal_vector();
+    
+    NT orth_coords[3];
+    orth_coords[0] = orth.hx()[0];
+    orth_coords[1] = orth.hy()[0];
+    orth_coords[2] = orth.hz()[0];
+
+    std::list<Point_3> points;
+    for(int dir=0; dir<3;++dir) {
+ 
+      NT cnst[3];
+      for(int i=0; i<3;i++)
+	cnst[i] = (i==dir? -h.d()[0] : 0);
+
+      NT cross[4][4];
+      cross[0][dir] = -orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
+      cross[1][dir] =  orth_coords[(dir+1)%3]-orth_coords[(dir+2)%3];
+      cross[2][dir] =  orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];  
+      cross[3][dir] = -orth_coords[(dir+1)%3]+orth_coords[(dir+2)%3];
+  
+      for(int i=0;i<4;++i)
+	cross[i][3] = orth_coords[dir];
+
+      cross[0][(dir+1)%3] = cross[3][(dir+1)%3] =  orth_coords[dir];
+      cross[1][(dir+1)%3] = cross[2][(dir+1)%3] = -orth_coords[dir];
+      
+      cross[0][(dir+2)%3] = cross[1][(dir+2)%3] =  orth_coords[dir];
+      cross[2][(dir+2)%3] = cross[3][(dir+2)%3] = -orth_coords[dir];
+
+      for(int i=0; i<4; ++i)
+	if(CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) < CGAL_NTS abs(RT(0,cross[i][3])) ||
+	   (CGAL_NTS abs(RT(cnst[dir],cross[i][dir])) == CGAL_NTS abs(RT(0,cross[i][3])) && dir==0))
+	  points.push_back(Kernel::epoint(cross[i][0],cnst[0],cross[i][1],cnst[1],cross[i][2],cnst[2],cross[i][3]));
+      
+    }
+
+    for(int i=0;i<2;i++)
+      orth_coords[i] = CGAL_NTS abs(orth_coords[i]);
+
+    int max = 0;
+    if(orth_coords[1] > orth_coords[0])
+      max = 1;
+    if(orth_coords[2] > orth_coords[max])
+      max = 2;   
+
+    int min = 0;
+    if(orth_coords[1] < orth_coords[0])
+      min = 1;
+    if(orth_coords[2] < orth_coords[min])
+      min = 2;   
+
+    SNC_constructor C(snc());
+    points.sort(circle_lt<Point_3>(max));
+
+    typename std::list<Point_3>::const_iterator p,prev,next;
+    for(p=points.begin();p!=points.end();p++)
+      cerr << *p << std::endl;
+
+    for(p=points.begin();p!=points.end();p++){
+
+      if(p==points.begin()) prev = --points.end();
+      else { prev = p; prev--;}
+      if(p==--points.end()) next=points.begin();
+      else {next = p; ++next;}
+      TRACEN("points " << *prev << "           " << *p << "      " << *next);
+
+      Vector_3 v= *prev - *p;
+      Sphere_point sp1(v);
+      TRACEN(sp1);
+      sp1 = sp1.normalized();
+      TRACEN(sp1);
+      CGAL_assertion(sp1.hx().degree() == 0);
+      CGAL_assertion(sp1.hy().degree() == 0);
+      CGAL_assertion(sp1.hz().degree() == 0);
+      CGAL_assertion(sp1.hw().degree() == 0);
+
+      v= *next - *p;
+      Sphere_point sp2(v);
+      TRACEN(sp2);
+      sp2 = sp2.normalized();
+      TRACEN(sp2);
+      CGAL_assertion(sp2.hx().degree() == 0);
+      CGAL_assertion(sp2.hy().degree() == 0);
+      CGAL_assertion(sp2.hz().degree() == 0);
+      CGAL_assertion(sp2.hw().degree() == 0);
+
+      TRACEN("sps " << sp1 << "     " << sp2);
+      TRACEN(orth_coords[min] << "|" << orth_coords[(min+1)%3] << "|" << orth_coords[(min+2)%3]);
+
+      if(orth_coords[min]==0 && orth_coords[(min+1)%3] == orth_coords[(min+2)%3]) 
+	C.create_degenerate_corner_frame_point(*p,sp1,sp2,min, max, (b==INCLUDED));
+      else if(CGAL_NTS abs(p->hx()) == CGAL_NTS abs(p->hy()) && CGAL_NTS abs(p->hz()) == CGAL_NTS abs(p->hy()))
+	C.create_corner_frame_point(*p,sp1,sp2,max,(b==INCLUDED));
+      else
+	C.create_frame_point(*p,sp1,sp2,h,(b==INCLUDED));
+    }
+
+    RT sum;
+    sum= h.a()+h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum=-h.a()+h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1, 1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum= h.a()-h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum=-h.a()-h.b()+h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1,-1, 1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum= h.a()+h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum=-h.a()+h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1, 1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum= h.a()-h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner( 1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
+    sum=-h.a()-h.b()-h.c(); if(h.d()!=0 || sum!= 0) { TRACEN(sum); C.create_extended_box_corner(-1,-1,-1, (sum<0 || (sum == 0 && h.d()<0)));}
+    
+  }
+
+
   void add_box_corners(const Plane_3& h, Boundary& b) {
 
     TRACEN("add box corner");
@@ -311,6 +478,10 @@ protected:
   void build_external_structure() {
     SNC_constructor C(snc());
     C.pair_up_halfedges();
+    
+    SNC_io_parser Op(std::cout, snc());
+    Op.print();
+
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
@@ -643,7 +814,7 @@ public:
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _or, rsnc);
     Nef_polyhedron_3<T> res(rsnc);
-    res.clear_box_marks();
+    //    res.clear_box_marks();
     return res;
   }
 
@@ -730,6 +901,7 @@ public:
   { return N1.difference(*this).is_empty(); } 
 
     void transform( const Aff_transformation_3& aff) {
+
         // precondition: the polyhedron as a bounded boundary
         // (needs to be explicitly tested at some time)
         if( is_shared())
@@ -739,7 +911,9 @@ public:
                                      aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
                                      aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
                                      aff.hm(3,3));
+
         SNC_decorator deco( snc());
+
         Vertex_iterator vi;
         CGAL_nef3_forall_vertices( vi, snc()) {
             //Vertex_iterator vi = deco.vertices_begin();
@@ -877,8 +1051,9 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
   TRACEN("construction from plane "<<h);
-  initialize_extended_cube_vertices(EMPTY);
-  add_box_corners(h, b);
+  //  initialize_extended_cube_vertices(EMPTY);
+  create_vertices_of_box_with_plane(h,b);
+  //  add_box_corners(h, b);
   build_external_structure();
 }
 

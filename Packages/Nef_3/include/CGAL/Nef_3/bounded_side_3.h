@@ -67,7 +67,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   typedef typename R::Vector_3 Vector_3;
   typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
-
+  
   if(plane == Plane_3(0,0,0,0)) {
     // TO TEST: code never tested
     IteratorForward p(first);

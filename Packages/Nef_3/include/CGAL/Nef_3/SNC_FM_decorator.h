@@ -396,7 +396,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     if ( G.left_turn(p1,p2,p3) ) { 
       Halffacet_handle f = sncp()->new_halffacet_pair(plane_supporting_facet);
       link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f)); 
-      mark(f) = mark(e); 
+      mark(f) = mark(e);
       TRACEN("  creating new facet object "<<&*f<<" bd "<<&*e);
     }
   }

@@ -473,6 +473,7 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
+
     if ( assign(se,*it) ) { 
       if( is_boundary_object(se)) 
 	undef_boundary_item(se); 
@@ -1124,10 +1125,11 @@ public:
       reset_object_list(hf->boundary_entry_objects_);
 
     }
-
+   
     /* 
      * Edges simplification
      */
+
     Halfedge_iterator e(D.halfedges_begin());
     while( e != D.halfedges_end() && e->is_twin())
       e++;
@@ -1292,6 +1294,7 @@ public:
      }
      Halffacet_iterator f;
      CGAL_nef3_forall_halffacets( f, *this) {
+       if(f->is_twin() || hash_facet[f] != NULL) continue;
        if( uf_facet.find(hash_facet[f]) != hash_facet[f]) {
 	 TRACEN("no find object "<<IO->index(f));
 	 delete_halffacet_pair(f);

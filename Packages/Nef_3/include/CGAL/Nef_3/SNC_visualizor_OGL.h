@@ -727,9 +727,11 @@ static void draw()
   glMultMatrixd( M);
   
   glScaled(s,s,s);
+
   GLdouble z_vec[3] = { rotation.m(2,0) / s,
                         rotation.m(2,1) / s,
                         rotation.m(2,2) / s};
+
   int win = glutGetWindow();
   polyhedra_[win-1].draw( z_vec);
   glPopMatrix();
@@ -853,10 +855,10 @@ public:
   void draw(Vertex_handle v) const
   { 
     Point_3 p = point(v);
-    Point_3 sp(p.hx().eval_at(1000),
-               p.hy().eval_at(1000),
-               p.hz().eval_at(1000),
-               p.hw().eval_at(1000));
+    Point_3 sp(p.hx().eval_at(10000),
+               p.hy().eval_at(10000),
+               p.hz().eval_at(10000),
+               p.hw().eval_at(10000));
     TRACEN("vertex " << sp);
     ppoly_->push_back(double_point(sp), mark(v)); 
   }
@@ -865,14 +867,14 @@ public:
   { 
     Point_3 s = point(source(e));
     Point_3 t = point(target(e));
-    Segment_3 seg(Point_3(s.hx().eval_at(1000),
-                          s.hy().eval_at(1000),
-                          s.hz().eval_at(1000),
-                          s.hw().eval_at(1000)),
-		  Point_3(t.hx().eval_at(1000),
-                          t.hy().eval_at(1000),
-                          t.hz().eval_at(1000),
-                          t.hw().eval_at(1000)));
+    Segment_3 seg(Point_3(s.hx().eval_at(10000),
+                          s.hy().eval_at(10000),
+                          s.hz().eval_at(10000),
+                          s.hw().eval_at(10000)),
+		  Point_3(t.hx().eval_at(10000),
+                          t.hy().eval_at(10000),
+                          t.hz().eval_at(10000),
+                          t.hw().eval_at(10000)));
     TRACEN("edge " << seg);
     ppoly_->push_back(double_segment(seg), mark(e)); 
   }
@@ -888,9 +890,9 @@ public:
 	SHalfedge_around_facet_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
 	  Point_3 p = point(source(hc));
-	  Point_3 sp(p.hx().eval_at(1000),
-                     p.hy().eval_at(1000),
-                     p.hz().eval_at(1000),
+	  Point_3 sp(p.hx().eval_at(10000),
+                     p.hy().eval_at(10000),
+                     p.hz().eval_at(10000),
                      p.hw().eval_at(1));
 	      TRACEN(" ");TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
@@ -906,13 +908,15 @@ public:
 
   void draw() const
   { 
+    SETDTHREAD(53);
     Vertex_iterator v;
     CGAL_nef3_forall_vertices(v,*sncp()) draw(v);
     ppoly_->bbox() = sncp()->bounded_bbox();
     Halfedge_iterator e;
     CGAL_nef3_forall_edges(e,*sncp()) draw(e);
     Halffacet_iterator f;
-    CGAL_nef3_forall_facets(f,*sncp()) draw(f);
+    int i = 0;
+    CGAL_nef3_forall_facets(f,*sncp()) { if(i<22) draw(f); ++i;}
   }
 
 }; // SNC_visualizor_OGL<SNC_>
