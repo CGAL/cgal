@@ -1,2 +1,5 @@
+Version 2.1.3
+Adapted cgal_test and makefile in test directory to new install_cgal.
+
 Version 2.1.2
 Fixed a bug in template specialisation syntax.
