@@ -1,5 +1,12 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.27 (17 Apr 2003)
+     - removed a ;; to get rid of a warning
+
+1.26 (4 Apr 2003)
+     - Fixed bug in division
+     - Removed all VC6 workarounds
+     - Added tests of Extended_cartesian_kernel
 
 1.25 (21 Jan 2003)
 

@@ -26,6 +26,7 @@ int main()
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << CGAL::sweepversion << std::endl;
   CGAL_TEST_START;
+  
 {
   typedef  CGAL::Extended_homogeneous<Integer> EKernel;
   typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
@@ -56,8 +57,8 @@ int main()
   CGAL_TEST((!(N1*N2)) == (!N1+!N2));
 
   Nef_polyhedron N3 = N1.intersection(N2);
-  /* N3 is the first quadrant including the positive y-axis
-     but excluding the origin and the positive x-axis */
+  // N3 is the first quadrant including the positive y-axis
+   //  but excluding the origin and the positive x-axis 
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
@@ -150,6 +151,8 @@ int main()
 
 
 }
+
+
 {
   typedef  CGAL::Filtered_extended_homogeneous<Integer> EKernel;
   typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
@@ -180,8 +183,8 @@ int main()
   CGAL_TEST((!(N1*N2)) == (!N1+!N2));
 
   Nef_polyhedron N3 = N1.intersection(N2);
-  /* N3 is the first quadrant including the positive y-axis
-     but excluding the origin and the positive x-axis */
+  // N3 is the first quadrant including the positive y-axis
+   //  but excluding the origin and the positive x-axis 
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
@@ -276,6 +279,7 @@ int main()
   Nef_polyhedron::EK.print_statistics();
 }
 
+
 {
   typedef double Rational;
   typedef  CGAL::Extended_cartesian<Rational> EKernel;
@@ -312,8 +316,8 @@ int main()
   CGAL_TEST((!(N1*N2)) == (!N1+!N2));
 
   Nef_polyhedron N3 = N1.intersection(N2);
-  /* N3 is the first quadrant including the positive y-axis
-     but excluding the origin and the positive x-axis */
+  // N3 is the first quadrant including the positive y-axis
+   //  but excluding the origin and the positive x-axis 
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
