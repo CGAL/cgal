@@ -399,7 +399,14 @@ They are listed below as such.
 
 \begin{ccClass}{Alpha_shape_vertex_base}
 \ccCreationVariable{v}
+
+\ccTypes
+
+\ccNestedType{Interval3}{A container to store the three special values 
+($\alpha_1, \alpha_2, \alpha_3$) associated with an Alpha Shape Vertex.}
+
 \ccCreation
+
 \ccConstructor{Alpha_shape_vertex_base();}{default constructor.}
 \ccGlue
 \ccConstructor{Alpha_shape_vertex_base(Point p);}{constructor setting
@@ -409,6 +416,7 @@ th point associated to.}
 {constructor setting the point  associated to and an incident face.}
 
 \ccHeading{Access Functions}
+
 \ccMethod{std::pair< Coord_type, Coord_type > get_Range();}
 {returns two alpha values $\alpha_1 \leq \alpha_2$, such as for
 $\alpha$ under $\alpha_2$, the vertex is attached but singular, and
@@ -712,6 +720,23 @@ such that \ccVar\ satisfies the following two properties:\\
 all data weighted points are either on the boundary or in the interior of the regularized version of \ccVar.\\
 If no such value is found, the iterator points to the first element with 
 $\alpha$-value such that \ccVar\ satisfies the second property.}
+
+
+% \ccHeading{Initialization of weights}
+% 
+% \smallskip
+% The weighted alpha shape class provides methods to initialize the
+% weights of points, if they are not given with. These methods are
+% heuristic, and they are only able to deal with sample of points on a
+% contour.
+% 
+% \ccMethod{std::vector<Point>
+%  initialize_weighted_points_to_the_nearest_voronoi_vertex
+%  (std::vector<Point>::const_iterator  first,
+%   std::vector<Point>::const_iterator  last);}
+
+
+
 \ccHeading{I/O}
 
 The I/O operators are defined for \ccStyle{iostream}, and for

@@ -1,5 +1,5 @@
 Version 1.5 :
-add a doc (to be reviewed). add examples.
+added a doc (to be reviewed). add examples.
 
 Version 1.4 :
 g++-2.95.1 support.
