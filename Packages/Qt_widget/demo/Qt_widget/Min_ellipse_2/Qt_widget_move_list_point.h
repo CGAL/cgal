@@ -151,7 +151,7 @@ private:
 
   void delete_pointi(){
     l_of_p->remove(current_v);
-    widget->redraw();	//redraw the scenes
+    widget->redraw();	//redraw the layers
   };
   void move_pointi(){
     on_first = TRUE;
