@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+28 August 2004 Menelaos Karavelas
+- added code for join_vertices and split_vertex methods
+
 25 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
 

@@ -28,6 +28,7 @@
 #include <stack>
 #include <vector>
 #include <algorithm>
+#include <boost/tuple/tuple.hpp>
 
 #if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
 #  define CGAL_T2_USE_ITERATOR_AS_HANDLE
@@ -328,6 +329,21 @@ public:
   void delete_face(Face_handle);
   void delete_vertex(Vertex_handle);
 
+  // split and join operations
+ protected:
+  Vertex_handle join_vertices(Face_handle f, int i, Vertex_handle v);
+
+  typedef
+  boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
+  Fourtuple;
+
+ public:
+  Fourtuple split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1);
+
+  inline Vertex_handle join_vertices(Face_handle f, int i) {
+    return join_vertices(f, i, f->vertex( this->ccw(i) ));
+  }
+  
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
   
@@ -1284,6 +1300,291 @@ delete_vertex(Vertex_handle v)
 #else
   vertex_container().erase(v.base());
 #endif
+}
+
+// split and join operations
+
+template <class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Fourtuple
+Triangulation_data_structure_2<Vb,Fb>::
+split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
+{
+  /*
+  // The following method preforms a split operation of the vertex v
+  // using the faces f1 and g1. The split operation is shown
+  // below.
+  // The names of the variables in the method correspond to the
+  // quantities in the drawings below
+  //
+  // The configuration before the split:
+  //
+  //                  cw(i1)   v3   ccw(i2)
+  //                     *-----*-----*
+  //                    / \    |    / \
+  //                   /   \ f1|f2 /   \
+  //                  /     \  |  /     \
+  //                 /       \ | /       \
+  //                /         \|/v        \
+  //               *-----------*-----------*
+  //                \         /|\         /
+  //                 \       / | \       /
+  //                  \     /  |  \     /
+  //                   \   / g2|g1 \   /
+  //                    \ /    |    \ /
+  //                     *-----*-----*
+  //                 ccw(j2)   v4   cw(j1)
+  //
+  //
+  // The configuration after the split:
+  //
+  //
+  //               cw(i1)      v3     ccw(i2)
+  //                 *---------*---------*
+  //                / \       / \       / \
+  //               /   \  f1 /   \  f2 /   \
+  //              /     \   /  f  \   /     \
+  //             /       \ /     v2\ /       \
+  //            *---------*---------*---------*
+  //             \       / \v1     / \       /
+  //              \     /   \  g  /   \     /
+  //               \   /  g2 \   /  g1 \   /
+  //                \ /       \ /       \ /
+  //                 *---------*---------*
+  //              ccw(j2)      v4      cw(j1)
+  //
+  */
+
+  CGAL_triangulation_expensive_precondition( is_valid() );
+
+  CGAL_triangulation_precondition( dimension() == 2 );
+  CGAL_triangulation_precondition( f1 != Face_handle() && f1->has_vertex(v) );
+  CGAL_triangulation_precondition( g1 != Face_handle() && g1->has_vertex(v) );
+
+  // 1. first we read some information that we will need
+  int i1 = f1->index(v);
+  int j1 = g1->index(v);
+  Face_handle f2 = f1->neighbor( cw(i1) );
+  Face_handle g2 = g1->neighbor( cw(j1) );
+
+  int i2 = f2->index(v);
+  int j2 = g2->index(v);
+
+  Vertex_handle v3 = f1->vertex( ccw(i1) );
+  Vertex_handle v4 = g1->vertex( ccw(j1) );
+
+  // lst is the list of faces adjecent to v stored in
+  // counterclockwise order from g2 to f1) inclusive.
+  // the list idx contains the indices of v in the
+  // faces in lst.
+  std::list<Face_handle> lst;
+  std::list<int>         idx;
+
+  Face_circulator fc(v, g1);
+  Face_handle ff(fc);
+  while ( ff != f2 ) {
+    lst.push_back( ff );
+    idx.push_back( ff->index(v) );
+    fc++;
+    ff = Face_handle(fc);
+  }
+  lst.push_back( ff );
+  idx.push_back( ff->index(v) );
+
+  // 2. we create the new vertices and the two new faces
+  Vertex_handle v1 = v;
+  Vertex_handle v2 = create_vertex();
+  Face_handle f = create_face(v1, v2, v3);
+  Face_handle g = create_face(v2, v1, v4);
+
+  // 3. we update the adjacency information for the new vertices and
+  //    the new faces
+  f->set_neighbor(0, f2);
+  f->set_neighbor(1, f1);
+  f->set_neighbor(2, g);
+  g->set_neighbor(0, g2);
+  g->set_neighbor(1, g1);
+  g->set_neighbor(2, g);
+  v1->set_face(f);
+  v2->set_face(g);
+
+  // 4. update the vertex for the faces f2 through g1 in
+  //    counterclockwise order
+  typename std::list<Face_handle>::iterator fit = lst.begin();
+  typename std::list<int>::iterator         iit = idx.begin();
+  for (; fit != lst.end(); ++fit, ++iit) {
+    (*fit)->set_vertex(*iit, v2);
+  }
+
+  lst.clear();
+  idx.clear();
+
+  // 5. make f and g the new neighbors of f1, f2 and g1, g2
+  //    respectively.
+  f1->set_neighbor(  cw(i1), f );
+  f2->set_neighbor( ccw(i2), f );
+  g1->set_neighbor(  cw(j1), g );
+  g2->set_neighbor( ccw(j2), g );
+
+  CGAL_triangulation_expensive_postcondition( is_valid() );
+
+  // 6. return the new stuff
+  return Fourtuple(v1, v2, f, g);
+}
+
+template <class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
+Triangulation_data_structure_2<Vb,Fb>::
+join_vertices(Face_handle f, int i, Vertex_handle v)
+{
+  CGAL_triangulation_expensive_precondition( is_valid() );
+  CGAL_triangulation_precondition( f != Face_handle() );
+  CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+
+  // this methods does the "join"-operation and preserves
+  // the vertex v among the two vertices that define the edge (f, i) 
+
+  Vertex_handle v1 = f->vertex( ccw(i) );
+  Vertex_handle v2 = f->vertex( cw(i)  );
+
+  CGAL_triangulation_precondition( v == v1 || v == v2 );
+
+  if ( v == v2 ) {
+    return join_vertices(f->neighbor(i), f->mirror_index(i), v);
+  }
+
+  int deg2 = v2->degree();
+
+  CGAL_triangulation_precondition( deg2 >= 3 );
+
+  if ( deg2 == 3 ) {
+    remove_degree_3(v2, f);
+    return v1;
+  }
+  /* the following piece of code used to exist when the method was in
+     the Apollonius_graph_data_structure_2 class, where degree 2
+     vertices are allowed.
+  */     
+  //  if ( deg2 == 2 ) {
+  //    remove_degree_2(v2);
+  //    return v1;
+  //  }
+
+  /*
+  // The following drawing corrsponds to the variables
+  // used in this part...
+  // The vertex v1 is returned...
+  //
+  //      itl       i=v3      itr
+  //       *---------*---------*
+  //        \       / \       /
+  //         \  tl /   \  tr /
+  //          \   /  f  \   /
+  //           \ /       \ /
+  //  v1=ccw(i) *---------*  cw(i)=v2
+  //           / \       / \
+  //          /   \  g  /   \
+  //         /  bl \   /  br \
+  //        /       \ /	      \
+  //       *---------*---------*
+  //      ibl       j=v4      ibr
+  //                                                           
+  // The situation after the "join"-operation is as follows:
+  //
+  //                 i
+  //           *-----*-----*
+  //            \    |    /
+  //             \ tl|tr /
+  //              \  |  /
+  //               \ | /
+  //                \|/
+  //                 *  v1
+  //                /|\
+  //               / | \
+  //              /  |	\
+  //             / bl|br \
+  //            /    |	  \
+  //           *-----*-----*
+  //
+  */
+
+  // first we register all the needed info
+  Face_handle g = f->neighbor(i);
+  int j = f->mirror_index(i);
+
+  Face_handle tl = f->neighbor( cw(i)  );
+  Face_handle tr = f->neighbor( ccw(i) );
+
+  int itl = f->mirror_index( cw(i)  );
+  int itr = f->mirror_index( ccw(i) );
+
+  Face_handle bl = g->neighbor( ccw(j) );
+  Face_handle br = g->neighbor( cw(j)  );
+
+  int ibl = g->mirror_index( ccw(j) );
+  int ibr = g->mirror_index( cw(j)  );
+
+  // we need to store the faces adjacent to v2 as well as the
+  // indices of v2 w.r.t. these faces, so that afterwards we can set 
+  // v1 to be the vertex for these faces
+  std::vector<Face_handle> star_faces_of_v2;
+  std::vector<int> star_indices_of_v2;
+  Face_circulator fc_start(v2);
+  Face_circulator fc = fc_start;
+
+  do {
+    Face_handle ff(fc);
+    star_faces_of_v2.push_back(ff);
+    star_indices_of_v2.push_back(ff->index(v2));
+    ++fc;
+  } while ( fc != fc_start );
+
+  CGAL_triangulation_assertion( int(star_faces_of_v2.size()) == deg2 );
+
+  // from this point and on we modify the values
+
+  // first set the neighbors
+  tl->set_neighbor(itl, tr);
+  tr->set_neighbor(itr, tl);
+
+  bl->set_neighbor(ibl, br);
+  br->set_neighbor(ibr, bl);
+
+  // make sure that all the faces containing v2 as a vertex, now
+  // contain v1
+  for (unsigned int k = 0; k < star_faces_of_v2.size(); k++) {
+    int id = star_indices_of_v2[k];
+    CGAL_triangulation_assertion( star_faces_of_v2[k]->vertex(id) == v2 );
+    star_faces_of_v2[k]->set_vertex( id, v1 );
+  }
+
+  // then make sure that all the vertices have correct pointers to 
+  // faces
+  Vertex_handle v3 = f->vertex(i);
+  Vertex_handle v4 = g->vertex(j);
+  if ( v3->face() == f )  v3->set_face(tr);
+  if ( v4->face() == g )  v4->set_face(br);
+  if ( v1->face() == f || v1->face() == g ) v1->set_face(tl);
+
+
+#ifndef CGAL_NO_ASSERTIONS
+  for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
+    int id;
+    CGAL_triangulation_assertion( !fit->has_vertex(v2, id) );
+  }
+#endif
+
+  // memory management
+  star_faces_of_v2.clear();
+  star_indices_of_v2.clear();
+
+  delete_face(f);
+  delete_face(g);
+
+  delete_vertex(v2);
+
+  CGAL_triangulation_expensive_postcondition( is_valid() );
+
+  return v1;
 }
 
 // CHECKING
