@@ -71,7 +71,7 @@ public:
   void make_x_monotone(const Curve_2 & cv, std::list<X_curve_2>& l) const
   {
     l.clear();
-    l.push_back(X_curve_2(cv));
+    l.push_back(cv);
   } 
 
   X_curve_2 curve_flip(const X_curve_2 & cv) const {
