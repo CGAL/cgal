@@ -56,6 +56,16 @@ public:
 
   // Predicates:
   // -----------
+  /*! \todo introduce less_x and less_y into traits. If possible, remove
+   * compare_x and compare_y. Otherwise, leave both (even though the formers
+   * can be implemented by the laters).
+   */
+  bool point_is_left(const Point_2 & p1, const Point_2 & p2) const
+  { return (compare_x(p1, p2) == SMALLER); }
+  
+  bool point_is_right(const Point_2 & p1, const Point_2 & p2) const
+  { return (compare_x(p1, p2) == LARGER); }
+    
   bool point_is_same_x(const Point_2 & p1, const Point_2 & p2) const
   { return (compare_x(p1, p2) == EQUAL); }
   
@@ -71,10 +81,8 @@ public:
   bool point_is_left_low(const Point_2 & p1, const Point_2 & p2) const
   { 
     Comparison_result k = compare_x(p1, p2);
-    if (k == SMALLER)
-      return true;
-    if ( (k == EQUAL) && (point_is_lower(p1, p2)) )
-      return true;
+    if (k == SMALLER) return true;
+    if ((k == EQUAL) && (point_is_lower(p1, p2))) return true;
     return false;
   }
     
@@ -273,6 +281,15 @@ public:
       curve_is_source_unbounded(cv)||
       curve_is_target_unbounded(cv);
   }
+
+  /*!
+   */
+  Comparison_result compare_xy(const Point_2 & p, const Point_2 & q)
+  {
+    Comparison_result c = compare_x(p,q);
+    return (c != EQUAL) ? c : compare_y(p,q);
+  }
+    
 };
 
 CGAL_END_NAMESPACE

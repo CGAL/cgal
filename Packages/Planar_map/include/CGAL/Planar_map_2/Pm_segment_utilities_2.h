@@ -60,11 +60,8 @@ public Kernel_::Construct_direction_2
     
   Direction_2 operator()(const Segment_2 & cv, const Point_2 & point) const
   { 
-    if (is_equal(construct_vertex(cv, 0), point)) {
-      const Direction_2 & d = Base::operator()(cv);
-      return construct_opposite_direction(d);
-    }
-    return Base::operator()(cv);
+    if (is_equal(construct_vertex(cv, 0), point)) return Base::operator()(cv);
+    return construct_opposite_direction(cv);
   }
 
 private:
@@ -88,35 +85,24 @@ public:
     Kernel kernel;
     is_equal = kernel.equal_2_object();
     construct_vertex = kernel.construct_vertex_2_object();
-    has_on = kernel.has_on_2_object();
   }
 
   Is_vertex_for_segments_2(const Kernel & in_kernel)
   {
     is_equal = in_kernel.equal_2_object();
     construct_vertex = in_kernel.construct_vertex_2_object();
-    has_on = in_kernel.has_on_2_object();
   }
 
-  bool operator()(const Point_2 & point, Segment_2 segment)
+  bool operator()(const Point_2 & point, Segment_2 cv)
   {
-    // is point on segment
-    if (has_on(segment, point)) {
-      const Point_2 & source = construct_vertex(segment, 0);
-      // is point segment's source
-      if (is_equal(source, point)) return true;
-      const Point_2 & target = construct_vertex(segment, 1);
-      // is point is segment's target
-      if (is_equal(target, point)) return true; 
-      return false;
-    }
+    if (is_equal(construct_vertex(cv, 0), point) ||
+        is_equal(construct_vertex(cv, 1), point)) return true; 
     return false;
   }
 
 private:
   typename Kernel::Equal_2 is_equal;
   typename Kernel::Construct_vertex_2 construct_vertex;
-  typename Kernel::Has_on_2 has_on;
 };
 
 /*! 
@@ -131,8 +117,9 @@ public Kernel_::Counterclockwise_in_between_2
   typedef typename Kernel::Counterclockwise_in_between_2 Base;
   typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Direction_2                   Direction_2;
-  typedef struct Is_vertex_for_segments_2<Kernel>        Is_vertex_2;
 
+  typedef struct Is_vertex_for_segments_2<Kernel>        Is_vertex_2;
+    
   typedef CGAL::Construct_direction_at_endpoint_2<Kernel, Segment_2>
                                                          Construct_direction_2;
   Counterclockwise_in_between_for_segments_2()
@@ -161,7 +148,7 @@ public Kernel_::Counterclockwise_in_between_2
                           "point should be an endpoint of first.");
     CGAL_precondition_msg(is_vertex(point, second),
                           "point should be an endpoint of second.");
-
+    
     const Direction_2 & d  = construct_direction(cv,     point);
     const Direction_2 & d1 = construct_direction(first,  point);
     const Direction_2 & d2 = construct_direction(second, point);
@@ -173,16 +160,6 @@ private:
   Construct_direction_2 construct_direction;
   typename Kernel::Counterclockwise_in_between_2 counterclockwise_in_between;
 };
-
-#if 0
-// SHAI: Turn this into a functor
-template <class Segment_2>
-Segment_2 curve_flip(const Segment_2 & cv)
-{
-  typedef typename Segment_2::R Kernel;
-  return Kernel().construct_opposite_segment_2_object()(cv);
-}
-#endif
 
 CGAL_END_NAMESPACE
 

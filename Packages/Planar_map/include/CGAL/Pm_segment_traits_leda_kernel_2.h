@@ -200,7 +200,97 @@ public:
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
   };
+
+  /*!
+   */
+  class Direction_2 : public Point_2 {
+  public:
+    Direction_2(const Point_2 & p) : Point_2(p) {}
+
+    /*!
+     */
+    Sign
+    sign_of_determinant2x2(const FT & a00, const FT & a01,
+                           const FT & a10, const FT & a11) const
+    {
+      return
+      static_cast<Sign>(static_cast<int>(CGAL_NTS compare( a00*a11, a10*a01)));
+    }
     
+    /*!
+     */
+    Comparison_result
+    compare_angle_with_x_axis_2(const FT & dx1, const FT & dy1,
+                                const FT & dx2, const FT & dy2) const
+    {
+      // angles are in [-pi,pi], and the angle between Ox and d1 is compared
+      // with the angle between Ox and d2
+      int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
+        : ((dy1 >= FT(0))?2:3);
+      int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
+        : ((dy2 >= FT(0))?2:3);
+      // We can't use CGAL_NTS compare(quadrant_1,quadrant_2) because in case
+      // of tie, we need additional computation
+      if (quadrant_1 > quadrant_2) return LARGER;
+      else if (quadrant_1 < quadrant_2) return SMALLER;
+      return Comparison_result(-sign_of_determinant2x2(dx1,dy1,dx2,dy2));
+    }
+      
+    /*!
+     */
+    Comparison_result
+    compare_angle_with_x_axis(const Direction_2 & d1,
+                              const Direction_2 & d2) const
+    { return compare_angle_with_x_axis_2(d1.xcoord(), d1.ycoord(),
+                                         d2.xcoord(), d2.ycoord()); }
+
+    /*!
+     */
+    bool operator<(const Direction_2 & d) const
+    { return compare_angle_with_x_axis(*this, d) == SMALLER; }
+
+    /*!
+     */
+    bool operator<=(const Direction_2 & d) const
+    { return compare_angle_with_x_axis(*this, d) != LARGER; }
+      
+    /*!
+     */
+    bool counterclockwise_in_between(const Direction_2 & d1,
+                                     const Direction_2 & d2) const
+    {
+      if (d1 <*this) return (*this < d2 || d2 <= d1);
+      return (*this < d2 && d2 <= d1);
+    }
+  };
+
+  /*!
+   */
+  class Counterclockwise_in_between_2 {
+  public:
+    bool operator()(const Self::Direction_2 & d, const Self::Direction_2 & d1,
+                    const Self::Direction_2 & d2) const
+    {
+      return d.counterclockwise_in_between(d1, d2);
+    }
+  };
+
+  /*!
+   */
+  class Construct_direction_2 {
+  public:
+    Self::Direction_2 operator()(const Segment_2 & cv) const
+    { return Self::Direction_2(cv.target() - cv.source()); }
+  };
+
+  /*!
+   */
+  class Construct_opposite_direction_2 {
+  public:
+    Self::Direction_2 operator()(const Segment_2 & cv) const
+    { return Self::Direction_2(cv.source() - cv.target()); }
+  };
+
   // creators:
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
   Equal_2 equal_2_object() const { return Equal_2(); }
@@ -212,6 +302,12 @@ public:
     { return Compare_y_at_x_2(); }
   Less_x_2 less_x_2_object() const { return Less_x_2(); }
   Compare_slope_2 compare_slope_2_object() const { return Compare_slope_2(); }
+  Counterclockwise_in_between_2 counterclockwise_in_between_2_object() const
+    { return Counterclockwise_in_between_2(); }
+  Construct_direction_2 construct_direction_2_object() const
+    { return Construct_direction_2(); }
+  Construct_opposite_direction_2 construct_opposite_direction_2_object() const
+    { return Construct_opposite_direction_2(); }
 };
 
 CGAL_END_NAMESPACE

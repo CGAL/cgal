@@ -39,6 +39,7 @@ private:
   typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve>
                                                 Counterclockwise_in_between_2;
 
+protected:
   inline Counterclockwise_in_between_2 counterclockwise_in_between_2_object()
     const
   { return Counterclockwise_in_between_2(); }
@@ -112,7 +113,11 @@ public:
   Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
 				       const X_curve_2 & cv2, 
 				       const Point_2 & q) const
-  { return compare_y_at_x_2_object()(q, cv1, cv2); }
+  {
+    if (!curve_is_in_x_range(cv1, q) || !curve_is_in_x_range(cv2, q))
+      return EQUAL;
+    return compare_y_at_x_2_object()(q, cv1, cv2);
+  }
 
   /*! curve_compare_at_x_left() compares the y value of two curves in an
    * epsilon environment to the left of the x value of the input point
@@ -135,6 +140,9 @@ public:
     const Point_2 & source2 = construct_vertex(cv2, 0);
     const Point_2 & target2 = construct_vertex(cv2, 1);
     if (!(less_x(source2, q) || less_x(target2, q))) return EQUAL;
+
+    if (less_x(source1, q) && less_x(target1, q)) return EQUAL;
+    if (less_x(source2, q) && less_x(target2, q)) return EQUAL;
     
     // since the curve is continous 
     Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
@@ -167,6 +175,9 @@ public:
     const Point_2 & target2 = construct_vertex(cv2, 1);
     if (!(less_x(q, source2) || less_x(q, target2))) return EQUAL;
 
+    if (less_x(q, source1) && less_x(q, target1)) return EQUAL;
+    if (less_x(q, source2) && less_x(q, target2)) return EQUAL;
+    
     // since the curve is continous (?)
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
     if (r != EQUAL) return r;     
@@ -223,16 +234,6 @@ public:
    */
   Point_2 curve_target(const X_curve_2 & cv) const 
   { return construct_vertex_2_object()(cv, 1); }
-
-  /*! \todo replace indirect use point_is_left() with less_x_2() 
-   */
-  bool point_is_left(const Point_2 & p1, const Point_2 & p2) const
-  { return less_x_2_object()(p1, p2); }
-
-  /*! \todo replace indirect use point_is_right() with less_x_2()
-   */
-  bool point_is_right(const Point_2 & p1, const  Point_2 & p2) const
-  { return less_x_2_object()(p2, p1); }
 };
 
 CGAL_END_NAMESPACE
