@@ -2783,7 +2783,7 @@ incident_cells(Vertex_handle v,
 	       int dummy_for_windows) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
 
   if ( dimension() < 3 )
       return;
@@ -2811,7 +2811,7 @@ incident_cells(Vertex_handle v,
 	       Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
 
   if ( dimension() < 3 )
       return;
@@ -2840,7 +2840,7 @@ incident_vertices(Vertex_handle v,
 		  int dummy_for_windows) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
       
   if ( number_of_vertices() < 2 )
       return;
@@ -2863,7 +2863,7 @@ incident_vertices(Vertex_handle v,
 		  Cell_handle c ) const
 {
   CGAL_triangulation_precondition( &(*v) != NULL );
-  CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+  CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
       
   if ( number_of_vertices() < 2 )
       return;

@@ -1876,7 +1876,7 @@ insert_increase_dimension(Vertex * v, // new vertex
     // ( geometrically : first finite vertex )
     {
       CGAL_triangulation_precondition( star != NULL );
-      CGAL_triangulation_precondition( is_vertex(star) ); 
+      CGAL_triangulation_expensive_precondition( is_vertex(star) ); 
       // this precondition is not expensive when there is only one vertex!
 
       set_number_of_vertices( number_of_vertices()+1 );
@@ -2234,7 +2234,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 incident_cells(Vertex* v, std::set<Cell*> & cells, Cell* c) const
 {
   CGAL_triangulation_precondition( v != NULL );
-  CGAL_triangulation_precondition( is_vertex(v) );
+  CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
   if ( dimension() < 3 )
       return;
@@ -2260,7 +2260,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 incident_vertices(Vertex* v, std::set<Vertex*> & vertices, Cell* c) const
 {
   CGAL_triangulation_precondition( v != NULL );
-  CGAL_triangulation_precondition( is_vertex(v) );
+  CGAL_triangulation_expensive_precondition( is_vertex(v) );
       
   if ( number_of_vertices() < 2 )
       return;
@@ -2428,7 +2428,8 @@ Triangulation_data_structure_3<Vb,Cb>::
 copy_tds(const Tds & tds, Vertex* vert )
   // returns the new vertex corresponding to vert in the new tds 
 {
-  CGAL_triangulation_precondition( vert==NULL || tds.is_vertex(vert) );
+  CGAL_triangulation_expensive_precondition( vert == NULL
+	                                  || tds.is_vertex(vert) );
 
   std::map< void*, void* > V;
   std::map< void*, void* > F;
