@@ -8,19 +8,25 @@
 \begin{ccClass} {Window_stream}
 \ccSection{Window Stream}
 
-Note: For the functionality described in this section you need \leda or
+Note: For the functionality described in this section you need \leda\ or
 the \cgal\ port of the \leda window lib. The \cgal\ port has an interface
 close to the \leda window, but operations using \leda geometry classes
-were removed and the names of the used types were changed from
-\ccStyle{leda_name} to \ccStyle{CGAL::name} and \ccStyle{leda_string}
-was replaced by \ccStyle{std::string}.
+were removed and the names of the used types and enums were changed from
+\ccStyle{leda_name} to \ccStyle{CGAL::name}, \ccStyle{leda_string}
+was replaced by \ccStyle{std::string} and \ccStyle{leda_list} was replaced
+by \ccStyle{std::list}.
+If the window port is used, the macro \ccStyle{CGAL_USE_CGAL_WINDOW} is 
+defined. The header file \ccStyle{<CGAL/IO/cgal_window_redefine.h>} offers
+redefinitions of the \leda\ names.
 
 \ccDefinition 
 
 An object of type \ccClassName\ is a two-dimensional window for
 graphical IO. The input and output operations performs a mapping from
 object coordinates to window coordinates.
-Actually, \ccClassName\ is identical to the \leda\ class \ccStyle{leda_window}.
+Actually, \ccClassName\ is identical to the \leda\ class \ccStyle{leda_window},
+if \leda\ is used and to the ported version of the \leda\ window class, if
+\leda\ is not used.
 Therefore, the rich functionality of \ccStyle{leda_window} is available on
 \ccClassName\ as well, for example panels.
 In addition, the class \ccClassName\ provides input and output 
