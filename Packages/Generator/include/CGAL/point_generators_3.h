@@ -70,8 +70,8 @@ generate_point() {
                          d_range * ( 2 * _rnd.get_double() - 1.0),
                          d_range * ( 2 * _rnd.get_double() - 1.0));
    } 
-   while (CGAL::to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y()) >=
-          d_range * d_range);
+   while (CGAL::to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y() +
+                          d_item.z() * d_item.z()) >= d_range * d_range);
 }
 
 
