@@ -2,7 +2,7 @@
 //           Changes in 2.3:
 //-----------------------------------------------------------------------//
 
-Now the examples are also converted to namespace CGAL.
+Now the examples and demo are also converted to namespace CGAL.
 
 //-----------------------------------------------------------------------//
 //           Changes from 2.1 to 2.2:
