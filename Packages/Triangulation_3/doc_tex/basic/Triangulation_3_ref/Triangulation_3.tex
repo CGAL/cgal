@@ -401,7 +401,7 @@ or not.  Note that the class \ccc{Delaunay_triangulation_3} also
 provides a \ccc{nearest_vertex()} function.
 
 \ccMethod{Cell_handle
-          locate(const Point & query, Cell_handle start = NULL) const;}
+          locate(const Point & query, Cell_handle start = Cell_handle()) const;}
 {
 %\ccPrecond{\ccVar.\ccc{dimension()} $= 3$ (otherwise there is no
 %cell yet).}\\
@@ -422,7 +422,7 @@ The optional argument \ccc{start} is used as a starting place for the search.
 
 \ccMethod{Cell_handle
           locate(const Point & query, Locate_type & lt,
-                 int & li, int & lj, Cell_handle start = NULL ) const;}
+                 int & li, int & lj, Cell_handle start = Cell_handle() ) const;}
 {If \ccc{query} lies inside the affine hull of the points, the $k$-face
 (finite or infinite) that contains \ccc{query} in its interior is
 returned, by means of the cell returned together with \ccc{lt}, which
@@ -444,7 +444,7 @@ which can happen in case of degenerate dimensions, \ccc{lt} is set to
 \ccc{OUTSIDE_AFFINE_HULL}, and the cell returned has no meaning.
 As a particular case, if there is no finite vertex yet in the
 triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
-\ccc{locate} returns \ccc{NULL}. \\
+\ccc{locate} returns the default constructed handle. \\
 The optional argument \ccc{start} is used as a starting place for the search.
 }
 
@@ -587,7 +587,8 @@ known to be flippable.
 The following operations are guaranteed to lead to a valid triangulation 
 when they are applied on a valid triangulation.
 
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = NULL );}
+\ccMethod{Vertex_handle insert(const Point & p,
+                               Cell_handle start = Cell_handle() );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex.\\
 If point \ccc{p} coincides with an already existing vertex, this 
@@ -884,7 +885,7 @@ of a given vertex}
 {Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
 iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
 Returns the resulting output iterator.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
@@ -892,12 +893,12 @@ Returns the resulting output iterator.
 {Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<2$, then do
 nothing.  Returns the resulting output iterator.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{size_type degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.
 The infinite vertex is counted.
-\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccVar.\ccc{is_vertex(v)}.}}
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
