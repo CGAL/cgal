@@ -1,3 +1,6 @@
+
+- Fixed typo in Weighted_Minkowski_distance.h: The_distance -> the_distance [af]
+
 Version 3.36 (30 July 2003)
 rursu:
  - fixed Kdtree_example3.C for cl_1300 by providing the full spec of Kernel_traits
