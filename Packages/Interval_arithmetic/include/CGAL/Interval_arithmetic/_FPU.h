@@ -46,16 +46,9 @@
 #error "Architecture not supported."
 #endif
 
-
-#ifndef CGAL_IA_DONT_USE_ASSEMBLY
-#if (defined(__GNUC__) && \
-     (defined(__i386)   || \
-      defined(__sparc)  || \
-      defined(__mips)   || \
-      defined(__alpha)  ) )
+#ifndef CGAL_IA_DONT_USE_ASSEMBLY && defined(__GNUC__)
 #define CGAL_IA_USE_ASSEMBLY
 #endif
-#endif // CGAL_IA_DONT_USE_ASSEMBLY
 
 #ifdef __linux
 #include <fpu_control.h>
@@ -209,7 +202,7 @@ inline void FPU_set_cw (FPU_CW_t cw)
 #endif // CGAL_IA_USE_ASSEMBLY
 }
 
-// Obscolete: wrappers for the old interface.
+// Obscolete: wrappers for the old interface.  Will be removed after 2.0.
 
 #if 1
 inline void FPU_set_rounding_to_zero (void)
