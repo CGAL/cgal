@@ -55,7 +55,7 @@ public:
   Triangulation_all_faces_iterator_2(const Triangulation_2<Gt,Tds> *tr)
     : Base(&(tr->_tds))
     {}
-   Triangulation_all_faces_iterator_2(const Triangulation_2<Gt,Tds> *tr, int i)
+   Triangulation_all_faces_iterator_2(const Triangulation_2<Gt,Tds> *tr, int)
     : Base(&(tr->_tds),1) 
     {}
   
@@ -87,8 +87,8 @@ public:
         
   Triangulation_finite_faces_iterator_2(const Triangulation* tr);
 
-  Triangulation_finite_faces_iterator_2(const Triangulation* tr, int i)
-    : All_faces(tr,i), _tr(tr)
+  Triangulation_finite_faces_iterator_2(const Triangulation* tr, int)
+    : All_faces(tr,1), _tr(tr)
   { }
   
   Finite_faces&  operator++();
@@ -125,8 +125,8 @@ public:
     : Base( &(tr->_tds))
   { }
 
-  Triangulation_all_vertices_iterator_2(const Triangulation *tr, int i)
-    : Base( &(tr->_tds),i)
+  Triangulation_all_vertices_iterator_2(const Triangulation *tr, int)
+    : Base( &(tr->_tds),1)
   { }
   
   All_vertices&   operator++();
@@ -154,8 +154,8 @@ public:
         
   Triangulation_finite_vertices_iterator_2(const Triangulation *tr);
     
-  Triangulation_finite_vertices_iterator_2(const Triangulation *tr, int i)
-    : All_vertices(tr,i), _tr(tr)
+  Triangulation_finite_vertices_iterator_2(const Triangulation *tr, int )
+    : All_vertices(tr,1), _tr(tr)
   { }
 
   Finite_vertices&  operator++();
@@ -190,8 +190,8 @@ public:
     : Base(&(tr->_tds))
     {} 
   
-  Triangulation_all_edges_iterator_2(const Triangulation *tr, int i)
-    : Base(&(tr->_tds),i)
+  Triangulation_all_edges_iterator_2(const Triangulation *tr, int )
+    : Base(&(tr->_tds),1)
   { }
        
   All_edges&  operator++();
@@ -218,8 +218,8 @@ public:
         
   Triangulation_finite_edges_iterator_2(const Triangulation *tr);
   
-  Triangulation_finite_edges_iterator_2(const Triangulation *tr, int i)
-    : All_edges(tr,i), _tr(tr)
+  Triangulation_finite_edges_iterator_2(const Triangulation *tr, int )
+    : All_edges(tr,1), _tr(tr)
   { }
        
   Finite_edges& operator++();

@@ -105,7 +105,6 @@ private:
 
 
 public:
-  #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -118,55 +117,7 @@ public:
       }
       return number_of_vertices() - n;
   }
-  #else
-  #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
-  int
-  insert(std::list<Weighted_point>::const_iterator first,
-  	std::list<Weighted_point>::const_iterator last)
-  {	int n = number_of_vertices();
-  	while(first != last)
-  	{	insert(*first);
-  		++first;
-  	}
-  	return number_of_vertices() - n;
-  }
-  #endif // LIST_H
-  #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
-  int
-  insert(std::vector<Weighted_point>::const_iterator first,
-  	std::vector<Weighted_point>::const_iterator last)
-  {	int n = number_of_vertices();
-  	while(first != last)
-  	{	insert(*first);
-  		++first;
-  	}
-  	return number_of_vertices() - n;
-  }
-  #endif // VECTOR_H
-  #ifdef ITERATOR_H
-  int
-  insert(std::istream_iterator<Weighted_point, std::ptrdiff_t> first,
-         std::istream_iterator<Weighted_point, std::ptrdiff_t> last)
-  {	int n = number_of_vertices();
-  	while(first != last)
-  	{	insert(*first);
-  		++first;
-  	}
-  	return number_of_vertices() - n;
-  }
-  #endif // ITERATOR_H
-  
-  int
-  insert(Weighted_point* first, Weighted_point* last)
-  {	int n = number_of_vertices();
-  	while(first != last)
-  	{	insert(*first);
-  		++first;
-  	}
-  	return number_of_vertices() - n;
-  }
-  #endif // TEMPLATE_MEMBER_FUNCTIONS
-  
+    
 };
 
 
