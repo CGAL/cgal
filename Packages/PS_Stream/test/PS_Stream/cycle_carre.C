@@ -1,39 +1,34 @@
+#include <CGAL/Cartesian.h>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Direction_3.h>
-#include <CGAL/Plane_3.h>
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/IO/PS_Stream_3.h>
 
-using namespace std;
-
 typedef CGAL::Cartesian<double> D;
 typedef CGAL::Cartesian<leda_real> R;
 typedef CGAL::Bbox_3 PS_BBox3;
-//typedef CGAL::Direction_3< R > Direction;
-typedef CGAL::Direction_3< D > Direction;
-typedef CGAL::Point_3< D > Point3;
+//typedef R::Direction_3 Direction;
+typedef D::Direction_3 Direction;
+typedef D::Point_3     Point3;
 
 
-int main(void) {
-
+int main(void)
+{
   double x,y,z,lx,ly,lz;
   std::string filename;
-  cout << "Enter file name: ";cin >> filename;
-  cerr << "Enter view x: ";cin >> x;
-  cerr << "Enter view y: ";cin >> y;
-  cerr << "Enter view z: ";cin >> z;
-  cerr << "Enter light x: ";cin >> lx;
-  cerr << "Enter light y: ";cin >> ly;
-  cerr << "Enter light z: ";cin >> lz;
+  std::cout << "Enter file name: ";std::cin >> filename;
+  std::cerr << "Enter view x: ";std::cin >> x;
+  std::cerr << "Enter view y: ";std::cin >> y;
+  std::cerr << "Enter view z: ";std::cin >> z;
+  std::cerr << "Enter light x: ";std::cin >> lx;
+  std::cerr << "Enter light y: ";std::cin >> ly;
+  std::cerr << "Enter light z: ";std::cin >> lz;
 
   Direction dir(x,y,z);
   Direction light(lx,ly,lz);
@@ -80,12 +75,10 @@ int main(void) {
   vfacet.push_back(face1);vfacet.push_back(face2);vfacet.push_back(face3);vfacet.push_back(face4); 
   vfacet.push_back(face1bis);vfacet.push_back(face2bis);vfacet.push_back(face3bis);vfacet.push_back(face4bis); 
   
-    for(int i=0;i<vfacet.size();i++) {
+    for(unsigned int i=0;i<vfacet.size();i++) {
     ps.add_facet(vfacet[i]);
   }
 
   ps.display();
-return 0;
+  return 0;
 }
-
-
