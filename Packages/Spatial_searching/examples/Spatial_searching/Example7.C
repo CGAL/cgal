@@ -22,10 +22,10 @@
 #include <CGAL/Nearest_neighbour_L2_standard_search.h>
 #include <CGAL/Search_nearest_neighbour.h>
 #include <CGAL/point_generators_3.h>
-// #include <CGAL/Timer.h>
+#include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
 // #include <CGAL/squared_distance_3.h>
-#include <time.h>
+// #include <time.h>
 
 // typedef CGAL::Cartesian<double> R; 
 // typedef R::Point_3 Point;
@@ -126,6 +126,8 @@ typedef double NT;
 typedef CGAL::Plane_separator<NT> Separator;
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
+typedef CGAL::Nearest_neighbour_L2_standard_search <Traits,CGAL::Search_nearest_neighbour> 
+Nearest_neighbours_type;
 
 NT The_squared_distance(const Point& P, const Point& Q) {
 	NT distx= P.x()-Q.x();
@@ -136,8 +138,9 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 
   int test_benchmark_nearest_neighbour_L2() {
 
-  clock_t ticks_start, ticks_stop;
-  int dim=3; 
+  CGAL::Timer t;
+  // clock_t ticks_start, ticks_stop;
+  // int dim=3; 
   int bucket_size=1;
   NT eps=0.0;
 
@@ -174,15 +177,15 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   
   
   
-  ticks_start=clock();
+  t.reset(); t.start();
   Traits tr(bucket_size, CGAL::SLIDING_MIDPOINT, 3.0, true);
   typedef CGAL::Binary_search_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr, true);
-  ticks_stop=clock();
+  t.stop();
 
   std::cout << "created binary search tree containing" << std::endl
   << query_point_number << " random points in the 3-dim unit cube in time " 
-  << float(ticks_stop-ticks_start)/float(CLK_TCK) << std::endl;
+  << t.time() << std::endl;
   d.statistics();
 
   // end of building binary search tree
@@ -191,23 +194,22 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 	  CGAL::Search_nearest_neighbour>::Item_with_distance> nearest_neighbours;
   nearest_neighbours.reserve(query_point_number);
 
-  ticks_start=clock(); 
+  t.reset(); t.start();
   
   
   for (int i=0; i < query_point_number; i++) { /*
     NNN_Iterator NNN_Iterator1(d,query_points[i],0.0);
     nearest_neighbours[i]=*NNN_Iterator1; */
-    CGAL::Nearest_neighbour_L2_standard_search 
-	<Traits,CGAL::Search_nearest_neighbour> NN(d, query_points[i], 1, 0.0);
+    Nearest_neighbours_type NN(d, query_points[i], 1, 0.0);
     NN.the_k_nearest_neighbours(std::back_inserter(nearest_neighbours));
   };
   
   
   
-  ticks_stop=clock();
+  t.stop();
    
   std::cout << "computed" << std::endl
-  << query_point_number << " queries in time " <<  float(ticks_stop-ticks_start)/float(CLK_TCK) <<
+  << query_point_number << " queries in time " <<  t.time() <<
   " seconds using ASPAS" << std::endl; 
 
  
@@ -223,7 +225,7 @@ NT The_squared_distance(const Point& P, const Point& Q) {
   std::vector<int> 
 	  nearest_neighbours_brute_force_index(query_point_number);
 
-  ticks_start=clock();
+  t.start();
   for (int i=0; i < query_point_number; i++) {
     // one time iterator
     nearest_neighbours_brute_force_index[i]=0;
@@ -238,10 +240,10 @@ NT The_squared_distance(const Point& P, const Point& Q) {
 		};
 	};
   };
-  ticks_stop=clock();
+  t.stop();
 
   std::cout << "computed" << std::endl
-  << query_point_number << " queries in time " <<  float(ticks_stop-ticks_start)/float(CLK_TCK) <<
+  << query_point_number << " queries in time " <<  t.time() <<
   " seconds using brute force" << std::endl;
 
   // compare the results
