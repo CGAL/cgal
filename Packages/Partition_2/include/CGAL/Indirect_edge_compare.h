@@ -88,6 +88,9 @@ class Indirect_edge_compare
         after_p++;
         ForwardCirculator after_q = q;
         after_q++;
+
+        if (p == q && after_p == after_q) return false;
+
         if (p == after_q) 
         {
           return larger_x_at_vertex_y(p, q);
