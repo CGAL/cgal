@@ -1,4 +1,8 @@
-STLport is a multiplatform implementation of C++ STL; see
+Contents:
+1) VC6 support
+2) VC70 support
+
+1) STLport is a multiplatform implementation of C++ STL; see
 http://www.stlport.org
 ---------------------------------------------------------
 
@@ -39,4 +43,20 @@ all T's for which vector<T> is present.
 (Naturally, T* could be used somewhere else in the code, and
 hence CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T) would be still
 needed in this case).
+
+-------------------------------------------------------------------
+
+2) VC7.0 native STL needs the same treatment of iterator_traits
+for pointer types as VC6. The type  iterator_traits is by itself
+defined OK.
+ 
+So CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T) is still there,
+(file vc7/stl_iterator_base.h)
+but instead of STLport the native STL is used (it's considerably updated
+w.r.t. VC6 STL).
+
+File vc7/iterator contains also some fixes for <algorithm> header.
+(extra overloads for functions _Iter_cat, _Dist_type, _Val_type).
+
+
 

@@ -1,3 +1,7 @@
+1.0 (7/2/01)
+added support for VC7.0 beta1 native STL
+removed stlport/sc5, stlport/bc50, stlport/old_hp.
+
 0.6.1 (08/12/00)
 a bit more cleanup in cgal_vector.h
 
