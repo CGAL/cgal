@@ -13,7 +13,7 @@
 #include <vector>
 #include <cassert>
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#ifdef CGAL_USE_GEOMVIEW
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -69,13 +69,12 @@ int main ()
   return 0;
 }
 
-#else // on windows:
+#else
 
 int main() {
   std::cerr <<
-  "This demo requires geomview, which is is not present on windows\n";
+  "This demo requires geomview, which is not present on this platform\n";
   return 0;
 }
 
 #endif
-
