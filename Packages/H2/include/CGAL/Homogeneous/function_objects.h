@@ -1388,8 +1388,9 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_circumcenter_2
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::FT          FT;
+    typedef typename K::Point_2     Point_2;
+    typedef typename K::Triangle_2  Triangle_2;
   public:
     typedef Point_2          result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -1450,14 +1451,22 @@ namespace HomogeneousKernelFunctors {
 
       return Point_2( vvx, vvy, vvw );
     }
+
+    Point_2
+    operator()(const Triangle_2& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+    }
   };
 
   template <typename K>
   class Construct_circumcenter_3
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Point_3  Point_3;
-    typedef typename K::Plane_3  Plane_3;
+    typedef typename K::FT             FT;
+    typedef typename K::Point_3        Point_3;
+    typedef typename K::Triangle_3     Triangle_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
+    typedef typename K::Plane_3        Plane_3;
   public:
     typedef Point_3          result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -1469,6 +1478,12 @@ namespace HomogeneousKernelFunctors {
 				     bisector(p,q),
 				     bisector(p,r));
     } // FIXME
+
+    Point_3
+    operator()(const Triangle_3& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+    }
 
     Point_3
     operator()(const Point_3& p, const Point_3& q,
@@ -1534,6 +1549,13 @@ namespace HomogeneousKernelFunctors {
 				  shx, shy, shz, shw );
 
       return Point_3( chx, -chy, chz, RT(2)*chw);
+    }
+
+    Point_3
+    operator()(const Tetrahedron_3& t) const
+    {
+      return this->operator()(t.vertex(0), t.vertex(1),
+                              t.vertex(2), t.vertex(3));
     }
   };
 

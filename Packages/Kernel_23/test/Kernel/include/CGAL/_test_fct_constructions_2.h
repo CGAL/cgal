@@ -28,6 +28,7 @@ _test_fct_constructions_2(const R&)
 {
   typedef typename R::RT     RT;
   typedef CGAL::Point_2<R>    Point;
+  typedef CGAL::Triangle_2<R> Triangle;
   typedef CGAL::Vector_2<R>   Vector;
 
   RT RT0(0);
@@ -49,6 +50,8 @@ _test_fct_constructions_2(const R&)
   // circumcenter
   assert( CGAL::circumcenter( pne, pse, pnw) == p);
   assert( CGAL::circumcenter( psw, pse, pnw) == p);
+  assert( CGAL::circumcenter( Triangle(pne, pse, pnw)) == p);
+  assert( CGAL::circumcenter( Triangle(psw, pse, pnw)) == p);
 
   // centroid
   Point pe = p + Vector(RT1, RT0);

@@ -76,11 +76,27 @@ circumcenter(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Point_3
+circumcenter(const Tetrahedron_3<K> &t)
+{
+  return K().construct_circumcenter_3_object()(t);
+}
+
+template < class K >
+inline
+typename K::Point_3
 circumcenter(const Point_3<K> &p,
              const Point_3<K> &q,
              const Point_3<K> &r)
 {
   return K().construct_circumcenter_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+typename K::Point_3
+circumcenter(const Triangle_3<K> &t)
+{
+  return K().construct_circumcenter_3_object()(t);
 }
 
 template < class K >

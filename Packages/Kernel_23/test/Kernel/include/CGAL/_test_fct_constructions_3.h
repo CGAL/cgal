@@ -26,9 +26,11 @@ template <class R>
 bool
 _test_fct_constructions_3(const R&)
 {
-  typedef typename R::RT     RT;
-  typedef typename R::Point_3   Point;
-  typedef typename R::Vector_3  Vector;
+  typedef typename R::RT             RT;
+  typedef typename R::Point_3        Point;
+  typedef typename R::Vector_3       Vector;
+  typedef typename R::Triangle_3     Triangle;
+  typedef typename R::Tetrahedron_3  Tetrahedron;
 
   RT RT0(0);
   RT RT1(1);
@@ -60,8 +62,12 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::circumcenter( p111, p001, p010, p000) == p);
   assert( CGAL::circumcenter( p101, p001, p010, p100) == p);
   assert( CGAL::circumcenter( p001, p000, p110, p100) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p111, p001, p010, p000) ) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p101, p001, p010, p100) ) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p001, p000, p110, p100) ) == p);
 
-  assert( CGAL::circumcenter( p2, p3, p4) == p);
+  assert( CGAL::circumcenter( p2, p3, p4 ) == p);
+  assert( CGAL::circumcenter( Triangle(p2, p3, p4) ) == p);
 
   // centroid
   Point p_11 = p + Vector(RT0, RT1, RT1);

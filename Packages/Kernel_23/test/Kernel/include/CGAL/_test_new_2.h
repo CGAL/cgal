@@ -259,6 +259,7 @@ test_new_2(const R& rep)
   typename R::Construct_circumcenter_2 construct_circumcenter
         = rep.construct_circumcenter_2_object();
   Point_2 tmp13 = construct_circumcenter(p2,p3,p4);
+          tmp13 = construct_circumcenter(t2);
 
   typename R::Construct_centroid_2 construct_centroid
         = rep.construct_centroid_2_object();

@@ -1,3 +1,6 @@
+15 Feb 2004 Sylvain Pion
+- Add circumcenter(Triangle_[23]) and circumcenter(Tetrahedron_3).
+
 Version 1.106 (09 February 2004) [rursu]
 - Updated headers in examples
 

@@ -127,6 +127,14 @@ circumcenter(const Point_2<K> &p,
 
 template < class K >
 inline
+typename K::Point_2
+circumcenter(const Triangle_2<K> &t)
+{
+  return K().construct_circumcenter_2_object()(t);
+}
+
+template < class K >
+inline
 bool
 collinear(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {

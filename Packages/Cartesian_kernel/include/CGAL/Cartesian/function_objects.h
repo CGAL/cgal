@@ -930,8 +930,8 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Construct_circumcenter_2
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Point_2  Point_2;
+    typedef typename K::Point_2     Point_2;
+    typedef typename K::Triangle_2  Triangle_2;
   public:
     typedef Point_2          result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -940,17 +940,26 @@ namespace CartesianKernelFunctors {
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { 
       typename K::Construct_point_2 construct_point_2;
+      typedef typename K::FT        FT;
       FT x, y;
       circumcenterC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(), x, y);
       return construct_point_2(x, y);
+    }
+
+    Point_2
+    operator()(const Triangle_2& t) const
+    { 
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
     }
   };
 
   template <typename K>
   class Construct_circumcenter_3
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Point_3  Point_3;
+    typedef typename K::FT             FT;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
+    typedef typename K::Triangle_3     Triangle_3;
+    typedef typename K::Point_3        Point_3;
   public:
     typedef Point_3          result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -968,6 +977,12 @@ namespace CartesianKernelFunctors {
     }
 
     Point_3
+    operator()(const Triangle_3& t) const
+    { 
+      return this->operator()(t.vertex(0), t.vertex(1), t.vertex(2));
+    }
+
+    Point_3
     operator()(const Point_3& p, const Point_3& q,
 	       const Point_3& r, const Point_3& s) const
     {
@@ -979,6 +994,13 @@ namespace CartesianKernelFunctors {
 		     s.x(), s.y(), s.z(),
 		     x, y, z);
       return construct_point_3(x, y, z);
+    }
+
+    Point_3
+    operator()(const Tetrahedron_3& t) const
+    { 
+      return this->operator()(t.vertex(0), t.vertex(1),
+                              t.vertex(2), t.vertex(3));
     }
   };
 

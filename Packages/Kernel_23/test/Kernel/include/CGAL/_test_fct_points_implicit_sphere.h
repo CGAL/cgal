@@ -28,6 +28,8 @@ _test_fct_points_implicit_sphere(const R&)
 {
   typedef typename R::RT    RT;
   typedef typename R::FT    FT;
+  typedef CGAL::Tetrahedron_3<R>  Tetrahedron;
+
   const RT RT0(0);
   const RT RT4(4);
   const FT FT1(1);
@@ -135,6 +137,9 @@ _test_fct_points_implicit_sphere(const R&)
   assert( CGAL::circumcenter(ex, ey, ez, oz) == org );
   assert( CGAL::circumcenter(p,q,r,s) == org );
   assert( CGAL::circumcenter(p,r,q,s) == org );
+  assert( CGAL::circumcenter(Tetrahedron(ex, ey, ez, oz)) == org );
+  assert( CGAL::circumcenter(Tetrahedron(p,q,r,s)) == org );
+  assert( CGAL::circumcenter(Tetrahedron(p,r,q,s)) == org );
   
   CGAL::Vector_3<R>  v( RT(12), RT(4), RT(-4), RT(2) );
   CGAL::Point_3<R>   pt = p + v;
@@ -161,10 +166,12 @@ _test_fct_points_implicit_sphere(const R&)
           == CGAL::ON_UNBOUNDED_SIDE);
   assert( CGAL::side_of_bounded_sphere(pt,rt,qt,st,ot) \
           == CGAL::ON_UNBOUNDED_SIDE);
-  
+
   assert( CGAL::circumcenter(pt,qt,rt,st) == c );
   assert( CGAL::circumcenter(pt,rt,qt,st) == c );
-  
+  assert( CGAL::circumcenter(Tetrahedron(pt,qt,rt,st)) == c );
+  assert( CGAL::circumcenter(Tetrahedron(pt,rt,qt,st)) == c );
+
   // Now test side_of_bounded_sphere(p, q, t).
 
   CGAL::Point_3<R> p1 (RT(100),RT(100),RT(100),RT(10));

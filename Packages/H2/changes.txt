@@ -1,3 +1,6 @@
+15 Feb 2004 Sylvain Pion
+- Add circumcenter(Triangle_[23]) and circumcenter(Tetrahedron_3).
+
 2.119 (24 January 2004)
 - Workaround g++ 2.95 pickyness in static_cast<>.
 
