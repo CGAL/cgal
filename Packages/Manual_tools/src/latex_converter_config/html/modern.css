@@ -87,6 +87,7 @@ div.NavPrev            { background-color: #c0ffc0; }
 /* cc_manual.sty                                                           */
 /* ----------------------------------------------------------------------- */
 div.AdvancedBlock      { background-color: #c0d0ff; }
+em.AdvancedBlockLabel  { font-size:10pt; font-style: italic; }
 
 /* ----------------------------------------------------------------------- */
 /* verbatim and example code environments
