@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.28 on 14-Nov-2003
+Replaced CGAL::Point_2<K>  with K::Point_2
+
 Version 3.27 on 17-Oct-2003
 - Removed one more #endif in Min_circle_2.h
 

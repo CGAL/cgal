@@ -21,9 +21,7 @@
 #define CGAL_MIN_CIRCLE_2_TRAITS_2_H
 
 // includes
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
+
 #ifndef CGAL_OPTIMISATION_CIRCLE_2_H
 #  include <CGAL/Optimisation_circle_2.h>
 #endif
@@ -48,7 +46,7 @@ class Min_circle_2_traits_2 {
   public:
     // types
     typedef  K_                              K;
-    typedef  CGAL::Point_2<K>                Point;
+    typedef  typename K::Point_2             Point;
     typedef  CGAL::Optimisation_circle_2<K>  Circle;
 
 private:
