@@ -99,12 +99,14 @@ private:
   S s_;
 };
 
+/*
 template < class R >
 struct Construct_iso_rectangle_2 {
   Iso_rectangle_2< R >
   operator()(const Point_2< R >& min, const Point_2< R >& max) const
   { return Iso_rectangle_2< R >(min, max); }
 };
+*/
 template < class R >
 struct Signed_x_distance_2
 : public CGAL_STD::binary_function<
@@ -264,12 +266,16 @@ struct Rectangular_p_center_default_traits_2 : public R
   // from the kernel
   typedef typename R::Construct_min_point_2     Construct_min_point_2;
   typedef typename R::Construct_max_point_2     Construct_max_point_2;
+  typedef typename R::Construct_iso_rectangle_2 Construct_iso_rectangle_2;
 
   // additions
+  /*
+  Now from the Kernel (hopefully :)
   typedef Construct_iso_rectangle_2< R > Construct_iso_rectangle_2;
   Construct_iso_rectangle_2
   construct_iso_rectangle_2_object() const
   { return Construct_iso_rectangle_2(); }
+  */
 
   typedef Signed_x_distance_2< R >  Signed_x_distance_2;
   typedef Signed_y_distance_2< R >  Signed_y_distance_2;
