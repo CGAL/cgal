@@ -1,6 +1,6 @@
 % begin cgal manual page
 
-\begin{ccRefClass}{Segment_d<R>}\ccCreationVariable{s}
+\begin{ccRefClass}{Segment_d<Kernel>}\ccCreationVariable{s}
 
 \ccDefinition
 
@@ -27,15 +27,15 @@ $s$. A segment whose endpoints are equal is called \emph{degenerate}.
 
 \ccCreation
 
-\ccConstructor{Segment_d<R>()}{introduces a variable \ccc{s}
-of type \ccc{Segment_d<R>}.}
+\ccConstructor{Segment_d<Kernel>()}{introduces a variable \ccc{s}
+of type \ccc{Segment_d<Kernel>}.}
 
-\ccConstructor{Segment_d<R>(Point_d<R> p, Point_d<R> q)}{introduces a
-variable \ccc{s} of type \ccc{Segment_d<R>} which is initialized to
+\ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a
+variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
 the segment $(p,q)$. \ccPrecond \ccc{p.dimension()==q.dimension()}.  }
 
-\ccConstructor{Segment_d<R>(Point_d<R> p, Vector_d<R> v)}{introduces a
-variable \ccc{s} of type \ccc{Segment_d<R>} which is initialized to
+\ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Vector_d<Kernel> v)}{introduces a
+variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
 the segment \ccc{(p,p+v)}. \ccPrecond \ccc{p.dimension()==v.dimension()}. }
 
 \ccSetTwoOfThreeColumns{3cm}{3cm}
@@ -45,50 +45,50 @@ the segment \ccc{(p,p+v)}. \ccPrecond \ccc{p.dimension()==v.dimension()}. }
 \ccMethod{int dimension();}{returns the dimension of the ambient
 space.}
 
-\ccMethod{Point_d<R> source();}{returns the source point of segment
+\ccMethod{Point_d<Kernel> source();}{returns the source point of segment
 \ccc{s}. }
 
-\ccMethod{Point_d<R> target();}{returns the target point of segment
+\ccMethod{Point_d<Kernel> target();}{returns the target point of segment
 \ccc{s}. }
 
-\ccMethod{Point_d<R> vertex(int i) ;}{returns source or target of
+\ccMethod{Point_d<Kernel> vertex(int i) ;}{returns source or target of
 \ccc{s}: \ccc{vertex(0)} returns the source, \ccc{vertex(1)} returns
 the target. The parameter $i$ is taken modulo $2$, which gives easy
 access to the other vertex.  \ccPrecond $i \geq 0$.  }
 
-\ccMethod{Point_d<R> point(int i) ;}{returns \ccc{vertex(i)}.  }
+\ccMethod{Point_d<Kernel> point(int i) ;}{returns \ccc{vertex(i)}.  }
 
-\ccMethod{Point_d<R> operator[](int i) ;}{returns \ccc{vertex(i)}.  }
+\ccMethod{Point_d<Kernel> operator[](int i) ;}{returns \ccc{vertex(i)}.  }
 
-\ccMethod{Point_d<R> min() ;}{returns the lexicographically smaller
+\ccMethod{Point_d<Kernel> min() ;}{returns the lexicographically smaller
 vertex.  }
 
-\ccMethod{Point_d<R> max() ;}{returns the lexicographically larger
+\ccMethod{Point_d<Kernel> max() ;}{returns the lexicographically larger
 vertex.  }
 
-\ccMethod{Segment_d<R> opposite() ;}{returns the segment
+\ccMethod{Segment_d<Kernel> opposite() ;}{returns the segment
 \ccc{(target(),source())}.  }
 
-\ccMethod{Direction_d<R> direction() ;}{returns the direction from
+\ccMethod{Direction_d<Kernel> direction() ;}{returns the direction from
 source to target. \ccPrecond \ccc{s} is non-degenerate.  }
 
-\ccMethod{Vector_d<R> vector() ;}{returns the vector from source to
+\ccMethod{Vector_d<Kernel> vector() ;}{returns the vector from source to
 target.}
 
 \ccMethod{FT squared_length() ;}{returns the square of the length of
 \ccc{s}.}
 
-\ccMethod{bool has_on(const Point_d<R>& p) ;}{returns true if $p$ lies
+\ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{returns true if $p$ lies
 on \ccc{s} and false otherwise. \ccPrecond
 \ccc{s.dimension()==p.dimension()}. }
 
-\ccMethod{ Line_d<R> supporting_line() ;}{returns the supporting line
+\ccMethod{ Line_d<Kernel> supporting_line() ;}{returns the supporting line
 of \ccc{s}.  \ccPrecond \ccc{s} is non-degenerate.  }
 
-\ccMethod{Segment_d<R> transform(const Aff_transformation_d<R>& t)
+\ccMethod{Segment_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
 ;}{returns $t(s)$. \ccPrecond \ccc{s.dimension()==t.dimension()}. }
 
-\ccMethod{Segment_d<R> operator+(const Vector_d<R>& v) ;}{returns
+\ccMethod{Segment_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns
 $s+v$, i.e., \ccc{s} translated by vector $v$. \ccPrecond
 \ccc{s.dimension()==v.dimension()}. }
 
@@ -97,17 +97,17 @@ degenerate i.e.  \ccc{s.source()=s.target()}.  }
 
 \ccHeading{Non-Member Functions}  
 
-\ccFunction{bool weak_equality(const Segment_d<R>& s1, const
-Segment_d<R>& s2) ;}{Test for equality as unoriented
+\ccFunction{bool weak_equality(const Segment_d<Kernel>& s1, const
+Segment_d<Kernel>& s2) ;}{Test for equality as unoriented
 segments. \ccPrecond \ccc{s1.dimension()==s2.dimension()}.}
 
-\ccFunction{bool parallel(const Segment_d<R>& s1, const Segment_d<R>&
+\ccFunction{bool parallel(const Segment_d<Kernel>& s1, const Segment_d<Kernel>&
 s2) ;}{return true if one of the segments is degenerate or if the
 unoriented supporting lines are parallel. \ccPrecond
 \ccc{s1.dimension()==s2.dimension()}. }
 
-\ccFunction{bool common_endpoint(const Segment_d<R>& s1, const
-Segment_d<R>& s2, Point_d<R>& common) ;}{if \ccc{s1} and \ccc{s2}
+\ccFunction{bool common_endpoint(const Segment_d<Kernel>& s1, const
+Segment_d<Kernel>& s2, Point_d<Kernel>& common) ;}{if \ccc{s1} and \ccc{s2}
 touch in a common end point, this point is assigned to \ccc{common}
 and the result is \ccc{true}, otherwise the result is \ccc{false}. If
 \ccc{s1==s2} then one of the endpoints is returned.  \ccPrecond

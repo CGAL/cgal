@@ -1,10 +1,10 @@
 \providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
 
-\begin{ccRefClass}{Vector_d<R>}\ccCreationVariable{v}
+\begin{ccRefClass}{Vector_d<Kernel>}\ccCreationVariable{v}
 
 \ccDefinition
 
-An instance of data type \ccc{Vector_d<R>} is a vector of Euclidean
+An instance of data type \ccc{Vector_d<Kernel>} is a vector of Euclidean
 space in dimension $d$. A vector $r = (r_0,\ldots,r_{ d - 1})$ can be
 represented in homogeneous coordinates $(h_0,\ldots,h_d)$ of number
 type \ccc{RT}, such that $r_i = h_i/h_d$ which is of type \ccc{FT}. We
@@ -40,16 +40,16 @@ invariant under translations.
 
 \ccCreation
 
-\ccConstructor{Vector_d<R>()}{introduces a variable \ccc{v}
-  of type \ccc{Vector_d<R>}.}
+\ccConstructor{Vector_d<Kernel>()}{introduces a variable \ccc{v}
+  of type \ccc{Vector_d<Kernel>}.}
 
-\ccConstructor{Vector_d<R>(int d, Null_vector)}{ introduces the zero
-  vector \ccc{v} of type \ccc{Vector_d<R>} in $d$-dimensional space.
+\ccConstructor{Vector_d<Kernel>(int d, Null_vector)}{ introduces the zero
+  vector \ccc{v} of type \ccc{Vector_d<Kernel>} in $d$-dimensional space.
   For the creation flag \ccc{CGAL::NULL_VECTOR} can be used.}
 
-\ccConstructor{template <class InputIterator> Vector_d<R>(int d,
+\ccConstructor{template <class InputIterator> Vector_d<Kernel>(int d,
   InputIterator first, InputIterator last)}{ introduces a variable
-  \ccc{v} of type \ccc{Vector_d<R>} in dimension \ccc{d}.  If
+  \ccc{v} of type \ccc{Vector_d<Kernel>} in dimension \ccc{d}.  If
   \ccc{size [first,last) == d} this creates a vector with Cartesian
   coordinates \ccc{set [first,last)}. If \ccc{size [first,last) ==
     p+1} the range specifies the homogeneous coordinates $\ccc{H = set
@@ -59,9 +59,9 @@ invariant under translations.
   where the last has to be non-zero. \ccRequire The value type of
   \ccc{InputIterator} is \ccc{RT}.  }
 
-\ccConstructor{template <class InputIterator> Vector_d<R>(int d,
+\ccConstructor{template <class InputIterator> Vector_d<Kernel>(int d,
   InputIterator first, InputIterator last, RT D)}{ introduces a
-  variable \ccc{v} of type \ccc{Vector_d<R>} in dimension \ccc{d}
+  variable \ccc{v} of type \ccc{Vector_d<Kernel>} in dimension \ccc{d}
   initialized to the vector with homogeneous coordinates as defined by
   \ccc{H = set [first,last)} and \ccc{D}: $(\pm \ccc{H[0]},
   \pm\ccc{H[1]}, \ldots, \pm\ccc{H[d-1]}, \pm\ccc{D})$. The sign
@@ -69,16 +69,16 @@ invariant under translations.
   iterator range defines a $d$-tuple of \ccc{RT}. \ccRequire The value
   type of \ccc{InputIterator} is \ccc{RT}.  }
 
-\ccConstructor{Vector_d<R>(int d, Base_vector, int i)}{ returns a
-  variable \ccc{v} of type \ccc{Vector_d<R>} initialized to the $i$-th
+\ccConstructor{Vector_d<Kernel>(int d, Base_vector, int i)}{ returns a
+  variable \ccc{v} of type \ccc{Vector_d<Kernel>} initialized to the $i$-th
   base vector of dimension $d$.  \ccPrecond $0 \leq i < d$.}
 
-\ccConstructor{Vector_d<R>(RT x, RT y, RT w = 1)}{introduces a
-  variable \ccc{v} of type \ccc{Vector_d<R>} in $2$-dimensional space.
+\ccConstructor{Vector_d<Kernel>(RT x, RT y, RT w = 1)}{introduces a
+  variable \ccc{v} of type \ccc{Vector_d<Kernel>} in $2$-dimensional space.
   \ccPrecond $w \neq 0$.}
 
-\ccConstructor{Vector_d<R>(RT x, RT y, RT z, RT w)}{introduces a
-  variable \ccc{v} of type \ccc{Vector_d<R>} in $3$-dimensional space.
+\ccConstructor{Vector_d<Kernel>(RT x, RT y, RT z, RT w)}{introduces a
+  variable \ccc{v} of type \ccc{Vector_d<Kernel>} in $3$-dimensional space.
   \ccPrecond $w \neq 0$.}
 
 \ccSetTwoOfThreeColumns{5cm}{3cm}
@@ -114,50 +114,50 @@ invariant under translations.
   iterator pointing beyond the last homogeneous coordinate of \ccc{v}.
   }
 
-\ccMethod{ Direction_d<R> direction() ;}{returns the direction of
+\ccMethod{ Direction_d<Kernel> direction() ;}{returns the direction of
   \ccc{v}.  }
 
-\ccMethod{Vector_d<R> transform(const Aff_transformation_d<R>& t)
+\ccMethod{Vector_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
   ;}{returns $t(v)$.  }
 
 \ccHeading{Arithmetic Operators, Tests and IO} 
 
 
-\ccMethod{Vector_d<R>& operator*=(const RT& n) ;}{multiplies all
+\ccMethod{Vector_d<Kernel>& operator*=(const RT& n) ;}{multiplies all
   Cartesian coordinates by \ccc{n}.  }
 
-\ccMethod{Vector_d<R>& operator*=(const FT& r) ;}{multiplies all
+\ccMethod{Vector_d<Kernel>& operator*=(const FT& r) ;}{multiplies all
   Cartesian coordinates by \ccc{r}.  }
 
-\ccMethod{Vector_d<R> operator/(const RT& n) ;}{returns the vector
+\ccMethod{Vector_d<Kernel> operator/(const RT& n) ;}{returns the vector
   with Cartesian coordinates $v_i/n, 0 \leq i < d$.  }
 
-\ccMethod{Vector_d<R> operator/(const FT& r) ;}{returns the vector
+\ccMethod{Vector_d<Kernel> operator/(const FT& r) ;}{returns the vector
   with Cartesian coordinates $v_i/r, 0 \leq i < d$.  }
 
-\ccMethod{Vector_d<R>& operator/=(const RT& n) ;}{divides all
+\ccMethod{Vector_d<Kernel>& operator/=(const RT& n) ;}{divides all
   Cartesian coordinates by \ccc{n}.  }
 
-\ccMethod{Vector_d<R>& operator/=(const FT& r) ;}{divides all
+\ccMethod{Vector_d<Kernel>& operator/=(const FT& r) ;}{divides all
   Cartesian coordinates by \ccc{r}.  }
 
-\ccMethod{FT operator* (const Vector_d<R>& w) ;}{inner product, i.e.,
+\ccMethod{FT operator* (const Vector_d<Kernel>& w) ;}{inner product, i.e.,
   $\sum_{ 0 \le i < d } v_i w_i$, where $v_i$ and $w_i$ are the
   Cartesian coordinates of $v$ and $w$ respectively.  }
 
-\ccMethod{Vector_d<R> operator+(const Vector_d<R>& w) ;}{returns the
+\ccMethod{Vector_d<Kernel> operator+(const Vector_d<Kernel>& w) ;}{returns the
   vector with Cartesian coordinates $v_i+w_i, 0 \leq i < d$.  }
 
-\ccMethod{Vector_d<R>& operator+=(const Vector_d<R>& w) ;}{addition
+\ccMethod{Vector_d<Kernel>& operator+=(const Vector_d<Kernel>& w) ;}{addition
   plus assignment.  }
 
-\ccMethod{Vector_d<R> operator-(const Vector_d<R>& w) ;}{returns the
+\ccMethod{Vector_d<Kernel> operator-(const Vector_d<Kernel>& w) ;}{returns the
   vector with Cartesian coordinates $v_i-w_i, 0 \leq i < d$.  }
 
-\ccMethod{Vector_d<R>& operator-=(const Vector_d<R>& w) ;}{subtraction
+\ccMethod{Vector_d<Kernel>& operator-=(const Vector_d<Kernel>& w) ;}{subtraction
   plus assignment.  }
 
-\ccMethod{Vector_d<R> operator-() ;}{returns the vector in opposite
+\ccMethod{Vector_d<Kernel> operator-() ;}{returns the vector in opposite
   direction.  }
 
 \ccMethod{bool is_zero() ;}{returns true if \ccc{v} is the zero
@@ -167,10 +167,10 @@ invariant under translations.
 lower dimensional interface \ccc{x()}, \ccc{y()}, \ccc{z()},
 \ccc{hx()}, \ccc{hy()}, \ccc{hz()}, \ccc{hw()}.
 
-\ccFunction{Vector_d<R> operator*(const RT& n, const Vector_d<R>& v)
+\ccFunction{Vector_d<Kernel> operator*(const RT& n, const Vector_d<Kernel>& v)
   ;}{returns the vector with Cartesian coordinates $n v_i$.  }
 
-\ccFunction{Vector_d<R> operator*(const FT& r, const Vector_d<R>& v)
+\ccFunction{Vector_d<Kernel> operator*(const FT& r, const Vector_d<Kernel>& v)
   ;}{returns the vector with Cartesian coordinates $r v_i, 0 \leq i <
   d$.  }
 
