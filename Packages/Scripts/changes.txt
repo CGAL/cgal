@@ -1,4 +1,9 @@
-1.29 -rursu
+1.31 -rursu
+Added create_internal_release script in developer_scripts
+This script is used to create an internal release from All checked out package on the CVS.
+Type "./create_internal_release -h" to get the usage
+
+1.30 -rursu
 Moved list_cgal_include script in scripts
 
 1.28 (25 November 2002)

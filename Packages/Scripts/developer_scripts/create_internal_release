@@ -1,0 +1,841 @@
+#!/usr/local/bin/perl
+#this script generates the internal release
+
+use Cwd;
+use File::Find;
+use Getopt::Std;
+
+sub usage() {
+    print STDERR<<"EOF";
+usage:
+  $0 (-h|-r) 
+             [-d releasedir] [-a allpackagesdir] 
+             [-s scriptsdir]
+             [-l lockfile] [-p packagesfile] 
+
+Exactly one of the options -h or -r must be present.
+    -h show this message and quit
+    -r release version to be created
+
+    -d releasedir, default releasedir is the current dir
+    -a allpackagesdir, default is releasedir/All
+    -s scriptsdir, default is releasedir
+    -l lockfile, default is releasedir/release_creation.lock
+    -p packagesfile, default is releasedir/include_in_release
+
+
+   The RELEASEDIR is the place where the new release will be created.
+   The ALLPACKAGESDIR is the directory that contains the checked out packages from the CVS. Could be a taged version (<<current_submission>>) or some other version.
+   The SCRIPTSDIR is the place where you have the create_makefile script. This script you can take it from CVS/Scripts/scripts/create_makefile. You need this script to create the default makefiles for examples and tests.
+   The LOCKFILE is some file used by lockfile command as a mutex.
+   The PACKAGESFILE is the file that contains a list of the packages you want to include in this release. In fact it is a filter for packages you have in ALLPACKAGESDIR. There is one file that is used to create the CGAL internal release in CVS/Maintenance/release_building/include_in_release. You can take that one too.
+
+Example of how to use the script:
+>cvs -q co -P -r current_submission All
+>./create_internal_release -r CGAL-I-1
+or
+>./create_internal_release -r CGAL-I-7 -d \$HOME -a \$HOME/CGALCVS/All -s \$HOME/scripts -l release_creation.lock -p include_in_release
+
+
+EOF
+}
+
+
+my $TEMPFILE="TEMPFILE.$$";
+
+#----------------------------------------------------#
+#                Initialisation                      #
+#----------------------------------------------------#
+
+my (
+    $VERSION,
+    $LOCKFILE,
+    $ALLPACKAGESDIR,
+    $RELEASEDIR,
+    $MAINDIR,
+    $SCRIPTSDIR,
+    $LOCKCMD,
+    $packages_file
+);
+
+  $RELEASEDIR=cwd();
+  $ALLPACKAGESDIR="$RELEASEDIR/All";
+  $LOCKFILE="$RELEASEDIR/release_creation.lock";
+  $SCRIPTSDIR=$RELEASEDIR;
+  $LOCKCMD='lockfile';
+  $packages_file="$RELEASEDIR/include_in_release";
+
+
+
+
+sub termination_signal_handler {
+    unlink $LOCKFILE;
+    exit 1;
+}
+
+sub lock()
+{
+    if (system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
+	print STDERR <<"TOTHIER";
+The script could not proceed because
+it could not acquire the needed lock on file $LOCKFILE.
+TOTHIER
+	exit 1;
+    }
+    $SIG{INT} = \&termination_signal_handler;
+    $SIG{TERM} = \&termination_signal_handler;
+}
+
+sub unlock()
+{
+    unlink $LOCKFILE;
+    $SIG{INT} = 'DEFAULT';
+    $SIG{TERM} = 'DEFAULT';
+}
+
+sub create_packages_dir(){
+  print "Creating $VERSION/Packages directory ...\n";
+  chdir $RELEASEDIR or die;
+  if (! -f $packages_file){
+    print STDERR "$packages_file file does not exist\n";
+    unlock;
+    die "\n";
+  }
+  open PACKAGES_TO_INCLUDE, "$packages_file" or die;
+  while (<PACKAGES_TO_INCLUDE>){
+    chomp;
+    s/\s*//g;
+    next if /^$/;
+    $is_permitted_package{$_}=1;
+  }
+  close PACKAGES_TO_INCLUDE;
+
+  opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
+  while (defined($package_name = readdir(ALLPACKAGESDIR))) {
+    next unless $is_permitted_package{$package_name};
+    chdir "$RELEASEDIR/$VERSION" or die;
+    mkdir('Packages', 0775);
+    chdir 'Packages';
+    mkdir($package_name, 0775);
+    if (-f "$ALLPACKAGESDIR/$package_name/maintainer"){
+      system('cp', "$ALLPACKAGESDIR/$package_name/maintainer", "$RELEASEDIR/$VERSION/Packages/$package_name");
+    }
+    if  (-f "$ALLPACKAGESDIR/$package_name/version"){
+      system('cp', "$ALLPACKAGESDIR/$package_name/version", "$RELEASEDIR/$VERSION/Packages/$package_name");
+    }
+    if (-f "$ALLPACKAGESDIR/$package_name/changes.txt"){
+      system('cp', "$ALLPACKAGESDIR/$package_name/changes.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
+    }
+    if (-f "$ALLPACKAGESDIR/$package_name/description.txt"){
+      system('cp', "$ALLPACKAGESDIR/$package_name/description.txt", "$RELEASEDIR/$VERSION/Packages/$package_name");
+    }
+
+  }
+  closedir ALLPACKAGESDIR;
+}
+
+
+sub install_packages() {
+  my ($filename, $direc, %is_permited_package, $package_name);
+  print "Installing packages ...\n";
+  chdir $RELEASEDIR or die;
+  if (! -f $packages_file){
+    print STDERR "$packages_file file does not exist\n";
+    unlock;
+    die "\n";
+  }
+
+
+  open PACKAGES_TO_INCLUDE, "$packages_file" or die;
+  while (<PACKAGES_TO_INCLUDE>){
+    chomp;
+    s/\s*//g;
+    next if /^$/;
+    $is_permitted_package{$_}=1;
+  }
+  close PACKAGES_TO_INCLUDE;
+
+  opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
+  while (defined($package_name = readdir(ALLPACKAGESDIR))) {
+    next unless $is_permitted_package{$package_name};
+    $dont_submit="$ALLPACKAGESDIR/$package_name/dont_submit";
+    $exclude_command="--exclude-from=$dont_submit";
+    chdir "$ALLPACKAGESDIR" or die;
+    if(-f $dont_submit){
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', "$exclude_command", '--exclude=TODO', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=version', '--exclude=.cvsignore', "$package_name");
+    } else {
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=CVS', '--exclude=dont_submit', '--exclude=maintainer', '--exclude=description.txt', '--exclude=changes.txt', '--exclude=TODO', '--exclude=version', '--exclude=.cvsignore',"$package_name");
+    }
+    system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
+    
+
+    chdir "$RELEASEDIR/$VERSION" or die;
+    system('tar', '-xf', "temppack.tar");
+    opendir packagename, "$package_name";
+    @fichiers = readdir packagename;
+    closedir packagename;
+    shift @fichiers; shift @fichiers;
+    foreach $fichier (@fichiers){
+      system('cp', '-r', "$package_name/$fichier", "$RELEASEDIR/$VERSION");
+    }
+    system('rm', '-rf', "$package_name");
+
+  }
+  closedir ALLPACKAGESDIR;
+  unlink 'temppack.tar', 'description.txt', 'long_description.txt', 'changes.txt', 'submission_info', 'long_description.txt.old';
+}
+
+#-----------------------------------------------------------------------#
+# set the version information in the include/CGAL/config.h include file.#
+#-----------------------------------------------------------------------#
+
+sub set_version_in_config()
+{
+    chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
+    open(SOURCE_FILE, '<config.h') or die "Error opening config.h: $!";
+    open(TEMPFILE, ">tempfile") or die;
+    while ( <SOURCE_FILE> ) {
+	s|^\s*\#\s*define\s+CGAL_VERSION\b.*$|#define CGAL_VERSION $VERSION|;
+	s|^\s*\#\s*define\s*CGAL_VERSION_NR\b.*$|#define CGAL_VERSION_NR $VERSION|;
+	print TEMPFILE $_;
+    }
+    close SOURCE_FILE || die "Error closing config.h_with_dir: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+#    rename($TEMPFILE, 'config.h' );
+    system('mv', "tempfile", 'config.h');
+#    || warn "Could not update file config.h";
+    chdir '../..' or die;
+}
+
+
+sub make_src_makefiles(){
+  chdir "$RELEASEDIR/$VERSION" or die;
+  chdir 'src' or die;
+  @source_files = glob("*.C");
+@object_files = map {substr($_, 0,-2) . '$(OBJ_EXT)'} @source_files;
+$, = " \\\n";
+
+open MFLIB, ">makefile_lib";
+
+print MFLIB <<'EOF';
+# This is the makefile for compiling the CGAL object library libCGAL.a.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_LIB_CXXFLAGS)
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+EOF
+
+print MFLIB @object_files;
+print MFLIB "\n";
+
+print MFLIB <<'EOF';
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: lib_no_install
+	mv $(CGAL_LIB) $(CGAL_LIB_DESTINATION)
+
+lib_no_install: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+	$(CGAL_LIB_CREATE)$(CGAL_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_LIB_LDFLAGS)
+	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+
+
+clean:
+	rm -f $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+EOF
+
+close MFLIB;
+open MFSHARED, ">makefile_sharedlib";
+
+print MFSHARED <<'EOF';
+# This is the makefile for compiling the CGAL shared object library libCGAL.so.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
+
+#---------------------------------------------------------------------#
+#                    object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+EOF
+
+print MFSHARED @object_files;
+print MFSHARED "\n";
+
+print MFSHARED <<'EOF';
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_SHARED_LIB_LDFLAGS)
+	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
+	rm $(CGAL_OBJECTS) $(CGAL_EXTRA_OBJECTS)
+
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+
+EOF
+
+}
+
+
+#---------------------------------------------------------------#
+# CreateExampleTestDirs
+#---------------------------------------------------------------#
+
+sub CreateExampleTestDirs()
+{
+    my $DIR;
+    print "Creating $VERSION/test/example directories ...\n";
+    chdir "$RELEASEDIR/$VERSION" or die;
+    chdir 'examples' or return;
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
+	}
+    }
+    chdir '..';
+}
+
+
+#---------------------------------------------------------------#
+# CreateDemoTestDirs
+#---------------------------------------------------------------#
+
+sub CreateDemoTestDirs()
+{
+    my $DIR;
+    print "Creating $VERSION/test/demo directories ...\n";
+    chdir "$RELEASEDIR/$VERSION" or die;
+    chdir 'demo' or return;
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    system('cp', '-r', "$DIR", "../test/${DIR}_Demo");
+            open(CGAL_TEST,">../test/${DIR}_Demo/cgal_test");
+            print CGAL_TEST <<'EOF';
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile
+#---------------------------------------------------------------------#
+
+compile()
+{
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" all' >compiler_output 2>&1 ; then
+    echo "   succesful compilation " >> $ERRORFILE
+    cat compiler_output
+  else
+    echo "   ERROR:    compilation " >> $ERRORFILE
+    eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+    eval 'make -k CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" all'
+  fi
+  rm compiler_output
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+    compile
+EOF
+         close(CGAL_TEST);
+         chmod 0755, '../test/${DIR}_Demo/cgal_test';
+	}
+    }
+    chdir '..';
+}
+
+
+sub CreateConfigurationTestdir(){
+  print "Creating $VERSION/test/Configuration directory ...\n";
+  chdir "$RELEASEDIR/$VERSION" or die;
+  system('cp', '-r', 'config/testfiles', 'test/Configuration');
+}
+
+#---------------------------------------------------------------#
+# CreateSrcTestDir
+#---------------------------------------------------------------#
+
+sub CreateSrcTestDir()
+{
+    print "Creating $VERSION/test/src directory ...\n";
+    chdir "$RELEASEDIR/$VERSION" or die;
+    system('cp', '-r', 'src', 'test');
+    rename('test/src/makefile_lib','test/src/makefile');
+    open(CGAL_TEST,">test/src/cgal_test");
+    print CGAL_TEST <<'EOF';
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" -k $1' ; then
+    echo "   compilation of $1 succeeded" >> $ERRORFILE
+  else
+    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile $file
+  done
+else
+  compile lib_no_install 
+fi
+EOF
+
+    close(CGAL_TEST);
+    chmod 0755, 'test/src/cgal_test';
+}
+
+
+
+#---------------------------------------------------------------#
+# create cgal_test script in tests
+#---------------------------------------------------------------#
+sub create_test(){
+    open(CGAL_TEST,">cgal_test");
+    print CGAL_TEST <<'EOF';
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+    echo "   succesful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "${SUCCES}" ] ; then
+     OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+    rm -f $OUTPUTFILE
+    COMMAND="./$1"
+    if [ -f $1.cmd ] ; then
+      COMMAND="$COMMAND `cat $1.cmd`"
+    fi
+    if [ -f $1.cin ] ; then
+      COMMAND="cat $1.cin | $COMMAND"
+    fi
+    echo "Executing $1 ... "
+    echo
+    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+      echo "   succesful execution   of $1" >> $ERRORFILE
+    else
+      echo "   ERROR:    execution   of $1" >> $ERRORFILE
+    fi
+  else
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
+  fi
+
+  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+EOF
+    close(CGAL_TEST);
+
+  open(CGAL_TEST,">>cgal_test");
+  my $cfile;
+  foreach $cfile (glob("*.C")) {
+    substr($cfile, -2, 2) = "";
+    print CGAL_TEST "  compile_and_run $cfile\n";
+  }
+  print CGAL_TEST "fi\n";
+    close(CGAL_TEST);
+    chmod 0755, 'cgal_test';
+}
+
+
+
+#---------------------------------------------------------------#
+# make_testscripts and generate makefiles in test and examples
+#---------------------------------------------------------------#
+
+sub make_testscripts()
+{
+    my ($DIR, $BASEDIR);
+    chdir "$RELEASEDIR/$VERSION" or die;
+    $BASEDIR = cwd();
+    print "Creating and checking makefiles ...\n";
+
+    chdir 'test';
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    chdir $DIR;
+	    if ( -f 'Makefile') {
+		rename 'Makefile', 'makefile';
+	    }
+	    if ( -f 'makefile' ) {
+                open MAKEFILE, "makefile";
+                open NEW_MAKEFILE, ">makefile.new";
+		while (<MAKEFILE>) {
+		   s/\.o\b/\$(OBJ_EXT)/g;
+		   s/-g\b/\$(DEBUG_OPT)/g;
+		   print NEW_MAKEFILE $_;
+		}
+		close NEW_MAKEFILE;
+		close MAKEFILE;
+		rename("makefile.new","makefile");
+	    } else {
+                my $options = '-t';
+		if ( -f 'create_makefile_options') {
+		    if (open(OPTIONS, "<create_makefile_options")) {
+		        $_ = <OPTIONS>;
+			chomp;
+			if (/^[\w\s-]+$/) { $options = $_;
+			} else {
+			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			}
+			close OPTIONS;
+		    }
+		}
+		system("$SCRIPTSDIR/create_makefile", $options);
+	    }
+	    if ( ! -f 'cgal_test' ) {
+	      create_test();
+	    }
+	    chdir '..';
+	}
+    }
+    chdir $BASEDIR;
+    chdir 'examples';
+    print "Creating makefiles in examples\n";
+    foreach $DIR (glob("*")) {
+	if ( -d $DIR ) {
+	    chdir $DIR;
+	    if ( -f 'Makefile') {
+		rename 'Makefile', 'makefile';
+	    }
+	    if ( -f 'makefile' ) {
+                open MAKEFILE, "makefile";
+                open NEW_MAKEFILE, ">makefile.new";
+		while (<MAKEFILE>) {
+		   s/\.o\b/\$(OBJ_EXT)/g;
+		   s/-g\b/\$(DEBUG_OPT)/g;
+		   print NEW_MAKEFILE $_;
+		}
+		close NEW_MAKEFILE;
+		close MAKEFILE;
+		rename("makefile.new","makefile");
+	    } else {
+                my $options = '-d';
+		if ( -f 'create_makefile_options') {
+		    if (open(OPTIONS, "<create_makefile_options")) {
+		        $_ = <OPTIONS>;
+			chomp;
+			if (/^[\w\s-]+$/) { $options = $_;
+			} else {
+			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			}
+			close OPTIONS;
+		    }
+		}
+		system("$SCRIPTSDIR/create_makefile", $options);
+	    }
+	    chdir '..';
+	}
+    }
+    chdir $BASEDIR;
+}
+
+#----------------------------------------------------------------#
+#                     check_and_update_file                      #
+#----------------------------------------------------------------#
+
+sub check_and_update_file($$)
+{
+    my ($filename, $filename_with_dir) = @_;
+    my $header_type = 0;
+    my $lines_exceeding_length = 0;
+    my $has_line_directives = 0;
+    unlink $TEMPFILE;
+    open SOURCE_FILE, "<$filename" || die "Error opening $filename_with_dir: $!\n";
+    open TEMPFILE, ">$TEMPFILE" || die;
+    while ( <SOURCE_FILE> ) {
+	$header_type = 1
+	    if m|^Copyright \(c\) \d{4](,\s?\d{4})* The CGAL Consortium|;
+	$header_type = 2
+	    if m|^// Copyright \(c\) \d{4}(,\s?\d{4})* The CGAL Consortium|;
+	$lines_exceeding_length +=1 if length $_ > 80;
+	$has_line_directives = 1 if m|^\s*#\s*line\s|;
+	s<^\s*//\s*file\s*:.*$><// file          : $filename_with_dir>;
+	s<^\s*// release\b.*$><// release       : \$CGAL_Revision: $VERSION \$>;
+	s<^\s*// release_date.*$><$release_date>;
+	print TEMPFILE $_;
+    }
+    close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    rename($TEMPFILE, $filename )
+    || system('mv', "$TEMPFILE", "$filename")
+    || warn "Could not update file $filename_with_dir\n";
+    if ($header_type == 0) {
+	print FILE_CHECKS "$filename_with_dir has unrecognised header.\n";
+    } elsif ($header_type == 1) {
+	print FILE_CHECKS "$filename_with_dir has old style header.\n";
+    }
+    if ($lines_exceeding_length) {
+	print FILE_CHECKS "$filename_with_dir has $lines_exceeding_length",
+	    " lines over 80 characters.\n";
+    }
+    if ($has_line_directives) {
+	print FILE_CHECKS "$filename_with_dir has line directives.\n";
+    }
+}
+
+#----------------------------------------------------------------#
+#                     set_file_headers                           #
+#----------------------------------------------------------------#
+
+sub set_file_headers()
+{
+    print "Setting file headers...\n";
+    chdir "$RELEASEDIR/$VERSION";
+    $release_date =
+	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
+    chomp($release_date);
+    open(FILE_CHECKS,">$PARENT_DIR/code_check_$VERSION");
+    find(\&file_header_setting, 'include', 'src', 'examples', 'config/testfiles');
+    close FILE_CHECKS;
+    chdir $MAIN_DIR;
+}
+
+sub file_header_setting
+{
+    my ($filename,$dev,$ino,$mode,$nlink,$uid,$gid,$filetype);
+    $filename = $_;
+    if ( ! /\.[h|C]$/ ||
+	! (($dev,$ino,$mode,$nlink,$uid,$gid) = lstat($filename)) ||
+	! -f _ ) {
+	return;
+    }
+    check_and_update_file($filename, $File::Find::name);
+}
+
+
+#----------------------------------------------------#
+#                Main entry point                    #
+#----------------------------------------------------#
+
+
+sub main(){
+
+getopts('hr:a:d:l:p:s:');
+if ($::opt_h ) {
+  usage();
+  die "\n";
+}
+if ($::opt_d){
+  $RELEASEDIR = $::opt_d;
+  $ALLPACKAGESDIR = "$RELEASEDIR/All";
+  $SCRIPTSDIR = "$RELEASEDIR";
+  $LOCKFILE="$RELEASEDIR/release_creation.lock";
+  $packages_file="$RELEASEDIR/include_in_release";
+}
+
+if ($::opt_r){
+  $VERSION = $::opt_r;
+} else {
+  usage();
+  die "\n";
+}
+if ($::opt_a){
+  $ALLPACKAGESDIR = $::opt_a;
+}
+if ($::opt_s){
+  $SCRIPTSDIR = $::opt_s;
+}
+if ($::opt_l){
+  $LOCKFILE = $::opt_l;
+}
+if ($::opt_p){
+  $packages_file = $::opt_p;
+}
+  print "Initializing variables ...\n";
+  print "  Release dir: $RELEASEDIR\n";
+  print "  All packages dir: $ALLPACKAGESDIR\n";
+  print "  Scripts dir: $SCRIPTSDIR\n";
+  print "  Lockfile: $LOCKFILE\n";
+  print "  Packages file : $packages_file\n";
+  umask(002);
+  chdir $RELEASEDIR or die;
+  if (! -d $VERSION){
+    print "Creating release directory ${VERSION} ...\n";
+    mkdir($VERSION, 0775);
+  } else {
+    print "$VERSION already exists in $RELEASEDIR\n";
+    print "Please remove it first\n";
+    exit 1;
+  }
+lock;
+
+create_packages_dir();
+install_packages();
+CreateConfigurationTestdir();
+CreateSrcTestDir();
+CreateDemoTestDirs();
+CreateExampleTestDirs();
+set_version_in_config();
+make_testscripts();
+set_file_headers();
+make_src_makefiles();
+
+
+unlock;
+
+}
+
+main();
