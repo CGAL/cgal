@@ -5280,7 +5280,7 @@ install_gmp()
 
     case ${CGAL_OS_COMPILER} in 
 	*CYGWIN*) 
-	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-4.0.1"
+	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-4.1.2"
 	    case `compiler_description` in
 		*VC++*)    _tmp_name=msvc
 			   _tmp_lib=gmp.lib
