@@ -118,13 +118,13 @@ public:
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
 protected:
+    mutable bool                        _known;
+    mutable Intersection_results        _result;
+    mutable typename K::FT              _min, _max;
     typename K::Point_2             _ref_point;
     typename K::Vector_2            _dir;
     typename K::Point_2             _isomin;
     typename K::Point_2             _isomax;
-    mutable bool                        _known;
-    mutable Intersection_results        _result;
-    mutable typename K::FT              _min, _max;
 };
 
 template <class K>
