@@ -148,7 +148,7 @@ bool square_root_test()
 
 bool overflow_test()
 {
-  int i=0;
+  int i;
   IA_nt a (2), b(2.1);
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
