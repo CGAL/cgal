@@ -64,11 +64,25 @@ public:
   typedef typename R::Circle_2_base             Circle_2;
 #endif
 
-  PointC2();
-  PointC2(const Origin &);
-  PointC2(const FT &x, const FT &y);
-  PointC2(const FT &hx, const FT &hy, const FT &hw);
-  PointC2(const Vector_2 &v);
+  PointC2()
+    : Point_handle_2(Point_ref_2()) {}
+
+  PointC2(const Origin &)
+    : Point_handle_2(Point_ref_2(FT(0), FT(0))) {}
+
+  PointC2(const FT &x, const FT &y)
+    : Point_handle_2(Point_ref_2(x, y)) {}
+
+  PointC2(const FT &hx, const FT &hy, const FT &hw)
+  {
+    if (hw != FT(1))
+      initialize_with( Point_ref_2(hx/hw, hy/hw) );
+    else
+      initialize_with( Point_ref_2(hx, hy) );
+  }
+
+  PointC2(const Vector_2 &v)
+    : Point_handle_2(v) {}
 
   FT x() const
   {
@@ -106,6 +120,8 @@ public:
 
   bool operator==(const Self &p) const
   {
+      if (identical(p))
+	  return true;
       return equal_xy(*this, p);
   }
   bool operator!=(const Self &p) const
@@ -115,41 +131,11 @@ public:
 
   Bbox_2 bbox() const;
 
-  Self transform(const Aff_transformation_2 &) const;
+  Self transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
+  }
 };
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2()
-  : Point_handle_2(Point_ref_2()) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const Origin &)
-  : Point_handle_2(Point_ref_2(FT(0), FT(0))) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
-                              const typename PointC2<R CGAL_CTAG>::FT &y)
-  : Point_handle_2(Point_ref_2(x, y)) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
-  : Point_handle_2(v) {}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
-                              const typename PointC2<R CGAL_CTAG>::FT &hy,
-                              const typename PointC2<R CGAL_CTAG>::FT &hw)
-{
-  if( hw != FT(1))
-    initialize_with( Point_ref_2(hx/hw, hy/hw) );
-  else
-    initialize_with( Point_ref_2(hx, hy) );
-}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -169,15 +155,6 @@ PointC2<R CGAL_CTAG>::homogeneous(int i) const
   if (i<2)
     return cartesian(i);
   return FT(1);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-PointC2<R CGAL_CTAG>
-PointC2<R CGAL_CTAG>::
-transform( const typename PointC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
-  return t.transform(*this);
 }
 
 template < class R >
