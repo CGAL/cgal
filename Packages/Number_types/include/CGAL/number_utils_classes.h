@@ -32,30 +32,34 @@
 #endif // CGAL_CONFIG_H
 
 #include <algorithm>
-#include <functional>
+#include <CGAL/functional_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class NT >
 struct Is_zero :public CGAL_STD::unary_function< NT, bool > {
+  typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return is_zero( x); }
 };
 
 template < class NT >
 struct Is_one :public CGAL_STD::unary_function< NT, bool > {
+  typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return is_one( x); }
 };
 
 template < class NT >
 struct Is_negative :public CGAL_STD::unary_function< NT, bool > {
+  typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return is_negative( x); }
 };
 
 template < class NT >
 struct Is_positive :public CGAL_STD::unary_function< NT, bool > {
+  typedef Arity_tag< 1 > Arity;
   bool operator()( const NT& x) const
   { return is_positive( x); }
 };
@@ -63,6 +67,7 @@ struct Is_positive :public CGAL_STD::unary_function< NT, bool > {
 // Sign would result in a name clash with enum.h
 template < class NT >
 struct Sgn :public CGAL_STD::unary_function< NT, int > {
+  typedef Arity_tag< 1 > Arity;
   Sign operator()( const NT& x) const
   { return sign( x); }
 };
@@ -70,6 +75,7 @@ struct Sgn :public CGAL_STD::unary_function< NT, int > {
 template < class NT >
 struct Lexicographical_sign
   :public CGAL_STD::binary_function< NT, NT, int > {
+  typedef Arity_tag< 2 > Arity;
 
   Sign operator()( const NT& x, const NT& y) const
   { return lexicographical_sign( x, y); }
@@ -77,18 +83,21 @@ struct Lexicographical_sign
 
 template < class NT >
 struct Abs :public CGAL_STD::unary_function< NT, NT > {
+  typedef Arity_tag< 1 > Arity;
   NT operator()( const NT& x) const
   { return abs( x); }
 };
 
 template < class NT >
 struct Min :public CGAL_STD::binary_function< NT, NT, NT > {
+  typedef Arity_tag< 2 > Arity;
   NT operator()( const NT& x, const NT& y) const
   { return std::min( x, y); }
 };
 
 template < class NT >
 struct Max :public CGAL_STD::binary_function< NT, NT, NT > {
+  typedef Arity_tag< 2 > Arity;
   NT operator()( const NT& x, const NT& y) const
   { return std::max( x, y); }
 };
@@ -96,6 +105,7 @@ struct Max :public CGAL_STD::binary_function< NT, NT, NT > {
 template < class NT >
 struct Compare
   :public CGAL_STD::binary_function< NT, NT, Comparison_result > {
+  typedef Arity_tag< 2 > Arity;
 
   Comparison_result
   operator()( const NT& x, const NT& y) const
@@ -104,6 +114,7 @@ struct Compare
 
 template < class NT >
 struct Square :public CGAL_STD::unary_function< NT, NT > {
+  typedef Arity_tag< 2 > Arity;
 
   NT
   operator()( const NT& x) const
