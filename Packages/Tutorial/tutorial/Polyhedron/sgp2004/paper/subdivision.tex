@@ -27,6 +27,14 @@ Doo-Sabin subdivision (DQQ) \cite{ds} and $\sqrt{3}$ subdivision
 \cite{sqrt3}. Subdivisions, such as Quad-Triangle subdivision 
 \cite{qts,l-pg-03}, may employ a hybrid refinement consisting
 of two different refinements.
+
+The \gm\ multiplies the stencils and
+results the vertices on the refined mesh.
+Examples of the correspondence between a stencil and its 
+vertex are shown in Fig.\ref{fig:RefMap}, where 
+Catmull-Clark subdivision has three distinct stencils 
+and Doo-Sabin subdivision has only one stencil.
+
 \begin{figure}[htb]
   \centering
   \psfrag{PQQ}[]{\scriptsize PQQ} 
@@ -40,15 +48,9 @@ of two different refinements.
     dual quadrilateral quadrisection (DQQ) and
     $\sqrt{3}$ triangulation.}
   \label{fig:RefSchemes}
-\end{figure}
-The \gm\ multiplies the stencils and
-results the vertices on the refined mesh.
-Examples of the correspondence between a stencil and its 
-vertex are shown in Fig.\ref{fig:RefMap}, where 
-Catmull-Clark subdivision has three distinct stencils 
-and Doo-Sabin subdivision has only one stencil.
-\begin{figure}
-  \centering
+%\end{figure}
+%\begin{figure}[htb]
+%  \centering
   \psfrag{A}[]{(a)}
   \psfrag{B}[]{(b)}
   \psfrag{C}[]{(c)}
@@ -64,7 +66,6 @@ and Doo-Sabin subdivision has only one stencil.
 	   The weights of the stencils are not shown.}
   \label{fig:RefMap}
 \end{figure}
-
 
 % templated rules: a generic framework for subdivisions 
 \subsubsection{Generic Subdivision Solution}
