@@ -426,7 +426,7 @@ inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
             bool int_output) const
   {
     if(int_output) {
-      Point_2 out_p = _gt.get_integer_grid_point(p,pixel_size);
+      Point_2 out_p = _gt.integer_grid_point(p,pixel_size);
       return(out_p);
     } else
       return(p);
