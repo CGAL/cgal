@@ -331,11 +331,7 @@ public:
     // -- changes the dimension
     // -- if (reorient) the orientation of the cells is modified
 
-#ifdef SYL
-  typedef std::vector<void *> Conflict_set;
-#else
   typedef std::set<void *> Conflict_set;
-#endif
 
   // for Delaunay :
   void star_region(const Conflict_set & region, Vertex* v, Cell* c, int li);
@@ -345,11 +341,7 @@ public:
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star(
-#ifndef SYL
-                    const Conflict_set & region,
-#endif
-                    Vertex* v, Cell* c, int li);
+  Cell* create_star(const Conflict_set & region, Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
 
 public:
@@ -2054,19 +2046,11 @@ star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // by linking v to the boundary of region
 {
   CGAL_triangulation_precondition( dimension() >= 2 );
-#ifdef SYL
-  CGAL_triangulation_precondition( c->get_flags() == 1 );
-#else
   CGAL_triangulation_precondition( region.find( (Conflict_set::value_type) c )  
 				   != region.end() );
-#endif
 
   // does not check whether region is connected 
-#ifdef SYL
-  Cell* nouv = create_star(v, c, li );
-#else
   Cell* nouv = create_star( region, v, c, li );
-#endif
   v->set_cell( nouv );
   Conflict_set::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it)
@@ -2076,11 +2060,7 @@ star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star(
-#ifndef SYL
-            const Conflict_set & region,
-#endif
-            Vertex* v, Cell* c, int li )
+create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
@@ -2114,11 +2094,7 @@ create_star(
       while (true) {
 	j1 = n->index( cur->vertex(j1) );
 	j2 = n->index( cur->vertex(j2) );
-#ifdef SYL
-	if (n->get_flags() == 0)
-#else
 	if ( region.find( (Conflict_set::value_type) n ) == region.end() )
-#endif
 	  break; //not in conflict
 	CGAL_triangulation_assertion( n != c );
 	cur = n;
@@ -2128,11 +2104,7 @@ create_star(
       if ( n->neighbor( next_around_edge(j2,j1) ) == cur ) {
 	// neighbor relation is reciprocical, ie
 	// the cell we are looking for is not yet created
-#ifdef SYL
-	cnew->set_neighbor(ii,create_star(v,cur,cur->index(n)));
-#else
 	cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
-#endif
 	continue;
       }
       // else the cell we are looking for was already created
@@ -2155,12 +2127,8 @@ create_star(
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-#ifdef SYL
-    while ( cur->neighbor(cw(i1))->get_flags() == 1 ) {
-#else
     while ( region.find( (Conflict_set::value_type) cur->neighbor(cw(i1)) ) !=
 	    region.end() ) {
-#endif
       // neighbor in conflict
       cur = cur->neighbor(cw(i1));
       i1 = cur->index( v1 );

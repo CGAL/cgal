@@ -167,11 +167,7 @@ public:
   void print(Cell_handle c) const;
 
 private:
-#ifdef SYL
-  typedef std::vector<void *> Conflict_set;
-#else
   typedef std::set<void *> Conflict_set;
-#endif
 
   void
   find_conflicts_3(Conflict_set & conflicts, const Point & p,
@@ -279,25 +275,20 @@ insert(const Point & p, Cell_handle start)
       Locate_type lt;
       int li, lj;
       Cell_handle c = locate( p, start, lt, li, lj);
-      if ( lt == VERTEX ) return c->vertex(li);
-      else {
-//       case OUTSIDE_CONVEX_HULL:
-//       case CELL:
-//       case FACET:
-//       case EDGE:
-	  Vertex_handle v = new Vertex(p);
-	  set_number_of_vertices(number_of_vertices()+1);
-	  Conflict_set conflicts;
-#ifdef SYL
-	  conflicts.reserve(32);
-#endif
-	  Cell_handle aconflict;
-	  int ineighbor;
-	  find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
-	  _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
-	  return v;
-      }
-      //      break;// unreachable code
+      if ( lt == VERTEX )
+	  return c->vertex(li);
+//    case OUTSIDE_CONVEX_HULL:
+//    case CELL:
+//    case FACET:
+//    case EDGE:
+      Vertex_handle v = new Vertex(p);
+      set_number_of_vertices(number_of_vertices()+1);
+      Conflict_set conflicts;
+      Cell_handle aconflict;
+      int ineighbor;
+      find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
+      _tds.star_region(conflicts,&(*v),&(*aconflict),ineighbor);
+      return v;
     }// dim 3
   case 2:
     {
@@ -313,9 +304,6 @@ insert(const Point & p, Cell_handle start)
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Conflict_set conflicts;
-#ifdef SYL
-	  conflicts.reserve(16);
-#endif
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
@@ -325,12 +313,9 @@ insert(const Point & p, Cell_handle start)
       case VERTEX:
 	return c->vertex(li);
       case OUTSIDE_AFFINE_HULL:
-	{
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	  return
-	    Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
-	}
+	return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p); 
       }
     }//dim 2
   default :
@@ -355,17 +340,15 @@ remove(Vertex_handle v)
     Vertex_iterator vit;
     Vertex_iterator vdone = vertices_end();
     std::list<Point> points;
-    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit) {
+    for ( vit = finite_vertices_begin(); vit != vdone ; ++vit)
       if ( v != (*vit).handle() ) 
-	{ points.push_front( vit->point() ); }
-    }
-    typename std::list<Point>::iterator pit;
-    typename std::list<Point>::iterator pdone = points.end();
+	points.push_front( vit->point() );
+
+    typename std::list<Point>::iterator pit, pdone = points.end();
     
     clear();
-    for ( pit = points.begin(); pit != pdone; ++pit) {
+    for ( pit = points.begin(); pit != pdone; ++pit)
       insert( *pit );
-    }
 
     return true;
   }
@@ -1035,20 +1018,12 @@ find_conflicts_3(Conflict_set & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-#ifdef SYL
-  conflicts.push_back( (Conflict_set::value_type) &(*c) );
-  c->set_in_conflict_flag(1);
-#else
   (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
-#endif
 
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
-#ifdef SYL
-    if (test->get_in_conflict_flag() == 1)
-#else
-    if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
-#endif
+    if (conflicts.find( (Conflict_set::value_type) &(*test) )
+	    != conflicts.end())
       continue; // test was already tested and found to be in conflict.
     if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
       find_conflicts_3(conflicts, p, test, ac, i);
@@ -1142,21 +1117,12 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-
-#ifdef SYL
-  conflicts.push_back( (Conflict_set::value_type) &(*c) );
-  c->set_in_conflict_flag(1);
-#else
   (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
-#endif
 
   for ( int j=0; j<3; j++ ) {
     Cell_handle test = c->neighbor(j);
-#ifdef SYL
-    if (test->get_in_conflict_flag() == 1)
-#else
-    if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
-#endif
+    if (conflicts.find( (Conflict_set::value_type) &(*test) )
+	    != conflicts.end())
       continue;   // test was already found
     if ( side_of_circle( test, 3, p ) == ON_BOUNDED_SIDE )
       find_conflicts_2(conflicts, p, test, ac, i);
