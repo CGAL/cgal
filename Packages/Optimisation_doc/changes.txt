@@ -1,6 +1,6 @@
 Changes done to the `Optimisation_doc' package
 
-Version 0.6 on 13-Sep-2000
+Version 0.6 on 15-Sep-2000
 - `bad' introduction added in user manual.
 - changed referencing of concepts.
 
