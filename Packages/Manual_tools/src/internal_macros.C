@@ -1120,6 +1120,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "{", "\\begingroup");
     insertInternalGlobalMacro( "}", "\\endgroup");
 
+    insertInternalGlobalMacro( "$$", "\\lciTexToggleDisplayMathMode");
+
     insertInternalGlobalMacro( "\\newcommand", newcommand, 2);
     insertInternalGlobalMacro( "\\newcommand@mom", newcommand_opt);
     insertInternalGlobalMacro( "\\def", newcommand, 2);

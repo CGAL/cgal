@@ -1326,6 +1326,10 @@
 }\(\newcommand{\lciMathModeDisplay}{\lcTrue}}
 \newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{<P>}}
 \newenvironment{displaymath}{\[}{\]}
+
+%% Called for TeX $$ sequence:
+\newcommand{\lciTexToggleDisplayMathMode}{\lciIf{\lciMathModeDisplay}{\]}{\[}}
+
 \newenvironment{equation}{\[}{\]}
 
 \newcommand{\ensuremath}[1]{\lciIf{\lciMathMode}{#1}{$#1$}}

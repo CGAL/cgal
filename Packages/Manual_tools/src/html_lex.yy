@@ -265,7 +265,8 @@ number          {digit}+
 		    yylval.text = "\n<P>\n\n";
 		    return STRING;
 	        }
-"%".*  { /* Match one line TeX comments at the last line in a file (EOF) */ }
+"%".*  {            /* Match TeX comments at the last line in a file (EOF) */ 
+                    break;}
 
 <<EOF>>         {   if ( YY_START != INITIAL)
                         printErrorMessage( ParsingStateError);
@@ -887,6 +888,17 @@ number          {digit}+
  /* TeX macro expansion                    */
  /* -------------------------------------- */
 <INITIAL,AllttMode>{texmacro}       {
+                    yyleng = removespaces( yytext);
+		    if ( ! expand_macro())
+			return STRING;
+		    break;
+                }
+
+
+ /* Specials TeX sequence macro expansion:    */
+ /* see also below for active char expansion  */
+ /* ----------------------------------------- */
+<INITIAL>"$$"       {
                     yyleng = removespaces( yytext);
 		    if ( ! expand_macro())
 			return STRING;
