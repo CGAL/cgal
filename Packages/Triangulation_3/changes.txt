@@ -1,3 +1,6 @@
+Version 1.189 (?? January 04)
+- Replace obsolete CGAL_TYPENAME_MSVC_NULL by typename.
+
 Version 1.188 (18 January 04)
 - Remove useless friend declarations.
 - Replace NULL by default constructed Handles.

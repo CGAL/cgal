@@ -70,7 +70,7 @@ public:
 
 
 
-template < class K, class Weight = CGAL_TYPENAME_MSVC_NULL K::RT >
+template < class K, class Weight = typename K::RT >
 class Regular_triangulation_euclidean_traits_3
   : public K
 {
