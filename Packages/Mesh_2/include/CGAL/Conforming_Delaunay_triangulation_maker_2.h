@@ -27,7 +27,7 @@ namespace CGAL {
 template <typename Tr>
 class Conforming_Delaunay_triangulation_maker_2
 {
-  typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;;
+  typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
 
   typedef Mesh_2::Refine_edges_with_clusters<Tr,
