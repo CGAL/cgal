@@ -1,6 +1,9 @@
 Stream_support Package: Release changes:
 ---------------------------------------------------------------------
 
+2.22 (16 July 2003)
+- Modified the demos to compile if the LEDA is not installed
+
 2.21 (12 Apr 2003)
 - Replace <strstream> by <sstream>.
 
