@@ -92,7 +92,7 @@ show_triangulation_faces(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
         for (int i=0; i<3; i++)
             gv << V[fit->vertex(i)];
         gv << 0; // without color.
-      // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random color.
+     // gv << 4 << drand48() << drand48() << drand48() << 1.0; // random color
     }
 }
 
