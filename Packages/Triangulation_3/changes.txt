@@ -1,3 +1,6 @@
+16 November 2004 Sylvain Pion
+- Comment out Regular::remove() documentation, as it's not ready.
+
 9 November 2004 Sylvain Pion
 - Disable test_regular_as_delaunay_3 since remove is not ready yet.
 
