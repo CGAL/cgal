@@ -145,6 +145,14 @@ Their value type is \ccStyle{Segment_2}.
                  \ccStyle{Point_2}.
     }
 
+  \ccConstructor{template <class ForwardCirculator>
+      Polygon_2( ForwardCirculator start); }
+    { Introduces a polygon \ccVar\ with vertices from the sequence defined by
+      the range \ccStyle{[start,start]}.
+      \ccPrecond The value type of points in the range \ccStyle{[first,last)} is
+                 \ccStyle{Point_2}.
+    }
+
 %  \ccHidden\ccDestructor{ ~Polygon_2();}{ destructor }
 
   \ccHidden\ccMethod{ Polygon_2<Traits,Container>& operator=(const
