@@ -165,7 +165,7 @@ public:
   {}
   
   // copy constructor duplicates vertices and cells
-  Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> & tr)
+  Delaunay_triangulation_3(const Delaunay_triangulation_3 & tr)
     : Triangulation_3<Gt,Tds>(tr)
   { 
     CGAL_triangulation_postcondition( is_valid() );  

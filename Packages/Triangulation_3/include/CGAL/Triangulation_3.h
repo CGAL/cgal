@@ -208,7 +208,7 @@ public:
     }
 
   // copy constructor duplicates vertices and cells
-  Triangulation_3(const Triangulation_3<GT,Tds> & tr)
+  Triangulation_3(const Triangulation_3 & tr)
     : _gt(tr._gt)
     {
       infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
@@ -222,19 +222,14 @@ public:
 
   Triangulation_3 & operator=(const Triangulation_3 & tr)
     {
-      //     clear();               BUG !!
-      //     infinite.Delete();
-      infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
-      _gt = tr._gt;
+      copy_triangulation(tr);
       return *this;
     }
 
   // HELPING FUNCTIONS
    
-  void copy_triangulation(const Triangulation_3<GT,Tds> & tr)
+  void copy_triangulation(const Triangulation_3 & tr)
     {
-      //     clear();               BUG !!
-      //     infinite.Delete();
       _gt = tr._gt;
       infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
     }

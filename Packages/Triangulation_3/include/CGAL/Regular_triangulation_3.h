@@ -71,7 +71,7 @@ public:
   {}
   
   // copy constructor duplicates vertices and cells
-  Regular_triangulation_3(const Regular_triangulation_3<Gt,Tds> & rt)
+  Regular_triangulation_3(const Regular_triangulation_3 & rt)
       : Triangulation_3<Gt,Tds>(rt)
   { 
       CGAL_triangulation_postcondition( is_valid() );  
