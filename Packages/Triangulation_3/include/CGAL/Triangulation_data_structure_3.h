@@ -242,11 +242,9 @@ private:
 public:
   // not documented
   std::istream& read_cells(std::istream& is,
-			   std::map< int, 
-			   Triangulation_data_structure_3<Vb,Cb>::Vertex* > &V,
+			   std::map< int, Vertex* > &V,
 			   int & m,
-			   std::map< int, 
-			   Triangulation_data_structure_3<Vb,Cb>::Cell* > &C );
+			   std::map< int, Cell* > &C );
   // not documented
   std::ostream& print_cells(std::ostream& os, 
 			    std::map< void*, int > &V ) const;
@@ -1224,134 +1222,13 @@ flip_really( Cell* c, int i, int j,
   delete_cell( c );
 }
 
-// not documented
-// template < class Vb, class Cb>
-// std::istream& 
-// read_cells(std::istream& is,
-// 	   Triangulation_data_structure_3<Vb,Cb>  &tds,
-// 	   std::map< int,
-// 	             typename Triangulation_data_structure_3<Vb,Cb>::Vertex*
-// 	             > &V,
-// 	   int & m,
-// 	   std::map< int,
-//                      typename Triangulation_data_structure_3<Vb,Cb>::Cell*
-// 	             > &C )
-// {
-//   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-//   typedef typename Tds::Vertex  Vertex;
-//   typedef typename Tds::Cell Cell;
-//   typedef typename Tds::Edge Edge;
-//   typedef typename Tds::Facet Facet;
- 
-//   // creation of the cells and neighbors
-//   switch (tds.dimension()) {
-//   case 3:
-//     {
-//       is >> m;
-//       Cell* c;
-
-//       int i0, i1, i2, i3;
-//       for(int i = 0; i < m; i++) {
-// 	is >> i0 >> i1 >> i2 >> i3;
-// 	c = tds.create_cell(V[i0], V[i1], V[i2], V[i3]);
-// 	C[i] = c;
-// 	V[i0]->set_cell(c);
-// 	V[i1]->set_cell(c);
-// 	V[i2]->set_cell(c);
-// 	V[i3]->set_cell(c);
-//       }
-//       for(int j = 0; j < m; j++) {
-//         is >> i0 >> i1 >> i2 >> i3;
-//         c = C[j];
-//         c->set_neighbor(0, C[i0]);
-//         c->set_neighbor(1, C[i1]);
-//         c->set_neighbor(2, C[i2]);
-//         c->set_neighbor(3, C[i3]);
-//       }
-//       break;
-//     }
-//   case 2:
-//     {
-//       is >> m;
-//       Cell* c;
-
-//       int i0, i1, i2;
-//       for(int i = 0; i < m; i++) {
-// 	is >> i0 >> i1 >> i2;
-// 	c = tds.create_cell(V[i0], V[i1], V[i2], NULL);
-// 	C[i] = c;
-// 	V[i0]->set_cell(c);
-// 	V[i1]->set_cell(c);
-// 	V[i2]->set_cell(c);
-//       }
-//       for(int j = 0; j < m; j++) {
-//         is >> i0 >> i1 >> i2;
-// 	c = C[j];
-//         c->set_neighbor(0, C[i0]);
-//         c->set_neighbor(1, C[i1]);
-//         c->set_neighbor(2, C[i2]);
-//       }
-//       break;
-//     }
-//   case 1:
-//     {
-//       is >> m;
-//       Cell* c;
-
-//       int i0, i1;
-//       for(int i = 0; i < m; i++) {
-// 	is >> i0 >> i1;
-// 	c = tds.create_cell(V[i0], V[i1], NULL, NULL);
-// 	C[i] = c;
-// 	V[i0]->set_cell(c);
-// 	V[i1]->set_cell(c);
-//       }
-//       for(int j = 0; j < m; j++) {
-//         is >> i0 >> i1;
-// 	c = C[j];
-//         c->set_neighbor(0, C[i0]);
-//         c->set_neighbor(1, C[i1]);
-//       }
-//       break;
-//     }
-//   case 0:
-//     {
-//       m = 2;
-//       Cell* c;
-
-//       //      CGAL_triangulation_assertion( (n == 2) );
-//       for (int i=0; i < 2; i++) {
-// 	c = tds.create_cell(V[i], NULL, NULL, NULL);
-// 	C[i] = c;
-// 	V[i]->set_cell(c);
-//       }
-//       for (int j=0; j < 2; j++) {
-// 	c = C[j];
-//         c->set_neighbor(0, C[1-j]);
-//       }
-//       break;
-//     }
-//   case -1:
-//     {
-//       m = 1;
-//       Cell* c;
-//       //      CGAL_triangulation_assertion( (n == 1) );
-//       c = tds.create_cell(V[0], NULL, NULL, NULL);
-//       C[0] = c;
-//       V[0]->set_cell(c);
-//       break;
-//     }
-//   }
-//   return is;
-// }
-
 template < class Vb, class Cb >
 std::istream& 
 Triangulation_data_structure_3<Vb,Cb>::
 read_cells(std::istream& is,
-	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Vertex* > &V,
+	   std::map< int, Vertex* > &V,
 	   int & m,
-	   std::map< int, Triangulation_data_structure_3<Vb,Cb>::Cell* > &C)
+	   std::map< int, Cell* > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -1454,154 +1331,6 @@ read_cells(std::istream& is,
   }
   return is;
 }
-
-// not documented
-// template < class Vb, class Cb>
-// std::ostream& 
-// print_cells(std::ostream& os, 
-// 	    const Triangulation_data_structure_3<Vb,Cb>  &tds,
-// 	    std::map< void*, int > &V )
-// {
-//   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
-//   typedef typename Tds::Vertex  Vertex;
-//   typedef typename Tds::Cell Cell;
-//   typedef typename Tds::Edge Edge;
-//   typedef typename Tds::Facet Facet;
-//   typedef typename Tds::Vertex_iterator  Vertex_iterator;
-//   typedef typename Tds::Cell_iterator  Cell_iterator;
-//   typedef typename Tds::Edge_iterator  Edge_iterator;
-//   typedef typename Tds::Facet_iterator  Facet_iterator;
-
-//   std::map< void*, int > C;
-
-//   int i = 0;
-//   int j;
-//   int m;
-  
-//   switch ( tds.dimension() ) {
-//   case 3:
-//     {
-//       m = tds.number_of_cells();
-//       os << m;
-//       if(is_ascii(os))
-// 	  os << std::endl;
-
-//       // write the cells
-//       Cell_iterator it = tds.cells_begin();
-//       while( it != tds.cells_end() ) {
-// 	C[&(*it)] = i++;
-// 	for(j = 0; j < 4; j++){
-// 	  os << V[it->vertex(j)];
-// 	  if(is_ascii(os)) {
-// 	    if ( j==3 )
-// 	      os << std::endl;
-// 	    else
-// 	      os << ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       CGAL_triangulation_assertion( i == m );
-      
-//       // write the neighbors
-//       it = tds.cells_begin();
-//       while ( it != tds.cells_end() ) {
-// 	for (j = 0; j < 4; j++) {
-// 	  os << C[&(* it->neighbor(j))];
-// 	  if(is_ascii(os)){
-// 	    if(j==3)
-// 	      os << std::endl;
-// 	    else
-// 	      os <<  ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       break;
-//     }
-//   case 2:
-//     {
-//       m = tds.number_of_facets();
-//       os << m;
-//       if(is_ascii(os))
-// 	  os << std::endl;
-
-//       // write the facets
-//       Facet_iterator it = tds.facets_begin();
-//       while( it != tds.facets_end() ) {
-// 	C[&*((*it).first)] = i++;
-// 	for(j = 0; j < 3; j++){
-// 	  os << V[(*it).first->vertex(j)];
-// 	  if(is_ascii(os)) {
-// 	    if ( j==2 )
-// 	      os << std::endl;
-// 	    else
-// 	      os <<  ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       CGAL_triangulation_assertion( i == m );
-      
-//       // write the neighbors
-//       it = tds.facets_begin();
-//       while ( it != tds.facets_end() ) {
-// 	for (j = 0; j < 3; j++) {
-// 	  os << C[&*((*it).first->neighbor(j))];
-// 	  if(is_ascii(os)){
-// 	    if(j==2)
-// 	      os << std::endl;
-// 	    else
-// 	      os <<  ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       break;
-//     }
-//   case 1:
-//     {
-//       m = tds.number_of_edges();
-//       os << m;
-//       if(is_ascii(os))
-// 	  os << std::endl;
-
-//       // write the edges
-//       Edge_iterator it = tds.edges_begin();
-//       while( it != tds.edges_end() ) {
-// 	C[&*((*it).first)] = i++;
-// 	for(j = 0; j < 2; j++){
-// 	  os << V[(*it).first->vertex(j)];
-// 	  if(is_ascii(os)) {
-// 	    if ( j==1 )
-// 	      os << std::endl;
-// 	    else
-// 	      os <<  ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       CGAL_triangulation_assertion( i == m );
-      
-//       // write the neighbors
-//       it = tds.edges_begin();
-//       while ( it != tds.edges_end() ) {
-// 	for (j = 0; j < 2; j++) {
-// 	  os << C[&*((*it).first->neighbor(j))];
-// 	  if(is_ascii(os)){
-// 	    if(j==1)
-// 	      os << std::endl;
-// 	    else
-// 	      os <<  ' ';
-// 	  }
-// 	}
-// 	++it;
-//       }
-//       break;
-//     }
-//   }
-//   return os;
-// }
 
 template < class Vb, class Cb>
 std::ostream& 
