@@ -5,8 +5,6 @@ constrained and regular triangulations with  tests and examples.
 - Replaced template parameter K with K_ in class Weighted_point_mapper_2
   to avoid error message for SunPro and Intel compiler
 
-Replaced template parameter K with K_ in class Weighted_point_mapper_2
-
 26 April 2004 Mariette Yvinec
 - fixed a useless test in _test_triangulation_tds.C
 - fixed deprecated code (replace NULL by Vertex_handle() or Face_handle()
