@@ -1857,8 +1857,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    Vertex_circulator_3_2 done = vc;
 	    
 	    do {
-	      if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
-		//if((&(*vc) != v0) && (&(*vc) != v3)) { // infinite loop
+	      //if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
+		if((&(*vc) != w0) && (&(*vc) != w3)) { // infinite loop
 		const Point & pc = vc->info()->point();
 
 		if(orientation(p0,p2,p3,pc) == COPLANAR) { goto next_ear; }
@@ -1870,8 +1870,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    vc = w1->incident_vertices();
 	    done = vc;
 	    do {
-	      if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
-	      //if((&(*vc) != v0) && (&(*vc) != v3)) {
+	      //if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
+	      if((&(*vc) != w0) && (&(*vc) != w3)) {
 		const Point & pc = vc->info()->point();
 		if(orientation(p0,p1,p3,pc) == COPLANAR) { goto next_ear; }
 	      }
