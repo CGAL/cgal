@@ -80,21 +80,6 @@ public:
       return side_of_plane_centered_sphere(a,normal,p,q,r,t);
     }
 
-private:
-  Point   a;
-  Vector  normal;
-};
-
-template <class Point>
-class Side_of_plane_centered_sphere_degenerated_2_3
-{
-public:
-  typedef typename Point::R::Vector_3     Vector;
-
-  Side_of_plane_centered_sphere_degenerated_2_3(const Point& _p,
-						const Vector& _normal)
-    : a(_p), normal(_normal) {}
-
   Oriented_side operator()(const Point &p, const Point &q,
                            const Point &r) const
     {
@@ -284,10 +269,8 @@ public:
 
 
   //specific tests:
-  typedef Orientation_with_normal_plane_2_3<Rep>          Orientation_2;
+  typedef Orientation_with_normal_plane_2_3<Rep>           Orientation_2;
   typedef Side_of_plane_centered_sphere_2_3<Point_2>       Power_test_2;
-  typedef Side_of_plane_centered_sphere_degenerated_2_3<Point_2>
-  Power_test_degenerated_2;
 
   typedef Construct_plane_centered_circumcenter_3<Point_2>
   Construct_weighted_circumcenter_2;
@@ -300,10 +283,8 @@ public:
 
 
   //for certificated coordinate/neighbor computation:
-  typedef typename Rep::Less_distance_to_point_3
-                                                  Less_distance_to_point_2;
-  typedef typename Rep::Compute_squared_distance_3
-  Compute_squared_distance_2;
+  typedef typename Rep::Less_distance_to_point_3    Less_distance_to_point_2;
+  typedef typename Rep::Compute_squared_distance_3  Compute_squared_distance_2;
 
 
   //instantiations and creation of functors:
@@ -315,10 +296,6 @@ public:
   Power_test_2
   power_test_2_object() const
     { return Power_test_2(a,normal);}
-
-  Power_test_degenerated_2
-  power_test_degenerated_2_object() const
-    { return Power_test_degenerated_2(a,normal);}
 
   Compare_distance_2 compare_distance_2_object() const
     { return Compare_distance_2(); }

@@ -1,3 +1,7 @@
+23 September 2004 Sylvain Pion
+- Merge Power_test_degenerated_2 in Power_test_2 following the change in
+  Regular_triangulation_2.
+
 11 September 2004 Sylvain Pion
 - Replace _R by K.
 
