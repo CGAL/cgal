@@ -25,6 +25,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
+inline
+int
+my_rint(double d)
+{
+#if defined __BORLANDC__ || defined _MSC_VER
+  return int(d<0 ? d-0.5 : d+0.5);
+#else
+  return (int) ::rint(d);
+#endif
+}
+
 // I use macros because otherwise it's not STD compliant...
 #define CGAL_MP_FLOAT_TRUNC_MAX (double(base)*(base/2-1)/double(base-1))
 #define CGAL_MP_FLOAT_TRUNC_MIN (double(-base)*(base/2)/double(base-1))
@@ -55,7 +66,7 @@ MP_Float::MP_Float(double d)
     // Then, compute the limbs.
     v.resize(limbs_per_double);
     for (int i = limbs_per_double - 1; i > 0; i--) {
-      v[i] = (limb) ::rint(d);
+      v[i] = my_rint(d);
       if (d-v[i] >= double(base/2-1)/(base-1))
         v[i]++;
       d -= v[i];
@@ -67,7 +78,7 @@ MP_Float::MP_Float(double d)
 
     remove_trailing_zeros();
 
-    CGAL_expensive_assertion(d == (limb) ::rint(d));
+    CGAL_expensive_assertion(d == my_rint(d));
     CGAL_assertion(v.back() != 0);
     CGAL_expensive_assertion(CGAL::to_double(*this) == bak);
 }
