@@ -106,7 +106,7 @@ namespace CGAL {
   {
     if (but[2]->isOn())
     {
-	*widget >> linebut;
+	widget->attach(linebut);
 	activebutton = 2;
 	is_active = true;
     }
@@ -120,7 +120,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      *widget >> pointbut;
+      widget->attach(pointbut);
       activebutton = 1;
       is_active = true;
     }
@@ -143,7 +143,7 @@ namespace CGAL {
     {
       widget->detach_current_tool();
       movepointbut.set_Delaunay(dt);
-      *widget >> movepointbut;
+      widget->attach(movepointbut);
       activebutton = 3;
       is_active = true;
     }

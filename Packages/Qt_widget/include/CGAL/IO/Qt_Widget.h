@@ -76,7 +76,6 @@ public:
   void lock() { ++Locked; };
   void unlock() { if (Locked>0) --Locked; do_paint(); };
   void do_paint() { if (Locked==0) repaint( FALSE ); };
-
   
   void show_scene(Qt_scene* s);
   
@@ -154,8 +153,9 @@ public:
 
   // tool system
   // ~~~~~~~~~~~
+  void	      attach(Qt_widget_tool& tool);
   inline bool has_tool() const { return _has_tool; };
-  void detach_current_tool(); 
+  void	      detach_current_tool(); 
   
   Qt_widget& operator<<(Qt_widget_tool* tool);
   Qt_widget& operator>>(Qt_widget_tool &tool);

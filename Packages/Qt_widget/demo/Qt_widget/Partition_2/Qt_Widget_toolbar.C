@@ -91,9 +91,7 @@ namespace CGAL {
   {
     if (but[1]->isOn())
     {
-      if(is_active)
-	but[activebutton]->toggle();
-      *widget >> getsimplebut;
+      widget->attach(getsimplebut);
       activebutton = 1;
       is_active = true;
     } else {
