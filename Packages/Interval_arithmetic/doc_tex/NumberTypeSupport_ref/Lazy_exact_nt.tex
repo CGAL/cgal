@@ -39,6 +39,10 @@ constructor from a double too).}
 \ccGlue
 \ccConstructor{Lazy_exact_nt(NT n)}
 {introduces the value \ccc{n}.}
+\ccGlue
+\ccConstructor{template <class NT1> Lazy_exact_nt(Lazy_exact_nt<NT1> n)}
+{introduces the value \ccc{n}. \ccc{NT1} needs to be convertible to \ccc{NT}
+(and this conversion will only be done if necessary).}
 
 \ccOperations
 

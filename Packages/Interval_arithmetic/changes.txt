@@ -1,3 +1,6 @@
+Version 4.150 on 8 November 2002
+- Forgot the doc part.
+
 Version 4.149 on 8 November 2002
 - Add a template constructor from a Lazy_exact_nt<ET1> to Lazy_exact_nt<ET>.
 
