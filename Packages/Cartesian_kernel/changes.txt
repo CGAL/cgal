@@ -4,6 +4,8 @@ Version 6.0 (?? ????? 00)
 - Merged all .C files into their corresponding .h, except Aff_*.
 - Changed constructions_on_*.h to *_constructions_[23].h, gathering
   constructions which _return_ type is the same.
+- Moved distance_computations_[23].h to the more general
+  ft_constructions_[23].h.
 
 --- CGAL 2.2 is out ---
 

@@ -5,8 +5,6 @@ Stuff to look at, as time permits:
   CGAL_TYPENAME_BUG stuff...
 
 - Finish merging .C files in corresponding .h files.
-- Finish putting FT constructions (such as distance_computations.h) in
-  FT_constructions.h.  Grep for FIXME.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
 - SphereC3 should be tested...  Sphere_3<R> is missing right now, so...
 - Aff_tranformations can't use Handle_for<> yet.
