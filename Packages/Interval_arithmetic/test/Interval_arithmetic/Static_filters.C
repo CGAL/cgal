@@ -2,14 +2,9 @@
 #define CGAL_PROFILE
 
 #include <CGAL/Random.h>
-#include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Static_filters.h>
 
-typedef CGAL::Simple_cartesian<CGAL::Fixed_precision_nt> Kf;
 typedef CGAL::Simple_cartesian<double> K;
-typedef CGAL::Simple_cartesian<CGAL::Filtered_exact<double, CGAL::MP_Float> > //, CGAL::Dynamic, false> >
-// typedef CGAL::Simple_cartesian<CGAL::Filtered_exact<double, CGAL::MP_Float, CGAL::Static, false> >
-        KE;
 
 CGAL::Random R;
 
@@ -40,19 +35,6 @@ int main()
   const CGAL::Static_filters<K>::Coplanar_orientation_3 & my_co3 =
         k.coplanar_orientation_3_object();
 
-  // K::Orientation_3 inexact_o;
-  // KE::Orientation_3 ore;
-  // Kf::Orientation_3 orf;
-
-#ifdef CGAL_IA_NEW_FILTERS
-  CGAL::Static_Filtered_orientationC3_12::new_bound(1.0);
-#endif
-  CGAL::Fixed_precision_nt::init(1.0);
-  std::cerr << "*** bound used by Fixed : " << CGAL::Fixed_Or1 << std::endl;
-  // This bound is slightly better than epsilon_2.  It's OK, since for the
-  // Fixed, the initial subtraction fits exactly in a double.
-  // Maybe we can slightly improve the bound, but not much, it seems.
-
   for (int i=0; i<100; ++i) {
     K::Point_3 p(prand()), q(prand()), r(prand()), s(prand()), t(prand());
     K::Point_2 p2(prand2()), q2(prand2()), r2(prand2()), s2(prand2());
@@ -65,10 +47,6 @@ int main()
     k.register_object(q2);
     k.register_object(r2);
     k.register_object(s2);
-    // KE::Point_3 pe(p.x(), p.y(), p.z()), qe(q.x(), q.y(), q.z()),
-    //             re(r.x(), r.y(), r.z()), se(s.x(), s.y(), s.z());
-    // Kf::Point_3 pf(p.x(), p.y(), p.z()), qf(q.x(), q.y(), q.z()),
-    //             rf(r.x(), r.y(), r.z()), sf(s.x(), s.y(), s.z());
     // CGAL::Protect_FPU_rounding<false> Z;
     for (int j=0; j<1000; ++j) {
       // assert( my_o(p, q, r, s) == ore(pe, qe, re, se) );
