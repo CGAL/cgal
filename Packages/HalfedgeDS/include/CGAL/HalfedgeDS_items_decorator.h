@@ -222,6 +222,7 @@ public:
         h->HBase::set_next( h->opposite());
         set_prev( h->opposite(), h);
         set_vertex( h, v);
+        set_vertex_halfedge( h);
     }
 
     void insert_tip( Halfedge_handle h, Halfedge_handle v) const {
