@@ -313,7 +313,20 @@ protected:
     bool OK = true;
     std::ifstream in(filename);
     OK = OK && in;
-    OK = OK && snc().load(in);
+    
+    size_t s(strlen(filename));
+    if(filename[s-7] == 'n' &&
+       filename[s-6] == 'e' &&
+       filename[s-5] == 'f' &&
+       filename[s-4] == '3' &&
+       filename[s-3] == '.' &&
+       filename[s-2] == 'S') {
+      //      initialize_infibox_vertices(EMPTY);
+      //      build_external_structure();
+      OK = OK && snc().load_simple(in);
+    }
+    else
+      OK = OK && snc().load(in);
     if(!OK) 
       std::cerr << "Failure while loading data" << std::endl;
     pl() = _pl;
@@ -408,7 +421,7 @@ protected:
     P.delegate(bp);
   }
 
-  void dump(std::ostream& os = std::cerr) { SNC_io_parser::dump( snc(), os); }
+  void dump(bool sorted = false, std::ostream& os = std::cerr) { SNC_io_parser::dump( snc(), os, sorted); }
 
   bool is_valid( bool verb = false, int level = 0) {
     // checks the combinatorial consistency.
@@ -989,9 +1002,7 @@ Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   TRACEN("construction from empty or space.");
   pl() = _pl;
   if(Infi_box::extended_Kernel()) {
-    SNC_constructor C(snc());
-    Infi_box::initialize_infibox_vertices(C,space == COMPLETE);
-    //  initialize_simple_cube_vertices(space);
+    initialize_infibox_vertices(space);
     build_external_structure();
   }
 }
