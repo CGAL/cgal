@@ -290,6 +290,7 @@ void Qt_widget::set_window(double  x_min, double x_max,
 			   double y_min, double y_max,
 			   bool const_ranges)
 {
+  add_to_history();
   xmin = x_min;
   xmax = x_max;
   ymin = y_min;
@@ -300,8 +301,21 @@ void Qt_widget::set_window(double  x_min, double x_max,
   set_scales();
 }
 
+void Qt_widget::set_window_p(double  x_min, double x_max,
+			   double y_min, double y_max)
+{
+  xmin = x_min;
+  xmax = x_max;
+  ymin = y_min;
+  ymax = y_max;  
+  xcentre = xmin + (xmax - xmin)/2;
+  ycentre = ymin + (ymax - ymin)/2;
+  set_scales();
+}
+
 void Qt_widget::zoom_in(double ratio, double xc, double yc)
 {
+  add_to_history(); //add the current viewport to history
   xscal = xscal*ratio; yscal = yscal*ratio;
   xcentre = xc;
   ycentre = yc;

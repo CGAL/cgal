@@ -52,6 +52,8 @@ public:
 private slots:
   void zoomin();
   void zoomout();
+  void back();
+  void forward();
   
 private:
   QToolBar		  *maintoolbar;

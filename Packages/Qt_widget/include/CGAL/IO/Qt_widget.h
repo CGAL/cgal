@@ -28,12 +28,16 @@
 #include <qmessagebox.h>
 #include <qprinter.h>
 
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 #include <vector>
 #include <list>
 #include <map>
 
+#ifndef CGAL_QT_WIDGET_HISTORY_H
+  #include <CGAL/IO/Qt_widget_history.h>
+#endif
 namespace CGAL {
 
 class Qt_widget_layer;
@@ -57,8 +61,11 @@ public:
   void set_x_scale(double xscale){ xscal = xscale; }
   void set_y_scale(double yscale){ yscal = yscale; }
 
+  void add_to_history(){history.add_to_history(xmin, xmax, ymin, ymax);}
+
   inline void move_center(double distx, double disty) 
   {
+    add_to_history(); //add the current viewport to history
     xcentre += distx;
     ycentre += disty;
     set_scale_center(xcentre, ycentre);
@@ -68,6 +75,17 @@ public:
     xcentre = x; ycentre = y;
     set_scale_center(xcentre, ycentre);
   };
+
+  void back(){
+    if(history.back())
+      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
+                history.get_atom()->y1(), history.get_atom()->y2());
+  }
+  void forward(){
+    if(history.forward())
+      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
+                history.get_atom()->y1(), history.get_atom()->y2());
+  }
 
   // painting system
   inline QPainter& get_painter() { return (*painter); };
@@ -184,7 +202,9 @@ private:
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(double xc, double yc);
   double  xcentre, ycentre; //the center of the axex
-
+  
+  Qt_widget_history history;
+  void set_window_p(double x_min, double x_max, double y_min, double y_max);
 
   // color types convertors
   static QColor CGAL2Qt_Color(Color c);

@@ -29,6 +29,8 @@
 #include <CGAL/IO/pixmaps/zoom_in.xpm>
 #include <CGAL/IO/pixmaps/focus.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
+#include <CGAL/IO/pixmaps/back.xpm>
+#include <CGAL/IO/pixmaps/forward.xpm>
 
 
 
@@ -58,33 +60,49 @@ namespace CGAL {
   but[0] = new QToolButton(maintoolbar, "notool");
   but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   
-  but[1] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
+  but[1] = new QToolButton(QPixmap( (const char**)back_xpm ),
+			     "Back", 
+			     0, 
+			     this, 
+			     SLOT(back()), 
+			     maintoolbar, 
+			     "Back");
+  but[2] = new QToolButton(QPixmap( (const char**)forward_xpm ),
+			     "Forward", 
+			     0, 
+			     this, 
+			     SLOT(forward()), 
+			     maintoolbar, 
+			     "Forward");
+
+  
+  but[3] = new QToolButton(QPixmap( (const char**)zoomin_xpm ),
 			     "Zoom in", 
 			     0, 
 			     this, 
 			     SLOT(zoomin()), 
 			     maintoolbar, 
 			     "Zoom in");
-  but[2] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
+  but[4] = new QToolButton(QPixmap( (const char**)zoomout_xpm ),
 			     "Zoom out", 
 			     0, 
 			     this, 
 			     SLOT(zoomout()), 
 			     maintoolbar, 
 			     "Zoom out");
-
-  but[3] = new QToolButton(maintoolbar, "focus");
-  but[3]->setPixmap(QPixmap( (const char**)focus_xpm ));
-  but[4] = new QToolButton(maintoolbar, "focus on region");
-  but[4]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
-  but[5] = new QToolButton(maintoolbar, "handtool");
-  but[5]->setPixmap(QPixmap( (const char**)hand_xpm ));
+  
+  but[5] = new QToolButton(maintoolbar, "focus");
+  but[5]->setPixmap(QPixmap( (const char**)focus_xpm ));
+  but[6] = new QToolButton(maintoolbar, "focus on region");
+  but[6]->setPixmap(QPixmap( (const char**)zoomin_rect_xpm ));
+  but[7] = new QToolButton(maintoolbar, "handtool");
+  but[7]->setPixmap(QPixmap( (const char**)hand_xpm ));
     
 
 	
     button_group = new QButtonGroup(0, "My_group");
-    nr_of_buttons = 6;
-    for(int i = 3; i<nr_of_buttons; i++){
+    nr_of_buttons = 8;
+    for(int i = 5; i<nr_of_buttons; i++){
       but[i]->setToggleButton(true);
       button_group->insert(but[i]);
     }
@@ -92,11 +110,11 @@ namespace CGAL {
     button_group->insert(but[0]);
     button_group->setExclusive(true);
   
-    connect(but[3], SIGNAL(stateChanged(int)),
-        &zoombut, SLOT(stateChanged(int)));
-    connect(but[4], SIGNAL(stateChanged(int)),
-        &zoomrectbut, SLOT(stateChanged(int)));	
     connect(but[5], SIGNAL(stateChanged(int)),
+        &zoombut, SLOT(stateChanged(int)));
+    connect(but[6], SIGNAL(stateChanged(int)),
+        &zoomrectbut, SLOT(stateChanged(int)));	
+    connect(but[7], SIGNAL(stateChanged(int)),
         &handtoolbut, SLOT(stateChanged(int)));
   };
     void Qt_widget_standard_toolbar::zoomin()
@@ -109,7 +127,16 @@ namespace CGAL {
     widget->zoom_out(2);
     widget->redraw();
   }
-
+  void Qt_widget_standard_toolbar::back()
+  {
+    widget->back();
+    widget->redraw();
+  }
+    void Qt_widget_standard_toolbar::forward()
+  {
+    widget->forward();
+    widget->redraw();
+  }
 
 }//end namespace
 #include "Qt_widget_standard_toolbar.moc"
