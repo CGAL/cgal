@@ -6,23 +6,23 @@
 
 void usage(char* program)
 {
-  cerr << "\nNAME\n     "
+  std::cerr << "\nNAME\n     "
        << program << " - Triangulation of a point set\n\n";
-  cerr << "SYNOPSIS\n     "
+  std::cerr << "SYNOPSIS\n     "
        << program << " [-draw] [-statistics] [-check]"
        << " [min #] [max #] [winx #] [winy #]"
        << " [-file fname]\n";
 
-  cerr << "\nDESCRIPTION\n"
+  std::cerr << "\nDESCRIPTION\n"
        << "     Triangulates a point set that comes from a file or stdin.\n";
-  cerr << "\nOPTIONS\n"
-       << "     -draw          : Displays intermediate results" << endl
-       << "     -statistics    : Collects and displays performance data" << endl
-       << "     -check         : Performs correctness tests" << endl
-       << "     -min           : xmin and ymin of the logical window" << endl
-       << "     -max           : xmax and ymax of the logical window" << endl
-       << "     -winx -winy    : size of the physical window" << endl
-       << "     -file fname    : Reads points from file ./fname" << endl << endl
+  std::cerr << "\nOPTIONS\n"
+       << "     -draw          : Displays intermediate results" << std::endl
+       << "     -statistics    : Collects and displays performance data" << std::endl
+       << "     -check         : Performs correctness tests" << std::endl
+       << "     -min           : xmin and ymin of the logical window" << std::endl
+       << "     -max           : xmax and ymax of the logical window" << std::endl
+       << "     -winx -winy    : size of the physical window" << std::endl
+       << "     -file fname    : Reads points from file ./fname" << std::endl << std::endl
        << "     All options can be abbreviated by their first character\n\n";
 }
 
@@ -51,32 +51,32 @@ parse(int argc, char* argv[], Options &opt)
             argc--;
         }else if (! strcmp(argv[0], "-min")) {
             if (sscanf(argv[1], "%lf", &opt.min) != 1) {
-                cerr << "Argument for min must be a number"
-                     << endl;
+                std::cerr << "Argument for min must be a number"
+                     << std::endl;
             }
             argv += 2;
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-max")) {
             if (sscanf(argv[1], "%lf", &opt.max) != 1) {
-                cerr << "Argument for max must be a number"
-                     << endl;
+                std::cerr << "Argument for max must be a number"
+                     << std::endl;
             }
             argv += 2;
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-winx")) {
             if (sscanf(argv[1], "%d", &opt.winx) != 1) {
-                cerr << "Argument for winx must be a number"
-                     << endl;
+                std::cerr << "Argument for winx must be a number"
+                     << std::endl;
             }
             argv += 2;
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-winy")) {
             if (sscanf(argv[1], "%d", &opt.winy) != 1) {
-                cerr << "Argument for winy must be a number"
-                     << endl;
+                std::cerr << "Argument for winy must be a number"
+                     << std::endl;
             }
             argv += 2;
             argc -= 2;
@@ -94,13 +94,13 @@ parse(int argc, char* argv[], Options &opt)
           return false;
       }
       else {
-          cerr << "Unrecognized option " << argv[0] << endl;
+          std::cerr << "Unrecognized option " << argv[0] << std::endl;
           usage(opt.program);
           return false;
       }
     }
   if(argc > 0){
-      cerr << "Unrecognized option " << argv[0] << endl;
+      std::cerr << "Unrecognized option " << argv[0] << std::endl;
       usage(opt.program);
       return false;
   }

@@ -3,7 +3,7 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream.h>
+#include <strstream>
 
 //to get shorter names
 #define Cartesian Ca
@@ -26,15 +26,15 @@
 
 
 typedef double coord_type;
-typedef CGAL::Cartesian<coord_type>  Rep;
+typedef CGAL::Cartesian<coord_type>  Rp;
 
-typedef CGAL::Point_2<Rep>  Point_;
-typedef CGAL::Segment_2<Rep>  Segment_;
-typedef CGAL::Ray_2<Rep>  Ray_;
-typedef CGAL::Line_2<Rep>  Line_;
-typedef CGAL::Triangle_2<Rep>  Triangle_;
+typedef CGAL::Point_2<Rp>  Point_;
+typedef CGAL::Segment_2<Rp>  Segment_;
+typedef CGAL::Ray_2<Rp>  Ray_;
+typedef CGAL::Line_2<Rp>  Line_;
+typedef CGAL::Triangle_2<Rp>  Triangle_;
 
-typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt;
+typedef CGAL::Triangulation_euclidean_traits_2<Rp> Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
@@ -74,7 +74,7 @@ void
 any_button(CGAL::Window_stream &W)
 {
     double x, y;
-    cerr << "Press any button to continue" << endl;
+    std::cerr << "Press any button to continue" << std::endl;
     W.read_mouse(x,y);
 }
 
@@ -85,8 +85,8 @@ Vertex_handle_ closest_vertex(const TRIANGULATION &T,
                const Point_& p)
 {
     Vertex_handle_ v = f->vertex(0);
-    Rep::FT d  = CGAL::squared_distance(p, v->point());
-    Rep::FT d2 = CGAL::squared_distance(p, f->vertex(1)->point());
+    Rp::FT d  = CGAL::squared_distance(p, v->point());
+    Rp::FT d2 = CGAL::squared_distance(p, f->vertex(1)->point());
     if(d2 < d){
         d = d2;
         v = f->vertex(1);
@@ -103,9 +103,9 @@ void window_input(TRIANGULATION &T,
 		  Window_stream &W,
 		  const Options& opt)
 {
-    cerr << "Enter points with the left button" << endl;
-    cerr << "Remove points with the middle button" << endl;
-    cerr << "Right button terminates input of points" << endl;
+    std::cerr << "Enter points with the left button" << std::endl;
+    std::cerr << "Remove points with the middle button" << std::endl;
+    std::cerr << "Right button terminates input of points" << std::endl;
 
     Point_ p;
     Point_ q(coord_type(W.xmin()-1),
@@ -217,48 +217,36 @@ void file_input(Triangulation_ &T,
 
     int n, count = 0;
     is >> n;
-    cerr << "Reading " << n << " points" << endl;
+    std::cerr << "Reading " << n << " points" << std::endl;
 
     if( (! opt.check) && (! opt.draw)){
-	cerr << "Reading from iterator" << endl;
-        istream_iterator<Point_, ptrdiff_t> begin(is);
-        istream_iterator<Point_, ptrdiff_t> end;
+	std::cerr << "Reading from iterator" << std::endl;
+        std::istream_iterator<Point_> begin(is);
+        std::istream_iterator<Point_> end;
         T.insert(begin, end);
     }else{
-	cerr << "Reading from point to point" << endl;
+	std::cerr << "Reading from point to point" << std::endl;
         Point_ mp;
 
         for(; n > 0; n--){
             is >> mp;
             T.insert(mp);
             if(opt.check){
-		cerr << "Checking validity" << endl;
+		std::cerr << "Checking validity" << std::endl;
                 T.is_valid();
             }
             if(opt.draw){
-#ifdef DELAUNAY
                 W.clear();
                 W << CGAL::BLUE << T << CGAL::RED;
-#else
-                Vertex_circulator_ vc = v->incident_vertices(),
-                                  done(vc);
-                if(vc != NULL){
-                    do{
-                        if(! T.is_infinite(vc)){
-                            W << Segment_(v->point(), vc->point());
-                        }
-                    }while(++vc != done);
-                }
-#endif // DELAUNAY
             }
 
             if(++count == 100){
-                cerr << ".";
+                std::cerr << ".";
                 count = 0;
             }
         }
     }
-    cerr << "Done with file input" << endl;
+    std::cerr << "Done with file input" << std::endl;
 }
 
 void container_input(Triangulation_ &T,
@@ -270,7 +258,7 @@ void container_input(Triangulation_ &T,
     L.push_front(Point_(1,1));
 
     int n = T.insert(L.begin(), L.end());
-    cerr << n << " points inserted from a list." << endl;
+    std::cerr << n << " points inserted from a list." << std::endl;
 
     std::vector<Point_> V(3);
     V[0] = Point_(0, 0);
@@ -278,7 +266,7 @@ void container_input(Triangulation_ &T,
     V[2] = Point_(0.3, 0.3);
 
     n = T.insert(V.begin(), V.end());
-    cerr << n << " points inserted from a vector." << endl;
+    std::cerr << n << " points inserted from a vector." << std::endl;
 
     W.clear();
     W << T;
@@ -327,8 +315,8 @@ void draw_incident_edges(Triangulation_ &T,
                          Window_stream &W)
 {
     if (T.dimension()<1) return;
-    cerr << "Select a face" << endl;
-    cerr << "The adjacent edges of the vertices of this face will be\n"
+    std::cerr << "Select a face" << std::endl;
+    std::cerr << "The adjacent edges of the vertices of this face will be\n"
          << "highlighted in turn.\n";
 
     Point_ p;
@@ -338,7 +326,7 @@ void draw_incident_edges(Triangulation_ &T,
     for(int j = 0; j < 3; j++) {
         Vertex_handle_ v =  f->vertex(j);
         if(! T.is_infinite(v)) {
-            cerr << "degree(v) = " << v->degree() << endl;
+            std::cerr << "degree(v) = " << v->degree() << std::endl;
             draw_incident_edges(T, v, W);
             any_button(W);
             redraw_incident_edges(T, v, W);
@@ -351,10 +339,10 @@ void draw_faces_along_line(Triangulation_ &T,
 {
     if (T.dimension()<2) return;
     Point_ p, q;
-    cerr << "Enter two points" << endl;
-    cerr << "The faces intersected by the line joining those points "<< endl;
-    cerr << " will be highlighted" << endl;
-    cerr << endl;
+    std::cerr << "Enter two points" << std::endl;
+    std::cerr << "The faces intersected by the line joining those points "<< std::endl;
+    std::cerr << " will be highlighted" << std::endl;
+    std::cerr << std::endl;
     W << CGAL::RED;
     drawing_mode dm = W.set_mode(leda_xor_mode);
     W >> p >> q;
@@ -366,7 +354,7 @@ void draw_faces_along_line(Triangulation_ &T,
     Line_face_circulator_ lfc = T.line_walk(p, q, f),
                          done(lfc);
     if(lfc == (CGAL_NULL_TYPE) NULL){
-        cerr << "Line does not intersect convex hull" << endl;
+        std::cerr << "Line does not intersect convex hull" << std::endl;
     } else {
         do{
             if(! T.is_infinite( lfc  )){
@@ -394,12 +382,12 @@ void draw_convex_hull(Triangulation_ &T,
 {
     if (T.dimension()<1) return;
     Point_ p, q;
-    cerr << "Highlighting of the convex hull\n";
+    std::cerr << "Highlighting of the convex hull\n";
 
     Vertex_circulator_ chc = T.infinite_vertex()->incident_vertices(),
                            done(chc);
     if(chc == (CGAL_NULL_TYPE) NULL) {
-        cerr << "convex hull is empty" << endl;
+        std::cerr << "convex hull is empty" << std::endl;
     } else {
         drawing_mode dm = W.set_mode(leda_src_mode);
         W << CGAL::RED;
@@ -426,7 +414,7 @@ void draw_convex_hull(Triangulation_ &T,
 void show_faces_iterator(Triangulation_ &T,
                  Window_stream &W)
 {
-  cerr << "Highlighting in turn each face traversed by the face iterarot "<<endl;
+  std::cerr << "Highlighting in turn each face traversed by the face iterarot "<<std::endl;
   W << CGAL::GREEN;
   Face_iterator_ fit= T.faces_begin();
   while (fit != T.faces_end()) {
@@ -448,8 +436,8 @@ void show_nearest_vertex(Delaunay_ &T,
                     Window_stream &W)
 {
     if (T.dimension()<1) return;
-    cerr << "The vertex that is nearest to the cursor is highlighted" << endl;
-    cerr << "Click any button to continue" << endl;
+    std::cerr << "The vertex that is nearest to the cursor is highlighted" << std::endl;
+    std::cerr << "Click any button to continue" << std::endl;
 
     Vertex_handle_ nv = NULL;
     Vertex_handle_ v = NULL;
@@ -495,15 +483,15 @@ void fileIO(Delaunay_ &T,
             Window_stream &W,
             const Options& opt)
 {
-    cerr << "The triangulation will be written to a file and read again\n";
+    std::cerr << "The triangulation will be written to a file and read again\n";
     {
-        ofstream out("tr");
+        std::ofstream out("tr");
         CGAL::set_ascii_mode(out);
-        out << T << endl;
+        out << T << std::endl;
     }
     Triangulation_ T2;
 
-    ifstream in("tr");
+    std::ifstream in("tr");
     CGAL::set_ascii_mode(in);
     in >> T2;
     T2.is_valid();
@@ -522,7 +510,7 @@ void fileIO(Delaunay_ &T,
 
 void draw_dual( Delaunay_ &T, Window_stream &W )
 {
-   cerr << "The dual of the triangulation is displayed" << endl;
+   std::cerr << "The dual of the triangulation is displayed" << std::endl;
    W << CGAL::RED;
     Delaunay_::Face_iterator fit, fbegin=T.faces_begin(), fend=T.faces_end();
     for (fit=fbegin; fit != fend; ++fit)
@@ -542,7 +530,7 @@ void draw_dual( Delaunay_ &T, Window_stream &W )
  
 void action(int n)
 {
-  cerr << "action is called "<<n<<endl;
+  std::cerr << "action is called "<<n<<std::endl;
 }
 
 
@@ -577,7 +565,7 @@ int main(int argc, char* argv[])
     W << T;
     any_button(W);
     // Copy constructor
-    cout << "copy"<<endl;
+    cout << "copy"<<std::endl;
     Copy = Triangulation_(T);
     W << CGAL::BLUE;
     W << Copy;
@@ -587,7 +575,7 @@ int main(int argc, char* argv[])
     draw_convex_hull(T, W);
     show_faces_iterator(T,W);
  
-    cout <<endl<<endl<< "DELAUNAY TRIANGULATION"<<endl;
+    cout <<std::endl<<std::endl<< "DELAUNAY TRIANGULATION"<<std::endl;
     T_global = (Triangulation_ *)&D;
     W.clear();
     window_input(D, W, opt);
@@ -598,7 +586,7 @@ int main(int argc, char* argv[])
     W << D;
     any_button(W);
     // Copy constructor
-    cout << "copy"<<endl;
+    cout << "copy"<<std::endl;
     DCopy = Delaunay_(D);
     W << CGAL::BLUE;
     W << DCopy;

@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I./include 	-I../../include \
 	$(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-	-DDELAUNAY
 
 
 #---------------------------------------------------------------------#
@@ -36,15 +35,11 @@ WINDOW_LDFLAGS = $(CGAL_WINDOW_LDFLAGS)
 demo: demo.o parse.o
 	$(CGAL_CXX) -o demo demo.o parse.o $(WINDOW_LDFLAGS)
 
-
-
 clean:
 	- rm -rf *~ *.o core tr
 
 realclean: clean
-	- rm -rf lfc demo grid crust points3D voronoi \
-	triangulation_basic_example triangulation_terrain \
-	triangulation_locate_grid
+	- rm -rf  demo 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
