@@ -104,9 +104,9 @@ public:
   typedef typename TPM::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename TPM::Face_const_handle       Face_const_handle;
   typedef typename TPM::Halfedge_around_vertex_circulator
-                                             Halfedge_around_vertex_circulator;
+  Halfedge_around_vertex_circulator;
   typedef typename TPM::Halfedge_around_vertex_const_circulator 
-                                       Halfedge_around_vertex_const_circulator;
+  Halfedge_around_vertex_const_circulator;
   typedef typename TPM::Holes_iterator          Holes_iterator;
   typedef typename TPM::Holes_const_iterator    Holes_const_iterator;
   typedef typename TPM::Ccb_halfedge_const_circulator 
@@ -122,16 +122,17 @@ public:
 
   // Obsolete, for backward compatability
   typedef Point_2                               Point;
-  typedef X_monotone_curve_2                             X_curve;
+  typedef X_monotone_curve_2                    X_curve;
 
   // Implementation Types
   // --------------------
 protected:
-  typedef std::list<X_monotone_curve_2>                  X_monotone_curve_2_container;
+  typedef std::list<X_monotone_curve_2>        X_monotone_curve_2_container;
   
   // sweep related types
   typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
-  typedef typename X_monotone_curve_2_container::iterator X_monotone_curve_2_container_iterator;
+  typedef typename X_monotone_curve_2_container::iterator
+  X_monotone_curve_2_container_iterator;
   typedef Point_plus_handle<Traits, Vertex_handle>
                                                Point_plus;
   typedef std::map<Point_2, Point_plus, PointLessFunctor>
@@ -225,9 +226,10 @@ public:
   }
 
   template <class X_monotone_curve_2_iterator>
-  Halfedge_iterator non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
-					    const X_monotone_curve_2_iterator & end,
-					    Change_notification * en = NULL)
+  Halfedge_iterator
+  non_intersecting_insert(const X_monotone_curve_2_iterator & begin,
+                          const X_monotone_curve_2_iterator & end,
+                          Change_notification * en = NULL)
   {
     PointLessFunctor event_queue_pred(traits);
     Event_queue event_queue(event_queue_pred);
@@ -300,9 +302,10 @@ public:
   Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv, 
                                      Vertex_handle v1, 
                                      Change_notification * en = NULL);
-  Halfedge_handle non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
-                                     Vertex_handle v1, 
-                                     Change_notification * en = NULL);
+  Halfedge_handle
+  non_intersecting_insert_from_vertex(const X_monotone_curve_2 & cv, 
+                                      Vertex_handle v1, 
+                                      Change_notification * en = NULL);
 
   // Obsolete
   Halfedge_handle insert_from_vertex(const X_monotone_curve_2 & cv, 
@@ -1083,9 +1086,10 @@ template < class Dcel, class Traits >
 inline
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_from_vertex(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv,
-                   typename Planar_map_2<Dcel,Traits>::Halfedge_handle prev,
-                   Change_notification * en
+insert_from_vertex
+(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv,
+ typename Planar_map_2<Dcel,Traits>::Halfedge_handle prev,
+ Change_notification * en
 #ifdef _MSC_VER
                    ,int
 #endif
@@ -1119,9 +1123,10 @@ insert_from_vertex(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
-                   typename Planar_map_2< Dcel, Traits >::Vertex_handle v1, 
-                   Change_notification * en)
+insert_from_vertex
+(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
+ typename Planar_map_2< Dcel, Traits >::Vertex_handle v1, 
+ Change_notification * en)
 {
   CGAL_precondition_msg(traits->point_equal(v1->point(), 
                                               traits->curve_source(cv)) ||
@@ -1168,10 +1173,11 @@ non_intersecting_insert_from_vertex(
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_from_vertex(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
-                   typename Planar_map_2< Dcel, Traits >::Vertex_handle v1,
-                   bool source,
-                   Change_notification * en)
+insert_from_vertex
+(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
+ typename Planar_map_2< Dcel, Traits >::Vertex_handle v1,
+ bool source,
+ Change_notification * en)
 {
   (void) source;
   // For some reason MSVC cannot handle the following call, even if the
@@ -1230,10 +1236,11 @@ path_length(typename Planar_map_2< Dcel, Traits >::Halfedge_const_handle prev1,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv, 
-                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev1, 
-                   typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2, 
-                   Change_notification                                  * en
+insert_at_vertices
+(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv, 
+ typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev1, 
+ typename Planar_map_2<Dcel, Traits>::Halfedge_handle prev2, 
+ Change_notification                                  * en
 #ifdef _MSC_VER
                    ,int
 #endif
@@ -1324,10 +1331,11 @@ insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-insert_at_vertices(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv, 
-                   typename Planar_map_2< Dcel, Traits >::Vertex_handle   v1, 
-                   typename Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
-                   Change_notification                                  * en)
+insert_at_vertices
+(const typename Planar_map_2<Dcel, Traits>::X_monotone_curve_2 & cv, 
+ typename Planar_map_2< Dcel, Traits >::Vertex_handle   v1, 
+ typename Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
+ Change_notification                                  * en)
 {
   CGAL_precondition_msg(traits->point_equal(v1->point(), 
                                               traits->curve_source(cv)) &&
@@ -1597,10 +1605,11 @@ insert(const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-split_edge(typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
-           const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & c1, 
-           const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & c2,
-           Change_notification                                    * en )
+split_edge
+(typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
+ const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & c1, 
+ const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & c2,
+ Change_notification                                    * en )
 {
   CGAL_precondition(traits->point_equal(traits->curve_source(c2),
                                           traits->curve_target(c1)));
@@ -1650,10 +1659,11 @@ split_edge(typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e,
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
-merge_edge(typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e1, 
-           typename Planar_map_2< Dcel, Traits >::Halfedge_handle   e2, 
-           const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2   & cv, 
-           Change_notification                                    * en)
+merge_edge
+(typename Planar_map_2< Dcel, Traits >::Halfedge_handle e1, 
+ typename Planar_map_2< Dcel, Traits >::Halfedge_handle e2, 
+ const typename Planar_map_2< Dcel, Traits >::X_monotone_curve_2 & cv, 
+ Change_notification * en)
 {
   CGAL_precondition((traits->point_equal(traits->curve_source(cv),
                                            e1->source()->point()) &&

@@ -47,7 +47,7 @@ public:
   typedef typename Planar_map::Halfedge                 Halfedge;
   typedef typename Planar_map::Vertex_handle            Vertex_handle;
   typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2                    X_monotone_curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef Pm_bounding_box_base<Planar_map>              Bounding_box;
   typedef typename Base::Halfedge_handle_iterator Halfedge_handle_iterator;
   typedef typename Base::Token                          Token;
@@ -93,7 +93,8 @@ public:
 		  Halfedge_handle, Halfedge_handle,
 		  const X_monotone_curve_2 &, const X_monotone_curve_2 &) {}
 
-  void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &, Halfedge_handle,
+  void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &,
+                  Halfedge_handle,
                   const X_monotone_curve_2 &) {}
 
   void remove_edge(Halfedge_handle) {}

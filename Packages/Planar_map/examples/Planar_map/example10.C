@@ -28,7 +28,7 @@ private:
 template <class Traits>
 class Pm_my_dcel : 
   public CGAL::Pm_dcel<Pm_my_vertex<typename Traits::Point_2>,
-                       CGAL::Pm_halfedge_base<typename Traits::X_monotone_curve_2>, 
+               CGAL::Pm_halfedge_base<typename Traits::X_monotone_curve_2>, 
                        CGAL::Pm_face_base> 
 {
 public:  // Creation

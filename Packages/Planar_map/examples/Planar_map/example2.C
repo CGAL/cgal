@@ -14,7 +14,7 @@
 typedef CGAL::Homogeneous<long>           Kernel;
 typedef CGAL::Pm_segment_traits_2<Kernel> Traits;
 typedef Traits::Point_2                   Point_2;
-typedef Traits::X_monotone_curve_2                 X_monotone_curve_2;
+typedef Traits::X_monotone_curve_2        X_monotone_curve_2;
 typedef CGAL::Pm_default_dcel<Traits>     Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>   Planar_map;
 
@@ -34,7 +34,8 @@ int main()
   cv[4] = X_monotone_curve_2(a3, a4);
   
   std::cout << "The curves of the map :" << std::endl;
-  std::copy(&cv[0], &cv[5], std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
+  std::copy(&cv[0], &cv[5],
+            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
   // Insert the curves into the Planar_map:

@@ -62,7 +62,8 @@ int main()
   X_monotone_curve_2 c1(a2, p);
   X_monotone_curve_2 c2(p, a3);
   Planar_map::Halfedge_handle se = pm.split_edge(e[2], c1, c2); 
-  pm.insert_at_vertices(X_monotone_curve_2(p, a1), se->target(), e[0]->source());
+  pm.insert_at_vertices(X_monotone_curve_2(p, a1), se->target(),
+                        e[0]->source());
 
   // Print map after splitting and adding:
   std::cout << std::endl << "* * * Map after:" << std::endl << std::endl;

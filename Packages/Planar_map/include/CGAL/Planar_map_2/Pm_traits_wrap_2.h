@@ -51,7 +51,7 @@ public:
 //  typedef  typename I::Info_face       Info_face;
   
   typedef PlanarMapTraits_2                     Base;
-  typedef typename Base::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Point_2                Point_2;
 
   typedef typename Base::Has_left_category      Has_left_category;
@@ -470,10 +470,10 @@ public:
 	    curve_is_target_unbounded(cv));
   }
     
-  /*! curves_compare_y_at_x_left() is implemented based on the Has_left category
-   * If the category indicates that the "left" version is available, it calls
-   * the function with same name defined in the base class. Otherwise, it
-   * reflects the given point and curves about the origin, and calls the
+  /*! curves_compare_y_at_x_left() is implemented based on the Has_left
+   * category. If the category indicates that the "left" version is available,
+   * it calls the function with same name defined in the base class. Otherwise,
+   * it reflects the given point and curves about the origin, and calls the
    * "right" version.
    */
   Comparison_result curves_compare_y_at_x_left(const X_monotone_curve_2 & cv1,
@@ -484,18 +484,20 @@ public:
   }
 
     
-  Comparison_result curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
-                                                const X_monotone_curve_2 & cv2, 
-                                                const Point_2 & q,
-                                                Tag_true) const
+  Comparison_result
+  curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
+                                 const X_monotone_curve_2 & cv2, 
+                                 const Point_2 & q,
+                                 Tag_true) const
   {
     return Base::curves_compare_y_at_x_left(cv1, cv2, q);
   }
     
-  Comparison_result curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
-                                                const X_monotone_curve_2 & cv2, 
-                                                const Point_2 & q,
-                                                Tag_false) const 
+  Comparison_result
+  curves_compare_y_at_x_left_imp(const X_monotone_curve_2 & cv1,
+                                 const X_monotone_curve_2 & cv2, 
+                                 const Point_2 & q,
+                                 Tag_false) const 
   {
     Point_2 rq = point_reflect_in_x_and_y(q);
     X_monotone_curve_2 rcv1 = curve_reflect_in_x_and_y(cv1);

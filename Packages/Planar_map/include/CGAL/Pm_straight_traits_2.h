@@ -482,7 +482,7 @@ public:
     }
 
   Comparison_result 
-    curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
+  curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q)
     const 
     {
       CGAL_precondition(point_in_x_range(cv1, q));

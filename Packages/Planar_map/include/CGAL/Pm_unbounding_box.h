@@ -49,11 +49,12 @@ public:
   typedef Pm_traits_wrap_2<Traits> Traits_wrap;
   */
   typedef typename Planar_map::Traits                   Traits;
-  typedef typename Traits::X_monotone_curve_2                    X_monotone_curve_2;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Point_2                      Point_2;
 
   typedef typename std::vector<Point_2>::iterator       Point_iterator;
-  typedef typename std::vector<X_monotone_curve_2>::iterator     X_curve_iterator;
+  typedef typename std::vector<X_monotone_curve_2>::iterator
+                                                        X_curve_iterator;
 
   /*  typedef typename Traits::Bounding_box Bounding_box;
   typedef typename Traits::Boundary_type Boundary_type;
@@ -146,7 +147,8 @@ public:
                            Halfedge_handle, Halfedge_handle,
                            const Point_2 &) {}
 
-  void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &, Halfedge_handle,
+  void merge_edge(const X_monotone_curve_2 &, const X_monotone_curve_2 &,
+                  Halfedge_handle,
                   //additions by iddo for arrangement
                   const X_monotone_curve_2 &) {}
 

@@ -93,7 +93,7 @@ public:
   }
   
   Comparison_result 
-  curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q) 
+  curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q)
     const 
   {
     CGAL_assertion(t.curves_compare_y_at_x(cv1,cv2,q) ==

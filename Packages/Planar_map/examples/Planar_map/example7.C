@@ -34,7 +34,7 @@ typedef CGAL::Pm_walk_along_line_point_location<Planar_map>
                                                         Walk_point_location;
 typedef Planar_map::Locate_type                         Locate_type;
 typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_monotone_curve_2                               X_monotone_curve_2;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
 typedef Planar_map::Halfedge_const_handle               Halfedge_const_handle;
 typedef Planar_map::Ccb_halfedge_const_circulator
                                                 Ccb_halfedge_const_circulator;

@@ -205,8 +205,8 @@ public:
    * intersect at x(q).
    */
   Comparison_result curves_compare_y_at_x_right(const X_monotone_curve_2 & cv1,
-                                                const X_monotone_curve_2 & cv2, 
-                                                const Point_2 & q) const 
+                                                const X_monotone_curve_2 & cv2,
+                                                const Point_2 & q) const
   {
     // The two curves must not be vertical.
     CGAL_precondition(! curve_is_vertical(cv1));

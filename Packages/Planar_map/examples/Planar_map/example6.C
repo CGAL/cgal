@@ -65,7 +65,8 @@ int main()
   cv[5] = X_monotone_curve_2(a1, a4);
 
   std::cout << "The curves of the map :" << std::endl; 
-  std::copy(&cv[0], &cv[6], std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
+  std::copy(&cv[0], &cv[6],
+            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
   std::cout << std::endl;
 
   // Insert the curves into the Planar_map:
