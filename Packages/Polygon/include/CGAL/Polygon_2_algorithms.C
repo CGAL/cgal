@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,7 +6,7 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
 // release       : $CGAL_Revision: CGAL-0.9-I-06 $
 // release_date  : $CGAL_Date: 1998/03/11 $
@@ -19,7 +19,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -583,7 +583,7 @@ bool Simplicity_test_2<ForwardIterator, Traits>::consecutive_edges(
   int e1, int e2) const
 {
   int n = NumberOfVertices();
-  return ( abs(e2-e1) == 1 || abs(e2-e1) == n-1 );
+  return ( CGAL_NTS abs(e2-e1) == 1 || CGAL_NTS abs(e2-e1) == n-1 );
 }
 
 //-----------------------------------------------------------------------//

@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
@@ -6,7 +6,7 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
 // release       : $CGAL_Revision: CGAL-0.9-I-06 $
 // release_date  : $CGAL_Date: 1998/03/11 $
@@ -19,7 +19,7 @@
 //
 // coordinator   : Utrecht University
 //
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_POLYGON_TRAITS_2_H
 #define CGAL_POLYGON_TRAITS_2_H
@@ -85,12 +85,12 @@ class Polygon_traits_2_aux : public _R
 
     int sign(const FT& x) const
     {
-      return ::CGAL::sign(x);
+      return CGAL_NTS sign(x);
     }
 
     bool is_negative(const FT& x) const
     {
-      return ::CGAL::is_negative(x);
+      return CGAL_NTS is_negative(x);
     }
 
     bool do_intersect(const Point_2& p1,
