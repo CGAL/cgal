@@ -1,5 +1,6 @@
 14 September
 - Added testsuite for Orthogonal_k_neighbor_search
+- Replaced Orthogonal_priority_search.C with Orthogonal_incremental_neighbor_search.C
 
 07 September Andreas Fabri
 - Made the Kd_tree lazy which allows to insert points after its construction
