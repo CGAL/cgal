@@ -37,7 +37,11 @@ return a unique address.
 \ccMethod{template <class Handle>
           std::size_t operator()( const Handle& key);}{
     returns unique hash value for any \ccc{Handle}
-    type for which \ccc{&*key} gives a unique address.}
+    type for which \ccc{&*key} gives a unique address.
+    \ccCommentHeading{Requirement} The type 
+    \ccc{std::iterator_traits<Handle>::value_type} has to be defined
+    (which it is already for pointers, handles, iterators, and 
+    circulators).}
 
 \ccSeeAlso
 
@@ -45,7 +49,10 @@ return a unique address.
 
 \ccImplementation
 
-Plain type cast of \ccc{&*key} to \ccc{std::size_t}.
+Plain type cast of \ccc{&*key} to \ccc{std::size_t} and devided
+by the size of the \ccc{std::iterator_traits<Handle>::value_type} to
+avoid correlations with the internal table size, which is a power of
+two.
 
 \end{ccRefClass}
 
