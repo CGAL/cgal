@@ -1437,6 +1437,7 @@ Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
 Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
+Packages/Nef_3/performance/Nef_3/union_of_rotated_cylinders svneol=native#unset
 Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
 Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
 Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
