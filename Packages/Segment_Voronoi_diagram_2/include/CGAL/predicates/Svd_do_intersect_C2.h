@@ -243,8 +243,7 @@ private:
   {
     CGAL_precondition( ip < 2 && iq < 2 );
 
-    if ( same_segments(p.supporting_segment(),
-		       q.supporting_segment()) ) { 
+    if ( same_segments(p.supporting_site(), q.supporting_site()) ) {
       Line_2 l = compute_supporting_line(p.supporting_segment());
       Line_2 lp;
 

@@ -367,7 +367,7 @@ insert_segment(const Point_2& p0, const Point_2& p1, int level)
     level = random_level();
   }
 
-  Site_2 t(Segment_2(p0, p1));
+  Site_2 t(p0, p1);
 
   if ( is_degenerate_segment(t) ) {
     return insert_point(p0, level);

@@ -438,13 +438,13 @@ public:
   // insert a segment
   Vertex_handle  insert(const Point_2& p1, const Point_2& p2) {
     return
-    insert_segment(Site_2(Segment_2(p1, p2)), Vertex_handle(), true);
+    insert_segment(Site_2(p1, p2), Vertex_handle(), true);
   }
 
   Vertex_handle  insert(const Point_2& p0, const Point_2& p1, 
 			Vertex_handle vnear) {
     return
-    insert_segment(Site_2(Segment_2(p0, p1)), vnear, true);
+    insert_segment(Site_2(p0, p1), vnear, true);
   }
 
   // MK::ERROR: I may not want to expose this...

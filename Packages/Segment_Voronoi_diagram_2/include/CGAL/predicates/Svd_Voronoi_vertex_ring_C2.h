@@ -395,8 +395,8 @@ private:
 #if 1
     CGAL_precondition( supp.is_segment() && s.is_segment() );
     
-    if ( same_segments(supp.supporting_segment(),
-		       s.supporting_segment()) ) {
+    if ( same_segments(supp.supporting_site(),
+		       s.supporting_site()) ) {
       return false;
     }
 
@@ -411,14 +411,14 @@ private:
     }
 
     if ( !s.is_exact(0) &&
-	 same_segments(supp.supporting_segment(),
-		       s.crossing_segment(0)) ) {
+	 same_segments(supp.supporting_site(),
+		       s.crossing_site(0)) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
     if ( !s.is_exact(1) &&
-	 same_segments(supp.supporting_segment(),
-		       s.crossing_segment(1)) ) {
+	 same_segments(supp.supporting_site(),
+		       s.crossing_site(1)) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
@@ -1134,18 +1134,18 @@ private:
 
     if ( v_type == PSS ) {
       if ( p_.is_segment() &&
-	   same_segments(p_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(p_.supporting_site(),
+			 t.supporting_site()) ) {
 	return POSITIVE;
       }
       if ( q_.is_segment() &&
-	   same_segments(q_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(q_.supporting_site(),
+			 t.supporting_site()) ) {
 	return POSITIVE;
       }
       if ( r_.is_segment() &&
-	   same_segments(r_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(r_.supporting_site(),
+			 t.supporting_site()) ) {
 	return POSITIVE;
       }
     }
@@ -1207,20 +1207,20 @@ private:
       CGAL_assertion( v_type == PSS );
 
       if ( p_.is_segment() &&
-	   same_segments(p_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(p_.supporting_site(),
+			 t.supporting_site()) ) {
 	return ZERO;
       }
 
       if ( q_.is_segment() &&
-	   same_segments(q_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(q_.supporting_site(),
+			 t.supporting_site()) ) {
 	return ZERO;
       }
 
       if ( r_.is_segment() &&
-	   same_segments(r_.supporting_segment(),
-			 t.supporting_segment()) ) {
+	   same_segments(r_.supporting_site(),
+			 t.supporting_site()) ) {
 	return ZERO;
       }
 #if 0

@@ -54,8 +54,9 @@ public:
   }
 
   // constructs segment site using input segment
-  Segment_Voronoi_diagram_simple_site_2(const Segment_2 &s) {
-    initialize_site(s);
+  Segment_Voronoi_diagram_simple_site_2(const Point_2& p1,
+					const Point_2& p2) {
+    initialize_site(p1, p2);
   }
 
   // the compiler complains that it cannot find this constructor;
@@ -74,6 +75,29 @@ public:
     CGAL_assertion( false );
   }
 
+  template<class A1, class A2, class A3, class A4>
+  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
+					const A3&, const A4&) {
+    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
+    CGAL_assertion( false );
+  }
+
+  template<class A1, class A2, class A3, class A4, class A5>
+  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
+					const A3&, const A4&,
+					const A5&) {
+    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
+    CGAL_assertion( false );
+  }
+
+  template<class A1, class A2, class A3, class A4, class A5, class A6>
+  Segment_Voronoi_diagram_simple_site_2(const A1&, const A2&,
+					const A3&, const A4&,
+					const A5&, const A6&) {
+    //    THIS_CONSTRUCTOR_SHOULD_HAVE_NEVER_BEEN_CALLED;
+    CGAL_assertion( false );
+  }
+
   Segment_Voronoi_diagram_simple_site_2(const Object &o) {
     if ( assign(p_, o) ) {
       initialize_site(p_);
@@ -82,7 +106,7 @@ public:
 
     Segment_2 s;
     if ( assign(s, o) ) {
-      initialize_site(s);
+      initialize_site(s.source(), s.target());
       return;
     }
 
@@ -95,9 +119,15 @@ public:
   bool is_exact() const { return true; }
   bool is_exact(unsigned int i) const { return true; }
 
-  Point_2 point() const { 
+  const Point_2& point() const { 
     CGAL_precondition ( is_point() );
     return p_;
+  }
+
+  const Point_2& point(unsigned int i) const { 
+    CGAL_precondition ( i < 2 );
+    if ( i == 0 ) { return p_; }
+    else { CGAL_precondition( is_segment() ); return p2_; }
   }
 
   Segment_2 segment() const {
@@ -130,6 +160,21 @@ public:
     return Self( segment().opposite() );
   }
 
+  Self supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return *this;
+  }
+
+  Self supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && i < 2 );
+    return Self(p_, p_);
+  }
+
+  Self crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && i < 2 );
+    return *this;
+  }
+
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
     return segment();
@@ -149,21 +194,29 @@ public:
     initialize_site(p);
   }
 
-  void set_segment(const Segment_2& s) {
-    initialize_site(s);
+  void set_segment(const Point_2& p1, const Point_2& p2) {
+    initialize_site(p1, p2);
   }
 
   // the compiler complains that it cannot find this constructor;
   // solution: make the insert_intersecting_segment a template
   // method...
-  template<class A1, class A2>
-  void set_point(const A1&, const A2&)
+  template<class A1, class A2, class A3, class A4>
+  void set_point(const A1&, const A2&, const A3&, const A4&)
   {
     CGAL_assertion(false);
   }
 
-  template<class A1, class A2, class A3>
-  void set_segment(const A1&, const A2&, const A3&)
+  template<class A1, class A2, class A3, class A4, class A5>
+  void set_segment(const A1&, const A2&, const A3&, const A4&,
+		   const A5&)
+  {
+    CGAL_assertion(false);
+  }
+
+  template<class A1, class A2, class A3, class A4, class A5, class A6>
+  void set_segment(const A1&, const A2&, const A3&, const A4&,
+		   const A5&, const A6&)
   {
     CGAL_assertion(false);
   }
@@ -180,16 +233,15 @@ protected:
     p_ = p;
   }
 
-  void initialize_site(const Segment_2& s)
+  void initialize_site(const Point_2& p1, const Point_2& p2)
   {
     type_ = 2;
-    p_ = s.source();
-    p2_ = s.target();
+    p_ = p1;
+    p2_ = p2;
   }
 
 protected:
-  Point_2 p_;
-  Point_2 p2_;
+  Point_2 p_, p2_;
   char type_;
 };
 
@@ -214,7 +266,6 @@ operator>>(std::istream &is,
 {
   typedef Segment_Voronoi_diagram_simple_site_2<R>   Site_2;
   typedef typename Site_2::Point_2                   Point_2;
-  typedef typename Site_2::Segment_2                 Segment_2;
 
   char type;
   if (is >> type) {
@@ -223,9 +274,9 @@ operator>>(std::istream &is,
       is >> p;
       t.set_point(p);
     } else if (type == 's') {
-      Segment_2 s;
-      is >> s;
-      t.set_segment(s);
+      Point_2 p1, p2;
+      is >> p1 >> p2;
+      t.set_segment(p1, p2);
     }
   }
   return is;

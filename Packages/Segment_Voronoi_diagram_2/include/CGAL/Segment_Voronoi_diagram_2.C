@@ -1021,24 +1021,25 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 		     v->storage_site().supporting_segment_handle());
   Storage_site_2 ssitev = v->storage_site();
 
-  Site_2 sx(t.supporting_segment(), v->site().supporting_segment());
   Site_2 sitev(v->site());
+  Site_2 sx(t.point(0), t.point(1), sitev.point(0), sitev.point(1));
 
   Face_circulator fc1 = incident_faces(v);
   Face_circulator fc2 = fc1; ++fc2;
   Face_circulator fc_start = fc1;
   Face_handle f1, f2;
   bool found_f1 = false, found_f2 = false;
+  Site_2 sitev_supp(sitev.point(0), sitev.point(1));
   do {
     Face_handle ff1(fc1), ff2(fc2);
     Oriented_side os1 = oriented_side(fc1->vertex(0)->site(),
 				      fc1->vertex(1)->site(),
 				      fc1->vertex(2)->site(),
-				      sitev.supporting_segment(), sx);
+				      sitev_supp, sx);
     Oriented_side os2 = oriented_side(fc2->vertex(0)->site(),
 				      fc2->vertex(1)->site(),
 				      fc2->vertex(2)->site(),
-				      sitev.supporting_segment(), sx);
+				      sitev_supp, sx);
     if ( !found_f1 &&
 	 os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
@@ -1066,14 +1067,14 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ssv1;
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
-    sv1.set_segment(sitev.supporting_segment(),
-		    t.supporting_segment(), true);
+    sv1.set_segment(sitev.point(0), sitev.point(1),
+		    t.point(0), t.point(1), true);
     ssv1.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(), true);
   } else {
-    sv1.set_segment(sitev.supporting_segment(),
-		    sitev.crossing_segment(0),
-		    t.supporting_segment());
+    sv1.set_segment(sitev.point(0), sitev.point(1),
+		    sitev.point(2), sitev.point(3),
+		    t.point(0), t.point(1));
     ssv1.set_segment(ssitev.supporting_segment_handle(),
 		     ssitev.crossing_segment_handle(0),
 		     ss.supporting_segment_handle());
@@ -1084,14 +1085,14 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ssv2;
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
-    sv2.set_segment(sitev.supporting_segment(),
-		    t.supporting_segment(), false);
+    sv2.set_segment(sitev.point(0), sitev.point(1),
+		    t.point(0), t.point(1), false);
     ssv2.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(), false);
   } else {
-    sv2.set_segment(sitev.supporting_segment(),
-		    t.supporting_segment(),
-		    sitev.crossing_segment(1));
+    sv2.set_segment(sitev.point(0), sitev.point(1),
+		    t.point(0), t.point(1),
+		    sitev.point(4), sitev.point(5));
     ssv2.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(),
 		     ssitev.crossing_segment_handle(1));
@@ -1106,28 +1107,28 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
-    s3.set_segment(t.supporting_segment(),
-		   sitev.supporting_segment(), true);
+    s3.set_segment(t.point(0), t.point(1),
+		   sitev.point(0), sitev.point(1), true);
     ss3.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(), true);
   } else {
-    s3.set_segment(t.supporting_segment(),
-		   t.crossing_segment(0),
-		   sitev.supporting_segment());
+    s3.set_segment(t.point(0), t.point(1),
+		   t.point(2), t.point(3),
+		   sitev.point(0), sitev.point(1));
     ss3.set_segment(ss.supporting_segment_handle(),
 		    ss.crossing_segment_handle(0),
 		    ssitev.supporting_segment_handle());
   }
 
   if ( t.is_exact(1) ) {
-    s4.set_segment(t.supporting_segment(),
-		   sitev.supporting_segment(), false);
+    s4.set_segment(t.point(0), t.point(1),
+		   sitev.point(0), sitev.point(1), false);
     ss4.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(), false);
   } else {
-    s4.set_segment(t.supporting_segment(),
-		   sitev.supporting_segment(),
-		   t.crossing_segment(1));
+    s4.set_segment(t.point(0), t.point(1),
+		   sitev.point(0), sitev.point(1),
+		   t.point(4), t.point(5));
     ss4.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(),
 		    ss.crossing_segment_handle(1));

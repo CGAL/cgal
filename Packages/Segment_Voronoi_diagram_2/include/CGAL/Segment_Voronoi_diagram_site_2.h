@@ -49,47 +49,60 @@ public:
   Segment_Voronoi_diagram_site_2() : type_(0) {}
 
   // constructs point site using input point
-  Segment_Voronoi_diagram_site_2(const Point_2 &p) {
+  Segment_Voronoi_diagram_site_2(const Point_2& p) {
+    changed_ = false;
     initialize_site(p);
   }
 
-  // constructs segment site using input segment
-  Segment_Voronoi_diagram_site_2(const Segment_2 &s) {
-    initialize_site(s);
+  // constructs segment site using the segment (p1,p2)
+  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2)
+  {
+    changed_ = false;
+    initialize_site(p1, p2);
   }
 
-  // constructs point site using point of intersection
-  Segment_Voronoi_diagram_site_2(const Segment_2& s1,
-				 const Segment_2& s2) {
-    initialize_site(s1, s2);
+  // constructs point site using the point of intersection of the
+  // segments (p1,p2) and (q1,q2)
+  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
+				 const Point_2& q1, const Point_2& q2)
+  {
+    changed_ = false;
+    initialize_site(p1, p2, q1, q2);
   }
 
-  // constructs segment site using points of intersection of support
-  // with s1 and support with s2 as endpoints
-  Segment_Voronoi_diagram_site_2(const Segment_2& support,
-				 const Segment_2& s1,
-				 const Segment_2& s2) {
-    initialize_site(support, s1, s2);
+  // constructs segment site using the points of intersection of the
+  // segment-pairs (p1,p2)-(q1,q2) and (p1,p2)-(q3,q4) as endpoints;
+  // the segment (p1,p2) is a segment that supports the actual segment
+  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
+				 const Point_2& q1, const Point_2& q2,
+				 const Point_2& r1, const Point_2& r2)
+  {
+    changed_ = false;
+    initialize_site(p1, p2, q1, q2, r1, r2);
   }
 
   // constructs segment site using either the source or the target of
-  // support (that depends on the boolean is_first_exact) and the
-  // intersection of support with s as the other endpoint
-  Segment_Voronoi_diagram_site_2(const Segment_2& support,
-				 const Segment_2& s,
-				 bool is_first_exact) {
-    initialize_site(support, s, is_first_exact);
+  // (p1,p2) (that depends on the boolean is_first_exact) and the
+  // intersection of (p1,p2) with (q1,q2) as the other endpoint
+  Segment_Voronoi_diagram_site_2(const Point_2& p1, const Point_2& p2,
+				 const Point_2& q1, const Point_2& q2,
+				 bool is_first_exact)
+  {
+    changed_ = false;
+    initialize_site(p1, p2, q1, q2, is_first_exact);
   }
 
   Segment_Voronoi_diagram_site_2(const Object &o) {
     if ( assign(p_, o) ) {
+      changed_ = false;
       initialize_site(p_);
       return;
     }
 
     Segment_2 s;
     if ( assign(s, o) ) {
-      initialize_site(s);
+      changed_ = false;
+      initialize_site(s.source(), s.target());
       return;
     }
 
@@ -106,6 +119,33 @@ public:
     return !(type_ & 8);
   }
 
+  const Point_2& point(unsigned int i) const
+  {
+    CGAL_precondition( i < 6 );
+    if ( i == 0 ) { return p_; }
+    else if ( i == 1 ) {
+      CGAL_precondition( is_segment() || !is_exact() );
+      return p2_;
+    } else if ( i == 2 ) {
+      CGAL_precondition( (is_point() && !is_exact()) ||
+			 (is_segment() && !is_exact(0)) );
+      return q1_;
+    } else if ( i == 3 ) {
+      CGAL_precondition( (is_point() && !is_exact()) ||
+			 (is_segment() && !is_exact(0)) );
+      return q2_;
+    } else if ( i == 4 ) {
+      CGAL_precondition( (is_point() && !is_exact()) ||
+			 (is_segment() && !is_exact(1)) );
+      return q3_;
+    } else {  // i == 5
+      CGAL_precondition( (is_point() && !is_exact()) ||
+			 (is_segment() && !is_exact(1)) );
+      return q4_;
+    }
+  }
+
+
   Point_2 point() const { 
     CGAL_precondition ( is_point() );
     if ( !is_exact() ) {
@@ -114,6 +154,7 @@ public:
       return p_;
     }
   }
+
   Segment_2 segment() const {
     CGAL_precondition ( is_segment() ); 
     return Segment_2( source(), target() );
@@ -129,12 +170,34 @@ public:
     return compute_target();
   }
 
+  Self supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return Self(p_, p2_);
+  }
+
+  Self supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && i < 2);
+    CGAL_precondition( !is_exact() );
+    if ( i == 0 ) { return Self(q1_, q2_); }
+    return Self(q3_, q4_);
+  }
+
+  Self crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_exact() );
+    CGAL_precondition( i < 2 && !is_exact(i) );
+    if ( i == 0 ) {
+      return Self(q1_, q2_);
+    } else {
+      return Self(q3_, q4_);
+    }
+  }
+
   Self source_site() const {
     CGAL_precondition( is_segment() );
     if ( is_exact() || is_exact(0) ) {
       return Self(p_);
     } else {
-      return Self(supporting_segment(), Segment_2(q1_, q2_));
+      return Self(p_, p2_, q1_, q2_);
     }
   }
 
@@ -143,14 +206,15 @@ public:
     if ( is_exact() || is_exact(1) ) {
       return Self(p2_);
     } else {
-      return Self(supporting_segment(), Segment_2(q3_, q4_));
+      return Self(p_, p2_, q3_, q4_);
     }
   }
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
     if ( is_exact() ) {
-      return Self( segment().opposite() );
+      return Self(p2_, p_);
+      //      return segment().opposite() );
     }
 
     Segment_2 supp = supporting_segment().opposite();
@@ -158,21 +222,28 @@ public:
     CGAL_assertion( !is_exact(0) || !is_exact(1) );
 
     if ( is_exact(0) && !is_exact(1) ) {
-      return Self(supp, crossing_segment(1), false);
+      //      return Self(supp, crossing_segment(1), false);
+      return Self(p2_, p_, q3_, q4_, false);
     } else if ( !is_exact(0) && is_exact(1) ) {
-      return Self(supp, crossing_segment(0), true);
+      //      return Self(supp, crossing_segment(0), true);
+      return Self(p2_, p_, q1_, q2_, true);
     } else {
-      return Self(supp, crossing_segment(1), crossing_segment(0));
+      //      return Self(supp, crossing_segment(1), crossing_segment(0));
+      return Self(p2_, p_, q3_, q4_, q1_, q2_);
     }
   }
 
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
+#if 0
     if ( is_exact() ) {
       return segment();
     } else {
       return Segment_2(p_, p2_);
     }
+#else
+    return Segment_2(p_, p2_);
+#endif
   }
 
   Segment_2 supporting_segment(unsigned int i) const {
@@ -195,25 +266,33 @@ public:
   }
 
   void set_point(const Point_2& p) {
+    changed_ = true;
     initialize_site(p);
   }
 
-  void set_segment(const Segment_2& s) {
-    initialize_site(s);
+  void set_segment(const Point_2& p1, const Point_2& p2) {
+    changed_ = true;
+    initialize_site(p1, p2);
   }
 
-  void set_point(const Segment_2& s1, const Segment_2& s2) {
-    initialize_site(s1, s2);
+  void set_point(const Point_2& p1, const Point_2& p2,
+		 const Point_2& q1, const Point_2& q2) {
+    changed_ = true;
+    initialize_site(p1, p2, q1, q2);
   }
 
-  void set_segment(const Segment_2& support, const Segment_2& s1,
-		   const Segment_2& s2) {
-    initialize_site(support, s1, s2);
+  void set_segment(const Point_2& p1, const Point_2& p2,
+		   const Point_2& q1, const Point_2& q2,
+		   const Point_2& r1, const Point_2& r2) {
+    changed_ = true;
+    initialize_site(p1, p2, q1, q2, r1, r2);
   }
 
-  void set_segment(const Segment_2& support, const Segment_2& s,
+  void set_segment(const Point_2& p1, const Point_2& p2,
+		   const Point_2& q1, const Point_2& q2,
 		   bool is_first_exact) {
-    initialize_site(support, s, is_first_exact);
+    changed_ = true;
+    initialize_site(p1, p2, q1, q2, is_first_exact);
   }
 
   std::ostream& write(std::ostream& os)
@@ -228,49 +307,52 @@ protected:
     p_ = p;
   }
 
-  void initialize_site(const Segment_2& s)
+  void initialize_site(const Point_2& p1, const Point_2& p2)
   {
     type_ = 2;
-    p_ = s.source();
-    p2_ = s.target();
+    p_ = p1;
+    p2_ = p2;
   }
-  void initialize_site(const Segment_2& s1, const Segment_2& s2)
+  void initialize_site(const Point_2& p1, const Point_2& p2,
+		       const Point_2& q1, const Point_2& q2)
   {
     // MK: Sort the segments s1 and s2 in lexicographical order so
     //     that the computation of the intersection point is always
     //     done in the same manner (?)
     type_ = 5;
-    q1_ = s1.source();
-    q2_ = s1.target();
-    q3_ = s2.source();
-    q4_ = s2.target();
+    q1_ = p1;
+    q2_ = p2;
+    q3_ = q1;
+    q4_ = q2;
   }
 
 
-  void initialize_site(const Segment_2& support, const Segment_2& s1,
-		       const Segment_2& s2)
+  void initialize_site(const Point_2& p1, const Point_2& p2,
+		       const Point_2& q1, const Point_2& q2,
+		       const Point_2& r1, const Point_2& r2)
   {
     type_ = 14;
-    p_ = support.source();
-    p2_ = support.target();
-    q1_ = s1.source();
-    q2_ = s1.target();
-    q3_ = s2.source();
-    q4_ = s2.target();
+    p_ = p1;
+    p2_ = p2;
+    q1_ = q1;
+    q2_ = q2;
+    q3_ = r1;
+    q4_ = r2;
   }
 
-  void initialize_site(const Segment_2& support, const Segment_2& s,
+  void initialize_site(const Point_2& p1, const Point_2& p2,
+		       const Point_2& q1, const Point_2& q2,
 		       bool is_first_exact)
   {
     type_ = (is_first_exact ? 10 : 6);
-    p_ = support.source();
-    p2_ = support.target();
+    p_ = p1;
+    p2_ = p2;
     if ( is_first_exact ) {
-      q3_ = s.source();
-      q4_ = s.target();
+      q3_ = q1;
+      q4_ = q2;
     } else {
-      q1_ = s.source();
-      q2_ = s.target();
+      q1_ = q1;
+      q2_ = q2;
     }
   }
 
@@ -290,6 +372,48 @@ protected:
     } else {
       return compute_intersection_point(p_, p2_, q3_, q4_);
     }
+  }
+
+  // computes the point of intersection of the segments (p1,p2) and
+  // (q1,q2) and also caches the result
+  const Point_2& compute_intersection_point1() const
+  {
+    static const Point_2 px;
+    static int i = 0;
+
+    if ( i == 0 || changed_ ) {
+      px = compute_intersection_point(p1,p2,q1,q2);
+      i = 1;
+    }
+    return px;
+  }
+
+  // computes the point of intersection of the segments (p1,p2) and
+  // (q3,q4) and also caches the result
+  const Point_2& compute_intersection_point2() const
+  {
+    static const Point_2 px;
+    static int i = 0;
+
+    if ( i == 0 || changed_ ) {
+      px = compute_intersection_point(p1,p2,q3,q4);
+      i = 1;
+    }
+    return px;
+  }
+
+  // computes the point of intersection of the segments (q1,q2) and
+  // (q3,q4) and also caches the result
+  const Point_2& compute_intersection_point3() const
+  {
+    static const Point_2 px;
+    static int i = 0;
+
+    if ( i == 0 || changed_ ) {
+      px = compute_intersection_point(q1,q2,q3,q4);
+      i = 1;
+    }
+    return px;
   }
 
   // computes the point of intersection of the segments p1p2 and p3p4
@@ -315,6 +439,7 @@ protected:
   Point_2 p2_;
   Point_2 q1_, q2_, q3_, q4_;
   char type_;
+  bool changed_;
 };
 
 //-------------------------------------------------------------------------
@@ -338,7 +463,6 @@ operator>>(std::istream &is,
 {
   typedef Segment_Voronoi_diagram_site_2<R>   Site_2;
   typedef typename Site_2::Point_2            Point_2;
-  typedef typename Site_2::Segment_2          Segment_2;
 
   char type;
   if (is >> type) {
@@ -347,9 +471,9 @@ operator>>(std::istream &is,
       is >> p;
       t.set_point(p);
     } else if (type == 's') {
-      Segment_2 s;
-      is >> s;
-      t.set_segment(s);
+      Point_2 p1, p2;
+      is >> p1 >> p2;
+      t.set_segment(p1, p2);
     }
   }
   return is;

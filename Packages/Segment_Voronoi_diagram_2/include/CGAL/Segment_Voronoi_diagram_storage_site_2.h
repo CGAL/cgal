@@ -39,8 +39,8 @@ public:
   typedef R_ R;
   typedef R  Rep;
   typedef H_ Handle;
-  typedef typename R::Point_2   Point_2;
-  typedef typename R::Segment_2 Segment_2;
+  //  typedef typename R::Point_2   Point_2;
+  //  typedef typename R::Segment_2 Segment_2;
   typedef typename R::Site_2    Site_2;
 
   typedef std::pair<Handle,Handle>  Handle_pair;
@@ -85,23 +85,7 @@ public:
     initialize_site(hsupport, hp, is_first_exact);
   }
 
-#if 0
-  Segment_Voronoi_diagram_storage_site_2(const Object &o) {
-    if ( assign(p_, o) ) {
-      initialize_site(p);
-      return;
-    }
-
-    Segment_2 s;
-    if ( assign(s, o) ) {
-      initialize_site(s);
-      return;
-    }
-
-    defined_ = false;
-  }
-#endif
-
+public:
   // PREDICATES
   //-----------
   bool is_defined() const { return type_; }
@@ -146,123 +130,26 @@ public:
     }
   }
 
-  // TO BE REMOVED
-  void set_point(const Point_2& p) {};
-
   Site_2 site() const {
     if ( is_point() ) {
       if ( is_exact() ) {
-	return Site_2(point());
+	return Site_2(*h_[0]);
       } else {
-	return Site_2(supporting_segment(0),
-		      supporting_segment(1));
+	return Site_2(*h_[2], *h_[3], *h_[4], *h_[5]);
       }
     } else {
       if ( is_exact() ) {
-	return Site_2( segment() );
+	return Site_2(*h_[0], *h_[1]);
       } else if ( is_exact(0) ) {
-	return Site_2( supporting_segment(), crossing_segment(1), true);
+	return Site_2(*h_[0], *h_[1], *h_[4], *h_[5], true);
       } else if ( is_exact(1) ) {
-	return Site_2( supporting_segment(), crossing_segment(0), false);
+	return Site_2(*h_[0], *h_[1], *h_[2], *h_[3], false);
       } else {
-	return Site_2( supporting_segment(), crossing_segment(0),
-		       crossing_segment(1));
+	return Site_2(*h_[0], *h_[1], *h_[2], *h_[3], *h_[4], *h_[5]);
       }
     }
   }
-protected:
-  Point_2 point() const { 
-    CGAL_precondition ( is_point() );
-    if ( !is_exact() ) {
-      return compute_intersection_point(*h_[2], *h_[3], *h_[4], *h_[5]);
-    } else {
-      return *h_[0];
-    }
-  }
 
-  Segment_2 segment() const {
-    CGAL_precondition ( is_segment() ); 
-    return Segment_2( source(), target() );
-  }
-
-  Point_2 source() const {
-    CGAL_precondition ( is_segment() ); 
-    return compute_source();
-  }
-
-  Point_2 target() const {
-    CGAL_precondition ( is_segment() ); 
-    return compute_target();
-  }
-
-  Self source_site() const {
-    CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(0) ) {
-      return Self(h_[0]);
-    } else {
-      return
-	Self(Handle_pair(h_[0], h_[1]), Handle_pair(h_[2], h_[3]));
-    }
-  }
-
-  Self target_site() const {
-    CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(1) ) {
-      return Self(h_[1]);
-    } else {
-      return
-	Self(Handle_pair(h_[0], h_[1]), Handle_pair(h_[4], h_[5]));
-    }
-  }
-
-  Self opposite_site() const {
-    CGAL_precondition( is_segment() );
-
-    Handle_pair supp(h_[1], h_[0]);
-
-    if ( is_exact() ) {
-      return Self(supp);
-    }
-
-    CGAL_assertion( !is_exact(0) || !is_exact(1) );
-
-    if ( is_exact(0) && !is_exact(1) ) {
-      return Self(supp, Handle_pair(h_[4], h_[5]), false);
-    } else if ( !is_exact(0) && is_exact(1) ) {
-      return Self(supp, Handle_pair(h_[2], h_[3]), true);
-    } else {
-      return Self(supp, Handle_pair(h_[4], h_[5]),
-		  Handle_pair(h_[2], h_[3]));
-    }
-  }
-
-  Segment_2 supporting_segment() const {
-    CGAL_precondition( is_segment() );
-    if ( is_exact() ) {
-      return segment();
-    } else {
-      return Segment_2(*h_[0], *h_[1]);
-    }
-  }
-
-  Segment_2 supporting_segment(unsigned int i) const {
-    CGAL_precondition( is_point() && !is_exact() && i < 2 );
-    if ( i == 0 ) {
-      return Segment_2(*h_[2], *h_[3]);
-    } else {
-      return Segment_2(*h_[4], *h_[5]);
-    }
-  }
-
-  Segment_2 crossing_segment(unsigned int i) const {
-    CGAL_precondition( is_segment() && !is_exact() );
-    CGAL_precondition( i < 2 && !is_exact(i) );
-    if ( i == 0 ) {
-      return Segment_2(*h_[2], *h_[3]);
-    } else {
-      return Segment_2(*h_[4], *h_[5]);
-    }
-  }
 public:
   // SET METHODS
   //------------
@@ -289,14 +176,6 @@ public:
 		   bool is_first_exact) {
     initialize_site(hsupport, hp, is_first_exact);
   }
-
-#if 0
-public:
-  std::ostream& write(std::ostream& os)
-  {
-    return os << (*this);
-  }
-#endif
 
 protected:
   // INITIALIZATION
@@ -356,80 +235,12 @@ protected:
     }
   }
 
-  // CONSTRUCTION METHODS
-  //---------------------
-  Point_2 compute_source() const {
-    CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(0) ) {
-      return *h_[0];
-    } else {
-      return compute_intersection_point(*h_[0], *h_[1], *h_[2], *h_[3]);
-    }
-  }
-
-  Point_2 compute_target() const {
-    CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(1) ) {
-      return *h_[1];
-    } else {
-      return compute_intersection_point(*h_[0], *h_[1], *h_[4], *h_[5]);
-    }
-  }
-
-  // computes the point of intersection of the segments p1p2 and p3p4
-  static Point_2
-  compute_intersection_point(const Point_2& p1, const Point_2& p2,
-			     const Point_2& p3, const Point_2& p4)
-  {
-    RT x1 = p1.x(), y1 = p1.y();
-    RT x2 = p2.x(), y2 = p2.y();
-    RT x3 = p3.x(), y3 = p3.y();
-    RT x4 = p4.x(), y4 = p4.y();
-
-    RT D = det2x2_by_formula(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
-    RT Dt = det2x2_by_formula(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
-
-    RT t = Dt / D;
-
-    return Point_2(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t);
-  }
-
 protected:
   Handle h_[6];
   char type_;
 };
 
 //-------------------------------------------------------------------------
-#if 0
-template <class R, class H>
-std::ostream&
-operator<<(std::ostream& os, 
-	   const Segment_Voronoi_diagram_storage_site_2<R,H>& s)
-{
-  if (!s.is_defined())
-    return os << "u";
-  if (s.is_point())
-    return os << "p " << s.point ();
-  return os << "s " << s.segment ();
-}
-
-template < class R, class H, class Stream >
-Stream&
-operator<<(Stream& str,
-	   const Segment_Voronoi_diagram_storage_site_2<R,H>& t)
-{
-  if ( t.is_defined() ) {
-    if ( t.is_point() ) {
-      str << "p " << t.point();
-    } else {
-      str << "s " << t.segment().source() << "  "
-	  << t.segment().target();
-    }
-  }
-
-  return str;
-}
-#endif
 
 CGAL_END_NAMESPACE
 

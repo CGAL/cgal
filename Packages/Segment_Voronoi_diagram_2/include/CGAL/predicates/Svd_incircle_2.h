@@ -246,7 +246,7 @@ public:
       return incircle_p(p, q, t);
     }
 
-    return incircle_s(p, q, t.segment());
+    return incircle_s(p, q, t);
   }
 
 

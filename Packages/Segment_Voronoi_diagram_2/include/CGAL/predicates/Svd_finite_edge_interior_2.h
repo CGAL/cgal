@@ -268,10 +268,10 @@ private:
 	   are_same(t1, sq.target_site()) ) {
 	o_t1 = ON_ORIENTED_BOUNDARY;
       } else if (  !t1.is_exact() &&
-		   ( same_segments(t1.supporting_segment(0),
-				   sq.supporting_segment()) ||
-		     same_segments(t1.supporting_segment(1),
-				   sq.supporting_segment()) )  ) {
+		   ( same_segments(t1.supporting_site(0),
+				   sq.supporting_site()) ||
+		     same_segments(t1.supporting_site(1),
+				   sq.supporting_site()) )  ) {
 	o_t1 = ON_ORIENTED_BOUNDARY;
       } else {
 	o_t1 = oriented_side_of_line(lq, t1.point());

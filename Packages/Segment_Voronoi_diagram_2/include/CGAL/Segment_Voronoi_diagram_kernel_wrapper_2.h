@@ -84,7 +84,6 @@ private:
 
   typedef typename K2::Site_2     K2_Site_2;
   typedef typename K2::Point_2    K2_Point_2;
-  typedef typename K2::Segment_2  K2_Segment_2;
 
   typedef Converter               Base;
 
@@ -108,61 +107,74 @@ public:
       return K2_Site_2( Base::operator()(t.point()) );
     }
 
-    return K2_Site_2( Base::operator()(t.segment()) );
+    return K2_Site_2( Base::operator()(t.point(0)),
+		      Base::operator()(t.point(1)) );
   }
 #endif
 
   K2_Site_2
   operator()(const typename K1::Site_2& t) const
   {
+    typedef typename K1::Site_2  K1_Site_2;
+
     if ( t.is_point() ) {
       if ( t.is_exact() ) {
 	return K2_Site_2( Base::operator()(t.point()) );
       } else {
-	K2_Segment_2 s1 = Base::operator()(t.supporting_segment(0));
-	K2_Segment_2 s2 = Base::operator()(t.supporting_segment(1));
-	return K2_Site_2(s1, s2);
+	K1_Site_2 s1 = t.supporting_site(0);
+	K1_Site_2 s2 = t.supporting_site(1);
+	return K2_Site_2( Base::operator()(s1.point(0)),
+			  Base::operator()(s1.point(1)),
+			  Base::operator()(s2.point(0)),
+			  Base::operator()(s2.point(1)) );
       }
     }
 
     if ( t.is_exact() ) {
-      return K2_Site_2( Base::operator()(t.segment()) );
+      return K2_Site_2( Base::operator()(t.point(0)),
+			Base::operator()(t.point(1)) );
     } else {
-      K2_Segment_2 supp = Base::operator()(t.supporting_segment());
+      K1_Site_2 supp = t.supporting_site();
       if ( t.is_exact(0) ) {
-	K2_Segment_2 cs = Base::operator()(t.crossing_segment(1));
-	return K2_Site_2(supp, cs, true);
+	K1_Site_2 cs = t.crossing_site(1);
+	return K2_Site_2(Base::operator()(supp.point(0)),
+			 Base::operator()(supp.point(1)),
+			 Base::operator()(cs.point(0)),
+			 Base::operator()(cs.point(1)), true);
       } else if ( t.is_exact(1) ) {
-	K2_Segment_2 cs = Base::operator()(t.crossing_segment(0));
-	return K2_Site_2(supp, cs, false);
+	K1_Site_2 cs = t.crossing_site(0);
+	return K2_Site_2(Base::operator()(supp.point(0)),
+			 Base::operator()(supp.point(1)),
+			 Base::operator()(cs.point(0)),
+			 Base::operator()(cs.point(1)), false);
       } else {
-	K2_Segment_2 cs1 = Base::operator()(t.crossing_segment(0));
-	K2_Segment_2 cs2 = Base::operator()(t.crossing_segment(1));
-	return K2_Site_2(supp, cs1, cs2);
+	K1_Site_2 cs1 = t.crossing_site(0);
+	K1_Site_2 cs2 = t.crossing_site(1);
+	return K2_Site_2(Base::operator()(supp.point(0)),
+			 Base::operator()(supp.point(1)),
+			 Base::operator()(cs1.point(0)),
+			 Base::operator()(cs1.point(1)),
+			 Base::operator()(cs2.point(0)),
+			 Base::operator()(cs2.point(1)));
       }
     }
   }
 
+#ifdef CGAL_CFG_USING_BASE_MEMBER_BUG
   K2_Point_2
   operator()(const typename K1::Point_2& p) const
   {
     return Base::operator()(p);
   }
 
-
-  K2_Segment_2
-  operator()(const typename K1::Segment_2& s) const
-  {
-    return  Base::operator()(s);
-  }
-
-
   Sign
   operator()(const Sign& s) const
   {
     return s;
   }
-
+#else
+  using Base::operator();
+#endif
 };
 
 
