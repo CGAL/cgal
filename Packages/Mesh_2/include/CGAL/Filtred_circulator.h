@@ -20,7 +20,7 @@ public:
 
   Self& operator=(const Self& c)
     {
-      this->Circ::operator=(c);
+      this->Circ::operator=(c);//*this = c;
       is_null=c.is_null;
       test=c.test;
       return *this;
@@ -42,11 +42,11 @@ public:
 	}
     };
 
-  bool operator==( CGAL_NULL_TYPE p) const {
+  bool operator==( CGAL_NULL_TYPE ) const {
     return is_null;
   }
 
-  bool operator!=( CGAL_NULL_TYPE p) const {
+  bool operator!=( CGAL_NULL_TYPE ) const {
     return !is_null;
   }
 

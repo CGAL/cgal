@@ -735,6 +735,8 @@ int main(int argc, char** argv)
     W->saveTriangulationUrgently();
     my_previous_failure_function(e.type, e.expr, e.file, e. line, e.msg);
   }
+
+  return 0;
 }
 
 // moc_source_file: mesh_demo.C
