@@ -46,6 +46,7 @@ public:
   typedef typename Tr::Vertex                 Vertex;
   typedef typename Tr::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex_circulator      Vertex_circulator;
+  typedef typename Tr::Edge_circulator        Edge_circulator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef typename Tr::Finite_edges_iterator  Finite_edges_iterator;
@@ -70,10 +71,8 @@ protected:
   typedef std::pair<Vertex_handle,Vertex_handle> Constrained_edge;
 
   /**
-     Function object class. Take a
-     Conforming_Delaunay_triangulation_2 object m and a Vertex_handle v in
-     constructor. Is_edge_constrained(Vertex_handle v2) tells if [v,v2] is
-     a constrained edge in m. */
+     Function object class. Take an Edge_circulator and tells if refers to
+     a constrained edge. */
   class Is_edge_constrained {
   public:
     Is_edge_constrained()
@@ -110,9 +109,9 @@ protected:
   typedef Filter_circulator<Edge_circulator, Is_edge_constrained>
     Constrained_edge_circulator;
 
-
-  // Helper functions to access the two vertices of an Edge
-  // source is the vertex around which the circulator turns
+  /** Helper functions to access the two vertices of an Edge
+      source is the vertex around which the circulator turns. */
+  //@{
   Vertex_handle source(const Edge_circulator& ec) const
   {
     return ec->first->vertex(cw(ec->second));
@@ -122,9 +121,7 @@ protected:
   {
     return ec->first->vertex(ccw(ec->second));
   }
-
- 
-
+  //@}
 
   typedef std::list<Constrained_edge> List_of_constraints;
   typedef CGAL::Filtered_container<List_of_constraints, 
@@ -213,8 +210,8 @@ public:
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
 	const Point& b = fh->vertex(ct.ccw(i))->point();
-	Vertex_handle vi = fh->vertex(i);
-	Vertex_handle mvi = fh->mirror_vertex(i);
+	const Vertex_handle& vi = fh->vertex(i);
+	const Vertex_handle& mvi = fh->mirror_vertex(i);
 
 	return( ( ct.is_infinite(vi) || angle(a, vi->point(), b) != OBTUSE) &&
 		( ct.is_infinite(mvi) || angle(a, mvi->point(), b) != OBTUSE ));
@@ -248,13 +245,15 @@ public:
 	const Side_of_oriented_circle_2 in_circle =
 	  ct.geom_traits().side_of_oriented_circle_2_object();
 	
-	const Point& a = fh->vertex(ct.cw(i))->point();
-	const Point& b = fh->vertex(ct.ccw(i))->point();
-	Vertex_handle vi = fh->vertex(i);
-	Vertex_handle mvi = fh->mirror_vertex(i);
+	const Vertex_handle& vi = fh->vertex(i);
+	const Vertex_handle& mvi = fh->mirror_vertex(i);
+
 	if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
 	  return true;
 	}
+
+	const Point& a = fh->vertex(ct.cw(i))->point();
+	const Point& b = fh->vertex(ct.ccw(i))->point();
 	const Point& c = vi->point();
 	const Point& d = mvi->point();
 	
@@ -751,8 +750,6 @@ create_clusters_of_vertex(const Vertex_handle v)
   bool in_a_cluster = false;
   do
     {
-      Face_handle f = next->first; // the face to the right side of the edge
-      int i = next->second;
       if(is_small_angle(target(current)->point(), v->point(), target(next)->point()))
 	{
 	  if(!in_a_cluster)
