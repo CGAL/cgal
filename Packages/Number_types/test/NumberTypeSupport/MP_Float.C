@@ -40,6 +40,12 @@ void square_test()
     MPF D(d);
     CGAL_assertion(D*D == CGAL::square(D));
   }
+
+  // Test case by Nico Kruithof.
+  CGAL::MP_Float f = 32767.5;
+  CGAL::MP_Float g = 32767.5;
+  CGAL::MP_Float sqr = CGAL::square(f);
+  assert(sqr == f*g);
 }
 
 MPF factoriel (short i)

@@ -1,3 +1,6 @@
+4.79      (11 Feb 03)
+- Fix square(MP_Float).
+
 4.78      (6 Feb 03)
 - doc fix : GREATER -> LARGER.
 

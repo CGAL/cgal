@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2001,2002,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,11 +16,10 @@
 // revision_date : $Date$
 // package       : Number_types
 // author(s)     : Sylvain Pion
-// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+// coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 #include <functional>
 #include <cmath>
@@ -212,7 +211,7 @@ square(const MP_Float &a)
     limb2 carry = 0, carry2 = 0;
     for(j=0; j<i; j++)
     {
-      // There a risk of overflow here :(
+      // There is a risk of overflow here :(
       // It can only happen when a.v[i] == a.v[j] == -2^15 (log_limb...)
       limb2 tmp0 = std::multiplies<limb2>()(a.v[i], a.v[j]);
       limb2 tmp1 = carry + (limb2) r.v[i+j] + tmp0;
@@ -236,8 +235,7 @@ square(const MP_Float &a)
     limb2 tmp0 = carry + (limb2) r.v[i+i]
                        + std::multiplies<limb2>()(a.v[i], a.v[i]);
     r.v[i+i] = tmp0;
-    r.v[i+i+1] = MP_Float::higher_limb(tmp0);
-    CGAL_assertion(carry2 == 0);
+    r.v[i+i+1] = MP_Float::higher_limb(tmp0) + carry2;
   }
   r.canonicalize();
   return r;
