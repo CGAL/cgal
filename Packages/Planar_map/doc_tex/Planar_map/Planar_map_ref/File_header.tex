@@ -17,10 +17,10 @@
 \ccCreationVariable{file_header}
 
 \ccDefinition
-Generally, the \ccRefName class contains configurations the user defines before using the IO functions.
-These configurations concern the verbose flag, writing a file with or without comments etc.
+Generally, the \ccRefName \/ class contains configurations the user defines before using the I/O functions.
+These configurations concern the verbose flag, writing a file with or without comments, etc.
 This class is the base class of \ccc{Pm_file_scanner} \ccc{Pm_file_writer}.
-The list of configurations of \ccRefName are written below:
+The list of parameters for \ccRefName is as follows:
 
 \begin{itemize}
 \item {\bf verbose } define a verbose format for printing the \ccc{Planar map}. This flag is set by default to false.
@@ -31,66 +31,70 @@ The list of configurations of \ccRefName are written below:
 \item {\bf dimension} - specifies the dimension of \ccc{Planer map}. This flag is set by default to 2.
 \end{itemize}
 
-In addition the \ccRefName class includes the information regarding the number of vertices, halfedges and faces the 
-\ccc{Planar map} has.
+In addition the \ccRefName \/ class includes the information regarding the 
+number of vertices, halfedges and faces the \ccc{Planar map} has.
 
 %The following requirement catalog lists the primitives, i.e., types, member functions
 %etc., that must be defined for any \ccc{Planar map} file writer class that can be used to parameterize the reading function of \ccc{Planar map}. 
 
 
 \ccCreation
-When creating \ccRefName object, the user has to define all the configurations he needed, the default configurations are provided as above and hence the user has to define only those configurations which are different from the default.
-Here \ccStyle{Self} is a typedef of \ccRefName.
+When creating a \ccRefName \/ object, the user sets the parameters as needed.
+ 
+%the default configurations are provided as above and hence the user has to define only those configurations which are different from the default.
 
 \ccConstructor{File_header ();} 
-{constructs a default \ccRefName\ which contains all the default configurations.}
+{constructs a default \ccRefName\ which contains the default configuration.}
 
 \ccConstructor{File_header (int v, int h, int f, bool verbose = false, bool no_comments = false, 
    bool ascii = true, int offset = 0, bool colors = false, int dim = 2);} 
 {constructs \ccRefName\ with \ccc{v} vertices \ccc{h} halfedges and \ccc{f} faces, the other parameters can also be set by the user, otherwise they are getting their default values.}
 
-\ccConstructor{File_header (const Self& file_header);}{copy constructor.}
+\ccConstructor{File_header(const File_header& file_header);}
+{copy constructor.}
 
 \ccModifiers
 
-\ccMethod{void set_verbose(bool b);}{setting the verbose flag to b.}
+\ccMethod{void set_verbose(bool b);}{sets the verbose flag to b.}
 
-\ccMethod{void set_ascii(bool b);}{setting the ascii flag to b.}
+\ccMethod{void set_ascii(bool b);} {sets the ascii flag to b.}
 
-\ccMethod{void set_no_comments(bool b);}{setting the no\_comments flag to b.}
+\ccMethod{void set_no_comments(bool b);} \ccGlue{sets the no\_comments flag to b.}
 
-\ccMethod{void set_index_offset(int i);}{setting index\_offset to i.}
+\ccMethod{void set_index_offset(int i);} \ccGlue{sets index\_offset to i.}
 
-\ccMethod{void set_colors(bool b);}{setting the colors flag to b.}
+\ccMethod{void set_colors(bool b);} \ccGlue{sets the colors flag to b.}
 
-\ccMethod{void set_dimension(int i);}{setting the dimension to i.}
+\ccMethod{void set_dimension(int i);} \ccGlue{sets the dimension to i.}
 
-\ccMethod{void set_number_of_vertices(size_t n);}{setting the number of vertices to n.}
+\ccMethod{void set_number_of_vertices(size_t n);} \ccGlue{sets the number of vertices to n.}
 
-\ccMethod{void set_number_of_halfedges(size_t n);}{setting the number of halfedges to n.}
+\ccMethod{void set_number_of_halfedges(size_t n);} \ccGlue{sets the number of halfedges to n.}
 
-\ccMethod{void set_number_of_faces(size_t n);}{setting the number of faces to n.}
+\ccMethod{void set_number_of_faces(size_t n);} \ccGlue{sets the number of faces to n.}
 
 \ccAccessFunctions
-\ccMethod{bool verbose();} {return true if the format is verbose.}
+%\ccGlueBegin
+\ccMethod{bool verbose();} \ccGlue{returns true if the format is verbose.}
 
-\ccMethod{bool ascii();} {return true if the format is given by ascii.}
+\ccMethod{bool ascii();} \ccGlue{returns true if the format is given by ascii.}
 
-\ccMethod{bool no_comments();} {return true if the format is defined without comments.}
+\ccMethod{bool no_comments();} \ccGlue{returns true if the format is defined without comments.}
 
-\ccMethod{bool comments();} {return true if the format is defined with comments.}
+\ccMethod{bool comments();} \ccGlue{returns true if the format is defined with comments.}
 
-\ccMethod{int index_offset();} {return the offset defined for the indices in the format.}
+\ccMethod{int index_offset();} \ccGlue{returns the offset defined for the indices in the format.}
 
-\ccMethod{bool has_colors();} {return true if the format presents the \ccc{Planar map} by colors.}
+\ccMethod{bool has_colors();} \ccGlue{returns true if the format presents the \ccc{Planar map} by colors.}
 
-\ccMethod{int dimension();} {return the dimension defined by the format.}
+\ccMethod{int dimension();} \ccGlue{returns the dimension defined by the format.}
 
-\ccMethod{size_t number_of_vertices();} {return the number of vertices defined by the format.}
+\ccMethod{size_t number_of_vertices();} \ccGlue{returns the number of vertices defined by the format.}
 
-\ccMethod{size_t number_of_halfedges();} {return the number of halfedges defined by the format.}
+\ccMethod{size_t number_of_halfedges();} \ccGlue{returns the number of halfedges defined by the format.}
 
-\ccMethod{size_t number_of_faces();} {return the number of faces defined by the format.}
+\ccMethod{size_t number_of_faces();} \ccGlue{returns the number of faces defined by the format.}
+%\ccGlueEnd
 
 \end{ccRefClass} % File_header
 

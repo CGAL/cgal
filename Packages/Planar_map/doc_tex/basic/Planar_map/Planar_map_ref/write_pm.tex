@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% | Reference manual page: write_pm.tex (Planar_map)
 % +------------------------------------------------------------------------+
 % | 
 % | Package: pm (Planar_map_2)
@@ -17,13 +17,14 @@
 \ccCreationVariable{write_pm}
 
 \ccDefinition
-\ccc{write_pm} is a global function defined for writing \ccc{Planar map}. 
-The function is templated with the \ccc{Planar map}, and the \ccStyle{writer}.  
-This function uses the functions defined in \ccStyle{writer}, and prints the \ccc{planar map} 
-in the format discussed in \ccRefPage{Pm_IO_format}. 
-The operator defined for writing \ccc{Planar map} to an output stream uses this function when parameterize the 
-\ccStyle{writer} with an object derived from \ccc{Pm_file_writer}.
+\ccc{write_pm} is a global function defined for writing a \ccc{Planar map} object. 
+The function is templated with the \ccc{Planar map} class, and the \ccStyle{Writer} class.  
+This function uses the functions defined in the \ccStyle{Writer} class, and prints a  
+\ccc{Planar map} object in the format discussed in \ccRefPage{Pm_IO_format}. 
+The operator defined for writing a \ccc{Planar map} obejct to an output stream 
+uses this function when parameterize \ccStyle{Writer} with an object instanciated from \ccc{Pm_file_writer}.
 
+\ccInclude{CGAL/IO/write_pm.h}
 
 \end{ccRefFunction} % writer_pm
 

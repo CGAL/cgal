@@ -21,7 +21,6 @@
 \clearpage
 \section{Planar Map Reference Pages}
 \ccRefLabel{Pm_Ref_intro}
-
 \subsection*{Introduction}
 
 A planar subdivision (or planar map) is an embedding of a planar 
@@ -68,6 +67,7 @@ Therefore, all models of the former are models of the latter.
 There are several supplied traits classes for the \ccc{Arrangement} which the user can use. 
 These classes are described at the end of Chapter \ref{I1_ChapterArrangement_2}
 (\ccc{2D Arrangements}).
+
 
 \begin{ccAdvanced}
 \subsection*{Point Location Strategies}
@@ -186,64 +186,112 @@ additional functions, namely to model the \ccc{Pm_bounding_box_traits} concept
 
 \end{ccAdvanced}
 \begin{ccAdvanced}
-\subsection*{IO functions}
-The planar map supports IO functions, which include reading a Planar map from the standard input or writing it to the standard output, 
-and also writing a Planar map to a graphic stream.
-The motivation for using IO functions is not only to be able to draw the Planar map to a window for instance, but also to be capable to save Planar maps 
-in text file by writing it and reloading it from a text file by reading it. The format of the output file constructed by the writing operation is 
-defined in a way the reading function will be able to constructs the Planar map by updating 
-directly the {\em Dcel} and not using the insertion functions of the Planar map. Consequently, the reading function constructs the Planar map very 
-efficiently, and hence a user who would like to save its Planar map and reload it has to construct his Planar map by the insertion functions only once, 
-after the saving the Planar map to a text file it will be reloaded very efficiently in the next times.
+\subsection*{I/O functions}
+The \ccc{Planar map} package supports I/O functions, which include reading a planar map representation from 
+the standard input or writing it to the standard output, 
+and also sending a planar map to a graphic stream.
 
-When the user would like to read its \ccc{Planar map} from the standard input or print it into 
-the standard output, he may simply use the \ccc{Extractor} (\ccc{ >> }) and \ccc{Insertor} (\ccc{ << }) operators defined for Planar map correspondingly. 
-If the user add attributes to the Planar map components, reading (writing) the Planar map would be done by inheriting the class \ccStyle{Pm_file_scanner} 
-( \ccStyle{Pm_file_writer} ) and overriding all the relevant function for scanning (writing) the Planar map components. 
-After the definition of the inherited class the user has to call the function \ccStyle{read} of Planar map (the global function \ccStyle{write_pm} ) 
-and putting this class as a parameter.
-The ability of writing the Planar map into a graphic stream as \ccStyle{leda_window}, Postscript file or Geomview is also provided, 
-the user simply has to use the Insertor operator operated on the graphic stream and its Planar map. 
-If the user has additional attributes he has to inherit the class \ccStyle{Pm_drawer} and then call the global function \ccStyle{draw_pm} 
-with this class and the Planar map as parameters.
+The motivation for using I/O functions is not only to be able to draw 
+the planar map to a window for instance, 
+but also to be capable to save planar maps in a text file by writing it 
+and reloading it from a text file by reading it. 
+
+The format of the output file is defined in a way the reading function will be 
+able to constructs the planar map by updating directly the \ccc{Dcel} without 
+using the insertion functions of the \ccc{Planar map}. 
+Consequently, the reading function constructs the planar map very 
+efficiently, and hence users who would like to save their planar map and reload 
+it have to construct their planar map by the insertion functions only once, 
+after saving the planar map to a text file it can be reloaded very efficiently 
+when needed.
+
+When users would like to read their planar map from the standard input or print 
+it to the standard output, they may simply use the \ccc{Extractor} (\ccc{ >> }) 
+and \ccc{Insertor} (\ccc{ << }) operators defined for \ccc{Planar map} 
+respectively. 
+If users add attributes to their planar map components, reading (resp. writing) planar map would 
+be done by inheriting the class \ccStyle{Pm_file_scanner} (resp. \ccStyle{Pm_file_writer} ) 
+and overriding all the relevant function for scanning (resp. writing) 
+the planar map components. 
+
+After the definition of the inherited class users have to call the function 
+\ccStyle{read} of \ccc{Planar map} (resp. the global function \ccStyle{write_pm} ) with the inherited class as a parameter.
+
+The ability of sending the \ccc{Planar map} into a graphic stream as 
+\ccStyle{leda_window}, Postscript file or Geomview is also provided, 
+users simply have to use the Insertor operator operated on the graphic stream and their planar map. 
+When users would like to add attributes to their planar map components and 
+send their planar maps to a graphic stream, they have to inherit the class 
+\ccStyle{Pm_drawer} and then call the global function \ccStyle{draw_pm} 
+with this class and their planar map as parameters.
 
 \paragraph{Format}
 \ccRefLabel{Pm_IO_format}
-The format chosen right now does not follow an existing standard format. 
-Generally, the format contains lists of the components of \ccc{Planar map} followed by each other, 
-and for each component we write its associative geometric information and some topological information in order to be able to update 
+The chosen format does not follow an existing standard format. 
+Generally, the format contains lists of the components of 
+\ccc{Planar map} followed by each other, 
+and for each component we write its associative geometric information and 
+some topological information in order to be able to update 
 the \ccc{Dcel} efficiently. The format is detailed below:
 
 \begin{enumerate}
-\item First, we write a line with three integer values specifying the number of vertices, halfedges and faces the \ccc{Planar map} has.
+\item The data begins with a line of three integer values specifying the number of vertices, 
+halfedges and faces the \ccc{Planar map} has.
 \item The vertices list: each component in the vertices list contains the point of its associative vertex.
-\item The halfedges list: each halfedge component is written by an index indicating the vertex origin of the halfedge, and a curve specifying the halfedge's curve.
-\item The faces list: each component in the faces list contains its outer boundary, if the face is bounded, and a list of its holes which can be empty in case the face has no holes. The format of the outer boundary is the number of halfedges of its connected component followed by the indices indicating the halfedges of that component, those indices have the same order of the halfedges on the connected component. 
-The format of the list of the holes is first the number of holes followed by the connected components per each hole, the format of each connected components resembles the format of the outer boundary specified before.
+\item The halfedges list: each halfedge component is written by an index indicating the vertex origin 
+of the halfedge, and a curve specifying the halfedge's curve.
+\item The faces list: each component in the faces list contains its outer boundary, 
+if the face is bounded, and a list of its holes which can be empty in case the face 
+has no holes. The format of the outer boundary is the number of halfedges of its connected 
+component followed by the indices indicating the halfedges of that component, those indices 
+have the same order of the halfedges on the connected component. 
+The format of the list of the holes is first the number of holes followed by the connected 
+components per each hole, the format of each connected components resembles the format 
+of the outer boundary specified above.
+\item Lines begining with '\#' serve as comments and are ignored.
+\item The format does not differentiate between spaces and new lines, 
+except new lines which belong to commented lines. 
+And hence, writing the planar in one single line having no comments is also considered legal. 
+If users would like to keep the commented lines, they may write all the 
+components between two consecutive commented lines in one single line.
+
 \end{enumerate}
 
+\ccExample {of usage in I/O functions}
 \ccIncludeExampleCode{Planar_map/example9.cin}
 
-The example above presents a Planar map containing one triangle with the coordinates {\em (0,0)}, {\em (1,1)} and {\em (2,0)}. 
-The Planar map is templated with \ccStyle{Pm_segment_exact_traits<R>} while \ccStyle{R} is \ccStyle{Cartesian<leda_rational>}.
-The first line specifying that the \ccc{Planar map} has three vertices, six halfedges, and 2 faces (the triangle and the unbounded faces). 
-The list of vertices is written below, as shown from the text it's the list of points. The next list is the halfedges list, each component contains one 
-index (between 0 to 2) in the vertices list and its associated segment. After the halfedges list comes the faces list which starts with the 
-\ccStyle{unbounded face} which has one hole which is the triangle, this connected component specifies that the hole has three halfedges with 
-the indices 4, 0 and 3. the next face which is the triangle is written in the same way.
+The example above presents a planar map containing one triangle with the coordinates 
+{\em (0,0)}, {\em (1,1)} and {\em (2,0)}. 
+The \ccc{Planar map} instance that was used to produce this example was templated 
+with the \ccStyle{Pm_segment_exact_traits} class, which was templated with the representation 
+class \ccStyle{Cartesian<leda_rational>}.
+The first line specifying that the planar map has three vertices, six halfedges, 
+and 2 faces (the triangle and the unbounded face). 
+The list of vertices each represented by its associated point follows, as shown in the 
+output example. 
+The next list is the one of halfedges, each component is represented by one 
+index (between 0 to 2) of the vertices 
+list and its associated segment. 
+The faces list is presented next. It starts with the \ccStyle{unbounded face} 
+having one hole which is the triangle, this connected component specifies that the hole has three halfedges with 
+the indices 4, 0 and 3. The next face presenting the triangle is written in the same way.
 
-Since the current format may not be comfortable for a user to read, there is a possibility to define a verbose format which contains instead of 
-indices - the components themselves, and hence the user has the option to have a format which is easy for human to read.
-This format cannot be scanned by the reading functions of the Planar map.
+The current format may not be comfortable for a user to read, because the usage of indices. 
+There is a possibility to define a verbose format which contains instead of 
+indices, the components themselves, and hence the user has the option to have a format which is easy for human to read.
+This format cannot be scanned by the reading functions of \ccc {Planar map}.
 
-\ccExample
+\ccExample {of user defined I/O functions}
 \label{PM_sec:example10}
 
-The following program demonstrates the using of IO functions while the user has additional attribute to his \ccc{Planar map}.
-The attributes chosen here is adding color to a \ccStyle{Vertex}.
-First the program extends the \ccc{Dcel} to contain that attribute.
-Second the program extends the \ccc{Pm_file_writer} class to handle the user \ccStyle{vertex}. It simply override the functions for 
-writing a vertex to print also the color of the vertex. Finally, the main function defines an empty \ccc{Planar map},  
+The following program demonstrates the usage of I/O functions while users have 
+an additional attribute in their planar map.
+The attribute chosen here is adding color to a \ccStyle{Vertex}.
+First the program extends the \ccc{Dcel} to that maintain attribute.
+Second, the program extends the \ccc{Pm_file_writer} class to handle the newly 
+defined \ccStyle{vertex}. 
+It simply overrides the functions for writing a vertex to print the color of the vertex as well. 
+Finally, the main function defines an empty \ccc{Planar map},  
 reads it from the standard input stream, and then set all vertices colors. It then defines an object of its extended writer class and 
 parameterize the function \ccc{write_pm} with that object.
 
