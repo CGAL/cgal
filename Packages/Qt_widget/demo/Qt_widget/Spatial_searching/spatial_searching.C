@@ -169,9 +169,45 @@ private slots:
     if(CGAL::assign(p,obj)) {
       vector_of_points.push_back(p);
       something_changed();
+    } else if(CGAL::assign(ir, obj)){
+      // Searching an exact range
+      // using default value 0.0 for epsilon fuzziness paramater
+      Fuzzy_box exact_range(ir.min(), ir.max());
+      Traits tr;
+      typedef CGAL::Kd_tree<Traits> Tree;
+      std::list<Point> l, res;
+      std::copy_n(vector_of_points.begin(), vector_of_points.size(),
+                  std::back_inserter(l));
+      Tree d(l.begin(), l.end(), tr);
+      d.search( std::back_inserter( res ), exact_range);
+      widget->redraw();
+      *widget << CGAL::RED;
+      *widget << ir;
+      std::list<Point>::const_iterator it = res.begin();
+      while(it!=res.end()){
+        *widget << (*it);
+        it++;
+      }
+        
+    } else if(CGAL::assign(c, obj)){
+      // exact range searching using default value 0.0 for fuzziness paramater
+      Fuzzy_circle exact_range(c.center(), sqrt(c.squared_radius()));
+      Traits tr;
+      typedef CGAL::Kd_tree<Traits> Tree;
+      std::list<Point> l, res;
+      std::copy_n(vector_of_points.begin(), vector_of_points.size(),
+                  std::back_inserter(l));
+      Tree d(l.begin(), l.end(), tr);
+      d.search( std::back_inserter( res ), exact_range);
+      widget->redraw();
+      *widget << CGAL::RED;
+      *widget << c;
+      std::list<Point>::const_iterator it = res.begin();
+      while(it!=res.end()){
+        *widget << (*it);
+        it++;
+      }
     }
-
-
   };
 
   void about()
