@@ -277,9 +277,9 @@ public:
     return tmp;
   }
 
-  inline Facet & operator*() const
+  inline Facet operator*() const
   {
-    return (Facet &)(*_cb);
+    return std::make_pair( (Cell*) (*_cb).first, (*_cb).second  ) ;
   }
 
 private: 

@@ -408,9 +408,9 @@ public:
     return tmp;
   }
 
-  inline Facet& operator*() const
+  inline Facet operator*() const
   {
-    return std::make_pair(*pos,
+    return std::make_pair(pos,
 			  nextposaround( pos->index(_c->vertex(_s)),
 					 pos->index(_c->vertex(_t)) ) );
   }
