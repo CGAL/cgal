@@ -26,13 +26,11 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_segment_traits_2.h>
-#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/tags.h>
 
 #include <list>
 
-// if we use a LEDA version without namespaces
-// we have to define a few macros
+// if we use a LEDA version without namespaces we have to define a few macros
 #if !defined(LEDA_NAMESPACE)
 #define LEDA_BEGIN_NAMESPACE
 #define LEDA_END_NAMESPACE
@@ -44,8 +42,9 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_XT_SINGLE_POINT 1
 #define	CGAL_XT_ORIGINAL_POINT 2
 
+template <class Kernel_>
 class Arr_leda_segment_traits_2
-  : public Pm_segment_traits_2<leda_rat_kernel_traits>
+  : public Pm_segment_traits_2<Kernel_>
 {
 public:
   Arr_leda_segment_traits_2() {}
@@ -53,14 +52,14 @@ public:
 public:
   typedef Tag_false                             Has_left_category;
     
-  typedef leda_rat_kernel_traits                Kernel;
+  typedef Kernel_                               Kernel;
   typedef Pm_segment_traits_2<Kernel>           Base;
   
-  typedef Base::Point_2                         Point_2;
-  typedef Base::X_curve_2                       X_curve_2;
+  typedef typename Base::Point_2                Point_2;
+  typedef typename Base::X_curve_2              X_curve_2;
   typedef X_curve_2                             Curve_2;
 
-  typedef Base::Curve_point_status              Curve_point_status;
+  typedef typename Base::Curve_point_status     Curve_point_status;
 
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
@@ -182,6 +181,8 @@ public:
 	return false;*/
   }
 
+  /*!
+   */
   bool nearest_intersection_to_left(const X_curve_2 & c1,
                                     const X_curve_2 & c2,
                                     const Point_2 & pt,
@@ -196,7 +197,6 @@ public:
     bool res = c1.intersection(c2, xcv);
     if (!res) return false;
 
-    Compare_xy_2 compare_xy = compare_xy_2_object();
     if (compare_xy(xcv.source(),xcv.target()) == SMALLER)
       xcv=curve_flip(xcv);
     if (compare_xy(xcv.target(),pt) == SMALLER) {
@@ -222,6 +222,12 @@ public:
   }
 
 
+  Comparison_result compare_xy(const Point_2 & p, const Point_2 & q) const
+  {
+    Comparison_result c = compare_x(p,q);
+    return (c != EQUAL) ? c : compare_y(p,q);
+  }
+
   // returns values in p1 and p2 only if return_intersection is true
   // if (xsect_type | CGAL_XT_SINGLE_POINT) then only p1 is returned
   bool intersection_base(const X_curve_2 & c1, const X_curve_2 & c2,
@@ -230,93 +236,76 @@ public:
 			 Point_2 & p1, Point_2 & p2, 
                          int & xsect_type) const 
   {
+    const Point_2 & c1_src = c1.source();
+    const Point_2 & c1_trg = c1.target();
+    const Point_2 & c2_src = c2.source();
+    const Point_2 & c2_trg = c2.target();
+    
     xsect_type = 0;
-    Compare_xy_2 compare_xy = compare_xy_2_object();
-    if ( c1.is_trivial())
-    { 
-      if (c2.contains(c1.source())) { 
-        if (right) {
-          if (compare_xy(c1.source(),pt) == LARGER) {
-            // intersection is c1.source()
-            xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
-            if (return_intersection) {
-              p1 = c1.source();
-              //p2 = p1;
-            }	
-            return true; 
-          }
-        } else {
-          if (compare_xy(c1.source(),pt) == SMALLER) {
-            // intersection is c1.source()
-            xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
-            if (return_intersection) {
-              p1 = c1.source();
-              //p2 = p1;
-            }	
-            return true; 
-          }
+    if (c1.is_trivial()) { 
+      if (!c2.contains(c1_src)) return false;
+      if (right) {
+        if (compare_xy(c1_src, pt) == LARGER) {
+          // intersection is c1_src
+          xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
+          if (return_intersection) {
+            p1 = c1_src;
+            //p2 = p1;
+          }	
+          return true; 
         }
       } else {
-        return false;
+        if (compare_xy(c1_src,pt) == SMALLER) {
+          // intersection is c1_src
+          xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
+          if (return_intersection) {
+            p1 = c1_src;
+            //p2 = p1;
+          }	
+          return true; 
+        }
       }
     }
 	  
     if (c2.is_trivial()) { 
-      if (c1.contains(c2.source())) { 
-        if (right) {
-          if (compare_xy(c2.source(), pt) == LARGER) {
-            // intersection is c2.source()
-            xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
-            if (return_intersection) {
-              p1 = c2.source();
-              //p2 = p1;
-            }	
-            return true; 
-          }
-        } else {
-          if (compare_xy(c2.source(),pt) == SMALLER) {
-            // intersection is c2.source()
-              xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
-              if (return_intersection) {
-                p1 = c2.source();
-                //p2 = p1;
-              }	
-              return true; 
-          }
+      if (!c1.contains(c2_src)) return false;
+      if (right) {
+        if (compare_xy(c2_src, pt) == LARGER) {
+          // intersection is c2_src
+          xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
+          if (return_intersection) {
+            p1 = c2_src;
+            //p2 = p1;
+          }	
+          return true; 
         }
       } else {
-        return false;
+        if (compare_xy(c2_src, pt) == SMALLER) {
+          // intersection is c2_src
+          xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
+          if (return_intersection) {
+            p1 = c2_src;
+            //p2 = p1;
+          }	
+          return true; 
+        }
       }
     }
 	  
     int o1 = CGAL_LEDA_SCOPE::orientation(c1, c2.start()); 
     int o2 = CGAL_LEDA_SCOPE::orientation(c1, c2.end());
 	  
-    if (o1 == 0 && o2 == 0) { 
-      leda_rat_point sa = c1.source(); 
-      leda_rat_point sb = c1.target();
-      if (CGAL_LEDA_SCOPE::compare (sa, sb) > 0) { 
-        leda_rat_point h = sa; 
-        sa = sb; 
-        sb = h; 
-      }
+    if (o1 == 0 && o2 == 0) {
+      int cmp_c1 = (CGAL_LEDA_SCOPE::compare (c1_src, c1_trg) > 0);
+      const Point_2 & sa = (cmp_c1) ? c1_trg : c1_src;
+      const Point_2 & sb = (cmp_c1) ? c1_src : c1_trg; 
 		  
-      leda_rat_point ta = c2.source(); 
-      leda_rat_point tb = c2.target();
+      int cmp_c2 = (CGAL_LEDA_SCOPE::compare (c2_src, c2_trg) > 0);
+      const Point_2 & ta = (cmp_c2) ? c2_trg : c2_src; 
+      const Point_2 & tb = (cmp_c2) ? c2_src : c2_trg;
 		  
-      if (CGAL_LEDA_SCOPE::compare (ta, tb) > 0) { 
-        leda_rat_point h = ta; 
-        ta = tb; 
-        tb = h; 
-      }
-		  
-      leda_rat_point a = sa;
-      if (CGAL_LEDA_SCOPE::compare(sa, ta) < 0) 
-	a = ta;
-      
-      leda_rat_point b = tb; 
-      if (CGAL_LEDA_SCOPE::compare(sb, tb) < 0) 
-	b = sb;
+      const Point_2 & a = (CGAL_LEDA_SCOPE::compare(sa, ta) < 0) ? ta : sa;
+      const Point_2 & b = (CGAL_LEDA_SCOPE::compare(sb, tb) < 0) ? sb : tb; 
       
       if (CGAL_LEDA_SCOPE::compare(a,b) <= 0) { 
         // a is left-low to b
@@ -360,7 +349,7 @@ public:
       leda_integer m1 = c1.X2() * c1.Y1() - c1.X1() * c1.Y2();
       leda_integer m2 = c2.X2() * c2.Y1() - c2.X1() * c2.Y2();
 		  
-      leda_rat_point p(m2*c1.dx() - m1*c2.dx(), m2*c1.dy() - m1*c2.dy(), w);
+      Point_2 p(m2*c1.dx() - m1*c2.dx(), m2*c1.dy() - m1*c2.dy(), w);
       if (right) {
         if (compare_xy(p, pt) == LARGER) {
           //intersection is rat_segment(p, p);
@@ -408,7 +397,7 @@ private:
   }
 
   // Dummies  
-  mutable leda_rat_point dummy_pnt1, dummy_pnt2;
+  mutable Point_2 dummy_pnt1, dummy_pnt2;
   mutable int dummy_int;
 };
 
