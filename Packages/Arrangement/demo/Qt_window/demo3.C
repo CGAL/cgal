@@ -33,7 +33,7 @@ int main(int, char*)
 
 #else
 
-#include "cgal_types.h"
+#include "cgal_types3.h"
 
 #include <fstream>
 #include <stack>
@@ -44,7 +44,7 @@ int main(int, char*)
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
-#include "Qt_widget_toolbar.h"
+#include "Qt_widget_toolbar3.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -70,6 +70,8 @@ const QString my_title_string("Arrangement Demo with"
 //global flags and variables
 int                 current_state;
 std::list<Curve>    list_of_segments;
+std::list<Cgal_Polygon>  list_of_polygons;
+
 Arr                 arr;
 bool                pl_valid=false;
 Point               pl_point;
@@ -87,10 +89,18 @@ public:
 
     *widget << CGAL::GREEN;
     *widget << CGAL::LineWidth(1);
-    std::list<Curve>::iterator itp = list_of_segments.begin();
-    while(itp!=list_of_segments.end()){
-      *widget << (*itp++);
+    std::list<Cgal_Polygon>::iterator itp = list_of_polygons.begin();
+    while(itp!=list_of_polygons.end()){
+      Cgal_Polygon::Edge_const_iterator eci = (*itp).edges_begin();
+      Cgal_Polygon::Edge_const_iterator last_edge=(*itp).edges_end();
+      last_edge--;
+      while(eci != last_edge )
+      {
+	*widget << (*eci++);
+      }
+      itp++;
     }
+
 
     if(pl_valid && !(arr.halfedges_begin() == arr.halfedges_end()) ) 
     {
@@ -110,7 +120,19 @@ public:
       {
 	Arr::Ccb_halfedge_circulator cc=f->outer_ccb();
 	do {
-	  *widget << cc->curve();
+	  CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
+	  for (points_iter = cc->curve().begin(); points_iter != cc->curve().end(); ) 
+	  {
+	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	    points_iter++;
+    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+    
+	    if (target_point == cc->curve().end())
+	      break;
+    
+	    Segment s(*source_point, *target_point);
+	    *widget << s;
+	  }
 	} while (++cc != f->outer_ccb());
 	
       }
@@ -121,7 +143,19 @@ public:
 	Arr::Ccb_halfedge_circulator cc=*hit; 
 	do 
 	{
-	  *widget << cc->curve();
+	  CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
+	  for (points_iter = cc->curve().begin(); points_iter != cc->curve().end(); ) 
+	  {
+	    CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	    points_iter++;
+    	    CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+    
+	    if (target_point == cc->curve().end())
+	      break;
+    
+	    Segment s(*source_point, *target_point);
+	    *widget << s;
+	  }
 	} while (++cc != *hit);
       }
       *widget << CGAL::LineWidth(1);
@@ -132,9 +166,11 @@ public:
 
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == Qt::RightButton)
+    if(e->button() == Qt::MidButton)
     {
-      if( list_of_segments.empty() )
+      pl_valid = false;
+
+      if( list_of_polygons.empty() )
 	return;
 
       NT x=static_cast<NT>(widget->x_real(e->x()));
@@ -142,38 +178,68 @@ public:
 
       Point p(x,y);
       NT min_dist=100000000;
-      std::list<Curve>::iterator itp = list_of_segments.begin();
-      std::list<Curve>::iterator it_seg=NULL;
-      while(itp!=list_of_segments.end())
-      {
-	NT dist = squared_distance( p, (*itp));
-	if( dist < min_dist)
-	{
-	  min_dist = dist;
-	  it_seg = itp;
-	}
-	itp++;
-      }
+      std::list<Cgal_Polygon>::iterator it_closest=NULL;
+      std::list<Cgal_Polygon>::iterator pit = list_of_polygons.begin();
 
+      Segment closest_segment;
+
+      while(pit!=list_of_polygons.end())
+      {
+	Cgal_Polygon::Edge_const_iterator eit = (*pit).edges_begin();
+	Cgal_Polygon::Edge_const_iterator last_edge=(*pit).edges_end();
+	last_edge--;
+	while(eit != last_edge )
+	{
+	  NT dist = squared_distance( p, (*eit));
+	  if( dist < min_dist)
+	  {
+	    min_dist = dist;
+	    it_closest = pit;
+	    closest_segment = (*eit);
+	  }
+	  eit++;
+	}
+	pit++;
+      }
       
+
+
       Arr::Curve_iterator ci = arr.curve_node_begin();
       while(ci != arr.curve_node_end() )
       {
-	if( (*ci).curve() == 
-	  (*it_seg) )
+	bool found=false;
+
+	CGAL::Polyline_2<Seg_traits>::const_iterator points_iter;
+	for (points_iter = ci->curve().begin(); points_iter != ci->curve().end(); ) 
 	{
-	  arr.remove_curve( ci );
-	  break;
+	  CGAL::Polyline_2<Seg_traits>::const_iterator source_point = points_iter;
+	  points_iter++;
+	  CGAL::Polyline_2<Seg_traits>::const_iterator target_point = points_iter;
+	    
+	  if (target_point == ci->curve().end())
+	    break;
+	    
+	  Segment s(*source_point, *target_point);
+	  if(s == closest_segment)
+	  {
+	    arr.remove_curve(ci);
+	    found=true;
+	    break;
+	  }
 	}
+	if(found)
+	  break;
+
 	ci++;
       }
 
-      list_of_segments.erase( it_seg );
+      list_of_polygons.erase( it_closest );
+//      list_of_covering.clear();
+//      list_of_segments.clear();
       
-      pl_valid = false;
       (*widget).redraw();
     }
-  };
+  }; 
   
 };//end class 
 
@@ -205,7 +271,7 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate segments", this,
+    draw->insertItem("&Generate polylines", this,
 				SLOT(gen_segments()), CTRL+Key_G );
 
     // help menu
@@ -259,10 +325,24 @@ private slots:
   {
     pl_valid = false;
 
-    Segment s;
-    if(CGAL::assign(s,obj)) {
-      list_of_segments.push_back(s);
-      arr.insert(s);
+
+    Cgal_Polygon pol;
+    if(CGAL::assign(pol,obj))
+    {
+      list_of_polygons.push_back(pol);
+
+      std::vector<Point> pts;
+
+      Cgal_Polygon::Edge_const_iterator eci = pol.edges_begin();
+      while(eci != pol.edges_end() )
+      {
+	Curve c= *eci++;
+	Seg_traits ST;
+	pts.push_back( ST.curve_source(c) );
+      }
+
+      Traits::Curve_2 pol( pts.begin(), pts.end() );
+      arr.insert( pol );
       something_changed();
     }
 
@@ -319,22 +399,30 @@ private slots:
   {
     stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_square_2<Point> g(0.5);
-    for(int count=0; count<25; count++) 
+    std::list<Point> list_of_points;
+    CGAL::Random_points_in_square_2<Point> g(1);
+    for(int count=0; count<5; count++) 
     {
-      Point p1(*g++), p2(*g++);
-      NT scale(2);
-      Segment s( Point(p1.x()*scale,p1.y()*scale)  , Point(p2.x()*scale,p2.y()*scale) );
-      list_of_segments.push_back(s);
-      arr.insert(s);
+      list_of_points.clear();
+      for(int i=0; i<5; i++)
+      {
+	list_of_points.push_back(*g++);
+      }
+      CGAL::Polyline_2<Seg_traits> p(list_of_points.begin(), list_of_points.end() );
+
+      Cgal_Polygon pol(list_of_points.begin(), list_of_points.end() );
+      
+      list_of_polygons.push_back(pol);
+
+      arr.insert(p);
     }
 
     pl_valid = false;
 
     something_changed();
+
   }
 	
 
@@ -347,7 +435,7 @@ private:
   Qt_layer_show_ch      testlayer;
 };
 
-#include "demo1.moc"
+#include "demo3.moc"
 
 
 int

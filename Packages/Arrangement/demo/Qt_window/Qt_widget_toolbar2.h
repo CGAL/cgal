@@ -45,13 +45,11 @@
 #ifndef CGAL_QT_WIDGET_TOOLBAR_H
 #define CGAL_QT_WIDGET_TOOLBAR_H
 
-#include "cgal_types.h"
+#include "cgal_types2.h"
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_get_point.h>
-#include <CGAL/IO/Qt_widget_get_segment.h>
-#include "Qt_widget_move_list_point.h"
+#include <CGAL/IO/Qt_widget_get_simple_polygon.h>
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -66,21 +64,19 @@ class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Curve> *l1);
+  Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Cgal_Polygon> *l1);
   ~Tools_toolbar(){};
 
 signals:
   void new_object(CGAL::Object);
 
 private:
-  QToolButton     *but[10];
+  QToolButton     *but[9];
   QButtonGroup    *button_group;
   CGAL::Qt_widget *widget;
   int             nr_of_buttons;
 
-  CGAL::Qt_widget_get_point<RP>  pointbut;
-  CGAL::Qt_widget_get_segment<RP>   segmentbut;
-//  Qt_widget_move_list_point<RP>  move_deletebut;
+  CGAL::Qt_widget_get_polygon<Cgal_Polygon>   polygonbut;
 };//end class
 
 #endif

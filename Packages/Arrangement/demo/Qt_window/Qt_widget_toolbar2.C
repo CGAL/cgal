@@ -21,27 +21,24 @@
 #ifdef CGAL_USE_QT
 
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_toolbar.h"
+#include "Qt_widget_toolbar2.h"
 
 // icons
 #include <CGAL/IO/pixmaps/movepoint.xpm>
-#include <CGAL/IO/pixmaps/point.xpm>
-#include <CGAL/IO/pixmaps/line.xpm>
+#include <CGAL/IO/pixmaps/polygon.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
 
 #include <qiconset.h>
 
 Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, 
-			     QMainWindow *mw, std::list<Curve> *l1) :
+			     QMainWindow *mw, std::list<Cgal_Polygon> *l1) :
   QToolBar(mw, "NT")
   {
 //    w->attach(&move_deletebut);
-    w->attach(&pointbut);
-    w->attach(&segmentbut);
+    w->attach(&polygonbut);
 
 //    move_deletebut.deactivate();
-    pointbut.deactivate();
-    segmentbut.deactivate();
+    polygonbut.deactivate();
 
 //    move_deletebut.pass_the_structure(l1);
     //set the widget
@@ -49,27 +46,22 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
 
     QIconSet set0(QPixmap( (const char**)arrow_small_xpm ),
                   QPixmap( (const char**)arrow_xpm ));
-    QIconSet set1(QPixmap( (const char**)point_small_xpm ),
-                  QPixmap( (const char**)point_xpm ));
 //    QIconSet set2(QPixmap( (const char**)movepoint_small_xpm ),
 //                  QPixmap( (const char**)movepoint_xpm ));
-    QIconSet set2(QPixmap( (const char**)line_small_xpm ),
-                  QPixmap( (const char**)line_xpm ));
+    QIconSet set1(QPixmap( (const char**)polygon_small_xpm ),
+                  QPixmap( (const char**)polygon_xpm ));
 		
   but[0] = new QToolButton(this, "deactivate layer");
   but[0]->setIconSet(set0);
   but[0]->setTextLabel("Deactivate Layer");
-  but[1] = new QToolButton(this, "pointinput layer");
-  but[1]->setIconSet(set1);
-  but[1]->setTextLabel("Input point");
 //  but[2] = new QToolButton(this, "move/delete layer");
 //  but[2]->setIconSet(set2);
 //  but[2]->setTextLabel("Move/Delete Point");
-  but[2] = new QToolButton(this, "segment layer");
-  but[2]->setIconSet(set2);
-  but[2]->setTextLabel("Segment layer");
+  but[1] = new QToolButton(this, "polygon layer");
+  but[1]->setIconSet(set1);
+  but[1]->setTextLabel("Polygon layer");
   
-  nr_of_buttons = 3;
+  nr_of_buttons = 2;
   button_group = new QButtonGroup(0, "My_group");
   for(int i = 0; i<nr_of_buttons; i++) {
     button_group->insert(but[i]);
@@ -77,14 +69,12 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   }
   button_group->setExclusive(true);
   
-  connect(but[1], SIGNAL(stateChanged(int)),
-        &pointbut, SLOT(stateChanged(int)));
 //  connect(but[2], SIGNAL(stateChanged(int)),
 //        &move_deletebut, SLOT(stateChanged(int)));
-  connect(but[2], SIGNAL(stateChanged(int)),
-        &segmentbut, SLOT(stateChanged(int)));
+  connect(but[1], SIGNAL(stateChanged(int)),
+        &polygonbut, SLOT(stateChanged(int)));
 };
 
-#include "Qt_widget_toolbar.moc"
+#include "Qt_widget_toolbar2.moc"
 
 #endif
