@@ -42,29 +42,12 @@ gp_linear_intersection(const LineH2<R>& l1, const LineH2<R>& l2)
                      l1.a()*l2.b() - l2.a()*l1.b() );
 }
 
-template <class R>
+template <typename K>
 CGAL_KERNEL_MEDIUM_INLINE
-LineH2<R>
-bisector( const PointH2<R>& p, const PointH2<R>& q )
+typename K::Line_2
+bisector( const PointH2<K>& p, const PointH2<K>& q )
 {
-  typedef typename R::RT RT;
-
- // Bisector equation is based on equation
- // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
- // and x() = hx()/hw() ...
-
-  const RT & phx = p.hx();
-  const RT & phy = p.hy();
-  const RT & phw = p.hw();
-  const RT & qhx = q.hx();
-  const RT & qhy = q.hy();
-  const RT & qhw = q.hw();
-
-  RT a = RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
-  RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
-  RT c = qhx*qhx*phw*phw + qhy*qhy*phw*phw - phx*phx*qhw*qhw - phy*phy*qhw*qhw;
-
-  return LineH2<R>( a, b, c );
+  return K().construct_bisector_2_object()(p, q);
 }
 
 template <class R>

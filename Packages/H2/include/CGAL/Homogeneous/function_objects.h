@@ -1330,21 +1330,60 @@ namespace HomogeneousKernelFunctors {
       // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
       // and x() = hx()/hw() ...
 
-      RT phx = p.hx();
-      RT phy = p.hy();
-      RT phw = p.hw();
-      RT qhx = q.hx();
-      RT qhy = q.hy();
-      RT qhw = q.hw();
+      const RT &phx = p.hx();
+      const RT &phy = p.hy();
+      const RT &phw = p.hw();
+      const RT &qhx = q.hx();
+      const RT &qhy = q.hy();
+      const RT &qhw = q.hw();
 
-      RT a = RT(2) * ( qhx*qhw*phw*phw - phx*phw*qhw*qhw );
-      RT b = RT(2) * ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
-      RT c = phx*phx*qhw*qhw + phy*phy*qhw*qhw 
-	- qhx*qhx*phw*phw - qhy*qhy*phw*phw;
+      RT a = RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
+      RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
+      RT c = qhx*qhx*phw*phw + qhy*qhy*phw*phw 
+	   - phx*phx*qhw*qhw - phy*phy*qhw*qhw;
 
       return Line_2( a, b, c );
     }
   };
+
+  template <typename K>
+  class Construct_bisector_3
+  {
+    typedef typename K::FT      FT;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Plane_3 Plane_3;
+  public:
+    typedef Plane_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Plane_3
+    operator()(const Point_3& p, const Point_3& q) const
+    {
+      typedef typename K::RT RT;
+
+      // Bisector equation is based on equation
+      // ( X - p.x())^2 + (Y - p.y())^2 == ( X - q.x())^2 + (Y - q.y())
+      // and x() = hx()/hw() ...
+
+      const RT& phx = p.hx();
+      const RT& phy = p.hy();
+      const RT& phz = p.hz();
+      const RT& phw = p.hw();
+      const RT& qhx = q.hx();
+      const RT& qhy = q.hy();
+      const RT& qhz = q.hz();
+      const RT& qhw = q.hw();
+
+      RT a = RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
+      RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
+      RT c = RT(2) * ( phz*phw*qhw*qhw - qhz*qhw*phw*phw );
+      RT d = qhx*qhx*phw*phw + qhy*qhy*phw*phw + qhz*qhz*phw*phw
+	   - phx*phx*qhw*qhw - phy*phy*qhw*qhw - phz*phz*qhw*qhw;
+
+      return Plane_3( a, b, c, d );
+    }
+  };
+
 
   template <typename K>
   class Construct_centroid_2

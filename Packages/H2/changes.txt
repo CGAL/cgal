@@ -1,3 +1,7 @@
+2.106 (19 November 2003)
+- Fix Construct_bisector_2 functor.
+- Added bisector(Point_3, Point_3).
+
 2.105 (17 November 2003)
 - Remove deprecated stuff.
 
