@@ -80,7 +80,7 @@ void test_file_IO_OFF() {
         stream << P << '\0';
         P = Polyhedron();
         scan_OFF( stream, P, true);
-        CGAL_assertion( stream);
+        CGAL_assertion( ! ! stream); // ! ! to fool VC7 CL1310
         CGAL_assertion( P.is_triangle( P.halfedges_begin()));
 
         std::stringstream stream_new;
@@ -88,7 +88,7 @@ void test_file_IO_OFF() {
         stream_new << '\0';
         P = Polyhedron();
         stream_new >> P;
-        CGAL_assertion( stream_new);
+        CGAL_assertion( ! ! stream_new); // ! ! to fool VC7 CL1310
         CGAL_assertion( P.is_triangle( P.halfedges_begin()));
         {
             std::ofstream out2( "triangle_binary.off");

@@ -1,6 +1,11 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.15 (07 May 2003)
+
+     - Changed test for stringstream in test program to double negation
+       to fool VC7 CL1310.
+
 3.14 (07 May 2003)
 
      - In examples/Polyhedron_IO/terr_triang.C switched to default
