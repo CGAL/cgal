@@ -45,7 +45,7 @@ public:
   Gmpz_rep()
   { mpz_init(mpZ); }
 
-  Gmpz_rep(mpz_t z)
+  Gmpz_rep(const mpz_t z)
   { mpz_init_set(mpZ, z); }
 
   Gmpz_rep(const Gmpz_rep & g)
@@ -94,7 +94,7 @@ public:
   Gmpz()
     : Base(Gmpz_rep()) {}
 
-  Gmpz(mpz_t z)
+  Gmpz(const mpz_t z)
     : Base(Gmpz_rep(z)) {}
 
   Gmpz(int i)
