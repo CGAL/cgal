@@ -97,19 +97,25 @@ public:
                                                            const FT& m34,
                        const FT& w = FT(1));
 
-  Point_3     transform(const Point_3 &p) const { return ptr()->transform(p); }
-  Point_3     operator()(const Point_3 &p) const { return transform(p); }
+  Point_3     transform(const Point_3 &p) const
+  { return ptr()->transform(p); }
+  Point_3     operator()(const Point_3 &p) const
+  { return transform(p); }
 
   Vector_3    transform(const Vector_3 &v) const
-                                           { return ptr()->transform(v); }
-  Vector_3    operator()(const Vector_3 &v) const { return transform(v); }
+  { return ptr()->transform(v); }
+  Vector_3    operator()(const Vector_3 &v) const
+  { return transform(v); }
 
   Direction_3 transform(const Direction_3 &d) const
-                                              { return ptr()->transform(d); }
-  Direction_3 operator()(const Direction_3 &d) const { return transform(d); }
+  { return ptr()->transform(d); }
+  Direction_3 operator()(const Direction_3 &d) const
+  { return transform(d); }
 
-  Plane_3     transform(const Plane_3& p) const { return p.transform(*this); }
-  Plane_3     operator()(const Plane_3& p) const { return transform(l); }
+  Plane_3     transform(const Plane_3& p) const
+  { return p.transform(*this); }
+  Plane_3     operator()(const Plane_3& p) const
+  { return transform(l); } // FIXME : l ???
 
   Self        inverse() const { return ptr()->inverse(); }
   
@@ -136,8 +142,7 @@ private:
 #endif
 
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3()
+Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3()
 {
   FT ft1(1), ft0(0);
   PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
@@ -156,17 +161,14 @@ Aff_transformationC3(const Identity_transformation &)
 }
 
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(
-	const Translation,
+Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(const Translation,
         const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
 {
   PTR = new Translation_repC3<R>(v);
 }
 
 template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const Scaling,
+Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(const Scaling,
                      const typename Aff_transformationC3<R CGAL_CTAG>::FT &s,
                      const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
 {
