@@ -26,7 +26,6 @@
 #include <CGAL/functional.h> 
 #include <CGAL/function_objects.h> 
 #include <CGAL/Circulator_project.h>
-#include <CGAL/Nef_3/bounded_side_3.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
