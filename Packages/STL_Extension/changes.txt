@@ -7,10 +7,18 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-ALL : New functor adaptors (bind/compose).
-ALL : Removed Compose for Projection objects.
 ALL : Rejoined Inverse_index fix by Dima.
 ALL : Fixed sunpro 5.3 problems.
+ALL : Added Emptyset_iterator and Oneset_iterator.
+SRC : Combined iterators and iterator adaptors into iterator.h.
+SRC : Fixed a few more sunpro problems.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.3
+//---------------------------------------------------------------------
+
+ALL : New functor adaptors (bind/compose).
+ALL : Removed Compose for Projection objects.
 ALL : Fixed dumb compiler macro.
 ALL : Fixed stlport stuff for msvc.
 ALL : Added functional_base to stlport.
