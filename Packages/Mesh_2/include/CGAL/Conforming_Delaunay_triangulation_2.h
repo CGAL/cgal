@@ -241,8 +241,13 @@ public:
 	
 	const Point& a = fh->vertex(ct.cw(i))->point();
 	const Point& b = fh->vertex(ct.ccw(i))->point();
-	const Point& c = fh->vertex(i)->point();
-	const Point& d = fh->mirror_vertex(i)->point();
+	Vertex_handle vi = fh->vertex(i);
+	Vertex_handle mvi = fh->mirror_vertex(i);
+	if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
+	  return true;
+	}
+	const Point& c = vi->point();
+	const Point& d = mvi->point();
 	
 	return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
       }
