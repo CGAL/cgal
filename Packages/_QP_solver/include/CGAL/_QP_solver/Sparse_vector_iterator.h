@@ -8,17 +8,16 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/_QP_solver/Sparse_vector_iterator.h
-// package       : _QP_solver 0.9.1 (21 Mar 2001)
+// package       : $CGAL_Package: _QP_solver $
 //
 // revision      : 0.1
-// revision_date : 2000/08/09 00:00:00
+// revision_date : 2000/08/09
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: sparse vector iterator

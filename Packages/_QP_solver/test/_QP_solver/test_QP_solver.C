@@ -8,17 +8,16 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : test/_QP_solver/test_QP_solver.C
-// package       : _QP_solver 0.9.1 (21 Mar 2001)
+// package       : $CGAL_Package: _QP_solver $
 //
 // revision      : 0.2
-// revision_date : 2000/08/21 00:00:00
+// revision_date : 2000/08/21
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test program for the QP solver

@@ -8,17 +8,16 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-wip $
+// release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/_QP_solver/Join_random_access_iterator.h
-// package       : _QP_solver 0.9.1 (21 Mar 2001)
+// package       : $CGAL_Package: _QP_solver $
 //
 // revision      : 0.3
-// revision_date : 2000/09/11 00:00:00
+// revision_date : 2000/09/11
 //
-// author(s)     : Sven Schönherr
-// maintainer    : Sven Schönherr <sven@inf.ethz.ch>
+// author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
 // implementation: join random access iterator
