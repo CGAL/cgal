@@ -147,22 +147,22 @@ typedef Arr_2::Planar_map                           Planar_map;
 // we use the namespace std for compatability with MSVC
 typedef std::list<Point>                     Point_list;
 
-class Arr_polyline_traits_test
+class Arr_test
 {
   Arr_2 arr;  
 
 public:
 #if CGAL_ARR_TEST_POINT_LOCATION == 4
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
+  Arr_test() : arr(new CGAL::Pm_simple_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3  
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
+  Arr_test() : arr(new CGAL::Pm_walk_along_line_point_location<Planar_map>) {};
 
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
+  Arr_test() : arr(new CGAL::Pm_naive_point_location<Planar_map>) {};
 #else
   // CGAL_ARR_TEST_POINT_LOCATION == 1
-  Arr_polyline_traits_test() : arr(new CGAL::Pm_default_point_location<Planar_map>) {};
+  Arr_test() : arr(new CGAL::Pm_default_point_location<Planar_map>) {};
   // None
 #endif
 
@@ -186,7 +186,7 @@ private:
   // count overlap references in arrangement,
   // that is every reference from a halfedge of an overlapped edge
   // to its overlapping curves.
-  unsigned count_overlaps(Arr_2 & arr)
+  unsigned count_overlaps()
     {
       Arr_2::Halfedge_iterator hit;
       Arr_2::Overlap_circulator oe;
@@ -253,7 +253,7 @@ private:
       std::cout << std::endl;
     }
   
-  bool point_is_in_expected_place(Arr_2 & arr, Point &pnt, Arr_2::Locate_type exp_lt)
+  bool point_is_in_expected_place(Point &pnt, Arr_2::Locate_type exp_lt)
     {
       Arr_2::Locate_type    location_of_vertex;
       
@@ -262,7 +262,7 @@ private:
       return (location_of_vertex == exp_lt);
     }
   
-  void check_that_vertices_are_in_arrangement(Arr_2 & arr, Point_list & all_points_list)
+  void check_that_vertices_are_in_arrangement(Point_list & all_points_list)
     {
       Point_list::iterator pit;
       
@@ -273,14 +273,13 @@ private:
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(arr, *pit, Arr_2::VERTEX) ||
-                         point_is_in_expected_place(arr, *pit, Arr_2::EDGE));
+	  CGAL_assertion(point_is_in_expected_place(*pit, Arr_2::VERTEX) ||
+                         point_is_in_expected_place(*pit, Arr_2::EDGE));
 	}
     }
   
-  void points_in_expected_place(Arr_2 &                      arr,
-				  Point_list &              point_list,
-				  std::list<Arr_2::Locate_type> & lt_list)
+  void points_in_expected_place(Point_list                    & point_list,
+				std::list<Arr_2::Locate_type> & lt_list)
     {
       Point_list::iterator              pit;
       std::list<Arr_2::Locate_type>::iterator lt_it;
@@ -298,7 +297,7 @@ private:
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(arr, *pit, *lt_it));
+	  CGAL_assertion(point_is_in_expected_place(*pit, *lt_it));
 	}
     }
 
@@ -603,25 +602,25 @@ public:
       //print_vertices(arr);
 
       // debug
-//       Arr_2::Face_handle    f  = arr->unbounded_face();
-//       Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
-//       Arr_2::Ccb            c  = *it;
+      //   Arr_2::Face_handle    f  = arr->unbounded_face();
+      //   Arr_2::Holes_iterator it = f->holes_begin(),end=f->holes_end();
+      //   Arr_2::Ccb            c  = *it;
       //const X_curve& cv = curr->curve();
 
       // Check validity of arrangement after insertion
       CGAL_assertion(arr.is_valid());
             
       // Check that vertices read are indeed in the arrangement
-      check_that_vertices_are_in_arrangement(arr, all_points_list);
+      check_that_vertices_are_in_arrangement(all_points_list);
 
       // count overlaps
-      actual_num_overlaps = count_overlaps(arr); 
+      actual_num_overlaps = count_overlaps(); 
 
       show_comparison();   
       
       CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
       // verify that test points are as located in the arrangemet as expected
-      points_in_expected_place(arr, test_point_list, exp_type_list);
+      points_in_expected_place(test_point_list, exp_type_list);
       CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
       CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
       CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
@@ -632,8 +631,8 @@ public:
 int main(int argc, char* argv[])
 {
   
-  Arr_polyline_traits_test test;
-  bool                     reverse_order = false;
+  Arr_test test;
+  bool     reverse_order = false;
 
   if (argc < 2 || argc > 3) {
     std::cout << "usage: test data_file [reverse]" << std::endl;
