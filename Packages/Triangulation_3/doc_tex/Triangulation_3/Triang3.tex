@@ -332,6 +332,10 @@ It can be used as a traits class for
 \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,
 TriangulationDataStructure_3>}.
 
+There is also another model of the traits concept,
+\ccc{Regular_triangulation_filtered_traits_3<FK>}, which is providing filtered
+predicates (exact and efficient).
+
 \subsection{The Triangulation Data Structure Parameter}
 \label{Triangulation3-sec-tds}
 
@@ -567,6 +571,9 @@ triangulations.
 
 He changed the design in CGAL 3.0, allowing users to add handles in
 his own vertices and cells. 
+
+In 2004, Christophe Delage implemented the vertex removal function for
+regular triangulations, based on the code for Delaunay.
 
 The authors wish to thank Jean-Daniel Boissonnat, Olivier Devillers
 and Mariette Yvinec for helpful discussions \cite{bdty-tcgal-00}.
