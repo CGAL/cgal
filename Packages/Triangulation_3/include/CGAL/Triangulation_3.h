@@ -133,8 +133,7 @@ private:
   
   void init_tds()
     {
-      infinite = new Vertex(Point(500,500,500)); // ?? debug
-      _tds.insert_outside_affine_hull(&(*infinite));
+      infinite = (Vertex*) _tds.insert_outside_affine_hull(Vertex(Point(500,500,500)));
       // forces the compiler to instanciate CGAL_debug :
       CGAL_debug( infinite ); 
       CGAL_debug( Cell_handle() );
@@ -2030,9 +2029,8 @@ public:
 			     c->vertex(2)->point(),
 			     c->vertex(3)->point(),
 			     lt,i,j ) == CGAL_ON_BOUNDED_SIDE );
-    Vertex_handle v = new Vertex(p);
-    _tds.insert_in_cell( &(*v), &(*c) );
-    return v;
+
+    return (Vertex*)_tds.insert_in_cell( Vertex(p), &(*c) );
   }
 
   Vertex_handle
@@ -2068,9 +2066,8 @@ public:
 			  c->vertex((i+3)&3)->point(),
 			  lt,li,lj) == CGAL_ON_BOUNDED_SIDE)
 	);
-    Vertex_handle v = new Vertex(p);
-    _tds.insert_in_facet(&(*v), &(*c), i);
-    return v;
+
+    return (Vertex*) _tds.insert_in_facet( Vertex(p), &(*c), i);
   }
 
   Vertex_handle
@@ -2138,9 +2135,8 @@ public:
       CGAL_triangulation_assertion( false );
       // return 
     }
-    Vertex_handle v = new Vertex(p);
-    _tds.insert_in_edge(&(*v), &(*c), i, j);
-    return v;
+
+    return (Vertex*) _tds.insert_in_edge( Vertex(p), &(*c), i, j);
   }
   
   Vertex_handle
@@ -2404,9 +2400,10 @@ public:
       reorient = false;
       break;
     }
-    Vertex_handle v = new Vertex(p);
-    _tds.insert_outside_affine_hull(&(*v), &(*infinite_vertex()), reorient);
-    return v;
+
+    return( (Vertex*) _tds.insert_outside_affine_hull( Vertex(p), 
+							&(*infinite_vertex()), 
+							reorient));
   }
 
 

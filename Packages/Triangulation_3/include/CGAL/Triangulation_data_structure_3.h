@@ -107,7 +107,7 @@ public:
   CGAL_Triangulation_data_structure_3(const Vertex & v)
     : _dimension(-2), _number_of_vertices(0), _list_of_cells()
   {
-    insert_outside_affine_hull(&v);
+    insert_outside_affine_hull(v);
     //    CGAL_triangulation_postcondition( is_valid() );
   }
 
@@ -278,10 +278,13 @@ public:
 
   //INSERTION
 
-  void insert_in_cell(Vertex* v, Cell* c)
+  Vertex * insert_in_cell(const Vertex & w, Cell* c)
 
   { //insert in cell
-    CGAL_triangulation_precondition( (v != NULL) && (c != NULL));
+    CGAL_triangulation_precondition( (c != NULL));
+
+    Vertex * v = new Vertex(w);
+
 //     c->insert_in_cell(v);
 
     Vertex* v0 = c->vertex(0);
@@ -314,19 +317,23 @@ public:
     if( v0->cell() == c  ) {  v0->set_cell(c1); }
     v->set_cell(c);
     set_number_of_vertices(number_of_vertices() +1);
+
+    return v;
   }
   // end insert_in_cell
 
-  void insert_in_facet(Vertex* v, const Facet & f)
+  Vertex * insert_in_facet(const Vertex & w, const Facet & f)
     {
-      return insert_in_facet(v,f.first,f.second);
+      return insert_in_facet(w,f.first,f.second);
     }
 
-  void insert_in_facet(Vertex* v, Cell* c, int i)
+  Vertex * insert_in_facet(const Vertex & w, Cell* c, int i)
   { // inserts v in the facet opposite to vertex i of cell c
 
-    CGAL_triangulation_precondition( (v != NULL) && (c != NULL)); 
+    CGAL_triangulation_precondition( (c != NULL)); 
     CGAL_triangulation_precondition( dimension() >= 2 );
+
+    Vertex * v = new Vertex(w);
 
     switch ( dimension() ) {
 
@@ -454,19 +461,23 @@ public:
       }
     }
     set_number_of_vertices(number_of_vertices() +1);
+
+    return v;
   }
   // end insert_in_facet
 
-  void insert_in_edge(Vertex* v, const Edge & e)   
+  Vertex * insert_in_edge(const Vertex & w, const Edge & e)   
   { 
-    return insert_in_edge(v, e.first, e.second, e.third);
+    return insert_in_edge(w, e.first, e.second, e.third);
   }
 
-  void insert_in_edge(Vertex* v, Cell* c, int i, int j)   
+  Vertex * insert_in_edge(const Vertex & w, Cell* c, int i, int j)   
   { // inserts v in the edge of cell c with vertices i and j
-    CGAL_triangulation_precondition( v != NULL && c != NULL ); 
+    CGAL_triangulation_precondition( c != NULL ); 
     CGAL_triangulation_precondition( i != j );
     CGAL_triangulation_precondition( dimension() >= 1 );
+
+    Vertex * v = new Vertex(w);
 
     Cell* cnew;
     Cell* dnew;
@@ -594,10 +605,12 @@ public:
       }
     }
     set_number_of_vertices(number_of_vertices() +1);
+
+    return v;
   }// end insert_in_edge
 
 
-  void insert_outside_affine_hull(Vertex* v, // new vertex
+  Vertex * insert_outside_affine_hull(const Vertex & w, // new vertex
 				  Vertex* star = NULL,
 				  bool reorient = false) 
     // star = vertex from which we triangulate the facet of the incremented dimension
@@ -608,7 +621,7 @@ public:
 
     // if (reorient) the orientation of the cells is modified
   {  // insert()
-    CGAL_triangulation_precondition( v != NULL );
+    Vertex * v = new Vertex(w);
 
     Cell* c;
     Cell* d;
@@ -852,6 +865,7 @@ public:
       }
     }// end switch
     
+    return v;
   } // end insert_outside_affine_hull
 
   // for Delaunay :
