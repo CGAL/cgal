@@ -1876,7 +1876,8 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
                 }
             }
             if ( is)
-                p = Polynomial<NT>(std::make_pair( coeffs.begin(), coeffs.end()));
+                p = Polynomial<NT>(std::make_pair( coeffs.begin(),
+                                                   coeffs.end()));
         }
         break;
     case CGAL::IO::BINARY :
