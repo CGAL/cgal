@@ -10,8 +10,8 @@
 An object of the class \ccc{MP_Float} is able to represent a floating point
 value with arbitrary precision.  This number type has the property that
 additions, subtractions and multiplications are computed exactly, as well as
-the construction from a double.  The division and square root are computed
-approximately, so we suggest that you use rationnals using Quotient<MP\_Float>
+the construction from a double.  Division and square root are computed
+approximately, so we suggest that you use rationals using Quotient<MP\_Float>
 when you need exact divisions.
 
 \ccInclude{CGAL/MP_Float.h}
@@ -32,7 +32,7 @@ when you need exact divisions.
 {introduces the floating point value d.}
 
 \ccOperations
-All functions are provided so that it can be used as a number type class in
+All functions are provided so that it can be used as a number type in
 \cgal.
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const MP_Float& m);}
