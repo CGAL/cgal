@@ -3,6 +3,7 @@
 
 \usepackage{alltt}
 \usepackage{cc_manual}
+\usepackage{makeidx}
 \usepackage{latex_converter}
 \usepackage{amssymb}
 \usepackage{pslatex}
@@ -20,6 +21,8 @@
 
 \newcommand{\cgalrelease}{2.2}
 
+\makeindex
+
 \begin{document}
 
 \include{title}
@@ -34,6 +37,8 @@
 \pagenumbering{arabic}
 
 \input{installation}
+
+\printindex
 
 %\bibliographystyle{alpha}
 %\bibliography{../cgal-manual}
