@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.15 (12/09/03)
+- no changes but resubmission 
+
 ver 8.14 (10/09/03)
 - Qt_help_window class is in the CGAL namespace now
 - renamed Makefile to makefile_local (for windows systems)
