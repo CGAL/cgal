@@ -317,8 +317,9 @@ void draw_incident_edges(Triangulation_ &T,
 {
     if (T.dimension()<1) return;
     std::cerr << "Select a face" << std::endl;
-    std::cerr << "The adjacent edges of the vertices of this face will be\n"
-         << "highlighted in turn.\n";
+    std::cerr << "The adjacent edges of the vertices of this face will be"
+		 << std::endl
+         << "highlighted in turn."<< std::endl;
 
     Point_ p;
     W >> p;
@@ -384,7 +385,7 @@ void draw_convex_hull(Triangulation_ &T,
 {
     if (T.dimension()<1) return;
     Point_ p, q;
-    std::cerr << "Highlighting of the convex hull\n";
+    std::cerr << "Highlighting of the convex hull"<< std::endl;
 
     Vertex_circulator_ chc = T.infinite_vertex()->incident_vertices(),
                            done(chc);
@@ -416,8 +417,8 @@ void draw_convex_hull(Triangulation_ &T,
 void show_faces_iterator(Triangulation_ &T,
                  Window_stream &W)
 {
-  std::cerr << "Highlighting in turn each face 
-             traversed by the face iterarot "<<std::endl;
+  std::cerr << "Highlighting in turn each face traversed by the face iterarot "
+			<<std::endl;
   W << CGAL::GREEN;
   Face_iterator_ fit= T.faces_begin();
   while (fit != T.faces_end()) {
@@ -439,7 +440,8 @@ void show_nearest_vertex(Delaunay_ &T,
                     Window_stream &W)
 {
     if (T.dimension()<1) return;
-    std::cerr << "The vertex that is nearest to the cursor is highlighted" << std::endl;
+    std::cerr << "The vertex that is nearest to the cursor is highlighted"
+	          << std::endl;
     std::cerr << "Click any button to continue" << std::endl;
 
     Vertex_handle_ nv = NULL;
@@ -486,7 +488,8 @@ void fileIO(Delaunay_ &T,
             Window_stream &W,
             const Options& opt)
 {
-    std::cerr << "The triangulation will be written to a file and read again\n";
+    std::cerr << "The triangulation will be written to a file and read again"
+			  << std::endl;
     {
         std::ofstream out("tr");
         CGAL::set_ascii_mode(out);

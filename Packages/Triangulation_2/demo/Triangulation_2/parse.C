@@ -50,7 +50,7 @@ parse(int argc, char* argv[], Options &opt)
             argv++;
             argc--;
         }else if (! strcmp(argv[0], "-min")) {
-            if (sscanf(argv[1], "%lf", &opt.min) != 1) {
+            if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.min) != 1) {
                 std::cerr << "Argument for min must be a number"
                      << std::endl;
             }
@@ -58,7 +58,7 @@ parse(int argc, char* argv[], Options &opt)
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-max")) {
-            if (sscanf(argv[1], "%lf", &opt.max) != 1) {
+            if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.max) != 1) {
                 std::cerr << "Argument for max must be a number"
                      << std::endl;
             }
@@ -66,7 +66,7 @@ parse(int argc, char* argv[], Options &opt)
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-winx")) {
-            if (sscanf(argv[1], "%d", &opt.winx) != 1) {
+            if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.winx) != 1) {
                 std::cerr << "Argument for winx must be a number"
                      << std::endl;
             }
@@ -74,7 +74,7 @@ parse(int argc, char* argv[], Options &opt)
             argc -= 2;
 
         }else if (! strcmp(argv[0], "-winy")) {
-            if (sscanf(argv[1], "%d", &opt.winy) != 1) {
+            if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.winy) != 1) {
                 std::cerr << "Argument for winy must be a number"
                      << std::endl;
             }
