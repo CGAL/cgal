@@ -11,6 +11,7 @@
 #include <qwhatsthis.h>
 
 #include "qt_layers.h"
+#include "edit_vertex_layer.h"
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
@@ -19,6 +20,7 @@
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
+#include <CGAL/IO/pixmaps/movepoint.xpm>
 //#include "removecircle.xpm"
 
 
@@ -37,6 +39,7 @@ public:
     showDG = new Delaunay_graph_layer<AG_2>(ag);
     showNT = new Visible_sites_layer<AG_2>(ag);
     showTR = new Hidden_sites_layer<AG_2>(ag);
+    edit_V = new Edit_vertex_layer<AG_2>(&ag);
 
     // set the widget
     this->widget = widget;
@@ -47,7 +50,7 @@ public:
     widget->attach(showDG);
     widget->attach(showVD);
     widget->attach(showNT);
-
+    widget->attach(edit_V);
 
     but[0] = new QToolButton(QPixmap( (const char**)points_small_xpm ),
 			     "Show sites", 
@@ -107,9 +110,18 @@ public:
 			     this, 
 			     "Remove site");
 #endif
-    showDG->deactivate();
+    but[6] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
+			     "Edit site", 
+			     0, 
+			     this, 
+			     SLOT(edit_mode()),
+			     this, 
+			     "Edit site");
 
-    nr_of_buttons = 6;
+    showDG->deactivate();
+    edit_V->deactivate();
+
+    nr_of_buttons = 7;
     for(int i = 0; i < nr_of_buttons; i++){
       but[i]->setToggleButton(TRUE);
     }
@@ -127,6 +139,7 @@ public:
     delete showDG;
     delete showTR;
     delete showNT;
+    delete edit_V;
   }
 
   inline QToolBar* toolbar() { return this; };
@@ -134,6 +147,7 @@ public:
 signals:
   void new_object(CGAL::Object);
   void removeModeChanged(bool);
+  void editModeChanged(bool);
   void inputModeChanged(bool);
 		
 private slots:
@@ -192,6 +206,19 @@ private slots:
     emit removeModeChanged( but[5]->isOn() );
   }
 
+  void edit_mode() {
+#if 0
+    if ( but[6]->isOn() ) {
+      edit_V->activate();
+    } else {
+      edit_V->deactivate();
+    }
+
+    emit editModeChanged( but[6]->isOn() );
+    //    emit editModeChanged( but[6]->isOn() );
+#endif
+  }
+
 private:
   QToolButton		*but[10];
   CGAL::Qt_widget	*widget;
@@ -202,6 +229,7 @@ private:
   Delaunay_graph_layer<AG_2>              *showDG;
   Visible_sites_layer<AG_2>               *showNT;
   Hidden_sites_layer<AG_2>                *showTR;
+  Edit_vertex_layer<AG_2>                 *edit_V;
 
 };//end class
 

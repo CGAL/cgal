@@ -51,8 +51,12 @@ qt_file_toolbar.moc:  qt_file_toolbar.h
 qt_layers_toolbar.moc:  qt_layers_toolbar.h
 	$(QT_MOC) -o qt_layers_toolbar.moc qt_layers_toolbar.h
 
+edit_vertex_layer.moc:  edit_vertex_layer.h
+	$(QT_MOC) -o edit_vertex_layer.moc edit_vertex_layer.h
+
 apollonius_graph_2$(OBJ_EXT): apollonius_graph_2.moc \
-	qt_file_toolbar.moc qt_layers_toolbar.moc
+	qt_file_toolbar.moc qt_layers_toolbar.moc \
+        edit_vertex_layer.moc
 
 apollonius_graph_2$(EXE_EXT): apollonius_graph_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)apollonius_graph_2 \

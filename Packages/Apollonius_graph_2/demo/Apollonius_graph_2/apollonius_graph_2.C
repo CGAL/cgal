@@ -59,12 +59,14 @@ private:
   CGAL::Qt_widget_standard_toolbar *stoolbar;
   CGAL::Qt_widget_get_circle<Rep> get_circle;
   CGAL::Qt_widget_get_point<Rep> get_point;
+  bool is_edit_mode;
   bool is_remove_mode;
   bool is_insert_point_mode;
 
 public:
   My_Window(int x, int y)
   {
+    is_edit_mode = false;
     is_remove_mode = false;
     is_insert_point_mode = false;
 
@@ -100,6 +102,9 @@ public:
     connect(layers_toolbar, SIGNAL(removeModeChanged(bool)), this,
 	    SLOT(get_remove_mode(bool)));
 
+    connect(layers_toolbar, SIGNAL(editModeChanged(bool)), this,
+    	    SLOT(get_edit_mode(bool)));
+
     connect(file_toolbar, SIGNAL(fileToRead(const QString&)), this,
 	    SLOT(read_from_file(const QString&)));
 
@@ -134,6 +139,7 @@ public:
 private slots:
   void get_object(CGAL::Object obj)
   {
+    if ( is_edit_mode ) { return; }
     if ( is_remove_mode ) {
       if ( ag.number_of_vertices() == 0 ) { return; }
       Point_2 p;
@@ -187,7 +193,7 @@ private slots:
   {
     is_insert_point_mode = b;
 
-    if ( !is_remove_mode ) {
+    if ( !is_remove_mode && !is_edit_mode ) {
       if ( is_insert_point_mode ) {
 	get_point.activate();
 	get_circle.deactivate();
@@ -199,46 +205,61 @@ private slots:
   }
 
   void get_remove_mode(bool b)
-    {
-      is_remove_mode = b;
+  {
+    is_remove_mode = b;
 
-      if ( is_remove_mode ) {	
-	get_point.activate();
-	get_circle.deactivate();
-      } else {
-	if ( !is_insert_point_mode ) {
-	  get_point.deactivate();
-	  get_circle.activate();
-	}
+    if ( is_remove_mode ) {	
+      get_point.activate();
+      get_circle.deactivate();
+    } else {
+      if ( !is_insert_point_mode ) {
+	get_point.deactivate();
+	get_circle.activate();
       }
     }
+  }
+
+  void get_edit_mode(bool b)
+  {
+    is_edit_mode = b;
+
+    if ( is_edit_mode ) {	
+      get_point.activate();
+      get_circle.deactivate();
+    } else {
+      if ( !is_insert_point_mode ) {
+	get_point.deactivate();
+	get_circle.activate();
+      }
+    }
+  }
 
   void read_from_file(const QString& fileName)
-    {
-      std::ifstream f(fileName);
-      assert( f );
+  {
+    std::ifstream f(fileName);
+    assert( f );
 
-      //      int n;
-      //      f >> n;
-      Apollonius_site_2 wp;
+    //      int n;
+    //      f >> n;
+    Apollonius_site_2 wp;
 
-      int counter = 0;
-      std::cout << std::endl;
+    int counter = 0;
+    std::cout << std::endl;
 
-      while ( f >> wp ) {
-	ag.insert(wp);
-	counter++;
-	if ( counter % 500 == 0 ) {
-	  std::cout << "\r" << counter
-		    << " sites haved been inserted..." << std::flush;
-	}
+    while ( f >> wp ) {
+      ag.insert(wp);
+      counter++;
+      if ( counter % 500 == 0 ) {
+	std::cout << "\r" << counter
+		  << " sites haved been inserted..." << std::flush;
       }
-      std::cout << "\r" << counter 
-		<< " sites haved been inserted... Done!"
-		<< std::endl;
-      assert( ag.is_valid(false, 1) );
-      widget->redraw();
     }
+    std::cout << "\r" << counter 
+	      << " sites haved been inserted... Done!"
+	      << std::endl;
+    assert( ag.is_valid(false, 1) );
+    widget->redraw();
+  }
 
   void write_to_file(const QString& fileName)
   {
@@ -253,15 +274,15 @@ private slots:
   }
 
   void print_screen()
-    {
-      widget->print_to_ps();
-    }
+  {
+    widget->print_to_ps();
+  }
 
   void remove_all()
-    {
-      ag.clear();
-      widget->redraw();
-    }
+  {
+    ag.clear();
+    widget->redraw();
+  }
 
 };
 
@@ -282,6 +303,7 @@ main(int argc, char* argv[])
   W.show();
   W.set_window(0,size,0,size);
   W.setCaption("Apollonius diagram 2");
+  W.setMouseTracking(TRUE);
   return app.exec();
 }
 
