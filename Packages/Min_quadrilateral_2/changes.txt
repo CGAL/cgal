@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Added expensive precondition checking.
+ALL : Added test with degenerate input.
+ALL : Better degeneracy handling; don't loop on NaN point sequence.
 
 //---------------------------------------------------------------------
 //	 CGAL 2.3
