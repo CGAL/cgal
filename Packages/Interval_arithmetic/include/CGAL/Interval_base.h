@@ -30,7 +30,7 @@
 #include <utility>				// Relational operators.
 #include <CGAL/double.h>                        // is_finite(double)
 
-#define CGAL_IA_NEW_FILTERS // Enable new filters for now.
+// #define CGAL_IA_NEW_FILTERS // Disable new filters for now.
 
 CGAL_BEGIN_NAMESPACE
 
