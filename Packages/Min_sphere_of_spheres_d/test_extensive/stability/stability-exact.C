@@ -13,11 +13,11 @@
 // #include <CGAL/Filtered_exact.h>
 // #include <CGAL/leda_real.h>
 
-#include "../../test/Min_sphere_of_spheres_d/Rational.h"
+#include <CGAL/Gmpq.h>
 #include "stability.h"
 
 // All exact computations will be done with the following number-type:
-typedef Rational ExactFT;
+typedef CGAL::Gmpq ExactFT;
 // typedef leda_real ExactFT;
 // typedef CGAL::Filtered_exact<double,leda_real> ExactFT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > ExactFT;
