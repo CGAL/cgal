@@ -429,8 +429,7 @@ public:
       return !(*this == fi);
     }
     
-  Facet
-  operator*() const
+  Facet operator*() const
     {
       // case pos == NULL should not be accessed, there is no facet
       // when dimension <2 
@@ -696,8 +695,7 @@ public:
       return !(*this == ei);
     }
     
-  Edge
-  operator*() const
+  Edge operator*() const
     {
       // case pos == NULL should not be accessed, there is no edge
       // when dimension <2 

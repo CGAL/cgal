@@ -38,8 +38,6 @@ _test_cls_regular_3(const Triangulation &)
 
   typedef std::list<Weighted_point>                        list_point;
 
-  //  _test_cls_triangulation_3( Cls() );
-
   // temporary version
 
   int n,m;

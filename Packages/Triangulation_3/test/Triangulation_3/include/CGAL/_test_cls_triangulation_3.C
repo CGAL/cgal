@@ -21,6 +21,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+#include <cassert>
 
 #include <iostream>
 #include <fstream>

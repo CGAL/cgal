@@ -21,6 +21,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
+#include <cassert>
 
 #include <CGAL/_test_types.h>
 
