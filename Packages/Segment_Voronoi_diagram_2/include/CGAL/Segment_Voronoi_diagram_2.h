@@ -97,7 +97,8 @@ class Segment_Voronoi_diagram_hierarchy_2;
 template<class Gt,
 	 class PC = std::list<typename Gt::Point_2>,
 	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
-                Segment_Voronoi_diagram_vertex_base_2<Gt,PC>,
+                Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
+			    typename Gt::Intersections_flag>,
                 Segment_Voronoi_diagram_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Voronoi_diagram_2
@@ -199,6 +200,8 @@ public:
 
 protected:
   // some more local types
+  typedef typename Gt::Intersections_tag       Intersections_tag;
+
   typedef typename DS::Vertex_base             Vertex_base;
 
   typedef std::map<Face_handle,bool>           Face_map;
@@ -341,19 +344,19 @@ public:
   //------------
   Face_circulator
   incident_faces(Vertex_handle v,
-		 Face_handle f = Face_handle(NULL)) const {
+		 Face_handle f = Face_handle()) const {
     return DG::incident_faces(v, f);
   }
 
   Vertex_circulator
   incident_vertices(Vertex_handle v,
-		    Face_handle f = Face_handle(NULL)) const { 
+		    Face_handle f = Face_handle()) const { 
     return DG::incident_vertices(v, f);
   }
 
   Edge_circulator
   incident_edges(Vertex_handle v,
-		 Face_handle f = Face_handle(NULL)) const {
+		 Face_handle f = Face_handle()) const {
     return DG::incident_edges(v, f);
   }
  
@@ -501,7 +504,7 @@ public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
   Vertex_handle  nearest_neighbor(const Point& p) const {
-    return nearest_neighbor(Site_2(p), Vertex_handle(NULL));
+    return nearest_neighbor(Site_2(p), Vertex_handle());
   }
 
   Vertex_handle  nearest_neighbor(const Point& p,
@@ -923,9 +926,23 @@ protected:
   //  Vertex_handle  insert_third(const Point& p0, const Point& p1);
   Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
 
+  template<class ITag>
   Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
 					     const Site_2& t,
-					     Vertex_handle v);
+					     Vertex_handle v, ITag tag)
+  {
+    return insert_intersecting_segment_with_tag(ss, t, v, tag);
+  }
+
+  Vertex_handle
+  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				       const Site_2& t,
+				       Vertex_handle v, Tag_false);
+
+  Vertex_handle
+  insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				       const Site_2& t,
+				       Vertex_handle v, Tag_true);
 
   Vertex_handle insert_point(const Point& p, Vertex_handle vnear);
   Vertex_handle insert_point(const Storage_site_2& t,
@@ -960,7 +977,7 @@ protected:
 
 protected:
   // methods for removal
-
+#if 0
   std::pair<Vertex_handle,Vertex_handle >
   endpoint_vertices(Vertex_handle v) const;
 
@@ -982,7 +999,7 @@ protected:
 				   const Vertex_handle& vnearest,
 				   List& l, Face_map& fm,
 				   std::vector<Vh_triple*>* fe);
-
+#endif
 protected:
   // methods for I/O
 

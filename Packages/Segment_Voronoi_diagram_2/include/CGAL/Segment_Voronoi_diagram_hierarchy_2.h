@@ -52,7 +52,8 @@ template < class Gt,
 	   class PC = std::list<typename Gt::Point_2>,
 	   class DS = Segment_Voronoi_diagram_data_structure_2<
               Segment_Voronoi_diagram_hierarchy_vertex_base_2<
-                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC> >,
+                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC,
+			     typename Gt::Intersections_tag> >,
               Segment_Voronoi_diagram_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Voronoi_diagram_hierarchy_2
@@ -238,7 +239,9 @@ copy_triangulation
   {
     for(All_vertices_iterator it = hierarchy[0]->all_vertices_begin(); 
 	it != hierarchy[0]->all_vertices_end(); ++it) {
-      if ( it->up() != NULL ) V[ it->up()->down() ] = it;
+      if ( it->up() != Vertex_handle() ) {
+	V[ it->up()->down() ] = it;
+      }
     }
   }
   {
@@ -250,7 +253,9 @@ copy_triangulation
 	// make reverse link
 	it->down()->set_up( it );
 	// make map for next level
-	if ( it->up() != NULL ) V[ it->up()->down() ] = it;
+	if ( it->up() != Vertex_handle() ) {
+	  V[ it->up()->down() ] = it;
+	}
       }
     }
   }
@@ -322,7 +327,7 @@ insert_point(const Point& p, int level,	Vertex_handle* vertices)
 
   if ( vertices != NULL ) { vertices[0] = vertex; }
 
-  CGAL_assertion( vertex != Vertex_handle(NULL) );
+  CGAL_assertion( vertex != Vertex_handle() );
 
   // insert at other levels
   Vertex_handle previous = vertex;
@@ -331,7 +336,7 @@ insert_point(const Point& p, int level,	Vertex_handle* vertices)
   while (k <= level ) {
     vertex = hierarchy[k]->insert(p, vnear[k]);
 
-    CGAL_assertion( vertex != Vertex_handle(NULL) );
+    CGAL_assertion( vertex != Vertex_handle() );
 
     if ( vertices != NULL ) { vertices[k] = vertex; }
 
@@ -374,8 +379,8 @@ insert_segment(const Point& p0, const Point& p1, int level)
   insert_point(p0, level, vertices0);
   insert_point(p1, level, vertices1);
 
-  CGAL_assertion( vertices0[0] != Vertex_handle(NULL) );
-  CGAL_assertion( vertices1[0] != Vertex_handle(NULL) );
+  CGAL_assertion( vertices0[0] != Vertex_handle() );
+  CGAL_assertion( vertices1[0] != Vertex_handle() );
 
   Storage_site_2 ss = create_storage_site(vertices0[0], vertices1[0]);
 
@@ -387,12 +392,17 @@ insert_segment(const Point& p0, const Point& p1, int level)
     vertex = hierarchy[0]->insert_segment2(t, ss, vertices0[0], false);
   }
 
-  CGAL_assertion( vertex != Vertex_handle(NULL) );
+  // this can happen only if I ask not to look for intersections...
+  if ( vertex == Vertex_handle() ) {
+    return vertex;
+  }
+
+  CGAL_assertion( vertex != Vertex_handle() );
 
 #if 0
   // this is the case when the new site is a segment and it intersects
   // existing segments
-  if ( vertex == Vertex_handle(NULL) ) {
+  if ( vertex == Vertex_handle() ) {
     return vertex;
   }
 #endif
@@ -415,7 +425,7 @@ insert_segment(const Point& p0, const Point& p1, int level)
       vertex = hierarchy[k]->insert_segment2(t, ss, vertices0[k], false);
     }
 
-    CGAL_assertion( vertex != Vertex_handle(NULL) );
+    CGAL_assertion( vertex != Vertex_handle() );
 
     vertex->set_down(previous); // link with level above
     previous->set_up(vertex);
@@ -462,7 +472,7 @@ nearest_neighbor(const Site& p,
 {
   CGAL_precondition( p.is_point() );
 
-  Vertex_handle nearest(NULL);
+  Vertex_handle nearest;
   int level  = svd_hierarchy_2__maxlevel;
 
   // find the highest level with enough vertices
@@ -471,7 +481,7 @@ nearest_neighbor(const Site& p,
     if ( !level ) break;  // do not go below 0
   }
   for (unsigned int i = level + 1; i < svd_hierarchy_2__maxlevel; i++) {
-    vnear[i] = Vertex_handle(NULL);
+    vnear[i] = Vertex_handle();
   }
 
   while ( level > 0 ) {
@@ -479,7 +489,7 @@ nearest_neighbor(const Site& p,
       hierarchy[level]->nearest_neighbor(p, nearest);  
 
     CGAL_assertion( !hierarchy[level]->is_infinite(vnear[level]) );
-    CGAL_assertion( vnear[level] != Vertex_handle(NULL) );
+    CGAL_assertion( vnear[level] != Vertex_handle() );
     // go at the same vertex on level below
     nearest = nearest->down();
     --level;

@@ -292,7 +292,7 @@ typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Edge
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 flip(Face_handle& f, int i)
 {
-  CGAL_precondition ( f != NULL );
+  CGAL_precondition ( f != Face_handle() );
   CGAL_precondition (i == 0 || i == 1 || i == 2);
   CGAL_precondition( this->dimension()==2 ); 
 
@@ -554,7 +554,7 @@ insert_point(const Point& p, Vertex_handle vnear)
 
   Vertex_handle  vnearest = nearest_neighbor( p, vnear );
 
-  CGAL_assertion( vnearest != Vertex_handle(NULL) );
+  CGAL_assertion( vnearest != Vertex_handle() );
 
   // find the first conflict
   // check if it is already inserted
@@ -574,7 +574,7 @@ insert_point(const Point& p, Vertex_handle vnear)
     Vertex_handle vv(vc);
     if ( do_intersect(t, vv) ) {
       // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
-      return Vertex_handle(NULL);
+      return Vertex_handle();
     }
     ++vc;
   } while ( vc != vc_start );
@@ -637,7 +637,7 @@ insert_point(const Point& p, Vertex_handle vnear)
   List l;
   Face_map fm;
 
-  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle());
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
@@ -684,7 +684,7 @@ insert_point(const Storage_site_2& ss, const Site& t,
   // first find the nearest neighbor
   Vertex_handle  vnearest = nearest_neighbor( t.point(), vnear );
 
-  CGAL_assertion( vnearest != Vertex_handle(NULL) );
+  CGAL_assertion( vnearest != Vertex_handle() );
 
   // find the first conflict
   // check if it is already inserted
@@ -704,7 +704,7 @@ insert_point(const Storage_site_2& ss, const Site& t,
     Vertex_handle vv(vc);
     if ( do_intersect(t, vv) ) {
       // ADD HERE CODE THAT DOES THE APPROPRIATE INSERTION
-      return Vertex_handle(NULL);
+      return Vertex_handle();
     }
     ++vc;
   } while ( vc != vc_start );
@@ -766,7 +766,7 @@ insert_point(const Storage_site_2& ss, const Site& t,
   List l;
   Face_map fm;
 
-  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle());
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
@@ -819,8 +819,8 @@ insert_segment(const Site& t, Vertex_handle vnear,
 
     Storage_site_2 ss = create_storage_site(v0, v1);
     return insert_segment2( t, ss, v0, false );
-    //    insert_point( t.source_site(), Vertex_handle(NULL) );
-    //    insert_point( t.target_site(), Vertex_handle(NULL) );
+    //    insert_point( t.source_site(), Vertex_handle() );
+    //    insert_point( t.target_site(), Vertex_handle() );
   }
 }
 
@@ -841,10 +841,10 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   }
 
   if ( number_of_vertices() <= 1 ) {
-    //    insert_point( t.source_site(), Vertex_handle(NULL) );
-    //    insert_point( t.target_site(), Vertex_handle(NULL) );
-    Vertex_handle v0 = insert_point( t.source(), Vertex_handle(NULL) );
-    insert_point( t.target(), Vertex_handle(NULL) );
+    //    insert_point( t.source_site(), Vertex_handle() );
+    //    insert_point( t.target_site(), Vertex_handle() );
+    Vertex_handle v0 = insert_point( t.source(), Vertex_handle() );
+    insert_point( t.target(), Vertex_handle() );
     return insert_segment( t, v0, false );
   } else if ( number_of_vertices() == 2 ) {
     Segment s = t.segment();
@@ -862,7 +862,7 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   }
 
 #endif
-  CGAL_assertion( vnearest != Vertex_handle(NULL) );
+  CGAL_assertion( vnearest != Vertex_handle() );
   // MK: add here code that checks if the inserted segment has already
   // been inserted; MAYBE THIS IS NOT NEEDED; I ALREADY DO IT IN
   // do_intersect
@@ -879,8 +879,8 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
     }
     if ( do_intersect(t, vv) ) {
       if ( t.is_segment() ) {
-	return insert_intersecting_segment(ss, t, vv);
-	//	return Vertex_handle(NULL);
+	return insert_intersecting_segment(ss, t, vv,
+					   Intersections_tag());
       }
     }
     ++vc;
@@ -947,7 +947,7 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   List l;
   Face_map fm;
 
-  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle(NULL));
+  std::pair<bool, Vertex_handle> vcross(false, Vertex_handle());
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
@@ -960,7 +960,8 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
-      return insert_intersecting_segment(ss, t, vcross.second);
+      return insert_intersecting_segment(ss, t, vcross.second,
+					 Intersections_tag());
       //      return vcross.second;
     }
   }
@@ -979,8 +980,19 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-insert_intersecting_segment(const Storage_site_2& ss,
-			    const Site_2& t, Vertex_handle v)
+insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				     const Site_2& t, Vertex_handle v,
+				     Tag_false)
+{
+  return Vertex_handle();
+}
+
+template<class Gt, class PC, class DS, class LTag>
+typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
+insert_intersecting_segment_with_tag(const Storage_site_2& ss,
+				     const Site_2& t, Vertex_handle v,
+				     Tag_true)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
@@ -1422,10 +1434,10 @@ nearest_neighbor(const Site_2& p,
   CGAL_precondition( p.is_point() );
 
   if ( number_of_vertices() == 0 ) {
-    return Vertex_handle(NULL);
+    return Vertex_handle();
   }
 
-  if ( start_vertex == NULL ) {
+  if ( start_vertex == Vertex_handle() ) {
     start_vertex = finite_vertex();
   }
 
@@ -1915,7 +1927,7 @@ finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 //----------------------------------------------------------------------
 // methods for disk removal
 //----------------------------------------------------------------------
-
+#if 0
 template<class Gt, class PC, class DS, class LTag>
 std::pair<
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle,
@@ -2030,7 +2042,7 @@ unsigned int
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 remove(Vertex_handle v, bool remove_endpoints)
 {
-  CGAL_precondition( v != Vertex_handle(NULL) );
+  CGAL_precondition( v != Vertex_handle() );
   CGAL_precondition( !is_infinite(v) );
 
   int num_removed(0);
@@ -2147,7 +2159,7 @@ remove_degree_d(Vertex_handle v, bool remove_endpoints)
 	vh_small = svd_small.insert( vc->segment(), v_src );
       }
 
-      if ( vh_small != NULL ) {
+      if ( vh_small != Vertex_handle() ) {
 	vmap[vh_small] = vh_large;
       }
     }
@@ -2258,7 +2270,7 @@ remove_degree_d_vertex(Vertex_handle v)
       vmap[vh_small] = vh_large;
     } else { 
       vh_small = ag_small.insert(vc->point());
-      if ( vh_small != NULL ) {
+      if ( vh_small != Vertex_handle() ) {
 	vmap[vh_small] = vh_large;
       }
     }
@@ -2370,7 +2382,7 @@ minimize_degree(Vertex_handle v)
     }
   } while ( found || fc != fc_start );
 }
-#if 0
+
 template<class Gt, class PC, class DS, class LTag>
 void
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
@@ -2388,7 +2400,7 @@ find_conflict_region_remove(const Vertex_handle& v,
     return;
   }
 
-  CGAL_precondition( vnearest != NULL );
+  CGAL_precondition( vnearest != Vertex_handle() );
 
 
   // find the first conflict

@@ -26,11 +26,48 @@
 
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_storage_site_2.h>
+#include <CGAL/Segment_Voronoi_diagram_simple_storage_site_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
+  template<class Gt, class Handle, class USE_SIMPLE_STORAGE_SITE_Tag>
+  struct SVDVB2_Which_storage_site;
+
+  // use the simple storage site
+  template<class Gt, class Handle>
+  struct SVDVB2_Which_storage_site<Gt,Handle,Tag_false>
+  {
+    typedef Gt         Geom_traits;
+    typedef Handle     Point_handle;
+    typedef Tag_false  Storage_site_tag;
+
+    typedef
+    Segment_Voronoi_diagram_simple_storage_site_2<Geom_traits,
+						  Point_handle>
+    Storage_site_2;
+  };
+
+  // use the full storage site
+  template<class Gt, class Handle>
+  struct SVDVB2_Which_storage_site<Gt,Handle,Tag_true>
+  {
+    typedef Gt         Geom_traits;
+    typedef Handle     Point_handle;
+    typedef Tag_true   Storage_site_tag;
+
+    typedef
+    Segment_Voronoi_diagram_storage_site_2<Geom_traits,Point_handle>
+    Storage_site_2;
+  };
+
+
+} // namespace CGALi
+
 
 template < class Gt, class PC,
+	   class USE_FULL_STORAGE_SITE_Tag = Tag_true,
 	   class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Voronoi_diagram_vertex_base_2
   : public Vb
@@ -45,10 +82,16 @@ public:
   typedef typename Point_container::iterator  Point_handle;
   typedef Vb                                  Base;
   typedef typename Gt::Site_2                 Site_2;
+  typedef USE_FULL_STORAGE_SITE_Tag           Storage_site_tag;
 
+private:
   typedef
-  Segment_Voronoi_diagram_storage_site_2<Gt,Point_handle>
-  Storage_site_2;
+  CGALi::SVDVB2_Which_storage_site<Geom_traits,Point_handle,
+				   Storage_site_tag>
+  Which_storage_site;
+
+public:
+  typedef typename Which_storage_site::Storage_site_2  Storage_site_2;
 
   typedef DS           Segment_Voronoi_diagram_data_structure_2;
   
@@ -58,8 +101,10 @@ public:
 
   template < typename DS2 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<DS2>::Other      Vb2;
-    typedef Segment_Voronoi_diagram_vertex_base_2<Gt,PC,Vb2>  Other;
+    typedef typename Vb::template Rebind_TDS<DS2>::Other   Vb2;
+    typedef Storage_site_tag                               STag;
+    typedef
+    Segment_Voronoi_diagram_vertex_base_2<Gt,PC,STag,Vb2>  Other;
   };
 
   

@@ -104,14 +104,14 @@ public:
 
   // PREDICATES
   //-----------
-  bool is_defined() const { return type_ != 0; }
+  bool is_defined() const { return type_; }
   bool is_point() const { return (type_ & 3) == 1; }
   bool is_segment() const { return (type_ & 3) == 2; }
-  bool is_exact() const { return (type_ & 12) == 0; }
+  bool is_exact() const { return !(type_ & 12); }
   bool is_exact(unsigned int i) const {
     CGAL_precondition( is_segment() && i < 2 );
-    if ( i == 0 ) { return (type_ & 4) == 0; }
-    return (type_ & 8) == 0;
+    if ( i == 0 ) { return !(type_ & 4); }
+    return !(type_ & 8);
   }
 
   // ACCESS METHODS
@@ -246,7 +246,6 @@ protected:
   }
 
   Segment_2 supporting_segment(unsigned int i) const {
-    //    CGAL_precondition( is_point() && !input_ && i < 2 );
     CGAL_precondition( is_point() && !is_exact() && i < 2 );
     if ( i == 0 ) {
       return Segment_2(*h_[2], *h_[3]);
@@ -256,9 +255,7 @@ protected:
   }
 
   Segment_2 crossing_segment(unsigned int i) const {
-    //    CGAL_precondition( is_segment() && !input_ );
     CGAL_precondition( is_segment() && !is_exact() );
-    //    CGAL_precondition( i < 2 && !is_exact_[i] );
     CGAL_precondition( i < 2 && !is_exact(i) );
     if ( i == 0 ) {
       return Segment_2(*h_[2], *h_[3]);
@@ -293,11 +290,13 @@ public:
     initialize_site(hsupport, hp, is_first_exact);
   }
 
+#if 0
 public:
   std::ostream& write(std::ostream& os)
   {
     return os << (*this);
   }
+#endif
 
 protected:
   // INITIALIZATION
@@ -361,7 +360,6 @@ protected:
   //---------------------
   Point_2 compute_source() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ || is_exact_[0] ) {
     if ( is_exact() || is_exact(0) ) {
       return *h_[0];
     } else {
@@ -371,7 +369,6 @@ protected:
 
   Point_2 compute_target() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ || is_exact_[1] ) {
     if ( is_exact() || is_exact(1) ) {
       return *h_[1];
     } else {
@@ -403,7 +400,7 @@ protected:
 };
 
 //-------------------------------------------------------------------------
-
+#if 0
 template <class R, class H>
 std::ostream&
 operator<<(std::ostream& os, 
@@ -418,7 +415,8 @@ operator<<(std::ostream& os,
 
 template < class R, class H, class Stream >
 Stream&
-operator<<(Stream& str, Segment_Voronoi_diagram_storage_site_2<R,H>& t)
+operator<<(Stream& str,
+	   const Segment_Voronoi_diagram_storage_site_2<R,H>& t)
 {
   if ( t.is_defined() ) {
     if ( t.is_point() ) {
@@ -431,7 +429,7 @@ operator<<(Stream& str, Segment_Voronoi_diagram_storage_site_2<R,H>& t)
 
   return str;
 }
-
+#endif
 
 CGAL_END_NAMESPACE
 

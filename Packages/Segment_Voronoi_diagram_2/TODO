@@ -1,14 +1,18 @@
+- write all geometric types with _2 at the end: e.g. Site -> Site_2
+- replace segment arguments in constructors of sites with points
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
-- add two different storage sites, one for the case of intersecting
-  segments and one for the case of non-intersecting segments
-- add boolean parameter in Segment_Voronoi_diagram_2 class that indicates
-  how to treat intersecting segments
+- in the hierarchy use the Intersections_tag tag to decide whether or
+  not to add segments in the upper levels; this should be changed and
+  controlled by a separate tag; however, the intersection_flag flag
+  must be removed.
 - add boolean in the hierarchy class that indicates whether to insert segments
   in the upper levels of the hierarchy or not
 - create the class Triangulation_face_base_with_edges_2 and move the
   functionality there; this class should also be (or not be used)
-  in the Apollonius_graph_2 package)
+  in the Apollonius_graph_2 package); actually the best way to do this
+  is to use the face base with info class, where info is a small class
+  with the 6 edges.
 - change the doc so that the requirement for the face base is the
   Triangulation_face_base_2 class
 - replace the vertex base class of both the Apollonius_graph_2 and

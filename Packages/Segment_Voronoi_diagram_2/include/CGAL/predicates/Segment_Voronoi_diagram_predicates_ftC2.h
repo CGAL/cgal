@@ -240,13 +240,14 @@ struct Svd_predicate_caller<Result_t, Predicate, 5>
 //--------------------------------------------------------------------------
 
 template<template<class Kernel> class Predicate_t,
-	 typename Return_t, class FT,
+	 typename Return_t, class FT, class ITag,
 	 unsigned int Num_sites>
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[])
 {
   typedef Simple_cartesian<FT>                 Rep;
-  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef
+  CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
 
   typedef typename Kernel::Site_2                   Site_2;
   typedef Predicate_t<Kernel>                       Predicate;
@@ -268,13 +269,14 @@ svd_predicate_ftC2(const FT v[], const char site_types[])
 }
 
 template<template<class Kernel, class MTag> class Predicate_t,
-	 typename Return_t, class FT,
-	 class Method_tag, unsigned int Num_sites>
+	 typename Return_t, class FT, class Method_tag,
+	 class ITag, unsigned int Num_sites>
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[])
 {
   typedef Simple_cartesian<FT>                 Rep;
-  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef
+  CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
 
   typedef typename Kernel::Site_2                   Site_2;
   typedef Predicate_t<Kernel,Method_tag>            Predicate;
@@ -296,13 +298,14 @@ svd_predicate_ftC2(const FT v[], const char site_types[])
 }
 
 template<template<class Kernel, class MTag> class Predicate_t,
-	 typename Return_t, class FT,
-	 class Method_tag, typename Data, unsigned int Num_sites>
+	 typename Return_t, class FT, class Method_tag, 
+	 class ITag, typename Data, unsigned int Num_sites>
 Return_t
 svd_predicate_ftC2(const FT v[], const char site_types[], Data data)
 {
   typedef Simple_cartesian<FT>                 Rep;
-  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+  typedef
+  CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep,ITag>  Kernel;
 
   typedef typename Kernel::Site_2                   Site_2;
   typedef Predicate_t<Kernel,Method_tag>            Predicate;
@@ -331,7 +334,8 @@ template<template<class Kernel> class Predicate,
 Return_t
 svd_predicate_C2(const typename K::Site_2 t[])
 {
-  typedef typename K::FT   FT;
+  typedef typename K::FT                 FT;
+  typedef typename K::Intersections_tag  ITag;
 
   FT v[Num_sites * 12];
   char site_types[Num_sites * 2];
@@ -340,8 +344,8 @@ svd_predicate_C2(const typename K::Site_2 t[])
     svd_predicate_push_back_C2<K>(t[i], v, k, site_types, j);
   }
 
-  return
-    svd_predicate_ftC2<Predicate,Return_t,FT,Num_sites>(v, site_types);
+  return svd_predicate_ftC2<Predicate,Return_t,FT,
+    ITag,Num_sites>(v, site_types);
 }
 
 template<template<class Kernel, class MTag> class Predicate,
@@ -350,7 +354,8 @@ template<template<class Kernel, class MTag> class Predicate,
 Return_t
 svd_predicate_C2(const typename K::Site_2 t[])
 {
-  typedef typename K::FT   FT;
+  typedef typename K::FT                 FT;
+  typedef typename K::Intersections_tag  ITag;
 
   FT v[Num_sites * 12];
   char site_types[Num_sites * 2];
@@ -360,7 +365,7 @@ svd_predicate_C2(const typename K::Site_2 t[])
   }
 
   return svd_predicate_ftC2<Predicate,Return_t,FT,
-    Method_tag,Num_sites>(v, site_types);
+    Method_tag,ITag,Num_sites>(v, site_types);
 }
 
 template<template<class Kernel, class MTag> class Predicate,
@@ -369,7 +374,8 @@ template<template<class Kernel, class MTag> class Predicate,
 Return_t
 svd_predicate_C2(const typename K::Site_2 t[], Data data)
 {
-  typedef typename K::FT   FT;
+  typedef typename K::FT                 FT;
+  typedef typename K::Intersections_tag  ITag;
 
   FT v[Num_sites * 12];
   char site_types[Num_sites * 2];
@@ -379,7 +385,7 @@ svd_predicate_C2(const typename K::Site_2 t[], Data data)
   }
 
   return svd_predicate_ftC2<Predicate,Return_t,FT,
-    Method_tag, Data, Num_sites>(v, site_types, data);
+    Method_tag,ITag,Data,Num_sites>(v, site_types, data);
 }
 
 //--------------------------------------------------------------------------

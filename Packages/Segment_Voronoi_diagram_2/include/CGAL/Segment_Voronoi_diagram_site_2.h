@@ -25,10 +25,6 @@
 #include <iostream>
 #include <CGAL/assertions.h>
 
-#ifdef VORONOI_WANT_WINDOW
-#  include <CGAL/IO/Window_stream.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
   /** A Site is either a point or a segment or a point defined as the
@@ -100,32 +96,18 @@ public:
     type_ = 0;
   }
 
-#if 0
-  bool is_defined () const { return defined_; }
-  bool is_point () const { return defined_ && point_; }
-  bool is_segment () const { return defined_ && !point_; }
-  bool is_exact() const { return defined_ && input_; }
-  bool is_exact(unsigned int i) const {
-    CGAL_precondition( is_segment() && i < 2 );
-    return is_exact_[i];
-  }
-#else
-  bool is_defined() const { return type_ != 0; }
+  bool is_defined() const { return type_; }
   bool is_point() const { return (type_ & 3) == 1; }
   bool is_segment() const { return (type_ & 3) == 2; }
-  bool is_exact() const { return (type_ & 12) == 0; }
+  bool is_exact() const { return !(type_ & 12); }
   bool is_exact(unsigned int i) const {
     CGAL_precondition( is_segment() && i < 2 );
-    if ( i == 0 ) { return (type_ & 4) == 0; }
-    return (type_ & 8) == 0;
-    //    if ( i == 0 ) { return type_ == 10 || type_ == 14; }
-    //    return type_ == 6 || type_ == 14;
+    if ( i == 0 ) { return !(type_ & 4); }
+    return !(type_ & 8);
   }
-#endif
 
   Point_2 point() const { 
     CGAL_precondition ( is_point() );
-    //    if ( !input_ ) {
     if ( !is_exact() ) {
       return compute_intersection_point(q1_, q2_, q3_, q4_);
     } else {
@@ -150,7 +132,6 @@ public:
   Self source_site() const {
     CGAL_precondition( is_segment() );
     if ( is_exact() || is_exact(0) ) {
-      //if ( input_ || is_exact_[0] ) {
       return Self(p_);
     } else {
       return Self(supporting_segment(), Segment_2(q1_, q2_));
@@ -159,7 +140,6 @@ public:
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ || is_exact_[1] ) {
     if ( is_exact() || is_exact(1) ) {
       return Self(p2_);
     } else {
@@ -169,20 +149,16 @@ public:
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ ) {
     if ( is_exact() ) {
       return Self( segment().opposite() );
     }
 
     Segment_2 supp = supporting_segment().opposite();
 
-    //    CGAL_assertion( !is_exact_[0] || !is_exact_[1] );
     CGAL_assertion( !is_exact(0) || !is_exact(1) );
 
-    //    if ( is_exact_[0] && !is_exact_[1] ) {
     if ( is_exact(0) && !is_exact(1) ) {
       return Self(supp, crossing_segment(1), false);
-      //    } else if ( !is_exact_[0] && is_exact_[1] ) {
     } else if ( !is_exact(0) && is_exact(1) ) {
       return Self(supp, crossing_segment(0), true);
     } else {
@@ -192,7 +168,6 @@ public:
 
   Segment_2 supporting_segment() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ ) {
     if ( is_exact() ) {
       return segment();
     } else {
@@ -201,7 +176,6 @@ public:
   }
 
   Segment_2 supporting_segment(unsigned int i) const {
-    //    CGAL_precondition( is_point() && !input_ && i < 2 );
     CGAL_precondition( is_point() && !is_exact() && i < 2 );
     if ( i == 0 ) {
       return Segment_2(q1_, q2_);
@@ -211,9 +185,7 @@ public:
   }
 
   Segment_2 crossing_segment(unsigned int i) const {
-    //    CGAL_precondition( is_segment() && !input_ );
     CGAL_precondition( is_segment() && !is_exact() );
-    //    CGAL_precondition( i < 2 && !is_exact_[i] );
     CGAL_precondition( i < 2 && !is_exact(i) );
     if ( i == 0 ) {
       return Segment_2(q1_, q2_);
@@ -252,20 +224,12 @@ public:
 protected:
   void initialize_site(const Point_2& p)
   {
-    //    defined_ = true;
-    //    point_ = true;
-    //    input_ = true;
-    //    is_exact_[0] = is_exact_[1] = true;
     type_ = 1;
     p_ = p;
   }
 
   void initialize_site(const Segment_2& s)
   {
-    //    defined_ = true;
-    //    point_ = false;
-    //    input_ = true;
-    //    is_exact_[0] = is_exact_[1] = true;
     type_ = 2;
     p_ = s.source();
     p2_ = s.target();
@@ -275,10 +239,6 @@ protected:
     // MK: Sort the segments s1 and s2 in lexicographical order so
     //     that the computation of the intersection point is always
     //     done in the same manner (?)
-    //    defined_ = true;
-    //    point_ = true;
-    //    input_ = false;
-    //    is_exact_[0] = is_exact_[1] = false;
     type_ = 5;
     q1_ = s1.source();
     q2_ = s1.target();
@@ -290,10 +250,6 @@ protected:
   void initialize_site(const Segment_2& support, const Segment_2& s1,
 		       const Segment_2& s2)
   {
-    //    defined_ = true;
-    //    point_ = false;
-    //    input_ = false;
-    //    is_exact_[0] = is_exact_[1] = false;
     type_ = 14;
     p_ = support.source();
     p2_ = support.target();
@@ -306,11 +262,6 @@ protected:
   void initialize_site(const Segment_2& support, const Segment_2& s,
 		       bool is_first_exact)
   {
-    //    defined_ = true;
-    //    point_ = false;
-    //    input_ = false;
-    //    is_exact_[0] = is_first_exact;
-    //    is_exact_[1] = !is_first_exact;
     type_ = (is_first_exact ? 10 : 6);
     p_ = support.source();
     p2_ = support.target();
@@ -325,7 +276,6 @@ protected:
 
   Point_2 compute_source() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ || is_exact_[0] ) {
     if ( is_exact() || is_exact(0) ) {
       return p_;
     } else {
@@ -335,7 +285,6 @@ protected:
 
   Point_2 compute_target() const {
     CGAL_precondition( is_segment() );
-    //    if ( input_ || is_exact_[1] ) {
     if ( is_exact() || is_exact(1) ) {
       return p2_;
     } else {
@@ -366,12 +315,6 @@ protected:
   Point_2 p2_;
   Point_2 q1_, q2_, q3_, q4_;
   char type_;
-#if 0
-  bool defined_;
-  bool point_;
-  bool input_;
-  bool is_exact_[2];
-#endif
 };
 
 //-------------------------------------------------------------------------

@@ -97,8 +97,8 @@ public:
   split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   {
     CGAL_precondition( this->dimension() == 2 );
-    CGAL_precondition( f1 != Face_handle(NULL) && f1->has_vertex(v) );
-    CGAL_precondition( g1 != Face_handle(NULL) && g1->has_vertex(v) );
+    CGAL_precondition( f1 != Face_handle() && f1->has_vertex(v) );
+    CGAL_precondition( g1 != Face_handle() && g1->has_vertex(v) );
 
     typedef Vertex_handle VH;
     typedef Face_handle   FH;

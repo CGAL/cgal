@@ -64,6 +64,7 @@ template<class CK_t,
 	 class EK_t    = Simple_cartesian< MP_Float >,
 #endif
 	 class EK_MTag = Ring_tag,
+	 class ITag    = Tag_true,
 	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = CK_MTag,
 	 class C2E_t   = Cartesian_converter<CK_t, EK_t>,
@@ -73,13 +74,13 @@ template<class CK_t,
 class Segment_Voronoi_diagram_filtered_traits_2
 {
 private:
-  typedef Segment_Voronoi_diagram_traits_2<CK_t, CK_MTag>   CK_traits;
-  typedef Segment_Voronoi_diagram_traits_2<FK_t, FK_MTag>   FK_traits;
-  typedef Segment_Voronoi_diagram_traits_2<EK_t, EK_MTag>   EK_traits;
+  typedef Segment_Voronoi_diagram_traits_2<CK_t,CK_MTag,ITag>  CK_traits;
+  typedef Segment_Voronoi_diagram_traits_2<FK_t,FK_MTag,ITag>  FK_traits;
+  typedef Segment_Voronoi_diagram_traits_2<EK_t,EK_MTag,ITag>  EK_traits;
 
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<CK_t>    CK;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<FK_t>    FK;
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<EK_t>    EK;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<CK_t,ITag>  CK;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<FK_t,ITag>  FK;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<EK_t,ITag>  EK;
 
   typedef Svd_cartesian_converter<CK, EK, C2E_t>            C2E;
   typedef Svd_cartesian_converter<CK, FK, C2F_t>            C2F;
@@ -134,6 +135,7 @@ public:
   //------------
   typedef CK_t                          R;
   typedef CK_MTag                       Method_tag;
+  typedef ITag                          Intersections_tag;
 
   typedef CK_traits                     Construction_traits;
   typedef FK_traits                     Filtering_traits;

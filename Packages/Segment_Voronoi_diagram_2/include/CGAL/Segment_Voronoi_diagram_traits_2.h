@@ -403,7 +403,7 @@ public:
 //-----------------------------------------------------------------------
 // the Traits class
 //-----------------------------------------------------------------------
-template < class R, class MTag = Sqrt_field_tag >
+template<class R, class MTag = Sqrt_field_tag, class ITag = Tag_true>
 class Segment_Voronoi_diagram_traits_2
 {
 public:
@@ -414,10 +414,16 @@ public:
   // BASIC TYPES
   //------------
   
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<R>   Kernel;
-  typedef Kernel                                        K;
-  typedef R                                             Rep;
-  typedef MTag                                          Method_tag;
+  typedef Segment_Voronoi_diagram_kernel_wrapper_2<R,ITag> Kernel;
+  typedef Kernel                                           K;
+  typedef R                                                Rep;
+  typedef MTag                                             Method_tag;
+
+  // the following tag controls how support intersections in the
+  // traits. If it is Tag_true then we fully support intersections.
+  // If it is Tag_true it is assumed that no intersections appear in
+  // the data and so there is limited support for intersections.
+  typedef ITag                                    Intersections_tag;
 
   typedef typename Kernel::Point_2                Point_2;
   typedef typename Kernel::Line_2                 Line_2;

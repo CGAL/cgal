@@ -24,32 +24,57 @@
 
 
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
+#include <CGAL/Segment_Voronoi_diagram_simple_site_2.h>
 
 
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Kernel_base_2>
+namespace CGALi {
+
+  template<class K, class ITag> struct SVD_Which_site;
+
+  // If the ITag is Tag_true we fully support intersections and
+  // therefore we need the full-fletched site.
+  template<class K>
+  struct SVD_Which_site<K,Tag_true>
+  {
+    typedef K          Kernel;
+    typedef Tag_true   Intersections_tag;
+
+    typedef CGAL::Segment_Voronoi_diagram_site_2<K> Site_2;
+  };
+
+  // If the ITag is Tag_false we are happy with the simple site.
+  template<class K>
+  struct SVD_Which_site<K,Tag_false>
+  {
+    typedef K          Kernel;
+    typedef Tag_false  Intersections_tag;
+
+    typedef CGAL::Segment_Voronoi_diagram_simple_site_2<K> Site_2;
+  };
+
+} // namespace CGALi
+
+
+
+template<class Kernel_base_2, class ITag>
 class Segment_Voronoi_diagram_kernel_wrapper_2
   : public Kernel_base_2
 {
-private:
-  typedef Segment_Voronoi_diagram_kernel_wrapper_2<Kernel_base_2> Self;
-
 public:
-  //  typedef CGAL::Segment_Voronoi_diagram_site_2<Self>  Site_2;
-  typedef CGAL::Segment_Voronoi_diagram_site_2<Kernel_base_2>  Site_2;
-  //  typedef typename Site_2::Point_2    Point_2;
-  //  typedef typename Site_2::Segment_2  Segment_2;
+  typedef Kernel_base_2    Kernel_base;
+  typedef ITag             Intersections_tag;
 
-  //  typedef typename Kernel_base_2::Point_2    Point_2;
-  //  typedef typename Kernel_base_2::Segment_2  Segment_2;
+  typedef typename
+  CGALi::SVD_Which_site<Kernel_base,Intersections_tag>::Site_2  Site_2;
 };
 
 
 
 
-template<class K1, class K2, class Converter >
+template<class K1, class K2, class Converter>
 class Svd_cartesian_converter
   : public Converter
 {
@@ -64,6 +89,29 @@ private:
   typedef Converter               Base;
 
 public:
+#if 0
+  // MK: maybe at some day I will also add the intersections tag in
+  // this class too; this way I will be able to avoid calling, inside
+  // operator() for sites, constructors that have no meaning for
+  // simple sites. The more general problem though happens in the
+  // predicates, since there I assume full sites and I am accessing
+  // information as if the sites are full sites. The only solution
+  // around that is to pass the intersections tag to the predicates as
+  // well and have them avoid calling methods that should exists
+  // (i.e., do not have any real meaning for simple sites and should
+  // not have been called in the first place).
+
+  K2_Site_2
+  operator()(const typename K1::Site_2& t) const
+  {
+    if ( t.is_point() ) {
+      return K2_Site_2( Base::operator()(t.point()) );
+    }
+
+    return K2_Site_2( Base::operator()(t.segment()) );
+  }
+#endif
+
   K2_Site_2
   operator()(const typename K1::Site_2& t) const
   {
@@ -94,7 +142,6 @@ public:
       }
     }
   }
-
 
   K2_Point_2
   operator()(const typename K1::Point_2& p) const
