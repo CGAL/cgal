@@ -30,3 +30,6 @@
 
 % L.K. -------------------------------------------------------------------
 \newcommand{\CC}{C\raise.08ex\hbox{\texttt{++}}}
+\newcommand{\openmesh}{\textsc{OpenMesh}}
+\newcommand{\opensg}{\textsc{OpenSG}}
+\newcommand{\cgal}{\textsc{ Cgal}}

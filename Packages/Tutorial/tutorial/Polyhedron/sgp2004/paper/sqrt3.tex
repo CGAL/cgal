@@ -1,12 +1,15 @@
 
 The $\sqrt{3}$ subdivision scheme was introduced by
-Kobbelt~\cite{sqrt3}. It takes as input a triangle mesh and subdivides
-each facet into three triangles by splitting it at its centroid.  The write
-a function that creates the centroid for one triangle. The
-combinatorial part exists already as an Euler operator for \cgalpoly,
-only the coordinates of the new vertex need to be computed. We exploit
-the knowledge that the facet is a triangle and access the 1-ring of
-the centroid directly without any loops or branching decisions.
+Kobbelt~\cite{sqrt3}. It is an adaptive scheme, but in our example
+progra we realize only a single uniform subdivision step.
+
+The subdivision step takes a triangle mesh as input and splits each
+facet at its centroid into three triangles.  We write a function that
+creates the centroid for one triangle. The combinatorial part exists
+already as an Euler operator for \cgalpoly, only the coordinates of
+the new vertex need to be computed. We exploit the knowledge that the
+facet is a triangle and access the 1-ring of the centroid directly
+without any loops or branching decisions.
 
 \begin{lstlisting}
 void create_centroid( Polyhedron& P, Facet_iterator f) {
@@ -121,4 +124,18 @@ Fig.\ref{fig:sqrt3}.
     \label{fig:sqrt3}
 \end{figure}
 
+\begin{tabular}{l|lll}
+  \textbf{$\sqrt{3}$ subdivision} & \cgal\ float & \cgal\ double &
+  \openmesh\ float \\\hline
+  Lion vase: subdiv 1  & 0.95 & 1.22 &  1.27 \\
+  Lion vase: subdiv 2  & 3.90 & 23.73 & 128 (swap)
+\end{tabular}
+
+\begin{tabular}{l|ll}
+  \textbf{load OFF file} & \cgal (binary) & \openmesh (ascii) \\\hline
+  Bunny     &  0.7 & 0.8\\
+  Lion vase &  4.2 & 4.5 \\
+  David     &  7.6 & 9.6 \\
+  Raptor    &  22.0 7 20.6
+\end{tabular}
 
