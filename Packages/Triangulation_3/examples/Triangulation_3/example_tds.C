@@ -28,7 +28,6 @@
 #include <vector>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 
 #include <CGAL/Triangulation_geom_traits_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
