@@ -26,12 +26,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
-    (defined(__sgi__)   || defined(__sgi)   || defined(sgi)) || \
-    (defined(__i386__)  || defined(__i386)  || defined(i386)) || \
-    (defined(__ia64__)  || defined(__ia64)  || defined(ia64)) || \
-    (defined(__alpha__) || defined(__alpha) || defined(alpha)) || \
-    (defined(__ppc__)   || defined(__ppc)   || defined(ppc)) || \
+#if (defined(__sparc__)   || defined(__sparc)   || defined(sparc))   || \
+    (defined(__sgi__)     || defined(__sgi)     || defined(sgi))     || \
+    (defined(__i386__)    || defined(__i386)    || defined(i386))    || \
+    (defined(__x86_64__)  || defined(__x86_64)  || defined(x86_64))  || \
+    (defined(__ia64__)    || defined(__ia64)    || defined(ia64))    || \
+    (defined(__alpha__)   || defined(__alpha)   || defined(alpha))   || \
+    (defined(__ppc__)     || defined(__ppc)     || defined(ppc))     || \
     (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
     typedef  signed char             Integer8;
     typedef  short                   Integer16;
@@ -40,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
     typedef  unsigned short          UInteger16;
     typedef  unsigned int            UInteger32;
     // See long_long.h for Integer64.
-#  ifdef __ia64__
+#  if (defined __ia64__ || defined __x86_64__)
     typedef long                     Integer64;
     typedef unsigned long            UInteger64;
 #    define CGAL_HAS_INTEGER64

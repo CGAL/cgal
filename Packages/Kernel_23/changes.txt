@@ -1,3 +1,6 @@
+20 November 2004 Sylvain Pion
+- x86_64 porting.
+
 5 November 2004 Sylvain Pion
 - Fix alphabetical order in the concepts list.
 
