@@ -166,8 +166,8 @@ private:
   Coord_type Infinity;
   Coord_type UNDEFINED;
   
-  std::list< Vertex_handle > Alpha_shape_vertices_list;
-  std::list< Edge > Alpha_shape_edges_list;
+  mutable std::list< Vertex_handle > Alpha_shape_vertices_list;
+  mutable std::list< Edge > Alpha_shape_edges_list;
 
 public:
 
@@ -424,7 +424,7 @@ private:
 
 public:
 
-  Alpha_shape_vertices_iterator alpha_shape_vertices_begin()
+  Alpha_shape_vertices_iterator alpha_shape_vertices_begin() const
     { 
       Alpha_shape_vertices_list.clear();
       std::back_insert_iterator< std::list< Vertex_handle > > 
@@ -442,18 +442,18 @@ public:
     }
   //---------------------------------------------------------------------
 
-  Alpha_shape_vertices_iterator alpha_shape_vertices_end()
+  Alpha_shape_vertices_iterator alpha_shape_vertices_end() const
     {
       return Alpha_shape_vertices_list.end();
     }
 
-  Alpha_shape_vertices_iterator Alpha_shape_vertices_end()
+  Alpha_shape_vertices_iterator Alpha_shape_vertices_end() const
     {
       return Alpha_shape_vertices_list.end();
     }
   //---------------------------------------------------------------------
 
-  Alpha_shape_edges_iterator alpha_shape_edges_begin()
+  Alpha_shape_edges_iterator alpha_shape_edges_begin() const
     {
       Alpha_shape_edges_list.clear();
       std::back_insert_iterator< std::list<Edge > > 
@@ -462,18 +462,18 @@ public:
       return Alpha_shape_edges_list.begin();
     }
 
-  Alpha_shape_edges_iterator Alpha_shape_edges_begin()
+  Alpha_shape_edges_iterator Alpha_shape_edges_begin() const
   {
     return alpha_shape_edges_begin();
   }
   //---------------------------------------------------------------------
 
-  Alpha_shape_edges_iterator alpha_shape_edges_end()
+  Alpha_shape_edges_iterator alpha_shape_edges_end() const
     {
       return Alpha_shape_edges_list.end();
     }
 
-  Alpha_shape_edges_iterator Alpha_shape_edges_end()
+  Alpha_shape_edges_iterator Alpha_shape_edges_end() const
     {
       return Alpha_shape_edges_list.end();
     }
