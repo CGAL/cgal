@@ -56,7 +56,7 @@ In addition, a box has an unique \ccc{id}-number. It is used to order
 boxes consistently in each dimension even if boxes have identical
 coordinates. In consequence, the algorithm guarantees that a pair of
 intersecting boxes is reported only once.  This self-intersection
-function creates internallz a second copy of the box sequence. The
+function creates internally a second copy of the box sequence. The
 copying has to preserve the \ccc{id}-number of boxes.  Note that this
 implies that the address of the box is not sufficient for the
 \ccc{id}-number if boxes are copied by value. Boxes of equal

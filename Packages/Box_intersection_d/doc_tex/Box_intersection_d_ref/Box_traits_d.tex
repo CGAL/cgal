@@ -12,6 +12,13 @@ type of \ccc{BoxHandle}; there is one if \ccc{BoxHandle} is a class type and the
 two if \ccc{BoxHandle} is a pointer type, one for a mutable and one for a const
 pointer, respectively.
 
+This class implements the mapping from its \ccc{BoxHandle} argument to
+the \ccc{Box_parameter} type required in the
+\ccc{BoxIntersectionTraits_d} concept. In particular in the case where
+\ccc{BoxHandle} is a class type \ccc{B}, it defines
+\ccc{Box_parameter} to be of type \ccc{const B&}, while for the other
+cases it just uses the pointer type.
+
 \begin{itemize}
   \item
     \ccc{BoxHandle}: either a class type \ccc{B}, a pointer \ccc{B*}, or a

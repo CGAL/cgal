@@ -3,8 +3,8 @@
 % +------------------------------------------------------------------------+
 
 \begin{ccRefConcept}{BoxIntersectionTraits_d}
-\ccThree{inti}{BoxIntersectionmmmmnTraits_d::dimension();}{}
-\ccTwo{BoxIntersectionTraits_d::Box_handle;}{}
+\ccThree{inti}{BoxIntersectionmmmmmmnTraits_d::dimension();}{}
+\ccTwo{BoxIntersectionTraits_d::NT;}{}
 \ccCreationVariable{traits}
 
 \ccDefinition
@@ -26,11 +26,13 @@ the boxes manipulated in these algorithms.
 \ccTypes
 
 
-\ccNestedType{Box_handle}{box handle. Since we support in our algorithms
-  passing the boxes by value as well as passing them as pointers, we
-  use as box handle either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
-  respectively, where \ccc{B} is the actual box type.
-  The boxes are passed as function arguments using exactly this type.} 
+\ccNestedType{Box_parameter}{type used for passing box parameters in the
+  functions below. Since we support in our algorithms
+  passing the boxes by value as well as passing them as pointers, this
+  type can be either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
+  respectively, where \ccc{B} is the actual box type. The difference
+  to the box handle type lies in the first case where the box handle
+  would be \ccc{B} where this type is \ccc{const B&}.}
 
 \ccNestedType{NT}{number type to represent the box
   boundaries. Allowed are the builtin types \ccc{int}, \ccc{unsigned
@@ -44,16 +46,16 @@ the boxes manipulated in these algorithms.
 \ccFunction{int BoxIntersectionTraits_d::dimension();}{%
   returns the dimension of the box.}
 
-\ccFunction{ID BoxIntersectionTraits_d::id(Box_handle box);}{%
+\ccFunction{ID BoxIntersectionTraits_d::id(Box_parameter box);}{%
   returns the unique \ccc{id}-number for the \ccc{box}.}
 
-\ccThree{const int}{BoxIntersec}{}
+\ccThree{inti}{BoxIntersec}{}
 
-\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box_handle box, int d);}{%
+\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box_parameter box, int d);}{%
   returns the lower boundary of the \ccc{box} in dimension
   \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 
-\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box_handle box, int d);}{%
+\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box_parameter box, int d);}{%
   returns the upper boundary of the \ccc{box} in dimension
   \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
 

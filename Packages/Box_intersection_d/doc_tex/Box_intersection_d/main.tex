@@ -494,8 +494,8 @@ than \ccc{2*eps}.
 The requirements for the box traits class are best studied on
 page~\ccRefPage{BoxIntersectionTraits_d} in the Reference Manual. In a
 nutshell, we have to define the type \ccc{NT} for the box coordinates,
-the type \ccc{ID} for the \ccc{id}-number, and the type \ccc{Box_handle}
-for the box handle, here \ccc{Point_3*} since we work with the pointers.
+the type \ccc{ID} for the \ccc{id}-number, and the type \ccc{Box_parameter}
+similar to the box handle, here \ccc{Point_3*} since we work with the pointers.
 All member functions in the traits class are static. Two functions give
 access to the max and min coordinates that we compute from the point
 coordinates plus or minus the \ccc{eps} value, respectively. For the
@@ -519,8 +519,8 @@ stored in the \ccc{boxes} so far.
 
 Lutz Kettner and Andreas Meyer implemented the algorithms starting
 from the publication~\cite{cgal:ze-fsbi-02}. We had access to the
-original C implementation of Afra Zomoridian, which helped clarifying
-some questions, and we are greatful to the help of Afra Zomorodian in
+original C implementation of Afra Zomorodian, which helped clarifying
+some questions, and we are grateful to the help of Afra Zomorodian in
 answering our questions during his visit. We thank Steve Robbins for
 an excellent review for this package. Steve Robbins provided an
 independent and earlier implementation of this algorithm,
