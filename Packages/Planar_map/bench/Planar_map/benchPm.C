@@ -253,6 +253,7 @@ int main(int argc, char * argv[])
 {
   Parse_args parseArgs(argc, argv);
   int rc = parseArgs.parse();
+  if (rc > 0) return 0;
   if (rc < 0) return rc;
   
   bool verbose = parseArgs.getVerbose();
@@ -304,3 +305,4 @@ int main(int argc, char * argv[])
   
   return 0;
 }
+
