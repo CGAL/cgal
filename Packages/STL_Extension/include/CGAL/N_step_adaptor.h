@@ -170,13 +170,12 @@ public:
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 #ifndef CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES
-template < class D, class I, int N, class Ref, class Ptr,
+template < class I, int N, class Ref, class Ptr,
            class Val, class Dist, class Ctg>
 inline
 N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>
-operator+( D n, N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i) {
-  return i += Dist(n);
-}
+operator+( Dist n, N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
+{ return i += n; }
 #endif // CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES //
 
 CGAL_END_NAMESPACE

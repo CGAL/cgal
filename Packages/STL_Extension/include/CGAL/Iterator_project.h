@@ -144,13 +144,12 @@ public:
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
-template < class D, class Fct, class I, class Ref, class Ptr,
+template < class Fct, class I, class Ref, class Ptr,
            class Dist, class Ctg>
 inline
 Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg>
-operator+( D n, Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg> i) {
-  return i += Dist(n);
-}
+operator+( Dist n, Iterator_project<I,Fct,Ref,Ptr,Dist,Ctg> i)
+{ return i += n; }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 #ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
@@ -293,12 +292,11 @@ public:
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
-template < class D, class Fct, class I, class II, class Dist, class Ctg>
+template < class Fct, class I, class II, class Dist, class Ctg>
 inline
 Iterator_const_project<I,II,Fct,Dist,Ctg>
-operator+( D n, Iterator_const_project<I,II,Fct,Dist,Ctg> i) {
-  return i += Dist(n);
-}
+operator+( Dist n, Iterator_const_project<I,II,Fct,Dist,Ctg> i)
+{ return i += n; }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
 #ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT

@@ -162,13 +162,12 @@ public:
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS //
 };
 
-template < class D, class I, class Ref, class Ptr, class Val,
+template < class I, class Ref, class Ptr, class Val,
            class Dist, class Ctg>
 inline
 Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg>
-operator+( D n, Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg> i) {
-  return i += Dist(n);
-}
+operator+( Dist n, Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg> i)
+{ return i += n; }
 
 CGAL_END_NAMESPACE
 #endif // CGAL_ITERATOR_IDENTITY_H //
