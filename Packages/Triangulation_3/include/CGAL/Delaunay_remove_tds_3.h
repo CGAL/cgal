@@ -66,7 +66,7 @@ public :
 
 template < class I, class Fb = Triangulation_ds_face_base_2<> >
 class Delaunay_remove_tds_face_3_2
-  : public Fb, Triangulation_cw_ccw_2
+  : public Fb, public Triangulation_cw_ccw_2
 {
 public:
 
