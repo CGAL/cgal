@@ -316,8 +316,8 @@ public:
       return c;
     }
     SFace_handle sf_below = adjacent_sface(f_below);
-    TRACEN( "Shell not assigned to a volume hit ");
-    TRACEN( "(Inner shell #" << Shell[sf] << ")");
+    TRACE( "Shell not assigned to a volume hit ");
+    TRACEN( "(Inner shell #" << Shell[sf_below] << ")");
     c = determine_volume( sf_below, MinimalVertex, Shell);
     link_as_inner_shell( sf_below, c);
     return c;
@@ -379,24 +379,35 @@ public:
     CGAL_assertion( !h.is_degenerate());
     Point_2 (*t)(Point_3);
     Vector_3 hv( h.orthogonal_vector()), 
-      hxy( 0, 0, 1), hyz( 1, 0, 0), hxz( 0, 1, 0);
-    if( !is_zero( hv * hxz) )
-      /* the plane is not perpendicular to the XZ plane */
-      t = &point_3_get_x_z_point_2< Point_2, Point_3>;
-    else if( !is_zero( hv * hyz) )
-      /* the plane is not perpendicular to the XZ plane */
+      hxy( 0, 0, 1), hyz( 1, 0, 0), hzx( 0, 1, 0);
+    bool mirror = false;
+    if( !is_zero( hv * hzx) ) {
+      /* the plane is not perpendicular to the ZX plane */
+      t = &point_3_get_z_x_point_2< Point_2, Point_3>;
+      if( is_negative( hv * hzx)) mirror = true;
+    }
+    else if( !is_zero( hv * hyz) ) {
+      /* the plane is not perpendicular to the YZ plane */
       t = &point_3_get_y_z_point_2< Point_2, Point_3>;
+      if( is_negative( hv * hyz)) mirror = true;
+    }
     else {
       CGAL_assertion( !is_zero( hv * hxy) );
       /* the plane is not perpendicular to the XY plane */
       t = &point_3_get_x_y_point_2< Point_2, Point_3>;
+      if( is_negative( hv * hxy)) mirror = true;
     }
     Direction_2 da( t( ORIGIN + Vector_3(a) ) - ORIGIN),
       db( t( ORIGIN + Vector_3(b)) - ORIGIN), 
       dc( t( ORIGIN + Vector_3(c)) - ORIGIN);
-    TRACE( "CCW ordered " << a << ", " << b << ", " << c << ": ");
-    TRACE( "CCW ordered " << da << ", " << db << ", " << dc << ": ");
-    TRACEN( strictly_ordered_ccw( da, db, dc));
+    if( mirror ) {
+      da = Direction_2(-da.dx(), da.dy());
+      db = Direction_2(-db.dx(), db.dy());
+      dc = Direction_2(-dc.dx(), dc.dy());
+    }
+    TRACEN( "CCW ordered " << a << ", " << b << ", " << c << ": ");
+    TRACEN( "CCW ordered " << da << ", " << db << ", " << dc);
+    TRACEN( "? " << strictly_ordered_ccw( da, db, dc));
     return strictly_ordered_ccw( da, db, dc);
   }
 
@@ -409,18 +420,19 @@ public:
     
     Direction_3 d_r = -ray.direction(), d_e = segment(e).direction();
     Plane_3 h_ref( segment(e).source(), d_e);
+    TRACEN("--> ref plane " << h_ref);
 
     SHalfedge_handle se = D.first_out_edge(e);
     Plane_3 h_se = plane(facet(twin(se)));
-    Vector_3 v_se = cross_product( Vector_3(d_e),
-				   Vector_3(h_se.orthogonal_direction()));
+    Vector_3 v_se = cross_product( Vector_3(h_se.orthogonal_direction()),
+				   Vector_3(d_e));
     Direction_3 d_se = Direction_3(v_se);
     
-    SHalfedge_around_svertex_circulator sc(D.out_edges(e)), sce(sc);
+    SHalfedge_around_svertex_circulator sc(se), sce(sc);
     CGAL_For_all(sc, sce) {
       Plane_3 h_sc = plane(facet(twin(sc)));
-      Vector_3 v_sc = cross_product( Vector_3(d_e),
-				     Vector_3(h_sc.orthogonal_direction()));
+      Vector_3 v_sc = cross_product( Vector_3(h_sc.orthogonal_direction()),
+				     Vector_3(d_e));
       Direction_3 d_sc = Direction_3(v_sc);
 
       if ( strictly_ordered_ccw_3(d_se, d_sc, d_r, h_ref)) {
@@ -883,18 +895,18 @@ link_shalfedges_to_facet_cycles() const
     SHalfedge_around_svertex_circulator ce(D.first_out_edge(e)),cee(ce);
     SHalfedge_around_svertex_circulator cet(Dt.first_out_edge(et)),cete(cet);
     /*debug*/
-    SHalfedge_around_svertex_circulator ceti, cetj;
-    cetj = cet; ceti = cetj++;
-    if(ceti != cetj)
-      CGAL_For_all(ceti,cete) 
-      {
-	TRACEN(" et   ss "<<Dt.point(Dt.source(ceti))<<" "
-	       <<Dt.point(Dt.target(ceti))<<" "<<&(*ceti));
-	TRACEN(" et+1 ss "<<Dt.point(Dt.source(cetj))<<" "
-	       <<Dt.point(Dt.target(cetj))<<" "<<&(*cetj));
-	//CGAL_nef3_assertion( Dt.circle(ceti) != D.circle(cetj));
-	cetj++;
-      }
+    SHalfedge_around_svertex_circulator ceti = cet;
+    CGAL_For_all(ceti,cete) {
+      TRACEN(" et   ss "<<Dt.point(Dt.source(ceti))<<" "
+	     <<Dt.point(Dt.target(ceti))<<" "<<&(*ceti));
+      TRACEN(" et plane " << Dt.circle(ceti));
+    }
+    SHalfedge_around_svertex_circulator cei = ce;
+    CGAL_For_all(cei,cee) {
+      TRACEN(" e   ss "<<Dt.point(Dt.source(cei))<<" "
+	     <<Dt.point(Dt.target(cei))<<" "<<&(*cei));
+      TRACEN(" e plane " << Dt.circle(cei));
+    }
     /*debug*/
     CGAL_For_all(cet,cete) 
       {

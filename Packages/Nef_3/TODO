@@ -2,8 +2,6 @@ Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
 - Simplification of the SNC structure
-- Simplify during the construction from polyhedral surfaces
-  (based on the simplification of SM)
 - Unary operations
 - Intersections of Line_3 with Line_3
 - Find all intersections between two SNC's.

@@ -84,6 +84,7 @@ template <class Polyhedron_, class SNC_structure, class SNC_constructor>
 void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;
+  typedef typename SNC_constructor::SM_overlayer     SM_overlayer;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
@@ -111,7 +112,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     TRACEN("v "<<pv.point());
 
 #ifdef CGAL_P2NEF3_USE_SM_OVERLAY
-    typedef typename SNC_constructor::SM_overlayer SM_overlayer;
     std::list<Sphere_point> sp_list;
     std::list<Sphere_segment> ss_list;
     typename Polyhedron::Halfedge_around_vertex_const_circulator 
@@ -253,6 +253,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.mark(fint) = true;
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();
+    
+    SM_overlayer O(nv);
+    // O.simplify();
 #endif // CGAL_P2NEF3_USE_SM_OVERLAY
 	
     //SMIO::dump(nv);

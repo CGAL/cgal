@@ -703,7 +703,7 @@ public:
   { shalfloops_.erase(h); delete &* h; }
   void delete_sface_only(SFace_handle h)
   { sfaces_.erase(h); delete &* h; }
-
+  
   void simplify() {
     Halffacet_iterator f;
     CGAL_forall_facets(f, *this) { // all facets

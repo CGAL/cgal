@@ -48,13 +48,13 @@ Point_2 point_3_get_x_y_point_2(Point_3 p) {
 }
 
 template <class Point_2, class Point_3> 
-Point_2 point_3_get_x_z_point_2(Point_3 p) {
-  return( Point_2(p.hx(), p.hz(), p.hw()) );
+Point_2 point_3_get_y_z_point_2(Point_3 p) {
+  return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
 template <class Point_2, class Point_3> 
-Point_2 point_3_get_y_z_point_2(Point_3 p) {
-  return( Point_2(p.hy(), p.hz(), p.hw()) );
+Point_2 point_3_get_z_x_point_2(Point_3 p) {
+  return( Point_2(p.hz(), p.hx(), p.hw()) );
 }
 
 template <class IteratorForward, class R>
@@ -83,15 +83,15 @@ Bounded_side bounded_side_3(IteratorForward first,
   CGAL_assertion(!plane.is_degenerate());
   TRACEN(plane);
   Point_2 (*t)(Point_3);
-  Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pxz(0,1,0);
-  TRACEN("pv*pxz: "<<pv*pxz);
+  Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pzx(0,1,0);
+  TRACEN("pv*pxz: "<<pv*pzx);
   TRACEN("pv*pyz: "<<pv*pyz);
   TRACEN("pv*pxy: "<<pv*pxy);
-  if( !is_zero(pv*pxz) )
-    /* the plane is not perpendicular to the XZ plane */
-    t = &point_3_get_x_z_point_2< Point_2, Point_3>;
+  if( !is_zero(pv*pzx) )
+    /* the plane is not perpendicular to the ZX plane */
+    t = &point_3_get_z_x_point_2< Point_2, Point_3>;
   else if( !is_zero(pv*pyz) )
-    /* the plane is not perpendicular to the XZ plane */
+    /* the plane is not perpendicular to the YZ plane */
     t = &point_3_get_y_z_point_2< Point_2, Point_3>;
   else {
     CGAL_assertion( !is_zero(pv*pxy) );
