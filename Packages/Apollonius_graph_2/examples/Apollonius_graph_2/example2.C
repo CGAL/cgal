@@ -1,10 +1,12 @@
+// file: example2.C
+#include <CGAL/basic.h>
+
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
 
 
-#include <CGAL/basic.h>
 
 
 #if defined CGAL_USE_LEDA

@@ -1,9 +1,10 @@
+// file: example1.C
+#include <CGAL/basic.h>
+
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
-#include <CGAL/basic.h>
 
 // Workaround for buggy compilers.
 #ifdef CGAL_CFG_MATCHING_BUG_2

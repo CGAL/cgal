@@ -1,9 +1,10 @@
+// file: example4.C
+#include <CGAL/basic.h>
+
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
-#include <CGAL/basic.h>
 
 // example that uses the Filtered_kernel
 
