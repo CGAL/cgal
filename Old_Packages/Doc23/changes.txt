@@ -1,3 +1,6 @@
+2.46    (20 Mar 2002)
+- updated number type concepts
+
 2.45    (7 Mar 2002)
 - added number type concepts to doc
 - added more explanation about exact vs. inexact number type in the individual
