@@ -289,6 +289,17 @@ public:
 	  
       c->_previous_cell->_next_cell = c->_next_cell;
       c->_next_cell->_previous_cell = c->_previous_cell;
+
+//       int i;
+//       Vertex* v;
+//       for ( i=0; i <= dimension(); i++ ) {
+// 	v = c->vertex(i);
+// 	if ( v != NULL ) {
+// 	  v->set_cell( c->neighbor( (i+1)%(dimension()+1) ) );
+// 	  // may be NULL
+// 	}
+//       };
+
       delete( c ); 
     }
     
@@ -319,6 +330,15 @@ public:
 
   bool is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t) const; 
   // returns false when dimension <3
+
+  bool has_vertex(const Facet & f, Vertex* v, int & j) const;
+  bool has_vertex(Cell* c, int i, Vertex* v, int & j) const;
+  bool has_vertex(const Facet & f, Vertex* v) const;
+  bool has_vertex(Cell* c, int i, Vertex* v) const;
+
+  bool are_equal(Cell* c, int i, Cell* n, int j) const;
+  bool are_equal(const Facet & f, const Facet & g) const;
+  bool are_equal(const Facet & f, Cell* n, int j) const;
 
   // MODIFY
 
@@ -886,6 +906,81 @@ is_cell(Vertex* u, Vertex* v, Vertex* w, Vertex* t) const
     ++it;
   }
   return false;
+}
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+has_vertex(Cell* c, int i, Vertex* v, int & j) const
+  // computes the index j of the vertex in the cell c giving the query
+  // facet (c,i)  
+  // j has no meaning if false is returned
+{
+  CGAL_triangulation_precondition( dimension() == 3 ); 
+  return ( c->has_vertex(v,j) && (j != i) );
+}
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+has_vertex(Cell* c, int i, Vertex* v) const
+  // checks whether the query facet (c,i) has vertex v
+{
+  CGAL_triangulation_precondition( dimension() == 3 ); 
+  int j;
+  return ( c->has_vertex(v,j) && (j != i) );
+}
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+has_vertex(const Facet & f, Vertex* v, int & j) const
+{
+  return( has_vertex( f.first, f.second, v, j ) );
+}
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+has_vertex(const Facet & f, Vertex* v) const
+{
+  return( has_vertex( f.first, f.second, v ) );
+}
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+are_equal(Cell* c, int i, Cell* n, int j) const
+  // tests whether facets c,i and n,j, have the same 3 vertices
+  // the triangulation is supposed to be valid, the orientation of the 
+  // facets is not checked here
+  // the neighbor relations between c and  n are not tested either,
+  // which allows to use this method before setting these relations
+  // (see remove in Delaunay_3)
+  //   if ( c->neighbor(i) != n ) return false;
+  //   if ( n->neighbor(j) != c ) return false;
+
+{
+  CGAL_triangulation_precondition( dimension() == 3 ); 
+
+  if ( (c==n) && (i==j) ) return true;
+
+  int j1,j2,j3;
+  return( n->has_vertex( c->vertex((i+1)&3), j1 ) &&
+	  n->has_vertex( c->vertex((i+2)&3), j2 ) &&
+	  n->has_vertex( c->vertex((i+3)&3), j3 ) &&
+	  ( j1+j2+j3+j == 6 ) );
+}
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+are_equal(const Facet & f, const Facet & g) const
+{
+  return( are_equal( f.first, f.second, g.first, g.second ) );
+}
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+are_equal(const Facet & f, Cell* n, int j) const
+{
+  return( are_equal( f.first, f.second, n, j ) );
 }
 
 template < class Vb, class Cb>
@@ -2217,12 +2312,12 @@ is_valid(bool verbose, int level ) const
 	CGAL_triangulation_assertion(false); return false;
       }
 
+      int cell_count;
+      if ( ! count_cells(cell_count,verbose,level) ) {return false;}
       int edge_count;
       if ( ! count_edges(edge_count,verbose,level) ) {return false;}
       int facet_count;
       if ( ! count_facets(facet_count,verbose,level) ) {return false;}
-      int cell_count;
-      if ( ! count_cells(cell_count,verbose,level) ) {return false;}
 
       // Euler relation 
       if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
