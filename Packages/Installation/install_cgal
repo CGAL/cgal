@@ -118,7 +118,7 @@ CGAL_TESTSUITE='y'
 # ---------------------------------------------
 # set to non-empty string, if MIPSPRO 64 compiler
 # is to be supported
-SUPPORT_MIPSPRO_64=''
+SUPPORT_MIPSPRO_64='y'
 
 
 # ---------------------------------------------
@@ -232,15 +232,25 @@ CUSTOM_LDFLAGS=''
 # ---------------------------------------------------------------------
 # How to use this script
 # ---------------------------------------------------------------------
+print_general_information()
+{
+    ${_printf} \
+"You can get a list of all options with \"`basename $0` --help\"
+
+First-time-installers: 
+----------------------
+Just type \"`basename $0` -i\" and follow the menus.
+If you get stuck, please read the documentation.\n\n"
+}
+
 print_usage_information()
 {
 	${_printf} \
-"Just type \"`basename $0` -i\" and follow the menus.
-Please read the documentation.
-
-usage: `basename $0` [-leda] [-gmp] [--verbose] 
+"usage: `basename $0`  
       [--help | --version | -i | --interactive |
-       -ni <comp> | --non-interactive <comp> | -os <comp>]
+       -ni <comp> | --non-interactive <comp> | -os <comp> |
+       --build-all | --rebuild-all]
+      [-leda] [-gmp] [--verbose]
       [--CGAL_DIR <dir>] [--STL_DIR <dir>]
       [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
@@ -1111,7 +1121,7 @@ compiler_absolute()
     fi
     ${_printf} "@"
     get_compiler_description "${_args}"
-    printf "@no-c-compiler@${_args}@"
+    ${_printf} "@no-c-compiler@${_args}@"
     get_compiler_version "${_args}"
 }
 
@@ -1356,10 +1366,15 @@ print_headline()
 # wait until enter is pressed
 wait_for_enter()
 {
-    print_center_line "Please press <ENTER> to continue."
-    print_filled_line
-    flush_buffer
-    read dummy
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+	print_center_line "Please press <ENTER> to continue."
+	print_filled_line
+	flush_buffer
+	read dummy
+    else
+	print_center_line "D O N E"
+	print_filled_line
+    fi
 }
 
 # setup two strings for printing the menu
@@ -1574,31 +1589,37 @@ check_CGAL_INSTALL_VERSION()
     esac
 }
 
+check_COMPILER()
+{
+    _check_comp_executable `compiler_bin`
+}
+
 # try to read variable $1 from file $2 
 # (usually this is $CGAL_DIRECTORY_FILE)
 # (and run "check_$1", if you got it)
 # return 0, iff something went wrong
 try_to_get_var_from_file()
 {
-    if [ -r $2 ]; then
-	_awkprg="/$1/"'{printf $1}'
-	_tmp=`${_awk} "${_awkprg}" $2`
-	if [ -n "${_tmp}" ]; then
-	    _awkprg="/$1/"'{printf $4}'
-	    _tmp=`${_awk} "${_awkprg}" $2`
-	    log_print "got $1 from config/`$_basename $2`.\nset to <${_tmp}>."
-	    _tmp=\'${_tmp}\'
-	    eval $1="${_tmp}"
-	    eval "check_$1 log_print"
-	    return $?
+    if [ -r ${2} ]; then
+	_awkprg="/${1}/"'{print $0}'
+	_tmp2=`${_awk} "${_awkprg}" ${2}`
+	if [ -n "${_tmp2}" ]; then
+	    _tmp2=`${_printf} "${_tmp2}\n" | \
+		${_awk} '{for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
+		    printf "%s",$(NF-1)}'`
+	    log_print "got ${1} from config/`${_basename} ${2}`."
+	    log_print "set to <\${_tmp2}>."
+	    eval $1="${_tmp2}"
+	    eval "check_${1} log_print"
+	    return ${?}
 	else
-	    log_print "WARNING: cannot find field $1 in file." 
+	    log_print "WARNING: cannot find field ${1} in file." 
 	fi
     else
-	log_print "WARNING: cannot find file $2." 
+	log_print "WARNING: cannot find file ${2}." 
     fi
-    # delete previous value of $1
-    eval $1=''
+    # delete previous value of ${1}
+    eval ${1}=''
     return 0
 }
 
@@ -2396,6 +2417,7 @@ store_compiler_settings()
     ${_printf} \
 	"*/\n\n" \
 	>>${_file}
+    _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
     _store_install_config_variable STL_STATUS >>${_file}
     _store_install_config_variable STL_DIR >>${_file}
@@ -3072,9 +3094,10 @@ install_gmp()
     fi
     
     cd ${GMP_VERSION}
-    case ${SYST} in
-	*IRIX*-6*)
-	    # gmp-2.0.2 build fails on irix6 
+    case ${CGAL_OS_COMPILER} in
+	mips_IRIX*-6*_CC-*32-*)
+	    # gmp-2.0.2 build fails on irix6, since it assummes
+	    # 64 bit wordsize
 	    _host=mips-sgi-irix5;;
 	*)
 	    _host='';;
@@ -3473,6 +3496,17 @@ $3" $1 > $1.TEMP' ; then
   fi
 }
 
+prepare_lib_makefiles()
+{
+    for FILE in ${CGAL_SRC_DIR}/makefile_lib \
+	${CGAL_SRC_DIR}/makefile_sharedlib \
+	${CGAL_EXAMPLE_DIR}/makefile
+    do
+	replace_line ${FILE} CGAL_MAKEFILE \
+	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    done
+}
+
 # log via $1
 generatemakefiles()
 {
@@ -3497,13 +3531,7 @@ generatemakefiles()
   fi
   create_include_makefile
 
-  for FILE in ${CGAL_SRC_DIR}/makefile_lib \
-    ${CGAL_SRC_DIR}/makefile_sharedlib \
-    ${CGAL_EXAMPLE_DIR}/makefile
-  do
-    replace_line ${FILE} CGAL_MAKEFILE \
-      "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
-  done
+  prepare_lib_makefiles
 
   for DIRECTORY in `${_ls} ${CGAL_EXAMPLE_DIR}`; do
     if [ -d ${DIRECTORY} ]; then
@@ -3567,7 +3595,11 @@ make_makefiles()
 
 write_menu_information()
 {
-    clear_screen
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+	clear_screen
+    else
+	write_buffer "\n"
+    fi
     print_filled_line
     print_empty_line
     print_headline "$1 CGAL ${CGAL_VERSION}"
@@ -3578,14 +3610,8 @@ write_menu_information()
     ${_printf} "\n"
 }
 
-lib_menu()
+build_cgal()
 {
-    write_menu_information "Compiling"
-
-    make_lib_dir
-    make_makefiles
-
-    # build the libs:
     cd ${CGAL_SRC_DIR}
     if _do_compile lib; then
 	LIB_COMPILED='ok'
@@ -3600,6 +3626,17 @@ lib_menu()
     print_filled_line
     wait_for_enter
     cd ${CGAL_DIR}
+}
+
+lib_menu()
+{
+    write_menu_information "Compiling"
+
+    make_lib_dir
+    make_makefiles
+
+    # build the libs:
+    build_cgal
 }
 
 
@@ -3700,22 +3737,6 @@ main_menu()
 		fi
 		;;
 	    q|Q)
-		if [ -z "${ANY_LIB_COMPILED}" ]; then
-		    go_down_lines 1
-		    print_filled_line
-		    print_line \
-		    "WARNING: You did not build any libs during this session."
-		else
-		    go_down_lines 3
-		    flush_buffer
-		    $_cat ${INSTALL_RIS_LOGFILE}
-		    print_filled_line
-		    print_center_line "`$_basename $0` completed."
-		fi
-		print_center_line "If something went wrong, (or maybe also, if not:)"
-		print_center_line "have a look at `$_basename ${INSTALL_LOGFILE}`." 
-		print_filled_line
-		flush_buffer
 		return;;
 	esac
     done
@@ -3750,6 +3771,58 @@ cgal_install_header()
     ${_printf} "\n--------------------------------------------------------\n"
     ${_printf} "  This is the install script for CGAL ${CGAL_VERSION}.\n"
     ${_printf} "--------------------------------------------------------\n\n"
+}
+
+
+# ---------------------------------------------------------------------
+# functions for interactive modes:
+#
+
+startup_interactive()
+{
+    ${_printf} " one moment, please\n"
+    INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+    if [ -n "${_ANY_OPT}" ]; then
+	${_printf} "\nWARNING: In interactive mode all command line options\n"
+	${_printf} "  except for \"-i\" and \"--CGAL_DIR\" are ignored.\n\n"
+	clear_buffer
+    fi
+    init_logfiles
+    ${_printf} "."
+    check_for_utils
+    ${_printf} "."
+    get_cgal_version
+    ${_printf} "."
+    check_conf_dir
+    ${_printf} "."
+    set_expr
+    ${_printf} "."
+    set_menu_lines
+    ${_printf} "."
+    set_terminal_variables
+    ${_printf} "."
+}
+
+finish_interactive()
+{
+    if [ -z "${ANY_LIB_COMPILED}" ]; then
+	go_down_lines 1
+	print_filled_line
+	print_line \
+	    "WARNING: You did not build any libs during this session."
+    else
+	go_down_lines 3
+	flush_buffer
+	${_cat} ${INSTALL_RIS_LOGFILE}
+	print_filled_line
+	print_center_line "`${_basename} ${0}` completed."
+    fi
+    print_center_line \
+	"If something went wrong, (or maybe also, if not:)"
+    print_center_line \
+	"have a look at `${_basename} ${INSTALL_LOGFILE}`." 
+    print_filled_line
+    flush_buffer
 }
 
 
@@ -3876,6 +3949,18 @@ while [ ${#} -gt 0 ]; do
 	    ${_printf} "`basename $0` is ${CGAL_INSTALL_VERSION}.\n"
 	    exit 0
 	    ;;
+	--rebuild-all*|-ra*|-RA*|-rba*|-RBA*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='rebuild-all'
+	    ;;
+	--build-all*|-ba*|-BA*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='build-all'
+	    ;;
 	*) 
 	    _WHAT_TO_DO='help'
 	    ;;
@@ -3893,7 +3978,7 @@ case ${_WHAT_TO_DO} in
 	${_printf} "running non interactive mode ...\n"
 	INSTALL_INTERACTIVE=''
 	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
-	printf \
+	${_printf} \
 	    "\n--------------------------------------------------------\n"
 	${_printf} "Locating Utilities:\n"
 	${_printf} \
@@ -3901,13 +3986,7 @@ case ${_WHAT_TO_DO} in
 	check_for_utils
 	check_conf_dir
 	guess_os 'print_with_indent'
-	_check_comp_executable ${COMPILER}
-	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
-	COMPILER="`compiler_absolute ${COMPILER}`"
-	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
-	set_ostype
-	set_compiler_flags
-	printf \
+	${_printf} \
 	    "\n--------------------------------------------------------\n"
 	${_printf} "Determining CGAL Version:\n"
 	${_printf} \
@@ -3918,6 +3997,12 @@ case ${_WHAT_TO_DO} in
 	${_printf} "Settings from Command Line:\n"
 	${_printf} \
 	    "--------------------------------------------------------\n"
+	_check_comp_executable ${COMPILER}
+	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
+	COMPILER="`compiler_absolute ${COMPILER}`"
+	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
+	set_ostype
+	set_compiler_flags
 	flush_buffer
 	${_printf} \
 	    "\n--------------------------------------------------------\n"
@@ -3940,7 +4025,8 @@ case ${_WHAT_TO_DO} in
 	    "--------------------------------------------------------\n"
 	make_lib_dir
 	CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_`full_ostype`
-	generatemakefiles ${_printf}
+	generatemakefiles 'print_with_indent'
+	store_compiler_settings
 
 	${_printf} \
 	    "\n--------------------------------------------------------\n"
@@ -3954,31 +4040,12 @@ case ${_WHAT_TO_DO} in
     *interactive*)
 	cgal_install_header
 	# start interactive part
-	${_printf} "starting interactive mode - one moment, please\n"
+	${_printf} "starting interactive mode -"
+	startup_interactive
 	INSTALL_INTERACTIVE='y'
-	INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
-	if [ -n "${_ANY_OPT}" ]; then
-	    ${_printf} "\nWARNING: In interactive mode all command line options\n"
-	    ${_printf} "  except for \"-i\" and \"--CGAL_DIR\" are ignored.\n\n"
-	    clear_buffer
-	fi
-	init_logfiles
-	${_printf} "."
-	check_for_utils
-	${_printf} "."
-	get_cgal_version
-	${_printf} "."
-	check_conf_dir
-	${_printf} "."
-	set_expr
-	${_printf} "."
-	set_menu_lines
-	${_printf} "."
-	set_terminal_variables
-	${_printf} "."
 	search_for_compilers
-	
 	main_menu
+	finish_interactive
 	;;
     *ostype*)
 	# architecture/os key
@@ -3995,9 +4062,50 @@ case ${_WHAT_TO_DO} in
 	full_ostype
 	${_printf} "\n"
 	;;
-    *)
+    *build-all*)
+	cgal_install_header
+	${_printf} "starting ${_WHAT_TO_DO} -"
+	startup_interactive
+	guess_os log_print
+	${_printf} "\n\n"
+	for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+	do
+	    log_print \
+		"\n--------------------------------------------------------"
+	    log_print "Build on `${_basename} ${i}`:" 
+	    log_print \
+		"--------------------------------------------------------"
+	    try_to_get_var_from_file COMPILER ${i}
+	    if [ -n "${COMPILER}" ]; then
+		set_ostype
+		set_compiler_flags
+		retrieve_compiler_settings
+		case ${_WHAT_TO_DO} in
+		    *rebuild-all*)
+			test_compiler_specifica "${INSTALL_VERBOSE}"
+			;;
+		esac
+		lib_menu
+	    else
+		log_print "Cannot rebuild the library."
+		print_filled_line
+		print_empty_line
+		print_headline "Cannot build on `${_basename} ${i}` !" 
+		print_headline "No COMPILER defined in config/install/..."
+		print_filled_line
+		write_buffer "\n"
+		flush_buffer
+	    fi
+	done
+	finish_interactive
+	;;
+    *help*)
 	cgal_install_header
 	print_usage_information
+	;;
+    *)
+	cgal_install_header
+	print_general_information
 	;;
 esac
 exit 0
