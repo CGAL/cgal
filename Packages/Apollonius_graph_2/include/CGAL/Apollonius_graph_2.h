@@ -451,7 +451,10 @@ public:
     wp_list.clear();
   }
 
-  Vertex_handle  insert(const Site_2& p);
+  Vertex_handle  insert(const Site_2& p) {
+    return insert(p, NULL);
+  }
+
   Vertex_handle  insert(const Site_2& p, Vertex_handle vnear);
 
 public:

@@ -596,19 +596,7 @@ insert_third(const Site_2& p)
 }
 
 
-
 template< class Gt, class Agds >
-inline
-typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
-Apollonius_graph_2<Gt,Agds>::
-insert(const Site_2& p)
-{
-  return insert(p, NULL);
-}
-
-
-template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 insert(const Site_2& p, Vertex_handle vnear)

@@ -1149,12 +1149,19 @@ public:
 //-----------------------------------------------------------------------
 // the Traits class for a filtered kernel
 //-----------------------------------------------------------------------
-template< class MTag, class _CK, class _EK, class _FK,
-  class _C2E, class _C2F >
-class Apollonius_graph_euclidean_traits_2<
-Filtered_kernel<_CK,_EK,_FK,_C2E,_C2F>, MTag>
+template<class C_Traits,
+	 class E_Traits =
+	 Apollonius_graph_traits_2<Cartesian<MP_Float> > >
+	 
+class Apollonius_graph_filtered_traits_2
 {
 private:
+  typedef typename C_Traits::R                             CK;
+  typedef typename E_Traits::R                             EK;
+  typedef typename Simple_cartesian<Interval_nt_advanced>  FK;
+
+  typedef Apollonius_graph_traits_2<
+
   typedef Apollonius_graph_kernel_wrapper_2<_CK>  CK;
   typedef Apollonius_graph_kernel_wrapper_2<_EK>  EK;
   typedef Apollonius_graph_kernel_wrapper_2<_FK>  FK;
