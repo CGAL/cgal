@@ -103,6 +103,30 @@ public:
   typename Tds::Vertex_handle
   insert_degree_2(typename Tds::Face_handle f, int i)
   {
+    /*
+    // This method basically does the following transformation
+    // The remove_degree_2 method performs the same operation in the
+    // opposite direction
+    //
+    //
+    //                                                *
+    //                 i                             / \
+    //                 *                            /   \
+    //                / \                          /  f  \
+    //               /   \                        / _____ \
+    //              /  f  \                      / /  f1 \ \
+    //             /       \                     |/   v   \|
+    //  v0=ccw(i) *---------* v1=cw(i)  ===>  v0 *----*----* v1
+    //             \       /                     |\   f2  /|
+    //              \  g  /                      \ \_____/ /
+    //               \   /                        \       /
+    //                \ /                          \  g  /
+    //                 *                            \   /
+    //                 j                             \ /
+    //                                                *
+    //
+    */
+
     typedef typename Tds::Vertex_handle Vertex_handle;
     typedef typename Tds::Face_handle   Face_handle;
 
