@@ -244,10 +244,10 @@ public:
       CGAL_triangulation_precondition( &_list_of_temporary_free_cells !=
 	     _list_of_temporary_free_cells._next_cell );
 
-      link_cells(&_list_of_free_cells,
-	          _list_of_temporary_free_cells._next_cell);
       link_cells(_list_of_temporary_free_cells._previous_cell,
-	         &_list_of_free_cells);
+	         _list_of_free_cells._next_cell);
+      link_cells(&_list_of_free_cells,
+	         _list_of_temporary_free_cells._next_cell);
       link_cells(&_list_of_temporary_free_cells,
 	         &_list_of_temporary_free_cells);
   }

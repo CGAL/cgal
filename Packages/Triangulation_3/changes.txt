@@ -1,5 +1,6 @@
 Version 1.52 (?? May 01)
 - Regular works again.
+- Fix memleak in TDS.
 
 Version 1.51 (18 May 01)
 - remove
