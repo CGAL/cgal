@@ -1,13 +1,8 @@
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
-//#include <CGAL/Polygon_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/sweep_to_construct_planar_map_2.h>
-#include <CGAL/IO/Pm_Window_stream.h>
-
-#include <CGAL/leda_rational.h>
-
 #include <CGAL/Bops/Bops_traits.h>
 #include <CGAL/Bops_polygon_2.h>
 
@@ -15,18 +10,17 @@
 #include <vector>
 #include <list>
 
-#include <CGAL/IO/cgal_window.h>  //used for visualization.
+// uncomment if LEDA is installed.
+//#include <CGAL/IO/cgal_window.h>  //used for visualization.
+//#include <CGAL/IO/Pm_Window_stream.h>
 
-
-//typedef CGAL::Quotient<int>         NT;
-typedef leda_rational               NT;
+typedef CGAL::Quotient<int>         NT;
 typedef CGAL::Cartesian<NT>         K;
 typedef K::Point_2                  Point_2;
 typedef CGAL::Bops_traits_2<K>      BopsTraits;
 typedef BopsTraits::Polygon_2       Polygon_2;
 typedef Polygon_2::Segment_2        Segment_2;
 typedef CGAL::Arr_segment_exact_traits<K>  Traits;
-
 
 using std::cin; 
 using std::cout; 
@@ -39,7 +33,7 @@ void read_polygon(const char* filename, Polygon_2& polygon)
 
   file >> n;
   
-  double    x, y;
+  int    x, y;
   while (n--) {
     file >> x >> y;
     polygon.push_back(Point_2(x,y));
@@ -50,15 +44,15 @@ void read_polygon(const char* filename, Polygon_2& polygon)
 
 int  main(int argc, char* argv[])
 {
-  if (argc != 3) {
-    std::cout << "usage: Segment_sweep_ovl_from_file filename\n";
+  if (argc != 2) {
+    cout << "usage: Segment_sweep_ovl_from_file filename"<<endl;
     exit(1);
   }
 
   Polygon_2  poly1, poly2;
   
   read_polygon(argv[1],poly1);
-  read_polygon(argv[2],poly2);
+  read_polygon(argv[1],poly2);
   
   Traits traits;
   BopsTraits bops_traits;
@@ -77,5 +71,17 @@ int  main(int argc, char* argv[])
        iter != polygons.end(); ++iter)
     cout << *iter;
   
+  cout<<endl;
+  
  return 0;
 }
+
+
+
+
+
+
+
+
+
+
