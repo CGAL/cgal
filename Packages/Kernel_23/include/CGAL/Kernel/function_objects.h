@@ -13,7 +13,7 @@
 // file          : include/CGAL/Kernel/function_objects.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Stefan Schirra <Stefan.Schirra@@mpi-sb.mpg.de>
+// author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================
@@ -1086,6 +1086,19 @@ class Compare_angle_with_x_axis
     operator()(const T& p, const T& q) const
     { return compare_angle_with_x_axis(p,q); }
 };
+
+class Compare_slope
+{
+  public:
+    typedef Comparison_result      result_type;
+    typedef Arity_tag< 2 >         Arity;
+
+    template <class T>
+    Comparison_result
+    operator()(const T& l1, const T& l2) const
+    { return compare_slopes(l1,l2); }
+};
+
 
 template <class Plane, class Point>
 class Less_signed_distance_to_plane

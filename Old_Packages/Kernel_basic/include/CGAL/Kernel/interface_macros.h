@@ -239,6 +239,9 @@ CGAL_Kernel_pred(CGALi::Compare_x_at_y,
 CGAL_Kernel_pred(CGALi::Compare_distance<Point_2>,
 	         Compare_distance_2,
 		 compare_distance_2_object)
+CGAL_Kernel_pred(CGALi::Compare_slope,
+	         Compare_slope_2,
+		 compare_slope_2_object)
 CGAL_Kernel_pred(CGAL ::p_Less_dist_to_point<Point_2>,
                  Less_distance_to_point_2,
                  less_distance_to_point_2_object)

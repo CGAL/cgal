@@ -18,7 +18,7 @@
 // author(s)     : Sylvain Pion
 //                 Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_PREDICATES_SIGN_OF_DETERMINANT_H

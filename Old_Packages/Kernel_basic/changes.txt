@@ -1,3 +1,6 @@
+3.70   (5 December 2001)
+- added CompareSlopes_2 function object
+
 3.69   (5 December 2001)
 - Add functional_base.h from STL extensions.
 
