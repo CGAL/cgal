@@ -1,10 +1,10 @@
 // file: examples/Nef_3/simple.C
 
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
-typedef CGAL::Cartesian<CGAL::Gmpq>  Kernel;
+typedef CGAL::Homogeneous<CGAL::Gmpz>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 
 int main() {

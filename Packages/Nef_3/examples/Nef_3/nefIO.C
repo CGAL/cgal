@@ -5,6 +5,7 @@
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
+#include <fstream>
 
 typedef CGAL::Gmpz  NT;
 typedef CGAL::Simple_homogeneous<NT>  SK;
@@ -19,9 +20,9 @@ int main() {
   std::cin >> E;
 
   if(E.is_bounded()) {
-    ofstream out("temp.nef3");
+    std::ofstream out("temp.nef3");
     out << E;
-    ifstream in("temp.nef3");
+    std::ifstream in("temp.nef3");
     in >> S;
   }
 }

@@ -19,7 +19,7 @@ int main() {
   std::cin >> N;
   
   Vertex_const_iterator v;
-  for(v = vertices_begin(); v != vertices_end(); v++) {
+  for(v = N.vertices_begin(); v != N.vertices_end(); ++v) {
     Point_3 p(v->point());
     if(p.hx().degree() > 0 || p.hy().degree() > 0 || p.hz().degree() > 0)
       std::cout << "extended vertex at " << p << std::endl;
@@ -27,7 +27,7 @@ int main() {
       std::cout << "standard vertex at " << p << std::endl;
 
     if(p == Point_3(RT(0,1), RT(0,1), RT(0,1)))
-       std::cout << "  found the (right,back,top) vertex of the infimaximal box"
+       std::cout << "  found vertex (right,back,top) of the infimaximal box"
                  << std::endl;
   }
 

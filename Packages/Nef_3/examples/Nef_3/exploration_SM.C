@@ -28,7 +28,7 @@ int main() {
   for(sf = S.sfaces_begin(); sf != S.sfaces_end(); sf++) {
     SFace_cycle_const_iterator it;
     std::cout << "the sface cycles of sface " << i++ << " start with an\n";
-    for(it = sf.sface_cycles_begin(); it != sface_cycles_end(); it++) {
+    for(it = sf->sface_cycles_begin(); it != sf->sface_cycles_end(); it++) {
       if (it.is_svertex())
         std::cout << "  svertex at position " 
                   << SVertex_const_handle(it)->point() << std::endl;

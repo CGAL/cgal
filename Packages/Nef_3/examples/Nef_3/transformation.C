@@ -3,6 +3,7 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 typedef CGAL::Extended_homogeneous_3<CGAL::Gmpz>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
@@ -15,7 +16,7 @@ int main() {
   Nef_polyhedron N(Plane_3(0,1,0,0));
   Aff_transformation_3 transl(CGAL::TRANSLATION, Vector_3(5, 7, 9));
   Aff_transformation_3 rotx90(1,0,0,
-			      0,0,1,
+			      0,0,-1,
 			      0,1,0,
 			      1); 
   Aff_transformation_3 scale(3,0,0,
