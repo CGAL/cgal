@@ -319,12 +319,13 @@ public:
     }
    template <class OutputItFaces, class OutputItBoundaryEdges, 
      class OutputItHiddenVertices> 
-  Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
-  get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point  &p, 
-						 OutputItFaces fit, 
-						 OutputItBoundaryEdges eit,
-						 OutputItHiddenVertices vit,		
-						 Face_handle start = Face_handle(NULL)) const
+   Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
+   get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point  &p, 
+						  OutputItFaces fit, 
+						  OutputItBoundaryEdges eit,
+						  OutputItHiddenVertices vit,
+						  Face_handle start = 
+						  Face_handle(NULL)) const
     {
       CGAL_triangulation_precondition( dimension() == 2);
       int li;
@@ -332,17 +333,19 @@ public:
       Face_handle fh = locate(p,lt,li, start);
       switch(lt) {
       case OUTSIDE_AFFINE_HULL:
-      case VERTEX:
 	return make_triple(fit, eit, vit);
+      case VERTEX:
       case FACE:
       case EDGE:
       case OUTSIDE_CONVEX_HULL:
 	//test whether p is not in conflict 
-	// with the first face
+	// with the first face: 
+	// this includes the cases that p is located 
+	// on a vertex and either equal or no conflict
 	if (!test_conflict(p,fh))
 	  return make_triple(fit, eit, vit);
 	
-	// region includes all faces so far treated
+	// region includes all faces in conflict so far detected
 	// stack includes the faces in the region whose neighbors
 	// have not yet been looked at
 	std::set<Face_handle> region;
@@ -350,9 +353,11 @@ public:
 	
 	//collection of all boundary_vertices:
 	std::set< Vertex_handle> boundary_vertices;
+	//collection of potential_intern_vertices = vertices incident
+	// to an edge incident to two faces in conflict and met 
+	// twice during the "walk":
 	std::set< Vertex_handle> potential_intern_vertices;
 	
-
 	*fit++ = fh; //put fh in OutputItFaces
 	region.insert(fh);
 	st.push(Edge(fh,2));
@@ -391,7 +396,6 @@ public:
 	}
 	if(!potential_intern_vertices.empty()){
 	  //determine the hidden vertices:
-	  //set containing the boundary vertices
 	  std::set_difference (potential_intern_vertices.begin(), 
 			  potential_intern_vertices.end(),
 			  boundary_vertices.begin(),
@@ -423,7 +427,8 @@ public:
   get_conflicts_and_hidden_vertices(const Weighted_point  &p, 
 				    OutputItFaces fit, 
 				    OutputItHiddenVertices vit,
-				    Face_handle start= Face_handle(NULL)) const
+				    Face_handle start = 
+				    Face_handle(NULL)) const
     {
       Triple<OutputItFaces, Emptyset_iterator,OutputItHiddenVertices> 
 	pp = 
@@ -440,7 +445,8 @@ public:
   get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point  &p, 
 						OutputItBoundaryEdges eit, 
 						OutputItHiddenVertices vit,
-						Face_handle start= Face_handle(NULL)) const
+						Face_handle start = 
+						Face_handle(NULL)) const
     {
       Triple<Emptyset_iterator,OutputItBoundaryEdges,
 	OutputItHiddenVertices> 
