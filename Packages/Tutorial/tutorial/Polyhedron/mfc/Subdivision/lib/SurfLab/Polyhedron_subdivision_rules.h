@@ -288,23 +288,23 @@ public:
 
 public:
   void point_rule(Halfedge_handle edge, Point& pt) {
-    Halfedge_around_facet_circulator cir = edge->facet()->facet_begin();
+    Halfedge_around_facet_circulator cir = he->facet()->facet_begin();
 
     int n =  CGAL::circulator_size(cir); 
 
     Vector cv(0,0,0), t;
     if (n == 4) {
-      cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*9;
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN);
-      cv = cv + ((++cir)->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*9;
+      cv = cv + (he->next()->vertex()->point()-CGAL::ORIGIN)*3;
+      cv = cv + (he->next()->next()->vertex()->point()-CGAL::ORIGIN);
+      cv = cv + (he->prev()->vertex()->point()-CGAL::ORIGIN)*3;
       cv = cv/16;
     } else {
       double a;
-      for (int k = 0; k < n; ++k, ++cir) {
+      for (int k = 0; k < n; ++k, he = he->next()) {
 	if (k == 0) a = ((double)5/n) + 1;
 	else a = (3+2*std::cos(2*k*3.141593/n))/n;
-	cv = cv + (cir->vertex()->point()-CGAL::ORIGIN)*a;
+	cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
       }
       cv = cv/4;
     }
