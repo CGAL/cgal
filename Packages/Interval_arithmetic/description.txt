@@ -1,1 +1,2 @@
 Interval arithmetic as a number type for CGAL.
+CGAL_Filtering<CT,ET> as a general filtering scheme for robust predicates.
