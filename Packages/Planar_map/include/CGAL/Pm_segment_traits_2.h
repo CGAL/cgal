@@ -75,6 +75,7 @@ protected:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
+  typedef typename Kernel::Equal_2              Equal_2;
     
   typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve_2>
                                                 Counterclockwise_in_between_2;
@@ -279,7 +280,11 @@ public:
   /*! \todo replace indirect use curve_is_same() with equal_2()
    */
   bool curve_is_same(const X_curve_2 & cv1,const X_curve_2 & cv2) const
-  { return equal_2_object()(cv1, cv2); }
+  {
+    Equal_2 equal = equal_2_object();
+    const X_curve_2 & ocv1 = construct_opposite_segment_2_object()(cv1);
+    return equal(cv1, cv2) || equal(ocv1, cv2);
+  }
 
   /*! \todo replace indirect use point_is_same() with equal_2()
    */
