@@ -11,7 +11,7 @@
 
 #include <CGAL/IO/Pm_iostream.h>
 #include <CGAL/IO/write_pm.h>
-#include <iostream.h>
+#include <iostream>
 
 //#ifdef CGAL_USE_LEDA
 //#include <CGAL/IO/Pm_Postscript_file_stream.h>
