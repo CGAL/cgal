@@ -1,6 +1,9 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.21 (6 Aug 2001)
+     - Susan moved missing .gif files into Polyhedron_ref directory
+
 3.20 (31 Jul 2001)
      - Susan moved Polyhedron_ref directory up one level
 
