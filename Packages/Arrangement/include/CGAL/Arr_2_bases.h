@@ -34,6 +34,8 @@ public:
 
   Arr_2_vertex_base() {}
 
+  virtual ~Arr_2_vertex_base() {}
+  
   void*       halfedge()               {return hdg;}
   const void* halfedge() const         {return hdg;}
   void        set_halfedge( void* h)   { hdg = h;}
@@ -45,6 +47,11 @@ public:
     pt=p;
   }
 
+  // assign function for non-connectivity data
+  virtual void assign(const Arr_2_vertex_base<Pt> &v)
+  {
+    pt = v.pt;
+  }
 };
 
 template <class Base_node>
@@ -53,7 +60,9 @@ public:
   typedef typename Base_node::Curve Curve;
 
   Arr_2_halfedge_base() : bn(0) {}
-
+  
+  virtual ~Arr_2_halfedge_base() {}
+  
   void*       opposite()       { return opp;}
   const void* opposite() const { return opp;}
 
@@ -103,6 +112,12 @@ public:
   const Base_node* edge_node() const {return bn;} 
   void set_edge_node(Base_node* b) {bn=b;}
 
+  // assign function for non-connectivity data
+  virtual void assign(const Arr_2_halfedge_base<Base_node> &e)
+  {
+    //bn = new Base_node(*e.bn);
+  }
+
 protected:
 
   void* opp;
@@ -128,7 +143,9 @@ public:
 
 
   Arr_2_face_base() : holes() {};
-
+  
+  virtual ~Arr_2_face_base() {}
+  
   void* halfedge() { return hdg;}
   const void* halfedge() const { return hdg;}
 
@@ -163,6 +180,11 @@ public:
   //this is not documented but needed for a private project
   Holes_container::size_type number_of_holes() const { return holes.size();}
 
+  // assign function for non-connectivity data
+  virtual void assign(const  Arr_2_face_base &f)
+  {
+  }
+
 protected:
   void* hdg;
   Holes_container holes ;
@@ -182,6 +204,12 @@ public:
   const Curve& curve() const {return cv;}
   void set_curve(const Curve& c) {cv=c;}
 
+  // assign function for non-connectivity data
+  virtual void assign(const Arr_base_node<Curve> &bn)
+  {
+    cv = bn.cv;
+  }
+
 protected: 
   Curve cv;
 };
@@ -189,6 +217,7 @@ protected:
 CGAL_END_NAMESPACE
 
 #endif
+
 
 
 
