@@ -1,3 +1,6 @@
+1.40 (3 June 2003)
+- Fix doc bugs.
+
 1.39 (2 June 2003)
 - Fix test-suite warnings.
 
