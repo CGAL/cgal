@@ -1,3 +1,6 @@
+version 1.7 [sp]
+- SunPro CC and GCC 3.x issues.
+
 version 1.6 [af]
 - added typename
 -moved body of get_left_bottom_right_top() in the class for VC++6

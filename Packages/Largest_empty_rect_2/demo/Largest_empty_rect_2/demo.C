@@ -69,7 +69,7 @@ void show_biggest_rec(Largest_empty_rect &empty_rectangle,
     << ")\n   top-right point   - (" << b.max().x() << ":"
     << b.max().y() << ")\n";
   std::cout << "Its size is "
-    << abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y()))
+    << CGAL_NTS abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y()))
     << std::endl;
 }
 

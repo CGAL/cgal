@@ -48,9 +48,13 @@ private:
   Traits _gt;
   class Less_yx;
   class Less_xy;
+  class Point_data;
 
-  // We make class Point_data public for Sun CC
-public:
+  // These friends are required by SUNPRO CC.
+  friend class Point_data;
+  friend class Less_xy;
+  friend class Less_yx;
+
   class Point_data {
   public:
 
