@@ -20,6 +20,7 @@
 #endif
 #else
 #if defined(USE_MY_KERNEL)
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/Arr_leda_segment_traits_2.h>
 #else
 #include <CGAL/Cartesian.h>
@@ -82,7 +83,8 @@ typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #else
 
 #if defined(USE_MY_KERNEL)
-typedef CGAL::Arr_leda_segment_traits_2                 Traits;
+typedef CGAL::leda_rat_kernel_traits                    Kernel;
+typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 #define PM_TYPE "My Leda Kernel"
 #else
 typedef CGAL::Cartesian<NT>                             Kernel;
