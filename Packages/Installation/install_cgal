@@ -6290,8 +6290,7 @@ $3${_EXTRA_NEWLINE}" $1 > $1.TEMP' ; then
 prepare_lib_makefiles()
 {
     for FILE in ${CGAL_SRC_DIR}/makefile_lib \
-	${CGAL_SRC_DIR}/makefile_sharedlib \
-	${CGAL_EXAMPLE_DIR}/makefile
+	${CGAL_SRC_DIR}/makefile_sharedlib 
     do
 	replace_line ${FILE} CGAL_MAKEFILE \
 	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
@@ -7037,6 +7036,9 @@ while [ ${#} -gt 0 ]; do
 	-core*|-CORE*|--core*|--CORE*)
 	    _ANY_OPT='y'
 	    CORE_SUPPORT='_CORE'
+	    if [ -z "${CORE_INSTALLATION}" ]; then
+		CORE_INSTALLATION='c'
+	    fi
 	    write_buffer "${_LEFTSPACE}Enable CORE support.\n"
 	    ;;
 	-cln*|-CLN*|--cln*|--CLN*)
