@@ -32,15 +32,13 @@
    %intersection of 2 curves.
 
 \ccTypes
-  \ccNestedType{Point_2}{same as \ccc{PlanarMapTraits_2::Point_2}.}
+  \ccNestedType{Curve_2}{A type that holds a general curve in the plane. The
+  sweep-line operation operates on curves of this type.}
   \ccNestedType{X_curve_2}{same as \ccc{PlanarMapTraits_2::X_curve_2}.}
-  \ccNestedType{Curve_2}{
-   curve type, this type should be {\it syntactically} identical to
-   the \ccc{X_curve_2} type (i.e., it should {\em be} the same type).
-   However, {\it semantically} it differs from the \ccc{X_curve_2} in
-   that it is not necessarily $x$-monotone. In the following methods
-   when we require an \ccc{X_curve_2} as a parameter, we assume that the
-   curve is $x$-monotone.}
+  \ccNestedType{Point_2}{same as \ccc{PlanarMapTraits_2::Point_2}.}
+
+  The following methods that have a parameter of type \ccc{X_curve_2} have the
+  implicit precondition that requires the parameter to be $x$-monotone.
 
 \ccOperations
 
@@ -63,21 +61,11 @@ axes). E.g., the point $(2,2)$ will be reflected as $(-2,-2)$. }
 that is the reflection of \ccc{cv} about the origin 
 (both the $x$ and $y$ axes). E.g., the line segment $((2,2),(3,3))$ will be reflected as $((-2,-2),(-3,-3))$. }
 
-\ccMethod{void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2,
-                   const Point_2& split_pt);}{splits $cv$ at \ccc{split_pt}
-and assigns the resulting two curves to \ccc{c1} and \ccc{c2}.
-\ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}
-}
-
-\ccMethod{bool do_intersect_to_right(const X_curve_2& c1, const X_curve_2& c2,
-                             const Point_2& pt);}{returns $true$ if \ccc{c1}
-and \ccc{c2} intersect at a point that is lexicographically larger than 
-\ccc{pt}
-% to the right of the point \ccc{pt}.
-% Intersection to the right of \ccc{pt} is defined as
-% an intersection which is lexicographically strictly to the right of \ccc{pt}
-(i.e., an intersection above or to the right of
-\ccc{pt} but {\em not} on \ccc{pt}).}
+  \ccMethod{void curve_split(const X_curve_2& cv, X_curve_2& c1, X_curve_2& c2,
+                             const Point_2& split_pt);}
+  {splits $cv$ at \ccc{split_pt} into two curves, and assigns them to
+  \ccc{c1} and \ccc{c2} respectively.
+  \ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}}
 
 \ccMethod{bool nearest_intersection_to_right(const X_curve_2& c1,
                                       const X_curve_2& c2,
@@ -97,7 +85,6 @@ if the overlapping subcurve contains \ccc{pt} either \ccc{p1} or \ccc{p2} will
 be equal to \ccc{pt}, this is the only case in which this can happen.
 If \ccc{c1} and \ccc{c2} do not intersect to the right of \ccc{pt}
 the function returns \ccc{false}, otherwise it returns true.
-%\ccPrecond{\ccc{do_intersect_to_right(c1,c2,pt) == true}}
 }
 
 %The intersection function is defined in such a way to enable dealing with
