@@ -467,8 +467,10 @@ point iterator.
 
 @macro <Poly_dist_d types> += @begin
 
+    typedef typename Index_vector::const_iterator IVCI;
+
     typedef  CGAL::Join_random_access_iterator_1<
-                 typename Index_vector::const_iterator, Point_by_index >
+                 IVCI, Point_by_index >
                                         Support_point_iterator;
 @end
 
