@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-65 $
-// release_date  : $CGAL_Date: 2002/03/19 $
+// release       : 
+// release_date  : 2002, March 20
 //
 // file          : include/CGAL/Optimisation/Access_coordinates_begin_d.h
-// package       : Optimisation_basic (3.8.11)
+// package       : Optimisation_basic (3.8.12)
 // maintainer    : Sven Schönherr <sven@inf.ethz.ch>
 //
 // revision      : $Revision$
@@ -60,8 +60,27 @@ class Access_coordinates_begin_d {
     Access_coordinates_begin_d( ) { }
 
     // operations
+private:
     Coordinate_iterator
-    operator() ( const Point& p) const { return p.begin(); }
+    access( const Point& p, Cartesian_tag) const 
+    { return p.cartesian_begin(); }
+  
+    Coordinate_iterator
+    access( const Point& p, Homogeneous_tag) const 
+    { return p.homogeneous_begin(); }
+  
+  
+public:
+    Coordinate_iterator
+    operator() ( const Point& p) const { 
+      typename R::Rep_tag tag;
+#if defined(__sun) && defined(__SUNPRO_CC)
+    // to avoid a warning "tag has not yet been assigned a value"
+    typedef typename R::Rep_tag Rep_tag;
+    tag = Rep_tag();
+#endif // SUNPRO
+      return access(p, tag);
+    }
 };
 
 CGAL_END_NAMESPACE
