@@ -338,7 +338,8 @@ public:
   }
         
   CGAL_Triangulation_edge_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr)
-    : _ib( &(tr->_tds), 1), _tr(tr)
+    : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
+    // _inf is initialized but should never be used
   { }
        
   CGAL_Triangulation_edge_iterator_3(const Edge_iterator & ei)
@@ -357,7 +358,14 @@ public:
   bool
   operator==(const Edge_iterator & ei) const
   {
-    return ( _ib == ei._ib);
+    if ( _tr != ei._tr ) 
+      return false;
+
+    if ( ( _ib == _tr->_tds.edges_end() ) 
+	 || ( ei._ib == _tr->_tds.edges_end() ) ) 
+      return ( _ib == ei._ib );
+
+    return ( ( _ib == ei._ib ) && ( _inf == ei._inf ) );
   }
 
   bool
@@ -458,6 +466,7 @@ public:
         
   CGAL_Triangulation_facet_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr)
     : _ib( &(tr->_tds), 1), _tr(tr), _inf(true)
+  // _inf is initialized but should never be used
   { }
        
   CGAL_Triangulation_facet_iterator_3(const Facet_iterator & fi)
@@ -476,7 +485,14 @@ public:
   bool
   operator==(const Facet_iterator & fi) const
   {
-    return ( _ib == fi._ib);
+    if ( _tr != fi._tr ) 
+      return false;
+
+    if ( ( _ib == _tr->_tds.facets_end() ) 
+	 || ( fi._ib == _tr->_tds.facets_end() ) ) 
+      return ( _ib == fi._ib );
+
+    return ( ( _ib == fi._ib ) && ( _inf == fi._inf ) );
   }
 
   bool
@@ -509,7 +525,7 @@ public:
     else{
       do {
 	--_ib;
-      } while ( ( _ib != _tr->_tds.edges_end() )
+      } while ( ( _ib != _tr->_tds.facets_end() )
 		&& _tr->is_infinite(make_pair(Cell_handle( (Cell *) (*_ib).first), (*_ib).second )) );
     }
     return *this;   

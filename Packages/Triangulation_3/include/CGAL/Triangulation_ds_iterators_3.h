@@ -554,6 +554,9 @@ public:
 	    notfound = false;
 	  }
 	}
+	else {
+	  b=0; e=1;
+	}
       } while ( (pos != _tds->past_end_cell()) &&
 		notfound );
       break;
@@ -604,12 +607,20 @@ public:
 	    e--;
 	  }
 	}
-	Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
-	while ( &(*ccir) > pos ) {
-	  --ccir;
+	if (pos != _tds->past_end_cell()) {
+	  Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+// 	while ( &(*ccir) > pos ) {
+// 	  --ccir;
+// 	}
+	  do {
+	    ++ccir;
+	  } while ( &(*ccir) > pos );
+	  if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
+	    notfound = false;
+	  }
 	}
-	if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
-	  notfound = false;
+	else {
+	  b=0; e=1;
 	}
       } while ( (pos != _tds->past_end_cell()) &&
 		notfound );
