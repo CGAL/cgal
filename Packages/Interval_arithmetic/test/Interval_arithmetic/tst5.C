@@ -109,7 +109,7 @@ int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
-  // a = CGAL::abs(a);
+  // a = CGAL::abs(a); // Breaks VC++... why ???
 #ifndef CGAL_CFG_MATCHING_BUG_2
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
