@@ -10,7 +10,7 @@ Version 6.0 (?? ????? 00)
 - Call identical() in all operator==() in order to be consistent.
 - Sphere_3 is back to life.
 - Ctors don't use "new (static_cast<void *> (ptr)) ...", but proper
-  construction via the Handle_for.
+  construction via the Handle_for.  Got rid of the various new_rep().
 - Various cleanups.
 
 --- CGAL 2.2 is out ---

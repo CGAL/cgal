@@ -6,18 +6,22 @@ Stuff to look at, as time permits:
   - It must have the same interface than Handle_for<>
   - Must use the allocator, see Stefan's mail.
   - Aff_tranformations can't use Handle_for<> yet.
+  - Replace ptr by ptr() ?
+  - Provide dummy_Handle_for<>.
 
 *** Before submitting : check the test-suite on M$, especially for
   CGAL_TYPENAME_BUG stuff...
 
-- What's this new_rep() ?
+- LineC3 stores a Twotuple<Point_3>, but the second point is in fact a vector,
+  the direction of the line.  It's dirty, and should be changed to match
+  LineH3 which is cleaner.
 - Finish merging .C files in corresponding .h files.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable on
   the command line, and not in config.h...
-- Merging Cartesian and SimpleCartesian : mail to Stefan [+ the list ?]
+- Merging Cartesian and SimpleCartesian :
   Currently, there are 10000 lines of code in SimpleCartesian kernel, mostly
   copy-pasted and adapted from the Cartesian kernel.  This is evil in itself
   from the maintainance point of view.  I think only the low level (FT-based)
@@ -50,6 +54,7 @@ Stuff to look at, as time permits:
    PointC2 : public R::Handled_Point_2
    And similarly for SimpleCartesian.
    Try it...
+   This will allow to pass an Allocator parameter via the kernel traits.
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
@@ -133,6 +138,7 @@ Stuff to look at, as time permits:
   Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
 - Status of the scripts create_symlinks and remove_symlinks ?
 - Status of the test/ directories in the old C2, C3, Cartesian_basic ?
+  What's in it ?  Should it be kept or thrown ?
 - include/CGAL/smallest_radiusC2.h should use the kernel code.
   Check if it's ok (correct and as efficient), and tell Frank to do so.
   The name of this file doesn't have anything to do with what is inside anyway.

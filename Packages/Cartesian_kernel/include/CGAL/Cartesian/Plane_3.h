@@ -115,37 +115,7 @@ public:
   bool         has_on(const Point_3 &p) const;
 
   bool         is_degenerate() const;
-
-private:
-  void              new_rep(const Point_3 &p,
-                            const Point_3 &q,
-                            const Point_3 &r);
-  void              new_rep(const FT &a, const FT &b,
-                            const FT &c, const FT &d);
 };
-
-template < class R >
-inline
-void
-PlaneC3<R CGAL_CTAG>::
-new_rep(const typename PlaneC3<R CGAL_CTAG>::FT &a,
-        const typename PlaneC3<R CGAL_CTAG>::FT &b,
-        const typename PlaneC3<R CGAL_CTAG>::FT &c,
-        const typename PlaneC3<R CGAL_CTAG>::FT &d)
-{
-  new ( static_cast< void*>(ptr)) Fourtuple<FT>(a, b, c, d);
-}
-
-template < class R >
-inline
-void
-PlaneC3<R CGAL_CTAG>::new_rep(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
-                              const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
-                              const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
-{
-  PlaneC3<R CGAL_CTAG> h = plane_from_points(p,q,r);
-  new_rep(h.a(), h.b(), h.c(), h.d());
-}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -160,71 +130,54 @@ PlaneC3<R CGAL_CTAG>::PlaneC3(const PlaneC3<R CGAL_CTAG> &p)
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
+PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
+        const typename PlaneC3<R CGAL_CTAG>::FT &b,
+        const typename PlaneC3<R CGAL_CTAG>::FT &c,
+        const typename PlaneC3<R CGAL_CTAG>::FT &d)
+  : Handle_for<Fourtuple<FT> >( Fourtuple<FT>(a, b, c, d) ) {}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &q,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &r)
-{
-  new_rep(p, q, r);
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_points(p, q, r) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Direction_3 &d)
-{
-  PlaneC3<R CGAL_CTAG> h = plane_from_point_direction(p,d);
-  new_rep(h.a(), h.b(), h.c(), h.d());
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_point_direction(p, d) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p,
         const typename PlaneC3<R CGAL_CTAG>::Vector_3 &v)
-{
-  FT a, b, c, d;
-  plane_from_point_directionC3(p.x(),p.y(),p.z(),v.x(),v.y(),v.z(),a,b,c,d);
-  new_rep(a, b, c, d);
-}
-
-template < class R >
-CGAL_KERNEL_CTOR_INLINE
-PlaneC3<R CGAL_CTAG>::
-PlaneC3(const typename PlaneC3<R CGAL_CTAG>::FT &a,
-        const typename PlaneC3<R CGAL_CTAG>::FT &b,
-        const typename PlaneC3<R CGAL_CTAG>::FT &c,
-        const typename PlaneC3<R CGAL_CTAG>::FT &d)
-{
-  new_rep(a, b, c, d);
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_point_direction(p, v.direction()) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-{
-  new_rep(l.point(), l.point()+l.direction().to_vector(), p);
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_points( l.point(), l.point()+l.direction().to_vector(), p)) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Segment_3 &s,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-{
-  new_rep(s.start(), s.end(), p);
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_points( s.start(), s.end(), p) ) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
 PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Ray_3 &r,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
-{
-  new_rep(r.start(), r.second_point(), p);
-}
+  : Handle_for<Fourtuple<FT> >( plane_from_points( r.start(), r.second_point(), p) ) {}
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -234,7 +187,6 @@ PlaneC3<R CGAL_CTAG>::operator==(const PlaneC3<R CGAL_CTAG> &p) const
   if ( identical(p) ) return true;
   return has_on_boundary(p.point()) &&
          (orthogonal_direction() == p.orthogonal_direction());
-
 }
 
 template < class R >
