@@ -1,4 +1,6 @@
-2.1.20(03/02/03)  removed VC6 project files (cl version = 1200)
+2.1.22(10/02/03)  removed makefile.mak from examples and demos.
+
+2.1.21(03/02/03)  removed VC6 project files (cl version = 1200)
 
 2.1.19(26/07/02)  Fixed the cgallib.vcproj debug and release version
 
