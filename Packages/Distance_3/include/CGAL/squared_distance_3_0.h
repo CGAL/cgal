@@ -42,6 +42,7 @@ bool is_null(const typename CGAL_WRAP(K)::Vector_3 &v, const K&)
 }
 
 
+
 template <class K>
 typename K::RT
 wdot(const typename CGAL_WRAP(K)::Vector_3 &u,
@@ -51,21 +52,46 @@ wdot(const typename CGAL_WRAP(K)::Vector_3 &u,
     return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
+template <class K>
+typename K::RT
+wdot_tag(const typename CGAL_WRAP(K)::Point_3 &p,
+	 const typename CGAL_WRAP(K)::Point_3 &q,
+	 const typename CGAL_WRAP(K)::Point_3 &r, 
+	 const K&,
+	 const Cartesian_tag&)
+{
+  return  ( (p.x() - q.x()) * (r.x()- q.x())
+	    + (p.y()- q.y())* (r.y()- q.y())
+	    + (p.z()- q.z()) * (r.z() - q.z()) );
+}
 
 template <class K>
+typename K::RT
+wdot_tag(const typename CGAL_WRAP(K)::Point_3 &p,
+	 const typename CGAL_WRAP(K)::Point_3 &q,
+	 const typename CGAL_WRAP(K)::Point_3 &r, 
+	 const K&,
+	 const Homogeneous_tag&)
+{
+    return  ( (p.hx() * q.hw() - q.hx() * p.hw())
+	      * (r.hx() * q.hw() - q.hx() * r.hw())
+	      + (p.hy() * q.hw() - q.hy() * p.hw())
+	      * (r.hy() * q.hw() - q.hy() * r.hw())
+	      + (p.hz() * q.hw() - q.hz() * p.hw())
+	      * (r.hz() * q.hw() - q.hz() * r.hw()));
+}
+
+template <class K>
+inline
 typename K::RT
 wdot(const typename CGAL_WRAP(K)::Point_3 &p,
      const typename CGAL_WRAP(K)::Point_3 &q,
      const typename CGAL_WRAP(K)::Point_3 &r, 
      const K&)
-{
-    K* pR = 0;
-    return  (wmult(pR, p.hx(),q.hw()) - wmult(pR, q.hx(),p.hw()))
-          * (wmult(pR, r.hx(),q.hw()) - wmult(pR, q.hx(),r.hw()))
-        +   (wmult(pR, p.hy(),q.hw()) - wmult(pR, q.hy(),p.hw()))
-          * (wmult(pR, r.hy(),q.hw()) - wmult(pR, q.hy(),r.hw()))
-        +   (wmult(pR, p.hz(),q.hw()) - wmult(pR, q.hz(),p.hw()))
-          * (wmult(pR, r.hz(),q.hw()) - wmult(pR, q.hz(),r.hw()));
+{ 
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return wdot_tag(p, q, r, k, tag);
 }
 
 

@@ -60,7 +60,7 @@ squared_distance(
 {
   typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
-  Vector_3 diff = construct_vector(plane.point(), pt));
+  Vector_3 diff = construct_vector(plane.point(), pt);
   return squared_distance_to_plane(plane.orthogonal_vector(), diff, k);
 }
 
@@ -114,7 +114,7 @@ squared_distance(
     typedef typename K::FT FT;
     const Point_3 &start = ray.start();
     const Point_3 &planepoint = plane.point();
-    Vector_3 start_min_pp = const(planepoint, start);
+    Vector_3 start_min_pp = construct_vector(planepoint, start);
     Vector_3 end_min_pp = ray.direction().vector();
     const Vector_3 &normal = plane.orthogonal_vector();
     RT sdm_rs2pp = wdot(normal, start_min_pp, k);
