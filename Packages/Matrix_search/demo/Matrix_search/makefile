@@ -1,3 +1,4 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -15,14 +16,17 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           -g
+           $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
+LIBPATH = \
+          $(CGAL_WINDOW_LIBPATH)
+
 LDFLAGS = \
-           $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
@@ -34,26 +38,24 @@ all:            \
                 extremal_polygon_2_demo \
                 rectangular_p_center_2_demo 
 
-all_furthest_neighbors_2_demo: all_furthest_neighbors_2_demo.o
-	$(CGAL_CXX) -o all_furthest_neighbors_2_demo all_furthest_neighbors_2_demo.o $(LDFLAGS)
+all_furthest_neighbors_2_demo$(EXE_EXT): all_furthest_neighbors_2_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)all_furthest_neighbors_2_demo all_furthest_neighbors_2_demo$(OBJ_EXT) $(LDFLAGS)
 
-extremal_polygon_2_demo: extremal_polygon_2_demo.o
-	$(CGAL_CXX) -o extremal_polygon_2_demo extremal_polygon_2_demo.o $(LDFLAGS)
+extremal_polygon_2_demo$(EXE_EXT): extremal_polygon_2_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extremal_polygon_2_demo extremal_polygon_2_demo$(OBJ_EXT) $(LDFLAGS)
 
-rectangular_p_center_2_demo: rectangular_p_center_2_demo.o
-	$(CGAL_CXX) -o rectangular_p_center_2_demo rectangular_p_center_2_demo.o $(LDFLAGS)
+rectangular_p_center_2_demo$(EXE_EXT): rectangular_p_center_2_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)rectangular_p_center_2_demo rectangular_p_center_2_demo$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f *.o \
-                   all_furthest_neighbors_2_demo \
-                   extremal_polygon_2_demo \
-                   rectangular_p_center_2_demo \
-                   core
+clean: \
+                   all_furthest_neighbors_2_demo.clean \
+                   extremal_polygon_2_demo.clean \
+                   rectangular_p_center_2_demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
