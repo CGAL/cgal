@@ -21,7 +21,7 @@ all: lib
 	make -C test/Qt_widget
 
 lib:
-	make -C src/CGALQt -f makefile_Qt
+	make -C src/CGALQt
 
 # compile the doc_tex in a .dvi file.
 doc:
