@@ -13,6 +13,8 @@ public:
 
   void draw() {
     *widget << CGAL::BLUE;
+    *widget << CGAL::PointSize(3);
+    *widget << CGAL::LineWidth(3);
     svd.draw_primal(*widget);
   }
 
@@ -44,6 +46,8 @@ public:
 
   void draw(){
     *widget << CGAL::RED;
+    *widget << CGAL::PointSize(6);
+    *widget << CGAL::LineWidth(3);
     svd.draw_sites(*widget);
   }
 };
