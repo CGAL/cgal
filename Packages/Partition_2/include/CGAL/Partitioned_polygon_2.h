@@ -30,7 +30,13 @@
 #define CGAL_PARTITIONED_POLYGON_2_H
 
 #include <list>
+//  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
+//  (from stlport?)
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#include <vector>
+#else
 #include <CGAL/vector.h>
+#endif // MSVC6
 #include <CGAL/circulator.h>
 
 namespace CGAL {
@@ -99,14 +105,25 @@ class Partition_vertex;
 //   Traits::Point_2
 //   Traits::Leftturn_2
 //   Traits::Orientation_2
+//
+//  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
+//  (from stlport?)
 template <class Traits_>
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
+#else
 class Partitioned_polygon_2 : 
                             public CGALi::vector< Partition_vertex< Traits_ > >
+#endif // MSVC 6
 {
 public:
    typedef Traits_                                      Traits;
    typedef Partition_vertex<Traits>                     Vertex;
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+   typedef typename std::vector< Vertex >::iterator     Iterator;
+#else
    typedef typename CGALi::vector< Vertex >::iterator   Iterator;
+#endif
    typedef Circulator_from_iterator<Iterator>           Circulator;
    typedef typename Traits::Polygon_2                   Subpolygon_2;
    typedef typename Traits::Point_2                     Point_2;

@@ -29,19 +29,33 @@
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
+//  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
+//  (from stlport?)
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+#include <vector>
+#else
 #include <CGAL/vector.h>
+#endif // MSVC6
 #include <CGAL/Rotation_tree_node_2.h>
 #include <CGAL/functional.h>
 
 namespace CGAL {
 
 template <class Traits_>
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+class Rotation_tree_2 : public std::vector< Rotation_tree_node_2<Traits_> >
+#else
 class Rotation_tree_2 : public CGALi::vector< Rotation_tree_node_2<Traits_> >
+#endif // MSVC 6
 {
 public:
    typedef Traits_                                 Traits;
    typedef Rotation_tree_node_2<Traits>            Node;
+#if defined( _MSC_VER) && (_MSC_VER <= 1200)
+   typedef typename std::vector<Node>::iterator    Self_iterator;
+#else
    typedef typename CGALi::vector<Node>::iterator  Self_iterator;
+#endif // MSVC6
    typedef typename Traits::Point_2                Point_2;
 
 

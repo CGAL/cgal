@@ -1,3 +1,6 @@
+1.36 (3 May 2002)
+  - switch back to std::vector for MSVC6 (CGALi::vector doesn't work there...)
+
 1.35 (3 May 2002)
   - use CGALi::vector in Rotation_tree as well
 
