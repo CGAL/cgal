@@ -105,58 +105,9 @@ int main(int argc,char *argv[])
   std::cout << "\nthe output\n";
   print_out(s1);
 
-  // output for integer mode
-  s1.use_integer_mode(true);
-  std::cout << "\nthe output for integer grid\n";
-  print_out(s1);
-  s1.use_integer_mode(false);
-
-
-  std::cout << "\noutput after removing first element\n";
-  s1.remove(*(seg_list.begin()));
-  print_out(s1);
-
-  std::cout << "\noutput after inserting first element\n";
-  s1.insert(*(seg_list.begin()));
-  print_out(s1);
-
-  std::cout << "\ntesting clear\n";
-  s1.clear();
-  s1.insert(*(seg_list.begin()));
-  print_out(s1);
-
-  Snap_rounding_2 s2(prec,true,false,4);
-
-  std::cout << "\ndefault ctor + multiple insertion\n";
-  s2.insert(seg_list.begin(),seg_list.end());
-  print_out(s2);
-
   std::cout << "\ntesting sr\n";
   Snap_rounding_2 s3(seg_list.begin(),seg_list.end(),prec,false,false);
   print_out(s3);
-
-  std::cout << "\nchanging to isr\n";
-  s3.do_isr(true);
-  print_out(s3);
-
-  std::cout << "\nchanging number of kd-trees\n";
-  s3.set_number_of_kd_trees(2);
-  print_out(s3);
-
-  std::cout << "\ntesting cctor\n";
-  Snap_rounding_2 s4(s3);
-  print_out(s3);
-
-  std::cout << "\ntesting operator=\n";
-  Snap_rounding_2 s5(prec,true,false,4);
-  s5 = s3;
-  print_out(s5);
-
-  // testing changing of pixel size
-  std::cout << "\ntesting changing of pixel size\n";
-  Snap_rounding_2 s6(seg_list.begin(),seg_list.end(),prec,true,false,3);
-  s6.set_pixel_size(0.5);
-  print_out(s6);
 
   return(0);
 }
