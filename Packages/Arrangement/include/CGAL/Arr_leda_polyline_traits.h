@@ -33,6 +33,7 @@
 #include <LEDA/rat_point.h>
 
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 //the following is for a type check (creates compiler problems,not implemented)
 //#include <typeinfo>
@@ -44,6 +45,8 @@ template <class FT_, class Container  = std::vector<leda_rat_point > >
 class Arr_leda_polyline_traits : public Pm_segment_traits_leda_kernel_2<FT_>
 {
 public:
+  typedef Lazy_intersection_tag                         Intersection_category;
+
   typedef FT_                                           FT;
   typedef Arr_leda_polyline_traits<FT,Container>        Self;
 

@@ -22,6 +22,7 @@
 #define CGAL_PM_WITH_INTERSECTIONS_MISC_H
 
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,6 +34,8 @@ public:
   typedef  Planar_map_traits_wrap<I> Base;
   typedef  typename Base::X_curve_2  X_curve_2;
   typedef  typename Base::Point_2    Point_2;
+
+  typedef typename I::Intersection_category  Intersection_category;
   
   Planar_map_with_intersections_traits_wrap() : Base() {}
 
@@ -98,15 +101,32 @@ public:
     p2 = p;
   }
 
-#ifndef CGAL_PMWX_TRAITS_HAVE_INTERSECT_TO_LEFT
-
   // maps the curves to their mirror images over the y coordinate
   // and calls nearest_intersect_to_right (see there).
   bool nearest_intersection_to_left(const X_curve_2 & cv1,
                                     const X_curve_2 & cv2,
                                     const Point_2 & pt,
-                                    Point_2 & p1,
-                                    Point_2 & p2) const 
+                                    Point_2 & p1, Point_2 & p2) const 
+  {
+    return nearest_intersection_to_left_imp(cv1, cv2, pt, p1, p2,
+                                            Intersection_category());
+  }
+
+    
+  bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
+                                        const X_curve_2 & cv2,
+                                        const Point_2 & pt,
+                                        Point_2 & p1, Point_2 & p2,
+                                        Efficient_intersection_tag) const
+  {
+    return Base::nearest_intersection_to_left(cv1, cv2, pt, p1, p2);
+  }
+    
+  bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
+                                        const X_curve_2 & cv2,
+                                        const Point_2 & pt,
+                                        Point_2 & p1, Point_2 & p2,
+                                        Lazy_intersection_tag) const 
     {
       Point_2 rpt = point_reflect_in_x_and_y( pt);
       X_curve_2 rcv1 = curve_reflect_in_x_and_y( cv1);
@@ -127,14 +147,26 @@ public:
   bool do_intersect_to_left(const X_curve_2 & ca, const X_curve_2 & cb,
 			    const Point_2 & pt) const
   {
+    return do_intersect_to_left_imp(ca, cb, pt, Intersection_category());
+  }
+
+  bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
+                                const Point_2 & pt,
+                                Efficient_intersection_tag) const
+  {
+    return Base::do_intersect_to_left(ca, cb, pt);
+  }
+    
+  bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
+                                const Point_2 & pt,
+                                Lazy_intersection_tag) const
+  {
       Point_2 rpt = point_reflect_in_x_and_y( pt);
       X_curve_2 rca = curve_reflect_in_x_and_y( ca);
       X_curve_2 rcb = curve_reflect_in_x_and_y( cb);
 
       return do_intersect_to_right(rca, rcb, rpt);
   }
-
-#endif //CGAL_PMWX_TRAITS_HAVE_INTERSECT_TO_LEFT
 
 };
 

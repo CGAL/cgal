@@ -24,6 +24,7 @@
 #include <list>
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,6 +34,7 @@ template <class NT>
 class Circ_Curve {
 
 public:
+  typedef Lazy_intersection_tag                 Intersection_category;
   typedef Cartesian<NT>             Kernel;
   typedef typename Kernel::Point_2  Point_2;
   typedef typename Kernel::Circle_2 Circle_2;

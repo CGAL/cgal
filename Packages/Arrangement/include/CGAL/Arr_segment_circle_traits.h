@@ -25,6 +25,7 @@
 #include <list>
 
 #include <CGAL/Segment_circle_2.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,6 +37,7 @@ template <class _NT>
 class Arr_segment_circle_traits 
 {
  public:
+  typedef Lazy_intersection_tag     Intersection_category;
   
   typedef _NT                       NT;
 

@@ -37,6 +37,7 @@
 #include <CGAL/squared_distance_2.h>
 
 #include <CGAL/Pm_segment_traits_2.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,6 +46,8 @@ template <class Kernel_,
 class Arr_polyline_traits : public Kernel_
 {
 public:
+  typedef Lazy_intersection_tag         Intersection_category;
+    
   typedef Kernel_                       Kernel;
   typedef Arr_polyline_traits<Kernel>   Self;
 

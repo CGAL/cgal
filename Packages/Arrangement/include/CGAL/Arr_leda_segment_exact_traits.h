@@ -29,6 +29,7 @@
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,6 +44,8 @@ public:
   Arr_leda_segment_exact_traits() {}
 
 public:
+  typedef Lazy_intersection_tag                 Intersection_category;
+    
   typedef Pm_segment_traits_leda_kernel_2<FT_>  Kernel;
   typedef Pm_segment_traits_2<Kernel>           Base;
   

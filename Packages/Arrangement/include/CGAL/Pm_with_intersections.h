@@ -34,7 +34,6 @@
 #define CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 #endif
 
-
 CGAL_BEGIN_NAMESPACE
 
 template<class Planar_map_>
