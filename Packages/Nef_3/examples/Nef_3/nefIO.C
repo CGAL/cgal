@@ -2,14 +2,14 @@
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Extended_homogeneous_3.h>
+#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <fstream>
 
 typedef CGAL::Gmpz  NT;
 typedef CGAL::Simple_homogeneous<NT>  SK;
-typedef CGAL::Extended_homogeneous_3<NT>  EK;
+typedef CGAL::Extended_homogeneous<NT>  EK;
 typedef CGAL::Nef_polyhedron_3<SK>  Nef_polyhedron_S;
 typedef CGAL::Nef_polyhedron_3<EK>  Nef_polyhedron_E;
 
