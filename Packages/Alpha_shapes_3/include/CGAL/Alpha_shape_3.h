@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -175,8 +176,11 @@ public:  // should be private ? --> operator should be wrappers
   Coord_type Infinity;
   Coord_type UNDEFINED;
 
-  std::list< Vertex_handle > Alpha_shape_vertices_list;
-  std::list< Facet > Alpha_shape_facets_list;
+  mutable std::list< Vertex_handle > Alpha_shape_vertices_list;
+  mutable std::list< Facet > Alpha_shape_facets_list;
+
+  mutable bool use_vertex_cache;
+  mutable bool use_facet_cache;
 
 
   //------------------------- CONSTRUCTORS ------------------------------
@@ -185,7 +189,8 @@ public:  // should be private ? --> operator should be wrappers
   // alpha-value `alpha'. Precondition: `alpha' >= 0.
   Alpha_shape_3(Coord_type alpha = 0, 
 		Mode m = REGULARIZED)
-    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2)
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2), 
+    use_vertex_cache(false), use_facet_cache(false)
     {}
  
   // Introduces an alpha-shape `A' for a positive alpha-value
@@ -197,7 +202,8 @@ public:  // should be private ? --> operator should be wrappers
 		const InputIterator& last,  
 		const Coord_type& alpha = 0,
 		Mode m = REGULARIZED)
-    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2)
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2), 
+    use_vertex_cache(false), use_facet_cache(false)
     {
       Dt::insert(first, last);
       if (dimension() == 3)
@@ -295,6 +301,8 @@ public:
 
       set_alpha(0); 
       set_mode(REGULARIZED);
+      use_vertex_cache = false;
+      use_facet_cache = false;
 
     }
 
@@ -350,6 +358,8 @@ public:
     {
       Coord_type previous_alpha = _alpha;
       _alpha = alpha;
+      use_vertex_cache = false;
+      use_facet_cache = false;
       return previous_alpha;
     }
 
@@ -360,7 +370,7 @@ public:
     }
   
 
-  const Coord_type&  get_nth_alpha(const int& n) const
+  const Coord_type&  get_nth_alpha(int n) const
     // Returns the n-th alpha-value.
     // n < size()
     {
@@ -418,28 +428,26 @@ public:
   //---------------------------------------------------------------------
 private:
 
-  std::back_insert_iterator< std::list<Vertex_handle > >
-  get_alpha_shape_vertices(std::back_insert_iterator<
-			   std::list<Vertex_handle > > result) const;
+  void
+  update_alpha_shape_vertex_list() const;
 
   //---------------------------------------------------------------------
 
-  std::back_insert_iterator<std::list<std::pair< Cell_handle, int > > >
-  get_alpha_shape_facets(std::back_insert_iterator<
-			 std::list<
-			 std::pair< Cell_handle, int > > > result) const;
+  void
+  update_alpha_shape_facet_list() const; 
 
   //---------------------------------------------------------------------
 public:
 
-  Alpha_shape_vertices_iterator alpha_shape_vertices_begin()
-    {
-      Alpha_shape_vertices_list.clear();
-      get_alpha_shape_vertices(std::back_inserter(Alpha_shape_vertices_list));
+  Alpha_shape_vertices_iterator alpha_shape_vertices_begin() const
+  {
+    if(!use_vertex_cache){
+      update_alpha_shape_vertex_list();
+    }
       return Alpha_shape_vertices_list.begin();
     }
 
-  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin()
+  Alpha_shape_vertices_iterator Alpha_shape_vertices_begin() const
     {
       return alpha_shape_vertices_begin();
     }
@@ -457,11 +465,11 @@ public:
 
   //---------------------------------------------------------------------
 
-  // TODO: introduce some lazyness, otherwisae this is a O(n) operation
   Alpha_shape_facets_iterator alpha_shape_facets_begin()
     {
-      Alpha_shape_facets_list.clear();
-      get_alpha_shape_facets(std::back_inserter(Alpha_shape_facets_list));
+      if(! use_facet_cache){
+	update_alpha_shape_facet_list();
+      }
       return Alpha_shape_facets_list.begin();
     }
 
@@ -694,7 +702,7 @@ private:
 
 public:
 
-  Alpha_iterator find_optimal_alpha(const int& nb_components);
+  Alpha_iterator find_optimal_alpha(int nb_components);
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
   // (2) all data points on the boundary or in its interior
@@ -1437,12 +1445,10 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 //---------------------------------------------------------------------
 
 template <class Dt>
-std::back_insert_iterator< 
-       std::list<typename Alpha_shape_3<Dt>::Vertex_handle > >
-Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
-					    std::list<Vertex_handle > > 
-					    result) const
+void
+Alpha_shape_3<Dt>::update_alpha_shape_vertex_list() const
 {
+  Alpha_shape_vertices_list.clear();
   typedef Alpha_shape_3<Dt>::Interval_vertex_map Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
@@ -1469,7 +1475,7 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 	  v = (*vertex_alpha_it).second;
 	  CGAL_triangulation_assertion(classify(v) == 
 				       Alpha_shape_3<Dt>::REGULAR);
-	  *result++ = v;
+	  Alpha_shape_vertices_list.push_back(v);
 	}
     }
  
@@ -1484,22 +1490,19 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 	  CGAL_triangulation_assertion(classify(v) == 
 				       Alpha_shape_3<Dt>::SINGULAR);
 
-	  *result++ = v;
+	  Alpha_shape_vertices_list.push_back(v);
 	}
     }
-  return result;
+  use_vertex_cache = true;
 }
 
 //---------------------------------------------------------------------
 
 template <class Dt>
-std::back_insert_iterator< std::list<
-    std::pair<typename Alpha_shape_3<Dt>::Cell_handle, int > > >
-Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
-					  std::list<
-					  std::pair< Cell_handle, int > > > 
-					  result) const
+void
+Alpha_shape_3<Dt>::update_alpha_shape_facet_list() const
 {
+  Alpha_shape_facets_list.clear();
   // Writes the faces of the alpha shape `A' for the current 'alpha'-value
   // to the container where 'out' refers to. Returns an output iterator 
   // which is the end of the constructed range.
@@ -1537,8 +1540,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
                                  (*face_alpha_it).second.first,
 				 (*face_alpha_it).second.second) ==
 			Alpha_shape_3<Dt>::REGULAR);
-	      *result++ = Facet((*face_alpha_it).second.first,
-				(*face_alpha_it).second.second);
+	      Alpha_shape_facets_list.push_back(Facet((*face_alpha_it).second.first,
+						      (*face_alpha_it).second.second));
 	    }
 	}
     }
@@ -1570,8 +1573,8 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
                                      (*face_alpha_it).second.first,
 				     (*face_alpha_it).second.second) ==
 			    Alpha_shape_3<Dt>::REGULAR);
-		  *result++ = Facet((*face_alpha_it).second.first,
-				    (*face_alpha_it).second.second);
+		  Alpha_shape_facets_list.push_back(Facet((*face_alpha_it).second.first,
+							  (*face_alpha_it).second.second));
 		}
 	    }
 	  else
@@ -1590,15 +1593,15 @@ Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 			    classify((*face_alpha_it).second.first,
 				     (*face_alpha_it).second.second) ==
 			    Alpha_shape_3<Dt>::SINGULAR);
-		  *result++ = Facet((*face_alpha_it).second.first,
-				    (*face_alpha_it).second.second);
+		  Alpha_shape_facets_list.push_back(Facet((*face_alpha_it).second.first,
+							    (*face_alpha_it).second.second));
 		}
 	    }
 
 	}
 
     }
-  return result;
+  use_facet_cache = true;
 }
 
 //---------------------------------------------------------------------
@@ -1758,7 +1761,7 @@ void Alpha_shape_3<Dt>::traverse(const Cell_handle& pCell,
 
 template <class Dt>
 typename Alpha_shape_3<Dt>::Alpha_iterator 
-Alpha_shape_3<Dt>::find_optimal_alpha(const int& nb_components)
+Alpha_shape_3<Dt>::find_optimal_alpha(int nb_components)
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
   // (2) all data points on the boundary or in its interior
