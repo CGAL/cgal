@@ -1,41 +1,49 @@
 #  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
-#
-# Targets: package doc clean test
-# - all = test/package ?
 
-.PHONY: doc package filters test
+.PHONY: doc package filters test example submit
 
-package: doc filters clean Interval_arithmetic.tar.gz
-	@echo "-----------------------------------------------------"
-	@echo "------- Penser à: -----------------------------------"
-	@echo " *** updater les fichiers version  et changes.txt ---"
-	@echo " *** faire un make test -----------------------------"
-	@echo " *** faire un cvs commit/status    ------------------"
-	@echo " *** faire un cvs rtag v?_? ia     ------------------"
-	@echo " *** mettre à jour le fichier html ------------------"
-	@echo " *** mail à cgal-submit (www-sop !!!) ---------------"
-	@echo "-----------------------------------------------------"
+WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
+Package=Interval_arithmetic
+WWW_dir=$(WWW_base)/$(Package)
+
+package: doc filters example clean $(Package).tar.gz
+	@echo "-----------------------------------------"
+	@echo "------- Penser à: -----------------------"
+	@echo "---- fichiers version et changes.txt ----"
+	@echo "---- make test --------------------------"
+	@echo "---- cvs commit/status    ---------------"
+	@echo "---- cvs rtag v?_? ia     ---------------"
+	@echo "---- mettre à jour le fichier html ------"
+	@echo "---- make submit                   ------"
+	@echo "-----------------------------------------"
+
+submit: package
+	cp $(Package).tar.gz doc_ps/$(Package).ps $(WWW_dir)
+	mail -s autohandle cgal-submit@cs.uu.nl spion < submit-mail
 
 test:
-	$(MAKE) -C test/Interval_arithmetic all
+	$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/support/Interval_arithmetic clean
-	$(MAKE) -C test/Interval_arithmetic clean
-	rm -f Interval_arithmetic.tar.gz
+	$(MAKE) -C doc_tex/support/$(Package) clean
+	$(MAKE) -C test/$(Package) clean
+	rm -f $(Package).tar.gz
 
-Interval_arithmetic.tar.gz:
-	tar -zcvf Interval_arithmetic.tar.gz \
+$(Package).tar.gz:
+	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO \
+	--exclude=TODO --exclude=submit-mail \
 	version description.txt changes.txt \
 	include doc_tex doc_ps test examples
 
-doc: doc_ps/Interval_arithmetic.ps
+doc: doc_ps/$(Package).ps
+
+doc_ps/$(Package).ps: doc_tex/support/$(Package)/main.tex
+	$(MAKE) -C doc_tex/support/$(Package)
+	cp doc_tex/support/$(Package)/$(Package).ps doc_ps/
+
+example:
+	$(MAKE) -C examples/$(Package)/include/CGAL/Arithmetic_filter
 
 filters:
-	$(MAKE) -C include/CGAL/Arithmetic_filter all
-
-doc_ps/Interval_arithmetic.ps: doc_tex/support/Interval_arithmetic/main.tex
-	$(MAKE) -C doc_tex/support/Interval_arithmetic
-	cp doc_tex/support/Interval_arithmetic/Interval_arithmetic.ps doc_ps/
+	$(MAKE) -C include/CGAL/Arithmetic_filter
