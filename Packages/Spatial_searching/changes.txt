@@ -1,3 +1,7 @@
+8 July 2004 Andreas Fabri
+- Use Compact_container::construct_insert instead of insert
+- Replaced list with vector in Kd_tree
+
 28 May 2004 Sylvain Pion
 - Fix Windows end of line in dont_submit.
 
