@@ -31,7 +31,7 @@
 namespace CGAL {
 
 template <class SearchTraits, 
-	  class Distance_=Euclidean_distance<SearchTraits>, 
+  class Distance_=Euclidean_distance<SearchTraits>,
           class Splitter_=Sliding_midpoint<SearchTraits> ,
 	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_true> >
 class Orthogonal_k_neighbor_search {
@@ -42,9 +42,10 @@ public:
   typedef Tree_  Tree;
   typedef Distance_ Distance;
   typedef typename SearchTraits::Point_d Point_d;
-  typedef typename SearchTraits::Point_d Query_item;
+  typedef typename Distance::Query_item Query_item;
+
   typedef typename SearchTraits::FT FT;
-  typedef std::pair<Point_d,FT> Point_with_distance;
+  typedef std::pair<Point_d,FT> Point_with_transformed_distance;
   
   typedef typename Tree::Node_handle Node_handle;
   
@@ -63,7 +64,7 @@ Query_item query_object;
 int total_item_number;
 FT distance_to_root;   
 
-typedef std::list<Point_with_distance> NN_list;
+typedef std::list<Point_with_transformed_distance> NN_list;
 
 public:
   typedef typename NN_list::const_iterator iterator;
@@ -98,7 +99,7 @@ Distance distance_instance;
 			typename NN_list::iterator it=l.begin();
 			for (; (it != l.end()); ++it) 
 			{ if (dist < it->second) break;}
-        		Point_with_distance NN_Candidate(*I,dist);
+        		Point_with_transformed_distance NN_Candidate(*I,dist);
         		l.insert(it,NN_Candidate);
         		if (actual_k > max_k) {
 				actual_k--;

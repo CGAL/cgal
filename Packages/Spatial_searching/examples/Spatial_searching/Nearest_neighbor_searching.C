@@ -2,35 +2,37 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Search_traits_2.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
- 
+#include <CGAL/Search_traits_2.h>
+#include <list>
+
+
 typedef CGAL::Cartesian<double> K;
-typedef K::Point_2 Point;
-typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
-typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef K::Point_2 Point_d;
 typedef CGAL::Search_traits_2<K> TreeTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
 int main() {
-  const int N = 1000;
-  // generator for random data points in the square ( (-1,-1), (1,1) ) 
-  Random_points_iterator rpit( 1.0);
-  
-  // Insert N points in the tree
-  Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N));
+  const int N = 1;
 
-  Point query(0,0);
+  std::list<Point_d> points;
+  points.push_back(Point_d(0,0));
+  
+  Tree tree(points.begin(), points.end());
+
+  Point_d query(0,0);
   
   // Initialize the search structure, and search all N points
+  
   Neighbor_search search(tree, query, N);
- 
+  
    // report the N nearest neighbors and their distance
   // This should sort all N points by increasing distance from origin
   for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it){
     std::cout << it->first << " "<< sqrt(it->second) << std::endl;
   }
+  
+  
   return 0;
 }

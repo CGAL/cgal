@@ -32,7 +32,8 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::Iso_box_d Iso_box_d;
     typedef typename SearchTraits::FT FT;
-    typedef typename SearchTraits::Construct_vertex_d Construct_vertex_d;
+    typedef typename SearchTraits::Construct_min_vertex_d Construct_min_vertex_d;
+    typedef typename SearchTraits::Construct_min_vertex_d Construct_max_vertex_d;
     typedef typename SearchTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef typename SearchTraits::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
 
@@ -58,9 +59,10 @@ namespace CGAL {
 	  dim = end - begin;
 
 	  Iso_box_d box = typename SearchTraits::Construct_iso_box_d()(p,q);
-	  Construct_vertex_d construct_vertex_d;
-	  min = construct_vertex_d(box, 0);
-	  max = construct_vertex_d(box, (1<<dim)-1);
+	  Construct_min_vertex_d construct_min_vertex_d;
+	  Construct_max_vertex_d construct_max_vertex_d;
+	  min = construct_min_vertex_d(box);
+	  max = construct_max_vertex_d(box);
 	  min_begin = construct_it(min);
 	  max_begin = construct_it(max);
 	  

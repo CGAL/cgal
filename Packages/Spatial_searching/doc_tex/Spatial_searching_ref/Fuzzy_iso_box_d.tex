@@ -38,16 +38,14 @@ Expects for the template argument a model of the concept
 \ccTypes
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
-\ccTypedef{Traits::Iso_box_d Iso_box_d;}{Iso box type.}
-\ccTypedef{Traits::Construct_iso_box_d Construct_iso_box_d;}{Function object with an operator 
-that takes two \ccc{Point_d} and returns the smallest \ccc{Iso_box_d} vontaing the points.}
+\ccTypedef{Point_d Query_point_d;}{Query point type.}
 
 \ccTypedef{Traits::FT FT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{b}  %% choose variable name
 
-\ccConstructor{Fuzzy_iso_box(Point_d p, Point_d q, FT epsilon=FT(0));}{Constructs a fuzzy iso box
+\ccConstructor{Fuzzy_iso_box(Query_point_d p, Query_point_d q, FT epsilon=FT(0));}{Constructs a fuzzy iso box
 specified by the minimal iso box containing $p$ and $q$ and fuzziness value \ccc{epsilon}.}
 
 \ccOperations

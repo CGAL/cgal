@@ -45,9 +45,10 @@ kd tree nodes.
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
-\ccTypedef{std::pair<Point_d,FT> Point_with_distance;}{Pair of point and distance.}
+\ccTypedef{GeneralDistance::Query_item Query_item;}{Query item.}
+\ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
 
-\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_transformed_distance}
                         for enumerating approximate neighbors.}
 \ccTypedef{SpatialTree Tree;}{The tree type.}
 
@@ -56,7 +57,7 @@ kd tree nodes.
 \ccOperations
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Point_d query, int k=1, FT eps=FT(0.0),
+\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Query_item query, int k=1, FT eps=FT(0.0),
                                           bool search_nearest=true, 
                                           OrthogonalDistance d=OrthogonalDistance());}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{query} 
@@ -75,7 +76,7 @@ distance \ccc{d} and approximation factor \ccc{eps}.}
 \begin{ccAdvanced}
 \ccMethod{std::ostream& statistics(std::ostream& s);}
 {
-Inserts statistics of the search process into the output stream \ccc{s}.
+Inserts statistics of the search process into the output stream~\ccc{s}.
 }
 \end{ccAdvanced}
 

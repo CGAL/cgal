@@ -171,10 +171,30 @@ namespace CGAL {
 	return lower()->num_items() + upper()->num_items();
     }
 
+    unsigned int 
+    num_nodes() 
+    {
+      if (is_leaf()) return 1;
+      else 
+	return lower()->num_nodes() + upper()->num_nodes();
+    }
+
+    unsigned int 
+   bucket_size() 
+    {
+      if (is_leaf()) std::cout << size() << std::endl;
+      else{ 
+	lower()->bucket_size();
+	upper()->bucket_size();
+      }
+    }
+    
     int 
     depth(const int current_max_depth) const
     {
-      if (is_leaf()) return current_max_depth;
+      if (is_leaf()){
+	return current_max_depth;
+      }
       else return 
 	     std::max( lower()->depth(current_max_depth + 1),
 		       upper()->depth(current_max_depth + 1));

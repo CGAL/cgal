@@ -1,20 +1,21 @@
 // file: examples/Spatial_searching/Fuzzy_range_query.C
-
-#include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Homogeneous_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/Search_traits_d.h>
 
 typedef CGAL::MP_Float NT;
 typedef CGAL::Homogeneous_d<NT> K;
 typedef K::Point_d Point_d;
+typedef CGAL::Search_traits_d<K> Traits;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Kd_tree<K> Tree;
-typedef CGAL::Fuzzy_sphere<K> Fuzzy_sphere;
-typedef CGAL::Fuzzy_iso_box<K> Fuzzy_iso_box;
+typedef CGAL::Kd_tree<Traits> Tree;
+typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
 int main() {
   const int D = 4;

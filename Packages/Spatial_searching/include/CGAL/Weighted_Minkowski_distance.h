@@ -33,8 +33,9 @@ namespace CGAL {
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
-    typedef typename SearchTraits::FT FT;
-    typedef std::vector<FT> Weight_vector;
+    typedef Point_d                        Query_item;
+    typedef typename SearchTraits::FT      FT;
+    typedef std::vector<FT>                Weight_vector;
 
     private:
 
@@ -92,7 +93,7 @@ namespace CGAL {
 
     inline 
     FT 
-    transformed_distance(const Point_d& q, const Point_d& p) 
+    transformed_distance(const Query_item& q, const Point_d& p) 
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
@@ -114,7 +115,7 @@ namespace CGAL {
 
     inline 
     FT 
-    min_distance_to_rectangle(const Point_d& q,
+    min_distance_to_rectangle(const Query_item& q,
 			      const Kd_tree_rectangle<SearchTraits>& r) const 
     {
       FT distance = FT(0);
@@ -149,7 +150,7 @@ namespace CGAL {
 
     inline 
     FT
-    max_distance_to_rectangle(const Point_d& q,
+    max_distance_to_rectangle(const Query_item& q,
 			      const Kd_tree_rectangle<SearchTraits>& r) const {
       FT distance=FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;

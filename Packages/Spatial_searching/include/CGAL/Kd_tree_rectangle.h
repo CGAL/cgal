@@ -132,6 +132,7 @@ namespace CGAL {
       }
       begin++;
       typedef typename std::iterator_traits<PointPointerIter>::value_type P;
+      int in=0;
       std::for_each(begin, end, set_bounds_from_pointer<SearchTraits, P,T>(dim, lower_, upper_));
       set_max_span();
     }
@@ -175,6 +176,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
+      assert(lower_ != NULL);
       return lower_[i];
     }
     

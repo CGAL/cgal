@@ -11,53 +11,49 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Sliding_midpoint<Traits, PointContainer, SpatialSeparator>}
+\begin{ccRefFunctionObjectClass}{Sliding_midpoint<Traits, SpatialSeparator>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
 Implements the {\em sliding midpoint} splitting rule.
+This is a modification of the \ccc{Midpoint_of_rectangle} splitting rule.
+It first attempts to perform a midpoint of rectangle split as
+described above. If data points lie on both sides of the separating
+plane the sliding midpoint rule computes the same separator as
+the midpoint of rectangle rule. If the data points lie only on one
+side it avoids this by sliding the separator, computed by
+the midpoint of rectangle rule, to the nearest datapoint.
 
+\ccInclude{CGAL/Splitters.h}
 
 \ccParameters
 
 Expects for the first template argument a model of the concept
 \ccc{SearchTraits}, for example \ccc{CGAL::Cartesian_d<double>}.
 
-Expects for the second argument a model of the concept \ccc{PointContainer}. It has as default value
-the type \ccc{CGAL::Point_container<Traits>}.
-
-Expects for the third template argument a model of the concept \ccc{Separator}. It has as default value
+Expects for the second template argument a model of the concept \ccc{Separator}. It has as default value
 the type, \ccc{CGAL::Plane_separator<Traits::FT>}.
 
-\ccInclude{CGAL/Splitters.h}
 
 \ccIsModel
 
 \ccc{Splitter}
 
-\ccTypes
-
-\ccTypedef{Traits::FT FT;}{Number type.} 
-\ccTypedef{PointContainer Container;}{Point container.}
-\ccTypedef{SpatialSeparator Separator;}{Separator.}
-
+\ccCreation
 \ccCreationVariable{s}  %% choose variable name
+\ccConstructor{ Sliding_fair(unsigned int bucket_size)}{Constructor.}
+
 
 \ccOperations
 
-\ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1);} 
-{Modifies the separator $s$ by the {\em sliding midpoint} splitting rule, 
-and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
-using the splitting dimension and the splitting value of the modified separator.
-}
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
 
 \ccSeeAlso
 
 \ccc{Splitter},\\
- \ccc{PointContainer},\\
  \ccc{SpatialSeparator}
 \end{ccRefFunctionObjectClass}
 

@@ -73,7 +73,7 @@ class Cell
 
     
 
-typedef std::pair<Point_d,FT> Point_with_distance;
+typedef std::pair<Point_d,FT> Point_with_transformed_distance;
 typedef std::pair<Cell*,FT> Cell_with_distance;
 
 // this forward declaration may problems for g++ 
@@ -82,7 +82,7 @@ class iterator;
 
     typedef std::vector<Cell_with_distance*> Cell_with_distance_vector;
 
-    typedef std::vector<Point_with_distance*> Point_with_distance_vector;
+    typedef std::vector<Point_with_transformed_distance*> Point_with_distance_vector;
 
     typedef std::vector<FT> Distance_vector;
 
@@ -124,7 +124,7 @@ class iterator;
     public:
 
     typedef std::input_iterator_tag iterator_category;
-    typedef Point_with_distance value_type;
+    typedef Point_with_transformed_distance value_type;
     typedef int distance_type;
 
     class Iterator_implementation;
@@ -152,7 +152,7 @@ class iterator;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }
 
-    Point_with_distance& operator* () {
+    Point_with_transformed_distance& operator* () {
                 return *(*Ptr_implementation);
     }
 
@@ -163,8 +163,8 @@ class iterator;
     }
 
     // postfix operator
-    Point_with_distance operator++(int) {
-        Point_with_distance result = (*Ptr_implementation)++;
+    Point_with_transformed_distance operator++(int) {
+        Point_with_transformed_distance result = (*Ptr_implementation)++;
         return result;
     }
 
@@ -248,7 +248,7 @@ class Distance_smaller
         }
 
         //highest priority is smallest distance
-        bool operator() (Point_with_distance* p1, Point_with_distance* p2) const 
+        bool operator() (Point_with_transformed_distance* p1, Point_with_transformed_distance* p2) const 
         {
 		if (search_nearest) {return (p1->second > p2->second);}
                 else {return (p2->second > p1->second);}
@@ -258,7 +258,7 @@ class Distance_smaller
     std::priority_queue<Cell_with_distance*, Cell_with_distance_vector,
     Priority_higher>* PriorityQueue;
 
-    std::priority_queue<Point_with_distance*, Point_with_distance_vector,
+    std::priority_queue<Point_with_transformed_distance*, Point_with_distance_vector,
     Distance_smaller>* Item_PriorityQueue;
     
 
@@ -283,7 +283,7 @@ class Distance_smaller
 	Cell_with_distance_vector, Priority_higher> 
         (Priority_higher(search_nearest));
 
-        Item_PriorityQueue= new std::priority_queue<Point_with_distance*, 
+        Item_PriorityQueue= new std::priority_queue<Point_with_transformed_distance*, 
 	Point_with_distance_vector,
     	Distance_smaller>
 	(Distance_smaller(search_nearest));
@@ -327,7 +327,7 @@ class Distance_smaller
     }
 
     // * operator
-    Point_with_distance& operator* () {    
+    Point_with_transformed_distance& operator* () {    
 			return *(Item_PriorityQueue->top());
     }
 
@@ -340,9 +340,9 @@ class Distance_smaller
     }
 
     // postfix operator
-      Point_with_distance operator++(int) {     
+      Point_with_transformed_distance operator++(int) {     
         
-        Point_with_distance result = *(Item_PriorityQueue->top());        
+        Point_with_transformed_distance result = *(Item_PriorityQueue->top());        
         ++*this;        
         
         return result;
@@ -374,7 +374,7 @@ class Distance_smaller
                 delete The_top;
 	};
 	while (Item_PriorityQueue->size()>0) {
-                Point_with_distance* The_top=Item_PriorityQueue->top();
+                Point_with_transformed_distance* The_top=Item_PriorityQueue->top();
                 Item_PriorityQueue->pop();
                 delete The_top;
         };
@@ -384,7 +384,7 @@ class Distance_smaller
     private:
 
     void Delete_the_current_item_top() {
-        Point_with_distance* The_item_top=Item_PriorityQueue->top();
+        Point_with_transformed_distance* The_item_top=Item_PriorityQueue->top();
         Item_PriorityQueue->pop();
         delete The_item_top;
     }
@@ -475,8 +475,8 @@ else {
                         FT distance_to_query_point=
                         Distance_instance->
                         distance(query_point,**it);
-                        Point_with_distance *NN_Candidate=
-                        new Point_with_distance(**it,distance_to_query_point);
+                        Point_with_transformed_distance *NN_Candidate=
+                        new Point_with_transformed_distance(**it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
                   }
                   // old top of PriorityQueue has been processed,

@@ -25,6 +25,10 @@ A separator is a ($d$-1)-dimensional subspace that separates a $d$-dimensional s
 One part of space is said to be on the negative side of the separator and the other part of space is 
 said to be on the positive side of the separator.
 
+\ccHasModels
+
+\ccc{CGAL::Plane_separator<FT>}.
+
 \ccTypes
 
 \ccNestedType{FT;}{Number type.}
@@ -53,11 +57,6 @@ void set_cutting_value(FT v);}
 \ccMethod{template <class Point_d>
 bool has_on_negative_side(Point_d p);}
 {Returns true if and only if the point \ccc{p} is on the negative side of the separator.}
-
-
-\ccHasModels
-
-\ccc{CGAL::Plane_separator<FT>}.
 
 
 

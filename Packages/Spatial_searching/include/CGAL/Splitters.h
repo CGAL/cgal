@@ -181,19 +181,26 @@ namespace CGAL {
     void 
     operator()(Separator& sep, Container& c0, Container& c1)
     {
+      assert(c0.is_valid());
+      assert(c1.is_valid());
       sep = Separator(c0.max_span_coord(),
 		      (c0.max_span_upper() + c0.max_span_lower())/FT(2));
+
       FT max_span_lower = 
 	c0.tight_bounding_box().min_coord(c0.max_span_coord());
+
+      assert(max_span_lower >= c0.max_span_lower());
       FT max_span_upper = 
 	c0.tight_bounding_box().max_coord(c0.max_span_coord());
+      
+      assert(max_span_upper <= c0.max_span_upper());
       if (max_span_upper <= sep.cutting_value()) {
 	sep.set_cutting_value(max_span_upper); 
-      };
-      if (max_span_lower >= sep.cutting_value()) {
+      };      
+      if (max_span_lower >= sep.cutting_value()) {    
 	sep.set_cutting_value(max_span_lower); 
-      };
-      c0.split(c1,sep,true);
+      };   
+      c0.split(c1,sep,true); 
     }
   };
   

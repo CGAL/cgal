@@ -27,7 +27,7 @@ extended or unextended nodes.
 \ccParameters
 
 Expects for the first template argument an implementation of the concept \ccc{SearchTraits},
-for example \ccc{CGAL::Kernel_d<double>}.
+for example \ccc{CGAL::Cartesian_d<double>}.
 
 Expects for the second template argument a model of the
 concept \ccc{GeneralDistance}. The default type is 
@@ -42,7 +42,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
-\ccTypedef{std::pair<Point_d,FT> Point_with_distance;}{Pair of point and distance.} 
+\ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.} 
 
 \ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
                         for enumerating approximate neighbors.}

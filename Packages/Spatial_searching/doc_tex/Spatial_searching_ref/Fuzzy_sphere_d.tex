@@ -37,6 +37,7 @@ Expects for the template argument a model of the concept
 
 \ccTypes
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Point_d Query_point_d;}{Query point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
 
 \ccCreation
@@ -44,7 +45,7 @@ Expects for the template argument a model of the concept
 
 
 
-\ccConstructor{Fuzzy_sphere(Point_d center, FT radius, FT epsilon=FT(0));}{Constructs a fuzzy sphere
+\ccConstructor{Fuzzy_sphere(Query_point_d center, FT radius, FT epsilon=FT(0));}{Constructs a fuzzy sphere
 centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
 
 \ccOperations

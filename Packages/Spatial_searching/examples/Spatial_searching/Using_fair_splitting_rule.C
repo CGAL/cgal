@@ -6,8 +6,8 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
 typedef CGAL::Cartesian<double> R;
-typedef R::Point_2 Point;
-typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
+typedef R::Point_2 Point_d;
+typedef CGAL::Random_points_in_square_2<Point_d> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Search_traits_2<R> Traits;
 typedef CGAL::Euclidean_distance<Traits> Distance;
@@ -26,7 +26,7 @@ int main() {
 	    N_Random_points_iterator(N),
 	    fair);
 
-  Point query(0,0);
+  Point_d query(0,0);
 
   // Initialize the search structure, and search all N points
   Neighbor_search search(tree, query, N);

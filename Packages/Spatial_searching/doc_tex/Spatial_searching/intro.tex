@@ -48,7 +48,7 @@ sphere. The objects in the spatial data structure are $d$-dimensional
 points.
 
 Often the number of the neighbors to be computed is not know
-beforehand, e.g. because the number may depend on some properties of
+beforehand, e.g., because the number may depend on some properties of
 the neighbors (for example when querying for the nearest city to Paris with
 population greater than a million) or the distance to the query point.
 The convential approach is $k$-{\em nearest neighbor searching} that
@@ -90,6 +90,38 @@ neighbor must not be smaller than $r/(1+\epsilon)$.  Obviously, for
 $\epsilon=0$ we get the exact result, and the larger $\epsilon$ is,
 the less exact the result.
 
+Neighbor searching is implemented by the following four classes.
+
+The class \ccc{CGAL::Orthogonal_k_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>} implements the standard
+search strategy for orthogonal distances like the weighted Minkowski
+distance. It requires the use of extended nodes in the spatial tree
+and supports only $k$ neighbor searching for point queries.
+
+The class \ccc{CGAL::K_neighbor_search<Traits, GeneralDistance,
+Splitter, SpatialTree>} implements the standard search strategy for
+general distances like the Manhattan distance for iso-rectangles.
+It does not require the use of extended nodes in the spatia tree and supports
+only $k$ neighbor searching for queries defined by points or spatial
+objects.
+
+The class \ccc{Orthogonal_incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>} implements the incrementral
+search strategy for general distances like the weighted Minkowski
+distance. It requires the use of extended nodes in the spatial tree
+and supports incremental neighbor searching and distance browsing for
+point queries.
+
+The class \ccc{CGAL::Incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>} implements the incremental
+search strategy for general distances like the Manhattan distance for
+iso-rectangles.  It does not requires the use of extended nodes in the
+spatial tree and supports incremental neighbor searching and distance
+browsing for queries defined by points or spatial objects.
+
+
+
+
 \subsection{Range Searching}
 
 {\em Exact range searching} and {\em approximate range searching} is
@@ -101,6 +133,94 @@ $\epsilon$, points inside the object are always reported and points
 outside the object are never reported. Points within distance
 $\epsilon$ to the boundary may be or may be not reported.  For exact
 range searching the fuzziness parameter $\epsilon$ is set to zero.
+
+The class \ccc{Kd_tree} implements range searching in the method \ccc{search},
+which is a template method with an output iterator and a model of the
+concept \ccc{FuzzyQueryItem} as \ccc{CGAL::Fuzzy_iso_box_d}  
+or \ccc{CGAL::Fuzzy_sphere_d}. 
+For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
+used in building the $k$-$d$ tree to a large value (e.g. 100), 
+because in general the query time will be less then using the default value.
+
+\section{Splitting Rules}
+\label{Spatial_Searching:Splitting_rule_section}
+
+Instead of using the default splitting rule \ccc{Sliding_midpoint} described below,
+a user may, depending upon the data, select 
+one from the following splitting rules,
+which determine how a separating hyperplane is computed:
+
+\begin{description}
+
+\item[ \ccc{Midpoint_of_rectangle}]
+
+This splitting rule cuts a rectangle through its midpoint orthogonal
+to the longest side.
+
+\item[ \ccc{Midpoint_of_max_spread}]
+
+This splitting rule cuts a rectangle through $(Mind+Maxd)/2$ orthogonal
+to the dimension with the maximum point spread $[Mind,Maxd]$.
+
+\item[ \ccc{Sliding_midpoint}]
+
+This is a modification of the midpoint of rectangle splitting rule.
+It first attempts to perform a midpoint of rectangle split as
+described above. If data points lie on both sides of the separating
+plane the sliding midpoint rule computes the same separator as
+the midpoint of rectangle rule. If the data points lie only on one
+side it avoids this by sliding the separator, computed by
+the midpoint of rectangle rule, to the nearest datapoint.
+
+\item[ \ccc{Median_of_rectangle}]
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item[ \ccc{Median_of_max_spread}]
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item[ \ccc{Fair}]
+
+This splitting rule is a compromise between the median of rectangle
+splitting rule and the midpoint of rectangle splitting rule. This
+splitting rule maintains an upper bound on the maximal allowed ratio
+of the longest and shortest side of a rectangle (the value of this
+upper bound is set in the constructor of the fair splitting
+rule). Among the splits that satisfy this bound, it selects the one in
+which the points have the largest spread.  It then splits the points
+in the most even manner possible, subject to maintaining the bound on
+the ratio of the resulting rectangles.
+
+\item[ \ccc{Sliding_fair}]
+
+This splitting rule is a compromise between the fair splitting rule
+and the sliding midpoint rule.  Sliding fair-split is based on the
+theory that there are two types of splits that are good: balanced
+splits that produce fat rectangles, and unbalanced splits provided the
+rectangle with fewer points is fat.
+
+Also, this splitting rule maintains an upper bound on the maximal
+allowed ratio of the longest and shortest side of a rectangle (the
+value of this upper bound is set in the constructor of the fair
+splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.  It then
+considers the most extreme cuts that would be allowed by the aspect
+ratio bound. This is done by dividing the longest side of the
+rectangle by the aspect ratio bound. If the median cut lies between
+these extreme cuts, then we use the median cut. If not, then consider
+the extreme cut that is closer to the median.  If all the points lie
+to one side of this cut, then we slide the cut until it hits the first
+point.  This may violate the aspect ratio bound, but will never
+generate empty cells.
+
+\end{description}
+
+
 
 
 \section{Example Programs}
@@ -208,8 +328,10 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 \newpage
 
-\section{The $k$-$d$ tree}
-\label{Kd_tree_section}
+\section{Software Design}
+
+\subsection{The $k$-$d$ tree}
+\label{Kd_tree_subsection}
 
 Bentley \cite{b-mbstu-75} introduced the $k$-$d$ tree as a
 generalization of the binary search tree in higher dimensions. $k$-$d$
@@ -275,319 +397,6 @@ distances are used instead of the Euclidean distance itself.
 
 
 
-\section{Software Design}
 
-\begin{ccTexOnly}
-\begin{figure}[t]
-\begin{center}
-\leavevmode
-\vspace*{-6.5cm}
-\hspace*{-2cm}
-\scalebox{.3}{\includegraphics{Spatial_searching/Fig1.ps}}
-\end{center}
-\vspace*{6cm}
-\caption{Scheme of concepts and classes implementing neighbor searching algorithms.
-Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
-Container is used as shorthand for PointContainer,
-Separator is used as shorthand for SpatialSeparator,
-and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
-\label{ASPAS:Fig1}}
-\end{figure}
-\end{ccTexOnly}
 
-\begin{ccHtmlOnly}
 
-<P>
-<center>
-<img border=0 src="./Fig1.gif" alt=" "><br> 
-Scheme of concepts and classes implementing neighbor searching algorithms.
-Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
-Container is used as shorthand for PointContainer, Separator is used as shorthand for SpatialSeparator,
-and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
-</center>
-
-\end{ccHtmlOnly}
-
-The spatial searching package consists of a number of concepts, each implemented by
-one or more classes, and four classes implementing neighbor 
-searching algorithms. 
-\begin{ccTexOnly}
-(See figure \ref{ASPAS:Fig1}) 
-\end{ccTexOnly}
-
-\subsection{Concepts}
-
-The concepts related to the spatial searching package are
-
-\begin{itemize}
-
-\item
-\ccc{QueryItem} denoting a $d$-dimensional spatial query object. The concepts
-\ccc{SpatialPoint}, \ccc{IsoBox_d}, and \ccc{Ball_d} refine \ccc{QueryItem}.
-
-\item 
-\ccc{SpatialPoint} 
-denoting a $d$-dimensional point, as implemented by 
-\ccc{CGAL::Point_2<Kernel>}, \ccc{CGAL::Point_3<Kernel>}, and \ccc{CGAL::Point_d<Kernel>}.
-
-\item
-\ccc{IsoBox_d} 
-denoting a $d$-dimensional iso-box, as implemented
-by
-\ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
-and \ccc{CGAL::Iso_box_d<Kernel>}.
-
-\item
-\ccc{Ball_d}
-denoting a $d$-dimensional ball, as implemented by
-\ccc{CGAL::Circle_2<Kernel>}, \ccc{CGAL::Sphere_3<Kernel>},
-and \ccc{CGAL::Sphere_d<Kernel>}.
-
-
-\item
-\ccc{PointContainer} denoting a container, that stores points and
-provides method to support the implementation of splitting rules. 
-\ccc{CGAL::Point_container<SpatialPoint>} provides an implementation.
-
-
-\ccc{SpatialSeparator} denoting a $d-1$-dimensional
-subspace separating a $d$-dimensional spaces in two parts,
-as implemented by \ccc{CGAL::Plane_separator<NT>}.
-
-\item 
-\ccc{Splitter} denoting a splitting rule as implemented by the function object classes 
-\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>},
-\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>},
-\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, SpatialSeparator>},
-\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, SpatialSeparator>},
-\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, SpatialSeparator>},
-\ccc{CGAL::Fair<SpatialPoint, PointContainer, SpatialSeparator>}, and
-\ccc{CGAL::Sliding_Fair<SpatialPoint, PointContainer, SpatialSeparator>}.
-
-\item
-\ccc{PointTraits} denoting a traits class for the construction of a tree.
-\ccc{CGAL::Kd_tree_traits_point< SpatialPoint, Splitter >} provides an implementation. 
-
-\item
-\ccc{GeneralDistance} denoting a general distance object. A general distance object should define distances between a query object
-and the points stored in a tree and between the query object and the rectangles associated with the nodes from the tree.
-Implementations for queries defined by points are provided
-by \ccc{CGAL::Euclidean_distance<SpatialPoint>}, and
-\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>} implementing 
-a weighted Minkowski metric.
-
-An implementation for queries defined by rectangles is provided by
-\ccc{CGAL::Manhattan_distance_rectangle_point<IsoBox_d,SpatialPoint>}.
-An implementation for queries defined by spheres is provided by
-\ccc{CGAL::Euclidean_distance_sphere_point<Ball_d,SpatialPoint>}.
-
-\item
-\ccc{OrthogonalDistance} denoting a distance object. An orthogonal distance object should define distances 
-between a query object and the points stored in a tree and between the
-query object and the rectangles associated with the nodes from the
-tree.  Also, incremental distance computation is supported by an
-orthogonal distance object.  Implementations for queries defined by
-points are provided by \ccc{CGAL::Euclidean_distance<SpatialPoint>},
-and
-\ccc{CGAL::Weighted_Minkowski_distance<SpatialPoint>} implementing 
-a weighted Minkowski metric.
-
-\item
-\ccc{SpatialTree} denoting a tree supporting spatial searching 
-\ccc{CGAL::Kd_tree<PointTraits>} provides an implementation of $k$-$d$ trees.
-
-\end{itemize}
-
-\subsection{Neighbor Search}
-
-The four classes implementing neighbor searching algorithms are
-
-\begin{itemize}
-
-\item
-The class \ccc{CGAL::K_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} 
-implementing the standard search strategy for general distances
-like the Manhattan distance for iso-rectangles.
-Requires no use of extended nodes in the $k$-$d$ tree and supports only $k$
-neighbor searching for queries defined by points or spatial objects.
-
-
-\item
-The class \ccc{CGAL::Incremental_neighbor_search<PointTraits,
-GeneralDistance, Splitter, SpatialTree>} implementing the incremental
-search strategy for general distances like the Manhattan distance for
-iso-rectangles.  Requires no use of extended nodes in the $k$-$d$ tree
-and supports incremental neighbor searching and distance browsing for
-queries defined by points or spatial objects.
-
-\item
-The class \ccc{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>} 
-implementing the standard search strategy for orthogonal distances
-like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports 
-only $k$ neighbor searching for point queries.
-
-\item
-The class \ccc{Orthogonal_incremental_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} 
-implementing the priority search strategy for general distances
-like a weighted Minkowski distance. Requires the use of extended nodes in the $k$-$d$ tree and supports incremental
-neighbor searching and distance browsing for point queries.
-
-\end{itemize}
-
-If one wants to implement a splitter or a tree data structure
-methods from the following classes can be used
-
-\begin{itemize}
-
-\item
-The class \ccc{CGAL::Kd_tree_rectangle<NT>} implementing $d$-dimensional iso-rectangles, 
-methods to compute bounding boxes
-of point sets and methods to split iso-rectangles.
-
-\item
-The class \ccc{CGAL::Kd_tree_node<PointTraits>} implementing $k$-$d$ tree nodes.
-
-\end{itemize}
-
-\subsection{Range searching}
-
-Besides neighbor searching described above, the spatial searching package
-supports also range searching using the method \\
-\ccc{template <class OutputIterator, class FuzzyQueryItem>} \\
-\ccc{OutputIterator CGAL::Kd_tree<Treetraits>::search(OutputIterator it, const FuzzyQueryItem& q)}.\\
-Implementations for the concept \ccc{FuzzyQueryItem} are provided by
-the class \ccc{CGAL::Fuzzy_iso_box_d<SpatialPoint, IsoBox_d>}  
-and the class \ccc{CGAL::Fuzzy_sphere_d<SpatialPoint>}. 
-For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
-used in building the $k$-$d$ tree to a large value (e.g. 100), 
-because in general the query time will be less then using the default value 5 for the parameter \ccc{bucket_size}.
-
-
-\section{Splitting Rules}
-\label{Spatial_Searching:Splitting_rule_section}
-
-Instead of using the default splitting rule \ccc{Sliding_midpoint} described below,
-a user may, depending upon the data, select 
-one from the following splitting rules,
-which determine how a separating hyperplane is computed:
-
-\begin{itemize}
-
-\item \ccc{Midpoint_of_rectangle}
-
-This splitting rule cuts a rectangle through its midpoint orthogonal
-to the longest side.
-
-\item \ccc{Midpoint_of_max_spread}
-
-This splitting rule cuts a rectangle through $(Mind+Maxd)/2$ orthogonal
-to the dimension with the maximum point spread $[Mind,Maxd]$.
-
-\item \ccc{Sliding_midpoint}
-
-This is a modification of the midpoint of rectangle splitting rule.
-It first attempts to perform a midpoint of rectangle split as
-described above. If data points lie on both sides of the separating
-plane the sliding midpoint rule computes the same separator as
-the midpoint of rectangle rule. If the data points lie only on one
-side it avoids this by sliding the separator, computed by
-the midpoint of rectangle rule, to the nearest datapoint.
-
-\item \ccc{Median_of_rectangle}
-
-The splitting dimension is the dimension of the longest side of the rectangle.
-The splitting value is defined by the median of the coordinates of the data points
-along this dimension.
-
-\item \ccc{Median_of_max_spread}
-
-The splitting dimension is the dimension of the longest side of the rectangle.
-The splitting value is defined by the median of the coordinates of the data points
-along this dimension.
-
-\item \ccc{Fair}
-
-This splitting rule is a compromise between the median of rectangle
-splitting rule and the midpoint of rectangle splitting rule. This
-splitting rule maintains an upper bound on the maximal allowed ratio
-of the longest and shortest side of a rectangle (the value of this
-upper bound is set in the constructor of the fair splitting
-rule). Among the splits that satisfy this bound, it selects the one in
-which the points have the largest spread.  It then splits the points
-in the most even manner possible, subject to maintaining the bound on
-the ratio of the resulting rectangles.
-
-\item \ccc{Sliding_fair}
-
-This splitting rule is a compromise between the fair splitting rule
-and the sliding midpoint rule.  Sliding fair-split is based on the
-theory that there are two types of splits that are good: balanced
-splits that produce fat rectangles, and unbalanced splits provided the
-rectangle with fewer points is fat.
-
-Also, this splitting rule maintains an upper bound on the maximal
-allowed ratio of the longest and shortest side of a rectangle (the
-value of this upper bound is set in the constructor of the fair
-splitting rule). Among the splits that satisfy this bound, it selects
-the one one in which the points have the largest spread.  It then
-considers the most extreme cuts that would be allowed by the aspect
-ratio bound. This is done by dividing the longest side of the
-rectangle by the aspect ratio bound. If the median cut lies between
-these extreme cuts, then we use the median cut. If not, then consider
-the extreme cut that is closer to the median.  If all the points lie
-to one side of this cut, then we slide the cut until it hits the first
-point.  This may violate the aspect ratio bound, but will never
-generate empty cells.
-
-\end{itemize}
-
-
-
-\section{Backward compability with the Kd-trees package}
-\label{Spatial_searching:Backward_compability_Kd-trees}
-
-In release 2.3 of \cgal\ $k$-$d$ trees have been implemented by the
-class \ccc{CGAL::Kdtree_d<PointTraits>}, that is parameterized with
-one of the traits classes
-
-\begin{itemize}
-
-\item
-\ccc{Kd_Interface} supporting user defined $d$-dimensional points.
-
-\item 
-\ccc{Kd_Interface_2d} supporting \ccc{CGAL::Point_2<R>}. 
-
-\item
-\ccc{Kd_Interface_3d} supporting \ccc{CGAL::Point_3<R>}. 
-
-\end{itemize}
-
-This $k$-$d$ tree implementation is backward compatible with the
-$k$-$d$ tree implementation provided by the spatial searching package,
-except for the definition of \ccc{Kdtree_d<Traits>::Box} and for the
-requirements on the definition of user defined $d$-dimensional points.
-
-In contrast with the old $k$-$d$ tree implementation, the spatial searching package
-requires that the \ccc{Kdtree_d<Traits>::Box} is bounded.
-
-The user can move from the old $k$-$d$ tree implementation to the spatial searching package by
-replacing in the code \\
-\begin{verbatim}
-#include <CGAL/Kd_tree_d.h>
-by
-#include <CGAL/Kd_tree_d_new.h>
-\end{verbatim}
- 
-Further, the spatial searching package requires that the user provides
-for a user defined point class \ccc{My_Point} a nested representation
-class \ccc{My_Point::R} or specializes \ccc{CGAL::Kernel_traits} for
-\ccc{My_Point::R}.
-
-The first solution is illustrated by the following code fragment:
-
-% \ccIncludeExampleCode{Representation_class.C}
-
-The second solution is illustrated by the following code fragment:
-
-% \ccIncludeExampleCode{Partial_specialization.C}

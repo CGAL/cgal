@@ -11,13 +11,16 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<Traits, PointContainer, SpatialSeparator>}
+\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<Traits, SpatialSeparator>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
 Implements the {\em midpoint of rectangle} splitting rule.
+A rectangles is cut through its midpoint orthogonal to the longest side.
+
+\ccInclude{CGAL/Splitters.h}
 
 \ccParameters
 
@@ -25,39 +28,28 @@ Expects for the first template argument a model of
 the concept \ccc{SearchTraits}, for example
 the type \ccc{CGAL::Search_traits_3< Cartesian<double> >}. 
 
-Expects for the second argument a model of the concept \ccc{PointContainer}. It has as default value
-the type \ccc{CGAL::Point_container<Traits>}.
-
-Expects for the third template argument a model of the concept \ccc{Separator}. It has as default value
+Expects for the second template argument a model of the concept \ccc{Separator}. It has as default value
 the type, \ccc{CGAL::Plane_separator<Traits::FT>}
 
-\ccInclude{CGAL/Splitters.h}
 
 \ccIsModel
 
 \ccc{Splitter}
 
-\ccTypes
 
-\ccTypedef{Traits::FT FT;}{Number type.} 
-\ccTypedef{PointContainer Container;}{Point container.}
-\ccTypedef{SpatialSeparator Separator;}{Separator.}
-
+\ccCreation
 \ccCreationVariable{s}  %% choose variable name
 
-\ccOperations
+\ccConstructor{Midpoint_of_rectangle_spread();}{Default constructor.}
+\ccConstructor{Midpoint_of_rectangle(unsigned int bucket_size);}{Constructor.}
 
-\ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1);} 
-{Modifies the separator $s$ by the {\em midpoint of rectangle} splitting rule, 
-and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
-using the splitting dimension and the splitting value of the modified separator.
-}
+\ccOperations
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
 
 \ccSeeAlso
 
 \ccc{Splitter},\\
-\ccc{PointContainer},\\
 \ccc{SpatialSeparator}
 
 \end{ccRefFunctionObjectClass}

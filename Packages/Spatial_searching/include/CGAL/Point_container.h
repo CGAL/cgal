@@ -48,8 +48,8 @@ private:
   int built_coord;    // a coordinate for which the pointer list is built
   Kd_tree_rectangle<SearchTraits> bbox;       // bounding box, i.e. rectangle of node
   Kd_tree_rectangle<SearchTraits> tbox;       // tight bounding box, 
-                                              // i.e. minimal enclosing bounding
-	                	              // box of points
+  // i.e. minimal enclosing bounding
+  // box of points
 	                	    
 public:
 
@@ -58,35 +58,35 @@ public:
   { 
     return bbox; 
   }
+  
+  inline const Kd_tree_rectangle<SearchTraits>&
+  tight_bounding_box() const 
+  { 
+    return tbox; 
+  }
 
-    inline const Kd_tree_rectangle<SearchTraits>&
-    tight_bounding_box() const 
-    { 
-      return tbox; 
-    }
-
-    inline int 
-    dimension() const 
+  inline int 
+  dimension() const 
   { 
     return bbox.dimension(); 
   } 
 
-    inline int 
-    built_coordinate() const 
+  inline int 
+  built_coordinate() const 
   { 
     return built_coord; 
   } 
 
-    // coordinate of the maximal span
-    inline int 
-    max_span_coord() const 
+  // coordinate of the maximal span
+  inline int 
+  max_span_coord() const 
   {
     return bbox.max_span_coord(); 
   }
 
-    // coordinate of the maximal tight span
-    inline int 
-    max_tight_span_coord() const 
+  // coordinate of the maximal tight span
+  inline int 
+  max_tight_span_coord() const 
   { 
     return tbox.max_span_coord(); 
   }
@@ -217,7 +217,7 @@ public:
 
   // building the container from a sequence of Point_d*
   Point_container(const int d, iterator begin, iterator end) :
-    b(begin), e(end), bbox(d, begin, end), tbox()  
+    b(begin), e(end), bbox(d, begin, end), tbox(bbox)  
   {
     built_coord = max_span_coord();
   }
@@ -257,24 +257,74 @@ public:
       return  *(ptit+split_coord) < value; 
     }
   };
-  
+
+
+  template <class SearchTraits>   
+  struct Between {
+    typedef typename SearchTraits::FT FT;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef std::vector<Point_d*> Point_vector;
+    
+    int split_coord;
+    FT low, high;
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+    
+    Between(int s, FT l, FT h)
+      : split_coord(s), low(l), high(h)
+    {}
+    
+    bool 
+    operator()(Point_d* pt) const
+    {
+      typename SearchTraits::Cartesian_const_iterator_d ptit;
+      ptit = construct_it(*pt);
+      if(! ( *(ptit+split_coord) <= high ) ){
+	//	std::cerr << "Point " << *pt << " exceeds " << high << " in dimension " << split_coord << std::endl;
+	return false;
+      }
+      if(! ( *(ptit+split_coord) >= low ) ){
+	//std::cerr << "Point " << *pt << " below " << low << " in dimension " << split_coord << std::endl;
+	return false;
+      }
+      return true;
+    }
+  };
+
+
   void recompute_tight_bounding_box() 
   {
     tbox.update_from_point_pointers(begin(), end());
   }
   
-  
+
+  bool
+  is_valid() const
+  {
+    bool b = true;
+    for (int i = 0; i < dimension(); i++){
+      assert( b = b && (bbox.min_coord(i) <= tbox.min_coord(i)));
+      assert( b = b && (bbox.max_coord(i) >= tbox.max_coord(i)));
+
+      Between<SearchTraits> between(i,tbox.min_coord(i), tbox.max_coord(i));
+      for(iterator it = begin(); it != end(); it++){
+	between(*it);
+      }
+    }
+    return b;
+  }
+
+
   // note that splitting is restricted to the built coordinate
   template <class Separator>
   void split(Point_container<SearchTraits>& c, Separator& sep,  
 	     bool sliding=false) 
   {
     assert(dimension()==c.dimension());
-    
+    assert(is_valid());
     c.bbox=bbox;
     
     const int split_coord = sep.cutting_dimension();
-    const FT cutting_value = sep.cutting_value();
+    FT cutting_value = sep.cutting_value();
 
     built_coord=split_coord;
     c.built_coord=split_coord;
@@ -287,55 +337,38 @@ public:
     iterator it = std::partition(begin(), end(), cmp);
     // now [begin,it) are lower and [it,end) are upper
     if (sliding) { // avoid empty lists 
-	  
+
       if (it == begin()) {
-	FT min_value = bbox.max_coord(built_coord);
-	bool found_smaller = false;
-	for (iterator pt = begin(); (pt != end()); ++pt) {
-	  ptit = construct_it((*(*pt)));	
-	  if ( *(ptit+split_coord) < min_value) {
-	    min_value= *(ptit+split_coord);
-	    it = pt;
-	    found_smaller = true;
-	  }
+	iterator minelt = std::min_element(begin(),end(),comp_coord_val<SearchTraits,int>(split_coord));
+	if(minelt != it){
+	  std::iter_swap(minelt,it);
 	}
-	if(found_smaller){
-	  Cmp<SearchTraits> cmp2(split_coord, min_value);
-	  it = std::partition(begin(), end(), cmp2);
-	}
+	cutting_value = *(construct_it(**it)+split_coord);
+	sep.set_cutting_value(cutting_value);
+	it++;
       }
       if (it == end()) {
-	FT max_value=bbox.min_coord(built_coord);
-	bool found_larger = false;
-	for (iterator pt = begin(); (pt != end()); ++pt) {
-	  ptit = construct_it((*(*pt)));	
-	  if ( *(ptit+split_coord) > max_value) {
-	    max_value= *(ptit+split_coord) ;
-	    it = pt;
-	    found_larger = true;
-	  }
+	iterator maxelt = std::max_element(begin(),end(),comp_coord_val<SearchTraits,int>(split_coord));
+	it--;
+	if(maxelt != it){
+	  std::iter_swap(maxelt,it);
 	}
-	if(found_larger){
-	  Cmp<SearchTraits> cmp2(split_coord, max_value);
-	  it = std::partition(begin(), end(), cmp2);
-	}
-	    
+	cutting_value = *(construct_it(**it)+split_coord);
+	sep.set_cutting_value(cutting_value);
       }
     }
-	
+
     c.set_range(begin(), it);
     set_range(it, end());
-
     // adjusting boxes
     bbox.set_lower_bound(split_coord, cutting_value);
     tbox.update_from_point_pointers(begin(),
 				    end());
-	
     c.bbox.set_upper_bound(split_coord, cutting_value);
     c.tbox.update_from_point_pointers(c.begin(),
 				      c.end());
-        
-       
+    assert(is_valid());
+    assert(c.is_valid());
   }
 
 
@@ -366,8 +399,8 @@ public:
   FT 
   median(const int split_coord) 
   {
-    Point_vector::iterator mid = begin() + (end() - begin())/2;
-    
+    typename Point_vector::iterator mid = begin() + (end() - begin())/2;
+    int dist = std::distance(begin(),end());
     std::nth_element(begin(), mid, end(),comp_coord_val<SearchTraits,int>(split_coord));
     
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
@@ -392,8 +425,8 @@ private:
   operator<< (std::ostream& s, Point_container<Point>& c) 
   {
     s << "Points container of size " << c.size() << "\n cell:";
-    s << bbox;
-    s << "\n minimal box enclosing points:"; s << tbox; 
+    s << c.bounding_box();
+    s << "\n minimal box enclosing points:"; s << c.tight_bounding_box(); 
     return s;
   }
 

@@ -21,10 +21,19 @@
   
 The concept \ccRefName\ defines the requirements for a function object class implementing a splitting rule.
 
+\ccHasModels
+
+\ccc{CGAL::Fair<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_rectangle<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_max_spread<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_fair<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_midpoint<Traits, SpatialSeparator>.}
+
 \ccTypes
 
 \ccNestedType{FT;}{Number type.}
-\ccNestedType{Container;}{Point container.}
 \ccNestedType{Separator;}{Separator.} 
 
 \ccCreationVariable{s}  %% choose variable name
@@ -47,16 +56,6 @@ of a cell allowed for fair splitting.}
 \ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
 
  
-\ccHasModels
-
-\ccc{CGAL::Fair<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Median_of_rectangle<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Median_of_max_spread<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Midpoint_of_rectangle<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Midpoint_of_max_spread<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Sliding_fair<Traits, PointContainer, SpatialSeparator>}, \\
-\ccc{CGAL::Sliding_midpoint<Traits, PointContainer, SpatialSeparator>.}
-
 
 
 \end{ccAdvanced}

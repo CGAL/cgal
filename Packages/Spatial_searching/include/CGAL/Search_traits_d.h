@@ -28,8 +28,12 @@ namespace CGAL {
 
   public:
     typedef typename K::Cartesian_const_iterator_d Cartesian_const_iterator_d;
-    typedef typename K::Construct_Cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
+    typedef typename K::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
+    typedef typename K::Construct_iso_box_d Construct_iso_box_d;
+    typedef typename K::Construct_min_vertex_d Construct_min_vertex_d;
+    typedef typename K::Construct_max_vertex_d Construct_max_vertex_d;
     typedef typename K::Point_d Point_d;
+    typedef typename K::Iso_box_d Iso_box_d;
     typedef typename K::FT FT;
     
   };

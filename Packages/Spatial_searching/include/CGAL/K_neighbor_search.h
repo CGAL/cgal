@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-template <class SearchTraits, 
+template <class SearchTraits,
           class Distance_=Euclidean_distance<SearchTraits>,
           class Splitter_=Sliding_midpoint<SearchTraits> , 
 	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false> >
@@ -43,13 +43,14 @@ public:
   typedef Tree_ Tree;
   typedef typename SearchTraits::Point_d Point_d;
   typedef typename SearchTraits::FT FT;
-  typedef std::pair<Point_d,FT> Point_with_distance;
+  typedef std::pair<Point_d,FT> Point_with_transformed_distance;
   
   typedef typename Tree::Node_handle Node_handle;
   
   typedef typename Tree::Point_d_iterator Point_d_iterator;
   typedef Kd_tree_rectangle<SearchTraits> Rectangle;
   typedef typename Distance::Query_item Query_item;
+
 private:
 
   int number_of_internal_nodes_visited;
@@ -63,7 +64,7 @@ private:
   int total_item_number;
   FT distance_to_root;   
   
-  typedef std::list<Point_with_distance> NN_list;
+  typedef std::list<Point_with_transformed_distance> NN_list;
 
 public:
   typedef typename NN_list::const_iterator iterator;
@@ -97,7 +98,7 @@ private:
       typename NN_list::iterator it=l.begin();
       for (; (it != l.end()); ++it) 
 	{ if (dist < it->second) break;}
-      Point_with_distance NN_Candidate(*I,dist);
+      Point_with_transformed_distance NN_Candidate(*I,dist);
       l.insert(it,NN_Candidate);
       if (actual_k > max_k) {
 	actual_k--;

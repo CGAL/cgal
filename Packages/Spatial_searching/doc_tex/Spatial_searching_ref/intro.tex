@@ -27,8 +27,6 @@ query items representing points and spatial objects.
 \end{itemize}
 
 
-In these searching problems a set $P$ of data points in $d$-dimensional
-space is given.
 
 The spatial searching package consists of the following concepts and
 classes that are described in the reference pages.
@@ -54,7 +52,8 @@ classes that are described in the reference pages.
 
 \ccRefIdfierPage{CGAL::Search_traits_2<Kernel>}\\
 \ccRefIdfierPage{CGAL::Search_traits_3<Kernel>}\\
-\ccRefIdfierPage{CGAL::Search_traits<FT_, Point_, CartesianIterator,ConstructCartesianIterator>}
+\ccRefIdfierPage{CGAL::Search_traits_d<Kernel>}\\
+\ccRefIdfierPage{CGAL::Search_traits<NT,Point,CartesianIterator,ConstructCartesianIterator,ConstructMinVertex,ConstructMaxVertex>}
 
 \ccHeading{Distance Classes}
 
@@ -65,14 +64,13 @@ classes that are described in the reference pages.
 
 \ccHeading{Splitter Classes}
 
-\ccRefIdfierPage{CGAL::Splitter_base<FT>} \\
-\ccRefIdfierPage{CGAL::Sliding_midpoint<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Sliding_fair<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Fair<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Median_of_max_spread<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Median_of_rectangle<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Midpoint_of_max_spread<Traits, PointContainer, SpatialSeparator>} \\
-\ccRefIdfierPage{CGAL::Midpoint_of_rectangle<Traits, PointContainer, SpatialSeparator>} 
+\ccRefIdfierPage{CGAL::Sliding_midpoint<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Sliding_fair<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Fair<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_max_spread<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_rectangle<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>} 
 
 
 
@@ -80,23 +78,20 @@ classes that are described in the reference pages.
 
 \ccRefIdfierPage{CGAL::Kd_tree_node<Traits, Splitter, UseExtendedNode>} \\
 \ccRefIdfierPage{CGAL::Kd_tree_rectangle<Traits>} \\
-\ccRefIdfierPage{CGAL::Plane_separator<FT>} \\
-\ccRefIdfierPage{CGAL::Point_container<Traits>}
+\ccRefIdfierPage{CGAL::Plane_separator<FT>}
 
 \ccHeading{Concepts}
 
 \ccRefConceptPage{FuzzyQueryItem} \\
 \ccRefConceptPage{GeneralDistance} \\ 
 \ccRefConceptPage{OrthogonalDistance} \\
-\ccRefConceptPage{PointContainer} \\
 \ccRefConceptPage{SearchTraits} \\
-\ccRefConceptPage{SpatialPoint} \\
 \ccRefConceptPage{SpatialSeparator} \\
-\ccRefConceptPage{SpatialTree} \\
-\ccRefConceptPage{Splitter}
+\ccRefConceptPage{SpatialTree}
 
-\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}
-
+\begin{ccHtmlOnly}
+\ccHeading{Alphabetical Listing of Reference Pages}}
+\end{ccHtmlOnly}
 
  
 

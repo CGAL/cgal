@@ -27,8 +27,10 @@ To optimize distance computations squared distances are used.
 
 \ccParameters
 
-Expects for the template argument a model of the concept
+Expects for the first template argument a model of the concept
 \ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
+
+
 
 \ccIsModel
 
@@ -38,22 +40,22 @@ OrthogonalDistance
 
 \ccTypedef{Traits::FT FT;}{Number type.}
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
-\ccTypedef{Traits::Point_d Query_item;}{Query item type.}
+\ccTypedef{Point_d Query_item;}{Query item type.}
 
 \ccCreation
-\ccCreationVariable{d}  %% choose variable name
+\ccCreationVariable{ed}  %% choose variable name
 
 \ccConstructor{Euclidean_distance();}{Default constructor.}
 
 \ccOperations
  
-\ccMethod{FT transformed_distance(Point_d q, Point_d p);}{Returns the squared Euclidean distance between~\ccc{q} and~\ccc{p}.}
+\ccMethod{FT transformed_distance(Query_item q, Point_d p);}{Returns the squared Euclidean distance between~\ccc{q} and~\ccc{p}.}
 
-\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
 {Returns the squared Euclidean distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;);}
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r;);}
 {Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 

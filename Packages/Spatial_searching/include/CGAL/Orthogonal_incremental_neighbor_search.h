@@ -40,15 +40,15 @@ public:
   typedef Tree_  Tree;
   typedef Distance_ Distance;
   typedef typename SearchTraits::Point_d Point_d;
-  typedef Point_d Query_item;
+  typedef typename Distance::Query_item Query_item;
   typedef typename SearchTraits::FT FT;
   typedef typename Tree::Point_d_iterator Point_d_iterator;
   typedef typename Tree::Node_handle Node_handle;
 
-  typedef std::pair<Point_d,FT> Point_with_distance;
+  typedef std::pair<Point_d,FT> Point_with_transformed_distance;
   typedef std::pair<Node_handle,FT> Node_with_distance;
   typedef std::vector<Node_with_distance*> Node_with_distance_vector;
-  typedef std::vector<Point_with_distance*> Point_with_distance_vector;
+  typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
 
 
 
@@ -66,7 +66,7 @@ class Iterator_implementation {
     
     FT multiplication_factor;
 
-    Point_d* query_point;
+    Query_item* query_point;
 
     int total_item_number;
 
@@ -107,7 +107,7 @@ class Iterator_implementation {
         } 
 
         //highest priority is smallest distance
-        bool operator() (Point_with_distance* p1, Point_with_distance* p2) const
+        bool operator() (Point_with_transformed_distance* p1, Point_with_transformed_distance* p2) const
 	{
 		if (search_nearest) {return (p1->second > p2->second);}
                 else {return (p2->second > p1->second);}
@@ -119,7 +119,7 @@ class Iterator_implementation {
     Priority_higher>* PriorityQueue;
 
     public:
-    std::priority_queue<Point_with_distance*, Point_with_distance_vector,
+    std::priority_queue<Point_with_transformed_distance*, Point_with_transformed_distance_vector,
     Distance_smaller>* Item_PriorityQueue;
 
     Distance* Orthogonal_distance_instance;
@@ -139,8 +139,8 @@ class Iterator_implementation {
     	Priority_higher> 
         (Priority_higher(search_nearest));
 
-        Item_PriorityQueue = new std::priority_queue<Point_with_distance*, 
-	Point_with_distance_vector,
+        Item_PriorityQueue = new std::priority_queue<Point_with_transformed_distance*, 
+	Point_with_transformed_distance_vector,
     	Distance_smaller> 
        (Distance_smaller(search_nearest));
        
@@ -180,7 +180,7 @@ class Iterator_implementation {
     }
 
     // * operator
-    Point_with_distance& operator* () const {
+    Point_with_transformed_distance& operator* () const {
 			return *(Item_PriorityQueue->top());
     }
 
@@ -192,8 +192,8 @@ class Iterator_implementation {
     }
 
     // postfix operator
-    Point_with_distance operator++(int) {
-        Point_with_distance result = *(Item_PriorityQueue->top());
+    Point_with_transformed_distance operator++(int) {
+        Point_with_transformed_distance result = *(Item_PriorityQueue->top());
         ++*this;
         return result;
     }
@@ -224,7 +224,7 @@ class Iterator_implementation {
                 delete The_top;
 	};
 	while (Item_PriorityQueue->size()>0) {
-                Point_with_distance* The_top=Item_PriorityQueue->top();
+                Point_with_transformed_distance* The_top=Item_PriorityQueue->top();
                 Item_PriorityQueue->pop();
                 delete The_top;
         };
@@ -236,7 +236,7 @@ class Iterator_implementation {
     private:
 
     void Delete_the_current_item_top() {
-        Point_with_distance* The_item_top=Item_PriorityQueue->top();
+        Point_with_transformed_distance* The_item_top=Item_PriorityQueue->top();
         Item_PriorityQueue->pop();
         delete The_item_top;
     }
@@ -322,8 +322,8 @@ class Iterator_implementation {
                         FT distance_to_query_point=
                         Orthogonal_distance_instance->
                         transformed_distance(*query_point,**it);
-                        Point_with_distance *NN_Candidate=
-                        new Point_with_distance(**it,distance_to_query_point);
+                        Point_with_transformed_distance *NN_Candidate=
+                        new Point_with_transformed_distance(**it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
                   };
                   // old top of PriorityQueue has been processed,
@@ -393,9 +393,9 @@ class iterator;
     public:
 
       typedef std::forward_iterator_tag iterator_category;
-      typedef Point_with_distance       value_type;
-      typedef Point_with_distance*      pointer;
-      typedef const Point_with_distance&      reference;
+      typedef Point_with_transformed_distance       value_type;
+      typedef Point_with_transformed_distance*      pointer;
+      typedef const Point_with_transformed_distance&      reference;
       typedef std::size_t               size_type;
       typedef std::ptrdiff_t            difference_type;
       typedef int distance_type;
@@ -426,7 +426,7 @@ class iterator;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }
 
-      const Point_with_distance& operator* () const {
+      const Point_with_transformed_distance& operator* () const {
                 return *(*Ptr_implementation);
     }
 
@@ -437,7 +437,7 @@ class iterator;
     }
 
     // postfix operator
-    Point_with_distance operator++(int) {
+    Point_with_transformed_distance operator++(int) {
         return (*Ptr_implementation)++;
     }
 

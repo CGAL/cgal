@@ -1,14 +1,13 @@
 // file: examples/Spatial_searching/Distance_browsing.C
 
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/point_generators_d.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
+#include <CGAL/Search_traits_2.h>
 
-typedef CGAL::Cartesian_d<double> K;
-typedef K::Point_d Point_d;
-typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
-typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Orthogonal_incremental_neighbor_search<K> NN_incremental_search;
+typedef CGAL::Cartesian<double> K;
+typedef K::Point_2 Point_d;
+typedef CGAL::Search_traits_2<K> TreeTraits;
+typedef CGAL::Orthogonal_incremental_neighbor_search<TreeTraits> NN_incremental_search;
 typedef NN_incremental_search::iterator NN_iterator;
 typedef NN_incremental_search::Tree Tree;
 
@@ -21,24 +20,42 @@ struct X_not_positive {
 typedef CGAL::Filter_iterator<NN_iterator, X_not_positive> NN_positive_x_iterator;
 
 int main() {
-  const int D = 4;
-  const int N = 20;
+  const int D = 2;
+  const int N = 1;
 
-  // generator for random data points in the square ( (-1,-1), (1,1) ) 
-  Random_points_iterator rpit(N, 1.0);
+  std::list<Point_d> points;
+  points.push_back(Point_d(0,0));
+  points.push_back(Point_d(1,1));
+  points.push_back(Point_d(0,1));
+  points.push_back(Point_d(10,110));
+  points.push_back(Point_d(45,0));
+  points.push_back(Point_d(0,2340));
+  points.push_back(Point_d(0,30));
+
+  Tree tree(points.begin(), points.end());
   
-  // Insert N points in the tree
-  Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N));
-  // define query
-  double four[D] = { 0.5, 0.5, 0.5, 0.5 };
-  Point_d query(D, four, four+D );
+  Point_d query(0,0);
 
   NN_incremental_search NN(tree, query);
   NN_positive_x_iterator it(NN.end(), X_not_positive(), NN.begin());
   
   std::cout <<  "The first 5 nearest neighbours with positive x-coord are: " << std::endl;
   for (int j=0; j < 5; ++j,++it) 
-      std::cout <<   (*it).first << "  " << (*it).second << std::endl;
+    std::cout <<   (*it).first << "; squared distance =   " << (*it).second << std::endl;
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

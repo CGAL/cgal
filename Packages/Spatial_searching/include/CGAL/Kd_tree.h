@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-
+  //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
 template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
 class Kd_tree {
 
@@ -113,7 +113,6 @@ private:
     Node_handle nh = nodes.construct_insert(Node::EXTENDED_INTERNAL);
     
     Point_container c_low(c.dimension());
-    
     split(nh->separator(), c, c_low);
 	        
     int cd  = nh->separator().cutting_dimension();
@@ -147,7 +146,6 @@ private:
     Node_handle nh = nodes.construct_insert(Node::INTERNAL);
     
     Point_container c_low(c.dimension());
-    
     split(nh->separator(), c, c_low);
 	        
     if (c_low.size() > split.bucket_size()){
@@ -182,12 +180,10 @@ public:
 
     data.reserve(pts.size());
     for(int i = 0; i < pts.size(); i++){
-      data[i] = &pts[i];
+      data.push_back(&pts[i]);
     }
     Point_container c(dim, data.begin(), data.end());
-
     bbox = new Kd_tree_rectangle<SearchTraits>(c.bounding_box());
-    
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
@@ -222,6 +218,12 @@ public:
     return tree_root; 
   }
 
+  void
+  print() const
+  {
+    root()->print();
+  }
+
   const Kd_tree_rectangle<SearchTraits>&
   bounding_box() const 
   {
@@ -253,7 +255,10 @@ public:
     s << "Tree statistics:" << std::endl;
     s << "Number of items stored: " 
       << tree_root->num_items() << std::endl;
+    s << "Number of nodes: " 
+      << tree_root->num_nodes() << std::endl;
     s << " Tree depth: " << tree_root->depth() << std::endl;
+    //    tree_root->bucket_size();
     return s;
   }
 

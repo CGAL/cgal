@@ -24,13 +24,15 @@
 
 namespace CGAL {
 
+
+
   template <class SearchTraits>
   class Euclidean_distance {
 
     public:
 
-    typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::FT    FT;
+    typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
     
     public:
@@ -39,7 +41,7 @@ namespace CGAL {
     	Euclidean_distance() {}
 
 
-	inline FT transformed_distance(const Point_d& q, const Point_d& p) const {
+	inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
 	        FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
@@ -51,7 +53,7 @@ namespace CGAL {
 	}
 
 
-	inline FT min_distance_to_rectangle(const Point_d& q,
+	inline FT min_distance_to_rectangle(const Query_item& q,
 					    const Kd_tree_rectangle<SearchTraits>& r) const {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
@@ -69,7 +71,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline FT max_distance_to_rectangle(const Point_d& q,
+	inline FT max_distance_to_rectangle(const Query_item& q,
 					     const Kd_tree_rectangle<SearchTraits>& r) const {
 		FT distance=FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
