@@ -95,12 +95,13 @@ widget to be c.}
 
 %TOOLS
 \ccHeading{Tools}
-\ccMethod{void attach(Qt_widget_tool& tool);}{Attaches a tool to the widget. If another
-tool is already attached this gets detached first.}
+\ccMethod{void attach(Qt_widget_tool* tool);}{Attaches a tool to the
+widget. If another tool is already attached this gets detached first.}
 
 \ccMethod{bool has_tool() const;}{Returns true if a tool is attached.}
 
-\ccMethod{void detach_current_tool();}{Detaches the current tool from the widget.}
+\ccMethod{void detach_current_tool();}{Detaches the current tool from
+the widget.}
 
 %LAYERS
 \ccHeading{Layers}
@@ -111,8 +112,8 @@ s it's a pointer to an existing layer.}
 \ccMethod{void activate(Qt_widget_layer* s);}{Activate a layer. s it's a 
 pointer to an existing attached layer.}
 \ccMethod{void deactivate(Qt_widget_layer* s);}{Deactivate a layer. When you'll
-deactivate a layer, that layer will keep the order in the list of layers. s it's
-a pointer to an existing attached layer.}
+deactivate a layer, that layer will keep the order in the list of
+layers. s it's a pointer to an existing attached layer.}
 \ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
 overload this function and put your code for drawing here if you don't use 
 \ccc{layers}. Redraw the layers situated in the list. Before 
@@ -132,11 +133,11 @@ by the tools that create \cgal\ objects. It then emits the signal
 \ccMethod{QColor color() const;}{Returns the current pen color. The color 
 returned is a Qt class.}
 
-\ccMethod{QColor backgroundColor() const;}{Returns the current widget background
-color. The color returned is a Qt class.}
+\ccMethod{QColor backgroundColor() const;}{Returns the current widget
+background color. The color returned is a Qt class.}
 
-\ccMethod{QColor fillColor() const;}{Returns the current color used for filling 
-the objects. The color returned is a Qt class.}
+\ccMethod{QColor fillColor() const;}{Returns the current color used
+for filling the objects. The color returned is a Qt class.}
 
 \ccMethod{PointStyle pointStyle();}{Returns the current point style. PointStyle
  is a enumeration declared in \ccc{Qt_widget}.}
@@ -150,24 +151,29 @@ the objects. The color returned is a Qt class.}
 
 %COORDINATES
 %\ccHeading{Coordinates}
-\ccMethod{double x_min() const;}{Returns the left \ccc{x} coordinate  of the widget.}
-\ccMethod{double y_min() const;}{Returns the lower\ccc{y} coordinate  of the widget.}
-\ccMethod{double x_max() const;}{Returns the right\ccc{x} coordinate of the widget.}
-\ccMethod{double y_max() const;}{Returns the upper\ccc{y} coordinate of the widget.}
+\ccMethod{double x_min() const;}{Returns the left \ccc{x} coordinate
+of the widget.}
+\ccMethod{double y_min() const;}{Returns the lower\ccc{y} coordinate
+of the widget.}
+\ccMethod{double x_max() const;}{Returns the right\ccc{x} coordinate
+of the widget.}
+\ccMethod{double y_max() const;}{Returns the upper\ccc{y} coordinate
+of the widget.}
 
 \begin{ccAdvanced}
 %PAINTER
 \ccHeading{Painter and Pixmap}
 
-In order that layers can draw on the drawing area of a widget, they have to access
-the underlying pixmap and painter.
+In order that layers can draw on the drawing area of a widget, they
+have to access the underlying pixmap and painter.
  
 \ccStyle{Qt_widget} use as a backbuffer for drawing a pixmap
-defined inside the class, that is an object of type \ccc{QPixmap}. The \ccc{QPixmap} class
-is an off-screen pixel-based paint device. One common use of the \ccc{QPixmap} class
-is to enable smooth updating of widgets.
+defined inside the class, that is an object of type \ccc{QPixmap}. The
+\ccc{QPixmap} class is an off-screen pixel-based paint device. One
+common use of the \ccc{QPixmap} class is to enable smooth updating of widgets.
 The QPainter class paints on paint devices. There is an object of type 
-QPainter defined in \ccStyle{Qt_widget} that uses as a paint device the \ccc{QPixmap} object.
+QPainter defined in \ccStyle{Qt_widget} that uses as a paint device
+the \ccc{QPixmap} object.
 
 \ccMethod{QPixmap& get_pixmap();}{Returns the current pixmap.}
 

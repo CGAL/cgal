@@ -672,7 +672,7 @@ My_Tool	t;
 \end{ccExampleCode}
 In the constructor of My\_Window we attach the tool:
 \begin{ccExampleCode}
-widget->attach(t);
+widget->attach(&t);
 \end{ccExampleCode}
 
 To receive the object that the tool creates, in the constructor of My\_Window, 
@@ -737,7 +737,7 @@ CGAL::Qt_widget_get_point<Rep> get_point;
 \end{ccExampleCode}
 In the constructor of My\_Window also we attached this generic tool:
 \begin{ccExampleCode}
-widget->attach(get_point);
+widget->attach(&get_point);
 \end{ccExampleCode}
 
 The connect is still there in the constructor, the good news is that
