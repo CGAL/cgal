@@ -341,8 +341,8 @@ private:
 
   // Using a union is clean and should avoid aliasing problems.
   union menion {
-    void *   p;
-    Type     t:2;
+    void *         p;
+    unsigned int   t:2;
 
     menion(void * ptr)
     : p(ptr) {}
@@ -364,7 +364,7 @@ private:
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
-    return menion(Traits::pointer(*ptr)).t;
+    return (Type) menion(Traits::pointer(*ptr)).t;
   }
 
   // Sets the pointer part and the type of the pointee.
@@ -447,6 +447,7 @@ void Compact_container<T, Allocator>::clear()
       first_item = p; // keep pointer to begining of current block.
     }
   };
+  CGAL_assertion(capacity_==0);
   init();
 }
 

@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fix Compact_container for VC 7.1.
 GLOB: - Sun doesn't have operator!= for std::reverse_iterator
 GLOB: removed stlport/cgal_functional_base.h
 GLOB: Fix typo in iterator.h
