@@ -57,8 +57,8 @@ power_testH2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Oriented_side result = power_testH2(
@@ -78,12 +78,12 @@ power_testH2(
 		ty.interval(),
 		tw.interval(),
 		twt.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return power_testH2(
 		px.exact(),
 		py.exact(),
@@ -125,8 +125,8 @@ power_testH2(
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tw, 
     const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &twt)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Oriented_side result = power_testH2(
@@ -142,12 +142,12 @@ power_testH2(
 		ty.interval(),
 		tw.interval(),
 		twt.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return power_testH2(
 		px.exact(),
 		py.exact(),

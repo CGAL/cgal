@@ -1,10 +1,35 @@
 // ======================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1999 The GALIA Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This software and related documentation is part of the
+// Computational Geometry Algorithms Library (CGAL).
+//
+// Every use of CGAL requires a license. Licenses come in three kinds:
+//
+// - For academic research and teaching purposes, permission to use and
+//   copy the software and its documentation is hereby granted free of  
+//   charge, provided that
+//   (1) it is not a component of a commercial product, and
+//   (2) this notice appears in all copies of the software and
+//       related documentation.
+// - Development licenses grant access to the source code of the library 
+//   to develop programs. These programs may be sold to other parties as 
+//   executable code. To obtain a development license, please contact
+//   the GALIA Consortium (at cgal@cs.uu.nl).
+// - Commercialization licenses grant access to the source code and the
+//   right to sell development licenses. To obtain a commercialization 
+//   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
+//
+// This software and documentation is provided "as-is" and without
+// warranty of any kind. In no event shall the CGAL Consortium be
+// liable for any damage of any kind.
+//
+// The GALIA Consortium consists of Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Free University of Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany),
+// and Tel-Aviv University (Israel).
 //
 // ----------------------------------------------------------------------
 //
@@ -17,9 +42,11 @@
 // revision      : $Revision$
 // revision_date :
 // author(s)     : Sylvain.Pion@sophia.inria.fr
-//                 Sylvain Pion     (Sylvain.Pion@sophia.inria.fr)
+//                 Sylvain Pion
 //
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
+// coordinator   : INRIA Sophia-Antipolis
+//
+// email         : cgal@cs.uu.nl
 //
 // ======================================================================
 
@@ -48,18 +75,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_xC2(
@@ -70,12 +97,12 @@ compare_xC2(
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -93,24 +120,24 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_xC2(
@@ -126,12 +153,12 @@ compare_xC2(
 		h2a.interval(),
 		h2b.interval(),
 		h2c.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -154,15 +181,15 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -171,12 +198,12 @@ compare_y_at_xC2(
 		la.interval(),
 		lb.interval(),
 		lc.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -192,18 +219,18 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -214,12 +241,12 @@ compare_y_at_xC2(
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -237,20 +264,20 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_LARGE_INLINE
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ha,  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ha,  
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hb,  
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &hc)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -263,12 +290,12 @@ compare_y_at_xC2(
 		ha.interval(),
 		hb.interval(),
 		hc.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -288,24 +315,24 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_LARGE_INLINE
 Comparison_result
 compare_y_at_xC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &l2c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h1c,
                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2a, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2b, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &h2c)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_y_at_xC2(
@@ -321,12 +348,12 @@ compare_y_at_xC2(
 		h2a.interval(),
 		h2b.interval(),
 		h2c.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -349,14 +376,14 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // inline
 Comparison_result
 compare_deltax_deltayC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx,
                         
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_deltax_deltayC2(
@@ -364,12 +391,12 @@ compare_deltax_deltayC2(
 		qx.interval(),
 		ry.interval(),
 		sy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -381,17 +408,17 @@ compare_deltax_deltayC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 Comparison_result
 compare_lexicographically_xyC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = compare_lexicographically_xyC2(
@@ -399,12 +426,12 @@ compare_lexicographically_xyC2(
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return compare_lexicographically_xyC2(
 		px.exact(),
 		py.exact(),
@@ -416,20 +443,20 @@ compare_lexicographically_xyC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 Orientation
 orientationC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
               
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
               
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Orientation result = orientationC2(
@@ -439,12 +466,12 @@ orientationC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return orientationC2(
 		px.exact(),
 		py.exact(),
@@ -461,17 +488,17 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_ordered_along_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                    
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                                    
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = collinear_are_ordered_along_lineC2(
@@ -481,12 +508,12 @@ collinear_are_ordered_along_lineC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return collinear_are_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
@@ -503,17 +530,17 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_strictly_ordered_along_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                                             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = collinear_are_strictly_ordered_along_lineC2(
@@ -523,12 +550,12 @@ collinear_are_strictly_ordered_along_lineC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return collinear_are_strictly_ordered_along_lineC2(
 		px.exact(),
 		py.exact(),
@@ -545,20 +572,20 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_LARGE_INLINE
 Oriented_side
 side_of_oriented_circleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Oriented_side result = side_of_oriented_circleC2(
@@ -570,12 +597,12 @@ side_of_oriented_circleC2(
 		ry.interval(),
 		tx.interval(),
 		ty.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -594,20 +621,20 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 // CGAL_KERNEL_LARGE_INLINE
 Bounded_side
 side_of_bounded_circleC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                          
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                          
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
                          
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &tx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ty)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Bounded_side result = side_of_bounded_circleC2(
@@ -619,12 +646,12 @@ side_of_bounded_circleC2(
 		ry.interval(),
 		tx.interval(),
 		ty.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -640,20 +667,20 @@ side_of_bounded_circleC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 Comparison_result
 cmp_dist_to_pointC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                     
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                     
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_dist_to_pointC2(
@@ -663,12 +690,12 @@ cmp_dist_to_pointC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -682,20 +709,20 @@ cmp_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_larger_dist_to_pointC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                            
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                            
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_dist_to_pointC2(
@@ -705,12 +732,12 @@ has_larger_dist_to_pointC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_larger_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -724,20 +751,20 @@ has_larger_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_smaller_dist_to_pointC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                             
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_dist_to_pointC2(
@@ -747,12 +774,12 @@ has_smaller_dist_to_pointC2(
 		qy.interval(),
 		rx.interval(),
 		ry.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_smaller_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -766,21 +793,21 @@ has_smaller_dist_to_pointC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 Comparison_result
 cmp_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
@@ -791,12 +818,12 @@ cmp_signed_dist_to_lineC2(
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return cmp_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -811,21 +838,21 @@ cmp_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_larger_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
                                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_signed_dist_to_lineC2(
@@ -836,12 +863,12 @@ has_larger_signed_dist_to_lineC2(
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_larger_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -856,21 +883,21 @@ has_larger_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_smaller_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &la, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lb, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &lc,
                                   
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                   
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_signed_dist_to_lineC2(
@@ -881,12 +908,12 @@ has_smaller_signed_dist_to_lineC2(
 		py.interval(),
 		qx.interval(),
 		qy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_smaller_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -900,23 +927,23 @@ has_smaller_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 Comparison_result
 cmp_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
                           
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     Comparison_result result = cmp_signed_dist_to_lineC2(
@@ -928,12 +955,12 @@ cmp_signed_dist_to_lineC2(
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -949,23 +976,23 @@ cmp_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_larger_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
                                  
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_larger_signed_dist_to_lineC2(
@@ -977,12 +1004,12 @@ has_larger_signed_dist_to_lineC2(
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_larger_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
@@ -998,23 +1025,23 @@ has_larger_signed_dist_to_lineC2(
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif
-// CGAL_KERNEL_MEDIUM_INLINE
+// inline
 bool
 has_smaller_signed_dist_to_lineC2(
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &px, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &py,
                                   
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &qy,
                                   
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &rx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &ry,
                                   
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
-    const Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sx, 
+    const CGAL::Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &sy)
 {
-  FPU_CW_t backup = FPU_get_cw();
-  FPU_set_cw(FPU_cw_up);
+  CGAL::FPU_CW_t backup = CGAL::FPU_get_cw();
+  CGAL::FPU_set_cw(CGAL::FPU_cw_up);
   try
   {
     bool result = has_smaller_signed_dist_to_lineC2(
@@ -1026,12 +1053,12 @@ has_smaller_signed_dist_to_lineC2(
 		ry.interval(),
 		sx.interval(),
 		sy.interval());
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return result;
   } 
-  catch (Interval_nt_advanced::unsafe_comparison)
+  catch (CGAL::Interval_nt_advanced::unsafe_comparison)
   {
-    FPU_set_cw(backup);
+    CGAL::FPU_set_cw(backup);
     return has_smaller_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
