@@ -1,3 +1,6 @@
+4.54     (28 March 02)
+- Added 3-arg min/max where using std::min/max does not work.
+
 4.53     (28 March 02)
 - Fixed cgal_test.
 
