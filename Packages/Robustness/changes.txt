@@ -1,3 +1,6 @@
+1.19    (14 Aug 2003) [rursu]
+- fixed the demo for Windows platform
+
 1.18    (12 Aug 2003) [rursu]
 - modified Qt based demo. Added new features.
 
