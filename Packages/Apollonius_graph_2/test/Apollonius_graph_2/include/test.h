@@ -20,20 +20,25 @@ CGAL_BEGIN_NAMESPACE
 
 
 template<class Kernel, class Method_tag>
-bool test_traits()
+struct Traits_tester
 {
-  typedef Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
-  return test_traits_base( Traits() );
+  typedef typename Apollonius_graph_traits_2<Kernel,Method_tag>  Traits;
+
+  bool operator()(int = 0) const {
+    return test_traits_base( Traits() );
+  }
 };
 
 template<class CK, class CK_Method, class EK, class EK_Method>
-bool test_filtered_traits()
+struct Filtered_traits_tester
 {
   typedef
   Apollonius_graph_filtered_traits_2<CK, CK_Method, EK, EK_Method>
   Traits;
 
-  return test_traits_base( Traits() );
+  bool operator()(int = 0) const {
+    return test_traits_base( Traits() );
+  }
 };
 
 

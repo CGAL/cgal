@@ -51,7 +51,9 @@ int main()
     //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
 
     std::cout << "testing the traits class..." << std::flush;
-    bool traits_ok = CGAL::test_traits<Kernel,Method_tag>();
+
+    CGAL::Traits_tester<Kernel,Method_tag> test_traits;
+    bool traits_ok = test_traits();
 
     assert( traits_ok );
     std::cout << " done!" << std::endl;
@@ -91,8 +93,9 @@ int main()
     assert( ifs_hierarchy );
 
     std::cout << "testing the filtered traits class..." << std::flush;
-    bool traits_ok =
-      CGAL::test_filtered_traits<CK,Method_tag,EK,Method_tag>();
+
+    CGAL::Filtered_traits_tester<CK,Method_tag,EK,Method_tag> test_traits;
+    bool traits_ok = test_traits();
 
     assert( traits_ok );
     std::cout << " done!" << std::endl;

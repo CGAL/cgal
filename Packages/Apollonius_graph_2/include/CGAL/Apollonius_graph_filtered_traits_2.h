@@ -51,19 +51,48 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
+
+
+template<class CK>
+struct CK_To_interval
+  : public To_interval< typename CK::RT >
+{
+};
+
+template<class CK, class FK>
+struct AG_Interval_converter
+  : public Cartesian_converter<CK, FK, CK_To_interval<CK> >
+{};
+
+
+
+
+
+
+#if 1
 template<class CK_t,
 	 class CK_MTag = Ring_tag,
-	 class EK_t    = Simple_cartesian<MP_Float>,
+	 class EK_t    = Simple_cartesian< MP_Float >,
 	 class EK_MTag = CK_MTag,
-	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
+	 class FK_t    = Simple_cartesian< Interval_nt_advanced >,
 	 class FK_MTag = CK_MTag,
-	 class C2E_t   = Cartesian_converter<CK_t, EK_t>,
-	 class C2F_t   =
-	 Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> >
->
+  class C2E_t   = Cartesian_converter<CK_t, EK_t>,
+  class C2F_t   = AG_Interval_converter<CK_t, FK_t> >
+  //  class C2F_t =	 Cartesian_converter<CK_t, FK_t,
+  //  To_interval<typename CK_t::RT> > >
+#endif
+//template<class CK_t>
 class Apollonius_graph_filtered_traits_2
 {
 private:
+#if 0
+  typedef CGAL::Ring_tag CK_MTag;
+  typedef Simple_cartesian<MP_Float> EK_t;
+  typedef CK_MTag EK_MTag;
+  typedef CK_MTag FK_MTag;
+
+  typedef Simple_cartesian<Interval_nt_advanced> FK_t;
+#endif
   typedef Apollonius_graph_traits_2<CK_t, CK_MTag>    CK_traits;
   typedef Apollonius_graph_traits_2<FK_t, FK_MTag>    FK_traits;
   typedef Apollonius_graph_traits_2<EK_t, EK_MTag>    EK_traits;
@@ -71,6 +100,16 @@ private:
   typedef Apollonius_graph_kernel_wrapper_2<CK_t>     CK;
   typedef Apollonius_graph_kernel_wrapper_2<FK_t>     FK;
   typedef Apollonius_graph_kernel_wrapper_2<EK_t>     EK;
+
+#if 0
+  typedef typename CK_t::RT CKt_RT;
+
+  typedef
+  Cartesian_converter<CK_t, EK_t> C2E_t;
+
+  typedef
+  Cartesian_converter<CK_t, FK_t, To_interval<CKt_RT> > C2F_t;
+#endif
 
   typedef
   Apollonius_graph_cartesian_converter<CK, EK, C2E_t>   C2E;
@@ -126,7 +165,7 @@ public:
   typedef FK_traits                     Filtering_traits;
   typedef EK_traits                     Exact_traits;
 
-  typedef FK_MTag                       Construction_traits_method_tag;
+  typedef CK_MTag                       Construction_traits_method_tag;
   typedef FK_MTag                       Filtering_traits_method_tag;
   typedef EK_MTag                       Exact_traits_method_tag;
 
