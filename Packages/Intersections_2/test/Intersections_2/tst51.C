@@ -23,7 +23,7 @@ void print(const point_t &pt)
 	yd = 0.0;
     std::cout.setf(std::ios::showpos, std::ios::showpos);
     std::cout << xd <<' '<< yd;
-    std::cout.setf(0, std::ios::showpos);
+    std::cout.unsetf(std::ios::showpos);
 }
 
 
