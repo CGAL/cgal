@@ -56,11 +56,22 @@ public:
 	                Point_2(maxx, maxy)));
   }
 
+  Iso_rectangleC2(const Point_2 &left, const Point_2 &right,
+                  const Point_2 &bottom, const Point_2 &top)
+    : base(rep(Point_2(left.x(), bottom.y()),
+               Point_2(right.x(), top.y())))
+  {
+    CGAL_kernel_precondition(!less_x(right, left));
+    CGAL_kernel_precondition(!less_y(top, bottom));
+  }
+
   Iso_rectangleC2(const FT& min_x, const FT& min_y, 
                   const FT& max_x, const FT& max_y)
+    : base(rep(Point_2(min_x, min_y),
+               Point_2(max_x, max_y)))
   {
-    initialize_with(rep(Point_2(min_x, min_y),
-	                Point_2(max_x, max_y)));
+    CGAL_kernel_precondition(min_x <= max_x);
+    CGAL_kernel_precondition(min_y <= max_y);
   }
 
   Iso_rectangleC2(const FT& min_hx, const FT& min_hy, 

@@ -56,14 +56,28 @@ public:
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
     initialize_with(rep(Point_3(minx, miny, minz),
-				     Point_3(maxx, maxy, maxz)));
+		        Point_3(maxx, maxy, maxz)));
+  }
+
+  Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
+               const Point_3 &bottom, const Point_3 &top,
+               const Point_3 &far,    const Point_3 &close)
+    : base(rep(Point_3(left.x(), bottom.y(), far.z()),
+               Point_3(right.x(), top.y(), close.z())))
+  {
+    CGAL_kernel_precondition(!less_x(right, left));
+    CGAL_kernel_precondition(!less_y(top, bottom));
+    CGAL_kernel_precondition(!less_z(close, far));
   }
 
   Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,
                const FT& max_x, const FT& max_y, const FT& max_z)
+    : base(rep(Point_3(min_x, min_y, min_z),
+	       Point_3(max_x, max_y, max_z)))
   {
-    initialize_with(rep(Point_3(min_x, min_y, min_z),
-				     Point_3(max_x, max_y, max_z)));
+    CGAL_kernel_precondition(min_x <= max_x);
+    CGAL_kernel_precondition(min_y <= max_y);
+    CGAL_kernel_precondition(min_z <= max_z);
   }
 
   Iso_cuboidC3(const FT& min_hx, const FT& min_hy, const FT& min_hz,
@@ -72,13 +86,11 @@ public:
   {
     if (hw == FT(1))
        initialize_with(rep(Point_3(min_hx, min_hy, min_hz),
-				        Point_3(max_hx, max_hy, max_hz)));
+			   Point_3(max_hx, max_hy, max_hz)));
     else
-       initialize_with(
-         rep(Point_3(min_hx/hw, min_hy/hw, min_hz/hw),
-                          Point_3(max_hx/hw, max_hy/hw, max_hz/hw)));
+       initialize_with( rep( Point_3(min_hx/hw, min_hy/hw, min_hz/hw),
+                             Point_3(max_hx/hw, max_hy/hw, max_hz/hw)));
   }
-
 
   bool operator==(const Iso_cuboidC3& s) const;
   bool operator!=(const Iso_cuboidC3& s) const;
