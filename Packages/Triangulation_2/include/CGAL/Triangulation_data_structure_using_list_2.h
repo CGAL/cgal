@@ -433,10 +433,6 @@ insert_first( )
   CGAL_triangulation_precondition( number_of_vertices() == 0 &&
 				   dimension()==-2 );
   return insert_dim_up();
-//   Vertex* v1 = new Vertex;
-//   set_infinite_vertex(v1);
-//   set_number_of_vertices(1);
-//   return v1;
 }
 
 template < class Vb, class Fb>
@@ -447,16 +443,7 @@ insert_second()
   CGAL_triangulation_precondition( number_of_vertices() == 1 &&
 				   dimension()==-1 );
   return insert_dim_up();
-//   Vertex* v2= new Vertex;
-//   Face * f1 = new Face( _infinite_vertex, NULL, NULL);
-//   Face * f2 = new Face( v2, NULL, NULL);
-//   f1->set_neighbor(0,f2);
-//   f2->set_neighbor(0,f1);
-//   _infinite_vertex->set_face(f1);
-//   v2->set_face(f2);
-//   set_number_of_vertices(2);
-//   set_dimension(0);
-//   return v2;
+
 }
 
 
@@ -468,7 +455,6 @@ insert_in_face(Face* f)
 {
   CGAL_triangulation_precondition( f != NULL && dimension()== 2);
   Vertex*  v = create_vertex();
-  //set_number_of_vertices(number_of_vertices() +1);
 
   Vertex* v0 = f->vertex(0);
   Vertex* v2 = f->vertex(2);
@@ -522,7 +508,6 @@ insert_in_edge(Face* f, int i)
     ff->set_neighbor(1,g);
     v->set_face(g);
     vv->set_face(ff);
-    //set_number_of_vertices(number_of_vertices() +1);
   }
 
     else { //dimension() ==2
@@ -779,15 +764,6 @@ inline void
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 remove_second(Vertex* v)
 {
- //  CGAL_triangulation_precondition(number_of_vertices()== 2 &&
-// 				  dimension() == 0);
-//   delete v->face()->neighbor(0);
-//   delete v->face();
-//   delete v;
-//   set_number_of_vertices(1);
-//   set_dimension(-1);
-//   infinite_vertex()->set_face(NULL);
-//   return;
   CGAL_triangulation_precondition(number_of_vertices()== 2 &&
  				  dimension() == 0);
   remove_dim_down(v);
@@ -800,13 +776,6 @@ inline void
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 remove_first(Vertex* v)
 {
-  // CGAL_triangulation_precondition(number_of_vertices()== 1 && 
-// 				  dimension() == -1 &&
-// 				  v== infinite_vertex());
-//   delete v;
-//   set_number_of_vertices(0);
-//   set_infinite_vertex(NULL);
-//   return;
   CGAL_triangulation_precondition(number_of_vertices()== 1 && 
  				  dimension() == -1);
   remove_dim_down(v);
@@ -834,11 +803,7 @@ star_hole(Vertex* newv, List_edges& hole)
 {
   CGAL_triangulation_precondition(dimension() == 2);
   List_edges::const_iterator hit = hole.begin();
-  // Face* first_f = create_face(newv, 
-// 			      hit->first->vertex(cw(hit->second)),
-// 			      hit->first->vertex(ccw(hit->second)));
-//   first_f->set_neighbor(0, hit->second);
-//   hit->first->set_neighbor(hit->second, first_f);
+
   Face* first_f = create_face(hit->first, hit->second, newv);
   ++hit;
   Face* previous_f=first_f, *next_f;
@@ -847,13 +812,6 @@ star_hole(Vertex* newv, List_edges& hole)
     next_f->set_neighbor(1, previous_f);
     previous_f->set_neighbor(0, next_f);
     previous_f=next_f;
-    // Face* next_f = create_face(newv, 
-// 			       hit->first->vertex(cw(hit->second)),
-// 			       hit->first->vertex(ccw(hit->second)));
-    //    next_f->set_neighbor(0, hit->first);
-    //    next_f->set_neighbor(2, previous_f);
-//     hit->first->set_neighbor(hit->second, first_f);
-//     previous_f->set_neighbor(1,next_f);
   }
   next_f->set_neighbor(0, first_f);
   first_f->set_neighbor(1, next_f);
