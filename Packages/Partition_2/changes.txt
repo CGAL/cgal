@@ -1,3 +1,9 @@
+
+
+2 august 2004 Mariette Yvinec
+- changed Edge_list in Partition_vertex_map.h  to Pvm_edge_list
+  to avoid a clash with Segment Voronoi diagram 
+
 14 May 2004 Sylvain Pion
 - Remove unused variables generating warnings.
 
