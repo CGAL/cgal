@@ -290,6 +290,11 @@ Please note:
 
    <LI> <B>The detection of errors is not exact.  You should look at the log 
         files even when a "y" appears suggesting that everything is OK.</B>
+
+   <LI> A (rather rudimentary) 
+        <A HREF="test_manual/html/gif_grep_list.html">test for broken picture 
+        links</A> is also performed.  Follow the link to your chapter(s) to
+        see if there are pictures that couldn't be found.
 </UL>
 </P>
 
