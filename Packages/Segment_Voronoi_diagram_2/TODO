@@ -8,8 +8,6 @@
   but constructions also need to use this too.
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
-- add tag in the hierarchy class that indicates whether to insert segments
-  in the upper levels of the hierarchy or not
 - change the doc so that the requirement for the face base is the
   Triangulation_face_base_2 class
 - add the methods insert_polyline and insert_polygon that do some
