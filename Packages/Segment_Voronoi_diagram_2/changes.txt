@@ -1,3 +1,9 @@
+27 June 2004:  Menelaos Karavelas
+- added hack for G++ 3.4 on PowerPC about initialized static variables
+  in methods
+- fixed bugs in is_degenerate_edge and incircle predicates. The bugs in the
+  incircle predicate were only affecting the is_degenerate_edge predicate.
+
 24 June 2004:  Menelaos Karavelas
 - fixed bug in copy method of segment Voronoi diagram; added some debugging
   code with CGAL_NO_ASSERTIONS block
