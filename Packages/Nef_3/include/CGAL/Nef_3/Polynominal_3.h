@@ -1399,7 +1399,6 @@ template <class NT> CGAL::Sign
   { return p.sign(); }
 #endif // collides with global CGAL sign
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300
 //------------------------------------------------------------------
 // SPECIALIZE_FUNCTION(NT,int double) START
 // SPECIALIZING inline to :
@@ -1759,7 +1758,6 @@ template <class NT> CGAL::Sign
 
 // SPECIALIZE_FUNCTION(NT,int double) END
 //------------------------------------------------------------------
-#endif // _MSC_VER CGAL_CFG_MATCHING_BUG_2
 
 
 template <class NT> 
