@@ -1,3 +1,6 @@
+2.51   (7 January 2003)
+- Replace "3" by RT(3) so that Quotient<Gmpz> works.
+
 2.50   (5 October 2002)
 - Add explicit types to function templates to support expression templates
   (GMP++).

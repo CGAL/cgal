@@ -121,7 +121,7 @@ centroid( PointH3<R> const& p,
          + s.hy()*phw*qhw*rhw);
    RT hz(p.hz()*qhw*rhw*shw + q.hz()*phw*rhw*shw + r.hz()*phw*qhw*shw
          + s.hz()*phw*qhw*rhw);
-   RT hw( phw*qhw*rhw*shw * 4);
+   RT hw( phw*qhw*rhw*shw * RT(4));
    return PointH3<R>(hx, hy, hz, hw);
 }
 
@@ -139,7 +139,7 @@ centroid( PointH3<R> const& p,
    RT hx(p.hx()*qhw*rhw + q.hx()*phw*rhw + r.hx()*phw*qhw);
    RT hy(p.hy()*qhw*rhw + q.hy()*phw*rhw + r.hy()*phw*qhw);
    RT hz(p.hz()*qhw*rhw + q.hz()*phw*rhw + r.hz()*phw*qhw);
-   RT hw( phw*qhw*rhw * 3);
+   RT hw( phw*qhw*rhw * RT(3));
    return PointH3<R>(hx, hy, hz, hw);
 }
 
