@@ -11,16 +11,15 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : demo/Nef_3/nef_3.h
+// file          : test/Nef_3/nef_3.h
 // package       : Nef_3
 // chapter       : 3D-Nef Polyhedra
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Lutz Kettner    <kettner@mpi-sb.mpg.de>
-// maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+// author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
+// maintainer    : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 // coordinator   : MPI Saarbruecken
 //
 // Demo program maintaining a stack of Nef polyhedra in the space and
@@ -41,8 +40,6 @@
 template<typename Kernel>
 class test {
 
-  const char* datadir="data/"
-
   typedef typename Kernel::Point_3                       Point_3;
   typedef typename Kernel::Plane_3                       Plane_3;
   typedef typename Kernel::Vector_3                      Vector_3;
@@ -59,6 +56,9 @@ public:
   test() {};
 
 private:
+
+  static const char* datadir;  
+
   bool are_files_equal(char* name1, char* name2) {
     std::ifstream in1(name1);
     std::ifstream in2(name2);
@@ -79,13 +79,15 @@ private:
   }
 
   bool does_nef3_equals_file(Nef_polyhedron& N, char* name, char* suffix) {
-    char* fullname = new char[strlen(name)+strlen(suffix)+1];
-    strcpy(fullname, name);
+    char* fullname = new char[strlen(datadir)+strlen(name)+strlen(suffix)+1];
+    strcpy(fullname, datadir);
+    strcat(fullname, name);
     strcat(fullname, suffix);
-    std::ofstream out("temp.nef3");
+    std::ofstream out("data/temp.nef3");
     N.dump(out);
-    return are_files_equal("temp.nef3",fullname);
+    bool b = are_files_equal("data/temp.nef3",fullname);
     delete [] fullname;
+    return b;
   }
 
   Nef_polyhedron load_off( char* name) {
@@ -97,10 +99,13 @@ private:
   }
 
   Nef_polyhedron load_nef3(char* name, char* suffix) {
-    char* fullname = new char[strlen(name)+strlen(suffix)+1];
-    strcpy(fullname, name);
+    char* fullname = new char[strlen(datadir)+strlen(name)+strlen(suffix)+1];
+    strcpy(fullname, datadir);
+    strcat(fullname, name);
     strcat(fullname, suffix);
-    return Nef_polyhedron(fullname);
+    Nef_polyhedron tmp(fullname);
+    delete[] fullname;
+    return tmp;
   }
 
 public:
@@ -112,7 +117,7 @@ public:
     Nef_polyhedron N2;
     Nef_polyhedron N3;
 
-    C = load_off("cube.off");
+    C = load_off("data/cube.off");
     N = C;
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"cube.nef3",suffix));
@@ -237,23 +242,23 @@ public:
 
     // ******************** Simplification *************************
 
-    N = load_off("cube+v.off");
+    N = load_off("data/cube+v.off");
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"cube.nef3",suffix));
 
-    N = load_off("cube+vee.off");
+    N = load_off("data/cube+vee.off");
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"cube1.nef3",suffix));
 
-    N = load_off("cube+veeee.off");
+    N = load_off("data/cube+veeee.off");
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"cube2.nef3",suffix)); 
 
-    N = load_off("cube+vONe.off");
+    N = load_off("data/cube+vONe.off");
     CGAL_assertion(N.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N,"cube3.nef3",suffix));
 
-    N = load_off("cube.off");
+    N = load_off("data/cube.off");
     N1 = N;
     N2 = N;
     N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,0,0,1)));
@@ -322,7 +327,7 @@ public:
       CGAL_assertion(N1.is_valid(0,0));
       N1.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(-1,0,0,1)));
       CGAL_assertion(N1.is_valid(0,0));
-      N2 = Nef_polyhedron("viereck.nef3");
+      N2 = Nef_polyhedron("data/viereck.nef3");
       CGAL_assertion(N2.is_valid(0,0));
       N2.transform(Aff_transformation_3( CGAL::TRANSLATION, Vector_3(2,3,0,1)));
       CGAL_assertion(N2.is_valid(0,0));
@@ -392,7 +397,7 @@ public:
     // ******************* Unary Operations ********************************
     
     if(suffix[1] == 'E') {
-      Nef_polyhedron T("topologyE.nef3");
+      Nef_polyhedron T("data/topologyE.nef3");
       N = T;
       N = N.boundary();
       CGAL_assertion(N.is_valid(0,0));
@@ -425,6 +430,9 @@ public:
   }
 
 };
+
+template<typename Kernel>
+const char* test<Kernel>::datadir="data/";
 
 int main() {
 
