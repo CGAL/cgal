@@ -4,9 +4,9 @@
   cc_index_link.C
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual_index.sty.
-  Function  :add links in HTML-index
-  System    : bison, flex, C++ (g++)
-  Author    : 2003 Lutz Kettner, Renata Krysta
+  Function  :adds links in HTML-index (combines manual.ind with HREF)
+  System    : C++ (g++)
+  Author    : 2003 Renata Krysta
   Revision  : $Revision$
   Date      : $Date$
  
@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <iostream.h>
 #include <fstream.h>
-#include <string.h>
 
 
 typedef struct Lines{
@@ -56,6 +55,7 @@ char* search(pList list, int number) {
                return list->text;
            } else  list=list->next;
         }
+     return '\0';
 } 
 
 
@@ -64,7 +64,10 @@ char* search(pList list, int number) {
 /* ------------------------------------------------------- */
  
 main( int argc, char **argv) {
-  if (argc < 5) {
+// argv[1] is a file with sorted index entries and their numbers
+// argv[2] is a file with links and their numbers
+// argv[3] is an output file
+  if (argc < 4) {
       cerr << "*** Error: program needs an additional parameter"<<'\n';
       exit(1);
   }
@@ -93,8 +96,8 @@ main( int argc, char **argv) {
      cerr<<"*** Error: cannot open file "<< file_name2 <<'\n';
  
  
- char ch;
-
+  char ch;
+  char* out_link; 
   char name_link[300];
 
   bool end_name;
@@ -103,7 +106,7 @@ main( int argc, char **argv) {
       if (in_file2.get(ch)) {
          if (ch=='?') {
              if (in_file2.get(ch)) {
-                if (ch=='?') {
+                if (ch=='?') {    // if index entry
                   end_name=0; 
                   char tmp[300]="";
                   bool page = 0;
@@ -129,19 +132,22 @@ main( int argc, char **argv) {
                     }
                   }
                 
-                  if (page) {
+                  if (page) {    //if link
                     in_file2 >> number;
-                    out_file <<"<A "<<search(list,number)<<">" <<tmp 
-                             << "</A> ";
-                    while (in_file2.get(ch) && ch!='<') {
-                      if (ch=='|') {
-                        in_file2 >> number;
-                        out_file << "<A "<< search(list,number)<<">" 
-                                 // << "<img SRC=\""<< argv[4] << "/index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";  
-                                 << "<img SRC=\"./index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";  
-                      }
-                    }  
-                    out_file << ch;
+                    out_link = search(list,number);
+                       if (out_link) {
+                          out_file <<"<A "<< out_link <<">" <<tmp << "</A> ";
+                       } else out_file << tmp;
+                          while (in_file2.get(ch) && ch!='<') {
+                             if (ch=='|') {
+                               in_file2 >> number;
+                               if (out_link) {
+                                 out_file << "<A "<< search(list,number)<<">" 
+                                          << "<img SRC=\"" << "gif/index_arrow.gif\" ALT=\"reference\" WIDTH=\"14\" HEIGHT=\"12\" VALIGN=BOTTOM BORDER=0></A> ";
+                               }  
+                             }
+                          }  
+                          out_file << ch;
                   } else out_file << name_link; 
 
                  } else out_file << ch; 

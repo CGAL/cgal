@@ -394,9 +394,9 @@ end
 if ( $?DEBUG) echo "# Converting the index."
 
 makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
-cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/cc_index ${config_gif}
-cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
-    
+cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/cc_index
+\cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
+\cat ${config_gif}/index_arrow.gif > ${out_path}/gif/index_arrow.gif    
 
 # Copy the necessary images to the manual.
 # -------------------------------------------------------
@@ -602,8 +602,9 @@ foreach f ($in_files $ref_files)
     \cat ${new_tmp_path}/$f:h/HREF >> ${new_tmp_path}/HREF
 end
 makeindex -s ${config_html}/html_index.mst ${new_tmp_path}/manual.hidx
-cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/manual_index ${config_gif}
-cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/manual_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
+cc_index_link ${new_tmp_path}/HREF ${new_tmp_path}/manual.ind ${new_tmp_path}/manual_index
+\cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/manual_index ${new_tmp_path}/cc_index_footer > ${out_path}/manual_index.html
+\cat ${config_gif}/index_arrow.gif > ${out_path}/gif/index_arrow.gif
 
 
 # Copy the necessary images to the manual.

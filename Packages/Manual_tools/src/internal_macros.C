@@ -32,69 +32,6 @@
 // ======================================================================
 
 
-// ======================================================================
-// Index keys and sorting
-// ======================================================================
-
-// Sort keys for the index
-// ----------------------------------
-// The index is organized in a set of fixed topics. 
-
-// sort_keys are used to sort the index according to different sections.
-// A sort_key is followed by a 0 to indicate the section title.
-// A sort_key is followed by a 1 to indicate a normal entry.
-
-
-
-const string  sort_key_concept          = "<!sort B";
-const string  sort_key_class            = "<!sort B";
-const string  sort_key_struct           = "<!sort B";  // structs like classes
-const string  sort_key_nested_type      = "<!sort B";
-const string  sort_key_enum             = "<!sort B";
-const string  sort_key_enum_tags        = "<!sort B";
-const string  sort_key_typedef          = "<!sort B";
-const string  sort_key_macro            = "<!sort B";
-const string  sort_key_variable         = "<!sort B";
-const string  sort_key_function         = "<!sort B";
-const string  sort_key_member_function  = "<!sort B";
-
-
-
-const string& find_sort_key( string txt) {
-    if ( txt.size() > 0)
-	txt[0] = tolower( txt[0]);
-    if ( txt == "concept")
-	return sort_key_concept;
-    if ( txt == "functionObjectConcept")
-	return sort_key_concept;
-    if ( txt == "class")
-	return sort_key_class;
-    if ( txt == "functionObjectClass")
-	return sort_key_class;
-    if ( txt == "struct")
-	return sort_key_struct;
-    if ( txt == "nested_type")
-	return sort_key_nested_type;
-    if ( txt == "enum")
-	return sort_key_enum;
-    if ( txt == "enum_tags")
-	return sort_key_enum_tags;
-    if ( txt == "typedef")
-	return sort_key_typedef;
-    if ( txt == "macro")
-	return sort_key_macro;
-    if ( txt == "variable")
-	return sort_key_variable;
-    if ( txt == "constant")
-	return sort_key_variable;
-    if ( txt == "function")
-	return sort_key_function;
-    if ( txt == "member_function")
-	return sort_key_member_function;
-    printErrorMessage( UnknownIndexCategoryError);
-    return sort_key_class;
-}
-
 static int index_anchor_counter = 0;
 
 static int cross_link_anchor_counter = 0;
@@ -198,12 +135,7 @@ void handleChapter(  const Buffer_list& T) {
 
     // table of contents
    
-    if (macroIsTrue("\\lciIfMultipleParts"))
-      *contents_stream << " <TR> <TD>"<< chapter_num <<"    <A HREF=\"" 
-                     << main_filename 
-		     << "\">" << chapter_title << "</A> </TD> </TR>" << endl;
-    else
-      *contents_stream << "    <LI> <A HREF=\"" << main_filename
+    *contents_stream << "    <LI> <A HREF=\"" << main_filename
 		     << "\">" << chapter_title << "</A>" << endl;      
 }
 
@@ -214,26 +146,31 @@ void handlePart(  const Buffer_list& T) {
 
     if (!part_title.empty()) // end previous part 
     {
-       *contents_stream << " </TABLE></TD><TD VALIGN=TOP> <TABLE>"  << endl;
+       *contents_stream << "</OL>"  << endl;
        *contents_stream << "<!-- End of manual part -->"  << endl;
      //  chapter_num=0; 
     }
-    else
-    {
-       *contents_stream << "<TABLE WIDTH=100%><TD VALIGN=TOP><TABLE>" << endl;
-    } 
-    
+       
     part_title = string( text_block_to_string( T));
 
     // add new part title to table of contents
     *contents_stream << "<!-- Start of new manual part -->"  << endl;
-    *contents_stream << "<TR> <TH ALIGN=LEFT VALIGN=TOP><H3>" << part_title << "</H3></TH> </TR>" << endl; 
+    *contents_stream << "<H3>" << part_title << "</H3>" << endl; 
     if ( macroIsTrue( "\\lciIfNumberChaptersByPart") )
-        chapter_num=0;
+       *contents_stream << "<OL>" << endl;
+    else
+       *contents_stream << "<OL START=" << chapter_num+1 << ">" << endl;
 }
+
+// ========================================================================
+// Index
+// ========================================================================
 
 
 string correct_name (string s) {
+// corrects index entries for HTML (with <> and </> commands) so that
+// the result is a correct command in HTML.
+// Example: ``<I> index'' is changed into ``<I> index </I>''.  
 
   string tab[20];
   string search_item;
@@ -279,13 +216,6 @@ string correct_name (string s) {
       if (!(tab[j]=="")) 
           correct_s += "</" + tab[j] + ">"; 
    } 
-/*   if (tab_item > 1) {
-       cerr << endl;
-       cerr << " ***Index Warning*** " << endl; 
-       cerr << "Your indexing text contains formatting commands in the " 
-            << " interior. I'll do what I canwith this, but"
-            << " you may be in trouble" << endl;
-   } */
    return correct_s;
 
 }
@@ -294,6 +224,7 @@ string correct_name (string s) {
 void mainTextParse(string s,
                    string& index_name,
                    string& modifier) {
+// This function separates the normal entry and the modified entry from s.
 
    remove_leading_spaces(s);
    size_t i = 0;
@@ -327,7 +258,7 @@ void OpenFileforIndex() {
   temp_current_filename = current_filename; 
 
   string WhichItem = macroX("\\lciWhichItem");
-  if (WhichItem=="MainItem") {
+  if (WhichItem=="MainItem" || WhichItem=="index") {
      new_main_filename = macroX("\\lciMainItemFile");
   }
   else {
@@ -364,6 +295,7 @@ void CloseFileforIndex() {
 
 
 string name_for_ordering(string s) {
+// index entry without HTML commands
 
    string ord_s=""; 
    size_t i = 0;
@@ -379,6 +311,8 @@ string name_for_ordering(string s) {
    } 
    return ord_s;
 }
+
+// list of modified entries
 
 typedef struct Lines{
   string text;
@@ -450,8 +384,7 @@ void handleIndex() {
        ord_sub_sub_index_name = name_for_ordering(sub_sub_index_name); 
        ord_sub_sub_modifier = name_for_ordering(sub_sub_modifier);
    } 
-
- 
+    
    string sub_item="";
    string sub_sub_item="";
 
@@ -518,24 +451,24 @@ void handleIndex2(string main_item, string sub_item, string sub_sub_item, int mo
         *index_stream <<"! " << sub_item;
         if (sub_sub_item!="") *index_stream <<"! " << sub_sub_item;
    }
-    
-   switch (modifier) {
-      case 0 :
-//"<A HREF=\"") + filename + "\">"
-           *HREF_stream << HREF_counter << " HREF=\"" << current_filename
-                        << "#Index_anchor_" << index_anchor_counter << "\"" 
-                        << endl;
-           break;
-      case 1 :
-           *HREF_stream << HREF_counter <<" HREF=\"" << current_filename
-                        << "#Index_anchor_" << index_anchor_counter << "\"" 
-                        << endl;
-           break;
-      case 2 :
-           *HREF_stream << HREF_counter << " HREF=\"" << "#" << HREF_counter-2 
-                        << "\"" << endl;
-           break; 
-   } 
+   if ( !macroIsTrue("\\lciIfSeeAlso")) { 
+      switch (modifier) {
+        case 0 :
+             *HREF_stream << HREF_counter << " HREF=\"" << current_filename
+                          << "#Index_anchor_" << index_anchor_counter << "\"" 
+                          << endl;
+             break;
+        case 1 :
+             *HREF_stream << HREF_counter <<" HREF=\"" << current_filename
+                          << "#Index_anchor_" << index_anchor_counter << "\"" 
+                          << endl;
+             break;
+        case 2 :
+             *HREF_stream << HREF_counter << " HREF=\"" << "#"
+                          << HREF_counter-2 << "\"" << endl;
+             break; 
+      } 
+   } else *current_ostream<<"NIE1"<<main_item<<endl;
   
      
    *index_stream << "}{"<< HREF_counter << "}" << endl;
@@ -672,21 +605,13 @@ void handleClassFile( const string& filename,
     open_html( *class_stream);
     // Make a hyperlink in the chapter to the class file.
     if ( main_stream != &cout) {
-        if (macroIsTrue("\\lciIfMultipleParts"))
-           *main_stream  << "<TR> <TD> <UL><LI>" << formatted_reference
-		      << ".</UL> </TD> </TR>\n" << endl;
-        else
            *main_stream  << "<UL><LI>\n" << formatted_reference
 		      << ".</UL>\n" << endl;
     }
 
     // table of contents
     if ( macroIsTrue( "\\lciIfHtmlClassToc"))
-        if (macroIsTrue("\\lciIfMultipleParts"))
-            *contents_stream << "<TR> <TD> <UL><LI> " << formatted_reference
-			 << "</UL> </TD> </TR>" << endl;
-        else
-            *contents_stream << "<UL><LI> " <<  formatted_reference
+           *contents_stream << "<UL><LI> " <<  formatted_reference
 			 << "</UL> " << endl;
 
 
@@ -715,7 +640,6 @@ void handleClassFileEnd( void) {
 
 void handleClassEnvironment() {
     string ref_scope_name = macroX("\\ccPureRefScope");
-//    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
     template_class_name = macroX("\\ccPureClassTemplateName");
     string formatted_template_class_name = 
 	convert_C_to_html( template_class_name);
@@ -734,14 +658,10 @@ void handleClassEnvironment() {
 	handleClassFile( filename, contents);
     }
 
-    if ( macroIsTrue( "\\lciIfHtmlClassIndex") && 
-	 macroIsTrue( "\\lciIfHtmlIndex"))    // Index.
-	//*current_ostream << handleHtmlIndex( sort_key_class, 
-	//		    	             template_class_name,
-	//				     formatted_template_class_name);
-
-
- handleIndex2(class_name +"@ ??? "+
+    if ( macroIsTrue( "\\lciIfHtmlClassIndex") &&
+         macroIsTrue( "\\lciIfHtmlIndex")  &&  macroIsTrue( "\\ccIndex")
+         &&  macroIsTrue( "\\ccAutoIndex"))    // Index.
+            handleIndex2(class_name +"@ ??? "+
                         convert_C_to_html(class_name),"","",0);
 
 
@@ -1034,19 +954,9 @@ three_column_layout( const string&, string param[], size_t n, size_t opt) {
 // ======================================================================
 string
 html_index( const string&, string param[], size_t n, size_t opt) {
-/*    NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
+    NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
     crop_string( param[0]);
-    string key = find_sort_key( param[0]);
-    string s = string( "\n\\lcRawHtml{<A NAME=\"Index_anchor_") 
-	 + int_to_string( index_anchor_counter) + "\"></A>}\n"
-	   "\\lciPushOutput{index}\\lcRawHtml{" + key + "1"
-         + filter_for_index_comment( param[1]) + "!><A HREF=\""
-         + current_filename + "#Index_anchor_" 
-	 + int_to_string( index_anchor_counter) + "\">}" + param[1] 
-	 + "\\lcRawHtml{</A><BR>\n}\\lciPopOutput";
-    ++index_anchor_counter;
-
-    return s;*/
+    handleIndex2(param[1]+"@ ??? "+convert_C_to_html(param[1]),"","",0);
     return "";
 }
 
