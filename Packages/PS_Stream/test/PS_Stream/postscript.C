@@ -1,6 +1,6 @@
 #include <CGAL/Cartesian.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
@@ -9,7 +9,6 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/Circle_2.h>
 #include <CGAL/IO/PS_Stream.h>
-#include "PS_Stream.C"
 
 typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
 typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
@@ -19,12 +18,8 @@ typedef CGAL::Iso_rectangle_2< CGAL::Cartesian<double> > Rect;
 typedef CGAL::Circle_2< CGAL::Cartesian<double> >    Circle;
 typedef CGAL::Bbox_2 BBox;
 
-
-
 int  main()
 {
-
-
  CGAL::PS_Stream::PS_BBox bb(-2,-2,2,2);
 
  //  CGAL::PS_Stream ps(bb,400,500,"titi.ps",CGAL::PS_Stream::QUIET_EPS);

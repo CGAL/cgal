@@ -11,7 +11,7 @@
 #include <CGAL/Plane_3.h>
 #include <CGAL/Bbox_3.h>
 
-#include "PS_Stream_3.C"
+#include <CGAL/IO/PS_Stream_3.h>
 
 using namespace std;
 
