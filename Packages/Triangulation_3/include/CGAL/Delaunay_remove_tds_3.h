@@ -264,8 +264,8 @@ private:
 };
 
 
-// The compare function is needed to find opposite edges. In fact it sorts
-// a tuple by the first and second component. Maybe this is of general interest.
+// The compare function is needed to find opposite edges. In fact it sorts a
+// tuple by the first and second component. Maybe this is of general interest.
 template < class H>
 class Delaunay_remove_tds_halfedge_compare_3_2 {
 public:
