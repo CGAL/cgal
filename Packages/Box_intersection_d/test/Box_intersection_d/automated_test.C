@@ -16,11 +16,12 @@
 #include <cmath>
 
 
-typedef CGAL::Default_box_d< int, 3 >     Box;
-typedef CGAL::Default_box_traits_d< Box > Box_adapter;
-typedef CGAL::Default_box_predicate_traits_d< Box_adapter, true > Traits;
-typedef std::vector< Box >     Box_container;
-typedef std::pair< Box, Box >  Box_pair;
+typedef CGAL::Box_intersection_d::Box_d< int, 3 >     Box;
+typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
+typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
+                                                  Box_adapter, true > Traits;
+typedef std::vector< Box >      Box_container;
+typedef std::pair< Box, Box >   Box_pair;
 typedef std::vector< Box_pair > Result_container;
 
 
@@ -121,8 +122,9 @@ test( const char* filename1, const char* filename2 )
     std::cout << "all pairs ...... " << std::flush;
     Timer timer;
     timer.start();
-    CGAL::all_pairs( boxes1.begin(), boxes1.end(),
-                     boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
+    CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
+                                         boxes2.begin(), boxes2.end(),
+                                         callback1, Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.t << " seconds." << std::endl;
@@ -130,10 +132,12 @@ test( const char* filename1, const char* filename2 )
 
     std::cout << "one way scan ...... " << std::flush;
     timer.start();
-    CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
-    CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                        boxes1.begin(), boxes1.end(), callback2, Traits(), 2 );
+    CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
+                                            boxes2.begin(), boxes2.end(),
+                                            callback2, Traits(), 2 );
+    CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
+                                            boxes1.begin(), boxes1.end(),
+                                            callback2, Traits(), 2 );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.t << " seconds." << std::endl;
@@ -146,7 +150,8 @@ test( const char* filename1, const char* filename2 )
     const unsigned int n = boxes1.size();
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_d_custom( boxes1.begin(), boxes1.end(),
-                                     boxes2.begin(), boxes2.end(), callback2, Traits(), cutoff );
+                                     boxes2.begin(), boxes2.end(),
+                                     callback2, Traits(), cutoff );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.t << " seconds." << std::endl;

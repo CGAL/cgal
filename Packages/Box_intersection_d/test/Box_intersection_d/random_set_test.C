@@ -19,11 +19,12 @@ static unsigned int failed = 0;
 template< class NT, unsigned int DIM, bool CLOSED >
 struct _test {
 typedef NT Number_type;
-typedef CGAL::Default_box_d< Number_type, DIM >  Box;
-typedef CGAL::Default_box_traits_d< Box > Box_adapter;
-typedef CGAL::Default_box_predicate_traits_d< Box_adapter, CLOSED > Traits;
-typedef std::vector< Box >     Box_container;
-typedef std::pair< Box, Box >  Box_pair;
+typedef CGAL::Box_intersection_d::Box_d< Number_type, DIM >  Box;
+typedef CGAL::Box_intersection_d::Box_traits_d< Box > Box_adapter;
+typedef CGAL::Box_intersection_d::Box_predicate_traits_d<
+                                                 Box_adapter, CLOSED > Traits;
+typedef std::vector< Box >      Box_container;
+typedef std::pair< Box, Box >   Box_pair;
 typedef std::vector< Box_pair > Result_container;
 
 
@@ -59,8 +60,6 @@ struct Storage_callback {
     void operator()( const Box& a, const Box& b ) {
         assert_intersection( a, b );
         ++counter;
-        //storage.push_back( std::make_pair( a, b ) );
-        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
 
@@ -70,7 +69,6 @@ struct Counter_callback {
     void operator()( const Box& a, const Box& b ) {
         assert_intersection( a, b );
         ++counter;
-        //std::cout << Traits::get_id( a ) << " " << Traits::get_id( b ) << std::endl;
     }
 };
 
@@ -119,11 +117,14 @@ unsigned int countDuplicates( Storage& storage ) {
 } */
 
 static void
-test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_intersection_d::BIPARTITE )
+test_n( unsigned int n,
+        CGAL::Box_intersection_d::Setting
+                             setting = CGAL::Box_intersection_d::BIPARTITE )
 {
     Box_container boxes1, boxes2;
     //Result_container result_allpairs, result_scanner, result_tree;
-    std::cout << "generating random box sets with size " << n << " ... " << std::flush;
+    std::cout << "generating random box sets with size " << n
+              << " ... " << std::flush;
     fill_boxes( n, boxes1 );
     bool bipartite = setting == CGAL::Box_intersection_d::BIPARTITE;
 
@@ -138,8 +139,9 @@ test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_in
     if( n < 20000 ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
-        CGAL::all_pairs( boxes1.begin(), boxes1.end(),
-                         boxes2.begin(), boxes2.end(), callback0, Traits(), DIM - 1 );
+        CGAL::Box_intersection_d::all_pairs( boxes1.begin(), boxes1.end(),
+                                             boxes2.begin(), boxes2.end(),
+                                             callback0, Traits(), DIM - 1 );
         timer.stop();
         std::cout << "got " << callback0.counter << " intersections in "
                   << timer.t << " seconds."
@@ -148,11 +150,13 @@ test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_in
     }
     std::cout << "one way scan ... " << std::flush;
     timer.start();
-    CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback1, Traits(), DIM - 1 );
+    CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
+                                            boxes2.begin(), boxes2.end(),
+                                            callback1, Traits(), DIM - 1 );
     if( bipartite )
-        CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                            boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
+        CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
+                                                boxes1.begin(), boxes1.end(),
+                                                callback1, Traits(), DIM - 1);
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
               << timer.t << " seconds."
@@ -163,12 +167,15 @@ test_n( unsigned int n, CGAL::Box_intersection_d::Setting setting = CGAL::Box_in
     timer.start();
     unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
     CGAL::box_intersection_d_custom( boxes1.begin(), boxes1.end(),
-                                     boxes2.begin(), boxes2.end(), callback2, Traits(), cutoff, setting );
+                                     boxes2.begin(), boxes2.end(),
+                                     callback2, Traits(), cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.t << " seconds." << std::endl;
 
-    if( callback1.counter != callback2.counter || n < 20000 && callback0.counter != callback1.counter ) {
+    if( callback1.counter != callback2.counter ||
+        n < 20000 && callback0.counter != callback1.counter )
+    {
         ++failed;
         /*unsigned int missing    = countMissingItems( result_scanner,
                                                      result_tree );
@@ -252,7 +259,8 @@ int main( int argc, char ** argv ) {
     //d();
 
     if( failed != 0 )
-        std::cout << "a total number of " << failed << " tests failed!" << std::endl;
+        std::cout << "a total number of " << failed
+                  << " tests failed!" << std::endl;
     else
         std::cout << "all tests passed." << std::endl;
 }
