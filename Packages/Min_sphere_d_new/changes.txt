@@ -1,5 +1,8 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.12.4 on 26-Mar-2002
+- Fixed test program to use Kernel_d.
+
 Version 0.12.3 on 22-Mar-2002
 - Use Kernel_d.
 
