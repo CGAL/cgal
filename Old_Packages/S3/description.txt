@@ -1,0 +1,3 @@
+Cartesian kernel without reference counting - 3d
+Files are located in include/CGAL/SimpleCartesian
+Naming scheme is ...S3&lt;FT&gt;
