@@ -1,4 +1,5 @@
 5 March 2005 Sylvain Pion
+- Use <boost/operators.hpp> to simplify <CGAL/Quotient.h>.
 - Add test program for the mixed operators of Quotient.
 
 3 March 2005 Sylvain Pion

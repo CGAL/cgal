@@ -45,6 +45,8 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Number_type_traits.h>
 
+#include <boost/operators.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -69,6 +71,10 @@ simplify_quotient(NT &, NT &) {}
 
 template <class NT_>
 class Quotient
+  : boost::ordered_field_operators1< Quotient<NT_>
+  , boost::ordered_field_operators2< Quotient<NT_>, NT_
+  , boost::ordered_field_operators2< Quotient<NT_>, CGAL_int(NT_)
+    > > >
 {
  public:
   typedef NT_        NT;
@@ -373,38 +379,6 @@ io_Operator
 io_tag(const Quotient<NT>&)
 { return io_Operator(); }
 
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator+(const Quotient<NT>& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z = x;
-  return z += y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator-(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return (Quotient<NT>(x) -= y); }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator*(const Quotient<NT>& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z = x;
-  return z *= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator/(const Quotient<NT>& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z = x;
-  return z /= y;
-}
 
 template <class NT>
 inline
@@ -412,143 +386,6 @@ Quotient<NT>
 operator-(const Quotient<NT>& x)
 { return Quotient<NT>(-x.num,x.den); }
 
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator+(const NT& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z(x);
-  return z += y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator+(const Quotient<NT>& x, const NT& y)
-{
-  Quotient<NT> z = x;
-  return z += y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator+(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{
-  Quotient<NT> z = x;
-  return z += NT(y);
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator+(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{ return y + x; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator-(const NT& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z(x);
-  return z -= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator-(const Quotient<NT>& x, const NT& y)
-{
-  Quotient<NT> z = x;
-  return z -= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator-(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{
-  Quotient<NT> z = x;
-  return z -= NT(y);
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator-(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z = x;
-  return z -= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator*(const NT& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z(x);
-  return z *= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator*(const Quotient<NT>& x, const NT& y)
-{
-  Quotient<NT> z = x;
-  return z *= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator*(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{
-  Quotient<NT> z = x;
-  return z *= NT(y);
-}
-
-template <class NT>
-inline
-Quotient<NT>
-operator*(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{ return y*x; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator/(const NT& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z(x) ;
-  return z /= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator/(const Quotient<NT>& x, const NT& y)
-{
-  Quotient<NT> z = x;
-  return z /= y;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator/(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{
-  Quotient<NT> z = x;
-  return z /= NT(y);
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-Quotient<NT>
-operator/(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{
-  Quotient<NT> z = x;
-  return z /= y;
-}
 
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -573,51 +410,9 @@ operator==(const Quotient<NT>& x, const NT& y)
 template <class NT>
 inline
 bool
-operator==(const NT& x, const Quotient<NT>& y)
-{ return y == x; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const CGAL_int(NT) & x, const Quotient<NT>& y)
-{ return y.den * x == y.num; }
-
-template <class NT>
-inline
-bool
 operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return y == x; }
+{ return x.den * y == x.num; }
 
-
-template <class NT>
-inline
-bool
-operator!=(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return ! (x == y); }
-
-template <class NT>
-inline
-bool
-operator!=(const Quotient<NT>& x, const NT& y)
-{ return ! (x == y); }
-
-template <class NT>
-inline
-bool
-operator!=(const NT& x, const Quotient<NT>& y)
-{ return ! (x == y); }
-
-template <class NT>
-inline
-bool
-operator!=(const CGAL_int(NT) & x, const Quotient<NT>& y)
-{ return ! (x == y); }
-
-template <class NT>
-inline
-bool
-operator!=(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return ! (x == y); }
 
 
 template <class NT>
@@ -639,22 +434,6 @@ operator<(const Quotient<NT>& x, const NT& y)
 template <class NT>
 CGAL_MEDIUM_INLINE
 bool
-operator<(const NT& x, const Quotient<NT>& y)
-{
-  return quotient_cmp(Quotient<NT>(x),y) == SMALLER;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator<(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{
-  return quotient_cmp(Quotient<NT>(x),y) == SMALLER;
-}
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
 operator<(const Quotient<NT>& x, const CGAL_int(NT)& y)
 {
   return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
@@ -664,96 +443,14 @@ operator<(const Quotient<NT>& x, const CGAL_int(NT)& y)
 template <class NT>
 inline
 bool
-operator>(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return y < x; }
-
-template <class NT>
-inline
-bool
 operator>(const Quotient<NT>& x, const NT& y)
-{ return y < x; }
-
-template <class NT>
-inline
-bool
-operator>(const NT& x, const Quotient<NT>& y)
-{ return y < x; }
+{ return quotient_cmp(x,Quotient<NT>(y)) == LARGER; }
 
 template <class NT>
 inline
 bool
 operator>(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{ return y < x; }
-
-template <class NT>
-inline
-bool
-operator>(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{ return y < x; }
-
-
-
-template <class NT>
-inline
-bool
-operator<=(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return ! (y < x); }
-
-template <class NT>
-inline
-bool
-operator<=(const Quotient<NT>& x, const NT& y)
-{ return ! (y < x); }
-
-template <class NT>
-inline
-bool
-operator<=(const NT& x, const Quotient<NT>& y)
-{ return ! (y < x); }
-
-template <class NT>
-inline
-bool
-operator<=(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{ return ! (y < x); }
-
-template <class NT>
-inline
-bool
-operator<=(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{ return ! (y < x); }
-
-
-
-template <class NT>
-inline
-bool
-operator>=(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return ! (x < y); }
-
-template <class NT>
-inline
-bool
-operator>=(const Quotient<NT>& x, const NT& y)
-{ return ! (x < y); }
-
-template <class NT>
-inline
-bool
-operator>=(const NT& x, const Quotient<NT>& y)
-{ return ! (x < y); }
-
-template <class NT>
-inline
-bool
-operator>=(const Quotient<NT>& x, const CGAL_int(NT)& y)
-{ return ! (x < y); }
-
-template <class NT>
-inline
-bool
-operator>=(const CGAL_int(NT)& x, const Quotient<NT>& y)
-{ return ! (x < y); }
+{ return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
 
 template <class NT>
