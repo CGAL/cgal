@@ -1,3 +1,6 @@
+2.8.10  (19 July 2001)
+- removed include of CGAL/LEDA/window.h in forward_decl_window_stream.h
+
 2.8.9   (11 July 2001)
 - removed unused parameter names in Postscript_file_stream
 - got rid of node_width here too

@@ -27,9 +27,9 @@
 #define CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 
 #if defined(CGAL_USE_CGAL_WINDOW)
-#include <CGAL/LEDA/window.h>
-
-class CGAL::window;
+CGAL_BEGIN_NAMESPACE
+class window;
+CGAL_END_NAMESPACE
 #else
 class leda_window;
 #endif
