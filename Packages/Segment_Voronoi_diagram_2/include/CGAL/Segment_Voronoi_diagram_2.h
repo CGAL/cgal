@@ -687,7 +687,24 @@ protected:
   {
     std::pair<int,int> res =
       geom_traits().do_intersect_2_object()(p, q);
+
+#if 1
+    CGAL_assertion( res.first <= 4 && res.second <= 4 );
+
+    if ( res.first == 2 ) {
+      CGAL_assertion( res.second == 2 );
+    } else if ( res.second == 2 ) {
+      CGAL_assertion( res.first == 2 );
+    }
+
+    if ( res.first == 3 ) {
+      CGAL_assertion( res.second == 3 );
+    } else if ( res.second == 3 ) {
+      CGAL_assertion( res.first == 3 );
+    }
+#endif
     if ( res.first < 2 && res.second < 2 ) { return false; }
+
     return (res.first != 3);
   }
 
