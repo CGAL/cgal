@@ -107,12 +107,12 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
 
 
-\ccMethod{Geomview_stream&
+\ccFunction{Geomview_stream&
           operator<<(Geomview_stream& G,
 	             const Bbox_2& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
 
-\ccMethod{Geomview_stream&
+\ccFunction{Geomview_stream&
           operator<<(Geomview_stream& G,
                      const Bbox_3& b);}
 {Inserts the bounding box \ccc{b} into the stream \ccVar.}
@@ -324,7 +324,7 @@ All insert operators construct expressions in \ccc{gcl}, the Geomview
 comand language, which is a subset of {\sc Lisp}. These expressions
 are sent to Geomview via the pipe. The extract operators notify \ccc{interest}
 for a certain kind of events. When such an event happens Geomview
-sends a description of the event in \cc{gcl} and the extract operator has
+sends a description of the event in \ccc{gcl} and the extract operator has
 to parse this expression.
 
 In order to implement further insert and extract operators you should
