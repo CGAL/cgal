@@ -82,8 +82,6 @@ enum { BEFORE = -1, AFTER = 1 };
 typedef typename Sphere_kernel::Aff_transformation_3 Aff_transformation_3;
 
 typedef void*  GenPtr;
-//typedef typename Map::Constructor_parameter        Constructor_parameter;
-//typedef typename Map::Constructor_const_parameter  Constructor_const_parameter;
 typedef typename Map::SVertex                   SVertex;
 typedef typename Map::SVertex_handle            SVertex_handle;
 typedef typename Map::SVertex_iterator          SVertex_iterator;
