@@ -226,31 +226,32 @@ of the current triangulation.}
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
+
+
+\ccThree{Triangulation_2<>}{t = Triangulation_2 tr}{}
+\ccThreeToTwo
 \ccConstructor{Triangulation_2();}{default constructor.}
-
-%\ccThree{Triangulation_2<Traits,Tds>}{t = tr}{}
-%\ccThreeToTwo
-
-\ccConstructor{Triangulation_2<Traits,Tds>(
+\ccGlue
+\ccConstructor{Triangulation_2(
                    const Traits& gt = Traits() );}
 {Introduces an empty triangulation \ccVar.}
 
 
-\ccConstructor{Triangulation_2<Traits,Tds>(
-                   const Triangulation_2<Traits,Tds>& tr);}
+\ccConstructor{Triangulation_2(
+                   const Triangulation_2& tr);}
 {Copy constructor. All the vertices and faces are duplicated.
  After the copy, \ccVar\ and \ccc{tr}
 refer to different triangulations~: 
  if \ccc{tr} is modified, \ccVar\ is not. }
 
-\ccMethod{Triangulation_2<Traits,Tds> operator=(const Triangulation_2<Traits,Tds>& tr);}
+\ccMethod{Triangulation_2 operator=(const Triangulation_2& tr);}
 {Assignement. All the vertices and faces are duplicated.
  After the assignement, \ccVar\ and \ccc{tr}
 refer to different triangulations~: 
  if \ccc{tr} is modified, \ccVar\ is not.}
 
 \ccThree{Vertex_handle}{t.number_of_vertices()x}{}
-\ccMethod{void swap(Triangulation_2<Traits,Tds>& tr);}
+\ccMethod{void swap(Triangulation_2& tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
 \ccc{t.swap(tr)} should be preferred to \ccc{t} = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that.}
@@ -260,7 +261,7 @@ resulting
  in an
 empty triangulation.}
 
-\ccFunction{void ~t();}
+\ccFunction{void ~Triangulation_2();}
 {Destructor. All vertices and faces are deleted.}
 
 
