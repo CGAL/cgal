@@ -353,6 +353,7 @@ public:
     CGAL_Filter_cons(Compute_y_at_x_2, compute_y_at_x_2_object)
     CGAL_Filter_cons(Compute_squared_distance_2, Compute_squared_distance_2_object)
     CGAL_Filter_cons(Compute_squared_length_2, Compute_squared_length_2_object)
+    CGAL_Filter_cons(Compute_squared_radius_2, Compute_squared_radius_2_object)
 
 
     CGAL_Filter_pred(Equal_2, equal_2_object)
@@ -438,6 +439,7 @@ public:
     CGAL_Filter_cons(Intersect_3, intersect_3_object)
     CGAL_Filter_cons(Compute_squared_distance_3, compute_squared_distance_3_object)
     CGAL_Filter_cons(Compute_squared_length_3, compute_squared_length_3_object)
+    CGAL_Filter_cons(Compute_squared_radius_3, compute_squared_radius_3_object)
 
 
     CGAL_Filter_pred(Equal_3, equal_3_object)
