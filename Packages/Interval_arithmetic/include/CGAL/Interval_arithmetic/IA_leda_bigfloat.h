@@ -17,7 +17,7 @@
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
-// coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
+// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
