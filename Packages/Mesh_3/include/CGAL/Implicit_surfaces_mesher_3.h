@@ -110,24 +110,27 @@ public:
   {
     if(!initialized)
       init();
-    
-    // TODO Refaire tout ca!
-    Tr& tr = tets.triangulation_ref_impl();
-    std::ofstream os2("dump_initial.off");
-    os2 << "{ LIST\n";
-    for(typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-	vit != tr.finite_vertices_end(); ++vit)
-      os2 << "{ SPHERE 0.05 " << vit->point() << " }\n";
-    os2 << "}\n";
-
-    facets.refine(tets_visitor.previous_level());
-    {
-      std::cerr << "surface finie\n";
-      std::ofstream os("dump.off");
-      
-      output_surface_facets_to_off (os, tr);
-    }
     tets.refine(tets_visitor);
+  }
+
+  void refine_surface()
+  {
+    if(!initialized)
+      init();
+    facets.refine(tets_visitor.previous_level());
+  }
+
+  void step_by_step()
+  {
+    if(!initialized)
+      init();
+    tets.try_to_insert_one_point(tets_visitor);
+  }
+
+  bool done()
+  {
+    return tets.no_longer_element_to_refine();
+    
   }
 }; // end Implicit_surfaces_mesher_3
 

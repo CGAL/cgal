@@ -80,9 +80,19 @@ int main(int argc, char **argv) {
   
   // Surface meshing
   Mesher mesher (T, O, C, tets_criteria);
-//   Chew mesher (T, O, a_r_crit);
   mesher.refine_mesh();
-  
+//   mesher.refine_surface();
+//   int i = 0;
+//   while(!mesher.done())
+//     {
+//       std::stringstream s;
+//       s << "out." << i++ << ".mesh";
+//       std::cerr << s.str() << std::endl;
+//       std::ofstream os3(s.str().c_str());
+//       output_pslg_to_medit(os3, T);
+//       mesher.step_by_step();
+//     }
+//   exit(0);
   std::cout << "Final number of points: " << T.number_of_vertices() 
             << std::endl;
 

@@ -10,6 +10,7 @@
 //
 // Author(s)     : Steve OUDOT
 
+#include <cmath>
 #include "implicit_function.h"
 
 ///////////////// Definitions of several famous surfaces /////////////////
@@ -26,6 +27,7 @@ int false_knot_function (double, double, double);  // (c=(0,0,0), r=1)
 int knot1_function (double, double, double);  // (c=(0,0,0), r=4)
 int knot2_function (double, double, double);  // (c=(0,0,0), r=4)
 int knot3_function (double, double, double);  // (c=(0,0,0), r=4)
+int peanut_function (double, double, double);  // (c=(0,0,0), r=2)
 
 
 
@@ -422,4 +424,20 @@ int knot3_function (double a, double b, double c) {  // radius = 4
 
 
 
+int peanut_function (double x, double y, double z) {
 
+  double bending_coef = 0.5;
+
+  double sphun = (x+1.5)*(x+1.5) + y*y + z*z - 1;
+  double sphdeux = (x-1.5)*(x-1.5) + y*y + z*z - 1;
+
+  double eq = 
+    1 - std::exp (-bending_coef*sphun) - std::exp (-bending_coef*sphdeux);
+
+  if (eq < 0)
+    return -1;
+  else if (eq > 0)
+    return 1;
+  else
+    return 0;
+}

@@ -189,11 +189,17 @@ public:
 
   void remove_star_from_bad_cells(const Cell_handle& c, Zone& zone)
   {
+    std::cout << "(" << this->queue_size();
+    int i = 0;
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
       if(*cit != c)
-        this->remove_element(*cit);
+	{
+	  i++;
+	  this->remove_element(*cit);
+	}
+    std::cout << "-" << i << "=" << this->queue_size() << ")\n";
   }
 
   void after_insertion_impl(const Vertex_handle& v)

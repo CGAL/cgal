@@ -80,6 +80,11 @@ namespace CGAL {
         m.erase(e);
       }
 
+      int queue_size()
+      {
+	return m.size();
+      }
+
     }; // end Double_map_container
     
   }; // end namespace Mesh_3

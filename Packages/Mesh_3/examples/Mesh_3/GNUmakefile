@@ -9,4 +9,5 @@ depends: *.C
 	  echo "$${f%.C}$(OBJ_EXT): \\" >> depends; \
 	  $(CGAL_CXX) $(CXXFLAGS) -M -MG $$f \
 	     | grep '\.\./\.\..*/include/CGAL' >> depends; \
-	done
+	done; \
+	test -f depends
