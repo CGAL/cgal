@@ -275,16 +275,16 @@ is_valid(bool verbose, int level) const
     result = result && ( it->down() == 0 );
 
   //verify that other levels has down pointer and reciprocal link is fine
-  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
-    for( Vertex_iterator it = hierarchy[i]->finite_vertices_begin(); 
-	 it != hierarchy[i]->vertices_end(); ++it) 
+  for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j)
+    for( Vertex_iterator it = hierarchy[j]->finite_vertices_begin(); 
+	 it != hierarchy[j]->vertices_end(); ++it) 
       result = result && 
 	       ( ((Vertex*)((Vertex*)it->down())->up()) ==  &(*it) );
 
   //verify that other levels has down pointer and reciprocal link is fine
-  for(int i=0; i<Triangulation_hierarchy_3__maxlevel-1; ++i)
-    for( Vertex_iterator it = hierarchy[i]->finite_vertices_begin(); 
-	 it != hierarchy[i]->vertices_end(); ++it) 
+  for(int k=0; k<Triangulation_hierarchy_3__maxlevel-1; ++k)
+    for( Vertex_iterator it = hierarchy[k]->finite_vertices_begin(); 
+	 it != hierarchy[k]->vertices_end(); ++it) 
       result = result && ( ((Vertex*)it->up() == NULL) ||
 	       ( ((Vertex*)((Vertex*)it->up())->down()) ==  &(*it) ));
 
