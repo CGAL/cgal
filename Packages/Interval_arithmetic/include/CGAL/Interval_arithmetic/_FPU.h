@@ -39,13 +39,13 @@
 #define __osf
 #endif
 
-#if (	!defined(__i386__)  && \
-	!defined(__sparc__) && \
-	!defined(__alpha__) && \
-	!defined(__mips__)  && \
-	!defined(__sgi)     && \
-	!defined(_MSC_VER) \
-	)
+#if (	!defined(__i386__)     && \
+	!defined(__sparc__)    && \
+	!defined(__alpha__)    && \
+	!defined(__mips__)     && \
+	!defined(__powerpc__)  && \
+	!defined(__sgi)        && \
+	!defined(_MSC_VER) )
 #error "Architecture not supported."
 #endif
 
@@ -188,6 +188,21 @@ enum {
  * round_toward_neg_infinity -- round to more negative integer
  */
 #endif //_MSC_VER
+
+
+#ifdef __powerpc__
+#ifdef CGAL_IA_USE_ASSEMBLY
+#define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
+#define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
+#endif
+typedef unsigned long FPU_CW_t;
+enum {
+    FPU_cw_zero = _FPU_RC_ZERO,
+    FPU_cw_near = _FPU_RC_NEAREST,
+    FPU_cw_up   = _FPU_RC_UP,
+    FPU_cw_down = _FPU_RC_DOWN
+};
+#endif // __powerpc__
 
 
 // Main functions: FPU_get_cw() and FPU_set_cw();
