@@ -10,8 +10,6 @@
 % $Date$
 % =============================================================================
 
-\clearpage
-
 \begin{ccClassTemplate}{CGAL_Min_ellipse_2<Traits>}
 \ccSection{2D Smallest Enclosing Ellipse}
 \label{sec:min_ellipse_2_spec}
@@ -47,7 +45,17 @@ exact arithmetic is used, see Section~\ref{sec:opt_traits_impl}.
 % -----------------------------------------------------------------------------
 \ccHeading{Traits Class}
 
-\input{topic_Traits_Class.tex}
+The template parameter \ccc{Traits} is a traits class that defines the
+abstract interface between the optimisation algorithm and the
+primitives it uses.  For example \ccc{Traits::Point} is a mapping on a
+point class. Think of it as 2D points in the Euclidean plane.
+
+We provide a traits class implementation using the \cgal\ 2D kernel as
+described in Section~\ref{sec:opt_traits_impl}. Traits class adapters
+to user supplied point classes are available, see
+Section~\ref{sec:opt_traits_adapt}. Customizing own traits classes for
+optimisation algorithms can be done according to the requirements for
+traits classes listed in Section~\ref{sec:opt_traits_req}.
 
 % -----------------------------------------------------------------------------
 \ccTypes
