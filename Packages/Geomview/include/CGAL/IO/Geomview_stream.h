@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997,1998,1999,2000 The CGAL Consortium
+// Copyright (c) 1997,1998,1999,2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -392,6 +392,61 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
     gv.set_raw(raw_bak);
     gv.set_ascii_mode(ascii_bak);
 
+    return gv;
+}
+#endif
+
+// Ray and Line drawing should be done by intersecting them with the BBox
+// of the Geomview_stream.  But for now we take the easy approach.
+
+#if defined CGAL_RAY_2_H && \
+   !defined CGAL_GV_OUT_RAY_2_H
+#define CGAL_GV_OUT_RAY_2_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Ray_2<R> &r)
+{
+    typename R::Segment_2 s(r.source(), r.point(1));
+    gv << s;
+    return gv;
+}
+#endif
+
+#if defined CGAL_RAY_3_H && \
+   !defined CGAL_GV_OUT_RAY_3_H
+#define CGAL_GV_OUT_RAY_3_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Ray_3<R> &r)
+{
+    typename R::Segment_3 s(r.source(), r.point(1));
+    gv << s;
+    return gv;
+}
+#endif
+
+#if defined CGAL_LINE_2_H && \
+   !defined CGAL_GV_OUT_LINE_2_H
+#define CGAL_GV_OUT_LINE_2_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Line_2<R> &r)
+{
+    typename R::Segment_2 s(r.point(-1), r.point(1));
+    gv << s;
+    return gv;
+}
+#endif
+
+#if defined CGAL_LINE_3_H && \
+   !defined CGAL_GV_OUT_LINE_3_H
+#define CGAL_GV_OUT_LINE_3_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Line_3<R> &r)
+{
+    typename R::Segment_3 s(r.point(-1), r.point(1));
+    gv << s;
     return gv;
 }
 #endif

@@ -4,10 +4,12 @@
   It's still probably a bug in Geomview.
 - The remote geomview (with rsh) facility probably doesn't work.
   But is it useful ?
-- What to do for Circle_2 ?  Maybe there's some code somewhere, or ask the
-  geomview list.  Or do the discretisation ourselves, maybe it's the kernel's
-  job ?  Discretisation for Sphere and Circle should be configurable for the
-  stream.
+- Missing operators (for 2d and 3d Voronoi diagrams) :
+  - Ray_[23], Line_[23] : an easy one is already there, but to do it
+    perfectly, we should draw the segment resulting from the intersection of
+    the object with the BBox.
+  - Circle_2
+- Discretisation for Sphere and Circle should be configurable for the stream.
 - Is there a way to see edges like cylinders somewhat (possibly generate them
   ourselves), so that we know which one is in front of which other one ?
 - For T3D : I want to be able to tell Geomview or the CGAL program to stop
@@ -32,7 +34,6 @@ Color:
 Demo :
 ------
 - Add demo files for polyhedrons ?
-- Bernd is asking to see minimum enclosing spheres.
 
 Doc:
 ---

@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.8 (23 January 2001)
+- Added (simple) operator<<() for Ray_[23] and Line_[23].
+
 Ver 3.7 (7 December 2000)
 - Added a member function get_new_id(string) to replace and generalize the
   per type counters used to get unique identifiers for geomview.
