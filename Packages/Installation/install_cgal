@@ -50,6 +50,7 @@ LEDA_LIB_DIR=''
 # is it installed in standard system dirs(''),
 # or do we want to provide extra incl/lib flags, although it is
 # installed in sysdirs ('x')?
+# set to 'n', if this has not been tested yet
 NEED_EXTRA_LEDA_IDIR='y'
 NEED_EXTRA_LEDA_LDIR='y'
 
@@ -303,7 +304,7 @@ init_logfiles()
 	>${INSTALL_LOGFILE}
     log_print "log of $0 $*" 
     log_print "called by $LOGNAME on `date`" 
-    log_print "CGAL_DIR is $CGAL_DIR" 
+    log_print "CGAL_DIR is ${CGAL_DIR}" 
     log_print "----------------------------------------------------------" 
     ${_printf} "${_LEFTSPACE}----------------------------------------------------------\n" \
 	>${INSTALL_RIS_LOGFILE}
@@ -460,15 +461,26 @@ rpath_directive()
 #---------------------------------------------------------
 # flags for CGAL
 
+# print message used to remind the user of setting 
+# his DIR variables correctly
+_where_is()
+{
+    ${_printf} " Where is your ${1} ? "
+}
+
 cgal_cxxflags()
 {
-    ${_printf} "-I${CGAL_INCL_DIR} "
+    ${_printf} \
+	"-I${CGAL_INCL_DIR:-`_where_is 'CGAL_INCL_DIR'`} "
 }
 
 cgal_ldflags()
 {
-    ${_printf} "-L${CGAL_LIB_DIR}/`full_ostype`"
-    ${_printf} " `rpath_directive`${CGAL_LIB_DIR}/`full_ostype` "
+    ${_printf} \
+	"-L${CGAL_LIB_DIR:-`_where_is 'CGAL_LIB_DIR'`}/`full_ostype` "
+    ${_printf} \
+	"`rpath_directive`${CGAL_LIB_DIR:-`_where_is 'CGAL_LIB_DIR'`}/"
+    ${_printf} "`full_ostype` "
 }
 
 #---------------------------------------------------------
@@ -479,7 +491,7 @@ gmp_cxxflags()
     if [ -n "${GMP_SUPPORT}" -a \
 	"${GMP_INSTALLATION}" != 'c' -a \
 	"${GMP_INSTALLATION}" != 's' ]; then
-	${_printf} "-I${GMP_INCL_DIR} "
+	${_printf} "-I${GMP_INCL_DIR:-`_where_is 'GMP_INCL_DIR'`} "
     fi
 }
 
@@ -488,7 +500,9 @@ gmp_ldflags()
     if [ -n "${GMP_SUPPORT}" ]; then
 	if [ "${GMP_INSTALLATION}" != 'c' -a \
              "${GMP_INSTALLATION}" != 's' ]; then
-	    ${_printf} "-L${GMP_LIB_DIR} `rpath_directive`${GMP_LIB_DIR} "
+	    ${_printf} "-L${GMP_LIB_DIR:-`_where_is 'GMP_LIB_DIR'`} "
+	    ${_printf} "`rpath_directive`"
+	    ${_printf} "${GMP_LIB_DIR:-`_where_is 'GMP_LIB_DIR'`} "
 	fi
 	${_printf} "-lgmp "
     fi
@@ -500,7 +514,7 @@ gmp_ldflags()
 stl_cxxflags()
 {
     if [ "${STL_STATUS}" != "b" ]; then
-	${_printf} "-I${STL_DIR} "
+	${_printf} "-I${STL_DIR:-`_where_is 'STL_DIR'`} "
     fi
 }
 
@@ -509,7 +523,7 @@ stl_cxxflags()
 leda_cxxflags()
 {
     if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	${_printf} "-I${LEDA_INCL_DIR} "
+	${_printf} "-I${LEDA_INCL_DIR:-`_where_is 'LEDA_INCL_DIR'`} "
     fi
 }
 
@@ -517,7 +531,9 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    ${_printf} "-L${LEDA_LIB_DIR} `rpath_directive`${LEDA_LIB_DIR} "
+	    ${_printf} "-L${LEDA_LIB_DIR:-`_where_is 'LEDA_LIB_DIR'`} "
+	    ${_printf} "`rpath_directive`"
+	    ${_printf} "${LEDA_LIB_DIR:-`_where_is 'LEDA_LIB_DIR'`} "
 	fi
 	${_printf} "-lP -lG -lL "
     fi
@@ -538,7 +554,11 @@ rtti_patch_cxxflags()
 rtti_patch_ldflags()
 {
     if [ -n "${GCC_RTTI_PATCH_SUPPORT}" ]; then
-	${_printf} "-L${GCC_RTTI_PATCH_DIR} `rpath_directive`${GCC_RTTI_PATCH_DIR} -nodefaultlibs -lstdc++ -liberty -lg++ -lgcc -lc "
+	${_printf} \
+	    "-L${GCC_RTTI_PATCH_DIR:-`_where_is 'GCC_RTTI_PATCH_DIR'`} "
+	${_printf} "`rpath_directive`"
+	${_printf} "${GCC_RTTI_PATCH_DIR:-`_where_is 'GCC_RTTI_PATCH_DIR'`} "
+	${_printf} "-nodefaultlibs -lstdc++ -liberty -lg++ -lgcc -lc "
     fi
 }
 
@@ -1379,7 +1399,7 @@ test_for_leda_incl_in_sys_incl()
     int main() {
 	return 0;
     }\n' > ${TMP_CXX_FILE}.C
-    if _compile_test "LEDA sysincl" ' ' "$1"; then
+    if _compile_test "LEDA sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
 	cleanup_after_compile
 	${_printf} " ok.\n"
 	NEED_EXTRA_LEDA_IDIR=''
@@ -1399,8 +1419,9 @@ test_for_leda_lib_in_sys_lib()
     int main() {
 	return 0;
     }' > ${TMP_CXX_FILE}.C
-    if _compile_test "LEDA syslibs" ' ' "$1"; then
-	if _link_run_test "LEDA syslibs" '-lP -lG -lL -lm' "$1"; then
+    if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
+	if _link_run_test "LEDA syslibs" \
+	    "${CUSTOM_LDFLAGS} -lP -lG -lL -lm" "$1"; then
 	    NEED_EXTRA_LEDA_LDIR=''
 	    return 0
 	fi
@@ -1673,7 +1694,8 @@ test_stl_general()
 	}' >> ${TMP_CXX_FILE}.C
     
     if [ -z "$1" ]; then
-	_compile_test "${2}" ' ' '' && _link_run_test "${2}" ' ' ''
+	_compile_test "${2}" "${CUSTOM_CXXFLAGS} " '' && \
+	    _link_run_test "${2}" "${CUSTOM_LDFLAGS} " ''
     else
 	_compile_test "${2}" "`stl_test_cxxflags` " $1 && \
 	    _link_run_test "${2}" "`stl_test_ldflags` " $1 
@@ -1815,8 +1837,8 @@ test_gmp()
 	    return 0;
 	}' >> ${TMP_CXX_FILE}.C
 	if [ "$1" = "GMP syslib" ]; then
-	    _compile_test "$1" ' ' "$2" && \
-		_link_run_test "$1" '-lgmp ' "$2"
+	    _compile_test "$1" "${CUSTOM_CXXFLAGS} " "$2" && \
+		_link_run_test "$1" "${CUSTOM_LDFLAGS} -lgmp" "$2"
 	else
 	    _compile_test "$1" '' "$2" && \
 		_link_run_test "$1" '' "$2"
@@ -1940,11 +1962,14 @@ retrieve_compiler_settings()
     fi
 
     # LEDA specific stuff:
-    if try_to_get_var_from_file NEED_EXTRA_LEDA_IDIR "${_file}"; then
-	test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
-    fi
-    if try_to_get_var_from_file NEED_EXTRA_LEDA_LDIR "${_file}"; then
-	test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
+    if try_to_get_var_from_file NEED_EXTRA_LEDA_IDIR "${_file}" || \
+	try_to_get_var_from_file NEED_EXTRA_LEDA_LDIR "${_file}"; then
+	if [ -n "${LEDA_SUPPORT}" ]; then
+	    LEDA_SUPPORT=''
+	    SETUP_COMPLETE=''
+	fi
+	NEED_EXTRA_LEDA_IDIR='n'
+	NEED_EXTRA_LEDA_LDIR='n'
     fi
     if try_to_get_var_from_file LEDA_INCL_DIR "${_file}"; then
 	if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
@@ -2451,11 +2476,19 @@ leda_menu()
 	fi
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
 	menu_tailer 'Main Menu'
-	case $KEY in
+	case ${KEY} in
 	    e|E)
 		if [ -z "${LEDA_SUPPORT}" ]; then 
 		    LEDA_SUPPORT='_LEDA'
 		    SETUP_COMPLETE=''
+		    # test for LEDA sysincl/-lib, if this was not done before
+		    if [ "${NEED_EXTRA_LEDA_IDIR}" = 'n' -o \
+			 "${NEED_EXTRA_LEDA_LDIR}" = 'n' ]; then
+			go_down_lines 3
+			flush_buffer
+			test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
+			test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
+		    fi
 		else
 		    LEDA_SUPPORT=''
 		fi
@@ -3098,7 +3131,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -shared"
+	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_FLAG="-R "
 	    ;;
@@ -3591,7 +3624,6 @@ while [ $# -gt 0 ]; do
 	*--version*|-V*|-v*)
 	    # version
 	    echo "`basename $0` is ${CGAL_INSTALL_VERSION}."
-	    echo
 	    exit 0
 	    ;;
 	*) 
