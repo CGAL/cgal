@@ -76,7 +76,7 @@ public:
     traits = (Traits_wrap*)(&tr);
   }
 	
-  void insert(Halfedge_handle h, const X_curve& cv) 
+  void insert(Halfedge_handle, const X_curve &) 
   {
   }
 	
@@ -344,28 +344,24 @@ public:
     return h;
   }
 
-  void split_edge(const X_curve &cv,
-		  Halfedge_handle e1,
-		  Halfedge_handle e2
-		  ,const X_curve& cv1, const X_curve& cv2
-		  ) 
+  void split_edge(const X_curve &,
+		  Halfedge_handle, Halfedge_handle,
+		  const X_curve &, const X_curve &) 
   {
   }
 
-  void merge_edge(const X_curve &cv1,
-		  const X_curve &cv2,
-		  Halfedge_handle e
-		  ,const X_curve& cv
-		  ) 
+  void merge_edge(const X_curve &, const X_curve &,
+		  Halfedge_handle,
+                  const X_curve &) 
   {
   }
 
-  void remove_edge(Halfedge_handle e) 
+  void remove_edge(Halfedge_handle) 
   {
   }
 
-  void remove_edge(const Halfedge_handle_iterator& begin,
-		   const Halfedge_handle_iterator& end) 
+  void remove_edge(const Halfedge_handle_iterator &,
+		   const Halfedge_handle_iterator &) 
   {
   }
 
@@ -373,9 +369,9 @@ public:
   {
   }
 
-  void update(const Halfedge_handle_iterator&,
-	      const Halfedge_handle_iterator&,
-	      const Token& token)
+  void update(const Halfedge_handle_iterator &,
+	      const Halfedge_handle_iterator &,
+	      const Token & token)
   { token.rebuild_bounding_box(this); }
 
 public:
