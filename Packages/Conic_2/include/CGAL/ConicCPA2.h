@@ -171,7 +171,7 @@ class ConicCPA2
                                 (CGAL::to_double(c3), CGAL::to_double(c2),
                                  CGAL::to_double(c1), CGAL::to_double(c0),
                                  roots[0], roots[1], roots[2]);
-           CGAL_optimisation_precondition (nr_roots > 0); // minimum exists
+           CGAL_kernel_precondition (nr_roots > 0); // minimum exists
            return best_value (roots, nr_roots,
                                  CGAL::to_double(a2), CGAL::to_double(a1),
                                  CGAL::to_double(a0), CGAL::to_double(b3),
@@ -320,7 +320,7 @@ class ConicCPA2
     
     PT center () const
     {
-        CGAL_optimisation_precondition (type != PARABOLA);
+        CGAL_kernel_precondition (type != PARABOLA);
         PT p;
         FT two = FT(2);
         FT div = -det();
@@ -429,7 +429,7 @@ class ConicCPA2
         if ( ! CGAL_NTS is_zero( u())) factor1 = u(); else
         if ( ! CGAL_NTS is_zero( v())) factor1 = v(); else
         if ( ! CGAL_NTS is_zero( w())) factor1 = w(); else
-        CGAL_optimisation_assertion_msg( false, "all coefficients zero");
+        CGAL_kernel_assertion_msg( false, "all coefficients zero");
     
         // find coefficient != 0
         FT  factor2;
@@ -439,7 +439,7 @@ class ConicCPA2
         if ( ! CGAL_NTS is_zero( c.u())) factor2 = c.u(); else
         if ( ! CGAL_NTS is_zero( c.v())) factor2 = c.v(); else
         if ( ! CGAL_NTS is_zero( c.w())) factor2 = c.w(); else
-        CGAL_optimisation_assertion_msg( false, "all coefficients zero");
+        CGAL_kernel_assertion_msg( false, "all coefficients zero");
     
         return(    ( r()*factor2 == c.r()*factor1)
                 && ( s()*factor2 == c.s()*factor1)
@@ -470,7 +470,7 @@ class ConicCPA2
         dao.get (p4, x4, y4);
     
         // precondition: p1 != p2, p3 != p4
-        CGAL_optimisation_precondition
+        CGAL_kernel_precondition
             ( ((x1 != x2) || (y1 != y2)) &&
               ((x3 != x4) || (y3 != y4)) );
     
@@ -500,7 +500,7 @@ class ConicCPA2
     
         // precondition: p1, p2, p3 not collinear
         FT det = -x3*y2+x1*y2+x2*y3-x1*y3+x3*y1-x2*y1;
-        CGAL_optimisation_precondition (!CGAL_NTS is_zero (det));
+        CGAL_kernel_precondition (!CGAL_NTS is_zero (det));
     
         FT x1x1 = x1*x1, y1y1 = y1*y1,
            x2x2 = x2*x2, y2y2 = y2*y2,
@@ -558,7 +558,7 @@ class ConicCPA2
                                -c1.evaluate (p5), c2);
         analyse();
         // precondition: all points distinct <=> conic nontrivial
-        CGAL_optimisation_precondition (!is_trivial());
+        CGAL_kernel_precondition (!is_trivial());
         if (o != _o) set_opposite();
     }
     

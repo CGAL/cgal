@@ -66,7 +66,7 @@ NT best_value (NT *values, int nr_values,
                 det_positive = true;
             }
     }
-    CGAL_optimisation_precondition (det_positive);
+    CGAL_kernel_precondition (det_positive);
     return best;
 }
 
@@ -79,7 +79,7 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
         // quadratic equation
         if (c2 == 0) {
             // linear equation
-            CGAL_optimisation_precondition (c1 != 0);
+            CGAL_kernel_precondition (c1 != 0);
             r1 = -c0/c1;
             return 1;
         }
