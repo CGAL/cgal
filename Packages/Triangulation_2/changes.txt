@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.101 (17/07/03) [af]
+- Added typedef in Constrained_triangulation_2 to get rid of g++-3.2 warning
+
 Ver 7.99 = 7.100
 - rursu: corrected the word used in demo "constraineds" -> "constraints"
 
