@@ -162,9 +162,9 @@ Tuple_d(int d, I& start, I end) : v(d) \
 Tuple_d(int d, I start, I end, NT D) : v(d) \
 { int i(0); while ( i < d && start != end ) v[i++] = *start++; v[d-1] = D; }
 
-FIXTUPLE(int*)
+//FIXTUPLE(int*)
 FIXTUPLE(const int*)
-FIXTUPLE(NT*)
+//FIXTUPLE(NT*)
 FIXTUPLE(const NT*)
 
 #undef FIXTUPLE

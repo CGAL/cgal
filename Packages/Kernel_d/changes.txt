@@ -1,6 +1,10 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.60 (11 April 2002)
+   removed instance of non-const macro that caused ambiguities for
+   Borland.
+
 0.9.59 (26 March 2002)
    added missing include
 
