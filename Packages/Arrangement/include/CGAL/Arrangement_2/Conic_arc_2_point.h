@@ -23,12 +23,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-class Point_2_ex : public Point_2<R>
+template <class Kernel_>
+class Point_2_ex : public Kernel_::Point_2
 {
  public:
+  typedef Kernel_                       Kernel;
+  typedef Kernel                        R;
 
-   typedef typename R::FT      NT;
+  typedef typename Kernel::Point_2      Base;
+  typedef Point_2_ex<Kernel>            Self;
+    
+  typedef typename Kernel::FT           NT;
  
   enum Type
   {
@@ -58,7 +63,7 @@ class Point_2_ex : public Point_2<R>
 
   // Constructors.
   Point_2_ex () :
-    CGAL::Point_2<R>(),
+    Base(),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0),
@@ -72,7 +77,7 @@ class Point_2_ex : public Point_2<R>
 
   Point_2_ex (const NT& hx, const NT& hy, const NT& hz,
 	      const Type& type) :
-    CGAL::Point_2<R>(hx,hy,hz),
+    Base(hx,hy,hz),
     _type(type),
     conic_id1(0),
     conic_id2(0),
@@ -88,7 +93,7 @@ class Point_2_ex : public Point_2<R>
   Point_2_ex (const NT& hx, const NT& hy,
 	      const Type& type,
 	      const int& id1 = 0, const int& id2 = 0) :
-    CGAL::Point_2<R>(hx,hy),
+    Base(hx,hy),
     _type(type),
     conic_id1(id1),
     conic_id2(id2),
@@ -102,7 +107,7 @@ class Point_2_ex : public Point_2<R>
   }
 
   Point_2_ex (const NT& hx, const NT& hy) :
-    CGAL::Point_2<R>(hx,hy),
+    Base(hx,hy),
     _type(User_defined),
     conic_id1(0),
     conic_id2(0),
@@ -115,6 +120,21 @@ class Point_2_ex : public Point_2<R>
     y_err = 2 * y().get_double_error();
   }
 
+  // shai begin
+  template <typename Point_type>
+  Point_2_ex (const Point_type & p) :
+    Point_2<R>(p.x(), p.y()),
+    _type(User_defined),
+    conic_id1(0),
+    conic_id2(0)
+  {
+    x_app = TO_APNT(x());
+    x_err = 2 * x().get_double_error();
+    y_app = TO_APNT(y());
+    y_err = 2 * y().get_double_error();
+  }
+  // shai end
+    
   // Attach the generating polynomials information.
   void attach_polynomials (const int& _x_deg, std::vector<NT> _x_coeffs,
 			   const int& _y_deg, std::vector<NT> _y_coeffs)
@@ -230,7 +250,7 @@ class Point_2_ex : public Point_2<R>
   }
 
   // Compare the co-ordinates of two given points.
-  Comparison_result compare_x (const Point_2_ex<R>& p) const
+  Comparison_result compare_x (const Self & p) const
   {
 #ifdef CGAL_CONIC_ARC_USE_FILTER
     if (APNT_ABS(x_app - p.x_app) >= (x_err + p.x_err))
@@ -289,7 +309,7 @@ class Point_2_ex : public Point_2<R>
     return (CGAL::compare (x(), p.x()));
   }
 
-  Comparison_result compare_y (const Point_2_ex<R>& p) const
+  Comparison_result compare_y (const Self & p) const
   {
 #ifdef CGAL_CONIC_ARC_USE_FILTER
     if (APNT_ABS(y_app - p.y_app) >= (y_err + p.y_err))
@@ -349,23 +369,23 @@ class Point_2_ex : public Point_2<R>
   }
   
   // Equality operators.
-  bool equals (const Point_2_ex<R>& p) const
+  bool equals (const Self & p) const
   {
     return (compare_x(p) == EQUAL && compare_y(p) == EQUAL);
   }
 
-  bool operator== (const Point_2_ex<R>& p) const
+  bool operator== (const Self & p) const
   {
     return (compare_x(p) == EQUAL && compare_y(p) == EQUAL);
   }
 
-  bool operator!= (const Point_2_ex<R>& p) const
+  bool operator!= (const Self & p) const
   {
     return (compare_x(p) != EQUAL || compare_y(p) != EQUAL);
   }
 
   // Copmare two points lexicographically.
-  Comparison_result compare_lex_xy (const Point_2_ex<R>& p) const
+  Comparison_result compare_lex_xy (const Self & p) const
   {
     Comparison_result   res = this->compare_x (p);
 
@@ -375,7 +395,7 @@ class Point_2_ex : public Point_2<R>
     return (this->compare_y (p));
   }
 
-  Comparison_result compare_lex_yx (const Point_2_ex<R>& p) const
+  Comparison_result compare_lex_yx (const Self & p) const
   {
     Comparison_result   res = this->compare_y (p);
 
@@ -386,9 +406,9 @@ class Point_2_ex : public Point_2<R>
   }
 
   // Reflect a point.
-  Point_2_ex<R> reflect_in_y () const
+  Self reflect_in_y () const
   {
-    Point_2_ex<R> ref_point (-hx(), hy(), hw(), _type);
+    Self ref_point (-hx(), hy(), hw(), _type);
     int           i;
 
     if (conic_id1 != 0)
@@ -415,9 +435,9 @@ class Point_2_ex : public Point_2<R>
     return (ref_point);
   }
 
-  Point_2_ex<R> reflect_in_x_and_y () const
+  Self reflect_in_x_and_y () const
   {
-    Point_2_ex<R> ref_point (-hx(), -hy(), hw(), _type);
+    Self ref_point (-hx(), -hy(), hw(), _type);
     int           i;
 
     if (conic_id1 != 0)
