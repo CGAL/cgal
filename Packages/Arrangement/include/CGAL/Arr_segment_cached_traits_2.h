@@ -126,7 +126,6 @@ protected:
   typedef typename Kernel::Compare_x_2          Compare_x_2;
   typedef typename Kernel::Compare_y_2          Compare_y_2;
   typedef typename Kernel::Compare_xy_2         Compare_xy_2;
-  typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Compare_slope_2      Compare_slope_2;
   typedef typename Kernel::Has_on_2             Has_on_2;
     
