@@ -33,7 +33,8 @@ typedef CGAL::Simple_cartesian<double>    CK;
 typedef CGAL::Simple_cartesian<CGAL::MP_Float>  EK;
 //typedef CGAL::Simple_cartesian<leda_real>  EK;
 
-typedef CGAL::Filtered_kernel<CK,EK>      Rep;
+//typedef CGAL::Filtered_kernel<CK,EK>      Rep;
+typedef CGAL::Filtered_kernel<CK>      Rep;
 // non-filtered kernel
 //typedef CK  Rep;
 

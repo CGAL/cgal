@@ -145,7 +145,7 @@ private slots:
 	} while ( vc != vc_start );
 	std::cout << "==============================" << std::endl;
 #else
-	if ( v.ptr() != NULL ) {
+	if ( &(*v) != NULL ) {
 	  ag.remove(v);
 	  ag.is_valid(false,1);
 	  //	  std::cout << "--------" << std::endl;

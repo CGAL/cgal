@@ -1699,7 +1699,7 @@ void
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
+  CGAL_triangulation_precondition( v != Vertex_handle(NULL) );
   CGAL_triangulation_precondition( !is_infinite(v) );
 
   // find a neighbor of v to use for point location of hidden sites to

@@ -28,7 +28,7 @@ public:
 
 protected:
   // static stuff
-  static const double STEP = 2;
+  static const double STEP;
 
   inline static
   double square(const double &x)
@@ -257,6 +257,8 @@ public:
   }
 };
 
+template < class Point, class Weight, class Line >
+const double Parabola_2<Point,Weight,Line>::STEP = 2;
 
 template< class Stream, class Point, class Weight, class Line >
 inline

@@ -7,6 +7,8 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+MYCGAL_I = $(HOME)/CGAL/internal_releases/CGAL-I
+CGAL_MAKEFILE = $(MYCGAL_I)/make/makefile_i686_Linux-2.4.18-14_g++-3.2.0
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -17,7 +19,7 @@ include $(CGAL_MAKEFILE)
 #
 # CGAL 2.5 has the needed functionality and so the following directory is not
 # needed with 2.5
-CGAL_PATCHES_DIR = ./include
+CGAL_PATCHES_DIR = ./ #./include
 AG_INC_DIR = ../../include
 MY_CXXFLAGS = -I$(CGAL_PATCHES_DIR) -I$(AG_INC_DIR)
 

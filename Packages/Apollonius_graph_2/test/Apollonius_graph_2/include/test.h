@@ -71,7 +71,7 @@ bool test_traits()
   // testing constructors
   //--------------------------------------------------------------------
   Traits tr;
-  Traits tr1(tr1);
+  Traits tr1(tr);
   tr1 = tr;
 
 

@@ -26,7 +26,7 @@ public:
   typedef CGAL::Ray_2< Cartesian<double> >       Ray_2;
 
 protected:
-  static const FT OFFSET = 1000;
+  static const FT OFFSET;
 
   template< class Stream >
   inline
@@ -101,6 +101,11 @@ public:
   }
   
 };
+
+template < class Point, class Weight >
+const double Hyperbola_ray_2<Point,Weight>::OFFSET = 1000;
+
+
 
 template< class Stream, class Point, class Weight >
 inline

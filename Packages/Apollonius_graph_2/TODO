@@ -14,3 +14,5 @@
 - remove from the code the type for Site (in the traits class and the
   main class if it is there)
 - change the draw_* methods to write_* in Apollonius_graph_2.{h,C}
+- check the typedefs.h file in the demo directory to make sure that
+  definitions make sense
