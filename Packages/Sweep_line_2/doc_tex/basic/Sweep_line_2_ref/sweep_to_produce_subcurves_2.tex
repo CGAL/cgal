@@ -20,7 +20,7 @@
 
 The function \ccRefName\ generates the set of interior disjoint
 subcurves induced by the given set of input curves. It is also
-possible to ask the function to include the each overlapping subcurve
+possible to ask the function to include each overlapping subcurve
 as many times as it is covered by input curves.
 
 \def\ccLongParamLayout{\ccTrue} 
@@ -28,7 +28,7 @@ as many times as it is covered by input curves.
 \ccFunction{
    template <class Inputiterator, class SweepLineTraits_2, class OutputIterator>
    void 
-   sweep_to_produce_planar_map_subcurves(
+   sweep_to_produce_subcurves_2(
    Inputiterator curves_begin, 
    Inputiterator curves_end, 
    SweepLineTraits_2& traits, 
@@ -38,9 +38,10 @@ as many times as it is covered by input curves.
    given in the range \ccStyle{[curves_begin, curves_end)}. The
    parameter \ccStyle{subcurves} is a container which will eventually
    hold all the reported
-   subcurves. \ccc{sweep_to_produce_planar_map_subcurve} supports
-   curves which are interior intersect, overlap or non x-monotone, and
-   hence the user may provide his curves as input without any
+   subcurves. \ccc{sweep_to_produce_subcurve_2} supports
+   curves which may intersect in their interior, 
+   have overlap portions, or not necessarily $x$-monotone. 
+   Hence the user may provide his curves as input without any
    restriction of the kind mentioned above. When providing overlapping
    curves as input users can make a choice by the boolean parameter
    \ccStyle{overlapping} whether the output they will get will contain
@@ -76,9 +77,14 @@ as many times as it is covered by input curves.
 The following example is a demonstration of the usage of the \ccc
 {Sweep line} algorithm. In this example we shall present the usage of
 the sweep line technique when inserting the resulting disjoint
-interior subcurves to a container. The input segments are just like as
-in ~\ref{ssec:example1_sweep} , and the result we are interested with
-is only reporting the sub segments obtained by the \ccc{Sweep line}
+interior subcurves to a container. 
+%The input segments are just like as
+%in ~\ref{ssec:example1_sweep} , 
+The input is defined by four segments
+--- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
+(an hourglass shape), two of them are intersecting in their
+interior. The result we are interested with
+is the reported sub segments obtained by the \ccc{Sweep line}
 algorithm.
 
 \ccIncludeExampleCode{Sweep_line_2/example3.C}
