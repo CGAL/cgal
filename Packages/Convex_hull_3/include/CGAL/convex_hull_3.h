@@ -286,11 +286,9 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
 // MSVC6 and the other by MSVC 7.0). 
 //
 
-#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER)
-#define CGAL_FUNCTION_OVERLOAD_BUG
-#endif
 
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
 template < class Tr, class Traits, class Items,
@@ -317,16 +315,16 @@ ch_quickhull_3_scan(
         CGAL::Unique_hash_map<typename Polyhedron_3::Facet_handle,
                    std::list<typename Traits::Point_3> >& outside_sets,
         const Traits& traits)
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
  
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
   typedef Polyhedron_3<Tr,Items,HDS,Alloc>             Polyhedron;
 
 #else
   typedef Polyhedron_3                                    Polyhedron;
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
   typedef typename Polyhedron::Halfedge_handle            Halfedge_handle;
   typedef typename Polyhedron::Halfedge_iterator          Halfedge_iterator;
   typedef typename Polyhedron::Facet_handle               Facet_handle;
@@ -450,7 +448,7 @@ ch_quickhull_3_scan(
 // Polyhedron_3 type in its two different forms (one that is swallowed by
 // MSVC6 and the other by MSVC 7.0). 
 //
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
 template < class Tr, class Traits, class Items,
@@ -466,10 +464,10 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 template <class Polyhedron_3, class Traits>
 void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
                               Polyhedron_3& P, const Traits& traits)
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 
 {
-#if defined (CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined (CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
   typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>     Polyhedron;
 
@@ -536,7 +534,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 // Polyhedron_3 type in its two different forms (one that is swallowed by
 // MSVC6 and the other by MSVC 7.0). 
 //
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
 template < class InputIterator, class Tr, class Traits,
@@ -565,7 +563,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                           InputIterator point3_it, Polyhedron_3& P,
                           const Traits& traits)
 
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 
 {
   typedef typename Traits::Point_3	  		  Point_3;  
@@ -734,7 +732,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 // Polyhedron_3 type in its two different forms (one that is swallowed by
 // MSVC6 and the other by MSVC 7.0). 
 //
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
 template < class InputIterator,
@@ -754,15 +752,15 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
   typedef typename Traits::Point_3                Point_3;  
   typedef typename Traits::Plane_3	      	  Plane_3;
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
   typedef std::list< Traits::Point_3>             Point_3_list;
 #else
   typedef std::list<Point_3>                      Point_3_list;
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
   typedef typename Point_3_list::iterator         P3_iterator;
 
   Point_3_list points(first, beyond);
@@ -798,7 +796,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 // Polyhedron_3 type in its two different forms (one that is swallowed by
 // MSVC6 and the other by MSVC 7.0). 
 //
-#if defined(CGAL_FUNCTION_OVERLOAD_BUG)
+#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
 
 
 template < class InputIterator, class Traits, class Items,
@@ -818,7 +816,7 @@ template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron)
 
-#endif // CGAL_FUNCTION_OVERLOAD_BUG
+#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename Kernel_traits<Point_3>::Kernel                  K;
