@@ -657,6 +657,7 @@ set_compiler_flags()
     RUNTIME_LINKER_FLAG=''
     PRINT_STACKTRACE_PROGRAM=
     WINDOWS_COMPILER=""
+    CYGWIN_COMPILER=""
     SUFFIX_LIST=
     OBJ_EXT=".o"
     OBJ_OPT="-c"
@@ -689,6 +690,7 @@ set_compiler_flags()
 	    WINDOW_DIR=""
 	    XLIBS=""
 	    WINDOWS_COMPILER="y"
+	    CYGWIN_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SUFFIX=".lib"
@@ -710,6 +712,7 @@ set_compiler_flags()
 	*CL.*|*cl.*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
+	    CYGWIN_COMPILER="y"
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
@@ -843,21 +846,16 @@ set_compiler_flags()
 	    #### settings Metroworks C++ compiler 
 	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
 	    CGAL_LIB_CXXFLAGS=""
-	    CGAL_LIB_CREATE=""
-	    CGAL_OBJ_PREFIX="+"
+	    CGAL_LIB_CREATE="mwld -library -o "
 	    WINDOW_DIR=""
+	    CYGWIN_COMPILER="y"
 	    XLIBS=""
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
-	    LIB_SUFFIX=".lib"
 	    REMOVE_EXT_LIST=".obj"
-	    LIB_OPT=""
-	    LEDA_LIB_OPT="lib"
 	    DEBUG_OPT=""
 	    EXE_OPT="-o "
 	    EXE_EXT=".exe"
-	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_WIN_LIBNAME="CGALWin.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=""
@@ -921,6 +919,15 @@ print_undef()
 	${_printf} "%s\n" "#undef ${i}"
 	${_printf} "%s\n" "#endif // ${i}"
     done
+}
+
+quote()
+{
+    if [ -z "${CYGWIN_COMPILER}" ]; then
+	printf "%s\n" "${*}"
+    else
+	printf "%s\n" "\"${*}\""
+    fi
 }
 
 create_replacement_header()
@@ -1272,7 +1279,7 @@ _where_is()
 
 posix_path()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "$*"
     else
 	${_printf} "%s" "`${_cygpath} -u $*`"
@@ -1281,7 +1288,7 @@ posix_path()
 
 filename_for_compiler()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "$1"
     else
 	${_printf} "%s" "`${_cygpath} -w $1`"
@@ -1290,7 +1297,7 @@ filename_for_compiler()
 
 include_dir_option()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "-I%s " "$1"
     else
 	${_printf} "'-I%s' " "`${_cygpath} -w $1`"
@@ -1299,7 +1306,7 @@ include_dir_option()
 
 libpath_option()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "${LIBPATH_OPT}%s " "$*"
     else
 	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w $*`"
@@ -1322,7 +1329,7 @@ lib_option()
 
 object_file_name()
 {
-    if [ -z "${WINDOWS_COMPILER}" ]; then
+    if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "$1${OBJ_EXT}"
     else
 	${_printf} "%s" "'`${_cygpath} -w $1`${OBJ_EXT}'"
@@ -1352,7 +1359,7 @@ concat_path()
   if [ $# != 0 ] ; then
     ${_printf} "%s" "$1"
     shift
-    if [ -n "${WINDOWS_COMPILER}" ]; then
+    if [ -n "${CYGWIN_COMPILER}" ]; then
         for elem in "$@"
         do
             ${_printf} "%s%s" '\' "${elem}"
@@ -2655,7 +2662,7 @@ _link_run_test()
     _flags="${2}`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
 
     # link
-    _link=`compiler_bin`
+    _link="`compiler_bin`"
     case ${COMPILER} in
 	*CL.*|*cl.*) _link="link";;
     esac
@@ -4331,7 +4338,7 @@ write_linker_flags()
   #
   # LIBS
   #
-  if [ -n "${WINDOWS_COMPILER}" ]; then
+  if [ -n "${CYGWIN_COMPILER}" ]; then
     LIB_PATH="'${LIBPATH_OPT}\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)'"
     RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)"
   else
@@ -4342,7 +4349,7 @@ write_linker_flags()
   WLIBS="`lib_option CGAL`"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	if [ -n "${WINDOWS_COMPILER}" ]; then
+	if [ -n "${CYGWIN_COMPILER}" ]; then
 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(LEDA_LIB_DIR)'"
 	else
 	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
@@ -4360,7 +4367,7 @@ write_linker_flags()
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	if [ -n "${WINDOWS_COMPILER}" ]; then
+	if [ -n "${CYGWIN_COMPILER}" ]; then
 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
 	else
 	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
