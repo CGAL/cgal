@@ -1,6 +1,4 @@
-
 This is what you need to do to create a release:
-   
 
 For the library:
 
@@ -17,14 +15,10 @@ Let <release_dir> be the directory in which you plan to build the release.
                Remove the test directory.
                Remove developer_scripts dir
                Remove doc_tex dir
-               Remove src/CGALwin dir
                Remove winutils dir
-               Remove examples/*/cgal_test, demos/*/cgal_test, 
-                      examples/*/version demos/*/version
+               Remove examples/*/cgal_test, demo/*/cgal_test
                Find all .C and .h files and collect them in a file
-               Run the script 'make_public_header' to update the headers of 
-               all files.
-               Edit include/CGAL/config.h
+               Edit include/CGAL/version.h
                    #define CGAL_VERSION ...
                    #define CGAL_VERSION_NR ...
       7.  Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
