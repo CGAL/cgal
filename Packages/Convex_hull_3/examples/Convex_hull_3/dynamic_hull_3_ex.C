@@ -1,6 +1,9 @@
 //
 // file: examples/Convex_hull_3/dynamic_hull_3_ex.C
 //
+#ifdef _MSC_VER
+#define Cartesian Ca
+#endif
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
