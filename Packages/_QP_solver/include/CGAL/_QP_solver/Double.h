@@ -36,10 +36,6 @@ double
 to_double( GMP::Double d) { return d.to_double(); }
 
 inline
-Number_tag
-number_type_tag( GMP::Double) { return Number_tag(); }
-
-inline
 bool is_finite( GMP::Double) { return true; }
 
 inline
