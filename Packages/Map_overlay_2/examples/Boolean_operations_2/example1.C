@@ -8,12 +8,13 @@
 #include <CGAL/Boolean_operations_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Planar_map_2.h>
-#include <CGAL/IO/Pm_Window_stream.h>
 #include <iostream.h>
 #include <vector>
 #include <list>
-#include <CGAL/IO/cgal_window.h>  //used for visualization -
 
+// uncomment if LEDA is installed.
+//#include <CGAL/IO/cgal_window.h>  //used for visualization -
+//#include <CGAL/IO/Pm_Window_stream.h>
 
 typedef CGAL::Quotient<int>                 NT;
 typedef CGAL::Cartesian<NT>                 R;
@@ -24,7 +25,7 @@ typedef Traits::Curve                       Curve;
 
 typedef CGAL::Bop_default_dcel<Traits>           Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>          Planar_map;
-typedef CGAL::Map_overlay<Planar_map>            MapOverlay;
+typedef CGAL::Map_overlay_2<Planar_map>          MapOverlay;
 typedef CGAL::Boolean_operations_2<MapOverlay>   Bops;
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 
@@ -52,7 +53,8 @@ int  main()
   }
   
   Traits traits;
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), curves.end(), traits, pm1);
+  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
+                                        curves.end(), traits, pm1);
   
   curves.clear();
   
@@ -62,7 +64,8 @@ int  main()
     curves.push_back(X_curve(Point(x1,y1), Point(x2,y2)));
   }
    
-  CGAL::sweep_to_construct_planar_map_2(curves.begin(), curves.end(), traits, pm2);
+  CGAL::sweep_to_construct_planar_map_2(curves.begin(), 
+                                        curves.end(), traits, pm2);
   
   // ignoring unbounded face in boolean operations.
   pm1.unbounded_face()->set_ignore_bop(false); 
@@ -74,24 +77,28 @@ int  main()
   Halfedges_container halfedges_result;
   bop.intersection(halfedges_result);
   
-  CGAL::Window_stream W(700, 700);
-  W.init(-10,10,-10);
-  W.set_node_width(3);
-  W.display();
+  // uncomment if LEDA is installed.
+  //CGAL::Window_stream W(700, 700);
+  //W.init(-10,10,-10);
+  //W.set_node_width(3);
+  //W.display();
   
-  W<<CGAL::BLUE;
-  W<<pm1;
-  W<<CGAL::RED;
-  W<<pm2;
+  //W<<CGAL::BLUE;
+  //W<<pm1;
+  //W<<CGAL::RED;
+  //W<<pm2;
 
   // drawing all edges in the intersection of pm1 and pm2.
-  for (Halfedges_container::iterator h_iter=halfedges_result.begin();
-       h_iter!=halfedges_result.end(); ++h_iter){
-    W << CGAL::PURPLE;
-    W << (*h_iter)->curve();
-  }
+  //for (Halfedges_container::iterator h_iter=halfedges_result.begin();
+  //     h_iter!=halfedges_result.end(); ++h_iter){
+  //  W << CGAL::PURPLE;
+  //  W << (*h_iter)->curve();
+  //}
       
   return 0;
 }
+
+
+
 
 
