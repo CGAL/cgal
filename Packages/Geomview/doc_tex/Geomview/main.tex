@@ -125,7 +125,7 @@ can be moved anywhere with the left mouse button, before a point is entered.
             Geomview_stream&
             operator>>(Geomview_stream& G, Point_3<R>& p);}
 {Extracts the point \ccc{p} from the stream \ccVar. The point is
- echoed.}
+ echoed by default, and it depends on the stream echo mode status.}
 
 
 
@@ -224,6 +224,14 @@ stream is in ascii mode.}
  code for points internally, by temporary saving the raw mode to true, and
  restoring it after.
    Returns the previous value. By default, raw mode is off.}
+
+\ccMethod{bool get_echo();}
+{Returns \ccc{true} iff echo mode is on.}
+
+\ccMethod{bool set_echo(bool b);} 
+{Sets echo mode.  In echo mode, when you select a point in Geomview, the point
+ is actually sent back to Geomview.
+ Returns the previous value. By default, echo mode is on.}
 
 \ccMethod{bool in_binary_mode();}
 {Returns \ccc{true} iff \ccVar\ is in binary mode.}

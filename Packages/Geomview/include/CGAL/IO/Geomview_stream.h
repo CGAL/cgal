@@ -95,6 +95,16 @@ public:
 
     Geomview_stream &operator>>(char *expr);
 
+    bool set_echo(bool b)
+    {
+	std::swap(b, echo_flag);
+	return b;
+    }
+    bool get_echo() const
+    {
+	return echo_flag;
+    }
+
     bool set_raw(bool b)
     {
 	std::swap(b, raw_flag);
@@ -151,9 +161,10 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color vertex_color, edge_color, face_color;
-    bool raw_flag;    // bool that decides if we output footers and headers.
-    bool trace_flag;  // bool that makes operator<<() write a trace on cerr.
-    bool binary_flag; // bool that makes operator<< write binary format
+    bool echo_flag;   // decides if we echo the point we get back to Geomview.
+    bool raw_flag;    // decides if we output footers and headers.
+    bool trace_flag;  // makes operator<<() write a trace on cerr.
+    bool binary_flag; // makes operator<< write binary format
     int line_width;   // width of edges
     double radius;    // radius of vertices
     int in, out;      // file descriptors for input and output pipes
@@ -433,7 +444,8 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
     parse_point(pickpoint, point);
 
     // we echo the input
-    gv << point; // FIXME : have an echo_mode boolean ?
+    if (gv.get_echo())
+	gv << point;
 
     // we are done and tell geomview to stop sending pick events
     gv << "(uninterest " << gclpick  << ") (pickable pickplane no)" ;

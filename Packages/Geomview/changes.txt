@@ -1,5 +1,9 @@
 CHANGES to the Geomview package.
 
+Ver 3.5 (?? ???????? 2000)
+- New echo_flag boolean, that decides when a point Geomview gives us needs to
+  be echoed to Geomview.
+
 Ver 3.4 (29 November 2000)
 - Removed the cruft about "ascii" and "binary" function pointers (beurk !).
 - Added a raw mode, and use it internally : get_raw() and set_raw().

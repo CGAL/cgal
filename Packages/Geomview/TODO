@@ -1,4 +1,3 @@
-- Implement echo_flag for operator>>(Point).
 - Policy : decide a policy for if operators<<() must save and restore
   correctly binary_flag.  And apply also to triangulations.
 - Add flags to the stream that say :
