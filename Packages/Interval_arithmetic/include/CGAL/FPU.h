@@ -40,7 +40,7 @@ extern "C" {
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #  include <ieeefp.h>
 #elif defined __osf || defined __osf__ 
-#  ifdef __GNUG__ && !defined __INTEL_COMPILER
+#  ifdef __GNUG__
      // GCC seems to remove (fixincludes) read_rnd/write_rnd...
 #    include "/usr/include/float.h"
 #  else
@@ -101,6 +101,10 @@ inline double IA_force_to_double(double x)
     ! (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
   // This appears to be faster but is GNU specific,
   // and GCC 3.0.0 has a bug with it.
+  // Menelaos: this is the place where interval arithmetic fails
+  //           for the Intel compiler in linux; the Intel compiler
+  //           defines by default __GNUG__ and the following code is
+  //           compiled instead of the one after the #else.
   asm("" : "=m"(x) : "m"(x));
   // asm("" : "+m"(x) );
   return x;
@@ -127,7 +131,7 @@ inline double IA_force_to_double(double x)
 // because operations are done with a wrong rounding mode at compile time.
 // G++ also uses __builtin_constant_p().
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  if defined __GNUG__ && __GNUG__ < 3 && !defined __INTEL_COMPILER
+#  if defined __GNUG__ && __GNUG__ < 3
 	// Note : GCC 3 doesn't guarantee __builtin_constant_p to return false
 	// when he will not do cprop :(.
 #    define CGAL_IA_STOP_CPROP(x) \
