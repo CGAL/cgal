@@ -1,3 +1,6 @@
+2.48 (rursu)
+- patched config for cl 1310.
+
 2.47
 - Remove warning in CGAL_CFG_MATCHING_BUG_2.C
 

@@ -22,7 +22,9 @@
 #pragma warning(once:4503)
 
 
-#if defined (_MSC_VER) && ( (_MSC_VER >= 1300) || defined (__INTEL_COMPILER) )
+// the iterator specializations should be used for:
+// cl 1300 and Intel Compiler
+#if defined (_MSC_VER) && ( (_MSC_VER == 1300) || defined (__INTEL_COMPILER) )
 #include <CGAL/config/msvc7/iterator_specializations.h>
 #endif
 
