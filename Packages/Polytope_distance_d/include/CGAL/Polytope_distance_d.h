@@ -267,7 +267,7 @@ class Polytope_distance_d {
     
     FT
     squared_distance( ) const
-        { CGAL_optimisation_precondition( ! is_empty());
+        { 
           return FT( squared_distance_numerator  ()) /
                  FT( squared_distance_denominator()); }
     
