@@ -63,16 +63,16 @@ public:
     typedef Traits_                                       Traits;
     typedef HalfedgeDSItems                               Items;
 
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename Items::Vertex_wrapper<Self,Traits>   Vertex_wrapper;
     typedef typename Items::Halfedge_wrapper<Self,Traits> Halfedge_wrapper;
     typedef typename Items::Face_wrapper<Self,Traits>     Face_wrapper;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
     // here is the standard conforming way
     typedef Items::template Vertex_wrapper<Self,Traits>   Vertex_wrapper;
     typedef Items::template Halfedge_wrapper<Self,Traits> Halfedge_wrapper;
     typedef Items::template Face_wrapper<Self,Traits>     Face_wrapper;
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
 
     typedef typename Vertex_wrapper::Vertex            Vertex;
     typedef std::vector<Vertex>                        Vertex_vector;
@@ -138,16 +138,24 @@ private:
 
 public:
 
-    static inline Vertex_handle vertex_handle( Vertex* v) { return v; }
+    static inline Vertex_handle vertex_handle( Vertex* v) {
+        return Vertex_I(v);
+    }
     static inline Vertex_const_handle vertex_handle( const Vertex* v) {
-        return v;
+        return Vertex_CI(v);
     }
-    static inline Halfedge_handle halfedge_handle( Halfedge* h) { return h; }
+    static inline Halfedge_handle halfedge_handle( Halfedge* h) {
+        return Halfedge_I(h);
+    }
     static inline Halfedge_const_handle halfedge_handle( const Halfedge* h) {
-        return h;
+        return Halfedge_CI(h);
     }
-    static inline Face_handle face_handle( Face* f) { return f; }
-    static inline Face_const_handle face_handle( const Face* f) { return f; }
+    static inline Face_handle face_handle( Face* f) {
+        return Face_I(f);
+    }
+    static inline Face_const_handle face_handle( const Face* f) {
+        return Face_CI(f);
+    }
 
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM

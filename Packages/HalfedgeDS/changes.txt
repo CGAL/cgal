@@ -1,6 +1,16 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.11 (29 Jun 2001)
+
+     - Smaller corrections in the doc.
+     - Added pathname to example program header line.
+     - Replaced __GNUC__ excpetions with new workaround flag
+       CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD.
+     - Static method halfedge_handle() in HalfedgeDS_vector changed.
+     - Fixed missing halfedge_handle() call in hds_prog_compact.C to
+       make it work with g++ 3.0.
+
 3.10 (25 Jun 2001)
 
      - Fixed missing Plane dummy types in face_base classes.

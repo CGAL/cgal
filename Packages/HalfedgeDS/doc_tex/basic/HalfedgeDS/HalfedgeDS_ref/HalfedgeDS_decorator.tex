@@ -217,7 +217,7 @@ the halfedge \ccc{h->next} with a new face in-between.
     {splits the face incident to \ccc{h} and \ccc{g} into two faces
      with a new diagonal between the two vertices denoted by \ccc{h} and
      \ccc{g} respectively. The second (new) face obtained from
-     \ccc{hds} is a copy of the first face. Return \ccc{h->next()} after the
+     \ccc{hds} is a copy of the first face. Returns \ccc{h->next()} after the
      operation, i.e., the new diagonal. The new face is to the right of the 
      new diagonal, the old face is to the left. The time is proportional 
      to the distance from \ccc{h} to \ccc{g} around the face.} 
@@ -243,9 +243,8 @@ the halfedge \ccc{h->next} with a new face in-between.
      and connects them with a new edge. The second (new) vertex
      obtained from \ccc{hds} is a copy of the first vertex. Returns
      \ccc{h->next()->opposite()} after the operation, i.e., the new edge
-     in the orientation towards the new vertex.
-     The time is proportional to the distance
-     from \ccc{h} to \ccc{g} around the vertex.} 
+     in the orientation towards the new vertex. The time is proportional 
+     to the distance from \ccc{h} to \ccc{g} around the vertex.} 
 
 \ccMethod{Halfedge_handle join_vertex( Halfedge_handle h);}
     {joins the two vertices incident to $h$. The vertex denoted by

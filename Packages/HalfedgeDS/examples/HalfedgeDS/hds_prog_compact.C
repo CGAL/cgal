@@ -1,5 +1,5 @@
-// hds_prog_compact.C
-// -------------------------------------
+// examples/HalfedgeDS/hds_prog_compact.C
+// --------------------------------------
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_decorator.h>
@@ -53,8 +53,8 @@ public:
 	return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
     }
     Halfedge_const_handle next() const {
-	return Halfedge_const_handle((const Halfedge*)(nxt & 
-						 (~ std::ptrdiff_t(1))));
+	return HDS::halfedge_handle((const Halfedge*)
+                                    (nxt & (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
         CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) || 

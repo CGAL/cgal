@@ -29,7 +29,7 @@ faces, for example for planar maps, polyhedra, or other orientable,
 two-dimensional surfaces embedded in arbitrary dimension. Each edge is
 decomposed into two halfedges with opposite orientations. One incident
 face and one incident vertex are stored in each halfedge.  For each
-face and each vertex one incident halfedge is stored.  Reduced
+face and each vertex, one incident halfedge is stored.  Reduced
 variants of the halfedge data structure can omit some of these
 informations, for example the halfedge pointers in faces or the
 storage of faces at all.
@@ -114,7 +114,7 @@ Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
 \end{ccHtmlOnly}
 illustrates the responsibilities of the three layers of the software
-design with the \ccc{CGAL::Polyhedron_3} as an example for the top
+design, with the \ccc{CGAL::Polyhedron_3} as an example for the top
 layer.  The items provide the space for the information that is
 actually stored, i.e.~with member variables and access member
 functions in \ccc{Vertex}, \ccc{Halfedge}, and \ccc{Face}
@@ -139,10 +139,9 @@ optional incidences, a three-dimensional point in the vertex type and
 a plane equation in the face type.
 
 The \ccc{Halfedge_data_structure}, concept \ccc{HalfedgeDS}, is
-responsible of the storage organization of the items. Currently,
+responsible for the storage organization of the items. Currently,
 implementations using internally a bidirectional list or a
-vector are provided. The
-\ccc{Halfedge_data_structure} defines the handles and iterators
+vector are provided. The \ccc{HalfedgeDS} defines the handles and iterators
 belonging to the items. These types are promoted to the declaration of
 the items themselves and are used there to provide the references to
 the incident items. This promotion of types is done with a template
@@ -151,29 +150,30 @@ provides member functions to insert and delete items, to traverse all
 items, and it gives access to the items in order to manipulate the
 items.
 
-There are two different models for the \ccc{HalfedgeDS} concept
-available and more might come. Therefore we have kept their interface
-small. Functionality common to all these models is separated into a
-helper classes, \ccc{HalfedgeDS_decorator}, \ccc{HalfedgeDS_const_decorator}, 
-and  \ccc{HalfedgeDS_items_decorator}, which are not shown in 
-Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
-  <A HREF="Chapter_main.html#figureHalfedgeDSDesign"><IMG 
-  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
-\end{ccHtmlOnly}, but would be placed at the
-side of the \ccc{Halfedge_data_structure} since it broadens that
-interface but does not hide it.  This helper class contains operations
-that are useful to implement the operations in the next layer, for
-example, the polyhedron. It adds, for example, the Euler operations and
-partial operations from which further Euler operations can be built
-from, such as inserting an edge into the ring of edges at a vertex.
-Furthermore, the helper class contains adaptive functionality.  For
-example, if the \ccc{prev()} member function is not provided for
-halfedges, the \ccc{find_prev()} member function of the helper class
-searches in the positive direction along the face for the previous
-halfedge. But if the \ccc{prev()} member function is provided, the
-\ccc{find_prev()} member function simply calls it. This distinction
-is resolved at compile time with a technique called {\em
-  compile-time tags}, similar to iterator tags in~\cite{sl-stl-95}.
+There are two different models for the \ccc{HalfedgeDS} concept available,
+\ccc{HalfedgeDS_list} and \ccc{HalfedgeDS_vector}, and more might come.
+Therefore we have kept their interface small and factored out common
+functionality into separate helper classes, \ccc{HalfedgeDS_decorator},
+\ccc{HalfedgeDS_const_decorator}, and \ccc{HalfedgeDS_items_decorator},
+which are not shown in
+Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly} <A
+HREF="Chapter_main.html#figureHalfedgeDSDesign"><IMG
+SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
+HEIGHT="10"></A>
+\end{ccHtmlOnly}, but would be placed at the side of the \ccc{HalfedgeDS}
+since they broaden that interface but do not hide it.  This helper
+class contains operations that are useful to implement the operations
+in the next layer, for example, the polyhedron. It adds, for example,
+the Euler operations and partial operations from which further Euler
+operations can be built, such as inserting an edge into the ring of
+edges at a vertex.  Furthermore, the helper class contains adaptive
+functionality.  For example, if the \ccc{prev()} member function is
+not provided for halfedges, the \ccc{find_prev()} member function of
+the helper class searches in the positive direction along the face for
+the previous halfedge. But if the \ccc{prev()} member function is
+provided, the \ccc{find_prev()} member function simply calls it. This
+distinction is resolved at compile time with a technique called {\em
+compile-time tags}, similar to iterator tags in~\cite{sl-stl-95}.
 
 The \ccc{Polyhedron_3} as an example for the third layer adds the
 geometric interpretation, provides an easy-to-use interface of
@@ -204,7 +204,7 @@ design.
 
 The following example program uses the default halfedge data structure
 and the decorator class. The default halfedge data structure uses a
-list based representation. All incidences of the items and a point
+list-based representation. All incidences of the items and a point
 type for vertices are defined. The trivial traits class provides the
 type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex and two faces, and checks its validity.
@@ -276,9 +276,9 @@ member variable \ccc{color}.
 \begin{ccAdvanced}
   
 The halfedge data structure as presented here is slightly less space
-efficient as for example the winged-edge data
+efficient as, for example, the winged-edge data
 structure~\cite{b-prcv-75}, the DCEL~\cite{mp-fitcp-78} or variants of
-the quad-edge data structure~\cite{gs-pmgsc-85}.  On the other side,
+the quad-edge data structure~\cite{gs-pmgsc-85}.  On the other hand,
 it does not require any search operations during traversals. A
 comparison can be found in~\cite{k-ugpdd-99}.
 
@@ -287,19 +287,19 @@ representation using traditional C techniques (i.e.~type casting and
 the assumption that pointers, especially those from {\tt malloc} or
 {\tt new}, point to even addresses). The idea goes as follows: The
 halfedge data structure allocates halfedges pairwise.  Concerning the
-vector based data structure this implies that the absolute value of
-the difference between a halfedge and its opposite halfedge is always
+vector-based data structure this implies that the absolute value of
+the differengce between a halfedge and its opposite halfedge is always
 one with respect to C pointer arithmetic. We can replace the opposite
 pointer by a single bit encoding the sign of this difference.  We will
 store this bit as the least significant bit in the next halfedge
-handle.  This example omits the previous pointer. What remains are
-three pointers per halfedge. 
+handle.  Furthermore, we do not implement a pointer to the previous
+halfedge. What remains are three pointers per halfedge. 
 
 We use the static member function \ccc{halfedge_handle()} to convert
 from pointers to halfedge handles. The same solution can be applied to
 the list-based halfedge data structure \ccc{CGAL::HalfedgeDS_list},
 see \texttt{examples/HalfedgeDS/hds\_prog\_compact2.C}. Here is the
-example for the vector based data structure.
+example for the vector-based data structure.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_compact.C}
 

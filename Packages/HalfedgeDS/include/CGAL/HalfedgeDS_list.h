@@ -114,16 +114,16 @@ public:
     typedef Traits_                                       Traits;
     typedef HalfedgeDSItems                               Items;
 
-#ifdef __GNUC__
+#ifdef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename Items::Vertex_wrapper<Self,Traits>   Vertex_wrapper;
     typedef typename Items::Halfedge_wrapper<Self,Traits> Halfedge_wrapper;
     typedef typename Items::Face_wrapper<Self,Traits>     Face_wrapper;
-#else // __GNUC__ //
+#else // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
     // here is the standard conforming way
     typedef Items::template Vertex_wrapper<Self,Traits>   Vertex_wrapper;
     typedef Items::template Halfedge_wrapper<Self,Traits> Halfedge_wrapper;
     typedef Items::template Face_wrapper<Self,Traits>     Face_wrapper;
-#endif // __GNUC__ //
+#endif // CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD //
     typedef typename Vertex_wrapper::Vertex            Vertex_base;
     typedef HalfedgeDS_in_place_list_vertex< Vertex_base> Vertex;
     typedef In_place_list<Vertex,false>                Vertex_list;

@@ -1,4 +1,4 @@
-// hds_prog_vector.C              
+// examples/HalfedgeDS/hds_prog_vector.C              
 // -------------------------------------
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_vector.h>
