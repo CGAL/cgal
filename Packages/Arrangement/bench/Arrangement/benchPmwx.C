@@ -203,7 +203,11 @@ public:
     }
     Strategy strategy;
     Pmwx pm(&strategy);
+#if defined(USE_INSERT_FAST)
+    pm.insert_fast(m_curveList.begin(), m_curveList.end());
+#else
     pm.insert(m_curveList.begin(), m_curveList.end());
+#endif
     if (m_verbose) {
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
@@ -236,7 +240,11 @@ public:
   {
     Strategy strategy;
     Pmwx pm(&strategy);
+#if defined(USE_INSERT_FAST)
+    pm.insert_fast(m_curveList.begin(), m_curveList.end());
+#else
     pm.insert(m_curveList.begin(), m_curveList.end());
+#endif
     if (m_verbose) {
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
       std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;

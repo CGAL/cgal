@@ -25,7 +25,13 @@ TARGET0 = benchPmwx$(EXEFILESUFFIX)
 endif
 endif
 endif
-LOBJDIR :=$(LOBJDIR)_gcc$(GCC_VER)
+LOBJDIR :=$(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
+
+ifeq ($(USE_INSERT_FAST), 1)
+LCPPDEFS+= -DUSE_INSERT_FAST
+LOBJDIR :=$(LOBJDIR)_fast
+TARGET0 :=$(TARGET0)_fast
+endif
 
 LCPPINCS = -I$(BASEDIR)/../../include
 LCPPINCS+= -I$(BASEDIR)/../../../Benchmark/include
@@ -45,3 +51,6 @@ use_my_kernel:
 
 use_conic_traits:
 	$(MAKEF) "USE_CONIC_TRAITS=1"
+
+use_insert_fast:
+	$(MAKEF) "USE_INSERT_FAST=1"
