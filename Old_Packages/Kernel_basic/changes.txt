@@ -1,3 +1,6 @@
+3.56   (15 August 2001)
+- Oops : #ifdef instead of #ifndef.
+
 3.55   (15 August 2001)
 - SunPro has problems with protected/friend.
 

@@ -96,7 +96,7 @@ class Object
     template <class T>
     friend bool assign(T& t, const Object& o);
 
-#ifdef __SUNPRO_CC
+#ifndef __SUNPRO_CC
   protected:
 #endif
     Object_base*  ptr;
