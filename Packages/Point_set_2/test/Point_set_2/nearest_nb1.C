@@ -19,13 +19,12 @@ typedef CGAL::Triangulation_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
 
 
-typedef point_set_traits_2<REP>                             TRAITS;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Edge           Edge;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Edge_iterator  Edge_iterator;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_set_2<TRAITS,Gt,Tds>::Vertex         Vertex;
+typedef CGAL::Point_set_2<Gt,Tds>::Edge           Edge;
+typedef CGAL::Point_set_2<Gt,Tds>::Edge_iterator  Edge_iterator;
+typedef CGAL::Point_set_2<Gt,Tds>::Vertex_handle  Vertex_handle;
+typedef CGAL::Point_set_2<Gt,Tds>::Vertex         Vertex;
 
-Point_set_2<TRAITS,Gt,Tds> PSet;
+Point_set_2<Gt,Tds> PSet;
 
 Point_2<REP> ar1[5];
 
@@ -92,9 +91,9 @@ int main()
    w2=check1(L);
    
    // construction ...
-   Point_set_2<TRAITS,Gt,Tds> PSet2;
-   Point_set_2<TRAITS,Gt,Tds> PSet3(Lr.begin(),Lr.end());
-   Point_set_2<TRAITS,Gt,Tds> PSet4(Lr);
+   Point_set_2<Gt,Tds> PSet2;
+   Point_set_2<Gt,Tds> PSet3(Lr.begin(),Lr.end());
+   Point_set_2<Gt,Tds> PSet4(Lr);
    
    // init ...
    PSet2.init(Lr);
