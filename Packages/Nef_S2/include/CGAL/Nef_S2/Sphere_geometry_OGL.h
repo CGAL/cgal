@@ -781,10 +781,12 @@ void init()
   glLightfv (GL_LIGHT0, GL_POSITION, light0);
   glEnable (GL_LIGHT0);
 
+ 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_AUTO_NORMAL);
   glEnable(GL_NORMALIZE);
-  glEnable(GL_POINT_SMOOTH);
+  //  glEnable(GL_POINT_SMOOTH);
+
 }
 
 void enter_leave(int state)
