@@ -1,13 +1,7 @@
-# Makefile for a CGAL package.
+.PHONY: submit
 
-.PHONY: package submit Version
-
-Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
 CGAL_VERSION:='$(VERSION) ($(shell date '+%e %b %Y'))'
-WWW_base=/net/servers/www-sop/prisme/CGAL/DR:/Members
-WWW_dir=$(WWW_base)/$(Package)
-TMP_file=/tmp/submit-mail
 
 all:
 	@echo "-----------------------------------"
@@ -17,27 +11,8 @@ all:
 	@echo "---- make VERSION=X.XX submit  ----"
 	@echo "-----------------------------------"
 
-Version:
+submit:
 	echo $(CGAL_VERSION) > version
 	cvs commit -m "Bump for $(CGAL_VERSION)" version
 	cvs tag -c $(TAG_VERSION)
 	cvs tag -F -c current_submission
-
-submit: clean Version $(Package).tar.gz
-	cp $(Package).tar.gz version description.txt \
-	  changes.txt $(WWW_dir)
-	echo > $(TMP_file)
-	echo "submission::" >> $(TMP_file)
-	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
-	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
-	rm -f $(TMP_file)
-
-$(Package).tar.gz:
-	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO --exclude="*~" --exclude="*.old" \
-	version maintainer description.txt changes.txt include
-
-clean:
-	rm -f $(Package).tar.gz
