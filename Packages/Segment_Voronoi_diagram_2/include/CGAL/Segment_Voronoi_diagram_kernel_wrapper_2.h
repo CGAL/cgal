@@ -79,42 +79,27 @@ template<class K1, class K2, class Converter>
 class Svd_cartesian_converter : public Converter
 {
 private:
+  typedef typename K1::Site_2     K1_Site_2;
+  typedef typename K1::Point_2    K1_Point_2;
+
   typedef typename K2::Site_2     K2_Site_2;
   typedef typename K2::Point_2    K2_Point_2;
 
   typedef Converter               Base;
 
-public:
-#if 0
-  // MK::ERROR:
-  // maybe at some day I will also add the intersections tag in
-  // this class too; this way I will be able to avoid calling, inside
-  // operator() for sites, constructors that have no meaning for
-  // simple sites. The more general problem though happens in the
-  // predicates, since there I assume full sites and I am accessing
-  // information as if the sites are full sites. The only solution
-  // around that is to pass the intersections tag to the predicates as
-  // well and have them avoid calling methods that should exists
-  // (i.e., do not have any real meaning for simple sites and should
-  // not have been called in the first place).
+  typedef typename K1::Intersections_tag  Intersections_tag;
 
-  K2_Site_2
-  operator()(const typename K1::Site_2& t) const
+private:
+  static const Intersections_tag&  intersections_tag()
   {
-    if ( t.is_point() ) {
-      return K2_Site_2( Base::operator()(t.point()) );
-    }
-
-    return K2_Site_2( Base::operator()(t.point(0)),
-		      Base::operator()(t.point(1)) );
+    static Intersections_tag itag;
+    return itag;
   }
-#endif
 
-  K2_Site_2
-  operator()(const typename K1::Site_2& t) const
+private:
+  // with intersections
+  K2_Site_2 convert_site(const K1_Site_2& t, const Tag_true&) const
   {
-    typedef typename K1::Site_2  K1_Site_2;
-
     if ( t.is_point() ) {
       if ( t.is_exact() ) {
 	return K2_Site_2( Base::operator()(t.point()) );
@@ -158,9 +143,28 @@ public:
     }
   }
 
+  // without intersections
+  K2_Site_2 convert_site(const K1_Site_2& t, const Tag_false&) const
+  {
+    if ( t.is_point() ) {
+      return K2_Site_2( Base::operator()(t.point()) );
+    }
+
+    // t is a segment
+    return K2_Site_2( Base::operator()(t.point(0)),
+		      Base::operator()(t.point(1)) );    
+  }
+
+public:
+  K2_Site_2
+  operator()(const K1_Site_2& t) const
+  {
+    return convert_site(t, intersections_tag());
+  }
+
 #if defined(CGAL_CFG_USING_BASE_MEMBER_BUG) || defined(_MSC_VER)
   K2_Point_2
-  operator()(const typename K1::Point_2& p) const
+  operator()(const K1_Point_2& p) const
   {
     return Base::operator()(p);
   }
