@@ -137,8 +137,7 @@ Direction_d<R> direction() const
 }
 
 Vector_d<R> vector() const
-/*{\Mop returns the vector from source to target.\\
-\precond |\Mvar| is non-degenerate. }*/
+/*{\Mop returns the vector from source to target.}*/
 { return ptr->vector(); }
 
 FT squared_length() const

@@ -117,9 +117,10 @@ FIXDIRHD(const RT*)
 #undef FIXDIRHD
 #endif
 
-DirectionHd(Base_direction, int d, int i) : Base( Tuple(d+1) )
+DirectionHd(int d, Base_direction, int i) : Base( Tuple(d+1) )
 /*{\Mcreate returns a variable |\Mvar| of type |\Mname| initialized  
-to the direction of the $i$-th base vector of dimension $d$. }*/
+to the direction of the $i$-th base vector of dimension $d$.
+\precond $0 \leq i < d$.}*/
 { entry(d) = 1; 
   if ( d==0 ) return;
   CGAL_assertion_msg((0<=i&&i<d), "DirectionHd::base: index out of range.");

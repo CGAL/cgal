@@ -61,8 +61,8 @@ FIXDIRD(const RT*)
 
   Direction_d(const Direction_d<R> &d) : Base(d) {}
   Direction_d(const Vector_d<R> &v) : Base(v) {}
-  Direction_d(Base_direction, int d, int i) : 
-    Base(Base_direction(),d,i) {}
+  Direction_d(int d, Base_direction, int i) : 
+    Base(d,Base_direction(),i) {}
   Direction_d(const Base& p) : Base(p) {}
 
   Self operator-() const { return Base::operator-(); }

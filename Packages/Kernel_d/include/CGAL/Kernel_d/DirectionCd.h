@@ -77,7 +77,7 @@ FIXDIRCD(const RT*)
 #undef FIXDIRCD
 #endif
 
-DirectionCd(Base_direction, int d, int i) : Base( Tuple(d) )
+DirectionCd(int d, Base_direction, int i) : Base( Tuple(d) )
 { if ( d==0 ) return;
   CGAL_assertion_msg((0<=i&&i<d), "DirectionCd::base: index out of range.");
   entry(i) = 1;

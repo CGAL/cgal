@@ -331,7 +331,7 @@ int main()
     Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
-              d4 = Direction(Direction::Base_direction(),3,2),
+              d4 = Direction(3,Direction::Base_direction(),2),
               d5(d0);
     CGAL_TEST(d0==d5);
     CGAL_TEST(d2==Direction(2,2,0));
@@ -827,7 +827,7 @@ int main()
     Direction d0(3), d1(3,iv1.begin(),iv1.end()), 
               d2(3,iv2.begin(),iv2.end()),
               d31(1,1,1), d32(1,1),
-              d4 = Direction(Direction::Base_direction(),3,2),
+              d4 = Direction(3,Direction::Base_direction(),2),
               d5(d0);
     CGAL_TEST(d0==d5);
     CGAL_TEST(d2==Direction(2,2,0));
