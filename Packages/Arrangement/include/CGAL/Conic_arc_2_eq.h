@@ -1,9 +1,11 @@
 #ifndef CGAL_CONIC_ARC_2_EQ_H
 #define CGAL_CONIC_ARC_2_EQ_H
 
-#include <CGAL/number_type_tags.h>
-#include <CGAL/double.h>
-#include <CGAL/double.h>
+//#include <CGAL/number_type_tags.h>
+//#include <CGAL/double.h>
+//#include <CGAL/double.h>
+#include <CGAL/basic.h>
+
 #include <CGAL/leda_bigfloat.h>
 
 CGAL_BEGIN_NAMESPACE
