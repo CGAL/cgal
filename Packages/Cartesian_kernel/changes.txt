@@ -1,3 +1,7 @@
+Version 6.5 (?? ?????? 2001)
+- Kernel_traits_common.h shorted with the use of a macro
+- Several missing function object classes added
+
 Version 6.4 (25 January 2001)
 - Use the new file iterator_traits_pointer_specs_for_simple_cartesian_kernel.h
 
