@@ -174,10 +174,10 @@ squared_distance_parallel(
 
 
 
-template <class RT, class K>
+template <class K>
 inline
-RT 
-_distance_measure_sub(RT startwdist, RT endwdist,
+typename K::RT 
+_distance_measure_sub(typename K::RT startwdist, typename K::RT endwdist,
 			 const typename CGAL_WRAP(K)::Vector_3 &start, 
 			 const typename CGAL_WRAP(K)::Vector_3 &end,
 			 const K&)
