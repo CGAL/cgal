@@ -24,7 +24,7 @@
 \ccHtmlIndexC[concept]{Random_access_circulator}
 
 Note: This specification is a revised version based on the \CC\ 
-Standard~\cite{c-isplc-98}, which is available now. In particular,
+Standard~\cite{cgal:ansi-is14882-98}, which is available now. In particular,
 iterator traits are now assumed and required.
 
 Iterators in the \stl\ were tailored for linear sequences. The
@@ -49,7 +49,7 @@ bidirectional, and random access circulators\footnote{Input
   they would be indistinguishable from output iterators.}. Most
 requirements for circulators are equal to those for iterators. We
 present the changes, please refer to \cite[chapter 18]{ms-strg-96} or
-\cite{c-isplc-98} for the iterator requirements.
+\cite{cgal:ansi-is14882-98} for the iterator requirements.
 
 {\bf Past-the-end value:} There is no past-the-end value for circulators.
 
@@ -117,7 +117,7 @@ instead of {\tt NULL}.
                          empty sequence.\\
     {\tt a == NULL}   \> Returns {\tt true} if {\tt a} denotes an empty
                          sequence, {\tt false} otherwise. \\
-		      \> For simplicity, {\tt NULL == a} is not required. The\\
+                      \> For simplicity, {\tt NULL == a} is not required. The\\
                       \> behavior for comparisons with pointer-like 
                          values different than {\tt NULL} \\
                       \> is undefined. A runtime assertion is 
