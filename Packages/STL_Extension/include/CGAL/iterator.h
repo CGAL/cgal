@@ -436,11 +436,11 @@ template < class I, class P, class Ref, class Ptr,
 #ifndef __SUNPRO_CC
 template < class I,
            class P,
-           class Ref  = typename std::iterator_traits<I>::reference,
-           class Ptr  = typename std::iterator_traits<I>::pointer,
-           class Val  = typename std::iterator_traits<I>::value_type,
-           class Dist = typename std::iterator_traits<I>::difference_type,
-           class Ctg = typename std::iterator_traits<I>::iterator_category>
+class Ref  = CGAL_TYPENAME_MSVC_NULL std::iterator_traits<I>::reference,
+class Ptr  = CGAL_TYPENAME_MSVC_NULL std::iterator_traits<I>::pointer,
+class Val  = CGAL_TYPENAME_MSVC_NULL std::iterator_traits<I>::value_type,
+class Dist = CGAL_TYPENAME_MSVC_NULL std::iterator_traits<I>::difference_type,
+class Ctg = CGAL_TYPENAME_MSVC_NULL std::iterator_traits<I>::iterator_category>
 #else
 template < class I,
            class P,
