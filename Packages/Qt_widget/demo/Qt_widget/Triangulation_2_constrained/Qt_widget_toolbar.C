@@ -57,13 +57,13 @@ namespace CGAL {
   but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
   but[1] = new QToolButton(maintoolbar, "notool");
   but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
-  but[1]->setTextLabel("Get Point");
+  but[1]->setTextLabel("Input Point");
   but[2] = new QToolButton(maintoolbar, "notool");
   but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
-  but[2]->setTextLabel("Get Segment");
+  but[2]->setTextLabel("Input Segment");
   but[3] = new QToolButton(maintoolbar, "notool");
   but[3]->setPixmap(QPixmap( (const char**)polygon_xpm ));
-  but[3]->setTextLabel("Get Polygon");
+  but[3]->setTextLabel("Input Polygon");
   		
   nr_of_buttons = 4;
 

@@ -127,10 +127,10 @@ public:
     file->insertItem("&Save Triangulation", this,
 		      SLOT(save_triangulation()), CTRL+Key_T);
     file->insertSeparator();
-    file->insertItem("&Load Constrainets", this, 
-		      SLOT(load_constraineds()), CTRL+Key_L);
-    file->insertItem("&Save Constrainets", this,
-		      SLOT(save_constraineds()), CTRL+Key_T);
+    file->insertItem("&Load Constraints", this, 
+		      SLOT(load_constraints()), CTRL+Key_L);
+    file->insertItem("&Save Constraints", this,
+		      SLOT(save_constraints()), CTRL+Key_T);
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()));
     file->insertSeparator();
@@ -297,11 +297,11 @@ private slots:
     something_changed();
   }
 
-  void load_constraineds()
+  void load_constraints()
   {
   }
 
-  void save_constraineds()
+  void save_constraints()
   {
   }
 
