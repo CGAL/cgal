@@ -30,7 +30,7 @@
 \newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{2.0}
+%\newcommand{\cgalrelease}{2.0}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -49,23 +49,7 @@
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
 \newcommand{\stlportpage}{\path'http://www.metabyte.com/~fbp/stl/'}
 
-%%
-%% titlepage
-%%
-\input{title}
-
-%%
-%% table of contents 
-%%
-\pagenumbering{arabic}
-
-\tableofcontents
-\newpage
-
-%%
-%% main body 
-%%
-
+\lcHtml{\chapter{Installation}}
 \section{Introduction}
 
 \cgal\ is a \textit{Computational Geometry Algorithms Library\/} written
@@ -85,9 +69,10 @@ and/or the \gnu\ Multiple Precision library GMP.
 In order to build the \cgal\ libraries you need a \CC\ compiler.
 Currently only a small number of recent compilers on unix platforms
 are supported. The reason is that most compilers do not conform to the
-ISO 14882 standard for \CC\footnote{see e.g.
-  \path~http://reality.sgi.com/austern/std-c++/faq-new.html\#PartB~
-  for information} and some of them have so many limitations/bugs that
+ISO 14882 standard for 
+\lcTex{\CC\footnote{see e.g. \path~http://reality.sgi.com/austern/std-c++/faq-new.html\#PartB~ for information}}
+\lcHtml{\CC\footnote{see e.g. \path~http://reality.sgi.com/austern/std-c++/faq-new.html#PartB~ for information}}
+and some of them have so many limitations/bugs that
 we could not work around all of them.
 
 More precisely, \cgaldir\ supports the following Unix
@@ -225,7 +210,7 @@ will not get informed about this\footnote{If you are that curious what
   \texttt{\cgaldir/install.log}.}, but see some dots written to the
 screen indicating progress.
 
-{\scriptsize
+{\ccTexHtml{\scriptsize}{}
 \begin{alltt}
 --------------------------------------------------------
   This is the install script for CGAL \cgalrelease
@@ -256,7 +241,7 @@ from the compiler menu.
 
 A menu similar to the following will appear on your screen.
 
-{\scriptsize \label{pic:main-menu}
+{\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
   **              CGAL 2.0 Installation Main Menu               **
@@ -315,7 +300,7 @@ compile \cgal\ applications. If everything went ok, the output should
 look as follows (if not, you should have a look at the error messages
 from compiler or linker).
 
-{\scriptsize
+{\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
   ****************************************************************
   **                                                            **
