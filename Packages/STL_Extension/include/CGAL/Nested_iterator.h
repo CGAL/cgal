@@ -136,7 +136,7 @@ public:
     return *this;
   }
 
-  Self& operator++(int)
+  Self operator++(int)
   {
     Self tmp = *this;
     ++(*this);
@@ -159,7 +159,7 @@ public:
     return *this;
   }
 
-  Self& operator--(int)
+  Self operator--(int)
   {
     Self tmp = *this;
     --(*this);
