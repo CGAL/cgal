@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Threetuple.h>
+#include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Filtred_container.h>
 #include <CGAL/Filtred_circulator.h>
@@ -217,8 +217,9 @@ public:
 private:
   // PRIVATE TYPES
 
-  typedef CGAL::Threetuple<Vertex_handle> Threevertices;
-
+  typedef CGAL::Triple<Vertex_handle,
+                       Vertex_handle,
+                       Vertex_handle> Threevertices;
   // traits type
   typedef typename Geom_traits::Vector_2 Vector_2;
   typedef typename Geom_traits::Construct_translated_point_2
@@ -306,9 +307,9 @@ private:
       {
 	const Threevertices& t = p.second;
 	const Vertex_handle&
-	  va = t.e0,
-	  vb = t.e1,
-	  vc = t.e2;
+	  va = t.first,
+	  vb = t.second,
+	  vc = t.third;
 	Face_handle f;
 	return( _m.is_face(va,vb,vc,f) && _m.is_bad(f));
       }
@@ -1366,9 +1367,9 @@ process_one_face()
 {
   const Threevertices& t = bad_faces.front().second;
   const Vertex_handle&
-    va = t.e0,
-    vb = t.e1,
-    vc = t.e2;
+    va = t.first,
+    vb = t.second,
+    vc = t.third;
 
   Face_handle f;
   is_face(va,vb,vc,f);
