@@ -2598,14 +2598,14 @@ We hope to provide a better method some day, because this is by far
 the weakest part of the package.  Nonetheless, here's how it
 works.\par\medskip
 %
-When \code{pivot()} is called, we are given a basis~$C$ and a ball~$D$
+When \code{pivot()} is called, we are given a basis~$C$ and a ball~$d$
 not contained in~$\MB(C)$, and we are to produce a basis~$C'$ of
-$C\cup\{D\}$.  In the setup of \code{pivot()} the basis~$C$ as well as
-the ball~$D$ are given implicitly.  (We will come to that later during
+$C\cup\{d\}$.  In the setup of \code{pivot()} the basis~$C$ as well as
+the ball~$d$ are given implicitly.  (We will come to that later during
 the discussion of the LP-algorithm and the heuristic.)  There is a
 vector \code{l} of balls and an integer $0\le e\le d+1$
 such that the balls \code{l[$0$..$(e-1)$]} constitute the basis~$C$.
-The ball $D$ is given implictly as \code{l[D]}.  When \code{pivot()}
+The ball $d$ is given implictly as \code{l[d]}.  When \code{pivot()}
 returns, the variable $e$ will be adjusted and the elements in the
 vector~\code{l} rearranged in such a way that balls
 \code{l[$0$..$(e-1)$]} consistute~$C'$.\par\medskip
@@ -2622,20 +2622,20 @@ unchanged.\par\medskip
 \psfrag{$C_1$}{$C_0$}
 \psfrag{$C_2$}{$C_1$}
 \psfrag{$C_3$}{$C_2$}
-\psfrag{$D$}{$D$}
+\psfrag{$D$}{$d$}
 \includegraphics{figs/pivot/cex.xfig.eps}
-\caption{\label{fig_pivot}The basis computation \code{pivot($C$,$D$)}.}
+\caption{\label{fig_pivot}The basis computation \code{pivot($C$,$d$)}.}
 \end{center}
 \end{figure}
 %
-Since we know that $D$ must be contained in the new basis~$C'$, we can
+Since we know that $d$ must be contained in the new basis~$C'$, we can
 compute~$C'$ by inspecting all subsets~$T\subseteq C$: For (at least)
-one such~$T$ the set $T\cup\{D\}$ will be a basis of $C\cup\{D\}$.
+one such~$T$ the set $T\cup\{d\}$ will be a basis of $C\cup\{d\}$.
 Since we will iterate over the subsets~$T$ in such a way that we see
 all proper subsets of~$T$ before encountering~$T$ itself, we can
-conclude that the first set~$T$ with the property that $T\cup\{D\}$
+conclude that the first set~$T$ with the property that $T\cup\{d\}$
 forms a support set of itself must form a basis
-of~$C\cup\{D\}$.\par\medskip
+of~$C\cup\{d\}$.\par\medskip
 %
 We denote subsets of~$C=\{C_0,\ldots,C_{e-1}\}$ by bit-strings of
 width~$e$.  So $01010\cdots0$ represents the set~$\{C_1,C_3\}$, for
@@ -2658,32 +2658,32 @@ void gen(pos) {
 %
 Figure~\ref{fig_pivot} illustrates this method.  We are given a
 basis~$C$ consisting of two points and ball, together with another
-point~$D$ not contained in~$\MB(C)$.  The sets produced by
+point~$d$ not contained in~$\MB(C)$.  The sets produced by
 \code{gen($0$)} are listed in figure~\ref{fig_pivot_tab}.  For every
 set~$T$ we check, using an instance \code{ss} of class
-\code{Support\_set}, whether $T\cup\{D\}$ constitutes a support set of
+\code{Support\_set}, whether $T\cup\{d\}$ constitutes a support set of
 itself (e.g.\ whether \code{is\_spanning()} returns true after having pushed
 the members of the set onto~\code{ss}).  If this is the case, we check
-whether the ball $\MB(T\cup\{D\})$ (which we obtain by
-querying~\code{ss}) encloses all other balls in~$C\cup\{D\}$.  If so,
-we have found a support set of~$C\cup\{D\}$, and since no proper
+whether the ball $\MB(T\cup\{d\})$ (which we obtain by
+querying~\code{ss}) encloses all other balls in~$C\cup\{d\}$.  If so,
+we have found a support set of~$C\cup\{d\}$, and since no proper
 subset was a basis, we have actually found a basis
-of~$C\cup\{D\}$.\par\medskip
+of~$C\cup\{d\}$.\par\medskip
 %
 \begin{figure}[tbhp]
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
-bit-string~\code{T} & $T\cup\{D\}$ & primitive($T\cup\{D\}$) &
-enclosing($T\cup\{D\}$) \\
+bit-string~\code{T} & $T\cup\{d\}$ & primitive($T\cup\{d\}$) &
+enclosing($T\cup\{d\}$) \\
 \hline
- $000$ & $\{D\}$ & yes & no\\
- $001$ & $\{C_0,D\}$ & yes & no\\
- $010$ & $\{C_1,D\}$ & yes & no\\
- $011$ & $\{C_1,C_0,D\}$ & yes & no\\
- $100$ & $\{C_2,D\}$ & yes & no\\
- $101$ & $\{C_2,C_0,D\}$ & yes & yes\\
- $110$ & $\{C_2,C_1,D\}$ & yes & no\\
- $111$ & $\{C_2,C_1,C_0,D\}$ & no & n/a
+ $000$ & $\{d\}$ & yes & no\\
+ $001$ & $\{C_0,d\}$ & yes & no\\
+ $010$ & $\{C_1,d\}$ & yes & no\\
+ $011$ & $\{C_1,C_0,d\}$ & yes & no\\
+ $100$ & $\{C_2,d\}$ & yes & no\\
+ $101$ & $\{C_2,C_0,d\}$ & yes & yes\\
+ $110$ & $\{C_2,C_1,d\}$ & yes & no\\
+ $111$ & $\{C_2,C_1,C_0,d\}$ & no & n/a
 \end{tabular}
 \caption{\label{fig_pivot_tab}The iteration corresponding to
 figure~\ref{fig_pivot}.}
@@ -2721,15 +2721,15 @@ bool is_better(const FT&,const FT&,const Tag_true is_exact) {
 }
 
 template<class Traits>
-bool Min_sphere_of_spheres_d<Traits>::pivot(const int D) {
+bool Min_sphere_of_spheres_d<Traits>::pivot(const int d) {
   using namespace Min_sphere_of_spheres_d_impl;
 
   // remember old radius:
   const Result old = ss.radius();
 
-  // reset basis to {D}:
+  // reset basis to {d}:
   ss.reset();
-  ss.push(l[D]);
+  ss.push(l[d]);
 
   // try all subsets:
   std::bitset<Traits::D+1> T;
@@ -2768,9 +2768,9 @@ the bit at line~($\star$); we only do so if \code{push()} returns
 true.  Otherwise we know that no superset forms a basis, so we skip
 the whole branch of the recursion.  Notice also that the statements
 after the while-loop should, at least in theory, never be reached
-(because one of the generated subsets \e{is} a basis of~$C\cup\{D\}$).
+(because one of the generated subsets \e{is} a basis of~$C\cup\{d\}$).
 But since we are dealing with floating-point numbers, we must handle
-the case somehow: We take it as a sign that the ball~$D$ was very
+the case somehow: We take it as a sign that the ball~$d$ was very
 close to~$\MB(C)$ and so we don't change the basis at all.\par\medskip
 %
 @$@<no basis was found@>==@{@-
@@ -2818,7 +2818,7 @@ if (isEnclosingSupporting) {
   for(int i=0; i<e; ++i)
     if (T.test(i))
       std::swap(l[next++],l[i]);
-  std::swap(l[next++],l[D]);
+  std::swap(l[next++],l[d]);
   e = next;
   return is_better(old,ss.radius(),Is_exact());
 }
@@ -2967,7 +2967,7 @@ public: // construction and destruction:
   template<typename InputIterator>
   inline Min_sphere_of_spheres_d(InputIterator begin,InputIterator end,
                                  const Traits& traits = Traits()) :
-    t(traits), e(0), ss(t) {
+    t(traits), ss(t), e(0) {
     is_up_to_date = false;
     CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc()));
     insert(begin,end);            // todo. better way?
@@ -3262,7 +3262,7 @@ bool Min_sphere_of_spheres_d<Traits>::
   using std::endl;
 
   // check size of support set:
-  if (e > l.size() || e > (D+1)) {
+  if (e > static_cast<int>(l.size()) || e > (D+1)) {
     cerr << "Min_sphere_of_spheres_d: support set too large." << endl
          << "Please contact the author <kf@@iaeth.ch>." << endl;
     return false;
@@ -3294,7 +3294,7 @@ inequality.)\par\medskip
 %
 @$@<fail if miniball is not enclosing@>==@{@-
 // check that the miniball is enclosing:
-for (int i=0; i<l.size(); ++i)
+for (unsigned int i=0; i<l.size(); ++i)
   if (!ss.contains(t.center_cartesian_begin(l[i]),
                    t.radius(l[i]),Tol,Is_exact())) {
     cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << endl
@@ -3307,7 +3307,7 @@ for (int i=0; i<l.size(); ++i)
 // check that all support balls lie on the boundary:
 typedef Pair<FT> P;
 bool isSupporting = true;
-for (int i=0; i<e; ++i) {
+for (unsigned int i=0; i<e; ++i) {
   // check radii:
   const P rd = ss.radius()-t.radius(l[i]);
   if (is_neg(rd,ss.disc()))
@@ -3360,8 +3360,8 @@ c \\
 \end{array}
 \right].
 \end{equation}
-
-
+%
+%
 Using Gaussian elimination we transform (\ref{valid_coeffs_sys}) to a
 system whose coefficient matrix is upper-triangular.  Backsubstitution
 then yields the coefficients~$\lambda_i$.  In the code below we use
@@ -3371,9 +3371,9 @@ matrix of system~(\ref{valid_coeffs_sys}).\par\medskip
 @$@<compute coefficients@>==@{@-
 // set up initial system's coefficient matrix:
 FT (*m)[D+1] = new FT[e][D+1];
-for (int j=0; j<e; ++j)
+for (unsigned int j=0; j<e; ++j)
   copy_n<D>(t.center_cartesian_begin(l[j]),m[j]);
-for (int j=0; j<e; ++j)
+for (unsigned int j=0; j<e; ++j)
   m[j][D] = FT(1);
 
 // set up initial system's right-hand-side:
@@ -3382,7 +3382,7 @@ copy_n<D>(ss.begin(),rhs);
 rhs[D] = FT(1);
 
 // perform Gaussian elimination:
-for (int j=0; j<e; ++j) {
+for (unsigned int j=0; j<e; ++j) {
   // check rank:
   if (m[j][j] == FT(0)) {
     // find row with non-zero entry in column j:
@@ -3396,7 +3396,7 @@ for (int j=0; j<e; ++j) {
     }
 
     // exchange rows:
-    for (int k=0; k<e; ++k)
+    for (unsigned int k=0; k<e; ++k)
       std::swap(m[k][j],m[k][i]);
     std::swap(rhs[j],rhs[i]);
   }
@@ -3404,24 +3404,24 @@ for (int j=0; j<e; ++j) {
 
   // eliminate m[j][j+1..D] by subtracting a
   // multiple of row j from row i:
-  for (int i=j+1; i<D+1; ++i) {
+  for (unsigned int i=j+1; i<D+1; ++i) {
     // determine factor:
-    const FT l = m[j][i]/m[j][j];
+    const FT factor = m[j][i]/m[j][j];
 
     // subtract row j times l from row i:
-    for (int k=0; k<e; ++k)
-      m[k][i] -= m[k][j]*l;
-    rhs[i] -= rhs[j]*l;
+    for (unsigned int k=0; k<e; ++k)
+      m[k][i] -= m[k][j]*factor;
+    rhs[i] -= rhs[j]*factor;
   }
 }
 
 // check that we now have an upper triangular matrix:
-for (int j=0; j<e; ++j)
-  for(int i=j+1; i<D+1; ++i)
+for (unsigned int j=0; j<e; ++j)
+  for(unsigned int i=j+1; i<D+1; ++i)
     CGAL_MINIBALL_ASSERT(m[j][i] == FT(0));
 
 // check solvability:
-for (int i=e; i<D+1; ++i)
+for (unsigned int i=e; i<D+1; ++i)
   if (!is_zero(rhs[i],ss.disc())) {
     cerr << "Min_sphere_of_spheres_d: center of the miniball" << endl
          << "not in the span of the support centers." << endl
@@ -3431,9 +3431,9 @@ for (int i=e; i<D+1; ++i)
 
 // compute coefficients by backsubstitution:
 Pair<FT> lambda[D+1];
-for (int i=e-1; i>=0; --i) {
+for (unsigned int i=e-1; i>=0; --i) {
   lambda[i] = rhs[i];
-  for (int j=i+1; j<e; ++j)
+  for (unsigned int j=i+1; j<e; ++j)
     lambda[i] -= lambda[j]*m[j][i];
   lambda[i] = lambda[i]/m[i][i];
 }
@@ -3441,7 +3441,7 @@ for (int i=e-1; i>=0; --i) {
 %
 @$@<fail if support set is not spanning or if it is not minimal@>==@{@-
 // check coefficients:
-for (int i=0; i<e; ++i)
+for (unsigned int i=0; i<e; ++i)
   if (is_neg_or_zero(lambda[i],ss.disc())) {
     cerr << "Min_sphere_of_spheres_d: center of miniball not in" << endl
          << "interior of convex hull of support centers." << endl
@@ -3680,7 +3680,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   Min_sphere_of_spheres_d<Traits>::
     Min_sphere_of_spheres_d(const Traits& traits) :
-    t(traits), e(0), ss(t) {
+    t(traits), ss(t), e(0) {
     is_up_to_date = true;
     CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc())); // makes sure
                // that initially no ball is enclosed (cf. contains()).

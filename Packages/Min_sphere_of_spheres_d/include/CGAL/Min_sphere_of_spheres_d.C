@@ -287,7 +287,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // check that all support balls lie on the boundary:
     typedef Pair<FT> P;
     bool isSupporting = true;
-    for (int i=0; i<e; ++i) {
+    for (unsigned int i=0; i<e; ++i) {
       // check radii:
       const P rd = ss.radius()-t.radius(l[i]);
       if (is_neg(rd,ss.disc()))
@@ -349,12 +349,12 @@ namespace CGAL_MINIBALL_NAMESPACE {
       // multiple of row j from row i:
       for (unsigned int i=j+1; i<D+1; ++i) {
         // determine factor:
-        const FT l = m[j][i]/m[j][j];
+        const FT factor = m[j][i]/m[j][j];
     
         // subtract row j times l from row i:
         for (unsigned int k=0; k<e; ++k)
-          m[k][i] -= m[k][j]*l;
-        rhs[i] -= rhs[j]*l;
+          m[k][i] -= m[k][j]*factor;
+        rhs[i] -= rhs[j]*factor;
       }
     }
     

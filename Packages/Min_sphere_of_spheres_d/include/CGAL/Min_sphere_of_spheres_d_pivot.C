@@ -66,15 +66,15 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
   
   template<class Traits>
-  bool Min_sphere_of_spheres_d<Traits>::pivot(const int D) {
+  bool Min_sphere_of_spheres_d<Traits>::pivot(const int d) {
     using namespace Min_sphere_of_spheres_d_impl;
   
     // remember old radius:
     const Result old = ss.radius();
   
-    // reset basis to {D}:
+    // reset basis to {d}:
     ss.reset();
-    ss.push(l[D]);
+    ss.push(l[d]);
   
     // try all subsets:
     std::bitset<Traits::D+1> T;
@@ -98,7 +98,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
           for(int i=0; i<e; ++i)
             if (T.test(i))
               std::swap(l[next++],l[i]);
-          std::swap(l[next++],l[D]);
+          std::swap(l[next++],l[d]);
           e = next;
           return is_better(old,ss.radius(),Is_exact());
         }
