@@ -6,8 +6,9 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
+.SUFFIXES: .moc
+
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -35,21 +36,9 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-#SOURCES = ../../../../src/CGALQt/Qt_widget.o \
-	../../../../src/CGALQt/Qt_widget_tool.o \
-	../../../../src/CGALQt/Qt_widget_view.o \
-	../../../../src/CGALQt/Qt_widget_standard_toolbar.o
-
-
 all: tutorial8$(EXE_EXT)
 
-tutorial8.moc: tutorial8.C
-	$(QT_MOC) tutorial8.C -o tutorial8.moc
-
-tutorial8$(OBJ_EXT): tutorial8.C tutorial8.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tutorial8.C
-
-tutorial8$(EXE_EXT): tutorial8$(OBJ_EXT)
+tutorial8$(EXE_EXT): tutorial8.moc tutorial8$(OBJ_EXT) 
 	$(CGAL_CXX)  $(EXE_OPT)tutorial8 tutorial8$(OBJ_EXT) $(LDFLAGS)
 
 clean:
@@ -62,3 +51,6 @@ clean:
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.C.moc:
+	$(QT_MOC) $< -o $@
