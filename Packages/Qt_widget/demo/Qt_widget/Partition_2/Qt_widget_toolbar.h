@@ -42,7 +42,7 @@
 typedef CGAL::Cartesian<CGAL::MP_Float>     Rp;
 typedef CGAL::Partition_traits_2<Rp>			  Traits;
 typedef Traits::Point_2                     Point_2;
-typedef Traits::Polygon_2                   Polygon;
+typedef Traits::Polygon_2                   Polygon_2;
 
 
 namespace CGAL {
@@ -61,13 +61,14 @@ signals:
 private slots:
 	
 private:
-  QToolBar				*maintoolbar;
-  QToolButton		  *but[10];
-  Qt_widget				*widget;
-  QButtonGroup    *button_group;
-  int					    nr_of_buttons;
+  QToolBar       *maintoolbar;
+  QToolButton    *but[10];
+  Qt_widget      *widget;
+  QButtonGroup   *button_group;
+  int		 nr_of_buttons;
 	
-  CGAL::Qt_widget_get_simple_polygon<Polygon> getsimplebut;
+  CGAL::Qt_widget_get_simple_polygon<Polygon_2> 
+                 getsimplebut;
 };//end class
 
 };//end namespace
