@@ -43,13 +43,14 @@ CGAL_BEGIN_NAMESPACE
 template <class O1, class O2, class Conv>
 class Predicate_checker
 {
-    O1 o1;
-    O2 o2;
+    const O1 & o1;
+    const O2 & o2;
     Conv c;
 
 public:
 
-    Predicate_checker() {}
+    Predicate_checker(const O1 &oo1 = O1(), const O2 &oo2 = O2())
+	: o1(oo1), o2(oo2) {}
 
     typedef typename O1::result_type result_type;
 
@@ -143,6 +144,9 @@ class Kernel_checker
 {
     typedef K1     Kernel1;
     typedef K2     Kernel2;
+
+    Kernel2 k2;
+
     // typedef Comp   Comparator;
     typedef Conv   c;
 
@@ -151,7 +155,7 @@ class Kernel_checker
 
 #define CGAL_check_pred(X, Y) \
     typedef Predicate_checker<typename K1::X, typename K2::X, Conv> X; \
-    X Y() const { return X(); }
+    X Y() const { return X(K1::Y(), k2.Y()); }
 
 #define CGAL_Kernel_pred(X,Y,Z) CGAL_check_pred(Y, Z)
 #define CGAL_Kernel_cons(X,Y,Z)

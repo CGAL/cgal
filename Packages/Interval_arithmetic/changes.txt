@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.116 on ?? August 2001
+- Kernel_checker allows non-copyable predicates (ie works with Static_filters).
+
 Version 4.115 on 16 August 2001
 - New class Profile_counter.
 - Use it in the filtered predicates.
