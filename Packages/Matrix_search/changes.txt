@@ -1,6 +1,9 @@
 //=====================================================================
 //	Revision History for package Matrix_search
 //=====================================================================
+05 October 2004 Andreas Fabri
+- A workaround to Transform_iterator: Added typedef std::_Unchecked_iterator_tag _Checked_iterator_category; for VC8. 
+  Strange that no other iterator complains about this "feature" missing  
 
 10 August 2004 Andreas Fabri
 - In rectangular_p_center_2_random2_test.C: Use Kernel_traits<Point>::Kernel::FT  instead of  Point::R::FT   
