@@ -34,7 +34,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 SOURCES = ../../../src/Qt_Widget$(OBJ_EXT) ../../../src/Qt_Widget_tool$(OBJ_EXT) \
-	Qt_widget_toolbar$(OBJ_EXT) Qt_widget_toolbar_views$(OBJ_EXT) \
+	Qt_widget_toolbar$(OBJ_EXT) \
 	../../../src/Qt_Widget_MovePoint$(OBJ_EXT) ../../../src/Qt_Scene$(OBJ_EXT) \
 	../../../src/Qt_Widget_standard_toolbar$(OBJ_EXT)
 #	../../../src/Qt_ScenesWidget$(OBJ_EXT)
@@ -56,20 +56,22 @@ Qt_widget_toolbar.moc: Qt_widget_toolbar.h \
                       $(CGAL_INCL)/CGAL/IO/Qt_Widget_Handtool.h
 	$(QT_MOC) -o Qt_widget_toolbar.moc $<
 
-Qt_widget_toolbar_views$(OBJ_EXT): Qt_widget_toolbar_views.C \
-		Qt_widget_toolbar_views.moc
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar_views.C
+convex_hull_2.moc: convex_hull_2.C \
+		$(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
+		Qt_widget_toolbar.h \
+		$(CGAL_INCL)/CGAL/IO/Qt_Widget_standard_toolbar.h
+	$(QT_MOC) -o convex_hull_2.moc $<
 
-Qt_widget_toolbar_views.moc: Qt_widget_toolbar_views.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_voronoy.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_triangulation.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Nearest_vertex.h \
-                      $(CGAL_INCL)/CGAL/IO/Qt_Scene_Show_Mouse_coordinates.h
-	$(QT_MOC) -o Qt_widget_toolbar_views.moc $<
+convex_hull_2$(OBJ_EXT): convex_hull_2.C convex_hull_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) convex_hull_2.C
+
+
+convex_hull_2$(EXE_EXT): convex_hull_2$(OBJ_EXT) $(SOURCES)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convex_hull_2 $(SOURCES) convex_hull_2$(OBJ_EXT) $(LDFLAGS)
+
 
 triangulationdemo.moc: triangulationdemo.C $(CGAL_INCL)/CGAL/IO/Qt_Widget.h \
-			Qt_widget_toolbar_views.h Qt_widget_toolbar.h \
+			Qt_widget_toolbar.h \
 			$(CGAL_INCL)/CGAL/IO/Qt_ScenesWidget.h
 	${QT_MOC} -o triangulationdemo.moc triangulationdemo.C
 
