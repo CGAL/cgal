@@ -23,8 +23,8 @@
 #ifndef CGAL_MP_INTEGER_H
 #define CGAL_MP_INTEGER_H
 
-// MP_Integer class : very simple multiprecision integer class.
-// It is not really optimized for speed, but for simplicity.
+// MP_Integer : very simple multiprecision integer.
+// It is not optimized for speed, but for simplicity.
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -32,7 +32,7 @@
 #include <utility>
 
 // TODO :
-// - operator<() is buggy, it ust test lexicographically...
+// - the non-inline stuff must go in src/MP_Integer.C.
 // - implement missing CGAL requirements.
 // - Documentation.
 // - Use concept checking ( REQUIRE() ) to test sizeof(limb2)=2sizeof(limb) ?
@@ -69,19 +69,20 @@ public:
     remove_leading_zeros();
   }
 
-  MP_Integer operator-() const;
+  MP_Integer operator-() const
+  {
+    return MP_Integer() - (*this);
+  }
   MP_Integer operator+(const MP_Integer &) const;
   MP_Integer operator-(const MP_Integer &) const;
   MP_Integer operator*(const MP_Integer &) const;
-  MP_Integer operator/(const MP_Integer &) const
-  {
-    CGAL_assertion_msg(false, "Sorry, MP_Integer division not implemented");
-    abort();
-    return MP_Integer();
-  }
+  MP_Integer operator/(const MP_Integer &) const;
 
   bool operator<(const MP_Integer &) const;
-  bool operator==(const MP_Integer &) const;
+  bool operator==(const MP_Integer &b) const
+  {
+    return b.v == v;
+  }
 
 private:
 
@@ -112,26 +113,19 @@ private:
   std::vector<limb> v;
 };
 
+// The following must go in src/MP_Integer.C
+
 bool
 MP_Integer::operator<(const MP_Integer & b) const
 {
-  // FIXME : What did I drink ?
-  int i = std::max(size(), b.size())-1;
-  if (i<0)
-    return false;
-  return (*this)[i] < b[i];
-}
-
-bool
-MP_Integer::operator==(const MP_Integer & b) const
-{
-  return b.v == v;
-}
-
-MP_Integer
-MP_Integer::operator-() const
-{
-  return MP_Integer()-*this;
+  for (int i=std::max(size(), b.size()); i>=0; i--)
+  {
+      if ((*this)[i] < b[i])
+	  return true;
+      if ((*this)[i] > b[i])
+	  return false;
+  }
+  return false;
 }
 
 // Maybe we can merge the 2 following functions using STL's Add/Sub function
@@ -194,9 +188,17 @@ MP_Integer::operator*(const MP_Integer &b) const
 }
 
 MP_Integer
+MP_Integer::operator/(const MP_Integer &) const
+{
+  CGAL_assertion_msg(false, "Sorry, MP_Integer division not implemented");
+  abort();
+  return MP_Integer();
+}
+
+MP_Integer
 sqrt(const MP_Integer &)
 {
-  CGAL_assertion(false, "Sorry, NP_Integer square root not implemented");
+  CGAL_assertion(false, "Sorry, MP_Integer square root not implemented");
   abort();
   return MP_Integer();
 }
@@ -214,6 +216,15 @@ operator<< (std::ostream & os, const MP_Integer &b)
       os << "* 2^" << (8*sizeof(MP_Integer::limb))*i << " + ";
   }
   return os;
+}
+
+std::istream &
+operator>> (std::istream & is, MP_Integer &b)
+{
+  int i;
+  is >> i;
+  b = MP_Integer(i);
+  return is;
 }
 
 CGAL_END_NAMESPACE
