@@ -327,14 +327,14 @@ public:
   /*! curves_overlap() test overlapping between two given curves
    * \patam c1 the first curve
    * \patam c2 the second curve
-   * \return true if cv1 and cv2 overlap in a one-dimensional subcurve
+   * \return true if c1 and c2 overlap in a one-dimensional subcurve
    * (i.e., not in a finite number of points). Otherwise, false.
    * \todo end point coincidence instead of intersection!
    */
-  bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const 
+  bool curves_overlap(const X_curve_2 & c1, const X_curve_2 & c2) const
   {
+    Object res = intersect_2_object()(c1, c2);
     X_curve_2 seg;
-    Object res = intersect_2_object()(cv1, cv2);
     return (assign(seg, res) != 0);
   }
 

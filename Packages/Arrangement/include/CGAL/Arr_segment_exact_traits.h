@@ -27,7 +27,7 @@
 #define CGAL_ARR_SEGMENT_EXACT_TRAITS_H
 
 #include <CGAL/Pm_segment_traits_2.h>
-#include <CGAL/Segment_2_Segment_2_intersection.h>
+#include <CGAL/intersections.h>
 #include <CGAL/Arr_intersection_tags.h>
 
 #include <list>
@@ -83,7 +83,10 @@ public:
    * \return a segment with source and target point interchanged
    * \todo replace indirect use curve_flip() with opposite()
    */
-  X_curve_2 curve_flip(const X_curve_2 & cv) const { return cv.opposite(); }
+  X_curve_2 curve_flip(const X_curve_2 & cv) const
+  {
+    return construct_opposite_segment_2_object()(cv);
+  }
  
   /*! curve_split() splits a given curve at a given split point into two
    * sub-curves.
@@ -125,7 +128,7 @@ public:
   {
     Point_2 ip;
     X_curve_2 seg;
-    Object res = intersection(c1, c2);
+    Object res = intersect_2_object()(c1, c2);
 
     if (assign(ip, res)) {
       return (compare_xy_2_object()(ip, pt) == LARGER);
@@ -167,7 +170,7 @@ public:
   {
     Point_2 ip;
     X_curve_2 seg;
-    Object res = intersection(c1, c2);
+    Object res = intersect_2_object()(c1, c2);
 
     if (assign(p1,res)) {
       // the intersection is a point:
@@ -239,13 +242,13 @@ public:
   /*! curves_overlap() test overlapping between two given curves
    * \patam c1 the first curve
    * \patam c2 the second curve
-   * \return true if cv1 and cv2 overlap in a one-dimensional subcurve
+   * \return true if c1 and c2 overlap in a one-dimensional subcurve
    * (i.e., not in a finite number of points). Otherwise, false.
    */
-  bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const 
+  bool curves_overlap(const X_curve_2 & c1, const X_curve_2 & c2) const 
   {
     X_curve_2 seg;
-    Object res = intersection(cv1, cv2);
+    Object res = intersect_2_object()(c1, c2);
     return (assign(seg, res) != 0);
   }
 
