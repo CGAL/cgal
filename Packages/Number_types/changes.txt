@@ -1,5 +1,6 @@
 2 September 2004 Menelaos Karavelas
 - removed occurences of CGAL_USE_ADL_FOR_NT
+- number_types_basic.h: added declarations for CORE::Expr
 
 2 September 2004 Sylvain Pion
 - test for the precense of the Number_type_traits tags.
