@@ -63,9 +63,8 @@ typedef Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point_3 Point;
 
-int main(int argc, char* argv[])
+int main()
 {
-
   Triangulation T;
 
   // insertion from a list :
