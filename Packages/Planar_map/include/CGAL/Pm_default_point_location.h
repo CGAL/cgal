@@ -81,7 +81,7 @@ public:
     return parent;
   }
 protected:
-	Halfedge_handle parent;
+  Halfedge_handle parent;
 };
 
 
@@ -102,7 +102,7 @@ public:
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
   typedef typename Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef PL_X_curve_plus<Planar_map> X_curve_plus;
-  typedef Td_traits<Pm_traits_wrap,X_curve_plus> Td_traits;
+  typedef CGAL::Td_traits<Pm_traits_wrap,X_curve_plus> Td_traits;
   typedef Trapezoidal_decomposition_2<Td_traits> Trapezoidal_decomposition;
   typedef Pm_bounding_box_base<Planar_map> Bounding_box;
   typedef typename Pm_traits::Point Point;
@@ -118,7 +118,6 @@ protected:
   typedef Planar_map PM;
   typedef const Self* cPLp;
   
-	
 public:
   Pm_default_point_location(bool rebuild=true) : 
     pm(NULL),
@@ -158,7 +157,7 @@ public:
                   //end additions
                   )
   {
-    //	  td.split_edge(X_curve_plus(cv),X_curve_plus(e1),X_curve_plus(e2));
+    // td.split_edge(X_curve_plus(cv),X_curve_plus(e1),X_curve_plus(e2));
     td.split_edge(X_curve_plus(cv),X_curve_plus(cv1,e1),X_curve_plus(cv2,e2));
   }
   
@@ -177,7 +176,7 @@ public:
     td.merge_edge(
                   X_curve_plus(cv1),
                   X_curve_plus(cv2),
-                  //		X_curve_plus(e)
+                  // X_curve_plus(e)
                   X_curve_plus(cv,e)
                   );
   }
@@ -188,7 +187,7 @@ public:
     td.remove(X_curve_plus(e));
   }
   void remove_edge(const Halfedge_handle_iterator& begin,
-		const Halfedge_handle_iterator& end)
+                   const Halfedge_handle_iterator& end)
   {
     std::vector<X_curve_plus> c;
     Halfedge_handle_iterator it=begin;
@@ -205,40 +204,39 @@ public:
   {
 
 #ifdef CGAL_PMBB_DEBUG
-		std::cout << "\nPL::update called with traits = "; 
-		traits->debug();
+    std::cout << "\nPL::update called with traits = "; 
+    traits->debug();
 #endif
 
-		if (begin!=end)
-		{
+    if (begin!=end)
+    {
+      Halfedge_handle_container c;
+      Halfedge_handle_iterator it=begin;
+      while (it!=end)
+      {
+        c.push_back(Halfedge_handle(*it));
+        ++it;
+      }
+      remove_edge(begin,end);
+      Halfedge_handle_iterator cend=c.end();
+      it=c.begin();
+      token.rebuild_bounding_box(this);
 
-			Halfedge_handle_container c;
-			Halfedge_handle_iterator it=begin;
-			while (it!=end)
-	      {
-					c.push_back(Halfedge_handle(*it));
-					++it;
-				}
-			remove_edge(begin,end);
-			Halfedge_handle_iterator cend=c.end();
-			it=c.begin();
-			token.rebuild_bounding_box(this);
-			// 
-			while(it!=cend)
-	      {
-					insert(*it,(*it)->curve());
-					++it;
-				}
-		}
-		else
-		{
-			token.rebuild_bounding_box(this);
-		}
+      while(it!=cend)
+      {
+        insert(*it,(*it)->curve());
+        ++it;
+      }
+    }
+    else
+    {
+      token.rebuild_bounding_box(this);
+    }
 #ifdef CGAL_PMBB_DEBUG
-		std::cout << "\nPL::update exited with traits = "; 
-		traits->debug();
+    std::cout << "\nPL::update exited with traits = "; 
+    traits->debug();
 #endif
-	}  
+  }  
   
   const TD* get_trapezoidal_decomposition() const {return &td;}
   
@@ -301,9 +299,9 @@ private:
   bool halfedge_represents_point_inside_face(const Halfedge_handle& h,
                                              const Point& p) const 
   {
-    return (traits->curve_get_point_status(h->curve(),p)
-	    ==Pm_traits::ABOVE_CURVE)
-      ==traits->point_is_left(h->source()->point(),h->target()->point());
+    return (traits->curve_get_point_status(h->curve(),p) ==
+            Pm_traits::ABOVE_CURVE) ==
+        traits->point_is_left(h->source()->point(),h->target()->point());
   }
   Halfedge_handle halfedge_representing_unbounded_face() const
   {
@@ -322,10 +320,10 @@ private:
   
   //use the latter
   //to workaround internal compiler error in egcs1.1
-  //	Locate_type convert(const Point& p,const TD::Locate_type& lt,
-  // Halfedge_handle& h,bool up=true) const	
-  Locate_type convert(const Point& p,const int& lt,Halfedge_handle& h,
-		      bool up=true) const
+  //Locate_type convert(const Point& p,const TD::Locate_type& lt,
+  // Halfedge_handle& h,bool up=true) const
+  Locate_type convert(const Point & p,const int & lt,Halfedge_handle & h,
+                      bool up = true) const
   {
     switch(lt)
       {
@@ -380,7 +378,7 @@ typedef typename Traits::X_curve X_curve;
  causes 
 error C2086: '<Unknown>' : redefinition
 */
-	 
+
 /*
 egcs workaround:
 
@@ -388,5 +386,5 @@ To solve the internal compiler errors egcs had when dealing
 with nested templated classes we moved them outside:
 
 template <class Planar_map_>
-class PL_X_curve_plus: public Planar_map_::Traits::X_curve	 
+class PL_X_curve_plus: public Planar_map_::Traits::X_curve
 */
