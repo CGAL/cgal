@@ -1,3 +1,6 @@
+25 March 2004 Radu Ursu
+- made doc work with the new implementation of the Manual tools
+
 23 March 2004 Radu Ursu
 - fixed Qt_widget.C x_pixel and y_pixel!!!
 - added more functionality to Qt_widget_get_polygon.h: shift key makes the line go vertical or horizontal 
