@@ -1,5 +1,10 @@
-27 May 2004:  Menelaos
-- added support for overlapping segments (one-level algorithm)
+27 May 2004:  Menelaos Karavelas
+- added the method
+     Vertex_handle  insert(const Site_2& t, Vertex_handle vnear);
+  in the Segment_Voronoi_diagram_2 class
+- added two methods in storage site: source_site() and target_site()
+- added support for overlapping segments (both one-level and
+  hierarchy)
 - fixed bug in finite edge interior (wrong answer when a Voronoi edge
   was degenerate and a point was touching the single Voronoi circle)
 - added macros in Svd_Voronoi_vertex_*_C2.h to indicate a change on
