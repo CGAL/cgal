@@ -361,7 +361,7 @@ public:
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
   // start must be non NULL and finite
-  // if lt == OUTSIDE_CONVEX_HULL, returns a finite cell, and li is the
+  // if lt == OUTSIDE_CONVEX_HULL, li is the
   // index of a facet separating p from the rest of the triangulation
   // in dimension 2 :
   // returns a facet (Cell_handle,li) if lt == FACET
@@ -1400,7 +1400,7 @@ locate(const Point & p,
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
   // start must be non NULL and finite
-  // if lt == OUTSIDE_CONVEX_HULL, returns a finite cell, and li is the
+  // if lt == OUTSIDE_CONVEX_HULL, li is the
   // index of a facet separating p from the rest of the triangulation
   // in dimension 2 :
   // returns a facet (Cell_handle,li) if lt == FACET
