@@ -80,8 +80,10 @@ else
   compile_and_run polyhedron_prog_simple
   compile_and_run polyhedron_prog_simple_old
   compile_and_run polyhedron_prog_subdiv
+  compile_and_run polyhedron_prog_subdiv_with_boundary
   compile_and_run polyhedron_prog_tetra
   compile_and_run polyhedron_prog_tetra_old
+  compile_and_run polyhedron_prog_traits
   compile_and_run polyhedron_prog_vector
 fi
 

@@ -48,8 +48,10 @@ all:            \
                 polyhedron_prog_simple \
                 polyhedron_prog_simple_old \
                 polyhedron_prog_subdiv \
+                polyhedron_prog_subdiv_with_boundary \
                 polyhedron_prog_tetra \
                 polyhedron_prog_tetra_old \
+                polyhedron_prog_traits \
                 polyhedron_prog_vector 
 
 polyhedron_prog_color$(EXE_EXT): polyhedron_prog_color$(OBJ_EXT)
@@ -88,11 +90,17 @@ polyhedron_prog_simple_old$(EXE_EXT): polyhedron_prog_simple_old$(OBJ_EXT)
 polyhedron_prog_subdiv$(EXE_EXT): polyhedron_prog_subdiv$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_subdiv polyhedron_prog_subdiv$(OBJ_EXT) $(LDFLAGS)
 
+polyhedron_prog_subdiv_with_boundary$(EXE_EXT): polyhedron_prog_subdiv_with_boundary$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_subdiv_with_boundary polyhedron_prog_subdiv_with_boundary$(OBJ_EXT) $(LDFLAGS)
+
 polyhedron_prog_tetra$(EXE_EXT): polyhedron_prog_tetra$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_tetra polyhedron_prog_tetra$(OBJ_EXT) $(LDFLAGS)
 
 polyhedron_prog_tetra_old$(EXE_EXT): polyhedron_prog_tetra_old$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_tetra_old polyhedron_prog_tetra_old$(OBJ_EXT) $(LDFLAGS)
+
+polyhedron_prog_traits$(EXE_EXT): polyhedron_prog_traits$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_traits polyhedron_prog_traits$(OBJ_EXT) $(LDFLAGS)
 
 polyhedron_prog_vector$(EXE_EXT): polyhedron_prog_vector$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_prog_vector polyhedron_prog_vector$(OBJ_EXT) $(LDFLAGS)
@@ -110,8 +118,10 @@ clean: \
                    polyhedron_prog_simple.clean \
                    polyhedron_prog_simple_old.clean \
                    polyhedron_prog_subdiv.clean \
+                   polyhedron_prog_subdiv_with_boundary.clean \
                    polyhedron_prog_tetra.clean \
                    polyhedron_prog_tetra_old.clean \
+                   polyhedron_prog_traits.clean \
                    polyhedron_prog_vector.clean 
 
 #---------------------------------------------------------------------#
