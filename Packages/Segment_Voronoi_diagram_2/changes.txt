@@ -1,3 +1,7 @@
+22 June 2004:  Menelaos Karavelas
+- fixed errors of g++ 3.4.0 related to the traits' template parameter
+  checking
+
 9 June 2004:  Menelaos Karavelas
 - added some more assertion checks in test_types.h (when testing the
   assignment operator)

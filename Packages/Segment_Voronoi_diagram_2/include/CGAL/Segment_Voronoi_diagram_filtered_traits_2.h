@@ -72,21 +72,24 @@ namespace CGALi {
   struct SVD_Concept_check_tags<D,Ring_tag,2>
   {
     SVD_Concept_check_tags() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags<D,Ring_tag,4> {
     SVD_Concept_check_tags() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags<D,Ring_tag,6> {
     SVD_Concept_check_tags() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
@@ -96,21 +99,24 @@ namespace CGALi {
   struct SVD_Concept_check_tags<D,Euclidean_ring_tag,2>
   {
     SVD_Concept_check_tags() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags<D,Euclidean_ring_tag,4> {
     SVD_Concept_check_tags() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags<D,Euclidean_ring_tag,6> {
     SVD_Concept_check_tags() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
@@ -123,21 +129,24 @@ namespace CGALi {
   struct SVD_Concept_check_tags_wi<D,Field_tag,2>
   {
     SVD_Concept_check_tags_wi() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags_wi<D,Field_tag,4> {
     SVD_Concept_check_tags_wi() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags_wi<D,Field_tag,6> {
     SVD_Concept_check_tags_wi() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
@@ -147,21 +156,24 @@ namespace CGALi {
   struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,2>
   {
     SVD_Concept_check_tags_wi() {
-      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,4> {
     SVD_Concept_check_tags_wi() {
-      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_4TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 
   template<class D>
   struct SVD_Concept_check_tags_wi<D,Euclidean_ring_tag,6> {
     SVD_Concept_check_tags_wi() {
-      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+      THE_6TH_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+      ( D() );
     }
   };
 

@@ -51,7 +51,8 @@ struct Segment_Voronoi_diagram_traits_2<R,Ring_tag>
   : public Segment_Voronoi_diagram_traits_base_2<R,Ring_tag,Tag_true>
 {
   Segment_Voronoi_diagram_traits_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+    ( R() );
   }
 };
 
@@ -60,7 +61,8 @@ struct Segment_Voronoi_diagram_traits_2<R,Euclidean_ring_tag>
   : public Segment_Voronoi_diagram_traits_base_2<R,Ring_tag,Tag_true>
 {
   Segment_Voronoi_diagram_traits_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag();
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+    ( R() );
   }
 };
 
@@ -76,7 +78,8 @@ struct Segment_Voronoi_diagram_traits_without_intersections_2<R,Field_tag>
   : public Segment_Voronoi_diagram_traits_base_2<R,Ring_tag,Tag_false>
 {
   Segment_Voronoi_diagram_traits_without_intersections_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+    ( R() );
   }
 };
 
@@ -86,7 +89,8 @@ Segment_Voronoi_diagram_traits_without_intersections_2<R,Euclidean_ring_tag>
   : public Segment_Voronoi_diagram_traits_base_2<R,Ring_tag,Tag_false>
 {
   Segment_Voronoi_diagram_traits_without_intersections_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag();
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+    ( R() );
   }
 };
 
