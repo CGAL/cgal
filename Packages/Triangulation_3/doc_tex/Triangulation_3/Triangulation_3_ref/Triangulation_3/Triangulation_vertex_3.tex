@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_vertex_3<Triangulation_traits_3,Tds_3>}  %% add template arg's if necessary
+\begin{ccRefClass}[Triangulation_3<Triangulation_traits_3,Tds_3>::]{Vertex}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,8 +26,6 @@ maximal dimension.
 
 \ccInheritsFrom
 \ccc{Tds_3::Vertex}
-
-\ccTypes
 
 \ccTypes
 \ccThree{typedef triple <Cell*, int, int>}{Facettoto}{}
@@ -108,6 +106,8 @@ of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
 %\end{ccAdvanced} 
 
 \ccSeeAlso
+
+\ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Cell}.
 
 \ccExample
 

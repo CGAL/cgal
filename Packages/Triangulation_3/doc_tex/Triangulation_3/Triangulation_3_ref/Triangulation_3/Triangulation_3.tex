@@ -296,6 +296,39 @@ order.
 \ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{x} are vertices of \ccVar.}\\
 \textit{not yet implemented}}
 
+There is a method \ccc{has_vertex} in the cell class. The analogous
+methods for facets are defined here.
+
+\ccMethod{bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;}
+{If \ccc{v} is a vertex of \ccc{f}, then \ccc{j} is the index of
+\ccc{v} in the cell \ccc{f.first}, and the method returns \ccc{true}.
+\ccPrecond{\ccVar.dimension()==3}}
+\ccGlue
+\ccMethod{bool has_vertex(Cell_handle c, int i, 
+	Vertex_handle v, int & j) const;}
+{Same for facet \ccc{(c,i)}. Computes the index \ccc{j} of \ccc{v} in
+\ccc{c}.}
+\ccGlue
+\ccMethod{bool has_vertex(const Facet & f, Vertex_handle v) const;}
+{}
+\ccGlue
+\ccMethod{bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;}
+{Same as the first two methods, but these two methods do not return the
+index of the vertex.}
+
+The following three methods test whether two facets have the same
+vertices.
+
+\ccMethod{bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;}
+{}
+\ccGlue
+\ccMethod{bool are_equal(const Facet & f, const Facet & g) const;}
+{}
+\ccGlue
+\ccMethod{bool are_equal(const Facet & f, Cell_handle n, int j) const;}
+{For these three methods: \ccPrecond{\ccVar.dimension()==3}.}
+
+
 \ccHeading{Point location}
 \ccThree{Vertex_handle}{t.locate()toto}{}
 
@@ -847,8 +880,8 @@ cells.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_vertex_3<Triangulation_traits_3,Tds_3>},\\
-\ccc{CGAL::Triangulation_cell_3<Triangulation_traits_3,Tds_3>}.
+\ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Vertex},\\
+\ccc{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>::Cell}.
 
 %\ccExample
 

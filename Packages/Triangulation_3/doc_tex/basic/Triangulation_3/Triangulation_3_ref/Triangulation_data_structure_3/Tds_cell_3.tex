@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Tds_cell_3}
+\begin{ccRefConcept}{Tds_3::Cell}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -34,9 +34,9 @@ Section~\ref{TDS3-sec-degen_dim}.)
 \ccThreeToTwo
 The class \ccClassName\ defines the following types.
 
-\ccTypedef{typedef Tds::Vertex Vertex;}{}
+\ccTypedef{typedef Tds_3::Vertex Vertex;}{}
 \ccGlue
-\ccTypedef{typedef Tds::Cell Cell;}{}
+\ccTypedef{typedef Tds_3::Cell Cell;}{}
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
@@ -140,13 +140,13 @@ The validity of the base cell is also checked.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
 
-\ccHasModels
+%\ccHasModels
 
-\ccc{Triangulation_ds_cell_3}.
+%\ccc{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>::Cell}.
 
 \ccSeeAlso
 
-\ccc{Tds_vertex_3}.
+\ccc{Tds_3::Vertex}.
 
 %% \ccExample
 

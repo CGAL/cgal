@@ -56,7 +56,8 @@ The second template parameter of the basic triangulation class
 data structure class. (See Chapter~\ref{chapter-TDS3}.)  
 
 To ensure all the \textbf{flexibility} of class \ccc{Triangulation_3}
-described in \ccRefPage{Triangulation_3<Triangulation_traits_3,Tds_3>}
+described in 
+\ccRefPage{CGAL::Triangulation_3<Triangulation_traits_3,Tds_3>}
 and in Chapter~\ref{chapter-Triangulation3}, a model of a
 triangulation data structure must be templated by the base vertex and
 the base cell classes (see~\ref{TDS3-sec-intro}):
@@ -78,7 +79,7 @@ operations.
 \ccGlue
 \ccNestedType{Cell}{Cell type}
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
-\ccRefPage{Tds_vertex_3} and \ccRefPage{Tds_cell_3}.
+\ccRefPage{Tds_3::Vertex} and \ccRefPage{Tds_3::Cell}.
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
@@ -207,6 +208,37 @@ this order.}
 \ccc{c} is found, it computes the indices \ccc{i}, \ccc{j}, \ccc{k}
 and \ccc{l} of the vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in
 \ccc{c}, in this order.} 
+
+There is a method \ccc{has_vertex} in the cell class. The analogous
+methods for facets are defined here.
+
+\ccMethod{bool has_vertex(const Facet & f, Vertex* v, int & j) const;}
+{If \ccc{v} is a vertex of \ccc{f}, then \ccc{j} is the index of
+\ccc{v} in the cell \ccc{f.first}, and the method returns \ccc{true}.
+\ccPrecond{\ccVar.dimension()==3}}
+\ccGlue
+\ccMethod{bool has_vertex(Cell* c, int i, Vertex* v, int & j) const;}
+{Same for facet \ccc{(c,i)}. Computes the index \ccc{j} of \ccc{v} in
+\ccc{c}.}
+\ccGlue
+\ccMethod{bool has_vertex(const Facet & f, Vertex* v) const;}
+{}
+\ccGlue
+\ccMethod{bool has_vertex(Cell* c, int i, Vertex* v) const;}
+{Same as the first two methods, but these two methods do not return the
+index of the vertex.}
+
+The following three methods test whether two facets have the same
+vertices.
+
+\ccMethod{bool are_equal(const Facet & f, const Facet & g) const;}
+{}
+\ccGlue
+\ccMethod{bool are_equal(Cell* c, int i, Cell* n, int j) const;}
+{}
+\ccGlue
+\ccMethod{bool are_equal(const Facet & f, Cell* n, int j) const;}
+{For these three methods: \ccPrecond{\ccVar.dimension()==3}.}
 
 \ccHeading{Flips}
 
@@ -526,8 +558,8 @@ for faces of maximal dimension instead of cells.
 
 \ccSeeAlso
 
-\ccc{Tds_vertex_3},\\
-\ccc{Tds_cell_3}.
+\ccc{Tds_3::Vertex},\\
+\ccc{Tds_3::Cell}.
 
 \end{ccRefConcept}
 
