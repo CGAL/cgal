@@ -1,3 +1,7 @@
+
+Version 2.76 (1 October 2003) [af]
+- Removed kdtree
+
 Version 2.75 (27 Sep 2003)
 - new headers
 
