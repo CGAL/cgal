@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 
-#if !defined(CGAL_USE_LEDA) || !defined(CGAL_USE_CGAL_WINDOW )
+#if !defined(CGAL_USE_LEDA) && !defined(CGAL_USE_CGAL_WINDOW )
 int main()
 {
 
