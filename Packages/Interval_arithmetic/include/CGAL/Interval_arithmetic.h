@@ -343,8 +343,8 @@ inline
 CGAL_Interval_nt_advanced
 CGAL_square (const CGAL_Interval_nt_advanced& d)
 {
-  if (d.inf<=0) return CGAL_Interval_nt_advanced(-(-d.inf*d.inf), d.sup*d.sup);
-  if (d.sup<=0) return CGAL_Interval_nt_advanced(-(-d.sup*d.sup), d.inf*d.inf);
+  if (d.inf<=0) return CGAL_Interval_nt_advanced(-(d.inf*-d.inf), d.sup*d.sup);
+  if (d.sup<=0) return CGAL_Interval_nt_advanced(-(d.sup*-d.sup), d.inf*d.inf);
 // Till CGAL_square(double) is not defined, this fails.
 // return CGAL_Interval_nt_advanced(0.0, CGAL_square(CGAL_max(d.inf, d.sup)));
   return CGAL_Interval_nt_advanced(0.0, CGAL_max(d.inf, d.sup)
