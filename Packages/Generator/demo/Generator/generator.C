@@ -30,6 +30,10 @@ int main(int, char*){
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Join_input_iterator.h>
+#include <CGAL/Counting_iterator.h>
+#include <CGAL/copy_n.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -61,13 +65,15 @@ int main(int, char*){
 typedef double                          Coord_type;
 typedef CGAL::Cartesian<Coord_type>     Rep;
 
-typedef CGAL::Point_2<Rep>              Point;
+typedef Rep::Point_2                    Point;
+typedef Rep::Segment_2                  Segment;
 typedef CGAL::Creator_uniform_2<double,Point>
                                         Creator; 
 
 //global flags and variables
 int current_state;
 std::list<Point>                        list_of_points;
+std::list<Segment>                      list_of_segments;
 
 const QString my_title_string("Generator Demo with"
 			      " CGAL Qt_widget");
@@ -87,6 +93,12 @@ public:
       while(itp!=list_of_points.end())
       {
         *widget << (*itp++);
+      }
+
+      std::list<Segment>::iterator its = list_of_segments.begin();
+      while(its!=list_of_segments.end())
+      {
+        *widget << (*its++);
       }
     widget->unlock();
   };	
@@ -132,6 +144,11 @@ public:
     generate->insertItem("&Points on square grid", this,
 				SLOT(on_square_grid()), CTRL+Key_G );
 
+    generate->insertItem("&Segments", this,
+				SLOT(segments()), CTRL+Key_T );
+    generate->insertItem("&Fan of Segments", this,
+				SLOT(segment_fan()), CTRL+Key_F );
+
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
@@ -164,6 +181,7 @@ public slots:
   {
     widget->lock();
     list_of_points.clear();
+    list_of_segments.clear();
     stoolbar->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
 		// set the Visible Area to the Interval
@@ -274,6 +292,63 @@ private slots:
     something_changed();
   }
 	
+
+
+  void segments()
+  {
+   // Create test segment set. Prepare a vector for 200 segments.
+    std::vector<Segment> segs;
+    segs.reserve(200);
+
+    // Prepare point generator for the horizontal segment, length 200.
+    typedef  CGAL::Random_points_on_segment_2<Point,Creator>  P1;
+    P1 p1( Point(-1,0), Point(1,0));
+
+    // Prepare point generator for random points on circle, radius 250.
+    typedef  CGAL::Random_points_on_circle_2<Point,Creator>  P2;
+    P2 p2(1);
+
+    // Create 200 segments.
+    typedef CGAL::Creator_uniform_2< Point, Segment> Seg_creator;
+    typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
+    Seg_iterator g( p1, p2);
+    CGAL::copy_n( g, 200, std::back_inserter(list_of_segments));
+    something_changed();
+  }
+
+
+  void segment_fan()
+  {
+   // Create test segment set. Prepare a vector for 100 segments.
+    std::vector<Segment> segs;
+    segs.reserve(100);
+    typedef CGAL::Points_on_segment_2<Point>                PG;
+    typedef CGAL::Creator_uniform_2< Point, Segment>        Seg_creator;
+    typedef CGAL::Join_input_iterator_2< PG, PG, Seg_creator>   Segm_iterator;
+    typedef CGAL::Counting_iterator<Segm_iterator,Segment>  Count_iterator;
+
+    // A horizontal like fan.
+    PG p1( Point(-1, -0.05), Point(-1, 0.05),50);   // Point generator.
+    PG p2( Point( 1,-1), Point( 1,1),50);
+    Segm_iterator  t1( p1, p2);                     // Segment generator.
+    Count_iterator t1_begin( t1);                   // Finite range.
+    Count_iterator t1_end( 50);
+    std::copy( t1_begin, t1_end, std::back_inserter(list_of_segments));
+
+    // A vertical like fan.
+    PG p3( Point( -0.05,-1), Point(  0.05,-1),50);
+    PG p4( Point(-1, 1), Point( 1, 1),50);
+    Segm_iterator  t2( p3, p4);
+    Count_iterator t2_begin( t2);
+    Count_iterator t2_end( 50);
+    std::copy( t2_begin, t2_end, std::back_inserter(list_of_segments));
+
+    something_changed();
+  }
+
+
+
+
 
 private:
   CGAL::Qt_widget        *widget;
