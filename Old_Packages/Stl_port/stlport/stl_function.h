@@ -30,12 +30,15 @@
 #ifndef __SGI_STL_INTERNAL_FUNCTION_H
 #define __SGI_STL_INTERNAL_FUNCTION_H
 
+#include <CGAL/functional_base.h>
+
 __STL_BEGIN_NAMESPACE
 
 template <class _Arg, class _Result>
 struct unary_function {
   typedef _Arg argument_type;
   typedef _Result result_type;
+  typedef CGAL::Arity_tag< 1 > Arity;
 };
 
 template <class _Arg1, class _Arg2, class _Result>
@@ -43,6 +46,7 @@ struct binary_function {
   typedef _Arg1 first_argument_type;
   typedef _Arg2 second_argument_type;
   typedef _Result result_type;
+  typedef CGAL::Arity_tag< 2 > Arity;
 };      
 
 template <class _Tp>
