@@ -133,10 +133,8 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TriangleC2<R>::FT
 TriangleC2<R>::area() const
 {
-  typename R::Construct_vector_2 construct_vector;
-  typename R::Vector_2 v1 = construct_vector(vertex(0), vertex(1));
-  typename R::Vector_2 v2 = construct_vector(vertex(0), vertex(2));
-  return det2x2_by_formula(v1.x(), v1.y(), v2.x(), v2.y())/FT(2);
+  typename R::Compute_area_2 compute_area;
+  return compute_area(vertex(0), vertex(1), vertex(2));
 }
 
 template < class R >
@@ -263,8 +261,8 @@ TriangleC2<R>::bbox() const
 {
   typename R::Construct_bbox_2 construct_bbox_2;
   return construct_bbox_2(vertex(0)) 
-    + construct_bbox_2(vertex(1)) 
-    + construct_bbox_2(vertex(2));
+       + construct_bbox_2(vertex(1)) 
+       + construct_bbox_2(vertex(2));
 }
 
 template < class R >
