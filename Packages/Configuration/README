@@ -1,0 +1,3 @@
+Apply changes to configuration files in directory config/testfiles.
+Then, before committing, run the script prepare_submit. This copies the
+configuration files to the directory test/Configuration.
