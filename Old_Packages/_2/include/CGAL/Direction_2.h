@@ -17,8 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_DIRECTION_2_H
@@ -27,14 +26,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Direction_2 : public R_::Direction_2_base
+class Direction_2 : public R_::Kernel_base::Direction_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Line_2                Line_2;
   typedef typename R_::Ray_2                 Ray_2;
   typedef typename R_::Segment_2             Segment_2;
-  typedef typename R_::Direction_2_base      RDirection_2;
+  typedef typename R_::Kernel_base::Direction_2      RDirection_2;
 public:
   typedef  R_   R;
 
@@ -68,7 +67,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Direction_2<R> &d)
 {
-  typedef typename  R::Direction_2_base  RDirection_2;
+  typedef typename  R::Kernel_base::Direction_2  RDirection_2;
   return os << static_cast<const RDirection_2&>(d);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_2
@@ -78,7 +77,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Direction_2<R> &p)
 {
-  typedef typename  R::Direction_2_base  RDirection_2;
+  typedef typename  R::Kernel_base::Direction_2  RDirection_2;
   return is >> static_cast<RDirection_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_2

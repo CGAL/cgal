@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Sven Schoenherr
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_BASIC_CONSTRUCTIONS_2_H

@@ -161,38 +161,7 @@ struct Simple_cartesian
     // It is necessary to redefine here the classes to ensure that
     // Cartesian<FT>::Point_2 is exactly CGAL::Point_2< Cartesian<FT> >
 
-    // Cartesian<FT>::Base is needed so that CGAL::Point_2< Cartesian<FT> >
-    // can inherit from Cartesian<FT>::Point_2_base
-
-    typedef typename Kernel_base::Point_2                 Point_2_base;
-    typedef typename Kernel_base::Vector_2                Vector_2_base;
-    typedef typename Kernel_base::Direction_2             Direction_2_base;
-    typedef typename Kernel_base::Segment_2               Segment_2_base;
-    typedef typename Kernel_base::Line_2                  Line_2_base;
-    typedef typename Kernel_base::Ray_2                   Ray_2_base;
-    typedef typename Kernel_base::Triangle_2              Triangle_2_base;
-    typedef typename Kernel_base::Circle_2                Circle_2_base;
-    typedef typename Kernel_base::Conic_2                 Conic_2_base;
-    typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2_base;
-    typedef typename Kernel_base::Aff_transformation_2  
-                                                     Aff_transformation_2_base;
-
-    typedef typename Kernel_base::Point_3                 Point_3_base;
-    typedef typename Kernel_base::Vector_3                Vector_3_base;
-    typedef typename Kernel_base::Direction_3             Direction_3_base;
-    typedef typename Kernel_base::Line_3                  Line_3_base;
-    typedef typename Kernel_base::Plane_3                 Plane_3_base;
-    typedef typename Kernel_base::Ray_3                   Ray_3_base;
-    typedef typename Kernel_base::Segment_3               Segment_3_base;
-    typedef typename Kernel_base::Triangle_3              Triangle_3_base;
-    typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3_base;
-    typedef typename Kernel_base::Sphere_3                Sphere_3_base;
-    typedef typename Kernel_base::Iso_cuboid_3            Iso_cuboid_3_base;
-    typedef typename Kernel_base::Aff_transformation_3    
-                                                  Aff_transformation_3_base;
-  
     typedef typename Kernel_base::Point_d                 Point_d_base;
-
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
     typedef typename Kernel_base::Object_2                Object_2;
@@ -233,18 +202,12 @@ struct Simple_cartesian
 
     // The typedefs that allow to specify the handle of each type.
 
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> >	
-	                                                Point_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> >
-                                                        Vector_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> >
-                                                 	Direction_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
-                                                        Line_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
-                                                       	Ray_handle_2;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> >
-                                                      	Segment_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Point_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Vector_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<FT> > Direction_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Line_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> > Ray_handle_2;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_2> > Segment_handle_2;
     typedef CGAL::Simple_Handle_for<Triple<Point_2, FT, Orientation> >
                                                       	Circle_handle_2;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_2> >
@@ -254,20 +217,14 @@ struct Simple_cartesian
     typedef CGAL::Handle_for_virtual< Aff_transformation_rep_baseC2<Self> >
 			                           Aff_transformation_handle_2;
 
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
-                                                    	Point_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
-                                                   	Vector_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> >
-                                                  	Direction_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Point_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Vector_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Threetuple<FT> > Direction_handle_3;
     typedef CGAL::Simple_Handle_for<std::pair<Point_3, Direction_3> >
                                                      	Line_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<FT> >
-                                                   	Plane_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
-                                                  	Ray_handle_3;
-    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> >
-                                                   	Segment_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Fourtuple<FT> > Plane_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> > Ray_handle_3;
+    typedef CGAL::Simple_Handle_for<CGAL::Twotuple<Point_3> > Segment_handle_3;
     typedef CGAL::Simple_Handle_for<Triple<Point_3, FT, Orientation> >
                                                     	Sphere_handle_3;
     typedef CGAL::Simple_Handle_for<CGAL::Threetuple<Point_3> >

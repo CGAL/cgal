@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -27,10 +27,10 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Triangle_2 : public R_::Triangle_2_base
+class Triangle_2 : public R_::Kernel_base::Triangle_2
 {
   typedef typename R_::Point_2          Point_2;
-  typedef typename R_::Triangle_2_base  RTriangle_2;
+  typedef typename R_::Kernel_base::Triangle_2  RTriangle_2;
 public:
   typedef  R_                          R;
 
@@ -52,7 +52,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Triangle_2<R> &t)
 {
-  typedef typename  R::Triangle_2_base  RTriangle_2;
+  typedef typename  R::Kernel_base::Triangle_2  RTriangle_2;
   return os << (const RTriangle_2&)t;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_2
@@ -62,7 +62,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Triangle_2<R> &t)
 {
-  typedef typename  R::Triangle_2_base  RTriangle_2;
+  typedef typename  R::Kernel_base::Triangle_2  RTriangle_2;
   return is >> (RTriangle_2&)t;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_2

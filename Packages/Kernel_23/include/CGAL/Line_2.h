@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_LINE_2_H
@@ -26,14 +26,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Line_2 : public R_::Line_2_base
+class Line_2 : public R_::Kernel_base::Line_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Segment_2             Segment_2;
   typedef typename R_::Ray_2                 Ray_2;
   typedef typename R_::Direction_2           Direction_2;
-  typedef typename R_::Line_2_base  RLine_2;
+  typedef typename R_::Kernel_base::Line_2  RLine_2;
 public:
   typedef  R_   R;
 
@@ -67,7 +67,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_2<R> &l)
 {
-  typedef typename  R::Line_2_base  RLine_2;
+  typedef typename  R::Kernel_base::Line_2  RLine_2;
   return os << static_cast<const RLine_2&>(l);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINE_2
@@ -77,7 +77,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Line_2<R> &p)
 {
-  typedef typename  R::Line_2_base  RLine_2;
+  typedef typename  R::Kernel_base::Line_2  RLine_2;
   return is >> static_cast<RLine_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2

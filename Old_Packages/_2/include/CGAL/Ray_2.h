@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_RAY_2_H
@@ -26,12 +26,12 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Ray_2 : public R_::Ray_2_base
+class Ray_2 : public R_::Kernel_base::Ray_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Direction_2           Direction_2;
-  typedef typename R_::Ray_2_base  RRay_2;
+  typedef typename R_::Kernel_base::Ray_2  RRay_2;
 public:
   typedef  R_   R;
 
@@ -56,7 +56,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Ray_2<R> &r)
 {
-  typedef typename  R::Ray_2_base  RRay_2;
+  typedef typename  R::Kernel_base::Ray_2  RRay_2;
   return os << static_cast<const RRay_2&>(r);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAY_2
@@ -66,7 +66,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Ray_2<R> &r)
 {
-  typedef typename  R::Ray_2_base  RRay_2;
+  typedef typename  R::Kernel_base::Ray_2  RRay_2;
   return is >> static_cast<RRay_2&>(r);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAY_2

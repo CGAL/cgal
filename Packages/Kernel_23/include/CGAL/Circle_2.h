@@ -18,7 +18,7 @@
 // author(s)     : Andreas Fabri
 //                 Sven Schoenherr
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_CIRCLE_2_H
@@ -27,11 +27,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Circle_2 : public R_::Circle_2_base
+class Circle_2 : public R_::Kernel_base::Circle_2
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
-  typedef typename R_::Circle_2_base  RCircle_2;
+  typedef typename R_::Kernel_base::Circle_2  RCircle_2;
 public:
   typedef  R_   R;
 
@@ -73,7 +73,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Circle_2<R> &c)
 {
-  typedef typename R::Circle_2_base  RCircle_2;
+  typedef typename R::Kernel_base::Circle_2  RCircle_2;
   return os << (const RCircle_2&)c;
 }
 
@@ -84,7 +84,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Circle_2<R> &c)
 {
-  typedef typename R::Circle_2_base  RCircle_2;
+  typedef typename R::Kernel_base::Circle_2  RCircle_2;
   return is >> (RCircle_2&)c;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2

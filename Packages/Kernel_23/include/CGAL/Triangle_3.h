@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Triangle_3 : public R_::Triangle_3_base
+class Triangle_3 : public R_::Kernel_base::Triangle_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
-  typedef typename R_::Triangle_3_base  RTriangle_3;
+  typedef typename R_::Kernel_base::Triangle_3  RTriangle_3;
 public:
   typedef          R_                       R;
 
@@ -52,7 +52,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Triangle_3<R>& t)
 {
-  typedef typename  R::Triangle_3_base  RTriangle_3;
+  typedef typename  R::Kernel_base::Triangle_3  RTriangle_3;
   return os << static_cast<const RTriangle_3&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
@@ -62,7 +62,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Triangle_3<R>& t)
 {
-  typedef typename  R::Triangle_3_base  RTriangle_3;
+  typedef typename  R::Kernel_base::Triangle_3  RTriangle_3;
   return is >> static_cast<RTriangle_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3

@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Aff_transformation_3 : public R_::Aff_transformation_3_base
+class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
 {
   typedef typename R_::RT            RT;
   typedef typename R_::Vector_3      Vector_3;
-  typedef typename R_::Aff_transformation_3_base  RAff_transformation_3;
+  typedef typename R_::Kernel_base::Aff_transformation_3 RAff_transformation_3;
 public:
   typedef R_                        R;
 
@@ -82,7 +82,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const CGAL::Aff_transformation_3<R>& t)
 {
-  typedef typename   R::Aff_transformation_3_base  RAff_transformation_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 RAff_transformation_3;
   return os << static_cast<const RAff_transformation_3&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
@@ -92,7 +92,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
 {
-  typedef typename   R::Aff_transformation_3_base  RAff_transformation_3;
+  typedef typename R::Kernel_base::Aff_transformation_3 RAff_transformation_3;
   return is >> static_cast<const RAff_transformation_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3

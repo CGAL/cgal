@@ -26,10 +26,10 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Tetrahedron_3 : public R_::Tetrahedron_3_base
+class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 {
   typedef typename R_::Point_3             Point_3;
-  typedef typename R_::Tetrahedron_3_base  RTetrahedron_3;
+  typedef typename R_::Kernel_base::Tetrahedron_3  RTetrahedron_3;
 public:
   typedef          R_                       R;
 
@@ -54,7 +54,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
 {
-  typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
+  typedef typename  R::Kernel_base::Tetrahedron_3  RTetrahedron_3;
   return os << static_cast<const RTetrahedron_3&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
@@ -64,7 +64,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Tetrahedron_3<R>& t)
 {
-  typedef typename  R::Tetrahedron_3_base  RTetrahedron_3;
+  typedef typename  R::Kernel_base::Tetrahedron_3  RTetrahedron_3;
   return is >> static_cast<RTetrahedron_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3

@@ -26,12 +26,12 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Ray_3 : public R_::Ray_3_base
+class Ray_3 : public R_::Kernel_base::Ray_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
-  typedef typename R_::Ray_3_base  RRay_3;
+  typedef typename R_::Kernel_base::Ray_3  RRay_3;
 public:
   typedef          R_                       R;
 
@@ -56,7 +56,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Ray_3<R>& r)
 {
-  typedef typename  R::Ray_3_base  RRay_3;
+  typedef typename  R::Kernel_base::Ray_3  RRay_3;
   return os << static_cast<const RRay_3&>(r);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_RAY_3
@@ -66,7 +66,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Ray_3<R>& r)
 {
-  typedef typename  R::Ray_3_base  RRay_3;
+  typedef typename  R::Kernel_base::Ray_3  RRay_3;
   return is >> static_cast<RRay_3&>(r);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3

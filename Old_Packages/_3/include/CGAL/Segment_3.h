@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Segment_3 : public R_::Segment_3_base
+class Segment_3 : public R_::Kernel_base::Segment_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
-  typedef typename R_::Segment_3_base  RSegment_3;
+  typedef typename R_::Kernel_base::Segment_3  RSegment_3;
 public:
   typedef          R_                       R;
 
@@ -52,7 +52,7 @@ template < class R>
 std::ostream&
 operator<<(std::ostream& os, const Segment_3<R>& s)
 {
-  typedef typename  R::Segment_3_base  RSegment_3;
+  typedef typename  R::Kernel_base::Segment_3  RSegment_3;
   return os << static_cast<const RSegment_3&>(s);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
@@ -62,7 +62,7 @@ template < class R>
 std::istream&
 operator>>(std::istream& is, Segment_3<R>& s)
 {
-  typedef typename  R::Segment_3_base  RSegment_3;
+  typedef typename  R::Kernel_base::Segment_3  RSegment_3;
   return is >> static_cast<RSegment_3&>(s);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3

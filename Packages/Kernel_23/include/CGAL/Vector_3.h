@@ -28,12 +28,12 @@ CGAL_BEGIN_NAMESPACE
 class Null_vector;
 
 template <class R_>
-class Vector_3 : public R_::Vector_3_base
+class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
-  typedef typename R_::Vector_3_base         RVector_3;
+  typedef typename R_::Kernel_base::Vector_3         RVector_3;
 public:
   typedef          R_                       R;
 
@@ -64,7 +64,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Vector_3<R>& v)
 {
-  typedef typename  R::Vector_3_base  RVector_3;
+  typedef typename  R::Kernel_base::Vector_3  RVector_3;
   return os << static_cast<const RVector_3&>(v);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
@@ -74,7 +74,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Vector_3<R>& p)
 {
-  typedef typename  R::Vector_3_base  RVector_3;
+  typedef typename  R::Kernel_base::Vector_3  RVector_3;
   return is >> static_cast<RVector_3&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3

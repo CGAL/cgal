@@ -28,11 +28,11 @@ CGAL_BEGIN_NAMESPACE
 class Origin;
 
 template <class R_>
-class Point_3 : public R_::Point_3_base
+class Point_3 : public R_::Kernel_base::Point_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_3              Vector_3;
-  typedef typename R_::Point_3_base  RPoint_3;
+  typedef typename R_::Kernel_base::Point_3  RPoint_3;
 public:
   typedef          R_                       R;
 
@@ -72,7 +72,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_3<R>& p)
 {
-  typedef typename  R::Point_3_base  RPoint_3;
+  typedef typename  R::Kernel_base::Point_3  RPoint_3;
   return os << static_cast<const RPoint_3&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_3
@@ -81,7 +81,7 @@ operator<<(std::ostream& os, const Point_3<R>& p)
 template < class R >
 std::istream& operator>>(std::istream& is, Point_3<R>& p)
 {
-  typedef typename  R::Point_3_base  RPoint_3;
+  typedef typename  R::Kernel_base::Point_3  RPoint_3;
   return is >> static_cast<RPoint_3&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3

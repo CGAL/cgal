@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_ISO_RECTANGLE_2_H
@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Iso_rectangle_2 : public R_::Iso_rectangle_2_base
+class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_2               Point_2;
-  typedef typename R_::Iso_rectangle_2_base  RIso_rectangle_2;
+  typedef typename R_::Kernel_base::Iso_rectangle_2  RIso_rectangle_2;
 public:
   typedef  R_   R;
 
@@ -60,7 +60,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
 {
-  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
+  typedef typename R::Kernel_base::Iso_rectangle_2  RIso_rectangle_2;
   return  os << (const RIso_rectangle_2&)r;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
@@ -70,7 +70,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Iso_rectangle_2<R> &r)
 {
-  typedef typename R::Iso_rectangle_2_base  RIso_rectangle_2;
+  typedef typename R::Kernel_base::Iso_rectangle_2  RIso_rectangle_2;
   is >> (RIso_rectangle_2&)r;
   return is;
 }

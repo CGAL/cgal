@@ -15,10 +15,9 @@
 // package       : _2
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// author(s)     : Andreas Fabri, Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_VECTOR_2_H
@@ -29,12 +28,12 @@ CGAL_BEGIN_NAMESPACE
 class Null_vector;
 
 template <class R_>
-class Vector_2 : public R_::Vector_2_base
+class Vector_2 : public R_::Kernel_base::Vector_2
 {
   typedef typename R_::RT             RT;
   typedef typename R_::Point_2        Point_2;
   typedef typename R_::Direction_2    Direction_2;
-  typedef typename R_::Vector_2_base  RVector_2;
+  typedef typename R_::Kernel_base::Vector_2  RVector_2;
 public:
   typedef  R_                        R;
 
@@ -60,7 +59,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Vector_2<R> &v)
 {
-  typedef typename  R::Vector_2_base  RVector_2;
+  typedef typename  R::Kernel_base::Vector_2  RVector_2;
   return os << static_cast<const RVector_2&>(v);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
@@ -70,7 +69,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, Vector_2<R> &p)
 {
-  typedef typename  R::Vector_2_base  RVector_2;
+  typedef typename  R::Kernel_base::Vector_2  RVector_2;
   return is >> static_cast<RVector_2&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2

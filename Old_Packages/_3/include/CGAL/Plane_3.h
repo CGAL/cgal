@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Plane_3 : public R_::Plane_3_base
+class Plane_3 : public R_::Kernel_base::Plane_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_3               Point_3;
@@ -35,7 +35,7 @@ class Plane_3 : public R_::Plane_3_base
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
-  typedef typename R_::Plane_3_base  RPlane_3;
+  typedef typename R_::Kernel_base::Plane_3  RPlane_3;
 public:
   typedef          R_                       R;
 
@@ -75,7 +75,7 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Plane_3<R>& p)
 {
-  typedef typename  R::Plane_3_base  RPlane_3;
+  typedef typename  R::Kernel_base::Plane_3  RPlane_3;
   return os << static_cast<const RPlane_3&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
@@ -85,7 +85,7 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Plane_3<R>& t)
 {
-  typedef typename  R::Plane_3_base  RPlane_3;
+  typedef typename  R::Kernel_base::Plane_3  RPlane_3;
   return is >> static_cast<RPlane_3&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3

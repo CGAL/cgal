@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL_SEGMENT_2_H
@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Segment_2 : public R_::Segment_2_base
+class Segment_2 : public R_::Kernel_base::Segment_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Point_2               Point_2;
-  typedef typename R_::Segment_2_base  RSegment_2;
+  typedef typename R_::Kernel_base::Segment_2  RSegment_2;
 public:
   typedef  R_                               R;
 
@@ -53,7 +53,7 @@ template < class R>
 std::ostream &
 operator<<(std::ostream &os, const Segment_2<R> &s)
 {
-  typedef typename  R::Segment_2_base  RSegment_2;
+  typedef typename  R::Kernel_base::Segment_2  RSegment_2;
   return os << static_cast<const RSegment_2&>(s);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_2
@@ -63,7 +63,7 @@ template < class R>
 std::istream &
 operator>>(std::istream &is, Segment_2<R> &s)
 {
-  typedef typename  R::Segment_2_base  RSegment_2;
+  typedef typename  R::Kernel_base::Segment_2  RSegment_2;
   return is >> static_cast<RSegment_2&>(s);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2

@@ -26,14 +26,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Direction_3 : public R_::Direction_3_base
+class Direction_3 : public R_::Kernel_base::Direction_3
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
-  typedef typename R_::Direction_3_base  RDirection_3;
+  typedef typename R_::Kernel_base::Direction_3 RDirection_3;
 public:
   typedef          R_                       R;
 
@@ -66,7 +66,7 @@ public:
 template < class R >
 std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
 {
-  typedef typename  R::Direction_3_base  RDirection_3;
+  typedef typename  R::Kernel_base::Direction_3 RDirection_3;
   return os << static_cast<const RDirection_3&>(d); }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
 
@@ -74,7 +74,7 @@ std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
 template < class R >
 std::istream& operator>>(std::istream& is, Direction_3<R>& p)
 {
-  typedef typename  R::Direction_3_base  RDirection_3;
+  typedef typename  R::Kernel_base::Direction_3  RDirection_3;
   return is >> static_cast<RDirection_3&>(p); }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
 

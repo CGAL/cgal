@@ -1,3 +1,6 @@
+Version 6.51 (23 January 2002)
+- Remove Point_2_base and such typedefs.
+
 Version 6.51 (22 January 2002)
 - Classes and funtion return type only refer to R::...
 

@@ -26,11 +26,11 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Sphere_3 : public R_::Sphere_3_base
+class Sphere_3 : public R_::Kernel_base::Sphere_3
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
-  typedef typename R_::Sphere_3_base  RSphere_3;
+  typedef typename R_::Kernel_base::Sphere_3  RSphere_3;
 public:
   typedef          R_                       R;
 

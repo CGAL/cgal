@@ -27,14 +27,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-class Aff_transformation_2 : public R_::Aff_transformation_2_base
+class Aff_transformation_2 : public R_::Kernel_base::Aff_transformation_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Line_2                Line_2;
   typedef typename R_::Direction_2           Direction_2;
   typedef typename R_::Vector_2              Vector_2;
-  typedef typename R_::Aff_transformation_2_base  RAff_transformation_2;
+  typedef typename R_::Kernel_base::Aff_transformation_2 RAff_transformation_2;
 public:
   typedef  R_                               R;
 
@@ -112,7 +112,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const CGAL::Aff_transformation_2<R> &t)
 {
-  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
+  typedef typename R::Kernel_base::Aff_transformation_2  RAff_transformation_2;
   return os << static_cast<const RAff_transformation_2&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_2
@@ -122,7 +122,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, CGAL::Aff_transformation_2<R> &t)
 {
-  typedef typename  R::Aff_transformation_2_base  RAff_transformation_2;
+  typedef typename R::Kernel_base::Aff_transformation_2  RAff_transformation_2;
   return is >> static_cast<RAff_transformation_2&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_2

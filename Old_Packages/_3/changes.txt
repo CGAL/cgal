@@ -1,4 +1,5 @@
-3.31 (22 January 2002)
+3.31 (23 January 2002)
+- Remove Point_2_base and such typedefs.                                                        
 - Declare Origin in Point_3.h and Null_vector in Vector_3.h.
 
 3.30 (22 January 2002)

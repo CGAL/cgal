@@ -92,39 +92,11 @@ class Homogeneous
     typedef Homogeneous_tag                         Rep_tag;
     typedef Homogeneous_base< R, RT_, FT_ >         Kernel_base;
 
-    typedef typename Kernel_base::Point_2               Point_2_base;
-    typedef typename Kernel_base::Vector_2              Vector_2_base;
-    typedef typename Kernel_base::Direction_2           Direction_2_base;
-    typedef typename Kernel_base::Line_2                Line_2_base;
-    typedef typename Kernel_base::Segment_2             Segment_2_base;
-    typedef typename Kernel_base::Ray_2                 Ray_2_base;
-    typedef typename Kernel_base::Circle_2              Circle_2_base;
-    typedef typename Kernel_base::Conic_2               Conic_2_base;
-    typedef typename Kernel_base::Triangle_2            Triangle_2_base;
-    typedef typename Kernel_base::Iso_rectangle_2       Iso_rectangle_2_base;
-    typedef typename Kernel_base::Aff_transformation_2
-	                                            Aff_transformation_2_base;
-
-    typedef typename Kernel_base::Point_3               Point_3_base;
-    typedef typename Kernel_base::Vector_3              Vector_3_base;
-    typedef typename Kernel_base::Direction_3           Direction_3_base;
-    typedef typename Kernel_base::Plane_3               Plane_3_base;
-    typedef typename Kernel_base::Line_3                Line_3_base;
-    typedef typename Kernel_base::Segment_3             Segment_3_base;
-    typedef typename Kernel_base::Ray_3                 Ray_3_base;
-    typedef typename Kernel_base::Sphere_3              Sphere_3_base;
-    typedef typename Kernel_base::Triangle_3            Triangle_3_base;
-    typedef typename Kernel_base::Tetrahedron_3         Tetrahedron_3_base;
-    typedef typename Kernel_base::Iso_cuboid_3          Iso_cuboid_3_base;
-    typedef typename Kernel_base::Aff_transformation_3
-                                                     Aff_transformation_3_base;
-
     typedef typename Kernel_base::Point_d               Point_d_base;
 
     typedef typename Kernel_base::Object_2              Object_2;
     typedef typename Kernel_base::Object_3              Object_3;
 
-    // we have: template <class R> CGAL::Point_2 : public R::Point_2_base
     typedef CGAL::Point_2< R >                     Point_2;
     typedef CGAL::Vector_2< R >                    Vector_2;
     typedef CGAL::Direction_2< R >                 Direction_2;
