@@ -41,9 +41,18 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
+// TODO :
+// - better filtering strategy.
+// - add more predicates :
+//   - lexicographical comparisons
+//   - left_turn (via generic adapter to orientation)
+//   - power_tests
+//   - others ?
+
+
 CGAL_BEGIN_NAMESPACE
 
-template < class K_base >
+template < typename K_base >
 struct Static_filters : public K_base
 {
   typedef SF_Orientation_2<K_base>                  Orientation_2;

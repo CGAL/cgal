@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Merge Static_filters into Filtered_kernel.
+
+20 June 2004 Sylvain Pion
 - Don't assume coordinates are doubles, call to_double().
 
 20 June 2004 Sylvain Pion

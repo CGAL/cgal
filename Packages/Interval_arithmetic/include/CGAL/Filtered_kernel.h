@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
+// Copyright (c) 2001,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -31,12 +31,11 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Static_filters.h>
 
 // This file contains the definition of a generic kernel filter.
 //
 // TODO:
-// - at the moment, it's restricted to IA filtering, but this should be
-//   generalized to allow other kinds of filters (static...).
 // - at the moment, only the predicates are filtered.
 //   Constructions will come later.
 // - the kernel provides the traits interface, as well as type equality.
@@ -86,20 +85,31 @@ public:
 
 };
 
+template < typename CK, typename Kernel >
+class Static_filters_base
+  : public Static_filters<Filtered_kernel_base<CK, Kernel> >
+{
+    template < typename Kernel2 >
+    struct Base { typedef Static_filters_base<CK, Kernel2>  Type; };
+};
+
 template <class CK>
 struct Filtered_kernel_adaptor
-  : public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
+  //: public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
+  : public Static_filters_base< CK, Filtered_kernel_adaptor<CK> >
 {};
 
 template <class CK>
 struct Filtered_kernel_without_type_equality
-  : public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+  //: public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+  : public Static_filters_base< CK, Filtered_kernel_without_type_equality<CK> >
 {};
 
 template <class CK>
 struct Filtered_kernel
   : public Type_equality_wrapper< 
-             Filtered_kernel_base< CK, Filtered_kernel<CK> >,
+             //Filtered_kernel_base< CK, Filtered_kernel<CK> >,
+             Static_filters_base< CK, Filtered_kernel<CK> >,
              Filtered_kernel<CK> >
 {};
 
