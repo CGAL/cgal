@@ -40,7 +40,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-#include <CGAL/Nef_2/MSC_vector.h>
+#include <CGAL/Nef_2/vector_MSC.h>
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char
 #define SNIINST ,'c','c'
@@ -235,7 +235,7 @@ template <class pNT> class RPolynomial_rep : public Ref_counted
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   typedef std::vector<NT> Vector;
   #else
-  typedef CGAL::MSC_vector<NT> Vector;
+  typedef CGAL::vector_MSC<NT> Vector;
   #endif
   typedef typename Vector::size_type      Size_type;
   typedef typename Vector::iterator       iterator;
