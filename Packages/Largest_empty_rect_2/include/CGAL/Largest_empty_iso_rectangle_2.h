@@ -1337,8 +1337,10 @@ void Largest_empty_iso_rectangle_2<T>::kd_test(Iso_rectangle_2 rec)
   for(list<Point_2>::iterator iter = res.begin();
                               iter != res.end();
                               ++iter)
-    if(rec.has_on_bounded_side(*iter))
+    if(rec.has_on_bounded_side(*iter)) {
        std::cout << "LER has points inside!!!!!!!!!!!!!!!\n";
+       exit(-1);
+    }
 }
 #endif
 
