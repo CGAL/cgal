@@ -14,7 +14,7 @@
 // $Source$
 // $Revision$ $Date$
 // $Name$
-//file:///usr/share/doc/mozilla-browser/localstart.html
+//
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
 //                 Miguel Granados    <granados@mpi-sb.mpg.de>
 //                 Susan Hert         <hert@mpi-sb.mpg.de>

@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+//                 Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
 #ifndef CGAL_SNC_SM_OVERLAYER_H
 #define CGAL_SNC_SM_OVERLAYER_H

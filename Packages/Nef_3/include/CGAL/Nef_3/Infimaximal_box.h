@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Peter Hachenberger    <hachenberger@mpi-sb.mpg.de>
+
 #ifndef CGAL_INFIMAXIMAL_BOX_H
 #define CGAL_INFIMAXIMAL_BOX_H
 
