@@ -35,12 +35,11 @@ compile_and_run()
      rm -f $OUTPUTFILE
      touch $OUTPUTFILE
      datafiles="DATA/$2/*"
-  
-    for DATAFILE in ${datafiles}
-    do
-        base=`expr $DATAFILE : '.*\/\(.*\)' '|' $DATAFILE`;
-        if [ ${base}=="CVS" ]; then continue; fi
 
+     for DATAFILE in ${datafiles}
+       do
+        base=`expr $DATAFILE : '.*\/\(.*\)' '|' $DATAFILE`;
+        if [ ${base} == "CVS" ]; then continue; fi
 	COMMAND="./$1 ${DATAFILE}"
         EXEC_AND_DATAFILE="$1 `basename ${DATAFILE}`"
 	echo "Executing $1 `basename ${DATAFILE}` ... "
