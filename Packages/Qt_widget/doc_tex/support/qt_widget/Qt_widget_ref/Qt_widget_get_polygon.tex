@@ -12,13 +12,15 @@
 \begin{ccRefClass}{Qt_widget_get_polygon}
 
 \ccDefinition
-An object of type Qt\_widget\_get\_polygon creates a \cgal\ polygon, a new 
+An object of type \ccRefName\ creates a \cgal\ polygon. A new 
 vertex is inserted every time the left mouse button is pressed.
-
-\ccInheritsFrom
-Qt\_widget\_tool
+The polygon is returned on a right click.
 
 \ccInclude{CGAL/IO/Qt_widget_get_polygon.h}
+
+\ccInheritsFrom
+\ccc{Qt_widget_tool}
+
 \ccGlue
 
 \ccCreation

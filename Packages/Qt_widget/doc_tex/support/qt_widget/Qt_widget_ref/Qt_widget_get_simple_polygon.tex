@@ -12,12 +12,15 @@
 \begin{ccRefClass}{Qt_widget_get_simple_polygon}
 
 \ccDefinition
-An object of type Qt\_widget\_get\_simple\_polygon creates a \cgal\ simple polygon,
- a new vertex is inserted every time the left mouse button is pressed, if the 
-polygon that contains all the vertices inserted untill that time is simple.
-
+An object of type\ccRefName\ creates a \cgal\ simple polygon.
+A new vertex is inserted every time the left mouse button is pressed, if the 
+polyline entered so far is simple. A right click closes the polygon, if
+it is simple.
 
 \ccInclude{CGAL/IO/Qt_widget_get_simple_polygon.h}
+
+\ccInheritsFrom
+\ccc{Qt_widget_tool}
 \ccGlue
 
 \ccCreation

@@ -14,9 +14,7 @@
 \ccGlue
 
 \ccDefinition
-A tool for Qt\_widget is a class that receives events from Qt\_widget and can 
-provide some functionalities like input objects for Qt\_widget and modify 
-already created objects.
+The class \ccRefName\ serves as base class for tools. It defines empty 
 
 \ccCreation
 \ccCreationVariable{tool}
@@ -28,6 +26,7 @@ already created objects.
 
 \ccMethod{bool is_attached() const;}{Return true if this tool is currently 
 attached to the Qt\_widget.}
+
 \ccMethod{virtual void mousePressEvent(QMouseEvent *);}{}
 \ccGlue
 \ccMethod{virtual void mouseReleaseEvent(QMouseEvent *);}{}
@@ -44,25 +43,31 @@ attached to the Qt\_widget.}
 \ccGlue
 \ccMethod{virtual void enterEvent(QEvent *);}{}
 \ccGlue
-\ccMethod{virtual void leaveEvent(QEvent *);}{This virtual functions should be
-overloaded in the child tool classes and declared as private members. This 
-functions are called by the Qt\_widget every time a event is received by the 
-widget.}
+\ccMethod{virtual void leaveEvent(QEvent *);}{These virtual functions should be
+overloaded in the child tool classes and declared as private members. The 
+functions are called by the \ccc{Qt_widget} every time it receives an event.}
+
 \ccHeading{protected}
 \ccMethod{virtual void attaching();}{}
 \ccGlue
 \ccMethod{virtual void detaching();}{You have to overload this functions to
 provide your tool with initialization and destruction code.}
-\ccHeading{signals}
-\ccMethod{void redraw();}{Emited when a tool needs that Qt\_widget refresh the
+
+\ccHeading{Signals}
+\ccMethod{void redraw();}{Emitted when a tool needs that \ccc{Qt_widget} refreshes the
 screen. For example after a tool modified an object, the screen should reflect
 the change.}
-\ccHeading{public slots}
-\ccMethod{virtual void widget_repainted();}{Called every time by Qt\_widget
-when the widget have been repainted.}
-\end{ccRefClass}
+
+\ccHeading{Public Slots}
+
+\ccMethod{virtual void widget_repainted();}{Called every time by \ccc{Qt_widget}
+when the widget has been repainted.}
+
+
 \ccExample
+
 An example of a tool that is working as a magnifying glass.
+
 \begin{ccExampleCode}
 #ifndef CGAL_QT_WINDOW_ZOOM_H
 #define CGAL_QT_WINDOW_ZOOM_H
@@ -77,7 +82,7 @@ class Qt_widget_zoom : public Qt_widget_tool
 {
   //  Q_OBJECT
 private:
-	int									    x2, y2;
+	int  x2, y2;
 	bool circle_already_drawn;
 	bool old_mouse_tracking;
 
@@ -167,6 +172,8 @@ public:
 
 #endif // CGAL_QT_WINDOW_ZOOM_H
 \end{ccExampleCode}
+
+\end{ccRefClass}
 % +-----------------------------------------------------+
 % EOF
 
