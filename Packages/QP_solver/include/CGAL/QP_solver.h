@@ -270,7 +270,8 @@ private:
     S_art                    art_s;     // special artificial column for slacks
     int                      art_s_i;   // index of special artificial column
     int                      art_basic; // number of basic artificial variables
-    Values                   aux_c;     // objective function for phase I
+    C_aux                    aux_c;     // objective function for phase I
+    					// initially has the same size as A_art
     
     // current status
     Indices                  B_O;       // basis (original variables)
@@ -301,7 +302,7 @@ private:
     const bool               has_ineq;  // flag indicating    ineq. constraits
 
     // additional variables
-    int                      l;         // minimum of 'qp_n' and 'qp_m'
+    int                      l;         // minimum of 'qp_n+e+1' and 'qp_m'
     
     int 		     e;         // number of equality constraints
     
@@ -329,6 +330,7 @@ private:
     
     Values                   q_lambda;  // length dependent on C
     Values                   q_x_O;     // used in the ratio test & update
+    					// length dependent on B_O
     Values                   q_x_S;     // 
 
     Values                   tmp_l;     // temporary vector of size l
@@ -447,6 +449,11 @@ private:
 
     // access to artificial variables
     int  number_of_artificial_variables( ) const { return art_A.size(); }
+    
+    C_auxiliary_iterator
+    c_auxiliary_value_iterator_begin( ) const { return aux_c.begin(); }
+    C_auxiliary_iterator
+    c_auxiliary_value_iterator_end( ) const {return aux_c.end(); }
 
     // access to basic variables
     int  number_of_basic_variables( ) const { return B_O.size()+B_S.size(); }
@@ -502,6 +509,10 @@ private:
         { CGAL_qpe_precondition( j >= 0);
           CGAL_qpe_precondition( j < number_of_working_variables());
           return ( in_B[ j] >= 0); }
+	  
+    bool is_artificial(int k) const;
+    
+    int get_l() const;
 
     // access to lambda
     Lambda_numerator_iterator
@@ -804,7 +815,8 @@ private:
 	if ( art_A[ j].second) mu_j = -mu_j;
 
 	// c_j + ...
-	mu_j += dd*NT( 1);
+	mu_j += dd*aux_c[ j];
+
     }
 
     template < class NT, class It >  inline                     // has ineq.
@@ -827,7 +839,7 @@ private:
 	    if ( art_A[ j].second) mu_j = -mu_j;
 
 	    // c_j + ...
-	    mu_j += dd*NT( 1);
+	    mu_j += dd*aux_c[ j];
 	}
     }
 

@@ -58,7 +58,7 @@ set( int n, int m,
 {
     // store QP
     CGAL_qpe_precondition( n > 0);
-    CGAL_qpe_precondition( m > 0);
+    //CGAL_qpe_precondition( m > 0);
     qp_n = n; qp_m = m;
     qp_A = A_it; qp_b = b_it; qp_c = c_it; qp_D = D_it;
     qp_r = Row_type_it;
@@ -340,16 +340,16 @@ init_solution( )
     minus_c_B.insert( minus_c_B.end(), l, -et1);
     if ( art_s_i > 0) minus_c_B[ art_A.size()-1] *= ET( qp_n+qp_m);
     // and now aux_c
-    aux_c.reserve(art_A.size()+slack_A.size()+art_A.size());
-    aux_c.insert(aux_c.end(), qp_n+slack_A.size()+art_A.size(), et0);
+    aux_c.reserve(art_A.size());
+    aux_c.insert(aux_c.end(), art_A.size(), 0);
     for (int col=qp_n+slack_A.size(); col<number_of_working_variables(); ++col)
     {
     	if (col==art_s_i) {
             // special artificial
-	    aux_c[col]= ET( qp_n+qp_m);
+	    aux_c[col-qp_n-slack_A.size()]=  qp_n+qp_m;
         } else {
 	    // normal artificial
-	    aux_c[col]= et1;
+	    aux_c[col-qp_n-slack_A.size()]= 1;
 	}
     }
     // allocate memory for current solution
@@ -1738,6 +1738,21 @@ variable_type( int k) const
 	                                       "artificial"));
 }
 
+template < class Rep_ > 
+bool QPE_solver<Rep_>::
+is_artificial(int k) const
+{
+    return (k >= (int)(qp_n+slack_A.size())); 
+}
+
+template < class Rep_ > 
+int QPE_solver<Rep_>::
+get_l() const
+{
+    return l;
+}
+
+
 template < class Rep_ >
 bool QPE_solver<Rep_>::
 is_solution_feasible()
@@ -1754,8 +1769,9 @@ is_solution_feasible()
         original_vars_nonneg = original_vars_nonneg && ((*v_it) >= et0);
     }
     
-    // check feasibility against constraint matrix A
     feasible = original_vars_nonneg;
+    
+    // check feasibility against constraint matrix A
     Values lhs_col(qp_m, et0);
     //initialize M
     for (int i = 0; i < qp_m; ++i) {
@@ -1844,12 +1860,6 @@ is_solution_feasible_aux()
     
     for (M_i_it = M.begin(); M_i_it != M.end(); ++M_i_it) {
         feasible = feasible && (lhs_col[*M_i_it] == ET(qp_b[*M_i_it]) * d);
-	CGAL_qpe_debug {
-	    std::cout << "lhs_col[" << *M_i_it << "]= " <<
-	        lhs_col[*M_i_it] << std::endl;
-	    std::cout << "qp_b[" << *M_i_it << "]= " <<
-	        qp_b[*M_i_it] << std::endl;
-	}
     }    
     return feasible;
 }
@@ -1883,9 +1893,9 @@ is_solution_optimal()
     //debug
     CGAL_qpe_debug {
         for (int col = 0; col < qp_m; ++col) {
-	    std::cout << "lambda'[" << col << "]= " << lambda_prime[col] 
-	        << std::endl;        
-        }
+	    vout4 << "lambda'[" << col << "]= " << lambda_prime[col] 
+	        << std::endl;
+	}        
     }
     
     // tau^T = c^T + 2x'^T * D'^T + lambda'^T * A 
@@ -1910,8 +1920,7 @@ is_solution_optimal()
 		    * (*A_by_index_iterator( M_i_it, a_accessor));
 	}
 	CGAL_qpe_debug {
-	    std::cout << "tau[" << col << "]= " << tau[col] 
-	        << std::endl;
+	    vout4 << "tau[" << col << "]= " << tau[col] << std::endl;
 	}
     }
 
@@ -1970,7 +1979,7 @@ is_solution_optimal_aux()
 {
     Index_iterator i_it, M_i_it;
     Value_iterator v_it;
-    //ET             lhs;
+    C_auxiliary_iterator c_it;
     Indices        M;
     unsigned int            k;
     int no_of_wo_vars = this->number_of_working_variables();
@@ -2004,16 +2013,16 @@ is_solution_optimal_aux()
     //debug
     CGAL_qpe_debug {
         for (int col = 0; col < qp_m; ++col) {
-	    std::cout << "lambda_aux[" << col << "]= " << lambda_aux[col] 
-	        << std::endl;        
-        }
+	    vout4 << "lambda_aux[" << col << "]= " << lambda_aux[col] 
+	        << std::endl;
+        }        
     }
      
-    // tau^T = c^T + lambda'^T * A
+    // tau^T = c^T + lambda'^T * aux_A
     Values tau_aux(no_of_wo_vars, et0);
-    v_it = aux_c.begin();
-    for (int col = 0; col < no_of_wo_vars; ++v_it, ++col) {
-        tau_aux[col] = (*v_it) * d;
+    c_it = aux_c.begin();
+    for (int col = qp_n+slack_A.size(); col < no_of_wo_vars; ++c_it, ++col) {
+        tau_aux[col] = ET(*c_it) * d;
     }
     
     for (int col = 0; col < no_of_wo_vars; ++col) {
@@ -2043,8 +2052,7 @@ is_solution_optimal_aux()
 	    }
 	}
 	CGAL_qpe_debug {
-	    std::cout << "tau_aux[" << col << "]= " << tau_aux[col] 
-	        << std::endl;
+	    vout4 << "tau_aux[" << col << "]= " << tau_aux[col] << std::endl;
 	}
     }
     // since there are only equality constraints in auxiliary problem
@@ -2074,17 +2082,17 @@ is_solution_valid()
     case OPTIMAL:  	f = this->is_solution_feasible();
      			o = this->is_solution_optimal();
 			CGAL_qpe_debug {
-    			    std::cout << "feasible: " << f << std::endl;
-			    std::cout << "optimal: " << o << std::endl;
+    			    vout << "feasible: " << f << std::endl;
+			    vout << "optimal: " << o << std::endl;
 			}
 			return (f && o);
     case INFEASIBLE: 	f = this->is_solution_feasible_aux();
     			o = this->is_solution_optimal_aux();
 			aux_positive = this->solution() > et0;
 			CGAL_qpe_debug {
-    			    std::cout << "feasible_aux: " << f << std::endl;
-    			    std::cout << "optimal_aux: " << o << std::endl;
-			    std::cout << "objective value positive " <<
+    			    vout << "feasible_aux: " << f << std::endl;
+    			    vout << "optimal_aux: " << o << std::endl;
+			    vout << "objective value positive: " <<
 			        aux_positive << std::endl;
 			}
     			return (f && o && aux_positive);
