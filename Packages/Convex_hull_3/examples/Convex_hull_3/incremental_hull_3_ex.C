@@ -24,6 +24,7 @@ typedef double RT;
 #endif
 #endif
 
+
 typedef CGAL::Filtered_exact<double, RT>       NT;
 typedef CGAL::Homogeneous<NT>                  K;
 typedef K::Point_3                             Point_3;
@@ -44,6 +45,7 @@ int main()
 
   // compute convex hull 
   CGAL::convex_hull_incremental_3( V.begin(), V.end(), P, true);
+
 
   return 0;
 }
