@@ -36,6 +36,9 @@ public:
     void                    current(Segment_2<R> &seg) const;
     void                    current(Point_2<R> &point) const;
     states                  current_state() const;
+    bool                    operator==(const Straight_2_<R>&) const;
+    bool                    operator!=(const Straight_2_<R>&other) const
+                { return !(*this == other);}
 protected:
     Line_2<R>          support_;   // The supporting line.
     Point_2<R>         min_;
@@ -206,6 +209,31 @@ current(Point_2<R> &pt) const
     CGAL_kernel_assertion(bound_state_ == NO_UNBOUNDED
                 && collinear_order(min_, max_) == 0);
     pt = min_;
+}
+
+
+template <class R>
+bool Straight_2_<R>::operator==(const Straight_2_<R>& s) const
+{
+  typedef Straight_2_<R> Straight_2;
+  //    enum bound_states {NO_UNBOUNDED=0, MIN_UNBOUNDED=1, MAX_UNBOUNDED=2,
+  //                    BOTH_UNBOUNDED = 3, LINE_EMPTY = 4};
+  if (bound_state_!=s.bound_state()) return false;
+  if (bound_state_==Straight_2::LINE_EMPTY) return true; // empty
+  if (support_!=s.support_)
+    return false; // on different lines, even if both are points.
+  switch (bound_state_)
+    {
+    case Straight_2::NO_UNBOUNDED:
+      return min_==s.min_ && max_==s.max_;
+    case Straight_2::MAX_UNBOUNDED:
+      return min_==s.min_;
+    case Straight_2::MIN_UNBOUNDED:
+      return max_==s.max_;
+    case Straight_2::BOTH_UNBOUNDED:
+      return true;
+    }
+  return false;
 }
 
 /*
