@@ -80,9 +80,9 @@ draw_new_faces(Vertex_handle v, CGAL_Window_stream& W)
    drawing_mode dm=W.set_mode(leda_src_mode);
    W << CGAL_BLUE;
    Face_handle f = v->face();
-   if (f == NULL) { return;} //first point, no face
+   if (f.is_null()) { return;} //first point, no face
    draw_face(f,W);
-   while(f->neighbor(1) != NULL) {
+   while( ! f->neighbor(1).is_null()) {
      f = f->neighbor(1);
      draw_face(f,W);
    }
