@@ -12,11 +12,12 @@ they are not all collinear) and one that handles all degenerate cases
 and returns a \ccc{CGAL::Object}, which may be a point, a segment, a
 triangle, or a polyhedron.
 
-%The function \ccc{convex_hull_3_from_d}\ccIndexMainItem[C]{convex_hull_3_from_d}
-%provides an interface that produces a polyhedron as output and uses the
-%d-dimensional algorithm for building this.  This brings with it the power
-%to query the hull structure for point inclusion, {\em etc.} 
-%\marginpar{Michael, is there something more to say here?}
+The function \ccc{convex_hull_3_from_d}\ccIndexMainItem[C]{convex_hull_3_from_d}
+provides an interface that produces a polyhedron as output and uses the
+d-dimensional randomized incremental construction algorithm.  This function
+does not have a traits class in its interface as it uses the representation
+class \ccc{R} used in the polyhedron type to define an instance of the 
+adapter traits class \ccc{CGAL::Convex_hull_d_traits_3<R>}.
 
 \end{ccPackage}
 
