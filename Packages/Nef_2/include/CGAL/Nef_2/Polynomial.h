@@ -1287,7 +1287,9 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
                            const Polynomial<NT>& p2)
 { 
   typedef Number_type_traits<NT> Traits;
-  return divop(p1,p2, typename Traits::Has_gcd());
+  typename Traits::Has_gcd has_gcd;
+  
+  return divop(p1,p2, has_gcd);
 }
 
 
@@ -1296,7 +1298,8 @@ Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
 { 
   typedef Number_type_traits<NT> Traits;
-  return modop(p1,p2, typename Traits::Has_gcd()); }
+  typename Traits::Has_gcd has_gcd;
+  return modop(p1,p2, has_gcd); }
 
 
 template <class NT> 
@@ -2007,5 +2010,6 @@ CGAL_END_NAMESPACE
 
 
 #endif  // CGAL_POLYNOMIAL_H
+
 
 
