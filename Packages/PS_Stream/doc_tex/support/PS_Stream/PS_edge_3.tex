@@ -1,0 +1,127 @@
+%\chapter{PostScript Stream} \label{Chapter_Postscript}
+
+\chapter{The PS\_edge\_3 class}
+
+\begin{ccClass} {PS_edge_3}
+
+\section{Introduction}
+
+The class \ccClassName\ is used to represent edges in 3D.
+
+\ccSection{The PS\_edge\_3 Class}
+\ccDefinition 
+
+	An object of type \ccClassName\ is an edge in the space.
+Indeed, this class is used to represent the edge in 3D. \\
+A \ccClassName\ object is composed of two points of the \ccc{Point\_3} type which determines
+the extremities of the edge. \\
+Moreover, it is possible to specify the color of the edge and its
+visibility. 
+The visibility determines if the edge is \ccc{VISIBLE} or \ccc{INVISIBLE}. \\
+Indeed, during the cutting of a facet we will introduce edge which cut a
+face in two part, but we don't want to display this edge. So if an edge
+is set to  \ccc{INVISIBLE}, the edge exist but will not be displayed. \\
+By default, if the color and the attribut are not specified, they are
+set to  \ccc{CGAL::BLACK} and  \ccc{VISIBLE}.
+
+\ccInclude{CGAL/IO/PS_edge_3.h}
+
+\ccTypes
+
+\ccTypedef{typedef double coord_type;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Cartesian< coord_type > CT;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Point_3< R > Point3;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Aff_transformation_3< CT >
+Transformation;.}{}
+\ccGlue
+\ccEnum   {enum Visibility {INVISIBLE,VISIBLE} ;}{}
+
+\ccCreation
+\ccCreationVariable{ps_edge_3}
+
+\ccConstructor{PS_edge_3(Point3 &PA,Point3 &PB,Color
+color=CGAL::BLACK,Visibility v=VISIBLE);} {Creates an edge by giving
+the two Point\_3 \ccc{PA} and \ccc{PB}. The edge color is given by the 
+ \ccc{color} parameter. The parameter  \ccc{v} allows to choose the visibility of
+the edge. The parameters  \ccc{color} and  \ccc{v} are set by default to
+ \ccc{CGAL::BLACK} and \ccc{VISIBLE}. Thus, if the user don't enter any 
+color or visibility, they are set to the default value.}
+
+\ccConstructor{PS_edge_3(const PS_edge_3& edge);} {This is the copy
+constructor which is use to duplicate an existing edge.}
+
+\ccAccessFunctions
+\par
+
+\ccMethod{inline Visibility visibility() const;}{Return the visibility of the 
+edge that is to say if the edge is  \ccc{VISIBLE} or  \ccc{INVISIBLE}.}
+
+\ccMethod{inline Color color() const;}{Return the edge color.}
+
+\ccMethod{inline Point3 first_point() const;}{Return the first point of 
+the edge.}
+
+\ccMethod{inline Point3 second_point() const;}{Return the second point of 
+the edge.}
+
+
+\ccOperations
+
+\ccMethod{PS_edge_3 operator= (PS_edge_3& edge);}{This is an
+assignment operator.}
+
+\ccFunction{friend ostream& operator<< (ostream& os, const PS_edge_3&
+ps_edge_3);}{This operator allows to display the settings of the edge
+on a terminal. \\
+The display is the next : [(PointA),(PointB)] Color: 255 0 0 | VISIBLE.\\
+It displays the two points of the edge, the color in \ccc{RGB} and the visibility of the edge.}
+
+\ccFunction{double xmin();}{Return the minimum according to the x
+coordinate of the two points of the edge.}
+
+\ccFunction{double ymin();}{Return the minimum according to the y
+coordinate of the two points of the edge.}
+
+\ccFunction{double zmin();}{Return the minimum according to the z
+coordinate of the two points of the edge.}
+
+\ccFunction{double xmax();}{Return the maximum according to the x
+coordinate of the two points of the edge.}
+
+\ccFunction{double ymax();}{Return the maximum according to the y
+coordinate of the two points of the edge.}
+
+\ccFunction{double zmax();}{Return the maximum according to the z
+coordinate of the two points of the edge.}
+
+\ccFunction{void transformation(Transformation &t);}{Function to
+transform the two points of the edge according the transformation t;}
+
+\par
+\par
+
+\ccHeading{Setting functions}
+\par
+
+\ccFunction{inline void set_visibility(Visibility v);}{Allows to
+change the visibility(\ccc{VISIBLE} or  \ccc{INVISIBLE}) of the edge.}
+
+\ccFunction{inline void set_color(Color c);}{Allows to change the edge 
+color by the new color \ccc{c}.}
+
+\ccFunction{inline void set_first_point(Point3 pa);}{Allows to change the
+coordinates of the first point of the edge.}
+
+\ccFunction{inline void set_second_point(Point3 pb);}{Allows to change the
+coordinates of the second point of the edge.}
+
+\par
+
+\end{ccClass}
+
+
+
+

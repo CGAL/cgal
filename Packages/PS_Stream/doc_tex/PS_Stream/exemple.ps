@@ -48,15 +48,14 @@ st grestore
 161.25 157.5 mt
 (Centre) show
 255 0 255 setrgbcolor
-112.5 262.5 187.5 262.5 150 300 112.5 262.5 tr gsave 
-0 255 0 setcolor fill grestore 
-st
+112.5 262.5 187.5 262.5 150 300 112.5 262.5 tr st
 0 0 0 setrgbcolor
 0 setlinewidth
 /Helvetica findfont
 12 scalefont setfont
-%% CGAL - LATEX : 195 262.5 triangle
-gsave 0 setgray 2 setlinewidth
+195 262.5 mt
+(triangle) show
+gsave 0 setgray 0 setlinewidth
 [] 0 setdash
 150 0 mt
 150 300 lt st
@@ -127,20 +126,5 @@ gsave
 3 setlinewidth
 0 0 300 300 rectstroke
 grestore
-%%}\makeatletter\let\@notdefinable\relax
-%%\def\IPEc#1[#2]#3{\newcommand{#1}[#2]{#3}\ignorespaces}\@ifundefined
-%%{selectfont}{\let\selectfont\relax\def\fontsize#1#2{}}{}\makeatother
-%%\IPEc\IPEput[4]{\put(0,0){\special{psfile=\IPEfile}}}
-%%\IPEc\IPEmp[2]{\minipage[t]{#1bp}#2\special{color pop}\endminipage}
-%%\IPEc\IPEtext[1]{\makebox(0,0)[lb]{#1\special{color pop}}}
-%%\IPEc\IPEfs[1]{\IPEcolfs{0 0 0}{#1}}
-%%\IPEc\IPEcolfs[2]{\dimen0=#2pt\fontsize{#2}{1.2\dimen0}\selectfont
-%%\special{color push rgb #1}}
-%%\IPEc\IPEsize[2]{\unitlength1bp\ignorespaces}
-%%\IPEsize{300}{300}
-%%\begin{picture}(300,300)(0,0)
-%%\IPEput{0}{0}{300}{300}
-%%\put(195,262.5){\IPEtext{\IPEfs{10}\rm triangle }}
-%%\end{picture}\endinput}
 showpage
 end
