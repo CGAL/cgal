@@ -148,9 +148,10 @@ public:
   void copy_tds(const Tds &tds);
   Vertex* copy_tds(const Tds &tds, const Vertex*);
 
-  Vertex* file_input(std::istream& is);
+  Vertex* file_input(std::istream& is, bool skip_first=false);
   void file_output(std::ostream& os,
-		   Vertex* v = infinite_vertex()) const;
+		   Vertex* v = NULL,
+		   bool skip_first=false) const;
 
 
   // SETTING (had to make them public for use in remove from Triangulations)
@@ -987,12 +988,12 @@ clear()
 template <class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-file_output( std::ostream& os, Vertex* v) const
+file_output( std::ostream& os, Vertex* v, bool skip_first) const
 {
   // ouput to a file
-  // Vertex* is the vertex to be output first
-  // should be the infinite_vertex
-  CGAL_triangulation_assertion(v == infinite_vertex());
+  // if non NULL, v is the vertex to be output first
+  // if skip_first is true, the point in the first vertex is not output
+  // (it may be for instance the infinite vertex of the triangulation)
   
   int n = number_of_vertices();
   int m = number_of_full_dim_faces();
@@ -1003,16 +1004,20 @@ file_output( std::ostream& os, Vertex* v) const
   std::map< void*, int, less<void*> > V;
   std::map< void*, int, less<void*> > F;
 
-  // write vertex v first
+  // first vertex 
   int inum = 0;
-  V[v] = inum;
-  os << v->point();
-  if(is_ascii(os))  os << ' ';
+  if ( v != NULL) {
+    V[v] = inum++;
+    if( ! skip_first){
+    os << v->point();
+    if(is_ascii(os))  os << ' ';
+    }
+  }
   
-  // write the other vertices
+  // other vertices
   for( Vertex_iterator it= vertices_begin(); it != vertices_end() ; ++it) {
     if ( &(*it) != v) {
-	V[&(*it)] = ++inum;
+	V[&(*it)] = inum++;
 	os << it->point();
 	if(is_ascii(os)) os << ' ';
     }
@@ -1052,17 +1057,18 @@ file_output( std::ostream& os, Vertex* v) const
 template <class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-file_input( std::istream& is)
+file_input( std::istream& is, bool skip_first)
 {
   //input from file
-  //return a pointer to the first vertex
+  //return a pointer to the first input vertex
+  // if no_first is true, a first vertex is added (infinite_vertex)
   //set this  first vertex as infinite_Vertex
   if(number_of_vertices() != 0)    clear();
   
   int n, m, d;
   is >> n >> m >> d;
 
-  if (n==0) return NULL;
+  if (n==0){ return NULL;}
 
   set_number_of_vertices(n);
   set_dimension(d);
@@ -1071,7 +1077,12 @@ file_input( std::istream& is)
   std::vector<Face*> F(m);
 
   // read vertices
-  for(int i = 0 ; i < n; ++i) {
+  int i = 0;
+  if(skip_first){
+    V[0] = new Vertex();
+    ++i;
+  }
+  for( ; i < n; ++i) {
     typename Gt::Point p;
     is >> p;
     V[i] = new Vertex(p);

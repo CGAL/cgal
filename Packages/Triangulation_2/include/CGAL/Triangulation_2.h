@@ -1725,7 +1725,7 @@ void
 Triangulation_2<Gt, Tds>::
 file_output(std::ostream& os) const
 {
-  _tds.file_output(os, &(*infinite_vertex()));
+  _tds.file_output(os, &(*infinite_vertex()), true);
 }
 
 template <class Gt, class Tds >
@@ -1734,7 +1734,7 @@ Triangulation_2<Gt, Tds>::
 file_input(std::istream& is)
 {
   clear();
-  Vertex_handle v= static_cast<Vertex*>(_tds.file_input(is));
+  Vertex_handle v= static_cast<Vertex*>(_tds.file_input(is, true));
   set_infinite_vertex(v);
   return v;
 }
