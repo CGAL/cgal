@@ -139,7 +139,7 @@ sub set_file_headers()
 	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
     chomp($release_date);
     open(FILE_CHECKS,">$PARENT_DIR/code_check_$VERSION");
-    find(\&file_header_setting, 'include', 'src', 'config/testfiles');
+    find(\&file_header_setting, 'include', 'src', 'examples', 'config/testfiles');
     close FILE_CHECKS;
     chdir $MAIN_DIR;
 }
@@ -274,7 +274,7 @@ sub CreateExampleTestDirs()
 #---------------------------------------------------------------#
 # list_test_directories <package>
 #
-# drukt de testdirectories af die in de submission aanwezig zijn
+# drukt de test en examples directories af die in de submission aanwezig zijn
 
 sub list_test_directories($)
 {
@@ -287,6 +287,9 @@ sub list_test_directories($)
     pop @zip_contents;
     foreach $zipped_file (@zip_contents) {
 	if ( $zipped_file =~ m|\btest/([^/\n]+)| ) {
+	    $test_dirs{$1} = 1;
+	}
+	if ( $zipped_file =~ m|\bexamples/([^/\n]+)| ) {
 	    $test_dirs{$1} = 1;
 	}
     }
