@@ -723,6 +723,7 @@ set_compiler_flags()
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
     WINDOW_DIR="/usr/lib/X11"
+    XLIBS="-lX11"
     RUNTIME_LINKER_FLAG=''
     LONG_NAME_PROBLEM_CXXFLAGS=
     LONG_NAME_PROBLEM_LDFLAGS=
@@ -753,6 +754,7 @@ set_compiler_flags()
 	    CGAL_LIB_CXXFLAGS="-P"
 	    CGAL_LIB_CREATE="tlib ''"
 	    WINDOW_DIR=
+	    XLIBS=
 	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
@@ -771,13 +773,14 @@ set_compiler_flags()
 	*CL.EXE*|*cl.exe*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm400 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT -D__STL_DEBUG `include_dir_option ${CGAL_DIR}/stlport`"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT `include_dir_option ${CGAL_DIR}/stlport`"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
 	    WINDOW_DIR=
+	    XLIBS="user32.lib gdi32.lib comdlg32.lib shell32.lib"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
 	    LIB_SFX=".lib"
@@ -4046,7 +4049,7 @@ write_linker_flags()
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
-    WLIBS="${WLIBS} -lW -lP -lG -lL -lX11"
+    WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -4117,8 +4120,10 @@ write_linker_flags()
   # CGAL_WINDOW_LIBPATH
   #
   if [ -n "${LEDA_SUPPORT}" ]; then
-    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
+    if [ -n "${WINDOW_DIR}" ]; then 
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
+    fi
     ${_printf} "CGAL_WINDOW_LIBPATH =" >> ${FILE}
     makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
     makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
