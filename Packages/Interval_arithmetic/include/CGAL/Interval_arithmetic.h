@@ -54,6 +54,12 @@ struct Interval_nt_advanced
   friend inline IA operator-     (const IA &, const IA &);
   friend inline IA operator*     (const IA &, const IA &);
   friend inline IA operator/     (const IA &, const IA &);
+  friend inline bool operator<   (const IA &, const IA &);
+  friend inline bool operator>   (const IA &, const IA &);
+  friend inline bool operator<=  (const IA &, const IA &);
+  friend inline bool operator>=  (const IA &, const IA &);
+  friend inline bool operator==  (const IA &, const IA &);
+  friend inline bool operator!=  (const IA &, const IA &);
   friend inline IA min           (const IA &, const IA &);
   friend inline IA max           (const IA &, const IA &);
   friend inline IA sqrt          (const IA &);
@@ -110,34 +116,6 @@ public:
   IA & operator-= (const IA & d);
   IA & operator*= (const IA & d);
   IA & operator/= (const IA & d);
-
-  bool operator< (const IA & d) const
-  {
-    if (_sup  < d._inf) return true;
-    if (_inf >= d._sup) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator<= (const IA & d) const
-  {
-    if (_sup <= d._inf) return true;
-    if (_inf >  d._sup) return false;
-    overlap_action();
-    return false;
-  }
-  
-  bool operator== (const IA & d) const
-  {
-    if (d._inf >  _sup || d._sup  < _inf) return false;
-    if (d._inf == _sup && d._sup == _inf) return true;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>  (const IA & d) const { return   d <  *this; }
-  bool operator>= (const IA & d) const { return   d <= *this; }
-  bool operator!= (const IA & d) const { return !(d == *this); }
 
   bool is_same (const IA & d) const
   { return _inf == d._inf && _sup == d._sup; }
@@ -244,38 +222,6 @@ operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   };
 }
 
-// The following should be eliminated too.
-
-inline
-bool
-operator< (const double d, const Interval_nt_advanced & t)
-{ return t>d; }
-
-inline
-bool
-operator<= (const double d, const Interval_nt_advanced & t)
-{ return t>=d; }
-
-inline
-bool
-operator> (const double d, const Interval_nt_advanced & t)
-{ return t<d; }
-
-inline
-bool
-operator>= (const double d, const Interval_nt_advanced & t)
-{ return t<=d; }
-
-inline
-bool
-operator== (const double d, const Interval_nt_advanced & t)
-{ return t==d; }
-
-inline
-bool
-operator!= (const double d, const Interval_nt_advanced & t)
-{ return t!=d; }
-
 inline
 Interval_nt_advanced
 operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
@@ -315,6 +261,57 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
     return CGAL_IA_LARGEST; // IA (-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
+}
+
+inline
+bool
+operator< (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    if (e._sup  < d._inf) return true;
+    if (e._inf >= d._sup) return false;
+    Interval_nt_advanced::overlap_action();
+    return false;
+}
+
+inline
+bool
+operator<= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    if (e._sup <= d._inf) return true;
+    if (e._inf >  d._sup) return false;
+    Interval_nt_advanced::overlap_action();
+    return false;
+}
+
+inline
+bool
+operator== (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    if (d._inf >  e._sup || d._sup  < e._inf) return false;
+    if (d._inf == e._sup && d._sup == e._inf) return true;
+    Interval_nt_advanced::overlap_action();
+    return false;
+}
+
+inline
+bool
+operator> (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    return d < e;
+}
+
+inline
+bool
+operator>= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    return d <= e;
+}
+
+inline
+bool
+operator!= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
+{
+    return !(d == e);
 }
 
 inline
