@@ -253,8 +253,8 @@ public:
    * \param cv The curve.
    * \param p The point.
    * \pre p is in the x-range of cv.
-   * \return LARGER if y(p) > cv(x(p));
-   *         SMALLER if y(p) < cv(x(p));
+   * \return SMALLER if y(p) < cv(x(p)), that is the point is below the curve;
+   *         LARGER if y(p) > cv(x(p)), that is the point is above the curve;
    *         or else (if p is on the curve) EQUAL.
    */
   Comparison_result curve_compare_y_at_x (const Point_2 & p,
