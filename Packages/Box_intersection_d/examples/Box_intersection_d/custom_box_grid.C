@@ -47,7 +47,8 @@ int main() {
     // run the intersection algorithm and store results in a vector
     std::vector<std::size_t> result;
     CGAL::box_intersection_d( b_ptr, b_ptr+9, q_ptr, q_ptr+2, 
-                              report( std::back_inserter( result)), 0);
+                              report( std::back_inserter( result)), 
+                              std::ptrdiff_t(0));
     // sort and check result
     std::sort( result.begin(), result.end());
     std::size_t chk[13] = {0,1,2,3,4,4,5,5,6,7,7,8,8};

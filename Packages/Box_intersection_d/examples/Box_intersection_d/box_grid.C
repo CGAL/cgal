@@ -47,7 +47,8 @@ int main() {
     result.clear();
     CGAL::box_intersection_d( boxes, boxes+9, query, query+2, 
                               report( std::back_inserter( result)),
-                              1, CGAL::Box_intersection_d::HALF_OPEN);
+                              std::ptrdiff_t(1), 
+                              CGAL::Box_intersection_d::HALF_OPEN);
     // sort, check, and show result
     std::sort( result.begin(), result.end());
     std::size_t check2[2]  = {4,8};
