@@ -45,9 +45,9 @@ The default traits class is the kernel in which the type
           \item \ccc{vertices_begin()}
           \item \ccc{vertices_end()}
         \end{itemize}
-        The vertex type of \ccc{Polyhedron_3} must be 
-        \ccc{CGAL::Polyhedron_3<Traits>::Vertex};
-        the facet type must be \ccc{CGAL::Polyhedron_3<Triats>::Facet}.
+        The vertex type of \ccc{Polyhedron_3} must be a model of
+        \ccc{ConvexHullPolyhedronVertex_3};
+        the facet type must be \ccc{ConvexHullPolyhedronFacet_3}.
 \end{enumerate}
 
 
