@@ -1,5 +1,14 @@
-Concerning the static filters:
-------------------------------
+For CGAL-2.3-I-* :
+------------------
+- mv CGAL/Interval_arithmetic/_FPU.h CGAL/FPU.h.
+- mv include/*.C *.def ; Or use template test functions within a single file ?
+- Rename ._inf and ._sup to .inf_ and .sup_, so that it's std compliant.
+- Use Self instead of IA as the internal typedef ?
+- Implement and document enough for the new to_interval() requirement.
+- Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.
+
+Concerning the static filters:  Lot's of work here for a "minor" optimization !
+------------------------------            ===> low priority for now.
 - Known problems with the current approach:
   - Match operator<(a,b) and co...
   - What to do with branches (e.g. collinearC3() and power_test()):
@@ -27,7 +36,8 @@ Concerning the static filters:
 - Replace: NEW_bound = max(NEW_bound, fabs(px.to_double())); by: if (NEW_bound
   < fabs(px.to_double())) NEW_bound = fabs(px.to_double()); or even, using a
   .bound() member function: if (NEW_bound < px.bound()) NEW_bound = px.bound();
-- Member function access for generical type should be (?): .dbl_approx()
+  Moreover, to_double() is not exact, we should use abs(to_interval(x)).sup() !
+- Member function access for generic type should be (?): .dbl_approx()
   .bound()      (basically a bound on: fabs(.dbl_approx())) .error()
 - Add a "number of bits" field in Static_filter_error ?  (so that we get the
   same thing as Fixed for 24 bits)
@@ -35,8 +45,39 @@ Concerning the static filters:
 
 Concerning the main code:
 -------------------------
-- Try to use asm() to clobber the adress of a double variable (read AND write),
-  instead of the volatile trick.  If it's faster...
+- Implement to_interval() for CLN types (long [long|double] are done).
+  What will be the interface exactly ?
+  - return type is Interval_base, in Interval_base.h, which has a ctor with 1
+    and 2 doubles.
+  - with what rounding mode requirement can/will it be called:
+    - will CGAL call to_interval() with any rounding mode, in which case
+      the function to_interval() must protect itself.
+    - we will fix a default calling rounding mode from within CGAL, which will
+      be the default rounding mode (NB: it's the contrary as the current
+      convert_to() functions in the IA package...).
+    - To sum up:
+      - double (and other builtins <= double) and Fixed_precision_nt don't care
+        about the current rounding mode, so it will be a pain if we enforced
+	a specific mode before entering to_interval().
+      - Lazy_exact_nt<> doesn't care (currently, since it already has the
+        interval precomputed).
+      - Quotient<RT> forwards the requirements to those of RT.
+      - Gmpz, LEDA NTs a priori prefer the default rounding mode, but they
+        have to make 2 changes anyway, so a third is not that a big deal...
+    - My gust feeling would be to require from the NT that to_interval(NT) can
+      be called from within CGAL with whatever rounding mode.  So it has to
+      protect itself if it needs to.
+- Implement CGAL_ms_sqrt() with asms so that no special install procedure is
+  needed ?  Should not be too hard, and should be faster (no function call).
+- GCC 2.96 seems really bad at optimizing copy ctor of intervals (august'00).
+- Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
+- Try to see if KCC can use the GCC asm() on x86 ?
+- Try to get rid of the libc5 compatible version (make benchmarks first).
+- Avec des predicats function_objects, on pourrait se passer du script
+  autogenerateur pour les filtres dynamiques (voir comment marchent les trucs
+  de la STL dans ce domaine) ?  Le convertisseur prenant comme parametre
+  template un entier qui serait le nombre d'arguments du predicat :) ?
+  A revoir en tout cas dans l'optique d'un noyau filtre.
 - Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
   And what about for Interval_nt<> too ?
 - There are problems with Handle_for if the allocator is not standard, because
@@ -44,20 +85,7 @@ Concerning the main code:
   work for virtual derived types from RefCounted.  I guess that's why it fails
   for Aff_transformation too...  What's the solution.  Ask Stefan if he has a
   clue.
-- GCC 2.96 fails right now (and in a different way with -g and -O2...).......
-  Maybe it's temporary, so let's wait and retry later... [ today's 14 June 00 ]
-- KCC 4.0 fails when optimizing...
-- Check if the symbols beginning with an underscore must be fixed.
-  Move IA/_FPU.h to CGAL/FPU.h (keeping the CVS history) ?
-- Use STL's relational operators from <utility>.  Check produced code before
-  switching for all...
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
-- volatile should be removed from FPU_empiric_test() now that we enforce this
-  everywhere.
-- Move the constant propagation barriers more deeply, where they are needed.
-  (i.e. just before the actual FP operations that need to be done at run time)
-  And go towards an ISO C9X compliant implementation.
-- Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
   Target convert_from_to (const Target, const Source) is fine ?
   It could maybe be made better this way:
@@ -65,6 +93,7 @@ Concerning the main code:
   Suggest that to Stefan for misc.h ?
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
+- Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
   (ça évite de le faire inutilement pour les variables intermédiaires,
@@ -74,7 +103,6 @@ Concerning the main code:
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? See C9X and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
-? Implement convert_to for: long double, long long (CGAL..._64), CLN.
 
 - Un patch dans GCC 2.96:
         (C++) patch: -fno-enforce-eh-specs

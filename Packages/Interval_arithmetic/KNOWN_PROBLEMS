@@ -40,11 +40,10 @@ with the rounding modes used in this package.
 
   Solution:
   - stopping propagation by disabling optimization (=> slow).
+  - put the constant in a global variable.
   - using a macro with "volatile" in the Interval_nt constructor, which stops
     any propagation at the entry.  The drawback is that it also stops many
-    other optimizations.
-
-  The workaround is not enabled by default.
+    other optimizations.  We now use this macro only just before it is needed.
 
 3/ std::sqrt() on Windows (GCC CygWin and VC++):
 ------------------------------------------------
@@ -55,9 +54,6 @@ with the rounding modes used in this package.
   The fix would be to provide our own cgal_sqrt_ms_workaround() in extern C
   precompiled module.
   
-  Since it's not that much used, I haven't done it yet, but it should be done
-  one day for correctness.  Maybe CygWin / GCC 2.95 fixes that (not tested).
-
 4/ is_valid() bug with VC++:
 ----------------------------
 
@@ -87,6 +83,13 @@ with the rounding modes used in this package.
   Solution: adding parenthesis.
 
   Also, it seems it optimizes "d<=d" to true, even if d is NaN...
+
+6/ ISO C99:
+-----------
+
+  The new (May'00) C standard specifies compiler and library requirements
+  to implement portable interval arithmetic !!!
+  Problem: it's not fully implemented anywhere that I know of.
 
 --
 Sylvain
