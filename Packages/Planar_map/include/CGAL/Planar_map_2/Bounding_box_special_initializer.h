@@ -33,12 +33,15 @@ Bounding_box_base* init_default_bounding_box(T_*) const
 
 #ifdef CGAL_PM_STRAIGHT_EXACT_TRAITS_H
 template <class R_>
-Bounding_box_base* init_default_bounding_box(Pm_straight_exact_traits<R_>*) const
+Bounding_box_base* init_default_bounding_box(Pm_straight_exact_traits<R_>*)
+const
 {
   return new Pm_dynamic_open_bounding_box<Self>;
 }
 template <class R_>
-Bounding_box_base* init_default_bounding_box(const Pm_straight_exact_traits<R_>*) const
+Bounding_box_base* 
+init_default_bounding_box(const Pm_straight_exact_traits<R_>*)
+const
 {
   return new Pm_dynamic_open_bounding_box<Self>;
 }
@@ -48,7 +51,8 @@ Bounding_box_base* init_default_bounding_box(Pm_straight_exact_traits<R_>*)
   return new Pm_dynamic_open_bounding_box<Self>;
 }
 template <class R_>
-Bounding_box_base* init_default_bounding_box(const Pm_straight_exact_traits<R_>*)
+Bounding_box_base* 
+init_default_bounding_box(const Pm_straight_exact_traits<R_>*)
 {
   return new Pm_dynamic_open_bounding_box<Self>;
 }

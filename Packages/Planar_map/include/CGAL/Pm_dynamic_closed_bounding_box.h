@@ -77,10 +77,12 @@ public:
     //  typedef std::list<X_curve> X_curve_container;
     //  typedef Topological_map<_Dcel> TPM;
   */
-  typedef typename Planar_map::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Planar_map::Holes_iterator Holes_iterator;
-  typedef typename Planar_map::Holes_const_iterator Holes_const_iterator;
-  typedef typename Planar_map::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+  typedef typename Planar_map::Halfedge_around_vertex_circulator 
+                                             Halfedge_around_vertex_circulator;
+  typedef typename Planar_map::Holes_iterator                   Holes_iterator;
+  typedef typename Planar_map::Holes_const_iterator       Holes_const_iterator;
+  typedef typename Planar_map::Ccb_halfedge_const_circulator 
+                                                 Ccb_halfedge_const_circulator;
   typedef typename Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   /*
     typedef typename Base::Size Size;
@@ -96,7 +98,8 @@ public:
   }
   bool insert(const Point& p) {
     // Returns true if bounding box remained unchanged.
-    Bounding_box bold = traits->get_bounding_box(), b=traits->increase_bounding_box(p);
+    Bounding_box bold = traits->get_bounding_box(), 
+                 b    = traits->increase_bounding_box(p);
     if (b!=bold)
       {
         Traits* PL_traits=(Traits*)get_point_location()->get_traits();
@@ -151,7 +154,8 @@ public:
     CGAL_assertion(debug_invariant());
 #endif
     
-    Bounding_box bold = traits->get_bounding_box(), b=traits->increase_bounding_box(cv);
+    Bounding_box bold = traits->get_bounding_box(), 
+                 b    = traits->increase_bounding_box(cv);
     
     if (b!=bold)
       {
@@ -311,7 +315,8 @@ public:
               }
             else {++it;++it;}
           }
-        // make sure that the intersection of the curve with the vertical ray is inside the bounding box
+        // make sure that the intersection of the curve with the vertical ray 
+	// is inside the bounding box
         // (if such intersection exists).
       }
     else if (lt==Planar_map::VERTEX)
@@ -383,7 +388,11 @@ protected:
           Ccb_halfedge_const_circulator begin(he->twin());
           Ccb_halfedge_const_circulator circ=begin;
           while (++circ!=begin) 
-            { if (circ->face()==unbounded) lt=Planar_map::UNBOUNDED_FACE; break;}
+            { 
+	      if (circ->face()==unbounded) 
+		lt=Planar_map::UNBOUNDED_FACE; 
+	      break;
+	    }
         }
         break;
       case Planar_map::EDGE:
@@ -396,13 +405,17 @@ protected:
             begin=he->target()->incident_halfedges(),
             circ=begin;
           while (++circ!=begin) 
-            { if (circ->face()==unbounded) lt=Planar_map::UNBOUNDED_VERTEX; break;}
+            { 
+	      if (circ->face()==unbounded) 
+		lt=Planar_map::UNBOUNDED_VERTEX; 
+	      break;
+	    }
         }
         break;
       }
   }
   
-  //	bool cooriented(const Ccb_halfedge_circulator& h,const X_curve& cv) const
+  //bool cooriented(const Ccb_halfedge_circulator& h,const X_curve& cv) const
   bool cooriented(const Halfedge_const_handle& h,const X_curve& cv) const
     // Returns weather the halfedge and the curve are cooriented or not.
   {
@@ -410,17 +423,19 @@ protected:
     const Point& s=h->source()->point(),&t=h->target()->point();
     if (traits->point_is_same_x(s,t))
       {
-        CGAL_precondition(
-                          traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP || 
-                          traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_DOWN);
-        return (traits->point_is_higher(t,s)==(traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP));
+        CGAL_precondition( 
+	  traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP || 
+	  traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_DOWN);
+        return (traits->point_is_higher(t,s) ==
+		(traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP));
       }
     else
       {
         CGAL_precondition(
-                          traits->curve_get_status(cv)==Traits::CURVE_RIGHT ||
-                          traits->curve_get_status(cv)==Traits::CURVE_LEFT);
-        return (traits->point_is_right(t,s)==(traits->curve_get_status(cv)==Traits::CURVE_RIGHT));
+          traits->curve_get_status(cv)==Traits::CURVE_RIGHT ||
+	  traits->curve_get_status(cv)==Traits::CURVE_LEFT);
+        return (traits->point_is_right(t,s) ==
+		(traits->curve_get_status(cv)==Traits::CURVE_RIGHT));
       }
   }
   
@@ -541,14 +556,14 @@ protected:
         get_point_location()->update(halfedge_on_boundary);
         
         if (intersection_on_boundary)
-				// Synchronize between the new boundary and the old boundary.
+	// Synchronize between the new boundary and the old boundary.
           {
             while (
                    !traits->is_point_on_curve(
-                                              *boundary_circ,
-                                              halfedge_on_boundary->target()->point())
+                      *boundary_circ,
+		      halfedge_on_boundary->target()->point())
                    ) boundary_circ++;
-				// new_boundary_it contains an intersection point.
+	    // new_boundary_it contains an intersection point.
             while(
                   target_is_intersection_point(circ,curr_endp) &&
                   traits->is_point_on_curve(*boundary_circ,curr_endp)
@@ -557,15 +572,15 @@ protected:
                 halfedge_on_boundary=circ;
                 ++circ;
               }
-				// Synchronize boundary curve iterator and halfedge circulator.
-				// Curve turns counter clockwise, while halfedge turns clockwise.
+	    // Synchronize boundary curve iterator and halfedge circulator.
+	    // Curve turns counter clockwise, while halfedge turns clockwise.
             
             X_curve curr_cv=*boundary_circ;
-				// last curves along old and new boundaries.
+	    // last curves along old and new boundaries.
             bool last_was_intersecting=false;
-				// last edge's target had an intersection point. 
+	    // last edge's target had an intersection point. 
             Halfedge_around_vertex_circulator inter_edge=circ;
-				// auxiliary halfedge for the intersection point calculation.
+	    // auxiliary halfedge for the intersection point calculation.
             ++inter_edge;
             curr_endp=traits->curve_target(inter_edge->curve());
             ++circ; // circ is oriented clockwise.
@@ -594,69 +609,70 @@ protected:
                 }
               ++circ; // circ is oriented clockwise.
               
-              // don't forget to remove the old halfedges!!!
-              // optimization: need not remove all corver halfedges, only in case of a lack, or an over use.
+	      // don't forget to remove the old halfedges!!!
+              // optimization: need not remove all corver halfedges, 
+	      // only in case of a lack, or an over use.
               
             } while (circ!=begin);
             
-				/*
-                                  const X_curve& cv=vnext->curve();
-                                  Halfedge_handle h=vnext;
-                                  Vertex_handle 
-                                  s=h->source(),
-                                  t=h->target(); 
-				// optimization: never handle both h and h->twin().
-				if (h->face()==h->twin()->face() && 
-				traits->point_is_left_low(s->point(),t->point())) 
-				{
-				#ifdef CGAL_PM_DEBUG
-				CGAL_precondition( 
-				traits->point_is_same(
-				traits->curve_source(h->curve()),h->source()->point()) &&
-				traits->point_is_same(
-				traits->curve_target(h->curve()),h->target()->point()) ||
-				traits->point_is_same(
-				traits->curve_source(h->curve()),h->target()->point()) &&
-				traits->point_is_same(
-				traits->curve_target(h->curve()),h->source()->point()) );
-				#endif
-				--circ;
-				// turn counter clockwise around face.
-				continue;
-				}
-				if (cooriented(h,cv))
-				{
-				t->set_point(traits->curve_target(cv));
-				s->set_point(traits->curve_source(cv));
-				}
-				else
-				{
-				t->set_point(traits->curve_source(cv));
-				s->set_point(traits->curve_target(cv));
-				}
-				CGAL_postcondition(!traits->point_is_same(
-				h->source()->point(),h->target()->point()));
-				#ifdef CGAL_PM_DEBUG
-				CGAL_precondition( 
-				traits->point_is_same(
-				traits->curve_source(h->curve()),h->source()->point()) &&
-				traits->point_is_same(
-				traits->curve_target(h->curve()),h->target()->point()) ||
-				traits->point_is_same(
-				traits->curve_source(h->curve()),h->target()->point()) &&
-				traits->point_is_same(
-				traits->curve_target(h->curve()),h->source()->point()) );
-				#endif
-				}
-				else
-				{
-				
-				  }
-				  ++circ;
-				  } while (circ!=begin);
-				  //		++it;
-				*/
-				
+/*
+  const X_curve& cv=vnext->curve();
+  Halfedge_handle h=vnext;
+  Vertex_handle 
+  s=h->source(),
+  t=h->target(); 
+  // optimization: never handle both h and h->twin().
+  if (h->face()==h->twin()->face() && 
+  traits->point_is_left_low(s->point(),t->point())) 
+  {
+  #ifdef CGAL_PM_DEBUG
+  CGAL_precondition( 
+  traits->point_is_same(
+  traits->curve_source(h->curve()),h->source()->point()) &&
+  traits->point_is_same(
+  traits->curve_target(h->curve()),h->target()->point()) ||
+  traits->point_is_same(
+  traits->curve_source(h->curve()),h->target()->point()) &&
+  traits->point_is_same(
+  traits->curve_target(h->curve()),h->source()->point()) );
+  #endif
+  --circ;
+  // turn counter clockwise around face.
+  continue;
+  }
+  if (cooriented(h,cv))
+  {
+  t->set_point(traits->curve_target(cv));
+  s->set_point(traits->curve_source(cv));
+  }
+  else
+  {
+  t->set_point(traits->curve_source(cv));
+  s->set_point(traits->curve_target(cv));
+  }
+  CGAL_postcondition(!traits->point_is_same(
+  h->source()->point(),h->target()->point()));
+  #ifdef CGAL_PM_DEBUG
+  CGAL_precondition( 
+  traits->point_is_same(
+  traits->curve_source(h->curve()),h->source()->point()) &&
+  traits->point_is_same(
+  traits->curve_target(h->curve()),h->target()->point()) ||
+  traits->point_is_same(
+  traits->curve_source(h->curve()),h->target()->point()) &&
+  traits->point_is_same(
+  traits->curve_target(h->curve()),h->source()->point()) );
+  #endif
+  }
+  else
+  {
+  
+  }
+  ++circ;
+  } while (circ!=begin);
+  //		++it;
+*/
+	    
           }
         else
 				// Recreate the whole boundary.
@@ -701,7 +717,8 @@ protected:
             currcv=nextcv;
             ++nextcv;
           }
-        curre = pm->insert_at_vertices(*currcv, curre->target(), first->source());
+        curre = pm->insert_at_vertices(*currcv, curre->target(), 
+				       first->source());
         
         CGAL_assertion(curre->next_halfedge()==first);
       }
@@ -753,5 +770,5 @@ Special situations:
 	 
 	  */
 	  
-	  /* optimization: It is possible to keep a pointer to a bounding box, instead of a 
-	  virtual base class. */
+	  /* optimization: It is possible to keep a pointer to a bounding box,
+             instead of a virtual base class. */

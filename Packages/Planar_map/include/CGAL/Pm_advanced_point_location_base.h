@@ -55,8 +55,12 @@ public:
 	
 	Pm_advanced_point_location_base():Pm_point_location_base {}
 	
-	virtual Halfedge_handle ray_shoot(const Point& p, Locate_type& lt, const X_curve&) = 0;
-	virtual Halfedge_handle x_curve_shoot(const Point& p, Locate_type& lt, const Ray&) = 0;
+	virtual Halfedge_handle ray_shoot(const Point& p, 
+					  Locate_type& lt, 
+					  const X_curve&) = 0;
+	virtual Halfedge_handle x_curve_shoot(const Point& p, 
+					      Locate_type& lt, 
+					      const Ray&) = 0;
 	
 };
 

@@ -33,7 +33,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
-const typename Pm_straight_exact_traits<R_>::Bounding_box Pm_straight_exact_traits<R_>::unbounded_box;
+const typename Pm_straight_exact_traits<R_>::Bounding_box 
+Pm_straight_exact_traits<R_>::unbounded_box;
 
 CGAL_END_NAMESPACE
 

@@ -219,7 +219,8 @@ public:
     }
   
   Comparison_result 
-  curve_compare_at_x_right(const X_curve &cv1, const X_curve &cv2, const Point & q) const 
+  curve_compare_at_x_right(const X_curve &cv1, const X_curve &cv2, 
+			   const Point & q) const 
   {
     // cases  in which the function isn't defined
     //CGAL_assertion(!curve_is_vertical(cv1));

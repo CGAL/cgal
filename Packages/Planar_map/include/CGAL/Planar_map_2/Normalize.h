@@ -112,7 +112,9 @@ inline bool normalize_coordinates(Iso_rectangle_2<R_>& bb)  {
 }
 #ifdef CGAL_CARTESIAN_H
 #ifdef CGAL_LEDA_RATIONAL_H
-inline bool normalize_coordinates(Iso_rectangle_2<Cartesian<leda_rational> >& bb)  {
+inline bool normalize_coordinates(
+              Iso_rectangle_2<Cartesian<leda_rational> >& bb)
+{
   //    return normalize(bb[0])&&normalize(bb[2]); 
   // Should be implemented internally in Iso_rectangle, in the near future.
   CGAL::Point_2<Cartesian<leda_rational> > min=bb[0];
@@ -126,12 +128,15 @@ inline bool normalize_coordinates(Iso_rectangle_2<Cartesian<leda_rational> >& bb
 }
 #endif
 #ifdef CGAL_LEDA_INTEGER_H
-  inline bool normalize_coordinates(Iso_rectangle_2<Cartesian<leda_integer> >& bb)  {
+  inline bool normalize_coordinates(
+                Iso_rectangle_2<Cartesian<leda_integer> >& bb)
+{
     //    return normalize_coordinates(bb[0])&&normalize_coordinates(bb[2]); 
     // Should be implemented internally in Iso_rectangle, in the near future.
     CGAL::Point_2<Cartesian<leda_integer> > min=bb[0];
     CGAL::Point_2<Cartesian<leda_integer> > max=bb[2];
-    if (normalize_coordinates(min)||normalize_coordinates(max)) bb=CGAL::Iso_rectangle_2<Cartesian<leda_integer> >(min,max);
+    if (normalize_coordinates(min)||normalize_coordinates(max)) 
+      bb=CGAL::Iso_rectangle_2<Cartesian<leda_integer> >(min,max);
     return bb;    
   }
 #endif
@@ -139,8 +144,11 @@ inline bool normalize_coordinates(Iso_rectangle_2<Cartesian<leda_rational> >& bb
 #ifdef CGAL_HOMOGENEOUS_H
 #ifdef CGAL_LEDA_RATIONAL_H
 /*
-  inline bool normalize_coordinates(Iso_rectangleH2<Homogeneous<leda_rational> >& bb)  {
-    return normalize_coordinates((PointH2<Homogeneous<leda_rational> >&) bb[0])&&normalize_coordinates((PointH2<Homogeneous<leda_rational> >&) bb[2]);
+  inline bool normalize_coordinates(
+                Iso_rectangleH2<Homogeneous<leda_rational> >& bb)  {
+    return 
+    normalize_coordinates((PointH2<Homogeneous<leda_rational> >&) bb[0]) &&
+    normalize_coordinates((PointH2<Homogeneous<leda_rational> >&) bb[2]);
   }
 */
 #endif

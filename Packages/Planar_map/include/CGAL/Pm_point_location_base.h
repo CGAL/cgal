@@ -50,7 +50,8 @@ public:
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
   typedef typename Planar_map::Halfedge Halfedge;
   typedef std::vector<Halfedge_handle> Halfedge_handle_container;
-	typedef typename Halfedge_handle_container::iterator Halfedge_handle_iterator;
+  typedef typename Halfedge_handle_container::iterator 
+                                        Halfedge_handle_iterator;
   typedef typename Traits::X_curve X_curve;
 //  typedef typename Traits::X_curve_iterator X_curve_iterator;
   typedef typename Traits::Point Point;
@@ -77,7 +78,8 @@ public:
   virtual Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, 
                                              bool up) const = 0;
   /* Applies the bounding box */
-  virtual Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up)
+  virtual Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, 
+					     bool up)
   {
     return vertical_ray_shoot(p,lt,up);
   }

@@ -57,8 +57,9 @@
 #endif
 #endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
-// for solving the dynamic cast in the copy constructor, these lines will be removed after writing 
-//copy construtor for point location.
+// for solving the dynamic cast in the copy constructor, 
+// these lines will be removed after writing 
+// copy construtor for point location.
 #ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #endif
@@ -274,9 +275,9 @@ public:
   Planar_map_2(const Self& pm){
     // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
     //                                pm.get_point_bbox());
-
-    typedef         Pm_naive_point_location<Planar_map_2<Dcel,Traits> >  Pm_naive;
-    typedef         Pm_naive*                                            Pm_naive_pointer;
+    
+    typedef Pm_naive_point_location<Planar_map_2<Dcel,Traits> >  Pm_naive;
+    typedef Pm_naive*                                    Pm_naive_pointer;
 
     traits = new Traits_wrap();
     use_delete_traits = true;

@@ -94,7 +94,8 @@ public:
 
     Token(const Bounding_box& t) : b(t) {};
 
-    virtual void rebuild_bounding_box(const Point_location_base* p) const {((Traits*)p->get_traits())->set_bounding_box(b);}
+    virtual void rebuild_bounding_box(const Point_location_base* p) const 
+    {((Traits*)p->get_traits())->set_bounding_box(b);}
   private:
     const Bounding_box& b;
   };
@@ -276,7 +277,8 @@ public:
               return false;
             else {++it;++it;}
           }
-        // make sure that the intersection of the curve with the vertical ray is inside the bounding box
+        // make sure that the intersection of the curve with the vertical ray 
+	// is inside the bounding box
         // (if such intersection exists).
       }
     else if (lt==Planar_map::VERTEX)
@@ -381,7 +383,8 @@ protected:
         CGAL_precondition(
           traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP || 
           traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_DOWN);
-        return (traits->point_is_higher(t,s)==(traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP));
+        return (traits->point_is_higher(t,s) ==
+		(traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP));
       }
     else
       {
@@ -476,10 +479,13 @@ protected:
             traits->curve_source(h->curve()),
             h->target()->point()) &&
           traits->point_is_same(
-                                traits->curve_target(h->curve()),h->source()->point())))
+                                traits->curve_target(h->curve()),
+				h->source()->point())))
           {
-            std::cout << "\ncurve_source(h->curve())=" << traits->curve_source(h->curve());
-            std::cout << " curve_target(h->curve())=" << traits->curve_target(h->curve());
+            std::cout << "\ncurve_source(h->curve())=" 
+		      << traits->curve_source(h->curve());
+            std::cout << " curve_target(h->curve())=" 
+		      << traits->curve_target(h->curve());
             std::cout << " h->source()->point()=" << h->source()->point();
             std::cout << " h->target()->point()=" << h->target()->point();
           }

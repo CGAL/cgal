@@ -349,14 +349,17 @@ public:
 	std::cerr << "\nt=" << t;
 	std::cerr << "\nleftmost(s, t)=" << leftmost(s, t);
 	std::cerr << "\nrightmost(s, t)=" << rightmost(s, t);
-	std::cerr << "\n!is_right(q, rightmost(s, t))=" << !is_right(q, rightmost(s, t)) ? "true" : "false";
-	std::cerr << "\n!is_left(q, leftmost(s, t))=" << !is_left(q, leftmost(s, t)) ? "true" : "false";
+	std::cerr << "\n!is_right(q, rightmost(s, t))=" 
+                  << !is_right(q, rightmost(s, t)) ? "true" : "false";
+	std::cerr << "\n!is_left(q, leftmost(s, t))=" 
+                  << !is_left(q, leftmost(s, t)) ? "true" : "false";
 	std::cerr.flush();
       */
       return !is_right(q, rightmost(s, t)) && !is_left(q, leftmost(s, t));
     }
   /*
-    bool unbounded_curve_is_in_x_range(const X_curve & cv, const Point & q) const
+    bool unbounded_curve_is_in_x_range(const X_curve & cv, const Point & q) 
+    const
     { 
     switch(cv.get_type())
     {
@@ -476,7 +479,7 @@ public:
 		    return SMALLER;
 		    
 		    if ( is_higher(curve_source(cv2), p1) ) // bug fix (Oren)
-		    The answer should be independent of the curve's orientation !!
+	    The answer should be independent of the curve's orientation !!
 		    
 		    p1 x--x               p1 x--x
 		    |                     /\
@@ -504,39 +507,50 @@ public:
   Comparison_result 
     curve_compare_at_x_left(const X_curve &cv1, const X_curve &cv2, 
 			    const Point &q) const 
-    {
-      // cases  in which the function isn't defined
-      //CGAL_assertion(!curve_is_vertical(cv1));
-      //CGAL_assertion(!curve_is_vertical(cv2));
-		  //CGAL_assertion(is_left(leftmost(curve_source(cv1), curve_target(cv1)), q));
-		  //CGAL_assertion(is_left(leftmost(curve_source(cv2), curve_target(cv2)), q));
+  {
+    // cases  in which the function isn't defined
+    //CGAL_assertion(!curve_is_vertical(cv1));
+    //CGAL_assertion(!curve_is_vertical(cv2));
+    //CGAL_assertion(is_left(leftmost(curve_source(cv1), 
+    //curve_target(cv1)), q));
+    //CGAL_assertion(is_left(leftmost(curve_source(cv2), 
+    //curve_target(cv2)), q));
+      
+    if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) 
+      return EQUAL;
+    if (!is_left(leftmost(curve_source(cv1), curve_target(cv1)), q)) 
+      return EQUAL;
+    if (!is_left(leftmost(curve_source(cv2), curve_target(cv2)), q)) 
+      return EQUAL;
 		  
-		  if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-		  if (!is_left(leftmost(curve_source(cv1), curve_target(cv1)), q)) return EQUAL;
-		  if (!is_left(leftmost(curve_source(cv2), curve_target(cv2)), q)) return EQUAL;
+    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
 		  
-		  Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-		  
-		  if ( r != EQUAL)
-			  return r;     // since the curve is continous 
-		  
-		  // <cv2> and <cv1> meet at a point with the same x-coordinate as q
-		  // compare their derivatives
-		  return compare_value(curve_derivative(cv2), curve_derivative(cv1));
-	  }
+    if ( r != EQUAL)
+      return r;  // since the curve is continous 
+		 
+    // <cv2> and <cv1> meet at a point with the same x-coordinate as q
+    // compare their derivatives
+    return compare_value(curve_derivative(cv2), curve_derivative(cv1));
+  }
 	  
   Comparison_result 
-    curve_compare_at_x_right(const X_curve &cv1, const X_curve &cv2, const Point & q) const 
+    curve_compare_at_x_right(const X_curve &cv1, const X_curve &cv2, 
+			     const Point & q) const 
     {
       // cases  in which the function isn't defined
       //CGAL_assertion(!curve_is_vertical(cv1));
       //CGAL_assertion(!curve_is_vertical(cv2));
-      //CGAL_assertion(is_right(rightmost(curve_source(cv1), curve_target(cv1)), q));
-      //CGAL_assertion(is_right(rightmost(curve_source(cv2), curve_target(cv2)), q));
+      //CGAL_assertion(is_right(rightmost(curve_source(cv1), 
+      //curve_target(cv1)), q));
+      //CGAL_assertion(is_right(rightmost(curve_source(cv2), 
+      //curve_target(cv2)), q));
       
-      if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) return EQUAL;
-      if (!is_right(rightmost(curve_source(cv1), curve_target(cv1)), q)) return EQUAL;
-      if (!is_right(rightmost(curve_source(cv2), curve_target(cv2)), q)) return EQUAL;
+      if (curve_is_vertical(cv1) || (curve_is_vertical(cv2))) 
+	return EQUAL;
+      if (!is_right(rightmost(curve_source(cv1), curve_target(cv1)), q)) 
+	return EQUAL;
+      if (!is_right(rightmost(curve_source(cv2), curve_target(cv2)), q)) 
+	return EQUAL;
       
       Comparison_result r = curve_compare_at_x(cv1, cv2, q);
       
@@ -601,7 +615,8 @@ public:
     case X_UNBOUNDED:
     return ((X_unbounded_curve&)cv).direction();
     default:
-    CGAL_assertion(cv.current_state()==X_BOUNDED||cv.current_state()==X_TARGET_UNBOUNDED||
+    CGAL_assertion(cv.current_state()==X_BOUNDED||
+    cv.current_state()==X_TARGET_UNBOUNDED||
     cv.current_state()==X_SOURCE_UNBOUNDED||cv.current_state()==X_UNBOUNDED);
     }
     return Direction();
@@ -637,13 +652,13 @@ public:
       if (is_point_bounded(p)) 
 	{
 	  CGAL_precondition(
-			    cv.get_type()==X_BOUNDED && 
-			    is_same(((X_bounded_curve&)cv).source(),p) ||
-			    cv.get_type()==X_BOUNDED && 
-			    is_same(((X_bounded_curve&)cv).target(),p) ||
-			    (cv.get_type()==X_TARGET_UNBOUNDED || 
-			     cv.get_type()==X_SOURCE_UNBOUNDED) && 
-			    is_same(((X_target_unbounded_curve&)cv).source(),p));
+		    cv.get_type()==X_BOUNDED && 
+		    is_same(((X_bounded_curve&)cv).source(),p) ||
+		    cv.get_type()==X_BOUNDED && 
+		    is_same(((X_bounded_curve&)cv).target(),p) ||
+		    (cv.get_type()==X_TARGET_UNBOUNDED || 
+		     cv.get_type()==X_SOURCE_UNBOUNDED) && 
+		    is_same(((X_target_unbounded_curve&)cv).source(),p));
 	  if (cv.get_type()==X_BOUNDED && 
 	      is_same(((X_bounded_curve&)cv).target(),p) ||
 	      cv.get_type()==X_SOURCE_UNBOUNDED)
@@ -915,29 +930,29 @@ public:
 	}	
 	
 public:
-	Point curve_calc_point_old(const X_curve &cv, const Point & q) const
-		// 	Used to draw an arrow representation of the vertical ray shoot.
-	{
-		// CGAL_assertion (!curve_is_in_s_range(cv, q));
-		if ( !curve_is_in_x_range(cv, q) )
-			return curve_source(cv);
-		
-		if (curve_is_vertical(cv))
-			return curve_source(cv);
-		
-		//return Point(q.x(), curve_source(cv).y() + 
-		//             (curve_target(cv).y() - curve_source(cv).y()) / 
-		//             (curve_target(cv).x() - curve_source(cv).x()) * 
-		//             (q.x() - curve_source(cv).x()) );
-		
-		const Point & a = curve_source(cv);
-		const Point & b = curve_target(cv);
-		return Point ((b.hx() * a.hw() - a.hx() * b.hw()) * q.hx() * a.hw(),
-			(b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
-			(b.hy() * a.hw() - a.hy() * b.hw()) * 
-			(q.hx() * a.hw() - a.hx() * q.hw()),  
-			(b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
-	}
+  Point curve_calc_point_old(const X_curve &cv, const Point & q) const
+    // Used to draw an arrow representation of the vertical ray shoot.
+  {
+    // CGAL_assertion (!curve_is_in_s_range(cv, q));
+    if ( !curve_is_in_x_range(cv, q) )
+      return curve_source(cv);
+    
+    if (curve_is_vertical(cv))
+      return curve_source(cv);
+    
+    //return Point(q.x(), curve_source(cv).y() + 
+    //             (curve_target(cv).y() - curve_source(cv).y()) / 
+    //             (curve_target(cv).x() - curve_source(cv).x()) * 
+    //             (q.x() - curve_source(cv).x()) );
+    
+    const Point & a = curve_source(cv);
+    const Point & b = curve_target(cv);
+    return Point ((b.hx() * a.hw() - a.hx() * b.hw()) * q.hx() * a.hw(),
+		  (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hy() + 
+		  (b.hy() * a.hw() - a.hy() * b.hw()) * 
+		  (q.hx() * a.hw() - a.hx() * q.hw()),  
+		  (b.hx() * a.hw() - a.hx() * b.hw()) * q.hw() * a.hw());
+  }
   Point curve_calc_point(const X_curve &cv, const Point & q) const
     // 	Used to draw an arrow representation of the vertical 
     // ray shoot.
@@ -962,7 +977,7 @@ public:
     //             (curve_target(cv).x() - curve_source(cv).x()) * 
     //             (q.x() - curve_source(cv).x()) );
     Point res1((t.hx() * s.hw() - s.hx() * t.hw()) * q.hx() * s.hw(),
-               //			(t.hx() * s.hw() - s.hx() * t.hw()) * q.hw() * s.hy() + 
+	       // (t.hx() * s.hw() - s.hx() * t.hw()) * q.hw() * s.hy() + 
                //			(t.hy() * s.hw() - s.hy() * t.hw()) * 
                //			(q.hx() * s.hw() - s.hx() * q.hw()),  
                (t.hx() * q.hw() - q.hx() * t.hw()) * s.hw() * s.hy() + 
@@ -1006,7 +1021,8 @@ public:
           CGAL_warning(seg.has_on(res1));
           CGAL_warning(seg.has_on(res2));
           CGAL_warning(seg.collinear_has_on(res1));
-          CGAL_warning(seg.collinear_has_on(res2));					break;
+          CGAL_warning(seg.collinear_has_on(res2));
+	  break;
         }
       }
 #endif
@@ -1048,9 +1064,12 @@ private:
   /* Returns the bbox's point boundary starting from left bottom 
      counter clockwise. */
 protected:
-  inline const Point get_point_boundary(const Boundary_type& i,const Bounding_box& b) const {
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
-		return b[i];
+  inline const Point get_point_boundary(const Boundary_type& i,
+					const Bounding_box& b) const 
+  {
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
+    return b[i];
   }
   inline const Point get_point_boundary(const Boundary_type& i) const {
     return get_point_boundary(i,bbox);
@@ -1067,9 +1086,11 @@ protected:
                                             const Bounding_box& b) const {
     /* returns the bounding box x_curve boundary starting from 
        bottom counter clockwise. */
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
-		CGAL_warning_msg(i>=0 && i<4,"\nVertex should be within the range {0,1,2,3}");
-		return Segment(b[i],b[(i+1)%4]);
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
+    CGAL_warning_msg(i>=0 && i<4,
+		     "\nVertex should be within the range {0,1,2,3}");
+    return Segment(b[i],b[(i+1)%4]);
   }
   inline const X_curve get_x_curve_boundary(const Boundary_type& i) const {
     return get_x_curve_boundary(i,bbox);
@@ -1100,7 +1121,8 @@ public:
        cv.bound_state()==X_curve::MIN_UNBOUNDED||
        cv.bound_state()==X_curve::BOTH_UNBOUNDED||
        cv.bound_state()==X_curve::LINE_EMPTY,
-       "Wrong curve type in\nbool is_source_unbounded(const X_curve& cv) const");
+       "Wrong curve type in\n"
+       "bool is_source_unbounded(const X_curve& cv) const");
     return false;
   }
   bool is_target_unbounded(const X_curve& cv) const{
@@ -1120,7 +1142,8 @@ public:
       cv.bound_state()==X_curve::MAX_UNBOUNDED||
       cv.bound_state()==X_curve::BOTH_UNBOUNDED||
       cv.bound_state()==X_curve::LINE_EMPTY,
-      "Wrong curve type in\nbool is_target_unbounded(const X_curve& cv) const");
+      "Wrong curve type in\n"
+      "bool is_target_unbounded(const X_curve& cv) const");
     return false;
   }
   
@@ -1193,7 +1216,8 @@ public:
 	cv.current_state()==X_curve::RAY||
 	cv.current_state()==X_curve::LINE||
 	cv.current_state()==X_curve::EMPTY,
-	"Wrong curve type in\nconst Bounding_box get_bounding_box(const X_curve& cv) const");
+	"Wrong curve type in\n"
+	"const Bounding_box get_bounding_box(const X_curve& cv) const");
       return bbox;
     }
 
@@ -1285,7 +1309,8 @@ public:
 				      const Bounding_box& b) const
   /* Returns a bounding box that encloses both the curve and the box */
   {
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     Point p;
     switch(cv.current_state())
       {
@@ -1490,11 +1515,12 @@ public:
     const
   /* 
      Returns true of the input Point is inside the open input Bounding_box.
-     Otherwise returns false and sets the input Boundary_type parameter to one of
-     the sides evident to this fact.
+     Otherwise returns false and sets the input Boundary_type parameter to one 
+     of the sides evident to this fact.
   */
   {
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     if (b.has_on_bounded_side(p)) return true;
     else // bbox[0] - left bottom, bbox[2] - right top
       {
@@ -1532,7 +1558,8 @@ public:
                   << "," << t << "," << b << ")";
       }
 #endif
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     switch(cv.current_state())
       {
       case X_curve::SEGMENT:
@@ -1563,7 +1590,8 @@ public:
      if (!l.is_vertical()) t=(compare_y_at_x(b[0],l)==SMALLER) ? TOP : BOTTOM;
      else t=compare_at_x(b[0],l.point())==SMALLER) ? RIGHT : LEFT;
      #ifdef CGAL_PM_DEBUG
-     CGAL_assertion(!l.is_vertical() && t==(compare_y_at_x(b[2],l)==SMALLER) ? TOP : BOTTOM ||
+     CGAL_assertion(!l.is_vertical() && t ==
+     (compare_y_at_x(b[2],l)==SMALLER) ? TOP : BOTTOM ||
      t==compare_at_x(b[2],l.point())==SMALLER) ? RIGHT : LEFT);
      #endif
      }
@@ -1612,13 +1640,15 @@ public:
   bool is_point_bounded(const Point& p, const Bounding_box& b) const
 /* Returns true if the input point is inside the closed input Bounding_box. */
   {
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     return b.bounded_side(p)!=ON_UNBOUNDED_SIDE;
   }
   bool is_point_bounded_inside(const Point& p, const Bounding_box& b) const
 /* Returns true if the input point is inside the open input Bounding_box. */
   {
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     return b.has_on_bounded_side(p);
   }
   /* Returns whether the point is in the bounding box*/
@@ -1635,7 +1665,8 @@ public:
     // The bounding box is supposed to be canonical, i.e. its sides are 
     // parralel to the axes.
 
-    CGAL_precondition_msg(!is_totally_unbounded(b),"Bounding_box is undefined");
+    CGAL_precondition_msg(!is_totally_unbounded(b),
+			  "Bounding_box is undefined");
     switch(cv.current_state())
       {
       case X_curve::SEGMENT:
@@ -1666,7 +1697,8 @@ public:
      if (!l.is_vertical()) t=(compare_y_at_x(b[0],l)==SMALLER) ? TOP : BOTTOM;
      else t=compare_at_x(b[0],l.point())==SMALLER) ? RIGHT : LEFT;
      #ifdef CGAL_PM_DEBUG
-     CGAL_assertion(!l.is_vertical() && t==(compare_y_at_x(b[2],l)==SMALLER) ? TOP : BOTTOM ||
+     CGAL_assertion(!l.is_vertical() && t ==
+     (compare_y_at_x(b[2],l)==SMALLER) ? TOP : BOTTOM ||
      t==compare_at_x(b[2],l.point())==SMALLER) ? RIGHT : LEFT);
      #endif
      }
@@ -1694,7 +1726,8 @@ public:
     const
 /* Returns true in the first bounding box is inside the second bounding box. */
     {
-      bool sbounded = !is_totally_unbounded(s),lbounded = !is_totally_unbounded(l);
+      bool sbounded = !is_totally_unbounded(s),
+	   lbounded = !is_totally_unbounded(l);
       if (sbounded && lbounded)
         return is_point_bounded(s[0],l) && is_point_bounded(s[2],l);
       else if (!sbounded) return !lbounded;
@@ -1705,7 +1738,8 @@ public:
   {
     return Segment(p,q);
   }
-  void get_corner(const Point& p1,const Point& p2,X_curve& cv1,X_curve& cv2, const Boundary_type& b) const
+  void get_corner(const Point& p1,const Point& p2,X_curve& cv1,X_curve& cv2, 
+		  const Boundary_type& b) const
   {
     Bounding_box box = Bounding_box(p1,p2);
     switch (b)
