@@ -23,6 +23,15 @@ For a robust version, CGAL::Filtered_exact<double, CGAL::MP_Float>
 should be used.
 --------------------------------------------------------------
 
+------- demo_color -------------------------------------------
+Constructs a Delaunay triangulation with a special Vertex base class
+containing a color (white by default).
+
+Sets the color of degree 6 vertices to red.
+
+Displays the triangulation where each vertex has its own color.
+--------------------------------------------------------------
+
 ------- demo_voronoi ------------------------------------------
 Constructs a Delaunay triangulation for points on a grid.
 
