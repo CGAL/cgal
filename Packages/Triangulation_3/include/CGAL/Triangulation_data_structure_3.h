@@ -145,6 +145,7 @@ public:
   // SETTING
   // to be protected ?
 
+  // DEPRECATED
   void set_number_of_vertices(int n) { _number_of_vertices = n; }
 
   void set_dimension(int n) { _dimension = n; }
@@ -2402,7 +2403,7 @@ clear()
   cell_container().clear();
   vertex_container().clear();
 
-  set_number_of_vertices(0);
+  _number_of_vertices = 0;
   set_dimension(-2);
 }
 

@@ -293,14 +293,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
-
-
-     //setting
-     
-  T1.set_number_of_vertices(100);
   assert(T1.dimension() == -1);
-  assert(T1.number_of_vertices() == 100);
-  //     assert(T1.is_valid());
 
      // Building some psychotics triangulations :
   std::cout << "    Constructor6 " << std::endl;

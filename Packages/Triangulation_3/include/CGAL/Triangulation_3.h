@@ -310,7 +310,8 @@ public:
     }
 
   // ASSIGNMENT
-  void set_number_of_vertices(int n) 
+  // DEPRECATED
+  void set_number_of_vertices(int n)
     { _tds.set_number_of_vertices(n+1); }
    
   // GEOMETRIC ACCESS FUNCTIONS

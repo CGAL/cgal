@@ -100,10 +100,6 @@ _test_cls_tds_3( const Tds &)
   std::cout << "ok" << std::endl;
   assert(tds6.is_valid());
 
-  // Setting functions
-  std::cout << "    setting functions" << std::endl;
-  tds1.set_number_of_vertices(1);
-  
   std::cout << "  Insert are tested in test_triangulation_3  " << std::endl;
 
   std::cout << "  Iterator and circulator are tested in test_triangulation_3  " << std::endl;
@@ -118,7 +114,6 @@ _test_cls_tds_3( const Tds &)
   assert(tds6.dimension()==3);
 
   assert(tds3.number_of_vertices()==2);
-  assert(tds1.number_of_vertices()==1);
 
   std::cout << "  Test flip " << std::endl;
   assert(tds6.is_valid());
