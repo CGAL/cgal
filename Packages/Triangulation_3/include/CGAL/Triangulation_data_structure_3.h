@@ -109,7 +109,7 @@ public:
 
     Vertex_handle() : _v() {}
     Vertex_handle(Vertex_iterator v) : _v(v) {}
-    Vertex_handle(void * n) : _v()
+    Vertex_handle(void * CGAL_triangulation_precondition_code(n)) : _v()
     { CGAL_triangulation_precondition(n == NULL); }
 
     Vertex* operator->() const { return &*_v; }
@@ -148,7 +148,7 @@ public:
     Cell_handle(Cell_circulator c) : _c(c.base()._c) {}
     Cell_handle(Face_circulator c) : _c(c.base()._c) {}
 #endif
-    Cell_handle(void * n) : _c()
+    Cell_handle(void * CGAL_triangulation_precondition_code(n)) : _c()
     { CGAL_triangulation_precondition(n == NULL); }
 
     Cell* operator->() const { return &*_c; }
