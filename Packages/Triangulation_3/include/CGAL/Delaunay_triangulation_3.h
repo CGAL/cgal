@@ -280,7 +280,8 @@ private:
 public:
 
   Bounded_side
-  side_of_sphere( const Cell_handle& c, const Point & p, bool perturb = false) const
+  side_of_sphere(const Cell_handle& c, const Point & p,
+	         bool perturb = false) const
   {
       return side_of_sphere(c->vertex(0), c->vertex(1),
                             c->vertex(2), c->vertex(3), p, perturb);
@@ -1071,7 +1072,8 @@ side_of_sphere(const Vertex_handle& v0, const Vertex_handle& v1,
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_circle(const Cell_handle& c, int i, const Point & p, bool perturb) const
+side_of_circle(const Cell_handle& c, int i,
+	       const Point & p, bool perturb) const
   // precondition : dimension >=2
   // in dimension 3, - for a finite facet
   // returns ON_BOUNDARY if the point lies on the circle,
