@@ -1,3 +1,10 @@
+10 August 2004:  Menelaos Karavelas
+- added examples in user manual
+- fixed minor problems in user manual
+- added one more example in the examples directory
+- made stylistic changes in the svd-filtered-traits.C example
+
+
 9 August 2004:  Menelaos Karavelas
 - replaced CGAL::Quadruple by boost::tuples::tuple
 - removed opposite_site method (unused) from the site classes
