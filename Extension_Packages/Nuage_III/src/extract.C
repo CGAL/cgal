@@ -105,7 +105,7 @@ file_input(const Options& opt, std::vector<Point>& points)
   int number_of_points =  opt.number_of_points;
   bool xyz = opt.xyz;
   
-  int mode = (opt.binary) ? std::ios::binary : std::ios::in;
+  std::ios::openmode mode = (opt.binary) ? std::ios::binary : std::ios::in;
   std::ifstream is(finput, mode);
 
   if(opt.binary){
