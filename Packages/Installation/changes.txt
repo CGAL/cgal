@@ -1,3 +1,8 @@
+02/04/2003 (rursu) 1.186
+----------
+	modified CGAL_CXXFLAGS. GMP and CLN include dirs should have come after CGAL config and include dirs.
+	modified lib name for QT on Windows commdlg32.lib -> comdlg32.lib
+
 28/03/2003 (rursu) 1.185
 ----------
 fixed ole_32.lib -> ole32.lib
