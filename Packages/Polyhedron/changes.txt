@@ -1,5 +1,12 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+
+     - Changes in the doc incorporating Andreas comments.
+     - Fixed inclusion of old design examples in the deprecated manual.
+     - Deleted two old design examples that are identical with the new.
+     - Fixed warnings in the test suite.
+     - Added PolyhedronTraits_3 concept doc.
+
 3.8 (18 Jun 2001)
 
      - Added missing htmlfiles and main.tex to doc_tex/basic/Polyhedron.

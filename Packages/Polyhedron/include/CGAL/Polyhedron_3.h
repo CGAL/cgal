@@ -81,6 +81,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 template <class Vertex_base>
 class I_Polyhedron_vertex  : public Vertex_base  {
 public:
@@ -309,6 +310,8 @@ private:
     void  set_face( Face_handle ff)      { Base::set_face(ff);}
     void  set_facet( Face_handle ff)     { set_face(ff);}
 };
+
+
 template <class Facet_base>
 class I_Polyhedron_facet  : public Facet_base  {
 public:
@@ -390,6 +393,8 @@ public:
         Base::set_halfedge(hh);
     }
 };
+
+
 template < class Items>
 class I_Polyhedron_derived_items_3 {
 public:
@@ -430,6 +435,8 @@ public:
         typedef I_Polyhedron_facet< Face_base> Face;
     };
 };
+
+
 template < class p_Traits,
            class p_Items = Polyhedron_items_3,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
