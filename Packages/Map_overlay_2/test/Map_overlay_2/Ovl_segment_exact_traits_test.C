@@ -2,7 +2,6 @@
 //#define  CGAL_SWEEP_LINE_DEBUG
 
 #include <CGAL/config.h> // needed for the LONGNAME flag
-#include <iostream>
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA)
@@ -18,14 +17,16 @@ int main(int argc, char* argv[])
 #else
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/Map_overlay_default_dcel.h>
 #include <CGAL/Arr_segment_exact_traits.h>
-
-#include "Map_overlay_base_test.h"
 
 // Quotient is included anyway, because it is used to read
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
 #include <CGAL/Quotient.h>
+
+#include <iostream>
+#include "Map_overlay_base_test.h"
 
 typedef CGAL::Quotient<int>                            NT;
 typedef CGAL::Cartesian<NT>                            R;

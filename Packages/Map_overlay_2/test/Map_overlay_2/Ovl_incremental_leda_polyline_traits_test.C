@@ -2,7 +2,6 @@
 //#define  OVL_DEBUG_TEST
 
 #include <CGAL/config.h> // needed for the LONGNAME flag
-#include <iostream>
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA)
@@ -17,18 +16,17 @@ int main(int argc, char* argv[])
 }
 #else
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
+#include <CGAL/leda_rational.h> 
+#include <CGAL/Map_overlay_default_dcel.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
-
 #include <CGAL/Pm_with_intersections.h>
-
+#include <CGAL/Map_overlay_incremental.h>
+#include <iostream>
 #include "Map_overlay_base_test.h"
 
-#ifndef CGAL_MAP_OVERLAY_INCREMENTAL_H
-#include <CGAL/Map_overlay_incremental.h>
-#endif
-
-typedef CGAL::Arr_leda_polyline_traits<>              Traits;
+typedef leda_rational                                 NT;
+typedef CGAL::Arr_leda_polyline_traits<NT>            Traits;
 
 typedef Traits::Point                                 Point;
 typedef Traits::X_curve                               X_curve;

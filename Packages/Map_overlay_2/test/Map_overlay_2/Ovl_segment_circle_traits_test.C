@@ -16,8 +16,9 @@ int main(int argc, char* argv[])
 }
 #else
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 #include <CGAL/leda_real.h>
+#include <CGAL/Map_overlay_default_dcel.h>
 #include <CGAL/Arr_segment_circle_traits.h>
 
 #include "Map_overlay_base_test.h"
