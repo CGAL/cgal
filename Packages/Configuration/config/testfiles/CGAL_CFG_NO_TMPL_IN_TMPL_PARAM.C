@@ -1,3 +1,19 @@
+// ======================================================================
+//
+// Copyright (c) 1998 The CGAL Consortium
+//
+// ----------------------------------------------------------------------
+//
+// release       : 
+// release_date  : 
+//
+// file          : config/testfiles/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
+// author(s)     : Lutz Kettner
+//
+// coordinator   : Utrecht University
+//
+// ======================================================================
+
 // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
 // ---------------------------------------------------------------------
 // A short test program to evaluate a C++ compiler.
