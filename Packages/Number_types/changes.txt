@@ -1,3 +1,6 @@
+4.64      (13 August 02)
+- Move to_interval(long long) from Interval_arithmetic.h to long_long.h.
+
 4.63      (12 August 02)
 - Shut up a valgrind warning in MP_Float.C.
 
@@ -18,7 +21,7 @@
 - Removed _test_sign.C.
 
 4.58     (2 July 02)
-- New square(MP_Float) specialization.
+- New square(MP_Float) overloading.
 
 ----------------------------- CGAL 2.4 -----------------------------
 

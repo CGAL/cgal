@@ -147,18 +147,6 @@ struct Interval_nt : public Interval_base
 
 typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
-#ifdef CGAL_USE_LONG_LONG
-inline
-Interval_base
-to_interval (const long long & z)
-{
-  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx ((double) z);
-  FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_nt_advanced(Interval_base::Smallest);
-}
-#endif
-
 template <bool Protected>
 #ifndef CGAL_IA_NO_INLINE
 inline

@@ -28,6 +28,7 @@
 #define CGAL_LONG_LONG_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Interval_arithmetic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -95,6 +96,16 @@ inline unsigned long long is_positive(unsigned long long i)
 
 inline unsigned long long abs(unsigned long long i) { return i; }
 } // namespace NTS
+
+inline
+Interval_base
+to_interval (const long long & z)
+{
+  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+  Interval_nt_advanced approx ((double) z);
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return approx + Interval_nt_advanced(Interval_base::Smallest);
+}
 
 
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \

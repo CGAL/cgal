@@ -1,3 +1,6 @@
+Version 4.143 on 13 August 2002
+- Move to_interval(long long) from Interval_arithmetic.h to long_long.h.
+
 Version 4.142 on 12 August 2002
 - Fix long long support.
 
