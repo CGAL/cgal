@@ -1,17 +1,24 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.20 (17 Nov 2003)
+- Added easy examples/Polyhedron_IO/polyhedron2vrml.C .
+
 3.19 (7 October 2003) [af]
-- Switched to Filtered_kernel<Simple_cartesian<double> > in examples/Polyhedron_IO/terr_trian.C
+- Switched to Filtered_kernel<Simple_cartesian<double> > in 
+  examples/Polyhedron_IO/terr_trian.C
 
 3.18 (22 September 2003)
 - new headers
 
 3.17 (21 July 2003)
 	- fixed bug in examples/Polyhedron_IO/off2stl.C [rursu]
-	- Replaced #define OUT/IN with CGAL_OUT/CGAL_IN to avoid nameclash (mingw/g++) [af]
+	- Replaced #define OUT/IN with CGAL_OUT/CGAL_IN to avoid 
+          nameclash (mingw/g++) [af]
 
 3.16 (16 July 2003)
-     - Changed example off2stl.C to avoid error in testsuite of VC7.0 that is confused with declaration and definition of one variable in the for scope and outside it
+     - Changed example off2stl.C to avoid error in testsuite of VC7.0 that 
+       is confused with declaration and definition of one variable in the 
+       for scope and outside it
 
 3.15 (07 May 2003)
 
