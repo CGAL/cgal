@@ -578,23 +578,24 @@ an index \ccc{li}. The locate type is : \\
  In this case the face handle \ccc{f} points to a face incident to \ccc{v}
 and the index \ccc{li} is the index of \ccc{v}  in \ccc{f}.\\
 \ccc{EDGE} if the point lies on an edge \ccc{e}. In this case, the face
-handle\ ccc{f}
-points to a face incident \ccc{e} and \ccc{li}  is the
-index of \ccc{e} in \ccc{f}.
-\ccc(FACE} if the point lies in the relative interior of a bounded
+handle \ccc{f}
+points to a face incident to \ccc{e} and \ccc{li}  is the
+index of \ccc{e} in \ccc{f}. \\
+\ccc{FACE} if the point lies in the relative interior of a bounded
 face \ccc{f}. In this case the face handle point to \ccc{f} and the
 index \ccc{li}
-has no meaning.
-\ccc{OUSIDE_CONVEX_HULL} if the point lies within the afffine hull of
+has no meaning. \\
+\ccc{OUSIDE_CONVEX_HULL} if the point lies within the affine hull of
 the triangulation but outside its convex hull. In this case, 
-the face handle \ccc{f} points to any infinite face which is a {\em witness} of the
-query point location.For a two dimensional triangulation, it means
+the face handle \ccc{f} points to any infinite face which is a {\em
+witness } of the
+query point location. For a two dimensional triangulation, this means
 that the supporting line of the finite edge of \ccc{f}  separates
 the query point from the triangulation. For a one-dimensional
 triangulation
 it means that the 
 finite vertex of \ccc{f}  separates
-the query point from the triangulation.
+the query point from the triangulation. \\
 \ccc{OUTSIDE_AFFINE_HULL} if the point lies outside the affine hull
 (in the case of a degenerate lower dimensional triangulation). In this 
 case, the face
@@ -604,16 +605,14 @@ handle \ccc{f} and  the index \ccc{li} have no meaning.
 
 \ccThree{Oriented_side }{t.is_infinite( Face_handle f, int i)x}{}
 \ccMethod{Face_handle
-          locate(const Point& query,
-                 Face_handle f = Face_handle()) const;}
+          locate(const Point& query) const;}{}
 
 
 \ccMethod{Face_handle
           locate(const Point& query,
                  Locate_type& lt,
-                 int& li)
-                 Face_handle h =Face_handle() ) const;}
-{Same as above. In addition, parameters \ccc{lt} and \ccc{li} are set respectively
+                 int& li) const;}
+{Parameters \ccc{lt} and \ccc{li} are set respectively
 to the locate type and the index describing the location.}
   
 
@@ -2413,7 +2412,7 @@ begins with a location step and
 \ccHeading{Duality}
 The following functions help to build the dual Vorono\"i diagrams.
 Note that since the dual of a egde of the triangulation can be either
-a segment or a ray or a line, the return type is a \cgal \ccc{Object).
+a segment or a ray or a line, the return type is a \cgal \ccc{Object}.
 
 \ccMethod{Point dual(const Face_handle &f) const;}
 {Returns the center of the circle circumscribed to face \ccc{f}.
