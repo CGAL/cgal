@@ -15,7 +15,7 @@ CGAL_CXX = g++
 CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            -I./include \
-	   -DCGAL_CFG_NO_ADVANCED_KERNEL -I../NewKernel/include \
+	   -DCGAL_CFG_NO_ADVANCED_KERNEL -I$(CGAL)/test/NewKernel/include \
 	   -I../../../C3/include \
 	   -I../../../Cartesian_basic/include \
            -I../../include \
