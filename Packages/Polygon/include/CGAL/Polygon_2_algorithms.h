@@ -58,8 +58,10 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 				ForwardIterator last,
 				const Traits& traits);
 
-template <class InputIterator>
-Bbox_2 bbox_2(InputIterator first, InputIterator last);
+template <class InputIterator, class Traits>
+Bbox_2 bbox_2(InputIterator first, 
+	      InputIterator last,
+	      const Traits& traits);
 
 
 template <class ForwardIterator, class Traits>
@@ -189,6 +191,15 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
   return bottom_vertex_2(first, last, K());
 }
 
+template <class InputIterator>
+inline
+Bbox_2 bbox_2(InputIterator first,
+	      InputIterator last)
+{
+  typedef typename Kernel_traits<
+    typename std::iterator_traits<InputIterator>::value_type>::Kernel K; 
+  return bbox_2(first, last, K());
+}
 
 
 template <class ForwardIterator, class Numbertype>

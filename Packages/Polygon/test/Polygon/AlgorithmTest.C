@@ -55,7 +55,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
     bool convex =
 	CGAL::is_convex_2(polygon.begin(), polygon.end());
     CGAL::Bbox_2 bbox =
-	CGAL::bbox_2(polygon.begin(), polygon.end());
+	CGAL::bbox_2(polygon.begin(), polygon.end(), R());
     typename R::FT area = 0, area2;
     CGAL::area_2(polygon.begin(), polygon.end(), area, R());
     area2 = CGAL::polygon_area_2(polygon.begin(), polygon.end(), R());
