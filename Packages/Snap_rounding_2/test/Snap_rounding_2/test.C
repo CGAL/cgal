@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 }
 #else
 #include <CGAL/Cartesian.h>
-#include <CGAL/Snap_rounding_2.h>
+#include "../../include/CGAL/Snap_rounding_2.h"
 
 typedef leda_rational Number_Type;
 
@@ -58,8 +58,7 @@ void read_data(int argc,char *argv[],Number_Type &prec,std::list<Segment_2> &seg
       is >> y1;
       is >> x2;
       is >> y2;
-      seg.set_data(x1,y1,x2,y2);
-      seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),Point_2(seg.get_x2(),seg.get_y2())));
+      seg_list.push_back(Segment_2(Point_2(x1,y1),Point_2(x2,y2)));
   }
 }
 
