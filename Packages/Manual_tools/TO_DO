@@ -1,6 +1,22 @@
 Manual_tools/TO_DO
 ==================
 
+-- Add warnings/errors for missing GIF's, and for [ref: entries indicating
+   missing ref's labels'
+
+-- Check which HTML standard we use. Validate pages officially.
+
+-- Make cross links from \label \ref pairs use the numbers, not the arrow icon.
+
+-- Gif figures that don't have quotes like in src="..." are not copied.
+   Either fix it or give error message.
+
+-- Cross-linking of ASCII and PRETTY enums in cgal_manual broken.
+
+-- indexing nested types: \ccNestedType{} not indexed?
+   For example : Triangulation_2::Line_face_circulator.
+   It seems that \ccTypedef names are already indexed???
+
 -- operator simplification not working, see operator< in Point_2
 
 -- Removal of same type not working, see Nef_S2 Sphere_segment
@@ -27,7 +43,6 @@ Manual_tools/TO_DO
 -- Test suite
 
 -- Check what to do with
-   Installation/doc_tex/installation
    Tutorial/doc_tex
 
 -- Macro to analyse length value (1pt, 2in, ...) and store in \lciLength
@@ -86,7 +101,7 @@ printed cgal manual
 -- Change page numbers of printed manual to <Part-Num>-<Chapter-Num> 
    + page per chapter
 
--- get rif of the underfull \hbox messages for the eps_tabs images
+-- get rid of the underfull \hbox messages for the eps_tabs images
    (annoys finding the real problems in the log.
 
 latex_to_html
@@ -117,8 +132,6 @@ latex_to_html
    counter values stay preserved.
 
 -- Improve \ifthenelse package with parsing of \and ...
-
--- Make titlepage convert automatically, see \begin{titlepage}
 
 -- Check if more stuff in the auxfile should be used, 
    should also the aux files of \include'd files be considered
