@@ -49,6 +49,7 @@ GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
+DOCS: For Sunpro 5.3, a patch is required.
 DOCS: Throw out windows native stuff.
 DOCS: Updated KAI CC url.
 DOCS: Added Qt stuff.
