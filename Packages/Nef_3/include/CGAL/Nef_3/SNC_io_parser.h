@@ -1464,7 +1464,7 @@ read_facet(Halffacet_handle fh) {
   }
   
   in >> index;
-  fh->volume() = Volume_of[index+addInfiBox];
+  fh->incident_volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("|");
   in >> a >> b >> c >> d;
   fh->plane() = Plane_3(a,b,c,d);
@@ -1582,7 +1582,7 @@ read_sedge(SHalfedge_handle e) const
   e->incident_sface() = SFace_of[sf];
   e->prev() = SEdge_of[ep];
   e->next() = SEdge_of[en];
-  e->incident_facet() = Halffacet_of[ft];
+  e->facet() = Halffacet_of[ft];
   return true;
 }
 */
@@ -1621,7 +1621,7 @@ read_sedge(SHalfedge_handle seh) {
   seh->next() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
-  seh->incident_facet() = Halffacet_of[index];
+  seh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
   in >> a >> b >> c >> d;
   seh->circle() = Sphere_circle(Plane_3(a,b,c,d));
@@ -1671,7 +1671,7 @@ read_sloop(SHalfloop_handle l) const
   CGAL_assertion(SLoop_of[n]==l);
   l->twin_ = SLoop_of[lt];
   l->incident_sface_ = SFace_of[sf];
-  l->incident_facet_ = Halffacet_of[ft];
+  l->facet_ = Halffacet_of[ft];
   return true;
 }
 */
@@ -1695,7 +1695,7 @@ read_sloop(SHalfloop_handle slh) {
   slh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
-  slh->incident_facet() = Halffacet_of[index];
+  slh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");	
   in >> a >> b >> c >> d;
   slh->circle() = Sphere_circle(Plane_3(a,b,c,d));	
@@ -1798,7 +1798,7 @@ read_sface(SFace_handle sfh) {
   }
   
   in >> index;
-  sfh->incident_volume() = Volume_of[index+addInfiBox];
+  sfh->volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("}");	
   in >> sfh->mark();
   
@@ -1892,7 +1892,7 @@ void SNC_io_parser<EW>::add_infi_box() {
     Halffacet_handle fh = Halffacet_of[fn+i];
     fh->twin() = Halffacet_of[fn+(i/2*2)+((i+1)%2)];
     fh->boundary_entry_objects().push_back(SEdge_of[sen+bnd[i]]);
-    fh->volume() = Volume_of[((i%4) == 1 || (i%4 == 2)) ? 1 : 0];
+    fh->incident_volume() = Volume_of[((i%4) == 1 || (i%4 == 2)) ? 1 : 0];
     if(i<4) {
       hz = i % 2 ? -1 : 1;
       hx = hy = 0;
@@ -1955,7 +1955,7 @@ void SNC_io_parser<EW>::add_infi_box() {
     seh->incident_sface() = SFace_of[sfn+(i%2)+(i/6)*2];
     seh->prev() = SEdge_of[sen+prevIdx[i]];
     seh->next() = SEdge_of[sen+nextIdx[i]];
-    seh->incident_facet() = Halffacet_of[fn+factIdx[i]];
+    seh->facet() = Halffacet_of[fn+factIdx[i]];
     if(i%6 < 2) {
       hz = (i%2) ? sgn[i/2] * (-1) : sgn[i/2];
       hx = hy = 0;
@@ -1979,7 +1979,7 @@ void SNC_io_parser<EW>::add_infi_box() {
     sfh->center_vertex() = Vertex_of[vn+(i/2)];
     sfh->boundary_entry_objects().push_back(SEdge_of[sen+(i/2*6)+(i%2)]);
     int cIdx = i%2 ? 1-volIdx[i/2] : volIdx[i/2];
-    sfh->incident_volume() = Volume_of[cIdx];
+    sfh->volume() = Volume_of[cIdx];
     sfh->mark() = cIdx ? Volume_of[1]->mark() : 0;
   }
 }

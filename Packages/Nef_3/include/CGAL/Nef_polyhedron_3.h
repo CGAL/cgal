@@ -435,7 +435,8 @@ protected:
   int orientation() {
     // Function does not work correctly with every Nef_polyhedron. 
     // It works correctly if v_max is 2-manifold
-
+    TRACEN("orientation");
+    
     typedef typename SM_decorator::SHalfedge_around_sface_circulator
       SHalfedge_around_sface_circulator;
 
@@ -448,12 +449,14 @@ protected:
     Vertex_handle v_max;
     Vertex_handle vh;
     CGAL_forall_vertices(vh, D) {
+      TRACEN("  is_standard " << vh->point() << " " << Infi_box::is_standard(D.point(vh)));
       if (Infi_box::is_standard(D.point(vh)) && 
 	  (first || D.point(vh).z() > D.point(v_max).z())) {
 	first = false;
 	v_max = vh;
       }
     }
+    TRACEN("  vmax " << v_max->point());
     CGAL_assertion_msg(!first, "off file is empty");
     SM_decorator SD(&*v_max);
 
@@ -464,20 +467,22 @@ protected:
     SFace_handle sf;
     CGAL_forall_sfaces(sf, SD) {
       if(D.volume(sf) != Infi_box::getNirvana(snc())) continue;
-      if(!first) return 0; // orientation can't be decided via v_max
+      CGAL_assertion_msg(first, "function shall not be used on this polyhedron");
       SHalfedge_around_sface_circulator estart(sf->sface_cycles_begin()), 
 	                                eend(estart);
       CGAL_For_all(estart,eend) {
 	Sphere_circle c(SD.circle(estart));
+	TRACEN("  circle " << c); 
 	double delta_z = CGAL::to_double(c.orthogonal_vector().hz());
+	TRACEN("  delta_z " << delta_z);
 	Point_3 target = ORIGIN + c.orthogonal_vector();
 	Segment_3 s(Point_3(0,0,0), target);
 	delta_z /= CGAL::sqrt(CGAL::to_double(s.squared_length()));
 	z += delta_z;	
+	TRACEN("  z " << z);
       }
       first = false;
     }
-    
     return sign(z);
   }
 
@@ -1013,8 +1018,8 @@ protected:
 	std::list<Vertex_handle> newVertices;
 	newVertices = Infi_box::create_vertices_on_infibox(cstr,
 							   pt, points, fi->mark(), 
-							   fi->twin()->volume()->mark(), 
-							   fi->volume()->mark());
+							   fi->twin()->incident_volume()->mark(), 
+							   fi->incident_volume()->mark());
 
 	for(li = newVertices.begin(); li != newVertices.end(); ++li) {
 	  if(Infi_box::is_infibox_corner(point(*li))) {
@@ -1035,7 +1040,7 @@ protected:
 	  SHalfedge_iterator sei;
 	  CGAL_forall_sedges(sei,SD) {
 	    if(!Infi_box::is_sedge_on_infibox(sei)) {
-	      hf[i] = sei->incident_facet();
+	      hf[i] = sei->facet();
 	      if(hf[i]->is_twin()) hf[i] = hf[i]->twin();
 	      ++i;
 	    }

@@ -156,7 +156,7 @@ public:
   static SHalfedge_const_handle next(SHalfedge_const_handle e)
   { return e->next(); }
   static Halffacet_const_handle facet(SHalfedge_const_handle e)
-  { return e->incident_facet(); }
+  { return e->facet(); }
   static SFace_const_handle sface(SHalfedge_const_handle e)
   { return e->incident_sface(); }
   static Halfedge_const_handle ssource(SHalfedge_const_handle e)
@@ -168,7 +168,7 @@ public:
   static SHalfloop_const_handle twin( SHalfloop_const_handle l)
   { return l->twin(); }
   static Halffacet_const_handle facet( SHalfloop_const_handle l)
-  { return l->incident_facet(); }
+  { return l->facet(); }
   static Vertex_const_handle vertex( SHalfloop_const_handle l)
   { return l->incident_sface()->center_vertex(); }
   static SFace_const_handle sface( SHalfloop_const_handle l)
@@ -178,13 +178,13 @@ public:
   static Vertex_const_handle vertex(SFace_const_handle f)
   { return f->center_vertex(); }
   static Volume_const_handle volume(SFace_const_handle f)
-  { return f->incident_volume(); }
+  { return f->volume(); }
   // SFace queries 
 
   static Halffacet_const_handle twin(Halffacet_const_handle f)
   { return f->twin(); }
   static Volume_const_handle volume(Halffacet_const_handle f)
-    { return f->volume(); }
+    { return f->incident_volume(); }
   // Halffacet queries
 */
 
@@ -663,7 +663,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
               V.visit(vv); // report edge
               DoneSV[vv] = DoneSV[vv->twin()] = true;
             }
-            Halffacet_const_handle f = ec->twin()->incident_facet();
+            Halffacet_const_handle f = ec->twin()->facet();
             if ( DoneF[f] ) continue;
             FacetCandidates.push_back(f); DoneF[f] = true;
           }
@@ -689,7 +689,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
         } else if (fc.is_shalfloop() ) {
 	  SHalfloop_const_handle l(fc);
 	  V.visit(l);
-          Halffacet_const_handle f = l->twin()->incident_facet();
+          Halffacet_const_handle f = l->twin()->facet();
           if ( DoneF[f] ) continue;
           FacetCandidates.push_back(f);  DoneF[f] = true;
         } else CGAL_assertion_msg(0,"Damn wrong handle.");

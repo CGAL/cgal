@@ -30,7 +30,6 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
-#include <CGAL/Nef_3/SNC_list.h>
 #include <list>
 
 #undef _DEBUG
@@ -1107,7 +1106,7 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
   // Halffacet update
   CGAL_forall_halffacets(f,*this) {
     f->twin() = FM[f->twin()];
-    f->volume() = CM[f->volume()];
+    f->incident_volume() = CM[f->incident_volume()];
     Halffacet_cycle_iterator ftc;
     for(ftc = f->facet_cycles_begin(); ftc !=  f->facet_cycles_end(); ++ftc) {
       if (ftc.is_shalfedge() ) {
@@ -1138,13 +1137,13 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     se->incident_sface() = SFM[se->incident_sface()];
     se->twin() = SEM[se->twin()];
     se->prev() = SEM[se->prev()]; se->next() = SEM[se->next()];
-    se->incident_facet() = FM[se->incident_facet()];
+    se->facet() = FM[se->facet()];
   }
 
   CGAL_forall_shalfloops(sl,*this) {
     sl->twin() = SLM[sl->twin()];
     sl->incident_sface() = SFM[sl->incident_sface()];
-    sl->incident_facet() = FM[sl->incident_facet()];
+    sl->facet() = FM[sl->facet()];
   }
   for ( slc = D.shalfloops_begin(), sl = shalfloops_begin();
 	slc != D.shalfloops_end(); ++slc, ++sl) {
@@ -1158,7 +1157,7 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 
   CGAL_forall_sfaces(sf,*this) {
     sf->center_vertex() = VM[sf->center_vertex()];
-    sf->incident_volume() = CM[sf->incident_volume()];
+    sf->volume() = CM[sf->volume()];
     SFace_cycle_iterator sfc;
     for(sfc = sf->sface_cycles_begin(); 
         sfc != sf->sface_cycles_end(); ++sfc) {

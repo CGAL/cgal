@@ -54,7 +54,7 @@ this shalfloop of opposite orientation.
 
 A sphere map having a shalfloop models the neighborhood of a vertex which is 
 isolated on a facet. That facet is returned by the member function
-\ccc{incident_facet}. 
+\ccc{facet}. 
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -90,7 +90,8 @@ class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfloops internally.
 
 \ccMethod{SHalfloop_const_handle twin() const;}{the twin of \ccVar\ .}
 
-\ccMethod{Halffacet_const_handle incident_facet() const;}{the incident facet of \ccVar\ .}
+\ccMethod{Halffacet_const_handle facet() const;}
+{the facet that corresponds to \ccVar\ in the 3D incidence structure.}
 
 \ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
 

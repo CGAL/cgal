@@ -69,7 +69,7 @@ Figure~\ccTexHtml{\ref{figureNef3FacetIncidences} on page
 \pageref{figureNef3FacetIncidences}}{}\begin{ccHtmlOnly}
   <A HREF="#figureNef3FacetIncidences"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
-\end{ccHtmlOnly}. The \ccc{incident_facet()} member function returns the facet 
+\end{ccHtmlOnly}. The \ccc{facet()} member function returns the facet 
 in which
 the shalfedge is part of one of the facet cycles. The successive assignment of 
 the form \ccc{se = se->next()} cycles counterclockwise around the facet (or a
@@ -136,7 +136,8 @@ class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfedges internally.
 \ccMethod{SHalfedge_const_handle cyclic_adj_succ() const;}
 {the edge after \ccVar\ in the cyclic ordered adjacency list of source().}
 
-\ccMethod{Halffacet_const_handle incident_facet() const;}{the incident facet of \ccVar\ .}
+\ccMethod{Halffacet_const_handle facet() const;}
+{the facet that corresponds to \ccVar\ in the 3D incidence structure.}
 
 \ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
 

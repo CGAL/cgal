@@ -254,7 +254,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static SHalfedge_handle next(SHalfedge_handle e)
   { return e->next(); }
   static Halffacet_handle facet(SHalfedge_handle e)
-  { return e->incident_facet(); }
+  { return e->facet(); }
   static SFace_handle sface(SHalfedge_handle e)
   { return e->incident_sface(); }
   static Halfedge_handle ssource(SHalfedge_handle e)
@@ -282,7 +282,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static SHalfloop_handle twin( SHalfloop_handle l)
   { return l->twin(); }
   static Halffacet_handle facet( SHalfloop_handle l)
-  { return l->incident_facet(); }
+  { return l->facet(); }
   static Vertex_handle vertex( SHalfloop_handle l)
   { return l->incident_sface()->center_vertex(); }
   static SFace_handle sface( SHalfloop_handle l)
@@ -292,13 +292,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Vertex_handle vertex(SFace_handle f)
   { return f->center_vertex(); }
   static Volume_handle volume(SFace_handle f)
-  { return f->incident_volume(); }
+  { return f->volume(); }
   /* SHalffacet queries */
 
   static Halffacet_handle twin(Halffacet_handle f)
   { return f->twin(); }
   static Volume_handle volume(Halffacet_handle f)
-    { return f->volume(); }
+    { return f->incident_volume(); }
   /* Halffacet queries */
 
   SFace_handle adjacent_sface(Halffacet_handle f) const {
@@ -369,12 +369,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   void link_as_facet_cycle(SHalfedge_handle e, Halffacet_handle f) const
   { SHalfedge_around_facet_circulator hfc(e), hend(hfc);
-    CGAL_For_all(hfc,hend) hfc->incident_facet() = f;
+    CGAL_For_all(hfc,hend) hfc->facet() = f;
     store_boundary_object(e,f);
   } 
 
   void link_as_interior_loop(SHalfloop_handle l, Halffacet_handle f) const
-  { l->incident_facet() = f;
+  { l->facet() = f;
     store_boundary_object(l,f);
   } 
 
@@ -447,22 +447,22 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   template <class H> void set_facet(H h, Halffacet_handle f) const 
-    { h->incident_facet() = f; }
+    { h->facet() = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const
-    { h->volume() = c; }
-  void set_volume(SFace_handle h, Volume_handle c) const 
     { h->incident_volume() = c; }
+  void set_volume(SFace_handle h, Volume_handle c) const 
+    { h->volume() = c; }
 
   void add_sloop_to_facet(SHalfloop_handle l, Halffacet_handle f) const {
     SM_decorator SD(&*vertex(l));
     Sphere_circle facet_plane(plane(f));
     if( facet_plane == SD.circle(l)) {
-      l->incident_facet() = f;
-      SD.twin(l)->incident_facet() = twin(f);
+      l->facet() = f;
+      SD.twin(l)->facet() = twin(f);
     } else {
       CGAL_assertion( facet_plane.opposite() == SD.circle(l));
-      l->incident_facet() = twin(f);
-      SD.twin(l)->incident_facet() = f;
+      l->facet() = twin(f);
+      SD.twin(l)->facet() = f;
     }
   }
 
@@ -523,10 +523,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	SHalfedge_handle se(fc);
 	TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se"<<PH(se));
-	TRACEN(se->incident_facet()->plane() <<"/"<<
-	       se->snext()->incident_facet()->plane()  <<"/"<< 
-	       se->snext()->snext()->incident_facet()->plane());
-	f_visible = se->twin()->incident_facet();
+	TRACEN(se->facet()->plane() <<"/"<<
+	       se->snext()->facet()->plane()  <<"/"<< 
+	       se->snext()->snext()->facet()->plane());
+	f_visible = se->twin()->facet();
 	TRACEN("f_visible"<<plane(f_visible));
       }
       else if ( fc.is_shalfloop()) {
@@ -1321,8 +1321,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (previous(twin(previous(she))) == twin(she));
       valid = valid && (twin(facet(she)) == facet(twin(she)));
       valid = valid && (mark(facet(she)) == mark(she));
-      valid = valid && (she->twin()->incident_facet()->volume() == 
-			she->incident_sface()->incident_volume());     
+      valid = valid && (she->twin()->facet()->incident_volume() == 
+			she->incident_sface()->volume());
       valid = valid && (++count <= max);
     }
 

@@ -574,8 +574,8 @@ public:
 				  const Point_3& p) const {
     return create_from_plane(f->plane(), p, 
 			     f->mark(), 
-			     f->twin()->volume()->mark(), 
-			     f->volume()->mark());
+			     f->twin()->incident_volume()->mark(), 
+			     f->incident_volume()->mark());
   }
 
   /*{\Mop produces the sphere map at point $p$ representing the local
@@ -751,15 +751,15 @@ public:
     Vector_3 vec(ps-CGAL::ORIGIN);
     if(faces_p->plane().oriented_side(p+vec) == ON_NEGATIVE_SIDE)
       faces_p = faces_p->twin();
-    v1->mark() = BOP(e->mark(), faces_p->volume()->mark(), inv);
-    v2->mark() = BOP(e->mark(), faces_p->twin()->volume()->mark(), inv);
+    v1->mark() = BOP(e->mark(), faces_p->incident_volume()->mark(), inv);
+    v2->mark() = BOP(e->mark(), faces_p->twin()->incident_volume()->mark(), inv);
     TRACEN("svertex 1 " << ps << " has mark " << v1->mark());
     TRACEN("svertex 2 " << ps.antipode() << " has mark " << v2->mark());
     
     if(E.is_isolated(e)) {
       TRACEN("edge is isolated");
-      Mark mf1 = BOP(e->incident_sface()->mark(), faces_p->volume()->mark(), inv);
-      Mark mf2 = BOP(e->incident_sface()->mark(), faces_p->twin()->volume()->mark(), inv);
+      Mark mf1 = BOP(e->incident_sface()->mark(), faces_p->incident_volume()->mark(), inv);
+      Mark mf2 = BOP(e->incident_sface()->mark(), faces_p->twin()->incident_volume()->mark(), inv);
       Mark ml = BOP(e->incident_sface()->mark(), faces_p->mark(), inv);
       
       SFace_handle f1 = D.new_sface();
@@ -808,8 +808,8 @@ public:
 	else
 	  se2 = D.new_shalfedge_pair(sv, next_edge, -1);
 	next_edge = twin(se2);
-	se1->mark() = se1->twin()->mark() = BOP(E.mark(ec), faces_p->volume()->mark(), inv);
-	se2->mark() = se2->twin()->mark() = BOP(E.mark(ec), faces_p->twin()->volume()->mark(), inv);
+	se1->mark() = se1->twin()->mark() = BOP(E.mark(ec), faces_p->incident_volume()->mark(), inv);
+	se2->mark() = se2->twin()->mark() = BOP(E.mark(ec), faces_p->twin()->incident_volume()->mark(), inv);
 	mark_of_right_sface[se1] = E.mark(E.face(ec));
 	D.circle(se1) = D.circle(se2) = E.circle(ec);
 	D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
@@ -827,10 +827,10 @@ public:
 	D.mark(se1) = D.mark(D.twin(se1)) = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
 	
 	sf = D.new_sface();
-	D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->volume()->mark(), inv);
+	D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->incident_volume()->mark(), inv);
 	D.link_as_face_cycle(se1,sf);
 	sf = D.new_sface();
-	D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->twin()->volume()->mark(), inv);
+	D.mark(sf) = BOP(mark_of_right_sface[ec2], faces_p->twin()->incident_volume()->mark(), inv);
 	D.link_as_face_cycle(D.twin(se1),sf);
       }   
     }
@@ -2013,14 +2013,14 @@ public:
       SM_decorator SD(&*v);
       SFace_iterator sf;
       CGAL_forall_sfaces(sf, SD)
-	sf->incident_volume()->mark() = sf->mark();
+	sf->volume()->mark() = sf->mark();
     }
     CGAL_forall_vertices(v,*this->sncp()) {
       if(is_standard(v) || !Infi_box::is_infibox_corner(point(v))) continue;
       SM_decorator SD(&*v);
       SFace_iterator sf;
       CGAL_forall_sfaces(sf, SD)
-	sf->mark() = sf->incident_volume()->mark();
+	sf->mark() = sf->volume()->mark();
     }    
   }
 

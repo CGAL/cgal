@@ -43,7 +43,7 @@ cycles.
     </CENTER>
 \end{ccHtmlOnly}
 
-The member function \ccc{twin} returns the opposite halffacet, \ccc{volume}
+The member function \ccc{twin} returns the opposite halffacet, \ccc{incident_volume}
 returns the incident volume. A Halffacet cycle either consists of consecutive
 shalfedges along the border (or a hole) of the halffacet, or of a single
 shalfloop on the sphere map of a vertex isolated on the halffacet. The 
@@ -94,7 +94,7 @@ class \ccc{Nef_polyhedron_3<Traits>} manages the needed halffacets internally.
 
 \ccMethod{Halffacet_const_handle  twin() const;}{the twin of \ccVar\ .}
 
-\ccMethod{Volume_const_handle  volume() const;}{the incident volume of \ccVar\ .}
+\ccMethod{Volume_const_handle  incident_volume() const;}{the incident volume of \ccVar\ .}
 
 \ccMethod{Halffacet_cycle_const_iterator  facet_cycle_begin() const;}
 {iterator over the entries to all halffacet cycles of \ccVar\ .}

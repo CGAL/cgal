@@ -562,8 +562,8 @@ class SNC_items {
     Plane_3& plane() { return supporting_plane_; }
     const Plane_3& plane() const { return supporting_plane_; }
 
-    Volume_handle& volume() { return volume_; }
-    Volume_const_handle volume() const { return volume_; }
+    Volume_handle& incident_volume() { return volume_; }
+    Volume_const_handle incident_volume() const { return volume_; }
 
     Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
     const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
@@ -709,7 +709,7 @@ class SNC_items {
     SHalfedge_handle   twin_;
     // Topology within global Nef structure:  
     SHalfedge_handle   prev_, next_;
-    Halffacet_handle   incident_facet_;
+    Halffacet_handle   facet_;
     GenPtr             info_;
     // temporary needed:
     Mark               mark_;
@@ -719,7 +719,7 @@ class SNC_items {
 
     SHalfedge() : source_(), sprev_(), snext_(),
      incident_sface_(), twin_(), 
-     prev_(), next_(), incident_facet_(), 
+     prev_(), next_(), facet_(), 
      info_(), mark_(), circle_() {}
 
     ~SHalfedge() {
@@ -735,7 +735,7 @@ class SNC_items {
       twin_ = e.twin_;
       prev_ = e.prev_;
       next_ = e.next_;
-      incident_facet_ = e.incident_facet_;
+      facet_ = e.facet_;
       info_ = 0;
       mark_ = e.mark_;
       circle_ = e.circle_;
@@ -750,7 +750,7 @@ class SNC_items {
       twin_ = e.twin_;
       prev_ = e.prev_;
       next_ = e.next_;
-      incident_facet_ = e.incident_facet_;
+      facet_ = e.facet_;
       info_ = 0;
       mark_ = e.mark_;
       circle_ = e.circle_;
@@ -797,8 +797,8 @@ class SNC_items {
     SFace_handle& incident_sface() { return incident_sface_; }
     SFace_const_handle incident_sface() const { return incident_sface_; }
 
-    Halffacet_handle& incident_facet() { return incident_facet_; }
-    Halffacet_const_handle incident_facet() const { return incident_facet_; }
+    Halffacet_handle& facet() { return facet_; }
+    Halffacet_const_handle facet() const { return facet_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -831,8 +831,8 @@ class SNC_items {
       
       valid = valid && (incident_sface_ != SFace_handle() && 
 			incident_sface_ != NULL);
-      valid = valid && (incident_facet_ != Halffacet_handle() &&
-			incident_facet_ != NULL);
+      valid = valid && (facet_ != Halffacet_handle() &&
+			facet_ != NULL);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
       
@@ -862,7 +862,7 @@ class SNC_items {
 
     SHalfloop_handle   twin_;
     SFace_handle       incident_sface_;
-    Halffacet_handle   incident_facet_;
+    Halffacet_handle   facet_;
     GenPtr             info_;
     // temporary needed:
     Mark               mark_;
@@ -870,7 +870,7 @@ class SNC_items {
 
   public:
 
-    SHalfloop() : twin_(), incident_sface_(), incident_facet_(), 
+    SHalfloop() : twin_(), incident_sface_(), facet_(), 
       info_(), mark_(), circle_() {}
 
     ~SHalfloop() {
@@ -879,7 +879,7 @@ class SNC_items {
     SHalfloop(const SHalfloop<Refs>& l)
     { twin_ = l.twin_;
       incident_sface_ = l.incident_sface_;
-      incident_facet_ = l.incident_facet_;
+      facet_ = l.facet_;
       info_ = 0;
       mark_ = l.mark_;
       circle_ = l.circle_;
@@ -888,7 +888,7 @@ class SNC_items {
     SHalfloop<Refs>& operator=(const SHalfloop<Refs>& l)
     { twin_ = l.twin_;
       incident_sface_ = l.incident_sface_;
-      incident_facet_ = l.incident_facet_;
+      facet_ = l.facet_;
       info_ = 0;
       mark_ = l.mark_;
       circle_ = l.circle_;
@@ -907,8 +907,8 @@ class SNC_items {
     SFace_handle& incident_sface() { return incident_sface_; }
     SFace_const_handle incident_sface() const { return incident_sface_; }
 
-    Halffacet_handle& incident_facet() { return incident_facet_; }
-    Halffacet_const_handle incident_facet() const { return incident_facet_; }
+    Halffacet_handle& facet() { return facet_; }
+    Halffacet_const_handle facet() const { return facet_; }
 
     GenPtr& info() { return info_; }
     const GenPtr& info() const { return info_; }
@@ -932,8 +932,8 @@ class SNC_items {
       bool valid = (twin_  != SHalfloop_handle() && twin_  != NULL);
       valid = valid && (incident_sface_ != SFace_handle() && 
 			incident_sface_ != NULL);
-      valid = valid && (incident_facet_ != Halffacet_handle() &&
-			incident_facet_ != NULL);
+      valid = valid && (facet_ != Halffacet_handle() &&
+			facet_ != NULL);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
       
@@ -963,7 +963,7 @@ class SNC_items {
     typedef typename Refs::SFace_cycle_const_iterator 
                                                 SFace_cycle_const_iterator;
     Vertex_handle  center_vertex_;
-    Volume_handle  incident_volume_;
+    Volume_handle  volume_;
     //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
     GenPtr         info_;
     // temporary needed:
@@ -972,7 +972,7 @@ class SNC_items {
   public:
     Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
-    SFace() : center_vertex_(), incident_volume_(), info_(), mark_() {}
+    SFace() : center_vertex_(), volume_(), info_(), mark_() {}
 
     ~SFace() {
       TRACEN("  destroying SFace item "<<&*this);
@@ -980,7 +980,7 @@ class SNC_items {
 
     SFace(const SFace<Refs>& f)
     { center_vertex_ = f.center_vertex_;
-      incident_volume_ = f.incident_volume_;
+      volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
       info_ = 0;
       mark_ = f.mark_;
@@ -989,7 +989,7 @@ class SNC_items {
     SFace<Refs>& operator=(const SFace<Refs>& f)
     { if (this == &f) return *this;
       center_vertex_ = f.center_vertex_;
-      incident_volume_ = f.incident_volume_;
+      volume_ = f.volume_;
       boundary_entry_objects_ = f.boundary_entry_objects_;
       info_ = 0;
       mark_ = f.mark_;
@@ -1011,8 +1011,8 @@ class SNC_items {
     Vertex_handle& center_vertex() { return center_vertex_; }
     Vertex_const_handle center_vertex() const { return center_vertex_; }
 
-    Volume_handle& incident_volume() { return incident_volume_; }
-    Volume_const_handle incident_volume() const { return incident_volume_; }
+    Volume_handle& volume() { return volume_; }
+    Volume_const_handle volume() const { return volume_; }
 
     Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
     const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
@@ -1027,8 +1027,8 @@ class SNC_items {
 	"level = " << level << "):" << std::endl;
 
       bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != NULL);
-      valid = valid && (incident_volume_ != Volume_handle() &&
-			incident_volume_ != NULL);
+      valid = valid && (volume_ != Volume_handle() &&
+			volume_ != NULL);
 
       if(boundary_entry_objects_.empty()) {
 	valid = valid && 
