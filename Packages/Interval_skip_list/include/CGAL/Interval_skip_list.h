@@ -158,8 +158,7 @@ namespace CGAL {
 
     friend class IntervalSLnode<Interval>;
 
-    Interval_skip_list();  // constructor
-
+    Interval_skip_list();  
     
     template <class InputIterator>
     Interval_skip_list(InputIterator b, InputIterator e)
@@ -168,6 +167,10 @@ namespace CGAL {
 	insert(*b);
       }
     }
+
+    ~Interval_skip_list(); 
+
+    void clear();
 
     IntervalSLnode<Interval>* search(const Value& searchKey);  
     // return node containing
@@ -339,6 +342,33 @@ namespace CGAL {
     for (int i = 0; i< MAX_FORWARD; i++) {
       header->forward[i] = 0;
     }
+  }
+
+  template <class Interval>
+  Interval_skip_list<Interval>::~Interval_skip_list()
+  {
+    for (int i = 0; i< MAX_FORWARD; i++) {
+      if(header->forward[i] != 0){
+	delete header->forward[i];
+      }
+    }
+    delete header;
+  }
+
+  template <class Interval>
+  void
+  Interval_skip_list<Interval>::clear()
+  {
+    for (int i = 0; i< MAX_FORWARD; i++) {
+      if(header->forward[i] != 0){
+	delete header->forward[i];
+	header->forward[i] = 0;
+      }
+    }
+    delete header;
+    header = new IntervalSLnode<Interval>(MAX_FORWARD);
+    maxLevel = 0;
+
   }
 
   template <class Interval>
