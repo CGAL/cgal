@@ -5,6 +5,8 @@
 @! file  : web/Optimisation/Min_circle_2.aw
 @! author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 @! ----------------------------------------------------------------------------
+@! $CGAL_Chapter: Geometric Optimisation $
+@! $CGAL_Package: Min_circle_2 WIP $
 @! $Revision$
 @! $Date$
 @! ============================================================================
@@ -45,17 +47,21 @@
 @! Title
 @! ============================================================================
 
-\RCSdef{\rcsrevision}{$Revision$}
-\RCSdefDate{\rcsdate}{$Date$}
+\RCSdef{\rcsRevision}{$Revision$}
+\RCSdefDate{\rcsDate}{$Date$}
+\newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
 @t vskip 5 mm
-@t title titlefont centre "CGAL -- 2D Smallest Enclosing Circle*"
+@t title titlefont centre "2D Smallest Enclosing Circle*"
 @t vskip 1 mm
-@t title smalltitlefont centre "Implementation Documentation"
-@t vskip 5 mm
 @t title smalltitlefont centre "Bernd Gärtner and Sven Schönherr"
 \smallskip
-\centerline{\rcsrevision\ , \rcsdate}
+\begin{center}
+  \begin{tabular}{l}
+    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
+    \verb+$CGAL_Package: Min_circle_2 WIP+\cgalWIP\verb+$+ \\
+  \end{tabular}
+\end{center}
 @t vskip 1 mm
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
@@ -3042,9 +3048,9 @@ end of each file.
 
 \subsection{test\_Min\_circle\_2.C}
 
-@file <test/Optimisation/test_Min_circle_2.C> = @begin
+@file <test/Min_circle_2/test_Min_circle_2.C> = @begin
     @<file header>(
-        "test/optimisation/test_Min_circle_2.C",
+        "test/Min_circle_2/test_Min_circle_2.C",
         "test program for 2D Smallest Enclosing Circle")
 
     @<Min_circle_2 test (includes and typedefs)>
@@ -3101,7 +3107,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Optimisation","Optimisation/Min_circle_2",
+        "Min_circle_2","Optimisation/Min_circle_2",
         "$Revision$","$Date$",
         "Sven Schönherr <sven@@inf.fu-berlin.de>",
         "Bernd Gärtner",
