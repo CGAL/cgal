@@ -4,12 +4,6 @@
 #include "short_names.h"
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/Arr_2_bases.h>
-#include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_conic_traits_2.h> 
-#include <CGAL/Arrangement_2.h>
 
 #ifndef CGAL_USE_LEDA
 // To enable compilation without leda:
@@ -19,6 +13,13 @@ int main ()
 }
 
 #else
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/Arr_2_bases.h>
+#include <CGAL/Arr_2_default_dcel.h>
+#include <CGAL/Arr_conic_traits_2.h> 
+#include <CGAL/Arrangement_2.h>
 
 typedef leda_real                                       NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
