@@ -158,8 +158,8 @@ void partition_opt_cvx_load(int current,
                    << partition_opt_cvx_debug_list_count << std::endl;
          std::cout << "     diagonal list = " << diag_list1 << std::endl;
 #endif
-         v_list[current].stack_push(v_list[previous].vertex_num(), num_polygons,
-                                    diag_list1);
+         v_list[current].stack_push(v_list[previous].vertex_num(), 
+                                    num_polygons, diag_list1);
        }
     }
 }
@@ -237,7 +237,8 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
    std::cout << "decompose(" << edge_num1 << ", " << edge_num2 << "): "
              << " edge[" << edge_num1 << "][" << edge_num2 << "] set to " 
              << edges[edge_num1][edge_num2] << std::endl;
-   std::cout << " with diagonal list " << edges[edge_num1][edge_num2].solution()
+   std::cout << " with diagonal list " 
+             << edges[edge_num1][edge_num2].solution()
              << std::endl;
    std::cout << "decompose(" << edge_num1 << ", " << edge_num2 
              << "): returning " << num_pieces << std::endl;
@@ -271,7 +272,7 @@ bool partition_opt_cvx_is_visible_n3(const Polygon_2& polygon, unsigned int i,
    // determine if the edge goes through the interior of the polygon or not
    Leftturn_2 leftturn = traits.leftturn_2_object();
    Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn);
-   if (rightturn(polygon[prev_i], polygon[i], polygon[next_i])) // concave angle
+   if (rightturn(polygon[prev_i], polygon[i], polygon[next_i]))// concave angle
    {
      if (rightturn(polygon[prev_i], polygon[i], polygon[j]) &&
          rightturn(polygon[j], polygon[i], polygon[next_i]))
@@ -369,7 +370,8 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    typedef Bidirectional_circulator_from_iterator<I,V,S,D> Circulator;
 
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)   || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS)   || defined(NDEBUG)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                      Polygon_2;
@@ -378,7 +380,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 
    P_Polygon_2 polygon(first, beyond);
    CGAL_partition_precondition(
-     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
+    orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
    std::cout << "The polygon: " << std::endl;
@@ -420,7 +422,8 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
       );
    }
    
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
    return res;
 #else
    return res.to_output_iterator();

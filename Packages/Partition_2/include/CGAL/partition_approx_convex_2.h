@@ -80,7 +80,8 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
-   std::cout << "edge: " << *edge.source() << " " << *edge.target() <<std::endl;
+   std::cout << "edge: " << *edge.source() << " " << *edge.target()
+             << std::endl;
 #endif
 
    Circulator next_ccw_pt_ref, prev_ccw_pt_ref;
@@ -90,7 +91,7 @@ bool partition_appx_cvx_cuts_nonconvex_angle( Edge_circulator e_circ,
    Edge_circulator prev_e = e_circ; prev_e--;
 
    // find the first edge before this one that has been included in the
-   // partition polygon (and is thus marked as constrained in the triangulation)
+   // partition polygon (and is thus marked as constrained in triangulation)
    while (prev_e != e_circ && (triangles.is_infinite(*prev_e) ||
            !(*prev_e).first->is_constrained((*prev_e).second)))
       prev_e--;
@@ -154,7 +155,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    P_Polygon_2 polygon(first, beyond);
 
    CGAL_partition_precondition(
-     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
+    orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
    Circulator first_c(polygon.begin(), polygon.end(), polygon.begin());
    Circulator c(polygon.begin(), polygon.end());
@@ -235,7 +236,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
                 }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                 else 
-                   std::cout << "not an edge through the interior" << std::endl;
+                   std::cout << "not an edge through the interior" 
+                             << std::endl;
 #endif
              }
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
@@ -246,7 +248,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
        } while (++e_circ != first_e);
    }
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                  Polygon_2;
@@ -259,7 +262,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
                                    res.output_so_far_begin(), 
                                    res.output_so_far_end(), traits));
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
    return res;
 #else
    return res.to_output_iterator();

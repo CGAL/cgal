@@ -57,12 +57,15 @@ polygons_w_steiner_are_equal(Circulator1 orig_first, Circulator2 new_first)
    Circulator2 new_circ;
 
    // find the first (original) vertex in the list of vertices
-   for (new_circ = new_first; *new_circ != *orig_first && ++new_circ != new_first;) {}
+   for (new_circ = new_first; 
+        *new_circ != *orig_first && ++new_circ != new_first;) 
+   {}
 
    if (new_circ == new_first) 
    {
 #ifdef CGAL_PARTITION_CHECK_DEBUG
-      std::cout << "first vertex " << *orig_first << " not found " << std::endl;
+      std::cout << "first vertex " << *orig_first << " not found " 
+                << std::endl;
 #endif // CGAL_PARTITION_CHECK_DEBUG
       return false;
    }

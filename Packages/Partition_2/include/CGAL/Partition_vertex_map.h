@@ -64,9 +64,9 @@ public:
       bool e1_to_e2_left_turn = _leftturn((*e1.endpoint()).first, _vertex, 
                                 (*e2.endpoint()).first);
 
-      // if both edges are on the same side of the vertical line through _vertex
-      // then e1 comes before e2 (in CW order from the vertical line) if one 
-      // makes a left turn going from e1 to e2
+      // if both edges are on the same side of the vertical line through 
+      // _vertex then e1 comes before e2 (in CW order from the vertical line)
+      // if one  makes a left turn going from e1 to e2
       if (e1_less == e2_less)
           return e1_to_e2_left_turn;
       else // e1 comes first if it is to the right of the vertical line
@@ -125,18 +125,18 @@ private:
 };
 
 
-template <class Traits_>
+template <class Traits>
 class Edge_list : public std::list< 
-                   Edge_info<typename Partition_vertex_map<Traits_>::iterator> >
+                  Edge_info<typename Partition_vertex_map<Traits>::iterator> >
 {
 public:
-   typedef Traits_                                        Traits;
-   typedef typename Traits::Point_2                       Point_2;
-   typedef typename Traits::Orientation_2                 Orientation_pred;
-   typedef Edge_list<Traits>                              Self;
-   typedef typename Self::iterator                        Self_iterator;
-   typedef typename Self::const_iterator                  Self_const_iterator;
-   typedef Circulator_from_iterator<Self_const_iterator>  Self_const_circulator;
+   typedef typename Traits::Point_2                      Point_2;
+   typedef typename Traits::Orientation_2                Orientation_pred;
+   typedef Edge_info<typename Partition_vertex_map<Traits>::iterator> 
+                                                         Edge;
+   typedef typename std::list<Edge>::iterator            Self_iterator;
+   typedef typename std::list<Edge>::const_iterator      Self_const_iterator;
+   typedef Circulator_from_iterator<Self_const_iterator> Self_const_circulator;
 
    typedef typename Partition_vertex_map<Traits>::iterator  Map_iterator;
    typedef Edge_info<Map_iterator>                          Edge_info;
@@ -146,8 +146,10 @@ public:
    {
        Self_iterator e_it;
 
-       for (e_it = begin(); e_it != end() && (*e_it).endpoint() != endpoint_ref;
-            e_it++) {}
+       for (e_it = begin(); 
+            e_it != end() && (*e_it).endpoint() != endpoint_ref;
+            e_it++) 
+       {}
 
        if (e_it != end())
             (*e_it).set_poly_num2(num);
@@ -159,8 +161,10 @@ public:
    {
        Self_iterator e_it;
 
-       for (e_it = begin(); e_it != end() && (*e_it).endpoint() != endpoint_ref;
-            e_it++) {}
+       for (e_it = begin(); 
+            e_it != end() && (*e_it).endpoint() != endpoint_ref;
+            e_it++) 
+       {}
 
        if (e_it != end())
             (*e_it).set_poly_num2(num);
@@ -273,8 +277,10 @@ class Partition_vertex_map : public std::map<typename Traits::Point_2,
 {
 public:
 
-   typedef Partition_vertex_map<Traits>            Self;
-   typedef typename Self::iterator                 Self_iterator;
+   typedef typename std::map<typename Traits::Point_2,
+                             Edge_list<Traits>,
+                             typename Traits::Less_xy_2>::iterator
+                                                   Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
    Partition_vertex_map() {}
@@ -284,7 +290,46 @@ public:
    {  build(first_poly, last_poly); }
    
    template <class InputIterator>
-   void build(InputIterator first_poly, InputIterator last_poly);
+   void build(InputIterator poly_first, InputIterator poly_last)
+   {
+      typedef typename Traits::Polygon_2::Vertex_const_iterator
+                                                      Poly_vtx_const_iterator;
+      typedef std::pair<Self_iterator, bool>          Location_pair;
+      typedef Edge_list<Traits>                       Edge_list;
+      typedef typename Traits::Point_2                Point_2;
+      typedef std::pair<Point_2, Edge_list>           P_Vertex;
+   
+   
+      Location_pair v_loc_pair;
+      Location_pair begin_v_loc_pair;
+      Location_pair prev_v_loc_pair;
+   
+      Poly_vtx_const_iterator begin;
+      Poly_vtx_const_iterator end;
+      Poly_vtx_const_iterator v_it;
+   
+      int poly_num = 0;
+      for (; poly_first != poly_last; poly_first++, poly_num++)
+      {
+        begin = (*poly_first).vertices_begin();
+        end = (*poly_first).vertices_end();
+        begin_v_loc_pair= insert(P_Vertex(*begin, Edge_list()));
+        prev_v_loc_pair = begin_v_loc_pair;
+        v_it = begin;
+        for (v_it++; v_it != end; v_it++)
+        {
+           v_loc_pair = insert(P_Vertex(*v_it, Edge_list()));
+           insert_next_edge(prev_v_loc_pair.first, v_loc_pair.first, poly_num);
+           insert_prev_edge(v_loc_pair.first, prev_v_loc_pair.first, poly_num);
+           prev_v_loc_pair = v_loc_pair;
+        }
+        insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first, 
+                         poly_num);
+        insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first, 
+                         poly_num);
+      }
+   }
+
 
    void insert_next_edge(Self_iterator& v1_ref, Self_iterator& v2_ref, int num)
    {
@@ -307,14 +352,102 @@ public:
    }
 
    template <class OutputIterator>
-   OutputIterator union_vertices(OutputIterator result);
+   OutputIterator union_vertices(OutputIterator result)
+   {
+       if (empty()) return result;
+   
+       Self_iterator first = begin();
+       Self_iterator v_it = first;
+       Self_iterator prev_v_it;
+       bool inserting = false;
+       Self_iterator next_v_it;
+   
+       do
+       {
+          // Don't want to sort the edges for vertices of degree 2 because they
+          // are already in CCW order (since the partition polygons were in CCW
+          // order), and this is what you need when to begin the construction 
+          // of the union polygon.
+          if ((*v_it).second.size() > 2)
+          {
+           (*v_it).second.sort(
+           CW_indirect_edge_info_compare<Self_iterator,Traits>((*v_it).first));
+          }
+          if (!inserting)
+          {
+              if ((*v_it).second.size() == 2)
+              {
+                 inserting = true;
+                 // insert this vertex and the two around it
+                 first = prev_v_it = (*(*v_it).second.begin()).endpoint();
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+                 std::cout << "union_vertices: inserting "
+                           << (*prev_v_it).first << std::endl;
+#endif
+                 *result = (*prev_v_it).first;
+                 result++;
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+                 std::cout << "union_vertices: inserting "
+                           << (*v_it).first << std::endl;
+#endif
+                 *result = (*v_it).first;
+                 result++;
+                 next_v_it = (*v_it).second.last_edge_info().endpoint();
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+                 std::cout << "union_vertices: inserting "
+                           << (*next_v_it).first << std::endl;
+#endif
+                 *result = (*next_v_it).first;
+                 result++;
+              }
+              else
+              {
+                 next_v_it = v_it;
+                 next_v_it++;
+              }
+          }
+          else
+          {
+             // find the previous vertex in this vertex's list
+             next_v_it =(*v_it).second.next_ccw_edge_info(prev_v_it).endpoint();
+             if (next_v_it != first)
+             {
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+                std::cout << "union_vertices: inserting "
+                          << (*next_v_it).first << std::endl;
+#endif
+                *result = (*next_v_it).first;
+                result++;
+             }
+          }
+          prev_v_it  = v_it;
+          v_it = next_v_it;
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+          std::cout << "union_vertices: prev_v_it " << (*prev_v_it).first
+                    << " v_it " << (*v_it).first << " next_v_it "
+                    << (*next_v_it).first << std::endl;
+#endif
+       }
+       while (v_it != first && v_it != end());
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+       if (v_it == first)
+          std::cout << "union_vertices: stopped because first was reached "
+                    << std::endl;
+       else
+          std::cout << "union_vertices: stopped because end was reached "
+                    << std::endl;
+#endif
+       return result;
+   }
 
 };
 
 }
 
+/*
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Partition_vertex_map.C>
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+*/
 
 #endif // CGAL_PARTITION_VERTEX_MAP_H

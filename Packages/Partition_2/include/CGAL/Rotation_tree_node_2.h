@@ -40,8 +40,8 @@ class Rotation_tree_node_2 : public Traits::Point_2
 {
 public:
    typedef typename Traits::Point_2                         Point_2;
-   typedef Rotation_tree_2<Traits>                          Tree;
-   typedef typename Tree::iterator                          Tree_iterator;
+   typedef typename std::list< Rotation_tree_node_2<Traits> >::iterator
+                                                            Tree_iterator;
    typedef std::pair<Tree_iterator, bool>                   Node_ref;
 
 

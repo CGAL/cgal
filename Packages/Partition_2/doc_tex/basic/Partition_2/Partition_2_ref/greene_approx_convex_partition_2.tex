@@ -49,15 +49,16 @@ the resulting sequence of polygons is returned.
           whose vertices are oriented counterclockwise.
 \end{enumerate}
 
-The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2}.
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
 \ccIndexTraitsClassDefault{greene_approx_convex_partition_2}
+with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
-\ccc{approx_convex_partition_2},
-\ccc{convex_partition_is_valid_2},
-\ccc{optimal_convex_partition_2},
-\ccc{partition_is_valid_2},
-\ccc{y_monotone_partition_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} 
 
 \ccExample
 The following code fragment will compute an approximately optimal

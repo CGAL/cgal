@@ -7,7 +7,8 @@
 % |
 % +------------------------------------------------------------------------+
 
-
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
 \begin{ccRefConcept}{PartitionIsValidTraits_2}
 
 \ccDefinition
@@ -191,16 +192,18 @@ on $l$.
 
 \ccHasModels
 
-\ccc{Partition_traits_2}
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
 
 \ccSeeAlso
 
-\ccc{approx_convex_partition_2},
-\ccc{greene_approx_convex_partition_2},
-\ccc{optimal_convex_partition_2},
-\ccc{y_monotone_partition_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
 
 \end{ccRefConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

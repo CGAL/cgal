@@ -28,6 +28,7 @@
 
 namespace CGAL {
 
+/*
 // Pre:  ccw order of points; no repeated points
 template <class Traits>
 template <class ForwardIterator>
@@ -35,7 +36,7 @@ void
 Vertex_visibility_graph_2<Traits>::build(ForwardIterator first, 
                                   ForwardIterator beyond)
 {
-   Polygon_2       polygon(first,beyond);
+   Polygon       polygon(first,beyond);
    Tree            tree(polygon.begin(), polygon.end());
 
    Vertex_map  vertex_map;
@@ -157,6 +158,7 @@ Vertex_visibility_graph_2<Traits>::is_valid(ForwardIterator first,
    // ??? how do you check if there are missing edges ???
 }
 
+*/
 
 // want to determine, for each vertex p of the polygon, the line segment
 // immediately below it.  For vertical edges, the segment below is not the
@@ -164,7 +166,7 @@ Vertex_visibility_graph_2<Traits>::is_valid(ForwardIterator first,
 template <class Traits>
 void 
 Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
-                              const Polygon_2& polygon, Vertex_map& vertex_map)
+                              const Polygon& polygon, Vertex_map& vertex_map)
 {
    typedef typename Vertex_map::value_type           Map_pair;
 
@@ -177,8 +179,8 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
    iterator_list.sort(Indirect_less_xy_compare_2<Traits>());
 
    // Create an ordered list of edge endpoints (iterators), initially empty
-   typedef std::set< Point_pair, Segment_less_yx_2 >  Ordered_edge_set;
-   typedef typename Ordered_edge_set::iterator        Ordered_edge_set_iterator;
+   typedef std::set< Point_pair, Segment_less_yx_2 > Ordered_edge_set;
+   typedef typename Ordered_edge_set::iterator       Ordered_edge_set_iterator;
 
    Ordered_edge_set              ordered_edges;
    Ordered_edge_set_iterator     edge_it;
@@ -329,7 +331,9 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
 template <class Traits>
 bool 
 Vertex_visibility_graph_2<Traits>::left_turn_to_parent(
-                                   Tree_iterator p, Tree_iterator q, Tree& tree)
+                                   Tree_iterator p, 
+                                   Tree_iterator q, 
+                                   Tree& tree)
 {
    if (tree.parent_is_p_infinity(q)) 
    {
@@ -354,7 +358,8 @@ Vertex_visibility_graph_2<Traits>::left_turn_to_parent(
 template <class Traits>
 bool 
 Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
-                             const Polygon_2& polygon, Polygon_const_iterator p,
+                             const Polygon& polygon, 
+                             Polygon_const_iterator p,
                              Polygon_const_iterator q)
 {
    Turn_reverser<Point_2, Leftturn_2> rightturn(leftturn_2);
@@ -384,8 +389,8 @@ Vertex_visibility_graph_2<Traits>::diagonal_in_interior(
 // returns true if the looker can see the point_to_see 
 template <class Traits>
 bool Vertex_visibility_graph_2<Traits>::point_is_visible(
-                                           const Polygon_2& polygon, 
-                                           Polygon_const_iterator point_to_see, 
+                                           const Polygon& polygon, 
+                                           Polygon_const_iterator point_to_see,
                                            Vertex_map_iterator looker)
 {
    // Collect pointers to the current visibility segments for the looker
@@ -401,7 +406,8 @@ bool Vertex_visibility_graph_2<Traits>::point_is_visible(
    prev_vis_endpt--;
 
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-     cout << "looker is " << (*looker).first << " point to see is " << *point_to_see;
+     cout << "looker is " << (*looker).first << " point to see is " 
+          << *point_to_see;
      cout << " visibility points are prev: " << *prev_vis_endpt
           << " vis: " << *vis_endpt << " next: " << *next_vis_endpt << endl;
 #endif
@@ -523,8 +529,8 @@ bool Vertex_visibility_graph_2<Traits>::point_is_visible(
 template <class Traits>
 void Vertex_visibility_graph_2<Traits>::update_visibility(
                                                       Vertex_map_iterator p_it,
-                                                      Vertex_map_iterator q_it, 
-                                                      const Polygon_2& polygon, 
+                                                      Vertex_map_iterator q_it,
+                                                      const Polygon& polygon,
                                                       int are_adjacent)
 {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -550,7 +556,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       turn_q = prev_q;
 
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-   std::cout << "prev_q = " << *prev_q  << " turn_q = " << *turn_q << std::endl;
+   std::cout << "prev_q = " << *prev_q  << " turn_q = " << *turn_q 
+             << std::endl;
 #endif
 
    if (are_adjacent)
@@ -559,14 +566,16 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       {
          (*p_it).second.second = (*q_it).second.second; // p sees what q sees
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "adjacent with right turn; p now sees what q sees" << std::endl;
+         std::cout << "adjacent with right turn; p now sees what q sees" 
+                   << std::endl;
 #endif
       }
       else // turn left or go straight
       {
          (*p_it).second.second = (*q_it).second.first;  // p sees q
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "adjacent and NOT right turn; p now sees q " << std::endl;
+         std::cout << "adjacent and NOT right turn; p now sees q " 
+                   << std::endl;
 #endif
       }
    }
@@ -581,7 +590,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       if (turn_q == polygon.end()) turn_q = polygon.begin();
 
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-      std::cout << "prev_q = " << *prev_q  << " turn_q = " << *turn_q << std::endl;
+      std::cout << "prev_q = " << *prev_q  << " turn_q = " << *turn_q 
+                << std::endl;
 #endif
       // q sees nothing or there is a left turn to the next point after q
       if ((*q_it).second.second == polygon.end() || 
@@ -589,14 +599,16 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       {
          (*p_it).second.second = (*q_it).second.first; // p sees q
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "p sees q's segment, q sees nothing and left to next point; p sees q " << std::endl;
+         std::cout << "p sees q's segment, q sees nothing and left to next "
+                   << " point; p sees q " << std::endl;
 #endif
       }
       else
       {
          (*p_it).second.second = (*q_it).second.second; // p sees what q sees
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "p sees q's segment, q sees something; p sees what q sees" << std::endl;
+         std::cout << "p sees q's segment, q sees something;"
+                   << " p sees what q sees" << std::endl;
 #endif 
       }
    }
@@ -624,7 +636,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
          {
             (*p_it).second.second = (*q_it).second.first;
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "p sees something in direction of q, but q is closer; p sees q" << std::endl;
+            std::cout << "p sees something in direction of q, but q is closer;"
+                      << " p sees q" << std::endl;
 #endif 
          }
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -636,18 +649,20 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       }
       else if (assign(i_seg, next_result))
       {
-         if (collinear_ordered_2((*p_it).first, (*q_it).first, i_seg.source()) &&
-             collinear_ordered_2((*p_it).first, (*q_it).first, i_seg.target()))
+         if (collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.source()) &&
+             collinear_ordered_2((*p_it).first,(*q_it).first,i_seg.target()))
          {
             (*p_it).second.second = (*q_it).second.first;
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-            std::cout << "p sees something in direction of q, but q is closer; p sees q" << std::endl;
+            std::cout << "p sees something in direction of q, but q is closer;"
+                      << " p sees q" << std::endl;
 #endif 
          }
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          else 
          {
-            std::cout << "p sees something in direction of q that's closer than q; p doesn't see  q" << std::endl;
+            std::cout << "p sees something in direction of q that's closer "
+                      << " than q; p doesn't see  q" << std::endl;
          }
 #endif 
       }
@@ -655,7 +670,8 @@ void Vertex_visibility_graph_2<Traits>::update_visibility(
       {
          (*p_it).second.second = (*q_it).second.first;
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
-         std::cout << "p doesn't see something in direction of q; p sees q" << std::endl;
+         std::cout << "p doesn't see something in direction of q; p sees q" 
+                   << std::endl;
 #endif 
       }
    }
@@ -672,7 +688,7 @@ template <class Traits>
 void Vertex_visibility_graph_2<Traits>::update_collinear_visibility(
                                                     Vertex_map_iterator p_it,
                                                     Vertex_map_iterator q_it, 
-                                                    const Polygon_2& polygon)
+                                                    const Polygon& polygon)
 {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
    std::cout << "updating collinear visibility" << std::endl;
@@ -716,8 +732,9 @@ void Vertex_visibility_graph_2<Traits>::update_collinear_visibility(
    // on p's current visibility point) and updates p's visibility point
    // where appropriate
 template <class Traits>
-void Vertex_visibility_graph_2<Traits>::handle(Tree_iterator p, Tree_iterator q, 
-                                        const Polygon_2& polygon,
+void Vertex_visibility_graph_2<Traits>::handle(Tree_iterator p, 
+                                        Tree_iterator q, 
+                                        const Polygon& polygon,
                                         Vertex_map& vertex_map)
 {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG

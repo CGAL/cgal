@@ -176,7 +176,8 @@ class Partition_vertex : public Traits::Point_2
     {
        std::cout << "from " << *this << std::endl;
        typename std::list<Circulator>::const_iterator it;
-       for (it = diag_endpoint_refs.begin();it != diag_endpoint_refs.end();it++)
+       for (it = diag_endpoint_refs.begin();it != diag_endpoint_refs.end();
+            it++)
        {
           std::cout << " to " << **it << std::endl;
        }
@@ -195,18 +196,16 @@ private:
 //   Traits::Orientation_2
 //   Traits::leftturn_2_object
 //   Traits::orientation_2_object
-template <class Traits_>
-class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
+template <class Traits>
+class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits > >
 {
-   typedef Traits_                                   Traits;
-   typedef Partitioned_polygon_2<Traits>             Self;
-   typedef Partition_vertex<Traits>                  Vertex;
-   typedef typename Self::iterator                   Iterator;
-   typedef Circulator_from_iterator<Iterator>        Circulator;
-   typedef typename Traits::Polygon_2                Subpolygon_2;
-   typedef typename Traits::Point_2                  Point_2;
-   typedef typename Traits::Leftturn_2               Leftturn_2;
-   typedef Turn_reverser<Point_2, Leftturn_2>        Rightturn_2;
+   typedef Partition_vertex<Traits>                     Vertex;
+   typedef typename std::vector< Vertex >::iterator     Iterator;
+   typedef Circulator_from_iterator<Iterator>           Circulator;
+   typedef typename Traits::Polygon_2                   Subpolygon_2;
+   typedef typename Traits::Point_2                     Point_2;
+   typedef typename Traits::Leftturn_2                  Leftturn_2;
+   typedef Turn_reverser<Point_2, Leftturn_2>           Rightturn_2;
 
 public:
    Partitioned_polygon_2() : 
@@ -228,17 +227,156 @@ public:
       (*v2_ref).insert_diagonal(v1_ref);
    }
 
-   void prune_diagonals();
+   void prune_diagonals()
+   {
+      Circulator first(begin(), end(), begin());
+      Circulator c = first;
+      typedef Partition_vertex<Traits>::Diagonal_iterator Diagonal_iterator;
+
+      Diagonal_iterator d;
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+      std::cout << "pruning diagonals ..." << std::endl;
+#endif
+      do {
+         d = (*c).diagonals_begin();
+         while (d != (*c).diagonals_end()) {
+            if (!diagonal_is_necessary(c, *d))
+            {
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+               std::cout << "   removing from " << *c << " to " << **d
+                         << std::endl;
+#endif
+               (**d).diagonal_erase(c);
+               d = (*c).diagonal_erase(d);
+            }
+            else
+            {
+              d++;
+            }
+         }
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+         (*c).print_diagonals();
+#endif
+         (*c).reset_current_diagonal();
+      }
+      while (++c != first);
+   }
 
    // the pruning is probably no longer necessary
    template <class OutputIterator>
-   OutputIterator partition(OutputIterator result, bool prune);
+   OutputIterator partition(OutputIterator result, bool prune)
+   {
+      // walk through each vertex and sort the diagonals
+      Circulator first(begin(), end());
+      Circulator c = first;
+      Circulator next;
+      Circulator prev = c;
+      prev--;
+      do
+      {
+         next = c;
+         next++;
+         (*c).sort_diagonals(prev, next);
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+         (*c).print_diagonals();
+#endif
+         prev = c;
+      }
+      while (++c != first);
+
+      // now remove any diagonals that do not cut a reflex angle at one end
+      if (prune) prune_diagonals();
+
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+      c = first;
+      do
+      {
+         (*c).print_diagonals();
+      }
+      while (++c != first);
+#endif
+
+      make_polygon(first, result);
+      return result;
+   }
 
 private:
    template<class OutputIterator>
-   Circulator make_polygon(Circulator start, OutputIterator& result);
+   Circulator make_polygon(Circulator start, OutputIterator& result)
+   {
+       Subpolygon_2 new_polygon;
+       Circulator next = start;
+       do
+       {
+          new_polygon.push_back(*next);
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+          std::cout << "adding vertex " << *next << std::endl;
+#endif
+          Circulator diag;
+          if ((*next).has_unused_diagonals())
+          {
+             diag = (*next).current_diagonal();
+#ifdef CGAL_PARTITIONED_POLY_DEBUG
+             std::cout << "diagonal endpoint: " << *diag << std::endl;
+#endif
+             (*next).advance_diagonal();
+             if (diag == start)
+             {
+                *result = new_polygon;
+                result++;
+                return next;
+             }
+             else
+             {
+                next = make_polygon(next, result);
+             }
+          }
+          else next++;
+       } while (next != start);
+       *result = new_polygon;
+       result++;
+       return next;
+       // if there are no diagonals at this vertex
+       //    push on the vertex
+       // else if the first diagonal closes the polygon
+       //    close the polygon
+       //    return the current vertex (NOT the other end of the diagonal)
+       // else
+       //    remove the first diagonal
+       //    recur, starting a new polygon at this vertex and return the
+       //      vertex where the new polygon ended
+       //    continue from the last vertex of the new polygon
+   }
 
-   bool cuts_reflex_angle(Circulator vertex_ref, Circulator diag_endpoint);
+   
+
+   bool cuts_reflex_angle(Circulator vertex_ref, Circulator diag_endpoint)
+   {
+      Circulator prev = vertex_ref; prev--;
+      Circulator next = vertex_ref; next++;
+   
+      typedef Partition_vertex<Traits>::Diagonal_iterator Diagonal_iterator;
+   
+      // find diag_endpoint in vertex_ref's list of diagonals
+      Diagonal_iterator d_it;
+      for (d_it = (*vertex_ref).diagonals_begin();
+           d_it != (*vertex_ref).diagonals_end() && diag_endpoint != *d_it;
+           d_it++)
+      {
+         prev = *d_it;
+      }
+      Diagonal_iterator next_d_it = d_it;
+      next_d_it++;
+      if (next_d_it == (*vertex_ref).diagonals_end())
+      {
+         next = vertex_ref;
+         next++;
+      }
+      else
+         next = *next_d_it;
+   
+      return _rightturn(*prev, *vertex_ref, *next);
+   }
 
    bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2) 
    {
@@ -251,9 +389,10 @@ private:
 
 }
 
-
+/*
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Partitioned_polygon_2.C>
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+*/
 
 #endif // CGAL_PARTITIONED_POLYGON_2_H

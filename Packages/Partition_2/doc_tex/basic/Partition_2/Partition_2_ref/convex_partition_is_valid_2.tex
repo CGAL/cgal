@@ -6,30 +6,27 @@
 Function that determines if a given set of polygons represents
 a valid convex partitioning for a given sequence of points that represent a
 simple, counterclockwise-oriented polygon.  
-%A convex partition is valid if the 
-%polygons do not overlap, the union of the polygons is the same as the original
-%polygon given by the sequence of points, and if each partition polygon is 
-%convex. 
+A convex partition is valid if the 
+polygons do not overlap, the union of the polygons is the same as the original
+polygon given by the sequence of points, and if each partition polygon is 
+convex. 
+\ccIndexSubsubitem{polygon partitioning}{convex}{valid}
 
 \ccInclude{CGAL/partition_is_valid_2.h}
 
 \ccFunction{
-template<class InputIterator1, class InputIterator2, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool
-convex_partition_is_valid_2 (InputIterator1 point_first, 
-                             InputIterator1 point_last,
-                             InputIterator2 poly_first, 
-                             InputIterator2 poly_last,
+convex_partition_is_valid_2 (InputIterator point_first, 
+                             InputIterator point_last,
+                             ForwardIterator poly_first, 
+                             ForwardIterator poly_last,
                              const Traits& traits = Default_traits);
 }
 {
 determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_last})
 define a valid convex partition of the polygon defined by the points in the 
-range [\ccc{point_first}, \ccc{point_last}), where a valid convex partition 
-is one in which the polygons are nonoverlapping and the union of the polygons 
-is the same as the original polygon defined on [\ccc{point_first}, 
-\ccc{point_last}) and each polygon is convex.
-\ccIndexSubsubitem{polygon partitioning}{convex}{valid}
+range [\ccc{point_first}, \ccc{point_last}). 
 The function returns \ccc{true} iff the partition is valid and otherwise
 returns \ccc{false}.
 }
@@ -42,21 +39,24 @@ returns \ccc{false}.
     \item \ccc{Traits} is a model of the concept
           ConvexPartitionIsValidTraits\_2%
           \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}.
-    \item \ccc{InputIterator1::value_type} should be \ccc{Traits::Point_2},
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
           which should also be the type of the points stored in an object
-          of type \ccc{InputIterator2::value_type}.
+          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{ForwardIterator::value_type} should be 
+          \ccc{Traits::Polygon_2}.
 \end{enumerate}
 
-The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2}.%
-\ccIndexTraitsClassDefault{convex_partition_is_valid_2}
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
+\ccIndexTraitsClassDefault{convex_partition_is_valid_2} 
+with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
 
-\ccc{approx_convex_partition_2},
-\ccc{greene_approx_convex_partition_2},
-\ccc{is_convex_2},
-\ccc{optimal_convex_partition_2},
-\ccc{partition_is_valid_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2}\\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccc{CGAL::is_convex_2}
 
 \ccExample
 

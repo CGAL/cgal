@@ -6,7 +6,9 @@
 
 Function that determines if a given set of polygons represents
 a valid partition for a given sequence of points that 
-define a simple, counterclockwise-oriented polygon.  
+define a simple, counterclockwise-oriented polygon.  A valid partition is one in
+which the polygons are nonoverlapping and the union of the polygons is the 
+same as the original polygon.
 \ccIndexSubitem{polygon partitioning}{valid}
 \ccIndexSubsubitem{polygon partitioning}{convex}{valid}
 \ccIndexSubsubitem{polygon partitioning}{y-monotone}{valid}
@@ -14,19 +16,17 @@ define a simple, counterclockwise-oriented polygon.
 \ccInclude{CGAL/partition_is_valid_2.h}
 
 \ccFunction{
-template<class InputIterator1, class InputIterator2, class Traits>
+template<class InputIterator, class ForwardIterator, class Traits>
 bool
-partition_is_valid_2 (InputIterator1 point_first, InputIterator1 point_last,
-                      InputIterator2 poly_first, InputIterator2 poly_last,
+partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
+                      ForwardIterator poly_first, ForwardIterator poly_last,
                       const Traits& traits = Default_traits);
 }
 {
 returns \ccc{true} iff the polygons in the range [\ccc{poly_first}, 
 \ccc{poly_last}) define a valid partition of the polygon defined by the 
 points in the range [\ccc{point_first}, \ccc{point_last}) and 
-\ccc{false} otherwise.  A valid partition is one in
-which the polygons are nonoverlapping and the union of the polygons is the 
-same as the original polygon defined on [\ccc{point_first}, \ccc{point_last}).
+\ccc{false} otherwise.  
 Each polygon must also satisfy the property 
 tested by \ccc{Traits::Is_valid()}. 
 }
@@ -41,23 +41,26 @@ tested by \ccc{Traits::Is_valid()}.
           \ccIndexMainItem[c]{PartitionIsValidTraits_2} and the
           concept defining the requirements for the validity test 
           implemented by \ccc{Traits::Is_valid()}.
-    \item \ccc{InputIterator1::value_type} should be \ccc{Traits::Point_2},
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
           which should also be the type of the points stored in an object
-          of type \ccc{InputIterator2::value_type}.
+          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{ForwardIterator::value_type} should be 
+          \ccc{Traits::Polygon_2}.
 \end{enumerate}
 
-The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2}.%
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
 \ccIndexTraitsClassDefault{partition_is_valid_2}
+with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
 
-\ccc{approx_convex_partition_2},
-\ccc{greene_approx_convex_partition_2},
-\ccc{is_y_monotone_2},
-\ccc{is_convex_2},
-\ccc{optimal_convex_partition_2},
-\ccc{Partition_is_valid_traits_2},
-\ccc{y_monotone_partition_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::is_y_monotone_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccc{CGAL::is_convex_2} 
 
 \ccExample
 
@@ -92,7 +95,7 @@ this assertion is superfluous unless postcondition checking for
    Validity_traits       validity_traits;
 
    // ...
-   // insert vertices into P to create a simle, CCW-oriented polygon
+   // insert vertices into P to create a simple, CCW-oriented polygon
    // ...
    CGAL::optimal_convex_partition_2(P.vertices_begin(),
                                     P.vertices_end(),

@@ -96,7 +96,7 @@ class Vertex_visibility_traits_2
 
 
     // ----------
-    //   needed for simplicity and counterclockwise order precondition checking 
+    //   needed for simplicity and counterclockwise order precondition checking
     FT 
     cross_product_2(const ::CGAL::Vector_2<R>& p, 
                     const ::CGAL::Vector_2<R>& q) const

@@ -35,19 +35,58 @@
 
 namespace CGAL {
 
-template <class Traits>
-class Rotation_tree_2 : public std::list< Rotation_tree_node_2<Traits> >
+template <class Traits_>
+class Rotation_tree_2 : public std::list< Rotation_tree_node_2<Traits_> >
 {
 public:
-   typedef Rotation_tree_2<Traits>      Self;
-   typedef Rotation_tree_node_2<Traits> Node;
-   typedef typename Self::iterator      Self_iterator;
-   typedef typename Traits::Point_2     Point_2;
+   typedef Traits_                               Traits;
+   typedef Rotation_tree_node_2<Traits>          Node;
+   typedef typename std::list<Node>::iterator    Self_iterator;
+   typedef typename Traits::Point_2              Point_2;
 
 
    // constructor
    template<class ForwardIterator>
-   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond);
+   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond)
+   {
+      typedef typename Traits::R                               R;
+      typedef typename Traits::R::FT                           FT;
+      typedef typename Traits::Less_xy_2                       Less_xy_2;
+      typedef ch_Binary_predicate_reversor<Point_2, Less_xy_2> Greater_xy_2;
+   
+      for (ForwardIterator it = first; it != beyond; it++)
+         push_back(*it);
+   
+      sort(Greater_xy_2(Traits().less_xy_2_object()));
+      unique();
+   
+      // b is the point with the largest x coordinate
+      Node largest_x = front();
+   
+      // push the point p_minus_infinity
+      push_front(Point_2( CGAL::to_double(largest_x.x())+1,
+                         -CGAL::to_double(largest_x.y())));
+   
+      // push the point p_infinity
+      push_front(Point_2(CGAL::to_double(largest_x.x())+1,
+                         CGAL::to_double(largest_x.y())));
+   
+      _p_inf = begin();  // record the iterators to these extreme points
+      _p_minus_inf = begin(); _p_minus_inf++;
+   
+      Self_iterator root = begin();     // p_infinity
+      Self_iterator child = root;
+      child++;                          // now points to p_minus_inf
+      set_rightmost_child(child, root); // make p_minus_inf a child of p_inf
+      root++;                           // now points to p_minus_inf
+      child++;                          // now points to p_0
+      while (child != end())  // make all points children of p_minus_inf
+      {
+         set_rightmost_child(child,root);
+         child++;
+      }
+   }
+
 
    // the point that comes first in the right-to-left ordering is first
    // in the ordering, after the auxilliary points p_minus_inf and p_inf
@@ -109,7 +148,7 @@ public:
    // makes *p the left sibling of *q
    void set_left_sibling(Self_iterator p, Self_iterator q);
 
-   // makes p the right sibling of q
+   // makes *p the right sibling of *q
    void set_right_sibling(Self_iterator p, Self_iterator q);
 
    // NOTE:  this function does not actually remove the node p from the

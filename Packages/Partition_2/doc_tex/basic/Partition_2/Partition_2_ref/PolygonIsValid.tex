@@ -8,7 +8,8 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
 \begin{ccRefFunctionObjectConcept}{PolygonIsValid}
 
 \ccDefinition
@@ -33,26 +34,29 @@ for validity of the polygon.
 template<class InputIterator>
 bool operator()(InputIterator first, InputIterator last);}
 { 
-  returns \ccc{true} iff the points in the range [\ccc{first},\ccc{last}) 
-  define a valid polygon.
+  returns \ccc{true} iff the points of type \ccc{Traits::Point_2}
+  in the range [\ccc{first},\ccc{last}) define a valid polygon.
 }
 
 \ccHasModels
 
-\ccc{Is_convex_2}, 
-\ccc{Is_y_monotone_2}
+\ccRefIdfierPage{CGAL::Is_convex_2<Traits>}  \\
+\ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>}
 
 \ccSeeAlso
 
-\ccc{approx_convex_partition_2},
-\ccc{convex_partition_is_valid_2},
-\ccc{greene_approx_convex_partition_2},
-\ccc{optimal_convex_partition_2},
-\ccc{partition_is_valid_2},
-\ccc{y_monotone_partition_2},
-\ccc{y_monotone_partition_is_valid_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
 
 \end{ccRefFunctionObjectConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

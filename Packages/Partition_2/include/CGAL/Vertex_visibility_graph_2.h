@@ -59,19 +59,20 @@ private:
    typedef typename Traits::Less_xy_2         Less_xy_2;
    typedef typename Traits::Orientation_2     Orientation_2;
    typedef typename Traits::Collinear_are_ordered_along_line_2 
-                                             Collinear_are_ordered_along_line_2;
+                                            Collinear_are_ordered_along_line_2;
    typedef typename Traits::Are_strictly_ordered_along_line_2 
-                                             Are_strictly_ordered_along_line_2;
-   typedef typename Traits::Construct_segment_2 Construct_segment_2; 
-   typedef typename Traits::Construct_ray_2     Construct_ray_2; 
+                                            Are_strictly_ordered_along_line_2;
+   typedef typename Traits::Construct_segment_2 
+                                            Construct_segment_2; 
+   typedef typename Traits::Construct_ray_2   Construct_ray_2; 
    typedef Segment_less_yx_2<Traits>          Segment_less_yx_2;
 
    typedef Rotation_tree_2<Traits>            Tree;
    typedef typename Tree::iterator            Tree_iterator;
 
-   typedef std::list< Point_2 >               Polygon_2;
-   typedef typename Polygon_2::const_iterator Polygon_const_iterator;
-   typedef typename Polygon_2::iterator       Polygon_iterator;
+   typedef std::list< Point_2 >               Polygon;
+   typedef typename Polygon::const_iterator   Polygon_const_iterator;
+   typedef typename Polygon::iterator         Polygon_iterator;
 
    // the edge set is simply a set of point pairs.
    typedef std::pair<Point_2, Point_2>                Point_pair;
@@ -100,7 +101,8 @@ public:
      leftturn_2(Traits().leftturn_2_object()), 
      orientation_2(Traits().orientation_2_object()), 
      collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()), 
-     are_strictly_ordered_along_line_2(Traits().are_strictly_ordered_along_line_2_object()),
+     are_strictly_ordered_along_line_2(
+           Traits().are_strictly_ordered_along_line_2_object()),
      less_xy_2(Traits().less_xy_2_object()),
      construct_segment_2(Traits().construct_segment_2_object()),
      construct_ray_2(Traits().construct_ray_2_object())
@@ -110,7 +112,103 @@ public:
 
    // Pre:  ccw order of points; no repeated points
    template <class ForwardIterator>
-   void build(ForwardIterator first, ForwardIterator beyond);
+   void build(ForwardIterator first, ForwardIterator beyond)
+   {
+      Polygon         polygon(first,beyond);
+      Tree            tree(polygon.begin(), polygon.end());
+   
+      Vertex_map  vertex_map;
+      initialize_vertex_map(polygon, vertex_map);
+   
+      std::stack<Tree_iterator> s;
+      s.push(tree.rightmost_point_ref());   // push on p_0, the rightmost point
+   
+      Tree_iterator p, p_r, q, z;
+      while (!s.empty())
+      {
+         p = s.top();
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         if (p != tree.end())
+            std::cout << "p = " << *p << std::endl;
+         else
+            std::cout << "p == NULL" << std::endl;
+#endif
+         s.pop();
+         p_r = tree.right_sibling(p);
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         if (p_r != tree.end())
+            std::cout << "p_r = " << *p_r << std::endl;
+         else
+            std::cout << "p_r == NULL" << std::endl;
+#endif
+         q = tree.parent(p);
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         if (q != tree.end())
+            std::cout << "q = " << *q << std::endl;
+         else
+            std::cout << "q == NULL" << std::endl;
+#endif
+         if (!tree.parent_is_p_minus_infinity(p))
+         {
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+            std::cout << "q is not p_minus_infinity" << std::endl;
+#endif
+            handle(p,q,polygon,vertex_map);
+         }
+         z = tree.left_sibling(q);
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         if (z != tree.end())
+            std::cout << "z = " << *z << std::endl;
+         else
+            std::cout << "z == NULL" << std::endl;
+         std::cout << "erasing " << *p << " from tree " << std::endl;
+#endif
+         tree.erase(p);
+         if ((z == tree.end()) || !left_turn_to_parent(p,z,tree))
+         {
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+            std::cout << "making " << *p << " the left sibling of " << *q
+                      << std::endl;
+#endif
+            tree.set_left_sibling(p,q);
+         }
+         else
+         {
+            // NOTE: no need to check here if z is p_infinity since you are
+            // moving DOWN the tree instead of up and p_infinity is at the root
+            while ((tree.rightmost_child(z) != tree.end()) &&
+                   !rightturn(*p,*tree.rightmost_child(z),*z))
+            {
+               z = tree.rightmost_child(z);
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+               std::cout << "    z = " << *z << std::endl;
+#endif
+            }
+            tree.set_rightmost_child(p,z);
+            if (!s.empty() && z == s.top())
+            {
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+               std::cout << "popping " << *z << " from top of stack "<<std::endl;
+#endif
+               z = s.top();
+               s.pop();
+            }
+         }
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+         std::cout << " p is now " << *p << std::endl;
+#endif
+         if (tree.left_sibling(p) == tree.end() && !tree.parent_is_p_infinity(p))
+         {
+#ifdef CGAL_VISIBILITY_GRAPH_DEBUG
+            std::cout << "pushing " << *p << std::endl;
+#endif
+            s.push(p);
+         }
+         if (p_r != tree.end()) s.push(p_r);
+      }
+   //   print_edge_set(edges);
+   }
+
 
    void clear()
    {
@@ -166,15 +264,36 @@ public:
 
 // ??? need to finish this ???
    template <class ForwardIterator>
-   bool is_valid(ForwardIterator first, ForwardIterator beyond);
+   bool is_valid(ForwardIterator first, ForwardIterator beyond)
+   {
+      std::vector<Point_2> vertices(first, beyond);
+      bool edge_there[vertices.size()];
+   
+      // for each edge in the graph determine if it is either an edge of the
+      // polygon or, if not, if it intersects the polygon in the interior of
+      // the edge.
+      for (iterator e_it = edges.begin(); e_it != edges.end(); e_it++)
+      {
+         Segment_2 s = construct_segment_2((*e_it).first, (*e_it).second);
+         if (is_an_edge(*e_it))
+            edge_there[edge_num] = true;
+         else if (do_intersect_in_interior(s, first, beyond))
+         return false;
+      }
+      // check if all the edges of the polygon are present
+      //
+      // ??? how do you check if there are missing edges ???
+   }
+
 
 private:
 
-   void print_vertex_map(const Vertex_map& vertex_map, const Polygon_2& polygon)
+   void print_vertex_map(const Vertex_map& vertex_map, 
+                         const Polygon& polygon)
    {
       typedef typename Vertex_map::const_iterator    const_iterator;
 
-      for (const_iterator it = vertex_map.begin(); it != vertex_map.end(); it++)
+      for (const_iterator it = vertex_map.begin(); it != vertex_map.end();it++)
       {
          if ((*it).second.second != polygon.end())
          std::cout << (*it).first << " sees " << *((*it).second.second) 
@@ -195,7 +314,8 @@ private:
    // want to determine, for each vertex p of the polygon, the line segment
    // immediately below it.  For vertical edges, the segment below is not the
    // one that begins at the other endpoint of the edge.
-   void initialize_vertex_map(const Polygon_2& polygon, Vertex_map& vertex_map);
+   void initialize_vertex_map(const Polygon& polygon, 
+                              Vertex_map& vertex_map);
 
    // determines if one makes a left turn going from p to q to q's parent.
    // if q's parent is p_infinity, then a left turn is made when p's x value
@@ -208,7 +328,7 @@ private:
 
 
    // returns true if q is the vertex after p
-   bool is_next_to(const Polygon_2& polygon, Polygon_const_iterator p, 
+   bool is_next_to(const Polygon& polygon, Polygon_const_iterator p, 
                    Polygon_const_iterator q) const
    {
       Polygon_const_iterator next = p; next++;
@@ -217,7 +337,7 @@ private:
    }
 
    // returns true if q is the vertex before or after p
-   bool are_adjacent(const Polygon_2& polygon, Polygon_const_iterator p, 
+   bool are_adjacent(const Polygon& polygon, Polygon_const_iterator p, 
                      Polygon_const_iterator q) const
    {
       Polygon_const_iterator next = p; next++;
@@ -230,28 +350,29 @@ private:
    }
 
    // returns true if the diagonal from p to q cuts the interior angle at p
-   bool diagonal_in_interior(const Polygon_2& polygon, Polygon_const_iterator p,
+   bool diagonal_in_interior(const Polygon& polygon, 
+                             Polygon_const_iterator p,
                              Polygon_const_iterator q);
  
 
    // returns true if the looker can see the point_to_see 
-   bool point_is_visible(const Polygon_2& polygon, 
+   bool point_is_visible(const Polygon& polygon, 
                          Polygon_const_iterator point_to_see, 
                          Vertex_map_iterator looker);
    
    void update_visibility(Vertex_map_iterator p_it,
                           Vertex_map_iterator q_it, 
-                          const Polygon_2& polygon, int are_adjacent);
+                          const Polygon& polygon, int are_adjacent);
 
    void update_collinear_visibility(Vertex_map_iterator p_it,
                                     Vertex_map_iterator q_it, 
-                                    const Polygon_2& polygon);
+                                    const Polygon& polygon);
 
    // The segment between points p and q is a potential visibility edge
    // This function determines if the edge should be added or not (based
    // on p's current visibility point) and updates p's visibility point
    // where appropriate
-   void handle(Tree_iterator p, Tree_iterator q, const Polygon_2& polygon,
+   void handle(Tree_iterator p, Tree_iterator q, const Polygon& polygon,
                Vertex_map& vertex_map);
 
 private:

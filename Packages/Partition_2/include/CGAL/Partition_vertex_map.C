@@ -55,20 +55,20 @@ Partition_vertex_map<Traits>::build(InputIterator poly_first,
    int poly_num = 0;
    for (; poly_first != poly_last; poly_first++, poly_num++)
    {
-      begin = (*poly_first).vertices_begin();
-      end = (*poly_first).vertices_end();
-      begin_v_loc_pair= insert(P_Vertex(*begin, Edge_list()));
-      prev_v_loc_pair = begin_v_loc_pair;
-      v_it = begin;
-      for (v_it++; v_it != end; v_it++)
-      {
-         v_loc_pair = insert(P_Vertex(*v_it, Edge_list()));
-         insert_next_edge(prev_v_loc_pair.first, v_loc_pair.first, poly_num);
-         insert_prev_edge(v_loc_pair.first, prev_v_loc_pair.first, poly_num);
-         prev_v_loc_pair = v_loc_pair;
-      }
-      insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first, poly_num);
-      insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first, poly_num);
+     begin = (*poly_first).vertices_begin();
+     end = (*poly_first).vertices_end();
+     begin_v_loc_pair= insert(P_Vertex(*begin, Edge_list()));
+     prev_v_loc_pair = begin_v_loc_pair;
+     v_it = begin;
+     for (v_it++; v_it != end; v_it++)
+     {
+        v_loc_pair = insert(P_Vertex(*v_it, Edge_list()));
+        insert_next_edge(prev_v_loc_pair.first, v_loc_pair.first, poly_num);
+        insert_prev_edge(v_loc_pair.first, prev_v_loc_pair.first, poly_num);
+        prev_v_loc_pair = v_loc_pair;
+     }
+     insert_next_edge(prev_v_loc_pair.first, begin_v_loc_pair.first, poly_num);
+     insert_prev_edge(begin_v_loc_pair.first, prev_v_loc_pair.first, poly_num);
    }
 }
 

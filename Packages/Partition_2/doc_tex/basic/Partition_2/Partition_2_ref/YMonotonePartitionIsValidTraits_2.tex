@@ -6,7 +6,8 @@
 % | 
 % +------------------------------------------------------------------------+
 
-
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
 \begin{ccRefConcept}{YMonotonePartitionIsValidTraits_2}
 \ccIndexSubitemBegin[C]{y_monotone_partition_2}{traits class}
 \ccIndexSubitemBegin[C]{y_monotone_partition_is_valid}{traits class}
@@ -38,16 +39,18 @@ PartitionIsValidTraits\_2.
 
 \ccHasModels
 
-\ccc{Partition_traits_2}
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
 
 \ccSeeAlso
 
-\ccc{partition_is_valid_2},
-\ccc{y_monotone_partition_2}
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
 
 \ccIndexSubitemEnd[C]{y_monotone_partition_2}{traits class}
 \ccIndexSubitemEnd[C]{y_monotone_partition_is_valid}{traits class}
 \end{ccRefConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

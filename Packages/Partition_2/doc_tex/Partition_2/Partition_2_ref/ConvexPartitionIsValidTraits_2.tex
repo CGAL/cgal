@@ -8,7 +8,8 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
 \begin{ccRefConcept}{ConvexPartitionIsValidTraits_2}
 \ccIndexSubitemBegin[C]{approx_convex_partition_2}{traits class}
 \ccIndexSubitemBegin[C]{greene_approx_convex_partition_2}{traits class}
@@ -45,21 +46,23 @@ PartitionIsValidTraits\_2.
 
 \ccHasModels
 
-\ccc{Partition_traits_2}
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
 
 \ccSeeAlso
 
-\ccc{approx_convex_partition_2},
-\ccc{greene_approx_convex_partition_2},
-\ccc{Is_convex_2},
-\ccc{is_convex_2},
-\ccc{optimal_convex_partition_2}
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::Is_convex_2<Traits>}\\
+%\ccRefIdfierPage{CGAL::is_convex_2}\\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2}
 
 \ccIndexSubitemEnd[C]{approx_convex_partition_2}{traits class}
 \ccIndexSubitemEnd[C]{greene_approx_convex_partition_2}{traits class}
 \ccIndexSubitemEnd[C]{optimal_convex_partition_2}{traits class}
 \ccIndexSubitemEnd[C]{convex_partition_is_valid_2}{traits class}
 \end{ccRefConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

@@ -62,11 +62,13 @@ bool is_adjacent_to(BidirectionalCirculator new_point_ref,
    // find the old point in original list of points 
    if (*new_point_ref == *(++old_point_ref)) return true;  // check ccw
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to:  next point is " << *old_point_ref <<std::endl;
+   std::cout << "is_adjacent_to:  next point is " << *old_point_ref 
+             << std::endl;
 #endif
    old_point_ref--;
 #ifdef CGAL_GREENE_APPROX_DEBUG
-   std::cout << "is_adjacent_to:  old_point is " << *old_point_ref << std::endl;
+   std::cout << "is_adjacent_to:  old_point is " << *old_point_ref 
+             << std::endl;
 #endif
    if (*new_point_ref == *(--old_point_ref)) return true;  // check cw
 #ifdef CGAL_GREENE_APPROX_DEBUG
@@ -79,8 +81,10 @@ bool is_adjacent_to(BidirectionalCirculator new_point_ref,
 
 // erases vertices in the range [first, last) (counterclockwise)
 template<class BidirectionalCirculator, class Polygon_2>
-void erase_vertices(BidirectionalCirculator first, BidirectionalCirculator last,
-                    Polygon_2& polygon, bool& update_required)
+void erase_vertices(BidirectionalCirculator first, 
+                    BidirectionalCirculator last,
+                    Polygon_2& polygon, 
+                    bool& update_required)
 {
    typedef typename Polygon_2::iterator  Vertex_iterator;
    Vertex_iterator it = polygon.begin();
@@ -208,16 +212,19 @@ void visible(Polygon_2& polygon,
                   top_chain.initialize(stack.front());
                   top_chain.change_dir();
 #ifdef CGAL_GREENE_APPROX_DEBUG
-                  std::cout << "visible:  stack is now " << *stack.back() << " "
-                       << *stack.front() << " dir " << int(stack.direction()) 
-                       << std::endl;
+                  std::cout << "visible:  stack is now " << *stack.back() 
+                            << " " << *stack.front() 
+                            << " dir " << int(stack.direction()) 
+                            << std::endl;
                   std::cout << "visible:  bottom_chain is now " 
-                       << *bottom_chain.back() << " "
-                       << *bottom_chain.front() 
-                       << " dir " << int(bottom_chain.direction()) << std::endl;
-                  std::cout << "visible:  top_chain is now " << *top_chain.back() 
-                       << " " << *top_chain.front() 
-                       << " dir " << int(top_chain.direction()) << std::endl;
+                            << *bottom_chain.back() << " "
+                            << *bottom_chain.front() 
+                            << " dir " << int(bottom_chain.direction()) 
+                            << std::endl;
+                  std::cout << "visible:  top_chain is now " 
+                            << *top_chain.back() << " " << *top_chain.front() 
+                            << " dir " << int(top_chain.direction()) 
+                            << std::endl;
 #endif
                }
                else
@@ -297,9 +304,10 @@ void stack_extend(Polygon_2& polygon,
                        result, traits);
 }
 
-template <class Polygon_2, class BidirectionalCirculator, class OutputIterator,
-          class Traits>
-void change_top_chain(Polygon_2& polygon, BidirectionalCirculator new_point_ref,
+template <class Polygon_2, class BidirectionalCirculator, 
+          class OutputIterator, class Traits>
+void change_top_chain(Polygon_2& polygon, 
+                      BidirectionalCirculator new_point_ref,
                       Circ_pair< BidirectionalCirculator >& stack,
                       Circ_pair< BidirectionalCirculator >& top_chain, 
                       Circ_pair< BidirectionalCirculator >& bottom_chain, 
@@ -371,7 +379,7 @@ void change_top_chain(Polygon_2& polygon, BidirectionalCirculator new_point_ref,
             done = true;
             stack.push_front(new_point_ref);
 #ifdef CGAL_GREENE_APPROX_DEBUG
-            std::cout << "change_top_chain: stack is empty.  New stack top is "
+            std::cout << "change_top_chain: stack is empty. New stack top is "
                       << *stack.front() << std::endl;
             std::cout << "stack.back is " << *stack.back() << std::endl;
             std::cout << "stack.before_back is " << *stack.before_back() 
@@ -681,9 +689,9 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
    Vertex_list  polygon(first, beyond);
 
    CGAL_partition_precondition(
-     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
+    orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
    CGAL_partition_precondition(
-     is_y_monotone_2(polygon.begin(), polygon.end(), traits));
+    is_y_monotone_2(polygon.begin(), polygon.end(), traits));
 
    Vertex_circulator point_ref(&polygon);
    Vertex_circulator circ = point_ref;
@@ -786,7 +794,8 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
    typedef typename Traits::Point_2                          Point_2;
    typedef typename Traits::Polygon_2                        Polygon_2;
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
    OutputIterator res(result);
 #else
 
@@ -817,7 +826,8 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
                                    res.output_so_far_begin(),
                                    res.output_so_far_end(), traits));
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
    return res;
 #else
    return res.to_output_iterator();

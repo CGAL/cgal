@@ -75,7 +75,8 @@ enum Partition_y_mono_vertex_type {PARTITION_Y_MONO_START_VERTEX,
 //
 template <class BidirectionalCirculator, class Traits>
 Partition_y_mono_vertex_type partition_y_mono_vertex_type(
-                                BidirectionalCirculator c, const Traits& traits)
+                                BidirectionalCirculator c, 
+                                const Traits& traits)
 {
    BidirectionalCirculator previous = c;
    previous--;
@@ -130,7 +131,8 @@ void partition_y_mono_print_tree(Tree tree)
 }
 
 template <class BidirectionalCirculator, class Tree>
-void partition_y_mono_handle_start_vertex(BidirectionalCirculator c, Tree& tree)
+void partition_y_mono_handle_start_vertex(BidirectionalCirculator c, 
+                                          Tree& tree)
 {
    typedef typename Tree::value_type ValuePair;
 
@@ -191,7 +193,7 @@ void partition_y_mono_handle_end_vertex(BidirectionalCirculator c, Tree& tree,
 
 template<class BidirectionalCirculator, class Iterator, class Tree>
 inline
-void partition_y_mono_edge_directly_left(BidirectionalCirculator c, Tree& tree, 
+void partition_y_mono_edge_directly_left(BidirectionalCirculator c, Tree& tree,
                                          Iterator& it)
 {
    it = tree.lower_bound(c);  // edge directly to the left of v_i since the
@@ -199,13 +201,14 @@ void partition_y_mono_edge_directly_left(BidirectionalCirculator c, Tree& tree,
                               // left
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    if (it != tree.end())
-   std::cout << "partition_y_mono_edge_directly_left: lower_bound  edge node: " 
+   std::cout << "partition_y_mono_edge_directly_left: lower_bound  edge node: "
              << *((*it).first) << " helper " << *((*it).second) << std::endl;
 #endif
 }
 
 template <class BidirectionalCirculator, class Tree, class Partition_Poly>
-void partition_y_mono_handle_split_vertex(BidirectionalCirculator c, Tree& tree,
+void partition_y_mono_handle_split_vertex(BidirectionalCirculator c, 
+                                          Tree& tree,
                                           Partition_Poly& partition_poly)
 {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
@@ -241,7 +244,8 @@ void partition_y_mono_handle_split_vertex(BidirectionalCirculator c, Tree& tree,
 
 template <class BidirectionalCirculator, class Tree, 
           class Partition_Poly, class Traits>
-void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c, Tree& tree,
+void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c, 
+                                          Tree& tree,
                                           Partition_Poly& partition_poly, 
                                           const Traits& traits)
 {
@@ -284,7 +288,7 @@ void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c, Tree& tree,
       tree.insert(ValuePair(ej,c));
    }
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "partition_y_mono_handle_merge_vertex: after erase(s) tree is " 
+   std::cout << "partition_y_mono_handle_merge_vertex: after erase(s) tree is "
              << std::endl;
    partition_y_mono_print_tree(tree);
 #endif
@@ -411,7 +415,8 @@ void partition_y_mono_handle_collinear_vertex(BidirectionalCirculator c,
 
 
 template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
+OutputIterator partition_y_monotone_2(InputIterator first, 
+                                      InputIterator beyond,
                                       OutputIterator result,
                                       const Traits& traits)
 {
@@ -421,7 +426,8 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
    typedef typename P_Polygon_2::iterator                  I;
    typedef Circulator_from_iterator<I>                     Circulator;
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                      Polygon_2;
@@ -430,11 +436,10 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
 
    P_Polygon_2 polygon(first, beyond);
    CGAL_partition_precondition(
-     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
+    orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
    Circulator first_c(polygon.begin(), polygon.end());
    Circulator_list<Circulator>  circ_list(first_c);
-//   circ_list.catenate(first_c);
    circ_list.sort(Indirect_not_less_yx_compare<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
@@ -462,7 +467,7 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
             partition_y_mono_handle_merge_vertex(*it, tree, polygon, traits);
             break;
          case PARTITION_Y_MONO_REGULAR_VERTEX:
-            partition_y_mono_handle_regular_vertex(*it, tree, polygon,  traits);
+            partition_y_mono_handle_regular_vertex(*it, tree, polygon, traits);
             break;
          case PARTITION_Y_MONO_COLLINEAR_VERTEX:
             partition_y_mono_handle_collinear_vertex(*it, tree);
@@ -483,7 +488,8 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
                                        res.output_so_far_begin(),
                                        res.output_so_far_end(), traits));
 
-#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
+    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
    return res;
 #else
    return res.to_output_iterator();
@@ -492,7 +498,8 @@ OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator partition_y_monotone_2(InputIterator first, InputIterator beyond,
+OutputIterator partition_y_monotone_2(InputIterator first, 
+                                      InputIterator beyond,
                                       OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
@@ -512,7 +519,5 @@ OutputIterator CGAL_partition_y_monotone_2(InputIterator first,
 }
 
 }
-
-
 
 #endif // CGAL_PARTITION_Y_MONOTONE_H

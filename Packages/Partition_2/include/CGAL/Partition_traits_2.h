@@ -42,8 +42,8 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
 {
   public:
     typedef R_                                          R;
-    typedef Partition_traits_2<R>                       Self;
-    typedef CGAL::Polygon_traits_2<R>                   Poly_Traits;
+    typedef Partition_traits_2<R_>                      Self;
+    typedef CGAL::Polygon_traits_2<R_>                  Poly_Traits;
     typedef typename Poly_Traits::Point_2               Point_2;
     typedef ::std::list<Point_2>                        Container;
     typedef CGAL::Polygon_2<Poly_Traits, Container>     Polygon_2;
@@ -61,7 +61,7 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     typedef typename R::Construct_line_2                Construct_line_2;
 
     // needed by visibility graph and thus by optimal convex
-    typedef Ray_2<R>                                    Ray_2; 
+    typedef Ray_2<R_>                                   Ray_2; 
     typedef typename R::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
     typedef typename R::Are_strictly_ordered_along_line_2

@@ -106,7 +106,8 @@ OutputIterator y_monotone_partition_2(InputIterator first,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator y_monotone_partition_2(InputIterator first, InputIterator beyond,
+OutputIterator y_monotone_partition_2(InputIterator first, 
+                                      InputIterator beyond,
                                       OutputIterator result)
 {
    return partition_y_monotone_2(first, beyond, result);

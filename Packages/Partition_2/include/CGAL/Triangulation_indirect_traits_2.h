@@ -36,7 +36,8 @@ class Indirect_segment
 {
 public:
    Indirect_segment() {}
-   Indirect_segment(Circulator s, Circulator t) : _source_ref(s), _target_ref(t)
+   Indirect_segment(Circulator s, Circulator t) : _source_ref(s), 
+                                                  _target_ref(t)
    {}
    Circulator source() {return _source_ref;}
    Circulator target() {return _target_ref;}
@@ -115,13 +116,13 @@ class Triangulation_indirect_traits_2
 {
 public:
 
-   typedef Circulator                      Point_2;
-   typedef Indirect_segment<Circulator>    Segment_2;
-   typedef Indirect_triangle<Circulator>   Triangle_2;
-   typedef Indirect_orientation_2<typename Traits::Orientation_2> Orientation_2;
-   typedef Indirect_compare_x_2<typename Traits::Compare_x_2>     Compare_x_2;
-   typedef Indirect_compare_y_2<typename Traits::Compare_y_2>     Compare_y_2;
-   typedef CGALi::Construct<Segment_2>      Construct_segment_2;
+  typedef Circulator                      Point_2;
+  typedef Indirect_segment<Circulator>    Segment_2;
+  typedef Indirect_triangle<Circulator>   Triangle_2;
+  typedef Indirect_orientation_2<typename Traits::Orientation_2> Orientation_2;
+  typedef Indirect_compare_x_2<typename Traits::Compare_x_2>     Compare_x_2;
+  typedef Indirect_compare_y_2<typename Traits::Compare_y_2>     Compare_y_2;
+  typedef CGALi::Construct<Segment_2>      Construct_segment_2;
 
    Compare_x_2 compare_x_2_object() const
    {

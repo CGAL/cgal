@@ -31,6 +31,7 @@
 
 namespace CGAL {
 
+/*
 template<class Traits>
 template<class ForwardIterator>
 Rotation_tree_2<Traits>::Rotation_tree_2(ForwardIterator first, 
@@ -73,6 +74,7 @@ Rotation_tree_2<Traits>::Rotation_tree_2(ForwardIterator first,
       child++;
    }
 }
+*/
 
 // makes *p the rightmost child of *q
 template<class Traits>
@@ -102,7 +104,8 @@ void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p,
 
 // makes *p the left sibling of *q
 template <class Traits>
-void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p, Self_iterator q)
+void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p, 
+                                               Self_iterator q)
 {
    if (q == end()) return;
        

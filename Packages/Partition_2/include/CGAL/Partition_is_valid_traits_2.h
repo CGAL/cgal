@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-template <class Traits, class IsValid>
+template <class Traits, class PolygonIsValid>
 class Partition_is_valid_traits_2 : public Traits
 {
 public:
@@ -44,7 +44,7 @@ public:
    typedef typename Traits::Vector_2        Vector_2;
    typedef typename Traits::FT              FT;
 
-   typedef IsValid                          Is_valid;
+   typedef PolygonIsValid                   Is_valid;
    
    Is_valid
    is_valid_object(const Traits& traits) const
