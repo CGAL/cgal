@@ -928,6 +928,53 @@ bool Snap_rounding_2<Rep_>::triangle_empty_up_right(const Segment_2& s,const Poi
 
 // @@@@ a function for ISRS
 template<class Rep_>
+bool Snap_rounding_2<Rep_>::triangle_empty_down_right(const Segment_2& s,const Point_2& p_inp,
+      std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Point_2 p(p_inp.x() + pixel_size / 2,p_inp.y() - pixel_size / 2);
+  bool found;
+  Point_2 s1 = find_point_on_segment_right(s,p,found);
+  if(!found)
+    return(true);
+  Point_2 s2 = find_point_on_segment_down(s,p,found);
+  if(!found)
+    return(true);
+  Point_2 h1,h2,h3,h4;
+
+  #ifdef DEBUG
+    std::cout << "s2 = " << s << std::endl;
+    std::cout << "p = " << p << std::endl;
+    std::cout << "s1 = " << s1 << std::endl;
+    std::cout << "s2 = " << s2 << std::endl;
+  #endif
+
+  for(typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::const_iterator i = hot_pixels_list.begin();i != hot_pixels_list.end();++i) {
+    h1 = i->second->get_ll();
+    h2 = i->second->get_lr();
+    h3 = i->second->get_ul();
+    h4 = i->second->get_ur();
+    #ifdef DEBUG
+      std::cout << "h1 = " << h1 << std::endl;
+      std::cout << "h2 = " << h2 << std::endl;
+      std::cout << "h3 = " << h3 << std::endl;
+      std::cout << "h4 = " << h4 << std::endl;
+    #endif
+    if(right_turn(s1,h1,p) && right_turn(s2,h1,s1) && right_turn(p,h1,s2) ||
+       right_turn(s1,h2,p) && right_turn(s2,h2,s1) && right_turn(p,h2,s2) ||
+       right_turn(s1,h3,p) && right_turn(s2,h3,s1) && right_turn(p,h3,s2) ||
+       right_turn(s1,h4,p) && right_turn(s2,h4,s1) && right_turn(p,h4,s2)) {
+      #ifdef DEBUG
+        std::cout << "inside TRIANGLE" << std::endl;
+      #endif
+      return(false);
+    }
+  }
+
+  return(true);
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
 bool Snap_rounding_2<Rep_>::triangle_empty_up_left(const Segment_2& s,const Point_2& p_inp,
       std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
@@ -1113,24 +1160,14 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
   for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
     // UP RIGHT
     Point_2 p_center = iter->first;
-    #ifdef DEBUG
-      std::cout << "p_center = " << p_center << std::endl;
-    #endif
     Point_2 query_point = Point_2(p_center.x(),p_center.y() + pixel_size);
     bool done = false;
     while(!done) {
-      #ifdef DEBUG
-        std::cout << "query_point = " << query_point << std::endl;
-      #endif
       bool found;
       NT sq_dis;
       Segment_2 first_s = find_segment_to_right(p_center,query_point,segment_list,sq_dis,found);
       if(found && //negative_slope(first_s) &&
          inside_bounding_box(query_point,first_s)) {
-        #ifdef DEBUG
-          std::cout << "first_s = " << first_s << std::endl;
-	  std::cout << "sq_dis = " << sq_dis << std::endl;
-        #endif
         if(sq_dis < dis1)
           query_point = next_center_to_right(query_point,first_s);
         else if(sq_dis < dis2 &&
@@ -1151,11 +1188,6 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
       bool found;
       NT sq_dis;
       Segment_2 first_s = find_segment_to_left(p_center,query_point,segment_list,sq_dis,found);
-      #ifdef DEBUG
-          std::cout << "query_point = " << query_point << std::endl;
-          std::cout << "first_s = " << first_s << std::endl;
-	  std::cout << "sq_dis = " << sq_dis << std::endl;
-      #endif
       if(found && //positive_slope(first_s) &&
          inside_bounding_box(query_point,first_s)) {
         if(sq_dis < dis1) {
@@ -1170,7 +1202,64 @@ void Snap_rounding_2<Rep_>::produce_extra_hot_pixels(std::list<std::pair<Point_2
 	 done = true;
     }
 
-    //**** repeat 2 more times
+    // DOWN RIGHT
+    p_center = iter->first;
+    #ifdef DEBUG
+      std::cout << "p_center = " << p_center << std::endl;
+    #endif
+    query_point = Point_2(p_center.x(),p_center.y() - pixel_size);
+    done = false;
+    while(!done) {
+      #ifdef DEBUG
+        std::cout << "query_point = " << query_point << std::endl;
+      #endif
+      bool found;
+      NT sq_dis;
+      Segment_2 first_s = find_segment_to_right(p_center,query_point,segment_list,sq_dis,found);
+      if(found && //negative_slope(first_s) &&
+         inside_bounding_box(query_point,first_s)) {
+        #ifdef DEBUG
+          std::cout << "first_s = " << first_s << std::endl;
+	  std::cout << "sq_dis = " << sq_dis << std::endl;
+        #endif
+        if(sq_dis < dis1)
+          query_point = next_center_to_right(query_point,first_s);
+        else if(sq_dis < dis2 &&
+                triangle_empty_down_right(first_s,query_point,hot_pixels_list) && negative_slope(first_s)) {
+          heat_pixel_down_right(query_point,first_s,hot_pixels_list);// insert to the end of the list
+          done = true;
+	} else
+          done = true;
+      } else
+	 done = true;
+    }
+
+    // DOWN LEFT
+    p_center = iter->first;
+    query_point = Point_2(p_center.x(),p_center.y() - pixel_size);
+    done = false;
+    while(!done) {
+      bool found;
+      NT sq_dis;
+      Segment_2 first_s = find_segment_to_left(p_center,query_point,segment_list,sq_dis,found);
+      #ifdef DEBUG
+          std::cout << "query_point = " << query_point << std::endl;
+          std::cout << "first_s = " << first_s << std::endl;
+	  std::cout << "sq_dis = " << sq_dis << std::endl;
+      #endif
+      if(found && //positive_slope(first_s) &&
+         inside_bounding_box(query_point,first_s)) {
+        if(sq_dis < dis1) {
+          query_point = next_center_to_left(query_point,first_s);
+        } else if(sq_dis < dis2 &&
+                triangle_empty_down_left(first_s,query_point,hot_pixels_list) && positive_slope(first_s)) {
+          heat_pixel_down_left(query_point,first_s,hot_pixels_list);// insert to the end of the list
+          done = true;
+	} else
+          done = true;
+      } else
+	 done = true;
+    }
   }
 
   // below is the ray shooting code
