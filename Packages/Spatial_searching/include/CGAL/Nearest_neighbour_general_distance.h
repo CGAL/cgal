@@ -1,10 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
-
-// ======================================================================
-//
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,12 +12,15 @@
 // release_date  :
 //
 // file          : include/CGAL/Nearest_neighbour_general_distance.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/15 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
+
 
 #ifndef  NEAREST_NEIGHBOUR_GENERAL_DISTANCE_H
 #define  NEAREST_NEIGHBOUR_GENERAL_DISTANCE_H
@@ -44,7 +43,7 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits, class Distance>
 class Nearest_neighbour_general_distance {
 
-private:
+public:
 
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
@@ -53,7 +52,6 @@ typedef Base_node<Tree_traits> Node;
 typedef Binary_search_tree<Tree_traits> Tree;
 typedef Box<NT> Node_box;    
 
-public:
 
 class Cell 
     {
@@ -143,7 +141,7 @@ class Distance_smaller
     // destructor
     ~Nearest_neighbour_general_distance() {
 		delete start;
-                delete past_the_end;
+        delete past_the_end;
     };
 
     iterator begin() {

@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,12 +12,15 @@
 // release_date  :
 //
 // file          : include/CGAL/Leaf_node.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
+
 
 #ifndef CGAL_LEAF_NODE_H
 #define CGAL_LEAF_NODE_H
@@ -57,7 +60,7 @@ public:
 	const NT mini, const NT maxi,
 	const NT minj, const NT maxj) {
 	  // PS << border_color(RED);  works only for visual
-	  for (Item_iterator it=begin(); it != end(); it++) { //Item_iterator replaced Item**
+	  for (Item_iterator it=begin(); it != end(); it++) { 
 	  Point_2D p ( (*(*it))[i], (*(*it))[j] ); 
 	  PS << p;
 	}

@@ -1,11 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// ======================================================================
-//
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -17,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Weighted_Minkowski_distance.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/15
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -157,7 +154,8 @@ namespace CGAL {
 		}
 		else
 		{
-			new_dist = dist + (*The_weights)[cutting_dimension] * (pow(fabs(new_off),p)-pow(fabs(old_off),p));
+			new_dist = dist + (*The_weights)[cutting_dimension] * 
+					(pow(fabs(new_off),p)-pow(fabs(old_off),p));
 		}
                 return new_dist;
 	}

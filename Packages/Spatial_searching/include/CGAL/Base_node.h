@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -11,11 +11,13 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Base_Node.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// file          : include/CGAL/Base_node.h
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 

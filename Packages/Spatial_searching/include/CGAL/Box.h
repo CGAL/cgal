@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Box.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -153,7 +155,8 @@ namespace CGAL {
     }
 
     template <class PointPointerIter>
-    void update_from_point_pointers(PointPointerIter begin, PointPointerIter end, bool empty) {
+    void update_from_point_pointers(PointPointerIter begin, 
+                                    PointPointerIter end, bool empty) {
 		if (empty) { // no points
 		  for (int i=0; i < dim; ++i)
 		  {
@@ -166,7 +169,8 @@ namespace CGAL {
 	        lower_[i]= (*(*begin))[i]; upper_[i]=(*(*begin))[i];
 		  }
 	      begin++;
-          typedef typename std::iterator_traits<PointPointerIter>::value_type P;
+          typedef typename 
+	  std::iterator_traits<PointPointerIter>::value_type P;
           std::for_each(begin, end,
 		    set_bounds_from_pointer<P,T>(dim, lower_, upper_));
 		}
@@ -247,7 +251,8 @@ namespace CGAL {
     return 1;
   }
 
-  template <class NT, class Point> NT Min_squared_distance_l2_to_box(const Point& p,
+  template <class NT, class Point> 
+  NT Min_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -257,7 +262,8 @@ namespace CGAL {
     return distance;
   }
 
-  template <class NT, class Point> NT Max_squared_distance_l2_to_box(const Point& p,
+  template <class NT, class Point> 
+  NT Max_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -269,7 +275,8 @@ namespace CGAL {
     return distance;
   }
 
-  template <class NT, class Point> NT Min_distance_linf_to_box(const Point& p,
+  template <class NT, class Point> 
+  NT Min_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -279,7 +286,8 @@ namespace CGAL {
     return distance;
   }
 
-  template <class NT, class Point> NT Max_distance_linf_to_box(const Point& p,
+  template <class NT, class Point> 
+  NT Max_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {

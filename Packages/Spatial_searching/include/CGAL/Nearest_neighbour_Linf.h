@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Nearest_neighbour_Linf.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -37,7 +39,7 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
 class Nearest_neighbour_Linf {
 
-private:
+public:
 
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
@@ -47,8 +49,6 @@ typedef Binary_search_tree<Tree_traits> Tree;
 
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
-
-public:
 
 class iterator;
 
@@ -172,8 +172,10 @@ class Distance_smaller
     bool operator==(const iterator& It) const {
 
         if (
-                ((Ptr_implementation == 0) || Ptr_implementation->Item_PriorityQueue.empty()) &&
-                ((It.Ptr_implementation == 0) ||  It.Ptr_implementation->Item_PriorityQueue.empty())
+                ((Ptr_implementation == 0) || 
+		  Ptr_implementation->Item_PriorityQueue.empty()) &&
+                ((It.Ptr_implementation == 0) ||  
+                  It.Ptr_implementation->Item_PriorityQueue.empty())
         )
         return true;
         // else
@@ -185,17 +187,14 @@ class Distance_smaller
     }
 
     ~iterator() {
-        std::cout << "called ~iterator"  << std::endl;
         if (Ptr_implementation != 0) {
-               std::cout << "reference_count is" << Ptr_implementation->reference_count << std::endl;
+               
                 Ptr_implementation->reference_count--;
                 if (Ptr_implementation->reference_count==0) {
                         delete Ptr_implementation;
                         Ptr_implementation = 0;
                 }
-               if (Ptr_implementation != 0) std::cout << "new reference_count is" << Ptr_implementation->reference_count << std::endl;
         }
-        else std::cout << "Ptr_implementation is null" << std::endl;
     }
 
 
@@ -260,7 +259,8 @@ class Distance_smaller
 
 
 
-        Node_with_distance *The_Root = new Node_with_distance(tree.root(),distance_to_root);
+        Node_with_distance *The_Root = 
+        new Node_with_distance(tree.root(),distance_to_root);
         PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
@@ -322,9 +322,11 @@ class Distance_smaller
 
         if (!(Item_PriorityQueue.empty())) {
         if (search_nearest)
-        	next_neighbour_found=(multiplication_factor*rd > Item_PriorityQueue.top()->second);
+        	next_neighbour_found=
+		(multiplication_factor*rd > Item_PriorityQueue.top()->second);
         else
-		next_neighbour_found=(multiplication_factor*rd < Item_PriorityQueue.top()->second);
+		next_neighbour_found=
+		(multiplication_factor*rd < Item_PriorityQueue.top()->second);
         }
         
 
@@ -341,7 +343,8 @@ class Distance_smaller
                         int new_cut_dim=N->separator()->cutting_dimension();
                         NT new_rd;
                         NT new_off =
-                        (*query_point)[new_cut_dim] - N->separator()->cutting_value();
+                        (*query_point)[new_cut_dim] - 
+			N->separator()->cutting_value();
                         if ( ((new_off < 0.0) && (search_nearest)) ||
                         (( new_off >= 0.0) && (!search_nearest))  ) {
 				if (-new_off > rd) new_rd=-new_off;
@@ -366,8 +369,10 @@ class Distance_smaller
                         number_of_items_visited++;
                         NT distance_to_query_point=0.0;
                         for (int i=0; i< (*it)->dimension(); i++)       {
-                                if (fabs((*query_point)[i] - (*(*it))[i]) > distance_to_query_point)
-                                distance_to_query_point = fabs((*query_point)[i] - (*(*it))[i]);
+                                if (fabs((*query_point)[i] - (*(*it))[i]) 
+				    > distance_to_query_point)
+                                distance_to_query_point = 
+				fabs((*query_point)[i] - (*(*it))[i]);
                         }
                         Item_with_distance *NN_Candidate=
                         new Item_with_distance(*it,distance_to_query_point);
@@ -394,7 +399,7 @@ class Distance_smaller
                 };
                 number_of_neighbours_computed++;
         }   // next_neighbour_found or priority queue is empty
-        // in the latter case also the item priority quee is empty
+        // in the latter case also the item priority queue is empty
     }
 }; // class Iterator_implementaion
 }; // class iterator
@@ -402,8 +407,9 @@ class Distance_smaller
 
 template <class Tree_traits, class Search_traits>
 void swap (typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& x,
-        typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& y) {
-        typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator::Iterator_implementation
+typename Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& y) {
+typename 
+Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

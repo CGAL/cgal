@@ -1,8 +1,6 @@
 // ======================================================================
 //
-// ======================================================================
-//
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -14,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Nearest_neighbour_L2.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -39,7 +39,7 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
 class Nearest_neighbour_L2 {
 
-private:
+public:
 
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
@@ -49,8 +49,6 @@ typedef Binary_search_tree<Tree_traits> Tree;
 
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
-
-public:
 
 class iterator;
 

@@ -1,10 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
-
-// ======================================================================
-//
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -15,11 +11,13 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Nearest_neighbour_PQ.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/15 
+// file          : include/CGAL/Nearest_neighbour_Minkowski_norm.h
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -44,7 +42,7 @@ namespace CGAL {
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
 class Nearest_neighbour_PQ {
 
-private:
+public:
 
 typedef typename Tree_traits::Item Item;
 typedef typename Tree_traits::NT NT;
@@ -55,7 +53,7 @@ typedef Binary_search_tree<Tree_traits> Tree;
 typedef typename Tree_traits::Item_with_distance Item_with_distance;
 typedef std::pair<Node*,NT> Node_with_distance;
 
-public:
+
 
 class iterator;
 
@@ -179,8 +177,10 @@ class Distance_smaller
     bool operator==(const iterator& It) const {
 
         if (
-                ((Ptr_implementation == 0) || Ptr_implementation->Item_PriorityQueue.empty()) &&
-                ((It.Ptr_implementation == 0) ||  It.Ptr_implementation->Item_PriorityQueue.empty())
+                ((Ptr_implementation == 0) || 
+		  Ptr_implementation->Item_PriorityQueue.empty()) &&
+                ((It.Ptr_implementation == 0) ||  
+		  It.Ptr_implementation->Item_PriorityQueue.empty())
         )
         return true;
         // else
@@ -330,9 +330,11 @@ class Distance_smaller
         bool next_neighbour_found=false;
         if (!(Item_PriorityQueue.empty())) {
         if (search_nearest)
-        	next_neighbour_found=(multiplication_factor*rd > Item_PriorityQueue.top()->second);
+        	next_neighbour_found=
+		(multiplication_factor*rd > Item_PriorityQueue.top()->second);
         else
-		next_neighbour_found=(multiplication_factor*rd < Item_PriorityQueue.top()->second);
+		next_neighbour_found=
+		(multiplication_factor*rd < Item_PriorityQueue.top()->second);
         }
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
@@ -410,8 +412,10 @@ class Distance_smaller
 
 template <class Tree_traits, class Search_traits, class Orthogonal_Distance>
 void swap (typename Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator& x,
-        typename Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator& y) {
-        typename Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator::Iterator_implementation
+typename 
+Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator& y) {
+typename 
+Nearest_neighbour_PQ<Tree_traits, Search_traits, Orthogonal_Distance>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;

@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,14 +12,17 @@
 // release_date  :
 //
 // file          : include/CGAL/Splitting_rules.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
-// Defines rules used for constructing a split node. That is, it implements, in several ways, the concept
+// Defines rules used for constructing a split node. That is, it implements, 
+// in several ways, the concept
 // Boxtree_splitter<NT>.
 
 
@@ -31,23 +34,24 @@
 namespace CGAL {
 
 enum Split_rule {MEDIAN_OF_MAX_SPREAD, MEDIAN_OF_BOX,
-        MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_BOX, FAIR, SLIDING_MIDPOINT, SLIDING_FAIR};
+        MIDPOINT_OF_MAX_SPREAD, MIDPOINT_OF_BOX, FAIR, 
+		SLIDING_MIDPOINT, SLIDING_FAIR};
 
 enum Shrink_rule {NONE, SIMPLE, CENTROID};
 
 template <class P>
 class Splitter {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   // virtual void rule(Points_container<P>& c, Plane_separator<NT>* sep) {}
 };
 
 template <class P>
 class Median_Of_Max_Spread : public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c) {
         Plane_separator<NT>* sep =
         new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
@@ -59,8 +63,8 @@ public:
 template <class P>
 class Fair : public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
@@ -73,22 +77,22 @@ public:
 template <class P>
 class Sliding_Fair : public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c, NT Aspect_ratio) {
-		// find legal cut with max spread
-	    Plane_separator<NT>* sep = 
-        new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
-        sep->set_cutting_val(c.balanced_sliding_fair(sep->cutting_dimension(),Aspect_ratio));
-        return sep;
+    // find legal cut with max spread
+    Plane_separator<NT>* sep = 
+    new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),0.0);
+    sep->set_cutting_val(c.balanced_sliding_fair(sep->cutting_dimension(),Aspect_ratio));
+    return sep;
   }
 };
 
 template <class P>
 class Sliding_MidPoint: public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
@@ -108,8 +112,8 @@ public:
 template <class P>
 class Median_Of_Box : public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),0.0);
@@ -121,8 +125,8 @@ public:
 template <class P>
 class MidPoint_Of_Max_Spread : public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_tight_span_coord(),
@@ -134,8 +138,8 @@ public:
 template <class P>
 class MidPoint_Of_Box: public Splitter<P> {
 public:
-  typedef Kernel_traits<P>::Kernel K;
-  typedef K::FT NT;
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef typename K::FT NT;
   Plane_separator<NT>* rule(Points_container<P>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),

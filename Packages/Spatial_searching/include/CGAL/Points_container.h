@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Points_container.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -52,8 +54,8 @@ namespace CGAL {
   public:
     typedef std::list<Item*> Points_list; 
 
-    typedef Kernel_traits<Item>::Kernel K;
-    typedef K::FT NT;
+    typedef typename Kernel_traits<Item>::Kernel K;
+    typedef typename K::FT NT;
     typedef Points_container<Item> Self;
 
   private:
@@ -61,7 +63,8 @@ namespace CGAL {
     int built_coord;     // a coordinate for which the pointer list is built
     //    Points points;// points container
     Box<NT> bbox;        // bounding box, i.e. cell of node
-    Box<NT> tbox;        // tight bounding box, i.e. minimal enclosing bounding box of points
+    Box<NT> tbox;        // tight bounding box, i.e. minimal enclosing bounding 
+	                     // box of points
 
     struct build_max_span_list : public std::unary_function<Item, void> {
       Points_list *x;
@@ -198,7 +201,6 @@ namespace CGAL {
     }
 
 	// building an empty container 
-//    template <class Iter>
 	Points_container(int d) :
 	p_list(new Points_list[d]), bbox(d), tbox(d) {}
 
@@ -231,16 +233,7 @@ namespace CGAL {
 	void add_points_from_container(Points_container<Item>& c) {
 	  assert(built_coord=c.built_coord);
 	  merge(p_list[built_coord], c.p_list[built_coord], Less_lexicographically_d());
-	  /* alternative implemenetation
-	  bool something_done=true;
-	  for (int i = 0; i < dimension(); ++i) {
-	    // add  c.p_list[i] to p_list[i]
-		  if (!(p_list[i].empty()) && (!(c.p_list[i].empty))) {
-			p_list[i].splice(p_list[i].end(), c.p_list(i));
-			something_done=true;
-		  }
-	  }
-	  assert(something_done);*/
+	 );
 
 	}
 
@@ -250,9 +243,10 @@ namespace CGAL {
 	}
 
 
-    
+      // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Points_container<Item>& c, Separator* sep, bool sliding=false) {
+      void split_container(Points_container<Item>& c, Separator* sep, 
+	  bool sliding=false) {
 
 		assert(dimension()==c.dimension());
 		
@@ -263,46 +257,40 @@ namespace CGAL {
         const int split_coord = sep->cutting_dimension();
         const NT cutting_value = sep->cutting_value();
 
-		/*
-		std::cout << "container size =" << size() << std::endl;
-		std::cout << "split_coord=" << split_coord << std::endl;
-		std::cout << "cutting_value=" << cutting_value << std::endl;
-		std::cout << "dimension=" << dimension() << std::endl;
-        */
-
-		// prepare the coordinate, if necessary
+		// if necessary prepare the coordinate and clear old built_coord.
 		if (p_list[split_coord].empty()) {
 			// copy p_list[built_coord] to p_list[split_coord]
 			p_list[split_coord]=p_list[built_coord];
 			// sort p_list[split_coord]
 			p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
+	        // clear old built coord
 		}
-        
-		//splitting builds list along the split_coord
 		built_coord=split_coord;
 		c.built_coord=split_coord;
+		
 
-		// splitting the lists in two; can be done better for
-		// i == split_coord...
-
-		Points_list tmp_list(0);
 		for (int i = 0; i < dimension(); ++i) {
-			if (! p_list[i].empty()) {
-                NT min_val=bbox.upper(split_coord); //init with upperbound
-				NT max_val=bbox.lower(split_coord);  //init with lowerbound;
-                typename Points_list::iterator pt_min=p_list[i].begin();
-                typename Points_list::iterator pt_max=p_list[i].begin();
+			// if (! p_list[i].empty()) {
+			if (i==split_coord) {    
+                // find iterator to split the list
+				// avoid empty list by moving first 
+				c.p_list[i].clear();
+                for (typename Points_list::iterator pt = p_list[i].begin();
+					( (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) &&
+					  (pt != p_list[i].end())
+					); ++pt) {}
+                // avoid empty lists 
+			    if (pt==p_list[i].begin()) pt++;
+				if (pt==p_list[i].end())  pt--;
+				// move points on negative side to c.p_list
+			    c.p_list[i].splice(c.p_list[i].end(), p_list[i], p_list[i].begin(), pt); 
+				/* general split
+				Points_list tmp_list(0);
 				tmp_list.clear();
 				c.p_list[i].clear();
 				
 				for (typename Points_list::iterator pt = p_list[i].begin();
 				pt != p_list[i].end(); pt= p_list[i].begin()) {
-					if ((*(*pt))[split_coord] < min_val) {
-						pt_min=pt; min_val= (*(*pt))[split_coord];
-                    }
-					if ((*(*pt))[split_coord] > max_val) {
-						pt_max=pt; max_val= (*(*pt))[split_coord];
-                    }
 					if (sep->side(*(*pt)) == ON_NEGATIVE_SIDE) {
 						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt); 
 					}
@@ -315,73 +303,41 @@ namespace CGAL {
 				
 				if (sliding) { // avoid empty list
 					if (p_list[i].empty()) {// move maximal value to p_list
+						NT max_val=bbox.lower(split_coord);  //init with lowerbound;
+						typename Points_list::iterator pt_max=c.p_list[i].begin();
+						for (typename Points_list::iterator pt = c.p_list[i].begin();
+						pt != c.p_list[i].end(); ++pt) {
+					    if ((*(*pt))[split_coord] > max_val) {
+						   pt_max=pt; max_val= (*(*pt))[split_coord];
+						}}
 						p_list[i].splice(p_list[i].end(), c.p_list[i], pt_max);
 					} 
 					if (c.p_list[i].empty()) {// move minimal value to c.p_list
+						NT min_val=bbox.upper(split_coord); //init with upperbound
+				        typename Points_list::iterator pt_min=p_list[i].begin();
+						for (typename Points_list::iterator pt = p_list[i].begin();
+						pt != p_list[i].end(); ++pt) {
+						if ((*(*pt))[split_coord] < min_val) {
+						    pt_min=pt; min_val= (*(*pt))[split_coord];
+						}}
 						c.p_list[i].splice(c.p_list[i].end(), p_list[i], pt_min);
 					} 
-				}
-		}
-		}
+				} */
+		    } // end of if
+				else { p_list[i].clear(); c.p_list[i].clear(); }
+		} // end of for
 		
-		
-
-
-        /*
-		if (sliding) { // then each list should contain at least one element
-			if (p_list[split_coord].empty()) { // move last element of c.p_list to p_list
-				// std::cout << "moved last element of c.p_list to p_list" << std::endl;
-                                // test_validity=true;
-				Points_list::const_reference Back_c_p_list=c.p_list[split_coord].back();
-				for (int i = 0; i < dimension(); ++i) {
-					if (! c.p_list[i].empty()) {
-						p_list[i].push_front(Back_c_p_list);
-						c.p_list[i].remove(Back_c_p_list);
-					}
-				}
-			};
-
-			{ for (int i = 0; i < dimension(); ++i)
-	    if (! p_list[i].empty()) assert(p_list[i].size() == size());
-        }
-
+        assert(! p_list[built_coord].empty());
+		assert(! c.p_list[built_coord].empty());
 		{ for (int i = 0; i < dimension(); ++i)
-	    if (! c.p_list[i].empty()) assert(c.p_list[i].size() == c.size());
-        }
-
-			if (c.p_list[split_coord].empty()) { // move first element of p_list to c.p_list
-				// std::cout << "moved first element of p_list to c.p_list" << std::endl;
-                                // test_validity=true;
-				Points_list::const_reference Front_p_list=p_list[split_coord].front();
-				for (int i = 0; i < dimension(); ++i) {
-					if (! p_list[i].empty()) {
-						c.p_list[i].push_back(Front_p_list);
-						std::cout << "i in loop = " << i << std::endl;
-						std::cout << "p_list size before remove=" << p_list[i].size() << std::endl;
-						p_list[i].remove(Front_p_list);
-						std::cout << "p_list size after remove=" << p_list[i].size() << std::endl;
-					}
+			if (! c.p_list[i].empty()) { 
+				if (c.p_list[i].size() != c.size()) {
+					std::cout << "error: c.size()=" << c.size() << std::endl;
+					std::cout << "error c.p_list[i].size=" 
+						      << c.p_list[i].size() << std::endl;
 				}
-			}
-
-			{ for (int i = 0; i < dimension(); ++i)
-	    if (! p_list[i].empty()) 
-			if (! (p_list[i].size() == size())) {
-				
-				
-				std::cout << "split_coord=" << split_coord << std::endl;
-				std::cout << "size=" << size() << std::endl;
-				std::cout << "i=" << i << std::endl;
-				std::cout << "p_list size=" << p_list[i].size() << std::endl;
-				std::cout << "points:" << std::endl;
-				for (typename Points_list::iterator p = p_list[i].begin();
-					p != p_list[i].end(); ++p) std::cout << **p << " "; std::cout << std::endl;
-
-			}
-        } */
-
-		{ for (int i = 0; i < dimension(); ++i)
-	    if (! c.p_list[i].empty()) assert(c.p_list[i].size() == c.size());
+			assert(c.p_list[i].size() == c.size());
+		 }
         }
 		// }
 
@@ -404,7 +360,8 @@ namespace CGAL {
          p_list[split_coord].sort(comp_coord_val<Item>(split_coord));
       }
       typename Points_list::iterator median_point_ptr=p_list[split_coord].begin();
-      for (unsigned int i = 0; i < p_list[split_coord].size()/2-1; i++, median_point_ptr++) {}
+      for (unsigned int i = 0; i < p_list[split_coord].size()/2-1; i++, 
+		   median_point_ptr++) {}
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];
@@ -416,26 +373,20 @@ namespace CGAL {
 
     inline bool empty() { return size() == 0;}
 
-    bool is_valid() {return true;}
-
-    /*
-    bool is_valid() {
+     bool is_valid() {
       // checking that all the lists are of the same size
-     { for (int i = 0; i < dimension(); ++i)
-	if (! p_list[i].empty()) assert(p_list[i].size() == size());
-     }
-      // checking that all the points lie in the box specified
-     {
-
-	  // std::cout << "warning: this call of Poins_cointaner::is_valid() takes much computing time" << std::endl;
-      // std::cout << bbox; // bbox.print(std::cout);
-
-
-      // extra test added by Hans to see if all pointer lists are sorted
+     for (int i = 0; i < dimension(); ++i)
+	 if (! p_list[i].empty()) assert(p_list[i].size() == size());
+     
+     // checking that all the points lie in the box specified
 
       for (int i = 0; i < dimension(); ++i) {
       if (! p_list[i].empty())   {
         typename Points_list::iterator p1=p_list[i].begin();
+		if (! belongs(*(*p1), bbox)) {
+			std::cout << "error: point " << (*(*p1)) << std::endl;
+			std::cout << "error: does not belong to box " << bbox << std::endl;
+		}
         assert(belongs(*(*p1), bbox));
         if  (p_list[i].size()>1) {
            typename Points_list::iterator p2 = p1;
@@ -447,45 +398,12 @@ namespace CGAL {
         }
       // else std:: cout << "p_list is empty" << std:: endl;
       // end added by Hans
-     }
-     }
-     }
-     // std::cout << std::endl;
-      // checking that all the lists point to the same Points (debug-only...)
-     {
-      //  define RT for lexicographically_smaller
-      // typename RT::Less_lexicographically_d lt;  error
-      // lexicographically_smaller<RT> Compare;
-      // std::set<Item, Less_lexicographically_d>  t,t1;
+     } 
+	 }
+     return true;
+  }
 
-
-      // test did not run using lexicographically smaller order
-
-      // std::set<Item> t,t1;
-      /*
-      typedef typename Item::R  RT;
-      std::set <Item, lexicographically_smaller<RT>() >;
-      for (typename Points_list::iterator p = p_list[built_coord].begin();
-	   p != p_list[built_coord].end(); ++p)
-	   t.insert(*(*p));
-      assert(t.size() == size());
-
-      for (int i = 0; i < dimension(); ++i)
-	if (! p_list[i].empty()) {
-	  t1.clear();
-	  for (typename Points_list::iterator p = p_list[i].begin();
-	       p != p_list[i].end(); ++p) t1.insert(*(*p));
-	  assert(t == t1);
-	}
      
-     }
-      return true;
-    }*/
-
-      // friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
-      // (std::ostream&, Points_container<P>&);
-    // Self&);
-
 
   private:
     explicit Points_container() {} // disable default constructor

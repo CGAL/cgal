@@ -16,7 +16,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Nearest_neighbour_L2.h>
 #include <CGAL/Search_nearest_neighbour.h>
-#include <CGAL/Point_generators_3.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
 

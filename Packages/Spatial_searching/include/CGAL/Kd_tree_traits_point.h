@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2001 The CGAL Consortium
+// Copyright (c) 2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,10 +12,12 @@
 // release_date  :
 //
 // file          : include/CGAL/Kd_tree_traits_point.h
-// package       : APSPAS
-// revision      : 1.0 
-// revision_date : 2001/06/12 
+// package       : ASPAS
+// revision      : 1.4 
+// revision_date : 2002/16/08 
+// authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
+// coordinator   : Utrecht University
 //
 // ======================================================================
 
@@ -32,8 +34,8 @@ namespace CGAL {
   public:
     typedef Separator_ Separator;
     typedef Item_ Item;
-    typedef Kernel_traits<Item>::Kernel K;
-    typedef K::FT NT;
+    typedef typename Kernel_traits<Item>::Kernel K;
+    typedef typename K::FT NT;
     typedef Item** Item_iterator;
     typedef typename std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
@@ -49,8 +51,10 @@ namespace CGAL {
 
         
 
-	Kd_tree_traits_point(int bucket_size=1, Split_rule My_split_rule=SLIDING_MIDPOINT,
-						 NT aspect_ratio=3.0, bool use_extended_nodes=true) {
+	Kd_tree_traits_point(int bucket_size=1, 
+			     Split_rule My_split_rule=SLIDING_MIDPOINT,
+			     NT aspect_ratio=3.0, 
+			     bool use_extended_nodes=true) {
 		Bucket_size = bucket_size;
 		Selected_split_rule = My_split_rule;
 		Aspect_ratio = aspect_ratio;
