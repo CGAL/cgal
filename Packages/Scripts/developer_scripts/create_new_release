@@ -72,5 +72,12 @@ You can fetch it at :
 ${URL}/${release_name}.tar.gz
 
 EOF
+
+
+#we will call the create_modules script
+#All directory is the CVSDIR directory
+
+./create_modules -u n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
+
 fi
 

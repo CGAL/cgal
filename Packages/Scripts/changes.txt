@@ -1,3 +1,11 @@
+12 June 2004 Radu Ursu
+- create_new_release script is also used to build the modules. It calls create_modules script
+- create_modules script changed:
+    - added updating|not updating feature
+    - added installation dir
+    - added customization of the RELEASE VERSION and RELEASE NUMBER
+    - it tar/gzip the modules and put them in the installation dir
+
 03 June 2004 Radu Ursu
 - fixed minor bug in create_internal_release when the release is built on 
   Windows platform. The Auxiliary package was copied in the root of the 
