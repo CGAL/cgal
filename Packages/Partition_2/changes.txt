@@ -1,3 +1,6 @@
+1.21 (26 Oct 2001)
+  - added missing std:: in debug statement
+ 
 1.20 (13 Sep 2001)
   - added refresh button (necessary for Windows platforms?) to demo programs
   - commented out random polygon generation in examples; seems to be buggy
