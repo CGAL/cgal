@@ -1,11 +1,4 @@
-// Copyright (c) 1997-2001  Freie Universitaet Berlin (Germany).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-// example progr.: 2D Smallest Enclosing Ellipse
-// ============================================================================
+// file: examples/Min_ellipse_2/example_Min_ellipse_2.C
 
 // includes
 #include <CGAL/Homogeneous.h>

@@ -1,9 +1,4 @@
-// Copyright (c) 1999  Tel-Aviv University (Israel).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL. This example
-// program may be used, distributed and modified without limitation.
-//
+// file: examples/Largest_empty_rect_2/Largest_empty_rect_2.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>

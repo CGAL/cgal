@@ -1,16 +1,5 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
 // file: examples/Generator/rcs_example.C
-// --------------------------------------
-// generator of random convex set
-//
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>

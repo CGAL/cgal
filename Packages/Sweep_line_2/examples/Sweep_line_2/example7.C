@@ -1,8 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL. This example
-// program may be used, distributed and modified without limitation.
+// file: examples/Sweep_line_2/example7.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>

@@ -1,9 +1,3 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
 // Print a Triangulation<Traits> with 3d points in object file format (OFF).
 
 #ifndef CGAL_TRIANGULATION_PRINT_OFF_H

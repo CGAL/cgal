@@ -1,8 +1,4 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
+// file: examples/SearchStructures/segment_tree_4.C
 
 // Implementation: Testprogram for 4-dimensional Segment Trees
 // A four dimensional Segment Tree is defined in this class.

@@ -1,13 +1,8 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
+// file: examples/SearchStructures/range_tree_1.C
 
 // Implementation: Testprogram for 1-dimensional Range Trees
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
-//
 
 #include <CGAL/basic.h> 
 

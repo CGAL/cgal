@@ -1,10 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-//
+// file: examples/Core/delaunay.C
 
 #ifdef CGAL_USE_CORE
 

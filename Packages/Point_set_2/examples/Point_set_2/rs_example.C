@@ -1,8 +1,4 @@
-// Copyright (c) 1999  Martin-Luther-University Halle-Wittenberg (Germany).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
+// file: examples/Point_set_2/rs_example.C
 
 #include <CGAL/Cartesian.h>
 #include <list>

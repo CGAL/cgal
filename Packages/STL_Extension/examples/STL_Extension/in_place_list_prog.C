@@ -1,13 +1,4 @@
-// Copyright (c) 2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
-//
-// This file is part of an example program for CGAL. This example
-// program may be used, distributed and modified without limitation.
-//
-// in_place_list_prog.C                 
+// file: examples/STL_Extension/in_place_list_prog.C                 
 
 #include <CGAL/basic.h>
 #include <cassert>

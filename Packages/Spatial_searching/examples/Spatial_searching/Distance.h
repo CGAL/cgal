@@ -1,8 +1,3 @@
-// Copyright (c) 2002 Utrecht University
-//
-// This file is part of an example program for CGAL. This example
-// program may be used, distributed and modified without limitation.
-
 struct Distance {
   typedef Point Query_item;
 

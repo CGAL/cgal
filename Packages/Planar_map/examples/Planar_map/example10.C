@@ -1,10 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-// examples/Planar_map/example10.C
+// file: examples/Planar_map/example10.C
 
 
 #include <CGAL/Cartesian.h>

@@ -1,9 +1,5 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
+// file: examples/Polyhedron_IO/off2stl.C
+
 // Convert from OFF format to StereoLithography StL format.
 
 #include <CGAL/Simple_cartesian.h>

@@ -1,10 +1,4 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-// examples/Polyhedron/polyhedron_prog_off.C
+// file: examples/Polyhedron/polyhedron_prog_off.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

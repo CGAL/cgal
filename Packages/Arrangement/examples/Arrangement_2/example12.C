@@ -1,11 +1,4 @@
-// Copyright (c) 1999  Tel-Aviv University (Israel).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-// examples/Arrangement_2/example12
-// --------------------------------
+// file: examples/Arrangement_2/example12.C
 
 // Shorten long names for problematic compilers (e.g., MSVC):
 #include "short_names.h"

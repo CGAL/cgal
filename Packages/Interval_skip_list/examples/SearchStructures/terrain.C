@@ -1,3 +1,5 @@
+// file: examples/Interval_skip_list/terrain.C
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>

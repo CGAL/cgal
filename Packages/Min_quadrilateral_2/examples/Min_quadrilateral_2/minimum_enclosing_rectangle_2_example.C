@@ -1,11 +1,4 @@
-// Copyright (c) 1999-2003  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
-// Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
-//                 Emo Welzl <emo@inf.ethz.ch>
+// file: examples/Min_quadrilateral_2/minimum_enclosing_rectangle_2_example.C
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>

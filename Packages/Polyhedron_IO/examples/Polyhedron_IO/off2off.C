@@ -1,9 +1,5 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
+// file: examples/Polyhedron_IO/off2off.C
+
 // Copies a file in OFF format.
 
 #include <CGAL/basic.h>

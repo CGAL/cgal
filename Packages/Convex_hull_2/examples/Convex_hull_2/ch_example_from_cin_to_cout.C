@@ -1,11 +1,5 @@
-// Copyright (c) 1999  Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
 // file: examples/Convex_hull_2/ch_example_from_cin_to_cout.C
-//
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/ch_graham_andrew.h>
 

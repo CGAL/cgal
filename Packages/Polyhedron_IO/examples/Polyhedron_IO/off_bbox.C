@@ -1,11 +1,6 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
-// All rights reserved.
-//
-// This file is part of an example program for CGAL.  This example
-// program may be used, distributed and modified without limitation.
-//
+// file: examples/Polyhedron_IO/off_bbox.C
+
 // computes bbox of an OFF object.
-// ============================================================================
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_3.h>
