@@ -36,12 +36,12 @@ template < class Vbb >
 class Apollonius_graph_hierarchy_vertex_base_2
  : public Vbb
 {
-  typedef Vbb                                              Base;
-  typedef typename Base::Apollonius_graph_data_structure   Agds;
+  typedef Vbb                                                Base;
+  typedef typename Base::Apollonius_graph_data_structure_2   Agds;
 
 public:
   typedef typename Base::Site_2             Site_2;
-  typedef Agds                              Apollonius_graph_data_structure;
+  typedef Agds                              Apollonius_graph_data_structure_2;
   typedef typename Agds::Vertex_handle      Vertex_handle;
   typedef typename Agds::Face_handle        Face_handle;
 
