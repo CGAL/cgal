@@ -1,3 +1,7 @@
+29 March 2004 Michael Hoffmann
+- Changed awk return value in create_makefile to fix a problem 
+  on Solaris 2.9
+
 18 March 2004 Michael Hoffmann
 - Added ranlib call to src/makefile... in create_internal_release
 
