@@ -20,8 +20,8 @@
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
-// coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
+// maintainer    : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+// coordinator   : Lutz Kettner <Lutz.Kettner@mpi-sb.mpg.de>
 //
 // implementation: Extended homogeneous kernel
 // ============================================================================
@@ -34,12 +34,7 @@
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/number_utils.h>
-#if defined( _MSC_VER) && (_MSC_VER <= 1200) && ! defined(__INTEL_COMPILER)
-#include <CGAL/Nef_2/Polynomial_MSC.h>
-#define Polynomial Polynomial_MSC
-#else
 #include <CGAL/Nef_2/Polynomial.h>
-#endif
 #undef _DEBUG
 #define _DEBUG 5
 #include <CGAL/Nef_2/debug.h>
@@ -356,8 +351,8 @@ on the extended geometric objects.}*/
   /*{\Xop only used internally.}*/
   { TRACEN("simplify("<<p<<")");
     RT x=p.hx(), y=p.hy(), w=p.hw();
-    RT common = x.is_zero() ? y : gcd(x,y);
-    common = gcd(common,w);
+    RT common = x.is_zero()? y : RT::gcd(x,y);
+    common = RT::gcd(common,w);
     p = Point_2(x/common,y/common,w/common);
     TRACEN("canceled="<<p);
   }
@@ -371,8 +366,8 @@ on the extended geometric objects.}*/
   { Line_2 l(p1,p2);
       TRACEN("eline("<<p1<<p2<<")="<<l);
     RT a=l.a(), b=l.b(), c=l.c();
-    RT common = a.is_zero() ? b : gcd(a,b);
-    common = gcd(common,c);
+    RT common = a.is_zero() ? b : RT::gcd(a,b);
+    common = RT::gcd(common,c);
     l =  Line_2(a/common,b/common,c/common);
       TRACEN("canceled="<<l);
     return l; 
