@@ -40,7 +40,7 @@ int main()
       values.insert(std::make_pair(p,a + bx* x+ by*y + c*(x*x+y*y)));
     }
   sibson_gradient_fitting_nn_2(T,std::inserter(gradients,gradients.begin()),
-			       CGAL::DataAccess<Point_value_map>(values), 
+			       CGAL::Data_access<Point_value_map>(values), 
 			       Traits());
   
  
@@ -57,8 +57,8 @@ int main()
     CGAL::sibson_c1_interpolation_square
     (coords.begin(),
      coords.end(),norm,p, 
-     CGAL::DataAccess<Point_value_map>(values),
-     CGAL::DataAccess<Point_vector_map>(gradients),
+     CGAL::Data_access<Point_value_map>(values),
+     CGAL::Data_access<Point_vector_map>(gradients),
      Traits());
   if(res.second)
     std::cout << "   Tested interpolation on " << p 

@@ -236,35 +236,35 @@ int main(int argc,  char* argv[])
     switch(method){
     case 0: 
       value = CGAL::linear_interpolation(coords.begin(),coords.end(),norm,
-				       CGAL::DataAccess<Point_value_map>(values)); 
+				       CGAL::Data_access<Point_value_map>(values)); 
       break;
     case 1: 
       res = CGAL::quadratic_interpolation(coords.begin(),coords.end(),
 					  norm, points[i], 
-					  CGAL::DataAccess< Point_value_map>
+					  CGAL::Data_access< Point_value_map>
 					  (values),
-					  CGAL::DataAccess< Point_vector_map>
+					  CGAL::Data_access< Point_vector_map>
 					  (gradients),traits); break;
     case 2:  
       res = CGAL::sibson_c1_interpolation(coords.begin(),coords.end(),
        					  norm, points[i], 
-       					  CGAL::DataAccess<Point_value_map>
+       					  CGAL::Data_access<Point_value_map>
        					  (values),
-       					  CGAL::DataAccess<Point_vector_map>
+       					  CGAL::Data_access<Point_vector_map>
        					  (gradients), traits); break;
     case 3:  
       res = CGAL::sibson_c1_interpolation_square(coords.begin(),coords.end(),
 						 norm, points[i], 
-						 CGAL::DataAccess<Point_value_map>
+						 CGAL::Data_access<Point_value_map>
 						 (values),
-						 CGAL::DataAccess<Point_vector_map>
+						 CGAL::Data_access<Point_vector_map>
 						 (gradients), traits); break;
     case 4:  
       res = CGAL::farin_c1_interpolation(coords.begin(),coords.end(),
 					 norm, points[i], 
-					 CGAL::DataAccess<Point_value_map>
+					 CGAL::Data_access<Point_value_map>
 					 (values),
-					 CGAL::DataAccess<Point_vector_map>
+					 CGAL::Data_access<Point_vector_map>
 					 (gradients), traits); break;
       
     default: std::cout <<"No valid choice of interpolant." <<

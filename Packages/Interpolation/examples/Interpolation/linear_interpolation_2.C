@@ -21,7 +21,7 @@ int main()
 {
   Delaunay_triangulation T;
   std::map<Point, Coord_type, K::Less_xy_2> values;
-  typedef CGAL::DataAccess< std::map<Point, Coord_type, K::Less_xy_2 > > 
+  typedef CGAL::Data_access< std::map<Point, Coord_type, K::Less_xy_2 > > 
                                             Value_access;
   
   Coord_type a(0.25), bx(1.3), by(-0.7);

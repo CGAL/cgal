@@ -296,8 +296,8 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
     
     for(int i=0; i<3; i++)
       assert(test_interpolation(coords.begin(), coords.end(),norm,points[j], 
-       				CGAL::DataAccess< Point_value_map >(values[i]),
-       				CGAL::DataAccess< Point_vector_map >
+       				CGAL::Data_access< Point_value_map >(values[i]),
+       				CGAL::Data_access< Point_vector_map >
 				(gradients[i]), 
        				Traits(), i, tolerance ));
     coords.clear();
@@ -310,30 +310,30 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   Point_vector_map approx_gradients[2];
   CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[0],
 						     approx_gradients[0].begin()),
-				     CGAL::DataAccess<Point_value_map>(values[0]), 
+				     CGAL::Data_access<Point_value_map>(values[0]), 
 				     GradTraits());
   CGAL::sibson_gradient_fitting_nn_2(T,std::inserter(approx_gradients[1],
 						     approx_gradients[1].begin()),
-				     CGAL::DataAccess<Point_value_map>(values[1]), 
+				     CGAL::Data_access<Point_value_map>(values[1]), 
 				     GradTraits());  
   for(int j=0; j<n; j++){
     std::pair<Vector, bool> res = 
-      CGAL::DataAccess<Point_vector_map>(approx_gradients[0])(points[j]);
+      CGAL::Data_access<Point_vector_map>(approx_gradients[0])(points[j]);
     if(res.second){
       
       //if it is the exact computation kernel: test the equality:
       assert(tolerance > Coord_type(0) || res.first ==  
-	     CGAL::DataAccess<Point_vector_map>(gradients[0])(points[j]).first);
+	     CGAL::Data_access<Point_vector_map>(gradients[0])(points[j]).first);
       res = 
-	CGAL::DataAccess<Point_vector_map>(approx_gradients[1])(points[j]);
+	CGAL::Data_access<Point_vector_map>(approx_gradients[1])(points[j]);
       //if one exists->the other must also exist 
       assert(res.second);
       
 
       assert(tolerance > Coord_type(0) || res.first ==  
-	     CGAL::DataAccess<Point_vector_map>(gradients[1])(points[j]).first);
+	     CGAL::Data_access<Point_vector_map>(gradients[1])(points[j]).first);
     }else
-      assert(!CGAL::DataAccess<Point_vector_map>(approx_gradients[1])
+      assert(!CGAL::Data_access<Point_vector_map>(approx_gradients[1])
 	     (points[j]).second);
   }
 
@@ -351,8 +351,8 @@ _test_interpolation_functions_2_delaunay( const Triangul &, const
   assert(ci==coords.end());
   for(int i=0; i<3; i++)
     assert(test_interpolation(coords.begin(), coords.end(),norm,points[n/2], 
-			      CGAL::DataAccess< Point_value_map >(values[i]),
-			      CGAL::DataAccess< Point_vector_map >
+			      CGAL::Data_access< Point_value_map >(values[i]),
+			      CGAL::Data_access< Point_vector_map >
 			      (gradients[i]), 
 			      Traits(),i, tolerance));
   coords.clear();

@@ -27,12 +27,12 @@ CGAL_BEGIN_NAMESPACE
 
 //Functor class for accessing the function values/gradients
 template< class Map >  
-struct DataAccess : public std::unary_function< typename Map::key_type,
-		    std::pair< typename Map::mapped_type, bool> > {
+struct Data_access : public std::unary_function< typename Map::key_type,
+		     std::pair< typename Map::mapped_type, bool> > {
   typedef typename Map::mapped_type Data_type;
   typedef typename Map::key_type  Point;
   
-  DataAccess< Map >(const Map& m): map(m){};
+  Data_access< Map >(const Map& m): map(m){};
   
   std::pair< Data_type, bool> 
   operator()(const Point& p) { 
