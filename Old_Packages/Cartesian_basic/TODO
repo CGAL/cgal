@@ -1,13 +1,5 @@
 Stuff to look at, as time permits:
 ----------------------------------
-- Add Vector_[23d].squared_length(), similar to Segment_[23d].squared_length().
-  It should be FT-based (fix V*V while at it), and will use square().
-- In C2 and C3, there are about 30 occurences of:
-   #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-   // This is a partial specialization
-   <R_,Cartesian_tag>
-   #endif
-  They could easily be replaced by a simple macro.
 - Getting rid of the partial kernels Cartesian_2 and Cartesian_3.  This is a
   lot (1Kloc) of redundant code, and this is something only aimed at reducing
   compile time, for which I have some serious doubts anyway.  So:
