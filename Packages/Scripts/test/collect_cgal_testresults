@@ -49,14 +49,13 @@ do_platform()
   sed -n '/CGAL_VERSION/s/#define //p' <../include/CGAL/config.h >> $RESULT_FILE
   echo "TESTER ${TESTER}" >> $RESULT_FILE
   echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
-  OS_COMPILER=`echo $PLATFORM | sed 's/_LEDA//'`
 
-  LEDA_INCL_DIR=`cat "../config/install/${OS_COMPILER}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
+  LEDA_INCL_DIR=`cat "../config/install/${PLATFORM}" |sed -n '/LEDA_INCL_DIR/s/^.*= .\([^ ]*\). .*$/\1/p'`
   if [ -r ${LEDA_INCL_DIR}/LEDA/basic.h ]; then
     sed -n '/__LEDA__/s/^#define __LEDA__/LEDA version/p' < ${LEDA_INCL_DIR}/LEDA/basic.h >>$RESULT_FILE
   fi
 
-  cat "../config/install/${OS_COMPILER}" >> $RESULT_FILE
+  cat "../config/install/${PLATFORM}" >> $RESULT_FILE
   echo "------------" >> $RESULT_FILE
 
   for DIR in $TEST_DIRECTORIES ; do
