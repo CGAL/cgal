@@ -130,6 +130,80 @@ public:
     c1 = X_monotone_curve_2 (org_c1, cv.get_data());
     c2 = X_monotone_curve_2 (org_c2, cv.get_data());
   }
+
+  /*!
+   * Find the nearest intersection of the two given curves to the right of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the right of the reference point (that is, whose
+   * left endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The refernece point.
+   * \return An empty object if there is no intersection to the right of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
+   */
+  Object nearest_intersection_to_right (const X_monotone_curve_2 & cv1,
+				        const X_monotone_curve_2 & cv2,
+					const Point_2 & p) const
+  {
+    // Use the base method and resturn the result as is in case there is
+    // no intersection or if the intersection is a single point.
+    CGAL::Object res = Traits::nearest_intersection_to_right (cv1, cv2, p);
+    Point_2      ip;
+
+    if (res.is_empty() || CGAL::assign (ip, res))
+      return (res);
+
+    // Attach data to the overlapping curve and return it.
+    Org_x_monotone_curve_2  icv;
+
+    CGAL::assign (icv, res);
+    return (CGAL::make_object (X_monotone_curve_2 (icv, cv1.get_data())));
+  }
+
+  /*!
+   * Find the nearest intersection of the two given curves to the left of 
+   * a given reference point.
+   * Nearest is defined as the lexicographically nearest point, not including 
+   * the point reference point itself.
+   * If the intersection of the two curves is an X_monotone_curve_2, that is,
+   * there is an overlapping subcurve, that contains the reference point in
+   * its x-range, the function should return an X_monotone_curve_2 whose 
+   * interior is strictly to the left of the reference point (that is, whose
+   * right endpoint is the projection of the reference point onto the 
+   * overlapping subcurve).
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The refernece point.
+   * \return An empty object if there is no intersection to the left of p.
+   *         An object wrapping a Point_2 in case of a simple intersection.
+   *         An object wrapping an X_monotone_curve_2 in case of an overlap.
+   */
+  Object nearest_intersection_to_left (const X_monotone_curve_2 & cv1,
+				       const X_monotone_curve_2 & cv2,
+				       const Point_2 & p) const
+  {
+    // Use the base method and resturn the result as is in case there is
+    // no intersection or if the intersection is a single point.
+    CGAL::Object res = Traits::nearest_intersection_to_left (cv1, cv2, p);
+    Point_2      ip;
+
+    if (res.is_empty() || CGAL::assign (ip, res))
+      return (res);
+
+    // Attach data to the overlapping curve and return it.
+    Org_x_monotone_curve_2  icv;
+
+    CGAL::assign (icv, res);
+    return (CGAL::make_object (X_monotone_curve_2 (icv, cv1.get_data())));
+  }
 };
 
 CGAL_END_NAMESPACE
