@@ -58,7 +58,12 @@ Hyperplanes are affine subspaces of dimension $d-1$ in $\E^d$, passing
 through $d$ points.  Hyperplanes are oriented and partition space into
 a positive side and a negative side.  In \cgal, there are no special
 classes for halfspaces.  Halfspaces are supposed to be represented by
-oriented hyperplanes.
+oriented hyperplanes. All kernel objects are equality comparable via
+\ccc{operator==} and \ccc{operator!=}. For those oriented objects
+whose orientation can be reversed (segments, lines, hyperplanes,
+spheres) there is also a global function \ccc{weak_equality} that
+allows to test for point set equality disregarding the orientation.
+
 
 \section{Orientation and Relative Position}
 
