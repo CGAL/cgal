@@ -1065,7 +1065,7 @@ subdivide(const Map* M0, const Map* M1)
   CGAL_forall_sedges(e,*this) {
     e->circle() = Sphere_circle(e->source()->point(), e->twin()->source()->point()); 
     e->twin()->circle() = e->circle().opposite();
-    CGAL_NEF_TRACEN(PH(u) << " with circle " << circle(u));
+    CGAL_NEF_TRACEN(PH(e) << " with circle " << e->circle());
   }
 
   std::vector<Mark> mohs(4);
