@@ -1015,7 +1015,7 @@ copy_tds(const Tds &tds, const Vertex* v)
   // create the vertices
   for( Vertex_iterator it=tds.vertices_begin();
        it != tds.vertices_end(); ++it) {
-    V[&(*it)] = new Vertex( it->point() );
+    V[&(*it)] = new Vertex( *it );
   }
   V[0] = 0 ; //to cope with lower dimensional cases  when creating faces
 

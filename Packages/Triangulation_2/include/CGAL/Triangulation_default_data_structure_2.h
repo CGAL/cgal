@@ -909,50 +909,6 @@ is_valid(bool verbose, int level) const
   return result;
 }
 
-//TODO this function is to be removed
-// used only by constrained Triangulation ?
-// template < class Gt , class Vb, class Fb>
-// void
-// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-// init(Vertex*  v)
-//     {
-//         if( v == NULL ){
-//             return;
-//         } 
-	
-// 	set_infinite_vertex(v);
-
-// 	if( v->face() == NULL ){ //only one vertex
-// 	  set_number_of_vertices(1);
-// 	  set_dimension(0);
-// 	  return;
-//         } 
-	
-// 	if( v->face()->neighbor(1) == NULL ){ //two vertices
-// 	  set_number_of_vertices(2);
-// 	  set_dimension(0);
-// 	  return;
-//         } 
-	  
-// 	if( v->face()->neighbor(2) == NULL ){  //One dimensional triangulation
-// 	  set_dimension(1);
-// 	}
-	    
-// 	else{
-// 	  set_dimension(2);
-// 	}
-	  
-// 	  //count number of vertices
-// 	set_number_of_vertices(2);
-// 	Vertex_iterator it = vertices_begin();
-// 	while(it != vertices_end()){
-// 	  ++_number_of_vertices;
-// 	  ++it;
-// 	}
-// 	set_number_of_vertices(number_of_vertices()-2);
-// 	return;
-//     }
-
 
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
@@ -976,7 +932,7 @@ copy_tds(const Tds &tds, const Vertex* v)
   // create the vertices
   for( Vertex_iterator it=tds.vertices_begin();
        it != tds.vertices_end(); ++it) {
-    V[&(*it)] = new Vertex( it->point() );
+    V[&(*it)] = new Vertex( *it );
   }
   V[0] = 0 ; //to cope with lower dimensional cases  when creating faces
 

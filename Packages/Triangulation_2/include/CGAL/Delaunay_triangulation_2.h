@@ -165,13 +165,13 @@ nearest_vertex(const Point  &p, Face_handle f) const
   case 0:
     if (number_of_vertices() == 0) return NULL;
     if (number_of_vertices() == 1) return finite_vertex();
-    break;
+    //break;
   case 1:
     return nearest_vertex_1D(p);
-    break;      
+    //break;      
   case 2:
     return nearest_vertex_2D(p,f);
-    break;
+    //break;
   }
   return NULL;
 }
