@@ -377,7 +377,9 @@ public:
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
 
-  Halffacet_handle get_facet_below( Vertex_handle vi) const; 
+  Halffacet_handle get_facet_below( Vertex_handle vi, 
+				    const std::vector< SFace_handle>& MinimalSFace, 
+				    const Sface_shell_hash&  Shell) const; 
   Volume_handle determine_volume( SFace_handle sf, 
                 const std::vector< SFace_handle>& MinimalSFace, 
 				  const Sface_shell_hash&  Shell ) const;
@@ -396,6 +398,7 @@ public:
 
   void build_external_structure() {
     //    SETDTHREAD(43);
+    //    /*debug*/ sncp()->print_statistics();
     pair_up_halfedges();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
@@ -422,14 +425,14 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
     int add_corners = 0;
     while(orth_coords[add_corners] == 0){
       CGAL_assertion(add_corners < 2);
-      add_corners++;
+      ++add_corners;
     }
 
     std::list<Point_3> points;
     for(int dir=0; dir<3;++dir) {
 
       NT cnst[3];
-      for(int i=0; i<3;i++)
+      for(int i=0; i<3;++i)
 	cnst[i] = (i==dir? -h.d()[0] : 0);
 
       NT cross[4][4];
@@ -459,7 +462,7 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
 					  cross[i][3]));
     }
 
-    for(int i=0;i<3;i++)
+    for(int i=0;i<3;++i)
       orth_coords[i] = CGAL_NTS abs(orth_coords[i]);
 
     int max = 0;
@@ -478,10 +481,10 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
     points.sort(circle_lt<Kernel>(max));
 
     typename std::list<Point_3>::const_iterator p,prev,next;
-    for(p=points.begin();p!=points.end();p++)
+    for(p=points.begin();p!=points.end();++p)
       TRACEN(*p);
 
-    for(p=points.begin();p!=points.end();p++){
+    for(p=points.begin();p!=points.end();++p){
 
       if(p==points.begin()) prev = --points.end();
       else { prev = p; prev--;}
@@ -1172,7 +1175,28 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
   D.mark(v2) = BOP(E.mark(e), mark(volume(twin(faces_p))));
 
   if(E.is_isolated(e)) {
-    CGAL_nef3_assertion_msg(0,"not implemented yet");
+    Mark mf1 = BOP(E.mark(E.face(e)), mark(volume(faces_p)));
+    Mark mf2 = BOP(E.mark(E.face(e)), mark(volume(twin(faces_p))));
+    Mark ml = BOP(E.mark(E.face(e)), mark(faces_p));
+
+    SFace_handle f1 = D.new_face();
+    D.link_as_isolated_vertex(v1, f1);
+    D.mark(f1) = mf1;
+    
+    if(mf1 == mf2 && mf1 == ml) {
+      D.link_as_isolated_vertex(v2, f1);
+    }
+    else {
+      SHalfloop_handle l = D.new_loop_pair();
+      SFace_handle f2 = D.new_face();    
+      D.link_as_isolated_vertex(v2, f2);
+      D.link_as_loop(l,f1);
+      D.link_as_loop(twin(l),f2);
+      D.circle(l) = Sphere_circle(plane(faces_p)); 
+      D.circle(twin(l)) = D.circle(l).opposite();
+      D.mark(f2) = mf2;
+      D.mark(l) = ml;
+    }
   }
   else {
     SVertex_handle sv;
@@ -1203,7 +1227,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     SHalfedge_around_svertex_circulator ec2(D.out_edges(v1)), ee2(ec2);
     CGAL_For_all(ec2,ee2) {
       SHalfedge_around_svertex_circulator en(ec2);
-      en++;
+      ++en;
       se1 = D.new_edge_pair(twin(ec2), twin(en), -1, 1);
       TRACEN("new edge pair " << ssource(twin(ec2))->tmp_point() << " -> " << ssource(twin(en))->tmp_point());
       D.circle(se1) = Sphere_circle(plane(faces_p));
@@ -1218,7 +1242,6 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
       D.link_as_face_cycle(D.twin(se1),sf);
     }   
   }
-  TRACEN("");
 
   SM_point_locator L(D.center_vertex());
   L.init_marks_of_halfspheres();
@@ -1229,7 +1252,9 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
 template <typename SNC_>
 typename SNC_::Halffacet_handle 
 SNC_constructor<SNC_>::
-get_facet_below( Vertex_handle vi) const {
+get_facet_below( Vertex_handle vi, 
+		 const std::vector< SFace_handle>& MinimalSFace, 
+		 const Sface_shell_hash&  Shell) const {
   // {\Mop determines the facet below a vertex |vi| via ray shooting. }
 
     Halffacet_handle f_below;
@@ -1255,14 +1280,20 @@ get_facet_below( Vertex_handle vi) const {
     if( assign(v, o)) {
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
-      if( f_below == Halffacet_handle())
-	f_below = get_facet_below(v);
+      if( f_below == Halffacet_handle()) {
+	CGAL_nef3_assertion(v->sfaces_begin() == v->sfaces_last());
+	f_below = get_facet_below(vertex(MinimalSFace[Shell[v->sfaces_begin()]]), 
+				  MinimalSFace,Shell);
+      }
     }
     else if( assign(e, o)) {
       TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
-      if( f_below == Halffacet_handle())
-	f_below = get_facet_below(vertex(e));
+      if( f_below == Halffacet_handle()) {
+	CGAL_nef3_assertion(vertex(e)->sfaces_begin() == vertex(e)->sfaces_last());
+	f_below = get_facet_below(vertex(MinimalSFace[Shell[vertex(e)->sfaces_begin()]]), 
+				  MinimalSFace, Shell);
+      }
     }
     else if( assign(f, o)) {
       TRACEN("facet below from from facet...");
@@ -1286,7 +1317,7 @@ determine_volume( SFace_handle sf,
   TRACEN("determine volume");
     Vertex_handle v_min = vertex(MinimalSFace[Shell[sf]]);
  
-    Halffacet_handle f_below = get_facet_below(v_min);
+    Halffacet_handle f_below = get_facet_below(v_min, MinimalSFace, Shell);
     if ( f_below == Halffacet_handle())
       return Base(*this).volumes_begin();
     Volume_handle c = volume(f_below);
@@ -1581,7 +1612,7 @@ create_volumes()
     TRACEN("sface out " << ShellSf[f]);
   }
 
-  for(unsigned int i=0; i<EntrySFace.size(); i++)
+  for(unsigned int i=0; i<EntrySFace.size(); ++i)
     Closed.push_back(false);
 
   Halffacet_iterator hf;

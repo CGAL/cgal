@@ -1289,11 +1289,18 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
   CGAL::Union_find< SFace_handle> UF;
   
-
   SFace_iterator f;
   CGAL_nef3_forall_sfaces(f,*this) {
      Pitem[f] = UF.make_set(f);
      clear_face_cycle_entries(f);
+  }
+
+  if ( has_loop() ) {
+    SHalfloop_handle l = shalfloop();
+    SFace_handle f = *(UF.find(Pitem[face(l)]));
+    link_as_loop(l,f);
+    f = *(UF.find(Pitem[face(twin(l))]));
+    link_as_loop(twin(l),f);
   }
 
   SHalfedge_iterator e, en;
@@ -1377,17 +1384,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     }
   }
 
-  /*
-  if ( has_loop() ) {
-    cerr << "here !!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    SHalfloop_handle l = shalfloop();
-    SFace_handle f = *(UF.find(Pitem[face(l)]));
-    link_as_loop(l,f);
-    f = *(UF.find(Pitem[face(twin(l))]));
-    link_as_loop(twin(l),f);
-  }
-  */
-
   SFace_iterator fn;
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
     ++fn;
@@ -1413,6 +1409,8 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   CGAL_nef3_forall_shalfedges(ex,*this)
     TRACEN(PH(ex)<< " circle " << circle(ex) << " " << mark(ex));
   TRACEN(" ");
+
+  SETDTHREAD(1);
 
 }
 

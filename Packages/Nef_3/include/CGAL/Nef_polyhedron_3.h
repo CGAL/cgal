@@ -859,7 +859,14 @@ protected:
 	sdeco.transform( linear);
       }
     }
-    deco.compute_all_marks_of_halfspheres();
+
+    if(aff.homogeneous(0,1) != 0 ||
+       aff.homogeneous(0,2) != 0 ||
+       aff.homogeneous(1,0) != 0 ||
+       aff.homogeneous(1,2) != 0 ||
+       aff.homogeneous(2,0) != 0 ||
+       aff.homogeneous(2,1) != 0)
+      deco.compute_all_marks_of_halfspheres();
     
     Halffacet_iterator fi;
     CGAL_nef3_forall_halffacets(fi,snc()) {
