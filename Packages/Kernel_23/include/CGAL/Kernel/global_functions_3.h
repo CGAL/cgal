@@ -97,6 +97,23 @@ bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
 
 template < class K >
 inline
+Point_3<K>
+centroid(const Point_3<K> &p, const Point_3<K> &q,
+         const Point_3<K> &r, const Point_3<K> &s)
+{
+  return CGALi::centroid(p, q, r, s, K());
+}
+
+template < class K >
+inline
+Point_3<K>
+centroid(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::centroid(p, q, r, K());
+}
+
+template < class K >
+inline
 typename K::Point_3
 circumcenter(const Point_3<K> &p, const Point_3<K> &q,
              const Point_3<K> &r, const Point_3<K> &s)

@@ -29,27 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class K >
-inline
-PointC3<K>
-centroid(const PointC3<K> &p,
-         const PointC3<K> &q,
-         const PointC3<K> &r,
-         const PointC3<K> &s)
-{
-  return K().construct_centroid_3_object()(p, q, r, s);
-}
-
-template < class K >
-inline
-PointC3<K>
-centroid(const PointC3<K> &p,
-         const PointC3<K> &q,
-         const PointC3<K> &r)
-{
-  return K().construct_centroid_3_object()(p, q, r);
-}
-
 template <class K>
 CGAL_KERNEL_LARGE_INLINE
 PointC3<K>

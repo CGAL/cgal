@@ -1,4 +1,7 @@
 13 Mar 2004 Sylvain Pion
+- Move centroid() to the new scheme.
+
+13 Mar 2004 Sylvain Pion
 - Use LineC3 instead of LineH3.
 - Merge Construct_line_3 between H&C.
 - Duplicate Construct_projected_point_3 between H&C.

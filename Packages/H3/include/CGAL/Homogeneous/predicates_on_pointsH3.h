@@ -346,64 +346,6 @@ collinear_are_ordered_along_line(const PointH3<R> &p,
   return  ((rqx == qrx) && (rqy == qry) && (rqz == qrz));
 }
 
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
-side_of_bounded_sphere(const PointH3<R> &p,
-                       const PointH3<R> &q,
-                       const PointH3<R> &t)
-{
-  typedef typename R::RT RT;
-
-  const RT& phx = p.hx();
-  const RT& phy = p.hy();
-  const RT& phz = p.hz();
-  const RT& phw = p.hw();
-  const RT& qhx = q.hx();
-  const RT& qhy = q.hy();
-  const RT& qhz = q.hz();
-  const RT& qhw = q.hw();
-  const RT& thx = t.hx();
-  const RT& thy = t.hy();
-  const RT& thz = t.hz();
-  const RT& thw = t.hw();
-
-  return Bounded_side( CGAL_NTS sign<RT>((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
-	                               + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
-	                               + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)));
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
-side_of_bounded_sphere(const PointH3<R> &p,
-                       const PointH3<R> &q,
-                       const PointH3<R> &r,
-                       const PointH3<R> &s,
-                       const PointH3<R> &test)
-{
-  Oriented_side  oside = side_of_oriented_sphere(p,q,r,s,test);
-  if ( are_positive_oriented( p,q,r,s) )
-  {
-    switch (oside)
-    {
-        case ON_POSITIVE_SIDE    :   return ON_BOUNDED_SIDE;
-        case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
-        case ON_NEGATIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
-    }
-  }
-  else
-  {
-    switch (oside)
-    {
-        case ON_POSITIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
-        case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
-        case ON_NEGATIVE_SIDE    :   return ON_BOUNDED_SIDE;
-    }
-  }
-  return ON_BOUNDARY;  // Pls, no warnings anylonger
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PREDICATES_ON_POINTSH3_H

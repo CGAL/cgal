@@ -1550,7 +1550,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_centroid_3
   {
-    typedef typename K::FT       FT;
+    typedef typename K::RT       RT;
     typedef typename K::Point_3  Point_3;
   public:
     typedef Point_3          result_type;
@@ -1559,10 +1559,9 @@ namespace HomogeneousKernelFunctors {
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { 
-      typedef typename K::RT  RT;
-      const RT phw(p.hw());
-      const RT qhw(q.hw());
-      const RT rhw(r.hw());
+      const RT& phw = p.hw();
+      const RT& qhw = q.hw();
+      const RT& rhw = r.hw();
       RT hx(p.hx()*qhw*rhw + q.hx()*phw*rhw + r.hx()*phw*qhw);
       RT hy(p.hy()*qhw*rhw + q.hy()*phw*rhw + r.hy()*phw*qhw);
       RT hz(p.hz()*qhw*rhw + q.hz()*phw*rhw + r.hz()*phw*qhw);
@@ -1574,11 +1573,10 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, 
                const Point_3& r, const Point_3& s) const
     {
-      typedef typename K::RT  RT;
-      const RT phw(p.hw());
-      const RT qhw(q.hw());
-      const RT rhw(r.hw());
-      const RT shw(s.hw());
+      const RT& phw = p.hw();
+      const RT& qhw = q.hw();
+      const RT& rhw = r.hw();
+      const RT& shw = s.hw();
       RT hx(p.hx()*qhw*rhw*shw + q.hx()*phw*rhw*shw + r.hx()*phw*qhw*shw
 	    + s.hx()*phw*qhw*rhw);
       RT hy(p.hy()*qhw*rhw*shw + q.hy()*phw*rhw*shw + r.hy()*phw*qhw*shw

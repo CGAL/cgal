@@ -1,4 +1,7 @@
 13 Mar 2004 Sylvain Pion
+- Move centroid() to the new scheme.
+
+13 Mar 2004 Sylvain Pion
 - Get rid of equal_line() and remove the file predicates_on_line_2.h.
 
 13 Mar 2004 Sylvain Pion
