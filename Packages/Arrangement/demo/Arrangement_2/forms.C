@@ -3,9 +3,9 @@
 
 /*! constructor - build the properties dialog form */
 PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
-                                 int number_of_tabs , const char* name,
-                                 bool modal, WFlags f  ): 
-  QDialog( parent, name, modal, f ),
+                                 int number_of_tabs , Qt_widget_base_tab 
+								 *w_demo_p, double scale, bool colors_flag): 
+  QDialog( parent),
   myBar(bar)
 {
   setCaption( "Properties -- Options" );
@@ -17,15 +17,15 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   textLabel1 = new QLabel( "Width", this );
   arrLayout1->addWidget( textLabel1 );
   box1 = new QSpinBox( 300, 1000, 50, this, "box1" ); 
-  box1->setValue(700); 
+  box1->setValue(parent->width()); 
   arrLayout1->addWidget( box1 );
   optionsFormLayout->addLayout( arrLayout1 );
   
   arrLayout2 = new QHBoxLayout( 0, 0, 6 );
-  textLabel2 = new QLabel( "Hight", this );
+  textLabel2 = new QLabel( "Height", this );
   arrLayout2->addWidget( textLabel2 );
   box2 = new QSpinBox( 300, 1000, 50, this, "box2" );
-  box2->setValue(700);
+  box2->setValue(parent->height());
   arrLayout2->addWidget( box2 );
   optionsFormLayout->addLayout( arrLayout2 );
   
@@ -33,23 +33,15 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   textLabel3 = new QLabel( "Line Width", this );
   arrLayout3->addWidget( textLabel3 );
   box3 = new QSpinBox( 1, 5, 1, this, "box3" );
-  box3->setValue(2);
+  box3->setValue(w_demo_p->m_line_width);
   arrLayout3->addWidget( box3 );
   optionsFormLayout->addLayout( arrLayout3 );
-
-  arrLayout8 = new QHBoxLayout( 0, 0, 6 );
-  textLabel8 = new QLabel( "Vertex Radius", this );
-  arrLayout8->addWidget( textLabel8 );
-  box8 = new QSpinBox( 1, 5, 1, this, "box8" );
-  box8->setValue(3);
-  arrLayout8->addWidget( box8 );
-  optionsFormLayout->addLayout( arrLayout8 );
   
   arrLayout4 = new QHBoxLayout( 0, 0, 6 );
   textLabel4 = new QLabel( "Scaling Factor", this );
   arrLayout4->addWidget( textLabel4 );
   box4 = new MySpinBox( 10, 100, 1, this, "box4" );
-  box4->setValue(20);
+  box4->setValue(static_cast<int>(scale*10));
   arrLayout4->addWidget( box4 );
   optionsFormLayout->addLayout( arrLayout4 );
   
@@ -61,12 +53,14 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   box5->insertItem( "Uniform Color At Overlay" );
   arrLayout5->addWidget( box5 );
   optionsFormLayout->addLayout( arrLayout5 );
+  if (!colors_flag)
+    box5->setCurrentItem(1);
   
   arrLayout6 = new QHBoxLayout( 0, 0, 6 );
   textLabel6 = new QLabel( "Grid Cube Size", this );
   arrLayout6->addWidget( textLabel6 );
   box6 = new QSpinBox( 1, 100, 1, this, "box6" );
-  box6->setValue(1);
+  box6->setValue(w_demo_p->cube_size);
   arrLayout6->addWidget( box6 );
   optionsFormLayout->addLayout( arrLayout6 );
 
@@ -78,6 +72,27 @@ PropertiesForm::PropertiesForm(  QTabWidget * bar, QWidget* parent ,
   box7->insertItem( "Remove Current Xcurve" );
   arrLayout7->addWidget( box7 );
   optionsFormLayout->addLayout( arrLayout7 );
+  if (!w_demo_p->remove_org_curve)
+    box7->setCurrentItem(1);
+  
+  arrLayout8 = new QHBoxLayout( 0, 0, 6 );
+  textLabel8 = new QLabel( "Vertex Radius", this );
+  arrLayout8->addWidget( textLabel8 );
+  box8 = new QSpinBox( 1, 5, 1, this, "box8" );
+  box8->setValue(w_demo_p->m_vertex_width);
+  arrLayout8->addWidget( box8 );
+  optionsFormLayout->addLayout( arrLayout8 );
+
+  arrLayout9 = new QHBoxLayout( 0, 0, 6 );
+  textLabel9 = new QLabel( "Draw vertex not in intersection", this );
+  arrLayout9->addWidget( textLabel9 );
+  box9 = new QComboBox( FALSE, this );
+  box9->insertItem( "Draw" );
+  box9->insertItem( "Don't draw" );
+  arrLayout9->addWidget( box9 );
+  optionsFormLayout->addLayout( arrLayout9 );
+  if (!w_demo_p->draw_vertex)
+    box9->setCurrentItem(1);
   
   buttonsLayout = new QHBoxLayout( 0, 0, 6 );
   okPushButton = new QPushButton( "OK", this );
@@ -208,6 +223,15 @@ OverlayForm::OverlayForm(  QTabWidget * bar, QWidget* parent ,int tab_number ,
   
   setAcceptDrops(TRUE); 
 }
+//////////////////////////////////////////////////////////////////////////////// 
+//CheckItem::CheckItem(  QListBox * listbox, const QPixmap & pix,
+//					                       const QString & text ): 
+//  QListBoxPixmap( listbox, pix, text )
+//{ 
+//  check_box = new QCheckBox(listbox);
+//} 
+
+
 ////////////////////////////////////////////////////////////////////////////// 
 
 /*! DDListBox constructor */ 
@@ -342,6 +366,42 @@ OptionsForm::OptionsForm( QWidget* parent ,int number_of_tabs ,
   connect( cancelPushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
   
   textLabel1->setBuddy( arrComboBox1 );
+  
+}
+
+/*! CheckForm constructor */
+CheckForm::CheckForm( OverlayForm *overlay_form , QWidget* parent ): 
+  QDialog( parent )
+{
+  setCaption( "Overlay - paint intersections" );
+  resize( 320, 290 );
+  
+  optionsFormLayout = new QVBoxLayout( this, 11, 6 );
+  layout = new QHBoxLayout( 0, 0, 6 );
+  button_group = 
+	  new QVButtonGroup("Check to paint Planar Maps intersections", this);
+
+  for (unsigned int i = 0; i < overlay_form->listBox2->count(); i++)
+  {
+    overlay_form->listBox2->setCurrentItem(i);
+    QCheckBox *b = new QCheckBox(overlay_form->listBox2->currentText() , button_group);
+	b->setChecked( true );
+	button_group->insert( b , i ); 
+  }
+
+  layout->addWidget( button_group );
+  optionsFormLayout->addLayout( layout );
+  
+  buttonsLayout = new QHBoxLayout( 0, 0, 6 );
+  okPushButton = new QPushButton( "OK", this );
+  okPushButton->setDefault( TRUE );
+  buttonsLayout->addWidget( okPushButton );
+  cancelPushButton = new QPushButton( "Cancel", this );
+  buttonsLayout->addWidget( cancelPushButton );
+  optionsFormLayout->addLayout( buttonsLayout );
+  
+  connect( okPushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
+  connect( cancelPushButton, SIGNAL( clicked() ), this, SLOT( reject() ));
   
 }
 

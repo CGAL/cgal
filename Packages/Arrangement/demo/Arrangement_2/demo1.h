@@ -128,7 +128,8 @@ private slots:
 	/*! overlay planar maps */
 	void overlay_pm();
 	/*! make the overlay */
-	void make_overlay( std::list<int> indexes , TraitsType t );
+	void make_overlay( std::list<int> indexes , std::list<int> paint_flags , 
+		               TraitsType t , bool new_tab );
     /*! save file */
 	void fileSave();
 	/*! save file to ps */

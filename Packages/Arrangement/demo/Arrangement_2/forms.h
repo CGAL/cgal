@@ -17,6 +17,8 @@
 #include <qbuttongroup.h>  
 #include <qbutton.h>  
 #include <qradiobutton.h>  
+#include <qcheckbox.h> 
+#include <qvbuttongroup.h> 
 
 #include "cgal_types1.h"
 
@@ -63,13 +65,14 @@ public:
 /*! class PropertiesForm is the dialog form that allow the user
  *  to set the program properties.
  */
+class Qt_widget_base_tab;
 class PropertiesForm : public QDialog
 {
   Q_OBJECT
 public:
   PropertiesForm( QTabWidget * bar = 0 , QWidget* parent = 0 ,
-                  int number_of_tabs = 0 , const char* name = "options form",
-                  bool modal = FALSE, WFlags f = 0  );
+                  int number_of_tabs = 0 , Qt_widget_base_tab *w_demo_p = 0, 
+				  double scale = 0 , bool colors_flag = true);
   ~PropertiesForm() {}
   
   QLabel *textLabel1;
@@ -80,6 +83,7 @@ public:
   QLabel *textLabel6;
   QLabel *textLabel7;
   QLabel *textLabel8;
+  QLabel *textLabel9;
   QSpinBox *box1;
   QSpinBox *box2;
   QSpinBox *box3;
@@ -88,6 +92,7 @@ public:
   QSpinBox *box6;
   QComboBox *box7;
   QSpinBox *box8;
+  QComboBox *box9;
   QPushButton *okPushButton;
   QPushButton *cancelPushButton;
   
@@ -101,6 +106,7 @@ protected:
   QHBoxLayout *arrLayout6;
   QHBoxLayout *arrLayout7;
   QHBoxLayout *arrLayout8;
+  QHBoxLayout *arrLayout9;
   QHBoxLayout *buttonsLayout;
   
 private:
@@ -153,6 +159,15 @@ private:
   
 }; 
 
+///*! class CheckItem used for the drag/drop action in the overlay form */ 
+//class CheckItem : public QListBoxPixmap  
+//{   
+//public: 
+//  CheckItem(  QListBox * listbox, const QPixmap & pix, const QString & text );  
+//private: 
+//  QCheckBox *check_box;
+//}; 
+
 /*! class OptionsForm used for choosing which conic type will be inserted */ 
 class OptionsForm : public QDialog
 {
@@ -172,6 +187,24 @@ protected:
   QHBoxLayout *arrLayout1;
   QHBoxLayout *buttonsLayout;
   
+}; 
+
+/*! class CheckForm used for choosing which conic type will be inserted */ 
+class CheckForm : public QDialog
+{
+  Q_OBJECT
+public:
+  CheckForm( OverlayForm *overlay_form , QWidget* parent = 0);
+  ~CheckForm() {}
+  
+  QVButtonGroup *button_group;
+  QPushButton *okPushButton;
+  QPushButton *cancelPushButton;
+  
+protected:
+  QVBoxLayout *optionsFormLayout;
+  QHBoxLayout *layout;
+  QHBoxLayout *buttonsLayout;
 }; 
 
 /*! class FileOpenOptionsForm used for choosing which action will be taken  

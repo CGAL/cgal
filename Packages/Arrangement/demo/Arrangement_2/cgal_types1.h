@@ -1,14 +1,12 @@
 #ifndef CGAL_TYPES_HEADER
 #define CGAL_TYPES_HEADER
 
+#include <CGAL/basic.h>
+
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_help_window.h>
-#include <CGAL/IO/Postscript_file_stream.h> 
-#include <CGAL/IO/Pm_drawer.h> 
-#include <CGAL/IO/draw_pm.h> 
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -19,8 +17,8 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Pm_with_intersections.h>
 #include <CGAL/squared_distance_2.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_traits_2.h>
+//#include <CGAL/Polygon_2.h>
+//#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -29,6 +27,10 @@
 #include <CGAL/leda_real.h>
 #include <CGAL/Planar_map_2.h> 
 #include <CGAL/Bbox_2.h>
+#include <CGAL/IO/Postscript_file_stream.h> 
+//#include <CGAL/IO/Pm_Postscript_file_stream.h>
+#include <CGAL/IO/Pm_drawer.h> 
+#include <CGAL/IO/draw_pm.h> 
 
 #include <iostream>
 
@@ -44,9 +46,9 @@ typedef CGAL::Cartesian<Coord_type>                        Coord_kernel;
 typedef Coord_kernel::Point_2                              Coord_point;
 typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
-typedef CGAL::Polygon_traits_2<Coord_kernel>               PT;
-typedef std::vector<Coord_point>                           Container;
-typedef CGAL::Polygon_2<PT, Container>                     Cgal_polygon;
+//typedef CGAL::Polygon_traits_2<Coord_kernel>               PT;
+//typedef std::vector<Coord_point>                           Container;
+//typedef CGAL::Polygon_2<PT, Container>                     Cgal_polygon;
 
 // Planar map typedef - using rational exact number type
 typedef CGAL::Quotient<CGAL::MP_Float>                     NT;

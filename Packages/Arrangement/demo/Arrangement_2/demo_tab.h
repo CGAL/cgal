@@ -40,7 +40,8 @@ public:
     ray_shooting_direction(true),
     remove_org_curve(true),
     empty(true),
-    first_time_merge(true)
+    first_time_merge(true),
+	draw_vertex(true)
   {
     *this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
     set_window(-10, 10, -10, 10);
@@ -107,6 +108,9 @@ public:
   bool empty;
   /*! true when it is the first time in merge mode */
   bool first_time_merge;
+  /*! true when you want to draw all vertex, false if
+      only the intersecting vertex*/
+  bool draw_vertex;
 };
 
 /*! template class Qt_widget_demo_tab gets a Tab_traits class as 
@@ -199,18 +203,27 @@ public:
          vit != m_curves_arr.vertices_end(); vit++)
     {
       Halfedge_around_vertex_circulator 
-        eit, first = (*vit).incident_halfedges();
+        eit,eit2, first = (*vit).incident_halfedges();
       
       eit = first;
 	  setColor(Qt::red);
-      int ind1;
-      int ind2 = (*eit).curve().get_data().m_index;
+	  int ind1, ind2;
+	  
+	  eit2 = first;
+	  do
+	  { // find (if exist) a different index than the tab index
+	    ind2 = (*eit2).curve().get_data().m_index;
+		if (ind2 != index)
+		  break;
+		eit2++;
+	  } while (eit2 != first);
+
       do 
       {
         ind1 = (*eit).curve().get_data().m_index;
         
         // Keep track of IDs we haven't seen before.
-        if (ind1 != ind2)
+        if (ind1 != ind2 && ind1 != index && ind2 != index)
         {
           const Pm_point_2& p = (*vit).point();
           *this << p;
@@ -219,7 +232,7 @@ public:
         
         eit++;
         
-		if (eit == first)
+		if (eit == first && draw_vertex)
 		{
 		  setColor(colors[ind1]);
 		  const Pm_point_2& p = (*vit).point();
@@ -625,7 +638,7 @@ public:
 	    if (curve == org_curve && result == li.end())
 		{
 		  li.push_back(hei->twin());
-		  m_curves_arr.remove_edge(hei);
+		  m_curves_arr.remove_edge(hei);		  
 		}
 	  }
 	}
@@ -979,6 +992,8 @@ public:
     cd.m_ptr.m_curve = base_seg_p;
     Pm_seg_2 * seg = new Pm_seg_2( *base_seg_p, cd );
     w->m_curves_arr.insert(*seg);
+	CGAL::Bbox_2 curve_bbox = seg->bbox();
+	w->bbox = w->bbox + curve_bbox;
   }
   
   /*! curve_point_distance - return the distance between a point 
@@ -1605,6 +1620,8 @@ private:
     cd.m_ptr.m_curve = base_pol_p;
     Pm_pol_2 * pol = new Pm_pol_2( *base_pol_p, cd );
     w->m_curves_arr.insert( *pol );
+	CGAL::Bbox_2 curve_bbox = pol->bbox();
+	w->bbox = w->bbox + curve_bbox;
   }
   
   /*! convert - convert from Pm_pol_curve to Coord_segment */
@@ -1905,7 +1922,8 @@ public:
       cd.m_index = w->index;
       cd.m_ptr.m_curve = cv;
       w->m_curves_arr.insert(Pm_conic_2( *cv , cd));
-        
+      CGAL::Bbox_2 curve_bbox = cv->bbox();
+	  w->bbox = w->bbox + curve_bbox; 
       w->active = false;
       //w->redraw();  // not working so I use new_object insted
       w->new_object(make_object(Coord_segment(m_p1 , p)));

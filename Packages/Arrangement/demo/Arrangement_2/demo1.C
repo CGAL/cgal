@@ -342,7 +342,7 @@ MyWindow::MyWindow(int w, int h)
   //state flag 
   old_state = 0;
   add_segment_tab();
-  
+  resize(m_width,m_height);  
 }
 
 /*! distructor */
@@ -428,7 +428,7 @@ void MyWindow::init(Qt_widget_base_tab *widget)
                     QString("Arr " + QString::number( widget->index ) ),
                     widget->index );
   myBar->setCurrentPage(myBar->indexOf(widget));
-  resize(m_width,m_height);
+ 
   update();
   something_changed();
   
@@ -530,6 +530,8 @@ void MyWindow::updateTraitsType( QAction *action )
           // continue
           break;
       case 1: // The user clicked the Quit or pressed Escape
+		  update();
+          something_changed();
           return;
           break;
     }
@@ -559,8 +561,6 @@ void MyWindow::updateTraitsType( QAction *action )
   myBar->insertTab( widget, label , index );
   
   myBar->setCurrentPage(index);
-  
-  resize(m_width,m_height);
     
   update();
   something_changed();
@@ -653,6 +653,7 @@ void MyWindow::updateSnapMode( bool on )
   {
     SnapMode old = w_demo_p->snap_mode;
     setGridSnapMode->setOn( FALSE );
+	setSnapMode->setOn( FALSE );
     setGridSnapMode->setEnabled( FALSE );
     w_demo_p->snap = false;
     w_demo_p->snap_mode = NONE;
@@ -661,7 +662,7 @@ void MyWindow::updateSnapMode( bool on )
   }
 }
 
-/*! update grid snap mode - we have to states of snap
+/*! update grid snap mode - we have 2 states of snap
  *  - to grid points 
  *  - to closest point in the planar map
  * \param on - true when we choos grid mode
@@ -801,7 +802,8 @@ void MyWindow::properties()
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   
   PropertiesForm *optionsForm = 
-    new PropertiesForm( myBar , this ,number_of_tabs );
+    new PropertiesForm( myBar , this ,number_of_tabs ,w_demo_p , 
+		m_scailing_factor , colors_flag);
   
   if ( optionsForm->exec() ) 
   {    
@@ -821,6 +823,11 @@ void MyWindow::properties()
       w_demo_p->remove_org_curve = true;
     else
       w_demo_p->remove_org_curve = false;
+	QString draw_vertex_mode = optionsForm->box9->currentText();
+	if (strcmp(remove_mode,"Draw") == 0)
+      w_demo_p->draw_vertex = true;
+    else
+      w_demo_p->draw_vertex = false;
     m_scailing_factor = (new_factor/10);
     resize(m_width,m_height);
     w_demo_p->redraw();
@@ -1005,7 +1012,10 @@ void MyWindow::fileOpen( bool clear_flag )
     QFileDialog::getOpenFileName(QString::null, 0, this,
                                  "file open", "Demo -- File Open" );
   if ( !filename.isEmpty() )
+  {
     load( filename , clear_flag);
+	updateMode( dragMode );
+  }
   else
     statusBar()->message( "File Open abandoned", 2000 );
 }
@@ -1043,17 +1053,18 @@ void MyWindow::fileOpenPm()
        (myBar->currentPage());
       w_demo_p->m_curves_arr.read(inputFile);
 	  if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
-    	w_demo_p->empty = false;
+    	w_demo_p->empty = true;
       else 
-        w_demo_p->empty = true;
+        w_demo_p->empty = false;
      break;
     }
    case POLYLINE_TRAITS: // dosen't work !!
     {
-      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p = 
+      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
-       w_demo_p->m_curves_arr.read(inputFile);   
+       w_demo_p->m_curves_arr.read(inputFile);
+
 	   if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
 	     w_demo_p->empty = false;
        else 
@@ -1077,6 +1088,7 @@ void MyWindow::fileOpenPm()
   
   inputFile.close();
   w_demo_p1->setCursor(old);
+  updateMode( dragMode );
   something_changed();
 
   setCaption( QString( "Planar Map -- %1" ).arg( m_filename ) );
@@ -1134,9 +1146,9 @@ void MyWindow::load( const QString& filename , bool clear_flag )
         w_demo->bbox = w_demo->bbox + curve_bbox;
 	}
 	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
-	  w_demo_p->empty = false;
+	  w_demo_p->empty = true;
     else 
-      w_demo_p->empty = true;    
+      w_demo_p->empty = false;    
   }
   
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -1152,7 +1164,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     std::vector<Pm_pol_point_2> points;
     int i, j;
     
-    inputFile >> num_polylines;
+    inputFile >> num_polylines; 
     for (i = 0; i < num_polylines; i++) 
     {
       inputFile >> num_segments;
@@ -1162,10 +1174,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
         inputFile >> ix >> iy;
         points.push_back (Pm_pol_point_2(NT(ix),NT(iy)));
       }
-      
+
       Pm_base_pol_2 *base_polyline = 
         new Pm_base_pol_2(points.begin(), points.end());
-      
+ 	
       CGAL::Bbox_2 curve_bbox = base_polyline->bbox();
       if (i == 0)
         w_demo->bbox = curve_bbox;
@@ -1180,9 +1192,9 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       w_demo_p->m_curves_arr.insert(Pm_pol_2( *base_polyline , cd));
     }
     if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
-      w_demo_p->empty = false;
-    else 
       w_demo_p->empty = true;
+    else 
+      w_demo_p->empty = false;
   }
   
   else if (w_demo->traits_type == SEGMENT_TRAITS)
@@ -1222,9 +1234,9 @@ void MyWindow::load( const QString& filename , bool clear_flag )
 
     }
 	if( w_demo_p->m_curves_arr.number_of_vertices() == 0 )
-	  w_demo_p->empty = false;
+	  w_demo_p->empty = true;
     else 
-      w_demo_p->empty = true;
+      w_demo_p->empty = false;
       
   }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
@@ -1525,7 +1537,7 @@ void MyWindow::fileSave()
 /*! save planar map to post script */
 void MyWindow::fileSave_ps()
 {
-#if 0
+    #if 0
   
   Qt_widget_base_tab    *w_demo_p1 = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
@@ -1591,7 +1603,12 @@ void MyWindow::overlay_pm()
                               "Max number of Planar Maps to overlay is 12!!!");
       return;
     }
-    std::list<int> indexes;
+	CheckForm *check_form = new CheckForm( form , this );
+	if ( ! check_form->exec() )
+	  return;
+    
+	std::list<int> indexes;
+	std::list<int> paint_flags;
     TraitsType t;
     Qt_widget_base_tab *w_demo_p;
     int index,real_index;
@@ -1607,16 +1624,49 @@ void MyWindow::overlay_pm()
       index = atoi(pch);
       real_index = realIndex(index);
       indexes.push_back(real_index);
+	  QCheckBox *b = 
+		  static_cast<QCheckBox *> (check_form->button_group->find(i));
+	  if ( b->isChecked() )
+        paint_flags.push_back(1);
+	  else
+	    paint_flags.push_back(0);
     }
+	delete check_form;
     
     w_demo_p = static_cast<Qt_widget_base_tab *> (myBar->page( real_index ));
     t = w_demo_p->traits_type;
 
-    QCursor old = w_demo_p->cursor();
-    w_demo_p->setCursor(Qt::WaitCursor);
-    make_overlay( indexes , t);
-    w_demo_p->setCursor(old);
-    
+	Qt_widget_base_tab *w_demo_p_current = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+
+	if( w_demo_p_current->empty ) // pm is empty
+	{
+     /* QCursor old = w_demo_p_current->cursor();
+      w_demo_p_current->setCursor(Qt::WaitCursor);*/
+
+      make_overlay( indexes , paint_flags , t , false);
+	  w_demo_p_current->empty = false;
+	 /* w_demo_p_current->setCursor(old);*/
+	}
+	else
+	{
+      FileOpenOptionsForm * form = new FileOpenOptionsForm(false);
+      if ( form->exec() ) 
+      {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+        switch ( id ) 
+        {
+         case 0: // open file in a new tab
+           make_overlay( indexes , paint_flags , t , true);    
+		   w_demo_p_current->empty = false;
+          break;
+         case 1: // open file in current tab (delete current Pm)
+           make_overlay( indexes , paint_flags , t , false);
+		   w_demo_p_current->empty = false;
+          break;        
+        }// switch
+      }// if
+    }// else        
   }
   delete form;
 }
@@ -1625,28 +1675,37 @@ void MyWindow::overlay_pm()
  * \param indexes - list of the planar maps indexes in the overlay
  * \param t - the traits type of the overlay
  */
-void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
+void MyWindow::make_overlay( std::list<int> indexes ,
+               std::list<int> paint_flags ,TraitsType t , bool new_tab)
 {
   switch ( t ) 
   {
    case SEGMENT_TRAITS:
     {
-     add_segment_tab();
+	 if(new_tab)
+       add_segment_tab();
+	 else
+	   updateTraitsType( setSegmentTraits );
+
      Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p_new = 
        static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
        (myBar->currentPage());
-     Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p;
+
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+     
+	 Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p;
      
      std::list<Pm_seg_2> seg_list;
      Pm_seg_const_iter itp;
-     *w_demo_p_new << CGAL::LineWidth(2);
-     int current;
+     int current, flag;
      
      while (! indexes.empty())
      {
        current = indexes.front();
        indexes.pop_front();
-       w_demo_p_new->setColor(colors[current-1]);
+	   flag = paint_flags.front();
+       paint_flags.pop_front();
        w_demo_p = 
          static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
          (myBar->page( current ));
@@ -1656,10 +1715,14 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
             hei != w_demo_p->m_curves_arr.edges_end(); ++hei) 
        {
          Pm_xseg_2 xcurve = hei->curve();
-         Pm_seg_2 curve(xcurve, xcurve.get_data());
+		 Curve_data cd = xcurve.get_data();
+         if ( flag == 0 )
+		   cd.m_index = w_demo_p_new->index;
+         xcurve.set_data( cd );
+         Pm_seg_2 curve(xcurve, cd);
          seg_list.push_back(curve);
        }
-       
+       w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
      }
      
      w_demo_p_new->m_curves_arr.insert(seg_list.begin(),seg_list.end());
@@ -1678,26 +1741,41 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
        }
        
      }
-     
+
+	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin() , 
+                 w_demo_p_new->bbox.xmax() ,w_demo_p_new->bbox.ymin() , 
+	                                         w_demo_p_new->bbox.ymax());
+	 	 
+     w_demo_p_new->setCursor(old);     
      break;
     }
    case POLYLINE_TRAITS:
     {
-     add_polyline_tab();
+	 if(new_tab)
+       add_polyline_tab();
+	 else
+	   updateTraitsType( setPolylineTraits );
+
      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p_new = 
        static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
        (myBar->currentPage());
+	 
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+
      Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p;
      
      std::list<Pm_pol_2> pol_list;
      Pm_pol_const_iter itp;
-     int current;
+     int current,flag;
      
      while (! indexes.empty())
      {
        current = indexes.front();
        indexes.pop_front();
-       w_demo_p_new->setColor(colors[current-1]);
+   	   flag = paint_flags.front();
+       paint_flags.pop_front();
+
        w_demo_p = 
          static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
          (myBar->page( current ));
@@ -1707,10 +1785,14 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
             hei != w_demo_p->m_curves_arr.halfedges_end(); ++hei) 
        {
          Pm_xpol_2 xcurve = hei->curve();
-         Pm_pol_2 curve(xcurve, xcurve.get_data());
+ 		 Curve_pol_data cd = xcurve.get_data();
+         if ( flag == 0 )
+		   cd.m_index = w_demo_p_new->index;
+         xcurve.set_data( cd );
+         Pm_pol_2 curve(xcurve, cd);
          pol_list.push_back(curve);
        }
-       
+       w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
      }
      
      w_demo_p_new->m_curves_arr.insert(
@@ -1730,27 +1812,42 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
          hei->curve().set_data( cd );
        }
      }
-     
+	 w_demo_p_new->set_window(w_demo_p_new->bbox.xmin() , 
+                 w_demo_p_new->bbox.xmax() ,w_demo_p_new->bbox.ymin() , 
+	                                         w_demo_p_new->bbox.ymax());
+	 
+     w_demo_p_new->setCursor(old);
 
      break;
     }
    case CONIC_TRAITS:
     {
-     add_conic_tab();
+	 if(new_tab)
+	   add_conic_tab();
+	 else
+	   updateTraitsType( setConicTraits );
+
      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p_new = 
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *> 
        (myBar->currentPage());
-     Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p;
+	 std::cout << myBar->currentPageIndex() << std::endl;
+	 std::fflush(stdout);
+
+	 QCursor old = w_demo_p_new->cursor();
+     w_demo_p_new->setCursor(Qt::WaitCursor);
+     
+	 Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p;
      
      Pm_xconic_const_iter itp;
-     *w_demo_p_new << CGAL::LineWidth(3);
-     int current;
+     int current,flag;
      
      while (! indexes.empty())
      {
        current = indexes.front();
        indexes.pop_front();
-       w_demo_p_new->setColor(colors[current-1]);
+   	   flag = paint_flags.front();
+       paint_flags.pop_front();
+
        w_demo_p = static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
          (myBar->page( current ));
        
@@ -1759,12 +1856,17 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
             hei != w_demo_p->m_curves_arr.halfedges_end(); ++hei) 
        {
          Pm_xconic_2 xcurve = hei->curve();
-         Pm_conic_2 curve(xcurve, xcurve.get_data());
-         //seg_list.push_back(curve);
+  		 Curve_conic_data cd = xcurve.get_data();
+         if ( flag == 0 )
+		   cd.m_index = w_demo_p_new->index;
+         xcurve.set_data( cd );
+         Pm_conic_2 curve(xcurve, cd);
          w_demo_p_new->m_curves_arr.insert(curve);
        }
+	   w_demo_p_new->bbox = w_demo_p_new->bbox + w_demo_p->bbox;
      }
-     
+     std::cout << myBar->currentPageIndex() << std::endl;
+	 std::fflush(stdout);
      if (!colors_flag)
      {
        // update new planner map indexes
@@ -1778,7 +1880,10 @@ void MyWindow::make_overlay( std::list<int> indexes , TraitsType t)
          hei->curve().set_data( cd );
        }
      }
-     
+     w_demo_p_new->set_window(w_demo_p_new->bbox.xmin() , 
+                 w_demo_p_new->bbox.xmax() ,w_demo_p_new->bbox.ymin() , 
+	                                         w_demo_p_new->bbox.ymax());
+     w_demo_p_new->setCursor(old);
      break;
     }
     
