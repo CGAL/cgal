@@ -23,9 +23,10 @@ CGAL_OBJECTS = \
 Qt_widget$(OBJ_EXT) \
 Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
-Qt_widget_xpm_icons$(OBJ_EXT) \
 Qt_help_window$(OBJ_EXT) \
-Qt_widget_history$(OBJ_EXT)
+Qt_widget_history$(OBJ_EXT) \
+Qt_widget_xpm_icons$(OBJ_EXT) \
+Qt_widget_OpenGL$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -38,6 +39,8 @@ lib_no_install: $(CGAL_OBJECTS)
 	$(CGAL_LIB_CREATE)$(CGAL_QT_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
+	$(RANLIB) $(CGAL_QT_LIB)
+	rm $(CGAL_OBJECTS) 
 
 clean:
 	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) *.moc
@@ -61,18 +64,23 @@ Qt_widget_standard_toolbar$(OBJ_EXT):  Qt_widget_standard_toolbar.C \
 	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_standard_toolbar.C
 
-Qt_widget_history$(OBJ_EXT): Qt_widget_history.C \
-			../../include/CGAL/IO/Qt_widget_history.h
-	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_history.h -o Qt_widget_history.moc
-	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_history.C
-
 Qt_help_window$(OBJ_EXT): Qt_help_window.C \
 			../../include/CGAL/IO/Qt_help_window.h
 	$(QT_MOC) ../../include/CGAL/IO/Qt_help_window.h -o Qt_help_window.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_help_window.C
 
+Qt_widget_history$(OBJ_EXT): Qt_widget_history.C \
+			../../include/CGAL/IO/Qt_widget_history.h
+	$(QT_MOC) ../../include/CGAL/IO/Qt_widget_history.h -o Qt_widget_history.moc
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_history.C
+
 Qt_widget_xpm_icons$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_xpm_icons.C
+
+Qt_widget_OpenGL$(OBJ_EXT): Qt_widget_OpenGL.C \
+			../../include/CGAL/IO/Qt_OpenGL.h
+	$(QT_MOC) ../../include/CGAL/IO/Qt_OpenGL.h -o Qt_widget_OpenGL.moc
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.C
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<

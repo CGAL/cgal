@@ -25,7 +25,8 @@ Qt_widget_layer$(OBJ_EXT) \
 Qt_widget_standard_toolbar$(OBJ_EXT) \
 Qt_help_window$(OBJ_EXT) \
 Qt_widget_history$(OBJ_EXT) \
-Qt_widget_xpm_icons$(OBJ_EXT)
+Qt_widget_xpm_icons$(OBJ_EXT) \
+Qt_widget_OpenGL$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -69,6 +70,10 @@ Qt_widget_history$(OBJ_EXT):
 
 Qt_widget_xpm_icons$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_xpm_icons.C
+
+Qt_widget_OpenGL$(OBJ_EXT):
+	$(QT_MOC) ../../include/CGAL/IO/Qt_OpenGL.h -o Qt_widget_OpenGL.moc
+	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.C
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
