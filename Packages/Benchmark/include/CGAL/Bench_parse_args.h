@@ -248,7 +248,7 @@ public:
     while (optind < m_argc) {
       m_filename[m_files_number] = m_argv[optind];
       if (!m_dirs.find(m_filename[m_files_number], m_fullname[m_files_number])) {
-        std::cerr << "Cannot find file " << m_filename << "!" << std::endl;
+        std::cerr << "Cannot find file " << m_filename[m_files_number] << "!" << std::endl;
         return -1;
       }
       m_files_number++;
