@@ -36,6 +36,9 @@
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
+#ifndef CGAL_DISTANCE_PREDICATES_2_H
+#include <CGAL/distance_predicates_2.h>
+#endif // CGAL_DISTANCE_PREDICATES_2_H
 #ifndef CGAL_CONVEX_HULL_2_H
 #include <CGAL/convex_hull_2.h>
 #endif // CGAL_CONVEX_HULL_2_H
@@ -54,18 +57,16 @@
 #ifndef CGAL_IO_LEDA_WINDOW_H
 #include <CGAL/IO/leda_window.h>
 #endif // CGAL_IO_LEDA_WINDOW_H
-#ifndef CGAL_PROTECT_LEDA_POINT_SET_H
-#include <LEDA/point_set.h>
-#define CGAL_PROTECT_LEDA_POINT_SET_H
-#endif // CGAL_PROTECT_LEDA_POINT_SET_H
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
 #include <algorithm>
 
 using CGAL::cgalize;
+using CGAL::has_smaller_dist_to_point;
 using CGAL::RED;
 using std::back_inserter;
+using std::copy;
 using std::max;
 
 using std::vector;
@@ -95,10 +96,6 @@ typedef Random_access_circulator_from_container< Polygon >
 typedef PointCont::const_iterator                 Vertex_const_iterator;
 typedef vector< Vertex_iterator >                 Vertex_iteratorCont;
 typedef Vertex_iteratorCont::iterator             Vertex_iteratorIter;
-#include <LEDA/REDEFINE_NAMES.h>
-typedef point                                     LEDA_Point;
-typedef point_set< PointIter >                    LEDA_Point_set_PointIter;
-#include <LEDA/UNDEFINE_NAMES.h>
 
 #ifdef EXTREMAL_POLYGON_MEASURE
 #ifndef CGAL_PROTECT_CTIME
@@ -161,33 +158,22 @@ main()
   PointCont points;
   Polygon p;
   bool polygon_changed( false);
-  LEDA_Point_set_PointIter point_location;
 
   for (;;) {
-    if ( polygon_changed) {
+    if (polygon_changed) {
       // compute convex hull:
       PointCont ch_points;
-      convex_hull_points_2( points.begin(),
-                            points.end(),
-                            back_inserter( ch_points));
+      convex_hull_points_2(points.begin(),
+                           points.end(),
+                           back_inserter(ch_points));
     
       // replace points by ch_points:
-      points.erase( points.begin(), points.end());
-      points.insert( points.begin(),
-                     ch_points.begin(),
-                     ch_points.end());
+      points.erase(points.begin(), points.end());
+      points.insert(points.begin(), ch_points.begin(), ch_points.end());
     
       // construct polygon and data structure for point location:
-      p.erase( p.begin(), p.end());
-      point_location.clear();
-      for ( PointIter p1( points.begin());
-            p1 != points.end();
-            ++p1) {
-        p.push_back( *p1);
-        point_location.insert(
-          LEDA_Point( (*p1).x(), (*p1).y()),
-          p1);
-      }
+      p.erase(p.begin(), p.end());
+      copy(points.begin(), points.end(), back_inserter(p));
     
       polygon_changed = false;
     } // if ( polygon_changed)
@@ -270,19 +256,17 @@ main()
       input = W.get_mouse( x, y);
       if ( input == MOUSE_BUTTON( 2)) {
         // move point
-        PointIter nearest(
-          point_location.inf(
-            point_location.nearest_neighbor(
-              LEDA_Point( x, y))));
+        
+        // find nearest vertex
+        Point sp(x, y);
+        PointIter nearest = points.begin();
+        PointIter k = nearest;
+        while (++k != points.end())
+          if (has_smaller_dist_to_point(sp, *k, *nearest))
+            nearest = k;
+        
         // test for snapping:
-        /*
-        #ifdef __GNUG__
-        FT di( squared_distance( *nearest, Point( x, y)));
-        if ( di < FT( 0.05)) {
-        #else
-        */
         if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
-        // #endif
           int v( 0);
           drawing_mode old_drawing_mode( W.set_mode( leda_xor_mode));
           leda_color old_color( W.set_color( leda_grey1));
@@ -350,20 +334,18 @@ main()
       }
       else if ( input == MOUSE_BUTTON( 3)) {
         // delete point
-        PointIter nearest(
-          point_location.inf(
-            point_location.nearest_neighbor(
-              LEDA_Point( x, y))));
+        
+        // find nearest vertex
+        Point sp(x, y);
+        PointIter nearest = points.begin();
+        PointIter k = nearest;
+        while (++k != points.end())
+          if (has_smaller_dist_to_point(sp, *k, *nearest))
+            nearest = k;
+        
         // test for snapping:
-        /*
-        #ifdef __GNUG__
-        FT di( squared_distance( *nearest, Point( x, y)));
-        if ( di < FT( 0.05)) {
-        #else
-        */
-        if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
-        //#endif
-          points.erase( nearest);
+        if (squared_distance(*nearest, Point(x, y)) < FT(0.05)) {
+          points.erase(nearest);
           polygon_changed = true;
           break;
         }    
