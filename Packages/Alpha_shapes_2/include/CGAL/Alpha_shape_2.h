@@ -91,19 +91,15 @@ private:
 
   typedef long Key;
  
-  typedef std::multimap< Coord_type, Face_handle > Interval_face_map;
-  typedef typename Interval_face_map::value_type   Interval_face;
+  typedef std::multimap< Coord_type, Face_handle >  Interval_face_map;
+  typedef typename Interval_face_map::value_type    Interval_face;
 
-  typedef typename Tds::Face Face_tds;
-  typedef typename Tds::Face_base  Face_base;
-  typedef typename Face_base::Interval_3 Interval3;
-  // should be replaced by as soon as possible
-  // typedef typename Face::Interval_3 Interval3;
+  typedef typename Tds::Face::Interval_3            Interval3;
+  
+  typedef std::multimap< Interval3, Edge >          Interval_edge_map;
+  typedef typename Interval_edge_map::value_type    Interval_edge;
 
-  typedef std::multimap< Interval3, Edge >         Interval_edge_map;
-  typedef typename Interval_edge_map::value_type   Interval_edge;
-
-  typedef std::pair< Coord_type, Coord_type > Interval2;
+  typedef std::pair< Coord_type, Coord_type >       Interval2;
   typedef std::multimap< Interval2, Vertex_handle > Interval_vertex_map;
   typedef typename Interval_vertex_map::value_type  Interval_vertex;
 
@@ -413,7 +409,52 @@ private:
 
   std::back_insert_iterator< std::list< Vertex_handle > >
   get_alpha_shape_vertices(std::back_insert_iterator< 
-			   std::list< Vertex_handle > > result) const;
+  std::list< Vertex_handle > > result) const{
+	//typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
+	//                                              Interval_vertex_map;
+	typename Interval_vertex_map::const_iterator vertex_alpha_it;
+
+	//const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
+	const Interval2* pInterval2;
+	Vertex_handle v;
+	     
+	// write the regular vertices
+
+	for (vertex_alpha_it = _interval_vertex_map.begin(); 
+		vertex_alpha_it != _interval_vertex_map.end() &&
+		(*vertex_alpha_it).first.first < get_alpha();
+		++vertex_alpha_it) 
+		{
+		pInterval2 = &(*vertex_alpha_it).first;
+
+		if((pInterval2->second >= get_alpha()
+		|| pInterval2->second == Infinity)) 
+		{
+		// alpha must be larger than the min boundary
+		// and alpha is smaller than the upper boundary
+		// which might be infinity 
+		// write the vertex
+		v = (*vertex_alpha_it).second;
+		CGAL_triangulation_assertion((classify(v) == REGULAR));
+		*result++ = v;
+		}
+		}
+	 
+	if (get_mode() == Alpha_shape_2<Dt>::GENERAL) 
+		{
+		// write the singular vertices
+		for (; 
+		vertex_alpha_it != _interval_vertex_map.end();
+		++vertex_alpha_it) 
+		{
+		v = (*vertex_alpha_it).second;
+		CGAL_triangulation_assertion((classify(v) == SINGULAR));
+
+		*result++ = v;
+		}
+		}
+	return result;
+  }
 
   //---------------------------------------------------------------------
 
@@ -1022,60 +1063,6 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum()
 
 }
 
-//-------------------------------------------------------------------------
-
-template < class Dt >
-std::back_insert_iterator
-                  < std::list< CGAL_TYPENAME_MSVC_NULL 
-                                   Alpha_shape_2<Dt>::Vertex_handle > >
-Alpha_shape_2<Dt>::get_alpha_shape_vertices
-(std::back_insert_iterator< std::list< Vertex_handle > > result) const 
-{
-  //typedef typename Alpha_shape_2<Dt>::Interval_vertex_map 
-  //                                              Interval_vertex_map;
-  typename Interval_vertex_map::const_iterator vertex_alpha_it;
-
-  //const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
-  const Interval2* pInterval2;
-  Vertex_handle v;
-     
-  // write the regular vertices
-
-  for (vertex_alpha_it = _interval_vertex_map.begin(); 
-       vertex_alpha_it != _interval_vertex_map.end() &&
-	 (*vertex_alpha_it).first.first < get_alpha();
-       ++vertex_alpha_it) 
-    {
-      pInterval2 = &(*vertex_alpha_it).first;
-
-      if((pInterval2->second >= get_alpha()
-	  || pInterval2->second == Infinity)) 
-	{
-	  // alpha must be larger than the min boundary
-	  // and alpha is smaller than the upper boundary
-	  // which might be infinity 
-	  // write the vertex
-	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion((classify(v) == REGULAR));
-	  *result++ = v;
-	}
-    }
- 
-  if (get_mode() == Alpha_shape_2<Dt>::GENERAL) 
-    {
-      // write the singular vertices
-      for (; 
-	   vertex_alpha_it != _interval_vertex_map.end();
-	   ++vertex_alpha_it) 
-	{
-	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion((classify(v) == SINGULAR));
-
-	  *result++ = v;
-	}
-    }
-  return result;
-}
 
 //-------------------------------------------------------------------------
 
