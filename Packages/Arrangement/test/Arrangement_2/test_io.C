@@ -49,7 +49,7 @@
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
-#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
+//#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
@@ -235,7 +235,7 @@ private:
   // count overlap references in arrangement,
   // that is every reference from a halfedge of an overlapped edge
   // to its overlapping curves.
-  unsigned count_overlaps(Arr_2 & arr)
+  unsigned count_overlaps()
     {
       Arr_2::Halfedge_iterator hit;
       Arr_2::Overlap_circulator oe;
@@ -265,18 +265,18 @@ private:
       return counted_overlaps;
     }
  
-  void print_vertices(Arr_2 & arr)
-    {
-      Arr_2::Vertex_const_iterator vit;
-
-      std::cout << "Vertices in Arrangement:" << std::endl;
-      for(vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++)
-	{
-	  std::cout << (*vit).point() << " , ";
-	}
-      std::cout << std::endl;
-   } 
- 
+  void print_vertices()
+     {
+       Arr_2::Vertex_const_iterator vit;
+       
+       std::cout << "Vertices in Arrangement:" << std::endl;
+       for(vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++)
+         {
+           std::cout << (*vit).point() << " , ";
+         }
+       std::cout << std::endl;
+     } 
+  
   void print_kind_of_location(Arr_2::Locate_type &lt)
     {
       switch (lt) {
@@ -302,7 +302,7 @@ private:
       std::cout << std::endl;
     }
   
-  bool point_is_in_expected_place(Arr_2 & arr, Point &pnt, Arr_2::Locate_type exp_lt)
+  bool point_is_in_expected_place(Point &pnt, Arr_2::Locate_type exp_lt)
     {
       Arr_2::Locate_type    location_of_vertex;
       
@@ -311,7 +311,7 @@ private:
       return (location_of_vertex == exp_lt);
     }
   
-  void check_that_vertices_are_in_arrangement(Arr_2 & arr, Point_list & all_points_list)
+  void check_that_vertices_are_in_arrangement(Point_list & all_points_list)
     {
       Point_list::iterator pit;
       
@@ -322,17 +322,16 @@ private:
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(arr, *pit, Arr_2::VERTEX) ||
-                         point_is_in_expected_place(arr, *pit, Arr_2::EDGE));
+	  CGAL_assertion(point_is_in_expected_place(*pit, Arr_2::VERTEX) ||
+                         point_is_in_expected_place(*pit, Arr_2::EDGE));
 	}
     }
   
-  void points_in_expected_place(Arr_2 &                      arr,
-				  Point_list &              point_list,
-				  std::list<Arr_2::Locate_type> & lt_list)
-    {
-      Point_list::iterator              pit;
-      std::list<Arr_2::Locate_type>::iterator lt_it;
+  void points_in_expected_place(Point_list &              point_list,
+                                std::list<Arr_2::Locate_type> & lt_list)
+  {
+    Point_list::iterator              pit;
+    std::list<Arr_2::Locate_type>::iterator lt_it;
       
       for (pit = point_list.begin(), lt_it = lt_list.begin();
 	   pit != point_list.end();
@@ -347,7 +346,7 @@ private:
 #else
 	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
 #endif
-	  CGAL_assertion(point_is_in_expected_place(arr, *pit, *lt_it));
+	  CGAL_assertion(point_is_in_expected_place(*pit, *lt_it));
 	}
     }
 
@@ -594,16 +593,16 @@ public:
       CGAL_assertion(arr.is_valid());
             
       // Check that vertices read are indeed in the arrangement
-      check_that_vertices_are_in_arrangement(arr, all_points_list);
+      check_that_vertices_are_in_arrangement(all_points_list);
 
       // count overlaps
-      actual_num_overlaps = count_overlaps(arr); 
+      actual_num_overlaps = count_overlaps(); 
 
       show_comparison();   
       
       CGAL_assertion (arr.number_of_vertices()  == expected_num_vertices);
       // verify that test points are as located in the arrangemet as expected
-      points_in_expected_place(arr, test_point_list, exp_type_list);
+      points_in_expected_place(test_point_list, exp_type_list);
       CGAL_assertion (arr.number_of_halfedges() == expected_num_edges * 2);
       CGAL_assertion (arr.number_of_faces()     == expected_num_faces);
       CGAL_assertion (actual_num_overlaps       == expected_num_overlaps);
@@ -633,3 +632,5 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
+
+
