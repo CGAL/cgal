@@ -1,3 +1,6 @@
+2.11    (?? June 2001)
+- removed dd_geo directory
+
 2.10    (1 June 2001)
 - fixed number type conversion in centroid predicate
 - added some missing typenames
