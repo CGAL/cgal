@@ -58,7 +58,7 @@ struct Interval_nt_advanced
   struct unsafe_comparison {};		// Exception class.
   static unsigned number_of_failures;	// Counts the number of failures.
 
-  void overlap_action() const // This should be runtime customisable. FIXME
+  static void overlap_action() // This should be runtime customisable. FIXME
 #ifndef CGAL_IA_NO_EXCEPTION
       throw (unsafe_comparison)
   { number_of_failures++;  throw unsafe_comparison(); }
@@ -423,7 +423,7 @@ sign (const Interval_nt_advanced & d)
   if (d.inf() > 0) return POSITIVE;
   if (d.sup() < 0) return NEGATIVE;
   if (d.inf() == d.sup()) return ZERO;
-  d.overlap_action();
+  Interval_nt_advanced::overlap_action();
   return ZERO;
 }
 
@@ -434,7 +434,7 @@ compare (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
   if (d.inf() > e.sup()) return LARGER;
   if (e.inf() > d.sup()) return SMALLER;
   if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
-  d.overlap_action();
+  Interval_nt_advanced::overlap_action();
   return EQUAL;
 }
 
