@@ -1516,7 +1516,7 @@ create_from_edge(Halfedge_const_handle e,
  
   typedef typename CGAL::SNC_const_decorator<SNC_structure> SNC_const_decorator;
 
-  CGAL_assertion(segment(e).has_on(p));
+  CGAL_assertion(SNC_const_decorator::segment(e).has_on(p));
   Vertex_handle v = sncp()->new_vertex( p, e->mark());
   SM_decorator D(&*v);
   SM_const_decorator E(&*e->source());

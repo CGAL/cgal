@@ -204,7 +204,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   //  using(point);
   // using(calc_point);
 
-  using(segment);
+  //  using(segment);
   //  using(plane);
   //  using(vector);
   //  using(orthogonal_vector);
@@ -771,8 +771,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 				     const Selection& BOP, SNC_structure& rsnc)
     /*{\opOverlays two spheres maps.}*/ {
   
-    SNC_const_decorator D;
-
 #ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
     typedef SM_io_parser<SM_decorator> SM_io_parser;
     SM_io_parser IO0( std::cerr, v0);

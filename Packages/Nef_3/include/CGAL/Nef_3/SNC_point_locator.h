@@ -259,8 +259,9 @@ public:
         }
         else if( assign( e, *o)) {
           Point_3 q;
-          _TRACEN("trying edge on "<<segment(e));
-          if( is.does_intersect_internally( ray, segment(e), q)) {
+          _TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
+          if( is.does_intersect_internally( ray, Segment_3(e->source()->point(),
+                                                           e->twin()->source()->point()), q)) {
             _TRACEN("ray intersects edge on "<<q);
             _TRACEN("prev. intersection? "<<hit);
             if( hit) _TRACEN("prev. intersection on "<<eor);
@@ -351,8 +352,8 @@ public:
         }
       }
       else if( assign( e, *o)) {
-        if ( is.does_contain_internally( segment(e), p) ) {
-          _TRACEN("found on edge "<<segment(e));
+        if ( is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
+          _TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
           result = Object_handle(e);
           found = true;
         }
@@ -392,8 +393,9 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "intersecting edge: "<<&*e0<<' '<<segment(e0));
-    Segment_3 s(segment(e0));
+    _TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
+                                                         e0->twin()->source()->point()));
+    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -406,10 +408,12 @@ public:
       }
       else if( assign( e, *o)) {
         Point_3 q;
-        if( is.does_intersect_internally( s, segment(e), q)) {
+        if( is.does_intersect_internally( s, Segment_3(e0->source()->point(),
+	                                               e0->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, Object_handle(e), q);
-          _TRACEN("edge intersects edge "<<' '<<&*e<<segment(e)<<" on "<<q);
+          _TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
+                                                                e->twin()->source()->point())<<" on "<<q);
         }
       }
       else if( assign( f, *o)) {
@@ -428,11 +432,12 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    _TRACEN( "intersecting edge: "<<segment(e0));
+    _TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
+                                               e0->twin()->source()->point()));
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
     Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
-    Segment_3 s(segment(e0));
+    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -596,15 +601,18 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    TRACEN( "intersecting edge: "<<segment(e0));
+    TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
+                                              e0->twin()->source()->point()));
     SNC_intersection is(*sncp());
-    Segment_3 s(segment(e0));
+    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Halfedge_iterator e;
     CGAL_forall_edges( e, *sncp()) {
       Point_3 q;
-      if( is.does_intersect_internally( s, segment(e), q)) {
+      if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
+                                                     e->twin()->source()->point()), q)) {
         q = normalized(q);
-        TRACEN("edge intersects edge "<<segment(e)<<" on "<<q);
+        TRACEN("edge intersects edge "<< Segment_3(e->source()->point(),
+                                                   e->twin()->source()->point()) <<" on "<<q);
         call_back( e0, Object_handle(e), q);
       }
     }
@@ -615,9 +623,11 @@ public:
     const typename SNC_point_locator::Intersection_call_back& call_back) const {
     TIMER(it_t.start());
     CGAL_assertion( initialized);
-    TRACEN( "intersecting edge: "<<segment(e0));
+    TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
+                                              e0->twin()->source()->point()));
     SNC_intersection is(*sncp());
-    Segment_3 s(segment(e0));
+    Segment_3 s(Segment_3(e0->source()->point(),
+                          e0->twin()->source()->point()));
     Halffacet_iterator f;
     CGAL_forall_facets( f, *sncp()) {
       Point_3 q;

@@ -148,7 +148,7 @@ struct binop_intersection_test_segment_tree {
       if( Infi_box::degree( f1->plane().d() ) > 0 )
         return;
       Point_3 ip;
-      if( is.does_intersect_internally( SNC_decorator::segment(e0), f1, ip )) {
+      if( is.does_intersect_internally( Const_decorator::segment(e0), f1, ip )) {
         cb(e0,f1,ip);
         ignore[ std::make_pair( e0->twin(), f1 ) ] = true;
       }
@@ -171,7 +171,7 @@ struct binop_intersection_test_segment_tree {
       if( Infi_box::degree( f0->plane().d() ) > 0 )
         return;
       Point_3 ip;
-      if( is.does_intersect_internally( SNC_decorator::segment( e1 ),
+      if( is.does_intersect_internally( Const_decorator::segment( e1 ),
                                         f0, ip ) )
         cb(e1,f0,ip);
     }
@@ -190,8 +190,8 @@ struct binop_intersection_test_segment_tree {
       Halfedge_const_iterator e0 = box0.get_halfedge();
       Halfedge_const_iterator e1 = box1.get_halfedge();
       Point_3 ip;
-      if( is.does_intersect_internally( SNC_decorator::segment( e0 ),
-                                        SNC_decorator::segment( e1 ), ip ))
+      if( is.does_intersect_internally( Const_decorator::segment( e0 ),
+                                        Const_decorator::segment( e1 ), ip ))
         cb(e0,e1,ip);
     }
   };
