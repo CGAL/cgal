@@ -96,9 +96,9 @@ public:
     out () << edge->curve() << std::endl;
   }
 
-  void write_edge_nodes_end() {
-    out() << std::endl;
-  }
+  //void write_edge_nodes_end() {
+  //  out() << std::endl;
+  // }
 
   /*void write_footer() {
     if (m_header.comments())
