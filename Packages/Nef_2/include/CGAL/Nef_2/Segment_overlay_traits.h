@@ -92,7 +92,7 @@ public:
      int s = 0;
      if ( p == K.source(s1) )      s =   K.orientation(s2,p);
      else if ( p == K.source(s2) ) s = - K.orientation(s1,p);
-     else ASSERT(0,"compare error in sweep.");
+     else CGAL_assertion_msg(0,"compare error in sweep.");
      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) ) 
        return s;
     
@@ -481,7 +481,7 @@ public:
        s =   K.orientation(s2,p);
      else if ( K.orientation(s2,p) == 0 ) 
        s = - K.orientation(s1,p);
-     else ASSERT(0,"compare error in sweep.");
+     else CGAL_assertion_msg(0,"compare error in sweep.");
      if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) ) 
        return ( s < 0 );
     
