@@ -55,6 +55,20 @@ circumcenter( PointC3<R CGAL_CTAG> const& p,
   return PointC3<R CGAL_CTAG>(x,y,z);
 }
 
+template < class R >
+PointC3<R CGAL_CTAG>
+circumcenter( PointC3<R CGAL_CTAG> const& p,
+              PointC3<R CGAL_CTAG> const& q,
+              PointC3<R CGAL_CTAG> const& r)
+{
+  typename R::FT x,y,z;
+  circumcenterC3(p.x(),p.y(),p.z(),
+                 q.x(),q.y(),q.z(),
+                 r.x(),r.y(),r.z(),
+                 x,y,z);
+  return PointC3<R CGAL_CTAG>(x,y,z);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_POINTS_3_H
