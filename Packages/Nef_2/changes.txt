@@ -1,6 +1,12 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.21 (8 July 2002)
+     - restore changes from 1.19
+
+1.20 (8 July 2002)
+     - ??? mistake that removed last change
+
 1.19 (8 July 2002)
      - rename ASSERT macro to CGAL_NEF_ASSERT to avoid conflict with 
        other libraries' macros.
