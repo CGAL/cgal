@@ -119,7 +119,10 @@ public:
       Segment_2 seg(ps, pt);
       return seg.bbox();
     }
-      
+
+    Point_2 source() { return ps; }
+    Point_2 target() { return pt; }
+
   private:
 
     friend class Arr_segment_cached_traits_2;
