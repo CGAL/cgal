@@ -31,6 +31,7 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 
 
+
 namespace CGAL {
   Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw)
   {
@@ -179,7 +180,6 @@ namespace CGAL {
   }
 
 }//end namespace
-
 #include "Qt_widget_standard_toolbar.moc"
 
 #endif
