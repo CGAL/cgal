@@ -332,12 +332,12 @@ public:
     if (is_same(p0,p1))
       return true; 
       
-    int or0=::orientation(p0,p,px);
-    int or1=::orientation(p1,p,px);
-    int or=or0*or1;
+    int orient0=::orientation(p0,p,px);
+    int orient1=::orientation(p1,p,px);
+    int orient=orient0*orient1;
       
-    if (or < 0) { //one is a leftturn the other rightturn
-      return (or0 == LEFTTURN); //leftturn
+    if (orient < 0) { //one is a leftturn the other rightturn
+      return (orient0 == LEFTTURN); //leftturn
     }
     else { //both are either left or right turns (or one is colinear)
       return (::orientation(p0,p,p1)==RIGHTTURN); //rightturn
