@@ -1,3 +1,6 @@
+2.53 [af]
+- Refined the test  in CGAL_CFG_NO_LIMITS, as Sun CC 5.4 has a bug in limits
+
 2.52  [af]
 - Added CGAL_CFG_NO_LIMITS
 
