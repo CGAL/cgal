@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2000  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -64,6 +64,26 @@ struct Borland_workaround
 static Borland_workaround Borland_workaround_object;
 #endif // __BORLANDC__
 
+#ifdef __PGI
+// PGI cannot cope with denormalized values at compile time.
+// Hence we have to generate CGAL_IA_MIN_DOUBLE at run time.
+namespace {
+double pgcc_init_min_double()
+{
+    double d = 1;
+    double e = 1;
+    do {
+	d = e;
+	e = CGAL_IA_FORCE_TO_DOUBLE(e/2);
+    } while (e != 0);
+    return d;
+}
+} // anonymous namespace
+
+namespace CGALi {
+double minimin = pgcc_init_min_double();
+}
+#endif
 
 // The results of 1-epsilon and -1+epsilon are enough
 // to detect exactly the current rounding mode.

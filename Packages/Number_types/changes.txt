@@ -1,3 +1,6 @@
+9 Apr 2004 Sylvain Pion
+- PGCC workarounds.
+
 29 March 2004 Radu Ursu
 - rolled back some changes in doc_tex/NumberTypeSupport_ref/main.tex 
 

@@ -1,3 +1,6 @@
+9 Apr 2004 Sylvain Pion
+- PGCC workarounds.
+
 17 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 

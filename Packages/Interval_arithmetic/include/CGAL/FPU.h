@@ -35,7 +35,7 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __linux__ 
+#elif defined __linux__ && !defined __PGI
 #  include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #  include <ieeefp.h>
@@ -50,7 +50,8 @@ extern "C" {
 #  include <float.h>
 #elif defined __sgi
 #  include <sys/fpu.h>
-#elif defined _MSC_VER || defined __i386__ || defined __sparc__
+#elif defined _MSC_VER || defined __sparc__ || \
+     (defined __i386__ && !defined __PGI)
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
@@ -62,7 +63,13 @@ extern "C" {
 // Some useful constants
 
 #if defined CGAL_CFG_NO_LIMITS
-#  define CGAL_IA_MIN_DOUBLE (5e-324)
+#  if defined __PGI
+     // PGCC crashes when dealing with denormalized values at compile time.
+     // So we have to generate it at run time.
+#    define CGAL_IA_MIN_DOUBLE (CGAL::CGALi::minimin)
+#  else
+#    define CGAL_IA_MIN_DOUBLE (5e-324)
+#  endif
 #  define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 #else
 #  include <limits>
@@ -71,6 +78,12 @@ extern "C" {
 #endif
 
 CGAL_BEGIN_NAMESPACE
+
+#ifdef __PGI
+namespace CGALi {
+extern double minimin;
+}
+#endif
 
 
 // Inline function to stop compiler optimization.
@@ -160,7 +173,7 @@ inline double IA_bug_sqrt(double d)
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
 
-#if defined __i386__
+#if defined __i386__ && !defined __PGI
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version is not enough because of the extended
