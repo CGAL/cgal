@@ -460,18 +460,20 @@ EOF
 
 \begin{document}
 
+\cgalTitlePage{$1 Package}
+
 \cgalchapters{
 EOF
     if [ $# -eq 1 ]; then
         if [[ $1 == *_ref ]]; then
-            echo "    \entryleft{\part{Reference Manual}}"
+            echo "    %\entryleft{\part{Reference Manual}}"
             echo "    \lcTex{\entryleft{\listofrefpages}}"
         else
-            echo "    \entryleft{\part{User Manual}}"
+            echo "    %\entryleft{\part{User Manual}}"
         fi
         echo "    \packageleft{$1}"
     else
-        echo "    \entryleftright{\part{User Manual}}{\part{Reference Manual}}"
+        echo "    %\entryleftright{\part{User Manual}}{\part{Reference Manual}}"
         echo "    \lcTex{\entryright{\listofrefpages}}"
         echo "    \packageleftright{$1}{$2}"
     fi
