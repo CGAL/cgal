@@ -1,3 +1,9 @@
+4.25 (20 September)
+- Added typenames
+
+4.24
+- New headers
+
 4.23 (17 Sep 2003) [af]
 - Removed Polygon_traits
 
