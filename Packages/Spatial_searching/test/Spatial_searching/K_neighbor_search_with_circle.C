@@ -41,9 +41,6 @@ int main() {
   Neighbor_search search(tree, query, K);
   std::vector<Point> result;
 
-  Point p1(1.2, 0.2), p2(0.2, 1);
-  std::cout <<  std::sqrt(dist.transformed_distance(query,p1)) << "        " << std::sqrt(dist.transformed_distance(query,p2)) <<  std::endl;
-  return 0;
   for (Neighbor_search::iterator it = search.begin();
        it != search.end();
        it++){ 
