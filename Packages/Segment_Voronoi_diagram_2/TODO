@@ -1,3 +1,14 @@
+- create the class Triangulation_face_base_with_edges_2 and move the
+  functionality there; this class should also be (or not be used)
+  in the Apollonius_graph_2 package)
+- move the definition of the
+  Segment_Voronoi_diagram_hierarchy_vertex_base_2 class in a separate
+  file
+- add the methods insert_polyline and insert_polygon that do some
+  optimized insertion for polylines and polygons; add these in both
+  the one-level and hierarchy classes
+- remove the macro USE_KERNEL_PREDICATES from the traits classes, once
+  the traits' interface is finalized
 - define the Orientation_2 predicate in the traits but for sites, not
   for points.
 - replace the Point_container class by a more generic class called
