@@ -1,3 +1,4 @@
+- TODO revoir Triangulation_2_traits_3.h
 - change the order of the test the precondition on insert_in_edge
   or turn it into a CGAL_triangulation_exactness_precondition()?
 - rendre les iterator vraiment const
