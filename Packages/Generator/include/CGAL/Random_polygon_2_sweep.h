@@ -475,9 +475,16 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
                          const PolygonTraits& polygon_traits)
 {
     std::pair<int,int> swap_interval;
+/*
+        Iterator it;
+        for (it = points_begin; it != points_end; it++)
+          std::cout << *it << " ";
+        std::cout << endl;
+*/
     do {
         swap_interval = check_simple_polygon(points_begin,
 	                                     points_end, polygon_traits);
+
 	if (swap_interval.first == -1)
 	    break;
         // swap with vertex_data.conflict1, vertex_data.conflict2;

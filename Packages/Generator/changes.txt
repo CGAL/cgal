@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.56 (17 Apr 2002)
+   - added correct demo for manual
+
 2.55 (24 Mar 2002)
    - fixed reference to renamed doc file.
 
