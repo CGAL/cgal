@@ -270,7 +270,8 @@ private slots:
     A.clear();
     win.clear_history();
     win.lock();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    win.set_window(-1.1, 1.1, -1.1, 1.1); 
+    // set the Visible Area to the Interval
 
     // send resizeEvent only on show.
     win.unlock();
