@@ -1,3 +1,6 @@
+26 March 2004 Radu Ursu
+-made doc work with the new implementation of the Manual tools
+
 24 Feb 2004 Sylvain Pion
 - Fix return void expression detected by MipsPro.
 
