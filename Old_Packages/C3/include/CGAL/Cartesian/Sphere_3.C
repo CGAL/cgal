@@ -280,13 +280,12 @@ SphereC3<R CGAL_CTAG>::bbox() const
 template < class R >
 CGAL_KERNEL_INLINE
 SphereC3<R CGAL_CTAG>
-SphereC3<R CGAL_CTAG>::
-orthogonal_transform
+SphereC3<R CGAL_CTAG>::orthogonal_transform
   (const typename SphereC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
 {
   Vector_3 vec(FT(1), FT(0) );   // unit vector
   vec = vec.transform(t);             // transformed
-  FT  sq_scale = FT( vec*vec );       // squared scaling factor
+  FT sq_scale = vec.squared_length();       // squared scaling factor
 
   return SphereC3<R CGAL_CTAG>(t.transform(center()),
                       sq_scale * squared_radius(),

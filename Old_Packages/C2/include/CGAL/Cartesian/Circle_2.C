@@ -263,13 +263,12 @@ CircleC2<R CGAL_CTAG>::bbox() const
 template < class R >
 CGAL_KERNEL_INLINE
 CircleC2<R CGAL_CTAG>
-CircleC2<R CGAL_CTAG>::
-orthogonal_transform
+CircleC2<R CGAL_CTAG>::orthogonal_transform
   (const typename CircleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
 {
   Vector_2 vec(FT(1), FT(0) );   // unit vector
   vec = vec.transform(t);             // transformed
-  FT  sq_scale = FT( vec*vec );       // squared scaling factor
+  FT sq_scale = vec.squared_length();       // squared scaling factor
 
   return CircleC2<R CGAL_CTAG>(t.transform(center()),
                                sq_scale * squared_radius(),
@@ -359,4 +358,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_CIRCLE_2_H
+#endif // CGAL_CARTESIAN_CIRCLE_2_C
