@@ -45,13 +45,14 @@ provide the user-defined policies that perform the point operations.
 A subdivision algorithm has three key behaviors: \emph{refinement}, 
 \emph{smoothing} and \emph{stencil correspondence}. The refinement is
 acted as a \CodeFmt{for\_each} algorithm on the source \emph{and}
-refined polyhedron while applying the smoothing behaviors. CSL
+the refined polyhedron while applying the smoothing behaviors. CSL
 implement the refinements as the host functions with the smoothing
 rules as the policies. Some major refinement schemes are shown in
-\figurename\ \ref{fig:RefSchemes}. The accompanying CSL only
-provides PQQ, PTQ and DQQ schemes. The refinements also define the
-stencil correspondences; PQQ and DQQ cases are shown in 
-\figurename\ \ref{fig:RefMap}. These stencil correspondences 
+\figurename\ \ref{fig:RefSchemes}. The tutorial accompanying CSL only
+provides PQQ, PTQ and DQQ schemes. The refinement configurations 
+also define the stencil correspondences; stencils of PQQ and DQQ 
+schemes are shown in \figurename\ \ref{fig:RefMap}. 
+These stencil correspondences 
 specified the functional interface between the refinement hosts 
 and the geometry smoothing policies.
 
@@ -107,9 +108,8 @@ public:
 };
 \end{lstlisting}
 The interface is defined according to the stencil correspondence of
-the refinement scheme.  The PQQ scheme contains three stencils as
-shown in
-\figurename\ \ref{fig:RefMap} (a--c). Each of them
+the refinement scheme. A PQQ scheme contains three stencils that are
+shown in \figurename\ \ref{fig:RefMap} (a--c). Each of them
 defines a policy function, which of the \CodeFmt{quadralize\_rule} 
 is the \CodeFmt{facet\_rule()}, 
 the \CodeFmt{edge\_rule()}, and the \CodeFmt{vertex\_rule()} 
@@ -152,8 +152,7 @@ traverse and collect the points. The point calculation use
 the conventional interface \CodeFmt{[i]} of the point type. 
 For \CodeFmt{Point} not equipped with the index access 
 \CodeFmt{[i]}, a user-implemented policy class need to be 
-provided. Though it should be an easy task as the example policy
-shown. The CGAL \CodeFmt{Point\_3}/\CodeFmt{Vector\_3}
+provided. The CGAL \CodeFmt{Point\_3}/\CodeFmt{Vector\_3}
 computation can be used if the \CodeFmt{Point} is the equivalent
 type of \CodeFmt{Point\_3} which is shown below. 
 \begin{lstlisting}
@@ -171,11 +170,11 @@ type of \CodeFmt{Point\_3} which is shown below.
   }
 \end{lstlisting}
 
-Instead of the circulator, the \CodeFmt{edge\_point\_rule} 
-for Catmull-Clark subdivision requires the low lever 
-halfedge traversal. It is simply done with the adjacency 
-pointers of the halfedge item, i.e.\ the \CodeFmt{next()},
-the \CodeFmt{prev()}, and the \CodeFmt{oppposite()}.
+The \CodeFmt{edge\_point\_rule()} of
+Catmull-Clark subdivision requires the low lever 
+halfedge traversal that is the \CodeFmt{next()},
+the \CodeFmt{prev()}, and the \CodeFmt{opposite()}
+of the halfedge item.
 \begin{lstlisting}
   void edge_point_rule(Halfedge_handle edge, Point& pt) {
     Point p1 = edge->vertex()->point();
@@ -228,9 +227,7 @@ a vertex circulation.
 	       (Q[2] + 2*R[2] + S[2]*(n-3))/n );
   }
 \end{lstlisting}
-Most of the codes are to do the geometry computations. The connectivity
-operation is still a simple circulation.
-\\
+\vspace{0.5cm}
 
 \noindent \textbf{Connectivity refinement} in CSL is 
 design as a host function. A refinement host refines the input 
@@ -298,7 +295,7 @@ The details of the Step2 and Step3 are shown in
 \CodeFmt{insert\_vertex()} and \CodeFmt{insert\_edge()} are simple
 connectivity functions composed of the Euler operators provided 
 by \cgalpoly . Details about these two functions, readers should refer
-to the \emph{lib\/SurfLab\/Polyhedron\_decorator.h}.
+to the \emph{lib/SurfLab/Polyhedron\_decorator.h}.
 \\
 
 \begin{figure}
@@ -322,14 +319,16 @@ to the \emph{lib\/SurfLab\/Polyhedron\_decorator.h}.
 \noindent \textbf{Stencil correspondence} is another key
 behavior for a subdivision algorithm.
 CSL refinement hosts employ the geometry policies
-to generate the smoothing points. These points are then assigned 
-to the corresponding refined vertices. Three temporary
-point buffers, \CodeFmt{vertex\_point\_buffer}, 
+to generate the smoothing points. 
+Three temporary point buffers, \CodeFmt{vertex\_point\_buffer}, 
 \CodeFmt{edge\_point\_buffer} and \CodeFmt{face\_point\_buffer}, 
 are used in the refinement host to store the points generated
-by the geometry policies. Since CSL is designed
-to accept a generic \cgalpoly , item flags in the 
-Quad-Triangle example (described in the previous section) 
+by the geometry policies. These points are then assigned 
+to the corresponding refined vertices. In the Quad-Triangle
+implementation, the customized item flags are used
+to register the stencil correspondence.  
+Since CSL is designed to accept a generic \cgalpoly , 
+customized item flags (witch results a specific \cgalpoly) 
 is not a feasible option for CSL. To maintain the stencil 
 correspondence, CSL implicitly matches the storage 
 order and operation order. The operation order is the
@@ -341,14 +340,9 @@ geometry items by appending them at the end of the underlying
 containers, in most cases the linked-list or the vector.
 So the operation order is equivalent to the storage of the 
 vertex items, hence the storage order of the points.
-The storage order of the points is the also the order of calling 
-the geometry policies.
 CSL arranges the calling order of the geometry policies
 to meet the operation order, which ensures the 
 correspondence between the stencils and the points.
-The smoothed points are generated 
-from the geometry policies and stored in the temporary 
-point buffers before assigned to the refined vertices.
 \begin{lstlisting}
   // Build a new vertices buffer has the following structure:
   // 0 1 ... e_begin ... f_begin ... (end_of_buffer)
@@ -413,9 +407,10 @@ accompanying source code.
 \end{figure}
 
 Primal schemes, such as PQQ, PTQ and $\sqrt{3}$ refinement, reserve
-the control polyhedron or control vertices.  These schemes can devise
-a sequence of Euler operations to incrementally manipulate the
-connectivity while maintaining the stencil correspondence.  Dual
+the control vertices or even the control polyhedron. 
+We can devise a sequence of Euler operations to incrementally 
+manipulate the connectivity while maintaining the stencil 
+correspondence for these schemes.  Dual
 schemes, such as DQQ refinement, exchange the vertex and facet in the
 process. These schemes lost the control vertices and hence are hard to
 devise incremental manipulations. The modifier callback mechanism
@@ -435,10 +430,9 @@ Doo-Sabin stencils.
 \\
 
 \noindent The \textbf{geometry policy} of a DQQ scheme is shown in
-\figurename\ \ref{fig:RefMap} (d). The stencil centers around
-a corner (as a facet-vertex pair) and defines the interface 
-of the geometry policy. Only one geometry policy, i.e.\ the corner 
-point, is needed for DQQ refinement. 
+\figurename\ \ref{fig:RefMap} (d) where the stencil centers around
+a corner (as a facet-vertex pair). Only one geometry policy, i.e.\ the 
+corner point, is needed for a DQQ scheme. 
 \begin{lstlisting}
 template <class _Poly>
 class dualize_rule {
@@ -488,8 +482,7 @@ to support Doo-Sabin stencil.
 Instead of using the conventional interface \CodeFmt{[i]} 
 of the point type, we demonstrate the CGAL 
 \CodeFmt{Point\_3}/\CodeFmt{Vector\_3} computation that gives
-more succinct codes. For non-CGAL point type, a user-defined 
-policy is required. 
+more succinct codes. 
 \\
 
 \noindent \textbf{Connectivity refinement} is implemented
@@ -512,12 +505,12 @@ void dualize_polyhedron(Polyhedron& p, RULE<Polyhedron> rule, int d = 1) {
 }
 \end{lstlisting}
 The \CodeFmt{dualize\_1step()} first constructs a facet-vertex list
-that is similar to the format of the OFF file or the OpenGL vertex
+that is similar to the format of a OFF file or the OpenGL vertex
 array. A facet-vertex list contains two buffers: a point buffer and a
 facet index buffer. The point buffer stores the smoothing points
 generated by the geometry policy, i.e.\ the \CodeFmt{point\_rule()}.
 The points are generated in the order of the halfedge iterator. Note
-each halfedge points to a corner that is a vertex on the refined
+that each halfedge points to a corner that is a vertex on the refined
 polyhedron.  The facet index buffer contains a list of the vertex
 indices which depict facet polygons of the refined polyhedron. The
 vertex indices point to the storage position in the point
@@ -624,7 +617,7 @@ subdivision with a template geometry policy class.  The accompanying
 source code of CSL supports Catmull-Clark, Loop, and Doo-Sabin
 geometry policies and hence the subdivisions.  Each of the subdivision
 is constructed by a proper combination of the refinement host and the
-subdivision rules.  A customized subdivision can easily created with a
+subdivision rules.  A customized subdivision can be easily created with a
 user-customized policy class. For example, a linear subdivision with
 PQQ configuration is parameterized with average geometry rules.
 \begin{lstlisting}
@@ -655,7 +648,7 @@ public:
   }
 };
 \end{lstlisting}
-Following function call invokes our new and simple linear PQQ subdivision.
+Following function call invokes this simple linear PQQ subdivision.
 \begin{lstlisting}
   quad_quadralize_polyhedron(poly, average_rule<Polyhedron>(), step);
 \end{lstlisting}
@@ -668,7 +661,7 @@ of the refinement functions and the geometry policy classes (hence the
 name \emph{Combinatory} SL). The proper combination is constrained by
 the stencil correspondence and checked in the compiler time.
 
-Current version of CSL only supports the geometry modification of the
+The tutorial version of CSL only supports the geometry modification of the
 vertex (hence only the isotrophic subdivision). Boundary can be easily
 supported by introducing the boundary policy. But for anisotropic
 subdivisions (e.g.\ Pixar's crease rules), data modifications of the
