@@ -1,0 +1,59 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Section: Random Numbers Generator
+% -----------------------------------------------------------------------------
+% file  : Kernel/spec/Random.tex
+% author: Sven Schönherr (sven@inf.fu-berlin.de)
+% $Id$
+% =============================================================================
+
+\begin{ccClass}{CGAL_Random}
+\ccSection{Random Numbers Generator}
+
+\ccDefinition
+
+An instance of type \ccClassName\ is a random numbers generator. It
+allows to generate uniformly distributed random \ccc{bool}s,
+\ccc{int}s and \ccc{double}s. It can be used as the random number
+generating function object in the STL algorithm \ccc{random_shuffle}.
+
+Instances of \ccClassName\ can be seen as input streams. Different
+streams are \emph{independent} of each other, i.e.\ the sequence of
+numbers from one stream does \emph{not} depend upon how many numbers
+were extracted from the other streams.
+
+\ccInclude{CGAL/Random.h}
+
+\ccCreation
+\ccCreationVariable{random}
+
+\ccSetThreeColumns{double}{}{
+  returns a random \ccc{double} from the interval
+  $[$\ccc{lower}$,$\ccc{upper}$)$.}
+\ccPropagateThreeToTwoColumns
+
+
+\ccConstructor{ CGAL_Random( );}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.}
+
+
+\ccOperations
+
+\ccMemberFunction{ bool get_bool( );}{
+        returns a random \ccc{bool}.}
+
+\ccMemberFunction{ int get_int( int lower, int upper);}{
+        returns a random \ccc{int} from the interval
+        $[$\ccc{lower}$,$\ccc{upper}$)$.}
+
+\ccMemberFunction{ double get_double( double lower = 0.0,
+                                      double upper = 1.0);}{
+        returns a random \ccc{double} from the interval
+        $[$\ccc{lower}$,$\ccc{upper}$)$.}
+
+\ccMemberFunction{ int operator() ( int upper);}{
+        returns \ccVar\ccc{.get_int( 0, upper)}.}
+
+\end{ccClass}
+
+% ===== EOF ===================================================================
