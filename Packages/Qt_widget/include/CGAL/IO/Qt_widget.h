@@ -630,11 +630,10 @@ template< class R >
 Qt_widget&
 operator<<(Qt_widget& w, const Iso_rectangle_2<R>& r)
 {
-  int
-    xmin = w.x_pixel(to_double(r.min().x())),
-    ymin = w.y_pixel(to_double(r.min().y())),
-    xmax = w.x_pixel(to_double(r.max().x())),
-    ymax = w.y_pixel(to_double(r.max().y()));
+  int xmin = w.x_pixel(to_double(r.xmin()));
+  int ymin = w.y_pixel(to_double(r.ymin()));
+  int xmax = w.x_pixel(to_double(r.xmax()));
+  int ymax = w.y_pixel(to_double(r.ymax()));
   w.get_painter().drawRect(xmin,ymin,xmax-xmin,ymax-ymin);
   w.do_paint();
   return w;
