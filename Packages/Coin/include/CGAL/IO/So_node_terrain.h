@@ -313,7 +313,8 @@ protected:
     if(complexity == 0){//render the bounding box
       Finite_vertices_iterator vit;
       glBegin(GL_POINTS);
-      for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit)
+      for (vit = t.finite_vertices_begin(); 
+        vit != t.finite_vertices_end(); ++vit)
         glVertex3f(CGAL::to_double((*vit).point().x()), 
             CGAL::to_double((*vit).point().y()), 
             CGAL::to_double((*vit).point().z()));
