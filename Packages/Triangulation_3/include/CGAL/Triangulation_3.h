@@ -1989,11 +1989,14 @@ side_of_facet(const Point & p,
 			    c->vertex(1)->point(),
 			    c->vertex(2)->point(),
 			    lt, i_t, j_t);
-    // indices in the original cell :
-    li = ( i_t == 0 ) ? 0 :
-         ( i_t == 1 ) ? 1 : 2;
-    lj = ( j_t == 0 ) ? 0 :
-         ( j_t == 1 ) ? 1 : 2;
+    // We protect the following code by this test to avoid valgrind messages.
+    if (side == ON_BOUNDARY) {
+        // indices in the original cell :
+        li = ( i_t == 0 ) ? 0 :
+             ( i_t == 1 ) ? 1 : 2;
+        lj = ( j_t == 0 ) ? 0 :
+             ( j_t == 1 ) ? 1 : 2;
+    }
     return side;
   }
   // else infinite facet
