@@ -1,3 +1,9 @@
+---
 Perhaps, my setBackgroundColor should use a const QColor& instead of a 
 single QColor as argument.
 As well as other properties.
+---
+Tools system
+---
+Scenes system
+---

@@ -2,7 +2,7 @@
 #ifndef CGAL_USE_QT
 #include <iostream>
 
-int main(int argc, char* argv[])
+int main(int, char*)
 {
 
   std::cout << "Sorry, this demo needs QT...";
