@@ -84,65 +84,80 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1));
     }
   }
 
   template <class A1, class A2>
   result_type
+  operator()(const A1 &a1, const A2 &a2) const;
+#if 0
+  template <class A1, class A2>
+  result_type
   operator()(const A1 &a1, const A2 &a2) const
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2));
     }
   }
+#endif
 
+  template <class A1, class A2, class A3>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const;
+#if 0
   template <class A1, class A2, class A3>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3));
     }
   }
+#endif
 
+  template <class A1, class A2, class A3, class A4>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const;
+#if 0
   template <class A1, class A2, class A3, class A4>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4));
     }
   }
+#endif
 
   template <class A1, class A2, class A3, class A4, class A5>
   result_type
@@ -151,13 +166,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5));
     }
@@ -170,13 +185,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5), To_Approx(a6));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6));
     }
@@ -190,13 +205,13 @@ public:
   {
     try
     {
-      Protect_FPU_rounding<Protection> Protection;
+      Protect_FPU_rounding<Protection> P;
       return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
 	      To_Approx(a4), To_Approx(a5), To_Approx(a6), To_Approx(a7));
     }
     catch (Interval_nt_advanced::unsafe_comparison)
     {
-      Protect_FPU_rounding<!Protection> Protection(CGAL_FE_TONEAREST);
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
 	      To_Exact(a4), To_Exact(a5), To_Exact(a6), To_Exact(a7));
     }
@@ -204,6 +219,62 @@ public:
 
   // Idem for more than 7 arguments.  Do it on demand.
 };
+
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1, class A2>
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1, const A2 &a2) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1), To_Approx(a2));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1), To_Exact(a2));
+    }
+  }
+
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1, class A2, class A3>
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3));
+    }
+  }
+
+
+template <class EP, class AP, class EC, class AC, bool Protection>
+  template <class A1, class A2, class A3, class A4>
+Filtered_predicate<EP,AP,EC,AC,Protection>::result_type
+Filtered_predicate<EP,AP,EC,AC,Protection>::
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      return Approx_predicate(To_Approx(a1), To_Approx(a2), To_Approx(a3),
+	      To_Approx(a4));
+    }
+    catch (Interval_nt_advanced::unsafe_comparison)
+    {
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Exact_predicate(To_Exact(a1), To_Exact(a2), To_Exact(a3),
+	      To_Exact(a4));
+    }
+  }
 
 CGAL_END_NAMESPACE
 
