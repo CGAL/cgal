@@ -1,3 +1,6 @@
+2.9 (12 August 2003)
+Even more bugfixes.
+
 2.8 (7 August 2003)
 Bug fixes after the first step ==:>-
 
