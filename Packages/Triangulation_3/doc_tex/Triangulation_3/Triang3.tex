@@ -298,7 +298,7 @@ combinatorial structure, described in Section~\ref{TDS3-sec-design} of
 Chapter~\ref{chapter-TDS3}.
 \end{itemize}
 
-The class \ccc{Triangulation_hierarchy_3} is parametrized by a class, which at
+The class \ccc{Triangulation_hierarchy_3} is parameterized by a class, which at
 the moment can only be \ccc{Delaunay_triangulation_3}.  It fetches its
 geometric traits from this parameter directly.
 
@@ -365,8 +365,8 @@ base class.
 In order to satisfy as many uses as possible, a design has been selected that
 allows to exchange different parts to meet the users' needs, while still
 re-using a maximum of the provided functionalities.  We have already seen that
-the main triangulation classes are parametrized by a geometric traits class and
-a triangulation data structure (TDS), which can be interchanged.
+the main triangulation classes are parameterized by a geometric traits class
+and a triangulation data structure (TDS), which can be interchanged.
 
 The most useful flexibility is the ability given to the user to add his own
 data in the vertices and cells by providing his own vertex and cell base
@@ -394,8 +394,8 @@ Since adjacency relations are stored in the vertices and cells, it means that
 the vertex and cell base classes have to be able to store handles (an entity
 akeen to pointers) to their neighbors in the TDS.  This in turns means that the
 vertex and cell base classes have to know the types of these handles, which are
-provided by the TDS.  So in a sense, the base classes are parametrized by the
-TDS, and the TDS is parametrized by the vertex and cell base classes !
+provided by the TDS.  So in a sense, the base classes are parameterized by the
+TDS, and the TDS is parameterized by the vertex and cell base classes !
 This is a cycle which cannot be resolved easily.
 
 The solution that we have chosen is similar to the mecanism used by the
@@ -405,7 +405,8 @@ TDS type by and inside the TDS itself.  Rebinding is performed by a nested
 template class of the vertex or cell base classes, which provides a type
 which is the rebound vertex or cell base class (it is logically equivalent
 to a mecanism which does not exist yet in the C++ language: \textit{template
-typedef} or \textit{template aliasing}).
+typedef} or \textit{template aliasing}).  Figure~\ref{TDS3-fig-layers} in
+Chapter~\ref{chapter-TDS3} explains this part in more detail.
 
 Here is how it works, schematically:
 
@@ -519,7 +520,7 @@ public:
 
 The changes that need to be made are the following:
 \begin{itemize}
-\item{} \ccc{My_vertex} has to be parametrized by the vertex base class it
+\item{} \ccc{My_vertex} has to be parameterized by the vertex base class it
         derives from.
 \item{} a nested template class \ccc{Rebind_TDS} has to be defined.
 \item{} \texttt{void*} has to be changed to \ccc{Cell_handle}, and you need to
