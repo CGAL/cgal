@@ -7,7 +7,7 @@ correspondant a l'Alpha Shape.
 
 
 
-#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -17,9 +17,6 @@ correspondant a l'Alpha Shape.
 
 #include <vector>
 #include <list>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 
 #include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/Triangulation_circulators_3.h>
@@ -48,15 +45,15 @@ typedef double coord_type;
 // #endif//CGAL_USE_GMP
 // #endif//CGAL_USE_LEDA
 
-typedef CGAL::Cartesian<coord_type>  CRep;
+typedef CGAL::Cartesian<coord_type>  K;
 
-typedef CGAL::Point_3<CRep>  Point;
-typedef CGAL::Segment_3<CRep>  Segment;
-typedef CGAL::Ray_3<CRep>  Ray;
-typedef CGAL::Line_3<CRep>  Line;
-typedef CGAL::Triangle_3<CRep>  Triangle;
+typedef K::Point_3<K>  Point;
+typedef K::Segment_3<K>  Segment;
+typedef K::Ray_3<K>  Ray;
+typedef K::Line_3<K>  Line;
+typedef K::Triangle_3<K>  Triangle;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<CRep> Gt;
+typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
 typedef Gt::Point Wpoint;
 
 typedef CGAL::Alpha_shape_vertex_base_3<Gt> Vb;
@@ -90,7 +87,7 @@ typedef Alpha_shape_3::Alpha_iterator Alpha_iterator;
 //---------------------------------------------------------------------
 
 void
-Construct_Alpha_shape(const std::list<Wpoint> &V_p,
+construct_alpha_shape(const std::list<Wpoint> &V_p,
 		      Alpha_shape_3::Mode mode,
 		      Alpha_shape_3& A)
   // Generate Alpha Shape
@@ -166,7 +163,7 @@ int main()
   coord_type w;
   std::cin >> w;
   file_input(L, w);  
-  Construct_Alpha_shape(L,Alpha_shape_3::GENERAL,A);
+  construct_alpha_shape(L,Alpha_shape_3::GENERAL,A);
 
   std::cout << "Alpha Shape computed" << std::endl;
 
