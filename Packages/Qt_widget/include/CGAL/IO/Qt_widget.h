@@ -33,6 +33,9 @@
 #include <list>
 #include <map>
 
+
+#define CGAL_MOC_FROM(sourcefile) 
+
 namespace CGAL {
 
 class Qt_widget_tool;
