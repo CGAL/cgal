@@ -321,8 +321,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   static Point_3& point(Vertex_handle v)
   { return v->point(); }
 
-  Vector_3 vector(Halfedge_handle e) const { 
-    return Vector_3(e->vector());
+  Vector_3 vector(Halfedge_handle e) const {  // rename to to_vector
+    return Vector_3(e->vector()-CGAL::ORIGIN);
   }
 
   static Segment_3 segment(Halfedge_handle e)
@@ -569,7 +569,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     // vector of a plane gives us a vector vec0/vec1 on the plane of the facet 
     // and orthogonal to e, pointing inside of the facet.
 
-    Vector_3 ev(segment(e).direction()), rv(ray.direction());
+    Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
     SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e));
     Halffacet_handle res = facet(sh); 
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
@@ -717,8 +717,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     Halffacet_handle res = facet(sh);    
 
-    Vector_3 ed(segment(e).direction());
-    Vector_3 ev(segment(e).direction()), rv(ray.direction());
+    Vector_3 ed(segment(e).to_vector());
+    Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
     SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), send(sh);
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
     TRACEN("initial face candidate "<< plane(res));
@@ -1287,6 +1287,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (++count <= max);
     }
 
+   verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
     SHalfedge_iterator she;
     CGAL_forall_shalfedges(she,*sncp()) {
       valid = valid && (next(she) != she);
@@ -1300,6 +1303,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (++count <= max);
     }
 
+   verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+
     SHalfloop_iterator shl;
     CGAL_forall_shalfloops(shl,*sncp()){
       SM_decorator SD;
@@ -1307,6 +1313,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       //      valid = valid && (plane(facet(twin(shl))) == SD.circle(shl)); 
       //      valid = valid && (volume(facet(twin(shl))) == volume(sface(shl)));
     }
+
+    verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
+	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
     SFace_iterator sf;
     CGAL_forall_sfaces(sf,*sncp()) {

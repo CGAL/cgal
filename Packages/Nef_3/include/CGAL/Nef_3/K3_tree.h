@@ -453,7 +453,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
       TRACEN("Objects_along_ray: input ray: "<<r);
-      CGAL_assertion( Vector_3(r.direction()) == Vector_3( -1, 0, 0));
+      CGAL_assertion( Vector_3(r.to_vector()) == Vector_3( -1, 0, 0));
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;

@@ -288,7 +288,7 @@ class Infimaximal_box<Tag_true, Kernel> {
     Point_3 p  = e->center_vertex()->point();
     if(Kernel::is_standard(p)) return false;
 
-    Vector_3 v(e->vector());
+    Vector_3 v(e->vector()-CGAL::ORIGIN);
     CGAL_assertion(p.hw().degree() == 0);
     RT Outer(0,CGAL_NTS abs(p.hw()[0]));
 

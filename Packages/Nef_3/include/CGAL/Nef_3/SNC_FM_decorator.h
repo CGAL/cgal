@@ -148,7 +148,7 @@ int orientation(const Segment_2& s, const Point_2& p) const
 
 int compare_xy(const Point_2& p1, const Point_2& p2) const
 { return static_cast<int>(
-    CGAL::compare_lexicographically_xyz(p1,p2)); }
+    CGAL::compare_xyz(p1,p2)); }
 
 Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
 { CGAL_assertion(target(s1)==target(s2)); 

@@ -194,7 +194,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	 ls1.direction() == -ls2.direction() )
       // the segments are parallel 
       return false;
-    Vector_3 vs1(s1.direction()), vs2(s2.direction()), 
+    Vector_3 vs1(s1.to_vector()), vs2(s2.to_vector()), 
       vt(cross_product( vs1, vs2)), 
       ws1(cross_product( vt, vs1)), ws2(cross_product( vt, vs2));
     Plane_3 hs1( s1.source(), ws1);

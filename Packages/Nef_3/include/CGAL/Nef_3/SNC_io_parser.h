@@ -1024,12 +1024,12 @@ void SNC_io_parser<EW>::read()
 
   char c;
   int spaces = 0;
-  streampos pos(in.tellg());
+  std::streampos pos(in.tellg());
   in.get(c);
   while(in.get(c) && c != '\n')
     if(c == ' ')
       ++spaces;
-  in.seekg(pos,ios::beg); 
+  in.seekg(pos,std::ios::beg); 
 
   CGAL_assertion_msg(c=='\n' && (spaces==15 || spaces==26),"wrong file format");
   CGAL_assertion_msg(!(Infi_box::standard_kernel() && spaces==26), 

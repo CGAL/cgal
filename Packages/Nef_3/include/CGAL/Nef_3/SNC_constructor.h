@@ -598,10 +598,10 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   
   if (spherical_orientation(SP[0],SP[1],SP[2]) < 0) {
     SP[3] = SP[2];
-    SP[2] = -Vector_3(SP[3]);
+    SP[2] = CGAL::ORIGIN-SP[3];
   }
   else
-    SP[3] = -Vector_3(SP[2]);
+    SP[3] = CGAL::ORIGIN-SP[2];
  
   RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
   CGAL_assertion(delta !=0);
@@ -952,7 +952,7 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.circle(twin(l)) = c.opposite();
   D.mark(f1) = mark(volume(f));
   D.mark(f2) = mark(volume(twin(f)));
-  D.mark(l) = mark(f);
+  D.mark(l) = D.mark(D.twin(l)) = mark(f);
   return v;
 }
 
@@ -1136,7 +1136,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
   TRACEN("new svertex 1 " << ps);
   TRACEN("new svertex 2 " << ps.antipode());
   Halffacet_handle faces_p(f);
-  Vector_3 vec(ps);
+  Vector_3 vec(ps-CGAL::ORIGIN);
   if(plane(faces_p).oriented_side(p+vec) == ON_NEGATIVE_SIDE)
     faces_p = twin(faces_p);
   D.mark(v1) = BOP(E.mark(e), mark(volume(faces_p)), inv);
@@ -1166,7 +1166,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
       D.circle(l) = Sphere_circle(plane(faces_p)); 
       D.circle(twin(l)) = D.circle(l).opposite();
       D.mark(f2) = mf2;
-      D.mark(l) = ml;
+      D.mark(l) = D.mark(D.twin(l)) = ml;
     }
   }
   else {
