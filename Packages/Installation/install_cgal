@@ -534,20 +534,6 @@ initial_check()
     done
 }
 
-# fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/config.h
-# and compiler-testsuite version id 
-# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
-get_cgal_version()
-{
-    # this file is assumed to contain one line matching "CGAL_VERSION "
-    # where the third field describes the CGAL version
-    FILE="${CGAL_INCL_DIR}/CGAL/config.h"
-    _check_read ${FILE}
-    CGAL_VERSION=`${_fgrep} "CGAL_VERSION " ${FILE} | \
-	${_awk} '{printf "%s",$3}'`
-    
-    log_print "CGAL version is ${CGAL_VERSION}."
-}
 
 # initialize the logfiles
 init_logfiles()
@@ -6825,8 +6811,6 @@ startup_interactive()
     ${_printf} "."
     check_for_utils
     ${_printf} "."
-    get_cgal_version
-    ${_printf} "."
     check_conf_dir
     ${_printf} "."
     set_expr
@@ -7151,12 +7135,6 @@ case ${_WHAT_TO_DO} in
 	case ${SYST} in
 	    *CYGWIN*) _check_for_sysutil cygpath y;;
 	esac
-	${_printf} "\n%s\n" \
-	    "--------------------------------------------------------"
-	${_printf} "%s\n" "Determining CGAL Version:"
-	${_printf} "%s\n" \
-	    "--------------------------------------------------------"
-	get_cgal_version
 	${_printf} "\n%s\n" \
 	    "--------------------------------------------------------"
 	${_printf} "%s\n" "Settings from Command Line:"
