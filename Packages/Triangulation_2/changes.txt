@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.07 (9/03/02)
+- changed Infinite_tester from private to protected for KCC
+- suppressed some typedef in test functions for KCC
+
 Ver 7.06 (8/03/02)
 - replaced Dummy_output_iterator by Emptyset_iterator
 - commented references to sweep construction of constrained triangulation

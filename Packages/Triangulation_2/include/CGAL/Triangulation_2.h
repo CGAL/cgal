@@ -65,8 +65,8 @@ template < class Gt,
 class Triangulation_2
   : public Triangulation_cw_ccw_2
 {
-  class Infinite_tester;
 public:
+  class Infinite_tester;
   typedef Tds Triangulation_data_structure;
   typedef Triangulation_2<Gt,Tds>  Self;
 
@@ -358,7 +358,7 @@ private:
   
 
  // This class is used to generate the Finite_*_iterators.
-protected:
+public :
   friend class Infinite_tester;
   class Infinite_tester
   {
