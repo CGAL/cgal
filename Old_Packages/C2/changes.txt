@@ -1,3 +1,17 @@
+Version 3.6 (20 April 2000)
+- fixed a bug in compare_xC2
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+
 Version 3.5  (6 april 2000)
 - changed the code of constructor
 	Iso_rectangleC2(const Point_2 &p,   const Point_2 &q)
