@@ -1,3 +1,6 @@
+4.76      (20 January 03)
+- static to_double(Gmpz) seems to cause problems, so make it inline.
+
 4.75      (20 January 03)
 - Test-suite changes for newer GCC.
 

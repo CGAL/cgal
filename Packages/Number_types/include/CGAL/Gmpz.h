@@ -607,7 +607,7 @@ namespace NTS {
   }
 }
 
-static
+inline
 double to_double(const Quotient<Gmpz>& quot)
 {
   mpq_t  mpQ;
