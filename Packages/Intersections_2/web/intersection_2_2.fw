@@ -14,9 +14,7 @@ MPI, Saarbruecken@)
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,12 +42,8 @@ Geert-Jan Giezeman@,@-
 Saarbruecken@)
 
 
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -158,19 +152,10 @@ which it should do, probably.
 
 @$@<Triangle_2_Triangle_2_pair implementation@>+=@{
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -222,9 +207,7 @@ CGAL_END_NAMESPACE
 @}
 
 @$@<Triangle_2_Triangle_2_pair implementation@>+=@{
-#ifndef CGAL_LINE_2_LINE_2_INTERSECTION_H
 #include <CGAL/Line_2_Line_2_intersection.h>
-#endif // CGAL_LINE_2_LINE_2_INTERSECTION_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -479,9 +462,7 @@ include/CGAL/Triangle_2_Line_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Line_2_Triangle_2_intersection.h>
-#endif // CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Line_2_Triangle_2_intersection.h@>==@{
@@ -494,18 +475,10 @@ Saarbruecken@)
 #ifndef CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -540,9 +513,7 @@ CGAL_END_NAMESPACE
 
 @<Line_2_Triangle_2_pair implementation@>
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -594,15 +565,9 @@ CGAL_END_NAMESPACE
 @}
 
 @$@<Line_2_Triangle_2_pair implementation@>==@{
-#ifndef CGAL_STRAIGHT_2_H
 #include <CGAL/Straight_2.h>
-#endif // CGAL_STRAIGHT_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -719,9 +684,7 @@ include/CGAL/Triangle_2_Ray_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Ray_2_Triangle_2_intersection.h>
-#endif // CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Ray_2_Triangle_2_intersection.h@>==@{
@@ -734,18 +697,10 @@ Saarbruecken@)
 #ifndef CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_RAY_2_H
 #include <CGAL/Ray_2.h>
-#endif // CGAL_RAY_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -780,9 +735,7 @@ CGAL_END_NAMESPACE
 
 @<2D Ray Triangle intersection implementation@>
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -835,18 +788,10 @@ CGAL_END_NAMESPACE
 
 @$@<2D Ray Triangle intersection implementation@>==@{
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_STRAIGHT_2_H
 #include <CGAL/Straight_2.h>
-#endif // CGAL_STRAIGHT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -963,9 +908,7 @@ include/CGAL/Triangle_2_Segment_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Segment_2_Triangle_2_intersection.h>
-#endif // CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Segment_2_Triangle_2_intersection.h@>==@{
@@ -978,15 +921,9 @@ Saarbruecken@)
 #ifndef CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1022,9 +959,7 @@ CGAL_END_NAMESPACE
 @<Segment_2_Triangle_2_pair implementation@>
 
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1077,18 +1012,10 @@ CGAL_END_NAMESPACE
 
 @$@<Segment_2_Triangle_2_pair implementation@>==@{
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_STRAIGHT_2_H
 #include <CGAL/Straight_2.h>
-#endif // CGAL_STRAIGHT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1205,9 +1132,7 @@ include/CGAL/Triangle_2_Point_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Point_2_Triangle_2_intersection.h>
-#endif // CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Point_2_Triangle_2_intersection.h@>==@{
@@ -1220,15 +1145,9 @@ Saarbruecken@)
 #ifndef CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_TRIANGLE_2_H
 #include <CGAL/Triangle_2.h>
-#endif // CGAL_TRIANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1262,9 +1181,7 @@ CGAL_END_NAMESPACE
 
 @<Point_2_Triangle_2_pair implementation@>
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1310,18 +1227,10 @@ CGAL_END_NAMESPACE
 
 @$@<Point_2_Triangle_2_pair implementation@>==@{
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_STRAIGHT_2_H
 #include <CGAL/Straight_2.h>
-#endif // CGAL_STRAIGHT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1415,9 +1324,7 @@ include/CGAL/Iso_rectangle_2_Line_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Line_2_Iso_rectangle_2_intersection.h@>==@{
@@ -1430,12 +1337,8 @@ Saarbruecken@)
 #ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1471,9 +1374,7 @@ CGAL_END_NAMESPACE
 
 @<Line_2_Iso_rectangle_2_pair implementation@>
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1526,15 +1427,9 @@ CGAL_END_NAMESPACE
 
 @$@<Line_2_Iso_rectangle_2_pair implementation@>==@{
 
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1669,9 +1564,7 @@ include/CGAL/Iso_rectangle_2_Ray_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -1685,24 +1578,12 @@ Saarbruecken@)
 #ifndef CGAL_RAY_2_BBOX_2_INTERSECTION_H
 #define CGAL_RAY_2_BBOX_2_INTERSECTION_H
 
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_RAY_2_H
 #include <CGAL/Ray_2.h>
-#endif // CGAL_RAY_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1741,9 +1622,7 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1932,9 +1811,7 @@ include/CGAL/Iso_rectangle_2_Segment_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -1948,21 +1825,11 @@ Saarbruecken@)
 #ifndef CGAL_SEGMENT_2_BBOX_2_INTERSECTION_H
 #define CGAL_SEGMENT_2_BBOX_2_INTERSECTION_H
 
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2001,9 +1868,7 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2188,9 +2053,7 @@ include/CGAL/Iso_rectangle_2_Point_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 @O@<../include/CGAL/Point_2_Iso_rectangle_2_intersection.h@>==@{
@@ -2203,12 +2066,8 @@ Saarbruecken@)
 #ifndef CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2223,9 +2082,7 @@ do_intersect(
 
 CGAL_END_NAMESPACE
 
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2278,12 +2135,8 @@ Saarbruecken@)
 #ifndef CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_OBJECT_H
 #include <CGAL/Object.h>
-#endif // CGAL_OBJECT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2357,33 +2210,15 @@ Saarbruecken@)
 #ifndef CGAL_INTERSECTION_2_2_H
 #define CGAL_INTERSECTION_2_2_H
 
-#ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Triangle_2_intersection.h>
-#endif // CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
-#ifndef CGAL_TRIANGLE_2_LINE_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Line_2_intersection.h>
-#endif // CGAL_TRIANGLE_2_LINE_2_INTERSECTION_H
-#ifndef CGAL_TRIANGLE_2_RAY_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Ray_2_intersection.h>
-#endif // CGAL_TRIANGLE_2_RAY_2_INTERSECTION_H
-#ifndef CGAL_TRIANGLE_2_SEGMENT_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Segment_2_intersection.h>
-#endif // CGAL_TRIANGLE_2_SEGMENT_2_INTERSECTION_H
-#ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Iso_rectangle_2_Iso_rectangle_2_intersection.h>
-#endif // CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
 #endif
 @}
