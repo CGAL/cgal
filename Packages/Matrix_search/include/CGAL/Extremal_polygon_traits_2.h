@@ -162,13 +162,6 @@ CGAL_END_NAMESPACE
 #endif // CGAL_USE_LEDA
 CGAL_BEGIN_NAMESPACE
 
-template < class FT_ >
-struct Sqrt : public CGAL_STD::binary_function< FT_, FT_, FT_ >
-{
-  typedef Arity_tag< 1 > Arity;
-  typedef FT_  FT;
-  FT operator()(const FT& x) const { return CGAL_NTS sqrt(x); }
-};
 template < class K_ >
 struct Extremal_polygon_perimeter_traits_2 {
   typedef          K_                                K;

@@ -55,6 +55,10 @@ using std::copy;
 using std::max;
 typedef CGAL::Window_stream Window;
 
+#if defined(LEDA_NAMESPACE)
+using leda::button_release_event;
+#endif
+
 using std::vector;
 using CGAL::Cartesian;
 using CGAL::Random_access_circulator_from_container;

@@ -339,7 +339,7 @@ main(int argc, char* argv[])
            << " and " << number_of_piercing_points
            << " points." << endl;
 #ifdef CGAL_PCENTER_CHECK
-      CGAL::Infinity_distance_2< K > dist;
+      CGAL::I_Infinity_distance_2< K > dist;
       for (iterator i = input_points.begin(); i != input_points.end(); ++i) {
         iterator j = centers.begin();
         do {
@@ -385,8 +385,8 @@ main(int argc, char* argv[])
 #ifdef CGAL_PCENTER_CHECK
       // check that there is at least one square with two points
       // on opposite sides
-      CGAL::Signed_x_distance_2< K > xdist;
-      CGAL::Signed_y_distance_2< K > ydist;
+      CGAL::I_Signed_x_distance_2< K > xdist;
+      CGAL::I_Signed_y_distance_2< K > ydist;
       bool boundary = false;
       for (iterator i = centers.begin(); i != centers.end(); ++i) {
         int left = 0, right = 0, bottom = 0, top = 0;

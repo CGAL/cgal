@@ -55,6 +55,9 @@ using CGAL::all_furthest_neighbors_2;
 using CGAL::cgalize;
 using CGAL::RED;
 
+#if defined(LEDA_NAMESPACE)
+using leda::button_release_event;
+#endif
 
 typedef double                                 FT;
 typedef CGAL::Window_stream                    Window;
