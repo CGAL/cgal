@@ -1,0 +1,28 @@
+Package Interpolation: provides interpolation functions and functions for computing natural neighbor coordinates
+Ver 1.2 (09/01/04)  repair of big mess with CVS repository
+
+Ver 1.1 (28/11/03)  includes first version of surface neighbor coordinates
+
+Ver 1.0 (20/11/03)  first version of two dimensional natural- and regular-
+		    neighbor coordinate computation + interpolation functions
+
+CONTENTS:
+
+description.txt
+changes.txt
+maintainer
+
+doc_tex/ 
+
+include/CGAL: contains the following files
+	Interpolation_traits_2.h 
+	Regular_neighbor_coordinates_traits_2.h
+	interpolation_functions.h
+	natural_neighbor_coordinates_2.h
+	regular_neighbor_coordinates_2.h
+	
+examples/Interpolation contains the following examples:
+	    
+demo/Interpolation contains the following examples:
+	    
+test/Interpolation contains the test suite for the interpolation methods and the coordinate computation
