@@ -167,6 +167,9 @@ template< class Obj > Viewer_3& operator<<(Viewer_3& W, const
 					   O_manip<Obj> &m);
 
 template<class Obj> class O_manip {
+#ifdef _MSC_VER
+ public:
+#endif
   Viewer_3& (*f)(Viewer_3&,Obj);
   Obj i;
 
@@ -185,6 +188,7 @@ Viewer_3& operator<<(Viewer_3& W, const O_manip<Obj>& m)
 {
   return m.f(W,m.i);
 }
+
 // ######## The Stream Manipulator END###############################
 
 // functions used for precision
@@ -246,7 +250,7 @@ O_manip<Style> set_style(Style i)
 
 // }
 
-// // Stream for style and precision.
+// Stream for style and precision.
 // Viewer_3&
 // operator<<(Viewer_3& W, Style s)
 // {
@@ -268,7 +272,6 @@ operator<<(Viewer_3& W, const object &o)
 W.add_drawable(convert_type(o,W));
 return W;
 }
-
 CGAL_END_NAMESPACE
 
 #endif //CGAL_VIEWER_STREAM_H
