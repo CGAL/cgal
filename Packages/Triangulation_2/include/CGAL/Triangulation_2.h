@@ -102,14 +102,16 @@ protected:
 public:
 
 // CONSTRUCTORS
-  CGAL_Triangulation_2() :
-    _infinite_vertex( new Vertex), _tds(&(*_infinite_vertex))
-  {}
+  CGAL_Triangulation_2() 
+   {
+     init();
+   }
 
   CGAL_Triangulation_2(const Geom_traits& geom_traits) 
-    : _infinite_vertex( new Vertex), _tds(&(*_infinite_vertex)), 
-       _gt(geom_traits)
-  {}
+    :        _gt(geom_traits)
+  {
+    init();
+  }
 
   
   // copy constructor duplicates vertices and faces
@@ -117,7 +119,7 @@ public:
     : _gt(tr._gt)
     {
       _infinite_vertex = (Vertex *) _tds.copy_tds(tr._tds, &(*tr.infinite));
-      } 
+    } 
  
 
   //Assignement
@@ -131,7 +133,7 @@ public:
   void init()
     {
        _infinite_vertex = new Vertex();
-       _tds = Tds( &(*_infinite_vertex));
+       _tds.init( &(*_infinite_vertex));
     }
    
   void  copy_triangulation(const CGAL_Triangulation_2 &tr)
