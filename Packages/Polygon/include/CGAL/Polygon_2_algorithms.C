@@ -22,7 +22,7 @@
 // ======================================================================
 
 #include "CGAL/Polygon_2_algorithms.h"
-#include "CGAL/Simplicity_test.h"
+#include "CGAL/Polygon_2_simplicity.h"
 #include <cstdlib>
 #include <algorithm>
 #include <set>
@@ -34,21 +34,18 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------//
 //                          is_simple_2
 //-----------------------------------------------------------------------//
-// uses Traits::compare_x
-//      Traits::compare_y
-//      Traits::cross_product_2
-//      Traits::do_intersect
-//      Traits::have_equal_direction
-//      Traits::is_negative
-//      Traits::lexicographically_yx_smaller_or_equal
+// uses Traits::Less_xy_2
+//      Traits::less_xy_2
+//      Traits::Orientation_2
+//      Traits::orientation_2
+//      Traits::Point_2
 
 template <class ForwardIterator, class Traits>
 bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const Traits& traits)
 {
-  Simplicity_test_2<ForwardIterator, Traits> test(traits);
-  return test.Test(first, last);
+  return is_simple_polygon(first, last, traits);
 }
 
 //-----------------------------------------------------------------------//

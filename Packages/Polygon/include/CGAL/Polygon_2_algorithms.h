@@ -32,7 +32,7 @@
 #include <CGAL/polygon_assertions.h>
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/Polygon_traits_2.h>
+ #include <CGAL/Polygon_traits_2.h>
 #endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE
@@ -231,7 +231,7 @@ bool is_simple_2_aux(ForwardIterator first,
                           ForwardIterator last,
                           const Point_2<R>&)
 {
-  return is_simple_2(first, last, Polygon_traits_2<R>());
+  return is_simple_2(first, last, R());
 }
 
 template <class ForwardIterator>
