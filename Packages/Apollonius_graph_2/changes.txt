@@ -1,3 +1,7 @@
+5 June 2004:  Menelaos Karavelas
+- changed name of line argument in Parabola_2 constructor to avoid
+  warning of SunPro CC compiler
+
 14 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - warning of SunPro CC 5.30 for uninitialized variable in
   Ag2_infinite_edge_test_C2.h
