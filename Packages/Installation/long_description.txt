@@ -4,6 +4,17 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.34
+//---------------------------------------------------------------------
+
+ALL : Update for CGAL-2.0.
+GLOB: Show whether compiler is supported.
+GLOB: Create redirection header files in correct dir.
+GLOB: New Upgrade option.
+TEST: Initial revision
+SRC : added Fixed_precision_nt.o.
+
+//---------------------------------------------------------------------
 //	revision 1.33
 //---------------------------------------------------------------------
 
@@ -36,6 +47,7 @@ SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
+TEST: Update for CGAL-2.0.
 
 //---------------------------------------------------------------------
 //	revision 1.28

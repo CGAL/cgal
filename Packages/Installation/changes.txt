@@ -7,6 +7,10 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Update for CGAL-2.0.
+GLOB: Show whether compiler is supported.
+GLOB: Create redirection header files in correct dir.
+GLOB: New Upgrade option.
 GLOB: added -Wall flag for gcc2.8/egcs.
 GLOB: added standard header redirection by Geert-Jan.
 GLOB: added namespace disabling for SGI-7.2.1 in tests.
@@ -14,5 +18,6 @@ GLOB: removed geomview support (now in geomview package).
 GLOB: added geomview support,
 GLOB: included fixes from CGAL-1-1-patch.
 DOCS: adopted to new html-converter.
+SRC : added Fixed_precision_nt.o.
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
