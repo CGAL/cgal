@@ -228,6 +228,8 @@ $t$ is the discriminant of the minsphere.  \ccPrecond \ccVar\ is
   pointers to the inserted spheres internally in order to save space and
   time, and consequently, the referenced spheres must not change.)}
 
+\ccMemberFunction{void update();}{computes $ms(S)$ and a support set of it.
+\ccPostcond \ccVar\ is up-to-date.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
