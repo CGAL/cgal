@@ -1466,7 +1466,7 @@ test_compiler_specifica()
 	elif [ "`${_basename} ${i}`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
 	    # we have to generate the redirection header cctype
 	    create_replacement_header notest cctype "" ctype.h
-	elif [ "`${_basename} ${i}`" = "CGAL_CFG_NO_LONGNAME_PROBLEM.C" ]; then
+	elif [ "`${_basename} ${i}`" = "CGAL_CFG_LONGNAME_BUG.C" ]; then
 	    LONG_NAME_PROBLEM=y
 	fi
 	${_printf} "%s\n\n" \

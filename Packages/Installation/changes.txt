@@ -2,7 +2,11 @@
 //	Revision History for package Installation
 //=====================================================================
 
-18 AUgust 2004 Radu Ursu
+20 August 2004 Sylvain Pion
+- Rename "CGAL_CFG_NO_LONGNAME_PROBLEM.C" to "CGAL_CFG_LONGNAME_BUG.C".
+  (seems more correct)
+
+18 August 2004 Radu Ursu
 - install GMP in the CGAL tree copies also mpfr.h and mpf2mpfr.h
 
 13 August 2004 Sylvain Pion
