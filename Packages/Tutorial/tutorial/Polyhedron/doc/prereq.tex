@@ -90,14 +90,32 @@ should refer to \cite{Warren:subdivision} and \cite{Sub:course:2000}.
   \label{fig:RefSchemes}
 \end{figure}
 
+\begin{figure}[h]
+  \centering
+  \psfrag{A}[]{(a)}
+  \psfrag{B}[]{(b)}
+  \psfrag{C}[]{(c)}
+  \psfrag{D}[]{(d)}
+  \epsfig{file=figs/RefMap.eps, width=7.5cm}
+  \caption{The stencil ({\itshape top blue}) and its 
+           vertex ({\itshape bottom red}) in 
+           Catmull-Clark subdivision (a-c)
+           and Doo-Sabin subdivision (d). Catmull-Clark
+           subdivision has three stencils: facet-stencil (a), 
+           edge-stencil (b) and vertex-stencil (c). 
+           Doo-Sabin subdivision has only corner-stencil (d).
+           The stencil weights are not shown.}
+  \label{fig:RefMap}
+\end{figure}
+
+
 % ------------------------------------------------------------------------
-%\section*{(Our) FAQs}
+%% \section{FAQs}
 
-%We compile a list of questions concerned about the tutorial and the
-%accompanying source codes and libraray.   
+%% We compile a list of questions concerned about the tutorial and the
+%% accompanying source codes and libraray.   
  
-
-%\begin{itemize}
+%% \begin{itemize}
 
 %% \item Why should I read this tutorial? I am not interested in subdivisions. 
 %% The goal of this tutorial is to show how to use \cgalpoly\ 
@@ -117,276 +135,38 @@ should refer to \cite{Warren:subdivision} and \cite{Sub:course:2000}.
 %% functionalities. The OpenMesh subdivision
 %% library is not as generic.
 
-%\item Is is difficult or what's the difficulties to use \cgal\ Polyhedron?
-% It is not, once you buy the concepts taken or inspired from
-% the STL (iterators, circulars). You also have to be familiar 
-% with the concept of handles and halfedges.
+%% \item Is is difficult or what's the difficulties to use \cgal\ Polyhedron?
+%% It is not, once you buy the concepts taken or inspired from
+%% the STL (iterators, circulars). You also have to be familiar 
+%% with the concept of handles and halfedges.
 
-%\item How about the performance?
-% as fast as other libraries (and sometimes faster). It also
-% scales well. 
+%% \item How about the performance?
+%% as fast as other libraries (and sometimes faster). It also
+%% scales well. 
 
-%\item I don't like the subdivisions you have, how can I build my own 
-%      subdivision on your solution?
-% depending on the level of genericity you are targeting, the
-% type of scheme and whether you want to store all levels of subdivision
-% in memory, choose either Euler operators, incremental builder
-% or one new template rule to be plugged into the CSL.
+%% \item I don't like the subdivisions you have, how can I build my own 
+%%      subdivision on your solution?
+%% depending on the level of genericity you are targeting, the
+%% type of scheme and whether you want to store all levels of subdivision
+%% in memory, choose either Euler operators, incremental builder
+%% or one new template rule to be plugged into the CSL.
 
-%\item What's the future plan for CSL? 
-% CGAL Package?
-% referenced from Warren's web site about subdivision?
+%% \item What's the future plan for CSL? 
+%% CGAL Package?
+%% referenced from Warren's web site about subdivision?
 
-%\item The viewer is based on OpenGL. Can I learn from it
-%      to write my own viewer based on another graphics library?
+%% \item The viewer is based on OpenGL. Can I learn from it
+%%      to write my own viewer based on another graphics library?
       
-%\item What could be improved in the Polyhedron?
-% built-in functions for # of boundaries, # of connected 
-% components and genus.
-% edge collapses without the currently too restrictive precondition
-% (along with a function bool is_collapsible(Halfedge_handle h)
-% based on e.g. Edelsbrunner criteria.
-% built-in function bool is_border(Vertex_handle v)
-% built-in function to know the type of mesh (e.g. pure tri,
-% pure quad, tri-quad or polygonal).
+%% \item What could be improved in the Polyhedron?
+%% built-in functions for # of boundaries, # of connected 
+%% components and genus.
+%% edge collapses without the currently too restrictive precondition
+%% (along with a function bool is_collapsible(Halfedge_handle h)
+%% based on e.g. Edelsbrunner criteria.
+%% built-in function bool is_border(Vertex_handle v)
+%% built-in function to know the type of mesh (e.g. pure tri,
+%% pure quad, tri-quad or polygonal).
 
-%\end{itemize}
-
-% ------------------------------------------------------------------------
-\section*{Tutorial Outlines}
-
-% ------------------------------------------------------------------------
-\subsection*{Polyhedron Viewer}
-
-%% We have designed and implemented an application based on the
-%% \cgalpoly. This program provides a polyhedron viewer of
-%% following functionalities:\\
-%% \indent $\bullet$ File I/O,\\
-%% \indent $\bullet$ polyhedron rendering,\\ 
-%% \indent $\bullet$ and trackball manipulation.\\
-%% In addition to these built-in functions, the viewer is accompanied
-%% with a set of subdivision algorithms that generate smooth polyhedron
-%% surfaces from a coarse polyhedron. \italic{The tutorial instructs the
-%% readers through the design and the implementation of the polyhedron
-%% viewer and the subdivisions}. The first part of the tutorial
-%% highlights the design and implementation issues related to the \poly\
-%% used in the viewer. The second part of the tutorial explains how to
-%% implement the connectivity and geometry operations of the subdivision
-%% algorithms. The source codes are going to be published with the
-%% releasing of the tutorial.
-
-The tutorial starts with an implementation of 
-a basic polyhedron viewer based on the \cgalpoly\ with the 
-default configuration.
-This basic viewer demonstrates basic functionalities of a 
-\cgalpoly . We describe how to import a polyhedron file in 
-the OFF format based on the \italic{modifier callback mechanism} and the 
-\italic{incremental builder}. We also show the mesh traversal based on
-the \italic{iterators} and the \italic{circulators} for rendering and 
-the OFF file exporting. 
-
-An extended polyhedron viewer is then introduced by customizing 
-the \poly\ with extra attributes and functionalities. This 
-enriched polyhedron supports facet and vertex normals for rendering, 
-supports the axis-aligned bounding box of the polyhedron, and 
-provides geometry items specialized with algorithmic flags. 
-%The extended primitives are employed to support efficient 
-%computation of the number of connected components, number 
-%of boundaries and combinatorial genus of the polyhedron. 
-The superimposition of the control mesh on the subdivision surfaces
-are implemented with the flags of the halfedge items 
-(\figurename\ \ref{fig:quad-triangle}). 
-%This enriched polyhedron is used as
-%the core data structure of our application. 
-
-The tutorial also features a trackball to interactively manipulate the
-polyhedron, a snapshot function of the camera viewpoint and 
-the transformation states, a raster output to the clipboard, and the
-vectorial output to a postscript file.% (\figure\ \ref{fig:gargoyle}).
-
-\begin{figure}[h]
-  \centering
-  \psfrag{A}[]{(a)}
-  \psfrag{B}[]{(b)}
-  \psfrag{C}[]{(c)}
-  \psfrag{D}[]{(d)}
-  \epsfig{file=figs/RefMap.eps, width=7.5cm}
-  \caption{The stencil ({\itshape top blue}) and its 
-           vertex ({\itshape bottom red}) in 
-           Catmull-Clark subdivision (a-c)
-           and Doo-Sabin subdivision (d). Catmull-Clark
-           subdivision has three stencils: facet-stencil (a), 
-           edge-stencil (b) and vertex-stencil (c). 
-           Doo-Sabin subdivision has only corner-stencil (d).
-           The stencil weights are not shown.}
-  \label{fig:RefMap}
-\end{figure}
-
-%% \begin{figure}[t]
-%%     \centering{\includegraphics[width=3.5cm]{figs/gargoyle_raster}
-%%                \includegraphics[width=3.5cm]{figs/gargoyle_vec}}
-%%     \caption{Raster and vectorial output of the gargoyle mesh.}
-%%     \label{fig:gargoyle}
-%% \end{figure}
-
-% ------------------------------------------------------------------------
-\subsection*{Subdivision Algorithms}
-
-The second part of the tutorial focuses on the design and the
-implementation of $\sqrt{3}$ subdivision (\figurename\ \ref{fig:sqrt3}) 
-and Quad-Triangle subdivision (\figurename\ \ref{fig:quad-triangle}).  
-
-In addition to its importance in the surface modeling, we 
-choose subdivision algorithms to demonstrate both the 
-\italic{connectivity operation} (refinement) and the
-\italic{geometry operation} (smoothing) of a
-\cgalpoly . These two operations are the
-primary implementation components required by algorithms on
-polyhedron meshes. Readers intended to design and implement
-mesh algorithms other than subdivisions will also be benefited
-from the techniques we proposed here.
-
-The key to implement a subdivision algorithm is to 
-efficiently support the refinement, i.e.\ the connectivity 
-modifications. Two approaches are introduced to support the 
-refinement: the \italic{Euler operators} (operator scheme) and
-the \italic{modifier callback mechanism} (modifier scheme). 
-The operator scheme reconfigures the connectivity with a 
-combination of Euler operators. $\sqrt{3}$ subdivision~\cite{sqrt3} is
-used to demonstrate this scheme. We also compare our implementation
-with the $\sqrt{3}$ subdivision provided in OpenMesh library.
-
-Though simple and efficient in some
-refinements, e.g.\ $\sqrt{3}$ subdivision, the correct combination of
-the operators is hard to find for some refinements, e.g.\ Doo-Sabin
-subdivision~\cite{ds}. The modifier scheme solves the problem by
-letting the programmers create their own combinatorial operators 
-using the polyhedron incremental builder. Quad-Triangle
-subdivision~\cite{qts,l-pg-03} is used to demonstrate this scheme.
-
-% ------------------------------------------------------------------------
-\subsection*{Combinatorial Subdivision Library}
-
-The \emph{C}ombinatorial \emph{S}ubdivision \emph{L}ibrary 
-(CSL) is designed based on the policy-based design 
-\cite{Alexandrescu:2001:MCD}.
-The policy-based design assembles a class
-(called \emph{host}) with complex behavior out of many 
-small behaviors (called \emph{policies}).
-Each policy defines an interface for a
-specific behavior. CSL proposes a 
-generic subdivision solution as a \emph{refinement function}
-parameterized with the \emph{geometry smoothing rules}.
-Subdivisions in CSL are build as proper combinations of the
-refinement functions and the geometry policy classes.
-The refinement function refines the control mesh,
-maintains the correspondence between the control mesh and refined
-mesh, and applies the smoothing stencils provided by the policy
-class. For example, Catmull-Clark subdivision~\cite{cc} is structured
-\begin{figure}[h]
-    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
-    \caption{$\sqrt{3}$ subdivision of the mannequin mesh.}
-    \label{fig:sqrt3}
-    \vspace{0.5cm}
-\end{figure}
-as a quadralization function parameterized with the Catmull-Clark
-smoothing rules.
-
-
-\begin{lstlisting}
-void CatmullClark_subdivision(Polyhedron& p) {    
-  quadralize_polyhedron
-                <CatmullClark_rule<Polyhedron>>(p);  
-}
-class CatmullClark_rule {
-public:
-  void facet_rule(  Facet_handle  facet, Point& pt);
-  void edge_rule(Halfedge_handle   edge, Point& pt);
-  void vertex_rule(Vertex_handle vertex, Point& pt);
-};
-\end{lstlisting}
-\noindent The \CodeFmt{quadralize\_polyhedron<>()} 
-is the host function refining the input mesh
-and the \CodeFmt{CatmullClark\_rule} is the policy 
-class applying the Catmull-Clark stencils.
-The refinement functions are implemented based on the
-Euler operations or the modifier callback mechanism.
-The refinement functions also maintain the 
-correspondence with the stencil, i.e., the submesh 
-centered around the given facet, edge, or
-vertex, and the smoothing point.
-The smoothing point is calculated by calling the 
-policies, e.g., the \CodeFmt{facet\_rule()}, the 
-\CodeFmt{edge\_rule()}, and the \CodeFmt{vertex\_rule()} 
-respectively. Inside a policy, applying the 
-stencil is simplified to the mesh traversal of a 
-1-ring neighborhood which can be done with the 
-circulators. Following example illustrates  
-the policy of the facet-stencil in Catmull-Clark 
-subdivision.
-\begin{lstlisting}
-void facet_rule(Facet_handle facet, Point& point) {
-  Halfedge_around_facet_circulator hcir 
-                            = facet->facet_begin();
-  Vector vec = hcir->vertex()->point() - ORIGIN;
-  ++hcir;
-  do {
-    vec = vec + hcir->vertex()->point();
-  } while (++hcir != facet->facet_begin());
-  point = ORIGIN + vec/circulator_size(hcir);
-}
-\end{lstlisting}
-
-\begin{figure}[h]
-    \centering{\includegraphics[width=7.5cm]{figs/quad-triangle}}
-    \caption{Quad-Triangle subdivision of the rhombicuboctahedron mesh.}
-    \label{fig:quad-triangle}
-\end{figure}
-
-This policy-based approach offers a convenient way to
-specialize a subdivision with the template smoothing rules.
-CSL currently supports Catmull-Clark, 
-Loop, Doo-Sabin, $\sqrt{3}$ and Quad-Triangle
-subdivisions. %(\figurename\ \ref{fig:subzoo}).
-Though demonstrated with a specific enriched \poly\ in our 
-polyhedron viewer, CSL accepts any polyhedron mesh specialized 
-from the \poly\ with the \CodeFmt{Point} type defined in the vertex.  
-%not just the enriched polyhedron we used in the polyhedron
-%viewer.
-
-%% \begin{figure}[tb]
-%%   \centering
-%% %  \epsfig{file=figs/rook.eps, width=2cm}
-%%   \epsfig{file=figs/rook_cc.eps, width=1.3cm}
-%%   \epsfig{file=figs/rook_ds.eps, width=1.3cm}
-%%   \epsfig{file=figs/rook_qt.eps, width=1.3cm}
-%%   \epsfig{file=figs/rook_loop.eps, width=1.3cm}
-%%   \epsfig{file=figs/rook_sqrt3.eps, width=1.3cm}
-%%   \caption{Subdivisions supported in CSL.}
-%%   \label{fig:subzoo}
-%% \end{figure}
-
-
-
-% ------------------------------------------------------------------------
-\subsection{C++ and Generic Programming}
-
-Before using CGAL, it is mandatory to be familiar with C++ and the
-\italic{generic programming paradigm}. The latter features the notion
-of C++ class templates and function templates, which is at the corner
-stone of all features provided by CGAL.
-
-An example illustrating generic programming is the Standard Template
-Library (STL)~\cite{ms-stl-96}. Generality and flexibility is achieved
-with a set of \italic{concepts}, where a concept is a well defined set
-of requirements. One of them is the \italic{iterator} concept, which
-allows both referring to an item and traversing a sequence of
-items. Those items are stored in a data structure called
-\italic{container} in STL. Another concept, so-called
-\italic{circulator}, allows traversing some circular sequences. They
-share most of the requirements with iterators, except the lack of
-past-the-end position in the sequence. Since CGAL is strongly inspired
-from the genericity of STL, it is important to become familiar with
-its concepts before starting using it.
-
+%% \end{itemize}
 

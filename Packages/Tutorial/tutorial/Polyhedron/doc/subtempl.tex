@@ -1,157 +1,78 @@
-
-We use Catmull-Clark (CC) subdivision as our first example (see
-Figure~\ref{fig:cc}). CC subdivision can be defined as the combination
-of the primal quadrilateral quadrisection (PQQ) scheme and the
-Catmull-Clark geometry rules.
-
-{\scriptsize
-\begin{verbatim}
-template <class Polyhedron, template <class> Rule>
-void PrimalQuadQuadralize(Polyhedron& p, Rule<Polyhedron>& r) { ...}
-
-template <class Polyhedron>
-void CCSubdivision(Polyhedron& p) { 
-  PrimalQuadQuadralize(p, CatmullClarkRule<Polyhedron>());
-}
-\end{verbatim}
-}
-
-For meshes based on PQQ scheme, the footprints of the range vertices
-each corresponds to a topology primitive, i.e. vertex, edge or facet,
-in the domain (see Figure. \ref{fig:PQQMap}).  The policy class hence
-needs to provide the policy functions in each case.
-
-{ \scriptsize
-\begin{verbatim}
-template <class P> class CatmullClarkRule 
-{
-public:
-  typedef P                                    Polyhedron;
-  typedef typename Polyhedron::Vertex_handle   Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Facet_handle    Facet_handle;
-
-  void face_vertex_rule(Facet_handle domain_f,    Vertex_handle range_v);
-  void edge_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
-  void vertex_vertex_rule(Vertex_handle domain_v, Vertex_handle range_v);
-};
-\end{verbatim}
-}
-
-Each policy function has two input parameters: the domain primitive
-and the range vertex. The footprint, defined as the vertices set of
-the 1-distance neighbors of the corresponding domain primitive, is
-passed as the handle of the primitive. Empolying the incidental
-function of the halfedge data structure, the policy designer works on
-the simple view of the \italic{local} mesh corresponding to the
-footprint. Following codes demonstrate the facet-vertex case.
-
-{\scriptsize
-\begin{verbatim}
-void facet_vertex_rule(Facet_handle domain_f, Vertex_handle& range_v) 
-{
-  typedef typename Polyhedron::Point_3 Point;
-
-  Halfedge_around_facet_circulator hcir = domain_f->facet_begin();
-  Halfedge_around_facet_circulator hcir_end = hcir;
-  range_v->point() = Point(0,0,0);
-  do 
-    range_v->point() += hcir->vertex()->point();
-  while (++hcir != hcir_end);
-
-  range_v->point() /= circulator_size(hcir);
-}
-\end{verbatim}
-}
-
-% Catmull-Clark subdivision
-
-\begin{figure}[htb]
-    \centering{\includegraphics[width=10.0cm]{figs/subdivision}}
-    \caption{Catmull-Clark subdivision of a quadrilateral control mesh.}  
-    \label{fig:cc}
+The \emph{C}ombinatorial \emph{S}ubdivision \emph{L}ibrary 
+(CSL) is designed based on the policy-based design 
+\cite{Alexandrescu:2001:MCD}.
+The policy-based design assembles a class
+(called \emph{host}) with complex behavior out of many 
+small behaviors (called \emph{policies}).
+Each policy defines an interface for a
+specific behavior. CSL proposes a 
+generic subdivision solution as a \emph{refinement function}
+parameterized with the \emph{geometry smoothing rules}.
+Subdivisions in CSL are build as proper combinations of the
+refinement functions and the geometry policy classes.
+The refinement function refines the control mesh,
+maintains the correspondence between the control mesh and refined
+mesh, and applies the smoothing stencils provided by the policy
+class. For example, Catmull-Clark subdivision~\cite{cc} is structured
+\begin{figure}[h]
+    \centering{\includegraphics[width=7.0cm]{figs/sqrt3}}
+    \caption{$\sqrt{3}$ subdivision of the mannequin mesh.}
+    \label{fig:sqrt3}
+    \vspace{0.5cm}
 \end{figure}
+as a quadralization function parameterized with the Catmull-Clark
+smoothing rules.
 
-Loop subdivision uses similar refinement scheme to PQQ scheme except
-that it works on the triangle mesh. Hence the footprints of Loop
-scheme are same as the CC scheme but without the facet-vertex case.
 
-{\scriptsize
-\begin{verbatim}
-PrimalTriangleQuadralize(p, LoopRule<Polyhedron>());
-
-template <class Polyhedron>
-void LoopSubdivision(Polyhedron& p) 
-{ 
-  PrimalTriangleQuadralize(p, LoopRule<Polyhedron>());
+\begin{lstlisting}
+void CatmullClark_subdivision(Polyhedron& p) {    
+  quadralize_polyhedron
+                <CatmullClark_rule<Polyhedron>>(p);  
 }
-
-template <class P> class LoopRule 
-{
+class CatmullClark_rule {
 public:
-  typedef ...
-
-  void edge_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
-  void vertex_vertex_rule(Vertex_handle domain_v, Vertex_handle range_v);
+  void facet_rule(  Facet_handle  facet, Point& pt);
+  void edge_rule(Halfedge_handle   edge, Point& pt);
+  void vertex_rule(Vertex_handle vertex, Point& pt);
 };
-\end{verbatim}
+\end{lstlisting}
+\noindent The \CodeFmt{quadralize\_polyhedron<>()} 
+is the host function refining the input mesh
+and the \CodeFmt{CatmullClark\_rule} is the policy 
+class applying the Catmull-Clark stencils.
+The refinement functions are implemented based on the
+Euler operations or the modifier callback mechanism.
+The refinement functions also maintain the 
+correspondence with the stencil, i.e., the submesh 
+centered around the given facet, edge, or
+vertex, and the smoothing point.
+The smoothing point is calculated by calling the 
+policies, e.g., the \CodeFmt{facet\_rule()}, the 
+\CodeFmt{edge\_rule()}, and the \CodeFmt{vertex\_rule()} 
+respectively. Inside a policy, applying the 
+stencil is simplified to the mesh traversal of a 
+1-ring neighborhood which can be done with the 
+circulators. Following example illustrates  
+the policy of the facet-stencil in Catmull-Clark 
+subdivision.
+\begin{lstlisting}
+void facet_rule(Facet_handle facet, Point& point) {
+  Halfedge_around_facet_circulator hcir 
+                            = facet->facet_begin();
+  Vector vec = hcir->vertex()->point() - ORIGIN;
+  ++hcir;
+  do {
+    vec = vec + hcir->vertex()->point();
+  } while (++hcir != facet->facet_begin());
+  point = ORIGIN + vec/circulator_size(hcir);
 }
+\end{lstlisting}
 
-Doo-Sabin (DS) subdivision is fundamentally different from the primal
-subdivision schemes in the aspect of the footprints. As showed in
-Figure \ref{fig:PQQMap}, each range vertex corresponds to a
-\italic{corner} in the domain mesh. The footprint of the range vertex
-is the facet containing the corner.
-
-%% \begin{figure}
-%%   \centering
-%%   \includegraphics[width=2.5in]{pfigs/DQQRefMap.eps}
-%%   \caption{The correspondence of the domain footprint and the 
-%%            range vertex of the DQQ schemes.}
-%%   \label{fig:DQQMap}
-%% \end{figure}
-
-
-{\scriptsize
-\begin{verbatim}
-DualQuadQuadralize(p, DooSabinRule<Polyhedron>());
-
-template <class Polyhedron>
-void DSSubdivision(Polyhedron& p) 
-{ 
-  DualQuadQuadralize(p, DooSabinRule<Polyhedron>());
-}
-
-template <class P> class DooSabinRule 
-{
-public:
-  typedef ...
-
-  void corner_vertex_rule(Halfedge_handle domain_e, Vertex_handle range_v);
-};
-\end{verbatim}
-}
-
-The only policy function for the DS subdivision has the halfedge
-pointing to the corner as the domain parameter. A demo of policy
-function for the regular facet, i.e. the quadrilateral facet, is
-listed in the following codes.
-
-{\scriptsize
-\begin{verbatim}
-void corner_vertex__rule(Halfedge_handle domain_e, Vertex_handle range_v) 
-{
-  range_v->point() = Point(0,0,0);
-
-  range_v->point() = domain_e->vertex()->point() * 9 + 
-                    (domain_e->next()->vertex()->point() +
-                     domain_e->pre()->vertex()->point()) * 3 +
-		     domain_e->next()->next()->vertex()->point();
-  
-  range_v->point() /= 16.0;
-}
-\end{verbatim}
-}
-
-For the complete implementation of the subdivision, readers should
-refer to the accompanied source codes of this tutorial.
+This policy-based approach offers a convenient way to
+specialize a subdivision with the template smoothing rules.
+CSL currently supports Catmull-Clark, 
+Loop, Doo-Sabin, $\sqrt{3}$ and Quad-Triangle
+subdivisions. %(\figurename\ \ref{fig:subzoo}).
+Though demonstrated with a specific enriched \poly\ in our 
+polyhedron viewer, CSL accepts any polyhedron mesh specialized 
+from the \poly\ with the \CodeFmt{Point} type defined in the vertex.  
