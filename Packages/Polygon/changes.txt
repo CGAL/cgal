@@ -1,3 +1,6 @@
+4.11 (31 March 2003) [af]
++ Changed #ifdef _MSC_VER to #ifdef CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS
+
 4.10  (12 September 2002) [af]
 + Added "const" to  Polygon_2_const_edge_circulator::operator*() 
 
