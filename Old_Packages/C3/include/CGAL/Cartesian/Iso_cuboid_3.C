@@ -35,8 +35,7 @@ Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3()
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-Iso_cuboidC3<R CGAL_CTAG>::
-Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
+Iso_cuboidC3<R CGAL_CTAG>::Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>& r)
   : Handle((Handle&)r)
 {}
 
@@ -65,8 +64,7 @@ Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidH3()
 template < class R >
 CGAL_KERNEL_INLINE
 Iso_cuboidC3<R CGAL_CTAG>&
-Iso_cuboidC3<R CGAL_CTAG>::
-operator=(const Iso_cuboidC3<R CGAL_CTAG>& r)
+Iso_cuboidC3<R CGAL_CTAG>::operator=(const Iso_cuboidC3<R CGAL_CTAG>& r)
 {
  Handle::operator=(r);
  return *this;
@@ -75,17 +73,15 @@ operator=(const Iso_cuboidC3<R CGAL_CTAG>& r)
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
+Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 {
-  return  (min() == r.min()) && (max() == r.max());
+  return min() == r.min() && max() == r.max();
 }
 
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::
-operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
+Iso_cuboidC3<R CGAL_CTAG>::operator!=(const Iso_cuboidC3<R CGAL_CTAG>& r) const
 {
   return !(*this == r);
 }
@@ -197,26 +193,27 @@ bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
   Comparison_result m = compare_dominance(p,min());
   Comparison_result M = compare_submittance(p,max());
-  if (m == SMALLER) return ON_UNBOUNDED_SIDE;
-  if (M == SMALLER) return ON_UNBOUNDED_SIDE;
-  if (m == LARGER && M == LARGER) return ON_BOUNDED_SIDE;
+  if (m == SMALLER || M == SMALLER) return ON_UNBOUNDED_SIDE;
+  if (m == LARGER  && M == LARGER)  return ON_BOUNDED_SIDE;
   return ON_BOUNDARY;
 }
 
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::has_on_boundary(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R CGAL_CTAG>::
+has_on_boundary(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return ( bounded_side(p) == ON_BOUNDARY );
+  return bounded_side(p) == ON_BOUNDARY;
 }
 
 template < class R >
 inline
 bool
-Iso_cuboidC3<R CGAL_CTAG>::has_on(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+Iso_cuboidC3<R CGAL_CTAG>::
+has_on(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return ( bounded_side(p) == ON_BOUNDARY );
+  return bounded_side(p) == ON_BOUNDARY;
 }
 
 template < class R >
@@ -225,7 +222,7 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return ( bounded_side(p) == ON_BOUNDED_SIDE );
+  return bounded_side(p) == ON_BOUNDED_SIDE;
 }
 
 template < class R >
@@ -234,8 +231,8 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return ( lexicographically_smaller(p,min())
-        || lexicographically_smaller(max(),p) );
+  return lexicographically_smaller(p,min())
+      || lexicographically_smaller(max(),p);
 }
 
 template < class R >
@@ -243,9 +240,9 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::is_degenerate() const
 {
-  return ( min().hx() == max().hx()
-        || min().hy() == max().hy()
-        || min().hz() == max().hz() );
+  return min().hx() == max().hx()
+      || min().hy() == max().hy()
+      || min().hz() == max().hz();
 }
 
 template < class R >
@@ -253,7 +250,7 @@ inline
 Bbox_3
 Iso_cuboidC3<R CGAL_CTAG>::bbox() const
 {
-  return  min().bbox() + max().bbox();
+  return min().bbox() + max().bbox();
 }
 
 template < class R >
@@ -267,8 +264,8 @@ transform(const Iso_cuboidC3<R CGAL_CTAG>::Aff_transformation_3&t) const
 
 #ifndef NO_OSTREAM_INSERT_ISO_CUBOIDC3
 template < class R >
-std::ostream& operator<<(std::ostream& os,
-                         const Iso_cuboidC3<R CGAL_CTAG>& r)
+std::ostream &
+operator<<(std::ostream& os, const Iso_cuboidC3<R CGAL_CTAG>& r)
 {
   switch(os.iword(IO::mode)) {
   case IO::ASCII :
@@ -283,8 +280,8 @@ std::ostream& operator<<(std::ostream& os,
 
 #ifndef NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
 template < class R >
-std::istream& operator>>(std::istream& is,
-                         Iso_cuboidC3<R CGAL_CTAG>& r)
+std::istream &
+operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
 {
   Iso_cuboidC3<R CGAL_CTAG>::Point_3 p, q;
   is >> p >> q;
