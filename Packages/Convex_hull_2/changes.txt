@@ -1,3 +1,15 @@
+3.26 (05 Dec 2001)
+- Replaced all uses of ch_value_type with iterator_traits and Kernel_traits.
+  Deleted include/CGAL/ch_value_type.h.
+- Removed inclusion of and deleted file gnu_istream_iterator_value_type_fix.h.
+- Removed the use of include/CGAL/ch_utils.h from all files and removed it.
+- Removed the dependancy of include/CGAL/Kernel/Traits_aids.h.
+- Added ch_melkman.h. So far, only ch_melkman.C existed and was used for
+  inclusion.
+- Moved include/CGAL/ch_timing_2.[hC] to examples/Convex_hull_2/include/CGAL
+  only.
+- Reformatting and cleanup of include/CGAL/ files.
+
 3.25    (3 Oct 2001)
 - put back ch_postcondition_code macro around the save_first assignment
 
