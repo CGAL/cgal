@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_power_testH2_16_0;
-
 inline
 Oriented_side
 power_testH2_SAF(
@@ -145,7 +143,9 @@ power_testH2(
     const Static_adaptatif_filter &twt)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_power_testH2_16_0 = -1.0;
+
 letstry:
   try
   {
@@ -260,9 +260,6 @@ letstry:
 		twt.exact());
   }
 }
-
-double Filter_epsilon_power_testH2_12_0;
-double Filter_epsilon_power_testH2_12_1;
 
 inline
 Oriented_side
@@ -383,7 +380,10 @@ power_testH2(
     const Static_adaptatif_filter &twt)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_power_testH2_12_0 = -1.0;
+  static double Filter_epsilon_power_testH2_12_1 = -1.0;
+
 letstry:
   try
   {

@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_sign_of_determinant2x2_4_0;
-
 inline
 Sign
 sign_of_determinant2x2_SAF(
@@ -61,7 +59,9 @@ sign_of_determinant2x2(
     const Static_adaptatif_filter &a11)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_sign_of_determinant2x2_4_0 = -1.0;
+
 letstry:
   try
   {
@@ -117,8 +117,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_sign_of_determinant3x3_9_0;
-
 inline
 Sign
 sign_of_determinant3x3_SAF(
@@ -173,7 +171,9 @@ sign_of_determinant3x3(
     const Static_adaptatif_filter &a22)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_sign_of_determinant3x3_9_0 = -1.0;
+
 letstry:
   try
   {
@@ -254,8 +254,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_sign_of_determinant4x4_16_0;
-
 inline
 Sign
 sign_of_determinant4x4_SAF(
@@ -333,7 +331,9 @@ sign_of_determinant4x4(
     const Static_adaptatif_filter &a33)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_sign_of_determinant4x4_16_0 = -1.0;
+
 letstry:
   try
   {
@@ -449,8 +449,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_sign_of_determinant5x5_25_0;
-
 inline
 Sign
 sign_of_determinant5x5_SAF(
@@ -557,7 +555,9 @@ sign_of_determinant5x5(
     const Static_adaptatif_filter &a44)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_sign_of_determinant5x5_25_0 = -1.0;
+
 letstry:
   try
   {
@@ -718,8 +718,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_sign_of_determinant6x6_36_0;
-
 inline
 Sign
 sign_of_determinant6x6_SAF(
@@ -861,7 +859,9 @@ sign_of_determinant6x6(
     const Static_adaptatif_filter &a55)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_sign_of_determinant6x6_36_0 = -1.0;
+
 letstry:
   try
   {

@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_power_testC2_12_0;
-
 inline
 Oriented_side
 power_testC2_SAF(
@@ -117,7 +115,9 @@ power_testC2(
     const Static_adaptatif_filter &twt)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_power_testC2_12_0 = -1.0;
+
 letstry:
   try
   {
@@ -213,11 +213,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_power_testC2_9_0;
-double Filter_epsilon_power_testC2_9_1;
-double Filter_epsilon_power_testC2_9_2;
-double Filter_epsilon_power_testC2_9_3;
-
 inline
 Oriented_side
 power_testC2_SAF(
@@ -304,7 +299,12 @@ power_testC2(
     const Static_adaptatif_filter &twt)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_power_testC2_9_0 = -1.0;
+  static double Filter_epsilon_power_testC2_9_1 = -1.0;
+  static double Filter_epsilon_power_testC2_9_2 = -1.0;
+  static double Filter_epsilon_power_testC2_9_3 = -1.0;
+
 letstry:
   try
   {

@@ -26,9 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_compare_xC2_7_0;
-double Filter_epsilon_compare_xC2_7_1;
-
 inline
 Comparison_result
 compare_xC2_SAF(
@@ -85,7 +82,10 @@ compare_xC2(
     const Static_adaptatif_filter &l2c)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_xC2_7_0 = -1.0;
+  static double Filter_epsilon_compare_xC2_7_1 = -1.0;
+
 letstry:
   try
   {
@@ -157,10 +157,6 @@ letstry:
 		l2c.exact());
   }
 }
-
-double Filter_epsilon_compare_xC2_12_0;
-double Filter_epsilon_compare_xC2_12_1;
-double Filter_epsilon_compare_xC2_12_2;
 
 inline
 Comparison_result
@@ -245,7 +241,11 @@ compare_xC2(
     const Static_adaptatif_filter &h2c)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_xC2_12_0 = -1.0;
+  static double Filter_epsilon_compare_xC2_12_1 = -1.0;
+  static double Filter_epsilon_compare_xC2_12_2 = -1.0;
+
 letstry:
   try
   {
@@ -345,9 +345,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_compare_y_at_xC2_5_0;
-double Filter_epsilon_compare_y_at_xC2_5_1;
-
 inline
 Comparison_result
 compare_y_at_xC2_SAF(
@@ -394,7 +391,10 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &lc)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_5_0 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_5_1 = -1.0;
+
 letstry:
   try
   {
@@ -457,10 +457,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_compare_y_at_xC2_7_0;
-double Filter_epsilon_compare_y_at_xC2_7_1;
-double Filter_epsilon_compare_y_at_xC2_7_2;
-
 inline
 Comparison_result
 compare_y_at_xC2_SAF(
@@ -517,7 +513,11 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &l2c)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_7_0 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_7_1 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_7_2 = -1.0;
+
 letstry:
   try
   {
@@ -592,11 +592,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_compare_y_at_xC2_9_0;
-double Filter_epsilon_compare_y_at_xC2_9_1;
-double Filter_epsilon_compare_y_at_xC2_9_2;
-double Filter_epsilon_compare_y_at_xC2_9_3;
-
 inline
 Comparison_result
 compare_y_at_xC2_SAF(
@@ -659,7 +654,12 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &hc)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_9_0 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_9_1 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_9_2 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_9_3 = -1.0;
+
 letstry:
   try
   {
@@ -746,11 +746,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_compare_y_at_xC2_12_0;
-double Filter_epsilon_compare_y_at_xC2_12_1;
-double Filter_epsilon_compare_y_at_xC2_12_2;
-double Filter_epsilon_compare_y_at_xC2_12_3;
-
 inline
 Comparison_result
 compare_y_at_xC2_SAF(
@@ -832,7 +827,12 @@ compare_y_at_xC2(
     const Static_adaptatif_filter &h2c)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_12_0 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_12_1 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_12_2 = -1.0;
+  static double Filter_epsilon_compare_y_at_xC2_12_3 = -1.0;
+
 letstry:
   try
   {
@@ -934,8 +934,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_compare_deltax_deltayC2_4_0;
-
 inline
 Comparison_result
 compare_deltax_deltayC2_SAF(
@@ -971,7 +969,9 @@ compare_deltax_deltayC2(
     const Static_adaptatif_filter &sy)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_compare_deltax_deltayC2_4_0 = -1.0;
+
 letstry:
   try
   {
@@ -1027,8 +1027,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_orientationC2_6_0;
-
 inline
 Orientation
 orientationC2_SAF(
@@ -1070,7 +1068,9 @@ orientationC2(
     const Static_adaptatif_filter &ry)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_orientationC2_6_0 = -1.0;
+
 letstry:
   try
   {
@@ -1135,8 +1135,6 @@ letstry:
 		ry.exact());
   }
 }
-
-double Filter_epsilon_side_of_oriented_circleC2_8_0;
 
 inline
 Oriented_side
@@ -1215,7 +1213,9 @@ side_of_oriented_circleC2(
     const Static_adaptatif_filter &ty)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_side_of_oriented_circleC2_8_0 = -1.0;
+
 letstry:
   try
   {
@@ -1291,9 +1291,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_side_of_bounded_circleC2_8_0;
-double Filter_epsilon_side_of_bounded_circleC2_8_1;
-
 inline
 Bounded_side
 side_of_bounded_circleC2_SAF(
@@ -1349,7 +1346,10 @@ side_of_bounded_circleC2(
     const Static_adaptatif_filter &ty)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_side_of_bounded_circleC2_8_0 = -1.0;
+  static double Filter_epsilon_side_of_bounded_circleC2_8_1 = -1.0;
+
 letstry:
   try
   {
@@ -1427,8 +1427,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_dist_to_pointC2_6_0;
-
 inline
 Comparison_result
 cmp_dist_to_pointC2_SAF(
@@ -1472,7 +1470,9 @@ cmp_dist_to_pointC2(
     const Static_adaptatif_filter &ry)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_dist_to_pointC2_6_0 = -1.0;
+
 letstry:
   try
   {
@@ -1538,8 +1538,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_signed_dist_to_lineC2_7_0;
-
 inline
 Comparison_result
 cmp_signed_dist_to_lineC2_SAF(
@@ -1586,7 +1584,9 @@ cmp_signed_dist_to_lineC2(
     const Static_adaptatif_filter &qy)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_signed_dist_to_lineC2_7_0 = -1.0;
+
 letstry:
   try
   {
@@ -1657,8 +1657,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_signed_dist_to_lineC2_8_0;
-
 inline
 Comparison_result
 cmp_signed_dist_to_lineC2_SAF(
@@ -1708,7 +1706,9 @@ cmp_signed_dist_to_lineC2(
     const Static_adaptatif_filter &sy)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_signed_dist_to_lineC2_8_0 = -1.0;
+
 letstry:
   try
   {

@@ -26,8 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_in_smallest_orthogonalcircleC2_9_0;
-
 inline
 Oriented_side
 in_smallest_orthogonalcircleC2_SAF(
@@ -92,7 +90,9 @@ in_smallest_orthogonalcircleC2(
     const Static_adaptatif_filter &tw)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_in_smallest_orthogonalcircleC2_9_0 = -1.0;
+
 letstry:
   try
   {

@@ -26,10 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-double Filter_epsilon_collinearC3_9_0;
-double Filter_epsilon_collinearC3_9_1;
-double Filter_epsilon_collinearC3_9_2;
-
 inline
 bool
 collinearC3_SAF(
@@ -100,7 +96,11 @@ collinearC3(
     const Static_adaptatif_filter &rz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_collinearC3_9_0 = -1.0;
+  static double Filter_epsilon_collinearC3_9_1 = -1.0;
+  static double Filter_epsilon_collinearC3_9_2 = -1.0;
+
 letstry:
   try
   {
@@ -185,8 +185,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_orientationC3_12_0;
-
 inline
 Orientation
 orientationC3_SAF(
@@ -250,7 +248,9 @@ orientationC3(
     const Static_adaptatif_filter &sz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_orientationC3_12_0 = -1.0;
+
 letstry:
   try
   {
@@ -345,8 +345,6 @@ letstry:
 		sz.exact());
   }
 }
-
-double Filter_epsilon_side_of_oriented_sphereC3_15_0;
 
 inline
 Oriented_side
@@ -454,7 +452,9 @@ side_of_oriented_sphereC3(
     const Static_adaptatif_filter &tz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_side_of_oriented_sphereC3_15_0 = -1.0;
+
 letstry:
   try
   {
@@ -565,9 +565,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_side_of_bounded_sphereC3_15_0;
-double Filter_epsilon_side_of_bounded_sphereC3_15_1;
-
 inline
 Bounded_side
 side_of_bounded_sphereC3_SAF(
@@ -656,7 +653,10 @@ side_of_bounded_sphereC3(
     const Static_adaptatif_filter &tz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_side_of_bounded_sphereC3_15_0 = -1.0;
+  static double Filter_epsilon_side_of_bounded_sphereC3_15_1 = -1.0;
+
 letstry:
   try
   {
@@ -769,8 +769,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_dist_to_pointC3_9_0;
-
 inline
 Comparison_result
 cmp_dist_to_pointC3_SAF(
@@ -823,7 +821,9 @@ cmp_dist_to_pointC3(
     const Static_adaptatif_filter &rz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_dist_to_pointC3_9_0 = -1.0;
+
 letstry:
   try
   {
@@ -904,8 +904,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_signed_dist_to_planeC3_10_0;
-
 inline
 Comparison_result
 cmp_signed_dist_to_planeC3_SAF(
@@ -961,7 +959,9 @@ cmp_signed_dist_to_planeC3(
     const Static_adaptatif_filter &qz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_signed_dist_to_planeC3_10_0 = -1.0;
+
 letstry:
   try
   {
@@ -1047,8 +1047,6 @@ letstry:
   }
 }
 
-double Filter_epsilon_cmp_signed_dist_to_planeC3_15_0;
-
 inline
 Comparison_result
 cmp_signed_dist_to_planeC3_SAF(
@@ -1129,7 +1127,9 @@ cmp_signed_dist_to_planeC3(
     const Static_adaptatif_filter &qz)
 {
   bool tried = false;
-  static double _bound=0;
+  static double _bound = -1.0;
+  static double Filter_epsilon_cmp_signed_dist_to_planeC3_15_0 = -1.0;
+
 letstry:
   try
   {
