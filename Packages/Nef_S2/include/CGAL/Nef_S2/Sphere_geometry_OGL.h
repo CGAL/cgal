@@ -74,7 +74,7 @@ class Approximator {
     double cosalpha = v0*v3 / v0l / v3l; 
     double alpha = acos(cosalpha);
     const int units_per_halfcircle = 50;
-    int units = int(units_per_halfcircle/CGAL__PI * alpha);
+    int units = int(units_per_halfcircle/CGAL_PI * alpha);
     if (units == 0) ++units;
     bool seg_is_short = s.is_short();
     bool seg_is_halfcircle = s.is_halfcircle();
