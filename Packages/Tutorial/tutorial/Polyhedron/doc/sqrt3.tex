@@ -9,7 +9,7 @@ The subdivision step takes a triangle mesh as input and splits each
 facet at its centroid into three triangles.  We write a function that
 creates the centroid for one triangle. The topology refinement part
 exists already as an Euler operator in \cgalpoly, we only have to
-computer the coordinates of the new vertex. Since the facet is a
+compute the coordinates of the new vertex. Since the facet is a
 triangle, we access the 1-ring of the centroid directly without any
 loops or branching decisions (in general, we could use the circulator
 loop shown in the render function).% in Section~\ref{sec:poly}).
@@ -106,7 +106,7 @@ void subdiv( Polyhedron& P) {
 \noindent
 The \openmesh\ library Release 1.0.0-beta4 comes with a demo
 application for the subdivision algorithms that are available in
-\openmesh. Since L.  Kobbelt, the author of the
+\openmesh. Since L.~Kobbelt, the author of the
 $\sqrt{3}$-subdivision, is the head of the group developing \openmesh,
 it is natural to find his algorithm in the library. We compared it
 with our example implementation on a laptop with an Intel Mobile
