@@ -20,6 +20,8 @@ General
 - virer push-back
 
 TEST SUITE
+- faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
+  atteindre 100%.
 
 Doc
 - finir le changement Vertex * -> handles dans la TDS.
