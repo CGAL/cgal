@@ -539,8 +539,11 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
 
       Point_2 tmp1(x - pixel_size / 2.0,0);
       Point_2 tmp2(x + pixel_size / 2.0,0);
+      Point_2 tmp3(0,y + pixel_size / 2.0);
       Comparison_result c1 = _gt.compare_x_2_object()(p,tmp1);
       Comparison_result c2 = _gt.compare_x_2_object()(p,tmp2);
+      Comparison_result c3 = _gt.compare_y_2_object()(seg.target(),tmp3);
+      Comparison_result c4 = _gt.compare_y_2_object()(seg.source(),tmp3);
 
       if(c1 == EQUAL || c2 == EQUAL)
         return(false);// were checked
@@ -550,15 +553,13 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::DOWN_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::DOWN_RIGHT) && tar_y != y +
-               pixel_size / 2.0 ||
+               Snap_rounding_2<Rep_>::DOWN_RIGHT) && c3 != EQUAL ||
                (Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP ||
                Snap_rounding_2<Rep_>::get_direction() ==
                Snap_rounding_2<Rep_>::UP_LEFT ||
                Snap_rounding_2<Rep_>::get_direction() ==
-               Snap_rounding_2<Rep_>::UP_RIGHT) && sou_y != y +
-               pixel_size / 2.0);
+               Snap_rounding_2<Rep_>::UP_RIGHT) && c4 != EQUAL);
     } else
     return(false);
   }
