@@ -361,7 +361,7 @@ public:
   { t_ = t.t_; c_ = t.c_; }
 
   Sphere_triangle<R>& operator=(const Sphere_triangle<R>& t)
-  { VTriangle::operator=(t); t_ = t.t_; c_ = s.c_; return *this; }
+  { VTriangle::operator=(t); t_ = t.t_; c_ = t.c_; return *this; }
 
   virtual ~Sphere_triangle() {}
 
