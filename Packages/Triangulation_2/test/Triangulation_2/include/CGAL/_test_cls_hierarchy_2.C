@@ -91,12 +91,12 @@ _test_cls_hierarchy_2()
   vit = co_it->vertices_begin();
   assert ( *vit++ == v[1] && 
 	   *vit++ == v[5] &&
-	   *vit++ == v[2]);
+	   *vit++ == v[8]);
   co_it++;
   vit = co_it->vertices_begin();
   assert ( *vit++ == v[1] && 
 	   *vit++ == v[5] &&
-	   *vit++ == v[8]);
+	   *vit++ == v[2]);
   co_it++;
   assert (co_it  == h.contexts_end(v[1],v[5]));
 
