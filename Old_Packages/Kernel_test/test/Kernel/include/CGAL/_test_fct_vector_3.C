@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_FCT_VECTOR_3_C
 #define CGAL__TEST_FCT_VECTOR_3_C
-#ifndef CGAL__TEST_FCT_VECTOR_3_H
+
 #include <CGAL/_test_fct_vector_3.h>
-#endif // CGAL__TEST_FCT_VECTOR_3_H
 
 template <class R>
 bool
@@ -81,15 +80,6 @@ _test_fct_vector_3(const R& )
 
  std::cout << '.';
 
-#ifdef CGAL_VECTOR_WRAPPER
- assert( FT(v1 * v2) == FT(66) );
- assert( FT(v1 * v0) == FT(0) );
- assert( CGAL::Vector_3<R>( n1, n2, n3) == RT(2) * v1 );
- assert( CGAL::Vector_3<R>( n5, n6, n7) == RT(3) * v2 );
- assert( v2 / RT(3) == CGAL::Vector_3<R>( RT(1), -n4, -n2) );
- assert( (CGAL::Vector_3<R>&)(RT(3) * (v2 / RT(3))) == v2 );
- assert( (v2 * RT(3)) / RT(3) == v2 );
-#else // no multiplication scalar * vector ( only from the right side )
  assert( v1 * v2 == FT(66) );
  assert( v1 * v0 == FT(0) );
  assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * RT(2));
@@ -97,7 +87,6 @@ _test_fct_vector_3(const R& )
  assert( v2 / RT(3) == CGAL::Vector_3<R>( RT(1), -n4, -n2) );
  assert( (v2 * RT(3)) / RT(3) == v2 );
  assert( (v2 / RT(3)) * RT(3) == v2 );
-#endif // CGAL_VECTOR_WRAPPER
 
  assert( (v4 / (FT(n1)/FT(n3))) == v10 );
  assert( (v4 * (FT(n1)/FT(n3))) == v11 );
