@@ -40,6 +40,7 @@
 // void
 // CGAL__test_cls_geom_traits(typename Traits::Point p[34], const Traits & )
 
+
 template <class Traits, class Point>
 void
 CGAL__test_cls_geom_traits(Point p[34], const Traits & )
