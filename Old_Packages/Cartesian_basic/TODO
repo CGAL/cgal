@@ -1,23 +1,5 @@
 Stuff to look at, as time permits:
 ----------------------------------
-- Getting rid of the partial kernels Cartesian_2 and Cartesian_3.  This is a
-  lot (1Kloc) of redundant code, and this is something only aimed at reducing
-  compile time, for which I have some serious doubts anyway.  So:
-  - Make a compile time benchmark between Cartesian_2 vs Cartesian, say, with
-    Triangulation_2.
-  - Ask Herve's opinion (original author of this ...).
-  - Check it's not documented.
-  - Ask on cgal-develop if anyone needs this.
-  - Remove.
-- Can I get rid of the empty destructors of the kernel classes ?
-  The homogeneous kernel defines them too.  Why ?
-  Was it useful when they derived from a virtual base having a virtual
-  destructor, and thus needing this destructor ?  It's not the case anymore,
-  so maybe it's time to gain a few lines :)
-- Eventually merge C2, C3, Cartesian_basic (Cd ?).  Ask if it's a problem for
-  others.  If not, merge them inside CVS, so that history won't be lost.
-- Factorize all the new kernel traits stuff of the different kernels in a
-  separate .def file, included in all kernels ?
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
@@ -37,6 +19,25 @@ Stuff to look at, as time permits:
 {
   return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
 }
+- Getting rid of the partial kernels Cartesian_2 and Cartesian_3.  This is a
+  lot (1Kloc) of redundant code, and this is something only aimed at reducing
+  compile time, for which I have some serious doubts anyway.  So:
+  - XXX: Make sure it's not needed.  Cartesian seems built on top of it...
+  - Make a compile time benchmark between Cartesian_2 vs Cartesian, say, with
+    Triangulation_2.
+  - Ask Herve's opinion (original author of this ...).
+  - Check it's not documented.
+  - Ask on cgal-develop if anyone needs this.
+  - Remove.
+- Can I get rid of the empty destructors of the kernel classes ?
+  The homogeneous kernel defines them too.  Why ?
+  Was it useful when they derived from a virtual base having a virtual
+  destructor, and thus needing this destructor ?  It's not the case anymore,
+  so maybe it's time to gain a few lines :)
+- Eventually merge C2, C3, Cartesian_basic (Cd ?).  Ask if it's a problem for
+  others.  If not, merge them inside CVS, so that history won't be lost.
+- Factorize all the new kernel traits stuff of the different kernels in a
+  separate .def file, included in all kernels ?
 - Orientation of Circle_2 and Sphere_3.  I wonder if it's used anywhere.
   Wouldn't it have been better if the kernel circles and spheres were not
   oriented, and if someone needs an orientation, he will be able to build one
@@ -47,10 +48,12 @@ Stuff to look at, as time permits:
   Or maybe worth having a separate Non_oriented_Circle in the kernel ?
 - How does the test-suite runs on the kernel ?  I never figured that out ;)
   Run GCOV on it, I think it's _desperately_ needed...
-- There are still a few predicates and constructions that are not FT-based, but
-  mainly they are the simple ones, just needing to compute an opposite or
+- There are still a few predicates and constructions that are not FT-based,
+  but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
 - Factorize Cartesian and SimpleCartesian using an additional boolean template
-  parameter ?
+  parameter ?  I would prefer having the Cartesian kernel use simple objects
+  internally, and handles around them...  This way, the filtered kernel will be
+  simpler to implement.
 - Make this filtered kernel... first step only the predicates...
