@@ -1,3 +1,8 @@
+26 May Radu Ursu
+- added create_internal_module script on the CVS. This script is an adaptation
+  of create_internal_release to a script that creates modules instead of 
+  internal releases. This is a preliminary version. 
+
 25 May Sylvain Pion
 - create_internal_release : fix last change about C2vcproj.
 
