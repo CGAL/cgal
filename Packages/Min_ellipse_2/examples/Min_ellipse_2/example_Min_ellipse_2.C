@@ -32,18 +32,12 @@
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/Gmpz.h>
 
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(
-       CGAL::Point_2< CGAL::Homogeneous< CGAL::Gmpz > > )
-
-using namespace CGAL;
-using std::cout;
-
 // typedefs
-typedef  Gmpz                       NT;
-typedef  Homogeneous<NT>            R;
-typedef  Point_2<R>                 Point;
-typedef  Min_ellipse_2_traits_2<R>  Traits;
-typedef  Min_ellipse_2<Traits>      Min_ellipse;
+typedef  CGAL::Gmpz                       NT;
+typedef  CGAL::Homogeneous<NT>            R;
+typedef  CGAL::Point_2<R>                 Point;
+typedef  CGAL::Min_ellipse_2_traits_2<R>  Traits;
+typedef  CGAL::Min_ellipse_2<Traits>      Min_ellipse;
 
 // main
 int
@@ -56,11 +50,11 @@ main( int, char**)
 	P[ i] = Point( (i%2 == 0 ? i : -i), 0);
     // (0,0), (-1,0), (2,0), (-3,0), ...
 
-    Min_ellipse  me1( P, P+n);           // very slow
+    Min_ellipse  me1( P, P+n, false);    // very slow
     Min_ellipse  me2( P, P+n, true);     // fast
 
-    set_pretty_mode( cout);
-    cout << me2;
+    CGAL::set_pretty_mode( std::cout);
+    std::cout << me2;
 
     delete[] P;
 
