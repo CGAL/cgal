@@ -1,0 +1,18 @@
+Segment_generator_example1.C
+    example program for generic segment generator.  A number of segments
+    are generated and copied to a vector of segments.
+
+Segment_generator_example2.C
+    example program for the generic segment generator using precomputed
+    point locations.
+
+generators_example1.C
+    generates 1000 points as follows: 600 are draw from a disc; 200 are
+    drawn from a grid; 100 are duplicates; 100 are collinear points
+
+generators_example2.C
+    generates 500 points with integer coordinates
+
+random_polzgon_ex.C
+    generates a random polygon from a randomly chosen number of points
+    and prints the polygon to standard output
