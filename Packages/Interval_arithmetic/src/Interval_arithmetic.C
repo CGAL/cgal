@@ -44,6 +44,9 @@ CGAL_BEGIN_NAMESPACE
 #endif
 
 unsigned Interval_nt_advanced::number_of_failures = 0;
+const Interval_nt_advanced Interval_nt_advanced::Largest (-HUGE_VAL, HUGE_VAL);
+const Interval_nt_advanced Interval_nt_advanced::Smallest
+             (-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
 
 std::ostream &
 operator<< (std::ostream & os, const Interval_nt_advanced & I)
@@ -89,7 +92,8 @@ static Borland_workaround Borland_workaround_object;
 //               | -1+ulp | +inf |  zero |
 //               +--------+------+-------+
 
-FPU_CW_t FPU_empiric_test()
+FPU_CW_t
+FPU_empiric_test()
 {
     // If not marked "volatile", the result is false when optimizing
     // because the constants are propagated at compile time !!!
