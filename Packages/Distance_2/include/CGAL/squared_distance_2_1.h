@@ -55,17 +55,45 @@ namespace CGALi {
   typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Point_2 &pt,
 		   const typename CGAL_WRAP(K)::Line_2 &line,
-		   const K&)
+		   const K&,
+		   const Homogeneous_tag&)
   {
     typedef typename K::RT RT;
     RT a = line.a();
     RT b = line.b();
     RT w = pt.hw();
-    RT n = a*pt.hx() + b*pt.hy() + wmult((K*)0, line.c(), w);
-    RT d = wmult((K*)0, RT(a*a+b*b), w, w);
+    RT n = a*pt.hx() + b*pt.hy() + w * line.c();
+    RT d = (a*a+b*b) * w * w;
     return K::make_FT(n*n, d);
   }
-  
+
+  template <class K>
+  typename K::FT
+  squared_distance(const typename CGAL_WRAP(K)::Point_2 &pt,
+		   const typename CGAL_WRAP(K)::Line_2 &line,
+		   const K&,
+		   const Cartesian_tag&)
+  {
+    typedef typename K::FT FT;
+    FT a = line.a();
+    FT b = line.b();
+    FT n = a*pt.x() + b*pt.y() + line.c();
+    FT d = a*a+b*b;
+    return (n*n)/d;
+  }
+
+
+  template <class K>
+  typename K::FT
+  squared_distance(const typename CGAL_WRAP(K)::Point_2 &pt,
+		   const typename CGAL_WRAP(K)::Line_2 &line,
+		   const K& k)
+  {  
+    typedef typename K::Kernel_tag Tag;
+    Tag tag;
+    return squared_distance(pt, line, k, tag);
+  }
+
   template <class K>
   inline typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Line_2 &line, 
@@ -136,15 +164,9 @@ namespace CGALi {
 			    const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
-    bool same_direction;
     const Vector_2 &dir1 = seg1.direction().vector();
     const Vector_2 &dir2 = seg2.direction().vector();
-    if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy())) {
-      same_direction = (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
-    } else {
-      same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
-    }
-    if (same_direction) {
+    if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
 	return CGALi::squared_distance(seg1.target(), seg2.source(), k);
       if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
@@ -280,15 +302,10 @@ namespace CGALi {
 			    const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
-    bool same_direction;
     const Vector_2 &dir1 = seg.direction().vector();
     const Vector_2 &dir2 = ray.direction().vector();
-    if (CGAL_NTS abs(dir1.hx()) > CGAL_NTS abs(dir1.hy())) {
-      same_direction = (CGAL_NTS sign(dir1.hx()) == CGAL_NTS sign(dir2.hx()));
-    } else {
-      same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
-    }
-    if (same_direction) {
+
+    if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
 	return CGALi::squared_distance(seg.target(), ray.source(), k);
     } else {
@@ -467,15 +484,7 @@ namespace CGALi {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     if (!is_acute_angle(ray1dir, from1to2, k)) {
-      bool same_direction;
-      if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hy())) {
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hx()) == CGAL_NTS sign(ray2dir.hx()));
-      } else {
-	same_direction =
-	  (CGAL_NTS sign(ray1dir.hy()) == CGAL_NTS sign(ray2dir.hy()));
-      }
-      if (!same_direction)
+      if (!same_direction(ray1dir, ray2dir, k))
 	return (typename K::FT)(from1to2*from1to2);
     }
     RT wcr, w;
@@ -655,22 +664,39 @@ squared_distance(
 
 template <class K>
 class Squared_distance_to_line {
-    typename K::RT  a, b, c, sqnorm;
-  public:
-    Squared_distance_to_line(typename K::Line_2 const &line)
+  typename K::RT  a, b, c, sqnorm;
+public:
+  Squared_distance_to_line(typename K::Line_2 const &line)
     : a(line.a()), b(line.b()), c(line.c())
-    {
-        sqnorm = a*a+b*b;
-    }
-    typename K::FT operator()(typename K::Point_2 const &pt) const
-    {
-        typedef typename K::RT RT;
-        RT w = pt.hw();
-        RT n = a*pt.hx() + b*pt.hy() + wmult((K*)0, c, w);
-        RT d = wmult((K*)0, sqnorm, w, w);
-        return K::make_FT(n*n, d);
-    }
+  {
+    sqnorm = a*a+b*b;
+  }
+
+
+  typename K::FT impl(typename K::Point_2 const &pt, const Homogeneous_tag&) const
+  {
+    typedef typename K::RT RT;
+    RT w = pt.hw();
+    RT n = a*pt.hx() + b*pt.hy() + c * w;
+    RT d = sqnorm * w * w;
+    return K::make_FT(n*n, d);
+  }
+
+  typename K::FT impl(typename K::Point_2 const &pt, const Cartesian_tag&) const
+  {
+    typedef typename K::FT FT;
+    FT n = a*pt.x() + b*pt.y() + c;
+    return (n*n) / sqnorm;
+  }
+
+  typename K::FT operator()(typename K::Point_2 const &pt) const
+  {
+    typedef typename K::Kernel_tag Tag;
+    Tag tag;
+    return impl(pt, tag);
+  }
 };
+
 
 template <class K>
 inline typename K::FT
