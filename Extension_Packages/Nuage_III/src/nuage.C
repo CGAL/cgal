@@ -207,6 +207,7 @@ int _facet_number(0);
 int _postprocessing_cont(0);
 int _A_size_before_postprocessing(0);
 
+std::list<Point> removed_points;
 //=====================================================================
 //=====================================================================
 

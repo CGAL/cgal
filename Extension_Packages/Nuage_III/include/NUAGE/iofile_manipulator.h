@@ -1046,6 +1046,20 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
     }
   */
 
+  os << "Shape {\n"\
+    "geometry PointSet {\n"\
+    "coord Coordinate { point [\n";
+
+  for(std::list<Point>::iterator pit = removed_points.begin(); pit != removed_points.end(); pit++){
+    os << pit->x() << " " << pit->y() << " " << pit->z() << ",\n";
+  } 
+os << "] } }\n"
+	 "appearance Appearance {\n"
+	  "  material Material {\n"
+	  "    emissiveColor 1 0.1  0\n"
+	  "  }\n"
+	 "}\n"\
+      "} # Shape\n";
   os << "] # children\n"
     "} # Group\n";
   std::cout << "-- vrml result dumped." << std::endl;
