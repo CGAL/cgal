@@ -4163,7 +4163,7 @@ create_include_makefile()
   ${_printf} "%s" "CGAL_LIB_DESTINATION = " >> ${FILE}
   concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
   ${_printf} "\n\n"  >> ${FILE}
-  ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
+# ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
 # This breaks everything
 #  if [ -n "$LIB_CREATION_COMMANDS" ]; then
 #    ${_printf} "\t%s\n\n" "$LIB_CREATION_COMMANDS" >> ${FILE}
