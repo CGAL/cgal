@@ -231,11 +231,11 @@ public:
   typedef In_place_list<T,managed,Alloc>          Self;
 
 protected:
-#ifndef __MSC_VER__
+#ifndef _MSC_VER
   // Somehow the static initialization does not work correctly for MSVC
   // ---> strange linker errors
   static
-#endif // __MSC_VER__
+#endif // _MSC_VER
   Allocator allocator;
 
   pointer      node;
@@ -610,11 +610,11 @@ public:
 
 };
 
-#ifndef __MSC_VER__
+#ifndef _MSC_VER
 // init static member allocator object
 template <class T, bool managed, class Alloc>
 Alloc In_place_list<T,managed,Alloc>::allocator = Alloc();
-#endif // __MSC_VER__
+#endif // _MSC_VER
 
 template <class T, bool managed, class Alloc>
 void In_place_list<T,managed,Alloc>::

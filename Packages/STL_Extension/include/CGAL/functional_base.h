@@ -45,7 +45,7 @@ struct Arity_traits {
   typedef typename T::Arity Arity;
 };
 
-#ifndef __MSC_VER__
+#ifndef _MSC_VER
 #ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
 // --------------------------------------------------------------------
@@ -170,7 +170,7 @@ struct Arity_traits< std::const_mem_fun1_ref_t< T1, T2, T3 > > {
 };
 
 #endif // ! CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
-#endif // ! __MSC_VER__
+#endif // ! _MSC_VER
 
 } // namespace CGAL
 
