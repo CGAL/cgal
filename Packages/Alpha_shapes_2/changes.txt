@@ -1,3 +1,11 @@
+Version 11.27 (05/06/03)
+- remove thre private typedef to Base in Alpha_shape_face_base_2.h
+  and Alpha_shape_vertex_base_2.h
+
+version 11.26
+- submission by Andreas 
+  replace CGAL_TYPENAME_MSVC_NULL by Typename
+
 version 11.25 (07/05/03) rursu
 - fixed template parameters in instanciations of Regular_face_base_2
   in examples/Alpha_shapes_2/example_width.C (11.23 did only in one example)
