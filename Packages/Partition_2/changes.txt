@@ -1,3 +1,7 @@
+1.46 (11 June 2003) [af]
+- Got rid of class Circulator_list 
+- Use std::vectgor and not std::list as  std::list<T>::sort() is not available on Sun CC
+
 1.45 (6 June 2003)
 - doc fixes.
 
