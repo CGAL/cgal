@@ -25,6 +25,7 @@
 #define CGAL_KERNEL_TO_KERNEL_H
 
 #ifdef CGAL_USE_LEDA
+#include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
 #include <LEDA/rat_point.h>
 #endif
@@ -64,8 +65,12 @@ struct Cartesian_double_to_H_double_int
     leda_rat_point rt =  leda_point(s.target().x(), s.target().y());
 
     return Segment(
-      Point2(::to_double(rs.X()),::to_double(rs.Y()),::to_double(rs.W())),
-      Point2(::to_double(rt.X()),::to_double(rt.Y()),::to_double(rt.W())) );
+      Point2(CGAL_LEDA_SCOPE::to_double(rs.X()),
+             CGAL_LEDA_SCOPE::to_double(rs.Y()),
+             CGAL_LEDA_SCOPE::to_double(rs.W())),
+      Point2(CGAL_LEDA_SCOPE::to_double(rt.X()),
+             CGAL_LEDA_SCOPE::to_double(rt.Y()),
+             CGAL_LEDA_SCOPE::to_double(rt.W())) );
   }
 };
 
@@ -81,8 +86,12 @@ struct Cartesian_float_to_H_double_int
     leda_rat_point rt =  leda_point(s.target().x(), s.target().y());
 
     return Segment(
-      Point2(::to_double(rs.X()),::to_double(rs.Y()),::to_double(rs.W())),
-      Point2(::to_double(rt.X()),::to_double(rt.Y()),::to_double(rt.W())) );
+      Point2(CGAL_LEDA_SCOPE::to_double(rs.X()),
+             CGAL_LEDA_SCOPE::to_double(rs.Y()),
+             CGAL_LEDA_SCOPE::to_double(rs.W())),
+      Point2(CGAL_LEDA_SCOPE::to_double(rt.X()),
+             CGAL_LEDA_SCOPE::to_double(rt.Y()),
+             CGAL_LEDA_SCOPE::to_double(rt.W())) );
   }
 };
 #endif // CGAL_USE_LEDA
