@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.48 (30 June 00)
+Fixed is_edge() in Triangulation_defaults_data_structure_2 
+and Triangulation_data_structure_using_list_2.
+Fixed  remove_constraint() in Constrained_triangulation_2
+
 Ver 4.47 (29 June 00)
 forgot to update the doc ...
 
