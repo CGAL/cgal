@@ -2,7 +2,7 @@
 % The CGAL Reference Manual
 % Section: 2D Smallest Enclosing Circle
 % -----------------------------------------------------------------------------
-% file  : spec/Min_circle_2.tex
+% file  : Library/spec/Min_circle_2.tex
 % author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
 % $Id$
 % =============================================================================
@@ -51,9 +51,9 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
 
 \ccConstructor{ CGAL_Min_circle_2( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
-	It is initialized to
-	$mc($\ccTexHtml{$\emptyset$}{&Oslash;}$)$, the empty set.
-	\ccPostcond \ccStyle{\ccVar.is_empty()} = \ccStyle{true}.}
+        It is initialized to
+        $mc($\ccTexHtml{$\emptyset$}{&Oslash;}$)$, the empty set.
+        \ccPostcond \ccStyle{\ccVar.is_empty()} = \ccStyle{true}.}
 
 \ccHidden
 \ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<R>&);}{
@@ -140,8 +140,8 @@ the construction method is incremental itself.
 
 \ccMemberFunction{ void reserve( int n);}{
         reserves storage for at least \ccStyle{n} points in \ccVar. Although
-	this is in no case necessary, it may speed up memory allocation if 
-	the number of points to be inserted is known in advance.}
+        this is in no case necessary, it may speed up memory allocation if 
+        the number of points to be inserted is known in advance.}
 
 \ccHeading{Check operation}
 
@@ -187,8 +187,8 @@ unbounded side equals the whole plane $\E_2$.
 
 \ccMemberFunction{ bool is_degenerate( ) const;}{
         returns \ccStyle{true}, iff \ccVar\ is degenerate, i.e. if
-	\ccVar is empty or equal to a single point, equivalently if
-	the number of support points is less than 2.}
+        \ccVar is empty or equal to a single point, equivalently if
+        the number of support points is less than 2.}
 
 
 \ccImplementation
@@ -200,6 +200,16 @@ predicates take constant time, inserting a point might take up to
 linear time, but substantially less than computing the new smallest
 enclosing circle from scratch. For the member function \ccStyle{reserve}
 see the container \ccStyle{vector} from STL~\cite{STL}.
+
+We provide a specialization with homogeneous representation and
+numbertype \ccStyle{integer} that uses floating-point filter for the
+sign calculations in the predicates (see~\cite{MehlhornNaeher94}).
+This decreaes computation time by a factor of four compared to the
+generic implementation. If both \ccStyle{<CGAL/Integer.h>} and
+\ccStyle{<CGAL/Homogeneous.h>} are included before
+\ccStyle{CGAL/Min_circle_2.h>} then the specialization for
+\ccStyle{CGAL_Min_circle_2<CGAL_Homogeneous<integer>>} is used instead
+of the generic implementation.
 
 
 \ccExample
