@@ -425,7 +425,7 @@ class ConicHPA2
     bool operator == ( const ConicHPA2<_PT,_DA>& c) const
     {
         // find coefficient != 0
-        RT  factor1;
+        RT  factor1(0);
         if ( ! CGAL_NTS is_zero( r())) factor1 = r(); else
         if ( ! CGAL_NTS is_zero( s())) factor1 = s(); else
         if ( ! CGAL_NTS is_zero( t())) factor1 = t(); else
@@ -435,7 +435,7 @@ class ConicHPA2
         CGAL_kernel_assertion_msg( false, "all coefficients zero");
     
         // find coefficient != 0
-        RT  factor2;
+        RT  factor2(0);
         if ( ! CGAL_NTS is_zero( c.r())) factor2 = c.r(); else
         if ( ! CGAL_NTS is_zero( c.s())) factor2 = c.s(); else
         if ( ! CGAL_NTS is_zero( c.t())) factor2 = c.t(); else
