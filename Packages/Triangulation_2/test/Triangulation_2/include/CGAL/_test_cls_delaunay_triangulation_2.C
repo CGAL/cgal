@@ -56,7 +56,7 @@ _test_cls_delaunay_triangulation_2( const Triangulation & )
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Face_handle          Face_handle;
 
-  typedef pair<Face_handle,int>              Edge;
+  typedef std::pair<Face_handle,int>              Edge;
 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Face_iterator        Face_iterator;

@@ -81,7 +81,7 @@ _test_cls_triangulation_2( const Triangulation & )
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Face_handle          Face_handle;
 
-  typedef pair<Face_handle,int>              Edge;
+  typedef std::pair<Face_handle,int>              Edge;
 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Face_iterator        Face_iterator;
@@ -118,12 +118,12 @@ _test_cls_triangulation_2( const Triangulation & )
   int px=1, py=1;
   int qx=-1, qy=2;
 
-  list<Point> l; l.push_back(p0);
+  std::list<Point> l; l.push_back(p0);
   l.push_back(p1); l.push_back(p2); l.push_back(p3);
   l.push_back(p4); l.push_back(p5); l.push_back(p6);
   l.push_back(p7); l.push_back(p8); l.push_back(p9);
    
-  vector<Point> v; v.push_back(p0);
+  std::vector<Point> v; v.push_back(p0);
   v.push_back(p1); v.push_back(p2); v.push_back(p3);
   v.push_back(p4); v.push_back(p5); v.push_back(p6);
   v.push_back(p7); v.push_back(p8); v.push_back(p9);

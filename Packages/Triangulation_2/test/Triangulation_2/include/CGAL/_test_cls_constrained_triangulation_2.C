@@ -46,12 +46,12 @@ _test_cls_constrained_triangulation(const Triangulation &)
 
   typedef typename Cls::Vertex_handle         Vertex_handle;
   typedef typename Cls::Face_handle           Face_handle;
-  typedef pair<Face_handle,int>               Edge;
+  typedef std::pair<Face_handle,int>               Edge;
 
   typedef typename Cls::Locate_type           Locate_type;
 
-  typedef pair<Point,Point>                   Constraint ;
-  typedef list<Constraint>                    list_constraints;
+  typedef std::pair<Point,Point>                   Constraint ;
+  typedef std::list<Constraint>                    list_constraints;
   typedef typename list_constraints::iterator list_iterator;
 
 

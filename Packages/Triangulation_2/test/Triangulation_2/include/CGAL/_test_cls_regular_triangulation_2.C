@@ -27,7 +27,7 @@
 
 //#include <pair.h>
 
-//#include <vector.h>
+#include <vector.h>
 
 #include <CGAL/_test_fct_is_infinite.C>
 #include <CGAL/_test_triangulation_iterators.C>
@@ -70,7 +70,7 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Face_handle          Face_handle;
 
-  typedef pair<Face_handle,int>              Edge;
+  typedef std::pair<Face_handle,int>              Edge;
 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Face_iterator        Face_iterator;
@@ -108,12 +108,12 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   int px=1, py=1;
   int qx=-1, qy=2;
 
-  list<Point> l; l.push_back(p0);
+  std::list<Point> l; l.push_back(p0);
   l.push_back(p1); l.push_back(p2); l.push_back(p3);
   l.push_back(p4); l.push_back(p5); l.push_back(p6);
   l.push_back(p7); l.push_back(p8); l.push_back(p9);
    
-  vector<Point> v; v.push_back(p0);
+  std::vector<Point> v; v.push_back(p0);
   v.push_back(p1); v.push_back(p2); v.push_back(p3);
   v.push_back(p4); v.push_back(p5); v.push_back(p6);
   v.push_back(p7); v.push_back(p8); v.push_back(p9);
@@ -138,12 +138,12 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   WPoint wp15(p15,1);
 
 
-  list<WPoint> lw; lw.push_back(wp0);
+  std::list<WPoint> lw; lw.push_back(wp0);
   lw.push_back(wp1); lw.push_back(wp2); lw.push_back(wp3);
   lw.push_back(wp4); lw.push_back(wp5); lw.push_back(wp6);
   lw.push_back(wp7); lw.push_back(wp8); lw.push_back(wp9);
    
-  vector<WPoint> vw; vw.push_back(wp0);
+  std::vector<WPoint> vw; vw.push_back(wp0);
   vw.push_back(wp1); vw.push_back(wp2); vw.push_back(wp3);
   vw.push_back(wp4); vw.push_back(wp5); vw.push_back(wp6);
   vw.push_back(wp7); vw.push_back(wp8); vw.push_back(wp9);
