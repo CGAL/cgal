@@ -69,13 +69,13 @@ private:
 
 public:
   Segment_data();
-  Segment_data(Point_2 p_inp,Point_2 q_inp);
+  Segment_data(const Point_2& p_inp,const Point_2& q_inp);
   Segment_2 segment() const {return(Segment_2(p,q));}
   Point_2 source() const {return(p);}
   Point_2 target() const {return(q);}
-  inline void set_data(Point_2 inp_p,Point_2 inp_q);
+  inline void set_data(const Point_2& inp_p,const Point_2& inp_q);
   void determine_direction();
-  bool equal(Segment_2 s);
+  bool equal(const Segment_2& s);
   Segment_data(const Segment_data &other);
 };
 
@@ -104,14 +104,14 @@ private:
 public:
   template<class Out>
   void draw(Out &o) const;
-  Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
+  Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
   inline Point_2 get_center(bool int_output) const;
-  bool intersect_left(Segment_2 &seg) const;
-  bool intersect_right(Segment_2 &seg) const;
-  bool intersect_bot(Segment_2 &seg) const;
-  bool intersect_top(Segment_2 &seg) const;
+  bool intersect_left(const Segment_2& seg) const;
+  bool intersect_right(const Segment_2& seg) const;
+  bool intersect_bot(const Segment_2& seg) const;
+  bool intersect_top(const Segment_2& seg) const;
   bool intersect(Segment_data<Rep> &seg) const;
 
 };
@@ -211,17 +211,17 @@ public:
   const Polyline_const_iterator polylines_end();
 
   //! insert a segment
-  bool insert(Segment_2 seg);
+  bool insert(const Segment_2& seg);
 
   //! The STL standard member function for insertion.
-  bool push_back(Segment_2 seg);
+  bool push_back(const Segment_2& seg);
 
   //! Insertion of an iterator range.
   template < class InputIterator >
     int insert(InputIterator first, InputIterator last);
   
   //! Remove a segment
-  bool remove(Segment_2 seg);
+  bool remove(const Segment_2& seg);
 
   //! Remove all segments  .           .
   void clear();
@@ -268,12 +268,10 @@ private:
   bool int_output;
 
   void find_hot_pixels_and_create_kd_trees();
-
   void find_intersected_hot_pixels(Segment_data<Rep> &seg,
                          std::set<Hot_Pixel<Rep> *,
                          hot_pixel_dir_cmp<Rep> > &hot_pixels_intersected_set,
                          int &number_of_intersections);
-
   void reroute_sr(std::set<Hot_Pixel<Rep> *,hot_pixel_dir_cmp<Rep> >
                   &inp_hot_pixels_intersected_set,std::list<Point_2>
                   &seg_output);
@@ -290,7 +288,7 @@ private:
 template<class Rep_>
 Segment_data<Rep_>::Segment_data() {}
 template<class Rep_>
-Segment_data<Rep_>::Segment_data(Point_2 p_inp,Point_2 q_inp) :
+Segment_data<Rep_>::Segment_data(const Point_2& p_inp,const Point_2& q_inp) :
                     p(p_inp), q(q_inp) {}
 
 // cctor
@@ -302,14 +300,14 @@ Segment_data<Rep_>::Segment_data(const Segment_data& other)
 }
 
 template<class Rep_>
-inline void Segment_data<Rep_>::set_data(Point_2 inp_p,Point_2 inp_q)
+inline void Segment_data<Rep_>::set_data(const Point_2& inp_p,const Point_2& inp_q)
 {
   p = inp_p;
   q = inp_q;
 }
 
 template<class Rep_>
-bool Segment_data<Rep_>::equal(Segment_2 s)
+bool Segment_data<Rep_>::equal(const Segment_2& s)
 {
   return(s.source() == p && s.target() == q);
 }
@@ -355,7 +353,7 @@ template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
 
 // intersection pixel
 template<class Rep_>
-Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
+Hot_Pixel<Rep_>::Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
     NT x,y;
@@ -412,7 +410,7 @@ inline typename Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center(
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
+bool Hot_Pixel<Rep_>::intersect_left(const Segment_2& seg) const
   {
     Object result;    
     Point_2 p;
@@ -437,7 +435,7 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
 
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
+bool Hot_Pixel<Rep_>::intersect_right(const Segment_2& seg) const
   {
     Object result;    
     Point_2 p;
@@ -485,7 +483,7 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
+bool Hot_Pixel<Rep_>::intersect_bot(const Segment_2& seg) const
   {
     Object result;
     Point_2 p;
@@ -511,7 +509,7 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
   }
 
 template<class Rep_>
-bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
+bool Hot_Pixel<Rep_>::intersect_top(const Segment_2& seg) const
   {
     Object result;
     Point_2 p;
@@ -815,7 +813,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
 
 template<class Rep_>
 void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
-{
+  {
     erase_hp = false;
     wheteher_to_do_isr = other.wheteher_to_do_isr;
     int_output = other.int_output;
@@ -826,7 +824,7 @@ void Snap_rounding_2<Rep_>::copy(const Snap_rounding_2<Rep_>& other)
     seg_list = other.seg_list;
     seg_2_list = other.seg_2_list;
 
-}
+  }
 
 // cctor
 template<class Rep_>
@@ -863,7 +861,7 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(
   }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::insert(Segment_2 seg)
+bool Snap_rounding_2<Rep_>::insert(const Segment_2& seg)
   {
     need_sr = true;
     seg_list.push_back(Segment_data<Rep_>(
@@ -877,7 +875,7 @@ bool Snap_rounding_2<Rep_>::insert(Segment_2 seg)
   }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::push_back(Segment_2 seg)
+bool Snap_rounding_2<Rep_>::push_back(const Segment_2& seg)
   {
     return(insert(seg));
   }
@@ -926,7 +924,7 @@ const typename Snap_rounding_2<Rep_>::Polyline_const_iterator
 }
 
 template<class Rep_>
-bool Snap_rounding_2<Rep_>::remove(Segment_2 seg)
+bool Snap_rounding_2<Rep_>::remove(const Segment_2& seg)
   {
     need_sr = true;
     bool found = false;
