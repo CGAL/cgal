@@ -1,3 +1,24 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : demo/Qt_widget/Max_k-gon/max_k-gon.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu
+// release       : 
+// release_date  : 
+//
+// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+//
+// ============================================================================
+
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -174,7 +195,7 @@ public:
 
   //the new tools toolbar
   setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this, list_of_points);	
+  newtoolbar = new CGAL::Tools_toolbar(&win, this, &list_of_points);	
   //the standard toolbar
   stoolbar = new CGAL::Standard_toolbar (&win, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);

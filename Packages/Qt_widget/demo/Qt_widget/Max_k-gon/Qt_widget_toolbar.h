@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_Window_toolbar.h
-// package       : QT_window
+// file          : demo/Qt_widget/Max_k-gon/Qt_widget_toolbar.h
+// package       : Qt_widget
 // author(s)     : Ursu Radu
 // release       : 
 // release_date  : 
@@ -29,6 +29,7 @@
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include "Qt_widget_move_list_point.h"
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -44,7 +45,7 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> &l1);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l1);
   ~Tools_toolbar()
   {
     delete maintoolbar;
@@ -59,6 +60,7 @@ private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
   void pointtool();
+  void move_deletetool();
   void notool();
   
   void toggle_button();
@@ -73,7 +75,8 @@ private:
   int			nr_of_buttons;
 
 
-  CGAL::Qt_widget_get_point<Rp>	    pointbut;
+  CGAL::Qt_widget_get_point<Rp>	      pointbut;
+  CGAL::Qt_widget_move_list_point<Rp> *move_deletebut;
 };//end class
 
 };//end namespace
