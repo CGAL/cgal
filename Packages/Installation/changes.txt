@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: EXTRA_OBJECTS with .o suffix for cygwin/gcc.
+GLOB: EXE_OPT=.exe for cygwin/gcc.
+GLOB: Changed order ob libpath and link directives to please Borland.
 GLOB: Added LIB_SUFFIX, START_LD_OPT, LIBPATH_OPT and LIB_OPT to include
 GLOB:  makefile.
 GLOB: Added CGAL_GEOWIN_LDFLAGS.
