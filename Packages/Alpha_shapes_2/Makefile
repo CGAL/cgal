@@ -5,7 +5,7 @@ Package=Alpha_shapes_2
 
 .PHONY: doc package filters test example submit version rtag
 
-WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
+WWW_base= /net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
