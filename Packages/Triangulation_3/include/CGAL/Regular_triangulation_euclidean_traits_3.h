@@ -149,7 +149,10 @@ public:
   Sign operator() ( const Weighted_point_3 & p,
 		    const Weighted_point_3 & q) const
   {
-    return CGAL_NTS sign( p.weight() - q.weight());
+    return CGAL_NTS sign( CGAL_NTS square(p.x()-q.x()) +
+			  CGAL_NTS square(p.y()-q.y()) +
+			  CGAL_NTS square(p.z()-q.z()) +
+			  p.weight() - q.weight());
   }
 
 };

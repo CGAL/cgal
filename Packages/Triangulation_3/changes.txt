@@ -1,3 +1,5 @@
+1 Mars 2005 Mariette
+- fixed  operator() for two points in In_smallest_orthogonal_sphere
 
 1 Mars 2005 Mariette
 - added operator() for two points in In_smallest_orthogonal_sphere
