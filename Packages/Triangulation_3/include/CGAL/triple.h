@@ -23,11 +23,16 @@
 #define CGAL_TRIPLE_H
 
 #include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class T1, class T2, class T3>
 struct triple 
 {
+  typedef T1 first_type;
+  typedef T2 second_type;
+  typedef T3 third_type;
+
   T1 first;
   T2 second;
   T3 third;

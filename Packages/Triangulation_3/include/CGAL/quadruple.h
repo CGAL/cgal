@@ -23,11 +23,17 @@
 #define CGAL_QUADRUPLE_H
 
 #include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class T1, class T2, class T3, class T4>
 struct quadruple 
 {
+  typedef T1 first_type;
+  typedef T2 second_type;
+  typedef T3 third_type;
+  typedef T4 fourth_type;
+
   T1 first;
   T2 second;
   T3 third;
