@@ -1,0 +1,67 @@
+\begin{ccRefClass}{Kernel_archetype}
+
+%\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccc{CGAL::Kernel_archetype} is a concept archetype (minimal model) for the CGAL kernel concept.
+It provides all functionality required by the CGAL kernel concept, but nothing more.
+It can be used for testing successful compilation of packages of the basic library with a minimal
+model. Deprecated kernel functionality is not supported. All geometrical types (like the 2d/3d point or segment types)
+of \ccc{CGAL::Kernel_archetype} have
+copy constructors, default constructors and an assignment operator, and nothing else.
+Comparison operators are by default not supported, but can be switched on by defining the macro
+\ccc{CGAL_CONCEPT_ARCHETYPE_ALLOW_COMPARISONS}.
+
+The geometrical types of the concept archetype encapsulate no data members, so runtime checks with the archetype
+are not very useful (\ccc{CGAL::Kernel_archetype} is only meant for compilation checks with a minimal model in the testsuites
+of CGAL packages).
+
+The package supports the two- and three-dimensional part of the CGAL kernel concept. The d-dimensional
+part is not supported.
+
+\ccc{CGAL::Kernel_archetype} normally offers the full functionality (all types, functors and constructions
+of a CGAL kernel model), but it is possible to restrict the interface. This can be useful
+for testing packages that require only a very small subset of the functionality offered
+by CGAL kernel models.
+If you want to do this, you have to define the macro \ccc{CGAL_CA_LIMITED_INTERFACE} 
+(before the inclusion of {\em CGAL/Kernel\_archetype.h}) to switch on the interface limitation. 
+Now you have to tell the kernel archetype the types it has to provide for the specific package.
+
+For every type you have to define a macro.
+The name of the macro is \ccc{CGAL_CA_NAME_OF_KERNEL_TYPE}, where \ccc{NAME_OF_KERNEL_TYPE} is the name
+of the kernel type (written in capitals) that has to be provided by the kernel archetype for a specific package.
+If, for example, a package only needs type definitions for \ccc{Point_2} and \ccc{Orientation_2}, you would
+define \ccc{CGAL_CA_LIMITED_INTERFACE}, \ccc{CGAL_CA_POINT_2} and \ccc{CGAL_CA_ORIENTATION_2} .
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccInclude{CGAL/Kernel_archetype.h}
+
+\ccCreation
+\ccCreationVariable{ka}
+
+\ccConstructor{Kernel_archetype();}{Default constructor.}
+
+\ccTypes
+
+We provide all type definitions that must be provided by a CGAL kernel model.
+See the CGAL kernel concept manual pages for details.
+Deprecated functionality is not supported. You can restrict the interface
+by defining macros (see the definition for details).
+
+\ccOperations
+
+For each of the function objects of the kernel archetype, there is a member function
+that requires no arguments and returns an instance of that function object.
+The name of the member function is the uncapitalized name of the type
+returned with the suffix \ccc{_object} appended.
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+
+\end{ccRefClass}

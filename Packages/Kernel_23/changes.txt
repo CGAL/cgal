@@ -1,3 +1,8 @@
+1.15 (15 January 2003)
+- docs added for the kernel archetype
+- some names changed for the kernel archetype
+- example added
+
 1.14 (13 January 2003)
 - small change in test suite
 
