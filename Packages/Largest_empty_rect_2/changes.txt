@@ -1,3 +1,6 @@
+Version 1.47 (09 February 2004) [rursu]
+- Updated headers in examples
+
 version 1.46 (16 October 2003) [af]
 - Removed \bibliography and \bibliographystyle
 - Renamed Largest_empty_iso_rectangle_2.bib to cgal.bib
