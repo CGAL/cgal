@@ -48,7 +48,7 @@ public:
   // copy constructor duplicates vertices and cells
   CGAL_Delaunay_triangulation_3(const CGAL_Delaunay_triangulation_3<Gt,Tds> &tr)
     : CGAL_Triangulation_3<Gt,Tds>(tr)
-    { CGAL_triangulation_postcondition( is_valid() );  }
+    { CGAL_triangulation_postcondition( is_valid(true) );  }
   
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
