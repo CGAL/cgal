@@ -24,6 +24,8 @@
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Twotuple.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,28 +67,182 @@ public:
   PointC2(const FT &x, const FT &y);
   PointC2(const FT &hx, const FT &hy, const FT &hw);
   PointC2(const Vector_2 &v);
-  ~PointC2();
+  ~PointC2() {}
 
-  bool    operator==(const Self &p) const;
-  bool    operator!=(const Self &p) const;
- 
-  FT      x() const;
-  FT      y() const;
-  FT      cartesian(int i) const;
-  FT      operator[](int i) const;
+  FT x() const
+  {
+      return ptr->e0;
+  }
+  FT y() const
+  {
+      return ptr->e1;
+  }
 
-  FT      hx() const;
-  FT      hy() const;
-  FT      hw() const;
-  FT      homogeneous(int i) const;
+  FT hx() const
+  {
+      return x();
+  }
+  FT hy() const
+  {
+      return y();
+  }
+  FT hw() const
+  {
+      return FT(1);
+  }
 
-  int     dimension() const;
-  Bbox_2  bbox() const;
+  FT cartesian(int i) const;
+  FT homogeneous(int i) const;
+  FT operator[](int i) const
+  {
+      return cartesian(i);
+  }
 
+  int dimension() const
+  {
+      return 2;
+  }
+
+  bool operator==(const Self &p) const
+  {
+      return equal_xy(*this, p);
+  }
+  bool operator!=(const Self &p) const
+  {
+      return !(*this == p);
+  }
+
+  Bbox_2 bbox() const;
 
   Self transform(const Aff_transformation_2 &) const;
-
 };
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2()
+{
+  new ( static_cast< void*>(ptr)) Twotuple<FT>();
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const Origin &)
+{
+   new ( static_cast< void*>(ptr)) Twotuple<FT>(FT(0), FT(0));
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const PointC2<R CGAL_CTAG> &p)
+  : Handle_for<Twotuple<typename R::FT> >(p)
+{}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::Vector_2 &v)
+  : Handle_for<Twotuple<typename R::FT> > (v)
+{}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &hx,
+                              const typename PointC2<R CGAL_CTAG>::FT &hy,
+                              const typename PointC2<R CGAL_CTAG>::FT &hw)
+{
+  if( hw != FT(1))
+    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx/hw, hy/hw);
+  else
+    new ( static_cast< void*>(ptr)) Twotuple<FT>(hx, hy);
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+PointC2<R CGAL_CTAG>::PointC2(const typename PointC2<R CGAL_CTAG>::FT &x,
+                              const typename PointC2<R CGAL_CTAG>::FT &y)
+{
+  new ( static_cast< void*>(ptr)) Twotuple<FT>(x, y);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename PointC2<R CGAL_CTAG>::FT
+PointC2<R CGAL_CTAG>::cartesian(int i) const
+{
+  CGAL_kernel_precondition( (i == 0) || (i == 1) );
+  return (i == 0) ? x() : y();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename PointC2<R CGAL_CTAG>::FT
+PointC2<R CGAL_CTAG>::homogeneous(int i) const
+{
+  CGAL_kernel_precondition( (i>=0) && (i<=2) );
+  if (i<2)
+    return cartesian(i);
+  return FT(1);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+PointC2<R CGAL_CTAG>
+PointC2<R CGAL_CTAG>::
+transform( const typename PointC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+{
+  return t.transform(*this);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+Bbox_2
+PointC2<R CGAL_CTAG>::bbox() const
+{
+  double bx = CGAL::to_double(x());
+  double by = CGAL::to_double(y());
+  return Bbox_2(bx,by, bx,by);
+}
+
+#ifndef CGAL_NO_OSTREAM_INSERT_POINTC2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const PointC2<R CGAL_CTAG> &p)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << p.x() << ' ' << p.y();
+    case IO::BINARY :
+        write(os, p.x());
+        write(os, p.y());
+        return os;
+    default:
+        return os << "PointC2(" << p.x() << ", " << p.y() << ')';
+    }
+}
+#endif // CGAL_NO_OSTREAM_INSERT_POINTC2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTC2
+template < class R >
+std::istream &
+operator>>(std::istream &is, PointC2<R CGAL_CTAG> &p)
+{
+    typename PointC2<R CGAL_CTAG>::FT x, y;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> x >> y;
+        break;
+    case IO::BINARY :
+        read(is, x);
+        read(is, y);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    p = PointC2<R CGAL_CTAG>(x, y);
+    return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINTC2
 
 CGAL_END_NAMESPACE
 

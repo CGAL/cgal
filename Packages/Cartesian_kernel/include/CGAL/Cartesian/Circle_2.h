@@ -24,6 +24,10 @@
 
 #include <CGAL/Cartesian/redefine_names_2.h>
 #include <CGAL/Cartesian/Circle_rep_2.h>
+#include <CGAL/Cartesian/constructions_on_points_2.h>
+#include <CGAL/Cartesian/constructions_on_circles_2.h>
+#include <CGAL/Cartesian/distance_computations_2.h>
+#include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,7 +71,7 @@ public:
   CircleC2(const Point_2 &p, const Point_2 &q,
            const Orientation &orient = COUNTERCLOCKWISE); // And this too?
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r);
-  ~CircleC2();
+  ~CircleC2() {}
 
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
@@ -99,10 +103,316 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+CircleC2<R CGAL_CTAG>::CircleC2()
+{
+  new ( static_cast< void*>(ptr)) Circle_repC2<R>();
+}
 
-#ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#include <CGAL/Cartesian/Circle_2.C>
-#endif 
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+CircleC2<R CGAL_CTAG>::CircleC2(const CircleC2<R CGAL_CTAG> &c)
+  : Handle_for< Circle_repC2<R> > (c)
+{}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+CircleC2<R CGAL_CTAG>::
+CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
+         const typename CircleC2<R CGAL_CTAG>::FT &squared_radius,
+         const Orientation &orient)
+{
+  CGAL_kernel_precondition( ( squared_radius >= FT(0) ) &&
+                            ( orient    != COLLINEAR) );
+
+  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
+						  squared_radius, 
+						  orient);
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+CircleC2<R CGAL_CTAG>::
+CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &center,
+         const Orientation &orient)
+{
+  CGAL_kernel_precondition( orient != COLLINEAR );
+
+  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, FT(0), orient);
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CircleC2<R CGAL_CTAG>::
+CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
+         const typename CircleC2<R CGAL_CTAG>::Point_2 &q,
+         const Orientation &orient)
+{
+  CGAL_kernel_precondition( orient != COLLINEAR);
+
+  if ( p != q) {
+    Point_2 center = midpoint(p,q);
+    FT      squared_radius = squared_distance(p,center);
+
+    new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
+						     squared_radius, 
+						     orient);
+  } else
+    new ( static_cast< void*>(ptr)) Circle_repC2<R>(p, FT(0), orient);
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_MEDIUM_INLINE
+CircleC2<R CGAL_CTAG>::
+CircleC2(const typename CircleC2<R CGAL_CTAG>::Point_2 &p,
+         const typename CircleC2<R CGAL_CTAG>::Point_2 &q,
+         const typename CircleC2<R CGAL_CTAG>::Point_2 &r)
+{
+  Orientation orient = CGAL::orientation(p,q,r);
+  CGAL_kernel_precondition( orient != COLLINEAR);
+
+  Point_2 center = circumcenter(p,q,r);
+  FT      squared_radius = squared_distance(p,center);
+
+  new ( static_cast< void*>(ptr)) Circle_repC2<R>(center, 
+						  squared_radius, 
+						  orient);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+CircleC2<R CGAL_CTAG>::operator==(const CircleC2<R CGAL_CTAG> &c) const
+{
+  return center() == c.center() &&
+         squared_radius() == c.squared_radius() &&
+         orientation() == c.orientation();
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::operator!=(const CircleC2<R CGAL_CTAG> &c) const
+{
+  return !(*this == c);
+}
+
+template < class R >
+inline
+CircleC2<R CGAL_CTAG>::Point_2
+CircleC2<R CGAL_CTAG>::center() const
+{
+ return ptr->center;
+}
+
+template < class R >
+inline
+CircleC2<R CGAL_CTAG>::FT
+CircleC2<R CGAL_CTAG>::squared_radius() const
+{
+ return ptr->squared_radius;
+}
+
+template < class R >
+inline
+Orientation
+CircleC2<R CGAL_CTAG>::orientation() const
+{
+ return ptr->orient;
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+Oriented_side
+CircleC2<R CGAL_CTAG>::
+oriented_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return Oriented_side(bounded_side(p) * orientation());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+Bounded_side
+CircleC2<R CGAL_CTAG>::
+bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return Bounded_side(CGAL_NTS compare(squared_radius(),
+                                       squared_distance(center(),p)));
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_boundary(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return squared_distance(center(),p) == squared_radius();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_negative_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  if (orientation() == COUNTERCLOCKWISE)
+    return has_on_unbounded_side(p);
+  return has_on_bounded_side(p);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_positive_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  if (orientation() == COUNTERCLOCKWISE)
+    return has_on_bounded_side(p);
+  return has_on_unbounded_side(p);
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return squared_distance(center(),p) < squared_radius();
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_unbounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return squared_distance(center(),p) > squared_radius();
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::is_degenerate() const
+{
+  return CGAL_NTS is_zero(squared_radius());
+}
+
+template < class R >
+inline
+CircleC2<R CGAL_CTAG>
+CircleC2<R CGAL_CTAG>::opposite() const
+{
+  return CircleC2<R CGAL_CTAG>(center(),
+                               squared_radius(),
+                               CGAL::opposite(orientation()) );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+Bbox_2
+CircleC2<R CGAL_CTAG>::bbox() const
+{
+  // Robustness problems.
+  double cx = CGAL::to_double(center().x());
+  double cy = CGAL::to_double(center().y());
+  double radius = CGAL::sqrt(CGAL::to_double(squared_radius()));
+
+  return Bbox_2(cx - radius, cy - radius, cx + radius, cy + radius);
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+CircleC2<R CGAL_CTAG>
+CircleC2<R CGAL_CTAG>::orthogonal_transform
+  (const typename CircleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+{
+  Vector_2 vec(FT(1), FT(0) );   // unit vector
+  vec = vec.transform(t);             // transformed
+  FT sq_scale = vec.squared_length();       // squared scaling factor
+
+  return CircleC2<R CGAL_CTAG>(t.transform(center()),
+                               sq_scale * squared_radius(),
+                               t.is_even() ? orientation()
+                                           : CGAL::opposite(orientation()));
+}
+
+/*
+template < class R >
+inline
+EllipseC2<CircleC2<R CGAL_CTAG>::FT>
+CircleC2<R CGAL_CTAG>::
+transform(const Aff_transformationC2<CircleC2<R CGAL_CTAG>::FT> &t) const
+{
+  return CircleC2<R CGAL_CTAG>(t.transform(center()),
+                               squared_radius(),
+                               orientation());
+}
+*/
+
+#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLEC2
+template < class R >
+CGAL_KERNEL_INLINE
+std::ostream &
+operator<<(std::ostream &os, const CircleC2<R CGAL_CTAG> &c)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        os << c.center() << ' ' << c.squared_radius() << ' '
+           << (int)c.orientation();
+        break;
+    case IO::BINARY :
+        os << c.center();
+        write(os, c.squared_radius());
+        write(os, (int)c.orientation());
+        break;
+    default:
+        os << "CircleC2(" << c.center() <<  ", " << c.squared_radius() ;
+        switch (c.orientation()) {
+        case CLOCKWISE:
+            os << ", clockwise)";
+            break;
+        case COUNTERCLOCKWISE:
+            os << ", counterclockwise)";
+            break;
+        default:
+            os << ", collinear)";
+            break;
+        }
+        break;
+    }
+    return os;
+}
+#endif // CGAL_NO_OSTREAM_INSERT_CIRCLEC2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLEC2
+template < class R >
+CGAL_KERNEL_INLINE
+std::istream&
+operator>>(std::istream &is, CircleC2<R CGAL_CTAG> &c)
+{
+    typename CircleC2<R CGAL_CTAG>::Point_2 center;
+    typename CircleC2<R CGAL_CTAG>::FT squared_radius;
+    int o;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> center >> squared_radius >> o;
+        break;
+    case IO::BINARY :
+        is >> center;
+        read(is, squared_radius);
+        is >> o;
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    c = CircleC2<R CGAL_CTAG>(center, squared_radius, (Orientation)o);
+    return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEC2
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_CIRCLE_2_H

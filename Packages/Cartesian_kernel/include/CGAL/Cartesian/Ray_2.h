@@ -63,15 +63,21 @@ public:
   RayC2(const Self &r);
   RayC2(const Point_2 &sp, const Point_2 &secondp);
   RayC2(const Point_2 &sp, const Direction_2 &d);
-  ~RayC2();
+  ~RayC2() {}
 
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
 
   Point_2     start() const;
-  Point_2     source() const;
+  Point_2     source() const
+  {
+      return ptr->e0;
+  }
   Point_2     point(int i) const;
-  Point_2     second_point() const;
+  Point_2     second_point() const
+  {
+      return ptr->e1;
+  }
 
   Direction_2 direction() const;
   Line_2      supporting_line() const;
@@ -87,10 +93,189 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+RayC2<R CGAL_CTAG>::RayC2()
+{
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>();
+}
 
-#ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#include <CGAL/Cartesian/Ray_2.C>
-#endif 
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+RayC2<R CGAL_CTAG>::RayC2(const RayC2<R CGAL_CTAG>  &r)
+  : Handle_for<Twotuple<typename R::Point_2> >(r)
+{}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
+                          const typename RayC2<R CGAL_CTAG>::Point_2 &secondp)
+{
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, secondp);
+}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+RayC2<R CGAL_CTAG>::RayC2(const typename RayC2<R CGAL_CTAG>::Point_2 &sp,
+                          const typename RayC2<R CGAL_CTAG>::Direction_2 &d)
+{
+  new ( static_cast< void*>(ptr)) Twotuple<Point_2>(sp, sp + d.to_vector());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+RayC2<R CGAL_CTAG>::operator==(const RayC2<R CGAL_CTAG> &r) const
+{
+  return source() == r.source() && direction() == r.direction();
+}
+
+template < class R >
+inline
+bool
+RayC2<R CGAL_CTAG>::operator!=(const RayC2<R CGAL_CTAG> &r) const
+{
+  return !(*this == r);
+}
+
+template < class R >
+inline
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::start() const
+{
+  return source();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+typename RayC2<R CGAL_CTAG>::Point_2
+RayC2<R CGAL_CTAG>::point(int i) const
+{
+  CGAL_kernel_precondition( i >= 0 );
+  if (i == 0) return source();
+  if (i == 1) return second_point();
+  return source() + (second_point() - source()) * FT(i);
+}
+
+template < class R >
+inline
+typename RayC2<R CGAL_CTAG>::Direction_2
+RayC2<R CGAL_CTAG>::direction() const
+{
+  return Direction_2( second_point() - source() );
+}
+
+template < class R >
+inline
+typename RayC2<R CGAL_CTAG>::Line_2
+RayC2<R CGAL_CTAG>::supporting_line() const
+{
+  return Line_2(*this);
+}
+
+template < class R >
+inline
+RayC2<R CGAL_CTAG>
+RayC2<R CGAL_CTAG>::opposite() const
+{
+  return RayC2<R CGAL_CTAG>( source(), - direction() );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+RayC2<R CGAL_CTAG>
+RayC2<R CGAL_CTAG>::
+transform(const typename RayC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
+{
+  return RayC2<R CGAL_CTAG>(t.transform(source()), 
+			    t.transform(second_point()));
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool RayC2<R CGAL_CTAG>::is_horizontal() const
+{
+  return y_equal(source(), second_point());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool RayC2<R CGAL_CTAG>::is_vertical() const
+{
+  return x_equal(source(), second_point());
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool RayC2<R CGAL_CTAG>::is_degenerate() const
+{
+  return source() == second_point();
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+RayC2<R CGAL_CTAG>::has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
+{
+  return p == source()
+      || collinear(source(), p, second_point())
+      && Direction_2(p - source()) == direction();
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+bool
+RayC2<R CGAL_CTAG>::
+collinear_has_on(const typename RayC2<R CGAL_CTAG>::Point_2 &p) const
+{
+    switch(compare_x(source(), second_point())){
+    case SMALLER:
+        return compare_x(source(), p) != LARGER;
+    case LARGER:
+        return compare_x(p, source()) != LARGER;
+    default:
+        switch(compare_y(source(), second_point())){
+        case SMALLER:
+            return compare_y(source(), p) != LARGER;
+        case LARGER:
+            return compare_y(p, source()) != LARGER;
+        default:
+            return true; // p == source()
+        }
+    }
+}
+
+#ifndef CGAL_NO_OSTREAM_INSERT_RAYC2
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const RayC2<R CGAL_CTAG> &r)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << r.source() << ' ' << r.direction();
+    case IO::BINARY :
+        return os << r.source() << r.direction();
+    default:
+        return os << "RayC2(" << r.source() <<  ", " << r.direction() << ")";
+    }
+}
+#endif // CGAL_NO_OSTREAM_INSERT_RAYC2
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC2
+template < class R >
+std::istream &
+operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
+{
+    typename RayC2<R CGAL_CTAG>::Point_2 p;
+    typename RayC2<R CGAL_CTAG>::Direction_2 d;
+
+    is >> p >> d;
+
+    r = RayC2<R CGAL_CTAG>(p, d);
+    return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_RAY_2_H
