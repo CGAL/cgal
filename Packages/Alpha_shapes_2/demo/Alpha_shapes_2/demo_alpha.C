@@ -306,7 +306,8 @@ file_input(std::vector<Point>& V,
 
   if(is.fail())
     {
-      std::cerr << "unable to open " << opt.finname << " for input" << std::endl;
+      std::cerr << "unable to open " << opt.finname 
+		<< " for input" << std::endl;
       return false;
     }
 
@@ -669,14 +670,16 @@ int main(int argc,  char* argv[])
 	}
 
       std::cout << "alpha_value :" << A.get_alpha() << std::endl;
-      std::cout << "display Alpha Shape for alpha_index = " << alpha_index << std::endl;
+      std::cout << "display Alpha Shape for alpha_index = " 
+		<< alpha_index << std::endl;
       W << A;
      
       W.flush_buffer();
       W.stop_buffering();
 
 #ifdef DEBUG
-      std::cout << "nb components :" << A.number_solid_components() << std::endl;
+      std::cout << "nb components :" 
+		<< A.number_solid_components() << std::endl;
 #endif // DEBUG
     }
   return 0;

@@ -38,9 +38,9 @@ class Alpha_shape_vertex_base_2 : public Vb
   typedef Vb                                         Base;
   typedef typename Vb::Triangulation_data_structure  TDS;
 public:
-  typedef TDS                                        Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle                Vertex_handle;
-  typedef typename TDS::Face_handle                  Face_handle;
+  typedef TDS                             Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle     Vertex_handle;
+  typedef typename TDS::Face_handle       Face_handle;
 
   typedef typename Gt::Coord_type                Coord_type;
   typedef std::pair< Coord_type, Coord_type >    Interval2;
