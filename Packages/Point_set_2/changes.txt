@@ -1,3 +1,6 @@
+10 February 2004 Radu Ursu
+-Updated headers in examples
+
 2.3.15 (25 Nov 2003) [af]
 - Replace RIGHTTURN with RIGHT_TURN
 

@@ -1,3 +1,6 @@
+10 February 2004 Radu Ursu
+-Updated headers in examples
+
 4.35 (19 Jan 2004) [af]
 - Added bbox_2 functor to the doc, and replaced .bbox() function call by functor
 
