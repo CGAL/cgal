@@ -1,3 +1,6 @@
+22 June Sylvain Pion
+- Move code in order to please g++ 3.4.
+
 17 April Andreas Fabri
 - Global functions call functor call internal global function
 
