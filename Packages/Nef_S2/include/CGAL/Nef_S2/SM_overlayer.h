@@ -879,7 +879,7 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 template <typename Map>
 void SM_overlayer<Map>::
 create(const Sphere_circle& c) const
-{ SHalfloop_handle l1 = new_sloop_pair();
+{ SHalfloop_handle l1 = new_shalfloop_pair();
   SHalfloop_handle l2 = twin(l1);
   circle(l1) = c; circle(l2) = c.opposite();
   SFace_handle f1 = new_sface();

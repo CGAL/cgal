@@ -40,6 +40,8 @@ class SM_io_parser : public Decorator_
   typedef typename Decorator_traits::SHalfedge_around_svertex_circulator
                                      SHalfedge_around_svertex_circulator;
 
+  typedef typename Base::Constructor_parameter Constructor_parameter;
+
   std::istream& in; std::ostream& out;
   bool verbose;
   // a reference to the IO object
@@ -64,7 +66,6 @@ class SM_io_parser : public Decorator_
   bool read_edge(SHalfedge_handle);
   bool read_loop(SHalfloop_handle);
   bool read_face(SFace_handle);
-  bool read_init_points() const;
 
   void debug_vertex(SVertex_handle) const;
   void debug_edge(SHalfedge_handle) const;
@@ -72,11 +73,11 @@ class SM_io_parser : public Decorator_
 
 public:
 /*{\Mcreation 3}*/
-SM_io_parser(std::istream& is, const Base& D);
+SM_io_parser(std::istream& is, Constructor_parameter D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to input |H| from |is|.}*/
 
-SM_io_parser(std::ostream& os, const Base& D);
+SM_io_parser(std::ostream& os, Constructor_parameter D);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output |H| to |os|.}*/
 
@@ -99,7 +100,7 @@ std::string index(SHalfloop_handle l) const
 std::string index(SFace_handle f) const 
 { return FI(f,verbose); }
 
-static void dump(const Decorator_& D, std::ostream& os = cerr);
+static void dump(Constructor_parameter D, std::ostream& os = std::cerr);
 /*{\Mstatic prints the plane map decorated by |D| to |os|.}*/
 
 }; // SM_io_parser<Decorator_>
@@ -107,14 +108,14 @@ static void dump(const Decorator_& D, std::ostream& os = cerr);
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
-SM_io_parser(std::istream& iin, const Decorator_& H) :
+SM_io_parser(std::istream& iin, Constructor_parameter H) :
   Base(H), in(iin), out(std::cout), verbose(0), 
   vn(0), en(0), fn(0), ln(0)
 { clear(); }
 
 template <typename Decorator_>
 SM_io_parser<Decorator_>::
-SM_io_parser(std::ostream& iout, const Decorator_& D) 
+SM_io_parser(std::ostream& iout, Constructor_parameter D) 
   : Base(D), in(std::cin), out(iout), 
   VI(svertices_begin(),svertices_end(),'v'),
   EI(shalfedges_begin(),shalfedges_end(),'e'),
@@ -295,17 +296,6 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
 }
 
 template <typename Decorator_>
-bool SM_io_parser<Decorator_>::read_init_points() const
-{ Mark m_neg, m_pos;
-  if ( ! (in >> m_neg >> m_pos) ) return false;
-  mark_of_halfsphere(-1) = m_neg;
-  mark_of_halfsphere(+1) = m_pos;
-  return true;
-}
-
-
-
-template <typename Decorator_>
 void SM_io_parser<Decorator_>::print() const
 {
   out << "Sphere_map_2" << std::endl;
@@ -324,7 +314,7 @@ void SM_io_parser<Decorator_>::print() const
   CGAL_forall_shalfedges(eit,*this) print_edge(eit);
   if (verbose) 
     out << "/* index { twin, face, mark, circle } */" << std::endl;
-  if ( has_sloop() ) 
+  if ( has_shalfloop() ) 
   { print_loop(shalfloop()); print_loop(twin(shalfloop())); }
   if (verbose) 
     out << "/* index { fclist, ivlist, loop, mark } */" << std::endl;
@@ -374,8 +364,6 @@ void SM_io_parser<Decorator_>::read()
     if (!read_face(SFace_of[i]))
       CGAL_assertion_msg(0,"SM_io_parser::read: error in face line");
   }
-  if (!read_init_points())
-    CGAL_assertion_msg(0,"SM_io_parser::read: error in init point line");
 }
 
 //-----------------------------------------------------------------------------
@@ -422,7 +410,7 @@ void SM_io_parser<Decorator_>::debug() const
     debug_vertex(vit);
     CGAL_For_all(hcirc,hend) { out << "  "; debug_edge(hcirc); }
   }
-  if ( has_sloop() ) 
+  if ( has_shalfloop() ) 
   { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
   out << std::endl;
 }
@@ -449,7 +437,7 @@ void SM_io_parser<Decorator_>::print_faces() const
 }
 
 template <typename Decorator_>
-void SM_io_parser<Decorator_>::dump(const Decorator_& D, std::ostream& os)
+void SM_io_parser<Decorator_>::dump(const Constructor_parameter D, std::ostream& os)
 { SM_io_parser<Decorator_> Out(os,D);
   Out.print();
   Out.print_faces();

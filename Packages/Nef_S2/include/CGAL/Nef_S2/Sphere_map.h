@@ -37,14 +37,14 @@ CGAL_BEGIN_NAMESPACE
 template <typename HE>
 class move_edge_around_svertex {
 public:
-  void forward(HE& e) const  { e = (e->sprev_->twin_); }
-  void backward(HE& e) const { e = (e->twin_->snext_); }
+  void forward(HE& e) const  { e = (e->sprev()->twin()); }
+  void backward(HE& e) const { e = (e->twin()->snext()); }
 };
 
 template <typename HE>
 struct move_edge_around_sface {
-  void forward(HE& e)  const { e = (e->snext_); }
-  void backward(HE& e) const { e = (e->sprev_); }
+  void forward(HE& e)  const { e = (e->snext()); }
+  void backward(HE& e) const { e = (e->sprev()); }
 };
 
 /*{\Manpage {Sphere_map}{Kernel}{Sphere Maps}{M}}*/
@@ -392,13 +392,13 @@ public:
   SVertex_handle new_svertex(const Sphere_point& p, 
 			   Mark m = Mark())
   /*{\Mop returns a new vertex at point |p| marked by |m|.}*/
-  { SVertex_handle vh = new_svertex(); vh->point_ = p; vh->mark_ = m;
+  { SVertex_handle vh = new_svertex(); vh->point() = p; vh->mark() = m;
     TRACEN("new_svertex "<<&*vh);
     return vh;
   }
 
   template <typename H>
-  void make_twins(H h1, H h2) { h1->twin_ = h2; h2->twin_ = h1; }
+  void make_twins(H h1, H h2) { h1->twin() = h2; h2->twin() = h1; }
 
   SVertex_handle new_svertex() { 
     svertices_.push_back( * get_vertex_node(SVertex())); 
@@ -426,7 +426,7 @@ public:
     shalfloop_=ph; return ph; }
 
   SHalfedge_handle new_shalfedge_pair(const SHalfedge& e1)
-  { const SHalfedge& e2 = *(e1.twin_);
+  { const SHalfedge& e2 = *(e1.twin());
     SHalfedge* ep2 = new SHalfedge[2];
     SHalfedge* ep1 = ep2++;
     *ep1=e1; *ep2=e2;
@@ -437,7 +437,7 @@ public:
     make_twins(eh1,eh2); return eh1; }
 
   SHalfloop_handle new_shalfloop_pair(const SHalfloop& l1)
-  { const SHalfloop& l2 = *(l1.twin_);
+  { const SHalfloop& l2 = *(l1.twin());
     SHalfloop* ph = new SHalfloop[2];
     SHalfloop* pt(ph); ++pt;
     *ph=l1; *pt=l2; make_twins(ph,pt);
@@ -454,7 +454,7 @@ public:
   }
 
   void delete_shalfedge_pair(SHalfedge_handle h) { 
-    SHalfedge_handle t = h->twin_;
+    SHalfedge_handle t = h->twin();
     sedges_.erase(h); sedges_.erase(t);
     put_halfedge_node(&*h);
     put_halfedge_node(&*t);
@@ -499,7 +499,7 @@ pointer_update(const Sphere_map<K, I>& D)
   SHalfedge_iterator e = shalfedges_begin();
   for ( ; ec != D.shalfedges_end(); ++ec,++e) { 
     EM[ec] = e;
-    e->mark_ = ec->mark_;
+    e->mark() = ec->mark();
   }
   EM[D.shalfedges_end()] = shalfedges_end();
 
@@ -511,42 +511,42 @@ pointer_update(const Sphere_map<K, I>& D)
   SHalfloop_iterator l, lc;
   if ( D.shalfloop_ != 0 ) {
     LM[D.shalfloop_] = shalfloop_;
-    LM[D.shalfloop_->twin_] = shalfloop_->twin_;
+    LM[D.shalfloop_->twin()] = shalfloop_->twin();
     l = shalfloop();
     lc = D.shalfloop();
-    shalfloop_->mark_ = D.shalfloop()->mark_;
-    shalfloop_->twin_->mark_ = D.shalfloop()->twin_->mark_;    
-    if( !l->is_twin() && D.shalfloop()->is_twin()) l->mark_ = l->twin_->mark_;
+    shalfloop_->mark() = D.shalfloop()->mark();
+    shalfloop_->twin()->mark() = D.shalfloop()->twin()->mark();    
+    if( !l->is_twin() && D.shalfloop()->is_twin()) l->mark() = l->twin()->mark();
   }
 
   for (v = svertices_begin(); v != svertices_end(); ++v) {
     // Local Graph update: (SVertices are postponed/updated as Edges)
-    v->out_sedge_ = EM[v->out_sedge_];
-    v->incident_sface_ = FM[v->incident_sface_];
+    v->out_sedge() = EM[v->out_sedge()];
+    v->incident_sface() = FM[v->incident_sface()];
   }
   // Edge update:
   for (e = shalfedges_begin(); e != shalfedges_end(); ++e) {
-    e->twin_ = EM[e->twin_];
-    e->sprev_ = EM[e->sprev_];
-    e->snext_ = EM[e->snext_];
-    e->source_ = VM[e->source_];
-    e->incident_sface_ = FM[e->incident_sface_];
+    e->twin() = EM[e->twin()];
+    e->sprev() = EM[e->sprev()];
+    e->snext() = EM[e->snext()];
+    e->source() = VM[e->source()];
+    e->incident_sface() = FM[e->incident_sface()];
   }
   for ( ec = D.shalfedges_begin(), e = shalfedges_begin();
 	ec != D.shalfedges_end(); ++ec, ++e) {
-    if( !e->is_twin() && ec->is_twin()) e->mark_ = e->twin_->mark_;
+    if( !e->is_twin() && ec->is_twin()) e->mark() = e->twin()->mark();
   }
 
   for (l = shalfloops_begin(); l != shalfloops_end(); ++l) {
-    //    l->twin_ = LM[l->twin_];
-    l->incident_sface_ = FM[l->incident_sface_];
+    //    l->twin() = LM[l->twin()];
+    l->incident_sface() = FM[l->incident_sface()];
   }
 
 
   for (f = sfaces_begin(); f != sfaces_end(); ++f) {
     SFace_cycle_iterator fci; 
-    for(fci = f->boundary_entry_objects_.begin();
-	fci != f->boundary_entry_objects_.end(); ++fci) {
+    for(fci = f->boundary_entry_objects().begin();
+	fci != f->boundary_entry_objects().end(); ++fci) {
       if ( fci.is_svertex() ) 
       { v = SVertex_handle(fci);
 	*fci = Object_handle(VM[v]); store_sm_boundary_item(v,fci); }

@@ -27,12 +27,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Object.h>
+#include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <string>
 #include <strstream>
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename K, typename M> class SM_items;
 template <typename K, typename I> class Sphere_map;
 template <typename SM> class SM_const_decorator;
 template <typename SM> class SM_decorator;
@@ -42,13 +42,14 @@ template <typename EH> struct move_edge_around_sface;
 template <typename Kernel_, typename Mark_>
 struct SM_items {
 public:
-  typedef Kernel_                         Kernel;
-  typedef typename Kernel::Sphere_point   Sphere_point;
-  typedef typename Kernel::Sphere_segment Sphere_segment;
-  typedef typename Kernel::Sphere_circle  Sphere_circle;
-  typedef Mark_                           Mark;
-  typedef SM_items<Kernel_,Mark_>         Self;
-  typedef void*                           GenPtr;
+  typedef Kernel_                                Kernel;
+  typedef Mark_                                  Mark;
+  typedef SM_items<Kernel_,Mark_>                Self;
+  typedef CGAL::Sphere_geometry<Kernel>          Sphere_kernel;
+  typedef typename Sphere_kernel::Sphere_point   Sphere_point;
+  typedef typename Sphere_kernel::Sphere_segment Sphere_segment;
+  typedef typename Sphere_kernel::Sphere_circle  Sphere_circle;
+  typedef void*                                  GenPtr;
 
   template <typename Refs>
   class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
@@ -139,12 +140,12 @@ public:
     friend class move_edge_around_sface<SHalfedge_const_handle>;
 
     // Role within local graph:
-    Sphere_circle     circle_;
-    Mark              mark_;
+    Sphere_circle      circle_;
+    Mark               mark_;
     SHalfedge_handle   twin_, sprev_, snext_;
     SVertex_handle     source_;
     SFace_handle       incident_sface_;
-    GenPtr            info_;
+    GenPtr             info_;
 
   public:
     SHalfedge() : circle_(), mark_(), twin_(), sprev_(), snext_(),

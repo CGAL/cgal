@@ -647,10 +647,10 @@ void draw() const
 
 };
 
-  enum MenuEntries { ROTATE, SCALE, TRANSLATE, RESET_CONTROL, 
-		     UNITY_CUBE, AXES, 
-  		     FACES, SKELETON, TRIANGULATION, 
-		     QUIT };
+  enum MenuEntriesS2 { ROTATE, SCALE, TRANSLATE, RESET_CONTROL, 
+		       UNITY_CUBE, AXES, 
+  		       FACES, SKELETON, TRIANGULATION, 
+		       QUIT };
 
   int window_width  = 300;           // Breite und
   int window_height = 300;           // Hoehe des Fensters

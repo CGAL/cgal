@@ -2,9 +2,10 @@
 #define CGAL_SPHERE_CIRCLE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/Normalizing.h>
 
 CGAL_BEGIN_NAMESPACE
+
+template <class R> class Sphere_segment;
 
 /*{\Manpage{Sphere_circle}{R}{Great circles on the unit sphere}{c}}*/
 
