@@ -48,6 +48,7 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qinputdialog.h>
 #include <qstring.h>
+#include <qregexp.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtoolbar.h>
@@ -725,6 +726,91 @@ public slots:
 	      ++it)
 	    seeds->push_back(*it);
 	  is_mesh_initialized=true;
+	}
+      else if(s.right(5) == ".data")
+	{
+	  int nx, ny, niso, use_threshold;
+	  float threshold;
+
+	  std::ifstream ins(s);
+	  ins >> nx >> ny >> niso >> use_threshold >> threshold;
+	  for(int i = 0; i < niso; i++) {
+	    float f;
+	    ins >> f;
+	  }
+
+	  std::vector<Point> points(nx * ny);
+	  double xmin,xmax,ymin,ymax;
+	  ins >> xmin >> xmax >> ymin >> ymax;
+	  
+	  double dx = (xmax-xmin)/(nx-1);
+	  double dy = (ymax-ymin)/(ny-1);
+
+	  int k=0;
+	  for (int i=0; i<nx; i++) {
+	    for (int j=0; j<ny; j++) {
+	      points[k] = Point(xmin + i*dx,  ymin + j*dy);
+	      k++;
+	    }
+	  }
+	  
+	  std::random_shuffle(points.begin(), points.end());
+	  mesh->clear();
+	  //	  std::copy(points.begin(), points.end(), std::back_inserter(*mesh));
+  
+	  s.replace(QRegExp("\\.data$"), "_fault.data");
+
+	  std::ifstream ins2(s);
+	  int num_lines;
+	  ins2 >> num_lines;
+	  std::vector<int> num_vertex_per_line(num_lines);
+	  for(int i = 0; i < num_lines; i++){
+	    ins2 >> num_vertex_per_line[i];
+	  }
+  
+	  CGAL::Bbox_2 b;
+	  for(int i = 0; i < num_lines; i++){
+	    Point p, q;  
+	    ins2 >> p;
+	    if(i == 0){
+	      b = p.bbox();
+	    } else {
+	      b = b + p.bbox();
+	    }
+	    for(int j = 1; j < num_vertex_per_line[i]; j++){
+	      ins2 >> q;
+	      mesh->insert_constraint(p, q);
+	      p = q;
+	      b = b + p.bbox(); 
+	    }
+	  }
+
+	  for(unsigned int k = 0; k < points.size(); k++)
+	    if (CGAL::do_overlap(b,points[k].bbox()))
+	      mesh->insert(points[k]);
+	  
+	  xmax = b.xmax();
+	  xmin = b.xmin();
+	  ymax = b.ymax();
+	  ymin = b.ymin();
+
+	  dx = (xmax - xmin)/20.0;
+	  dy = (ymax - ymin)/20.0;
+	  xmin -= dx;
+	  ymin -= dy;
+	  xmax += dx;
+	  ymax += dy;
+	  Point bl(xmin, ymin);
+	  Point br(xmax, ymin);
+	  Point tl(xmin, ymax);
+	  Point tr(xmax, ymax);
+	  mesh->insert_constraint(bl, br);
+	  mesh->insert_constraint(br, tr);
+	  mesh->insert_constraint(tr, tl);
+	  mesh->insert_constraint(tl, bl);
+
+	  clearSeeds();
+	  is_mesh_initialized=false;	  
 	}
       else
 	{

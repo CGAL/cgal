@@ -1,3 +1,18 @@
+version 0.9.2 (2003/03/12)
+--------------------------
+o added a bench sub-directory
+o fixed some gcc-3.2.1 compilation errors
+o changes in the demo:
+  - added a panel next to the widget, that shows currently the number of points
+  - added a step actions'toolbar, improved with new buttons
+  - fix some bugs
+o changes in the example:
+  - added some "Triangle-like" options
+o changes in Mesh_2.h:
+  - fix compilation errors with gcc-3.2.1
+  - fix compilation errors when the number type is not double
+  - the bound on size is no longer a squared distance
+
 version 0.9.1 (2002/08/26)
 --------------------------
 o some code cleaning
