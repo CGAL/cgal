@@ -1,6 +1,6 @@
 #include <CGAL/config.h>
 
-#include "CGAL/Short_names.h"
+#include "short_names.h"
 
 #include <CGAL/basic.h>
 #include <CGAL/leda_rational.h>
@@ -26,15 +26,14 @@
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 
+#include <CGAL/Bench.C>
+#include <CGAL/Bench_parse_args.h>
+#include <CGAL/Bench_parse_args.C>
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <list>
-
-#include "CGAL/Bench.h"
-#include "CGAL/Bench.C"
-#include "CGAL/Bench_parse_args.h"
-#include "CGAL/Bench_parse_args.C"
 
 typedef leda_rational                                   NT;
 
