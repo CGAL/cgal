@@ -545,15 +545,15 @@ insert_dim_up(Vertex *w, bool orient)
 
   Vertex * v = new Vertex;
 
-  list<Face *> faces_list;
+  std::list<Face *> faces_list;
   Iterator_base ib= Iterator_base(this); 
   Iterator_base ib_end = Iterator_base(this,1);
   for ( ; ib != ib_end ; ++ib){
     faces_list.push_back( & (*ib));
   }
 
-  list<Face *>  to_delete;
-  list<Face *>::iterator lfit = faces_list.begin();
+  std::list<Face *>  to_delete;
+  std::list<Face *>::iterator lfit = faces_list.begin();
   int i = dimension()+1; // maximun non NULL index in faces after the insertion
   Face *f, *g;
 
@@ -676,15 +676,15 @@ remove_dim_down(Vertex* v)
 			    (dimension() == 2 && number_of_vertices() > 3) );
   // the faces incident to v are down graded one dimension
   // the other faces are deleted
-  list<Face* > to_delete;
-  list<Face* > to_downgrade;
+  std::list<Face* > to_delete;
+  std::list<Face* > to_downgrade;
   Iterator_base ib = iterator_base_begin();
   for( ; ib != iterator_base_end(); ++ib ){
     if ( ! ib->has_vertex(v) ) { to_delete.push_back(&(*ib));}
     else { to_downgrade.push_back(&(*ib));}
   }
 
-  list<Face*>::iterator lfit = to_downgrade.begin();
+  std::list<Face*>::iterator lfit = to_downgrade.begin();
   int j;
   Face * f;
   for( ; lfit !=  to_downgrade.end() ; ++lfit) {
