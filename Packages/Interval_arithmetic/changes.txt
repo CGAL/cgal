@@ -1,7 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.53 on ?? ???? 2000
+Version 4.53 on 20 August 2000
 - Make the adaptative static filters kind of work again.
+- CGAL:: qualified min() and max() in the test-suite for VC++ and MipsPro.
 
 Version 4.52 on 26 July 2000
 - Removed Lazy_exact_nt.C from the test-suite for the release.
