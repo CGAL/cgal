@@ -1,4 +1,8 @@
-Changes done for the Interval Arithmetic package.
+Changes done to the Interval Arithmetic package.
+
+Version 2.3 on 23 October 1998
+- the test-suite now includes some benchmark.
+- the code is optimized, even uses the GNU extension "named return value".
 
 Version 2.2 on 16 October 1998
 - removed more spurious constructors.
