@@ -277,11 +277,11 @@ protected:
   
     // Determine if we need to send normals. Normals are
     // necessary if we are not doing BASE_COLOR lighting.
-         
+    /*     
     // we use the Lazy element to get the light model.   
     SbBool sendNormals = (SoLazyElement::getLightModel(state) 
 	    != SoLazyElement::BASE_COLOR);      
-
+    
     // See if texturing is enabled. If so, we will have to
     // send explicit texture coordinates. The "doTextures" flag
     // will indicate if we care about textures at all.
@@ -289,7 +289,6 @@ protected:
     // Note this has changed slightly in Inventor version 2.1.
     // The texture coordinate type now is either FUNCTION or DEFAULT.
     // Texture coordinates are needed only for DEFAULT textures.
-
     SbBool doTextures =
       ( SoGLTextureEnabledElement::get(state) &&
         SoTextureCoordinateElement::getType(state) !=
@@ -298,15 +297,16 @@ protected:
       // Determine if there's a texture bound per vertex or per indexed vertex
       SoTextureCoordinateBindingElement::Binding texture_binding = 
         SoTextureCoordinateBindingElement::get(state);
-
+    
 
     // Determine if there's a material bound per part
     SoMaterialBindingElement::Binding material_binding = 
         SoMaterialBindingElement::get(state);
+    
     SbBool materialPerPart =
         (material_binding == SoMaterialBindingElement::PER_PART ||
          material_binding == SoMaterialBindingElement::PER_PART_INDEXED);
-
+    */
     // issue a lazy element send.
     // This send will ensure that all material state in GL is current. 
     SoGLLazyElement::sendAllMaterial(state);
@@ -522,9 +522,9 @@ protected:
       texCoord[3] = 1.0;
     }
 
-    SoMaterialBindingElement::Binding bind = 
-      SoMaterialBindingElement::get(action->getState());
-    float complexity = this->getComplexityValue(action);
+    //SoMaterialBindingElement::Binding bind = 
+    //  SoMaterialBindingElement::get(action->getState());
+    //float complexity = this->getComplexityValue(action);
 
     // We'll use this macro to make the code easier. It uses the
     // "point" variable to store the primitive vertex's point.
