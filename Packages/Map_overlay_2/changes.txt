@@ -1,0 +1,2 @@
+Version 1.23 (4 June 03) [af]
+- added missing #include <iostream> in the testsuite files
