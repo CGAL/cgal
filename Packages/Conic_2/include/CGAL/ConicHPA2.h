@@ -141,7 +141,7 @@ class ConicHPA2
                 -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
     
-        return CGAL::Sign (-CGAL_NTS sign (c0)*o);
+        return CGAL_NTS sign (-CGAL_NTS sign (c0)*o);
     }
     
     double vol_minimum (RT dr, RT ds, RT dt, RT du, RT dv, RT dw) const
@@ -348,6 +348,11 @@ class ConicHPA2
         return (type == ELLIPSE);
     }
     
+    bool is_circle () const
+    {
+        return (type == ELLIPSE && (r()==s()) && CGAL_NTS is_zero (t()));
+    }
+   
     bool is_empty () const
     {
         return empty;
@@ -458,7 +463,38 @@ class ConicHPA2
         _r = -r(); _s = -s(); _t = -t(); _u = -u(); _v = -v(); _w = -w();
         o = CGAL::opposite(orientation());
     }
+     
+  void set_circle (const PT& p1, const PT& p2, const PT& p3) 
+  { 
+     // the circle will have r = s = det*h1*h2*h3, t=0
+     RT x1, y1, h1, x2, y2, h2, x3, y3, h3;
+     dao.get (p1, x1, y1, h1);
+     dao.get (p2, x2, y2, h2);
+     dao.get (p3, x3, y3, h3);
     
+     // precondition: p1, p2, p3 not collinear
+     RT det = -h1*x3*y2+h3*x1*y2+h1*x2*y3-h2*x1*y3+h2*x3*y1-h3*x2*y1;
+     CGAL_kernel_precondition (!CGAL_NTS is_zero (det));
+     
+     // Cramer's rule
+     RT sqr1 = (-x1*x1 - y1*y1)*h2*h3;
+     RT sqr2 = (-x2*x2 - y2*y2)*h1*h3;
+     RT sqr3 = (-x3*x3 - y3*y3)*h1*h2;
+
+     _u = -h1*sqr3*y2+h3*sqr1*y2+h1*sqr2*y3-h2*sqr1*y3+h2*sqr3*y1-h3*sqr2*y1;
+     _v = -h1*x3*sqr2+h3*x1*sqr2+h1*x2*sqr3-h2*x1*sqr3+h2*x3*sqr1-h3*x2*sqr1;
+     _w = -sqr1*x3*y2+sqr3*x1*y2+sqr1*x2*y3-sqr2*x1*y3+sqr2*x3*y1-sqr3*x2*y1;
+     _r = det*h1*h2*h3;
+     _s = _r;
+     _t = RT(0);
+
+     analyse();
+     CGAL_kernel_postcondition(is_circle());
+     CGAL_kernel_postcondition(has_on_boundary(p1));
+     CGAL_kernel_postcondition(has_on_boundary(p2));
+     CGAL_kernel_postcondition(has_on_boundary(p3));
+  }
+ 
     void set_linepair (const PT& p1, const PT& p2, const PT& p3,
                        const PT& p4, const DA& da = DA())
     {

@@ -141,7 +141,7 @@ class ConicCPA2
           -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
     
-        return CGAL::Sign (-CGAL_NTS sign (c0)*o);
+        return CGAL_NTS sign (-CGAL_NTS sign (c0)*o);
     }
     
     double vol_minimum (FT dr, FT ds, FT dt, FT du, FT dv, FT dw) const
@@ -349,6 +349,11 @@ class ConicCPA2
     {
         return (type == ELLIPSE);
     }
+
+    bool is_circle () const
+    {
+        return (type == ELLIPSE && (r()==s()) && CGAL_NTS is_zero (t()));
+    }
     
     bool is_empty () const
     {
@@ -462,6 +467,37 @@ class ConicCPA2
         o = CGAL::opposite(orientation());
     }
     
+  void set_circle (const PT& p1, const PT& p2, const PT& p3) 
+  {
+     // the circle will have r = s = det, t=0
+     FT x1, y1, x2, y2, x3, y3;
+     dao.get (p1, x1, y1);
+     dao.get (p2, x2, y2);
+     dao.get (p3, x3, y3);
+    
+     // precondition: p1, p2, p3 not collinear
+     FT det = -x3*y2+x1*y2+x2*y3-x1*y3+x3*y1-x2*y1;
+     CGAL_kernel_precondition (!CGAL_NTS is_zero (det));
+
+     // Cramer's rule
+     FT sqr1 = -x1*x1 - y1*y1;
+     FT sqr2 = -x2*x2 - y2*y2;
+     FT sqr3 = -x3*x3 - y3*y3;
+
+     _u = -sqr3*y2+sqr1*y2+sqr2*y3-sqr1*y3+sqr3*y1-sqr2*y1;
+     _v =  -x3*sqr2+x1*sqr2+x2*sqr3-x1*sqr3+x3*sqr1-x2*sqr1;
+     _w = -x3*y2*sqr1+x1*y2*sqr3+x2*y3*sqr1-x1*y3*sqr2+x3*y1*sqr2-x2*y1*sqr3;
+     _r = det;
+     _s = det;
+     _t = FT(0);
+     
+     analyse();
+     CGAL_kernel_postcondition(is_circle());
+     CGAL_kernel_postcondition(has_on_boundary(p1));
+     CGAL_kernel_postcondition(has_on_boundary(p2));
+     CGAL_kernel_postcondition(has_on_boundary(p3));
+  }
+
     void set_linepair (const PT& p1, const PT& p2, const PT& p3, const PT& p4)
     {
         FT x1, y1, x2, y2, x3, y3, x4, y4;

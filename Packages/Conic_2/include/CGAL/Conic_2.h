@@ -67,8 +67,6 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
     Conic_2 (RT r, RT s, RT t, RT u, RT v, RT w)
         : _Conic_2 (r, s, t, u, v, w)
     {}
-    
-    
 
     // general access
     RT r () const
@@ -127,6 +125,11 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
     bool is_ellipse () const
     {
         return _Conic_2::is_ellipse();
+    }
+
+    bool is_circle () const
+    {
+        return _Conic_2::is_circle();
     }
     
     bool is_empty () const
@@ -217,6 +220,13 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
         _Conic_2::set_opposite();
     }
     
+    void set_circle (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
+		     const CGAL::Point_2<R>& p3)
+    {
+        // the unique circle through the three points
+        _Conic_2::set_circle(p1, p2, p3);
+    }
+
     void set_linepair (const CGAL::Point_2<R>& p1, const CGAL::Point_2<R>& p2,
                        const CGAL::Point_2<R>& p3, const CGAL::Point_2<R>& p4)
     {
