@@ -7,8 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
-
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -35,11 +33,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
-
-#SOURCES = ../../../src/CGALQt/Qt_widget$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_tool$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_view.o$(OBJ_EXT) \
-	../../../src/CGALQt/Qt_widget_standard_toolbar$(OBJ_EXT)
 
 all: triangulationdemo
 
