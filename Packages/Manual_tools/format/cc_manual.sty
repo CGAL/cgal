@@ -233,7 +233,7 @@
                    \begingroup\CCcatcode\creationvariableX}
 
 \def\creationvariableX #1{%
-                   \gdef\var{{\CCfont #1\CCendfont}}
+                   \gdef\var{{\CCfont\CCprintTokens #1\end\CCendfont}}
                    \gdef\purevar{#1}
                    \endgroup}
 
@@ -392,10 +392,11 @@
 \gdef\CCopenangle  {\CCendfont {\tt <}}
 \gdef\CCcloseangle {\CCendfont {\tt >}}
 \gdef\CCampersand  {\CCendfont {\tt \&}}
-% \gdef\CCunderscore {\raisebox{-.05ex}{\_}\kern.05em}
-\gdef\CCunderscore {\kern.05em\raisebox{.5ex}{\_}\kern-.1em}
+\gdef\CCunderscore {\raisebox{-.05ex}{\_}\kern.05em}
+% \gdef\CCunderscore {\kern.05em\raisebox{.5ex}{\_}\kern-.1em}
 \gdef\CChat        {{\large $\;\,\hat{}\,\,$}}
 \gdef\CCtilde      {{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
+\gdef\CChash       {{\rm \#}}
 
 % The sign for an empty parameter (i.e. of the type of the current class).
 \gdef\CCemptyParameter {$\diamondsuit$}
@@ -544,9 +545,9 @@
                        \CCinitWidths
                        \setbox\returntypebox=\hbox{}%
                        \setbox\callnamebox=\hbox{\classtemplatename
-                                 \ \ \CCfont\purevar}%
+                                 \ \ \CCfont\var}%
                        \setbox\functioncallbox=\hbox{\classtemplatename
-                                 \ \ \CCfont\purevar
+                                 \ \ \CCfont\var
                                  \isEmpty{#3}\ifnum\CCbool=\CCfalse
                                      ( \CCprintParamList{#3)#4})%
                                  \fi
@@ -593,14 +594,14 @@
                        \else
                            \CCseparateFunction{}#3 #4::\end%
                            \setbox\functioncallbox=\hbox{{\CCfont
-                               \ifnum#1=0 \purevar.\fi
+                               \ifnum#1=0 \var.\fi
                                \unhcopy\functionnamebox(% 
                                \isEmpty{#5}\ifnum\CCbool=\CCfalse
                                    \ \CCprintParamList{#5)#6}%
                                \fi)}}
                        \fi
                        \setbox\callnamebox=\hbox{{\CCfont
-                           \ifnum#1=0 \purevar.\fi
+                           \ifnum#1=0 \var.\fi
                            \unhbox\functionnamebox}}%
                        \CClayoutThreeColumns{(}{#5)#6}{)}{#2}%
                      }
@@ -655,13 +656,14 @@
                        \CCWsecond =\CCWconstructorsecond
                        \CCinitWidths
                        \setbox\returntypebox=\hbox{}%
-                       \setbox\callnamebox=\hbox{\CCfont #2}%
-                       \setbox\functioncallbox=\hbox{\CCfont #2\{\
+                       \setbox\callnamebox=\hbox{\CCfont\CCprintTokens #2\end}%
+                       \setbox\functioncallbox=\hbox{\CCfont
+                                 \CCprintTokens #2\end\{\
                                  \isEmpty{#3}\ifnum\CCbool=\CCfalse
                                      \CCprintParamList{#3)}%
                                  \fi
                                  \};}%
-                       \CClayoutThreeColumns{\{}{#3)}{\}}{#1}%
+                       \CClayoutThreeColumns{\CCendfont\{}{#3)}{\CCendfont\}}{#1}%
                      }
 
 % Manual layout: generalized three column format
@@ -729,7 +731,7 @@
                                \nopagebreak\CCmiddleskip
                                \parbox[t]{\CCWcomment}{\sloppy #4}\hfill
                                \CCbottombigskip
-			   \else
+                           \else
                                \CCbottomskip
                            \fi
                         \else
@@ -807,12 +809,17 @@
 % Print a character of a C++ declaration. Special handling of _<>&.
 \def\CCprintChar #1{%
                    \if_#1\CCunderscore
+                   \else\ifx\_#1\CCunderscore
                    \else\if<#1\CCopenangle
                    \else\if>#1\CCcloseangle
                    \else\if&#1\CCampersand
+                   \else\ifx\&#1\CCampersand
                    \else\if^#1\CChat
+                   \else\ifx\^#1\CChat
+                   \else\if###1\CChash
+                   \else\ifx\##1\CChash
                    \else #1%
-                   \fi\fi\fi\fi\fi}
+                   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi}
 
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
 % The token has to be delimited by "\end".
@@ -852,9 +859,9 @@
 \def\CCprintOperator #1#2operator#3(#4)#5\end{%
                        \ifnum#1=0
                            \isEmpty{#4}\ifnum\CCbool=\CCtrue
-                               \CCprintOperatorOne{#1}{\purevar}{#4}#3\end
+                               \CCprintOperatorOne{#1}{\var}{#4}#3\end
                            \else
-                               \CCprintOperatorOne{#1}{\purevar,}{#4}#3\end
+                               \CCprintOperatorOne{#1}{\var,}{#4}#3\end
                            \fi
                        \else
                            \CCprintOperatorOne{#1}{}{#4}#3\end
@@ -876,9 +883,9 @@
                            parenthesis operator}\fi
                        \ifnum#1=0
                            \isEmpty{#6}\ifnum\CCbool=\CCtrue
-                               \CCprintOperatorOne{#1}{\purevar}{#6}()\end
+                               \CCprintOperatorOne{#1}{\var}{#6}()\end
                            \else
-                               \CCprintOperatorOne{#1}{\purevar,}{#6}()\end
+                               \CCprintOperatorOne{#1}{\var,}{#6}()\end
                            \fi
                        \else
                            \CCprintOperatorOne{#1}{}{#6}()\end
@@ -892,12 +899,12 @@
                        \setbox\returntypebox=\hbox{{\CCfont
                            \CCprintTokens #2\end}}
                        \setbox\functioncallbox=\hbox{{\CCfont 
-                           \CCprintTokens #2(\purevar)\end}}
+                           \CCprintTokens #2(\var)\end}}
                        }
 
 % An operator is detected and can be printed.
 %   o  The first parameter contains a 0 for a method call, a 1 for a function.
-%   o  The second parameter contains the \purevar if it is a method.
+%   o  The second parameter contains the \var if it is a method.
 %   o  The third parameter contains the (maybe empty) parameter list.
 %   o  The fourth parameter is the first character of the operator.
 %   o  The fifth parameter contains the rest of the operator.
@@ -945,7 +952,7 @@
                            operators are currently supported by this
                            style, sorry.  Go ahead, and I format it as
                            a function}@
-                           \ifnum#1=0 {\CCfont \purevar.}\fi
+                           \ifnum#1=0 {\CCfont \var.}\fi
                            \CCprintTokens operator #4#5\end@
                            (\isEmpty{#3}\ifnum\CCbool=\CCfalse
                                \CCprintParamList{#3)}\fi
@@ -969,7 +976,7 @@
                            \if-#1\if-#2\CCoperatorpraefix{#1\!#2}\fi\fi
                        \or                         @ 2 parameters
                            \if[#1\if]#2\CCoperatorparXX{\CCendfont{\rm [} 
-				}{\CCendfont{\rm ]}}\fi\fi
+                                }{\CCendfont{\rm ]}}\fi\fi
                            \if(#1\if)#2\CCoperatorparXX{( }{)}\fi\fi
                            \if+#1\if+#2\CCoperatorpostfix{#1\!#2}\fi\fi
                            \if-#1\if-#2\CCoperatorpostfix{#1\!#2}\fi\fi
@@ -1243,9 +1250,8 @@
                 \CCprintTokens #2#1\end% nothing stripped
             \fi
         \else
-            \errmessage{Confusing class name with a space before 
-                        the template parameters. The allowed syntax
-                        is: name< params... }%
+            \CCprintTokens #2\ \end
+            \CCprintOwnClassXXX {#1}#3\end
         \fi}
 \def\CCprintOwnClassXXXX #1#2\end{% strip a leading template parameter
                    \if<#1\advance\xnestinglevel by1  \fi

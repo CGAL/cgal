@@ -90,10 +90,11 @@ runtime statements.
 \begin{class}{Demo_Class}
 \CCsection{A Simple Class}
 
-The class with its name is declared by \verb"\begin{class}{Demo_Class}". 
-For class templates the \verb"\begin{classtemplate}{Demo_Class<...>}"
+The class with its name is declared by 
+\verb"\b"\verb"egin{class}{Demo_Class}". 
+For class templates the \verb"\b"\verb"egin{classtemplate}{Demo_Class<...>}"
 environment is  designed. See the next section for an example.
-The macro \verb"\CCsection{"\ldots\verb"}" produces the section
+The macro \verb"\"\verb"CCsection{"\ldots\verb"}" produces the section
 title from above and appends the class name. Note that the special
 character ``\_'' has not to be quoted as it is usual within \LaTeX.
 In any case, the complete original \CC\ source text is written
@@ -120,17 +121,17 @@ changing macro expands.
 \definition 
 
 The class \classname\ does nothing. The formatted name of the class
-can be accessed using the macro \verb"\classname". The unformatted
+can be accessed using the macro \verb"\"\verb"classname". The unformatted
 name as it was originally written can be accessed using the
-\verb"\pureclassname" macro.
+\verb"\"\verb"pureclassname" macro.
 
-\creationvariable{p}
+\creationvariable{p_}
 \creation
 
 The constructors create a variable \var\ of the class. The
 \verb"\"\verb"creationvariable{"\ldots\verb"}" macro sets the name for the
-future use. It can be accessed with the \verb"\var" or
-\verb"\purevar" macro.
+future use. It can be accessed with the \verb"\"\verb"var" or
+\verb"\"\verb"purevar" macro.
 
 The constructors are written using the
 \verb"\"\verb"constructor{"\ldots\verb"}{"\ldots\verb"}" macro. The first
@@ -143,12 +144,14 @@ formatting. It makes no difference in the usage of a parameter. If the
 type of a constructor, method, or function parameter equals the
 current class, it is also omitted. In the case that nothing is left,
 the \CCemptyParameter\ symbol is used. See the copy constructor for an
-example. This all together is the way, we achieve very
-natural looking descriptions.
+example. All together we achieve this natural looking descriptions.
+
+\CCstyle{#include< demo_class.h>}
 
   \constructor{Demo_Class();}{introduces
      a variable \var\ initialized to the default. \CC\ code:
-     {\tt Demo\_Class();}}
+     {\tt Demo\_Class();}. Test CCstyle: \CCstyle{Underscore\_within
+     CCstyle}.}
 
   \constructor{Demo_Class( const Demo_Class &);}{copy
     constructor. \CC\ code: {\tt Demo\_Class(const Demo\_Class \&);}}
@@ -166,6 +169,8 @@ formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendfont{}".
 \gdef\CCfont{\tt}\gdef\CCendfont{}
   \constructor{Demo_Class( int a, X<Y> &x);}{arbitrary constructor.}
 
+\gdef\CCfont{\it}\gdef\CCendfont{\/}
+
 Also changable are the special characters the formatting has to
 deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
 \verb"\CCcloseangle", \verb"\CCampersand", \verb"\CChat", and
@@ -177,7 +182,7 @@ deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
 
 The layout of this section can be customized to the width of the
 return types and the declarations. The
-\verb"\threecolumns{"\ldots\verb"}{"\ldots\verb"}" macro sets the
+\verb"\"\verb"threecolumns{"\ldots\verb"}{"\ldots\verb"}" macro sets the
 width of the two leading columns of the total three columns. All other
 dimensions will be computed.
 
@@ -201,7 +206,7 @@ to the class, it is {\em not} removed.
 
   \method{Demo_Class   
              longish_function_name( 
-                        const CGAL_HAff_transformation<FT,RT> &t,
+                        const CGAL_Aff_transformation<FT,RT> &t,
                         const Dummy_Type &q,
                         Long_Type_Name_For_Fun Variable_Also_Long) const;
              }{ Even more longish declarations forces the parameters printed
@@ -296,13 +301,13 @@ operator cannot be used within the function or method name.
 \CCsection{Demo Class Template}
 
 This class template is given within a
-\verb"\begin{classtemplate}{Demo_Class<FT<RT> >}" environment.
+\verb"\be"\verb"gin{classtemplate}{Demo_Class<FT<RT> >}" environment.
 
 \creationvariable{p}
 \creation
 
 A current misbehaviour (or feature?) of the structuring macros is that
-they have fixed numbers. So the \verb"\definition" macro is here
+they have fixed numbers. So the \verb"\"\verb"definition" macro is here
 missing.
 
   \constructor{ Demo_Class();}{ default.}
@@ -319,6 +324,13 @@ missing.
 
   \function{ Demo_Class<FT<RT> > foo( Demo_Class<FT<RT> > q);}{
       right, with template parameters.}
+
+Another example demonstrating a const pointer declaration of a 
+class template.
+
+    \function{Demo_Class& foo( const Class< int>* b);}{}
+
+    \function{Demo_Class& foo( const Demo_Class< int>* b);}{}
 
 \end{classtemplate}
 
@@ -377,7 +389,7 @@ A small set of handy abbreviations are added. Here they are all together:
 
 \def\CCalternateThreeColumn{\CCfalse}
 
-Function templates are written with the macro \verb+\functiontemplate+
+Function templates are written with the macro \verb+\fu+\verb+nctiontemplate+
 that has an additional parameter in front for the template
 parameters. They are visible in the manual because the user does not
 see them, but the parameters are necessary for the specification
@@ -446,29 +458,32 @@ A set of handy abbreviations has been extended. They need the package
 
 \begin{tabbing}
   dum \= dummyyyyyyyy \= \kill
-  \> \verb+\Z+        \> \N        \\
-  \> \verb+\Z+        \> \Z        \\
-  \> \verb+\R+        \> \R
+  \> \verb+\+verb+N+        \> \N        \\
+  \> \verb+\+verb+Z+        \> \Z        \\
+  \> \verb+\+verb+R+        \> \R        \\
+  \> \verb+\+verb+E+        \> \E
 \end{tabbing}
 
-A \verb+\declaration+ accepts one parameter. The style will ignore it, while
-the checker tests if it exists one to one in the C++ code.
-It is intended for declarations that are somehow implied by the
-surrounded text, but should not be explicitly visible. For example, this
-example is not visible (smile).
+A \verb+\de+\verb+claration+ accepts one parameter. The style will
+ignore it, while the checker tests if it exists one to one in the C++
+code.  It is intended for declarations that are somehow implied by the
+surrounded text, but should not be explicitly visible. For example,
+this example is not visible (smile).
 
 \declaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
 
-A \verb+\hidden+ macro can be prepended to each macro with two parameters.
-It will remove the macro and its parameters from the manual.
-Again, the checker tests the macro as usual. Again an invisible example.
+A \verb+\+verb+hidden+ macro can be prepended to each macro with two
+parameters.  It will remove the macro and its parameters from the
+manual.  Again, the checker tests the macro as usual. Again an
+invisible example.
 
 \hidden\function{int foo( double d);}{This is a foo function.}
 
 If these non visible parts of the code should be made visible once,
-the \verb+\CCmakeAllVisible+ macro switches it on. For \verb+\declaration+ the 
-\verb+\CCstyle+ macro is used. The \verb+\hidden+ macro vanishes simply.
-The two funny invisible examples from above are repeated here.
+the \verb+\+\verb+CCmakeAllVisible+ macro switches it on. For
+\verb+\+verb+declaration+ the \verb+\+verb+CCstyle+ macro is used. The
+\verb+\+verb+hidden+ macro vanishes simply.  The two funny invisible
+examples from above are repeated here.
 
 \CCmakeAllVisible
 
@@ -498,7 +513,7 @@ the following example demonstrates:
 %
 % \end{class}
 
-The \verb+\CCstyle+ macro is not appropriate to format multiple lines
+The \verb+\+verb+CCstyle+ macro is not appropriate to format multiple lines
 of \CC\ code. Use other environments like the {\tt cprog} style.
 
 
