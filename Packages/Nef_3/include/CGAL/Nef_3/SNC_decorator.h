@@ -67,98 +67,97 @@ class SNC_decorator : public SNC_const_decorator<SNC_structure_> {
   SNC_point_locator* pl0;
 
 public:
-#define USING(t) typedef typename SNC_structure::t t
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halffacet_handle);
-  USING(Volume_handle);
-  USING(SVertex_handle);
-  USING(SHalfedge_handle);
-  USING(SHalfloop_handle);
-  USING(SFace_handle);
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Volume_handle Volume_handle;
+  typedef typename SNC_structure::SVertex_handle SVertex_handle;
+  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
+  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
+  typedef typename SNC_structure::SFace_handle SFace_handle;
 
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator); 
-  USING(Volume_iterator);
-  USING(SVertex_iterator);  
-  USING(SHalfedge_iterator);
-  USING(SHalfloop_iterator);
-  USING(SFace_iterator);  
+  typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
+  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator; 
+  typedef typename SNC_structure::Volume_iterator Volume_iterator;
+  typedef typename SNC_structure::SVertex_iterator SVertex_iterator;  
+  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
+  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator;
+  typedef typename SNC_structure::SFace_iterator SFace_iterator;  
 
-  USING(SHalfedge_around_facet_circulator);
-  USING(SFace_cycle_iterator);
-  USING(Halffacet_cycle_iterator);
-  USING(Shell_entry_iterator);
-#undef USING
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
+  typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
 
-#define USING(t) typedef typename Base::t t
-  //USING(SHalfedge);
-  USING(Object_handle);
-  USING(SObject_handle);
-  USING(Object_iterator);
+
+  //typedef typename Base::SHalfedge SHalfedge;
+  typedef typename Base::Object_handle Object_handle;
+  typedef typename Base::SObject_handle SObject_handle;
+  typedef typename Base::Object_iterator Object_iterator;
   
-  USING(Vertex);
-  USING(Halfedge);
-  USING(Halffacet);
-  USING(Volume);
-  USING(SVertex);
-  USING(SHalfedge);
-  USING(SHalfloop);
-  USING(SFace);
+  typedef typename Base::Vertex Vertex;
+  typedef typename Base::Halfedge Halfedge;
+  typedef typename Base::Halffacet Halffacet;
+  typedef typename Base::Volume Volume;
+  typedef typename Base::SVertex SVertex;
+  typedef typename Base::SHalfedge SHalfedge;
+  typedef typename Base::SHalfloop SHalfloop;
+  typedef typename Base::SFace SFace;
 
-  USING(Vertex_const_handle);
-  USING(Halfedge_const_handle);
-  USING(Halffacet_const_handle);
-  USING(Volume_const_handle);
-  USING(SVertex_const_handle);
-  USING(SHalfedge_const_handle);
-  USING(SHalfloop_const_handle);
-  USING(SFace_const_handle);
+  typedef typename Base::Vertex_const_handle Vertex_const_handle;
+  typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Base::Halffacet_const_handle Halffacet_const_handle;
+  typedef typename Base::Volume_const_handle Volume_const_handle;
+  typedef typename Base::SVertex_const_handle SVertex_const_handle;
+  typedef typename Base::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename Base::SHalfloop_const_handle SHalfloop_const_handle;
+  typedef typename Base::SFace_const_handle SFace_const_handle;
 
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Halffacet_const_iterator);
-  USING(Volume_const_iterator);
-  USING(SVertex_const_iterator);
-  USING(SHalfedge_const_iterator);
-  USING(SHalfloop_const_iterator);
-  USING(SFace_const_iterator);
+  typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename Base::Halffacet_const_iterator Halffacet_const_iterator;
+  typedef typename Base::Volume_const_iterator Volume_const_iterator;
+  typedef typename Base::SVertex_const_iterator SVertex_const_iterator;
+  typedef typename Base::SHalfedge_const_iterator SHalfedge_const_iterator;
+  typedef typename Base::SHalfloop_const_iterator SHalfloop_const_iterator;
+  typedef typename Base::SFace_const_iterator SFace_const_iterator;
 
-  USING(SHalfedge_around_facet_const_circulator);
-  USING(SFace_cycle_const_iterator);
-  USING(Halffacet_cycle_const_iterator);
-  USING(Shell_entry_const_iterator);
+  typedef typename Base::SHalfedge_around_facet_const_circulator SHalfedge_around_facet_const_circulator;
+  typedef typename Base::SFace_cycle_const_iterator SFace_cycle_const_iterator;
+  typedef typename Base::Halffacet_cycle_const_iterator Halffacet_cycle_const_iterator;
+  typedef typename Base::Shell_entry_const_iterator Shell_entry_const_iterator;
 
-  USING(Kernel);
-  USING(FT);
-  USING(RT);
+  typedef typename Base::Kernel Kernel;
+  typedef typename Base::FT FT;
+  typedef typename Base::RT RT;
 
-  USING(Point_3);
-  USING(Segment_3);
-  USING(Ray_3);
-  USING(Line_3);
-  USING(Plane_3);
-  USING(Vector_3);
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Segment_3 Segment_3;
+  typedef typename Base::Ray_3 Ray_3;
+  typedef typename Base::Line_3 Line_3;
+  typedef typename Base::Plane_3 Plane_3;
+  typedef typename Base::Vector_3 Vector_3;
 
-  USING(Sphere_kernel);
-  USING(Sphere_point);
-  USING(Sphere_segment);
-  USING(Sphere_circle);
-  USING(Sphere_direction);
+  typedef typename Base::Sphere_kernel Sphere_kernel;
+  typedef typename Base::Sphere_point Sphere_point;
+  typedef typename Base::Sphere_segment Sphere_segment;
+  typedef typename Base::Sphere_circle Sphere_circle;
+  typedef typename Base::Sphere_direction Sphere_direction;
 
-  USING(Size_type);
-  USING(Mark);
-  USING(Infi_box);
-  USING(Aff_transformation_3);
-#undef USING
+  typedef typename Base::Size_type Size_type;
+  typedef typename Base::Mark Mark;
+  typedef typename Base::Infi_box Infi_box;
+  typedef typename Base::Aff_transformation_3 Aff_transformation_3;
 
-#define DECUSING(t) typedef typename SM_decorator::t t
-  DECUSING(SHalfedge_around_svertex_const_circulator);
-  DECUSING(SHalfedge_around_svertex_circulator);
-  DECUSING(SHalfedge_around_sface_circulator);
-  DECUSING(SHalfedge_around_sface_const_circulator);
-#undef DECUSING
+  typedef typename SM_decorator::SHalfedge_around_svertex_const_circulator 
+                                 SHalfedge_around_svertex_const_circulator;
+  typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
+                                 SHalfedge_around_svertex_circulator;
+  typedef typename SM_decorator::SHalfedge_around_sface_circulator 
+                                 SHalfedge_around_sface_circulator;
+  typedef typename SM_decorator::SHalfedge_around_sface_const_circulator 
+                                 SHalfedge_around_sface_const_circulator;
 
   struct points_lt {
     bool operator()(Point_3& p1, Point_3& p2) const {
@@ -996,7 +995,7 @@ public:
     Vertex_iterator v0, v1;
     SNC_decorator D(result);
 
-    //    SETDTHREAD(131*43*31);
+    //    SETDTHREAD(19*43*131);
     
     TRACEN("=> binary operation");
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
@@ -1064,6 +1063,7 @@ public:
       Halfedge_handle e;
       Halffacet_handle f;
       Volume_handle c;
+      TRACEN("Locating point " << p1);
       Object_handle o = pl()->locate(p1);
       CGAL_nef3_assertion( !assign( v, o));
       if( assign( e, o)) {
@@ -1086,8 +1086,8 @@ public:
 	  SM.change_marks(mark(c), BOP);
 	  SM_overlayer O(v0);
 	  O.simplify();
-       	  TRACEN("p1 found on volume");
 	}
+	TRACEN("p1 found on volume");
       }
       else CGAL_nef3_assertion_msg( 0, "wrong handle");
     }

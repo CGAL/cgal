@@ -77,22 +77,20 @@ typedef size_t Size_type;
 
 typedef void*  GenPtr;
 
-#define USING(t) typedef typename Refs_::t t
-USING(Vertex_handle);
-USING(Vertex_const_handle);
-USING(SVertex_const_handle);
-USING(SVertex_const_iterator);
-USING(Vertex); 
-USING(SHalfedge); 
-USING(SHalfedge_const_handle); 
-USING(SHalfedge_const_iterator);
-USING(SHalfloop);
-USING(SHalfloop_const_handle);
-USING(SHalfloop_const_iterator);
-USING(SFace);
-USING(SFace_const_handle);
-USING(SFace_const_iterator);
-#undef USING
+typedef typename Refs_::Vertex_handle Vertex_handle;
+typedef typename Refs_::Vertex_const_handle Vertex_const_handle;
+typedef typename Refs_::SVertex_const_handle SVertex_const_handle;
+typedef typename Refs_::SVertex_const_iterator SVertex_const_iterator;
+typedef typename Refs_::Vertex Vertex; 
+typedef typename Refs_::SHalfedge SHalfedge; 
+typedef typename Refs_::SHalfedge_const_handle SHalfedge_const_handle; 
+typedef typename Refs_::SHalfedge_const_iterator SHalfedge_const_iterator;
+typedef typename Refs_::SHalfloop SHalfloop;
+typedef typename Refs_::SHalfloop_const_handle SHalfloop_const_handle;
+typedef typename Refs_::SHalfloop_const_iterator SHalfloop_const_iterator;
+typedef typename Refs_::SFace SFace;
+typedef typename Refs_::SFace_const_handle SFace_const_handle;
+typedef typename Refs_::SFace_const_iterator SFace_const_iterator;
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |SVertex_handle|, |SVertex_iterator|, |SHalfedge_handle|,

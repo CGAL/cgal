@@ -126,31 +126,38 @@ public:
     prefix.
   */
 
-#define USING(t) typedef typename Base::t t
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halfedge_const_handle);
-  USING(Halfloop_handle);
-  USING(Face_handle);
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Face_iterator);
-  USING(Object_handle);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_face_circulator);
-#undef USING
+  typedef typename Base::Vertex_handle Vertex_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Base::Halfloop_handle Halfloop_handle;
+  typedef typename Base::Face_handle Face_handle;
+  typedef typename Base::Vertex_iterator Vertex_iterator;
+  typedef typename Base::Halfedge_iterator Halfedge_iterator;
+  typedef typename Base::Face_iterator Face_iterator;
+  typedef typename Base::Object_handle Object_handle;
+  typedef typename Base::Halfedge_around_vertex_circulator 
+                         Halfedge_around_vertex_circulator;
+  typedef typename Base::Halfedge_around_face_circulator 
+                         Halfedge_around_face_circulator;
 
-#define USING(t) typedef typename Refs_::t SNC_##t
-  USING(Vertex_handle);
-  USING(SVertex_const_iterator);
-  USING(SHalfedge_const_iterator);
-  USING(SHalfloop_const_iterator);
-  USING(SFace_const_iterator);
-  USING(SVertex_const_handle);
-  USING(SHalfedge_const_handle);
-  USING(SHalfloop_const_handle);
-  USING(SFace_const_handle);
-#undef USING
+  typedef typename Refs_::Vertex_handle 
+    SNC_Vertex_handle;
+  typedef typename Refs_::SVertex_const_iterator 
+    SNC_SVertex_const_iterator;
+  typedef typename Refs_::SHalfedge_const_iterator 
+    SNC_SHalfedge_const_iterator;
+  typedef typename Refs_::SHalfloop_const_iterator 
+    SNC_SHalfloop_const_iterator;
+  typedef typename Refs_::SFace_const_iterator 
+    SNC_SFace_const_iterator;
+  typedef typename Refs_::SVertex_const_handle 
+    SNC_SVertex_const_handle;
+  typedef typename Refs_::SHalfedge_const_handle 
+    SNC_SHalfedge_const_handle;
+  typedef typename Refs_::SHalfloop_const_handle 
+    SNC_SHalfloop_const_handle;
+  typedef typename Refs_::SFace_const_handle 
+    SNC_SFace_const_handle;
 
   typedef typename Base::Kernel Kernel;
 

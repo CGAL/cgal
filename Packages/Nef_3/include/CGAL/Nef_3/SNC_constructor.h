@@ -184,81 +184,79 @@ public:
   typedef CGAL::SNC_SM_point_locator<SM_const_decorator>  SM_point_locator;
   typedef CGAL::SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
 
-  #define USING(t) typedef typename SNC_structure::t t
-  USING(Vertex);
-  USING(Halfedge);
-  USING(Halffacet);
-  USING(Volume);
+  typedef typename SNC_structure::Vertex Vertex;
+  typedef typename SNC_structure::Halfedge Halfedge;
+  typedef typename SNC_structure::Halffacet Halffacet;
+  typedef typename SNC_structure::Volume Volume;
   
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Halffacet_iterator);
-  USING(Volume_iterator);
+  typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
+  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
+  typedef typename SNC_structure::Volume_iterator Volume_iterator;
 
-  USING(Vertex_handle);
-  USING(Halfedge_handle);
-  USING(Halffacet_handle);
-  USING(Volume_handle);
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Volume_handle Volume_handle;
 
-  USING(Vertex_const_handle);
-  USING(Halfedge_const_handle);
-  USING(Halffacet_const_handle);
-  USING(Halffacet_const_iterator);
-  USING(Volume_const_handle);
+  typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
+  typedef typename SNC_structure::Halffacet_const_iterator Halffacet_const_iterator;
+  typedef typename SNC_structure::Volume_const_handle Volume_const_handle;
 
-  USING(SVertex_iterator);
-  USING(SHalfedge_iterator);
-  USING(SFace_iterator);
-  USING(SHalfloop_iterator);
+  typedef typename SNC_structure::SVertex_iterator SVertex_iterator;
+  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
+  typedef typename SNC_structure::SFace_iterator SFace_iterator;
+  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator;
 
-  USING(SVertex);
-  USING(SHalfedge);
-  USING(SFace);
-  USING(SHalfloop);
+  typedef typename SNC_structure::SVertex SVertex;
+  typedef typename SNC_structure::SHalfedge SHalfedge;
+  typedef typename SNC_structure::SFace SFace;
+  typedef typename SNC_structure::SHalfloop SHalfloop;
 
-  USING(SVertex_handle);
-  USING(SHalfedge_handle);
-  USING(SFace_handle);
-  USING(SHalfloop_handle);
+  typedef typename SNC_structure::SVertex_handle SVertex_handle;
+  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
+  typedef typename SNC_structure::SFace_handle SFace_handle;
+  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
 
-  USING(SVertex_const_handle); 
-  USING(SHalfedge_const_handle); 
-  USING(SHalfloop_const_handle); 
-  USING(SFace_const_handle); 
+  typedef typename SNC_structure::SVertex_const_handle SVertex_const_handle; 
+  typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle; 
+  typedef typename SNC_structure::SHalfloop_const_handle SHalfloop_const_handle; 
+  typedef typename SNC_structure::SFace_const_handle SFace_const_handle; 
 
-  USING(Object_handle);
-  USING(SObject_handle);
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::SObject_handle SObject_handle;
 
-  USING(SHalfedge_around_facet_const_circulator);
-  USING(SHalfedge_around_facet_circulator);
-  USING(SFace_cycle_iterator);
-  USING(SFace_cycle_const_iterator);
-  USING(Halffacet_cycle_iterator);
-  USING(Halffacet_cycle_const_iterator);
-  USING(Shell_entry_iterator);
-  USING(Shell_entry_const_iterator);
+  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator SHalfedge_around_facet_const_circulator;
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
+  typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename SNC_structure::SFace_cycle_const_iterator SFace_cycle_const_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_const_iterator Halffacet_cycle_const_iterator;
+  typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
+  typedef typename SNC_structure::Shell_entry_const_iterator Shell_entry_const_iterator;
 
-  USING(Point_3);
-  USING(Vector_3);
-  USING(Direction_3);
-  USING(Segment_3);
-  USING(Line_3);
-  USING(Plane_3);
-  USING(Ray_3);
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Vector_3 Vector_3;
+  typedef typename SNC_structure::Direction_3 Direction_3;
+  typedef typename SNC_structure::Segment_3 Segment_3;
+  typedef typename SNC_structure::Line_3 Line_3;
+  typedef typename SNC_structure::Plane_3 Plane_3;
+  typedef typename SNC_structure::Ray_3 Ray_3;
 
-  USING(Sphere_point);
-  USING(Sphere_segment);
-  USING(Sphere_circle);
-  USING(Sphere_direction);
+  typedef typename SNC_structure::Sphere_point Sphere_point;
+  typedef typename SNC_structure::Sphere_segment Sphere_segment;
+  typedef typename SNC_structure::Sphere_circle Sphere_circle;
+  typedef typename SNC_structure::Sphere_direction Sphere_direction;
 
-  USING(Mark);
-  USING(Infi_box);
-  #undef USING
+  typedef typename SNC_structure::Mark Mark;
+  typedef typename SNC_structure::Infi_box Infi_box;
 
-  #define DECUSING(t) typedef typename SM_decorator::t t
-  DECUSING(SHalfedge_around_svertex_const_circulator);
-  DECUSING(SHalfedge_around_svertex_circulator);
-  #undef DECUSING
+  typedef typename SM_decorator::SHalfedge_around_svertex_const_circulator 
+                                 SHalfedge_around_svertex_const_circulator;
+  typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
+                                 SHalfedge_around_svertex_circulator;
 
   enum{NORMAL, CORNER, DEGENERATE};
 
@@ -404,6 +402,7 @@ public:
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
+    SETDTHREAD(1);
   }
 }; // SNC_constructor<SNC>
 
@@ -999,15 +998,15 @@ create_from_edge(Halfedge_handle e,
   bool first = true;
 
   // SETDTHREAD(19*43*131);
-  /*
-  SHalfedge_handle eee;
+ 
+  SHalfedge_const_handle ceee;
   TRACEN("---------------------" << point(vertex(e)));
-  CGAL_nef3_forall_shalfedges(eee,EE)
-    TRACEN("|" << EE.circle(eee) <<
-	   "|" << EE.mark(eee) << 
-	   " " << EE.mark(EE.face(eee)));
+  CGAL_nef3_forall_shalfedges(ceee,E)
+    TRACEN("|" << E.circle(ceee) <<
+	   "|" << E.mark(ceee) << 
+	   " " << E.mark(E.face(ceee)));
   TRACEN(" ");
-  */
+ 
 
   if(E.is_isolated(e)) {
     SFace_handle f = D.new_face();
@@ -1025,11 +1024,11 @@ create_from_edge(Halfedge_handle e,
     first = false;
   }
 
-  /*
+  SHalfedge_handle eee;
   CGAL_nef3_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee));
   TRACEN(" ");
-  */
+ 
 
   ec1 = E.out_edges(e);
   SHalfedge_around_svertex_circulator ec2(D.out_edges(v1));
@@ -1048,14 +1047,13 @@ create_from_edge(Halfedge_handle e,
 
   TRACEN(" ");
 
-  /*
   CGAL_nef3_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee) <<
 	   "|" << D.mark(eee) << 
 	   " " << D.mark(D.face(eee)));
   TRACEN("---------------------");
-  */
 
+ 
   return v;
 }
 

@@ -282,22 +282,21 @@ public:
   typedef SNC_SM_overlayer<Refs_> Self;
   typedef CGAL::SNC_SM_point_locator<Decorator> SM_point_locator;
 
-#define USING(t) typedef typename Refs_::t t
-  USING(Vertex_handle);
-  USING(SVertex_handle);
-  USING(SHalfedge_handle);
-  USING(SHalfloop_handle);
-  USING(SFace_handle);
-  USING(SVertex_iterator);
-  USING(SHalfedge_iterator);
-  USING(SFace_iterator);
-  USING(SObject_handle);
-  USING(Infi_box);
-#undef USING
-#define DECUSING(t) typedef typename Decorator::t t
-  DECUSING(SHalfedge_around_svertex_circulator);
-  DECUSING(SHalfedge_around_sface_circulator);
-#undef DECUSING
+  typedef typename Refs_::Vertex_handle Vertex_handle;
+  typedef typename Refs_::SVertex_handle SVertex_handle;
+  typedef typename Refs_::SHalfedge_handle SHalfedge_handle;
+  typedef typename Refs_::SHalfloop_handle SHalfloop_handle;
+  typedef typename Refs_::SFace_handle SFace_handle;
+  typedef typename Refs_::SVertex_iterator SVertex_iterator;
+  typedef typename Refs_::SHalfedge_iterator SHalfedge_iterator;
+  typedef typename Refs_::SFace_iterator SFace_iterator;
+  typedef typename Refs_::SObject_handle SObject_handle;
+  typedef typename Refs_::Infi_box Infi_box;
+
+  typedef typename Decorator::SHalfedge_around_svertex_circulator 
+                              SHalfedge_around_svertex_circulator;
+  typedef typename Decorator::SHalfedge_around_sface_circulator 
+                              SHalfedge_around_sface_circulator;
 
   typedef std::pair<SHalfedge_handle,SHalfedge_handle> SHalfedge_pair;
 
@@ -1376,7 +1375,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     if ( v == v_start ) {     
       for (int i=0; i<2; ++i){
 	m_buffer[i] = mohs[offset+2*i];
-      }
+      } 
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
 	TRACEN("edge below "<< PH(e_below) << " " << mark(e_below,i));
@@ -1607,10 +1606,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     TRACEN(PH(ey) << " " << mark(face(ey))<< " circle " << circle(ey)); //  << " " << mark(ey,1));
   TRACEN(" ");
 
-
-  /* typedef typename CGAL::Partition<SFace_handle>::item partition_item;
-     CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
-     CGAL::Partition<SFace_handle> FP; */
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
   CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
   CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(NULL);
@@ -1736,9 +1731,7 @@ void SNC_SM_overlayer<Refs_>::simplify() const
   CGAL_nef3_forall_shalfedges(ex,*this)
     TRACEN(PH(ex)<< " circle " << circle(ex) << " " << mark(ex));
   TRACEN(" ");
-
 }
-
 
 
 CGAL_END_NAMESPACE

@@ -75,13 +75,12 @@ typedef P         Point;
 typedef V         Vertex_handle;
 typedef unsigned  Halfedge_handle;
 
-  CGAL::Unique_hash_map<Vertex_handle, void*> Info;
 CGAL::Unique_hash_map<I,E>& From;
 std::vector<E>& Support;
 unsigned edge_number;
 
-Vertex_handle new_vertex(const Point& p)
-{ geninfo<unsigned>::create(Info[p.vertex()]);
+Vertex_handle new_vertex(const Point& p) const
+{ geninfo<unsigned>::create(p.vertex()->info());
   return p.vertex(); }
 
 Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) 
@@ -93,7 +92,7 @@ void supporting_segment(Halfedge_handle e, I it)
 
 void halfedge_below(Vertex_handle v, Halfedge_handle e)
 { TRACEN("halfedge_below "<<&*v<<" "<<e); 
-  geninfo<unsigned>::access(Info[v]) = e; }
+  geninfo<unsigned>::access(v->info()) = e; }
 
 // all empty, no update necessary
 void link_as_target_and_append(Vertex_handle v, Halfedge_handle e)
@@ -172,23 +171,29 @@ public:
   typedef SNC_structure_ SNC_structure;
   typedef SNC_decorator<SNC_structure> Base;
 
-#define USING(t) typedef typename SNC_structure_::t t
-  USING(Vertex_iterator); USING(Vertex_handle);
-  USING(Halfedge_iterator); USING(Halfedge_handle);
-  USING(Halffacet_iterator); USING(Halffacet_handle);
-  USING(Volume_iterator); USING(Volume_handle);
-  USING(SVertex_iterator); USING(SVertex_handle);
-  USING(SHalfedge_iterator); USING(SHalfedge_handle);
-  USING(SHalfloop_iterator); USING(SHalfloop_handle);
-  USING(SFace_iterator); USING(SFace_handle);
-  USING(SFace_cycle_iterator);
-  USING(Halffacet_cycle_iterator);
-  USING(Shell_entry_iterator);
-  USING(SObject_handle);
-  USING(Point_3);
-  USING(Plane_3);
-  USING(Mark);
-#undef USING
+  typedef typename SNC_structure::Vertex_iterator Vertex_iterator; 
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator; 
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator; 
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Volume_iterator Volume_iterator;
+  typedef typename SNC_structure::Volume_handle Volume_handle;
+  typedef typename SNC_structure::SVertex_iterator SVertex_iterator; 
+  typedef typename SNC_structure::SVertex_handle SVertex_handle;
+  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator; 
+  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
+  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator; 
+  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
+  typedef typename SNC_structure::SFace_iterator SFace_iterator; 
+  typedef typename SNC_structure::SFace_handle SFace_handle;
+  typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
+  typedef typename SNC_structure::SObject_handle SObject_handle;
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Plane_3 Plane_3;
+  typedef typename SNC_structure::Mark Mark;
 
   typedef typename Base::SHalfedge_around_facet_circulator
     SHalfedge_around_facet_circulator;
@@ -245,21 +250,20 @@ protected:
    a facet. */
 //--------------------------------------------------------------------------
 
-  template <typename Halffacet_output>
   Halffacet_handle determine_facet(SHalfedge_handle e, 
     const std::vector<SHalfedge_handle>& MinimalEdge,
     const CGAL::Unique_hash_map<SHalfedge_handle,int>& FacetCycle,
-    const std::vector<SHalfedge_handle>& Edge_of, Halffacet_output& O) const
+    const std::vector<SHalfedge_handle>& Edge_of) const
   { TRACEN("  determine_facet "<<debug(e));
     int fc = FacetCycle[e];
     SHalfedge_handle e_min = MinimalEdge[fc];
     SHalfedge_handle e_below = 
-      Edge_of[geninfo<unsigned>::access(O.Info[target(e_min)])];
+      Edge_of[geninfo<unsigned>::access(info(target(e_min)))];
     CGAL_nef3_assertion( e_below != SHalfedge_handle() );
     Halffacet_handle f = facet(e_below);
     if ( f != Halffacet_handle() ) return f; // has already a facet 
     // e_below also has no facet
-    f = determine_facet(e_below, MinimalEdge, FacetCycle, Edge_of, O);
+    f = determine_facet(e_below, MinimalEdge, FacetCycle, Edge_of);
     link_as_facet_cycle(e_below,f); 
     link_as_facet_cycle(twin(e_below),twin(f)); 
     return f;
@@ -430,7 +434,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   CGAL_nef3_forall_iterators(eit,SHalfedges) { 
     e=*eit;
-    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(O.Info[vertex(e)])];
+    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(e)))];
     TRACE(debug(e) << " has edge below ");
     if(e_below != SHalfedge_handle())
       TRACE(debug(e_below));
@@ -439,7 +443,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   
   CGAL_nef3_forall_iterators(lit,SHalfloops) { 
     l=*lit;
-    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(O.Info[vertex(l)])];  
+    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(l)))];  
     TRACEN(point(vertex(l)) << " has edge below " << debug(e_below));
   }
 
@@ -447,13 +451,13 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   CGAL_nef3_forall_iterators(eit,SHalfedges) { e=*eit;
   if ( facet(e) != Halffacet_handle() ) continue;
     TRACEN("  linking hole "<<debug(e));
-    Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of, O);
+    Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of);
     link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f));
   }
 
   CGAL_nef3_forall_iterators(lit,SHalfloops) { l=*lit;
     SHalfedge_handle e_below = 
-      Edge_of[geninfo<unsigned>::access(O.Info[vertex(l)])];
+      Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
     
     TRACEN("link sloop at vertex "<< point(vertex(l)));
     TRACEN("e_below "  << debug(e_below));

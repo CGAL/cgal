@@ -378,7 +378,7 @@ public:
 
     CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited(false);
     SHalfedge_const_iterator e_res;
-    CGAL_nef3_forall_shalfedges(e,*this) {
+    CGAL_nef3_forall_sedges(e,*this) {
       Sphere_segment se = segment(e);
       Sphere_point p_res;
       if ( do_intersect_internally(se,s,p_res) ) {

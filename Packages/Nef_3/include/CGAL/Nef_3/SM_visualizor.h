@@ -69,16 +69,14 @@ public:
   typedef SNC_SM_triangulator<Refs_,Sphere_map,Sphere_kernel> 
                                                SNC_SM_triangulator;
 
-#define USING(t) typedef typename Refs_::t t
-  USING(Vertex_const_handle);
-  USING(SVertex_const_handle);   
-  USING(SHalfedge_const_handle); 
-  USING(SFace_const_handle);     
-  USING(SVertex_const_iterator);
-  USING(SHalfedge_const_iterator);
-  USING(SFace_const_iterator);
-  USING(Mark);
-#undef USING
+  typedef typename Refs_::Vertex_const_handle      Vertex_const_handle;
+  typedef typename Refs_::SVertex_const_handle     SVertex_const_handle;   
+  typedef typename Refs_::SHalfedge_const_handle   SHalfedge_const_handle; 
+  typedef typename Refs_::SFace_const_handle       SFace_const_handle;     
+  typedef typename Refs_::SVertex_const_iterator   SVertex_const_iterator;
+  typedef typename Refs_::SHalfedge_const_iterator SHalfedge_const_iterator;
+  typedef typename Refs_::SFace_const_iterator     SFace_const_iterator;
+  typedef typename Refs_::Mark                     Mark;
 
   /*
     Here collide two handle worlds: Nef_S2::handles and

@@ -200,20 +200,21 @@ protected:
                                                    Halffacet_handle;
   typedef typename SNC_decorator::Volume_handle    Volume_handle;
 
-#define USING(t) typedef typename SNC_structure::t t
-  USING(Sphere_point);
-  USING(Sphere_segment);
-  USING(Sphere_circle);
-  USING(Vertex_const_handle);
-  USING(Halfedge_const_handle);
-  USING(Halffacet_const_handle);
-  USING(Volume_const_handle);
-  USING(SHalfedge_around_svertex_circulator);
-  USING(SHalfedge_around_facet_circulator);
-  USING(SHalfedge_around_facet_const_circulator);
-  USING(Halffacet_cycle_iterator);
-  USING(Infi_box);
-# undef USING
+  typedef typename SNC_structure::Sphere_point                 Sphere_point;
+  typedef typename SNC_structure::Sphere_segment               Sphere_segment;
+  typedef typename SNC_structure::Sphere_circle                Sphere_circle;
+  typedef typename SNC_structure::Vertex_const_handle          Vertex_const_handle;
+  typedef typename SNC_structure::Halfedge_const_handle        Halfedge_const_handle;
+  typedef typename SNC_structure::Halffacet_const_handle       Halffacet_const_handle;
+  typedef typename SNC_structure::Volume_const_handle          Volume_const_handle;
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator 
+                                  SHalfedge_around_svertex_circulator;
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator 
+                                  SHalfedge_around_facet_circulator;
+  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator 
+                                  SHalfedge_around_facet_const_circulator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator     Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Infi_box                     Infi_box;
 
   typedef typename Kernel::RT                       RT;
 
@@ -873,7 +874,6 @@ protected:
 
   void transform( const Aff_transformation_3& aff) {
     
-    //      SETDTHREAD(11*23);
     // precondition: the polyhedron as a bounded boundary
     // (needs to be explicitly tested at some time)
 

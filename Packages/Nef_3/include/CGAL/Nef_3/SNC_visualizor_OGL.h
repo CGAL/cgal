@@ -815,29 +815,29 @@ class SNC_visualizor_OGL : public SNC_decorator<SNC_>
   CGAL::OGL::Polyhedron* ppoly_;
 
 public:
-  #define USING(t) typedef typename SNC_::t t
-  USING(Vertex_iterator); 
-  USING(Halfedge_iterator); 
-  USING(Halffacet_iterator); 
-  USING(Halffacet_cycle_iterator);
+  typedef typename SNC_::Vertex_iterator Vertex_iterator; 
+  typedef typename SNC_::Halfedge_iterator Halfedge_iterator; 
+  typedef typename SNC_::Halffacet_iterator Halffacet_iterator; 
+  typedef typename SNC_::Halffacet_cycle_iterator Halffacet_cycle_iterator;
 
-  USING(Object_handle);
-  USING(SObject_handle); 
-  USING(SHalfedge_handle); 
-  USING(SHalfloop_handle); 
+  typedef typename SNC_::Object_handle Object_handle;
+  typedef typename SNC_::SObject_handle SObject_handle; 
+  typedef typename SNC_::SHalfedge_handle SHalfedge_handle; 
+  typedef typename SNC_::SHalfloop_handle SHalfloop_handle; 
 
-  USING(Vertex_handle); 
-  USING(Halfedge_handle); 
-  USING(Halffacet_handle);
+  typedef typename SNC_::Vertex_handle Vertex_handle; 
+  typedef typename SNC_::Halfedge_handle Halfedge_handle; 
+  typedef typename SNC_::Halffacet_handle Halffacet_handle;
 
-  USING(Point_3);
-  USING(Vector_3);
-  USING(Segment_3);
-  USING(Plane_3);
-  USING(Mark);
-  USING(SHalfedge_around_facet_circulator);
-  USING(SHalfedge_around_facet_const_circulator);
-  #undef USING
+  typedef typename SNC_::Point_3 Point_3;
+  typedef typename SNC_::Vector_3 Vector_3;
+  typedef typename SNC_::Segment_3 Segment_3;
+  typedef typename SNC_::Plane_3 Plane_3;
+  typedef typename SNC_::Mark Mark;
+  typedef typename SNC_::SHalfedge_around_facet_circulator 
+                         SHalfedge_around_facet_circulator;
+  typedef typename SNC_::SHalfedge_around_facet_const_circulator 
+                         SHalfedge_around_facet_const_circulator;
 
   SNC_visualizor_OGL(const SNC_structure& N) : Base(const_cast<SNC_&>(N))
   { ppoly_ = & CGAL::OGL::add_polyhedron(); }

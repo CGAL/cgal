@@ -544,29 +544,38 @@ class SNC_io_parser : public SNC_decorator<SNC_structure_>
   typedef CGAL::SNC_SM_decorator<SNC_structure_> SM_decorator;
 
 public:
-  #define USING(t) typedef typename SNC_structure_::t t
-  USING(Vertex_iterator); USING(Vertex_handle);
-  USING(Halfedge_iterator); USING(Halfedge_handle);
-  USING(Halffacet_iterator); USING(Halffacet_handle);
-  USING(Volume_iterator); USING(Volume_handle);
-  USING(SVertex_iterator); USING(SVertex_handle);
-  USING(SHalfedge_iterator); USING(SHalfedge_handle);
-  USING(SFace_iterator); USING(SFace_handle);
-  USING(SHalfloop_iterator); USING(SHalfloop_handle);
-  USING(Object_iterator); USING(Object_handle);
-  USING(SObject_handle);
-  USING(SFace_cycle_iterator);
-  USING(Halffacet_cycle_iterator);
-  USING(Shell_entry_iterator);
-  USING(SHalfedge_around_svertex_circulator);
-  USING(SHalfedge_around_sface_circulator);
-  USING(Point_3);
-  USING(Plane_3);
-  USING(Vector_3);
-  USING(Sphere_point);
-  USING(Sphere_segment);
-  USING(Mark);
-  #undef USING
+  typedef typename SNC_structure::Vertex_iterator Vertex_iterator; 
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator; 
+  typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator; 
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Volume_iterator Volume_iterator; 
+  typedef typename SNC_structure::Volume_handle Volume_handle;
+  typedef typename SNC_structure::SVertex_iterator SVertex_iterator; 
+  typedef typename SNC_structure::SVertex_handle SVertex_handle;
+  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator; 
+  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
+  typedef typename SNC_structure::SFace_iterator SFace_iterator; 
+  typedef typename SNC_structure::SFace_handle SFace_handle;
+  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator; 
+  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
+  typedef typename SNC_structure::Object_iterator Object_iterator; 
+  typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::SObject_handle SObject_handle;
+  typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
+  typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator 
+                                  SHalfedge_around_svertex_circulator;
+  typedef typename SNC_structure::SHalfedge_around_sface_circulator 
+                                  SHalfedge_around_sface_circulator;
+  typedef typename SNC_structure::Point_3 Point_3;
+  typedef typename SNC_structure::Plane_3 Plane_3;
+  typedef typename SNC_structure::Vector_3 Vector_3;
+  typedef typename SNC_structure::Sphere_point Sphere_point;
+  typedef typename SNC_structure::Sphere_segment Sphere_segment;
+  typedef typename SNC_structure::Mark Mark;
   typedef void* GenPtr;
 
  private:

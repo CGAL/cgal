@@ -44,18 +44,18 @@ public:
 typedef Decorator_ Const_decorator;
 /*{\Mtypemember equals |Decorator_|.}*/
 
-#define USING(t) typedef typename Base::t t
-USING(Vertex_handle);
-USING(SVertex_handle);
-USING(SHalfedge_handle);
-USING(SVertex_const_iterator);
-USING(SHalfedge_const_iterator);
-USING(SHalfedge_around_svertex_const_circulator);
-USING(SHalfedge_around_sface_const_circulator);
-USING(Sphere_point);
-USING(Sphere_segment);
-USING(Sphere_direction);
-#undef USING
+typedef typename Base::Vertex_handle Vertex_handle;
+typedef typename Base::SVertex_handle SVertex_handle;
+typedef typename Base::SHalfedge_handle SHalfedge_handle;
+typedef typename Base::SVertex_const_iterator SVertex_const_iterator;
+typedef typename Base::SHalfedge_const_iterator SHalfedge_const_iterator;
+typedef typename Base::SHalfedge_around_svertex_const_circulator 
+                       SHalfedge_around_svertex_const_circulator;
+typedef typename Base::SHalfedge_around_sface_const_circulator 
+                       SHalfedge_around_sface_const_circulator;
+typedef typename Base::Sphere_point Sphere_point;
+typedef typename Base::Sphere_segment Sphere_segment;
+typedef typename Base::Sphere_direction Sphere_direction;
 
 /*{\Mcreation 3}*/
 SNC_SM_checker(Vertex_handle v) : Base(v) {}
