@@ -49,6 +49,8 @@ public:
     typedef RT_Converter  Ring_number_type_converter;
     typedef FT_Converter  Field_number_type_converter;
 
+    using Enum_converter::operator();
+
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {
