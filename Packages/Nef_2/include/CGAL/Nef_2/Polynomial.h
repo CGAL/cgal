@@ -332,7 +332,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last) // af removed SNIHACK
+  Polynomial(Forward_iterator first, Forward_iterator last) 
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -680,7 +680,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last ) // af removed SNIHACK
+  Polynomial(Forward_iterator first, Forward_iterator last ) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -1001,7 +1001,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last ) // af: removed SNIHACK
+  Polynomial(Forward_iterator first, Forward_iterator last ) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
@@ -1280,7 +1280,7 @@ template <class NT>
 Polynomial<NT> operator - (const Polynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end()); // af removed SNIINST
+  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end()); 
   typename Polynomial<NT>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
