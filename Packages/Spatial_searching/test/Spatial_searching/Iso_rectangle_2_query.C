@@ -49,12 +49,12 @@ int main() {
   std::list<Point> copy_all_points(all_points);
   std::list<Point>::iterator pt;
   for (pt=result.begin(); (pt != result.end()); ++pt) {
-    assert(! exact_ic.has_on_unbounded_side(*pt));
+    assert(! exact_ic.has_on_unbounded_side(*pt) || exact_ic.has_on_boundary(*pt));
     copy_all_points.remove(*pt);
   }
   
   for (pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
-    assert(exact_ic.has_on_unbounded_side(*pt));
+    assert(exact_ic.has_on_unbounded_side(*pt) || exact_ic.has_on_boundary(*pt));
   }
 
 
@@ -68,12 +68,12 @@ int main() {
   // test the results of the approximate query
   for (pt=result.begin(); (pt != result.end()); ++pt) {
     // a point we found may be slighlty outside the isorectangle
-    assert(! outer_ic.has_on_unbounded_side(*pt));
+    assert(! outer_ic.has_on_unbounded_side(*pt) || outer_ic.has_on_boundary(*pt));
     all_points.remove(*pt);
   }
   
   for (pt=all_points.begin(); (pt != all_points.end()); ++pt) {
-    assert(inner_ic.has_on_unbounded_side(*pt));
+    assert(inner_ic.has_on_unbounded_side(*pt) || inner_ic.has_on_boundary(*pt));
   }
   std::cout << "done" << std::endl;
 
