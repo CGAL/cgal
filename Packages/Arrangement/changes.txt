@@ -1,3 +1,6 @@
+5 November 2004 Sylvain Pion
+- g++ 3.4 fixes.
+
 30 September 2004 Andreas Fabri
 - Replaced == with -eq in cgal_test as some Solaris versions have problems with the former
 

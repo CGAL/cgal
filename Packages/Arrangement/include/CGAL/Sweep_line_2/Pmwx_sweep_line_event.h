@@ -80,9 +80,9 @@ public:
   /*! Constructor */
   Pmwx_sweep_line_event(const Point_2 &point, Traits *traits) :
     Base(point, traits)
-    {
-			m_verticalCurveXEvents = new VerticalXEventSet(EventLess(m_traits));
-		}
+  {
+    m_verticalCurveXEvents = new VerticalXEventSet(EventLess(this->m_traits));
+  }
 
 
     /*! destructor */
@@ -154,8 +154,8 @@ public:
    */
   void init_right_curves()
   {
-    m_isCurveInPm.resize(get_num_right_curves());
-    for ( int i = 0 ; i < get_num_right_curves() ; i++ )
+    m_isCurveInPm.resize(this->get_num_right_curves());
+    for ( int i = 0 ; i < this->get_num_right_curves() ; i++ )
       m_isCurveInPm[i] = false;
   }
   
@@ -181,7 +181,7 @@ public:
     skip--;  // now 'skip' holds the amount of the right curves of the event
 		         // that are already inserted to the planar map  - 1 (minus 1)
 
-    SubCurveIter iter = m_rightCurves->end();
+    SubCurveIter iter = this->m_rightCurves->end();
     --iter;
     
 
@@ -191,16 +191,17 @@ public:
     bool exist_vertical = m_insertInfo.get_vertical_below_event_flag() ||
                           m_insertInfo.get_vertical_above_event_flag();
 	   
-    for ( ; iter != m_rightCurves->begin() ; --iter )
+    for ( ; iter != this->m_rightCurves->begin() ; --iter )
     {
       if ( curve->getId() == (*iter)->getId() ) 
       {
         m_isCurveInPm[counter] = true;
-        if (( i == 0 ) && ( get_num_left_curves() == 0 ) && !exist_vertical) 
+        if (( i == 0 ) && ( this->get_num_left_curves() == 0 )
+            && !exist_vertical) 
         {
           return skip;
         }
-        if ( get_num_left_curves() == 0 && !exist_vertical ) 
+        if ( this->get_num_left_curves() == 0 && !exist_vertical ) 
 	      {   
           return i-1;
         }
@@ -214,7 +215,7 @@ public:
     CGAL_assertion(curve->getId() == (*iter)->getId());
     m_isCurveInPm[counter] = true;
     
-    if ( get_num_left_curves() == 0 && !exist_vertical )
+    if ( this->get_num_left_curves() == 0 && !exist_vertical )
       i--;
     return i;
   }
@@ -225,7 +226,7 @@ public:
   bool is_curve_largest(CurveWrap *curve)
   {
     int counter = 0;
-    SubCurveIter iter = m_rightCurves->end();
+    SubCurveIter iter = this->m_rightCurves->end();
     --iter;
     while ( curve->getId() != (*iter)->getId() )
     {
