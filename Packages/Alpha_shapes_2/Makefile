@@ -68,7 +68,9 @@ clean:
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
-	--exclude=CVS --exclude=wrapper.tex \
+	--exclude=CVS \
+	--exclude=wrapper.tex --exclude=weight.tex \
+	--exclude=Weighted_alpha_shape_2.h \
 	--exclude=Makefile* --exclude=*5000* --exclude=*.o \
         --exclude=*.obj --exclude=*.exe --exclude=*~ \
 	version description.txt changes.txt \
