@@ -27,7 +27,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
-
+#include <CGAL/Triangulation_utils_3.h>
 
 template < class Tds >
 class CGAL_Triangulation_ds_cell_circulator_3
@@ -46,7 +46,7 @@ public:
   // CONSTRUCTORS
 
   CGAL_Triangulation_ds_cell_circulator_3()
-    : _tds(NULL), _e(), pos(NULL), prev(NULL)
+    : _tds(NULL), _e(), pos(NULL)//, prev(NULL)
   {
     _e.first = NULL;
     _e.second = 0;
@@ -68,13 +68,13 @@ public:
 //       }
 //     else {
       pos = e.first;
-      int k = other(e.second, e.third);
-      prev = e.first->neighbor(k);
+      //      int k = other(e.second, e.third);
+      //      prev = e.first->neighbor(k);
 //    }
   }
 
   CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
-    : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
+    : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos)//, prev(ccir.prev)
   {}
    
   Cell_circulator & 
@@ -83,7 +83,7 @@ public:
       _tds = ccir._tds;
       _e = ccir._e;
       pos = ccir.pos;
-      prev = ccir.prev;
+      //      prev = ccir.prev;
       return *this;
     }
 
@@ -92,17 +92,19 @@ public:
   {
     CGAL_triangulation_precondition( (pos != NULL) );
     //then dimension() cannot be < 3
-    int i= pos->index(_e.first->vertex(_e.second));
+    int i = pos->index(_e.first->vertex(_e.second));
     int j = pos->index(_e.first->vertex(_e.third));
-    int k = other(i,j);
-    Cell * tmp = pos;
-    Cell * n = pos->neighbor(k);
-    if ( n == prev ) {
-      pos = pos->neighbor( 6-i-j-k );
-    }
-    else pos = n;
+    //    int k = other(i,j);
+    //    Cell * tmp = pos;
+    //    Cell * n = pos->neighbor(k);
+    //    if ( n == prev ) {
+    //      pos = pos->neighbor( 6-i-j-k );
+    //    }
+    //    else pos = n;
 
-    prev = tmp;
+    //    prev = tmp;
+
+    pos = pos->neighbor( nextposaroundij(i,j) );
     return *this;
   }
         
@@ -119,14 +121,16 @@ public:
     CGAL_triangulation_precondition( (pos != NULL) ); // then prev != NULL too
     int i = prev->index(_e.first->vertex(_e.second));
     int j = prev->index(_e.first->vertex(_e.third));
-    int k = other(i,j);
-    Cell * tmp = prev;
-    Cell * n = prev->neighbor(k);
-    if ( n == pos ) {
-      prev = prev->neighbor( 6-i-j-k );
-    }
-    else prev = n;
-    pos = tmp;
+    //    int k = other(i,j);
+    //    Cell * tmp = prev;
+    //    Cell * n = prev->neighbor(k);
+    //    if ( n == pos ) {
+    //      prev = prev->neighbor( 6-i-j-k );
+    //    }
+    //    else prev = n;
+    //    pos = tmp;
+
+    pos = pos->neighbor( nextposaroundij(j,i) );
     return *this;
   }
         
@@ -152,7 +156,8 @@ public:
   bool operator==(const Cell_circulator & ccir) const
   {
     return ( (_tds == ccir._tds) && (_e == ccir._e) && 
-	     (pos == ccir.pos) && (prev == ccir.prev) );
+	     //	     (pos == ccir.pos) && (prev == ccir.prev) );
+	     (pos == ccir.pos) );
   }
         
         
@@ -179,29 +184,29 @@ private:
   Tds* _tds;
   Edge _e;
   Cell* pos; // current cell
-  Cell* prev; // preceding cell
+  //  Cell* prev; // preceding cell
 
-  // given i and j supposed to be different and in 0,1,2,3
-  // i supposed to be < j
-  // computes the index of a vertex different from i and j in a cell 
-  // works in dimension 2 or 3
-  static int other(int i, int j)
-  {
-    int min, max;
-    if (i<j) {
-      min = i;
-      max = j;
-    }
-    else {
-      min = j;
-      max = i;
-    }
-    if ( min == 0 ) {
-      if ( max == 1 ) return 2;
-      else return 1;
-    }
-    else return 0;
-  }
+//   // given i and j supposed to be different and in 0,1,2,3
+//   // i supposed to be < j
+//   // computes the index of a vertex different from i and j in a cell 
+//   // works in dimension 2 or 3
+//   static int other(int i, int j)
+//   {
+//     int min, max;
+//     if (i<j) {
+//       min = i;
+//       max = j;
+//     }
+//     else {
+//       min = j;
+//       max = i;
+//     }
+//     if ( min == 0 ) {
+//       if ( max == 1 ) return 2;
+//       else return 1;
+//     }
+//     else return 0;
+//   }
 };
 
 #endif CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
