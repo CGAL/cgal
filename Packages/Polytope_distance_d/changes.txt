@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.1.8 on 23-Sep-2003
+- New file headers
+
 Version 1.1.7 on 16-Sep-2003
 - Undo last change, but protect the indexing commands by \lcTex.
 
