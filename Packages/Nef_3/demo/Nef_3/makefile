@@ -24,16 +24,14 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-ifdef CGAL_USE_QT
-  CUSTOM_LDFLAGS = -lGL -lGLU
-endif
+CUSTOM_LDFLAGS = -lGL -lGLU
 
 LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
