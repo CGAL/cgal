@@ -30,7 +30,10 @@ public :
     {}
 };
 
-typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
+typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > my_K;
+
+// This is just to shorten some symbol names for VC++
+struct K : public my_K {};
 
 typedef K::Point_3 Point;
 

@@ -1,3 +1,6 @@
+Version 1.79 (25 July 01)
+- Short names in the examples for VC++.
+
 Version 1.78 (23 July 01)
 - traits concepts doc modified according to the corresponding modifications
   in the code
