@@ -43,7 +43,7 @@ operator<<(Qt_widget &qt_w, const Apollonius_site_2<K>& wp)
 CGAL_END_NAMESPACE
 
 
-#include <CGAL/Qt_widget_Hyperbola_2.h>
+#include <CGAL/IO/Qt_widget_Hyperbola_2.h>
 
 #endif
 
