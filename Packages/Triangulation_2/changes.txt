@@ -2,6 +2,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.47 (23/09/02)
+ - no changes - just to try submission process
+
 Ver 7.46  (27/08/02)
 - simplify macros defined in dans Trivial_iterator.h
 - fixed demo/Triangulation_2/Delaunay.C
