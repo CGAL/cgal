@@ -7,6 +7,9 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Fixed VC++ pattern problem (match for CL|cl without .exe).
+GLOB: Added setting of CGAL_OBJ_PREFIX (for Borland support).
+GLOB: Changed CGAL_LIB_CREATE for Borland to "tlib /C /P512".
 GLOB: Do "make -i" for the libs in internal releases.
 GLOB: Set LONG_NAME_PROBLEM flags only when really needed.
 GLOB: Changed -Zm400 to -Zm900 for msvc. // DVP
