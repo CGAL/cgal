@@ -8,7 +8,12 @@
 \begin{ccClass} {Window_stream}
 \ccSection{Window Stream}
 
-Note: For the functionality described in this section you need \leda.
+Note: For the functionality described in this section you need \leda or
+the \cgal\ port of the \leda window lib. The \cgal\ port has an interface
+close to the \leda window, but operations using \leda geometry classes
+were removed and the names of the used types were changed from
+\ccStyle{leda_name} to \ccStyle{CGAL::name} and \ccStyle{leda_string}
+was replaced by \ccStyle{std::string}.
 
 \ccDefinition 
 
