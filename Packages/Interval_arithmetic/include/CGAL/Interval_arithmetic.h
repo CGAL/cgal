@@ -535,42 +535,26 @@ Interval_nt
 max (const Interval_nt & d, const Interval_nt & e)
 { return max((Interval_nt_advanced) d, (Interval_nt_advanced) e); }
 
-// Here we use the GNU extension of "Named return value".
-
-#ifdef __GNUG__
-#  define CGAL_NAMED_RETURN_VALUE_OPT_1 return tmp;
-#  define CGAL_NAMED_RETURN_VALUE_OPT_2
-#  define CGAL_NAMED_RETURN_VALUE_OPT_3
-#else
-#  define CGAL_NAMED_RETURN_VALUE_OPT_1
-#  define CGAL_NAMED_RETURN_VALUE_OPT_2 Interval_nt tmp;
-#  define CGAL_NAMED_RETURN_VALUE_OPT_3 return tmp;
-#endif
-
 inline
 Interval_nt
 Interval_nt::operator+ (const Interval_nt & d) const
-CGAL_NAMED_RETURN_VALUE_OPT_1
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  CGAL_NAMED_RETURN_VALUE_OPT_2
-  tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf);
-  tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup + d._sup);
+  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf),
+	            CGAL_IA_FORCE_TO_DOUBLE(_sup + d._sup));
   FPU_set_cw(backup);
-  CGAL_NAMED_RETURN_VALUE_OPT_3
+  return tmp;
 }
 
 inline
 Interval_nt
 Interval_nt::operator- (const Interval_nt & d) const
-CGAL_NAMED_RETURN_VALUE_OPT_1
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  CGAL_NAMED_RETURN_VALUE_OPT_2
-  tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf);
-  tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf);
+  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE(d._sup - _inf),
+                    CGAL_IA_FORCE_TO_DOUBLE(_sup - d._inf));
   FPU_set_cw(backup);
-  CGAL_NAMED_RETURN_VALUE_OPT_3
+  return tmp;
 }
 
 inline
@@ -586,10 +570,9 @@ Interval_nt::operator* (const Interval_nt & d) const
 inline
 Interval_nt
 Interval_nt::operator* (const double d) const
-CGAL_NAMED_RETURN_VALUE_OPT_1
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  CGAL_NAMED_RETURN_VALUE_OPT_2
+  Interval_nt tmp;
   if (d>=0) {
       tmp._inf = -CGAL_IA_FORCE_TO_DOUBLE(_inf*-d);
       tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_sup*d);
@@ -598,7 +581,7 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
       tmp._sup =  CGAL_IA_FORCE_TO_DOUBLE(_inf*d);
   }
   FPU_set_cw(backup);
-  CGAL_NAMED_RETURN_VALUE_OPT_3
+  return tmp;
 }
 
 inline
