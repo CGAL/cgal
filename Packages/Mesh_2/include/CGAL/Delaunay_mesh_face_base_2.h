@@ -31,6 +31,8 @@ class Delaunay_mesh_face_base_2 : public Fb
 public:
   typedef Gt Geom_traits;
   typedef Constrained_triangulation_face_base_2<Gt> CTFb;
+  typedef typename Fb::Vertex_handle Vertex_handle;
+  typedef typename Fb::Face_handle Face_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -44,17 +46,18 @@ protected:
 public:
   Delaunay_mesh_face_base_2(): Fb(), marked(false) {};
 
-  Delaunay_mesh_face_base_2(void* v0, void* v1, void* v2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0, 
+			    Vertex_handle v1, 
+			    Vertex_handle v2)
     : Fb(v0,v1,v2), marked(false) {};
 
-  Delaunay_mesh_face_base_2(void* v0, void* v1, void* v2,
-			    void* n0, void* n1, void* n2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0, 
+			    Vertex_handle v1, 
+			    Vertex_handle v2,
+			    Face_handle n0, 
+			    Face_handle n1, 
+			    Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2), marked(false) {};
-
-  Delaunay_mesh_face_base_2(void* v0, void* v1, void* v2,
-			    void* n0, void* n1, void* n2,
-			    bool c0, bool c1, bool c2 )
-    : Fb(v0,v1,v2,n0,n1,n2,c0,c1,c2), marked(false) {};
 
   inline
   bool is_marked() const { return marked; };

@@ -725,7 +725,7 @@ public slots:
 
   void updatePointCounter()
     {
-      nb_of_points->setNum(mesh->number_of_vertices());
+      nb_of_points->setNum(static_cast<int>(mesh->number_of_vertices()));
       if(nb_of_clusters_has_to_be_updated &&
 	 mesh->get_initialized() != Mesh::NONE)
 	{
