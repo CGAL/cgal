@@ -1,3 +1,9 @@
+4.66
+- forgot this entry for 4.65
+- added a construction of an arbitrary size integer from a double
+  in simplest_rational_in_interval. This is not allowed by the spec
+  but it will work for the integers we use.
+
 4.64      (13 August 02)
 - Move to_interval(long long) from Interval_arithmetic.h to long_long.h.
 
