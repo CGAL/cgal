@@ -57,7 +57,7 @@ public:
 template <class ConstructBbox_2>
 class MyConstruct_bbox_2 : public ConstructBbox_2 {
 public:
-  CGAL::Bbox_2 operator()(const typename MyPointC2& p) const {
+  CGAL::Bbox_2 operator()(const MyPointC2& p) const {
     return CGAL::Bbox_2(p.x(), p.y(), p.x(), p.y());
   }
 };
