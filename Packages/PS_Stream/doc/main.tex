@@ -1,59 +1,61 @@
-\chapter{PostScript Stream} \label{Chapter_Postscript}
+\chapter{PostScript Stream} \label{Chapter_PostScript}
 
 \section{Introduction}
 
 
-The {\em Postscript} language is a simple interpretative programming
-language with powerful graphics capabilitites. Its primary application
+The {\em PostScript} language is a simple interpretative programming
+language with powerful graphics capabilities. Its primary application
 is to describe the appearance of text, graphical shapes, and sampled
 images on printed pages. A program in this language may be used to
 communicate a description of a printable document from a composition
 system to a printing system.
 
- We provide a Postscript output for all geometric
+ We provide a PostScript output for all geometric
 classes which are defined in the \cgal\ kernel.\\
-Using this stream,allows to create
-Postscript file which can be viewed, printed as such or inserted in Latex documents.
+Using this stream allows to create PostScript files which can be viewed,
+printed as such or inserted in LaTeX documents.
 
 \begin{ccClass} {PS\_Stream}
-\ccSection{The Postscript Stream Class}
+\ccSection{The PostScript Stream Class}
 
 \ccDefinition 
 
-An object of type \ccClassName\ is a stream in which geometrics
-objects, and manipulators can be inserted.\\
-Every kind of \cgal\ objects introduced into the Postscript stream will
-be converted into a Postscript format and put into an output stream
+An object of type \ccClassName\ is a stream in which geometric
+objects and manipulators can be inserted.\\
+Every kind of \cgal\ objects introduced into the PostScript stream will
+be converted into a PostScript format and put into an output stream
 typically linked to a file. The resulting file can be visualized with
-a Postscript viewer or sent to any Postscript printer.\\
-Such a stream has a state,called {\em context}, that
+a PostScript viewer or sent to any PostScript printer.\\
+Such a stream has a state, called {\em context}, that
 holds parameters of the drawing such as the current color, or the current line
-style \ldots.Contexts can be modified and saved in order to
+style \ldots
+Contexts can be modified and saved in order to
 switch easily between contexts. A \ccClassName\ class also provides
 additionnal graphic
 features such as a coordinate system, grids, labels and borders.\\
 \par
-First of all, you have to define a bounding box enclosing all the
-parts of objects to be displayed. Objects  
+First of all, you have to define a bounding box enclosing all
+parts of the objects to be displayed. Objects  
 larger than this bounding box, will be clipped. Notice that the
 bounding box is given in user's coordinates.\\
 
-Different constants are defined in the \ccClassName\/  class, such CM, INCH,
+Different constants are defined in the \ccClassName\/  class, such as CM, INCH,
 POINT.\\
-They allow to make a conversion between Postscript dots (1 POINT=1
-Postscript dot) and usual units of mesure.\\
+They allow to make a conversion between PostScript dots (1 POINT=1
+PostScript dot) and usual units of mesure.\\
 
-Moreover, there exists several modes of output. By default it is the mode
-QUIET, which means that the output file will contains no specific information concerning
-the \cgal\ object. It contains only standard  Postscript data, and
+Moreover, there exists several modes of output. By default it is the QUIET
+mode, which means that the output file will contain no specific information
+concerning
+the \cgal\ object. It contains only standard  PostScript data, and
 therefore can be visualized or printed as such.\\
-Alternatively, the mode QUIET\_EPS is used to create an output which can be
-incorporated in a Latex document.\\
-The READABLE mode inserts in the generated file postscript comments
-giving a clear description of 
-each \cgal\ object displayed, that is to say, the position, the 
+Alternatively, the QUIET\_EPS mode can be used to create an output which can be
+incorporated in a LaTeX document.\\
+The READABLE mode inserts in the generated file some PostScript comments
+giving a clear description of
+each \cgal\ object displayed, that is to say, the position, the
 dimensions and the name (point, circle\ldots).\\
-And finally, we find the READABLE\_EPS mode, which combine the QUIET\_EPS and
+And finally, we find the READABLE\_EPS mode, which combines the QUIET\_EPS and
 READABLE mode.\\
 
 
@@ -72,7 +74,7 @@ output stream.}
 \ccGlue
 
 \ccNestedType{Context;}{The context type, used to select the drawing
-style of the Postscript output.}
+style of the PostScript output.}
 \ccGlue
 
 \ccNestedType{Axis;}{The axis type, used to generate a coordinate
@@ -85,8 +87,8 @@ system.}
 \ccNestedType{Label}{The label type, used to generate labels.}
 \ccGlue
 
-\ccNestedType{Latex\_Label}{The latex label type, used to generate
-Latex labels.}
+\ccNestedType{LaTeX\_Label}{The latex label type, used to generate
+LaTeX labels.}
 \ccGlue
 
 \ccNestedType{Border}{The border type, used to generate a border
@@ -103,22 +105,22 @@ FBOX};}{The style of points (cf figure~1.1 in section~1.3)}
 \ccCreationVariable{ps}
 
 \ccConstructor{PS_Stream(const PS_BBox& bb, ostream& os,OutputMode
-mode=QUIET);}{Creates a Postscript stream associated to the 
-bounding box \ccc{bb}, in a \ccc{mode} mode(by default, the mode is
+mode=QUIET);}{Creates a PostScript stream associated to the 
+bounding box \ccc{bb}, in a \ccc{mode} mode (by default, the mode is
 QUIET). The output stream is \ccc{os}. The size of the drawing is
 given by a
 default value, corresponding to the size of the drawing area on an
 A4-paper format.}
 
 \ccConstructor{PS_Stream(const PS_BBox& bb, const char* fname,
-OutputMode mode=QUIET);}{Creates the same  Postscript
+OutputMode mode=QUIET);}{Creates the same  PostScript
 stream as above, but the output will be a file, named \ccc{fname}.}
 
 \ccConstructor{PS_Stream(const PS_BBox& bb, float H, ostream& os,
 OutputMode mode=QUIET);}{This constructor specifies the
-size of the drawing in Postscript dots. The \ccc{H}
-parameter designs the height of the drawing in Postscript dots. The drawing width is
-calculated to keep circle round.}
+size of the drawing in PostScript dots. The \ccc{H}
+parameter designs the height of the drawing in PostScript dots. The drawing
+width is computed to keep circles round.}
 
 \ccConstructor{PS_Stream(const PS_BBox& bb, float H, const char*
 fname, OutputMode mode=QUIET);}{Creates the same
@@ -127,7 +129,7 @@ constructor as above, but the output stream will be in a file, named
 
 \ccConstructor{PS_Stream(const PS_BBox& bb, float L, float H, ostream& 
 os, OutputMode mode=QUIET);}{This constructor specifies the 
-size of the postscript drawing, in Postscript dots. The \ccc{L}
+size of the PostScript drawing, in PostScript dots. The \ccc{L}
 parameter represents the width of the output, and \ccc{H} the height.}
 
 \ccConstructor{PS_Stream(const PS_BBox& bb,float L, float H, const
@@ -137,25 +139,25 @@ constructor as above, but the output stream will be in a file, named
 
 \ccThree{const Context&&}{}{Creates the same constructor as above, but th}
 
-\ccFunction{void ~PS_Stream();}{The destructor. Inserts all the Latex
-instructions (if any), all the Latex labels (if any) and closes the stream.}
+\ccFunction{void ~PS_Stream();}{The destructor. Inserts all the LaTeX
+instructions (if any), all the LaTeX labels (if any) and closes the stream.}
 
 
 \ccAccessFunctions
 \par
 
-\ccMethod{ostream& os();}{Return the stream in which goes the
-Postscript output.}
+\ccMethod{ostream& os();}{Returns the stream in which goes the
+PostScript output.}
 \ccGlue
 
-\ccMethod{List_Label& list();}{Returns the list of Latex labels.}
+\ccMethod{List_Label& list();}{Returns the list of LaTeX labels.}
 \ccGlue
 
 \ccMethod{const Context context() const;}{Returns the context.}
 \ccGlue
 
 \ccMethod{PS_BBox bbox() const;}{Returns the bounding box associated
-to the Postscript stream.}
+to the PostScript stream.}
 \ccGlue
 
 \ccMethod{int width() const;}{Returns the width of the output.}
@@ -183,20 +185,20 @@ is READABLE or READABLE\_EPS.}
 
 \ccOperations
 
-\ccFunction{double x2ps(double x);}{Converts user's coordinates in  Postscript's coordinates.}
+\ccFunction{double x2ps(double x);}{Converts user's coordinates in  PostScript's coordinates.}
 \ccGlue
 
-\ccFunction{double y2ps(double y);}{Converts user's coordinates in Postscript's coordinates.}
+\ccFunction{double y2ps(double y);}{Converts user's coordinates in PostScript's coordinates.}
 \par
 \par
 
 \ccHeading{Setting functions}
 
-The following member functions, allow to influence the state of the stream, by modifying
-the data members of the \ccc{Context}\ class. They enable
- to change the color, the line width, the line style\ldots. \\
+The following member functions allow to change the state of the stream, by
+modifying the data members of the \ccc{Context}\ class. They allow
+to change the color, the line width, the line style\ldots. \\
 The same effects are more typically achieved by \ccc{manipulators} inserted
-in the Postscript stream. These \ccc{manipulators} are described in section ~1.4.
+in the PostScript stream. These \ccc{manipulators} are described in section ~1.4.
 \par
 
 
@@ -205,7 +207,7 @@ change the color of border lines.}
 \ccGlue
 
 \ccFunction{PS_Stream& set_fill_color(const Color& c);}{Allows to fill
-closed figures in a choosen color.}
+closed figures in a chosen color.}
 \ccGlue
 
 \ccFunction{PS_Stream& set_point_size(unsigned int s);}{Allows to change
@@ -233,8 +235,7 @@ to the default context.}
 \ccGlue
 
 \ccFunction{PS_Stream7 set_current_contex(const Context& c);}{Allows
-to globaly
-change the context into an other.}
+to globally change the context into an other.}
 \ccGlue
 
 \ccFunction{PS_Stream& set_point(Point_2<Cartesian<double>> p);}{Allows to 
@@ -249,14 +250,14 @@ coordinate system.}
 \ccGlue
 
 \ccFunction{PS_Stream& put_ps_label(const char* txt);}{Used to create a
-standart label.}
+standard label.}
 \ccGlue
 
-\ccFunction{PS_Stream& put_latex_label(const char* txt);}{Used te create a
-Latex label.}
+\ccFunction{PS_Stream& put_latex_label(const char* txt);}{Used to create a
+LaTeX label.}
 \ccGlue
 
-\ccFunction{PS_Stream& put_border(unsigned int t);}{used to generate a 
+\ccFunction{PS_Stream& put_border(unsigned int t);}{Used to generate a 
 frame around the drawing.}
 \ccGlue
 
@@ -287,9 +288,9 @@ to select the drawing style of points, lines, the colors \ldots.
 \ccClassName\ is a member class of the PS\_Stream class.\\
 
 The current context can be modified by using
-different functions that allow to change directly parameters of the
+different functions that allow to directly change the parameters of the
 \ccClassName\ class or by
-inserting manipulators in the Postscript stream (cf section ~1.4 {\em manipulators}).\\ 
+inserting manipulators in the PostScript stream (cf section ~1.4 {\em manipulators}).\\ 
 
 There is a default \ccClassName. \\
 The default values of the different fields of this class are : \\
@@ -309,7 +310,7 @@ Font             \>            ``Helvetica''\\
 Anchor Point     \>            (0,0)\\
 \end{tabbing}
 
-The following figure shows the different kind of style of points an lines.
+The following figure shows the different kinds of style of points and lines.
 
 \begin{figure}[h]
 \includegraphics{style.ps}
@@ -337,11 +338,11 @@ fill and draw the figures.}
 \ccGlue
 
 \ccMethod{unsigned int get_dot_size() const;}{Returns the dots size
-(given in Postscript dots).}
+(given in PostScript dots).}
 \ccGlue
 
 \ccMethod{unsigned int get_thickness() const;}{Returns the lines
-thickness (given in Postscript dots).}
+thickness (given in PostScript dots).}
 \ccGlue
 
 \ccMethod{unsigned int get_font_size() const;}{Returns the font size,
@@ -356,8 +357,7 @@ used only for standard labels.}
 font, used only for standard labels.}
 \ccGlue
 
-\ccMethod{bool get_fill() const;}{Returns true if a polygone is
-filled.}
+\ccMethod{bool get_fill() const;}{Returns true if a polygon is filled.}
 \par
 
 
@@ -380,18 +380,18 @@ color.}
 \ccGlue
 
 \ccMethod{void set_dot_size(unsigned int s);}{Sets the dot size given
-in Postscript dots.}
+in PostScript dots.}
 \ccGlue
 
-\ccMethod{void set_thickness(unsigned int t);}{Sets the lines
-thickness given in Postscript dots.}
+\ccMethod{void set_thickness(unsigned int t);}{Sets the line
+thickness given in PostScript dots.}
 \ccGlue
 
 \ccMethod{void set_font_size(unsigned int s);}{Sets the font size.}
 \ccGlue
 
-\ccMethod{void set_fill(bool& b);}{Closed figures will be fill if
-\ccc{b==true}.}
+\ccMethod{void set_fill(bool& b);}{Closed figures will be filled if
+\ccc{b=true}.}
 \par
 
 \ccMethod{void set_current_pos(const Point_2<Cartesian <double>>&
@@ -399,16 +399,16 @@ p);}{Point p becomes the current position.}
 \ccGlue
 
 \ccMethod{void set_line_style(DashStyle style);}{Sets the line style
-using a style.}
+to \ccc{style}.}
 \ccGlue
 
 \ccMethod{void set_font(const char* font);}{Sets the font. You must
-use the Postscript names of font.}
+use the PostScript names of font.}
 \par
 
-The selected font and  font size applies only to standard
-label. The font and font size of Latex labels are of the
-responsability of the Latex environment.
+The selected font and font size apply only to the standard labels. The font
+and font size of LaTeX labels are of the responsability of the LaTeX
+environment.
 
 \end{ccClass}
 
@@ -416,14 +416,14 @@ responsability of the Latex environment.
 \ccSubsection{Axis class}
 
 \ccDefinition
-An object of the \ccClassName\ class enables you to represente axis on the
-postscript output, therfore a coordinate system.
+An object of the \ccClassName\ class allows you to represent axis on the
+PostScript output, therefore a coordinate system.
 An object of such a class is defined by two doubles and one
 integer.
-The two double define the step between two marks on the x-axis 
+The two doubles define the step between two marks on the x-axis 
 and the y-axis (a zero value means no mark displayed on the axis).
 The integer represents the thickness of the axis.
-Only one \ccClassName\ object can be inserted in a postscript stream.
+Only one \ccClassName\ object can be inserted in a PostScript stream.
 
 \ccCreation
 \ccCreationVariable{a}
@@ -432,8 +432,8 @@ Only one \ccClassName\ object can be inserted in a postscript stream.
 system, with a line thickness 0.}
 
 \ccConstructor{PS_Stream::Axis(double x,double y,unsigned int
-t=0);}{Creates an orthogonal coordonate system with steps \ccc{x} and
-\ccc{y} and the line thickness t (by default t=0).}
+t=0);}{Creates an orthogonal coordinate system with steps \ccc{x} and
+\ccc{y} and the line thickness \ccc{t} (by default \ccc{t=0}).}
 
 \ccConstructor{PS_Stream::Axis(double xy,unsigned int t=0);}{Creates
 an orthogonal coordinate system with the same step \ccc{xy} for x-axis
@@ -458,20 +458,20 @@ axis.}
 \ccSubsection{Grid class}
 
 \ccDefinition
-An object of the \ccClassName\ class enables you to represente a grid on the 
+An object of the \ccClassName\ class allows you to represent a grid on the 
 output stream, that is to say, sequences of parallel lines equally
 spaced.
 An object of such a class is defined by two doubles and a DashStyle.
 The two doubles represent the vertical and horizontal spacing, and the 
 DashStyle the style of lines (cf figure ~1.1).
 Contrary to the objects of type \ccc{Axis}, you can insert as many
-\ccClassName\ object as you want in a postscript stream.
+\ccClassName\ object as you want in a PostScript stream.
 
 \ccCreation
 \ccCreationVariable{g}
 
 \ccConstructor{PS_Stream::Grid();}{Creates a grid with lines spaced of 
-1.0 and a default dash style (''[1 5] 0''). The style is the dash style used by Postscript.}
+1.0 and a default dash style (''[1 5] 0''). The style is the dash style used by PostScript.}
 
 \ccConstructor{PS_Stream::Grid(double x, double y, DashStyle str=''[1
 5] 0'');}{Creates a grid with vertical lines spaced of \ccc{x},
@@ -500,8 +500,8 @@ horizontal lines.}
 \ccSubsection{Label class}
 
 \ccDefinition
-This class is used to insert text in a postscript output.
-An object of the \ccClassName\ class is a label, that is to say text that can be inserted in a postscript stream.
+This class is used to insert text in a PostScript output.
+An object of the \ccClassName\ class is a label, that is to say text that can be inserted in a PostScript stream.
 The text will be displayed at the anchor point with the font and the
 font size of the current context.
 
@@ -521,21 +521,21 @@ with \ccc{txt} as text.}
 
 \end{ccClass}
 
-\begin{ccClass}{Latex_Label}
-\ccSubsection{Latex\_Label class}
+\begin{ccClass}{LaTeX_Label}
+\ccSubsection{LaTeX\_Label class}
 
 \ccDefinition
 This class is used to insert labels in drawing that are to be inserted 
-in a Latex document.
+in a LaTeX document.
 Such labels will appear with the font and font size of the including
-Latex document.
+LaTeX document.
 However, you can
-change this parameters by using standard Latex commands within the labels.\\
-The Postscript stream must be created with the mode QUIET\_EPS or READABLE\_EPS.\\
-These labels won't be display with a viewer but only with Latex, by
+change this parameters by using standard LaTeX commands within the labels.\\
+The PostScript stream must be created with the mode QUIET\_EPS or READABLE\_EPS.\\
+These labels won't be display with a viewer but only with LaTeX, by
 the following way :
-The generated Postscript file, for exemple \ccc{drawing.ps}, is then
-included in a Latex document as an {\sc Ipe} file by using the
+the generated PostScript file, for example \ccc{drawing.ps}, is then
+included in a LaTeX document as an {\sc Ipe} file by using the
 following syntax :
 
 \begin{verbatim}
@@ -552,11 +552,11 @@ following syntax :
 \ccCreation
 \ccCreationVariable{l}
 
-\ccConstructor{PS_Stream::Latex_Label();}{Creates a Latex label with
+\ccConstructor{PS_Stream::LaTeX_Label();}{Creates a LaTeX label with
 no text.}
 
-\ccConstructor{PS_Stream::Latex_Label(const char* txt);}{Creates a
-Latex label with \ccc{txt} as text.}
+\ccConstructor{PS_Stream::LaTeX_Label(const char* txt);}{Creates a
+LaTeX label with \ccc{txt} as text.}
 
 \end{ccClass}
 
@@ -564,14 +564,14 @@ Latex label with \ccc{txt} as text.}
 \ccSubsection{Border class}
 
 \ccDefinition
-The \ccClassName\ class is used to insert in the stream a frame
-surrounding the bounding box.
+The \ccClassName\ class is used to insert a frame surrounding the bounding box
+into the stream.
 
 \ccCreation
 \ccCreationVariable{b}
 
 \ccConstructor{PS_Stream::Border(int s =0);}{Creates a border of
-thickness s (by default s==0).}
+thickness \ccc{s} (by default \ccc{s=0}).}
 
 \ccAccessFunctions
 
@@ -584,17 +584,16 @@ thickness s (by default s==0).}
 
 \section{Manipulators}
 
-A \ccc{manipulator} is an object which can be inserted in a Postscript 
+A \ccc{manipulator} is an object which can be inserted in a PostScript 
 stream, via the operator <<, to change the context for further
 drawing.\\
-The \ccc{manipulators} are inserted in the Postscript stream through
+The \ccc{manipulators} are inserted in the PostScript stream through
  \ccc{manipulator-creators}, a \ccc{manipulator-creator} being  an 
 object function whose operator () creates a \ccc{manipulator}.\\
-Thus, to change the state of a stream, user just need to insert in
+Thus, to change the state of a stream, users just need to insert in
 the stream a \ccc{manipulator} created by the operator () of a
 \ccc{manipulator-creator} writing for exemple : \\
- ps << line\_width(4) << segment; to change the width of a segment,
-for exemple.\\
+ ps << line\_width(4) << segment; to change the width of a segment.\\
 
 Here, we simply document the use of these operators which is all the
 user needs to know  to modify the state of a stream. The design of
@@ -611,7 +610,7 @@ color& c));}{Sets the color used to fill objects.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps,point\_size(unsigned
-int s));}{Sets the point size in Postscript dots.}
+int s));}{Sets the point size in PostScript dots.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, point\_style(enum
@@ -623,7 +622,7 @@ style));}{Modify style of lines.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, line_width(unsigned
-int t));}{Sets the line thickness in Postscript dots.}
+int t));}{Sets the line thickness in PostScript dots.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, fill(bool b));}{Sets
@@ -654,7 +653,7 @@ txt));}{Puts a standard label at the anchor point.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, latex_label(const
-char* txt));}{Puts a Latex label at the anchor point.}
+char* txt));}{Puts a LaTeX label at the anchor point.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, border(unsigned
@@ -662,12 +661,12 @@ int t));}{Draws borders surrounding the bounding box.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, font(const char*
-ch));}{Sets the font of the Postscript label output, only for
+ch));}{Sets the font of the PostScript label output, only for
 standard labels.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, font_size(unsigned
-int s));}{Sets the font size of Postscript label output, only for standard
+int s));}{Sets the font size of PostScript label output, only for standard
 labels.}
 \par
 
@@ -681,7 +680,7 @@ The next paragraph makes precise, for the advanced users, the design of
 \ccSubsection{PS\_Manipulator class}
 
 A \ccClassTemplateName\ is an object which can be inserted in a
-Postscript stream to modify the context of this stream.
+PostScript stream to modify the context of this stream.
 
 An object of the \ccClassTemplateName\ class is created with a pointer
 to a function f and an object of type \ccc{T}. This 
@@ -698,7 +697,7 @@ t);}{}
 \end{ccClassTemplate}
 
 To change the state of the stream, a \ccc{PS_Manipulator} can be
-inserted in the Postscript stream via the output operator <<, defined as follow :
+inserted in the PostScript stream via the output operator <<, defined as follow :
 
 \ccHeading{I/O}
 
@@ -740,82 +739,81 @@ PS\_Manipulator object whose operator << triggers the call to f(T).}
 \def\ccLongParamLayout{\ccFalse}
 
 \ccFunction{PS_Manipulator_creator<const Color&>
-border_color(&PS_Stream::set_border_color);}{To sets the color used to 
+border_color(&PS_Stream::set_border_color);}{Sets the color used to 
 draw the boundaries objects.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<const
-Color&> fill_color(&PS_Stream::set_fill_color);}{To sets the color used 
+Color&> fill_color(&PS_Stream::set_fill_color);}{Sets the color used 
 to fill objects.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<unsigned int>
-point_size(&PS_Stream::set_point_size);}{To sets the points size in
-Postscript dots.}
+point_size(&PS_Stream::set_point_size);}{Sets the points size in
+PostScript dots.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<PS_Stream::DotStyle>
-point_style(&PS_Stream::set_point_style);}{To modify the
+point_style(&PS_Stream::set_point_style);}{Modifies the
 representation of points.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<DashStyle>
-line_style(&PS_Stream::set_line_style);} {To modify the  style of
-lines.}
+line_style(&PS_Stream::set_line_style);} {Modifies the style of lines.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<unsigned int>
-line_width(&PS_Stream::set_line_width);} {To sets the line thickness in
-Postscript dots.}
+line_width(&PS_Stream::set_line_width);} {Sets the line thickness in
+PostScript dots.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<bool>
-fill(&PS_Stream::set_fill);} {To sets if closed figures must be
+fill(&PS_Stream::set_fill);} {Sets if closed figures must be
 filled (\ccc{true})\  or not (\ccc{false})\ .}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<const PS_Stream::Context&>
-current_context(&PS_Stream::set_current_context);}{To changes the context.}
+current_context(&PS_Stream::set_current_context);}{Changes the context.}
 \ccGlue
 
 
 \ccFunction{PS_Manipulator_creator<Point_2<Cartesian<double>>>
-move_to(&PS_Stream::set_point);}{To sets the current anchor point.}
+move_to(&PS_Stream::set_point);}{Sets the current anchor point.}
 \ccGlue
 \par 
 
 \ccFunction{PS_Manipulator_creator<PS_Stream::Axis&>
-show_axis(&PS_Stream::set_axis);}{To draws axis.}
+show_axis(&PS_Stream::set_axis);}{Draws axis.}
 \ccGlue
 \par
 
 \ccFunction{PS_Manipulator_creator<PS_Stream::Grid&>
-show_grid(&PS_Stream::set_grid);}{To draws a Grid.}
+show_grid(&PS_Stream::set_grid);}{Draws a grid.}
 \ccGlue
 \par
 
 \ccFunction{PS_Manipulator_creator<const char*>
-ps_label(&PS_Stream::put_ps_label);}{To puts a standard label at the
+ps_label(&PS_Stream::put_ps_label);}{Puts a standard label at the
 anchor point.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<const char*>
-latex_label(&PS_Stream::put_latex_label);}{To puts a Latex label at
+latex_label(&PS_Stream::put_latex_label);}{Puts a LaTeX label at
 the anchor point.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<unsigned int>
-border(&PS_Stream::put_border);}{To draws borders.}
+border(&PS_Stream::put_border);}{Draws borders.}
 \ccGlue
 \par
 
 \ccFunction{PS_Manipulator_creator<cont char*>
-font(&PS_Stream::set_font);}{To sets the font of the postscript label 
+font(&PS_Stream::set_font);}{Sets the font of the PostScript label 
 output, only for standard labels.}
 \ccGlue
 
 \ccFunction{PS_Manipulator_creator<const char*>
-font_size(&PS_Stream::set_font_size);}{To sets the font size of postscript
+font_size(&PS_Stream::set_font_size);}{Sets the font size of PostScript
 label output, only for standard labels.}
 \ccGlue
 
@@ -824,9 +822,9 @@ label output, only for standard labels.}
 \ccHeading{I/O}
 
 Each geometric class of \cgal\ gets its own output operator for the
-Postscript stream provided by \cgal.
+PostScript stream provided by \cgal.
 
-\ccInclude{CGAL/IO/Postscript_stream.h}
+\ccInclude{CGAL/IO/PostScript_stream.h}
 
 \ccThree{PS_Stream& ps}{PS_Stream& ps << X}{}
 
@@ -841,8 +839,8 @@ point.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, const
-PS_Stream::Latex_label& txt);}{Displays the Latex label \ccc{txt} at
-the anchor point, \ccc{only in a Latex document}.}
+PS_Stream::LaTeX_label& txt);}{Displays the LaTeX label \ccc{txt} at
+the anchor point, \ccc{only in a LaTeX document}.}
 \ccGlue
 
 \ccFunction{PS_Stream& operator<<(PS_Stream& ps, const
@@ -891,16 +889,15 @@ c);}{Inserts the circle \ccc{c} into the stream \ccc{ps}.}
 
 \ccExample
 
-The following code fragment would enable you to have a look of the
-main functions associated to the Postscript output, and theirs
-utilities.
+The following code fragment would allow you to have a look of the
+main functions associated to the PostScript output, and their usage.
 
 \begin{cprog}
 
-#include <CGAL/Cartesian.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
@@ -947,7 +944,7 @@ ps <<a;
 ps <<show_grid(g);
 ps <<CGAL::border(3);
 
-return 1;
+return 0;
 }
 
 
@@ -960,7 +957,7 @@ and after visualisation, you obtain :\\
 \begin{center}
 \includegraphics{exemple.ps}
 \end{center}
-\caption{Postscript output}
+\caption{PostScript output}
 \end{figure}
 
 
