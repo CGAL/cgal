@@ -230,7 +230,8 @@ depends on the point location strategy used.
    the left of the returned \ccStyle{Halfedge} . If \ccStyle{lt} returns 
    UNBOUNDED\_FACE then \ccStyle{p} lies on the unbounded face, and 
    the returned \ccStyle{Halfedge} is on the boundary of 
-   a hole in the unbounded face.}
+   a hole in the unbounded face.
+   The returned value for an empty map equals \ccc{halfedges_end()}.}
    }
     
 %\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p, 
