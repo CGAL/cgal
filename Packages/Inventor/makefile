@@ -13,9 +13,10 @@ package:
 	@echo "---- make test                ----"
 	@echo "---- changes.txt              ----"
 	@echo "---- cvs update; cvs commit ------"
-	@echo "---- OLD VERSION="; more version 
-	@echo "---- make VERSION=2.x version-----"
-	@echo "---- make VERSION=2.x tag --------"
+	@echo "---- more version ----------------"
+	@echo "---- VERSION=   ; export VERSION -"
+	@echo "---- make Version ----------------"
+	@echo "---- make tag --------------------"
 	@echo "---- make submit -----------------"
 	@echo "----------------------------------"
 
