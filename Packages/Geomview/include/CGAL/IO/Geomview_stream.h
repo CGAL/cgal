@@ -106,6 +106,7 @@ public:
 
     int bbox_count;
     int triangle_count;
+    int sphere_count;
     int segment_count;
     int point_count;
     int tetrahedron_count;
@@ -381,6 +382,30 @@ operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
 }
 #endif
 
+#if defined CGAL_SPHERE_3_H && \
+   !defined CGAL_GV_OUT_SPHERE_3_H
+#define CGAL_GV_OUT_SPHERE_3_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
+{
+    std::ostrstream os;
+    os << "Sph" << gv.sphere_count++ << std::ends;
+    char *id = os.str();
+
+    gv << ascii
+       << "(geometry " << id << " {appearance {+edge material {edgecolor "
+       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
+       << "SPHERE\n"
+       << sqrt(to_double(S.squared_radius())) << "\n"
+       << to_double(S.center().x()) << " "
+       << to_double(S.center().y()) << " "
+       << to_double(S.center().z()) << "}})";
+
+    return gv;
+}
+#endif
+
 #ifdef CGAL_BBOX_2_H
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
@@ -390,6 +415,9 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
 #endif
+
+// The following stuff is for the very old Tetrahedralization.
+// I keep it for inspiration only.
 
 #if defined CGAL_TETRAHEDRALIZATION_3_H && \
    !defined CGAL_GV_OUT_CGAL_TETRAHEDRALIZATION_3_H
