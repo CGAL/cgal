@@ -156,7 +156,7 @@ public:
     typename Base::Less_yx  status_pred(traits);
     Status_line status(status_pred);
 
-    // building a container of all curves in the inout planar
+    // building a container of all curves in the input planar
     // map and the curves specified (which we break into x_monotone first)    
     X_curve_list x_monotone_curves;
     for (Halfedge_iterator h_iter = result.halfedges_begin(); 
