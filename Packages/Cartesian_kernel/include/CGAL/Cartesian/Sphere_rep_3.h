@@ -39,13 +39,10 @@ public:
   FT           squared_radius;
   Orientation  orient;
 
-
   Sphere_repC3() {}
 
   Sphere_repC3(const Point_3 & c, const FT & r, const Orientation &o)
     : center(c), squared_radius(r), orient(o) {}
-
-  ~Sphere_repC3() {}
 };
 
 CGAL_END_NAMESPACE
