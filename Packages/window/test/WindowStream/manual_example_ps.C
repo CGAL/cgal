@@ -22,7 +22,7 @@
 // ============================================================================
  
 
-#ifdef CGAL_USE_LEDA
+#if !defined(CGAL_USE_LEDA)
 int main() { return 0; }
 #else
 #include <CGAL/Cartesian.h>
