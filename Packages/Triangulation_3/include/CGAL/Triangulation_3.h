@@ -52,6 +52,9 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 
 template < class GT, class Tds>
+class CGAL_Delaunay_triangulation_3;
+
+template < class GT, class Tds>
 class CGAL_Triangulation_cell_iterator_3;
 
 template < class GT, class Tds>
