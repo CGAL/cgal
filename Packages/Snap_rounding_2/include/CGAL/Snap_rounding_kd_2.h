@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-24 $
 // release_date  : $CGAL_Date: 2000/12/29 $
 //
-// file          : include/CGAL/Isr_kd_2.h
+// file          : include/CGAL/Snap_rounding_kd_2.h
 // package       : arr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
@@ -365,7 +365,7 @@ public:
 
   }
 
-  Point_2 small_x_point(Point_2 p1,Point_2 p2)
+  Point_2 small_x_point(const Point_2& p1,const Point_2& p2)
   {
     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
     if(c == SMALLER)
@@ -374,7 +374,7 @@ public:
       return(p2);
   }
 
-  Point_2 big_x_point(Point_2 p1,Point_2 p2)
+  Point_2 big_x_point(const Point_2& p1,const Point_2& p2)
   {
     Comparison_result c = _gt.compare_x_2_object()(p1,p2);
     if(c == SMALLER)
@@ -383,7 +383,7 @@ public:
       return(p1);
   }
 
-  Point_2 small_y_point(Point_2 p1,Point_2 p2)
+  Point_2 small_y_point(const Point_2& p1,const Point_2& p2)
   {
     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
     if(c == SMALLER)
@@ -392,7 +392,7 @@ public:
       return(p2);
   }
 
-  Point_2 big_y_point(Point_2 p1,Point_2 p2)
+  Point_2 big_y_point(const Point_2& p1,const Point_2& p2)
   {
     Comparison_result c = _gt.compare_y_2_object()(p1,p2);
     if(c == SMALLER)
@@ -472,6 +472,7 @@ public:
       result_list.push_back(my_point_iter->object);
   }
 };
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SR_KD_2_H
+#endif

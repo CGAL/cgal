@@ -95,14 +95,6 @@ private:
   static Direction seg_dir;
 
 public:
-  template<class Out>
-  void draw(Out &o) const
-{
-    o << *right_seg;
-    o << *left_seg;
-    o << *top_seg;
-    o << *bot_seg;
-  }
   Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
@@ -258,16 +250,6 @@ void Segment_data<Rep_>::determine_direction(Direction &seg_dir)
   }
 }
 
-/* af: not with VC7 
-template<class Rep_>
-template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
-  {
-    o << *right_seg;
-    o << *left_seg;
-    o << *top_seg;
-    o << *bot_seg;
-  }
-*/
 // intersection pixel
 template<class Rep_>
 Hot_Pixel<Rep_>::Hot_Pixel(const Point_2& inp_point,NT inp_pixel_size) :
@@ -695,7 +677,7 @@ void snap_rounding_2(
   bool do_isr = true,
   bool int_output = true,
   unsigned int number_of_kd_trees = 1)
-  {
+{
 #ifdef KD_DEBUG
     number_of_false_hp = 0;
 #endif
@@ -727,4 +709,4 @@ void snap_rounding_2(
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ISR_2_H
+#endif
