@@ -178,7 +178,7 @@ inline double inverse_of_transformed_distance(double d) {
 typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
 typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Orthogonal_standard_search<Traits, Point, Point3D_distance> 
 NN_orthogonal_search;
 typedef CGAL::General_standard_search<Traits, Point, Point3D_distance> 

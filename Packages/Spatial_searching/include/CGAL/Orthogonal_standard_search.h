@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Orthogonal_standard_search.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -46,7 +46,7 @@ typedef typename Tree::Node_handle Node_handle;
 
 //private:
 
-typedef Kd_tree<Traits>::Item_iterator Item_iterator;
+typedef typename Kd_tree<Traits>::Item_iterator Item_iterator;
 typedef Kd_tree_rectangle<NT> Rectangle; 
 
 private:

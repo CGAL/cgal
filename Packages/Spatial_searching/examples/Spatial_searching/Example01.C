@@ -32,7 +32,7 @@ typedef R::FT FT;
 typedef R::RT RT;
 
 typedef CGAL::Plane_separator<FT> Separator;  // was double
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Creator_uniform_3<RT,Point> Creator; // was double
 
 int main() {

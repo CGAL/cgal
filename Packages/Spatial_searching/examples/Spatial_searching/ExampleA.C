@@ -16,8 +16,8 @@ typedef CGAL::Point_2<R> Point;
 typedef CGAL::Creator_uniform_2<double,Point> Creator;
 
 typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Weighted_Minkowski_distance<Point, Point> Distance;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
+typedef CGAL::Weighted_Minkowski_distance<Point> Distance;
 typedef CGAL::Orthogonal_standard_search<Traits, Point, Distance> 
 Neighbour_search;
 

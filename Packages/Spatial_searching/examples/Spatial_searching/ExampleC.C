@@ -16,7 +16,7 @@ typedef Point::R::FT NT;
 
 typedef CGAL::Iso_rectangle_d<R> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 // after CGAL/Kernel/function_objectsHd.h
 

@@ -25,15 +25,14 @@
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
 #include <CGAL/Splitters.h>
+
 namespace CGAL {
 
-  template <class Separator_, class Item_, 
-  	    class Splitter=Sliding_midpoint<Item_> >
+  template <class Item_, 
+            class Splitter=Sliding_midpoint<Item_>, class Separator_=Plane_separator<typename Item_::R::FT> >
   class Kd_tree_traits_point {
 
   public:
-    // typedef Separator_ Separator;
-    // typedef Item_ Item;
     typedef Item_ Item;
     typedef Separator_ Separator;
     typedef Item** Item_iterator;

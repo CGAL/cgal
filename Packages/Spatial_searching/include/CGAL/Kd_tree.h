@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Kd_tree.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -41,7 +41,7 @@ public:
   typedef Kd_tree<Traits> Tree;
 
   typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef std::vector<Item*>::iterator Item_iterator;
+  typedef typename std::vector<Item*>::iterator Item_iterator;
 private:
 
   Compact_container<Node> nodes;

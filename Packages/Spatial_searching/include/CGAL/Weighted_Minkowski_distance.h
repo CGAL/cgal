@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Weighted_Minkowski_distance.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-  template <class Query_item, class Item>
+  template <class Item>
   class Weighted_Minkowski_distance {
 
     public:
@@ -79,7 +79,7 @@ namespace CGAL {
 		delete The_weights;
 	};
 
-	inline NT distance(const Query_item& p1, const Item& p2) {
+	inline NT distance(const Item& p1, const Item& p2) {
 	        NT distance = NT(0);
 		if (p == NT(0)) {
 			for (unsigned int i = 0; i < The_dimension; ++i)
@@ -94,7 +94,7 @@ namespace CGAL {
 	}
 
 
-	inline NT min_distance_to_queryitem(const Query_item& Point,
+	inline NT min_distance_to_queryitem(const Item& Point,
 					    const Kd_tree_rectangle<NT>& r) {
 		NT distance = NT(0);
 		if (p == NT(0))
@@ -124,7 +124,7 @@ namespace CGAL {
 		return distance;
 	}
 
-	inline NT max_distance_to_queryitem(const Query_item& Point,
+	inline NT max_distance_to_queryitem(const Item& Point,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=NT(0);
 		if (p == NT(0))

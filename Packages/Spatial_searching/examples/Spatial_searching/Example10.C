@@ -23,7 +23,7 @@
   typedef CGAL::Point_d<R> Point;
 
   typedef CGAL::Plane_separator<double> Separator;
-  typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+  typedef CGAL::Kd_tree_traits_point<Point> Traits;
   
 int main() {
 

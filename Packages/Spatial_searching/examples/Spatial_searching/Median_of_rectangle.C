@@ -176,7 +176,7 @@ inline double inverse_of_transformed_distance(double d) {
 typedef CGAL::Kd_tree_rectangle<double> Rectangle;
 typedef CGAL::Plane_separator<double> Separator;
 
-typedef CGAL::Kd_tree_traits_point<Separator,Point,
+typedef CGAL::Kd_tree_traits_point<Point,
 CGAL::Median_of_rectangle<Point> > Traits;
 
 typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 

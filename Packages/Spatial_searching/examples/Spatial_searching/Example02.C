@@ -92,7 +92,7 @@ public:
 }; // end of class Point
 
   typedef CGAL::Plane_separator<double> Separator;
-  typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+  typedef CGAL::Kd_tree_traits_point<Point> Traits;
   typedef CGAL::Creator_uniform_3<double,Point> Creator;
 
 int main() {

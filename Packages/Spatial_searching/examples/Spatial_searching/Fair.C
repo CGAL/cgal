@@ -174,17 +174,21 @@ inline double inverse_of_transformed_distance(double d) {
 
 
 typedef CGAL::Kd_tree_rectangle<double> Rectangle;
-typedef CGAL::Plane_separator<double> Separator;
+// typedef CGAL::Plane_separator<double> Separator;
 
-typedef CGAL::Kd_tree_traits_point<Separator,Point,
+// typedef CGAL::Kd_tree_traits_point<Separator,Point,
+// CGAL::Fair<Point> > Traits;
+
+typedef CGAL::Kd_tree_traits_point<Point,
 CGAL::Fair<Point> > Traits;
 
 typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
 NN_priority_search;
 
+
 int main() {
 
-  std::cout << "test started" << std::endl;
+  std::cout << "test started" << std::endl; 
 
   int bucket_size=1;
   const int dim=3;
@@ -204,7 +208,6 @@ int main() {
         Point Random_point(v[0],v[1],v[2]);
         data_points.push_front(Random_point);
   }
-  
   
   Traits tr(bucket_size, 3.0, true);
 

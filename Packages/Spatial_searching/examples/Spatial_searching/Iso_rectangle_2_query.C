@@ -17,7 +17,7 @@ typedef R::Point_2 Point;
 typedef CGAL::Creator_uniform_2<double,Point> Creator;
 
 typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Iso_rectangle_2<R> box;	
 

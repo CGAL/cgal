@@ -33,7 +33,7 @@ typedef Point::R::RT RT;
 typedef CGAL::Iso_cuboid_3<R> Rectangle;
 typedef CGAL::Plane_separator<FT> Separator;
 
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::L1_distance_rectangle_point<Rectangle,Point> L1_distance;
 typedef CGAL::General_priority_search<Traits, Rectangle, L1_distance> 
 NN_priority_search;

@@ -17,8 +17,8 @@ typedef Point::R::FT NT;
 typedef CGAL::Kd_tree_rectangle<NT> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
-typedef CGAL::Weighted_Minkowski_distance<Point, Point> Distance;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
+typedef CGAL::Weighted_Minkowski_distance<Point> Distance;
 
 typedef CGAL::Orthogonal_priority_search<Traits, Point, Distance> 
 NN_priority_search;

@@ -17,7 +17,7 @@ typedef CGAL::Simple_cartesian<double> R;
 typedef R::Point_3 Point;
 
 typedef CGAL::Plane_separator<double> Separator;
-typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Iso_cuboid_3<R> box;	
 
