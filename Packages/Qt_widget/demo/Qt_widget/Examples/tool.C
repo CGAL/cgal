@@ -2,6 +2,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
 #include <qapplication.h>
@@ -11,23 +12,26 @@ typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
+
+class My_Layer : public CGAL::Qt_widget_layer{
+  void draw(CGAL::Qt_widget& win){
+    win << dt;
+  }
+};
+
 class My_Window : public CGAL::Qt_widget {
   Q_OBJECT
 public:
   My_Window(int x, int y){
     resize(x,y);
     attach(&get_point);
+    attach(&v);
     connect(this, SIGNAL(new_cgal_object(CGAL::Object)), 
             this, SLOT(get_new_object(CGAL::Object)));
   };
-private:	//functions
-  void redraw()
-  {
-    Qt_widget::redraw();
-    *this << dt;
-  }
 private:	//members
   CGAL::Qt_widget_get_point<Rep> get_point;
+  My_Layer v;
 private slots:
   void get_new_object(CGAL::Object obj)
   {
