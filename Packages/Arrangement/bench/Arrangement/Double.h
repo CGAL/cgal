@@ -17,6 +17,14 @@ private:
 
 public:
 
+  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_division;
+  typedef Tag_true   Has_sqrt;
+
+  typedef Tag_false  Has_exact_ring_operations;
+  typedef Tag_false  Has_exact_division;
+  typedef Tag_false  Has_exact_sqrt;
+  
   // Constructors.
   Double () :
     val(0)
@@ -34,22 +42,22 @@ public:
   }
 
   // Arithmetic opertors.
-  Double operator+ (const Double& x) const
+  Double operator+ (const Double & x) const
   {
     return (Double(val + x.val));
   }
 
-  Double operator- (const Double& x) const
+  Double operator- (const Double & x) const
   {
     return (Double(val - x.val));
   }
 
-  Double operator* (const Double& x) const
+  Double operator* (const Double & x) const
   {
     return (Double(val * x.val));
   }
 
-  Double operator/ (const Double& x) const
+  Double operator/ (const Double & x) const
   {
     return (Double(val / x.val));
   }
@@ -114,30 +122,30 @@ public:
     return (val > x.val || (*this == x));
   }
 
-  bool operator< (const Double& x) const
+  bool operator< (const Double & x) const
   {
     return (val < x.val && ! (*this == x));
   }
 
-  bool operator<= (const Double& x) const
+  bool operator<= (const Double & x) const
   {
     return (val < x.val || (*this == x));
   }
 
   // Friend operators:
-  friend Double operator+ (const double& x, const Double& y);
-  friend Double operator- (const double& x, const Double& y);
-  friend Double operator* (const double& x, const Double& y);
-  friend Double operator/ (const double& x, const Double& y);
+  friend Double operator+ (const double & x, const Double & y);
+  friend Double operator- (const double & x, const Double & y);
+  friend Double operator* (const double & x, const Double & y);
+  friend Double operator/ (const double & x, const Double & y);
 
   // Friend functions:
-  friend double to_double (const Double& x);
-  friend std::pair<double,double> to_interval(const Double& x);
-  friend bool is_finite (const Double& x);
-  friend Double sqrt (const Double& x);
-  friend Double pow (const Double& x, const Double& y);
-  friend Double exp (const Double& x);
-  friend Double log (const Double& x);
+  friend double to_double (const Double & x);
+  friend std::pair<double,double> to_interval(const Double & x);
+  friend bool is_finite (const Double & x);
+  friend Double sqrt (const Double & x);
+  friend Double pow (const Double & x, const Double & y);
+  friend Double exp (const Double & x);
+  friend Double log (const Double & x);
   friend Double sin (const Double& x);
   friend Double cos (const Double& x);
   friend Double tan (const Double& x);
@@ -147,31 +155,52 @@ public:
   friend Double atan2 (const Double& x, const Double& y);
 
   // I/O operations.
-  friend std::istream& operator>> (std::istream& is, Double& x);
-  friend std::ostream& operator<< (std::ostream& is, Double& x);
+  friend std::istream & operator>> (std::istream & is, Double & x);
+  friend std::ostream & operator<< (std::ostream & os, Double & x);
 
 };
 
+inline io_Operator io_tag(const Double &) { return io_Operator(); }
+
 // Friend operators:
-inline Double operator+ (const double& x, const Double& y)
+inline Double operator+ (const double & x, const Double & y)
 {
   return (Double (x + y.val));
 }
 
-inline Double operator- (const double& x, const Double& y)
+inline Double operator- (const double & x, const Double & y)
 {
   return (Double (x - y.val));
 }
 
-inline Double operator* (const double& x, const Double& y)
+inline Double operator* (const double & x, const Double & y)
 {
   return (Double (x * y.val));
 }
 
-inline Double operator/ (const double& x, const Double& y)
+inline Double operator/ (const double & x, const Double & y)
 {
   return (Double (x / y.val));
 }
+
+// Order operators.
+inline bool operator<(const double & a, const Double & b)
+{ return a < b; }
+
+inline bool operator>(const double & a, const Double & b)
+{ return b < a; }
+
+inline bool operator>=(const double & a, const Double & b)
+{ return ! (a < b); }
+
+inline bool operator<=(const double & a, const Double & b)
+{ return ! (a > b); }
+
+inline bool operator==(const double & a, const Double & b)
+{ return (a == b); }
+
+inline bool operator!=(const double & a, const Double & b)
+{ return ! (a == b); }
 
 // Friend functions:
 inline double to_double (const Double& x)
@@ -239,19 +268,19 @@ inline Double atan (const Double& x)
   return (Double (::atan(x.val)));
 }
 
-inline Double atan2 (const Double& x, const Double& y)
+inline Double atan2 (const Double & x, const Double & y)
 {
   return (Double (::atan2(x.val, y.val)));
 }
 
 // I/O operations.
-inline std::istream& operator>> (std::istream& is, Double& x)
+inline std::istream& operator>> (std::istream & is, Double & x)
 {
   is >> x.val;
   return (is);
 }
 
-inline std::ostream& operator<< (std::ostream& os, Double& x)
+inline std::ostream& operator<< (std::ostream & os, Double & x)
 {
   os << x.val;
   return (os);
