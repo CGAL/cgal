@@ -1,92 +1,126 @@
+# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-# CGAL_CXX=$(HOME)/egcs/$(UNAME)/bin/g++
-# Pour utiliser Purify:
-# CGAL_CXX=purify g++
-# CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-              # -L$(GMP_LIB_DIR) -lgmp -lm
-
 CXXFLAGS = \
-	-I../../../Number_types/include \
-	-I../../include \
-	$(TESTSUITE_CXXFLAGS) \
-	$(CGAL_CXXFLAGS) \
-	-g # -Winline -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing # -pedantic
-	# -g -W -Wall -Winline
-	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
-	# -O2 -W -Winline -Wunused -malign-double
-	# -I$(CGAL)/include_advanced    # Advanced kernel, cf config.h aussi.
-	# -mcpu=pentiumpro -march=pentiumpro -mieee-fp
-	# -mcpu=ultrasparc -mtune=ultrasparc
-	# -fomit-frame-pointer
-	# -fprofile-arcs -ftest-coverage # for GCOV
-	# -fpermissive
-	# -fno-enforce-eh-specs # for GCC 3
-	# -fhonor-std
-	# -frepo
-	# -pedantic
-	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	# -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
-	# /Fatst1.s
-	# /Op /Oi /Od /Za /O2 /Ox
-	# -DCGAL_IA_NEW_FILTERS \
-	# -DCGAL_CHECK_EXPENSIVE \
-	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS \
-	# -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_WARNINGS \
-	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION \
-	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT \
-	# -DLOOPS=10000000
+           -I../../include \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
+           $(CGAL_CXXFLAGS) \
+           -Iinclude \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
-# LDFLAGS = Interval_arithmetic$(OBJ_EXT)
-# LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
 
 LDFLAGS = \
-         $(TESTSUITE_LDFLAGS) \
-         $(CGAL_LDFLAGS)
+          $(TESTSUITE_LDFLAGS) \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-.PRECIOUS: %$(OBJ_EXT) tst1 %$(EXE_EXT)
-.SUFFIXES: .test
-.PHONY: %.test test
+all:            \
+                Filtered_kernel$(EXE_EXT) \
+                Kernel_checker$(EXE_EXT) \
+                Lazy_exact_nt$(EXE_EXT) \
+                Static_filters$(EXE_EXT) \
+                gcc_3.0_bug$(EXE_EXT) \
+                to_interval_test$(EXE_EXT) \
+                tst0$(EXE_EXT) \
+                tst1$(EXE_EXT) \
+                tst10$(EXE_EXT) \
+                tst2$(EXE_EXT) \
+                tst3$(EXE_EXT) \
+                tst4$(EXE_EXT) \
+                tst5$(EXE_EXT) \
+                tst6$(EXE_EXT) \
+                tst_static_adaptatif$(EXE_EXT) 
 
-%$(EXE_EXT) : %.C
+Filtered_kernel$(EXE_EXT): Filtered_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Filtered_kernel Filtered_kernel$(OBJ_EXT) $(LDFLAGS)
 
-%$(OBJ_EXT) : %.C
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+Kernel_checker$(EXE_EXT): Kernel_checker$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Kernel_checker Kernel_checker$(OBJ_EXT) $(LDFLAGS)
 
-%.s : %.C
-	$(CGAL_CXX) $(CXXFLAGS) -S $<
+Lazy_exact_nt$(EXE_EXT): Lazy_exact_nt$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_exact_nt Lazy_exact_nt$(OBJ_EXT) $(LDFLAGS)
 
-%$(EXE_EXT) : %$(OBJ_EXT)
-	$(CGAL_CXX) $(EXE_OPT)$@ $+ $(LDFLAGS)
-	./$@
+Static_filters$(EXE_EXT): Static_filters$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Static_filters Static_filters$(OBJ_EXT) $(LDFLAGS)
 
-%.test : %$(EXE_EXT)
-	./$<
+gcc_3.0_bug$(EXE_EXT): gcc_3.0_bug$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gcc_3.0_bug gcc_3.0_bug$(OBJ_EXT) $(LDFLAGS)
 
-SOURCES  := $(wildcard  *.C)
-OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
-PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
-TEST_RUN := $(SOURCES:.C=.test)
+to_interval_test$(EXE_EXT): to_interval_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)to_interval_test to_interval_test$(OBJ_EXT) $(LDFLAGS)
 
-all: ../../src/Interval_arithmetic$(OBJ_EXT) $(PROGRAMS)
-# all: $(PROGRAMS)
+tst0$(EXE_EXT): tst0$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst0 tst0$(OBJ_EXT) $(LDFLAGS)
 
-test: $(TEST_RUN)
+tst1$(EXE_EXT): tst1$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst1 tst1$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	rm -f *.o $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
-	rm -f *.obj *.exe
+tst10$(EXE_EXT): tst10$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst10 tst10$(OBJ_EXT) $(LDFLAGS)
+
+tst2$(EXE_EXT): tst2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst2 tst2$(OBJ_EXT) $(LDFLAGS)
+
+tst3$(EXE_EXT): tst3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst3 tst3$(OBJ_EXT) $(LDFLAGS)
+
+tst4$(EXE_EXT): tst4$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst4 tst4$(OBJ_EXT) $(LDFLAGS)
+
+tst5$(EXE_EXT): tst5$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst5 tst5$(OBJ_EXT) $(LDFLAGS)
+
+tst6$(EXE_EXT): tst6$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst6 tst6$(OBJ_EXT) $(LDFLAGS)
+
+tst_static_adaptatif$(EXE_EXT): tst_static_adaptatif$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)tst_static_adaptatif tst_static_adaptatif$(OBJ_EXT) $(LDFLAGS)
+
+clean: \
+                   Filtered_kernel.clean \
+                   Kernel_checker.clean \
+                   Lazy_exact_nt.clean \
+                   Static_filters.clean \
+                   gcc_3.0_bug.clean \
+                   to_interval_test.clean \
+                   tst0.clean \
+                   tst1.clean \
+                   tst10.clean \
+                   tst2.clean \
+                   tst3.clean \
+                   tst4.clean \
+                   tst5.clean \
+                   tst6.clean \
+                   tst_static_adaptatif.clean 
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
