@@ -1,6 +1,8 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.16 ()
+
 Ver 7.15 (03/04/02)
 - fixed Constrained triangulation so that default is with No_intersection_tag
 - and does not require intersection types from the traits class
