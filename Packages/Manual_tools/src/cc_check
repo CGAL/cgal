@@ -1,0 +1,68 @@
+#
+# cgal_check
+# ==========
+#
+# csh script to check consistency between specification and
+# implementation of the CGAL library kernel.
+#
+# The following programs are necessary to run this script
+#
+#    o  cgal_build_checker
+#    o  flex
+#    o  cc / gcc
+#
+# 1.1   30.10.95   Lutz Kettner, FU Berlin, Germany
+
+if ( $?DEBUG) echo "# DEBUG defined; all commands will be echoed."
+# optionally the gcc compiler can set here
+set CC = cc
+
+
+if ( $#argv < 1) goto usage
+set spec = ""
+while ($#argv > 0)
+    if ( "$1" == "-h") goto usage
+    if ( "$1" == "-against") then
+        shift
+	if ( $#argv < 1) goto usage
+	break
+    endif
+    set spec = "$spec $1"
+    shift
+end
+
+if ( $?DEBUG) echo "cgal_build_checker cgal_checker.yy cgal_checker.h $spec"
+cgal_build_checker cgal_checker.yy cgal_checker.h $spec
+if ( $?DEBUG) echo "flex -t -8 cgal_checker.yy > cgal_checker.c"
+flex -t -8 cgal_checker.yy > cgal_checker.c
+if ( $?DEBUG) echo "$CC -o cgal_checker cgal_checker.c"
+$CC -o cgal_checker cgal_checker.c
+if ( $?DEBUG) then 
+    echo "# rm cgal_checker.yy cgal_checker.c cgal_checker.h cgal_checker.o"
+else
+    rm cgal_checker.yy cgal_checker.c cgal_checker.h cgal_checker.o
+endif
+if ( $?DEBUG) echo "cgal_checker $argv"
+cgal_checker $argv
+set returnvalue = $status
+if ( $returnvalue) then
+    echo '==>  NOTE: The program call `cgal_checker '"$argv""' can be used to"
+    echo '==>        check the sources again. Otherwise, remove it.'
+    if ( $returnvalue == 3) set returnvalue = 0
+else
+    if ( $?DEBUG) then 
+        echo "# rm cgal_checker"
+    else
+        rm cgal_checker
+    endif
+endif
+exit $returnvalue
+
+usage:
+echo "Usage: $0 <spec-files...> [-against [<options>] <impl-files...>]"
+echo "   or: $0 -against [<options>] <impl-files...>"
+echo "           -fw         recognize FunnelWeb or AnyWeb keywords"
+echo "           -match      print all matched text"
+echo "           -unmatch    print all unmatched text"
+echo "           -comm       print all commented text"
+exit 1
