@@ -1,4 +1,22 @@
 //-----------------------------------------------------------------------//
+// 2.11
+
+In Polygon_2_algorithms.C:
+Modifications in sweepline algorithm for is_simple:
++ Made replacing edge by another edge more efficient (using insert with hint).
++ altered the output during debugging somewhat.
++ Removed a bug that did not initialise the vector index properly (it did a
+  reserve, but used it as if a resize had been done).
++ Fixed a bug that no intersection check was done for new neighbours after
+  erasing an edge.
++ Made all private members protected.
++ Renamed some functions.
+
+In SimplicityTest.C:
++ Return value now reflects if the tests went ok.
++ Added a testfile that detects the second bug mentioned above (erase bug).
+
+//-----------------------------------------------------------------------//
 // 2.10
 + Removed test of old-fashioned stl functionality (value_type,
   iterator_category and distance_type functions) from test.
