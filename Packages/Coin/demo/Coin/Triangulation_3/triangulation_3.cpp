@@ -297,7 +297,7 @@ main (int argc, char ** argv)
   material->diffuseColor.setValue(0.0f, 0.0f, 1.0f);
   cell_callback->setCallback(render_cells);
 
-  Node_triangulation_3<Triangulation> *triangl = new Node_triangulation_3<Triangulation>(T);  
+  Node_triangulation_3<Triangulation> *triangl = new Node_triangulation_3<Triangulation>(&T);  
 
   root->ref();
 

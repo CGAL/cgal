@@ -99,7 +99,8 @@ public:
       } while (0);
     } while (0);
   }// Initializes this class
-  Node_triangulation_3() : t(t_temp) {
+private:
+  Node_triangulation_3(){
     do {
       Node_triangulation_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -116,7 +117,8 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   }// The constructor
-  Node_triangulation_3(Triangulation_3 &T) : t(T) {
+public:
+  Node_triangulation_3(Triangulation_3 *T) : t(T) {
     do {
       Node_triangulation_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -236,12 +238,12 @@ protected:
     glPushMatrix();  
       Finite_vertices_iterator vit;
       glBegin(GL_POINTS);
-      for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit)
+      for (vit = t->finite_vertices_begin(); vit != t->finite_vertices_end(); ++vit)
         glVertex3f(CGAL::to_double((*vit).point().x()), CGAL::to_double((*vit).point().y()), CGAL::to_double((*vit).point().z()));
       glEnd();
 
     Finite_edges_iterator eit;
-    for (eit = t.finite_edges_begin(); eit != t.finite_edges_end(); ++eit) {
+    for (eit = t->finite_edges_begin(); eit != t->finite_edges_end(); ++eit) {
       Point p1( ((*eit).first)->vertex((*eit).second)->point().x(), 
 		            ((*eit).first)->vertex((*eit).second)->point().y(), 
 		            ((*eit).first)->vertex((*eit).second)->point().z());
@@ -261,7 +263,7 @@ protected:
     SbBox3f &box, SbVec3f &center){
     Finite_vertices_iterator vit;
     typename Traits::FT xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;    
-    for (vit = t.finite_vertices_begin(); vit != t.finite_vertices_end(); ++vit) {
+    for (vit = t->finite_vertices_begin(); vit != t->finite_vertices_end(); ++vit) {
       if((*vit).point().x() < xmin)
         xmin = (*vit).point().x();
       if((*vit).point().y() < ymin)
@@ -294,8 +296,14 @@ private:
   virtual SbBool generateDefaultNormals(SoState * state,
     SoNormalBundle * bundle){return FALSE;}
 
-  Triangulation_3 &t;
-  Triangulation_3 t_temp;
+  virtual SoNode * copy(SbBool copyconnections) const
+  {
+    Node_triangulation_3<Triangulation_3> *newT = (Node_triangulation_3<Triangulation_3>*)SoNode::copy(copyconnections);
+    newT->t = t;
+    return newT;
+  }
+
+  Triangulation_3 *t;
 
 };
 
