@@ -157,7 +157,7 @@ inline
 Object
 intersection(const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
 	     const typename CGAL_WRAP(K)::Segment_2 &seg,
-	     const K&)
+	     const K& k)
 {
   return CGALi::intersection(seg, iso, k);
 }
