@@ -512,32 +512,34 @@ private:
 
   void error_orient( Cell * n, int i) const
   {
-    cerr << this->vertex(0)->point() << ", "
-	 << this->vertex(1)->point() << ", "
-	 << this->vertex(2)->point() << ", "
-	 << this->vertex(3)->point() << endl
-	 << " pb orientation with neighbor " << i
-	 << " : " << endl 
-	 << n->vertex(0)->point() << ", "
-	 << n->vertex(1)->point() << ", "
-	 << n->vertex(2)->point() << ", "
-	 << n->vertex(3)->point() << endl
-	 << endl;
+//     cerr << this->vertex(0)->point() << ", "
+// 	 << this->vertex(1)->point() << ", "
+// 	 << this->vertex(2)->point() << ", "
+// 	 << this->vertex(3)->point() << endl
+// 	 << " pb orientation with neighbor " << i
+// 	 << " : " << endl 
+// 	 << n->vertex(0)->point() << ", "
+// 	 << n->vertex(1)->point() << ", "
+// 	 << n->vertex(2)->point() << ", "
+// 	 << n->vertex(3)->point() << endl
+// 	 << endl;
+    cerr << " pb orientation with neighbor " << endl;
   }
 
   void error_neighbor( Cell* n, int i, int in ) const
   {
-    cerr << "neighbor " << i << endl
-	 << n->vertex(0)->point() << ", "
-	 << n->vertex(1)->point() << ", "
-	 << n->vertex(2)->point() << ", "
-	 << n->vertex(3)->point() << endl
-	 << " does not have this " << endl
-	 << this->vertex(0)->point() << ", "
-	 << this->vertex(1)->point() << ", "
-	 << this->vertex(2)->point() << ", "
-	 << this->vertex(3)->point() << endl
-	 << " as neighbor " << in << endl;
+//     cerr << "neighbor " << i << endl
+// 	 << n->vertex(0)->point() << ", "
+// 	 << n->vertex(1)->point() << ", "
+// 	 << n->vertex(2)->point() << ", "
+// 	 << n->vertex(3)->point() << endl
+// 	 << " does not have this " << endl
+// 	 << this->vertex(0)->point() << ", "
+// 	 << this->vertex(1)->point() << ", "
+// 	 << this->vertex(2)->point() << ", "
+// 	 << this->vertex(3)->point() << endl
+// 	 << " as neighbor " << in << endl;
+    cerr << "neighbor of c has not c as neighbor" << endl;
   }
 
 };
