@@ -429,6 +429,9 @@ data structure constructed by the default constructor.}
 The following modifiers can affect the validity of the triangulation
 data structure.
 
+\ccMethod{Vertex * create_vertex();}
+{Creates a vertex and adds it to the triangulation data structure.}
+
 \ccMethod{Cell * create_cell();}
 {Creates a cell and adds it to the triangulation data structure. Its 
 vertices and neighbors are initialized to \ccc{NULL}.
@@ -443,6 +446,13 @@ being initialized with \ccc{NULL}.}
 		     Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
 {Creates a cell, initializes its vertices and neighbors, and adds it
 into the triangulation data structure.}
+
+\ccMethod{void delete_vertex( Vertex* v );}
+{Removes the vertex from the triangulation data structure.
+%\ccPrecond{The vertex is a vertex of \ccVar.}
+% We can't provide this precondition, since vertices are not linked in a list
+% inside the TDS at the moment, unlike cells.
+}
 
 \ccMethod{void delete_cell( Cell* c );}
 {Removes the cell from the triangulation data structure.

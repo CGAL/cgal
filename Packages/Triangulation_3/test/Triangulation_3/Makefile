@@ -15,6 +15,8 @@ include $(CGAL_MAKEFILE)
 
 # pour purify :
 #CGAL_CXX=purify -best-effort /usr/local/gcc/bin/g++
+# pour insure :
+# CGAL_CXX=insure
 
 CXXFLAGS = \
 	-I../../include \

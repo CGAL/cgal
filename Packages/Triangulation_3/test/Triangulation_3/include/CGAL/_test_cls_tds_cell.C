@@ -32,10 +32,10 @@ _test_cell_tds_3( const Cell &)
   std::cout << "   Cells Tds Constructors " << std::endl;
   int ind;
   Tds tds;
-  Vertex* v0= new Vertex;
-  Vertex* v1= new Vertex;
-  Vertex* v2= new Vertex;
-  Vertex* v3= new Vertex;
+  Vertex* v0= tds.create_vertex();
+  Vertex* v1= tds.create_vertex();
+  Vertex* v2= tds.create_vertex();
+  Vertex* v3= tds.create_vertex();
   Cell* c1 = tds.create_cell(v0, v1, v2, v3);
   assert(c1->has_vertex(v0));
   assert(c1->has_vertex(v1));
@@ -128,5 +128,8 @@ _test_cell_tds_3( const Cell &)
    assert(c2->index(n3)==3);
 
    std::cout << "   Tds Destructors " << std::endl;
-   delete v0; delete v1; delete v2; delete v3; 
+   tds.delete_vertex(v0);
+   tds.delete_vertex(v1);
+   tds.delete_vertex(v2);
+   tds.delete_vertex(v3);
 }

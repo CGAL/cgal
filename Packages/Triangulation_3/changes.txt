@@ -1,3 +1,6 @@
+Version 1.72 (? July 01)
+- New functions : TDS.create_vertex() and TDS.delete_vertex().
+
 Version 1.71 (6 July 01)
 - minor corrections in the user manual suggested by Susan and Andreas
 in Dagtuhl

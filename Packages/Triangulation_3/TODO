@@ -16,7 +16,6 @@ a negocier
 
 General
 - constructeurs pour avoir Triangulation T(points.begin(), points.end()); 
-- new Vertex
 - trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
   tout le 2d dans le 3d
 - insure

@@ -368,7 +368,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
           // vertex has to be deleted
           set_number_of_vertices(number_of_vertices()-1);
-          delete &(*(*it));
+          _tds.delete_vertex( &(*(*it)));
 	}
       }
       set_number_of_vertices(number_of_vertices()+1);
@@ -401,7 +401,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    {
               // vertex has to be deleted
               set_number_of_vertices(number_of_vertices()-1);
-              delete &(*(*it));
+              _tds.delete_vertex( &(*(*it)));
 	    }
 	  }
 	  set_number_of_vertices(number_of_vertices()+1);
@@ -428,7 +428,8 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
 	  if (! in_conflict_1(p, c) )
 	      return NULL;
-	  Vertex_handle v = new Vertex(p);
+	  Vertex_handle v = (Vertex *) _tds.create_vertex();
+	  v->set_point(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Cell_handle bound[2];
 	  Cell_handle n;
@@ -442,7 +443,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 		  (void) conflicts.insert( (void *) &(*n) );
 // 		P = new Weighted_point( n->vertex(1-j)->point() );
 // 		(void) deleted_points.insert((void*) P);
-	      delete( &(*(n->vertex(1-j))) );
+	      _tds.delete_vertex( &(*(n->vertex(1-j))) );
 	      set_number_of_vertices(number_of_vertices()-1);
 	      n = n->neighbor(j);
 	    }

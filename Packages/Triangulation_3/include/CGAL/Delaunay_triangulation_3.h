@@ -353,7 +353,7 @@ remove(Vertex_handle v)
       if ( *vit != &(*inf) && *vit != &(*v) ) 
 	insert( (*vit)->point(), NULL, (Vertex *) *vit );
 
-    delete(&(*v));
+    _tds.delete_vertex(&(*v));
 
     return true;
   }
@@ -369,7 +369,7 @@ remove(Vertex_handle v)
 
   bool filled = fill_hole_3D_ear(boundhole);
   if(filled){
-    delete( &(*v) );
+    _tds.delete_vertex(&(*v));
     delete_cells(hole);
     set_number_of_vertices(number_of_vertices()-1);
   } else {

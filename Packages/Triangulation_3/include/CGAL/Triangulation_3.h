@@ -53,14 +53,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class GT, class Tds> class Triangulation_cell_iterator_3;
-template < class GT, class Tds> class Triangulation_vertex_iterator_3;
-template < class GT, class Tds> class Triangulation_edge_iterator_3;
-template < class GT, class Tds> class Triangulation_facet_iterator_3;
-template < class GT, class Tds> class Triangulation_cell_circulator_3;
-template < class GT, class Tds> class Triangulation_facet_circulator_3;
-template < class GT, class Tds> class Triangulation_cell_3;
-
 template < class GT, class Tds > std::istream& operator>> 
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
  
@@ -717,8 +709,8 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   typedef typename Tds::Vertex                   TdsVertex;
   typedef typename Tds::Cell                     TdsCell;
 
-  tr._tds.clear(); // infinite vertex created
-  tr.infinite = new Vertex(); 
+  tr._tds.clear(); // infinite vertex deleted
+  tr.infinite = (Vertex *) tr._tds.create_vertex();
 
   int n, d;
   is >> d >> n;
@@ -730,14 +722,13 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   // the infinite vertex is numbered 0
 
   for (int i=1; i <= n; i++) {
-    V[i] = new Vertex();
+    V[i] = tr._tds.create_vertex();
     is >> *V[i];
   }
 
   std::map< int, TdsCell* > C;
 
   int m;
-  //read_cells(is, tr._tds, V, m, C);
   tr._tds.read_cells(is, V, m, C);
 
   for (int j=0 ; j < m; j++)
@@ -840,7 +831,6 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   }
 
   // asks the tds for the combinatorial information 
-  //print_cells(os, tr.tds(), V);
   tr.tds().print_cells(os, V);
   
   return os ;

@@ -151,6 +151,11 @@ public:
 
   void set_dimension(int n) { _dimension = n; }
 
+  Vertex* create_vertex()
+  {
+      return new Vertex();
+  }
+
   Cell* create_cell() 
     { 
       Cell* c = get_new_cell();
@@ -160,7 +165,8 @@ public:
 
   Cell* create_cell(Cell* c)
     {
-      Cell* cnew = new Cell(c);
+      Cell* cnew = get_new_cell();
+      *cnew = c;
       cnew->init();
       add_cell(cnew);
       return cnew; 
@@ -272,6 +278,14 @@ public:
 
   // ACCESS FUNCTIONS
 
+  void delete_vertex( Vertex* v )
+  {
+      // We can't check this condition because vertices are not linked in a
+      // list, unlike the cells.
+      // CGAL_triangulation_expensive_precondition( is_vertex(v) );
+      delete v;
+  }
+
   void delete_cell( Cell* c )
     { 
       CGAL_triangulation_expensive_precondition( dimension() != 3 ||
@@ -294,8 +308,7 @@ public:
 
   bool is_vertex(Vertex* v) const;
   bool is_edge(Cell* c, int i, int j) const;
-  bool is_edge(Vertex* u, Vertex* v, 
-	       Cell* & c, int & i, int & j) const;
+  bool is_edge(Vertex* u, Vertex* v, Cell* & c, int & i, int & j) const;
   bool is_facet(Cell* c, int i) const;
   bool is_facet(Vertex* u, Vertex* v, Vertex* w, 
 		Cell* & c, int & i, int & j, int & k) const;
@@ -421,7 +434,7 @@ public:
     CGAL_triangulation_precondition( tester(c) );
 
     if ( w == NULL ) 
-      w = new Vertex();
+      w = create_vertex();
 
     if (dimension() == 3)
     {
@@ -663,14 +676,14 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // creation of the vertices    
   for (int i=0; i < n; i++) {
     //    is >> p;
-    //    V[i] = new Vertex(p);
-    V[i] = new Vertex();
+    //    V[i] = tds.create_vertex();
+    //    V[i]->set_point(p);
+    V[i] = tds.create_vertex();
   }
 
   std::map< int, Cell* > C;
   int m;
  
-  //  read_cells(is, tds, V, m, C);
   tds.read_cells(is, V, m, C);
   CGAL_triangulation_assertion( tds.is_valid(false) );
   return is;
@@ -1487,7 +1500,7 @@ insert_in_cell( Vertex * v, Cell* c )
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   if ( v == NULL )
-    v = new Vertex();
+    v = create_vertex();
 
   Vertex* v0 = c->vertex(0);
   Vertex* v1 = c->vertex(1);
@@ -1533,7 +1546,7 @@ insert_in_facet(Vertex * v, Cell* c, int i)
   CGAL_triangulation_precondition( dimension() >= 2 );
 
   if ( v == NULL )
-    v = new Vertex();
+    v = create_vertex();
 
   switch ( dimension() ) {
 
@@ -1651,7 +1664,7 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
   CGAL_triangulation_precondition( dimension() >= 1 );
 
   if ( v == NULL )
-    v = new Vertex();
+    v = create_vertex();
 
   Cell* cnew;
   Cell* dnew;
@@ -1786,7 +1799,7 @@ insert_increase_dimension(Vertex * v, // new vertex
   // if (reorient) the orientation of the cells is modified
 {  // insert()
   if ( v == NULL ) 
-    v = new Vertex();
+    v = create_vertex();
 
   Cell* c;
   Cell* d;
@@ -1799,11 +1812,11 @@ insert_increase_dimension(Vertex * v, // new vertex
     // insertion of the first vertex
     // ( geometrically : infinite vertex )
     {
-      set_number_of_vertices( number_of_vertices()+1 );
-      set_dimension( dimension()+1 );
+      CGAL_triangulation_precondition( number_of_vertices() == 0);
+      set_number_of_vertices( 1 );
+      set_dimension( -1 );
 
-      c = create_cell( v, NULL, NULL, NULL,
-		       NULL, NULL, NULL, NULL );
+      c = create_cell( v, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
       v->set_cell(c);
       break;
     }
