@@ -324,6 +324,8 @@ public:
                          SHalfedge_around_svertex_circulator;
   typedef typename Base::SHalfedge_around_sface_circulator 
                          SHalfedge_around_sface_circulator;
+  typedef typename Base::SFace_cycle_iterator 
+                         SFace_cycle_iterator;
 
   typedef std::pair<SHalfedge_handle,SHalfedge_handle> SHalfedge_pair;
 
@@ -1381,11 +1383,10 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
   SFace_iterator f;
   for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) {
     assoc_info(f);
-    Object_handle boundary_object = sface_cycles_begin(f);
-    CGAL_assertion(boundary_object != NULL);
-    SHalfedge_handle e;
-    if ( !CGAL::assign(e,boundary_object) ) 
+    SFace_cycle_iterator boundary_object(f->sface_cycles_begin());
+    if (!boundary_object.is_shalfedge() ) 
       CGAL_assertion_msg(0,"Outer face cycle should be first.");
+    SHalfedge_handle e(boundary_object);
     for (int i=0; i<2; ++i) mark(f,i) = incident_mark(e,i);
   }
 }
