@@ -15,9 +15,7 @@ General
 - virer le init() qui n'est plus necessaire, vu qu'on a le default ctor qui
   remarche ?
 - Faire ce qu'il faut pour pouvoir avoir : typedef Vertex * Vertex_handle;
-- Deriver Triangulation de TDS ?  Avant ca, il faudrait separer les types
-  d'iterateurs -> Finite_vertices_iterator.  Et verifier qu'il n'y a pas de
-  clash.
+- Deriver Triangulation de TDS ?
 
 TEST SUITE
 
@@ -27,6 +25,7 @@ Doc
 
 Exemples - demo
 - en rajouter si bonnes idees...
+- Monique elle veut des exemples pour les output iterators.
 
 TDS
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
@@ -37,12 +36,11 @@ T3
   (cf mail sur cgal-discuss-l).
 - nettoyer flips/is_flippable (code duplique)
 - incident_facets, incident_cells (vieille demande de Frank a
-  rediscuter) 
+  rediscuter).  Heu, on peut avoir un peu plus de precisions ?
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
   donner un effet de perspective), vrml, viewer_3...
   cf Polyhedron_3, file I/O.
-- point iterator
 
 Delaunay
 - optimiser remove
