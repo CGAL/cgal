@@ -89,7 +89,7 @@ mesh$(OBJ_EXT): ../../include/CGAL/Delaunay_mesh_2.h \
                 ../../include/CGAL/Delaunay_mesh_traits_2.h \
 		../../include/CGAL/Double_map.h \
 		../../include/CGAL/Filter_circulator.h \
-		../../include/CGAL/Filtered_container.h \
+		../../include/CGAL/Filtered_container.h
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
