@@ -586,8 +586,8 @@ the GMP library (``\texttt{--GMP\_LIB\_DIR} \textit{$<$dir$>$}'').
 
 \subsection{Other Options}\label{sec:other-options}
 
-There are some more less important features of the install script
-we will summarize here. 
+There are some less important features of the install script we will
+summarize here.
 
 First of all you can get the version number of \texttt{cgal\_install}
 with option ``\texttt{--version}''. Note that all other options are
@@ -617,16 +617,6 @@ fails, otherwise you are just informed, \textit{if} it succeeded or
 not.  This option is not recommended for general use, but it can be
 useful to check why a certain test fails that was expected to be
 passed.
-
-\section{Troubleshooting}\label{sec:troubleshooting}
-
-In case you run into problems with \cgal, you should first have a look
-at the \cgal\ homepage:
-\begin{alltt}
-\cgalhomepage
-\end{alltt}
-If you cannot find a solution to your problem there, please send email
-to \texttt{cgal@cs.uu.nl}.
 
 \section{Identifying OS and Compiler}\label{sec:os-compiler-id}
 
@@ -785,12 +775,99 @@ The include makefiles in the \texttt{\cgaldir/make} directory
 corresponding to \leda\ can be recognized by the suffix
 ``\texttt{\_LEDA}''.
 
+\section{Troubleshooting}\label{sec:troubleshooting}
+
+This section contains some remarks about known problems and the
+solutions we propose. If your problem is not listed here, please have
+a look at the \cgal\ homepage:
+\begin{alltt}
+\cgalhomepage
+\end{alltt}
+or send an email to \texttt{cgal@cs.uu.nl}.
+
+\subsection{The ``Long-Name-Problem'' (Solaris only)}
+
+The system assembler and linker on Solaris 2.5 and 2.6 cannot handle
+symbols with more than 1024 characters. But this number is quickly
+exceeded where one starts nesting templates into each other. So if you
+encounter strange assembler or linker errors like 
+\begin{alltt}
+/usr/ccs/bin/as: "/var/tmp/cc0B5iGc.s", line 24: 
+error: can't compute value of an expression involving an external symbol
+\end{alltt}
+there is a good chance that you suffer from this ``long-name''
+problem.
+
+A solution is to install the \gnu -binutils\footnote{see
+  \path'http://www.gnu.org/software/binutils/'} and to tell the
+compiler that it shall use the \gnu-- instead of the native tools.
+From the compiler-menu (described in section \ref{sec:compiler-menu})
+you can set the corresponding option through the custom compiler
+flags, i.e. for \texttt{gcc}/\texttt{egcs} you would add 
+\begin{alltt}
+  -B/my/path/to/gnu/binutils/bin
+\end{alltt}
+assuming you installed the \gnu -binutils executables in
+\texttt{/my/path/to/gnu/binutils/bin}.
+
+If you cannot (or do not want to) install \gnu -binutils, there is a
+workaround that lets you compile, link and run your programs, but it
+prevents debugging, since the executables have to be stripped. In
+short the workaround is to compile with \texttt{-g} and to link with
+\texttt{-z nodefs -s}. In order to still have portable makefiles (see
+section\ref{sec:makefiles}), we define flags
+\texttt{LONG\_NAME\_PROBLEM\_CXXFLAGS} and
+\texttt{LONG\_NAME\_PROBLEM\_LDFLAGS} in the include makefiles which
+are empty except for the Solaris platform where they are set as stated
+above. In order to use these flags, edit your application makefile and
+add the flags to \texttt{CXXFLAGS} resp. \texttt{LDFLAGS} as indicated
+below.
+\begin{alltt}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
+# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
+
+CXXFLAGS = $(LONG_NAME_PROBLEM_CXXFLAGS) $(CGAL_CXXFLAGS) 
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+# The flag CGAL_LDFLAGS contains common linker flags and is defined
+# in the file CGAL_MAKEFILE. You may add your own linker flags to CXXFLAGS.
+
+LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS) 
+\end{alltt}
+
 \subsection{\leda\ and \stl\ conflicts}
 
 If you are using an old version of \leda, the combination of \leda\ 
 and \stl\ may give some problems. In order to avoid them, it is highly
 recommended to use the latest \leda\ release\footnote{At the moment
   this is \leda\ 3.8.}, since this is what we test \cgal\ with.
+
+\section{Compiler Optimisations}\label{sec:compiler-optimisations}
+
+You may have noticed that we do not set optimizer flags as \texttt{-O}
+by default in the include makefiles(see section\ref{sec:makefiles} for
+a description of the makefile structure in \cgal).  The main reason
+for not doing this is that compilers run much more stable without. On
+the other hand, most if not all \cgal\ programs will run considerably
+faster when compiled with optimisations! So if you are going for
+performance, you should/have to add \texttt{-O}, \texttt{-O3} or maybe
+more specific optimizer flags (please refer to the compiler
+documentation for that) to the \texttt{CXXFLAGS} variable in your
+application makefile:
+\begin{alltt}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+# The flag CGAL_CXXFLAGS contains the path to the compiler and is defined
+# in the file CGAL_MAKEFILE. You may add your own compiler flags to CXXFLAGS.
+
+CXXFLAGS = $(CGAL_CXXFLAGS) -O
+\end{alltt}
 
 \section{Upgrading a \cgal\ 1.* installation}
 In case you have \cgal\ 1.0/1.1/1.2 installed on your system, you
