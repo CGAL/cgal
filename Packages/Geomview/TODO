@@ -48,3 +48,11 @@ Doc:
 > y aura des triangulations de surfaces ca marchera pareil.
 > Soit c'est trop long, si tout ca est bien evident autant ne pas le dire.
 > qu'en penses-tu ?
+
+Medite bien, tu me raconteras.
+
+Ce qu'il faudrait dire qq part c'est que ces sorties en marcheront que si
+l'utilisateur a defini des sorties geomview pour les points, les segments,
+les triangles et le tetraedres qu'il fournit dans la Traits.
+C'est peut-etre dans la doc de Triangulation_2,3 qu'il faut l'ecrire ?
+pourquoi ne pas l'ecrire aussi dans la doc geomview ?
