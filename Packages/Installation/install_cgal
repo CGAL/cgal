@@ -592,6 +592,22 @@ guess_os()
 # compiler related functions:
 # -------------------------------------------------------------------
 
+
+# this header is used to disable the STL-in-std-namespace
+# for MIPSPRO later than 7.2
+write_sgi_no_namespace_header()
+{
+    ${_printf} "%s\n" '
+    #if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
+    #if (_COMPILER_VERSION >= 721) && defined(_NAMESPACES)
+    #define __STL_NO_NAMESPACES
+    #include <stl_config.h>
+    #undef __STL_USE_NAMESPACES
+    #endif
+    #endif
+'
+}
+
 # give version numbers for GNU GCC
 # NB: truncated to *.*.* (three numbers)
 # since we don't want to make a difference between 2.7.2.*
@@ -703,7 +719,7 @@ set_compiler_flags()
 	    ;;
 	*IRIX*g++-egcs*|*IRIX*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on irix
-	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -748,7 +764,7 @@ set_compiler_flags()
 	    ;;
 	*SunOS*5.*g++-egcs*|*SunOS*5.*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on solaris
-	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -778,7 +794,7 @@ set_compiler_flags()
 	    ;;
 	*Linux*g++-egcs*|*Linux*g++-2.8*)
 	    #### settings for egcs/gcc2.8 on linux
-	    ADDITIONAL_CXXFLAGS="-ftemplate-depth-25"
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -823,6 +839,139 @@ set_compiler_flags()
 	    ;;
     esac
 }
+
+# --------------------------------------------------------------------------
+# Following code is taken from make_redirection_headers
+# (by Geert-Jan <geert@cs.uu.nl>)
+
+#
+# internal variables from make_redirection_headers
+#
+
+tmp_code_file=redirect_tmpfile.C
+tmp_header_file=redirect_tmpfile
+
+create_replacement_header()
+#
+# Create one header as a replacement for a standard header, if necessary.
+# Should be invoked as
+#   create_replacement_header standard_header_name suffix replacements...
+#
+{
+    replacement_header=rh
+    header_name=$1
+    header_suffix=$2
+    shift 2
+#
+# Test if the standard header exists. Return if it does.
+#
+    ${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
+    ${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+    if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then return; fi
+#
+# The standard header does not exist.
+# If some of the replacement headers do exist, they included in a
+# newly created replacement header.
+#
+    rm -f ${replacement_header}
+    touch ${replacement_header}
+    for arg in $* ; do
+        ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
+	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+	if `compiler_bin` ${tmp_code_file} >/dev/null 2>&1; then
+	    ${_printf} "%s\n" "#include <$arg>" >> ${replacement_header}
+	fi
+    done
+#
+# Move the replacement header to the platform specific config directory.
+# This directory should be created first.
+#
+    if [ -s ${replacement_header} ]
+    then
+	mv ${replacement_header} "${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/${header_name}${header_suffix}"
+    fi
+}
+
+create_standard_header_replacements()
+{
+    ${_printf} "%s\n" "${_LEFTSPACE}Checking for standard header files"
+#
+# Decide if a .h suffix is needed for header files.
+#
+    ${_printf} "%s\n" "typedef int CGAL_nt;" > ${tmp_header_file}
+    ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
+    ${_printf} "%s\n" \
+	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
+    if `compiler_bin` -I . ${tmp_code_file} >/dev/null 2>&1
+    then
+	header_suffix=""
+    else
+	header_suffix=".h"
+    fi
+#
+# Now create the necessary replacement files from the list below.
+#
+    while read a b; do
+	${_printf} "%s" "${_LEFTSPACE}$a ..."
+	create_replacement_header $a "$header_suffix" $b
+	${_printf} "%s\n" " done."
+    done <<EOF2
+algorithm algobase.h algo.h
+ostream ostream.h
+numeric numeric.h
+new new.h
+memory alloc.h algobase.h
+map map.h multimap.h
+locale locale.h
+list list.h
+limits
+iterator iterator.h
+istream istream.h
+iostream iostream.h
+iosfwd iostream.h
+ios ios.h
+iomanip iomanip.h
+functional function.h
+fstream fstream.h
+exception exception.h
+deque deque.h
+cwctype wctype.h
+cwchar wchar.h
+ctime time.h
+cstring string.h
+cstdlib stdlib.h
+cstdio stdio.h
+cstddef stddef.h
+cstdarg stdarg.h
+csignal signal.h
+csetjmp setjmp.h
+complex complex.h
+cmath math.h
+clocales locales.h
+climits limits.h
+ciso646 iso646.h
+cfloat float.h
+cerrno errno.h
+cctype ctype.h
+cassert assert.h
+bitset bitset.h
+queue stack.h
+vector vector.h
+valarray valarray.h
+utility function.h pair.h
+typeinfo typeinfo.h
+string
+streambuf streambuf.h
+stdexcept stdexcept.h
+stack stack.h
+sstream sstream.h
+set set.h multiset.h
+EOF2
+}
+
+#
+# end of code segemnt from make_redirection_headers
+# --------------------------------------------------------------------------
 
 # COMPILER SPECS TEST:
 # set some compiler specific flags needed for CGAL
@@ -924,6 +1073,7 @@ test_compiler_specifica()
 	cleanup_after_compile
 	cleanup_after_link_run
     done
+    create_standard_header_replacements
     cd ${CGAL_DIR}
 }
 
@@ -2052,7 +2202,7 @@ test_for_leda_lib_in_sys_lib()
 test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
-	${_printf} "\n" > ${TMP_CXX_FILE}.C
+	write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
 	${_printf} "%s\n" '
 	    #include <iostream.h>
 	    #include <assert.h>
@@ -2234,6 +2384,7 @@ _test_sgi_june_1997_stl()
 # ($1 nonzero indicates verbosity)
 _test_sgi_3_0_stl()
 {
+    write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
     ${_printf} "%s\n" '
 	#include <assert.h>
 	#include <defalloc.h>
@@ -2258,7 +2409,7 @@ _test_sgi_3_0_stl()
 	    list<int> l;
 	    assert( check( l.begin()));
 	    return 0;
-	}' > ${TMP_CXX_FILE}.C
+	}' >> ${TMP_CXX_FILE}.C
     
     _compile_test "SGI STL 3.0" "`stl_test_cxxflags` " $1 && \
 	_link_run_test "SGI STL 3.0" "`stl_test_ldflags` " $1
@@ -2272,6 +2423,7 @@ _test_sgi_3_0_stl()
 # ($2 gives comment for _compile_test)
 test_stl_general()
 {
+    write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
     ${_printf} "%s\n" '
 	#include <iostream.h>
 	#include <algo.h>
@@ -2291,7 +2443,7 @@ test_stl_general()
 	    reverse( list1.begin(), list1.end());
 	    assert( list1 == lst( "niawt kram"));
 	    return 0;
-	}' > ${TMP_CXX_FILE}.C
+	}' >> ${TMP_CXX_FILE}.C
     
     if [ -z "$1" ]; then
 	_compile_test "${2}" "${CUSTOM_CXXFLAGS} " '' && \
