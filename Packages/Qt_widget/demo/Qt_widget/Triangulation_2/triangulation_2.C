@@ -37,6 +37,11 @@ int main(int, char*)
 
 #include "triangulation_2.h"
 
+const QString my_title_string("Triangulation Demo with"
+			      " CGAL Qt_scenes_widget");
+Delaunay	tr1;
+int		current_state;
+
 Window::Window(int w, int h)
 {
   widget = new CGAL::Qt_widget(this);
@@ -105,13 +110,6 @@ Window::Window(int w, int h)
   got_point = FALSE;
   old_state = 0;
 };
-
-Window::~Window
-{
-  delete newtoolbar;
-  delete vtoolbar;
-  delete stoolbar;
-}
 
 void Window::show_conflicts(Point p)
   {

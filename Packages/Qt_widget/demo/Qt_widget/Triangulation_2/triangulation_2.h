@@ -68,20 +68,13 @@ typedef Delaunay::Vertex_handle             Vertex_handle;
 typedef Delaunay::Edge                      Edge;
 typedef Triangulation::Line_face_circulator Line_face_circulator;
 
-const QString my_title_string("Triangulation Demo with"
-			      " CGAL Qt_scenes_widget");
-
-
-
-Delaunay	tr1;
-int		current_state;
+extern int		current_state;
 
 class Window : public QMainWindow
 {
   Q_OBJECT
 public:
 	Window(int w, int h);
-	~Window();
   void	set_window(double xmin, double xmax,
 		    double ymin, double ymax);
 
