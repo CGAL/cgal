@@ -511,7 +511,7 @@ protected:
 
 
 private:
-  // PRIVATE MEMBER DATAS
+  // --- PRIVATE MEMBER DATAS ---
 
   // edges_to_be_conformed: list of encroached constrained edges
   //  @fixme: some edges could be destroyed, use the same wrapper

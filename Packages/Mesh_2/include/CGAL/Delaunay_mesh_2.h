@@ -394,7 +394,7 @@ fill_facet_map()
       ++fit)
     {
       Quality q;
-      if( is_bad(fit, q) && fit->is_marked() )
+      if( fit->is_marked() && is_bad(fit, q) )
         push_in_bad_faces(fit, q);
     }
 }
