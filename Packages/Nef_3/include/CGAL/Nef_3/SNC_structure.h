@@ -764,7 +764,7 @@ public:
   char PSE(SHalfedge_handle h) { /* Print Sphere Segment */
     SNC_decorator D;
     SM_decorator SD;
-    TRACE(IO->index(h)<<" @ "<<IO->index(D.vertex(h))<<
+    TRACE(IO->index(h)<<" @ "<<IO->index(D.vertex(h))<<D.point(D.vertex(h))<<
 	  ", prev "<<IO->index(D.previous(h))<<
 	  ", next "<<IO->index(D.next(h))<<
 	  ", sprev "<<IO->index(SD.previous(h))<<
@@ -782,6 +782,44 @@ public:
       else TRACEN(PSE(c));
     TRACE("--> Facet cycle end"); 
     return ' ';
+  }
+
+  void merge_halfedges(SVertex_handle p, SVertex_handle q) {
+    SNC_decorator D(*this);
+    // make twin(p) and twin(q) a halfedge pair
+    D.make_twins( D.twin(p), D.twin(q));
+    Vertex_handle v(D.vertex(p)); 
+    CGAL_assertion(D.vertex(p) == D.vertex(q));
+    SM_decorator SD(v);
+    SHalfedge_around_svertex_circulator s(SD.first_out_edge(p)), se(s);
+    // for each s sedge between p and q
+    CGAL_For_all( s, se) {
+      // set prev next pair ( prev(s),  next(s))
+      D.link_as_prev_next_pair( D.previous(s), D.next(s));
+      // set prev next pair ( prev(twin(s)),  next(twin(s)))
+      D.link_as_prev_next_pair( D.previous(SD.twin(s)), D.next(SD.twin(s)));
+      // if( s is boundary item )
+      Halffacet_handle f( D.facet(s));
+      if( D.is_boundary_object(s)) {
+	// unset s as boundary of face(s)
+	D.undo_boundary_object(s, f);
+	// set prev(s) as boundary face(s)
+	D.store_boundary_object(D.previous(s), f);
+      }
+      // the same for twin(s)
+      Halffacet_handle ft( D.facet(D.twin(s)));
+      if( D.is_boundary_object(D.twin(s))) {
+	D.undo_boundary_object(D.twin(s), ft);
+	D.store_boundary_object(D.previous(D.twin(s)), ft);
+      }
+      // delete sedge s
+      SD.delete_edge_pair_only(s);
+    }
+    // delete p and q
+    SD.delete_vertex_only(p);
+    SD.delete_vertex_only(q);
+    // delete vertex(p) == vertex(q)
+    delete_vertex(v);
   }
 
   void merge_incident_sedges(SHalfedge_handle e1) {
@@ -866,6 +904,7 @@ public:
       merge_incident_sedges(cycle1);
       SD.delete_edge_pair_only(cycle1);
       SD.delete_vertex_only(e);
+      TRACEN("AFTER "<<PFC(new_cycle));
     }
     if( SDt.source(cycle2) == SDt.target(cycle2)) {
       TRACEN("cycle2 will converted into a sloop");
@@ -885,11 +924,10 @@ public:
       merge_incident_sedges(cycle2);
       SDt.delete_edge_pair_only(cycle2);
       SDt.delete_vertex_only(et);
+      TRACEN("AFTER "<<PFC(new_cycle));
     }
     merge_sets( f1, f2, hash, uf);
     merge_sets( D.twin(f1), D.twin(f2), hash, uf);
-    TRACEN("AFTER "<<PFC(new_cycle));
-    /* TODO: convert isolated vertex's edges in a halfloop */
   }
 
   bool is_isolated(Vertex_handle v) {
@@ -907,17 +945,22 @@ public:
   bool is_vertex_in_edge(Vertex_handle v) {
     SM_decorator SD(v);
     if( !is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
-	is_empty_range( SD.shalfedges_begin(), SD.shalfedges_end())) {
+	!SD.has_loop()) {
+      TRACE(point(v)<<" is vertex in edge? ");
       SVertex_iterator sv(SD.svertices_begin());
       SVertex_handle p0(sv++);
       if( sv != SD.svertices_end()) {
+	TRACEN("has one svertex, ");
 	SVertex_handle pf(sv++);
 	if( sv == SD.svertices_end()) {
+	  TRACEN("has two svertices, ");
 	  Sphere_point sp0(SD.point(p0)), spf(SD.point(pf));
+	  TRACEN("and are antipode,  yes");
 	  return( sp0 == spf.antipode());
 	}
       }
     }
+    TRACEN("no");
     return false;
   }
 
@@ -1016,14 +1059,13 @@ public:
       }
       if( is_vertex_in_edge(v)) {
 	SVertex_iterator sv(SD.svertices_begin());
-	Halfedge_handle e0(sv++), e1(sv++), e0t(D.twin(e0)), e1t(D.twin(e1));
-	if( D.mark(e0) == D.mark(sv) && D.mark(sv) == D.mark(e1)) {
-	  e0t->twin_ = e1t;
-	  e1t->twin_ = e0t;
-	  SD.delete_vertex_only(e0);
-	  SD.delete_vertex_only(e1);
-	  delete_vertex(v);
-	}
+	Halfedge_handle e1(sv++), e2(sv++);
+	TRACEN(" mark(e1) "<<D.mark(e1)<<
+	       " mark(sv) "<<D.mark(v)<<
+	       " mark(ef) "<<D.mark(e2));
+	CGAL_assertion( sv == SD.svertices_end());
+	if( D.mark(e1) == D.mark(v) && D.mark(v) == D.mark(e2))
+	  merge_halfedges(e1, e2);
       }
       v = v_next;
     }

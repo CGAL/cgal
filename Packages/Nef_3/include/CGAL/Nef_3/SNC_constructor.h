@@ -70,29 +70,39 @@ struct Project_halfedge_point {
   }
 };
   
-template <typename Point, typename Edge>
+template <typename Point, typename Edge, class Decorator>
 struct Halfedge_key {
-  typedef Halfedge_key<Point,Edge> Self;
+  typedef Halfedge_key<Point,Edge,Decorator> Self;
   Point p; int i; Edge e;
-  Halfedge_key(Point pi, int ii, Edge ei) : p(pi), i(ii), e(ei) {}
-  Halfedge_key(const Self& k) { p=k.p; i=k.i; e=k.e; }
+  Decorator& D;
+  Halfedge_key(Point pi, int ii, Edge ei, Decorator& Di ) : 
+    p(pi), i(ii), e(ei), D(Di) {}
+  Halfedge_key(const Self& k) : p(k.p), i(k.i), e(k.e), D(k.D) {}
   Self& operator=(const Self& k) { p=k.p; i=k.i; e=k.e; return *this; }
   bool operator==(const Self& k) const { return p==k.p && i==k.i; }
   bool operator!=(const Self& k) const { return !operator==(k); }
 };
 
-template <typename Point, typename Edge>
+template <typename Point, typename Edge, class Decorator>
 struct Halfedge_key_lt {
-  typedef Halfedge_key<Point,Edge> Key;
-  bool operator()(const Key& k1, const Key& k2) const
-  { if ( k1.p == k2.p ) return (k1.i > k2.i);
-  // WARNING: we must sort lexicographically along the line!!!
-    return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); }
+  typedef Halfedge_key<Point,Edge,Decorator> Key;
+  typedef typename Point::R R;
+  typedef typename R::Vector_3 Vector;
+  typedef typename R::Direction_3 Direction;
+  bool operator()( const Key& k1, const Key& k2) const { 
+    if ( k1.p == k2.p ) 
+      return (k1.i < k2.i);
+    /* previous code: 
+       else return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); */
+    Direction l(Vector(CGAL::ORIGIN, k1.D.tmp_point(k1.e)));
+    if( k1.i < 0) l = -l;
+    return (Direction( k2.p - k1.p) == l); 
+  }
 };
 
-template <typename Point, typename Edge>
+template <typename Point, typename Edge, class Decorator>
 std::ostream& operator<<(std::ostream& os, 
-                         const Halfedge_key<Point,Edge>& k )
+                         const Halfedge_key<Point,Edge,Decorator>& k )
 { os << k.p << " " << k.i; return os; }
 
 template <typename R>
@@ -801,15 +811,18 @@ template <typename SNC_>
 void SNC_constructor<SNC_>::
 pair_up_halfedges() const
 { TRACEN(">>>>>pair_up_halfedges");
-  typedef Halfedge_key<Point_3,Halfedge_handle>    Halfedge_key;
-  typedef Halfedge_key_lt<Point_3,Halfedge_handle> Halfedge_key_lt;
-  typedef std::list<Halfedge_key>                  Halfedge_list;
+  typedef Halfedge_key< Point_3, Halfedge_handle, SNC_decorator>
+    Halfedge_key;
+  typedef Halfedge_key_lt< Point_3, Halfedge_handle, SNC_decorator> 
+    Halfedge_key_lt;
+  typedef std::list<Halfedge_key>  Halfedge_list;
 
   typedef CGAL::Pluecker_line_3<Kernel> Pluecker_line_3;
   typedef CGAL::Pluecker_line_lt        Pluecker_line_lt;
-  typedef std::map<Pluecker_line_3, Halfedge_list, Pluecker_line_lt> 
+  typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt> 
     Pluecker_line_map;
 
+  SNC_decorator D(*this);
   Pluecker_line_map M;
   Halfedge_iterator e;
   CGAL_nef3_forall_halfedges(e,*sncp()) {
@@ -818,7 +831,7 @@ pair_up_halfedges() const
     TRACEN("  "<<p<<" "<<tmp_point(e)<<" "<<&*e<<" "<<l);
     int inverted;
     l = categorize(l,inverted);
-    M[l].push_back(Halfedge_key(p,inverted,e));
+    M[l].push_back(Halfedge_key(p,inverted,e,D));
   }
 
   Pluecker_line_map::iterator it;

@@ -47,6 +47,13 @@
 //#undef TRACEN
 //#define TRACEN(t) std::cerr << t << std::endl
 
+#define CGAL_NEF3_MARKED_VERTEX_COLOR 221,221,255
+#define CGAL_NEF3_UNMARKED_VERTEX_COLOR 15,15,31
+#define CGAL_NEF3_MARKED_EDGE_COLOR 221,221,255
+#define CGAL_NEF3_UNMARKED_EDGE_COLOR 15,15,31
+#define CGAL_NEF3_MARKED_FACET_COLOR 221,255,255
+#define CGAL_NEF3_UNMARKED_FACET_COLOR 31,31,63
+
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
 
@@ -276,7 +283,8 @@ namespace OGL {
 
     void draw(Vertex_iterator v) const
     { TRACEN("drawing vertex "<<*v);
-      CGAL::Color cf(200,200,230), ct(10,10,30); // more blue-ish
+      CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR), 
+	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
       CGAL::Color c = v->mark() ? ct : cf;
       glPointSize(10);
       glColor3ub(c.red(), c.green(), c.blue());
@@ -288,7 +296,8 @@ namespace OGL {
     void draw(Edge_iterator e) const
     { TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
-      CGAL::Color cf(200,200,230), ct(10,10,30); // more blue-ish
+      CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR), 
+	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
       CGAL::Color c = e->mark() ? ct : cf;
       glLineWidth(5);
       glColor3ub(c.red(),c.green(),c.blue());
@@ -313,7 +322,8 @@ namespace OGL {
 		      GLU_TESS_WINDING_POSITIVE);
 
       DFacet::Coord_const_iterator cit;
-      CGAL::Color cf(170,170,200), ct(30,30,50); // more blue-ish
+      CGAL::Color cf(CGAL_NEF3_MARKED_FACET_COLOR),
+	ct(CGAL_NEF3_UNMARKED_FACET_COLOR); // more blue-ish
       CGAL::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
@@ -561,6 +571,10 @@ static void initialize_olg()
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv(GL_LIGHT0, GL_POSITION, light_position);
   glEnable(GL_LIGHT0);
+
+  GLfloat ambient_light[] = {  0.8, 0.8, 0.8, 1.0 };
+  glLightfv(GL_LIGHT1, GL_AMBIENT, ambient_light);
+  glEnable(GL_LIGHT1);
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_POINT_SMOOTH);
