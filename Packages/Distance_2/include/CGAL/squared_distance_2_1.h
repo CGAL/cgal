@@ -82,7 +82,8 @@ namespace CGALi {
 		   const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
-    Vector_2 diff = pt-ray.source();
+    typename K::Construct_vector_2 construct_vector;
+    Vector_2 diff = construct_vector(ray.source(), pt);
     const Vector_2 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) )
       return (typename K::FT)(diff*diff);

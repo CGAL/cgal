@@ -48,7 +48,7 @@ namespace CGALi {
 		 const typename CGAL_WRAP(K)::Triangle_2 &triangle,
 		 const K& k )
   {
-    typename K::Leftturn_2 leftturn = k.leftturn_2_object();
+    typename K::Left_turn_2 leftturn = k.left_turn_2_object();
     typedef typename K::Point_2 Point_2;
     const Point_2 &vt0 = triangle.vertex(0);
     const Point_2 &vt1 = triangle.vertex(1);
