@@ -31,6 +31,9 @@
 //| a derived class.  The workaround is to write a forwarder.
 //| At least g++ 2.95 and SunPro CC 5.3 have this bug.
 
+template < typename T >
+void kill_unused_warning(const T&) {}
+
 struct A
 {
   int operator()(int a) const { return a; }
@@ -53,8 +56,8 @@ int main()
 
   d2 = b(d1);
 
-  (void) d1;
-  (void) d2;
+  kill_unused_warning(d1);
+  kill_unused_warning(d2);
 
   return 0;
 }
