@@ -204,13 +204,15 @@ private:
 				 bool &first_iter_is_right,
 				 bool &second_iter_is_right,
 				 bool &third_iter_is_right);
-  void determine_next_iter(typename Point_data_set_of_y::iterator &iter,
-			   typename Point_data_set_of_y::iterator &right_iter,
-			   typename Point_data_set_of_y::iterator &left_iter,
-			   typename Point_data_set_of_y::const_iterator right_iter_end,
-			   typename Point_data_set_of_y::const_iterator left_iter_end,
-			   bool &iter_is_right,
-			   bool &exist);
+  void determine_next_iter(
+		    typename Point_data_set_of_y::iterator &iter,
+		    typename Point_data_set_of_y::iterator &right_iter,
+		    typename Point_data_set_of_y::iterator &left_iter,
+		    typename Point_data_set_of_y::const_iterator right_iter_end,
+		    typename Point_data_set_of_y::const_iterator left_iter_end,
+		    bool &iter_is_right,
+		    bool &exist);
+
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
 		       typename Point_data_set_of_y::iterator iter2);
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
@@ -706,7 +708,9 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(x_sorted.begin(), x_sorted.end(), std::back_inserter(Point_data_list));
+  std::copy(x_sorted.begin(), 
+	    x_sorted.end(), 
+	    std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
                                iter2,iter3,first_iter,
                                beyond = Point_data_list.end();
@@ -800,7 +804,9 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), y_sorted.end(), std::back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(), 
+	    y_sorted.end(), 
+	    std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
@@ -843,7 +849,9 @@ void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), y_sorted.end(), std::back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(), 
+	    y_sorted.end(), 
+	    std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter, 
     beyond = Point_data_list.end();
@@ -905,8 +913,10 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
   bool &iter_is_right,
   bool &exist)
 {
-  if((typename Point_data_set_of_y::const_iterator)right_iter != right_iter_end) {
-    if((typename Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
+  if((typename Point_data_set_of_y::const_iterator)right_iter 
+     != right_iter_end) {
+    if((typename Point_data_set_of_y::const_iterator)left_iter 
+       != left_iter_end) {
       if(less_yx(*right_iter, *left_iter)) {
         iter = right_iter;
         iter_is_right = true;
@@ -922,7 +932,8 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
       ++right_iter;
     }
   } else { 
-    if((typename Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
+    if((typename Point_data_set_of_y::const_iterator)left_iter 
+       != left_iter_end) {
       iter = left_iter;
       iter_is_right = false;
       ++left_iter;
