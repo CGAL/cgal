@@ -59,7 +59,7 @@ void one_pair(trian_t const & trian1, trian_t const & trian2)
     if (CGAL_assign(pgn, result)) {
 	cout << "Polygon intersection.\n";
 	cout << pgn.size()<<'\n';
-	for (int i=0; i<pgn.size(); i++) {
+	for (container_t::size_type i=0; i<pgn.size(); i++) {
 	    print(pgn[i]);
 	    cout << '\n';
 	}
