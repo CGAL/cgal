@@ -16,11 +16,8 @@ meshes in Section~\ref{sec:Mesh_2_meshes}.
 \subsection{Definitions}
 \label{sec:Mesh_2_conforming_definitions}
 
-\textbf{Ins\'erer ici une d\'efinition des triangulation d'un ensemble de
-  \textit{data points}~? Et \textit{constrained}~?}
-
 A triangulation is a \emph{Delaunay triangulation} if the circumscribing
-circle of any facet of the triangulation contains no data point in its
+circle of any facet of the triangulation contains no vertex in its
 interior. A \emph{constrained} Delaunay triangulation is a constrained
 triangulation which is a much Delaunay as possible. The circumscribing
 circle of any facet of a constrained Delaunay triangulation contains in its
@@ -70,8 +67,8 @@ It has to be a model of the concept
 The constrained Delaunay triangulation \ccc{t} is passed by reference
 and is refined into a conforming Delaunay triangulation or a
 conforming Gabriel triangulation by adding vertices, that is, the
-triangulation is modified. In order to keep the original
-triangulation, the user has to make a copy of it.
+triangulation is modified. If the user needs to keep the original
+triangulation, he or she has to make a copy of it.
 
 The algorithm used by \ccc{make_conforming_Delaunay_2} and
 \ccc{make_conforming_Gabriel_2} builds internal data that would be
@@ -124,7 +121,7 @@ user can override this default by providing a set of seed points. Either
 seed points mark components to be meshed or they mark components not to be
 meshed (holes).
 
-\textbf{TODO: Insert figures: PSQL, its mesh. The same PSLG with seeds, and
+\textbf{TODO: Insert figures: PSLG, its mesh. The same PSLG with seeds, and
 its mesh.}
 
 \subsection{Shape and Size Criteria}
@@ -180,25 +177,29 @@ angle bound greater than $20.7$~degrees, but there is no such guarantee.
 
 Meshes are obtained from
 constrained Delaunay triangulations by calling the global function \\
-\ccc{template<class CDT> void refine_Delaunay_mesh_2 (CDT &t, typename
-  CDT::Geom_traits gt)}. \\
+\ccc{template<class CDT, class Criteria> void refine_Delaunay_mesh_2 (CDT
+  &t, typename CDT::Geom_traits gt)}. \\
 The template parameter \ccc{CDT} must be instantiated by a constrained
 Delaunay triangulation class that is a model of the concept
-\ccc{ConstrainedDelaunayTriangulation_2}.
+\ccc{ConstrainedDelaunayTriangulation_2}. In order to override the domain,
+a version of this function has two more arguments that define a sequence of
+seed points.
 
 The geometric traits class of \ccc{CDT} has to be a
 model of the concept \ccc{DelaunayMeshTraits_2}.  This concept
 refines the concept \ccc{ConformingDelaunayTriangulationTraits_2}
-adding the geometric criteria that the triangles have to satisfy.
+adding the geometric predicates and constructors. The template parameter
+\ccc{Criteria} must be a model of \ccc{MeshingCriteria_2}. This concept
+defines criteria that the triangles have to satisfy.
 \cgal\ provides several models for this concept such as:
 \begin{itemize}
-\item \ccc{Delaunay_mesh_traits_2<K>}, that defines a shape criterion
+\item \ccc{Delaunay_mesh_criteria_2<K>}, that defines a shape criterion
   that bounds the minimum angle of triangles, 
-\item \ccc{Delaunay_mesh_size_traits<K>}, that adds to the previous one a
+\item \ccc{Delaunay_mesh_size_criteria<K>}, that adds to the previous one a
   bound on the maximum edge length.
 \end{itemize}
 
-If the fonction \ccc{refine_Delaunay_mesh_2} is called several times on the
+If the function \ccc{refine_Delaunay_mesh_2} is called several times on the
 same triangulation with different criteria, the algorithm will rebuild used
 internal data at every call. In order to avoid that, the advanced user can
 use the class \ccc{Delaunay_mesher_2<CDT>}. That class provides also step
@@ -208,7 +209,7 @@ Any object of type \ccc{Delaunay_mesher_2<CDT>} is constructed from a
 reference to a \ccc{CDT} and it has several member functions to define the
 domain to be meshed and to mesh the \ccc{CDT}. See the example given below
 and the reference manual for details. Note that the \ccc{CDT} should not be
-externally modified during the life the the \ccc{Delaunay_mesher_2<CDT>}
+externally modified during the life time of the \ccc{Delaunay_mesher_2<CDT>}
 object.
 
 \subsection{Example Using the Global Function}
@@ -216,7 +217,7 @@ object.
 The following example inserts several segments into a constrained
 triangulation and then meshes it using the global function
 \ccc{refine_Delaunay_mesh_2}. The size and shape criteria are the defaults
-provided by the traits class \ccc{Delaunay_mesh_traits_2<K>}. No seeds are
+provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}. No seeds are
 given, meaning that the mesh domain covers the whole plane except for the
 unbounded component.
 
@@ -237,7 +238,7 @@ This example uses the class \ccc{Delaunay_mesher_2<CDT>} and calls
 
 This example uses the global function \ccc{refine_Delaunay_mesh_2} but
 defines a domain by using one seed. The size and shape criteria are the
-defaults provided by the traits class \ccc{Delaunay_mesh_traits_2<K>}.
+defaults provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}.
 
 \ccIncludeExampleCode{Mesh_2/mesh_with_seeds.C}
 

@@ -1,7 +1,7 @@
 \begin{ccRefFunction}{refine_Delaunay_mesh_2}
 
 
-\ccFunction{ template<class CDT, Criteria> 
+\ccFunction{ template<class CDT, class Criteria> 
 void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); }
 { Refines the default domain defined by a constrained Delaunay
   triangulation without seeds into a mesh satifying the criteria
@@ -10,9 +10,9 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); }
   constrained edges of \ccc{t}, except for the unbounded component.
   \ccPrecond The template parameter \ccc{CDT} must be a model of the
   concept \ccc{ConstrainedDelaunayTriangulation_2}. The geometric traits
-  class plugged into the constrained Delaunay triangulation must be a model
+  class of the constrained Delaunay triangulation must be a model
   of \ccc{DelaunayMeshTraits_2}.
-  \ccRequire The face plugged into the constrained
+  \ccRequire The face of the constrained
   Delaunay triangulation must be a model of the concept
   \ccc{DelaunayMeshFaceBase_2}. \ccc{Criteria} must be a model of the
   concept \ccc{MeshingCriteria_2} and \ccc{CDT::Face_handle} must be the same

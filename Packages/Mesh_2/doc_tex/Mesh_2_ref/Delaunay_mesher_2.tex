@@ -20,7 +20,7 @@ The constructor of the class \ccRefName{} takes a reference to a \ccc{CDT}
 as an argument. A call to the refinement method \ccc{refine_mesh()} will
 refine the constrained Delaunay triangulation into a mesh satisfying the
 size and shape criteria specified in the traits class. Note that if, during
-the life of the \ccRefName\ object, the triangulation is externally
+the life time of the \ccRefName\ object, the triangulation is externally
 modified, any further call to its member methods may crash. Considere
 constructing a new \ccRefName\ object if the triangulation has been
 modified.
@@ -84,11 +84,11 @@ The following functions are used to define seeds.
   satisfying the criteria defined by the traits.
 }
 
-\ccMethod{ void set_criteria(Criteria criteria);}
-{ Assigns \ccc{criteria} to the criteria traits object. }
-
 \ccMethod{ const Criteria& get_criteria();}
 { Returns a const reference to the criteria traits object. }
+
+\ccMethod{ void set_criteria(Criteria criteria);}
+{ Assigns \ccc{criteria} to the criteria traits object. }
 
 \begin{ccAdvanced}
   The function \ccc{set_criteria} scans all faces to recalculate the list of
@@ -133,16 +133,15 @@ meshing algorithm step by step, using the following methods.
              edges have been inserted since the last call.}
 
 \ccMethod{bool is_refinement_done(); }
-         {  Tests if the step by step refinement algorithm is done. }
+{ Tests if the step by step refinement algorithm is done. If it returns
+  \ccc{true}, the following calls to \ccc{step_by_step_refine_mesh} will
+  not insert any points, until some new constrained segments or points are
+  inserted in the triangulation and \ccc{init} is called again. }}
 
 \ccMethod{ bool step_by_step_refine_mesh(); }
-         { Applies one step of the algorithm. At any single step of the
-         algorithm, 
-         at most one point is inserted. The algorithm sometimes does not
-         insert a point at some steps. Anyway, internal data of the
-         \ccRefName{} object are modified at each step, until
-         \ccc{mesher.is_refinement_done()}. If the algorithm is finished,
-         the function returns \ccc{false}. If not, it returns \ccc{true}.}
+{ Applies one step of the algorithm, by inserting one point, if the
+  algorithm is not done. Returns \ccc{false} iff no point has been inserted
+  because the algorithm is done. }
 
 \end{ccAdvanced}
 
