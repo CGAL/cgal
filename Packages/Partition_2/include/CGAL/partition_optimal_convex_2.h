@@ -219,7 +219,8 @@ bool collinearly_visible(unsigned int edge_num1, unsigned int e_num,
 
    if ((e_num == edge_num1+1 || e_num+1 == edge_num2) && 
        edges[edge_num1][edge_num2].is_visible() &&
-       orientation(polygon[edge_num1], polygon[e_num], polygon[edge_num2]) ==        COLLINEAR)
+       orientation(polygon[edge_num1], polygon[e_num], polygon[edge_num2]) ==
+                  COLLINEAR)
      return true;
    else
      return false;    
