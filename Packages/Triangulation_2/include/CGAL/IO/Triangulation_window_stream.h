@@ -28,86 +28,42 @@
 #ifdef CGAL_TRIANGULATION_2_H
 #ifndef CGAL_WINDOW_STREAM_TRIANGULATION_2_H
 #define CGAL_WINDOW_STREAM_TRIANGULATION_2_H
-
 CGAL_BEGIN_NAMESPACE
-
 template < class Gt, class Tds>
 Window_stream&
-operator<<(Window_stream& os,
-           const Triangulation_2<Gt, Tds> &T)
+operator<<(Window_stream& os,  const Triangulation_2<Gt, Tds> &t)
 {
-    Triangulation_2<Gt, Tds>::Edge_iterator it = T.edges_begin();
-
-    while(it != T.edges_end()){
-        os << T.segment(it);
-        ++it;
-    }
-
-    return os;
+  return t.draw_triangulation(os);
 }
-
 CGAL_END_NAMESPACE
-
 #endif // CGAL_WINDOW_STREAM_TRIANGULATION_2_H
 #endif // CGAL_TRIANGULATION_2_H
 
 #ifdef CGAL_DELAUNAY_TRIANGULATION_2_H
 #ifndef CGAL_WINDOW_STREAM_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_WINDOW_STREAM_DELAUNAY_TRIANGULATION_2_H
-
 CGAL_BEGIN_NAMESPACE
-
 template < class Gt, class Tds >
 Window_stream&
-operator<<(Window_stream& os,
-           const Delaunay_triangulation_2<Gt,Tds> &T)
+operator<<(Window_stream& os,  const Delaunay_triangulation_2<Gt,Tds> &dt)
 {
-  return (os << (Triangulation_2<Gt, Tds>) T);
-  // c'est pas une bonne idee parceque le cast
-  // utilise le createur 
-  //Triangulation_2(const Triangulation_2<Gt,Tds> &tr)
-  //qui recopie toute les faces 
-
-//   Delaunay_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
-// 
-//     while(it != T.edges_end()){
-//         os << T.segment(it);
-//         ++it;
-//     }
-//   
-//     return os;
+   return dt.draw_triangulation(os);
 }
-
 CGAL_END_NAMESPACE
-
 #endif // CGAL_WINDOW_STREAM_DELAUNAY_TRIANGULATION_2_H
 #endif // CGAL_DELAUNAY_TRIANGULATION_2_H
 
 #ifdef CGAL_CONSTRAINED_TRIANGULATION_2_H
 #ifndef CGAL_WINDOW_STREAM_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_WINDOW_STREAM_CONSTRAINED_TRIANGULATION_2_H
-
 CGAL_BEGIN_NAMESPACE
-
 template < class Gt, class Tds>
 Window_stream&
-operator<<(Window_stream& os,
-           const Constrained_triangulation_2<Gt,Tds> &T)
+operator<<(Window_stream& os,  const Constrained_triangulation_2<Gt,Tds> &t)
 {
-
-  //return (os << (Triangulation_2<Gt, Tds>) T);
-  
-  Constrained_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
-
-    while(it != T.edges_end()){
-        os << T.segment(it);
-        ++it;
-    }
-   return os;
+  return t.draw_triangulation(os);
 }
-
 CGAL_END_NAMESPACE
-
 #endif // CGAL_WINDOW_STREAM_CONSTRAINED_TRIANGULATION_2_H
 #endif // CGAL_CONSTRAINED_TRIANGULATION_2_H
 
@@ -115,9 +71,7 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_WEIGHTED_POINT_H
 #ifndef CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
 #define CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
-
 CGAL_BEGIN_NAMESPACE
-
 template < class Point, class We >
 Window_stream&
 operator<<(Window_stream& os, const Weighted_point< Point, We > &p)
@@ -147,7 +101,6 @@ Window_stream& operator>>(Window_stream &os, Weighted_point< Point, We > &wp)
 }
 
 CGAL_END_NAMESPACE
-
 #endif // CGAL_WINDOW_STREAM_WEIGHTED_POINT_H
 #endif // CGAL_WEIGHTED_POINT_H
 
@@ -155,64 +108,13 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_REGULAR_TRIANGULATION_2_H
 #ifndef CGAL_WINDOW_STREAM_REGULAR_TRIANGULATION_2_H
 #define CGAL_WINDOW_STREAM_REGULAR_TRIANGULATION_2_H
-
 CGAL_BEGIN_NAMESPACE
-
 template < class Gt, class Tds >
 Window_stream&
-operator<<(Window_stream& os,
-           /*const*/ Regular_triangulation_2<Gt,Tds> &T)
+operator<<(Window_stream& os, Regular_triangulation_2<Gt,Tds> &t)
 {
-	Regular_triangulation_2<Gt,Tds>::Edge_iterator 
-	  it = T.edges_begin();
-
-	while(it != T.edges_end())
-	  {	os << GREEN<<T.segment(it);
-		++it;
-	}
-
-	if (T.number_of_vertices()>1 )
-	{	
-	  Regular_triangulation_2<Gt,Tds>::Vertex_iterator 
-	    v_i=T.vertices_begin(),
-	    done=T.vertices_end();
-
-		while(v_i != done)
-		{
-			os<< RED<<(v_i->point());
-			++v_i;
-		}
-	}else if (T.number_of_vertices()==1)
-	{
-		os<<RED<<T.finite_vertex()->point();
-	}
-
-	typedef typename Gt::Point    Point;
-	typedef list<Point> Point_list;
-	
-	if( T.number_of_vertices() < 2) {return os;}
-
-	Regular_triangulation_2<Gt,Tds>::Face_iterator fit;
-	for(fit=T.faces_begin(); fit != T.faces_end(); ++fit){
-	  Point_list::iterator plit;
-	 for(plit=fit->point_list().begin(); 
-	     plit!=fit->point_list().end(); ++plit) {
-	    os<<BLUE<< *plit;}
-	}
-	
-	Regular_triangulation_2<Gt,Tds>::Face_circulator 
-	  fc = T.infinite_vertex()->incident_faces(),done(fc);
-	do {
-	  Point_list::iterator plit;
-	  for(plit=fc->point_list().begin(); 
-	     plit!=fc->point_list().end(); ++plit) {
-	    os<<BLUE<< *plit;}
-	}while(++fc != done); 
- 
-    return os;
+    return t.draw_triangulation(os);
 }
-
 CGAL_END_NAMESPACE
-
 #endif // CGAL_WINDOW_STREAM_REGULAR_TRIANGULATION_2_H
 #endif // CGAL_REGULAR_TRIANGULATION_2_H
