@@ -64,7 +64,7 @@ struct range_tree_node: public tree_node_base
   protected:
   typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
 public:
-  friend rT_d;
+  friend class rT_d;
   
   range_tree_node() 
   {
@@ -122,7 +122,7 @@ protected:
   // A vertex is of this type:
   //  struct range_tree_node;
 
-  friend range_tree_node<C_Data,C_Window,C_Interface>;
+  friend class range_tree_node<C_Data,C_Window,C_Interface>;
 
   typedef range_tree_node<C_Data,C_Window,C_Interface> range_tree_node2;
   typedef range_tree_node<C_Data,C_Window,C_Interface> *link_type;
