@@ -280,9 +280,9 @@ is_valid(bool verbose, int level) const
   for( Finite_faces_iterator it = this->finite_faces_begin(); 
        it != this->finite_faces_end() ; it++) {
     for(int i=0; i<3; i++) {
-      if ( ! is_infinite( it->mirror_vertex(i))) {
+      if ( ! is_infinite( this->mirror_vertex(it,i))) {
 	result = result &&  ON_POSITIVE_SIDE != 
-	  side_of_oriented_circle( it, it->mirror_vertex(i)->point());
+	  side_of_oriented_circle( it, this->mirror_vertex(it,i)->point());
       }
       CGAL_triangulation_assertion( result );
     }

@@ -94,12 +94,6 @@ to the vertex with index \ccc{i}.
 {returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
 compute the index \ccc{i} of \ccc{n}.}
 
-\ccHeading{Other Access Functions}
-\ccMethod{int  mirror_index(int i) const;}
-{index of \ccVar\ as a neighbor of \ccVar.\ccc{neighbor(i)}}
-\ccGlue
-\ccMethod{Vertex_handle mirror_vertex(int i) const;}
-{vertex of \ccVar.\ccc{neighbor(i)}} opposite to  \ccVar.
 
 
 \begin{ccAdvanced}
@@ -149,6 +143,13 @@ in correct reverse order.}
 \ccMethod{int cw(int i) const;}
 {Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
 
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (istream& is, TriangulationDataStructure_2::Face & f);}
+{Inputs any non combinatorial information possibly stored in  the face.}
+\ccGlue
+\ccFunction{ostream& operator<< (ostream& os, const TriangulationDataStructure_2::Face & f);}
+{Outputs any non combinatorial information possibly stored in  the face.}
 
 
 \ccSeeAlso

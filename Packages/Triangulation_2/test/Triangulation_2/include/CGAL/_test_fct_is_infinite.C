@@ -52,8 +52,8 @@ _test_fct_is_infinite( const Triangulation &T )
     }
 
   // test is_infinite(Edge_circulator)
-  if ( ! T.infinite_vertex()->incident_edges().is_empty() )
-    assert( T.is_infinite( T.infinite_vertex()->incident_edges()) );
+  if ( ! T.incident_edges(T.infinite_vertex()).is_empty() )
+    assert( T.is_infinite( T.incident_edges(T.infinite_vertex())) );
 
   // test is_infinite(Edge_iterator)
   // -> for edge iterator

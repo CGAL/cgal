@@ -57,5 +57,6 @@ int main()
   std::cout << "using  Cartesian  points "   <<  std::endl;
   //_test_cls_regular_hierarchy_2( Rt());
   _test_cls_regular_hierarchy_2( Regular_hierarchy_cartesian());
+  std::cout << "done" << std::endl;
   return 0;
 }

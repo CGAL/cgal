@@ -70,5 +70,6 @@ int main()
 
   _test_cls_delaunay_triangulation_2( Cls4() );
 
+  std::cout << "done" << std::endl;
   return 0;
 }

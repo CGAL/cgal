@@ -100,7 +100,7 @@ with \ccc{Face_handle()}.}
                                        Vertex_handle v2,
                                        Face_handle n0, 
                                        Face_handle n1,
-                                       Face_handle n2,);}
+                                       Face_handle n2);}
 {initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
 \ccc{n0, n1, n2}.}
 
@@ -142,7 +142,7 @@ with \ccc{Face_handle()}.}
 \ccMethod{ void set_vertices();}
 {sets the vertices to \ccc{Vertex_handle()}.}
 \ccGlue
-\ccMethod{void set_vertices(Vertex_handle* v0,
+\ccMethod{void set_vertices(Vertex_handle v0,
 		    Vertex_handle v1,
 		    Vertex_handle v2);}
 {sets the vertices.}
@@ -182,17 +182,10 @@ a precise indication of the kind of invalidity encountered.}
 \ccMethod{void * for_compact_container() const;}{}
 \ccGlue
 \ccMethod{void * & for_compact_container();}{}
-{ These member functions are required by \ccc{Triangulation_data_structure_3}
+{ These member functions are required by \ccc{Triangulation_data_structure_2}
   because it uses \ccc{Compact_container} to store its faces.  See the
   documentation of \ccc{Compact_container} for the exact requirements.}
 
-\ccHeading{I/O}
-
-\ccFunction{istream& operator>> (istream& is, TriangulationDSFaceBase_2 & f);}
-{Inputs any non combinatorial information possibly stored in  the face.}
-\ccGlue
-\ccFunction{ostream& operator<< (ostream& os, const TriangulationDSFaceBase_2 & f);}
-{Outputs any non combinatorial information possibly stored in  the face.}
 
 
 

@@ -58,8 +58,44 @@ public:
 			    Face_handle n1, 
 			    Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2) {}
+
+  static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
+  static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  Vertex_handle mirror_vertex(int i) const;
+  int mirror_index(int i) const;
+#endif
+
 };
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class Gt, class Fb >
+inline
+typename Triangulation_face_base_2<Gt,Fb>::Vertex_handle
+Triangulation_face_base_2<Gt,Fb>::
+mirror_vertex(int i) const
+{
+  CGAL_triangulation_precondition ( this->neighbor(i) != Face_handle()
+				    && this->dimension() >= 1);
+  //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
+  return this->neighbor(i)->vertex(mirror_index(i));
+}
+
+template < class Gt, class Fb >
+inline int
+Triangulation_face_base_2<Gt,Fb>::
+mirror_index(int i) const
+{
+  // return the index of opposite vertex in neighbor(i);
+  CGAL_triangulation_precondition (this->neighbor(i) != Face_handle() &&
+	                           this->dimension() >= 1);
+  if (this->dimension() == 1) {
+    return 1 - (this->neighbor(i)->index(this->vertex(1-i)));
+  }
+  return this->ccw( this->neighbor(i)->index(this->vertex(this->ccw(i))));
+}
+#endif
 
 CGAL_END_NAMESPACE 
 

@@ -801,7 +801,7 @@ is_valid(bool verbose, int level) const
       }
     }
 
-     Vertex_circulator start = infinite_vertex()->incident_vertices();
+     Vertex_circulator start = incident_vertices(infinite_vertex());
      Vertex_circulator pc(start);
      Vertex_circulator qc(start); ++qc;
      Vertex_circulator rc(start); ++rc; ++rc;
@@ -818,7 +818,7 @@ is_valid(bool verbose, int level) const
      // which does not know the number of components nor the genus
      result = result && (number_of_faces() == 2*(number_of_vertices()+1)
 		                            - 4 
-                                           - infinite_vertex()->degree());
+                                           - degree(infinite_vertex()));
      CGAL_triangulation_assertion( result);
      break;
    }
@@ -1156,7 +1156,7 @@ exchange_incidences(Vertex_handle va, Vertex_handle vb)
   }
   else {
     CGAL_triangulation_assertion (dimension() == 2);
-    Face_circulator fc = vb->incident_faces(), done(fc);
+    Face_circulator fc = incident_faces(vb), done(fc);
     do {
       faces.push_back(fc);
       fc++;
@@ -1229,7 +1229,7 @@ regularize(Vertex_handle v)
     faces_around.push_back(v->face()->neighbor(1- v->face()->index(v)));
   }
   else{ //dimension==2
-    Face_circulator fit = v->incident_faces(), done(fit);
+    Face_circulator fit = incident_faces(v), done(fit);
     do {
       faces_around.push_back(fit++);
     } while(fit != done);
@@ -1315,7 +1315,7 @@ remove(Vertex_handle v )
     p_list.splice(p_list.begin(), n->vertex_list());
   }
   else if (dimension() == 2 ) {
-    Face_circulator fc = v->incident_faces(),done(fc);
+    Face_circulator fc = incident_faces(v),done(fc);
     do {
       p_list.splice(p_list.begin(), fc->vertex_list());
       fc++;
@@ -1779,7 +1779,7 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
   if(is_infinite(f,i))
     {
       int j = 3 - ( i + f->index(infinite_vertex()));
-      if ( f->vertex(j)->degree() == 4)
+      if ( degree(f->vertex(j)) == 4)
 	stack_flip_4_2(f,i,j,faces_around);
       return;
     }
@@ -1797,19 +1797,19 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
       stack_flip_2_2(f,i, faces_around);
       return;
     }
-    if (occw == RIGHT_TURN && f->vertex(ccw(i))->degree() == 3) {
+    if (occw == RIGHT_TURN && degree(f->vertex(ccw(i))) == 3) {
       stack_flip_3_1(f,i,ccw(i),faces_around);
       return;
     }
-    if (ocw == LEFT_TURN && f->vertex(cw(i))->degree() == 3) {
+    if (ocw == LEFT_TURN && degree(f->vertex(cw(i))) == 3) {
       stack_flip_3_1(f,i,cw(i),faces_around);
       return;
     }
-    if (occw == COLLINEAR && f->vertex(ccw(i))->degree() == 4) {
+    if (occw == COLLINEAR && degree(f->vertex(ccw(i))) == 4) {
       stack_flip_4_2(f,i,ccw(i),faces_around);
       return;
     }
-    if (ocw == COLLINEAR && f->vertex(cw(i))->degree() == 4)
+    if (ocw == COLLINEAR && degree(f->vertex(cw(i))) == 4)
       stack_flip_4_2(f,i,cw(i),faces_around);
     
     return;

@@ -566,7 +566,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   Triangle t = T2_3.triangle(loc); assert( &t == &t );
   Segment  s = T2_3.segment(loc,0); assert( &s == &s );
   s = T2_3.segment(Edge(loc,1)); assert( &s == &s );
-  s = T2_3.segment(v2_3_6->incident_edges()); assert( &s == &s );
+  s = T2_3.segment(T2_3.incident_edges(v2_3_6)); assert( &s == &s );
   s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
 
@@ -835,7 +835,7 @@ _test_regular_duality( const Del &T )
     }
 
   // Test dual(edge circulator)
-  Edge_circulator ec=T.finite_vertices_begin()->incident_edges(), done(ec);
+  Edge_circulator ec=T.incident_edges(T.finite_vertices_begin()), done(ec);
   if ( !ec.is_empty() ) 
   do  
     {

@@ -170,7 +170,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
 
   // find a finite vertex to the left of pq
   // if there is no, the line_face_circulator is null
-  Face_circulator fc = v->incident_faces();
+  Face_circulator fc = _tr->incident_faces(v);
   Face_circulator done(fc);
   int ic = fc->index(v);
   Vertex_handle  vt= fc->vertex(cw(ic));
@@ -243,7 +243,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
   //begins at the  first finite face traversed be the oriented line pq
 {
   Vertex_handle inf = _tr->infinite_vertex();
-  Face_circulator fc = inf->incident_faces(),
+  Face_circulator fc = _tr->incident_faces(inf),
     done(fc);
 
   i = fc->index(inf);

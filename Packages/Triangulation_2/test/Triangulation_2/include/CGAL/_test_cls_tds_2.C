@@ -126,15 +126,15 @@ _test_cls_tds_2( const Tds &)
   assert(tds4.is_valid() );
   // test insert-in-face, insert_in_egde dim==2
   // Find the face  v4_1 v4_2 v4_3 for insertion
-  Face_circulator fc= v4_1->incident_faces();
+  Face_circulator fc= tds4.incident_faces(v4_1);
   while( ! (fc->has_vertex(v4_2) && fc->has_vertex(v4_3)) ) fc++;
   Vertex_handle v4_4 = tds4.insert_in_face(fc);
-  assert(v4_4->degree() == 3);
+  assert(tds4.degree(v4_4) == 3);
   assert(tds4.is_valid() );
   // Find the edge v4_1v4_2 for insertion
-  fc = v4_1->incident_faces();
+  fc = tds4.incident_faces(v4_1);
   int ic;
-  while(! (fc->has_vertex(v4_2, ic ) && ic == fc->ccw(fc->index(v4_1)))) 
+  while(! (fc->has_vertex(v4_2, ic ) && ic == tds4.ccw(fc->index(v4_1)))) 
     fc++;
   Vertex_handle v4_5 = tds4.insert_in_edge(fc, ic);
   assert(tds4.is_valid() );
@@ -357,7 +357,7 @@ _test_tds_circulators( const Tds&  tds)
 	               vit != tds.vertices_end(); vit++) {
     
     Face_circulator fc = tds.incident_faces(vit), fdone(fc);
-    Face_circulator fc2 = vit->incident_faces();
+    Face_circulator fc2 = tds.incident_faces(vit);
     assert(fc2 == fc);
     if (! fc.is_empty()) {
       do {
@@ -369,7 +369,7 @@ _test_tds_circulators( const Tds&  tds)
     }
 
     Edge_circulator ec = tds.incident_edges(vit), edone(ec);
-    Edge_circulator ec2 = vit->incident_edges();
+    Edge_circulator ec2 = tds.incident_edges(vit);
     if (! ec.is_empty()) assert( ec2 == ec);
     if (! ec.is_empty()) {
       do {
@@ -381,7 +381,7 @@ _test_tds_circulators( const Tds&  tds)
 
     countvv = 0;
     Vertex_circulator vc = tds.incident_vertices(vit), vdone(vc);
-    Vertex_circulator vc2 = vit->incident_vertices();
+    Vertex_circulator vc2 = tds.incident_vertices(vit);
     if (! vc.is_empty()) assert( vc == vc2);
     if (! vc.is_empty()) {
       do {
@@ -393,7 +393,7 @@ _test_tds_circulators( const Tds&  tds)
       } while (++vc != vdone);
     }
 
-    assert( vit->degree() == countvv);
+    assert( tds.degree(vit) == countvv);
   }	       
 					     
   assert( countf == 3 * tds.number_of_faces());

@@ -54,5 +54,6 @@ int main()
   typedef CGAL::Regular_triangulation_2<RGt2>                    RCls2;
   _test_cls_regular_triangulation_2( RCls2() );
 
+  std::cout << "done" << std::endl;
   return 0;
 }

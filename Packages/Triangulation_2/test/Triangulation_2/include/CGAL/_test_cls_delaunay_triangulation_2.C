@@ -184,7 +184,7 @@ _test_delaunay_duality( const Del &T )
     }
 
   // Test dual(edge circulator)
-  Edge_circulator ec=T.finite_vertices_begin()->incident_edges(), done(ec);
+  Edge_circulator ec=T.incident_edges(T.finite_vertices_begin()), done(ec);
   if ( !ec.is_empty() ) 
   do  
     {

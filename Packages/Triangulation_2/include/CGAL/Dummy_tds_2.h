@@ -40,7 +40,10 @@ struct Dummy_tds_2 {
 
   struct Edge_circulator {};
   struct Facet_circulator {};
+  struct Face_circulator {};
   struct Vertex_circulator {};
+  
+  typedef std::size_t size_type;
 };
 
 CGAL_END_NAMESPACE

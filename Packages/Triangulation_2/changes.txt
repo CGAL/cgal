@@ -1,3 +1,6 @@
+22 February Andreas Fabri
+- Removed derivation of vertex and face class in TDS
+
 18 February 2005 Sylvain Pion
 - doc : Regular_filtered_traits was not included, oops.
 

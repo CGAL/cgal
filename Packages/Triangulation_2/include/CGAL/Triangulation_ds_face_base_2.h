@@ -86,6 +86,11 @@ public:
    // For use by Compact_container.
   void * for_compact_container() const {return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container();}
+
+
+  static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
+  static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
+
 };
 
 template <class TDS>

@@ -273,6 +273,9 @@ incident to \ccc{v}
 and the circulator begins with the face
 \ccc{f}.}
 
+\ccMethod{Vertex_handle  mirror_vertex(Face_handle f, int i) const;}{returns vertex of \ccc{f->neighbor(i)}.}
+
+\ccMethod{int   mirror_index(Face_handle f, int i) const;}{returns the index of \ccc{f} as a neighbor of \ccc{f->neighbor(i)}.}
 
 \ccHeading{Modifiers}
 The following modifier member functions  guarantee
@@ -456,6 +459,9 @@ and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
 triangulation: call the \ccc{is_valid()} member function for each vertex and 
 each face, checks the number of vertices and the Euler relation
 between numbers of vertices, faces and edges.}
+\ccGlue
+\ccMethod{size_type degree(Vertex_handle v) const;}
+{Returns the degree of \ccc{v} in the triangulation.}
 
 \ccHeading{I/O}
 

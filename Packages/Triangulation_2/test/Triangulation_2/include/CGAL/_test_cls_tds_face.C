@@ -142,14 +142,14 @@ _test_cls_tds_face( const Tds )
   assert( gh4->neighbor(2) == fh3 );
 
   //Test mirror_vertex() mirror_index()
-  assert( gh4->mirror_vertex(0) == vh4);
-  assert( fh1->mirror_vertex(0) == vh1);
-  assert( fh2->mirror_vertex(1) == vh2);
-  assert( fh3->mirror_vertex(2) == vh3);
-  assert( gh4->mirror_index(0) == 0);
-  assert( fh1->mirror_index(0) == 0);
-  assert( fh2->mirror_index(1) == 1);
-  assert( fh3->mirror_index(2) == 2);
+  assert( tds.mirror_vertex(gh4, 0) == vh4);
+  assert( tds.mirror_vertex(fh1, 0) == vh1);
+  assert( tds.mirror_vertex(fh2, 1) == vh2);
+  assert( tds.mirror_vertex(fh3, 2) == vh3);
+  assert( tds.mirror_index(gh4, 0) == 0);
+  assert( tds.mirror_index(fh1, 0) == 0);
+  assert( tds.mirror_index(fh2, 1) == 1);
+  assert( tds.mirror_index(fh3, 2) == 2);
 
   // Test is_valid
   assert( gh4->is_valid() );
@@ -183,10 +183,10 @@ _test_cls_tds_face( const Tds )
   assert (hh1->dimension() == 0);
   assert (hh1->is_valid()); 
 
-  assert(gh1->mirror_vertex(0) == vh1);
-  assert(gh1->mirror_vertex(1) == vh1);
-  assert(gh1->mirror_index(0) == 1);
-  assert(gh1->mirror_index(1) == 0);
+  assert(tds.mirror_vertex(gh1,0) == vh1);
+  assert(tds.mirror_vertex(gh1,1) == vh1);
+  assert(tds.mirror_index(gh1,0) == 1);
+  assert(tds.mirror_index(gh1,1) == 0);
 
   return;
 }

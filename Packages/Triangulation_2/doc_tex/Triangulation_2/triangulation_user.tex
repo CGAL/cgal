@@ -37,7 +37,7 @@ and constrained Delaunay triangulations
 Section~\ref{Section_2D_Triangulations_Constrained_Plus}
 describes a class which implements a constrained or
 constrained Delaunay triangulation  with
-an additionnal data structure 
+an additional data structure 
 to describe how the constraints are refined 
 by the edges of the triangulations.
 Section~\ref{Section_2D_Triangulations_Hierarchy}
@@ -270,15 +270,14 @@ of triangulation data structure is described in
 Chapter~\ref{user_chapter_2D_Triangulation_Data_Structure}.
 The triangulation data structure defines the types
 used to represent the faces and vertices of the triangulation,
-as well as additionnal types (handles, iterators and circulators)
+as well as additional types (handles, iterators and circulators)
 to access and visit the faces and vertices.
 
 \cgal\ provides the class \ccc{Triangulation_data_structure_2<Vb,Fb>}
 as a  default model of triangulation data structure.
 The class \ccc{Triangulation_data_structure_2<Vb,Fb>}
 has two template parameters standing for
-a vertex base class and a face base class from which the vertex and
-face classes are respectively derived.
+a vertex class and a face class.
 \cgal\ defines concepts 
 for these template parameters
 and provide default models for these concepts.
@@ -288,7 +287,7 @@ primitives of the triangulation.
 Those default vertex and  face base classes
 can be replaced by 
 user customized base classes in order, for example, to deal
-with additionnal properties attached to the vertices or faces
+with additional properties attached to the vertices or faces
 of a triangulation. See section~\ref{Section_2D_Triangulations_Flexibility}
 for more details on the way to make use of this flexibility.
 \end{itemize}
@@ -320,13 +319,13 @@ according to the different kind of triangulations:
 basic, Delaunay, regular, constrained or constrained Delaunay.
 Each kind of triangulations correspond to a different
 class. 
-Figure~\ref{2D_Triangulation_Fig_derivation_tree}  summarizes the derivation dependancies
+Figure~\ref{2D_Triangulation_Fig_derivation_tree}  summarizes the derivation dependencies
 of \cgal\ 2D triangulations classes.
 Any 2D triangulation class is parametrized by
 a geometric traits and a triangulation data structure.
 While a  unique concept \ccc{TriangulationDataStructure_2}
 describes the   triangulation data structure requirements
-for any  triangulation classes, 
+for any  triangulation class, 
 the concept of geometric traits actually depends
 on the  triangulation class.
 In general, the requirements for the vertex and face base classes 
@@ -434,7 +433,7 @@ The triangulation can be modified by several functions~:
 insertion of a point, removal of a vertex,
 flipping  of an edge. The flipping of an edge
 is possible when the union of the two incident faces
-forms  a convex body (see Figure~\ref{2D_Triangulation_fig_flip_bis}). 
+forms  a convex quadrilateral (see Figure~\ref{2D_Triangulation_fig_flip_bis}). 
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -569,7 +568,7 @@ from the class \ccc{Triangulation_2<Traits,Tds>}.
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>}
 inherits the types defined by the 
 basic class \ccc{Triangulation_2<Traits,Tds>}.
-Additionnal types, provided by the traits class,
+Additional types, provided by the traits class,
 are defined to represent the dual Voronoi diagram.
 
 
@@ -915,7 +914,7 @@ and exact constructions are provided.
 
 The class \ccc{Constrained_triangulation_2<Traits,Tds, Itag>}
 inherits from \ccc{Triangulation_2<Traits,Tds>}.
-It defines an additionnal type \ccc{Constraint}
+It defines an additional type \ccc{Constraint}
 to represent the constraints. A
 constraint is represented as a pair of points.
 
@@ -1187,8 +1186,8 @@ The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
 from its template parameter \ccc{Vb}.
 This design allows to use for  \ccc{Vb} 
 either the default
-vertex base class or a user customized
-vertex base with additionnal functionalities.
+vertex class or a user customized
+vertex class with additional functionalities.
 
 \subsection{Examples of the Use of a  Triangulation Hierarchy}
 \label{Subsection_2D_Triangulations_Hierarchy_Examples}
@@ -1201,7 +1200,7 @@ at the different levels of the hierarchy.
 \ccIncludeExampleCode{Triangulation_2/hierarchy.C}
 
 The following program shows how to use
-a triangulation hierachy in conjonction with a constrained 
+a triangulation hierachy in conjunction with a constrained 
 triangulation plus.
 \ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.C}
 
@@ -1217,24 +1216,23 @@ parameters : a geometric traits class
 and a triangulation data structure  class
 which the user can instantiate with his own customized classes.
 
-The most usefull flexibility however comes from the fact
+The most useful flexibility however comes from the fact
 that the triangulation data structure itself has two template
 parameters to be instantiated by 
-base classes for the vertices and faces of the triangulation.
-The vertex and face classes of the triangulation are derived
-from those base classes. 
-Thus, using his own customized classes to instantiate these
-parameters, the user can easily build up  a triangulation with additionnal
-informations or functionalities in the vertices and faces.
+classes for the vertices and faces of the triangulation.
+Using his own customized classes to instantiate these
+parameters, the user can easily build up  a triangulation with additional
+information or functionality in the vertices and faces.
 
-{\bf A cyclic dependancy}
+\subsection*{A cyclic dependency}
+
 To insure flexibility, the triangulation data structure is templated by the
 vertex and face base classes. Also since incidence and adjacency
 relations are stored in vertices and faces, the base classes have to
 know the types of handles on vertices and faces provided
 by the triangulation data structure. Thus the vertex and base
-classes have to be thenselves parameterized by the triangulation data
-structure, and there is a cyclic dependancy on template parameter.
+classes have to be themselves parameterized by the triangulation data
+structure, and there is a cyclic dependency on template parameter.
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -1262,7 +1260,7 @@ triangulation a functionality related to types defined by
 the triangulation data structure, for instance a handle to a vertex,
 and he was lead to use himself 
 \ccc{void*}  pointers).
-The new solution to resolve the template dependancy
+The new solution to resolve the template dependency
 is based on a rebind mechanism similar to the mecanism used in the 
 standard allocator class std::allocator. The rebind mecanism
 is described in Section~\ref{2D_TDS_default} 
@@ -1275,32 +1273,34 @@ of a nested template class
 the rebinding mecanism.
 
 
-The two following examples  aim to show how the user
+The two following examples show how the user
 can  put in use the flexibility offered by the
 base classes parameters.
 
-{\bf Adding colors} 
+\subsection*{Adding colors} 
+
 The first example corresponds to a case where the user wishes to add in 
 the vertices or faces of the triangulation  an additional information
-that do not depend on types provided
+that does not depend on types provided
 by the triangulation data structure. 
 In that case, predefined classes
 \ccc{Triangulation_vertex_base_with_info_2<Info,Traits,Vb>}
 or \ccc{Triangulation_face_base_with_info_2<Info,Traits,Vb>}
 can be used. Those classes have
 a template parameter \ccc{Info} devoted to
-handle additionnal information.
+handle additional information.
 The following examples shows how to add a 
 \ccc{CGAL::Color} in the triangulation faces.
 
 
 \ccIncludeExampleCode{Triangulation_2/colored_face.C}
 
-{\bf Adding handles}
-The second examples  shows how the user can  still
-derive and plug in his own vertex base 
-or face base when he would like to have  
-additionnal functionalities depending on types provided by the triangulation
+\subsection*{Adding handles}
+
+The second example  shows how the user can  still
+derive and plug in his own vertex 
+or face class when he would like to have  
+additional functionalities depending on types provided by the triangulation
 data structure. 
 
 

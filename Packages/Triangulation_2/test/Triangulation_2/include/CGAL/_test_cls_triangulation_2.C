@@ -226,8 +226,13 @@ _test_cls_triangulation_2( const Triangul & )
   Vertex_handle v2_1_10 = T2_1.insert(p10);  // inside the face p2,p4,p6
   assert( T2_1.dimension() == 2 );
   assert( T2_1.number_of_vertices() == 11 );
+#ifndef CGAL_NO_DEPRECATED_CODE
   assert( T2_1.number_of_faces() == 2 * 12 - 4 
                                  - T2_1.infinite_vertex()->degree() );
+#endif
+
+  assert( T2_1.number_of_faces() == 2 * 12 - 4 
+                                 - T2_1.degree(T2_1.infinite_vertex()) );
   
   // test is_valid for 2-triangulations
   assert( T2_1.is_valid() );
@@ -381,7 +386,7 @@ _test_cls_triangulation_2( const Triangul & )
   v0 = f->vertex(0);
   v1 = f->vertex(1);
   v2 = f->vertex(2);
-  v3 = f->mirror_vertex(0);
+  v3 = T2_1.mirror_vertex(f,0);
   assert(T2_1.is_face(v0,v1,v2));
   assert(T2_1.is_face(v0,v2,v1));
   assert(T2_1.is_face(v1,v2,v3,ff) && ff == f->neighbor(0));
@@ -613,7 +618,10 @@ _test_cls_triangulation_2( const Triangul & )
   Triangle t = T2_1.triangle(f); assert( &t == &t );
   Segment  s = T2_1.segment(f,0); assert( &s == &s );
   s = T2_1.segment(Edge(f,1)); assert( &s == &s );
+#ifndef CGAL_NO_DEPRECATED_CODE
   s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
+#endif
+  s = T2_1.segment(T2_1.incident_edges(v2_1_6)); assert( &s == &s );
   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 
   // finite/infinite vertex

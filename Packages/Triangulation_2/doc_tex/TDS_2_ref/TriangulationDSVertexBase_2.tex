@@ -44,10 +44,10 @@ to break the cycle, the base classes for faces and vertices
 use a \ccc{void} as triangulation
 data structure parameter. Then,
 the \ccc{Triangulation_data_structure_2}
-uses a {\it rebind}  mecanism (similar to the one specified in
+uses a {\it rebind}  mechanism (similar to the one specified in
 \ccc{std::allocator}) in order to plug itself 
 as parameter in the face and vertex  base classes. 
-This mecanism requires that the base class  provides
+This mechanism requires that the base class  provides
 a templated nested class \ccc{Rebind_TDS} that
 itself provides 
 the subtype \ccc{Rebind_TDS<TDS2>::Other}
@@ -57,6 +57,9 @@ that the   \ccc{Triangulation_data_structure_2}
  actually  uses  as a base class for the class
 of \ccc{Triangulation_data_structure_2::Vertex}.
 
+
+
+\ccRefines{\ccc{TriangulationDataStructure_2::Vertex}}
 
 
 \ccTypes
@@ -91,20 +94,6 @@ of the class \ccc{Triangulation_data_structure_2::Vertex}.}
 \ccConstructor{TriangulationDSVertexBase_2(Face_handle f);}
 {Constructs a vertex pointing to face  \ccc{f}.}
 
-\ccAccessFunctions
-
-\ccMethod{Face_handle face() const;}
-{returns an incident face.}
-
-\ccHeading{Setting}
-
-\ccMethod{void set_face(Face_handle c);}
-{Sets the incident face.}
-
-\ccHeading{Checking}
-\ccMethod{bool is_valid(bool verbose=false) const;}
-{Performs any desired test on a vertex. Checks that the
-pointer to an incident face is not \ccc{NULL}.}
 
 \ccHeading{Various}
 
@@ -115,16 +104,6 @@ pointer to an incident face is not \ccc{NULL}.}
   because it uses \ccc{Compact_container} to store its faces.  See the
   documentation of \ccc{Compact_container} for the exact requirements.}
 
-\ccHeading{I/O}
-
-\ccFunction{istream& operator>>
-(istream& is, TriangulationDSVertexBase_2 & v);}
-{Inputs the non-combinatorial information possibly stored in the vertex.} 
-
-\ccFunction{ostream& operator<< (ostream& os, 
-			const TriangulationDSVertexBase_2 & v);}
-{Outputs the non combinatorial operation possibly stored in the
-vertex.}
 
 \ccHasModels
 

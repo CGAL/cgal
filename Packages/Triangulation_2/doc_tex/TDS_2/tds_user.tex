@@ -201,25 +201,23 @@ class.
 The concept 
 \ccc{TriangulationDSVertexBase_2} and 
 \ccc{TriangulationDSFaceBase_2} describe the requirements for the
-base vertex and face classes of a triangulation data structure.
+vertex and face classes of a triangulation data structure.
 
-The triangulation data structure 
-derives from thoses base classes the
-vertex and face classes from thoses base classes.
+
 This design  allows the user to plug in the
 triangulation data structure
-his own base classes tuned for  his application.
+his own vertex or face classes tuned for  his application.
 
 \subsection{The cyclic dependancy of template parameters}
  Since adjacency and incidence relation are stored in vertices and
 faces,
-the vertex and face base classes have to know the types
+the vertex and face  classes have to know the types
 of handles on faces and vertices provided by the triangulation data
 structure.
-Therefore , vertex and base classes need to be templated 
+Therefore, vertex and face classes need to be templated 
 by the triangulation data structure. Because the triangulation
 data structure 
-is itself templated by the vertex and base classes this induces
+is itself templated by the vertex and face classes this induces
 a cyclic dependancy.
 See figure~\ref{2D_TDS_Fig_three_levels_2}.
 
@@ -240,19 +238,19 @@ See figure~\ref{2D_TDS_Fig_three_levels_2}.
 \end{figure}
 
 
-\subsection{The rebind mecanism}
+\subsection{The rebind mechanism}
 
 The solution proposed by \cgal\ to resolve this cyclic dependency
-is based on a rebind mecanism similar to the mecanism used in the 
+is based on a rebind mechanism similar to the mechanism used in the 
 standard allocator class std::allocator.
-The vertex and face base classes plugged in the instantiation of a
+The vertex and face  classes plugged in the instantiation of a
 triangulation data structure are themselves instantiated with a
 fake data structure. The triangulation data structure
 will then rebind  these classes, plugging itself
 at the place of the fake data structure, before using them
 to derive  the vertex and face classes. The rebinding is performed
 through a nested template class  \ccc{Rebind_TDS} in the vertex and
-face base class, which provide the rebound class
+face class, which provide the rebound class
 as a type called  \ccc{Other}.
 
 Here is how it works schematically. First, here is the rebinding
@@ -276,7 +274,7 @@ public:
 };
 \end{ccExampleCode}
 
-Then, here is the vertex base class with its nested 
+Then, here is the vertex  class with its nested 
  \ccc{Rebind_TDS} template class and its template parameter
 set by default to an an internal type faking a  triangulation data 
 structure.
@@ -307,7 +305,7 @@ of the flexibility offered by
 the triangulation data structure.
 \begin{itemize}
 \item{} First, when the user needs to have,
-in vertices and faces, additionnal informations 
+in vertices and faces, additional information
 which do not depend on types defined by the
 triangulated data structure,  predefined classes 
 \ccc{Triangulation_vertex_base_with_info}
@@ -329,7 +327,7 @@ for most of the triangulation classes are
 are the default base classes to be used when the triangulation data
 structure is plugged in a triangulation class.
 
-When derivation is used, the rebind mecanism is slightly
+When derivation is used, the rebind mechanism is slightly
 more involved, because it is necessary to rebind the  base class
 itself. However the user will be able to use in his classes
 references to types provided by the triangulation data structure.

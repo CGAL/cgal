@@ -57,5 +57,6 @@ int main()
   typedef CGAL::Triangulation_hierarchy_2<Dt>  Dh;
   _test_cls_delaunay_hierarchy_2( Dh() );
 
+  std::cout << "done" << std::endl;
    return 0;
 }

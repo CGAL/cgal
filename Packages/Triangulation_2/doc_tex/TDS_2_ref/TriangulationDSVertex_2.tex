@@ -89,16 +89,18 @@ has this vertex. The validity of the base vertex is also checked.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}
 
-\ccHeading{Miscellaneous}
 
-\ccMethod{int ccw(int i) const;}
-{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-\ccGlue
-\ccMethod{int cw(int i) const;}
-{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
-\ccGlue
-\ccMethod{size_type degree() const;}
-{Returns the degree of \ccVar\ in the triangulation.}
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationDataStructure_2::Vertex & v);}
+{Inputs the non-combinatorial information possibly stored in the vertex.} 
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationDataStructure_2::Vertex & v);}
+{Outputs the non combinatorial operation possibly stored in the
+vertex.}
+
 
 
 \ccHasModels

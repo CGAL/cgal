@@ -289,7 +289,7 @@ public:
     f=(*itedge).first;
     i=(*itedge).second;
     if (is_flipable(f,i)) {
-      eni=Edge(f->neighbor(i),f->mirror_index(i));
+      eni=Edge(f->neighbor(i),this->mirror_index(f,i));
       if (less_edge(*itedge,eni)) edge_set.insert(*itedge);
       else edge_set.insert(eni);
     }
@@ -306,7 +306,7 @@ public:
     // f->neighbor(indf) that are distinct from the edge to be flipped
 
     ni = f->neighbor(indf); 
-    indn=f->mirror_index(indf);
+    indn=this->mirror_index(f,indf);
     ei= Edge(f,indf);
     edge_set.erase(ei);
     e[0]= Edge(f,cw(indf));
@@ -317,7 +317,7 @@ public:
     for(i=0;i<4;i++) { 
       ff=e[i].first;
       ii=e[i].second;
-      eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
+      eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
       if (less_edge(e[i],eni)) {edge_set.erase(e[i]);}
       else { edge_set.erase(eni);} 
     } 
@@ -339,7 +339,7 @@ public:
       ff=e[i].first;
       ii=e[i].second;
       if (is_flipable(ff,ii)) {
-	eni=Edge(ff->neighbor(ii),ff->mirror_index(ii));
+	eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
 	if (less_edge(e[i],eni)) { 
 	  edge_set.insert(e[i]);}
 	else {
@@ -384,17 +384,17 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 flip (Face_handle& f, int i)
 {
   Face_handle g = f->neighbor(i);
-  int j = f->mirror_index(i);
+  int j = this->mirror_index(f,i);
 
   // save wings neighbors to be able to restore contraint status
   Face_handle f1 = f->neighbor(cw(i));
-  int i1 = f->mirror_index(cw(i));
+  int i1 = this->mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
-  int i2 = f->mirror_index(ccw(i));
+  int i2 = this->mirror_index(f,ccw(i));
   Face_handle f3 = g->neighbor(cw(j));
-  int i3 = g->mirror_index(cw(j));
+  int i3 = this->mirror_index(g,cw(j));
   Face_handle f4 = g->neighbor(ccw(j));
-  int i4 = g->mirror_index(ccw(j));
+  int i4 = this->mirror_index(g,ccw(j));
 
   // The following precondition prevents the test suit 
   // of triangulation to work on constrained Delaunay triangulation
@@ -404,13 +404,13 @@ flip (Face_handle& f, int i)
   // restore constraint status
   f->set_constraint(f->index(g), false);
   g->set_constraint(g->index(f), false);
-  f1->neighbor(i1)->set_constraint(f1->mirror_index(i1),
+  f1->neighbor(i1)->set_constraint(this->mirror_index(f1,i1),
 				   f1->is_constrained(i1));
-  f2->neighbor(i2)->set_constraint(f2->mirror_index(i2),
+  f2->neighbor(i2)->set_constraint(this->mirror_index(f2,i2),
 				   f2->is_constrained(i2));
-  f3->neighbor(i3)->set_constraint(f3->mirror_index(i3),
+  f3->neighbor(i3)->set_constraint(this->mirror_index(f3,i3),
 				   f3->is_constrained(i3));
-  f4->neighbor(i4)->set_constraint(f4->mirror_index(i4),
+  f4->neighbor(i4)->set_constraint(this->mirror_index(f4,i4),
 				   f4->is_constrained(i4));
   return;
 }

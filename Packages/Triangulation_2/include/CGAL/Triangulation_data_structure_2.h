@@ -42,8 +42,6 @@
 
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
-#include <CGAL/Triangulation_ds_face_2.h>
-#include <CGAL/Triangulation_ds_vertex_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
@@ -68,8 +66,8 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
                 
 public:
-  typedef Triangulation_ds_vertex_2<Vertex_base>     Vertex;
-  typedef Triangulation_ds_face_2<Face_base>         Face;
+  typedef Vertex_base                                Vertex;
+  typedef Face_base                                  Face;
   
 private:
   typedef Compact_container<Face>                    Face_container;
@@ -264,6 +262,38 @@ public:
 				 Face_handle f = Face_handle()) const{
     return Edge_circulator(v,f);
   }
+
+  size_type degree(Vertex_handle v) const {
+    int count = 0;
+    Vertex_circulator vc = incident_vertices(v), done(vc);
+    if ( ! vc.is_empty()) {
+      do { 
+	count += 1;
+      } while (++vc != done);
+    }
+    return count;
+  }
+
+  
+  Vertex_handle
+  mirror_vertex(Face_handle f, int i) const
+  {
+    CGAL_triangulation_precondition ( f->neighbor(i) != Face_handle()
+				    && f->dimension() >= 1);
+  return f->neighbor(i)->vertex(mirror_index(f,i));
+}
+
+  int
+  mirror_index(Face_handle f, int i) const
+  {
+    // return the index of opposite vertex in neighbor(i);
+    CGAL_triangulation_precondition (f->neighbor(i) != Face_handle() &&
+				     f->dimension() >= 1);
+    if (f->dimension() == 1) {
+      return 1 - (f->neighbor(i)->index(f->vertex(1-i)));
+    }
+    return ccw( f->neighbor(i)->index(f->vertex(ccw(i))));
+}
 
   // MODIFY
   void flip(Face_handle f, int i);
@@ -727,16 +757,16 @@ flip(Face_handle f, int i)
 {
   CGAL_triangulation_precondition( dimension()==2);
   Face_handle n  = f->neighbor(i);
-  int ni = f->mirror_index(i); //ni = n->index(f);
+  int ni = mirror_index(f,i); //ni = n->index(f);
     
   Vertex_handle  v_cw = f->vertex(cw(i));
   Vertex_handle  v_ccw = f->vertex(ccw(i));
 
   // bl == bottom left, tr == top right
   Face_handle tr = f->neighbor(ccw(i));
-  int tri =  f->mirror_index(ccw(i));  
+  int tri =  mirror_index(f,ccw(i));  
   Face_handle bl = n->neighbor(ccw(ni));
-  int bli =  n->mirror_index(ccw(ni)); 
+  int bli =  mirror_index(n,ccw(ni)); 
       
   f->set_vertex(cw(i), n->vertex(ni));
   n->set_vertex(cw(ni), f->vertex(i));
@@ -804,11 +834,11 @@ insert_in_face(Face_handle f)
   f1->set_neighbor(2, f2);
   f2->set_neighbor(1, f1);
   if (n1 != Face_handle()) {
-    int i1 = f->mirror_index(1); //int i1 = n1->index(f);
+    int i1 = mirror_index(f,1); //int i1 = n1->index(f);
     n1->set_neighbor(i1,f1);
   }
   if (n2 != Face_handle()) {
-    int i2 = f->mirror_index(2);//int i2 = n2->index(f);
+    int i2 = mirror_index(f,2);//int i2 = n2->index(f);
     n2->set_neighbor(i2,f2);}
 
   f->set_vertex(0, v);
@@ -847,7 +877,7 @@ insert_in_edge(Face_handle f, int i)
 
     else { //dimension() ==2
     Face_handle n = f->neighbor(i);
-    int in = f->mirror_index(i); //n->index(f);
+    int in = mirror_index(f,i); //n->index(f);
     v = insert_in_face(f);
     flip(n,in); 
     }
@@ -941,8 +971,8 @@ insert_dim_up(Vertex_handle w,  bool orient)
 	int j ;
 	if (f->vertex(0) == w) {j=0;}
 	else {j=1;}
-	f1= f->neighbor(i); i1= f->mirror_index(i); //f1->index(f);
-	f2= f->neighbor(j); i2= f->mirror_index(j); //f2->index(f);
+	f1= f->neighbor(i); i1= mirror_index(f,i); //f1->index(f);
+	f2= f->neighbor(j); i2= mirror_index(f,j); //f2->index(f);
 	f1->set_neighbor(i1,f2);
 	f2->set_neighbor(i2,f1);
 	delete_face(f);
@@ -965,16 +995,16 @@ remove_degree_3(Vertex_handle v, Face_handle f)
 // remove a vertex of degree 3
 {
   CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(v->degree() == 3);
+  CGAL_triangulation_precondition(degree(v) == 3);
 
   if (f == Face_handle()) {f= v->face();}
   else { CGAL_triangulation_assertion( f->has_vertex(v));}
       
   int i = f->index(v);
   Face_handle left = f->neighbor(cw(i));
-  int li = f->mirror_index(cw(i)); 
+  int li = mirror_index(f,cw(i)); 
   Face_handle right = f->neighbor(ccw(i));
-  int ri = f->mirror_index(ccw(i)); 
+  int ri = mirror_index(f,ccw(i)); 
 
   Face_handle ll, rr;
   Vertex_handle q = left->vertex(li);
@@ -982,7 +1012,7 @@ remove_degree_3(Vertex_handle v, Face_handle f)
     
   ll = left->neighbor(cw(li));
   if(ll != Face_handle()) {
-    int lli = left->mirror_index(cw(li)); 
+    int lli = mirror_index(left,cw(li)); 
     ll->set_neighbor(lli, f);
   } 
   f->set_neighbor(cw(i), ll);
@@ -990,7 +1020,7 @@ remove_degree_3(Vertex_handle v, Face_handle f)
         
   rr = right->neighbor(ccw(ri));
   if(rr != Face_handle()) {
-    int rri =  right->mirror_index(ccw(ri)); //rr->index(right);
+    int rri =  mirror_index(right,ccw(ri)); //rr->index(right);
     rr->set_neighbor(rri, f);
   } 
   f->set_neighbor(ccw(i), rr);
@@ -1156,7 +1186,7 @@ make_hole(Vertex_handle v, List_edges& hole)
    f = fc ;
    i = f->index(v);
    fn = f->neighbor(i);
-   in = f->mirror_index(i); //fn->index(f);
+   in = mirror_index(f,i); //fn->index(f);
    vv = f->vertex(cw(i));
    if( vv->face()==  f) vv->set_face(fn);
    vv = fc->vertex(ccw(i));
@@ -1465,10 +1495,10 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   CGAL_triangulation_precondition( v == v1 || v == v2 );
 
   if ( v == v2 ) {
-    return join_vertices(f->neighbor(i), f->mirror_index(i), v);
+    return join_vertices(f->neighbor(i), mirror_index(f,i), v);
   }
 
-  int deg2 = v2->degree();
+  int deg2 = degree(v2);
 
   CGAL_triangulation_precondition( deg2 >= 3 );
 
@@ -1522,19 +1552,19 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
 
   // first we register all the needed info
   Face_handle g = f->neighbor(i);
-  int j = f->mirror_index(i);
+  int j = mirror_index(f,i);
 
   Face_handle tl = f->neighbor( cw(i)  );
   Face_handle tr = f->neighbor( ccw(i) );
 
-  int itl = f->mirror_index( cw(i)  );
-  int itr = f->mirror_index( ccw(i) );
+  int itl = mirror_index(f, cw(i)  );
+  int itr = mirror_index(f, ccw(i) );
 
   Face_handle bl = g->neighbor( ccw(j) );
   Face_handle br = g->neighbor( cw(j)  );
 
-  int ibl = g->mirror_index( ccw(j) );
-  int ibr = g->mirror_index( cw(j)  );
+  int ibl = mirror_index(g, ccw(j) );
+  int ibr = mirror_index(g, cw(j)  );
 
   // we need to store the faces adjacent to v2 as well as the
   // indices of v2 w.r.t. these faces, so that afterwards we can set 
@@ -1631,7 +1661,7 @@ insert_degree_2(Face_handle f, int i)
   */
 
   Face_handle g = f->neighbor(i);
-  int j = f->mirror_index(i);
+  int j = mirror_index(f,i);
 
   Vertex_handle  v = create_vertex();
 
@@ -1662,7 +1692,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 remove_degree_2(Vertex_handle v)
 {
-  CGAL_precondition( v->degree() == 2 );
+  CGAL_precondition( degree(v) == 2 );
 
   Face_handle f1 = v->face();
   int i = f1->index(v);
@@ -1673,8 +1703,8 @@ remove_degree_2(Vertex_handle v)
   Face_handle ff1 = f1->neighbor( i );
   Face_handle ff2 = f2->neighbor( j );
 
-  int id1 = f1->mirror_index(i);
-  int id2 = f2->mirror_index(j);
+  int id1 = mirror_index(f1,i);
+  int id2 = mirror_index(f2,j);
 
   ff1->set_neighbor(id1, ff2);
   ff2->set_neighbor(id2, ff1);

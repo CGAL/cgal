@@ -448,7 +448,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   Triangle t = T2_3.triangle(f); assert( &t == &t );
   Segment  s = T2_3.segment(f,0); assert( &s == &s );
   s = T2_3.segment(Edge(f,1)); assert( &s == &s );
-  s = T2_3.segment(v2_3_6->incident_edges()); assert( &s == &s );
+  s = T2_3.segment(T2_3.incident_edges(v2_3_6)); assert( &s == &s );
   s = T2_3.segment(T2_3.finite_edges_begin()); assert( &s == &s );
 
  
