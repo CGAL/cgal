@@ -42,6 +42,7 @@ compile_and_run()
     fi
     echo "Executing $1 ... "
     echo
+    ulimit -t 1200
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of $1" >> $ERRORFILE
     else
@@ -74,10 +75,11 @@ else
   compile_and_run Filtered_cartesian
   compile_and_run Filtered_homogeneous
   compile_and_run Homogeneous
+  compile_and_run known_bit_size_integers
   compile_and_run Simple_cartesian
   compile_and_run Simple_homogeneous
-  compile_and_run test_kernel__
   compile_and_run test_kernel_archetype_2
   compile_and_run test_kernel_archetype_3
+  compile_and_run test_kernel__
 fi
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2001  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2005  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,60 +19,73 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Lutz Kettner
+// Author(s)     : Lutz Kettner, Sylvain Pion
 
 #ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
+#include <CGAL/basic.h>
+#include <boost/mpl/if.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
-#if (defined(__sparc__)   || defined(__sparc)   || defined(sparc))   || \
-    (defined(__sgi__)     || defined(__sgi)     || defined(sgi))     || \
-    (defined(__i386__)    || defined(__i386)    || defined(i386))    || \
-    (defined(__x86_64__)  || defined(__x86_64)  || defined(x86_64))  || \
-    (defined(__ia64__)    || defined(__ia64)    || defined(ia64))    || \
-    (defined(__alpha__)   || defined(__alpha)   || defined(alpha))   || \
-    (defined(__ppc__)     || defined(__ppc)     || defined(ppc))     || \
-    (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
-    typedef  signed char             Integer8;
-    typedef  short                   Integer16;
-    typedef  int                     Integer32;
-    typedef  unsigned char           UInteger8;
-    typedef  unsigned short          UInteger16;
-    typedef  unsigned int            UInteger32;
-    // See long_long.h for Integer64.
-#  if (defined __ia64__ || defined __x86_64__)
+namespace CGALi {
+
+namespace mpl = boost::mpl;
+
+template < int size >
+struct No_Integer_Type_Of_Size;
+
+// Provides a signed integral type whose sizeof() is s.
+// If not possible, gives No_Integer_Type_Of_Size<s>.
+template < int s >
+struct SizeofSelect
+{
+    typedef typename mpl::if_c< (sizeof(signed char) == s), signed char,
+	      typename mpl::if_c< (sizeof(short) == s), short,
+	        typename mpl::if_c< (sizeof(int) == s), int,
+	          typename mpl::if_c< (sizeof(long) == s), long,
+		    No_Integer_Type_Of_Size<s> >::type >::type >::type >::type  Type;
+};
+
+// Same thing for unsigned types.
+template < int s >
+struct USizeofSelect
+{
+    typedef typename mpl::if_c< (sizeof(unsigned char) == s), unsigned char,
+	      typename mpl::if_c< (sizeof(unsigned short) ==s), unsigned short,
+	        typename mpl::if_c< (sizeof(unsigned int) == s), unsigned int,
+	          typename mpl::if_c< (sizeof(unsigned long) == s),
+		                                              unsigned long,
+		    No_Integer_Type_Of_Size<s> >::type >::type >::type >::type  Type;
+};
+
+} // namespace CGALi
+
+
+typedef CGALi::SizeofSelect<1>::Type  Integer8;
+typedef CGALi::SizeofSelect<2>::Type  Integer16;
+typedef CGALi::SizeofSelect<4>::Type  Integer32;
+
+typedef CGALi::USizeofSelect<1>::Type  UInteger8;
+typedef CGALi::USizeofSelect<2>::Type  UInteger16;
+typedef CGALi::USizeofSelect<4>::Type  UInteger32;
+
+// TODO : move this file to Number_types ?
+
+#if defined __ia64__ || defined __x86_64
     typedef long                     Integer64;
     typedef unsigned long            UInteger64;
-#    define CGAL_HAS_INTEGER64
-#  endif
-#else
-#  if defined(__BORLANDC__)
-    typedef  __int8                  Integer8;
-    typedef  __int16                 Integer16;
-    typedef  __int32                 Integer32;
-    typedef  __int64                 Integer64;
-    typedef  unsigned __int8         UInteger8;
-    typedef  unsigned __int16        UInteger16;
-    typedef  unsigned __int32        UInteger32;
-    typedef  unsigned __int64        UInteger64;
-#define CGAL_HAS_INTEGER64
-#  else
-#  if defined(_MSC_VER)
-    typedef  signed char             Integer8;
-    typedef  short                   Integer16;
-    typedef  int                     Integer32;
-    typedef  __int64                 Integer64;
-    typedef  unsigned char           UInteger8;
-    typedef  unsigned short          UInteger16;
-    typedef  unsigned int            UInteger32;
-    typedef  unsigned __int64        UInteger64;
-#define CGAL_HAS_INTEGER64
-#  else
-#    error "patch this"
-#  endif
-#  endif
+#   define CGAL_HAS_INTEGER64
 #endif
+
+#if defined __BORLANDC__ || defined _MSC_VER
+    typedef __int64                  Integer64;
+    typedef unsigned __int64         UInteger64;
+#   define CGAL_HAS_INTEGER64
+#endif
+
+// 64 integer types are defined for other platforms in CGAL/long_long.h
 
 CGAL_END_NAMESPACE
 

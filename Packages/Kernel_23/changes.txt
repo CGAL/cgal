@@ -1,3 +1,8 @@
+6 February 2005 Sylvain Pion
+- Rewrite known_bit_size_integers.h using MPL to help portability.
+
+============================= CGAL 3.1 ===========================
+
 2 December 2004 Sylvain Pion
 - Doc : clarify that RT/FT are coming from Kernel::.
 
