@@ -1,4 +1,4 @@
-demo.C
+demo
 ------------
 Construction of a Delaunay triangulation.
 
@@ -7,5 +7,8 @@ Needs an input file "data" containing points (given by x y z)
 Opens a geomview window
 Draws the triangulation in geomview
 Writes the triangulation into a file "output"
+
+This demo program uses "doubles". 
+For a robust version, another arithmetic should be used.
 ------------
 

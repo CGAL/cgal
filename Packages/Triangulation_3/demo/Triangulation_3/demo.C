@@ -176,9 +176,9 @@ int main(int argc, char* argv[])
   Point py(0,1,0);
   Point pz(0,0,1);
   
-  ifstream iFile("points",ios::in);
+  ifstream iFile("data",ios::in);
   if (iFile) cout <<"                              reading file "
-		  << "points" << endl ;
+		  << "data" << endl ;
   Point nouv;
   if (iFile) {
     while ( iFile >> nouv ) {
