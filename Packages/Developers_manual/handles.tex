@@ -15,9 +15,10 @@
 \ccChapterAuthor{Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
 
 \section{Reference counting}
-Currently (with release 2.1), we use a reference counting%
-\ccIndexMainItem{reference counting} scheme for 
-the kernel objects in the Cartesian and the homogeneous kernels.
+As of release 2.1, a reference counting%
+\ccIndexMainItem{reference counting} scheme is used for
+the kernel objects in the kernels \ccc{Cartesian}\ccIndexSubitem{kernel}{\ccFont Cartesian} and 
+\ccc{Homogeneous}\ccIndexSubitem{kernel}{\ccFont Homogeneous}. 
 All copies of an object share a common representation object storing
 the data associated with a kernel object; see Figure~\ref{fig:refcounted}.
 
@@ -25,13 +26,17 @@ The motivation is to save space by avoiding storing the same data more
 than once and to save time in the copying procedure. 
 Of course, whether we actually save time and space depends on the size 
 of the data that we would have to copy without sharing representations.
+The drawback is an indirection in accessing the data. Such an indirection is 
+bad in terms of cache efficiency.\ccIndexMainItem{cache efficiency} 
+Thus there are also non-reference-counting kernels available
+\ccc{Simple_cartesian} and \ccc{Simple_homogeneous}.
 
 \begin{figure}
 \lcTex{
 \begin{center}
 \leavevmode
 \epsfxsize=0.6\textwidth
-\epsffile{reference_counting.eps}
+\epsffile{pictures/reference_counting.eps}
 \end{center}
 }
 \caption{Objects using reference counting (bottom) share common representation;
@@ -45,8 +50,6 @@ all data are copied to the new object (drawn at the right);\label{fig:refcounted
 }
 \end{figure}
 
-The drawback is an indirection in accessing the data. Such an indirection is 
-bad in terms of cache efficiency.\ccIndexMainItem{cache efficiency} 
 
 The reference counting in the kernel objects is not visible to a user
 and does not affect the interface of the objects. 
@@ -114,7 +117,7 @@ typedef Leda_like_rep    Rep;
 \begin{figure}[ht]
 \lcTex{
 \begin{center}
-\leavevmode\epsfxsize=7cm\epsffile{handle_rep.eps}
+\leavevmode\epsfxsize=7cm\epsffile{pictures/handle_rep.eps}
 \end{center}
 }
 \caption{UML class diagram for Handle \& Rep scheme.\label{fig:HandleRep}}
@@ -214,7 +217,7 @@ interface can be inherited from class \ccc{Ref_counted}.
 \begin{figure}[ht]
 \lcTex{
 \begin{center}
-\leavevmode\epsfxsize=13.5cm\epsffile{handle_allocate.eps}
+\leavevmode\epsfxsize=13.5cm\epsffile{pictures/handle_allocate.eps}
 \end{center}
 }
 \caption{UML diagram for templated handles.\label{fig:HandleFor}}
@@ -250,6 +253,8 @@ class My_geo_object : public Handle_for<My_rep>
 };
 \end{verbatim}
 
+You should also define a copy constructor for \ccc{My_rep} as this may be used 
+in in-place creation in the allocator scheme.
 The constructors of class \ccc{My_geo_object} are responsible for constructing
 the \ccc{My_rep} object. 
 %The space for the object is allocated

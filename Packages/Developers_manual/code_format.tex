@@ -18,19 +18,7 @@
 
 We do not want to impose very strict coding rules on the developers.
 What is most important is to follow the \cgal\ naming scheme 
-described in the next section. We recommend the use of 
-\ccAnchor{http://shelob.ce.ttu.edu/daves/lpfaq/faq.html}{\emph{literate programming}} tools\ccIndexMainItemDef{literate programming}, 
-\ccIndexSubitem{tools}{literate programming}
-\ccIndexSubitem{documentation}{of implementation}
-such as \ccAnchor{http://www.ross.net/funnelweb/}{\texttt{funnelweb}}%
-\ccIndexMainItem{\tt funnelweb},
-\ccAnchor{http://www-cs-faculty.stanford.edu/~knuth/cweb.html}{\texttt{cweb}},%
-\ccIndexMainItem{\tt cweb}
-or
-\ccAnchor{http://www.eecs.harvard.edu/~nr/noweb/}{\texttt{noweb}},%
-\ccIndexMainItem{\tt noweb}
-but this is up to the developer. However, there
-are some programming conventions
+described in the next section. However, there are some programming conventions
 (Section~\ref{sec:programming_conventions}) that should be adhered to, 
 rules for the code format
 (Section~\ref{sec:code_format}), and a mandatory heading for each
@@ -52,17 +40,25 @@ there are \emph{convincing} reasons.
 \subsection*{General rules}
 
 \begin{itemize}
-\item Words in a name should be separated by underscores. For example,
-      one would use \ccc{function_name} and \ccc{Class_name} instead of
-      \ccc{functionName} and \ccc{Classname}.
+\item Words in the names of everything except concepts should be separated by 
+      underscores. For example, one would use \ccc{function_name} and 
+       \ccc{Class_name} instead of \ccc{functionName} or \ccc{Classname}.
       \ccIndexSubitem{naming scheme}{word separators}
       \ccIndexSubitem{naming scheme}{underscores}
-      You may notice that this rule is sometimes violated in the names of
-      template parameters, where names follow the \stl\ naming scheme.  That
-      is,  each word starts with a capital letter 
-      and the words are catenated together without any delimiter, 
-      (\eg, \ccc{InputIterator}).  This exception is tolerated (and, in some
-      cases such as the iterators, encouraged).
+
+\item Words in the names of concepts (\textit{e.g.}, template parameters)
+      \ccIndexSubitem{naming scheme}{concepts}
+      \ccIndexSubitem{naming scheme}{capitalization}
+      should be separated using capital letters.  The only use of underscores
+      in concept names is before the dimension suffix.  For example, one
+      should use a name such as ConvexHullTraits\_2 for the concept
+      in contrast to \ccc{Convex_hull_traits_2} for the name of the class that
+      is a model of this concept.  This different naming scheme for concepts
+      and classes was adopted mainly for two reasons (a) it is consistent with
+      the \stl\ (cf. InputIterator) and (b) it avoids name clashes between 
+      concepts and classes that would require one or the other to have a 
+      rather contrived name.
+
 \item Abbreviations of words are to be avoided%
       \ccIndexSubitem{naming scheme}{abbreviations}
       ({\em e.g.}, use 
@@ -182,7 +178,7 @@ where the function call can be seen as a name for the object returned
 instead of function objects that simply maintain data associated with the
 computation.  It was also noted that the naming of functions and function
 objects is not consistent,
-either in \cgal\ or in the \stl\ (In some cases the action performed by a 
+either in \cgal\ or in the \stl\  (In some cases the action performed by a 
 function determines its name (\eg, \ccc{multiply()}) while in others the
 result of the action determines the name (\eg, \ccc{product()}).), so 
 achieving complete consistency with an existing naming scheme is not possible.
@@ -198,14 +194,12 @@ Here are the naming rules:
       kernel and the \stl. So, for example, we have objects like
       \ccc{Has_on_bounded_side_2}, \ccc{Is_degenerate_2}, and
       \ccc{Is_horizontal_2}.  According to the current kernel we also have
-      \ccc{Leftturn_2}.  For reasons of consistency with \stl, all
+      \ccc{Left_turn_2}.  For reasons of consistency with \stl, all
       ``less-than''-objects start with \ccc{Less_}, \eg,~\ccc{Less_xy_2}.
       Further examples are \ccc{Less_distance_to_point_2} and
       \ccc{Less_distance_to_line_2}. However, we have \ccc{Equal_2},
       whereas the corresponding \stl\ function object is called
-      \ccc{equal_to}. Here, we give our dimension rule higher priority. As
-      a special object, we also have an \ccc{Equal_xy_2} for checking
-      coincidence of points with respect to $x$ and $y$ coordinates.
+      \ccc{equal_to}. Here, we give our dimension rule higher priority. 
 \item The names of construction objects (category 2 above) follow the pattern 
       \ccc{Construct_{\tt type_d}}, where \texttt{type\_d} is the type 
       constructed, \eg,~\ccc{Construct_point_2} and \ccc{Construct_line_2}.  
@@ -271,6 +265,15 @@ function object is called \ccc{less_xy_2_object}.
       \ccc{Triangulation\_2}.
 \item If a file does not contain a single class, its name should not begin
       with a capital letter.
+\item No two files should have the same names even when capitalization is
+      ignored.  This is to prevent overwriting of files on operating systems
+      where file names are not case sensitive.  A package that contains 
+      file names that are the same as files already in the release will be
+      rejected by the submission script.
+
+\item The names of files should not contain any characters not allowed by
+      all the platforms the library supports.  In particular, it should not
+      contain the characters `:', `*', or `\ '.
 \end{itemize}
 \ccIndexSubitemEnd{source files}{naming scheme}
 \ccIndexSubitemEnd{naming scheme}{source files}
@@ -286,18 +289,30 @@ The first list of items are meant as rules, \ie,~you should follow them.
 
 \begin{itemize}
 \item Give typedefs for all template arguments of a class that may be
-      accessed later from outside the class, \eg, 
-  \begin{verbatim}
-  template < class Arg_ >
-  class Something {
-    public:
-      typedef  Arg_  Arg;
-  };
-  \end{verbatim}
-  As a general rule the template parameters should have the same name
-  as the typedef, followed by an underscore.  (Note that using a preceding
-  underscore is not allowed according to the \CC\ standard; all such names
-  are reserved.)\index{C++ standard@\CC\ standard!underscores}%
+      accessed later from outside the class. 
+
+     The template parameter is a concept and should follow the concept naming
+     scheme outlines in the previous section.  As a general rule, the typedef
+     should identify the template parameter with a type of the same name that
+     follows the naming convention of types.  For example
+     \begin{verbatim}
+     template < class GeometricTraits_2 >
+     class Something {
+       public:
+         typedef GeometricTraits_2 Geometric_traits_2;
+     };
+     \end{verbatim}
+     For one-word template arguments, the template parameter name should be 
+     followed by an underscore.  (Note that using a preceding
+     underscore is not allowed according to the \CC\ standard; all such names
+     are reserved.)\index{C++ standard@\CC\ standard!underscores}%
+     \begin{verbatim}
+     template < class Arg_ >
+     class Something {
+       public:
+         typedef  Arg_  Arg;
+     };
+     \end{verbatim}
   \ccIndexSubitem{underscores}{in names}%
   \ccIndexSubitem{naming scheme}{underscores}%
   \ccIndexSubitem{naming scheme}{template parameters}%
@@ -306,7 +321,7 @@ The first list of items are meant as rules, \ie,~you should follow them.
      \index{call by reference!const and@{\ccFont const} and}.
 \item Use \ccc{const} to indicate that a member function does not
       modify the object to which it is applied,
-      \eg,~\ccStyle{class A \{ int f( void) const; \};}. This should be also
+      \eg,~\ccStyle{class A \{ int f( void) const; \};}. This should also be
       done when it is only conceptually \ccc{const}%
       \index{conceptual const-ness@conceptual {\ccFont const}-ness|textbf}.
       This means that the member function \ccc{f()} is {\ccFont const} as seen from 
@@ -355,7 +370,7 @@ in contrast to the rules of previous paragraph.
 \item Use \CC-style comments, \eg,~{\ccFont // some comment}.%
       \ccIndexSubitem{code format}{comments}
 \item Remove line pragmas, \ie,~\verb|#line...|.% 
-      (See Section~\ref{sec:remove_line_directives}.)
+      \InternalOnly{(See Section~\ref{sec:remove_line_directives}.)}
 \end{itemize}
 \ccIndexMainItemEnd{code format}
 
@@ -366,11 +381,21 @@ in contrast to the rules of previous paragraph.
 \ccIndexSubitemBegin{source files}{headings for}
 
 Each \cgal\ source file must start with a heading that allows for an easy
-identification of the file. The file header contains a copyright notice, the
-current release number and date, and a description of the file.
+identification of the file.  The file header contains a copyright notice, the
+current release number and date, and a description of the file.  The name of
+the file in the header should be relative to the \texttt{CGAL\_HOME} directory.
+
+\ccIndexSubitem{example programs}{headings for}
+\ccIndexSubitem{demo programs}{headings for}
+For example and demo programs, the inclusion of the copyright notice is not
+necessary as this will get in the way if the program is included in the
+documentation.  However, these files should always contain the name of
+the file realtive to the \texttt{CGAL\_HOME} directory 
+(\eg, \nonlinkedpath|examples/Convex_hull_3/convex_hull_3.C|) 
+so the file can be located when seen out of context (\eg, in the documentation
+or from the demos web page).
 
 \subsection*{Internal releases}
-\label{sec:internal_releases}
 \ccIndexSubsubitemBegin{source files}{headings for}{internal releases}
 
 The heading of a \cgal\ source file that is submitted (for an internal release)
@@ -379,7 +404,7 @@ should have the following format:
 \begin{verbatim}
 // ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// Copyright (c) 1997-2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -442,7 +467,10 @@ lines of equal signs remain untouched.
 
 When a new public release is generated, only the fields {\tt <file>},
 {\tt <package>}, \mbox{{\tt <chapter>}} (if present), and {\tt <author(s)>}
-are kept.  The heading of the source file will become something like this:
+are kept.  The heading of the source file (generated by the 
+\texttt{make\_public\_header} script 
+\InternalOnly{ (see Chapter~\ref{chap:releases})}
+will become something like this:
 %
 \begin{verbatim}
 // ============================================================================
@@ -466,7 +494,7 @@ are kept.  The heading of the source file will become something like this:
 //
 // Commercial licenses
 // - A commercial license is available through Algorithmic Solutions,
-//   who also markets LEDA (http://www.algorithmic-solutions.com). 
+//   (http://www.algorithmic-solutions.com). 
 // - Commercial users may apply for an evaluation license by writing to
 //   Algorithmic Solutions (contact@algorithmic-solutions.com).
 //
@@ -493,6 +521,7 @@ are kept.  The heading of the source file will become something like this:
 \ccIndexSubsubitemEnd{source files}{headings for}{public releases}
 \ccIndexSubitemEnd{source files}{headings for}
 
+\InternalOnly{
 
 \section{Requirements and recommendations}
 \label{sec:code_format_doc_req_and_rec}
@@ -511,11 +540,12 @@ Requirements:
    \item Provide a header for each submitted file in the proper format.
 \end{itemize}
 
-\noindent
-Recommendations:
-\begin{itemize}
-   \item Use literate programming tools to adequately document your 
-         implementation.
-\end{itemize}
+}
+%\noindent
+%Recommendations:
+%\begin{itemize}
+%   \item Use literate programming tools to adequately document your 
+%         implementation.
+%\end{itemize}
 
 % ===== EOF ===================================================================

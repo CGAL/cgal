@@ -47,7 +47,7 @@ In \cgal, we also define the concept of a handle,
 which bahaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents.html}{\cgal\ Support Library Reference Manual}. 
+the \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{\cgal\ Support Library Reference Manual}. 
 Section~\ref{sec:handle_vs_it_vs_circ} below discusses when handles
 should be used in your code.
 \ccIndexMainItemEnd{handles}
@@ -56,7 +56,7 @@ The concept of iterators is relatively well described in textbooks such as
 Stroustrup's {\em The C++ Programming Langage} \cite{Stroustrup97} 
 and Austern's {\em Generic Programming and the \stl} \cite{Austern98}
 and in the
-\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal\ } manual (which also
+\ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsUseOfSTL.html}{Use of \stl\ and \stl\ Extensions in \cgal\ } manual (which also
 discusses the circulator concept).
 Thus we will not give a full description of this concept here
 but only a few hints about how to use and write iterators (and circulators)
@@ -141,13 +141,13 @@ typedef CGAL::PointH2< CGAL::Quotient<int>, int > Blah;
 CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Blah)
 \end{verbatim}
 
-The only currently supported compiler (as of release 2.1) that does not
+The only currently supported compiler (as of release 2.3) that does not
 support partial specialization is MS Visual \CC 6.0. Thus this macro is defined
 to have an effect only when using this compiler.  For all other compilers,
 it simply does nothing and thus can be safely left in the code, unprotected
 by checks for this compiler.
-The example program \texttt{examples/Getting\_started/advanced\_hull.C}
-contains an example of the use of this macro.\\
+%The example program \texttt{examples/Getting\_started/advanced\_hull.C}
+%contains an example of the use of this macro.\\
 \ccIndexMainItemEnd{iterator traits}
 
 
@@ -237,19 +237,18 @@ a window stream (\ie, it draws the segments in the window) using the
 standard copy function: 
 
 \begin{verbatim}
-typedef CGAL::Cartesian<double>       R;
-typedef CGAL::Segment_2<R>            Segment;
-typedef leda_window                   CGAL_Stream;
+typedef CGAL::Cartesian<double>   K;
+typedef K::Segment_2              Segment;
 
 std::vector<Segment>       segments;
-CGAL_Stream                W( 400, 400);
+CGAL::Window_stream        W( 400, 400);
 
 int main (int argc, char** argv)
 {
   // initialize segments
   std::copy( segments.begin(),
              segments.end(),
-             CGAL::Ostream_iterator< Segment, CGAL_Stream>( W));
+             CGAL::Ostream_iterator< Segment, CGAL::Window_stream>( W));
 }
 \end{verbatim}
 
@@ -316,7 +315,7 @@ front_insert_iterators<Container> front_inserter(Container& c);
 
 Thus, the \ccc{inserter} adaptor can be called for any container that
 has an \ccc{insert} member function, and \ccc{back_inserter}
-(resp. \ccc{front_inserter}) be called for any container that has a
+(resp. \ccc{front_inserter}) can be called for any container that has a
 \ccc{push_back} (resp. \ccc{push_front}) member function.  Some versions
 of \stl\ (in particular, the one of KCC and Borland) also require that 
 containers define a \ccc{value_type} and a \ccc{const_reference} type.
@@ -326,7 +325,7 @@ The following code will insert 200 copies of the value 7 at the end of
 \begin{verbatim}
 void g(vector<int>& vec)
 {
-    fill_n(back_inserter(vec),200,7);
+    fill_n(std::back_inserter(vec),200,7);
 }
 \end{verbatim}
 and this code will insert the points contained in the vector \ccc{vertices}
@@ -334,8 +333,8 @@ into a Delaunay triangulation data structure:
 
 \begin{verbatim}
 
-  typedef CGAL::Cartesian<double>                          R;
-  typedef CGAL::Triangulation_euclidean_traits_2<R>        Gt;
+  typedef CGAL::Cartesian<double>                          K;
+  typedef CGAL::Triangulation_euclidean_traits_2<K>        Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt>            Vb;
   typedef CGAL::Triangulation_face_base_2<Gt>              Fb;
   typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb>
@@ -364,7 +363,7 @@ into a Delaunay triangulation data structure:
 %of a handle, which is defined in \cgal\ (but not in \stl).  A handle
 %behaves roughly like a pointer to an object without an increment or
 %decrement operation. The requirements for handles are detailed in
-%the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents}{\cgal\ Support Library Reference Manual}. 
+%the \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/contents}{\cgal\ Support Library Reference Manual}. 
 %\ccIndexMainItemEnd{handles}
 
 \section{Writing code with and for iterators, circulators, and handles}
@@ -453,7 +452,7 @@ over either a linear or circular sequence:
 \ccStyle{CGAL_For_all_backwards( ic1, ic2)}
 \ccIndexMainItem[C]{CGAL_For_all_backwards}
 
-See the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/Circulator/Chapter_circulator.html}{Circulator documentation} in the
+See the \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/Circulator/Chapter_circulator.html}{Circulator documentation} in the
 Support Library Reference Manual for more information and examples.
 
 \subsection{Writing an iterator for your container}
@@ -505,6 +504,8 @@ that end in the suffix \ccc{_circulator} (Section~\ref{sec:naming_scheme}).
 \ccIndexSubitemEnd{containers}{circulators for}
 \ccIndexSubitemEnd{circulators}{writing}
 
+\InternalOnly{
+
 \section{Requirements and recommendations}
 \label{it_and_circ:it_and_circ_req_and_rec}
 
@@ -547,3 +548,4 @@ Recommendations:
       \ccIndexSubitem{containers}{member functions}
 \end{itemize}
 
+}

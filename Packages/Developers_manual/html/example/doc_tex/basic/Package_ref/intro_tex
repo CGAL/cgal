@@ -6,7 +6,7 @@
 
 \chapter{Examples of \CC\ Reference Pages}
 \ccChapterRelease{\ccRevision. \ \ccDate}\\
-\ccChapterAuthor{Lutz Kettner and Susan Hert}
+\ccChapterAuthor{Lutz Kettner}
 
 \section*{Summary}
 
@@ -14,39 +14,25 @@ This example chapter belongs to the documentation of the \LaTeX\ style
 file {\tt cc\_manual.sty} and the related tools, for example, the
 \LaTeX\ to HTML converter. See the related documention for the details.
 
-This example contains a reference page for an item of each category except
-variable (which will look the same as a constant):
-concept, constant, class, enum, function, function object class, function
-object concept, and macro. It documents no
+This example contains a reference page for an item of each category:
+concept, class, enum, function, variable and macro. It documents no
 particular functionality. It serves only as an example for the various
 layouts. The actual \LaTeX\ sources and the README file in the {\tt
   Tools/example/} directory should be studied in parallel to the
-formatted output since these files contain further comments and 
-descriptions of the tools used to create these pages. 
-\begin{ccTexOnly}
-For example, the
+formatted output, they contain further comments and descriptions of
+the tools used to create these pages. For example, the
 table-of-contents below uses not only the \verb+\ccRefIdfierPage+
 macro, but needs also a more hand-written layout for the
 \verb+is_empty_range+ function with its parameter list.  All items,
 except concepts and macros, are given including the global scope.
-\end{ccTexOnly}
 
-\lcTex{
 \subsection*{Concepts}
 
-\ccRefIdfierPage{Circulator} 
-
-\subsection*{Function Object Concepts}
-
-\ccRefIdfierPage{Kernel::Less_xy_2}
+\ccRefIdfierPage{Circulator}
 
 \subsection*{Classes}
 
-\ccRefIdfierPage{CGAL::Circulator_traits<C>} 
-
-\subsection*{Function Object Classes}
-
-\ccRefIdfierPage{CGAL::Less_xy_2}
+\ccRefIdfierPage{CGAL::Circulator_traits<C>}
 
 \subsection*{Enums}
 
@@ -62,14 +48,12 @@ except concepts and macros, are given including the global scope.
     {\hfill \ccRefPage{CGAL::is_empty_range}}
 \lcTex{\ccAutoIndexingOn}
 
-\subsection*{Constants}
+\subsection*{Variable}
 
 \ccRefIdfierPage{CGAL::ORIGIN}
 
 \subsection*{Macros}
 
 \ccc{For_all(i,j)}\hfill \ccRefPage{For_all}
-
-}
 
 %% EOF %%

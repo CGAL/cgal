@@ -65,10 +65,11 @@ qualify streams and so by \ccc{std::}, too.  That is:
 \begin{verbatim}
 std::cout << "Hello CGAL" << std::endl;
 \end{verbatim}
-or you have to add using declarations for the names you want to use without
-\ccc{std::} qualification. Whenever a platform does not put names in namespace
-\ccc{std}, \cgal\ adds the names it needs to namespace \ccc{std}. This
-is done by the configuration tools!
+or you have to add \ccc{using} declarations for the names you want to use 
+without \ccc{std::} qualification. Developers should of course assume that 
+the rules will be  applied strictly.  Whenever a platform does not put names 
+in namespace \ccc{std}, \cgal\ adds the names it needs to namespace \ccc{std}. 
+This is done by the configuration tools!
 \ccIndexMainItem{configuration}
 
 As for the C-library functions, you should use the macro 
@@ -96,7 +97,10 @@ my_new_function( My_new_cgal_class& );
 Make sure not to have include statements nested between 
 \verb+ namespace CGAL { + and \verb+ } // namespace CGAL+.
 Otherwise all names defined in the file included will be 
-added to namespace \ccc{CGAL}.
+added to namespace \ccc{CGAL}.  (Some people use the macros
+\ccc{CGAL_BEGIN_NAMESPACE} and \ccc{CGAL_END_NAMEPACE} 
+in place of the \texttt{namespace CGAL \{} and
+\texttt{\} // namespace CGAL}, respectively for better readability.)
 
 Some compilers don't like \texttt{CGAL::} qualification in
 namespace \ccc{CGAL}. In other cases, \eg, template friend declarations,%
@@ -141,7 +145,7 @@ While \verb+gcc 2.95+ and the Kai \CC\ compiler don't have problems
 with correctly compiling the program above, the mips compiler on {\sc IRIX} 
 does not implement Koenig lookup, so it fails:
 
-{\footnotesize
+{\small
 \begin{verbatim}
 bash-2.03$ CC -64 kl.C  
 cc-1387 CC: ERROR File = kl.C, Line = 19
@@ -184,7 +188,7 @@ instantiation and the scope enclosing the point of definition contain
 a \ccc{mix} function. The mips compiler on {\sc IRIX} and the Kai \CC\
 compiler complain about this ambiguity: 
 
-{\footnotesize
+{\small
 \begin{verbatim}
 bash-2.03$ CC -64 poi.C 
 cc-1282 CC: ERROR File = poi.C, Line = 11
@@ -291,6 +295,8 @@ Here, qualification with \ccc{CGAL} works as well.
 Summarizing, you can always qualify functions on number types
 with \ccc{CGAL_NTS} besides \ccc{min} and \ccc{max}.
 
+\InternalOnly{
+
 \section{Requirements and recommendations}
 
 Requirements:
@@ -314,3 +320,5 @@ Recommendations:
 unless it is required by a compiler or to resolve a name conflict with a
 local type in a scope enclosed by namespace \ccc{CGAL}.
 \end{itemize}
+
+}

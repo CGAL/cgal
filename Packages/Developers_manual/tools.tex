@@ -17,17 +17,15 @@
 
 There are a number of tools that automate some of the tedious and 
 error-prone tasks that are unavoidable when developing for \cgal.
-Most of these scripts can be found in several places.
+Most of these scripts can be in at least two places.
 \begin{itemize}
    \item in every internal release (directory {\tt developer\_scripts} or 
          {\tt scripts})
-   \item in the package Scripts on the %
-         \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages page}\begin{ccTexOnly}
-   ( \path|http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html|) 
-   \end{ccTexOnly}
-   \item on the \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/tools/index.html}{scripts page} \begin{ccTexOnly}
-   (\path|http://www.cs.uu.nl/CGAL/Members/Develop/tools/index.html|) 
-   \end{ccTexOnly}
+   \item in the package \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/}{Scripts} on the CVS server%
+         \index{CVS server!Scripts package@\texttt{Scripts} package}%
+         \begin{ccTexOnly}
+        (\path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/|) 
+         \end{ccTexOnly}.
 \end{itemize}
 
 \section{{\tt create\_assertions.sh}}
@@ -35,7 +33,7 @@ Most of these scripts can be found in several places.
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script|(}
 \ccIndexMainItem{assertions}
 
-The shell script \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/scripts/create_assertions.sh}{{\tt create\_assertions.sh}} generates assertion header files.
+The shell script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/create_assertions.sh}{{\tt create\_assertions.sh}} generates assertion header files.
 The command
 \begin{verse}
 {\tt create\_assertions.sh minkowski}
@@ -58,7 +56,7 @@ Section~\ref{sec:checks_controlling}.
 
 \cgal\ source files should not contain line directives, even if they are made
 with the help of a literate programming tool like funnelweb.
-The script \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/scripts/remove_line_directives}{{\tt remove\_line\_directives}} can be used to remove
+The script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/remove_line_directives}{{\tt remove\_line\_directives}} can be used to remove
 lines starting with {\tt \#line}.
 
 \section{{\tt rename\_clib\_calls}}
@@ -79,7 +77,7 @@ compiler). This macro should be prepended to all calls of functions from
 the C library. So, you should call \ccc{CGAL_CLIB_STD::sin(x)}, not 
 \ccc{std::sin(x)} or \ccc{sin(x)}.
 
-The perl script \ccAnchor{scripts/rename_clib_calls}{{\tt rename\_clib\_calls}}
+The perl script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/rename_clib_calls}{{\tt rename\_clib\_calls}}
 does this prepending.
 The script is idempotent, so applying it twice in a row does no harm.
 The script is not perfect, though. Especially, it recognizes complete
@@ -100,7 +98,7 @@ can help you to find out what to put there.
 \index{create_makefile script@{\tt create\_makefile} script|(}
 \ccIndexSubitemBegin{\tt makefile}{creating}
 
-The shell script \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/scripts/create_makefile}{{\tt create\_makefile}} creates a \cgal\ makefile
+The shell script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/scripts/create_makefile}{{\tt create\_makefile}} creates a \cgal\ makefile
 in the current working directory.
 The makefile will have rules to make an executable from every {\tt .C} 
 file in the directory.  The following options are available 
@@ -150,7 +148,7 @@ This variable can be set, {\em e.g.}, as an environment variable in
 In every subdirectory of {\tt test} there must be a shell script called
 {\tt cgal\_test}. This script is called from the {\tt run\_testsuite}%
 \index{run_testsuite script@{\tt run\_testsuite} script}
-script when the test suite is run. The script \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/scripts/create_cgal_test}{{\tt create\_cgal\_test}}
+script when the test suite is run. The script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/create_cgal_test}{{\tt create\_cgal\_test}}
 will create the shell script {\tt cgal\_test} in the current directory.
 
 As is the case with makefiles, this file will be generated automatically for
@@ -167,24 +165,49 @@ The generated file contains a header that lists the requirements a
 Section~\ref{sec:test_subdirectory} with the description of the 
 {\tt cgal\_test} script.
 
+\section{{\tt cgal\_submit}}
+\label{sec:cgal_submit}
+\index{cgal_submit script@{\tt cgal\_submit} script|(}
+\ccIndexSubitem{packages}{submitting}
+\ccIndexSubitem{submitting}{script for}
+
+The shell script \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/cgal_submit}{\texttt{cgal\_submit}} is used to 
+submit packages from the
+CVS server.  The script should be run from the working directory of the
+package being submitted and takes a single argument, which is the new
+version number of the package.  For example:
+\begin{verbatim}
+   cgal_submit 3.2.1
+\end{verbatim}
+The script will tag the files of a module
+with a tag \texttt{v}$<num>$, where $<num>$ is the version number given
+as an argument to the script (3.2.1 in the example above) with all `.'s 
+replaced by `\_'s (so \texttt{v3\_2\_1} for the example above).  The files are
+also labeled with the tag \texttt{current\_submission}.  The script is 
+available in the \texttt{developers\_scripts} directory of each internal 
+release.
+\index{cgal_submit script@{\tt cgal\_submit} script|)}
+ 
 \section{{\tt autotest\_cgal}}
 \label{sec:autotest_cgal}
 \index{autotest_cgal script@{\tt autotest\_cgal} script|(}
 \ccIndexSubitem{test suite}{internal release}
 
-This shell script \ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/members/autotest_cgal}{{\tt autotest\_cgal}}
-is used to run test suites for the internal releases of the library 
-``automagically''.  The script takes two arguments, which are a 
-\cgal\ release label (Section~\ref{sec:internal_releases}) and an email
+This shell script \ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/mem
+bers/autotest_cgal}{{\tt autotest\_cgal}}
+is used to run test suites for the internal releases of the library
+``automagically''.  The script takes two arguments, which are a
+\cgal\ release label (Section~\ref{sec:file_header}) and an email
 address of someone to notify about the success or failure of the test suite
 run.  For example:
 \begin{verbatim}
    autotest_cgal CGAL-2.2-I-3 cgal-submit@cs.uu.nl
 \end{verbatim}
 
-The script must be 
-\ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/members/autotest.html}{customized} 
-\begin{ccTexOnly} 
+The script must be
+\ccAnchor{http://www.cs.inf.ethz.ch/personal/hoffmann/CGAL/members/autotest.html
+}{customized}
+\begin{ccTexOnly}
  (See \path|http://www.cs.inf.ethz/ch/personal/hoffmann/CGAL/members/autotest.html|)
 \end{ccTexOnly}
 a bit to run on your environment, but

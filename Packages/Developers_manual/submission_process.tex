@@ -9,17 +9,23 @@
 % $Date$
 % =============================================================================
 
+\InternalOnly{
 \chapter{Submitting Packages}
 \label{chap:submission}
 \ccChapterRelease{Chapter Version: 1.0} \\
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl}) 
 \& Susan Hert ({\tt hert@mpi-sb.mpg.de})}
-
-\section{Editorial board}
+\section{Editorial committee}
 \label{sec:editorial_board}
+}
+
+\ExternalOnly{
+\chapter{Editorial Committee}
+}
 \ccIndexMainItemBegin{editorial board}
 
-The Editorial Board is in charge of approving the inclusion of new packages
+
+The editorial committee is in charge of approving the inclusion of new packages
 in the library.  This means that they assure that new contributions
 \begin{itemize}
    \item are in keeping with the philosophy of \cgal\ (Chapter~\ref{chap:intro});
@@ -33,15 +39,33 @@ in the library.  This means that they assure that new contributions
          supported by \cgal.
 \end{itemize}
 
-Software specifications should be submitted to the editorial committee
-for approval.  This can be done by sending mail to 
-\ccAnchor{mailto:cgal-editor@cs.uu.nl}{\texttt{cgal-editor@cs.uu.nl}}.  After
-some reasonable amount of time, you should receive feedback from someone
-on the committee about the specification and what, if anything, needs to
-be changed.
+Software specifications and implementations should be submitted to the 
+editorial committee for approval.  This can be done by sending mail to 
+\ccAnchor{mailto:editor@cgal.org}{\texttt{editor@cgal.org}} indicating
+where the (PostScript) documentation and code can be found.  After
+some reasonable amount of time, you should receive feedback from 
+the committee about the specification and what, if anything, needs to
+be changed. The usual procedure is that someone from the committee is
+assigned to be (or volunteers to be) the primary reviewer and sends 
+comments on the submitted package to the board and to the authors of
+the package.  Discussion then proceeds among the board members and the
+authors until a consensus is reached about how the package should be
+modified before being accepted.  When the package has been modified,
+the authors should again notify the editorial committee to let them
+know what has changed so a decision about acceptance of the package
+can be taken.  
+
+\InternalOnly{
+The discussion of specific packages are logged on the 
+\ccAnchor{http://www.cgal.org/Members/Editorial/}{Editorial Committee web page}%
+\lcTex{ (\path|http://www.cgal.org/Members/Editorial|)}.  Reading the 
+feedback given on other packages can be quite instructive as a means of
+learning what the editorial board is looking for.
+}
 
 One should write a specification for a new package
-(Chapter~\ref{chap:specification}) and submit it to the editorial board for 
+\InternalOnly{(Chapter~\ref{chap:specification})}
+and submit it to the editorial board for 
 approval before submitting the package for inclusion in the internal
 releases (and ideally before implementation of the package).  This
 assures that time is not wasted in fixing code that may later be changed
@@ -49,24 +73,31 @@ due to the recommendations of the board.
 However, since it can take some time for the board to process
 submissions, packages that are to become part of the library 
 (as opposed to being listed as 
-\ccAnchor{http://www.mpi-sb.mpg.de/~hert/CGAL/CEP/requirements.html}{\cgal\ Extension Packages}) can be submitted as detailed in 
-Section~\ref{sec:electronic_submission} before approval.
+\ccAnchor{http://www.cgal.org/CEP/requirements.html}{\cgal\ Extension Packages})
+can be submitted 
+\InternalOnly{as detailed in 
+Section~\ref{sec:electronic_submission}} before approval.
 Inclusion in an internal release does not ensure inclusion in a public
 release.  Only after approval by the board will packages be included in new
-public releases.
+public releases and then only if they pass the test suite, of course.
 
 The current members of the editorial board are:
-\begin{itemize}
-   \item Stefan Schirra
-   \item Remco Veltkamp
-   \item Mariette Yvinec.
-\end{itemize}
+\begin{center}
+\begin{tabular}{p{5cm}p{5cm}}
+Andreas Fabri (chair)  & Bernd G\"artner  \\
+Susan Hert             & Shai Hirsch  \\
+Michael Hoffmann       & Lutz Kettner  \\
+Dmitrii Pasechnik      & Sylvain Pion  \\
+Remco Veltkamp         & Mariette Yvinec 
+\end{tabular}
+\end{center}
 \ccIndexMainItemEnd{editorial board}
 
-
+\InternalOnly{
 \section{Electronic submission}
 \label{sec:electronic_submission}
 \ccIndexMainItemBegin{submitting}
+
 
 Whether you produce library code, demos, documentation or something else,
 if you want it to become part of \cgal, you'll have to submit it in the form
@@ -93,52 +124,40 @@ package names \texttt{pm} and \texttt{arr} are a bit too terse.
 A submission consists of a single compressed file.  The name of this file
 must be the name of the package followed by \texttt{.tar.gz} or \texttt{.tgz} 
 if the file is made with \texttt{tar} and \texttt{gzip} or followed by 
-\texttt{.zip} if the file is made with \texttt{zip}.  This file should 
-be put on a WWW server, preferably protected with
-the \cgal\ password.\footnote{If there is demand, it is possible to extend
-this service to submitting via \texttt{ftp}.} 
+\texttt{.zip} if the file is made with \texttt{zip}.   
 
-When the file is in place, it is time to notify Utrecht that the file
-should be fetched.  This is done by sending an email to
-\ccAnchor{mailto:cgal-submit@cs.uu.nl}{\texttt{cgal-submit@cs.uu.nl}}.  
-The subject of this email must be \texttt{autohandle}.  
-The body of the message must contain a line \verb+ submission::+ followed by a
-line with the URL. The URL must start on a new line, but may itself be
-split over several lines. So, the complete mail could look like 
-\begin{verbatim}
-  From: Geert-Jan Giezeman <geert@cs.uu.nl>
-  To: cgal-submit@cs.uu.nl
-  Subject: autohandle
-
-  submission::
-  http://www.cs.uu.nl/people/geert/CGAL
-  /Minkowski_2.zip
-\end{verbatim}
-If all goes well, the package is installed and the \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages page}
+With the advent of the CVS server, the submission of packages has become
+quite simple.  One need only 
+\begin{itemize}
+   \item[(a)] put your package on the CVS server (Chapter~\ref{chap:cvs})
+   \item[(b)] go to the working directory of the package and run the script 
+              \texttt{cgal\_submit} (Section~\ref{sec:cgal_submit}).
+\end{itemize}
+If all goes well, the package is installed and the 
+\ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages page}
 \begin{ccTexOnly} 
 (\path|http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html|) 
 \end{ccTexOnly}
 is updated. 
-The whole process is done without human intervention, so you should follow
-the rules described here precisely.
 
-
-Within 15 minutes you will receive a confirmation of your
+Within 15 minutes the maintainers of the package (those listed in the file
+\texttt{maintainer}) will receive a confirmation of the
 submission.\footnote{The confirmation goes also to the person responsible
 for the submission procedure.}  If this is not the case, send a mail to
-\texttt{cgal-submit} (with a subject other than \texttt{autohandle}) 
+\texttt{cgal-submit@cs.uu.nl} (with a subject other than \texttt{autohandle}) 
 and ask what went
 wrong.  The first time you submit a package, the confirmation message will
 tell you that the package will not go into internal releases. Usually, you
-request \texttt{cgal-submit} to add the package to the internal releases. In a
-perfectly bureaucratic world, the editorial committe would be asked if it
-is OK to add the package. In practice, that is not done.
+request \texttt{cgal-submit@cs.uu.nl} to add the package to the internal 
+releases. In a perfectly bureaucratic world, the editorial committee would be 
+asked if it is OK to add the package. In practice, that is not done.
 
 The submission process checks your package for several things.  It checks
 if your source files contain a valid header (Section~\ref{sec:file_header})
-and if the lines are not longer
-than 80 characters. Moreover, it is picky about the file 
-\ccAnchor{example/version}{\texttt{version}},
+and if the lines are not longer than 80 characters. It checks if any files
+in the package have the same case-insensitive name as a file in some other
+package.  Moreover, it is picky about the files
+\ccAnchor{example/version}{\texttt{version}} and \ccAnchor{example/maintainer}{\texttt{maintainer}},
 which must be part of your package. See Chapter~\ref{chap:directory_structure}
 for a precise description of the required format for this file.
 \ccIndexMainItemEnd{submitting}
@@ -155,19 +174,21 @@ some cases, you will not get a confirmation message at all.
 The following is a list of reasons why a submission might fail.
 \begin{itemize}
 
-\item The sender and the URL where the package is retrieved, should both be 
-      on a \cgal\ member site. If this is not the case, the submission will 
-      be rejected.  This is done as a security measure.
-
 \item The submitted file must obey the naming convention mentioned above, 
       otherwise the submission is rejected. 
 
-\item The package must contain a valid \ccAnchor{example/version}{version file}.
-      The version must be bigger than the previous version and a maintainer
-      should be mentioned.\index{version file@{\tt version} file}
+\item The submitted package must not contain any file whose name is the same
+      as a file in some other submitted package, otherwise the submission is 
+      rejected. 
 
-\item It may be impossible to get the package from the WWW server. 
-      This could be due to server failures, wrong permissions, misspellings
+\item The package must contain a valid \ccAnchor{example/version}{version file}.
+      The version must be bigger than the previous version.
+
+\item The package must contain a valid \ccAnchor{example/maintainer}{maintainer
+      file}.\index{maintainer file@{\tt maintainer} file}
+
+\item It may be impossible to get the package from the CVS server. 
+      This could be due to server failures, wrong permissions, misspellings,
       \etc
 
 \item Some resources may be exhausted in Utrecht (quota problems, usually).
@@ -185,7 +206,6 @@ Requirements:
    \item Submit specifications to the editorial board before submitting
          packages for internal releases.
    \item Obey the directory structure outlined in Chapter~\ref{chap:directory_structure}.
-   \item Format your submission-notification email exactly as detailed above.
 \end{itemize}
 
 \noindent
@@ -194,4 +214,6 @@ Recommendations:
     \item Wait for approval from the editorial board before submitting packages
           for internal releases.
 \end{itemize}
+}
+
 

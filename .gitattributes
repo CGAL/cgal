@@ -720,6 +720,22 @@ Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/Cartesian_ipoint.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/Cartesian_orientation.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/Object.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/cgal_bigger.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/cgal_small.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/generic_cgal.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/handle_allocate.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/handle_rep.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/homogeneous_ipoint.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/homogeneous_orientation.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/jnis.gif svneol=native#unset
+Packages/Developers_manual/html/images/reference_counting.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/rmi.gif svneol=native#unset
+Packages/Developers_manual/html/images/rmifile.gif svneol=native#unset
+Packages/Developers_manual/html/images/title.gif -text svneol=unset#unset
+Packages/Developers_manual/html/images/use_real.gif -text svneol=unset#unset
 Packages/Developers_manual/pictures/Object.eps -text
 Packages/Developers_manual/pictures/Object.gif -text svneol=unset#unset
 Packages/Developers_manual/pictures/a-full.ipe -text

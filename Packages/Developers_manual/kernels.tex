@@ -17,18 +17,21 @@ The layer of geometry kernels\ccIndexMainItem[t]{kernel}
 provides basic geometric objects
 and primitive operations on them. 
 It contains constant size\footnote{In dimension $d$, an object of 
-size $O(d)$ is considered to be of constant size.} geometric objects.
-The corresponding types are provided in a class called {\em kernel traits}.
+size $O(d)$ is considered to be of constant size.} geometric objects
+and operations on these objects.
+Each object is provided as both a stand-alone class, which is parameterized
+by a kernel class, and as a type in the kernel class.  Each operation and 
+construction in the kernel is provided via a function object class in the 
+\ccIndexMainItem[t]{function objects}
+kernel class and also as either a member function or a global function. 
+See~\cite{hhkps-aegk-01} for more details about this design.
 \ccIndexMainItemDef[t]{kernel traits}%
 \ccIndexSubitem{traits class}{kernel as a}%
 Ideally, if the kernel traits provide all the primitives required,
-you can use a kernel traits class directly with your algorithm or 
-data structure. Primitive operations are provided
-as function object types;\ccIndexMainItem[t]{function objects}
-see also Chapter~\ref{chap:traits_classes}.
-The kernel can also be used directly, not only as a traits class.
+you can use a kernel as a traits class directly with your algorithm or 
+data structure; see also Chapter~\ref{chap:traits_classes}.
 If you need primitives not provided by the kernel yet, please
-read Section \ref{sec:NewKernelTraits} below.
+read Section~\ref{sec:NewKernelTraits} below.
 
 \section{Cartesian and homogeneous representation}
 \label{sec:cart_and_hom_representation}
@@ -188,20 +191,21 @@ Since all $hw_j$ are positive in \cgal, sign is not affected
 by this multiplication. 
 
 \section{Available kernels}
-At present, there is a reference-counting\ccIndexMainItem{reference counting} 
-(Chapter~\ref{chap:reference_counting})
-Cartesian kernel, a 
-reference-counting homogeneous kernel, and a non-reference-counting
-Cartesian kernel. The corresponding kernel traits classes are
+At present, there are two homogeneous and two Cartesian kernels,
+one with reference counting\ccIndexMainItem{reference counting} 
+(Chapter~\ref{chap:reference_counting}) and one without.
+The corresponding kernel classes are
 \begin{verbatim}
 CGAL::Cartesian< NumberType >
 CGAL::Homogeneous< NumberType >
 CGAL::Simple_cartesian< NumberType >
+CGAL::Simple_homogeneous< NumberType >
 \end{verbatim}
 \ccIndexMainItem{kernel traits}
 \ccIndexSubitem{kernel}{\ccFont Cartesian}%
-\ccIndexSubitem{kernel}{\ccFont homogeneous}%
+\ccIndexSubitem{kernel}{\ccFont Homogeneous}%
 \ccIndexSubitem{kernel}{\ccFont Simple_cartesian}%
+\ccIndexSubitem{kernel}{\ccFont Simple_homogeneous}%
 These are all parameterized by a number type, which is used for storing
 the coordinates and the arithmetic in the corresponding primitives and
 predicates (unless the latter are specialised for using floating-point
@@ -225,10 +229,19 @@ implementation of the Cartesian kernel.
 \section{Kernel design and conventions}
 \ccIndexSubitem{kernel}{design}%
 \ccIndexSubitem{design}{kernel}%
-The kernel objects can also be used directly, not only through a traits class.
-For geometric objects in kernel traits \ccc{R}, the type 
-\ccc{R::Geo_object_D} is identical to \ccc{Geo_object_D<R>}. 
-The latter is the traditional use and hence very widespread in \cgal.
+Each kernel object is provided as both a stand-alone class, which is 
+parameterized by a kernel class (\ccc{Geo_object_D<K>}), and as a type 
+in the kernel class (\ccc{K::Geo_object_D}).  While the former use may
+be more natural for users not interested in the flexibility of the kernel
+(and is compatable with the original kernel design \cite{Fabri98}), the
+latter syntax should be used in all code distributed with the library
+as it allows types in the kernel to be easily exchanged and modified.
+Similarly, each operation and construction in the kernel is provided via 
+a function object class in the \ccIndexMainItem[t]{function objects}
+kernel class and also as either a member function or a global function; 
+developers should use the function object classes to gain access to the
+functionality.  See~\cite{hhkps-aegk-01} for more details about this 
+design and how it is accomplished.
 
 The classes for the geometric objects in the kernel have a 
 standardized interface.%
@@ -292,10 +305,9 @@ might rewrite the code or implement the new predicate using existing ones).
 If this is not feasible (especially for efficiency reasons), we have to 
 decide on adding the new predicate to the kernel traits. 
 If the new predicate is not too special, it will be added. 
-Otherwise you can not use the kernel traits as a traits class, but have
+Otherwise you cannot use the kernel as a traits class, but have
 to use additional traits.%
-\ccIndexSubitem{traits class}{additional} A long time ago, 
-we decided to have two traits parameters in such a case.
+\ccIndexSubitem{traits class}{additional} 
 
 See Section \ref{sec:CartesianHomogeneousComputation} on how to derive the
 homogeneous version of a predicate from the Cartesian version. 

@@ -16,20 +16,6 @@
 
 \ccIndexMainItemBegin{debugging}
 
-\begin{quote}
-An interactive debugger is an outstanding example of what is not needed --
-it encourages trial-and-error hacking rather than systematic design, and
-also hides marginal people barely qualified for precision programming.
-
-\hspace*{\fill}{\em Harlan Mills}
-\end{quote}
-
-\begin{quote}
-Think before you debug.
-
-\hspace*{\fill}{\em Anonymous \cgal\ Developer}
-\end{quote}
-
 Efficient debugging techniques can become an asset when writing geometric 
 libraries such as \cgal. 
 This chapter discusses debugging-related issues, like how to use 
@@ -49,7 +35,7 @@ version of a program that was used in the early stages of development as a
 (graphical) debugging tool.  In many cases, the output of a geometric
 algorithm is much easier to interpret in graphical form than numeric
 form.  Thus you should use the powerful graphical output capabilities
-of \cgal\ (see the \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents.html}{Support Library documentation}) 
+of \cgal\ (see the \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{Support Library documentation}) 
 to develop 
 \begin{itemize}
    \item programs that can be used for debugging the internal workings
@@ -73,7 +59,7 @@ of your code.  A cross-checker for a given concept is a model of that concept
 that is constructed from another model or models (one of which is the one
 you wish to check).  In order to implement the functionality required by
 the concept, the cross-checker will use functions from the models upon
-which it is built and perform test for validity, \etc on them.  If the tests
+which it is built and perform tests for validity, \etc\ on them.  If the tests
 succeed, the cross-checker returns the expected result.  Otherwise, the
 cross-checker can generate an assertion violation or a warning, depending
 on the severity of the offense. 
@@ -208,6 +194,7 @@ execution.
 \ccIndexSubitemEnd{handles}{and debugging}
 \ccIndexMainItemEnd{debugging}
 
+\InternalOnly{
 
 \section{Requirements and recommendations}
 \label{sec:debugging_req_and_rec}
@@ -224,3 +211,4 @@ Recommendations:
    \item Don't write buggy code \texttt{:-)}.
 \end{itemize}
 
+}

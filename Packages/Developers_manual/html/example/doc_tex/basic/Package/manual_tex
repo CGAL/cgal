@@ -30,14 +30,17 @@
 
 % New manual style including tab markers on the side margins
 % ----------------------------------------------------------
-\marginparsep7mm
-\marginparwidth15mm
+\marginparsep12mm
+\marginparwidth13mm
 \gdef\ccNewRefManualStyle{\ccTrue}  % undef this for old style manual
 
-% The tab markers are aligned with the top of the main text. To align
-% them with the page header, the following definition of the amount
-% by which the tab is shifted can be used
-\setlength{\ccRefTabLift}{12.5mm}
+% The tab marker are aligned with the top of the main text. To align
+% them with the page header, the following redefinition of the actual
+% formatting command can be used.
+\renewcommand{\ccDrawRefTabs}[2]{%
+    \marginpar{~\\\raisebox{12.5mm}[48mm]{%
+        \includegraphics{eps_tabs/cc_#1.eps}}}%
+}
 
 % Optionally, package authors and a package release can be shown
 % right below the chapter title. Comment out the following lines
@@ -67,7 +70,7 @@
 
 \begin{document}
 \input{main}
-\printindex        %places the index in the PostScript document
+\printindex        %places the index in the document
 \end{document}
 
 %% EOF %%

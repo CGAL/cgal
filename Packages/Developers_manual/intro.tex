@@ -17,10 +17,9 @@
 \& Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})
 }
 
-Welcome to the wonderful world of programming computational geometry in 
 \begin{ccTexOnly}
 \begin{center}
-{\IpeScale{20}\Ipe{cgal.ipe}}\\
+{\IpeScale{20}\Ipe{pictures/cgal.ipe}}\\
 \end{center}
 \end{ccTexOnly}
 
@@ -38,47 +37,13 @@ the most important efficient solutions to basic geometric problems
 developed in the area of computational geometry in a \CC\ software library.}
 \end{quote}
 
-Work on \cgal\ is supported by {\sc esprit iv} projects 21957 (CGAL) and
+Work on \cgal\ has been supported by {\sc esprit iv} projects 21957 (CGAL) and
 28155 (GALIA).
 
-\section{Manual organization}
-\label{sec:manual_org}
 
-This manual is meant to be a resource for developers who wish to contribute
-to the \cgal\ library either by designing new packages or maintaining
-or enhancing existing ones. The manual is organized roughly in the order in
-which a developer will need the information in order to produce a package
-for the library. We begin in this chapter with a description 
-of the design goals of \cgal\ and the overall design, which should be kept 
-in mind during all stages of development.  The remaining chapters describe 
-in more concrete terms the requirements and recommendations for documentation, 
-code writing, and testing that are derived from these goals.  We also describe 
-a number of tools that have been developed to help in the development process 
-and give pointers to other sources of information.
-
-In Chapter~\ref{chap:specification}, a description of how the specification for 
-a package should be documented is provided along with information about
-the tools available to help produce the documentation.
-Chapter~\ref{chap:directory_structure} describes the directory structure required
-for a package and Chapter~\ref{chap:tools} describes a set of tools that
-may be used to create or modify various files required within this directory
-structure. Chapters~\ref{chap:code_format} through~\ref{chap:robustness}
-discuss issues related to the writing of code that is in keeping with
-the goals of \cgal.  Chapter~\ref{chap:portability} describes issues
-related to the configuration of \cgal and 
-discusses portability issues for various platforms. Chapter~\ref{chap:testing} 
-describes the requirements for the test suite for a package and 
-Chapter~\ref{chap:debugging} consists of various hints for debugging.
-The \cgal\
-Java demo server is described in Chapter~\ref{chap:java_demos}. Information 
-about how to submit a package's specification to the editorial board 
-for approval and the implementation (and documentation) for inclusion in 
-internal releases is presented in  Chapter~\ref{chap:submission}.
-Chapter~\ref{chap:cvs} discusses the CVS server where developers should 
-place packages that are to remain a part of the library but currently have 
-no maintainers.  Chapters~\ref{chap:addresses} and Chapter~\ref{chap:info} 
-provide information about mailing lists and other information 
-resources developers might find useful.
+\InternalOnly{
+\input{manual_organization}
+}
 
 \input{philosophy}
 

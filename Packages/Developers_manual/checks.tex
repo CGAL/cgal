@@ -146,7 +146,7 @@ can be set (which also switches off the \ccc{assert} macro from the C-library)
 \index{assert macro@{\tt assert} macro!disabling}.
 \ccIndexSubitemEnd{checks}{disabling}
 
-To enable expensive and exactness checks, respecitively, the compile-time 
+To enable expensive and exactness checks, respectively, the compile-time 
 flags \ccc{CGAL_CHECK_EXPENSIVE}%
 \index{CGAL_CHECK_EXPENSIVE flag@{\tt CGAL\_CHECK\_EXPENSIVE} flag} 
 \ccIndexSubsubitem{checks}{expensive}{enabling}
@@ -174,32 +174,48 @@ term is used for the compile-time flags;
 \eg,~\ccc{CGAL_KERNEL_NO_WARNINGS} switches off the warnings
 in \emph{only} the kernel. Other packages have their own specific
 terms as documented in the corresponding chapters of the
-user/reference manual.
+reference manual.
 
+\InternalOnly{
+
+%
 For a new package you will first have to create a suitable header file
-with all macro definitions.
-This is done with the shell script.
-\texttt{create\_assertions.sh} (Section~\ref{sec:create_assertions})
+with all macro definitions.  This is done with the shell script
+\texttt{create\_assertions.sh} (Section~\ref{sec:create_assertions}).
 \index{create_assertions.sh script@{\tt create\_assertions.sh} script}
 The following command will create a file {\tt optimisation\_assertions.h}.
-%
-\begin{verbatim}
-  sh create_assertions.sh optimisation
-\end{verbatim}
-%
+
+{\centerline{\tt  sh create\_assertions.sh optimisation}}
+
 You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
-%
-\begin{verbatim}
-  #include <CGAL/optimisation_assertions.h>
 
-  void optimisation_foo( int i)
-  {
-    CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
-    // ...
-  }
+\lcTex{
+\begin{tabbing}
+xxx\=xx\=\kill
+\>  \texttt{\#include $<$CGAL/optimisation\_assertions.h$>$} \\ \\
+
+\>  \texttt{void optimisation\_foo( int i)} \\
+\>  \texttt{\{} \\
+\>\>\texttt{   CGAL\_optimisation\_precondition\_msg( i == 42, "Only 42 allowed!");} \\
+\>\>\texttt{    // ...} \\
+\>  \texttt{\}}
+\end{tabbing}
+}
+\lcHtml{
+\begin{verbatim}
+ #include <CGAL/optimisation\_assertions.h>
+
+ void optimisation\_foo( int i)
+ {
+   CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
+   // ...
+ }
 \end{verbatim}
-%
+}
+
+}
+
 \ccIndexSubsubitem{checks}{package-level}{documenting}
 \ccIndexSubitem{documentation}{of checks}
 The documentation of your new package has to name the term chosen to be
@@ -224,6 +240,8 @@ Some parts of the library, \eg,~the interval-arithmetic package, use
 exceptions, but there is no general policy concerning exception
 handling in \cgal.
 
+\InternalOnly{
+
 \section{Requirements and recommendations}
 \label{sec:checks_req_and_rec}
 
@@ -241,6 +259,8 @@ Recommendations:
          macros (Sections~\ref{sec:checks_using} 
          and~\ref{sec:checks_controlling}).
 \end{itemize}
+
+}
 
 \ccIndexMainItemEnd{checks}
 % ===== EOF ===================================================================

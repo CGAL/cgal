@@ -22,8 +22,11 @@ be included in an automated way into the internal (and public) releases of the
 library, the files must be organized in a specific directory structure, which 
 we describe here.  We describe the entire directory structure for a package. 
 Not every package will have all the parts described here. Only the files
-{\tt version}, {\tt changes.txt} and {\tt description.txt} are obligatory.
-\index{version file@{\tt version} file}\ccIndexMainItem{\tt changes.txt}\ccIndexMainItem{\tt description.txt}
+{\tt version}, {\tt maintainer}, {\tt changes.txt} and {\tt description.txt} 
+are obligatory.
+\index{maintainer file@{\tt maintainer} file}
+\index{version file@{\tt version} file}
+\ccIndexMainItem{\tt changes.txt}\ccIndexMainItem{\tt description.txt}
 Submissions should not contain files in other places than described here.
 Packages may be rejected if they do, and the contents won't go into releases.
 
@@ -37,8 +40,6 @@ The directory structure of a submission should be as follows:
       +--- test/<testdir>
       |
       +--- doc_tex/
-      |
-      +--- doc_ps/*.ps
       |
       +--- examples/<exampledir>
       |
@@ -82,12 +83,6 @@ The directory structure of a submission should be as follows:
        of this subdirectory.
        See Chapter~\ref{chap:specification} for guidelines for producing
        the documentation.
-  \item[{\tt doc\_ps}]\index{doc_ps directory@{\tt doc\_ps} directory}
-       contains the documentation for the package in PostScript 
-       format. See Section~\ref{sec:files_required} for more information. 
-       These documentation files are available on the 
-\ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/updates/packages.html}{packages web page} only; they are not
-       included in releases nor used to build the manual.
   \item[{\tt examples}]\index{examples directory@{\tt examples} directory}
        contains the example programs for the package.
        See Section~\ref{sec:examples_subdirectory} for a detailed 
@@ -129,27 +124,29 @@ The directory structure of a submission should be as follows:
         for example descriptions.
   \item[\ccAnchor{example/version}{{\tt version}}]
        \index{version file@{\tt version} file} should contain 
-       the version number, the date, and the
-       name and email address of the maintainer of the package in the following
-       format:
+       the version number and the date in the following format:
        \begin{verse}
-       {\it version} ({\it date}) \\
-       {\tt maintainer: } {\it name} $<${\it email address}$>$\\
+       {\it version} ({\it date}) 
        \end{verse}
        For example:
        \begin{verse}
-       2.3.3 (1 Sep 1999) \\
-       maintainer: Geert-Jan Giezeman $<$geert@cs.uu.nl$>$
+       2.3.3 (1 Sep 1999)
        \end{verse}
 
        The version number may contain only digits and dots. It should start and 
-       end with a digit. The date must be between parentheses and the email
-       address between angled brackets. 
+       end with a digit. The date must be between parentheses.
   \item[\ccAnchor{example/maintainer}{{\tt maintainer}}]%
-       \ccIndexSubitem{\tt maintainer}{file}
-       can be used as an alternative way to name the
-       maintainer of the package. Instead of having a line stating the
-       maintainer in the version file, it can be in this separate file.
+       \index{maintainer file@{\tt maintainer} file}
+       should be used to names the maintainers of the package. The file should
+       have for each maintainer a line with the following format:
+       \begin{verse}
+       {\it name} $<${\it email address}$>$\\
+       \end{verse}
+       For example:
+       \begin{verse}
+       {\it Susan Hert} $<$hert@mpi-sb.mpg.de$>$\\
+       {\it Sylvain Pion} $<$Sylvain.Pion@sophia.inria.fr$>$\\
+       \end{verse}
 \end{description}
 
 \section{{\tt test} subdirectory}
@@ -279,32 +276,33 @@ in the structure of the {\tt doc\_tex} directory, which contains the
 documentation source files: 
 \begin{verbatim}
       doc_tex
-           +--- general/
-           |
            +--- installation/
            |
            +--- kernel/
            |
            +--- basic/
            |
+           +--- deprecated_basic/
+           |
            +--- support/
            |
            +--- use_of_stl/
 \end{verbatim}
 
-The {\tt basic/} and {\tt support/} directories each contain subdirectories
+The {\tt basic/}, {\tt deprecated\_basic/} and {\tt support/} directories each 
+contain subdirectories
 that correspond to the packages documented in these manuals.  Contained in these
 subdirectories are the files required for producing a package's contributions
 to the reference manual and users' manual. The users' manual input files are
-located in the package's directory, but the reference manual files should
-be located in a subdirectory of this directory named $<Package>${\tt \_ref}
+located in the package's directory; the reference manual files are
+be located in a directory named $<Package>${\tt \_ref}
 \index{ref directory@{\tt \_ref} directory}.  
 For both the users' manual and reference manual parts, the input can be
 split into more than one file (In fact, this is necessary for the reference
 manual in order to support conversion to HTML; 
-see Section~\ref{sec:ref_manual}.), but
-there must be for each part a file called {\tt main.tex} that inputs all
-the other files.
+see Section~\ref{sec:ref_manual}.), but there must be a file called 
+{\tt main.tex} in both the user and reference manual directories that inputs 
+all the other files for that manual part.
 ({\bf Note}: You should use the \verb|\input| command and NOT the 
 \verb|\include| command to input other source files in this file.)  
 
@@ -326,18 +324,20 @@ the basic library can have the following documentation.
                           |
                           |- cgal.bib
                           |
-                          +--Optimisation_ref/
-                                   |- main.tex
-                                   |
-                                   |- *.tex
-                                   |
-                                   |- *.eps
-                                   |
-                                   |- *.gif
-                                   |
-                                   |- *.html
-                                   |
-                                   |- htmlfiles
+      doc_tex/basic/Optimisation_ref/
+                          |- main.tex
+                          |
+                          |- *.tex
+                          |
+                          |- *.eps
+                          |
+                          |- *.gif
+                          |
+                          |- *.html
+                          |
+                          |- htmlfiles
+                          |
+                          |- cgal.bib
 \end{verbatim}
 
 \begin{description}
@@ -369,7 +369,7 @@ the basic library can have the following documentation.
       resolved automatically when the manual is created. 
  \item[{\tt Optimisation\_ref/}] -- directory containing the source files
       for the reference manual pages for this package. 
- \item[\ccAnchor{example/doc_tex/basic/Package/Package_ref/main_tex}{{\tt Optimisation\_ref/main.tex}}]
+ \item[\ccAnchor{example/doc_tex/basic/Package_ref/main_tex}{{\tt Optimisation\_ref/main.tex}}]
       \ccIndexMainItem{\tt main.tex}\ccIndexSubitem{reference manual}{\tt main.tex}%
        -- the file that inputs the source files for the reference manual pages,
       with the same restrictions as above. 
@@ -388,8 +388,8 @@ the basic library can have the following documentation.
 \index{examples directory@{\tt examples} directory|(}
 \ccIndexSubitemBegin{example programs}{submitting}
 
-Example programs for a package should be placed in a subdirectory of the 
-directory {\tt examples}. 
+Example programs (Chapter~\ref{chap:examples_and_demos}) for a package should 
+be placed in a subdirectory of the directory {\tt examples}. 
 The subdirectory name, \verb|<exampledir>|, will usually correspond to the 
 package name, but this is not a requirement.
 To make sure that the examples will be tested%
@@ -405,6 +405,8 @@ The structure of an example directory should be as follows:
                    |
                    +--- include/
                    |
+                   |- README
+                   |
                    |- cgal_test
                    |
                    |- makefile
@@ -413,7 +415,9 @@ The structure of an example directory should be as follows:
 \end{verbatim}
 
 \ccIndexSubitem{source files}{examples}
-See the rules for a test directory for an explanation of these files 
+The file {\tt README} should contain information about what the programs do
+and how to compile them. 
+See the rules for a test directory for an explanation of the other files 
 and subdirectories. 
 \ccIndexSubitemEnd{example programs}{submitting}
 \index{examples directory@{\tt examples} directory|)}
@@ -424,9 +428,10 @@ and subdirectories.
 \ccIndexMainItem{demo programs}
 \ccIndexSubitemBegin{demo programs}{submitting}
 
-The {\tt demo} directory contains programs with graphical interfaces or 
-programs requiring user input. These programs will be compiled but not
-run by the test suite.\ccIndexSubitem{test suite}{demos in}
+The {\tt demo} directory (Chapter~\ref{chap:examples_and_demos}) contains 
+programs with graphical interfaces or programs requiring user input. These 
+programs will be compiled but not run by the test suite.
+\ccIndexSubitem{test suite}{demos in}
 The structure of this directory should be as follows: 
 \begin{verbatim}
       demo/<demodir>
@@ -503,6 +508,8 @@ The fules for submitting bug fixes are:
 \ccIndexSubitemEnd{submitting}{directory structure for}
 \ccIndexMainItemEnd{directory structure}
 
+\InternalOnly{
+
 \section{Requirements and recommendations}
 \label{sec:directories_req_and_rec}
 
@@ -520,3 +527,5 @@ Recommendations:
    \item Do not submit the script {\tt cgal\_test} used to compile and test
          your test suite programs.
 \end{itemize}
+
+}

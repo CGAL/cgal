@@ -3,7 +3,7 @@
 % Chapter: CVS Server
 % -----------------------------------------------------------------------------
 % file   : cvs.tex
-% authors: Mariette Yvinec <yvinec@sophica.inria.fr>
+% authors: Mariette Yvinec, Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 % -----------------------------------------------------------------------------
 % $Revision$
 % $Date$
@@ -11,109 +11,85 @@
 
 \chapter{CVS Server}
 \label{chap:cvs}
-\ccChapterRelease{Chapter Version: 1.0} \\
-\ccChapterAuthor{Mariette Yvinec ({\tt yvinec@sophia.inria.fr})}
-\ccIndexMainItemBegin{CVS server}
+\ccChapterRelease{Chapter Version: 2.0} \\
+\ccChapterAuthor{Sylvain Pion ({\tt Sylvain.Pion@sophia.inria.fr})}
+\index{CVS server|(}
 
 CVS (Concurrent Versions System) is a very efficient version control
 system that keeps track of the complete history of changes for a set of
 source files.  CVS is of great help when several people work on the
-same project. To know more about CVS, look at
-\path|http://www.sourcegear.com/CVS/support|
-where you can find an 
-\ccAnchor{http://www.sourcegear.com/CVS/Docs/overview}{introduction to CVS}, 
-a \ccAnchor{http://www.sourcegear.com/CVS/Docs/ref}{quick reference list}
-of CVS commands and 
-\ccAnchor{http://www.sourcegear.com/CVS/Docs/infopages}{the full reference manual}.
+same project.
 
-The machine \texttt{cgal.inria.fr} hosts a CVS server
-(and also the Java demo server) for \cgal.
+You can find the CVS manual at \path|http://www.cvshome.org/docs/manual/|.
+Lots of documentation, including tutorials, can easily be found on the net.
 
-\section{Why use a CVS server?}
-\label{sec:why_cvs}
-
-The original motivation for the CVS server was the need by 
-developers separated by some distance to work on a single package.
-A CVS server is a very convenient way to do that.
-Currently, the server is used to handle the maintainance of orphaned packages 
-that don't have a precise maintainer but in which we sometimes need to 
-make trivial modifications, but it could also be used to handle, for
-example:
-\begin{itemize}
-\item the web pages of the main \cgal\ web site(s);
-\item the Java Demo files (in this way, you could more easily add a
-       demo for your algorithms);
-\item the packages contributed by external people.
-\end{itemize}
-
+The machine \texttt{cgal.inria.fr} hosts a CVS server for \cgal.
+There is read-only access via the web at
+\path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/|.
 
 \section{Structure of the repository}
 \label{sec:cvs_structure}
-\ccIndexSubitem{CVS server}{directory structure}
+\index{CVS server!directory structure}
 \ccIndexSubitem{directory structure}{for CVS server}
 
-The CGAL repository, which is backed up daily,
-\ccIndexSubitem{CVS server}{backup} 
+The \cgal\ repository, which is backed up daily,
+\index{CVS server!backup} 
 is organized in the following way:
 \begin{itemize}
 \item There is one CVS module per \cgal\ package.
-\item A CVS module has the same structure as the current CGAL packages
-      (Chapter~\ref{chap:directory_structure}),
-      except that it may include the full source code for the documentation
-      as well as the implementation.  This means that source files from
-      literate programming tools (Chapter~\ref{sec:code_format}) used for 
-      implementation and specification documentation are included as well
-      as a means to create the target files from the source files (\eg,
-      a makefile). Other files can be included too as long as there's an 
-      automatic way to create the \cgal\ packages from the CVS files. We 
-      may define a common interface for that, let say \ccc{make package}.
-\item The CVS module should not include files that take a lot of disk space and 
-      can be easily remade from the sources (\ie, no \texttt{.ps}, \texttt{.o},
-      \texttt{.tar.gz}, \etc).
-\item A \ccc{Skeleton} CVS module will be provided to ease the creation
-      of new modules/packages that look like the others (thus more easily
-      handled by other people).  For example we could require files like
-      \texttt{MAINTAINERS}, \texttt{TODO}, a main \texttt{Makefile}
-      with targets \texttt{clean}, \texttt{doc}, \texttt{package},
-      \texttt{submit}, \texttt{test}, \texttt{code}...  (if there
-      should be a common structure, we shall decide it)
+\item A CVS module has the same structure as the current \cgal\ packages
+      (Chapter~\ref{chap:directory_structure}). 
+
+      As a general rule, try to not put under CVS control any files
+      that are automatically generated.
+      Note that you can put some files under CVS control that you don't
+      want to be included in releases (\textit{e.g.}, literate programming 
+      web files).
+      You can do that by adding their names in a \texttt{dont\_submit} file
+      \index{CVS server!dont_submit file@\texttt{dont\_submit} file}
+      (at the top of the module), using the syntax explained in the
+      \texttt{tar} manual (see the \texttt{--exclude-from}
+      option in the doc at \path|http://www.gnu.org/manual/tar/|).
+      By default, the files \texttt{TODO} and \texttt{wrapper.tex} are 
+      excluded from submissions.
 \end{itemize}
 
-The repository tree will have the following structure:
-	
+The repository tree has the following structure:
+
 \begin{verbatim}
 $CVSROOT/CGAL
+           |
            +---- Packages/ 
-           |         +--- C2/  
+           |         |
+           |         +--- Convex_hull_2/  
+           |         |     |
+           |         |     |-- maintainer 
+           |         |     |
+           |         |     |-- version
+           |         |     |
+           |         |     |-- changes.txt 
+           |         |     |
            |         |     |-- TODO 
-           |         |     |
-           |         |     |-- Makefile 
-           |         |     |
-           |         |     |-- MAINTAINERS 
            |         |     |
            |         |     +-- include/CGAL/ 
            |         |     |
            |         |     +-- src/ 
            |         |     |
-           |         |     |-- changes.txt 
+           |         |     +-- doc_tex/ 
            |         |     |
-           |         |     |--  ... 
+           |         |     +-- test/ 
            |         |     |
-           |         +--- CLN/  
+           |         |     +--  ... 
+           |         |
+           |         +--- Number_types/  
            |         |     
-           |         +--- Interval\_arithmetic/ 
+           |         +--- Cartesian_kernel/
            |         |     
            |         +--- ...  
-           |         |     
-           +---- Infrastructure/ 
+           |
+           +---- Old_Packages/
                      |     
-                     +--- Skeleton/ 
-                     |     
-                     +--- Manual_Tools/ 
-                     |     
-                     +--- Web_Files/  
-                     |     
-                     +--- Scripts/  
+                     +--- Bops/ 
                      |     
                      +--- ...  
 \end{verbatim}
@@ -121,150 +97,77 @@ $CVSROOT/CGAL
 
 \section{Access to the repository}
 \label{sec:cvs_access}
-\ccIndexSubitemBegin{CVS server}{access}
+\index{CVS server!access|(}
 
-Here are the access rules
+Here are the access rules:
 \begin{itemize}
 \item Everybody who has the login and password for \cgal\ members 
-      has read access to the \cgal\ repository.
-\item A set of people will have write access to the repository, primarily the
-      package maintainers.
-\item Write access is determined on a per-directory basis under CVS.
-      There is a Unix group for each module (\cgal\ Package), 
-      and anyone who has write access for a package is included
-      in the corresponding group. (The set of people who have write access
-      to a package should be decided by the maintainer of the package).
-\item CVS allows several methods to access the repository.  We chose the 
-      so-called \textit{pserver} approach since it is compulsory for read-only
-      access.  So there will be a Unix account on the machine 
-      \texttt{cgal.inria.fr} for everyone who
-     should have write-access, plus one anonymous account 
-     for \cgal\ members.
-\item You won't be able to login on this machine except via CVS.
+      has read access to the \cgal\ repository and there is also
+      read-only access for members via the web at 
+      \path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/|.
+\item Each package has a set (which can be only one person) of people having
+      write access to the corresponding module.  It's up to the maintainer of
+      the package to decide who is given write access, and how you should
+      coordinate (we may decide something else for the freeze periods).
+      The file
+      \path|http://cgal.inria.fr/cgi-bin/cvsweb.cgi/Admin/write_access_rights|
+      contains the write access lists.
+\item Currently, there is no SSH access method, only the less secure pserver
+      is working.
 \end{itemize}
-\ccIndexSubitemEnd{CVS server}{access}
-
-
-\section{Check-in policy}
-\label{sec:cvs_check_in}
-\ccIndexSubitemBegin{CVS server}{check-in policy}
-
-Here are the proposed check-in policies. (These are inspired from those of GCC, 
-so there is a proof that it can actually work.):
-
-\begin{itemize}
-\item Nobody is forced to use the CVS server to handle the maintainance of 
-      packages.
-\item Orphaned packages go there automatically so that they can be more easily
-      maintained by various people who will be given write-access.
-\item Each package maintainer can put packages there if desired.
-\item How check-ins are done for each package is decided by the maintainer.
-      We propose the following:
-     \begin{itemize}
-     \item You are the package {\bf maintainer}: you check-in what you want,
-          you decide who will be {\bf co-maintainer} of your package, and
-	  who will have {\bf write permission after approval}.
-     \item You are a {\bf co-maintainer}: you have write access to the
-          package, you discuss the policy with the other co-maintainers
-          by e-mail, and tell them when you commit something.
-     \item You have {\bf write permission after approval} by the maintainer(s):
-           You have write-access, but you need the permission
-	   of the maintainer to commit a patch.
-          This is useful if you want to contribute to a package frequently,
-          but the main maintainers want to review everything that you
-          check in before.  After approval, you can check in the patch
-          yourself, and the maintainer(s) use \texttt{cvs update} to retrieve
-	  your submitted patches.
-     \item You have only {\bf read-only} access to a package: 
-           You can easily check out a copy of the current code,
-	   make your modifications, test them, produce a patch (preferably
-	   with \texttt{cvs diff -u} ) and send it by e-mail to the
-	   maintainers of the package, who will be able to approve and check
-	   it in, or disapprove.
-     \end{itemize}
-\end{itemize}
-\ccIndexSubitemEnd{CVS server}{check-in policy}
+\index{CVS server!access|)}
 
 
 \section{How to use it}
 \label{sec:cvs_how_to}
 
-Note: this concerns the temporary current setup on \texttt{cgal.inria.fr}.
-
 \begin{itemize}
 \item
     First, you have to login (this basically stores the password in your
-    \texttt{.cvspass} file). For read-only access, type: \\
-    \texttt{cvs -d :pserver:member1@cgal.inria.fr:/CVSROOT login} \\
-    and enter the corresponding password.
+    \texttt{.cvspass} file). Type: \\
+    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT login} \\
+    and enter the password corresponding to your \texttt{login\_name} \\
+    (\texttt{member1} if you don't have any).
 \item
     To get the list of existing modules:
-    \texttt{cvs -d :pserver:member1@cgal.inria.fr:/CVSROOT co -c} \\
+    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co -c}
 \item
-    To check out a module, say \ccc{C2}:
-    \texttt{cvs -d :pserver:member1@cgal.inria.fr:/CVSROOT co C2} \\
+    To check out a module, say \ccc{Convex\_hull\_2}: \\
+    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co
+    Convex\_hull\_2}
 \item
     Once you have checked out a module, you don't need to specify
-    \texttt{-d ...} anymore.
+    \texttt{-d ...} anymore for the usual commands like \texttt{cvs commit}...
 \item
-    If you need write access (you want to put your package there, or be
-    allowed to modify someone else's package), you need a
-    login name and password. To get one contact 
-    \ccAnchor{mailto:yvinec@sophia.inria.fr}{\texttt{yvinec@sophia.inria.fr}}
-    and supply your login name, an encrypted password  and the list of 
-    the modules you want write access to.
-\end{itemize}
-
-You can use the following program to compute an encrypted password:
-    
+    To obtain write access to a package, you first need a personal login
+    name and password.  Send your login name to 
+    \ccAnchor{mailto:Sylvain.Pion@sophia.inria.fr}
+    {\texttt{Sylvain.Pion@sophia.inria.fr}}, as well as your password,
+    encrypted by the Perl script~:
 \begin{verbatim}
-#define _XOPEN_SOURCE
-#include <unistd.h>
-#include <stdio.h>
+#!/usr/local/bin/perl
+#
+# Perl script that computes an encrypted password.
+# Taken from the book "Open Source development with CVS" by Karl Fogel.
+# Sylvain Pion, 2000.
 
-int main()
-{
-   // salt  is  a  two-character  string  chosen  from  the  set
-   // [a-zA-Z0-9./].   This  string is used to perturb the algo-
-   // rithm in one of 4096 different ways.
-   const char *salt = "gc";
+srand (time());
+my $randletter = "(int (rand(26)) + (int (rand(1) + .5) % 2 ? 65 : 97))";
+my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
+my $plaintext = shift;
+my $crypttext = crypt ($plaintext, $salt);
 
-   // Your password in clear text (8 characters max)
-   const char *key = "mypasswd";
-   printf("%s\n", crypt(key,salt));
-   return 0;
-}
+print "${crypttext}\n";
 \end{verbatim}
 
-
-\section{Remarks}
-\label{sec:cvs_remarks}
-
-\begin{itemize}
-\item
-     This CVS server is still in an experimental stage.  If you think
-     that small modifications should be done so that you could happily use
-     this stuff, then send mail to 
-     \ccAnchor{mailto:cgal-develop@cs.uu.nl}{\texttt{cgal-develop@cs.uu.nl}}
-     or \ccAnchor{mailto:yvinec@sophia.inria.fr}{\texttt{yvinec@sophia.inria.fr}}
-     and let's discuss it.
-\item
-     There are possibilities to run a script after each \texttt{cvs
-     commit} command to, for example, send mail to a list who would track
-     these modifications (and archive them), or the maintainers might receive
-     a mail for each modification done to their packages, \etc...
-\item
-     We are open to technical suggestions from people who know about CVS.
-\item
-     Currently the machine \texttt{cgal.inria.fr} is not very powerful,
-     but if the need arises, we might be able to upgrade it.
-\item
-     If the scheme is successful and generalized, we might think about
-     extending it to the way we submit packages (Internal releases
-     can be created using the command \texttt{cvs update -rlast\_submit}, 
-     with an appropriate tag that the
-     maintainer just sets to a particular version, instead of submitting).
-     That's for the longer term.
+    and indicate for which packages you need write permission.
 \end{itemize}
 
-\ccIndexMainItemEnd{CVS server}
+There are possibilities to run a script after each \texttt{cvs
+commit} command, for example to send mail to the maintainers of
+a package so they all can keep track of what is going on.
+
+To submit a package from the CVS server, use the script
+\ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/CGAL/Packages/Scripts/developer_scripts/cgal_submit}{\texttt{cgal\_submit}} (Section~\ref{sec:cgal_submit}).
+
+\index{CVS server|)}

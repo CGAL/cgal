@@ -8,9 +8,22 @@
 % $Revision$
 % $Date$
 % =============================================================================
+\ccIndexMainItem{preconditions}
+\ccIndexMainItem{postconditions}
+\ccIndexMainItem{assertions}
+\ccIndexMainItem{warnings}
 
 \chapter{Specification Documentation}
 \label{chap:specification}
+
+
+\begin{quote}
+There are two ways of constructing a software design.  One way is to make
+it so simple that there are obviously no deficiencies.  And the other way
+is to make it so complicated that there are no obvious deficiencies.
+
+\hspace*{\fill}{\em C. A. R. Hoar}
+\end{quote}
 
 \ccIndexMainItemBegin{manuals}
 \ccChapterRelease{Chapter Version: 1.1} \\
@@ -20,49 +33,35 @@ The official \cgal\
 \ccAnchor{http://www.cgal.org/Manual/}{documentation} 
 is currently divided into six separate manuals:
 \begin{itemize}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/installation/contents.html}{Installation Guide}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual0/contents.html}{General Introduction}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual1/contents.html}{Kernel}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual2/contents.html}{Basic Library}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/ref-manual3/contents.html}{Support Library}
-   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/contents.html}{Use of \stl\ and \stl\ Extensions in \cgal}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsInstallation.html}{Installation Guide}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsKernel.html}{Kernel}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsBasic.html}{Basic Library}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{Support Library}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsUseOfSTL.html}{Use of \stl\ and \stl\ Extensions in \cgal}
+\end{itemize}
+and
+\begin{itemize}
+   \item \ccAnchor{http://www.cgal.org/Manual/doc_html/deprecated_basic_lib/contents.html}{Basic Library -- Deprecated Packages}
 \end{itemize}
 Not surprisingly, the Installation Guide describes how to install \cgal
-\ccIndexMainItem{installation}, 
-and the General Introduction generally introduces the library 
-by discussing the organization of the manuals
-\ccIndexSubitem{manuals}{organization}, the
-\cgal\ namespace (Chapter~\ref{chap:namespaces}),
-\ccIndexSubitem{namespace}{\ccFont CGAL} restrictions on the 
-inclusion order of header files
-\ccIndexSubitem{header files}{inclusion order},
-changes since the last release
-\ccIndexMainItem{release changes}
-and the various checks (preconditions,
-postconditions, {\em etc.}; see Chapter~\ref{chap:checks})
-\ccIndexMainItem{preconditions}
-\ccIndexMainItem{postconditions}
-\ccIndexMainItem{assertions}
-\ccIndexMainItem{warnings}
-used in the library.
-(This manual began its life as a larger document, but the information 
-originally contained in it has since been farmed out to other manuals.
-When someone has the time to attend to it, this manual should grow again
-to include a broader overview of the library.) The Use of \stl\ manual
-describes features of \stl\
-\ccIndexMainItem{\stl} that are used and extended in \cgal.
+\ccIndexMainItem{installation} and the Use of \stl\ manual describes 
+features of \stl\ \ccIndexMainItem{\stl} that are used and extended in \cgal.
+The manual of deprecated packages contains documentation of packages that are
+still distributed with the library but are on their way out persumably because
+they have been replaced by something better that is perhaps not supported on
+all platforms the library supports.  
 
 Documentation of new packages and features will likely be included in
 the Kernel, Basic Library, and Support Library documentation.  See 
 Section~\ref{sec:overall_design} for a description of what these three 
 parts of the library contain. Each of
-these manuals is (or, rather, will soon be) further subdivided into two 
+these manuals is (or will soon be) further subdivided into two 
 parts:  a Reference Manual and a Users' Manual.  Sections~\ref{sec:ref_manual}
 and~\ref{sec:users_manual} below describe the contents of these two parts.
 
-The manuals are produced from \ccTexHtml{\LaTeX\ }{LaTeX} input files in 
+The manuals are produced from \ccTexHtml{\LaTeX}{LaTeX} input files in 
 both PostScript and
-HTML format.  The conversion from \ccTexHtml{\LaTeX\ }{LaTeX} input to HTML 
+HTML format.  The conversion from \ccTexHtml{\LaTeX}{LaTeX} input to HTML 
 output is accomplished 
 through the use of a set of shell scripts and programs, as well as style 
 files that were designed to support this conversion.  These style files
@@ -87,9 +86,12 @@ documentation.
 \ccIndexSubitemBegin{tools}{manual}
 
 The manual tools are provided as a compressed tar file that is downloadable
-from \path|http://www.mpi-sb.mpg.de/~hert/CGAL/Tools/|.  When unpacked, the
-tar file will create a directory called {\tt Tools} that contains the following
-subdirectories:
+from \path|http://www.cgal.org/Members/Manual_tools/|.  The CVS package 
+\verb+Manual_tools+\ccIndexSubsubitem{tools}{manual}{CVS package}
+\index{CVS server!Manual_tools package@\texttt{Manual\_tools} package} contains the 
+source files used to create this distribution.  When unpacked, the
+tar file will create a directory called \texttt{Manual\_tools} that contains 
+the following subdirectories:
 
 \begin{description}
    \item[{\bf\tt doc/}] -- directory containing the documentation for
@@ -105,8 +107,8 @@ subdirectories:
         \ccTexHtml{\LaTeX\ }{LaTeX} to HTML.
 \end{description}
 
-There are also {\tt README} and {\tt INSTALLATION} files provided that
-will help you to install the tools on your system.
+There are also {\tt CHANGES}, {\tt README}, and {\tt INSTALLATION} files 
+provided that will help you to install the tools on your system.
 
 \subsection{The style files}
 \label{subsec:manual_style_files}
@@ -125,7 +127,7 @@ the file, the commands it defines, and how to use them.  These documents
 (\ccAnchor{./cc_manual.ps.gz}{{\tt cc\_manual.ps.gz}}, 
 \ccAnchor{./cc_manual_index.ps.gz}{{\tt cc\_manual\_index.ps.gz}} and
 \ccAnchor{./latex_to_html.ps.gz}{{\tt latex\_to\_html.ps.gz}}, respectively)
-are located in the {\tt Tools/doc} 
+are located in the {\tt Manual\_tools/doc} 
 directory\ccIndexSubsubitem{tools}{manual}{documentation}.
 
 \subsection{Scripts and programs}
@@ -143,13 +145,13 @@ The following scripts and programs are provided with the tools package.
          -- script used to prepend a part number to the 
          page numbers in a {\tt .idx} file produced by the indexing commands in
          a \ccTexHtml{\LaTeX\ }{LaTeX} document.  
-         See \ccAnchor{./cc_manual_index.ps.gz}{{\tt Tools/doc/cc\_manual\_index.ps.gz}}.
+         See \ccAnchor{./cc_manual_index.ps.gz}{{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}.
    \item \lcRawHtml{<A NAME="cc_extract_html">} 
          \verb|cc_extract_html|\lcRawHtml{</A>}%
          \index{cc_extract_html program@{\tt cc\_extract\_html} program}%
           -- program used by {\tt cc\_manual\_to\_html}
          that converts a \ccTexHtml{\LaTeX\ }{LaTeX} file into an HTML file.
-         See \ccAnchor{./latex_to_html.ps.gz}{{\tt Tools/doc/latex\_to\_html.ps.gz}}.
+         See \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}}.
          \lcRawHtml{<A NAME="cc_extract_images">}
    \item \verb|cc_extract_images|\lcRawHtml{</A>}%
          \index{cc_extract_images program@{\tt cc\_extract\_images} program}
@@ -165,31 +167,31 @@ The following scripts and programs are provided with the tools package.
          \lcRawHtml{<A NAME="cc_make_ref_pages">}
    \item \verb|cc_make_ref_pages|\lcRawHtml{</A>}
          \index{cc_make_ref_pages script@{\tt cc\_make\_ref\_pages} script}
-         -- script that creates a%
-         \ccAnchor{example/doc_tex/basic/Package/Package_ref/main_tex}%
+         -- script that creates a
+         \ccAnchor{example/doc_tex/basic/Package_ref/main_tex}%
                   {{\tt main.tex}}%
          \ccIndexMainItem{\tt main.tex}%
          \ccIndexSubitem{reference manual}{\tt main.tex}
          file in a directory, the name of which is supplied as an argument.  
          This {\tt main.tex} will be the driver file for the reference manual 
          chapter for the directory named in the argument. See 
-         \ccAnchor{./latex_to_html.ps.gz}{{\tt Tools/doc/cc\_manual.ps.gz}} 
+         \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}} 
          and the script itself for further explanation.
          \lcRawHtml{<A NAME="cc_manual_to_html">}
    \item \verb|cc_manual_to_html|\lcRawHtml{</A>}%
-         \index{cc_manual_to_html script@{\tt cc\_manual\_to\_html} script}%
+         \index{cc_manual_to_html script@{\tt cc\_manual\_to\_html} script}
          -- script that does the conversion from \ccTexHtml{\LaTeX\ }{LaTeX} 
             to HTML\ccIndexSubitem{manuals}{HTML}%
             \ccIndexSubitem{manuals}{HTML}.  
-            See \ccAnchor{./latex_to_html.ps.gz}{{\tt Tools/doc/latex\_to\_html.ps.gz}}%
-         and \ccAnchor{./cc_manual.ps.gz}{{\tt Tools/doc/cc\_manual.ps.gz}}.
+            See \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}}
+         and \ccAnchor{./cc_manual.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}.
          \lcRawHtml{<A NAME="cc_ref_wizard">}
    \item \verb|cc_ref_wizard|\lcRawHtml{</A>}%
          \index{cc_ref_wizard script@{\tt cc\_ref\_wizard} script}
-         -- script that creates a reference page skeleton%
+         -- script that creates a reference page skeleton
          \ccIndexSubitem{reference manual}{page template script}%
          given the category of the item and the item name. See
-         \ccAnchor{./cc_manual.ps.gz}{{\tt Tools/doc/cc\_manual.ps.gz}}
+         \ccAnchor{./cc_manual.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}
          and the script itself for further explanation.
          \lcRawHtml{<A NAME="cc_index_fix">}
    \item \verb|index_fix|\lcRawHtml{</A>}%
@@ -198,12 +200,12 @@ The following scripts and programs are provided with the tools package.
          -- script used to postprocess an {\tt .ind } file 
          produced by {\tt makeindex} to make the index fit the specifications
          detailed in \ccAnchor{./cc_manual_index.ps.gz}%
-         {{\tt Tools/doc/cc\_manual\_index.ps.gz}}.
+         {{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}.
 \end{itemize}
 
 
 The following programs are obsolete and will likely disappear from the
-tools package:
+manual tools package:
 \begin{itemize}
          \lcRawHtml{<A NAME="cc_extract">}
    \item \verb|cc_extract|\lcRawHtml{</A>}%
@@ -211,7 +213,7 @@ tools package:
           -- program to read a specification written with
          the \verb|cc_manual.sty| file and output all declarations in the
          document to standard output in \CC\ format. 
-         See \ccAnchor{./cc_extract.ps.gz}{{\tt Tools/doc/cc\_extract.ps.gz}} for further explanation.
+         See \ccAnchor{./cc_extract.ps.gz}{{\tt Manual\_tools/doc/cc\_extract.ps.gz}} for further explanation.
          \lcRawHtml{<A NAME="cc_check">}
    \item \verb|cc_check|\lcRawHtml{</A>}%
          \index{cc_extract script@{\tt cc\_check} script}
@@ -219,20 +221,9 @@ tools package:
          specification written in a \ccTexHtml{\TeX\ }{TeX} file with the 
          \verb|cc_manual.sty| 
          and the implementation in a C++ header file.  See
-         \ccAnchor{./cc_extract.ps.gz}{{\tt Tools/doc/cc\_extract.ps.gz}} 
+         \ccAnchor{./cc_extract.ps.gz}{{\tt Manual\_tools/doc/cc\_extract.ps.gz}} 
          for further explanation.
          \lcRawHtml{<A NAME="cc_rename_include">}
-   \item \verb|cc_rename_include|\lcRawHtml{</A>}%
-         \index{cc_rename_include@{\tt cc\_rename\_include} script}
-         -- script that renames all 
-         \verb|\ccc{#include<...>}| directives in a document to 
-         \verb|\ccInclude{...}| commands.  
-         \lcRawHtml{<A NAME="cc_update_2.1">}
-   \item \verb|cc_update_2.1|\lcRawHtml{</A>}%
-         \index{cc_update_2.1 script@{\tt cc\_update\_2.1} script}
-         -- script that can be used to translate a 
-         document written using a version of the tools older than 2.1
-         to the newer version. 
 \end{itemize}
 \ccIndexSubitemEnd{tools}{manual}
 \ccModifierCrossRefOn
@@ -255,9 +246,7 @@ put in their own chapter.)\ccIndexSubitem{manuals}{new style}
 It is required that the documentation submitted with a package be organized
 according to a specific directory structure, which is described more
 completely in Section~\ref{sec:doc_tex_subdirectory}.  You must submit
-both the {\tt .tex} source files and a PostScript version of the reference
-manual and users' manual chapters for your package according to the following
-rules:
+the {\tt .tex} source files according to the following rules:
 \begin{itemize}  
    \item The {\tt .tex} files for the users' manual%
          \ccIndexSubitem{users' manual}{directory} should be placed in a 
@@ -271,28 +260,27 @@ rules:
          manual source files using the \verb|\input| command (NOT the
          \verb|\include| command).%
          \index{input@$\backslash${\tt input}!vs. include@vs. $\backslash${\tt include}}.
-         (Until the new manual style is used, this
-         file should also input the reference manual source files.)%
          \ccIndexSubitem{manuals}{new style}%
          \ccIndexMainItem{reference manual}
 
    \item The source files for the reference manual should be placed in the 
-         directory \verb|doc_tex/|\VarText{manual part}/\VarText{Package}/%
-         \VarText{Package}\verb|_ref|%
+         directory \verb|doc_tex/|\VarText{manual part}/\VarText{Package}%
+         \verb|_ref|.
          \ccIndexSubitem{directory structure}{for reference manual}%
          \ccIndexSubitem{reference manual}{directory}%
          \index{ref directory@{\tt \_ref} directory}%
          (See Section~\ref{sec:doc_tex_subdirectory} for a full description of 
           the directory structure for the documentation.)
          and must also include a file 
-         \ccAnchor{example/doc_tex/basic/Package/Package_ref/main_tex}{{\tt main.tex}}.  For the purposes of the HTML converter, each item 
+         \ccAnchor{example/doc_tex/basic/Package_ref/main_tex}{{\tt main.tex}}.
+         For the purposes of the HTML converter, each item 
          documented in the reference manual should be put in its own file. 
          \ccIndexSubitem{reference manual}{files}
          (The script \ccAnchor{#cc_ref_wizard}{{\tt cc\_ref\_wizard}} can be 
           used to create these files.)
          The script \ccAnchor{#cc_make_ref_pages}{{\tt cc\_make\_ref\_pages}} 
          will create a 
-         \ccAnchor{example/doc_tex/basic/Package/Package_ref/main_tex}%
+         \ccAnchor{example/doc_tex/basic/Package_ref/main_tex}%
                   {{\tt main.tex}}
          \ccIndexSubsubitem{reference manual}{\tt main.tex}{creating}
          file given the name of the directory that contains the separate files 
@@ -300,19 +288,20 @@ rules:
          reference manual item.  The items will be input in alphabetical order,
          with a file {\tt intro.tex}\ccIndexMainItem{\tt intro.tex}, if it 
          exists, included first.  In the
-         \ccAnchor{example/doc_tex/basic/Package/Package_ref/intro_tex}%
+         \ccAnchor{example/doc_tex/basic/Package_ref/intro_tex}%
                   {{\tt intro.tex}} file, 
          there should be the \verb|\chapter| command,
          a short introductory section and an overview of the reference pages
-         contained in the chapter.  See the example provided in
-         \nonlinkedpath|Tools/example/Example_ref|. 
+         contained in the chapter as well as a nonnumbered section labeled
+         \textbf{Assertions} that indicates the string used in the 
+         package-specific assertion macros 
+         (Section~\ref{sec:checks_controlling}).  See the current reference
+         manual and the example provided in
+         \nonlinkedpath|Manual_tools/example/two_manuals|. 
 
-   \item The PostScript\ccIndexSubsubitem{manuals}{PostScript}{submitted} 
-         version of the chapters should be placed in
-         a directory \verb|doc_ps|\index{doc_ps directory@{\tt doc\_ps} directory}.  
-         To create this PostScript output
-         (and to test that there is no problem in converting your {\tt .tex}
-         files to HTML using {\tt cc\_manual\_to\_html})%
+   \item To create a PostScript version of a package's manual and to test 
+         that there is no problem in converting your {\tt .tex} files to 
+         HTML using {\tt cc\_manual\_to\_html}
          \ccIndexSubitem{manuals}{HTML}%
          \index{cc_manual_to_html script@{\tt cc\_manual\_to\_html} script}, 
          you will need
@@ -320,13 +309,137 @@ rules:
          that includes the preamble, \verb|\begin{document}|,
          \verb|\end{document}|, {\em etc.} commands.  This wrapper file
          should NOT be submitted (especially if it is called {\tt wrapper.tex}).
-         An example wrapper file is available in \nonlinkedpath|Tools/example|.  
-         You should submit one PostScript document that includes both the
-         users' manual and reference manual chapters.
+         Example wrapper files are available in the 
+         \nonlinkedpath|Manual_tools/example| directory and the actual wrapper
+         file used to create the manuals can be found in the package 
+         \texttt{Manual} on the \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/}{CVS server}
+         in the \nonlinkedpath|doc_tex_skel| subdirectory.
 \end{itemize}
 \ccIndexSubitemEnd{source files}{documentation}
 \ccIndexSubitemEnd{manuals}{source files}
 
+\section{Users' manual}
+\label{sec:users_manual}
+\ccIndexMainItemBegin{users' manual}
+
+In contrast to the reference manual, the users' manual is intended to be
+read by users who are first considering whether to use part of the library.
+Thus the descriptions provided here should give sufficient information
+for a user to understand the functionality provided by the packages, but
+this does not mean, for example, that all functions and classes need to
+be described in great detail.  Descriptions should be given in a more 
+general way than in the reference manual.  For example, one might mention 
+that there is a function called \ccc{ch_jarvis} that implements the Jarvis 
+march convex hull algorithm, but one need not explicitly state what the 
+arguments of this function are, what the traits class requirements are,
+or the template parameters. The users' manual should also provide examples%
+\ccIndexSubitem{example programs}{in users' manual}
+that are more lengthy than the ones provided in
+the reference manual.  The examples should naturally be accompanied by
+sufficient explanation of the code in order for them to be understandable,
+and one should aim for examples that illustrate the most interesting 
+features of a package and not necessarily the most complicated ones.
+
+You should mention the precise name of the class(es) or function(s)
+being described (although NOT in the table of contents) so if the user 
+wants the functionality being described it will be easy to find the thing 
+that provides it.  If the precise name is given (\textit{i.e.}, the name 
+given at the top of the reference page), then a hyperlink can be created 
+automatically.
+
+As a rule, each chapter should include:
+\begin{itemize}
+ \item definitions necessary to describe the functionality (usually at the
+       beginning of the chapter);
+
+ \item a section describing the software design, where applicable.  When there
+       are no real design issues to explain, then a section isn't really 
+       warranted but at the very least the interface to the class or function 
+       should be briefly explained (\textit{e.g.}, ``the class 
+       \ccc{CGAL::Cone<T, DS>} has two template parameters; the first 
+       represents the traits class and the second the data structure'', or 
+       ``the function \ccc{flavor(b, e, r)} computes the value 42 
+        from an iterator range \ccc{[b, e)} over a set of points.  The 
+        computed value is stored in the output iterator \ccc{r}");
+
+  \item one or more examples, which are included in the \texttt|examples|
+        or \texttt|demo| directory of the package and inserted into the
+        documentation using the \verb|\ccIncludeExampleCode| command.
+        \ccIndexSubitem{example programs}{in manuals}
+
+  \item a section (or paragraph) with information about the 
+        implementation, which includes: 
+        \begin{itemize}
+          \item references to the papers describing the algorithms/DS's 
+                implemented; 
+          \item comments on the running times; 
+          \item and perhaps a short description of how the algorithm works or 
+                the data structure is built.
+        \end{itemize}
+
+  \item pictures of resulting output are good too.
+\end{itemize}
+
+The table of contents reflects the organization of the manual, and it 
+should be a concise but informative listing. These specific guidelines 
+regarding the organization are provided:
+\begin{itemize}
+   \item There should be an introductory section that actually introduces
+         the chapter, perhaps providing definitions of relevant terms.  
+         It should not be followed immediately by examples, as this implies 
+         that the entire description was contained in the introduciton.
+
+   \item The section describing software design should be labeled (you guessed 
+         it) ``Software Design.'' 
+
+   \item Example programs should have entries in the table of contents and
+         the user should be able to figure out quite easily what this example
+         illustrated from the table of contents.  This means, examples should
+         be in sections of their own and the sections should have descriptive 
+         names (\textit{i.e.}, ``Example Constructing a Vanilla Cone'' instead 
+         of just ``Example'', unless this is a subsection of a section
+         entitled ``Vanilla Cone'').
+
+   \item The examples should appear near the things of which they are 
+         examples.  So for chapters describing more than one class (such as 
+         Triangulations) or one class that achieves different things by using 
+         different traits classes (such as Arrangements) or more than one
+         global function, the examples should appear in the sections 
+         corresponding to each class.  For example, if you had a 
+         section labeled, say, "Vanilla Cones" and then you do some 
+         explanations about what vanilla cones are and finally show an example 
+         of constructing one, the expected organization would be 
+         \begin{verbatim}
+           \section{Vanilla Cones}
+           \subsection{Definition}
+           \subsection{...}
+           \subsection{Example}
+           OR
+           \subsection{Example with Extra Stuff}
+         \end{verbatim}
+      
+
+         For chapters describing a single class 
+         (such as HalfedgeDS), the examples can appear in a section of their 
+         own.  
+
+   \item Examples should generally not span more than a page.  
+         Advanced examples are a possible exception.
+\end{itemize}
+
+In general, one should describe things at a level of detail that gives people 
+enough information to determine if they want to refer to the reference page 
+for the full details and one should use the precise name of a reference manual
+item so that cross-linking (by humans or the HTML converter) is possible.  For 
+example, you might say:  
+\begin{quote}
+  The fact that points are required to be chocolate in order to compute a 
+  Hundink cone means that the traits class for a Hundink cone must provide 
+  flavored predicates. The precise description of the requirements is given by 
+  the concept HundinkConeTraits\_6.  The class \ccc{Hundink_cone_traits_6}
+  is a model of this concept.
+\end{quote}
+\ccIndexMainItemEnd{users' manual}
 
 \section{Reference manual}
 \label{sec:ref_manual}
@@ -337,11 +450,11 @@ familiar with the library can look to find information about specific
 parts of the library they want to use.  It should provide detailed
 descriptions of the functions, classes, concepts, {\em etc.} provided
 in the library and should not be weighted down with lengthy explanations
-of the design philosophy or complicated examples
-\ccIndexSubitem{example programs}{in reference manual};  these things belong,
+of the design philosophy or complicated examples;
+\ccIndexSubitem{example programs}{in reference manual}  these things belong,
 if anywhere, in the
 users' manual.  Because the reference manual and users' manual are meant
-to be independent documents, there is (going to be) some overlap between 
+to be independent documents, there is going to be some overlap between 
 the two ({\em e.g.}, text that introduces a package chapter),
 but this overlap should be kept to a minimum.   
 
@@ -356,7 +469,7 @@ one of these environments is the production of a section heading that
 has the category followed by the identifier provided as the argument.  
 For all categories except concepts and function object concepts, this 
 identifier is prefixed by the
-global scope name that has been defined using \verb|\ccDefGlobalScope|.%\ccIndexEntry{DefGlobalScope}
+global scope name that has been defined using \verb|\ccDefGlobalScope|.
 By default, this scope is empty.  For example the following commands
 \begin{verbatim}
    \ccDefGlobalScope{CGAL::}
@@ -377,12 +490,13 @@ If \verb|\ccNewRefManualStyle|%\ccIndexEntry{NewRefManualStyle}%
 \ccIndexSubitem{manuals}{new style} has been set to \verb|\ccTrue|, each
 new reference manual environment will also produce a new page and will
 decorate the first page of each environment with a tab in the side
-margin.  
+margin.   The macro \verb|\ccRefPageBreak| can be usd to turn off page
+breaks for very short reference pages (\textit{e.g.},  for constants).
 
 Below we briefly describe what should be documented in
 each of the {\tt ccRef*} environments and list some of the most useful
 commands for each section.  See 
-\ccAnchor{./cc_manual.ps.gz}{{\tt Tools/doc/cc\_manual.ps.gz}}
+\ccAnchor{./cc_manual.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}
 for a full description of these environments and the other commands
 available.
 
@@ -398,9 +512,9 @@ that are empty for a particular item should, obviously, be left out.
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNN \= IsxModelxforxthexConceptxx \= \kill}
   \> \verb+\ccDefinition+      \>  {\bf Definition}    \>
-                                          including template parameters\\ %\ccIndexEntry{Definition}\\
+                                          including template parameters\\
   \> \verb+\ccInheritsFrom+    \>  {\bf Inherits From}     \>
-                                                     base classes\\ %\ccIndexEntry{InheritsFrom}\\
+                                                     base classes\\
 %  \> \verb+\ccGeneralizes+     \>  {\bf Generalizes}     \>
 %                                                     concept names\\
   \> \verb+\ccRefines+         \>  {\bf Refines}     \>
@@ -410,29 +524,27 @@ that are empty for a particular item should, obviously, be left out.
   \> \verb+\ccIsModel+         \>  {\bf Is Model for the Concept}     \>
                                                      concept names\\
   \> \verb+\ccTypes+           \>  {\bf Types}         \>
-                                                     local type definitions\\ %\ccIndexEntry{Types} \\
+                                                     local type definitions\\ 
   \> \verb+\ccConstants+       \>  {\bf Constants}     \>
-                                                     constant values\\ %\ccIndexEntry{Constants}\\
+                                                     constant values\\
   \> \verb+\ccCreation+        \>  {\bf Creation}      \>
-                                                     constructors, assignment\\ %\ccIndexEntry{Creation}\\
+                                                     constructors, assignment\\ 
   \> \verb+\ccOperations+      \>  {\bf Operations}    \>
-                                                     functions and operators\\ %\ccIndexEntry{Operations}\\
+                                                     functions and operators\\ 
   \> \verb+\ccAccessFunctions+ \>  {\bf Access Functions}    \>
-                                                     member access\\ %\ccIndexEntry{AccessFunctions}\\
+                                                     member access\\ 
   \> \verb+\ccQueryFunctions+ \>   {\bf Query Functions}    \>
                                                      query functions\\
   \> \verb+\ccPredicates+      \>  {\bf Predicates}    \>
-                                                     query functions\\% \ccIndexEntry{Predicates}\\
+                                                     predicates\\
   \> \verb+\ccModifiers +      \>  {\bf Modifiers}    \>
-                                                     insert, delete, update\\% \ccIndexEntry{Modifiers}
-  \> \verb+\ccHasModels+       \>  {\bf Has Models}\>
-                                                     model classes\\% \ccIndexEntry{HasModels}
+                                                     insert, delete, update\\
   \> \verb+\ccSeeAlso+         \>  {\bf See Also}\>
-                                                     running time, memory\\% \ccIndexEntry{SeeAlso}
+                                                     other classes, functions\\
   \> \verb+\ccImplementation+  \>  {\bf Implementation}\>
-                                                     other classes, functions\\% \ccIndexEntry{Implementation}
+                                                     running time, memory\\
   \> \verb+\ccExample+         \>  {\bf Example}       \>
-                                                     programming examples% \ccIndexEntry{Example}
+                                                     program examples
 \end{tabbing}
 \ccIndexSubitemEnd{reference manual}{section headings}
 
@@ -442,8 +554,9 @@ that are empty for a particular item should, obviously, be left out.
 \ccIndexSubitemBegin{reference manual}{classes}
 \ccIndexSubitem{classes}{documenting}
 
-Classes are described using the {\tt ccRefClass} environment.%\Eindex{ccRefClass}
-The types provided by the class should be described using\verb|\ccNestedType|
+Classes are described using the {\tt ccRefClass} environment.
+%\Eindex{ccRefClass}
+The types provided by the class should be described using\verb|\ccTypedef|
 followed by a description
 of each member function, its parameters, and pre- and postconditions (using 
 either \verb|\ccMethod|, \verb|\ccMemberFunction|, or \verb|\ccConstructor|).
@@ -454,12 +567,18 @@ Just after the definition section, a command \verb|\ccInclude| should be
 used to indicate in which file the class is defined.
 \ccIndexSubitemEnd{reference manual}{classes}
 
+Note that it is NOT generally sufficient to say simply that this class
+provides all types and operations required by a concept it models.  The
+point is to document the implementation details here so people can find
+out, for example, exactly what type of point is being used in the computation.
+
 \subsection{Concepts}
 \label{sec:ref_concept}
 \ccIndexSubitemBegin{reference manual}{concepts}
 \ccIndexSubitem{concepts}{documenting}
 
-Concepts should be described using the {\tt ccRefConcept} environment.%\Eindex{ccRefConcept}
+Concepts should be described using the {\tt ccRefConcept} environment. 
+%\Eindex{ccRefConcept}
 Concepts are abstractions that are defined by a set of syntactical and
 semantical requirements.  These requirements include data, types, and functions.
 You should describe the concept under a \verb|\ccDefinition|
@@ -475,7 +594,8 @@ in the library that are models for this concept.
 \ccIndexSubitem{constants, global}{documenting}
 
 Global constants should be described using the 
-{\tt ccRefConstant} environment.%\Eindex{ccRefVariable}.  
+{\tt ccRefConstant} environment.
+%\Eindex{ccRefVariable}.  
 The name of the constant
 should be provided as the argument to the environment.  Under a
 \verb|\ccDefinition| heading, the meaning of the constant
@@ -491,7 +611,8 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemBegin{reference manual}{enums}
 \ccIndexSubitem{enumerations}{documenting}
 
-Global enums should be described using the {\tt ccRefEnum} environment%\Eindex{ccRefEnums}
+Global enums should be described using the {\tt ccRefEnum} environment.
+%\Eindex{ccRefEnums}
 The name of the enum is provided as an argument to this environment.
 Within this environment the \verb|\ccGlobalEnum| macro should be used to
 format the complete enum declaration.  You should describe the enum and
@@ -505,7 +626,8 @@ appropriate ({\em e.g.}, \verb|\ccSeeAlso|, or \verb|\ccExample|).
 \ccIndexSubitemBegin{reference manual}{functions}
 \ccIndexSubitem{functions}{documenting}
 
-Global functions should be described using the {\tt ccRefFunction} environment%\Eindex{ccRefFunction}
+Global functions should be described using the {\tt ccRefFunction} environment.
+%\Eindex{ccRefFunction}
 The name of the function, excluding template declarations and parameters,
 is provided as the argument to this environment.  Under a \verb|\ccDefinition|
 heading, the purpose of the function should be described. Just after the
@@ -518,7 +640,7 @@ of the function should be documented using \verb|\ccPrecond| and
 \verb|\ccSeeAlso|, \verb|\ccImplementation|, and \verb|\ccExample|.
 \ccIndexSubitemEnd{reference manual}{functions}
 
-\subsection{Function Object Classes }
+\subsection{Function Object Classes}
 \label{sec:ref_function_object_class}
 \ccIndexSubitemBegin{reference manual}{function object classes}
 \ccIndexSubitem{function object classes}{documenting}
@@ -556,7 +678,7 @@ concept.
 \ccIndexSubitemBegin{reference manual}{macros}
 \ccIndexSubitem{macros}{documenting}
 
-Global macros should be describe using the {\tt ccRefMacro} environment%\Eindex{ccRefMacro}
+Global macros should be describe using the {\tt ccRefMacro} environment.
 The name of the macro, excluding its arguments, is provided as the argument
 to this environment.  Under a \verb|\ccDefinition| heading, the purpose of
 the macro should be described.  Just after the definition, a command 
@@ -572,7 +694,7 @@ be formatted using \verb|\ccc|.
 %\ccIndexSubitem{types, global}{documenting}
 
 Global variables should be described using the 
-{\tt ccRefVariable} environment.%\Eindex{ccRefVariable}.  
+{\tt ccRefVariable} environment.
 The name of the variable
 should be provided as the argument to the environment.  Under a
 \verb|\ccDefinition| heading, the meaning of the variable
@@ -584,130 +706,6 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemEnd{reference manual}{variables}
 \ccIndexMainItemEnd{reference manual}
 
-\section{Users' manual}
-\label{sec:users_manual}
-\ccIndexMainItemBegin{users' manual}
-
-%%%%%
-% New stuff decided on in Dagstuhl
-%%%%%
-%%
-%%Here are the general guidelines for what should be included in the
-%%users manual and how it should be organized.
-%%
-%%The goal of this manual is to describe the functionality available in
-%%the library and to illustrate it through relatively simple examples
-%%(although, of course not all functionality can be illustrated).
-%%The document should be easily and quickly readable, which means readers
-%%should not get bogged down in too many details.
-%%
-%%You should mention the precise name of the class(es) or function(s)
-%%being described (although NOT in the table of contents) so if the user 
-%%wants the functionality being described it will be easy to find the thing 
-%%that provides it.  If the precise name is given (i.e, the name given at 
-%%the top of the reference page), then a hyperlink can be created automatically.
-%%
-%%Each chapter should include:
-%%   - Definitions necessary to describe the functionality (usually at the
-%%     beginning of the chapter).
-%%
-%%   - A section describing the software design, where applicable.  When there
-%%     are no real design issues to explain, then a section isn't really warranted
-%%     but at the very least the interface to the class or function should be 
-%%     briefly explained (e.g. "the class CGAL::Cone<T, DS> has two template 
-%%     parameters; the first respresents the traits class and the second the 
-%%     data structure", or "the function flavor(b, e, r) computes the value 42 
-%%     from an iterator range [b, e) over a set of points.  The computed value 
-%%     is stored in the output iterator r")
-%%
-%%   - One or more examples.
-%%
-%%   - A section (or, rather, paragraph) with information about the 
-%%     implementation, which includes: references to the papers describing the 
-%%     algorithms/DS's implemented; comments on the running times; and perhaps 
-%%     a short description of how the algorithm works or the data structure is 
-%%     built.
-%%
-%%The table of contents reflects the organization of the manual, and it 
-%%should be a concise but informative listing. These specific guidelines 
-%%regarding the organization are provided:
-%%
-%%   - There *should* be a section labeled Introduction, but the next section
-%%     should not be examples.  Introduction should actually introduce things.
-%%
-%%   - The section describing software design should be labeled (you guessed it)
-%%     Software Design 
-%%
-%%   - Example programs should have entries in the table of contents, which
-%%     means they should be in sections of their own and the sections should
-%%     have descriptive names (i.e. "Example Constructing a Vanilla Cone" instead
-%%     of just "Example Program").  The examples should appear near the things
-%%     of which they are examples.  So for chapters describing more than one
-%%     class (such as Triangulations) or one class that achieves different things
-%%     by using different traits classes (such as Arrangements) or more than one
-%%     global function, the examples should appear in the sections corresponding 
-%%     to each class. For chapters describing a single class (such as HalfedgeDS),
-%%     the examples can appear in a section of their own.  The examples should 
-%%     generally not span more than a page.  Advanced examples are a possible 
-%%     exception.
-%%
-%%In general, one should describe things at a level of detail that gives people 
-%%enough information to determine if they want to refer to the reference page 
-%%for the full details and one should use the precise name of a reference manual
-%%item so that cross-linking (by humans or the HTML converter) is possible.  For 
-%%example, you might say:  
-%%
-%%  The fact that points are required to be chocolate in order to compute a 
-%%  Hundink cone means that the traits class for a Hundink cone must provide 
-%%  flavored predicates. The precise description of the requirements is given by 
-%%  the concept HundinkConeTraits_6.  The class Hundink_cone_traits_6 
-%%  is a model of this concept.
-%%
-%%
-%% PICTURES are good too.
-%%
-%%I wouldn't do this.  The nice thing about having "Example" in the title is it 
-%%tells people immediately that there is some example code to be found in this 
-%%section, and this is often what people look for, I think.  So, if you had a 
-%%section labeled, say, "Vanilla Cones" and then you do some explanations 
-%%about what vanilla cones are and finally show an example of constructing one,
-%%I would expect an organization as follows:
-%%
-%%     \section{Vanilla Cones}
-%%     \subsection{Definition}
-%%     \subsection{...}
-%%     \subsection{Example}
-%%     OR
-%%     \subsection{Example with Extra Stuff}
-%%
-%%(I think this sort of thing is what we suggested for the Triangulation chapter, 
-%%for example.)  
-%%
-%%The point is 
-%%    a) the user should be able to find example code easily from the table
-%%       of contents
-%%and b) the user should be able to figure out quite easily what this example
-%%       illustrates from the table of contents.
-%%
-
-In contrast to the reference manual, the users' manual is intended to be
-read by users who are first considering whether to use part of the library.
-Thus the descriptions provided here should give sufficient information
-for a user to understand the functionality provided by the packages, but
-this does not mean, for example, that all functions and classes need to
-be described in great detail.  Descriptions should be given in a more 
-general way than in the reference manual.  For example, one might mention 
-that there is a function called \ccc{ch_jarvis} that implements the Jarvis 
-march convex hull algorithm, but one need not explicitly state what the 
-arguments of this function are, what the traits class requirements are,
-or the template parameters. The users' manual should also provide examples%
-\ccIndexSubitem{example programs}{in users' manual}
-that are more lengthy than the ones provided in
-the reference manual.  The examples should naturally be accompanied by
-sufficient explanation of the code in order for them to be understandable,
-and one should aim for examples that illustrate the most interesting 
-features of a package and not necessarily the most complicated ones.
-\ccIndexMainItemEnd{users' manual}
 
 \section{Figures}
 \label{sec:doc_figures}
@@ -715,18 +713,18 @@ features of a package and not necessarily the most complicated ones.
 
 When including pictures in your documentation, you must provide versions
 of the pictures for both the PostScript and HTML versions of the manuals.
-This generally means providing both a {\tt .ps} or {\tt .ipe} file and
-a {\tt .gif} file.  You should take care that the figures are readable in
-both formats and that they are neither too large nor too small.  Also,
-all figures used in the HTML documentation should have transparent backgrounds.
-You can achieve this using the {\tt giftrans}\index{giftrans script@{\tt giftrans} script}
-program distributed with
+This generally means providing both a {\tt .ps}, {\tt .eps}, or {\tt .ipe} 
+file and a {\tt .gif} file.  You should take care that the figures are 
+readable in both formats and that they are neither too large nor too small.  
+Also, all figures used in the HTML documentation should have transparent 
+backgrounds.  You can achieve this using the {\tt giftrans}\index{giftrans 
+script@{\tt giftrans} script} program distributed with
 \ccTexHtml{\LaTeX\ }{LaTeX} or by using one of the scripts available at
-\path|http://www.mpi-sb.mpg.de/~hert/CGAL| for converting from 
-\ccAnchor{scripts/latex2gif}{\ccTexHtml{\LaTeX\ }{LaTeX} to gif},
-\ccAnchor{scripts/eps2gif}{Encapsulated PostScript to gif}, 
-\ccAnchor{scripts/pstogif}{PostScript to gif}, and from 
-\ccAnchor{scripts/ipe2gif}{ipe to gif}\ccIndexSubsubitem{manuals}{figures}{converting to gif}.  
+\path|http://www.cgal.org/Members/Manual_tools| for converting from 
+\ccAnchor{http://www.cgal.org/Members/Manual_tools/latex2gif}{\ccTexHtml{\LaTeX\ }{LaTeX} to gif},
+\ccAnchor{http://www.cgal.org/Members/Manual_tools/eps2gif}{Encapsulated PostScript to gif}, 
+\ccAnchor{http://www.cgal.org/Members/Manual_tools/pstogif}{PostScript to gif}, and from 
+\ccAnchor{http://www.cgal.org/Members/Manual_tools/ipe2gif}{ipe to gif}\ccIndexSubsubitem{manuals}{figures}{converting to gif}.  
 
 The program that converts to HTML does not currently support
 the commands that input PostScript figures into a document (since the figures
@@ -796,7 +794,7 @@ order to achieve the following goals:
 You should also take care that the index entries produced by the automatic
 indexing are in keeping with these goals, and, when not, use the commands
 provided in {\tt cc\_manual\_index.sty} to turn off the automatic indexing.
-See the file \ccAnchor{./cc_manual_index.ps.gz}{{\tt Tools/doc/cc\_manual\_index.ps.gz}}
+See the file \ccAnchor{./cc_manual_index.ps.gz}{{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}
 for a description of the commands available and a full description of what
 should and should not be indexed.
 \ccIndexSubitemEnd{index}{PostScript}
@@ -807,7 +805,7 @@ should and should not be indexed.
 \ccIndexSubitemBegin{manuals}{HTML}
 \index{cc_manual_to_html script@{\tt cc\_manual\_to\_html} script}
 
-The script {\tt cc\_manual\_to\_html} converts \ccTexHtml{\LaTeX\ }{LaTex}
+The script {\tt cc\_manual\_to\_html} converts \ccTexHtml{\LaTeX}{LaTex}
 source files
 into HTML files.  This conversion tool supports all the commands
 in the {\tt cc\_manual.sty}\ccIndexMainItem[c]{\tt cc_manual.sty} and 
@@ -838,12 +836,25 @@ documentation works with {\bf both} \ccTexHtml{\LaTeX\ }{LaTeX} and
 {\bf before} submitting.  The test suite is meant simply to assure that all the
 parts fit together nicely and all references to other parts of the manual
 get resolved correctly.  The results of the test suite are currently
-available at \path|http://www.cgal.org/Members/Manual_test/test_manual|.
+available at \path|http://www.cgal.org/Members/Manual_test/|.
 Each time you submit a package with modified documentation, you should
 check these test results to make sure your documentation did not cause
 any problems.
 \ccIndexSubitemEnd{manuals}{test suite}
 \ccIndexSubitemEnd{test suite}{for manuals}
+
+\section{CVS \texttt{Manual} package}
+\label{sec:cvs_manual}
+
+The package 
+\texttt{Manual}\index{CVS server!Manual package@\texttt{Manual} package} 
+on the \ccAnchor{http://cgal.inria.fr/cgi-bin/cvsweb.cgi/}{CVS server} 
+contains all the scripts and extra files used to run the manual test suite
+(Section~\ref{sec:doc_test_suite}) and to create the documentation for
+an external release.  Most of the processes are automated through a makefile,
+and there are several \texttt{README} files in this package that explain
+what is going on.
+\ccIndexSubitem{manuals}{CVS package}
 
 \section{Common problems and solutions}
 \label{sec:common_problems}
@@ -879,7 +890,7 @@ although one can also add the command \verb|\ccHtmlNoClassLinks| before the
      {\tt ipe2gif}\index{ipe2gif script@{\tt ipe2gif} script}, or 
      {\tt latex2gif}\index{latex2gif script@{\tt latex2gif} script} 
      that are available from 
-     \ccAnchor{http://www.mpi-sb.mpg.de/~hert/CGAL}{http://www.mpi-sb.mpg.de/~hert/CGAL} 
+     \path|http://www.cgal.org/Members/Manual_tools|
      (which use {\tt giftrans} and work for figures with white backgrounds) to 
      make the background transparent.
 \end{description}
@@ -1003,16 +1014,32 @@ both defined in {\tt latex\_converter.sty})\ccIndexMainItem[c]{\tt latex_convert
 given in the \verb|\input| command (or its derivative) or the absence of a 
 directory from the appropriate environment variable.
 
-\item[{\bf Solution:}] Paths to source files in other directories must be
-provided relative to the place where the conversion program is run, not
-relative to the place where the file containing the command is.  When producing
-the manual, these programs are run in the \VarText{manual part} directory
-({\em i.e.}, {\tt doc\_tex/basic}, {\tt doc\_tex/support}, {\em etc.}), so
-paths should be relative to these directories.  Alternatively, include the 
-directory where the source files can be found in the {\tt TEXINPUTS} and 
-{\tt LATEX\_CONV\_INPUTS} evironment variables. See 
-\ccAnchor{./latex_to_html.ps.gz}{{\tt Tools/doc/latex\_to\_html.ps.gz}} for 
-more details.
+\item[{\bf Solution:}] Paths to source files in other directories must 
+generally be provided relative to the place where the conversion program is 
+run, not relative to the place where the file containing the command is.  When 
+producing the manual, these programs are run in the \VarText{manual part} 
+directory ({\em i.e.}, {\tt doc\_tex/basic}, {\tt doc\_tex/support}, 
+{\em etc.}), so paths should be relative to these directories.  
+
+An exception is for example and demo programs included in the documentation.
+\ccIndexSubitem{example programs}{in manuals}.  These should always
+be programs that are in the distribution (and thus in the test suite)
+and should included using the command \texttt{ccIncludeExampleCode}.  For 
+programs you need only specify the path relative to the directory 
+\texttt{CGAL\_ROOT/examples} or \texttt{CGAL\_ROOT/demo} as the environment 
+variables \texttt{TEXINPUTS} and \texttt{LATEX\_CONV\_INPUTS} are set so these 
+directories are searched when the whole manual is created.  
+(See
+\ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}} 
+for more details.)
+For example,
+you would use the following command
+\begin{verbatim}
+   \ccIncludeExampleCode{Polygon/PolygonDemo.C}
+\end{verbatim}
+to include the source file \nonlinkedpath|CGAL_ROOT/demo/Polygon/PolygonDemo.C|.
+Obviously, you could have problems if you have an example program and a demo
+program with the same name in the same pacakge, so try to avoid this.
 \end{description}
 \index{input@$\backslash${\tt input}!files not found|)}
 \ccIndexSubitemEnd{source files}{documentation}
@@ -1034,7 +1061,10 @@ Requirements:
          in Section~~\ref{sec:doc_tex_subdirectory}.
    \item Indexing commands must be placed in the text to achieve the
          goals listed in Section~\ref{sec:indexing}.
-   \item Each reference manual item must be documented in its own file.
+   \item Example programs incluced in the manual should also be distributed
+         in the \texttt{examples} or \texttt{demo} directories and should
+         be incorporated in the documentation  using the 
+         \verb|\ccIncludeExampleCode| command.
 \end{itemize}
 
 \noindent
@@ -1045,5 +1075,7 @@ Recommendations:
          as approriate and in the indicated order.
    \item The users' manual should include illustrative examples of a package's
          functionality.
+   \item Document each item in the reference manual in its own file.
 \end{itemize}
+
 \ccIndexMainItemEnd{manuals}

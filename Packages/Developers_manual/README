@@ -14,9 +14,10 @@ editing:
  the parentheses there
 
 Then do
-  make ps_doc
-  make html_doc
+  make internal  // for the internal developers' manual
+  make external  // for the filtered developers' manual made public
 
 Then, if necessary, edit the makefile to change the installation directory
 and install the manual using:
-  make install
+  make install_internal
+  make install_external

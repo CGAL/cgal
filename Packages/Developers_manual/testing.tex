@@ -57,8 +57,8 @@ It is strongly recommended for a test suite of a package to
 The tool {\tt gcov} can be used together with the GNU C++ compiler to test 
 for code coverage in your programs and may be helpful when you create your 
 \cgal\ test suite programs.  You can find a complete guide to this tool 
-in the GNUPro Toolkit documentation at 
-\path|http://www.cygnus.com/pubs/gnupro-97r1|.
+in the GNU on-line documentation at
+\path|http://gcc.gnu.org/onlinedocs/gcc-2.95.2/gcc_6.html|.
 If you want to use the code coverage tool {\tt gcov}, you have to compile 
 your programs with the options \texttt{-fprofile-arcs} and 
 \texttt{-ftest-coverage}.
@@ -241,7 +241,7 @@ ways you can customize this script to meet you needs:
       script.  These variables are prepended to {\tt CXX\_FLAGS} and
       {\tt LDFLAGS}, respectively, in the test suite makefiles.  So, for
       example, if you have a directory \verb|experimental/include/CGAL| 
-      containing new or experimental \cgal files,  you can do the following:
+      containing new or experimental \cgal\ files,  you can do the following:
       \begin{center}
       \verb|TESTSUITE_CXXFLAGS="-Iexperimental/include"|
       \end{center}
@@ -377,7 +377,7 @@ Recommendations:
 \begin{itemize}
    \item Write test suite programs that use more than one instantiation of
          templated functions and classes, call every member function at least
-         once, and more than one kernel. 
+         once, and use more than one kernel. 
    \item Use pre- and postcondition checkers.
    \item Use \texttt{gcov} to test your code for coverage.
    \item Don't submit a makefile for your test suite unless you need to do

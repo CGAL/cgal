@@ -26,15 +26,17 @@ configuration of \cgal\ that allow you to answer such questions as:
 \item Does the compiler support Koenig lookup? (Section~\ref{sec:workaround_flags})
 \end{itemize}
 
-Also address here are issues related to writing code for non-standard-compliant
-compilers.  Compilers have made a lot of progress toward the \CC-standard 
-recently.  But still they do not fully implement it. There are a few features
-you may assume; others you may not assume. The list of obsolete
-workarounds in Section~\ref{sec:obsolete_workarounds} gives some indication 
-of what you may assume now.  Especially you may assume that the compiler
+Also addressed here are issues related to writing code for 
+non-standard-compliant compilers.  Compilers have made a lot of progress toward 
+the \CC-standard recently.  But still they do not fully implement it. There 
+are a few features you may assume; others you may not assume. The list of 
+obsolete workarounds in Section~\ref{sec:obsolete_workarounds} gives some 
+indication of what you may assume now.  Especially you may assume that the 
+compiler
 \begin{itemize}
 \item supports namespaces
 \item supports member templates
+\item support for \texttt{std::iterator\_traits}.
 \end{itemize}
 Still, there are many bugs (sometimes known as ``features'') left in the 
 compilers.  Have a look at the list of (non-obsolete) workarounds in 
@@ -67,8 +69,8 @@ iff \cgal\ is configured with \leda, GMP or CLN support, respectively.
 
 \section{Identifying \cgal\ and \leda\ versions}
 \label{sec:which_versions}
-\ccIndexSubitem{version number}{of \cgal}{checking}
-\ccIndexSubitem{version number}{of \leda}{checking}
+\ccIndexSubitem{version number}{of \cgal}
+\ccIndexSubitem{version number}{of \leda}
 \ccIndexSubitem{macros}{for version numbers}
 
 Every release of \cgal\ defines (in \texttt{<CGAL/config.h>}) two
@@ -86,7 +88,7 @@ macros:
 
      More precisely, it is defined as \texttt{1vvvmmmiii},
      where \texttt{vvv} is the major release number (currently 002),
-     \texttt{mmm} is the minor release number (currently 002), and
+     \texttt{mmm} is the minor release number (currently 004), and
      \texttt{iii} is the internal release number (currently 001). For
      public releases, the latter is defined as 100, at least as long as we
      manage to get out something with less than 100 internal releases.
@@ -128,14 +130,17 @@ piece of code that depends on whether you have \leda-4.0 or later.
 \ccIndexSubitem{macros}{for compiler identification}
 \ccIndexSubitem{flag}{for copmiler}
 
-Every compiler defines some macros that allow to identify it, see the
-following table.
+Every compiler defines some macros that allow you to identify it; see 
+the following table.
 
 \vspace{5mm}\fbox{\begin{tabular}{lll}
-Borland 5.4     & \texttt{\_\_BORLANDC\_\_}      & 0x540???\\
+Borland 5.4     & \texttt{\_\_BORLANDC\_\_}      & 0x540\\
+Borland 5.5     & \texttt{\_\_BORLANDC\_\_}      & 0x550\\
+Borland 5.5.1   & \texttt{\_\_BORLANDC\_\_}      & 0x551\\
 GNU 2.95        & \texttt{\_\_GNUC\_\_}          & 2\\
 GNU 2.95        & \texttt{\_\_GNUC\_MINOR\_\_}   & 95\\
-Microsoft VC6.0 & \texttt{\_MSC\_VER}            & ???\\
+Microsoft VC6.0 & \texttt{\_MSC\_VER}            & 1200\\
+Microsoft VC7.0 & \texttt{\_MSC\_VER}            & 1300\\
 SGI 7.3         & \texttt{\_COMPILER\_VERSION}   & 730\\
 SUN 5.0         & \texttt{\_\_SUNPRO\_CC}        & 0x500\\
 \end{tabular}}\vspace{5mm}
@@ -180,7 +185,7 @@ listed in Section~\ref{sec:which_compiler} to identify the compiler.
 But most of them are set in the platform-specific configuration files
 \ccIndexSubitem{configuration}{file}
 \begin{center}
-\ccAnchor{http://www.cgal.org/Manual/include/CGAL/config/sparc_SunOS-5.7_eg++-egcs-2.91.66/CGAL/compiler_config.h}{\texttt{<CGAL/config/}{\em os-compiler}\texttt{/CGAL/compiler\_config.h>}}
+\texttt{<CGAL/config/}{\em os-compiler}\texttt{/CGAL/compiler\_config.h>}
 \end{center}
 where \textit{os-compiler} refers to a string describing your
 operating system and compiler that is defined as follows.
@@ -234,13 +239,15 @@ platform-specific configuration file, iff either compilation or execution
 fails. The reasoning behind this sort of negative scheme is that on
 standard-compliant platforms there should be no flags at all.
 
+\InternalOnly{
 Which compilers passed which tests can be determined by looking at the 
 \ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html}%
 {test suite results page}\lcTex{ ( 
 \nonlinkedpath|http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html|)}
 for the package \texttt{Configuration}.
+}
 
-\noindent Currently (CGAL-2.2-I-1), we have the following configuration
+\noindent Currently (CGAL-2.4-I-8), we have the following configuration
 test files (and flags). The short descriptions that are given in the files are 
 included here. In some cases, it is probably necessary to have a look at the
 actual files to understand what the flag is for. This list is just to
@@ -255,23 +262,24 @@ for more explanation of some of these problems and known workarounds.
  standard C library functions in {\tt cctype} ({\tt isdigit} \etc) as macros.
  According to the standard they have to be functions.
 
-\item[{\tt CGAL\_CFG\_DYNAMIC\_CAST\_BUG}]~\\
- \ccIndexMainItem{dynamic cast bug}
- When a dynamic cast involves a pointer to a not-yet-instantiated 
- template class, some compilers give an error.
-
-\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_1}]~\\
- \ccIndexSubitem{matching}{with typename}
- This flag is set if the compiler does not match a function
- argument of type {\tt typename T::A} correctly.
- (\eg, SGI 7.2)
+\item[{\tt CGAL\_CFG\_ENUM\_BUG}]~\\
+ \ccIndexMainItem{enumeratrion bug}
+ This flag is set, if the compiler does not promote enumeration types
+ (which depend on a template parameter) correctly when they are used
+ as int template arguments (\eg, Borland 5.5).
 
 \item[{\tt CGAL\_CFG\_MATCHING\_BUG\_2}]~\\
  \ccIndexSubitem{matching}{function template}
  This flag is set if the compiler does not match the most
  specialized instance of a function template correctly,
- but complains about multiple matches.
- (\eg, SGI 7.2)
+ but complains about multiple matches
+ (\eg, SGI 7.2).
+
+\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_3}]~\\
+ \ccIndexSubitem{matching}{pointer type arguments}
+  This flag is set, if the compiler does not match function arguments 
+  of pointer type correctly, when the return type depends on 
+  the parameter's type (\eg, sun C++ 5.3).
 
 \item[{\tt CGAL\_CFG\_NO\_AUTOMATIC\_TEMPLATE\_INCLUSION}]~\\
  \ccIndexSubitem{source files}{template implementation files}
@@ -298,19 +306,12 @@ for more explanation of some of these problems and known workarounds.
   big-endian and little-endian machines.  This flag is
   set if it is a little-endian machine.
  
-\item[{\tt CGAL\_CFG\_NO\_DYNAMIC\_CAST}]~\\ 
-  \index{dynamic_cast support@{\tt dynamic\_cast} support}
-  This flag is set
-  if the compiler does not support the operator \texttt{dynamic\_cast}.
-  
-\item[{\tt CGAL\_CFG\_NO\_EXPLICIT\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
-  \ccIndexSubsubitem{template}{parameters}{specification of}
-  This flag is set if a compiler does not like explicit specification
-  of template arguments in template function calls.
-
 \item[{\tt CGAL\_CFG\_NO\_ITERATOR\_TRAITS}]~\\
   \ccIndexMainItem{iterator traits}
-  The flag is set if iterators are not fully supported 
+  The class \texttt{std::iterator\_traits} is part of the \texttt{std} library.
+  It is used to access certain properties of iterators, such as their value
+  type or iterator category (forward, bidirectional, \etc).
+  This flag is set if \texttt{std::iterator\_traits} is not fully supported 
   including their use in a template class, as a default template
   argument, and as a return type of global function.
 
@@ -329,20 +330,10 @@ for more explanation of some of these problems and known workarounds.
  This flag is set if a compiler (or assembler or linker) has problems 
  with long names. 
 
-\item[{\tt CGAL\_CFG\_NO\_NAMESPACE}]~\\
- \ccIndexSubitem{namespace}{support}
- This flag is set if a compiler does not know namespaces.
-
 \item[{\tt CGAL\_CFG\_NO\_PARTIAL\_CLASS\_TEMPLATE\_SPECIALISATION}]~\\
  \ccIndexMainItem{partial specialization}
  This flag is set if a compiler doesn't support partial specialization 
  of class templates.
-
-\item[{\tt CGAL\_CFG\_NO\_PARTIAL\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
-  \ccIndexSubsubitem{template}{parameters}{partial specification of}
-  \ccIndexSubitem{partial specification}{of template parameters}
- This flag is set if a compiler doesn't like explicit partial 
- specification of template arguments in template function calls.
 
 \item[{\tt CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS}]~\\
  \ccIndexSubitem{scope operator}{with parameters}
@@ -367,25 +358,17 @@ for more explanation of some of these problems and known workarounds.
   inherited from the standard C library in namespace {\ccFont std} (only tests
   for the symbols used in \cgal).
  
-\item[{\tt CGAL\_CFG\_NO\_STDIO\_NAMESPACE}]~\\ 
-  \index{IO library@I/O library!and namespace std@and namespace \ccStyle{std}}
-  \ccIndexSubitem{namespace}{\ccFont std}
-  This flag is
-  set if a compiler does not put the IO standard library in namespace
-  {\ccFont std}.
- 
-\item[{\tt CGAL\_CFG\_NO\_STD\_NAMESPACE}]~\\ 
-  \ccIndexSubitem{namespace}{\ccFont std}
-  This flag is
-  set if a compiler does not know the namespace \ccStyle{std}.  Some
-  compilers know namespace \ccStyle{std} but do not implement namespaces in
-  general.
- 
 \item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}]~\\ 
   \ccIndexSubsubitem{template}{function}{friend declaration}
   \ccIndexSubitem{friend declaration}{function template}
   Checks whether the compiler wants to have a \texttt{<>} in friend
   declarations of template functions.
+
+\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\ 
+  \ccIndexSubitem{template}{template parameter}
+  This flag is set of a compiler does not support member functions that have
+  parameter types that are dependent on the template parameter list of the
+  class and are implemented outside of the class body (\eg, g++ 2.95.2).
   
 \item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_PARAM}]~\\ 
   \ccIndexSubitem{template}{template parameter}
@@ -399,6 +382,12 @@ for more explanation of some of these problems and known workarounds.
  \index{template!argument!with typename@with \texttt{typename}}
  This flag is set if a compiler complains about {\tt typename}, 
  when passing a dependent type as template argument.
+
+\item[{\tt CGAL\_CFG\_USING\_USING\_BUG}]~\\
+ \ccIndexSubitem{\tt using}{nested}
+ This flag is set if a compiler does not accept a \texttt{using}
+ decrlataion referring to a symbol that is again declared by a 
+ using declaration.
 
 \end{description}
 \ccIndexMainItemEnd{workaround flags}
@@ -479,11 +468,14 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
 
 \begin{description}
 \item[\textbf{Template Parameters}]
-
+\ 
+\begin{itemize}
+\item
 With Borland, if a class is declared with a template parameter T, say, then
 the same name of the template parameter must be used elsewhere in all
 the other definitions and declarations for this class.
 
+\item
 Borland does not like things like
 \begin{center}
 \verb|template <class T> class foo { ... T(blah) ... }|
@@ -494,14 +486,20 @@ the workaround is
 \verb|template <class T0> class foo { typedef T0 T; ... T(blah) ... }|
 \end{center}
 
-
+\item
 For V\CC\ 6.0, the matching of template instances is broken 
 \begin{verbatim}
        template < class T >void foo( T, int){}
        template < class T, class R >void foo( T, R){}
 \end{verbatim}
-
 would lead to ``multiple matches'' error. 
+
+\item
+The V\CC\ 6.0 compiler does not like more than one non-type template
+argument.  We had a case with two int parameters where it compiled and
+linked seamlessless, but it generated no code.
+
+\end{itemize}
 
 
 \item[\textbf{{\tt for} loop variables}]
@@ -524,7 +522,10 @@ parameter in order to get the correct behavior with Visual \CC.
 
 \item[\textbf{{\tt typename} problem}]
 For Visual \CC, the keyword \ccc{typename} must be omitted, when
-a dependent on a template parameter type is passed as a template parameter. 
+a type dependent on a template parameter is passed as a template parameter. 
+You should use the macro \texttt{CGAL\_TYPENAME\_MSVC\_NULL} 
+(Section~\ref{sec:workaround_macros}) in place of the word \texttt{typename} 
+in this case.
 
 \item[\textbf{Friend operators}]
 
@@ -539,7 +540,7 @@ and only then define the operator.
 \item[\textbf{Function parameter matching}]
 
 The function parameter matching capacities of Visual \CC are rather limited. 
-Failures occur when your function bar is like
+Failures occur when your function \ccc{bar} is like
 \begin{verbatim}
   bar(std::some_iterator<std::some_container<T>>....) ...
   ...
@@ -597,6 +598,10 @@ code. Developers may remove the workarounds from existing code, though
 they are not forced to.
 
 \begin{description}
+\item[{\tt CGAL\_CFG\_DYNAMIC\_CAST\_BUG}]~\\
+ When a dynamic cast involves a pointer to a not-yet-instantiated 
+ template class, some compilers give an error.
+
 \item[{\tt CGAL\_CFG\_INCOMPLETE\_TYPE\_BUG\_1}]~\\
   When a class (\ccc{Cls_P} / \ccc{Cls_Pl}) refers to a not-yet-defined class
   (\ccc{Cls_At}), some compilers give an ``incomplete type error''.  This
@@ -620,6 +625,11 @@ they are not forced to.
   versions if a template type, which has not been instantiated yet, is
   put into an \stl\ vector (\eg, SunPro 4.2 with STLport-3.01). This
   program is used to detect this bug.
+
+\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_1}]~\\
+ This flag is set if the compiler does not match a function
+ argument of type {\tt typename T::A} correctly.
+ (\eg, SGI 7.2)
 
 \item[{\tt CGAL\_CFG\_NO\_ARROW\_OPERATOR}]~\\
   The arrow operator \ccc{operator->()} could not be overloaded by
@@ -661,6 +671,10 @@ they are not forced to.
 \item[{\tt CGAL\_CFG\_NO\_DEFAULT\_TEMPLATE\_ARGUMENTS}]~\\
   This flag is set if a compiler does not support default template
   arguments like \ccc{template< class A = int >}.
+ 
+\item[{\tt CGAL\_CFG\_NO\_DYNAMIC\_CAST}]~\\ 
+  This flag is set
+  if the compiler does not support the operator \texttt{dynamic\_cast}.
 
 \item[{\tt CGAL\_CFG\_NO\_EXPLICIT}]~\\
   This flag is set if a compiler does not know the keyword
@@ -669,6 +683,10 @@ they are not forced to.
 \item[{\tt CGAL\_CFG\_NO\_EXPLICIT\_CLASS\_TEMPLATE\_SPECIALISATION}]~\\
   This flag is set if a compiler does not support full specialization
   of class templates.
+
+\item[{\tt CGAL\_CFG\_NO\_EXPLICIT\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
+  This flag is set if a compiler does not like explicit specification
+  of template arguments in template function calls.
 
 \item[{\tt CGAL\_CFG\_NO\_LAZY\_INSTANTIATION}]~\\
   Implicit instantiation of a class template does only instantiate
@@ -688,6 +706,13 @@ they are not forced to.
   This flag is set if a compiler does not know the keyword
   \ccc{mutable}.
 
+\item[{\tt CGAL\_CFG\_NO\_NAMESPACE}]~\\
+ This flag is set if a compiler does not know namespaces.
+
+\item[{\tt CGAL\_CFG\_NO\_PARTIAL\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
+ This flag is set if a compiler doesn't like explicit partial 
+ specification of template arguments in template function calls.
+
 \item[{\tt CGAL\_CFG\_NO\_REINTERPRET\_CAST}]~\\
   This flag is set if the compiler does not support the operator
   \ccc{reinterpret_cast}.
@@ -699,6 +724,20 @@ they are not forced to.
 \item[{\tt CGAL\_CFG\_NO\_STATIC\_MEMBERS\_IN\_CLASS\_TEMPLATES}]~\\
   The following flag is set if a compiler does not accept static
   members in a template class.
+ 
+\item[{\tt CGAL\_CFG\_NO\_STDIO\_NAMESPACE}]~\\ 
+  \index{IO library@I/O library!and namespace std@and namespace \ccStyle{std}}
+  \ccIndexSubitem{namespace}{\ccFont std}
+  This flag is
+  set if a compiler does not put the IO standard library in namespace
+  {\ccFont std}.
+ 
+\item[{\tt CGAL\_CFG\_NO\_STD\_NAMESPACE}]~\\ 
+  \ccIndexSubitem{namespace}{\ccFont std}
+  This flag is
+  set if a compiler does not know the namespace \ccStyle{std}.  Some
+  compilers know namespace \ccStyle{std} but do not implement namespaces in
+  general.
 
 \item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FUNCTION\_MATCHING}]~\\
   Some compilers (like g++ 2.7.2) follow the old rules for argument
@@ -722,10 +761,11 @@ they are not forced to.
 \ccIndexSubitemEnd{workaround flags}{obsolete}
 
 
-
+\InternalOnly{
 \section{Requirements and recommendations}
 \label{sec:portability_req_and_rec}
-
+}
+\InternalOnly{
 \noindent
 Recommendations:
 \begin{itemize}
@@ -734,10 +774,13 @@ Recommendations:
       you should rather write a short test program that triggers the setting
       of a flag for this deficiency during configuration.
 \item Avoid classes having friend functions and member functions with
-      the same name. \verb+g++ 2.95.*+ does not like that. This holds also for
+      the same name. \texttt{g++ 2.95.*} does not like that. This holds also for
       operators, especially \ccc{operator-()}.
-\item Don't use variable declarations in a \verb+for+-clause. It is a
+\item Don't use variable declarations in a \texttt{for}-clause. It is a
       feature of the Microsoft compiler not to support this feature of
       the \CC-Standard.
 \end{itemize}
+}
+
 \ccIndexMainItemEnd{portability}
+
