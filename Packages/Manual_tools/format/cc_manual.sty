@@ -165,7 +165,7 @@
                    \begingroup\CCcatcode\creationvariableX}
 
 \def\creationvariableX #1{%
-                   \gdef\var{$#1$}
+                   \gdef\var{{\CCfont #1\CCendfont}}
                    \gdef\purevar{#1}
                    \endgroup}
 
@@ -270,6 +270,7 @@
 % | Predicates:
 % |
 % | isEmpty, isLetter, hasLeadingSpace, isOperator, isParenthesisOperator
+% | isConversionOperator
 % |
 % | All predicates uses pattern matching of TeX. The original predicate uses
 % | a single parameter that should be in braces like in LaTeX. Internally,
@@ -348,6 +349,14 @@
     % if and only if #6 is non empty, we have the () operator.
     \isEmpty{#6}\CCinvert}
     
+% This macro gets a complete C++ declaration for an operator and has to
+% decide weather it is the conversion operator declaration or not.
+\def\isConversionOperator #1{%
+    \isConversionOperatorX #1\end}
+\def\isConversionOperatorX #1operator#2\end{%
+    % if and only if #1 is empty, we have the conversion operator.
+    \isEmpty{#1}}
+    
 
 % +--------------------------------------------------------------------------
 % | Toplevel declaration formatting:
@@ -388,17 +397,22 @@
                        \fi
                        \def\CCextendedFormat{\ }% Switches ext. format OFF.
                        \isOperator{#2 #3(#4)#5}\ifnum\CCbool=\CCtrue
-                           \CCseparateOperator #2 #3\end%
-                           \isParenthesisOperator{#2 #3(#4)#5}%
+                           \isConversionOperator{#2 #3(#4)#5}
                            \ifnum\CCbool=\CCtrue
-                               \setbox\functioncallbox=\hbox{{\CCfont 
-                                   \CCprintParOperator #1#2 #3(#4)#5\end}}
+                               \CCprintConversionOperator #2 #3(#4)#5\end
                            \else
-                               \setbox\functioncallbox=\hbox{{\CCfont 
-                                   \CCprintOperator #1#2 #3(#4)#5\end}}
+                               \CCseparateOperator #2 #3\end%
+                               \isParenthesisOperator{#2 #3(#4)#5}%
+                               \ifnum\CCbool=\CCtrue
+                                   \setbox\functioncallbox=\hbox{{\CCfont 
+                                       \CCprintParOperator #1#2 #3(#4)#5\end}}
+                               \else
+                                   \setbox\functioncallbox=\hbox{{\CCfont 
+                                       \CCprintOperator #1#2 #3(#4)#5\end}}
+                               \fi
                            \fi
                        \else
-                           \CCseparateFunction #2 #3::\end%
+                           \CCseparateFunction{}#2 #3::\end%
                            \setbox\functioncallbox=\hbox{{\CCfont
                                \ifnum#1=0 \purevar.\fi
                                \unhcopy\functionnamebox(% 
@@ -448,55 +462,45 @@
 
 % Set the two boxes, returntype and functionname, for a function declaration.
 % The part of the declaration has to be terminated with "::\end".
-\def\CCseparateFunction #1::#2\end{%
-                       \isEmpty{#2}\ifnum\CCbool=\CCtrue 
-                           \CCseparateFunctionXX{}{}#1 .\end%
+\def\CCseparateFunction #1#2::#3\end{%
+                       \isEmpty{#3}\ifnum\CCbool=\CCtrue 
+                           \CCseparateFunctionXX{#1}#2 .\end%
                        \else
-                           \CCseparateFunctionX{#1}#2\end%
+                           \CCseparateFunction{#1#2::}#3\end%
                        \fi}
 
-\def\CCseparateFunctionX #1#2::\end{%
-                       \CCseparateFunctionXX{}{#2}#1 .\end}
-                    
 
 % Set the two boxes, returntype and functionname, for a function declaration.
 % This macro scans through the token list space by space. If the operators
 % & or * occurs on the right side, they are shifted to the left.
 %   o  The 1st parameter is the first part of the type.
-%   o  The 2nd parameter is the last part of the function name.
-%   o  The 3rd parameter is the next part of the type name.
-%   o  The 4th and 5th parameter are the next part of the return type or
-%      the name, if #6 is empty. Then, the 4th parameter is the first
+%   o  The 2nd parameter is the next part of the type name.
+%   o  The 3rd and 4th parameter are the next part of the return type or
+%      the name, if #4 is empty. Then, the 3rd parameter is the first
 %      character of it.
-%   o  The 6th parameter is the rest of the type and name.
-% The part of the declaration has to be terminated with " \end".
-\def\CCseparateFunctionXX #1#2#3 #4#5\end{%
-                       \isEmpty{#5}\ifnum\CCbool=\CCtrue 
+% The part of the declaration has to be terminated with " .\end".
+\def\CCseparateFunctionXX #1#2 #3#4\end{%
+                       \isEmpty{#4}\ifnum\CCbool=\CCtrue 
                            \setbox\returntypebox=\hbox{{\CCfont
                                \CCprintReturnType #1const.&.\end}}%
-                           \def\xparams{#2}\ifx\xparams\empty
-                               \setbox\functionnamebox=\hbox{{\CCfont
-                                   \CCprintTokens #3\end}}%
-                           \else
-                               \setbox\functionnamebox=\hbox{{\CCfont
-                                   \CCprintTokens #3::#2\end}}%
-                           \fi
+                           \setbox\functionnamebox=\hbox{{\CCfont
+                               \CCprintTokens #2\end}}%
                        \else
                            \def\xparams{#1}\ifx\xparams\empty
-                               \if#4&%
-                                   \CCseparateFunctionXX{#3#4}{#2}#5\end%
-                               \else\if#4*%
-                                   \CCseparateFunctionXX{#3#4}{#2}#5\end%
+                               \if#3&%
+                                   \CCseparateFunctionXX{#2#3}#4\end%
+                               \else\if#3*%
+                                   \CCseparateFunctionXX{#2#3}#4\end%
                                \else
-                                   \CCseparateFunctionXX{#3}{#2}#4#5\end%
+                                   \CCseparateFunctionXX{#2}#3#4\end%
                                \fi\fi
                            \else
-                               \if#4&%
-                                   \CCseparateFunctionXX{#1 #3#4}{#2}#5\end%
-                               \else\if#4*%
-                                   \CCseparateFunctionXX{#1 #3#4}{#2}#5\end%
+                               \if#3&%
+                                   \CCseparateFunctionXX{#1 #2#3}#4\end%
+                               \else\if#3*%
+                                   \CCseparateFunctionXX{#1 #2#3}#4\end%
                                \else
-                                   \CCseparateFunctionXX{#1 #3}{#2}#4#5\end%
+                                   \CCseparateFunctionXX{#1 #2}#3#4\end%
                                \fi\fi
                            \fi
                        \fi}
@@ -578,6 +582,17 @@
                            \CCprintOperatorOne{#1}{}{#6}()\end
                        \fi}
 
+
+% Formats a conversion operator.
+% Uses the returntypebox and the functioncallbox.
+% The declaration ends with "\end".
+\def\CCprintConversionOperator #1operator #2(#3)#4\end{%
+                       \setbox\returntypebox=\hbox{{\CCfont
+                           \CCprintTokens #2\end}}
+                       \setbox\functioncallbox=\hbox{{\CCfont 
+                           \CCprintTokens #2(\purevar)\end}}
+                       }
+
 % An operator is detected and can be printed.
 %   o  The first parameter contains a 0 for a method call, a 1 for a function.
 %   o  The second parameter contains the \purevar if it is a method.
@@ -629,7 +644,7 @@
                            style, sorry.  Go ahead, and I format it as
                            a function}@
                            \ifnum#1=0 {\CCfont \purevar.}\fi
-                           \CCprintTokens operator#4#5\end@
+                           \CCprintTokens operator #4#5\end@
                            (\isEmpty{#3}\ifnum\CCbool=\CCfalse
                                \CCprintParamList{#3}\fi
                            )@
@@ -642,8 +657,7 @@
 @   o  The third parameter contains the rest of the operator.
 @ The declaration ends with "\end".
 \gdef\CCprintOperatorTwo #1#2#3\end{@
-                   \def\xparams{#3}@
-                   \ifx\xparams\empty 
+                   \isEmpty{#3}\ifnum\CCbool=\CCtrue 
                        @ two character operations
                        \ifcase\NParameters         @ no parameter
                        \or                         @ 1 parameter

@@ -103,12 +103,15 @@ with operators. See the following example:
 \CCstyle{
     #define %^~ Return_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
 
-To achieve this behaviour with \TeX\, the \verb"\catcode" values of
+This example is created using the {\verb+\CC+}{\tt style} macro
+that formats its single parameter in this style.
+
+To achieve this behavior with \TeX\, the \verb"\catcode" values of
 some characters has to be changed. So within the \CC\ code 
-things like comments with ``\%'' sign wont work. Several macros read a
+things like comments with ``\%'' sign will not work. Several macros read a
 second parameter with a \TeX\ comment to the declaration. The catcodes
 are restored just before this second parameter. A sad sideeffect is
-that these changed catcodes wont apply if these macros are invoced
+that these changed catcodes will not apply if these macros are invoked
 within other macros. In that case, the argument text was just once
 parsed from \TeX\ and the catcodes are all fixed before the catcode
 changing macro expands.
@@ -124,12 +127,12 @@ name as it was originally written can be accessed using the
 \creation
 
 The constructors create a variable \var\ of the class. The
-\verb"\creationvariable{"\ldots\verb"}" macro sets the name for the
+\verb"\"\verb"creationvariable{"\ldots\verb"}" macro sets the name for the
 future use. It can be accessed with the \verb"\var" or
 \verb"\purevar" macro.
 
 The constructors are written using the
-\verb"\constructor{"\ldots\verb"}{"\ldots\verb"}" macro. The first
+\verb"\"\verb"constructor{"\ldots\verb"}{"\ldots\verb"}" macro. The first
 parameter contains the \CC\ declaration, the second parameter the comments.
 The declaration is written in the normal \CC\ fashion, as shown at the end
 of the comment. The style formats them as if they are used
@@ -220,10 +223,17 @@ future). An example:
 Operator declarations are formatted as like the operators are
 used.  All operators that are allowed to be overloaded in \CC\ are
 handled. They are listed in the last section for completeness and
-to check the layout. Type casting through an operator is currently
-not supported. It will give an error message. If the error will be
-ignored, the macro formats the operator as a method or function,
-as it was declared. Sometimes, there is a choice between
+to check the layout. 
+
+Type casting through a conversion operator is the default behavior 
+for the formatting routine if the return type before the {\tt 
+operator} keyword is empty.
+
+  \function{ operator int () const;}{Conversion operator.}
+
+  \function{operator A< FT>() const;}{Conversion operator.}
+
+Sometimes, there is a choice between
 implementing an operator as a method or as a function. Both
 declarations will produce the same formatting, as demonstrated
 with the next two declarations.
@@ -232,7 +242,7 @@ with the next two declarations.
         operator+(Demo_Class p, Demo_Class q);}{Declaration via function.}
 
   \method{Demo_Class
-        operator-(Demo_Class q);}{Declaration via method.}
+        operator+(Demo_Class q);}{Declaration via method.}
 
 There is some laziness allowed in placing spaces around the operator
 characters. See the following examples:
@@ -263,12 +273,14 @@ style can handle such cases:
 
 \method{A operator0(Demo_Class q);}{}
 
-For future extensions, the macro that separates the return type from
-the function or method name recognizes the scope operator (, but
-currently not in the usage as the global scope). An example:
+CGAL will use {\tt typedef}'s and the scope operator to define types.
+Here is an example for the scope operator within types.  The scope
+operator cannot be used within the function or method name.
 
-  \function{Demo_Class
-        Class_X :: foo(Demo_Class p, Demo_Class q);}{Declaration with scope.}
+  \threecolumns{5.8cm}{2.8cm}
+  \function{Demo_Class::Nested_Class
+        foo(Demo_Class::Nested_Class p, Demo_Class q);}{
+         Declaration with scope.}
 
 Other features should be incorporated. These are: Preprocessor
 constants and macros, normal C variable declarations and constants,
