@@ -393,8 +393,8 @@ locate_in_all(const Point& p,
     int& li,
     Face_handle pos[Triangulation_hierarchy_2__maxlevel]) const
 {
-  Face_handle position();
-  Vertex_handle nearest();
+  Face_handle position;
+  Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2 
     closer = geom_traits().compare_distance_2_object();
