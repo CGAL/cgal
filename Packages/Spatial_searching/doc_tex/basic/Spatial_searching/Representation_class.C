@@ -1,5 +1,6 @@
 #include <CGAL/Kd_tree_d.h>
 
+// user defined point class
 template <int  DIM>
 class Point_float_d 
 {

@@ -8,10 +8,10 @@ typedef R::Point_2 Point;
 
 typedef CGAL::Creator_uniform_2<double,Point> Creator;
 // add splitting rule as a template parameter to the traits class
-typedef CGAL::Kd_tree_traits_point<Point, CGAL::Fair<Point> > Traits;
-typedef CGAL::Orthogonal_standard_search<Traits> Neighbor_search;
+typedef CGAL::Kd_tree_traits_point<Point, CGAL::Fair<Point> > TreeTraits;
+typedef CGAL::Orthogonal_standard_search<TreeTraits> Neighbor_search;
 
-typedef std::vector<Traits::Item> Vector;
+typedef std::vector<TreeTraits::Point> Vector;
 
 int main() {
   
@@ -24,7 +24,7 @@ int main() {
   CGAL::Random_points_in_square_2<Point,Creator> g( 1.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
-  typedef CGAL::Kd_tree<Traits> Tree;
+  typedef CGAL::Kd_tree<TreeTraits> Tree;
   Tree d(data_points.begin(), data_points.end());
 
   // generate random query points
@@ -33,7 +33,7 @@ int main() {
   Vector query_points;
   CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
 
-  std::vector<Neighbor_search::Item_with_distance> nearest_neighbor;
+  std::vector<Neighbor_search::Point_with_distance> nearest_neighbor;
   
   for (int i=0; i < query_point_number; i++) { 
      Neighbor_search N(d, query_points[i]); 

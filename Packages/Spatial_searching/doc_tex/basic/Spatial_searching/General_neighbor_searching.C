@@ -1,7 +1,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Iso_rectangle_d.h>
-#include <CGAL/L1_distance_rectangle_point.h>
+#include <CGAL/Manhattan_distance_rectangle_point.h>
 #include <CGAL/General_standard_search.h>
 
 #include <vector>
@@ -14,9 +14,9 @@ typedef Point::R::FT NT;
 typedef CGAL::Iso_rectangle_d<R> Box;
 typedef CGAL::Plane_separator<NT> Separator;
 
-typedef CGAL::Kd_tree_traits_point<Point> Traits;
-typedef CGAL::L1_distance_rectangle_point<Box, Point> Distance;
-typedef CGAL::General_standard_search<Traits, Distance, Box> 
+typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
+typedef CGAL::Manhattan_distance_rectangle_point<Box, Point> Distance;
+typedef CGAL::General_standard_search<TreeTraits, Distance, Box> 
 Neighbor_search;
   
 int main() {
@@ -40,9 +40,9 @@ int main() {
         data_points.push_front(random_point);
   }
   
-  Traits tr(bucket_size, 3.0, false);
+  TreeTraits tr(bucket_size, 3.0, false);
 
-  typedef CGAL::Kd_tree<Traits> Tree;
+  typedef CGAL::Kd_tree<TreeTraits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // define query item
@@ -56,7 +56,7 @@ int main() {
   Point qq(dim,q,q+dim);
   Box query_item(pp,qq);
 
-  std::vector<Neighbor_search::Item_with_distance> neighbors1;
+  std::vector<Neighbor_search::Point_with_distance> neighbors1;
 
   Distance tr_dist(dim);
 
@@ -72,7 +72,7 @@ int main() {
      " fn= " << *(neighbors1[i].first) << std::endl; 
   }
 
-  std::vector<Neighbor_search::Item_with_distance> neighbors2;
+  std::vector<Neighbor_search::Point_with_distance> neighbors2;
 
   Neighbor_search N2(d, query_item, tr_dist, neighbor_number, 0.0, false);
  
