@@ -724,6 +724,8 @@ Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/msvc/gmp.lib svneol=native#unset
 Packages/Coin/demo/Coin/Polyhedron_3/data/venus.off -text
 Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.sln -text
 Packages/Coin/demo/Coin/Polyhedron_3/polyhedron_3.vcproj -text
+Packages/Coin/demo/Coin/Terrain/terrain.sln -text
+Packages/Coin/demo/Coin/Terrain/terrain.vcproj -text
 Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.sln -text
 Packages/Coin/demo/Coin/Triangulation_3/triangulation_3.vcproj -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
