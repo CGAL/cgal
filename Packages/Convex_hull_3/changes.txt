@@ -1,3 +1,6 @@
+16 Feb 2004 Andreas Fabri
+- Replaced constructions of a plane with equations by a triple of points.
+
 Version 2.54 (09 February 2004) [rursu]
 - updated headers in examples
 
