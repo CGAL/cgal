@@ -237,7 +237,7 @@ Constraint_hierarchy_2<T,Data>::
 context(T va, T vb)
 {
   H_context_iterator hcit, past;
-  CGAL_triangulation_assertion(get_contexts(va,vb, hcit ,past));
+  if(!get_contexts(va,vb, hcit ,past)) CGAL_triangulation_assertion(false);
   return *hcit;
 }
 
@@ -247,7 +247,7 @@ Constraint_hierarchy_2<T,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {
   H_context_list* hcl;
-  CGAL_triangulation_assertion(get_contexts(va,vb,hcl));
+  if (! get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
   return hcl->size();
 }
 
@@ -257,7 +257,7 @@ Constraint_hierarchy_2<T,Data>::
 contexts_begin(T va, T vb)
 {
    H_context_iterator first, last;
-   CGAL_triangulation_assertion( get_contexts(va,vb,first,last));
+   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
    return first;
 }
 
@@ -267,7 +267,7 @@ Constraint_hierarchy_2<T,Data>::
 contexts_end(T va, T vb)
 {   
    H_context_iterator first, last;
-   CGAL_triangulation_assertion( get_contexts(va,vb,first,last));
+   if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
    return last;
 } 
 
@@ -377,7 +377,7 @@ next_along_sc(T va, T vb, T& w) const
   // find the next vertex after vb along any enclosing constrained
   // return false if there is no ....
   H_context_iterator  ctxtit, past;
-  CGAL_triangulation_assertion(get_contexts(va, vb, ctxtit, past));
+  if(!get_contexts(va, vb, ctxtit, past)) CGAL_triangulation_assertion(false);
 
   H_vertex_it pos;
   for( ; ctxtit != past; ctxtit++){
@@ -408,8 +408,8 @@ remove_Steiner(T v, T va, T vb)
  
   H_context_list*  hcl1;
   H_context_list*  hcl2;
-  CGAL_triangulation_assertion(get_contexts(va,v,hcl1));
-  CGAL_triangulation_assertion(get_contexts(v,vb,hcl2));
+  if(!get_contexts(va,v,hcl1)) CGAL_triangulation_assertion(false);
+  if(!get_contexts(v,vb,hcl2)) CGAL_triangulation_assertion(false);
 
   H_vertex_it      pos;
   for(H_context_iterator ctit=hcl1->begin(); ctit != hcl1->end(); ctit++){
@@ -443,7 +443,7 @@ void
 Constraint_hierarchy_2<T,Data>::
 add_Steiner(T va, T vb, T vc){
   H_context_list* hcl;
-  CGAL_triangulation_assertion(get_contexts(va,vb,hcl));
+  if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
 
   H_context_list* hcl2 = new  H_context_list;
 
@@ -549,7 +549,7 @@ Constraint_hierarchy_2<T,Data>::
 oriented_end(T va, T vb, T& vc) const
 {
   H_context_iterator ctxt, past;
-  CGAL_triangulation_assertion(get_contexts(va,vb, ctxt, past) );
+  if(!get_contexts(va,vb, ctxt, past) ) CGAL_triangulation_assertion(false);
   if(*(ctxt->pos) == va)
     vc = ctxt->enclosing->back();
   else

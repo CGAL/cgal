@@ -2,6 +2,7 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 7.09 (  )
+- added type reference in Trianguation_2 for Microsoft
 - fixed a bug in Constrained_triamgulation_plus_2.h still related
   to approximate  intersection computation
 
