@@ -39,7 +39,6 @@ int main()
 
 #else
 
-#include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Planar_map_2.h>
 
@@ -282,7 +281,7 @@ void  scan_planar_map(const char* filename, PM& pm)
   
 int main(int argc, char* argv[])
 {
-  double x0=-10,x1=10,y0=-10;
+  double x0=-200,x1=200,y0=-200;
   
   if (argc != 3) {
     std::cout << "usage: Segment_sweep_ovl_from_file filename\n";
