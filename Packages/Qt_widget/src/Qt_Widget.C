@@ -28,40 +28,50 @@
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
-  QWidget(parent, name), initialized(false), Locked(0), _pointSize(4),
+  QWidget(parent, name),  Locked(0), _pointSize(4),
   _pointStyle(DISC), _has_tool(false), current_tool(0)
 {
   setCaption("CGAL::Qt_widget");
-  initialize();
-  paint.begin(&pixmap);
-  setBackgroundColor(Qt::white);
-  paint.setPen(QPen(Qt::black,2));
-  clear();
-}
 
-void Qt_widget::initialize()
-{
+  // initialize ranges and scales
   xmin=0;
   xmax=width()-1;
   ymin=0;
   ymax=height()-1;
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;
+  constranges=false;
   set_scales();
+
+  // initialize the pixmap and the painter
   pixmap.resize(size());
-  initialized=true;
+  paint.begin(&pixmap);
+
+  // set properties
+  setBackgroundColor(Qt::white);
+  paint.setPen(QPen(Qt::black,2));
+
+  clear();
 }
 
 void Qt_widget::set_scales()
 {
-  double 
-    tempmin = min(width(), height()),
-    tempmax = max(xmax-xmin, ymax-ymin);
-	
-  xscal=(tempmin - 1)/(tempmax);
-  yscal=(tempmin - 1)/(tempmax);
-  set_scale_center(xcentre, ycentre);
+  if(!constranges)
+    {
+      double 
+	tempmin = min(width(), height()),
+	tempmax = max(xmax-xmin, ymax-ymin);
+      
+      xscal=yscal=(tempmin - 1)/(tempmax);
+      set_scale_center(xcentre, ycentre);
+    }
+  else
+    {
+      xscal=width()/(xmax-xmin);
+      yscal=height()/(ymax-ymin);
+    }
 }
+
 void Qt_widget::set_scale_center(double xc, double yc)
 {
   xmin = xc - (width()/xscal)/2;
@@ -81,19 +91,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 
   paint.end();  // end painting on pixmap
 
-  /*
-    the only difference between an initialized Qt_widget and a
-    non-initialized one is here:
-    if the widget has been initialized, a resizeEvent modifies the
-    scalings where as it modifies z_min(), z_max() dimensions if not.
-  */
-  if (!isInitialized())
-    initialize();
-  else
-  {
-    pixmap.resize(size());
-    //set_scales();
-  }
+  pixmap.resize(size());
   paint.begin(&pixmap); // begin again painting on pixmap
 
   // restore paint state
@@ -104,7 +102,10 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 
   clear();
   
-  set_scale_center(xcentre, ycentre);
+  if (constranges)
+    set_scales();
+  else
+    set_scale_center(xcentre, ycentre);
   emit(resized());
   redraw();
 }
@@ -223,16 +224,18 @@ void Qt_widget::leaveEvent(QEvent *e)
   }
 }
 
-void Qt_widget::set_window(double  x_min, double x_max, double y_min, double y_max)
+void Qt_widget::set_window(double  x_min, double x_max,
+			   double y_min, double y_max,
+			   bool const_ranges)
 {
   xmin = x_min;
   xmax = x_max;
   ymin = y_min;
   ymax = y_max;
+  constranges = const_ranges;
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;
   set_scales();
-  initialized=true;
 }
 
 void Qt_widget::zoom_in(double ratio, double xc, double yc)

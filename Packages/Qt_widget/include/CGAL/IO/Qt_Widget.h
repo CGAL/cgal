@@ -49,8 +49,8 @@ public:
   ~Qt_widget() {};
 
   // initialization of coordinates system
-  void set_window(double x_min, double x_max, double y_min, double y_max);
-  bool isInitialized() const; // tell if init has been called
+  void set_window(double x_min, double x_max, double y_min, double y_max,
+		  bool const_ranges = false);
   void zoom_in(double ratio);
   void zoom_out(double ratio);
   void zoom_in(double ratio, double xc, double yc);
@@ -69,7 +69,6 @@ public:
     xcentre = x; ycentre = y;
     set_scale_center(xcentre, ycentre);
   };
-
 
   // painting system
   inline QPainter& painter() { return paint; };
@@ -199,8 +198,6 @@ public slots:
   void remove_scene(Qt_scene* s);
 
 private:
-  void	  initialize(); // initialize initiale dimensions
-  bool	  initialized;
   void	  set_scales(); // set xscal and yscal
   void	  set_scale_center(double xc, double yc);
   double  xcentre, ycentre; //the center of the axex
@@ -222,6 +219,7 @@ private:
 
   double xmin, xmax, ymin, ymax; // real dimensions
   double xscal, yscal; // scalings int/double
+  bool constranges; // tell if the ranges should be const
 
   // current tool
   bool _has_tool;
@@ -230,12 +228,6 @@ private:
   //for scenes
   std::list<Qt_scene*>	qt_scenes;
 };//end Qt_widget class
-
-inline
-bool Qt_widget:: isInitialized() const
-{
-  return initialized;
-}
 
 // manipulators
 // ~~~~~~~~~~~~

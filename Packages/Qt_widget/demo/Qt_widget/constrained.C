@@ -129,12 +129,15 @@ class MyWindow : public QMainWindow
 public:
   MyWindow(int x, int y): win(this) {
     setCentralWidget(&win);
+    win.set_window(-1.1, 1.1, -1.1, 1.1, true);
     point_factory = new CGAL::Qt_widget_get_point<Rep>();
     connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this,
 	    SLOT(new_point(CGAL::Object)));
     win << point_factory;
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
+
+    // TODO: change this connect when Qt_scenes_widget come back.
     connect(&win, SIGNAL(redrawed()), this, SLOT(redrawWin()));
     statusBar();
     
@@ -156,8 +159,6 @@ public:
   void init_paint()
   {
     win.lock();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // we need to put it there because Qt
-    // send resizeEvent only on show.
     load_file("data/fish");
     win.unlock();
     statusBar()->message("Enter points with the left button");
