@@ -27,44 +27,48 @@
 
 namespace CGAL {
 
-  template <class T> class Box;
   template <class T> class Points_container;
 
-  template <class NT>
-  std::ostream& operator<< (std::ostream& s, CGAL::Box<NT>& box) {
-    return box.print(s);
-  }
-
+  // Borland does not like moving this code into the class Box,
+  // it gives the error message
+  // [C++ Error] E2402 Illegal base class type: formal type
+  // 'std::unary_function<Point &,void>' resolves to
+  // 'std::unary_function<Point &,void>'
   template <class Point, class T>
   struct set_bounds : public std::unary_function<Point&, void> {
     int dim;
-      T *lower;
-      T *upper;
-      set_bounds(int d, T *l, T *u) : dim(d), lower(l), upper(u) {}
-      void operator() (Point& p) {
-	for (int i = 0; i < dim; ++i) {
-	   if (p[i] < lower[i]) lower[i] = p[i];
- 	  if (p[i] > upper[i]) upper[i] = p[i];
-	}
-      }
-    };
+    T *lower;
+    T *upper;
+    set_bounds(int d, T *l, T *u) : dim(d), lower(l), upper(u) {}
+    void operator() (Point& p) {
+		for (int i = 0; i < dim; ++i) {
+			if (p[i] < lower[i]) lower[i] = p[i];
+ 			if (p[i] > upper[i]) upper[i] = p[i];
+		}
+    }
+  };
 
-
+  // Borland does not like moving this code into the class Box,
+  // it gives the error message
+  // [C++ Error] E2402 Illegal base class type: formal type
+  // 'std::unary_function<Point &,void>' resolves to
+  // 'std::unary_function<Point &,void>'
   template <class P, class T>
   struct set_bounds_from_pointer : public std::unary_function<P, void> {
     int dim;
-      T *lower;
-      T *upper;
-      set_bounds_from_pointer(int d, T *l, T *u) :
+    T *lower;
+    T *upper;
+    set_bounds_from_pointer(int d, T *l, T *u) :
 	dim(d), lower(l), upper(u) {}
-      void operator() (P p) {
-	for (int i = 0; i < dim; ++i) {
-	   if ((*p)[i] < lower[i]) lower[i] = (*p)[i];
-	   if ((*p)[i] > upper[i]) upper[i] = (*p)[i];
-	}
-      }
-    };
-  
+    void operator() (P p) {
+		for (int i = 0; i < dim; ++i) {
+			if ((*p)[i] < lower[i]) lower[i] = (*p)[i];
+			if ((*p)[i] > upper[i]) upper[i] = (*p)[i];
+		}
+    }
+  };
+
+
   template <class T> class Box {
   public:
     typedef T NT;
@@ -98,7 +102,7 @@ namespace CGAL {
       for (int i = 1; i < dim; ++i) {
 	NT tmp = upper_[i] - lower_[i];
 	if (span < tmp) {
-	  span = tmp; 
+	  span = tmp;
 	  max_span_coord_ = i;
 	}
       }
@@ -116,8 +120,8 @@ namespace CGAL {
     Box() : dim(0), lower_(0), upper_(0) {}
 
     template <class Iter>
-    Box(const int d, Iter begin_lower, Iter end_lower, 	
-	Iter begin_upper, Iter end_upper) 
+    Box(const int d, Iter begin_lower, Iter end_lower,
+	Iter begin_upper, Iter end_upper)
       : dim(d) {
 
       lower_ = new NT[d];
@@ -126,19 +130,19 @@ namespace CGAL {
       std::copy(begin_upper, end_upper, upper_);
       set_max_span();
     }
-    
-    explicit Box(const Box<NT>& b) : dim(b.dim), 
+
+    explicit Box(const Box<NT>& b) : dim(b.dim),
       lower_(new NT[dim]), upper_(new NT[dim]) {
         std::copy(b.lower_, b.lower_+dim, lower_);
 	std::copy(b.upper_, b.upper_+dim, upper_);
 	set_max_span();
     }
-    
+
     template <class PointIter>
-    Box(const int d,  PointIter begin,  PointIter end) 
+    Box(const int d,  PointIter begin,  PointIter end)
       : dim(d), lower_(new NT[d]), upper_(new NT[d]) {
 	  // initialize with values of first point
-	  for (int i=0; i < dim; ++i) 
+	  for (int i=0; i < dim; ++i)
 	  {
 	    lower_[i]=(*begin)[i]; upper_[i]=(*begin)[i];
 	  }
@@ -218,16 +222,21 @@ namespace CGAL {
       }
       return *this;
     }
-  };
+  }; // of class Box
 
-template <class NT, class Point> bool belongs(const Point& p, 
+  template <class NT>
+    std::ostream& operator<< (std::ostream& s, Box<NT>& box) {
+    return box.print(s);
+  }
+
+  template <class NT, class Point> bool belongs(const Point& p, 
 					      const Box<NT>& b) {
     for (int i = 0; i < b.dimension(); ++i)
       if (p[i] < b.lower(i) || p[i] > b.upper(i)) return 0;
     return 1;
   }
 
-template <class NT, class Point> NT Min_squared_distance_l2_to_box(const Point& p,
+  template <class NT, class Point> NT Min_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -237,7 +246,7 @@ template <class NT, class Point> NT Min_squared_distance_l2_to_box(const Point& 
     return distance;
   }
 
-template <class NT, class Point> NT Max_squared_distance_l2_to_box(const Point& p,
+  template <class NT, class Point> NT Max_squared_distance_l2_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -249,7 +258,7 @@ template <class NT, class Point> NT Max_squared_distance_l2_to_box(const Point& 
     return distance;
   }
 
-template <class NT, class Point> NT Min_distance_linf_to_box(const Point& p,
+  template <class NT, class Point> NT Min_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {
@@ -259,7 +268,7 @@ template <class NT, class Point> NT Min_distance_linf_to_box(const Point& p,
     return distance;
   }
 
-template <class NT, class Point> NT Max_distance_linf_to_box(const Point& p,
+  template <class NT, class Point> NT Max_distance_linf_to_box(const Point& p,
 					      const Box<NT>& b) {
 	NT distance=0.0;
     for (int i = 0; i < b.dimension(); ++i) {

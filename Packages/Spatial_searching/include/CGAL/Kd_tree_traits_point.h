@@ -41,6 +41,7 @@ namespace CGAL {
     typedef Separator Separator;
     typedef Item Item;
     typedef Item::FT NT;
+	typedef Item** Item_iterator;
     typedef std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
 

@@ -28,44 +28,84 @@
 
 namespace CGAL {
 
+        template <class T>
+        struct get_val : public std::unary_function<const T,
+                typename std::iterator_traits<T>::reference> {
+                typename std::iterator_traits<T>::reference operator()(const T x)
+                {return *x;}
+        };
+        
 	template < class Traits > // = Kd_tree_traits_point >
 	class Base_node {
 	public:
 		typedef Traits::Item Item;
+		typedef Traits::Item_iterator Item_iterator;
 		typedef Base_node<Traits> Node;
-		typedef typename Item::FT NT;
+		typedef Traits::NT NT;
 		typedef Traits::Separator Separator;
 
 		Base_node() {};
 
-                // is_leaf() should be defined for all derived classes
-		// virtual const bool is_leaf() const =0;
-                virtual const bool is_leaf() const {assert(false); return 0;}
+               
+		// methods below are not always defined for all classes
+        // since it is not allowed to call them if they are
+        // not defined, calling the virtual function below is erroneous
+        // assert(false) is used to detect this type of error
+        // an alternative would be to not define the virtual
+        // functions below and to apply static_cast.
+        // This does not work for generic classes
+        // See the example:
+		/*  static cast does not work without specififying specialization parameters
+		template <class Tree>
+		unsigned int num_items(const Tree* root) {
+			if (root->is_leaf()) {
+			Leaf_node *L=static_cast<Tree*>(root);
+			return L->size();
+		}
+		else return num_items(root->lower()) + num_items(root->upper());
+		} */
 
-                // methods below are not always defined for all classes
-                // since it is not allowed to call them if they are
-                // not defined, calling the virtual function below is erroneous
-                // assert(false) is used to detect this type of error
-                // an alternative would be to not define the virtual
-                // functions below and to apply static_cast.
-                // This does not work for generic classes
-                // See the example at the start of Binary_search_tree.h
-
+ 
+		virtual const bool is_leaf() const {assert(false); return 0;}
 		virtual const int size() const {assert(false); return 0;}
 		virtual Node* lower() const {assert(false); return 0;}
 		virtual Node* upper() const {assert(false); return 0;}
-		virtual Item** const begin() const {assert(false); return 0;}
-		virtual Item** const end() const {assert(false); return 0;}
-                virtual const Separator* separator() const {assert(false); return 0;}
-                virtual const NT low_value() const {assert(false); return 0;}
-                virtual const NT high_value() const {assert(false); return 0;}
+		virtual Item_iterator const begin() const {assert(false); return 0;}
+		virtual Item_iterator const end() const {assert(false); return 0;}
+        virtual const Separator* separator() const {assert(false); return 0;}
+        virtual const NT low_value() const {assert(false); return 0;}
+        virtual const NT high_value() const {assert(false); return 0;}
 
-           virtual void data_to_postscript(PS_Stream& PS,
-            const int i, const int j,
-            const NT mini, const NT maxi,
+        virtual void data_to_postscript(PS_Stream& PS,
+        const int i, const int j,
+        const NT mini, const NT maxi,
 	    const NT minj, const NT maxj) {assert(false);};
 
         virtual ~Base_node() {};
+
+		int num_items() {
+			if is_leaf() return size();
+			else return num_items(lower()) + num_items(upper());
+		}
+
+		int depth(const int current_max_depth) {
+			if (is_leaf()) return current_max_depth;
+			else return std::max(depth(lower(), current_max_depth + 1),
+		       depth(upper(), current_max_depth + 1));
+		}
+
+		int depth() { return depth(root, 1); }
+
+		template <class OutputIterator>
+		void tree_items(OutputIterator& it) {
+			if is_leaf() std::transform(begin()end(), it,
+  			      get_val<Item*>());
+			else {
+				tree_items(lower(), it);
+				tree_items(root->upper(), it);
+			}
+		}
+
    };
 
 

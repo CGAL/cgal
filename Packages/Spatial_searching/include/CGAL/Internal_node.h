@@ -35,7 +35,7 @@ class Internal_node : public Base_node<Traits>  {
 
 public:
   typedef Traits::Item Item;
-  typedef typename Item::FT NT;
+  typedef Traits::NT NT;
   typedef Traits::Separator Separator;
   typedef Base_node<Traits> Node;
   typedef Point_2< Cartesian<NT> > Point_2D;
@@ -53,9 +53,7 @@ public:
   inline const Separator* separator() const {return sep; }
 
   Internal_node() {}
-  // Internal_node(const  Node* lower, const  Node* upper) :
-  //			  lower_ch(lower), upper_ch(upper) {}
-
+  
   Internal_node(Points_container<Item>& c, int bucket_size) {
 
     Traits tr;

@@ -313,6 +313,7 @@ namespace CGAL {
       void split_container(Points_container<Item>& c, Separator* sep, bool sliding=false) {
 
 		assert(dimension()==c.dimension());
+		assert(c.empty());
 		c.built_coord=built_coord;
         c.bbox=bbox;
         // bool test_validity=false;

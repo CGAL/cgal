@@ -230,9 +230,9 @@ class Nearest_neighbour_PQ {
         multiplication_factor=Search_traits_instance->Transformed_distance(1.0+Eps);
 
         max_distance=
-        Search_traits_instance->Max_distance_to_box(q,*(tree.bounding_box()));
+        Search_traits_instance->Upper_bound_distance_to_box(q,*(tree.bounding_box()));
         distance_to_root=
-        Search_traits_instance->Min_distance_to_box(q,*(tree.bounding_box()));
+        Search_traits_instance->Lower_bound_distance_to_box(q,*(tree.bounding_box()));
         std::cout << "max_distance=" << max_distance << std::endl;
         std::cout << "distance_to_root=" << distance_to_root << std::endl;
 

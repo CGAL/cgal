@@ -32,14 +32,14 @@ template <class Traits> // = Kd_tree_traits_Point>
 class Leaf_node: public Base_node<Traits>  {
 public:
   typedef Traits::Item Item;
-  
+  typedef Traits::Item_iterator Item_iterator;
 private:
   int n;
-  Item** data;
+  Item_iterator data;
 public:
-  typedef typename Item::FT NT;
+  typedef typename Traits::NT NT;
   typedef CGAL::Point_2< CGAL::Cartesian<NT> > Point_2D;
-  typedef Item** Item_iterator;
+  
   const bool is_leaf() const { return 1;}
   const int size() const { return n;}
   
