@@ -49,7 +49,7 @@ set( int n, int m, int nr_equalities)
     if ( ! x_x.empty()) x_x.clear();
    
     x_l.insert( x_l.end(), l, et0);
-    x_x.insert( x_x.end(), nr_equalities+1, et0); // has to grow later
+    x_x.insert( x_x.end(), l, et0); // has to grow later QP-case
 }
 
 // update functions
