@@ -24,12 +24,13 @@ Version:
 	cvs tag -F -c current_submission
 
 submit: clean Version $(Package).tar.gz
+	mkdir -p $(WWW_dir)
 	cp $(Package).tar.gz $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www.mpi-sb.mpg.de/~hert/CGAL/submissions" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
+	mail -s"autohandle" cgal-submit@cs.uu.nl $(USER) < $(TMP_file)
 	rm -f $(TMP_file)
 
 $(Package).tar.gz:
