@@ -82,14 +82,12 @@ Inherits the types of \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}.
 The following methods, which already exist in triangulations, are
 overloaded to ensure the property that all power spheres are regular.
 
-\ccMethod{Vertex_handle insert(const Weighted_point & p );}
+\ccMethod{Vertex_handle insert(const Weighted_point & p, Cell_handle start =
+Cell_handle() );}
 {Inserts weighted point \ccc{p} in the triangulation. If this
 insertion creates a vertex, this vertex is returned. Otherwise, this
-method returns \ccc{NULL}.}
-
-\ccMethod{Vertex_handle insert(const Weighted_point & p, Cell_handle start);}
-{Same as the previous method, \ccc{start} is used as a starting
-place for the search done within the insertion.}
+method returns \ccc{NULL}.
+The optional argument \ccc{start} is used as a starting place for the search.}
 
 The following method allows one to insert several points. It returns the
 number of inserted points. 

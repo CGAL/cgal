@@ -55,14 +55,11 @@ The following methods overload the corresponding methods of
 triangulations to ensure the empty sphere property of Delaunay 
 triangulations.
 
-\ccMethod{Vertex_handle insert(const Point & p );}
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex. Similar to the insertion in a triangulation, but ensures in
-addition the empty sphere property of all the created faces.}
-
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
-{Same as the previous method, \ccc{start} is used as a starting
-place for the search done within the insertion.}
+addition the empty sphere property of all the created faces.
+The optional argument \ccc{start} is used as a starting place for the search.}
 
 The following method allows one to insert several points. It returns the
 number of inserted points. 

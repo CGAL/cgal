@@ -132,9 +132,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Point & p );
-
-  Vertex_handle insert(const Point & p, Cell_handle start);
+  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
   
   bool remove(Vertex_handle v );
 
@@ -267,22 +265,6 @@ private:
 template < class Gt, class Tds >
 Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p )
-{
-  Cell_handle start;
-  if ( dimension() >= 1 )
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()->neighbor(
-	    infinite_vertex()->cell()->index( infinite_vertex()) );
-  else
-    start = NULL;
-
-  return insert( p, start );
-}
-
-template < class Gt, class Tds >
-Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
 insert(const Point & p, Cell_handle start)
 {
   switch (dimension()) {
@@ -330,7 +312,7 @@ insert(const Point & p, Cell_handle start)
     }//dim 2
   default :
     // dimension <= 1
-    return Triangulation_3<Gt,Tds>::insert(p);
+    return Triangulation_3<Gt,Tds>::insert(p,start);
   }
 }// insert(p)
 

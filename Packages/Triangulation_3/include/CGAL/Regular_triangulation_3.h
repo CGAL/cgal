@@ -92,9 +92,8 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert( const Weighted_point &p );
-
-  Vertex_handle insert( const Weighted_point & p, Cell_handle start );
+  Vertex_handle insert( const Weighted_point & p,
+	                Cell_handle start = Cell_handle());
     
   Bounded_side
   side_of_power_sphere( Cell_handle c, const Weighted_point &p) const;
@@ -326,23 +325,6 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
   Locate_type lt; int i;
   return side_of_edge( p, c, lt, i );
 }
-
-template < class Gt, class Tds >
-typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-Regular_triangulation_3<Gt,Tds>::
-insert(const Weighted_point & p )
-{
-  Cell_handle start;
-  if ( dimension() >= 1 ) {
-    // there is at least one finite "cell" (or facet or edge)
-    start = infinite_vertex()->cell()
-      ->neighbor(infinite_vertex()->cell()->index(infinite_vertex()));
-  }
-  else {
-    start = NULL;
-  }
-  return Regular_triangulation_3<Gt,Tds>::insert( p, start );
-}  
 
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle

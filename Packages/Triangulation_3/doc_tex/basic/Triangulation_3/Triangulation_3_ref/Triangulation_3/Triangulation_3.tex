@@ -537,7 +537,7 @@ known to be flippable.
 The following operations are guaranteed to lead to a valid triangulation 
 when they are applied on a valid triangulation.
 
-\ccMethod{Vertex_handle insert(const Point & p );}
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle() );}
 {Inserts point \ccc{p} in the triangulation and returns the corresponding
  vertex.\\
 If point \ccc{p} coincides with an already existing vertex, this 
@@ -556,11 +556,8 @@ linked to all the points, and the dimension of the triangulation is
 incremented. All the points now belong to the boundary of the convex
 hull, so, the infinite vertex is linked to all the points to
 triangulate the new infinite face. See 
-Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.}
-
-\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
-{Same as the previous method, but \ccc{start} is used as a starting
-place for the search done within the insertion.}
+Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.
+The optional argument \ccc{start} is used as a starting place for the search.}
 
 \ccMethod{template < class InputIterator >
           int
