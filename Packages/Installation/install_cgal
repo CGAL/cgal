@@ -895,7 +895,7 @@ create_replacement_header()
 // It wraps a standard header file that did not exist for this compiler
 // and adds its symbols to namespace std.
 // The existence of this file indicates that your compiler does not
-// conform to the ISO/IEC standard 14822 for C++.
+// conform to the ISO/IEC standard 14882 for C++.
 
 EOF3
 	    ${_printf} "%s\n" "#include <$arg>" >> ${replacement_header}
@@ -923,12 +923,14 @@ EOF3
 # those do not exist e.g. on mipspro: wcin wcout wcerr wclog
  	    istream) print_using IO istream istream_withassign >> ${replacement_header};;
 	    ostream) print_using IO ostream ostream_withassign >> ${replacement_header};;
+	    strstream) print_using IO strstream istrstream ostrstream >> ${replacement_header};;
 	    csetjmp) print_using C longjmp jmp_buf >> ${replacement_header};;
 	    cstdarg) print_using C va_list >> ${replacement_header};;
 	    ctime) print_using C size_t time_t clock_t tm asctime ctime clock difftime gmtime localtime mktime time strftime >> ${replacement_header};;
 	    csignal) print_using C sig_atomic_t raise signal >> ${replacement_header};;
 	    cstdlib) print_using C abort atexit exit getenv system calloc malloc free realloc atof atoi atol mblen mbstowcs mbtowc strtod strtol strtoul wcstombs wctomb bsearch qsort div_t ldiv_t abs div labs ldiv rand srand >> ${replacement_header};;
-	    cctype) print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
+# seem to be macros :(
+#	    cctype) print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
 	    cwctype) print_using C wctrans_t wctype_t wint_t iswalnum iswalpha iswcntrl iswctype iswdigit iswgraph iswlower iswprint iswpunct iswspace iswupper iswxdigit towctrans towlower towupper wctrans wctype >> ${replacement_header};;
 	    cstring) print_using C size_t memchr memcmp memcpy memmove memset strcat strchr strcmp strcoll strcpy strcspn strerror strlen strncat strncmp strncpy strpbrk strrchr strspn strstr strtok strxfrm >> ${replacement_header};;
 	    cwchar) print_using C wint_t size_t fgetwc fgetws fputwc fputws getwc getwchar putwc putwchar ungetwc wcscat wcschr wcscmp wcscoll wcscpy wcscspn wcsftime wcslen wcsncat wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstod wcstok wcstol wcstoul wcsxfrm >> ${replacement_header};;
@@ -1014,6 +1016,7 @@ utility function.h pair.h
 typeinfo typeinfo.h
 string
 streambuf streambuf.h
+strstream strstream.h
 stdexcept stdexcept.h
 stack stack.h
 sstream sstream.h
