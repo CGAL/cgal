@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.3-I-26 $
+// release_date  : $CGAL_Date: 2001/01/05 $
 //
 // file          : include/CGAL/Pm_segment_exact_traits.h
-// package       : pm (4.08)
+// package       : pm (5.43)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
@@ -129,29 +130,36 @@ public:
     if ((!curve_is_in_x_range(cv1, q)) || (!curve_is_in_x_range(cv2, q)))
       return EQUAL;
     
-    Point p1 = curve_calc_point(cv1, q);
-    Point p2 = curve_calc_point(cv2, q);
+    X_curve cv1_ = cv1;
+    X_curve cv2_ = cv2;
+    if (compare_lexicographically_xy(cv1.source(), cv1.target()) == LARGER)
+      cv1_ = curve_flip(cv1);
+    if (compare_lexicographically_xy(cv2.source(), cv2.target()) == LARGER)
+      cv2_ = curve_flip(cv2);
     
-    if (curve_is_vertical(cv1))
+    Point p1 = curve_calc_point(cv1_, q);
+    Point p2 = curve_calc_point(cv2_, q);
+    
+    if (curve_is_vertical(cv1_))
       {
-        if (curve_is_vertical(cv2))
+        if (curve_is_vertical(cv2_))
           {
             // both cv1 and cv2 are vertical
-            if ( is_lower(cv1.target(), cv2.source()) )
+            if ( is_lower(cv1_.target(), cv2_.source()) )
               return SMALLER;
-            if ( is_higher(cv1.source(), cv2.target()) )
+            if ( is_higher(cv1_.source(), cv2_.target()) )
               return LARGER;
             return SMALLER;
           }
         // cv1 is vertical and cv2 not
-        if ( is_lower(cv1.target(), p2) )
+        if ( is_lower(cv1_.target(), p2) )
           return SMALLER;
-        if ( is_higher(cv1.source(), p2) )
+        if ( is_higher(cv1_.source(), p2) )
           return LARGER;
         return EQUAL;
       }
     
-    if (curve_is_vertical(cv2))
+    if (curve_is_vertical(cv2_))
       {
         // cv2 is vertical and cv1- not
          /*        bug fix (Oren)
@@ -172,9 +180,9 @@ public:
         p                     p
 
         */
-        if (is_lower(lowest(cv2.source(),cv2.target()), p1) )
+        if (is_lower(cv2_.target(), p1) )
           return LARGER;
-        if ( is_higher(highest(cv2.source(),cv2.target()), p1) )
+        if (is_higher(cv2_.source(), p1) )
           return SMALLER;
         return EQUAL;
       }

@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, December 14
+// release       : $CGAL_Revision: CGAL-2.3-I-26 $
+// release_date  : $CGAL_Date: 2001/01/05 $
 //
 // file          : include/CGAL/Pm_leda_segment_exact_traits.h
-// package       : pm (4.17)
+// package       : pm (5.43)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Eyal flato  	  <flato@math.tau.ac.il>
 //		   Iddo hanniel	<hanniel@math.tau.ac.il>
 //
@@ -176,11 +177,46 @@ public:
 		// cv1_ and cv2_ are the same as cv1 and cv2 - oriented from left to right
 		X_curve cv1_ = cv1;
 		X_curve cv2_ = cv2;
-		if (is_left(cv1.target(), cv1.source()))
+		if (lexicographically_xy_larger(cv1.source(), cv1.target()))
 			cv1_ = cv1.reversal();
-		if (is_left(cv2.target(), cv2.source()))
+		if (lexicographically_xy_larger(cv2.source(), cv2.target()))
 			cv2_ = cv2.reversal();
 		
+                
+                // checking verical curves.
+                if (curve_is_vertical(cv1_)) {
+                  
+                  if (curve_is_vertical(cv2_)) {
+                    // both cv1 and cv2 are vertical
+                    if ( is_lower(cv1_.target(), cv2_.source()) )
+                      return SMALLER;
+                    if ( is_higher(cv1_.source(), cv2_.target()) )
+                      return LARGER;
+                    return EQUAL; // overlapping. 
+                  } // end  both cv1 and cv2 are vertical.
+                  else { // only cv1 is vertical.
+                    if (orientation(cv2_.source(), cv2_.target(), cv1_.source()) > 0 )
+                      return LARGER;
+                    
+                    if (orientation(cv2_.source(), cv2_.target(), cv1_.target()) < 0)
+                      return SMALLER;
+
+                    return EQUAL;
+                  }
+                }
+                
+                if (curve_is_vertical(cv2_)) { // only cv2 is vertical.
+                  if (orientation(cv1_.source(), cv1_.target(), cv2_.source()) > 0 )
+                    return SMALLER;
+                    
+                  if (orientation(cv1_.source(), cv1_.target(), cv2_.target()) < 0)
+                    return LARGER;
+
+                  return EQUAL;  
+                }
+                  
+                // end checking verical curves.
+
 		OP_CONSUME(opSegmentX, 1);
 		res = cmp_segments_at_xcoord(cv1_, cv2_, q);
 		
@@ -278,7 +314,7 @@ public:
 		int or1=orientation(p1,p,px);
                 // Bug Fix, Shai, Jan, 8, 2001
                 // 'or' is a keyword in C++, changed to 'orient'
-		int orient=or0*or1;
+                int orient=or0*or1;                        
 		
 		if (orient < 0) 
 		{ //one is a leftturn the other rightturn
