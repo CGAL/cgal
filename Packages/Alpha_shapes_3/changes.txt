@@ -1,3 +1,6 @@
+24 June 2004 Sylvain Pion
+- Various fixes required by g++ 3.4.
+
 22 May 2004 Sylvain Pion
 - SunPRO workarounds.
 

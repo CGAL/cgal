@@ -45,7 +45,7 @@ file_input(std::ifstream& is, std::list<Weighted_point>& L)
 
 template <class AS>
 void
-_test_weighted_alpha_shape_3(const AS &)
+_test_weighted_alpha_shape_3()
 {
   typedef AS                 Alpha_shape_3;
 

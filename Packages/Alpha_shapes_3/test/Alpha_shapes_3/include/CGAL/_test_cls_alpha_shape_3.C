@@ -45,7 +45,7 @@ file_input(std::ifstream& is, std::list<Point>& L)
 
 template <class AS>
 void
-_test_cls_alpha_shape_3(const AS &)
+_test_cls_alpha_shape_3()
 {
   typedef AS                 Alpha_shape_3;
 

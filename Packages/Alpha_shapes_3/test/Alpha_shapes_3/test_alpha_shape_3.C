@@ -40,7 +40,7 @@ typedef CGAL::Alpha_shape_3<Triangulation_3>  Alpha_shape_3;
 
 int main()
 {
-  _test_cls_alpha_shape_3( Alpha_shape_3() );
+  _test_cls_alpha_shape_3<Alpha_shape_3>();
   return 0;
 }
 

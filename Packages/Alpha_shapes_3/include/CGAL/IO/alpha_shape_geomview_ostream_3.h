@@ -76,7 +76,7 @@ Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv) const
     Vlist_begin = Alpha_shape_vertices_begin(),
     Vlist_end = Alpha_shape_vertices_end();
 
-  std::map<Alpha_shape_3<Dt>::Vertex_handle, int> V;
+  std::map<typename Alpha_shape_3<Dt>::Vertex_handle, int> V;
   int number_of_vertex = 0;
   for( Vlist_it = Vlist_begin; Vlist_it != Vlist_end; Vlist_it++) {
     V[*Vlist_it] = number_of_vertex++;
@@ -87,7 +87,7 @@ Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv) const
     Flist_begin = Alpha_shape_facets_begin(),
     Flist_end = Alpha_shape_facets_end();
 
-  std::map<Alpha_shape_3<Dt>::Facet, int> F;
+  std::map<typename Alpha_shape_3<Dt>::Facet, int> F;
   int number_of_facets = 0;
   for( Flist_it = Flist_begin; Flist_it != Flist_end; Flist_it++) {
     F[*Flist_it] = number_of_facets++;
