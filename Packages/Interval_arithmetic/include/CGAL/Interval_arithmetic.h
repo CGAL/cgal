@@ -38,9 +38,8 @@
 struct CGAL_Interval_nt_advanced
 {
 protected:
-        // "inf" stores the OPPOSITE of the lower bound.
-        // "sup" stores the upper bound of the interval.
-  double inf, sup;
+  double inf, sup;	// "inf" stores the OPPOSITE of the lower bound.
+			// "sup" stores the upper bound of the interval.
   struct unsafe_comparison{};  // Exception class.
 
 private:
@@ -158,7 +157,7 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
   {
     if (d.inf<=0)				/* d>=0 */
       return CGAL_Interval_nt_advanced(-((-inf)*d.inf), sup*d.sup);
-    else if (d.sup<=0)			/* d<=0 */
+    else if (d.sup<=0)				/* d<=0 */
       return CGAL_Interval_nt_advanced(-(sup*d.inf), (-inf)*d.sup);
     else					/* 0 \in d */
       return CGAL_Interval_nt_advanced(-(sup*d.inf), sup*d.sup);
@@ -167,16 +166,16 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
   {
     if (d.inf<=0)				/* d>=0 */
       return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*(-d.inf));
-    else if (d.sup<=0)			/* d<=0 */
+    else if (d.sup<=0)				/* d<=0 */
       return CGAL_Interval_nt_advanced(-((-sup)*d.sup), inf*d.inf);
     else					/* 0 \in d */
       return CGAL_Interval_nt_advanced(-(inf*d.sup), inf*d.inf);
   }
-  else					/* 0 \in [inf;sup] */
+  else						/* 0 \in [inf;sup] */
   {
     if (d.inf<=0)				/* d>=0 */
       return CGAL_Interval_nt_advanced(-(inf*d.sup), sup*d.sup);
-    else if (d.sup<=0)			/* d<=0 */
+    else if (d.sup<=0)				/* d<=0 */
       return CGAL_Interval_nt_advanced(-(sup*d.inf), inf*d.inf);
     else					/* 0 \in d */
     {
@@ -209,7 +208,7 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
   {
     if (inf<=0.0)				/* this>=0 */
       return CGAL_Interval_nt_advanced(-(inf/d.sup), sup/(-d.inf));
-    else if (sup<=0.0)			/* this<=0 */
+    else if (sup<=0.0)				/* this<=0 */
       return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/d.sup);
     else					/* 0 \in this */
       return CGAL_Interval_nt_advanced(-(inf/(-d.inf)), sup/(-d.inf));
@@ -218,12 +217,12 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
   {
     if (inf<=0.0)				/* this>=0 */
       return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/d.inf);
-    else if (sup<=0.0)			/* this<=0 */
+    else if (sup<=0.0)				/* this<=0 */
       return CGAL_Interval_nt_advanced(-(sup/d.inf), inf/(-d.sup));
     else					/* 0 \in this */
       return CGAL_Interval_nt_advanced(-(sup/(-d.sup)), inf/(-d.sup));
   }
-  else					/* 0 \in [d.inf;d.sup] */
+  else						/* 0 \in [d.inf;d.sup] */
     return CGAL_Interval_nt_advanced(-HUGE_VAL, HUGE_VAL);
 	   // We could do slightly better -> [0;HUGE_VAL] when d.sup==0,
 	   // but is this worth ?
@@ -408,14 +407,10 @@ inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
   return tmp;
 }
 
-// This one needs a version for ..._advanced ?
-// Is this function only needed by GPC...
-// Or maybe implement them as constructors, that'd be simpler, even if we
-// could not handle user types. (?? define a template constructor...)
-inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
-{ return (CGAL_Interval_nt) d; }
+inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const double &d)
+{ return (CGAL_Interval_nt_advanced) d; }
 
-// Finally we source the cast functions from other NTs, when necessary.
+// Finally we source the "cast" functions from other NTs, when necessary.
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -437,4 +432,4 @@ inline CGAL_Interval_nt CGAL_to_interval_nt(const double &d)
 #include <CGAL/Interval_arithmetic/IA_leda_rational.h>
 #endif
 
-#endif /* CGAL_INTERVAL_ARITHMETIC_H */
+#endif // CGAL_INTERVAL_ARITHMETIC_H
