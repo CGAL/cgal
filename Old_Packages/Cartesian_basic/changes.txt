@@ -2,6 +2,8 @@ Version 3.2.4 (September 2 1999)
 - Removed references to <CGAL/Kernel/function_objects_?.h>
   and copy pasted directly into Cartesian_? classes,
   because M$VC++ doesn't accept this (legal?) design
+- This means <CGAL/Kernel/...> are now not used, but they are kept
+  for the future if M$VC++ starts accepting them.
 - Added definitions of Cartesian_3::*_2, even though I do not include the
   corresponding <CGAL/Cartesian/*_2.?> (except for Point_2)
   This only works if the compiler does lazy instantiation
