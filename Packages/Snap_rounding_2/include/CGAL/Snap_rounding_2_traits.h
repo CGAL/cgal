@@ -53,7 +53,7 @@ void snap(Point_2 p,NT pixel_size,NT &x,NT &y)
     y = floor(y_tmp.to_double()) * pixel_size + pixel_size / 2.0;
   }
 
-Point_2 get_integer_grid_point(Point_2 p,NT pixel_size) const
+Point_2 integer_grid_point(Point_2 p,NT pixel_size) const
   {
     NT x = p.x() - pixel_size / 2.0 / pixel_size;
     NT y = p.y() - pixel_size / 2.0 / pixel_size;
@@ -84,7 +84,7 @@ Point_2 rotate_point(Point_2 p,NT angle)
     return(Point_2(x,y));
   }
 
-Iso_rectangle_2 get_bounding_of_min_sum(
+Iso_rectangle_2 get_bounding_of_minkowsi_sum(
                 Segment_2 s,
                 NT unit_squere,
 		NT angle)

@@ -216,7 +216,7 @@ public:
       --right_iter;
     }
 
-    Iso_rectangle_2 rec = _gt.get_bounding_of_min_sum(s,unit_squere,
+    Iso_rectangle_2 rec = _gt.get_bounding_of_minkowski_sum(s,unit_squere,
 			  right_iter->second);
 
     Point_2 p1 = rec.vertex(0);

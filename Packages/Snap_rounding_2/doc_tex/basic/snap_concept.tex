@@ -32,7 +32,7 @@ predicates on those primitives.
 \ccGlue
 \ccNestedType{Iso_rectangle_2}{The iso rectangle  type.}
 
-\ccNestedType{Compare_x_2_object}{Predicate object. Must provide
+\ccNestedType{Compare_x_2}{Predicate object. Must provide
 the operator
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns 
@@ -40,7 +40,7 @@ which returns
  according ding to the
 $x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Compare_y_2_object}{Predicate object. Must provide
+\ccNestedType{Compare_y_2}{Predicate object. Must provide
 the operator
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns
@@ -49,29 +49,36 @@ according to the
 $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 
-\ccNestedType{snap}{The snap operation as defined
+\ccNestedType{snap_2}{The snap operation as defined
 in \cite{isr-2002}. It rounds a point to a center of a pixel (unit square)
 in the grid used by the Snap Rounding algorithm. Must have the syntax
-\ccc{void snap(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
+\ccc{void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
 input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
-\ccNestedType{segment_direction}{Returns the slope of a segment
-as described in \cite{isr-2002}.
-Must have the syntax \ccc{double segment_direction(Segment_2 s)}
+\ccNestedType{segment_direction_2}{Returns a floating-point approximation of the
+slope of a segment as described in \cite{isr-2002}.
+Must have the syntax \ccc{double operator()(Segment_2 s)}
 where $s$ is the input segment.}
 
-\ccNestedType{rotate_point}{Rotate a point by a given angle.
-Must have the syntax \ccc{Point_2 rotate_point(Point_2 p,NT angle)}
+\ccNestedType{rotate_point_2}{Rotate a point by an approximation of a given angle
+as desribed in \cite{isr-2002}.
+Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT angle)}
 where $p$ is the point to rotate and angle is the rotation magnitude
 in radians.}
 
-\ccNestedType{get_bounding_of_min_sum}{Get the bounding box
+\ccNestedType{integer_grid_point_2}{return the conversion of a point
+from an arbitrary-precision representation into an integer one as
+described in \cite{isr-2002}. 
+Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
+where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel of the grid.
+}
+
+\ccNestedType{box_of_minkowski_sum_2}{Get the bounding box
 of the minkowski sum of a segment and a unit pixel as described in \cite{isr-2002}.
-Must have the syntax \ccc{Iso_rectangle_2 get_bounding_of_min_sum(
-Segment_2 s,NT unit_squere,NT angle)}
-where $s$ is the segment, $unit_square$ is the edge size of the pixel
+Must have the syntax \ccc{Iso_rectangle_2 operator()(Segment_2 s,NT unit_squere,NT angle)}
+where $s$ is the segment, {\ccc unit\_square} is the edge size of the pixel
 and $angle$ is the slope of the segment.}
 
 \ccCreation
@@ -100,11 +107,15 @@ and constructor objects.
 \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
-\ccMethod{Less_x_2 less_x_2_object();}{}
+\ccMethod{snap_2 snap_2_object();}{}
 \ccGlue
-\ccMethod{Less_xy_2 less_xy_2_object();}{}
+\ccMethod{segment_direction_2 segment_direction_object();}{}
 \ccGlue
-\ccMethod{Less_yx_2 less_yx_2_object();}{}
+\ccMethod{rotate_point_2 rotate_point_object();}{}
+\ccGlue
+\ccMethod{integer_grid_point_2 integer_grid_point_object();}{}
+\ccGlue
+\ccMethod{box_of_minkowski_sum_2 box_of_minkowski_sum_object();}{}
 \ccGlue
 
 
