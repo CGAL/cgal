@@ -14,33 +14,34 @@
 #include <cstdio>
 #include <cmath>
 
+static unsigned int failed = 0;
 
-//using namespace std;
-
-typedef double NumberType;
-typedef CGAL::Default_Bbox_d< NumberType, 3 >  Box;
+template< class NT, unsigned int DIM, bool CLOSED >
+struct _test {
+typedef NT NumberType;
+typedef CGAL::Default_Bbox_d< NumberType, DIM >  Box;
 typedef CGAL::Default_Bbox_d_Adapter< Box >    BoxAdapter;
-typedef CGAL::Default_Box_Traits< BoxAdapter > Traits;
+typedef CGAL::Default_Box_Traits< BoxAdapter, CLOSED > Traits;
 typedef std::vector< Box >     BoxContainer;
 typedef std::pair< Box, Box >  BoxPair;
 typedef std::vector< BoxPair > ResultContainer;
 
 
 static void fill_boxes( unsigned int n, BoxContainer& boxes ) {
-    unsigned int maxEdgeLength = (int) pow(n, (double)2/3);
+    NT maxEdgeLength = (NT) pow(n, (DIM-1.0)/DIM);
 
     for( unsigned int i = 0; i < n; ++i ) {
-        NumberType lo[3], hi[3];
-        for( unsigned int d = 0; d < 3; ++d ) {
+        NumberType lo[DIM], hi[DIM];
+        for( unsigned int d = 0; d < DIM; ++d ) {
             lo[d] = (NumberType)(drand48() * (n - maxEdgeLength));
-            hi[d] = lo[d] + 1.0 + (NumberType)(drand48() * maxEdgeLength);
+            hi[d] = (NumberType)(lo[d] + 1 + (drand48() * maxEdgeLength));
         }
         boxes.push_back( Box( &lo[0], &hi[0]) );
     }
 }
 
 static void assertIntersection( const Box& a, const Box& b ) {
-    for( unsigned int dim = 0; dim < 3; ++dim ) {
+    for( unsigned int dim = 0; dim < DIM; ++dim ) {
         if( Traits::does_intersect( a, b, dim ) == false ) {
             std::cout << "does not intersect!" << std::endl;
             //cout << a << endl << b << endl;
@@ -58,17 +59,14 @@ struct StorageCallback {
     void operator()( const Box& a, const Box& b ) {
         assertIntersection( a, b );
         ++counter;
-        storage.push_back( std::make_pair( a, b ) );
+        //storage.push_back( std::make_pair( a, b ) );
         //std::cout << Traits::get_num( a ) << " " << Traits::get_num( b ) << std::endl;
     }
 };
 
-
-
-
-bool
+/*bool
 operator==( const Box& a, const Box& b ) {
-    for( unsigned int dim = 0; dim < 3; ++dim )
+    for( unsigned int dim = 0; dim < DIM; ++dim )
         if( Traits::get_lo( a, dim ) != Traits::get_lo( b, dim ) ||
             Traits::get_hi( a, dim ) != Traits::get_hi( b, dim )   )
             return false;
@@ -108,7 +106,7 @@ unsigned int countDuplicates( Storage& storage ) {
                 ++counter;
 
     return counter;
-}
+} */
 
 static void
 test_n( unsigned int n, bool bipartite = true )
@@ -130,10 +128,10 @@ test_n( unsigned int n, bool bipartite = true )
     Timer timer;
     timer.start();
     CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
-                        boxes2.begin(), boxes2.end(), callback1, Traits(), 2 );
+                        boxes2.begin(), boxes2.end(), callback1, Traits(), DIM - 1 );
     if( bipartite )
         CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
-                            boxes1.begin(), boxes1.end(), callback1, Traits(), 2 );
+                            boxes1.begin(), boxes1.end(), callback1, Traits(), DIM - 1 );
     timer.stop();
     std::cout << "got " << callback1.counter << " intersections in "
          << timer.t << " seconds."
@@ -151,24 +149,91 @@ test_n( unsigned int n, bool bipartite = true )
               << timer.t << " seconds." << std::endl;
 
     if( callback1.counter != callback2.counter ) {
-        unsigned int missing    = countMissingItems( result_scanner,
+        ++failed;
+        /*unsigned int missing    = countMissingItems( result_scanner,
                                                      result_tree );
-        unsigned int duplicates = countDuplicates( result_tree );
-        std::cout << "!! failed !! " << missing  << " missing and "
+        unsigned int duplicates = countDuplicates( result_tree );*/
+        std::cout << "!! failed !! " << std::endl;
+        /*std::cout << "!! failed !! " << missing  << " missing and "
              << duplicates << " duplicate intersections in tree result. "
-             << std::endl;
+             << std::endl;*/
     }
     else
         std::cout << "--- passed --- " << std::endl;
 }
 
-
-int main( int argc, char ** argv ) {
-    for( unsigned int n = 8; n < 500000; n = (int)(n * 2)) {
+void operator()() {
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "DIM = " << DIM << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    for( unsigned int n = 8; n < 200000; n = (int)(n * 1.3)) {
         std::cout << "bipartite case: " << std::endl;
         test_n( n, true );
         std::cout << "complete case: " << std::endl;
         test_n( n, false );
     }
+}
+
+}; // end struct  test
+
+template< class NT >
+struct test
+{
+    _test< NT, 1, true >   t0;
+    _test< NT, 2, true >   t1;
+    _test< NT, 3, true >   t2;
+    _test< NT, 4, true >   t3;
+    _test< NT, 10, true >  t4;
+    _test< NT, 1, false >  t5;
+    _test< NT, 2, false >  t6;
+    _test< NT, 3, false >  t7;
+    _test< NT, 4, false >  t8;
+    _test< NT, 10, false > t9;
+
+    void operator()() {
+        t0();
+        t1();
+        t2();
+        t3();
+        t4();
+        t5();
+        t6();
+        t7();
+        t8();
+        t9();
+    }
+};
+
+
+
+int main( int argc, char ** argv ) {
+    test<unsigned int> a;
+    test<int> b;
+    test<float> c;
+    test<double> d;
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "unsigned int" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    a();
+    std::cout << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "signed int" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    b();
+    std::cout << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "float" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    c();
+    std::cout << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "double" << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    d();
+
+    if( failed != 0 )
+        std::cout << "a total number of " << failed << " tests failed!" << std::endl;
+    else
+        std::cout << "all tests passed." << std::endl;
 }
 

@@ -141,24 +141,23 @@ void segment_tree( RandomAccessIter p_begin, RandomAccessIter p_end,
     //DUMP("----------------===========[ new node ]============-------------")
     DUMP("range: [" << lo << "," << hi << ") dim " << dim << std::endl )
     DUMP("intervals: " )
-    dump_box_numbers( i_begin, i_end, traits );
-    //dump_intervals( i_begin, i_end, traits, dim );
+    //dump_box_numbers( i_begin, i_end, traits );
+    dump_intervals( i_begin, i_end, traits, dim );
     DUMP("points: " )
-    dump_box_numbers( p_begin, p_end, traits );
-    //dump_points( p_begin, p_end, traits, dim );
+    //dump_box_numbers( p_begin, p_end, traits );
+    dump_points( p_begin, p_end, traits, dim );
 #endif
 
 #if SEGMENT_TREE_CHECK_INVARIANTS
-    // first: each point is inside segment [lo,hi)
-    for( RandomAccessIter it = p_begin; it != p_end; ++it ) {
-        assert( Traits::get_lo( *it, dim ) < hi );
-        assert( Traits::get_lo( *it, dim ) >= lo );
-    }
-    // second: each interval intersects segment [lo,hi)
-    for( RandomAccessIter it = i_begin; it != i_end; ++it ) {
-        assert( Traits::get_lo( *it, dim ) < hi );
-        assert( Traits::get_hi( *it, dim ) > lo);
-
+    {
+        // first: each point is inside segment [lo,hi)
+        for( RandomAccessIter it = p_begin; it != p_end; ++it ) {
+            assert( Lo_Less( hi, dim )(*it) );
+            assert( Lo_Less( lo, dim )(*it) == false );
+        }
+        // second: each interval intersects segment [lo,hi)
+        for( RandomAccessIter it = i_begin; it != i_end; ++it )
+            assert( Hi_Greater( lo, dim )(*it) && Lo_Less( hi, dim )(*it) );
     }
 #endif
 

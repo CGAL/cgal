@@ -1,1 +1,0 @@
-- numeric_limits<int>::min = -22323......., limits<double>::min = 1e-300 ... min > 0 ??? 

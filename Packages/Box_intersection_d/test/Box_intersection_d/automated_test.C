@@ -23,7 +23,7 @@ using namespace std;
 
 typedef CGAL::Default_Bbox_d< int, 3 >         Box;
 typedef CGAL::Default_Bbox_d_Adapter< Box >    BoxAdapter;
-typedef CGAL::Default_Box_Traits< BoxAdapter > Traits;
+typedef CGAL::Default_Box_Traits< BoxAdapter, true > Traits;
 typedef vector< Box >     BoxContainer;
 typedef pair< Box, Box >  BoxPair;
 typedef vector< BoxPair > ResultContainer;
@@ -131,6 +131,19 @@ test( const char* filename1, const char* filename2 )
     timer.stop();
     cout << "got " << callback1.counter << " intersections in "
          << timer.t << " seconds." << endl;
+
+
+    cout << "one way scan ...... " << flush;
+    timer.start();
+    CGAL::one_way_scan( boxes1.begin(), boxes1.end(),
+                        boxes2.begin(), boxes2.end(), callback2, Traits(), 2 );
+    CGAL::one_way_scan( boxes2.begin(), boxes2.end(),
+                        boxes1.begin(), boxes1.end(), callback2, Traits(), 2 );
+    timer.stop();
+    cout << "got " << callback2.counter << " intersections in "
+         << timer.t << " seconds." << endl;
+    callback2.counter = 0;
+    result_tree.clear();
 
     cout << "segment tree ... " << flush;
     timer.reset();

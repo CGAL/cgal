@@ -75,13 +75,16 @@ struct Default_Bbox_d_Adapter {
 // unsigned int get_num( Box )
 // Box may be of type immediate, reference, or pointer
 
-template< class BoxAdapter >
+template< class BoxAdapter, bool closed >
 struct Default_Box_Traits : public BoxAdapter {
     typedef typename BoxAdapter::Box         Box;
     typedef typename BoxAdapter::NumberType  NumberType;
-    typedef Default_Box_Traits< BoxAdapter > Traits;
+    typedef Default_Box_Traits< BoxAdapter, closed > Traits;
 
     static unsigned int cutoff;
+
+    static bool hi_greater ( NumberType hi, NumberType val )
+    { return closed ? hi >= val : hi > val; }
 
     // cmp dim = \a b -> islolesslo a b dim
     class Compare : public std::binary_function< Box, Box, bool > {
@@ -110,7 +113,7 @@ struct Default_Box_Traits : public BoxAdapter {
         Hi_Greater( NumberType value, unsigned int dim )
             : value( value ), dim( dim ) {}
         bool operator() ( const Box& box ) const
-        { return get_hi( box, dim ) > value; }
+        { return hi_greater( get_hi( box, dim ), value); }
     };
 
     // p lo hi dim = \box -> getlo box dim < lo && gethi box dim > hi
@@ -132,10 +135,10 @@ struct Default_Box_Traits : public BoxAdapter {
     }
 
     static bool is_lo_less_hi( const Box& a, const Box& b, unsigned int dim )
-    { return get_lo(a,dim ) <  get_hi(b,dim); }
+    { return hi_greater( get_hi(b,dim), get_lo(a,dim )); }
 
     static bool does_intersect ( const Box& a, const Box& b, unsigned int dim )
-    { return get_hi(a,dim) > get_lo(b,dim) && get_hi(b,dim) > get_lo(a,dim); }
+    { return is_lo_less_hi( a, b, dim ) && is_lo_less_hi( b, a, dim ); }
 
     static bool contains_lo_point(const Box& a, const Box& b, unsigned int dim)
     { return !is_lo_less_lo( b, a, dim ) && is_lo_less_hi( b, a, dim );  }
@@ -144,9 +147,9 @@ struct Default_Box_Traits : public BoxAdapter {
     { return cutoff; }
 };
 
-template< class BoxAdapter >
+template< class BoxAdapter, bool closed >
 unsigned int
-Default_Box_Traits<BoxAdapter>::cutoff = 3000;
+Default_Box_Traits<BoxAdapter,closed>::cutoff = 3000;
 
 CGAL_END_NAMESPACE
 

@@ -10,21 +10,26 @@ Computing information about complex geometric primitives is often expensive. Whi
 Many geometric problems can be restated in terms of box intersections since if the bounding boxes of two primitives intersect, we know that the primitives may intersect or have close proximity. Some practical problems we may solve with this approach include detecting surface self-intersection, intersection of two different objects and performing proximity queries. 
 
 \section*{Bounding Box Intersection}
-\subsection*{Overview}
+\subsection*{Algorithm}
+...
 
+\subsection*{Quick Start}
+First, for each geometric primitive, a bounding box has to be computed. The bounding box sets have to be supplied to the algorithm by \ccc{Random Access Iterators}. Each intersection candidate is reported to a callback as a pair of box references. Boxes are user defined. Access from within the intersection algorithm is done using a box adapter, so boxes may have any interface. A traits class is required to specify predicates between boxes, number type, box type, dimension and some other parameters.
 
-\begin{itemize}
-\item put geometric primitives in enclosing bounding boxes
-\item (todo: check) box is half open, which means the upper bound has to be increased by a small amount
-\item boxes to be checked must be accessible by random access iterators
-\item while checking, each intersecting bbox pair is reported to a callback
-\item intersection algo expects input iterators, an output iterator and a traits class
-\item logarithmic runtime
-\item some fine-tuning required (cutoff) for last percent of performance
-\item two approaches: segment tree, two way scan
-\item segment tree has some overhead. if callback runtime is low, better use two way scan for lower numbers of boxes. normally, in \cgal
-there is slow processing (exact arithmetic) which means normally segment tree is faster even for lower numbers of boxes.
-\end{itemize}
+%\subsection*{Box}
+%default box provides 
+%\begin{itemize} 
+%  \item standard implementation with number type and dimension parameter
+%  \item unique numbering (required)    
+%  \item base class for user defined box carrying exact geometric primitive
+%\end{itemize}
+
+\subsection*{Bounding Box}
+Bounding boxes can have any dimension. In each dimension, an interval defines the size of the box in that dimension. For the starting point and end point of the interval, any number type can be used.
+
+Depending on your problem, the box can be half open or closed. A bounding box is half open, if in each dimension the interval $[lo,hi)$ is also half open. Similarly, a closed bounding box contains only closed intervals $[lo,hi]$ in each dimension. Closed intervals allow for zero-width boxes and for intersections at the boundary of objects. The distinction between closed or half open intervals does not require a different representation of boxes, but instead a different interpretation when comparing boxes (box predicates).
+
+There has to be an arbitrary fixed order between boxes, for example by assigning unique numbers. If boxes are allocated on the heap, also the memory location could define such an order. (perhaps explain why ...) A default bounding box is provided to derive from.
 
 \subsection*{Box Adapter}
 \begin{itemize}
@@ -43,9 +48,37 @@ static unsigned int get_num( const Box& b )
 \item default adapter provided, with 
 \end{itemize}
 
+\subsection*{Box Adapter}
+
+
+\begin{itemize}
+  \item put geometric primitives in enclosing bounding boxes
+  \item boxes can 
+  \begin{itemize}
+    \item be half open, with intervals $[lo,hi)$ in each dimension
+    \item or closed. this allows for intersections between empty boxes
+    \item have any dimension
+  \end{itemize}   
+  \item while checking, each intersecting box pair is reported to a callback
+  \item signature of a callback: void cb( Box a, Box b )
+  \item intersection algo expects input iterators, an output iterator and a traits class
+  \item box sets are passed as random access iterators
+  \item runtime $O(n\log^{d}n+k)$ where n is the number of boxes, d is dimension and k is number of intersections
+  \item some fine-tuning required (cutoff) for last percent of performance
+  \item fall back to usual interval scanning for low number of boxes
+  \item space requirement $O(n)$ where n is number of boxes. no new space is allocated. instead, user provided box iterators are reused.
+  \item segment tree has some overhead. if callback runtime is low, better use scanning for lower numbers of boxes. \cgal uses exact arithmetic -> slows down the computation inside the callbacks -> segment tree faster even for lower numbers of boxes.
+\end{itemize}
+
+
+
 \subsection*{Box Traits}
 \begin{itemize}
-\item defines predicates on boxes
+\item defines predicates on boxes, eg.
+  \begin{itemize}
+    \item one interval contains the starting point of another
+    \item interval starting point less than another intervals starting point    
+  \end{itemize}
 \item box access relies on BoxAdapter
 \item default traits class provided. normally, no need for own traits class
 
