@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Minor optimisation : to_double(double) returns a const reference.
+
+20 June 2004 Sylvain Pion
 - GMPXX : No need to forward abs() and sqrt() when CGAL_USE_ADL_FOR_NT.
 
 20 June 2004 Sylvain Pion

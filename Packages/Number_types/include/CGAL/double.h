@@ -43,8 +43,8 @@ template<> struct Number_type_traits<double> {
 };
 
 inline
-double
-to_double(double d)
+const double &
+to_double(const double & d)
 { return d; }
 
 inline 
