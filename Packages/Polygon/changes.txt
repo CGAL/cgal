@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// 2.14 (25 May 2000)
+
++ Fixed edge_compare_consecutive in Polygon_2_algorithms.C with a fix by Susan.
+
+//-----------------------------------------------------------------------//
 // 2.13 (3 April 2000)
 + Fix in Polygon_2_algorithms.C, replacing non standard vector.resize(...)
   by vector.insert(...)
