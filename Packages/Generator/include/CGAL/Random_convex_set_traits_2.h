@@ -26,19 +26,17 @@
 #if ! (CGAL_RANDOM_CONVEX_SET_TRAITS_2_H)
 #define CGAL_RANDOM_CONVEX_SET_TRAITS_2_H 1
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
-template < class R >
-struct Random_convex_set_traits {
+template < class Kernel >
+struct Random_convex_set_traits_2 {
 
-  typedef typename R::Point_2      Point_2;
-  typedef typename R::Direction_2  Direction_2;
-  typedef typename R::FT           FT;
+  typedef typename Kernel::Point_2      Point_2;
+  typedef typename Kernel::Direction_2  Direction_2;
+  typedef typename Kernel::FT           FT;
 
-  Random_convex_set_traits() : _origin( ORIGIN)
+  Random_convex_set_traits_2() : _origin( ORIGIN)
   {}
 
   Point_2
@@ -83,6 +81,10 @@ private:
   Point_2 _origin;
 };
 
+template <class Kernel>
+struct Random_convex_set_traits : public Random_convex_set_traits_2<Kernel>
+{};
+
 template < class OutputIterator, class Point_generator >
 inline
 OutputIterator
@@ -102,7 +104,7 @@ CGAL_random_convex_set_2( int n,
                           Point_2< R >*)
 {
   return random_convex_set_2(
-    n, o, pg, Random_convex_set_traits< R >());
+    n, o, pg, Random_convex_set_traits_2< R >());
 }
 
 
