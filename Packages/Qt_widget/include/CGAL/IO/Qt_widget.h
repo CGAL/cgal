@@ -788,7 +788,7 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
     double *Y = new double [2*dim];
 
     // actual number of pixels to be drawn
-    int pixels;
+    int pixels, ind;
 
     // conic coordinates
     double r = CGAL::to_double (c.r()),
@@ -817,7 +817,7 @@ operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
                 double y = -(r*x*x + u*x + w)/denom;
                 X[pixels] = x; Y[pixels++] = y; } }
     //ws.draw_pixels (pixels, X, Y);
-    for (int ind = 0; ind < pixels; ind++)
+    for (ind = 0; ind < pixels; ind++)
     {
       typedef Cartesian<double> Rep;
       typedef Point_2<Rep>	Point;
