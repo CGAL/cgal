@@ -28,5 +28,5 @@ typedef CGAL::Orthogonal_standard_search<Traits>        Neighbour_search;
 typedef CGAL::Fuzzy_iso_box_d<Point, Iso_rectangle_2>   Fuzzy_box;
 typedef CGAL::Fuzzy_sphere_d<Point>                     Fuzzy_circle;
 
-typedef std::vector<Traits::Item>                       Vector;
+typedef std::vector<Traits::Point>                      Vector;
 typedef std::vector<Point>                              Query_vector;
