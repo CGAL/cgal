@@ -56,6 +56,7 @@ class Nef_polyhedron_S2_rep {
   typedef Nef_polyhedron_S2_rep<K,I,M>        Self;
   friend class Nef_polyhedron_S2<K,I,M>;
 
+ public:
   typedef CGAL::Sphere_geometry<K>                     Sphere_kernel;
   typedef bool                                         Mark;
   typedef M                                            Sphere_map;
@@ -64,6 +65,7 @@ class Nef_polyhedron_S2_rep {
   typedef CGAL::SM_overlayer<Decorator>                Overlayer;
   typedef CGAL::SM_point_locator<Const_decorator>      Locator;
 
+ private:
   Sphere_map sm_; 
   
 public:
