@@ -27,7 +27,7 @@ int main(int, char*)
 
 
 
-#include <CGAL/IO/Qt_Widget.h>
+#include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_views.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
