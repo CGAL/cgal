@@ -29,6 +29,7 @@ Bbox_2_intersections.o \
 Double.o \
 Double_eps.o \
 File_header_OFF.o \
+File_header_extended_OFF.o \
 File_scanner_OFF.o \
 File_writer_OFF.o \
 File_writer_VRML_2.o \
