@@ -429,11 +429,11 @@ public:
   void bounds(FT &xmin, FT &ymin, 
 	      FT &xmax, FT &ymax)
     {
-      Mesh::Finite_vertices_iterator vi=mesh->finite_vertices_begin();
+      Mesh::Finite_vertices_iterator vi=triangulation->finite_vertices_begin();
       xmin=xmax=vi->point().x();
       ymin=ymax=vi->point().y();
       vi++;
-      while(vi != mesh->finite_vertices_end())
+      while(vi != triangulation->finite_vertices_end())
 	{
 	  if(vi->point().x() < xmin) xmin=vi->point().x();
 	  if(vi->point().x() > xmax) xmax=vi->point().x();
@@ -475,42 +475,43 @@ public slots:
 
 
   void get_cgal_object(CGAL::Object obj)
-    {
+    { // TODO: when inputs arise, seeds should be cleared
       Point p;
       Polygon poly;
       
       if(CGAL::assign(p,obj))
-	if(get_seed->is_active())
+	if(follow_mouse->is_active())
 	  {
-	    seeds->push_back(p);
 	    switch_to_mesh();
-	    mesh->mark_facets(seeds->begin(), seeds->end());
+	    typedef Mesh::Face_handle Face_handle;
+	    std::list<Face_handle> l;
+
+	    Face_handle fh = mesh->locate(p);
+	    traits.set_point(p);
+	    if( (fh!=NULL) )
+	      {
+		const Point&
+		  a = fh->vertex(0)->point(),
+		  b = fh->vertex(1)->point(),
+		  c = fh->vertex(2)->point();
+		  
+		if(traits.is_bad_object().operator()(a, b, c))
+		  l.push_back(fh);
+	      }
+	    mesh->set_geom_traits(traits, l.begin(), l.end());
+	    while( mesh->refine_step() );
+	    widget->redraw();
 	  }
 	else
-	  if(follow_mouse->is_active())
+	  if(get_seed->is_active())
 	    {
+	      seeds->push_back(p);
 	      switch_to_mesh();
-	      typedef Mesh::Face_handle Face_handle;
-	      std::list<Face_handle> l;
-
-	      Face_handle fh = mesh->locate(p);
-	      traits.set_point(p);
-	      if( (fh!=NULL) )
-		{
-		  const Point&
-		    a = fh->vertex(0)->point(),
-		    b = fh->vertex(1)->point(),
-		    c = fh->vertex(2)->point();
-		  
-		  if(traits.is_bad_object().operator()(a, b, c))
-		    l.push_back(fh);
-		}
-	      mesh->set_geom_traits(traits, l.begin(), l.end());
-	      while( mesh->refine_step() );
-	      widget->redraw();
+	      mesh->mark_facets(seeds->begin(), seeds->end());
 	    }
-	  else
+	  else // get_point is active
 	    {
+	      seeds->clear();
 	      switch_to_triangulation();
 	      triangulation->insert(p);
 	    }
@@ -521,7 +522,7 @@ public slots:
 	    for(Polygon::Edge_const_iterator it=poly.edges_begin();
 		it!=poly.edges_end();
 		it++)
-	    triangulation->insert((*it).source(),(*it).target());
+	      triangulation->insert((*it).source(),(*it).target());
 	  }
       widget->redraw();
     }
@@ -650,7 +651,7 @@ public slots:
       std::ifstream f(s);
       if(s.right(5) == ".poly")
 	{
-	  mesh->read_poly(f);
+	  mesh->read_poly(f, true);
 	  seeds->clear();
 	  for(Mesh::Seeds::iterator it = mesh->seeds.begin();
 	      it != mesh->seeds.end();
@@ -660,7 +661,7 @@ public slots:
 	}
       else
 	{
-	  mesh->read(f);
+	  mesh->read(f, true);
 	  seeds->clear();
 	  is_mesh_initialized=false;
 	}
@@ -708,7 +709,7 @@ public slots:
     {
       double bound = QInputDialog::getDouble( "Set bound",
 					      "Please enter a new bound",
-					      mesh->geom_traits().bound());
+					      traits.bound());
       traits.set_bound(bound);
       if( mesh != 0 )
 	mesh->set_geom_traits(traits);
@@ -719,7 +720,7 @@ public slots:
       double bound = 
 	QInputDialog::getDouble( "Set bound",
 				 "Please enter a new bound",
-				 mesh->geom_traits().size_bound());
+				 traits.size_bound());
       traits.set_size_bound(bound);
       if ( mesh != 0 )
 	mesh->set_geom_traits(traits);
