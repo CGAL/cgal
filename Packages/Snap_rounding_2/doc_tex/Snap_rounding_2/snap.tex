@@ -23,14 +23,13 @@
 \section{Introduction}
 Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
-representation \cite{gght-srlse-97, gm-rad-98, h-psifp-99}. In the study of robust
-geometric computing, it can be classified
+representation \cite{gght-srlse-97, gm-rad-98, cgal:h-psifp-99}. In
+the study of robust geometric computing, it can be classified
 as a finite precision approximation technique. Iterated Snap Rounding
-(ISR, for short) is
-a modification of SR in which each vertex is at least
-half-the-width-of-a-pixel away from any non-incident edge \cite{isr-2002}.
-This package supports both methods. Algorithmic details and experimental results are
-given in \cite{isr-2002}.
+(ISR, for short) is a modification of SR in which each vertex is at least
+half-the-width-of-a-pixel away from any non-incident edge
+\cite{hp-isr-02}. This package supports both methods. Algorithmic
+details and experimental results are given in \cite{hp-isr-02}.
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -78,7 +77,8 @@ the results of SR and ISR on the same input.
 
 \section{Terms and Software Design}
 
-Our package supports both schemes, implementing the algorithm described in \cite{isr-2002}.
+Our package supports both schemes, implementing the algorithm
+described in \cite{hp-isr-02}.
 Although the paper only describes an algorithm for ISR,
 it is easy to derive an algorithm for SR, by performing only
 the first rounding level for each segment.
