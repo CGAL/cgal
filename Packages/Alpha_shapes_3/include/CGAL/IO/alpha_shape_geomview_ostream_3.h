@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.0-I-20 $
 // release_date  : $CGAL_Date: 1999/06/02 $
 //
-// file          : include/CGAL/IO/Alpha_shape_geomview_stream_3.h
+// file          : include/CGAL/IO/alpha_shape_geomview_ostream_3.h
 // package       : Alpha_shapes_3(1.0)
 // source        : $RCSfile$
 // revision      : $Revision$
@@ -33,12 +33,15 @@
 // - Use the stream color instead of built-in constant/random.
 // - If interfaces were more similar, we could think of sharing 2d and 3d ?
 
+//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
+//-------------------------------------------------------------------
 
 // This one is to show the edges of a 3D triangulation.
 // template < class GT, class TDS >
 // void
-// show_triangulation_edges(Geomview_stream &gv, const Alpha_shape_3<GT,TDS> &T)
+// show_triangulation_edges(Geomview_stream &gv, 
+//                          const Alpha_shape_3<GT,TDS> &T)
 // {
 //   // Header.
 //   gv.set_ascii_mode();
@@ -62,10 +65,12 @@ CGAL_BEGIN_NAMESPACE
 //          << V[(*eit).first->vertex((*eit).second)]
 //          << V[(*eit).first->vertex((*eit).third)]
 //          << "\n"; // without color.
-//       // << 4 << drand48() << drand48() << drand48() << 1.0; // random color.
+//       // << 4 << drand48() << drand48() << drand48() << 1.0; // random color
 //   }
 // }
 
+
+//-------------------------------------------------------------------
 // This one outputs the facets.
 template < class Dt >
 void
@@ -114,6 +119,8 @@ Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv)
   }
 }
 
+//-------------------------------------------------------------------
+
 template < class Dt >
 Geomview_stream&
 operator<<( Geomview_stream &gv, Alpha_shape_3<Dt>& A)
@@ -134,6 +141,8 @@ operator<<( Geomview_stream &gv, Alpha_shape_3<Dt>& A)
     return gv;
 }
 
+//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
+//-------------------------------------------------------------------
 
 #endif // CGAL_IO_ALPHA_SHAPE_GEOMVIEW_OSTREAM_3_H

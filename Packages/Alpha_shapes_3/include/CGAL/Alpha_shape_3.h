@@ -63,10 +63,10 @@ class Alpha_shape_3 : public Dt
   // DEFINITION The class Alpha_shape_3<Dt> represents the family
   // of alpha-shapes of points in a plane for all positive alpha. It
   // maintains the underlying Delaunay tetrahedralization which represents
-  // connectivity and order among its simplices. Each k-dimensional simplex of the
-  // Delaunay tetrahedralization is associated with an interval that specifies
-  // for which values of alpha the simplex belongs to the alpha-shape (sorted
-  // linear arrays resp. multimaps or interval trees). There are links
+  // connectivity and order among its simplices. Each k-dimensional simplex of
+  // the Delaunay tetrahedralization is associated with an interval that
+  // specifies for which values of alpha the simplex belongs to the alpha-shape
+  // (sorted linear arrays resp. multimaps or interval trees). There are links
   // between the intervals and the k-dimensional simplices of the Delaunay
   // tetrahedralization (multimaps resp. hashtables).
   //
@@ -2050,6 +2050,6 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
-#include <CGAL/IO/Alpha_shape_geomview_ostream_3.h>
+#include <CGAL/IO/alpha_shape_geomview_ostream_3.h>
 
 #endif //CGAL_ALPHA_SHAPE_3_H
