@@ -45,56 +45,58 @@ class Homogeneous_base
   public:
     typedef RT_                                     RT;
     typedef FT_                                     FT;
-    typedef CGAL::Object                            Object_2;
-    // we have: template <class R> CGAL::Point_2 : public R::Point_2_base
-    typedef CGAL::Point_2< R_ >                     Point_2;
-    typedef CGAL::Vector_2< R_ >                    Vector_2;
-    typedef CGAL::Direction_2< R_ >                 Direction_2;
-    typedef CGAL::Segment_2< R_ >                   Segment_2;
-    typedef CGAL::Line_2< R_ >                      Line_2;
-    typedef CGAL::Ray_2< R_ >                       Ray_2;
-    typedef CGAL::Circle_2< R_ >                    Circle_2;
-    typedef CGAL::Triangle_2< R_ >                  Triangle_2;
-    typedef CGAL::Iso_rectangle_2< R_ >             Iso_rectangle_2;
-    typedef CGAL::Aff_transformation_2< R_ >        Aff_transformation_2;
-    typedef CGAL::Object                            Object_3;
-    typedef CGAL::Point_3< R_ >                     Point_3;
-    typedef CGAL::Vector_3< R_ >                    Vector_3;
-    typedef CGAL::Direction_3< R_ >                 Direction_3;
-    typedef CGAL::Segment_3< R_ >                   Segment_3;
-    typedef CGAL::Plane_3< R_ >                     Plane_3;
-    typedef CGAL::Line_3< R_ >                      Line_3;
-    typedef CGAL::Ray_3< R_ >                       Ray_3;
-    typedef CGAL::Triangle_3< R_ >                  Triangle_3;
-    typedef CGAL::Tetrahedron_3< R_ >               Tetrahedron_3;
-    typedef CGAL::Iso_cuboid_3< R_ >                Iso_cuboid_3;
-    typedef CGAL::Sphere_3< R_ >                    Sphere_3;
-    typedef CGAL::Aff_transformation_3< R_ >        Aff_transformation_3;
-    // we have: template <class R> CGAL::Point_d : public R::Point_d_base
-    typedef CGAL::Point_d< R_ >                     Point_d;
 
-    typedef CGAL::Handle_for< Threetuple<RT> >      Point_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >      Vector_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >      Direction_handle_2;
-    typedef CGAL::Handle_for< Ray_repH2<R_> >       Ray_handle_2;
-    typedef CGAL::Handle_for< Triangle_repH2< R_> > Triangle_handle_2;
-    typedef CGAL::Handle_for< Circle_repH2<R_> >    Circle_handle_2;
+    typedef CGAL::Object                            Object_2;
+    typedef CGAL::Object                            Object_3;
+
+    typedef PointH2< R_ >                           Point_2;
+    typedef VectorH2< R_ >                          Vector_2;
+    typedef DirectionH2< R_ >                       Direction_2;
+    typedef SegmentH2< R_ >                         Segment_2;
+    typedef LineH2< R_ >                            Line_2;
+    typedef RayH2< R_ >                             Ray_2;
+    typedef CircleH2< R_ >                          Circle_2;
+    typedef TriangleH2< R_ >                        Triangle_2;
+    typedef Iso_rectangleH2< R_ >                   Iso_rectangle_2;
+    typedef Aff_transformationH2< R_ >              Aff_transformation_2;
+
+    typedef PointH3< R_ >                            Point_3;
+    typedef VectorH3< R_ >                           Vector_3;
+    typedef DirectionH3< R_ >                        Direction_3;
+    typedef SegmentH3< R_ >                          Segment_3;
+    typedef PlaneH3< R_ >                            Plane_3;
+    typedef LineH3< R_ >                             Line_3;
+    typedef RayH3< R_ >                              Ray_3;
+    typedef TriangleH3< R_ >                         Triangle_3;
+    typedef TetrahedronH3< R_ >                      Tetrahedron_3;
+    typedef Iso_cuboidH3< R_ >                       Iso_cuboid_3;
+    typedef SphereH3< R_ >                           Sphere_3;
+    typedef Aff_transformationH3< R_ >               Aff_transformation_3;
+
+    typedef PointHd< FT, RT>                         Point_d;
+
+    typedef CGAL::Handle_for< Threetuple<RT> >       Point_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Vector_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Direction_handle_2;
+    typedef CGAL::Handle_for< Ray_repH2<R_> >        Ray_handle_2;
+    typedef CGAL::Handle_for< Triangle_repH2< R_> >  Triangle_handle_2;
+    typedef CGAL::Handle_for< Circle_repH2<R_> >     Circle_handle_2;
     typedef CGAL::Handle_for< Twotuple<PointH2<R_> > > Iso_rectangle_handle_2;
-    typedef CGAL::Handle_for< Threetuple<RT> >      Line_handle_2;
-    typedef CGAL::Handle_for< Segment_repH2<R_> >   Segment_handle_2;
+    typedef CGAL::Handle_for< Threetuple<RT> >       Line_handle_2;
+    typedef CGAL::Handle_for< Segment_repH2<R_> >    Segment_handle_2;
     typedef CGAL::Handle_for< Aff_transformation_rep_baseH2<R_>,
                     New_delete_allocator< Aff_transformation_rep_baseH2<R_> > >
 			                           Aff_transformation_handle_2;
 
-    typedef CGAL::Handle_for< RepH3<RT> >          Point_handle_3;
-    typedef CGAL::Handle_for< RepH3<RT> >          Vector_handle_3;
-    typedef CGAL::Handle_for< RepH3<RT> >          Direction_handle_3;
-    typedef CGAL::Handle_for< Fourtuple<RT> >      Plane_handle_3;
-    typedef CGAL::Handle_for< Ray_repH3<R_> >      Ray_handle_3;
-    typedef CGAL::Handle_for< Line_repH3<R_> >     Line_handle_3;
-    typedef CGAL::Handle_for< Sphere_repH3<R_> >   Sphere_handle_3;
+    typedef CGAL::Handle_for< RepH3<RT> >            Point_handle_3;
+    typedef CGAL::Handle_for< RepH3<RT> >            Vector_handle_3;
+    typedef CGAL::Handle_for< RepH3<RT> >            Direction_handle_3;
+    typedef CGAL::Handle_for< Fourtuple<RT> >        Plane_handle_3;
+    typedef CGAL::Handle_for< Ray_repH3<R_> >        Ray_handle_3;
+    typedef CGAL::Handle_for< Line_repH3<R_> >       Line_handle_3;
+    typedef CGAL::Handle_for< Sphere_repH3<R_> >     Sphere_handle_3;
     typedef CGAL::Handle_for< Tetrahedron_repH3<R_> >   Tetrahedron_handle_3;
-    typedef CGAL::Handle_for< Segment_repH3<R_> >  Segment_handle_3;
+    typedef CGAL::Handle_for< Segment_repH3<R_> >    Segment_handle_3;
     typedef CGAL::Handle_for< Threetuple< PointH3<R_> > >  Triangle_handle_3;
     typedef CGAL::Handle_for< Twotuple<PointH3<R_> > > Iso_cuboid_handle_3;
     typedef CGAL::Handle_for< Aff_transformation_rep_baseH3<R_>,
@@ -104,95 +106,78 @@ class Homogeneous_base
 };
 
 template <class RT_, class FT_ = Quotient<RT_> >
-class Homogeneous : public Homogeneous_base< Homogeneous<RT_,FT_>, RT_, FT_ >
+class Homogeneous
+  : public Homogeneous_base< Homogeneous<RT_,FT_>, RT_, FT_ >
 {
   public:
     typedef Homogeneous< RT_, FT_ >                 R;
     typedef RT_                                     RT;
     typedef FT_                                     FT;
+
     typedef Homogeneous_tag                         Rep_tag;
-    typedef PointH2< R >                            Point_2_base;
-    typedef VectorH2< R >                           Vector_2_base;
-    typedef DirectionH2< R >                        Direction_2_base;
-    typedef SegmentH2< R >                          Segment_2_base;
-    typedef LineH2< R >                             Line_2_base;
-    typedef RayH2< R >                              Ray_2_base;
-    typedef CircleH2< R >                           Circle_2_base;
-    typedef TriangleH2< R >                         Triangle_2_base;
-    typedef Iso_rectangleH2< R >                    Iso_rectangle_2_base;
-    typedef Aff_transformationH2< R >               Aff_transformation_2_base;
-    typedef Homogeneous_base< Homogeneous<RT_,FT_>, RT_, FT_ >   KernelBase;
+    typedef Homogeneous_base< R, RT_, FT_ >         Kernel_base;
 
-    typedef typename KernelBase::Point_2               Point_2;
-    typedef typename KernelBase::Vector_2              Vector_2;
-    typedef typename KernelBase::Direction_2           Direction_2;
-    typedef typename KernelBase::Line_2                Line_2;
-    typedef typename KernelBase::Segment_2             Segment_2;
-    typedef typename KernelBase::Ray_2                 Ray_2;
-    typedef typename KernelBase::Circle_2              Circle_2;
-    typedef typename KernelBase::Triangle_2            Triangle_2;
-    typedef typename KernelBase::Iso_rectangle_2       Iso_rectangle_2;
-    typedef typename KernelBase::Aff_transformation_2  Aff_transformation_2;
-    typedef typename KernelBase::Object_2              Object_2;
-    typedef typename KernelBase::Object_3              Object_3;
+    typedef typename Kernel_base::Point_2               Point_2_base;
+    typedef typename Kernel_base::Vector_2              Vector_2_base;
+    typedef typename Kernel_base::Direction_2           Direction_2_base;
+    typedef typename Kernel_base::Line_2                Line_2_base;
+    typedef typename Kernel_base::Segment_2             Segment_2_base;
+    typedef typename Kernel_base::Ray_2                 Ray_2_base;
+    typedef typename Kernel_base::Circle_2              Circle_2_base;
+    typedef typename Kernel_base::Triangle_2            Triangle_2_base;
+    typedef typename Kernel_base::Iso_rectangle_2       Iso_rectangle_2_base;
+    typedef typename Kernel_base::Aff_transformation_2
+	                                            Aff_transformation_2_base;
 
-    typedef PointH3< R >                             Point_3_base;
-    typedef VectorH3< R >                            Vector_3_base;
-    typedef DirectionH3< R >                         Direction_3_base;
-    typedef SegmentH3< R >                           Segment_3_base;
-    typedef PlaneH3< R >                             Plane_3_base;
-    typedef LineH3< R >                              Line_3_base;
-    typedef RayH3< R >                               Ray_3_base;
-    typedef TriangleH3< R >                          Triangle_3_base;
-    typedef TetrahedronH3< R >                       Tetrahedron_3_base;
-    typedef Iso_cuboidH3< R >                        Iso_cuboid_3_base;
-    typedef SphereH3< R >                            Sphere_3_base;
-    typedef Aff_transformationH3< R >                Aff_transformation_3_base;
-    typedef typename KernelBase::Point_3             Point_3;
-    typedef typename KernelBase::Vector_3            Vector_3;
-    typedef typename KernelBase::Direction_3         Direction_3;
-    typedef typename KernelBase::Plane_3             Plane_3;
-    typedef typename KernelBase::Line_3              Line_3;
-    typedef typename KernelBase::Segment_3           Segment_3;
-    typedef typename KernelBase::Ray_3               Ray_3;
-    typedef typename KernelBase::Sphere_3            Sphere_3;
-    typedef typename KernelBase::Triangle_3          Triangle_3;
-    typedef typename KernelBase::Tetrahedron_3       Tetrahedron_3;
-    typedef typename KernelBase::Iso_cuboid_3        Iso_cuboid_3;
-    typedef typename KernelBase::Aff_transformation_3
-                                                     Aff_transformation_3;
+    typedef typename Kernel_base::Point_3               Point_3_base;
+    typedef typename Kernel_base::Vector_3              Vector_3_base;
+    typedef typename Kernel_base::Direction_3           Direction_3_base;
+    typedef typename Kernel_base::Plane_3               Plane_3_base;
+    typedef typename Kernel_base::Line_3                Line_3_base;
+    typedef typename Kernel_base::Segment_3             Segment_3_base;
+    typedef typename Kernel_base::Ray_3                 Ray_3_base;
+    typedef typename Kernel_base::Sphere_3              Sphere_3_base;
+    typedef typename Kernel_base::Triangle_3            Triangle_3_base;
+    typedef typename Kernel_base::Tetrahedron_3         Tetrahedron_3_base;
+    typedef typename Kernel_base::Iso_cuboid_3          Iso_cuboid_3_base;
+    typedef typename Kernel_base::Aff_transformation_3
+                                                     Aff_transformation_3_base;
 
-    typedef PointHd< FT, RT>                         Point_d_base;
-    typedef typename KernelBase::Point_d             Point_d;
+    typedef typename Kernel_base::Point_d               Point_d_base;
 
-    typedef Data_accessorH2<R>                       Data_accessor_2;
-    typedef ConicHPA2<Point_2,Data_accessor_2>       Conic_2;
+    typedef typename Kernel_base::Object_2              Object_2;
+    typedef typename Kernel_base::Object_3              Object_3;
 
-    typedef typename KernelBase::Point_handle_2        Point_handle_2;
-    typedef typename KernelBase::Vector_handle_2       Vector_handle_2;
-    typedef typename KernelBase::Direction_handle_2    Direction_handle_2;
-    typedef typename KernelBase::Ray_handle_2          Ray_handle_2;
-    typedef typename KernelBase::Triangle_handle_2     Triangle_handle_2;
-    typedef typename KernelBase::Circle_handle_2       Circle_handle_2;
-    typedef typename KernelBase::Iso_rectangle_handle_2 Iso_rectangle_handle_2;
-    typedef typename KernelBase::Line_handle_2         Line_handle_2;
-    typedef typename KernelBase::Segment_handle_2      Segment_handle_2;
-    typedef typename KernelBase::Aff_transformation_handle_2
-			                           Aff_transformation_handle_2;
+    // we have: template <class R> CGAL::Point_2 : public R::Point_2_base
+    typedef CGAL::Point_2< R >                     Point_2;
+    typedef CGAL::Vector_2< R >                    Vector_2;
+    typedef CGAL::Direction_2< R >                 Direction_2;
+    typedef CGAL::Segment_2< R >                   Segment_2;
+    typedef CGAL::Line_2< R >                      Line_2;
+    typedef CGAL::Ray_2< R >                       Ray_2;
+    typedef CGAL::Circle_2< R >                    Circle_2;
+    typedef CGAL::Triangle_2< R >                  Triangle_2;
+    typedef CGAL::Iso_rectangle_2< R >             Iso_rectangle_2;
+    typedef CGAL::Aff_transformation_2< R >        Aff_transformation_2;
 
-    typedef typename KernelBase::Point_handle_3        Point_handle_3;
-    typedef typename KernelBase::Vector_handle_3       Vector_handle_3;
-    typedef typename KernelBase::Direction_handle_3    Direction_handle_3;
-    typedef typename KernelBase::Plane_handle_3        Plane_handle_3;
-    typedef typename KernelBase::Ray_handle_3          Ray_handle_3;
-    typedef typename KernelBase::Line_handle_3         Line_handle_3;
-    typedef typename KernelBase::Sphere_handle_3       Sphere_handle_3;
-    typedef typename KernelBase::Tetrahedron_handle_3  Tetrahedron_handle_3;
-    typedef typename KernelBase::Segment_handle_3      Segment_handle_3;
-    typedef typename KernelBase::Triangle_handle_3     Triangle_handle_3;
-    typedef typename KernelBase::Iso_cuboid_handle_3   Iso_cuboid_handle_3;
-    typedef typename KernelBase::Aff_transformation_handle_3
-			                           Aff_transformation_handle_3;
+    typedef CGAL::Point_3< R >                     Point_3;
+    typedef CGAL::Vector_3< R >                    Vector_3;
+    typedef CGAL::Direction_3< R >                 Direction_3;
+    typedef CGAL::Segment_3< R >                   Segment_3;
+    typedef CGAL::Plane_3< R >                     Plane_3;
+    typedef CGAL::Line_3< R >                      Line_3;
+    typedef CGAL::Ray_3< R >                       Ray_3;
+    typedef CGAL::Triangle_3< R >                  Triangle_3;
+    typedef CGAL::Tetrahedron_3< R >               Tetrahedron_3;
+    typedef CGAL::Iso_cuboid_3< R >                Iso_cuboid_3;
+    typedef CGAL::Sphere_3< R >                    Sphere_3;
+    typedef CGAL::Aff_transformation_3< R >        Aff_transformation_3;
+
+    // we have: template <class R> CGAL::Point_d : public R::Point_d_base
+    typedef CGAL::Point_d< R >                     Point_d;
+
+    typedef Data_accessorH2<R>                     Data_accessor_2;
+    typedef ConicHPA2<Point_2,Data_accessor_2>     Conic_2;
 
     static
     FT
