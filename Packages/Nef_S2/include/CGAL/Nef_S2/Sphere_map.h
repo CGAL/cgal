@@ -227,12 +227,12 @@ public:
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map(bool b=false) : boundary_item_(dummy.end()), 
+  Sphere_map(bool b=false) : boundary_item_(undef_), 
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
   ~Sphere_map() { clear(); }
 
-  Sphere_map(const Self& D) : boundary_item_(dummy.end()),
+  Sphere_map(const Self& D) : boundary_item_(undef_),
     svertices_(D.svertices_), 
     sedges_(D.sedges_), 
     sfaces_(D.sfaces_), 
@@ -254,7 +254,7 @@ public:
 
   void clear()
   { 
-    boundary_item_.clear(dummy.end());
+    boundary_item_.clear(undef_);
     svertices_.destroy(); 
     sfaces_.destroy();
     while ( shalfedges_begin() != shalfedges_end() )
@@ -264,7 +264,7 @@ public:
 
   template <typename H>
   bool is_sm_boundary_object(H h) const
-  { return boundary_item_[h]!=dummy.end(); }
+  { return boundary_item_[h]!=undef_; }
 
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
@@ -276,8 +276,8 @@ public:
 
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=dummy.end());
-    boundary_item_[h] = dummy.end(); }
+  { CGAL_assertion(boundary_item_[h]!=undef_);
+    boundary_item_[h] = undef_; }
 
   void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -477,9 +477,9 @@ public:
 
 protected:
   void pointer_update(const Self& D);
-  Object_list dummy;
   Handle_to_iterator_map boundary_item_;
-  
+  static Object_iterator undef_;
+
   SVertex_list       svertices_;
   SHalfedge_list     sedges_;
   SFace_list         sfaces_;
@@ -566,6 +566,11 @@ pointer_update(const Sphere_map<K, I, M>& D)
     }
   }
 }
+
+template <typename Kernel_, typename Items_, typename Mark_> 
+typename Sphere_map<Kernel_, Items_, Mark_>::Object_iterator
+Sphere_map<Kernel_, Items_, Mark_>::undef_;
+
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SPHERE_MAP_H
