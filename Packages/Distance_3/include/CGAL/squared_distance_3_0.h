@@ -159,9 +159,10 @@ typename K::FT
 squared_distance(const typename CGAL_WRAP(K)::Point_3 & pt1,
 		 const typename CGAL_WRAP(K)::Point_3 & pt2, 
 		 const K&)
-{
+{  
+  typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
-  Vector_3 vec(pt1-pt2);
+  Vector_3 vec = construct_vector(pt2, pt1);
   return vec*vec;
 }
 
