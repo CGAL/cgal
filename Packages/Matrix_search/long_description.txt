@@ -4,6 +4,16 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.41
+//---------------------------------------------------------------------
+
+ALL : Minimum_enclosing_* -> Min_*
+ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+ALL : extremal_polygon -> extremal_polygon_2
+ALL : all_furthest_neighbors -> all_furthest_neighbors_2
+DOCS: Changed everything acc. to the new manual structure.
+
+//---------------------------------------------------------------------
 //	revision 1.40
 //---------------------------------------------------------------------
 
@@ -221,6 +231,11 @@ TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 ALL : use namespace std and CGAL
 ALL : use standard header files
+DOCS: Minimum_enclosing_* -> Min_*
+DOCS: maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+DOCS: extremal_polygon -> extremal_polygon_2
+DOCS: all_furthest_neighbors -> all_furthest_neighbors_2
+DOCS: Changed everything acc. to the new manual structure.
 DOCS: Uniform traits classes documented.
 DOCS: added some return 0;
 DOCS: MSVBC workaround for TYPENAME_BUGs.
