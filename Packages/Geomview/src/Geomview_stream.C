@@ -129,7 +129,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	// working, at least for a few public releases.
         // So the plan is to send, from CGAL, the command : (echo "CGAL-3D")
         // It's the same length as "started", 7.
-        // Then we read 7 characters from Geomview, and test which string it is.
+        // Then we read 7 chars from Geomview, and test which string it is.
         // If it's "CGAL-3D", then fine, the user doesn't have .geomview with
         // the back-compatible echo command.
         // In the very long run, we'll be able to get rid of all this code as
@@ -159,7 +159,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         }
         else
         {
-            std::cerr << "Unexcepted string from Geomview at initialization !\n"
+            std::cerr << "Unexcepted string from Geomview at initialization!\n"
                       << "Going on nevertheless !" << std::endl;
         }
 #else
