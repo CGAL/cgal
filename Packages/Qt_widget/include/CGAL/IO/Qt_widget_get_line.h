@@ -35,81 +35,93 @@ template <class R>
 class Qt_widget_get_line : public Qt_widget_tool
 {
 public:
-  typedef Point_2<R>			Point;
-  typedef Line_2<R>				Line;
+  typedef Point_2<R>	Point;
+  typedef Line_2<R>	Line;
   typedef typename	R::FT FT;
 
-  Qt_widget_get_line() {};
+  Qt_widget_get_line() : firstpoint(false), 
+			 firsttime(true){};
 
 private:
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
-      {
-		FT
-		x=static_cast<FT>(widget->x_real(e->x())),
-		y=static_cast<FT>(widget->y_real(e->y()));
-		x1 = x;
-		y1 = y;
-		x2 = x;
-		y2 = y;
-		firstpoint = TRUE;
-      }
-  };
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON && !firstpoint)
+    {
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+      x1 = x;
+      y1 = y;
+      x2 = x;
+      y2 = y;
+      firstpoint = TRUE;
+    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+      if(x1!=x || y1!=y) {
+	widget->new_object(make_object(Line(Point(x1,y1),Point(x,y))));
+	firstpoint = FALSE;
+      }    
+    }
+  }
 
+  void leaveEvent(QEvent *e)
+  {
+    if(firstpoint)
+    {
+      RasterOp old = widget->rasterOp();	//save the initial raster mode
+      widget->lock();
+	widget->setRasterOp(XorROP);
+	*widget << CGAL::GREEN;
+	*widget << Line(Point(x1,y1),Point(x2,y2));
+	widget->setRasterOp(old);
+      widget->unlock();
+      firsttime = true;
+    }
+  }
   void mouseMoveEvent(QMouseEvent *e)
   {
+    if(firstpoint)
+    {
+      FT
+	x=static_cast<FT>(widget->x_real(e->x())),
+	y=static_cast<FT>(widget->y_real(e->y()));
+	RasterOp old = widget->rasterOp();	//save the initial raster mode
+	
+	widget->setRasterOp(XorROP);
+	widget->lock();
+	*widget << CGAL::GREEN;
+	if(!firsttime)
+	  *widget << Line(Point(x1,y1),Point(x2,y2));
+	*widget << Line(Point(x1,y1),Point(x,y));
+	widget->unlock();
+	widget->setRasterOp(old);
 
-	  if(firstpoint==TRUE)
-	  {
-		
-    	FT
-		x=static_cast<FT>(widget->x_real(e->x())),
-		y=static_cast<FT>(widget->y_real(e->y()));
-		RasterOp old = widget->rasterOp();	//save the initial raster mode
-		
-		widget->setRasterOp(XorROP);
-		widget->lock();
-		*widget << CGAL::GREEN;
-		*widget << Line(Point(x1,y1),Point(x2,y2));
-		*widget << Line(Point(x1,y1),Point(x,y));
-		widget->unlock();
-		widget->setRasterOp(old);
-
-		//save the last coordinates to redraw the screen
-		x2 = x;
-		y2 = y;
-
-		//widget->setRasterOp(old);	//restore the initial mode
-      }
+	//save the last coordinates to redraw the screen
+	x2 = x;
+	y2 = y;
+	firsttime = false;
+    }
   };
-	void mouseReleaseEvent(QMouseEvent *e)
-	{
-		if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)		
-		{
-			FT
-			x=static_cast<FT>(widget->x_real(e->x())),
-			y=static_cast<FT>(widget->y_real(e->y()));
-			if(x1!=x || y1!=y)
-				widget->new_object(make_object(Line(Point(x1,y1),Point(x,y))));
-			firstpoint = FALSE;
-		}
-	}
-
-	void attaching()
-	{
-		oldcursor = widget->cursor();
-		widget->setCursor(crossCursor);
-	};
+  void attaching()
+  {
+    oldcursor = widget->cursor();
+    widget->setCursor(crossCursor);
+  };
 
   void detaching()
-	{
-		widget->setCursor(oldcursor);
-	};
+  {
+    widget->setCursor(oldcursor);
+    firstpoint = false;
+  };
 
-  FT	x1, y1;
-  FT	x2, y2;
-  bool	firstpoint;
+  FT	x1, //the X of the first point
+	y1; //the Y of the first point
+  FT	x2, //the old second point's X
+	y2; //the old second point's Y
+  bool	firstpoint, //true if the user left clicked once
+	firsttime;  //true if the line is not drawn
 };//end class 
 
 } // namespace CGAL
