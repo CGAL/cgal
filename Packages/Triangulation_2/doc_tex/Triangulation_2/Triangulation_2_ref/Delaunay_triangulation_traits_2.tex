@@ -1,0 +1,108 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Delaunay_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSDelaunaytriangulationtraitsRev}{$Revision$}
+\RCSdefDate{\RCSDelaunaytriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Delaunay_triangulation_traits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ does this and that.
+In addition to the requirements 
+of the concept \ccc{Triangulation_traits_2}
+described \ccRefPage{Triangulation_traits_2},
+the concept \ccRefName\
+has to  provide a \ccc{side_of_oriented_circle} test
+and some additional types.
+The \ccc{side_of_oriented_circle} test is the test used to maintain the
+empty circle property and actually defines the triangulation.
+The additional types \ccc{Line}, \ccc{Direction}
+and \ccc{Ray} are used to describe the dual Voronoi diagram.
+The additional \ccc{Distance} type is only used by the
+\ccc{nearest_vertex(..)} query and the requirements for this type
+are given below.
+
+
+\ccTypes
+\ccNestedType{Line}
+\ccGlue
+\ccNestedType{Ray}{}
+\ccGlue
+\ccNestedType{Direction}{}
+\ccNestedType{Distance}{Needed only if the \ccc{nearest_neighbor()} 
+function is called.}
+
+Each of the three classes \ccc{Line}, \ccc{Direction} and 
+\ccc{Ray}  must know the two others.
+In addition, the \ccc{Line} class is required to have the two
+following member functions:
+\begin{ccClass}{Line}
+
+\ccCreationVariable{l}
+\ccThree{Direction }{l.direction()x}{}
+\ccMethod{Line opposite();}{the same line with opposite orientation.}
+\ccGlue
+\ccMethod{Direction direction();}{the direction of the line.}
+\end{ccClass}
+The \ccc{Ray} class must define a \ccc{Point} class which is the same
+as \ccc{Traits::Point} 
+is required to have the following constructor:
+
+\begin{ccClass}{Ray}
+\ccCreationVariable{r}
+\ccConstructor{Ray(Traits::Point p, Direction d);}{}
+\end{ccClass}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Delaunay_triangulation_traits_2();}{default constructor.}
+
+\ccPredicates
+\ccMethod{Oriented_side side_of_oriented_circle(const Point& p0,
+                                                     const Point& p1,
+                                                     const Point& p2,
+                                                     const Point& test);}
+{Gives the \ccc{Oriented_side} of point \ccc{test} with respect to
+the oriented circumscribing circle of  points \ccc{p0, p1} and \ccc{p2}.
+This answers the \ccc{in_circle}  test if the \ccc{Orientation}
+of  Points \ccc{p0, p1} and \ccc{p2} is known,
+which is the case for the points associated with the three
+vertices of a triangulation face.}
+
+
+\ccOperations
+\ccMethod{Point circumcenter(const Point &p, const Point &q, const
+Point &r) const;} { Returns the center point equidistant from \ccc{p}, \ccc{q} and
+\ccc{r}. This method is required only if the duality functions are called.}
+
+\ccMethod{Line bisector(const Segment &s);}
+{Returns the bisector line of segment s. This method is required only if duality functions
+are called.}
+
+\ccHasModels
+\ccc{CGAL::Triangulation_euclidean_traits_2<Rep>},
+\ccc{CGAL::Triangulation_euclidean_traits_xy_3<Rep>},
+\ccc{CGAL::Triangulation_euclidean_traits_yz_3<Rep>},
+\ccc{CGAL::Triangulation_euclidean_traits_zx_3<Rep>}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

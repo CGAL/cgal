@@ -1,0 +1,108 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationtraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Triangulation_traits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes 
+ the set of requirements to be
+fulfilled
+by any class used to instantiate the first template parameter of the class 
+\ccc{Triangulation_2<Traits,Tds>}.
+This concept provides the types of the geometric primitives used in the
+triangulation and the required predicates on those primitives.
+
+\ccTypes
+\ccNestedType{Point}{The  type must provide
+a copy constructor and assignment operator.}
+\ccGlue
+\ccNestedType{Segment}{The  type must provide a constructor that takes
+two points as argument.}
+\ccGlue
+\ccNestedType{Triangle}{The type must provide a constructor that takes
+three points as argument.}
+
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+Only a default constructor and an assignement operator are required. 
+Note that further constructors
+can be provided. 
+
+\ccConstructor{Triangulation_traits_2();}{default constructor.}
+\ccGlue
+\ccMethod{Triangulation_traits operator=(Triangulation_traits gtr);}
+{Assignment operator.}
+
+\ccHeading{Predicates}
+\ccThree{Comparison_result}{gt.compare_x(Point p0, Point p1)x}{}
+\ccMethod{Comparison_result compare_x(Point p0,
+                                           Point p1);}
+{Compares the \ccc{x}-coordinates.}
+\ccGlue
+\ccMethod{Comparison_result compare_y(Point p0,
+                                           Point p1);}
+{Compares the \ccc{y}-coordinates.}
+\ccGlue
+\ccMethod{bool compare(const Point& p0,
+                       const Point& p1);}
+{True if \ccc{compare_x(p0,p1)} and \ccc{compare_y(p0,p1)}
+return \ccc{EQUAL}.}
+\ccGlue
+\ccMethod{Orientation orientation(const Point& p0,
+                                       const Point& p1,
+                                       const Point& p2);}
+{Orientation test. }
+\ccGlue
+\ccMethod{Oriented_side side_of_oriented_circle(const Point &p,
+					const Point &q,
+					const Point &r,
+					const Point &s) const;}
+{Returns the oriented side of the query point \ccc{s}
+with respect to the oriented circle going through \ccc{p,q,r}
+in that order. This predicates is required
+only if the function 
+\ccc{ oriented_side(const Face_handle& f, const Point &p)}
+is explicitely called by the user.}
+
+\ccHeading{Construction}
+\ccMethod{Point circumcenter(const Point &p, const Point &q, const Point &r) const; }
+{Returns the center of the circle through \ccc{(p,q,r)}
+This method is required only if the function
+\ccc{circumcenter(Face_handle  f)} is called by the user.}
+
+
+
+\ccHasModels
+\ccc{Triangulation_euclidean_traits_2<R>}
+\ccc{Triangulation_euclidean_traits_xy_3<R>}
+\ccc{Triangulation_euclidean_traits_yz_3<R>}
+\ccc{Triangulation_euclidean_traits_zx_3<R>}
+
+\ccSeeAlso
+\ccc{Triangulation_2<Traits,Tds>}
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

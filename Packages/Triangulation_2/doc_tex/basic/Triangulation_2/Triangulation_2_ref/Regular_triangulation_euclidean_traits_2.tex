@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_2<Rep,Weight>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ does this and that.
+\cgal\ provides the predefined geometric traits
+ \ccRefName\ 
+This traits class is templated by a representation class \ccc{Rep}
+and a weight type \ccc{Weight}.
+This class inherits from
+\ccc{Triangulation_euclidean_traits_2 <Rep >}
+and uses a \ccc{Weighted_point} type
+derived from the type \ccc{Point} of
+\ccc{Triangulation_euclidean_traits_2 < Rep >}.
+
+\ccInclude{Regular_triangulation_euclidean_traits_2.h}
+
+\ccIsModel
+\ccc{Regular_triangulation_traits_2}
+
+\ccTypes
+\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point
+Point;}{}
+\ccGlue
+\ccTypedef{typedef Weighted_point<Point,Weight> Weighted_point;}{}
+\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Regular_triangulation_traits_2();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{examples/Package/Regular_triangulation_traits_2_prog.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{examples/Package/Regular_triangulation_traits_2_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
