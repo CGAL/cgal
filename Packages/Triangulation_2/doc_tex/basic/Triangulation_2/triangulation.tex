@@ -164,9 +164,9 @@ class parametrized by the base classes for faces and vertices.
 
 \subsection*{Organization of this chapter}
 Section~\ref{I1_Sect_Triangulation_2} introduces the basic triangulation class of \cgal ,
- \ccc{Triangulation_2<Gt, Tds>}, its local \ccc{Vertex} and \ccc{Face}
+ \ccc{Triangulation_2<Traits, Tds>}, its local \ccc{Vertex} and \ccc{Face}
 classes and gives some examples for a simple use of this class.
- The \ccc{Triangulation_2<Gt, Tds>} class  is merely designed to represent 
+ The \ccc{Triangulation_2<Traits, Tds>} class  is merely designed to represent 
 a triangulation for a set of points in the plane.
 The next section~\ref{I1_Sect_Geom_traits}
 describes the requirements for the geometric
@@ -241,7 +241,7 @@ infinity">
 \end{figure}
 
 
-The class \ccc{Triangulation_2<Gt,Tds>}
+The class \ccc{Triangulation_2<Traits,Tds>}
 implements this point of view
 and therefore considers  the triangulation of the set of points 
 as a set of  triangular,  finite and
@@ -254,7 +254,7 @@ or on an infinite face.
 
 A triangulation is a collection of vertices and faces that
 are linked together through incidence and adjacency relations.
- Each face give access to its three incident vertices and to
+Each face give access to its three incident vertices and to
 its 
 three adjacent faces. Each vertex give access to one of its  incident
 faces. 
@@ -262,7 +262,7 @@ faces.
 The three vertices of a face are indexed with 0, 1 and 2
 in counterclockwise order. The neighbor of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by $i$
- is opposite to the vertex with the same index.
+is opposite to the vertex with the same index.
 
 Many of the classes in the triangulation package
 offer  two functions \ccStyle{int cw(int i)} and 
@@ -334,7 +334,7 @@ counterclockwise order.
 \end{figure}
 
 
-\begin{ccClassTemplate}{Triangulation_2<Gt,Tds>}
+\begin{ccClassTemplate}{Triangulation_2<Traits,Tds>}
 \subsection{The Triangulation Class \protect \ccClassTemplateName} 
 
 The \ccClassTemplateName\  expects a model of  {geometric traits} class
@@ -349,18 +349,18 @@ and \ref{I1_Sect_Tds}.
 This class provides the function \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
-\ccThree{typedef Gt::Triangle}{}{the triangulation data structure type.}
+\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type.}
 \ccThreeToTwo
 
-\ccTypedef{typedef Gt Geom_traits;}{the geometric traits type.}
+\ccTypedef{typedef Traits Geom_traits;}{the geometric traits type.}
 \ccGlue
 \ccTypedef{typedef Tds Triangulation_data_structure;}{the triangulation data structure type.}
 
-\ccTypedef{typedef Gt::Point Point;}{the point type}
+\ccTypedef{typedef Traits::Point Point;}{the point type}
 \ccGlue
-\ccTypedef{typedef Gt::Segment Segment;}{the segment type}
+\ccTypedef{typedef Traits::Segment Segment;}{the segment type}
 \ccGlue
-\ccTypedef{typedef Gt::Triangle Triangle;}{the triangle type}
+\ccTypedef{typedef Traits::Triangle Triangle;}{the triangle type}
 
 The following types gives the classes representing the vertices and faces
  of the triangulation and the type corresponding to the edges.
@@ -379,7 +379,7 @@ The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
 
-\ccThree{typedef Gt::Triangle}{}{the triangulation data structure type}
+\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type}
 \ccThreeToTwo
 The vertices and faces of the triangulations are accessed through 
 \ccc{handles}\footnote{ A handle is a type which supports the two
@@ -447,29 +447,29 @@ of the current triangulation.}
 
 \ccCreation
 \ccCreationVariable{t}
-\ccThree{Triangulation_2<Gt,Tds>}{t = tr}{}
+\ccThree{Triangulation_2<Traits,Tds>}{t = tr}{}
 \ccThreeToTwo
 
-\ccConstructor{Triangulation_2<Gt,Tds>(
+\ccConstructor{Triangulation_2<Traits,Tds>(
                    const Geom_traits& gt = Geom_traits() );}
 {Introduces an empty triangulation \ccVar.}
 
 
-\ccConstructor{Triangulation_2<Gt,Tds>(
-                   const Triangulation_2<Gt,Tds>& tr);}
+\ccConstructor{Triangulation_2<Traits,Tds>(
+                   const Triangulation_2<Traits,Tds>& tr);}
 {Copy constructor. All the vertices and faces are duplicated.
  After the copy, \ccVar\ and \ccc{tr}
 refer to different triangulations~: 
  if \ccc{tr} is modified, \ccVar\ is not. }
 
-\ccMethod{Triangulation_2<Gt,Tds> operator=(const Triangulation_2<Gt,Tds>& tr);}
+\ccMethod{Triangulation_2<Traits,Tds> operator=(const Triangulation_2<Traits,Tds>& tr);}
 {Assignement. All the vertices and faces are duplicated.
  After the assignement, \ccVar\ and \ccc{tr}
 refer to different triangulations~: 
  if \ccc{tr} is modified, \ccVar\ is not.}
 
 \ccThree{Vertex_handle}{t.number_of_vertices()x}{}
-\ccMethod{void swap(Triangulation_2<Gt,Tds>& tr);}
+\ccMethod{void swap(Triangulation_2<Traits,Tds>& tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
 \ccVar. \ccc{swap(tr)} should be preferred to \ccc{t} = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that.}
@@ -479,7 +479,7 @@ resulting
  in an
 empty triangulation.}
 
-\ccFunction{void ~Triangulation_2<Gt,Tds> ();}
+\ccFunction{void ~Triangulation_2<Traits,Tds> ();}
 {Destructor. All vertices and faces are deleted.}
 
 
@@ -1080,19 +1080,19 @@ is an internal format.
 
 \ccThree{ostream&x}{ostream& os << T}{}
 \ccFunction{ostream& operator<<(ostream& os,
-                  const Triangulation_2<Gt,Tds>& T);}
+                  const Triangulation_2<Traits,Tds>& T);}
 {Inserts the triangulation \ccVar\ into the stream \ccc{os}.
 \ccPrecond The insert operator must be defined for \ccc{Point}.}
 
 \ccFunction{istream& operator>>(istream& is,
-                  const Triangulation_2<Gt,Tds>& T);}
+                  const Triangulation_2<Traits,Tds>& T);}
 {Reads a triangulation from stream \ccc{is} and assigns it
 to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
 
 \ccInclude{CGAL/IO/Window_stream.h}
 
 \ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Triangulation_2<Gt,Tds>& T);}
+                         const Triangulation_2<Traits,Tds>& T);}
 {Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
 The insert operator must be defined for \ccc{Point}
 and \ccc{Segment}.}
@@ -1122,13 +1122,13 @@ and finally points on the convex hull are written to {\tt cout}.
 using namespace CGAL;
 
 typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef Triangulation_face_base_2<Gt>  Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef Triangulation_2<Gt, Tds> Triangulation;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits>  Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb> Tds;
+typedef Triangulation_2<Traits, Tds> Triangulation;
 typedef Triangulation::Vertex_circulator Vertex_circulator;
-typedef Gt::Point   Point;
+typedef Traits::Point   Point;
 
 int main() {
   Triangulation t;
@@ -1196,7 +1196,7 @@ and all adjacent vertices.
 
 \ccTypes
 The class  {Vertex} defines the same types 
-as the class \ccc{Triangulation_2<Gt, Tds>} except for the iterators and the 
+as the class \ccc{Triangulation_2<Traits, Tds>} except for the iterators and the 
 \ccc{Line_face_circulator} which are not needed.
 
 \begin{ccAdvanced}
@@ -1326,7 +1326,7 @@ opposite to vertex i.
 
 \ccTypes
 The class  {Face} defines the same types 
-as the class \ccc{Triangulation_2<Gt,Tds>} except the iterators and circulators
+as the class \ccc{Triangulation_2<Traits,Tds>} except the iterators and circulators
 which are not needed.
 
 
@@ -1466,7 +1466,7 @@ which provides the geometric objects (points, segments and triangles) building u
 together with the geometric predicates on those objects.
 The first subsection of this section describes the requirements
 that the geometric traits class of the basic triangulation class
-\ccc{Triangulation_2<Gt, Tds>} has to fulfill. The second subsection
+\ccc{Triangulation_2<Traits, Tds>} has to fulfill. The second subsection
 presents some predefined geometric traits classes available in \cgal .
 
 
@@ -1476,7 +1476,7 @@ presents some predefined geometric traits classes available in \cgal .
 \ccCreationVariable{gt}
 
 The requirements for the geometric traits class of the basic triangulation class
-\ccc{Triangulation_2<Gt, Tds>} are  kept rather light.
+\ccc{Triangulation_2<Traits, Tds>} are  kept rather light.
 Essentially, a geometric traits class \ccClassName\ has to provide some  type
 for points, segments and triangles, and a few geometric predicates:
 coordinate comparison and  orientation tests.
@@ -1610,7 +1610,7 @@ respectively.
 \label{I1_Sect_Tds}
 
 The second template parameter of the basic triangulation class
-\ccc{Triangulation_2<Gt,Tds>} is a triangulation data structure class.
+\ccc{Triangulation_2<Traits,Tds>} is a triangulation data structure class.
 This class can be seen has a container for the 
 faces and vertices maintaining incidence and adjacency relations.
 The triangulation data structure class 
@@ -2214,7 +2214,7 @@ face through a
 \ccc{void *} pointer.
 
 \ccTypes
-\ccNestedType{Point}{must be the same as the point type \ccc{Gt::Point}
+\ccNestedType{Point}{must be the same as the point type \ccc{Traits::Point}
 defined by the geometric traits class of the triangulation.}
 
 \ccCreation
@@ -2326,13 +2326,13 @@ with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
 
 \subsection{The Default Base Classes}
 \cgal\ provides two default base classes 
-\ccc{Triangulation_face_base_2<Gt>} and \ccc{Triangulation_vertex_base_2<Gt>}
+\ccc{Triangulation_face_base_2<Traits>} and \ccc{Triangulation_vertex_base_2<Traits>}
 which model respectively 
 the \ccc{Vertex_base} and the \ccc{Face_base} concept.
 Both of them are templated by a geometric traits class.
-Using for these traits class, the geometric traits class used for the triangulation class
+Using for this traits class, the geometric traits class used for the triangulation class
 is strongly recommended. 
-It ensures that the point type defined by \ccc{Triangulation_vertex_base_2<Gt>}
+It ensures that the point type defined by \ccc{Triangulation_vertex_base_2<Traits>}
 is the same as the point type defined the  geometric traits class of
 the triangulation.
 
@@ -2352,11 +2352,11 @@ and use it to define a triangulation class.
 \begin{cprog}
 
 typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef Triangulation_face_base_2<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef Triangulation_2<Gt,Tds> Triangulation;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Triangulation_2<Traits,Tds> Triangulation;
 
 \end{cprog}
 
@@ -2371,7 +2371,9 @@ as long as this functionality  does not involve additional pointers to vertices 
 (because the base classes use only void* pointer and have no knowledge
 of the vertex or face types.).
 
-\begin{cprog}
+
+%\begin{cprog}
+\begin{ccExampleCode}
 /*  colored_face.C   */     
 /*  ---------------- */
 #include <CGAL/basic.h>
@@ -2385,25 +2387,25 @@ using namespace CGAL;
 using namespace std;
 
 /* A facet with a color member variable. */
-template < class Gt >
-class My_face_base : public Triangulation_face_base_2<Gt>
+template < class Traits >
+class My_face_base : public Triangulation_face_base_2<Traits>
 {
 public:
   Color color;
   My_face_base() :
-    Triangulation_face_base_2<Gt>() {}
+    Triangulation_face_base_2<Traits>() {}
   My_face_base(void* v0, void* v1, void* v2) : 
-    Triangulation_face_base_2<Gt>(v0,v1,v2) {}
+    Triangulation_face_base_2<Traits>(v0,v1,v2) {}
   My_face_base(void* v0, void* v1, void* v2, void* n0, void* n1, void* n2) : 
-    Triangulation_face_base_2<Gt>(v0,v1,v2,n0,n1,n2) {}
+    Triangulation_face_base_2<Traits>(v0,v1,v2,n0,n1,n2) {}
 };
 
 typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef My_face_base<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef Triangulation_2<Gt,Tds> Triangulation;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef My_face_base<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Triangulation_2<Traits,Tds> Triangulation;
 typedef Triangulation::Face_handle Face_handle;
 typedef Triangulation::Face_iterator Face_iterator;
 typedef Triangulation::Vertex_handle Vertex_handle;
@@ -2423,15 +2425,15 @@ int main() {
   }
   return 1;
 }
-
-\end{cprog}
+\end{ccExampleCode}
+%\end{cprog}
 
 
 \section{Delaunay Triangulations}
 \label{I1_Sect_Delaunay}
 
-\subsection{The Class \protect \ccc{Delaunay_triangulation_2<Gt,Tds>}}
-\begin{ccClassTemplate} {Delaunay_triangulation_2<Gt,Tds>}
+\subsection{The Class \protect \ccc{Delaunay_triangulation_2<Traits,Tds>}}
+\begin{ccClassTemplate} {Delaunay_triangulation_2<Traits,Tds>}
 \ccDefinition
 
 The class \ccClassTemplateName\ is designed to represent
@@ -2450,14 +2452,14 @@ of the Voronoi diagram of the points.
 
 A Delaunay triangulation is a special triangulation of a set of points.
 So it is natural to derive  the class \ccClassTemplateName\
-from the basic class \ccc{Triangulation_2<Gt,Tds>}.
-The template parameters \ccc{Gt} and \ccc{Tds} stand 
+from the basic class \ccc{Triangulation_2<Traits,Tds>}.
+The template parameters \ccc{Traits} and \ccc{Tds} stand 
 respectively
 for a model of geometric traits and for a model of triangulation data structure.
 The requirements for the triangulation data structure
 are those described previously in section~\ref{I1_Sect_Tds}
 and the same models can be used to instantiate the
-triangulation data structure of either a \ccc{Triangulation_2<Gt,Tds>}
+triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
 or a \ccClassTemplateName. On the contrary, because the
 concept of Delaunay triangulation relies on the notions of 
 empty circles and of distance, 
@@ -2484,37 +2486,37 @@ by the addition to the point set of well chosen sentinel points.
 
 \ccInheritsFrom
 
-\ccc{Triangulation_2<Gt,Tds>}
+\ccc{Triangulation_2<Traits,Tds>}
 
 \ccTypes
-\ccThree{typedef Gt::Direction}{Direction}{}
+\ccThree{typedef Traits::Direction}{Direction}{}
 \ccThreeToTwo
 
 Inherits all the types of the \ccc{Triangulation_2<Traits>}.
-In addition to the types inherited from \ccc{Triangulation_2<Gt,Tds>}
+In addition to the types inherited from \ccc{Triangulation_2<Traits,Tds>}
 the class \ccClassTemplateName\
 defines a type for the distance object function, and 
 some types to
 represent the dual Voronoi diagram.
 
-\ccTypedef{typedef Gt::Distance Distance;}{}
+\ccTypedef{typedef Traits::Distance Distance;}{}
 
-\ccTypedef{typedef Gt::Line Line;}{}
+\ccTypedef{typedef Traits::Line Line;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Direction Direction;}{}
+\ccTypedef{typedef Traits::Direction Direction;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Ray Ray;}{}
+\ccTypedef{typedef Traits::Ray Ray;}{}
 
 \ccCreation
 \ccCreationVariable{dt}
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 \ccThreeToTwo
 
-\ccConstructor{Delaunay_triangulation_2(const Gt& gt = Gt());}
+\ccConstructor{Delaunay_triangulation_2(const Traits& gt = Traits());}
 {introduces an empty Delaunay triangulation \ccVar.}
 
 \ccConstructor{Delaunay_triangulation_2(
-	       const Delaunay_triangulation_2<Gt,Tds> &tr);}
+	       const Delaunay_triangulation_2<Traits,Tds> &tr);}
 {Copy constructor. All the vertices and faces are duplicated.}
 
 
@@ -2522,7 +2524,7 @@ represent the dual Voronoi diagram.
 
 The following insertion and removal  functions overwrite
 the functions inherited from the class
-\ccc{Triangulation_2<Gt,Tds>} to maintain the Delaunay property.
+\ccc{Triangulation_2<Traits,Tds>} to maintain the Delaunay property.
 
 
 
@@ -2538,7 +2540,7 @@ Optional parameter \ccc{f} is used to initialize the location of \ccc{p}.
 Face_handle loc, int li );}
 { inerts a point \ccc{p}, the location of which is supposed to be
 given by \ccc{(lt,loc,li)}, see the description of member function
-\ccc{locate} in class \ccc{Triangulation_2<Gt,Tds>}.}
+\ccc{locate} in class \ccc{Triangulation_2<Traits,Tds>}.}
 
 \ccMethod{Vertex_handle push_back(const Point& p);}
 {Equivalent to \ccc{insert(p)}.}
@@ -2558,7 +2560,7 @@ given by \ccc{(lt,loc,li)}, see the description of member function
 {removes the vertex from the triangulation.}
 
 Note that the other modifier functions  of
-\ccc{Triangulation_2<Gt,Tds>} are not overwritten.
+\ccc{Triangulation_2<Traits,Tds>} are not overwritten.
 Thus a  call to \ccc{insert_in_face}
 \ccc{insert_in_edge}, \ccc{insert_outside_convex_hull},
 \ccc{insert_outside_affine_hull}  or \ccc{flip}
@@ -2628,7 +2630,7 @@ and additionally test the Delaunay property. This method is
 \ccHeading{I/O}
 The I/O operators for \ccc{iostream} and for
 the window stream are simply those defined for the base class
-\ccc{Triangulation_2<Gt, Tds>}.
+\ccc{Triangulation_2<Traits, Tds>}.
 In addition, there is a template member function to ouput
 the dual Voronoi diagram on a stream
 
@@ -2657,9 +2659,9 @@ using namespace CGAL;
 
 typedef Homogeneous<leda_integer>  Rp;
 typedef Triangulation_euclidean_traits_xy_3<Rp>  Terrain;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef Triangulation_face_base_2<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
 typedef Delaunay_triangulation_2<Terrain, Tds> Delaunay;
 
 int main()
@@ -2761,29 +2763,29 @@ following member functions:
 \ccMethod{Direction direction();}{the direction of the line.}
 \end{ccClass}
 The \ccc{Ray} class must define a \ccc{Point} class which is the same
-as \ccc{Gt::Point} 
+as \ccc{Traits::Point} 
 is required to have the following constructor:
 
 \begin{ccClass}{Ray}
 \ccCreationVariable{r}
-\ccConstructor{Ray(Gt::Point p, Direction d);}{}
+\ccConstructor{Ray(Traits::Point p, Direction d);}{}
 \end{ccClass}
 
 
 
-\begin{ccClassTemplate} {Distance<Gt>}
+\begin{ccClassTemplate} {Distance<Traits>}
 \subsubsection{Requirements for a Distance Class}
 
 A distance  class is a class designed to store three points
 \ccc{p0}, \ccc{p1} and \ccc{p2} and to decide which of \ccc{p1}
 and \ccc{p2} is closer to \ccc{p0}. 
-The class is templated by a geometric traits class \ccc{Gt}
+The class is templated by a geometric traits class \ccc{Traits}
 which is required to provide the \ccc{Point} type
 and provide a compare() member function 
 defining what closer means.
 
 \ccTypes
-\ccTypedef{Gt::Point Point;}{the point.}
+\ccTypedef{Traits::Point Point;}{the point.}
 
 \ccCreationVariable{dt}
 \ccCreation
@@ -2793,7 +2795,7 @@ The following constructor creates a distance object. Missing points are not init
 \ccConstructor{Distance(const Point& p0=Point(),
                         const Point& p1=Point(),
                         const Point& p2=Point(),
-                        Gt* gt = NULL);}{}
+                        Traits* gt = NULL);}{}
 \ccOperations
 \ccThree{Comparison}{result_point(int ii, Point ppp);}{}
 
@@ -2922,10 +2924,10 @@ ${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
 \subsection{ The Regular Triangulation  Class}
 
 
-\begin{ccClassTemplate}{Regular_triangulation_2<Gt, Tds>}
+\begin{ccClassTemplate}{Regular_triangulation_2<Traits, Tds>}
 The \cgal\  class \ccClassTemplateName\ is designed to maintain the
 regular triangulation of a set of weighted points.
-The template parameters \ccc{Gt}  and \ccc{Tds} stand respectively
+The template parameters \ccc{Traits}  and \ccc{Tds} stand respectively
  for a geometric traits class and a triangulation data structure class.
 Any triangulation data structure that fulfills the requirements of 
 section~\ref{I1_Sect_Tds} can be used for a regular triangulation.
@@ -2937,7 +2939,7 @@ for the geometric traits and the power point type are list below.
 
  \ccInheritsFrom
 
-\ccc{Triangulation_2<Gt,Tds>}
+\ccc{Triangulation_2<Traits,Tds>}
 
 The functions \ccc{insert} and 
 \ccc{remove} are overwritten to maintain the regular
@@ -2947,24 +2949,24 @@ to additionally test the local regular property of
 any pair of neighboring faces.
 
 \ccTypes
-\ccThree{typedef Gt::Weighted_point}{Weighted_point;}{}
+\ccThree{typedef Traits::Weighted_point}{Weighted_point;}{}
 \ccThreeToTwo
-\ccTypedef{typedef Gt::Distance Distance;}{}
+\ccTypedef{typedef Traits::Distance Distance;}{}
 
-\ccTypedef{typedef Gt::Line Line;}{}
+\ccTypedef{typedef Traits::Line Line;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Direction Direction;}{}
+\ccTypedef{typedef Traits::Direction Direction;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Ray Ray;}{}
+\ccTypedef{typedef Traits::Ray Ray;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Bare_point  Bare_point;}{}
+\ccTypedef{typedef Traits::Bare_point  Bare_point;}{}
 \ccGlue
-\ccTypedef{typedef Gt::Weighted_point  Weighted_point;}{}
+\ccTypedef{typedef Traits::Weighted_point  Weighted_point;}{}
 
 \ccCreation
 \ccCreationVariable{rt}
 
-\ccConstructor{Regular_triangulation_2(const Gt& gt = Gt());}
+\ccConstructor{Regular_triangulation_2(const Traits& gt = Traits());}
 {Introduces an empty regular triangulation \ccVar.}
 
 \ccConstructor{Regular_triangulation_2(const Regular_triangulation_2 &rt);}
@@ -3085,17 +3087,17 @@ using namespace CGAL;
 
 typedef Cartesian<double> Rp;
 typedef double W;
-typedef Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
-typedef Triangulation_vertex_base_2<Gt> Vb;
-typedef Regular_triangulation_face_base_2<Gt> Fb;
-typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
-typedef Regular_triangulation_2<Gt, Tds> Regular_triangulation;
+typedef Regular_triangulation_euclidean_traits_2<Rp,W>  Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Regular_triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Regular_triangulation_2<Traits, Tds> Regular_triangulation;
 
 int main()
 {
    Regular_triangulation rt;
 
-   Gt::Weighted_point wp;
+   Traits::Weighted_point wp;
    while(std::cin >> wp){
      std::cout << wp << std::endl;
      rt.insert(wp);
@@ -3143,7 +3145,7 @@ in addition to those of section~\ref{I1_Sect_Base_classes}
 \ccNestedType{ Weighted_point}
 {This type must be the same
 as the weighted point type 
-\ccc{Gt::Weigthed_point}
+\ccc{Traits::Weigthed_point}
 defined by the geometric traits class of the regular triangulation.}
 \ccGlue
 \ccTypedef{typedef std::list<Weighted_point> Point_list;}
@@ -3166,8 +3168,8 @@ hidden by the face.}
 
 \subsubsection{A Default Base Face Class for Regular Triangulations.}
 \cgal\ provides the templated class 
-\ccc{Regular_triangulation_face_base_2<Gt>}
-which derives from \ccc{Triangulation_face_base_2<Gt>}
+\ccc{Regular_triangulation_face_base_2<Traits>}
+which derives from \ccc{Triangulation_face_base_2<Traits>}
 and can be used as a default base class for faces of regular triangulations.
 
 \ccInclude{CGAL/Regular_triangulation_face_base_2.h} 
@@ -3246,7 +3248,7 @@ and uses a \ccc{Weighted_point} type
 derived from the type \ccc{Point} of
 \ccc{Triangulation_euclidean_traits_2 < R >}.
 
-\begin{ccClassTemplate}{Regular_triangulation_traits_2<Rep,Weight>}
+\begin{ccClassTemplate}{Regular_triangulation_euclidean_traits_2<Rep,Weight>}
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_2.h}
 
  \ccInheritsFrom
@@ -3258,7 +3260,7 @@ derived from the type \ccc{Point} of
 \ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point
 Point;}{}
 \ccGlue
-\ccTypedef{typedef Weighted_point_2<Point,Weight> Weighted_point;}{}
+\ccTypedef{typedef Weighted_point<Point,Weight> Weighted_point;}{}
 
 \end{ccClassTemplate}
 
@@ -3338,11 +3340,11 @@ constraints and its constrained triangulation">
 </CENTER>
 \end{ccHtmlOnly}
 
-\begin{ccClassTemplate} {Constrained_triangulation_2<Gt,Tds>}
+\begin{ccClassTemplate} {Constrained_triangulation_2<Traits,Tds>}
 \subsection{ The Constrained Triangulation  Class}
 A constrained triangulation is represented in the CGAL library as an
 object of the class \ccClassTemplateName .
-As usual the template parameters \ccc{Gt} and \ccc{Tds}
+As usual the template parameters \ccc{Traits} and \ccc{Tds}
 stand respectively for a geometric traits class and
 a triangulation data structure class. There is no additional
 requirements for the geometric traits and the triangulation data
@@ -3355,7 +3357,7 @@ of section~\ref{I1_Sect_Geom_traits} and ~\ref{I1_Sect_Tds}.
  
 \ccInheritsFrom
 
-\ccc{Triangulation_2<Gt,Tds>}
+\ccc{Triangulation_2<Traits,Tds>}
 
 \ccTypes
 \ccThree{typedef pair<Point,Point>}{Constraint;}{}
@@ -3451,7 +3453,7 @@ list
 
 \ccHeading{I/O}
 
-\ccFunction{ostream & operator<<(ostream& os, const CGAL_Constrained_triangulation_2<Gt,Tds> &Ct);}
+\ccFunction{ostream & operator<<(ostream& os, const CGAL_Constrained_triangulation_2<Traits,Tds> &Ct);}
 {Writes the triangulation and, for each face f, and integers i=0,1,2,
 write ``C'' or ``N'' depending whether edge 
 \ccc{(f,i)} is constrained or not.}
@@ -3551,9 +3553,9 @@ in face \ccVar and its neighbors.}
 
 Of course  \cgal\ provides a default \ccc{Face_base} class
 for the constrained triangulation. The class
-\ccc{Constrained_triangulation_face_base_2<Gt>}
+\ccc{Constrained_triangulation_face_base_2<Traits>}
 simply derived from 
-\ccc{Triangulation_face_base_2<Gt>} and override the
+\ccc{Triangulation_face_base_2<Traits>} and override the
 functions \ccc{reorient()}, \ccc{ccw_permute()} and 
 \ccc{cw_permute()}.
 
@@ -3562,7 +3564,7 @@ functions \ccc{reorient()}, \ccc{ccw_permute()} and
 \subsection{A Constrained Triangulation Class for Animation Purposes
 \label{I1_Subsec_Constrained_Demo_2}}
 
-\begin{ccClassTemplate}{Constrained_triangulation_demo_2<Gt,Tds>}
+\begin{ccClassTemplate}{Constrained_triangulation_demo_2<Traits,Tds>}
 
 \ccDefinition
 The class  \ccClassTemplateName\ is intended to provide
@@ -3573,7 +3575,7 @@ constrained triangulation.
 
 
 \ccInheritsFrom
-\ccc{Constrained_triangulation_2<Gt,Tds>}
+\ccc{Constrained_triangulation_2<Traits,Tds>}
 
 \ccTypes
 \ccThree{typedef Window_stream}{Window_stream;}{}
@@ -3584,7 +3586,7 @@ constrained triangulation.
 \ccCreationVariable{ctd}
 
 \ccConstructor{Constrained_triangulation_demo_2(Window_stream& W,
-                                     list<Constrained>& lc, Gt gt=Gt());}
+                                     list<Constrained>& lc, Traits gt=Traits());}
 {Outputs the created faces at each step of
 the sweeping line algorithm, providing thus an animation
 of the sweeping line algorithm.}
@@ -3610,12 +3612,12 @@ no vertex  that is visible
 from the interior of the triangle.
 
 \subsection{The Class 
-\protect \ccc{Constrained_Delaunay_triangulation_2<Gt,Tds>}}
-\begin{ccClassTemplate}{Constrained_Delaunay_triangulation_2<Gt,Tds>}
+\protect \ccc{Constrained_Delaunay_triangulation_2<Traits,Tds>}}
+\begin{ccClassTemplate}{Constrained_Delaunay_triangulation_2<Traits,Tds>}
 The \cgal\ class \ccClassTemplateName\ is designed to represent
 constrained Delaunay triangulations.
 
-The class is templated by a geometric traits class \ccc{Gt}
+The class is templated by a geometric traits class \ccc{Traits}
 and a triangulation data structure \ccc{Tds}.
 There are no special requirements for the triangulation data
 structure
@@ -3630,7 +3632,7 @@ are described in section~\ref{I1_Sect_Delaunay_geom_traits}.
 A constrained Delaunay triangulation is not a Delaunay
 triangulation but it is a constrained triangulation.
 Therefore the class \ccClassTemplateName\ derives from
-the class \ccc{Constrained_triangulation_2<Gt,Tds>}.
+the class \ccc{Constrained_triangulation_2<Traits,Tds>}.
 Also, information about the status (constrained or not)
 of the edges of the triangulation has to be stored
 in the face class
@@ -3642,11 +3644,11 @@ of a constrained  triangulation.
 
 \ccInclude{CGAL/Constrained_triangulation_2.h} 
  
-\ccInheritsFrom \ccc{Constrained_triangulation_2<Gt,Tds>}
+\ccInheritsFrom \ccc{Constrained_triangulation_2<Traits,Tds>}
 
 \ccTypes
 All types used in this class are inherited from the base class
-\ccc{Constrained_triangulation_2<Gt,Tds>}.
+\ccc{Constrained_triangulation_2<Traits,Tds>}.
 
 \ccCreation
 \ccCreationVariable{cdt}
