@@ -66,13 +66,13 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
    Polyhedron_3           polyhedron;
 
    geomview << CGAL::BLUE;
-   if ( assign(point, object) )
+   if ( CGAL::assign(point, object) )
       geomview << point;
-   else if ( assign(segment, object) )
+   else if ( CGAL::assign(segment, object) )
       geomview << segment;
-   else if ( assign(triangle, object) )
+   else if ( CGAL::assign(triangle, object) )
       geomview << triangle;
-   else if (assign(polyhedron, object));
+   else if (CGAL::assign(polyhedron, object));
       geomview << polyhedron;
 
 
@@ -88,15 +88,15 @@ int main(int argc, char* argv[])
 
   if (argc != 2)
   {
-      cerr << "Usage: " << argv[0] << " #points " << endl;
+      std::cerr << "Usage: " << argv[0] << " #points " << std::endl;
       exit(0);
   }
 
   int num = atoi(argv[1]);
   if (num < 0) 
   {
-     cerr << "Usage: " << argv[0] << " #points " << endl;
-     cerr << " #points must be >= 0" << endl;
+     std::cerr << "Usage: " << argv[0] << " #points " << std::endl;
+     std::cerr << " #points must be >= 0" << std::endl;
      exit(0);
   }
 
