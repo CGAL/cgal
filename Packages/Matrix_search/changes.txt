@@ -7,6 +7,12 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : Fixed warning on gcc3.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.2
+//---------------------------------------------------------------------
+
 ALL : Minimum_enclosing_* -> Min_*
 ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
 ALL : extremal_polygon -> extremal_polygon_2
@@ -31,7 +37,7 @@ SRC : Do not use non-std iterators (std::output_iterator etc.).
 ALL : Several fixes for Borland.
 
 //---------------------------------------------------------------------
-//	 CGAL-2.1
+//	 CGAL 2.1
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
@@ -78,7 +84,7 @@ TEST: Use Intervall_arithmetic number type.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 //---------------------------------------------------------------------
-//	 CGAL-1.2
+//	 CGAL 1.2
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.

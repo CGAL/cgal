@@ -4,20 +4,26 @@
 
 
 //---------------------------------------------------------------------
-//	revision 1.43
+//	revision 144
+//---------------------------------------------------------------------
+
+ALL : Fixed warning on gcc3.
+
+//---------------------------------------------------------------------
+//	revision 143
 //---------------------------------------------------------------------
 
 DOCS: Added some indexing for terms.
 DOCS: Few minor fixes in documentation.
 
 //---------------------------------------------------------------------
-//	revision 1.42
+//	revision 142
 //---------------------------------------------------------------------
 
 DOCS: Fixed \ccPureGlobalScope.
 
 //---------------------------------------------------------------------
-//	revision 1.41
+//	revision 141
 //---------------------------------------------------------------------
 
 ALL : Minimum_enclosing_* -> Min_*
@@ -27,49 +33,49 @@ ALL : all_furthest_neighbors -> all_furthest_neighbors_2
 DOCS: Changed everything acc. to the new manual structure.
 
 //---------------------------------------------------------------------
-//	revision 1.40
+//	revision 140
 //---------------------------------------------------------------------
 
 SRC : Removed side-effect from expensive assertion in 3center.
 
 //---------------------------------------------------------------------
-//	revision 1.39
+//	revision 139
 //---------------------------------------------------------------------
 
 DEMO: Fixed sprintf problem on msvc.
 DEMO: Fixed kcc warning.
 
 //---------------------------------------------------------------------
-//	revision 1.38
+//	revision 138
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.37
+//	revision 137
 //---------------------------------------------------------------------
 
 ALL : Use CGAL_NTS for number type utilities.
 
 //---------------------------------------------------------------------
-//	revision 1.36
+//	revision 136
 //---------------------------------------------------------------------
 
 SRC : Use Construct_iso_rectangle_2 from Kernel Traits.
 
 //---------------------------------------------------------------------
-//	revision 1.35
+//	revision 135
 //---------------------------------------------------------------------
 
 ALL : Fixed _Random_generator stuff (now without leading underscore).
 
 //---------------------------------------------------------------------
-//	revision 1.34
+//	revision 134
 //---------------------------------------------------------------------
 
 SRC : Fixed more ledaing underscores.
 
 //---------------------------------------------------------------------
-//	revision 1.33
+//	revision 133
 //---------------------------------------------------------------------
 
 DOCS: Added distance_object() to afn-spec.
@@ -77,7 +83,7 @@ SRC : Fixed leading underscore names.
 SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
 
 //---------------------------------------------------------------------
-//	revision 1.32
+//	revision 132
 //---------------------------------------------------------------------
 
 DEMO: Added check for CGAL_USE_LEDA.
@@ -85,13 +91,13 @@ SRC : Use CGAL compose functions.
 SRC : Do not use non-std iterators (std::output_iterator etc.).
 
 //---------------------------------------------------------------------
-//	revision 1.31
+//	revision 131
 //---------------------------------------------------------------------
 
 ALL : Several fixes for Borland.
 
 //---------------------------------------------------------------------
-//	revision 1.30
+//	revision 130
 //---------------------------------------------------------------------
 
 DEMO: Fixed MSVC problems.
@@ -99,7 +105,7 @@ TEST: Initial revision
 SRC : Fixed bug in four-center computation.
 
 //---------------------------------------------------------------------
-//	revision 1.29
+//	revision 129
 //---------------------------------------------------------------------
 
 SRC : Fixed range bug in expensive_assertion in extremal_polygon.
@@ -107,25 +113,25 @@ SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
 SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).
 
 //---------------------------------------------------------------------
-//	revision 1.28
+//	revision 128
 //---------------------------------------------------------------------
 
 SRC : Fixed expensive checks.
 SRC : Fixed internal compiler error on egcs-1.
 
 //---------------------------------------------------------------------
-//	revision 1.27
+//	revision 127
 //---------------------------------------------------------------------
 
 TEST: Fixed some MSVC #ifdefs.
 
 //---------------------------------------------------------------------
-//	revision 1.26
+//	revision 126
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.25
+//	revision 125
 //---------------------------------------------------------------------
 
 DEMO: Fixed a few things for VC++.
@@ -133,7 +139,7 @@ DOCS: Uniform traits classes documented.
 SRC : Completely new four-center implementation.
 
 //---------------------------------------------------------------------
-//	revision 1.24
+//	revision 124
 //---------------------------------------------------------------------
 
 SRC : Completely new four-cover implementation.
@@ -153,7 +159,7 @@ SRC : Initial revision
 SRC : Matrix_search
 
 //---------------------------------------------------------------------
-//	revision 1.23
+//	revision 123
 //---------------------------------------------------------------------
 
 SRC : Worked around some MSVC using-bugs.
@@ -168,34 +174,34 @@ SRC : Initial revision
 SRC : Matrix_search
 
 //---------------------------------------------------------------------
-//	revision 1.22
+//	revision 122
 //---------------------------------------------------------------------
 
 ALL : Replaced selfmade timer by CGAL::Timer.
 TEST: Removed "warning" from program output.
 
 //---------------------------------------------------------------------
-//	revision 1.21
+//	revision 121
 //---------------------------------------------------------------------
 
 SRC : Added std:: to vector in several places in extremal_polygon_2.h.
 
 //---------------------------------------------------------------------
-//	revision 1.20
+//	revision 120
 //---------------------------------------------------------------------
 
 DEMO: Prefixed leda_drawing_mode.
 SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
 
 //---------------------------------------------------------------------
-//	revision 1.19
+//	revision 119
 //---------------------------------------------------------------------
 
 ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 
 //---------------------------------------------------------------------
-//	revision 1.18
+//	revision 118
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
@@ -203,32 +209,32 @@ SRC : New linear 2- and 3-center algorithm.
 TEST: Use Intervall_arithmetic number type.
 
 //---------------------------------------------------------------------
-//	revision 1.17
+//	revision 117
 //---------------------------------------------------------------------
 
 DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
 DEMO: Now nearest neighbor queries are done brute-force.
 
 //---------------------------------------------------------------------
-//	revision 1.16
+//	revision 116
 //---------------------------------------------------------------------
 
 DOCS: fixed "cal" problem with html converter
 
 //---------------------------------------------------------------------
-//	revision 1.15
+//	revision 115
 //---------------------------------------------------------------------
 
 DOCS: fixed preconditions in replace_column (reported by Mariette).
 
 //---------------------------------------------------------------------
-//	revision 1.14
+//	revision 114
 //---------------------------------------------------------------------
 
 ALL : added std:: in a number of places where it was missing
 
 //---------------------------------------------------------------------
-//	revision 1.13
+//	revision 113
 //---------------------------------------------------------------------
 
 DEMO: Fixed MSVC problems.
@@ -239,7 +245,7 @@ TEST: MSVBC workaround for TYPENAME_BUGs.
 TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 //---------------------------------------------------------------------
-//	revision 1.12
+//	revision 112
 //---------------------------------------------------------------------
 
 ALL : use namespace std and CGAL
@@ -257,17 +263,17 @@ DOCS: fixed preconditions in replace_column (reported by Mariette).
 DOCS: Initial revision
 
 //---------------------------------------------------------------------
-//	revision 1.11
+//	revision 111
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.10
+//	revision 110
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.9
+//	revision 19
 //---------------------------------------------------------------------
 
 SRC : fix signed <-> unsigned comparison warning on gcc.
