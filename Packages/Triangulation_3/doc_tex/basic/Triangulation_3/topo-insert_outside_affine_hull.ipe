@@ -1,0 +1,474 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: Ipe 5.0
+%%BoundingBox: 150 276 449 523
+%%EndComments
+{\catcode37=9\def\IPEdummy{({{)}} pop
+%%}\makeatletter\let\@notdefinable\relax
+%%\def\IPEc#1[#2]#3{\newcommand{#1}[#2]{#3}\ignorespaces}\@ifundefined
+%%{selectfont}{\let\selectfont\relax\def\fontsize#1#2{}}{}\makeatother
+%%\IPEc\IPEput[4]{\put(0,0){\special{psfile=\IPEfile}}}
+%%\IPEc\IPEmp[2]{\minipage[t]{#1bp}#2\special{color pop}\endminipage}
+%%\IPEc\IPEtext[1]{\makebox(0,0)[lb]{#1\special{color pop}}}
+%%\IPEc\IPEfs[1]{\IPEcolfs{0 0 0}{#1}}
+%%\IPEc\IPEcolfs[2]{\dimen0=#2pt\fontsize{#2}{1.2\dimen0}\selectfont
+%%\special{color push rgb #1}}
+%%\IPEc\IPEsize[2]{\unitlength1bp\ignorespaces}
+%%\IPEsize{296.463}{245.505}
+%%\begin{picture}(296.463,245.505)(151.769,277.247)
+%%\IPEput{150}{276}{449}{523}
+%%\put(341.536,437.687){\IPEtext{\IPEfs{10}\rm $star$}}
+%%\put(448.231,439.402){\IPEmp{0}{\IPEfs{10}\rm $p$}}
+%%\put(151.769,277.247){\IPEtext{\IPEfs{10}\rm triangulation of $S^1$ }}
+%%\put(321.581,283.75){\IPEtext{\IPEfs{10}\rm triangulation of $S^2$ }}
+%%\end{picture}\endinput}
+%% Ipe postscript prologue
+
+/IpeDict 60 dict def
+IpeDict begin
+/origmatrix matrix currentmatrix def
+
+/sg {setgray} bind def
+/sc {setrgbcolor} bind def
+/ss {0 setdash setlinewidth} bind def
+/sk {stroke} bind def
+/fi {fill} bind def
+/sfi {gsave fill grestore} bind def
+/mt {moveto} bind def
+/lt {lineto} bind def
+/np {newpath} bind def
+/cl {closepath} bind def
+/N {moveto} bind def
+/L {lineto} bind def
+/E {lineto} bind def
+/C {lineto closepath} bind def
+%%%%
+%% x y size dx dy -> ar -> x y [ draws arrowhead, computes new vertex ]
+/smallarrow {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath fill
+-1 0 moveto currentpoint transform grestore itransform} bind def
+/ar {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath
+gsave origmatrix setmatrix [] 0 setdash stroke grestore fill
+0 0 moveto currentpoint transform grestore itransform} bind def
+%%%%
+/af {ar moveto} bind def
+/at {ar lineto} bind def
+%% x y size dx dy -> arw -> [ draws arrowhead ]
+/arw {ar pop pop} bind def
+%%%%
+/ci {0 360 arc} bind def
+/el {gsave concat 0 exch 0 exch 0 360 newpath arc origmatrix
+setmatrix} bind def
+/gs {gsave} bind def
+/gr {grestore} bind def
+/gsts {gsave translate scale } bind def
+%%
+/marker {gsave translate 0 setlinewidth [] 0 setdash newpath} bind def
+/m1 {marker 0 exch 0 exch 0 360 arc stroke grestore} bind def
+/m2 {marker 0 exch 0 exch 0 360 arc fill grestore} bind def
+/m3 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath stroke grestore} bind def 
+/m4 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath fill grestore} bind def
+/m5 {marker dup dup moveto dup neg dup lineto dup dup neg moveto dup
+neg exch lineto closepath stroke grestore} bind def
+
+%% splines
+systemdict /setpacking known {/savepacking currentpacking def false
+  setpacking} if
+/q0 {0 0} def
+/q1 {0 0} def
+/q2 {0 0} def
+/q3 {0 0} def
+/p0 {0 0} def
+/p1 {0 0} def
+/p2 {0 0} def
+/p3 {0 0} def
+systemdict /setpacking known {savepacking setpacking} if
+
+%% x y /qi -> defp -> [/qi [x y] def]
+/defp {dup 4 1 roll load astore def} bind def
+
+/midpoint { exch 4 3 roll add 2 div 3 1 roll add 2 div } bind def
+/thirdpoint { exch 4 3 roll 2 mul add 3 div 3 1 roll exch 2 mul add 3
+div } bind def
+
+/prespl {/p3 defp /p2 defp /p1 defp /p0 defp
+p1 p2 thirdpoint /q1 defp
+p2 p1 thirdpoint /q2 defp
+p1 p0 thirdpoint q1 midpoint /q0 defp
+p2 p3 thirdpoint q2 midpoint /q3 defp } bind def
+/postspl { q1 q2 q3 curveto p1 p2 p3 } bind def
+/fspl { prespl q0 moveto postspl } bind def
+/spl { prespl postspl } bind def
+/xspl { pop pop pop pop pop pop } bind def
+
+/qspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto } bind def
+
+/cqspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto
+p2 p1 midpoint /q0 defp
+p2 p0 midpoint /q3 defp
+p2 q0 thirdpoint /q1 defp
+p2 q3 thirdpoint /q2 defp q1 q2 q3 curveto
+p0 p2 midpoint /q0 defp
+p0 p1 midpoint /q3 defp
+p0 q0 thirdpoint /q1 defp
+p0 q3 thirdpoint /q2 defp q1 q2 q3 curveto } bind def
+
+%% bitmaps
+/pix { /picstr exch string def } def
+%% wd ht -> preimg -> ..stuff for image..
+/preimg { 8 [ 3 index 0 0 5 index neg 0 7 index ]
+ {currentfile picstr readhexstring pop} } def
+/img { preimg image } bind def
+/kimg { preimg false 3 colorimage } bind def
+%%
+end
+%% Ipe prologue end
+
+IpeDict begin 375.798 250.957 translate
+
+% Preamble 1
+%%\documentclass[a4paper]{article}
+% Group
+
+% Circle
+% ss 0
+0.8 [] ss
+np % xy
+-40.625 164.186 % r
+107.61 ci
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 0
+1.2 [] ss
+% xy
+-173.875 300.736 % r
+207.578 % ang
+-76.1863 -14.7488 np arc
+% sk
+0 sg sk
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+-86.9375 111.354 m4
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+-46.5199 136.817 m4
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+1.99584 190.472 m4
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+17.2504 222.273 m4
+% End
+
+% Text
+% xy -34.2619 186.73
+% sk 0
+% f 0 10
+% s $star$
+% End
+
+% Mark
+% sk
+0 sg
+% ty 2
+% sz
+2
+% xy
+55.3277 181.491 m2
+% End
+
+% Text
+% xy 72.4338 188.445
+% bb 0
+% sk 0
+% f 0 10
+% s $p$
+% End
+
+% Arc
+% ss 21845
+0.8 [ 1 ] ss
+% xy
+89.375 26.8224 % r
+229.736 % ang
+105.789 161.298 np arc
+% sk
+0 sg sk
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+-101.29 154.71 m4
+% End
+
+% Mark
+% sk
+0 sg
+% ty 4
+% sz
+2
+% xy
+-40.083 216.701 m4
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+-179.562 108.102 % r
+199.37 % ang
+24.4029 54.0868 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 21845
+0.4 [ 1 ] ss
+% xy
+116.188 314.554 % r
+184.379 % ang
+-165.88 -147.946 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+-99.9375 -23.5712 % r
+237.076 % ang
+64.5349 99.2033 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 21845
+0.4 [ 1 ] ss
+% xy
+59.3125 299.923 % r
+216.518 % ang
+-155.592 -137.881 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+196.625 -36.576 % r
+299.051 % ang
+130.604 144.506 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+89.375 -3.2512 % r
+212.518 % ang
+114.278 146.976 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+127.783 155.526 % r
+128.804 % ang
+147.209 164.474 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+4.28317 23.0393 % r
+166.471 % ang
+72.1439 90.7827 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.4 [ 4 ] ss
+% xy
+58.5 176.378 % r
+3.17764e-14 % ang
+116.565 289.596 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+15.0896 182.089 % r
+40.2425 % ang
+-0.850385 86.922 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+-38.0125 255.855 % r
+119.341 % ang
+-94.0878 -38.544 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+-40.2616 196.03 % r
+96.6885 % ang
+-118.865 -8.64781 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+10.922 196.849 % r
+46.9863 % ang
+-19.0777 22.4014 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 21845
+0.4 [ 1 ] ss
+% xy
+6.36227 144.82 % r
+85.4916 % ang
+56.398 123.293 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 3855
+0.8 [ 4 ] ss
+% xy
+-84.4909 175.153 % r
+139.962 % ang
+-51.4441 2.59583 np arc
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 21845
+0.4 [ 1 ] ss
+% xy
+-18.196 146.529 % r
+83.4958 % ang
+174.377 284.525 np arc
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 4095
+0.8 [ 12 4 ] ss
+% ar 2 7
+0 sg np % # 2
+-150.904 49.8617 mt
+-113.891 102.014 7 37.013 52.1523 at
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -224.029 26.2905
+% sk 0
+% f 0 10
+% s triangulation of $S^1$ 
+% End
+
+% Line
+% ss 4095
+0.8 [ 12 4 ] ss
+% ar 2 7
+0 sg np % # 2
+23.7832 44.9849 mt
+1.03317 127.89 7 -22.75 82.9051 at
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -54.2168 32.7929
+% sk 0
+% f 0 10
+% s triangulation of $S^2$ 
+% End
+
+% End
+
+end %% of Ipe figure
