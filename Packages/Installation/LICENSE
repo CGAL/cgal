@@ -8,6 +8,7 @@ both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  It is
 specified in each file of CGAL which license applies to it.
 
 
-The directory "auxiliary" contains external libraries such as GMP.
+The directory "auxiliary/" contains external libraries such as GMP.
+The directory "src/Core/" contains the CORE library.
 These libraries are not part of CGAL and have their own license.
 
