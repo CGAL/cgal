@@ -54,7 +54,7 @@ output iterator.}
 A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
-    std::pair< OutputIterator >
+    OutputIterator
     operator()(const CircularKernel::Circle_2 &c1, 
 	const CircularKernel::Circle_2 &c2, 
 	OutputIterator points);}
@@ -63,7 +63,7 @@ More precisely, \ccc{points} iterates on elements of type \ccc{std::pair<Circula
 \ccPrecond{\ccc{c1} and \ccc{c2} are not equal.}}
 
 \ccMethod{template < class OutputIterator >
-    std::pair< OutputIterator >
+    OutputIterator
     operator()(const CircularKernel::Circle_2 &c1, 
 	const CircularKernel::Circle_2 &c2, 
 	OutputIterator points, int foo);}
