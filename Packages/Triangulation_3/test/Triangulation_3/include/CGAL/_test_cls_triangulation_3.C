@@ -450,7 +450,7 @@ _test_cls_triangulation_3(const Triangulation &)
 
   std::cout << "  1000 points insertion"<< std::endl;
   Cls T3_2;
-  list_point::iterator it;
+  typename list_point::iterator it;
   int count = 0 ;
   std::cout << " number of inserted points : " ;
   for (it=lp.begin(); it!=lp.end();it++){
