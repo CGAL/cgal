@@ -86,7 +86,7 @@
 #else	// CGAL_IA_USE_ASSEMBLY
 #ifdef __i386
 #define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : : "g" (CW))
-// #define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
+#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW) : )
 // x86:                                       rounding | precision | def. mask
 static const unsigned short CGAL_FPU_cw_zero = 0xC00   |  0x200    | 0x107f; 
 static const unsigned short CGAL_FPU_cw_near = 0x0     |  0x200    | 0x107f;
@@ -103,9 +103,7 @@ static const unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
 #endif
 #ifdef __mips
 #define CGAL_IA_SETFPCW(CW) asm volatile ("lw $8,%0; ctc1 $8 $31": :"m" (CW))
-// #define CGAL_IA_GETFPCW(CW) \
-// asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
-// Mips:
+#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 $8 $31; sw $8,%0": "=m" (CW) :)
 static const unsigned int CGAL_FPU_cw_zero = 0x1;
 static const unsigned int CGAL_FPU_cw_near = 0x0;
 static const unsigned int CGAL_FPU_cw_up   = 0x2;
