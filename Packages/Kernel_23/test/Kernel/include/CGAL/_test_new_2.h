@@ -621,6 +621,7 @@ test_new_2(const R& rep)
   use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);
   use(tmp24g); use(tmp24h); use(tmp24);use(tmp_bool);
 
+  use(bb1);  use(bb2);  use(bb3);  use(bb4);  use(bb5);
   return true;
 }
 
