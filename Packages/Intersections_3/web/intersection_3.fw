@@ -63,9 +63,9 @@ intersection(const Plane_3<R> &plane, const Line_3<R>&line)
     const Direction_3<R> &line_dir = line.direction();
     RT num,  den;
     num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-        + plane.c()*line_pt.hz() + wmult((R*)0, plane.d(), line_pt.hw());
+          + plane.c()*line_pt.hz() + wmult((R*)0, plane.d(), line_pt.hw());
     den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
-        + plane.c()*line_dir.dz();
+          + plane.c()*line_dir.dz();
     if (den == RT(0)) {
         if (num == RT(0)) {
             // all line
@@ -447,7 +447,7 @@ intersection_bl(const Bbox_3 &box,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-    typedef Cartesian<double> R_cd;
+    typedef Simple_cartesian<double> R_cd;
     Point_3<R_cd> ref_point(lpx,lpy, lpz);
     Vector_3<R_cd> dir(ldx, ldy, ldz);
     double seg_min = 0.0, seg_max = 1.0;
@@ -1132,7 +1132,7 @@ web/intersection_3.fw@,@-
 Geert-Jan Giezeman <geert@@cs.uu.nl>@,@-
 Saarbruecken@)
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/bbox_intersection_3.h>
 @<3D CD Line Box intersection implementation@>
