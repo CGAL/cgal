@@ -673,7 +673,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond, 
-                   Polyhedron_3& polyhedron, int dummy = 1)
+                   Polyhedron_3& polyhedron  CGAL_MSVC_DUMMY_ARGUMENT)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename Kernel_traits<Point_3>::Kernel                  K;

@@ -1,3 +1,10 @@
+2.36    (22 Mar 2002)
+- removed one of the tests since it used coordinates not appropriate for
+  the number types used in the test suite
+- added CGAL_MSVC_DUMMY_ARGUMENT in place of the "int dummy=1" introduced to
+  help MCVC do proper matching of functions.  This should fix the problem
+  with the Borland compiler.
+
 2.35    (6 Mar 2002)
 - fixed small bug in demo program
 
