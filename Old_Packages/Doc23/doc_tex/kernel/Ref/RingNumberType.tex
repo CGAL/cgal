@@ -1,14 +1,121 @@
 \begin{ccRefConcept}{RingNumberType}
 
-A number type representing ring elements, i.e., must be closed under
-operations $+$, $-$, and $*$. A division operation is required only
-for those cases where the remainder is zero.
+\ccDefinition
+
+The concept \ccVar\ defines the syntactic requirements a number type must
+meet in order to be used in \cgal.
 
 \ccRefines
-CopyConstructable, Assignable, NumberType
+
+CopyConstructable, Assignable 
+
+
+\ccHasModels
+
+\CC\ built-in number types \\
+\ccc{CGAL::Filtered_exact<RingNumberType, ET>} \\
+\ccc{CGAL::Fixed_precision_nt} \\
+\ccc{CGAL::Interval_nt} \\
+\ccc{CGAL::Interval_nt_advanced} \\
+\ccc{CGAL::Lazy_exact_nt<RingNumberType>} \\
+\ccc{CGAL::MP_Float} \\
+\ccc{CGAL::Quotient<RingNumberType>} 
+
+
+\ccTypes
+
+\ccNestedType{Number_type_category}{indicates what kind of number type this is. 
+It should be defined as one of \ccc{Field_number_type_tag}, 
+\ccc{Ring_number_type_tag}, or \ccc{Euclidean_ring_number_type_tag}.}
+
+
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
+\ccCreation
+\ccCreationVariable{ntvar}
+
+\ccConstructor{RingNumberType();}
+            {Declaration of a variable.}
+
+
+\ccConstructor{RingNumberType(const RingNumberType &ntval);}
+            {Declaration and initialization.}
+
+
+\ccConstructor{RingNumberType(i)}
+            {Declaration and initialization with a small integer
+constant $i$, $0 \leq i \leq 127$. The neutral elements for addition
+(zero) and multiplication (one) are needed quite often, but sometimes
+other small constants are useful too. The value 127 was chosen such
+that even signed 8 bit number types can fulfill this condition.  }
+
+\ccSetThreeColumns{RingNumberTypeXXX}{}{\hspace*{8.5cm}}
+\ccOperations
+\ccMethod{RingNumberType & operator=(const RingNumberType &ntval);}
+        {Assignment.  }
+
+
+\ccFunction{bool is_valid(const RingNumberType &ntval);}
+{Not all values of a number type need be valid. The routine
+\ccStyle{is_valid} checks this. For example, an expression like
+\ccStyle{NT(0)/NT(0)} can result in an invalid number. Routines may
+have as a precondition that all numerical values are valid.}
+
+\ccFunction{bool is_finite(const RingNumberType &ntval);}
+{ When two large values are multiplied, the result may not fit in a
+  \ccStyle{NT}. 
+  Some number types (the standard \ccc{float} and \ccc{double} type
+  when they conform to standards) have a way to represent a too big
+  value as infinity.  \ccStyle{is_finite} implies \ccStyle{is_valid}.}
+
+\ccMethod{bool operator==(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator!=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccFunction{RingNumberType operator+(const RingNumberType &ntval1, const RingNumberType &ntval2);}
+       {}
+\ccGlue
+\ccMethod{RingNumberType operator+=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccFunction{RingNumberType operator-(const RingNumberType &ntval1, const RingNumberType &ntval2);}
+       {}
+\ccGlue
+\ccMethod{RingNumberType operator-=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccFunction{RingNumberType operator*(const RingNumberType &ntval1, const RingNumberType &ntval2);}
+       {}
+\ccGlue
+\ccMethod{RingNumberType operator*=(const RingNumberType &n) const;}
+       {}
+\ccGlue
+\ccFunction{RingNumberType operator-(const RingNumberType &ntval);}
+       {}
+
+\ccFunction{double to_double(const RingNumberType &ntval);}
+         {gives the double value for a number type.
+          This is usually an approximation for the real (stored) value.
+          It can be used to send numbers to a renderer or to store them 
+          in a file.}
+
 
 \ccSeeAlso
-\ccRefConceptPage{Kernel} \\
-\ccRefConceptPage{R}\\
+\ccRefConceptPage{EuclideanRingNumberType} \\
+\ccRefConceptPage{FieldNumberType} \\
+Support Library Manual
 
 \end{ccRefConcept}

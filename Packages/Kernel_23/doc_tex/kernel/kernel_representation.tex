@@ -183,13 +183,13 @@ or data structures needs more than is provided by a kernel. In these
 cases, a kernel can not be used as a traits class.
 
 \section{Choosing a Kernel}
-If you start with integral \ccHtmlNoLinksFrom{Cartesian} coordinates, many geometric computations
-will involve integral numerical values only. Especially, this is true for
-geometric computations that evaluate only predicates, which are tantamount to
-determinant computations. Examples are triangulation of point sets and 
-convex hull computation.
-In this case, the \ccHtmlNoLinksFrom{Cartesian} representation is probably the first choice, even
-with a ring type. You might use limited precision integer types like
+If you start with integral \ccHtmlNoLinksFrom{Cartesian} coordinates, many 
+geometric computations will involve integral numerical values only. Especially, 
+this is true for geometric computations that evaluate only predicates, which 
+are tantamount to determinant computations. Examples are triangulation of 
+point sets and convex hull computation.  In this case, the 
+\ccHtmlNoLinksFrom{Cartesian} representation is probably the first choice, 
+even with a ring type. You might use limited precision integer types like
 \ccc{int} or \ccc{long}, use \ccc{double} to present your integers (they
 have more bits in their mantissa than an \ccc{int} and overflow nicely), or an 
 arbitrary precision integer type like the wrapper \ccc{Gmpz} for the

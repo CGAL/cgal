@@ -1,0 +1,39 @@
+\begin{ccRefConcept}{EuclideanRingNumberType}
+
+%The concept \ccRefName\ defines the requirements of a number type to be
+%used ???.  
+The number type supports the operations $+$, $-$ and $*$ as well as
+$/$ when the remainder of the division is zero, and the computation of
+the greatest common divisor of two numbers.
+
+\ccRefines
+RingNumberType
+
+\ccHasModels
+\CC\ built-in number types \\
+\ccc{CGAL::Filtered_exact<EuclideanRingNumberType, ET>} \\
+\ccc{CGAL::Fixed_precision_nt} \\
+\ccc{CGAL::Interval_nt} \\
+\ccc{CGAL::Interval_nt_advanced} \\
+\ccc{CGAL::Lazy_exact_nt<EuclideanRingNumberType>} \\
+\ccc{CGAL::Quotient<RingNumberType>} \\
+
+\ccCreationVariable{ntvar}
+
+\ccOperations
+\ccGlue
+\ccMethod{EuclideanRingNumberType operator/(const EuclideanRingNumberType &n) const;}
+       {\ccPrecond \ccc{n} properly divides \ccVar.}
+
+\ccGlue
+\ccMethod{EuclideanRingNumberType gcd(const EuclideanRingNumberType &n) const;}
+       {Computes the greatest common divisor between \ccVar\ and \ccc{n}.}
+
+
+\ccSeeAlso
+\ccRefConceptPage{FieldNumberType} \\
+\ccRefConceptPage{Kernel} \\
+\ccRefConceptPage{R}\\
+Support Library Manual
+
+\end{ccRefConcept}

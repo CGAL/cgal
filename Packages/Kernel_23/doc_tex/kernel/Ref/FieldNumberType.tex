@@ -1,13 +1,35 @@
 \begin{ccRefConcept}{FieldNumberType}
 
-A number type representing field elements, i.e., must be closed under
-operations $+$, $-$, $*$ and also under division operation $/$.
+The concept \ccRefName\ defines the syntactic requirements of a number type
+to be used as a template parameter for the Cartesian kernels.  This number
+type supports the operations $+$, $-$, $*$ and $/$.
 
 \ccRefines
-CopyConstructable, Assignable, RingNumberType, NumberType
+RingNumberType
+
+\ccHasModels
+\CC\ built-in number types \\
+\ccc{CGAL::Filtered_exact<FieldNumberType, ET>} \\
+\ccc{CGAL::Fixed_precision_nt} \\
+\ccc{CGAL::Interval_nt} \\
+\ccc{CGAL::Interval_nt_advanced} \\
+\ccc{CGAL::Lazy_exact_nt<FieldNumberType>} \\
+\ccc{CGAL::Quotient<RingNumberType>} \\
+
+\ccCreationVariable{ntvar}
+
+\ccOperations
+\ccFunction{FieldNumberType operator/(const FieldNumberType &ntval1, 
+                                      const FieldNumberType &ntval2);}
+       {}
+
+\ccMethod{FieldNumberType operator/=(const FieldNumberType &n) const;}{}
+
 
 \ccSeeAlso
+\ccRefConceptPage{EuclideanRingNumberType} \\
 \ccRefConceptPage{Kernel} \\
 \ccRefConceptPage{R} \\
+Support Library Manual
 
 \end{ccRefConcept}
