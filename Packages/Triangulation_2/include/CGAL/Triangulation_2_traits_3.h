@@ -61,7 +61,7 @@ public:
       Orientation or;
       Point O(0.1111,0.1111,0.1111); 
       Point A(1.1111,0,0);
-      Point B(0,11111,0);
+      Point B(0,1.1111,0);
       Point C(0,0,1.1111);
 
       Point P = ((or = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
@@ -91,7 +91,7 @@ public:
       Orientation or;
       Point O(0.1111,0.1111,0.1111); 
       Point A(1.1111,0,0);
-      Point B(0,11111,0);
+      Point B(0,1.1111,0);
       Point C(0,0,1.1111);
 
       Point P = ((or = CGAL::orientation(p,q,r,O)) != ZERO) ? O:
