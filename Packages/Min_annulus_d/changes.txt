@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 1.1.1 on 16-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
+
 Version 1.1 on 09-Jul-2001
 - replaced template parameter 'R' by 'K'
 - fixed warning message of test program when no number type is available
