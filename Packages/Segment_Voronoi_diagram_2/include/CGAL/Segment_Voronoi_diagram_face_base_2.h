@@ -24,49 +24,69 @@
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_FACE_BASE_2_H
 
 #include <CGAL/Triangulation_ds_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
+//#include <CGAL/Triangulation_face_base_with_edges_2.h>
+#include <CGAL/Apollonius_graph_face_base_2.h>
 
-#ifdef USE_INPLACE_EDGE_LIST
-#  include <CGAL/Apollonius_graph_face_base_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
 
-#ifdef USE_INPLACE_EDGE_LIST
-template <class Gt,
-	  class Fb = Triangulation_ds_face_base_2<> >
-class Segment_Voronoi_diagram_face_base_2
-  : public Apollonius_graph_face_base_2<Gt,Fb>
-{};
+namespace CGALi {
 
-#else
+  template<class Gt, class Fb, class ADD_EDGES_Tag>
+  struct SVDFB2_Which_base;
 
-template <class Gt,
-	  class Fb = Triangulation_ds_face_base_2<> >
+
+  template<class Gt, class Fb>
+  struct SVDFB2_Which_base<Gt,Fb,Tag_true>
+  {
+    // MK::ERROR: replace the Apollonius_graph_face_base_2 class by the
+    //  more generic one: Triangulation_face_base_with_edges_2
+    //  typedef Triangulation_face_base_with_edges_2<Gt,Fb> Base;
+    
+    typedef Apollonius_graph_face_base_2<Gt,Fb> Base;
+  };
+
+  template<class Gt, class Fb>
+  struct SVDFB2_Which_base<Gt,Fb,Tag_false>
+  {
+    typedef Triangulation_face_base_2<Gt,Fb> Base;
+  };
+
+} // namespace CGALi
+
+
+
+template<class Gt,
+	 class Fb = Triangulation_ds_face_base_2<>,
+	 class ADD_EDGES_Tag = Tag_false>
 class Segment_Voronoi_diagram_face_base_2
-  : public Fb
+  : public CGALi::SVDFB2_Which_base<Gt,Fb,ADD_EDGES_Tag>::Base
 {
 protected:
   // local types
-  typedef typename Fb::Triangulation_data_structure    SVDDS;
+  typedef typename Fb::Triangulation_data_structure  DS;
 
 public:
   // TYPES
   //------
   typedef Gt                            Geom_traits;
-  typedef Fb                            Base;
+  typedef typename
+  CGALi::SVDFB2_Which_base<Gt,Fb,ADD_EDGES_Tag>::Base  Base;
+  //  typedef Fb                            Base;
 
-  typedef SVDDS         Segment_Voronoi_diagram_data_structure_2;
+  typedef DS         Segment_Voronoi_diagram_data_structure_2;
 
-  typedef typename SVDDS::Vertex_handle  Vertex_handle;
-  typedef typename SVDDS::Face_handle    Face_handle;
-  typedef typename SVDDS::Edge           Edge;
+  typedef typename DS::Vertex_handle  Vertex_handle;
+  typedef typename DS::Face_handle    Face_handle;
+  typedef typename DS::Edge           Edge;
 
 
-  template <typename SVDDS2>
+  template <typename DS2>
   struct Rebind_TDS {
-    typedef typename Fb::template Rebind_TDS<SVDDS2>::Other  Vb2;
-    typedef Segment_Voronoi_diagram_face_base_2<Gt,Vb2>      Other;
+    typedef typename Fb::template Rebind_TDS<DS2>::Other  Vb2;
+    typedef Segment_Voronoi_diagram_face_base_2<Gt,Vb2>   Other;
   }; 
 
 
@@ -89,7 +109,6 @@ public:
     : Base(v0,v1,v2,n0,n1,n2) {}
 };
 
-#endif
 
 CGAL_END_NAMESPACE 
 

@@ -55,9 +55,91 @@ void debug_info(char msg[], const T& t)
 //***********************************************************************
 
 //-----------------------------------------------------------------------
-//                           are same points
+//                           compare x
 //-----------------------------------------------------------------------
 
+template< class K >
+class Svd_compare_x_2
+{
+public:
+  typedef typename K::Site_2         Site_2;
+  typedef typename K::Point_2        Point_2;
+
+  typedef Comparison_result          result_type;
+
+  struct Arity {};
+
+private:
+  typedef typename K::Compare_x_2  compare_x_2;
+
+public:
+
+  result_type operator()(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_point() && q.is_point() );
+    return compare_x_2()( p.point(), q.point() );
+  }
+};
+
+//-----------------------------------------------------------------------
+//                           compare y
+//-----------------------------------------------------------------------
+
+template< class K >
+class Svd_compare_y_2
+{
+public:
+  typedef typename K::Site_2         Site_2;
+  typedef typename K::Point_2        Point_2;
+
+  typedef Comparison_result          result_type;
+
+  struct Arity {};
+
+private:
+  typedef typename K::Compare_y_2  compare_y_2;
+
+public:
+
+  result_type operator()(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_point() && q.is_point() );
+    return compare_y_2()( p.point(), q.point() );
+  }
+};
+
+//-----------------------------------------------------------------------
+//                           orientation
+//-----------------------------------------------------------------------
+
+template< class K >
+class Svd_orientation_2
+{
+public:
+  typedef typename K::Site_2         Site_2;
+  typedef typename K::Point_2        Point_2;
+
+  typedef Orientation                result_type;
+
+  struct Arity {};
+
+private:
+  typedef typename K::Orientation_2  orientation_2;
+
+public:
+
+  result_type operator()(const Site_2& p, const Site_2& q,
+			 const Site_2& r) const
+  {
+    CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
+    return orientation_2()( p.point(), q.point(), r.point() );
+  }
+};
+
+
+//-----------------------------------------------------------------------
+//                           are same points
+//-----------------------------------------------------------------------
 
 template< class K >
 class Are_same_points_2
@@ -317,8 +399,6 @@ public:
 };
 
 
-#define USE_KERNEL_PREDICATES
-
 
 //-----------------------------------------------------------------------
 // the Traits class
@@ -365,11 +445,9 @@ public:
 
   // PREDICATES
   //-----------
-#ifdef USE_KERNEL_PREDICATES
-  typedef typename Kernel::Compare_x_2                  Compare_x_2;
-  typedef typename Kernel::Compare_y_2                  Compare_y_2;
-  typedef typename Kernel::Orientation_2                Orientation_2;
-#endif
+  typedef CGAL::Svd_compare_x_2<K>                      Compare_x_2;
+  typedef CGAL::Svd_compare_y_2<K>                      Compare_y_2;
+  typedef CGAL::Svd_orientation_2<K>                    Orientation_2;
   typedef CGAL::Are_same_points_2<K>                    Are_same_points_2;
   typedef CGAL::Are_parallel_2<K>                       Are_parallel_2;
   typedef CGAL::Svd_oriented_side_of_bisector_2<K,MTag> 
@@ -405,7 +483,6 @@ public:
 
   // PREDICATES
   //-----------
-#ifdef USE_KERNEL_PREDICATES
   Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();
@@ -420,7 +497,7 @@ public:
   orientation_2_object() const {
     return Orientation_2();
   }
-#endif
+
   Are_same_points_2
   are_same_points_2_object() const {
     return Are_same_points_2();

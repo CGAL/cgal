@@ -40,7 +40,7 @@
 #include <CGAL/edge_list.h>
 #include <CGAL/Segment_Voronoi_diagram_traits_wrapper_2.h>
 
-#include <CGAL/Point_container.h>
+#include <CGAL/Simple_container_wrapper.h>
 
 /*
   Conventions:
@@ -58,21 +58,53 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class Gt, class PContainer, class DS >
+
+namespace CGALi {
+
+  template<typename Edge, typename LTag> struct SVD_which_list;
+
+  // use the in-place edge list
+  template<typename E>
+  struct SVD_which_list<E,Tag_true>
+  {
+    typedef E                           Edge;
+    typedef In_place_edge_list<Edge>    List;
+  };
+
+  // do not use the in-place edge list
+  template<typename E>
+  struct SVD_which_list<E,Tag_false>
+  {
+    typedef E                                 Edge;
+    // change the following to Tag_false in order to use
+    // CGAL's Unique_hash_map
+    typedef Tag_true                          Use_stl_map_tag;
+    typedef Edge_list<Edge,Use_stl_map_tag>   List;
+  };
+
+
+} // namespace CGALi
+
+
+
+
+template<class Gt, class PC, class DS, class LTag >
 class Segment_Voronoi_diagram_hierarchy_2;
 
+	 //	   typename PC = Point_container<typename Gt::Point_2>,
+  //	   typename PC = Point_container<typename Gt::Point_2>,
 
-template < class Gt,
-	   class PContainer = Point_container<typename Gt::Point_2>,
-           class DS = Segment_Voronoi_diagram_data_structure_2 < 
-                Segment_Voronoi_diagram_vertex_base_2<Gt,
-	                         typename PContainer::Point_handle>,
-                Segment_Voronoi_diagram_face_base_2<Gt> > >
+template<class Gt,
+	 class PC = std::list<typename Gt::Point_2>,
+	 class DS = Segment_Voronoi_diagram_data_structure_2 < 
+                Segment_Voronoi_diagram_vertex_base_2<Gt,PC>,
+                Segment_Voronoi_diagram_face_base_2<Gt> >,
+	 class LTag = Tag_false >
 class Segment_Voronoi_diagram_2
   : private Triangulation_2<
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, DS >
 {
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PContainer,DS>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>;
 protected:
   bool intersection_flag;
 
@@ -133,6 +165,8 @@ protected:
   typedef typename DG::Vertex        Vertex;
   typedef typename DG::Face          Face;
 
+  typedef LTag            Use_in_place_edge_list_tag;
+
 public:
   // TYPES
   //------
@@ -158,17 +192,16 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
-  typedef Point_container<Point>                  Point_container;
-  typedef typename Point_container::Point_handle  Point_handle;
+  typedef Simple_container_wrapper<PC>           Point_container;
+  typedef typename Point_container::iterator     Point_handle;
 
-  typedef typename DG::size_type                  size_type;
+  typedef typename DG::size_type                 size_type;
 
 protected:
   // some more local types
   typedef typename DS::Vertex_base             Vertex_base;
 
   typedef std::map<Face_handle,bool>           Face_map;
-  typedef std::map<Face_handle, Face_handle>   Face_face_map;
   typedef std::vector<Edge>                    Edge_vector;
 
   typedef std::list<Vertex_handle>         Vertex_list;
@@ -179,11 +212,8 @@ protected:
   typename Data_structure::Vertex_base::Storage_site_2  Storage_site_2;
 
   // the in place edge list
-#ifdef USE_INPLACE_EDGE_LIST
-  typedef In_place_edge_list<Edge>          List;
-#else
-  typedef Edge_list<Edge>          List;
-#endif
+  typedef typename
+  CGALi::SVD_which_list<Edge,Use_in_place_edge_list_tag>::List  List;
 
   typedef enum { NO_CONFLICT = -1, INTERIOR, LEFT_VERTEX,
 		 RIGHT_VERTEX, BOTH_VERTICES, ENTIRE_EDGE }

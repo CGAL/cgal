@@ -49,17 +49,17 @@ const unsigned int svd_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt,
-  class PContainer = Point_container<typename Gt::Point_2>,
-  class Tds = Segment_Voronoi_diagram_data_structure_2<
-    Segment_Voronoi_diagram_hierarchy_vertex_base_2<
-       Segment_Voronoi_diagram_vertex_base_2<Gt,
-                                 typename PContainer::Point_handle> >,
-    Segment_Voronoi_diagram_face_base_2<Gt> > >
+	   class PC = std::list<typename Gt::Point_2>,
+	   class DS = Segment_Voronoi_diagram_data_structure_2<
+              Segment_Voronoi_diagram_hierarchy_vertex_base_2<
+                 Segment_Voronoi_diagram_vertex_base_2<Gt,PC> >,
+              Segment_Voronoi_diagram_face_base_2<Gt> >,
+	   class LTag = Tag_false>
 class Segment_Voronoi_diagram_hierarchy_2
-  : public Segment_Voronoi_diagram_2<Gt,PContainer,Tds>
+  : public Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>
 {
 public:
-  typedef Segment_Voronoi_diagram_2<Gt,PContainer,Tds>  Base;
+  typedef Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>  Base;
 
   typedef typename Base::Geom_traits        Geom_traits;
 
@@ -177,14 +177,15 @@ private:
   int random_level();
 };
 
-template<class Gt, class P, class Tds>
-const int Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::UNDEFINED_LEVEL = -1;
+template<class Gt, class PC, class DS, class LTag>
+const int
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::UNDEFINED_LEVEL = -1;
 
 //**************************************************************************
 //**************************************************************************
 
-template<class Gt, class P, class Tds>
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+template<class Gt, class PC, class DS, class LTag>
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 Segment_Voronoi_diagram_hierarchy_2(const Geom_traits& traits)
   : Base(traits), random((long)0)
 { 
@@ -195,10 +196,10 @@ Segment_Voronoi_diagram_hierarchy_2(const Geom_traits& traits)
 
 
 // copy constructor duplicates vertices and faces
-template<class Gt, class P, class Tds>
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+template<class Gt, class PC, class DS, class LTag>
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 Segment_Voronoi_diagram_hierarchy_2
-(const Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds> &svd)
+(const Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag> &svd)
     : Base(), random((long)0)
 { 
   // create an empty triangulation to be able to delete it !
@@ -210,20 +211,20 @@ Segment_Voronoi_diagram_hierarchy_2
  
 
 //Assignement
-template<class Gt, class P, class Tds>
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds> &
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
-operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds> &svd)
+template<class Gt, class PC, class DS, class LTag>
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag> &
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
+operator=(const Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag> &svd)
 {
   copy_triangulation(svd);
   return *this;
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 void
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::   
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::   
 copy_triangulation
-(const Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds> &svd)
+(const Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag> &svd)
 {
   std::map< Vertex_handle, Vertex_handle > V;
   {
@@ -258,8 +259,8 @@ copy_triangulation
   hierarchy[0]->pc_ = svd.hierarchy[0]->pc_;
 }
 
-template<class Gt, class P, class Tds>
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>:: 
+template<class Gt, class PC, class DS, class LTag>
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>:: 
 ~Segment_Voronoi_diagram_hierarchy_2()
 {
   clear();
@@ -268,9 +269,9 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
   }
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 void
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>:: 
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>:: 
 clear()
 {
   for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
@@ -278,19 +279,19 @@ clear()
   }
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 inline
-typename Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 insert(const Point& p)
 {
   return insert_point(p, UNDEFINED_LEVEL);
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 inline
-typename Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 insert_point(const Point& p, int level)
 
 {
@@ -305,9 +306,9 @@ insert_point(const Point& p, int level)
   return vertices[0];
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 void
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 insert_point(const Point& p, int level,	Vertex_handle* vertices)
 {
   CGAL_precondition( level != UNDEFINED_LEVEL );
@@ -342,19 +343,19 @@ insert_point(const Point& p, int level,	Vertex_handle* vertices)
 }
 
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 inline
-typename Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 insert(const Point& p0, const Point& p1)
 {
   return insert_segment(p0, p1, UNDEFINED_LEVEL);
 }
 
 
-template<class Gt, class P, class Tds>
-typename Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::Vertex_handle
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+template<class Gt, class PC, class DS, class LTag>
+typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 insert_segment(const Point& p0, const Point& p1, int level)
 {
   if ( level == UNDEFINED_LEVEL ) {
@@ -425,9 +426,9 @@ insert_segment(const Point& p0, const Point& p1, int level)
 }
 
 #if 0
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 void
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 remove(Vertex_handle v, bool remove_endpoints)
 {
   void* u = v->up();
@@ -442,9 +443,9 @@ remove(Vertex_handle v, bool remove_endpoints)
 }
 #endif
 
-template<class Gt, class P, class Tds>
-typename Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::Vertex_handle 
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+template<class Gt, class PC, class DS, class LTag>
+typename Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::Vertex_handle 
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 nearest_neighbor(const Point& p, bool force_point) const
 {
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
@@ -452,9 +453,9 @@ nearest_neighbor(const Point& p, bool force_point) const
   return vnear[0];
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 void
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 nearest_neighbor(const Site& p,
 		 Vertex_handle vnear[svd_hierarchy_2__maxlevel],
 		 bool force_point) const
@@ -487,9 +488,9 @@ nearest_neighbor(const Site& p,
   // at level 0
 }
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 int
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>::
 random_level()
 {
   unsigned int l = 0;
@@ -503,9 +504,9 @@ random_level()
 }
 
 
-template<class Gt, class P, class Tds>
+template<class Gt, class PC, class DS, class LTag>
 bool
-Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>:: 
+Segment_Voronoi_diagram_hierarchy_2<Gt,PC,DS,LTag>:: 
 is_valid(bool verbose, int level) const
 {
   bool result(true);

@@ -30,7 +30,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template < class Gt, class PointHandle,
+template < class Gt, class PC,
 	   class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Voronoi_diagram_vertex_base_2
   : public Vb
@@ -40,10 +40,11 @@ private:
 public:
   // TYPES
   //------
-  typedef Gt                      Geom_traits;
-  typedef PointHandle             Point_handle;
-  typedef Vb                      Base;
-  typedef typename Gt::Site_2     Site_2;
+  typedef Gt                                  Geom_traits;
+  typedef PC                                  Point_container;
+  typedef typename Point_container::iterator  Point_handle;
+  typedef Vb                                  Base;
+  typedef typename Gt::Site_2                 Site_2;
 
   typedef
   Segment_Voronoi_diagram_storage_site_2<Gt,Point_handle>
@@ -57,9 +58,8 @@ public:
 
   template < typename DS2 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<DS2>::Other  Vb2;
-    typedef
-    Segment_Voronoi_diagram_vertex_base_2<Gt,Point_handle,Vb2>  Other;
+    typedef typename Vb::template Rebind_TDS<DS2>::Other      Vb2;
+    typedef Segment_Voronoi_diagram_vertex_base_2<Gt,PC,Vb2>  Other;
   };
 
   

@@ -1,5 +1,5 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
+// Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -28,118 +28,131 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define USE_BF      0
-#define USE_STD_MAP 1
-#define USE_INIT    0
 
 namespace CGALi {
 
-class Edge_hash_function
-  : public Handle_hash_function
-{
-private:
-  typedef Handle_hash_function     Base;
-
-public:
-  typedef Base::result_type        result_type;
-
-  template<class Edge>
-  result_type operator()(const Edge& e) const
+  class Edge_hash_function
+    : public Handle_hash_function
   {
-    return (Base::operator()(e.first)) << e.second;
-  }
-};
+  private:
+    typedef Handle_hash_function     Base;
+
+  public:
+    typedef Base::result_type        result_type;
+
+    template<class Edge>
+    result_type operator()(const Edge& e) const
+    {
+      return (Base::operator()(e.first)) << e.second;
+    }
+  };
 
 
-template<class Edge>
-class Edge_list_item
-{
-private:
-  typedef typename Edge::first_type   Face_handle;
-  typedef Edge_list_item<Edge>        Self;
-
-private:
-  Edge prev_;
-  Edge next_;
-
-public:
-  // remove the following method and make SENTINEL_EDGE a static const
-  // member of the class.
-  static Edge sentinel_edge() {
-    static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
-    return SENTINEL_EDGE;
-  }
-private:
-  static int sentinel_index() { return -1; }
-
-private:
-#if USE_INIT
-  void init() {
-    static Edge SENTINEL_EDGE = sentinel_edge();
-    init( SENTINEL_EDGE, SENTINEL_EDGE );
-  }
-
-  void init(const Edge& prev, const Edge& next) {
-    next_ = next;
-    prev_ = prev;
-  }
-#endif
-
-public:
-#if USE_INIT
-  Edge_list_item() { init(); }
-  Edge_list_item(const Edge& prev, const Edge& next)
-  { init(prev, next); }
-#else
-  Edge_list_item()
-    : prev_(sentinel_edge()), next_(sentinel_edge()) {}
-  Edge_list_item(const Edge& prev, const Edge& next)
-    : prev_(prev), next_(next) {}
-#endif
-
-  bool is_in_list() const
+  template<class Edge_t>
+  class Edge_list_item
   {
-    return ( next_.second != sentinel_index() ||
-	     prev_.second != sentinel_index() );
-  }
+  public:
+    typedef Edge_t                      Edge;
 
-  void set_next(const Edge& next)
+  private:
+    typedef typename Edge::first_type   Face_handle;
+
+  private:
+    Edge prev_;
+    Edge next_;
+
+  public:
+    // remove the following method and make SENTINEL_EDGE a static const
+    // member of the class.
+    static Edge sentinel_edge() {
+      static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
+      return SENTINEL_EDGE;
+    }
+
+  private:
+    static int sentinel_index() { return -1; }
+
+  public:
+    Edge_list_item()
+      : prev_(sentinel_edge()), next_(sentinel_edge()) {}
+    Edge_list_item(const Edge& prev, const Edge& next)
+      : prev_(prev), next_(next) {}
+
+
+    bool is_in_list() const
+    {
+      return ( next_.second != sentinel_index() ||
+	       prev_.second != sentinel_index() );
+    }
+
+    void set_next(const Edge& next)
+    {
+      next_ = next;
+    }
+
+    void set_previous(const Edge& prev)
+    {
+      prev_ = prev;
+    }
+
+    const Edge& next()     const { return next_; }
+    const Edge& previous() const { return prev_; }
+
+    void reset() {
+      Edge SENTINEL_EDGE = sentinel_edge();
+      next_ = prev_ = SENTINEL_EDGE;
+    }
+  };
+
+
+  
+  template<class E_t, class ListItem, class USE_STL_MAP_Tag>
+  struct Edge_list_which_map;
+
+  // use STL's map
+  template<class E_t, class ListItem>
+  struct Edge_list_which_map<E_t,ListItem,Tag_true>
   {
-    next_ = next;
-  }
+    typedef E_t                       Edge;
+    typedef ListItem                  List_item;
+    typedef std::map<Edge,List_item>  Edge_map;
+  };
 
-  void set_previous(const Edge& prev)
+  // use CGAL's Unique_hash_map
+  template<class E_t, class ListItem>
+  struct Edge_list_which_map<E_t,ListItem,Tag_false>
   {
-    prev_ = prev;
-  }
+    typedef E_t                         Edge;
+    typedef ListItem                    List_item;
+    typedef CGALi::Edge_hash_function   Hash_function;
 
-  const Edge& next()     const { return next_; }
-  const Edge& previous() const { return prev_; }
+    typedef Unique_hash_map<Edge,List_item,Hash_function>  Edge_map;
+  };
 
-  void reset() {
-    Edge SENTINEL_EDGE = sentinel_edge();
-    next_ = prev_ = SENTINEL_EDGE;
-  }
-};
+
 
 } // namespace CGALi
 
-template<class Edge>
+
+
+template<class Edge_t, class USE_STL_MAP_Tag = Tag_true>
 class Edge_list
 {
-private:
-  typedef CGALi::Edge_list_item<Edge>     List_item;
-#if USE_STD_MAP
-  typedef std::map<Edge,List_item>        Edge_map;
-#else
-  typedef
-  Unique_hash_map<Edge,List_item,CGALi::Edge_hash_function> Edge_map;
-#endif
-
 public:
   // TYPES
   //======
-  typedef std::size_t      size_type;
+  typedef std::size_t       size_type;
+  typedef Edge_t            Edge;
+  typedef USE_STL_MAP_Tag   Use_stl_map_tag;
+
+private:
+  typedef CGALi::Edge_list_item<Edge>  List_item;
+
+  typedef
+  CGALi::Edge_list_which_map<Edge,List_item,Use_stl_map_tag>
+  Which_map;
+
+  typedef typename Which_map::Edge_map  Edge_map;
 
 private:
   // PRIVATE DATA MEMBERS
@@ -160,12 +173,6 @@ private:
   }
 
   void insert_before_nocheck(const Edge& e, const Edge& new_e) {
-#if USE_BF
-    Edge old_front = front_;
-    front_ = e;
-    push_back(new_e);
-    front_ = old_front;
-#else
     List_item& li_e = emap[e];
 
     const Edge& prev_e = li_e.previous();
@@ -175,7 +182,50 @@ private:
     li_e.set_previous(new_e);
     li_prev_e.set_next(new_e);
     increase_size();
-#endif
+  }
+
+  // check whether the edge is in the list;
+  // the map used is STL's map 
+  bool is_in_list_with_tag(const Edge& e, const Tag_true&) const
+  {
+    if ( emap.find(e) == emap.end() ) { return false; }
+    return emap.find(e)->second.is_in_list();    
+  }
+
+  // check whether the edge is in the list;
+  // the map used is CGAL's Unique_hash_map 
+  bool is_in_list_with_tag(const Edge& e, const Tag_false&) const
+  {
+    if ( !emap.is_defined(e) ) { return false; }
+    return emap[e].is_in_list();
+  }
+
+  // return the next edge in the list;
+  // the map used is STL's map 
+  const Edge& next_with_tag(const Edge& e, const Tag_true&) const
+  {
+    return emap.find(e)->second.next();
+  }
+
+  // return the next edge in the list;
+  // the map used is CGAL's Unique_hash_map 
+  const Edge& next_with_tag(const Edge& e, const Tag_false&) const
+  {
+    return emap[e].next();
+  }
+
+  // return the previous edge in the list;
+  // the map used is STL's map 
+  const Edge& previous_with_tag(const Edge& e, const Tag_true&) const
+  {
+    return emap.find(e)->second.previous();
+  }
+
+  // return the previous edge in the list;
+  // the map used is CGAL's Unique_hash_map 
+  const Edge& previous_with_tag(const Edge& e, const Tag_false&) const
+  {
+    return emap[e].previous();
   }
 
 public:
@@ -184,23 +234,17 @@ public:
   Edge_list(const Edge& e = List_item::sentinel_edge() )
     : emap(), front_(e), size_(0) {}
 
-public:
+
   // PREDICATES
   //===========
   bool is_valid() const { return true; }
 
   bool is_in_list(const Edge& e) const {
-#if USE_STD_MAP
-    if ( emap.find(e) == emap.end() ) { return false; }
-    return emap.find(e)->second.is_in_list();
-    //    return li_e.is_in_list();
-#else
-    if ( !emap.is_defined(e) ) { return false; }
-    return emap[e].is_in_list();
-#endif
+    static Use_stl_map_tag  map_tag;
+    return is_in_list_with_tag(e, map_tag);
   }
 
-public:
+
   // ACCESS METHODS
   //===============
   size_type size() const {
@@ -209,20 +253,14 @@ public:
 
   const Edge& next(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
-#if USE_STD_MAP
-    return emap.find(e)->second.next();
-#else
-    return emap[e].next();
-#endif
+    static Use_stl_map_tag  map_tag;
+    return next_with_tag(e, map_tag);
   }
 
   const Edge& previous(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
-#if USE_STD_MAP
-    return emap.find(e)->second.previous();
-#else
-    return emap[e].previous();
-#endif
+    static Use_stl_map_tag  map_tag;
+    return previous_with_tag(e, map_tag);
   }
 
   const Edge& front() const {
@@ -235,7 +273,7 @@ public:
     return previous(front_);
   }
 
-public:
+
   // INSERTION
   //==========
   void push_front(const Edge& e) {
@@ -253,26 +291,13 @@ public:
       return;
     }
 
-#if USE_BF
-    Edge last_edge = back();
-    emap[e] = List_item(last_edge, front_);
-    emap[last_edge].set_next(e);
-    emap[front_].set_previous(e);
-    increase_size();
-#else
     insert_before_nocheck(front_, e);
-#endif
   }
 
   void insert_after(const Edge& e, const Edge& new_e) {
     CGAL_precondition( is_in_list(e) );
     CGAL_precondition( !is_in_list(new_e) );
-#if USE_BF
-    Edge old_front = front_;
-    front_ = emap[e].next();
-    push_front(new_e);
-    front_ = old_front;
-#else
+
     List_item& li_e = emap[e];
 
     const Edge& next_e = li_e.next();
@@ -282,7 +307,6 @@ public:
     li_e.set_next(new_e);
     li_next_e.set_previous(new_e);
     increase_size();
-#endif
   }
 
   void insert_before(const Edge& e, const Edge& new_e) {
@@ -291,14 +315,10 @@ public:
     insert_before_nocheck(e, new_e);
   }
 
-public:
+
   // REPLACEMENT
   //============
   void replace(const Edge& e, const Edge& new_e) {
-#if USE_BF
-    insert_before(e, new_e);
-    remove(e);
-#else
     CGAL_precondition( is_in_list(e) );
     CGAL_precondition( !is_in_list(new_e) );
 
@@ -310,13 +330,8 @@ public:
       li_e.reset();
     }
 
-#if USE_BF
-    Edge next_e = li_e.next();
-    Edge prev_e = li_e.previous();
-#else
     const Edge& next_e = li_e.next();
     const Edge& prev_e = li_e.previous();
-#endif
 
     emap[prev_e].set_next(new_e);
     emap[next_e].set_previous(new_e);
@@ -328,8 +343,8 @@ public:
     if ( e == front_ ) {
       front_ = new_e;
     }
-#endif
   }
+
 
   // REMOVAL
   //========
@@ -345,19 +360,8 @@ public:
     }
 
     List_item& li_e = emap[e];
-#if USE_BF
-    Edge next_e = li_e.next();
-    Edge prev_e = li_e.previous();
-#else
     const Edge& next_e = li_e.next();
     const Edge& prev_e = li_e.previous();
-#endif
-
-    //    Edge ne = li_e.next();
-    //    Edge pe = li_e.previous();
-
-    //    emap[pe].set_next(ne);
-    //    emap[ne].set_previous(pe);
 
     emap[prev_e].set_next(next_e);
     emap[next_e].set_previous(prev_e);

@@ -1,4 +1,5 @@
-- make number_of* methods return a size_type
+- in the doc change the name of the template parameter for the
+  point container from SC to PC.
 - add two different storage sites, one for the case of intersecting
   segments and one for the case of non-intersecting segments
 - add boolean parameter in Segment_Voronoi_diagram_2 class that indicates
@@ -15,38 +16,9 @@
   derive from that; the base class should accomodate different sites, other
   than points, and also have the capability of having a different type
   for storage and the actual site. Then derive from that.
-- move the definition of the Segment_Voronoi_diagram_hierarchy_vertex_base_2
-  class in a separate file
 - add the methods insert_polyline and insert_polygon that do some
   optimized insertion for polylines and polygons; add these in both
   the one-level and hierarchy classes
-- remove the macro USE_KERNEL_PREDICATES from the traits classes, once
-  the traits' interface is finalized
-- define the Orientation_2 predicate in the traits but for sites, not
-  for points.
-- replace the Point_container class by a more generic class called
-  Simple_container_wrapper; the Segment_Voronoi_diagram_2 class
-  should take as template parameter the real container (by default
-  std::list<typename Gt::Point_2>) and then inside wrap it.
-- remove the typedef for Face_face_map; it is not used
-- check if implementing the Face_map as an std::set<Face_handle> is faster
-  than std::map<Face_handle,bool>.
-- add a boolean template parameter in the Segment_Voronoi_diagram_2
-  that indicates if we want to optimize for space or time; in the case of space
-  use the Edge_list class and a set in add_bogus_vertices; in the case of time
-  use the In_place_edge_list_class and a vector in add_bogus_vertices
-- remove the macros USE_VECTOR, USE_SET from the add_bogus_vertices
-  method of the Segment_Voronoi_diagram_2 class; use a set (which
-  should be static)
-- remove the macros USE_BF, USE_STD_MAP and USE_INIT from the Edge_list
-  class; change the class Edge_list so that it takes an additional
-  boolean template parameter that indicates whether to use Unique_hash_map
-  of CGAL, or STL's map; use the STL map by default
-- remove the macro USE_INPLACE_EDGE_LIST
-- check if using an STL map in place of the Unique_hash_map, the edge
-  list runs faster. Also check if the Edge_vector, Vertex_map and
-  Face_map can be replaced by implementations using the
-  Unique_hash_map of CGAL.
 - fix the bug in insert_third for point
 - add the check for a segment intersecting an existing point and
   a point intersecting an existing segment.
