@@ -10,7 +10,7 @@ Alter the second line above, such that the major and minor release
 number are ok.
 Run this script. This does the following:
     Remove the test directory.
-    Remove scripts dir
+    Remove developer_scripts dir
     Remove doc_tex dir
     Find all .C and .h files and collect them in a file
     Run the script 'make_public_header' to update the headers of all files.
@@ -20,7 +20,7 @@ Run this script. This does the following:
 
 The rest is done manually still.
 Add README file.
-Edit install_cgal script: remove the "y" in CGAL_TESTSUITE='y'.
+Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
 Rename the current directory to CGAL-x.y.
 Do
   find CGAL-x.y -exec touch 01221530 {} \;
@@ -41,7 +41,7 @@ die if $minor < 0;
 die "Quitting: No include/CGAL directory under current directory\n"
 if (! -d 'include/CGAL' );
 system ("rm -rf test");
-system ("rm -rf scripts");
+system ("rm -rf developer_scripts");
 system ("rm -rf doc_tex");
 system("find . -name '*.[hC]' -print > filenames");
 system("make_public_header -v CGAL-$major.$minor -f filenames");
