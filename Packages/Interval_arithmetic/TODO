@@ -1,15 +1,23 @@
 Concerning the code itself:
 
+- try if __attribute__((const)) for GNU on my operators is ok, and speed up ?
+- cast functions: better not have a CGAL_convert_to<IA_not_adv> templated ?
+? Currently, some types (leda_*, GMP) need the rounding to nearest for doing
+  the conversion to Interval.  That's bad because double doesn't, and is the
+  case that must be optimized.  Maybe have a Tag for each NT saying if/how it
+  needs the rounding to do the conversion ?
+- For GMP (see CLN first), use a custom function ?
 - Workaround for the x86 bug: Rajouter pour __i386 + __GNUG__ ?
   #ifndef __OPTIMIZE__
   #warning Please compile with optimization on.
   #endif
-- Add preconditions on the rounding mode => CGAL_get_rounding...
-  (CGAL_check_rounding, dynamically ?)
+  Elucider ce bug (-> new gdb a installer...)
 - Include a counter for success/failures of the filter ?
   Would be really nice to have (one more compile option...).
-- Try to fix the assembly for Mips (is it Geert' egcs-1.0.3 problem ?)
-  he's moving to egcs-1.1.1, so re-enable it for next release..
+? What about re-enabling assembly for Mips ?  (when Geert upgrades to IRIX 6)
+? CGAL_FPU_set_rounding_mode(CGAL_FPU_rounding_mode) should replace the
+  old functions if it's as fast.
+? CGAL_FPU_get_rounding_mode() doesn't need to be inline => libCGAL ?
 ? SunPro CC 4.2 & MipsPro CC 7.2 don't want partial specializations, which
   breaks CGAL_convert_to<>(), and the overloaded predicates.  The first one is
   workable around, but not the second one...  So I decide to totally drop
@@ -28,7 +36,10 @@ Concerning the code itself:
 
 Concerning the script:
 
-? Clean it up, and comment it... I won't maintain it, and users might want to
+- fix the "line too long".
+  include/CGAL/Arithmetic_filter/predicates_on_ftC2.h has 3 lines over 80
+  +characters.
+? Clean it up, and comment it... I won't maintain it, but users might want to
   change it a little bit...
 ? Should I add "#include <Arithmetic_filter.h>" in the produced file ?  I
   guess not since they are not supposed to be included alone.  But it breaks
@@ -36,6 +47,9 @@ Concerning the script:
 
 Concerning the doc:
 
+- say we advise <double, leda_rational> or (<double, Quotient<Gmpz>> ?).
+- say we don't have Assembly on Mips by default (and change the code), but
+  should work on IRIX 6.
 ? document is_same().
 ? add a pointer to my MISC'99 paper to appear.
 ? when a "implementor's doc" will be available, shift the IA specific stuff in
@@ -43,9 +57,8 @@ Concerning the doc:
 
 Concerning the test-suite:
 
-- enable debug before re-submitting...  (or try SGI locally first)
 - small benchs on a few predicates.
-- test cast functions (are they dependant on rounding modes).
+- test cast functions ?
 - test NaNs (and Infs?).  Comparisons with these should throw the exception...
 - try to fix the x86 bug.  Currently, it hides the problem for the test-suite
   to work.
