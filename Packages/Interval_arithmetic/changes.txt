@@ -1,3 +1,8 @@
+24 September 2004 Sylvain Pion
+- Interval_nt : Introduce comparison functions/operators in namespace
+  CGAL::Certified which do not throw but return the guarantee-ness as a bool.
+- Lazy_exact_nt : use the above new functions to replace exceptions.
+
 20 September 2004 Sylvain Pion
 - Add Exact_type_selecter<> to select the exact number type to be used in
   Filtered_kernel.

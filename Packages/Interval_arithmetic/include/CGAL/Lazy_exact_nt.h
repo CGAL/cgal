@@ -338,30 +338,20 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
-  try
-  {
-    return a.approx() < b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (<)" << std::endl;
-    return a.exact() < b.exact();
-  }
+  std::pair<bool, bool> res = Certified::operator<(a.approx(), b.approx());
+  if (res.second)
+    return res.first;
+  return a.exact() < b.exact();
 }
 
 template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
-  try
-  {
-    return a.approx() == b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (==)" << std::endl;
-    return a.exact() == b.exact();
-  }
+  std::pair<bool, bool> res = Certified::operator==(a.approx(), b.approx());
+  if (res.second)
+    return res.first;
+  return a.exact() == b.exact();
 }
 
 template <typename ET>
@@ -394,36 +384,30 @@ template <typename ET>
 bool
 operator<(int a, const Lazy_exact_nt<ET>& b)
 {
-  try {
-    return a < b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a < b.exact();
-  }
+  std::pair<bool, bool> res = Certified::operator<(a, b.approx());
+  if (res.second)
+    return res.first;
+  return a < b.exact();
 }
 
 template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, int b)
 {
-  try {
-    return a.approx() < b;
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a.exact() < b;
-  }
+  std::pair<bool, bool> res = Certified::operator<(a.approx(), b);
+  if (res.second)
+    return res.first;
+  return a.exact() < b;
 }
 
 template <typename ET>
 bool
 operator==(int a, const Lazy_exact_nt<ET>& b)
 {
-  try {
-    return a == b.approx();
-  }
-  catch (Interval_nt<false>::unsafe_comparison) {
-    return a == b.exact();
-  }
+  std::pair<bool, bool> res = Certified::operator==(a, b.approx());
+  if (res.second)
+    return res.first;
+  return a == b.exact();
 }
 
 template <typename ET>
@@ -576,15 +560,10 @@ inline
 Sign
 sign(const Lazy_exact_nt<ET> & a)
 {
-  try
-  {
-    return CGAL_NTS sign(a.approx());
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (sign)" << std::endl;
-    return CGAL_NTS sign(a.exact());
-  }
+  std::pair<Sign, bool> res = Certified::sign(a.approx());
+  if (res.second)
+    return res.first;
+  return CGAL_NTS sign(a.exact());
 }
 
 template <typename ET>
@@ -592,15 +571,11 @@ inline
 Comparison_result
 compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 {
-  try
-  {
-    return CGAL_NTS compare(a.approx(), b.approx());
-  }
-  catch (Interval_nt<false>::unsafe_comparison)
-  {
-    // std::cerr << "Interval filter failure (compare)" << std::endl;
-    return CGAL_NTS compare(a.exact(), b.exact());
-  }
+  std::pair<Comparison_result, bool> res =
+                                    Certified::compare(a.approx(), b.approx());
+  if (res.second)
+    return res.first;
+  return CGAL_NTS compare(a.exact(), b.exact());
 }
 
 template <typename ET>

@@ -720,6 +720,92 @@ to_interval (const long & l)
     return std::pair<double,double>(l,l);
 }
 
+
+namespace Certified {
+
+// The following functions are similar to their CGAL:: counterparts, except
+// that they notify the non-guaranteed case by the return value, instead of
+// by throwing an exception which can be costly.
+// They return a pair<X, bool>, where the second member is true if the
+// comparison is guaranteed, and false otherwise.
+
+template <bool Protected>
+inline
+std::pair<bool, bool>
+operator<(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{
+  if (a.sup()  < b.inf()) return std::make_pair(true, true);
+  if (a.inf() >= b.sup()) return std::make_pair(false, true);
+  return std::make_pair(false, false);
+}
+
+template <bool Protected>
+inline
+std::pair<bool, bool>
+operator<(int a, const Interval_nt<Protected> &b)
+{
+  if (a  < b.inf()) return std::make_pair(true, true);
+  if (a >= b.sup()) return std::make_pair(false, true);
+  return std::make_pair(false, false);
+}
+
+template <bool Protected>
+inline
+std::pair<bool, bool>
+operator<(const Interval_nt<Protected> &a, int b)
+{
+  if (a.sup()  < b) return std::make_pair(true, true);
+  if (a.inf() >= b) return std::make_pair(false, true);
+  return std::make_pair(false, false);
+}
+
+template <bool Protected>
+inline
+std::pair<bool, bool>
+operator==(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{
+  if (b.inf() >  a.sup() || b.sup() <  a.inf())
+    return std::make_pair(false, true);
+  if (b.inf() == a.sup() && b.sup() == a.inf())
+    return std::make_pair(true, true);
+  return std::make_pair(false, false);
+}
+
+template <bool Protected>
+inline
+std::pair<bool, bool>
+operator==(int a, const Interval_nt<Protected> &b)
+{
+  if (b.inf() >  a || b.sup() <  a) return std::make_pair(false, true);
+  if (b.inf() == a && b.sup() == a) return std::make_pair(true, true);
+  return std::make_pair(false, false);
+}
+
+template <bool Protected>
+inline
+std::pair<Sign, bool>
+sign (const Interval_nt<Protected> & d)
+{
+  if (d.inf() > 0.0) return std::make_pair(POSITIVE, true);
+  if (d.sup() < 0.0) return std::make_pair(NEGATIVE, true);
+  if (d.inf() == d.sup()) return std::make_pair(ZERO, true);
+  return std::make_pair(ZERO, false);
+}
+
+template <bool Protected>
+inline
+std::pair<Comparison_result, bool>
+compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
+{
+  if (d.inf() > e.sup()) return std::make_pair(LARGER, true);
+  if (e.inf() > d.sup()) return std::make_pair(SMALLER, true);
+  if (e.inf() == d.sup() && d.inf() == e.sup())
+    return std::make_pair(EQUAL, true);
+  return std::make_pair(EQUAL, false);
+}
+
+} // namespace Certified
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
