@@ -1,3 +1,5 @@
+- Added a typedef to avoid error messsage with pedantic mode of g++ [af]
+
 2.36 (Shai)
 ====
 1. Sweep line files removed. Will be submitted via their own package.

@@ -78,7 +78,7 @@ public:
   typedef typename Base::SubCurveList SubCurveList;
   typedef typename Base::SubCurveListIter SubCurveListIter;
   typedef typename Base::SweepLinePlanarmap SweepLinePlanarmap;
-
+  typedef typename Base::EventQueueValueType EventQueueValueType;
 
   Pmwx_aggregate_insert() : 
     Base(), m_change_not(NULL) {}
