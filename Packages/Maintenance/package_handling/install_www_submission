@@ -10,8 +10,8 @@ my $testing=0;
 my $MAIL_PROG='/projects/CGAL/admin_scripts/send_cgal_mail';
 
 my ($sender, $submission, $packagedir, $oldpackagedir, $download_dir,
-    $administrator, $maintainer, $console_output,
-    $tempdir, $check_source_file_prog);
+    $console_output,
+    $tempdir, $check_source_file_prog, @reply_list);
 my $WGET;
 
 my $LOCKCMD="/sw/bin/lockfile";
@@ -24,7 +24,6 @@ sub init_variables()
 	$packagedir='/users/geert/tmp/inst_www/packages';
 	$oldpackagedir='/users/geert/tmp/inst_www/old_packages';
 	$download_dir='/users/geert/tmp/inst_www/download';
-	$administrator='geert@cs.uu.nl';
 	$console_output=1;
 	$check_source_file_prog=
 	'/users/geert/CGAL/Geert/maintenance/package_handling/check_headers';
@@ -32,10 +31,10 @@ sub init_variables()
 	$packagedir='/users/www/CGAL/Members/Develop/updates/packages';
 	$oldpackagedir='/projects/CGAL/old_packages';
 	$download_dir='/projects/CGAL/submissions/download';
-	$administrator='geert@cs.uu.nl';
 	$console_output=0;
 	$check_source_file_prog= '/projects/CGAL/admin_scripts/check_headers';
     }
+    @reply_list = ($sender, 'geert@cs.uu.nl');
     $WGET="/projects/CGAL/admin_scripts/get_cgal_html";
 }
 
@@ -220,7 +219,7 @@ sub check_version($)
     }
     if (defined($old_package_maintainer)) {
         if ($old_package_maintainer =~ /\<(.*)\>/) {
-            $maintainer = $1;
+            push(@reply_list, $1);
 	}
     }
     if ( $package_maintainer ne $old_package_maintainer) {
@@ -286,6 +285,11 @@ sub append_maintainer_file_to_version_file()
     }
     print VERSION $_;
     close(VERSION);
+    while (<MAINTAINER>) {
+        if ($_ =~ /\<(.*@.*)\>/) {
+	    push(@reply_list, $1);
+	}
+    }
     close(MAINTAINER);
 }
 
@@ -512,7 +516,6 @@ if ($starting_directory =~ m'CGAL/Geert/maintenance') {
 
 init_variables();
 
-
 $SIG{INT}='IGNORE';
 $SIG{QUIT} = 'IGNORE';
 $SIG{TERM} = 'IGNORE';
@@ -535,13 +538,20 @@ foreach $submission ( @ARGV) {
 }
 
 close LOGFILE;
-$ARGV[0] =~ s|.*/||;
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $administrator" if !$testing;
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $sender";
 
-if (defined($maintainer) && $maintainer ne $sender) {
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $maintainer";
+@reply_list = sort(@reply_list);
+my $prev = "";
+my @rlist;
+foreach (@reply_list) {
+    if ($_ ne $prev) {
+	$prev = $_;
+        push(@rlist, $prev);
+    }
 }
+
+$ARGV[0] =~ s|.*/||;
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" @rlist";
+
 
 unlink $ACTUAL_LOGFILE;
 
