@@ -45,7 +45,8 @@ DEMO_SUBDIRS= \
 ./Triangulation_2 \
 ./Min_ellipse_2 \
 ./Min_quadrilateral_2 \
-./Convex_Hull_2
+./Convex_Hull_2 \
+./Max_k-gon
 
 all:            \
                 constrained$(EXE_EXT) 
