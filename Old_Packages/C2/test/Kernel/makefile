@@ -87,6 +87,7 @@ clean:
 	- rm -f test_new_parts??.o test_new_parts??
 	- rm -f point_d_test.o point_d_test
 	- rm -f test_more.o test_more
+	- rm -f core
 
 distclean: clean
 	- rm -f Program* Compiler* Error* Test* error.txt
