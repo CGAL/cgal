@@ -351,12 +351,13 @@ CGAL__test_cls_triangulation_2( const Triangulation & )
      T2_8.clear();
      T2_8.insert(Point(0,0,1));
      T2_8.insert(Point(1,0,1));
-     T2_8.insert(Point(2,2,1));
      T2_8.insert(Point(1,1,1));
+     T2_8.insert(Point(0,1,1));
      ff = T2_8.locate(Point(0.5,0.5));
      assert(!T2_8.is_infinite(ff));
-     f2 = ff->neighbor(1);
+     f2 = ff->neighbor(0);
      assert(!T2_8.is_infinite(f2));
+     T2_8.flip(ff,0);
      assert( T2_8.is_valid() );
      
 
