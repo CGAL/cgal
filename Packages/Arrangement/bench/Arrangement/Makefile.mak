@@ -366,7 +366,8 @@ LLDLIBS+= $(CGALLIB) $(LEDALIBS) $(CGALQTLIB) $(QTLIB)
 # LLDLIBS+= $(CGALCORELIB)
 # endif
 LLDLIBS+= $(GMPLIBS)
-LLDLIBS+= -lX11 -lm
+# LLDLIBS+= -lX11
+LLDLIBS+= -lm
 LLDOPTS+= $(CGALLIBDIRS)
 
 include $(ROOT)/include/make/cgalrul.mak
