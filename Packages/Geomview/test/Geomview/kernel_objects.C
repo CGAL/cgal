@@ -18,11 +18,14 @@
 
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <unistd.h> // for sleep()
+
 typedef CGAL::Cartesian<double> K;
 
 int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0, 0, 0, 350, 350, 350));
+  gv.set_trace(true);
 
   gv.clear(); // remove pickplane.
   gv << K::Point_2 (200, 100);
