@@ -2,6 +2,11 @@
 // #define CGAL_NO_POSTCONDITIONS
 // #define CGAL_IA_DEBUG
 
+#ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#define CGAL_IA_CT double
+#define CGAL_IA_ET leda_real
+#endif
+
 #include <CGAL/basic.h>
 #include <CGAL/misc.h>
 #include <CGAL/config.h>
@@ -32,6 +37,8 @@
 #include <CGAL/Arithmetic_filter.h>
 
 using namespace CGAL;
+
+// Please pay attention to the workaround for MipsPro at teh top of the file.
 
 // Don't be stupid, Gmpz can only store integers !!!
 // typedef Filtered_exact<double, Gmpz> NT;
