@@ -22,3 +22,6 @@
 \def\cgalhds{\lstinline!CGAL::HalfedgeDS!}
 \def\hds{\lstinline!HalfedgeDS!}
 \def\hdsitem{\lstinline!PolyhedronItems!}
+
+% L.K. -------------------------------------------------------------------
+\newcommand{\CC}{C\raise.08ex\hbox{\texttt{++}}}

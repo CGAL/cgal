@@ -68,7 +68,7 @@
 
 % TITLE
 % ------------------------------------------------------------------------
-\title{{\LARGE {\sffamily\bfseries Algorithms on Meshes with CGAL Polyhedron}}}
+\title{Generic Subdivision Algorithms on Meshes based on the CGAL Polyhedron}
 
 % pierre: other suggestions for the title?
 %  Mesh Processing with CGAL Polyhedron
@@ -78,11 +78,11 @@
 
 % for anonymous conference submission please enter your SUBMISSION ID
 % instead of the author's name (and leave the affiliation blank) !!
-\author[Le-Jeng Shiue \& Pierre Alliez \& Radu Ursu \& Lutz Kettner]
-       {Le-Jeng Shiue\thanks{CISE, University of Florida} and
-        Pierre Alliez\thanks{GEOMETRICA, INRIA Sophia-Antipolis} and
-	Radu Ursu\thanks{GEOMETRICA, INRIA Sophia-Antipolis} and
-	Lutz Kettner\thanks{MPII, Saarbr\"ucken}
+\author[Le-Jeng Shiue, Pierre Alliez, Radu Ursu, and Lutz Kettner]
+       {Le-Jeng Shiue\thanks{CISE, University of Florida},
+        Pierre Alliez\thanks{GEOMETRICA, INRIA Sophia-Antipolis},
+        Radu Ursu\thanks{GEOMETRICA, INRIA Sophia-Antipolis}, and
+        Lutz Kettner\thanks{MPII, Saarbr\"ucken}
        }
 % ------------------------------------------------------------------------
 
@@ -100,19 +100,42 @@
 \maketitle
 
 \begin{abstract}
-  The computational geometry algorithms library (CGAL) adapts
-  design patterns and the generic programming paradigm in the design
-  and the implementation. The template parameterization 
-  of the CGAL polyhedron meshes enhances the flexibility and
-  the adaptability of supporting geometry algorithms.
-  We introduce the modification operations supported
-  in the CGAL polyhedron and demonstrate the applications
-  of subdivision surfaces. Based on the CGAL polyhedron meshes, 
-  we also propose a generic framework of the generic polyhedron and 
-  the soft-coupled geometry algorithms. The soft-coupled algorithms
-  are generic and to be specialized as combinations of the
-  topology and geometry operators. The geometry operators
-  are user-programmable based on the user-specialized CGAL polyhedron.
+  The \emph{Computational Geometry Algorithms Library\/} (CGAL) is an
+  efficient modern \CC\ library following the \emph{generic
+    programming\/} paradigm. It contains a flexible data structure for
+  meshes in graphics, the \cgalpoly. In generic programming, data
+  structures and algorithms are decoupled, for example, iterators
+  decouple container classes from conventional search and sorting
+  algorithms in the \CC\ Standard Template Library (STL). We describe
+  two different approaches one can take with the \cgalpoly\ when
+  implementing subdivision algorithms: An example implementation of
+  the $\sqrt{3}$ subdivision scheme based on Euler operations provided
+  by the \cgalpoly, and an example implementation of the quad-triangle
+  subdivision based on the modifier callback mechanism that enables
+  lower-level modifications. Then we describe a generic framework for
+  subdivision algorithms; its key feature is the separation of the
+  topological refinement operator from the geometric smoothing
+  operator.
+
+  This work is the core part of a tutorial for the \cgalpoly. The
+  tutorial also provides general amenities for working with meshes in
+  graphics; we offer an interactive visualizer based on OpenGL, file
+  I/O, and support for getting illustrations for publications.
+
+
+%   The computational geometry algorithms library (CGAL) adapts
+%   design patterns and the generic programming paradigm in the design
+%   and the implementation. The template parameterization 
+%   of the CGAL polyhedron meshes enhances the flexibility and
+%   the adaptability of supporting geometry algorithms.
+%   We introduce the modification operations supported
+%   in the CGAL polyhedron and demonstrate the applications
+%   of subdivision surfaces. Based on the CGAL polyhedron meshes, 
+%   we also propose a generic framework of the generic polyhedron and 
+%   the soft-coupled geometry algorithms. The soft-coupled algorithms
+%   are generic and to be specialized as combinations of the
+%   topology and geometry operators. The geometry operators
+%   are user-programmable based on the user-specialized CGAL polyhedron.
 
   \begin{classification} % according to http://www.acm.org/class/1998/
     \CCScat{I.?.?}{Computer Graphics}{??}
