@@ -164,10 +164,9 @@ public:
             BLAS<Vector>::axpy(-omega,t,r);						// r = r - omega*t
 	        rTr=BLAS<Vector>::dot(r,r);							// Current error rTr = (r|r)
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
-			if( IsZero(omega) )									// LS 03/2005: avoid division by zero 
-				break;											// stop solver
-			if( IsZero(rTh) )									// LS 03/2005: avoid division by zero 
-				break;											// stop solver
+			if( IsZero(omega) )									// LS 03/2005: break to avoid division by zero (see Laspack implementation)
+				break;		
+			assert( ! IsZero(rTh) );							// LS 03/2005: don't know what do do if division by zero 
             beta=(alpha/omega)/rTh; 
 			rTh=BLAS<Vector>::dot(rT,h); 						// rTh = (rT|h)
 			beta*=rTh;											// beta = (rTh / previous rTh) * (alpha / omega)
