@@ -8,9 +8,6 @@
 #include <fstream>
 #include <string>
 
-#include "short_names.h"
-
-
 #define CGAL_SEGMENT_TRAITS          1
 #define CGAL_SEGMENT_LEDA_TRAITS     2
 #define CGAL_POLYLINE_TRAITS         11
