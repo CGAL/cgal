@@ -31,16 +31,16 @@ typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
 
-class My_view : public CGAL::Qt_widget_view{
+class My_View : public CGAL::Qt_widget_view{
   void draw(CGAL::Qt_widget& win){
     win << CGAL::BLACK;
     win << dt;
   }
 };
 
-class My_widget : public CGAL::Qt_widget {
+class My_Widget : public CGAL::Qt_widget {
 public:
-  My_widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
+  My_Widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
 private:
   //this event is called only when the user press mouse
   void mousePressEvent(QMouseEvent *e)
@@ -51,9 +51,9 @@ private:
   }
 };
 
-class My_window : public QMainWindow{
+class My_Window : public QMainWindow{
 public:
-  My_window(int x, int y) : win(this)
+  My_Window(int x, int y) : win(this)
   {
     setCentralWidget(&win);
     resize(x,y);
@@ -67,18 +67,18 @@ public:
     win.attach(&v);
   }
 private:
-  My_widget win;
-  My_view v;
+  My_Widget win;
+  My_View v;
   CGAL::Standard_toolbar *stoolbar;
 };
 
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_Window W(600,600);
     app.setMainWidget( &W );
     W.show();
-    W.setCaption("Using QMainWindow QT class");
+    W.setCaption("Using the Standard Toolbar");
     return app.exec();
 }
 

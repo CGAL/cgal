@@ -75,90 +75,28 @@ As the following examples show, simple applications can be written
 without the views and tools.
 
 \subsection{Example: Hello Segment}
-
 The first example draws a red segment on an orange background.
+\ccIncludeExampleCode{../../../test/hellosegment.C}
+There is a limitation in this example, you cannot resize the window and keep the drawing.
 
-\begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/IO/Qt_Widget.h>
+\subsection{Example: Using Qt\_widget as a stream}
 
-#include <qapplication.h>
+In this example you can see how can you use \ccStyle{Qt\_widget} like a stream, for outputing Cgal objects.
 
-typedef CGAL::Cartesian<int> Rep;
-typedef CGAL::Point_2<Rep>   Point;
-typedef CGAL::Segment_2<Rep> Segment;
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-
-    CGAL::Qt_widget W;
-    app.setMainWidget( &W );
-    W.resize(600, 600);
-    W.set_window(0, 600, 0, 600);
-    W.show();
-    W.lock();
-    W << BackgroundColor(ORANGE) << RED;
-    W << Segment(Point(100,100), Point(400, 400));
-    W.unlock();
-
-    return app.exec();
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{../../../demo/Qt_widget/basic/first/first.C}
 
 In this example as you see, you can use \ccStyle{Qt\_widget} like a stream for output \cgal\ objects.
- There are some limitations in this example. When you'll try to resize the window, or to 
-move the window, you'll notice that what you have drawn will no longer be there. Like all
+ There are some limitations in this example. When you'll try to resize the window, you'll notice that what you have drawn will no longer be there. Like all
 the others window applications the code for drawing must be in a redraw function, in order
 to work when you'll make modifications on the window. In the next example you'll see what
 you have to do to resolve this problem.
-
 
 \subsection{Example: A Triangulation}
 
 This example is slightly more involved. The user can enter points and the application
 draws the Delaunay triangulation of the point set. 
 
-\begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/IO/Qt_Widget.h>
-
-#include <qapplication.h>
-
-typedef CGAL::Cartesian<double>             Rep;
-typedef CGAL::Point_2<Rep>                  Point;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
-
-Delaunay dt;
-class My_Window : public CGAL::Qt_widget {
-public:
-  My_Window(int x, int y){ resize(x,y); };
-private:
-  void redraw()
-  {
-    Qt_widget::redraw();
-    *this << dt;
-  }  
-  // mouse events get dispatched to this function
-  void mousePressEvent(QMouseEvent *e)
-  {
-    Qt_widget::mousePressEvent(e);
-    dt.insert(Point(x_real(e->x()), y_real(e->y())));
-    redraw();
-  }
-};
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-    My_Window W(600,600);
-    app.setMainWidget( &W );
-    W.set_window(0, 600, 0, 600);
-    W.show();
-    return app.exec();
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{../../../demo/Qt_widget/basic/second/second.C}
 
 As you noticed, the code used to output the triangulation is put in \ccStyle{redraw()} function.
 This function is called by the \ccStyle{Qt\_widget} when you modify the window. It is a better to
@@ -190,57 +128,7 @@ so that you can more easily write new views.
 
 
 \subsection{Example: Using A View for Output}
-
-\begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-
-
-#include <qapplication.h>
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_view.h>
-
-typedef CGAL::Cartesian<double>		    Rep;
-typedef CGAL::Point_2<Rep>		    Point;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
-
-Delaunay dt;
-
-class My_View : public CGAL::Qt_widget_view{
-  void draw(CGAL::Qt_widget& win){
-    win << dt;
-  }
-};
-
-class My_Window : public CGAL::Qt_widget {
-public:
-  My_Window(int x, int y)
-  {
-    resize(x,y);
-    attach(&v);
-  };
-private:
-  //this event is called only when the user press mouse
-  void mousePressEvent(QMouseEvent *e)
-  {
-    Qt_widget::mousePressEvent(e);
-    dt.insert(Point(x_real(e->x()), y_real(e->y())));
-    redraw();
-  }
-  My_View v;
-};
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-    My_Window W(600,600);
-    app.setMainWidget( &W );
-    W.set_window(0, 600, 0, 600);
-    W.show();
-    return app.exec();
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{../../../demo/Qt_widget/basic/third/third.C}
 
 As you see, this example seems very much with the precedent one, but
 the code for drawing the triangulation is no longer in \ccStyle{redraw()}
@@ -281,50 +169,7 @@ handles the input.  When the user clicks with the left mouse button, the tool cr
 a point and passes it to the widget. The widget then creates a signal that gets passed
 to the connected slot \ccc{My_Window::get_new_object(CGAL::Object)}.
 
-\begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/IO/Qt_Widget.h>
-
-#include <qapplication.h>
-
-typedef CGAL::Cartesian<double>             Rep;
-typedef CGAL::Point_2<Rep>                  Point;
-typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
-
-Delaunay dt;
-class My_Window : public CGAL::Qt_widget {
-public:
-  My_Window(int x, int y){
-    resize(x,y);
-    attach(get_point);
-    connect(this, SIGNAL(new_cgal_object(CGAL::Object)), 
-            this, SLOT(get_new_object(CGAL::Object)));
-  };
-private:
-  CGAL::Qt_widget_get_point<Rep> get_point;   
-private slots:
-  void get_new_object(CGAL::Object obj)
-  {
-    Point p;
-    if (CGAL::assign(p, obj)) { 
-      dt.insert(p);
-    }
-    redraw();
-  }
-
-}//endclass;
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-    My_Window W(600,600);
-    app.setMainWidget( &W );
-    W.set_window(0, 600, 0, 600);
-    W.show();
-    return app.exec();
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{../../../test/tool.C}
 
 The \ccStyle{Qt_widget} forwards all event callbacks to the attached tool.
 
@@ -384,10 +229,9 @@ function \ccStyle{Qt_widget::new_object(CGAL::Object)}. The \ccStyle{Qt_widget}
 then emits the signal \ccStyle{new_cgal_object(CGAL::Object)}. This signal can be 
 catched by any other object with the following connect statement:
 
-\begin{ccExampleCode}
-connect(Qt_widget,SIGNAL(new_cgal_object(CGAL::Object)),
-        anyOtherObject,SLOT(anyOtherFunction(CGAL::Object)));
-\end{ccExampleCode}
+
+connect(Qt\_widget\footnote{This means a pointer to an instance of Qt\_widget},SIGNAL(new\_cgal\_object(CGAL::Object)),anyOtherObject,SLOT(anyOtherFunction(CGAL::Object)));
+
 
 In the example we connect it to \ccc{MyWindow::get_new_object(CGAL::Object)}.
 
@@ -398,48 +242,9 @@ The standard toolbar includes the basic tools used for zooming and translating.
 It's very easy to use, we provide further down a typical model of how to use 
 the standard toolbar in your application:
 
-\begin{ccExampleCode}
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
+\ccIncludeExampleCode{../../../test/standard_toolbar.C}
 
-
-#include <qapplication.h>
-#include <qmainwindow.h>
-
-#include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_standard_toolbar.h>
-
-class My_window : public QMainWindow{
-public:
-  My_window(int x, int y) : win(this)
-  {
-    setCentralWidget(&win);
-    resize(x,y);
-    win.show();
-    win.set_window(0, x, 0, y);
-    
-    //How to attach the standard toolbar
-    stoolbar = new CGAL::Standard_toolbar(&win, this);
-    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-  }
-private:
-  CGAL::Qt_widget win;
-  CGAL::Standard_toolbar *stoolbar;
-};
-
-int main( int argc, char **argv )
-{
-    QApplication app( argc, argv );
-    My_window W(600,600);
-    app.setMainWidget( &W );
-    W.show();
-    W.setCaption("Using the Standard Toolbar");
-    return app.exec();
-}
-\end{ccExampleCode}
-
-
+This example generates 100 points and inserts in a delaunay triangulation. Using the standard toolbar you can zoomIn, zoomOut, translate.
 
 % +-----------------------------------------------------+
 % EOF
