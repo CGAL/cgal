@@ -27,6 +27,8 @@
 #ifndef CGAL_CONVEX_HULL_LEDA_TRAITS_2_H
 #define CGAL_CONVEX_HULL_LEDA_TRAITS_2_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #include <CGAL/basic.h>
 #include <CGAL/leda_in_CGAL_2.h>
 #include <CGAL/Kernel/function_objects.h>
@@ -35,6 +37,7 @@ CGAL_BEGIN_NAMESPACE
 
 class LEDA_kernel_2
 {
+public:
    typedef leda_point     Point_2;
    typedef leda_segment   Segment_2;
 };
@@ -77,6 +80,8 @@ public:
 typedef Convex_hull_leda_traits_2   convex_hull_leda_traits_2;
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_CONVEX_HULL_LEDA_TRAITS_2_H
 

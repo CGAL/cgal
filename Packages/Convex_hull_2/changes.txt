@@ -1,3 +1,7 @@
+3.38 (30 Oct 2002)
+- add missing public in LEDA toy kernels for traits
+- add CGAL_NO_DEPRECATED_CODE macro around LEDA traits
+
 3.37 (23 Oct 2002)
 - deprecate LEDA traits class; should be replaced by LEDA rat kernel traits
   CEP

@@ -26,6 +26,8 @@
 #ifndef CGAL_CONVEX_HULL_RAT_LEDA_TRAITS_2_H
 #define CGAL_CONVEX_HULL_RAT_LEDA_TRAITS_2_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #include <CGAL/basic.h>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/Kernel/function_objects.h>
@@ -34,6 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 class LEDA_rat_kernel_2
 {
+public:
    typedef leda_rat_point     Point_2;
    typedef leda_rat_segment   Segment_2;
 };
@@ -76,6 +79,8 @@ public:
 typedef Convex_hull_rat_leda_traits_2   convex_hull_rat_leda_traits_2;
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_cONVEX_HULL_RAT_LEDA_TRAITS_2_H
 
