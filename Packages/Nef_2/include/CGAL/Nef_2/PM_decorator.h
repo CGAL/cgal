@@ -481,17 +481,21 @@ void merge_halfedge_pairs_at_target(Halfedge_handle e) const
   and |target(next(e))| is kept consistent.}*/
 {
   TRACEN("merge_halfedge_pairs_at_target "<<PE(e));
-  Halfedge_handle en = e->next(), enn = en->next(),
-                  eo = e->opposite(), eno = en->opposite(),
-                  enno = eno->prev();
+  Halfedge_handle eo = e->opposite(), 
+                  en = e->next(), eno = en->opposite(),
+                  enn = en->next(), enno = eno->prev();
   Vertex_handle v = e->vertex(), vn = en->vertex();
   CGAL_assertion(has_outdeg_two(v));
   Face_handle f1 = en->face(), f2 = eno->face();
   // transfer the opposite face cycles e-en-enn to e-enn
-  e->set_next(enn); enn->set_prev(e);
-  eo->set_prev(enno); enno->set_next(eo);
+  if ( enn != eno ) {
+    e->set_next(enn); enn->set_prev(e);
+    eo->set_prev(enno); enno->set_next(eo);
+  } else {
+    e->set_next(eo); eo->set_prev(e);
+  }
   // set vertex of e and deal with vertex-halfedge incidence
-  e->set_vertex(vn);
+  e->set_vertex(vn); 
   if (vn->halfedge()==en) vn->set_halfedge(e);
   if (en->is_hole_entry()) 
   { f1->remove_fc(en); f1->store_fc(e); }
