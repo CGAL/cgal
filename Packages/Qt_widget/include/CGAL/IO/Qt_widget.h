@@ -54,10 +54,8 @@ public:
   // initialization of coordinates system
   void set_window(double x_min, double x_max, double y_min, double y_max,
 		  bool const_ranges = false);
-  void zoom_in(double ratio);
-  void zoom_out(double ratio);
-  void zoom_in(double ratio, double xc, double yc);
-  void zoom_out(double ratio, double xc, double yc);
+  void zoom(double ratio);
+  void zoom(double ratio, double xc, double yc);
   void set_x_scale(double xscale){ xscal = xscale; }
   void set_y_scale(double yscale){ yscal = yscale; }
 
@@ -272,7 +270,7 @@ struct Qt_widgetManip {
 		 Param pp) : f(ff), p(pp) {}
 };
 
-// usage: w << manip(Param) << ...
+// usage: w << manip(Param) f ...
 template <class Param>
 Qt_widget& operator<<(Qt_widget& w, Qt_widgetManip<Param> m)
 {

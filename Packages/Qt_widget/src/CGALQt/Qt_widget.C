@@ -350,7 +350,7 @@ void Qt_widget::configure_history_buttons()
   }
 }
 
-void Qt_widget::zoom_in(double ratio, double xc, double yc)
+void Qt_widget::zoom(double ratio, double xc, double yc)
 {  
   xscal = xscal*ratio; yscal = yscal*ratio;
   xcentre = xc;
@@ -360,20 +360,9 @@ void Qt_widget::zoom_in(double ratio, double xc, double yc)
   configure_history_buttons();
 }
 
-void Qt_widget::zoom_in(double ratio)
+void Qt_widget::zoom(double ratio)
 {
-  zoom_in(ratio,xcentre,ycentre);
-}
-
-void Qt_widget::zoom_out(double ratio)
-{
-  zoom_out(ratio,xcentre,ycentre);
-}
-
-void Qt_widget::zoom_out(double ratio, double xc, double yc)
-{
-  if(ratio!=0)
-    zoom_in(1/ratio,xc,yc);
+  zoom(ratio,xcentre,ycentre);
 }
 
 double Qt_widget::x_real(int x) const
