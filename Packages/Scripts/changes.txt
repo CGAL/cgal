@@ -1,3 +1,6 @@
+17 December 2004 Sylvain Pion
+- create_new_release : tag after doing the tarball.
+
 2 November 2004 Menelaos Karavelas
 - added script for creating MacOSX applications (needed for Qt demos) 
 
