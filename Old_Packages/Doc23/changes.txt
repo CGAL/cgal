@@ -1,4 +1,4 @@
-2.29    (?? June 2001)
+2.29    (10 July 2001)
 - More additions of function objects as a result of kernel traits discussion
 - New predicate : coplanar_orientation(3 points).
 
