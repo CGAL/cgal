@@ -178,13 +178,15 @@ inline const char* get_remember_font() {
 
 /* Two queues to manage footnotes. */
 /* =============================== */
-int  main_footnote_counter = 0;
+int  pre_footnote_counter   = 0;
+int  main_footnote_counter  = 0;
 int  class_footnote_counter = 0;
-int* footnote_counter = NULL;
+int* footnote_counter = &pre_footnote_counter;
 
+PQueue<char*>  pre_footnotes;
 PQueue<char*>  main_footnotes;
 PQueue<char*>  class_footnotes;
-PQueue<char*>* footnotes = NULL;
+PQueue<char*>* footnotes = &pre_footnotes;
 
 void insertFootnote( char* s) {
     if (footnotes == NULL)
@@ -315,6 +317,10 @@ char* extractRCSDate( char* s) {
     char* p = extractRCS( s);
     char *q = p + strlen( p) - 1;
     while( *q != ' ') {
+	if ( *q == '\0') {
+	    delete[] p;
+	    return newstr( "--/--/--");
+	}
         ADT_Assert( *q);
         --q;
     }
@@ -2846,7 +2852,6 @@ void handleChapter(  const Text& T) {
 	return;
     }
     if ( class_stream != 0) {
-        printFootnotes( *class_stream);
         if ( chapter_title)
 	    // navigation footer
 	    *class_stream << "<HR><B> Return to chapter:</B> <A HREF=\"" 
@@ -2861,10 +2866,10 @@ void handleChapter(  const Text& T) {
     }
     delete[] chapter_title;
     chapter_title = text_block_to_string( T);
+    printFootnotes( *main_stream);
     footnotes        = &main_footnotes;
     footnote_counter = &main_footnote_counter;
     if ( main_stream != &cout && main_stream != pre_stream) {
-        printFootnotes( *main_stream);
         // navigation footer
         *main_stream << "<HR> Next chapter: <A HREF=\"" 
 		     << new_main_filename 
@@ -3062,7 +3067,6 @@ void handleChar( char c) {
 // text are given.
 void handleClassFile( char* filename, const char* formatted_reference) {
     if ( class_stream != 0) {
-        printFootnotes( *class_stream);
         // navigation footer
         *class_stream << "<HR> <B>Next:</B> " << formatted_reference << endl;
         close_html( *class_stream);
@@ -3246,6 +3250,9 @@ void handleClassFileEnd( void) {
 	class_stream = 0;
 	class_filename = 0;
     ... */
+    printFootnotes( *class_stream);
+    footnotes        = &main_footnotes;
+    footnote_counter = &main_footnote_counter;
     current_stream   = main_stream;
     current_filename = main_filename;
 }
@@ -3629,7 +3636,6 @@ main( int argc, char **argv) {
 	fclose( in);
 
 	if ( class_stream != 0) {
-            printFootnotes( *class_stream);
 	    close_html( *class_stream);
 	    assert_file_write( *class_stream, class_filename);
 	    delete   class_stream;
@@ -3639,8 +3645,6 @@ main( int argc, char **argv) {
 	}
 	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout && main_stream != pre_stream) {
-            footnotes        = &main_footnotes;
-            footnote_counter = &main_footnote_counter;
             printFootnotes( *main_stream);
 	    close_html( *main_stream);
 	    assert_file_write( *main_stream, main_filename);
@@ -3652,6 +3656,8 @@ main( int argc, char **argv) {
     }
 
     if ( pre_main_filename) {
+	footnotes        = &pre_footnotes;
+	footnote_counter = &pre_footnote_counter;
         printFootnotes( *pre_stream);
         close_html( *pre_stream);
 	assert_file_write( *pre_stream, pre_main_filename);
