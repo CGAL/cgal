@@ -27,12 +27,7 @@
 // by the number types Interval_nt<>.
 
 #include <CGAL/basic.h>
-#include <utility>				// Relational operators.
-#include <CGAL/double.h>                        // is_finite(double)
-
-#ifdef __GNUG__
-#  define CGAL_IA_NEW_FILTERS   // VC++ is not ready.
-#endif
+#include <CGAL/double.h>
 
 CGAL_BEGIN_NAMESPACE
 
