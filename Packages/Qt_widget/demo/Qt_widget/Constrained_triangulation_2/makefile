@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include \
+CXXFLAGS = -I../../../include\
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -27,42 +27,26 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) \
+          $(CGAL_LDFLAGS)
+
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-DEMO_SUBDIRS= \
-./Convex_Hull_2 \
-./Examples \
-./Max_k-gon \
-./Min_ellipse_2 \
-./Min_quadrilateral_2 \
-./Partition_2 \
-./Triangulation_2 \
-./basic/tutorial1 \
-./basic/tutorial2 \
-./basic/tutorial3 \
-./basic/tutorial4 \
-./basic/tutorial5 \
-./basic/tutorial6 \
-./basic/tutorial7 \
-./basic/tutorial8
+all:            \
+                constrained$(EXE_EXT) 
 
-all:
-	badexit=""; \
-	for dir in $(DEMO_SUBDIRS); do \
-	  (cd $$dir && make ) || badexit="yes";\
-	done; \
-        test -z "$$badexit"
+constrained.moc:  constrained.C
+	$(QT_MOC) -o constrained.moc $<
 
-$(DEMO_SUBDIRS):
-	cd $@ && make
+constrained$(OBJ_EXT): constrained.moc
 
-#	for dir in ${DEMO_SUBDIRS}; do make -C $$dir; done
+constrained$(EXE_EXT): constrained$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constrained constrained$(OBJ_EXT) $(LDFLAGS)
 
-clean:
-	for dir in ${DEMO_SUBDIRS}; do make -C $$dir clean; done
+clean: \
+                   constrained.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
