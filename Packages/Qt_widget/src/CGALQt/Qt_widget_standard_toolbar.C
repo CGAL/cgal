@@ -31,6 +31,7 @@
 #include <CGAL/IO/pixmaps/arrow.xpm>
 #include <CGAL/IO/pixmaps/back.xpm>
 #include <CGAL/IO/pixmaps/forward.xpm>
+#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 
 
 
@@ -38,10 +39,12 @@ namespace CGAL {
   Qt_widget_standard_toolbar::Qt_widget_standard_toolbar(
 	  Qt_widget *w, QMainWindow *mw)
   {
+    show_coord = new Qt_widget_show_mouse_coordinates(*mw);
 
     w->attach_standard(&zoombut);
     w->attach_standard(&zoomrectbut);
     w->attach_standard(&handtoolbut);
+    w->attach_standard(show_coord);
     zoombut.deactivate();
     zoomrectbut.deactivate();
     handtoolbut.deactivate();
@@ -105,9 +108,12 @@ namespace CGAL {
     but[7] = new QToolButton(maintoolbar, "handtool");
     but[7]->setPixmap(QPixmap( (const char**)hand_xpm ));
     but[7]->setTextLabel("Pan tool");
-    
+    but[8] = new QToolButton(maintoolbar, "mouse");
+    but[8]->setPixmap(QPixmap( (const char**)mouse_coord_xpm) );
+    but[8]->setTextLabel("Mouse Coordinates");
+
     button_group = new QButtonGroup(0, "My_group");
-    nr_of_buttons = 8;
+    nr_of_buttons = 9;
     for(int i = 5; i<nr_of_buttons; i++){
       but[i]->setToggleButton(true);
       button_group->insert(but[i]);
@@ -124,6 +130,8 @@ namespace CGAL {
         &zoomrectbut, SLOT(stateChanged(int)));	
     connect(but[7], SIGNAL(stateChanged(int)),
         &handtoolbut, SLOT(stateChanged(int)));
+    connect(but[8], SIGNAL(stateChanged(int)),
+        show_coord, SLOT(stateChanged(int)));
     
     connect(widget, SIGNAL(set_back_enabled(bool)),
             but[1], SLOT(setEnabled(bool)));
