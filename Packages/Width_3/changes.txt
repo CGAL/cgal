@@ -1,0 +1,25 @@
+1.8
+- Moving to CVS Server and completed truncated text in description.txt
+
+1.7
+- To fix the problem with Microsoft Visual C: Replaced all function 
+  calls by resolving explicitly all typename's within the signature
+  and adding the corresponding class to the list of template
+  parameters. There are some functions that have now a dummy data
+  access object.
+- Some typename's have been replaced by a macro to please Microsoft VC
+  compiler.  
+- Added 2 typename's within debug regions
+- Now test_width_simplex.C is the same in the text directory and the
+  test directory
+
+1.6
+- Renamed class DA to Data_access to please Windows compilers bcc32
+  and CL
+
+1.5
+- Lines have been wrapped after 80 chars
+- At Line 1402: inserted CGAL:: before DA<...>
+
+1.4.1
+- Removed test/basic subdir
