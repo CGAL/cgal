@@ -29,7 +29,12 @@ IA_nt add (IA_nt a, IA_nt b)
 
 void bench()
 {
-  const int loops = 10000000;
+#ifndef LOOPS
+  const int loops = 1000;
+#else
+  const int loops = LOOPS;
+#endif
+
   int i;
   Timer t;
   double dt;
@@ -39,10 +44,6 @@ void bench()
   const IA_nt b(IA_nt(21)/10);
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
-// egcs-1.1 + -O + not advanced n'affiche pas pareil....
-// Bon, le problème est clair: il propage les constantes dans le constructeur,
-// du coup, c'est pas calculé avec le bon mode d'arrondi (-2.1 est précalculé).
-// Je fais un bug-report.
    c = a + b;
    cout << a << endl;
    cout << b << endl;
