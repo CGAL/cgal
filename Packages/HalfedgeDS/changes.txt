@@ -1,6 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.22 (?? Sep 2001)
+     - fixed broken figure reference for HTML manaul
+
 3.21 (6 Aug 2001)
      - Susan moved the missing *.gif and fig/*.ips from doc_tex/basic/HalfedgeDS
        to doc_tex/basic/HalfedgeDS_ref directory
