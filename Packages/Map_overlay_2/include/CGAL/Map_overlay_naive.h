@@ -67,7 +67,7 @@ public:
 
   void  map_overlay(const Arrangement &a1, 
                     const Arrangement &a2, 
-                    Map_overlay_ChangeNotification *pmwx_change_notf, 
+                    Map_overlay_ChangeNotification *change_notf, 
                     Arrangement &result)
   {
     /*typedef typename Arrangement::Vertex_handle             Vertex_handle;
@@ -102,10 +102,10 @@ public:
     for (half_edge_iter = a1.halfedges_begin(); 
          half_edge_iter != a1.halfedges_end(); 
          ++half_edge_iter, ++half_edge_iter){
-      pmwx_change_notf->set_curve_attributes(half_edge_iter->curve(), 
-                                             half_edge_iter, 
-                                             true);
-      result.insert(half_edge_iter->curve(), pmwx_change_notf);
+      change_notf->set_curve_attributes(half_edge_iter->curve(), 
+                                        half_edge_iter, 
+                                        true);
+      result.insert(half_edge_iter->curve(), change_notf);
       
       //result.insert(half_edge_iter->curve(), NULL); //debug only!
     }
@@ -113,15 +113,16 @@ public:
     for (half_edge_iter = a2.halfedges_begin(); 
          half_edge_iter != a2.halfedges_end(); 
          ++half_edge_iter, ++half_edge_iter){
-      pmwx_change_notf->set_curve_attributes(half_edge_iter->curve(), 
-                                             half_edge_iter, 
-                                             false); 
-      result.insert(half_edge_iter->curve(), pmwx_change_notf);
+      change_notf->set_curve_attributes(half_edge_iter->curve(), 
+                                        half_edge_iter, 
+                                        false); 
+      result.insert(half_edge_iter->curve(), change_notf);
       
       //result.insert(half_edge_iter->curve(), NULL);  //debug only!
     }
     
     //cout<<"After creating Arr\n";
+    change_notf->update_all_faces(result, a1, a2);
   }
 
 };
