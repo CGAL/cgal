@@ -1,5 +1,6 @@
-Version 6.11 (?? March 2001)
+Version 6.11 (20 March 2001)
 - Remove Cartesian/circle_constructions_2.h.
+- Add squared_radius().
 
 Version 6.10 (16 March 2001)
 - Change the origin point in some predicate and related constructions, in

@@ -342,6 +342,28 @@ class Call_squared_distance
     { return squared_distance(t1, t2); }
 };
 
+template <class ReturnType>
+class Call_squared_radius
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class T1>
+    ReturnType
+    operator()( const T1& t1) const
+    { return t1.squared_radius(); }
+
+    template <class T1>
+    ReturnType
+    operator()( const T1& t1, const T1& t2, const T1& t3) const
+    { return squared_radius(t1, t2, t3); }
+
+    template <class T1>
+    ReturnType
+    operator()( const T1& t1, const T1& t2, const T1& t3, const T1& t4) const
+    { return squared_radius(t1, t2, t3, t4); }
+};
+
 class Counterclockwise_in_between
 {
   public:

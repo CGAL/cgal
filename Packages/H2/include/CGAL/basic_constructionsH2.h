@@ -168,6 +168,17 @@ circumcenter( const PointH2<R>& p,
 }
 
 template <class R>
+CGAL_KERNEL_INLINE
+typename R::FT
+squared_radius( const PointH2<R>& p,
+                const PointH2<R>& q,
+                const PointH2<R>& r )
+{
+  return squared_distance(p, circumcenter(p, q, r));
+}
+
+template <class R>
+CGAL_KERNEL_LARGE_INLINE
 typename R::FT
 area(const TriangleH2<R>& t)
 {
@@ -182,6 +193,5 @@ area(const TriangleH2<R>& t)
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH2_H

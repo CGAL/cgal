@@ -193,7 +193,7 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
-squared_circumradiusC2(const FT &px, const FT &py,
+squared_radiusC2(const FT &px, const FT &py,
                        const FT &qx, const FT &qy,
                        const FT &rx, const FT &ry,
                        FT &x, FT &y )
@@ -208,7 +208,7 @@ squared_circumradiusC2(const FT &px, const FT &py,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
-squared_circumradiusC2(const FT &px, const FT &py,
+squared_radiusC2(const FT &px, const FT &py,
                        const FT &qx, const FT &qy,
                        const FT &rx, const FT &ry)
 {

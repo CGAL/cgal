@@ -119,6 +119,7 @@ CGAL_Kernel_obj(Do_intersect_2, do_intersect_2_object)
 typedef CGALi::Call_y_at_x_to_get<FT>              Compute_y_at_x_2;
 typedef CGALi::Call_squared_distance<FT>           Compute_squared_distance_2;
 typedef CGALi::Call_squared_length_to_get<FT>      Compute_squared_length_2;
+typedef CGALi::Call_squared_radius<FT>             Compute_squared_radius_2;
 typedef CGALi::Call_area_to_get<FT>                Compute_area_2;
 typedef CGALi::Equal                               Equal_2;
 typedef CGALi::Equal_x                             Equal_x_2;
@@ -136,6 +137,7 @@ typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
 CGAL_Kernel_obj(Compute_y_at_x_2, compute_y_at_x_2_object)
 CGAL_Kernel_obj(Compute_squared_distance_2, compute_squared_distance_2_object)
 CGAL_Kernel_obj(Compute_squared_length_2, compute_squared_length_2_object)
+CGAL_Kernel_obj(Compute_squared_radius_2, compute_squared_radius_2_object)
 CGAL_Kernel_obj(Compute_area_2, compute_area_2_object)
 CGAL_Kernel_obj(Equal_2, equal_2_object)
 CGAL_Kernel_obj(Equal_x_2, equal_x_2_object)
@@ -320,6 +322,7 @@ CGAL_Kernel_obj(Do_intersect_3, do_intersect_3_object)
 
 typedef CGALi::Call_squared_distance<FT>            Compute_squared_distance_3;
 typedef CGALi::Call_squared_length_to_get<FT>         Compute_squared_length_3;
+typedef CGALi::Call_squared_radius<FT>                Compute_squared_radius_3;
 typedef CGALi::Call_squared_area_to_get<FT>           Compute_squared_area_3;
 typedef CGALi::Call_volume_to_get<FT>                 Compute_volume_3;
 typedef CGALi::Equal                                  Equal_3;
@@ -341,6 +344,7 @@ typedef CGALi::Compare_xyz                            Compare_xyz_3;
 
 CGAL_Kernel_obj(Compute_squared_distance_3, compute_squared_distance_3_object)
 CGAL_Kernel_obj(Compute_squared_length_3, compute_squared_length_3_object)
+CGAL_Kernel_obj(Compute_squared_radius_3, compute_squared_radius_3_object)
 CGAL_Kernel_obj(Compute_squared_area_3, compute_squared_area_3_object)
 CGAL_Kernel_obj(Compute_volume_3, compute_volume_3_object)
 CGAL_Kernel_obj(Equal_3, equal_3_object)

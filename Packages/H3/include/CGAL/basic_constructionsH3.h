@@ -183,6 +183,27 @@ circumcenter( PointH3<R> const& p,
                                  bisector(p,r));
 }
 
+template <class R>
+CGAL_KERNEL_INLINE
+typename R::FT
+squared_radius( const PointH3<R>& p,
+                const PointH3<R>& q,
+                const PointH3<R>& r )
+{
+  return squared_distance(p, circumcenter(p, q, r));
+}
+
+template <class R>
+CGAL_KERNEL_INLINE
+typename R::FT
+squared_radius( const PointH3<R>& p,
+                const PointH3<R>& q,
+                const PointH3<R>& r,
+                const PointH3<R>& s )
+{
+  return squared_distance(p, circumcenter(p, q, r, s));
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH3_H

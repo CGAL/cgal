@@ -63,6 +63,32 @@ scaled_distance_to_plane(const PointC3<R CGAL_CTAG> &hp,
                                     p.x(), p.y(), p.z());
 }
 
+template < class R >
+inline
+typename R::FT
+squared_radius(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q,
+                     const PointC3<R CGAL_CTAG> &r)
+{
+  return squared_radiusC3(p.x(), p.y(), p.z(),
+	                  q.x(), q.y(), q.z(),
+			  r.x(), r.y(), r.z());
+}
+
+template < class R >
+inline
+typename R::FT
+squared_radius(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q,
+                     const PointC3<R CGAL_CTAG> &r,
+                     const PointC3<R CGAL_CTAG> &s)
+{
+  return squared_radiusC3(p.x(), p.y(), p.z(),
+	                  q.x(), q.y(), q.z(),
+			  r.x(), r.y(), r.z(),
+			  s.x(), s.y(), s.z());
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H

@@ -1,3 +1,6 @@
+2.24   (20 Mar 2001)
+- Added squared_radius().
+
 2.23   (16 Mar 2001)
 - Added constructor Vector(Point, Point).
 - side_of_bounded_circle(3 points).
