@@ -1,3 +1,7 @@
+2.1.39(22/10/03)  resubmission
+
+2.1.38(22/10/03)  new headers
+
 2.1.37(02/10/03)  modified the C2vcproj script and the master.vcproj file
 		  the projects are generated now in examples/package/ dir 
 		  and not examples/package/VC7
