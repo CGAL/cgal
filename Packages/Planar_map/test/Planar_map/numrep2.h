@@ -1,9 +1,9 @@
 #if TESTR == 1
 
-typedef double testnt;
-typedef CGAL::Simple_Cartesian<testnt>          Simple_TestR;
+typedef double                                  testnt;
+typedef CGAL::Simple_cartesian<testnt>          Cartesian_TestR;
 typedef CGAL::Filtered_kernel<Cartesian_TestR>  TestR;
-typedef TestR::RT inputt;
+typedef TestR::RT                               inputt;
 
 #endif
 
