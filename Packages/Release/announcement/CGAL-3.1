@@ -1,0 +1,100 @@
+Subject: CGAL 3.1 Released, Computational Geometry Algorithms Library
+Body: 
+
+We are pleased to announce the release 3.1 of CGAL, the Computational Geometry
+Algorithms Library.  
+
+
+Besides improvements of existing packages this release offers
+the following new algorithms and data structures.
+
+ o 2D Segment Voronoi Diagram
+
+   A data structure for Voronoi diagrams of segments in the plane under
+   the Euclidean metric. The Voronoi edges are arcs of straight lines and
+   parabolas. The algorithm provided in this package is incremental.
+
+
+ o 2D Conforming Triangulations and Meshes
+
+   An implementation of Shewchuk's algorithm to construct conforming
+   triangulations and 2D meshes.
+
+
+ o 3D Boolean Operations on Nef Polyhedra
+
+   A new class (Nef_polyhedron_3) representing 3D Nef polyhedra, a
+   boundary representation for cell-complexes bounded by halfspaces that
+   supports boolean operations and topological operations in full
+   generality including unbounded cells, mixed dimensional cells (e.g.,
+   isolated vertices and antennas). Nef polyhedra distinguish between
+   open and closed sets and can represent non-manifold geometry.
+
+
+ o Planar Nef polyhedra embedded on the sphere
+
+   A new class (Nef_polyhedron_S2) designed and supported mainly to
+   represent sphere neighborhoods around vertices of the three-
+   dimensional Nef polyhedra.
+
+
+ o dD Box_intersection_d
+
+   A new efficient algorithm for finding all intersecting pairs for large
+   numbers of iso-oriented boxes, i.e., typically these will be bounding
+   boxes of more complicated geometries. Useful for (self-) intersection
+   tests of surfaces etc.
+
+
+ o 2D Snap Rounding
+
+   Snap Rounding is a well known method for converting
+   arbitrary-precision arrangements of segments into a fixed-precision
+   representation. In the study of robust geometric computing, it can be
+   classified as a finite precision approximation technique. Iterated
+   Snap Rounding is a modification of Snap Rounding in which each vertex
+   is at least half-the-width-of-a-pixel away from any non-incident
+   edge. This package supports both methods.
+
+
+ o 2D and Surface Function Interpolation
+
+   This package implements different methods for scattered data
+   interpolation: Given measures of a function on a set of discrete data
+   points, the task is to interpolate this function on an arbitrary query
+   point. The package further offers functions for natural neighbor
+   interpolation.
+
+
+See http://www.cgal.org/releases_frame.html for a complete list of changes.
+
+
+
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data 
+structures and algorithms. The CGAL library contains:
+o Basic geometric primitives such as points, vectors, lines, predicates
+  for testing things such as relative positions of points, and operations
+  such as intersections and distance calculation.
+o A collection of standard data structures and geometric algorithms, 
+  such as convex hull, (Delaunay, Regular, Constrained) triangulation, Voronoi
+  diagrams, planar map, arrangements, polyhedron, smallest enclosing sphere,
+  multidimensional query structures...
+o Interfaces to other packages, e.g. for visualization, and I/O, and 
+  other support facilities. 
+
+
+
+The basic geometric primitives are distributed under the terms of the LGPL 
+Open Source license (GNU Lesser General Public License v2.1).  
+The data structures and algorithms are distributed under the terms of the QPL 
+Open Source license (Q Public License v1.0).
+So CGAL remains free of use for you, if your usage meets the criteria of
+these licenses, otherwise, a commercial license must be purchased from
+Geometry Factory (www.geometryfactory.com).
+
+
+For further information and for downloading the library and its 
+documentation, please visit the CGAL web page: http://www.cgal.org/
