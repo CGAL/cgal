@@ -34,7 +34,7 @@
 #define Apollonius_graph_vertex_base_2      Agvb2
 #define Apollonius_graph_face_base_2        Agfb2
 #define Apollonius_graph_traits_2           Agt2
-
+#define Apollonius_graph_traits_wrapper_2   Agtw2
 
 
 #endif //CGAL_APOLLONIUS_GRAPH_SHORT_NAMES_2_H

@@ -27,6 +27,11 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_WRAPPER_2_H
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_WRAPPER_2_H
 
+
+#include <CGAL/Apollonius_graph_short_names_2.h>
+
+
+
 CGAL_BEGIN_NAMESPACE
 
 
