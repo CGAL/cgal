@@ -445,6 +445,9 @@ protected:
 				  Vertex_handle vnear) const;
 
 
+#if 0
+  // MK: THE FOLLOWING ARE NOT IN THE SPEC
+  //======================================
 public:
   // ACCESS TO THE DUAL
   //-------------------
@@ -458,10 +461,12 @@ public:
   Object dual(const Finite_edges_iterator& ei) const {
     return dual(*ei);
   }
+#endif
 
 public:
   // I/O
   //----
+protected:
   template < class Stream >
   Stream& write_sites(Stream& str) const
   {
@@ -492,13 +497,13 @@ public:
     return str;
   }
 
-
+public:
   template< class Stream >
-  Stream& draw_primal(Stream &str) const
+  Stream& draw_dual(Stream &str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      draw_voronoi_edge(*eit, str);
+      draw_dual_edge(*eit, str);
     }
     return str;
   }
@@ -518,12 +523,13 @@ public:
 	  is_endpoint_of_segment(p, q) );
 
       if ( !is_endpoint_of_seg ) {
-	draw_voronoi_edge(*eit, str);
+	draw_dual_edge(*eit, str);
       }
     }
     return str;
   }
 
+protected:
   template < class Stream >
   Stream& draw_Voronoi_circles(Stream& str) const
   {
@@ -558,9 +564,10 @@ public:
   const Point_container& point_container() const { return pc_; }
 
 
-public:
+protected:
   // MK: THE FOLLOWING ARE NOT IN THE SPEC
   //======================================
+  // but they are needed internally
   // Primal
   Point  primal(const Face_handle& f) const;
   Object primal(const Edge e) const;
@@ -570,7 +577,6 @@ public:
   Object primal(const Finite_edges_iterator& ei) const {
     return primal(*ei);
   }
-
 
 protected:
   // wrappers for the geometric predicates
@@ -942,7 +948,7 @@ protected:
   // the geometric traits class.
 
   template< class Stream >
-  Stream& draw_voronoi_edge(Edge e, Stream &str) const
+  Stream& draw_dual_edge(Edge e, Stream &str) const
   {
     typename Geom_traits::Line_2              l;
     typename Geom_traits::Segment_2           s;
