@@ -33,7 +33,7 @@ sub reformat_results($)
     }
     open (PLATFORM_INFO,">$platform.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$GMP,$CLN) = ("-","-","-","-","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$GMP,$CLN,$QT) = ("-","-","-","-","-","-");
     while (! /^------/) {
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
@@ -50,6 +50,9 @@ sub reformat_results($)
 	if (/CLN_SUPPORT\s*=\s*\'_CLN\'/) {
 	    $CLN="+";
 	}
+	if (/QT_SUPPORT\s*=\s*\'_QT\'/) {
+	    $QT="+";
+	}
 	if (/LEDA_SUPPORT\s*=\s*\'_LEDA\'/ && $LEDA_VERSION eq "-") {
 	    $LEDA_VERSION="+";
 	}
@@ -65,6 +68,7 @@ $TESTER
 $LEDA_VERSION
 $GMP
 $CLN
+$QT
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
