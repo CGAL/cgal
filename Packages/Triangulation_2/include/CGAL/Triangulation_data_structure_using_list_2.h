@@ -82,7 +82,7 @@ class Triangulation_data_structure_using_list_2
 public:
   typedef Vb  Vertex_base;
   typedef Fb  Face_base;
-  typedef typename Vertex_base::Point                        Point;
+  //typedef typename Vertex_base::Point                        Point;
   typedef Triangulation_dsul_vertex_2<Vertex_base,Face_base> Vertex;
   typedef Triangulation_dsul_face_2<Vertex_base,Face_base>   Face;
   typedef std::pair<Face*, int>                              Edge;
@@ -1415,7 +1415,7 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    Point p;
+    typename Vertex_base::Point p;
     is >> p;
     V[i] = new Vertex(p);
   }

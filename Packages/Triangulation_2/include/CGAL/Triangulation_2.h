@@ -2016,16 +2016,11 @@ line_walk(const Point& p, const Point& q,  Face_handle f) const
     ? Line_face_circulator(p, q, this)
     : Line_face_circulator(p, q, f, this);
     
+  // the following lines may be useless :
+  //  Line_face_circulator(p,q...) returns either a null circulator 
+  //  or a pointer to a finite face (to be checked)
   if( (!lfc.is_empty()) && is_infinite( lfc )){
-      std::cerr << "from Triangulation_2 " << std::endl;
-    //return Line_face_circulator();
-    do {
-      for (int i =0; i < 3; i++) {
-	if (lfc->vertex(i) != infinite_vertex())
-	  std::cerr << "vertex " << i << " " 
-	       << lfc->vertex(i)->point() << std::endl;
-      }
-      ++lfc ;} 
+    do {      ++lfc ;} 
     while (is_infinite(lfc));
   }
   return lfc;
