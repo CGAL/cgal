@@ -24,68 +24,62 @@
 #ifndef CGAL_TRIANGULATION_CIRCULATORS_2_H
 #define CGAL_TRIANGULATION_CIRCULATORS_2_H
 
-#include <pair.h>
-#include <iterator.h>
+#include <utility>
+#include <iterator>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
+CGAL_BEGIN_NAMESPACE 
+
 template <class Gt, class Tds >
-class CGAL_Triangulation_2;
+class Triangulation_2;
 
 template <class Gt,  class Tds >
-class CGAL_Triangulation_face_2;
+class Triangulation_face_2;
 
 template <class Gt,  class Tds >
-class CGAL_Triangulation_vertex_2;
+class Triangulation_vertex_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_face_circulator_2;
+class Triangulation_face_circulator_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_circulator_2;
+class Triangulation_vertex_circulator_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_edge_circulator_2;
+class Triangulation_edge_circulator_2;
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_face_circulator_2
+class Triangulation_face_circulator_2
     : public 
-    CGAL_Bidirectional_circulator_base<CGAL_Triangulation_face_2<Gt,Tds>,
-					ptrdiff_t,size_t>
+    Bidirectional_circulator_base<Triangulation_face_2<Gt,Tds>,
+					ptrdiff_t,size_t>,
+      public Triangulation_cw_ccw_2
 {
 public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Face_circulator  Base_face_circulator;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt, Tds> Vertex;
-  typedef CGAL_Triangulation_vertex_handle_2<Gt, Tds> Vertex_handle;
-  typedef CGAL_Triangulation_face_handle_2<Gt, Tds>  Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_vertex_2<Gt, Tds> Vertex;
+  typedef Triangulation_vertex_handle_2<Gt, Tds> Vertex_handle;
+  typedef Triangulation_face_handle_2<Gt, Tds>  Face_handle;
+  typedef std::pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
-  typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
-  typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  typedef Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
+  typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
 
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
-
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
-  CGAL_Triangulation_face_circulator_2()
+  Triangulation_face_circulator_2()
     : _bfc()
   {}
 
-  CGAL_Triangulation_face_circulator_2(const Vertex_handle& v)
+  Triangulation_face_circulator_2(const Vertex_handle& v)
     : _bfc(&(*v))
   {
     if (v->face()==NULL  ||
@@ -93,7 +87,7 @@ public:
 	v->face()->dimension() == 1) { _bfc = Base_face_circulator();}
   }
 
-  CGAL_Triangulation_face_circulator_2(const Vertex_handle& v,
+  Triangulation_face_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bfc( &(*v), &(*f))
   {
@@ -104,11 +98,11 @@ public:
 
  
    
-   CGAL_Triangulation_face_circulator_2(const Face_circulator &fc)
+   Triangulation_face_circulator_2(const Face_circulator &fc)
     : _bfc(fc._bfc)
   {}
    
-  CGAL_Triangulation_face_circulator_2 &operator=(const Face_circulator &fc)
+  Triangulation_face_circulator_2 &operator=(const Face_circulator &fc)
   {
     _bfc = fc._bfc;
     return *this;
@@ -116,7 +110,7 @@ public:
   
   Face_circulator& operator++()
   {
-    _bfc++;
+    ++_bfc;
       return *this;
   }
         
@@ -129,7 +123,7 @@ public:
         
   Face_circulator& operator--()
   {
-    _bfc--;
+    --_bfc;
     return *this;
   }
         
@@ -189,47 +183,39 @@ private:
 
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_vertex_circulator_2
-    : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_vertex_2<Gt,Tds>,ptrdiff_t,size_t>
+class Triangulation_vertex_circulator_2
+    : public Bidirectional_circulator_base<
+          Triangulation_vertex_2<Gt,Tds>,ptrdiff_t,size_t>,
+  public Triangulation_cw_ccw_2
 {
 public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
   typedef typename Tds::Vertex_circulator  Base_vertex_circulator;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef std::pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
-  typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
-   typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  typedef Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
+  typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
-
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
-
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
-  CGAL_Triangulation_vertex_circulator_2()
+ 
+  Triangulation_vertex_circulator_2()
     : _bvc()
   {}
 
-  CGAL_Triangulation_vertex_circulator_2(const Vertex_handle& v)
+  Triangulation_vertex_circulator_2(const Vertex_handle& v)
     : _bvc(&(*v))
   {
     if (v->face()==NULL  ||
         v->face()->dimension() == 0 )	 { _bvc = Base_vertex_circulator();}
   }
 
-  CGAL_Triangulation_vertex_circulator_2(const Vertex_handle& v,
+  Triangulation_vertex_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bvc( &(*v), &(*f))
   {
@@ -237,11 +223,11 @@ public:
         v->face()->dimension() == 0 )	 { _bvc = Base_vertex_circulator();}
   }
    
-   CGAL_Triangulation_vertex_circulator_2(const Vertex_circulator &vc)
+   Triangulation_vertex_circulator_2(const Vertex_circulator &vc)
     : _bvc(vc._bvc)
   {}
    
-  CGAL_Triangulation_vertex_circulator_2 &
+  Triangulation_vertex_circulator_2 &
 	operator=(const Vertex_circulator &vc)
   {
     _bvc = vc._bvc;
@@ -250,7 +236,7 @@ public:
   
   Vertex_circulator& operator++()
   {
-    _bvc++;
+    ++_bvc;
     return *this;
   }
         
@@ -263,7 +249,7 @@ public:
         
   Vertex_circulator& operator--()
   {
-    _bvc--;
+    --_bvc;
     return *this;
   }
         
@@ -322,10 +308,12 @@ private:
 
 
 template < class Gt, class Tds>
-class CGAL_Triangulation_edge_circulator_2
+class Triangulation_edge_circulator_2
   : public 
-   CGAL_Bidirectional_circulator_base< 
-          typename CGAL_Triangulation_2<Gt, Tds>::Edge,ptrdiff_t,size_t>
+   Bidirectional_circulator_base< 
+          typename Triangulation_2<Gt,
+	    Tds>::Edge,ptrdiff_t,size_t>,
+    public Triangulation_cw_ccw_2
 {
 public:
   typedef Tds Triangulation_data_structure;
@@ -334,38 +322,28 @@ public:
   typedef typename Tds::Face Fa;
   typedef typename Tds::Edge_circulator  Base_edge_circulator;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef std::pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
-  typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
-  typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
-
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
-
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
-  CGAL_Triangulation_edge_circulator_2()
+  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  typedef Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
+  typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+  
+  Triangulation_edge_circulator_2()
     : _bec()
   {}
 
-  CGAL_Triangulation_edge_circulator_2(const Vertex_handle& v)
+  Triangulation_edge_circulator_2(const Vertex_handle& v)
     : _bec(&(*v))
   {
     if (v->face()==NULL  ||
         v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
   }
 
-  CGAL_Triangulation_edge_circulator_2(const Vertex_handle& v,
+  Triangulation_edge_circulator_2(const Vertex_handle& v,
 				       const Face_handle& f)
     : _bec( &(*v), &(*f))
   {
@@ -373,11 +351,11 @@ public:
         v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
   }
    
-   CGAL_Triangulation_edge_circulator_2(const Edge_circulator &ec)
+   Triangulation_edge_circulator_2(const Edge_circulator &ec)
     : _bec(ec._bec)
   {}
    
-  CGAL_Triangulation_edge_circulator_2 &operator=(const Edge_circulator &ec)
+  Triangulation_edge_circulator_2 &operator=(const Edge_circulator &ec)
   {
     _bec = ec._bec;
     return *this;
@@ -385,7 +363,7 @@ public:
   
   Edge_circulator& operator++()
   {
-    _bec++;
+    ++_bec;
     return *this;
   }
         
@@ -398,7 +376,7 @@ public:
         
   Edge_circulator& operator--()
   {
-    _bec--;
+    --_bec;
     return *this;
   }
         
@@ -441,7 +419,7 @@ public:
   inline Edge operator*() const
   {
     Face_handle fh = (Face *) ((*_bec).first);
-    return make_pair( fh  , (*_bec).second );
+    return std::make_pair( fh  , (*_bec).second );
   }
 
     
@@ -449,5 +427,6 @@ private:
   Base_edge_circulator  _bec;
 };
 
+CGAL_END_NAMESPACE
 
-#endif CGAL_TRIANGULATION_CIRCULATORS_2_H
+#endif //CGAL_TRIANGULATION_CIRCULATORS_2_H

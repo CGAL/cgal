@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : include/CGAL/Triangulation_face_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -28,18 +29,19 @@
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
 
+CGAL_BEGIN_NAMESPACE
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_2;
+class Triangulation_vertex_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_handle_2;
+class Triangulation_vertex_handle_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_face_handle_2;
+class Triangulation_face_handle_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_face_2  : public  Tds::Face
+class Triangulation_face_2  : public  Tds::Face
 {
 public:
   //  typedef Tds Tds;
@@ -52,21 +54,21 @@ public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
 
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef Triangulation_face_2<Gt,Tds> Face;
 
-  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  //  typedef pair<Face_handle, int>     Edge;
+  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  //  typedef std::pair<Face_handle, int>     Edge;
 
 
   inline
-  CGAL_Triangulation_face_2()
+  Triangulation_face_2()
     : Fa()
   { }
 
   inline
-  CGAL_Triangulation_face_2(const Vertex_handle& v0,
+  Triangulation_face_2(const Vertex_handle& v0,
 			  const Vertex_handle& v1,
 			  const Vertex_handle& v2)
     : Fa(&(*v0), &(*v1), &(*v2))
@@ -74,7 +76,7 @@ public:
         
     
   inline
-  CGAL_Triangulation_face_2(const Vertex_handle& v0,
+  Triangulation_face_2(const Vertex_handle& v0,
 			  const Vertex_handle& v1,
 			  const Vertex_handle& v2,
 			  const Face_handle& n0,
@@ -182,4 +184,6 @@ public:
 
 };
 
-#endif CGAL_TRIANGULATION_FACE_2_H
+CGAL_END_NAMESPACE
+
+#endif //CGAL_TRIANGULATION_FACE_2_H

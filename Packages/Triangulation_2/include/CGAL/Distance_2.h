@@ -11,8 +11,8 @@
 // release       :
 // release_date  :
 //
-// file          : Triangulation/include/CGAL/Distance_2.h
-// source        : $Source$
+// file          : include/CGAL/Distance_2.h
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
@@ -24,27 +24,32 @@
 #ifndef CGAL_DISTANCE_2_H
 #define CGAL_DISTANCE_2_H
 
+#include<CGAL/number_utils.h>
+
+CGAL_BEGIN_NAMESPACE
+
+
 template <class I>
-class CGAL_Distance_2{
+class Distance_2{
 public:
     typedef typename I::Point Point;
-    CGAL_Distance_2(const I* traits = NULL)
+    Distance_2(const I* traits = NULL)
     {}
 
-    CGAL_Distance_2(const Point& p0,
+    Distance_2(const Point& p0,
                     const I* traits = NULL)
         : _p0(p0)
     {}
 
 
-    CGAL_Distance_2(const Point& p0,
+    Distance_2(const Point& p0,
                     const Point& p1,
                     const I* traits = NULL)
         : _p0(p0), _p1(p1)
     {}
 
 
-    CGAL_Distance_2(const Point& p0,
+    Distance_2(const Point& p0,
                     const Point& p1,
                     const Point& p2,
                     const I* traits = NULL)
@@ -80,12 +85,12 @@ public:
       return _p2;
     }
 
-    CGAL_Comparison_result
+    Comparison_result
     compare() const
     {
-        return CGAL_compare(
-          (typename Point::R::FT)CGAL_squared_distance(_p0, _p1),
-          (typename Point::R::FT)CGAL_squared_distance(_p0, _p2));
+        return CGAL::compare(
+          (typename Point::R::FT)squared_distance(_p0, _p1),
+          (typename Point::R::FT)squared_distance(_p0, _p2));
 
     }
 
@@ -93,5 +98,6 @@ private:
     Point _p0, _p1, _p2;
 };
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_DISTANCE_2_H

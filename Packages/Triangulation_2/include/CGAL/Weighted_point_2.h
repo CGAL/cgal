@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : Triangulation/include/CGAL/Weighted_point_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -27,8 +28,10 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Pt, class We >
-class CGAL_Weighted_point_2 : public Pt
+class Weighted_point_2 : public Pt
 {
 public:
   typedef We Weight;
@@ -38,14 +41,14 @@ private:
 	Weight _weight;
 
 public: //constructors and destructors
-  CGAL_Weighted_point_2 ()
+  Weighted_point_2 ()
     : Point ()
   {
     _weight=Weight ( 0 ) ;
   }
 
 
-  CGAL_Weighted_point_2	( const CGAL_Weighted_point_2 &p0)
+  Weighted_point_2	( const Weighted_point_2 &p0)
   {
     Point::operator=(p0.point() );
     _weight=Weight( p0.weight() );
@@ -53,23 +56,23 @@ public: //constructors and destructors
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
 	template <class Weight_0 >
-	CGAL_Weighted_point_2
-	( const CGAL_Weighted_point_2<  Point, Weight_0 > &p0) : Point(p0.point())
+	Weighted_point_2
+	( const Weighted_point_2<  Point, Weight_0 > &p0) : Point(p0.point())
 	{	_weight=Weight( p0.weight() );
 	}
 #endif
 
-	CGAL_Weighted_point_2 ( const Point &p )
+	Weighted_point_2 ( const Point &p )
 		: Point ( p )
 	{	_weight=Weight ( 0 ) ;
 	}
 
-	CGAL_Weighted_point_2 ( const RT &x, const RT &y )
+	Weighted_point_2 ( const RT &x, const RT &y )
 		: Point ( x, y )
 	{	_weight=Weight ( 0 ) ;
 	}
 
-	CGAL_Weighted_point_2 ( const Point &p, const Weight &_weight_ )
+	Weighted_point_2 ( const Point &p, const Weight &_weight_ )
 		: Point ( p )
 	{	_weight=_weight_;
 	}
@@ -89,29 +92,40 @@ public:
 	}
 
 	Weight power(const Point &p)
-	{	return ((p.x()-x())*(p.x()-x())+(p.y()-y())*(p.y()-y())-weight());
+	{	
+	  return ((p.x()-x())*(p.x()-x())+(p.y()-y())*(p.y()-y())-weight());
 	}
+
+        Weight power(const Weighted_point_2 &p)
+	{	
+	  return  ( (p.x()-x())*(p.x()-x())
+		   +(p.y()-y())*(p.y()-y())
+		   -weight() -p.weight());
+	}
+
+
 
 };
 
 
 template < class Point, class Weight >
-ostream &operator<<(ostream &os, const CGAL_Weighted_point_2<Point,Weight> &p)
+std::ostream &operator<<(
+        std::ostream &os, const Weighted_point_2<Point,Weight> &p)
 {
 	return os << p.point() << " " << p.weight() ;
 }
 
 template < class Point, class Weight >
-istream  &operator>>(istream  &is,  CGAL_Weighted_point_2<Point,Weight> &p)
+std::istream  &operator>>(
+         std::istream  &is,  Weighted_point_2<Point,Weight> &p)
 {
 	Weight _weight_;
 	Point _point_;
 	is >> _point_  >> _weight_ ;
-	p=CGAL_Weighted_point_2<Point,Weight>( _point_, _weight_ );
+	p=Weighted_point_2<Point,Weight>( _point_, _weight_ );
 	return is;
 }
 
-
-
+CGAL_END_NAMESPACE
 
 #endif

@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
 //
-// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  <Marun_testsuiteriette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
@@ -28,11 +28,13 @@
 
 #include <CGAL/Triangulation_2.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class Gt, class Tds>
-class CGAL_Delaunay_triangulation_2 : public CGAL_Triangulation_2<Gt,Tds>
+class Delaunay_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
-friend istream& operator>> CGAL_NULL_TMPL_ARGS
-                (istream& is, CGAL_Delaunay_triangulation_2<Gt,Tds> &T);
+friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+                (std::istream& is, Delaunay_triangulation_2<Gt,Tds> &T);
 public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Distance Distance;
@@ -40,23 +42,24 @@ public:
   typedef typename Geom_traits::Line Line;
   typedef typename Geom_traits::Direction Direction;
 
-  CGAL_Delaunay_triangulation_2()
-    : CGAL_Triangulation_2<Gt,Tds>() {}
+  Delaunay_triangulation_2()
+    : Triangulation_2<Gt,Tds>() {}
   
-  CGAL_Delaunay_triangulation_2(const Gt& gt)
-  : CGAL_Triangulation_2<Gt,Tds>(gt) {}
+  Delaunay_triangulation_2(const Gt& gt)
+  : Triangulation_2<Gt,Tds>(gt) {}
   
   
-  CGAL_Delaunay_triangulation_2(const Vertex_handle& v, const Gt& gt=Gt())
-    : CGAL_Triangulation_2<Gt,Tds>(v,gt)
+  Delaunay_triangulation_2(const Vertex_handle& v, const Gt& gt=Gt())
+    : Triangulation_2<Gt,Tds>(v,gt)
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
   
   // copy constructor duplicates vertices and faces
   // no copy constructed needed :
-  // the default will invoke the copy constructor of CGAL_Triangulation_2 ?
-  CGAL_Delaunay_triangulation_2(const CGAL_Delaunay_triangulation_2<Gt,Tds> &tr)
-      : CGAL_Triangulation_2<Gt,Tds>(tr)
+  // the default will invoke the copy constructor of Triangulation_2 ?
+  Delaunay_triangulation_2(
+	       const Delaunay_triangulation_2<Gt,Tds> &tr)
+      : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( is_valid() );  }
   
   #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -74,8 +77,8 @@ public:
   #else
   #if defined(LIST_H) || defined(__SGI_STL_LIST_H)
   int
-  insert(list<Point>::const_iterator first,
-         list<Point>::const_iterator last)
+  insert(std::list<Point>::const_iterator first,
+         std::list<Point>::const_iterator last)
   {
       int n = number_of_vertices();
       while(first != last){
@@ -87,8 +90,8 @@ public:
   #endif // LIST_H
   #if defined(VECTOR_H) || defined(__SGI_STL_VECTOR_H)
   int
-  insert(vector<Point>::const_iterator first,
-         vector<Point>::const_iterator last)
+  insert(std::vector<Point>::const_iterator first,
+         std::vector<Point>::const_iterator last)
   {
       int n = number_of_vertices();
       while(first != last){
@@ -100,8 +103,8 @@ public:
   #endif // VECTOR_H
   #ifdef ITERATOR_H
   int
-  insert(istream_iterator<Point, ptrdiff_t> first,
-         istream_iterator<Point, ptrdiff_t> last)
+  insert(std::istream_iterator<Point, std::ptrdiff_t> first,
+         std::istream_iterator<Point, std::ptrdiff_t> last)
   {
       int n = number_of_vertices();
       while(first != last){
@@ -123,29 +126,38 @@ public:
       }
       return number_of_vertices() - n;
    }
-  #endif // CGAL_TEMPLATE_MEMBER_FUNCTIONS
+  #endif // TEMPLATE_MEMBER_FUNCTIONS
 
-  CGAL_Oriented_side
+  Oriented_side
   side_of_oriented_circle(const Face_handle& f, const Point & p) const
   {
-      CGAL_Orientation o;
+    //Orientation o;
       if ( ! is_infinite(f) ) {
           return geom_traits().side_of_oriented_circle(f->vertex(0)->point(),
                                                   f->vertex(1)->point(),
                                                   f->vertex(2)->point(),p);
-      } else if ( f->vertex(0) == infinite_vertex() ) {
-          o = geom_traits().orientation(f->vertex(1)->point(),
-                                f->vertex(2)->point(),p);
-      } else if ( f->vertex(1) == infinite_vertex() ) {
-          o = geom_traits().orientation(f->vertex(2)->point(),
-                                f->vertex(0)->point(),p);
-      } else if ( f->vertex(2) == infinite_vertex() ) {
-          o = geom_traits().orientation(f->vertex(0)->point(),
-                                f->vertex(1)->point(),p);
       }
-      return (o == CGAL_NEGATIVE) ? CGAL_ON_NEGATIVE_SIDE :
-          (o == CGAL_POSITIVE) ? CGAL_ON_POSITIVE_SIDE :
-          CGAL_ON_ORIENTED_BOUNDARY;
+ 
+     //  else if ( f->vertex(0) == infinite_vertex() ) {
+//           o = geom_traits().orientation(f->vertex(1)->point(),
+//                                 f->vertex(2)->point(),p);
+//       } else if ( f->vertex(1) == infinite_vertex() ) {
+//           o = geom_traits().orientation(f->vertex(2)->point(),
+//                                 f->vertex(0)->point(),p);
+//       } else if ( f->vertex(2) == infinite_vertex() ) {
+//           o = geom_traits().orientation(f->vertex(0)->point(),
+//                                 f->vertex(1)->point(),p);
+//       }
+
+      int i = f->index(infinite_vertex());
+      Orientation o =
+	geom_traits().orientation(f->vertex(ccw(i))->point(),
+				  f->vertex(cw(i))->point(),
+				  p);
+						     
+      return (o == NEGATIVE) ? ON_NEGATIVE_SIDE :
+          (o == POSITIVE) ? ON_POSITIVE_SIDE :
+          ON_ORIENTED_BOUNDARY;
   }
 
   Vertex_handle
@@ -165,7 +177,7 @@ public:
       nn = f->vertex(i);
       if ( ! is_infinite(f->vertex(ccw(i)))){
          closer.set_point( 3-min, f->vertex(ccw(i))->point() );
-          if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
+          if (  ( (min==1)? LARGER : SMALLER )
                 == closer.compare() ) {
               min = 3-min;
               nn=f->vertex(ccw(i));
@@ -173,7 +185,7 @@ public:
       }
       if ( ! is_infinite(f->vertex(cw(i)))){
           closer.set_point( 3-min, f->vertex(cw(i))->point() );
-          if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
+          if (  ( (min==1)? LARGER : SMALLER )
                 == closer.compare() ) {
               min = 3-min;
               nn=f->vertex(cw(i));
@@ -242,10 +254,10 @@ public:
   
   Vertex_handle
   insert(const Point  &p,
-         CGAL_Triangulation_2<Gt,Tds>::Locate_type& lt,
+         Triangulation_2<Gt,Tds>::Locate_type& lt,
          Face_handle f = Face_handle() )
   {
-      Vertex_handle v = CGAL_Triangulation_2<Gt,Tds>::insert(p,lt,f);
+      Vertex_handle v = Triangulation_2<Gt,Tds>::insert(p,lt,f);
       restore_Delaunay(v);
       return(v);
   }
@@ -279,7 +291,7 @@ private:
      else  remove_2D(v);
         
      return;
-   }
+  }
 
   bool is_valid(bool verbose = false, int level = 0) const
   {
@@ -287,14 +299,14 @@ private:
             return true;
        }
 
-    bool result = CGAL_Triangulation_2<Gt,Tds>::is_valid();
+    bool result = Triangulation_2<Gt,Tds>::is_valid();
 
     for( Face_iterator it = faces_begin(); it != faces_end() ; it++) {
 
       for(int i=0; i<3; i++) {
 	if ( ! is_infinite( it->vertex(i))) {
 	  result = result &&
-	    CGAL_ON_POSITIVE_SIDE != 
+	    ON_POSITIVE_SIDE != 
 	    side_of_oriented_circle( it->neighbor(i), it->vertex(i)->point());
 	}
 	if ( !result) {
@@ -324,13 +336,13 @@ private:
                         Distance& closer)const
   {
       Face_handle  ni=f->neighbor(i);
-      if ( CGAL_ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p) ) {
+      if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p) ) {
           return;
       }
       i = ni->index(f);
       if ( ! is_infinite(ni->vertex(i))){
           closer.set_point( 3-min, ni->vertex(i)->point() );
-          if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
+          if (  ( (min==1)? LARGER : SMALLER )
                 == closer.compare() ) {
               min = 3-min;
               nn=ni->vertex(i);
@@ -346,7 +358,7 @@ private:
   {
       Face_handle n = f->neighbor(i);
       
-      if ( CGAL_ON_POSITIVE_SIDE != 
+      if ( ON_POSITIVE_SIDE != 
 	   side_of_oriented_circle(n,  f->vertex(i)->point()) ) {          
 	return;
       }
@@ -357,53 +369,81 @@ private:
   }
 
 
- void remove_2D(Vertex_handle v)
-    {
-      //test the dimensionality of the resulting triangulation
-      //it goes down to 1 iff
-      // 1) any finite face is incident to v
-      // 2) all vertices are colinear
-       bool  dim1 = true; 
-      Face_iterator fit = faces_begin();
-      while (dim1==true && fit != faces_end()) {
-	dim1 = dim1 && fit->has_vertex(v);
-	fit++;
-      }
-      Face_circulator fic = v->incident_faces();
-      while (is_infinite(fic)) {++fic;}
-      Face_circulator done(fic);
-      Face_handle start(fic); int iv = start->index(v);
-      Point p = start->vertex(cw(iv))->point(), q = start->vertex(ccw(iv))->point();
-       while ( dim1 && ++fic != done) {
-	 iv = fic->index(v);
-	 if (fic->vertex(ccw(iv)) != infinite_vertex()) {
-	   dim1 = dim1 &&
-	     geom_traits().orientation(p, q, fic->vertex(ccw(iv))->point()) 
-	    == CGAL_COLLINEAR; 
-	 }
-       }
-	       
-       if (dim1) { 
-	 _tds.remove_down(&(*v));
-       }
-       else {
-	 list<Edge> hole;
-	 make_hole(v, hole);
-	 fill_hole(v, hole);
-	 v.Delete();
-	 set_number_of_vertices(number_of_vertices()-1);
-       }
-       return;       
-    }
+
+void remove_2D(Vertex_handle v );
+void   fill_hole ( Vertex_handle v, list< Edge > & first_hole );
 
 
-void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
+  public:
+  Point dual (const Face_handle &f) const
   {
-    
-    typedef Edge Hole_neighbor;
-    typedef list<Edge> Hole;
-    typedef list<Hole> Hole_list;
+    return geom_traits().circumcenter(f->vertex(0)->point(),
+                   f->vertex(1)->point(),
+                   f->vertex(2)->point());
+  }
+  
+  Object dual(const Edge &e) const
+  {
+    if( (!is_infinite(e.first)) 
+	&& (!is_infinite(e.first->neighbor(e.second))) ) {
+      	Segment s(dual(e.first),dual(e.first->neighbor(e.second)));
+      	return Object(new Wrapper< Segment >(s));
+    } 
+    else {
+      Face_handle f; int i;
+      if (is_infinite(e.first)) {
+        f=e.first->neighbor(e.second); f->has_neighbor(e.first,i);
+      } 
+      else {
+        f=e.first; i=e.second;
+      }
+      Line l = geom_traits().bisector(segment(f,i)).opposite();
+      if (! is_infinite(f)) {
+	Ray r(dual(f),l.direction());
+	return Object(new Wrapper< Ray >(r));
+      } 
+      else {
+	return Object(new Wrapper< Line >(l));
+      }
+    }
+    CGAL_triangulation_assertion(false); // we should not get here
+    return Object();
+  }
+  
+  Object dual(const Edge_circulator& ec) const
+  {
+      return dual(*ec);
+  }
+  
+  Object dual(const Edge_iterator& ei) const
+>>>>>>> 1.4.1.13
+  {
+      return dual(*ei);
+  }
+  
+};
 
+template < class Gt, class Tds >
+void
+Delaunay_triangulation_2<Gt,Tds>::
+remove_2D(Vertex_handle v )
+{
+    // General case
+  
+    // remove incident faces
+    // set up list of faces neighboring the hole
+    // in ccw order around the hole
+  
+    // problem with gcc link
+    typedef std::pair<void *, int> Hole_neighbor;
+    //typedef pair<Face_handle  , int>  Hole_neighbor;
+    typedef std::list<Hole_neighbor> Hole;
+    typedef std::list<Hole> Hole_list;
+  
+    Hole hole;
+    Hole_list hole_list;
+    std::list<Face_handle> to_delete;
+  
     Face_handle  f, ff, fn;
     int i =0,ii =0, in =0;
     Hole_list hole_list;
@@ -479,11 +519,11 @@ void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
           }
           else {     // vv is a finite vertex
             p = vv->point();
-            if (geom_traits().orientation(p0,p1,p) == CGAL_COUNTERCLOCKWISE) {
+            if (geom_traits().orientation(p0,p1,p) == COUNTERCLOCKWISE) {
               if(is_infinite(v2)) { v2=vv; p2=p; cut_after=hit;}
               else{
                 if( geom_traits().side_of_oriented_circle (p0,p1,p2,p) ==
-                    CGAL_ON_POSITIVE_SIDE){
+                    ON_POSITIVE_SIDE){
                v2=vv; p2=p; cut_after=hit;}
               }
             }
@@ -505,7 +545,7 @@ void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
   
         fn = (hole.front()).first;
         in = (hole.front()).second;
-        if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
+        if (fn->has_vertex(v2, i) && i == (int) fn->ccw(in)) {
           newf->set_neighbor(0,fn);
           fn->set_neighbor(in,newf);
           hole.pop_front();
@@ -515,7 +555,7 @@ void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
         else{
           fn = (hole.back()).first;
           in = (hole.back()).second;
-          if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
+          if (fn->has_vertex(v2, i) && i== (int) fn->cw(in)) {
             newf->set_neighbor(1,fn);
             fn->set_neighbor(in,newf);
             hole.pop_back();
@@ -542,70 +582,24 @@ void   fill_hole ( Vertex_handle v, list< Edge > & first_hole )
   }
 
 
-  public:
-  Point dual (const Face_handle &f) const
-  {
-    return geom_traits().circumcenter(f->vertex(0)->point(),
-                   f->vertex(1)->point(),
-                   f->vertex(2)->point());
-  }
-  
-  CGAL_Object dual(const Edge &e) const
-  {
-    if( (!is_infinite(e.first)) 
-	&& (!is_infinite(e.first->neighbor(e.second))) ) {
-      	Segment s(dual(e.first),dual(e.first->neighbor(e.second)));
-      	return CGAL_Object(new CGAL_Wrapper< Segment >(s));
-    } 
-    else {
-      Face_handle f; int i;
-      if (is_infinite(e.first)) {
-        f=e.first->neighbor(e.second); f->has_neighbor(e.first,i);
-      } 
-      else {
-        f=e.first; i=e.second;
-      }
-      Line l = geom_traits().bisector(segment(f,i)).opposite();
-      if (! is_infinite(f)) {
-	Ray r(dual(f),l.direction());
-	return CGAL_Object(new CGAL_Wrapper< Ray >(r));
-      } 
-      else {
-	return CGAL_Object(new CGAL_Wrapper< Line >(l));
-      }
-    }
-    CGAL_triangulation_assertion(false); // we should not get here
-    return CGAL_Object();
-  }
-  
-  CGAL_Object dual(const Edge_circulator& ec) const
-  {
-      return dual(*ec);
-  }
-  
-  CGAL_Object dual(const Edge_iterator& ei) const
-  {
-      return dual(*ei);
-  }
-  
-};
-
 
 template < class Gt, class Tds >
-ostream&
-operator<<(ostream& os, const CGAL_Delaunay_triangulation_2<Gt,Tds> &DT)
+std::ostream&
+operator<<(std::ostream& os, const Delaunay_triangulation_2<Gt,Tds> &DT)
 {
-  return os << (const CGAL_Triangulation_2<Gt,Tds>&)DT;
+  return os << (const Triangulation_2<Gt,Tds>&)DT;
 }
 
 
 template < class Gt, class Tds >
-istream&
-operator>>(istream& is, CGAL_Delaunay_triangulation_2<Gt,Tds> &dt)
+std::istream&
+operator>>(std::istream& is, Delaunay_triangulation_2<Gt,Tds> &dt)
 {
-  is >> (CGAL_Triangulation_2<Gt,Tds>&)dt;
+  is >> (Triangulation_2<Gt,Tds>&)dt;
   dt.is_valid();
   return is;
 }
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_2_H

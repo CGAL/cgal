@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : Triangulation/include/CGAL/Triangulation_vertex_base_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -27,22 +28,26 @@
 
 #include <CGAL/Triangulation_short_names_2.h>
 
+CGAL_BEGIN_NAMESPACE
+
+
 template < class GT >
-class CGAL_Triangulation_vertex_base_2 {
+class Triangulation_vertex_base_2 {
 
 public:
     typedef typename GT::Point Point;
 
 
-  CGAL_Triangulation_vertex_base_2 ()
-        : _p(),_f(NULL)
+
+    Triangulation_vertex_base_2 ()
+        : _f(NULL)
     {}
     
-    CGAL_Triangulation_vertex_base_2(const Point & p)
+    Triangulation_vertex_base_2(const Point & p)
         :  _p(p), _f(NULL)
     {}
     
-    CGAL_Triangulation_vertex_base_2(const Point & p, void* f)
+    Triangulation_vertex_base_2(const Point & p, void* f)
         :  _p(p), _f(f)
     {}
 
@@ -80,4 +85,6 @@ private:
 
 };
 
-#endif CGAL_TRIANGULATION_VERTEX_BASE_2_H
+CGAL_END_NAMESPACE
+
+#endif //CGAL_TRIANGULATION_VERTEX_BASE_2_H

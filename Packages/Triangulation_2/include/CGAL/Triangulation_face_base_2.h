@@ -11,10 +11,11 @@
 // release       :
 // release_date  :
 //
-// file          : Triangulation_face_base_2
-// source        : $Source$
+// file          : Triangulation_face_base_2.h
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -27,30 +28,34 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_utils_2.h>
+
+CGAL_BEGIN_NAMESPACE 
 
 template < class Gt >
-class CGAL_Triangulation_face_base_2 {
-
+class Triangulation_face_base_2 
+  : public Triangulation_cw_ccw_2
+{
 public:
   // typedef typename Gt::Triangle Triangle;
-  typedef CGAL_Triangulation_face_base_2  Face_base;
+  typedef Triangulation_face_base_2  Face_base;
 
   inline
-  CGAL_Triangulation_face_base_2()
+  Triangulation_face_base_2()
   {
     set_vertices();
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_face_base_2( void* v0, void* v1, void* v2)
+  Triangulation_face_base_2( void* v0, void* v1, void* v2)
   {
     set_vertices(v0, v1, v2);
     set_neighbors();
   }
 
   inline
-  CGAL_Triangulation_face_base_2(void* v0, void* v1, void* v2,
+  Triangulation_face_base_2(void* v0, void* v1, void* v2,
 				 void* n0, void* n1, void* n2)
   {
     set_vertices(v0, v1, v2);
@@ -212,15 +217,7 @@ public:
   }
  
  
-  inline int ccw(int i) const
-  {
-    return (i+1) % 3;
-  }
-    
-  inline int cw(int i) const
-  {
-    return (i+2) % 3;
-  }
+ 
    
  
   //the following trivial is_valid to allow
@@ -234,4 +231,8 @@ private:
   void* V[3];
   void* N[3];
 };
-#endif CGAL_TRIANGULATION_FACE_BASE_2_H
+
+CGAL_END_NAMESPACE 
+
+#endif //CGAL_TRIANGULATION_FACE_BASE_2_H
+

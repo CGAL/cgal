@@ -26,12 +26,14 @@
 #ifndef CGAL_POINTER_H
 #define CGAL_POINTER_H
 
-#include <assert.h>
-#include <iterator.h>
+#include <cassert>
+#include <iterator>
 #include <CGAL/circulator.h>
 
+CGAL_BEGIN_NAMESPACE 
+
 template<class T>
-class CGAL_Pointer
+class Pointer
 {
 
     private:
@@ -39,22 +41,23 @@ class CGAL_Pointer
     
     public:
     typedef T value_type;
-    typedef CGAL_Pointer<T> Pointer;
-    inline CGAL_Pointer()
+  //typedef Pointer<T> Pointer;
+
+    inline Pointer<T>()
         : _pointer(NULL)
     {}
     
-    inline CGAL_Pointer(const T* p)
+    inline Pointer<T>(const T* p)
         : _pointer((T*)p)
     {}
     
-    inline Pointer& operator=(const T*& p)
+    inline Pointer<T>& operator=(const T*& p)
     {
         ptr() = p ;
         return *this;
     }
     
-    inline Pointer& operator=(const Pointer& p)
+    inline Pointer<T>& operator=(const Pointer<T>& p)
     {
         ptr() = p.ptr();
         return *this;
@@ -80,12 +83,12 @@ class CGAL_Pointer
     }
     
     
-    inline bool operator==(const Pointer& p) const
+    inline bool operator==(const Pointer<T>& p) const
     {
         return ( ptr() == p.ptr() );
     }
     
-    inline bool operator!=(const Pointer& p) const
+    inline bool operator!=(const Pointer<T>& p) const
     {
         return !(*this == p);
     }
@@ -96,7 +99,7 @@ class CGAL_Pointer
   }
 
 
-inline bool operator==(CGAL_NULL_TYPE n) const
+  inline bool operator==(CGAL_NULL_TYPE n) const
     {
         assert( n == 0);
         return ( ptr() == NULL );
@@ -114,5 +117,7 @@ inline bool operator==(CGAL_NULL_TYPE n) const
     
 
 };
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_POINTER_H

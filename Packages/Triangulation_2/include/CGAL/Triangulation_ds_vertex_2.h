@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : Triangulation/include/CGAL/Triangulation_ds_vertex_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
@@ -24,32 +25,37 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
+#include <utility>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
+CGAL_BEGIN_NAMESPACE
 
 template <class Vb, class Fb >
-class  CGAL_Triangulation_ds_vertex_2 
-  : public Vb
+class  Triangulation_ds_vertex_2 
+  : public Vb,
+    public Triangulation_cw_ccw_2
 {
 public:
   typedef typename Vb::Point Point;
-  typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-  typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
-  typedef pair< Face*,int> Edge;
-  typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
-  typedef CGAL_Triangulation_ds_vertex_circulator_2<Vertex,Face> Vertex_circulator;
-  typedef CGAL_Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
+  typedef Triangulation_ds_vertex_2<Vb,Fb> Vertex;
+  typedef Triangulation_ds_face_2<Vb,Fb> Face;
+  typedef std::pair< Face*,int> Edge;
+  typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
+  typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 
+                                                           Vertex_circulator;
+  typedef Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
 
-  CGAL_Triangulation_ds_vertex_2()
+  Triangulation_ds_vertex_2()
     : Vb()
   {}
     
-  CGAL_Triangulation_ds_vertex_2(const Point & p)
+  Triangulation_ds_vertex_2(const Point & p)
     :  Vb(p)
   {}
     
-  CGAL_Triangulation_ds_vertex_2(const Point & p, Face * f)
+  Triangulation_ds_vertex_2(const Point & p, Face * f)
     :  Vb(p, f )
   {}
 
@@ -68,18 +74,6 @@ public:
     return ( (Face *) (Vb::face()) );
   }
     
-  static int ccw(int i)
-  {
-    return (i+1) % 3;
-  }
-    
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
-
-
-  
   int degree() const
   {
     Face* f = face();
@@ -138,4 +132,6 @@ public:
   }
 };
 
-#endif CGAL_TRIANGULATION_DS_VERTEX_2_H
+CGAL_END_NAMESPACE
+
+#endif //CGAL_TRIANGULATION_DS_VERTEX_2_H

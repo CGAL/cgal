@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : include/CGAL/Triangulation_vertex_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -24,33 +25,36 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_2_H
 #define CGAL_TRIANGULATION_VERTEX_2_H
 
+#include <utility>
 #include <CGAL/Pointer.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
 #include <CGAL/Triangulation_circulators_2.h>
 
 
-template < class Gt, class Tds >
-class CGAL_Triangulation_face_2;
+CGAL_BEGIN_NAMESPACE 
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_vertex_handle_2;
+class Triangulation_face_2;
 
 template < class Gt, class Tds >
-class CGAL_Triangulation_face__handle_2;
+class Triangulation_vertex_handle_2;
+
+template < class Gt, class Tds >
+class Triangulation_face__handle_2;
 
 template<class Gt,  class Tds>
-class CGAL_Triangulation_face_circulator_2;
+class Triangulation_face_circulator_2;
 
 template<class Gt,  class Tds>
-class CGAL_Triangulation_vertex_circulator_2;
+class Triangulation_vertex_circulator_2;
 
 template<class Gt, class Tds>
-class CGAL_Triangulation_edge_circulator_2;
+class Triangulation_edge_circulator_2;
 
 
 template<class Gt, class Tds >
-class CGAL_Triangulation_vertex_2
+class Triangulation_vertex_2
   : public Tds::Vertex
 {
 public:
@@ -65,27 +69,27 @@ public:
   typedef typename Tds::Vertex Ve;
   typedef typename Tds::Face Fa;
 
-  typedef CGAL_Triangulation_face_2<Gt,Tds> Face;
-  typedef CGAL_Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef Triangulation_face_2<Gt,Tds> Face;
+  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
   
-  typedef CGAL_Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef CGAL_Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  typedef pair<Face_handle, int>     Edge;
+  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
+  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
+  typedef std::pair<Face_handle, int>     Edge;
 
-  typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
-  typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
-  typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
+  typedef Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
+  typedef Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
+  typedef Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
 
   
-  CGAL_Triangulation_vertex_2()
+  Triangulation_vertex_2()
      : Ve()
   {}
 
-  CGAL_Triangulation_vertex_2(const Point & p)
+  Triangulation_vertex_2(const Point & p)
     :  Ve(p)
   {}
     
-  CGAL_Triangulation_vertex_2(const Point & p, const Face_handle& f)
+  Triangulation_vertex_2(const Point & p, const Face_handle& f)
     :  Ve(p, &(*f))
   {}
 
@@ -141,4 +145,8 @@ public:
   }
     
 };
-#endif CGAL_TRIANGULATION_2_H
+
+CGAL_END_NAMESPACE
+
+
+#endif //CGAL_TRIANGULATION_VERTEX_2_H

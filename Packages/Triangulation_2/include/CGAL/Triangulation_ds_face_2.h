@@ -11,10 +11,11 @@
 // release       :
 // release_date  :
 //
-// file          : Triangulation/include/CGAL/Triangulation_ds_face_2
+// file          : Triangulation/include/CGAL/Triangulation_ds_face_2.h
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -26,30 +27,31 @@
 
 #include <CGAL/Triangulation_short_names_2.h>
 
-template <class Vb, class Fb >
-class  CGAL_Triangulation_ds_vertex_2 ;
+CGAL_BEGIN_NAMESPACE 
 
+template <class Vb, class Fb >
+class  Triangulation_ds_vertex_2 ;
 
 
 template < class Vb, class Fb >
-class  CGAL_Triangulation_ds_face_2
+class  Triangulation_ds_face_2
   : public Fb
 {
 public:
   //typedef typename Fb::Triangle Triangle;
-  typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-  typedef CGAL_Triangulation_ds_face_2<Vb,Fb> Face;
+  typedef Triangulation_ds_vertex_2<Vb,Fb> Vertex;
+  typedef Triangulation_ds_face_2<Vb,Fb> Face;
 
   // creators
-  CGAL_Triangulation_ds_face_2()
+  Triangulation_ds_face_2()
     : Fb()
   {}
     
-  CGAL_Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2)
+  Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2)
     :  Fb(v0,v1,v2)
   {}
     
-  CGAL_Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2,
+  Triangulation_ds_face_2(Vertex* v0, Vertex* v1, Vertex* v2,
 				Face* n0, Face* n1, Face* n2)
     :  Fb(v0,v1,v2,n0,n1,n2)
   {}
@@ -213,4 +215,6 @@ public:
 
 };
 
-#endif CGAL_TRIANGULATION_DS_FACE_2_H
+CGAL_END_NAMESPACE
+
+#endif //CGAL_TRIANGULATION_DS_FACE_2_H

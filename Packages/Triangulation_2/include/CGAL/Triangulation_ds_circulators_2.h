@@ -12,9 +12,10 @@
 // release_date  :
 //
 // file          : Triangulation/include/CGAL/Triangulation_ds_circulators_2.h
-// source        : $Source$
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
+//
 // author(s)     : Mariette Yvinec
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
@@ -26,55 +27,57 @@
 
 
 
-#include <pair.h>
-#include <iterator.h>
+#include <utility>
+#include <iterator>
 #include <CGAL/circulator.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
+#include <CGAL/Triangulation_utils_2.h>
+
+CGAL_BEGIN_NAMESPACE
 
 template < class Vertex, class Face >
-class CGAL_Triangulation_ds_face_circulator_2
-    : public CGAL_Bidirectional_circulator_base<Face,ptrdiff_t,size_t>
+class Triangulation_ds_face_circulator_2
+  : public CGAL::Bidirectional_circulator_base<Face,
+                                 CGAL_STD::ptrdiff_t,
+				 CGAL_STD::size_t>,
+    public Triangulation_cw_ccw_2
+      
 {
 public:
-    typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
+    typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
+
+  // typedef Face                           value_type;
+//   typedef std:: ptrdiff_t                difference_type;
+//   typedef std::size_t                    size_type;
+//   typedef Face*                          pointer;
+//   typedef const Face*                    const_pointer;
+//   typedef Face&                          reference;
+//   typedef const Face&                    const_reference;
+//   typedef CGAL::Bidirectional_circulator_tag iterator_category;
 
 private: 
   Vertex* _v;
   Face* pos;
-  
 
-public :
-   static int ccw(int i)
-    {
-        return (i+1) % 3;
-    }
-
-
-    static int cw(int i)
-    {
-        return (i+2) % 3;
-    }
-
-
-  CGAL_Triangulation_ds_face_circulator_2()
+public:
+  Triangulation_ds_face_circulator_2()
     : _v(NULL), pos(NULL)
   {}
         
-  CGAL_Triangulation_ds_face_circulator_2(Vertex* v)
+  Triangulation_ds_face_circulator_2(Vertex* v)
     :  _v(v), pos(v->face())
   {}
 
 
-  CGAL_Triangulation_ds_face_circulator_2(Vertex* v,    Face* f)
+  Triangulation_ds_face_circulator_2(Vertex* v,    Face* f)
           :_v(v), pos(f)
   {
     CGAL_triangulation_precondition( f->has_vertex(v));
   }
 
         
-        
-  CGAL_Triangulation_ds_face_circulator_2(const Face_circulator &fc)
+  Triangulation_ds_face_circulator_2(const Face_circulator &fc)
     : _v(fc._v), pos(fc.pos)
   {}
         
@@ -161,22 +164,23 @@ public :
 
 
 template < class Vertex, class Face >
-class CGAL_Triangulation_ds_vertex_circulator_2 :
-    public CGAL_Bidirectional_circulator_base<Vertex,ptrdiff_t,size_t>
+class Triangulation_ds_vertex_circulator_2 :
+  public CGAL::Bidirectional_circulator_base<Vertex, 
+                       CGAL_STD::ptrdiff_t,CGAL_STD::size_t>,
+  public  Triangulation_cw_ccw_2
 {
 public:
-  
-  typedef CGAL_Triangulation_ds_vertex_circulator_2<Vertex, Face> Vertex_circulator;
+  // typedef Vertex                           value_type;
+//   typedef std:: ptrdiff_t                difference_type;
+//   typedef std::size_t                    size_type;
+//   typedef Vertex*                          pointer;
+//   typedef const Vertex*                    const_pointer;
+//   typedef Vertex&                          reference;
+//   typedef const Vertex&                    const_reference;
+//   typedef CGAL::Bidirectional_circulator_tag iterator_category;
+  typedef Triangulation_ds_vertex_circulator_2<Vertex, Face> 
+                                          Vertex_circulator;
     
-  static int ccw(int i)
-  {
-        return (i+1) % 3;
-  }
-
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
 
 private:
   Vertex* _v;
@@ -186,22 +190,11 @@ private:
 
 
 public:
-  CGAL_Triangulation_ds_vertex_circulator_2()
+  Triangulation_ds_vertex_circulator_2()
     :  _v(NULL), _f(NULL), _dim(0)
   {}
                 
-  CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v)
-    : _v( v ), _f(v->face())
-  {
-    if( _f != NULL ) {
-      int i = _f->index( _v );
-      if (_f->dimension() == 2) {_ri = ccw(i);}
-      else {_ri = 1-i;}
-    }
-  }
-
-  CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v,
-				       Face*   f)
+  Triangulation_ds_vertex_circulator_2( Vertex* v,  Face* f)
     : _v( v ), _f(f)
   {
     if( _f != NULL ) {
@@ -210,10 +203,19 @@ public:
       else {_ri = 1-i;}
     }
   }
+
+  Triangulation_ds_vertex_circulator_2(Vertex* v)
+				      
+    : _v( v ), _f(v->face())
+  {
+    if( _f != NULL ) {
+      int i = _f->index( _v );
+      if (_f->dimension() == 2) {_ri = ccw(i);}
+      else {_ri = 1-i;}
+    }
+  }
         
-
-
-  CGAL_Triangulation_ds_vertex_circulator_2(const Vertex_circulator &vc)
+  Triangulation_ds_vertex_circulator_2(const Vertex_circulator &vc)
     : _ri(vc._ri), _v(vc._v), _f(vc._f)
   {}
         
@@ -315,29 +317,28 @@ public:
     return !(*this == NULL);
   }
         
-        
 };
 
 
 
 template < class Vertex, class Face >
-class CGAL_Triangulation_ds_edge_circulator_2 :
-    public CGAL_Bidirectional_circulator_base<
-                    pair<Face*,int>,ptrdiff_t,size_t>
+class Triangulation_ds_edge_circulator_2 :
+  public CGAL::Bidirectional_circulator_base
+             <CGAL_STD::pair<Face*,int>, CGAL_STD::ptrdiff_t,std::size_t>,
+  public Triangulation_cw_ccw_2
 {
 public:
-  typedef CGAL_Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
-  typedef pair<Face*, int>         Edge;
+  typedef Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
+  typedef std::pair<Face*, int>         Edge;
 
-  static int ccw(int i)
-  {
-    return (i+1) % 3;
-  }
-
-  static int cw(int i)
-  {
-    return (i+2) % 3;
-  }
+  // typedef Edge                           value_type;
+//   typedef std:: ptrdiff_t                difference_type;
+//   typedef std::size_t                    size_type;
+//   typedef Edge*                          pointer;
+//   typedef const Edge*                    const_pointer;
+//   typedef Edge&                          reference;
+//   typedef const Edge&                    const_reference;
+//   typedef CGAL::Bidirectional_circulator_tag iterator_category;
 
 private:
   int _ri;
@@ -345,11 +346,11 @@ private:
   Face* _f;
 
 public:
-  CGAL_Triangulation_ds_edge_circulator_2()
+  Triangulation_ds_edge_circulator_2()
     : _v(NULL), _f(NULL)
   {}
             
-   CGAL_Triangulation_ds_edge_circulator_2( Vertex* v)
+   Triangulation_ds_edge_circulator_2( Vertex* v)
 				       
     : _v(v), _f(v->face())
   {
@@ -360,7 +361,7 @@ public:
     }
   }
 
-  CGAL_Triangulation_ds_edge_circulator_2( Vertex* v, Face* f)
+  Triangulation_ds_edge_circulator_2( Vertex* v, Face* f)
     : _v(v), _f(f)
   {
     if( _f != NULL ){
@@ -370,7 +371,7 @@ public:
     }
   }
         
-  CGAL_Triangulation_ds_edge_circulator_2(const Edge_circulator &vc)
+  Triangulation_ds_edge_circulator_2(const Edge_circulator &vc)
     : _ri(vc._ri), _v(vc._v), _f(vc._f)
   {}
         
@@ -387,16 +388,15 @@ public:
   operator*() const
   {
     if( _f == NULL) {
-      return make_pair(_f, 0);
+      return std::make_pair(_f, 0);
     }
-     return make_pair(_f, _ri);
+     return std::make_pair(_f, _ri);
   }
         
   Edge_circulator& operator++()
   {
     CGAL_triangulation_precondition( (_f != NULL) && (_v != NULL) );
     int i = _f->index(_v);
-
     if (_f->dimension() == 1) { 
       _f = _f->neighbor(1-i);
       _ri = 1 - _f->index(_v);
@@ -473,5 +473,6 @@ bool operator==(CGAL_NULL_TYPE n) const
         
 };
         
+CGAL_END_NAMESPACE
 
-#endif CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
+#endif //CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
