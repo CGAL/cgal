@@ -282,12 +282,12 @@ struct Staircases : public Loc_domain< Traits_ > {
     Citerator i = this->pts.begin();
     FT rr = FT(2) * this->r;
     do
-      if (this->traits.signed_x_distance_2_object()(this->maxx, *i) > rr &&
-          this->traits.signed_x_distance_2_object()(*i, this->minx) > rr &&
-          this->traits.signed_y_distance_2_object()(*i, this->miny) > rr &&
-          this->traits.signed_y_distance_2_object()(this->maxy, *i) > rr)
+      if (traits.signed_x_distance_2_object()(this->maxx, *i) > rr &&
+          traits.signed_x_distance_2_object()(*i, this->minx) > rr &&
+          traits.signed_y_distance_2_object()(*i, this->miny) > rr &&
+          traits.signed_y_distance_2_object()(this->maxy, *i) > rr)
         return false;
-    while (++i != this->pts.end());
+    while (++i != pts.end());
     return true;
   } // is_middle()
 
@@ -330,10 +330,10 @@ struct Staircases : public Loc_domain< Traits_ > {
 
   Intervall bottom_intervall() const {
     Point_2 p =
-      this->traits.construct_point_2_below_right_implicit_point_2_object()(
+      traits.construct_point_2_below_right_implicit_point_2_object()(
         this->minx, this->maxy, FT(2) * this->r);
     Point_2 q =
-      this->traits.construct_point_2_below_left_implicit_point_2_object()(
+      traits.construct_point_2_below_left_implicit_point_2_object()(
         this->maxx, this->maxy, FT(2) * this->r);
 
     Citerator i =
@@ -375,7 +375,7 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
                        bind_2(this->traits.less_x_2_object(), q),
-                       bind_2(this->traits.less_y_2_object(), q)));
+                       bind_2(tthis->raits.less_y_2_object(), q)));
     return Intervall(i == this->pts.end() ? this->maxy : *i,
                      j == this->pts.end() ? this->miny : *j);
   } // left_intervall()
@@ -385,7 +385,7 @@ struct Staircases : public Loc_domain< Traits_ > {
       this->traits.construct_point_2_above_right_implicit_point_2_object()(
         this->minx, this->miny, FT(2) * this->r);
     Point_2 q =
-      this->traits.construct_point_2_below_right_implicit_point_2_object()(
+      traits.construct_point_2_below_right_implicit_point_2_object()(
         this->minx, this->maxy, FT(2) * this->r);
 
     Citerator i =
@@ -409,8 +409,8 @@ struct Staircases : public Loc_domain< Traits_ > {
   template < class OutputIterator >
   OutputIterator shared_intervall(OutputIterator o) const {
     if (xgy) {
-      if (this->traits.signed_y_distance_2_object()(this->maxy, this->miny)
-	  > FT(4) * this->r)
+      if (this->traits.signed_y_distance_2_object()(
+          this->maxy, this->miny) > FT(4) * this->r)
         return o;
       Point_2 p =
         this->traits.construct_point_2_below_right_implicit_point_2_object()(
@@ -426,8 +426,8 @@ struct Staircases : public Loc_domain< Traits_ > {
             !this->traits.less_y_2_object()(q, *i))
           *o++ = *i;
     } else {
-      if (this->traits.signed_x_distance_2_object()(this->maxx, this->minx)
-          > FT(4) * this->r)
+      if (this->traits.signed_x_distance_2_object()(
+          this->maxx, this->minx) > FT(4) * this->r)
         return o;
       Point_2 p =
         this->traits.construct_point_2_above_left_implicit_point_2_object()(

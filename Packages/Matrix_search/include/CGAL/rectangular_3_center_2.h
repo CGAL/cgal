@@ -38,12 +38,6 @@
 #include <algorithm>
 #include <vector>
 
-#ifdef _MSC_VER
-// that compiler cannot even distinguish between global
-// and class scope, so ...
-#define Base B_B_Base
-#endif // _MSC_VER
-
 CGAL_BEGIN_NAMESPACE
 
 template < class ForwardIterator, class OutputIterator,
@@ -1327,6 +1321,10 @@ rectangular_3_center_2_type2(
     }
 
     // still a covering, but now there must be enough points in G
+    std::cerr << b1 << " - " << b3 << " - " << b3-b1 << std::endl;
+    std::cerr << cutoff << std::endl;
+    std::cerr << e-s << std::endl;
+
     CGAL_optimisation_assertion(b3 - b1 >= cutoff);
     e = b1;
     // adjust Q_t
@@ -1563,9 +1561,7 @@ rectangular_3_center_2(
 
 CGAL_END_NAMESPACE
 
-#ifdef _MSC_VER
-#undef Base
-#endif // _MSC_VER
+
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_H)
 // ----------------------------------------------------------------------------

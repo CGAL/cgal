@@ -76,41 +76,28 @@ typedef PCont::iterator                    iterator;
 typedef Creator_uniform_2< FT, Point >     Creator;
 typedef Random_points_in_square_2< Point, Creator >
                                            Point_generator;
-#ifdef _MSC_VER
-// that compiler cannot even distinguish between global
-// and class scope, so ...
-#define Base B_B_Base
-#endif // _MSC_VER
-
-#ifdef CGAL_CFG_NO_NAMESPACE
 template < class P,
            class Creator =
-           CGAL_STD::Creator_uniform_2< typename P::R::FT, P > >
-class Random_p_clusters_2 : public CGAL_STD::Random_generator_base< P > {
-#else
-template < class P,
-           class Creator =
-           CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::R::FT, P > >
+           CGAL::Creator_uniform_2< typename P::R::FT, P > >
 class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
-#endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
     typedef typename P::R::FT FT;
     double p = this->_rnd.get_double();
     Creator creator;
     if (p <= 1.0 / n)
-      this->d_item =
+      d_item =
         creator(FT(p0.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
                 FT(p0.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else if (p <= 2.0 / n)
-      this->d_item =
+      d_item =
         creator(FT(p1.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
                 FT(p1.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else if (p <= 3.0 / n)
-      this->d_item =
+      d_item =
         creator(FT(p2.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
                 FT(p2.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else
-      this->d_item =
+      d_item =
         creator(FT(p3.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
                 FT(p3.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
   }
@@ -124,14 +111,14 @@ public:
   : Base(r - c_size_, rnd),
     n(n_),
     c_size(c_size_),
-    p0(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
-                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p1(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
-                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p2(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
-                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
-    p3(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
-                 this->d_range * (2 * this->_rnd.get_double() - 1.0)))
+    p0(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
+                 d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p1(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
+                 d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p2(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
+                 d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p3(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
+                 d_range * (2 * this->_rnd.get_double() - 1.0)))
   {
     CGAL_precondition(n >= 1 && n <= 4);
     CGAL_precondition(c_size >= 0 && c_size <= r);
@@ -151,10 +138,6 @@ private:
   double c_size;
   P p0, p1, p2, p3;
 };
-
-#ifdef _MSC_VER
-#undef Base
-#endif // _MSC_VER
 
 int
 main(int argc, char* argv[])

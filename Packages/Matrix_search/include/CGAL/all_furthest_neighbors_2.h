@@ -37,12 +37,6 @@
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
-#ifdef _MSC_VER
-// that compiler cannot even distinguish between global
-// and class scope, so ...
-#define Base B_B_Base
-#endif // _MSC_VER
-
 template < class Operation, class RandomAccessIC >
 class All_furthest_neighbor_matrix
 : public Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
@@ -83,9 +77,6 @@ public:
   }
 };
 
-#ifdef _MSC_VER
-#undef Base
-#endif // _MSC_VER
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && !defined(CGAL_CFG_MATCHING_BUG_2)
 

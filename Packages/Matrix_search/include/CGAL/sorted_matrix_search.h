@@ -110,7 +110,7 @@ public:
     for (int i = 0; i < dim; ++i)
       for (int j = 0; j < dim; ++j) {
         if (CGAL_NTS abs(base_matrix(x + i, y + j) - v) < Value(1E-10))
-          std::cerr << "***" <<        base_matrix(x + i, y + j) << std::endl;
+          std::cerr << "***" << base_matrix(x + i, y + j) << std::endl;
         if (base_matrix(x + i, y + j) == v)
           return true;
       }

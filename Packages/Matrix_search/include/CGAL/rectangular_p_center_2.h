@@ -45,12 +45,6 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef _MSC_VER
-// that compiler cannot even distinguish between global
-// and class scope, so ...
-#define Base B_B_Base
-#endif // _MSC_VER
-
 template < class Operation,
            class RandomAccessIC_row,
            class RandomAccessIC_column >
@@ -100,10 +94,6 @@ public:
     return Base::operator()( r, number_of_columns() - 1 - c);
   }
 };
-
-#ifdef _MSC_VER
-#undef Base
-#endif // _MSC_VER
 
 template < class Operation,
            class RandomAccessIC_row,
