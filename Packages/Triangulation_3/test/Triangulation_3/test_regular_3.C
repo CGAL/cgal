@@ -215,8 +215,10 @@ int main()
   list_point lp;
   int a, b, d;
   for (a=0;a!=10;a++)
-    for (b=0;b!=10;b++)
-      for (d=0;d!=10;d++)
+    //    for (b=0;b!=10;b++)
+    for (b=0;b!=5;b++)
+      //      for (d=0;d!=10;d++)
+      for (d=0;d!=5;d++)
 	lp.push_back(Weighted_point( Point(a*b-d*a + (a-b)*10 +a ,
 					   a-b+d +5*b,
 					   a*a-d*d+b),

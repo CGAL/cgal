@@ -36,7 +36,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/_test_types.C>
-#include <CGAL/_test_cls_triangulation_3.C>
+#include <CGAL/_test_cls_delaunay_3.C>
 
 bool del=true;
 
@@ -53,7 +53,7 @@ std::cout << " with CGAL::Triangulation_geom_traits_3: " << std::endl;
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
   typedef CGAL::Delaunay_triangulation_3<traits,Tds>                Cls;
 
-  _test_cls_triangulation_3( Cls() );
+  _test_cls_delaunay_3( Cls() );
 
   return 0;
 }

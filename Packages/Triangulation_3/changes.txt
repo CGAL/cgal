@@ -1,8 +1,14 @@
+Version 1.35 (14 jul 00)
+first version of vertex_removal in Delaunay_3
+small functionalities (are_equal, has_vertex) on facets
+(nothing documented yet)
+CGAL_NTS added in predicates/Regular*3.h
+
 Version 1.34 (3 apr 00)
 fix in the doc :
 cheating with concept Tds_3 and its template parameters
 to remove problem with indexing...
-To be arranged latex
+To be arranged later
 
 Version 1.33 (29 march 00)
 very bad version of the new doc

@@ -12,11 +12,12 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_cls_triangulation_3.C
+// file          : include/CGAL/_test_cls_delaunay_3.C
 // revision      : 
 // revision_date : 
 
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+//                 Monique Teillaud
 
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -35,7 +36,7 @@
 #include <CGAL/Random.h>
 template <class Triangulation>
 void
-_test_cls_triangulation_3(const Triangulation &)
+_test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
 
@@ -416,6 +417,28 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
 
+  // impossible !!!
+//   // %%%%%%%%%% deletion in Delaunay
+//   if (del) {
+//     std::cout << "    deletion in Delaunay - grid case" << std::endl;
+//     Cls Tdel( T3_0 );
+//     Vertex_handle v;
+//     while ( Tdel.number_of_vertices() >= 1 ) {
+//       if ( Tdel.dimension() > 1 )
+// 	v = Tdel.infinite_cell()->vertex
+// 	  ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )&3 );
+//       else
+// 	if ( Tdel.dimension() == 1 )
+// 	  v = Tdel.infinite_cell()->vertex
+// 	    ( (Tdel.infinite_cell()->index( Tdel.infinite_vertex() ) +1 )%2 );
+// 	else
+// 	  v = Tdel.infinite_cell()->neighbor(0)->vertex(0);
+
+//       Tdel.remove( v );
+//       assert(Tdel.is_valid(false));
+//     }
+//   }
+
 
    std::cout << "    Constructor12 " << std::endl;
    Cls T3_1;
@@ -495,6 +518,27 @@ _test_cls_triangulation_3(const Triangulation &)
   
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
+
+  // %%%%%%%%%% deletion in Delaunay
+  if (del) {
+    std::cout << "    deletion in a 10points Delaunay triangulation";
+    Vertex_handle v;
+    while ( T3_5.number_of_vertices() >= 1 ) {
+      if ( T3_5.dimension() > 1 )
+	v = T3_5.infinite_cell()->vertex
+	  ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )&3 );
+      else
+	if ( T3_5.dimension() == 1 )
+	  v = T3_5.infinite_cell()->vertex
+	    ( (T3_5.infinite_cell()->index( T3_5.infinite_vertex() ) +1 )%2 );
+	else
+	  v = T3_5.infinite_cell()->neighbor(0)->vertex(0);
+
+      T3_5.remove( v );
+    }
+    assert(T3_5.is_valid(false));
+  }
+  std::cout << " done" << std::endl;
 
 //  // Test random triangulation :
 
