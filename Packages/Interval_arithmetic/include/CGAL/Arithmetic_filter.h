@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999,2000 The CGAL Consortium
+// Copyright (c) 1998,1999,2000,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -72,21 +72,16 @@ template < class CT, class ET, class Type = Dynamic,
            bool Protection = true, class Cache = No_Filter_Cache >
 class Filtered_exact
 {
-public:
-  typedef typename Number_type_traits<CT>::Has_gcd      Has_gcd;
-  typedef typename Number_type_traits<CT>::Has_division Has_division;
-  typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
-
-private:
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
-  typedef Interval_nt_advanced IA;
+  typedef Interval_nt_advanced                            IA;
 
   // Cache managing functions.
 
-  IA give_interval (const IA &inter) const
+  const IA & give_interval (const IA &inter) const
   {
       return inter;
   }
+
   IA give_interval (const No_Filter_Cache &) const
   {
       return Interval_nt_advanced(CGAL::to_interval(_value));
@@ -94,17 +89,24 @@ private:
 
   void compute_cache (const No_Filter_Cache &) const
   {}
+
   void compute_cache (IA &inter) const
-  { inter = give_interval (No_Filter_Cache()); }
+  {
+    inter = give_interval (No_Filter_Cache());
+  }
 
   void update_cache() { compute_cache (_cache); }
 
   // Private data members.
 
-  CT _value;
+  CT    _value;
   Cache _cache;
 
 public:
+
+  typedef typename Number_type_traits<CT>::Has_gcd      Has_gcd;
+  typedef typename Number_type_traits<CT>::Has_division Has_division;
+  typedef typename Number_type_traits<CT>::Has_sqrt     Has_sqrt;
 
   Filtered_exact () {}
   Filtered_exact (const Filtered_exact<CT, ET, Type, Protection, Cache> & fil)
@@ -116,33 +118,16 @@ public:
       : _value(num, den)   { update_cache(); }
 
   // The access functions.
-  CT value()	const { return _value; }
+  const CT & value() const { return _value; }
   IA interval() const { return give_interval(_cache); }
-  ET exact()    const
-  {
-#ifndef CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-    return convert_to<ET>(_value);
-#else
-    return convert_from_to(ET(), _value);
-#endif // CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-  }
+  ET exact()    const { return convert_to<ET>(_value); }
+
   double to_double() const { return CGAL::to_double(_value); }
   Restricted_double dbl() const { return Restricted_double(to_double()); }
 
-  Fil  operator- ()               const { return Fil(-_value); }
-  bool operator< (const Fil& fil) const { return _value <  fil._value; }
-  bool operator> (const Fil& fil) const { return _value >  fil._value; }
-  bool operator<=(const Fil& fil) const { return _value <= fil._value; }
-  bool operator>=(const Fil& fil) const { return _value >= fil._value; }
-  bool operator==(const Fil& fil) const { return _value == fil._value; }
-  bool operator!=(const Fil& fil) const { return _value != fil._value; }
+  Fil  operator- ()  const { return Fil(-_value); }
 
 #ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-  Fil operator+(const Fil& fil) const { return Fil(_value + fil._value); }
-  Fil operator-(const Fil& fil) const { return Fil(_value - fil._value); }
-  Fil operator*(const Fil& fil) const { return Fil(_value * fil._value); }
-  Fil operator/(const Fil& fil) const { return Fil(_value / fil._value); }
-
   Fil& operator+=(const Fil& fil)
     { _value += fil._value; update_cache(); return *this; }
   Fil& operator-=(const Fil& fil)
@@ -155,6 +140,207 @@ public:
     { _value %= fil._value; update_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
+
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator+(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() + b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator-(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() - b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator*(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() * b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator/(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() / b.value(); }
+
+// mixed operators
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator+(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          int b)
+{ return a.value() + b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator-(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          int b)
+{ return a.value() - b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator*(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          int b)
+{ return a.value() * b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator/(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+          int b)
+{ return a.value() / b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator+(int a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a + b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator-(int a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a - b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator*(int a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a * b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+Filtered_exact<CT, ET, Type, Protected, Cache>
+operator/(int a,
+          const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a / b.value(); }
+
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+               const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() < b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+               const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() > b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() <= b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() >= b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator==(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() == b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator!=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a.value() != b.value(); }
+
+
+// mixed operators
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+               int b)
+{ return a.value() < b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+               int b)
+{ return a.value() > b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                int b)
+{ return a.value() <= b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                int b)
+{ return a.value() >= b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator==(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                int b)
+{ return a.value() == b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator!=(const Filtered_exact<CT, ET, Type, Protected, Cache>& a,
+                int b)
+{ return a.value() != b; }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<(int a,
+               const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a < b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>(int a,
+               const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a > b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator<=(int a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a <= b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator>=(int a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a >= b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator==(int a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a == b.value(); }
+
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+bool operator!=(int a,
+                const Filtered_exact<CT, ET, Type, Protected, Cache>& b)
+{ return a != b.value(); }
+
 
 
 namespace CGALi {
@@ -179,7 +365,7 @@ namespace CGALi {
     return NT();
   }
 
-    template <class NT>
+  template <class NT>
   NT
   checked_div(const NT& n1, const NT& n2, Tag_true)
   {
@@ -221,16 +407,10 @@ div (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
 				  CGAL_IA_PROTECTED,CGAL_IA_CACHE>::Has_gcd()); }
 
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
-Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-sqrt (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil)
+Filtered_exact<CT, ET, Type, Protected, Cache>
+sqrt (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::sqrt(fil.value()); }
 
 
@@ -272,40 +452,22 @@ square (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
 } // namespace NTS
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 bool
-is_valid (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                                CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+is_valid (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::is_valid(fil.value()); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 bool
-is_finite (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                                CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+is_finite (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::is_finite(fil.value()); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 double
-to_double (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
-                                CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
+to_double (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::to_double(fil.value()); }
 
 namespace NTS {
@@ -318,8 +480,8 @@ inline
 static
 #endif
 Sign
-sign (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                           CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil)
+sign (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                           CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
 { return CGAL_NTS sign(fil.value()); }
 
 
@@ -331,10 +493,10 @@ inline
 static
 #endif
 Comparison_result
-compare (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                              CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil,
-	 const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                              CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
+compare (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                              CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
+	 const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                              CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
 { return CGAL_NTS compare(fil.value(), fil2.value()); }
 
 
@@ -346,8 +508,8 @@ inline
 static
 #endif
 Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-abs (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil)
+abs (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
 { return CGAL_NTS abs(fil.value()); }
 
 } // namespace NTS
@@ -360,10 +522,10 @@ inline
 static
 #endif
 Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-min (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil,
-     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
+min (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
+     const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
 { return min(fil.value(), fil2.value()); }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
@@ -374,52 +536,32 @@ inline
 static
 #endif
 Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,CGAL_IA_PROTECTED,CGAL_IA_CACHE>
-max (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil,
-     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                          CGAL_IA_PROTECTED,CGAL_IA_CACHE>& fil2)
+max (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil,
+     const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
+                          CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil2)
 { return max(fil.value(), fil2.value()); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 io_Operator
-io_tag (const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                             CGAL_IA_PROTECTED,CGAL_IA_CACHE> &fil)
+io_tag (const Filtered_exact<CT, ET, Type, Protected, Cache> &fil)
 { return io_tag(fil.value()); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 std::ostream &
 operator<< (std::ostream& os,
-	    const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-                                 CGAL_IA_PROTECTED,CGAL_IA_CACHE>& d)
-{
-    return os << d.value();
-}
+	    const Filtered_exact<CT, ET, Type, Protected, Cache>& d)
+{ return os << d.value(); }
 
-#ifndef CGAL_CFG_MATCHING_BUG_2
-template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
-           class CGAL_IA_CACHE >
+template < class CT, class ET, class Type, bool Protected, class Cache >
 inline
-#else
-static
-#endif
 std::istream &
 operator>> (std::istream &is, 
-	    Filtered_exact<CGAL_IA_CT,CGAL_IA_ET,Dynamic,
-	                   CGAL_IA_PROTECTED,CGAL_IA_CACHE>& d)
+	    Filtered_exact<CT, ET, Type, Protected, Cache>& d)
 {
-    CGAL_IA_CT e;
+    CT e;
     is >> e;
     d = e; 
     return is;

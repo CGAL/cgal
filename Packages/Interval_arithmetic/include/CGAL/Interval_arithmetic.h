@@ -114,46 +114,7 @@ public:
     throw unsafe_comparison();
   }
 
-  bool operator<  (const IA &d) const
-  {
-    if (sup()  < d.inf()) return true;
-    if (inf() >= d.sup()) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>  (const IA &d) const
-  {
-    return d < *this;
-  }
-
-  bool operator<= (const IA &d) const
-  {
-    if (sup() <= d.inf()) return true;
-    if (inf() >  d.sup()) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>= (const IA &d) const
-  {
-    return d <= *this;
-  }
-
-  bool operator== (const IA &d) const
-  {
-    if (d.inf() >  sup() || d.sup() < inf()) return false;
-    if (d.inf() == sup() && d.sup() == inf()) return true;
-    overlap_action();
-    return false;
-  }
-
-  bool operator!= (const IA &d) const
-  {
-    return !(*this == d);
-  }
-
-  // TODO : Maybe I should suppress these : they are useless.
+  // TODO : Maybe I should suppress these : they are useless and risky.
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
@@ -208,6 +169,161 @@ private:
 
 template <bool Protected>
 unsigned Interval_nt<Protected>::number_of_failures;
+
+template <bool Protected>
+inline
+bool
+operator<(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{
+  if (a.sup()  < b.inf()) return true;
+  if (a.inf() >= b.sup()) return false;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{ return b < a; }
+
+template <bool Protected>
+inline
+bool
+operator<=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{
+  if (a.sup() <= b.inf()) return true;
+  if (a.inf() >  b.sup()) return false;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{ return b <= a; }
+
+template <bool Protected>
+inline
+bool
+operator==(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{
+  if (b.inf() >  a.sup() || b.sup() <  a.inf()) return false;
+  if (b.inf() == a.sup() && b.sup() == a.inf()) return true;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator!=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
+{ return ! (a == b); }
+
+// Mixed operators.
+
+template <bool Protected>
+inline
+bool
+operator<(int a, const Interval_nt<Protected> &b)
+{
+  if (a < b.inf()) return true;
+  if (a >= b.sup()) return false;
+  b.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>(int a, const Interval_nt<Protected> &b)
+{ return b < a; }
+
+template <bool Protected>
+inline
+bool
+operator<=(int a, const Interval_nt<Protected> &b)
+{
+  if (a <= b.inf()) return true;
+  if (a >  b.sup()) return false;
+  b.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>=(int a, const Interval_nt<Protected> &b)
+{ return b <= a; }
+
+template <bool Protected>
+inline
+bool
+operator==(int a, const Interval_nt<Protected> &b)
+{
+  if (b.inf() >  a || b.sup() <  a) return false;
+  if (b.inf() == a && b.sup() == a) return true;
+  b.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator!=(int a, const Interval_nt<Protected> &b)
+{ return ! (a == b); }
+
+template <bool Protected>
+inline
+bool
+operator<(const Interval_nt<Protected> &a, int b)
+{
+  if (a.sup()  < b) return true;
+  if (a.inf() >= b) return false;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>(const Interval_nt<Protected> &a, int b)
+{ return b < a; }
+
+template <bool Protected>
+inline
+bool
+operator<=(const Interval_nt<Protected> &a, int b)
+{
+  if (a.sup() <= b) return true;
+  if (a.inf() >  b) return false;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator>=(const Interval_nt<Protected> &a, int b)
+{ return b <= a; }
+
+template <bool Protected>
+inline
+bool
+operator==(const Interval_nt<Protected> &a, int b)
+{
+  if (b >  a.sup() || b <  a.inf()) return false;
+  if (b == a.sup() && b == a.inf()) return true;
+  a.overlap_action();
+  return false;
+}
+
+template <bool Protected>
+inline
+bool
+operator!=(const Interval_nt<Protected> &a, int b)
+{ return ! (a == b); }
 
 
 template <bool Protected>
@@ -369,15 +485,6 @@ Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 	   // We could do slightly better -> [0;HUGE_VAL] when d.sup()==0,
 	   // but is this worth ?
 }
-
-#if 0 // TODO : Do this for the next release, same for is_one()
-bool is_zero(const NT &n)
-{
-  if (0 >  n.sup() || 0  < n.inf()) return false;
-  if (0 == n.sup() && 0 == n.inf()) return true;
-  n.overlap_action();
-}
-#endif
 
 template <bool Protected>
 inline

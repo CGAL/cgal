@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1999,2000,2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -300,18 +300,6 @@ public :
   Self operator- () const
   { return new Lazy_exact_Opp<ET>(*this); }
 
-  Self operator+ (const Self & a) const
-  { return new Lazy_exact_Add<ET>(*this, a); }
-
-  Self operator- (const Self & a) const
-  { return new Lazy_exact_Sub<ET>(*this, a); }
-
-  Self operator* (const Self & a) const
-  { return new Lazy_exact_Mul<ET>(*this, a); }
-
-  Self operator/ (const Self & a) const
-  { return new Lazy_exact_Div<ET>(*this, a); }
-
   const Interval_nt<true>& approx() const
   { return ptr()->approx(); }
 
@@ -327,55 +315,218 @@ public :
   const ET & exact() const
   { return ptr()->exact(); }
 
-  bool operator< (const Self & a) const
-  {
-    try
-    {
-      return approx() < a.approx();
-    }
-    catch (Interval_nt<false>::unsafe_comparison)
-    {
-      // std::cerr << "Interval filter failure (<)" << std::endl;
-      return exact() < a.exact();
-    }
-  }
-
-  bool operator> (const Self & a) const
-  {
-      return a<*this;
-  }
-
-  bool operator>= (const Self & a) const
-  {
-      return !(*this<a);
-  }
-
-  bool operator<= (const Self & a) const
-  {
-      return !(a<*this);
-  }
-
-  bool operator== (const Self & a) const
-  {
-    try
-    {
-      return approx() == a.approx();
-    }
-    catch (Interval_nt<false>::unsafe_comparison)
-    {
-      // std::cerr << "Interval filter failure (==)" << std::endl;
-      return exact() == a.exact();
-    }
-  }
-
-  bool operator!= (const Self & a) const
-  {
-      return ! (*this == a);
-  }
-
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
+
+template <typename ET>
+bool
+operator<(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{
+  try
+  {
+    return a.approx() < b.approx();
+  }
+  catch (Interval_nt<false>::unsafe_comparison)
+  {
+    // std::cerr << "Interval filter failure (<)" << std::endl;
+    return a.exact() < b.exact();
+  }
+}
+
+template <typename ET>
+bool
+operator==(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{
+  try
+  {
+    return a.approx() == b.approx();
+  }
+  catch (Interval_nt<false>::unsafe_comparison)
+  {
+    // std::cerr << "Interval filter failure (==)" << std::endl;
+    return a.exact() == b.exact();
+  }
+}
+
+template <typename ET>
+inline
+bool
+operator>(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return b < a; }
+
+template <typename ET>
+inline
+bool
+operator<=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return ! (b < a); }
+
+template <typename ET>
+inline
+bool
+operator>=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return ! (a < b); }
+
+template <typename ET>
+inline
+bool
+operator!=(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return ! (a == b); }
+
+
+// Mixed operators with int.
+template <typename ET>
+bool
+operator<(int a, const Lazy_exact_nt<ET>& b)
+{
+  try {
+    return a < b.approx();
+  }
+  catch (Interval_nt<false>::unsafe_comparison) {
+    return a < b.exact();
+  }
+}
+
+template <typename ET>
+bool
+operator<(const Lazy_exact_nt<ET>& a, int b)
+{
+  try {
+    return a.approx() < b;
+  }
+  catch (Interval_nt<false>::unsafe_comparison) {
+    return a.exact() < b;
+  }
+}
+
+template <typename ET>
+bool
+operator==(int a, const Lazy_exact_nt<ET>& b)
+{
+  try {
+    return a == b.approx();
+  }
+  catch (Interval_nt<false>::unsafe_comparison) {
+    return a == b.exact();
+  }
+}
+
+template <typename ET>
+inline
+bool
+operator==(const Lazy_exact_nt<ET>& a, int b)
+{ return b == a; }
+
+template <typename ET>
+inline
+bool
+operator>(int a, const Lazy_exact_nt<ET>& b)
+{ return b < a; }
+
+template <typename ET>
+inline
+bool
+operator>(const Lazy_exact_nt<ET>& a, int b)
+{ return b < a; }
+
+template <typename ET>
+inline
+bool
+operator<=(int a, const Lazy_exact_nt<ET>& b)
+{ return ! (b < a); }
+
+template <typename ET>
+inline
+bool
+operator<=(const Lazy_exact_nt<ET>& a, int b)
+{ return ! (b < a); }
+
+template <typename ET>
+inline
+bool
+operator>=(int a, const Lazy_exact_nt<ET>& b)
+{ return ! (a < b); }
+
+template <typename ET>
+inline
+bool
+operator>=(const Lazy_exact_nt<ET>& a, int b)
+{ return ! (a < b); }
+
+template <typename ET>
+inline
+bool
+operator!=(int a, const Lazy_exact_nt<ET>& b)
+{ return ! (a == b); }
+
+template <typename ET>
+inline
+bool
+operator!=(const Lazy_exact_nt<ET>& a, int b)
+{ return ! (b == a); }
+
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator+(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Add<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator-(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Sub<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator*(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Mul<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator/(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Div<ET>(a, b); }
+
+// mixed operators
+template <typename ET>
+Lazy_exact_nt<ET>
+operator+(const Lazy_exact_nt<ET>& a, int b)
+{ return new Lazy_exact_Add<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator-(const Lazy_exact_nt<ET>& a, int b)
+{ return new Lazy_exact_Sub<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator*(const Lazy_exact_nt<ET>& a, int b)
+{ return new Lazy_exact_Mul<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator/(const Lazy_exact_nt<ET>& a, int b)
+{ return new Lazy_exact_Div<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator+(int a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Add<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator-(int a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Sub<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator*(int a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Mul<ET>(a, b); }
+
+template <typename ET>
+Lazy_exact_nt<ET>
+operator/(int a, const Lazy_exact_nt<ET>& b)
+{ return new Lazy_exact_Div<ET>(a, b); }
+
 
 template <typename ET>
 inline
@@ -501,6 +652,30 @@ template <typename ET>
 inline
 Lazy_exact_nt<ET> &
 operator/=(Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
+{ return a = a / b; }
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET> &
+operator+=(Lazy_exact_nt<ET> & a, int b)
+{ return a = a + b; }
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET> &
+operator-=(Lazy_exact_nt<ET> & a, int b)
+{ return a = a - b; }
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET> &
+operator*=(Lazy_exact_nt<ET> & a, int b)
+{ return a = a * b; }
+
+template <typename ET>
+inline
+Lazy_exact_nt<ET> &
+operator/=(Lazy_exact_nt<ET> & a, int b)
 { return a = a / b; }
 
 template <typename ET>
