@@ -1422,16 +1422,15 @@ public:
       SHalfedge_around_facet_circulator c(u), cend(c);
       CGAL_For_all( c, cend) {
 	D.set_facet( c, f);
-	Point_3 p(D.point(D.vertex(c)));
-	if( lexicographically_xyz_smaller( p, D.point(D.vertex(u_min))))
+	if( lexicographically_xyz_smaller(D.point(D.vertex(c)), D.point(D.vertex(u_min))))
 	  u_min = c;
 	linked[c] = true;
       }
       /* store the edge use at the lexicographicaly minimum facet vertex, as
 	 a cycle entry of f.  The outermost cycle is stored at first
 	 on the facet's cycles list. */
-      SObject_list f_entries(f->boundary_entry_objects_);
-      if( is_empty_range( f_entries.begin(),f_entries.end())) {
+      if( is_empty_range( f->boundary_entry_objects_.begin(),
+			  f->boundary_entry_objects_.end())) {
 	D.store_boundary_object( u_min, f);
 	TRACEN("new outer cycle min. vertex: "<<D.point(D.vertex(u_min)));
       }
@@ -1440,8 +1439,7 @@ public:
 	CGAL_nef3_assertion( assign( f_sedge, 
 				     f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
-	Point_3 p(D.point(D.vertex(f_sedge)));
-	if( lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p))
+	if( lexicographically_xyz_smaller(D.point(D.vertex(u_min)), D.point(D.vertex(f_sedge))))
 	  D.store_as_first_boundary_object( u_min, f);
 	else
 	  D.store_boundary_object( u_min, f);
