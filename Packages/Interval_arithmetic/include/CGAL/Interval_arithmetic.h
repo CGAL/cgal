@@ -253,7 +253,13 @@ inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 {
   CGAL_FPU_set_rounding_to_minus_infinity();
   CGAL_Interval_nt_advanced tmp;
-  tmp.inf = - sqrt(-d.inf);
+  // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
+  // sqrt([-a,+b]) => [       0;sqrt(+b)] => we assume roundoff error.
+  // sqrt([-a,-b]) => [sqrt(-a);sqrt(-b)] => we assume user bug.
+  if ((d.inf<0) || (d.sup<0))
+    tmp.inf = - sqrt(-d.inf);
+  else
+    tmp.inf = 0;
   CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
