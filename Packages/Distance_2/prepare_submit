@@ -15,10 +15,8 @@ fi
 
 make xsrcs
 
-echo
-echo '>>>>>>'
-echo "   Now adapt version and description.txt and run make_zip"
-echo '>>>>>>'
+echo "Now adapt version and description.txt and run make_zip"
 
 
 
+cvs -q commit -m "" src include

@@ -6,10 +6,6 @@ then
     mkdir include/CGAL
 fi
 
-if [ ! -d src ]
-then
-    mkdir src
-fi
 
 cd web
 if [ ! -d lis ]
@@ -20,7 +16,10 @@ fi
 make xsrcs
 
 echo
-echo "Now adapt version and description.txt and run make_zip"
+echo '>>>>>>'
+echo "   Now adapt version and description.txt and run make_zip"
+echo '>>>>>>'
 
 
 
+cvs -q commit -m "" src include
