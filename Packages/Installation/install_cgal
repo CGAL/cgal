@@ -4195,7 +4195,13 @@ write_linker_flags()
 	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
     fi
-    ${_printf} "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+    if [ -n "${SEPARATE_LIBPATH}" ]; then
+	${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
+	${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+    else
+	${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
+	${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
+    fi
     makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
     makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
@@ -4210,7 +4216,7 @@ write_linker_flags()
   #
   ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
   else
@@ -4222,7 +4228,7 @@ write_linker_flags()
   #
   ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${GEOWLIBS}" >> ${FILE}
   else
