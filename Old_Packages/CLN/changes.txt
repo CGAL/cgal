@@ -1,5 +1,8 @@
 Changes done to the CLN package.
 
+Version 2.0 on 23 August 2000.
+- Fixed CGAL_NTS compare in the example file.
+
 Version 1.9 on 3 August 2000.
 - Moved workaround for Solaris/GCC from src/CLN.C to include/CGAL/CLN/common.h.
 - Moved workaround for Quotient<cl_I> from src/CLN.C to CGAL/CLN/cl_integer.h.

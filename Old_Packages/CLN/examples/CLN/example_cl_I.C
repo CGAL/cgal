@@ -19,7 +19,7 @@ main ()
 
     cl_I b = "31";
     cl_I p = b * 75;
-    bool ok = (p==2325) && (CGAL::compare(p,cl_I(31*75))==CGAL::EQUAL);
+    bool ok = (p==2325) && (CGAL_NTS compare(p,cl_I(31*75))==CGAL::EQUAL);
 
     cout << (ok ? "ok" : "ERROR") << endl;
     cout << p << " == " << 31*75 << endl;
