@@ -132,6 +132,8 @@ public:
   Gmpz operator*(const Gmpz &z) const;
   Gmpz operator*(int i) const;
 
+  Gmpz operator%(const Gmpz &z) const;
+
   Gmpz operator/(const Gmpz &z) const;
   Gmpz operator/(int i) const;
 
@@ -407,6 +409,15 @@ Gmpz::operator/(const Gmpz &z) const
 
 inline
 Gmpz
+Gmpz::operator%(const Gmpz &z) const
+{
+    Gmpz_rep* Res = new Gmpz_rep();
+    mpz_tdiv_r(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
+    return Gmpz(Res);
+}
+
+inline
+Gmpz
 Gmpz::operator/(int i) const
 {
     if (i>0)
@@ -522,8 +533,7 @@ gcd(const Gmpz &z, int i)
 
 inline
 Gmpz
-exact_division(const Gmpz &z1,
-                    const Gmpz &z2)
+exact_division(const Gmpz &z1, const Gmpz &z2)
 {
   Gmpz_rep* Res = new Gmpz_rep();
   mpz_divexact(Res->mpZ, z1.ptr()->mpZ, z2.ptr()->mpZ);

@@ -1,3 +1,6 @@
+4.14     (1 Mar 01)
+- Added operator% to Gmpz.
+
 4.13     (25 Feb 01)
 - Fix warning.
 
