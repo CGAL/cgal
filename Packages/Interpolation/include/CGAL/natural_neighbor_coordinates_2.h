@@ -183,6 +183,21 @@ natural_neighbor_coordinates_2(const Dt& dt,
 					traits);
 };
 
+//class providing a function object:
+template <class Dt, class OutputIterator>
+class natural_neighbor_coordinates_2_object 
+{
+public:
+  std::pair< OutputIterator, typename Dt::Geom_traits::FT > 
+  operator()(const Dt& dt, 
+	     typename Dt::Vertex_handle vh,
+	     OutputIterator out){
+    return natural_neighbor_coordinates_2(dt, vh, out);
+  }
+};
+
+
+
 //-------------------------------------------------------------------
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
