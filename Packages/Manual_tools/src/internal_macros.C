@@ -290,7 +290,8 @@ void handleClassFileEnd( void) {
 }
 
 void handleClassEnvironment() {
-    template_class_name = macroX("\\ccPureClassTemplateName");
+    string ref_scope_name = macroX("\\ccPureRefScope");
+    template_class_name = ref_scope_name + macroX("\\ccPureClassTemplateName");
     string formatted_template_class_name = 
 	convert_C_to_html( template_class_name);
     class_name = macroX( "\\ccPureClassName");
@@ -336,8 +337,9 @@ void handleClassEnd( void) {
 
 void handleHtmlClassFile( const string& filename, const Buffer_list& T) {
     char*  s = text_block_to_string( T);
-    string p = string("<A HREF=\"") + filename + "\">" + s + "</A>";
-    handleClassFile( filename, p);
+    string fixed_filename = replace_template_braces_and_colons(filename);
+    string p = string("<A HREF=\"") + fixed_filename + "\">" + s + "</A>";
+    handleClassFile( fixed_filename, p);
     delete[] s;    
 }
 

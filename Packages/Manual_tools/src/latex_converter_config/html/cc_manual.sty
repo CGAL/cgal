@@ -431,34 +431,35 @@
                    \lciParseCC{\lciRefDeclCont}%
                }
 
-\newcommand{\lciRefDeclCont}{\lciRefDeclContX\lciCCParameter}
-\newcommand{\lciRefDeclContX}[1]{%
-                   \def\ccPureRefName{#XC1}%
-                   \renewcommand{\ccRefName}{\ccc{#XC1}}%
-                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC1<@%
+\newcommand{\lciRefDeclCont}{\lciRefDeclContX\ccPureRefScope\lciCCParameter}
+\newcommand{\lciRefDeclContX}[2]{%
+                   \def\ccPureRefName{#XC1#XC2}%
+                   \renewcommand{\ccRefName}{\ccc{#XC1#XC2}}%
+                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC2<@%
                    \ccRefPageBegin
                    \ccRefSection{\ccRefCategory}{\ccPureRefName}%
                    % needed for compliance with ccClass
-                   \def\ccPureClassTemplateName{#XC1}%
-                   \renewcommand{\ccClassTemplateName}{\ccc{#XC1}}%
+                   \def\ccPureClassTemplateName{#XC1#XC2}%
+                   \renewcommand{\ccClassTemplateName}{\ccc{#XC1#XC2}}%
                    \begin{lciClass}%% to make classname and templateclassname
                                    %% known internally
                }
 
 % #1 = classname (functioname etc.) without template parameters
 \newcommand{\lciRefDeclDefFilename}[1]{%
-    \lciRefDeclDefFilenameX{#1}{\ccRefCategory}}
+    \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}}
 
-% #1 = classname (functioname etc.) without template parameters
-% #2 = Ref category
-\newcommand{\lciRefDeclDefFilenameX}[2]{%
-    \newcommand{\ccPureClassName}{#C1}%
-    \newcommand{\ccClassName}{\ccc{#C1}}%
-    \newcommand{\ccRefFilename}{#C1}%
+% #1 = local scope (may be empty)
+% #2 = classname (functioname etc.) without template parameters
+% #3 = Ref category
+\newcommand{\lciRefDeclDefFilenameX}[3]{%
+    \newcommand{\ccPureClassName}{#XC1#C2}%
+    \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
+    \newcommand{\ccRefFilename}{#XC1#C2}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
-    \begin{ccHtmlClassFile}{#XC2_#C1.html}{\ccRefName}%
-    \ccHtmlCrossLink{#C1}%
-    \ccHtmlIndexC[\ccRefCategory]{#C1}%
+    \begin{ccHtmlClassFile}{#XC3_#XC1#C2.html}{\ccRefName}%
+    \ccHtmlCrossLink{#XC1#C2}%
+    \ccHtmlIndexC[\ccRefCategory]{#XC1#C2}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
     \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
     \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
@@ -468,17 +469,17 @@
 %% Args: ccCategory, ccRefName
 \newcommand{\ccRefSection}[2]{%
     \lciIf{\ccNewRefManualStyle}{\lcDrawRefTabs{#1}{#2}}{}
-    \ccRefSectionX{\ccRefPureGlobalScope}{\ccPureRefScope}{#C2}
+    \ccRefSectionX{\ccRefPureGlobalScope}{#C2}
 }
 
-%% Args: ccRefPureGlobalScope, ccPureRefScope, ccRefName
-\newcommand{\ccRefSectionX}[3]{%
+%% Args: ccRefPureGlobalScope, ccRefName (which should include any local scope)
+\newcommand{\ccRefSectionX}[2]{%
     %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
     \section*{\lciIf{\ccNewRefManualStyle}{}{%
-      \lciIf{\ccIsFunctionObjectClass}{Function Object Class}{%
-      \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept}{%
+      \lciIf{\ccIsFunctionObjectClass}{Function Object Class }{%
+      \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept }{%
       \ccRefCategory~}}}%
-      \ccc{#XC1#XC2#XC3}}\label{ccRef_#XC1#XC2#XC3}}
+      \ccc{#XC1#XC2}}\label{ccRef_#XC1#XC2}}
 
 %% #1 == ccCategory
 %% #2 == ccRefName
@@ -536,7 +537,7 @@
 \newcommand{\lciRefLabelXX}[1]{\label{ccRef_#XC1}}
 
 \newcommand{\ccRefIdfierPage}{\ccc}
-\newcommand{\ccRefConceptPage}{}
+\newcommand{\ccRefConceptPage}{\ccc}
 
 % ___________________________________________________________________________
 % ###########################################################################
