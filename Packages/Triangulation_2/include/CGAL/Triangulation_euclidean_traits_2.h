@@ -57,7 +57,7 @@ public:
   Triangulation_euclidean_traits_2 &operator=
       (const Triangulation_euclidean_traits_2 &)
   {return *this;}
-
+ 
     Comparison_result compare_x(const Point &p, const Point &q) const
     {
         return CGAL::compare_x(p, q);

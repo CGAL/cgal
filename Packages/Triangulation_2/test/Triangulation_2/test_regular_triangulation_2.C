@@ -11,11 +11,12 @@
 // release       :
 // release_date  :
 // 
-// source        :
-// file          : test_triangulation_2.C
-// revision      : 
-// revision_date : 
+// source        : $RCSfile$
+// file          : test/Triangulation/test_triangulation_2.C
+// revision      : $revision$
+// revision_date : $Date$
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+//                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -23,11 +24,6 @@
 
 
 #include <CGAL/_test_types.h>
-
-//#include <CGAL/_test_types.C>
-
-
-
 #include <CGAL/Weighted_point.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>

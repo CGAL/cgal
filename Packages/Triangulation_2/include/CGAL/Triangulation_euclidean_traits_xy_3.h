@@ -54,7 +54,7 @@ public:
   Triangulation_euclidean_traits_xy_3(
 				const Triangulation_euclidean_traits_xy_3& et){}
   Triangulation_euclidean_traits_xy_3 &operator=(
-		       const Triangulation_euclidean_traits_xy_3&  et){return *this;}
+	    const Triangulation_euclidean_traits_xy_3&  et){return *this;}
 
 
     
@@ -76,25 +76,22 @@ public:
       }
     
     Orientation orientation(const Point &p,
-                                 const Point &q,
-                                 const Point &r) const
-      {
-        return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
-      }
-    
-
-    
-
+			    const Point &q,
+			    const Point &r) const
+    {
+      return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
+    }
+   
   Oriented_side side_of_oriented_circle(const Point &p,
 					const Point &q,
 					const Point &r,
 					const Point &s) const
-      {
-	return side_of_oriented_circleC2(x(p), y(p),
-					 x(q), y(q),
-					 x(r), y(r),
-					 x(s), y(s));
-      }
+    {
+      return side_of_oriented_circleC2(x(p), y(p),
+				       x(q), y(q),
+				       x(r), y(r),
+				       x(s), y(s));
+    }
     
     
     class Distance : public Distance_2<Traits> {

@@ -54,7 +54,7 @@ public:
   { }
 
   Regular_triangulation_face_base_2(void* v0, void* v1, void* v2,
-					     void* n0, void* n1, void* n2)
+				    void* n0, void* n1, void* n2)
     : Fbase(v0,v1,v2,n0,n1,n2), plist()
   { }
 

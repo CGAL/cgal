@@ -72,9 +72,9 @@ _test_cls_reg_triangulation_2( const Triangulation & )
 
   typedef std::pair<Face_handle,int>              Edge;
 
-  typedef typename Cls::Vertex_iterator      Vertex_iterator;
-  typedef typename Cls::Face_iterator        Face_iterator;
-  typedef typename Cls::Edge_iterator        Edge_iterator;
+  typedef typename Cls::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Cls::Finite_faces_iterator    Finite_faces_iterator;
+  typedef typename Cls::Finite_edges_iterator    Finite_edges_iterator;
 
   typedef typename Cls::Vertex_circulator    Vertex_circulator;
   typedef typename Cls::Face_circulator      Face_circulator;
@@ -154,23 +154,19 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   std::cout << "    constructors(1)" << std::endl;
 
   Cls T1;
-  assert( T1.dimension() == 0 ); // should be -1, but we'll discuss this
+  assert( T1.dimension() == -1 ); 
   assert( T1.number_of_vertices() == 0 );
 
-  // Cls T2(Gt()), T3(T2);
-  Cls T3(T1);
-  // assert( T3.geom_traits() == T2.geom_traits() ); // assert identity of traits
-
-  Cls T4 = T1;
-  // assert( T4.geom_traits() == T1.geom_traits() ); // assert identity of traits
   
+  Cls T3(T1);
+  Cls T4 = T1;
   T3.swap(T1);
 
 
   std::cout << "    insertions 0-dim" << std::endl;
   
   Cls T0_0;
-  assert( T0_0.dimension() == 0 );
+  assert( T0_0.dimension() == -1 );
   assert( T0_0.number_of_vertices() == 0 );
   assert( T0_0.is_valid() );
 
@@ -180,13 +176,8 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid() );
 
-Cls T0_2; 
-  // T0_2.insert_first(Vertex(p0).handle());
-  // this  statement cause a segmentation fault on Linux
-  // when the whole procedure is leaved
-  Vertex_handle v0_2_0(new Vertex(wp0));
-  T0_2.insert_first(v0_2_0);
-
+  Cls T0_2; 
+  T0_2.insert_first(wp0);
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.is_valid() );
@@ -217,9 +208,9 @@ Cls T0_2;
   
   // p1,p2,p3  [middle point first]
   Cls T1_3_1;
-  Vertex_handle v1_3_1_1 = T1_3_1.insert(wp1); assert( !v1_3_1_1.is_null() );
-  Vertex_handle v1_3_1_3 = T1_3_1.insert(wp3); assert( !v1_3_1_3.is_null() );
-  Vertex_handle v1_3_1_2 = T1_3_1.insert(wp2); assert( !v1_3_1_2.is_null() );
+  Vertex_handle v1_3_1_1 = T1_3_1.insert(wp2); assert( !v1_3_1_1.is_null() );
+  Vertex_handle v1_3_1_3 = T1_3_1.insert(wp1); assert( !v1_3_1_3.is_null() );
+  Vertex_handle v1_3_1_2 = T1_3_1.insert(wp3); assert( !v1_3_1_2.is_null() );
   assert( T1_3_1.dimension() == 1 );
   assert( T1_3_1.number_of_vertices() == 3 );
   // assert( T1_3_1.number_of_faces() == 0 );
@@ -242,7 +233,7 @@ Cls T0_2;
   //T1_6.insert_second(Vertex(p3).handle());
   // the following statement cause a segmentation fault on Linux
   // when the whole procedure is leaved
-  T1_6.insert_second( Vertex_handle(new Vertex(wp3)));
+  T1_6.insert_second( wp3);
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
   assert( T1_6.is_valid() ); 
@@ -278,46 +269,28 @@ Cls T0_2;
   Vertex_handle v2_3_3 = T2_3.insert(wp3, lt);
   assert( lt == Cls::EDGE );
   Vertex_handle v2_3_8 = T2_3.insert(wp8, lt);
-  assert( lt == Cls::COLLINEAR_OUTSIDE );
+  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   Vertex_handle v2_3_9 = T2_3.insert(wp9);
   assert( T2_3.dimension() == 1 );
   Vertex_handle v2_3_4 = T2_3.insert(wp4);
   assert( T2_3.dimension() == 2 );
-  Vertex_handle v2_3_6 = T2_3.insert(wp6, T2_3.faces_begin());
-  Vertex_handle v2_3_0 = T2_3.insert(wp0, lt, ++T2_3.faces_begin());
-  assert( lt == Cls::OUTSIDE );
+  Vertex_handle v2_3_6 = T2_3.insert(wp6, T2_3.finite_faces_begin());
+  Vertex_handle v2_3_0 = T2_3.insert(wp0, lt, ++T2_3.finite_faces_begin());
+  assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   Vertex_handle v2_3_5 = T2_3.insert(wp5);
   Vertex_handle v2_3_7 = T2_3.insert(wp7);
-  Vertex_handle v2_3_10 = T2_3.insert(wp10, lt, ++(++(T2_3.faces_begin())));
+  Vertex_handle v2_3_10 = T2_3.insert(wp10, lt, ++(++(T2_3.finite_faces_begin())));
   assert( lt == Cls::FACE );
   assert( T2_3.dimension() == 2 );
   assert( T2_3.number_of_vertices() == 11 );
-  // assert( T2_3.number_of_faces() == 13 );
   assert( T2_3.is_valid() );
   
-  // This test is wrong : 
-  // inserting a new point on a vertex first delete the vertex , than
-  // insert the point
-  // make sure inserting on a previous point does not insert it again
-  //   assert( T2_3.insert(wp10, lt) == v2_3_10 );
-
-
-  //  assert( lt == Cls::VERTEX );
-
-
-  // assert( T2_3.number_of_vertices() == 11 );
-
-//   // make sure push_back exists and does the same thing as insert
-//   assert( T2_3.push_back(wp10) == v2_3_10 );
-//   assert( T2_3.number_of_vertices() == 11 );
-
-
+ 
   // test list iterator insert
   Cls T2_5;
   assert( T2_5.insert(lw.begin(), lw.end()) == 10 );
   assert( T2_5.dimension() == 2 );
   assert( T2_5.number_of_vertices() == 10 );
-  // assert( T2_5.number_of_faces() == 13 );
   assert( T2_5.is_valid() );
 
   // test list iterator insert
@@ -325,15 +298,14 @@ Cls T0_2;
   assert( T2_6.insert(vw.begin(), vw.end()) == 10 );
   assert( T2_6.dimension() == 2 );
   assert( T2_6.number_of_vertices() == 10 );
-  // assert( T2_6.number_of_faces() == 13 );
   assert( T2_6.is_valid() );
   
-  // test grid insert
+  // test grid insert and make sure push_back exists
   Cls T2_7;
   int m, p;
   for (m=0; m<20; m++)
     for (p=0; p<20; p++)
-      T2_7.insert( WPoint(Point(m*px+p*qx, m*py+p*qy), 1) );
+      T2_7.push_back( WPoint(Point(m*px+p*qx, m*py+p*qy), 1) );
   assert( T2_7.number_of_vertices() == m*p );
   assert( T2_7.is_valid() );
 
@@ -346,16 +318,12 @@ Cls T0_2;
   assert( T0_1_1.number_of_vertices() == 1 );
   assert( T0_1_1.is_valid() );
 
-  // test constructor that takes a vertex handle
-  // this must(!) be the vertex at infinity
-  Cls T0_1_2( T0_1.infinite_vertex() , T0_1.geom_traits());
+  // test assignement
+  Cls T0_1_2;
+  T0_1_2 = T0_1;
   assert( T0_1_2.dimension() == 0 );
   assert( T0_1_2.number_of_vertices() == 1 );
   assert( T0_1_2.is_valid() );
-  // copy the triangulation to avoid having two triangulations
-  // with the same set of vertices and faces
-  // which causes a segmentation fault when the 2d one is deleted
-  T0_1_2 = T0_1;
   
   // test copy_constructor with non-empty 1-triangulation
   Cls T1_5_1( T1_5 );
@@ -369,48 +337,11 @@ Cls T0_2;
   assert( T1_5_2.number_of_vertices() == 5 );
   assert( T1_5_2.is_valid() );
 
-  // test constructor that takes a vertex handle
-  // this must(!) be the vertex at infinity
-  Cls T1_5_3( T1_5_2.infinite_vertex() , T1_5_2.geom_traits());
-  assert( T1_5_3.dimension() == 1 );
-  assert( T1_5_3.number_of_vertices() == 5 );
-  assert( T1_5_3.is_valid() );
-  // copy the triangulation to avoid having two triangulations
-  // with the same set of vertices and faces
-  // which causes a segmentation fault when the 2d one is deleted
-  T1_5_3 = T1_5_2;
-  
-  // test constructor that takes a vertex handle and a geom_traits
-  Cls T1_5_4( T1_5_2.infinite_vertex(), T2_1.geom_traits() );
-  assert( T1_5_4.dimension() == 1 );
-  assert( T1_5_4.number_of_vertices() == 5 );
-  assert( T1_5_4.is_valid() );
-  // Exchange the triangulation -- same reason
-  T1_5_4 = T1_5_2;
- 
-  // test copy_constructor with non-empty 2-triangulation
+   // test copy_constructor with non-empty 2-triangulation
   Cls T2_1_1( T2_1 );
   assert( T2_1_1.dimension() == 2 );
   assert( T2_1_1.number_of_vertices() == 11 );
   assert( T2_1_1.is_valid() );
-  
-  // test constructor that takes a vertex handle
-  Cls T2_1_2( T2_1.infinite_vertex(), T2_1.geom_traits() );
-  assert( T2_1_2.dimension() == 2 );
-  assert( T2_1_2.number_of_vertices() == 11 );
-  assert( T2_1_2.is_valid() );
-  // copy the triangulation to avoid having two triangulations
-  // with the same set of vertices and faces
-  // which causes a segmentation fault when the 2d one is deleted
-  T2_1_2 = T2_1;
-
-  // test constructor that takes a vertex handle and a geom_traits
-  Cls T2_1_3( T2_1.infinite_vertex(), T2_1.geom_traits() );
-  assert( T2_1_3.dimension() == 2 );
-  assert( T2_1_3.number_of_vertices() == 11 );
-  assert( T2_1_3.is_valid() );
-  // Copy the  triangulation, see T1_5_3
-  T2_1_3 = T2_1;
 
   // test assignment operator
   Cls T2_1_4 = T2_1;
@@ -460,23 +391,12 @@ Cls T0_2;
         && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p2))
        || (T1_3_2.geom_traits().compare(f->vertex(f->ccw(li))->point(), p2)
         && T1_3_2.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
-  f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::COLLINEAR_OUTSIDE );
-  assert( T1_3_2.geom_traits().compare(f->vertex(li)->point(), p9) );
-  f = T1_3_2.locate(p0,lt,li); assert( lt == Cls::OUTSIDE );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p0,f,li) );
-  f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p7,f,li) );
-  f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p5,f,li) );
-  f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p4,f,li) );
-  f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE );
-  li = f->index(T1_3_2.infinite_vertex());
-  assert( _test_is_to_the_left(T1_3_2,p6,f,li) );
+  f = T1_3_2.locate(p8,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
+  f = T1_3_2.locate(p7,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  f = T1_3_2.locate(p5,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  f = T1_3_2.locate(p4,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL );
+  f = T1_3_2.locate(p6,lt,li); assert( lt == Cls::OUTSIDE_AFFINE_HULL);
+ 
 
   // Check point location in 2-dimensional triangulations
   std::cout << "    point locations 2-dim" << std::endl;
@@ -510,13 +430,13 @@ Cls T0_2;
         && T2_1.geom_traits().compare(f->vertex(f->cw(li))->point(), p1)));
   f = T2_1.locate(p12,lt,li); assert( lt == Cls::FACE );
   assert( T2_1.oriented_side(f,p12) == CGAL::ON_POSITIVE_SIDE );
-  f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE );
+  f = T2_1.locate(p13,lt,li,f); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = f->index(T2_1.infinite_vertex());
   assert( _test_is_to_the_left(T2_1,p13,f,li) );
-  f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE );
+  f = T2_1.locate(p14,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = f->index(T2_1.infinite_vertex());
   assert( _test_is_to_the_left(T2_1,p14,f,li) );
-  f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE );
+  f = T2_1.locate(p15,lt,li); assert( lt == Cls::OUTSIDE_CONVEX_HULL );
   li = f->index(T2_1.infinite_vertex());
   assert( _test_is_to_the_left(T2_1,p15,f,li) );
 
@@ -549,7 +469,7 @@ Cls T0_2;
   _test_circulators(T1_6);
   _test_circulators(T2_1);
   _test_circulators(T2_3);
-  _test_circulators (T2_5);
+  _test_circulators(T2_5);
   _test_circulators(T2_6);
   _test_circulators(T2_7);
 
@@ -625,7 +545,7 @@ Cls T0_2;
   Segment  s = T2_1.segment(f,li); assert( &s == &s );
   s = T2_1.segment(Edge(f,li)); assert( &s == &s );
   s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
-  s = T2_1.segment(T2_1.edges_begin()); assert( &s == &s );
+  s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 
 
   /********************/
@@ -692,9 +612,9 @@ Cls T0_2;
   /***** REMOVALS *******/ 
   std::cout << "    removals" << std::endl;
 
-//   // test remove_first()
-//   T0_1.remove_first(T0_1.finite_vertex());
-//   assert( T0_1.number_of_vertices() == 0 );
+  // test remove_first()
+  T0_1.remove_first(T0_1.finite_vertex());
+  assert( T0_1.number_of_vertices() == 0 );
 
   // test remove_second()
   T1_6.remove_second(T1_6.finite_vertex());
