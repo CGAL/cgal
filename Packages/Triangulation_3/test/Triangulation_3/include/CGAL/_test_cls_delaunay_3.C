@@ -382,7 +382,7 @@ _test_cls_delaunay_3(const Triangulation &)
   for (m=0; m<20; m++)
     for (n=0; n<20; n++)
       {
-	qq[m+20*n] = Point(m*px+n*qx, m*py+n*qy, 1);
+	qq[m+20*n] = Point(m*px+(int)n*qx, m*py+(int)n*qy, 1);
 	T2_1.insert( qq[m+20*n] );
       }
   assert( T2_1.number_of_vertices() == m*n );

@@ -1,3 +1,6 @@
+28 July 2004 Sylvain Pion
+- Fix test-suite for IA64.
+
 24 June 2004 Sylvain Pion
 - Fix demo/makefile for IRIX's make.
 - Use CGAL_CFG_USING_BASE_MEMBER_BUG_3 for MipsPRO.
