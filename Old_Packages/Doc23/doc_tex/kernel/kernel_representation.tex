@@ -54,9 +54,9 @@ class provides the actual implementations of the kernel objects.
 For all kernel objects \ccc{Kernel_object}, the types 
 \ccc{CGAL::Kernel_object<R>} and \ccc{R::Kernel_object} are identical.
 
-CGAL offers three families of concrete models for the concept
+CGAL offers four families of concrete models for the concept
 representation class, two based on the \ccHtmlNoLinksFrom{Cartesian} representation of points
-and one based on the homogeneous representation of points. 
+and two based on the homogeneous representation of points. 
 The interface of the kernel objects is designed such that it works well
 with both \ccHtmlNoLinksFrom{Cartesian} and homogeneous representation, for example, points
 in 2D have a constructor with three arguments as well
@@ -113,7 +113,7 @@ efficient than \ccc{Cartesian<FieldNumberType>}.
 With \ccc{Simple_cartesian<FieldNumberType>}, both \ccc{Simple_cartesian<FieldNumberType>::FT}
 and \ccc{Simple_cartesian<FieldNumberType>::RT} are mapped to number type \ccc{FieldNumberType}.
 
-\section{Homogeneous Kernel}
+\section{Homogeneous Kernels}
 As we mentioned before, homogeneous coordinates permit to avoid 
 division operations in numerical computations, since the additional 
 coordinate can serve as a common denominator. 
@@ -193,8 +193,8 @@ with a ring type. You might use limited precision integer types like
 \ccc{int} or \ccc{long}, use \ccc{double} to present your integers (they
 have more bits in their mantissa than an \ccc{int} and overflow nicely), or an 
 arbitrary precision integer type like the wrapper \ccc{Gmpz} for the
-GMP integers or \ccc{leda_integer}. Note, that  unless you use an
-arbitrary precision integer type, incorrect results might arise due to
+GMP integers, \ccc{leda_integer} or \ccc{MP_Float}. Note, that unless you use
+an arbitrary precision ring type, incorrect results might arise due to
 overflow. 
 
 If new points are to be constructed, for example

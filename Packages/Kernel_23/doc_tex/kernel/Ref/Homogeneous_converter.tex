@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Homogeneous_converter<K1, K2, RT_Converter, FT_Converter>}
+\begin{ccRefClass}{Homogeneous_converter<K1, K2, RTConverter, FTConverter >}
 %\ccTexHtml{\ccSetThreeColumns{Point_2< us<RT> > }{}{\hspace*{8.5cm}}}{}
 
 \KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
@@ -35,10 +35,10 @@ default value is  \ccc{CGAL::NT_converter<K1::FT, K2::FT>}.
 
 \ccMemberFunction{K2::Point_2 operator()(const K1::Point_2&p);}
 { returns a \ccc{K2::Point_2} which coordinates are those of \ccc{p},
-converted by \ccc{RT_Converter}.}
+converted by \ccc{RTConverter}.}
 
-Similar operators are defined for the other kernel traits types \ccc{Point_3},
-\ccc{Vector_2}...
+Similar operators are defined for the other kernel traits geometric types
+\ccc{Point_3}, \ccc{Vector_2}...
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\

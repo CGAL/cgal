@@ -6,6 +6,9 @@
 - created a file Ref/ref_manual.tex that does the inclusion of the reference
   pages (previously done in main.tex) and a file Ref/main.tex that includes
   this and ordered the pages into sections
+- Update Cartesian_converter and Homogeneous_converter.
+- Update introduction wrt Simple_homogeneous.
+- Add Filtered_predicate<> and Filtered_kernel<>.
 
 2.32    (20 July 2001)
 - restored Less_distance_to_point_[23] with default constructors

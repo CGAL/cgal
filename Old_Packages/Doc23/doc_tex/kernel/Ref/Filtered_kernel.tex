@@ -1,0 +1,54 @@
+\begin{ccRefClass}{Filtered_kernel<CK, EK, FK, C2E, C2F>}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName is a kernel that uses the filtering technique
+\cite{bbp-iayea-98} to achieve a kernel with exact and efficient predicates
+given an exact kernel \ccc{EK} and a filtering kernel \ccc{FK}.  The geometric
+objects and constructions are exactly those of the kernel \ccc{CK}.
+
+This is achieved by converting the geometric objects of \ccc{CK} arguments of
+each predicate to the filtering kernel \ccc{FK} using \ccc{C2F}, then applying
+the corresponding predicate from \ccc{FK}, which should throw an exception in
+case it can't determine the result exactly.  In this case the exception is
+caught and the corresponding predicate from the kernel \ccc{EK} is called to
+obtain the exact result (after having converted the arguments using
+\ccc{C2E}).
+
+\ccc{CK}, \ccc{EK}, \ccc{FK} must be models of the concept \ccc{Kernel}.
+
+At the moment, the parameter \ccc{FK} supports only the four kernels of
+CGAL instantiated with \ccc{Interval_nt_advanced}.
+
+The default parameters are \ccc{EK = Simple_cartesian<MP_Float>},
+  \ccc{FK = Simple_cartesian<Interval_nt_advanced>},
+  \ccc{C2E = Cartesian_converter<CK, EK>},
+  \ccc{C2F = Cartesian_converter<CK, FK, Interval_converter<CK::RT>}.
+
+\ccIsModel{Kernel}
+
+\ccInclude{CGAL/Filtered_kernel.h}
+
+\ccExample
+
+The following example shows how to produce a kernel traits class \ccc{K} which
+geometric objects and constructions are those of
+\ccc{Simple_cartesian<double>} and which predicates are exact.
+
+\begin{verbatim}
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
+
+typedef CGAL::Simple_cartesian<double> CK;
+typedef CGAL::Filtered_kernel<CK> K;
+
+...
+\end{verbatim}
+
+\ccImplementation
+The implementation uses \ccc{CGAL::Filtered_predicate<EP, FP, C2E, C2F>} over
+each predicate of the kernel traits interface.
+
+\end{ccRefClass}
