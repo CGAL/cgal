@@ -1,3 +1,6 @@
+4.99  (3 June 2003)
+- Doc fix.
+
 4.98  (30 May 2003)
 - Implement to_interval(mpz_class) and to_interval(mpq_class).
 - Comment out mpf_class support (and documentation), it's probably useless.
