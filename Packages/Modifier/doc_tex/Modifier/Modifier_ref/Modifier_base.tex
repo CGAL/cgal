@@ -1,0 +1,62 @@
+% +=========================================================================+
+\begin{ccRefClass}{Modifier_base<R>}
+% +=========================================================================+
+\label{sectionModifierBase}
+
+\ccDefinition
+
+\ccClassTemplateName\ is an abstract base class providing the
+interface for any modifier. A modifier is a function object derived
+from \ccClassTemplateName\ that implements the pure virtual member
+function \ccc{operator()}, which accepts a single reference parameter
+\ccc{R&} on which the modifier is allowed to work.  \ccc{R} is the
+type of the internal representation that is to be modified.
+
+\ccInclude{CGAL/Modifier_base.h}
+
+\ccTypes
+\ccThree{virtual void}{modifier.operator()( R& poly) ;}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef R Representation;}{the internal representation type.}
+
+\ccOperations
+\ccCreationVariable{modifier}
+
+\ccTagFullDeclarations
+\ccMethod{virtual void operator()( R& rep);}
+    {\ccPostcond \ccc{rep} is a valid representation.}
+\ccTagDefaults
+
+\ccExample
+
+The following fragment defines a class {\tt A} with an internal
+representation {\tt i} of type {\tt int}. It provides a member
+function {\tt delegate()}, which gives a modifier access to the
+internal variable and checks validity thereafter.  The
+example modifier sets the internal variable to 42. The example
+function applies the modifier to an instance of class {\tt A}.
+
+\begin{verbatim}
+class A {
+    int i;  // protected internal representation
+public:
+    void delegate( CGAL::Modifier_base<int>& modifier) {
+        modifier(i);
+        CGAL_postcondition( i > 0);  // check validity
+    }
+};
+
+struct Modifier : public CGAL::Modifier_base<int> {
+    void operator()( int& rep) { rep = 42;}
+};
+
+void use_it() {
+    A a;
+    Modifier m;
+    a.delegate(m);  // a.i == 42 and A has checked that A::i > 0.
+}
+\end{verbatim}
+
+\end{ccRefClass}
+
