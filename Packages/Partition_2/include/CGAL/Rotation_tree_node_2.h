@@ -26,6 +26,19 @@
 // implementation: Node of a rotation tree used to compute vertex vis. graph
 // ============================================================================
 
+/*
+    Node of a rotation tree, used for computing the visibility graph of
+    a set of non-intersecting segments in a graph
+
+    Associated with each node in the rotation tree is the following information:
+
+      -  the coordinates of the associated segment endpoint
+      -  a pointer to the parent
+      -  a pointer to the left sibling
+      -  a pointer to the right sibling
+      -  a pointer to the rightmost child.
+ */
+
 #ifndef  CGAL_ROTATION_TREE_NODE_H
 #define  CGAL_ROTATION_TREE_NODE_H
 

@@ -26,6 +26,43 @@
 // implementation: Polygon vertex visibility graph
 // ============================================================================
 
+/*
+    Provides an implementation of the algorithm of Overmars and Welzl
+    for computing the visibility graph of a set of non-intersecting
+    line segments in the plane.  
+
+     @inproceedings{ow-nmcvg-88
+     , author =      "M. H. Overmars and Emo Welzl"
+     , title =       "New methods for computing visibility graphs"
+     , booktitle =   "Proc. 4th Annu. ACM Sympos. Comput. Geom."
+     , year =        1988
+     , pages =       "164--171"
+    }
+
+    The running time is $O(n^2)$ with linear space requirements.
+
+    The algorithm implemented uses a sweep-line technique to construct the
+    visibility graph.  The sweep data structure is a rotation tree, implemented
+    in the class CGAL::Rotation_tree_2.
+
+    A direction vector $d$ is swept from $-\pi/2$ to $\pi/2$,
+    and the sweep data structure, and whenever the direction of this vector
+    coincides with the slope of an edge in the rotation tree, the tree $G$
+    is updated and edges of the visibility graph are reported.  To accomplish
+    the updates, it is necessary to keep track of all the leaves that are
+    leftmost children of their parents.  In particular, one needs to know the
+    rightmost of these leftmost children.
+    
+    Two data structures are needed for the implementation of the algorithm:
+    the sweep data structure $G$, and a stack $S$ that contains all the
+    leaves in $G$ that are the leftmost children of their parents.  
+
+    TODO:
+      --is_valid function is not complete
+      --??? would a list of list of sorted vertices be a better representation?
+
+ */
+
 #ifndef  CGAL_VERTEX_VISIBILITY_GRAPH_2_H
 #define  CGAL_VERTEX_VISIBILITY_GRAPH_2_H
 

@@ -26,6 +26,20 @@
 // implementation: Rotation tree for vertex visibility graph computation
 // ============================================================================
 
+/*
+    A rotation tree for computing the vertex visibility graph of a set of
+    non-intersecting segments in the plane (e.g. edges of a polygon).
+
+    Let $V$ be the set of segment endpoints and
+    let $p_{\infinity}$ ($p_{-\infinity}$) be a point with $y$ coordinate
+    $\infinity$ ($-\infinity$) and $x$ coordinate larger than all points
+    in $V$. The tree $G$ is a tree with node set
+    $V \cup \{p_{\infinity}, p_{-\infinity}\}$.  Every node (except the one
+    corresponding to $p_{\infinity}$) has exactly one outgoing edge to the
+    point $q$ with the following property:  $q$ is the first point encountered
+    when looking from $p$ in direction $d$ and rotating counterclockwise.
+ */
+
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
