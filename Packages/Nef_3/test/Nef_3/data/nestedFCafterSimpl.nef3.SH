@@ -1,4 +1,5 @@
 Selective Nef Complex
+standard
 vertices   28
 halfedges  88
 facets     38

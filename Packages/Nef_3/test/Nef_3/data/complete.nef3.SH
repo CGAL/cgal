@@ -1,4 +1,5 @@
 Selective Nef Complex
+standard
 vertices   0
 halfedges  0
 facets     0
