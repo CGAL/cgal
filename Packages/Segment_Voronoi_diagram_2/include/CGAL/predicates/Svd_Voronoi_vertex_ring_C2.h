@@ -32,9 +32,7 @@
 
 
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 
 template<class K>
@@ -1178,7 +1176,6 @@ private:
       d2 = incircle_p(t.target_site());
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
-
 
     Line_2 l = compute_supporting_line(t.supporting_segment());
     Sign sl = incircle(l, type);
