@@ -1,3 +1,6 @@
+10 September 2004 Sylvain Pion
+- Remove Persistent_homology_d from internal releases.
+
 29 August 2004 Sylvain Pion
 - create_testresult_page : change <blink> to red.
 - create_testresult_page : rewrite sorting logic (fixes painful warnings too).
