@@ -1,3 +1,7 @@
+Version 1.2 (30 June 99)
+small bug fixes in the test-suite after results of 2.1-I-1
+methods defined outside classes to compile with -O2
+
 Version 1.1 (24 June 99)
 Bug fixes in memory management (too much cleaning...)
 testsuite was failing on Linux
