@@ -143,7 +143,7 @@ Sphere_segment construct_segment(const Sphere_point& p,
 Sphere_segment construct_segment(const Sphere_point& p, 
                                  const Sphere_point& q,
                                  const Plane_3& h) const
-{ return Sphere_segment(p,q,h); }
+{ return Sphere_segment(p,q, Sphere_circle(h)); }
 
 
 Plane_3 affine_representation(const Plane_3& h, const Point_3& p) const
