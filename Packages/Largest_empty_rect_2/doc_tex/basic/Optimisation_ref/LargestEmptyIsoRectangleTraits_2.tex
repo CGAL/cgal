@@ -33,34 +33,37 @@ predicates on those primitives.
 \ccNestedType{Iso_rectangle_2}{The iso rectangle  type.}
 
 \ccNestedType{Construct_iso_rectangle_2} {A constructor object for
-\ccc{Iso_rectangle_2}. Must provide.}
+\ccc{Iso_rectangle_2}.}
 
 
-\ccNestedType{Compare_x_2}{Predicate object. Must provide
-the operator.
-\ccc{Comparison_result operator()(Point p, Point q)}
+\ccNestedType{Compare_x_2_object}{Predicate object. Must provide
+the operator
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns 
 \ccc{SMALLER, EQUAL} or \ccc{ LARGER}
  according ding to the
 $x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Compare_y_2}{Predicate object. Must provide
-the operator.
-\ccc{Comparison_result operator()(Point p, Point q)}
-which returns the
-(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+\ccNestedType{Compare_y_2_object}{Predicate object. Must provide
+the operator
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
+which returns
+\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
 according to the
 $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Less_x_2}{Predicate object. Must provide
-the operator.
-}\ccGlue
-\ccNestedType{Less_xy_2}{Predicate object. Must provide
-the operator 
-}\ccGlue
-\ccNestedType{Less_yx_2}{Predicate object. Must provide
-the operator 
-}
+\ccNestedType{Less_x_2_object}{Predicate object. Must provide
+the operator
+\ccc{bool operator()(Point_2 p, Point_2 q)}
+which returns
+whether \ccc{p} is less than \ccc{q} according to their $x$-ordering.}
+\ccGlue
+\ccNestedType{Less_y_2_object}{Predicate object. Must provide
+the operator
+\ccc{bool operator()(Point_2 p, Point_2 q)}
+which returns
+whether \ccc{p} is less than \ccc{q} according to their $y$-ordering.}
+
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 Only a default constructor, copy constructor
