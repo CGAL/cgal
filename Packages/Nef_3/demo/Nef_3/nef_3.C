@@ -26,9 +26,10 @@
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Extended_homogeneous_3.h>
-#include <CGAL/Extended_cartesian_3.h>
+#include <CGAL/Extended_homogeneous.h>
+#include <CGAL/Extended_cartesian.h>
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -65,8 +66,8 @@ typedef CGAL::Gmpz NT;
 #endif
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
-typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
-//typedef CGAL::Extended_cartesian_3<NT>   Kernel;
+//typedef CGAL::Extended_homogeneous<NT>   Kernel;
+typedef CGAL::Extended_cartesian<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel.";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
 // typedef CGAL::Lazy_exact_nt<NT>  LNT;
