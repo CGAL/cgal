@@ -436,8 +436,11 @@ public:
     {
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2 (x0, y0, a, CGAL::CLOCKWISE, source, target);
-#else
+#elif BENCH_TRAITS == CK_CIRCLE_TRAITS || \
+      BENCH_TRAITS == CK_CONIC_TRAITS
       cv = Curve_2 (circle, target, source);
+#else
+      cv = Curve_2 (circle, source, target);
 #endif
     }
     else

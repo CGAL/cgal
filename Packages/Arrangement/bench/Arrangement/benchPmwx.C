@@ -162,7 +162,7 @@
 
 // Readers:
 // Conic reader:
-#if BENCH_TRAITS == SEGMENT_TRAITS
+#if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == SEGMENT_CACHED_TRAITS
 #include "Segment_reader.h"
 
 #elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
@@ -287,6 +287,17 @@ typedef CGAL::Qt_widget Window_stream;
 QApplication * App;
 #endif
 
+CGAL_BEGIN_NAMESPACE
+
+inline std::ostream & operator<<(std::ostream & os,
+                                 const Pmwx::Vertex & vertex)
+{
+  os << vertex.point();
+  return os;
+}
+
+CGAL_END_NAMESPACE
+
 /*! */
 inline Window_stream & operator<<(Window_stream & os, Pmwx & pm)
 {
@@ -319,7 +330,7 @@ public:
   /*! */
   int init()
   {
-#if BENCH_TRAITS == SEGMENT_TRAITS
+#if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == SEGMENT_CACHED_TRAITS
     Segment_reader<Traits> reader;
 
 #elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
@@ -456,6 +467,9 @@ public:
       std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
       std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
       std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+
+      std::copy(pm.vertices_begin(), pm.vertices_end(),
+                std::ostream_iterator<Pmwx::Vertex>(std::cout, "\n"));
     }
 
 #if defined(USE_CGAL_WINDOW)
