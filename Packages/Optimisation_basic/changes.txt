@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_basic' package
 
+03 June 2004 Andreas Fabri
+- inlined function _optimisation_is_valid_fail(..) in order to get rid of src/optimisation_basic.C
+
 Version 3.8.18 on 18-Jan-2004
 - Rename CGAL_TYPENAME_MSVC_NULL to typename.
 

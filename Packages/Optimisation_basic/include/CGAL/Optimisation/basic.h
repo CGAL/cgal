@@ -25,18 +25,10 @@
 #define CGAL_OPTIMISATION_BASIC_H
 
 // includes
-#ifndef CGAL_BASIC_H
-#  include <CGAL/basic.h>
-#endif
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-#  include <CGAL/Optimisation/assertions.h>
-#endif
-#ifndef CGAL_OPTIMISATION_DEBUG_H
-#  include <CGAL/Optimisation/debug.h>
-#endif
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
-#  include <CGAL/IO/Verbose_ostream.h>
-#endif
+#include <CGAL/basic.h>
+#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/Optimisation/debug.h>
+#include <CGAL/IO/Verbose_ostream.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,12 +37,18 @@ CGAL_BEGIN_NAMESPACE
 
 // is_valid failure function
 // -------------------------
+inline
 bool
 _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
-                             const char*            message);
-
+                             const char*            message)
+{
+    verr << "FAILED." << std::endl;
+    verr << "  --> " << message << std::endl;
+    verr << "  object is NOT valid!" << std::endl;
+    return false;
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_OPTIMISATION_BASIC_H
 
-// ===== EOF ==================================================================
+
