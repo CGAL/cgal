@@ -13,19 +13,51 @@
 
 %write_arr
 
-\begin{ccRefFunction}{write_arr<Arrangement,Writer>(Arrangement arr, Writer& writer, ostream& o);}
+\begin{ccRefFunction}{write_arr}
 
 \ccCreationVariable{write_arr}
 
 \ccDefinition
-\ccc{write_arr} is a global function defined for writing an \ccc{Arrangement} object. 
-The function is templated with the \ccc{Arrangement} class, and the \ccStyle{Writer} class.  
-This function uses the functions defined in the \ccStyle{Writer} class, and prints the 
-\ccc{Arrangement} object in the format discussed in \ccRefPage{Arr_IO_format}. 
-The operator defined for writing an \ccc{Arrangement} object to an output stream uses 
-this function when parameterize \ccStyle{Writer} with an object instanciated from \ccc{Arr_file_writer}.
+
+The function \ccRefName\ sends an object of the template parameter
+type \ccc{Arrangement} to an output stream. The function is intended
+for cases where the writer object is not the default one, i.e. for
+user defined writer classes which aim at writing arrangements with
+additional information or aim at special format. For a default use
+simply use the insertor operator (\ccc{<<}) of the output stream as in
+\ccc{cout << arr}.
+
+Reading is done using the \ccc{read} method of
+\ccc{Arrangement_2<Dcel,Traits,Base_node>}.
 
 \ccInclude{CGAL/IO/write_arr.h}
+
+\ccFunction{template <Arrangement, Writer> 
+            void 
+            write_arr(Arrangement arr, 
+            Writer& writer, 
+            ostream& o); }
+         {The function sends an arrangement object to an output
+            stream. The function uses the methods defined within the
+            \ccStyle{Writer} class, and prints \ccStyle{arr} which is instance of
+            \ccc{Arrangement} in the format discussed in
+            \ccRefPage{Arr_IO_format}. The printing is done by sending
+            the arrangement object to the output stream \ccc{o}. }
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item    \ccc{Arrangement}  
+             should be of type \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+    \item    \ccc{Writer}  
+             should be of type \ccc{Arr_file_writer<Arrangement>}.
+    
+   \item    The output stream should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Arrangement::Point},
+                \item \ccc{Arrangement::Curve}, 
+            \end{itemize}
+\end{enumerate}
 
 \end{ccRefFunction} % writer_arr
 
