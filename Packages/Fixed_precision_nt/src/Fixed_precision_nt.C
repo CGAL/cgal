@@ -827,10 +827,12 @@ void  Fixed_precision_nt::unperturb_insphere()
 bool  Fixed_precision_nt::is_perturbed_insphere() 
 {return Fixed_is_perturbed_insphere();}
 
+extern void force_ieee_double_precision();
+
 bool Fixed_precision_nt::init(float b) 
 { 
 #ifdef __i386               // processor Intel 386
-  FPU_set_cw(FPU_cw_near);
+  force_ieee_double_precision();
 #endif
   return Fixed_init(b);
 }
