@@ -32,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Tds >
 class  Triangulation_ds_face_2
-  : public Tds::Face_base,    
-    public Triangulation_cw_ccw_2
+  : public Tds::Face_base   
+    //    public Triangulation_cw_ccw_2
 {
 public:
   typedef typename Tds::Vertex_base        Vb;
@@ -43,14 +43,14 @@ public:
   typedef typename Tds::Vertex_handle      Vertex_handle;
   typedef typename Tds::Face_handle        Face_handle;
 
-private:
-  Face_handle _previous;
-  Face_handle _next;
+// private:
+//   Face_handle _previous;
+//   Face_handle _next;
 
 public :
   // creators
   Triangulation_ds_face_2()
-    : Fb(), _previous(this), _next(this)
+    : Fb()//, _previous(this), _next(this)
   {}
     
   Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
@@ -65,6 +65,9 @@ public :
   Triangulation_ds_face_2( const Face& f)
     : Fb(f)
     {}
+
+  static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
+  static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
 
   //setting
   void set_vertex(int i, Vertex_handle v) { Fb::set_vertex(i, &*v);}
@@ -94,11 +97,11 @@ public :
   Face_handle handle() {return const_cast<Face*>(this);}
   bool is_valid(bool verbose = false, int level = 0) const;
 
-  //Handling the list of faces
-  Face_handle previous() const {return _previous;}
-  Face_handle next() const {return _next;}
-  void  set_previous(Face_handle f) {_previous = f;};
-  void  set_next(Face_handle f) {_next = f;};
+//   //Handling the list of faces
+//   Face_handle previous() const {return _previous;}
+//   Face_handle next() const {return _next;}
+//   void  set_previous(Face_handle f) {_previous = f;};
+//   void  set_next(Face_handle f) {_next = f;};
 };
 
 

@@ -27,15 +27,15 @@ CGAL_BEGIN_NAMESPACE
 class Triangulation_cw_ccw_2
 {
 public:
-  int ccw(const int i) const
+  static int ccw(const int i) 
     {
-      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      CGAL_triangulation_precondition( i >= 0 && i < 3);
       return (i==2) ? 0 : i+1;
     }
 
-  int cw(const int i) const
+  static int cw(const int i)
     {
-      CGAL_triangulation_precondition( ((unsigned int) i) < 3 );
+      CGAL_triangulation_precondition( i >= 0 && i < 3);
       return (i==0) ? 2 : i-1;
     }
 };
