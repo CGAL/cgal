@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -73,7 +73,7 @@ public:
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking
-  bool is_valid() const
+  bool is_valid(bool verbose, int level) const
   { 
     //return true; 
     return( cell() != NULL );

@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 //
@@ -40,7 +40,7 @@ class CGAL_Triangulation_geom_traits_3
 public:
 
   typedef CGAL_Point_3<R>  Point;
-  typedef CGAL_Point_2< CGAL_Cartesian< CGAL_Quotient<R::RT> > >  Point2;
+  typedef CGAL_Point_2< CGAL_Cartesian< CGAL_Quotient<typename R::RT> > >  Point2;
   typedef CGAL_Segment_3<R> Segment;
   typedef CGAL_Triangle_3<R> Triangle;
   typedef CGAL_Tetrahedron_3<R> Tetrahedron;
@@ -86,10 +86,10 @@ public:
     return CGAL_orientation(p, q, r, s);
   }
 
-  CGAL_Orientation orientation_in_plane(const Point & p,
-					const Point & q,
+  CGAL_Orientation orientation_in_plane(const Point & q,
 					const Point & r,
-					const Point & s) const
+					const Point & s,
+					const Point & p) const
     // p,q,r,s supposed to be coplanar
     // q,r,s supposed to be non collinear
     // tests whether p is on the same side of q,r as s
@@ -197,6 +197,9 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, O, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(O, p, q, r, test);
+      default:
+	// only to avoid warning with egcs
+	return CGAL_side_of_oriented_sphere(p, q, r, O, test);
       }
       // if O coplanar, use A
       Point A(1,0,0);
@@ -205,6 +208,9 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, A, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(A, p, q, r, test);
+      default:
+	// only to avoid warning with egcs
+	return CGAL_side_of_oriented_sphere(p, q, r, O, test);
       }
       // if A is coplanar, use B
       Point B(0,1,0);
@@ -213,7 +219,10 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, B, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(B, p, q, r, test);
-      }
+      default:
+	// only to avoid warning with egcs
+	return CGAL_side_of_oriented_sphere(p, q, r, O, test);
+     }
       // if B also coplanar, use C
       Point C(0,0,1);
       switch ( orientation( p,q,r,C ) ) {
@@ -221,6 +230,9 @@ public:
 	return CGAL_side_of_oriented_sphere(p, q, r, C, test); 
       case CGAL_NEGATIVE:
 	return CGAL_side_of_oriented_sphere(C, p, q, r, test);
+      default:
+	// only to avoid warning with egcs
+	return CGAL_side_of_oriented_sphere(p, q, r, O, test);
       }
       // impossible, only to avoid compilation warnings :
       return CGAL_ON_POSITIVE_SIDE;

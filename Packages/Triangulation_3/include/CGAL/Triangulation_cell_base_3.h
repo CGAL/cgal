@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 //
@@ -75,7 +75,7 @@ public:
   }
     
   inline 
-  bool has_vertex(const void* v, int& i) const
+  bool has_vertex(const void* v, int & i) const
   {
     if (v == V[0]) {
       i = 0;
@@ -129,7 +129,7 @@ public:
   }
     
   inline 
-  bool has_neighbor(const void* n, int& i) const
+  bool has_neighbor(const void* n, int & i) const
   {
     if(n == N[0]){
       i = 0;
@@ -232,7 +232,7 @@ public:
   // the following trivial is_valid allows
   // the user of derived cell base classes 
   // to add their own purpose checking
-  bool is_valid() const
+  bool is_valid(bool verbose, int level) const
     {return true;}
 
 

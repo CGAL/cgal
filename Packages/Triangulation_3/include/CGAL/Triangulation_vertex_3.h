@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -77,13 +77,18 @@ public:
     :  Vtds(p)
   {}
     
-//   CGAL_Triangulation_vertex_3(const Point & p, Cell_handle c)
-//     :  Vtds(p, &(*c))
-//   {}
+  CGAL_Triangulation_vertex_3(const Point & p, Cell_handle c)
+    :  Vtds(p, &(*c))
+  {}
 
-  inline void set_cell(const Cell_handle & c)
+  inline void set_cell(Cell_handle c)
   {
     Vtds::set_cell(&(*c));
+  }
+    
+  inline void set_point(const Point & p)
+  {
+    Vtds::set_point(p);
   }
     
   inline Cell_handle cell() const
@@ -96,6 +101,10 @@ public:
     return Vertex_handle(this);
   }
 
+  inline bool is_valid(bool verbose = false, int level = 0) const
+  {
+    return Vtds::is_valid(verbose,level);
+  }
 //   inline Vertex_circulator incident_vertices()
 //   {
 //     return Vertex_circulator(handle(), cell());

@@ -16,7 +16,7 @@
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -336,7 +336,7 @@ public:
   typedef CGAL_Triangulation_edge_iterator_3<Gt,Tds>      Edge_iterator;
 
   CGAL_Triangulation_edge_iterator_3()
-    : _ib(), _tr(), _inf()
+    : _ib(), _tr(NULL), _inf(true)
   {}
         
   CGAL_Triangulation_edge_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr, bool inf)
@@ -463,7 +463,7 @@ public:
   typedef CGAL_Triangulation_facet_iterator_3<Gt,Tds> Facet_iterator;
 
   CGAL_Triangulation_facet_iterator_3()
-    : _ib(), _tr(), _inf()
+    : _ib(), _tr(NULL), _inf(true)
   {}
         
   CGAL_Triangulation_facet_iterator_3(CGAL_Triangulation_3<Gt,Tds> *tr, bool inf)

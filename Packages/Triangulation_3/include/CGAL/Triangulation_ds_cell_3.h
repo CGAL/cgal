@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 //
@@ -68,6 +68,8 @@ class CGAL_Triangulation_ds_cell_3
 
 public:
 
+  typedef typename Vb::Point Point;
+
   typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   //  typedef typename CGAL_Triangulation_data_structure_3<Vb,Cb>::Facet Facet;
@@ -114,7 +116,7 @@ public:
     {
       _previous_cell->_next_cell = _next_cell;
       _next_cell->_previous_cell = _previous_cell;
-      // automatically calls the destructor of the face base ?
+      // automatically calls the destructor of the cell base ?
     }
 
   // SETTING
@@ -168,7 +170,7 @@ public:
   }
     
   inline 
-  bool has_vertex(const Vertex* v, int& i) const
+  bool has_vertex(const Vertex* v, int & i) const
   {
     return (Cb::has_vertex(v,i));
   }
@@ -194,7 +196,7 @@ public:
   }
     
   inline 
-  bool has_neighbor(const Cell* n, int& i) const
+  bool has_neighbor(const Cell* n, int & i) const
   {
     return (Cb::has_neighbor(n,i));
   }
@@ -210,7 +212,7 @@ public:
 
   bool is_valid(int dim = 3, bool verbose = false, int level = 0) const
   {
-    if ( ! Cb::is_valid() ) return false;
+    if ( ! Cb::is_valid(verbose, true) ) return false;
 
     switch (dim) {
       
@@ -222,6 +224,7 @@ public:
 	if (verbose) { cerr << "vertex 0 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
+      vertex(0)->is_valid(verbose,level);
       if ( vertex(1) != NULL || 
 	   vertex(2) != NULL || vertex(3) != NULL ) {
 	if (verbose) { cerr << "vertex 1,2 or 3 != NULL" << endl;}
@@ -241,6 +244,7 @@ public:
 	if (verbose) { cerr << "vertex 0 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
+      vertex(0)->is_valid(verbose,level);
       if ( neighbor (0) == NULL ) {
 	if (verbose) { cerr << "neighbor 0 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
@@ -274,6 +278,8 @@ public:
 	if (verbose) { cerr << "vertex 0 or 1 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
+      vertex(0)->is_valid(verbose,level);
+      vertex(1)->is_valid(verbose,level);
       if ( n0 == NULL || n1 == NULL ) {
 	if (verbose) { cerr << "neighbor 0 or 1 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
@@ -322,6 +328,9 @@ public:
 	if (verbose) { cerr << "vertex 0, 1, or 2 NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
       }
+      vertex(0)->is_valid(verbose,level);
+      vertex(1)->is_valid(verbose,level);
+      vertex(2)->is_valid(verbose,level);
       if ( vertex(3) != NULL ) {
 	if (verbose) { cerr << "vertex 3 != NULL" << endl;}
 	CGAL_triangulation_assertion(false); return false;
@@ -370,6 +379,7 @@ public:
 	    }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
+	  vertex(i)->is_valid(verbose,level);
 	}
 
 	for(i = 0; i < 4; i++) {

@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 #ifndef CGAL_TRIANGULATION_UTILS_3_H
@@ -42,10 +42,10 @@ inline unsigned int nextposaroundij(const unsigned int i,
   // oriented edge vertex(i) vertex(j) in 3d
   CGAL_precondition( ( i < 4 ) && ( j < 4 ) && ( i != j ) );
   static const unsigned int tab_nextposaroundij[4][4] = {
-    5, 2, 3, 1,
-    3, 5, 0, 2,
-    1, 3, 5, 0,
-    2, 0, 1, 5 }; // the diagonal has no meaning
+    {5, 2, 3, 1},
+    {3, 5, 0, 2},
+    {1, 3, 5, 0},
+    {2, 0, 1, 5} }; // the diagonal has no meaning
   return tab_nextposaroundij[i][j];
 }
 

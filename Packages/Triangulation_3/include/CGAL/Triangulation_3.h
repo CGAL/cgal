@@ -16,7 +16,7 @@
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -753,6 +753,18 @@ public:
 //     return NULL;
 //   }
 
+  bool is_vertex(const Point & p, Vertex_handle & v) const
+    {
+      Locate_type lt;
+      int li, lj;
+      Cell_handle c = locate( p, lt, li, lj );
+      if ( lt == VERTEX ) {
+	v = c->vertex(li);
+	return true;
+      }
+      return false;
+    }
+
   inline Cell_handle
   locate(const Point & p) const
     {
@@ -824,7 +836,7 @@ public:
     case 3:
       {
 	CGAL_triangulation_precondition
-	  ( (start != NULL) 
+	  ( (&(*start) != NULL) 
 	    && ( ! start->has_vertex(infinite) ) );
 	Cell_handle c = start;
 	CGAL_Orientation o[4];
@@ -944,7 +956,7 @@ public:
     case 2:
       {
 	CGAL_triangulation_precondition
-	  ( (start != NULL) 
+	  ( (&(*start) != NULL) 
 	    && ( ! start->has_vertex(infinite) ) );
 	//first tests whether p is coplanar with the current triangulation
 	Facet_iterator finite_fit = finite_facets_begin();
@@ -979,17 +991,17 @@ public:
 	  p0 = c->vertex( i )->point();
 	  p1 = c->vertex( ccw(i) )->point();
 	  p2 = c->vertex( cw(i) )->point();
-	  o[0] = geom_traits().orientation_in_plane(p,p0,p1,p2);
+	  o[0] = geom_traits().orientation_in_plane(p0,p1,p2,p);
 	  if ( o[0] == CGAL_NEGATIVE ) {
 	    c = c->neighbor( cw(i) );
 	    continue;
 	  }
-	  o[1] = geom_traits().orientation_in_plane(p,p1,p2,p0);
+	  o[1] = geom_traits().orientation_in_plane(p1,p2,p0,p);
 	  if ( o[1] == CGAL_NEGATIVE ) {
 	    c = c->neighbor( i );
 	    continue;
 	  }
-	  o[2] = geom_traits().orientation_in_plane(p,p2,p0,p1);
+	  o[2] = geom_traits().orientation_in_plane(p2,p0,p1,p);
 	  if ( o[2] == CGAL_NEGATIVE ) {
 	    c = c->neighbor( ccw(i) );
 	    continue;
@@ -1032,7 +1044,7 @@ public:
     case 1:
       {
 	CGAL_triangulation_precondition
-	  ( (start != NULL) 
+	  ( (&(*start) != NULL) 
 	    && ( ! start->has_vertex(infinite) ) );
 	//first tests whether p is collinear with the current triangulation
 	Edge_iterator finite_eit = finite_edges_begin();
@@ -1049,9 +1061,9 @@ public:
 	p0 = start->vertex(0)->point();
 	p1 = start->vertex(1)->point();
 	CGAL_triangulation_assertion
-	  ( ( geom_traits().compare_x(p0,p1) != CGAL_ZERO ) ||
-	    ( geom_traits().compare_y(p0,p1) != CGAL_ZERO ) ||
-	    ( geom_traits().compare_z(p0,p1) != CGAL_ZERO ) );
+	  ( ( geom_traits().compare_x(p0,p1) != CGAL_EQUAL ) ||
+	    ( geom_traits().compare_y(p0,p1) != CGAL_EQUAL ) ||
+	    ( geom_traits().compare_z(p0,p1) != CGAL_EQUAL ) );
 	o = geom_traits().compare_x(p0,p1);
 	if ( o == CGAL_EQUAL ) {
 	  o = geom_traits().compare_y(p0,p1);
@@ -1410,11 +1422,11 @@ public:
 	( geom_traits().orientation(p,p0,p1,p2) == CGAL_COPLANAR );
 
       // edge p0 p1 :
-      CGAL_Orientation o0 = geom_traits().orientation_in_plane(p,p0,p1,p2);
+      CGAL_Orientation o0 = geom_traits().orientation_in_plane(p0,p1,p2,p);
       // edge p1 p2 :
-      CGAL_Orientation o1 = geom_traits().orientation_in_plane(p,p1,p2,p0);
+      CGAL_Orientation o1 = geom_traits().orientation_in_plane(p1,p2,p0,p);
       // edge p2 p0 :
-      CGAL_Orientation o2 = geom_traits().orientation_in_plane(p,p2,p0,p1);
+      CGAL_Orientation o2 = geom_traits().orientation_in_plane(p2,p0,p1,p);
 
       if ( (o0 == CGAL_NEGATIVE) ||
 	   (o1 == CGAL_NEGATIVE) ||
@@ -2405,8 +2417,94 @@ public:
     return Cell_circulator(ncthis,e,c);
   }
 
+  void
+  incident_cells(Vertex_handle v, 
+		 set<Cell*, less<Cell*> > & cells,
+		 Cell_handle c = NULL ) const
+    {
+      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
 
+      if ( dimension() < 3 ) { return; }
+
+      if ( c == NULL ) {
+	c = v->cell();
+      }
+      else {
+	CGAL_triangulation_precondition( c->has_vertex(v) );
+      }
+      if ( cells.find( &(*c) ) != cells.end() ) {
+	return; // c was already found
+      }
+      cells.insert( &(*c) );
+      
+      for ( int j=0; j<4; j++ ) {
+	if ( j != c->index(v) ) {
+	  incident_cells( v, cells, c->neighbor(j) );
+	}
+      }
+    }
+
+  void
+  incident_vertices(Vertex_handle v, 
+		    set<Vertex*, less<Vertex*> > & vertices,
+		    Cell_handle c = NULL ) const
+    {
+      CGAL_triangulation_precondition( v != NULL );
+      CGAL_triangulation_precondition( _tds.is_vertex(&(*v)) );
+      
+      if ( number_of_vertices() < 2 ) { return; }
+
+      if ( c == NULL ) {
+	c = v->cell();
+      }
+      else {
+	CGAL_triangulation_precondition( c->has_vertex(v) );
+      }
+
+      int d = dimension();
+      int j;
+      int found = 0;
+      for ( j=0; j <= d; j++ ) {
+	if ( j != c->index(v) ) {
+	  if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() ) {
+	    vertices.insert( &(*(c->vertex(j))) );
+	  }
+	  else {
+	    found++; // c->vertex(j) was already found 
+	  }
+	}
+      }
+      if ( found == 3 ) return; // c was already visited
+      
+      for ( j=0; j <= d; j++ ) {
+	if ( j != c->index(v) ) {
+	  incident_vertices( v, vertices, c->neighbor(j) );
+	}
+      }
+    }
+  
   // CHECKING
+  bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const
+    {
+      int i;
+      if ( ! (&(*c))->is_valid(t.dimension(),verbose,level) ) {
+	if (verbose) { 
+	  cerr << "combinatorically invalid cell" ;
+	  for ( i=0; i <= t.dimension(); i++ ) {
+	    cerr << c->vertex(i)->point() << ", " ;
+	  }
+	  cerr << endl;
+	}
+	CGAL_triangulation_assertion(false); return false;
+      }
+      if ( is_finite(c) ) {
+	is_valid_finite(c);
+      }
+      if (verbose) { cerr << "geometrically valid cell" << endl;}
+      return true;
+    } //end is_valid(cell)
+
   bool is_valid(bool verbose = false, int level = 0) const
   {
     if ( ! _tds.is_valid(verbose,level) ) {
@@ -2414,31 +2512,144 @@ public:
       CGAL_triangulation_assertion(false); return false;
     }
     
-    if ( infinite_vertex == NULL ) {
+    if ( &(*infinite_vertex()) == NULL ) {
       if (verbose) { cerr << "no infinite vertex" << endl; }
       CGAL_triangulation_assertion(false); return false;
     }
 
-    if (dimension() == 3 ) {
-      Cell_iterator it;
-      for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	if ( geom_traits().orientation(it->vertex(0)->point(),
-			      it->vertex(1)->point(),
-			      it->vertex(2)->point(),
-			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
-	  if (verbose) { cerr << "badly oriented cell " 
-			      << it->vertex(0)->point() << ", " 
-			      << it->vertex(1)->point() << ", " 
-			      << it->vertex(2)->point() << ", " 
-			      << it->vertex(3)->point() << ", " 
-			      << endl; }
-	  CGAL_triangulation_assertion(false); return false;
+    switch ( dimension() ) {
+    case 3:
+      {
+	Cell_iterator it;
+	for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
+// 	if ( geom_traits().orientation(it->vertex(0)->point(),
+// 			      it->vertex(1)->point(),
+// 			      it->vertex(2)->point(),
+// 			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
+// 	  if (verbose) { cerr << "badly oriented cell " 
+// 			      << it->vertex(0)->point() << ", " 
+// 			      << it->vertex(1)->point() << ", " 
+// 			      << it->vertex(2)->point() << ", " 
+// 			      << it->vertex(3)->point() << ", " 
+// 			      << endl; }
+// 	  CGAL_triangulation_assertion(false); return false;
+// 	}
+	  is_valid_finite((*it).handle());
 	}
+	break;
+      }
+    case 2:
+      {
+	Facet_iterator it;
+	for ( it = finite_facets_begin(); it != facets_end(); ++it ) {
+	  is_valid_finite((*it).first);
+	}
+	break;
+      }
+    case 1:
+      {
+	Edge_iterator it;
+	for ( it = finite_edges_begin(); it != edges_end(); ++it ) {
+	  is_valid_finite((*it).first);
+	}
+	break;
       }
     }
     if (verbose) { cerr << "valid triangulation" << endl;}
     return true;
   }
+
+private:
+  bool is_valid_finite(Cell_handle c, bool verbose = false, int level = 0) const
+    {
+      switch ( dimension() ) {
+      case 3:
+	{
+	  if ( geom_traits().orientation(c->vertex(0)->point(),
+					 c->vertex(1)->point(),
+					 c->vertex(2)->point(),
+					 c->vertex(3)->point()) 
+	       != CGAL_LEFTTURN ) {
+	    if (verbose) { cerr << "badly oriented cell " 
+				<< c->vertex(0)->point() << ", " 
+				<< c->vertex(1)->point() << ", " 
+				<< c->vertex(2)->point() << ", " 
+				<< c->vertex(3)->point() << endl; }
+	    CGAL_triangulation_assertion(false); return false;
+	  }
+	  break;
+	}
+      case 2:
+	{
+	  for ( int i=0; i<3; i++ ) {
+	    if ( ( ! is_infinite( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
+		 && 
+		 geom_traits().orientation_in_plane
+		 ( c->vertex(cw(i))->point(),
+		   c->vertex(ccw(i))->point(),
+		   c->vertex(i)->point(),
+		   c->neighbor(i)->vertex(c->neighbor(i)->index(c))->point()
+		   )
+		 != CGAL_NEGATIVE ) {
+	      if (verbose) { cerr << "badly oriented face "
+				  << c->vertex(0)->point() << ", " 
+				  << c->vertex(1)->point() << ", " 
+				  << c->vertex(2)->point() 
+				  << "with neighbor " << i
+				  << c->neighbor(i)->vertex(0)->point() << ", " 
+				  << c->neighbor(i)->vertex(1)->point() << ", " 
+				  << c->neighbor(i)->vertex(2)->point() 
+				  << endl; }
+	      CGAL_triangulation_assertion(false); return false;
+	    }
+	  }
+	  break;
+	}
+      case 1:
+	{
+	  Point p0 = c->vertex(0)->point();
+	  Point p1 = c->vertex(1)->point();
+	    
+	  Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
+	  if ( ! is_infinite( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
+	    Point n0 = c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
+	    if ( ( geom_traits().compare_x( p0, p1 )
+		   != geom_traits().compare_x( p1, n0 ) )
+		 || ( geom_traits().compare_y( p0, p1 )
+		      != geom_traits().compare_y( p1, n0 ) )
+		 || ( geom_traits().compare_z( p0, p1 )
+		      != geom_traits().compare_z( p1, n0 ) ) ) {
+	      if (verbose) { cerr << "badly oriented edge "
+				  << p0 << ", " << p1 << endl
+				  << "with neighbor 0"
+				  << c->neighbor(0)->vertex(1-c->neighbor(0)->index(c))->point() << ", "
+				  << n0
+				  << endl; }
+	      CGAL_triangulation_assertion(false); return false;
+	    }
+	  }
+	  if ( ! is_infinite( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) ) { 
+	    Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();	
+	    if ( ( geom_traits().compare_x( p1, p0 )
+		   != geom_traits().compare_x( p0, n1 ) )
+		 || ( geom_traits().compare_y( p1, p0 )
+		      != geom_traits().compare_y( p0, n1 ) )
+		 || ( geom_traits().compare_z( p1, p0 )
+		      != geom_traits().compare_z( p0, n1 ) ) ) {
+	      if (verbose) { cerr << "badly oriented edge "
+				  << p0 << ", " << p1 << endl
+				  << "with neighbor 1"
+				  << c->neighbor(1)->vertex(1-c->neighbor(1)->index(c))->point() << ", "
+				  << n1
+				  << endl; }
+	      CGAL_triangulation_assertion(false); return false;
+	    }
+	  }
+	  break;
+	}
+      }
+     return true;
+    }
 
 };
 

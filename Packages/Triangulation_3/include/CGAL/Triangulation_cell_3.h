@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -71,24 +71,24 @@ public:
   { }
 
   inline
-  CGAL_Triangulation_cell_3(Tds& tds,
-			  const Vertex_handle & v0,
-			  const Vertex_handle & v1,
-			  const Vertex_handle & v2,
-			  const Vertex_handle & v3)
+  CGAL_Triangulation_cell_3(Tds & tds,
+			    Vertex_handle v0,
+			    Vertex_handle v1,
+			    Vertex_handle v2,
+			    Vertex_handle v3)
     : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3))
   {}
     
   inline
-  CGAL_Triangulation_cell_3(Tds& tds,
-			  const Vertex_handle & v0,
-			  const Vertex_handle & v1,
-			  const Vertex_handle & v2,
-			  const Vertex_handle & v3,
-			  const Cell_handle & n0,
-			  const Cell_handle & n1,
-			  const Cell_handle & n2,
-			  const Cell_handle & n3)
+  CGAL_Triangulation_cell_3(Tds & tds,
+			    Vertex_handle v0,
+			    Vertex_handle v1,
+			    Vertex_handle v2,
+			    Vertex_handle v3,
+			    Cell_handle n0,
+			    Cell_handle n1,
+			    Cell_handle n2,
+			    Cell_handle n3)
     : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3), &(*n0), &(*n1), &(*n2), &(*n3)) 
   {}
 
@@ -115,7 +115,7 @@ public:
 
   //ACCESS FUNCTIONS
   inline
-  Cell_handle neighbor(int i)
+  Cell_handle neighbor(int i) const
   {
     return (Cell *)(Ctds::neighbor(i));
   }
@@ -125,12 +125,12 @@ public:
     return Ctds::index( &(*c));
   }
   
-  inline bool has_neighbor(Cell_handle c)
+  inline bool has_neighbor(Cell_handle c) const
   {
     return Ctds::has_neighbor( &(*c));
   }
 
-  inline bool has_neighbor(Cell_handle c, int &i)
+  inline bool has_neighbor(Cell_handle c, int & i) const
   {
     return Ctds::has_neighbor( &(*c), i);
   }
@@ -177,6 +177,10 @@ public:
     Ctds::set_neighbor(i, &(*n));
   }
 
+//   inline bool is_valid(bool verbose = false, int level = 0) const
+//   {
+//     return Ctds::is_valid(verbose,level);
+//   }
 };
 
 #endif CGAL_TRIANGULATION_CELL_3_H

@@ -15,7 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 //
@@ -81,6 +81,12 @@ public:
     Vb::set_cell(c);
   }
 
+  inline 
+  void set_point(const Point & p)
+  {
+    Vb::set_point(p);
+  }
+
   // USEFUL CONSTANT TIME FUNCTIONS
 
   // USEFUL NON CONSTANT TIME FUNCTIONS
@@ -120,8 +126,14 @@ public:
 
    bool is_valid(bool verbose = false, int level = 0) const
   {
-    bool result = Vb::is_valid();
+    bool result = Vb::is_valid(verbose,level);
     result = result && cell()->has_vertex(this);
+    if ( ! result ) {
+      if ( verbose ) {
+	cerr << "invalid vertex" << endl;
+      }
+      CGAL_triangulation_assertion(false);
+    }
     return result;
   }
 };

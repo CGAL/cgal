@@ -16,7 +16,7 @@
 //
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
-// coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
 
@@ -36,7 +36,7 @@ public:
   CGAL_Delaunay_triangulation_3()
     : CGAL_Triangulation_3<Gt,Tds>() {}
   
-  CGAL_Delaunay_triangulation_3(const Gt& gt)
+  CGAL_Delaunay_triangulation_3(const Gt & gt)
   : CGAL_Triangulation_3<Gt,Tds>(gt) {}
   
   CGAL_Delaunay_triangulation_3(const Point & p0,
@@ -46,7 +46,8 @@ public:
     : CGAL_Triangulation_3<Gt,Tds>(p0,p1,p2,p3){} // debug
 
   // copy constructor duplicates vertices and cells
-  CGAL_Delaunay_triangulation_3(const CGAL_Delaunay_triangulation_3<Gt,Tds> &tr)
+  CGAL_Delaunay_triangulation_3(const CGAL_Delaunay_triangulation_3<Gt,Tds> 
+				& tr)
     : CGAL_Triangulation_3<Gt,Tds>(tr)
     { CGAL_triangulation_postcondition( is_valid(true) );  }
   
@@ -198,6 +199,7 @@ public:
       // dimension <= 1
       return CGAL_Triangulation_3<Gt,Tds>::insert(p);
     }
+    return CGAL_Triangulation_3<Gt,Tds>::insert(p);// to avoid warning with egcs
   }// insert(p)
 
 private:
@@ -265,8 +267,8 @@ private:
 						  c->vertex(1)->point(),
 						  c->vertex(2)->point(),
 						  c->vertex(3)->point(),p);
-      return ( (o == CGAL_NEGATIVE) ? CGAL_ON_UNBOUNDED_SIDE :
-	       (o == CGAL_POSITIVE) ? CGAL_ON_BOUNDED_SIDE :
+      return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
+	       (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
 	       CGAL_ON_BOUNDARY );
     }
     // infinite cell :
@@ -305,10 +307,11 @@ private:
       CGAL_triangulation_assertion(false);
       return CGAL_ON_UNBOUNDED_SIDE;
     }
+    return CGAL_ON_UNBOUNDED_SIDE;// to avoid warning with egcs
   }// end side of sphere
 
   CGAL_Bounded_side
-  side_of_circle( Facet f, const Point & p) const
+  side_of_circle( const Facet & f, const Point & p) const
     {
       return side_of_circle(f.first, f.second, p);
     }
@@ -342,8 +345,8 @@ private:
 						    p);
 	// the triangulation is supposed to be valid, ie the facet
 	// with vertices 0 1 2 in this order is positively oriented
-	return ( (o == CGAL_NEGATIVE) ? CGAL_ON_UNBOUNDED_SIDE :
-		 (o == CGAL_POSITIVE) ? CGAL_ON_BOUNDED_SIDE :
+	return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
+		 (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
 		 CGAL_ON_BOUNDARY );
       }
       // else infinite facet
@@ -357,10 +360,10 @@ private:
       // to v1v2
       Cell_handle n = c->neighbor(i3);
       CGAL_Orientation o =
-	geom_traits().orientation_in_plane( p,
-					    v1->point(), 
+	geom_traits().orientation_in_plane( v1->point(), 
 					    v2->point(), 
-					    n->vertex(n->index(c))->point() );
+					    n->vertex(n->index(c))->point(),
+					    p );
       switch (o) {
       case CGAL_POSITIVE:
 	// p lies on the same side of v1v2 as vn, so not in f
@@ -445,8 +448,8 @@ private:
 						  c->vertex(i1)->point(),
 						  c->vertex(i2)->point(),
 						  p);
-      return ( (o == CGAL_NEGATIVE) ? CGAL_ON_UNBOUNDED_SIDE :
-	       (o == CGAL_POSITIVE) ? CGAL_ON_BOUNDED_SIDE :
+      return ( (o == CGAL_ON_NEGATIVE_SIDE) ? CGAL_ON_UNBOUNDED_SIDE :
+	       (o == CGAL_ON_POSITIVE_SIDE) ? CGAL_ON_BOUNDED_SIDE :
 	       CGAL_ON_BOUNDARY );
     }
     else {//infinite facet
@@ -456,10 +459,10 @@ private:
 	v1 = c->vertex( nextposaroundij(i3,i) ),
 	v2 = c->vertex( nextposaroundij(i,i3) );
       CGAL_Orientation o =
-	geom_traits().orientation_in_plane( p,
-					    v1->point(),
+	geom_traits().orientation_in_plane( v1->point(),
 					    v2->point(),
-					    c->vertex(i)->point());
+					    c->vertex(i)->point(),
+					    p );
       // then the code is duplicated from 2d case
       switch (o) {
       case CGAL_POSITIVE:
@@ -497,6 +500,7 @@ private:
 	}
       }// switch o
     }// infinite facet
+    return CGAL_ON_BOUNDARY; // to avoid warning with egcs
   }// side_of_circle
 
 };
