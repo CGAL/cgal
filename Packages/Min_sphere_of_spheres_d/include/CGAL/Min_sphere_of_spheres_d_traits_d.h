@@ -20,7 +20,6 @@
 #ifndef CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_D_H
 #define CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_D_H
 
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Weighted_point.h>
 
 namespace CGAL {
@@ -34,7 +33,7 @@ namespace CGAL {
   public: // types:
     typedef FT_ FT;
     typedef FT_ Weight;
-    typedef CGAL::Point_d<K_> Point;
+    typedef typename K_::Point_d Point;
     typedef CGAL::Weighted_point<Point,Weight> Sphere;
     typedef typename Point::Cartesian_const_iterator Cartesian_const_iterator;
     typedef UseSqrt_ Use_square_roots;
