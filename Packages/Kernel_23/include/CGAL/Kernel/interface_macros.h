@@ -37,6 +37,10 @@ CGAL_Kernel_pred(Are_ordered_along_line_2,
 		 are_ordered_along_line_2_object)
 CGAL_Kernel_pred(Are_ordered_along_line_3,
 		 are_ordered_along_line_3_object)
+CGAL_Kernel_pred(Are_parallel_2,
+		 are_parallel_2_object)
+CGAL_Kernel_pred(Are_parallel_3,
+		 are_parallel_3_object)
 CGAL_Kernel_pred(Are_strictly_ordered_along_line_2,
 		 are_strictly_ordered_along_line_2_object)
 CGAL_Kernel_pred(Are_strictly_ordered_along_line_3,

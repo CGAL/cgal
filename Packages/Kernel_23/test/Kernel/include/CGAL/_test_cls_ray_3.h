@@ -62,6 +62,10 @@ _test_cls_ray_3(const R& )
  assert( r7 == r2 );
  assert( r2 != r3 );
 
+ assert(   CGAL::parallel(r1, r1) );
+ assert(   CGAL::parallel(r4, r2) );
+ assert(   CGAL::parallel(r2, r3) );
+
  CGAL::Ray_3<R> r7l(p1, l);
  CGAL::Ray_3<R> r7v(p1, vec);
 
@@ -79,6 +83,9 @@ _test_cls_ray_3(const R& )
  assert( r5.has_on( r5.second_point() ));
  assert( r4.has_on( r4.point(1) ));
  assert( r4.has_on( r4.point(3) ));
+
+ assert( ! CGAL::parallel(r1, r5) );
+ assert( ! CGAL::parallel(r2, r5) );
 
  std::cout <<'.';
 

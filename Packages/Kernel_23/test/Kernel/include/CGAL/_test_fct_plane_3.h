@@ -47,11 +47,17 @@ _test_fct_plane_3(const R& )
  Point_3 p13( RT(18), RT(12), RT(0), RT(3) );  // ( 6, 4, 0)
 
  // bisector construction
- Plane_3 bp1 = CGAL::bisector(p2, p3);
- Plane_3 bp2 = CGAL::bisector(p3, p2);
- assert(bp1 == Plane_3(p12, p1, p13));
- assert(bp2 == Plane_3(p1, p12, p13));
- assert(bp1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
+ Plane_3 h1 = CGAL::bisector(p2, p3);
+ Plane_3 h2 = CGAL::bisector(p3, p2);
+ Plane_3 h3 (p12, p1, p13);
+ Plane_3 h4 (p1, p12, p13);
+ assert(h1 == h3);
+ assert(h2 == h4);
+ assert(h1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
+
+ Plane_3 h5 (p7, p8, p9);
+ assert(   CGAL::parallel(h1, h2) );
+ assert( ! CGAL::parallel(h1, h5) );
 
  std::cout << "done" << std::endl;
  return true;

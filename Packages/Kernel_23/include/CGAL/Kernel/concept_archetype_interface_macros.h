@@ -54,6 +54,18 @@ CGAL_Kernel_pred(Are_ordered_along_line_3,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_ARE_PARALLEL_2)
+CGAL_Kernel_pred(Are_parallel_2,
+		 are_parallel_2_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_ARE_PARALLEL_3)
+CGAL_Kernel_pred(Are_parallel_3,
+		 are_parallel_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_ARE_STRICTLY_ORDERED_ALONG_LINE_2)
 CGAL_Kernel_pred(Are_strictly_ordered_along_line_2,
 		 are_strictly_ordered_along_line_2_object)

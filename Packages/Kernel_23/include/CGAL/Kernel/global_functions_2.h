@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2003  Utrecht University (The Netherlands),
+// Copyright (c) 2003  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,26 +19,42 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Stefan Schirra
+// Author(s)     : Sylvain Pion
  
+#ifndef CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
+#define CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 
-#ifndef CGAL_KERNEL_BASIC_H
-#define CGAL_KERNEL_BASIC_H
+// Generic functions calling the kernel functor.
 
-#ifndef CGAL_KERNEL_INLINE
-#  define CGAL_KERNEL_INLINE inline
-#endif
+CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_KERNEL_MEDIUM_INLINE
-#  define CGAL_KERNEL_MEDIUM_INLINE
-#endif
+template <typename K>
+inline
+bool
+parallel(const typename K::Line_2 &l1,
+         const typename K::Line_2 &l2, const K &k)
+{
+  return k.are_parallel_2_object()(l1, l2);
+}
 
-#ifndef CGAL_KERNEL_LARGE_INLINE
-#  define CGAL_KERNEL_LARGE_INLINE
-#endif
+template <typename K>
+inline
+bool
+parallel(const typename K::Ray_2 &r1,
+         const typename K::Ray_2 &r2, const K &k)
+{
+  return k.are_parallel_2_object()(r1, r2);
+}
 
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/functional_base.h>
-#include <CGAL/Kernel/global_functions.h>
+template <typename K>
+inline
+bool
+parallel(const typename K::Segment_2 &s1,
+         const typename K::Segment_2 &s2, const K &k)
+{
+  return k.are_parallel_2_object()(s1, s2);
+}
 
-#endif // CGAL_KERNEL_BASIC_H
+CGAL_END_NAMESPACE
+
+#endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H

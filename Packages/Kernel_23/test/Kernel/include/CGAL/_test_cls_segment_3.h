@@ -51,6 +51,8 @@ _test_cls_segment_3(const R& )
  CGAL::Segment_3<R> s4( s2 );
  s1 = s4;
 
+ assert( CGAL::parallel(s2, s3) );
+
  CGAL::Vector_3<R> v0(p1, p2);
  assert( v0 == s2.to_vector() );
 
@@ -64,6 +66,8 @@ _test_cls_segment_3(const R& )
  assert( s5.has_on( p1 ) );
  assert( s5.has_on( p3 ) );
  assert( s2.has_on( p2 ) );
+
+ assert( ! CGAL::parallel(s1, s5) );
 
  std::cout <<'.';
 
@@ -98,6 +102,7 @@ _test_cls_segment_3(const R& )
 
  CGAL::Segment_3<R> sdeg(p3,p3);
  assert( sdeg.is_degenerate() );
+ assert( CGAL::parallel(sdeg, sdeg) );
 
  std::cout << "done" << std::endl;
  return true;

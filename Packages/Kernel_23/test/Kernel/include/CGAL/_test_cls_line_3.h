@@ -54,10 +54,12 @@ _test_cls_line_3(const R& )
 
  assert( l2 == l2);
  assert( l2 == l3);
+ assert( CGAL::parallel(l2, l3) );
 
  CGAL::Direction_3<R> dir( n9, n3, n1);
  CGAL::Line_3<R> l4(p3, dir);
  assert( l2 != l4);
+ assert( ! CGAL::parallel(l2, l4) );
 
  CGAL::Vector_3<R> vec( n9, n3, n1);
  CGAL::Line_3<R> l4v(p3, vec);

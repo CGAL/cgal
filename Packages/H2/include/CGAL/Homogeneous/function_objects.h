@@ -25,6 +25,7 @@
 #define CGAL_HOMOGENEOUS_FUNCTION_OBJECTS_H
 
 #include <CGAL/Kernel/function_objects.h>
+#include <CGAL/Cartesian/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -130,6 +131,10 @@ namespace HomogeneousKernelFunctors {
   using CommonKernelFunctors::Oriented_side_2;
   using CommonKernelFunctors::Oriented_side_3;
 #endif
+
+  // For lazyness...
+  using CartesianKernelFunctors::Are_parallel_2;
+  using CartesianKernelFunctors::Are_parallel_3;
 
   template <typename K>
   class Angle_2

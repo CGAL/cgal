@@ -55,6 +55,11 @@ _test_cls_segment_2(const R& )
  CGAL::Segment_2<R> s6 ( s3 );
  s0 = s2;
 
+ assert(   CGAL::parallel(s0, s2) );
+ assert(   CGAL::parallel(s1, s2) );
+ assert(   CGAL::parallel(s1, s3) );
+ assert( ! CGAL::parallel(s1, s5) );
+
  CGAL::Vector_2<R> v1 = s1.to_vector();
  assert( v1 == (p2-p1) );
 

@@ -71,6 +71,7 @@ _test_fct_line_2(const R& )
  Line_2 l5a(p6, p7);
  Line_2 l5b(p11, p1);
  assert ( CGAL::compare_slopes(l5a, l5b) == CGAL::EQUAL );
+ assert( CGAL::parallel(l5a, l5b) );
 
  // two positive slopes
  Line_2 l6(p2, p4);
@@ -81,14 +82,23 @@ _test_fct_line_2(const R& )
  assert( CGAL::compare_slopes(l7, l6) == CGAL::SMALLER );
  assert( CGAL::compare_slopes(l6, l8) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l8, l6) == CGAL::SMALLER );
+ assert(   CGAL::parallel(l6, l6) );
+ assert( ! CGAL::parallel(l6, l7) );
+ assert( ! CGAL::parallel(l7, l6) );
+ assert( ! CGAL::parallel(l6, l8) );
+ assert( ! CGAL::parallel(l8, l6) );
 
  // vertical and positive slope
  assert( CGAL::compare_slopes(l1, l6) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l6, l1) == CGAL::SMALLER );
+ assert( ! CGAL::parallel(l1, l6) );
+ assert( ! CGAL::parallel(l6, l1) );
 
  // horizontal and positive slope
  assert( CGAL::compare_slopes(l5, l6) == CGAL::SMALLER );
  assert( CGAL::compare_slopes(l6, l5) == CGAL::LARGER );
+ assert( ! CGAL::parallel(l5, l6) );
+ assert( ! CGAL::parallel(l6, l5) );
 
  std::cout <<'.';
 
@@ -100,10 +110,15 @@ _test_fct_line_2(const R& )
  assert( CGAL::compare_slopes(l9, l10) == CGAL::SMALLER );
  assert( CGAL::compare_slopes(l10, l9) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l11, l10) == CGAL::LARGER );
+ assert( ! CGAL::parallel(l9, l10) );
+ assert( ! CGAL::parallel(l10, l9) );
+ assert( ! CGAL::parallel(l11, l10) );
 
  // vertical and negative slope
  assert( CGAL::compare_slopes(l2, l9) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l9, l2) == CGAL::SMALLER );
+ assert( ! CGAL::parallel(l2, l9) );
+ assert( ! CGAL::parallel(l9, l2) );
 
  // horizontal and negative slope
  assert( CGAL::compare_slopes(l5, l9) == CGAL::LARGER );
@@ -114,6 +129,8 @@ _test_fct_line_2(const R& )
  // positive and negative slope
  assert( CGAL::compare_slopes(l6, l9) == CGAL::LARGER );
  assert( CGAL::compare_slopes(l9, l7) == CGAL::SMALLER );
+ assert( ! CGAL::parallel(l6, l9) );
+ assert( ! CGAL::parallel(l9, l7) );
 
  std::cout <<'.';
 
@@ -123,6 +140,7 @@ _test_fct_line_2(const R& )
  assert(bl1 == Line_2(p12, p1));
  assert(bl2 == Line_2(p1, p12));
  assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
+ assert( CGAL::parallel(bl1, bl2) );
 
  std::cout << "done" << std::endl;
  return true;

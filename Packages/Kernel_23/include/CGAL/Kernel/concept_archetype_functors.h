@@ -95,6 +95,59 @@ public:
 };
 
 template <typename K>
+class Are_parallel_2
+{
+    typedef typename K::Line_2          Line_2;
+    typedef typename K::Segment_2       Segment_2;
+    typedef typename K::Ray_2           Ray_2;
+  
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    bool
+    operator()(const Line_2&, const Line_2&) const
+    { return true; }
+
+    bool
+    operator()(const Segment_2&, const Segment_2&) const
+    { return true; }
+
+    bool
+    operator()(const Ray_2&, const Ray_2&) const
+    { return true; }
+};
+
+template <typename K>
+class Are_parallel_3
+{
+    typedef typename K::Line_3          Line_3;
+    typedef typename K::Segment_3       Segment_3;
+    typedef typename K::Ray_3           Ray_3;
+    typedef typename K::Plane_3         Plane_3;
+  
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    bool
+    operator()(const Line_3&, const Line_3&) const
+    { return true; }
+
+    bool
+    operator()(const Plane_3&, const Plane_3&) const
+    { return true; }
+
+    bool
+    operator()(const Segment_3&, const Segment_3&) const
+    { return true; }
+
+    bool
+    operator()(const Ray_3&, const Ray_3&) const
+    { return true; }
+};
+
+template <typename K>
 class Are_strictly_ordered_along_line_2
 {
     typedef typename K::Point_2 Point_2;

@@ -65,6 +65,11 @@ _test_cls_ray_2(const R& )
  CGAL::Ray_2<R> r8v( p2, v24);
  r0 = r3;
 
+ assert(   CGAL::parallel(r1, r2) );
+ assert(   CGAL::parallel(r1, r3) );
+ assert(   CGAL::parallel(r4, r5) );
+ assert( ! CGAL::parallel(r1, r6) );
+
  std::cout << '.';
 
  assert( r1 == r1 );
@@ -117,6 +122,7 @@ _test_cls_ray_2(const R& )
 
  assert( CGAL::Ray_2<R>( p1, p1).is_degenerate() );
  assert( ! r0.is_degenerate() );
+ assert( CGAL::parallel(r0, r0) );
 
  std::cout << "done" << std::endl;
  return true;

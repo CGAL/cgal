@@ -1,4 +1,4 @@
-// Copyright (c) 1999,2003  Utrecht University (The Netherlands),
+// Copyright (c) 2003  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,26 +19,28 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Stefan Schirra
+// Author(s)     : Sylvain Pion
  
+#ifndef CGAL_KERNEL_GLOBAL_FUNCTIONS_H
+#define CGAL_KERNEL_GLOBAL_FUNCTIONS_H
 
-#ifndef CGAL_KERNEL_BASIC_H
-#define CGAL_KERNEL_BASIC_H
+// Generic functions calling the kernel functor.
+// Independent of the dimension.
 
-#ifndef CGAL_KERNEL_INLINE
-#  define CGAL_KERNEL_INLINE inline
-#endif
+#include <CGAL/Kernel/global_functions_2.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
-#ifndef CGAL_KERNEL_MEDIUM_INLINE
-#  define CGAL_KERNEL_MEDIUM_INLINE
-#endif
+CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_KERNEL_LARGE_INLINE
-#  define CGAL_KERNEL_LARGE_INLINE
-#endif
+template <typename O>
+inline
+bool
+parallel(const O &o1, const O &o2)
+{
+  typedef typename Kernel_traits<O>::Kernel K;
+  return parallel(o1, o2, K());
+}
 
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/functional_base.h>
-#include <CGAL/Kernel/global_functions.h>
+CGAL_END_NAMESPACE
 
-#endif // CGAL_KERNEL_BASIC_H
+#endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_H

@@ -31,6 +31,26 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class FT >
+inline
+bool
+parallelC2(const FT &l1a, const FT &l1b,
+           const FT &l2a, const FT &l2b)
+{
+    return sign_of_determinant2x2(l1a, l1b, l2a, l2b) == ZERO;
+}
+
+template < class FT >
+bool
+parallelC2(const FT &s1sx, const FT &s1sy,
+           const FT &s1tx, const FT &s1ty,
+           const FT &s2sx, const FT &s2sy,
+           const FT &s2tx, const FT &s2ty)
+{
+    return sign_of_determinant2x2(s1tx - s1sx, s1ty - s1sy,
+                                  s2tx - s2sx, s2ty - s2sy) == ZERO;
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,

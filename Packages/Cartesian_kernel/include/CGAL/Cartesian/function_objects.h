@@ -167,6 +167,80 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Are_parallel_2
+  {
+    typedef typename K::Line_2          Line_2;
+    typedef typename K::Segment_2       Segment_2;
+    typedef typename K::Ray_2           Ray_2;
+  
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    bool
+    operator()(const Line_2& l1, const Line_2& l2) const
+    { return parallelC2(l1.a(), l1.b(), l2.a(), l2.b()); }
+
+    bool
+    operator()(const Segment_2& s1, const Segment_2& s2) const
+    { return parallelC2(s1.source().x(), s1.source().y(),
+                        s1.target().x(), s1.target().y(),
+                        s2.source().x(), s2.source().y(),
+                        s2.target().x(), s2.target().y());
+    }
+
+    bool
+    operator()(const Ray_2& r1, const Ray_2& r2) const
+    { return parallelC2(r1.source().x(), r1.source().y(),
+                        r1.second_point().x(), r1.second_point().y(),
+                        r2.source().x(), r2.source().y(),
+                        r2.second_point().x(), r2.second_point().y());
+    }
+  };
+
+  template <typename K>
+  class Are_parallel_3
+  {
+    typedef typename K::Line_3          Line_3;
+    typedef typename K::Segment_3       Segment_3;
+    typedef typename K::Ray_3           Ray_3;
+    typedef typename K::Plane_3         Plane_3;
+  
+  public:
+    typedef bool             result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    bool
+    operator()(const Line_3& l1, const Line_3& l2) const
+    { return parallelC3(
+                l1.to_vector().x(), l1.to_vector().y(), l1.to_vector().z(),
+                l2.to_vector().x(), l2.to_vector().y(), l2.to_vector().z());
+    }
+
+    bool
+    operator()(const Plane_3& h1, const Plane_3& h2) const
+    { return parallelC3(h1.a(), h1.b(), h1.c(),
+                        h2.a(), h2.b(), h2.c());
+    }
+
+    bool
+    operator()(const Segment_3& s1, const Segment_3& s2) const
+    { return parallelC3(s1.source().x(), s1.source().y(), s1.source().z(),
+                        s1.target().x(), s1.target().y(), s1.target().z(),
+                        s2.source().x(), s2.source().y(), s2.source().z(),
+                        s2.target().x(), s2.target().y(), s2.target().z());
+    }
+
+    bool
+    operator()(const Ray_3& r1, const Ray_3& r2) const
+    { return parallelC3(r1.source().x(), r1.source().y(), r1.source().z(),
+	r1.second_point().x(), r1.second_point().y(), r1.second_point().z(),
+                        r2.source().x(), r2.source().y(), r2.source().z(),
+	r2.second_point().x(), r2.second_point().y(), r2.second_point().z());
+    }
+  };
+
+  template <typename K>
   class Collinear_are_ordered_along_line_2
   {
     typedef typename K::Point_2         Point_2;
