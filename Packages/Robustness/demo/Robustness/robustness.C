@@ -34,29 +34,7 @@ int main(int, char*)
 }
 
 #else
-
-#include <fstream>
-#include <stack>
-#include <set>
-#include <string>
-
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/point_generators_2.h>
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float> exact_NT;
-#include <CGAL/segment_intersection_points_2.h>
-#include <CGAL/Join_input_iterator.h>
-#include <CGAL/copy_n.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/squared_distance_2.h>
-#include <CGAL/Cartesian_converter.h> 
-
-
-
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
@@ -74,35 +52,55 @@ typedef CGAL::Quotient<CGAL::MP_Float> exact_NT;
 #include <qtoolbar.h>
 #include <qfiledialog.h>
 #include <qtimer.h>
+#include <qprogressdialog.h>
 
-  typedef CGAL::Cartesian<double>       C_double;
-  typedef C_double::Point_2             double_Point;
-  typedef C_double::Segment_2           double_Segment;
-  typedef CGAL::Cartesian<exact_NT>     C_real;
-  typedef C_real::Point_2               real_Point;
-  typedef C_real::Segment_2             real_Segment;
-  typedef CGAL::Creator_uniform_2<double, double_Point>
-                                        Point_creator;
-  typedef CGAL::Random_points_in_square_2<double_Point, Point_creator>
-                                        Source;
-  typedef CGAL::Creator_uniform_2<double_Point,  double_Segment>
-                                        Segment_creator;
-  typedef CGAL::Join_input_iterator_2<Source, Source, Segment_creator>
-                                        Segment_iterator;
+
+#include <fstream>
+#include <stack>
+#include <set>
+#include <string>
 
 const QString my_title_string("Robustness Demo with"
 			      " CGAL Qt_widget");
 
 //global flags and variables
 int                           current_state;
-std::vector<double_Segment>   double_segments;
+std::vector<double_Segment>   double_segments, double_segments2;
 std::vector<real_Segment>     real_segments;
+
+std::vector<CartesianFloat::Segment_2>    float_segments, float_segments2;
+std::vector<HomogeneousFloat::Segment_2>  hfloat_segments, hfloat_segments2;
+std::vector<HomogeneousDouble::Segment_2> hdouble_segments, hdouble_segments2;
+
 std::vector<double_Point >    double_intersection_points;
 std::vector<real_Point >      real_intersection_points;
 std::vector<double_Point >    double_convex_hull;
 std::vector<real_Point >      real_convex_hull;
 
-class show_segments : public CGAL::Qt_widget_layer{
+class show_intersection_points : public CGAL::Qt_widget_layer{
+public:
+  void draw(){
+    widget->lock();
+    *widget << CGAL::LineWidth(1) << CGAL::GREEN;
+    std::vector<double_Segment>::iterator dit =
+      double_segments.begin();
+    while(dit!=double_segments.end()){
+      *widget << (*dit);
+      dit++;
+    }
+    *widget << CGAL::LineWidth(1) << CGAL::BLUE;
+    std::vector<double_Segment>::iterator dit2 =
+      double_segments2.begin();
+    while(dit2!=double_segments2.end()){
+      *widget << (*dit2);
+      dit2++;
+    }
+    
+    widget->unlock();
+  }
+};
+
+class show_hull_of_intersection_points : public CGAL::Qt_widget_layer{
 public:
   void draw(){
     widget->lock();
@@ -209,6 +207,11 @@ public:
     menuBar()->insertItem( "&Draw", draw );
     draw->insertItem("&Generate segments", this, 
 		     SLOT(gen_segments()), CTRL+Key_S );
+    draw->insertItem("Convex &Hull of intersection points", this, 
+		     SLOT(hull_points()), CTRL+Key_H );
+    
+    draw->insertItem("&Intersection points on segments", this, 
+		     SLOT(intersection_points()), CTRL+Key_I );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -231,7 +234,12 @@ public:
     old_state = 0;
 
     //layers
-    widget->attach(&segments_layer);
+    widget->attach(&hull_layer);
+    widget->attach(&int_points_layer);
+
+    qte = new QTextBrowser(NULL, "INFO");
+    qte->setCaption("Information Window");
+
   };
 
 private:
@@ -294,45 +302,235 @@ private slots:
     }
   }	
 
-  void gen_segments()
-  {
+  void intersection_points(){
     stoolbar->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-    // set the Visible Area to the Interval
-    Source RS(1);
-    Segment_iterator g( RS, RS);
-    double_segments.clear();
-    real_segments.clear();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    gen_segments();
+
+    //computing using Cartesian<float>
+    CartesianFloat::Point_2      p;
+    CartesianFloat::Intersect_2  intersection = 
+      CartesianFloat().intersect_2_object();
+    CGAL::Timer watch;
+    int is_count = 0;
+    int ol_count = 0;
+    int bl_count = 0;
+    watch.start();    
+    for( std::vector<CartesianFloat::Segment_2>::const_iterator i 
+	   = float_segments.begin(); i != float_segments.end(); ++i)
+        for( std::vector<CartesianFloat::Segment_2>::const_iterator j 
+	       = float_segments2.begin(); j != float_segments2.end(); ++j)
+        {
+            if ( CGAL::assign(p, intersection(*i,*j)) )
+            {
+                is_count++;
+                int ok1 = ( i->has_on(p)) ? 1 : 0;
+                int ok2 = ( j->has_on(p)) ? 1 : 0;
+                bl_count += ok1*ok2;
+                ol_count += ok1+ok2;
+            }
+        }
+    watch.stop();
+    QString s("%1"), s1("%1");
+    qte->resize(400, 300);
+    qte->show();
+    qte->setText("INFORMATION Cartesian<float>:");
+    s.setNum(is_count);
+    qte->append("Intersection points found: " + s);
+    s.setNum(bl_count); s1.setNum((double)bl_count/is_count * 100);
+    qte->append(s + " of them (" + s1 + "%) lie on both segments.");
+    s.setNum(2*is_count); s1.setNum(ol_count);
+    qte->append("Out of the " + s + " point-on-segment tests, ");
+    s.setNum((double)ol_count/is_count * 50);
+    qte->append(s1 + "(" + s + "%) are positive.");
+    s.setNum(watch.time());
+    qte->append("Computation time = " + s + " sec.");
+
+
+    //computing using Cartesian<double>
+    CartesianDouble::Intersect_2  double_intersection = 
+      CartesianDouble().intersect_2_object();
+    double_Point pd;
+    is_count = 0;
+    ol_count = 0;
+    bl_count = 0;
+    watch.reset();
+    watch.start();    
+    for( std::vector<CartesianDouble::Segment_2>::const_iterator i 
+	   = double_segments.begin(); i != double_segments.end(); ++i)
+        for( std::vector<CartesianDouble::Segment_2>::const_iterator j 
+	       = double_segments2.begin(); j != double_segments2.end(); ++j)
+        {
+            if ( CGAL::assign(pd, double_intersection(*i,*j)) )
+            {
+                is_count++;
+                int ok1 = ( i->has_on(pd)) ? 1 : 0;
+                int ok2 = ( j->has_on(pd)) ? 1 : 0;
+                bl_count += ok1*ok2;
+                ol_count += ok1+ok2;
+            }
+        }
+    watch.stop();
+    qte->append("_____");
+    qte->append("INFORMATION Cartesian " + QString::null + "double>:");
+    s.setNum(is_count);
+    qte->append("Intersection points found: " + s);
+    s.setNum(bl_count); s1.setNum((double)bl_count/is_count * 100);
+    qte->append(s + " of them (" + s1 + "%) lie on both segments.");
+    s.setNum(2*is_count); s1.setNum(ol_count);
+    qte->append("Out of the " + s + " point-on-segment tests, ");
+    s.setNum((double)ol_count/is_count * 50);
+    qte->append(s1 + "(" + s + "%) are positive.");
+    s.setNum(watch.time());
+    qte->append("Computation time = " + s + " sec.");
+
+
+    //computing using Homogeneous<float>
+    HomogeneousFloat::Intersect_2  hfloat_intersection = 
+      HomogeneousFloat().intersect_2_object();
+    HomogeneousFloat::Point_2 phf;
+    is_count = 0;
+    ol_count = 0;
+    bl_count = 0;
+    watch.reset();
+    watch.start();    
+    for( std::vector<HomogeneousFloat::Segment_2>::const_iterator i 
+	   = hfloat_segments.begin(); i != hfloat_segments.end(); ++i)
+        for( std::vector<HomogeneousFloat::Segment_2>::const_iterator j 
+	       = hfloat_segments2.begin(); j != hfloat_segments2.end(); ++j)
+        {
+            if ( CGAL::assign(phf, hfloat_intersection(*i,*j)) )
+            {
+                is_count++;
+                int ok1 = ( i->has_on(phf)) ? 1 : 0;
+                int ok2 = ( j->has_on(phf)) ? 1 : 0;
+                bl_count += ok1*ok2;
+                ol_count += ok1+ok2;
+            }
+	}
+    watch.stop();
+    qte->append("_____");
+    qte->append("INFORMATION Homogeneous float>:");
+    s.setNum(is_count);
+    qte->append("Intersection points found: " + s);
+    s.setNum(bl_count); s1.setNum((double)bl_count/is_count * 100);
+    qte->append(s + " of them (" + s1 + "%) lie on both segments.");
+    s.setNum(2*is_count); s1.setNum(ol_count);
+    qte->append("Out of the " + s + " point-on-segment tests, ");
+    s.setNum((double)ol_count/is_count * 50);
+    qte->append(s1 + "(" + s + "%) are positive.");
+    s.setNum(watch.time());
+    qte->append("Computation time = " + s + " sec.");
+
+
+    hull_layer.deactivate();
+    int_points_layer.activate();
+    something_changed();
+  }
+
+  void hull_points(){
+    stoolbar->clear_history();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    QString s("%1");
+    qte->resize(400, 300);
+    qte->show();
+    qte->setText("INFORMATION:");
+    qte->append("We compute the intersection points of segments using exact 
+                 and double arithmetic. Then we compute the convex hull of 
+                 those. If there are points that are different in different 
+                 arithmetic, we mark them by a red circle.");
+    
+    QProgressDialog progress( "Generating segments...", 
+      "Cancel computing", 60, NULL, "Compute random segments ...", true );
+    progress.setCaption("Progress bar");
+    progress.resize(200, 50);
+    progress.setTotalSteps(60);
+    progress.setProgress(10);
+    progress.setMinimumDuration(0);
+    progress.setLabelText("Compute random segments...");
+
+    gen_segments();
+    progress.setLabelText("Compute intersection points...");
+    progress.setProgress(20);
     double_convex_hull.clear();
     real_convex_hull.clear();
     double_intersection_points.clear();
     real_intersection_points.clear();
-    CGAL::copy_n( g, 100, std::back_inserter( double_segments) );
-    CGAL::Cartesian_converter<C_double, C_real> converter;
-    std::transform( double_segments.begin(),
-                    double_segments.end(),
-                    std::back_inserter( real_segments),
-                    converter );
     CGAL::segment_intersection_points_2(
           double_segments.begin(),
           double_segments.end(),
           std::back_inserter( double_intersection_points),
           C_double() );
+    progress.setLabelText("Compute intersection points exact...");
+    progress.setProgress(30);
     CGAL::segment_intersection_points_2(
           real_segments.begin(),
           real_segments.end(),
           std::back_inserter( real_intersection_points),
           C_real() );
+    progress.setLabelText("Compute hull of intersection points...");
+    progress.setProgress(40);
     CGAL::convex_hull_points_2(
           double_intersection_points.begin(),
           double_intersection_points.end(),
           std::back_inserter( double_convex_hull));
+    progress.setProgress(50);
+    progress.setLabelText("Compute hull of intersection points exact...");
     CGAL::convex_hull_points_2(
           real_intersection_points.begin(),
           real_intersection_points.end(),
           std::back_inserter( real_convex_hull));
+    progress.setProgress(60);
 
+    hull_layer.activate();
+    int_points_layer.deactivate();
     something_changed();
+  }
+
+  void gen_segments()
+  {
+    Source RS(1);
+    Segment_iterator g( RS, RS);
+    double_segments.clear();
+    real_segments.clear();
+    double_segments2.clear();
+    float_segments.clear();
+    float_segments2.clear();
+    hfloat_segments.clear();
+    hfloat_segments2.clear();
+    hdouble_segments.clear();
+    hdouble_segments2.clear();
+
+    CGAL::copy_n( g, 100, std::back_inserter( double_segments) );
+    CGAL::copy_n( g, 100, std::back_inserter( double_segments2) );
+
+    CGAL::Cartesian_converter<C_double, C_real> converter;
+    std::transform( double_segments.begin(),
+                    double_segments.end(),
+                    std::back_inserter( real_segments),
+                    converter );
+
+    CGAL::Cartesian_converter<C_double, CartesianFloat> fconverter;
+    std::transform(double_segments.begin(), double_segments.end(),
+		    std::back_inserter(float_segments), fconverter);
+    std::transform(double_segments2.begin(), double_segments2.end(),
+		    std::back_inserter(float_segments2), fconverter);
+
+    CGAL::Cartesian_double_to_Homogeneous< HomogeneousFloat::RT > 
+                                                        hfconverter;
+    std::transform(double_segments.begin(), double_segments.end(),
+		   std::back_inserter(hfloat_segments), hfconverter);
+    std::transform(double_segments2.begin(), double_segments2.end(),
+		   std::back_inserter(hfloat_segments2), hfconverter);
+
+    CGAL::Cartesian_double_to_Homogeneous<HomogeneousDouble::RT>
+                                                        hdconverter;
+    std::transform(double_segments.begin(), double_segments.end(),
+		   std::back_inserter(hdouble_segments), hdconverter);
+    std::transform(double_segments2.begin(), double_segments2.end(),
+		   std::back_inserter(hdouble_segments2), hdconverter);
+
+
   }	
 
 private:
@@ -340,7 +538,10 @@ private:
   CGAL::Qt_widget_standard_toolbar
                             *stoolbar;
   int                       old_state;
-  show_segments             segments_layer;
+  show_hull_of_intersection_points
+                            hull_layer;
+  show_intersection_points  int_points_layer;
+  QTextBrowser              *qte;
 };
 
 #include "robustness.moc"
