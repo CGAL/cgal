@@ -1,4 +1,15 @@
+% ----------------------------------------------------------------------
+% Documentation for the CGAL manual LaTeX style:
+% 
+% 16.08.1995   Lutz Kettner
+% ----------------------------------------------------------------------
+% The style is compatible with LaTeX2e, try:
+% \documentclass[12pt]{article}
+% \usepackage{latexsym}
+
+% LaTeX:
 \documentstyle[12pt]{article}
+
 %\pagestyle{empty}
 \textwidth 15.4cm 
 \textheight 24 cm
@@ -76,9 +87,11 @@ runtime statements.
 
 % ----------------------------------------------------------------------
 \begin{class}{Demo_Class}
-\CCsection{A simple class as an example}
+\CCsection{A Simple Class}
 
 The class with its name is declared by \verb"\begin{class}{Demo_Class}". 
+For class templates the \verb"\begin{classtemplate}{Demo_Class<...>}"
+environment is  designed. See the next section for an example.
 The macro \verb"\CCsection{"\ldots\verb"}" produces the section
 title from above and appends the class name. Note that the special
 character ``\_'' has not to be quoted as it is usual within \LaTeX.
@@ -92,11 +105,13 @@ with operators. See the following example:
 
 To achieve this behaviour with \TeX\, the \verb"\catcode" values of
 some characters has to be changed. So within the \CC\ code 
-things like comments with ``\%'' sign wont work. The \TeX\ comment in
-the other parameter works as usual. A sad sideeffect is that these
-changed catcodes wont apply if these macros are invoced within other
-macros. In that case, the argument text was just once parsed from
-\TeX\ and the catcodes are all fixed.
+things like comments with ``\%'' sign wont work. Several macros read a
+second parameter with a \TeX\ comment to the declaration. The catcodes
+are restored just before this second parameter. A sad sideeffect is
+that these changed catcodes wont apply if these macros are invoced
+within other macros. In that case, the argument text was just once
+parsed from \TeX\ and the catcodes are all fixed before the catcode
+changing macro expands.
 
 \definition 
 
@@ -129,27 +144,23 @@ natural looking descriptions.
 
   \constructor{Demo_Class();}{introduces
      a variable \var\ initialized to the default. \CC\ code:
-     \protect\verb"Demo\_Class();"}
+     {\tt Demo\_Class();}}
 
-  \constructor{Demo_Class(const Demo_Class &);}{copy
-    constructor. \CC\ code: \verb"Demo\_Class(const Demo\_Class \&);"
-     }
+  \constructor{Demo_Class( const Demo_Class &);}{copy
+    constructor. \CC\ code: {\tt Demo\_Class(const Demo\_Class \&);}}
 
-  \constructor{Demo_Class(RT hx, RT hy, RT hw);}{arbitrary constructor.
-     \CC\ code: \verb"Demo\_Class(RT hx, RT hy, RT hw);"}
+  \constructor{Demo_Class( RT hx, RT hy, RT hw);}{arbitrary constructor.
+     \CC\ code: {\tt Demo\_Class(RT hx, RT hy, RT hw);}}
 
 The font and style in which the declarations are formatted can be
 changed by overwriting the \verb"\CCfont" and \verb"\CCendfont"
-macros. There default settings are
-\verb"\def\CCfont{\it}\def\CCendfont{\/}". They are used within a
-group, so font changing commands are local. The following line is
-formatted using the definitions
-\verb"\def\CCfont{\tt}\def\CCendfont{}".
+macros. Their default settings are
+\verb"\gdef\CCfont{\it}\gdef\CCendfont{\/}". They are used within a
+group, so font changing commands are local. The rest of this document is
+formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendfont{}".
 
-\begingroup
-\def\CCfont{\tt}\def\CCendfont{}
-  \constructor{Demo_Class(int a, X<Y> &x);}{arbitrary constructor.}
-\endgroup
+\gdef\CCfont{\tt}\gdef\CCendfont{}
+  \constructor{Demo_Class( int a, X<Y> &x);}{arbitrary constructor.}
 
 Also changable are the special characters the formatting has to
 deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
@@ -163,10 +174,10 @@ deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
 The layout of this section can be customized to the width of the
 return types and the declarations. The
 \verb"\threecolumns{"\ldots\verb"}{"\ldots\verb"}" macro sets the
-width of the two leading columns of the total three columns. The other
+width of the two leading columns of the total three columns. All other
 dimensions will be computed.
 
-Note that declarations after the closing parantheses like {\tt const}
+Note that declarations after the closing parenthesis like {\tt const}
 for the implicit class parameter of a method will not be printed
 (this might change in the future).
 The return value is handled like a parameter type. That means that
@@ -193,9 +204,10 @@ to the class, it is {\em not} removed.
              one per line.}
 
 Reference or pointer parameters can occur on both sides of the
-separating space between the type and the function or method name. The
-formatting normalizes them to the the left side. This formatting is
-not done within the parameters (, but maybe in the future). An example:
+separating space between the return type and the function or method
+name. The formatting normalizes them to the left side. This
+formatting is not done within the parameters (, but maybe in the
+future). An example: 
 
     \function{Demo_Class& foo( int& a, int* b);}{}
 
@@ -267,8 +279,38 @@ similar to classes (more ?).
 
 
 % ----------------------------------------------------------------------
+\begin{classtemplate}{Demo_Class<FT<RT> >}
+\CCsection{Demo Class Template}
+
+This class template is given within a
+\verb"\begin{classtemplate}{Demo_Class<FT<RT> >}" environment.
+
+\creation
+
+A current misbehaviour (or feature?) of the structuring macros is that
+they have fixed numbers. So the \verb"\definition" macro is here
+missing.
+
+  \constructor{ Demo_Class();}{ default.}
+
+  \constructor{ Demo_Class( Demo_Class<FT<RT> > q);}{ copy.}
+
+  \constructor{ Demo_Class( A a, B *b);}{ arbitrary.}
+
+\operations
+\threecolumns{4.3cm}{2.3cm}
+
+  \method{ Demo_Class foo( Demo_Class q);}{
+      wrong, without template parameters.}
+
+  \function{ Demo_Class<FT<RT> > foo( Demo_Class<FT<RT> > q);}{
+      right, with template parameters.}
+
+\end{classtemplate}
+
+% ----------------------------------------------------------------------
 \begin{class}{Demo_Class}
-\section{The list of all operators}
+\section{The List of All Operators}
 
   \function{Ptr_Class
         operator->(Demo_Class p);}{}
@@ -324,20 +366,20 @@ similar to classes (more ?).
   \function{Demo_Class
         operator*(Demo_Class p);}{}
 
-  \method{void*
+  \method{ void*
         operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
-        {\tt $\backslash$method\{void* operator new( size\_t);\}}.}
+        $\backslash${\tt method\{ void* operator new( size\_t);\}}.}
 
-  \method{void
-        operator delete(void*, size_t);}{Hidden parameters are not shown.
-        \CC\ code: {\tt $\backslash$method\{void operator 
-            delete(void*, size\_t);\}}}
+  \method{ void
+        operator delete( void*, size_t);}{Hidden parameters are not shown.
+        \CC\ code: $\backslash${\tt method\{ void operator 
+            delete( void*, size\_t);\}}}
 
-  \method{void
-        operator delete[](void*, size_t);}{Hidden parameters are not
+  \method{ void
+        operator delete[]( void*, size_t);}{Hidden parameters are not
         shown again. 
-        \CC\ code: {\tt $\backslash$method\{void operator
-            delete[](void*, size\_t);\}}}
+        \CC\ code: $\backslash${\tt method\{ void operator
+            delete[]( void*, size\_t);\}}}
 
   \function{Member_Ptr
         operator->*(Demo_Class p);}{}
