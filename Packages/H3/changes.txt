@@ -1,3 +1,6 @@
+2.58 (11 April 2003) [af]
+- bug fix in Iso_cuboid_3
+
 2.57 (19 February 2003)
 - removed a const to make an Sgi CC warning disappear
 
