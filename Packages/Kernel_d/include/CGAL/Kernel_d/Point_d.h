@@ -38,10 +38,12 @@ class Point_d : public pR::Point_d_base
   Point_d(int d=0) : Base(d) {}
   Point_d(int d, const Origin &o) : Base(d,o) {}
 
-  Point_d(int a, int b, int c = 1) : Base(a,b,c) {} 
+  Point_d(int a, int b, int c = 1) : 
+    Base(RT(a),RT(b),RT(c)) {} 
   Point_d(const RT& a, const RT& b, const RT& c = 1) :
     Base(a,b,c) {}  
-  Point_d(int a, int b, int c, int d) : Base(a,b,c,d) {}
+  Point_d(int a, int b, int c, int d) : 
+    Base(RT(a),RT(b),RT(c),RT(d)) {}
   Point_d(const RT& a, const RT& b, const RT& c, const RT& d) :
     Base(a,b,c,d) {}
 

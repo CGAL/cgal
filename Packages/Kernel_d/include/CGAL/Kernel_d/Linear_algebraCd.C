@@ -251,8 +251,6 @@ verify_determinant(const Matrix & /*M*/,
 {
   // TODO: verify_determinant
   return true;
-  CGAL_kernel_assertion( false );
-  return false;
 }
 
 template < class FT, class AL >

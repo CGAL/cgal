@@ -115,7 +115,7 @@ PointCd(const FT& x, const FT& y, const FT& w = 1)
   vector_rep()/=w; }
 
 PointCd(int x, int y, int z, int w) : 
-  Base( Tuple((FT)x,(FT)y,(FT)z) )
+  Base( Tuple(FT(x),FT(y),FT(z)) )
 { CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0."); 
   vector_rep()/=w; }
 

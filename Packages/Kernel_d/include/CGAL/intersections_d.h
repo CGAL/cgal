@@ -44,7 +44,9 @@ Object intersection(const Line_d<R>& l1, const Line_d<R>& l2)
     case ll_pair::LINE:
       return make_object(l1);
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -71,7 +73,9 @@ Object intersection(const Ray_d<R>& l1, const Ray_d<R>& l2)
       return make_object(s);
     }
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -93,7 +97,9 @@ Object intersection(const Segment_d<R>& l1, const Segment_d<R>& l2)
       return make_object(s);
     }
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -113,7 +119,9 @@ Object intersection(const Line_d<R>& l, const Ray_d<R>& r)
         return make_object(r);
     }
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -139,7 +147,9 @@ Object intersection(const Ray_d<R>& r, const Segment_d<R>& s)
         return make_object(st);
     }
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -165,7 +175,9 @@ Object intersection(const Line_d<R>& l, const Segment_d<R>& s)
         return make_object(st);
     }
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -189,7 +201,9 @@ Object intersection(const Line_d<R>& l, const Hyperplane_d<R>& h)
     case lh_pair::LINE:
         return make_object(l);
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -213,7 +227,9 @@ Object intersection(const Ray_d<R>& r, const Hyperplane_d<R>& h)
     case rh_pair::RAY:
         return make_object(r);
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
@@ -236,7 +252,9 @@ Object intersection(const Segment_d<R>& s, const Hyperplane_d<R>& h)
     case sh_pair::SEGMENT:
         return make_object(s);
   }
+#ifndef __KCC
   return Object(); // never reached
+#endif
 }
 
 template <class R>
