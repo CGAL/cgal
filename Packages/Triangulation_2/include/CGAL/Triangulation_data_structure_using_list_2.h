@@ -539,7 +539,7 @@ flip(Face* f, int i)
 }
   
 template < class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 insert_first( )
 {
@@ -549,7 +549,7 @@ insert_first( )
 }
 
 template < class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex* 
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex* 
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 insert_second()
 {
@@ -561,7 +561,7 @@ insert_second()
 
 
 template <  class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 insert_in_face(Face* f)
   // New vertex will replace f->vertex(0) in face f
@@ -601,7 +601,7 @@ insert_in_face(Face* f)
 
 
 template <  class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 insert_in_edge(Face* f, int i)
   //insert in the edge opposite to vertex i of face f
@@ -635,7 +635,7 @@ insert_in_edge(Face* f, int i)
 
 
 template <  class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 insert_dim_up(Vertex *w, bool orient)
 {
@@ -897,7 +897,7 @@ remove_first(Vertex* v)
 
 template <class Vb, class Fb>
 inline
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 star_hole(List_edges& hole)
 {
@@ -961,7 +961,7 @@ make_hole(Vertex* v, List_edges& hole)
 
 template <class Vb, class Fb>
 inline
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_vertex()
 {
@@ -971,7 +971,7 @@ create_vertex()
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
 {
@@ -987,7 +987,7 @@ create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Face* f1, int i1, Face* f2, int i2)
 {
@@ -1002,7 +1002,7 @@ create_face(Face* f1, int i1, Face* f2, int i2)
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Face* f1, int i1, Vertex* v)
 {
@@ -1014,7 +1014,7 @@ create_face(Face* f1, int i1, Vertex* v)
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face()
 {
@@ -1024,7 +1024,7 @@ create_face()
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face( Face * f)
 {
@@ -1034,7 +1034,7 @@ create_face( Face * f)
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Vertex* v1, Vertex* v2, Vertex* v3)
 {
@@ -1044,7 +1044,7 @@ create_face(Vertex* v1, Vertex* v2, Vertex* v3)
 }
 
 template <class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Face*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 create_face(Vertex* v1, Vertex* v2, Vertex* v3,
 	    Face* f1, Face* f2, Face* f3)
@@ -1171,7 +1171,7 @@ is_valid(bool verbose, int level) const
 
 
 template <  class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 copy_tds(const Tds &tds, const Vertex* v) 
   // copy tds in this and return the vertex  corresponding to v
@@ -1394,7 +1394,7 @@ file_output( std::ostream& os, Vertex* v, bool skip_first) const
 
 
 template < class Vb, class Fb>
-Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
+typename Triangulation_data_structure_using_list_2<Vb,Fb>::Vertex*
 Triangulation_data_structure_using_list_2<Vb,Fb>::
 file_input( std::istream& is, bool skip_first)
 {
