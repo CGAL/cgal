@@ -879,7 +879,7 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
 template < class Gt, class Tds >
 void
 Regular_triangulation_3<Gt,Tds>::
-remove_2D(Vertex_handle v)
+remove_2D(Vertex_handle)
 {
   // Not yet implemented
   std::cerr << "WARNING: RT3::remove() in 2D not implemented" << std::endl;
