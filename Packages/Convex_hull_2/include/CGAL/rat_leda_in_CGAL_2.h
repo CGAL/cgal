@@ -164,22 +164,26 @@ cmp_signed_dist_to_line(const leda_rat_point& p, const leda_rat_point& q,
   }
   else
   {
-      return 
-        (Comparison_result)(r_or *( CGAL::sign(l.sqr_dist(r) - l.sqr_dist(s) )));
+     return 
+      (Comparison_result)(r_or *( CGAL::sign(l.sqr_dist(r) - l.sqr_dist(s) )));
   }
 #endif  // __LEDA__ >= 360
 }
 
 inline
 bool
-has_smaller_signed_dist_to_line(const leda_rat_point& p, const leda_rat_point& q,
-                                const leda_rat_point& r, const leda_rat_point& s)
+has_smaller_signed_dist_to_line(const leda_rat_point& p, 
+                                const leda_rat_point& q,
+                                const leda_rat_point& r, 
+                                const leda_rat_point& s)
 { return ( cmp_signed_dist_to_line(p,q,r,s) == SMALLER ); }
 
 inline
 bool
-has_larger_signed_dist_to_line(const leda_rat_point& p, const leda_rat_point& q,
-                               const leda_rat_point& r, const leda_rat_point& s)
+has_larger_signed_dist_to_line(const leda_rat_point& p, 
+                               const leda_rat_point& q,
+                               const leda_rat_point& r, 
+                               const leda_rat_point& s)
 { return ( cmp_signed_dist_to_line(p,q,r,s) == LARGER ); }
 
 CGAL_END_NAMESPACE

@@ -49,11 +49,11 @@ ch__recursive_eddy(List& L,
   ListIterator f_it = successor(a_it);
   ListIterator 
       c_it = std::min_element( f_it, b_it,  // max before
-                               ch_traits.less_signed_distance_to_line_2_object(*a_it,*b_it));
+                 ch_traits.less_signed_distance_to_line_2_object(*a_it,*b_it));
   Point_2 c = *c_it;
 
-  c_it = std::partition( f_it, b_it, ch_traits.left_of_line_2_object(c, *a_it ) );
-  f_it = std::partition( c_it, b_it, ch_traits.left_of_line_2_object(*b_it, c ) );
+  c_it = std::partition(f_it, b_it, ch_traits.left_of_line_2_object(c, *a_it));
+  f_it = std::partition(c_it, b_it, ch_traits.left_of_line_2_object(*b_it, c));
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
@@ -96,7 +96,8 @@ ch_eddy(InputIterator first, InputIterator last,
 
   L.erase(w);
   L.erase(e);
-  e = std::partition(L.begin(), L.end(), ch_traits.left_of_line_2_object( ep, wp) );
+  e = std::partition(L.begin(), L.end(), 
+                     ch_traits.left_of_line_2_object( ep, wp) );
   L.push_front(wp);
   e = L.insert(e, ep);
 

@@ -82,10 +82,11 @@ ch_bykat(InputIterator first, InputIterator last,
       if ( l != r)
       {
           c = *std::min_element( l, r, 
-                                 ch_traits.less_signed_distance_to_line_2_object(a,b) );
+                         ch_traits.less_signed_distance_to_line_2_object(a,b));
           H.push_back( b );
           L.push_back( l );
-          R.push_back( l = std::partition(l, r, ch_traits.left_of_line_2_object(b,c)));
+          R.push_back( l = std::partition(l, r, 
+                                     ch_traits.left_of_line_2_object(b,c)));
           r = std::partition(l, r, ch_traits.left_of_line_2_object(c,a));
           b = c; 
       }
@@ -178,11 +179,12 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
       {
           if ( r-l > CGAL_ch_THRESHOLD )
           {
-              c = *std::min_element( l, r, 
-                                     ch_traits.less_signed_distance_to_line_2_object(a,b) );
+              c = *std::min_element(l, r, 
+                         ch_traits.less_signed_distance_to_line_2_object(a,b));
               H.push_back( b );
               L.push_back( l );
-              R.push_back( l = std::partition(l, r, ch_traits.left_of_line_2_object(b,c)) );
+              R.push_back( l = std::partition(l, r, 
+                           ch_traits.left_of_line_2_object(b,c)) );
               r = std::partition(l, r, ch_traits.left_of_line_2_object(c,a));
               b = c; 
           }

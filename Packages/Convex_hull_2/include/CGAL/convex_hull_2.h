@@ -105,9 +105,9 @@ convex_hull_points_2(InputIterator first, InputIterator last,
 {
   return __convex_hull_points_2(first, last, result, ch_traits,
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
-                                std::iterator_traits<InputIterator>::iterator_category() );
+                    std::iterator_traits<InputIterator>::iterator_category() );
 #else
-                                std::iterator_category(first) );
+                    std::iterator_category(first) );
 #endif // CGAL_CFG_NO_ITERATOR_TRAITS
 }
 /*{\Mfuncl generates the counterclockwise sequence of extreme points

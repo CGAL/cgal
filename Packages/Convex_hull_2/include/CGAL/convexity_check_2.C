@@ -162,7 +162,8 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
       return true;
   }
 
-  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), *first2);
+  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), 
+                                                      *first2);
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)
@@ -197,7 +198,8 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
 
   if ( successor(first2) == last2 ) return true;
 
-  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), *first2);
+  Left_of_line  rol = ch_traits.left_of_line_2_object(*successor(first2), 
+                                                      *first2);
   iter22 = first2;
   iter21 = iter22++;
   while (iter22 != last2)

@@ -106,8 +106,8 @@ cmp_signed_dist_to_line( const leda_point & p, const leda_point & q,
   }
   else
   {
-      return 
-        (Comparison_result)(r_or *( CGAL::sign(l.sqr_dist(r) - l.sqr_dist(s) )));
+     return 
+      (Comparison_result)(r_or *( CGAL::sign(l.sqr_dist(r) - l.sqr_dist(s) )));
   }
 #endif  // __LEDA__ >= 360
 }

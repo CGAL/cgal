@@ -10,12 +10,10 @@
 // release       : 
 // release_date  : 2000, August 03
 //
-// file          : 
+// file          : include/CGAL/segment_intersection_points_2.h
 // package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : si.lw
-// revision      : 0.98
-// revision_date : 27 Nov 1998
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de>
 //
 // coordinator   : MPI, Saarbruecken

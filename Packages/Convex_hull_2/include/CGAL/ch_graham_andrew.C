@@ -93,7 +93,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
 
   }
 
-  typedef typename std::vector< BidirectionalIterator >::iterator  std_iterator;
+  typedef typename std::vector< BidirectionalIterator >::iterator std_iterator;
   std_iterator  stack_iter = S.begin();
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
     || defined(NDEBUG)
@@ -181,7 +181,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
 
   }
 
-  typedef typename std::vector< BidirectionalIterator >::iterator  std_iterator;
+  typedef typename std::vector< BidirectionalIterator >::iterator std_iterator;
   std_iterator  stack_iter = S.begin();
   for ( ++stack_iter;  stack_iter != S.end(); ++stack_iter)
   { *result =  **stack_iter;  ++result; }

@@ -70,7 +70,8 @@ of $pq$ and reports this sequence in a range starting at |result|,
 where $p$ is the value of |first| and $q$ is the value of |last| $-1$.
 The sequence reported starts with $p$, point $q$ is omitted.\\
 {\it Precondition:} The points in [|first|,|last|) are sorted with respect
-to $pq$ and the range [|first|,|last|) contains at least two different points.\\
+to $pq$ and the range [|first|,|last|) contains at least two different 
+points.\\
 {\sc traits}: uses |Traits::Leftturn_2| operating on the 
 point type |Traits::Point_2|.
 }*/
