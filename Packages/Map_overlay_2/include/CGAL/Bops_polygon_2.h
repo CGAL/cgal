@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-11 $
 // release_date  : $CGAL_Date: 2002/08/04 $
 //
-// file          : include/CGAL/Bop_polygon_2.h
+// file          : include/CGAL/Bops_polygon_2.h
 // package       : Map_overlay (1.12)
 // maintainer    : Efi Fogel <efif@math.tau.ac.il>
 // source        : 
