@@ -43,6 +43,7 @@
 // for solving the dynamic cast in the copy constructor, 
 // these lines will be removed after writing 
 // copy construtor for point location.
+#include <CGAL/Pm_trapezoid_dag_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_simple_point_location.h>
@@ -819,9 +820,12 @@ private:
 
   void update_subdivision(Point_node& point_node, 
 			  Change_notification *pm_change_notf);
- protected:
+
+protected:
   // Remove the Halfedge_const_handle protections
-  static inline Halfedge_handle Halfedge_handle_unconst(const Halfedge_const_handle hc) {
+  static inline Halfedge_handle
+  Halfedge_handle_unconst(const Halfedge_const_handle hc)
+  {
     return Halfedge_handle((Halfedge*)&*&*hc);
   }
 };
