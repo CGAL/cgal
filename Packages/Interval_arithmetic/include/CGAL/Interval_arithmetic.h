@@ -63,6 +63,9 @@ public:
 
   Interval_nt() {}
 
+  Interval_nt(int i)
+    : inf_sup(i, i) {}
+
   Interval_nt(double d)
     : inf_sup(d, d) {}
 
@@ -83,24 +86,6 @@ public:
 
   Interval_nt(const Pair & p)
     : inf_sup(p) {}
-
-  // The advantage of non-member operators is that (double * IA) just works...
-  // But is it really useful and wishable in CGAL ?
-  // Probably YES => TODO.
-  IA operator+ (const IA &d) const
-  {
-    Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_SUB(-inf(), d.inf()), CGAL_IA_ADD(sup(), d.sup()));
-  }
-
-  IA operator- (const IA &d) const
-  {
-    Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_SUB(d.sup(), inf()), CGAL_IA_SUB(sup(), d.inf()));
-  }
-
-  IA operator* (const IA &) const;
-  IA operator/ (const IA &) const;
 
   IA operator-() const { return IA (-sup(), -inf()); }
 
@@ -394,55 +379,89 @@ std::istream & operator>> (std::istream &is, Interval_nt<Protected> & I)
 
 typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
+
 template <bool Protected>
-#ifndef CGAL_IA_NO_INLINE
 inline
-#endif
 Interval_nt<Protected>
-Interval_nt<Protected>::operator* (const Interval_nt<Protected> & d) const
+operator+ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   Protect_FPU_rounding<Protected> P;
-  if (inf()>=0.0)					// e>=0
-  {
-    // d>=0     [inf()*d.inf(); sup()*d.sup()]
-    // d<=0     [sup()*d.inf(); inf()*d.sup()]
-    // d~=0     [sup()*d.inf(); sup()*d.sup()]
-    double a = inf(), b = sup();
-    if (d.inf() < 0.0)
-    {
-	a=b;
-	if (d.sup() < 0.0)
-	    b=inf();
-    }
-    return IA(-CGAL_IA_MUL(a, -d.inf()), CGAL_IA_MUL(b, d.sup()));
-  }
-  else if (sup()<=0.0)				// e<=0
-  {
-    // d>=0     [inf()*d.sup(); sup()*d.inf()]
-    // d<=0     [sup()*d.sup(); inf()*d.inf()]
-    // d~=0     [inf()*d.sup(); inf()*d.inf()]
-    double a = sup(), b = inf();
-    if (d.inf() < 0.0)
-    {
-	a=b;
-	if (d.sup() < 0.0)
-	    b=sup();
-    }
-    return IA(-CGAL_IA_MUL(b, -d.sup()), CGAL_IA_MUL(a, d.inf()));
-  }
-  else						// 0 \in [inf();sup()]
-  {
-    if (d.inf()>=0.0)				// d>=0
-      return IA(-CGAL_IA_MUL(-inf(), d.sup()), CGAL_IA_MUL(sup(), d.sup()));
-    if (d.sup()<=0.0)				// d<=0
-      return IA(-CGAL_IA_MUL(sup(), -d.inf()), CGAL_IA_MUL(inf(), d.inf()));
-        					// 0 \in d
-    double tmp1 = CGAL_IA_MUL(-inf(), d.sup());
-    double tmp2 = CGAL_IA_MUL(sup(), -d.inf());
-    double tmp3 = CGAL_IA_MUL(inf(), d.inf());
-    double tmp4 = CGAL_IA_MUL(sup(), d.sup());
-    return IA(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
-  };
+  return Interval_nt<Protected> (-CGAL_IA_SUB(-a.inf(), b.inf()),
+                                  CGAL_IA_ADD(a.sup(), b.sup()));
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator+ (double a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)+b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator+ (const Interval_nt<Protected> & a, double b)
+{
+  return a+Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator+ (int a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)+b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator+ (const Interval_nt<Protected> & a, int b)
+{
+  return a+Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator- (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
+{
+  Protect_FPU_rounding<Protected> P;
+  return Interval_nt<Protected>(-CGAL_IA_SUB(b.sup(), a.inf()),
+                                 CGAL_IA_SUB(a.sup(), b.inf()));
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator- (double a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)-b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator- (const Interval_nt<Protected> & a, double b)
+{
+  return a-Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator- (int a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)-b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator- (const Interval_nt<Protected> & a, int b)
+{
+  return a-Interval_nt<Protected>(b);
 }
 
 template <bool Protected>
@@ -450,41 +469,160 @@ template <bool Protected>
 inline
 #endif
 Interval_nt<Protected>
-Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
+operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
+  typedef Interval_nt<Protected> IA;
   Protect_FPU_rounding<Protected> P;
-  if (d.inf()>0.0)				// d>0
+  if (a.inf() >= 0.0)					// e>=0
   {
-    // e>=0	[inf()/d.sup(); sup()/d.inf()]
-    // e<=0	[inf()/d.inf(); sup()/d.sup()]
-    // e~=0	[inf()/d.inf(); sup()/d.inf()]
-    double a = d.sup(), b = d.inf();
-    if (inf()<0.0)
+    // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
+    // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
+    // b~=0     [a.sup()*b.inf(); a.sup()*b.sup()]
+    double aa = a.inf(), bb = a.sup();
+    if (b.inf() < 0.0)
     {
-	a=b;
-	if (sup()<0.0)
-	    b=d.sup();
-    };
-    return IA(-CGAL_IA_DIV(-inf(), a), CGAL_IA_DIV(sup(), b));
+	aa = bb;
+	if (b.sup() < 0.0)
+	    bb = a.inf();
+    }
+    return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
   }
-  else if (d.sup()<0.0)			// d<0
+  else if (a.sup()<=0.0)				// e<=0
   {
-    // e>=0	[sup()/d.sup(); inf()/d.inf()]
-    // e<=0	[sup()/d.inf(); inf()/d.sup()]
-    // e~=0	[sup()/d.sup(); inf()/d.sup()]
-    double a = d.sup(), b = d.inf();
-    if (inf()<0.0)
+    // b>=0     [a.inf()*b.sup(); a.sup()*b.inf()]
+    // b<=0     [a.sup()*b.sup(); a.inf()*b.inf()]
+    // b~=0     [a.inf()*b.sup(); a.inf()*b.inf()]
+    double aa = a.sup(), bb = a.inf();
+    if (b.inf() < 0.0)
     {
-	b=a;
-	if (sup()<0.0)
-	    a=d.inf();
-    };
-    return IA(-CGAL_IA_DIV(-sup(), a), CGAL_IA_DIV(inf(), b));
+	aa=bb;
+	if (b.sup() < 0.0)
+	    bb=a.sup();
+    }
+    return IA(-CGAL_IA_MUL(bb, -b.sup()), CGAL_IA_MUL(aa, b.inf()));
   }
-  else					// d~0
+  else						// 0 \in [inf();sup()]
+  {
+    if (b.inf()>=0.0)				// d>=0
+      return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
+                 CGAL_IA_MUL(a.sup(), b.sup()));
+    if (b.sup()<=0.0)				// d<=0
+      return IA(-CGAL_IA_MUL(a.sup(), -b.inf()),
+                 CGAL_IA_MUL(a.inf(), b.inf()));
+        					// 0 \in d
+    double tmp1 = CGAL_IA_MUL(-a.inf(),  b.sup());
+    double tmp2 = CGAL_IA_MUL( a.sup(), -b.inf());
+    double tmp3 = CGAL_IA_MUL( a.inf(),  b.inf());
+    double tmp4 = CGAL_IA_MUL( a.sup(),  b.sup());
+    return IA(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
+  }
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator* (double a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)*b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator* (const Interval_nt<Protected> & a, double b)
+{
+  return a*Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator* (int a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)*b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator* (const Interval_nt<Protected> & a, int b)
+{
+  return a*Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+#ifndef CGAL_IA_NO_INLINE
+inline
+#endif
+Interval_nt<Protected>
+operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
+{
+  typedef Interval_nt<Protected> IA;
+  Protect_FPU_rounding<Protected> P;
+  if (b.inf() > 0.0)				// b>0
+  {
+    // e>=0	[a.inf()/b.sup(); a.sup()/b.inf()]
+    // e<=0	[a.inf()/b.inf(); a.sup()/b.sup()]
+    // e~=0	[a.inf()/b.inf(); a.sup()/b.inf()]
+    double aa = b.sup(), bb = b.inf();
+    if (a.inf() < 0.0)
+    {
+	aa = bb;
+	if (a.sup() < 0.0)
+	    bb = b.sup();
+    };
+    return IA(-CGAL_IA_DIV(-a.inf(), aa), CGAL_IA_DIV(a.sup(), bb));
+  }
+  else if (b.sup()<0.0)			// b<0
+  {
+    // e>=0	[a.sup()/b.sup(); a.inf()/b.inf()]
+    // e<=0	[a.sup()/b.inf(); a.inf()/b.sup()]
+    // e~=0	[a.sup()/b.sup(); a.inf()/b.sup()]
+    double aa = b.sup(), bb = b.inf();
+    if (a.inf() < 0.0)
+    {
+	bb = aa;
+	if (a.sup() < 0.0)
+	    aa = b.inf();
+    };
+    return IA(-CGAL_IA_DIV(-a.sup(), aa), CGAL_IA_DIV(a.inf(), bb));
+  }
+  else					// b~0
     return IA::largest();
-	   // We could do slightly better -> [0;HUGE_VAL] when d.sup()==0,
+	   // We could do slightly better -> [0;HUGE_VAL] when b.sup()==0,
 	   // but is this worth ?
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator/ (double a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)/b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator/ (const Interval_nt<Protected> & a, double b)
+{
+  return a/Interval_nt<Protected>(b);
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator/ (int a, const Interval_nt<Protected> & b)
+{
+  return Interval_nt<Protected>(a)/b;
+}
+
+template <bool Protected>
+inline
+Interval_nt<Protected>
+operator/ (const Interval_nt<Protected> & a, int b)
+{
+  return a/Interval_nt<Protected>(b);
 }
 
 template <bool Protected>
