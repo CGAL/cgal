@@ -26,6 +26,7 @@
 #include <map>
 
 #include <CGAL/leda_integer.h> 
+#include "../../include/CGAL/Snap_rounding_2_utility.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +37,6 @@ typedef typename base_rep::FT                    NT;
 typedef typename base_rep::Point_2               Point_2;
 typedef typename base_rep::Segment_2             Segment_2;
 typedef typename base_rep::Iso_rectangle_2       Iso_rectangle_2;
-typedef typename base_rep::Aff_transformation_2  Transformation_2;
 
 public:
 
@@ -75,7 +75,8 @@ class Integer_grid_point_2 {
   }
 };
 
-Integer_grid_point_2 integer_grid_point_2_object() const { return Integer_grid_point_2(); }
+Integer_grid_point_2 integer_grid_point_2_object() const
+    { return Integer_grid_point_2(); }
 
 /*! Functor
  */
@@ -92,13 +93,14 @@ class Segment_direction_2 {
   }
 };
 
-Segment_direction_2 segment_direction_2_object() const {return Segment_direction_2(); }
+Segment_direction_2 segment_direction_2_object() const
+    {return Segment_direction_2(); }
 
 /*! Functor
  */
-class Rotate_point_2 {
+/*class Rotate_point_2 {
  public:
-  Point_2 operator()(Point_2 p,NT angle)
+  void operator()(Point_2& p,NT angle)
   {
     int tranc_angle = int(angle.to_double() * rad_to_deg);
     NT cosine_val = angle_to_sines_appr[90 - tranc_angle],
@@ -106,17 +108,12 @@ class Rotate_point_2 {
 
     Transformation_2 rotate(ROTATION, sine_val, cosine_val);
 
-    return(rotate(p));
-
-    /*NT x = p.x() * cosine_val - p.y() * sine_val,
-       y = p.x() * sine_val + p.y() * cosine_val;
-
-       return(Point_2(x,y));*/
+    p = rotate(p);
   }
 };
 
 Rotate_point_2 rotate_point_2_object() const {return Rotate_point_2(); }
-
+*/
 /*! Functor
  */
 
@@ -192,12 +189,19 @@ class Bounding_box_of_minkowski_sum_2 {
       ms6 = Point_2(x2 - 0.6 * unit_squere,y2 - 0.6 * unit_squere);
     }
 
-    _gt->rotate_point_2_object()(ms1,angle);
+    Snap_rounding_rotation<base_rep> r;
+    r(ms1,angle);
+    r(ms2,angle);
+    r(ms3,angle);
+    r(ms4,angle);
+    r(ms5,angle);
+    r(ms6,angle);
+    /*    _gt->rotate_point_2_object()(ms1,angle);
     _gt->rotate_point_2_object()(ms2,angle);
     _gt->rotate_point_2_object()(ms3,angle);
     _gt->rotate_point_2_object()(ms4,angle);
     _gt->rotate_point_2_object()(ms5,angle);
-    _gt->rotate_point_2_object()(ms6,angle);
+    _gt->rotate_point_2_object()(ms6,angle);*/
 
     // query
     Point_2 point_left,point_right,point_bot,point_top;
@@ -238,7 +242,6 @@ Bounding_box_of_minkowski_sum_2 bounding_box_of_minkowski_sum_2_object() const
     {return Bounding_box_of_minkowski_sum_2(this); }
 
  private:
-  static const double rad_to_deg = 57.297;
   static std::map<const int,NT> angle_to_sines_appr;
 
   void init_angle_appr()

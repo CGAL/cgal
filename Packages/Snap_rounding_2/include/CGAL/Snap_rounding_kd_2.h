@@ -30,6 +30,7 @@
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
+#include "../../include/CGAL/Snap_rounding_2_utility.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,7 +84,10 @@ private:
 
       Point_2 p(iter->first);
 
-      _gt.rotate_point_2_object()(p,angle);
+      Snap_rounding_rotation<Rep> r;
+      r(p,angle);
+
+      // _gt.rotate_point_2_object()(p,angle);
 
       my_point<NT,SAVED_OBJECT> rotated_point(p,iter->first,iter->second);
 
