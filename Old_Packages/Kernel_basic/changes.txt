@@ -1,4 +1,4 @@
-3.79   (?? January 2002)
+3.79   (24 January 2002)
 - Gather function objects in Kernel/function_objects.h.
 
 3.78   (18 January 2002)
