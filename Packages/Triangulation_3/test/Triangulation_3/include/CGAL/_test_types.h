@@ -34,8 +34,8 @@
 #  define CGAL_IA_PROTECTED   true
 #endif
 
-#include <CGAL/Filtered_exact.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <iostream>
 #include <cassert>

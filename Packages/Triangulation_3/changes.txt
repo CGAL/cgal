@@ -1,5 +1,8 @@
+Version 1.157 (17 June 03)
+- Fix test-suite on VC++.
+
 Version 1.156 (17 June 03)
-- Added alternative implementation of Delaunay_triangulation_3::remove(Vertex_handle)
+- Added alternative implementation of Delaunay_triangulation_3::remove()
   which is now the default
 - Added testsuite to cover new and old remove
 - Fixed bug in Delaunay_remove_tds_3.h introduced with Version 1.153
