@@ -1,5 +1,6 @@
 Version 1.69 (?? June 01)
 - fix in read_cells
+- cell constructions and deletions done by the TDS only + doc update.
 
 Version 1.68 (29 June 01)
 - read_cells and print_cells member functions of tds for gcc-2.96 
