@@ -1,10 +1,12 @@
 @! ============================================================================
-@! The CGAL Project
+@! The CGAL Library
 @! Implementation: Random Numbers Generator
 @! ----------------------------------------------------------------------------
 @! file  : web/Random/Random.aw
-@! author: Sven Schönherr (sven@inf.fu-berlin.de)
+@! author: Sven Schönherr <sven@inf.fu-berlin.de>
 @! ----------------------------------------------------------------------------
+@! $CGAL_Chapter: Random Sources $
+@! $CGAL_Package: Random WIP $
 @! $Revision$
 @! $Date$
 @! ============================================================================

@@ -1,9 +1,9 @@
 @! ============================================================================
-@! The CGAL Project
+@! The CGAL Library
 @! Implementation: 2D Conic
 @! ----------------------------------------------------------------------------
 @! file  : web/Optimisation/Conic_2.aw
-@! author: Bernd Gärtner, Sven Schönherr (gaertner@inf.ethz.ch)
+@! author: Bernd Gärtner, Sven Schönherr <gaertner@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_ellipse_2 WIP $
@@ -31,7 +31,7 @@
 @t vskip 5 mm
 @t title titlefont centre "2D Conic*"
 @t vskip 1 mm
-@t title smalltitlefont centre "Bernd Gärtner"
+@t title smalltitlefont centre "Bernd Gärtner and Sven Schönherr"
 \smallskip
 \begin{center}
   \begin{tabular}{l}

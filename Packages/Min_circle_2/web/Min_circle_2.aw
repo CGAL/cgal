@@ -1,9 +1,9 @@
 @! ============================================================================
-@! The CGAL Project
+@! The CGAL Library
 @! Implementation: 2D Smallest Enclosing Circle
 @! ----------------------------------------------------------------------------
 @! file  : web/Optimisation/Min_circle_2.aw
-@! author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
+@! author: Bernd Gärtner, Sven Schönherr <sven@inf.fu-berlin.de>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
 @! $CGAL_Package: Min_circle_2 WIP $
