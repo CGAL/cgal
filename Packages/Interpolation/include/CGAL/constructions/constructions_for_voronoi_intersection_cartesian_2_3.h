@@ -16,73 +16,71 @@
 // $Name$
 //
 // Author(s)     : Julia Floetotto
+
 #ifndef CGAL_CONSTRUCTIONS_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 #define CGAL_CONSTRUCTIONS_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 
+CGAL_BEGIN_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE 
 template < class RT>
 void
-plane_centered_circumcenter_translateC3(const RT &ax, const RT &ay, 
-					const RT &az, 
-					const RT &nx, const RT &ny, 
+plane_centered_circumcenter_translateC3(const RT &ax, const RT &ay,
+					const RT &az,
+					const RT &nx, const RT &ny,
 					const RT &nz,
-					const RT &qx, const RT &qy, 
+					const RT &qx, const RT &qy,
 					const RT &qz,
-					const RT &rx, const RT &ry, 
+					const RT &rx, const RT &ry,
 					const RT &rz,
-					RT &x, RT &y, RT &z){
-  
+					RT &x, RT &y, RT &z)
+{
   RT den = RT(2) * det3x3_by_formula(nx,qx,rx,
 				     ny,qy,ry,
 				     nz,qz,rz);
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
   CGAL_assertion ( den != RT(0) );
-  
-  RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy) + 
+
+  RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy) +
     CGAL_NTS square(qz);
-  RT r2 = CGAL_NTS square(rx) + CGAL_NTS square(ry) + 
+  RT r2 = CGAL_NTS square(rx) + CGAL_NTS square(ry) +
     CGAL_NTS square(rz);
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
-  
-  
-  
+
   x =   det3x3_by_formula(ny,nz,na,
 			  qy,qz,q2,
 			  ry,rz,r2)/ den ;
-  
+
   y = - det3x3_by_formula(nx,nz,na,
 			  qx,qz,q2,
 			  rx,rz,r2)/ den ;
-  
+
   z =   det3x3_by_formula(nx,ny,na,
 			  qx,qy,q2,
 			  rx,ry,r2)/ den ;
-
 }
 
 template < class RT>
 void
-plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az, 
+plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
 			      const RT &nx, const RT &ny, const RT &nz,
-			      const RT &px, const RT &py, const RT &pz, 
+			      const RT &px, const RT &py, const RT &pz,
 			      const RT &qx, const RT &qy, const RT &qz,
 			      const RT &rx, const RT &ry, const RT &rz,
 			      RT &x, RT &y, RT &z)
 {
   // resolution of the system (where we note c the center)
-  //  
+  //
   // ((a-c)*n)= 0                //the center lies in the plane (a, n)
   // (c-p)(c-p)=(c-q)(c-q)=(c-r)(c-r)   // p,q,r on a sphere(center c)
-  // 
+  //
   //precondition: p,q,r aren't collinear.
   //method:
-  // - tranlation of p to the origin.  
-  plane_centered_circumcenter_translateC3(ax-px, ay-py, az-pz,  
-					  nx, ny, nz, 
-					  qx-px, qy-py,qz-pz, 
+  // - tranlation of p to the origin.
+  plane_centered_circumcenter_translateC3(ax-px, ay-py, az-pz,
+					  nx, ny, nz,
+					  qx-px, qy-py,qz-pz,
 					  rx-px, ry-py,rz-pz,
 					  x, y, z);
   x+=px;
@@ -92,11 +90,11 @@ plane_centered_circumcenterC3(const RT &ax, const RT &ay, const RT &az,
 
 template < class RT>
 void
-bisector_plane_intersection_translateC3(const RT &ax, const RT &ay, 
-					const RT &az, 
-					const RT &nx, const RT &ny, 
+bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
+					const RT &az,
+					const RT &nx, const RT &ny,
 					const RT &nz,
-					const RT &qx, const RT &qy, 
+					const RT &qx, const RT &qy,
 					const RT &qz, const RT& den,
 					RT &x1, RT &y1, RT &x2, RT
 					&y2, bool& swapped)
@@ -105,32 +103,32 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
   // through p and q, c lies in h. 2 equations:
   //   c^2 = (q-c)^2   //p and q on the sphere's boundary
   //  (c-a)n = 0       //c in the plane h
-  // the line is defined by p1 and p2 with 
+  // the line is defined by p1 and p2 with
   //=> p1: z1 =0, p2: z2=1
   // precondition: (nx!=0 || ny!=0) && (qx!=0 && qy!=0) && den!=0
   // where RT den = RT(2.0) * det2x2_by_formula(qx,qy,nx, ny);
-  
-  RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy) 
+
+  RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy)
     + CGAL_NTS square(qz);
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
-  
+
   x1 = det2x2_by_formula(ny, na, qy, q2);
   y1 = - det2x2_by_formula(nx, na, qx, q2);
-  
+
   x2 = x1 +  RT(2.0) * det2x2_by_formula(qy,qz,ny, nz);
   y2 = y1 -  RT(2.0) * det2x2_by_formula(qx,qz,nx, nz);
-  
+
   x1 /= den;
   x2 /= den;
   y1 /= den;
   y2 /= den;
-  
-  //we need to orient the line such that 
-  // if p is on the positive side of the plane 
+
+  //we need to orient the line such that
+  // if p is on the positive side of the plane
   //(<=> (p-a)*n >0 <=> na < 0) then orientation (pq p1 p2) is ccw
   // if not: permutation of p1 and p2
-  if((sign_of_determinant3x3(qx,qy,qz, x1,y1,RT(0),x2 ,y2,RT(1)) 
+  if((sign_of_determinant3x3(qx,qy,qz, x1,y1,RT(0),x2 ,y2,RT(1))
       * CGAL_NTS sign (-na)) > 0 )
     {
       RT x3(x1),y3(y1);
@@ -144,25 +142,25 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
 
 template < class RT>
 void
-bisector_plane_intersection_permuteC3(const RT &ax, const RT &ay, 
-				      const RT &az, 
-				      const RT &nx, const RT &ny, 
+bisector_plane_intersection_permuteC3(const RT &ax, const RT &ay,
+				      const RT &az,
+				      const RT &nx, const RT &ny,
 				      const RT &nz,
-				      const RT &px, const RT &py, 
+				      const RT &px, const RT &py,
 				      const RT &pz,
-				      const RT &qx, const RT &qy, 
+				      const RT &qx, const RT &qy,
 				      const RT &qz,
 				      const RT &den,
-				      RT &x1, RT &y1, RT& z1, 
+				      RT &x1, RT &y1, RT& z1,
 				      RT &x2, RT &y2, RT& z2)
 {
   //translation of p to the origin
   bool swapped =false;
-  CGAL_precondition((nx!=RT(0) ||  ny!=RT(0)) && (qx!=px || qy!=py) 
+  CGAL_precondition((nx!=RT(0) ||  ny!=RT(0)) && (qx!=px || qy!=py)
 		    &&den!=RT(0));
- 
-  bisector_plane_intersection_translateC3(ax-px, ay-py, az-pz,  
-					  nx, ny, nz, 
+
+  bisector_plane_intersection_translateC3(ax-px, ay-py, az-pz,
+					  nx, ny, nz,
 					  qx-px, qy-py,qz-pz,den,
 					  x1, y1,x2,y2,swapped);
   // re-translation of the origin to p:
@@ -180,33 +178,33 @@ bisector_plane_intersection_permuteC3(const RT &ax, const RT &ay,
 
 template < class RT>
 void
-bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az, 
+bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
 			      const RT &nx, const RT &ny, const RT &nz,
 			      const RT &px, const RT &py, const RT &pz,
 			      const RT &qx, const RT &qy, const RT &qz,
-			      RT &x1, RT &y1, RT& z1, 
+			      RT &x1, RT &y1, RT& z1,
 			      RT &x2, RT &y2, RT& z2)
 {
   // constructs the line l = (p1,p2)= ((x1,y1,z1),(x2,y2,z2))
-  // the intersection line between the bisector of (p,q) and 
+  // the intersection line between the bisector of (p,q) and
   //  h: plane containing a orthogonal to n.
   // l is oriented such that if p is on the positive side of h,
   // then (pq p1 p2) is ccw, otherwise (pq p1 p2) is cw
-  // 
+  //
   // precondition: (pq) is not parallel to n
-  // 
-  // method: computing the intersection points of l 
-  //    with the planes (z=0/z=1) or (x=0/x=1) or (y=0/y=1) depending if 
-  //    1) the line is not parallel to the plane 
+  //
+  // method: computing the intersection points of l
+  //    with the planes (z=0/z=1) or (x=0/x=1) or (y=0/y=1) depending if
+  //    1) the line is not parallel to the plane
   //    2) the projection of n and (p-q) onto the plane is not
   //    identical
   //    computation for (z=0) with adequate permutations
   RT den = RT(2.0) * det2x2_by_formula(qx-px,qy-py,nx, ny);
   if ((nx!=0 ||  ny!=0) && (qx!=px || qy!=py) && den!=RT(0))
     //den==0 <=> projections of (qx,qy) and (nx,ny) are identical
-    //intersection with z=0/z=1 
+    //intersection with z=0/z=1
     bisector_plane_intersection_permuteC3(ax,ay,az,nx,ny,nz,px,py,pz,
-					  qx,qy,qz,den, 
+					  qx,qy,qz,den,
 					  x1,y1,z1,x2,y2,z2);
   else{
     den = RT(2.0) * det2x2_by_formula(qy-py,qz-pz,ny,nz);
@@ -227,5 +225,5 @@ bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
 }
 
 CGAL_END_NAMESPACE
-#endif //CGAL_CONSTRUCTIONS_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 
+#endif // CGAL_CONSTRUCTIONS_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H

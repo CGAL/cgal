@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Julia Floetotto
+
 #ifndef CGAL_INTERPOLATION_TRAITS_2_H
 #define CGAL_INTERPOLATION_TRAITS_2_H
 
@@ -27,9 +28,8 @@ CGAL_BEGIN_NAMESPACE
 // The class Interpolation_traits_2 is needed to define the geometric
 // operations used by the interpolation methods.
 
-
 template <class R>
-class Interpolation_traits_2 
+class Interpolation_traits_2
 {
 public:
   typedef typename R::FT                     FT;
@@ -39,24 +39,22 @@ public:
   typedef typename R::Construct_vector_2     Construct_vector_d;
   typedef typename R::Construct_scaled_vector_2
                                              Construct_scaled_vector_d;
-  typedef typename R::Compute_squared_distance_2 
+  typedef typename R::Compute_squared_distance_2
                                              Compute_squared_distance_d;
-  
+
   Construct_scaled_vector_d
   construct_scaled_vector_d_object()const
     {return Construct_scaled_vector_d();}
-  
+
   Construct_vector_d
   construct_vector_d_object()const
     {return Construct_vector_d();}
-  
+
   Compute_squared_distance_d
   compute_squared_distance_d_object()const
     {return Compute_squared_distance_d();}
-
 };
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERPOLATION_TRAITS_2_H
-
