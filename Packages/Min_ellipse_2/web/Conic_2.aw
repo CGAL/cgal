@@ -2459,8 +2459,9 @@ them consecutively in @prg{r1}, @prg{r2} and @prg{r3}. Precondition is that
 $p(\tau)$ is not a constant function.
 
 @macro <function solve_cubic> zero = @begin
-    int solve_cubic (double c3, double c2, double c1, double c0, 
-                          double &r1, double &r2, double &r3) 
+    template < class NT >
+    int solve_cubic (NT c3, NT c2, NT c1, NT c0, 
+                     NT &r1, NT &r2, NT &r3) 
     {
         if (c3 == 0.0) {
             // quadratic equation
@@ -2470,7 +2471,7 @@ $p(\tau)$ is not a constant function.
                 r1 = -c0/c1;
                 return 1;
             }
-            double D = c1*c1-4*c2*c0;
+            NT D = c1*c1-4*c2*c0;
             if (D < 0.0) 
                 // only complex roots
                 return 0;
@@ -2487,13 +2488,13 @@ $p(\tau)$ is not a constant function.
 
         // cubic equation
         // define the gamma_i
-        double g2 = c2/c3, 
-               g1 = c1/c3, 
-               g0 = c0/c3;
+        NT g2 = c2/c3, 
+           g1 = c1/c3, 
+           g0 = c0/c3;
 
         // define a, b
-        double a  = g1 - g2*g2/3.0,
-               b  = 2.0*g2*g2*g2/27.0 - g1*g2/3.0 + g0;
+        NT a = g1 - g2*g2/3.0,
+           b = 2.0*g2*g2*g2/27.0 - g1*g2/3.0 + g0;
 
         if (a == 0) {
             // one real root
@@ -2502,10 +2503,10 @@ $p(\tau)$ is not a constant function.
         }
 
         // define D
-        double D  = a*a*a/27.0 + b*b/4.0;
+        NT D  = a*a*a/27.0 + b*b/4.0;
         if (D >= 0.0) {
             // real case
-            double u = cbrt(-b/2.0 + sqrt(D)),
+            NT u = cbrt(-b/2.0 + sqrt(D)),
                    alpha = 1.0 - a/(3.0*u*u);
             if (D == 0) {
                 // two distinct real roots
@@ -2518,10 +2519,10 @@ $p(\tau)$ is not a constant function.
             return 1;
         }
         // complex case
-        double r_prime   = sqrt(-a/3),
-               phi_prime = acos (-b/(2.0*r_prime*r_prime*r_prime))/3.0,
-               u_R       = r_prime * cos (phi_prime),
-               u_I       = r_prime * sin (phi_prime);
+        NT r_prime   = sqrt(-a/3),
+           phi_prime = acos (-b/(2.0*r_prime*r_prime*r_prime))/3.0,
+           u_R       = r_prime * cos (phi_prime),
+           u_I       = r_prime * sin (phi_prime);
         // three distinct real roots
         r1 = 2.0*u_R - g2/3.0;
         r2 = -u_R + u_I*sqrt(3.0) - g2/3.0;
@@ -2624,14 +2625,15 @@ an ellipse of smallest volume exists, so the largest determinant must
 be positive. 
 
 @macro <function best_value> = @begin
-    double best_value (double *values, int nr_values, 
-                            double a2, double a1, double a0,
-                            double b3, double b2, double b1, double b0)
+    template < class NT >
+    NT best_value (NT *values, int nr_values, 
+                   NT a2, NT a1, NT a0,
+                   NT b3, NT b2, NT b1, NT b0)
     {
         bool det_positive = false;
-        double d, q, max_det = 0.0, det, best;
+        NT d, q, max_det = 0, det, best;
         for (int i=0; i<nr_values; ++i) {
-            double x = values[i];
+            NT x = values[i];
             d = (a2*x+a1)*x+a0;
             q = ((b3*x+b2)*x+b1)*x+b0;
             det = d*d*d/(q*q);
@@ -3174,6 +3176,10 @@ function and the functions in connection with the solution of cubic equations.
 
     #ifndef CONIC_MISC_H
     #define CONIC_MISC_H
+
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
 
     @<namespace begin>("CGAL")
     
