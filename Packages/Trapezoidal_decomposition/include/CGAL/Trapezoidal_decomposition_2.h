@@ -1439,7 +1439,7 @@ output: trapezoid iterator
                   {
                     // For a vertical curve, we always visit it after visiting one of its endpoints.
                     if ((up == EQUAL) || traits->is_vertical(*curr)) {
-                      std::cout << "EQUAL or VERTICAL" << std::endl;
+                      //std::cout << "EQUAL or VERTICAL" << std::endl;
                       if (curr->is_active()) return CURVE;
                       curr=curr.left();
                     }
@@ -2218,7 +2218,7 @@ public:
                                                 up_direction ? CGAL::LARGER : CGAL::SMALLER);
                 reference t_p = *curr;
 
-                std::cout << "t" << t << "\n";
+                //std::cout << "t" << t << "\n";
 
 #ifdef CGAL_TD_DEBUG
 		CGAL_warning(t_p.get_node());
