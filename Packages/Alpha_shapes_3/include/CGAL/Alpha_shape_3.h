@@ -434,11 +434,8 @@ public:
 
   Alpha_shape_vertices_iterator alpha_shape_vertices_begin()
     {
-      Alpha_shape_vertices_list.erase(Alpha_shape_vertices_list.begin(), 
-				      Alpha_shape_vertices_list.end());
-      std::back_insert_iterator< std::list< Vertex_handle > > 
-	V_it(Alpha_shape_vertices_list);
-      get_alpha_shape_vertices(V_it);
+      Alpha_shape_vertices_list.clear();
+      get_alpha_shape_vertices(std::back_inserter(Alpha_shape_vertices_list));
       return Alpha_shape_vertices_list.begin();
     }
 
@@ -460,13 +457,11 @@ public:
 
   //---------------------------------------------------------------------
 
+  // TODO: introduce some lazyness, otherwisae this is a O(n) operation
   Alpha_shape_facets_iterator alpha_shape_facets_begin()
     {
-      Alpha_shape_facets_list.erase(Alpha_shape_facets_list.begin(), 
-				    Alpha_shape_facets_list.end());
-      std::back_insert_iterator< std::list< Facet > > 
-	E_it(Alpha_shape_facets_list);
-      get_alpha_shape_facets(E_it);
+      Alpha_shape_facets_list.clear();
+      get_alpha_shape_facets(std::back_inserter(Alpha_shape_facets_list));
       return Alpha_shape_facets_list.begin();
     }
 
@@ -1443,7 +1438,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 template <class Dt>
 std::back_insert_iterator< 
-       std::list<CGAL_TYPENAME_MSVC_NULL Alpha_shape_3<Dt>::Vertex_handle > >
+       std::list<typename Alpha_shape_3<Dt>::Vertex_handle > >
 Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 					    std::list<Vertex_handle > > 
 					    result) const
@@ -1499,7 +1494,7 @@ Alpha_shape_3<Dt>::get_alpha_shape_vertices(std::back_insert_iterator<
 
 template <class Dt>
 std::back_insert_iterator< std::list<
-    std::pair<CGAL_TYPENAME_MSVC_NULL Alpha_shape_3<Dt>::Cell_handle, int > > >
+    std::pair<typename Alpha_shape_3<Dt>::Cell_handle, int > > >
 Alpha_shape_3<Dt>::get_alpha_shape_facets(std::back_insert_iterator<
 					  std::list<
 					  std::pair< Cell_handle, int > > > 
