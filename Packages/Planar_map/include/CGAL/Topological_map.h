@@ -52,11 +52,6 @@ public:
   
   typedef typename Dcel::iterator_category      iterator_category;
 
-  //These were taken from Lutz's polyhedron probably I'll need them too  
-#ifndef __SUNPRO_CC 
-//in SunPro protected members are not reachable from nested classes
-protected:
-#endif
   // These extra (internal) typedefs are necessary to make
   // SunPro CC 4.2 happy. (And they are used.)
   typedef typename  Dcel::Vertex_iterator          TR_VI;
@@ -96,12 +91,10 @@ public:
   Halfedge,
   Difference, iterator_category>       Halfedge_iterator;
   
-#ifndef __SUNPRO_CC
   typedef _Polyhedron_const_iterator<
   TR_C_HI, TR_HI,
   Halfedge,
   Difference, iterator_category>       Halfedge_const_iterator;
-#endif // __SUNPRO_CC //
   
   typedef _Polyhedron_iterator<
   TR_FI,
@@ -113,7 +106,6 @@ public:
   Face,
   Difference, iterator_category>       Face_const_iterator;
 
-
   typedef _Polyhedron_facet_circ<
   Halfedge,
   Halfedge_iterator,
@@ -124,30 +116,15 @@ public:
   Halfedge_iterator,
   Forward_circulator_tag>            Halfedge_around_vertex_circulator;
 
-
-#ifdef __SUNPRO_CC
-  typedef _Polyhedron_halfedge_const_iterator<
-  TR_C_HI, TR_HI,
-  Ccb_halfedge_circulator,
-  Halfedge_around_vertex_circulator,
-  Halfedge,
-  Difference, iterator_category>       Halfedge_const_iterator;
-#endif // __SUNPRO_CC //
- 
-  
   typedef _Polyhedron_facet_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>       Ccb_halfedge_const_circulator;
   
-  
   typedef _Polyhedron_vertex_const_circ<
   Halfedge,
   Halfedge_const_iterator,
   Forward_circulator_tag>      Halfedge_around_vertex_const_circulator;
-
-
-
 
   typedef _Polyhedron_iterator<
   TR_HOI,
@@ -389,21 +366,22 @@ public:
     // the CC compiler thinks we mean Base::Holes_iterator.
     Holes_iterator holes_begin() 
     {
-      return TR_HOI(Base::holes_begin());
+      return TR_HOI(typename Base::holes_begin());
     }
+
     Holes_const_iterator holes_begin() const
     {
-      return TR_C_HOI(Base::holes_begin()); 
+      return TR_C_HOI(typename Base::holes_begin()); 
     }
     
     Holes_iterator holes_end() 
     {
-      return TR_HOI(Base::holes_end()); 
+      return TR_HOI(typename Base::holes_end()); 
     }
 
     Holes_const_iterator holes_end() const 
     {
-      return TR_C_HOI(Base::holes_end()); 
+      return TR_C_HOI(typename Base::holes_end()); 
     }
 
     bool is_halfedge_on_inner_ccb(Halfedge_const_handle e) 
@@ -1455,8 +1433,6 @@ remove_edge(Halfedge_handle e)
     } //edge is on a hole..
   } //case b. (face deleted)
 }
-
- 
 
 CGAL_END_NAMESPACE
 
