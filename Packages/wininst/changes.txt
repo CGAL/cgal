@@ -1,3 +1,6 @@
+29 September 2004
+- Added mpfr.lib to the file master.vcproj
+
 03 June 2004 Radu Ursu
 - updated cgallib.vcproj: removed oprimisation_basic.C 
 - this project is also a VC++ 7.1 project, which means that it can't be 
