@@ -1,3 +1,8 @@
+Version 4.1 (22 March 2000)
+- fixed Iso_cuboid_3 again [my]
+- added maintainer file
+- changed Makefile to include maintainer file in package
+
 Version 4.0.5 (28 February 2000)
 - fixed Iso_cuboid_3 stuff [my]
 
