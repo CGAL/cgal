@@ -5,8 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-69/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

@@ -28,9 +28,7 @@
 #include <iostream>
 #include <CGAL/Random.h>
 
-//#include <CGAL/Compact_container.h>
-#include <CGAL/DS_Container.h>
-#include <list>
+#include <CGAL/Compact_container.h>
 
 
 namespace CGAL {
@@ -58,7 +56,6 @@ namespace CGAL {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     bool is_header;
-    //    typedef std::list<Interval>::const_iterator Interval_handle;
     typedef Interval* Interval_handle;
 
     Value key;
@@ -105,6 +102,21 @@ namespace CGAL {
   };
 
 
+template <class Interval_>
+class Interval_for_container : public Interval_
+    {
+      private:
+      void * p;
+    public:
+      Interval_for_container(const Interval_& i)
+	: Interval_(i), p(NULL)
+      {}
+      
+      void *   for_compact_container() const { return p; }
+      void * & for_compact_container()       { return p; }
+    };
+
+
   template <class Interval_>
   class Interval_skip_list
   {
@@ -112,10 +124,16 @@ namespace CGAL {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
     Random rand;
-    //std::list<Interval> container;
-    //typedef std::list<Interval>::iterator Interval_handle;
-    DS_Container<Interval> container;
-    typedef Interval* Interval_handle;
+
+    Compact_container<Interval_for_container<Interval> > container;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
+
+
+#ifdef CCC
+    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+#else
+    typedef IntervalListElt<Interval>* ILE_handle;
+#endif
 
     int maxLevel;
     IntervalSLnode<Interval>* header;
@@ -272,9 +290,7 @@ namespace CGAL {
     void print(std::ostream& os) const;
     void printOrdered(std::ostream& os) const;
 
-    
-    //typedef std::list<Interval>::const_iterator const_iterator;
-    typedef DS_Container<Interval>::iterator iterator;
+    typedef typename Compact_container<Interval_for_container<Interval> >::iterator iterator;
     typedef const iterator const_iterator;
 
     const_iterator begin() const
@@ -295,16 +311,22 @@ namespace CGAL {
   {
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
-    //    typedef std::list<Interval>::iterator Interval_handle;
-
-    typedef Interval* Interval_handle;
-
-    IntervalListElt<Interval>* header;
-
-    //static Compact_container<IntervalListElt<Interval> > compact_container;
-    static DS_Container<IntervalListElt<Interval> > compact_container;
+    //typedef Interval* Interval_handle;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
     
+#ifdef CCC
+    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+#else
+    typedef IntervalListElt<Interval>* ILE_handle;
+#endif
+
+
+    ILE_handle header;
+
+    static Compact_container<IntervalListElt<Interval> > compact_container;
+
   public:
+
     friend class IntervalListElt<Interval>;
 
     IntervalList();
@@ -318,25 +340,29 @@ namespace CGAL {
     void removeAll(IntervalList* l);
 
 
-    IntervalListElt<Interval>* create_list_element(const Interval_handle& I)
+    ILE_handle create_list_element(const Interval_handle& I)
     {
-      IntervalListElt<Interval> *e =compact_container.get_new_element();
-      e->I = I;
-      return e;
-      //IntervalListElt<Interval> e(I);
-      //IntervalListElt<Interval>* it = &*(compact_container.insert(e));
-      //return it;
+#ifdef CCC
+      IntervalListElt<Interval> e(I);
+      ILE_handle it = compact_container.insert(e);
+      return it;
+#else
+      return new IntervalListElt<Interval>(I);
+#endif
     }
 
-    void erase_list_element(IntervalListElt<Interval>* I)
+    void erase_list_element(ILE_handle I)
     {      
-      compact_container.release_element(I);
-      //compact_container.erase(I);
+#ifdef CCC
+      compact_container.erase(I);
+#else
+      delete I;
+#endif
     }
 
-    IntervalListElt<Interval>* get_first();
+    ILE_handle get_first();
 
-    IntervalListElt<Interval>* get_next(IntervalListElt<Interval>* element);
+    ILE_handle get_next(ILE_handle element);
 
     void copy(IntervalList* from); // add contents of "from" to self
  
@@ -345,8 +371,8 @@ namespace CGAL {
     OutputIterator
     copy(OutputIterator out) const
     {
-      IntervalListElt<Interval>* e = header;
-      while(e!=0) { 
+      ILE_handle e = header;
+      while(e!= NULL) { 
 	out = *(e->I);
 	++out;
 	e = e->next;
@@ -364,28 +390,31 @@ namespace CGAL {
   };
 
 
-  //template <class Interval_>
-  //Compact_container<IntervalListElt<Interval_> > 
-  //   IntervalList<Interval_>::compact_container;
-
   template <class Interval_>
-  DS_Container<IntervalListElt<Interval_> > 
-    IntervalList<Interval_>::compact_container;
+  Compact_container<IntervalListElt<Interval_> > 
+     IntervalList<Interval_>::compact_container;
+
+ 
+
 
 
   template <class Interval_>
   class IntervalListElt
   {
     typedef Interval_ Interval;
-    //    typedef std::list<Interval>::iterator Interval_handle;
-    typedef Interval* Interval_handle;
+    typedef Compact_container<Interval_for_container<Interval> >::iterator Interval_handle;
+#ifdef CCC
+    typedef Compact_container<IntervalListElt<Interval> >::iterator ILE_handle;
+#else
+    typedef IntervalListElt<Interval>* ILE_handle;
+#endif
 
     Interval_handle I;
-    IntervalListElt* next;
-    //void* p;
+    ILE_handle next;
+    void* p;
   public:
-    //void *   for_compact_container() const { return p; }
-    //void * & for_compact_container()       { return p; }
+    void *   for_compact_container() const { return p; }
+    void * & for_compact_container()       { return p; }
     
     bool operator==(const IntervalListElt& e)
     {
@@ -402,14 +431,14 @@ namespace CGAL {
     ~IntervalListElt();
 
     void 
-    set_next(IntervalListElt* nextElt)
+    set_next(ILE_handle nextElt)
     {
       next = nextElt;
     }
 
-    IntervalListElt* get_next()
+    ILE_handle get_next()
     {
-      return(next);
+      return next;
     }
 
     Interval_handle getInterval()
@@ -533,8 +562,8 @@ namespace CGAL {
 template <class Interval>
   void IntervalList<Interval>::copy(IntervalList* from)
   {
-    IntervalListElt<Interval>* e = from->header;
-    while(e!=0) { 
+    ILE_handle e = from->header;
+    while(e!=NULL) { 
       insert(e->I);
       e = e->next;
     }
@@ -544,9 +573,9 @@ template <class Interval>
 template <class Interval>
   void IntervalList<Interval>::clear()
   {
-    IntervalListElt<Interval>* x = header;
-    IntervalListElt<Interval>* y; 
-    while(x!=0) {
+    ILE_handle x = header;
+    ILE_handle y; 
+    while(x!= NULL) { // was 0
       y = x;
       x = x->next;
       erase_list_element(y);
@@ -619,12 +648,12 @@ template <class Interval>
     // holding place for elements to be removed  from promoted list.
 
     IntervalList<Interval> tempMarkList;  // temporary mark list
-    IntervalListElt<Interval>* m;
+    ILE_handle m;
     int i;
 
     for(i=0; (i<= x->level() - 2) && x->forward[i+1]!=0; i++) {
       IntervalList<Interval>* markList = update[i]->markers[i];
-      for(m = markList->get_first(); m != NULL; m = markList->get_next(m)) {
+      for(m = markList->get_first(); m != NULL ; m = markList->get_next(m)) { // af: NULL
 	if(m->getInterval()->contains_interval(x->key,x->forward[i+1]->key)) { 
 	  // promote m
 	  
@@ -672,7 +701,7 @@ template <class Interval>
     
     x->markers[i]->copy(&promoted);
     x->markers[i]->copy(update[i]->markers[i]);
-    for(m=promoted.get_first(); m!=0; m=promoted.get_next(m))
+    for(m=promoted.get_first(); m!=NULL; m=promoted.get_next(m))
       if(m->getInterval()->contains(x->forward[i]->key))
         x->forward[i]->eqMarkers->insert(m->getInterval());
     
@@ -744,7 +773,7 @@ template <class Interval>
        will be placed on the edge.  */
 
     update[i]->markers[i]->copy(&promoted);
-    for(m=promoted.get_first(); m!=0; m=promoted.get_next(m))
+    for(m=promoted.get_first(); m!=NULL; m=promoted.get_next(m))
       if(m->getInterval()->contains(update[i]->key))
 	update[i]->eqMarkers->insert(m->getInterval());
 
@@ -768,7 +797,7 @@ template <class Interval>
     IntervalList<Interval> demoted;
     IntervalList<Interval> newDemoted;
     IntervalList<Interval> tempRemoved;
-    IntervalListElt<Interval>* m;
+    ILE_handle m;
     int i;
     IntervalSLnode<Interval> *y;
 
@@ -776,7 +805,7 @@ template <class Interval>
 
     for(i=x->level()-1; i>=0; i--){
       // find marks on edge into x at level i to be demoted
-      for(m=update[i]->markers[i]->get_first(); m!=0; 
+      for(m=update[i]->markers[i]->get_first(); m!=NULL; 
 	  m=update[i]->markers[i]->get_next(m)){
 	if(x->forward[i]==0 ||
 	   ! m->getInterval()->contains_interval(update[i]->key,
@@ -790,7 +819,7 @@ template <class Interval>
       // there before demotion must be there afterwards.
 
       // Place previously demoted marks on this level as needed.
-      for(m=demoted.get_first(); m!=0; m=demoted.get_next(m)){
+      for(m=demoted.get_first(); m!=NULL; m=demoted.get_next(m)){
 	// Place mark on level i from update[i+1] to update[i], not including 
 	// update[i+1] itself, since it already has a mark if it needs one.
 	for(y=update[i+1]; y!=0 && y!=update[i]; y=y->forward[i]) {
@@ -824,7 +853,7 @@ template <class Interval>
     // newDemoted is already empty
 
     for(i=x->level()-1; i>=0; i--){
-      for(m=x->markers[i]->get_first(); m!=0; m=x->markers[i]->get_next(m)){
+      for(m=x->markers[i]->get_first(); m!=NULL ; m=x->markers[i]->get_next(m)){
 	if(x->forward[i]!=0 && 
 	   (update[i]->isHeader() ||
 	    !m->getInterval()->contains_interval(update[i]->key,
@@ -834,7 +863,7 @@ template <class Interval>
 	  }
       }
 
-      for(m=demoted.get_first(); m!=0; m=demoted.get_next(m)){
+      for(m=demoted.get_first(); m!= NULL; m=demoted.get_next(m)){
 	// Place mark on level i from x->forward[i] to x->forward[i+1].
 	// Don't place a mark directly on x->forward[i+1] since it is already
 	// marked.
@@ -878,8 +907,7 @@ template <class Interval>
     }
 
     Interval_handle ih = removeMarkers(left,I);
-    // container.erase(ih);
-    container.release_element(ih);
+    container.erase(ih);
     left->ownerCount--;
     if(left->ownerCount == 0) remove(left,update);
 
@@ -970,11 +998,10 @@ template <class Interval>
   void
   Interval_skip_list<Interval>::insert(const Interval& I)
   {
-    //container.push_front(I);
-    //Interval_handle ihandle = container.begin();
-    Interval_handle ihandle = container.get_new_element();
-    *ihandle = I;
-    insert(ihandle);
+    Interval_for_container<Interval> ifc(I);
+    Interval_handle ih = container.insert(ifc);
+    insert(ih);
+
   }
 
 
@@ -1172,7 +1199,7 @@ template <class Interval>
   template <class Interval>
   void IntervalList<Interval>::insert(const Interval_handle& I)
   {
-    IntervalListElt<Interval>* temp = create_list_element(I);
+    ILE_handle temp = create_list_element(I);
     temp->next = header;
     header = temp;
   }
@@ -1183,15 +1210,15 @@ template <class Interval>
   bool
   IntervalList<Interval>::remove(const Interval& I, Interval_handle& res)
   {
-    IntervalListElt<Interval> *x, *last;
-    x = header; last = 0;
-    while(x != 0 && *(x->getInterval()) != I) {
+    ILE_handle x, last;
+    x = header; last = NULL;
+    while(x != NULL && *(x->getInterval()) != I) {
       last = x;
       x = x->next;
     } 
-    if(x==0) {
+    if(x==NULL) {
       return false;
-    } else if (last==0) {
+    } else if (last==NULL) {
       header = x->next;
       res = x->getInterval();
       erase_list_element(x);
@@ -1208,15 +1235,15 @@ template <class Interval>
   void
   IntervalList<Interval>::remove(const Interval& I)
   {
-    IntervalListElt<Interval> *x, *last;
-    x = header; last = 0;
-    while(x != 0 && *(x->getInterval()) != I) {
+    ILE_handle x, last;
+    x = header; last = NULL;
+    while(x != NULL && *(x->getInterval()) != I) {
       last = x;
       x = x->next;
     }
-    if(x==0) {
+    if(x==NULL) {
       return ;
-    } else if (last==0) {
+    } else if (last==NULL) {
       header = x->next;
       erase_list_element(x);
     } else {
@@ -1228,8 +1255,8 @@ template <class Interval>
   template <class Interval>
   void IntervalList<Interval>::removeAll(IntervalList<Interval> *l)
   {
-    IntervalListElt<Interval> *x;
-    for(x=l->get_first(); x!=0; x=l->get_next(x))
+    ILE_handle x;
+    for(x=l->get_first(); x!=NULL; x=l->get_next(x))
       this->remove(*(x->getInterval()));
   }
 
@@ -1255,7 +1282,7 @@ template <class Interval>
 
   template <class Interval>
   inline
-  IntervalListElt<Interval>* 
+  typename IntervalList<Interval>::ILE_handle
   IntervalList<Interval>::get_first()
   {
     return header;
@@ -1263,8 +1290,9 @@ template <class Interval>
 
   template <class Interval>
   inline
-  IntervalListElt<Interval>* 
-  IntervalList<Interval>::get_next(IntervalListElt<Interval>* element)
+  
+  typename IntervalList<Interval>::ILE_handle
+  IntervalList<Interval>::get_next(ILE_handle element)
   {
     return element->next;
   }
@@ -1272,8 +1300,8 @@ template <class Interval>
   template <class Interval>
   void IntervalList<Interval>::print(std::ostream& os) const
   {
-    IntervalListElt<Interval>* e = header;
-    while(e != 0) {
+    ILE_handle e = header;
+    while(e != NULL) {
       e->print(os);
       e = e->get_next();
     }
@@ -1293,10 +1321,10 @@ template <class Interval>
   inline 
   bool IntervalList<Interval>::contains(const Interval_handle& I) const
   {
-    IntervalListElt<Interval>* x = header;
+    ILE_handle x = header;
     while(x!=0 && I != x->I)
       x = x->next;
-    if (x==0)
+    if (x==NULL)
       return false;
     else
       return true;

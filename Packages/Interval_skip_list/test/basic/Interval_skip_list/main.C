@@ -2,7 +2,7 @@
 #include <CGAL/Interval_skip_list_interval.h>
 #include <vector>
 #include <iostream>
-
+#include <list>
 typedef CGAL::Interval_skip_list_interval<double> Interval;
 typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 
