@@ -701,8 +701,9 @@ alt="insert_outside_affine_hull} (2-dimensional case)">
      Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
 	                          Cell_handle begin, int i);}
 {Creates a new vertex by starring a hole.  It takes an iterator range
-[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handles} which specifies a set
-of connected cells (resp. facets in dimension 2) describing a hole.
+[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handle}s which specifies
+a hole: a set of connected cells (resp. facets in dimension 2) which is
+star-shaped wrt \ccc{p}.
 (\ccc{begin}, \ccc{i}) is a facet (resp. an edge) on the boundary of the hole,
 that is, \ccc{begin} belongs to the set of cells (resp.  facets) previously
 described, and \ccc{begin->neighbor(i)} does not.  Then this function deletes
@@ -713,9 +714,9 @@ is called and \ccc{v} is returned.\\
 This operation is equivalent to calling
 \ccStyle{tds().insert_in_hole(cell_begin, cell_end, begin, i);
 v->set_point(p)}.
-\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets)
-is connected, its boundary is connected, and \ccc{p} lies inside the
-hole, which is star-shaped wrt \ccc{p}}.}
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets in
+dimension 2) is connected, its boundary is connected, and \ccc{p} lies inside
+the hole, which is star-shaped wrt \ccc{p}}.}
 
 \ccHeading{Traversal of the Triangulation}
 
