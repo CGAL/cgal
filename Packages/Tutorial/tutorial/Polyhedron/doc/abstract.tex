@@ -119,7 +119,7 @@ other algorithmic flags. \cgalpoly\ encapsulates a generic design of
 the halfedge data structure allowing users customize the \poly\ with
 the template parameters of the geometry primitives. There are several
 advantages that employing the \poly\ as the core data structure of a
-meshing application: \\
+mesh processing application: \\
 
 \indent $\bullet$ The \poly\ is a \italic{generic} data structure.\\
 \indent $\bullet$ The \poly\ is a \italic{robust} and \italic{optimized} 
@@ -158,13 +158,13 @@ for initialization and the mesh traversal, i.e. the \italic{iterators}
 and the \italic{circulators}, for rendering or mesh exporting. Based on
 this simple viewer, we then show the readers how to
 \italic{customize the \poly} to support certain functionalities. 
-An enriched polyhedron is proposed with the primitives 
-specialized with algorithmic flags. This enriched polyhedron
-is used as the core data structure of our meshing application.
-We then show how to interact with a customized \poly.
-The extended primitives are employed to support the superimposition of the 
-input mesh on the subdivided surfaces. A trackball function
-of the enriched polyhedron is also demonstrated in the tutorial.
+An enriched polyhedron is proposed with the primitives specialized
+with algorithmic flags. This enriched polyhedron is used as the core
+data structure of our application.  We then show how to interact with
+a customized \poly.  The extended primitives are employed to support
+the superimposition of the input mesh on the subdivided surfaces. A
+trackball function of the enriched polyhedron is also demonstrated in
+the tutorial.
 
 \subsubsection*{Subdivision Algorithms}
 
@@ -175,14 +175,14 @@ demonstrate both the \italic{topology operation} (refinement) and the
 \italic{geometry operations} (smoothing). The topology and the geometry
 operations are the two basic operations required by most geometry
 algorithms. Our implementations of the subdivisions are designed to be
-a separated library that accept any generic \poly\ as the input
+a separated library that accepts any generic \poly\ as the input
 polyhedron (not just the enriched polyhedron we used in the polyhedron
 viewer). The key to implement a subdivision algorithm is to support
 the refinement, i.e.\ the connectivity modifications.  Two approaches
 are first introduced to support the refinement: the \italic{atomic
 operators of the combinatorial modifications} (operator scheme) and
-the \italic{modifier mechanism} (modifier scheme).  The operator scheme
-reconfigures the connectivity with a combination of several
+the \italic{modifier mechanism} (modifier scheme).  The operator
+scheme reconfigures the connectivity with a combination of several
 combinatorial operators. The $\sqrt{3}$ subdivision is used to
 demonstrate this scheme. Though simple and efficient in some
 refinements, e.g.\ $\sqrt{3}$ subdivision, the correct combination of
@@ -207,6 +207,7 @@ void CatmullClark_subdivision(Polyhedron& p) {
   quadralize_polyhedron<CatmullClark_rule<Polyhedron>>(p);  
 }
 \end{lstlisting}
+
 The \lstinline!quadralize_polyhedron<>! represents the refinement
 (host function) and the \lstinline!CatmullClark_rule<>! supports the
 geometry rules (policy).  This approach offers a convenient way to
