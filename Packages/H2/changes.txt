@@ -1,3 +1,6 @@
+2.45   (29 October 2001)
+- Submission bug.
+
 2.44   (24 October 2001)
 - Handles simplifications.
 
