@@ -30,7 +30,7 @@
 \newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{1.2}
+\newcommand{\cgalrelease}{2.0}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -84,8 +84,8 @@ and/or the \gnu\ Multiple Precision library GMP.
 In order to build the \cgal\ libraries you need a \CC\ compiler.
 Currently only a small number of recent compilers on unix platforms
 are supported. The reason is that most compilers do not conform to the
-upcoming ANSI/ISO standard\footnote{see e.g.
-  \path~http://reality.sgi.com/austern/std-c++/faq.html\#PartB~ for
+ISO 14882 standard for \CC\footnote{see e.g.
+  \path~http://reality.sgi.com/austern/std-c++/faq-new.html\#PartB~ for
   information} and some of them have so many limitations/bugs that we
 could not work around all of them.
 
@@ -97,14 +97,13 @@ compilers/operating systems:
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}     & \textbf{operating system}\\\hline\hline
-    \mipsprocc\ 7.2 (n32) & IRIX 6.2\\\hline
-    \sunprocc{4.2}        & Solaris 2.5\\\hline
-    \Gcc{2.8.*}           & IRIX 6.2 / SUN Solaris 2.5 / Linux 2.0\\\hline
-    \egcs{1.0.*}          & IRIX 5.3 / IRIX 6.2 / Solaris 2.5 / Linux 2.0\\\hline
+    \mipsprocc\ 7.2 (n32) & IRIX 6.5\\\hline
+    \Gcc{2.8.1}           & IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
+    \egcs{1.0/1.1}        & IRIX 5.3 / IRIX 6.5 / Solaris 2.6 / Linux 2.0\\\hline
   \end{tabular}
 \end{center}
 
-There are plans to support PC compilers (\msvc{}) in the future, but
+There are plans to support PC compilers (\msvc{6}) in the future, but
 there is no such support at the moment.
 
 %%If your compiler/operating system is not on this list, this not
@@ -154,7 +153,7 @@ file that contains descriptions of the files in this directory. An
 example of an FTP-session is given below.
 
 \begin{alltt}
-      $ ftp ftp.cs.uu.nl 
+      $ ftp ftp.cs.uu.nl $
       Name (ftp.cs.uu.nl:<your username>): anonymous
       Password: <type your email address here>
       ftp> cd pub/CGAL
@@ -227,7 +226,7 @@ this.
 \section{A Sample Installation}\label{sec:sample-inst}
 
 In this section we sketch an example installation on a \textsc{Sun}
-running Solaris 2.5 with the \sunprocc{4.2} compiler. For a complete
+running Solaris 2.6 with the \egcs{1.1.1} compiler. For a complete
 description of the different menus and their options refer to section
 \ref{sec:interactive-mode}.
 
@@ -277,7 +276,7 @@ A menu similar to the following will appear on your screen.
 {\scriptsize \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 1.2 Installation Main Menu               **
+  **              CGAL 2.0 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.5                     **
@@ -343,7 +342,7 @@ bug is \textit{not} present. On the other hand \texttt{no} resp.
 {\scriptsize
 \begin{verbatim}
   ****************************************************************
-  **            CGAL 1.2 Installation Compiler Menu             **
+  **            CGAL 2.0 Installation Compiler Menu             **
   **            -----------------------------------             **
   **                                                            **
   **   OS:                  sparc_SunOS-5.5                     **
@@ -407,7 +406,7 @@ from compiler or linker).
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 1.2                     **
+  **                     Compiling CGAL 2.0                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -826,7 +825,7 @@ compiler.  To achieve this, the first section of each makefile
 contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-1.2/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-2.0/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 
@@ -878,7 +877,7 @@ have consequences for the makefile variables \texttt{CGAL\_CXX} and
 \texttt{CXXFLAGS}.
 
 \section{Compiling a \cgal\ application}
-The directory \texttt{CGAL-1.2/examples} contains a small program
+The directory \texttt{CGAL-2.0/examples} contains a small program
 (example.C) and a sample makefile with some comments. The
 \texttt{CGAL\_MAKEFILE} variable in this makefile (see section
 \ref{sec:makefiles}) is automatically substituted by the
@@ -929,45 +928,6 @@ avoid them, it is highly recommended to use the latest \leda\
 release\footnote{At the moment this is \leda\ 3.7.}, since this is
 what we test \cgal\ with.
 
-\subsubsection{Definition of type bool}
-
-If a compiler does not support the keyword bool, libraries like \leda\ 
-and \stl\ provide their own definition of bool. Unfortunately the
-\leda\ definition of bool is incompatible with the definition in most
-\stl\ implementations. One of them needs to be changed. The easiest
-solution is to modify \stl\ as follows:
-
-\begin{enumerate}
-\item locate the definition of bool; most of the time it is defined as
-
-\begin{verbatim}
-   typedef int bool;
-\end{verbatim}
-
-in a file called bool.h or stl\_config.h
-
-\item replace this definition by the following:
-
-\begin{verbatim}
-#ifdef CGAL_USE_LEDA
-#include <LEDA/bool.h>
-#else
-   typedef int bool;
-#endif
-\end{verbatim}
-\end{enumerate}
-
-The flag \texttt{CGAL\_USE\_LEDA} ensures that you can continue to use \stl\ wwithout
-depending on \leda.
-
-REMARK: If you do not like to modify centrally managed \stl\ files, it
-is possible to fake it. This can be done by making changes to a copy
-of the \stl\ file bool.h or stl\_config.h. After this you have to make
-sure that this copy is found earlier on the include path than the
-original file.  It is also possible to modify \leda\ instead of \stl.
-However, then you have to modify and recompile (if you have the source
-code) \leda.
-
 \subsubsection{'red' and 'black' conflict}
 
 When compiling the graphical demo programs that use \leda\ windows
@@ -1017,8 +977,8 @@ this. You have to compile these files yourself and add them to the
 custom linker flags during the installation of CGAL, or enter them
 manually in the makefiles.
 
-\section{Upgrading a \cgal\ 1.0/1.1 installation}
-In case you have \cgal\ 1.0/1.1 installed on your system, you might
+\section{Upgrading a \cgal\ 1.* installation}
+In case you have \cgal\ 1.0/1.1/1.2 installed on your system, you might
 like to reuse your configuration files. Simply use the following
 commands to put them into the right place:
 \begin{verbatim}
@@ -1027,7 +987,7 @@ cp -r <OLD_CGAL_DIR>/config/install <NEW_CGAL_DIR>/config
 where \texttt{<OLD\_CGAL\_DIR>} is your \cgal\ 1.0/1.1 root directory
 (e.g.  \texttt{/pub/local/CGAL-1.0}) and\\
 \texttt{<NEW\_CGAL\_DIR>} is the root directory of your new \cgal\ 
-installation (e.g. {\tt /pub/local/CGAL-1.2}).
+installation (e.g. {\tt /pub/local/CGAL-2.0}).
 
 It is \textbf{strongly} recommended to rerun all tests using the
 option \texttt{A} from the main menu.

@@ -13,7 +13,7 @@
 # recommended to use the full pathname! Another possibility is to define
 # an environment variable CGAL_MAKEFILE.
 
-CGAL_MAKEFILE = /users/jannes/CGAL-1.0/make/makefile_mips_IRIX-5.3_CC-4.0
+CGAL_MAKEFILE = /users/jannes/CGAL-2.0/make/makefile_mips_IRIX-5.3_CC-4.0
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

@@ -5,15 +5,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
-#include <iostream.h>
+#include <iostream>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Point_2<R> Point;
+typedef CGAL_Cartesian< double >  R;
+typedef CGAL_Point_2< R >         Point;
 
 int main()
 {
-  Point p(0,0);
-  CGAL_set_ascii_mode(cout);
-  cout << "p = " << p << endl;
+  Point p(0, 0);
+  CGAL_set_ascii_mode(std::cout);
+  std::cout << "p = " << p << std::endl;
 }
 
