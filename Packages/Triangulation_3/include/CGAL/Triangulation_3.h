@@ -818,12 +818,12 @@ link(Vertex_handle v, Cell_handle c)
       cur = cur->neighbor(next);
       next = nextposaroundij(cur->index(v1),cur->index(v));
     }
-    Cell_handle courant = bound->neighbor(i);
-    Cell_handle trouve = cur->neighbor(next);
-    courant->set_neighbor( courant->index(bound->vertex(i2)), trouve);
-    trouve->set_neighbor( 6 - trouve->index(v) - 
-			  trouve->index(infinite) -
-			  trouve->index(v1), courant );
+    Cell_handle current = bound->neighbor(i);
+    Cell_handle found = cur->neighbor(next);
+    current->set_neighbor( current->index(bound->vertex(i2)), found);
+    found->set_neighbor( 6 - found->index(v) - 
+			 found->index(infinite) -
+			 found->index(v1), current );
     bound = cur;
     i = next;
   } while ( ( bound != c ) || ( i != ib ) );
@@ -1512,68 +1512,75 @@ public:
     // giving the facet (c,i)
     {//side_of_facet
       CGAL_triangulation_precondition( dimension() == 2 );
+      CGAL_triangulation_precondition( i == 3 );
       if ( ! is_infinite(c,i) ) {
-	int i0, i1, i2; // indices in the considered facet
+	//	int i0, i1, i2; // indices in the considered facet
 	CGAL_Bounded_side side;
-	switch (i) {
-	case 0:
-	  {
-	    i0 = 1;
-	    i1 = 2;
-	    i2 = 3;
-	    break;
-	  }
-	case 1:
-	  {
-	    i0 = 0;
-	    i1 = 2;
-	    i2 = 3;
-	    break;
-	  }
-	case 2:
-	  {
-	    i0 = 0;
-	    i1 = 1;
-	    i2 = 3;
-	    break;
-	  }
-	case 3:
-	  {
-	    i0 = 0;
-	    i1 = 1;
-	    i2 = 2;
-	    break;
-	  }
-	default:
-	  {
-	    // impossible
-	    CGAL_triangulation_assertion( false );
-	    // to avoid warning at compile time :
-	    return side_of_triangle(p,
-				    c->vertex(1)->point(),
-				    c->vertex(2)->point(),
-				    c->vertex(3)->point(),
-				    lt, li, lj);
-	  }
-	}
+/* 	switch (i) { */
+/* 	case 0: */
+/* 	  { */
+/* 	    i0 = 1; */
+/* 	    i1 = 2; */
+/* 	    i2 = 3; */
+/* 	    break; */
+/* 	  } */
+/* 	case 1: */
+/* 	  { */
+/* 	    i0 = 0; */
+/* 	    i1 = 2; */
+/* 	    i2 = 3; */
+/* 	    break; */
+/* 	  } */
+/* 	case 2: */
+/* 	  { */
+/* 	    i0 = 0; */
+/* 	    i1 = 1; */
+/* 	    i2 = 3; */
+/* 	    break; */
+/* 	  } */
+/* 	case 3: */
+/* 	  { */
+/* 	    i0 = 0; */
+/* 	    i1 = 1; */
+/* 	    i2 = 2; */
+/* 	    break; */
+/* 	  } */
+/* 	default: */
+/* 	  { */
+/* 	    // impossible */
+/* 	    CGAL_triangulation_assertion( false ); */
+/* 	    // to avoid warning at compile time : */
+/* 	    return side_of_triangle(p, */
+/* 				    c->vertex(1)->point(), */
+/* 				    c->vertex(2)->point(), */
+/* 				    c->vertex(3)->point(), */
+/* 				    lt, li, lj); */
+/* 	  } */
+/* 	} */
 	int i_t, j_t;
+/* 	side = side_of_triangle(p, */
+/* 				c->vertex(i0)->point(), */
+/* 				c->vertex(i1)->point(), */
+/* 				c->vertex(i2)->point(), */
+/* 				lt, i_t, j_t); */
 	side = side_of_triangle(p,
-				c->vertex(i0)->point(),
-				c->vertex(i1)->point(),
-				c->vertex(i2)->point(),
+				c->vertex(0)->point(),
+				c->vertex(1)->point(),
+				c->vertex(2)->point(),
 				lt, i_t, j_t);
 	// indices in the original cell :
-	li = ( i_t == 0 ) ? i0 :
-	  ( i_t == 1 ) ? i1 :
-	  i2;
-	lj = ( j_t == 0 ) ? i0 :
-	  ( j_t == 1 ) ? i1 :
-	  i2;
+	li = ( i_t == 0 ) ? 0 :
+	  ( i_t == 1 ) ? 1 :
+	  2;
+	lj = ( j_t == 0 ) ? 0 :
+	  ( j_t == 1 ) ? 1 :
+	  2;
 	return side;
       }
       else { // infinite facet
 	int inf = c->index(infinite);
 	int i1,i2; // indices in the facet
+	// TBD: replace using nextposaroundij
 	if ( i == (inf+1)&3 ) {
 	  i1 = (inf+2)&3;
 	  i2 = (inf+3)&3;
