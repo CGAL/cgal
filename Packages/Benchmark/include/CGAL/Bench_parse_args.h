@@ -106,7 +106,9 @@ public:
 public:    
   Bench_parse_args(int argc, char * argv[]) :
       m_argc(argc), m_argv(argv), m_filename(0),
-      m_verbose(false), m_type_mask(0xffffffff), m_strategy_mask(0xffffffff),
+      m_verbose(false),
+      m_postscript(false),
+      m_type_mask(0xffffffff), m_strategy_mask(0xffffffff),
       m_input_format(FORMAT_RAT),
       m_print_header(true), m_name_length(32), m_seconds(1), m_samples(0),
 #if (defined _MSC_VER)
@@ -130,6 +132,7 @@ public:
   unsigned int get_type_mask() const { return m_type_mask; }
   unsigned int get_strategy_mask() const { return m_strategy_mask; }
   bool get_verbose() const { return m_verbose; }
+  bool get_postscript() const { return m_postscript; }
   FormatId get_input_format() const { return m_input_format; }
   int get_samples() const { return m_samples; }
   int get_iterations() const { return m_iterations; }
@@ -200,9 +203,10 @@ public:
         case 'h': printHelp(); return 1;
         case 'I': if (get_io_param(optarg)) return -1; break;
         case 'i': m_iterations = atoi(optarg); break;
+        case 'p': m_postscript = !m_postscript; break;
         case 's': m_samples = atoi(optarg); break;
         case 't': m_seconds = atoi(optarg); break;
-        case 'v': m_verbose = !m_verbose; break;
+        case 'v': m_verbose = !m_verbose; break;         
         default:
           std::cerr << m_prog_name << ": invalid option -- "
                     << static_cast<char>(c) << std::endl;
@@ -414,6 +418,7 @@ private:
   char ** m_argv;
   const char * m_filename;
   bool m_verbose;
+  bool m_postscript;
   unsigned int m_type_mask;
   unsigned int m_strategy_mask;
   FormatId m_input_format;

@@ -20,7 +20,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-char Bench_parse_args::s_option_str[] = "b:d:hi:I:s:t:v";
+char Bench_parse_args::s_option_str[] = "b:d:hi:I:ps:t:v";
 
 char * Bench_parse_args::s_io_opts[] = {"format", "f", NULL};
 
