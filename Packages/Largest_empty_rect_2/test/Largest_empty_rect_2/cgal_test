@@ -17,6 +17,8 @@ ERRORFILE=error.txt
 #                    compile <target>
 #---------------------------------------------------------------------#
 
+CMP='diff -w'
+
 compile()
 {
   echo "Compiling $1 ... "
@@ -50,13 +52,13 @@ run()
       echo "Executing ./$1 $DATAFILE > ${data_dir}/out"
       echo
       if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
-	  echo "   execution of $1 ${data_dir}/$DATATFILE > ${data_dir}/out succeeded" >> $ERRORFILE
-	  if cmp  ${data_dir}/out "${data_dir}/gold_$DATANAME" ; then
-	      echo "   no differences between output and gold were found" >> $ERRORFILE
+	  echo "   execution of $1 ${data_dir}/${DATAFILE} > ${data_dir}/out succeeded" >> $ERRORFILE
+	  if ${CMP} ${data_dir}/out "${data_dir}/gold_$DATANAME" ; then
+#	      echo "   no differences between output and gold were found" >> $ERRORFILE
 	  else
 	      echo "   ERROR:  differences between output and gold were found" >> $ERRORFILE
 	      echo "   ERROR:  differences between output and gold were found :" >> $OUTPUTFILE
-              diff ${data_dir}/out "${data_dir}/gold_$DATANAME" >> $OUTPUTFILE
+              ${CMP} ${data_dir}/out "${data_dir}/gold_$DATANAME" >> $OUTPUTFILE
 	  fi
       else
 	  echo "   ERROR: execution of $1 $DATAFILE $2 ${data_dir}/out failed" >> $ERRORFILE
