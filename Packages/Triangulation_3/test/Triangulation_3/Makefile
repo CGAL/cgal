@@ -5,7 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # pour purify, virer LEDA
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.3-I-19/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
+#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.3-I-19/make/makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
@@ -17,21 +17,26 @@ include $(CGAL_MAKEFILE)
 #CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
+	-I../../../Cartesian_kernel/include \
+	-I../../../Cd/include \
+	-I../../../_2/include \
+	-I../../../_3/include \
+	-I../../../H2/include \
+	-I../../../H3/include \
+	-I../../../Kernel_basic/include \
+	-I../../../Number_types/include \
 	-I../../include \
 	-I./include \
-        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
-	 $(CGAL_CXXFLAGS)\
+	 $(CGAL_CXXFLAGS) \
 	 $(TESTSUITE_CXXFLAGS) \
 	-DCGAL_CHECK_EXPENSIVE \
 	-W -Wall \
-	-g
-#	-pedantic \
-#	-g #\
-#	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_ASSERTIONS
-#         -gdwarf-2
-#	-O2 -fno-default-inline \
-
-
+	-g # -Wold-style-cast # -pedantic
+	# -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
+	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_WARNINGS \
+	# -B$(UTIL)/Binutils/$(UNAME)/bin/ \
+	# -gdwarf-2
+	# -O2 -fno-default-inline \
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -51,12 +56,13 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 
 all: test_triangulation_tds \
      test_triangulation_3 test_delaunay_3 \
-     test_regular_3 
+     test_regular_3 test_delaunay_hierarchy_3
 # test_triangulation_geom_traits test_triangulation_regular_traits 
 #	./test_triangulation_geom_traits
 	./test_triangulation_tds
 	./test_triangulation_3
 	./test_delaunay_3
+	./test_delaunay_hierarchy_3
 #	./test_triangulation_regular_traits
 	./test_regular_3 
 #        -B$(UTIL)/Binutils/$(UNAME)/bin/ \
@@ -73,6 +79,9 @@ test_triangulation_3: ../../src/Triangulation_3.o  test_triangulation_3.o
 test_delaunay_3: ../../src/Triangulation_3.o  test_delaunay_3.o 
 	$(CGAL_CXX) -o test_delaunay_3 Triangulation_3.o test_delaunay_3.o $(LDFLAGS)
 
+test_delaunay_hierarchy_3: ../../src/Triangulation_3.o test_delaunay_hierarchy_3.o 
+	$(CGAL_CXX) -o test_delaunay_hierarchy_3 Triangulation_3.o test_delaunay_hierarchy_3.o $(LDFLAGS)
+
 #test_triangulation_regular_traits: test_triangulation_regular_traits.o 
 #	$(CGAL_CXX) -o test_triangulation_regular_traits test_triangulation_regular_traits.o $(LDFLAGS)
 
@@ -82,6 +91,7 @@ test_regular_3: ../../src/Triangulation_3.o  test_regular_3.o
 clean:
 	- rm -f *.o test_triangulation_3 test_triangulation_geom_traits \
 	            test_triangulation_tds test_delaunay_3 \
+		    test_delaunay_hierarchy_3 \
 		    test_regular_3 test_triangulation_regular_traits \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
 	            Test_tds_IO_3 core
