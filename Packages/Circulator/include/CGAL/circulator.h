@@ -344,7 +344,7 @@ check_circulator_or_iterator( Iterator_tag ){
 }
 
 template< class IC> inline
-void Assert_circulator_or_iterator( const IC &ic){
+void Assert_circulator_or_iterator( const IC &){
     typedef typename Circulator_traits<IC>::category category;
     Assert_compile_time_tag(
         Circulator_or_iterator_tag(),
