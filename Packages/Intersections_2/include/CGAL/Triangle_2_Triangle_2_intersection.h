@@ -28,13 +28,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+template <class K>
+Object
+intersection(const typename CGAL_WRAP(K)::Triangle_2 &tr1, 
+	     const typename CGAL_WRAP(K)::Triangle_2 &tr2,
+	     const K& k);
+} // namespace CGALi
+
 template <class R>
 Object
 intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
 
-// template <class R>
-// bool
-// do_intersect(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
 
 CGAL_END_NAMESPACE
 
