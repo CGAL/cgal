@@ -32,12 +32,8 @@ typedef double Rtype;
 #include <CGAL/Quotient.h>
 typedef CGAL::Quotient<Rtype>   Ftype;
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_HOMOGENEOUS_H
 #include <CGAL/Homogeneous.h>
-#endif // CGAL_HOMOGENEOUS_H
 
 typedef CGAL::Cartesian<Ftype>         Test_rep_cartesian;
 typedef CGAL::Homogeneous<Rtype>       Test_rep_homogeneous;
