@@ -165,26 +165,31 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
       fit = D.faces_begin(), fend = D.faces_end();
     // we don't draw the first face outside the box:
     for ( ++fit; fit != fend; ++fit) {
+      Qt::RasterOp old_raster = ws.rasterOp();
+      //save the initial raster mode
       if(D.mark(fit))
       	ws.setFillColor(fillcolor);
-      else
+      else{  
+        ws.setRasterOp(Qt::CopyROP);
       	ws.setFillColor(bgcolor);
+      }
 
       std::list<Point> l;
       Halfedge_around_face_const_circulator fcirc(D.halfedge(fit)), 
                                             fend(fcirc);
       CGAL_For_all(fcirc, fend){
-	  if(D.is_standard(D.target(fcirc)))
-	    l.push_back(D.point(D.target(fcirc)));
+	      if(D.is_standard(D.target(fcirc)))
+	        l.push_back(D.point(D.target(fcirc)));
       }
       QPointArray array(l.size());int i=0;
       std::list<Point>::const_iterator it = l.begin();
       while(it!=l.end()){
-		array.setPoint(i++, ws.x_pixel(to_double((*it).x())), 
+        array.setPoint(i++, ws.x_pixel(to_double((*it).x())), 
 		       ws.y_pixel(to_double((*it).y())));
-	it++;
+      it++;
       }
       ws.get_painter().drawPolygon(array);
+      ws.setRasterOp(old_raster);
 /*
       Isolated_vertex_const_iterator iv_it;
       for (iv_it = D.isolated_vertices_begin(fit); 
@@ -208,11 +213,11 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     Halfedge_const_iterator hit, hend = D.halfedges_end();
     for (hit = D.halfedges_begin(); hit != hend; ++(++hit)) {
       if(D.mark(hit))
-		ws.setColor(color);
+        ws.setColor(color);
       else
-		ws.setColor(bgcolor);
+        ws.setColor(bgcolor);
       if(D.is_standard(D.source(hit)) 
-		&& D.is_standard(D.target(hit)))
+        && D.is_standard(D.target(hit)))
       ws << Standard_segment_2(D.point(D.source(hit)),
 								D.point(D.target(hit)));
     }
