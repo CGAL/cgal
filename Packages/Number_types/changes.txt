@@ -1,3 +1,6 @@
+4.30	 (25 July 01)
+- Fix MP_Float.tex.
+
 4.29	 (23 July 01)
 - operator<<(MP_Float) now prints a double approximation.
 

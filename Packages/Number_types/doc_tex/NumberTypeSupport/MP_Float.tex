@@ -41,8 +41,6 @@ All functions are provided so that it can be used as a number type in
 \ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
 {reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
 
-\end{ccClass} 
-
 \ccImplementation 
 The implementation of \ccc{MP_Float} is simple but provides a quadratic
 complexity for multiplications.  This can be a problem for large operands.
@@ -50,3 +48,4 @@ For faster implementations of the same functionality with large integral
 values, you may want to consider using \ccc{GMP}, \ccc{CLN} or \ccc{LEDA}
 instead.
 
+\end{ccClass} 
