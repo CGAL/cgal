@@ -103,13 +103,14 @@ class Handle_for
       return *this;
     }
 
-protected:
+// protected:
     typedef RefCounted element_type;
 
+    template <class T>
     void
-    initialize_with( const RefCounted& rc)
+    initialize_with( const T& rc)
     {
-      allocator.construct(ptr, rc);
+      allocator.construct((T*&)ptr, rc);
     }
 
     bool
@@ -143,6 +144,8 @@ protected:
         ptr = tmp_ptr;
       }
     }
+
+protected:
 
     static Allocator allocator;
     typename Allocator::pointer      ptr;

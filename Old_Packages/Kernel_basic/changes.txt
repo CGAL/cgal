@@ -1,6 +1,8 @@
-3.58   (?? October 2001)
+3.58   (5 October 2001)
 - [Simple_]Handle_for<> protection cleanup, non-const Ptr() added.
 - Remove cartesian_classes.h.
+- Add New_delete_allocator.h.
+- Handle_for<> should work for virtual hierarchies now.
 
 3.57   (12 September 2001)
 - Fixes for SunPro.

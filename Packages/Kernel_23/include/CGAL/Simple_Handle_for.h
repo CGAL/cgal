@@ -35,7 +35,6 @@ public:
     Simple_Handle_for(const Stored& rc)
 	: _s(rc) {}
 
-protected:
     typedef Stored element_type;
 
     void
