@@ -1,3 +1,6 @@
+20 Feb 2004 Andreas Fabri
+- In Convex_hull_traits_3.h: Replaced CGAL_VC7_BUG_PROTECTED with protected:
+
 16 Feb 2004 Sylvain Pion
 - Test for CGAL_USE_GEOMVIEW in the demos.
 
