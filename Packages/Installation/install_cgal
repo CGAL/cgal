@@ -5394,7 +5394,6 @@ write_linker_flags()
   fi
   LIBS="`lib_option CGAL`"
   WLIBS="`lib_option CGAL`"
-  QLIBS="`lib_option CGAL`"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
 	if [ -n "${CYGWIN_COMPILER}" ]; then
@@ -5443,6 +5442,9 @@ write_linker_flags()
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
+  else
+    # QLIBS has to be set anyway
+    QLIBS="${LIBS}"
   fi
 
   if [ -n "${GMP_SUPPORT}" ]; then
