@@ -211,7 +211,7 @@ Geomview_stream::look_recenter()
 }
 
 Geomview_stream&
-Geomview_stream::operator<<(std::string s)
+Geomview_stream::operator<<(const std::string & s)
 {
     if ((int)s.length() != ::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"
@@ -261,6 +261,18 @@ Geomview_stream::operator<<(unsigned int i)
     }
 
     return *this;
+}
+
+Geomview_stream&
+Geomview_stream::operator<<(long i)
+{
+    return operator<<((int) i);
+}
+
+Geomview_stream&
+Geomview_stream::operator<<(unsigned long i)
+{
+    return operator<<((unsigned int) i);
 }
 
 Geomview_stream&

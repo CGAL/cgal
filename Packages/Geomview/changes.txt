@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.34 (20 December 2002)
+- Add operator<<(long) and operator<<(unsigned long) (needed for MipsPro 64).
+
 Ver 3.33 (11 December 2002)
 - Add gv.draw_triangles(InputIterator begin, end) using OFF to be fast.
 

@@ -250,8 +250,22 @@ from Geomview and to read data sent back by Geomview.
 \ccPrecond You have to allocate enough memory.}
 
 \ccMethod{Geomview_stream& operator<<(int i);}
-{Inserts integer \ccc{i} into the stream. Puts whitespace around if the
+{Inserts \ccc{i} into the stream. Puts whitespace around if the
 stream is in ascii mode.}
+
+\ccMethod{Geomview_stream& operator<<(unsigned int i);}
+{Inserts \ccc{i} into the stream. Puts whitespace around if the
+stream is in ascii mode.}
+
+\ccMethod{Geomview_stream& operator<<(long i);}
+{Inserts \ccc{i} into the stream. Puts whitespace around if the
+stream is in ascii mode. Currently implemented by converting to int, so it
+can be truncated on 64 bit platforms.}
+
+\ccMethod{Geomview_stream& operator<<(unsigned long i);}
+{Inserts \ccc{i} into the stream. Puts whitespace around if the
+stream is in ascii mode. Currently implemented by converting to unsigned int,
+so it can be truncated on 64 bit platforms.}
 
 \ccMethod{Geomview_stream& operator<<(double d);}
 {Inserts double \ccc{d} into the stream. Puts whitespace around if the

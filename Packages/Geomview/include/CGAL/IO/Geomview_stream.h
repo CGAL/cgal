@@ -48,9 +48,11 @@ public:
     ~Geomview_stream();
 
     Geomview_stream &operator<<(const Color &c);
-    Geomview_stream &operator<<(std::string s);
+    Geomview_stream &operator<<(const std::string & s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(unsigned int i);
+    Geomview_stream &operator<<(long i);
+    Geomview_stream &operator<<(unsigned long i);
     Geomview_stream &operator<<(double d);
 
     template < class InputIterator >
