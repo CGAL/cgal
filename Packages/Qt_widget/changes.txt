@@ -1,3 +1,9 @@
+1.0.7 (5 June 2001)
+=====
+We now provide contrained.moc
+redraw signal is know resized.
+Several code cleaning.
+
 1.0.6 (22 May 2001)
 =====
 Added a #ifdef CGAL_USE_QT also in demos.

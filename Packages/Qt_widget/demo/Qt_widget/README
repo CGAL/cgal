@@ -8,7 +8,7 @@ It will create two programs: test and contrained
 test is a silly single test program. At first, it draws two segments 
 before the window is shown (and it does that to show that drawing can be 
 done before the window is shown). After a click, it draws several CGAL 
-geometrical object (see essai.C). Try to resize it to see what happens. 
+geometrical object (see test.C). Try to resize it to see what happens. 
 Quit by clicking with the right button.
 
 contrained is an adaptation of a demo from Mariette Yvinnec courses, using 
