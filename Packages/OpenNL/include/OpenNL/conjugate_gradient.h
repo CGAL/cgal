@@ -94,12 +94,9 @@ public:
 	// * A.dimension() == x.dimension()
 	bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
 	{
-        if (A.dimension() != b.dimension())
-			return false;
-        if (A.dimension() != x.dimension())
-			return false;
-        if (A.dimension() <= 0)
-			return false;
+        assert(A.dimension() == b.dimension()) ;
+        assert(A.dimension() == x.dimension()) ;
+        assert (A.dimension() > 0);
 
         unsigned int n = A.dimension() ;						// (Square) matrix dimension
         unsigned int max_iter = max_iter_ ;						// Max number of iterations
