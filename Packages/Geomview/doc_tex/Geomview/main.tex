@@ -168,8 +168,8 @@ Geomview_stream&
 operator<<(Geomview_stream &G, const Triangulation_2<GT,TDS> &T);}
 {Inserts the 2D triangulation \ccc{T} into the stream \ccVar.
  The actual output depends on whether the stream is in wired mode or not.
- Also note that in the case of terrains (when GT::Point_2 is
- Point_3<R>), then the 3D terrain is displayed.}
+ Also note that in the case of terrains (when \ccc{GT::Point_2} is
+ \ccc{Point_3<R>}), then the 3D terrain is displayed.}
 
 \ccInclude{CGAL/IO/Triangulation_geomview_ostream_3.h}
 
