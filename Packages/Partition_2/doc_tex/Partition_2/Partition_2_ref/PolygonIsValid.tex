@@ -32,10 +32,10 @@ for validity of the polygon.
 
 \ccMethod{
 template<class InputIterator>
-bool operator()(InputIterator first, InputIterator last);}
+bool operator()(InputIterator first, InputIterator beyond);}
 { 
   returns \ccc{true} iff the points of type \ccc{Traits::Point_2}
-  in the range [\ccc{first},\ccc{last}) define a valid polygon.
+  in the range [\ccc{first},\ccc{beyond}) define a valid polygon.
 }
 
 \ccHasModels
