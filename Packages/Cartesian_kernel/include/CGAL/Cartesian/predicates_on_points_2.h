@@ -292,30 +292,6 @@ right_turn(const PointC2<K> &p,
   return orientation(p, q, r) == RIGHT_TURN;
 }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class K >
-inline
-bool
-leftturn(const PointC2<K> &p,
-         const PointC2<K> &q,
-         const PointC2<K> &r)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED; // Use left_turn instead.
-  return orientation(p, q, r) == LEFT_TURN;
-}
-
-template < class K >
-inline
-bool
-rightturn(const PointC2<K> &p,
-          const PointC2<K> &q,
-          const PointC2<K> &r)
-{
-  bool THIS_FUNCTION_IS_DEPRECATED; // Use right_turn instead.
-  return orientation(p, q, r) == RIGHT_TURN;
-}
-#endif
-
 template <class K>
 inline
 Oriented_side

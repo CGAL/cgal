@@ -134,30 +134,6 @@ namespace CartesianKernelFunctors {
   using CommonKernelFunctors::Less_rotate_ccw_2;
   using CommonKernelFunctors::Oriented_side_2;
   using CommonKernelFunctors::Oriented_side_3;
-#ifndef CGAL_NO_DEPRECATED_CODE
-  using CommonKernelFunctors::Equal_xy_2;
-  using CommonKernelFunctors::Leftturn_2;
-  using CommonKernelFunctors::Equal_xyz_3;
-  using CommonKernelFunctors::Construct_direction_of_line_2;
-  using CommonKernelFunctors::Construct_direction_of_ray_2;
-  using CommonKernelFunctors::Construct_direction_of_line_3;
-  using CommonKernelFunctors::Construct_direction_of_ray_3;
-  using CommonKernelFunctors::Construct_max_point_2;
-  using CommonKernelFunctors::Construct_max_point_3;
-  using CommonKernelFunctors::Construct_min_point_2;
-  using CommonKernelFunctors::Construct_min_point_3;
-  using CommonKernelFunctors::Construct_source_point_2;
-  using CommonKernelFunctors::Construct_source_point_3;
-  using CommonKernelFunctors::Construct_target_point_2;
-  using CommonKernelFunctors::Construct_target_point_3;
-  using CommonKernelFunctors::Construct_second_point_on_2;
-  using CommonKernelFunctors::Construct_second_point_on_3;
-  using CommonKernelFunctors::Transform_2;
-  using CommonKernelFunctors::Transform_3;
-  using CommonKernelFunctors::Construct_aff_transformation_2;
-  using CommonKernelFunctors::Construct_aff_transformation_3;
-  using CommonKernelFunctors::Compute_y_at_x_2;
-#endif
 #endif
 
   template <typename K>

@@ -123,18 +123,6 @@ public:
   }
 
   Oriented_side oriented_side(const Point_3 &p) const;
-#ifndef CGAL_NO_DEPRECATED_CODE
-  bool         has_on_boundary(const Point_3 &p) const
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED; // Use has_on instead.
-      return has_on(p);
-  }
-  bool         has_on_boundary(const Line_3 &l) const
-  {
-      bool THIS_FUNCTION_IS_DEPRECATED; // Use has_on instead.
-      return has_on(l);
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
   bool         has_on_positive_side(const Point_3 &l) const;
   bool         has_on_negative_side(const Point_3 &l) const;
   bool         has_on(const Point_3 &p) const
