@@ -568,6 +568,8 @@ bool
 operator>=(const Point_2<K>& p, const Point_2<K>& q)
 { return ! K().less_xy_2_object()(p, q); }
 
+namespace CGALi {
+
 template <typename K>
 inline
 Orientation
@@ -576,6 +578,8 @@ orientation(const typename CGAL_WRAP(K)::Point_2 &p,
             const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
 {
   return k.orientation_2_object()(p, q, r);
+}
+
 }
 
 template <typename K>
@@ -622,7 +626,7 @@ right_turn(const typename CGAL_WRAP(K)::Point_2 &p,
            const typename CGAL_WRAP(K)::Point_2 &q,
            const typename CGAL_WRAP(K)::Point_2 &r, const K &k)
 {
-  return orientation(p, q, r, k) == RIGHT_TURN;
+  return CGALi::orientation(p, q, r, k) == RIGHT_TURN;
 }
 
 template <typename K>

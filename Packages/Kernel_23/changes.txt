@@ -1,3 +1,6 @@
+1.105 (24 January 2004)
+- Move orientation(p,q,r,k) in CGALi.
+
 1.104 (18 January 2004)
 - Remove obsolete *ITERATOR_TRAITS_POINTER_SPEC* workarounds.
 
