@@ -165,9 +165,9 @@ int main()
 
   typedef CORE::BigInt                                  CfNT;
   typedef CGAL::Cartesian<CfNT>                         IKernel;
-  typedef Int_kernel::Point_2                           IPoint;
-  typedef Int_kernel::Segment_2                         ISegment;
-  typedef Int_kernel::Circle_2                          ICircle;
+  typedef IKernel::Point_2                              IPoint;
+  typedef IKernel::Segment_2                            ISegment;
+  typedef IKernel::Circle_2                             ICircle;
   typedef CORE::Expr                                    NT;
   typedef CGAL::Cartesian<NT>                           AKernel;
   typedef CGAL::Arr_conic_traits_2<IKernel, AKernel>    Traits;
@@ -505,11 +505,11 @@ private:
 
         file >> x1 >> y1 >> x2 >> y2;
 
-        Point source (CoNT(x1), CoNT(y1));
-        Point target (CoNT(x2), CoNT(y2));
+        Point source = Point (NT(x1), NT(y1));
+        Point target = Point (NT(x2), NT(y2));
 
         // Create the circular arc.
-        cv = Curve (circle, source, target);
+        cv = Curve (circle, CGAL::CLOCKWISE, source, target);
       }
     }
     else if (type == 's' || type == 'S')
@@ -519,8 +519,8 @@ private:
 
       file >> x1 >> y1 >> x2 >> y2;
     
-      IPoint source (x1, y1);
-      IPoint target (x2, y2);
+      IPoint source = IPoint (x1, y1);
+      IPoint target = IPoint (x2, y2);
    
       cv = Curve (ISegment (source, target));
     }
