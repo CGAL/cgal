@@ -1,8 +1,3 @@
-- make the algorithm write a code to std::cerr when intersecting
-  segments are found but they are not supported by the algorithm;
-  this should go inside the insert_intersecting_segment method
-  and the error message should be printed only once (use a static
-  variable for that)
 - replace segment arguments in constructors of sites with points
 - in the doc change the name of the template parameter for the
   point container from SC to PC.
