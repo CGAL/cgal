@@ -40,22 +40,33 @@ class Progress_indicator_ostream : public Progress_indicator
   }
   void operator++(int) {
     Base::operator++();
+#ifndef CGAL_DISABLE_PROGRESS_INDICATOR_STATUS
     os.width(6);
     os<<percentage()<<'%'<<separator;
     os<<separator;
     os.flush();
+#endif
   }
   void operator++() {
     operator++(0);
   }
 };
 
-class Progress_indicator_cout 
+class Progress_indicator_clog
 : public Progress_indicator_ostream
 {
   typedef Progress_indicator_ostream Base;
  public:
-  Progress_indicator_cout( long n, char *msg, char s='\r') 
+  Progress_indicator_clog( long n, char *msg, char s='\r') 
+    : Base( std::clog, n, msg, s) {}
+};
+
+class Progress_indicator_cout
+: public Progress_indicator_ostream
+{
+  typedef Progress_indicator_ostream Base;
+ public:
+  Progress_indicator_clog( long n, char *msg, char s='\r') 
     : Base( std::cout, n, msg, s) {}
 };
 
