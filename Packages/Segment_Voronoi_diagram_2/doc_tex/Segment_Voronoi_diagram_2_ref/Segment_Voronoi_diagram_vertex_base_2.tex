@@ -18,7 +18,7 @@
 %% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_vertex_base_2<Gt,PC,SSTag>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_vertex_base_2<Gt,SSTag>}
 
 %% add template arg's if necessary
 
@@ -46,15 +46,16 @@ indicates that the simple storage site is to be used.
 \ccInclude{CGAL/Segment_Voronoi_diagram_vertex_base_2.h}
 
 \ccIsModel
-\ccc{SegmentVoronoiDiagramVertexBase_2}
+\ccc{SegmentVoronoiDiagramVertexBase_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
 
 \ccCreation
 \ccCreationVariable{vb}  %% choose variable name
-\ccTwo{Segment_Voronoi_diagram_vertex_base_2<Gt,PC>
+\ccTwo{Segment_Voronoi_diagram_vertex_base_2<Gt>
 vb(Storage_site_2 ss);++}{}
 
-\ccConstructor{Segment_Voronoi_diagram_vertex_base_2();}{Default constructor.}
-\ccGlue
 \ccConstructor{Segment_Voronoi_diagram_vertex_base_2(Storage_site_2 ss);}
 {Constructs a vertex associated with the storage site \ccc{ss}.}
 \ccGlue
@@ -71,8 +72,10 @@ vb(Storage_site_2 ss);++}{}
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

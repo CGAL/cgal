@@ -38,9 +38,8 @@ types for the predicates.
 \ccTwo{SegmentVoronoiDiagramTraits_2::Segment_2+}{}
 %
 \ccNestedType{Intersections_tag}{Indicates or not whether the
-  intersecting segments are to be supported.
-  \ccPrecond{The tag must either be \ccc{CGAL::Tag_true} or
-  \ccc{CGAL::Tag_false}.}}
+  intersecting segments are to be supported. The tag must either be
+  \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
 \ccNestedType{Site_2}{A type for a site of the segment Voronoi
   diagram. Must be a model of the concept
   \ccc{SegmentVoronoiDiagramSite_2}.}
@@ -140,7 +139,7 @@ usual orientation test for three points.
 \ccPrecond{the sites \ccc{s1}, \ccc{s2} and \ccc{s3} must be points.}}
 %
 \ccGlue
-\ccNestedType{Are_same_points_2}{A predicate object type. Must provide
+\ccNestedType{Equal_2}{A predicate object type. Must provide
   \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
   points represented by the sites \ccc{s1} and \ccc{s2} are identical.
   \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
@@ -150,7 +149,7 @@ usual orientation test for three points.
   \ccc{bool operator(Site_2 s1, Site_2 s2)}, which determines is the
   segments represented by the sites \ccc{s1} and \ccc{s2} are
   parallel.
-  \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
+  \ccPrecond{\ccc{s1} and \ccc{s2} must be segments.}}
 %
 \ccGlue
 \ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.
@@ -348,16 +347,20 @@ construct_svd_vertex_2_object();}{}
 
 \ccHasModels
 
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramSite_2}\\
-\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

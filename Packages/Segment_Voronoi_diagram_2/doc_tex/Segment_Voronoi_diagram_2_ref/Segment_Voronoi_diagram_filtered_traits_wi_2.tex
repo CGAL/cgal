@@ -20,7 +20,7 @@
 
 
 \begin{ccRefClass}
-{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -37,22 +37,23 @@ class with efficient and exact predicates given an exact
 kernel \ccc{EK} and a filtering kernel \ccc{FK}. The geometric
 constructions associated provided by this class are equivalent
 to those provided by the traits class
-\ccc{Segment_Voronoi_diagram_traits_2<CK,CM>}, which means that
-they may be inexact.
+\ccc{Segment_Voronoi_diagram_traits_without_intersections_2<CK,CM>},
+which means that they may be inexact.
 
-This class has six template parameters. The first, third and fifth
-template parameters must be a models of the \ccc{Kernel} concept. The
-second, fourth and sixth template parameters correspond to how
-predicates are evaluated. There are two predefined possible values for
-these parameters, namely \ccc{CGAL::Sqrt_field_tag} and
-\ccc{CGAL::Field_tag}. The first one must be used when the number type
-used in the representation supports the exact evaluation of signs of
-expressions involving all four basic operations and square roots,
-whereas the second one requires that only field operations are
-exact. Finally, in order to get exact constructions \ccc{CM}
-must be set to \ccc{CGAL::Sqrt_field_tag} and the number type in
-\ccc{CK} must support operations involing divisions and square roots
-(as well as the other three basic operations of course).
+This class has six template parameters. 
+The first, third and fifth template parameters must be a models of the
+\ccc{Kernel} concept. The second, fourth and sixth template parameters
+correspond to how predicates are evaluated. There are two predefined
+possible values for these parameters, namely \ccc{CGAL::Sqrt_field_tag}
+and \ccc{CGAL::Ring_tag}. The first one must be used when the number
+type used in the representation supports the exact evaluation of signs
+of expressions involving all four basic operations and square roots,
+whereas the second requires the exact evaluation of signs of ring-type
+expressions, i.e., expressions involving only additions, subtractions
+and multiplications. Finally, in order to get exact constructions
+\ccc{CM} must be set to \ccc{CGAL::Sqrt_field_tag} and the number type
+in \ccc{CK} must support operations involing divisions and square
+roots (as well as the other three basic operations of course).
 %
 The way the predicates are evaluated is discussed in
 \cite{b-ecvdl-96,k-peasv-04}.
@@ -61,7 +62,7 @@ The default values for the template parameters are as follows:
 \ccc{CM = CGAL::Sqrt_field_tag} (it is assumed that
 \ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<double>}
 will be the entry for the template parameter \ccc{CK}), 
-\ccc{EM = CGAL::Field_tag},
+\ccc{EM = CGAL::Ring_tag},
 \ccc{FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >},
 \ccc{FM = CGAL::Sqrt_field_tag}. If the \textsc{Gmp} package is
 installed with \cgal, the template parameter \ccc{EK} has the default
@@ -80,8 +81,8 @@ default value is
 
 \ccTypes
 
-\ccThree{typedef CGAL::Tag_true}{Intersections_tag;}{}
-\ccTypedef{typedef CGAL::Tag_true Intersections_tag;}{}
+\ccThree{typedef CGAL::Tag_false}{Intersections_tag;}{}
+\ccTypedef{typedef CGAL::Tag_false Intersections_tag;}{}
 
 In addition to the types required by the
 \ccc{SegmentVoronoiDiagramTraits_2} concept the class \ccRefName\
@@ -117,14 +118,13 @@ defines the following types:
 \ccSeeAlso
 \ccc{Kernel}\\
 \ccc{SegmentVoronoiDiagramTraits_2} \\
-\ccc{CGAL::Field_tag}\\
+\ccc{CGAL::Ring_tag}\\
 \ccc{CGAL::Sqrt_field_tag}\\
 \ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
-
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
 
 \end{ccRefClass}
 

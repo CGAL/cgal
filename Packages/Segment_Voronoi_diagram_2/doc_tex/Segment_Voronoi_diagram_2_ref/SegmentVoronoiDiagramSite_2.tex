@@ -203,12 +203,12 @@ requirements for the sites of a segment Voronoi diagram.
 \ccThree{void}{s.set_point(Point_2 p)+}{}
 %\ccThree{void}{s.set_segment(Point_2 p1, Point_2 p2)+}{}
 \ccMethod{void set_point(Point_2 p);}
-	 {Sets the site to be an point site with \ccc{p} as the
+	 {Sets the site to be a point site with \ccc{p} as the
 	   point.}
 %
 %\ccGlue
 \ccMethod{void set_point(Point_2 p1, Point_2 p2, Point_2 q1, Point_2 q2);}
-	 {Sets the site to be an point site with the point being the
+	 {Sets the site to be a point site with the point being the
 	   intersection point of the segments \ccc{(p1,p2)} and
 	   \ccc{(q1,q2)}.}
 %
@@ -220,7 +220,7 @@ requirements for the sites of a segment Voronoi diagram.
 \ccGlue
 \ccMethod{void set_segment(Point_2 p1, Point_2 p2, Point_2 q1, Point_2
   q2, bool b);}
-	 {Sets the site to be an segment site. If \ccc{b} is
+	 {Sets the site to be a segment site. If \ccc{b} is
 	   \ccc{true} the endpoints of the segment are \ccc{p1} and
 	   the point of intersection of the segments \ccc{(p1,p2)} and
 	   \ccc{(q1,q2)}. If \ccc{b} is \ccc{false} the endpoints of
@@ -230,7 +230,7 @@ requirements for the sites of a segment Voronoi diagram.
 \ccGlue
 \ccMethod{void set_segment(Point_2 p1, Point_2 p2, Point_2 q1, Point_2
   q2, Point_2 r1, Point_2 r2);}
-	 {Sets the site to be an segment site with endpoints the
+	 {Sets the site to be a segment site with endpoints the
 	   points of intersection of the pairs of segments
 	   \ccc{(p1,p2)}, \ccc{(q1,q2)} and \ccc{(p1,p2)},
 	   \ccc{(r1,r2)}.}
@@ -244,8 +244,10 @@ requirements for the sites of a segment Voronoi diagram.
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 
 \end{ccRefConcept}
 

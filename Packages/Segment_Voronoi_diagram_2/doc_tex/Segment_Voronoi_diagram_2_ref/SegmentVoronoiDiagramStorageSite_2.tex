@@ -38,7 +38,7 @@ by storing handles to points instead of points.
 \ccTypes
 \ccNestedType{Site_2}{The site type.}
 \ccGlue
-\ccNestedType{Point_handle}{The type for a handle to a point.}
+\ccNestedType{Point_handle;}{The type for a handle to a point.}
 
 
 
@@ -175,15 +175,17 @@ by storing handles to points instead of points.
 
 
 \ccHasModels
-\ccc{CGAL::Segment_Voronoi_diagram_storage_site_2<K,PC>}
+\ccc{CGAL::Segment_Voronoi_diagram_storage_site_2<Gt>}
 
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_storage_site_2<K,PC>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_storage_site_2<Gt>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 
 \end{ccRefConcept}
 

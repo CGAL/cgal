@@ -19,7 +19,7 @@
 
 
 
-\begin{ccRefClass}{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}
+\begin{ccRefClass}{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -27,7 +27,7 @@
 \ccDefinition
 
 We provide an alternative to the class
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} for the incremental
+\ccc{Segment_Voronoi_diagram_2<Gt,DS>} for the incremental
 construction of the segment Voronoi diagram. The \ccRefName\ class
 maintains a hierarchy of Voronoi diagrams. There are two possibilities
 as to how this hierarchy is constructed.
@@ -43,11 +43,11 @@ In the second case the upper levels of the hierarchy contains not only
 points but also segments. A site that is in level $i$, is in level
 $i+1$ with probability $1/\beta$ where $\beta > 1$ is some constant.
 
-The difference between the \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>}
+The difference between the \ccc{Segment_Voronoi_diagram_2<Gt,DS>}
 class and the \ccRefName\ class (both versions of it) is on how the
 nearest neighbor location is done. Given a point $p$ the location is
 done as follows: at the top most level we find the nearest neighbor of
-$p$ as in the \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class. At
+$p$ as in the \ccc{Segment_Voronoi_diagram_2<Gt,DS>} class. At
 every subsequent level $i$ we use the nearest neighbor found at level
 $i+1$ to find the nearest neighbor at level $i$. This is a variant of
 the corresponding hierarchy for points found in \cite{d-iirdt-98}. The
@@ -55,7 +55,7 @@ details are described in \cite{k-peasv-04}.
 
 The class has four template parameters. The first, third and fourth
 have essentially the same semantics as in the
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class. The
+\ccc{Segment_Voronoi_diagram_2<Gt,DS>} class. The
 first template parameter must be a model of the
 \ccc{SegmentVoronoiDiagramTraits_2} concept.
 The third template parameter must be a model of the
@@ -80,9 +80,9 @@ inserted in the upper levels of the hierarchy.
 
 
 The \ccRefName\ class derives publicly from the
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class. The interface is
+\ccc{Segment_Voronoi_diagram_2<Gt,DS>} class. The interface is
 the same with its base class. In the sequel only additional types
-defined and the methods overridden are documented.
+and methods defined are documented.
 
 
 \ccInclude{CGAL/Segment_Voronoi_diagram_hierarchy_2.h}
@@ -90,48 +90,47 @@ defined and the methods overridden are documented.
 
 
 \ccInheritsFrom
-\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}
 
 
 \ccTypes
 \ccRefName\ introduces the following types in addition to those
 introduced by its base class
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>}.
+\ccc{Segment_Voronoi_diagram_2<Gt,DS>}.
 
-\ccThree{typedef CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}{Base+}{}
+\ccThree{typedef CGAL::Segment_Voronoi_diagram_2<Gt,DS>}{Base+}{}
 \ccThreeToTwo
 \ccTypedef{typedef STag Segments_in_hierarchy_tag;}{A type for the
   \ccc{STag} template parameter.}
 \ccGlue
-\ccTypedef{typedef CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS> Base;}
+\ccTypedef{typedef CGAL::Segment_Voronoi_diagram_2<Gt,DS> Base;}
 	  {A type for the base class.}
 
 \ccCreation
 \ccCreationVariable{svdh}
 %
-\ccThree{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>}
+\ccThree{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}
 {svdh(Gt gt=Gt());}{}
 \ccThreeToTwo
 \ccTwo{Segment_Voronoi_diagram_hierarchy}{}
 %
 \ccConstructor{Segment_Voronoi_diagram_hierarchy_2(Gt
-gt=Gt())}{Creates an hierarchy of segment Voronoi diagrams using
+gt=Gt())}{Creates a hierarchy of segment Voronoi diagrams using
   \ccc{gt} as geometric traits.}
 %
 \ccGlue
 \ccConstructor{template< class Input_iterator >
-Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>(Input_iterator
+Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>(Input_iterator
 first, Input_iterator beyond, Gt gt=Gt())}
 {Creates a segment Voronoi diagram hierarchy using 
 \ccc{gt} as geometric traits and inserts all sites in the
-range [\ccc{first}, \ccc{beyond}).
-\ccPrecond{\ccc{Input_iterator} must be a model of
-  \ccc{InputIterator}. The value type of \ccc{Input_iterator} must be
-    either \ccc{Point_2} or \ccc{Site_2}}.}
+range [\ccc{first}, \ccc{beyond}). \ccc{Input_iterator} must be a
+  model of \ccc{InputIterator}. The value type of \ccc{Input_iterator}
+  must be either \ccc{Point_2} or \ccc{Site_2}.}
 %
 \ccGlue
-\ccConstructor{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>
-(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS> other)}
+\ccConstructor{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
+(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS> other)}
 {Copy constructor. All faces, vertices and inter-level pointers
 are duplicated. After the construction, \ccVar\ and \ccc{other} refer
 to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
@@ -140,160 +139,25 @@ not.}
 \ccThree{Segment_Voronoi_diagram_hierarchy<Gt,STag,PC,DS>++}{svdh = other;}{}
 \ccThreeToTwo
 \ccGlue
-\ccMethod{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>
-operator=(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>
+\ccMethod{Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
+operator=(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>
 other);}{Assignment. All faces, vertices and inter-level pointers
 are duplicated. After the construction, \ccVar\ and \ccc{other} refer
 to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
 not.}
-
-
-
-\ccHeading{Insertion}
-\ccThree{Vertex_handle }{svdh.insert(Point_2 p)+}{}
-%
-\ccMethod{template< class Input_iterator >
-size_type insert(Input_iterator first, Input_iterator beyond);}
-{Inserts the sites in the range
-[\ccc{first},\ccc{beyond}). The number of sites in the range
-  [\ccc{first}, \ccc{beyond}) is returned.
-\ccPrecond{\ccc{Input_iterator} must be a model of \ccc{InputIterator}
-  and its value type must be \ccc{Point_2} or \ccc{Site_2}.}}
-%
-\ccMethod{template< class Input_iterator >
-size_type insert(Input_iterator first, Input_iterator beyond,
-CGAL::Tag_false);} 
-	 {Same as the \ccc{svdh.insert(first,beyond)} method.}
-%
-\ccMethod{template< class Input_iterator >
-size_type insert(Input_iterator first, Input_iterator beyond,
-CGAL::Tag_true);} 
-	 {Inserts the sites in the range [\ccc{first}, \ccc{beyond})
-	     after perfoming a random shuffle on them. The input
-	     iterator range is not invalidated since the sites are
-	     copied locally before the shuffling is performed. The
-	     number of additional sites inserted is returned.
-	     \ccPrecond{\ccc{Input_iterator} must be a model of
-	       \ccc{InputIterator} and its value type must be
-	       \ccc{Point_2} or \ccc{Site_2}.}}
-%
-\ccGlue
-\ccMethod{Vertex_handle  insert(Point_2 p);}{Inserts the
-point \ccc{p} in the segment Voronoi diagram hierarchy. If \ccc{p} has
-already been inserted, then the vertex handle of its already inserted
-copy is returned. If \ccc{p} has not been inserted yet, the vertex
-handle of \ccc{p} is returned.}
-%
-\ccGlue
-\ccMethod{Vertex_handle  insert(Point_2 p1, Point_2 p2);}{Inserts the
-  closed segment with endpoints \ccc{p1} and \ccc{p2} in the segment
-  Voronoi diagram hierarchy. If the segment has already been inserted
-  in the diagram then the vertex handle of its already inserted copy
-  is returned. If the segment does not intersect any segment in the
-  existing diagram, the vertex handle corresponding to its
-  corresponding open segment is returned. Finally, if the segment
-  intersects other segments in the existing Voronoi diagram, the
-  vertex handle to one of its open subsegments is returned.}
-%
-\ccGlue
-\ccMethod{Vertex_handle insert(Site_2 s);}{Inserts the site \ccc{s} in the
-  segment Voronoi diagram hierarchy. The vertex handle returned has
-  the same semantics with the vertex handle returned by the methods
-  \ccc{Vertex_handle insert(Point_2 p)} and \ccc{Vertex_handle
-    insert(Point_2 p1, Point_2 p2)}, depending on whether \ccc{s}
-  represents a point or a segment respectively.
-\ccPrecond{\ccc{s.is_exact()} must be \ccc{true}.}}
-%
-\ccGlue
-\ccMethod{Vertex_handle insert(Point_2 p, Vertex_handle vnear);}
-{A call to this method is equivalent to \ccc{svdh.insert(p)} and it
-has been added for the sake of conformity with the interface of the
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class.}
-%
-\ccGlue
-\ccMethod{Vertex_handle insert(Point_2 p1, Point_2 p2, Vertex_handle
-  vnear);}{A call to this method is equivalent to
-  \ccc{svdh.insert(p1, p2)} and it has been added for the sake of
-  conformity with the interface of the
-  \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class.}
-%
-\ccGlue
-\ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
-vnear);}{A call to this method is equivalent to \ccc{svdh.insert(s)}
-and it has been added for the sake of conformity with the interface of
-the \ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class.}
-
-%\ccHeading{Removal}
-%\ccThree{void }{agh.remove(Vertex_handle v)+}{}
-%%
-%\ccMethod{void  remove(Vertex_handle v);}{Removes the site
-%associated to the vertex handle \ccc{v} from the Apollonius
-%graph hierarchy.
-%\ccPrecond{\ccc{v} must correspond to a valid finite
-%vertex of the Apollonius graph hierarchy.}}
-
-
-\ccHeading{Nearest neighbor location}
-\ccThree{Vertex_handle}{svdh.nearest_neighbor(Point_2 p)+}{}
-%
-\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
-{Finds the nearest neighbor of the point \ccc{p}. In other words it
-finds the site (point or open segment) whose Voronoi cell contains
-\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
-of \ccc{p} is returned. If there are no sites in the
-segment Voronoi diagram \ccc{Vertex_handle()} is returned.}
-%
-\ccGlue
-\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
-Vertex_handle vnear);}{Finds the nearest neighbor of the point
-\ccc{p}. If there are no visible sites in the segment Voronoi diagram
-\ccc{Vertex_handle()} is returned.
-A call to this method is equivalent to 
-\ccc{svdh.nearest_neighbor(p);} and it has been added for the sake of
-conformity with the interface of the
-\ccc{Segment_Voronoi_diagram_2<Gt,PC,DS>} class.}
-
-
-
-\ccHeading{Validity check}
-\ccThree{bool}{svdh.is_valid;}{}
-%
-\ccMethod{bool is_valid(bool verbose = false, int level = 1) const;}
-{Checks the validity of the segment Voronoi diagram hierarchy. If
-\ccc{verbose} is \ccc{true} a short message is sent to
-\ccc{std::cerr}. If \ccc{level} is 0, the data structure at all levels 
-is validated, as well as the inter-level pointers. If \ccc{level} is
-1, then the data structure at all levels is validated, the inter-level
-pointers are validated and all levels of the segment Voronoi diagram
-hierarchy are also validated. Negative values of \ccc{level} always
-return \ccc{true}, and values greater then 1 are equivalent to
-\ccc{level} being 1.}
-
-\ccHeading{Miscellaneous}
-\ccThree{void}{svdh.swap(other)+}{}
-%
-\ccMethod{void clear();}{Clears all contents of the segment Voronoi
-  diagram hierarchy.}
-\ccGlue
-% MK:: add this method make copy(...) protected and see doc of TDS
-\ccMethod{void swap(Segment_Voronoi_diagram_hierarchy_2<Gt,STag,PC,DS>
-other);}
-{The segment Voronoi diagram hierarchies \ccc{other} and \ccVar\ are
-swapped. \ccVar.\ccc{swap(other)} should be preferred to \ccVar\ccc{ =
-other} or to \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
-
 
 \ccSeeAlso
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}\\
 \ccc{SimpleContainer}\\
-\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,PC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>}\\
-\ccc{CGAL::Simple_container_wrapper<C>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>}
 
 \end{ccRefClass}
 

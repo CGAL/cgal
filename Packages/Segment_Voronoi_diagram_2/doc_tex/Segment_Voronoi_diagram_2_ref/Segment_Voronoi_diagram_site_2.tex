@@ -35,7 +35,10 @@ parameter \ccc{K} which must be a model of the \ccc{Kernel} concept.
 \ccInclude{CGAL/Segment_Voronoi_diagram_site_2.h}
 
 \ccIsModel
-\ccc{SegmentVoronoiDiagramSite_2}
+\ccc{SegmentVoronoiDiagramSite_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
 
 \ccTypes
 
@@ -49,8 +52,6 @@ types in the concept \ccc{SegmentVoronoiDiagramSite_2}.
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
-\ccConstructor{Segment_Voronoi_diagram_site_2<K>()}{Default constructor}
-%\ccGlue
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p)}{}
 %\ccGlue
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2 p2)}{}
@@ -64,17 +65,13 @@ types in the concept \ccc{SegmentVoronoiDiagramSite_2}.
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2
   p2, Point_2 q1, Point_2 q2, Point_2 r1, Point_2 r2)}{}
 
-
-
-\ccGlue
-\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Segment_Voronoi_diagram_site_2<K>
-  other)}{Copy constructor.}
-
 \ccSeeAlso
 \ccc{Kernel}\\
 \ccc{SegmentVoronoiDiagramSite_2}\\
-\ccc{CGAL::Segment_Voronoi_diagram_traits_2<ITag,K,MTag>}\\
-\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<ITag,CK,CM,EK,EM,FK,FM>}
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
 
 \end{ccRefClass}
 
