@@ -718,7 +718,7 @@ Now the implementation of the sidedness predicates is straight forward.
         { CGAL_optimisation_precondition(
               is_empty() || tco.access_dimension_d_object()( p) == d);
           ET sqr_d = sqr_dist( p);
-          return ( ( sqr_d == sqr_i_rad_numer) || ( sqr_d == sqr_o_rad_numer));}
+          return (( sqr_d == sqr_i_rad_numer) || ( sqr_d == sqr_o_rad_numer));}
 
     bool
     has_on_unbounded_side( const Point& p) const
@@ -1205,8 +1205,8 @@ squared radii of the smallest enclosing annulus.
     a_matrix.insert( a_matrix.end(), 2*points.size(), NT_vector( d+2));
     c_vector.resize( 2*points.size());
     for ( i = 0; i < number_of_points(); ++i) {
-        typename Access_coordinates_begin_d::Coordinate_iterator coord_it
-            = tco.access_coordinates_begin_d_object()( points[ i]);
+        typename Traits::Access_coordinates_begin_d::Coordinate_iterator
+            coord_it = tco.access_coordinates_begin_d_object()( points[ i]);
         NT  sum = 0;
         for ( j = 0; j < d; ++j) {
             a_matrix[ 2*i  ][ j] = nt_2*coord_it[ j];
@@ -1220,9 +1220,10 @@ squared radii of the smallest enclosing annulus.
         c_vector[ 2*i  ] =  sum;
         c_vector[ 2*i+1] = -sum;
     }
+    typedef  typename LP_rep::A_iterator  A_it;
     solver.set( 2*points.size(), d+2,
-                typename LP_rep::A_iterator( a_matrix.begin()),
-                b_vector.begin(), c_vector.begin(), (NT**)0);
+                A_it( a_matrix.begin()), b_vector.begin(), c_vector.begin(),
+                (NT**)0);
     solver.init();
     solver.solve();
 @end
