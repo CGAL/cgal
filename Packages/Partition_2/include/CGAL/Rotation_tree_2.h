@@ -58,22 +58,11 @@ public:
       // b is the point with the largest x coordinate
       Node largest_x = front();
    
-/*
-      // push the point p_minus_infinity
-      push_back(Point_2( CGAL::to_double(largest_x.x())+1,
-                         -CGAL::to_double(largest_x.y())));
+      // push the point p_minus_infinity; the coordinates should never be used
+      push_back(Point_2( 1, -1));
 
-      // push the point p_infinity
-      push_back(Point_2(CGAL::to_double(largest_x.x())+1,
-                         CGAL::to_double(largest_x.y())));
-*/
-      // push the point p_minus_infinity
-      push_back(Point_2( CGAL::to_double(MAXINT),
-                         -CGAL::to_double(MAXINT)));
-
-      // push the point p_infinity
-      push_back(Point_2(CGAL::to_double(MAXINT),
-                         CGAL::to_double(MAXINT)));
+      // push the point p_infinity; the coordinates should never be used
+      push_back(Point_2(1, 1));
    
       _p_inf = end();  // record the iterators to these extreme points
       _p_inf--;
