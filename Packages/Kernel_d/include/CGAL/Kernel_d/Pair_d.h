@@ -81,7 +81,7 @@ void read(std::istream& is)
   }
 }
 
-void print(std::ostream& os, char* _name) const
+void print(std::ostream& os, const char* _name) const
 { 
   switch( os.iword(CGAL::IO::mode) ) {
     case CGAL::IO::ASCII :
