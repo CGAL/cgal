@@ -78,7 +78,8 @@ public:
   bool operator<=(const DirectionC2 &d) const;
   bool operator>(const DirectionC2 &d) const;
   bool operator<(const DirectionC2 &d) const;
-  bool counterclockwise_in_between( const DirectionC2 &d1, const DirectionC2 &d2) const;
+  bool counterclockwise_in_between( const DirectionC2 &d1,
+	                            const DirectionC2 &d2) const;
   
   Vector_2 to_vector() const;
 
