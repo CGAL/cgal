@@ -42,6 +42,8 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
 public:
+  typedef Tds Triangulation_data_structure;
+  typedef Gt  Geom_traits;
 
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::Segment_3 Segment;

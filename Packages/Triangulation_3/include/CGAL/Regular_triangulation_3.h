@@ -42,6 +42,8 @@ class Regular_triangulation_3 : public Triangulation_3<Gt,Tds>
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
 public:
+  typedef Tds Triangulation_data_structure;
+  typedef Gt  Geom_traits;
 
   //  typedef typename Gt::Bare_point Point;
   typedef typename Gt::Weighted_point Weighted_point;
