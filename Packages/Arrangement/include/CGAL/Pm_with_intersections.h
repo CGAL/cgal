@@ -104,82 +104,83 @@ public:
   // finds the intersection of <cv> directed <direction_right> with the
   // halfedge <he>. The returned intersections is based on the intersection
   // of the supporting curves (if they exist).
-  bool directed_nearest_intersection_with_halfedge(
-						   const X_curve &cv,
-						   const X_curve &orig_cv,
-						   Halfedge_handle he,
-						   const Point &ref_point,
-						   bool direction_right,
-						   Point &xp1,
-						   Point &xp2,
-						   Pmwx_change_notification *en)
+  bool 
+  directed_nearest_intersection_with_halfedge(
+					      const X_curve &cv,
+					      const X_curve &orig_cv,
+					      Halfedge_handle he,
+					      const Point &ref_point,
+					      bool direction_right,
+					      Point &xp1,
+					      Point &xp2,
+					      Pmwx_change_notification *en)
   {
-	bool intersection_exists;
-	if (direction_right)
-	  intersection_exists =
+    bool intersection_exists;
+    if (direction_right)
+      intersection_exists =
 	pmwx_traits->do_intersect_to_right(cv, he->curve(), ref_point);
-	else
-	  intersection_exists = 
+    else
+      intersection_exists = 
 	pmwx_traits->do_intersect_to_left(cv, he->curve(), ref_point);
 
-	if ( ! intersection_exists)
-	  return false;
+    if ( ! intersection_exists)
+      return false;
 
-	if (direction_right)
-	  intersection_exists = pmwx_traits->nearest_intersection_to_right
+    if (direction_right)
+      intersection_exists = pmwx_traits->nearest_intersection_to_right
 	( orig_cv, curve(he, en), ref_point, xp1, xp2);
-	else
-	  intersection_exists = pmwx_traits->nearest_intersection_to_left
+    else
+      intersection_exists = pmwx_traits->nearest_intersection_to_left
 	( orig_cv, curve(he, en), ref_point, xp1, xp2);
 
-	CGAL_assertion (intersection_exists);
+    CGAL_assertion (intersection_exists);
 		
-	// check for an intersection on the real curves. assume there is none.
-	intersection_exists = false;
+    // check for an intersection on the real curves. assume there is none.
+    intersection_exists = false;
 
-	// since we are checking on the parent, we should make sure that the 
-	// intersection point is on the halfedge_cv and not only on the parent.
-	// do not worry: we will get the same intersection point for the correct
-	// halfedge_cv as well, and therefore we can throw it away if it's 
-	// not on halfedge_cv
-	// no need to check for cv because the checked side of it is not 
-	// in the arrangement yet so there is no possibility for an 
-	// intersection point not on cv.
+    // since we are checking on the parent, we should make sure that the 
+    // intersection point is on the halfedge_cv and not only on the parent.
+    // do not worry: we will get the same intersection point for the correct
+    // halfedge_cv as well, and therefore we can throw it away if it's 
+    // not on halfedge_cv
+    // no need to check for cv because the checked side of it is not 
+    // in the arrangement yet so there is no possibility for an 
+    // intersection point not on cv.
 
-	// the intersection is only one point
-	const X_curve &he_cv = he->curve();
-	if (traits->point_is_same(xp1, xp2)) {
-	  if (traits->curve_get_point_status(he_cv, xp1) == Traits::ON_CURVE) {
+    // the intersection is only one point
+    const X_curve &he_cv = he->curve();
+    if (traits->point_is_same(xp1, xp2)) {
+      if (traits->curve_get_point_status(he_cv, xp1) == Traits::ON_CURVE) {
 	intersection_exists = true;
-	  }
+      }
+    }
+    else { // there is an overlap
+      bool swap_done( false);
+      if ( ! pmwx_traits->point_is_left_low(xp1, xp2))
+	{
+	  pmwx_traits->points_swap(xp1, xp2);
+	  swap_done = true;
 	}
-	else { // there is an overlap
-	  bool swap_done( false);
-	  if ( ! pmwx_traits->point_is_left_low(xp1, xp2))
-	  {
-	pmwx_traits->points_swap(xp1, xp2);
-	swap_done = true;
-	  }
 
-	  Point left_point = traits->point_leftlow_most
+      Point left_point = traits->point_leftlow_most
 	( traits->curve_source(he_cv), traits->curve_target(he_cv));
-	  Point right_point = traits->point_righttop_most
+      Point right_point = traits->point_righttop_most
 	( traits->curve_source(he_cv), traits->curve_target(he_cv));
   
-	  if ( traits->point_is_left_low( xp1, left_point)) {
+      if ( traits->point_is_left_low( xp1, left_point)) {
 	xp1 = left_point;
-	  }
-	  if ( traits->point_is_left_low( right_point, xp2)) {
+      }
+      if ( traits->point_is_left_low( right_point, xp2)) {
 	xp2 = right_point;
-	  }
-	  if (traits->point_is_left_low( xp1, xp2)) {
+      }
+      if (traits->point_is_left_low( xp1, xp2)) {
 	intersection_exists = true;
-	  }
+      }
       if ( swap_done)
 	pmwx_traits->points_swap(xp1, xp2);
-	}
+    }
 
-	return intersection_exists;
+    return intersection_exists;
   }
 
 
@@ -711,14 +712,15 @@ public:
       }
   }
 	
-  Halfedge_handle insert_intersecting_xcurve(
-					     // inserted curve:
-					     const X_curve &cv_,               
-					     Vertex_handle &source_vertex,
-					     // to be set by the function :  
-					     Vertex_handle &target_vertex, 
-					     bool source_vertex_valid,
-					     Pmwx_change_notification *en = NULL)
+  Halfedge_handle 
+  insert_intersecting_xcurve(
+			     // inserted curve:
+			     const X_curve &cv_,               
+			     Vertex_handle &source_vertex,
+			     // to be set by the function :  
+			     Vertex_handle &target_vertex, 
+			     bool source_vertex_valid,
+			     Pmwx_change_notification *en = NULL)
   {
     CGAL_PM_START_OP(6)
       //if a vertex on which an endpoint of cv_ is known then set cv to 
@@ -1004,28 +1006,69 @@ public:
       return last_edge; 
   }
 
+  Halfedge_handle 
+  insert_intersecting_curve(
+			    // inserted curve:
+			    const typename Traits::Curve &c,
+			    Vertex_handle &source_vertex,
+			    // to be set by the function :  
+			    Vertex_handle &target_vertex, 
+			    bool source_vertex_valid,
+			    Pmwx_change_notification *en = NULL)
+  {
+    if (traits->is_x_monotone(c))
+      {
+	return insert_intersecting_xcurve(c, source_vertex, target_vertex, 
+					  source_vertex_valid, en);
+      }
+    else
+      {
+	Vertex_handle	 src, tgt;
+	Halfedge_handle last_he;
+	std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
+	std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::const_iterator it;
+	traits->make_x_monotone(c, x_list);
+	src = source_vertex;
+	tgt = target_vertex;
+	for (it = x_list.begin(); it != x_list.end(); it++)
+	  {
+	    if (it == x_list.begin()) 
+	      last_he = insert_intersecting_xcurve(*it, src, tgt, 
+						   source_vertex_valid, en); 
+	    else
+	      last_he = insert_intersecting_xcurve(*it, src, tgt, true, en); 
+	    src = tgt;
+	  }
+	target_vertex = tgt;
+	return last_he;
+      }
+  }
+
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
-  Halfedge_handle insert_from_vertex(const X_curve& c, Vertex_handle src, 
+  Halfedge_handle insert_from_vertex(const typename Traits::Curve& c, 
+				     Vertex_handle src, 
 				     Pmwx_change_notification *en = NULL)
   {
     CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
 						traits->curve_target( c)));
     Vertex_handle tgt;
-    return insert_intersecting_xcurve(c, src, tgt, true, en);
+    return insert_intersecting_curve(c, src, tgt, true, en);
   }
 
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
-  Halfedge_handle insert(const X_curve& c, Pmwx_change_notification *en = NULL)
+  Halfedge_handle insert(const typename Traits::Curve& c, 
+			 Pmwx_change_notification *en = NULL)
   {
     CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
 						traits->curve_target( c)));
     Vertex_handle src, tgt;
-    return insert_intersecting_xcurve(c, src, tgt, false, en);
+    return insert_intersecting_curve(c, src, tgt, false, en);
   }
 
-  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, Vertex_handle v1, bool source) 
+  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, 
+    Vertex_handle v1, bool source) 
   {
 	return Planar_map::insert_from_vertex(cv, v1, source);
   }
@@ -1033,6 +1076,11 @@ public:
   Halfedge_handle non_intersecting_insert(const X_curve& cv)
   {
 	return Planar_map::insert(cv);
+  }
+  Halfedge_handle non_intersecting_insert_at_vertices(const X_curve& cv, 
+	Vertex_handle v1, Vertex_handle v2) 
+  {
+    return Planar_map::insert_at_vertices(cv, v1, v2);
   }
 
 protected:
