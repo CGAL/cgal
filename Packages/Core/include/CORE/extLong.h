@@ -106,15 +106,15 @@ public:
   
   /// \name Conversion Function
   //@{
-  long toLong() const;
+  CORE_INLINE long toLong() const;
   //@}
  
   /// \name Builtin functions  
   //@{
-  long asLong() const;
-  bool isInfty() const;
-  bool isTiny() const;
-  bool isNaN() const;
+  CORE_INLINE long asLong() const;
+  CORE_INLINE bool isInfty() const;
+  CORE_INLINE bool isTiny() const;
+  CORE_INLINE bool isNaN() const;
   int  sign() const;
   //@}
 
