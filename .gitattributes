@@ -1696,6 +1696,8 @@ Packages/Tutorial/tutorial/Polyhedron/data/tetra.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/torus_quad.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/torus_tri.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/twtriCube.off -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.eps -text
+Packages/Tutorial/tutorial/Polyhedron/doc/figs/CCRefinement.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.eps -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefMap.fig -text
 Packages/Tutorial/tutorial/Polyhedron/doc/figs/RefSchemes.eps -text
