@@ -2,7 +2,7 @@
 
 #include <CGAL/IO/Qt_widget_OpenGL.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 Qt_widget_OpenGL::Qt_widget_OpenGL(int width, int height, double scale) :
   window_width(width),
@@ -223,6 +223,6 @@ void Qt_widget_OpenGL::slotPerspective() {
   perspective = !perspective;
 }
 
-CGAL_END_NAMESPACE
+} // namespace CGAL
 #include "Qt_widget_OpenGL.moc"
 #endif

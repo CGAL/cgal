@@ -13,7 +13,7 @@
 #include <qpopupmenu.h>
 #include <qpoint.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Qt_widget_OpenGL : public QGLWidget {
   Q_OBJECT
@@ -79,5 +79,5 @@ public:
   virtual void resizeGL(int w, int h);
 };
 
-CGAL_END_NAMESPACE
+} // namespace CGAL
 #endif // CGAL_QT_WIDGET_OPENGL_H
