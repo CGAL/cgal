@@ -52,10 +52,9 @@ public:
 	const Vertex_handle& sup = it->sup();
 	const Vertex_handle& inf = it->inf();
 	const Vertex_handle& top = it->top_edge()->sup();
-
 	const Vertex_handle& bottom = it->bottom_edge()->sup();
 
-	if( sup->type() == sup->RL || inf->type() == inf->LR )
+	if( sup->type() == Vertex::RL && inf->type() == Vertex::LR )
 	  {
 	    std::list<Point_2> list;
 	    
@@ -68,7 +67,7 @@ public:
 	    Vertex_handle va = top;
 	    if( point_top_valid ) list.push_back(point_top);
 	    
-	    while( va->type() != va->RL )
+	    while( va->type() != Vertex::RL )
 	      {
 		va = va->ccw_target_edge()->sup(); // ccR()
 
@@ -89,7 +88,7 @@ public:
 	    va = bottom;
 	    if( point_bottom_valid ) list.push_back(point_bottom);
  
-	    while( va->type() != va->RL )
+	    while( va->type() != Vertex::RL )
 	      {
 		va = va->ccw_source_edge()->sup(); // ccL()
 
@@ -100,7 +99,8 @@ public:
 	      }
 	    CGAL_assertion( va == sup );
 
-	    list.pop_back(); // remove the extra "sup".
+	    list.pop_back();
+	    // remove the extra "sup" that is counted twice.
 
 	    std::copy(list.rbegin(), list.rend(), std::back_inserter(poly));
 

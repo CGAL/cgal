@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../include -I../../Qt_widget/include\
+CXXFLAGS = -I../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -43,18 +43,23 @@ all:            \
                 visibility_graph$(EXE_EXT) 
 
 arrangments.moc:  arrangments.C
-	$(QT_MOC) -o arrangments.moc $<
+	$(QT_MOC) -o arrangments.moc arrangments.C
+
+Show_points.moc: Show_points.h
+	$(QT_MOC) -o Show_points.moc Show_points.h
+
+Show_points$(OBJ_EXT): Show_points.moc
 
 arrangments$(OBJ_EXT): arrangments.moc \
 	Show_pseudo_triangulation.h \
 	Show_antichain.h \
-	Qt_layer_show_lines.h \
-	Qt_layer_show_points.h \
-	Qt_layer_show_nearest_vertex.h \
+	Show_lines.h \
+	Show_points.h \
+	Show_nearest_vertex.h \
 	Show_pseudo_triangulation.h
 
-arrangments$(EXE_EXT): arrangments$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) $(LDFLAGSQT)
+arrangments$(EXE_EXT): arrangments$(OBJ_EXT) Show_points$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) Show_points$(OBJ_EXT) $(LDFLAGSQT)
 
 shortest_path$(EXE_EXT): shortest_path$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)shortest_path shortest_path$(OBJ_EXT) $(LDFLAGS)

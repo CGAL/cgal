@@ -23,14 +23,14 @@ public:
   Show_pseudo_triangulation(Antichain* &antichain,
 			    bool in_dual=false,
 			    Color c=CGAL::BLUE,
-			    int linewidth=1)
-    : ant(antichain), _dual(in_dual), color(c), width(linewidth) {};
+			    int width=1)
+    : ant(antichain), _dual(in_dual), color(c), _width(width) {};
 
   void draw()
   {
     *widget << color;
-    if(_dual) *widget << CGAL::PointSize(width);
-    else *widget << CGAL::LineWidth(width);
+    if(_dual) *widget << CGAL::PointSize(_width);
+    else *widget << CGAL::LineWidth(_width);
 
     for(Vertex_iterator it = ant->vertices_begin();
 	it!=ant->vertices_end();
@@ -50,7 +50,7 @@ private:
   Antichain*	&ant;
   bool _dual;
   Color color;
-  int width;
+  int _width;
 };//end class 
 
 } // namespace CGAL

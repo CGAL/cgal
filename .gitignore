@@ -208,6 +208,8 @@ Packages/Random_numbers/.tmp
 Packages/Random_numbers/Makefile
 Packages/Random_numbers/bin
 Packages/Random_numbers/doc_ps
+Packages/Visibility_complex/demo/*.moc
+Packages/Visibility_complex/demo/arrangments
 Packages/_QP_solver/*.aux
 Packages/_QP_solver/*.bbl
 Packages/_QP_solver/*.blg

@@ -65,16 +65,16 @@ bool do_intersect( const Polygon_2<Traits,Container>& P,
 	Orientation chi1a = orientation( *apred, *a, *b );
 	// ---------------------------------------------------------------------
 	if ( chi2 == COLLINEAR ) {
-	    if ( chi1b == RIGHTTURN && chi1a == RIGHTTURN ) return false;
-	    if ( chi1b == COLLINEAR && chi1a != RIGHTTURN ) ++a;
+	    if ( chi1b == RIGHT_TURN && chi1a == RIGHT_TURN ) return false;
+	    if ( chi1b == COLLINEAR && chi1a != RIGHT_TURN ) ++a;
 	    else ++b;
 	}
-	else if ( chi2 == LEFTTURN ) {
-	    if ( chi1a == LEFTTURN ) ++a; 
+	else if ( chi2 == LEFT_TURN ) {
+	    if ( chi1a == LEFT_TURN ) ++a; 
 	    else                     ++b;
 	}
 	else {
-	    if ( chi1b == LEFTTURN ) ++b;
+	    if ( chi1b == LEFT_TURN ) ++b;
 	    else                     ++a;
 	}
 	// ---------------------------------------------------------------------

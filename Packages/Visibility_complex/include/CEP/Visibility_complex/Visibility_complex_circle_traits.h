@@ -50,8 +50,8 @@ struct Visibility_complex_circle_traits
 				   tb->center().x() - sb->center().x(),
 				   tb->center().y() - sb->center().y(),
 				   stb * tb->radius() - ssb * sb->radius());
-	    if (sgn == POSITIVE) return LEFTTURN;
-	    else if (sgn == NEGATIVE) return RIGHTTURN;
+	    if (sgn == POSITIVE) return LEFT_TURN;
+	    else if (sgn == NEGATIVE) return RIGHT_TURN;
 	    return COLLINEAR;
 	}	
     };
@@ -177,8 +177,8 @@ public:
 				      tb->center().x() - sb->center().x(),
 				      tb->center().y() - sb->center().y(),
 				      stb * tb->radius() - ssb * sb->radius());
-	    if (sgn == POSITIVE) return LEFTTURN;
-	    else if (sgn == NEGATIVE) return RIGHTTURN;
+	    if (sgn == POSITIVE) return LEFT_TURN;
+	    else if (sgn == NEGATIVE) return RIGHT_TURN;
 	    return COLLINEAR;
 	}	
     };

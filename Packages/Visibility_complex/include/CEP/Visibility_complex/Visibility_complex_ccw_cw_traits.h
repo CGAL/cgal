@@ -682,7 +682,7 @@ struct Visibility_complex_right_ccw_traits
     struct Chi3 {
 	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
 	    typename _Vc::Gt::Orientation_infinite chi3;
-	    return (chi3(*v,*w) == LEFTTURN);
+	    return (chi3(*v,*w) == LEFT_TURN);
 	}
     };
     // ------------------------------------------------------------------------- 
@@ -715,7 +715,7 @@ struct Visibility_complex_left_ccw_traits
     struct Chi3 {
 	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
 	    typename _Vc::Gt::Orientation_infinite chi3;
-	    return (chi3(*v,*w->pi()) == RIGHTTURN);
+	    return (chi3(*v,*w->pi()) == RIGHT_TURN);
 	}
     };
     // ------------------------------------------------------------------------- 
@@ -748,7 +748,7 @@ struct Visibility_complex_right_cw_traits
     struct Chi3 {
 	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
 	    typename _Vc::Gt::Orientation_infinite chi3;
-	    return (chi3(*v,*w->pi()) == LEFTTURN);
+	    return (chi3(*v,*w->pi()) == LEFT_TURN);
 	}
     };
     // ------------------------------------------------------------------------- 
@@ -781,7 +781,7 @@ struct Visibility_complex_left_cw_traits
     struct Chi3 {
 	bool operator()(const Vertex_handle& v, const Vertex_handle& w) const {
 	    typename _Vc::Gt::Orientation_infinite chi3;
-	    return (chi3(*v,*w) == RIGHTTURN);
+	    return (chi3(*v,*w) == RIGHT_TURN);
 	}
     };
     // ------------------------------------------------------------------------- 

@@ -1,25 +1,5 @@
-// ============================================================================
-//
-// Copyright (c) 1997-2000 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// file          : include/CGAL/IO/Qt_layer_show_nearest_vertex.h
-// package       : Qt_widget
-// author(s)     : Radu Ursu
-// release       : 
-// release_date  : 
-//
-// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
-//
-// ============================================================================
-
-#ifndef CGAL_QT_LAYER_SHOW_NEAREST_VERTEX_H
-#define CGAL_QT_LAYER_SHOW_NEAREST_VERTEX_H
+#ifndef SHOW_NEAREST_VERTEX_H
+#define SHOW_NEAREST_VERTEX_H
 
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <qobject.h>
@@ -30,7 +10,7 @@ namespace CGAL {
 template <class DT, class OtherDT, class Line, 
 	  class Draw_other_things,
 	  class Other_draw_other_things>
-class Qt_layer_show_nearest_vertex : public Qt_widget_layer
+class Show_nearest_vertex : public Qt_widget_layer
 {
   enum State {DRAW_NOTHING, DRAW_POINT, DRAW_LINE};
 
@@ -41,22 +21,22 @@ public:
   typedef typename DT::Vertex                   Vertex;
   typedef typename DT::Vertex_handle		Vertex_handle;
   typedef typename DT::Geom_traits::FT		FT;
-  typedef Qt_layer_show_nearest_vertex<DT, OtherDT,
+  typedef Show_nearest_vertex<DT, OtherDT,
 				       Line,
 				       Draw_other_things,
 				       Other_draw_other_things> Self;
-  typedef Qt_layer_show_nearest_vertex<OtherDT, DT,
+  typedef Show_nearest_vertex<OtherDT, DT,
 				       Line,
 				       Other_draw_other_things,
 				       Draw_other_things> Other;
 
-  Qt_layer_show_nearest_vertex(const DT &t,
-			       Other* twin_layer,
-			       const QColor &point_color = Qt::green,
-			       const int point_size = 10,
-			       const PointStyle point_style = CIRCLE,
-			       const QColor &line_color = Qt::green,
-			       const int line_width = 1)
+  Show_nearest_vertex(const DT &t,
+		      Other* twin_layer,
+		      const QColor &point_color = Qt::green,
+		      const int point_size = 10,
+		      const PointStyle point_style = CIRCLE,
+		      const QColor &line_color = Qt::green,
+		      const int line_width = 1)
     : tr(t),
       _point_color(point_color),
       _point_size(point_size),
@@ -89,10 +69,8 @@ public:
 
 	  const Point& p = vh->point();
 
-	  widget->lock();
 	  *widget << p;
 	  Draw_other_things()(widget, vh);
-	  widget->unlock();
 
 	  break;
 	}
@@ -144,7 +122,10 @@ public:
     widget->redraw();
   }
 
-  void set_twin(Other* twin_layer) { other_layer = twin_layer; };
+  void set_twin(Other* twin_layer) 
+  { 
+    other_layer = twin_layer; 
+  };
 
   void set_line(const Line& l)
   {

@@ -30,8 +30,8 @@ struct Less_bitangent {
 	Orientation chi2ab = orientation(a,b);
 	// ---------------------------------------------------------------------
 	// Non degenerate cases.
-	if (chi2ab == RIGHTTURN){ return false;}
-	if (chi2ab == LEFTTURN) { return true; }
+	if (chi2ab == RIGHT_TURN){ return false;}
+	if (chi2ab == LEFT_TURN) { return true; }
 	// ---------------------------------------------------------------------
 	// Treatment of degenerate case when two bitangents are parallel.
 	// ---------------------------------------------------------------------
@@ -55,8 +55,8 @@ struct Less_bitangent {
 	// Final case : a and b have the same angle and same type
 	typename _Gtr::Orientation_infinite chi3;
 	Orientation op = chi3(a,b);
-	if (op == RIGHTTURN)     return false;
-	else if (op == LEFTTURN) return true;
+	if (op == RIGHT_TURN)     return false;
+	else if (op == LEFT_TURN) return true;
 	else {
 	    if (a.target_object() == b.source_object() &&
 		a.is_xx_left()    == b.is_left_xx())    return a.is_xx_left();
@@ -126,8 +126,8 @@ public:
 	Comparison_result cmp = Compare()(false,o,false,b);
 	CGAL_precondition(cmp != EQUAL);
 	Orientation_infinite chi3;
-	if (cmp == SMALLER) return (chi3(b,o) == LEFTTURN);
-	else                return (chi3(o,b) == RIGHTTURN);
+	if (cmp == SMALLER) return (chi3(b,o) == LEFT_TURN);
+	else                return (chi3(o,b) == RIGHT_TURN);
 	// Find somtething better than the above not using chi3...
 	// ---------------------------------------------------------------------
     }                      
@@ -167,8 +167,8 @@ public:
 	Comparison_result cmp = Compare()(false,b1,false,b2);
 	CGAL_precondition(cmp != EQUAL);
 	Orientation_infinite chi3;
-	if (cmp == SMALLER) return (chi3(b2,b1) == LEFTTURN);
-	else                return (chi3(b1,b2) == RIGHTTURN);
+	if (cmp == SMALLER) return (chi3(b2,b1) == LEFT_TURN);
+	else                return (chi3(b1,b2) == RIGHT_TURN);
 	// Find somtething better than the above not using chi3...
 	// ---------------------------------------------------------------------
     }
