@@ -319,9 +319,13 @@ run_command() {
       #error noexit "Non-zero exit-code when running '$@'."
     fi
   fi
+  ErrorInLogfile=0
   if [ -r $LogFile.tmp ]; then
     # copy temp logfile to final logfile and remove escape sequences (color)
     cat $LogFile.tmp | sed 's/[[][0-9]*m//g' >> $LogFile
+    if grep -i '^error' $LogFile.tmp > /dev/null ; then 
+        ErrorInLogfile=1
+    fi
     rm $LogFile.tmp
   fi
   if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=$ExitCode ; fi
@@ -485,6 +489,7 @@ convert() {
         for f in *.html ; do
             vout -n " ["${dir}/$f
             run_command anchor_filter $f ${AbsOutDir}/${dir}/$f
+            if [ $ErrorInLogfile -eq 1 ]; then GlobalExitCode=1 ; fi
             vout -n "]"
         done
         cd ${TmpDir}
