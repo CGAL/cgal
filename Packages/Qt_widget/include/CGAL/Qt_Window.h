@@ -1,3 +1,21 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// file          : include/CGAL/Qt_Window.h
+// package       : QT_window
+// author(s)     : Laurent Rineau
+//
+// coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_QT_WINDOW_H
 #define CGAL_QT_WINDOW_H
 
