@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.50 on ?? June 2000
+Version 4.50 on 28 June 2000
 - Replaced template by complete overloaded functions for true/false for sign,
   compare, abs and square, for M$ VC++.
 - Qualified min and max by std:: for doubles.
