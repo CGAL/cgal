@@ -54,7 +54,7 @@ class Multiple_kd_tree {
 typedef Rep_                                Rep;
 typedef typename Rep::FT                    NT;
 typedef CGAL::Segment_2<Rep>                Segment;// !!!! look at LER
-typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Point_2<Rep>                  Point_2;
 typedef CGAL::Iso_rectangle_2<Rep>          Iso_rectangle_2;
 typedef CGAL::Kdtree_interface_2d<my_point<NT,SAVED_OBJECT> >  kd_interface;
 typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
@@ -66,19 +66,19 @@ private:
   const double pi,half_pi,epsilon;
   int number_of_trees;
   std::list<std::pair<kd_tree *,NT> > kd_trees_list;
-  std::list<std::pair<Point,SAVED_OBJECT > > input_points_list;
+  std::list<std::pair<Point_2,SAVED_OBJECT > > input_points_list;
 
   std::pair<kd_tree *,NT> create_kd_tree(NT angle)
   {
     Points_List l;
     kd_tree *tree = new kd_tree(2);
 
-    for(typename std::list<std::pair<Point,SAVED_OBJECT> >::iterator
+    for(typename std::list<std::pair<Point_2,SAVED_OBJECT> >::iterator
         iter = input_points_list.begin();
         iter != input_points_list.end();
         ++iter) {
 
-      Point p(iter->first);
+      Point_2 p(iter->first);
 
       _gt.rotate_point(p,angle);
 
@@ -141,7 +141,7 @@ private:
   }
 
 public:
-  Multiple_kd_tree(std::list<std::pair<Point,SAVED_OBJECT> > 
+  Multiple_kd_tree(std::list<std::pair<Point_2,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
                    std::list<Segment> &seg_list) : 
     pi(3.1415),half_pi(1.57075),epsilon(0.001),
@@ -218,8 +218,8 @@ public:
     Iso_rectangle_2 rec = _gt.get_bounding_of_min_sum(s,unit_squere,
 			  right_iter->second);
 
-    Point p1 = rec.vertex(0);
-    Point p2 = rec.vertex(2);// end of new code
+    Point_2 p1 = rec.vertex(0);
+    Point_2 p2 = rec.vertex(2);// end of new code
 
     my_point<NT,SAVED_OBJECT> point1(p1); 
     my_point<NT,SAVED_OBJECT> point2(p2);
