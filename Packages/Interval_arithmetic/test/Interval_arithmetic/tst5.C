@@ -11,10 +11,10 @@
 #define CGAL_IA_CACHE No_Filter_Cache
 #ifdef CGAL_USE_LEDA
 #  define CGAL_IA_ET leda_real
-#elif defined CGAL_USE_GMP
-#  define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
+// #elif defined CGAL_USE_GMP
+// #  define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
 #else
-#  define CGAL_IA_ET CGAL::MP_Float
+#  define CGAL_IA_ET CGAL::Quotient<CGAL::MP_Float>
 #endif
 #endif
 
