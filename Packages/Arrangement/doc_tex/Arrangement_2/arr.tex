@@ -194,20 +194,27 @@ its \ccc{Edge_level}, and the curves are not inserted into the planar map.
 %---------------------------------------------------
 \section{Segment Arrangements}
 
-\ccInclude{CGAL/Arr_segment_exact_traits.h}\\
-\ccInclude{CGAL/Arr_leda_segment_exact_traits.h}
+The second template parameter of the arrangement class determines the
+so-called geometry of the arrangement, that is the family of curves we
+want to deal with. In order to deal with line segments we simply plug
+in on of the two segment traits classes supplied.
+
+The \ccc{Arr_segment_exact_traits<R>} class is generic and allows
+flexibility in determining the kernel which is used. The
+\ccc{Arr_leda_segments_exact_traits<R>} is specialized to use \leda\/'s
+\ccc{geometric rational kernel} and works with \leda\/'s rational
+numbers. It has better performance.
 
 \subsection{Example of an Arrangement of Segments}
-The following example demonstrates the construction of an
-$X$-shaped arrangement out of two segments.
-After the construction we
-traverse the edges of the arrangement in the order defined
-by the original segments.
+The following example demonstrates the construction of an $X$-shaped
+arrangement out of two segments.  After the construction we traverse
+the edges of the arrangement in the order defined by the original
+segments.
 
 The four numbers on each output lines is a representation of a segment.
 The first two numbers are the $x$ and $y$ coordinates of the first endpoint.
 The other two numbers are of the second endpoint. The way a curve is
-printed depends on the the output operator imlemented for it.
+printed depends on the the output operator implemented for it.
 
 \ccIncludeExampleCode{Arrangement_2/example1.C}
 
@@ -247,10 +254,14 @@ Edge 1 1 2 2 is covered by 2 edges.
 Edge 2 2 3 3 is covered by a single edge.
 \end{verbatim}
 
-\section{Arrangements of Circular Arcs and/or Line Segments}
+\section{Arrangements with Circular Arcs}
 
-\ccInclude{CGAL/Arr_circle_real_traits.h}\\
-\ccInclude{CGAL/Arr_segment_circle_traits.h}
+There is a traits class for circular arcs
+(\ccc{Arr_circle_real_traits<NT>}) and a traits class for both
+circular arcs \ccc{and} line segments
+(\ccc{Arr_segment_circle_traits<NT>}, which can be use, e.g., in
+motion planning applications. These traits classes expect a number type
+that supports the square root operation.
 
 \subsection{Example of an Arrangement of Circular Arcs}
 \label{ssec:example3}
@@ -281,8 +292,9 @@ in order to run).
 
 \section{Polyline Arrangements}
 
-\ccInclude{CGAL/Arr_polyline_traits.h}\\
-\ccInclude{CGAL/Arr_leda_polyline_traits.h}
+There are two supplied traits classes for polyline (a.k.a.,
+poly-segment) curves (\ccc{Arr_polyline_traits<R, Container>} and
+\ccc{Arr_leda_polyline_traits<Container>}).
 
 \subsection{Example of a Polyline Arrangement}
 \label{ssec:example10}
@@ -307,7 +319,7 @@ in order to run).
 \begin{ccAdvanced}
 \section{User-defined Hierarchy}
 
-The default hierarchy strucutre can be extended to include more levels
+The default hierarchy structure can be extended to include more levels
 according to user defined split functions.
 
 \subsection{Example of a User-defined Hierarchy}
