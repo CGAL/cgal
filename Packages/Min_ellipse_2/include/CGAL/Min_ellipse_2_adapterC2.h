@@ -145,11 +145,11 @@ class _Min_ellipse_2_adapterC2__Ellipse {
     FT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
     friend
-    std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream& os,
+    std::ostream&  operator << <> ( std::ostream& os,
         const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
     friend
-    std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream& is,
+    std::istream&  operator >> <> ( std::istream& is,
         _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
   public:

@@ -42,11 +42,11 @@ class Optimisation_ellipse_2;
 template < class K_ >
 class Optimisation_ellipse_2 {
     /*
-    friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
+    friend  std::ostream&  operator << <> (
         std::ostream&, const Optimisation_ellipse_2<K_>&);
-    friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
+    friend  std::istream&  operator >> <> (
         std::istream&, Optimisation_ellipse_2<K_> &);
-    friend  CGAL::Window_stream& operator << CGAL_NULL_TMPL_ARGS (
+    friend  CGAL::Window_stream& operator << <> (
         CGAL::Window_stream&, const Optimisation_ellipse_2<K_>&);
     */
   public:

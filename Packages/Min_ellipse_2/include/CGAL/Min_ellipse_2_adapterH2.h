@@ -154,10 +154,10 @@ class _Min_ellipse_2_adapterH2__Ellipse {
     CT   conic1, conic2;                    // two conics
     RT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
-    friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
+    friend  std::ostream&  operator << <> ( std::ostream&,
         const _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
-    friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
+    friend  std::istream&  operator >> <> ( std::istream&,
         _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
   public:

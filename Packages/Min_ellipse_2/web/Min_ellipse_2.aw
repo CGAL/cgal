@@ -1098,11 +1098,11 @@ The class interface looks as follows.
     template < class K_ >
     class Optimisation_ellipse_2 {
         /*
-        friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS (
+        friend  std::ostream&  operator << <> (
             std::ostream&, const Optimisation_ellipse_2<K_>&);
-        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS (
+        friend  std::istream&  operator >> <> (
             std::istream&, Optimisation_ellipse_2<K_> &);
-        friend  CGAL::Window_stream& operator << CGAL_NULL_TMPL_ARGS (
+        friend  CGAL::Window_stream& operator << <> (
             CGAL::Window_stream&, const Optimisation_ellipse_2<K_>&);
         */
       public:
@@ -1788,11 +1788,11 @@ it is declared \ccc{friend}.
         FT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
         friend
-        std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream& os,
+        std::ostream&  operator << <> ( std::ostream& os,
             const _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
         friend
-        std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream& is,
+        std::istream&  operator >> <> ( std::istream& is,
             _Min_ellipse_2_adapterC2__Ellipse<PT_,DA_>& c);
 
       public:
@@ -2189,10 +2189,10 @@ it is declared \ccc{friend}.
         CT   conic1, conic2;                    // two conics
         RT   dr, ds, dt, du, dv, dw;            // the gradient vector
 
-        friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
+        friend  std::ostream&  operator << <> ( std::ostream&,
             const _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
-        friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
+        friend  std::istream&  operator >> <> ( std::istream&,
             _Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>&);
 
       public:
