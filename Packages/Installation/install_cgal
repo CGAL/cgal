@@ -575,6 +575,7 @@ check_conf_dir()
     _check_dir_exists ${CGAL_MAKE_DIR}
     _check_dir_exists ${CGAL_SRC_DIR}
     _check_dir_exists ${CGAL_INCL_DIR}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
     _check_dir_exists ${CGAL_LIB_DIR}
     _check_dir_exists ${CGAL_CONF_DIR}
     _check_dir_exists ${CGAL_TEST_CONF_DIR}
@@ -686,7 +687,6 @@ set_dirs_dependant_on_cgal_dir()
     CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
     CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
     CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
-    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
 
     # ---------------------------------------------
     # logfile for testsuite:
