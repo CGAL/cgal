@@ -38,7 +38,9 @@ namespace CGAL {
     typedef typename SearchTraits::Sphere_d Sphere_d;
     typedef typename SearchTraits::FT    FT;
     typedef typename SearchTraits::Construct_center_d Construct_center_d;
-    typedef typename SearchTraits::Construct_squared_radius_d Construct_squared_radius_d;
+    typedef typename SearchTraits::Construct_squared_radius_d Construct_squared_radius_d
+    typedef typename SearchTraits::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator_d;
+    typedef typename SearchTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
     typedef Sphere_d Query_item;    
     public:
 
@@ -49,8 +51,8 @@ namespace CGAL {
 	inline FT transformed_distance(const Sphere_d& q, const Point_d& p) const {
                 Point_d c= Construct_center_d()(q);
 		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+		Construct_cartesian_const_iterator_d construct_it;
+                Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1), pit = construct_it(p);
 		for(; cit != ce; cit++, pit++){
 		  distance += ((*cit)-(*pit))*((*cit)-(*pit));
@@ -65,8 +67,8 @@ namespace CGAL {
 					     const Kd_tree_rectangle<SearchTraits>& r) const {
                 Point_d c= Construct_center_d(q);
 		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+		Construct_cartesian_const_iterator_d construct_it;
+                Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
 			if ((*cit) < r.min_coord(i))
@@ -84,10 +86,11 @@ namespace CGAL {
 
 	inline FT max_distance_to_rectangle(const Sphere_d& q,
 					      const Kd_tree_rectangle<SearchTraits>& r) const {
-                Point_d c=q.center();
+	  Construct_center_d construct_center_d;
+                Point_d c = construct_center_d(q);
 		FT distance=FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+		Construct_cartesian_const_iterator_d construct_it;
+                Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
 				if ((*cit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
