@@ -2024,7 +2024,6 @@ Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
 Packages/Tutorial/tutorial/Polyhedron/data/aircraft.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/aircraft_open.off -text
-Packages/Tutorial/tutorial/Polyhedron/data/al.obj -text
 Packages/Tutorial/tutorial/Polyhedron/data/bevel_cube.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/cross_all_quads.off -text
 Packages/Tutorial/tutorial/Polyhedron/data/cube_quad.off -text
