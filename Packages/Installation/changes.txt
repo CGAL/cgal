@@ -57,6 +57,8 @@ GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Added -Zc:forScope for intel.
+GLOB: Added echo dummymoc if qt support is disabled.
 GLOB: Retrieve config version from CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C.
 GLOB: Add spaces before "-" in libflags to please printf on some platforms.
 GLOB: modified lib name for QT commdlg32.lib -> comdlg32.lib
