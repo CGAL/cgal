@@ -370,8 +370,24 @@ private slots:
 
     char msg[100];
 
+    CGAL::Bbox_2 bbox;
+
     while ( f >> t ) {
       svd.insert(t);
+
+      CGAL::Bbox_2 tbox;
+      if ( t.is_segment() ) {
+	tbox = t.segment().bbox();
+      } else if ( t.is_point() ) {
+	tbox = t.point().bbox();
+      }
+
+      if ( counter == 0 ) {
+	bbox = tbox;
+      } else {
+	bbox = bbox + tbox;
+      }
+
       counter++;
       if ( counter % 500 == 0 ) {
 	std::cout << "\r" << counter
@@ -395,7 +411,13 @@ private slots:
 			   counter, timer.time());
     statusBar()->message(msg);
 
+    double width =  bbox.xmax() - bbox.xmin();
+    double height =  bbox.ymax() - bbox.ymin();
+    double s = 0.1;
+    set_window(bbox.xmin() - s * width,	bbox.xmax() + s * width,
+	       bbox.ymin() - s * height, bbox.ymax() + s * height);
     widget->redraw();
+    //    widget->clear_history();
   }
 
   void write_to_file(const QString& fileName)
