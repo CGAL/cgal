@@ -127,12 +127,14 @@ RayC2<R>::point(int i) const
   CGAL_kernel_precondition( i >= 0 );
 
   typename R::Construct_vector_2 construct_vector;
+  typename R::Construct_scaled_vector_2 construct_scaled_vector;
   typename R::Construct_translated_point_2 construct_translated_point;
   if (i == 0) return source();
   if (i == 1) return second_point();
   return construct_translated_point(source(),
-				    construct_vector(source(), 
-						     second_point())* FT(i));
+				    construct_scaled_vector(construct_vector(source(), 
+									     second_point()),
+							    FT(i)));
 }
 
 template < class R >
