@@ -1,3 +1,6 @@
+07 September 2004 Andreas Fabri
+- Changed {\ccc .. } to \ccc{..}
+
 24 August 2004 Andreas Fabri
 - changes in doc_tex for pdflatex
 
