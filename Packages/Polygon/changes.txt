@@ -1,3 +1,8 @@
+3.2 (22 June 2001)
++ Converted further to kernel traits (using Equal_2 and Construct_segment_2)
++ Added a few missing typenames.
++ Made a preliminary split of the manual pages (work in progress).
+
 3.1 (21 June 2001)
 + Converted the algorithms to use kernel traits.
 + Made polygon_traits be the kernel.

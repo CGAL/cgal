@@ -22,6 +22,10 @@
 #ifndef CGAL_SIMPLICITY_TEST_H
 #define CGAL_SIMPLICITY_TEST_H
 
+
+// ====  This file is now OBSOLETE ===== 
+// ====  The functionality has been placed in Polygon_2_simplicity.h ====
+
 #include <cstdlib>
 #include <algorithm>
 #include <set>

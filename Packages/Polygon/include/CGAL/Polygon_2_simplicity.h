@@ -125,7 +125,7 @@ template <class RandomAccessIt, class PolygonTraits>
 void Vertex_data<RandomAccessIt, PolygonTraits>::
 print_tree(Tree *tree)
 {
-    typedef Tree::iterator Tree_it;
+    typedef typename Tree::iterator Tree_it;
     for (Tree_it cur = tree->begin(); cur != tree->end(); ++cur) {
 	Vertex_index nb = next(*cur);
         std::cout << (*cur).as_int() << ' ' << nb.as_int() <<'\n';
@@ -306,7 +306,7 @@ bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
 chain_continuation(Tree *tree, Vertex_index cur_edge, Vertex_index next_edge)
 {
     // check if continuation point is on the right side of neighbor segments
-    typedef Tree::iterator It;
+    typedef typename Tree::iterator It;
     Edge_data<RandomAccessIt, PolygonTraits> &td = edges[cur_edge.as_int()];
     CGAL_polygon_assertion(td.is_in_tree);
     It cur_seg = td.tree_it;
@@ -342,7 +342,7 @@ bool i_polygon::Vertex_data<RandomAccessIt, PolygonTraits>::
 chain_end(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
 {
     // check if continuation point is on the right side of neighbor segments
-    typedef Tree::iterator It;
+    typedef typename Tree::iterator It;
     Edge_data<RandomAccessIt, PolygonTraits>
         &td_prev = edges[prev_vt.as_int()],
         &td_mid = edges[mid_vt.as_int()];

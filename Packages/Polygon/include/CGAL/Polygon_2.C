@@ -29,18 +29,36 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace i_polygon {
+template <class Equal_2, class Point_2>
+class Equal_pred {
+    Equal_2 m_equal_2;
+    Point_2 m_pt;
+public:
+    Equal_pred(Equal_2 equal_2, Point_2 const &pt)
+    : m_equal_2(equal_2), m_pt(pt) {}
+    bool operator()(Point_2 const &pt) const
+    { return m_equal_2(m_pt, pt); }
+};
+}
+
 template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
                  const Polygon_2<Traits_P,Container2_P> &y )
 {
-  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
+  typedef typename Traits_P::Equal_2 Equal_2;
+  typedef typename Traits_P::Point_2 Point_2;
+//  CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
+  if ((x.size() == 0) && (y.size() == 0)) return true;
 
   if (x.size() != y.size()) return false;
+  Equal_2 equal_2 = Traits_P().equal_2_object();
   typename Polygon_2<Traits_P,Container1_P>::Vertex_const_iterator x_iter =
     x.vertices_begin();
 
   typename Polygon_2<Traits_P,Container2_P>::Vertex_const_iterator y_iter =
-    std::find(y.vertices_begin(), y.vertices_end(), *x.vertices_begin());
+    std::find_if(y.vertices_begin(), y.vertices_end(),
+    i_polygon::Equal_pred<Equal_2, Point_2>(equal_2, *x.vertices_begin()));
 
   // if y doesn't contain the first point of x ...
   if (y_iter == y.vertices_end()) return false;
@@ -49,14 +67,14 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
   ++y_iter;
 
   while (y_iter != y.vertices_end()) {
-    if (*x_iter != *y_iter) return false;
+    if (!equal_2(*x_iter, *y_iter)) return false;
     ++x_iter;
     ++y_iter;
   }
 
   y_iter = y.vertices_begin();
   while (x_iter != x.vertices_end()) {
-    if (*x_iter != *y_iter) return false;
+    if (!equal_2(*x_iter, *y_iter)) return false;
     ++x_iter;
     ++y_iter;
   }

@@ -46,7 +46,7 @@ template <class ForwardIterator, class PolygonTraits, class ItTag>
 bool is_simple_aux_2(ForwardIterator first, ForwardIterator last, 
 	PolygonTraits const &traits, ItTag tag)
 {
-    std::vector<typename PolygonTraits::Point_2> data_copy(first, last);
+    std::vector<CGAL_TYPENAME_MSVC_NULL PolygonTraits::Point_2> data_copy(first, last);
     return is_simple_polygon(data_copy.begin(), data_copy.end(), traits);
 }
 
