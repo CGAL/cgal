@@ -2333,6 +2333,13 @@ it is declared \ccc{friend}.
                     ( sqr_rad  == c.sqr_rad ) );
         }
 
+        bool
+        operator != (
+            const CGAL::_Min_circle_2_adapterH2__Circle<_PT,_DA>& c) const
+        {
+            return( ! ( *this == c));
+        }
+
         Point
         center( ) const
         {
