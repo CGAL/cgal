@@ -1215,9 +1215,9 @@ public:
 
   // inserts a given curve container into the map using Tali's sweep
   template <class X_curve_2_iterator>
-  Halfedge_iterator insert_fast(const X_curve_2_iterator & begin,
-				const X_curve_2_iterator & end,
-				Change_notification * en = NULL)
+  Halfedge_iterator insert_tight(const X_curve_2_iterator & begin,
+                                 const X_curve_2_iterator & end,
+                                 Change_notification * en = NULL)
   {
     typedef Pmwx_aggregate_insert_tight<X_curve_2_iterator, Traits, 
                                   Self ,Change_notification> Pmwx_agg_insert;
