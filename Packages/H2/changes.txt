@@ -1,4 +1,4 @@
-2.57   (22 Jan 2003)
+2.75   (22 Jan 2003)
 - Add coordinate iterator
 - Add new constructor Iso_rectangle_2(left, right, bottom, top).
 
