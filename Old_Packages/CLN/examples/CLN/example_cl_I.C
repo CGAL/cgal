@@ -11,9 +11,6 @@ int main ()
 
 #include <CGAL/CLN/cl_integer.h>
 
-#include <cl_io.h>
-#include <cl_integer_io.h>
-
 int
 main ()
 {
