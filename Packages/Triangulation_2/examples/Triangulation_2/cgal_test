@@ -73,5 +73,6 @@ else
   compile_and_run triangulation_prog1
   compile_and_run terrain
   compile_and_run regular
+  compile_and_run constrained
 fi
 
