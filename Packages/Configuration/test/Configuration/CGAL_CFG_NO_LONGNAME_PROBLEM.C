@@ -39,5 +39,6 @@ int main ()
 {
   LONG_NAME< LONG_NAME< LONG_NAME< LONG_NAME< LONG_NAME< LONG_NAME<
   LONG_NAME< LONG_NAME< LONG_NAME< LONG_NAME< int > > > > > > > > > > a (1);
+  (void) a;
   return 0;
 }
