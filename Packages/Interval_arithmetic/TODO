@@ -1,27 +1,22 @@
 Concerning the code itself:
 
-- Fixed support : IA_Fixed.h
-- SGI'CC bugs me:
-"tst5.C", line 25: error(1282): more than one instance of overloaded function
-          "CGAL_compare_y_at_xC2" matches the argument list:
-            function template "CGAL_compare_y_at_xC2(const FT &, const FT &,
-                      const FT &, const FT &, const FT &)"
-            function template "CGAL_compare_y_at_xC2(const CGAL_Filtering<CT,
-                      ET> &, const CGAL_Filtering<CT, ET> &, const
-                      CGAL_Filtering<CT, ET> &, const CGAL_Filtering<CT, ET>
-                      &, const CGAL_Filtering<CT, ET> &)"
-            argument types are: (NT, NT, NT, NT, NT)
-    cout << "Result 1st test: " << (int)CGAL_compare_y_at_xC2(px, py, la, lb,
-lc);
-- Look at Stroustrup to learn what references are...
-- Try to fix that warning:
+- Workaround for the x86 bug: Rajouter pour __i386 + __GNUG__ ?
+  #ifndef __OPTIMIZE__
+  #warning Please compile with optimization on.
+  #endif
+- Add preconditions on the rounding mode => CGAL_get_rounding...
+  (CGAL_check_rounding, dynamically ?)
+- Include a counter for success/failures of the filter ?
+  Would be really nice to have (one more compile option...).
+- Try to fix the assembly for Mips (is it Geert' egcs-1.0.3 problem ?)
+  he's moving to egcs-1.1.1, so re-enable it for next release..
+? SunPro CC 4.2 & MipsPro CC 7.2 don't want partial specializations, which
+  breaks CGAL_convert_to<>(), and the overloaded predicates.  The first one is
+  workable around, but not the second one...  So I decide to totally drop
+  support for the CC's.
+? Try to fix that warning:
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-- overwrite overlap_action() so that it differs between IA and IA_advanced.
-  This implies declaring it as virtual...  It first needs a bench on
-  predicates.  It could be defined using template...
-- Add preconditions on the rounding mode => CGAL_get_rounding...
-? try to fix the assembly for Mips (is it Geert' egcs-1.0.3 problem ?)
 ? template by float/double ? (=> must provide CGAL_FPU... for floats...)
 ? implement operator{<,>,<=,>=}(double) -> the current operators will be
   implemented using them, and the tests (IA) > 0 will be faster ?
@@ -33,24 +28,24 @@ lc);
 
 Concerning the script:
 
-- Add a check for the return type (must be CGAL_sign... but not FT)
-  (it won't even compile in this case, I guess) ?
-- Directory where to put the script, and add it to the "make package".
+? Clean it up, and comment it... I won't maintain it, and users might want to
+  change it a little bit...
+? Should I add "#include <Arithmetic_filter.h>" in the produced file ?  I
+  guess not since they are not supposed to be included alone.  But it breaks
+  my own great [tm] rule ?
 
 Concerning the doc:
 
-- re-read the doc carefully.
-- modified sqrt() behaviour when negative.
-- document the change of behaviour in the comparison operators, and the effect
-  of CGAL_IA_DONT_THROW_EXCEPTION...
-- describe the filtering scheme (new class CGAL_Filter -> new paragraph).
-- Re-document CGAL_to_Interval_nt[_advanced]  (they change regarding the
-  ronding mode).
-? document the speed up with (double * IA).
 ? document is_same().
+? add a pointer to my MISC'99 paper to appear.
+? when a "implementor's doc" will be available, shift the IA specific stuff in
+  it ?
 
 Concerning the test-suite:
 
+- enable debug before re-submitting...  (or try SGI locally first)
 - small benchs on a few predicates.
 - test cast functions (are they dependant on rounding modes).
-- test NaNs (and Infs?).  Comparisons with these should throw the exception.
+- test NaNs (and Infs?).  Comparisons with these should throw the exception...
+- try to fix the x86 bug.  Currently, it hides the problem for the test-suite
+  to work.
