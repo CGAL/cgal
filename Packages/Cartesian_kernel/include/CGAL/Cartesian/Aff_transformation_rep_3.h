@@ -197,10 +197,6 @@ private:
   FT   t31, t32, t33, t34;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
@@ -309,10 +305,6 @@ Aff_transformation_repC3<R>::transpose() const
                                t12, t22, t32, t24,
                                t13, t23, t33, t34);
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

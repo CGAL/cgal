@@ -109,10 +109,6 @@ VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
 }
 
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_INLINE
 typename VectorH3<R>::FT
@@ -310,10 +306,6 @@ operator-(const PointH3<R>& p, const PointH3<R>& q)
                      p.hz()*q.hw() - q.hz()*p.hw(),
                      p.hw()*q.hw() );
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 template < class R >
 inline

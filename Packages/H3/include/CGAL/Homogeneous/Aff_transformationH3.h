@@ -356,10 +356,6 @@ public:
   { return Ptr()->homogeneous(i,j); }
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_INLINE
 Aff_transformation_repH3<R>::Aff_transformation_repH3(
@@ -888,10 +884,6 @@ operator<< ( std::ostream & out,
  << "| "<< r.t20 <<' '<< r.t21 <<' '<< r.t22 <<' '<< r.t23 << " |\n"
  << "| "<< RT0   <<' '<< RT0   <<' '<< RT0   <<' '<< r.t33 << " |\n";
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

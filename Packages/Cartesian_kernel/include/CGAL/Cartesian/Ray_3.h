@@ -81,10 +81,6 @@ public:
   bool        collinear_has_on(const Point_3 &p) const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 inline
 bool
@@ -218,10 +214,6 @@ operator>>(std::istream &is, RayC3<R> &r)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC3
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

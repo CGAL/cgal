@@ -603,10 +603,6 @@ public:
 
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 Aff_transformationH2<R>::Aff_transformationH2()
 { initialize_with(Aff_transformation_repH2<R>()); }
@@ -1054,10 +1050,6 @@ cartesian(int i, int j) const
   }
   return FT(0);
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

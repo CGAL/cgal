@@ -1,3 +1,6 @@
+2.53   (20 January 2003)
+- Remove #ifdef CGAL_CFG_TYPENAME_BUG stuff, as VC6 is not supported anymore.
+
 2.52   (20 January 2003)
 - Remove *handle_[23] types from the main kernel classes.
 

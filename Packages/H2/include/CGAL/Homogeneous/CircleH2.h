@@ -119,10 +119,6 @@ public:
     // bool  unoriented_equal( const CircleH2<R>& ) const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
@@ -382,10 +378,6 @@ std::istream& operator>>(std::istream &is, CircleH2<R> &c)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

@@ -83,10 +83,6 @@ public:
     LineH2<R>  transform(const Aff_transformation_2&) const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>::LineH2()
@@ -389,10 +385,6 @@ inline
 bool
 LineH2<R>::operator!=(const LineH2<R>& l) const
 { return !(*this == l); }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

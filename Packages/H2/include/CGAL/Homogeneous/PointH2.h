@@ -90,10 +90,6 @@ public:
     Direction_2 direction() const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -152,10 +148,6 @@ typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
 { return typename PointH2<R>::Direction_2(*this); }
 
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE

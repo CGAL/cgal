@@ -88,10 +88,6 @@ public:
   Bbox_3      bbox() const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 inline
 bool
@@ -262,10 +258,6 @@ operator>>(std::istream &is, SegmentC3<R> &s)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

@@ -101,10 +101,6 @@ public:
   const RT & delta(int i) const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template <class R >
 CGAL_KERNEL_INLINE
 const typename DirectionH3<R>::RT &
@@ -162,10 +158,6 @@ DirectionH3<R>
 cross_product( const DirectionH3<R>& d1,
                const DirectionH3<R>& d2)
 { return cross_product(d1.to_vector(),d2.to_vector()).direction(); }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 template <class R >
 inline

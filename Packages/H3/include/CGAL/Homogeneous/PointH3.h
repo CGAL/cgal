@@ -91,10 +91,6 @@ public:
 };
 
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 inline
 const typename PointH3<R>::RT &

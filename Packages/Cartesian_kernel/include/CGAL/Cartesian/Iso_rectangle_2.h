@@ -114,10 +114,6 @@ public:
   FT              area() const;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 inline
 bool
@@ -321,10 +317,6 @@ operator>>(std::istream &is, Iso_rectangleC2<R> &r)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

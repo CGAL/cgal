@@ -121,10 +121,6 @@ public:
   }
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -295,10 +291,6 @@ operator>>(std::istream &is, VectorC2<R> &p)
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTORC2
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

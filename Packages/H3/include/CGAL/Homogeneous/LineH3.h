@@ -87,10 +87,6 @@ bool
 LineH3<R>::operator!=(const LineH3<R>& l) const
 { return !(*this == l); }
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 inline
 const typename LineH3<R>::Point_3 &
@@ -201,10 +197,6 @@ LineH3<R>::operator==(const LineH3<R>& l) const
 {
   return l.direction() == direction() && l.has_on( point() );
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

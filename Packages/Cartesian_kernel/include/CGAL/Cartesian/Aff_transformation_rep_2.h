@@ -169,10 +169,6 @@ private:
     FT   t21, t22, t23;
 };
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
@@ -249,10 +245,6 @@ compose(const Scaling_repC2<R> &t) const
                                t.scalefactor_ * t22,
                                t.scalefactor_ * t23);
 }
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 
