@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.58 (12/02/03)
+- try to fix the makefile pb  in test/* and demo directorie
+  which appeared on last submission fom Andras
 
 Ver 7.57 (11/02/03)
 - test for new design in Triangulation_2_newd/example_3.C and _4.C
