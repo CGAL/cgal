@@ -1231,7 +1231,6 @@ Packages/Mesh_2/bench/data/square.poly -text
 Packages/Mesh_2/demo/Mesh_2/contraints.xpm -text
 Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
-Packages/Min_sphere_of_spheres_d/test/Min_sphere_of_spheres_d/lp-alg-exact svneol=native#unset
 Packages/Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text
 Packages/Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text
 Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess.eps -text
