@@ -70,7 +70,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename K_ >
+template < typename K_, typename FT_>
 struct Cartesian_base
 {
     typedef K_                                          Kernel;
@@ -105,8 +105,8 @@ struct Cartesian_base
     typedef SphereC3<Kernel>                            Sphere_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
 
-    typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_const_iterator_2;
-    typedef Cartesian_coordinate_iterator_3<Kernel> Cartesian_const_iterator_3;
+    typedef const FT_*                                  Cartesian_const_iterator_2;
+    typedef const FT_*                                  Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;

@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename FT_, typename Kernel >
 struct Cartesian_base_ref_count
-  : public Cartesian_base< Kernel >
+  : public Cartesian_base< Kernel, FT_ >
 {
     typedef FT_                                           RT;
     typedef FT_                                           FT;

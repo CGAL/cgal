@@ -27,7 +27,6 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +44,7 @@ class PointC3
   Base base;
 
 public:
-  typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
+  typedef const FT* Cartesian_const_iterator;
   typedef R_                                R;
 
   PointC3() {}
@@ -111,14 +110,14 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return Cartesian_const_iterator(static_cast<const Point_3* >(this),0);
-    //return Cartesian_const_iterator(this,0);
+    return & get(base).e0; 
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    return Cartesian_const_iterator(static_cast<const Point_3* >(this), 3);
-    //return Cartesian_const_iterator(this, 3);
+    const FT* ptr = & get(base).e2;
+    ptr++;
+    return ptr;
   }
 
   int dimension() const
