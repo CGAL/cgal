@@ -1,5 +1,10 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.6 on 15 April 1999
+- Final (hopefully) workaround for the rounding modes on IRIX.
+- Workaround for lack of convert_to<target>(source), replaced by
+  convert_from_to(target(), source).
+
 Version 3.5 on 1 April 1999
 - Header include files order fixes.
 - Use CGAL::to_double.
@@ -105,28 +110,22 @@ Version 1.6 on 10 May 1998.
   - reference to our (BBP) ACM SoCG'98 paper added.
 - ChangeLog file created.
 
-
 Version 1.5 on 26 February 1998.
 - Added "#include <assert.h>" forgotten in 1.4.
-
 
 Version 1.4 on 6 February 1998.
 - Changed _FPU_* to CGAL_FPU_*.
 - Doc updates.
 
-
 Version 1.3 on 16 December 1997.
 - Added an assertion when defining an interval with the lower bound greater
   than the upper.  Disabled when CGAL_NO_PRECONDITIONS is defined.
 
-
 Version 1.2 on 16 December 1997.
 - Added support for old Irix 5.3 include files.
 
-
 Version 1.1 on 16 December 1997.
 - lines too long problem fixed.
-
 
 Version 1.0 on 3 December 1997.
 - initial version based on some C code, and 2 C++ wrapper classes for CGAL.

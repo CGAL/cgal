@@ -11,16 +11,26 @@
 
 Concerning the code itself:
 
+- Workarounds (pour MipsPro [et M$VC]):
+  - specializations partielles: en faire une specialisation complete, avec des
+    types CT et ET que le user veut bien fournir (soit par typedef, soit par
+    macro).
+  - The convert_to workaround could be enabled even for all compilers ?
+    It would simplify the code, but:  slow down ?  still work for Quotient ?
+- Mariette dit que g++ 2.8.1 supporte pas
+  Filtered_exact<Quotient<Gmpz>,Quotient<Gmpz>>.  A vérifier et corriger.
+- Vérifier que EGCS optimise les expressions x*IA(1), IA(1)*x, x*IA(0), etc...
+  C'est apparemment loin d'être le cas.  Il inline, mais laisse les tests...
+  Il n'a pas l'air de propager les constantes à travers IA(1), même s'il
+  inline !!!
+- Refaire un petit coup de GCOV, pour voir où ça en est.
 - Avoir un flag dynamic (static member) qui dit si exception ou pas, voire un
   function pointer pour overlap_action() ?
   Et modifier le comportement dans les fonctions save/restore ?
-- MipsPro: Essayer de faire marcher (ask Michael).
 - essayer de mettre a et b "register", et voir le changement de l'assembly.
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
-- Faire un testfile pour vérifier que la version assembleur est supportée.
-  Tester IRIX5 profiterai aussi pour __SGI_ieeefp_h...
 - Permettre de cacher (NT tag ?) les conversions en intervalles.
   C'est pas un cache, mais un stockage forcé, et il faut l'updater
   si la value est modifiée...
@@ -35,9 +45,7 @@ Concerning the code itself:
 ? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
-? Looker BIAS s'il utiliser l'assembleur pour Borland/MipsPro/SunPro/Visual...
-  Visiblement, BIAS, c'est très nacze.
-? -ffast-math (essayer la test/bench-suite, et lire la doc, c'est compatible?)
+  In which case is it produced ?  I can't see it anymore.
 
 Concerning the script:
 
@@ -58,14 +66,10 @@ Concerning the doc:
 
 - change the status of homogeneous predicates when available...
 - faire un fichier long_description comme ça doit se faire.
-- say we don't have Assembly on Mips by default (and change the code), but
-  should work on IRIX 6.
-- Document CGAL_IA_DONT_USE_ASSEMBLY which disables the use of assembly.  It's
-  on by default, but is needed on IRIX 5.3 and its buggy assembler.  Will be
-  the default solution till I have some machine language code.
-  Or better, add a flag to the install procedure ?
+- Tell the status for Mips (the rounding mode).
+- Tell the status for MipsPro (the workaround about partial specializations).
 - add a pointer to my MISC'99 paper.
-- Documenter "IA::number_of_failures".
+- Document "IA::number_of_failures".
 
 Concerning the test-suite:
 

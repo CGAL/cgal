@@ -12,22 +12,39 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+# CGAL_CXX=$(HOME)/egcs/$(UNAME)/bin/g++
+
+# Extrait de la doc de GNU Make:
+# 
+# Here is an example, which compiles each of `foo.o' and `bar.o' from the
+# corresponding `.c' file: 
+# 
+# objects = foo.o bar.o
+# 
+# all: $(objects)
+# 
+# $(objects): %.o: %.c
+#	$(CC) -c $(CFLAGS) $< -o $@
+# 
+
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
-	   -W -O2 -mcpu=ultrasparc -mtune=ultrasparc -Winline
-	   # -W -g
+	   -g -O2
+	   # -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
+	   # -DNO_ASSERTIONS -DNO_PRECONDITIONS -DNO_POSTCONDITIONS \
+	   # -W -O2 
 	   # -mcpu=pentiumpro -march=pentiumpro
 	   # -mcpu=ultrasparc -mtune=ultrasparc
+	   # -B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	   # -fomit-frame-pointer
 	   # -fprofile-arcs -ftest-coverage
 	   # -DCGAL_IA_DEBUG
 	   # -DNO_QUOTIENT_INT \
+	   # -DCGAL_NO_QUOTIENT_INT_FRIENDS \
            # -O2 -xtarget=ultra2 # (SunPro)
 	   # -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
 	   # -ffast-math         # seems slower !?!
-	   # -B$(UTIL)/Binutils/$(UNAME)/bin/
 	   # -fhonor-std
 
 #---------------------------------------------------------------------#
