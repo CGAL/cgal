@@ -12,8 +12,10 @@
 - removed dependencies on the set_* methods of the site classes;
   this should make the site classes interface much simpler
 
+
 18 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - added code for input and output sites iterator
+
 
 15 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - the point container is not hardcoded
