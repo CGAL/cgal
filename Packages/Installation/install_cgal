@@ -898,6 +898,15 @@ set_compiler_flags()
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
+	*CYGWIN*g++-2.95*)
+	    #### settings for gcc-2.95.2 on Cygwin
+	    ADDITIONAL_CXXFLAGS="-Wall -ftemplate-depth-25"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR=
+	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    EXE_EXT=".exe"
+	    ;;
 	*)
 	    #### settings for unknown compiler 
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
