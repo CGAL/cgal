@@ -269,7 +269,7 @@ stream \ccc{verr}.
 \subsection{include/CGAL/Optimisation/assertions.h}
 
 @file <include/CGAL/Optimisation/assertions.h> = @begin
-    @<file header>(
+    @<file header with coauthor>(
         "include/CGAL/Optimisation/assertions.h",
         "assertion macros for optimisation algorithms",
         "Geert-Jan Giezeman")
@@ -310,8 +310,7 @@ stream \ccc{verr}.
 @file <include/CGAL/Optimisation/debug.h> = @begin
     @<file header>(
         "include/CGAL/Optimisation/debug.h",
-        "debug macro for optimisation algorithms",
-        "N.N.")
+        "debug macro for optimisation algorithms")
 
     #ifndef CGAL_OPTIMISATION_DEBUG_H
     #define CGAL_OPTIMISATION_DEBUG_H
@@ -337,8 +336,7 @@ stream \ccc{verr}.
 @file <include/CGAL/Optimisation/basic.h> = @begin
     @<file header>(
         "include/CGAL/Optimisation/basic.h",
-        "basic things for optimisation algorithms",
-        "N.N.")
+        "basic things for optimisation algorithms")
 
     #ifndef CGAL_OPTIMISATION_BASIC_H
     #define CGAL_OPTIMISATION_BASIC_H
@@ -382,8 +380,7 @@ stream \ccc{verr}.
 @file <src/Optimisation/basic.C> = @begin
     @<file header>(
         "src/Optimisation/basic.C",
-        "basic things for optimisation algorithms",
-        "N.N.")
+        "basic things for optimisation algorithms")
 
     #include <CGAL/Optimisation/basic.h>
 
@@ -410,8 +407,7 @@ stream \ccc{verr}.
 @file <include/CGAL/IO/optimisation_Window_stream.h> = @begin
     @<file header>(
         "include/CGAL/IO/optimisation_Window_stream.h",
-        "graphical output to `leda_window' for optimisation algorith.",
-        "Bernd Gärtner")
+        "graphical output to `leda_window' for optimisation algorith.")
 
     #include <CGAL/IO/Min_circle_2_Window_stream.h>
     #include <CGAL/IO/Min_ellipse_2_Window_stream.h>
@@ -427,18 +423,31 @@ stream \ccc{verr}.
 
 @i ../file_header.awi
  
-And here comes the specific file header for the product files of this
+And here come two specific file headers for the product files of this
 web file.
 
-@macro <file header>(3) many = @begin
+@macro <file header>(2) many = @begin
     @<copyright notice>
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
         "Optimisation_basic","Optimisation/optimisation_basic",
         "$Revision$","$Date$",
+        "Sven Schönherr",
         "Sven Schönherr <sven@@inf.fu-berlin.de>",
-        "@3",
+        "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
+        "@2")
+@end
+
+@macro <file header with coauthor>(3) many = @begin
+    @<copyright notice>
+    @<file name>(@1)
+    @<file description>(
+        "Geometric Optimisation",
+        "Optimisation_basic","Optimisation/optimisation_basic",
+        "$Revision$","$Date$",
+        "@3, Sven Schönherr",
+        "Sven Schönherr <sven@@inf.fu-berlin.de>",
         "ETH Zürich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
         "@2")
 @end
