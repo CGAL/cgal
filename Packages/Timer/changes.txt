@@ -1,53 +1,69 @@
 Timer Package: Release changes:
 ---------------------------------------------------------------------
 
+2.4 (21 Mar 2002)
+
+     - Maintenance moved to Lutz Kettner, MPI Saarbruecken.
+
 2.3 (20 Mar 2002)
 
-    - Added missing float.h file to include/CGAL/Real_timer.h.
+     - Added missing float.h file to include/CGAL/Real_timer.h.
 
 2.2 (18 Mar 2002)
 
-    - Improved Timer based on getrusage() on POSIX systems (does
-      not wrap around after 30 minutes).
-    - Error behaviour of both timer classes changed to warning
-      and proper error return values.
-    - Rewritten test program (more modular, since both timers are so similar.
-    - Cleanup at some places, all based on one system depending function
-      returning a time in seconds in one double.
-    - Changed the precision function to compute the precision dynamically
-      at runtime at its first invocation.
+     - Improved Timer based on getrusage() on POSIX systems (does
+       not wrap around after 30 minutes).
+     - Error behaviour of both timer classes changed to warning
+       and proper error return values.
+     - Rewritten test program (more modular, since both timers are so similar.
+     - Cleanup at some places, all based on one system depending function
+       returning a time in seconds in one double.
+     - Changed the precision function to compute the precision dynamically
+       at runtime at its first invocation.
 
 2.1.1 (10 Dec 2001)
-    Real_timer changes from Andreas Fabri for MWCC included
+
+     Real_timer changes from Andreas Fabri for MWCC included
 
 2.1 (28 Sept 2001)
-    some consts in Real_timer.h removed (caused KCC warnings)
+
+     some consts in Real_timer.h removed (caused KCC warnings)
 
 2.0 (20 June 2001)
-    manual split
+
+     manual split
 
 1.9 (4  April 2001)
-    changes in Real_timer.h to avoid warnings
+
+     changes in Real_timer.h to avoid warnings
 
 1.8 (11 August 2000)
-    change to ccRefName in the manual
+
+     change to ccRefName in the manual
 
 1.7 (14 April 2000)
-    changed the manual a bit
+
+     changed the manual a bit
 
 1.6 (1 Feb 2000)
-    some changes for Borland C++
-    Real_timer.h reorganized a bit
 
-1.5 CGAL_CLIB_STD added at a few places
+     some changes for Borland C++
+     Real_timer.h reorganized a bit
+
+1.5
+
+     CGAL_CLIB_STD added at a few places
 
 1.4 (20 Sept 1999)
+
      endl 's removed
 
 1.3 (17 Sept 1999)
+
      added std:: to cerr
 
 1.2 (13 Sept 1999)
+
      Changes for Visual C++; uses _ftime on this platform for Real_timer
 
 1.1 (05 Mar 1999)
