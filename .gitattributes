@@ -1396,6 +1396,7 @@ Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Packages/Nef_3/demo/Nef_3/cube.off -text
 Packages/Nef_3/demo/Nef_3/cube2.off -text
 Packages/Nef_3/demo/Nef_3/cube3.off -text
+Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
 Packages/Nef_3/test/Nef_3/data/cube+v.off -text
 Packages/Nef_3/test/Nef_3/data/cube+vONe.off -text
 Packages/Nef_3/test/Nef_3/data/cube+vee.off -text
