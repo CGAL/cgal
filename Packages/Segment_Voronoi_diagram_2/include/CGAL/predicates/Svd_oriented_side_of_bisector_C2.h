@@ -264,25 +264,17 @@ private:
 
     if ( t1.is_point() && t2.is_point() ) {
       r = compare_distances_pp(t1, t2, q);
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_ORIENTED_BOUNDARY;
     } else if ( t1.is_segment() && t2.is_point() ) {
       r = compare_distances_sp(t1, t2, q);
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_NEGATIVE_SIDE;
     } else if ( t1.is_point() && t2.is_segment() ) {
       r = opposite( compare_distances_sp(t2, t1, q) );
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_POSITIVE_SIDE;
     } else {
       r = compare_distances_ss(t1, t2, q);
-      if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
-      if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
-      return ON_ORIENTED_BOUNDARY;
     }
+
+    if ( r == LARGER ) { return ON_NEGATIVE_SIDE; }
+    if ( r == SMALLER ) { return ON_POSITIVE_SIDE; }
+    return ON_ORIENTED_BOUNDARY;
   }
 
 public:
