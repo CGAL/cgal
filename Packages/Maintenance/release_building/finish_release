@@ -157,7 +157,7 @@ system("./create_testresult_page", '-p', $old_version, $new_version);
 
 sub make_diffs()
 {
-    system('mkdir','-p',"$diff_dir);
+    system('mkdir','-p',"$diff_dir");
     chdir $diff_dir;
     system("gunzip -c $release_dir/$old_version.tar.gz | tar xf - ");
     system("gunzip -c $release_dir/$new_version.tar.gz | tar xf -" );
