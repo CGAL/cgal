@@ -1,6 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+- Changed license header for basic library files.
+
 0.104 (22 October 2003)
 - changed license header
 

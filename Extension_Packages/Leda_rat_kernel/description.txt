@@ -1,3 +1,0 @@
-CGAL kernel model for rational LEDA kernel.
-
-Needs LEDA (4.3/4.4).

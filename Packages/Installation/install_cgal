@@ -290,12 +290,12 @@ print_usage_information()
        --upgrade <dir> | --build-all | --rebuild-all |
        --build <config> | --rebuild <config> |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
-      [-leda] [-core] [-gmp] [-gmpxx] [-qt] [--verbose]
+      [-leda] [-core] [-gmp] [-gmpxx] [-qt] [-qt_mt] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
       [--CORE_INCL_DIR <dir>] [--CORE_LIB_DIR <dir>]
-      [--QT_DIR <dir] [--QT_INCL_DIR <dir>] 
+      [--QT_DIR <dir>] [--QT_INCL_DIR <dir>] 
       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
       [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
 
@@ -304,6 +304,7 @@ print_usage_information()
   -gmp         enables support for GMP
   -gmpxx       enables support for GMP built-in C++ interface
   -qt          enables support for Qt
+  -qt_mt       enables thread support for Qt
   --verbose    give report for each test that fails
                (not generally recommended)
   --help       gives this message
@@ -986,9 +987,9 @@ set_compiler_flags()
 	    #### settings for gcc on Darwin
 	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
 	    CGAL_SHARED_LIB_CXXFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Wl,dynamiclib"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    WINDOW_DIR="/usr/X11R6/lib"
-	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    RUNTIME_LINKER_FLAG=''
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*mwcc.exe*|*MWCC*)
@@ -4256,7 +4257,7 @@ test_setup()
 	print_line "The following lines show results of configuration tests."
 	print_line \
 	  "Some of the tests might fail, since many compilers are"
-	print_line "still not completely ANSI/ISO compliant."
+	print_line "still not completely ISO standard compliant."
 	print_line "Since we worked around the arising problems," 
 	print_center_line "${_bold_on}*** CGAL will work fine ***${_bold_off}"
 	print_line "regardless of the outcome of these tests."
@@ -4642,14 +4643,15 @@ compiler_choose_menu()
 		while [ $i -lt ${_COMPILER_NUMBER} ]; do
 		    _tmp=`eval "echo '$'_COMPILER_$i"`
 		    _tmp=`eval "echo ${_tmp}"`
-		    if [ "${COMPILER_NAME}" == `compiler_bin ${_tmp}` ]; then
+		    if [ "${COMPILER_NAME}" = `compiler_bin ${_tmp}` ]; then
 			return
 		    fi
 	    	    eval "${_EXPR} ${i} + 1"
 	    	    i=${_result}
 		done
 		# Reject if it doesn't pass this test
-		if ! get_compiler_description ${COMPILER_NAME}; then
+		if get_compiler_description ${COMPILER_NAME} ; then :
+		else
 		    return
 		fi
 		COMPILER="`basename ${COMPILER_NAME}`@`compiler_basename \"${_tmp3}\"`@${COMPILER_NAME}@${COMPILER_NAME}@`compiler_description \"${_tmp3}\"`@"
@@ -5940,7 +5942,7 @@ write_linker_flags()
 	SECOND_LIB=`lib_option "${QT_SECOND_LIB}"`
 	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole32` `lib_option winspool` `lib_option comdlg32` `lib_option ws2_32` `lib_option shell32` `lib_option advapi32` ${SECOND_LIB}"
     else
-	QLIBS="${LIBS} `lib_qt` `lib_option CGALQt`"
+	QLIBS="${LIBS} `lib_option CGALQt` `lib_qt`"
     fi
   else
     # QLIBS has to be set anyway
@@ -6600,8 +6602,8 @@ upgrade()
     log_print "done."
 
     # copy gmp header and libs
-    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h"
-    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* gmp.lib"
+    upgrade_copy "search/copy gmp header files" "include" "${CGAL_INCL_DIR}" "gmp.h gmpxx.h"
+    upgrade_copy "search/copy gmp libs" "lib" "${CGAL_LIB_DIR}" "libgmp.* libgmpxx.* gmp.lib"
     print_headline "D O N E"
     go_up_lines 1
     print_filled_line
@@ -6993,6 +6995,11 @@ while [ ${#} -gt 0 ]; do
 		shift
 	    fi
 	    ;;
+	-qt_mt*|-QT_MT*|--qt_mt*|--QT_MT*)
+	    _ANY_OPT='y'
+	    QT_T_SUPPORT='y'
+	    write_buffer "${_LEFTSPACE}Enable Qt Thread support.\n"
+	    ;;
 	-qt*|-QT*|--qt*|--QT*)
 	    _ANY_OPT='y'
 	    QT_SUPPORT='_QT'
@@ -7030,6 +7037,9 @@ while [ ${#} -gt 0 ]; do
 	-core*|-CORE*|--core*|--CORE*)
 	    _ANY_OPT='y'
 	    CORE_SUPPORT='_CORE'
+	    if [ -z "${CORE_INSTALLATION}" ]; then
+		CORE_INSTALLATION='c'
+	    fi
 	    write_buffer "${_LEFTSPACE}Enable CORE support.\n"
 	    ;;
 	-cln*|-CLN*|--cln*|--CLN*)

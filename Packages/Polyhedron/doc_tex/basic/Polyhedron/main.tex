@@ -371,13 +371,13 @@ from the \cgal\ program.  These output functions are provided as
 stream operators, now acting on the stream type of the respective
 format.
 
-\ccInclude{CGAL/IO/Inventor_ostream.h}
+\ccInclude{CGAL/IO/Polyhedron_inventor_ostream.h}
 \\
-\ccInclude{CGAL/IO/VRML_1_ostream.h}
+\ccInclude{CGAL/IO/Polyhedron_VRML_1_ostream.h}
 \\
-\ccInclude{CGAL/IO/VRML_2_ostream.h}
+\ccInclude{CGAL/IO/Polyhedron_VRML_2_ostream.h}
 \\
-\ccInclude{CGAL/IO/Geomview_stream.h}
+\ccInclude{CGAL/IO/Polyhedron_geomview_stream.h}
 
 \ccHtmlNoLinks
 \ccGlobalFunction{template <class PolyhedronTraits_3>
@@ -410,7 +410,31 @@ Section~\ref{sectionPolyIntro}.
 
 Some example programs around the different file formats are provided
 in the distribution under \texttt{examples/Polyhedron\_IO/} and
-\texttt{demo/Polyhedron\_IO/}.
+\texttt{demo/Polyhedron\_IO/}. We show an example converting OFF input
+into VRML 1.0 output.
+
+\begin{ccExampleCode}
+// examples/Polyhedron_IO/polyhedron2vrml.C
+// ----------------------------------------
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Polyhedron_VRML_1_ostream.h> 
+#include <iostream>
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
+
+int main() {
+    Polyhedron P;
+    std::cin >> P;
+    CGAL::VRML_1_ostream out( std::cout);
+    out << P;
+    return ( std::cin && std::cout) ? 0 : 1;
+}
+\end{ccExampleCode}
+
 
 
 % +========================================================================+

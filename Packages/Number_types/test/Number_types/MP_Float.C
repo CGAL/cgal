@@ -8,7 +8,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/Quotient.h>
 
-typedef CGAL::MP_Float MPF;
+typedef CGAL::MP_Float       MPF;
+typedef CGAL::Quotient<MPF>  QMPF;
 
 void test_equality(int i)
 {
@@ -66,9 +67,39 @@ void print_test()
   std::cout << std::endl;
 }
 
+void test_overflow_to_double()
+{
+  std::cout << "Tests if to_double(Quotient<MPF>) overflows or not."
+            << std::endl;
+
+  QMPF val = MPF(1)/2;
+  for (int i=0; i<3000; ++i) {
+    // std::cout << CGAL::to_double(val) << std::endl;
+    // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
+    val = val * (1<<16);
+    val = val / (1<<16);
+  }
+  assert(CGAL::to_double(val) == 0.5);
+}
+
+void test_overflow_to_interval()
+{
+  std::cout << "Tests if to_interval(Quotient<MPF>) overflows or not."
+            << std::endl;
+
+  QMPF val = MPF(1)/2;
+  for (int i=0; i<3000; ++i) {
+    // std::cout << CGAL::to_double(val) << std::endl;
+    // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
+    val = val * (1<<16);
+    val = val / (1<<16);
+  }
+  assert(CGAL::to_interval(val) == std::make_pair(0.5, 0.5));
+}
+
 int main(int argc, char **argv)
 {
-  CGAL::Quotient<CGAL::MP_Float> q1(1), q2(2);
+  QMPF q1(1), q2(2);
   assert(q1+q1 == q2);
 
   int loops = argc > 1 ? CGAL_CLIB_STD::atoi(argv[1]) : 100;
@@ -142,6 +173,10 @@ int main(int argc, char **argv)
   print_test();
 
   square_test();
+
+  test_overflow_to_double();
+
+  test_overflow_to_interval();
 
   return 0;
 }

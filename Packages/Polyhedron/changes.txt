@@ -1,6 +1,8 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+- Fixed wrong include files for output support. Added easy example.
+
 3.33 (22 Sep 2003)
 - new headers
 

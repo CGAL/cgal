@@ -1,3 +1,12 @@
+On the 3_0_branch :
+
+09 Feb 2004  Sylvain Pion
+- SunPro workaround
+
+- Improve the precision of to_interval(Quotient<MP_Float>).
+
+========================= CGAL 3.0 ========================
+
 4.122 (28 October 2003)
 - Protect to_double(Quotient<MP_Float>) against overflows like Quotient<Gmpz>.
 

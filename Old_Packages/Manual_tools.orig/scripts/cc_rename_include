@@ -1,5 +1,0 @@
-#!/usr/local/bin/perl -pi.bak
-
-# rename all include statements to \ccInclude
-s/[\\]cc((Style)|c)[{]#include +<([^>]*)>[}]/\\ccInclude{$3}/g;
-

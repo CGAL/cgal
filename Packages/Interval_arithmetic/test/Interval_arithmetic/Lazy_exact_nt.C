@@ -24,6 +24,9 @@
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 typedef leda_real        Exact_NT;
+//#elif defined CGAL_USE_GMP
+//#  include <CGAL/Gmpq.h>
+//typedef CGAL::Gmpq       Exact_NT;
 #else
 typedef CGAL::Quotient<CGAL::MP_Float> Exact_NT; // doesn't do exact sqrt()
 namespace CGAL {
@@ -95,6 +98,37 @@ void delaunay()
 			     my_NT(my_rand())));
 }
 
+// Tests the precision of to_double()
+void test_to_double()
+{
+  std::cout << "Current relative precision of to_double is : "
+            << NT::get_relative_precision_of_to_double() << std::endl;
+  double prec = 1.0/(1<<30)/(1<<10);
+  std::cout << "Setting it to : " << prec << std::endl;
+  NT::set_relative_precision_of_to_double(prec);
+  assert(NT::get_relative_precision_of_to_double() == prec);
+
+  // First compute an approximated value for 1.
+  NT one = 1;
+  NT three = 3;
+  NT tmp = one/three;
+  tmp *= three;
+  tmp = (tmp + 1/tmp)/2;
+  std::cout << "Approximated interval for 1 : " << tmp.approx() << std::endl;
+
+  // Now we square it repeatedly (the interval is going to grow), and we check
+  // that to_double() stays reasonnably close to 1.
+  for (int i = 0; i < 20; ++i) {
+    tmp = CGAL::square(tmp);
+    double d = CGAL::to_double(tmp);
+    std::cout << "double approximation is : " << d << std::endl;
+    std::cout << "interval approximation is : " << tmp.approx() << std::endl;
+    //std::cout << "numerator   = " << tmp.exact().numerator() << std::endl;
+    //std::cout << "denominator = " << tmp.exact().denominator() << std::endl;
+    assert(d > 0.999 && d < 1.001);
+  }
+}
+
 int main ()
 {
   std::cout.precision(20);
@@ -133,6 +167,7 @@ int main ()
   CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > deux(two);
   assert(zwei == deux);
 
+  test_to_double();
+
   return 0;
 }
-

@@ -40,61 +40,6 @@ public:
 
 
 public:
-#if 0
-  void
-  flip(Face_handle f, int i)
-  {
-    CGAL_precondition( dimension()==2 );
-
-    // AWDG CHANGE
-    // flip sould never be called if i and its mirror vertex are the same
-    CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
-
-    Face_handle n  = f->neighbor(i);
-    // this another change: we make sure that the index of f is given
-    // through the mirror vertex
-    int ni = n->index( f->mirror_vertex(i) );
-    // old code is here
-    //  int ni = n->index(f);
-    
-    Vertex_handle  v_cw = f->vertex(cw(i));
-    Vertex_handle  v_ccw = f->vertex(ccw(i));
-
-    // bl == bottom left, tr == top right
-    Face_handle tr = f->neighbor(ccw(i));
-    Face_handle bl = n->neighbor(ccw(ni));
-    int bli, tri;
-    // same change here: the indices for bl and tr are given through
-    // their mirror vertices
-    bli = bl->index( n->mirror_vertex(ccw(ni)) );
-    tri = tr->index( f->mirror_vertex(ccw(i)) );
-    // old code is here
-    //  bli = bl->index(n);
-    //  tri = tr->index(f);
-    
-    f->set_vertex(cw(i), n->vertex(ni));
-    n->set_vertex(cw(ni), f->vertex(i));
-    
-    // update the neighborhood relations
-    f->set_neighbor(i, bl);
-    bl->set_neighbor(bli, f);
-
-    f->set_neighbor(ccw(i), n);
-    n->set_neighbor(ccw(ni), f);
-    
-    n->set_neighbor(ni, tr);
-    tr->set_neighbor(tri, n);
-    
-    if(v_cw->face() == f) {
-      v_cw->set_face(n);
-    }
-    
-    if(v_ccw->face() == n) {
-      v_ccw->set_face(f);
-    }
-  }
-#endif
-  
   typename Tds::Vertex_handle
   insert_degree_2(typename Tds::Face_handle f, int i)
   {
@@ -149,58 +94,6 @@ public:
 
     return v;
   }
-
-#if 0
-  Vertex_handle
-  insert_in_face(Face_handle f)
-  {
-    // AWDG CHANGE
-    // new code for inserting a vertex in a face
-    // the old one relies on getting right the index of a face which can
-    // give a wrong answer in our case, because the index of a face is
-    // not longer unique; this is because two faces can have two common edges
-
-    CGAL_precondition( f != NULL && dimension()== 2);
-    Vertex_handle  v = create_vertex();
-
-    Vertex_handle v0 = f->vertex(0);
-    Vertex_handle v2 = f->vertex(2);
-    Vertex_handle v1 = f->vertex(1);
-    
-    Face_handle n1 = f->neighbor(1);
-    Face_handle n2 = f->neighbor(2);
-
-    // the computation for i1 and i2 needs to be changed
-    int i1(0), i2(0);
-    if ( n1 != NULL ) {
-      i1 = n1->index( f->mirror_vertex(1) );
-    }
-    if ( n2 != NULL ) {
-      i2 = n2->index( f->mirror_vertex(2) );
-    }
-
-    Face_handle f1 = create_face(v0, v, v2, f, n1, NULL);
-    Face_handle f2 = create_face(v0, v1, v, f, NULL, n2);
-
-    f1->set_neighbor(2, f2);
-    f2->set_neighbor(1, f1);
-    if (n1 != NULL) {
-      n1->set_neighbor(i1,f1);
-    }
-    if (n2 != NULL) {
-      n2->set_neighbor(i2,f2);
-    }
-
-    f->set_vertex(0, v);
-    f->set_neighbor(1, f1);
-    f->set_neighbor(2, f2);
-
-    if( v0->face() == f  ) {  v0->set_face(f2); }
-    v->set_face(f);
-
-    return v;
- }
-#endif
 
   void
   remove_degree_2(typename Tds::Vertex_handle v)

@@ -63,6 +63,13 @@ exact value.}
 \ccMethod{Interval_nt<false> interval();} {returns an interval containing the 
 exact value.}
 
+\ccMethod{static void set_relative_precision_of_to_double(double d);}
+{specifies the relative precision that \ccc{to_double()} has to fulfill.
+The default value is $10^{-5}$.  \ccPrecond{d>0 and d<1.}}
+
+\ccMethod{static double get_relative_precision_of_to_double();}
+{returns the relative precision that \ccc{to_double()} currently fulfills.}
+
 \ccFunction{std::ostream& operator<<(std::ostream& out,
                                      const Lazy_exact_nt<NT>& m);}
 {writes \ccc{m} to ostream \ccc{out} in an interval format.}

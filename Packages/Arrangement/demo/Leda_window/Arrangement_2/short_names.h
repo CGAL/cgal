@@ -1,7 +1,7 @@
 #include <CGAL/config.h>
 
 #if defined(CGAL_CFG_LONGNAME_BUG)
-#define Quotient                        Qt
+//#define Quotient                        Qt
 #define Homogeneous                     Hs
 #define Cartesian                       Cn
 #define Simple_cartesian                SC

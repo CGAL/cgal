@@ -151,8 +151,23 @@ public:
 
   typedef typename std::list< Vertex_handle >::iterator 
   Alpha_shape_vertices_iterator;
-  typedef typename std::list< Facet >::iterator Alpha_shape_facets_iterator;
+  typedef typename std::list< Facet >::iterator
+  Alpha_shape_facets_iterator;
+  
+  class Out_alpha_shape_test
+  //test if a cell belong to the alphashape
+  {
+    const Alpha_shape_3 * _as;
+  public:
+    Out_alpha_shape_test() {}
+    Out_alpha_shape_test(const Alpha_shape_3 * as) {_as = as;}
+    bool operator() ( const Finite_cells_iterator& fci) const {
+      return _as->classify(fci) == EXTERIOR ;
+    }
+  };
 
+  typedef Filter_iterator< Finite_cells_iterator, Out_alpha_shape_test>
+  Alpha_shape_cells_iterator;
 
 public:  // should be private ? --> operator should be wrappers
 
@@ -333,11 +348,13 @@ private:
       return (f.first)->get_facet_ranges(f.second);    
     }
 
-  Interval3 find_interval(const Edge& e) const
-    {
-      return (e.first)->get_edge_ranges(e.second, e.third);
-    }
+//   Interval3 find_interval(const Edge& e) const
+//     {
+//       return (e.first)->get_edge_ranges(e.second, e.third);
+//     }
   
+  Interval3 find_interval(const Cell_handle& s, int i, int j) const;
+
   Interval2 find_interval(const Vertex_handle& v) const
     {
       return v->get_range();
@@ -485,6 +502,19 @@ public:
       return alpha_shape_facets_end();
     }
 
+  Alpha_shape_cells_iterator alpha_shape_cells_begin() {
+    return filter_iterator(finite_cells_begin(),
+			   finite_cells_end(),
+			   Out_alpha_shape_test(this));
+  }
+  
+  Alpha_shape_cells_iterator alpha_shape_cells_end() {
+    return filter_iterator(finite_cells_begin(),
+			   finite_cells_end(),
+			   Out_alpha_shape_test(this),
+			   finite_cells_end());
+  }
+
 
 public: 
   
@@ -630,7 +660,7 @@ public:
   
   Classification_type  classify(const Cell_handle& s, 
 				int i,
-				int j) const
+ 				int j) const
     {  
       return classify(s, i, j, get_alpha());
     }
@@ -737,7 +767,19 @@ private:
 					       s->vertex(i)->point());
  
       return (b == ON_BOUNDED_SIDE) ? true : false;
-    } 
+    }
+
+  bool is_attached(const Vertex_handle& vh1, 
+		   const Vertex_handle& vh2,
+		   const Vertex_handle& vh3) const
+    {
+     Bounded_side b = 
+	Gt().side_of_bounded_sphere_3_object()(vh1->point(),
+					       vh2->point(),
+					       vh3->point());
+ 
+      return (b == ON_BOUNDED_SIDE) ? true : false; 
+    }
  
   //------------------- GEOMETRIC PRIMITIVES ----------------------------
 
@@ -781,6 +823,10 @@ private:
   //---------------------------------------------------------------------
 public:  
   void show_alpha_shape_faces(Geomview_stream &gv);
+
+
+  // to Debug
+  void show_interval_facet_map() ;
 
 }; 
 
@@ -902,6 +948,8 @@ Alpha_shape_3<Dt>::initialize_interval_facet_map()
 
       // cross-links
       (f.first)->set_facet_ranges(f.second, interval);
+      pNeighbor->set_facet_ranges( Neigh_i,interval);
+      
     }
 
   // Remark:
@@ -1566,10 +1614,11 @@ Alpha_shape_3<Dt>::update_alpha_shape_facet_list() const
 		{
 		  CGAL_triangulation_assertion(classify(
                                      (*face_alpha_it).second.first,
-				     (*face_alpha_it).second.second) ==
-			    Alpha_shape_3<Dt>::REGULAR);
-		  Alpha_shape_facets_list.push_back(Facet((*face_alpha_it).second.first,
-							  (*face_alpha_it).second.second));
+				     (*face_alpha_it).second.second ) ==
+			    Alpha_shape_3<Dt>::REGULAR );
+		  Alpha_shape_facets_list.push_back(
+		    Facet((*face_alpha_it).second.first,
+			  (*face_alpha_it).second.second));
 		}
 	    }
 	  else
@@ -1639,6 +1688,60 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
 //---------------------------------------------------------------------
 
 template < class Dt >
+typename Alpha_shape_3<Dt>::Interval3
+Alpha_shape_3<Dt>::
+find_interval(const Cell_handle& s, int i, int j) const
+{
+ // edge is said to be singular if not incident to a tetrahedra
+ // in the alpha-shapes
+ // there is n no use to test if edge is attached or not if the mode
+ // is set to REGULAR, in this case 
+ // b_attached is set to true 
+// interval.first is set to UNDEFINED for any edge.
+
+ Coord_type alpha_min_e = UNDEFINED;
+ Coord_type alpha_mid_e ;
+ Coord_type alpha_max_e = 0;
+ bool b_attached = false;
+
+ 
+  //initialisation
+  Cell_circulator ccirc = incident_cells(s,i,j),
+    cdone(ccirc);
+  do {
+    if(is_infinite(ccirc) ) alpha_max_e =  Infinity;
+    else alpha_mid_e = find_interval(ccirc);
+  } while(++ccirc != cdone);
+
+  //another turn
+  do {
+    if (!is_infinite(ccirc) ) {
+     alpha_mid_e = min ( alpha_mid_e, find_interval(ccirc));
+     if (alpha_max_e != Infinity) 
+       alpha_max_e = max(alpha_max_e, find_interval(ccirc));
+    }
+  }while(++ccirc != cdone); 
+ 
+   //-----set alpha_min_e in the GENERAL mode--------------------
+  if( get_mode() == GENERAL) {
+    Facet_circulator fcirc = incident_facets(s,i,j),
+      fdone(fcirc);
+    do {
+      // test whether the vertex of ss opposite to *fcirc
+      // is inside the sphere defined by the edge e = (s, i,j)
+      Cell_handle ss = (*fcirc).first;
+      int ii = (*fcirc).second;
+      if (!is_infinite(ss->vertex(ii)) )
+	b_attached = is_attached(s->vertex(i), s->vertex(j), ss->vertex(ii));
+    } while(++fcirc != fdone);
+
+    if(! b_attached) alpha_min_e = squared_radius(s,i,j);
+  }
+
+  return make_triple(alpha_min_e,alpha_mid_e,alpha_max_e);
+}
+
+template < class Dt >
 typename Alpha_shape_3<Dt>::Classification_type  
 Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
 			    int i,
@@ -1647,34 +1750,46 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
   // Classifies the edge `e' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
 { 
-  // the version that uses a simplified version without crosslinks
-  // is much slower
-  if (is_infinite(s, i, j))
-    return EXTERIOR;
+//   // the version that uses a simplified version without crosslinks
+//   // is much slower
+//   if (is_infinite(s, i, j))     return EXTERIOR;
     
-  // FIX SUGGESTED BY JUR VAN DER BERG
-  //Interval3 interval = find_interval((const Edge)(s,i,j));
-  Interval3 interval = s->get_edge_ranges(i, j);
-  //  (*(_facet_interval_map.find(const_facet(s, i)))).second;
+//   // FIX SUGGESTED BY JUR VAN DER BERG
+//   //Interval3 interval = find_interval((const Edge)(s,i,j));
+//   Interval3 interval = s->get_edge_ranges(i, j);
+//   //  (*(_facet_interval_map.find(const_facet(s, i)))).second;
  
-  if (alpha <= interval.second)
-    {
-      if (get_mode() == REGULARIZED ||
-	  interval.first == UNDEFINED ||
-	  alpha <= interval.first)
-	return EXTERIOR;
-      else // alpha > interval.first
-	return SINGULAR;
-    }
-  else    // alpha > interval.second
-    {
-      if (interval.third == Infinity ||
-	  alpha <= interval.third)
-	return REGULAR;
-      else // alpha > interval.third
-	return INTERIOR;
-    }
-   
+//   if (alpha <= interval.second)
+//     {
+//       if (get_mode() == REGULARIZED ||
+// 	  interval.first == UNDEFINED ||
+// 	  alpha <= interval.first)
+// 	return EXTERIOR;
+//       else // alpha > interval.first
+// 	return SINGULAR;
+//     }
+//   else    // alpha > interval.second
+//     {
+//       if (interval.third == Infinity ||
+// 	  alpha <= interval.third)
+// 	return REGULAR;
+//       else // alpha > interval.third
+// 	return INTERIOR;
+//     }
+  
+  if (is_infinite(s, i, j))     return EXTERIOR;
+  Interval3 interval = find_interval(s,i,j);
+
+//   std::cout << interval.first << "\t"
+//             << interval.second << "\t"
+// 	    << interval.third << "\t"; 
+ 
+  // edge is said to be singular if not incident to a tetrahedra
+  // in the alpha-shapes
+  if (interval.third != Infinity && alpha >= interval.third) return INTERIOR;
+  else if ( alpha >= interval.second) return REGULAR;
+  else if ( get_mode() == GENERAL && alpha >= interval.first) return SINGULAR;
+  else return EXTERIOR;
 }
 
 //---------------------------------------------------------------------
@@ -1863,6 +1978,27 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	}
     }
   return alpha_solid;
+}
+
+template <class Dt>
+void
+Alpha_shape_3<Dt>::
+show_interval_facet_map()
+{
+  typename Interval_facet_map::iterator ifmit = _interval_facet_map.begin(),
+    ifmdone = _interval_facet_map.end();
+  for( ; ifmit != ifmdone; ++ifmit) {
+    Interval3 interval3 = ifmit->first;
+    std::cout << std::endl;
+    std::cout << interval3.first << "\t"
+	      << interval3.second << "\t"
+	      << interval3.third << "\t" << std::endl;
+    Facet facet = ifmit->second;
+    interval3 = find_interval(facet);
+    std::cout << interval3.first << "\t"
+	      << interval3.second << "\t"
+	      << interval3.third << "\t" << std::endl;    
+  }
 }
 
 //-------------------------------------------------------------------

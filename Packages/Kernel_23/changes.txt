@@ -1,3 +1,10 @@
+Backported to the 3.0_branch :
+
+- Fix documentation of do_intersect() for Triangle_3
+  (Philippe Guigue's contribution).
+
+========================== CGAL 3.0 =====================
+
 1.88 (29 October 2003)
 - Fix test-suite.
 

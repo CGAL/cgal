@@ -24,10 +24,6 @@
 
 #include <CGAL/Hyperbola_segment_2.h>
 
-#ifdef CGAL_USE_QT
-#include <CGAL/IO/Qt_widget.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt >
@@ -80,8 +76,9 @@ public:
   }
 
 
-#if defined CGAL_QT_WIDGET_H
-  void draw_qt(Qt_widget& s)
+#ifdef CGAL_USE_QT
+  template<class QTWIDGET>
+  void draw_qt(QTWIDGET& s)
   {
     if ( CGAL::is_zero(r) ) {
       draw_ray(s);
@@ -135,16 +132,6 @@ Stream& operator<<(Stream &s, const Hyperbola_ray_2<Gt> &H)
   H.draw(s);
   return s;
 }
-
-#if defined CGAL_QT_WIDGET_H
-template< class Gt >
-inline
-Qt_widget& operator<<(Qt_widget &s, Hyperbola_ray_2<Gt> &H)
-{
-  H.draw_qt(s);
-  return s;
-}
-#endif
 
 CGAL_END_NAMESPACE
 

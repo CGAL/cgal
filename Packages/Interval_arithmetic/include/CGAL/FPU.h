@@ -31,7 +31,7 @@
 // a helper class which is a nice way to protect blocks of code needing a
 // particular rounding mode.
 
-#ifdef __MWERKS__
+#if defined __MWERKS__ || defined __MACH__
 #  include <fenv.h>
 #elif defined __alpha__  && defined __linux__ 
 extern "C" {
@@ -167,7 +167,7 @@ typedef fpu_control_t FPU_CW_t;
 #define CGAL_FE_UPWARD       FE_UPWARD
 #define CGAL_FE_DOWNWARD     FE_DOWNWARD
 
-#elif defined __MWERKS__
+#elif defined __MWERKS__ || defined __MACH__
 #define CGAL_IA_SETFPCW(CW) fesetround(CW)
 #define CGAL_IA_GETFPCW(CW) CW = fegetround()
 typedef int FPU_CW_t;

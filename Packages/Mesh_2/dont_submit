@@ -1,8 +1,0 @@
-.cvsignore
-Makefile
-TODO
-my_tags.j2h
-README
-bench
-Doxyfile
-stylesheet.css

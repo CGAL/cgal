@@ -28,10 +28,6 @@
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Kernel_traits.h>
 
-#ifdef CGAL_USE_QT
-#include <CGAL/IO/Qt_widget.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt >
@@ -250,7 +246,8 @@ public:
       }
     }
 
-  void draw_qt(Qt_widget& W) const
+  template<class QTWIDGET>
+  void draw_qt(QTWIDGET& W) const
     {
       std::vector< Point_2 > pleft, pright;
       generate_points_qt(pleft, pright);
@@ -314,15 +311,6 @@ Stream& operator<<(Stream& s, const Hyperbola_2<Gt> &H)
   return s;
 }
 
-#if defined CGAL_USE_QT
-template< class Gt >
-inline
-Qt_widget& operator<<(Qt_widget& s, const Hyperbola_2< Gt > &H)
-{
-  H.draw_qt(s);
-  return s;
-}
-#endif
 
 CGAL_END_NAMESPACE
 

@@ -270,7 +270,7 @@ dots written to the screen indicating progress.
 starting interactive mode - one moment, please
 .......
 
-  Choosing compiler GNU 3.3.0.
+  Choosing compiler GNU 3.3.2.
 
 \end{alltt}}
   
@@ -291,7 +291,7 @@ A menu similar to the following will appear on your screen.\index{main
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.9                     **
-  **   Compiler:            GNU 3.3.0                           **
+  **   Compiler:            GNU 3.3.2                           **
   **   Support for:         no other library.                   **
   **                                                            **
   **   Compiler is supported by CGAL.                           **
@@ -381,7 +381,7 @@ at the error messages from compiler or linker.)
   ****************************************************************
 
   OS:           sparc_SunOS-5.9
-  COMPILER:     GNU 3.3.0
+  COMPILER:     GNU 3.3.2
   GMP:          not supported
   GMPXX:        not supported
   CORE:         not supported
@@ -1426,20 +1426,42 @@ path. You can solve this problem by adding the directory containing
 represented by the environment variable \texttt{LD\_LIBRARY\_PATH}.
 
 For example, if you have a standard \texttt{gcc} installation below
-\texttt{/software/gcc-3.3.0/}, you would type 
+\texttt{/software/gcc-3.3.2/}, you would type 
 \begin{alltt}
-      export LD_LIBRARY_PATH=/software/gcc-3.3.0/lib:$LD_LIBRARY_PATH
+      export LD_LIBRARY_PATH=/software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
 \end{alltt}
 for bourne shell alikes, while for \texttt{csh} descendants the syntax
 is
 \begin{alltt}
-      setenv LD_LIBRARY_PATH /software/gcc-3.3.0/lib:$LD_LIBRARY_PATH
+      setenv LD_LIBRARY_PATH /software/gcc-3.3.2/lib:$LD_LIBRARY_PATH
 \end{alltt}
 You might want to add this command to your shell startup file.
 
 Alternatively, you can build the runtime linker path into the
 executables by setting corresponding custom linker flags (cf.
 Section~\ref{sec:compiler-menu}).
+
+\subsection{Defect in the G++ 3.2 ABI}
+\label{sec:gcc32abi}
+\index{gcc@\texttt{g++} 3.2 ABI}\index{compilers!gcc@\texttt{g++} 3.2 ABI}
+
+Some versions of \texttt{gcc}, for example \Gcc{3.3.0}, have problems
+in their \CC-ABI, that surface in error messages similar to the
+following.
+%
+\begin{verbatim}
+  error: due to a defect in the G++ 3.2 ABI, G++ has assigned 
+    the same mangled name to two different types.
+\end{verbatim}
+%
+If this occurs to you, please seriously consider upgrading your
+compiler. This issue is fixed starting from \Gcc{3.3.1}.
+Alternatively, you can add \texttt{-fabi-version=0} to your custom
+compiler flags\footnote{Thanks to Christopher Intemann for pointing
+  this out.}. In interactive mode, this is done via the Compiler Menu,
+as described in Section~\ref{sec:compiler-menu}. Afterwards rebuild
+the libraries. But note that changing the \textsc{Abi} might have side
+effects. Hence, a compiler upgrade is the recommended fix here.
 
 \subsection{The ``Long-Name-Problem'' on IRIX6}\label{sec:longnameirix}
 \index{problems with long names}\index{long name problem}

@@ -428,6 +428,33 @@ find_closest(const Point & p,
         }
         if (!type) lt=Planar_map::VERTEX; 
         // lt should be already Planar_map::VERTEX
+
+	if (up && (traits->point_equal(traits->curve_leftmost(cv),traits->curve_leftmost(ecv)))) 
+	  //|| (!up && (traits->point_equal(traits->curve_rightmost(cv),traits->curve_rightmost(ecv)))))
+	
+	  // check if cv and ecv are both to the right of p (if up) 
+	  //if so, it means that the y-value of ecv and cv is equal on p.x
+	  // -  since traits->curves_compare_y_at_x(ecv, cv , p) == EQUAL
+	  //it also means that ecv is upper than cv
+	  // - since traits->curves_compare_y_at_x_from_bottom(ecv, cv, q) != LARGER
+	{
+	//idit : specail case:
+        /*
+         *           x
+         *          / 
+         *         x
+         *         |\
+         *         p x
+         *
+         */
+	  // orient e upright
+	  if ( up == traits->point_is_left_low(e->target()->point(),
+					       e->source()->point()))
+	  {
+	    //std::cout << "e changed to twin\n";
+	    e = e->twin();
+	  }
+	}
       }
 
 #ifdef CGAL_PM_DEBUG

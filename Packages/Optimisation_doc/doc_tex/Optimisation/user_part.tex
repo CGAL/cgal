@@ -56,7 +56,9 @@ Other classes for which we provide solutions are ellipses
 (\ccc{Min_ellipse_2<Traits>}), rectangles (\ccc{min_rectangle_2}),
 parallelograms (\ccc{min_parallelogram_2}) and strips
 (\ccc{min_strip_2}) in the plane, with appropriate optimality
-criteria. In addition to spheres (\ccc{Min_sphere_d<Traits>}), there
+criteria. In addition to spheres for points
+(\ccc{Min_sphere_d<Traits>}) and spheres for spheres
+(\ccc{Min_sphere_of_spheres_d<Traits>}), there
 is another class of objects which allows for solutions in arbitrary
 dimension, namely annuli (\ccc{Min_annulus_d<Traits>}).
 
@@ -72,6 +74,11 @@ dimension, namely annuli (\ccc{Min_annulus_d<Traits>}).
 %%\leavevmode\epsfxsize8cm\epsffile{annulus.eps}
 \end{center}
 \end{ccTexOnly}
+
+In addition to computing the smallest sphere enclosing a set
+of points, \cgal\ offers a class  
+\ccc{Min_sphere_of_spheres_d<Traits>}
+which computes the smallest sphere enclosing a set of spheres.
 
 Bounding volumes can be used to obtain simple approximations of
 complicated objects. For example, consider the problem of deciding

@@ -13,6 +13,7 @@
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
+#include <CGAL/IO/Qt_widget_Apollonius_site_2.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
 
 
@@ -251,11 +252,11 @@ private slots:
       counter++;
       if ( counter % 500 == 0 ) {
 	std::cout << "\r" << counter
-		  << " sites haved been inserted..." << std::flush;
+		  << " sites have been inserted..." << std::flush;
       }
     }
     std::cout << "\r" << counter 
-	      << " sites haved been inserted... Done!"
+	      << " sites have been inserted... Done!"
 	      << std::endl;
     assert( ag.is_valid(false, 1) );
     widget->redraw();
@@ -308,7 +309,7 @@ main(int argc, char* argv[])
 }
 
 
-// moc_source_file: demo.C
+// moc_source_file: apollonius_graph_2.C
 
 #else
 
