@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// 2.13 (3 April 2000)
++ Fix in Polygon_2_algorithms.C, replacing non standard vector.resize(...)
+  by vector.insert(...)
+
+//-----------------------------------------------------------------------//
 // 2.12
 
 Rewrote example Custompoint1.C. It does not use 'using namespace CGAL'
