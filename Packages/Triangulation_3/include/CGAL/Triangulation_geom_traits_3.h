@@ -42,7 +42,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 // The classes prefixed with Local_ ae only needed because the
 // kernel does not provide them yet.
 
@@ -59,11 +58,7 @@ class Local_Coplanar_orientation
     }
 };
 
-////
-
-
 template < class FT >
-/*CGAL_NO_FILTER*/
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
 local_coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
@@ -93,9 +88,6 @@ local_coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &p
                                               vx,vy,vz,v2));
 }
 
-////
-
-
 class Local_Coplanar_side_of_oriented_circle
 {
   public:
@@ -105,7 +97,6 @@ class Local_Coplanar_side_of_oriented_circle
     Oriented_side
     operator()(const T1& p, const T1& q, const T1& r, const T1& t, const T2& v) const
     { 
-
       //return coplanar_side_of_oriented_circle(p,q,r,t, v); 
       return local_coplanar_side_of_oriented_circleC3(p.x(), p.y(), p.z(),
 						      q.x(), q.y(), q.z(),
@@ -126,9 +117,6 @@ public:
     return cross_product(v1, v2);
   }
 };
-
-
-
 
 template < class Repres >
 class Triangulation_geom_traits_3 
@@ -169,6 +157,7 @@ public:
   typedef typename Rep::Construct_triangle_3 Construct_triangle_3;
   typedef typename Rep::Construct_tetrahedron_3 Construct_tetrahedron_3;
 
+  typedef typename Rep::Less_distance_to_point_3 Less_distance_to_point_3;
 
   Triangulation_geom_traits_3()
     {}
@@ -180,25 +169,20 @@ public:
   operator=(const Triangulation_geom_traits_3 & )
     {return *this;}
 
-
   Compare_x_3
   compare_x_3_object() const { 
     return Compare_x_3();
   }
 
-
   Compare_y_3
   compare_y_3_object() const { 
     return Compare_y_3();
   }
-  
-
 
   Compare_z_3
   compare_z_3_object() const {
     return Compare_z_3();
-}
-
+  }
   
   Equal_3
   equal_3_object() const {
@@ -209,7 +193,6 @@ public:
   cross_product_object() const { 
     return Cross_product();
   }
-
 
   Collinear_3
   collinear_3_object() const {
@@ -248,7 +231,11 @@ public:
     return Construct_tetrahedron_3();
   }
 
-
+  Less_distance_to_point_3
+  less_distance_to_point_3_object(const Point_3 &p) const
+  {
+      return Less_distance_to_point_3(p);
+  }
 };
 
 CGAL_END_NAMESPACE
