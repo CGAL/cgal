@@ -94,7 +94,8 @@ void show_welcome_message(CGAL::Window_stream & os)
   text += "Click left button for polyline points.\\n ";
   text += "Click right button as last point in polygon.\\n ";
   text += " \\n ";
-  text += "Clicking close to a point, assumes the location is at the point.\\n ";
+  text +=
+    "Clicking close to a point, assumes the location is at the point.\\n ";
   text += "Lonely points will be discarded.\\n ";
  
   os.set_status_string("Press Begin to enter polylines.");
@@ -102,7 +103,7 @@ void show_welcome_message(CGAL::Window_stream & os)
   // wait for button
 }
 
-// redraw function for the LEDA window. used automatically when window reappears
+// redraw function for LEDA window. used automatically when window reappears
 void redraw(CGAL::Window_stream * wp) 
 {
   wp->start_buffering();

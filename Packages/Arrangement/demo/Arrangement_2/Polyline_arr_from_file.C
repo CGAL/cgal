@@ -107,7 +107,7 @@ void read_arr(Arr_2 & arr, char * filename)
   }
 }
 
-// redraw function for the LEDA window. used automatically when window reappears
+// redraw function for LEDA window. used automatically when window reappears
 void redraw(CGAL::Window_stream * wp) 
 {
   wp->start_buffering();
